@@ -1,42 +1,64 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: new reiser4progs?
-Date: Mon, 21 Feb 2005 10:10:56 -0800
-Message-ID: <421A2430.6040208@namesys.com>
-References: <20050218083158.GA28563@xs4all.nl> <200502181619.59336.vitaly@namesys.com> <20050218140824.GA50286@xs4all.nl> <200502181717.30090.vitaly@namesys.com> <42161B27.9040408@gmx.net>
+Subject: Re: when is it decided that extent pointer is to be created in reiser4
+Date: Mon, 21 Feb 2005 10:24:23 -0800
+Message-ID: <421A2757.4000408@namesys.com>
+References: <20050221172615.70993.qmail@web60109.mail.yahoo.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42161B27.9040408@gmx.net>
+In-Reply-To: <20050221172615.70993.qmail@web60109.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Christian <evilninja@gmx.net>
-Cc: reiserfs-list@namesys.com
+To: Pallavi Dalya <pallavidalya@yahoo.com>
+Cc: reiser-list mailing <reiserfs-list@namesys.com>
 
-What is the time since the last update was released, and are there bugs 
-whose fixes are possessed only by Vitaly at this time?
+Pallavi Dalya wrote:
 
-Hans
+>hello,
+>
+>     as far as i know tree based file systems use
+>extents for managing free space. does reiser4 use a
+>bitmap based method or extents to keep track of used
+>and free blocks.
+>  
+>
+bitmap.
 
-Christian wrote:
+>      another issue is that when i tried storing a
+>small file an extent pointer was created for the file
+>which was also the case for a large file. but to my
+>knowledge extent pointers are created for large files
+>and in some file systems there is a fixed limit to the
+>file size after which it is assigned an extent
+>pointer.
+>  
+>
+we store in formatted nodes until the file reaches ~16k in size.
 
-> Vitaly Fertman wrote:
+>wat is the policy used in reiser4 to decide which
+>files should be stored using extent pointers and which
+>should not.
+>      also from what i have observed each file has a
+>unique key representing it in reiser4. is there any
+>specific key generation algorithm for file names and
+>if yes where could i find it. is it possible that
+>instead of passing single file names to the key
+>generation algorithms we could pass the entire path to
+>generate a unique key.
+>  
 >
-> >testing a release candidate before releasing.
-> >the amount of time needed depends on the amount of problems
-> >appeared, if debugging/fixing/bugfix testing is need, etc.
+If you have a limit on the path length, or you make keys variable in 
+length, yes.
+
+>________________________________________________________________________
+>Yahoo! Messenger - Communicate instantly..."Ping" 
+>your friends today! Download Messenger Now 
+>http://uk.messenger.yahoo.com/download/index.html
 >
 >
-> would it be an option to publish daily (nightly) builds, along with a big.
-> fat UNTESTED warning? it could be done via scripts and even if it does not
-> build one day or the other - users would notice that and could report.
+>  
 >
-> thanks,
-> Christian.
-> --
-> BOFH excuse #88:
->
-> Boss' kid fucked up the machine
 
