@@ -1,36 +1,29 @@
-From: Kuba Ober <kuba@mareimbrium.org>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: Filesystem errors
-Date: Wed, 17 Jul 2002 08:11:44 -0400
-Message-ID: <200207170811.44229.kuba@mareimbrium.org>
-References: <200207160146.01440.cabernet@internode.on.net> <200207171736.44485.cabernet@internode.on.net> <20020717121056.A12081@namesys.com>
+Date: Wed, 17 Jul 2002 16:16:32 +0400
+Message-ID: <20020717161632.A2614@namesys.com>
+References: <200207160146.01440.cabernet@internode.on.net> <200207171736.44485.cabernet@internode.on.net> <20020717121056.A12081@namesys.com> <200207170811.44229.kuba@mareimbrium.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11034-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11035-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020717121056.A12081@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <200207170811.44229.kuba@mareimbrium.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Kuba Ober <kuba@mareimbrium.org>
+Cc: reiserfs-list@namesys.com
 
-> On Wed, Jul 17, 2002 at 05:36:44PM +0930, Brian Marr wrote:
-> > Thanks for your comments. My system is still going under my watchful eye.
-> > I tried to copy the data using tar to a spare diskl
-> > tar -cplf - -C /myhardrive . | tar -xpvf -
-> > but this did not go far. I wonder if I could boot into rescue and do  a
-> > dd ? I have not used this before.
->
-> use dd_rescue tool, conventional dd is not working very good with
-> broken hard disks.
+Hello!
 
-Better yet, buy sprinrite (www.grc.com). It's an absolutely great tool, and 
-more than worth the money. Although it doesn't handle out-of-place (i.e. data 
-moving) recovery on non-fat filesystems, it can diagnose your disk and try 
-recovering in-place. It uses quite advanced data recovery methods. It goes 
-about as far as you can go without taking the hard drive out and plugging it 
-into specialized hardware.
+On Wed, Jul 17, 2002 at 08:11:44AM -0400, Kuba Ober wrote:
 
-Did I mention that spinrite was about 100kb in size and written in assembler?
+> Did I mention that spinrite was about 100kb in size and written in assembler?
 
-Cheers, Kuba Ober
+This is not an advantage by any means in my view. It only means it is
+x86 specific, most probably requires dos/windows, and hard to debug.
+
+Bye,
+    Oleg
