@@ -1,47 +1,33 @@
-From: Vitaly Fertman <vitaly@namesys.com>
+From: Domenico Andreoli <cavok@libero.it>
 Subject: Re: fsck.reiser4
-Date: Mon, 22 Dec 2003 17:02:07 +0300
-Message-ID: <200312221702.07705.vitaly@namesys.com>
-References: <200312212203.52775.janfengler@web.de> <200312221523.26888.vitaly@namesys.com> <3FE6F7DD.7000503@libero.it>
+Date: Mon, 22 Dec 2003 18:55:44 +0100
+Message-ID: <3FE73020.6060000@libero.it>
+References: <200312212203.52775.janfengler@web.de> <200312221523.26888.vitaly@namesys.com> <3FE6F7DD.7000503@libero.it> <200312221702.07705.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16380-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16381-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FE6F7DD.7000503@libero.it>
-Content-Disposition: inline
+In-Reply-To: <200312221702.07705.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Domenico Andreoli <cavok@libero.it>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-On Monday 22 December 2003 16:55, Domenico Andreoli wrote:
-> hi Vitaly,
+Vitaly Fertman wrote:
+> you need the latest libaal to be installed first.
+> bk clone bk://bk.namesys.com/bk/libaal
+> prepare
+> configure
+> make 
+> make install
+> ldconfig
+> 
 
-hello, 
+i've already done this, i have installed libaal 0.4.15
 
-> Vitaly Fertman wrote:
-> > It seems this bug was already fixed, we have not released
-> > another reiser4progs snapshot yet, so you can wait a bit for
-> > the coming release or you can get the code from our bk
-> > repositories:
-> >
-> > bk clone bk://bk.namesys.com/bk/libaal
-> > bk clone bk://bk.namesys.com/bk/reiser4progs
->
-> i just checked out reiser4progs but i had some problems building it :(
-
-you need the latest libaal to be installed first.
-bk clone bk://bk.namesys.com/bk/libaal
-prepare
-configure
-make 
-make install
-ldconfig
-
-Then you can build the reiser4progs.
-
--- 
-Thanks,
-Vitaly Fertman
+-----[ Domenico Andreoli, aka cavok
+ --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
+   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
