@@ -1,146 +1,37 @@
-From: Redeeman <redeeman@metanurb.dk>
+From: Christoph Hellwig <hch@lst.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 14:30:46 +0200
-Message-ID: <1093523446.12491.0.camel@localhost>
-References: <20040824202521.GA26705@lst.de>	<412CEE38.1080707@namesys.com>
-	 <20040825152805.45a1ce64.akpm@osdl.org>  <412D9FE6.9050307@namesys.com>
-Reply-To: redeeman@metanurb.dk
+Date: Thu, 26 Aug 2004 14:41:19 +0200
+Message-ID: <20040826124119.GA431@lst.de>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <20040825203516.GB4688@backtop.namesys.com> <20040825205149.GA17654@lst.de> <412DA2CF.2030204@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20652-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20653-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <412D9FE6.9050307@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <412DA2CF.2030204@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Christoph Hellwig <hch@lst.de>, Alex Zarochentsev <zam@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, 2004-08-26 at 01:31 -0700, Hans Reiser wrote:
-> Andrew Morton wrote:
-> 
-> >Hans Reiser <reiser@namesys.com> wrote:
-> >  
+On Thu, Aug 26, 2004 at 01:43:59AM -0700, Hans Reiser wrote:
+> >Again, O_DIRECTORY was added to solve a real-world race, not just for
+> >the sake of it. 
 > >
-> >>I had not intended to respond to this because I have nothing positive to 
-> >>say, but Andrew said I needed to respond and suggested I should copy 
-> >>Linus.
-> >>    
-> >>
-> >
-> >Yes, but I didn't say "flame Christoph and ignore the issues" ;)
-> >  
-> >
-> Oh....;-)
-> 
-> >There are lots of little things to do with implementation, coding style,
-> >module exports, deadlocks, what code goes where, etc.  These are all normal
-> >daily kernel business and we should set them aside for now and concentrate
-> >on the bigger issues.
-> >  
-> >
-> Yes, you are right, but I am not sure Viro will go along with that..... ;-)
-> 
-> >And as I see it, there are two big issues:
-> >
-> >a) reiser4 extends the Linux API in ways which POSIX/Unix/etc do not
-> >   anticipate and 
-> >
-> >b) it does this within the context of just a single filesystem.
-> >
-> >I see three possible responses:
-> >
-> >a) accept the reiser4-only extensions as-is (possibly with post-review
-> >   modifications, of course) or
-> >
-> >b) accept the reiser4-only extensions with a view to turning them into
-> >   kernel-wide extensions at some time in the future, so all filesystems
-> >   will offer the extensions (as much as poss) or
-> >
-> >c) reject the extensions.
-> >
-> >
-> >My own order of preference is b) c) a). 
-> >
-> I don't object to b), though I think b) should wait for 2.7 and reiser4 
-> should not.
-> 
-> > The fact that one filesystem will
-> >offer features which other filesystems do not and cannot offer makes me
-> >queasy for some reason.
-> >  
-> >
-> Andrew, we need to compete with WinFS and Dominic Giampaolo's filesystem 
-> for Apple, and that means we need to put search engine and database 
-> functionality into the filesystem.  It takes 11 years of serious 
-> research to build a clean storage layer able to handle doing that.  
-> Reiser4 has done that, finally.  None of the other Linux filesystems 
-> have.  The next major release of ReiserFS is going to be bursting with 
-> semantic enhancements, because the prerequisites for them are in place 
-> now.  None of the other Linux filesystems have those prerequisites.  
-> They won't be able to keep up with the semantic enhancements.  This 
-> metafiles and file-directories stuff is actually fairly trivial stuff.
-> 
-> Look guys, in 1993 I anticipated the battle would be here, and I build 
-> the foundation for a defensive tower right at the spot MS and Apple are 
-> now maneuvering towards.  Help me get the next level on the tower before 
-> they get here.  It is one hell of a foundation, they won't be able to 
-> shake it, their trees are not as powerful.  Don't move reiser4 into vfs, 
-> use reiser4 as the vfs.  Don't write filesystems, write file plugins and 
-> disk format plugins and all the other kinds of plugins, and you won't be 
-> missing any expressive power that you really want....
-> 
-couldnt be more true
+> Can you supply more details and we will try to reply concretely?  Thanks.
 
-> Give Saveliev and I some credit.  10 years of hard work at an ivory 
-> tower nobody thought mattered.  Now the battle leaves the browser and 
-> swings our way.  Don't duplicate that infrastructure, use it. 
-> 
-> There is so much we could use help with if talented people like you 
-> chose to contribute.
-> 
-> >b) means that at some time in the future we need to hoist the reiser4
-> >extensions (at a conceptual level) (and probably with restrictions) up into
-> >the VFS.  This will involve much thought, argument and work.
-> >
-> >
-> >To get us started on this route it would really help me (and, probably,
-> >others) if you could describe what these API extensions are in a very
-> >simple way, without referring to incomprehehsible web pages,
-> >
-> what is not comprehensible....?
-> 
-> > and without
-> >using terms which non-reiser4 people don't understand.
-> >  
-> >
-> Well, I agree that there is value in defining things in more detail than 
-> we have.
-> 
-> >It would be best if each extension was addressed in a separate email
-> >thread.
-> >
-> >We also need to discuss what a reiser4 "module" is, what its capabilities
-> >are, and what licensing implications they have.
-> >
-> >Then, we can look at each one and say "yup, that makes sense - we want
-> >Linux to do that" and we can also think about how we would implement it at
-> >the VFS level.
-> >
-> >If we follow the above route I believe we can make progress in a technical
-> >direction and not get deadlocked on personal/political stuff.
-> >
-> >
-> >Now, an alternative to all the above is to just merge reiser4 as-is, after
-> >addressing all the lower-level coding issues.  And see what happens.  That
-> >may be a thing which Linus wishes to do.  I'm easy.
-> >
-> >
-> >  
-> >
-> 
-> 
--- 
-Redeeman <redeeman@metanurb.dk>
+It's really userland programming 101 :)
+
+ you need to fstat after open to really check that no one swtiched the
+ path below you to a fifo or device, O_DIRECTORY gets that directly in
+ the open call, with the additional benefit of making sure you don't
+ get any of the sideeffects at all that would happen if you're opening
+ a device file.
+
+ the current reiser4 semantics break that and as soon as you're having a
+ world-writeable (e.g. /tmp) dir on it and someone is doing an opendir
+ on it he's lost.
 
