@@ -1,34 +1,77 @@
-From: Hubert Mantel <mantel@suse.de>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Recent spam
-Date: Fri, 6 Jun 2003 15:44:45 +0200
-Message-ID: <20030606134445.GU26526@suse.de>
-References: <3EDAEEBE.3050202@netscape.net> <1054820341.23131.126.camel@tiny.suse.com> <3EDF5618.5090904@namesys.com> <200306060548.44154.russell@coker.com.au> <3EE04C02.2090707@namesys.com>
+Date: Fri, 06 Jun 2003 18:33:11 +0400
+Message-ID: <3EE0A627.4080702@namesys.com>
+References: <3EDAEEBE.3050202@netscape.net>	 <1054820341.23131.126.camel@tiny.suse.com> <3EDF5618.5090904@namesys.com>	 <200306060548.44154.russell@coker.com.au>  <3EE04C02.2090707@namesys.com> <1054890172.1075.14.camel@localhost>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14476-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14477-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3EE04C02.2090707@namesys.com>
+In-Reply-To: <1054890172.1075.14.camel@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Soeren Sonnenburg <reiserfs@nn7.de>
+Cc: Alexander Lyamin <flx@namesys.com>, Russell Coker <russell@coker.com.au>, reiserfs-list <reiserfs-list@namesys.com>
 
-Hi,
+Soeren Sonnenburg wrote:
 
-On Fri, Jun 06, Hans Reiser wrote:
+>On Fri, 2003-06-06 at 10:08, Hans Reiser wrote:
+>  
+>
+>>Russell Coker wrote:
+>>
+>>    
+>>
+>>>On Fri, 6 Jun 2003 00:39, Hans Reiser wrote:
+>>> 
+>>>
+>>>      
+>>>
+>>>>Demidov's computer so that it can run with the case on it, etc.  Giving
+>>>>him the additional task of dealing with spamcop is just asinine.
+>>>>   
+>>>>
+>>>>        
+>>>>
+>>>I hope you realise that you are proving the administrators of SpamCop to be 
+>>>correct.  They believe that SPAM will only be accepted as a problem and dealt 
+>>>with if reacted to forcefully.  Other services have nicer methods and don't 
+>>>get the results.
+>>>
+>>>After this issue has been discussed many times the only positive response I 
+>>>have received from you has been after using SpamCop.  I conclude that I am 
+>>>correct to use it.
+>>>
+>>>No-one has asked the administrators of your mailing list to do anything 
+>>>special, just to refrain from doing unusual things.
+>>>
+>>>If you want a quick temporary fix then change the list address.  The 
+>>>subscribers will be able to deal with it well enough (it's happened before) 
+>>>but the spammers will take some time to catch up.
+>>>
+>>> 
+>>>
+>>>      
+>>>
+>>Remove Russell from the list.
+>>    
+>>
+>
+>In that case remove me too.
+>
+>Soeren.
+>
+>
+>
+>
+>  
+>
+Happy to remove you and anyone else who lists us in the spamcop database.
 
-> Remove Russell from the list.
+-- 
+Hans
 
-This is ridiculous.
 
-Manually removing one person from the mailinglist needs about the same 
-amount of "work" as fixing the spamassassin configuration.
-
-> Hans
-                                                                  -o)
-    Hubert Mantel              Goodbye, dots...                   /\\
-                                                                 _\_v
-                          319 mails received today.
