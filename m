@@ -1,61 +1,79 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Filesystem corruption
-Date: Thu, 14 Aug 2003 11:49:34 +0400
-Message-ID: <20030814074934.GA3893@namesys.com>
-References: <3F3A61C8.4060504@oceanfree.net>
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: Reiser4 status: benchmarked vs. V3 (and ext3)
+Date: Thu, 14 Aug 2003 14:58:28 +0100
+Message-ID: <1060869508.4803.35.camel@passion.cambridge.redhat.com>
+References: <Pine.LNX.3.96.1030813160910.12417A-100000@gatekeeper.tmr.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15307-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-15308-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3F3A61C8.4060504@oceanfree.net>
+In-Reply-To: <Pine.LNX.3.96.1030813160910.12417A-100000@gatekeeper.tmr.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Locke <locke@oceanfree.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Bill Davidsen <davidsen@tmr.com>
+Cc: Yury Umanets <umka@namesys.com>, Daniel Egger <degger@fhm.edu>, Hans Reiser <reiser@namesys.com>, Nikita Danilov <Nikita@namesys.com>, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, reiserfs mailing list <reiserfs-list@namesys.com>
 
-Hello!
+On Wed, 2003-08-13 at 21:12, Bill Davidsen wrote:
+> The driver should do the logical to physical mapping, but the portability
+> vanishes if the filesystem to physical mapping is not the same for all
+> machines and operating systems. For pluggable devices this is important.
 
-On Thu, Aug 14, 2003 at 12:05:28AM +0800, Locke wrote:
-> the files. I'm guessing the reason why it recovered so little was 
-> because that because I was running a 7.8GB+40GB LVM and the 40GB 
-> pyhsical volume wasn't working and left it with only 7.8GB.
+The portability also vanishes if the file system layout is not the same
+for all machines and operating systems... what's your point?
 
-Yes of course.
+Just like there are standard file systems, there are also standard
+'translation layers' -- pseudofilesystems which are used to emulate a
+hard drive on flash storage -- and some of these are implemented for
+Linux.
 
-> is_tree_node: node level 0 does not match to the expected one 1
-> vs-5150: search_by_key: invalid format found in block 8838461. Fsck?
+Take a PCMCIA flash card (real flash, not CF) with FTL and FAT on it,
+and it'll work just fine under both Windows and Linux, because they both
+use the standard FTL and FAT formats.
 
-So LVM substitures zero filled blocks instead of data if physical volume
-is unavailable.
-Of course reiserfsck happily thrown all of those blocks out of the tree.
+FTL provides the logical<->physical mapping and the wear levelling, FAT
+is just normal FAT.=20
 
-> And also when rebooting after the corruption I saw several error 
-> messages for all drives, hda, hdb and hdg
-> **
-> hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
-> hda: dma_intr: error=0x84 { DriveStatusError BadCRC }
-> hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
-> hda: dma_intr: error=0x84 { DriveStatusError BadCRC }
+> The leveling seems to be done by JFFs2 in a portable way, and that's as i=
+t
+> should be.=20
 
-Also you should consider replacing your noisy IDE cable for primary IDE
-controller with not noisy one. Or just run in lower UDMA mode.
+You seem to be very confused here. JFFS2 works on flash directly;
+nothing's pretending to be a block device. It doesn't seem to be at all
+relevant to this discussion.
 
-> **The messages are copied from the FAQ in namesys.com because they 
-> looked similar so I'm not sure if they're the exactly same.
+JFFS2 does its own wear levelling and flash management, because it works
+directly on the flash.=20
 
-Well, if they are not the same, you'd better write them down on paper.
+FAT can't do that -- it needs some other code (like the FTL code) to
+emulate a normal hard drive for it, providing wear levelling and
+logical<->physical translation for it.=20
 
-> Is there anything I can try to recover more data?
+See http://www.infradead.org/~dwmw2/mtd-upper-layers.jpeg
 
-You might try to get LVM up again and run reiserfsck --rebuild tree.
-Some more stuff wuill be restored.
-Though still you will have lots of files' content lost and there is no way
-to restore it anymore.
-Also use reiserfsck 3.6.11
+Wear levelling is not done in the driver -- the driver just drives the
+flash, and in fact is below the bottom of the diagram since it's largely
+irrelevant. It just gives you read/write/erase functions for the raw
+flash.
 
-Bye,
-    Oleg
+Wear levelling is done either in the file system which works directly on
+the flash (JFFS2, YAFFS), or in the 'translation layer' which uses the
+flash to pretend to be a block device (FTL, NFTL, INFTL, SMTL). (In the
+case of the extremely na=C3=AFve 'mtdblock' translation layer, no translati=
+on
+and no wear levelling is done at all.)
+
+> If the leveling were in the driver I don't believe even FAT
+> would work.
+
+I think that by 'driver' you actually mean the 'translation layer' or
+the combination of translation layer and underlying hardware driver, in
+which case you would be incorrect to say that it wouldn't work. That
+_is_ how it works, portably.
+
+
+--=20
+dwmw2
+
