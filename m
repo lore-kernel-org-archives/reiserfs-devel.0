@@ -1,64 +1,60 @@
-From: Baldur Norddahl <bbn-reiserfs@dark.x.dtu.dk>
-Subject: Re: Filesystem corruption after resize
-Date: Wed, 12 Jun 2002 14:19:25 +0200
-Message-ID: <20020612121925.GA23461@dark.x.dtu.dk>
-References: <20020611165513.GB23259@dark.x.dtu.dk> <200206121250.31567.vitaly@namesys.com>
+From: Kuba Ober <kuba@mareimbrium.org>
+Subject: Re: Mount and file system size issue
+Date: Wed, 12 Jun 2002 11:33:31 -0400
+Message-ID: <200206121133.31763.kuba@mareimbrium.org>
+References: <8287102CFE5C31418556A13A4E5BEE91E95A77@sphynx.git.compgen.com> <20020609230747.A8355@namesys.com> <005d01c210a6$d28bad60$5701a8c0@bomoon>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10723-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10724-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <200206121250.31567.vitaly@namesys.com>
+In-Reply-To: <005d01c210a6$d28bad60$5701a8c0@bomoon>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: Baldur Norddahl <bbn-reiserfs@dark.x.dtu.dk>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: bo <bo@sosnetwork.net>
+Cc: reiserfs-list@namesys.com
 
-Quoting Vitaly Fertman (vitaly@namesys.com):
-> Hi, 
-> 
-> > Hello,
-> > The exact commands used are:
+On poniedzia=B3ek 10 czerwiec 2002 01:47 pm, bo wrote:
+> Hi ,
+>
+> > On Sat, Jun 08, 2002 at 12:42:21PM -0700, bo wrote:
+> > >    >reiserfs: warning: CONFIG_REISERFS_CHECK is set On
+> > >    >reiserfs: warning:  -it is slow mode for debugging
+> > >    >reiserfs:  checking transaction log(device 21:01)
 > >
-> > resize_reiserfs -s 400G /dev/vg01/stuff
-> > lvreduce -l 16693 /dev/vg01/stuff
-> > pvmove -v /dev/md1
-> > vgreduce -v vg01 /dev/md1
-> > resize_reiserfs /dev/vg01/stuff
-> > reiserfsck --check /dev/vg01/stuff
+> > Hm. Would it help if you turn of CONFIG_REISERFS_CHECK config item?
+>
+> I will try it later, I could not rebuild the system now.
+> Are there anyway to turn it off on the command line?
+>
+> > > ???   It took 2-3 seconds(1 out of 5), or 3-4 munites(1 out of 5)
+> > >         or forever(3 out of 5) to complete.
 > >
-> > This all worked like a charm, until I noticed that a nightly script that
-> > scans all files, no longer was able to access about 20 files (access denied
-> > even though the script is running as root).
-> 
-> Do you mean reiserfsck finished without any error/warning massage? 
+> > All of that on the same filesystem (with same contents)?
+>
+> I mean it fails(hang) most of time when I try to mount the reiserfs with
+> 120G size after "mkreiserfs".
+> As you notice in the system status below, the CPU is occupied by the syst=
+em
+> by 99.6(8) %.
+> I do not know why?
+>
+> > > System status at this time: from another console( run "top")
+> > > ---------------------------------------------------------
+> > >   1:40am  up  1:40,  2 users,  load average: 8.62, 7.71, 4.81
+> > > 37 processes: 30 sleeping, 6 running, 1 zombie, 0 stopped
+> > > CPU states:  0.3% user, 99.6% system,  0.0% nice,  0.0% idle
+> >
+> > Ok, all the time is spent in kernel.
+> > Can you capture several traces for us please?
+> > ( several sysrq-p and/or sysrq-t outputs when this happens).
+>
+> Sorry! What is "sysrq"?
 
-Yes, it did not detect any errors after the resize. The errors turned up a
-day after. So it might not be 100% that those two events are linked. But
-since nothing else was done that could justify corruptions, that is the
-theory I am working on.
+It's a key on your keyboard, I hope.
 
-> This progs I send to you is what is going to be the next release. 
-> Please run --check and tell me what is in fsck.log. You can run 
-> --fix-fixable if it says so, but it would be better to run 
-> rebuild-tree on a copy (it is not a release). Or you can do the following:
-> 
-> debugreiserfs/debugreiserfs -p /dev/vg01/stuff | gzip -p > stuff.gz
-> 
-> it will pack metadata (without filebodies), I will download it and test 
-> locally.
+# echo 1 > /proc/sys/kernel sysrq
+# cat /usr/src/linux/Documentation/sysrq.txt
 
-I will send you those two files in a seperate mail.
-
-I copied all the data over to the other raid device, so I am not so much
-concerned about rescueing the filesystem - I could just reformat the whole
-thing and copy the files back.
-
-But I would very much like to find out what happened so I can take actions
-to prevent it from happening again. Particularly I need to know if resizing
-on lvm devices is working properly, since I will need to resize again
-shortly when the replacement disk arrives.
-
-Baldur
+Cheers, Kuba Ober
