@@ -1,34 +1,55 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary	additional
- namespace to ReiserFS
-Date: Tue, 27 Apr 2004 10:35:39 -0700
-Message-ID: <408E99EB.6050203@namesys.com>
-References: <1082750045.12989.199.camel@watt.suse.com> <408D3FEE.1030603@namesys.com> <1083000711.30344.44.camel@watt.suse.com> <408D51C4.7010803@namesys.com> <1083006783.30344.102.camel@watt.suse.com> <20040426204037.GA21455@merlin.emma.line.org>
+From: Bruce Guenter <lists-reiserfs-list@bruce-guenter.dyndns.org>
+Subject: Re: Reiserfs concurrent write problems
+Date: Tue, 27 Apr 2004 10:15:44 -0600
+Message-ID: <20040427161544.GA27873@em.ca>
+References: <20040426172648.GA22918@em.ca> <1083000970.30344.50.camel@watt.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18250-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
+Return-path: <reiserfs-list-return-18251-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040426204037.GA21455@merlin.emma.line.org>
+Content-Disposition: inline
+In-Reply-To: <1083000970.30344.50.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Matthias Andree wrote:
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
->If so, the whole discussion is about getting out of the frying pan and
->into the fire. The traditional approach will then be standards compliant
->but be out-of-band and outside of the file system name space, the new
->approach will be outside of the standards, requiring application
->developers to produce a Linux and a POSIX version.
->
->Or am I barking up the wrong tree?
->
->  
->
-There is always friction between standards and innovation.  One should 
-comply with standards unless genuinely innovating.
+On Mon, Apr 26, 2004 at 01:36:11PM -0400, Chris Mason wrote:
+> Please try 2.6.6-rc2-mm2, which has new block allocator patches and
+> other speedups.
+>=20
+> The default mount options should work best for you, but this might work
+> too:
+>=20
+> mount -o alloc=3Dskip_busy:dirid_groups /dev/xxx /mnt
+
+Using the new kernel and the above mount options boosted the write
+performance of ReiserFS, almost to the level of XFS.  At the highest
+concurrency level, the reading performance dropped, but it's still much
+faster than the other FSs.
+
+Thanks for your help.
+--=20
+Bruce Guenter <bruceg@em.ca> http://em.ca/~bruceg/ http://untroubled.org/
+OpenPGP key: 699980E8 / D0B7 C8DD 365D A395 29DA  2E2A E96F B2DC 6999 80E8
+
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQFAjocw6W+y3GmZgOgRAuvUAJ9Z7PUZJ4iq840Vci/imFBMkx4UEACfRSYg
+NRS8+6kY1NUvC1Bxi04iVek=
+=Awll
+-----END PGP SIGNATURE-----
+
+--ikeVEW9yuYc//A+q--
