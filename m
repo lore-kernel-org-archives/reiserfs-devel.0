@@ -1,33 +1,47 @@
-From: Tom Vier <tmv@comcast.net>
-Subject: Re: Can compression at filesystem level improve	overall	performance?
-Date: Mon, 29 Mar 2004 00:25:05 -0500
-Message-ID: <20040329052505.GB19372@zero>
-References: <405B02ED.4010602@solidcode.net> <1079713790.9729.1.camel@redeeman.linux.dk> <16475.9613.375262.677576@laputa.namesys.com> <1079978427.4658.63.camel@localhost.localdomain> <405F46D8.1040607@namesys.com> <1080011016.4658.408.camel@localhost.localdomain> <4060189B.2000500@namesys.com> <1080145163.4658.1314.camel@localhost.localdomain>
-Reply-To: Tom Vier <tmv@comcast.net>
+From: Claudio Martins <ctpm@rnl.ist.utl.pt>
+Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Date: Mon, 29 Mar 2004 10:17:51 +0100
+Message-ID: <200403291017.51872.ctpm@rnl.ist.utl.pt>
+References: <200403271537.52955.sikkh@wp.pl> <40670001.60302@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17553-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17555-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <40670001.60302@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <1080145163.4658.1314.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
+Cc: Hans Reiser <reiser@namesys.com>, Piotr Neuman <sikkh@wp.pl>
 
-On Wed, Mar 24, 2004 at 11:19:23AM -0500, Scott Young wrote:
-> Additional metadata could identify the program and the user that made
-> that specific version of a file, and any malicious changes can be
-> selectively rolled back.  An administrator may use the metadata to audit
-> the changes a file made to the filesystem, or a program could be run in
-> a jail where the changes it makes to the filesystem are only visible to
-> itself.  Versioning opens up a plethora of possibilities for data
-> security.
 
-or you could just chattr +i, and avoid changes in the first place. 8)
+On Sunday 28 March 2004 17:40, Hans Reiser wrote:
+> Piotr Neuman wrote:
+> >The new naming scheme for plugins ("metas" in snapshot 2004.03.26) may on
+> >certain occasions cause name clashes. This patch changes "metas" into
+> >"..metas" which should avoid this problem in most cases.
+>
+> The name clashing is less important than the greater user friendliness.
+> Users on the mailing list convinced me of this.
 
--- 
-Tom Vier <tmv@comcast.net>
-DSA Key ID 0x15741ECE
+  Please note that the supposed "user friendliness" you gain will go away the 
+moment a user tries to unpack a source tarball for some project which happens 
+to contain a directory named "metas". How are you going to fix it? You'll 
+have the trouble of not getting the content of the "metas" directory which 
+was inside the tarball and which tar failed to write to the directory, and 
+you won't be able to build your project unless you modify it. This is just 
+one example of many...
+
+  So IMO it is much better to have a "..metas" and prevent all the trouble you 
+*will* get for sure if using "metas".
+
+  After all, unix filesystems have always been nice because they don't impose 
+much restrictions on user filenames. As Filipe Almeida pointed out, why now 
+reproduce the mess that exists in Windows with "aux" and such other special 
+filenames?
+
+Claudio
+
