@@ -1,48 +1,42 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <pgramoul@nerim.net>
-Subject: Re: 2.4.21-rc3
-Date: Fri, 23 May 2003 16:13:56 +0200
-Message-ID: <20030523161356.7986c5d6.pgramoul@nerim.net>
-References: <200305232256.17604.russell@coker.com.au>
+From: Bernd Schubert <bernd-schubert@web.de>
+Subject: no further nfsd-fh: found a name that I didn't expect
+Date: Fri, 23 May 2003 17:03:47 +0200
+Sender: Bernd Schubert <Bernd.Schubert@tc.pci.uni-heidelberg.de>
+Message-ID: <200305231703.47899.bernd-schubert@web.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14228-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14229-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200305232256.17604.russell@coker.com.au>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
-To: Russell Coker <russell@coker.com.au>
-Cc: reiserfs <reiserfs-list@namesys.com>
+To: 'reiserfs' <reiserfs-list@namesys.com>
+Cc: Oleg Drokin <green@namesys.com>
+
+Hello!
+
+I just wanted to report that we are now running the iget5-patched 2.4.20=20
+kernel for almost 2 month and never saw the ' nfsd-fh: found ....' messsage=
+s=20
+ever again. Well, we once rebooted and used by accident the wrong=20
+kernel-image and of course had problems again until the next reboot.
+
+Btw, is the iget4()-fix in 2.4.21-rc3 the same patch ?
 
 
-Hello Russell,
+Thanks again for your great work,
+	Bernd
 
-On Fri, 23 May 2003 22:56:17 +1000
-Russell Coker <russell@coker.com.au> wrote:
 
-  | I've noticed that the modules ide-taskfile.o and ide-io.o depend on eac=
-h other=20
-  | if you compile the 2.4.21-rc3 with IDE as modules.
-  |=20
-  | Is this a bug in the kernel or are we supposed to use a new module load=
-er that=20
-  | can resolve such things?
 
-IIRC, according to Alan Cox, on LKML, IDE shouldn't even work as a module, =
-well, if you value
-your data.
-
-So why don't you include IDE statically in your kernel ?
-
-Thanks,
-
-Philippe
-
---=20
-
-Philippe Gramoull=E9
-philippe.gramoulle@mmania.com
-Lycos Europe - NOC France
-
+=2D-=20
+Bernd Schubert
+Physikalisch Chemisches Institut
+Abt. Theoretische Chemie
+Universit=E4t Heidelberg
+INF 229
+69120 Heidelberg
+e-mail: bernd.schubert@pci.uni-h	eidelberg.de
