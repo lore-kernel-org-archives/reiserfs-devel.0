@@ -1,45 +1,66 @@
-From: Pysiak Satriani <pysiak.satriani@wp.pl>
-Subject: Re[4]: reiser4.1
-Date: Fri, 4 Mar 2005 20:22:42 +0100
-Message-ID: <1144043083.20050304202242@wp.pl>
-References: <4461b4b458db80949fe1830f90501153@hotmail.com>
- <1109776277.3504.469.camel@tribesman.namesys.com>
- <42263473.7050900@namesys.com>            <37288019.20050303095520@wp.pl>
- <200503040755.j247tsK0001173@turing-police.cc.vt.edu>
-Reply-To: Pysiak Satriani <pysiak.satriani@wp.pl>
+From: Junfeng Yang <yjf@stanford.edu>
+Subject: [CHECKER] Do ext2, jfs and reiserfs respect mount -o sync/dirsync
+ option? (fwd)
+Date: Fri, 4 Mar 2005 15:23:01 -0800 (PST)
+Message-ID: <Pine.GSO.4.44.0503041521590.17877-100000@elaine24.Stanford.EDU>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200503040755.j247tsK0001173@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
+Cc: mc@cs.Stanford.EDU
 
-Hello Valdis,
 
-Friday, March 4, 2005, 8:55:52 AM, you wrote:
+Looks like I sent the following message to an obsolete mailing list...
 
-> IBM's AIX 4.3 and later support LZ compression on their JFS file system.
-> I was able to measure a 10-15% speed-up by converting /usr to compressed
-> even on a 133MZ Power604e chip because even back then, it was faster to
-> read half as many blocks off a SCSI disk and decompress.
-Interesting.
+---------- Forwarded message ----------
+Date: Thu, 3 Mar 2005 22:33:40 -0800 (PST)
+From: Junfeng Yang <yjf@stanford.edu>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+     ext2-devel@lists.sourceforge.net,
+     jfs-discussion@www-124.southbury.usf.ibm.com, reiser@namesys.com
+Cc: mc@cs.stanford.edu
+Subject: [MC] [CHECKER] Do ext2,
+     jfs and reiserfs respect mount -o sync/dirsync option?
 
-> So it's been at least a potential win for a decade or so, assuming your
-> filesystem is able to deal well with fragments (you can't really win unless
-> you take a 4K or so logical block, compress it to some number of 512-byte
-> chunks, and then store the resulting chunks cheaply - JFS does the
-> blocks-and-frags efficiently, so it's easy to win.
-I wonder if NTFS compression does it well... I was always scared of
-compression on NTFS because of possible slowdowns and just the fact that
-compression adds another level of complexity to all reads/write and
-possible future recovery if something breaks down.
 
--- 
-Best regards,
-Maciej
+Hi,
 
+FiSC (our file system checker) emits several warnings on ext2, jfs and
+reiserfs, complaining that diretories or files are lost while FiSC
+believes they should already be persistent on disk. (ext3 behaves
+correctly.)
+
+All warnings boil down to a single cause:  when these file systems are
+mounted -o sync or dirsync, dirty blocks are still written out
+asynchronously.  It appears to me that these mount options don't have any
+effect on these file systems.  Is this the intended behavior?
+
+man mount shows:
+
+              sync   All  I/O to the file system should be done
+synchronously.
+
+              dirsync
+                     All directory updates within the file  system  should
+be
+                     done  synchronously.   This  affects the following
+system
+                     calls: creat, link, unlink, symlink, mkdir, rmdir,
+mknod
+                     and rename.
+
+Any clafirication on this would be very helpful,
+
+-Junfeng
+
+
+_______________________________________________
+MC mailing list
+MC@keeda.stanford.edu
+http://keeda.stanford.edu/cgi-bin/mailman/listinfo/mc
 
