@@ -1,43 +1,30 @@
-From: Raul Miller <moth@debian.org>
+From: Stefan Traby <stefan@hello-penguin.com>
 Subject: Re: reiser4 non-free?
-Date: Thu, 6 May 2004 19:40:15 -0400
-Message-ID: <20040506194015.R13880@links.magenta.com>
-References: <4097CCA4.4060707@namesys.com> <87fzag139k.fsf@aule.evenmere.org> <4099A868.9030406@slaphack.com> <20040506.083242.41632888.wlandry@ucsd.edu> <87k6zpy8ke.fsf@aule.evenmere.org> <20040506143643.GB25505@raptus.homelinux.org> <877jvpy08v.fsf@aule.evenmere.org> <409A7F98.7040609@namesys.com> <20040506232310.GA25081@hezmatt.org>
+Date: Fri, 7 May 2004 02:15:28 +0200
+Message-ID: <20040507001528.GA18544@hello-penguin.com>
+References: <4097CCA4.4060707@namesys.com> <87fzag139k.fsf@aule.evenmere.org> <4099A868.9030406@slaphack.com> <20040506.083242.41632888.wlandry@ucsd.edu> <87k6zpy8ke.fsf@aule.evenmere.org> <20040506143643.GB25505@raptus.homelinux.org> <877jvpy08v.fsf@aule.evenmere.org> <409A7F98.7040609@namesys.com> <20040506232310.GA25081@hezmatt.org> <20040506194015.R13880@links.magenta.com>
+Reply-To: Stefan Traby <stefan@hello-penguin.com>
 Mime-Version: 1.0
-Return-path: <bounce-debian-legal=debian-legal=m.gmane.org@lists.debian.org>
+Return-path: <reiserfs-list-return-18524-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040506232310.GA25081@hezmatt.org>; from mpalmer@hezmatt.org on Fri, May 07, 2004 at 09:23:10AM +1000
-Resent-Message-ID: <mXNK2.A.U3C.gzsmAB@murphy>
+In-Reply-To: <20040506194015.R13880@links.magenta.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-List-Post: <mailto:debian-legal@lists.debian.org>
-List-Help: <mailto:debian-legal-request@lists.debian.org?subject=help>
-List-Subscribe: <mailto:debian-legal-request@lists.debian.org?subject=subscribe>
-List-Unsubscribe: <mailto:debian-legal-request@lists.debian.org?subject=unsubscribe>
-List-Archive: <http://lists.debian.org/debian-legal/>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: debian-legal@lists.debian.org, reiserfs-list@namesys.com
+To: Raul Miller <moth@debian.org>
+Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-On Fri, May 07, 2004 at 09:23:10AM +1000, Matthew Palmer wrote:
-> Q: Where is the limit between displaying the credits where the user won't
-> necessarily see them, and forcing the user to read them?
-> 
-> Likely Answer: Umm...
-> 
-> Actual Answer: ???
+On Thu, May 06, 2004 at 07:40:15PM -0400, Raul Miller wrote:
 
-Other things to consider:  how long must they be displayed?  What fonts
-can be used?  What colors?  What orientations are allowed for the text?
-What sort of display devices or mechanisms are ok to use (imagine systems
-with no monitor and no serial terminal, or systems with a 3d interface
-and not text)?
+> Other things to consider:  how long must they be displayed?  What fonts
 
-Or imagine systems for the blind -- what volume must these credits be
-played at?  What speech rates are ok to use?  What quality of rendition
-to phonemes is required?
-
-Just scratching the surface, ...
+0 seconds. Just choose the correct locale. :)
 
 -- 
-Raul Miller
 
+  ciao - 
+    Stefan
