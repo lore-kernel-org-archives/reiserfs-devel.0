@@ -1,56 +1,33 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: About direntries pointing to nowhere on reiserfs problem in 2.4
-Date: Fri, 28 Feb 2003 10:46:51 +0300
-Message-ID: <20030228104651.A1234@namesys.com>
-References: <20030220175309.A23616@namesys.com> <b3mnpd$1ho$1@satsuki.furryterror.org>
+Subject: Re: Getopt improvements
+Date: Fri, 28 Feb 2003 10:47:56 +0300
+Message-ID: <20030228104756.B1234@namesys.com>
+References: <3E5D26A2.7010804@suse.com> <20030227092551.C28643@namesys.com> <3E5E312C.50406@suse.com> <3E5E730C.7030804@namesys.com> <3E5E84B2.90708@suse.com> <3E5E92BA.4090307@namesys.com> <3E5EAA3A.8030203@suse.com> <448183093.20030228012237@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12966-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12967-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <b3mnpd$1ho$1@satsuki.furryterror.org>
+In-Reply-To: <448183093.20030228012237@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zygo Blaxell <eazgwmir@umail.furryterror.org>
+To: Anders Widman <andewid@tnonline.net>
 Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Thu, Feb 27, 2003 at 11:15:41PM -0500, Zygo Blaxell wrote:
+On Fri, Feb 28, 2003 at 01:22:37AM +0100, Anders Widman wrote:
+> >         Well, the more possible values a given multivalue option has, the more
+> > values that need to be explicitly negated for a mutually exclusive
+> > option. The descriptor lines get quite long with more than 2 options
+> > when you need to specify every value you need to clear.
+>   How  about  a 'clear' option that clears out previous options passed
+>   when  the fs was mounted?
 
-> OK, I did the following:
-> 	patch kernel
-> 	install patched kernel
-> 	umount filesystem
-> 	reiserfsck 3.6.5-pre1 --fix-fixable the filesystem
-> 	forgot to note the last few things reiserfsck said
-
-Ideally, resiserfsck should have told you wwhenever there were any
-unfixed corruptions left.
-
-> 	reboot machine
-> 	verify that patched kernel is running
-> 	wait a few days
-> 	read "unlink: Permission denied" in logs
-> I'm wondering if I'm still seeing the bug, or just the lingering
-> after-effects of the bug that might still be hiding in the filesystem.
-
-Hard to tell. But it well might be a hiding bugs.
---fix-fixable does not correct link counts, so if you have
-file with nlinks=3 and 4 hardlinks to it, you are in trouble after
-three of the hardlinks are removed.
-
-> Is fix-fixable able to correct link counts?  If not, presumably I need
-
-No. It may only delete entries pointing to nowhere, I think.
-
-> to do a full rebuild-tree in order to correct any incorrect link counts
-> that may still be present on the filesystem?
-
-Probably yes.
+This is counter intuitive, I'd say.
 
 Bye,
     Oleg
