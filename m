@@ -1,48 +1,48 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: what do you do that stresses your filesystem?
-Date: Mon, 23 Dec 2002 23:02:13 +0100
-Message-ID: <200212232302.13468.Dieter.Nuetzel@hamburg.de>
-References: <3E06F360.7000708@namesys.com> <139251509046.20021223123719@tnonline.net>
+Date: Tue, 24 Dec 2002 12:22:58 +0300
+Message-ID: <3E082772.2000009@namesys.com>
+References: <3E06F360.7000708@namesys.com> <139251509046.20021223123719@tnonline.net> <3E06F752.5000806@namesys.com> <200212230736.08717.tomlins@cam.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12234-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12235-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <139251509046.20021223123719@tnonline.net>
-Content-Disposition: inline
+In-Reply-To: <200212230736.08717.tomlins@cam.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: ReiserFS <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ed Tomlinson <tomlins@fcfcn.org>
+Cc: ReiserFS <reiserfs-list@namesys.com>
 
-Am Montag, 23. Dezember 2002 12:37 schrieb Anders Widman:
-> > We were discussing how to optimize reiser4 best, and came to realize
-> > that us developers did not have a good enough intuition for what users
-> > do that stresses their filesystem enough that they care about its
-> > performance.
-> >
-> > If you just do edits of files it probably does not matter too much what
-> > fs you use.
+Ed Tomlinson wrote:
+
+>On December 23, 2002 06:45 am, Hans Reiser wrote:
+>  
 >
-> depends  on  how  large  edits  =3D)..  Like  video-editing requires big
-> r/w performance.
+>>Anders Widman wrote:
+>>    
+>>
+>>>>Booting the machine seems like one activity that many users end up
+>>>>waiting on the FS for.  Yes?
+>>>>        
+>>>>
+>>>Hopefully we do not have to reboot to often... :)
+>>>      
+>>>
+>>buying the seagate hard drives with fluid ballbearings (and fanless
+>>heatsinks) reduces the need to halt at bedtime by a lot.....
+>>    
+>>
+>
+>Various (pulls, clones) bk operations using the 2.5 kernel tree.
+>
+>Ed Tomlinson
+>
+>
+>
+>  
+>
+Isn't that CPU and memory bound?
 
-Like Andrew Morten suggest all the time (deadline IO tests):
-
-Running (heavy) constant (streaming) IO in the background during "normal" I=
-O=20
-(20-40 parallel gcc/g++ compilers (make -j20) in my case).
-
-WMs e.g. KDE 3.1 isn't a case any longer...;-)
-
-Give your "workers" a break.
-			Merry Christmas!
-
-=2D-=20
-Dieter N=FCtzel
-Graduate Student, Computer Science
-
-University of Hamburg
-Department of Computer Science
-@home: Dieter.Nuetzel at hamburg.de (replace at with @)
