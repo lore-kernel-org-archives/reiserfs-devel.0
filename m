@@ -1,69 +1,101 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiser4progs-1.0.3 : superblock backups
-Date: Thu, 16 Dec 2004 01:10:31 +0300
-Message-ID: <200412160110.31638.vitaly@namesys.com>
-References: <courier.41C082CE.00004F63@softhome.net>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: file as a directory
+Date: Wed, 15 Dec 2004 17:56:43 -0600
+Message-ID: <41C0CF3B.1030705@slaphack.com>
+References: <200411301631.iAUGVT8h007823@laptop11.inf.utfsm.cl>	 <41ACA7C9.1070001@namesys.com>	 <1103043518.21728.159.camel@pear.st-and.ac.uk>	 <41BF21BC.1020809@namesys.com>	 <1103059622.2999.17.camel@grape.st-and.ac.uk>	 <41BFC1C5.1070302@slaphack.com> <1103102854.30601.12.camel@pear.st-and.ac.uk>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22796-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22797-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <courier.41C082CE.00004F63@softhome.net>
-Content-Disposition: inline
+In-Reply-To: <1103102854.30601.12.camel@pear.st-and.ac.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: lJoublanc@softhome.net, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-On Wednesday 15 December 2004 21:30, lJoublanc@softhome.net wrote:
-> Regarding the new release of reiser4progs:
->
-> it's unclear to me from the release announcement whether prevoius versions
-> of reiser4progs correctly backup superblocks or not. You imply it's been
-> corrected - so it wasn't working before?
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-blocks were reserved but the content was not correct.
+Peter Foldiak wrote:
+| On Wed, 2004-12-15 at 04:47, David Masover wrote:
+|
+|>Peter Foldiak wrote:
+|>| Also, a pseudofile (e.g. dirname/..../structure ?) could be used to
+|>| specify how the files should be glued together. A simple question is,
+|>| for instance, what separators to use between the components, and what
+|>| ordering to use when putting the component objects together. (This
+|>| pseudofile could also determine more complicated ways of composing
+|>| objects.)
+|>
+|>If the filesystem does caching, I'd rather have a type of executable
+|>which, read normally, appears as a stream of its own standard output.
+|>You'd get the actual file as something like bar/.../source.
+|
+|
+| This sounds better and more general than my proposed ..../structure
+| file. So could you explain this in a bit more detail?
+| Would for instance the simplest (and default?) glueing code in your
+| bar/..../source file be
+|
+| cat *
+|
+| which just concatenates all the subcomponents in no particular order?
 
-> i.e. if I had previously used libaal 1.0.2, and my superblock got
-> corrupted, could I rebuild it from teh backup if upgarded to 1.0.3?
+Sounds right.  Well, actually, you need a shebang, as this would be
+called from kernel space.
 
-no, backup will not be found. both versions will recover the super block 
-in the same way -- 1.0.2 does not take the backup into account at all; 
-1.0.3 will not find the backup on your fs -- however 1.0.3 will also fix 
-the backup.
+Speaking of which, how much speed is lost by starting up a process?
 
-> I'm asking because recently that's exactly what happened to me. My disc is
-> failing due to hardware level problems, the superblock is wrecked, it won't
-> mount, and I need to recover my stuff!
->
-> In a final rescue effort, I've updated to 1.0.3, but if I run fsck.reiser4
->  --build-sb, I get:
->
-> [...]
-> Warn : A new master superblock is created on '/dev/hdd1'.
-> Enter the key plugin name [key_large]:
-> Error: Can't read bitmap block 18. Input/output error.
-> Error: Can't load ondisk bitmap.
-> Error: Can't initialize block allocator.
-> Fatal: Failed to open the block allocator.
+The idea of caching is that running
 
-io error on the block # 18 (4k size). 
+cat *; cat *; cat *; cat *; cat *
 
-> Can anyone tell me what it means? Is the problem to do with reiser4
-> superblocks or is the disk so buggered it can't write the table anymore?
+is probably slower than
 
-it looks like the disk problem, look into your syslog for more info.
+cat * > baz; cat baz; cat baz; cat baz; cat baz; cat baz
 
-> Any help is greatly appreciated...
->
-> Luciano
->
-> p.s. shame I'm having these hardware problems, as besides that r4 has
-> worked pretty well!
+The kernel is the right place to do such caching.  It is not the right
+place to implement almost any kind of "cool new kind of file" that Hans
+wants us to develop.
 
--- 
-Thanks,
-Vitaly Fertman
+|>This could be done with pipes and daemons, but it's not as easy to
+|>manage and seems impossible to do as efficiently (with built-in caching,
+|>etc.)
+|
+|
+| How would you do it?
 
+With two kernel reiser4 plugins -- one for files and one for
+directories.  Others could come later, but I don't see this being so
+important for things like symlinks.
 
+Then, I'd let reiser4 cache things (in RAM and in free space on the
+filesystem) which are generated through these plugins.
+
+Directory plugins allow inheritence, too -- just have the plugin install
+itself on all of its children.
+
+Compression, encryption, etc. could all be done through the same mechanism.
+
+[...]
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.6 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iQIVAwUBQcDPO3gHNmZLgCUhAQIYhg//VeuJvEG2cbwANaka136xXDSy5blo71f0
+ulgVBIe7XK8SMpLigNwVQQlTpmIncccu4ymOZG8egf4ex9d269Zv47TSmP+QkJEi
+UU8Oky+oMFE/ntg5ZEoVxXe+oz2fCxzyYKwyjdWwHJZnylsHSaSsIpziaIZR+UXG
+hcxZ9Cs3sLSlK0iYWM/R3dFBgRDMKR3/spz9gHGtyicLYbGvhzdHo6jSE1V8bqrg
+44gt3XbB/SgKQTSeqBMr2/QCPpHKrFKqFhrsbVNzcjL7GftLOBeGRvVAWF9QIlUv
+qDbIubfchr2KxYxE8qCsKTYqX5+VgDj0GDuwuymiq7fy4cIO0VIr3br1vJRWDUy3
+VZeTbrQd3LJ6gSiTPN8+0CQQlpjEduS5EZfeIiygrQed1xHZBUbR59xV7KfIaHLz
+lY06VKpwstmPjHueNx9T7T18aOjMVLWZbA+IWbRHdqLs0VqNltttVIz0e8WgFJHJ
+3ISA0N+WNYCeR75XjWnD78e6vzhvTlGKLe2PjAdWDtuiSKTITV1HCKjSzMFL3JEd
+CymOFhxddxx+aZrd8w1s0unjdGzkxdPfmpdd0XdBnB7vHYPpkw4ELacIqHt0OOTg
+UYnBMem/UhLxisllfBOc0lunbxFynPOjsqYFTDTcHYHoZh0Kyel98m25uXeEr9VL
+m2R6SMkl49k=
+=oNG7
+-----END PGP SIGNATURE-----
