@@ -1,60 +1,57 @@
-From: Oleg Drokin <green@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Catastrophe with mailboxes on ReiserFS
-Date: Wed, 9 Oct 2002 12:18:11 +0400
-Message-ID: <20021009121811.A22948@namesys.com>
-References: <20021009094215.B11954@namesys.com> <Pine.LNX.4.44.0210091041350.880-100000@fii.fi.tartu.ee>
+Date: Wed, 09 Oct 2002 15:24:09 +0400
+Message-ID: <3DA411D9.9010104@namesys.com>
+References: <Pine.LNX.4.44.0210082331110.10033-100000@fii.fi.tartu.ee> <20021009094215.B11954@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11625-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11626-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44.0210091041350.880-100000@fii.fi.tartu.ee>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Robert Tiismus <robert@fi.tartu.ee>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Oleg Drokin <green@namesys.com>
+Cc: Robert Tiismus <robert@fi.tartu.ee>, reiserfs-list@namesys.com
 
-Hello!
+Oleg Drokin wrote:
 
-On Wed, Oct 09, 2002 at 11:06:36AM +0300, Robert Tiismus wrote:
+>Hello!
+>
+>On Tue, Oct 08, 2002 at 11:55:42PM +0300, Robert Tiismus wrote:
+>  
+>
+>>malfunction with the new hardware. I think that when closing the side
+>>panel, I misaligned the scsi cable from the connector and disk access
+>>malfunctioned. Then, after rebooting the system, everything seemed ok, besides
+>>this unfortunate inident with three mailboxes :(
+>>    
+>>
+>
+>Behaviour of hardware is unpredicatble on bad wiring and that kind of stuff.
+>
+>  
+>
+>>Is it possible, that VBT happened during following reboot?
+>>    
+>>
+>
+>If the wiring was already ok, then this is very unlikely.
+>
+>Also you probably want to run reiserfsck on that disk to make sure
+>no other damage happened.
+>
+>Bye,
+>    Oleg
+>
+>
+>  
+>
+Robert's problem sounds like the disadvantage of metadata journaling in 
+action.  He can avoid this in the future by using write ordering and 
+chris's datalogging patches, or v4 when that ships.
 
-> > Also you probably want to run reiserfsck on that disk to make sure
-> > no other damage happened.
-> Thank you. Reiserfsck said that all is ok. It's just that I have seen nothing
+Hans
 
-This is good.
 
-> similar happening with other filesystems. I would prefer disappearing
-> data to leaking data. Am I completely wrong, when I say that because of
-> 'tail packing' in ReiserFS, it can leak information with more
-> probability than, lets say ext2 or ufs or...? Will notails option give
-
-No, tail packing should have no effect on leakign data.
-Anyway tail packing is only takes effect for files less than 16K in size.
-
-> me more secure FS? I have to assure company management, and myself, that this
-
-notails will have no effect on that.
-
-> incident happened not because I put ReiserFS on new server. It could
-> have happened also with other filesystems :)
-
-Indeed it seems that you've got either some metadata altered (block pointers)
-or the block content swapped somehow, both of which could happen on any FS
-with absolutely same results.
-BTW, I just remembered that until you apply Chris' Mason "data logging" patches,
-there is a certain window where system crash would lead to "deleted" 
-data appearing at the end of files that were appended before the crash.
-(that's it, metadata is already updated and list newly allocated blocknumbers,
-but old content od those blocks is still intact since crash prevented system
-from putting new content in there), but since you've got other file's data
-in the middle of file, this is not the case.
-
-Bye,
-    Oleg
-> 
-> Robert Tiismus
-> 
