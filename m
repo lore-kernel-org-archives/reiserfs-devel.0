@@ -1,52 +1,92 @@
-From: Fredrik Tolf <fredrik@dolda2000.com>
-Subject: Re: XATTR bugs
-Date: Wed, 26 Nov 2003 03:13:08 +0100
-Message-ID: <16324.3124.24337.108932@pc7.dolda2000.com>
-References: <16323.62343.428966.858580@pc7.dolda2000.com>
-	<3FC361A9.30709@namesys.com>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: kernel memory limits
+Date: Wed, 26 Nov 2003 16:07:26 +0300
+Message-ID: <16324.42382.487334.541590@laputa.namesys.com>
+References: <3FB38371.60101@dsvr.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16167-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16169-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FC361A9.30709@namesys.com>
+In-Reply-To: <3FB38371.60101@dsvr.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Fredrik Tolf <fredrik@dolda2000.com>, reiserfs-list@namesys.com, jeffm@suse.de
+To: Nick Burrett <nick@dsvr.net>
+Cc: reiserfs-list <reiserfs-list@namesys.com>, Chris Mason <Mason@Suse.COM>
 
-Hans Reiser writes:
- > Fredrik Tolf wrote:
+Nick Burrett writes:
  > 
- > >Hi!
- > >
- > >I just applied the ReiserFS xattr patches to my 2.6.0-test10 Linux
- > >kernel, and I found what appears to be two bugs.
- > >
- > >The patches were those from
- > >ftp://ftp.suse.com/pub/people/jeffm/reiserfs/aclea/
- > >
- > >Since there is no mention of this URL on the namesys.com home page, I
- > >don't know if these patches are "official".
- > >
- > Nope.  They are suse kernel only.  The official kernel has V4 as the 
- > planned point of entry for ACLs, and V3 is in something very close to a 
- > frozen state. 
  > 
- > > If they aren't, please
- > >tell me so and I will turn elsewhere, and if you know where to mail it
- > >instead, please tell me that too.
- > >  
- > >
- > jeffm@suse.de can help you.  Please DO consider them on-topic for 
- > reiserfs-list though.  Just because I am not accepting them into the 
- > official kernel does not mean I want to stand in the way of people doing 
- > what they want to do with our code, and doing it effectively, it just 
- > means I have a different philosophy of release management.;-)
+ > Hi,
+ > 
+ > I'm running standard 2.4.22 kernel, 2xP4 Xeon with 2Gb RAM.
+ > 
+ > After reaching 127 filesystems on the server, all formatted as reiserfs, 
+ > I now find the following errors are occurring:
+ > 
+ > 
+ > reiserfs: found format "3.6" with standard journal
+ > reiserfs: using ordered data mode
+ > loop(7,124):clm-2000, unable to allocate bitmaps for journal lists
+ > Unable to handle kernel NULL pointer dereference at virtual address 00000000
+ >   printing eip:
 
-OK, I see - I will forward my thoughts to him, then. Thanks!
+Sorry, for delay.
 
-Fredrik Tolf
+Please try following patch:
+----------------------------------------------------------------------
 
+diff -puN fs/reiserfs/journal.c~jb_bitmaps-NULL-check fs/reiserfs/journal.c
+--- i386/fs/reiserfs/journal.c~jb_bitmaps-NULL-check	Wed Nov 26 16:03:56 2003
++++ i386-god/fs/reiserfs/journal.c	Wed Nov 26 16:03:56 2003
+@@ -193,6 +193,9 @@ static int set_bit_in_list_bitmap(struct
+ static void cleanup_bitmap_list(struct super_block *p_s_sb,
+                                 struct reiserfs_list_bitmap *jb) {
+   int i;
++  if (jb->bitmaps == NULL)
++    return;
++
+   for (i = 0 ; i < SB_BMAP_NR(p_s_sb) ; i++) {
+     if (jb->bitmaps[i]) {
+       free_bitmap_node(p_s_sb, jb->bitmaps[i]) ;
+
+_
+----------------------------------------------------------------------
+
+(It is against 2.6, but hopefully will apply.)
+
+Chris what do you think?
+
+ > c01d5397
+
+[...]
+
+ > 
+ > $ iptables -F
+ > iptables: Memory allocation problem
+ > 
+ > I was hoping to mount 254 filesystems on this server.  Another server 
+ > running ext2 successfully runs with over 1000 filesystems and another 
+ > with ext3 runs 220 filesystems.
+ > 
+ > This is 100% reproducable. Is there anything I can do about this ?
+ > 
+
+Patch should fix the oops, but not the memory exhaustion problem.
+
+ > 
+ > Regards,
+ > 
+ > 
+ > Nick.
+ > 
+
+Nikita.
+
+ > 
+ > -- 
+ > Nick Burrett
+ > Network Engineer, Designer Servers Ltd.   http://www.dsvr.co.uk
+ > 
