@@ -1,48 +1,70 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: What about 2.4.20.pre8+data-logging ?
-Date: Tue, 01 Oct 2002 10:13:07 +0200
-Message-ID: <3D995913.5090204@mb.tu-ilmenau.de>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: reiserfsprogs-3.6.4-pre3
+Date: Tue, 1 Oct 2002 14:06:32 +0400
+Message-ID: <200210011406.32568.vitaly@namesys.com>
+References: <200209171723.09026.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11588-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11589-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200209171723.09026.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>, Oleg Drokin <green@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Hi all!
+Hi all,
 
-Just a simple question upon the subject line. I want to test it on here 
-NOW!!!
+This new reiserfsprogs pre release includes (against pre2)
+- full bitmap correction was added to fix-fixable (not only 
+  adding blocks which are reachable through the tree to 
+  on-disk bitmap)
 
+Fixed bugs: 
+- improved journal parameters checking before rebuilding 
+  the tree.
 
+This package is going to be a new release, but was not well 
+tested by our testers yet. 
 
-Previous simple testing data (simple, though I got many very very 
-helpful advices and hints from Oleg Drokin) for data-logging on a real 
-partition can be read on:
-   http://manuel.krause.bei.t-online.de/topics/sw-tests.2.htm
-  and the parameters are shown on the next page (sw-tests.3.htm) .
-Maybe I posted an unreliable variance of that to the list, so far. But 
-that is my actual competitive comparison on the same disk content.
+> Hi all,
+>
+> A new reiserfsprogs pre release is available at
+> ftp.namesys.com/pub/reiserfsprogs/pre/reiserfsprogs-3.6.4-pre2.tar.gz
+>
+> Changes went into 3.6.4-pre2:
+>
+> fix-fixable sets correct item formats in item headers if needed.
+> rebuild got some extra checks for invalid tails on pass0.
+> fsck check does not complain on wrong file sizes if safelink exists.
+> check dma mode/spead of harddrive and warn the user if it descreased
+>   -- it could happen due to some hardware problem.
+>
+> Fixed bugs:
+>
+> during conversion tails to indirect items on pass2 and back conversion
+>   on semantic pass.
+> not proper cleaning flags in item headers.
+> during relocation of shared objects.
+> new block allocating on pass2 (very rare case).
+>
+> Changes went into 3.6.4-pre1:
+>
+> Correction of nlinks on fix-fixable was disabled, because
+>   fix-fixable zeroes nlinks on the first pass and wants to
+>   increment them on semantic pass. But semantic pass is skipped
+>   if there are fatal corruptions.
+> Exit codes were fixed.
+> Warning/error messages were changed to more user friendly form.
+>
+> Changes which got into 3.6.3-pre1, but were not included into the
+> release:
+>
+> Great speedups for pass2 of reiserfsck.
 
-Disk content isn't altered still. Waiting for the next data-logging 
-patch, my / filling up. File size distribution data is available upon 
-request. (BTW, is it wanted, that I capture it according to my timings 
-that I take, anyways? One command line more on this... and gzipped on 
-the page it doesn't make a great difference. Instead of debugreiserfs' 
-output... wow!  ;-)  )
+-- 
 
-
-
-Please, correct me if something went definitely wrong with this testing 
-or this page.
-
-
-Thank you,
-
-Manuel
-
+Thanks,
+Vitaly Fertman
