@@ -1,58 +1,62 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: Carrying Attributes too Far
-Date: Sun, 14 Sep 2003 00:21:35 -0400
-Sender: news <news@sea.gmane.org>
-Message-ID: <873cf0t2y8.fsf@labatt.uhoreg.ca>
-References: <3F60925F.9000004@namesys.com> <3122307789-BeMail@cr593174-a>
- <20030914015610.GB26701@matchmail.com>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: New reiser4 snapshot (2003.09.12) is out
+Date: Sun, 14 Sep 2003 08:51:03 +0400
+Message-ID: <20030914045103.GK2123@backtop.namesys.com>
+References: <20030913063124.GJ2123@backtop.namesys.com> <3F632446.30004@namesys.com> <20030913192123.GA24770@namesys.com> <200309140004.57447.vitaly@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15665-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15666-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <200309140004.57447.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: Oleg Drokin <green@namesys.com>, Hans Reiser <reiser@namesys.com>, "Robert P. J. Day" <rpjday@mindspring.com>, Mike Benoit <mikeb@netnation.com>, reiserfs-list@namesys.com
 
-Retry...
+On Sun, Sep 14, 2003 at 12:04:57AM +0400, Vitaly Fertman wrote:
+> Hi, 
+> 
+> I hope this patch for configure.in will solve the problem.
+> Try it please and tell us about your results.
+> 
 
->>>>> "Mike" == Mike Fedyk <mfedyk@matchmail.com> writes:
+What about making --disable-werror working?
 
-[...]
+Or, which is better, I think, remove -Werror from CFLAGS ?  
+It is second time when small warning breaks reiser4progs compilation. 
 
-Mike> Please concentrate on cross platform file formats.
 
-Nah, this is a filesystems list.  We don't care about file formats. ;-)
+> On Saturday 13 September 2003 23:21, Oleg Drokin wrote:
+> > Hello!
+> >
+> > On Sat, Sep 13, 2003 at 06:05:58PM +0400, Hans Reiser wrote:
+> > > >>my system definitely has readline installed, and i get the same error.
+> > > >
+> > > >On the other hand, you need not only readline itself, but also its
+> > > > header files.
+> > > >Lots of distributions (e.g. redhat-alike) form another package called
+> > > >(usuaully) readline-devel,
+> > > >that contains this necessary stuff.
+> > >
+> > > did you adjust our headers to be redhat compatible?  If not, please do.
+> >
+> > The problem turned out to be that RedHat's readline was compiled with
+> > ncurses dynamically, so when you link in readline, you need to link ncurses
+> > too.
+> >
+> > Vitaly will release the fix to configure script shortly, I believe.
+> >
+> > Bye,
+> >     Oleg
+> 
+> -- 
+> Thanks,
+> Vitaly Fertman
 
-Actually, most of the important data will probably still remain in the
-file itself, but Reiser4 will use a plugin to extract attributes.  If
-the file format supports attributes.  If not, then when you transfer
-the file, the recipient wouldn't have gotten the attributes anyways.
-
-Mike> How is this going to be exported with nfs or samba?
-
-My preference would be to make Reiser5 a distributed filesystem, and
-make it work under Windows and Mac.  But that's just me.  Life will be
-much nicer after Reiser[4|5|6] takes over the world.  ;-)
-
-[...]
-
->> I'd also like to attach a BeOS style MIME type attribute to
->> everything,
-
-Mike> So now you have to read an attribute just to find out that it's a
-Mike> text file, once for each file.  Talk about performance...
-
-Mike> Compare that to just reading the directory listing once.
-
-You must have a magic ls.  My ls doesn't tell me which files are plain
-text/binary data/images/audio/etc.
 
 -- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
+Alex.
