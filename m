@@ -1,92 +1,88 @@
-From: Nikita Danilov <nikita@clusterfs.com>
-Subject: Re: EACCESS vs ENOENT for nonexistent files-within-files
-Date: Wed, 15 Sep 2004 15:41:40 +0400
-Message-ID: <16712.10868.647572.90804@thebsh.namesys.com>
-References: <20040913140637.GB29591@redhat.com>
-	<20040913161326.GB2252@backtop.namesys.com>
-	<20040913185255.GA1920@redhat.com>
-	<16709.63624.953839.299199@thebsh.namesys.com>
-	<41481FA5.2000504@gmx.net>
+From: <mailinglists@d-g-c.de>
+Subject: Re: ReiserFS V4 kernel 2.6.9-rc1 mm4
+Date: Wed, 15 Sep 2004 14:29:30 +0200
+Message-ID: <003901c49b1f$a792e550$0a00a8c0@splatter>
+References: <1095149098.13920.ezmlm@namesys.com> <42492.80.156.40.148.1095149724.squirrel@webmail.d-g-c.de> <1095177597.5478.172.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21753-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21754-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41481FA5.2000504@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: evilninja <evilninja@gmx.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-evilninja writes:
- > -----BEGIN PGP SIGNED MESSAGE-----
- > Hash: SHA1
+Hi again,
 
-Hello, Christian evilninja :)
+> Hello
+>
+> On Tue, 2004-09-14 at 12:15, mailinglists@d-g-c.de wrote:
+> > Hi,
+> > i have got a big problem with my 220GB reiser4 partition. it is mounted
+to
+> > /home. i want to share it with nfs-server v3. it is mountable by a
+foreign
+> > client - but i get input/output errors when i try to swith into a
+> > subdirectory or a "ls -la". a simple "ls" does work without errors! are
+> > there any known nfs/reiser4 problems?
+> >
+> Please describe configurations of both server and client: hardware and
+> software.
+> Does ls -la work on local filesystem?
+> What does dmesg say when ls -la reports i/o error?
 
- > 
- > Nikita Danilov wrote:
- > >
- > > If newfile.txt has no +x bit set, then justification is obvious: UNIX
- > > requires +x bit for lookup, and EACCES is returned when trying to lookup
- > > anything in a directory (or, in this case, a regular file) without +x
- > > bit:
- > >
- > > $ mkdir zzz
- > > $ chmod a-x zzz
- > > $ cat zzz/.htaccess
- > > cat: zzz/.htaccess: Permission denied
- > >
- > > This is how things worked for almost 30 years.
- > >
- > > If you observe EACCES on the file with +x bit---this is unknown bug and
- > > test-case is most welcome.
- > 
- > at least on ext3 and nfs3 i have this:
- > 
- > evil@prinz:/tmp$ touch file.txt
- > evil@prinz:/tmp$ cat file.txt/.htaccess
- > cat: file.txt/.htaccess: Not a directory
- > evil@prinz:/tmp$ chmod +x file.txt
- > evil@prinz:/tmp$ cat file.txt/.htaccess
- > cat: file.txt/.htaccess: Not a directory
+my fstab:
+==================================================
+/dev/hde1               /boot           ext2            noauto,noatime
+1 2
+/dev/hde5               /               reiserfs        noatime
+0 0
+/dev/hde2               none            swap            sw
+0 0
+/dev/hde6               /usr            reiserfs        noatime
+0 0
+/dev/hde7               /var            reiserfs        noatime
+0 0
+/dev/hde8               /opt            reiserfs        noatime
+0 0
+/dev/hde9               /tmp            reiserfs        noatime
+0 0
+/dev/hde10              /home           reiser4         noatime
+0 0
+/dev/cdroms/cdrom0      /mnt/cdrom      iso9660         noauto,ro
+0 0
+#/dev/fd0               /mnt/floppy     auto            noauto
+0 0
+none                    /proc           proc            defaults
+0 0
+none                    /dev/shm        tmpfs           defaults
+0 0
+capifs                  /dev/capi       capifs          defaults
+0 0
+==================================================
 
-But in reiser4 file.txt _is_ a directory. That's the whole point: it
-contains other objects inside.
+so my only reiser4 patition is hde10. exporting any other partition (eg.
+/tmp) with nfs i do not get any errors!
+a local ls -la is working fine! also the samba 3.0.5 server is sharing all
+files on /home/samba without any problems.
+i also got clamavd running for samba - all working fine. only the nfs
+exports make problems...
 
- > 
- > ...which sounds *a bit* more reasonable than "permission denied", but
- >    "cat: file.txt/: Not a directory"
- > or
- >    "cat: file.txt/.htaccess: No such file or directory"
- > 
- > would make even more sense IMHO.
+the client is a 2.4.24 kernel with no nfs v3 support - but mounting /tmp
+works fines...
 
-This is very simple: do be able to do a lookup one needs +x bit. No +x
-bit--no lookup. No lookup---impossible to determine exists .htaccess or
-not.
+greetz florian engelmann
 
-Permission bits determine what operations are possible on
-object. Letting user to know that .htaccess doesn't exist while
-permission bits on parent explicitly disable lookups is a security
-hole.
 
- > 
- > Christian.
+>
+>
+> > thx and greetz
+> >  florian engelmann
+> >
+> >
+>
+>
 
-Nikita.
 
- > - --
- > BOFH excuse #290:
- > 
- > The CPU has shifted, and become decentralized.
- > -----BEGIN PGP SIGNATURE-----
- > Version: GnuPG v1.2.5 (GNU/Linux)
- > Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
- > 
- > iD8DBQFBSB+lC/PVm5+NVoYRAvslAJwLMd7VJlOOIJhkZmYMetspLeWYzQCgsUli
- > SFgoAG3eMrHn1URscHeoGZM=
- > =yFbW
- > -----END PGP SIGNATURE-----
