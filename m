@@ -1,65 +1,69 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: Congratulations! we have got hash function screwed up
-Date: Thu, 06 Jan 2005 21:55:20 +0300
-Message-ID: <41DD8998.3070604@namesys.com>
-References: <20041228221218.GA6412@schmorp.de> <20050106124505.GE5352@backtop.namesys.com> <20050106142706.GE519@schmorp.de>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: Recursive modified-timestamp?
+Date: Thu, 06 Jan 2005 16:31:38 -0600
+Message-ID: <41DDBC4A.6020305@slaphack.com>
+References: <4329085595-BeMail@cr593174-a> <41D834E1.6030404@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23052-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23054-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050106142706.GE519@schmorp.de>
+In-Reply-To: <41D834E1.6030404@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: pcg@goof.com
-Cc: Alex Zarochentsev <zam@namesys.com>, reiserfs-list@namesys.com, stefan@hello-penguin.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: "Alexander G. M. Smith" <agmsmith@rogers.com>, reiserfs-list@namesys.com
 
-pcg( Marc)@goof(A.).(Lehmann )com wrote:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
->On Thu, Jan 06, 2005 at 03:45:06PM +0300, Alex Zarochentsev <zam@namesys.com> wrote:
->  
->
->>>generic bug in handling hash collisions?
->>>      
->>>
->>Tea hash is designed to be more resistant.  
->>    
->>
+Hans Reiser wrote:
+| Alexander G. M. Smith wrote:
+|
+|>
+|> Possibly.  But I'd like to generalize it a bit.  Percolated attributes
+|> are
+|> perhaps a better more general idea.  We already have inherited attributes
+|> (such as security of children being inherited from the parent) so
+|> going in
+|> the other direction isn't all that big step, it just needs an
+|> application,
+|> like your modification detection system.
+|>
+|>
+| The general form of inheritance should not be restricted to inheriting
+| from parents.  Parents should merely be a default if nothing is
+| specified as what one inherits from.  And when one inherits, one can
+| write through to what one inherits from, at least by default.
 
-Actually this can not be more resistant as it use the same 32-bit output 
-size. So to find
-a collision you just need to find hashes of  2^16 = 65536 random documents.
+Right.  Thinking back to the recursive-mtimes, one possible way to get
+an mtime for a tree is to have every modification to one of its files
+percolate back up the tree (child-to-parent), meaning a parent is
+"inheriting" that attribute from each of its children.
 
->
->As the example posted shows, tea doesn't look better, it generates
->nicely-looking collisions, too.
->
->  
->
+This could be made fast by merely having a flag that says "this file has
+been modified since this program last checked", so that the change-flag
+doesn't have to go all the way back up the tree each time.
 
->I'd suggest getting rid of reiserfs on anything important. I can't have it
->when my filesystem randomly returns errors when it should be working.
->
->I wonder wether this hasn't any security relevance, as it allows attackers
->easily to create filename holes in the filesystem that even root cannot
->override.
->  
->
+One possible way to do this is to give each file/directory a list of
+links to each of its parents.  How hard would that be to add?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.6 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-It should be a weighty reason to use strong hash function for creating 
-entries because
-stable hash means bad performance and more occupied place in stat-data: 
-I am not
-sure that even 160 bit will guarantee absence of collision for a long time..
-
-Edward.
-
->Thanks for the suggestion, though! However, the workaround I currently use
->(delete the dir, reinstall) works better, as it doesn't destroy debian's
->idea of the filesystem layout.
->
->  
->
-
+iQIVAwUBQd28SXgHNmZLgCUhAQLBfBAAlRBz2RKpBpYxqI5D1LXUQsv6/pDPO3kF
+ROlGCaS4lbFIsVHuJazS1uVW+JSY/7FQWRBx06PpsM3jB8RHCKnlhx8WUgGEt9sb
+r7AQ+u91nPk2Oh638X6tNgFPbiUMCFpRZXuQ7e7SmyxIuqEEwUsIsEIirqo6uru5
+KN7/2JiABMlUIQAF8SbPB4RwNxUbAP1d//khAhhseLlq4b7nyT426kLVmxQY5hjq
+QiMxJWvODm9ifuKu+Kwe2DhZa+s/jKAHCIdKNP25rzUTSaOtRnqX90zAJmO/vtL6
+HKGAW3+YpuVv+wV7wcSfKNoCRSdr1m2HxgmIoyF5I7Z1G4/hMCqilroK+2lii2aA
+DhjvSSUFlLwnvZcvWwnsE8T/pRXICT5RR/pvmtIiji+HJUJEufn75+QxPk/IFYNk
+HboXahafDm669tQiOPvHhBIRNxblXmO4BsumJ5C8b3Qt6Xpx434VkHfqWmcgnTjg
+a/wyXSa5/AiD4KrMR9GcN1PkOVP6Kr42o2w/iGEUZqQfM11kWCLAvYA/8fcYgxWm
+der1Pa+jrw9/t4eJFTEPE0jKNau7MXlA/yeIXXVh+0T51fApdXuPsOCs8J5GWzCZ
+8EUaXS7FO7FrI4/ynarnewlOtVvAOGiit1aMDdN89fF1WlTWU3aze8pCPgJ+EQb8
+T8Sb9/eLWJM=
+=hNoL
+-----END PGP SIGNATURE-----
