@@ -1,50 +1,47 @@
-From: Miguel <turtle.power@wanadoo.es>
-Subject: Re: Can compression at filesystem level improve overall
- performance?
-Date: Tue, 23 Mar 2004 01:17:33 +0100
-Message-ID: <20040323011733.7026b4bb.turtle.power@wanadoo.es>
-References: <405B02ED.4010602@solidcode.net>
+From: Vince <fuzzy77@free.fr>
+Subject: Re: 2.6.4 corruption
+Date: Tue, 23 Mar 2004 01:28:57 +0100
+Message-ID: <405F84C9.6020406@free.fr>
+References: <20040322005555.GA509@zero> <200403221221.42413.Dieter.Nuetzel@hamburg.de> <20040323000856.GA3975@zero>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-17391-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17392-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <405B02ED.4010602@solidcode.net>
+In-Reply-To: <20040323000856.GA3975@zero>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Erik Terpstra <erik@solidcode.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Tom Vier <tmv@comcast.net>
+Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-On Fri, 19 Mar 2004 15:25:49 +0100
-Erik Terpstra <erik@solidcode.net> wrote:
+Tom Vier wrote:
+> On Mon, Mar 22, 2004 at 12:21:42PM +0100, Dieter N?tzel wrote:
+> 
+>>Use the data-logging patches for 2.6.4 up or "wait" or 2.6.5/2.6.6.
+> 
+> 
+> i'm getting rejects using:
+> 
+> for i in `cat /pkgs/linux/reiserfs/mason/data-logging/2.6.4/series`; do \
+> patch -p1 --dry-run < /pkgs/linux/reiserfs/mason/data-logging/2.6.4/$i; done
+             ^^^^^^^^^
 
-> Hello everyone,
->=20
-> For the last couple of years I noticed that the performance of most of
->=20
-> my systems has it's bottleneck in data throughput rather than CPU=20
-> performance.
->=20
-> Is it fair to say that today compression at the filesystem level would
->=20
-> improve overall performance?
->=20
-> If this is the case, it probably wouldn't be too hard to implement as
-> a module in Reiser4?
->=20
-> Any thoughts?
->=20
-> --Erik.
->=20
-There's some publication on this issue:
+You should apply the patches for real:
 
-http://ssrc.cse.ucsc.edu/Papers/ucsc-crl-03-04.pdf (Measuring the
-compressibility of metadata and small files for disk/NVRAM hybrid
-storage systems) at http://ssrc.cse.ucsc.edu/publications.shtml
+> patching file fs/reiserfs/stree.c
 
-I'dont know if it's statements are correct but it's a beginning
+... stree.c is modified here
 
---=20
-La resistencia es f=FAtil todos ser=E9is asimilados
+> patching file include/linux/reiserfs_fs.h
+> patching file fs/reiserfs/stree.c
+                             ^^^^^^^
+and it looks like the second patch depends on the first one when wanting 
+to modify the same file (therefore a reject with --dry-run)...
+
+> Hunk #1 FAILED at 678.
+> Hunk #2 succeeded at 690 (offset -2 lines).
+> Hunk #3 FAILED at 704.
+> 2 out of 3 hunks FAILED -- saving rejects to file fs/reiserfs/stree.c.rej
+> patching file fs/reiserfs/stree.c
