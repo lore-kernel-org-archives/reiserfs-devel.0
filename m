@@ -1,62 +1,80 @@
-From: Robert Walsh <rjwalsh@durables.org>
-Subject: Re: Journal writes hanging in presence of I/O errors
-Date: 08 Aug 2002 13:15:19 -0700
-Message-ID: <1028837720.11334.27.camel@spoon.durables.org>
-References: <1028828929.9189.25.camel@spoon.durables.org> 
-	<1028836637.5940.16.camel@oberon.rnd.esoft.com>
+From: berthiaume_wayne@emc.com
+Subject: RE: reiserfsck --rebuild-tree is very slow
+Date: Thu, 8 Aug 2002 17:08:45 -0400
+Message-ID: <93F527C91A6ED411AFE10050040665D0049BFE3B@corpusmx1.us.dg.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature";
-	boundary="=-+As0fpvFIHtm724OSp/0"
-Return-path: <reiserfs-list-return-11145-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11146-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1028836637.5940.16.camel@oberon.rnd.esoft.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Jonathan Briggs <jbriggs@esoft.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: green@namesys.com, pawal@blipp.com
+Cc: reiserfs-list@namesys.com
 
---=-+As0fpvFIHtm724OSp/0
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+	You may want to check with hdparm -d /dev/hd<x> to see if the drive
+has dropped out of DMA into PIO. When IDE detects an error it will step back
+and retry in PIO, afterwards it remains in PIO. In 2.4.19 there is a kernel
+config parameter to set IDE to always DMA so you don't get this type of
+system degradation.
+Wayne.
+-----Original Message-----
+From: Oleg Drokin [mailto:green@namesys.com]
+Sent: Monday, August 05, 2002 3:43 AM
+To: Patrik Wallstrom
+Cc: reiserfs-list@namesys.com
+Subject: Re: [reiserfs-list] reiserfsck --rebuild-tree is very slow
 
-> Bad blocks and disk errors are a problem for every file system.  Modern
-> hard drives handle bad sectors by using the firmware to relocate to a
-> good sector.  The Linux kernel should have another layer (LVM, probably)
-> between the hard drive and the file system that can do the same thing.=20
-> The LVM layer should replace bad physical blocks with good ones.  This
-> way, the file system never needs to worry about it, except perhaps by
-> setting a fsck-required flag.  File system check would be required
-> because on a read error, the replacement block wouldn't contain the
-> correct data.
 
-This would work for small numbers of bad blocks, but for something more
-catastrophic, it might not be suitable.  If you only have one physical
-drive underneath and it seizes up or something, then you've got issues
-that deferring it to the LVM isn't going to help with.  You still need
-to check that your block I/O worked.
+Hello!
 
-Regards,
- Robert.
+On Mon, Aug 05, 2002 at 09:37:52AM +0200, Patrik Wallstrom wrote:
+> > > The result of reiserfsck --check and the result with --fix-fixable:
+> > > bread: Cannot read a block # 10052279.
+> > Hm, what's in kernel logs, is it filled with I/O errors?
+> Aug  5 06:34:13 motor kernel: hdd: lost interrupt
+> Aug  5 06:34:53 motor last message repeated 4 times
+> Aug  5 06:35:53 motor last message repeated 6 times
 
---=20
-Robert Walsh
-Amalgamated Durables, Inc.  -  "We don't make the things you buy."
-Email: rjwalsh@durables.org
+Hm, this is a problem of IDE layer then
 
---=-+As0fpvFIHtm724OSp/0
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+> > > From what I can see, this session can last for many years...
+> > > Any advise?
+> > Look into the kernel logs, if it is filled by many I/O error messages, 
+> > then it will indeed may atek a lot of time. Also it is possible that the
+> > drive itself is reading data very slowly (ie it encounters multiple
+errors
+> > that it tries to correct and this takes huge amount of time, I saw such
+> > behaviour with IBM DTLA drives).
+> > If you can access data on the drive just fine without fsck
+> > (I mean if dd if=/dev/device of=/dev/zero bs=4096k works as fast as
+expected),
+> > then this may need more investigations.
+> The read operation from dd was very fast.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.6 (GNU/Linux)
-Comment: For info see http://www.gnupg.org
+You mean right now if you interrupt reiserfsck and issue a dd command, it
+will be fast (ie. you tried it right now), or it was fast some time ago?
 
-iD8DBQA9UtFXbZtqSALM5CYRAlRIAJ9zkKUELztYEnA3ICUqA3tsAbWtJACfUK0E
-zoqeyA6MAdBQRGg/fIwlH+A=
-=rL9z
------END PGP SIGNATURE-----
+How aboult changing blocksize from 4M down to 4k?
 
---=-+As0fpvFIHtm724OSp/0--
+> Should I just try --rebuild-tree, and wait for some weeks? :)
 
+No, you should fix a problem in your IDE subsystem instead.
+
+> The error from --check was now
+> Bad root block 4294967295. (--rebuild-tree did not complete)
+
+Yes, this is correct message for unfinished rebuild tree.
+
+> So I guess I have to...
+
+As an alternative thing: you can copy your partition to file, run fsck
+on that file and then dd the file back, but this way the problem you
+are having won't be fixed. And we have nothing to do with the problem so
+we cannot help here (err, we can help probably but since that's not reiserfs
+bug, such a help won't be free).
+
+Bye,
+    Oleg
