@@ -1,66 +1,76 @@
-From: Piotr Neuman <sikkh@wp.pl>
-Subject: Re: Reiser4 journal replay stats
-Date: Wed, 20 Oct 2004 23:31:08 +0200
-Message-ID: <200410202331.08984.sikkh@wp.pl>
-References: <200410162209.12163.sikkh@wp.pl> <41757737.3050604@namesys.com> <41757DD8.5020105@linspireinc.com>
+From: brianmas@highstream.net
+Subject: reiserfs3 problem, need advice/guidance
+Date: Thu, 21 Oct 2004 12:16:39 -0400
+Message-ID: <1098375399.4177e0e70c104@webmail.highstream.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22116-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-22119-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41757DD8.5020105@linspireinc.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Clifford Beshers <clifford.beshers@linspireinc.com>
-Cc: Alex Zarochentsev <zam@namesys.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-> Hans Reiser wrote:
-> > Piotr Neuman wrote:
-> >> Hi
-> >>
-> >> This small patch is will print out nuber of transartions replied from
-> >> logs after a crash, quite like reiserfs 3.6 does:
-> >>
-> >> http://kem.p.lodz.pl/~peter/reiser4_replay_stats.patch
-> >>
-> >> Thanks to Nikita Danilov for guidance.
-> >
-> > Do the members of the list view this as useful?  I worry that to
-> > average persons, who don't know what a transaction is, this is vaguely
-> > scary.
-> >
-> > Clifford, I cc'd you because your intuition is better than mine for this.
-> >
-> > Perhaps it should say something reassuring, like "All went well in the
-> > filesystem aspect of recovering from what seems to have been an
-> > improperly shutdown or crashed system."
+I have a server vanilla 2.4.26 SMP kernel, Adaptec SCSI RAID5 w/ reiserfs, been
+running fine for about 9 months.
 
-[cut]
+I recently (last 3 days) started doing some back ups with most current rsync
+(2.6.3), just reading from the disk in this machine writing to a remote
+machine. That's the only thing I can think of that's changed, besides added an
+ntp server but I am assuming that's not it. At the same time this rsync job was
+running there is a samba share I am reading from and translating data from, this
+job has been running since the machine was installed though never caused a
+problem.
 
-> I don't know if this text already exists, but I would make sure there
-> are messages that indicate:
->
->     * that the file system was improperly shutdown;
->     * that an improper shutdown is no big deal for Reiser4 and we'll
->       happily clean things up;
->     * give an indication that no data was lost (if you can determine
->       that) and that all is well with the world.
->
-> Probably a longer answer than you wanted, but I'm not going to take the
-> time to edit it down. ;-)
+this morning the machine locked up, still responded to pings but everything else
+seemed completely dead. Checking the error logs after reboot I see this:
 
-Updated patch to reflect above suggestions. There is only one technical thing, 
-since reiser4 uses wandering logs I find it very hard to crash in such a way 
-that it will reply even a single transaction, so I don't really know if this 
-patch is usefull ;-).
 
-Download:
+Oct 21 04:15:04 hsa10 kernel: sd(8,3):vs-13060: reiserfs_update_sd: stat data of
+ object [25333038 23882091 0x0 SD] (nlink == 1) not found (pos 33)
+Oct 21 04:15:04 hsa10 last message repeated 3 times
+Oct 21 04:15:04 hsa10 kernel: sd(8,3):PAP-12350: do_balance: insert_size == 0, m
+ode == p
+Oct 21 04:15:04 hsa10 kernel:  <4>sd(8,3):vs-13060: reiserfs_update_sd: stat dat
+a of object [25333038 23882091 0x0 SD] (nlink == 1) not found (pos 33)
+Oct 21 04:15:04 hsa10 kernel: sd(8,3):vs-13060: reiserfs_update_sd: stat data of
+ object [25333038 23882091 0x0 SD] (nlink == 1) not found (pos 33)
 
-http://kem.p.lodz.pl/~peter/reiser4_replay_stats-2.patch
+and on and on until an hour and 40 minutes later when the logs end.
 
-Regards
+these numbers: [25333038 23882091 0x0 SD]  and vs-13060 do not change in the
+rest of the log.
 
-Piotr Neuman
+there are other messages that aren't exactly like the above mixed in like:
+
+Oct 21 04:18:00 hsa10 kernel: sd(8,3):PAP-5660: reiserfs_do_truncate: wrong
+result -1 of search for [25333038 23882091 0xfffffffffffffff DIRECT]
+
+also I noticed all these retries happen at around 00 seconds after the minute
+(top of the minute)
+
+So what should I do? what could cause this as well? We have a write cache
+(another situation where there can be this kind of error apparently dring power
+loss) on this server but it's also battery backed up so that shouldn't be an
+issue (according to what I read).
+
+on reboot the dmesg spews:
+
+reiserfs: found format "3.6" with standard journal
+reiserfs: checking transaction log (device sd(8,3)) ...
+for (sd(8,3))
+reiserfs: replayed 63 transactions in 0 seconds
+sd(8,3):Using r5 hash to sort names
+
+I see some people who have gotten this type of error told
+to rebuild the filesystem, is that suggested in all cases? I don't want to
+have to do that if it's not needed. We do have back ups but even so ...
+
+the server is rebooted and seems to be running fine now.
+
+Any help is appreciated.
+
+brian
+
