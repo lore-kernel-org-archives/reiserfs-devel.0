@@ -1,39 +1,39 @@
-From: Alexander Lyamin <flx@msu.ru>
-Subject: Re:   reiser4 plugins (was: silent semantic changes with reiser4)
-Date: Sat, 28 Aug 2004 23:27:55 +0400
-Message-ID: <20040828192755.GJ6746@alias>
-References: <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <20040828105929.GB6746@alias> <20040828111233.GA11339@lst.de> <20040828120502.GE6746@alias> <20040828135655.GA13380@lst.de> <20040828192350.GI6746@alias>
-Reply-To: flx@msu.ru
+From: Andries Brouwer <aebr@win.tue.nl>
+Subject: Re: silent semantic changes with reiser4
+Date: Sat, 28 Aug 2004 21:41:29 +0200
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040828194129.GA7713@pclin040.win.tue.nl>
+References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org> <20040828170515.GB24868@hh.idb.hist.no> <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org> <20040828182954.GJ21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408281132480.2295@ppc970.osdl.org> <20040828185613.GK21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408281201290.2295@ppc970.osdl.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21016-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20040828192350.GI6746@alias>
+In-Reply-To: <Pine.LNX.4.58.0408281201290.2295@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: flx@msu.ru, Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: viro@parcelfarce.linux.theplanet.co.uk, Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
 
-Sat, Aug 28, 2004 at 11:23:50PM +0400, Alexander Lyamin wrote:
-> Sat, Aug 28, 2004 at 03:56:55PM +0200, Christoph Hellwig wrote:
-> > > 
-> > > some times, some approaches to  some problems  just would not work.
-> > 
-> > You still haven't even bother explaining what you want to do.  It's hard
-> > to argue against vague uncertainity.
-> 
->  o files as directories -  no oppinion on that.
->                             
->  o metafiles -   AFAIK it was product of Nikita Danilov just playing and fooling.
-> 
-> Probably solution that will satisfy you is to have "legacy (dumb?) mode" which
-> is leaving all this fancy stuff out of sight.
+On Sat, Aug 28, 2004 at 12:16:47PM -0700, Linus Torvalds wrote:
 
-and enabled compile time or mount option...
+If I see it correctly, you want to group a file and some
+ancillary files together.
 
--- 
-"the liberation loophole will make it clear.."
-lex lyamin
+The Unix way would be to make a directory and put them all there:
+	xterm/xterm
+	xterm/xterm.icon
+
+But you are unsatisfied and want
+	xterm
+	xterm/xterm.icon
+
+As long as we agree that the latter really means the former,
+there are no problems in finding out what should happen.
+
+The conclusion is, that a directory carries an additional bit
+that says "if I am opened as a regular file then use the file
+of the same name inside".
+
+Now there is no attribute space, just a shorthand.
+
+Andries
