@@ -1,39 +1,82 @@
-From: Andries Brouwer <aebr@win.tue.nl>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: silent semantic changes with reiser4
-Date: Sun, 29 Aug 2004 15:56:17 +0200
-Message-ID: <20040829135617.GA8021@pclin040.win.tue.nl>
-References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org> <20040828170515.GB24868@hh.idb.hist.no> <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org> <20040828182954.GJ21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408281132480.2295@ppc970.osdl.org> <20040828185613.GK21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408281201290.2295@ppc970.osdl.org> <20040828194129.GA7713@pclin040.win.tue.nl> <Pine.LNX.4.58.0408281244340.2295@ppc970.osdl.org>
-Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21053-reiserfs=m.gmane.org@namesys.com>
+Date: Sat, 28 Aug 2004 20:04:13 -0400
+Message-ID: <200408290004.i7T04DEO003646@localhost.localdomain>
+References: <riel@redhat.com>
+Return-path: <reiserfs-list-return-21054-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.58.0408281244340.2295@ppc970.osdl.org>
+In-Reply-To: Message from Rik van Riel <riel@redhat.com> 
+   of "Thu, 26 Aug 2004 16:10:48 -0400." <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Andries Brouwer <aebr@win.tue.nl>, viro@parcelfarce.linux.theplanet.co.uk, Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
+To: Rik van Riel <riel@redhat.com>
+Cc: Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Sat, Aug 28, 2004 at 12:46:10PM -0700, Linus Torvalds wrote:
+Rik van Riel <riel@redhat.com> said:
+> On Thu, 26 Aug 2004, Linus Torvalds wrote:
+> > So "/tmp/bash" is _not_ two different things. It is _one_ entity, that
+> > contains both a standard data stream (the "file" part) _and_ pointers to
+> > other named streams (the "directory" part).
 
-> > Now there is no attribute space, just a shorthand.
+> Thinking about it some more, how would file managers and
+> file chosers handle this situation ?
 > 
-> It's more than a shorthand, though. _Much_ more.
-> ...
-> Both of those are why it would need special support.
+> Currently the user browses the directory tree and when
+> the user clicks on something, one of the following 
+> happens:
+> 
+> 1) if it is a directory, the file manager/choser changes
+>    into that directory
+> 
+> 2) if it is a file, the file is opened
 
-Yes - support, I do not argue against that.
-But I argue against an attribute space.
+And now you have a mess. Is it "really" a file, or a directory? Why not
+just keep both well apart, and stay happy? I just fail to see what could be
+gained by having directories that really aren't, and files that aren't
+either. Use a directory if you want one, use a file elsewhere.
 
-This xterm.icon was xterm.icons - with both large and small
-icons. And these icons have copyrights. Etc. There is just
-an arbitrary tree below this xterm filesystem object.
-The files below are in no way different from the files above.
+> Now how do we present things to users ?
+> 
+> How will users know when an object can only be chdired
+> into, or only be opened ?
 
-Unix says: everything is a file. Now we get: everything is
-a directory. And some directories have a file attached.
+Easy: It is a directory, or it isn't.
 
-Andries
+> For objects that do both, how does the user choose ?
+
+Don't give silly choices.
+
+> Do we really want to have a file paradigm that's different
+> from the other OSes out there ?
+
+I vote "no". There are/have been OSes with weird "files", none of them
+survived to get anywhere as popular as Unix and "file == stream of
+bytes". Even with much simpler variants like files as sequences of
+records. For a good reason: The Unix way is simple, and extremely flexible,
+as my proggie can define at its own whim how to handle what's inside. If a
+single stream isn't enough, we have directories. No need to innovate there.
+
+> What happens when users want to transfer data from Linux
+> to another system ?
+
+Or between Linux systems with different kernels that happen to implement
+different views/metadata on files.
+
+Please do remember devfs: It sounded like a cool idea, got into the kernel
+just to be thrown out later because nobody used it. Much heat was
+generated, nothing of permanent value. This looks the same: A very vocal
+tiny minority is clamoring for something completely non-Unix for totally
+bogus reasons. What happened to "code talks, bullshit walks"? There is _no_
+code (== real-world, user programs that can't be done efficiently enough
+without this), so this nonsense should just be thrown out, and everybody go
+back to real hacking.
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
