@@ -1,110 +1,70 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: /proc/fs/reiserfs question
-Date: Mon, 14 Oct 2002 21:40:29 +0400
-Message-ID: <3DAB018D.2070904@namesys.com>
-References: <20021014160435.344ca55b.philippe.gramoulle@mmania.com> <15786.54223.785138.49029@laputa.namesys.com>
+From: Russell Coker <bofh@coker.com.au>
+Subject: Re: Reiserfs with Samba vs NetApp Filer
+Date: Mon, 14 Oct 2002 22:52:09 +0200
+Message-ID: <200210142252.09438.bofh@coker.com.au>
+References: <200210121052.22603.bofh@coker.com.au> <200210122302.g9CN23BD000383@sirius.cs.pdx.edu> <20021014175909.GA10292@tapu.f00f.org>
+Reply-To: Russell Coker <bofh@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11683-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11684-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20021014175909.GA10292@tapu.f00f.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: =?KOI8-R?Q?Philippe_Gramoulle=27?= <philippe.gramoulle@mmania.com>, reiserfs <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Chris Wedgwood <cw@f00f.org>
+Cc: reiserfs-list@namesys.com
 
-Nikita Danilov wrote:
+On Mon, 14 Oct 2002 19:59, Chris Wedgwood wrote:
+> On Sat, Oct 12, 2002 at 04:02:03PM -0700, The Amazing Dragon wrote:
+> > I believe PCI-X is still 64-bits wide (I haven't seen anything
+> > mention this so I assume it is unchanged) and up to 133MHz, so
+> > theoretical bandwidth of 1066MBps. So 7 Serial ATA drives, perhaps
+> > 10 drives if you take into account the real performance of drives.
+>
+> Bus width is at best a very naive metric.
+>
+> At present, you can't get 100MB/s sustained read off any IDE drive I'm
+> aware off, not even for linear-read-out.  You *may* get 50MB/s on a
+> high-end SCSI disk, most IDE drives seem to top out around 30MB/s.
 
->Philippe Gramoull=E9 writes:
-> > Hi,
-> >=20
-> > Is there any documentation that gives the description for each line=20
-> > of each file in /proc/fs/reiserfs/sd(x,x)/*
-> >=20
-> > like what is the meaning of s_fix_nodes ? etc..
->
->I am afraid one has to dig it out of the sources. Here is description of
->some fields displayed in "super", they pertain to the in-core
->super-block:
->
->			"state": REISERFS_VALID_FS/REISERFS_ERROR_FS
->
->			"mount options": options given to mount
->
->			"gen. counter": file system "generation acounter"---this is
->			incremented with each balancing.
->
->			"s_kmallocs": how many kmallocs (calls to general purpose
->			kernel memory allocator) were performed by reiserfs code
->
->			"s_disk_reads": not maintained
->
->			"s_disk_writes": not maintained
->
->			"s_fix_nodes": how many time "fix-nodes" (1st phase of
->			balancing) was performed.
->
->			"s_do_balance": how many times "do-balance" (2nd phase of
->			balancing) was performed
->
->			"s_unneeded_left_neighbor": not maintained
->
->			"s_good_search_by_key_reada": not maintained
->
->			"s_bmaps": not maintained
->
->			"s_bmaps_without_search": not maintained
->
->			"s_direct2indirect": how many direct->indirect converions
->			were performed
->
->			"s_indirect2direct": how many indirect->direct converions
->			were performed
->
->			"max_hash_collisions": maximal hash collision met so far.
->
->			"breads": not maintained
->
->			"bread_misses": not maintained
->
->			"search_by_key": how many times search_by_key (main tree
->			traversal routine) was called.
->
->			"search_by_key_fs_changed": how many times search_by_key was
->			performed concurrently to balancing.
->
->			"search_by_key_restarted": how many times search_by_key had
->			to restart due to concurrent balancing.
->
->			"insert_item_restarted"-------+
->			"paste_into_item_restarted"   +
->			"cut_from_item_restarted"     +-> how many times particular
->			"delete_solid_item_restarted" +   balancing operation had to
->			"delete_item_restarted"-------+   restart
->
->			"leaked_oid": how many object-ids (unique identifiers
->			assigned to files) were missed
->
->			"leaves_removable": how many times three leaf nodes of the
->			balanced tree were mergeable into one
->
->I guess we should keep this information somewhere on the web-site. If
->you need more detailed info, let me know.
->
-> >=20
-> > Thanks much,
-> >=20
-> > Philippe.
->
->Nikita.
->
->
-> =20
->
-The unmaintained fields should be removed.  Put into post-Halloween todo=20
-list.
+In my tests IDE drives topped out at 30MB/s for sustained reads from the start 
+of the drive two years ago, one year ago they were approaching 40MB/s.  I 
+haven't tested the latest drives, but I expect them to be faster...  Maybe 
+the recently released IDE drives will sustain 50MB/s for the first few dozen 
+gigs at least...
 
-Hans
+> The other thing is, how many people need 1G/s+ disk IO?  Chances are
+> if you need this, you might be convinced to use real-hardware instead
+> of a PC full of IDE drives.
+
+The real question is "how many people need such linear performance with no 
+seeks?".  Probably almost none.
+
+> > What astonishes me is that 66MHz 64-bit PCI is *still* confined
+> > exclusively to high end motherboards, when even the low-end
+> > motherboards are struggling against the bandwidth monster.
+>
+> Nope.  Some cheap MB's are 64/66, the Dual Athlon boards for example.
+
+Cheap == single CPU.
+
+In a quick web search of some companies I buy from, one sells a single 
+dual-CPU motherboard which costs three times as much as the single-CPU 
+motherboards (which have become amazingly cheap).  However it'll end up 
+costing more because with the lack of choice I'll probably be forced to spend 
+more on other things.
+
+> P.S. FWIW, SGI demonstrated 7GB/s through the filesystem over five
+>      years ago.
+
+Yes, and still no-one makes PC hardware that compares.  :(
+
+-- 
+http://www.coker.com.au/bonnie++/     Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/       Postal SMTP/POP benchmark
+http://www.coker.com.au/projects.html Projects I am working on
+http://www.coker.com.au/~russell/     My home page
 
