@@ -1,12 +1,12 @@
 From: Yury Umanets <umka@namesys.com>
 Subject: Re: Gnu Parted error, Kernel Panic, Reiserfs
-Date: Fri, 16 Apr 2004 16:23:06 +0300
-Message-ID: <1082121768.7920.24.camel@firefly>
+Date: Fri, 16 Apr 2004 16:49:30 +0300
+Message-ID: <1082123370.5789.0.camel@firefly>
 References: <Pine.LNX.4.21.0404161253580.16938-100000@mlf.linux.rulez.org>
 	 <1082120726.7920.17.camel@firefly>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17992-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17993-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -33,16 +33,14 @@ On Fri, 2004-04-16 at 16:05, Yury Umanets wrote:
 > 
 > umka@namesys.com
 > umka@clustrefs.com
-> torque@ukrpost.ent
+torque@ukrpost.ent
 
-Correct ones are: 
-
+Sorry, correct ones are:
+umka@namesys.com
 umka@clusterfs.com
 torque@ukrpost.net
-> 
 
--- 
-umka
+
 -- 
 umka
 
