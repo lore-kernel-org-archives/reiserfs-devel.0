@@ -1,42 +1,42 @@
-From: Heinz-Josef Claes <hjclaes@web.de>
-Subject: hard linking in reiserfs 4
-Date: Tue, 18 Nov 2003 07:53:32 +0100
-Sender: hjclaes@web.de
-Message-ID: <1069105166.3206.3.camel@schlappix.schnulli.de>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: dead inode read from disk... ignore?
+Date: Tue, 18 Nov 2003 12:09:16 +0300
+Message-ID: <16313.57788.693126.214555@laputa.namesys.com>
+References: <3FB20ACD.8080105@dotcom.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16109-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16110-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3FB20ACD.8080105@dotcom.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: myciel <myciel@dotcom.pl>
+Cc: reiserfs-list@namesys.com
 
-Hi,
+myciel writes:
+ > Hi
+ > 
+ > Few times a day I get in syslog:
+ > kernel: sd(8,20):vs-13075: reiserfs_read_inode2: dead inode read from 
+ > disk [11574064 47212 0x0 SD]. This is likely to be race with knfsd. Ignore
+ > 
+ > I just wanted to be sure: should I  really ignore this?
 
-I read the following in the man page of ln:
+Sorry, for delay.
 
-(ln (coreutils) 5.0    March 2003   LN(1))
+Yes, you should ignore it as it says.
 
-   -d, -F, --directory
-          hard link directories (super-user only)
+ > 
+ > kernel: 2.4.22 SMP + data-logging patches + Trond's nfs patches
+ > 2 filesystems:  ~800G and  ~450G,
+ > filled in ~50% with small files avg size ~36kb
+ > 
+ > thanks
+ > 
+ > rafal
+ > 
 
-This is not possible with reiserfs 3.6.
-Will it be possible with reiserfs 4?
-I'm really interested in this feature - does anybody know an existing
-filesystem supporting hard links to directories? (I know ext2 does not
-support them either.)
-
-Best regards,
-
-
-
--- 
-Heinz-Josef Claes                     hjclaes@web.de
-project: http://sourceforge.net/projects/storebackup
-      -> snapshot-like backup to another disk
-
-
-
+Nikita.
