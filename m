@@ -1,35 +1,33 @@
-From: "Matthias Urlichs" <smurf@noris.de>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: Bug in reiserfsck 3.6.1-pre1
-Date: Mon, 16 Sep 2002 09:35:21 +0200
-Message-ID: <20020916093520.C10175@noris.de>
-References: <20020916025655.E22362@noris.de> <20020916091943.A5459@namesys.com>
+Date: Mon, 16 Sep 2002 11:43:10 +0400
+Message-ID: <20020916114310.A10826@namesys.com>
+References: <20020916025655.E22362@noris.de> <20020916091943.A5459@namesys.com> <20020916093520.C10175@noris.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11462-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11463-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20020916091943.A5459@namesys.com>; from green@namesys.com on Mon, Sep 16, 2002 at 09:19:43AM +0400
+In-Reply-To: <20020916093520.C10175@noris.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <green@namesys.com>
+To: Matthias Urlichs <smurf@noris.de>
 Cc: reiserfs-list@namesys.com
 
-Hi,
+Hello!
 
-Oleg Drokin:
-> We are interested in metadata from that volume if possible.
-> Please run debugreiserfs -p /dev/md0 | gzip -9c >/somewhere/metadata_md0.gz
-> 
-Will do, as soon as the save-state re-run from reiserfsck is done and if
-it still exhibits the problem.  :-/
+On Mon, Sep 16, 2002 at 09:35:21AM +0200, Matthias Urlichs wrote:
 
-> Then make this file available for us to download.
-> 
-Warning: that'll be 100+ MBytes. Compressed. (The original RAID's almost
-half a terabyte.)
+> > Then make this file available for us to download.
+> Warning: that'll be 100+ MBytes. Compressed. (The original RAID's almost
+> half a terabyte.)
 
--- 
-Matthias Urlichs     |     noris network AG     |     http://smurf.noris.de/
+I don't understand where's this number from.
+Metadata size exceeds 40 Megabytes pretty rarely.
+Yes, I have seen metadata snapshots from 800M filesystems for example.
+
+Bye,
+    Oleg
