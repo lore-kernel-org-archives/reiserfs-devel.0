@@ -1,37 +1,47 @@
-From: "Nicholas S. Wourms" <nwourms@netscape.net>
-Subject: Re: Reiser4's status of this week.
-Date: Mon, 21 Jun 2004 16:26:09 -0400
-Message-ID: <40D74461.2090306@netscape.net>
-References: <7794555.1087651158684.JavaMail.postfix@mx20.mail.sohu.com> <40D45B6C.7000002@namesys.com> <40D482CB.1080303@netscape.net> <20040620122458.GC5084@backtop.namesys.com>
+From: Alexander Lyamin <flx@msu.ru>
+Subject: Re: reiser4 bk pull problem
+Date: Tue, 22 Jun 2004 12:38:49 +0400
+Message-ID: <20040622083849.GA20068@alias.nmd.msu.ru>
+References: <200405291554.18065.l_allegrucci@despammed.com>
+Reply-To: flx@msu.ru
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19289-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19291-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040620122458.GC5084@backtop.namesys.com>
+Content-Disposition: inline
+In-Reply-To: <200405291554.18065.l_allegrucci@despammed.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: zam@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lorenzo Allegrucci <l_allegrucci@despammed.com>
 Cc: reiserfs-list@namesys.com
 
-zam wrote:
-> On Sat, Jun 19, 2004 at 02:15:39PM -0400, Nicholas S. Wourms wrote:
+Sat, May 29, 2004 at 03:54:18PM +0200, Lorenzo Allegrucci wrote:
 > 
-> Yes we have.
-> We work with an internal bk repository. 
+> I can bk clone the reiser4-linux-2.6 repository
+> but I can't bk pull, it waits forever.
+> I've tried upgrating to bitkeeper 3.2 (from 3.0.4)
+> but the problem is still there.
+> Does bk pull work for you?
+> thanks,
+
+well.
+i am the one to blame for non-working pull.
+
+currently its disfunctional cause of there is issues with temporary
+certificates from bitmover, which somehow could not be obtained by
+server in multiple repository configuration...
+
+we are going to separate the servers (this supposed to make pull work again)
+, right after we move from thebsh.namesys.com
+
+sorry for inconvinience
 > 
-> The public repositories are copies of the internal ones, we have a script to
-> update public repositories once per day.  We will figure out after weekend 
-> why it does not after weekend.
-> 
+> -- 
+> Lorenzo
 
-Thanks for looking into this.  Are you still working on it?  I ask 
-because attempting to bk clone now returns the following error:
-
-ERROR-Lock fail: possible permission problem.
-
-Cheers,
-Nicholas
-
+-- 
+"the liberation loophole will make it clear.."
+lex lyamin
