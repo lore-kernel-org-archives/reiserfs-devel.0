@@ -1,42 +1,31 @@
-From: Travis Crump <pretzalz@techhouse.org>
+From: "Matt Ryan" <mryan@debian.org>
 Subject: Re: plagiarism of reiserfs by Debian
-Date: Sat, 19 Apr 2003 15:05:16 -0400
-Message-ID: <3EA19DEC.3090202@techhouse.org>
-References: <143CBAC4-7291-11D7-ADF3-00050285B655@ncpro.com>
+Date: Sat, 19 Apr 2003 20:24:21 +0100
+Message-ID: <00f001c306a9$47d22560$a2b89bd9@banana.org.uk>
+References: <200304181604.28955.vitaly@namesys.com> <3EA17427.7040300@namesys.com> <20030419172906.GX2528@phunnypharm.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13721-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13722-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <143CBAC4-7291-11D7-ADF3-00050285B655@ncpro.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Marcel Weber <mmweber@ncpro.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Ben Collins <bcollins@debian.org>
 Cc: Hans Reiser <reiser@namesys.com>, Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com, debian-testing@lists.debian.org, Ed Boraas <ed@debian.org>, debian-devel@lists.debian.org
 
-Marcel Weber wrote:
-> Hans, I hope that the removal of these credits was a mistake and that 
-> they're going to be included in future releases of testing. ReiserFS is 
-> a really fine piece of software and anyone who helped with it's 
-> development should have the right to be credited if he or she wants so.
-> 
-> Perhaps someone should file a bug against this.
-> 
-> Regards
-> 
-> Marcel
+> Now I hope you stop with your trolling and consider speaking
+> respectfully to us. I am pretty sure that if you emailed the maintainer
+> of the package and pointed out the facts to him, he would revert the
+> change.
+
+Dude,
+
+    You really need to calm down. Twice now recently you have opened your
+mouth and stuck your foot in when there really wasn't any need to. Take a
+Valium and do something less stressful.
 
 
-You mean a bug report like 
-<http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=152547>?  Oh, wait... 
-  What if someone wanted to write a gtk frontend to mkreiserfs?  The 
-credit would be similarly removed from the user's sight.  It would 
-probably me right to put the message in the about window of this 
-hypothetical program, but it wouldn't have the same visiblity as the 
-credit now has since users rarely look at the about window.  Ultimately, 
-all that was removed was *code* that gets compiled.  If the maintainer 
-cannot arbitrarily change any code he wants, then it is not clear that 
-the program is DFSG-free.
+Matt.
 
