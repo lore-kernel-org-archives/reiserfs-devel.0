@@ -1,35 +1,48 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: http://www.namesys.com/snapshots/2004.08.03-internal.testing/
-Date: Wed, 4 Aug 2004 21:21:40 +0300
-Message-ID: <20040804182140.GS1284@nysv.org>
-References: <200408031750.00291.vitaly@namesys.com> <20040803135805.GK1284@nysv.org> <200408031819.51600.vitaly@namesys.com> <4110A38A.7040807@namesys.com> <20040804095513.GL1284@nysv.org> <20040804144144.2f5fe7b3@philou.gramoulle.local> <1091627399.4791.22.camel@watt.suse.com> <4273.192.168.0.30.1091628986.squirrel@sml.dyndns.org> <20040804142227.GR1284@nysv.org> <41112137.4010102@namesys.com>
+From: "David Dabbs" <david@dabbs.net>
+Subject: RE: mongo_copy: cp: cannot stat `/mnt/testfs/testdir0-0-0/f92': Input/output error
+Date: Wed, 4 Aug 2004 13:29:37 -0500
+Message-ID: <20040804183243.B91D615DBB@mail03.powweb.com>
+References: <411126C2.20007@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19991-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19992-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <41112137.4010102@namesys.com>
+In-Reply-To: <411126C2.20007@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Thomas Graham <lkthomas@sml.dyndns.org>, Chris Mason <mason@suse.com>, reiserfs-list@namesys.com
+To: 'Hans Reiser' <reiser@namesys.com>
+Cc: "'Vladimir V. Saveliev'" <vs@namesys.com>, reiserfs-list@namesys.com
 
-On Wed, Aug 04, 2004 at 10:47:35AM -0700, Hans Reiser wrote:
->I don't understand why Vitaly cannot do one of the things suggested on 
->this thread: create an fsck option for people like Markus to use.
->If Vitaly does that, problem solved, yes?
 
-Yes.
 
-It's my opinion that if it can be done silently by fsck, it's the best
-thing.
+> >
+> For us to reproduce, we need to have a script of some sort that exactly
+> reproduces what you did.
+> 
+> It is especially significant to note such things as whether you might
+> have run out of disk space, etc.
+> 
 
-But I think we're beating a dead horse (if you say that in English as
-well) here. Let's just make this filesystem rock :)
+No, that was not the case. Because of that very issue, I just bought a
+larger drive so I could complete more extensive mongo runs. I would have
+known if the disk had filled. Last time I checked df during the later stages
+of a run it was reporting something like 12% in use.
 
--- 
-mjt
+> It makes a lot of sense that you did not run stock mongo, because elena
+> runs that a lot and we likely would have hit the bug already if you had.
+
+Yes, except that I reran mongo without the MKFILES and MKDIRS phases, and as
+I mentioned in another post, with the exception for an extra print statement
+to track script progress, no changes were made to stock mongo sources.
+
+If you believe it will help, I'll tar up my mongo directory and place on my
+web site. Will follow-up.
+
+
+David
+
+
 
