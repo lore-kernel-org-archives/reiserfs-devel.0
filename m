@@ -1,30 +1,72 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Reiser4 support on parted program ...
-Date: Wed, 15 Sep 2004 18:44:48 +0300
-Message-ID: <20040915154448.GH26192@nysv.org>
-References: <41472F46.4000109@futuretg.com> <41477625.304@slaphack.com> <4147E95B.8090108@futuretg.com> <20040915094952.GA5137@backtop.namesys.com> <414840FC.4090505@clusterfs.com> <20040915132013.GG26192@nysv.org> <20040915154205.GE18622@no-eff-eks.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: Reiser4 ACL-Support
+Date: Wed, 15 Sep 2004 11:50:39 -0400
+Message-ID: <414864CF.1080606@suse.com>
+References: <200409151540.58354.marcel@hilzinger.hu> <41484A7F.5080605@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21780-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21781-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040915154205.GE18622@no-eff-eks.com>
+In-Reply-To: <41484A7F.5080605@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Marcel Hilzinger <marcel@hilzinger.hu>, reiserfs-list@namesys.com
 
-On Wed, Sep 15, 2004 at 08:42:05AM -0700, Sami Samhuri wrote:
->I have also seen people mention that the lack of resizing capabilities
->is a major roadblock for them to adopt reiser4.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Well, quotas are more common imo, but they shouldn't be difficult either.
+Hans Reiser wrote:
+| Marcel Hilzinger wrote:
+|
+|> I found this in
+|>
+|> http://thebsh.namesys.com/snapshots/2004.02.06/READ.ME:
+|>
+|> reiser4 supports extended file attributes and POSIX acls with mount
+|> options
+|>   "xattr", and "acl" respectively. We are not going to maintain this
+|>   interface though. Reiser4 specific interface will be ultimately used
+|>   instead.
+|>
+|> Am I right, that in the final version there is no ACL-Support?
+|> No more or -- not yet...
+|>
+|>
+|>
+|>
+| There is no acl support yet, and when it exists (it will) it will not
+| use the xattrs interface.
 
-Best of luck with the resizer anyway, Dr. Orlando's team and the community 
-will test it even if Namesys disables it by default :)
+Hans -
 
--- 
-mjt
+I hate to keep beating a dead horse on this, but it needs to be brought
+up again. I agree with you that the xattr interface isn't as elegant as
+the files-as-directories solution, but the fact of the matter is that
+there is a defined method of exporting xattrs and ACLs to userspace.
+Many tools have already been modified to use it, and users aren't going
+to want a filesystem specific utility to manage metadata that other
+filesystems provide in a standard API. I know I don't want to use
+'reiser4ls' to see if files have ACLs.
 
+I suspect that if such an interface is not provided, there will be an
+external patch to implement it. It might as well be officially
+supported. If, at some point, the battle is won for
+files-as-directories, then you can deprecate it.
+
+- -Jeff
+
+- --
+Jeff Mahoney
+SuSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iD8DBQFBSGTPLPWxlyuTD7IRArYSAJ9r+bS5/oJ9jT3AfGUlNdcMCaQiVgCeMxIn
+YSeSc2SahHpRBHk9kyMFABk=
+=Bq4z
+-----END PGP SIGNATURE-----
