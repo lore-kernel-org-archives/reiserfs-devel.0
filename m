@@ -1,44 +1,46 @@
-From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Subject: Re: file as a directory
-Date: Tue, 14 Dec 2004 21:27:03 +0000
-Message-ID: <1103059622.2999.17.camel@grape.st-and.ac.uk>
-References: <200411301631.iAUGVT8h007823@laptop11.inf.utfsm.cl>
-	 <41ACA7C9.1070001@namesys.com>
-	 <1103043518.21728.159.camel@pear.st-and.ac.uk>
-	 <41BF21BC.1020809@namesys.com>
+From: Klaus Thorn <klaus@trillke.net>
+Subject: Re: Status of quota support for reiserfs on 2.6.x kernels
+Date: Wed, 15 Dec 2004 00:29:06 +0000 (UTC)
+Message-ID: <loom.20041215T011250-550@post.gmane.org>
+References: <20041123105332.02470503.philippe.gramoulle@mmania.com> <200411231406.43497.christian.mayrhuber@gmx.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22768-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22769-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41BF21BC.1020809@namesys.com>
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+To: reiserfs-list@namesys.com
 
-On Tue, 2004-12-14 at 17:24, Hans Reiser wrote:
-> Peter, I think you are right, though it might be useful to have the 
-> default be dirname/..../glued and to allow users to link 
-> dirname/..../filebody to 
-> dirname/..../something_else_if_they_want_it_to_not_be_glued, and to have 
-> dirname/..../filebody or whatever it is linked to be what they get if 
-> they read the directory as a file.
+Christian Mayrhuber <christian.mayrhuber <at> gmx.net> writes:
 
-Yes. I assume you mean that dirname in itself should always be
-interpreted as dirname/..../glued, which by default would be a linked to
-dirname/..../filebody, the latter being the file content, right?
+> Quotas are in kernel 2.6 and supported by ext2,ext3,reiserfs,xfs.
+> Reiserfs doesn't need an extra patch for quotas, data journalling
+> or extended attributes. Everything is right there for
+> kernels > 2.6.5 if I remember right.
 
-Also, a pseudofile (e.g. dirname/..../structure ?) could be used to
-specify how the files should be glued together. A simple question is,
-for instance, what separators to use between the components, and what
-ordering to use when putting the component objects together. (This
-pseudofile could also determine more complicated ways of composing
-objects.) 
+I tried to use quota with 2.6.7 and got two serious problems:
 
-The component objects themselves could be full objects, so they
-themselves could have sub-components.
- Peter
+1. soft quotas were treated like hard quotas
+(grace time 8 days but behaved like 0 days)
+
+2. after a few days no access to the file system was possible,
+fs-options usrquota and grpquota were doubled
+when listed by the mount command.
+(all 14 clients, samba and nfs paralyzed,
+a whole radio station silent, yes I had better days)
+After reboot the problem was gone but I turned quota off.
+
+so imho quota with reiserfs is experimental and buggy
+
+> I guess it would be wise to wait with the migration till these patches
+> make it into some official 2.6 kernel release.
+
+damn. I can't switch to ext3 since my filesystem is too big
+to be copied somewhere else.
+I'm stuck and need quota with reiserfs and linux 2.6.
+What can I do?
 
