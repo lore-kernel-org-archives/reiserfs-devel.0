@@ -1,43 +1,46 @@
-From: Ookhoi <ookhoi@humilis.net>
-Subject: Re: recovery of crashed reiserfs disk?
-Date: Sat, 18 Jan 2003 10:01:57 +0100
-Message-ID: <20030118100157.C5575@humilis>
-References: <20030117221535.GA945@Kadath> <20030118080941.B5575@humilis> <20030118115142.B21932@namesys.com>
-Reply-To: ookhoi@humilis.net
+From: Russell Coker <russell@coker.com.au>
+Subject: Re: 2.4.20 at kernel.org and data logging
+Date: Sat, 18 Jan 2003 11:25:16 +0100
+Message-ID: <200301181125.16752.russell@coker.com.au>
+References: <0E18D85A21D2874080456C3B8A12E83E01009FAD@cof110avexu4.global.avaya.com>
+Reply-To: Russell Coker <russell@coker.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12433-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12434-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <0E18D85A21D2874080456C3B8A12E83E01009FAD@cof110avexu4.global.avaya.com>
 Content-Disposition: inline
-In-Reply-To: <20030118115142.B21932@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <green@namesys.com>
-Cc: Ookhoi <ookhoi@humilis.net>, Francois-Rene Rideau <fare@tunes.org>, reiserfs-list@namesys.com
+To: "Sewell, Cassandra D (Cassandra)" <csewell@avaya.com>, reiserfs-list@namesys.com
 
-Hi Oleg,
+On Fri, 17 Jan 2003 00:51, Sewell, Cassandra D (Cassandra) wrote:
+> Is the data logging patch for 2.4.20 kernel considered
+> complete?  I see a patch at
+> ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20.  Also will this
+> patch be considered working for the last stable 2.4.20 posted at the
+> kernel.org location?
+>
+> I am in the process of upgrading some machines from 2.2.x (I know way
+> overdue), and need the data-logging capability.
 
-Oleg Drokin wrote (ao):
-> On Sat, Jan 18, 2003 at 08:09:41AM +0100, Ookhoi wrote:
-> > Dunno if you got an answer already. My mail is a bit slow atm.
-> > I think you can copy your data to the 120GB disk, reiserfsck it, and
-> > mount it. 
-> > You can dd /dev/hdc4 with 
-> > dd if=/dev/hdc4 of=/largedir/largefile conv=noerror
-> > where /largedir is a directory on another disk.
-> 
-> This is only partly true.
-> We found that only conv=noerror produces HDD images with
-> bad sectors siply skipped. This is not acceptable.
-> You need to use dd_rescue tool that is developed at SuSE I think.
-> 
-> > If that doesn't work, you could try ddrescue:
-> > http://www.garloff.de/kurt/linux/ddrescue/
-> 
-> In fact don't even try plain dd ;)
+I am using those patches on some 2.4.20 machines running as Qmail mail 
+servers.  I have the /var file system mounted with data journalling.
 
-Thank you for the correction. Can you please consider to add these tips
-to the faq?
+I have 4 machines running each with >250,000 mail boxes with continual heavy 
+IO load (the load never goes below 100 disk writes per second).
+
+I found the benefit to be much smaller than I had hoped.  The patches in 
+question have a number of other performance improvements which made a huge 
+and noticable difference.  data=journal seemed to make a small difference, 
+but nothing exciting.
+
+-- 
+http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
+http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
+http://www.coker.com.au/~russell/  My home page
+
