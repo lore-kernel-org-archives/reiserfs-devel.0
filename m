@@ -1,72 +1,37 @@
-From: Christophe Saout <christophe@saout.de>
+From: Hendrik Visage <hvisage@envisage.co.za>
 Subject: Re: How to build a big file server
-Date: 05 Jun 2003 11:45:53 +0200
-Message-ID: <1054806353.558.16.camel@chtephan.cs.pocnet.net>
-References: <1054800852.1997.15.camel@wusel.schnulli.de>
+Date: Thu, 5 Jun 2003 11:51:01 +0200
+Message-ID: <20030605095101.GH4769@hvs.envisage.co.za>
+References: <1054800852.1997.15.camel@wusel.schnulli.de> <3EDEFE7A.1090502@gmx.net> <20030605025554.J1522@schatzie.adilger.int>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14419-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14420-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1054800852.1997.15.camel@wusel.schnulli.de>
+Content-Disposition: inline
+In-Reply-To: <20030605025554.J1522@schatzie.adilger.int>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Heinz-Josef Claes <hjclaes@web.de>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>, Heinz-Josef Claes <hjclaes@web.de>, ReiserFS List <reiserfs-list@namesys.com>
 
-Hi!
+On Thu, Jun 05, 2003 at 02:55:54AM -0600, Andreas Dilger wrote:
+> 
+> The other problem I've heard of with hardware RAID is that if you do not
+> have another of exactly the same RAID controller, it may be impossible to
+> get your data back if the controller fails.  If you are planning on making
+> many similar servers, that may not be a problem, but is always something
+> to be aware of with hardware RAID.
 
-> I plan to build a big fileserver for Deutscher Bundestag (German
-> Parliament) who is converting to linux on the server side. In the
-> beginning it will be used in a testing environment and later multiple of
-> them in production use.
+True.
 
-Great. :-)
+They write meta information on the disks saying this disk is part of this
+mirror in this configuration. Then the higher end versions even have copies
+in NVRAM *and* the disks, to check whether the disks have been moved etc.
 
-> - I plan to build a system with IDE 250GB drives. 7 of them for raid 5
-> and one hot spare. The OS will be on separate hardware raid 1 on smaller
-> disks. Does anybody have experience with IDE controlers for the big
-> disks? Is it better to use hardware raid oder software raid
-> (performance)?
+Thus, beware in the "cheap" cases... though the bigger OEMs (Dell/IBM/etc.)
+which have support contracts etc. you would be able to get a replacement
+part (if it's not too old ;^)
 
-I'm successfully running a bunch of servers with Promise
-Ultra100/Ultra133 controllers and software raid on it (and LVM but
-that's another story).
-
-The only problem you'll probably run into is that the PCI slots get full
-because you should only have one hard disk per cable to get the best
-performance.
-
-Also you should try use an APIC to not run into trouble with interrupts
-(I think it should work somewhat better though I cannot prove this).
-
-The only problem with that solution is that when one disk fails you'll
-have to turn of the machine and exchange the disk, and after turning it
-on fdisk it (I love the raid autodetection) and raidhotadd that disk
-manually.
-
-And I've never used software raid5, only striping over several raid1
-pairs. The cpu has to calculate the checksums. But when doing heavy disk
-IO the machines usually only use five percent of the CPU time or
-something so I don't think that should be too much of a bottleneck if
-it's a fast machine.
-
-> - At this time, we plan to use reiserfs. What are the advantages /
-> disadvantages of using the raid 1 for journaling for the (big) raid 5
-> (performance, recovery)? The system will be heavily used with
-> storebackup (www.sf.net/projects/storebackup) witch means that lots of
-> hard links have to be created as fast as possible.
-
-I haven't tested separate journals yet, but reiserfs is very fast in
-dealing with lots of files. You probably should just try it out.
-
-I don't have enough hard disks here to play with them now, but on a raid
-10 configuration here (striping over two raid1 pairs of 200 GB 7200 rpm
-disks that can do about 50MB/sec each) a cp -al takes about one minute
-over 80.000 files/directories.
-
--- 
-Christophe Saout <christophe@saout.de>
-
+Hendrik
