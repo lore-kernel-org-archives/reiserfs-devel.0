@@ -1,78 +1,90 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: A couple of questions
-Date: Thu, 16 May 2002 19:35:24 +0400
-Message-ID: <20020516193524.C2877@namesys.com>
-References: <OF4598EC34.B53F2A48-ON85256BBB.00531156@pok.ibm.com>
+From: Edward Shushkin <edward@namesys.com>
+Subject: Re: Problems with journal size option on mkfs
+Date: Thu, 16 May 2002 20:14:10 +0400
+Sender: edward
+Message-ID: <3CE3DAD2.F3FD1987@namesys.com>
+References: <OF61DE11CE.F7B7B7AE-ON85256BBB.0051CE0D@pok.ibm.com> <20020516190911.A2877@namesys.com> <3CE3CD0C.2050504@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10341-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10342-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <OF4598EC34.B53F2A48-ON85256BBB.00531156@pok.ibm.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steve Pratt <slpratt@us.ibm.com>
-Cc: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Oleg Drokin <green@namesys.com>, Steve Pratt <slpratt@us.ibm.com>, reiserfs-list@namesys.com
 
-Hello!
+Hans Reiser wrote:
+> 
+> Oleg Drokin wrote:
+> 
+> >Hello!
+> >
+> >On Thu, May 16, 2002 at 09:59:46AM -0500, Steve Pratt wrote:
+> >
+> >
+> >
+> >>>This is because non-standard journal support is only included in 2.5
+> >>>
+> >>>
+> >>kernel
+> >>
+> >>
+> >>>series.
+> >>>2.4 support is available as separate patch for now.
+> >>>
+> >>>
+> >>So just to be sure I understand this:the current 2.4 kernel code (2.4.18)
+> >>does not include support for ANY non-standard journal options, including
+> >>non default size of an inline log??
+> >>
+> >>
+> >
+> >Yes, this is correct.
+> >
+> >
+> >
+> >>If this is true, wouldn't it have made sense to put some checking in the
+> >>utilities to detect the level of support in the kernel and either put out a
+> >>meaningful error message or simply ignore the option?  As it stands now,
+> >>from the command line mkfs doesn't even indicate that there was an error.
+> >>
+> >>
+> >
+> >There were no error at mkfs time. May be user is doing mkfs from some bootable
+> >floppy with old kernel and then plans to boot into more modern kernel, for
+> >example.
+> >
+> >
+> >
+> >>Even if the ReiserFS utilities don't check, is there some way I can query
+> >>the ReiserFS kernel code to detect the presence of these features?
+> >>
+> >>
+> >
+> >Well, the simplest way is to have (or make) small file with reiserfs image
+> >with non-standard journal and try to mount it ;)
+> >Or you can try to mount valid reiserfs fs with jdev= mount option, which
+> >is only present on code with nonstandard journaling support.
+> >In short, there is no easy way. But if you can think of any,
+> >we might implement it if it non-intrusive and easy enough.
+> >Actually this is not very reliable in the sence that you cannot say
+> >which kernel user plans to use later on.
+> >
+> >Bye,
+> >    Oleg
+> >
+> >
+> >
+> >
+> I don't agree with Oleg's answer.  Lack of a meaningful error message is
+> a bug.
 
-On Thu, May 16, 2002 at 10:11:37AM -0500, Steve Pratt wrote:
-> >> superblock. Neither 3.5 nor 3.6 superblock appear to have a label field,
-> >> but mkfs has an option for it.
-> >Labels are supported in reiserfs v3.6 format. (2.4 supopr was merged into
-> >2.4.19-pre3, if I remember correctly).
-> Ok, so it looks like I can use the option and if they have the right kernel
-> code it will just work.
+mkreiserfs allows to create non-standard journal regardless of 
+the current kernel version. If it is not correct, we'll modify it.
+Thanks,
+Edward.
 
-In fact even kernel without "support" will work.
-Support is only means that the space in superblock is marked as used by
-label/uuid instead of being marked as "reserved".
-You cannot query uuid/label from withing the kernel, anyway.
-
-> >You can circumvient this by echo Yes | reiserfsck ...
-> >if you need.
-> Actually this is not trivial in fork/exec in C code.  Especially when I
-
-I think it is.
-
-> want to preserve the return code from the fsck.  If you know of a coding
-> trick to do this I would be interested.
-
-Basically it is (half pseudocode):
-
-ifd=create_input_pipe(&pifd); // 
-ofd=create_output_pipe(&pofd); // these 2 would return fds suitable for child
-			       // and modify fds suitable for parent.
-			       // in fact simple pipe(2) is what you need.
-if (!fork()) {
-	close(0);
-	close(1);
-	close(2);
-	dup2(ifd,0);
-	dup2(ofd,1);
-	dup2(ofd,2);
-	close(ofd);
-	close(ifd);
-	execl("/path/reiserfsck","reiserfsck","param1","param2",...);
-}
-close(ofd);
-close(ifd);
-read_len=read(pofd,&buffer, 100000); // nonblocking read in fact.
-print_message(buffer, read_len); // Hans wants you to print mkreiserfs/reiserfsck banner on screen.
-write(pifd, "Yes\n", 4);
-read_len=read(pofd,&buffer, 100000); // nonblocking read in fact. probably in a loop
-				     // Here you can even provide user with
-print_message(buffer, read_len);     // progress information.
-
-wait(&exitcode);
-close(pifd);
-close(pofd);
-analyze_exitcode_and_notify_user(exitcode);
-
-Bye,
-    Oleg
-
-
-
+> 
+> Hans
