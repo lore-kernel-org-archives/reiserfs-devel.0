@@ -1,60 +1,86 @@
-From: Christer Weinigel <christer@weinigel.se>
-Subject: Re: silent semantic changes with reiser4
-Date: 06 Sep 2004 16:52:21 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <m3wtz7h2l6.fsf@zoo.weinigel.se>
-References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
-	<Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
-	<m3eklm9ain.fsf@zoo.weinigel.se> <20040905111743.GC26560@thundrix.ch>
-	<1215700165.20040905135749@tnonline.net>
-	<20040905115854.GH26560@thundrix.ch>
-	<1819110960.20040905143012@tnonline.net>
-	<20040906105018.GB28111@atrey.karlin.mff.cuni.cz>
-	<6010544610.20040906143222@tnonline.net>
+From: "E. Gryaznova" <grev@namesys.com>
+Subject: Re: Too many links error
+Date: Mon, 06 Sep 2004 18:49:04 +0400
+Message-ID: <413C78E0.7070109@namesys.com>
+References: <20040903192121.39231.qmail@web51308.mail.yahoo.com>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <6010544610.20040906143222@tnonline.net>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Spam <spam@tnonline.net>
-Cc: Pavel Machek <pavel@suse.cz>, Tonnerre <tonnerre@thundrix.ch>, Christer Weinigel <christer@weinigel.se>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Return-path: <reiserfs-list-return-21530-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <20040903192121.39231.qmail@web51308.mail.yahoo.com>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "[Izomorfix {metal}]" <izohacker@yahoo.com>
+Cc: reiserfs-list@namesys.com
 
-Spam <spam@tnonline.net> writes:
+Hello.
 
-> >>   The problem with the userspace library is standardization. What
-> >>   would be needed is a userspace library that has a extensible plugin
-> >>   interface that is standardized. Otherwise we would need lots of
-> >>   different libraries, and I seriously doubt that 1) this will happen
-> >>   and 2) we get all Linux programs to be patched to use it.
-> 
-> > libvfs from midnight commander (and anything build on the top of it)
-> > already is very extensible.
-> 
->   This wasn't my point. My point was about all applications using it.
->   Most aren't.
+Thank you for the report.
+Is this easy reproducible for you? If yes -- would you please set 
+CONFIG_REISER4_DEBUG and CONFIG_REISER4_DEBUG_OUTPUT  turned "on" and 
+send us  the dmesg?
 
-So why do you think that just because you put an interface into the
-everyone will automatically start using it and use it without any
-conflicts (i.e. is foo/icon a windows icon, a gif, png, or jpeg file,
-what size is it, 16x16, 48x48...).  
+Thanks,
+Lena.
 
-When you add a new shared namespace, userspace must be taught about it
-anyways.  So start with a userspace library, convince people to use
-it, and when you know what people want, _then_ put it into the kernel
-to increase performance or security.  Don't start with "wouldn't it be
-nice if" without any thought behind it, it will just mean that we get
-another useless and misdesigned interface in the kernel that we have
-to live with for years.
+[Izomorfix {metal}] wrote:
 
-Do you know how long it took to get rid of /dev/cua0 and the locking
-mess associated with it?  (Deity!  I just checked on my FC2 system,
-it's still there.  I thought it would be dead by now.)
+>Hello, I'm fairly new to the list.
+>Here's my problem (from dmesg):
+>
+>reiser4[emerge(7829)]: create_child_common
+>(fs/reiser4/plugin/dir/dir.c:534)[nikita-2219]:
+>WARNING: Failed to initialize dir for 1304053: -31
+>
+>I get a lot of these whenever I try to emerge (gentoo)
+>2 times:
+>emerge vixie-cron. (works)
+>emerge vixie-cron (spits this error)
+>repeat.
+>Could you tell me how to fix it (what to post.)
+>
+>Almost forgot: here's the output of emerge:Traceback
+>(most recent call last):
+>  File "/usr/bin/emerge", line 2605, in ?
+>    unmerge("clean", ["world"])
+>  File "/usr/bin/emerge", line 1852, in unmerge
+>   
+>retval=portage.unmerge(mysplit[0],mysplit[1],portage.root,mysettings,unmerge_action
+>not in ["clean","prune"])
+>  File "/usr/lib/portage/pym/portage.py", line 2494,
+>in unmerge
+>    mylink.unmerge(trimworld=mytrimworld,cleanup=1)
+>  File "/usr/lib/portage/pym/portage.py", line 5261,
+>in unmerge
+>   
+>a=doebuild(myebuildpath,"prerm",self.myroot,self.settings,cleanup=cleanup,use_cache=0)
+>  File "/usr/lib/portage/pym/portage.py", line 2155,
+>in doebuild
+>    os.makedirs(mysettings["T"])
+>  File "/usr/lib/python2.3/os.py", line 153, in
+>makedirs
+>    makedirs(head, mode)
+>  File "/usr/lib/python2.3/os.py", line 154, in
+>makedirs
+>    mkdir(name, mode)
+>OSError: [Errno 31] Too many links:
+>'/var/tmp/portage/aterm-0.4.2-r8'
+>
+>Please bear with me, cause I'm a newbie (15 years and
+>counting :) )
+>
+>
+>		
+>_______________________________
+>Do you Yahoo!?
+>Win 1 of 4,000 free domain names from Yahoo! Enter now.
+>http://promotions.yahoo.com/goldrush
+>
+>
+>  
+>
 
-  /Christer
 
--- 
-"Just how much can I get away with and still go to heaven?"
-
-Freelance consultant specializing in device driver programming for Linux 
-Christer Weinigel <christer@weinigel.se>  http://www.weinigel.se
