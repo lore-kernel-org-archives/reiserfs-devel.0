@@ -1,49 +1,84 @@
-From: Matthias Andree <matthias.andree@gmx.de>
-Subject: 2.4.24 Oops in find (maybe reiserfs related)
-Date: Tue, 20 Jan 2004 16:32:43 +0100
-Message-ID: <20040120153242.GA19858@merlin.emma.line.org>
+From: "Wolfgang Riedmann" <wolfgang@riedmann.it>
+Subject: (Fwd) wait_buffer_until_released on Debian 3 i386 2.4.22
+Date: Tue, 20 Jan 2004 19:07:14 +0100
+Message-ID: <400D7C62.28502.314998@localhost>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16588-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: Quoted-printable
+Return-path: <reiserfs-list-return-16589-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+Content-description: Mail message body
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Linux-Kernel mailing list <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-This happened during the nightly updatedb, which calls find. The hex
-string is "resi", "locate resi" finds a file in a reiserfs file system,
-/usr.
+Hi,
 
-reiserfsck 3.6.11 afterwards fixed some
-vpf-10680: The file [103048 103049] has the wrong block count in the
-StatData (2) - corrected to (1)
+the problem with the server crash has been repeated.
 
-But I doubt these are related. Are they?
+It' s a completely new machine, installed december, 21 2003.
 
-Unable to handle kernel paging request at virtual address 72657369
- printing eip:
-72657369
-*pde = 00000000
-Oops: 0000
-CPU:    0
-EIP:    0010:[<72657369>]    Not tainted
-EFLAGS: 00010206
-eax: f8bce0a0   ebx: 72657369   ecx: c1c1f13c   edx: f117dec0
-esi: ec837f98   edi: 08060828   ebp: bffff258   esp: ec837f8c
-ds: 0018   es: 0018   ss: 0018
-Process find (pid: 7765, stackpage=ec837000)
-Stack: c014ebf1 f117dec0 bffff530 f117dec0 f7edae80 00001000 ebcc0be0 00000001
-       00000008 00000001 00001000 ec836000 bffff530 c01090eb 08060831 bffff530
-       080541cc bffff530 08060828 bffff258 000000c4 0000002b 0000002b 000000c4
-Call Trace:    [sys_lstat64+129/144] [system_call+51/56]
-Call Trace:    [<c014ebf1>] [<c01090eb>]
-Code:  Bad EIP value.
+The exact error in the logs is 
 
+Jan 20 18:54:50 lxworksystem kernel: vs-3050: 
+wait_buffer_until_released: nobody releases buffer (dev 68:07, size 
+4096, blocknr 3145728, count 3, list 0, state 0x10019, page c1568940, 
+(UPTODATE, CLEAN, UNLOCKED)). Still waiting (-1710000000)  JDIRTY 
+!JWAIT
+
+and a smbd process is using 99% CPU. No Samba connect ist possible, 
+ssh works so I could read the errors from /var/log/messages.
+
+Please let me know what I can do to solve this error as it's 
+occurring now every 2-3 days!
+
+As I wrote before the machine is a HP Compaq ProLiant ML 350 G3 with 
+512 MB of memory, a Compaq Smart Array 641 with 128 MB cache and 4 
+discs (Compaq, I don't know the manufacturer) each 36 GB 10k rpm that 
+are forming a hardware RAID5 array so the OS sees only one big drive 
+with around 100 GB, and yes, the biggest partition with 87 G has 
+about 46 GBs of data.
+
+Thank you in advance!
+
+Wolfgang 
+
+------- Forwarded message follows -------
+From:           	"Wolfgang Riedmann" <wolfgang@riedmann.it>
+Organization:   	Riedmann
+To:             	reiserfs-list@namesys.com
+Date sent:      	Fri, 16 Jan 2004 13:53:27 +0100
+Subject:        	wait_buffer_until_released on Debian 3 i386 2.4.22
+Priority:       	normal
+
+[ Double-click this line for list subscription options ] 
+
+Hi,
+
+I' m having a problem on a HP/Compaq ProLiant ML350 with a SmartArray 
+641 RAID controller. Sometimes (the first time ten days ago, the 
+second time yesterday eventing) a smbd process seems to provocate a 
+wait_buffer_until_released error. The smbd process is taking 100% of 
+the CPU, no Windows client can do anything, but sshd works so I can 
+connect.
+
+Unfortunately, I was not able to see the messages after the reboot. 
+For the OS the drive is one big drive with about 100 G space....
+
+Is there any patch or fix or something other I can do?
+
+Thank you very much!
+
+Wolfgang
+
+
+------- End of forwarded message -------
 -- 
-Matthias Andree
+-- Wolfgang Riedmann
+-- Individuelle EDV-L=F6sungen - Soluzioni informatiche personalizzate
+-- I-39012 Meran, V. Laurin-Str. 2d
+-- http://www.riedmann.it - wolfgang@riedmann.it
 
-Encrypt your mail: my GnuPG key ID is 0x052E7D95
+
