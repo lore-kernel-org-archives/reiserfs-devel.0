@@ -1,39 +1,54 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: 2.4.21 reiserfs oops
-Date: Mon, 23 Jun 2003 13:53:56 +0400
-Message-ID: <20030623095356.GA12936@namesys.com>
-References: <87he6iyzyj.fsf@amaterasu.srvr.nix>
+From: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
+Subject: Re: resize_reiserfs probs
+Date: Mon, 23 Jun 2003 12:57:30 +0200
+Message-ID: <3EF6DD1A.5040802@gmx.net>
+References: <200306230132.08812.harryrat@gmx.de> <3EF69F09.90404@gmx.net> <200306230902.05070.harryrat@gmx.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14669-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14670-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <87he6iyzyj.fsf@amaterasu.srvr.nix>
+In-Reply-To: <200306230902.05070.harryrat@gmx.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nix <nix@esperi.demon.co.uk>
-Cc: Linux Kernel Development <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
+To: Harald Radke <harryrat@gmx.de>
+Cc: reiserfs-list@namesys.com
 
-Hello!
+Harald Radke wrote:
+> Good morning all!
+> 
+> 
+>>>"resize_reiserfs: can't shrink fs; too many blocks already allocated"
+>>>[...]
+> 
+> 
+>>I know this one very well. Please tell us the exact (including spaces)
+>>command line you were using to resize it. I suspect user error here - at
+>>least it was one when I got this error.
+> 
+> 
+> the command was 
+> 
+> -> resize_reiserfs -s -9240720K /dev/hda3
+> 
+> I also tried
+> 
+> -> resize_reiserfs -s -9200M /dev/hda3
+> (for "testing" purposes"....same prob)
 
-On Sun, Jun 22, 2003 at 03:00:20PM +0100, Nix wrote:
+Your command doesn't resize to 9200M, it makes the fs 9200M SMALLER. Of
+course that is going to fail. Please try
 
-> Jun 22 13:52:42 loki kernel: Unable to handle kernel NULL pointer dereference at virtual address 00000001 
+resize_reiserfs -s 9240720K /dev/hda3
+or
+resize_reiserfs -s 9200M /dev/hda3
 
-This is very strange address to oops on.
+and you should be fine. The minus sign is the key to your problem.
 
-> Jun 22 13:52:43 loki kernel: EIP:    0010:[<c0092df4>]    Not tainted 
+HTH,
+Carl-Daniel
+-- 
+http://www.hailfinger.org/
 
-And the EIP is prior to kernel start which is also very strange.
-On the other hand the address c0192df4 is somewhere inside reiserfs code,
-so it looks like a single bit error, I'd say.
-
-Can you run memtest86 for some time to verify that your RAM is OK?
-(hm, and the oops got twice to the logs which is pretty strange thing, too,
-never seen anything like this).
-
-Bye,
-    Oleg
