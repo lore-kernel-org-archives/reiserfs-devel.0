@@ -1,33 +1,73 @@
-From: "Burnes, James" <james.burnes@gwl.com>
-Subject: RE: 2.6.7 reiser4 patch ?
-Date: Tue, 6 Jul 2004 10:26:57 -0600
-Message-ID: <3DF9165145FACB4C96977FF650C1E9040C46A14F@its-mail1.its.corp.gwl.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: a hosed reiserfs
+Date: Tue, 06 Jul 2004 12:05:03 -0700
+Message-ID: <40EAF7DF.3030507@namesys.com>
+References: <3DF9165145FACB4C96977FF650C1E9040C46A14E@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19531-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19533-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
+In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C46A14E@its-mail1.its.corp.gwl.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: =?iso-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, Mikael Cluseau <nwrk@nwrk.dyndns.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Burnes, James" <james.burnes@gwl.com>
+Cc: Bruce Israel <israel@tux.org>, reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>, Alexander Lyamin aka FLX <flx@namesys.com>
 
-Is namesys et al trying for 2.6.8 inclusion for Reiser4?
+Burnes, James wrote:
 
-jim burnes
-security engineer
-great-west, denver
-=20
+>Speaking of which.  Does ReiserFS receive funding from the Linux Fund?
+>(The MasterCard which sends a percentage of all of your MC transactions
+>to open source projects?)
+>  
+>
+No we don't, is there real money in the Linux Fund?
 
->=20
-> The -mm tree is used because -mm stuff goes into mainline and
-> that's what the Reiser4 people are trying to accomplish...
->=20
-> There's nothing wrong with sticking to what Namesys gives :)
->=20
-> --
-> mjt
+>
+>
+>jim burnes
+>security engineer
+>great-west, denver
+> 
+>
+>  
+>
+>>-----Original Message-----
+>>From: Hans Reiser [mailto:reiser@namesys.com]
+>>Sent: Sunday, July 04, 2004 4:57 PM
+>>To: Bruce Israel
+>>Cc: reiserfs-list@namesys.com; Vitaly Fertman; Alexander Lyamin aka
+>>    
+>>
+>FLX
+>  
+>
+>>Subject: Re: a hosed reiserfs
+>>
+>>Bruce Israel wrote:
+>>
+>>    
+>>
+>>>On Mon, Jun 28, 2004 at 10:46:05AM -0700, Hans Reiser wrote:
+>>>
+>>>
+>>>      
+>>>
+>>>>www.namesys.com/support.html takes credit cards.  Thanks for being
+>>>>        
+>>>>
+>our
+>  
+>
+>>>>customer.
+>>>>
+>>>>        
+>>>>
+>
+>
+>
+>  
+>
 
