@@ -1,79 +1,77 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Handling holes by reiser4 cryptcompress (crc) object plugin
-Date: Tue, 08 Feb 2005 18:30:02 +0300
-Message-ID: <4208DAFA.5090007@namesys.com>
+From: Jake Maciejewski <maciejej@msoe.edu>
+Subject: Re: AMD64 progress?
+Date: Tue, 08 Feb 2005 12:25:58 -0600
+Message-ID: <1107887159.12393.6.camel@gentoo>
+References: <20050114201751.GB5883@backtop.namesys.com>
+	 <Pine.LNX.4.44.0501152102230.10167-100000@ccc7.wpi.edu>
+	 <20050207132934.GA7482@backtop.namesys.com>
+	 <1107804896.10689.17.camel@gentoo>
+	 <20050207195147.GB7482@backtop.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20050207195147.GB7482@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Alex Zarochentsev <zam@namesys.com>
+Cc: Isaac Chanin <chanin@WPI.EDU>, reiserfs-list@namesys.com
 
-Hi everyone.
-This holes design looks pretty reasonable and Hans asked me to discuss 
-in the list about
-possible obscured issues.
+On Mon, 2005-02-07 at 22:51 +0300, Alex Zarochentsev wrote:
+> On Mon, Feb 07, 2005 at 01:34:56PM -0600, Jake Maciejewski wrote:
+> > I'm running reiser4progs 1.0.3 and 2.6.10 patched with reiser4 from
+> > 2.6.11-rc3-mm1 (and this patch).
+> > 
+> > I've been doing the simultaneous dd and kernel compilation that has
+> > always crashed reiser4 on AMD64 in the past. After about an hour with
+> > debugging and two hours without debugging, I'm thinking of more ways to
+> > torture the FS. For now it looks like reiser4 is working on AMD64!
+> 
+> i think so.  reiser4/amd64 passed 5h of stress testing instead of crashing in
+> first 30min.
+> 
 
-First, this is a short report about crc-plugin business.
-All crc-file operations are going per-cluster. Cluster size is an 
-attribute of crc-file
-assigned by user as N*PAGE_SIZE (N==1, 2, 4, 8, 16). So each crc-file is 
-considered as
-a set of chunks and the crc object plugin manages the following objects:
-.page cluster of index I (a set of N pages, the first one has index 
-I*PAGE_SIZE),
-.disk cluster of key K (a set of mergeable items (powered by reiser4 
-ctail item plugin),
- the first of which has key K).
-Disk clusters contain processed (compressed, encrypted) data, whereas 
-page clusters
-contain plain text.
+Have you been stress testing with debugging disabled? I was doing some
+extreme testing and crashed reiser4 with this patch twice. The same test
+that crashed it one of the times passes on reiserfs (didn't try the
+other), and if enable debugging, I can torture reiser4 all night and
+still not crash it. I'll do some more tests and try to identify a
+simple, reproducible crash scenario.
 
-The file can contain holes. Currently if we create a hole which occupies 
-more then one
-cluster, we don't represent it by any items. We use to say that 
-appropriate disk cluster
-is _fake_ (it doesn't exist neither in memory nor on disk). Partial 
-holes are represented
-by real disk clusters (a hole is partial if it starts in the cluster 
-from non-zero offset).
+> > 
+> > How did you track this bug down anyway? Do you have AMD64 hardware, or
+> 
+> yes, we have amd64 h/w now.
+> 
+> > did you look over the code and discover an invalid assumption? 
+> 
+> I found it only after realizing that reiser4_find_next_set_bit
+> is broken :( (its simple replacement worked fine)
+> 
+> > If this
+> > bug is indeed fixed, are we any closer to inclusion in vanilla?
+> > 
+> > On Mon, 2005-02-07 at 16:29 +0300, Alex Zarochentsev wrote:
+> > > Hello,
+> > > 
+> > > On Sat, Jan 15, 2005 at 09:26:01PM -0500, Isaac Chanin wrote:
+> > > > 
+> > > > Also tested this patch, similar results as to what I've been getting - 
+> > > > ie. working for awhile (more than a few hours even this time, but that 
+> > > > could just be coincidence, i suppose) and then going down with the normal 
+> > > > reiser4_find_next_zero_bit(bnode_working_data(bnode), end_offset, 
+> > > > start_offset) >= end_offset error.  For the exact message see 
+> > > > http://users.wpi.edu/~chanin/r4newpatch.txt.
+> > > > 
+> > > 
+> > > please try attached patch (it is for fs/reiser4 subtree)
+> > > 
+> > -- 
+> > Jake Maciejewski <maciejej@msoe.edu>
+> > 
+> 
+-- 
+Jake Maciejewski <maciejej@msoe.edu>
 
-The crc-specific file_read(), mmap(), etc.. call readpage(), readpages() 
-which use to fill
-pages by plain text prepared from the data which is contained in the 
-appropriate disk cluster,
-and if the last one is not found (dc is fake) the pages are filled by 
-zeroes. Note we take
-care of this to be not found in a good sense: the search routine should 
-return NOTFOUND
-(not an error).
-If we modify a hole page cluster (by crc-specific file_write, mmapped 
-write), and the
-appropriate disk cluster is fake, then real disk cluster will be 
-created. If we truncate
-up/down a hole page cluster and the appropriate dc is fake, we don't 
-create a real one
-(just update stat-data).
-
-Example of possible crc-file evolution (cluster size == 64K):
-(Operations/Resulted disk structure)
-1. create / disk stat-data (i_size == 0)
-2. truncate up to 10G / disk stat-data (i_size == 10G)
-3. truncate down to 20M / disk stat-data (i_size == 20M)
-4. write 100K from off 70K /disk stat-data (i_size == 20M) + 2 disk 
-clusters (key1== 64K, key2 == 128K)
-5. truncate down to 100K / disk stat-data (i_size == 100K) + 1 disk 
-cluster (key1==64K)
-6. truncate down to 50K / disk stat-data (i_size == 50K)
-etc...
-
-This design has been encoded and seems to be working on various 
-benchmarks which
-create intensive hole fragmentation, but ... so all 
-questions/suggestions are welcome.
-
-Thanks,
-Edward.
