@@ -1,55 +1,46 @@
-From: Christian Mayrhuber <cmayr@iicm.edu>
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Wed, 31 Mar 2004 20:37:38 +0200
-Message-ID: <200403312037.38276.cmayr@iicm.edu>
-References: <20040331163524.74880.qmail@web25004.mail.ukl.yahoo.com>
+Date: Wed, 31 Mar 2004 13:46:56 -0500
+Sender: news <news@sea.gmane.org>
+Message-ID: <878yhgrh0f.fsf@uhoreg.ca>
+References: <87y8phtxk6.fsf@uhoreg.ca> <200403310620.i2V6K7D9018881@sirius.cs.pdx.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-17630-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17631-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040331163524.74880.qmail@web25004.mail.ukl.yahoo.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Wednesday 31 March 2004 18:35, Narcoleptic Electron wrote:
-> Christian Mayrhuber wrote:
-> > If a novice user encounters a directory called '+'
-> > for the first time, not
-> > knowing there is meta information available in
-> > reiser4, this will result in
-> > a bug report, for sure.
-> >
-> > If I had to choose between '+' and 'metas' I'd go
-> > with 'metas'.
->
-> "Metas" is only meaningful in English.
->
->
-> ______________________________________________________________________
-> Post your free ad now! http://personals.yahoo.ca
+>>>>> "Elliott" == The Amazing Dragon (Elliott Mitchell) <ehem@cs.pdx.edu> writes:
 
-No, according to babelfish
+[...]
 
-translation from
+Elliott> Though you do have a point that the GUI tools filenames with
+Elliott> '&' or '!'  becomes more common. '\' does have the advantage of
+Elliott> simply needing to by typed twice (rather than one key followed
+Elliott> by shift-number combo). Useful if you need to tell the tell the
+Elliott> GUI what the file actually is.
 
-English: meta information=20
+Yes.  I think that \ is nice because you just have to type it twice in
+the shell.  It is also a reserved character in DOS/Windows, so at least
+Windows users won't be in the habit of naming their files with \.  (It's
+also an uncommon character to begin with.)
 
-to
+One other problem, though, that I forgot to mention in my last post, is
+that in the shell, or in a script, you would have to type it twice,
+whereas in a GUI, you only have to type it once, which may lead to
+confusion.
 
-Spanish: informaci=F3n del meta
-=46rench: l'information de m=E9ta
-German: Metainformationen
-Italian: le informazioni del meta
-Portuguese: informa=E7=E3o do meta
+Overall, I in general don't like the idea of adding a new separator
+character, but if we did, I think \ would be the way to go.
 
-I've not tried how the plural translates...
-I've not understood the chinese, korean and japanese icons. :-)
-I don't know how bablefish handles words it doesn't know.
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
-=2D-=20
-lg, Chris
