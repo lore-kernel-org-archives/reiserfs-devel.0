@@ -1,54 +1,38 @@
-From: Andreas Dilger <adilger@clusterfs.com>
-Subject: Re: [Fwd: Re: [alg] reiserfs and filesystem labels]
-Date: Sun, 16 Mar 2003 15:58:56 -0700
-Message-ID: <20030316155856.F12806@schatzie.adilger.int>
-References: <1047846988.2691.12.camel@localhost.localdomain>
+From: Pierre Abbat <phma@webjockey.net>
+Subject: Re: help recover filesystem corrupted by failing ide controller
+Date: Sun, 16 Mar 2003 18:48:29 -0500
+Message-ID: <200303161848.29929.phma@webjockey.net>
+References: <200303141942.00679.phma@webjockey.net> <200303152013.46523.phma@webjockey.net> <200303161833.00381.vitaly@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13287-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13289-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200303161833.00381.vitaly@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <1047846988.2691.12.camel@localhost.localdomain>; from newton@hammet.net on Sun, Mar 16, 2003 at 02:36:23PM -0600
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Newton Hammet <newton@hammet.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list <reiserfs-list@namesys.com>
 
-On Mar 16, 2003  14:36 -0600, Newton Hammet wrote:
-> However when I create a reiserfs filesystem in the following manner:
-> 
-> /sbin/mkreiserfs --label bigfs_0035 /dev/hdg8
-> 
-> and attempt a mount in the following manner:mount: no such partition
-> found
-> 
-> 
-> mount -L bigfs_0035 /mnt/bkup
-> 				-or-
-> mount LABEL=bigfs_0035 /mnt/bkup
-> 
-> I get the following message:
-> 
-> mount: no such partition found
+On Sunday 16 March 2003 10:33, Vitaly Fertman wrote:
+> Hi,
+>
+> > reiserfs_open_journal: journal parameters from super block does not match
+> > to journal parameters from journal.
+>
+> There is a new check for journal parameters were added which helps to
+> recover fs with relocated journal and in a few other cases. These
+> parameters were not stored correctly in old kernels before relocated
+> journal appeared. This is nothing to worry about, and you can fix with fsck
+> --rebuild-sb help - say there to fix parameters in the jouranl by ones from
+> the super block.
 
-The "mount" command doesn't understand labels for reiserfs.  A while ago,
-I managed to get labels and UUIDs added to the reiserfs superblock, but
-I never followed through with adding support for reading these in "mount".
-You can simply add support directly to mount for reading the UUID and
-LABEL fields from the reiserfs superblock.
+Thanks. I successfully refscked /var and /home and the computer is up and 
+running.
 
-Alternately, the current e2fsprogs work-in-progress (WIP) release _finally_
-has the libblkid library included in it, and it should be pretty easy to
-change mount over to using this library, which has support for identifying
-all sorts of LABEL/UUID identifiers (this is what fsck will now use for
-doing fsck-by-label).
-
-Cheers, Andreas
---
-Andreas Dilger
-http://sourceforge.net/projects/ext2resize/
-http://www-mddsp.enel.ucalgary.ca/People/adilger/
-
+phma
+-- 
+.i toljundi do .ibabo mi'afra tu'a do
+.ibabo damba do .ibabo do jinga
