@@ -1,39 +1,47 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: reproducable deadlock condition (reiser4)
-Date: Thu, 30 Sep 2004 19:20:23 +0400
-Message-ID: <1096557622.1462.19.camel@tribesman.namesys.com>
-References: <1096116193.12503.7.camel@leto.cs.pocnet.net>
-	 <559718553.20040925144815@tnonline.net>
-	 <1096116729.12503.15.camel@leto.cs.pocnet.net>
-	 <1096472922.11946.2.camel@leto.cs.pocnet.net>
-	 <1096554187.4332.1.camel@leto.cs.pocnet.net>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: plugins - examples and (more) docs
+Date: Thu, 30 Sep 2004 10:52:35 -0700
+Message-ID: <415C47E3.9010703@namesys.com>
+References: <41556502.6030505@desy.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21976-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21977-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1096554187.4332.1.camel@leto.cs.pocnet.net>
+In-Reply-To: <41556502.6030505@desy.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Christophe Saout <christophe@saout.de>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Martin.Gasthuber@desy.de
+Cc: Reiserfs-List@namesys.com
 
-Hello
+Martin Gasthuber wrote:
 
-On Thu, 2004-09-30 at 18:23, Christophe Saout wrote:
-> Hello,
-> 
-> I'm still offering the possibility to debug this deadlock on my machine,
-> is really no one interested? :(
-> 
-Sorry, there are ones.
-
-> Not even a comment?
-> 
-
-Would you try to grab Sysrq+T's output via serial console when system
-hangs?
-
-
+> Hi,
+>
+>   for our large storage system holding half a petabyte of experimental 
+> physics data, we are looking for a new nameservice implementation. 
+> Roughly this means - just store filenames in a hierarchical fashion 
+> (as usual) but only store metadata (from the other storage system 
+> components i.g. disk-cache and tape store) and no real data (this is 
+> in the cache - one or more times, and the 'real' copy is on tape). 
+> Right now we have a DB (simple key/value) system with a faked NFS 
+> server code on top.
+> While looking at other ways and making proof of concept implementation 
+> i 'traped' into reiser4 with the important plugin feature. For our 
+> system we need 'unique + persistent' IDs for files with the ability to 
+> map in both directions (name -> id, id -> name), extended attributes 
+> and virtual files. From what i understand, reading the reiser4 docs 
+> i've found, all this should be feasible by creating new plugins for 
+> files and IDs. Because i like 'real' stuff - im' looking for plugin 
+> example code and more docs related to plugin creation and integration. 
+> Any idea where i can find that ???
+>
+> Regards,
+>   Martin
+>
+>
+You are right that this is doable, for examples see our source code 
+which is much better commented than the rest of the kernel (disclaimer: 
+akpm code is better commented than ours).
