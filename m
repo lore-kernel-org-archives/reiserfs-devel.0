@@ -1,51 +1,54 @@
 From: Linus Torvalds <torvalds@osdl.org>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 16:27:21 -0700 (PDT)
-Message-ID: <Pine.LNX.4.58.0408261625180.2304@ppc970.osdl.org>
-References: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com>
- <Pine.LNX.4.58.0408261315110.2304@ppc970.osdl.org> <412E69D2.50503@namesys.com>
+Subject: Re: [some sanity for a change] possible design issues for hybrids
+Date: Thu, 26 Aug 2004 16:24:51 -0700 (PDT)
+Message-ID: <Pine.LNX.4.58.0408261619230.2304@ppc970.osdl.org>
+References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com>
+ <200408262128.41326.vda@port.imtp.ilyichevsk.odessa.ua>
+ <Pine.LNX.4.58.0408261132150.2304@ppc970.osdl.org>
+ <20040826191323.GY21964@parcelfarce.linux.theplanet.co.uk>
+ <20040826203228.GZ21964@parcelfarce.linux.theplanet.co.uk>
+ <Pine.LNX.4.58.0408261344150.2304@ppc970.osdl.org>
+ <20040826212853.GA21964@parcelfarce.linux.theplanet.co.uk>
+ <Pine.LNX.4.58.0408261436480.2304@ppc970.osdl.org>
+ <20040826223625.GB21964@parcelfarce.linux.theplanet.co.uk>
+ <Pine.LNX.4.58.0408261538030.2304@ppc970.osdl.org>
+ <20040826225308.GC21964@parcelfarce.linux.theplanet.co.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20841-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20842-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <412E69D2.50503@namesys.com>
+In-Reply-To: <20040826225308.GC21964@parcelfarce.linux.theplanet.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: viro@parcelfarce.linux.theplanet.co.uk
+Cc: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
 
 
-On Thu, 26 Aug 2004, Hans Reiser wrote:
->
-> Linus Torvalds wrote:
-> >
-> >For example, it's likely that most filesystems would _not_ allow linking 
-> >of a named stream anywhere else.
->
-> Why?  It is just a file that inherits its stat data and is referenced by 
-> a concatenation method of its parent directory.  The link will also 
-> inherit its stat data from the original parent directory.
+On Thu, 26 Aug 2004 viro@parcelfarce.linux.theplanet.co.uk wrote:
+> 
+> What dentry->d_mountpoint?  No such thing...
 
-In reiser4, maybe. Not in general. Look at what other filesystems do for 
-attributes..
+Sorry - set "dentry->d_mounted++" + "add vfsmount/dentry to hashes".
 
-> > And you might not be able to change the 
-> >permissions or date on the named stream either, since it may or may not 
-> >have a separate date/permission thing from the container.
->
-> You should be able to change the permission and data, but when you 
-> change it, you change it for the whole container.
+Yes, it's not a direct list off the dentry, but it effectively is the same
+thing.
 
-Why? I'd much rather disallow it, than allow it and then have "nonlocal" 
-effects.
+So basically: the "d_mounted++" just makes sure we get into
+"lookup_mnt()". That's where we will usually find the actual mount thing.
 
-I can also see a filesystem validly having _extra_ permissions (ie apart
-from the container) on it too.
+And that's also where the special case comes in: if we _don't_ find the 
+mount thing there, that's where we need to create it. That will only 
+happen if somebody looks it up using another namespace, though, so it 
+should be rare.
 
-Not all the world is reiser4. 
+And when it does happen, we can just create a new vfsmount - we have all
+the information there (we'll have to walk the per-inode-or-whatever
+vfsmount list to find all the information to populate the thing with, of
+course. But we need that list _anyway_, so it should be a fairly 
+straightforward special case).
 
-		Linus
+			Linus
