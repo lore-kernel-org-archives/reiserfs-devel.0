@@ -1,106 +1,95 @@
-From: Robert_Thilsted@ord.uscourts.gov
-Subject: Re: Lost Files
-Date: Wed, 29 Oct 2003 07:28:45 -0800
-Message-ID: <OF0830F813.28F95302-ON88256DCE.00542FCD@uscmail.uscourts.gov>
+From: Christian Mayrhuber <christian.mayrhuber@osiris.at>
+Subject: Re: Furure of ReiserfsV3?
+Date: Wed, 29 Oct 2003 16:44:40 +0100
+Message-ID: <3F9FE068.5060303@osiris.at>
+References: <3F9FC877.9000903@gmx.net>    <1067436839.1632.253.camel@tiny.suse.com> <3F9FCF40.8060807@gmx.net> <.192.168.0.99.1067382465.squirrel@sml.dyndns.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-15933-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15934-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <.192.168.0.99.1067382465.squirrel@sml.dyndns.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Thomas Graham <lkthomas@sml.dyndns.org>
+Cc: reiserfs-list@namesys.com
 
+Thomas Graham wrote:
+>>Chris Mason wrote:
+>>
+>>>On Wed, 2003-10-29 at 09:02, Christian Mayrhuber wrote:
+>>>
+>>>
+>>>>Hi,
+>>>>
+>>>>if someone looks at the feature matrix of the major filesystems in
+>>>>kernel 2.6.0 it tells you the following:
+>>>>
+>>>>FS        data ordered   EA   ACL   Quota   sec. labels   ext. journal
+>>>>======================================================================
+>>>>ext2             N       Y     Y      Y         Y            N
+>>>>ext3             Y       Y     Y      Y         Y            Y
+>>>>xfs              N       N     Y      Y         N            Y
+>>>>jfs              N       N     Y      ?         N            Y
+>>>>reiserfs         N       N     N      Y         N            Y
+>>>>(reiserfs)       Y*      Y**   Y**    Y         N            Y
+>>>>
+>>>>* data logging patches by Chris Mason (SuSE)
+>>>>** EA/ACL patches by Jeff Mahoney (SuSE)
+>>>>
+>>>>The current feature situation does not look great for reiserfs.
+>>>>From my point of view the latest data logging patches seem to behave
+>>>>very solid and are desireable to have in 2.6.x.
+>>>>I have no experience with the EA/ACL patches from Jeff Mahoney, but
+>>>>SuSE uses them for a long time.
+>>>>
+>>>>What can be expected to be seen in reiserfs V3 before reiser4's big
+>>>>time? Or has reiserfs V3 entered a hard feature freeze.
+>>>
+>>>
+>>>SuSE is actively porting all of this.  Even though I've been saying this
+>>>for over a year now, it really is happening ;-)  Basically as we migrate
+>>>to 2.6 for our products, we'll be pulling in all the features we added
+>>>during the 2.4 kernels.
+>>>
+>>>v3 has a lot of users, so we've no intention of leaving them behind in
+>>>the 2.6 series kernels.
+>>>
+>>>-chris
+>>>
+>>>
+>>
+>>Short summary of Hans and Chris Mason:
+>>
+>>FS        data ordered   EA   ACL   Quota   sec. labels   ext. journal
+>>======================================================================
+>>reiserfs         Y       N     N      Y         N            Y
+>>reiserfs_suse    Y       Y     Y      Y         N            Y
+>>
+>>which is, IMHO, pretty good.
+>>Great work developers!
+>>--
+>>lg, Chris
+>>
+>>
+> 
+> 
+> huh ?! where could I get the suse patches ?!
+> anyone could point out an address to download please ? Thanks.
 
+Kernel 2.4:
+Logging + Quota ftp://ftp.suse.com/pub/people/mason/patches/data-logging
+EA/ACL for 2.4 http://acl.bestbits.at
+EA/ACL for reiserfs ftp://ftp.suse.com/pub/people/jeffm/reiserfs/aclea
 
-
-
-
-I have 40+ servers with 18 to 500Gig partitions, hardware and software =
-RAID
-1 and 5, Pentium III - Pentium 4 - AMD Opteron, 1 to 4 processors, and =
-all
-running SuSE 8.2 (moving to 9.0) using reiserfs.  I have never had a ca=
-se
-of data corruption or loss in the last two years.  Your problem could b=
-e
-hardware but the first thing I would do is to try SuSE 9.0.  From my
-experience, definitely not normal.
-
-
-
-|---------+---------------------------->
-|         |           "Alexander       |
-|         |           Waller"          |
-|         |           <a.waller@webpoin|
-|         |           t.at>            |
-|         |                            |
-|         |           10/29/03 01:06 AM|
-|         |                            |
-|---------+---------------------------->
-  >--------------------------------------------------------------------=
--------------------------------------------|
-  |                                                                    =
-                                           |
-  |       To:       <reiserfs-list@namesys.com>                        =
-                                           |
-  |       cc:       <webmaster@webpoint.at>                            =
-                                           |
-  |       Subject:  Lost Files                                         =
-                                           |
-  >--------------------------------------------------------------------=
--------------------------------------------|
-
-
-
-
-Hi !
-Yesterday it was the third time I lost important files on a
-reiserfs-partition.
-This time I had a reasonable backup.
-So i could minimize the time my server was offline.
-I use S.u.S.E 8.2.
-The first to times reiserfsck was not able to repair any file. I found =
-all
-of them in the directory /lost+found, but that was not good for me. ( 1=
-1000
-files there )
-This time about 5000 files were in /lost+found and the rest in the righ=
-t
-place.
-
-Is this a normal behavior or do you think I have a hardware problem ?
-Is the S.u.S.E implementation wrong ?
-Shall I change to ext3 ? ( It=B4s slower, I know )
-
-Whats the right strategie to recover a defetive partition ?
-
-Alex.
-
-
---
-
-WebPoint Internet Solutions
-Alexander Waller
-Vorarlberger Wirtschaftspark
-A-6840 G=F6tzis
-
-www.webpoint.at
-tel.  +43 5523 58244
-fax.  +43 5523 58255
-mobil +43 676 4121128
-
-webmaster-team  : webmaster@webpoint.at
-hostmaster-team : hostmaster@webpoint.at
-
-***                                     ***
-*       WebPoint Internet Solutions       *
-***                                     ***
-
-
-
-=
-
+or use the SuSE/UnitedLinux Kernel 
+ftp://ftp.suse.com/pub/projects/kernel/UnitedLinux/
+-- 
+Mit freundlichen Gruessen,
+Christian Mayrhuber
+Osiris Softwareentwicklung KEG
+Wienerstr. 131
+4020 Linz
 
