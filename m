@@ -1,58 +1,44 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: flush earlier?  (was Re: Congratulations! we have got hash function
- screwed up)
-Date: Fri, 07 Jan 2005 15:52:08 -0800
-Message-ID: <41DF20A8.20506@namesys.com>
-References: <20041228221218.GA6412@schmorp.de> <20050106124505.GE5352@backtop.namesys.com> <20050106142706.GE519@schmorp.de> <41DD5FA9.5020800@namesys.com> <1967462673.20050106171323@tnonline.net> <20050106162619.GG18173@ZenIV.linux.org.uk> <41DEC53A.40403@namesys.com> <41DF1AE1.8090306@slaphack.com>
+From: hanasaki <hanasaki@hanaden.com>
+Subject: Re: --rebuild-tree always finds errors --check is ok
+Date: Fri, 07 Jan 2005 18:44:06 -0600
+Message-ID: <41DF2CD6.7040800@hanaden.com>
+References: <41D71C4E.6000209@hanaden.com> <1104849038.32178.54.camel@tribesman.namesys.com> <41DAD195.1080306@hanaden.com> <200501072343.08374.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23080-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23081-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41DF1AE1.8090306@slaphack.com>
+In-Reply-To: <200501072343.08374.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Masover <ninja@slaphack.com>
-Cc: Chris Dukes <pakrat@www.uk.linux.org>, Spam <spam@tnonline.net>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-David Masover wrote:
+Could you outline exactly what takes place on a rebuild-tree?
 
-> Hans Reiser wrote:
-> | Chris Dukes wrote:
-> |
-> |>
-> |>
-> |> All filesystems will fail or suffer degraded performance under
-> |> certain conditions, you need to determine what conditions are 
-> acceptable
-> |> for your data.
-> |>
-> |>
-> |>
-> | and each generation of software reduces the extent of such conditions.
-> | Reiser4 fixes this problem cleanly.
->
-> I think Reiser4's degraded performance condition is when it gets lots of
-> RAM.  First, a disclaimer -- I don't have the latest reiser4 patch.  But
-> in all versions of the FS, I've found that if I'm ever trying to do
-> anything when reiser finally decides to flush to disk, basically my
-> whole system is locked up.  I haven't tested, but I think this would
-> actually be worse with more RAM, because it would be longer until the
-> flush was forced, so each flush would take longer.
->
-> What is needed is some sort of estimator or estimate.  An estimator
-> would be something that would flush when, based on recent fs load, it
-> was reasonable to expect that RAM would fill up just as the flush was
-> completing.  An estimate would be to flush if a certain percentage of
-> RAM was full, and to go to synchronous mode if memory usage didn't go
-> back below that percentage.
+I was under the incorrect assumption that if a rebuild-tree is 100% 
+successful then the FS is ok and a subsequent rebuild-tree will have 
+nothing to fix/report.  .....
 
-We need to throttle rather than flush, so as to ensure that for every 
-page added to an atom, at least X pages must reach disk, until close to 
-the end of the atom when we just flush it out.
-
-Another missing and needed feature....
-
-Hans
+Vitaly Fertman wrote:
+> On Tuesday 04 January 2005 20:25, hanasaki wrote:
+> 
+>>Version of reiserfsk
+>>======================
+>>== From debian sarge
+>>/sbin/reiserfsck -V
+>>reiserfsck 3.6.19 (2003 www.namesys.com)
+>>== also used the version in knoppix 3.7 with similar results
+>>
+>>the output of two consecutive runs of --rebuild-tree on the same
+>>unmounted partition are attached.  Below is the diff
+> 
+> 
+> rebuild-tree finds some blocks that looks like reiserfs formatted 
+> blocks for the first sight whereas they are not and just belongs to 
+> some file bodies. The consistency check reveals no valid metadata 
+> in them, so they are considered as not valid reiserfs formatted blocks
+> and left not modified on disk. This is why the second run of rebuild-tree
+> finds them again and tries to do all the stuff again.
+> 
