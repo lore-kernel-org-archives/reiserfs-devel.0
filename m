@@ -1,39 +1,39 @@
-From: Alex Zarochentsev <zam@namesys.com>
+From: Andries Brouwer <aebr@win.tue.nl>
 Subject: Re: silent semantic changes with reiser4
-Date: Sun, 29 Aug 2004 16:34:28 +0400
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040829123428.GP5108@backtop.namesys.com>
-References: <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <412DA40B.5040806@namesys.com> <20040826140500.GA29965@fs.tum.de> <1093530313.11694.56.camel@leto.cs.pocnet.net> <20040826150434.GF5733@mail.shareable.org>
+Date: Sun, 29 Aug 2004 15:56:17 +0200
+Message-ID: <20040829135617.GA8021@pclin040.win.tue.nl>
+References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org> <20040828170515.GB24868@hh.idb.hist.no> <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org> <20040828182954.GJ21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408281132480.2295@ppc970.osdl.org> <20040828185613.GK21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408281201290.2295@ppc970.osdl.org> <20040828194129.GA7713@pclin040.win.tue.nl> <Pine.LNX.4.58.0408281244340.2295@ppc970.osdl.org>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Return-path: <reiserfs-list-return-21053-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040826150434.GF5733@mail.shareable.org>
+In-Reply-To: <Pine.LNX.4.58.0408281244340.2295@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Christophe Saout <christophe@saout.de>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Andries Brouwer <aebr@win.tue.nl>, viro@parcelfarce.linux.theplanet.co.uk, Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
 
-On Thu, Aug 26, 2004 at 04:04:34PM +0100, Jamie Lokier wrote:
-> Christophe Saout wrote:
-> > What reiser4 can do, but the VFS can't is to insert or remove data in
-> > the middle of a file. Adding this above the page cache would probably be
-> > almost impossible (truncate seems already complicated enough).
+On Sat, Aug 28, 2004 at 12:46:10PM -0700, Linus Torvalds wrote:
+
+> > Now there is no attribute space, just a shorthand.
 > 
-> That would be one of those "special features" that a
-> VFS-plus-userspace implementation of archive views could take
-> advantage of on reiser4, while using a slower method (sometimes much
-> slower) on all other filesystems.
-> 
-> By the way, can reiser4 share parts of files between different files?
+> It's more than a shorthand, though. _Much_ more.
+> ...
+> Both of those are why it would need special support.
 
-no, those file plugins are not written yet :)
+Yes - support, I do not argue against that.
+But I argue against an attribute space.
 
-Do you mean COW files or some another thing?  For COW files, the reiser4
-support is not enough, we need to teach cp(1) or another utility to inform the
-fs layer that copying can be done by creation of COW files.
+This xterm.icon was xterm.icons - with both large and small
+icons. And these icons have copyrights. Etc. There is just
+an arbitrary tree below this xterm filesystem object.
+The files below are in no way different from the files above.
 
-> -- Jamie
+Unix says: everything is a file. Now we get: everything is
+a directory. And some directories have a file attached.
 
--- 
-Alex.
+Andries
