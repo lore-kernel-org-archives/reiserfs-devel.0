@@ -1,31 +1,36 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: different block sizes and badblocks
-Date: Fri, 21 Jun 2002 18:41:10 +0400
-Message-ID: <20020621184110.A1190@namesys.com>
-References: <93F527C91A6ED411AFE10050040665D0049BFBD5@corpusmx1.us.dg.com>
+From: Harald van Pee <pee@iskp.uni-bonn.de>
+Subject: crash after kernel: clm-6004: convert tail failed inode ... error -28
+Date: Fri, 21 Jun 2002 17:52:52 +0200
+Message-ID: <200206211552.g5LFqqc07539@klee.cb.uni-bonn.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10777-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10778-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <93F527C91A6ED411AFE10050040665D0049BFBD5@corpusmx1.us.dg.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: berthiaume_wayne@emc.com
-Cc: reiserfs-list@namesys.com, newsmail@satimex.tvnet.hu
+To: reiserfs-list@namesys.com
 
-Hello!
+Hi,
 
-On Fri, Jun 21, 2002 at 10:35:25AM -0400, berthiaume_wayne@emc.com wrote:
+this is stock linux 2.4.18 on SuSE 7.0.=20
+Last night I wrote to a disk on an software raid 0 array until there was =
+no=20
+capacity availible on this disk. But my jobs don't stop writing and so I =
+got=20
+a lot of clm-6004: convert tail failed messages,=20
+until the kernel the kernel stops working. The last 6 entries in=20
+/var/log/messages=20
+before the crash are from this kind of messages, nothing else for the nex=
+t 12=20
+hours until I noticed the crash.
+I can't see any problems with the filesystem after the reboot.
+I don't want to reproduce this error, but I want to avoid such kind of cr=
+ashs=20
+in the future.
 
-> 	How does reiserfs normally handle a bad block encountered on a read
-> at this time?
+Is this a known problem and does a patch exists?
 
-I/O errro on journal read or superblock read or root node read are threatened
-like mount failures.
-I/O error on read in is usually handled to userspace as -EIO.
-
-Bye,
-    Oleg 
+Regards
+Harald
