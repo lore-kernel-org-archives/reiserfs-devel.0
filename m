@@ -1,34 +1,35 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: reiser4 mount problem
-Date: Tue, 3 Aug 2004 15:25:56 +0300
-Message-ID: <20040803122556.GJ1284@nysv.org>
-References: <20040803114437.GI1284@nysv.org> <20040803122620.74F2815CC0@mail03.powweb.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: http://www.namesys.com/snapshots/2004.08.03-internal.testing/
+Date: Tue, 3 Aug 2004 17:50:00 +0400
+Message-ID: <200408031750.00291.vitaly@namesys.com>
+References: <200406150022.34578.vitaly@namesys.com> <200407131427.58912.vitaly@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19940-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19941-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200407131427.58912.vitaly@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <20040803122620.74F2815CC0@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Dabbs <david@dabbs.net>
-Cc: reiserfs-list@namesys.com, 'Francesco Biscani' <frbiscani@jumpy.it>
+To: reiserfs-list@namesys.com
 
-On Tue, Aug 03, 2004 at 07:23:31AM -0500, David Dabbs wrote:
->Markus and Francesco, I saw something posted to the list from a gentoo
->contributor regarding a reiser4 rc2-mm2 patch, or are you referring to the
->08-02 patch.
+Hello All,
 
-08.02. I will probably be testing the rc2-mm2 patch, unless someone
-else gets it into Namesys' bk first, but I have some things to take care
-of that don't allow me to use something that may break.
+This snapshot contains updated reiser4progs-0.5.7 and the grub patch.
 
-I haven't actually tried 08.02 yet either, but judging by the changelog
-and vs, it includes what fixed all the issues.
+It includes several bug fixes against the previous snapshot, and has a disk 
+format change -- the layout of blocks that contain backuped fs metadata 
+are changed. 
+
+No kernel patch is needed for the disk format change, however fsck may 
+report about some corruptions on an existent fs if a block was allocated 
+for some data and has become a backup one. Fsck.reiser4 --build-fs is 
+able to fix it of course, although the data in these blocks are lost then.
 
 -- 
-mjt
+Thanks,
+Vitaly Fertman
 
