@@ -1,32 +1,28 @@
-From: David T Hollis <dhollis@davehollis.com>
-Subject: Re: RPM spec file for libaal
-Date: Thu, 28 Aug 2003 13:01:15 -0400
-Message-ID: <3F4E355B.6060204@davehollis.com>
-References: <3F4E3413.30108@davehollis.com>
+From: Mike Fedyk <mfedyk@matchmail.com>
+Subject: Re: write barrier patches for 2.4.21
+Date: Thu, 28 Aug 2003 10:07:25 -0700
+Message-ID: <20030828170725.GB21352@matchmail.com>
+References: <20030825170849.GA14811@mfa.kfki.hu> <20030826214624.GA410@zero> <20030827064103.GA29131@namesys.com> <20030827220337.GB4886@zero> <1062031059.5324.111.camel@tiny.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15474-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15475-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F4E3413.30108@davehollis.com>
+Content-Disposition: inline
+In-Reply-To: <1062031059.5324.111.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <mason@suse.com>
+Cc: Tom Vier <tmv@comcast.net>, Reiserfs List <reiserfs-list@namesys.com>
 
-David T Hollis wrote:
+On Wed, Aug 27, 2003 at 08:37:40PM -0400, Chris Mason wrote:
+> scsi drives don't really need them because most scsi drives don't have
+> write back caching on by default, and most actually listen when you turn
+> the cache off.  The scsi tag queuing makes good performance possible
+> even without writeback caching.
 
-> This can be included in the libaal package to allow users to build it 
-> with rpmbuild -ta libaal-XXXXX.tar.gz.  If there is desire, I could 
-> produce a patch that would allow configure to embed the proper version 
-> in the spec file to help automate future releases.
->
->BUILD_OPTS="--enable-stand-alone"
->%if %{enable_debug}
->BUILD_OPTS="$BUILD_OPTS	--enable-debug"
->%endif
->
-
-Shoot, you can scratch these lines.  No longer needed.
-
+So, in essence, TCQ is exposing what is happening in the cache, and allowing
+control/showing state compared to IDE's non-TCQ write cache.  Do I have that
+right?
