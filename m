@@ -1,73 +1,52 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Sun, 29 Aug 2004 21:42:15 -0400
-Sender: Trond Myklebust <trondmy@trondhjem.org>
-Message-ID: <1093830135.8099.181.camel@lade.trondhjem.org>
-References: <Pine.LNX.4.44.0408271043090.10272-100000@chimarrao.boston.redhat.com>
-	 <412F7D63.4000109@namesys.com> <20040827230857.69340aec.pj@sgi.com>
-	 <20040829150231.GE9471@alias> <4132205A.9080505@namesys.com>
-	 <20040829183629.GP21964@parcelfarce.linux.theplanet.co.uk>
-	 <20040829185744.GQ21964@parcelfarce.linux.theplanet.co.uk>
-	 <41323751.5000607@namesys.com>
-	 <20040829212700.GA16297@parcelfarce.linux.theplanet.co.uk>
-	 <Pine.LNX.4.58.0408291431070.2295@ppc970.osdl.org>
-	 <1093821430.8099.49.camel@lade.trondhjem.org>
-	 <Pine.LNX.4.58.0408291641070.2295@ppc970.osdl.org>
+Date: Sun, 29 Aug 2004 19:18:23 -0700
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <41328E6F.60902@namesys.com>
+References: <Pine.LNX.4.44.0408271043090.10272-100000@chimarrao.boston.redhat.com> <412F7D63.4000109@namesys.com> <20040827230857.69340aec.pj@sgi.com> <20040829150231.GE9471@alias> <4132205A.9080505@namesys.com> <20040829183629.GP21964@parcelfarce.linux.theplanet.co.uk> <20040829185744.GQ21964@parcelfarce.linux.theplanet.co.uk> <41323751.5000607@namesys.com> <20040829212700.GA16297@parcelfarce.linux.theplanet.co.uk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-21095-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.58.0408291641070.2295@ppc970.osdl.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20040829212700.GA16297@parcelfarce.linux.theplanet.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Alexander Viro <viro@parcelfarce.linux.theplanet.co.uk>, Hans Reiser <reiser@namesys.com>, flx@msu.ru, Paul Jackson <pj@sgi.com>, riel@redhat.com, ninja@slaphack.com, diegocg@teleline.es, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, Linux Filesystem Development <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: viro@parcelfarce.linux.theplanet.co.uk
+Cc: flx@msu.ru, Paul Jackson <pj@sgi.com>, riel@redhat.com, ninja@slaphack.com, torvalds@osdl.org, diegocg@teleline.es, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-P=E5 su , 29/08/2004 klokka 19:54, skreiv Linus Torvalds:
+You are assuming that the hiding has to be embodied by the dentry cache. 
+That sounds hard. Let's not do that; I am too lazy.
 
-> The problem really ends up being directories with attributes (where we
-> can't just overmount the existing directory). That's where "openat()"=20
-> helps us.=20
+We can put it at a layer above that. Let us have a "mask" concept. For 
+the purposes of this discussion, the mask can be made totally trivial 
+and hardcoded, with none of the expressive power of my new DoD project, 
+and can probably be coded in a few hours to exclude the metas. For my 
+new DoD project we are creating a configurable, scalable, sophisticated 
+"mask" abstraction, and you must successfully pass through the mask 
+before you can ask if the filesystem contains X/Y/Z. (For the darpa 
+project with the general purpose masks with specifications and all that 
+we will take 6 months, not a few hours.)
 
-Well, yes there has to be a distinction between a true bind mount which
-actually covers the file or directory, and something like the stream
-"bind mount" which doesn't.
+The rest shall wait until after I get a bite to eat, ok?
 
-The stream "bind mount" is just there to allow you to root the
-attributes in a single tree. It can be made functionally entirely
-equivalent to the openat(), but uses pathname semantics (e.g., "//") to
-denote the attribute fork instead of an extra function call.
+Hans
 
-> > Is it just the fantasy of supporting hard-links across "stream
-> > boundaries" (as in "touch a b; ln b a/b; ln a b/a")? I'm pretty sure
-> > nobody wants to have to add cyclic graph detection to their filesystems
-> > anyway. 8-)
->=20
-> It's easy enough to do the graph detection at the VFS layer, exactly=20
-> because of the density of the dentry graph.=20
+viro@parcelfarce.linux.theplanet.co.uk wrote:
 
-Don't you end up having to lock the entire paths b/c/d and a/e/f in
-order to prevent "ln a b/c/d/a; ln b a/e/f/b"?
+>On Sun, Aug 29, 2004 at 01:06:41PM -0700, Hans Reiser wrote:
+>
+>  
+>
+>>How about if you educate me on the problems you see for a bit before I 
+>>respond? I think it might help us move into a constructive discussion.
+>>    
+>>
+>
+>A slew of cache coherency issues (and memory consumption on top of that).
+>Rigth now we have a signle dentry tree for all fs instances, no matter
+>how many times it and its subtrees are visible in the tree.  Which,
+>obviously, avoids all that crap.  As soon as we start trying to have
+>multiple trees over the same fs, we are in for a *lot* of fun.
+>
+>  
+>
 
-> > What other issues would need to be addressed?
-
->  - how to actually test this out in practice (ie getting reiser4 to do th=
-e
->    proper thing wrt the VFS layer, but preferably _also_ having another
->    filesystem like NFSv4 or cifs that actually uses this and shows what
->    the problems are).
-
-As I said, NFSv4 can be made ready pretty quickly: Bruce is already
-finishing up the xattr implementation.
-
->  - whether it makes any sense at all unless we also make at least a few=20
->    other filesystems support it, so that people start using it as an=20
->    "expected feature" rather than a "works only on a couple of machines".
-
-NTFS? ;-)
-
-Cheers,
-  Trond
