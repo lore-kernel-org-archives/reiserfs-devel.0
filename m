@@ -1,55 +1,106 @@
-From: Redeeman <redeeman@metanurb.dk>
-Subject: Re: hans! i found a bug in reiser4 :((((
-Date: Mon, 12 Apr 2004 13:05:05 +0200
-Message-ID: <1081767905.8170.3.camel@redeeman.linux.dk>
-References: <1081698647.5514.3.camel@redeeman.linux.dk>
-	 <1081755850.1183.30.camel@tribesman.namesys.com>
-	 <407A6B87.1080101@fbsd.za.net>
-	 <12910.144.214.5.217.1081766422.squirrel@sml.dyndns.org>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: On plugins, on-disk formatting and such
+Date: Mon, 12 Apr 2004 17:30:06 +0400
+Message-ID: <20040412133006.GA1579@backtop.namesys.com>
+References: <20040410100701.GE5229@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17863-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-17864-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <12910.144.214.5.217.1081766422.squirrel@sml.dyndns.org>
+Content-Disposition: inline
+In-Reply-To: <20040410100701.GE5229@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Markus =?koi8-r?Q?T=F6rnqvist?= <mjt@nysv.org>
+Cc: reiserfs-list@namesys.com
 
-i noticed this while trying to do a livecd with gentoos cataylst, i
-thught it would help speeding up on a reiser4 partition.
+On Sat, Apr 10, 2004 at 01:07:01PM +0300, Markus T=F6rnqvist wrote:
+> First off I'd like to thank the Namesys guys for their excellent work,
+> the latest snapshot has been very stable for me, so stable in fact
+> that my life is boring because of it ;)
+>=20
+> I have like a ton of questions so I'll just put them in this mail and
+> see which points get replied to. Hopefully all ;)
+>=20
+> 1) The xattrs issue never got any replies, although I gathered that it
+>    would be possible to map xattr calls to the Reiser4 API.
+>    Is this fact or fiction? What will the Reiser4 API look like, apart
+>    from control files?
 
-before that i read on the forums that it didnt compile on reiser4, but i
-thought "wtf! lamer! why wouldnt it?!"
+xattrs are possible but we have no plans to use them. =20
+2 APIs are: pseudo files and reiser4 syscall.
 
-but when i moved the build to reiser4 partition, it failed. moving back
-to reiserfs partition, and it builds. with absolutely no change other
-than the fs change. and for cflags, im just using standard. no
-optimization at all.
+>=20
+> 2) Is metadata stored anywhere? If I want to organize all my libs in one
+>    fibre, I make it so, I reboot and do I then have to reset the fibration
+>    for the directory? Is it possible to have persistency here? Wouldn't
+>    a wrong fibration type make the files inaccessible?
+>    Is this addressed in the Reiser4 API somehow?
 
+reiser4 is able to store plugin sets (list of plugin ids for the object) as=
+=20
+a part of the object's stat data.
 
-On Mon, 2004-04-12 at 12:40, Thomas Graham wrote:
-> it seems a very serious problem, are you sure that the problem is come
-> from reiserfs4 ? did you put optimize tag to none when you compile glibc ?
-> because glibc is very sensative on optimize tag, please post the error
-> section to mail list, so that people could help for that, I hope that's
-> not reiser4 problem, errrr...
-> 
-> 
-> > That is correct.
-> >
-> > Vladimir Saveliev wrote:
-> >> Hello
-> >>
-> >>
-> >> Do you mean that you put glibc sources on reiser4 and that make fails?
-> >>
-> >>
-> >
-> >
--- 
-Regards, Redeeman
-redeeman@metanurb.dk
+>=20
+> 3) How big are the chances that the on-disk layout will still change?
+>    On IRC I've got the impression that the chance is next to none,
+>    and I thank you for that!
+>    Still, a lot of people are hesitant to try Reiser4 because of this
+>    fear. Doing an mkfs is not a small thing and some assurance would
+>    surely bring along community testing support.
+>=20
+> 4) http://thebsh.namesys.com/snapshots/2004.03.26/READ.ME
+>    4.1) I have used Reiser4 as my rootfs for a long, long time.
+>         Why does the READ.ME say I can't do it?-) I just never mount
+>         it read-only, so I don't have to remount it read-write and it
+>         just works. Is there something amiss here?
+>   =20
+>    4.2) What exactly does it mean that CONFIG_REISER4_COPY_ON_CAPTURE
+>         is stabler than before? Is it soon safe to configure in?
+>         Is it possible for me to test it on only one filesystem or
+>         do I risk rootfs (and home directory) stability by trying it
+>         out? If I compile it in, what's the best way of testing it?
 
+we still see fs errors if COC enable. they are rare now, but COC is not sta=
+ble
+yet.
+
+>=20
+> 5) If I wanted to write an fs plugin, I gathered that I would not have
+>    to mkfs again. Should this not require some persistency in metadata?
+>    I also gathered that Hans Reiser is against loadable kernel modules
+>    that are in essence filesystem plugins. Is this because a stray
+>    rmmod might cause breakage or something else?
+>    One of the good things for me in Linux is that I can use honest
+>    modules to try something, rmmod, recompile, insmod and I don't
+>    think this is any different.
+>=20
+> 6) I understood there are some NFS issues still left, what other issues
+>    are there? Is it possible to have some TODO list on the web so
+>    people could guess at what's going on? (BTW, Nikita, that doesn't
+>    mean I won't bug you in the future ;)
+>=20
+> 7) http://namesys.com/benchmarks.html#slow.2004.03.26
+>    That is awesome. Could someone give a brief, or rather human-readable,
+>    explanation on why Reiser4 refuses to slow down under those loads?
+>    Not that I'd find those benchmarks hard to swollow per se, I did
+>    see Reiser4 perform superior for myself.
+>    But what is the secret? Atomic transactions?
+
+I think it is a feature of delayed block allocation.=20
+
+>=20
+> Thanks again for the good work and I hope this brings along some discussi=
+on
+> more interesting than the metas/ thread!
+
+>=20
+> --=20
+> mjt
+>=20
+
+--=20
+Alex.
