@@ -1,55 +1,66 @@
-From: Erwin Riegler <riegler@hep.itp.tuwien.ac.at>
-Subject: bug in reiser4
-Date: Tue, 29 Mar 2005 13:55:15 +0200 (CEST)
-Message-ID: <Pine.LNX.4.21.0503291350290.5605-100000@hep.itp.tuwien.ac.at>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: bug in reiser4
+Date: Tue, 29 Mar 2005 17:29:20 +0400
+Message-ID: <1112102960.4650.422.camel@tribesman.namesys.com>
+References: <Pine.LNX.4.21.0503291350290.5605-100000@hep.itp.tuwien.ac.at>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <reiserfs-list-return-23720-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-23721-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <Pine.LNX.4.21.0503291350290.5605-100000@hep.itp.tuwien.ac.at>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Erwin Riegler <riegler@hep.itp.tuwien.ac.at>
+Cc: reiserfs-list@namesys.com
 
+Hello
 
-hi,
-i have been using reiser4 for five months without any problems.
-but suddenly i get strange error messages on the screen when=20
-i try to halt the machine:
+On Tue, 2005-03-29 at 15:55, Erwin Riegler wrote:
+> hi,
+> i have been using reiser4 for five months without any problems.
+> but suddenly i get strange error messages on the screen when=20
+> i try to halt the machine:
+>=20
+> # halt
+>=20
+>=20
+> ...
+>=20
+> reiser4[pdflush(131)]: jnode_lock_parent_coord
+> (fs/reiser4/flush.c:3095)[nikita-3178]:
+>=20
 
-# halt
+I guess your filesystem got a corruption. Would you please fsck.reiser4
+it end let us know whether it found anything?
 
-
-=2E..
-
-reiser4[pdflush(131)]: jnode_lock_parent_coord
-(fs/reiser4/flush.c:3095)[nikita-3178]:
-
-=2E..
-
-this message is repeating all the time and the system is hanging in a
-never ending loop.
-
-system:
-
-debian sid
-kernel: 2.6.10-cko3
-
-best,
-erwin=20
-
-
-------------------------------------------------------------
-[work address]                             [private address]
-Erwin Riegler                                  Erwin Riegler
-Max Planck Institute for                A=DFmayergasse 23/5/41
-Mathematics in the Sciences                    A-1120 Vienna
-Inselstrasse 22
-D-04103 Leipzig
-office: +49-341-995950-850             home: +43-660-2146904
-email:  riegler@hep.itp.tuwien.ac.at                =20
-web:    http://www.mis.mpg.de
-------------------------------------------------------------
+> ...
+>=20
+> this message is repeating all the time and the system is hanging in a
+> never ending loop.
+>=20
+> system:
+>=20
+> debian sid
+> kernel: 2.6.10-cko3
+>=20
+> best,
+> erwin=20
+>=20
+>=20
+> ------------------------------------------------------------
+> [work address]                             [private address]
+> Erwin Riegler                                  Erwin Riegler
+> Max Planck Institute for                A=DFmayergasse 23/5/41
+> Mathematics in the Sciences                    A-1120 Vienna
+> Inselstrasse 22
+> D-04103 Leipzig
+> office: +49-341-995950-850             home: +43-660-2146904
+> email:  riegler@hep.itp.tuwien.ac.at                =20
+> web:    http://www.mis.mpg.de
+> ------------------------------------------------------------
+>=20
+>=20
 
