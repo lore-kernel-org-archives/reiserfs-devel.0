@@ -1,32 +1,36 @@
-From: Zhihui Zhang <bf20761@binghamton.edu>
-Subject: Question of file holes
-Date: Wed, 19 Nov 2003 18:44:57 -0500 (EST)
-Message-ID: <Pine.GSO.4.58.0311191836030.26453@bingsun2.cc.binghamton.edu>
+From: Guido Schimmels <guido.schimmels@freenet.de>
+Subject: Will Reiser4 support a "hidden" attribute?
+Date: Thu, 20 Nov 2003 01:58:44 +0100
+Message-ID: <20031120005844.GC8854@Benine>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16126-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-16127-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; format="Flowed"; delsp="Yes"; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hi,
+I would like to have some clarification about this section from  
+namesys.com:
 
-In ReiserFS V3, holes are pointed to by NULL indirect pointers and are a
-source of inefficiency when creating a file with a large hole.  In
-Reiser4, this is replaced by NULL extents whose starting address is zero.
-This is fine.  But I just cannot figure out why we must represent holes
-with NULL pointers or NULL extents. If a search fail to find a valid
-block, we can assume we hit a hole, right?  Also, what the differences
-between the two following cases.  They both seem to refer to holes:
+"Hidden Directory Entries
 
-#define HOLE_EXTENT_START 0
-#define UNALLOCATED_EXTENT_START 1
+A file can exist but not be visible when using readdir in the usual  
+way. WAFL does this with the .snapshots directory; it works well for  
+them without disturbing users. This is useful for adding access to a  
+variety of new features and their applications without disturbing the  
+user when they are not relevant."
 
-Thanks for your help.
+This paragraph has been drastically pruned since the last time I was  
+reading it. Back then it went ahead asking if people wanted hidden  
+files like fat, ntfs and HFS always had. From the way this section has  
+been shortened I take it, this feature has indeed found its way into  
+Reiser4? This would be fantastic! I'm planning to use Reiser4 for my  
+Desktop Linux project. I need this feature to hide the Unix legacy tree  
+like MacOS X does it and (back then) BeOS.
 
--Zhihui
--- 
+What would be the command to hide/unhide a file?
