@@ -1,47 +1,65 @@
-From: Mirar <mirar-yg@mirar.org>
+From: Anders Widman <andewid@tnonline.net>
 Subject: Re: power loss -> corruption
-Date: 15 May 2003 17:17:49 +0200
-Sender: mirar@orchid.mirar.org
-Message-ID: <m1n0ho5jdu.fsf@orchid.mirar.org>
-References: <m1k7d11yaz.fsf@orchid.mirar.org>
-	<200305081531.13964.Dieter.Nuetzel@hamburg.de>
-	<m1r87061sv.fsf@orchid.mirar.org>
-	<200305151323.36129.Dieter.Nuetzel@hamburg.de>
+Date: Fri, 16 May 2003 00:38:13 +0200 (CEST)
+Message-ID: <1245.213.204.144.196.1053038293.squirrel@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14119-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-14122-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200305151323.36129.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: =?iso-8859-1?q?Dieter_N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Cc: reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-> In short, DON'T DO THAT without "suspend kernel patches". *nix is
-> NOT designed for "disk power management" in the first place. But it
-> evolves...;-)
+> Am Donnerstag, 15. Mai 2003 10:40 schrieb Mirar:
+>> > This _is_ very well known for me.
+>> > Some KDE config files and my tcsh history file where broken without
+>> > data-logging (data=journal/ordered).
+>>
+>> My .zsh-history just got nuked with data=ordered.
+>>
+>> The kernel couldn't agree with my HPT controller and stopped all (!)
+>> IDE activities when I did a 'hdparm -y /dev/hd?' (all sleep). (Note,
+>> the .zsh-history was not on that controller.)
 
-Never had a trouble with it before. :)
+Hm..  Are  you sure you are using the right command? "-Y" is SLEEP and
+"-y"  is STANDBY mode. With stand by mode the drive spins up by itself
+when  data  is  requested.  However when you use sleep mode it needs a
+reset to wake up again (or if the driver can issue a soft reset).
 
-I have them regularly spin down using hdparm -S, and never had a
-problem before... This time I was tracking down a noise, which turned
-out to be air in the waterpump.
+Even  if  the  drive spins back up there can be transfer errors or DMA
+problems that follows. IF you want a reliable configuration you should
+not use power-save mode. It is not very well supported on all hardware
+in Linux :(
 
-> HPT ("small" IDE/ATA "RAID") controllers are not that good
-> (supported) as they seems. Apart that they are "cheap".
 
-Nope. It's always been a headache. Never behaved *this* bad though.
-I only have my spare data disks (80+120Gb) on it though.
+> In short, DON'T DO THAT without "suspend kernel patches".
+> *nix is NOT designed for "disk power management" in the first place.
+> But it evolves...;-)
 
-> > Not in the same way as previously (just a block), though. It was
-> > completely filled with binary data.
-> 
+> HPT ("small" IDE/ATA "RAID") controllers are not that good (supported)
+as they
+> seems. Apart that they are "cheap".
+
+>> Not in the same way as previously (just a block), though. It was
+>> completely filled with binary data.
+
 > Sounds like another problem (hardware, see above).
 
-Not the same controller. The root/home disk is on the main IDE controller 
-(whatever's on VIA KT266). So it seems like a sync issue of some sort.
+>> No other active files seems to have been affected, though.
 
-/Mirar
+> Good.
+
+> -Dieter
+
+
+
+
+
+
+--------
+PGP public key: https://tnonline.net/secure/pgp_key.txt
+
+
