@@ -1,59 +1,48 @@
-From: Alexander Lyamin <flx@msu.ru>
-Subject: Re:  viewprinting processes and process oriented permissions got funded by DARPA
-Date: Wed, 14 Apr 2004 15:37:41 +0400
-Message-ID: <20040414113741.GB15922@alias.nmd.msu.ru>
-References: <407C304F.4080804@namesys.com> <m31xmrefug.fsf@averell.firstfloor.org> <407C930D.5010407@namesys.com> <20040414022248.GA92870@colin2.muc.de>
-Reply-To: flx@msu.ru
+From: Asheesh Laroia <asheesh@asheesh.org>
+Subject: Failed conversion -> undelete loopback file?
+Date: Wed, 14 Apr 2004 08:04:19 -0400 (EDT)
+Message-ID: <Pine.LNX.4.58.0404140752140.32161@renaissance.laroia.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17924-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17925-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040414022248.GA92870@colin2.muc.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andi Kleen <ak@muc.de>
-Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Wed, Apr 14, 2004 at 04:22:48AM +0200, Andi Kleen wrote:
-> On Tue, Apr 13, 2004 at 06:25:33PM -0700, Hans Reiser wrote:
-> > Andi Kleen wrote:
-> > 
-> > >Amazing. You managed to write all this without ever mentioning
-> > >that linux 2.6 already has per process name spaces (=views) in
-> > >form of CLONE_NS.
-> > >
-> > >-Andi
-> > Can you specify exclude *.c in them?  I think that your =views is a 
-> > simplistic statement.
-> 
-> You can add any files/directories you want (mount --bind). Excluding
-> is not directly supported. 
->  
-> Doing it by directories is more natural though as it works with mount 
-> points. Basically it mirrors the plan9 implementation and in
-> plan9 it is extensively used. I don't know of any uses in Linux
-> so far, but the infrastructure is there in the kernel.
+I used the convertfs toolkit from http://tzukanov.narod.ru/convertfs/ to
+convert my reiserfs filesystem to ext3.  I wanted to do this because the
+kernel I had installed doesn't support reiserfs.
 
-"prior work" is bold declaration.
-idea is trivial. admit it. yet implementation is tricky.
-especially implementation that would not kill perfomance/usability.
+So I booted of the MEPIS Live CD to do the conversion.
 
+So the first time I tried, it created an ext3 filesystem full of errors,
+but since the process died early, it didn't delete any source files.  I
+deleted the loopback file it created and ran reiserfsck 3.6.14, which told
+to me rebuld-tree, so I did.
 
-... there is nice english word "reinventing".
+I then tried again.  I got an error on unmount, but the process seemed to
+have finished.  So I rebooted back into MEPIS.
 
-> I don't doubt that your proposal is more powerful (and more complicated
-> and vapour right now), but I think you should mention prior work
-theres two kinds of vapour.
-just vapour and vapour with underlying infrastructure.
-sounds just same, but really different.
+Now on mount, my reiserfs partition said:
 
-> in linux and plan9 before discussing clearcase at least.
+Using r5 hash to sort names
+Removing [2 11 0x0 SD]...done
+There were 1 uncompleted unlinks/truncates. Completed.
 
-n.b. just my private oppinion.
--- 
-"the liberation loophole will make it clear.."
-lex lyamin
+That deletion took a long time, so it probably just deleted the loopback
+ext3 filesystem.  The reiserfs partition now contains no directories or
+files.  The partition shows 33MB used (out of 50GB).
+
+But a quick look inside ("less -f /dev/hdb6") shows my data are still
+around somewhere.
+
+Is it possible to undo that deletion of [2 11 0x0 SD]?  What should I
+consider?
+
+Thanks all.  This is extremly distressing.
+
+-- Asheesh.
