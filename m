@@ -1,48 +1,37 @@
-From: "daniel.poelzleithner" <poelzi@poelzi.org>
-Subject: Re: can't find a reiserfs file ssytem! 2
-Date: Wed, 17 Mar 2004 23:29:35 +0100
-Message-ID: <4058D14F.4060800@poelzi.org>
-References: <20040317140309.ABECF3982E7@ws5-1.us4.outblaze.com>
+From: Stuart Levy <slevy@ncsa.uiuc.edu>
+Subject: Re: errors with very large reiserfs partition (was: Re: Software Raid0 problem (Update))
+Date: Wed, 17 Mar 2004 16:37:07 -0600
+Message-ID: <20040317223707.GB1875251@ilia.ncsa.uiuc.edu>
+References: <87ish46lq3.fsf@freeze.oslo.dnmi.no> <001701c40c27$1e4c6f00$4a64000a@aztechsolutions.com> <20040317201821.GB1869726@ilia.ncsa.uiuc.edu> <20040317213006.GB5080@favonius>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17289-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17290-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040317140309.ABECF3982E7@ws5-1.us4.outblaze.com>
+Content-Disposition: inline
+In-Reply-To: <20040317213006.GB5080@favonius>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sander <sander@humilis.net>
+Cc: Stuart Levy <slevy@ncsa.uiuc.edu>, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Wed, Mar 17, 2004 at 10:30:06PM +0100, Sander wrote:
+> Hi Stuart,
+> 
+> I hope you don't mind that I inform the reiserfs team about your tests
+> and the resulting error for reiserfs by cc'ing them.
 
-mite pascoff wrote:
+Great, thanks.
 
-| my problem partition is 15GB large and dd stoped after copying 2GB of
-data with a messige like:
-| File size limit exceeded
-| So I began testing this part/image of the problem partition
+It's probably not strictly a reiserfs problem, except that
+(like the XFS implementors) they could try to detect the problem at mount 
+time on systems with 32-bit block addressing, and refuse to mount large filesystems.
 
-Looks for me like a dd without large file support. Try a new version
-that support 64 bit file sizes or another too.
+I just checked fs/xfs/linux/xfs_linux.h for the 2.6.4 kernel.
+They conditionally enable XFS_BIG_BLKNOS under either of two conditions:
+either CONFIG_LBD is set (the Large Block Device option, which somebody
+mentioned earlier in this linux-ide-arrays thread), or BITS_PER_LONG == 64.
 
-
-regards
-~ Daniel
-
-- --
-nihil me cirumdat
-
-.. . .. ... . . .. . ... . .. . ... . . .
-pgp key @ http://files.poelzi.org/pgp.txt
-ED80 E53D 5269 4BB1 1E73 3A53 CBF9 A421 0A7B 003D
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Debian - http://enigmail.mozdev.org
-
-iD8DBQFAWNFOy/mkIQp7AD0RArv1AJ0YutkLleaLPwN8QwWL0cvt2D5g2gCdEIyX
-h+1MLLHm96PwpctrRMYo6Ak=
-=lqMp
------END PGP SIGNATURE-----
+   Stuart
