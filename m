@@ -1,40 +1,51 @@
-From: Rodd Zurcher <rodd.zurcher@motorola.com>
+From: Benjamin Scott <bscott@ntisys.com>
 Subject: Re: Silly question, defrag
-Date: Thu, 04 Apr 2002 16:18:27 -0600
-Message-ID: <3CACD133.8020106@motorola.com>
-References: <200204030017.12595@X-Message-Flag:> <3CAABBA6.3030101@swelltech.com> <200204030740.05950@X-Message-Flag:> <20020403154906.A21821@ultraviolet.org> <20972156.20020404111651@tnonline.net> <20020404105440.F27377@ultraviolet.org>
+Date: Thu, 4 Apr 2002 17:34:09 -0500 (EST)
+Sender: bscott@ntisys.com
+Message-ID: <Pine.LNX.4.44.0204041721530.1352-100000@dragon.inside.ntisys.com>
+References: <20020404105440.F27377@ultraviolet.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <20020404105440.F27377@ultraviolet.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: ReiserFS List <reiserfs-list@namesys.com>
 
-Tracy R Reed wrote:
 
->If there were real value in regularly defragging then Veritas, Sun, IBM,
->HP, and all of those guys would have made defraggers for their respective
->filesystems and it would be considered best practice and standard
->operating procedure to use them. But I have never heard of any such tools
->nor procedures.
->
-HP-UX's vxfs (veritas i believe) ships with a defrag tool that packs 
-extents and reorders data based on access usage (dir order I believe). 
-HPUX documentation did recommend running it and tuning how often by 
-ammount of fragmentation. I found on a heavily used ClearCase server a 
-nightly run kept fragmentation down; although a weekly run was probably 
-all that was necessary. Haven't run HPUX in several years so things may 
-be different now.
+  It occurs to me that people are treating the answer to this question as a
+single binary value.  I think that is an incorrect approach.
 
-rbz
+  By definition, any filesystem which is capable of storing files in
+non-contiguous allocations can become fragmented.  The questions are, how
+likely and how bad will it be?  It seems likely to me that different
+filesystem implementations will have different behaviors with regards to
+fragmentation, and those behaviors further vary depending on filesystem
+usage patterns.
+
+  So one question becomes, "Given a particular usage pattern, how fragmented
+will a given filesystem become per unit of time?"  To use everyone's
+favorite example, FAT's policy of simply allocating free blocks as it finds
+them is practically worst-case for fragmentation.  I imagine it likely that
+a more intelligent filesystem implementation would do better at this.
+
+  Another question is, "Once a given filesystem becomes fragmented to a
+given extent, what kind of performance impact do you see?"  This seems
+likely to be an easier question to answer; you can do things like calculate
+average seeks given various conditions, or just plain time a benchmark.  I
+think it would seem likely that, once a filesystem does become fragmented,
+performance is going to suck mud.  So most of it comes back to that first
+question: Just how bad will the fragmentation get?
+
+  I highly doubt this issue can be resolved to a single "yes or no" answer.
 
 -- 
-Rodd Zurcher
-Principal Software Engineer
-SPS/WBSG/WSAS - 847.576.0666
-rodd.zurcher@motorola.com
+Ben Scott <bscott@ntisys.com>
+| The opinions expressed in this message are those of the author and do not |
+| necessarily represent the views or policy of any other person, entity or  |
+| organization.  All information is provided without warranty of any kind.  |
 
 
 
