@@ -1,69 +1,73 @@
-From: "Roger James" <rogerjames99@btinternet.com>
-Subject: Newbiw question on write barriers and ordered write barriers
-Date: Mon, 1 Sep 2003 21:06:37 +0100
-Message-ID: <000501c370c4$94165ba0$fe0aa8c0@lancaster.beardandsandals.co.uk>
+From: Mike Benoit <mikeb@netnation.com>
+Subject: Reiser4 input/output errors...
+Date: Mon, 01 Sep 2003 14:53:01 -0700
+Message-ID: <1062453181.2791.17.camel@mikeb.staff.netnation.com>
+Reply-To: mikeb@netnation.com
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0006_01C370CC.F5DC4A40"
-Return-path: <reiserfs-list-return-15506-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15507-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-------=_NextPart_000_0006_01C370CC.F5DC4A40
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+I assume this isn't supposed to happen?
 
-Hi,
+[root@mikeb home]# mkfs.reiser4 /dev/hda8
+mkfs.reiser4 0.4.12
+Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by
+reiser4progs/COPYING.
 
+Information: Reiser4 is going to be created on /dev/hda8.
+(Yes/No): Yes
+Creating reiser4 on /dev/hda8...done
+Synchronizing /dev/hda8...done
+
+[root@mikeb home]# mount -t reiser4 /dev/hda8 /home/test2
+[root@mikeb test2]# cd /home/test2
+[root@mikeb test2]# cp /usr/src/linux-2.6.0-test4.tar.bz2 ./
+[root@mikeb test2]# tar jxf linux-2.6.0-test4.tar.bz2
+
+[root@mikeb test2]# rm -rf linux-2.6.0-test4/
+rm: reading directory `linux-2.6.0-test4//drivers/net/e100':
+Input/output error
+rm: reading directory `linux-2.6.0-test4//drivers/net/sk98lin':
+Input/output error
+rm: cannot remove directory `linux-2.6.0-test4//drivers/net': Directory
+not empty
+
+I tried this on two different partitions (/dev/hda7 and /dev/hda8) the
+exact same files had the error on both, so it seems to be reproducible.
+It does however work fine if I use ext3 on the said partitions. This is
+a brand new HD (about a week old) so I doubt it has any bad blocks
+(badblocks /dev/hda8 doesn't report anything).
+
+[root@mikeb home]# mkfs.reiser4 --version
+mkfs.reiser4 0.4.12
+
+Kernel: 2.6.0-test4 #5 Mon Sep 1 14:20:14 PDT 2003 i686 unknown unknown
+GNU/Linux
+
+CONFIG_REISER4_FS=y
+CONFIG_REISER4_LARGE_KEY=y
+
+CPU:
+cpu family      : 6
+model           : 8
+model name      : AMD Athlon(tm) Processor
+stepping        : 1
+cpu MHz         : 1662.612
+cache size      : 256 KB
+
+Distro: Mandrake 9.2beta.
+
+
+-- 
+Best Regards,
  
-
-Ever since I updated my SuSE Linux 8.1 set up with the latest patches
-from SuSE I have been seeing the following messages at boot up time
-(once only for each drive).
-
- 
-
-<4>hda: drive_cmd: status=0x51 { DriveReady SeekComplete Error }
-
-<4>hda: drive_cmd: error=0x04 { DriveStatusError }
-
-<4>hda:saw err in ide_end_drive_cmd, disabling write barriers
-
-<4>hda: drive_cmd: status=0x51 { DriveReady SeekComplete Error }
-
-<4>hda: drive_cmd: error=0x04 { DriveStatusError }
-
-<4>hda:saw err in ide_end_drive_cmd, disabling write barriers
-
-<4>reiserfs: using ordered data mode
-
-<4>Using r5 hash to sort names
-
- 
-
-I have struggled to find out whether I should be worried about this. I
-guess this is something to do with journaling and ordered writes, but
-the messages are somewhat cryptic. Is this the kernel detecting a
-problem with the drive based controllers (they are both Maxtor 6Y120L0s)
-or the motherboard chipset (Nvidia NForce) and disabling the
-functionality? I don't see the message again, but one of the reasons I
-did upgrade the kernel was that I was having occasional disk
-corruptions. Are there any switches/parameters I should be setting?
-
- 
-
-Can anyone give me a heads up on this.
-
- 
-
-Roger
-
-
-------=_NextPart_000_0006_01C370CC.F5DC4A40--
+Mike Benoit
 
 
