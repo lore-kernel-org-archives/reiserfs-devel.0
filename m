@@ -1,146 +1,245 @@
-From: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
-Subject: Re: implementing reiserfs in C++ for a new OS
-Date: Wed, 11 Aug 2004 22:40:55 +0200
-Message-ID: <411A8457.2030801@futuretg.com>
-References: <71d3364904080706112e72fb6b@mail.gmail.com>	<20040809172437.GP1284@nysv.org>	<71d3364904080922267e8c14af@mail.gmail.com>	<200408101312.48888.reiserfs-list@quinnh.org>	<4119273E.1040104@namesys.com>	<20040810211951.GU1284@nysv.org>	<41194690.5050908@namesys.com>	<1365645117.20040811065416@tnonline.net>	<4119B7D1.7000705@namesys.com>	<16665.61639.659924.562747@laputa.namesys.com>	<411A4CA1.9090604@namesys.com>	<16666.20331.980571.419171@gargle.gargle.HOWL>	<411A5933.90408@namesys.com> <16666.23297.324669.957050@laputa.namesys.com>
+From: "Rodolfo Sikora" <sikora@inova.com.br>
+Subject: Re[3]: Is there a way to change root inode from -1 to what ever    it    will    work?
+Date: 11 Aug 2004 18:00:19 -0300
+Message-ID: <20040811210019.27186.qmail@qmail-local.inova.com.br>
+References: <20040811183322.5806.qmail@qmail-local.inova.com.br>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20214-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20215-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16666.23297.324669.957050@laputa.namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Nikita Danilov <Nikita@Clusterfs.COM>
-Cc: Hans Reiser <reiser@namesys.com>, Spam <spam@tnonline.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
 
-Nikita Danilov wrote:
 
->Hans Reiser writes:
-> > Nikita Danilov wrote:
-> > 
-> > >Hans Reiser writes:
-> > > > Nikita Danilov wrote:
-> > > > 
-> > > > >
-> > > > >Copyright to result of translation belongs to the translator. At
-> > > > >least, according to Russian law.
-> > > > >
-> > > > >  
-> > > > >
-> > > > I may be completely wrong legally, esp. in Russia.  I personally think 
-> > > > it should belong to the original author if the original copyright is 
-> > > > still valid.
-> > > > 
-> > > > Otherwise harry potter can get translated and no need to pay rowling.
-> > >
-> > >`Otherwise' is non-sequitur. One pays royalties to get a permission to
-> > >produce and/or sell derived work. But copyright to derived work lies
-> > >with translator.
-> > > 
-> > >Otherwise, copyright to reiser4 (re-)implementation of allocate-on-flush
-> > >belongs to SGI.
-> > >  
-> > >
-> > I would feel more guilty about that if their team had not gone so far 
-> > out of their way to encourage me to learn and use their most valuable 
-> > innovation when I visited SGI.  I try to credit SGI on that generally, 
-> > but folks are welcome to point out where an additional credit is needed 
-> > (it is too easy to neglect such things).  I do think that I took their 
-> > idea to the next level....
+Hi, could u please grab this new one:
+
+lynx 200.245.240.81/md0-metadata.bz2
+
+Thanks
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>De:"Rodolfo Sikora" <sikora@inova.com.br>
+>Para:"Vitaly Fertman" <vitaly@namesys.com>, <reiserfs-list@namesys.com>
+>Assunto:Re[2]: Is there a way to change root inode from -1 to what ever   =
+ it    will    work?
 >
->That's orthogonal to the topic of this discussion. The question is:
->did you ask SGI's permission to re-implement allocate on flush idea?
->If no, why re-implementors of reiserfs in C++ should seek yours? I
->guess, that they are pretty sure that they will took your ideas to the
->next level... :-)
 >
->  
+>Vitaly,
 >
-I don't think that a simply re-implementation of the Reiser code in C++,
-will offer any benefit to anyone.
-
-They are swim in a new sea (ReiserFS) and have no idea about what is.
-C++ is not the language
-generally used for command based utilities.
-
-C++ is generally used to program with objects, for example the graphical
-interface where buttons, menu
-bar are objects, and also a library may be extrapoled to work with MacOS
-X, MS Windows or GNU/Linux, using
-the same code, like did Trolltech people.
-
-The Linux kernel had been written in C, and therefore the reiserfs code
-inside the kernel have no sense in another language.
-
-Hans, instead invent the ReiserFS, and he is not a newbie in FileSystem
-architecture.
-
-Have no sense to request some code or any authorization to anyone
-because but ReiserFS 3 and 4 are GPL, at the same level
-than SGI XFS.
-
-So, I suppose that Hans choose a particular routine inside XFS that is
-used to solve a particular problem that probably the employees he hire
-was not capable to solve.
-
-Because the original works are available under GPL, this is just in the
-sense and in the respect of the GPL license, Use the code, modify
-and release.
-
-Instead these guys, want to close the code, they will realize without to
-understand really nothing about it.
-
-This simply have no sense and their comment is a stupid comment.
-
-They can do in C++ ... and? They can will rewrite the ReiserFS Utilities
-in C++ and? Who will use? We? I don't thing.
-
-The Capital comments are silly comments like a boy: "I will take the bus
-to back home, and don't want to be disturbed".
-
-For us, here nothing is changed. We are more happy to use ReiserFS 4.
-What is important for us, is than will be 100% error free.
-
-Otherwise I will contrib to solve the bugs following my expertise, also
-taking some code from other GPL places. This is GNU/Linux!
-
-Thanks,
-Giovanni
-
-> > 
-> > > > 
-> > > > Hans
-> > >
+>Answering your other question
 >
->Nikita.
+>####### Pass 3 #########
+>vpf-10650: The directory [633134 378466] has the
+>wrong size in the StatData (219824) - corrected
+>to (219768)
+>vpf-10680: The file [3752512 3756937] has the
+>wrong block count in the StatData (8) -
+>corrected to (0)
+>vpf-10650: The directory [108925 3470744] has
+>the wrong size in the StatData (141408) -
+>corrected to (141352)
+>vpf-10680: The file [3552600 3552664] has the
+>wrong block count in the StatData (3760) -
+>corrected to (3752)
+>semantic_rebuild.c 903 rebuild_semantic_pass
+>rebuild_semantic_pass: Hash mismatch detected
+>for ("789161P1086316520PunknownP1221z2,") in
+>directory [17623 1715079]
 >
-> > >
-> > >
-> > >  
-> > >
-> > 
-> > 
+>it does have problem in a different place.
 >
->  
+>is that bad or good ?
 >
+>I'm going to do another reiserfsdebug now.
+>
+>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>De:Vitaly Fertman <vitaly@namesys.com>
+>>Para:"Rodolfo Sikora" <sikora@inova.com.br>,
+><reiserfs-list@namesys.com>
+>>Assunto:Re: Is there a way to change root inode
+>from -1 to what ever it    will    work?
+>>
+>>On Wednesday 11 August 2004 02:04, Rodolfo
+>>Sikora wrote:
+>>> Well if this helps in anything:
+>>>
+>>>
+>>> vpf-10650: The directory [198278 198979] has
+>>the wrong size in the StatData
+>>> (79280) - corrected to (79224)
+>>>
+>>> semantic_rebuild.c 903 rebuild_semantic_pass
+>>> rebuild_semantic_pass: Hash mismatch detected
+>>for
+>>> ("18s149P1084520547PunknownP6765:2,") in
+>>directory [198278 330428]
+>>>
+>>> Aborted
+>>>
+>>
+>>does it happen in this particular place all the
+>>time? or the name is different
+>>from run to run? Would you pack the metadata of
+>>the fs with:
+>>	  debugreiserfs -p /dev/md0 | bzip2 -c >
+>>md0.bz2
+>>and provide it for downloading, I will check
+>how
+>>fsck works on your metadata,
+>>it evth will be ok, then the problem could be a
+>>hardware one (memory, hdd)=20
+>>or a software raid problem or a raid
+>>configuration problem.
+>>
+>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>>
+>>> >De:"Rodolfo Sikora" <sikora@inova.com.br>
+>>> >Para:reiserfs-list@namesys.com
+>>> >Assunto:Is there a way to change root inode
+>>from -1 to what ever it will=09
+>>> >  work?
+>>> >
+>>> >Hi,
+>>> >
+>>> >I had problems with my software raid:
+>>> >
+>>> >cebola:~# mdadm --detail /dev/md0
+>>> >/dev/md0:
+>>> >	   Version : 00.90.01
+>>> >  Creation Time : Wed May 19 01:07:53 2004
+>>> >	  Raid Level : raid5
+>>> >	  Array Size : 175790976 (167.65 GiB
+>>180.01
+>>> >GB)
+>>> >	 Device Size : 58596992 (55.88 GiB 60.00
+>>GB)
+>>> >	Raid Devices : 4
+>>> >  Total Devices : 3
+>>> >Preferred Minor : 0
+>>> >	 Persistence : Superblock is persistent
+>>> >
+>>> >	 Update Time : Tue Aug 10 16:21:23 2004
+>>> >	     State : clean, no-errors
+>>> > Active Devices : 3
+>>> >Working Devices : 3
+>>> > Failed Devices : 0
+>>> >  Spare Devices : 0
+>>> >
+>>> >	    Layout : left-symmetric
+>>> >	  Chunk Size : 4K
+>>> >
+>>> >	 Number   Major   Minor   RaidDevice
+>State
+>>> >	  0	  8	  65	    0	   active
+>>> >sync /dev/sde1
+>>> >	  1	  0	   0	   -1	 =20
+>removed
+>>> >	  2	  8	  97	    2	   active
+>>> >sync /dev/sdg1
+>>> >	  3	  8	 113	    3	   active
+>>> >sync /dev/sdh1
+>>> >	      UUID :
+>>> >7cceaa8d:4014fc0d:c48efe80:ddb856d4
+>>> >	    Events : 0.722114
+>>> >
+>>> >anyway the raid went ok and my /dev/md0 with
+>>> >reiser was ok until I decided to fix few
+>>> >corrupted data (files with weird permission
+>>> >denied).
+>>> >
+>>> >I run --fix-fixable and it asked me to run
+>>> >--rebuild-tree.
+>>> >I run rebuild-tree twice (is takes about 4
+>>> >hours) and bot time on pass 3 it stops
+>saying
+>>> >"aborted". What is this?
+>>> >
+>>> >I'm running the latest (I hope) reiserfsck
+>>> >version (3.6.17).
+>>> >
+>>> >All I found is that reiserfsck turns root
+>>inode
+>>> >to -1 and only change it back after a
+>>successful
+>>> >repair.
+>>> >
+>>> >I know I have intact data inside, unless
+>>> >reiserfsch messed it, so my question is: "Is
+>>> >there anything I could do to be able to
+>mount
+>>it
+>>> >again?"
+>>> >
+>>> >I do have backup but it's not so updated.
+>>> >
+>>> >Thank you for any help.
+>>> >
+>>> >
+>>> >
+>>> >Rodolfo Sikora - Desenvolvimento e Opera=E7=E3o
+>>> >Departamento de Opera=E7=F5es e Tecnologia
+>>> >Inova Tecnologias - http://www.inova.com.br
+>>> >
+>>> >
+>>> >
+>>>
+>>>**********************************************
+>*
+>>*
+>>> >****
+>>> >*Velop* - administra=E7=E3o, controle e
+>>> >monitoramento da
+>>> >sua comunica=E7=E3o na Internet.
+>>> >http://www.inova.com.br
+>>>
+>>> Rodolfo Sikora - Desenvolvimento e Opera=E7=E3o
+>>> Departamento de Opera=E7=F5es e Tecnologia
+>>> Inova Tecnologias - http://www.inova.com.br
+>>>
+>>>
+>>>
+>>>
+>>***********************************************
+>*
+>>****
+>>> *Velop* - administra=E7=E3o, controle e
+>>monitoramento da
+>>> sua comunica=E7=E3o na Internet.
+>>> http://www.inova.com.br
+>>
+>>--=20
+>>Thanks,
+>>Vitaly Fertman
+>
+>
+>
+>Rodolfo Sikora - Desenvolvimento e Opera=E7=E3o
+>Departamento de Opera=E7=F5es e Tecnologia
+>Inova Tecnologias - http://www.inova.com.br
+>
+>
+>
+>************************************************
+>****
+>*Velop* - administra=E7=E3o, controle e
+>monitoramento da=20
+>sua comunica=E7=E3o na Internet.
+>http://www.inova.com.br
 
 
--- 
 
--- 
-
---
-Check FT Websites ...
-http://www.futuretg.com  - ftp://ftp.futuretg.com
-http://www.FTLinuxCourse.com
-	http://www.FTLinuxCourse.com/Certification
-http://www.rpmparadaise.org
-http://GNULinuxUtilities.com
-http://www.YourPersonalOperatingSystem.com
-
---
+Rodolfo Sikora - Desenvolvimento e Opera=E7=E3o
+Departamento de Opera=E7=F5es e Tecnologia
+Inova Tecnologias - http://www.inova.com.br
 
 
+
+****************************************************
+*Velop* - administra=E7=E3o, controle e monitoramento da=20
+sua comunica=E7=E3o na Internet.
+http://www.inova.com.br
