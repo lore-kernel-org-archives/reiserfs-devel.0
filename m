@@ -1,51 +1,50 @@
-From: Cal <hihone@bigpond.net.au>
-Subject: Re: reiser4 crash
-Date: Thu, 25 Nov 2004 23:35:42 +1100
-Message-ID: <20041125233542.4388689b.hihone@bigpond.net.au>
-References: <20041119084757.GA2310@sk2-4.tky.hut.fi>
-	<1101369249.1628.13.camel@tribesman.namesys.com>
-	<20041125221919.2180794b.hihone@bigpond.net.au>
-	<20041125112343.GG26192@nysv.org>
-	<20041125224212.4ac7e9f4.hihone@bigpond.net.au>
-	<20041125120545.GH26192@nysv.org>
-Reply-To: hihone@bigpond.net.au
+From: Bernhard Prell <bernhard.prell@gmx.net>
+Subject: Question on Reiser4 regarding power failures
+Date: Thu, 25 Nov 2004 16:37:27 +0100
+Message-ID: <200411251637.28047.bernhard.prell@gmx.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22562-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22564-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20041125120545.GH26192@nysv.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Markus =?ISO-8859-1?Q?T=F6rnqvist?= <mjt@nysv.org>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-----------
-and then at Thu, 25 Nov 2004 14:05:45 +0200, it was written ...
- >ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.9/
- >http://marc.theaimsgroup.com/?l=reiserfs&m=110121057720746&w=2
- >
- >It is possible the posted patch is included in the second patch
- >at namesys.
- >
- >I'd still like to know about the two -cko patches though, as I can't
- >remember which ones they were (I'm at the office) and if they
- >should be included and whatever....
- >
-Cool, thanks!  I found the mailing list one, and with that applied to
-2.6.10-rc2-mm3, the first run of apt-get update completed
-successfully.  That's good!
+Hello everybody,
 
-I've been looking after grandkids for a couple of days, so I missed
-the recent 2.6.9 updates on ftp.namesys.com.  I'm more interested in
-2.6.10-rcx+, but l'll maybe take a look at the 2.6.9 stuff.
+I have a simple question about Reiser4. I already tried to find the answer in 
+http://www.namesys.com/v4/v4.html but I'm not completly sure if I understood 
+everything :-)
 
-I'm a little confused about the cko reference.  I'm happily running
-2.6.9-cko3 ona seconfd system, but I've not seen any breakdown of
-the cko series (ie, the two particular cko patches you're
-referencing). 
+*Background:
+I 'm administrating about 20 computers. The installed Linux/Reiser is quite 
+old: SuSE Linux with kernel 2.4.7(SMP) (dmesg tells me reiser 3.5.x disk 
+format, ReiserFS version 3.6.25).
 
-cheers, and thanks
-Cal
+Obviously people often pull the plug without cleanly shutting down the 
+systems, because maybe twice per month I have to setup a system again because 
+it doesn't want to boot anymore. The reason is always a somehow corrupted 
+root-filesystem. Sometimes reiserfsck can repair it, sometimes not because of 
+I/O-read-errors. If that's the case I also have a look at the disk with 
+"smartctl -t short /dev/hda" and it also reports read-errors. Then I usually 
+do a "dd if=/dev/zero of=/dev/hda", repartition, reformat, setup the system 
+from a tar file and everything is fine again (smartctl doesn't report 
+read-errors anymore).
+
+*Now my question, you may have guessed it:
+Will the corruption caused by partially written sectors or other problems 
+caused by _power failures_ be still a problem under reiser4 or are they gone 
+forever because of the "atomic transactions" (at least in theory)?
+(That would mean that reiserfsck is only existing to repair problems caused by 
+bugs in reiser4...)
+
+Sorry if this has been asked before, I tried to find an answer in the 
+list-archive.
+
+Thanks in advance
+
+Bernhard
