@@ -1,7 +1,7 @@
-From: Vladimir Saveliev <vs@namesys.com>
+From: Jonathan Briggs <jbriggs@esoft.com>
 Subject: Re: "df -i" support
-Date: Fri, 14 May 2004 21:48:22 +0400
-Message-ID: <1084556902.29549.22.camel@tribesman.namesys.com>
+Date: Fri, 14 May 2004 11:50:09 -0600
+Message-ID: <1084557009.3263.7.camel@localhost.localdomain>
 References: <20040513093432.52d3d7a3.turtle.power@wanadoo.es>
 	 <1084439945.14090.6209.camel@tribesman.namesys.com>
 	 <20040514173227.5b0541b5.turtle.power@wanadoo.es>
@@ -9,7 +9,7 @@ References: <20040513093432.52d3d7a3.turtle.power@wanadoo.es>
 	 <20040514194040.22389128.turtle.power@wanadoo.es>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18695-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18696-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -18,11 +18,9 @@ In-Reply-To: <20040514194040.22389128.turtle.power@wanadoo.es>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Miguel <turtle.power@wanadoo.es>
-Cc: Valdis.Kletnieks@vt.edu, reiserfs-list@namesys.com
+Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Hello
-
-On Fri, 2004-05-14 at 21:40, Miguel wrote:
+On Fri, 2004-05-14 at 11:40, Miguel wrote:
 > On Fri, 14 May 2004 12:55:53 -0400
 > Valdis.Kletnieks@vt.edu wrote:
 > 
@@ -40,35 +38,26 @@ On Fri, 2004-05-14 at 21:40, Miguel wrote:
 > > system should be flagging that.
 > 
 > No, we check this value to know how many files are in that
-> partition (well an aproximation).
-
-Well, it is possible to calculate approximately how many files are on a
-filesystem
-
->  I hope that this is true for ext2/3,
+> partition (well an aproximation). I hope that this is true for ext2/3,
 > isn't?
+> 
 
-> > 
-> > So just fix your code to say '-1 means unlimited', or if that's too
-> > complicated make it say:
-> > 
-> > 	if (value == -1) { value = 2147483648; }
-> > 
-> > which won't be right but should make your scripts act correctly.
-> 
-> df -i on a 2.4.x kernel already returns (2^32 - 1) free inodes.
-> probably kernel return -1 but df "get" this as a non-signed value.
-> 
-> Here's an example sda1 is an ext3 partition an sdb1 is reiserfs
-> formatted:
-> 
-> 
-> Filesystem            Inodes   IUsed   IFree IUse% Mounted on
-> /dev/sda1            4480448  132216 4348232    3% /
-> /dev/sdb1            4294967295       0 4294967295    0%
-> /var/spool/postfix
-> 
-> scripts return about 132000 files in / and 0 files in the other
-> filesystem
-> 
+Would this help you?
+
+# cat /proc/fs/reiserfs/md1/oidmap
+
+At the end of oidmap is a line like this:
+total:  46 [46/972] used: 176147 [exact]
+
+I think the used: 176147 is pretty close to what you want.  The number
+goes up and down when I create or remove files.  When I ran 'find /
+-xdev | wc -l' I got 174425.  I'm not sure where the extra 1,000+ comes
+from.  
+
+You would need to have CONFIG_REISERFS_PROC_INFO set in your kernel, and
+of course you would need to replace md1 with whatever device you were
+using.
+-- 
+Jonathan Briggs
+jbriggs@esoft.com
 
