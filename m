@@ -1,85 +1,65 @@
-From: Paul Wagland <paul@wagland.net>
-Subject: Re: reiser4 non-free? (I throw in the towel)
-Date: Tue, 11 May 2004 15:50:27 +0200
-Message-ID: <291D3403-A352-11D8-BD91-000A95CD704C@wagland.net>
-References: <1084025633.28080.196082736@webmail.messagingengine.com> <200405110004.05704.reiser@namesys.com> <20040511090947.Z13880@links.magenta.com>
-Mime-Version: 1.0 (Apple Message framework v613)
-Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha1; boundary="Apple-Mail-39-749529285"
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: reiser4 non-free?
+Date: Tue, 11 May 2004 11:02:52 -0400
+Message-ID: <200405111502.i4BF2qOu012463@turing-police.cc.vt.edu>
+References: <1084188152.26226.196158678@webmail.messagingengine.com> <20040510.214915.74754947.wlandry@ucsd.edu> <200405110158.i4B1wONb022531@turing-police.cc.vt.edu>
+            <20040510.223329.108738295.wlandry@ucsd.edu>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_-344009184P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18606-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18607-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040511090947.Z13880@links.magenta.com>
+In-Reply-To: Your message of "Mon, 10 May 2004 22:33:29 EDT."
+             <20040510.223329.108738295.wlandry@ucsd.edu> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Raul Miller <moth@debian.org>
-Cc: reiserfs-list@namesys.com, rms@gnu.org, Humberto Massa <humberto.massa@almg.gov.br>, debian-legal@lists.debian.org, Hans Reiser <reiser@namesys.com>, Valdis.Kletnieks@vt.edu, vitaly@namesys.com
+To: Walter Landry <wlandry@ucsd.edu>
+Cc: debian-legal@lists.debian.org, reiser@namesys.com, reiserfs-list@namesys.com, ed@debian.org, cavok@debian.org
 
---Apple-Mail-39-749529285
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+--==_Exmh_-344009184P
+Content-Type: text/plain; charset=us-ascii
+
+On Mon, 10 May 2004 22:33:29 EDT, Walter Landry <wlandry@ucsd.edu>  said:
+
+> I think you're agreeing with me.  I can't make it a simple red circle
+> or green square.  I have to spit out the credits _and_ the
+> circle/square.
+
+No, what's happening is that the mkfs program is spitting out the credits,
+which are being read by a Perl/tktcl/python/whatever script which is then
+parsing it and deciding whether to show the user a circle or a square.
+
+The concept that the user would actually see the program output during system
+bootup died when the Bell Lab guys first put 'foo > /dev/null' into a /etc/rc
+script back in the late 60s.
+
+For that matter, it probably died in late 1963, when Fred Brooks was steering
+the IBM team that produced (among other things) JCL, and the team thought that
+coding:
+
+//GO.SYSPRINT DD DUMMY
+
+was something reasonable to support (that's the JCL equiv of "> /dev/null").
+
+I pondered the whole "credits" question for a bit last night, and I realized
+that (a) I could account for at least the last 75 'mkfs' commands I had caused
+to run, and (b) of those 75, exactly *one* did *not* have all of its output
+swallowed by 'anaconda' during a RedHat or Fedora install.....
 
 
-On May 11, 2004, at 15:09, Raul Miller wrote:
-
-> On Tue, May 11, 2004 at 12:04:05AM -0700, Hans Reiser wrote:
->> I think Humberto is correct in his analysis of what makes something
->> derivative.  By the logic of that analysis though, reiserfs can be
->> distributed even if it is licensed differently from the rest of the 
->> kernel
->> because it is not derivative of it (It can be ported to other 
->> operating
->> systems, and was created with the intention of performing such 
->> porting.  I
->> did not expect Linux to be effective in earning money relative to 
->> sales to OS
->> companies like Sun way back in 1993 when we started, and Linux was not
->> intended to be the primary income source for Namesys.....).  By his
->> legally correct analysis, that the kernel all gets linked together is 
->> not
->> relevant.
->
->   "We wrote A as an appendix to B, but we intend to also find some C
->   and have it be an appendix to that as well."
->
-> I can see at least two issues with this line of thought.  Email me
-> privately if you feel it important to know how I look at this.
-
-I think a more correct analogy (from Han's point of view at least) 
-would be:
-
-'We wrote this explanatory work "A" about work "B", it is also relevant 
-to work "C" which is on the same topic as "B"'
-
-Look at it from a QT point of view, written and distributed freely for 
-Linux, but also relevant (and paid for) on other OS'es... Given that 
-they have sold reiser3 to other unnamed companies, I think that the 
-argument can quite easily be made that reiser4 would also exist without 
-linux, but that linux is the "first target". But, as always, I am not a 
-lawyer ;-)
-
-FWIW, I would like to publicly thank Hans for his decision to release 
-the whole shebang under a GPLv2 license. It makes me even happier that 
-I earlier sent a donation to namesys.
-
-Cheers,
-Paul
-
---Apple-Mail-39-749529285
-content-type: application/pgp-signature; x-mac-type=70674453;
-	name=PGP.sig
-content-description: This is a digitally signed message part
-content-disposition: inline; filename=PGP.sig
-content-transfer-encoding: 7bit
+--==_Exmh_-344009184P
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (Darwin)
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-iD8DBQFAoNoktch0EvEFvxURAl41AJ9ZaY9rJAi5yBFMqQk6gsIwpuHxRgCfTGWn
-ldJGd1ADB9gpnc6VfFwPQ2Y=
-=WuI1
+iD8DBQFAoOsccC3lWbTT17ARAmysAKCSAz5SW+tuL60LD9KBxK2J+v7HZACg9Pvy
+6mkRUVXDeXO2QVrwZSZHu3s=
+=VFL3
 -----END PGP SIGNATURE-----
 
---Apple-Mail-39-749529285--
-
+--==_Exmh_-344009184P--
