@@ -1,46 +1,35 @@
 From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: status of reiser4
-Date: Mon, 20 Dec 2004 07:48:28 +0200
-Message-ID: <20041220054828.GS26192@nysv.org>
-References: <41C322ED.4000807@namesys.com> <1103309648.8570.28.camel@localhost>
+Subject: Re: 2.6.10-rc3-cko1
+Date: Mon, 20 Dec 2004 08:06:36 +0200
+Message-ID: <20041220060636.GT26192@nysv.org>
+References: <200412181843.49942.sikkh@wp.pl>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22843-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22845-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1103309648.8570.28.camel@localhost>
+In-Reply-To: <200412181843.49942.sikkh@wp.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jake Maciejewski <maciejej@msoe.edu>
-Cc: Hans Reiser <reiser@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Piotr Neuman <sikkh@wp.pl>
+Cc: reiserfs-list@namesys.com
 
-On Fri, Dec 17, 2004 at 12:54:08PM -0600, Jake Maciejewski wrote:
->Have there been any reports other than Isaac's of reiser4 working on
->AMD64? It still doesn't work for me, and I'd like to know if I'm the
->only one having problems.
+On Sat, Dec 18, 2004 at 06:43:49PM +0100, Piotr Neuman wrote:
+>
+>Regards to all reiser developers for great work.
 
-I recently purchased an AMD64 setup.
-Here's the catch; I did so because my old box went belly-up and now
-it seems the GFX card is broken (The box shut itself down and doesn't
-boot if the GFX card has its extra power cable connected, regardless
-of the amount of other hardware. I hate hardware.)
+And to you, sikkhmeister :)
 
-Anyway, due to severe space limitations, I couldn't back my home up
-so I'm hoping it'll work long enough for me to wiggle some stuff
-somewhere else.
+(Just applied the patch, I'll let you know how it goes :)
 
-My plan for testing is to use Reiser4 in (at least) an x86 chroot,
-which should hit amd64 bugs nonetheless, because the only difference
-is how the software is compiled, yes?
+>ps. At the moment software suspend 2 is not included (I'm too lazy and, 
+>swsusp2 is usually most work ;-). Will be there most likely in 2.6.10 
+>release.
 
-Anything specific I should look out for? Nothing I have in my home
-directory is _that_ critical for me to get out _now_, but I would
-like to get it some day :>
-
-Thanks guys!
+swsusp2 was the turnoff when I tried to merge the 2.6.9 to a new cko..
 
 -- 
 mjt
