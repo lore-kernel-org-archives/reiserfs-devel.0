@@ -1,45 +1,38 @@
-From: Fabien Combernous <fcombernous@eprocess.fr>
-Subject: Re: Archives are they availables some where ?
-Date: Mon, 28 Oct 2002 17:59:46 +0100
-Message-ID: <3DBD6D02.3030102@eprocess.fr>
-References: <3DBD698E.5080405@eprocess.fr> <15805.27771.983513.254457@laputa.namesys.com>
+From: Matt Stegman <matts@ksu.edu>
+Subject: Re: Online Resizing Failure
+Date: Mon, 28 Oct 2002 11:02:49 -0600 (CST)
+Message-ID: <Pine.GSO.4.33L.0210281040001.29849-100000@unix2.cc.ksu.edu>
+References: <20021028192635.A1171@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11813-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11814-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20021028192635.A1171@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: reiserfs <reiserfs-list@Namesys.COM>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-It sould be interesting to add this link in the welcome mail. :o)
+On Mon, 28 Oct 2002, Oleg Drokin wrote:
+> resize_reiserfs is sure that you are trying to shrink the FS.
+> How did you specified new size, can you give us more info on what are you doing,
+> what commands you given, and other useful info?
 
-Nikita Danilov wrote:
-> Fabien Combernous writes:
->  > Lo,
->  >=20
->  > I'm my welcome mail on this mailling list nothink said avout archives.
->  > Archives are they availables some where ?
->=20
-> Archives of reiserfs mailing list are available at
-> http://marc.theaimsgroup.com/?l=3Dreiserfs&r=3D1&w=3D2
->=20
->  >=20
->  > Fabien.
->  >=20
->=20
-> Nikita.
->=20
->  > --=20
->=20
+Well, after looking at it again, it looks like it succeeded.  `df -k`
+reports the new size, and the kernel message "can't shrink filesystem
+on-line" is from a _second_ try to resize the filesystem; after it was
+successfully resized the first time.
 
---=20
+What fooled me was that resize_reiserfs didn't give any output at all for
+online growing, while growing offline produces some output - I guess it's
+just a summary of the fs blocks.  Why doesn't online resizing produce any
+output?
 
-Fabien COMBERNOUS - IT Engineer
-eProcess - Parc Club du Mill=E9naire Batiment n=B0 6
-1025 rue Henri Becquerel - 34000 Montpellier FRANCE
-http://www.eprocess.fr - +33 (0)4 67 13 84 50
+-- 
+      -Matt Stegman
+
+
 
