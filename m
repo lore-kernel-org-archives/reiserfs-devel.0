@@ -1,10 +1,10 @@
-From: Bernhard Sadlowski <sadlowsk@mathematik.Uni-Bielefeld.DE>
-Subject: bad_stat_data: block 1557090, [921 189485 0x0 SD (0)], SD has bad nlink number
-Date: Sun, 4 Aug 2002 11:27:16 +0200
-Sender: Bernhard Sadlowski <sadlowsk@Mathematik.Uni-Bielefeld.DE>
-Message-ID: <20020804092716.GA17343@mathematik.uni-bielefeld.de>
+From: Patrik Wallstrom <pawal@blipp.com>
+Subject: reiserfsck --rebuild-tree is very slow
+Date: Sun, 4 Aug 2002 23:21:48 +0200
+Message-ID: <20020804212148.GC6570@vic20.blipp.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11117-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11118-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -12,104 +12,77 @@ Errors-To: flx@namesys.com
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-I've upgraded from 2.4.18 (with several reiserpatches) to 2.4.19 (plain)
-and also upgraded the reiserprogs to version 3.6.2. 
+Hi,
+I've been running "reiserfsck --rebuild-tree /dev/hdd" for 24h now on
+a 40Gb drive that is 99% full. I am using reiserfsprogs 3.6.2 from
+Debian unstable.
 
-I see errors which won't be corrected with "--fix-fixable", although
-reiserfsck says they will. Are they serious? Bug in reiserfsck?
+The result of reiserfsck --check and the result with --fix-fixable:
+bread: Cannot read a block # 10052279.
 
-Thanks,
-Bernhard
+The --rebuild-sb seemed successful:
 
-This is the output of "time reiserfsck --check /dev/md0"
+Did you use resiser(y/n)[n]:
+rebuild-sb: wrong block count occured (10052280), fixed (6193026)
+rebuild-sb: wrong bitmap number occured (307), fixed (189)
+rebuild-sb: no uuid found, a new uuid generated
+(c30996b1-8a54-45db-8407-102bc973b42b)
+rebuild-sb: wrong journal max transaction length occured (0), fixed (1024)
+rebuild-sb: wrong journal max batch size occured (0), fixed (900)
+rebuild-sb: wrong journal  max commit age occured (0), fixed (30)
+Reiserfs super block in block 16 on 0x1640 of format 3.6 with standard
+journal
+Count of blocks on the device: 6193026
+Number of bitmaps: 189
+Blocksize: 4096
+Free blocks (count of blocks - used [journal, bitmaps, data, reserved]
+blocks): 82842
+Root block: 8384
+Filesystem is cleanly umounted
+Tree height: 4
+Hash function used to sort names: "r5"
+Objectid map size 20, max 972
+Journal parameters:
+	Device [0x0]
+	Magic [0x0]
+	Size 8193 blocks (including 1 for journal header) (first block 18)
+	Max transaction length 1024 blocks
+	Max batch size 900 blocks
+	Max commit age 30
+Blocks reserved by journal: 0
+Fs state field: 0x1
+sb_version: 2
+inode generation number: 4240
+UUID: c30996b1-8a54-45db-8407-102bc973b42b
+LABEL:
+Set flags in SB:
 
-###########
-reiserfsck --check started at Sun Aug  4 10:58:42 2002
-###########
+Is this ok ? (y/n)[n]: y
+
+Do not forget to run reiserfsck --rebuild-tree
+
+
+Here's my results so far from the --rebuild-tree session:
+
 Replaying journal..
 No transactions found
-Checking S+tree../  1 (of   3)/ 12 (of 166)/ 18 (of  92)bad_stat_data:
-block 1557090, [921 189485 0x0 SD (0)], SD has bad nlink number
-/  3 (of   3)/ 67 (of 100)/  9 (of 170)bad_stat_data: block 1582967,
-[198978 198986 0x0 SD (0)], directory SD has bad nlink number
-ok
-Comparing bitmaps..ok
-Checking Semantic tree...
-ok
-There were found 2 corruptions which can be fixed with --fix-fixable
 ###########
-reiserfsck finished at Sun Aug  4 11:02:32 2002
+reiserfsck --rebuild-tree started at Sat Aug  3 22:07:31 2002
 ###########
 
-real    3m55.568s
-user    0m35.920s
-sys     0m10.210s
+Pass 0:
+####### Pass 0 #######
+Loading on-disk bitmap .. ok, 6110187 blocks marked used
+Skipping 8399 blocks (super block, journal, bitmaps) 6101788 blocks
+will be read
+0%                                                         left 5911812, 2 =
+/sec
 
+=46rom what I can see, this session can last for many years...
 
-This is the output of "time reiserfsck --fix-fixable /dev/md0"
+Any advise?
 
-###########
-reiserfsck --fix-fixable started at Sun Aug  4 11:05:01 2002
-###########
-Replaying journal..
-No transactions found
-Checking S+tree..ok
-Comparing bitmaps..ok
-Checking Semantic tree...
-ok
-No corruptions found
-There are on the filesystem:
-        Leaves 65144
-        Internal nodes 431
-        Directories 13035
-        Other files 207804
-        Data block pointers 23448221 (18310 of them are zero)
-        Safe links 0
-###########
-reiserfsck finished at Sun Aug  4 11:11:56 2002
-###########
-
-real    7m3.679s
-user    0m39.330s
-sys     0m17.780s
-
-This is the output of a second "time reiserfsck --check /dev/md0"
-
-###########
-reiserfsck --check started at Sun Aug  4 11:12:31 2002
-###########
-Replaying journal..
-No transactions found
-Checking S+tree../  1 (of   3)/ 12 (of 166)/ 18 (of  92)bad_stat_data:
-block 1557090, [921 189485 0x0 SD (0)], SD has bad nlink number
-/  3 (of   3)/ 67 (of 100)/  9 (of 170)bad_stat_data: block 1582967,
-[198978 198986 0x0 SD (0)], directory SD has bad nlink number
-ok
-Comparing bitmaps..ok
-Checking Semantic tree...
-ok
-There were found 2 corruptions which can be fixed with --fix-fixable
-###########
-reiserfsck finished at Sun Aug  4 11:18:27 2002
-###########
-
-real    5m58.794s
-user    0m40.080s
-sys     0m13.940s
-
-# cat /proc/mdstat
-Personalities : [linear] [raid0] [raid1] [raid5] [multipath]
-read_ahead 1024 sectors
-md0 : active raid1 hdg1[0] hde1[1]
-      97685632 blocks [2/2] [UU]
-
-unused devices: <none>
-
-# cat /proc/fs/reiserfs/version
-ReiserFS version 3.6.25 [as module]
-
-# uname -r
-2.4.19
+--=20
+patrik_wallstrom->foodfight->pawal@blipp.com->+46-709580442
