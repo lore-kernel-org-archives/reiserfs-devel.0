@@ -1,68 +1,46 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: rebuild-tree
-Date: Mon, 08 Dec 2003 18:51:29 +0300
-Message-ID: <3FD49E01.9090502@namesys.com>
-References: <1070829963.2789.528.camel@larry>
+From: Chris Mason <mason@suse.com>
+Subject: Re: SuSE 9.0 reiserfsprogs-3.6.9. When will we see an update?
+Date: Mon, 08 Dec 2003 15:24:43 -0500
+Message-ID: <1070915083.10849.38.camel@tiny.suse.com>
+References: <200312011931.01285.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16289-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-16290-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1070829963.2789.528.camel@larry>
+In-Reply-To: <200312011931.01285.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Larry Weldon <larry@welcoin.com>
-Cc: reiserfs mailing list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Cc: ReiserFS-List <reiserfs-list@namesys.com>
 
-Larry Weldon wrote:
+On Mon, 2003-12-01 at 13:31, Dieter N=FCtzel wrote:
+> Hello Chris,
+>=20
+> some time has passed...;-)
+>=20
+> I had a bad system corruption due to a broken system disk. My IBM U160 di=
+sk=20
+> (DDYS-T18350; 18,2 GB; 10k RPM) was broken for the third time...
+> Now I replaced it with two (RAID1) Fujitsu MAS3184NP (U320; 18,4 GB; 15k =
+RPM;=20
+> 65-78 MB/s (inner to outer)) and SUSE 9.0 on LVM.
+>=20
+> After a power loss I got some files in "lost+found" from "/opt" (last=20
+> accessed) and reiserfsck was relative slow (reiserfsprogs-3.6.9).
+> Reiserfsprogs-3.6.11 and -pre12 is way faster (on my old SuSE7.3 based sy=
+stem)=20
+> and there where some fixes.
+>=20
+> I tried to compile them on SuSE 9.0 as always but I failed 'cause SuSE pa=
+tched=20
+> some things.
 
->A client's production file server is set up using RAID-1 with 2 IDE
->disks and reiserfs. The operating system is Mandrake 9.1.
->
-which kernel does it use?
+Hmmm, did you try the 9.0 reiserfsck?  It actually does include most of
+3.6.11.
 
->=======================================================================
->Unfortunately, the tree structure used is also the weak point of 
->ReiserFS: if any of it gets corrupted, chances are that much more data
->will be affected than under traditional FileSystems. Rather than losing
->a single file to corruption of an inode, you may lose almost the entire
->contents of your disk if metadata close to the root of the BTree is
->affected. Fortunately, the likelihood of this happening due to bugs has
->been dramatically reduced in more recent version of the driver. Hardware
->failure caused corruption is still a serious problem, though.
->========================================================================
->  
->
-The guy who wrote this does a nice job of telling one everything about 
-himself except his email address.
-
-I don't know why he says this, and I don't think it is true.  If you 
-trash the blocks with the root directory in any filesystem you are going 
-to end up with a lot of files in lost+found, yes?
-
-Maybe others have a different experience or understanding of the remark.
-
-With reiserfs, if you corrupt the internal nodes of the tree, you have 
-to run fsck before you can use it, and in this we are more fragile, but 
-once fsck has been run it is no more fragile than anything else 
-(assuming you use the latest fsck, because fsck took a long time to 
-stabilize).
-
->Now, I can't just stop using reiserfs and I don't want to. I think there
->is great merit in it. So, first, with the limited info I have given,
->what might have happened to create the problem and how likely might it
->be to happen again? Secondly, what is the *real* hazard of corruption
->_higher_up_ in the tree which the article says might blow away the whole
->partition?
->
->Thanks and regards.
->  
->
-
-
--- 
-Hans
+-chris
 
 
