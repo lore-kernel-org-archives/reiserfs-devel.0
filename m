@@ -1,90 +1,99 @@
-From: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
-Subject: Re: 2.6.9-mm1
-Date: Sun, 24 Oct 2004 14:41:01 +0000
-Message-ID: <417BBEFD.9080308@futuretg.com>
-References: <20041022032039.730eb226.akpm@osdl.org> <4179425A.3080903@namesys.com>
+From: Spam <spam@tnonline.net>
+Subject: Re: [patch] Repacker stats
+Date: Sun, 24 Oct 2004 14:52:13 +0200
+Message-ID: <713783005.20041024145213@tnonline.net>
+References: <200410202159.46110.sikkh@wp.pl>
+ <1378615689.20041022193803@tnonline.net>
+ <200410231033.29164.christian.mayrhuber@gmx.net> <417A860D.9010701@namesys.com>
+Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22153-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22155-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4179425A.3080903@namesys.com>
+In-Reply-To: <417A860D.9010701@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: linux-kernel@vger.kernel.org, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Hans Reiser wrote:
 
-> Andrew Morton wrote:
->
+
+>> Christian Mayrhuber wrote:
+
+>> On Friday 22 October 2004 19:38, Spam wrote:
+>>  
 >>
->>  - reiser4: not sure, really.  The namespace extensions were disabled,
->>    although all the code for that is still present.  Linus's filesystem
->>    criterion used to be "once lots of people are using it, preferably 
->> when
->>    vendors are shipping it".  That's a bit of a chicken and egg thing 
->> though.
->>    Needs more discussion.
+>>>  Hello,
+>>>
+>>>  I was interested in testing the repacker statistics tool that Piotr
+>>>  Neuman wrote (and others later added to). But from what I can see
+>>>  the repacker is disabled in 2.6.9-rc4-mm1, because of this patch:
+>>>
+>>>     
+>>>    
+>>>
+>>>  http://kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.9-rc4/2.6.9-rc4-mm1/broken-out/reiser4-disable-repacker.patch
+>>>
+>>>
+>>>  Is there something wrong with the repacker that is has to be
+>>>  disabled?
+>>>
+>>>  ~S
+>>>  
+>>>    
+>>>
+>>
+>>Currently the repacker is known to corrupt the filesystem, that's
+>>why it's disabled, I guess.
 >>
 >>  
 >>
-> No distro using reiserfs V3 as the default is going to keep doing so 
-> once reiser4 meets their stability requirements. Reiserfs is used by a 
-> lot of people, and reiser4 obsoletes it, and the users know that. 
+> There are two reasons:
 
-I agree that OS that choose ReiserFS for default now will adopt Reiser4 
-instead ReiserFS 3, .... but they need to continue
-to support ReiserFS 3 as well Reiser4 ...
+> 1) functionality that is not stable should be turned off until it is
+> stable ("...." and repacker both).
 
-In some sense this is equivalent to ext2 and ext3.
+  Turned off, or perhaps better to be marked as unstable or dangerous.
+  If it isn't available, no one will test and report problems.
 
-Thanks,
-Giovanni
+> 2) we aren't making payroll and need something nonessential to bundle
+> with support if we want people to buy support so that I am to be able to
+> quit my day job and pay people.  There is nothing less essential yet
+> still salable than a repacker/resizer.  ext3 had a proprietary resizer,
+> so it is not an innovation by us.
 
+  This I do understand very well. It brings my thoughts to Diskepper
+  from Executive Software (www.executive.com). Microsoft included a
+  basic version of their defrag software into Windows 2000. Users see
+  the functionality, but they cannot do much with it other than manual
+  defrag. All advanced features usually needed for corporate world is
+  only available if you pay to "upgrade" to full version of Diskeeper.
 
-> None of the distros have expressed any intent of staying on V3, and 
-> they'd be silly to do it. Many of them have expressed a desire to use 
-> reiser4. Next year, indications are that reiser4 usage by distros as 
-> their default will exceed that which is today possessed by V3. The 
-> higher performance of V4 is going to increase our market share.
->
-> I would like to encourage its inclusion as an experimental filesystem 
-> BEFORE vendors ship it. I think first putting experimental stuff in 
-> the kernels used by hackers makes sense. I think it creates more of a 
-> community.
->
-> I'd like to point out that there is a lot of stuff in the kernel that 
-> is a lot less stable than reiser4.
->
-> That said, inclusion in -mm found some bugs, and we are still testing 
-> one of the fixes which was a bit deep. I want to finish that testing 
-> (not more than 7 days) and send you all fixes before asking for 
-> inclusion.
->
-> Also, Hellwig made a valid point about getting rid of some macros that 
-> reduce readability (I also hate code that prevents editors finding 
-> called functions), and zam is working on fixing that.
->
-> Lindows is planning on shipping with reiser4 in its next release. I 
-> would very much like to see our inclusion before that.
->
+  My suggestion is to leave a basic version of the repacker for normal
+  users, and to offer a more advanced and manageable version for
+  corporate network and server use? More users will see the
+  availability of defrag with Reiser4 and choose it above another fs.
+  In the end, probably, more people/companies would buy the extended
+  features?
 
+> reiser4 development is going at greatly reduced speed due to our needing
+> to take contracts involving other kernel work rather than working on
+> reiser4.  I am basically unable to spend time reviewing reiser4 code
+> because I have this day job fixing things not related to reiser4 in the
+> kernel.  I am glad to have the day job, but getting money from our work
+> on reiser4 would be better.....
 
--- 
+> I have also asked both the EU and the US for money, wish me luck. I'd
+> like to start working on the enhanced semantics for ReiserFS, but I need
+> money to do that.  We are losing momentum vs. Apple and MS.  The resizer
+> might bring in the money for enhanced semantics work.
 
+  I wish you luck. It would be a shame if you would have to quit the
+  work on your filesystems.
 
--- 
--- 
-
-Check FT Websites ... http://www.futuretg.com  - ftp://ftp.futuretg.com
-http://www.FTLinuxCourse.com
-    http://www.FTLinuxCourse.com/Certification
-http://www.rpmparadaise.org
-http://GNULinuxUtilities.com
-http://www.YourPersonalOperatingSystem.com
+  ~S
 
 -- 
 
