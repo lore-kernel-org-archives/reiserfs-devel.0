@@ -1,53 +1,66 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: ReConfigurable Directory Structure & Agrregation of files according
- to semantic.
-Date: Wed, 17 Mar 2004 08:47:29 -0600
-Message-ID: <40586501.1070005@slaphack.com>
-References: <94121091767-BeMail@cr593174-a>
+From: "mite pascoff" <ttl@linuxmail.org>
+Subject: Re: can't find a reiserfs file ssytem! 3.b
+Date: Wed, 17 Mar 2004 16:50:13 +0200
+Message-ID: <20040317145013.B6D3B3982E7@ws5-1.us4.outblaze.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17273-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17274-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <94121091767-BeMail@cr593174-a>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
-
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-Alexander G. M. Smith wrote:
-...
-| I (and others) think it would be better for this to be done at the file
-| system level.  That way you can leverage all sorts of other utilities and
+Content-Type: text/plain; charset="us-ascii"
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: reiserfs-list@namesys.com
 
 
-What about a reiser4 plugin?
-What about a plugin that is mostly in userspace?
-Even a generic reiser4 kernel plugin that allows userspace plugins to be
-written?
+----- Original Message -----
+From: Vitaly Fertman <vitaly@namesys.com>
+Date: Wed, 17 Mar 2004 20:15:11 +0300
+To: "mite pascoff" <ttl@linuxmail.org>,"Vladimir Saveliev" <vs@namesys.com>
+Subject: Re: can't find a reiserfs file ssytem! 2
 
-I suggest v4 because you can start right now.  Maybe v6 would be better,
-but at this rate, you'll be lucky to get a stable v4 by the time you're
-done your project.
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQFhlAXgHNmZLgCUhAQJFQQ//VKa0yoqu+WXEKynR/KsNZv+pGNDrKvUh
-6uVewiftyE7wJIyhmqwOSwsfcNb9LjaV5TPt7h1bzw7g+dZyktIZIOM7564Zeb/V
-ETbiE+S43lnprDxfGMUcrhp+n26mej48Onz5MOJI+Nb7JtJ6HkWs14lXfjNuyxg3
-1arbX8PkH/igXknzMYvl4ghp6nrpyVf33kDSHjvq9jSA64Pott17Z1b1p0uUzUG/
-WSXaqsosXATAR/mgfPP780693y9oxjIovWs0XBvOXhjDmpNWt3H829yFwfH+h4EO
-23gj9kd3xmdXJiVSKpFwvZSVxm2wMDcMON92t0klTSthPB3E8t/f6lI/ndDhC1a0
-xySmAwS52Mi1vhE+9Dc3w9vX90de/vUzHQoXhbVXDHtytP96VhumF9kco5QfqPPL
-jLwa7k2ZcQS8maP4pUaYgtAdI8dOqNNyBxeEpTzzJ0WWBM1xa9OaeT+FOW1yQofj
-2bO+ax+Mx+mXCw6RCWU2SvEGwjxLV1Rb+zcY+dx8E4cULw8K+PglOcaPFQKlW8CR
-w7vvY8aXp/cTwQjLiNQPzzerudQtB4hLvMosmofisRr+95oiX6hLfdchQAWQung4
-Ol9d9SJFZXnyxuzIUgeB1ELwF85iX0pAEcIyLqP4u3uwLIhEKCqBjvz+hpL/4MEo
-Pvkl8kLPsQE=
-=1erf
------END PGP SIGNATURE-----
+> > my problem partition is 15GB large and dd stoped after copying 2GB of data
+> > with a messige like: File size limit exceeded
+> 
+> what fs do you copy the partition to?
+
+FAT32 is the WinXP parttiion I use through the network
+
+> 
+> > So I began testing this part/image of the problem partition
+> 
+> do you want to recover only first 2G of your data?
+
+NO thats because dd could copy only 2GB af data and stops ... I want to recover the whole 15GB partition
+
+
+> what do you see in the syslog related to this mount failure?
+
+This is what "says" syslog when I try to mount the 2GB image.file of the problem partition:
+Mar 17 16:27:37 ttl kernel: reiserfs: checking transaction log (device 07:00) ...
+Mar 17 16:27:37 ttl kernel: reiserfs: journal-837: IO error during journal replay
+Mar 17 16:27:37 ttl kernel: Replay Failure, unable to mount
+Mar 17 16:27:37 ttl kernel: reiserfs_read_super: unable to initialize journal space
+
+> could you prepare the metadata of _this_ spare device with:
+>     debugreiserfs -p sparedevice | bzip2 -c > sparedevice_meta.bz2
+> and provide it for downloading ?
+
+What device do you mean? I use a spare free space on a harddrive on a pc through the network which runs WinXP ...
+ 
+> what kernel do you use?
+
+2.4.18 / Slackware8.1
+
+
+-- 
+______________________________________________
+Check out the latest SMS services @ http://www.linuxmail.org 
+This allows you to send and receive SMS through your mailbox.
+
+
+Powered by Outblaze
