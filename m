@@ -1,32 +1,31 @@
-From: Helge Hielscher <hhielscher@unternehmen.com>
-Subject: Re: fsck.reiser4 segfault with one partition
-Date: Tue, 01 Jun 2004 21:37:13 +0200
-Sender: news <news@sea.gmane.org>
-Message-ID: <pan.2004.06.01.19.37.08.75221@unternehmen.com>
-References: <pan.2004.06.01.11.57.09.230448@unternehmen.com> <200406012240.33075.vitaly@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: The situation at hand and in the future
+Date: Tue, 01 Jun 2004 19:45:51 -0700
+Message-ID: <40BD3F5F.1090809@namesys.com>
+References: <20040527200127.GS4990@nysv.org> <200405272105.i4RL5LDh026210@turing-police.cc.vt.edu> <40B6670D.9060408@slaphack.com> <20040528063324.GT4990@nysv.org> <40B89C9C.5050307@slaphack.com> <20040529154917.GW4990@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-18950-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18953-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20040529154917.GW4990@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, Edward Shishkin <edward@namesys.com>
+Cc: David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, reiserfs-list@namesys.com
 
-On Tue, 01 Jun 2004 22:40:33 +0400, Vitaly Fertman wrote:
-> On Tuesday 01 June 2004 15:57, Helge Hielscher wrote:
-> 
->> fsck.reiser4 segfaulted when I tried to check /dev/hda6 (see below).
-> 
-> which version do you have? the latest was 0.5.4 in
-> www.namesys.com/snapshots/2004.04.21-internal.testing.fixed/
-> would you try it first?
+Markus T=F6rnqvist wrote:
 
-Tried it and got the same result: fsck.reiser4 segfaults at semantic tree
-checking.
+>
+>Unfortunately the error codes in the code are named Edward, who doesn't
+>appear in the README...
+> =20
+>
 
-Regards,
-Helge
+Edward, add this credit for yourself to both the readme and the=20
+mkreiserfs credits when it starts to work:
+
+Edward Shushkin wrote the reiser4 compression and crypto plugins
 
