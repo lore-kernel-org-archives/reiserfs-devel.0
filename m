@@ -1,46 +1,24 @@
-From: Alex Veber <vibir@012.net.il>
-Subject: Re: ld.so error with mkfs.reiser4
-Date: Wed, 23 Apr 2003 01:48:11 +0300
-Message-ID: <200304230148.11610.vibir@012.net.il>
-References: <200304221054.28028.vibir@012.net.il> <3EA5446F.8070309@namesys.com>
+From: "Thomas Graham" <lkthomas@sml.dyndns.org>
+Subject: Converter program from V3 to V4 ?
+Date: Wed, 23 Apr 2003 17:55:25 +0200 (CEST)
+Message-ID: <50020.61.238.161.206.1051113325.squirrel@sml.dyndns.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13764-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-13765-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3EA5446F.8070309@namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-On Tuesday 22 April 2003 16:32, you wrote:
-> Alex Veber wrote:
-> >Hi,
->
-> Hello Alex,
->
-> >Trying to run a fresh BK pulled mkfs.reiser4 I get
-> >
-> >Inconsistency detected by ld.so: ../sysdeps/i386/dl-machine.h: 611:
-> >elf_machine_rel_relative: Assertion `((reloc->r_info) & 0xff) == 8'
-> > failed!
-> >
-> >my system is a athlon tbird 1200, GLIBC 2.3.2 with NPTL support, GCC
-> > 3.2.2, binutils 2.13.90.0.20 and kernel 2.5.67. This is the first time
-> > this sort of thing happens to me.
-> >
-> >Thanks,
-> >	Alex Veber
-> >
-> >btw: Please CC me.
->
-> We have fixed this bug in the last commit of reiser4progs and now it
-> works fine on gcc -3.x too. Can you try it one more time?
+reiserfs 4 will be release soon, I got almost 90GB data on a HD that is
+using reiserfs3, how could I install v4 on this HD ? would it have a
+converter program to concert from V3 to V4 ? Thanks.
 
-Yes. it works fine now.
 
-	Alex Veber.
+-- 
+
+
 
