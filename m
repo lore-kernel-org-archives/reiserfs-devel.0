@@ -1,60 +1,78 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: File-level copy-on-write?
-Date: Fri, 11 Feb 2005 23:14:07 -0600
-Message-ID: <420D909F.5070601@slaphack.com>
-References: <420C6A4F.2060905@rolandpj.com> <1108122178.3899.95.camel@tribesman.namesys.com>
+Subject: Re: Plugin for corruption resistance?
+Date: Fri, 11 Feb 2005 23:19:02 -0600
+Message-ID: <420D91C6.2030501@slaphack.com>
+References: <e692861c05021110583585f84e@mail.gmail.com> <20050211205350.GA13345@zero>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1108122178.3899.95.camel@tribesman.namesys.com>
+In-Reply-To: <20050211205350.GA13345@zero>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: Roland Paterson-Jones <roland@rolandpj.com>, reiserfs-list@namesys.com
+To: Tom Vier <tmv@comcast.net>
+Cc: Gregory Maxwell <gmaxwell@gmail.com>, reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Vladimir Saveliev wrote:
-[...]
-|>If not, can I implement this easily (how easily ;) ) with a plugin.
-|>
+First, let me second the original idea.  So long as the hash isn't
+updated until that attribute is read, it should be fine.
+
+Tom Vier wrote:
+| On Fri, Feb 11, 2005 at 01:58:59PM -0500, Gregory Maxwell wrote:
 |
-| I guess you mean plugin for reiser4?
-| You probably can but I do not think that it would be easy.
-
-But, AFAIK it's in the long-term plans, as it's needed for snapshots,
-which AFAIK are also in the long-term plans.
-
-|>Any ideas and pointers greatfully received
+|>1. Lots of applications today (such a P2P sharing systems) need the
+|>hashes of files.. it's inefficient to keep recomputing them.  The file
+|>system always knows when a file changes, so it can be setup to always
+|>return the correct hash.
 |
 |
-| I think it would be easier to modify the application.
-| You should probably start with detailed definition of your COW protocol.
+| That should be done in userland, imho. Especially since different apps use
+| lots of different hashes.
 
-I, for one, would appreciate it if you (or someone) would look at how
-difficult it would be to implement as a plugin, because it's got to be
-done eventually, and won't be done soon by the Namesys guys (AFAIK they
-are working on stability right now).
+For no particularly good reason, imho.  md4/md5 are reasonably fast,
+sha1 is reasonably secure.  What else do you need?
+
+| I was thinking about this kind of stuff (ECC plugin for r4) not too long
+| ago. Hashing the whole file is too slow; if you update a single block, the
+| whole file has to be read in to recalculate. Adding, say, one sector
+of crc
+| for each block would be a lot more feasible.
+
+If it was actually to work like ECC.  But this doesn't sound like it
+would be checked at every read, but rather when fsck is run, or when
+some app needs it.  If it is supposed to be checked at every read, your
+below suggestion is better.
+
+| I think the best way to do this though, would be to write a virtual blk
+| driver that works like loop back (ie, uses a backing file/dev), and
+shortens
+| the overall size by one sector * number of blocks. Actually, you could
+| probably copy the raid5 md code and rewrite it to only use one device. I'd
+| try that first.
+
+Been done.  Think it's part of dev-mapper or evms or some disk magic
+like that.  But it's also useful for individual files, for application
+reasons.
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.6 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQg2QnngHNmZLgCUhAQLO5A/9FK7SGjra5rMdQxgBw/0SUuEfYI/+yl55
-eVgk3u0pd0QEVfzOc8j80nxP7uRZNGkRTMFT7sPl81npSybg76/G1fUo8miJZaPU
-OYZbW8XdaNYnTlpHRkgJegyrryoIWg2lN3/PL4URgONTQ6q4qHFZ/xKjfNpSECGl
-ZfZFeaj+myuPYVO/d5qmOOx9uJ4vIC8SJsDlqU9r+gPG6Oe3mXn88Kk72EUfch1T
-2bg9fXRfI6L1hx08J3nK6V27VnecMxTicO2Z25EChmnBcxK/2EJMa+qBZo14oC9+
-WjZ6Gp+T1Bwmp/qYXaoG1olhIovyHUpT2B8L/1dIw6UJDq8ZSkHpQKWmR1dGzQ7V
-SrIxrevw4I3FCJolQGKFOI7NAXN0Alx3t4h50kcPfGfCbgXMcC9oft8JK/R52IqX
-Wa7ejHp4ff0nAP4+Olrbe5kugVdSjhuwIXe2lbb6MPpf1jxI5TrNFVKgj8MHmXLL
-uESvFEkE0I9GJwSXC6s11ot8LRS//1h/fye0IpgWCcQoa6oyoTJf88ygdFn534u7
-dHLMr8SxtJ69W7no2jfQ0TXuxboF2VA7QXBNoS5g+bj4BqwPu2a8HAi1qrH+0rgQ
-GmqiM8hw40x+YlqeZj/aj80E7oqpAYjg2ZKd0nSVrxfx4NzW9NF6Rbk7Bi4xegPG
-70RSNoupCbQ=
-=Oj2l
+iQIVAwUBQg2RxXgHNmZLgCUhAQKxyhAAkun806f/kI3RmnKX8gV0KZ+ubdMoyNWK
+vUF4Ln79jMLAxxe2fxrkBZux7qQhNUpaO69+jIAfYFqPGj/L1RS03lAqhz7bZCDp
+2GOiBdoOhB7fBJuv1XKbHBrDJdROE8QTJWLuFMyAvxUC7u+uZZ2yU8EVHlKWTLoH
+fA40Vr5t7p77ll/zALG1qpEd9GhSDXAbQ0cbqMvy9cYzo+Wreo9xifH4bT9u8SGk
+NgqGTf3iMKhetfFWqxmgg9F34SMVF9IuyRud2mHvqY7NQW1B3k7MFjOax7fgFTRF
+xxwUzt2lE77tmEUM87r16sCkK+YSJTNNaTancV4yYhzQ+Oz43NwkUW0nwy0jOOVz
+C3sydKjsYoOMiBAVind+arILSrmLwMXpgZ7/6/NV5A7XiUZWy2TeZGYLXjEZbNOV
+V5Tg1KsMnJxPS2n/y7FG9HQXx/iFapWG8RWkz3O9Pzg/Zywsi4LbcgI+72iHImLj
+5+b5YXxQsv9F415pXEaCSNGmMg7FZ/wURXPXwEruPJrs1aJ1SipoZzUCUXN9OpvJ
+efW+IQmbx1tUhQvBfiYmeGj/vscPfkXbwnXlwZOpU7tkkVw8F+t/OJT4jL6Z5wOj
+el8FDYz3swRR1W+nUTJK+NOBkkR3RPjtdOqUahXPF7jqK3Wc1EsZ4MGhlBaLwp+l
+UqUzpsVgmdc=
+=jkeg
 -----END PGP SIGNATURE-----
