@@ -1,28 +1,52 @@
-From: "Ketaki" <ketaki.kulkarni@patni.com>
-Subject: Reiserfs commands on Miracle linux
-Date: Thu, 27 Nov 2003 10:43:18 +0530
-Message-ID: <004601c3b4a5$2ba2d100$e0bba5cc@patni.com>
+From: ivan <ivan@t1.unisoftbg.com>
+Subject: production use of reiserfs
+Date: Fri, 28 Nov 2003 08:46:12 +0200
+Message-ID: <200311280846.12697.ivan@t1.unisoftbg.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0043_01C3B4D3.45411C60"
-Return-path: <reiserfs-list-return-16173-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-16174-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-------=_NextPart_000_0043_01C3B4D3.45411C60
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-hello,
+We are collecting our statistic for the last 9 m. of using linux + postgr=
+eSQL=20
+as oracle+windows alternative in production.
 
-Can u please tell me whether Miracle Linux supports Reiserfs filesystem =
-and where can I get reiserfs specific commands for Miracle Linux
+We are using linux redhat (7.3 and 9.0) + reiserfs (it was recomendet as=20
+stable and fast).
 
+For this time we have 6 filesystem crashes (all after powerdown) with tot=
+al=20
+database lose.
 
-------=_NextPart_000_0043_01C3B4D3.45411C60--
+It is very bad situation because for this period we do not have any probl=
+ems=20
+with windows + oracle.
 
+So it is now time to see if resierfs is production ready or we need to ch=
+ange=20
+the filesystem (or OS distro).
+
+My question:
+
+exist somewath special in reiserfs setup on redhat, that we need to chang=
+e?
+We are using the standart install (linux reiserfs).
+
+We do not make changes on kernel or setup.
+
+Is it good idea to change redhat?
+
+Also it is possible to use redhat AS 3.0, but we do not find any info how=
+ to=20
+instsall it with reiserfs. Exist any problems on this distro?
+
+regards,
+ivan.
