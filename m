@@ -1,34 +1,34 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: fsck.reiser4 segfault with one partition
-Date: Wed, 2 Jun 2004 17:04:38 +0400
-Message-ID: <200406021704.38972.vitaly@namesys.com>
-References: <pan.2004.06.01.11.57.09.230448@unternehmen.com> <200406021658.17346.vitaly@namesys.com> <200406021604.49333.rmeijer@internet.gr>
+From: Chris Mason <mason@suse.com>
+Subject: Re: Some kind of benchmark
+Date: Wed, 02 Jun 2004 09:16:16 -0400
+Message-ID: <1086182176.22636.3449.camel@watt.suse.com>
+References: <200406011832.30163.marcel@hilzinger.hu>
+	 <1086168950.24589.4.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18968-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18969-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200406021604.49333.rmeijer@internet.gr>
-Content-Disposition: inline
+In-Reply-To: <1086168950.24589.4.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Raymond A. Meijer" <rmeijer@internet.gr>, reiserfs-list@namesys.com
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: Marcel Hilzinger <marcel@hilzinger.hu>, reiserfs-list@namesys.com
 
-On Wednesday 02 June 2004 17:04, Raymond A. Meijer wrote:
-> On Wed 2 June 2004 15:58, Vitaly Fertman wrote:
-> > > Tried it and got the same result: fsck.reiser4 segfaults at semantic
-> > > tree checking.
-> >
-> > Can you provide the packed fs metadata for downloading?
-> > (debugfs.reiser4 -P /dev/xxx | bzip2 -c > xxx.bz2)
->
-> I have that problem too on one of my partitions! Do you want my metadata as
-> well?
+On Wed, 2004-06-02 at 05:35, Vladimir Saveliev wrote:
 
-yes, where can I download it from?
--- 
-Thanks,
-Vitaly Fertman
+> Suse kernel differs from stock one substantially. I guess. So, it is
+> very likely that those changes (which are not reiserfs only, certainly)
+> are responsible for that difference.
+> When suse experts will wake up they will say more details about what
+> might cause overwrite speedup
+
+Well, the suse kernel has a lot of patches that are supposed to make
+things faster.  Try benchmarking against 2.6.6 or 2.6.7-rc1, which has
+most of them included.
+
+-chris
+
 
