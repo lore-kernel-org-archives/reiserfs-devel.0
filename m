@@ -1,89 +1,65 @@
-From: Adrian Bunk <bunk@fs.tum.de>
-Subject: [2.6 patch] remove four superfluous BUG's in ReiserFS
-Date: Thu, 17 Jul 2003 00:57:22 +0200
-Message-ID: <20030716225722.GA1407@fs.tum.de>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: reiserfsprogs-3.6.9 release
+Date: Thu, 17 Jul 2003 12:14:55 +0400
+Message-ID: <20030717081455.GA13974@namesys.com>
+References: <200307162103.29531.vitaly@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14954-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14955-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
+In-Reply-To: <200307162103.29531.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
-Cc: linux-kernel@vger.kernel.org, Randy Hron <rwhron@earthlink.net>, trivial@rustcorp.com.au
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-The trivial patch below by Randy Hron still applies agains 2.6.0-test1.
+Hello!
 
-Please apply
-Adrian
+   BTW, it seems one other important change was omissed in the short summary below.
+   The license on the reiserfsprogs package was changed from GPLv2 to
+   GPLv2 with additional restriction that I quote below:
+=======================
+ReiserFSprogs is hereby licensed under the GNU General Public License
+version 2 but with the following "Anti-Plagiarism" modification:
+You may not remove any credits or brand marks, or cause them to not
+display, unless you are an end user (that is, you are not
+redistributing to others).  Yes, there really are people with the
+nerve to remove credits from software they did not write, or only
+wrote a small part of, and they are even frequently occurring sad to
+say.  Credits are not ads, credits describe someone's contribution to
+the project (e.g. labor or money) whereas an ad says something else.
+=======================
 
-
------ Forwarded message from rwhron@earthlink.net -----
-
-Date:	Tue, 15 Apr 2003 10:30:24 -0400
-From: rwhron@earthlink.net
-To: linux-kernel@vger.kernel.org,
-    reiserfs-list@namesys.com
-Subject: Re: BUGed to death
-
-The patch below eliminates 4 BUG() calls that clearly 
-cannot happen based on the context.
-
---- linux-2.5.67-mm2/fs/reiserfs/hashes.c.orig	2003-04-15 10:11:44.000000000 -0400
-+++ linux-2.5.67-mm2/fs/reiserfs/hashes.c	2003-04-15 10:13:43.000000000 -0400
-@@ -90,10 +90,6 @@
- 
- 	if (len >= 12)
- 	{
--	    	//assert(len < 16);
--		if (len >= 16)
--		    BUG();
--
- 		a = (u32)msg[ 0]      |
- 		    (u32)msg[ 1] << 8 |
- 		    (u32)msg[ 2] << 16|
-@@ -116,9 +112,6 @@
- 	}
- 	else if (len >= 8)
- 	{
--	    	//assert(len < 12);
--		if (len >= 12)
--		    BUG();
- 		a = (u32)msg[ 0]      |
- 		    (u32)msg[ 1] << 8 |
- 		    (u32)msg[ 2] << 16|
-@@ -137,9 +130,6 @@
- 	}
- 	else if (len >= 4)
- 	{
--	    	//assert(len < 8);
--		if (len >= 8)
--		    BUG();
- 		a = (u32)msg[ 0]      |
- 		    (u32)msg[ 1] << 8 |
- 		    (u32)msg[ 2] << 16|
-@@ -154,9 +144,6 @@
- 	}
- 	else
- 	{
--	    	//assert(len < 4);
--		if (len >= 4)
--		    BUG();
- 		a = b = c = d = pad;
- 		for(i = 0; i < len; i++)
- 		{
--- 
-Randy Hron
-http://home.earthlink.net/~rwhron/kernel/bigbox.html
-
--
-To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
-Please read the FAQ at  http://www.tux.org/lkml/
-
------ End forwarded message -----
-
+Bye,
+    Oleg
+On Wed, Jul 16, 2003 at 09:03:29PM +0400, Vitaly Fertman wrote:
+> 
+> Hi all, 
+> 
+> the new reiserfsprogs release is available on our ftp site (ftp.namesys.com).
+> 
+> This release includes:
+> - objectid handling was improved, significant speedup at pass0 and
+> semantic/lost+found rebuild passes (was in last pre releases for some time);
+> - improved leaves recovery on pass0 of rebuild-tree;
+> - exit codes of reiserfsck were fixed;
+> - reiserfsck --yes option was added
+> - mkreiserfs --quiet option was added;
+> - fsck check on boot avoids another bitmap reading on the following mount;
+> - credits were fixed.
+> 
+> Some bugs were fixed:
+> - fsck proceeds for the standard journal when wrong journal parameters in the 
+>   journal header detected, fixing them with the warning;
+> - a bug in journal replaying code when the only transaction exists was fixed;
+> - a few not standard journal related bugs in mkreiserfs and reiserfstune were 
+> fixed;
+> - a pair of bugs in rebuild-sb were fixed;
+> 
+> -- 
+> Thanks,
+> Vitaly Fertman
