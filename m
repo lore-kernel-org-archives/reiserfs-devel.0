@@ -1,35 +1,31 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Wolfgang Rohdewald <wolfgang@rohdewald.de>
 Subject: Re: file attributes destroyed.
-Date: Sun, 26 Oct 2003 19:29:06 +0300
-Message-ID: <3F9BF652.1050303@namesys.com>
-References: <200310261227.18711.wolfgang@rohdewald.de> <200310261550.06162.vitaly@namesys.com> <200310261452.46275.wolfgang@rohdewald.de>
+Date: Sun, 26 Oct 2003 18:05:21 +0100
+Message-ID: <200310261805.21481.wolfgang@rohdewald.de>
+References: <200310261227.18711.wolfgang@rohdewald.de> <200310261452.46275.wolfgang@rohdewald.de> <3F9BF652.1050303@namesys.com>
+Reply-To: wolfgang@rohdewald.de
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15887-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15888-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200310261452.46275.wolfgang@rohdewald.de>
+In-Reply-To: <3F9BF652.1050303@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: wolfgang@rohdewald.de
-Cc: reiserfs-list@namesys.com, vs@thebsh.namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Wolfgang Rohdewald wrote:
+On 26.10.2003 17:29, Hans Reiser wrote:
+HR> Ah, wait, I forgot, did you ever use a kernel version older than 2.4.22 
+HR> on this fs?  Could the corruption be from that time?
 
->On 26.10.2003 13:50, Vitaly Fertman wrote:
->VF> would you take the latest reiserfsprogs from our ftp site (3.6.11) and run
->VF> reiserfsck to be sure that there are no fs corruptions.
->
->I'll try that later, being away now for a while.
->
->  
->
-Ah, wait, I forgot, did you ever use a kernel version older than 2.4.22 
-on this fs?  Could the corruption be from that time?
+I am not sure how old this file system is but it has certainly seen 2.4.20
+and 2.4.21.
+
+However the files were still intact when I made my nightly backup last night.
+I'll try reiserfsck later.
 
 -- 
-Hans
-
-
+Wolfgang
