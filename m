@@ -1,47 +1,49 @@
-From: Soeren Sonnenburg <reiserfs@nn7.de>
-Subject: Re: trouble with reiserfs on ppc vs-3050:
-	wait_buffer_until_released ...
-Date: 28 Apr 2003 21:54:44 +0200
-Message-ID: <1051559684.10360.13.camel@localhost>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: trouble with reiserfs on ppc vs-3050: wait_buffer_until_released
+ ...
+Date: Tue, 29 Apr 2003 00:14:28 +0400
+Message-ID: <3EAD8BA4.2020000@namesys.com>
 References: <1051258287.5564.1.camel@fortknox>
-	 <1051259723.3513.7.camel@localhost> <20030425084742.GA22827@namesys.com>
-	 <1051261556.3513.31.camel@localhost> <20030425091916.GG10802@namesys.com>
-	 <1051263219.1642.10.camel@localhost> <20030425094630.GH10802@namesys.com>
-	 <1051265575.1656.37.camel@localhost> <20030425102812.GA24352@namesys.com>
-	 <1051397193.1232.4.camel@localhost>  <20030428051858.GA22805@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13881-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13882-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030428051858.GA22805@namesys.com>
+In-Reply-To: <1051258287.5564.1.camel@fortknox>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Soeren Sonnenburg <kernel@nn7.de>
+Cc: reiserfs-list@namesys.com, vs@namesys.com, Alexander Lyamin <flx@namesys.com>
 
-On Mon, 2003-04-28 at 07:18, Oleg Drokin wrote:
-> Hello!
-> 
-> On Sun, Apr 27, 2003 at 12:46:53AM +0200, Soeren Sonnenburg wrote:
-> 
-> > > Ok, is this a new box? any chance to check if the memory is right?
-> > ok, so I ran the memtest tool for a night without it finding any
-> > errors... I did a full compare (not only md5sums) over network with the
-> > files I have on disk... they were the same... I let bonnie run and
-> > checked for corruption... nothing ... 
-> > Looks like all I can do is keeping an eye on it.
-> 
-> Hm, and given there was another report like this recently, it seems like
-> some reiserfs problem :(
-> Unfortunatelly we don't even have PPC (or other bigendian) hardware to test on.
+Soeren Sonnenburg wrote:
 
-so it seems all I can do is check the fs much more regularly and see
-whether I observe some corruption again...
+>Hi...
+>
+>I suddenly have a file which when I access it using gvim gives
+>
+>vs-3050: wait_buffer_until_released: nobody releases buffer (dev 03:07,
+>size 4096, blocknr 2031616, count 3, list 0, state 0x10019, page
+>c0add66540, (UPTODATE, CLEAN, UNLOCKED)). Still waiting (570000000)
+>JDIRTY !WAIT
+>
+>and makes the whole machine hang...
+>
+>
+>Ideas what I could do about it ?
+>
+>Soeren.
+>
+>
+>
+>  
+>
+Let's ask Vladimir about this, I don't find it acceptable to leave a bug 
+in ReiserFS.  Probably Soeren can let us login remotely, and probably 
+flx can go ask IBM for some hardware for debugging this.
 
-if the problem occurs again do you have an idea how to track it down ?
+-- 
+Hans
 
-Soeren (who is hoping to not see this message again).
 
