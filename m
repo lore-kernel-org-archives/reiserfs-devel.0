@@ -1,37 +1,36 @@
-From: Pallavi Dalya <pallavidalya@yahoo.com>
-Subject: in reiser4 can extent pointer exist at any level
-Date: Thu, 20 Jan 2005 17:18:34 +0000 (GMT)
-Message-ID: <20050120171834.54511.qmail@web60108.mail.yahoo.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-23181-reiserfs=m.gmane.org@namesys.com>
+From: Aaron D. Ball <adb@bdi.com>
+Subject: knfsd and append-only attribute:  "operation not permitted"
+Date: Thu, 20 Jan 2005 13:45:53 -0500
+Message-ID: <8381054C-6B13-11D9-BFA6-000D933B35AA@bdi.com>
+Mime-Version: 1.0 (Apple Message framework v619)
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23182-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hello,
+When I use the kernel-based NFS server to export directories on 
+ReiserFS that have the append-only attribute set, I can't access the 
+files from the client machines at all:  for example, "ls" returns 
+"operation not permitted".  Is this a known bug?  Is there a good 
+workaround?
 
-      In reiser4 only the node pointer items are
-present throughout the tree except for the leaves of
-the tree and the other items like the tail policy
-item,directory entry items and stat data items are
-present in the leaf nodes.
-      But recently I came accross a extent pointer
-present in the root of the tree in reiser4. Is this
-possible.
-      But according to the theory all the data should
-be present at the lower level (i.e the leaf level) of
-the tree. Then how can an extent pointer exist at any
-level but the leaf of the tree.
+I'm running up-to-date Debian sid with Linux 2.6.10 compiled from the 
+stock Debian kernel-source package.  Everything works fine in other 
+contexts, such as
 
-Pallavi
- 
+* direct access on the server
+* access via Samba
+* access via the userspace NFS server (which I'm using as a workaround 
+for now)
 
-________________________________________________________________________
-Yahoo! Messenger - Communicate instantly..."Ping" 
-your friends today! Download Messenger Now 
-http://uk.messenger.yahoo.com/download/index.html
+I'd really like to get things working with the kernel-based server so I 
+can have locks.  Abandoning extended attributes would mean I have to 
+monitor certain files and directories for changes and check them after 
+the fact rather than simply blocking all the changes I don't want.  Is 
+there hope?  Am I just doing something dumb?
+
