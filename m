@@ -1,33 +1,53 @@
-From: "bmoon" <bo@anthologysolutions.com>
-Subject: how to fix the file system which has a dangling file?
-Date: Thu, 19 Jun 2003 11:55:14 -0700
-Message-ID: <00ac01c33694$5266e2c0$6b01a8c0@bmoon>
-References: <200306162226.39701.russell@coker.com.au> <1056030719.6758.97.camel@tiny.suse.com> <200306200046.52292.russell@coker.com.au> <1056035446.1071.143.camel@moss-huskers.epoch.ncsc.mil> <1056036084.6758.114.camel@tiny.suse.com> <1056043514.1071.199.camel@moss-huskers.epoch.ncsc.mil> <1056045995.6758.139.camel@tiny.suse.com>
+From: "Giuliano Luppi" <g_luppi@brokerstudio.it>
+Subject: Mount fails after reiserfsck --rebuild-tree failure
+Date: Thu, 19 Jun 2003 21:11:29 +0200
+Message-ID: <FCEDLNJPOJKGBCPDLKPGGEFMCBAA.g_luppi@brokerstudio.it>
+Reply-To: "Ing. Davide Imbeni" <davide.imbeni@tei.ericsson.se>,
+   <davide.imbeni@tiscali.it>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14635-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0009_01C336A7.5A2DDFA0"
+Return-path: <reiserfs-list-return-14636-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hello!
+------=_NextPart_000_0009_01C336A7.5A2DDFA0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-I accidently ran a novice application to create a big file, that was bigger
-than the size of available disk space.
+Estimated sirs,
+after experiencing some problems accessing files on a reiserfs file system
+(SuSE linux 8.1, kernel 2.4), I tried reiserfsck =96rebuild-tree.
+Since the problem resulted to be in the hardware, it failed, leaving me with
+an unmountable partition (root inode set to 0)
 
-So it created a dangling file which can not be removed, even I can not
-remove the directory including that file.
+As suggested in you site=92s FAQ (section 2), I tried with the latest
+reiserfsprogs (3.6.7-pre1), installed on another HD (with RedHat). The
+latter also failed.
 
-I ran "fsck -f" , it did not help.
+Now I know the problems are (a lot of) bad blocks.
 
-It is on EX2 file system.
+I would like to
+1.	re-enable mounting the partition, in order to recover some of the data I
+still have there (I know, I should backup more often=85 :-( )
+2.	possibly fix the badblocks (as you describe in section 38 of the FAQ), in
+order to bring up the system until new hard disks are ready.
 
-Please provide me any idea to remove it.
+The main question is: how can I undo the setting of root inode to 0?
+Is there a good way for dealing with faulty hardware with reiserfs?
 
-Thanks,
+Thank you very much for your answers
 
-Bo
+Davide Imbeni
+
+---
+Outgoing mail is certified Virus Free.
+Checked by AVG anti-virus system (http://www.grisoft.com).
+Version: 6.0.489 / Virus Database: 288 - Release Date: 10/06/2003
+
+------=_NextPart_000_0009_01C336A7.5A2DDFA0--
+
