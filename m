@@ -1,70 +1,63 @@
-From: none <turtle.power@wanadoo.es>
-Subject: Re: trouble with reiserfs on ppc vs-3050:
- wait_buffer_until_released ...
-Date: Sat, 26 Apr 2003 17:27:57 +0200
-Message-ID: <20030426172757.37f44815.turtle.power@wanadoo.es>
-References: <1051258287.5564.1.camel@fortknox>
+From: Greg Ward <gward@python.net>
+Subject: Safely spinning down SCSI ReiserFS disk
+Date: Sat, 26 Apr 2003 17:16:38 -0400
+Message-ID: <20030426211638.GA690@cthulhu.gerg.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13829-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-list-return-13830-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1051258287.5564.1.camel@fortknox>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hi
-Digging in logs I've found that this happened to me about 10 days ago,
-badblocks didn't found any disk defect.
+Hi all -- I'd like to make it so my primary disk, which is a very noisy
+10000 RPM SCSI disk, spins down at night.  (I also plan to "apm
+--suspend" the system immediately after spinning the disk down, so I'm
+not worried about normal system activity failing because of a "dead"
+disk.  And of course the first thing the system will do when it wakes up
+in the morning will be to spin up the disk!)
 
-Apr 16 15:29:37 poma kernel: vs-3050: wait_buffer_until_released: nobody
-releases buffer (dev 03:04, size 4096, blocknr 1441792, count 3, list 0,
-state 0x10019, page c0674838, (UPTODATE, CLEAN, UNLOCKED)). Still
-waiting (60000000)  JDIRTY !JWAIT Apr 16 15:29:44 poma modprobe:
-modprobe: Can't locate module char-major-10-134 Apr 16 15:29:53 poma
-kernel: vs-3050: wait_buffer_until_released: nobody releases buffer (dev
-03:04, size 4096, blocknr 1441792, count 3, list 0, state 0x10019, page
-c0674838, (UPTODATE, CLEAN, UNLOCKED)). Still waiting (90000000)  JDIRTY
-!JWAIT Apr 16 15:30:10 poma kernel: vs-3050: wait_buffer_until_released:
-nobody releases buffer (dev 03:04, size 4096, blocknr 1441792, count 3,
-list 0, state 0x10019, page c0674838, (UPTODATE, CLEAN, UNLOCKED)).
-Still waiting (120000000)  JDIRTY !JWAIT
+From searching the list archives, I know I'm not the only one who wants
+to do this, but I'm having problems that might be ReiserFS-related.
+Specifically, it looks like ReiserFS is trying to write journal data to
+the disk after it's spun down, even though I run /bin/sync before the
+spindown.
 
-My machine is a ppc G3 (mac) with a 2.4.20 benh kernel running on a /
-reiserfs that holds the last 6gigs of the drive, and the corrupted one
-is a spare partition using the remaining first 6 gigs of the drive.
+Here's my setup: / is /dev/sda2; the only other partitions on sda are
+swap and /scratch.  /home, /var, /tmp, /usr/local are all on that one
+partition.  I also have a big (and blissfully quiet) IDE disk at my
+disposal.
 
-In my case the problem raised when downloading a big file from a local
-machine lets say about 5-10Mb/s with wget, which then get the 100% of my
-cpu and becomes "unkillable" but is in R state not D.
+Here's how I spin the disk down now:
 
-I can provide additional information on Monday if someone needs....
+  * create a ramdisk with a few minimal tools -- mainly the
+    scsi-spin binary from scsitools 0.3-2 (Debian package)
 
+  * write a script in the ramdisk that runs
+      sync
+      scsi-spin --force --down /dev/sda
+      sleep 5
+      scsi-spin --force --up /dev/sda
 
-On 25 Apr 2003 10:11:53 +0200
-Soeren Sonnenburg <kernel@nn7.de> wrote:
+  * sync and chroot to the ramdisk and run that script in it
 
-> Hi...
->=20
-> I suddenly have a file which when I access it using gvim gives
->=20
-> vs-3050: wait_buffer_until_released: nobody releases buffer (dev
-> 03:07, size 4096, blocknr 2031616, count 3, list 0, state 0x10019,
-> page c0add66540, (UPTODATE, CLEAN, UNLOCKED)). Still waiting
-> (570000000) JDIRTY !WAIT
->=20
-> and makes the whole machine hang...
->=20
->=20
-> Ideas what I could do about it ?
->=20
-> Soeren.
->=20
->=20
+The disk spins down fine, and then comes back up -- but any process that
+tries to access the disk blocks forever, and there's a "kernel bug" dump
+on my console.  At that point I have to reboot -- good thing I built the
+"Magic SysRq key" feature into my kernel, since I can't even run the
+"reboot" binary!
 
+Is this sort of behaviour expected?  Is there anything more I should be
+doing to safely spin down the disk containing ReiserFS filesystems?
+Would it be useful if I provided that "kernel bug" dump?  (Maybe I can
+write it to my IDE disk before rebooting... hmmm...)
 
---=20
-La resistencia es f=FAtil todos ser=E9is asimilados
+Thanks --
+
+        Greg
+-- 
+Greg Ward <gward@python.net>                         http://www.gerg.ca/
