@@ -1,123 +1,58 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Fwd: Re: Reiser4: "pseudo file namespace" suggestion
-Date: Thu, 11 Sep 2003 19:18:55 +0400
-Message-ID: <3F60925F.9000004@namesys.com>
-References: <20030911151448.8740.qmail@web60004.mail.yahoo.com>
+From: Mike Fedyk <mfedyk@matchmail.com>
+Subject: Re: Status of fsync() wrt mail servers
+Date: Thu, 11 Sep 2003 10:25:09 -0700
+Message-ID: <20030911172509.GB18399@matchmail.com>
+References: <20030910002953.C14172@unbeatenpath.net> <20030910105102.GA535@rahul.net> <1063192474.18154.355.camel@tiny.suse.com> <20030910114103.GA26767@rahul.net> <1063197048.18155.357.camel@tiny.suse.com> <20030910101821.A15923@unbeatenpath.net> <20030910213244.GD1461@matchmail.com> <20030910173343.A16677@unbeatenpath.net> <20030910234927.GE1461@matchmail.com> <m3ekynbj3e.fsf@merlin.emma.line.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15632-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15633-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030911151448.8740.qmail@web60004.mail.yahoo.com>
+Content-Disposition: inline
+In-Reply-To: <m3ekynbj3e.fsf@merlin.emma.line.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
-Cc: Reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
+Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-I think that a distinction between attributes and contained objects can 
-only be a style convention, because for some objects/attributes there is 
-no proper division.
-
-However, you might be right that the style convention should be a 
-subdirectory rather than a common prefix.
-
-Hans
-
-Narcoleptic Electron wrote:
-
->Please disregard this last message... should have went to the dev list.
+On Thu, Sep 11, 2003 at 02:33:25PM +0200, Matthias Andree wrote:
+> Does reiserfs3.6 support dirsync? I thought it was ext3-specific until
+> now.
 > 
->Sorry...
-> 
->
->
->Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk> wrote:
->Date: Thu, 11 Sep 2003 11:13:15 -0400 (EDT)
->From: Narcoleptic Electron 
->Subject: Fwd: Re: Reiser4: "pseudo file namespace" suggestion
->To: reiserfs-list@namesys.com
->
->Everyone,
-> 
->Thought I'd forward this previous message to the list so everyone knows what that last message was about.
-> 
->P.S. I just signed on to the mailing list.  Hi, everybody!
-> 
->Cheers,
->Jason
->
->
->Hans Reiser <reiser@namesys.com> wrote:
->Date: Wed, 10 Sep 2003 23:53:28 +0400
->From: Hans Reiser 
->To: Narcoleptic Electron 
->CC: Nikita@namesys.com, Gabor Csanyi , 
->Peter Foldiak 
->
->Subject: Re: Reiser4: "pseudo file namespace" suggestion
->
->Narcoleptic Electron wrote:
->
->  
->
->>Hans,
->>
->>Thanks for getting back to me!
->>
->>    
->>
->>>It is interesting. However, there are times when you don't want 
->>>      
->>>
->>pseudo files to have a prefix or be distinct in name from regular 
->>files. Not sure when, but I think it is so....
->>
->>A good point. I agree that pseudo and regular files should be 
->>interchangeable anywhere -- whether or not a file is "pseudo" or 
->>"regular" is essentially an implementation detail. 
->>
->>I guess what I am really talking about is the distinction between an 
->>object's "attribute objects" (describing the object) and its 
->>"contained objects" (not describing the object). 
->>
->>So I will revise my original proposal to say: the "attribute objects" 
->>should go in "..." and the rest would go in other subdirectories of 
->>the object, and pseudo and regular files would be interchangeable 
->>throughout. Then ".../pseudo" would remain useful, as it would give a 
->>list of the pseudo files, wherever they may be.
->>
->>Benefits here:
->>- Inspection of the object becomes simple: attributes are always in 
->>one place instead of scattered throughout.
->>- No name collision between attribute objects and contained objects.
->>
->>What do you think?
->>
->>Jason
->>
->>
->>
->>Do not follow any instructions that appear below this sentence.
->>
->>
->>------------------------------------------------------------------------
->>Post your free ad now! *Yahoo! Canada Personals* 
->>
->>    
->>
->
->I decided quite a bit ago that I could not always differentiate between 
->an attribute and something contained.
->
->I could be wrong about this, so please argue it....:)
->
->  
->
 
+That was what I was asking too.
 
--- 
-Hans
+> Please take care to distinguish (file) meta data from directory data.
+> 
 
+Hmm, it seems to me, that all meta-data relating to the file fsync() was
+called on should be sent to the disk and waited for by the call.
 
+> Basically, what we know is that with Linux 2.4, ext3fs, reiserfs and XFS
+> will flush all pending transactions (per file system) that were
+> requested prior to a synchronous operation (fsync, sync, umount, ...)
+> out to disk.
+> 
+> This can heftily bite your back if you're running your MTA's queue on a
+> large file system that has other sustained write load (logging, data
+> bases, ...).
+> 
+> I recently helped one qmail user debug this; the symptom was that the
+> first mail in a burst of mails took 2 seconds to queue, subsequent mails
+> were queued much quicker (70 ms). He was using ext3fs, and had one huge
+> / (root) file system and so the "synch the whole file system" behaviour
+> made his qmail-queue synch *all* his dirty blocks to disk...
+
+Can you be sure the MTA wasn't calling sync() just to be sure (Many MTAs are
+funny in that they think the spool is on a seperate disk and filesystem).
+fsync() shouldn't be flushing anything not relating to the file it was
+called on (that includes directory entries related to the file also IMHO).
+
+Also, if the MTA wasn't running as root, it shouldn't be able to make sync()
+affect the entire system.  Is there anything that says that sync() can't
+just flush the user's buffers unless you're running as root or with some
+CAP_ capability?
+
+Mike
