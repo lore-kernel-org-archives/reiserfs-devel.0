@@ -1,62 +1,48 @@
-From: Spam <spam@tnonline.net>
-Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 13:34:36 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <855536742.20040827133436@tnonline.net>
-References: <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk>
- <20040826001152.GB23423@mail.shareable.org>
- <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk>
- <20040826010049.GA24731@mail.shareable.org>
- <20040826100530.GA20805@taniwha.stupidest.org>
- <20040826110258.GC30449@mail.shareable.org> <412E06B2.7060106@pobox.com>
- <1093552705.5678.96.camel@krustophenia.net>
- <1093553429.13881.48.camel@leto.cs.pocnet.net>
- <1093553846.5678.102.camel@krustophenia.net> <20040827092131.GA1284@nysv.org>
-Reply-To: Spam <spam@tnonline.net>
+From: Francesco Biscani <biscani@pd.astro.it>
+Subject: Re: reiser4 corruption problem (maybe related to "Broken reiser4 FS")
+Date: Fri, 27 Aug 2004 13:30:32 +0200
+Message-ID: <200408271330.32348.biscani@pd.astro.it>
+References: <412E6EFC.3070600@dermichi.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040827092131.GA1284@nysv.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20909-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <412E6EFC.3070600@dermichi.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: =?ISO-8859-15?B?TWFya3VzIFT2cm5xdmlzdA==?=  <mjt@nysv.org>
-Cc: Lee Revell <rlrevell@joe-job.com>, Christophe Saout <christophe@saout.de>, Will Dyson <will_dyson@pobox.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
+Cc: Michael Weissenbacher <webmaster@dermichi.com>
 
-Hello Markus,
+Hi,
 
-Friday, August 27, 2004, 11:21:31 AM, you wrote:
+On Friday 27 August 2004 01:15, Michael Weissenbacher wrote:
+> criminal mnt # uname -a
+> Linux criminal 2.6.8.1-mm4 #4 Wed Aug 25 01:34:48 CEST 2004 i686 AMD
+> Athlon(tm) XP 2400+ AuthenticAMD GNU/Linux
+> the distro is gentoo and i use reiser4progs1.0.1
 
-> On Thu, Aug 26, 2004 at 04:57:26PM -0400, Lee Revell wrote:
->>On Thu, 2004-08-26 at 16:50, Christophe Saout wrote:
->>> are read-only and system-wide and the user-overridden changes. I don't
->>> know if all of these things would really make sense inside the kernel.
->>True.  FWIW, I never use most of those features.  It's just too damn
->>slow.  Windows seems to implement all of the useful features of
->>GnomeVFS, and they are 10x faster.
+This may be a long shot, but from the readme on kernel.org it seems that 
+2.6.8.1-mm4 could have random breakage:
 
-> Are they in the kernel in Windows?
+"- This kernel has an x86 patch which alters the copy_*_user() functions so
+  they will return -EFAULT on a fault rather than the number of bytes which
+  remain to be copied.  This is a bit of an experiment, because this seems to
+  be the preferred API for those functions.   It's a see-what-breaks thing.
 
-  Some are, some aren't :)
+  And things will break.  If weird behaviour is observed, please revert
+  usercopy-return-EFAULT.patch and send a report."
 
-  Many  of the features are between the FS and the application layers.
-  Therefore  they will work with all programs that use the Windows API
-  to  access  files  etc.  I  do not think that many programs actually
-  access   disks  directly  at the FS or below level. Exceptions would
-  perhaps be file-recovery tools etc.
+So maybe you could try 2.6.9-rc1-mm1 amd see if the problem persists. I've 
+heard other users having problems with that particular -mm release and 
+reiser4.
 
-  Others are simply plugins to Windows Explorer.
+> thanks,
+> michael weissenbacher
 
-  I  don't  know  if  all,  any,  or none, are installed at the kernel
-  level. I doubt they are.
+Regards,
 
-  But  the  problem  with  Linux  seem to be that programs actually do
-  access  the  FS  directly.  Therefore  everything  will break if you
-  change the FS structures to much.
-
-  Like I said, this is IMHO something that Linux should somehow solve.
-  Applications  should  really  not  access  the filesystems directly.
-  Perhaps Grub and stuff like it should, but not many other.
-
-  ~S
-
-
+  Francesco
