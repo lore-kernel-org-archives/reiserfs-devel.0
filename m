@@ -1,45 +1,53 @@
-From: Rhyotte <rhyotte@myrealbox.com>
-Subject: My Apologies~
-Date: Wed, 05 May 2004 11:27:21 -0700
-Message-ID: <40993209.5010701@myrealbox.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: reiser4non-free
+Date: Wed, 05 May 2004 14:38:17 -0400
+Message-ID: <200405051838.i45IcH6A018977@turing-police.cc.vt.edu>
+References: <4097E691.9070001@myrealbox.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_-1664438526P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18468-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18469-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: Your message of "Tue, 04 May 2004 11:53:05 PDT."
+             <4097E691.9070001@myrealbox.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: Rhyotte <rhyotte@myrealbox.com>
+Cc: reiserfs-list@namesys.com
 
->
->
->Act like adults, make an agreement then 
->> shake hands and be friends again.
->
+--==_Exmh_-1664438526P
+Content-Type: text/plain; charset=us-ascii
 
-That was a case of the written word not quite conveying what I was 
-really thinking about / feeling. Certainly I am a little frustrated at 
-some of the flaming going on. So I apologize for for misstating that. In 
-my opinion it may behoove the relevant parties to take a "timeout" to 
-all get in an private IRC channel and hash out the semantics of an 
-'official' agreement draft ect. Having read Jeremy Hankins:  
+On Tue, 04 May 2004 11:53:05 PDT, Rhyotte <rhyotte@myrealbox.com>  said:
 
->- You want to make sure that people know who contributed to ReiserFS
->  regardless of whether or not they are interested in finding out.
->
-   It would seem to me this is about the only point that is really 
-problematic. And this point IF I have read Hans postings correctly would 
-seem to be a missunderstanding that can be corrected without too much 
-hassle.  "a stitch in time saves nine" I believe the old saying goes. It 
-would seem that if you can get with D-L and hash this out, then it would 
-most likely end up in an agreement that would prove most beneficial to 
-all parties involved. So taking a Mid Morning off to do a real time IRC 
-with the appropriate parties would most likely save alot of headaches 
-later on.
-   Again my apologies for coming off as I did.
+> "splash screen" upon every system bootup! The nvidia one is bad enough - 
+> I wind up thinking of that one as " well my 3D acceleration is working". 
 
-Thank you Reiser-Lists for your patience.
-Gary Sheppard
+Off-topic, but NVidia realizes this..   In your XF86Config:
 
+Section "Device"
+        Identifier "nVidia Corporation|NV17 [GeForce4 440 Go"
+        Driver "nvidia"
+        Option "NoLogo" "true"
+
+That last line should fix *that* problem.  I'll let the rest of the people
+engaging in the discussion ponder if a similar NoLogo solution helps others
+that have similar issues. ;)
+
+
+--==_Exmh_-1664438526P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFAmTSZcC3lWbTT17ARAm7JAJ0eid/zgnF/nEry8gQLrYy3tOoVmgCeIdbW
+uJjPNw7AlMdg0ndy/zrh2zE=
+=IlGI
+-----END PGP SIGNATURE-----
+
+--==_Exmh_-1664438526P--
