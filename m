@@ -1,49 +1,91 @@
-From: Andrea Arcangeli <andrea@suse.de>
-Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 02:18:51 +0200
-Message-ID: <20040827001851.GA7640@nocona.random>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <1093467601.9749.14.camel@leto.cs.pocnet.net> <20040825225933.GD5618@nocona.random> <412DA0B5.3030301@namesys.com> <20040826112818.GL5618@nocona.random> <412E77F3.1090206@namesys.com>
+From: viro@parcelfarce.linux.theplanet.co.uk
+Subject: Re: [some sanity for a change] possible design issues for hybrids
+Date: Fri, 27 Aug 2004 02:01:48 +0100
+Sender: <viro@www.linux.org.uk>
+Message-ID: <20040827010147.GE21964@parcelfarce.linux.theplanet.co.uk>
+References: <20040826203228.GZ21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408261344150.2304@ppc970.osdl.org> <20040826212853.GA21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408261436480.2304@ppc970.osdl.org> <20040826223625.GB21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408261538030.2304@ppc970.osdl.org> <20040826225308.GC21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408261619230.2304@ppc970.osdl.org> <20040826234048.GD21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408261652240.2304@ppc970.osdl.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20861-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20862-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <412E77F3.1090206@namesys.com>
+In-Reply-To: <Pine.LNX.4.58.0408261652240.2304@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Christophe Saout <christophe@saout.de>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Thu, Aug 26, 2004 at 04:53:23PM -0700, Hans Reiser wrote:
-> Think of it as being like VFS, where you can plugin new filesystems.  
-> Only in this case, you can plugin new kinds of files, and everything you 
-> need to implement those new kinds of files (items, nodes, keys, 
-> processing before flushing to disk, etc.) also gets implemented as a 
-> plugin.  It is an Uber-VFS.
+On Thu, Aug 26, 2004 at 04:57:01PM -0700, Linus Torvalds wrote:
+> Right. We obviously need to mark the dentry somehow, and only do the 
+> "create vfsmount" special case in this special case. If we didn't do that, 
+> then it wouldn't be a special case, now would it?
+> 
+> So clearly lookup_mnt() needs to check the dentry in the failure case. The 
+> marking could be in any of three places
+>  - mark the dentry itself by just using a dentry flag ("DCACHE_AUTOVFSMNT")
+>    or by having a dentry operation for this.
+>  - mark the inode itself (same logic as dentry)
+>  - look up the first vfsmount (on the inode list), and look if that one is 
+>    of the automatic type.
+> 
+> Clearly we should not _always_ create a vfsmount, that would just break 
+> the existign logic.
 
-I'm just confused by the naming, following your comparison with it being
-like VFS, I don't call reiser4 a "plugin" of the VFS.
+Hmm...  IOW, you are suggesting to use normal trigger for lookup_mnt() and
+then have extra check in lookup_mnt() failure exit.  That will probably
+work (and I'd prefer to mark dentry here).
 
-The vfs offers an interface for the fs to register into
-it. Like the scsi highlevel code also offers an interface for the
-lowlevel driver to register into it, but we don't call scsi lowlevel
-drivers "plugins".
+Freeing these guys will not be fun.  The final reference could be given
+up under very different locking conditions - it's certainly a blocking
+operation (it can trigger final umount, among other things), but having
+it trigger removal from mount tree(s) can get ugly.  We might be able to
+tweak that, but it will probably need require major surgery in several
+places.
 
-the ext3 directory code calling ext3_getblk would be also a plugin in
-your vocabulary, and the ext3_getblk call would be plugin-hook.
+Right now we assume that vfsmount lock *and* per-namespace semaphore are
+held when detaching from the tree (attaching what could be the first at
+given dentry --- same + i_sem on its ->i_sem).  We also assume that vfsmount is
+detached before refcount reaches zero.  The thing is, that final refcount
+can be dropped while holding namespace semaphore.  It's not fatal (we'll
+need to hold onto these guys until dropping that semaphore or add an analog
+of mntput() for places under namespace sem), but it can get messy.
 
-> I am not concerned about ram in this design, I want nifty new kinds of 
-> files easy crafted over a weekend by sysadmins working in Canada and 
-> Guatemala.  Software engineering cost is what matters to me ( I turned 
-> 40, so I think different now....;-) )
+Situation with unlink(): we need to (a) check that all vfsmounts over
+given point are "hybrid" ones (locking is not a problem at that point)
+and (b) after successful operation (unlink() and rename() alike, AFAICS)
+we want to go and kill everything under the victim dentry.  *That*
+can get very ugly, since fs could be mounted in a lot of places and/or
+in a lot of namespaces.
 
-Adding proper layering and abstractions is sure a good thing, if you can
-turn the street into a crowd of reiser4 kernel hackers because your API
-is so clean that any sysadmin can craft new kind of files over the
-weekend you're welcome to go ahead ;). (I just doubt the "plugin"
-terminology can make a difference by the time people start scratching
-their head into the code, the design and the clean abstraction of the
-code will make a difference instead)
+Note that we also need to do in VFS what NFS tries to do in revalidation -
+if dentry is invalidated, everything under it should be detached and
+dropped.  So it's not something new - we do need something that would
+be called outside of any superblock/namespace/vfsmount locks (both
+unlink() and revalidation qualify) and would kill the vfsmounts that
+become unreachable.
+
+Locking rules for attaching might need adjustment (the logics with ->i_sem
+is that we want !d_mountpoint() stay true around call of ->unlink(),
+->rmdir() and ->rename(); so cloning or replacing doesn't need that
+protection.  Now it might become interesting - we'll need to be careful
+in pivot_root(2) and possibly some other places).
+
+I'll see what can be done (it'll definitely take careful looking at the
+code), but there is a chance of things getting very ugly.
+
+BTW, shared subtrees *are* compatible with that puppy - there's a lot
+of corner cases to look at, but AFAICS they are all doable.  Lifetime
+rules can get ugly in some of them, but that's on par with the situation
+without sharing.
+
+One thing that looks like a bad interface: we get forcible "use same
+dentry for file and directory" with that design.  That can lead to
+a big can of worms - without a large audit I wouldn't bet a dime on
+ability to get that right (and same applies to reiser4 code as-is,
+for the same reasons).  No idea how bad it will turn out to be - right
+now all I can say is that we might run into trouble and that we almost
+certainly will get extra "be careful not to do <list of things>" rules
+out of that.
