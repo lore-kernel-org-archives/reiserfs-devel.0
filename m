@@ -1,61 +1,73 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: Fwd: reiser4 non-free?
-Date: Mon, 03 May 2004 18:25:41 -0400
-Message-ID: <200405032225.i43MPf7V010088@turing-police.cc.vt.edu>
-References: <20040424193246.GA2490@raptus.homelinux.org> <4091DAFE.5030809@namesys.com> <20040430055619.GD7487@archimedes.ucr.edu> <40923D1C.3090003@namesys.com> <20040430174343.GE7487@archimedes.ucr.edu> <409561EE.7030000@namesys.com> <20040502215500.GB18235@xieana.donarmstrong.com>
-            <20040503065830.GS29226@nysv.org>
+From: Stewart Smith <stewart@flamingspork.com>
+Subject: Re: max files
+Date: Tue, 04 May 2004 08:56:49 +1000
+Message-ID: <1083625008.6688.54.camel@faith>
+References: <3DF9165145FACB4C96977FF650C1E9040C469F16@its-mail1.its.corp.gwl.com>
+	 <4096851F.9040508@namesys.com>  <409685C3.30502@mweb.co.za>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1560651711P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18409-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-nF4jSxy1h8GW5yH65OZ5"
+Return-path: <reiserfs-list-return-18410-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Mon, 03 May 2004 09:58:30 +0300."
-             <20040503065830.GS29226@nysv.org> 
+In-Reply-To: <409685C3.30502@mweb.co.za>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
-Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
+To: camis <camis@mweb.co.za>
+Cc: reiserfs-list@namesys.com
 
---==_Exmh_1560651711P
-Content-Type: text/plain; charset=us-ascii
+--=-nF4jSxy1h8GW5yH65OZ5
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 03 May 2004 09:58:30 +0300, mjt@nysv.org (Markus =?UNKNOWN?Q?T=F6rnqvist?=)  said:
+On Tue, 2004-05-04 at 03:47, camis wrote:
+> Anyone tested to see how fast/sluggish reiser3 (or 4?)
+> performs when accessing a directory that has between
+> 5 and 25 million flat/text files?
 
-> It's really quite a shame that the best distro around is so rigid
-> as to not allow Reiser's minor, and understandable, addition in
-> his licensing.
+AFAIK no current file system performs "well" under this scenario. There
+is work going on to get better performance for >1million directories on
+xfs - but it is a tricky problem.
 
-The idiomatic phrase for this is "slippery slope" - it's much easier (and
-morally justifiable) to draw a hard line and and say "everybody on that
-side of the line goes in non-free" without exceptions.  If you accept Hans'
-"minor addition", then you get to fight the "but *my* minor addition isn't
-much bigger than Hans', why can't *my* stuff go in free too?" fight for
-every single package.
+just as an indicator - for a dir with ~101000 files on reiser3, reading
+from disk ('cause this box doesn't have that much memory):
 
-And I will advance the suggestion that the entire "We don't care how many users
-we have, we will stick to the highest principles no matter what" philosophy is
-a large part of *WHY* Debian is the sort of distribution it is.  Yes, they
-probably *could* be less rigid about this issue.  But then they'd lose a large
-part of what makes Debian be Debian, rather than some other distribution...
+stewart@saturn:~$ time ls Maildir/.Lists.linux-kernel/cur/ > /dev/null
+=20
+real    0m9.403s
+user    0m2.190s
+sys     0m0.230s
 
-> Wouldn't mkfs -f > /dev/null be adequate suppression?
+and for repeated runs (i.e. when things are cached):
+stewart@saturn:~$ time ls Maildir/.Lists.linux-kernel/cur/ > /dev/null
+=20
+real    0m2.284s
+user    0m2.160s
+sys     0m0.130s
 
-Redirecting to /dev/null at the time you *MOST* want to be paying very
-close attention to everything that's output... Bad idea. :)
+so it is quite possible that you'll get acceptable performance... at
+least for some applications :)
 
---==_Exmh_1560651711P
-Content-Type: application/pgp-signature
+The algorithms will scale, there just may be implementation details
+around the place that could make things faster.
+
+I'd say, test it :)
+--=20
+Stewart Smith (stewart@flamingspork.com)
+http://www.flamingspork.com/
+
+
+--=-nF4jSxy1h8GW5yH65OZ5
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
 
-iD8DBQFAlsbkcC3lWbTT17ARAuH/AKCYH1zCDxGP4whrMEIe1WxJOUxXfQCeMhcN
-U7/aXGpbHzZdXSNyX+8vMlc=
-=KxbW
+iD8DBQBAls4w3tgLgERgy8oRAmPFAKCtl6i4/rMDdLg8TUeQBMecBwpgHwCfbq5l
+Wmz+3JGIHW37sxh1H+BFbpc=
+=XtTh
 -----END PGP SIGNATURE-----
 
---==_Exmh_1560651711P--
+--=-nF4jSxy1h8GW5yH65OZ5--
+
