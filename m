@@ -1,46 +1,30 @@
-From: Andrew Morton <akpm@osdl.org>
-Subject: Re: precise characterization of ext3 atomicity
-Date: Thu, 4 Sep 2003 13:10:52 -0700
-Message-ID: <20030904131052.6ec6426d.akpm@osdl.org>
-References: <3F574A49.7040900@namesys.com>
-	<20030904085537.78c251b3.akpm@osdl.org>
-	<200309042216.04121.phillips@arcor.de>
+From: Tom Vier <tmv@comcast.net>
+Subject: Re: write barrier patches for 2.4.21
+Date: Thu, 4 Sep 2003 16:49:46 -0400
+Message-ID: <20030904204946.GB16937@zero>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15563-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15564-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200309042216.04121.phillips@arcor.de>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Daniel Phillips <phillips@arcor.de>
-Cc: reiser@namesys.com, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Daniel Phillips <phillips@arcor.de> wrote:
->
-> On Thursday 04 September 2003 17:55, Andrew Morton wrote:
-> > Hans Reiser <reiser@namesys.com> wrote:
-> > > Is it correct to say of ext3 that it guarantees and only guarantees
-> > > atomicity of writes that do not cross page boundaries?
-> >
-> > Yes.
-> 
-> Is that just happenstance, or does Posix or similar mandate it?
+On Fri, Aug 29, 2003 at 03:56:08AM +0200, Matthias Andree wrote:
+> They don't? That's not what I've seen on some of the recent drives I
+> bought. The OEM manuals should have details.
 
-Happenstance.
+all the seagate's i've gotten have always had it disabled. including the
+15k.3's i bought a little while back. old quantum's, too. i don't remember
+any scsi drive i've had that defaulted to enabled. most highend scsi drives
+are suppost to be highly reliable, and default to such settings, so they can
+just be plugged into a hotswap raid w/o having to change mode pages.
 
-It's semi-trivial to do this in ext3.  You'd open the file with O_ATOMIC
-and a write() would either be completely atomic or would return -EFOO
-without having written anything.
-
-The thing which prevents this is the ranking order between journal_start()
-and lock_page().
-
-It's not trivial but also not too hard to change things so that
-journal_start() can rank outside lock_page() - this would also offer some
-CPU savings.
-
-Can't say that I'm terribly motivated about the feature though.
-
+-- 
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0xE6CB97DA
