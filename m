@@ -1,68 +1,66 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: 2.4.19-pre7.pending 01-05 didn't make it's way
-	into -pre8?
-Date: 03 May 2002 09:34:56 -0400
-Message-ID: <1020432896.1510.197.camel@tiny>
-References: <200205031448.56202.Dieter.Nuetzel@hamburg.de>
-	<1020431887.1510.190.camel@tiny> 
-	<200205031527.45970.Dieter.Nuetzel@hamburg.de>
+From: berthiaume_wayne@emc.com
+Subject: RE: fsync() Performance Issue
+Date: Fri, 3 May 2002 16:35:04 -0400
+Message-ID: <93F527C91A6ED411AFE10050040665D0049BF9B4@corpusmx1.us.dg.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10225-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10226-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <200205031527.45970.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Cc: Oleg Drokin <green@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: mason@suse.com
+Cc: reiserfs-list@namesys.com, green@namesys.com
 
-On Fri, 2002-05-03 at 09:27, Dieter N=FCtzel wrote:
-> On Friday 03 May 2002 15:18, Chris Mason wrote:
-> > On Fri, 2002-05-03 at 08:48, Dieter N=FCtzel wrote:
-> > > Only for notification and up-to date info.
-> > > Seems that 06 is in, Chris?
-> >
-> > I started getting daily reports of some people hitting that on
-> > sledgehammer and s390, so it got sent in before the others.
->=20
-> Ah, the SuSE/AMD team? ;-)
+	Chris, I have some quick preliminary results for you. I have
+additional testing to perform and haven't run debugreiserfs() yet. If you
+have a preference for which tests to run debugreiserfs() let me know.
+	Base testing was done against 2.4.13 built on RH 7.1 using the
+test_writes.c code I forwarded to you. The system is a Tyan with single
+PIII, IDE Promise 20269, Maxtor 160GB drive - write cache disabled. All
+numbers are with fsync() and 1KB files. As I said, more testing, i.e.
+filesizes, need to be performed.
 
-The s390 guys actually found the bug, any 64 bit platform should hit it,
-unless they somehow find a way to store 6800 bytes in a 4k buffer.  The
-LTP suite triggers it very reliably, more people are running that now so
-the reports went up in frequency.
+2.4.13 			
+	=> 47.4ms/file
+2.4.19-pre7 / no options
+	=> 50.3ms/file
+2.4.19-pre7 speedup / no options
+	=> 46.8ms/file
+2.4.19-pre7 speedup, data logging, write barrier / no options
+	=> 47.1ms/file
+2.4.19-pre7 speedup, data logging, write barrier / data=journal
+	=> 25.2ms/file
+2.4.19-pre7 speedup, data logging, write barrier / data=journal,barrier=none
+	=> 27.8ms/file
 
-I won't even guess how alphas and ia64s managed to work as long as they
-did (it gets caught by a debugging check before corrupting anything,
-thank you Vladimir).
+	Now what I find interesting are the last two results. The write
+cache is disabled on the HDD. These early results are most promising. Next
+week I'll be running bonnie++ and our homegrown test against reiserfs and
+ext3fs with the same kernel metrics but add filesizes: 10K, 100K, 1M, 10M,
+and 100M. 
+	One question is will these patches be going into the 2.4 tree and
+when?
+Regards,
+Wayne.  
 
->=20
-> [-]
-> > > Even all (?) current SuSE (one of the main ReiserFS promoter) release
-> > > kernels do not include the quota stuff. Why?
-> >
-> > The new quota patches require a quota utilities upgrade, so they won't
-> > go into a stable kernel series.  Jan Kara recently started on a version
-> > of the new quota stuff that worked with the old utils.
-> >
-> > The suse kernels do include the quota patches (which is the main reason
-> > I keep the reiserfs bits up to date ;-)
->=20
-> Huh,
->=20
-> this is weird.
-> I upgraded a SuSE 7.3 system (server at a school) with=20
-> k_i386-2.4.16-20.i386.rpm quota tools installed but nothing worked.
-> Even the quota file generation failed with "quota not supported".
-> ReiserFS 3.6, of course.
->=20
-> Should I try again with newer kernel version?
+-----Original Message-----
+From: Chris Mason [mailto:mason@suse.com]
+Sent: Wednesday, May 01, 2002 9:32 AM
+To: berthiaume_wayne@emc.com
+Subject: RE: [reiserfs-list] fsync() Performance Issue
 
-Mount -o usrquota,grpquota?  SuSE started putting in the quota stuff for
-reiserfs around 2.4.12.
+
+Here are some quick results from the test program you sent.  I haven't
+yet done the test on an unpatch kernel, so these numbers just show the
+improvement from data logging.
+
+As the size of the synchronous write increases, data logging helps
+less.  With an 8k file size, data logging decreases total run time and
+per file time by 40%.  16k file size it decreases it by 32%.
+
+This was on a scsi drive.
 
 -chris
-
 
