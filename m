@@ -1,44 +1,67 @@
-From: Chris Dukes <pakrat@www.uk.linux.org>
-Subject: Re: reiser4progs 0.5.4 for Debian
-Date: Thu, 3 Jun 2004 20:58:10 +0100
-Sender: <pakrat@www.linux.org.uk>
-Message-ID: <20040603195810.GD12290@parcelfarce.linux.theplanet.co.uk>
-References: <20040603194120.GD4990@nysv.org>
+From: David Greaves <david@dgreaves.com>
+Subject: Can't mount after mkfs -b 8192
+Date: Thu, 03 Jun 2004 22:35:15 +0100
+Message-ID: <40BF9993.5060409@dgreaves.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18999-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19000-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040603194120.GD4990@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Markus =?iso-8859-1?Q?T=F6rnqvist?= <mjt@nysv.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On Thu, Jun 03, 2004 at 10:41:20PM +0300, Markus T=F6rnqvist wrote:
-> Hi
->=20
-> I know this is the wrong forum perhaps, but AFAIK the reiser4progs
-> maintainer(s) read this list..
->=20
-> Where's version 0.5.4 of the package?-)
+Help :)
 
-It would be better if you put the "bug" of a new upstream release
-in the debian bug tracking system through 'reportbug reiser4progs'.
-Currently that bug is not reported.
->=20
-> Now if it's totally GPL, there shouldn't even be that issue.
->=20
-> Just showing my concern if there are segfaults and stuff flying
-> around..
+This seems odd...
 
-Well, if you'd submitted a debian bug report, the maintainer should
-note on the bug report if such is a hindrancy to releasing a new
-upstream version.
+Kernel 2.6.6
+progsreiserfs 0.3.0.4-3
 
---=20
-Chris Dukes
-Been there, done that, got the slightly-charred t-shirt. -- Crowder
+I have a raid5 array in an LVM2 VG with a 600Gb LV defined.
+If I make a reiserfs with a block size of 8192 it won't mount.
+
+The following commands were issued consecutively:
+
+cu:~# mkfs -treiserfs /dev/video_vg/video_lv
+All data on /dev/video_vg/video_lv will be lost. Do you really want to 
+create reiser filesystem (v3.6) (y/n) y
+Creating reiser filesystem (v3.6) with standard journal on 
+/dev/video_vg/video_lv
+initializing skiped area: done
+initializing journal: done
+syncing...done
+
+cu:~# mount /dev/video_vg/video_lv /huge
+
+cu:~# df -k
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/hda2             19283776    697988  18585788   4% /
+/dev/hda1                97826     13003     79604  15% /boot
+/dev/mapper/video_vg-video_lv
+                     629126396     32840 629093556   1% /huge
+
+cu:~# umount /huge
+
+cu:~# mkfs -treiserfs -b 8192 /dev/video_vg/video_lv
+All data on /dev/video_vg/video_lv will be lost. Do you really want to 
+create reiser filesystem (v3.6) (y/n) y
+Creating reiser filesystem (v3.6) with standard journal on 
+/dev/video_vg/video_lv
+initializing skiped area: done
+initializing journal: done
+syncing...done
+
+cu:~# mount /dev/video_vg/video_lv /huge
+mount: wrong fs type, bad option, bad superblock on /dev/video_vg/video_lv,
+       or too many mounted file systems
+
+dmesg now shows:
+sh-2011: read_super_block: can't find a reiserfs filesystem on (dev 
+dm-0, block 16, size 4096)
+sh-2021: reiserfs_fill_super: can not find reiserfs on dm-0
+
+David
+
