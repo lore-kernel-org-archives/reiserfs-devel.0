@@ -1,40 +1,37 @@
-From: Oleg Drokin <green@namesys.com>
+From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
 Subject: Re: Horrible ftruncate performance
-Date: Fri, 11 Jul 2003 19:32:31 +0400
-Message-ID: <20030711153231.GG17180@namesys.com>
-References: <20030710052931.GA17957@namesys.com> <200307111716.56823.Dieter.Nuetzel@hamburg.de> <20030711152431.GF17180@namesys.com> <200307111727.25642.Dieter.Nuetzel@hamburg.de>
+Date: Fri, 11 Jul 2003 17:32:49 +0200
+Message-ID: <200307111732.49524.Dieter.Nuetzel@hamburg.de>
+References: <20030710052931.GA17957@namesys.com> <200307111716.56823.Dieter.Nuetzel@hamburg.de> <20030711152431.GF17180@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14890-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14891-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20030711152431.GF17180@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <200307111727.25642.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
-Cc: Szakacsits Szabolcs <szaka@sienet.hu>, reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
 
-Hello!
+Am Freitag, 11. Juli 2003 17:24 schrieb Oleg Drokin:
+> Hello!
+>
+> On Fri, Jul 11, 2003 at 05:16:56PM +0200, Dieter N?tzel wrote:
+> > OK some "hand work"...
 
-On Fri, Jul 11, 2003 at 05:27:25PM +0200, Dieter N?tzel wrote:
-> > Actually I did it already, as data-logging patches can be applied to
-> > 2.4.22-pre3 (where this truncate patch was included).
-> No -aaX.
+Where comes this from?
+I don't find it my tree:
 
-Right.
+fs/eiserfs/inode.c
 
-> > > Maybe it _IS_ time for this _AND_ all the other data-logging patches?
-> > > 2.4.22-pre5?
-> > It's Chris turn. I thought it is good idea to test in -ac first, though
-> > (even taking into account that these patches are part of SuSE's stock
-> > kernels).
-> I don't think -ac would make it => No big Reiser involved...
+-            if (un.unfm_nodenum)
+                 inode->i_blocks += inode->i_sb->s_blocksize / 512;
+             //mark_tail_converted (inode);
 
-Would make what?
-I think Alan have agreed to put data-logging code in already.
+Thanks,
+	Dieter
 
-Bye,
-    Oleg
