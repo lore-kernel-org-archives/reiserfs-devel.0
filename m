@@ -1,34 +1,66 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 02 Sep 2004 19:55:43 +0100
-Message-ID: <1094151338.5645.32.camel@localhost.localdomain>
-References: Message from Lee Revell <rlrevell@joe-job.com>
-	 of "Wed, 01 Sep 2004 18:51:12 -0400." <1094079071.1343.25.camel@krustophenia.net>
-	 <200409021425.i82EPn9i005192@laptop11.inf.utfsm.cl>
-	 <1535878866.20040902214144@tnonline.net>
+Date: Thu, 2 Sep 2004 20:58:25 +0100
+Message-ID: <20040902195825.GC24932@mail.shareable.org>
+References: <20040829191044.GA10090@thundrix.ch> <3247172997-BeMail@cr593174-a> <20040831081528.GA14371@thundrix.ch> <20040901201608.GD31934@mail.shareable.org> <m3u0ugilj2.fsf@zoo.weinigel.se>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21313-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21314-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1535878866.20040902214144@tnonline.net>
+Content-Disposition: inline
+In-Reply-To: <m3u0ugilj2.fsf@zoo.weinigel.se>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Spam <spam@tnonline.net>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Lee Revell <rlrevell@joe-job.com>, Jamie Lokier <jamie@shareable.org>, Pavel Machek <pavel@suse.cz>, David Masover <ninja@slaphack.com>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Christer Weinigel <christer@weinigel.se>
+Cc: Tonnerre <tonnerre@thundrix.ch>, "Alexander G. M. Smith" <agmsmith@rogers.com>, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com, vonbrand@inf.utfsm.cl
 
-On Iau, 2004-09-02 at 20:41, Spam wrote:
-> > It is trivial to implement this by looking inside the files. I.e., the way
-> > mc has done this for ages.
+Christer Weinigel wrote:
+> Jamie Lokier <jamie@shareable.org> writes:
 > 
->   Difference is that you can't do "locate" or "find" or "Search".. You
->   would have to open the files in an archive-supporting application
->   such as mc.
+> > (For example, if I edit an HTML file which is encoded in iso-8859-1,
+> > change it to utf-8 and indicate that in a META element, and save it
+> > under the same name, the full content-type should change from
+> > "text/html; charset=iso-8859-1" to "text/html; charset=utf-8".)
+> >
+> > I don't see how you can do that without kernel support.
+> 
+> [code which runs in the program which needs to read the content-type]
+> 
+> This code is guaranteed to always give you an up to date charset for a
+> file, provided that the mtime is guaranteed to change every time the
+> file changes.
 
-And would you rather that logic was running swappable in shared library
-space or privileged and unswappable in kernel ?
+...which it isn't, but ignoring that.
 
-Alan
+Yes we all know that code will work, turning a blind eye to occasional
+mtime failures.
 
+What I objected to isn't that, but Tonerre's idea of a daemon (i.e. in
+the background, that's what daemons do) updating xattrs.  Your code
+will work.  Tonerre's has a serious race condition.
+
+> > Don't say dnotify or inotify, because neither would work.
+> 
+> Why not?  The approach above works on any filesystem, even without
+> dnotify or inotify but will be more efficient with them.
+
+The above approach is in fact better with dnotify/inotify, when they
+area available, because then it doesn't have mtime problems.
+
+My objection is that dnotify & inotify don't fix the problems of a
+"daemon" (i.e. in the background) updating an xattr - because the
+daemon might not run scheduled between the write and when the file
+needs to be used.
+
+That said, yours has practical problems too.  The intended purpose (*)
+of storing content-type in an xattr was so that programs which need to
+read content without understanding it may just do so (e.g. mail agents,
+httpd), and are distinct from the programs which compute and set it
+(e.g. programs which understand specific content formats).
+
+(*) I don't necessarily agree with that purpose.
+
+-- Jamie
