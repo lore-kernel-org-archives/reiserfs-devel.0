@@ -1,53 +1,121 @@
-From: Jamie Lokier <jamie@shareable.org>
+From: Christophe Saout <christophe@saout.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 12:58:56 +0100
-Message-ID: <20040826115856.GF30449@mail.shareable.org>
-References: <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1939276887.20040826114028@tnonline.net> <20040826024956.08b66b46.akpm@osdl.org> <839984491.20040826122025@tnonline.net> <m3llg2m9o0.fsf@zoo.weinigel.se>
+Date: Thu, 26 Aug 2004 14:00:27 +0200
+Message-ID: <1093521627.9004.23.camel@leto.cs.pocnet.net>
+References: <Pine.LNX.4.44.0408260736080.23532-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20645-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-wqpJ0jQK10SAdFjTAomn"
+Return-path: <reiserfs-list-return-20646-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <m3llg2m9o0.fsf@zoo.weinigel.se>
+In-Reply-To: <Pine.LNX.4.44.0408260736080.23532-100000@chimarrao.boston.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christer Weinigel <christer@weinigel.se>
-Cc: Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Rik van Riel <riel@redhat.com>
+Cc: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Christer Weinigel wrote:
-> all applicatons that copy files will fail to copy the streams.  So
-> no working cp command, no nautilus nor konqueror without changes to
-> the application.
+--=-wqpJ0jQK10SAdFjTAomn
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-No true.  A lot of the fancy stuff depends on metadata which is merely
-another view of the serialised contents in the flat file.  Nautilus &
-Konqueror thumbnails are an example of that (I gave a few more in
-other mails).  cp works fine with that, and so does ftp.  The metadata
-is just recalculated when it's needed from the target file.
+Am Donnerstag, den 26.08.2004, 07:42 -0400 schrieb Rik van Riel:
 
-> And if you have to change the applications anyway, isn't it much
-> better to agree on a shared library in userspace that everyone uses?
-> Which has the added bonus that it can be made to work on top of
-> Linux, Windows, Ultrix and VMS?
+> > > I like cat < a > b. You can keep your progress.
+> >=20
+> > cat <a >b does not preserve following file properties even on standard
+> > UNIX filesystems: name,owner,group,permissions.
+>=20
+> Losing permissions is one thing.  Annoying, mostly.
+>=20
+> However, actual losing file data during such a copy is
+> nothing short of a disaster, IMHO. =20
+>=20
+> In my opinion we shouldn't merge file-as-a-directory
+> semantics into the kernel until we figure out how to
+> fix the backup/restore problem and keep standard unix
+> utilities work.
 
-Ideally yes, a shared library _or_ at least an agreed representation.
+Well, again, what about xattrs and ACLs...?
 
-However, with filesystem support you can improve performance by
-avoiding unneed serialisation (write to your huge *Office
-presentation, read it from another program, no need to wait for the
-slow tar+compress stage yet it's _as if_ those were done), retain
-computed metadata with coherency guarantees (e.g. real time search
-indexes, crypto digests and such), and let the filesystem decide when
-best to prune computed metadata or convert representations.
+Actually, reiser4 doesn't currently implement storage of arbitrary user
+data under a file.
 
-All of these things can work with a combination of userspace plugins
-(not the same as reiser4 plugins), and filesystem support.
+It's just some sysfs-like information that can be retrieved, some
+properties can be changed. If you copy a file the worst thing that can
+happen right now is that you lose the information whether that file
+should be encrypted or compressed. You don't lose data.
 
-Without the filesystem support, you can still use the userspace
-plugins -- so apps would still be portable -- but you don't get the
-extras mentioned above.
+In case some people are wondering, this is what you can find in the
+reiser4 metas:
 
--- Jamie
+leto:/home/chtephan/.muttrc/metas > la
+insgesamt 1
+dr-xr-xr-x  1 chtephan users   0 26. Aug 13:52 .
+-rwx------  1 chtephan users 290 12. Jan 2004  ..
+-r--r--r--  1 chtephan users   0 26. Aug 13:52 bmap
+-rw-r--r--  1 chtephan users   0 26. Aug 13:52 gid
+-r--r--r--  1 chtephan users   0 26. Aug 13:52 items
+-r--r--r--  1 chtephan users   0 26. Aug 13:52 key
+-r--r--r--  1 chtephan users   0 26. Aug 13:52 locality
+--w-------  1 chtephan users   0 26. Aug 13:52 new
+-r--r--r--  1 chtephan users   0 26. Aug 13:52 nlink
+-r--r--r--  1 chtephan users   0 26. Aug 13:52 oid
+dr-xr-xr-x  1 chtephan users   0 26. Aug 13:52 plugin
+-r--r--r--  1 chtephan users   0 26. Aug 13:52 pseudo
+-r--r--r--  1 chtephan users   0 26. Aug 13:52 readdir
+-rw-r--r--  1 chtephan users   0 26. Aug 13:52 rwx
+-r--r--r--  1 chtephan users   0 26. Aug 13:52 size
+-rw-r--r--  1 chtephan users   0 26. Aug 13:52 uid
+
+Some of them are reiser4 specific things (items, key, locality, oid)
+which can only be queried anyway.
+
+The rest is what you can also get using other VFS calls.
+
+leto:/home/chtephan/.muttrc/metas/plugin > la
+insgesamt 0
+dr-xr-xr-x  1 chtephan users 0 26. Aug 13:52 .
+dr-xr-xr-x  1 chtephan users 0 26. Aug 13:52 ..
+-rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 compression
+-rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 crypto
+-rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 digest
+-rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 dir
+-rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 dir_item
+-rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 fibration
+-rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 file
+-rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 formatting
+-rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 hash
+-rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 perm
+-rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 sd
+
+Here you can change reiser4 specific things. Here you can change some
+properties how the file is stored in the reiser4 tree. For example you
+can activate compression, encryption or authentication or set some hints
+to optimize speed.
+
+You can't create or remove these pseudo-files, just like in sysfs.
+
+I don't know, but if someone wants to store user data I think you would
+have to implement a directory "userdata" or something where you can
+store it.
+
+Not all of the information does make a lot sense inside a modified tar.
+Who is interested in the bmap information of the file or some other
+read-only information?
+
+
+--=-wqpJ0jQK10SAdFjTAomn
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQBBLdDbZCYBcts5dM0RAizLAJoDIUG7l/J0r/+Q7Qhvys/jNCeB7QCePDbv
+vUQPq1FsqrzE2TSkcAxFkYc=
+=MYx8
+-----END PGP SIGNATURE-----
+
+--=-wqpJ0jQK10SAdFjTAomn--
+
