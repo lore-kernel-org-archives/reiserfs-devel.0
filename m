@@ -1,70 +1,52 @@
-From: Russell Coker <russell@coker.com.au>
-Subject: Re: How to mount reiserfs with a relocated journal? -- Figured out
-Date: Fri, 11 Jul 2003 17:43:21 +1000
-Message-ID: <200307111743.21259.russell@coker.com.au>
-References: <003701c3477d$33239580$6401a8c0@doug>
-Reply-To: Russell Coker <russell@coker.com.au>
+From: Chris Mason <mason@suse.com>
+Subject: Re: Horrible ftruncate performance
+Date: 11 Jul 2003 10:27:04 -0400
+Message-ID: <1057933624.13313.60.camel@tiny.suse.com>
+References: <Pine.LNX.4.30.0307100523110.24356-100000@divine.city.tvnet.hu>
+	 <20030710052931.GA17957@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14881-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14882-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <003701c3477d$33239580$6401a8c0@doug>
-Content-Disposition: inline
+In-Reply-To: <20030710052931.GA17957@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Doug Bazarnic <doug@cavecreek.net>
-Cc: ReiserFS <reiserfs-list@namesys.com>
+To: Oleg Drokin <green@namesys.com>
+Cc: Szakacsits Szabolcs <szaka@sienet.hu>, reiserfs-list@namesys.com
 
-I'm replying to the list because I believe that this will interest other 
-people and that it is not something you desired to keep secret.  Also if I 
-get something wrong then someone will correct me.  ;)
+On Thu, 2003-07-10 at 01:29, Oleg Drokin wrote:
+> Hello!
+> 
+> On Thu, Jul 10, 2003 at 05:23:39AM +0200, Szakacsits Szabolcs wrote:
+> 
+> > I've noticed very long "hangs" using reiserfs and they were always at
+> > ftruncate(2). I made a comparision between different filesystems. SuSE 8.2
+> 
+> Yes, this is known "feature".
+> 
+> > (same bad performance on older SuSE versions as well), same partitition,
+> > default mkfs.*. Let's create a 200GB sparse file:
+> > 	dd if=/dev/zero of=sparse bs=1 seek=200G count=1
+> > Results:
+> > 	ext3	    0.00 sec
+> > 	XFS         0.00 sec
+> > 	JFS         0.00 sec
+> > 	reiserfs  874.27 sec (all spent in the kernel)
+> 
+> See the patch below.
+> It is merged into 2.4.22-pre3
+> Speeds up large holes creation in ~ 1000 times (on 4k blocksize)
+> 
+> > Is there a faster way to create big sparse files on reiserfs?
+> 
+> Use the patch. (should apply to 2.4.18,2.4.19,2.4.20,2.4.21)
+> (I am unsure if you can apply it to the kernel from SuSE 8.2, though).
 
-On Fri, 11 Jul 2003 17:22, Doug Bazarnic wrote:
-> Are you aware if these cards require drivers under linux?
+I'll try to get this in for 8.3, it makes a huge difference.
 
-There is a driver in the stock kernel.  Enable CONFIG_BLK_DEV_UMEM.
+-chris
 
-> I've just read the literature on the flash cards and they mtbf is
-> 1,000,000 hours, not writes.
-
-That sounds reasonably good, although it might be based on "typical usage 
-patterns"...
-
-BTW  Did you know that disk life depends on altitude?  If you run a hard drive 
-at the top of a mountain or below sea level then that may dramatically 
-decrease it's life.  Due to manufacturing issues some drives in a series will 
-work better in mountains than others, manufacturers are capable of supplying 
-such drives if they feel inclined.  If you get a drive that due to 
-manufacturing issues will work best below sea level and run it on a mountain 
-you won't expect it to last the MTBF time.
-
-Unless you are doing exactly what the manufacturer thinks a "typical" user 
-will do then don't count on getting a MTBF.
-
-> Do you know if having a larger journal slows things down, or speeds
-> things up?
-
-If there is no seek time (as is the case with Flash and umem cards) then there 
-is no penalty to making it larger AFAIK.  Whether there is any benefit is 
-another issue.
-
-For my client I designed a system with a 1G umem card which would be used for 
-32M journals for two important file systems and the other 960M was to be used 
-for a partition mounted under /var/spool for performance critical data that 
-was to be written synchronously.  I judged that 960M of virtually instant 
-storage (that did not affect the speed of the other partitions in the RAID 
-device in any way) would be of much greater benefit than larger journals.
-
-If you are using a database that has it's own journalling system then maybe 
-you could have the database journal on the umem device, which may give better 
-performance gains than anything you could do at the FS level.
-
--- 
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
 
