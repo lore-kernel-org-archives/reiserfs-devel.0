@@ -1,47 +1,70 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: running unpatched 2.2.19 on reiserFS-ed system
-Date: Tue, 11 Jun 2002 09:04:59 +0400
-Message-ID: <20020611090459.A5294@namesys.com>
-References: <20020611045911.45570.qmail@web21410.mail.yahoo.com>
+From: Kurt <kpalmer@advance.net>
+Subject: Re: Filesystem Corruption
+Date: Tue, 11 Jun 2002 12:49:48 -0400
+Message-ID: <200206111249.48229.kpalmer@advance.net>
+References: <200206061400.01445.kpalmer@advance.net> <20020607111539.B12869@namesys.com>
+Reply-To: kpalmer@advance.net
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10716-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10717-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <20020611045911.45570.qmail@web21410.mail.yahoo.com>
+In-Reply-To: <20020607111539.B12869@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Antonie Nygma <darkenigma80@yahoo.com>
+To: Oleg Drokin <green@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Hello!
+Thanks Oleg,
+=09=09sorry for the late response (i was out of the office) , you may fin=
+d the=20
+following information on the last crash useful :-
++++++++++++++++
+3 04:32:37 devo kernel: vs-13075: reiserfs_read_inode2: dead inode read f=
+rom=20
+disk [854 1695654 0x0 SD]. This is likely to be race with knfsd. Ignore
+Jun  3 04:32:39 devo kernel: vs-13060: reiserfs_update_sd: stat data of o=
+bject=20
+[854 1695654 0x0 SD] (nlink =3D=3D 1) not found (pos 1)
+Jun  3 04:41:38 devo kernel: vs-13060: reiserfs_update_sd: stat data of o=
+bject=20
+[854 1695654 0x0 SD] (nlink =3D=3D 1) not found (pos 1)
+Jun  3 04:41:43 devo kernel: vs-13060: reiserfs_update_sd: stat data of o=
+bject=20
+[854 1695654 0x0 SD] (nlink =3D=3D 1) not found (pos 1)
+++++++++++++
+I will upgrade the kernel and reiserfs tools this week and inform you of =
+the=20
+result after a fsck.
+-Kurt
 
-On Mon, Jun 10, 2002 at 09:59:11PM -0700, Antonie Nygma wrote:
+On Friday 07 June 2002 3:15 am, Oleg Drokin wrote:
+> Hello!
+>
+> On Thu, Jun 06, 2002 at 02:00:01PM -0400, Kurt wrote:
+> > error stating the file pointed to nowhere.
+> > I was unable to complete a reiserfsck --fix-fixable because of the le=
+ngth
+> > of time that this (fsck) process took since this was an unscheduled
+> > downtime. During the weekend i will attempt to do the fsck again, how=
+ever
+> > i really needed to know if this problem has been observed by anyone e=
+lse,
+> > and what steps they took to fix the problem.
+>
+> We recommend you to upgrade your kernel to 2.4.18.
+> To know what exact problem is it would be very useful if you'd posted
+> excerpts from kernel logs with actual errors.
+> Thank you.
+>
+> Bye,
+>     Oleg
 
-> stuffs on (fresh) kernel-2.2.19 and could not
-> succesfully boot after compilation and rebooting.
-> the error: Unable to mount root fs (kernel panic).
-> i suspect this is because all the partitions in the
-> current HDD are reiser-FS.
+--=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Kurt Palmer                                      SysAdmin
+kpalmer@advance.net                Advance Internet
+201-459-2846
 
-Yes.
-
-> can anybody help me point out what i need to do to get
-> k-2.2.19 to run on the machine?
-
-
-If your reiserfs partitions are of v3.5 format (see dmesg output,
-2.4 kernels will output warning in case of v3.5 fs being mounted),
-you must apply latest reiserfs patch (against 2.2.20, but should apply fine
-to 2.2.19) from ftp://ftp.namesys.com/pub/reiserfs-for-2.2
-then recompile kernel and it should boot.
-If you have v3.6 filesystem format, then you cannot use it from 2.2 kernel.
-
-(BTW we are recommending to use 2.4.18+ kernels from 2.4 series because of
-mane bugfixes that went into it. Any earlier 2.4 kernels should not be used
-for reiserfs, if you really want your data to be consistent.)
-
-Bye,
-    Oleg
