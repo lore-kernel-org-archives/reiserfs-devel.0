@@ -1,35 +1,36 @@
-From: claus@xn--frber-gra.muc.de (=?ISO-8859-1?Q?Claus_F=E4rber?=)
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
 Subject: Re: silent semantic changes with reiser4
-Date: 31 Aug 2004 13:01:00 +0200
-Sender: news <news@sea.gmane.org>
-Message-ID: <9FuGrTY3cDD@3247.org>
-References: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com>
-	<412E4999.1050504@sover.net>
+Date: Wed, 01 Sep 2004 07:51:33 -0400 EDT
+Message-ID: <216111536359-BeMail@cr593174-a>
+References: <413578C9.8020305@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21205-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21206-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <413578C9.8020305@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: Hans Reiser <reiser@namesys.com>
+Cc: ninja@slaphack.com, vonbrand@inf.utfsm.cl, pavel@ucw.cz, jamie@shareable.org, cw@f00f.org, viro@parcelfarce.linux.theplanet.co.uk, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com, zam@namesys.com, torvalds@osdl.org
 
-Stephen Wille Padnos <spadnos@sover.net> schrieb/wrote:
-> How does the file manager / chooser decide whether you're trying to
-> move into a directory, or the meta-data-directory for a directory?
-> It's not just files that should have metadata - directories need* them
-> too.  Making it possible to see attributes as a directory under a file
-> is great, but you'd still need an O_META flag for accessing directory
-> metadata (since there are already files under a directory).
+Hans Reiser wrote on Wed, 01 Sep 2004 00:22:49 -0700:
+> Making "hard links only link to the file aspect of the file-directory
+> duality, and persons who want to link to the directory aspect must use
+> symlinks" seems to solve this.  If we want to use the Alexander Smith
+> solution to cycle detection, and allow hard links to directories, then
+> we must make sure that for the hard linked entity, there is a single
+> lock for it somewhere (e.g. the directory inode) that can be taken.
 
-A simple convention that meta data files start with, say ".$", would be  
-enough.
+Oddly enough that's what I did in my RAM file system.  No matter how
+the file/directory node is found (the path can lead through different
+parents), it has a unique ID and a corresponding single lock for it.
 
-Claus
--- 
-http://www.faerber.muc.de
+Rename/delete goes and locks all the nodes that might change parents
+and/or children, then it does its operations (though it has to watch
+out for deadlocks, which are unavoidable when two rename/deletes both
+sneak up on the same file by different paths).
 
-
+- Alex
