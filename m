@@ -1,60 +1,56 @@
-From: Vladimir Saveliev <vs@namesys.com>
+From: Oliver Korpilla <okorpil@fh-landshut.de>
 Subject: Re: Reiser4 and NFS
-Date: Tue, 07 Sep 2004 11:57:22 +0400
-Message-ID: <1094543842.1340.61.camel@tribesman.namesys.com>
-References: <413C5DBA.1070207@fh-landshut.de>
+Date: Tue, 07 Sep 2004 10:05:48 +0200
+Message-ID: <413D6BDC.80006@fh-landshut.de>
+References: <413C5DBA.1070207@fh-landshut.de> <1094543842.1340.61.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21557-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21558-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <413C5DBA.1070207@fh-landshut.de>
+In-Reply-To: <1094543842.1340.61.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Oliver Korpilla <okorpil@fh-landshut.de>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Vladimir Saveliev <vs@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Hello
+Hello Vladimir,
 
-On Mon, 2004-09-06 at 16:53, Oliver Korpilla wrote:
-> Hello!
-> 
-> I've recently upgraded my Debian Sarge to use a Reiser4 as a root filesystem out 
-> of curiosity.
-> 
-> I've been doing development on this box, involving serving a root filesystem to 
-> an embedded target via NFS.
-> 
-> My box (the host) is a vanilla kernel.org Linux 2.6.8.1-mm1 with 
-> reiser-all.diff.gz patchset. It's configured to serve NFSv3.
-> 
-> The target has a TimeSys 2.4.21 (realtime) Linux kernel with NFSv3 client support.
-> 
-> Before that, I've used 2.4.26 with an ext3 filesystem, and everything went fine. 
-> Then I've upgraded kernel and my root filesystem (to Reiser4, I surely consider 
-> that an upgrade! ;) ), and I get NFS error -45 (Operation not supported), when 
-> target wants to do the LOOKUP operation (I can see that on Ethereal).
-> 
-> I've found a similar error occuring when serving VFAT partitions over NFS:
-> http://linux.derkeiler.com/Mailing-Lists/Kernel/2004-02/7848.html
-> 
-> I've switched the particular subtree of my root FS that I want to serve via NFS 
-> back to ext3, and the problem is gone, so this problem is clearly rooted in the 
-> interaction between NFS and Reiser4.
-> 
-> If I were to do a wild guess, I'd say: Since both VFAT and Reiser4 directory 
-> semantics differ from "standard Unix" (or at least ext*) conventions, this is 
-> interferring with the NFS LOOKUP operation, don't you think?
-> 
-> I'll be glad to provide any additional information if required.
-> 
+I guess not.
 
-I have no problems with exporting reiser4 via NFS. Could it be that you
-have problem because your client is embedded?
+Both my clients are embedded systems, and both didn't work.
 
-> Thanks and with kind regards,
-> Oliver Korpilla
-> 
+Client/Target one is a Motorola MVME2100 board with an MPC8240 PowerPC CPU @ 200
+MHz.
+
+Client/Target two is a Motorola MVME5500 board with an MPC7455 PowerPC CPU @ 1GHz.
+
+Both failed to mount their root filesystem via NFS from a Reiser4 on the
+server/host, but worked fine with an ext3 over NFS.
+
+Either this is a NFSv3/Reiser4/2.6.8.1 server vs. NFSv3/2.4.21 client problem,
+or it has something to do with endianness (PowerPC is big-endian, Intel P4 box
+is little-endian). I know ext* has absolutely no issues with endianness, neither
+as RAM disk nor over NFS, but perhaps Reiser4 has?
+
+Do both your client and your server have kernel 2.6.x? Are both Reiser4 patched?
+
+Maybe Linux 2.6.x has new LOOKUP operation semantics in order to support Reiser4
+that Linux 2.4.2x hasn't?
+
+On a side note:
+
+It would be nice if we could reproduce the error, since I like Reiser4. I did a
+large egrep over the whole /usr subtree, and didn't hear a sound from my hard
+drive because accesses seemed to be well-ordered (no superfluous head
+movements). I first thought the operation failed. ;)
+
+With kind regards,
+Oliver Korpilla
+
+Vladimir Saveliev wrote:
+> I have no problems with exporting reiser4 via NFS. Could it be that you
+> have problem because your client is embedded?
 
