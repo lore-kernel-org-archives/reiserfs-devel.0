@@ -1,49 +1,43 @@
-From: Ragnar =?iso-8859-15?Q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
-Subject: Re: Snapshots a la NetApp?
-Date: Mon, 24 Mar 2003 13:49:35 +0100
-Message-ID: <20030324124934.GD1318@vestdata.no>
-References: <200303221822.34401.phma@webjockey.net> <33433.10.20.2.148.1048390681.squirrel@alpha> <20030323111831.GF12916@marowsky-bree.de>
+From: Nicolas Vanderavero <nv@info.ucl.ac.be>
+Subject: "Unformat" a ReiserFS partition : a testimony :-)
+Date: Mon, 24 Mar 2003 20:36:19 +0100
+Message-ID: <3E7F5E33.4020709@info.ucl.ac.be>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13352-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13355-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030323111831.GF12916@marowsky-bree.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Lars Marowsky-Bree <lmb@suse.de>
-Cc: kend@xanoptix.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On Sun, Mar 23, 2003 at 12:18:31PM +0100, Lars Marowsky-Bree wrote:
-> > I'm just wondering if there's any development being done on NetApp-like
-> > snapshots.  (This differs from LVM snapshots in that it's file-by-file,
-> > instead of volume based.)  If not, has anyone given it any consideratio=
-n?=20
-> > It would be a huge win for the RAID-in-a-box folks, and, speaking as a
-> > sysadmin, is something about which I dream frequently.
->=20
-> Well, implementing it at the LVM level isn't entirely bad though. What ki=
-nd of
-> advantage would have implementing at the filesystem level have? It would =
-need
-> to compensate at least the disadvantage of being less general.
+Hello,
 
-I think the main advantage of having it in the filesystem is that it
-makes the snapshots available to the users. This makes it possible for
-regular users to undelete / restore files without having to contact the
-sysadmin.=20
+while reinstalling a Debian on a new hard drive, I made the mistake to 
+format in reiserfs my good old /home which was on /dev/sda7 instead of 
+formatting the new /dev/hda7. Gasp ! Eight gigabytes lost ...
 
-As for linux implementations of NetApp-like snapshots you should check
-out snapfs:=20
+Or ... maybe it was not totally lost :-) I immediately made a dump of 
+the partition with 'dd' and started grepping some known text on it. It 
+seemed that no data was really lost. I didn't know what to do. So I read 
+the man pages and found the reiserfsck command quite interesting :-)
 
-http://www.mountainviewdata.com/us/product/product_snap_1.html
-http://www-mddsp.enel.ucalgary.ca/People/adilger/snapfs/
-http://sourcefrog.net/projects/snapfs/
+Ok, I am a total newbie to filesystems and to ReiserFS. So maybe it will 
+sound trivial to you, but just in case it happens to anyone else, I just 
+wanted to say that running a reiserfsck --rebuild-tree -S on my 
+partition was enough to unformat it. I ended up with some file in 
+lost+found, but a 'file *' is enough to discover what they are.
+
+So, maybe it would be usefull to add an entry in the "Example of using" 
+section of the man page of reiserfsck, saying something like : "If you 
+reformatted by mistake a reiserFS partition, you can try to unformat it 
+by running reiserfsck --rebuild-tree -S on it".
+
+Anyway, thank you for developing this filesystem.
+Nicolas Vanderavero.
 
 
---=20
-Ragnar Kj=F8rstad
-Zet.no
+
+
