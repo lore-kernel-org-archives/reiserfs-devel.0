@@ -1,48 +1,54 @@
 From: Felipe Alfaro Solana <felipe_alfaro@linuxmail.org>
-Subject: Re: Desktop Filesystem Benchmarks in 2.6.3
-Date: Wed, 03 Mar 2004 14:07:16 +0100
-Message-ID: <1078319235.1113.2.camel@teapot.felipe-alfaro.com>
-References: <4044119D.6050502@andrew.cmu.edu>
-	 <40453538.8050103@animezone.org> <20040303014115.GP19111@khan.acc.umu.se>
-	 <200403030700.57164.robin.rosenberg.lists@dewire.com>
-	 <1078307033.904.1.camel@teapot.felipe-alfaro.com>
-	 <1078308797.2641.14.camel@venus.local.navi.pl>
+Subject: RE: Desktop Filesystem Benchmarks in 2.6.3
+Date: Wed, 03 Mar 2004 14:14:16 +0100
+Message-ID: <1078319654.1113.10.camel@teapot.felipe-alfaro.com>
+References: <KHEHKKKAAILFJGJCHDCAAEFFEKAA.mg@sgi.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-17044-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17045-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1078308797.2641.14.camel@venus.local.navi.pl>
+In-Reply-To: <KHEHKKKAAILFJGJCHDCAAEFFEKAA.mg@sgi.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-To: Olaf =?iso-8859-2?Q?Fr=B1czyk?= <olaf@cbk.poznan.pl>
+Content-Type: text/plain; charset="us-ascii"
+To: Mike Gigante <mg@sgi.com>
 Cc: Robin Rosenberg <robin.rosenberg.lists@dewire.com>, David Weinehall <david@southpole.se>, Andrew Ho <andrewho@animezone.org>, Dax Kelson <dax@gurulabs.com>, Peter Nelson <pnelson@andrew.cmu.edu>, Hans Reiser <reiser@namesys.com>, linux-kernel <linux-kernel@vger.kernel.org>, ext2-devel@lists.sourceforge.net, ext3-users@redhat.com, jfs-discussion@www-124.southbury.usf.ibm.com, reiserfs-list@namesys.com, linux-xfs@oss.sgi.com
 
-On Wed, 2004-03-03 at 11:13, Olaf Fr=C4=85czyk wrote:
-> > > Recoverability matters to me. The driver could be 10 megabyte and
-> > > *I* would not care. XFS seems to stand no matter how rudely the OS
-> > > is knocked down.
-
+On Wed, 2004-03-03 at 11:24, Mike Gigante wrote:
+> On Wednesday 03 March 2004 10:43, Felipe Alfaro Solana wrote:
 > > But XFS easily breaks down due to media defects. Once ago I used XFS,
 > > but I lost all data on one of my volumes due to a bad block on my hard
 > > disk. XFS was unable to recover from the error, and the XFS recovery
 > > tools were unable to deal with the error.
+> 
+> A single bad-block rendered the entire filesystem non-recoverable 
+> for XFS? Sounds difficult to believe since there is redundancy such
+> as multiple copies of the superblock etc.
 
-> You lost all data? Or you just had to restore them from backup? If you
-> didn't have a backup it is your fault not XFS one :)
+You should believe it... It was a combination of a power failure and
+some bad disk sectors. Maybe it was just a kernel bug, after all, as
+this happened with 2.5 kernels: during kernel bootup, the kernel invoked
+XFS recovery but it failed due to media errors.
 
-Well, it was a testing machine with no important data, so I could just
-afford to lose everything, as it was the case.
+> I can believe you lost *some* data, but "lost all my data"??? -- I 
+> believe that you'd have to had had *considerably* more than 
+> "a bad block" :-)
 
-> But even if you had no backup, why didn't you move your data (using dd
-> or something else) to another (without defects) drive, and run recovery
-> on new drive?
+It was exactly one disk block, at least that's what the low-level HDD
+diagnostic program for my IBM/Hitachi laptop drive told me. In fact, the
+HDD diagnostic was able to recover the media defects.
 
-I tried, but it proved more difficult than expected, since the computer
-was a laptop and I couldn't move the HDD to another computer. Using the
-distro rescue CD was useless as it's kernel didn't have XFS support. All
-in all, XFS recovery was a nightmare compared to ext3 recovery, for
-example.
+That could have been one of those very improbable cases, but I lost the
+entire volume. Neither the kernel nor XFS tools were able to recover the
+XFS volume. However, I must say that I didn't try every single known way
+of performing the recovery, but recovery with ext2/3 is pretty
+straightforward.
+
+As I said, it could have been a kernel bug, or maybe I simply didn't
+understand the implications of recovery, but xfs_repair was totally
+unable to fix the problem. It instructed me to use "dd" to move the
+volume to a healthy disk and retry the operation, but it was not easy to
+do that as I explained before.
 
