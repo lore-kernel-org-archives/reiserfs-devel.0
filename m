@@ -1,26 +1,57 @@
-From: Michael Weissenbacher <webmaster@dermichi.com>
-Subject: Re: fsck.reiser4 problem (was: reiser4 corruption problem)
-Date: Tue, 31 Aug 2004 18:32:55 +0200
-Message-ID: <4134A837.30607@dermichi.com>
-References: <20040831161821.4ECB515F84@mail03.powweb.com>
+From: V13 <v13@priest.com>
+Subject: Re: silent semantic changes in reiser4 (brief attempt to document the idea of what reiser4 wants to do with metafiles and why
+Date: Tue, 31 Aug 2004 20:55:55 +0300
+Message-ID: <200408312055.56335.v13@priest.com>
+References: <41323AD8.7040103@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21163-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21164-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040831161821.4ECB515F84@mail03.powweb.com>
+In-Reply-To: <41323AD8.7040103@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Dabbs <david@dabbs.net>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Andrew Morton <akpm@digeo.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@osdl.org>, reiserfs-list@namesys.com
 
-Hello David,
-> Can anyone at Namesys comment on Michael's posts? 
-Vladimir Saveliev submitted a patch for the hash calculation code of 
-reiser4progs today, which solved my problem. I'm running new tests at 
-the moment and so far everything is stable.
+On Sunday 29 August 2004 23:21, Hans Reiser wrote:
+> The Idea
+>
+> You should be able to access metadata about a file the same way you
+> access the file's data, but with a name based on the filename followed
+> by a name to select the metadata of interest.
+>
+> Examples:
+>
+> cat song_of_silence/metas/owner
+> cat song_of_silence/metas/permissions
+> cat 10 > song_of_silence/metas/mixer_defaults/volume
+> cat song_of_silence/metas/license
 
-don't forget to enjoy your vacation :)
-Michael
+Maybe I'm crazy but:
+
+ You're talking about a major change in the way filesystems work if this is 
+going to be used by other FSs too. If  I understand this correctly it is a 
+completely new thing and trying to do it by patching existing well-known 
+'primitives' may be wrong. 
+
+  AFAIK and AFAICS the metadata are not files or directories. You can look at 
+them as files/dirs but they are not, just like a tar is not a directory. I 
+believe that the correct thing to do (tm) is to add a new 'concept' named 
+'metadata' (which already exists). This way you'll have files, directories 
+and metadata (or whatever you call them). So, each directory can have 
+metadatas and files and each file can have metadatas. Then you have to 
+provide some new methods of accessing them and not to use chdir() etc. (lets 
+say chdir_meta() to enter the meta dir which will work for files too). After 
+entering the 'metadir' you'll be able to use existing methods etc to access 
+its 'files'.
+
+  This approach doesn't mess with existing things and can be extended for 
+other filesystems too.
+
+(Just a thought)
+
+<<V13>>
