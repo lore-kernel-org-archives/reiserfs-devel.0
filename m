@@ -1,60 +1,99 @@
-From: Klaus Dieter Wolfinger <kd.wolfinger@gmx.de>
-Subject: Problems with reiserfs partition after systemcrash -- I need help
-Date: Thu, 1 May 2003 19:19:44 +0200
-Message-ID: <200305011848.48027.kd.wolfinger@gmx.de>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Unicode policy
+Date: Fri, 02 May 2003 04:55:37 +0400
+Message-ID: <3EB1C209.1050808@namesys.com>
+References: <200305011538.h41FcFn01653@linux1.futureware.at> <20030501154819.GA15670@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13917-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13919-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20030501154819.GA15670@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Oleg Drokin <green@namesys.com>
+Cc: Philipp G?hring <p.guehring@futureware.at>, reiserfs-list@namesys.com
 
-Hello experts,
-after a systemcrash I can't mount a partition (hdb2) with reiserfs.
+It is a VFS issue.  We just conform.  VFS can't handle / and null being 
+in a filename, so Unicode can't work in Linux.  If you get VFS to handle 
+Unicode, I'll make ReiserFS work.  Linus is the one to convince, not us.
 
-Technical details:
-reiserfsck 3.6.2 (2002)
-SuSE Linux 8.1; Kernel 2.4
+Best,
+
+Hans
+
+Oleg Drokin wrote:
+
+>Hello!
+>
+>On Thu, May 01, 2003 at 05:38:04PM +0200, Philipp G?hring wrote:
+>
+>  
+>
+>>I have some question regarding the Unicode policy of filenames in filesystem, 
+>>especially ReiserFS. 
+>>Are filenames stored in UTF-8?
+>>    
+>>
+>
+>No. filenames are stored "as is". If you write those as unicode, you get unicode.
+>
+>There are several restrictions on filenames in Unix/Linux:
+>You cannot use 0-byte and '/'-byte as part of filename.
+>
+>  
+>
+>>Should they be stored in UTF-8?
+>>    
+>>
+>
+>You decide how do you want to store your filenames.
+>
+>  
+>
+>>Is it a question of the filesystem?
+>>    
+>>
+>
+>Some filesystems do it, but I doubt FS should do it.
+>
+>  
+>
+>>Is it the applications job to interpret it?
+>>    
+>>
+>
+>It is debatable. Kernel/VFS/some library might do this as well.
+>
+>  
+>
+>>Or is the filesystem encoding independent?
+>>    
+>>
+>
+>Some filesystems are encoding-dependent and some are not (because they do not know anything about encoding at all).
+>
+>  
+>
+>>Are there migration plans to Unicode?
+>>    
+>>
+>
+>Migration of what? Migration of reiserfs to unicode is not planned.
+>Same for reiser4. You can write whatever plugin to store filenames in any way
+>you might imagine in reiser4.
+>
+>Bye,
+>    Oleg
+>
+>
+>  
+>
 
 
-#> reiserfsck --rebuild-sb /dev/hdb2
-Count of blocks on the device: 1636621
-Number of bitmaps: 50
-Blocksize: 4096
-Free blocks (....): 393153
-Root block: 33419
-Filesystem is NOT clean
-Tree height: 5
-=2E
-=2E
-=2E
-=2E
-Superblock seems to be correct
+-- 
+Hans
 
-#> reiserfsck --rebuild-tree /dev/hdb2
-
-pass0 -> interrupts with the message:
-cannot read block 12252
-
-badblocks -b 4096 /dev/hdb2
-98
-99
-=2E.... long list of numbers
-
-23954
-=2E
-23966
-
------------------------------------------------
-Is it possible to retrieve the data on this partition ?
-
-thanks a lot in advance
-with best regards
-Klaus Dieter Wolfinger
---
-kd.wolfinger@gmx.de
 
