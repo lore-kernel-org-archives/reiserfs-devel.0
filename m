@@ -1,72 +1,51 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: [PATCH] various allocator optimizations
-Date: Wed, 12 Mar 2003 14:12:53 +0300
-Message-ID: <3E6F1635.2010305@namesys.com>
-References: <1047400482.8215.312.camel@tiny.suse.com>	 <20030311194205.A4493@namesys.com>	 <1047403968.8219.337.camel@tiny.suse.com>  <3E6E584D.4080809@namesys.com>	 <1047421551.8219.448.camel@tiny.suse.com>  <3E6E674E.4040305@namesys.com> <1047433739.8215.487.camel@tiny.suse.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: [PATCH] new data logging and quota patches available
+Date: 12 Mar 2003 08:22:30 -0500
+Message-ID: <1047475349.8219.499.camel@tiny.suse.com>
+References: <1046439149.2163.21.camel@tiny.suse.com>
+	 <3E66B73D.6030008@mb.tu-ilmenau.de>
+	 <1046922372.2161.275.camel@tiny.suse.com> <3E66C88E.40207@mb.tu-ilmenau.de>
+	 <3E69FA70.5030601@mb.tu-ilmenau.de>
+	 <1047227975.8215.150.camel@tiny.suse.com>
+	 <3E6B74C0.5050702@mb.tu-ilmenau.de>
+	 <1047230647.8219.161.camel@tiny.suse.com>
+	 <3E6B7C61.9050405@mb.tu-ilmenau.de>
+	 <1047415578.8215.383.camel@tiny.suse.com>
+	 <20030312103800.A9291@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13217-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13219-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1047433739.8215.487.camel@tiny.suse.com>
+In-Reply-To: <20030312103800.A9291@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Oleg Drokin <green@namesys.com>
+Cc: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>, reiserfs-list <reiserfs-list@namesys.com>
 
-Chris Mason wrote:
+On Wed, 2003-03-12 at 02:38, Oleg Drokin wrote:
+> Hello!
+> 
+> On Tue, Mar 11, 2003 at 03:46:18PM -0500, Chris Mason wrote:
+> > [ slow down between 2.419 data logging and 2.4.21-pre data logging ]
+> > Ok, could you please apply the search_reada-4 patch I sent and do your
+> 
+> > It's about 10% faster here, but my dataset is slightly different.
+> 
+> Hm. Last time we had conversation with you on this patch (a year ago?
+> may be even more), you said this patch makes no difference to you at all.
+> And we thought this is because your system is all-scsi, and scsi appears
+> to be more intelligent about caching/readahead.
+> Have you switched to IDE already? ;)
 
->On Tue, 2003-03-11 at 17:46, Hans Reiser wrote:
->  
->
->>Chris Mason wrote:
->>
->>    
->>
->>>On Tue, 2003-03-11 at 16:42, Hans Reiser wrote:
->>>
->>> 
->>>
->>>      
->>>
->>>>Chris, don't you think the right answer would be to take zam's resizer 
->>>>and make a defragmenter out of it?
->>>>   
->>>>
->>>>        
->>>>
->>>Yes and no, for a defrag program to fix things we'd have to agree on an
->>>optimal layout ;-)  Also it assumes the machine has idle time when a
->>>defragment cycle is possible. 
->>>
->>>      
->>>
->>No, it assumes that 80% of files don't move during the course of a week, 
->>so if defrag takes a week, it still adds value.
->>
->>    
->>
->I ran a number of systems where this wasn't true.  Spool files are
->constantly appended to or deleted by pop/imap servers.  Idle time is
->important, between normal operations and backups it is almost impossible
->to find a time when big servers have disk bandwidth to spare.
->
->I like the idea of a dynamic in-kernel fragmentation tool though, you
->mark a file as being in need of reallocation, and it happens before io
->or something (hand waving is fun).
->
-You mean you like the allocate on flush we do in reiser4?
+No, that was on a scsi drive ;-)  Which patch, the search_reada?  Or
+mounting with the border?
 
-Perhaps I should say only that for 80% of machines 80% of the files 
-never move during the course of a week.;-)
+search_reada doesn't make much difference without the border, and even
+then it really only helps on long sequential reads.
 
-allocate on flush will improve a lot of the cases, and an online 
-repacker will improve a lot of the ones that allocate on flush does not 
-improve.
-
--- 
-Hans
+-chris
 
 
