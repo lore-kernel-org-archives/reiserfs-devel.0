@@ -1,69 +1,40 @@
-From: "Rodolfo Sikora" <sikora@inova.com.br>
-Subject: Re[5]: Is there a way to change root inode from -1 to what ever    it    will    work?
-Date: 12 Aug 2004 11:32:08 -0300
-Message-ID: <20040812143208.5990.qmail@qmail-local.inova.com.br>
-References: <200408121417.16087.vitaly@namesys.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: implementing reiserfs in C++ for a new OS
+Date: Thu, 12 Aug 2004 17:44:30 +0300
+Message-ID: <20040812144430.GF1284@nysv.org>
+References: <71d3364904080706112e72fb6b@mail.gmail.com> <20040809172437.GP1284@nysv.org> <71d3364904080922267e8c14af@mail.gmail.com> <200408101312.48888.reiserfs-list@quinnh.org> <4119273E.1040104@namesys.com> <20040810211951.GU1284@nysv.org> <41194690.5050908@namesys.com> <1365645117.20040811065416@tnonline.net> <4119B7D1.7000705@namesys.com> <695292334.20040811222138@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20228-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20229-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
+In-Reply-To: <695292334.20040811222138@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Spam <spam@tnonline.net>
+Cc: reiserfs-list@namesys.com
 
-Vitaly,
+On Wed, Aug 11, 2004 at 10:21:38PM +0200, Spam wrote:
+>  Indeed.  But  I  could write another poem which is based on the same
+>  ideas.  Another  example  would  be  an  idea about a cool 3D GUI it
+>  doesn't  mean  no  one else can implement that idea. I would have to
+>  patent  it (in those countries that allow software patents) in order
+>  to protect the idea.
 
-When I saw bzip2 problems.. I also thought about RAM.. I went to our IDC an=
-d changed our RAM and it worked pretty well.
+That's why patents are a bad thing.
 
-Vitaly, thank you very much for your help, and I'm sorry if I did u waste t=
-ime with this issue!!
+Originally they're of course about giving the inventor some leeway to
+do something with his invention, but they can be abused, and are abused,
+so badly that they do more harm than good.
 
-Regards!
-[]s
+http://www.base.com/software-patents/disputes.html
 
+That for example, Google got me many more hits, but everyone cand find
+the data themselves :)
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->De:Vitaly Fertman <vitaly@namesys.com>
->Para:"Rodolfo Sikora" <sikora@inova.com.br>, <reiserfs-list@namesys.com>
->Assunto:Re: Re[3]: Is there a way to change root inode from -1 to what eve=
-r    it    will    work?
->
->Hi,
->
->I think you have some problem with ram.
->1 - fsck aborts on different places all the time
->on your computer;
->2 - first bz2 failed to bunzip2 on my computer;
->3 - second bz2 had some problems on unpacking
->with 'debugreiserfs -u'
->also, I just jumped them over in gdb so was able
->to unpack most of the data;
->4 - fsck (3.6.18) worked fine for me on your
->metadata.
->
->in the case of a hardware problem, I want to
->point to the fact that=20
->we deal with them under
->www.namesys.com/support.html terms.
->
->--=20
->Thanks,
->Vitaly Fertman
+-- 
+mjt
 
-
-
-Rodolfo Sikora - Desenvolvimento e Opera=E7=E3o
-Departamento de Opera=E7=F5es e Tecnologia
-Inova Tecnologias - http://www.inova.com.br
-
-
-
-****************************************************
-*Velop* - administra=E7=E3o, controle e monitoramento da=20
-sua comunica=E7=E3o na Internet.
-http://www.inova.com.br
