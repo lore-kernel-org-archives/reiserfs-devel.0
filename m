@@ -1,65 +1,79 @@
 From: Horst von Brand <vonbrand@inf.utfsm.cl>
-Subject: Re: silent semantic changes with reiser4
-Date: Fri, 03 Sep 2004 13:12:47 -0400
-Message-ID: <200409031712.i83HCmEN027415@laptop11.inf.utfsm.cl>
-References: <gj@pointblue.com.pl>
-Return-path: <reiserfs-list-return-21440-reiserfs=m.gmane.org@namesys.com>
+Subject: Re: The argument for fs assistance in handling archives
+Date: Fri, 03 Sep 2004 13:26:58 -0400
+Message-ID: <200409031726.i83HQxJc008835@laptop11.inf.utfsm.cl>
+References: <reiser@namesys.com>
+Return-path: <reiserfs-list-return-21441-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from =?UTF-8?B?R3J6ZWdvcnogSmHFm2tpZXdpY3o=?= <gj@pointblue.com.pl> 
-   of "Fri, 03 Sep 2004 06:36:41 +0200." <4137F4D9.7040206@pointblue.com.pl> 
+In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
+   of "Thu, 02 Sep 2004 23:35:34 MST." <413810B6.7020805@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?R3J6ZWdvcnogSmHFm2tpZXdpY3o=?= <gj@pointblue.com.pl>
-Cc: Jamie Lokier <jamie@shareable.org>, Rik van Riel <riel@redhat.com>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: David Masover <ninja@slaphack.com>, Steve Bergman <steve@rueb.com>, "Martin J. Bligh" <mbligh@aracnet.com>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, reiserfs <reiserfs-list@namesys.com>
 
-=?UTF-8?B?R3J6ZWdvcnogSmHFm2tpZXdpY3o=?= <gj@pointblue.com.pl> said:
-> Jamie Lokier wrote:
-> >Note that file-as-directory doesn't imply that you can store just
-> >anything into those directories.
+Hans Reiser <reiser@namesys.com> said:
+> David Masover wrote:
+> > The use of ext3 as a filesystem isn't cross-platform.  Every disk-write
+> > is platform-specific!  We should all be using captive-ntfs instead!
 
-> >Is it a problem to decree that "file data MUST NOT be stored in a
-> >metadata directory; only non-essential metadata and data computed from
-> >the file data may be stored"?
+> ;-)
+> 
+> All this stuff about how no filesystem should be allowed to have 
+> semantic features others don't, it seems very Bolshevist to me.
 
-> That's exactly what folks seem to lost in this debate.
-> We (developers) want to have files as dirs to:
-> * be able to extract/modify file part on fly. For instance, simple .iso 
-> file, without need to mount it over loop (btw, if someone is going to 
-> redesign VFS, can we handle that kinda case too please?), .tar, or 
-> unzipped (kernel can handle zips) "streams". File is a stream, why 
-> shouldn't I have a chance to grab a stream out of archive/image than ?
+Haven seen that. Just requests that _experimental_ features be prototyped
+in ReiserFS, and _if_ they show they are worth the hassle, _then_ design a
+nice VFS interface on them.
 
-ISO9660 is designed for read-only, i.e., modifying something in the middle
-is probably as hard to do as just unpack/modify/repack. Same for tar, cpio,
-and compressed versions of same. No gain, for a major hassle implementing
-this.
+> Let Linux have an ecosystem with a diverse ecology of filesystems, and 
+> the features that work will reproduce to other filesystems.  I thought 
+> that was the Linus way?
 
-> * be able to store metadata, that doesn't matter on copy, and even 
-> should not be copied sometimes. Things like thumbnails, metainformation 
-> (used for search). All of these extracted from acctual file (either by 
-> VFS 'plugins', or by userspace application), and saved there so that it 
-> can be used later on. So we save some time on extracting it.
+It is.
 
-You save iff the resources spent updating this stuff is less than
-recomputing on the fly each time. Also, placing random stuff in the kernel
-is _not_ "zero cost", it is _very_ expensive (kernel memory is always
-resident, kernel code is _extremely_ critical, once it is in the kernel it
-is very hard to change interfaces). Besides, this kind of "metadata" will
-most probably be different for each user, and a user should also be able to
-associate it to files she has no write right on. I.e., keep it in a
-per-user directory, managed by whatever GUI tools she uses.
+> If not, why did I spend 10 years laying the storage layer groundwork for 
+> semantic enhancements when I could have taken that job at Sun as 
+> filesystems architect and made a lot more money?
 
-What you (developer) wish for and what kernel hackers are able to deliver
-aren't the same. As it stands this is a badly-thought-through proposal,
-with very complex ramifications that few here are aware of (see Al Viro's
-and Linus' posts about locking; it breaks the fundamental principle that
-something is a file or a directory, so this would break many applications),
-and no clean solutions as of now.
+Dunno. That _you_ choose to do this is no reason _others_ will have to take
+the results over lock, stock and barrel. 
+
+Linux' development works because there is a lot of "wasted" effort on
+alternatives that don't pan out. Many don't ever leave the drawing board,
+others (like the (now defunct) Xiafs, devfs, and volume management code)
+went far, even got fully implemented, only to be scrapped later. It might
+just be ReiserFS' fate too..
+
+> I want to tinker.  Let me play in my sandbox, and if you don't like what 
+> I do, don't imitate it.....  I think there are plenty of users who like 
+> reiser4 though....
+
+Go tinker and play. But don't aggravate non-ReiserFS-users, please. Come up
+with solutions to the issues Al Viro and Linus raised.
+
+> Linus, trying to outguess someone who has spent 2 decades studying 
+> namespace design as to what will be useful to users is risky.
+
+I'd guess LKML adds up to a few thousand years mulling over this, so this
+isn't a great point.
+
+>                                                                Look at 
+> reiser4's performance, see if it obsoletes V3, and if it does then let 
+> me play a bit.
+
+I'd say it is a free world.
+
+> Objecting on the grounds that it causes VFS bugs is reasonable, but I 
+> answered those questions and you did not respond (I can resend if 
+> asked).  If you really really don't like what we do to VFS, well, we can 
+> confine ourselves to sys_reiser4(), but that is only a last resort from 
+> my view.
 -- 
 Dr. Horst H. von Brand                   User #22616 counter.li.org
 Departamento de Informatica                     Fono: +56 32 654431
