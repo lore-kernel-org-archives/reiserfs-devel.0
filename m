@@ -1,53 +1,88 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: snapshot, checkpoints
-Date: Thu, 10 Jun 2004 19:27:33 -0700
-Message-ID: <40C91895.5090009@namesys.com>
-References: <20040527065259.99429.qmail@web51306.mail.yahoo.com>	<1085641393.1915.199.camel@tribesman.namesys.com>	<20040527092727.GO4990@nysv.org>	<20040604131005.hmvps8wcw4sccgcs@www.wagland.net>	<200406041925.i54JPZgp025255@turing-police.cc.vt.edu>	<40C14E9C.4000706@slaphack.com>	<116CD3CA-B709-11D8-A933-000A95CD704C@kungfoocoder.org>	<40C78D86.2060305@slaphack.com> <20040610065427.622450fb@rayanne> <40C7EFB9.1040609@namesys.com> <40C8DD73.7080100@slaphack.com>
+From: David Greaves <david@dgreaves.com>
+Subject: Re: How long will a shrinkfs take?
+Date: Fri, 11 Jun 2004 09:29:11 +0100
+Message-ID: <40C96D57.2030208@dgreaves.com>
+References: <40C8C0EF.7060704@dgreaves.com> <20040610205419.GQ8091@backtop.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19141-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19145-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40C8DD73.7080100@slaphack.com>
+In-Reply-To: <20040610205419.GQ8091@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: David Masover <ninja@slaphack.com>
-Cc: Pierre Etchemaite <petchema@concept-micro.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Alex Zarochentsev <zam@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-David Masover wrote:
+Alex Zarochentsev wrote:
 
+>On Thu, Jun 10, 2004 at 09:13:35PM +0100, David Greaves wrote:
+>  
 >
+>>Hi
+>>
+>>I have a 1Tb reiserfs that I want to shrink to 500Gb
+>>400Gb of data is used.
+>>
+>>Any estimates as to how long this will take?
+>>Sustained I/O is about 33Mb/s at the fs level, 44 Mb/s at the lv level 
+>>and 65Mb/s at the md0 level.
+>>    
+>>
 >
-> Hans Reiser wrote:
-> | Pierre Etchemaite wrote:
-> |
-> |> Le Wed, 09 Jun 2004 17:21:58 -0500, David Masover=20
-> <ninja@slaphack.com> a
-> |> =E9crit :
-> |>
-> |>
-> |>
-> |>> Good, then we don't have to immediately rewrite the wheel.  But I=20
-> still
-> |>> would rather that we do this eventually.  My concept has the changes
-> |>> stored on the same partition, seems like it may be faster, and=20
-> opens the
-> |>> door for a filesystem-based cvs.
-> |>>
-> |
-> | This phrase made me thing you might want to be aware of
-> | http://www.namesys.com/blackbox_security.html which got darpa funding
-> | recently....
+>ReiserFs shrinker reads all tree nodes as fsck does (reiserfsck --check may be
+>used for rough estimation) plus shrinker writes relocated nodes (this highly
+>depends on how many nodes are above 500GB boundary).
+>  
 >
-> Looks cool, I sort of understand it, but what's it got to do with what I
-> said?  What "phrase"?  Filesystem-based cvs?
+OK -  well I know that fsck --check is of the order of minutes rather 
+than hours (did that rather too recently ;) )
+
+So if I asume even spread, 50% is above so 200 Gb needs reading + then 
+writing so say 1Gb/min = 3-4 hours
+
+OK ta.
+
+BTW, is resizefs safely interruptible? So can I run it for a couple of 
+hours, interrupt, fsck, remount and do it again?
+(The system's in use and I only get short windows when I can do this 
+kind of thing)
+I understand that if this happens the fs won't have been resized.
+
+I envisage the behaviour to be:
+1 calc new top boundary
+2 scan for files (nodes) with data above boundary
+3 foreach file
+3.1 copy data below boundary
+3.2 change node to reflect new position
+3.3 mark old space as free
+4 set new top boundary
+
+most of the time being spent in 3.
+
+David
+
+>Anyway running reiserfsck --check before shrinking is a good practice.
 >
-Yes, views are an important step towards "Filesystem-based cvs", see=20
-clearcase as an example.  Transaction infrastructure, substantially=20
-present in reiser4 (see our (long) main page on reiser4 design,=20
-somewhere near the middle I think), is also an important component. =20
-Currently we support atomic sets of fs operations, although this is=20
-immature code (meaning reiser4 works reliably but the api is still in=20
-progress, etc.).
+>  
+>
+>>(I didn't expect the fs to be so slow so I'm going to try a few tuning 
+>>params on the new 500Gb space before copying over the data and growing 
+>>back to a Tb)
+>>
+>>Is it proportional to the amount of shrinkage (ie 2 hrs to reduce by 
+>>50G, 20 hrs to reduce by 500Gb)
+>>    
+>>
+>
+>  
+>
+>>David
+>>    
+>>
+>
+>  
+>
+
