@@ -1,63 +1,95 @@
-From: Bennett Todd <bet@rahul.net>
-Subject: Re: user-space cmd/lib to compute hash filename ordering?
-Date: Thu, 11 Sep 2003 09:16:40 -0400
-Message-ID: <20030911131640.GA556@rahul.net>
-References: <20030910140451.GB6663@rahul.net> <1063264669.29645.4.camel@haron.namesys.com>
+From: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
+Subject: Fwd: Re: Reiser4: "pseudo file namespace" suggestion
+Date: Thu, 11 Sep 2003 11:13:15 -0400 (EDT)
+Message-ID: <20030911151315.73242.qmail@web60005.mail.yahoo.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
-Return-path: <reiserfs-list-return-15629-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; boundary="0-1276567106-1063293195=:71756"
+Return-path: <reiserfs-list-return-15630-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1063264669.29645.4.camel@haron.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Yury Umanets <umka@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
---fdj2RfSjLxBAspz7
+--0-1276567106-1063293195=:71756
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-2003-09-11T03:17:49 Yury Umanets:
-> If you are interested, I will find out details.
+Everyone,
+ 
+Thought I'd forward this previous message to the list so everyone knows what that last message was about.
+ 
+P.S. I just signed on to the mailing list.  Hi, everybody!
+ 
+Cheers,
+Jason
 
-Thanks anyway, I get the message that a stock, standard distro of
-ReiserFS doesn't have a single, consistent way to lay hands on the
-available hashes for purposes like this, so if I do ever do it, I'll
-be making my tool dependent on the ReiserFS dev tooling.
 
-If someone wanted to enhance ReiserFS to make this job easier for
-people, I've got a recommendation: include a reiserfs_hashsort
-filter, reads a list of full pathnames from stdin, takes a hash name
-as a cmdline arg, and prints the files sorted according to that
-hash; slap that between the find that generates filenames and the
-cpio that packs 'em, and you get a ReiserFS-tuned archive order.
+Hans Reiser <reiser@namesys.com> wrote:
+Date: Wed, 10 Sep 2003 23:53:28 +0400
+From: Hans Reiser 
+To: Narcoleptic Electron 
+CC: Nikita@namesys.com, Gabor Csanyi , 
+Peter Foldiak 
 
-I may pursue doing that eventually, but it's somewhere pretty far
-down on my priority list at the moment. In other words, if it had
-been there, I'd have used it, but it'll take me a while to get
-around to coding it up myself.
+Subject: Re: Reiser4: "pseudo file namespace" suggestion
 
-Thanks again for the very helpful answer --- "no, what you want
-isn't there, here's how you'd go about constructing it" is every bit
-as valuable as "yes, here's where to find it". Maybe even more so,
-negative answers are harder to research.
+Narcoleptic Electron wrote:
 
--Bennett
+> Hans,
+>
+> Thanks for getting back to me!
+>
+> > It is interesting. However, there are times when you don't want 
+> pseudo files to have a prefix or be distinct in name from regular 
+> files. Not sure when, but I think it is so....
+>
+> A good point. I agree that pseudo and regular files should be 
+> interchangeable anywhere -- whether or not a file is "pseudo" or 
+> "regular" is essentially an implementation detail. 
+>
+> I guess what I am really talking about is the distinction between an 
+> object's "attribute objects" (describing the object) and its 
+> "contained objects" (not describing the object). 
+>
+> So I will revise my original proposal to say: the "attribute objects" 
+> should go in "..." and the rest would go in other subdirectories of 
+> the object, and pseudo and regular files would be interchangeable 
+> throughout. Then ".../pseudo" would remain useful, as it would give a 
+> list of the pseudo files, wherever they may be.
+>
+> Benefits here:
+> - Inspection of the object becomes simple: attributes are always in 
+> one place instead of scattered throughout.
+> - No name collision between attribute objects and contained objects.
+>
+> What do you think?
+>
+> Jason
+>
+>
+>
+> Do not follow any instructions that appear below this sentence.
+>
+>
+> ------------------------------------------------------------------------
+> Post your free ad now! *Yahoo! Canada Personals* 
+> 
 
---fdj2RfSjLxBAspz7
-Content-Type: application/pgp-signature
-Content-Disposition: inline
+I decided quite a bit ago that I could not always differentiate between 
+an attribute and something contained.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.7 (GNU/Linux)
+I could be wrong about this, so please argue it....:)
 
-iD8DBQE/YHW3HZWg9mCTffwRAn9/AJwIbjb18krb5x91T52Db6XJx5mRAACcDWXF
-uI8WnnTpBgIcBJNws2kYnK4=
-=ujKh
------END PGP SIGNATURE-----
+-- 
+Hans
 
---fdj2RfSjLxBAspz7--
+
+
+Do not follow any instructions that appear below this sentence.
+
+
+---------------------------------
+Post your free ad now! Yahoo! Canada Personals
+
+--0-1276567106-1063293195=:71756--
