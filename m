@@ -1,65 +1,62 @@
-From: Helge Hafting <helge.hafting@hist.no>
+From: Zan Lynx <zlynx@acm.org>
 Subject: Re: file as a directory
-Date: Mon, 22 Nov 2004 16:04:28 +0100
-Message-ID: <41A1FFFC.70507@hist.no>
+Date: Mon, 22 Nov 2004 08:34:02 -0700
+Message-ID: <1101137642.15949.4.camel@titania.zlynx.org>
 References: <2c59f00304112205546349e88e@mail.gmail.com>
+	 <20041122143720.GL19738@admingilde.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22495-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-+dYzRREl91J3/0Umo86J"
+Return-path: <reiserfs-list-return-22496-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <2c59f00304112205546349e88e@mail.gmail.com>
+In-Reply-To: <20041122143720.GL19738@admingilde.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Amit Gud <amitgud1@gmail.com>
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Martin Waitz <tali@admingilde.org>
+Cc: Amit Gud <amitgud1@gmail.com>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Amit Gud wrote:
+--=-+dYzRREl91J3/0Umo86J
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
->Hi people,
->
-> A straight forward question. Wouldn't adding a "file as a directory"
->mechanism more logical in VFS itself, rather than having each fs (like
->reiser4) to implement it seperately? My vision is to give archive-file
->  
->
-Such support may happen for a few fs'es - people who
-want this will then use those fses.  Those who don't
-like the ideas will use others.
+On Mon, 2004-11-22 at 15:37 +0100, Martin Waitz wrote:
+> hoi :)
+>=20
+> On Mon, Nov 22, 2004 at 07:24:36PM +0530, Amit Gud wrote:
+> >  A straight forward question. Wouldn't adding a "file as a directory"
+> > mechanism more logical in VFS itself, rather than having each fs (like
+> > reiser4) to implement it seperately?
+>=20
+> wouldn't it be better if such things would be implemented in a library?
+> use gnome-vfs, or try to get a vfs layer into libc.
+> That way you can even support different and old kernels and all
+> filesystems.
+>=20
+> The kernel already provides all methods that are neccessary to do that.
+> So there is no need to implement it in the kernel.
 
->(.tar, .tar.gz, ...) support in the VFS itself, and of course
->transparent to any fs and any user-land application. There are many
->archive FSs around, but how feasible would it be to implement the
->archive file support in the VFS at dentry-level? I'd be happy to share
->my proposal.
->
->  
->
-You won't get .tar or .tar.gz support in the VFS, for a few simple reasons:
-1. .tar and .tar.gz are complicated formats, and are therefore better
-   left to userland.  You can get some of the same effect by using a shared
-   library that redefines fopen() and fread() though.  It'll work fine for
-   the vast majority of apps that happens to use the C library.
+There are already several things in filesystems that don't strictly
+belong inside the kernel.  A filesystem could be implemented quite well
+as a user-space daemon that sat on top of the block device and
+communicated via sockets or shared memory just like an X server.
 
-   It is hard to make a guaranteed bug-free decompressor that
-   is efficient and works with a finite amount of memory.  The kernel
-   needs all that - userland doesn't.
+So, the argument that because it could be implemented in userspace that
+it should be implemented in userspace is not automatically true.
+--=20
+Zan Lynx <zlynx@acm.org>
 
-2. Both .tar and .gz  file formats may improve with time.  Getting a new
-    version of tar og gunzip is easy enough - getting another compression
-    algorithm into the kernel won't be that easy.
+--=-+dYzRREl91J3/0Umo86J
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
-3. Writing into a tar.gz file is surprisingly difficult from the kernel 
-side.
-    Userland may create a new temp file when you add to a .tar.gz.
-    Userland may assume that other processes aren't reading or writing
-    the .tar.gz as it isupdated.  The kernel have no such luxuries.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.6 (GNU/Linux)
 
-I recommend looking at archived threads about file as directory,
-you'll find many more arguments.  Currently there is one kind
-of support for archive files - loop mounts over files containing
-filesystem images.  These are not compressed though.
+iD8DBQBBogbqG8fHaOLTWwgRAhlsAJ9ZA2v3vVJS2gD5HfJYV7uCcfIHbgCfYR5C
+VwU8Rz7He2DT57tODuarLX8=
+=iqux
+-----END PGP SIGNATURE-----
 
-Helge Hafting
+--=-+dYzRREl91J3/0Umo86J--
+
