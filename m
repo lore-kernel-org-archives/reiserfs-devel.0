@@ -1,29 +1,30 @@
-From: Ferenc Kiraly <feri@feridot.com>
-Subject: bad blocks on reiserfs filesystem
-Date: Mon, 14 Jul 2003 21:11:28 +0200
-Message-ID: <3F130060.7010106@feridot.com>
+From: David Nielsen <Lovechild@foolclan.com>
+Subject: New Reiser4 snapshot?
+Date: 14 Jul 2003 21:23:24 +0200
+Message-ID: <1058210604.3694.4.camel@pilot.stavtrup-st.dk>
+References: <08628CA53C6CBA4ABAFB9E808A5214CB0179043E@mercury.infiniconsys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14935-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14936-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <08628CA53C6CBA4ABAFB9E808A5214CB0179043E@mercury.infiniconsys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs <reiserfs-list@namesys.com>
 
-	Hi!
+New to the list, so I'm sorry if this has been asked previously
 
-I have a reiserfs root (/) partition where the first 5 blocks went bad.
-I need to recover as much as possible from that partition. Is
-it possible? And if so, how should I go about it?
+With the arrivial of 2.6.0-test1 can we expect a snapshot of Reiser4
+anytime soon for those of us who likes to break our boxes ?
 
-I have tried reiserfsck with the --rebuild-sb and --rebuild-tree
-options, with no luck.
+I know this is a long shot, but have ReiserFS3 on a EVMS2 based RAID0
+(RAID1 for /boot)  and I would really hate to have to reinstall my
+entire system - is there an easy way to convert my current FS to Reiser4
+or is using a tool like Mondo or tar the only way ? 
 
-Thank you,
-
-	feri.
-
+Regards 
+David Nielsen
 
