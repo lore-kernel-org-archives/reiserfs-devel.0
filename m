@@ -1,11 +1,11 @@
 From: Vijayan Prabhakaran <pvijayan@gmail.com>
-Subject: Another bug in commiting old transactions
-Date: Wed, 15 Sep 2004 16:34:17 -0500
-Message-ID: <d68fdf7d040915143410fe965f@mail.gmail.com>
+Subject: YET another problem in committing old transactions
+Date: Wed, 15 Sep 2004 16:56:19 -0500
+Message-ID: <d68fdf7d0409151456576dfc03@mail.gmail.com>
 Reply-To: Vijayan Prabhakaran <pvijayan@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21793-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21794-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -13,61 +13,38 @@ Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: mason@suse.com, reiserfs-list@namesys.com
-Cc: vijayan@cs.wisc.edu
+Cc: reiser@namesys.com, vijayan@cs.wisc.edu
 
 Hi,
 
-This is in continuation to my previous mail on bug in
-reiserfs_journal_commit_thread().
+There is one more problem in committing the old transactions.
 
-Previous bug:
----------------
-There is an "if" condition in reiserfs_journal_commit_thread():
+In function reiserfs_flush_old_commits(), there is a condition that checks
+if the current transaction is older than 30 seconds. Only if that
+condition satisfies, the data is flushed to the disk. The condition looks
+like:
 
-if (CURRENT_TIME - last_run > 5) {
-  reiserfs_flush_old_commits(s);
+if (blah blah blah &&
+(now - SB_JOURNAL(p_s_sb)->j_trans_start_time) >
+        SB_JOURNAL_MAX_TRANS_AGE(p_s_sb))
+{
+
+  /*flush the transaction by calling do_journal_end*/
+
 }
 
-that must be changed to
+Note: SB_JOURNAL_MAX_TRANS_AGE(p_s_sb) returns 30 seconds.
 
-if (CURRENT_TIME - last_run >= 5) {
-  reiserfs_flush_old_commits(s);
-}
+Now my question is this:
 
-New bug:
-----------
-Even after changing the above "if" condition to use ">=" instead of
-">", dirty old data were not being flushed by the file system. The
-reason for this in reiserfs_flush_old_commits() function.
+When does reiserfs flush the old uncommitted data ? Is it every 5 seconds
+or every 30 seconds ?
 
-There is a safety check in reiserfs_flush_old_commits(). It looks like:
+If it is going to do it in every 5 seconds when the thread wakes up, why
+do we have the condition for 30 seconds ? If the flush happens only every
+30 seconds, why the thread calls reiserfs_flush_old_commits() every 5
+seconds ?
 
-/* safety check so we don't flush while we are replaying the log during
- * mount
- */
-if (list_empty(&SB_JOURNAL(p_s_sb)->j_journal_list)) {
-  return 0  ;
-}
-
-This condition was added so that the reiserfs doesn't flush dirty data
-while replaying during mount.
-
-But the first transaction after the mount does NOT get flushed to the
-disk because of this condition. The first transaction gets added to
-the j_journal_list only in function do_journal_end(). So, until that
-point the j_journal_list remains empty.
-
-Fix:
-----
-Actually, we don't need this condition at all.
-reiserfs_flush_old_commits() function will be called only ONLY by the
-reiserfs_journal_commit_thread. And this thread is created only after
-the replay is over (in journal_init() function). So, I thought even
-removing this condition would not affect the system in any way.
-
-Chris: Any comments on this fix ? If you think it is ok, can you
-please add this also to your patch ?
-
-I appreciate your help.
+Is there any reason for this discrepancy ?
 
 Vijayan
