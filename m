@@ -1,42 +1,36 @@
-From: Cal <hihone@bigpond.net.au>
+From: Francesco Biscani <biscani@pd.astro.it>
 Subject: Re: 2.6.9-3 patch won't compile
-Date: Tue, 14 Dec 2004 00:04:14 +1100
-Message-ID: <20041214000414.3d14a322.hihone@bigpond.net.au>
+Date: Mon, 13 Dec 2004 14:04:37 +0100
+Message-ID: <200412131404.38119.biscani@pd.astro.it>
 References: <18A36962E684664DB223E403DB64FB220C6806@W23FT01.Fourtop.local>
-Reply-To: hihone@bigpond.net.au
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22752-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-22753-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <18A36962E684664DB223E403DB64FB220C6806@W23FT01.Fourtop.local>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Lex  Jonkers <jonkersl@Fourtop.nl>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
+Cc: Lex Jonkers <jonkersl@fourtop.nl>, hihone@bigpond.net.au
 
-----------
-and then at Mon, 13 Dec 2004 13:44:35 +0100, it was written ...
- >>  >fs/reiser4/plugin/cryptcompress.c: In function `set_cluster_params':
- >>  >fs/reiser4/plugin/cryptcompress.c:2203: parse error before 
- >> `hole_size'
- >...
- >
- >Any idea why -3 won't compile on a vanilla 2.6.9 ?
- >-1 and -2 compile without problems.
- >
- >With Regards,
- >Lex Jonkers
+On Monday 13 December 2004 13:44, Lex  Jonkers wrote:
+> yes i ment the namesys 2.6.9-[1-3] patches.
+>
+> Any idea why -3 won't compile on a vanilla 2.6.9 ?
+> -1 and -2 compile without problems.
+>
 
-Looks like maybe a compilation problem.  Where yours dies with a parse
-error (cryptcompress.c:2203), mine coughs a polite warning -
-fs/reiser4/plugin/cryptcompress.c: In function `set_cluster_params':
-fs/reiser4/plugin/cryptcompress.c:2203: warning: ISO C90 forbids mixed
-declarations and code
+It compiles for me (gcc 3.4.3, vanilla kernel). Which compiler are you usin=
+g?
 
-I'm using gcc (GCC) 3.4.4 20041128 (prerelease) (Debian 3.4.3-3). I can't
-help but wonder if my compiler is bigger than your compiler?
+Regards,
 
-cheers, Cal
+=2D-=20
+Dr. Francesco Biscani
+Dipartimento di Astronomia
+Universit=E0 di Padova
+biscani@pd.astro.it
