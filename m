@@ -1,35 +1,64 @@
-From: Hans Reiser <reiser@namesys.com>
+From: "Thomas Graham" <lkthomas@sml.dyndns.org>
 Subject: Re: reiser4 without problems?!
-Date: Sun, 21 Nov 2004 12:28:31 -0800
-Message-ID: <41A0FA6F.5080905@namesys.com>
+Date: Mon, 22 Nov 2004 11:09:25 +0800 (HKT)
+Message-ID: <1433.147.8.17.110.1101092965.squirrel@sml.dyndns.org>
 References: <20041121201203.8A3C23956@sitemail.everyone.net>
+    <20041121204104.GY26192@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22476-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-22482-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20041121201203.8A3C23956@sitemail.everyone.net>
+In-Reply-To: <20041121204104.GY26192@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: bluegod@linuxwaves.com
+Content-Type: text/plain; charset="us-ascii"
+To: Markus =?iso-8859-1?Q?T=F6rnqvist?= <mjt@nysv.org>
 Cc: reiserfs-list@namesys.com
 
-BLuEGoD wrote:
+I don't have so much problem as using it as a storage FS, I use reiser3
+for my root filesystem, couldn't trust that, I wouldn't give it a risk
+such as apache bugs before, pretty unstable tho, I have a 200GB and a
+160GB HD using as non-root folder for storage, nothing crash but the
+repacker sucks, Hans seems giveup on repacker idea, well, what's next ?
 
-> Hi, I want to run a debian with reiser4, but since reiser4 went out, there is no one that run it without problems, anyone knows if any kernel with -mm patches runs well?.. I think nowadays all people are losing time with reiser4, because I read that reiser4 comes without anything positive than others (that is because comes with "core" only).. If someone can set up for three or more days a system stable with reiser4 and 2.6.X kernel please tell me who!
+> On Sun, Nov 21, 2004 at 12:12:02PM -0800, BLuEGoD wrote:
+>>
+>> Hi, I want to run a debian with reiser4, but since reiser4 went out,
+>> there
+>> is no one that run it without problems, anyone knows if any kernel with
+>> -mm
+>> patches runs well?.. I think nowadays all people are losing time with
 >
->P.D. Personally, I think kernel 2.6.8 has better stability than 2.6.9 :)
+> Apart from my recent issues, which I just realized others have reported
+> as well, the -cko series has been the best for me, and unfortunately
+> the -rc2-mm2 crashes even worse for me (if I turn debug on), so it'll
+> take a while before I can say anything more.
+>
+> Reiser4progs is still in Debian, so that's nothing.
+>
+>> reiser4, because I read that reiser4 comes without anything positive
+>> than
+>> others (that is because comes with "core" only).. If someone can set up
+>> for
+>> three or more days a system stable with reiser4 and 2.6.X kernel please
+>> tell
+>> me who!
+>
+> I just used debootstrap to install from a small partition which I still
+> have as reiserfs.
+>
+> It's not a big issue to install it yourself.
+>
+> --
+> mjt
 >
 >
->
->_____________________________________________________________
->Get your FREE, LinuxWaves.com Email Now! --> http://www.LinuxWaves.com
->Join Linux Discussions! --> http://Community.LinuxWaves.com
->
->
->  
->
-It seems like the most recent reiser4 is not as stable as past ones.  It 
-is the weekend, let's give vs a few days to fix things starting on monday.
+
+
+-- 
+HK Celtic Orchestra leader and coordanator: Thomas Graham Lau
+Phone number: 852-93239670    (24hours a day, 7days a week non-stop phone)
+Web site: http://sml.dyndns.org
+Email: lkthomas@sml.dyndns.org
