@@ -1,31 +1,45 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: reiser4 plugins (was: silent semantic changes with reiser4)
-Date: Thu, 26 Aug 2004 17:25:28 +0100
-Message-ID: <20040826172528.A21345@infradead.org>
-References: <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <1093527307.11694.23.camel@leto.cs.pocnet.net> <20040826134034.GA1470@lst.de> <1093528683.11694.36.camel@leto.cs.pocnet.net> <20040826153748.GA3700@lst.de> <1093535334.5482.1.camel@leto.cs.pocnet.net> <20040826160601.GB4326@lst.de> <1093536859.5482.13.camel@leto.cs.pocnet.net>
+From: Will Dyson <will_dyson@pobox.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 26 Aug 2004 12:32:34 -0400
+Message-ID: <412E10A2.1020801@pobox.com>
+References: <20040824202521.GA26705@lst.de>	<412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20718-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20719-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1093536859.5482.13.camel@leto.cs.pocnet.net>; from christophe@saout.de on Thu, Aug 26, 2004 at 06:14:19PM +0200
+In-Reply-To: <412D9FE6.9050307@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe Saout <christophe@saout.de>
-Cc: Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-On Thu, Aug 26, 2004 at 06:14:19PM +0200, Christophe Saout wrote:
-> Ok, I see your point. aops. Sorry.
-> Looking at the code this could be done. The wrappers that dispatch the
-> operations are really small and call the plugin that is registered with
-> the inode of the mapping. Instead it could have directly set the
-> corresponding operations. Right. The wrappers are doing a few things
-> before calling the plugin. That could be done the other way round too.
-> But that's more of an implementation issue and could still be changed.
+Hans Reiser wrote:
 
-I agree that it's an implementation issue.  But it's also a good proof
-for how Hans tries to ignore all the existing infrastructure for various
-reasons.
+> Andrew, we need to compete with WinFS and Dominic Giampaolo's filesystem 
+> for Apple, and that means we need to put search engine and database 
+> functionality into the filesystem.  It takes 11 years of serious 
+
+Hans,
+
+I'm very curious about your ideas on how to put search engine and 
+database functionality into the filesystem. Although I've let the Befs 
+filesystem driver largely stagnate over the past two years, from time to 
+time I think about the problem of exporting to userspace the attribute 
+indexes that BeFS keeps on disk.
+
+In the original BeOS, they solved the problem by having the filesystem 
+driver itself take a text query string and parse it, returning a list of 
+inodes that match. The whole business of parsing a query string in the 
+kernel (let alone in the filesystem driver) has always seemed ugly to 
+me. However, the best alternative I've come up with is to simply export 
+the index data as a special file (perhaps in sysfs?) and have userspace 
+responsible for searching the index. That would probably work, but it 
+wouldn't help other filesystems that implement even a different index 
+format, much less a different form of extra searchability.
+
+-- 
+Will Dyson
+"Back off man, I'm a scientist!" -Dr. Peter Venkman
