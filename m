@@ -1,34 +1,41 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: reiserfsck failure
-Date: Thu, 16 Jan 2003 12:32:55 +0300
-Message-ID: <20030116123255.A16554@namesys.com>
-References: <3E247A12.4E479B64@neolinear.com> <3E247AB6.89265382@neolinear.com> <20030115095925.A23036@namesys.com> <3E25C151.CE31D219@neolinear.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Any information on S+tree?
+Date: Thu, 16 Jan 2003 13:03:56 +0300
+Message-ID: <3E26838C.2030407@namesys.com>
+References: <15842.28332.47095.407177@laputa.namesys.com><E18Gchd-0005jx-00@aqualene.uio.no> <15843.22257.733637.646758@laputa.namesys.com> <015601c29648$deed2390$6a01a8c0@bmoon>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12374-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12375-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3E25C151.CE31D219@neolinear.com>
+In-Reply-To: <015601c29648$deed2390$6a01a8c0@bmoon>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Bill Schrier <wschrier@neolinear.com>
-Cc: it@neolinear.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: bmoon <bo@anthologysolutions.com>
+Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Hello!
+bmoon wrote:
 
-On Wed, Jan 15, 2003 at 03:15:13PM -0500, Bill Schrier wrote:
-> Unfortunatly, the console was completely hosed up and I couldn't even get any
-> display on it to record any messages to stderr.  Sorry - don't think I can help
-> there...
+>Hello,
+>
+>I thought Reiserfs uses B+tree, but 
+>Reiserfs is using S+tree according to the source code.
+>Where can I get any information or document on this S+tree?
+>
+>Thanks,
+>
+>Bo
+>
+>
+>  
+>
+S+tree is an old name for what we use.  You might look at our 
+www.namesys.com/v4/v4p1.html and www.namesys.com/v4/v4p2.html and 
+www.namesys.com/v4/v4.html documentation for our latest trees.
 
-Hm. You still have not told us what version of reiserfsck was that.
-Also can you please capture metadata snapshot for us
-(debugreiserfs -p /dev/yourdevice | bzip2 -9c >metadata.bz2 )
-and make it available for us to download?
-Thank you.
+-- 
+Hans
 
-Bye,
-    Oleg
+
