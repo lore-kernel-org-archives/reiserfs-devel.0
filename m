@@ -1,41 +1,38 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: data loss with reiserfs
-Date: Sat, 22 Jun 2002 13:41:24 +0400
-Message-ID: <20020622134124.A1287@namesys.com>
-References: <200206211920.38534.JPicht85@web.de> <200206212048.07920.JPicht85@web.de> <20020622114015.A4260@namesys.com> <200206221132.21918.JPicht85@web.de>
+From: The Doctor What <docwhat@gerf.org>
+Subject: Is it good for a PDA fs?
+Date: Sat, 22 Jun 2002 11:52:07 -0500
+Message-ID: <20020622115207.E23457@gerf.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10792-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10793-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <200206221132.21918.JPicht85@web.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julian Picht <JPicht85@web.de>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+Having just bought a Sharp Zaurus with a 64meg MMC and a 256 CF, my
+mind instantly jumps to the question, can it be used to pick up
+chicks?
 
-On Sat, Jun 22, 2002 at 11:32:21AM +0200, Julian Picht wrote:
+When I was done with that avenue of thought, I wondered if it's
+worth it to figure out how to build my own kernel just to add
+reiserfs to it.
 
-> > What options have you passed to reiserfsck?
-> I typed "reiserfsck --check /dev/hdb3"
+I know about it's handiness with journalling, etc. and that'd be
+useful for the occasional glitches I've had.
 
-This does not modify any data on the partition.
+Does ReiserFS has anything that is more useful or less usefull for
+such a small memory application?
 
-> > And have it reported anything other than "no errors"?
-> It gave an status report while scanning, then said "no errors".
+Ciao!
 
-Well, then it must be something other that have freed the space.
-There is a painful way of trying to restore all bits that were lost.
-this is using -S switch in conjunction to --rebuild-tree in reiserfsck.
-Note that most probably your partition would be destroyed after result, though
-from bunch of files in /lost+found (and may be at old place) you may be able to
-find what you are looking for. 
+-- 
+"If A equals success, then the formula is A = X + Y + Z.  X is work.  Y is
+play.  Z is keep your mouth shut."
+		-- Albert Einstein 
 
-This doesnot give the answer to the question of why the data was lost, though.
-
-Bye,
-    Oleg
+The Doctor What: A really hip dude               http://docwhat.gerf.org/
+docwhat@gerf.org                                                   KF6VNC
