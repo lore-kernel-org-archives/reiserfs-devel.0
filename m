@@ -1,44 +1,76 @@
-From: Henning Westerholt <henning-04@die.informatik.uni-siegen.de>
-Subject: Re: Calling stat with millions of files
-Date: Tue, 8 Jun 2004 22:29:36 +0200
-Message-ID: <200406082229.36625.henning-04@die.informatik.uni-siegen.de>
-References: <Pine.LNX.4.58.0406071735290.30177@localhost.localdomain> <1086721127.20554.24.camel@ipso.snappymail.ca>
+From: David Greaves <david@dgreaves.com>
+Subject: Re: support for Reiserfs 3.6 failed on ~1Tb lvm2 lv on 2.6.6?
+Date: Tue, 08 Jun 2004 21:55:19 +0100
+Message-ID: <40C627B7.9000803@dgreaves.com>
+References: <3DF9165145FACB4C96977FF650C1E9040C46A03F@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19102-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19103-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1086721127.20554.24.camel@ipso.snappymail.ca>
-Content-Disposition: inline
+In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C46A03F@its-mail1.its.corp.gwl.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Burnes, James" <james.burnes@gwl.com>
+Cc: bernd-schubert@web.de, reiserfs-list@namesys.com
 
-Am Dienstag, 8. Juni 2004 20:58 schrieb Mike Benoit:
-> I'm currently using the "Rsync Snapshot"
+Thanks - I'll try both :)
+
+I'm talking to namesys too.
+
+I am wondering if the resync corrupted the data.
+
+I'm pretty happy that I didn't do anything 'wrong' - something is either 
+broken in hw (mem) or buggy.
+
+David
+
+Burnes, James wrote:
+
+>Rather than running memtest86 for two days you might find it easier to
+>simply re-seat your memory modules and try again.
 >
-> http://www.mikerubel.org/computers/rsync_snapshots/
+>If that doesn't fix it, then run memtest.
 >
-> backup method with a 340Gb RAID5 array on a PIII-800 with 256mb RAM.
-> Currently used is about 200gb in 68 million files. I would guess over
-> 75% are hard links.
 >
-> My mount options are: notail,noatime,nodiratime
-> Kernel: 2.6.3-7mdk
 >
-> The Performance I'm seeing is pretty good, I don't have any complaints.
+>jim burnes
+>security engineer
+>great-west, denver
+> 
+>
+>  
+>
+>>-----Original Message-----
+>>From: bernd-schubert@web.de [mailto:bernd-schubert@web.de]
+>>Sent: Tuesday, June 08, 2004 1:18 PM
+>>To: reiserfs-list@namesys.com
+>>Cc: David Greaves
+>>Subject: Re: support for Reiserfs 3.6 failed on ~1Tb lvm2 lv on 2.6.6?
+>>
+>>Did you already run memtest86 for at least a couple of ours, but
+>>    
+>>
+>better
+>  
+>
+>>several days (all tests have to be enabled)? I also had problems like
+>>    
+>>
+>this
+>  
+>
+>>several times and usually it simply had been memory problems. On my
+>>notebook
+>>even the shared memory graphics card could cause this...
+>>
+>>Cheers,
+>>	Bernd
+>>
+>
+>
+>  
+>
 
-I'm using the same backup method like Mike. The machine is a 2.5 GHz P4 with 
-Suse kernel 2.4.20, and a Raid5 array filled with ~100 GB data. 
-
-A "ls -lR" on the oldest snapshot (150000 files) needs 2m40s, probably because 
-i use no special mount options, and the data in this directory is from four 
-different machines. 
-But otherwise i'm satisfied with the performance of reiserfs. So i think there 
-must been a other problem with your system.
-
-Best regards,
-
-Henning
