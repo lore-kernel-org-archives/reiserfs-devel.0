@@ -1,10 +1,10 @@
 From: "Burnes, James" <james.burnes@gwl.com>
 Subject: RE: Setting the disk label
-Date: Wed, 14 Jan 2004 13:17:43 -0700
-Message-ID: <3DF9165145FACB4C96977FF650C1E90409633616@its-mail1.its.corp.gwl.com>
+Date: Wed, 14 Jan 2004 13:32:15 -0700
+Message-ID: <3DF9165145FACB4C96977FF650C1E90409633617@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16505-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16506-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,7 +14,15 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: redeeman@metanurb.dk, Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-Thanks.  Much appreciated.
+Thanks, again.  I was reading the man pages and it says that filesystems
+modified by reiserfstune need a special kernel patch or a normal 2.4
+kernel will refuse to mount them.  I'm not sure if that only applies if
+you change the journaling device/parameter or if it applies to all
+options of reiserfstune.
+
+I'm guessing it's only if you change journal device parameters, as the
+other possible interpretation wouldn't make much sense and Hans and crew
+tend to do things that make a lot of sense (as far as I know ;-)
 
 jim burnes
 security engineer
