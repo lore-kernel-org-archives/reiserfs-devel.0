@@ -1,34 +1,66 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: [BK] ReiserFS file write bug fix for 2.4
-Date: Thu, 12 Sep 2002 08:53:00 +0400
-Message-ID: <20020912085300.A4625@namesys.com>
-References: <3D7F7783.6030804@namesys.com> <200209111934.11373.Dieter.Nuetzel@hamburg.de> <20020911215310.A1504@namesys.com> <200209112137.22422.Dieter.Nuetzel@hamburg.de>
+From: Tracy R Reed <treed@ultraviolet.org>
+Subject: Re: [reiserfs-list] Re: NFS/2.4.18/reiserfs question
+Date: Wed, 11 Sep 2002 22:02:23 -0700
+Sender: nfs-admin@lists.sourceforge.net
+Message-ID: <20020911220223.B4671@ultraviolet.org>
+References: <Pine.LNX.4.44.0209110853090.29369-100000@fogarty.jakma.org> <Pine.LNX.4.44L1.0209111208160.20363-100000@sequence.stanford.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11430-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Content-Type: multipart/signed; micalg=pgp-md5;
+	protocol="application/pgp-signature"; boundary="/WwmFnJnmDyWGHa4"
+Return-path: <nfs-admin@lists.sourceforge.net>
 Content-Disposition: inline
-In-Reply-To: <200209112137.22422.Dieter.Nuetzel@hamburg.de>
+In-Reply-To: <Pine.LNX.4.44L1.0209111208160.20363-100000@sequence.stanford.edu>; from troy@sequence.stanford.edu on Wed, Sep 11, 2002 at 12:34:23PM -0700
+Errors-To: nfs-admin@lists.sourceforge.net
+List-Help: <mailto:nfs-request@lists.sourceforge.net?subject=help>
+List-Post: <mailto:nfs@lists.sourceforge.net>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/nfs>,
+	<mailto:nfs-request@lists.sourceforge.net?subject=subscribe>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
-Cc: Linux Kernel List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/nfs>,
+	<mailto:nfs-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://www.geocrawler.com/redir-sf.php3?list=nfs>
+To: Troy Wu <troy@sequence.stanford.edu>
+Cc: NFS at SourceForge <NFS@lists.sourceforge.net>, ReiserFS at NameSys <reiserfs-list@namesys.com>
 
-Hello!
 
-On Wed, Sep 11, 2002 at 09:37:22PM +0200, Dieter N?tzel wrote:
-> > On Wed, Sep 11, 2002 at 07:34:11PM +0200, Dieter N?tzel wrote:
-> > > On Wednesday 11 September 2002 19:04, Hans Reiser wrote:
-> > > > Well, at least getting the new file write code into pre6 found this bug
-> > > > for us....  please apply.
-> > > What is the "right" way to get the new block allocation going?
-> > use 2.4.19-pre2+ and it is in there ;)
-> You meant 2.4.20-pre2, didn't you?
+--/WwmFnJnmDyWGHa4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ah, yes. 2.4.20-pre2+ of course.
+On Wed, Sep 11, 2002 at 12:34:23PM -0700, Troy Wu spake thusly:
+> I've gotten some very helpful information, but am still a little confused.
+> Basically, I've heard some people say that Reiser (RFS) is simply a bad
+> choice with NFS.  Others have said I'm using the wrong version of the
+> on-disk format.  I've also been reading up on the discussion at the
+> ReiserFS archives about this.
 
-Bye,
-    Oleg
+http://www.namesys.com/faq.html#nfs
+
+--=20
+Tracy Reed      http://www.ultraviolet.org
+"Our products just aren't engineered for security." - Brian Valentine,
+senior VP in charge of Microsoft's Windows development 5 Sept 2002
+
+--/WwmFnJnmDyWGHa4
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.1 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
+
+iEYEARECAAYFAj2AH98ACgkQ9PIYKZYVAq3SCgCbB7qN+nVdG39ALUQ/8B1b3CBU
+bdEAoISOp5cPBfvBciSHWCgYUCRcZOQr
+=Znq/
+-----END PGP SIGNATURE-----
+
+--/WwmFnJnmDyWGHa4--
+
+
+-------------------------------------------------------
+In remembrance
+www.osdn.com/911/
+_______________________________________________
+NFS maillist  -  NFS@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/nfs
