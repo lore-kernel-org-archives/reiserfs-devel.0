@@ -1,97 +1,71 @@
-From: "Burnes, James" <james.burnes@gwl.com>
-Subject: Chris/Jeff/Reiserfs ACL/xattr squabble not necessary
-Date: Thu, 29 Apr 2004 10:53:32 -0600
-Message-ID: <3DF9165145FACB4C96977FF650C1E9040C469EE5@its-mail1.its.corp.gwl.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: metas Permission Denied
+Date: Thu, 29 Apr 2004 12:59:28 -0400
+Message-ID: <200404291659.i3TGxSNP019093@turing-police.cc.vt.edu>
+References: <E38393BE-9950-11D8-B39A-000A95C88606@aoc.nrao.edu> <16528.46352.173184.528623@laputa.namesys.com> <39CF0546-99EE-11D8-8CFE-000A95C88606@aoc.nrao.edu> <16529.9818.916980.360020@laputa.namesys.com> <200404291614.i3TGEoAI017900@turing-police.cc.vt.edu>
+            <16529.11188.555986.964130@laputa.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18290-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_-260260928P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18291-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
+In-Reply-To: Your message of "Thu, 29 Apr 2004 20:22:12 +0400."
+             <16529.11188.555986.964130@laputa.namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com
+To: Nikita Danilov <Nikita@Namesys.COM>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-Maybe what is needed is an interim v3 release, meant to bridge the
-current VFS acl semantics with future VFS *innovations*.  In other words
-to take people who wisely chose v3 instead of ext2/etc and allow them to
-bridge into the future while still embracing the reiser vision.
-(reiservision? sounds like a new TV feature.  "Linux!  Now enhanced with
-ReiserVision (tm) ;-)
+--==_Exmh_-260260928P
+Content-Type: text/plain; charset=us-ascii
 
-Ahem, sorry.  I don't know what the future VFS plans are, but an
-object-oriented filesystem extension in VFS and Reiser4 would be a match
-made in heaven.  In other words, don't get bogged down in the VFS
-semantics squabble.  Leap frog the entire discussion and go for the
-whole enchilada.  OO fs in VFS.
+On Thu, 29 Apr 2004 20:22:12 +0400, Nikita Danilov said:
+> Eh? What I described is precisely decades old meaning of rwx bits for
+> directories.
 
-Excuse my ignorance if this has already been planned or discarded as a
-silly idea.
+Exactly.  The problem is that the rwx bits have had other meanings for decades
+on "regular files"..
 
-jim burnes
-security engineer
-great-west, denver
-=20
+> Problem is that we have to fit objects that are both regular files and
+> directories into access control scheme that wasn't designed for such a
+> mix. I don't see better solution short of inventing new bit(s).
 
-> -----Original Message-----
-> From: Christian Mayrhuber [mailto:christian.mayrhuber@gmx.net]
-> Sent: Thursday, April 29, 2004 5:35 AM
-> To: reiserfs-list@namesys.com
-> Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary
-> additional namespace to ReiserFS
->=20
-> On Wednesday 28 April 2004 14:45, you wrote:
-> > On Wed, 2004-04-28 at 05:44, Markus TXrnqvist wrote:
-> > > On Wed, Apr 28, 2004 at 10:22:36AM +0200, Christian Mayrhuber
-wrote:
-> > > >I wonder if Novell/SuSE would take over full Reiserfs3
-maintainership
-> as
-> > > >namesys is now concentrating on the next big step: Reiser4.
-> > >
-> > > This would be an EXCELLENT idea; something that a SuSEist should
-take
-> > > seriously if reading this list.
-> >
-> > SUSE has been a major reiserfs v3 contributor for a long time, in
-code,
-> > testing and userbase.  My goal here is not to change our working
-> > relationship with namesys, only to convince Hans that he needs to
-> > rethink the way v3 has been maintained.
-> Good Luck!
-> Hans seems to fear xattrs like the devil fears holy water.
->=20
-> The additional unnecessary namespace is not needed by users, but acl's
-> are - at least for the ones operating a samba server.
->=20
-> The Reiserfs stabilization process lasted till midlife of 2.4. With
-that
-> experience in mind Reiser4 will be a NO-NO for server usage till
-kernel
-> 2.8.1x. If there are no acl's available for Reiserfs its server users
-will
-> turn their tide towards a fs that has data=3Dordered + acl support.
-> The only linux filesystem that has both features is ext3.
-> I prefer reiserfs over ext3 for server usage, mostly because it can do
-> online
-> growing which is  a valueable feature in the combination with lvm. The
-> only
-> other linux filesystem able to do that is xfs.
-> Data integrity trough data=3Dordered + acl's + online growing would =
-make
-> Reiserfs the best enterprise fs available for Linux, at least until
-> Reiser4
-> is stable enough.
->=20
-> Due to the great work of Namesys and SuSE engineers Reiserfs has
-developed
-> that far, denying features that make sense and that are an
-implementation
-> of
-> an accepted interface in the linux vfs layer, is just sad.
->=20
-> --
-> lg, Chris
+AIX/370's 'Transparent Computing Facility" had similar issues with "hidden
+directories", and HP/UX apparently had "context sensitive directories".  AIX/
+370 mostly used it to support transparent usage of binaries across multiple
+architectures.  So for instance,
 
+/bin/ls@  was a directory, with an additional flag in the inode saying 'hidden'
+(you needed both the trailing @ and the flag).  Then in the directory, you'd
+have two or more binaries "i386" "i370" "xa370" for various architectures.
+
+I spent a good chunk of 3 years fighting the resulting brain damage - although
+it *mostly* worked OK, the corner cases kept popping up.
+
+Imagine *every* bug you've ever seen that involved confusing the 'stat()'
+system call with 'lstat()', and every bug that's ever been caused because of
+the blurring of "mount point" and "directory"..  Now imagine that *every file*
+on the file system can trigger that sort of bug, not just the relatively small
+percentage of files that are mount points or symlinks.....
+
+Trust me - you *really* want to create a new bit, simply to avoid breaking
+every program that thinks the old bit has the usual semantics.
+
+
+
+--==_Exmh_-260260928P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFAkTRvcC3lWbTT17ARAnHrAKDectpAyAAYhPkY/UI7rqqiUzM/FwCfXo8z
+JrjhkbQu+ne8I41vNa1q1Xs=
+=2FOf
+-----END PGP SIGNATURE-----
+
+--==_Exmh_-260260928P--
