@@ -1,70 +1,42 @@
-From: Jason Stubbs <jstubbs@gentoo.org>
-Subject: Re: Gnu Parted error, Kernel Panic, Reiserfs
-Date: Fri, 16 Apr 2004 23:24:28 +0900
-Message-ID: <200404162324.33202.jstubbs@gentoo.org>
-References: <Pine.LNX.4.21.0404161554420.16938-100000@mlf.linux.rulez.org> <1082124859.22432.2.camel@firefly>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: [PATCH] reiserfs v3 fixes and features
+Date: Fri, 16 Apr 2004 11:44:49 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <87zn9capvy.fsf@uhoreg.ca>
+References: <1081274618.30828.30.camel@watt.suse.com> <1081989006.27614.110.camel@watt.suse.com>
+ <874qrmkl43.fsf@uhoreg.ca> <16510.31796.137286.428042@laputa.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-17997-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17999-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1082124859.22432.2.camel@firefly>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: Text/Plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-=2D----BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+>>>>> "Nikita" == Nikita Danilov <Nikita@Namesys.COM> writes:
 
-On Friday 16 April 2004 23:14, Yury Umanets wrote:
-> On Fri, 2004-04-16 at 17:06, Szakacsits Szabolcs wrote:
-> > On Fri, 16 Apr 2004, Yury Umanets wrote:
-> > > One more thing. Is it common case, that resizier errors happen on
-> > > Gento?
-> >
-> > Hmmm, seems to be a good point. Alan had Gentoo. On the QTParted forums
-> > people mention Gentoo. SystemRescueCD (http://www.sysresccd.org), the
-> > most popular LiveCD for partition handling is Gentoo based ...
->
-> It is quite possible, that Gentoo guys have modified progsreiserfs a
-> little bit like Debian guys did some time ago on stock reiserfsprogs.
-> And then there was lots of errors with bitmap, as bit working functions
-> was incorrectly modified.
->
-> Can this explain lots of errors on Gentoo?
+>> On 2.6.5, it still fails:
+>> 
+>> ...
+>> CC      fs/reiserfs/bitmap.o
+>> In file included from fs/reiserfs/bitmap.c:8:
+>> include/linux/reiserfs_fs.h: In function `reiserfs_transaction_running':
+>> include/linux/reiserfs_fs.h:1752: error: structure has no member named `journal_info'
+>> make[3]: *** [fs/reiserfs/bitmap.o] Error 1
 
-Latest version available is 3.6.9. Absolutely no patches are applied to any=
- of=20
-the available versions.
+Nikita> Err.. clash with the reiser4 patch, surely.
 
-> > Look what I've found right now:
-> >
-> > 	http://www.sysresccd.org/forums/viewtopic.php?t=3D294
-> >
-> >   "Why is it that with and only with System Rescue CD, if I format a
-> >    partition as reiserfs, then copy some data from another resierfs
-> >    partition to that newly formatted partition and then unmount the
-> >    partition and run fsck on it, errors are found that need fixing?"
-> >
-> > 	Szaka
->
-> Also they might modify kernel code...
+OK.  Is there a workaround or updated patch?  Or do I have to choose
+between Reiserfs 3 data=ordered and Reiser4?
 
-I don't know what kernel is used on this System Rescue CD. Neither of=20
-gentoo-sources (2.4-based) and gentoo-dev-sources (2.6-based) apply any=20
-reiserfs-specific patches that I am aware of.
+Thanks
 
-Regards,
-Jason Stubbs
-=2D----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
-iQCVAwUBQH/soVoikN4/5jfsAQKA1wP/RFBrTCAGxmNk6lJbCbCFZdDeizUY3ZXp
-pR7UKNpMoXwLNZvb1CZD9fqIAG8Gwo915ZgSsSPfaN2YbJfZ7vabCzYl3hzHp3Lg
-1jaEQRMXYaiSEZMdVzWMtiFvKPPKi2+PwPfMks8z5tMlrlEywAR6BIrzcOMM/NU+
-hUyAfiuPK2U=3D
-=3DydFQ
-=2D----END PGP SIGNATURE-----
