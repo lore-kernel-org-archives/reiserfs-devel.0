@@ -1,55 +1,37 @@
-From: Bruce Guenter <lists-reiserfs-list@bruce-guenter.dyndns.org>
-Subject: Re: Reiserfs concurrent write problems
-Date: Tue, 27 Apr 2004 10:15:44 -0600
-Message-ID: <20040427161544.GA27873@em.ca>
-References: <20040426172648.GA22918@em.ca> <1083000970.30344.50.camel@watt.suse.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary additional
+ namespace to ReiserFS
+Date: Tue, 27 Apr 2004 10:58:26 -0700
+Message-ID: <408E9F42.2080804@namesys.com>
+References: <1082750045.12989.199.camel@watt.suse.com> <408D3FEE.1030603@namesys.com> <20040426203314.A6973@infradead.org> <408E986F.90506@namesys.com> <20040427183400.A20221@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
-Return-path: <reiserfs-list-return-18251-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18252-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1083000970.30344.50.camel@watt.suse.com>
+In-Reply-To: <20040427183400.A20221@infradead.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Chris Mason <mason@suse.com>, Linus Torvalds <torvalds@osdl.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, akpm@osdl.org
 
---ikeVEW9yuYc//A+q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Christoph Hellwig wrote:
 
-On Mon, Apr 26, 2004 at 01:36:11PM -0400, Chris Mason wrote:
-> Please try 2.6.6-rc2-mm2, which has new block allocator patches and
-> other speedups.
->=20
-> The default mount options should work best for you, but this might work
-> too:
->=20
-> mount -o alloc=3Dskip_busy:dirid_groups /dev/xxx /mnt
+>>Did you notice that V4 blows XFS and ReiserFS V3 away in benchmarks?    
+>>That is what I have been doing for 3 years....
+>>
+>>See www.namesys.com for details.
+>>    
+>>
+>
+>see www.microsoft.com why Windows is much better than Linux.  Yeah, thanks.
+>  
+>
+Ask the users whether their laptops, etc.,  seem to go a lot faster with 
+V4.  They seem to be pretty happy with it.
 
-Using the new kernel and the above mount options boosted the write
-performance of ReiserFS, almost to the level of XFS.  At the highest
-concurrency level, the reading performance dropped, but it's still much
-faster than the other FSs.
+V4 fixed all of V3's serious performance flaws, and totally obsoletes 
+it.    I am very happy with it.
 
-Thanks for your help.
---=20
-Bruce Guenter <bruceg@em.ca> http://em.ca/~bruceg/ http://untroubled.org/
-OpenPGP key: 699980E8 / D0B7 C8DD 365D A395 29DA  2E2A E96F B2DC 6999 80E8
-
---ikeVEW9yuYc//A+q
-Content-Type: application/pgp-signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQFAjocw6W+y3GmZgOgRAuvUAJ9Z7PUZJ4iq840Vci/imFBMkx4UEACfRSYg
-NRS8+6kY1NUvC1Bxi04iVek=
-=Awll
------END PGP SIGNATURE-----
-
---ikeVEW9yuYc//A+q--
