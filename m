@@ -1,39 +1,61 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: kern.log unrecognized option warning
-Date: Fri, 27 Aug 2004 20:58:22 +0400
-Message-ID: <20040827165822.GD5108@backtop.namesys.com>
-References: <1392551425.20040827154059@wp.pl>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: reiserfs bug? ALSO Reiser4 bug!?
+Date: Fri, 27 Aug 2004 20:45:55 +0300
+Message-ID: <20040827174555.GB1284@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20922-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20923-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1392551425.20040827154059@wp.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maciej Soltysiak <pysiak.satriani@wp.pl>
-Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Fri, Aug 27, 2004 at 03:40:59PM +0200, Maciej Soltysiak wrote:
-> Hi,
-> 
-> While adding an entry to fstab i tried it with reiserfs notail.
-> Ok, there's no such option.
-> Is it important to write this also to the kern.log?
+Hi
 
-yes. otherwise user/admin would not understand why mount fails.
+I set up a symlink /var/log -> /boot/log where /boot is a reiserfs
+system. That was because Reiser4 lost log data when we were chasing the
+last bug with VS.
 
-> 
-> Aug 26 20:27:25 dns kernel: reiser4[mount(4962)]: parse_options (fs/reiser4/vfs_ops.c:844)[nikita-2307]:
-> Aug 26 20:27:25 dns kernel: WARNING: Unrecognized option: "notail"
-> 
-> Regards,
-> Maciej
-> 
-> 
+Now the partition grew full and it was shown by my computer completely
+locking up. Out of the blue. At least that's what I assume caused the
+lock-up and the following.
+
+On a reboot I got a trace on the screen from dmesg dying. Unfortunately
+I can't use netconsole for some reason, but it was there.
+Sometimes it boots but screams a lot that the logfiles are not found,
+and for some reason /boot never mounted. 
+
+That's mysterious because /boot must be mounted for the kernel to be
+loaded, I don't have a copy in the mount point directory, but dmesg says
+nothing about anything but Reiser4 being mounted on /
+
+I don't frankly have the time now to reproduce this, it is somewhat
+sporadic and I tried it too many times already. The system is a Debian
+Sid (Unstable) and the command was
+dmesg -s 524288 > /var/log/dmesg on a full reiserfs /var/log -> /boot/log
+partition/directory.
+
+Now that I got my system up, it did not mount /boot or /home/mjt, only /
+and it also lost the host name. (none):/etc# is my prompt.
+
+The filesystem is 128480 blocks with just as many used.
+
+Hope this helps in any way!
+
+PS.
+Now that I kicked in a reboot, I'm getting:
+reiser4[run-parts(2707)]: traverse_tree (fs/reiser4/search.c:755)[nikita-1481]:
+WARNING: Too many iterations: 1048576
+
+Where the iteration count varies. Warnings are usually not lethal, right?
+But this seems to end never. Time for the sync-umount-reboot sysrq magic..
+
+Thanks!
 
 -- 
-Alex.
+mjt
+
