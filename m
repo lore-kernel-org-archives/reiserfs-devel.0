@@ -1,37 +1,42 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Working Reiser4 patch for kernel 2.6.6(-mm2)?
-Date: Wed, 2 Jun 2004 19:52:08 +0300
-Message-ID: <20040602165208.GI4990@nysv.org>
-References: <200406021554.11690.rmeijer@internet.gr> <20040602125602.GC8091@backtop.namesys.com> <200406021603.46918.rmeijer@internet.gr> <20040602160234.GF8091@backtop.namesys.com> <20040602162348.GH4990@nysv.org> <20040602163444.GG8091@backtop.namesys.com> <20040602163913.GH8091@backtop.namesys.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: fsck.reiser4 segfault with one partition
+Date: Wed, 2 Jun 2004 21:43:08 +0400
+Message-ID: <200406022143.08104.vitaly@namesys.com>
+References: <pan.2004.06.01.11.57.09.230448@unternehmen.com> <200406021658.17346.vitaly@namesys.com> <pan.2004.06.02.10.19.28.403959@unternehmen.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18978-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18980-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <pan.2004.06.02.10.19.28.403959@unternehmen.com>
 Content-Disposition: inline
-In-Reply-To: <20040602163913.GH8091@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: "Raymond A. Meijer" <rmeijer@internet.gr>, reiserfs-list@namesys.com
+To: Helge Hielscher <hhielscher@unternehmen.com>, reiserfs-list@namesys.com
 
-On Wed, Jun 02, 2004 at 08:39:13PM +0400, Alex Zarochentsev wrote:
->Sorry Markus, the last question is not for you.  But why do you think
->2.6.6 is the point? 
+> The metadata is on its way. But what is strange, I have run fsck.reiser4
+> directly after fsck.reiser4 and here is what I get now (ups, just noticed
+> that I use the old version again, hope that it does not matter much)
 
-This is from the original mail:
-Can someone point me to a WORKING Reiser4 patch for kernel 2.6.6 or 2.6.6-mm2?
+this is a different error -- now you have the internal reiser4 tree broken.
 
-And:
-Subject: Re: Working Reiser4 patch for kernel 2.6.6(-mm2)?
+> # fsck.reiser4 /dev/hda6
+> ***** Tree Traverse Pass: scanning the reiser4 internal tree.
+> Error: Node (409174), item (4): item has the wrong length (62). Should be
+> (56). Error: Node (409174), item (4): broken item found.
+> Error: Node (409174): the node is broken. Pointed from the node (430549),
+> item (7), unit (0). The whole subtree is skipped.
 
-;)
+the previous problem was on the semantic pass, but now:
+> Fatal corruptions were found. Semantic pass is skipped.
 
-Besides that, maybe some other bugfix that's not easily included or
-just the desire to ride the bleeding edge...
-
+the only write that could happen is the journal replaying.
+did you umount the fs while fscking?
+which reiser4 code are you using? 
+probably you have upgraded to some newer snapshot?
 -- 
-mjt
+Thanks,
+Vitaly Fertman
 
