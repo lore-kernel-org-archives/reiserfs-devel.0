@@ -1,49 +1,75 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: newbie question about mounting options
-Date: Thu, 08 Apr 2004 12:26:16 -0400
-Message-ID: <200404081626.i38GQGhj015743@turing-police.cc.vt.edu>
-References: <000a01c41d82$7e69bf70$3acac9d2@pierre2>
+From: "Burnes, James" <james.burnes@gwl.com>
+Subject: Resier Fragmentation Effects (was compression vs performance)
+Date: Thu, 8 Apr 2004 11:00:17 -0600
+Message-ID: <3DF9165145FACB4C96977FF650C1E9040C469DBF@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1753699904P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17795-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-17796-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Thu, 08 Apr 2004 17:59:36 +0200."
-             <000a01c41d82$7e69bf70$3acac9d2@pierre2> 
+content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Pierre Fafet <pierre.fafet@ladservices.fr>
-Cc: 'Reiserfs List' <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Stewart Smith <stewart@flamingspork.com>, Tom Vier <tmv@comcast.net>
+Cc: Scott Young <youngs1@sunyit.edu>, reiserfs-list@namesys.com
 
---==_Exmh_1753699904P
-Content-Type: text/plain; charset=us-ascii
+I thought nearly all filesystems designed since Berkeley FFS were nearly
+immune to fragmentation problems.
 
-On Thu, 08 Apr 2004 17:59:36 +0200, Pierre Fafet <pierre.fafet@ladservices.fr>  said:
+After reading the following analysis at Harvard, it seems that
+fragmentation is still a problem.
 
->     [root@CORTON root]# mkreiserfs -s 8193 -j /dev/sdf1 /dev/sdg2
-> 
->     <-------------mkreiserfs, 2002------------->
->     reiserfsprogs 3.6.4
+http://www.eecs.harvard.edu/~keith/research/tr94.html
 
-> Why is it not working ?
+At least with FFS it seems that fragmentation is significantly worse
+with smaller files.  That makes a certain intuitive sense.
 
-reiserfsprogs is up to 3.6.13 or even later.  Probably you'll need to get to
-some non-ancient version before anybody even thinks about the problem.
-There's been lots of bugs fixed in the 2 years since the version you're running....
+Of course the Harvard guys are claiming worst case FFS fragmentation
+incurs a 30% performance hit.  It would be nice if they could fix that,
+but everything is relative.  I remember badly fragmented FAT filesystems
+with probably closer to 90% performance hit.=20
 
---==_Exmh_1753699904P
-Content-Type: application/pgp-signature
+Apparently worst case is with file systems loaded down with a lot of
+small files like news and mail servers.  Since Reiser tends to be used
+in situations that call for a lot of small file creation and deletion I
+thought this would be pertinent.  Also Reiser is radically different
+internally than FFS.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+I know Hans is super busy right now so I don't expect him to comment,
+but maybe one of the core people could comment about the effects in
+Reiser3 and 4 if they have a spare moment.
 
-iD8DBQFAdX0ocC3lWbTT17ARAtXdAKCAyVbBe3laSpM7ZIT9FhwcBiLp2gCg28HP
-HlAfjicfYqAlWjJorXOIHiI=
-=uknJ
------END PGP SIGNATURE-----
+jim burnes
+security engineer
+great-west, denver
+=20
 
---==_Exmh_1753699904P--
+> -----Original Message-----
+> From: Stewart Smith [mailto:stewart@flamingspork.com]
+> Sent: Thursday, April 08, 2004 5:48 AM
+> To: Tom Vier
+> Cc: Scott Young; reiserfs-list@namesys.com
+> Subject: Re: Can compression at filesystem level improveoverall
+> performance?
+>=20
+> On Tue, 2004-03-30 at 14:53, Tom Vier wrote:
+> > an online defragger is an interesting idea. i think i remember the
+topic
+> > coming up for ext2 along time ago. iirc, reiserfs can lose
+performance
+> over
+> > time (usage, actually), too.
+>=20
+> XFS has this, xfs_fsr (part of xfsdump package on debian, might be
+> called that on other distros too...)
+>=20
+> Although... it's pretty hard to get XFS to fragment in the first
+place,
+> which is the best way to do things - but it's a hard way :)
+>=20
+> --
+> Stewart Smith (stewart@flamingspork.com)
+> http://www.flamingspork.com/
+
