@@ -1,50 +1,68 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: Behavior of tails with respect to shred, wipe, etc
-Date: Fri, 25 Oct 2002 20:09:22 +0400
-Message-ID: <15801.27826.109914.445364@laputa.namesys.com>
-References: <HDEFILEPHCPLCAGPLCEMIELIDFAA.icycle@charter.net>
-	<15801.26994.705639.374241@laputa.namesys.com>
-	<20021025200014.A1763@namesys.com>
+From: Preston Lord <webmaster@t2.net>
+Subject: Need some help on reiserfs failure
+Date: 25 Oct 2002 10:12:31 -0600
+Message-ID: <1035562356.3711.30.camel@preston>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11778-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11779-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021025200014.A1763@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: Brett Russ <icycle@charter.net>, Reiserfs-List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Oleg Drokin writes:
- > Hello!
- > 
- > On Fri, Oct 25, 2002 at 07:55:30PM +0400, Nikita Danilov wrote:
- > 
- > >  > 2) If someone confirms that there is not a way to guarantee obliteration of
- > >  > original data in all cases with tails, can I assume that disabling tails
- > >  > will rectify the problem?
- > > I think yes. Reiserfs neither relocates nor journals unformatted blocks
- > > (until data-journalling patches are used).
- > 
- > Actually this is only true if file was not truncated prior to overwrite.
+Hi List,
 
-Correct.
+On my home pc I am running SuSE 8 Pro.
+I have my root partition using reiserfs.
+When I woke up this morning the computer was frozen and after rebooting
+it tells me there is no root partition defined. I pulled the hdd from
+the machine and slaved it into another SuSE 8 pc. If I use Yast2-
+Partition Utilities I can see the partitions are defined and the fs is
+still being listed as reiserfs on the failed root on the home hdd.
 
- > 
- > > I guess we should address this issue in reiser4. This is -security-
- > > feature after all. Hans? It is not clear how to intehgrate this with
- > > journalling though.
- > 
- > Zero out all freed blocks (mount option). This will kill write performance
- > though.
+I tried using reiserfsck as follows:
 
-Journal would still retain copies.
+resiserfsck --check /dev/hda4
 
- > 
- > Bye,
- >     Oleg
+ reiserfs_open: bread failed reading block 2
+ reiserfs_open: bread failed reading block 16
+ reiserfs_open: neither new nor old reiserfs format found on /dev/hda4
+ reiserfsck: could not open filesystem on "/dev/hda4"
 
-Nikita.
+reiserfsck --rebuild-sb --rebuild-tree /dev/hda5
+
+ reiserfs_open: bread failed reading block 16
+ reiserfs_open: neither new nor old reiserfs format found on /dev/hda5
+ reiserfsck: could not open filesystem on "/dev/hda5"
+
+reiserfsck --fix-fixable /dev/hd5
+
+ reiserfsck: could not open filesystem on "/dev/hd5"
+
+
+Of course when I try to mount I get the dreaded:
+ mount: wrong fs type, bad option, bad superblock on /dev/hda5,
+        or too many mounted file systems
+
+
+Please tell me there is hope?
+
+Thanks in advance.
+
+-- 
+
+Regards
+
+Preston Lord
+Programmer/Developer
+Network Specialist
+_______________
+General Manager
+Double T Computer Services
+Sask, Canada
+1.306.773.2054
+http://www.t2.net
+
