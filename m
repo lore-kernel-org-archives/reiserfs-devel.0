@@ -1,47 +1,78 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Reiserfs concurrent write problems
-Date: Tue, 27 Apr 2004 14:00:41 -0400
-Message-ID: <1083088841.30344.131.camel@watt.suse.com>
-References: <20040426172648.GA22918@em.ca>
-	 <1083000970.30344.50.camel@watt.suse.com>  <20040427161544.GA27873@em.ca>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary	additional namespace to ReiserFS
+Date: Tue, 27 Apr 2004 21:00:35 +0300
+Message-ID: <20040427180035.GC29226@nysv.org>
+References: <1082750045.12989.199.camel@watt.suse.com> <408D3FEE.1030603@namesys.com> <1083000711.30344.44.camel@watt.suse.com> <408D51C4.7010803@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18253-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18254-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040427161544.GA27873@em.ca>
+Content-Disposition: inline
+In-Reply-To: <408D51C4.7010803@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Bruce Guenter <lists-reiserfs-list@bruce-guenter.dyndns.org>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Chris Mason <mason@suse.com>, Linus Torvalds <torvalds@osdl.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, akpm@osdl.org
 
-On Tue, 2004-04-27 at 12:15, Bruce Guenter wrote:
-> On Mon, Apr 26, 2004 at 01:36:11PM -0400, Chris Mason wrote:
-> > Please try 2.6.6-rc2-mm2, which has new block allocator patches and
-> > other speedups.
-> > 
-> > The default mount options should work best for you, but this might work
-> > too:
-> > 
-> > mount -o alloc=skip_busy:dirid_groups /dev/xxx /mnt
-> 
-> Using the new kernel and the above mount options boosted the write
-> performance of ReiserFS, almost to the level of XFS.  At the highest
-> concurrency level, the reading performance dropped, but it's still much
-> faster than the other FSs.
-> 
-> Thanks for your help.
+On Mon, Apr 26, 2004 at 11:15:32AM -0700, Hans Reiser wrote:
 
-Good to hear, could I trouble you to ping me (or better yet
-reiserfs-list) when you have the graphs updated?
+>The ReiserFS maintainer (me, in case you forgot;-) ) decided what 
+>release acls would go into, and you disregarded it and wrote an 
+>implementation that was inconsistent with the one planned.
 
-Other notes about 2.6.6-rc2-mm2, it has some ext3 optimizations as well,
-you might want to rebenchmark there.  reiserfs defaults to -o
-data=ordered in the 2.6.6-rc2 (and -mm), you should get slightly better
-numbers with -o data=writeback.
+Surely this can not be such a bad thing.
 
--chris
+There's a lot of stuff flying around for the kernel that's not included
+for one reason or another, probably because some maintainer doesn't like
+it. What do people do? They patch it in by themselves.
 
+If there's demand for something and someone provides it, what's the big
+deal? It's still not supported by the maintainer, but it is maintained,
+and it complies with standards.
+
+Not that different from using some other scheduler or something than what's
+provided in the mainline kernel. It can then be developed and possibly
+make it into the mainline. Possibly. If the maintainer wants it.
+
+Besides, Reiser4 was, and maybe is in the grand scheme of things, something
+of the future and maybe interim solutions shouldn't be disregarded.
+
+>ReiserFS portion.  ReiserFS did not go down the xattr path, and declared 
+>that it would not do so long at the very beginning.  You are continuing 
+>to try to force us down that path, and now you are claiming that because 
+
+I hardly see this as forcing anyone to do anything.
+
+No-one takes away anyone's freedom of choice, in fact, the very idea of
+free software has been embodied here.
+
+>V4 took longer than hacking V3 that means that xattrs are a pre-existing 
+>api that we are heretically not conforming to.  Love it.
+
+If xattrs were there first, why wouldn't they be pre-existing?-)
+
+If Reiser4 attributes are better and stand a chance at becoming the new
+standard, you should by Bog stand behind them and embrace this competition.
+
+Let SuSE keep their customers happy and have people see that Reiser4
+attributes are better.
+
+>patches disregarded.  Stable branches do not get new semantics added to 
+>them just before new major releases with preferred semantics come out.
+
+This is of course only natural. But you allowed this to happen in your
+choice of license and that's not a bad thing. Quite the contrary.
+
+>Please consider contributing to enriching the collection of files that 
+>act as attributes of other files in V4 instead of pulling your oars in 
+>the other direction.  If you do, you will be (as usually) a valued 
+>contributor.
+
+Amen to that.
+
+-- 
+mjt
 
