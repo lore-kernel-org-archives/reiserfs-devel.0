@@ -1,78 +1,112 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: reiser4 bug
-Date: Mon, 28 Feb 2005 17:45:18 +0300
-Message-ID: <20050228144518.GK8161@backtop.namesys.com>
-References: <422220B3.8000800@cpc.wmin.ac.uk>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Install errors, reiser3 messages
+Date: Mon, 28 Feb 2005 13:52:14 -0800
+Message-ID: <4223928E.6060708@namesys.com>
+References: <421E71D4.7050806@linspireinc.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <422220B3.8000800@cpc.wmin.ac.uk>
+In-Reply-To: <421E71D4.7050806@linspireinc.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Szabolcs Illes <illes@cpc.wmin.ac.uk>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Clifford Beshers <clifford.beshers@linspireinc.com>
 Cc: reiserfs-list@namesys.com
 
-On Sun, Feb 27, 2005 at 07:34:11PM +0000, Szabolcs Illes wrote:
-> Hi All,
-> 
-> I have been using reiser4fs for 4 months without any problem since 
-> today. After tryinig to open a movie with mplayer a have this in my log:
+Clifford Beshers wrote:
 
-no other reiser4 messages in the log for 4 months?  like delimiting keys
-mismatch reports?
+>
+> We recently rewrote our installer to use a custom program that can 
+> stream a compressed iso9660 image file and unpack it to disk.  
+> Previously it used rsync.  Everything seemed to be fine, but when we 
+> started running it on many machines, we started encountering errors 
+> like the ones shown below, the output of dmesg.
+>
+> At first I suspected it might be that the kernel hadn't re-read the 
+> partition table, but on several installs we did not create or modify 
+> that table.
+>
+> Anyone have any guesses as to what is going wrong?
+> Again, this is reiser3.
+>
+>
+> hda1: rw=0, want=116654088, limit=50058477
+> attempt to access beyond end of device
+> hda1: rw=0, want=116916232, limit=50058477
+> attempt to access beyond end of device
+> hda1: rw=0, want=117178376, limit=50058477
+> ReiserFS: hda1: warning: sh-2029: reiserfs read_bitmaps: bitmap block 
+> (#6258688) reading failed
+> ReiserFS: hda1: warning: jmacd-8: reiserfs_fill_super: unable to read 
+> bitmap
 
-there was wrong bitmap checksum.  actually I haven't seen such reports until
-now.  are you sure your computer's disk/ram work well?
+The above look like hardware errors from the disk drive.  There have 
+been rsync related emails on this list, but let's start with a working 
+disk drive, ok?
 
-> 
-> Feb 27 14:00:22 sunset kernel: reiser4[mc(9192)]: 
-> write_sd_by_inode_common (fs/reiser4/plugin/object.c:480)[nikita-2221]:
-> Feb 27 14:00:22 sunset kernel: WARNING: Failed to save sd for 1599330: -5
-> Feb 27 14:00:22 sunset kernel: reiser4[mc(9192)]: create_child_common 
-> (fs/reiser4/plugin/dir/dir.c:501)[nikita-2219]:
-> Feb 27 14:00:22 sunset kernel: WARNING: Failed to create sd for 1599330
-> Feb 27 14:00:23 sunset kernel: reiser4[cupsd(3296)]: parse_node40 
-> (fs/reiser4/plugin/node/node40.c:767)[nikita-494]:
-> Feb 27 14:00:23 sunset kernel: WARNING: Wrong level found in node: 1 != 95
-> Feb 27 14:00:23 sunset kernel: reiser4[cupsd(3296)]: parse_node40 
-> (fs/reiser4/plugin/node/node40.c:767)[nikita-494]:
-> Feb 27 14:00:23 sunset kernel: WARNING: Wrong level found in node: 1 != 95
-> Feb 27 14:00:24 sunset kernel: reiser4[cupsd(3296)]: parse_node40 
-> (fs/reiser4/plugin/node/node40.c:767)[nikita-494]:
-> Feb 27 14:00:24 sunset kernel: WARNING: Wrong level found in node: 1 != 95
-> ......
-> 1000x times
+It is remotely possible that the above could be a failure to reboot 
+after using fsync....
 
-were there unclear reboots?  That shouldn't be a problem unless disk write
-caching is disabled. 
+> NTFS volume version 1.2.
+> NTFS-fs warning (device hda2): load_system_files(): Volume is dirty.  
+> Will not be able to remount read-write.  Run chkdsk and mount in Windows.
+> ReiserFS: hda1: found reiserfs format "3.6" with standard journal
+> ReiserFS: hda1: using ordered data mode
+> ReiserFS: hda1: journal params: device hda1, size 8192, journal first 
+> block 18, max trans len 1024, max batch 900, max commit age 30, max 
+> trans age 30
+> ReiserFS: hda1: checking transaction log (hda1)
+> ReiserFS: hda1: Using r5 hash to sort names
+> ReiserFS: hda1: warning: Created .reiserfs_priv on hda1 - reserved for 
+> xattr storage.
+> Adding 1049592k swap on /mnt/install/boot/linux-swap.swp.  Priority:-1 
+> extents:215
+> ReiserFS: warning: is_leaf: item location seems wrong (second one): 
+> *3.6* [7 32 0x1 DIRECT], item_len 170, item_location 3388, 
+> free_space(entry_count) 65535
+> ReiserFS: hda1: warning: vs-5150: search_by_key: invalid format found 
+> in block 5439488. Fsck?
+> ReiserFS: warning: is_leaf: item location seems wrong (second one): 
+> *3.6* [7 32 0x1 DIRECT], item_len 169, item_location 3388, 
+> free_space(entry_count) 65535
+> ReiserFS: hda1: warning: vs-5150: search_by_key: invalid format found 
+> in block 5439488. Fsck?
+> ReiserFS: warning: is_leaf: item location seems wrong (second one): 
+> *3.6* [7 32 0x1 DIRECT], item_len 169, item_location 3388, 
+> free_space(entry_count) 65535
+> ReiserFS: hda1: warning: vs-5150: search_by_key: invalid format found 
+> in block 5439488. Fsck?
+> ReiserFS: warning: is_leaf: item location seems wrong (second one): 
+> *3.6* [7 32 0x1 DIRECT], item_len 169, item_location 3388, 
+> free_space(entry_count) 65535
+> ReiserFS: hda1: warning: vs-5150: search_by_key: invalid format found 
+> in block 5439488. Fsck?
+> ReiserFS: warning: is_leaf: item location seems wrong (second one): 
+> *3.6* [7 32 0x1 DIRECT], item_len 169, item_location 3388, 
+> free_space(entry_count) 65535
+> ReiserFS: hda1: warning: vs-5150: search_by_key: invalid format found 
+> in block 5439488. Fsck?
+> ReiserFS: warning: is_leaf: item location seems wrong (second one): 
+> *3.6* [7 32 0x1 DIRECT], item_len 169, item_location 3388, 
+> free_space(entry_count) 65535
+> ReiserFS: hda1: warning: vs-5150: search_by_key: invalid format found 
+> in block 5439488. Fsck?
+> ReiserFS: warning: is_leaf: item location seems wrong (second one): 
+> *3.6* [7 32 0x1 DIRECT], item_len 169, item_location 3388, 
+> free_space(entry_count) 65535
+> ReiserFS: hda1: warning: vs-5150: search_by_key: invalid format found 
+> in block 5439488. Fsck?
+>
+> -- 
+>
+> This message contains information which may be confidential and 
+> privileged. Unless you are the addressee (or authorized to receive for 
+> the addressee), you may not use, copy or disclose to anyone the 
+> message or any information contained in the message. If you have 
+> received the message in error, please advise the sender and delete the 
+> message.  Thank you.
+>
+>
 
-> After trying to reboot:
-> 
-> http://nuk.teteny.elte.hu/~selli/dscf0437.jpg  (using 2.6.9-cko3)
-> http://nuk.teteny.elte.hu/~selli/dscf0438.jpg
-> http://nuk.teteny.elte.hu/~selli/dscf0439.jpg
-> 
-> I had to install a new root filesystem, and using that I was able to fix 
-> the filesystem. ( --build-sb, build-fs, and fix )
-> I have lost some file but fortunatly I was able to use my system again.
-> 
-> The affair happend when I was using 2.6.10 with reiser4 patch(from 
-> namesys.com). I tried to reboot with my previos kernel (2.6.9-cko3) but 
-> had the some bug (see screenshots). Sorry but I forgot to save the 
-> outout of the fsck prog :(.
-> 
-> If U need any information do not hesitate contacting me.( I am not on 
-> the mailing list)
-> 
-> Some info in advanve:
-> Hardware: Dell Inpiron 8600c (1600Mhz Centrion processor)
-> 
-> Kernel config:
-[...] 
-
--- 
-Alex.
