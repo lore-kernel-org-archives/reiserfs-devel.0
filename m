@@ -1,60 +1,77 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: http://www.namesys.com/snapshots/2004.08.03-internal.testing/
-Date: Wed, 4 Aug 2004 22:51:41 +0400
-Message-ID: <200408042251.41149.vitaly@namesys.com>
-References: <200406150022.34578.vitaly@namesys.com> <20040804142227.GR1284@nysv.org> <41112137.4010102@namesys.com>
+From: "Lamont R. Peterson" <lamont@gurulabs.com>
+Subject: Re: yeah, it was hardware error, we can ship!
+Date: Wed, 04 Aug 2004 12:56:20 -0600
+Message-ID: <1091645780.2391.15.camel@wraith.lrp.advansoft.us>
+References: <41112B30.2050509@namesys.com>
+Reply-To: lamont@gurulabs.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20000-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-08nMVlYm79cWJ97rVknS"
+Return-path: <reiserfs-list-return-20001-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41112137.4010102@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <41112B30.2050509@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>, Markus =?utf-8?q?T=C3=B6rnqvist?= <mjt@nysv.org>
-Cc: Thomas Graham <lkthomas@sml.dyndns.org>, Chris Mason <mason@suse.com>, reiserfs-list@namesys.com
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-On Wednesday 04 August 2004 21:47, Hans Reiser wrote:
-> Markus T=F6rnqvist wrote:
-> >On Wed, Aug 04, 2004 at 10:16:26PM +0800, Thomas Graham wrote:
-> >>if a convertor are not done yet, I think we could wait until it's bundle
-> >>into the .tar.gz and we could use it, actually, do we HAVE TO do that
-> >>format changes ? or normal user could just ignore that except for some =
-of
-> >>them who reach problem with that ?
-> >
-> >I don't think you HAVE to do it, if you would, there would be a
-> > compensation in the kernel, and Vitaly said there is not.
-> >
-> >So just avoid the reiser4progs like the plague, call the Namesys helpdes=
-k,
-> >whatever and ask Vitaly to remove the file from the web, remove the
-> >code that changes the format, whatever.
-> >
-> >I just hope I won't hit a corruptive bug on my machine, it would be pret=
-ty
-> >anticlimactic if I did and I would lose data because it decides to
-> >change the format.
->
-> I don't understand why Vitaly cannot do one of the things suggested on
-> this thread: create an fsck option for people like Markus to use.
->
-> If Vitaly does that, problem solved, yes?
->
-> Chris is right that any disk format changes need to be made now.
-> Vitaly, send an email defining what you propose to do, and cc the list.
-> Do that now please.
+--=-08nMVlYm79cWJ97rVknS
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-I have written a converter (an option to debugfs), testing it,=20
-it does well for the last half an hout already.=20
+On Wed, 2004-08-04 at 12:30, Hans Reiser wrote:
+> I excerpt the evidence of it:
+>=20
+>  kernel: hda: drive_cmd: status=3D0x51 { DriveReady SeekComplete Error }
+>  kernel: hda: drive_cmd: error=3D0x04 { DriveStatusError }
+>  kernel: ide: failed opcode was: 0xef
+>  [powersave_proxy][2907]: WARNING: hdparm returned error 5
+>  kernel: hda: task_no_data_intr: status=3D0x51 { DriveReady SeekComplete =
+Error
+> }
+>  kernel: hda: task_no_data_intr: error=3D0x04 { DriveStatusError }
+>  kernel: ide: failed opcode was: 0xef
+>  [powersave_proxy][2907]: WARNING: hdparm returned error 5
+>  ifup: No configuration found for sit0
+>  kernel: hdb: drive_cmd: status=3D0x51 { DriveReady SeekComplete Error }
 
-I am going to release another internal snapshot with the explanation=20
-in README how to use it.
+David, what distribution were you using when he got these errors?  What
+desktop environment was running on X at the time?
 
+I ask because I started to see some similar errors on my notebook a
+couple of months ago after I upgraded to FC2 (from FC1/FC2test hybrid).=20
+I thought that my hard drive was starting to turn on me.
+
+After replacing it with a new drive and installing FC2 from scratch, I
+still saw the same errors.  I was also experiencing massive DMA timeout
+errors for hda that were causing hard lockups.
+
+The really weird part was that it only happens after about two minutes
+logged on using Red Hat's build of KDE.  Using Gnome (or any other
+desktop) the problems disappeared entirely.  I know Red Hat cuts up and
+rearranges KDE when they build it, but I do not know what they are doing
+differently that would account for this error.  I also tried KDE's
+packages for FC2; that worked perfectly and this problem did not appear.
+
+BTW: I have ext3 and reiserfs (3.6) partitions on this notebook.  On the
+old hard drive, I used plain old partitions.  On the new drive, I use
+LVM for everything except /boot and swap.
 --=20
-Thanks,
-Vitaly Fertman
+Lamont R. Peterson <lamont@gurulabs.com>
+Senior Instructor
+Guru Labs, L.C. http://www.GuruLabs.com/
+
+--=-08nMVlYm79cWJ97rVknS
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQBBETFTRK8Q4zt1QRURAmNLAJ94wk3iQ6aCBaeJXCs5pZ4Af8WArgCeK+ah
+zHEJ/6XWxfFO6gZectAxB+4=
+=iIA/
+-----END PGP SIGNATURE-----
+
+--=-08nMVlYm79cWJ97rVknS--
 
