@@ -1,38 +1,64 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiser4 non-free?
-Date: Sat, 15 May 2004 14:52:39 -0700
-Message-ID: <40A69127.3010304@namesys.com>
-References: <1084188152.26226.196158678@webmail.messagingengine.com> <20040510.214915.74754947.wlandry@ucsd.edu> <200405110158.i4B1wONb022531@turing-police.cc.vt.edu> <20040510.223329.108738295.wlandry@ucsd.edu> <200405111502.i4BF2qOu012463@turing-police.cc.vt.edu> <40A0F93F.8020604@namesys.com> <200405111635.i4BGZFZ1024441@turing-police.cc.vt.edu>            <40A113ED.8000706@namesys.com> <200405111906.i4BJ6mIc013385@turing-police.cc.vt.edu>
+From: Redeeman <redeeman@metanurb.dk>
+Subject: Re: Reiser4 status as of this weekend
+Date: Sat, 15 May 2004 23:56:04 +0200
+Message-ID: <1084658164.1082.5.camel@redeeman.kaspersandberg.com>
+References: <003a01c4377d$d653eac0$7d02a8c0@toronto.chantrynetworks.com>
+	 <40A68F75.2030306@namesys.com>
+Reply-To: redeeman@metanurb.dk
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18721-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18722-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200405111906.i4BJ6mIc013385@turing-police.cc.vt.edu>
+In-Reply-To: <40A68F75.2030306@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Valdis.Kletnieks@vt.edu
-Cc: Walter Landry <wlandry@ucsd.edu>, debian-legal@lists.debian.org, reiserfs-list@namesys.com, ed@debian.org, cavok@debian.org
+Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-Valdis.Kletnieks@vt.edu wrote:
+NOOOOOO NIKITA! DONT LEAVE!!
 
->On Tue, 11 May 2004 10:57:01 PDT, Hans Reiser said:
->
->  
->
->>Random credits are the elegant answer.  Displaying only the distro name 
->>at boot time is morally wrong.
->>    
->>
->
->Would be nice - the RedHat/Fedora GUI installer already supports showing the
->current install status in one pane, and scrolling through a bunch of blurbs
->in another.  It might be possible to get (at least) the Fedora side of the fence
->to include blurbs for the package contributors as well...
->  
->
-That would be really nice.
-
+On Sat, 2004-05-15 at 23:45, Hans Reiser wrote:
+> Russell Treleaven wrote:
+> 
+> >Hi Hans,
+> >
+> >Your website has been saying "Reiser4 is in final testing, and will ship
+> >soon!" for a long time.
+> >Terms like long and soon are kinda vague. How long has the website
+> >stated that Reiser4 will ship soon?
+> >I really like the idea and wan't to try out Reiser4.
+> >
+> >Sincerely,
+> >
+> >Russell Treleaven
+> >
+> >
+> >
+> >  
+> >
+> Some users are saying that it is rock solid (please contradict dear 
+> readers).  We the developers can use iozone to make it crash by mmapping 
+> more than all of ram and dirtying all the mmapped pages.  Linux is not 
+> well structured for managing memory under that circumstance.   The clean 
+> fix for that for reiser4 given the way the Linux design is,  is 
+> substantial work to do right, and is in progress.  We currently have a 
+> fix that costs performance, and are fixing the performance issue (which 
+> is fixable but requires code....).
+> 
+> We would probably have it ready to ship this week, but Nikita is leaving 
+> Namesys after having done a great job here for way too little pay, and 
+> that means we need to have him and Saveliev spend a full week doing a 
+> code review before he goes, and Zam and I are busy earning the next 
+> month payroll money by doing work for digeo, and such is the free 
+> software "business".  Sigh.
+> 
+> So, stay tuned, and check again in two weeks.
+> 
+> Hans
+-- 
+Regards, Redeeman
+()  ascii ribbon campaign - against html e-mail 
+/\                        - against microsoft attachments
 
