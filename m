@@ -1,57 +1,34 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output error"
-Date: Tue, 10 Aug 2004 10:35:58 -0700
-Message-ID: <4119077E.6070306@namesys.com>
-References: <20040807065039.5BF4E15CBC@mail03.powweb.com> <41148997.4070404@namesys.com> <200408100321.i7A3LHxu027087@turing-police.cc.vt.edu> <20040810092022.GN9811@backtop.namesys.com>
+From: "David Dabbs" <david@dabbs.net>
+Subject: RE: Was able to reproduce "cp: cannot stat file.x: Input/output error"
+Date: Tue, 10 Aug 2004 12:42:01 -0500
+Message-ID: <20040810175005.A085915E31@mail03.powweb.com>
+References: <4119077E.6070306@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20129-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20130-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040810092022.GN9811@backtop.namesys.com>
+In-Reply-To: <4119077E.6070306@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: Valdis.Kletnieks@vt.edu, David Dabbs <david@dabbs.net>, 'ReiserFS List' <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: 'Hans Reiser' <reiser@namesys.com>, 'Alex Zarochentsev' <zam@namesys.com>
+Cc: 'ReiserFS List' <reiserfs-list@namesys.com>
 
-Alex Zarochentsev wrote:
 
->On Mon, Aug 09, 2004 at 11:21:17PM -0400, Valdis.Kletnieks@vt.edu wrote:
->  
->
->>On Sat, 07 Aug 2004 00:49:43 PDT, Hans Reiser said:
->>
->>    
->>
->>>>I think I have discovered the problem - unless there was a reason mongo was
->>>>issuing mount/unmount commands at the start/end of a mongo 'run' as well as
->>>>before/after _each phase_.
->>>>        
->>>>
->>>Probably someone wanted to separate the measurement of the phases.  It 
->>>has been a while since I read mongo.....
->>>      
->>>
->>Note that an unmount/mount pair will force a flush of all dirtied pages in the
->>in-memory file cache, and *really* not return until it's really done and really
->>out on disk.  In addition, sync() will force stuff to disk, but *not* invalidate
->>in-cache pages - more drastic measures are needed if you want to benchmark
->>with a cold cache (which is almost a must if you're doing actual filesystem
->>benchmarking, as otherwise you're benching the in-core cache instead).
->>    
->>
->
->That was designed to have result in each phase as independent as we can.  For
->example, if we have read slowdown in mongo, we will analyze only reads and,
->probably, fs fragmentation, we won't deal with unmeasurable cache state before
->the read phase. Known and persistent "cold cache effect" is better than unknown
->hot cache one :)  And, mongo phases are designed to be long and keep the cold
->cache effect at minimum.
->  
->
 
-Let me be more precise here.  Is the time spent mounting and umounting 
-included in the time for the phase?
+
+> 
+> Let me be more precise here.  Is the time spent mounting and umounting
+> included in the time for the phase?
+
+ [David Dabbs] 
+No. Each phase iteration is wrapped in a time call. The mounting and
+unmounting happen before and after this, so there's shouldn't be any timing
+impact. I'd need to double check the sources, but I'm pretty sure that's the
+case.
+
+David
+
 
