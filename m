@@ -1,62 +1,49 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: The situation at hand and in the future
-Date: Thu, 27 May 2004 17:05:21 -0400
-Message-ID: <200405272105.i4RL5LDh026210@turing-police.cc.vt.edu>
-References: <20040527200127.GS4990@nysv.org>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: Where Reiser4 may break?
+Date: Thu, 27 May 2004 16:30:10 -0500
+Message-ID: <40B65DE2.4060607@slaphack.com>
+References: <20040526204457.GJ4990@nysv.org> <1085648404.1915.219.camel@tribesman.namesys.com> <20040527092541.GN4990@nysv.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-1798637798P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18879-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18880-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Thu, 27 May 2004 23:01:27 +0300."
-             <20040527200127.GS4990@nysv.org> 
+In-Reply-To: <20040527092541.GN4990@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
+Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
 
---==_Exmh_-1798637798P
-Content-Type: text/plain; charset=us-ascii
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On Thu, 27 May 2004 23:01:27 +0300, mjt@nysv.org (Markus =?UNKNOWN?Q?T=F6rnqvist?=)  said:
+Markus T=F6rnqvist wrote:
+[ ... ]
+| Well, we'll see what the future brings in this.
+| I couldn't care less about architecture-compatibility, but then again,
+| I may start caring if the situation demands it :)
 
-> So, the Reiser4 API is good for providing passphrases for encrypted files
-> and directories, right? Because using echo to unlock them from the file
-> system is hazardous?
-> 
-> Why not add user-space programs which basically do what echo does, but
-> with the terminal echo turned off? They would probably size at around
-> 0k and would use the pseudo file API.
-> 
-> Maybe this would be a use case:
-> 1. Joe wants to encrypt the files he l33ch3d from kazaa at work.
-> 2. Joe chdirs to the pseudo directory under ~/Work/Warez/
-> 3. Joe says echo 3DES\0 > plugin/crypto
-> 4. Now the directory knows it must be 3DES-encrypted, but it needs
->    a passphrase.
-> 5. Joe says echo TOPSECRETPASSWORD\0 > plugin/cryptokey
-
-Remember that English has an entropy of only 2.5 bits/byte or so - as a result,
-you *REALLY*, *REALLY* want to use a program that reads a much longer
-passphrase and computes a hash to use as the actual key.
-
-See Jari Russu's patch to util-linux 2.12 in the loop-AES package
-(http://loop-aes.sourceforge.net) for an example if what I mean - it includes
-patches to "mount" and "losetup" to do all the passphrase/key handling.
-
---==_Exmh_-1798637798P
-Content-Type: application/pgp-signature
-
+Do we gain any speed by not adding that compatibility?  If so, it should
+be optional (mkfs/mount option, not compile time).  Maybe we should be
+able to specify at mkfs time what architecture to optimize for (x86,
+ppc, everything, etc.), but let it default to optimize for this one.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iD8DBQFAtlgRcC3lWbTT17ARAnKxAJ9yDXrJmRU/IKN9vA2TQB2JE76towCfRKyT
-wZmpDgn/tfVdMt0NVqz5kJ0=
-=EqeS
+iQIVAwUBQLZd4ngHNmZLgCUhAQI+/w//eXFRJdpj9S3nGCv7dFB7MTNdkocib8Ys
+JXph2dL0N7nO04WiVLkxFaAIYWmQVQ/pN9JTMX36PQVm8f/An5ltXJyb2516TZSy
+rGxD+WR13uB26b6/c2CERT6yE93FHQAWFEgkJqtCsBYD2ICAIoa03qGdyWyefxQ5
+Y3H7o340KIcOCzcNzDJvk66/VdZYG83KBaiMrg9fohPPV0d/gFbLSNguGJAHzh/B
+TYAi5bucYPBCMRta5CpmccD721icDryrbHxibWxLdA7+ncJquCLb4zdBaeNLD3Qh
+qoFxKxqvSZOwnXqCXKc2EgDT16a+bFOwj39xPynMeBXbuJrvVL0a70og7kGjMyf1
+tRA4s7LflAMq0JldM/fRxbQb/RtCe2nxh5/p0V5wI2ZFWyilowYooZ3uWm4lqRWe
+RPbCFxPeGuZqq782yhnln7iaPqrBK0PaaPqsBgousnacwQnfqaZl/D1QGqt03bUi
+zR+hTvKbc1zv85f2LoprEA8HtdMXwzQH8AdK1E+0qW/bHI6EAGBtBXWE29QJDObe
+mh0AZDstqcm9OiK75hEGPRPnjGs72S7TKwuX8eIk1kTxmiTQqvXsQmpGwWZOHRoD
+z0qVFt0a3a9JQnMsC1UE6qpbxjK5oEzmj/l+MCiqQuobKm/oS6r1g0V0cVACCkg3
+vE+bRcrGcDE=3D
+=3DEIQc
 -----END PGP SIGNATURE-----
-
---==_Exmh_-1798637798P--
