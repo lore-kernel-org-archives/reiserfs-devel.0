@@ -1,50 +1,41 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Stress test failure for reiserfs, but ext3 ok on Linux 2.4.20
-Date: Wed, 15 Jan 2003 13:43:15 +0300
-Message-ID: <20030115134315.A31068@namesys.com>
-References: <20030115023559.GA14694@mathematik.uni-bielefeld.de>
+From: Philippe =?ISO-8859-1?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
+Subject: Re: Quotas aand 2.5.x
+Date: Wed, 15 Jan 2003 11:59:53 +0100
+Message-ID: <20030115115953.7e01be58.philippe.gramoulle@mmania.com>
+References: <20030114182217.4fa8f2f8.philippe.gramoulle@mmania.com>
+	<20030114203842.A18999@namesys.com>
+	<3E2451B0.1020905@namesys.com>
+	<20030115104306.51404b4c.philippe.gramoulle@mmania.com>
+	<20030115124629.A30051@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12356-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12357-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030115023559.GA14694@mathematik.uni-bielefeld.de>
+In-Reply-To: <20030115124629.A30051@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Bernhard Sadlowski <sadlowsk@mathematik.Uni-Bielefeld.DE>
-Cc: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: reiser@namesys.com, reiserfs-list@namesys.com, mason@namesys.com
 
-Hello!
+On Wed, 15 Jan 2003 12:46:29 +0300
+Oleg Drokin <green@namesys.com> wrote:
 
-On Wed, Jan 15, 2003 at 03:35:59AM +0100, Bernhard Sadlowski wrote:
+  |  Hello!
+  |  
+  |  On Wed, Jan 15, 2003 at 10:43:06AM +0100, Philippe Gramoull? wrote:
+  |  
+  |  > Actually, right now, we still have that nasty bug every time we run quotacheck that prenvent us from enabling them on several filerservers which is a big problem right now (that's on 2.4.x)
+  |  
+  |  Have you tried 2.4. without Chris' datalogging patched, but with original short
+  |  overflow fix?
 
-> I am using the attached stess.sh script (probably from this mailinglist)
-> for creating load on a reiserfs filesystem, which forks 100
-> (read,write,delete) processes: 
-> # mkreiserfs /dev/sda4
-> # mount /dev/sda4 /backup
-> # stress.sh -c /usr -n 100 /backup 
-> Then wait until /backup fills up.
+Well, my question was more like a Plan B.
 
-Hm. This resembles me something.
-Can you reproduce the same problem if you apply patches from
-ftp://ftp.namesys.com/pub/reiserfs-for-2.4/testing/quota-2.4.20/
-These patches add quota support to reiserfs, but also change some
-new inode-related operation to prevent deadlocks like you are seeing.
+I think i did, and that it still crashed, always during the quotacheck,  but i'll try it again to be 100% sure.
 
-> Any I/O freezes and even after killing the script, the remaining cp and
-> mv commands don't terminate. They are in status "D". A simle "ls
-> /backup" never comes back. Only a hard powerdown fixes this situation,
-> because "init 6" etc. doesn't work. I have even activated the reiserfs
-> debug, but I don't see any additional info.
+Thanks,
 
-Try executing sysrq-t after the lockup happens, then send us decoded output
-plese.
-
-Thank you.
-
-Bye,
-    Oleg
+Philippe
