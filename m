@@ -1,65 +1,57 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: Using filename-hash as part of key
-Date: Mon, 23 Dec 2002 10:49:27 -0500
-Message-ID: <200212231549.gBNFnRlK008563@turing-police.cc.vt.edu>
-References: <20021223141641.B31759@namesys.com>
-            <15878.63735.448875.70027@laputa.namesys.com>
+From: Ross Vandegrift <ross@willow.seitz.com>
+Subject: Re: what do you do that stresses your filesystem?
+Date: Mon, 23 Dec 2002 10:56:40 -0500
+Message-ID: <20021223155640.GB773@willow.seitz.com>
+References: <3E06F360.7000708@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-1179002449P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12218-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12219-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Mon, 23 Dec 2002 14:52:23 +0300."
-             <15878.63735.448875.70027@laputa.namesys.com> 
+Content-Disposition: inline
+In-Reply-To: <3E06F360.7000708@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Nikita Danilov <Nikita@namesys.com>
-Cc: Oleg Drokin <green@namesys.com>, reiserfs-dev@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: ReiserFS <reiserfs-list@namesys.com>
 
---==_Exmh_-1179002449P
-Content-Type: text/plain; charset=us-ascii
+On Mon, Dec 23, 2002 at 02:28:32PM +0300, Hans Reiser wrote:
+> Booting the machine seems like one activity that many users end up 
+> waiting on the FS for.  Yes?
 
-On Mon, 23 Dec 2002 14:52:23 +0300, Nikita Danilov said:
+Not really.  I've been running ReiserFS for at least three or four
+years.  I haven't seen a machine have to fsck in forever ::-)
 
->  >    But as Hans argues, usually these sequentional-read operations are ones
- most
->  >    noticed because they are usually performed by humans:
->  >    ls, tar, copy of a directory and this kind of stuff.
-> 
-> Humans are so slow compared to the slowest hard drive that ls is the
-> least important thing to optimize.
+On machines with Linux md RAID arrays that need to be remirrored, 
+I do end up waiting a bit (10-30 seconds) due to read starvation, but
+this problem is so much better than it used to be it's hardly worth
+mentioning.
 
-Never had a 26-hour daily backup of a large mail spool, have you? ;)
+> Starting up complex and big applications like xemacs and mozilla would 
+> be another.  Yes?
 
-Remember that 'tar' and copy of a directory are things that are likely to
-be done as part of a production workload - and if you aren't using tar,
-you still need to have *something* that does a stat() on every single file,
-even if it's an incremental.
+Not really - I've found that apps like mozilla are usually loaded from
+disk exactly once per reboot, and then stay cached in memory until the
+box is restarted.  Most of the startup time comes from the app doing
+lots of work itself - subsequent starts show no disk activity at all.
 
-There's also resource contention issues - many systems are up 24x7, and
-things like backups and the like have to be done on live filesystems during
-off-peak hours.  This means that if "off-peak" is 9PM-6AM, you have *two*
-constraints:  (1) the job has to finish in under 9 hours, (2) It has to consume
-few enough resources that nothing else bogs down....
+> Others?
+
+As a long time user of ReiserFS, I don't really wait on the filesystem
+anymore.  With Ext2, I used to wait on large deletes, but that's clearly
+not an issue anymore.  I've noticed that when I need a performance
+upgrade, a faster disk is the best solution.
+
 -- 
-				Valdis Kletnieks
-				Computer Systems Senior Engineer
-				Virginia Tech
+Ross Vandegrift
+ross@willow.seitz.com
 
-
---==_Exmh_-1179002449P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.1 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQE+BzCHcC3lWbTT17ARAvl8AKCvzW00YnU5f8cPPZpHsTA/Emyr/QCeLdhE
-85gLV3zhSBWcohQoFWLDB/8=
-=953v
------END PGP SIGNATURE-----
-
---==_Exmh_-1179002449P--
+A Pope has a Water Cannon.                               It is a Water Cannon.
+He fires Holy-Water from it.                        It is a Holy-Water Cannon.
+He Blesses it.                                 It is a Holy Holy-Water Cannon.
+He Blesses the Hell out of it.          It is a Wholly Holy Holy-Water Cannon.
+He has it pierced.                It is a Holey Wholly Holy Holy-Water Cannon.
+He makes it official.       It is a Canon Holey Wholly Holy Holy-Water Cannon.
+Batman and Robin arrive.                                       He shoots them.
