@@ -1,77 +1,29 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: file as a directory
-Date: Fri, 17 Dec 2004 18:20:31 -0600
-Message-ID: <41C377CF.2040506@slaphack.com>
-References: <200411301631.iAUGVT8h007823@laptop11.inf.utfsm.cl>	 <41ACA7C9.1070001@namesys.com>	 <1103043518.21728.159.camel@pear.st-and.ac.uk>	 <41BF21BC.1020809@namesys.com>	 <1103059622.2999.17.camel@grape.st-and.ac.uk>	 <41BFC1C5.1070302@slaphack.com>	 <1103102854.30601.12.camel@pear.st-and.ac.uk>	 <41C0CF3B.1030705@slaphack.com>  <41C1D870.2020407@namesys.com> <1103223664.2336.335.camel@pear.st-and.ac.uk> <41C320EB.1050400@namesys.com>
+From: "Maciej Soltysiak" <pysiak.satriani@wp.pl>
+Subject: Re: status of reiser4
+Date: Sat, 18 Dec 2004 10:58:04 +0100
+Message-ID: <00a601c4e4e8$1a962690$0e25fe0a@pysiak>
+References: <41C322ED.4000807@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22827-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22833-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41C320EB.1050400@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; format="flowed"; charset="us-ascii"; reply-type="response"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hi,
 
-Hans Reiser wrote:
-| Peter Foldiak wrote:
-|
-|> On Thu, 2004-12-16 at 18:48, Hans Reiser wrote:
-|>
-|>
-|>> David Masover wrote:
-|>>
-|>>
-|>>> Speaking of which, how much speed is lost by starting up a process?
-|>>>
-|>>> The idea of caching is that running
-|>>>
-|>>> cat *; cat *; cat *; cat *; cat *
-|>>>
-|>>> is probably slower than
-|>>>
-|>>> cat * > baz; cat baz; cat baz; cat baz; cat baz; cat baz
-|>>>
-|>>
-|>> Only for small files where the per file overhead of a read is
-|>> significant.
-|>>
-|>
-|>
-|> But if the glued "file" is a stream (or pipe?) you can't do everything
-|> with it (e.g. seek() ) that you could do with a proper file, right?
-|>
-|>
-| It does not need to be a pipe-like file.  Seek can be implemented for a
-| composite (glued) file.
+> bundle a set of patches together, send them to andrew morton, and then 
+> start a discussion on the changes to core kernel code that Hellweg and 
+> company object to that currently prevent our inclusion.
+That is nice.
+Are we going to have patches for vanilla 2.6.10 for non -mm users?
+I mean patches trivial to apply. Because the -mm tree contains lots of
+r4 patches. And applying them in correct order may be troublesome.
+Users really like one patch to be applied without unknown dependencies.
 
-Composite plugins are likely fairly simple (cat *) so they shouldn't be
-required to implement seek on their own.  In OO terms, they should
-"inherit" a more global facility, which would be based on cached pipes.
 
-But definitely for files that are likely to be large, but still seekable
-(zipfiles), you want the plugin to provide its own seek support.
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQcN3zXgHNmZLgCUhAQKF1w/7B51wfpaIVi6ap+TVsZ+t3FLPTqyOF24W
-lnqSUnM50zlJixQMKLzmZSOUGC/EsDZIVqShAUhniKAp8cvYNCE0HjqZl1b8S0HV
-MggehXJJwSfl3/RHCbRXo1URXzSodGLyCsdEhi88viyhilj7+9uJRhxmOx1cO7uS
-p/yS3LgpxEEjhDiu09MXnAHuXGTdKB9hQl63HxPwa72uM3Q5M7zCl0p+X+rH9xIj
-HgdZMbmoCiA6QmRJzLBq/s0xRo385bfeTHMCwB3aIyYNFeTvJDoZP6IEbi9Ee0DH
-Ns9rwJo+B2FPbHKHlmFxZkLVwmnQqr9WemYYybUGNOVdIamn87Ah6/ObvAmM+dQw
-dnRF2YVPM9gNv0LSOS3nteNr6ldYzEZWGi24ScPpFrJpZAMBVNarX0zE4+S2Dc75
-a733Z2pkOhHUvRPoDVXvUTKC5863cuWH7lgvTfT5eAANG/AANphi2vyFfgT5KWKt
-gF+SnRkLiDSfjcqgts036vfpIziz/aM9dZxzgE+j8IjuGNchl/6q1OVt7+WOJOrq
-grfOgVB26pFgYFD7ZjJSiZKHGRDJZXrUo4VnUoG43Dy4JZVlG4qpivMO50Ep0GD2
-cVFw1/MKP0beAA1S1R5Fh0mLo0jNHlsxSD6XoKjUuL/xjnLpyN/AdmIhQq0mMujY
-vYBBaDHYkYc=
-=RMFf
------END PGP SIGNATURE-----
+Maciej Soltysiak
