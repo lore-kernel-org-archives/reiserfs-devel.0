@@ -1,42 +1,38 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: reiser limits
-Date: Fri, 16 Apr 2004 13:19:40 -0400
-Message-ID: <1082135980.27614.1436.camel@watt.suse.com>
-References: <001d01c422e2$9f7e14d0$3f32a8c0@ds.ig.com.br>
-	 <1082034018.27614.145.camel@watt.suse.com>  <c5om4s$rvd$1@sea.gmane.org>
+From: "James H. Cloos Jr." <cloos@jhcloos.com>
+Subject: Re: "Metas"
+Date: Fri, 16 Apr 2004 14:11:21 -0400
+Message-ID: <m3smf3oks6.fsf@lugabout.jhcloos.org>
+References: <20040413180301.77098.qmail@web25010.mail.ukl.yahoo.com>
+	<407C2C37.30903@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18001-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18002-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <c5om4s$rvd$1@sea.gmane.org>
+In-Reply-To: <407C2C37.30903@namesys.com> (Hans Reiser's message of "Tue, 13
+ Apr 2004 11:06:47 -0700")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Nick Matteo <kundor@member.fsf.org>
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-On Fri, 2004-04-16 at 09:19, Nick Matteo wrote:
-> Chris Mason wrote:
-> 
-> > On Thu, 2004-04-15 at 08:10, Fabiano Reis wrote:
-> >> Hi list,
-> >>  
-> >> Someone knows how many directory can I create inside a single
-> >> directory?
-> > 
-> > Both 2.4.x and 2.6.x v3 have no additional limits on subdirs, it's the
-> > same as the number of files you can put on the FS (~2^32).
-> > 
-> > v4 might be higher, not sure.
-> > 
-> > -chris
-> 
-> Can 64-bit platforms have 2^64 files?
+Just to add to this, as someone who is eagerly anticipating r4:
 
-Sorry, not in v3, it is regulated by the disk format, not the cpu.
+While .metas or .meta might be OK, metas or meta is not.
 
--chris
+No reserved name should lack an initial dot.
 
+Netapp's .snapshot dir was mentioned in this tread.  That only works
+because of the initial dot in the name.  Had it been just snapshot
+or snapshots it would not have gone over nearly as well.
 
+I cannot see even those w/o a posix background finding metas any
+easier than .metas.
+
+I also suspect you will find it easier to get past Linus.
+
+-JimC
+-- 
+James H. Cloos, Jr. <cloos@jhcloos.com> <http://jhcloos.com>
