@@ -1,41 +1,31 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Any information on S+tree?
-Date: Thu, 16 Jan 2003 13:03:56 +0300
-Message-ID: <3E26838C.2030407@namesys.com>
-References: <15842.28332.47095.407177@laputa.namesys.com><E18Gchd-0005jx-00@aqualene.uio.no> <15843.22257.733637.646758@laputa.namesys.com> <015601c29648$deed2390$6a01a8c0@bmoon>
+From: "darren" <teodarren@myrealbox.com>
+Subject: any tips on optimising samba on reiserfs?
+Date: Thu, 16 Jan 2003 18:40:58 +0800
+Message-ID: <000601c2bd4b$c2305720$0101a8c0@bummer>
+References: <3E26838C.2030407@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12375-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12376-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <015601c29648$deed2390$6a01a8c0@bmoon>
+In-Reply-To: <3E26838C.2030407@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: bmoon <bo@anthologysolutions.com>
-Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Content-Type: text/plain; charset="us-ascii"
+To: 'Reiserfs mail-list' <Reiserfs-List@Namesys.COM>
 
-bmoon wrote:
+Hi all,
 
->Hello,
->
->I thought Reiserfs uses B+tree, but 
->Reiserfs is using S+tree according to the source code.
->Where can I get any information or document on this S+tree?
->
->Thanks,
->
->Bo
->
->
->  
->
-S+tree is an old name for what we use.  You might look at our 
-www.namesys.com/v4/v4p1.html and www.namesys.com/v4/v4p2.html and 
-www.namesys.com/v4/v4.html documentation for our latest trees.
+I have been trying to setup my reiserfs/samba CIFS file server on my
+LAN.
 
--- 
-Hans
+Although all my benchmarks have been showing good local read write
+performance, I cannot seem to get the most of it over the network with
+samba.
 
+Anyone got any tips on how I can do this?
+
+p.s. I have already done all the obvious optimizations like TCP_NODELAY
+and using SO_SNBUF=16384 blah blah..
 
