@@ -1,35 +1,59 @@
-From: Jan Kara <jack@ucw.cz>
-Subject: Re: quota problem
-Date: Thu, 7 Nov 2002 17:44:27 +0100
-Message-ID: <20021107164427.GI28780@atrey.karlin.mff.cuni.cz>
-References: <20021104121034.GA96760@ppk.itb.ac.id>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Poor sequential write performance.
+Date: Thu, 07 Nov 2002 13:09:00 -0500
+Message-ID: <200211071809.gA7I90nd004446@turing-police.cc.vt.edu>
+References: <3DCA47AB.8060008@valuecommerce.ne.jp>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11944-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_1690657712P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11945-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20021104121034.GA96760@ppk.itb.ac.id>
+In-Reply-To: Your message of "Thu, 07 Nov 2002 19:59:55 +0900."
+             <3DCA47AB.8060008@valuecommerce.ne.jp> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dikshie <dikshie@ppk.itb.ac.id>
-Cc: reiserfs-list@namesys.com, ext3-users@redhat.com
+To: Naoki <naoki@valuecommerce.ne.jp>
+Cc: reiserfs-list@namesys.com
 
-  Hello,
-  
-> VFS: Quota for id 1114 referenced but not present.
-> VFS: Can't read quota structure for id 1114.
-> VFS: Quota for id 1116 referenced but not present.
-> VFS: Can't read quota structure for id 1116.
-> VFS: Quota for id 1115 referenced but not present.
-> VFS: Can't read quota structure for id 1115.
-> VFS: Inserting already present quota entry (block 12).
-> VFS: Error -5 occured while creating quota.
-  This looks like corrupted quota file. quotacheck(8) should be able
-to fix it (but probably you should check that limits are set properly -
-some of them might got lost). 2.4.18 kernel has a small race which can
-occur under heavy load and cause such corruption so I suggest you
-updating to newer kernel...
-								Honza
+--==_Exmh_1690657712P
+Content-Type: text/plain; charset=us-ascii
+
+On Thu, 07 Nov 2002 19:59:55 +0900, Naoki <naoki@valuecommerce.ne.jp>  said:
+
+> real    0m3.059s
+> user    0m2.543s <== say what???
+> sys     0m0.064s
+
+> 0.25user 0.04system 0:00.38elapsed 76%CPU (0avgtext+0avgdata 0maxresident)k
+> 0inputs+0outputs (115major+19minor)pagefaults 0swaps
+
+I'd start by investigating why on the new box the 'user' time is 2.5+ seconds.
+
+Notice that the 'system' times on both boxes are comparable (0.06 versus
+0.04 - low enough that timer resolution probably matters in any jitter in
+the measurements).
+
+Does 'which wc' show you running something other than /usr/bin/time on the
+new box?
+-- 
+				Valdis Kletnieks
+				Computer Systems Senior Engineer
+				Virginia Tech
+
+
+--==_Exmh_1690657712P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQE9yqw8cC3lWbTT17ARAvpjAJ9PrKJ9WITSUqveVHlgvcoiIpgfBQCggDj+
+FUJgLT7oDUjrpYRZFgtjZvY=
+=/GUY
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1690657712P--
