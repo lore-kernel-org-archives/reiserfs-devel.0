@@ -1,28 +1,27 @@
-From: Valdis.Kletnieks@vt.edu
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: duplicate files and recent changes
-Date: Thu, 06 Jun 2002 13:54:22 +0000
-Message-ID: <85256BD0.00645126.00@patapsco.com>
+Date: Thu, 06 Jun 2002 17:51:46 +0000
+Message-ID: <85256BD0.006463E3.00@patapsco.com>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- Boundary="0__=IdQYeiXl7nILNzmLYEqf6lRldmIK4vfv5ThZ35d1vPJ56m6VrvBmujBE"
-Return-path: <reiserfs-list-return-10597-reiserfs=m.gmane.org@namesys.com>
+ Boundary="0__=kLtQO3aCuLnZh9lOyHMTCYwxuGUVNwHmSDg6926mOZibEmBCPsBYQRqN"
+Return-path: <reiserfs-list-return-10598-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "S. Alexander Jacobson" <alex@shop.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
---0__=IdQYeiXl7nILNzmLYEqf6lRldmIK4vfv5ThZ35d1vPJ56m6VrvBmujBE
+--0__=kLtQO3aCuLnZh9lOyHMTCYwxuGUVNwHmSDg6926mOZibEmBCPsBYQRqN
 Content-type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
                                                                   
  (Embedded                                                        
- image moved   Valdis.Kletnieks@vt.edu                            
- to file:      06/06/2002 09:54 AM                                
- pic16144.pcx)                                                    
+ image moved   Hubert Chan <hubert@uhoreg.ca>                     
+ to file:      06/06/2002 01:51 PM                                
+ pic20800.pcx)                                                    
                                                                   
 
 
@@ -33,9 +32,9 @@ Content-Disposition: inline
 
 
  (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic09442.pcx)
+ image moved   Hubert Chan <hubert@uhoreg.ca>
+ to file:      06/06/2002 01:51 PM
+ pic12587.pcx)
 
 
 
@@ -46,9 +45,9 @@ Content-Disposition: inline
 
 
  (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic09063.pcx)
+ image moved   Hubert Chan <hubert@uhoreg.ca>
+ to file:      06/06/2002 01:51 PM
+ pic00169.pcx)
 
 
 
@@ -56,281 +55,5 @@ Content-Disposition: inline
 
 
 
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic04806.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic10465.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic17079.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic10007.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic16147.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic11308.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic15841.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic20581.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic19402.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic30124.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic23278.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic03814.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic14574.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic07359.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic07726.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic14099.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic20730.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic28349.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic26147.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic06027.pcx)
-
-
-
-
-
-
-
-
-On Thu, 06 Jun 2002 01:30:46 EDT, "S. Alexander Jacobson" <alex@shop.com>  said:
-
-> 1. Can reiserfs detect that I have two copies of
-> the same file on disk and store tham as one file
-> (doing a lazy copy) if someone writes to one of
-> them?
-
-Something I'd like to see even more than that would be VMS-style version
-numbers on files.
---
-                    Valdis Kletnieks
-                    Computer Systems Senior Engineer
-                    Virginia Tech
-
-
---0__=IdQYeiXl7nILNzmLYEqf6lRldmIK4vfv5ThZ35d1vPJ56m6VrvBmujBE--
+--0__=kLtQO3aCuLnZh9lOyHMTCYwxuGUVNwHmSDg6926mOZibEmBCPsBYQRqN--
 
