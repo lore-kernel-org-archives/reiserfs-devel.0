@@ -1,65 +1,51 @@
-From: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
-Subject: Re: Reiser4 support on parted program ...
-Date: Wed, 15 Sep 2004 19:54:13 +0200
-Message-ID: <414881C5.9030501@futuretg.com>
-References: <41472F46.4000109@futuretg.com> <41477625.304@slaphack.com> <4147E95B.8090108@futuretg.com> <20040915094952.GA5137@backtop.namesys.com> <414840FC.4090505@clusterfs.com> <20040915132013.GG26192@nysv.org> <41484449.8060301@clusterfs.com> <4148610F.5020508@futuretg.com> <414862D1.6010304@namesys.com> <41488026.6080904@clusterfs.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: Error  in compiling  application program  including reiserfs
+  header files
+Date: Wed, 15 Sep 2004 15:05:41 -0400
+Message-ID: <41489285.7030808@suse.com>
+References: <BAY16-DAV17lVrnoMUT0008bc02@hotmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21786-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21788-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41488026.6080904@clusterfs.com>
+In-Reply-To: <BAY16-DAV17lVrnoMUT0008bc02@hotmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Yury Umanets <yury@clusterfs.com>
-Cc: Hans Reiser <reiser@namesys.com>, =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, Alex Zarochentsev <zam@namesys.com>, David Masover <ninja@slaphack.com>, reiserfs-list@namesys.com
+To: Sachin Durge <sachindurge@hotmail.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Yury Umanets wrote:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-> Hans Reiser wrote:
->
->> Dr. Giovanni A. Orlando wrote:
->>
->>>
->>>
->>>    As soon the installer works fine supporting Reiser4, including 
->>> parted support
->>>    it, I will comment in this mailing list, and offer for free 
->>> donwload.
->>>
->> Reiser4 resizer is not ready for prime time, and like pseudos, should 
->> not have been enabled before it was tested.  We are going to send in 
->> a patch to turn it off until it is debugged.
->
->
-> hello Hans,
->
-> I suspect, that Dr. Giovanni A. Orlando meant offline resizer which 
-> should be in utils. Not online resizer-repacker...
->
-Actually, we want that reiser4 is supported inside parted program. 
-Nothing else.
+Sachin Durge wrote:
+| Hi All
+| I  am  new  to  this list
+| I  am  writting  a  user application .
+| In my application i  have  included
+|
+| reiserfs_fs.h
+| reiserfs_fs_sb.h
+| reiserfs_fs_i.h
+|
+| It is giving  lots  of errors
+| Any one has any clue
 
-I don't think this support will enable any other support like 
-reiser4-resize.
+Including kernel headers in userspace programs is unsupported. There are
+examples of userspace headers available in reiserfsprogs.
 
-Thanks,
-Giovanni
+- -Jeff
 
--- 
+- --
+Jeff Mahoney
+SuSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
--- 
-
---
-Check FT Websites ... 
-http://www.futuretg.com  - ftp://ftp.futuretg.com
-http://www.FTLinuxCourse.com
-	http://www.FTLinuxCourse.com/Certification
-http://www.rpmparadaise.org
-http://GNULinuxUtilities.com
-http://www.YourPersonalOperatingSystem.com
-
---
-
+iD8DBQFBSJKFLPWxlyuTD7IRAv6oAJ0Q16D+cpxH2FHXJnA6EMWFsOvmyACfUE2q
+XZapVivGKe7AtKpjoao9omQ=
+=3pst
+-----END PGP SIGNATURE-----
