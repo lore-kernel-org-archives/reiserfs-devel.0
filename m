@@ -1,41 +1,45 @@
-From: Hubert Chan <hubert@uhoreg.ca>
+From: Nikita Danilov <Nikita@Namesys.COM>
 Subject: Re: Will Reiser4 support a "hidden" attribute?
-Date: Thu, 20 Nov 2003 13:42:55 -0500
-Sender: news <news@sea.gmane.org>
-Message-ID: <87fzgirids.fsf@uhoreg.ca>
-References: <20031120005844.GC8854@Benine> <1069305523.11497.37.camel@faith>
+Date: Thu, 20 Nov 2003 21:49:39 +0300
+Message-ID: <16317.3267.987713.833145@laputa.namesys.com>
+References: <20031120005844.GC8854@Benine>
+	<1069305523.11497.37.camel@faith>
+	<20031120142353.GA1253@Benine>
+	<3FBC6050.3050600@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16134-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16135-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3FBC6050.3050600@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Guido Schimmels <guido.schimmels@freenet.de>, reiserfs-list@namesys.com
 
->>>>> "Stewart" == Stewart Smith <stewart@flamingspork.com> writes:
+Hans Reiser writes:
+ > Nikita, please update us all on how far we have gotten in implementing this.
 
-Stewart> On Thu, 2003-11-20 at 11:58, Guido Schimmels wrote:
->> Reiser4? This would be fantastic! I'm planning to use Reiser4 for my
->> Desktop Linux project. I need this feature to hide the Unix legacy
->> tree like MacOS X does it and (back then) BeOS.
+OK.
 
-Stewart> Note that MacOS X actually accomplishes this by the GUI having
-Stewart> a list (inside a file named '.hidden') of things not to show.
+We currently don't have ability to hide particular file. That is, there
+is no way to somehow mark file hidden at the kernel level. If I am
+allowed to humbly voice my opinion, usages shown by participants of this
+thread (trimming down list of files visible in the GUI front-end) should
+be done at the user level. In UNIX ls(1) command hides dot files for
+ages.
 
-[...]
+On the other hand, some file system objects (pseudo files
+http://namesys.com/v4/pseudo.html) are not shown by the readdir(2). But
+this is to keep various utilities like cp(1) and friends from trying to
+read from them.
 
-Stewart> A patch to nautilus to do this would be pretty simple, although
-Stewart> then you get into the problems of hiding a lot of stuff from
-Stewart> the user (which you may not want to).
+ > 
+ > -- 
+ > Hans
+ > 
+ > 
 
-Nautilus 2.4 already does this.
-
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
+Nikita.
