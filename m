@@ -1,59 +1,95 @@
-From: Oleg Drokin <green@namesys.com>
+From: Jeff Mahoney <jeffm@suse.com>
 Subject: Re: Getopt improvements
-Date: Thu, 27 Feb 2003 09:25:51 +0300
-Message-ID: <20030227092551.C28643@namesys.com>
-References: <3E5D26A2.7010804@suse.com>
+Date: Thu, 27 Feb 2003 10:39:24 -0500
+Message-ID: <3E5E312C.50406@suse.com>
+References: <3E5D26A2.7010804@suse.com> <20030227092551.C28643@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12951-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ boundary="------------030200000003090400060802"
+Return-path: <reiserfs-list-return-12953-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3E5D26A2.7010804@suse.com>
+In-Reply-To: <20030227092551.C28643@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jeff Mahoney <jeffm@suse.com>
+To: Oleg Drokin <green@namesys.com>
 Cc: Reiserfs List <reiserfs-list@namesys.com>
 
-Hello!
+--------------030200000003090400060802
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2003 at 03:42:10PM -0500, Jeff Mahoney wrote:
+Oleg Drokin wrote:
+> Hello!
+> 
+> On Wed, Feb 26, 2003 at 03:42:10PM -0500, Jeff Mahoney wrote:
+> 
+> 
+>>	Here's a patch against the new reiserfs_getopt stuff.
+>>	There are a few shortcomings with the existing implementation:
+>>	1) There's no easy way to specify the negation of an option. For 
+>>example, in the current implementation, you can do -oremount,attrs - but 
+>>you can't turn them off again. The only way of handling this would have 
+>>been to add another bit.. and then you can't deal with 
+>>-oremount,attrs,noattrs,attrs - which is the correct one in that case? 
+>>Clearly it's the last one, but there's no way to divine that using the 
+>>existing code.
+> 
+> 
+> All this is highly true. And I got highly annoyed by this myself
+> That's why I developed similar stuff (my patch is against 2.5, see below).
+> Should work with remounting (but necessary two lines are missed in this patch).
+> Also I was in need to set or clear two options, so my approach is a bit different.
+> (Though initially I was going pretty similar stuff to yours).
+> 
+> 
+>>	2) All of the multiple option sets are mutually exclusive. For example, 
+>>-ohash=r5,hash=rupasov would set BOTH FORCE_RUPASOV_HASH and FORCE_R5_HASH.
+> 
+> 
+> My version makes it so that only last one takes effect. In fact I just made it possible
+> to specify for each option, what other bits should be cleared when this one is in effect.
+> 
+> 
+>>	The patch addresses both of these problems.
+>>	The first shortcoming is solved by adding a "no_prefix" member to 
+>>opt_desc_t, which allows the option to be negated by prefixing "no" to 
+> 
+> 
+> Well, I just decided I won't die if I add negated value to description table ;)
 
-> 	Here's a patch against the new reiserfs_getopt stuff.
-> 	There are a few shortcomings with the existing implementation:
-> 	1) There's no easy way to specify the negation of an option. For 
-> example, in the current implementation, you can do -oremount,attrs - but 
-> you can't turn them off again. The only way of handling this would have 
-> been to add another bit.. and then you can't deal with 
-> -oremount,attrs,noattrs,attrs - which is the correct one in that case? 
-> Clearly it's the last one, but there's no way to divine that using the 
-> existing code.
+	Oleg -
+	
+	I like the ability to specify the bits that should be cleared. It's 
+more flexible than my solution, and doesn't involve looping after each 
+option.
 
-All this is highly true. And I got highly annoyed by this myself
-That's why I developed similar stuff (my patch is against 2.5, see below).
-Should work with remounting (but necessary two lines are missed in this patch).
-Also I was in need to set or clear two options, so my approach is a bit different.
-(Though initially I was going pretty similar stuff to yours).
+	However, I noticed in the stock 2.5.63 code that the bits during 
+remount don't get propogated at all to s_mount_opts.
+	
+	Attached is your patch, updated to set the bits on remount.
 
-> 	2) All of the multiple option sets are mutually exclusive. For example, 
-> -ohash=r5,hash=rupasov would set BOTH FORCE_RUPASOV_HASH and FORCE_R5_HASH.
+	Any chance in getting the getopt update into the next 2.4 release?
 
-My version makes it so that only last one takes effect. In fact I just made it possible
-to specify for each option, what other bits should be cleared when this one is in effect.
+	Thanks.
 
-> 	The patch addresses both of these problems.
-> 	The first shortcoming is solved by adding a "no_prefix" member to 
-> opt_desc_t, which allows the option to be negated by prefixing "no" to 
+	-Jeff
 
-Well, I just decided I won't die if I add negated value to description table ;)
+-- 
+jeffm@suse.com
+jeffm@csh.rit.edu
 
-Bye,
-    Oleg
-===== fs/reiserfs/super.c 1.58 vs edited =====
---- 1.58/fs/reiserfs/super.c	Tue Jan 14 04:12:01 2003
-+++ edited/fs/reiserfs/super.c	Thu Feb 27 09:22:34 2003
+--------------030200000003090400060802
+Content-Type: text/plain;
+ name="linux-2.5.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="linux-2.5.diff"
+
+diff -ruN linux-2.5.63/fs/reiserfs/super.c linux-2.5.63.devel/fs/reiserfs/super.c
+--- linux-2.5.63/fs/reiserfs/super.c	2003-02-24 14:05:31.000000000 -0500
++++ linux-2.5.63.devel/fs/reiserfs/super.c	2003-02-27 10:27:56.000000000 -0500
 @@ -500,8 +500,11 @@
     mount options that have values rather than being toggles. */
  typedef struct {
@@ -185,3 +221,36 @@ Bye,
      
      for (pos = options; pos; ) {
  	c = reiserfs_getopt (s, &pos, opts, &arg, mount_options);
+@@ -703,13 +713,27 @@
+   struct reiserfs_super_block * rs;
+   struct reiserfs_transaction_handle th ;
+   unsigned long blocks;
+-  unsigned long mount_options;
++  unsigned long mount_options = s->u.reiserfs_sb.s_mount_opt;
++  unsigned long safe_mask = 0;
+ 
+   rs = SB_DISK_SUPER_BLOCK (s);
+ 
+   if (!reiserfs_parse_options(s, arg, &mount_options, &blocks, NULL))
+     return -EINVAL;
+-  
++
++  /* Add options that are safe here */
++  safe_mask |= 1 << REISERFS_SMALLTAIL;
++  safe_mask |= 1 << REISERFS_LARGETAIL;
++  safe_mask |= 1 << REISERFS_NO_BORDER;
++  safe_mask |= 1 << REISERFS_NO_UNHASHED_RELOCATION;
++  safe_mask |= 1 << REISERFS_HASHED_RELOCATION;
++  safe_mask |= 1 << REISERFS_TEST4;
++  safe_mask |= 1 << REISERFS_ATTRS;
++
++  /* Update the bitmask, taking care to keep
++   * the bits we're not allowed to change here */
++  s->u.reiserfs_sb.s_mount_opt = (s->u.reiserfs_sb.s_mount_opt & ~safe_mask) | (mount_options & safe_mask);
++
+   if(blocks) {
+     int rc = reiserfs_resize(s, blocks);
+     if (rc != 0)
+
+--------------030200000003090400060802--
+
