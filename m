@@ -1,73 +1,101 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: where are reiser4 sources
-Date: Wed, 23 Feb 2005 18:58:05 -0600
-Message-ID: <421D269D.6040206@slaphack.com>
-References: <421A096F.5040603@gmx.de> <421A941B.5030708@slaphack.com> <421B4DC0.2000006@gmx.de> <421B7CD5.8080001@namesys.com> <421B7FFF.8050201@gmx.de> <421CBB13.4030306@namesys.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: [PATCH] reiserfs: return -EIO instead of calling BUG() when rename
+	goes wrong
+Date: Thu, 24 Feb 2005 16:00:52 +0300
+Message-ID: <1109250052.3097.477.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="=-QFXYTCsn2Tru+sdcT0Bt"
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <421CBB13.4030306@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Mark Junker <mjscod@gmx.de>, reiserfs-list@namesys.com
+To: Andrew Morton <akpm@osdl.org>
+Cc: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+--=-QFXYTCsn2Tru+sdcT0Bt
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hans Reiser wrote:
-| Mark Junker wrote:
-|
-|> Hans Reiser schrieb:
-|>
-|>> That violates the license.
-|>
-|>
-|>
-|> GPL? This shouldn't be a problem because the sources aren't statically
-|> linked to Windows. The sources to create the driver can be published
-|> under GPL too so this shouldn't be a problem.
-|>
-|> Where do you see the license violation?
-|>
-|> Regards,
-|> Mark
-|>
-|>
-|>
-| The GPL says nothing about static linking.  You are making a derivative
-| work.  No.
+Hello
 
-Excuse me, your mail client is communicating with mine.  Mine is under
-DJB's license, which forbids derivative works which are distributed as
-anything other than patches to the original.
+Please, apply this patch.
 
-Now, chances are that your mail client isn't using the same license
-(which is forbidden), and I really doubt it's distributed as patches to
-qmail.  Yet, by your definition, it communicates with my server, which
-makes it a "derivative work".
+--=-QFXYTCsn2Tru+sdcT0Bt
+Content-Disposition: attachment; filename=reiserfs-rename-do-not-oops.patch
+Content-Type: text/plain; name=reiserfs-rename-do-not-oops.patch; charset=KOI8-R
+Content-Transfer-Encoding: 7bit
 
-If you don't like what people are doing with your software, you should
-have chosen another license.  I don't think a Windows driver is any more
-a part of Windows than Wine is, if done properly.
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQh0mnHgHNmZLgCUhAQIPiw/+IDTJnIZsGBowcXD0bLwoKm2ajvY7GPyx
-jJN3yW8/K1DYDVypeddv1RSnsWsnafzbeVtM797eWJ8RJb3nDQqOd6UzxpqtAu3R
-jDkkyg12j4gf7/edPAvg8bd3tQ/ZIBEK3/cNS1MxVz+LuWb/gOKMqsNfcPMgmS66
-Vus40awC0z6TVrLHvakh91ni3+o4DQW3CGLnWJDugNZxWqs5K10SaEusGw8brUY7
-XsomZAycACrDep0FgQp/ywfMdn8fvB1Z0JTtXMiD8F7pbJjDu8tWbr1X6omlZQwp
-6FH6QH8C/JbxvJ8rKQEHRO+RHAhandCWdR9ZNntsQj90xa1g7m4KSMtB/VwPacp3
-zc3cF5aCE5r0HyBsM8/H8gbResRu1FOHqUMzD2SpJ3gUO2QWvty119vL+eXqaDa4
-OGzeFPUJ28jmWOz3FFGXaMFI2410Hlb1L6MpetPz0vgt+WkxTK5taiOx/So5y0fb
-DL3zJd0WOZi9c1pyF7sQKCmesQzvM0wQdQEYEUhUExdbenKp+MPIbFminZHfZ1Tq
-4nODQjdmwfsgCbfLD1I0OvC/4zqvUtXjFObD/sUADae38FVmgUU9zAn6/fgkKCUP
-oLcbGiTinLz4lC60HEWlHiJi7+Y7ODguC7lPRS9wPbn0MQe3MfLXpbqa0MiYdTh6
-7RVJ2DuOWOc=
-=UCTg
------END PGP SIGNATURE-----
+This patch makes reiserfs to return -EIO when rename-ing went wrong
+instead of calling BUG().
+
+
+ fs/reiserfs/namei.c |   30 +++++++++++++++++++++++-------
+ 1 files changed, 23 insertions(+), 7 deletions(-)
+
+diff -puN fs/reiserfs/namei.c~reiserfs-rename-do-not-oops fs/reiserfs/namei.c
+--- linux-2.6.11-rc3-mm2/fs/reiserfs/namei.c~reiserfs-rename-do-not-oops	2005-02-24 13:56:20.000000000 +0300
++++ linux-2.6.11-rc3-mm2-vs/fs/reiserfs/namei.c	2005-02-24 15:59:13.000000000 +0300
+@@ -1255,7 +1255,6 @@ static int reiserfs_rename (struct inode
+         return retval;
+     }
+ 
+-
+     /* add new entry (or find the existing one) */
+     retval = reiserfs_add_entry (&th, new_dir, new_dentry->d_name.name, new_dentry->d_name.len, 
+ 				 old_inode, 0);
+@@ -1283,8 +1282,13 @@ static int reiserfs_rename (struct inode
+ 
+     while (1) {
+ 	// look for old name using corresponding entry key (found by reiserfs_find_entry)
+-	if (search_by_entry_key (new_dir->i_sb, &old_de.de_entry_key, &old_entry_path, &old_de) != NAME_FOUND)
+-	    BUG ();
++	if ((retval = search_by_entry_key (new_dir->i_sb, &old_de.de_entry_key,
++					   &old_entry_path, &old_de)) != NAME_FOUND) {
++	    pathrelse(&old_entry_path);
++	    journal_end(&th, old_dir->i_sb, jbegin_count);
++	    reiserfs_write_unlock(old_dir->i_sb);
++	    return -EIO;
++	}
+ 
+ 	copy_item_head(&old_entry_ih, get_ih(&old_entry_path)) ;
+ 
+@@ -1296,16 +1300,28 @@ static int reiserfs_rename (struct inode
+ 				      &new_entry_path, &new_de);
+ 	// reiserfs_add_entry should not return IO_ERROR, because it is called with essentially same parameters from
+         // reiserfs_add_entry above, and we'll catch any i/o errors before we get here.
+-	if (retval != NAME_FOUND_INVISIBLE && retval != NAME_FOUND)
+-	    BUG ();
++	if (retval != NAME_FOUND_INVISIBLE && retval != NAME_FOUND) {
++	    pathrelse(&new_entry_path);
++	    pathrelse(&old_entry_path);
++	    journal_end(&th, old_dir->i_sb, jbegin_count);
++	    reiserfs_write_unlock(old_dir->i_sb);
++	    return -EIO;
++	}
+ 
+ 	copy_item_head(&new_entry_ih, get_ih(&new_entry_path)) ;
+ 
+ 	reiserfs_prepare_for_journal(old_inode->i_sb, new_de.de_bh, 1) ;
+ 
+ 	if (S_ISDIR(old_inode->i_mode)) {
+-	    if (search_by_entry_key (new_dir->i_sb, &dot_dot_de.de_entry_key, &dot_dot_entry_path, &dot_dot_de) != NAME_FOUND)
+-		BUG ();
++	    if ((retval = search_by_entry_key (new_dir->i_sb, &dot_dot_de.de_entry_key,
++					       &dot_dot_entry_path, &dot_dot_de)) != NAME_FOUND) {
++		pathrelse(&dot_dot_entry_path);
++		pathrelse(&new_entry_path);
++		pathrelse(&old_entry_path);
++		journal_end(&th, old_dir->i_sb, jbegin_count);
++		reiserfs_write_unlock(old_dir->i_sb);
++		return -EIO;
++	    }
+ 	    copy_item_head(&dot_dot_ih, get_ih(&dot_dot_entry_path)) ;
+ 	    // node containing ".." gets into transaction
+ 	    reiserfs_prepare_for_journal(old_inode->i_sb, dot_dot_de.de_bh, 1) ;
+
+_
+
+--=-QFXYTCsn2Tru+sdcT0Bt--
+
