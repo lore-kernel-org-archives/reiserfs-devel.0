@@ -1,77 +1,59 @@
-From: biscani@pd.astro.it
-Subject: System freeze: __iounmap: bad address dfd00000
-Date: Sun, 29 Aug 2004 01:29:39 +0200
-Message-ID: <1093735779.41311563b892b@webmail.pd.astro.it>
+From: Jeremy Allison <jra@samba.org>
+Subject: Re: silent semantic changes with reiser4
+Date: Sat, 28 Aug 2004 16:47:38 -0700
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040828234738.GC2611@localhost.localdomain>
+References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org> <20040828170515.GB24868@hh.idb.hist.no> <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org>
+Reply-To: Jeremy Allison <jra@samba.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-21029-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com, Al Viro <viro@parcelfarce.linux.theplanet.co.uk>
 
-Hi,  
-  
-today I experienced some system freezes under heavy IO load. I was moving my  
-~20GB / to another partition. The system simply stopped responding (twice)  
-when I was copying /usr. Unfortunately the freeze was pretty hard, and no  
-clues could be gathered from the system logs. Neither ssh-ing from another  
-machine worked. I tried with kernels 2.6.8.1-mm3 and 2.6.9-rc1-mm1, same  
-behaviour: no hard disk activity and complete freeze.  
-  
-The two partitions are reiser4, so I'm CCing this message also to  
-reiserfs-list.  
-  
-I don't think it is a FS related problem, though. Firstly because doing  
-exactly the same thing on another machine worked ok (I tried 3 times).  
-Secondly because of some cryptic messages my system has been giving for some  
-time. The message is:  
-  
-Aug 28 18:43:00 kurtz __iounmap: bad address dfd00000  
-  
-This is usually repeated 2 or 3 times. According to my logs this started 
-happening with 2.6.8.1-mm1. I had never seen it before. This also appeared 
-when I was finally able to copy my partition (on the third try). The system 
-hanged on shutdown immidiately after though :-/  
-  
-I googled around for that message, but found nothing, except for some lkml 
-activity at the 2.5.25 time and some recent SATA bugs. This hard drive is not 
-SATA though. This is the output of my lspci: 
- 
-0000:00:00.0 Host bridge: ATI Technologies Inc: Unknown device cbb2 (rev 02) 
-0000:00:01.0 PCI bridge: ATI Technologies Inc PCI Bridge [IGP 340M] 
-0000:00:06.0 Multimedia audio controller: ALi Corporation M5451 PCI AC-Link 
-Controller Audio Device (rev 02) 
-0000:00:07.0 ISA bridge: ALi Corporation M1533 PCI to ISA Bridge [Aladdin IV] 
-0000:00:08.0 Modem: ALi Corporation M5457 AC'97 Modem Controller 
-0000:00:0a.0 CardBus bridge: Texas Instruments PCI1410 PC card Cardbus 
-Controller (rev 02) 
-0000:00:0b.0 USB Controller: VIA Technologies, Inc. VT82xxxxx UHCI USB 1.1 
-Controller (rev 50) 
-0000:00:0b.1 USB Controller: VIA Technologies, Inc. VT82xxxxx UHCI USB 1.1 
-Controller (rev 50) 
-0000:00:0b.2 USB Controller: VIA Technologies, Inc. USB 2.0 (rev 51) 
-0000:00:0c.0 FireWire (IEEE 1394): Texas Instruments TSB43AB21 IEEE-1394a-2000 
-Controller (PHY/Link) 
-0000:00:10.0 IDE interface: ALi Corporation M5229 IDE (rev c4) 
-0000:00:11.0 Bridge: ALi Corporation M7101 Power Management Controller [PMU] 
-0000:00:12.0 Ethernet controller: National Semiconductor Corporation DP83815 
-(MacPhyter) Ethernet Controller 
-0000:01:05.0 VGA compatible controller: ATI Technologies Inc Radeon IGP 340M 
- 
-As you can see the IDE subsystem is from ALi. This is an HP laptop which has 
-never shown any kind of instability. Also smartmontools say that the hard 
-drive is ok. The kernel has been compiled with mregparm=3, but aside from that 
-no fancy options has been used. I also tried disabling ide IRQ sharing and 
-ACPI, still no luck. Can anyone give me some insight in this? If more 
-informations are needed, please let me know. 
- 
-Thanks very much, 
- 
-  Francesco 
- 
-PS: please CC me since I'm not subscribed to lkml. 
+On Sat, Aug 28, 2004 at 11:09:38AM -0700, Linus Torvalds wrote:
+> 
+> If you look at the Solaris interface, the _nice_ part about "openat()" is 
+> that you can do something like
+> 
+> 	file = open(filename, O_RDONLY);
+> 	if (file < 0)
+> 		return -ENOENT;
+> 	icon = openat(file, "icon", O_RDONLY | O_XATTR);
+> 	if (icon < 0)
+> 		icon = default_icon_file;
+> 	..
+> 
+> and it will work regardless of whether "filename" is a directory or a 
+> regular file, if I've understood correctly.
+> 
+> Now, I think that makes sense for several reasons:
+>  - single case
+>  - race-free (think "stat()" vs "fstat()" races).
+>  - I think we want to do "openat()" regardless of whether we ever 
+>    support extended attributes or not ("openat()" is nice for doing 
+>    "namei()" in user space even in the absense of any attributes or 
+>    named streams).
+> 
+> So what we can do is
+>  - implement openat() regardless, and expect to do the Solaris thing for 
+>    it if we ever do streams.
+
+Hurrah ! Definately the best way to go as far as Samba is concerned.
+Makes our portability easier. Now the NT interface allows an open on
+a named data stream without an open on the containing file (ie.
+you can do CreateFile("filename::STREAMNAME",....) without doing
+CreateFile("filename",..." first, but I personally think those
+semantics are a nasty hack. It makes much more sense (IMHO) to
+ensure that you already have an open fd on a file before allowing
+access to the named streams inside, Windows be damned. If we have
+some semantic issues mapping from the Windows semantics to Solaris/Linux
+semantics then so be it, it's a Samba problem so to speak :-).
+
+Thanks,
+
+	Jeremy.
