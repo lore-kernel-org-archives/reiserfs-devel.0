@@ -1,60 +1,28 @@
-From: Tonnerre <tonnerre@thundrix.ch>
+From: Frank van Maarseveen <frankvm@xs4all.nl>
 Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: Mon, 6 Sep 2004 10:04:24 +0200
-Message-ID: <20040906080424.GC28697@thundrix.ch>
-References: <1094118362.4847.23.camel@localhost.localdomain> <20040902203854.GA4801@janus> <1094160994.31499.19.camel@shaggy.austin.ibm.com> <20040902214806.GA5272@janus> <20040902220027.GD23987@parcelfarce.linux.theplanet.co.uk> <20040902220242.GA5414@janus> <20040902220640.GE23987@parcelfarce.linux.theplanet.co.uk> <20040902221133.GB5414@janus> <20040902221722.GF23987@parcelfarce.linux.theplanet.co.uk> <20040902222650.GA5523@janus>
+Date: Mon, 6 Sep 2004 10:08:45 +0200
+Message-ID: <20040906080845.GA31483@janus>
+References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain> <20040902203854.GA4801@janus> <20040906075603.GB28697@thundrix.ch>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bAmEntskrkuBymla"
-Return-path: <reiserfs-list-return-21497-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21498-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040902222650.GA5523@janus>
+In-Reply-To: <20040906075603.GB28697@thundrix.ch>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Frank van Maarseveen <frankvm@xs4all.nl>
-Cc: viro@parcelfarce.linux.theplanet.co.uk, Dave Kleikamp <shaggy@austin.ibm.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Tonnerre <tonnerre@thundrix.ch>
+Cc: Frank van Maarseveen <frankvm@xs4all.nl>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
---bAmEntskrkuBymla
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, Sep 06, 2004 at 09:56:03AM +0200, Tonnerre wrote:
+> 
+> $ cat fs_header owner_root flags_with_suid evil_program > evil.iso
+> $ ls -l evil.iso/evil_program
 
-Salut,
+It should of course be equivalent to a user mount: nodev nosuid etc.
 
-On Fri, Sep 03, 2004 at 12:26:50AM +0200, Frank van Maarseveen wrote:
-> Try a "make tags;grep SUPER_MAGIC tags".
-> Or is it there for a different purpose?
-
-Problem is:
-
-There are  cool superblock magics  for reiserfs. And for  ext[23]. And
-even for good old Minix. Cool.
-
-However,  there  are   also  ugly  file  systems,  such   as  fat  for
-example. Fat has been defined as  "something that can be read by a fat
-driver", which  can be pretty  much anything. You can't  really detect
-whether it is fat. Even Microsoft only guess whether some FS is fat or
-not.
-
-And don't  say detect it  via a partition  table.  There are a  lot of
-cases where you get absolutely no  or wrong information out of it, and
-there are also lots of cases where you plainly have none.
-
-			    Tonnerre
-
---bAmEntskrkuBymla
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.9.2 (GNU/Linux)
-
-iD8DBQFBPBoI/4bL7ovhw40RAgPmAJ0eM6NfPMARRJhHfd+vIXP+6+UAQgCgpUl/
-5tX5B0VUa6gBMKZKdIjycec=
-=KbEr
------END PGP SIGNATURE-----
-
---bAmEntskrkuBymla--
+-- 
+Frank
