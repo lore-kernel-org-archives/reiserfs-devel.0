@@ -1,40 +1,32 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 02 Sep 2004 10:50:53 +0100
-Message-ID: <1094118649.4847.30.camel@localhost.localdomain>
-References: <20040829191044.GA10090@thundrix.ch>
-	 <3247172997-BeMail@cr593174-a> <20040831081528.GA14371@thundrix.ch>
-	 <20040901201608.GD31934@mail.shareable.org>
+From: Oliver Neukum <oliver@neukum.org>
+Subject: Re: The argument for fs assistance in handling archives
+Date: Thu, 2 Sep 2004 13:09:04 +0200
+Message-ID: <200409021309.04780.oliver@neukum.org>
+References: <20040826150202.GE5733@mail.shareable.org> <4136E0B6.4000705@namesys.com> <1117111836.20040902115249@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21271-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-21272-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040901201608.GD31934@mail.shareable.org>
+In-Reply-To: <1117111836.20040902115249@tnonline.net>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Tonnerre <tonnerre@thundrix.ch>, "Alexander G. M. Smith" <agmsmith@rogers.com>, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com, vonbrand@inf.utfsm.cl
+Content-Type: text/plain; charset="iso-8859-1"
+To: Spam <spam@tnonline.net>
+Cc: Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Mer, 2004-09-01 at 21:16, Jamie Lokier wrote:
-> (For example, if I edit an HTML file which is encoded in iso-8859-1,
-> change it to utf-8 and indicate that in a META element, and save it
-> under the same name, the full content-type should change from
-> "text/html; charset=iso-8859-1" to "text/html; charset=utf-8".)
-> 
-> I don't see how you can do that without kernel support.
-> 
-> Don't say dnotify or inotify, because neither would work.
+Am Donnerstag, 2. September 2004 11:52 schrieb Spam:
+> =A0 Btw, version control for ordinary files would be a great feature. I
+> =A0 think something like it is available through Windows 2000/3 server.
+> =A0 Isn't it called "Shadow Copies". It works over network shares. :)
+>=20
+> =A0 It allows you to restore previous versions of the file even if you
+> =A0 delete or overwrite it.
 
-inotify done right is useful here as well as in a lot of other desktop
-cases where dnotify doesn't really scale. Its enough to let me
+There's no need to do that in kernel, unless you want to be able
+to force it unto users.
 
-	- Find the new file
-	- Virus scan it
-	- Classify its possible type heirarchies
-	- Index it
-
-Alan
-
+	Regards
+		Oliver
