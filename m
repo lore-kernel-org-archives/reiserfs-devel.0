@@ -1,62 +1,104 @@
-From: jared@roberts.org
-Subject: issues with sync/remount, loopback
-Date: Sat, 09 Aug 2003 11:52:00 -0700 (PDT)
-Message-ID: <20030809115202.2685.h009.c000.wm@mail.roberts.org.criticalpath.net>
+From: Wes Janzen <superchkn@sbcglobal.net>
+Subject: Re: FS Corruption with VIA MVP3 + UDMA/DMA
+Date: Sat, 09 Aug 2003 18:18:04 -0500
+Message-ID: <3F35812C.10404@sbcglobal.net>
+References: <16128.19218.139117.293393@charged.uio.no> <3F34E6D1.7030900@sbcglobal.net> <20030809162710.GC29647@mail.jlokier.co.uk> <200308091943.25231.insecure@mail.od.ua> <20030809173850.GA30143@mail.jlokier.co.uk>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15269-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15271-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <20030809173850.GA30143@mail.jlokier.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Linux Kernel <linux-kernel@vger.kernel.org>
+Cc: reiserfs-list@namesys.com
 
-I'm having a couple of problems with reiser4.  I got
-the 2.5 kernel tree and reiser4 source from bk on the
-2nd-- although it didn't compile until I applied the
-patch posted by pillars.NET.  I just pulled and built
-again, this time with -test3 and I'm still experiencing
-the same problems.
+Nothing runs on this one ;-)
 
-On startup, when the initscript tries to remount from
-ro to rw, reiser4 starts printing out "flushing like
-mad..." and counting powers of two.  I "solved" this by
-setting rootflags in the kernel to mount / rw on boot,
-and took out the remount from my startup script.  This
-works, but then on shutdown, the same problem happens. 
-Looked like it was looping during sync.
+WinXP/2003 will die from registry and unrecoverable NTFS filesystem 
+corruption.  Win98 will randomly corrupt driver files eventually leading 
+to an unbootable system, or worse, a completely corrupted filesystem as 
+scandisk happily crosslinks all the files (experienced this several 
+times, just thought it was the hard drives and windows...since the 
+drives would fail a few months later and since I had past experience 
+with a Pentium 166 and HX system running Win95 doing this).
 
-There are also some programs that consistantly do weird
-things-- apt-get always freezes in the same place, (ps
-lists it in state "D", and it won't die even with kill
--9).  Once one process has hung, others start-- even a
-"ps aux" will get stuck in uninterruptable sleep!
+Linux fared better, but still would corrupt the filesystem, sometimes 
+leading to an unusable system say if an important library is moved to 
+lost+found during fsck.  It was much more reliable than any Windows 
+install and easily repairable.  With windows, I had no choice but to 
+re-install (backing up the registry after every boot worked until NTFS 
+would eventually die).  I lost a few data and help files under linux, 
+but at this point I backed up all the time anyway (after my first 
+installation was hopelessly mangled).
 
-The motherboard is an asus a7v600, I belive DMA is on. 
-The harddrive in question is 200 bogogigs, and reiser4
-is on the last 60 bogogigs or so (ie: past the 28-bit
-addressing barrier).  Let me know if you need more
-details on anything.
+I've tried several PCI tweaks with 2.4 which didn't really seem to cure 
+anything.  My powertweak doesn't seem to like the 2.5 series kernels, so 
+I haven't tried that.  Not that it seems to matter, the promise 
+controllers have much better throughput anyway even with the same modes 
+and settings in hdparm.  I tried all the hdparm combinations of dma 
+modes and other settings with only a slight decrease in the chance of 
+corruption and a corresponding dive in throughput.  It worked through 
+2.5.74, but I finally disabled it for everything except my IDE ZIP drive 
+and stuck in another promise card after concluding that it was just 
+hopelessly broken.
 
-Another issue which is probably known, but I didn't see
-a bugtracker to check: loopback doesn't work at all in
-reiser4.  I just get an "Invalid argument" or some such
-on the loop ioctl.  I tested loopback on the same
-kernel with a floppy image on my ext2 boot partition
-and it worked fine.  I also tried both my system
-losetup (util-linux 2.11z I believe), and a
-locally-built 2.12pre from kernel.org-- same problem.
+It would have been nice if 2.4 would just refuse to use DMA, that way 
+I'd have known about the problem much earlier.  I would think with all 
+the stuff in the kernel about the RZ1000, the problems with the MVP3 
+would be mentioned as well.  As just a typical end user I couldn't 
+figure out why Linux and reiserfs, which are supposed to be so stable 
+wouldn't weren't.  At this point I'd already run exhaustive memory , 
+hard drive bad sector, and CPU tests without any failures so I was 
+pretty certain it wasn't a hardware issue.  Everyone I knew had crashes 
+with Windows so those didn't surprise me so much.
 
-Everything above was with an 8/2 pull of
--test2+reiser4.  Just now I tried again with -test3.  I
-didn't try remounting on boot, 'cus I'm afraid if it
-doesn't work I won't be able to boot at all, but I did
-see the same problem on shutdown.  I also saw that
-loopback was still broken.  I didn't try the
-reliably-failing apt-get test, but I can try that too
-if you want another datapoint.
+It's a decent computer for web browsing and let's me gauge the 
+performance of my business apps.  It's a pretty good low-end target 
+machine now that it doesn't write garbage to my drives.
 
---Jared
+I just think this should be documented in case someone sets up a 
+proxy/firewall machine with this configuration.  For the majority of 
+home users, any higher-end machine is probably wasted on such an 
+application.  I setup such a system to share my parents dial-up 
+connection over a wireless network.  Of course, it's using an HX chipset 
+and P233MMX so it's rock solid, only needing rebooted when the modem 
+locks up (happened twice since I set it up a year ago).  Even though 
+it's running 2.4.18 and my dad likes to reset it rather than 
+CTRL-ALT-DEL when the modem locks up, it has yet to corrupt reiserfs. 
+
+That's the kind of stability that got me really wondering about my system...
+
+Jamie Lokier wrote:
+
+>insecure wrote:
+>  
+>
+>>>The VP2/97 also had severe problems with DMA.  I could never run
+>>>standard kernels on mind in the 2.0 days, and distro installs would
+>>>always lock up during installation, although Mandrake 8 seemed
+>>>reliable so something improved.
+>>>      
+>>>
+>>I had a VIA VPX sometime ago. AFAIR it worked fine...
+>>
+>>I suspect PCI conf tweaks etc could work around
+>>this trouble. I'm afraid there won't be much interest
+>>in fixing these oldies. For example, I got rid of that
+>>board (exchanged for Socket A one) -> no way to test fixes :(
+>>    
+>>
+>
+>I found a hdparm command which fixed it, though it wasn't much use
+>during distro installs.  It was very pleasant to see Mandrake 8 just
+>work.  Fwiw, Windows 95, 98 and NT4 have no problems on the box.  It's
+>now my "Internet Explorer 4" test rig :)
+>
+>-- Jamie
+>
+>  
+>
+
