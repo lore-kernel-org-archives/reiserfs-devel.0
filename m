@@ -1,116 +1,98 @@
-From: Jan Kara <jack@ucw.cz>
-Subject: Re: Status of quota support for reiserfs on 2.6.x kernels
-Date: Tue, 4 Jan 2005 18:52:58 +0100
-Message-ID: <20050104175258.GJ28019@atrey.karlin.mff.cuni.cz>
-References: <20041123105332.02470503.philippe.gramoulle@mmania.com> <200411231406.43497.christian.mayrhuber@gmx.net> <loom.20041215T011250-550@post.gmane.org> <20041215133805.GE25999@atrey.karlin.mff.cuni.cz> <20041228205503.GA17689@trillke.net>
+From: Domenico Andreoli <cavok@tiscali.it>
+Subject: reiser4progs: FTBFS (amd64/gcc-4.0): static declaration of 'oid40_plug' follows non-static declaration
+Date: Mon, 3 Jan 2005 18:29:44 +0100
+Message-ID: <20050103172944.GA24729@raptus.dandreoli.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="ZfOjI3PrQbgiZnxM"
-Return-path: <reiserfs-list-return-23038-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23040-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Resent-Message-ID: <20050105094123.GA12477@raptus.dandreoli.com>
+Resent-To: reiserfs-list@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20041228205503.GA17689@trillke.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: klaus thorn <klaus@trillke.net>
-Cc: reiserfs-list@namesys.com, edv@trillke.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
+Cc: 288414@bugs.debian.org
 
---ZfOjI3PrQbgiZnxM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+hi all,
 
-  Sorry for a bit late reply but I was on a holidays.
+  i've just received the following bug report for reiser4progs debian
+package version 1.03-1.
 
-> On Wed, Dec 15, 2004 at 02:38:06PM +0100, Jan Kara wrote:
-> > > I tried to use quota with 2.6.7 and got two serious problems
-> >   I suggest trying some newer kernel - either 2.6.10-rc3-mm1 or
-> > just plain 2.6.10-rc3 with attached patch applied (the patch fixes the
-> > deadlock you seem to hit).
-> 
-> It tried the latter on another server and the filesystem was accessible
-> at all time but other problems occured (maybe not quota-related) that made
-> my co-admins downgrade to 2.6.9:
-> 
-> 1. suddenly, after running the patched kernel for days,
-> su, sudo and authentication through courier webmailer was not possible,
-> ssh-root-login went fine. After reboot problem was gone but pam_rootok.so
-> was missing (file system curruption?)
-  Are there any error messages in the log? If that was filesystem
-corruption there should be some.... Otherwise it's hard to guess what
-was going on.
+is this a known problem? what about the proposed patch?
 
-> 2. after a few hours stress-testing the quota-partition:
-> kernel crash: code ff 21 e2 8b 0a ...
-> ... 76 60 e0 ff 6a 00
-> kernel BUG at lib/kernel_lock:120!
-> invalid operand: 0000
-  This does not look nice. Do you have all the error message? From this
-part it's hard to guess what has happened.
+thanks
+domenico
 
-> Do you think they are quota-related or related to you quota-fixall patch?
-  They might be - you can try to stress-test the filesystem without
-quotas enabled and see if some error occurs.
-
-> Is your fix appliable for vanilla 2.6.10 or is it already integrated
-> or is there a newer patch?
-  The patch I sent you should be applicable to 2.6.10 kernel. There's also one
-other bugfix to my quota-fixall patch which I attached (but you don't seem to
-actually hit that problem).
-
-								Honza
-
---ZfOjI3PrQbgiZnxM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="reiserfs-do-not-clear-MS_ACTIVE.patch"
+ps: happy new year :)
 
 
-When CONFIG_QUOTA is defined reiserfs's finish_unfinished sets and clears
-MS_ACTIVE bit in s_flags field of super block. If that bit was set already
-it should not be set.
+----- Forwarded message from Andreas Jochens <aj@andaco.de> -----
 
+Date: Mon, 03 Jan 2005 17:55:02 +0100
+From: Andreas Jochens <aj@andaco.de>
+To: Debian Bug Tracking System <submit@bugs.debian.org>
+Subject: Bug#288414: reiser4progs: FTBFS (amd64/gcc-4.0): static declaration of 'oid40_plug' follows non-static declaration
 
- fs/reiserfs/super.c |   13 ++++++++++---
- 1 files changed, 10 insertions(+), 3 deletions(-)
+When building 'reiser4progs' on amd64 with gcc-4.0,
+I get the following error:
 
-diff -puN fs/reiserfs/super.c~reiserfs-do-not-clear-MS_ACTIVE fs/reiserfs/super.c
---- linux-2.6.10-rc3-mm1/fs/reiserfs/super.c~reiserfs-do-not-clear-MS_ACTIVE	2004-12-23 18:22:06.568755520 +0300
-+++ linux-2.6.10-rc3-mm1-vs/fs/reiserfs/super.c	2004-12-23 18:22:06.576756006 +0300
-@@ -158,6 +158,7 @@ static int finish_unfinished (struct sup
-     int truncate;
- #ifdef CONFIG_QUOTA
-     int i;
-+    int ms_active_set;
- #endif
-  
-  
-@@ -168,7 +169,12 @@ static int finish_unfinished (struct sup
+ x86_64-linux-gcc -DHAVE_CONFIG_H -I. -I. -I../../.. -I../../../include -D_REENTRANT -D_FILE_OFFSET_BITS=no -DENABLE_SYMLINKS -DENABLE_SPECIAL -DENABLE_R5_HASH -DENABLE_FNV1_HASH -DENABLE_RUPASOV_HASH -DENABLE_TEA_HASH -DENABLE_DEG_HASH -DENABLE_LARGE_KEYS -DENABLE_SHORT_KEYS -DENABLE_DOT_O_FIBRE -DENABLE_EXT_1_FIBRE -DENABLE_EXT_3_FIBRE -DENABLE_LEXIC_FIBRE -O3 -Wall -g -O2 -W -Wall -Wuninitialized -Wno-unused-parameter -Wredundant-decls -MT liboid40_static_la-oid40.lo -MD -MP -MF .deps/liboid40_static_la-oid40.Tpo -c oid40.c -o liboid40_static_la-oid40.o
+oid40.c:206: error: static declaration of 'oid40_plug' follows non-static declaration
+oid40.c:11: error: previous declaration of 'oid40_plug' was here
+make[5]: *** [liboid40_static_la-oid40.lo] Error 1
+make[5]: Leaving directory `/reiser4progs-1.0.3/plugin/oid/oid40'
+
+With the attached patch 'reiser4progs' can be compiled
+on amd64 using gcc-4.0.
+
+Regards
+Andreas Jochens
+
+diff -urN ../tmp-orig/reiser4progs-1.0.3/plugin/key/key_large/key_large.c ./plugin/key/key_large/key_large.c
+--- ../tmp-orig/reiser4progs-1.0.3/plugin/key/key_large/key_large.c	2004-10-19 23:02:47.000000000 +0200
++++ ./plugin/key/key_large/key_large.c	2005-01-03 17:13:29.425846752 +0100
+@@ -6,7 +6,7 @@
+ #ifdef ENABLE_LARGE_KEYS
+ #include "key_large.h"
  
- #ifdef CONFIG_QUOTA
-     /* Needed for iput() to work correctly and not trash data */
--    s->s_flags |= MS_ACTIVE;
-+    if (s->s_flags & MS_ACTIVE) {
-+	    ms_active_set = 0;
-+    } else {
-+	    ms_active_set = 1;
-+	    s->s_flags |= MS_ACTIVE;
-+    }
-     /* Turn on quotas so that they are updated correctly */
-     for (i = 0; i < MAXQUOTAS; i++) {
- 	if (REISERFS_SB(s)->s_qf_names[i]) {
-@@ -276,8 +282,9 @@ static int finish_unfinished (struct sup
-             if (sb_dqopt(s)->files[i])
-                     vfs_quota_off_mount(s, i);
-     }
--    /* Restore the flag back */
--    s->s_flags &= ~MS_ACTIVE;
-+    if (ms_active_set)
-+	    /* Restore the flag back */
-+	    s->s_flags &= ~MS_ACTIVE;
- #endif
-     pathrelse (&path);
-     if (done)
+-extern reiser4_plug_t key_large_plug;
++static reiser4_plug_t key_large_plug;
+ 
+ /* Returns minimal key */
+ static reiser4_key_t *key_large_minimal(void) {
+diff -urN ../tmp-orig/reiser4progs-1.0.3/plugin/key/key_short/key_short.c ./plugin/key/key_short/key_short.c
+--- ../tmp-orig/reiser4progs-1.0.3/plugin/key/key_short/key_short.c	2004-10-19 23:02:27.000000000 +0200
++++ ./plugin/key/key_short/key_short.c	2005-01-03 17:13:12.000000000 +0100
+@@ -6,7 +6,7 @@
+ #ifdef ENABLE_SHORT_KEYS
+ #include "key_short.h"
+ 
+-extern reiser4_plug_t key_short_plug;
++static reiser4_plug_t key_short_plug;
+ 
+ /* Returns minimal key */
+ static reiser4_key_t *key_short_minimal(void) {
+diff -urN ../tmp-orig/reiser4progs-1.0.3/plugin/oid/oid40/oid40.c ./plugin/oid/oid40/oid40.c
+--- ../tmp-orig/reiser4progs-1.0.3/plugin/oid/oid40/oid40.c	2004-12-02 17:13:27.000000000 +0100
++++ ./plugin/oid/oid40/oid40.c	2005-01-03 17:09:38.000000000 +0100
+@@ -8,7 +8,7 @@
+ #include "oid40.h"
+ #include "oid40_repair.h"
+ 
+-extern reiser4_plug_t oid40_plug;
++static reiser4_plug_t oid40_plug;
+ 
+ static uint32_t oid40_get_state(generic_entity_t *entity) {
+ 	aal_assert("umka-2088", entity != NULL);
 
-_
 
---ZfOjI3PrQbgiZnxM--
+----- End forwarded message -----
+
+
+-----[ Domenico Andreoli, aka cavok
+ --[ http://people.debian.org/~cavok/gpgkey.asc
+   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
