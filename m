@@ -1,55 +1,33 @@
-From: Joachim Reichelt <Reichelt@gbf.de>
-Subject: Lost ACL
-Date: Fri, 13 Feb 2004 15:51:21 +0100
-Message-ID: <402CE469.4010809@gbf.de>
+From: markw@osdl.org
+Subject: resier4 performance with dbt-2
+Date: Fri, 13 Feb 2004 09:31:10 -0800 (PST)
+Message-ID: <200402131731.i1DHVaE22114@mail.osdl.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16782-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16783-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: TEXT/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Dear all,
+http://developer.osdl.org/markw/fs/dbt2_stp_results.html
 
-on SuSE 8.1 we have a fileserver with acl's on 500GB on a hardware raid.
-Now we had to powerdown the system. The controler seems to have not
-properly written all data to disk. So i had to do a
-reiserfsck --fix-fixable /dev/sda8
+I have some data (at the link above) with the reiser4 2004.02.06
+snapshot applied to linux-2.6.2 with our DBT-2 (OLTP) workload on 4-way
+and 8-way systems.  On the 4-way systems, the results of the workload
+seem comparable to other filesystems.  On the 8-way systems, the results
+of the workload drop about 28%.
 
-This did nearly the whole job, but left me with a tree
-./.reiserfs_privat/xattr/ (size of dir is ~38MB)
-The files thereis seems to be two hex numbers seperated by a dot e.g. 
-12E63C.24C58
-and no acl.
-What can I do to get acl back?
+I have readprofile and oprofile (w/ annotated assembly) data with the
+results.  If there's anything else I can provide let me know.
 
 -- 
-Mit freundlichen Gruessen                         Best Regards
- 
-         Joachim Reichelt
-
-WWW: http://www.gbf.de         _/_/_/   _/_/_/   _/_/_/_/
-WWW: http://www.gbf.de/sb    _/    _/  _/   _/  _/
-                            _/        _/   _/  _/
-Mascheroder Weg 1          _/  _/    _/_/_/   _/_/_/
-D-38124 Braunschweig      _/    _/  _/   _/  _/
-Tel: +(49) 531 6181 352  _/    _/  _/   _/  _/
-FAX: +(49) 531 2612 388   _/_/_/  _/_/_/   _/
-
-			SB  - Strukturbiologie
-              GBF - Gesellschaft fuer Biotechnologische Forschung
-                    German Research Centre for Biotechnology
-
-See me at:
-EMAIL: REICHELT@gbf.de    WWW:  http://www.gbf.de/sb/Reichelt.htm
-
--- Disclaimer --
-Standard > Keyword : Opinions, my own, nobody else's, whatsoever ...
-
-Man muss sich notfalls jemand mieten,
-hat man an Geist selbst nichts zu bieten!     (Heinz Erhardt)
-
+Mark Wong - - markw@osdl.org
+Open Source Development Lab Inc - A non-profit corporation
+12725 SW Millikan Way - Suite 400 - Beaverton, OR 97005
+(503) 626-2455 x 32 (office)
+(503) 626-2436      (fax)
+http://developer.osdl.org/markw/
