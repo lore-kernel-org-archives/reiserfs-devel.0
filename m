@@ -1,70 +1,135 @@
-From: Redeeman <redeeman@metanurb.dk>
-Subject: Re: I've done a very bad mistake
-Date: Fri, 02 Jul 2004 14:45:02 +0200
-Message-ID: <1088772302.10317.0.camel@localhost>
-References: <200407011523.48481.aotto1968@onlinehome.de>
-	 <1088703219.15328.6.camel@localhost>  <40E4DE40.7020809@slaphack.com>
-Reply-To: redeeman@metanurb.dk
+From: Uwe Wagner <Uwe.Beach@gmx.de>
+Subject: Problem with reiserfs
+Date: Fri, 2 Jul 2004 19:42:05 +0200
+Message-ID: <200407021942.05459.Uwe.Beach@gmx.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19486-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19488-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40E4DE40.7020809@slaphack.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-a device file is just a completely normal file.. almost..
-i know this because i once did:
+Hi,
 
-cp blah.blablabla /dev/null
-and my null was replaced by this.
+I've problems with a reiserfs filesystem.
 
-On Thu, 2004-07-01 at 23:02 -0500, David Masover wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
-> 
-> 
-> 
-> Redeeman wrote:
-> | afaik, this only overwrites the device node. recreate it, and you should
-> | be fine
-> 
-> Last I checked, it doesn't.  For instance, I often do
-> 
-> # cp file.img /dev/fd0
-> # cp /dev/fd0 file.img.test
-> # diff file.img file.img.test
-> 
-> to write a floppy from an image, then verify that the floppy matches the
-> image.
-> 
-> In fact, I think it detects if the destination is a device node and
-> behaves like 'dd' if it is.
-> 
-> 
-> -----BEGIN PGP SIGNATURE-----
-> Version: GnuPG v1.2.4 (GNU/Linux)
-> Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-> 
-> iQIVAwUBQOTeQHgHNmZLgCUhAQI4HA//aqAFXvrN8avrfzc+eNFN1zIX3m7VFDk9
-> lll+gMpu9k6poet+40DOL3VFwHMaA/sk6e7MdmYQddYAu8Xk+OGXr/UAV70Hz6pF
-> juTdBVBSDuNB3xOyDBvrJ9e1hSTw0KmLaxNUvvKC2IoI24V2vLPijsCT0+4THd5i
-> P3SAmVZY9xGfTGFrt/u82fbfjv8sOYrLVfFVfD3v6M/swEcCqsCVBliJt0zYpLic
-> v48mcRzmEzGNVxubkd8o/F5EzsOoiHqcA2gZoTDTvFmsToT6anoL6lYeNLbkGuOc
-> 5I5YPnX44V7skU/g+5wXRpLIBXi4NrhYJtwqyY44shNIX+b1DVFG/zHWBOBI9KEz
-> ImhoufwjFzErmKhBMZS5oyHrErtQru3fLDBWWDrrrN7x8Tdj1uEqFKEHhGucqjvs
-> ajQ75LqzjmIRewXQw/i+A7q8uB3nReQYTfnLpU0xIql9Xw9Mw+3eB5dnkuuZvOMi
-> opNRPdbEAxwSPGVybMskyVpaZWLO8gQQDUcOQYa2IUnGsL74qbPswdOkKgsHgwnw
-> iZyb5Je59BzsgKp2JdKhsZhS9k36F3lMqrmlX1+jupO7g/Ql2K6lw/rMjgqF2EcM
-> qMoRjy0zhTskQ4jrj9M7Ge5KFBqoEr4yi92etN+SaGtBUDKlIB6Jmta9j50o0XUw
-> rbnYmnz+JFM=
-> =JVWe
-> -----END PGP SIGNATURE-----
-> 
--- 
-Redeeman <redeeman@metanurb.dk>
+reiserfs --check /dev/hda6 reports:
 
+###########
+reiserfsck --check started at Fri Jul  2 19:32:09 2004
+###########
+Replaying journal..
+No transactions found
+Checking internal tree..
+
+Bad root block 0. (--rebuild-tree did not complete)
+
+Aborted
+
+
+I've tried the following :
+
+echo "\n" | ./debugreiserfs -k -S -q /dev/hda6 | head -10000
+debugreiserfs 3.6.17 (2003 www.namesys.com)
+
+Whole device (40035980 blocks) is to be scanned
+looking for ([0 0])
+0%....20%....40%....60%....80%....100%
+Log file 'scan.log' is opened
+What key do you want to find: dirid?objectid?block 16 is reiserfs super block
+block 3823602 is reiserfs leaf node
+block 4253995 is reiserfs leaf node
+block 9145906 is reiserfs leaf node
+block 19806806 is reiserfs leaf node
+
+
+
+
+
+reiserfsck --rebuild-tree -S --logfile /tmp/reiser.log /dev/hda6
+
+Replaying journal..
+No transactions found
+###########
+reiserfsck --rebuild-tree started at Fri Jul  2 17:52:15 2004
+###########
+
+Pass 0:
+The whole partition (40035980 blocks) is to be scanned
+Skipping 9432 blocks (super block, journal, bitmaps) 40026548 blocks will be 
+rea
+d
+0%....20%....40%....60%....80%....100%                       left 0, 
+10690 /sec
+Selected hash ("r5") does not match to the hash set in the super block (not 
+set)
+.
+        "r5" hash is selected
+Flushing..finished
+        Read blocks (but not data blocks) 40026548
+                Leaves among those 4
+                        - leaves all contents of which could not be saved and 
+de
+leted 4
+                Objectids found 2
+
+Pass 1 (will try to insert 0 leaves):
+Looking for allocable blocks .. finished
+
+Flushing..finished
+        0 leaves read
+                0 inserted
+Flushing..finished
+
+
+No reiserfs metadata found.  If you are sure that you had the reiserfs
+on this partition,  then the start  of the partition  might be changed
+or all data were wiped out. The start of the partition may get changed
+by a partitioner  if you have used one.  Then you probably rebuilt the
+superblock as there was no one.  Zero the block at 64K offset from the
+start of the partition (a new super block you have just built) and try
+to move the start of the partition a few cylinders aside  and check if
+debugreiserfs /dev/xxx detects a reiserfs super block. If it does this
+is likely to be the right super block version.                        
+If this makes you nervous, try  www.namesys.com/support.html,  and for
+$25 the author of fsck,  or a colleague  if he is out,  will  step you
+through it all.
+
+Aborted
+
+
+the contents of /tmp/reiser.log :
+
+####### Pass 0 #######
+block 3823602: The free space (4094) is incorrect, should be (4072) - 
+corrected
+block 4253995: The number of items (39428) is incorrect, should be (1) - 
+corrected
+block 4253995: The free space (1791) is incorrect, should be (720) - corrected
+pass0: vpf-10110: block 4253995, item (0): Unknown item type found [83860229 
+2567307162 0x20006ff ??? (15)] - deleted
+block 9145906: The number of items (24) is incorrect, should be (1) - 
+corrected
+block 9145906: The free space (34063) is incorrect, should be (3792) - 
+corrected
+pass0: vpf-10110: block 9145906, item (0): Unknown item type found [4143972353 
+33554626 0xb4850f00 ??? (15)] - deleted
+block 19806806: The number of items (1890) is incorrect, should be (1) - 
+corrected
+block 19806806: The free space (1) is incorrect, should be (3280) - corrected
+pass0: vpf-10210: block 19806806, item 0: The item with wrong offset or length 
+found [3574071296 16777405 0xf0802000018c008 DRCT (2)], len 768 - deleted
+Could not find a hash in use. Using "r5"
+####### Pass 1 #######
+####### Pass 2 #######
+
+
+Is there a chance to repair the filesystem ?
+
+regards
+uwe
