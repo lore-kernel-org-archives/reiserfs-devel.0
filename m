@@ -1,67 +1,42 @@
 From: Chris Mason <mason@suse.com>
-Subject: Re: Data-logging and md as / fs bug
-Date: 08 May 2003 09:35:35 -0400
-Message-ID: <1052400935.14616.493.camel@tiny.suse.com>
-References: <3EB30852.6090402@netscape.net>
-	 <200305071641.37361.christian.mayrhuber@gmx.net>
-	 <1052318606.14616.394.camel@tiny.suse.com>
-	 <200305071652.00627.christian.mayrhuber@gmx.net>
-	 <1052321005.14616.407.camel@tiny.suse.com>
+Subject: Re: new data logging patches available
+Date: 08 May 2003 09:38:17 -0400
+Message-ID: <1052401097.14617.496.camel@tiny.suse.com>
+References: <1052400138.14612.483.camel@tiny.suse.com>
+	 <1052400767.872.14.camel@localhost>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14021-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14022-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1052321005.14616.407.camel@tiny.suse.com>
+In-Reply-To: <1052400767.872.14.camel@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: Soeren Sonnenburg <reiserfs@nn7.de>
+Cc: reiserfs-list@namesys.com
 
-On Wed, 2003-05-07 at 11:23, Chris Mason wrote:
-
-[ md complains about busy devices on reboot ]
-
-> Ok, it's probably because of the way the journal relocation code grabs
-> the journal device.  Since root doesn't really get fully unmounted we've
-> probably got a reference open and that is upsetting the md code.
+On Thu, 2003-05-08 at 09:32, Soeren Sonnenburg wrote:
+> On Thu, 2003-05-08 at 15:22, Chris Mason wrote:
 > 
-> The right fix is probably to skip the bdget when the journal device is
-> not external , and just set journal->j_dev_bd to super->s_bdev.
+> > 03-relocation-8.diff is also updated, I believe it will fix the bug
+> > where md reports the device is busy during reboot.  It has not been
+> > tested on a box with a software raid root device, so please handle with
+> > care.
+> 
+> errhm... I would pretty much like to have data logging on my root
+> sw-raid... unfortunately I cannot risk a dataloss atm...
+> so could you please tell what kind of bugs you expect to happen such
+> that I know the risks a bit better ?
 
-Hopefully 03-relocation-8.diff fixes this.  The incremental is below if
-you'd like to give it a try, but use with caution as I haven't tested on
-an md root device here.
+Basically the change is to avoid adding an extra reference count when
+the log is not on an external device.  It should be safe, but if I've
+screwed something up it will cause oopsen and other problems.
 
-diff -Nru a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
---- a/fs/reiserfs/journal.c	Thu May  8 09:38:49 2003
-+++ b/fs/reiserfs/journal.c	Thu May  8 09:38:49 2003
-@@ -2294,7 +2294,7 @@
-     
-     result = 0;
- 	
--    if( journal -> j_dev_bd != NULL ) {
-+    if( journal -> j_dev_bd != NULL && journal->j_dev_bd != super->s_bdev) {
- 	result = blkdev_put( journal -> j_dev_bd, BDEV_FS );
- 	journal -> j_dev_bd = NULL;
-     }
-@@ -2330,6 +2330,14 @@
- 
- 	if( ( !jdev_name || !jdev_name[ 0 ] ) ) {
- 
-+		/* don't add an extra reference to the device when 
-+		 * the log is on the same disk as the FS.  It makes the
-+		 * raid code unhappy
-+		 */
-+		if (jdev == super->s_dev) {
-+		    journal->j_dev_bd = super->s_bdev;
-+		    return 0;
-+		}
- 		journal -> j_dev_bd = bdget( kdev_t_to_nr( jdev ) );
- 		if( journal -> j_dev_bd ) {
- 			result = blkdev_get( journal -> j_dev_bd, 
+I would suggest watching the list for success and problem reports for a
+few days.
 
+-chris
 
 
