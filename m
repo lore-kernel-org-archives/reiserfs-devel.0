@@ -1,33 +1,36 @@
-From: Oleg Drokin <green@namesys.com>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
 Subject: Re: Catastrophe with mailboxes on ReiserFS
-Date: Wed, 9 Oct 2002 19:19:36 +0400
-Message-ID: <20021009191936.A1096@namesys.com>
-References: <20021009094215.B11954@namesys.com> <200210091623.31301.Dieter.Nuetzel@hamburg.de> <20021009183223.A5139@namesys.com> <200210091715.20082.Dieter.Nuetzel@hamburg.de>
+Date: Wed, 9 Oct 2002 17:26:14 +0200
+Message-ID: <200210091726.14200.Dieter.Nuetzel@hamburg.de>
+References: <20021009094215.B11954@namesys.com> <200210091715.20082.Dieter.Nuetzel@hamburg.de> <20021009191936.A1096@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11635-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11636-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20021009191936.A1096@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <200210091715.20082.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
+To: Oleg Drokin <green@namesys.com>
 Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Hello!
+Am Mittwoch, 9. Oktober 2002 17:19 schrieb Oleg Drokin:
+> Hello!
+>
+> On Wed, Oct 09, 2002 at 05:15:20PM +0200, Dieter N?tzel wrote:
+> > But you are sure with "cp -a original".
+> > And Q3A seems to "modify" it ;-(
+> > Truly bad coding style...
+> > So NOT ReiserFS to blame?!
+>
+> There is a reason thato blame reiserfs too, unfortunately.
+> But Cris' patches should change that.
 
-On Wed, Oct 09, 2002 at 05:15:20PM +0200, Dieter N?tzel wrote:
+Yes, to "close" this thread, "data-logging" should be my friend ;-)
+Hopefully soon for 2.5.41+.
 
-> But you are sure with "cp -a original".
-> And Q3A seems to "modify" it ;-(
-> Truly bad coding style...
-> So NOT ReiserFS to blame?!
-
-There is a reason thato blame reiserfs too, unfortunately.
-But Cris' patches should change that.
-
-Bye,
-    Oleg
+Regards,
+	Dieter
