@@ -1,36 +1,54 @@
-From: Andreas <IOBuf@gmx.de>
-Subject: Re: fsck.reiser4 problem (was: reiser4 corruption problem)
-Date: Tue, 31 Aug 2004 16:03:56 +0200
-Message-ID: <200408311603.56537.IOBuf@gmx.de>
-References: <20040831012446.631CB15E2E@mail03.powweb.com> <200408311209.43653.IOBuf@gmx.de> <1093955415.2716.476.camel@tribesman.namesys.com>
+From: Mike Waychison <Michael.Waychison@Sun.COM>
+Subject: Re: silent semantic changes in reiser4 (brief attempt to document the
+ idea of what reiser4 wants to do with metafiles and why
+Date: Tue, 31 Aug 2004 10:09:52 -0400
+Message-ID: <413486B0.4050101@sun.com>
+References: <41323AD8.7040103@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-21157-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21158-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1093955415.2716.476.camel@tribesman.namesys.com>
-Content-Disposition: inline
+In-reply-to: <41323AD8.7040103@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-9"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Andrew Morton <akpm@digeo.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@osdl.org>, reiserfs-list@namesys.com
 
-Hello,
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-> Would you, please, provide exact sequences of operations which confuses
-> reiser4?
+Hans Reiser wrote:
 
-mkfs.reiser4 /dev/discs/disc0/part2
-mount /dev/discs/disc0/part2 /mnt/d0p2
-touch /mnt/d0p2/abcdefghijklmnopq=E4=F6=FC=DF=DF=DF=DF
-umount /mnt/d0p2
-fsck.reiser4 /dev/discs/disc0/part2
+>
+> Why Openat Sucks:
+>
+> because you can't go cat filenameA/metas/permissions >
+> filenameB/permissions
+>
+> If cat doesn't work, then we are suffering exactly the problem with
+> namespace fragmentation that this whole scheme was invented to avoid.
+>
 
+Sure you can.  All you need to do is fix your shell.
 
-And as I now realize "fsck.reiser4 --build-fs" produces always a segmentati=
-on=20
-fault here, even on a newly created Reiser4 filesystem.
+- --
+Mike Waychison
+Sun Microsystems, Inc.
+1 (650) 352-5299 voice
+1 (416) 202-8336 voice
+http://www.sun.com
 
-Bye
- Andreas
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+NOTICE:  The opinions expressed in this email are held by me,
+and may not represent the views of Sun Microsystems, Inc.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQFBNIavdQs4kOxk3/MRAmvAAJ9sZfEgIOfINZsT23pa+Y3nQ4lfMACgmN3q
+sdgPzBUg9i/c+roWDrXq5BI=
+=poSJ
+-----END PGP SIGNATURE-----
