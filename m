@@ -1,35 +1,40 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: goodbye
-Date: Tue, 21 Oct 2003 12:48:29 +0400
-Message-ID: <3F94F2DD.90007@namesys.com>
-References: <200310211316.21360.russell@coker.com.au>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: Reiser4 segfault perhaps?
+Date: Tue, 21 Oct 2003 14:14:04 +0400
+Message-ID: <16277.1772.853617.134394@laputa.namesys.com>
+References: <1066671812.1407.14.camel@mikeb.staff.netnation.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15872-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15873-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200310211316.21360.russell@coker.com.au>
+In-Reply-To: <1066671812.1407.14.camel@mikeb.staff.netnation.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: russell@coker.com.au
+Content-Type: text/plain; charset="us-ascii"
+To: mikeb@netnation.com
 Cc: reiserfs-list@namesys.com
 
-Russell Coker wrote:
+Mike Benoit writes:
+ > In an attempt to be brave, I tried migrating my /home partition to
+ > Reiser4 (I backup 3 times/day). At the time I had a Windows share
+ > mounted with Samba, /backup and / partition mounted as ext3, and a
+ > "fresh" /home partition mounted as Reiser4. 
+ > 
+ > I then tried copying everything (1GB) from the /backup partition to the
+ > /home partition, then in another terminal proceeded to type "df" over
+ > and over again as fast as I could... Apparently that was a bad idea. 
 
->The old version of ReiserFS seems to have developed as much as it will and the 
->new version does not interest me at this time, so I am unsubscribing from 
->this list.
->
->If you have any discussions involving Bonnie++ or Postal on ReiserFS then 
->please CC me.
->
->  
->
-Thanks much for your many valuable contributions to the mailing list.
+Do you have some other exotic file system mounted? Call-chain
+writeback_inodes()->generic_sync_sb_inodes() is impossible in reiser4.
 
--- 
-Hans
+ > 
+ > PS. Hans, I'm interested in how the laptop migration to Reiser4 is
+ > going?
+ > 
+ > Oct 20 09:59:06 mikeb kernel: kjournald starting.  Commit interval 5
+ > seconds
+ > Oct 20 09:59:06 mikeb kernel: EXT3 FS on hda7, internal journal
 
-
+Nikita.
