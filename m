@@ -1,77 +1,71 @@
-From: =?iso-8859-1?Q?Morten_B=F8geskov?= <morten+namesys.com@bogeskov.dk>
-Subject: /dev/ram0 and reiserfs3
-Date: Fri, 8 Oct 2004 15:10:15 +0200 (CEST)
-Message-ID: <Pine.LNX.4.58L.0410081459020.21505@mail.digitell.dk>
+From: Milan =?ISO-8859-1?Q?Holz=E4pfel?= <lists@mjh.name>
+Subject: Re: Vanilla kernel patch
+Date: Fri, 8 Oct 2004 16:29:25 +0200
+Sender: news <news@sea.gmane.org>
+Message-ID: <20041008162925.3e0e03c4.lists@mjh.name>
+References: <200410071402.33421.biscani@pd.astro.it>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-22025-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22026-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="iso-8859-1"
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Hello.. I've stumbled upon somthing wierd. and I couldn't see anything on=20
-the mailing-list on this subject...
+On Thu, 7 Oct 2004 14:02:27 +0200
+Francesco Biscani <biscani@pd.astro.it> wrote:
 
-On a 2.6.8.1 stock kernel booted with ramdisk_size=3D32000:
+> Hi,
+>=20
+> yesterday I threw together a patchset to enable reiser4 for the vanilla=20
+> 2.6.9-rc3 kernel.  [...]
 
-# mkreiserfs -f -s 1024 /dev/ram0
-mkreiserfs 3.6.11 (2003 www.namesys.com)
+I did the same some time ago with the last official snapshot, which has
+worked fine for me so far.  reiser4 is used for my gentoo portage tree,
+my /var filesystem, for a partition where portage compiles the packages
+on and for Squid's cache (Squid is a http and ftp proxy).
 
-A pair of credits:
-Alexander  Lyamin  keeps our hardware  running,  and was very  generous =20
-to our
-project in many little ways.
+> What are the pitfalls I'm falling in, doing this? Is this safe or is ther=
+e=20
+> stuff in -mm that is absolutely needed by reiser4?
 
-Chris Mason wrote the journaling code for V3,  which was enormously more=20
-useful
-to users than just waiting until  we could create a wandering log=20
-filesystem as
-Hans would have unwisely done without him.
-Jeff Mahoney optimized the bitmap  scanning code for V3,  and performed=20
-the big
-endian cleanups.=20
+Well I'd make the guess that if there is something in the mm kernel
+which is absolutely needed by reiser4 then the thing won't link or you
+will be unable to load the module if you chose to compile it as a
+module.
 
-Guessing about desired format.. Kernel 2.6.8.1 is running.
-Format 3.6 with non-standard journal
-Count of blocks on the device: 8000
-Number of blocks consumed by mkreiserfs formatting process: 1043
-Blocksize: 4096
-Hash function used to sort names: "r5"
-Journal Size 1024 blocks (first block 18)
-Journal Max transaction length 511
-inode generation number: 0
-UUID: b66c61ae-3c4d-4682-932c-ee01d0d8009e
-Initializing journal - 0%....20%....40%....60%....80%....100%
-Syncing..ok
+> Thanks!
 
-Tell your friends to use a kernel based on 2.4.18 or later, and especially =
-
-not a
-kernel based on 2.4.9, when you use reiserFS. Have fun.
-
-ReiserFS is successfully created on /dev/ram0.
-# dd if=3D/dev/ram0 of=3Dimage bs=3D1k
-32000+0 records in
-32000+0 records out
-# mkdir mountpoint
-# mount -o loop image mountpoint -t reiserfs
-# umount mountpoint
-# mount /dev/ram0 mountpoint -t reiserfs
-mount: wrong fs type, bad option, bad superblock on /dev/ram0,
-       or too many mounted file systems
+Regards,
+Milan
 
 
-I just don't get the difference between mounting a file from a loopback=20
-device and mounting a ramdisk with the same content. Could somebody please
-enlighten be to the subtle difference?
+- --=20
 
-Yours
---
-  Morten B=F8geskov (email: morten@bogeskov.dk)
+                   Milan Holz=E4pfel alias jagdfalke alias jag
 
-I just got lost in thought... It was unfamiliar territory.
+Antworten direkt an mich                             Answers directly to me
+gehen bitte an eine Addresse,                        go to an address one
+die man hier finden kann:                            can find here, please:
+
+Kontaktinfos sowie                                   Contact infos as well =
+as
+=D6ff GnuPG-Schl=FCssel    <URL:http://con.mjh.name/>    GnuPG Public Key
+GnuPG Fingerabdruck     4C8A 5FAF 5D32 6125 89D1     GnuPG Fingerprint
+                        0CE5 DB0C AF4F 6583 7966
+
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQFBZqRF2wyvT2WDeWYRAvvvAKDjc0RjCJoA9UdcJvSk7+gtWJFJ/ACeO29S
+FPoE3gdyY49VyNt/y57KLj4=3D
+=3DMs9R
+-----END PGP SIGNATURE-----
+
