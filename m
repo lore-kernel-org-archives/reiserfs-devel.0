@@ -1,36 +1,78 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
 Subject: Re: file as a directory
-Date: Sat, 27 Nov 2004 14:49:37 +0200
-Message-ID: <20041127124937.GO26192@nysv.org>
-References: <2c59f00304112205546349e88e@mail.gmail.com> <1101287762.1267.41.camel@pear.st-and.ac.uk> <4d8e3fd304112407023ff0a33d@mail.gmail.com> <200411241711.28393.christian.mayrhuber@gmx.net> <1101379820.2838.15.camel@grape.st-and.ac.uk> <41A773CD.6000802@namesys.com>
+Date: Sat, 27 Nov 2004 14:14:18 +0100
+Message-ID: <200411271414.18801.christian.mayrhuber@gmx.net>
+References: <2c59f00304112205546349e88e@mail.gmail.com> <200411262213.58242.christian.mayrhuber@gmx.net> <1101553779.3680.28.camel@grape.st-and.ac.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22598-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22599-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1101553779.3680.28.camel@grape.st-and.ac.uk>
 Content-Disposition: inline
-In-Reply-To: <41A773CD.6000802@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>, linux-kernel@vger.kernel.org
+To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+Cc: reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>, linux-kernel@vger.kernel.org
 
-On Fri, Nov 26, 2004 at 10:19:57AM -0800, Hans Reiser wrote:
+On Saturday 27 November 2004 12:09, Peter Foldiak wrote:
+> On Fri, 2004-11-26 at 21:13, Christian Mayrhuber wrote:
+> > Regarding namespace unification + XPath:
+> > For files: cat /etc/passwd/[. = "joe"] should work like in XPath.
+> 
+> I don't understand this. Why would you need the "."? And why the /
+> between passwd and [ ?
+Yes, I was confused by /etc/passwd/[username] in an earlier email.
+I think we both mean basically the same.
 
->For the case Peter cites, yes, it does add clutter to the pathname to 
->say "..metas" (actually, it is "...." now in the current reiser4, not 
->"..metas").  This is because you aren't looking for metafile 
+> /etc/passwd/joe/shell
+> 
+> whould be the shell joe uses.
+Yes.
 
-"...." shound like something that could be an alias for ../..
-so not much better than reserving the word "metas" from the namespace.
+> So by default, /etc/passwd/joe should be equivalent to /etc/passwd[user
+> = "joe"]
+Yes.
+/etc/passwd/joe/shell would be equivalent to
+/etc/passwd[shell = "/bin/bash"]/joe/shell if joe has bash as shell, right?
 
-I guess I'll still go with ..metas here, as it's the best compromise
-showed. Or maybe even ..meta (as there is no need for the plural imo)
+> 
+> But you should be able to select based on fullname too:
+> 
+> /etc/passwd[fullname = "Joe Smith"]
+Ok.
+This means that any XPath like expression will need to return a directory 
+entry representing a restricted view on the /etc/passwd contents.
+The result of 'ls /etc/passwd[fullname = "Joe Smith"]' would be alike
+'drwxr-xr-x  2 root root 48 2004-11-27 13:48 joe', right?
 
-Just re-opening a damned useless, old, tired and daft can of worms :P
+> 
+> and
+> 
+> /etc/passwd[shell = "/bin/bash"]/user
+> 
+> should give you the user names of all users whose shell is /bin/bash,
+> right?
+I'm confused again.
+I expected 'ls /etc/passwd[shell = "/bin/bash"]/user' to give you the
+passwd entries of "user" and 'ls /etc/passwd[shell = "/bin/bash"]/' to
+give the users that have a bash shell.
+
+
+> > # cd /etc/passwd/
+> > # ls -a *
+> > . .. .... joe root
+> > # cd joe
+> > # ls
+> > gid home passwd shell uid
+> 
+> yes, but where is the username? that would be the first one listed here,
+> right?
+joe is the username and a directory. There is no username entry in the
+joe directory, because the username is already in the directory.
+You can rename a user by renaming joe. 'mv joe newname'.
 
 -- 
-mjt
-
+lg, Chris
