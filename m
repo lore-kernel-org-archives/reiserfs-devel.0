@@ -1,31 +1,58 @@
-From: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
-Subject: Re: Can we have announcements on reiserfs-progs'
- progress?
-Date: Wed, 28 Aug 2002 10:43:25 +0200
-Message-ID: <m3n0r72x1u.fsf@merlin.emma.line.org>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: Can we have announcements on reiserfs-progs' progress?
+Date: Wed, 28 Aug 2002 16:58:25 +0400
+Message-ID: <200208281658.25707.vitaly@namesys.com>
 References: <3D6C3FCA.5000908@mb.tu-ilmenau.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11332-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11333-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3D6C3FCA.5000908@mb.tu-ilmenau.de> (Manuel Krause's message of
- "Wed, 28 Aug 2002 05:13:14 +0200")
+In-Reply-To: <3D6C3FCA.5000908@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>, reiserfs-list <reiserfs-list@namesys.com>
 
-Manuel Krause <manuel.krause@mb.tu-ilmenau.de> writes:
+On Wednesday 28 August 2002 07:13, Manuel Krause wrote:
+> Hi all!
+>
+> Thank you all for making me able to complain again. :-)) Sorry...
+>
+> I found a new pre-release of the reiserfs-progs on the namesys server.
+>
+> Can we have announcements on the list even about those prerelease facts
+> and a summarized Changelog with it?
+
+Actually I intended to put it on our internal ftp server for testing, but 
+put it mistakenly to public ftp instead - that is why tehre was no annoncement. 
+As no problem was found so far, I have put it to pre folder and yes, we can 
+annonce
+
+> The actual Changelog diff seems to be quite important:
+> "2002-15-11
+>    * reiserfsck
+> 	Correction of nlinks on fix-fixable was disabled, because
+> 	fix-fixable zeroes nlinks on the first pass and wants to
+> 	increment them on semantic pass. But semantic pass is skipped
+> 	if there are fatal corruptions.
+> 2002-08-11
+>    * reiserfsck
+> 	exit codes were fixed"
+
+And another one small bug in fsck was fixed.
+Many warning/error messages were changed to more user friendly form.
 
 > And avoid "2002-15-11" in the packages' Changelog _before_ this date has
 > gone - That may confuse my mind completely before having my coffee in
 > the morning  ;-))
 
-2002-15-11 is not a valid date (as per ISO 8601, at least, but which you
-should heed if you use dashes, it's just YYYY-MM-DD). 2002-08-15 is
-probably what is meant.
+;) ok it is fixed.
+
+Ok, there is a new 3.6.4-pre1 version in the pub/reiserfsprogs/pre folder. 
 
 -- 
-Matthias Andree
+
+Thanks,
+Vitaly Fertman
