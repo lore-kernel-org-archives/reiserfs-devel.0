@@ -1,24 +1,25 @@
-From: Tom Vier <tmv@comcast.net>
-Subject: Re: data=ordered patch for 2.6.5?
-Date: Sun, 4 Apr 2004 20:20:34 -0400
-Message-ID: <20040405002034.GC9905@zero>
-References: <20040404234544.GA9905@zero>
-Reply-To: Tom Vier <tmv@comcast.net>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Subject: Re: "Metas"
+Date: Sun, 04 Apr 2004 20:32:44 -0400 EDT
+Message-ID: <35813986328-BeMail@cr593174-a>
+References: <200404050212.05364.chrivers@iversen-net.dk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17699-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17700-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040404234544.GA9905@zero>
+In-Reply-To: <200404050212.05364.chrivers@iversen-net.dk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-is it ok to use the 2.6.5-rc2-mm2 patch on 2.6.5?
+Christian Iversen wrote on Mon, 5 Apr 2004 02:12:05 +0200:
+> Just a thought. Who on this list does NOT support "..." instead of metas?
 
--- 
-Tom Vier <tmv@comcast.net>
-DSA Key ID 0x15741ECE
+Windows has that as the parent of the parent directory.
+
+I also use it as the second parent directory in a file system that allows multiple parents, .... is the third parent directory, and so on.  But that doesn't really matter since nobody's making much use of multiple parents yet.
+
+- Alex
