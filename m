@@ -1,42 +1,64 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Re: New to reiserfs
-Date: Tue, 14 May 2002 00:57:53 +0400
-Message-ID: <3CE028D1.8070605@namesys.com>
-References: <200205132153.59075.Dieter.Nuetzel@hamburg.de> <3CE01BE0.2000003@swelltech.com>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: New to reiserfs
+Date: Mon, 13 May 2002 23:24:24 +0200
+Message-ID: <200205132324.24309.Dieter.Nuetzel@hamburg.de>
+References: <200205132153.59075.Dieter.Nuetzel@hamburg.de> <3CE028A3.3080002@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10304-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10305-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <3CE028A3.3080002@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-9"; format="flowed"
-To: Joe Cooper <joe@swelltech.com>
-Cc: =?ISO-8859-15?Q?Dieter_N=FCtzel?= <Dieter.Nuetzel@hamburg.de>, Chris Mason <mason@suse.com>, Oleg Drokin <green@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, JPASTORM@esade.edu, Nikita Danilov <Nikita@Namesys.COM>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Chris Mason <mason@suse.com>, Oleg Drokin <green@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, JPASTORM@esade.edu
 
-Joe Cooper wrote:
-
+On Monday 13 May 2002 22:57, Hans Reiser wrote:
 > Dieter N=FCtzel wrote:
->
->> On Monday 13 May 2002 10:07, Hans Reiser wrote:
->
->
->>> squid will benefit from your putting all files in one directory.
->>
->
-> Hi Hans and all,
->
-> Out of curiosity...When did this become true?  I haven't tested in=20
-> some time, but way back in 2.4.0pre days it was very far from reality=20
-> (all-in-one-dir was about 20-30% slower than the standard default of=20
-> x/256/256).
->
-> I'll be happy to run some Polygraph runs of this...I wasn't aware=20
-> anything had changed, however.  Perhaps someone has a pointer for the=20
-> relevant changelog entries?
+> >On Monday 13 May 2002 10:07, Hans Reiser wrote:
+> >>>>4.- I have a PIII 1 GHz, 512 MB RAM, SCSI server where I run sendmail,
+> >>>>bind and squid. Will I have problems with performance if I migrate to
+> >>>>reiserfs?
+> >>
+> >>sendmail will be lower in performance when using reiserfs unless you use
+> >>the latest not yet released patches and turned data journaling on.
+> >
+> >More speed numbers on this to come with related post.
+> >
+> >>Do you really push the performance limits of the machine as a mail
+> >> server?
+> >
+> >You mean if it is worth?
 
-Perhaps I misremember, Nikita, please comment.
+Here I don't understand you that's why I asking.
 
-Hans
+> >>squid will benefit from your putting all files in one directory.
+> >
+> >So I should clobber my squid partition/dir and reconfigure to put all
+> > files into only one directory and let the squid hierarchy alone?
+> >
+> >Thanks,
+> >	Dieter
+>
+> I don't understand you.
+>
+> You should put squid into one big directory (not using their kludge that
+> avoids making directories too large by using a tree)
 
+So you understand me right...;-)
 
+> unless you have multiple processors (in which case the VFS directory giant
+> lock will hurt you).
+
+BKL?
+
+Where is the limit 2, 4, or even more CPUs?
+I'll have two in some days.
+
+Thanks,
+	Dieter
+
+PS You know that I'm on the preemption+lock-break, O(1)-scheduler track...;=
+-)
