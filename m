@@ -1,49 +1,41 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
-Subject: Re: silent semantic changes with reiser4
-Date: Sat, 28 Aug 2004 19:14:53 -0400
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <200408282314.i7SNErYv003270@localhost.localdomain>
-References: <jamie@shareable.org>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: Message from Jamie Lokier <jamie@shareable.org> 
-   of "Thu, 26 Aug 2004 16:02:02 +0100." <20040826150202.GE5733@mail.shareable.org> 
+From: Alexander Lyamin <flx@msu.ru>
+Subject: Re:  silent semantic changes with reiser4
+Date: Sun, 29 Aug 2004 19:00:41 +0400
+Message-ID: <20040829150041.GD9471@alias>
+References: <Pine.LNX.4.44.0408271043090.10272-100000@chimarrao.boston.redhat.com> <412F7D63.4000109@namesys.com>
+Reply-To: flx@msu.ru
+Mime-Version: 1.0
+Return-path: <reiserfs-list-return-21059-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <412F7D63.4000109@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: Rik van Riel <riel@redhat.com>, David Masover <ninja@slaphack.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Jamie Lokier <jamie@shareable.org> said:
+Fri, Aug 27, 2004 at 11:28:51AM -0700, Hans Reiser wrote:
+> Rik van Riel wrote:
+> 
+> >
+> >
+> >Currently I see no way to distinguish between the stuff
+> >that should be backed up and the stuff that shouldn't.
+> >
+> > 
+> >
+> We create filename/pseudos/backup, and that tells the archiver what to 
+> do.....
 
-[...]
+its ugly idea.
 
-> When a simple "cd" into .tar.gz or .iso is implemented properly, it
-> will have _no_ performance penalty after you have first looked in the
-> file, so long as it remains in the on-disk cache.  And, the filesystem
-> will manage that cache intelligently.
-
-Nonsense. The .iso or .tar or whatever would have to be kept un-isoed or
-un-tarred in memory (or on disk cache) for this to be true, and that takes
-quite a long time. Each time you want to peek anew at linux/Makefile, the
-whole tarfile will have to be read and stored somewhere, and that is just
-too slow for my taste. The .tar format is optimized for compact storage,
-the on-disk format of a filesystem is optimized for fast access and
-modifiability. Now go ahead and enlarge a file on your .iso/.tar a bit...it
-will take ages to rebuild the whole thing. There is a _reason_ why there
-are filesystems and archives, and they use different formats. If it weren't
-so, everybody and Aunt Tillie would just carry .ext3's around, and would
-wonder what the heck all this fuss is about.
-
-> Imagine: for looking at source files and such, you probably won't
-> bother untarring in future, and you won't bother keeping untarred
-> source trees in your home directory for easy access to things you look
-> at often.  Why waste the space?  You could install whole applications
-> as a .tar and run them from within it, with no performance penalty.
-
-Perpetuum mobile is a nice idea too.
+representations should be distinguished from sources. and its reasonably
+to put this distinguisher somewhere in namespace. but filename/pseudos/backup
+is plain ugly.
 -- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+"the liberation loophole will make it clear.."
+lex lyamin
