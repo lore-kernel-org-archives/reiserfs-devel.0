@@ -1,27 +1,28 @@
-From: f00bar <f00bar@sbcglobal.net>
-Subject: Future of user space tools for Reiser4
-Date: Tue, 3 Aug 2004 07:57:14 -0700 (PDT)
-Message-ID: <20040803145714.73646.qmail@web80804.mail.yahoo.com>
-References: <20040802224500.35985.qmail@web80804.mail.yahoo.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: reiserfsprogs 3.6.18 release
+Date: Tue, 3 Aug 2004 20:14:33 +0400
+Message-ID: <200408032014.33703.vitaly@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19944-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19946-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040802224500.35985.qmail@web80804.mail.yahoo.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-What is the future of the user space tools for
-Reiser4?
+Hi all,
 
-My understanding is that resize tool and possibly
-others may remain proprietary. What does this mean?
-Does it mean that the tools are to be licensed for end
-user use or that the tools will only be included in
-proprietary programs? If they can be licensed for end
-user use, how does one go about licensing them?
+The new release is available on our ftp site, it inlcludes :
+- fixes in the big endian support code;
+- fixes in unaligned access to unformatted block pointers on ia64;
+- handle suse's block allocator changes correctly;
+- syncing host & journal devices after replaing every transaction.
+
+-- 
+Thanks,
+Vitaly Fertman
 
