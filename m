@@ -1,64 +1,77 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiser4 data journalling?
-Date: Sat, 30 Aug 2003 01:47:47 +0400
-Message-ID: <3F4FCA03.8060706@namesys.com>
-References: <3F4E3AF9.2060100@tupshin.com> <16206.16138.72832.920045@laputa.namesys.com> <3F4E6AA4.3030900@namesys.com> <20030829001814.GB9019@zero> <3F4E9C6D.2080009@namesys.com> <20030829012322.GJ21352@matchmail.com>
+From: <system_lists@nullzone.org>
+Subject: RE: reiser4 data journalling?
+Date: Fri, 29 Aug 2003 23:56:23 +0200
+Message-ID: <008201c36e78$63425bd0$0202a8c0@main>
+References: <3F4FC8FD.1050303@namesys.com>
+Reply-To: <system_lists@nullzone.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15499-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-15500-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030829012322.GJ21352@matchmail.com>
+In-Reply-To: <3F4FC8FD.1050303@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Mike Fedyk <mfedyk@matchmail.com>
-Cc: Tom Vier <tmv@comcast.net>, Reiserfs List <reiserfs-list@namesys.com>
-
-Mike Fedyk wrote:
-
->On Fri, Aug 29, 2003 at 04:21:01AM +0400, Hans Reiser wrote:
->  
->
->>Tom Vier wrote:
->>    
->>
->>>would it be much more difficult to allow non-page aligned bufs to be 
->>>written
->>>atomically? a fully atomic fs would be very nice. otherwise, a lot of utils
->>>and shell builtins would have to be modded to insure page alignment. it
->>>would be neat if all the regular builtins (cp, mv, ln) were atomic. of
->>>course, even neater would be the ability to group multiple ops into one
->>>atomic action. (this is probably already planned - it's been a while since 
->>>i
->>>read the reiserfs4 paper on the namesys site.)
->>>
->>>
->>>
->>>      
->>>
->>reiser4 does all this that you ask for, although the user space API is 
->>not yet compiling;-)
->>
->>    
->>
->
->So you can have one 5k memory area that spans two pages, and it will act on
->them atomically?
->
-we deal with files not memory areas.
-
->  Or does that mean that the utils are already page aligned
->by other kernel mechanisims?  Or that they'll have to use the reiser API to
->do some of the above (other than the op grouping)?
->
->
->  
->
+Content-Type: text/plain; charset="us-ascii"
+To: 'Reiserfs List' <reiserfs-list@namesys.com>
 
 
--- 
-Hans
+> -----Mensaje original-----
+> De: Hans Reiser [mailto:reiser@namesys.com]
+> Enviado el: viernes, 29 de agosto de 2003 23:43
+> Para: Nikita Danilov
+> CC: Oleg Drokin; Mike Fedyk; Tom Vier; Reiserfs List
+> Asunto: Re: reiser4 data journalling?
+>=20
+> Nikita Danilov wrote:
+>=20
+> >Hans Reiser writes:
+> > > Oleg Drokin wrote:
+> > >
+> > > >Hello!
+> > > >
+> > > >On Thu, Aug 28, 2003 at 06:23:22PM -0700, Mike Fedyk wrote:
+> > > >
+> > > >
+> > > >
+> > > >>So you can have one 5k memory area that spans two pages, and it =
+will
+> act on
+> > > >>them atomically?  Or does that mean that the utils are already =
+page
+> aligned
+> > > >>by other kernel mechanisims?  Or that they'll have to use the =
+reiser
+> API to
+> > > >>do some of the above (other than the op grouping)?
+> > > >>
+> > > >>
+> > > >
+> > > >Data does not need to be page aligned for atomic operations.
+> > > >
+> > > >Bye,
+> > > >    Oleg
+> > > >
+> > > >
+> > > >
+> > > >
+> > > in reiser4
+> >
+> >Why?
+> >
+> >
+> >
+> Because atomicity in ext3 basically consists of guaranteeing that the
+> filesystem is consistent, and due to the disk drive implementation 4k
+> blocks are written atomically.  So, if you span more than one block, =
+it is
+> not guaranteed to be atomic.
+>=20
+> Someone should correct me if I got it wrong, as ext3 is not my
+> specialty....
+>=20
+
+I think that is right.
 
 
