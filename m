@@ -1,33 +1,29 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Subject: Re: file as a directory
-Date: Tue, 21 Dec 2004 08:16:56 -0500 EST
-Message-ID: <37345179322-BeMail@cr593174-a>
-References: <41C7B549.7090705@slaphack.com>
+From: Tom Vier <tmv@comcast.net>
+Subject: Re: Need Warm Fuzzies, ReiserFS (3)
+Date: Tue, 21 Dec 2004 10:49:56 -0500
+Message-ID: <20041221154956.GA15688@zero>
+References: <41C66615.5010206@simutronics.com> <200412201725.03216.christian.mayrhuber@gmx.net> <1046303449.20041220173238@tnonline.net> <200412202124.40569.christian.mayrhuber@gmx.net> <1651262095.20041220213110@tnonline.net> <20041220212618.GA12487@zero> <393297117.20041220223429@tnonline.net>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22871-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22873-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41C7B549.7090705@slaphack.com>
+Content-Disposition: inline
+In-Reply-To: <393297117.20041220223429@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: David Masover <ninja@slaphack.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-David Masover wrote on Mon, 20 Dec 2004 23:31:53 -0600:
-> Would it work in a typical setup?  My instinct is no.
+On Mon, Dec 20, 2004 at 10:34:29PM +0100, Spam wrote:
+>   Most people with Win2000/XP have write-cache enabled. Yet there are
+>   rarely problems due to power failures?
 
-Depends on how big the directory loop and attached files are (basically all
-the descendants of the directory you're trying to delete).  In most cases,
-you don't have millions of directories in a loop.  With millions of files,
-it might run out of RAM to keep track of locked inodes, making it impossible
-to delete a directory in a loop that somewhere has millions of files as
-descendants.  The awkward user work-around would be to move the files
-somewhere else (files don't have descendants so that's feasible), delete
-the directory, then move them back.
+fwih (from netbsd tech-kern) windows issues cache flushes. I don't know how
+people know that, though.
 
-Of course, in a RAM disk, there can't be that many files :-)
-
-- Alex
+-- 
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0x15741ECE
