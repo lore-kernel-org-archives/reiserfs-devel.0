@@ -1,36 +1,65 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: 2.6.10-rc3-cko1
-Date: Mon, 20 Dec 2004 08:06:36 +0200
-Message-ID: <20041220060636.GT26192@nysv.org>
-References: <200412181843.49942.sikkh@wp.pl>
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Subject: Re: Need Warm Fuzzies, ReiserFS (3)
+Date: Mon, 20 Dec 2004 13:31:25 +0100
+Message-ID: <200412201331.25180.christian.mayrhuber@gmx.net>
+References: <41C66615.5010206@simutronics.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22845-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22846-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <41C66615.5010206@simutronics.com>
 Content-Disposition: inline
-In-Reply-To: <200412181843.49942.sikkh@wp.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Piotr Neuman <sikkh@wp.pl>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Sat, Dec 18, 2004 at 06:43:49PM +0100, Piotr Neuman wrote:
->
->Regards to all reiser developers for great work.
+On Monday 20 December 2004 06:41, Jim Miller wrote:
+> Hi everyone,
+> 
+> I have recently been burned by the XFS file system -- After a recent 
+> system crash/hang we experienced a lot of file corruption and needed to 
+> restore from a backup that was ~12hrs old.  It seems that XFS keeps a 
+> lot of journal info in memory and a sudden system crash (hang) prevents 
+> it from writing out the journal. 
+> 
+> We run a few game servers that have a large number of large and small 
+> files that are actively accessed (and restoring from a backup 12hrs old 
+> made a lot of our gamers very unhappy).  We were running EXT3 (which in 
+> the past recovered nicely from hangs/crashes) but performance was so bad 
+> we needed a new FS so 6mos ago a decision was made to go with XFS. 
+> I would like to switch to ReiserFS (v3) (I understand Reiser4 isn't 
+> quite ready for production use) and was hoping to get the warm fuzzies 
+> about making this decision.  I know it's much faster than ext3 but at 
+> this point I need to feel good about it's ability to recover from a 
+> sudden system hang/crash/reset.
+> 
+> 
+> Thanks,
+> Jim
 
-And to you, sikkhmeister :)
+My experience of Reiserfs recovery is good. I had once a HW RAID5 array
+with a defective controller unable to detect harddisk errors. Though two
+of the five disks failed I was able to recover around 80% of the mail
+folders.
 
-(Just applied the patch, I'll let you know how it goes :)
+However, there were cases on this list where reiserfsck had problems and
+namesys needed a metadata dump to fix reiserfsck. I guess most problems
+it had are fixed now. Note: always use the newest reiserfsck version from 
+namesys :-)
 
->ps. At the moment software suspend 2 is not included (I'm too lazy and, 
->swsusp2 is usually most work ;-). Will be there most likely in 2.6.10 
->release.
+If you need good performance and data integrity I'd go with the following
+mount options for drives at controllers
+1) with battery backup: rw,noatime,nodiratime,notail
+2) without battery backup: rw,noatime,nodiratime,notail,barrier=flush
+and a 2.6.9 kernel.
 
-swsusp2 was the turnoff when I tried to merge the 2.6.9 to a new cko..
+The barrier mount option should provide protection against a corrupted
+journal during power failure for drives with write caching enabled.
+(Mostly IDE)
 
 -- 
-mjt
+lg, Chris
 
