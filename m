@@ -1,51 +1,34 @@
-From: dos20 <ventas@dos20.com>
-Subject: problemas in make reiser4progs-0.4.20
-Date: Sun, 4 Jan 2004 00:19:56 -0300
-Message-ID: <200401040019.57067.ventas@dos20.com>
-Reply-To: ventas@dos20.com
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: reiser4progs-0.4.20 and libaal
+Date: Mon, 5 Jan 2004 13:06:02 +0300
+Message-ID: <200401051306.02914.vitaly@namesys.com>
+References: <3FF5E391.2060300@planet.nl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16420-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16421-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3FF5E391.2060300@planet.nl>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Stef van der Made <svdmade@planet.nl>, reiserfs-list@namesys.com
 
-Hello, run "make" (reiser4progs-0.4.20 in debian woody witch kernel 2.6.0) =
+Hello,
 
-and:
------------------------------------------
-libreiser4_la-libreiser4.lo(.text+0x59c):/root/tar/reiserfs/LATEST/reiser4p=
-rogs-0.4.20/libreiser4/libreiser4.c:=20
-first defined here
-collect2: ld returned 1 exit status
-make[2]: *** [libreiser4.la] Error 1
-make[2]: Leaving directory=20
-`/root/tar/reiserfs/LATEST/reiser4progs-0.4.20/libreiser4'
-make[1]: *** [all-recursive] Error 1
-make[1]: Leaving directory `/root/tar/reiserfs/LATEST/reiser4progs-0.4.20'
-make: *** [all] Error 2
-atlanta:~/tar/reiserfs/LATEST/reiser4progs-0.4.20#
------------------------------------------
+On Saturday 03 January 2004 00:33, Stef van der Made wrote:
+> While trying to compile reiser4progs I bumped into the problem that I
+> din't have libaal installed. The configure script told me that it was
+> locateed on www.namesys.com/pub/libaal. However the webserver doesn't
+> know about this location.
 
-where is the problem ?.
-thanks.
+You can obtain libaal from the same location as reiser4progs -- 
+www.namesys.com/snapshots. I will fix the link also.
 
+-- 
+Thanks,
+Vitaly Fertman
 
-
---=20
-Diego Gil
-dos20 - Soluciones Inform=E1ticas
-
-Tel. (0261) 4205122/156561429
-JABBER: dos20@jabber.org
-MSN: dos_20@hotmail.com
-WEB: www.dos20.com
-
-Use Software libre !!!,  use Mensajer=EDa Jabber, use Linux, use su=20
-inteligencia...
 
