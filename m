@@ -1,14 +1,14 @@
 From: Spam <spam@tnonline.net>
 Subject: Re: silent semantic changes with reiser4
-Date: Sun, 29 Aug 2004 18:52:17 +0200
-Message-ID: <10558145.20040829185217@tnonline.net>
+Date: Sun, 29 Aug 2004 18:53:29 +0200
+Message-ID: <956432928.20040829185329@tnonline.net>
 References: Your message of "Fri, 27 Aug 2004 22:44:04 +0200."
  <1732169380.20040827224404@tnonline.net>
  <200408291521.i7TFLsQk028363@localhost.localdomain>
 Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21068-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21069-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
