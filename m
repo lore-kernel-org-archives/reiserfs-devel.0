@@ -1,95 +1,55 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: BUG in writeback mode - from data journaling patch
-Date: Mon, 30 Aug 2004 18:03:57 +0200
-Message-ID: <200408301803.57727.Dieter.Nuetzel@hamburg.de>
-References: <d68fdf7d040819113256eba856@mail.gmail.com>
+From: Herbert Poetzl <herbert@13thfloor.at>
+Subject: Re: reiser4 plugins
+Date: Mon, 30 Aug 2004 18:02:05 +0200
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040830160205.GA7718@MAIL.13thfloor.at>
+References: <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <20040828105929.GB6746@alias> <Pine.LNX.4.58.0408281011280.2295@ppc970.osdl.org> <20040828190350.GA14152@alias> <20040828190901.GA18083@lst.de> <4130FBF8.8070005@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21112-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <d68fdf7d040819113256eba856@mail.gmail.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <4130FBF8.8070005@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: mason@suse.com, vijayan@cs.wisc.edu
-Cc: reiserfs-list@namesys.com, Vijayan Prabhakaran <pvijayan@gmail.com>
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, flx@msu.ru, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Am Donnerstag, 19. August 2004 20:32 schrieb Vijayan Prabhakaran:
-> Dear Chris Mason,
->
-> I found a bug in writeback mode. In writeback mode, when a file block
-> was overwritten, the file's stat information was not getting updated.
-> For more details on this, please refer to my previous mail on the same
-> topic.
->
-> I tracked down the bug to the data journaling patch.
->
-> Bug description:
-> ----------------
->
-> In file inode.c, there is a function called __commit_write(). In that
-> function, there is a "if" condition:
->
-> if (reiserfs_data_ordered(inode->i_sb)) {
->   lock_kernel();
->   add_to_flushlist(inode, bh);
->   /* if we don't update the inode trans information,
->    * an fsync(fd) might not catch these data blocks
->    */
->
->   reiserfs_update_inode_transaction(inode);
->   unlock_kernel();
-> } else {
->   buffer_insert_inode_data_queue(bh, inode);
-> }
->
-> If you look at the condition, for ordered mode, the inode transaction
-> information gets updated by the call
-> reiserfs_update_inode_transaction(). But, for writeback mode, this is
-> not done.
->
-> Since the inode transaction information is not updated, later in
-> function __commit_trans_jl() (which is in file journal.c), the
-> following "if" condition fails.
->
-> flush_commit_only:
-> if (journal_list_still_alive(inode->i_sb, id)) {
->   ...
-> }
->
-> Because of this failure, the file's stat data, even though available
-> in the transaction list, did not get written to the disk.
->
-> Bug fix:
-> --------
->
-> If we add reiserfs_update_inode_transaction() call in __commit_write()
-> for the writeback mode, then it works fine. That is,
->
-> if (reiserfs_data_ordered(inode->i_sb)) {
->   lock_kernel();
->   add_to_flushlist(inode, bh);
->   /* if we don't update the inode trans information,
->    * an fsync(fd) might not catch these data blocks
->    */
->
->   reiserfs_update_inode_transaction(inode);
->   unlock_kernel();
-> } else {
->   reiserfs_update_inode_transaction(inode);
->   buffer_insert_inode_data_queue(bh, inode);
-> }
->
-> Could you please verify this fix and if you think it is appropriate,
-> can you please add this to your patch.
->
-> I appreciate your help.
+On Sat, Aug 28, 2004 at 02:41:12PM -0700, Hans Reiser wrote:
+> I think it is reasonable to make the -nopseudos (turns off the metafiles 
+> ) mount option mandatory, until the bugs are resolved.
+> 
+> Our testing did not find these metafile/VFS bugs because of the reason 
+> for all our bugs, we screwed up. 
+> 
+> There is a distinct difference between some persons and I, which is that 
+> some think all of reiser4 should be excluded until metafiles are 
+> implemented by VFS some long time from now, and I, in that I merely 
+> think buggy optional features should be turned off until they are 
+> fixed.  I, being renowned for my paranoia and asininity as I am, think 
+> these persons find it convenient as an excuse to keep us from competing, 
+> and I think that if we were slower there would be less hassle every time 
+> we try to get into the kernel. 
+> 
+> While reiser4 has some significant roughnesses remaining in its 
+> performance, I think the average user would find it performs better than 
+> other filesystems, and is stable enough for, say, a laptop, and I 
+> predict that by the time we have it stable enough for mission critical 
+> servers, all the roughness in various important corner cases will be 
+> gone.  
+> 
+> Persons benchmarking it with tarballs, please be sure to use tarballs 
+> created on reiser4, not ext2 tarballs, readdir order matters a lot for 
+> sorted directory filesystems.
 
-Chris,
+hmm, so probably we have to wait until all
+tar packagers moved to reiser4, so that the
+available tar files are 'sorted properly' ...
 
-any thoughts on this?
+best,
+Herbert
 
--Dieter
+> Hans
+> -
+> To unsubscribe from this list: send the line "unsubscribe linux-fsdevel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
