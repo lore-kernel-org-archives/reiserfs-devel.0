@@ -1,150 +1,98 @@
-From: Jeff Mahoney <jeffm@novell.com>
-Subject: [PATCH] Support for unsupported options.
-Date: Fri, 08 Oct 2004 16:41:32 -0400
-Message-ID: <4166FB7C.9040707@novell.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Interesting deletion idea
+Date: Fri, 08 Oct 2004 18:14:37 -0400
+Message-ID: <200410082214.i98MEbfT003666@turing-police.cc.vt.edu>
+References: <41662BC7.80309@comcast.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------050306060500060006080506"
-Return-path: <reiserfs-list-return-22031-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_-613764224P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22032-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: Your message of "Fri, 08 Oct 2004 01:55:19 EDT."
+             <41662BC7.80309@comcast.net> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: John Richard Moser <nigelenki@comcast.net>
+Cc: reiserfs-list@namesys.com
 
---------------050306060500060006080506
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--==_Exmh_-613764224P
+Content-Type: text/plain; charset=us-ascii
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Fri, 08 Oct 2004 01:55:19 EDT, John Richard Moser said:
 
+> It'd be fun to be able to mount -o remount,erase=gutman / and have the
+> gutman algorithm erase everything.  It may be interesting to get the
+> journal to work around parts of the journal being erased, and to do
+> other things in an attempt to allow heavy erasure algorithms (Gutman is
+> a 34 pass alg IIRC) to function without slowing operations down visibly.
 
-Yes, the subject sounds silly, but it's needed.
+Anybody seriously proposing Gutman's 35 passes needs to be taken out back
+and shot - or at least worked over with a rubber hose.  The *only* reason
+that there's 35 passes is so that at least 3 or 4 passes will tickle a
+corner case of some on-media encoding scheme (for instance, if you don't
+have any MFM drives left, you can toss like half the entries).
 
-The set of allowable mount options shouldn't change based on the running
-kernel configuration. The feature that the option corresponds to may be
-unavailable, but it should be sufficient to warn the user that the the
-feature is disabled, but the mount has succeeded.
+Current thinking from the spooks who should know:
 
-Ext3 does this for things like acl/xattr, and I feel that we should as well.
+Canadian RCMP TSSIT OPS-II says: "Must first be checked for correct functioning
+and then have all storage areas overwritten once with the binary digit ONE,
+once with the binary digit ZERO and once with a single numeric, alphabetic or
+special character, " (http://jya.com/rcmp2.htm)
 
-Fortunately, the code to implement it is trivial.
+American DoD 5220-22.M says: Overwriting all addressable locations with a
+character, its complement, then a random character and verify.
 
-Attached are two patches.
-* reiserfs-unsupported-opts.diff
-~  - Adds a REISERFS_UNSUPPORTED_OPT mount flag, and uses it to denote
-~    when a mount option is allowed, but not supported in the running
-~    configuration.
-~  - Rather than setting/clearing this bit, it's treated as special
-~    and issues a warning using the name of the mount option.
-* reiserfs-unsupported-acl.diff
-~  - Uses the above flag to denote ACLs and user xattrs as unsupported
-~    when support is not compiled in.
+DOD 5220-22.M applies to civilian contractors, and is approved for material
+rated up to SECRET.  TOP SECRET or higher still calls for physical destruction
+of media or mass degaussing.
 
-Currently, if a filesystem is mounted with -oacl and they are not
-compiled in, the filesystem will fail to mount.
+In other words, our spooks think that if 3 passes isn't enough, you need to
+totally destroy it.
 
-Hans - Please take a quick look, I'd like to get this one upstream ASAP.
+(Two notes - (1) that read-back verify *is* required to make sure you did it
+right, and (2) neither one worries about the information leakage from bad blocks
+that have been remapped by the drive)
 
-- -Jeff
+> The erasure should probably only apply to relavent parts of disk.  Inode
+> information, for example, would be pointless; journal transactions, file
+> data, and directory entries, on the other hand, are all possible
+> sensitive information; the filename may be sensitive data (directory entry).
 
-- --
-Jeff Mahoney
-SuSE Labs
+Careful analysis of the inodes themselves has a *lot* more information leakage
+than you might expect - if the filesystem uses *ANY* sort of predictable order
+for inode allocation, you can look at the free inodes and trace back what
+order they were freed in (very easy if the filesystem has a free inode list,
+a bit more of a challenge if it allocates on the fly like reiser3).  Once
+you know that, you know what uid/gid the file belonged to, its size, and
+the ctime/mtime/atime.
+
+That's a *LOT* of info that can be used to reconstruct what was going on.
+
+> Buffering multiple overwrites of the same area and applying them in a
+> sane and orderly manner may allow you to catch rapid, repeted overwrites
+> of disk areas and wait until several have gone by before actually
+> applying them.  This would allow you to avoid some of the overhead of
+> attempting to destroy overwritten data.
+
+Actually, that's the *last* think you want to do - you really need to send
+3 overwrites down the pipe to the disk *and make sure you have a write barrier
+between them*.  The *last* think you want is to send 3 writes to the disk,
+and have the disk's write cache bugger^Wbuffer "optimize" it so only the
+last written block actually goes to disk....
+
+--==_Exmh_-613764224P
+Content-Type: application/pgp-signature
+
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Version: GnuPG v1.2.6 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-iD8DBQFBZvt8LPWxlyuTD7IRAkVsAKCSEcslVXF9PUSQpP9DAUGgYzKCawCfeG8W
-ZvCfZtmxZlmdxs6cU7AzOh4=
-=iQbU
+iD8DBQFBZxFMcC3lWbTT17ARAt4zAJ9MvzdYImOhtYqeVtXthKZx2kRj2wCdGzV0
+U6WkiUI12umkO31hkoY1bLs=
+=ek4+
 -----END PGP SIGNATURE-----
 
---------------050306060500060006080506
-Content-Type: text/plain;
- name="reiserfs-unsupported-acl.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="reiserfs-unsupported-acl.diff"
-
-This patch uses the REISERFS_UNSUPPORTED_OPT flag to denote -o(no)acl, and
--o(no)user_xattr as unsupported, but allowable, when support isn't built into
-the kernel.
-
-Signed-off-by: Jeff Mahoney <jeffm@novell.com>
-
-diff -ruPX dontdiff linux-2.6.8/fs/reiserfs/super.c linux-2.6.8.fix/fs/reiserfs/super.c
---- linux-2.6.8/fs/reiserfs/super.c	2004-10-08 16:46:09.070660248 -0400
-+++ linux-2.6.8.fix/fs/reiserfs/super.c	2004-10-08 16:42:59.896419104 -0400
-@@ -741,11 +747,19 @@
- 	{"conv",	.setmask = 1<<REISERFS_CONVERT},
- 	{"attrs",	.setmask = 1<<REISERFS_ATTRS},
- 	{"noattrs",	.clrmask = 1<<REISERFS_ATTRS},
-+#ifdef CONFIG_REISERFS_FS_XATTR
- 	{"user_xattr",	.setmask = 1<<REISERFS_XATTRS_USER},
- 	{"nouser_xattr",.clrmask = 1<<REISERFS_XATTRS_USER},
-+#else
-+	{"user_xattr",	.setmask = 1<<REISERFS_UNSUPPORTED_OPT},
-+	{"nouser_xattr",.clrmask = 1<<REISERFS_UNSUPPORTED_OPT},
-+#endif
- #ifdef CONFIG_REISERFS_FS_POSIX_ACL
- 	{"acl",		.setmask = 1<<REISERFS_POSIXACL},
- 	{"noacl",	.clrmask = 1<<REISERFS_POSIXACL},
-+#else
-+	{"acl",		.setmask = 1<<REISERFS_UNSUPPORTED_OPT},
-+	{"noacl",	.clrmask = 1<<REISERFS_UNSUPPORTED_OPT},
- #endif
- 	{"nolog",},	 /* This is unsupported */
- 	{"replayonly",	.setmask = 1<<REPLAYONLY},
-
---------------050306060500060006080506
-Content-Type: text/plain;
- name="reiserfs-unsupported-opts.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="reiserfs-unsupported-opts.diff"
-
-This patch adds a REISERFS_UNSUPPORTED_OPT flag to denote when a mount option
-is allowable, but is unsupported in the running configuration. This allows
-the potential for the set of mount options to be consistent, regardless of
-what features the kernel is compiled with.
-
-Rather than failing the mount, a warning is issued and the mount succeeds.
-
-Signed-off-by: Jeff Mahoney <jeffm@novell.com>
-
-diff -ruPX dontdiff linux-2.6.8/fs/reiserfs/super.c linux-2.6.8.fix/fs/reiserfs/super.c
---- linux-2.6.8/fs/reiserfs/super.c	2004-10-08 16:46:09.070660248 -0400
-+++ linux-2.6.8.fix/fs/reiserfs/super.c	2004-10-08 16:42:59.896419104 -0400
-@@ -659,8 +659,14 @@
-     for (opt = opts; opt->option_name; opt ++) {
- 	if (!strncmp (p, opt->option_name, strlen (opt->option_name))) {
- 	    if (bit_flags) {
--		*bit_flags &= ~opt->clrmask;
--		*bit_flags |= opt->setmask;
-+                if (opt->clrmask == (1 << REISERFS_UNSUPPORTED_OPT))
-+                    reiserfs_warning (s, "%s not supported.", p);
-+                else
-+                    *bit_flags &= ~opt->clrmask;
-+                if (opt->setmask == (1 << REISERFS_UNSUPPORTED_OPT))
-+                    reiserfs_warning (s, "%s not supported.", p);
-+                else
-+                    *bit_flags |= opt->setmask;
- 	    }
- 	    break;
- 	}
-diff -ruPX dontdiff linux-2.6.8/include/linux/reiserfs_fs_sb.h linux-2.6.8.fix/include/linux/reiserfs_fs_sb.h
---- linux-2.6.8/include/linux/reiserfs_fs_sb.h	2004-10-08 16:46:04.541348808 -0400
-+++ linux-2.6.8.fix/include/linux/reiserfs_fs_sb.h	2004-10-08 16:31:50.641161368 -0400
-@@ -467,6 +467,7 @@
-     REISERFS_TEST2,
-     REISERFS_TEST3,
-     REISERFS_TEST4,
-+    REISERFS_UNSUPPORTED_OPT,
- };
- 
- #define reiserfs_r5_hash(s) (REISERFS_SB(s)->s_mount_opt & (1 << FORCE_R5_HASH))
-
---------------050306060500060006080506--
+--==_Exmh_-613764224P--
