@@ -1,44 +1,34 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: kernel BUG 362
-Date: Fri, 01 Apr 2005 16:26:54 +0400
-Message-ID: <1112358403.3757.43.camel@tribesman.namesys.com>
-References: <435.921-16966-1988335017-1112349396@seznam.cz>
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Subject: Re: Reiser4/2.6.11 dbench hang
+Date: Fri, 01 Apr 2005 21:30:15 +0200
+Message-ID: <424DA147.2020903@gmx.net>
+References: <4249D57F.8020809@gmx.net>	 <1112188350.4761.671.camel@tribesman.namesys.com>	 <424B0A4F.8010809@gmx.net>	 <1112219882.4650.759.camel@tribesman.namesys.com>	 <424B299E.5020805@gmx.net> <1112290038.22814.10.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23751-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23752-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <435.921-16966-1988335017-1112349396@seznam.cz>
+In-Reply-To: <1112290038.22814.10.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Ralf <ralf@seznam.cz>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
 
-Hello
-
-On Fri, 2005-04-01 at 13:56, Ralf wrote:
-> hi, i have problems:
+Vladimir Saveliev schrieb:
 > 
-> file "bugs.txt" in attachment (or here http://147.229.196.80/tmp/bugs.txt) - some of error messages i got, i had to reboot my system due this errors
-> 
-> i use debian unstable, linux kernel 2.6.11.6, reiser 3.6 fs, reiser V3, reiserfsprogs 1.3.6.19, i does not use quotas
-> 
-> the patch in the attachment (or here http://147.229.196.80/tmp/reiser-lock-fix.diff) does not work for me
-> 
-Please provide more details of the problem:
-
-can you reproduce it?
-what did your system do when it happened?
-what filesystems did you have mounted when system crashed?
-do you have messages starting with "REISERFS: panic.." in system logs?
-
-
-
-> 
-> ____________________________________________________________
-> http://www.bezpecnyinternet.cz
-> http://ad.seznam.cz/clickthru?spotId=94734
+> This problem is fixed, but running your test during several hours caused
+> reiser4 crash. It just happened, so, tomorrow I will take a look at it.
 > 
 
+I was able to deadlock kernel 2.6.11 + reiser4-for-2.6.11-3.patch.gz
++ elevator=cfq.
+This time it happend during the first dbench-3.02 run with 90 clients in 
+the cleanup phase of the benchmark.
+Maybe the reproduction of the deadlock is easier when using the cfq
+io scheduler.
+
+No fs corruption reported by fsck.reiser4 after a cold reboot :-)
+
+-- 
+lg, Chris
