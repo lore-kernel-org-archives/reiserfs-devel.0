@@ -1,87 +1,52 @@
-From: Clifford Beshers <clifford.beshers@lindows.com>
-Subject: Re: 2 Terabyte install
-Date: Fri, 07 May 2004 09:48:09 -0700
-Message-ID: <409BBDC9.3030809@lindows.com>
-References: <409AC2FF.7080800@lindows.com> <1083917932.14089.281.camel@tribesman.namesys.com> <409BB690.6030604@namesys.com>
+From: "Lamont R. Peterson" <lamont@gurulabs.com>
+Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary
+	additional namespace to ReiserFS
+Date: Fri, 07 May 2004 11:29:43 -0600
+Message-ID: <1083950982.2985.24.camel@wraith.lrp.advansoft.us>
+References: <1082750045.12989.199.camel@watt.suse.com>
+	 <408D3FEE.1030603@namesys.com> <20040426203314.A6973@infradead.org>
+	 <408E986F.90506@namesys.com> <20040427183400.A20221@infradead.org>
+	 <408E9F42.2080804@namesys.com>  <40927B6C.9020600@slaphack.com>
+Reply-To: lamont@gurulabs.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18539-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-GCyJiCvkw7ADhUtMNrZ+"
+Return-path: <reiserfs-list-return-18540-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <409BB690.6030604@namesys.com>
+In-Reply-To: <40927B6C.9020600@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Vladimir Saveliev <vs@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>, Vitaly Fertman <vitaly@namesys.com>
+To: reiserfs-list@namesys.com
 
-Thanks Hans, but no need.  I found the page in the FAQ about three 
-minutes after I posted.  I get so used to google finding me the right 
-things, I occasionally forget to just go to the place I know should have 
-the answers.
+--=-GCyJiCvkw7ADhUtMNrZ+
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-So far, I know that sfdisk choked on creating the partition, but that 
-fdisk succeeded.  After that the install proceeded normally, but the 
-system didn't reboot.  I have to go get details on why, but my guessis 
-either lilo or a missing module in the initrd.
+On Fri, 2004-04-30 at 10:14, David Masover wrote:
+[SNIP]
+> I haven't run any benchmarks against "real" databases like mysql, but if
+> we want to talk about what V4 obsoletes, it obsoletes things which
+> haven't even been developed/released yet (WinFS on Longhorn).
 
-Hans Reiser wrote:
+Microsoft has publicly postponed WinFS to the next version of Windows
+past Longhorn, which is not scheduled for release until 2010.
+--=20
+Lamont R. Peterson <lamont@gurulabs.com>
+Senior Instructor
+Guru Labs, L.C. http://www.GuruLabs.com/
 
-> Vladimir Saveliev wrote:
->
->> Hello
->>
->> On Fri, 2004-05-07 at 02:58, Clifford Beshers wrote:
->>  
->>
->>> What are the current size limitations for disks/partitions/filesystems
->>> with the following combinations?  My googling has produced
->>> inconsistent answers.
->>>        { linux 2.4.24, linux 2.6.5 } X { reiserfs3, reiser4 }
->>>   
->>
->>
->> http://namesys.com/faq.html#reiserfsspecs
->>
->>  
->>
->>> We have a new machine with a 3-ware 8 port controller (looks like a
->>> scsi controller to the system, but actually drives 8 ide drives).  We
->>> have 8 x 300GB drives attached for a total > 2TB.
->>>
->>> Our IT guy has been unable to install Linspire on it (linux 2.6.5,
->>> reiserfs3).  I'm about to go look in more detail, but I thought I'd
->>> find out what the bounds were for sure.
->>>
->>>   
->>
->>
->> I assume mkreiserfs was not the reason why you guys failed to install
->> linux on your hardware. It works for > 2tb devices.
->>
->>  
->>
->>> Thanks,
->>>
->>> Cliff
->>>
->>> -- 
->>>
->>> This message contains information which may be confidential and 
->>> privileged. Unless you are the addressee (or authorized to receive 
->>> for the addressee), you may not use, copy or disclose to anyone the 
->>> message or any information contained in the message. If you have 
->>> received the message in error, please advise the sender and delete 
->>> the message.  Thank you.
->>>   
->>
->>
->>
->>
->>  
->>
-> Please provide exact answer to this question about what are V3 
-> limits.  Vitaly, please assist.
+--=-GCyJiCvkw7ADhUtMNrZ+
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+
+iD8DBQBAm8eGRK8Q4zt1QRURAgR4AKCW9jwPZ1JSLMqgbzF4sjKsJprmkgCgnTQV
+G4IbIRc7in/Sv+B0n7Umvsk=
+=k1Mh
+-----END PGP SIGNATURE-----
+
+--=-GCyJiCvkw7ADhUtMNrZ+--
 
