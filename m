@@ -1,37 +1,58 @@
-From: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
-Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Fri, 2 Apr 2004 12:27:34 -0500 (EST)
-Message-ID: <20040402172735.76368.qmail@web25009.mail.ukl.yahoo.com>
-References: <406D92CC.1080009@namesys.com>
+From: Bennett Todd <bet@rahul.net>
+Subject: filenames that can be safely stolen (was Re: starting with ".." could break stuff)
+Date: Fri, 2 Apr 2004 22:02:50 +0000
+Message-ID: <20040402220250.GB4668@rahul.net>
+References: <200404010546.i315kEvY019805@sirius.cs.pdx.edu> <20040402035617.GC2158@zero> <8765ciqr6v.fsf@uhoreg.ca>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17670-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rS8CxjVDS/+yyDmU"
+Return-path: <reiserfs-list-return-17672-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <406D92CC.1080009@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <8765ciqr6v.fsf@uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hans Reiser wrote: 
+--rS8CxjVDS/+yyDmU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Narcoleptic Electron wrote:
-> 
-> >1. Leave the "metas" directory as it is, for
-> storing
-> >the meta data hierarchy.
-> >  
-> >
-> We will do 1.
+2004-04-02T16:29:12 Hubert Chan:
+> Tom> i bet there's a few apps that, when trying to skip .., only check
+> Tom> the first two chars of the name. this may or may not be a problem.
+>=20
+> Then those apps are broken.  ..foo has always been a valid filename
+> (though highly uncommon).  ..metas doesn't introduce anything new -- it
+> only makes ..files more common.
 
-What is the plan for addressing the name clash
-problems that this causes?  (eg. I copy a directory,
-that happens to contain a "metas" directory, to my
-Reiser4 partition)
+Yup.
 
+For another example, AFS steals "@sys"; it's a special black-magic
+voodoo name that acts like a symlink to a machine-specific value,
+used to set up baroque symlink trees so one uniform network
+filesystem can support dispatching to appropriate versions of
+machine-specific files like executables.
 
-______________________________________________________________________ 
-Post your free ad now! http://personals.yahoo.ca
+So another possibility worth considering might be @metas, with the
+prior art of AFS to cite to people who complain about theoretical
+problems:-).
+
+-Bennett
+
+--rS8CxjVDS/+yyDmU
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
+
+iD8DBQFAbeMJHZWg9mCTffwRApicAJ47at8dQhi44MS6cSKp8nbjnP8HEgCeMxRL
+2A1DyCYU4KTDUcDW4VKZ8lo=
+=4J97
+-----END PGP SIGNATURE-----
+
+--rS8CxjVDS/+yyDmU--
