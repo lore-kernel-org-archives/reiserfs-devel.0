@@ -1,34 +1,49 @@
-From: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
-Subject: Re: Corruption: --fix-fixable results in all nlink values = 0
-Date: Mon, 19 Aug 2002 15:55:15 +0200
-Message-ID: <20020819135515.GA24645@merlin.emma.line.org>
-References: <3D60B6E2.7050006@namesys.com> <20020819132252.A4346@namesys.com> <3D60C35E.7000903@namesys.com> <20020819142035.A5741@namesys.com> <3D60C82F.1080403@namesys.com> <20020819144046.A6258@namesys.com> <3D60D304.3090508@namesys.com> <20020819152002.A6682@namesys.com> <3D60F2CC.7030806@namesys.com> <20020819173150.E7520@namesys.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: 'let the hdd remap the bad blocks'
+Date: Mon, 19 Aug 2002 19:59:06 +0400
+Message-ID: <20020819195906.A19984@namesys.com>
+References: <5.1.1.6.2.20020819155611.01ff7af0@pop.tvnet.hu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11243-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11244-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20020819173150.E7520@namesys.com>
+In-Reply-To: <5.1.1.6.2.20020819155611.01ff7af0@pop.tvnet.hu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Newsmail <newsmail@satimex.tvnet.hu>
+Cc: reiserfs-list@namesys.com
 
-On Mon, 19 Aug 2002, Oleg Drokin wrote:
+Hello!
 
-> Hello!
+   Basically uyou'd better search for this on HDD vendors sites.
+   What's going on is simply can be described this way:
+   You write some block to HDD, if HDD decides the block is bad for some reason
+   and remapping is allowed (usually by tiurning on SMART), block is written to
+   different on-platter location and drive adds one more entry to its
+   remaped-blocks list. Next time you read this block, drive consults its
+   remapped blocks list and if block is remapped, reads it from new location
+   with correct content.
+   Described mechanism works for writing.
+   Actually I've seen something that looks like remapping on read, though 
+   I have no meaningful explanation for that (except that they may have some
+   extra redundant info stored when you write data to disk, so that if sector
+   cannot be read, its content is restored with that redundant information and
+   sector is then remapped.). And this process takes a lot of time.
+
+Bye,
+    Oleg
+On Mon, Aug 19, 2002 at 03:58:30PM +0100, Newsmail wrote:
+> Hello Hans and Oleg,
+> maybe its an offtopic question, but Hans always talks about leaving the 
+> hard disk to remap the bad blocks by itself. could you explain it in some 
+> words, how all this works, what happens after, and since when it exists, or 
+> do you have any special URL explaining this?
+> thx in advance,
+> greg
 > 
-> On Mon, Aug 19, 2002 at 05:29:48PM +0400, Hans Reiser wrote:
 > 
-> > I want it to use /etc/badblocks file if it exists, and if it uses then 
 > 
-> /etc/badblocks for which volume, how about other mounted volumes?
-> (appending volume name won't work, as these may easily move by itself, esp. on
-> scsi)
-
-And a UUID (not sure if reiserfs has one, ext2fs/ext3fs have) can again
-fall prey to corruption, but would otherwise be invariant to moving the
-partition around (be it pvmove, adding another SCSI drive, you name it).
-
