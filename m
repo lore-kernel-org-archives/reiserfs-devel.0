@@ -1,9 +1,9 @@
-From: Jason Holt <jason@lunkwill.org>
-Subject: securely deleting files
-Date: Tue, 6 May 2003 05:37:13 +0000 (UTC)
-Message-ID: <Pine.LNX.4.44.0305060522270.20364-100000@potato.zayda.com>
+From: Siim Vahtre <siim@pld.ttu.ee>
+Subject: reiserfs for old system?
+Date: Tue, 6 May 2003 13:27:31 +0300 (EET DST)
+Message-ID: <Pine.GSO.4.53.0305061320040.10901@pitsa.pld.ttu.ee>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13957-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13958-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,30 +14,21 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
 
-shred is a tool which is supposed to overwrite files so that they're
-unrecoverable, even with fairly involved recovery techniques.  
+Hi!
 
-But it isn't guaranteed to work - sensitive blocks may get moved around on the
-physical disk, stored in journals, etc.
+I have an old laptop (486/sx, 33mhz, 8M RAM) with ~180M hd.
 
-So here's how I get around it:
+I really don't care much about the stability, although I would love to
+make it a bit faster. Currently is uses e2fs but would have no problem
+converting it to reiserfs if I gain some speed by doing that.
 
-$ cat >sensitive
-there's something sensitive in this file...
+It does not have any large files on it, it does not have many small files
+on it. Hence, it nearly has any files on it at all. Is there any point at
+using reiserfs? How much (if at all) will I gain speed if I use reiserfs?
 
-$ rm sensitive
-$ cat /dev/zero    >foo ; sync ; rm foo  # Fill up the disk, then delete.
-$ cat /dev/urandom >foo ; sync ; rm foo  # For the *truly* paranoid
+And what about reiser4, will that make any difference on this aspect?
 
-Now, a good friend of mine pointed out that part of the space on a filesystem
-is kept aside just for root, so you may want to fill the disk up as root.  
-(Is this actually a concern?  Can blocks which used to hold user data end up
-being reserved?)  
+P.S: When will new snapshot of reiser4 released for 2.5 kernels?
 
-Also, if your sensitive file was in memory recently it might have been swapped
-out, in which case it may still be in the swap partition.  I have a program
-which fills up all available *memory* as well, and I could post the source
-here if everyone's interested.
-
-						-J
-
+--
+Siim Vahtre
