@@ -1,86 +1,48 @@
-From: Michael Milverton <camel78@iprimus.com.au>
-Subject: Re: we need a slogan for our reiser4 t-shirt
-Date: Tue, 29 Jun 2004 13:08:04 +0800
-Message-ID: <200406291308.19499.camel78@iprimus.com.au>
-References: <200406261304.03783.camel78@iprimus.com.au> <5.2.1.1.0.20040628183521.00bbb690@idiom.com>
-Reply-To: camel78@iprimus.com.au
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: reiser4 on alpha
+Date: Tue, 29 Jun 2004 20:38:29 +0400
+Message-ID: <20040629163829.GT5080@backtop.namesys.com>
+References: <20040626015101.3c47427d.pegasus@nerv.eu.org> <20040626064131.GN5080@backtop.namesys.com> <20040626095732.24379346.pegasus@nerv.eu.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1;
-  boundary="Boundary-02=_DlP4Akq5Epp4iPP";
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19442-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19445-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <5.2.1.1.0.20040628183521.00bbb690@idiom.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
-Cc: beverly reiser <beverly@idiom.com>, Hans Reiser <reiser@namesys.com>
-
---Boundary-02=_DlP4Akq5Epp4iPP
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
+In-Reply-To: <20040626095732.24379346.pegasus@nerv.eu.org>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jure Pe??ar <pegasus@nerv.eu.org>
+Cc: reiserfs-list@namesys.com
 
-If you think you can use the idea then your welcome to change what you like=
- :)=20
+On Sat, Jun 26, 2004 at 09:57:32AM +0200, Jure Pe??ar wrote:
+> On Sat, 26 Jun 2004 10:41:31 +0400
+> Alex Zarochentsev <zam@namesys.com> wrote:
+> 
+> > > {standard input}: Assembler messages:
+> > > {standard input}:5: Warning: setting incorrect section attributes for
+> > > .got
+> > 
+> > Does only reiser4 produce the above warning?
+> 
+> No. I get these from various parts of the kernel, but are a lot less
+> frequent now on 2.6.7 than on previous kernels.
+> 
+> > > Looking at fs/reiser4/debug.h suggest that this is something done on
+> > > purpose to guard against other problems.
+> > 
+> > yes, "duplicated case value" is a result of our compile-time assertion if
+> > it fails.
+> > 
+> > But the assertion is wrong because the assumtion that struct coord has no
+> > implicit padding is wrong on alpha.
+> 
+> Do i undestrand that right, the fix is just to comment out the c1->pad line
+> there?
 
-The main logic of the idea is that the tree concept is quite central to the=
-=20
-filesystem. Anybody who was familiar with the concepts behind the filesyste=
-m=20
-would probably connect the idea, and those who didn't would still have all=
-=20
-the descriptive words and/or phrases to think about.
+you can remove the wrong caccert.  
 
-On Tue, 29 Jun 2004 09:45 am, beverly reiser wrote:
-> I think we could use the words just as they are with out a tree graphic
-> only with this slight modifacation.
-> Put REISERFS4 in a different color from the rest of the words.
->
-> >>                   R
-> >>                 filEsystem
-> >>                    Innovative
-> >>         plug-inS
-> >>                   Engineered
-> >>            secuRe
-> >>                   Fast
-> >>                   Sleek
-> >>engineered  4  performance
->
-> or just use :
-> >>                   Fast
-> >>                   Sleek
-> >>engineered  4  performance
->
-> What do you think?
-> Beverly
-> with F
->        S
->         4
-> in contrasting colors.
->
-=2D-=20
-GNU/Linux: Secure, Stable, Free
-Michael <camel78@iprimus.com.au>
-
---Boundary-02=_DlP4Akq5Epp4iPP
-Content-Type: application/pgp-signature
-Content-Description: signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iQCVAwUAQOD5QzbWs3O08JjCAQIm3gP/ZG3uAoXPdtMeI3UocqvY6oiNhujWnmXG
-xxx3iRdaLKDZCkfshHeTlPV0hG3BzeEMTWXYDuGO3DttKqrH/VvHCoIrlBH9Dae9
-73iyQhJ2CHagwIGuSS34A5eaAYD6zkI57ZXtdVPni1ULvR9zzW9uQy+8qeSBupi/
-0eAccdJ8lOo=
-=vTBQ
------END PGP SIGNATURE-----
-
---Boundary-02=_DlP4Akq5Epp4iPP--
+-- 
+Alex.
