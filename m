@@ -1,33 +1,49 @@
 From: Chris Mason <mason@suse.com>
-Subject: Re: Re: [PATCH CFT] tons of logging patches
-Date: 17 Jun 2002 15:04:39 -0400
-Message-ID: <1024340679.18666.36.camel@tiny>
+Subject: Re: Quota and reiserfs status
+Date: 17 Jun 2002 18:16:06 -0400
+Message-ID: <1024352166.20149.100.camel@tiny>
+References: <3D00B880.E3A7B770@cri74.org> 
+	<20020607162010.GI27843@atrey.karlin.mff.cuni.cz>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10761-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10762-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <3D0D2DEE.7080909@mb.tu-ilmenau.de>
+In-Reply-To: <20020607162010.GI27843@atrey.karlin.mff.cuni.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>, tomlins@cam.org
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: Jan Kara <jack@ucw.cz>
+Cc: Fabien Salvi <fabien@cri74.org>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-On Sun, 2002-06-16 at 20:31, Manuel Krause wrote:
-
+On Fri, 2002-06-07 at 12:20, Jan Kara wrote:
+>   Hello,
+>   
+> > I've tried some tests with quota using reiserfs filesystems.
+> > It works very well...
 > > 
-> > Hmmm, I might have found it, but this isn't a new bug to the 07 patch. 
-> > Have you been able to reproduce, or have you fallen back to the older
-> > patches?
+> > I have attached a very little documentation (2 ascii texts) about simple
+> > configuration.
+> > Hope it can help somebody.
+>   The text is nice :)
+>   
+> > I have one question :
+> > Now, you must patch linux kernel to have quota with reiserfs enabled.
 > > 
-> 
-> You mean 03-beta-data-logging-7.diff.gz when saying "07 patch"? Then I 
-> didn't go back according to my disk content.
-> 
+> > Is it provided to the near future, or maybe not before the next stable
+> > release of lk ?
+>   Currently VFS side of the patches is in 2.5 kernel and I
+> suppose Chris will commit Reiserfs part soon. I plan to backport patches
+> from 2.5 kernel to 2.4 (but it's not certain Marcello will agree with it
+> and I'm also not sure about Reiserfs part of the patches).
 
-I've uploaded 03-beta-data-logging-8.diff.gz.  It will fix the oops Ed
-hit, and hopefully your corruption problem as well.
+I think the 2.4 patches are stable enough that we can include them if
+and when Jan's new quota code is included.
+
+For 2.5.x, I want to put in the data logging code first (it is actually
+based on pieces of the quota support).  This is non-trivial, but will
+make the total time to merge both features easier.
 
 -chris
+
 
