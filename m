@@ -1,51 +1,105 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: Carrying Attributes too Far
-Date: Sat, 06 Dec 2003 21:48:41 -0500
-Sender: news <news@sea.gmane.org>
-Message-ID: <874qwds5py.fsf@uhoreg.ca>
-References: <1065247084.3f7e616c94ec9@webmail.st-andrews.ac.uk> <3FCE3716.8000509@namesys.com>
- <1070584227.3fcfd1a3d67f4@webmail.st-andrews.ac.uk>
- <3FD07C4D.6090401@namesys.com>
- <1070753637.3fd267652753f@webmail.st-andrews.ac.uk>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Garbage collection for files (was Re: More on Hard Links (was
+ A bold idea (Re: Carrying Attributes too Far)))
+Date: Sun, 07 Dec 2003 06:27:12 +0300
+Message-ID: <3FD29E10.3050203@namesys.com>
+References: <2342084747-BeMail@cr593174-a>	<3FD0912C.1090700@ninja.dynup.net>	<16336.37772.88198.217245@laputa.namesys.com>	<3FD0AB30.6060305@namesys.com> <16336.45022.572929.274859@laputa.namesys.com> <3FD135F5.804@ninja.dynup.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16271-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16272-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3FD135F5.804@ninja.dynup.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Masover <jedi@ninja.dynup.net>
+Cc: reiserfs-list@namesys.com
 
->>>>> "Leo" == lrc1  <lrc1@st-andrews.ac.uk> writes:
+The approaches nikita suggests don't seem very efficient for the no loop 
+case. 
 
-[...]
+Hans
 
-Leo> Second, before implementing hard linking across directories you're
-                                                     ^^^^^^^^^^^
-I assume you meant "filesystems" there?
+David Masover wrote:
 
-Leo> really going to need two-way links between directories and their
-Leo> children.
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+>
+>
+> I will step aside and let the smart people figure this out.  Only one 
+> real suggestion -- most directories will not have loops.  I'm not sure 
+> how, but I'd imagine it's possible to use refcounts there and other 
+> forms of garbage collection elsewhere.  I felt my refcount-based idea 
+> was clean and cool-looking, but I have had approximately 10-15 mins of 
+> experience in this subject.
+>
+> Only one question -- does it work for rm -rf?
+>
+> Thread below:
+>
+> Nikita Danilov wrote:
+>
+>> Hans Reiser writes:
+>> > Nikita Danilov wrote:
+>> > > > But if multiple hard-links to the directories
+>> > >are allowed, file system is an arbitrary graph. It makes little 
+>> sense to
+>> > >try to stretch reference counting to work in this situation. There 
+>> are
+>> > >much more efficient forms of garbage collection for this.
+>> > >
+>> > >Nikita.
+>> > >
+>> > >
+>> > >  > >
+>> > Educate us, I am curious.
+>>
+>> http://citeseer.nj.nec.com/jones03garbage.html is a recent bibliography
+>> in this subject, containing more than 20000 references. I am afraid this
+>> is little too much for a brief description. But basically, instead of
+>> reclaiming garbage when "last reference" goes out, collectors typically
+>> run periodically trying to find unreachable objects. Common way to do so
+>> is to find -reachable- ones, and then to declare the rest
+>> unreachable. Also, do avoid scanning the whole heap^Wfile system,
+>> objects are segregated into "generations", and allocation is tuned so
+>> that there are no references from object older generation to younger
+>> one. Some smart techniques (like colored pointers) are used to avoid
+>> garbage collection to proceed concurrently with mutators. And so
+>> on. Large field for an experimentation.
+>>
+>> > > -- > Hans
+>> >
+>> Nikita.
+>>
+>> >  
+>>
+>
+> -----BEGIN PGP SIGNATURE-----
+> Version: GnuPG v1.2.3 (GNU/Linux)
+> Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+>
+> iQIVAwUBP9E1+QisZLIF6uqOAQJ4VQ/+MZizcUlDJ2Zbb7zteUP8upK3f9a2Z/qY
+> hEtWrTAqP2/zpLf68GR0OkfPnwe7g3h9NYvCWSJ5j3tt3lr7TS/PcPoMWn8cv+7j
+> wQoJRwI6rVb7FkCuOu/s8qSMG47dww/3Ao1jc2eFngT16ghIgDPEBBL0DwwqSbsG
+> NrNevs1yDqO+qRlsoHbe6oqz+55BEtwc/APnBKHzXj8dDNevv5PEx7WwH12A+tRe
+> etMxXygc7OTqk7miH00OTH5+afnJEgF0JiWwMDUsDiYTT54Cl4a9E+nUzm0kp5SI
+> R0VYHgNkxTQ692SPE2Zdl+xSVaPq9N9byfDZdTO4jfSp9zx3PA6HfG+Lc30o0IAZ
+> VGKfV3+wV0jnIE/Ek3pFDv1Xn1gAtM3htfIvFZSvysEC4Km0UkvIOgsQyZByh3fq
+> Dzop9pjmM/CMLfu/Z+4APQ4j8Mt3nCSvEPnTgrp8D7ptpkq/1nhCzS1Ej42+XQZ+
+> h/7pyE15wrC8EyVUgVQMDZa1n6R1k+w/VvsNhMqfuTaTfXJBWaiq0Chj6QMfX6nx
+> kBRjzudFkh5Sg2Kf7vwwv+aH/wd0F953BnFq6Ceg2FAV6Mt308aHI9JnBSP08uIz
+> my/p1fLxhwyEZ1MzBJC97rQivRa2WUXrDwnC6duHbTg8A913tiW5lXIvEIooarOR
+> IFSQ2vdEzio=
+> =X4Fs
+> -----END PGP SIGNATURE-----
+>
+>
+>
 
-I don't see why you would need this.  Can you explain?
-
-Leo> * You'll also need explicit file deletion and if possible weak
-Leo> non-symbolic links (..loose links).
-
-What do you mean by "loose links"/"weak non-symbolic links"?
-
-Leo> * More precisely, you'll need the call to discover the parents of a
-Leo> given file.  The actual reference from child to parent is only
-Leo> absolutely necessary for links across filesystems; on internal
-Leo> links it's basically a performance optimisation.
-
-Again, I do not see why this is needed.
 
 -- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+Hans
+
 
