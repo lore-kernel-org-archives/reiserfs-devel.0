@@ -1,50 +1,32 @@
-From: Ragnar =?iso-8859-15?Q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
+From: Chris Mason <mason@suse.com>
 Subject: Re: Recent spam
-Date: Thu, 5 Jun 2003 17:29:48 +0200
-Message-ID: <20030605152948.GC22550@vestdata.no>
-References: <3EDAEEBE.3050202@netscape.net> <200306020833.40614.m.c.p@gmx.net> <1054538668.8091.8.camel@localhost> <200306021859.39138.russell@coker.com.au> <3EDF450A.1060003@namesys.com> <20030605145709.GM15761@parcelfarce.linux.theplanet.co.uk> <1054825912.23132.152.camel@tiny.suse.com>
+Date: 05 Jun 2003 12:26:46 -0400
+Message-ID: <1054830406.23132.165.camel@tiny.suse.com>
+References: <3EDAEEBE.3050202@netscape.net>
+	 <200306020833.40614.m.c.p@gmx.net> <1054538668.8091.8.camel@localhost>
+	 <200306021859.39138.russell@coker.com.au> <3EDF450A.1060003@namesys.com>
+	 <20030605145709.GM15761@parcelfarce.linux.theplanet.co.uk>
+	 <3EDF608A.3080104@namesys.com>  <3EDF60EC.2070106@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14452-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14453-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1054825912.23132.152.camel@tiny.suse.com>
+In-Reply-To: <3EDF60EC.2070106@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Chris Mason <mason@suse.com>
-Cc: Chris Dukes <pakrat@www.uk.linux.org>, Hans Reiser <reiser@namesys.com>, Russell Coker <russell@coker.com.au>, Soeren Sonnenburg <reiserfs@nn7.de>, reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Chris Dukes <pakrat@www.uk.linux.org>, Russell Coker <russell@coker.com.au>, Soeren Sonnenburg <reiserfs@nn7.de>, reiserfs-list <reiserfs-list@namesys.com>
 
-On Thu, Jun 05, 2003 at 11:11:53AM -0400, Chris Mason wrote:
-> On Thu, 2003-06-05 at 10:57, Chris Dukes wrote:
-> > On Thu, Jun 05, 2003 at 05:26:34PM +0400, Hans Reiser wrote:
-> > What is inconsiderate is taking the time to flag some of these spams
-> > as spam, but not taking the time to forward them off to a bucket for
-> > approval or disposal (And multiple people can sort through the spam,
-> > so don't blame your overworked sysadmin.
->=20
-> Heh, time spent moderating messages would either be by Hans' sysadmin or
-> his coders.  I'd just as soon see the tagged messages deleted.
+On Thu, 2003-06-05 at 11:25, Hans Reiser wrote:
+> Oh dear, Chris Mason, I owe you an apology, I thought the mail from 
+> Chris Dukes was from you.  Sorry.
 
-I'm sure a lot of subscribers to the list would volunteer to
-approve/disaprove postings marked as possible spam. I should wouldn't
-mind using a few minutes a week if it would help.
+Good thing I read a further down in the thread before hitting send ;-) 
+Life is too short to waste it making flames about spam, please fix the
+list when you can.
 
-> > <suggestion>
-> > If namesys' admin is unable or unwilling to get the namesys mailing
-> > lists to cease being anonymous injection points for SPAM, perhaps
-> > you should contract out the management of the mailing list.
-> > Considering past incidents (like the mailloop), it may solve problems
-> > beyond SPAM.
-> > </suggestion>
+-chris
 
-Moving the list to sourceforge or another simular service may be useful
-to reduce the amount of systemadministration.
-
-
-
---=20
-Ragnar Kj=F8rstad
-Zet.no
