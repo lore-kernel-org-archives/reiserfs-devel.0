@@ -1,96 +1,88 @@
 From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
 Subject: Re: [RFC] Pathname Semantics with //
-Date: Fri, 10 Sep 2004 13:06:51 +0200
-Message-ID: <200409101306.51871.christian.mayrhuber@gmx.net>
-References: <20040909103656.B15E715CB2@mail03.powweb.com> <200409091933.06100.christian.mayrhuber@gmx.net> <20040909230333.GB8464@mail.shareable.org>
+Date: Fri, 10 Sep 2004 13:47:32 +0200
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <200409101347.32548.christian.mayrhuber@gmx.net>
+References: <20040910013246.BF49B15ED9@mail03.powweb.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-21675-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <20040909230333.GB8464@mail.shareable.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20040910013246.BF49B15ED9@mail03.powweb.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 Cc: linux-fsdevel@vger.kernel.org
 
-On Friday 10 September 2004 01:03, Jamie Lokier wrote:
-> Christian Mayrhuber wrote:
-> > //http://somehost:port/foo/bla
->=20
-> While we're here, I'll point out that http://somehost/foo/bla and
-> http://somehost/foo/bla/ are valid, distinct URLs.
->=20
-> If http://somehost/foo/bla/ exists, many HTTP servers will return it
-> as the target of a redirect for http://somehost/foo/bla.  The reason
-> for this is that it's important for any relative URLs in a document to
-> be resolved relative to the correct base URL of the document.
->=20
-> If we do actually allow file-and-directory objects, it makes sense for
-> the path _with_ slash on the end (//http://somehost/foo/bla/) to be
-> accessible as both a file and a directory, mapping to that HTTP
-> resource, and resources below it in the path hierarchy.
->=20
-> Then relative paths in the resource resolve sensibly in programs which
-> think they're in the local filesystem.
->=20
-> It also makes sense for the path _without_ slash to be recognisable to
-> programs as needing the slash.  That could be done by making the path
-> without slash by a symlink to one with (symlinks are a natural
-> representation of redirects).  But that seems like a gross violation
-> of POSIX semantics: we can't really return different objects depending
-> on the trailing slash.
+On Friday 10 September 2004 03:37, David Dabbs wrote:
+> 
+> > From: Jamie Lokier [mailto:jamie@shareable.org]
+> > 
+> > Christian Mayrhuber wrote:
+> > > //http://somehost:port/foo/bla
+> > 
+> > While we're here, I'll point out that http://somehost/foo/bla and
+> > http://somehost/foo/bla/ are valid, distinct URLs.
+> > 
+> >... snip
+> > 
+> > Food for thought.
+> > 
+> > -- Jamie
+> 
+> While I think there are bigger fish to fry before tackling URLish stuff
+> beyond filesystem access, I'll dive in.
+> 
+> Handwaving over changes to create() and many other apis that enable this,
+> what happens when you type the following commands? 
+> 
+>   ln -s //http://dabbs.net/foo/ MyPage
+>   cat MyURL
+> 
+> The first command works just fine today sans /any/ changes. Cat of course
+> fails (today) because it calls open("MyURL") which will follow the link
+> provided O_NOFOLLOW was not passed. After our magic mods, VFS will parse the
+> // escape, see that it is NOT file:// and then what? When we were talking
+> strictly about filesystem access this wasn't an issue.
+> 
+> We certainly don't want the kernel in the business of being a protocol
+> proxy, so any non-file:// pathnames could simply return EFAULT or ENOTDIR,
+> or ELNKURL, which indicates that the target is a URL. Apps that want to do
+> something /useful/ with the target resource (i.e. desktops) will have
+> http/ftp/etc libraries. They are free to stat() the file, get the linked-to
+> URL and use whatever protocol client lib they wish to access the URL. 
+I'd say return EFAULT for protocols the kernel has no userspace helper for.
+If there is a userspace helper, ask it.
+For now this means EFAULT all the time, except //file:// or //:, whatever, 
+because the kernel knows nothing about userspace helpers.
 
-Agreed this is a problem.
-I'd say that the kernel cannot gurantee to be posix conformant in the=20
-protocol space, because most protocols are not designed to be
-posix compliant.
-Excerpt from David's first email:
->4_11
->=A0 =A0...
->=A0 =A0A pathname that begins with two successive slashes may be interpret=
-ed in=20
->=A0 =A0an implementation-defined manner, although more than two leading sl=
-ashes=20
->=A0 =A0shall be treated as a single slash.
->=A0 =A0....
-That would mean no posix conformance for paths starting with //, because it=
-=20
-depends on the implementation. Except maybe //: or //file:// or //metas:// =
-or
-what ever name the metadata advanced namespace carries.
+I'm suggesting //somename:// as an entry point for hooks to gnome-vfs or kio.
+Providing these features to all userspace applications,
+not just the ones linked with the gnome or kde libraries.
+For ex.: cp "//audiocd:/Ogg Vorbis/*.ogg" ./
 
->=20
-> So instead, it makes sense for either form of the path to be a
-> file-and-directory object whose type is S_IFDIR, and specifically not
-> S_IFREG -- but only in the cases where the HTTP transaction to the URL
-> without a trailing slash returns a redirect to the same URL with a
-> slash appended.  When the HTTP transaction to the URL without a
-> trailing slash returns a resource, then it's type in the filesystem
-> should be S_IFREG, but still a file-as-directory object.
->=20
-> Food for thought.
->=20
-> -- Jamie
->=20
-I'd say the userspace protocol handler should answer the question
-where the url is pointing to and if it's a file or directory, if it follows=
-=20
-redirects, etc.
-A http implementation may well only provide S_IFREG types as return values.
-I don't think that cd //http://somehost/some/path/ will ever work, because
-one will see http://somehost/some/path/index.html|php|cgi|jsp for sure.
+> 
+> Shooting from the hip here. If we want to unify namespaces in a UNIXy way,
+> what if we make the VFS expose all the non-file "protocol" namespaces
+> through one mount point, device node or whatever. A filesystem, perhaps
+> something built using FiST [http://www.filesystems.org/], would "handle" a
+> protocol. Another, perhaps preferred, option is to steer in the direction of
+> Plan9, where ftp can be mounted and handled by a user-space filesystem,
+> ftpfs. 
+> See http://plan9.bell-labs.com/magic/man2html/4/ftpfs
+> 
+> 
+> David
+> 
+> 
+That's the most powerful option, but does not fit all use cases.
+Sometimes you just may want to do "less //tar://myarchive.tar/README"
+for read only content browsing.
 
-I think for //ftp:// posix conformity could be guaranteed for names, but no=
-t=20
-for more advanced features like locking.
+Mounting a webdav or ftp server as userspace filesystem would be definitely 
+nice, but the filesystem has to guarantee posix conformance, because it is
+mounted into a posix namespace.
 
-Don't let the kernel decide how to deal with the different protocols it onl=
-y=20
-needs to know what userspace handler to ask.
-
-=2D-=20
+-- 
 lg, Chris
+
