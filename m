@@ -1,35 +1,44 @@
-From: Sander <sander@humilis.net>
-Subject: Reiserfs, what is the problem with the word? (was: Re: Resier Fragmentation Effects (was compression vs performance))
-Date: Thu, 8 Apr 2004 21:06:52 +0200
-Message-ID: <20040408190651.GA13111@favonius>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Reiserfs, what is the problem with the word? (was: Re: Resier Fragmentation Effects (was compression vs performance))
+Date: Thu, 08 Apr 2004 15:14:12 -0400
+Message-ID: <200404081914.i38JECjH021493@turing-police.cc.vt.edu>
 References: <3DF9165145FACB4C96977FF650C1E9040C469DC0@its-mail1.its.corp.gwl.com> <200404081924.55431.Dieter.Nuetzel@hamburg.de>
-Reply-To: sander@humilis.net
+            <20040408190651.GA13111@favonius>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17800-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_2079659304P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17801-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200404081924.55431.Dieter.Nuetzel@hamburg.de>
+In-Reply-To: Your message of "Thu, 08 Apr 2004 21:06:52 +0200."
+             <20040408190651.GA13111@favonius> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
-Cc: reiserfs-list@namesys.com, "Burnes, James" <james.burnes@gwl.com>, Stewart Smith <stewart@flamingspork.com>, Tom Vier <tmv@comcast.net>, Scott Young <youngs1@sunyit.edu>
+To: sander@humilis.net
+Cc: reiserfs-list@namesys.com
 
-Dieter N?tzel wrote (ao):
-> Have a look into the RieserFS archive.
-                       ^^^^^^^^
-> Subject: Re: Resier Fragmentation Effects (was compression vs performance)
-               ^^^^^^
+--==_Exmh_2079659304P
+Content-Type: text/plain; charset=us-ascii
 
-Reiser(FS) is the most misspelled name I've ever seen. Why is this word
-so difficult for people? (serious question)
+On Thu, 08 Apr 2004 21:06:52 +0200, Sander said:
 
-To me it sounds German, but that doesn't even keep German people from
-misspelling it ;-)
+> Reiser(FS) is the most misspelled name I've ever seen. Why is this word
+> so difficult for people? (serious question)
 
--- 
-Humilis IT Services and Solutions
-http://www.humilis.net
+Makes me glad I don't write filesystems, if poor Hans causes that much trouble. :)
+
+--==_Exmh_2079659304P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFAdaSDcC3lWbTT17ARAphfAJkB1PEBXkXxHrOfaXBB63D6h01CdgCePNDd
+qNaDMLay4suH7SuMpcaDS18=
+=qHk/
+-----END PGP SIGNATURE-----
+
+--==_Exmh_2079659304P--
