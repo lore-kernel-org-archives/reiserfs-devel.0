@@ -1,10 +1,10 @@
-From: <pcg( Marc)@goof(A.).(Lehmann )com>
+From: <pcg@goof.com ( Marc) (A.) (Lehmann )>
 Subject: Re: A couple of questions
 Date: Thu, 16 May 2002 23:44:19 +0200
-Message-ID: <20020516214419.GE15774@schmorp.de>
+Message-ID: <ac1gjn$70k$2@main.gmane.org>
 References: <OF4AF5C20B.BE2F7D18-ON85256BBB.006643F3@pok.ibm.com> <3CE41796.4030404@namesys.com> <200205161723.42672.kuba@mareimbrium.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10348-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10349-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
