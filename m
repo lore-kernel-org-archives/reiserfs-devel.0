@@ -1,36 +1,31 @@
-From: Anders Widman <andewid@tnonline.net>
-Subject: Re: badblocks
-Date: Thu, 8 Aug 2002 13:06:13 +0200
-Message-ID: <879599906.20020808130613@tnonline.net>
-References: <002401c23eca$bba73a90$e4d22fc2@acealex>
-Reply-To: Anders Widman <andewid@tnonline.net>
+From: Radim Kolar <hsn@cybermail.net>
+Subject: Re: BUG: uncorrectable/undetectable damage by reiserfsck
+Date: Wed, 7 Aug 2002 20:45:59 +0200
+Message-ID: <20020807184559.GA1828@home>
+References: <1028663930.11027.ezmlm@namesys.com> <20020807050535.GA541@home> <20020807100235.A25242@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11141-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11142-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <002401c23eca$bba73a90$e4d22fc2@acealex>
+Content-Disposition: inline
+In-Reply-To: <20020807100235.A25242@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Alexander Saers <alex@saers.com>
+Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <green@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-> When will badblocks be supported in reiser. I have a lot of ibm disks that
-> constantly creats bad blocks :)
+> Can you please make a metadata snapshot from that filesystem
+> (debugreiserfs -p /dev/device | gzip -9c >metadata.gz) and make that available
+> for download.
 
-> /Alexander
+when you will make a new version of debugreiserfs add option for not
+dumping journal data, or option for filling these 32MB with zeros, so it
+will compress better. It will made files considerably smaller. I am an
+modemoid user.
 
+http://home.worldonline.cz/~cz210552/err/metadata.bz2
 
-
-
-
-You should consider having them replaced instead.. IBM offer at least
-3 years on all IDE type disk drives, and 5 years on SCSI/Fibre Channel
-type drives.
-
-http://www.storage.ibm.com/hdd/support/pre_rma.htm
-
-//Anders
-
+let me know when i can remove this file.
