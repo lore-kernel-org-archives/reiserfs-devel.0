@@ -1,77 +1,43 @@
-From: Mike Hodson <mike@mystica.cx>
+From: Ross Vandegrift <ross@willow.seitz.com>
 Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
-Date: Tue, 11 Feb 2003 19:02:21 -0600
-Message-ID: <20030211171139.A5B3.MIKE@mystica.cx>
-References: <20030211144144.A5A9.MIKE@mystica.cx> <NDBBJPAGKLCMDEIEKOPBAEIMKFAA.mailinglists@websitemanagers.com.au>
+Date: Wed, 12 Feb 2003 00:12:13 -0500
+Message-ID: <20030212051213.GA21039@willow.seitz.com>
+References: <NDBBJPAGKLCMDEIEKOPBAEIMKFAA.mailinglists@websitemanagers.com.au> <3452483515.20030212001747@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12694-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12695-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <NDBBJPAGKLCMDEIEKOPBAEIMKFAA.mailinglists@websitemanagers.com.au>
+Content-Disposition: inline
+In-Reply-To: <3452483515.20030212001747@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Adam Goryachev <mailinglists@websitemanagers.com.au>
+Content-Transfer-Encoding: 7bit
+To: Anders Widman <andewid@tnonline.net>
 Cc: reiserfs-list@namesys.com
 
-> I can't comment on your experience, but personally if I have a drive with
-> any number of badblocks (which are showing up to the fs layer, not invisibly
-> re-mapped by the drive) then I take the drive back and get a replacement, or
-> bin the drive.
-I'd have liked to do that, but 2 problems. 1, the drive was an OEM drive,
-and the reseller I bought it from went out of business- Western Digital
-wouldn't accept an RMA directly from an end-user on that drive. and 2, I
-didn't even notice errors until one day it wouldnt work properly. At
-that time I thought it was a reiserfs inconstancy, and I fscked. at that
-point I noticed a few {DriveReady -SeekComplete} errors and then most of
-the data on the drive nulled itself out.
+On Wed, Feb 12, 2003 at 12:17:47AM +0100, Anders Widman wrote:
+> Sure,  a  disk  with physical errors should be replaced, but until you
+> find out about the error on the drive the FS HAS TO HANDLE these kinds
+> of problems.
 
-> I suppose that if you continue to have a growing number of FS errors, then
-> you either have faulty hardware, or are using a buggy version of
-> software.... If you already admit to badblocks, then I would blame
-> hardware..
-The case I outlined at the beginning of my message involved 2 specific
-drives. The drive that completely failed was a WD 6.4 gig. The 20gig was
-a Maxtor that I've had for 2.5 years, that to my knowledge does not have
-media errors, but there have been some FS corruptions. I don't think its
-media since I never see any 'DriveReady-seekcomplete' errors that you
-usually get with bad sectors.
+No, this is *ridiculous*.  A filesystem should tolerate a failed disk when
+the VM system can handle bad memory, or the scheduler can handle an
+overheated CPU.  In all three cases, hard failure of a machine is
+certain, unless hardware is replaced before the failure occurs.
 
-> Hmmm, so apart from finding a number of errors and doing it's best to fix
-> them (putting them into lost+found) and recovering all of your other files
-> even with hardware issues present, you recovered all of your data? The
-> problem here is?
-The fact that the filesystem got so many errors in the first place. And
-as ive said, hardware issues are AFAIK not the cause.
-
-If a harddrive is showing badblocks and then the disk vendors tool shows no
-errors, I think a simple dd over the whole disk or similar would really show
-the true story....
-If i haven't made myself clear, the badblocks problem was with a
-different drive.  The thought occured to me that there may have been bad
-blocks due to the sporadic corruption, but I don't have any error
-messages to back up that thought.
-
-> ext2 requires periodic fsck's which are also rather dis-concerting when you
-> are never quite sure whether you need to allow a few hours downtime for a
-> kernel upgrade this time, or perhaps it is only a few minutes.
-
-Well one way of being completely sure is to reset the mount count in the
-filesystem before rebooting, or to set the fstab to never automatically
-fsck. then on some set  schedule, fsck along with a kernel upgrade, and
-schedule the downtime
-
-> Finally, I find it interesting to see people who swear they will never use
-> reiserfs again to be on the reiserfs mailing list :).
-I may use it at some point, when its as well proven as the second
-extended filesystem is currently. Its interesting to see how many people
-have errors, and when that number gets lower and more people start
-posting good things I may reevaluate it at some point :)
-
-Mike
+You have to start your software on some kind of foundation.  Working
+hardware sounds like a great place to me.
 
 -- 
-Mike Hodson  <mike@mystica.cx>  ICQ: 18145059
+Ross Vandegrift
+ross@willow.seitz.com
 
+A Pope has a Water Cannon.                               It is a Water Cannon.
+He fires Holy-Water from it.                        It is a Holy-Water Cannon.
+He Blesses it.                                 It is a Holy Holy-Water Cannon.
+He Blesses the Hell out of it.          It is a Wholly Holy Holy-Water Cannon.
+He has it pierced.                It is a Holey Wholly Holy Holy-Water Cannon.
+He makes it official.       It is a Canon Holey Wholly Holy Holy-Water Cannon.
+Batman and Robin arrive.                                       He shoots them.
