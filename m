@@ -1,100 +1,73 @@
 From: Enrique Perez-Terron <enrique.perez-terron@norway.online.no>
-Subject: Re: Split Trees (my design, similar to binary treaps)
-Date: 09 Jun 2003 17:33:58 +0200
-Message-ID: <1055172836.20593.283.camel@arabia.home.lan>
-References: <20030608052613.19341.qmail@web40008.mail.yahoo.com>
+Subject: Split trees and locking during insertions
+Date: 09 Jun 2003 18:09:39 +0200
+Message-ID: <1055174978.20597.321.camel@arabia.home.lan>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14502-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14503-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030608052613.19341.qmail@web40008.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Kevin Bealer <kevinbealer@yahoo.com>
+To: kevinbealer@yahoo.com
 Cc: reiserfs-list@namesys.com
 
-On Sun, 2003-06-08 at 07:26, Kevin Bealer wrote:
+A question from Hans Reiser made me think of some advantages that could
+be obtained for skip lists, skip trees and split trees by making the
+level a predictable function of the key. 
 
-> I may have accidentally called my version a skip
-> tree.  If skip tree is another version, I'm not
+One could for instance seed the random number generator with a hash of
+the key just before generating the next level number. Then the level
+should still have the same distribution and randomness, yet if two
+processes simultaneously try to insert the same key they compute the
+same level for the key.  Those versed in number theory might know of far
+more efficient computations than this, but this shows that at least one
+method exists.
 
-I won't discard completely the possibility that it was me that
-short-circuited to skip trees when seeing "split tree" some lines below
-"skip list"...
+Without such seeding we have the following:
 
-In any case, this is my description of a skip tree:
+During insertion, if duplicated keys are to be avoided, the algorithm
+first finds the position P in the tree where the new node will be
+placed, then searches the tree below P to see if there is already
+another node with the same key.
 
-A skip tree is just like a B-tree except that the number of keys in a
-node may be zero, and has no upper bound. Keys are not repeated at lower
-levels, and "payload data" associated with a key is stored with the key,
-usually in the form of a pointer. 
+It would be an error to lock P only after the nodes below have been
+inspected and the decision to insert below P has been taken. While the
+algorithm descends the subtrees below P another process could insert a
+node with the same key anywhere above the node we are currently
+inspecting. So, we have to write lock the node above the assigned level
+of the new node, and keep the node locked while we descend the levels to
+see if the key is already present. 
 
-These data pointers are not further mentioned. In what follows all
-pointers are pointers to skip tree nodes.
+If we keep P locked, a competing process cannot insert a new node with
+the same key above P, (say at P') because it too has to look below P' to
+see if there is already a node with that key, and then it will have to
+wait on P to be released, and it will find the key we are inserting.
 
-Thus a skip tree of 
+With seeding, when we find the location where we want to insert the new
+node, we need not look any further to make the decision. We can begin
+the insertion right away. The algorithm does no longer need to be
+two-pass or one-and-a-half-pass. 
 
-   height 0     is empty,
-   height 1     is a node with zero or more keys in ascending order, 
-   height h > 1 is a node with zero or more keys, k_1,...,k_n, in
-                ascending order, and n+1 pointers p_0,...p_n to height
-                h-1 skip trees. 
+Once the decision to do the insertion is made, the procedure is the same
+with or without seeding. The node above the new node can be released as
+soon as the new node is inserted into the tree and write locked. The
+lock on the new node can be released when both child pointers have been
+assigned its final value and the nodes having the left and right
+receiver pointer have been write locked. When a right receiver pointer
+is assigned to, the new right receiver pointer is found and its owner
+node is write locked before the lock on the old right receiver pointer
+owner is released.
 
-The keys accessible directly or indirectly through pointer p_i in a
-node, have values between the keys k_{i-1} and k_i in the node.
+If the level function is sufficiently cheap, also lookups might benefit
+slightly, by first computing the level of the key we are looking for and
+then deciding the node is not there if it is not at that level.
 
-On insertion, a level h is randomly assigned to the new key. 
-
-If the skip tree already has height h (sub)trees, the key is inserted
-into the root node of the unique height h (sub)tree where the key is
-permitted by the ordering constraints. If the new key becomes k_i in the
-node, the node pointed to by p_{i-1} is split in two, one node becomes
-the new p_{i-1}, the other becomes the new p_i. Former keys k_i,...,k_n
-are renumbered k_{i+1},...,k_{n+1}, and the former pointers p_i,..,p_n
-are renumbered p_{i+1},...,p{n+1}. Nodes two levels below h are not
-changed.
-
-If no level-l node exists, one is created with the new key, and as many
-empty nodes are created as needed to make the tree have two subtrees of
-height l-1. The original tree's root node is split in two if required
-and the parts used instead of empty nodes at the appropriate place in
-the subtrees below the new root node.
-
-Converting a skip list into a skip tree is straightforward.
-
-The head and nil nodes of the skip list are not included in the skip
-tree.
-
-A skip tree whose highest level with nonzero population is L, is
-converted to a skip tree of height L.
-
-The elements in the top-level list are placed in the root node of the
-skip tree.
-
-In a skip list, if a and b are level l nodes that are consecutive in the
-level l list, then the nodes between a and b in the lower level lists
-form a skip list with a and b as head and nil respectively.
-
-This (sub)skip list is converted in the same way as the original skip
-list, so the keys of the level l-1 nodes between a and b form the root
-node of a skip (sub)tree. Notice that there may be zero keys in this
-(subtree) root node, since there may be no level l-1 nodes between a and
-b.
-
-The skip tree is a structure where the power-of-two  distribution of the
-levels is often not optimal. Using a block size that can accommodate N
-keys per one-block node, I guess something near 3N/4 keys of level l-1
-for each level l key is optimal. The trade-off is between the cost of
-having a linear list of blocks to constitute a single logical node when
-there are too many keys (and most of the time the second block will have
-very few keys in it), against the cost of having more levels if each
-node has few keys. 3N/4 corresponds to a p value of 4/(3N). Then level 1
-must be chosen (1-p) of the time, level 2 (1-p)*p of the time, etc. If
-you expect your data to have less than MAX keys over the lifetime of the
-tree, you would clamp the level to be no more than log_{3N/4}(MAX) + 1.
+This would save one comparison half the times, plus two comparisons a
+quarter of the time, etc.  But most comparisons are cheap when the keys
+are different.
 
 Regards, Enrique
 
