@@ -1,44 +1,29 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Using fs views to isolate untrusted processes: I need an assistant
- architect in the USA for Phase I of a DARPA funded linux kernel project
-Date: Thu, 26 Aug 2004 01:48:51 -0700
-Message-ID: <412DA3F3.8070607@namesys.com>
-References: <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 26 Aug 2004 01:49:15 -0700
+Message-ID: <412DA40B.5040806@namesys.com>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20598-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20599-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com>
+In-Reply-To: <20040826010049.GA24731@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Rik van Riel <riel@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, George Beshers <gbeshers@comcast.net>
+To: Jamie Lokier <jamie@shareable.org>
+Cc: viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Rik van Riel wrote:
+Jamie Lokier wrote:
 
->On Sun, 1 Aug 2004, Hans Reiser wrote:
 >
+>
+>One of the big potential uses for file-as-directory is to go inside
+>archive files, ELF files, .iso files and so on in a convenient way.
 >  
 >
->>You can think of this as chroot on steroids.
->>    
->>
->
->Sounds like what you want is pretty much the namespace stuff
->that has been in the kernel since the early 2.4 days.
->
->No need to replicate VFS functionality inside the filesystem.
->
->  
->
-It differs in that it has masks (view specifications), they scale well, 
-their collection and specification is well automated, and they are 
-attached to the process executable rather than in some centralized place 
-(that is, they are process oriented not object oriented (traditional) 
-and not centralized.  Users without root can use them and be trusted 
-with the power to do so.
+Yes, this was part of the plan, tar file-directory plugins would be cute.
 
-Hans
+
