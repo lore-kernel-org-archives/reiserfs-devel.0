@@ -1,48 +1,43 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: file as a directory
-Date: Mon, 29 Nov 2004 07:41:48 -0800
-Message-ID: <41AB433C.2030705@namesys.com>
-References: <2c59f00304112205546349e88e@mail.gmail.com> <1101287762.1267.41.camel@pear.st-and.ac.uk> <4d8e3fd304112407023ff0a33d@mail.gmail.com> <200411241711.28393.christian.mayrhuber@gmx.net> <1101379820.2838.15.camel@grape.st-and.ac.uk> <41A773CD.6000802@namesys.com> <20041127124937.GO26192@nysv.org>
+From: Matt Stegman <matts@ksu.edu>
+Subject: Re: Question on Reiser4 regarding power failures
+Date: Mon, 29 Nov 2004 12:15:51 -0600 (CST)
+Message-ID: <Pine.GSO.4.44L.0411291207020.615-100000@unix2.cc.ksu.edu>
+References: <200411291025.11004.BernhardPrell@vantagefilm.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-22616-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22618-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20041127124937.GO26192@nysv.org>
+In-Reply-To: <200411291025.11004.BernhardPrell@vantagefilm.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
-Cc: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>, linux-kernel@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Bernhard Prell <BernhardPrell@vantagefilm.com>
+Cc: reiserfs-list@namesys.com
 
-Markus T=F6rnqvist wrote:
 
->On Fri, Nov 26, 2004 at 10:19:57AM -0800, Hans Reiser wrote:
->
-> =20
->
->>For the case Peter cites, yes, it does add clutter to the pathname to=20
->>say "..metas" (actually, it is "...." now in the current reiser4, not=20
->>"..metas").  This is because you aren't looking for metafile=20
->>   =20
->>
->
->"...." shound like something that could be an alias for ../..
->so not much better than reserving the word "metas" from the namespace.
->
->I guess I'll still go with ..metas here, as it's the best compromise
->showed. Or maybe even ..meta (as there is no need for the plural imo)
->
->Just re-opening a damned useless, old, tired and daft can of worms :P
->
-> =20
->
-I agree that ..metas is much less likely to cause a namespace collision,=20
-but I also think that if we called it "john" it would not be a major=20
-problem, and since the issue is causing us political problems in getting=20
-into the kernel, "...." is more PR right (as it does not slight Finnish=20
-women named meta by suggesting they are too obscure to count), and so=20
-"...." wins.    "...." also has the advantage that it is elegant in=20
-extending the Unix convention, in that we already have a ".." and a "."=20
-and hidden files that start with ".".
+> Will this really help to protect against partially written sectors and from
+> there resulting read-errors (If a disk loses power while writing a sector the
+> CRC-Check will fail and the disk reports an read-error that's not caused by a
+> real hardware defect)? Changing the write cache strategy just "moves" the
+> problem "in time" - maybe the propability that something happens is lower,
+> because the amount of data that gets written at a certain point of time is
+> smaller.
+
+Aren't sector writes (512-byte sectors) on hard drives atomic?  I believe
+they are, either all 512 bytes are written or none are.  The problem with
+write caching is that when the kernel asks the drive to write sectors,
+those sectors will end up in the write cache instead of going to disk, but
+the disk will report them as written.  This is fast, but if the power is
+lost before the cache is written to disk, then you've just lost your data
+- up to the size of your drive's cache, anywhere from 256kB or less up to
+8MB caches on late model drives - and the write cache makes no ordering
+guarantees at all.  This pretty much negates the security of a journalling
+filesystem, since it relies on knowing whether certain data was written to
+the disk or not.
+
+-- 
+Matt Stegman
+
+
