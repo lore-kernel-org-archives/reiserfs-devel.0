@@ -1,26 +1,24 @@
-From: =?UTF-8?B?SMOldmFyZCBXYWxs?= <haavardw@ifi.uio.no>
-Subject: Re: umount bug?
-Date: Fri, 25 Mar 2005 13:14:30 +0100
-Message-ID: <424400A6.3000309@ifi.uio.no>
-References: <4241B21B.9070404@cpc.wmin.ac.uk> <1111603872.11275.7.camel@gentoo> <1111682170.3084.22.camel@tribesman.namesys.com> <200503251246.24567.pb101@o2.pl>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: reiser4 update
+Date: Fri, 25 Mar 2005 20:25:49 +0300
+Message-ID: <1111771549.3084.293.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200503251246.24567.pb101@o2.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"; format="flowed"
-To: pb101@o2.pl
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+Cc: "reiserfs-dev@namesys.com" <reiserfs-dev@namesys.com>
 
+Hello
 
-Pawe=C5=82 Bugalski wrote:
-[...]
-> Anyway which object.c file should I patch?
+The most recent reiser4 code can taken from:
+ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.11
+and
+ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.12-rc1-mm3
 
-My guess is /usr/src/linux/fs/reiser4/plugin/object.c
+Please complain if you find something wrong with this
 
---
-hw
