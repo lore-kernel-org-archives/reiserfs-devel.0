@@ -1,52 +1,74 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: The Necessity of File Types (was silent semantic changes with
- reiser4)
-Date: Mon, 30 Aug 2004 19:42:03 -0500
+Subject: Re: silent semantic changes with reiser4
+Date: Mon, 30 Aug 2004 19:46:44 -0500
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <4133C95B.8080307@slaphack.com>
-References: <3632837631-BeMail@cr593174-a>
+Message-ID: <4133CA74.6070906@slaphack.com>
+References: <Pine.LNX.4.44.0408271043090.10272-100000@chimarrao.boston.redhat.com> <412F7D63.4000109@namesys.com> <20040829150041.GD9471@alias>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <3632837631-BeMail@cr593174-a>
+In-Reply-To: <20040829150041.GD9471@alias>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Cc: Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, torvalds@osdl.org
+To: flx@msu.ru
+Cc: Hans Reiser <reiser@namesys.com>, Rik van Riel <riel@redhat.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Alexander G. M. Smith wrote:
-[...]
-| By the way, I disagree on Hans with using a directory for the meta
-data, I'd prefer to just have "..meta." as the name prefix of the
-metadata things.  Otherwise there's an extra directory level in there,
-making ..meta/ different from other directories (making browsing it a
-bit awkward since it doesn't have metadata of its own - like window
-coordinates for displaying the directory).
+Alexander Lyamin wrote:
+| Fri, Aug 27, 2004 at 11:28:51AM -0700, Hans Reiser wrote:
+|
+|>Rik van Riel wrote:
+|>
+|>
+|>>
+|>>Currently I see no way to distinguish between the stuff
+|>>that should be backed up and the stuff that shouldn't.
+|>>
+|>>
+|>>
+|>
+|>We create filename/pseudos/backup, and that tells the archiver what to
+|>do.....
+|
+|
+| its ugly idea.
+|
+| representations should be distinguished from sources. and its reasonably
+| to put this distinguisher somewhere in namespace. but
+filename/pseudos/backup
+| is plain ugly.
 
-You'd rather do "cat ..meta.pseudo" than "ls ..metas/"?
-And we already have weird directories.  /proc doesn't do things that
-/tmp does.  I also doubt proc will ever store that kind of metadata.
+How about filename/metas/serialized, or filename/metas/fschunk?
 
-I don't like either "metas" or "..metas", but you'll have to look in the
-archives for why.  I am NOT starting that again.
+And I did mention before about how it'd be nice for it to be an fs chunk...
+
+Imagine 5000 tiny little files that, by the time reiser's done with
+them, fit inside 5 blocks or so.  It's insanely cheaper to copy the five
+blocks than to tar them up.  It also means that we don't have to worry
+about supporting tar on other platforms -- if they don't have reiser4,
+they need a separate converter.  If apps are going to use reiser4
+metadata for anything significant, they probably would link against some
+sort of userland implementation of reiser4 as a Windows library, say, to
+access the files elsewhere.
+
+That's extreme, but you get the idea.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQTPJW3gHNmZLgCUhAQKuEw/+PjrDfSlZvuTUwiOSa/kU05qjTKkIp05F
-nBkrSIUKSUfoYN3gILucIGOjjJ5qBRW3wLIwWyO+raOAzHFTdylvR1rEWP9h/JUG
-Psz3X8RE8cubiuNwjyJawI87cPX8HW1xQxgkiiquZN2L5XbvHsFsbwAJV1tJLnrM
-2lL6IBUXcxDIh7pdB0/z+4t945ElT3Rl09CLP/MfP4GNvt/UWjhbeHNWdeLq93C+
-w0irn6VIsm+1+GKqEhpYLLMj9V4cbBY6m7XMuBzH+gEyu5exAMqGzPLGDiG/I6y/
-rXI6IF94i2p4sLMv0LmtEvQsV37LFIKRBrWVScV5oiQ93LPVLG6pYmAi6RLsHN03
-QazMmcRwjVvrTAf0KS21KXaE0qYbvgoQpteUEkPZLRkczSmiry2d3e6gBQlCV7xj
-9Hzkm9HxR0BjxmRaMVLEWZ86t08OHkl0Ab186DiHUC5RlL2FPIvdyYthXo9wwtI/
-XlA03Rvc3kl6DVRO8UM/+fa8v5MDn58ZMI2QgdPrU0V2Q9bGv/woByszXaDA+IVJ
-ZiHQ8IgShYlkA279DffOrZnDPnZMOWa7iRYetX5PYPoAyfkrmFKofT8va+dDL7pf
-HA5crUR5ws1EZZ8lUfrtXXnsBeEn9PS0lUHvJY7zZ4tJfZ65Fa+IiDpK5p+1tJZi
-ylCBNEidK/8=
-=CiZ9
+iQIVAwUBQTPKc3gHNmZLgCUhAQJ5xw//T+kLDCHlfQEaGM9XAeFDZU9f4m4PWjet
+n2xODVIxaT7WmnZ4nQ3rRTiJjsXvRBcPdWUTFRZl6NbLqa/K6ESpUJAZsZynRhXd
+NLJ9gEpeqcUrXBLrmTD5AbzENOLdqDIo2qQ+hde68H5vo+naa5xtTyrMiHNHQWbf
+9P45WKXYt36madg4KjAhZcYB+T843fc/ItjLQBTwxBNOykBcZ82UUNwGeGbiqczm
+uXftCD6BNtKsXnJxu2jVc8CK93lOw4SIf7BY09PFXgK2XTpAsKzOwwqpBtdxSzqD
+lkz+nGEeYZk6GRA3N1OTbPJnboee7WHZzMyvXDMBsExfR6puV1SYA2NWhj9uGDmS
+nYNZwdN+RimiouD1D9DD+oCQe/Gr66THicex5FM37cMBdaDf0jGblvpDdQRfkhcX
+2KGLCt1ax620ia2945/+/+6iQqM7+oTQsVNziYjVGQ4gCNRzZh8SBtM0yUZuecNO
+H84fWYLICGos+Qk7FyCuQOquTSVRWKadkiDaOSre2hFk+S9VmDWkghJSNGrnqoKi
+pFYFrUzL+NXPHs6G8b8EKAaQQt+Z8iHE6xgdc+yS56Pdrq8apRzeQv2zhgZaRq9J
+kCRgvYo40xFMX4B+EqexxIiwc6nPUD5dFbt0OnJMEk4pduFq64lMVdoQA8Qp4X8a
+0feuVuaWHr0=
+=ymeH
 -----END PGP SIGNATURE-----
