@@ -1,56 +1,41 @@
-From: Jamie Lokier <jamie@shareable.org>
+From: Linus Torvalds <torvalds@osdl.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 18:20:29 +0100
-Sender: linux-kernel-owner@vger.kernel.org
-Message-ID: <20040826172029.GP5733@mail.shareable.org>
-References: <20040825200859.GA16345@lst.de> <20040825203516.GB4688@backtop.namesys.com> <20040825205149.GA17654@lst.de> <412DA2CF.2030204@namesys.com> <20040826124119.GA431@lst.de> <20040826134812.GB5733@mail.shareable.org> <20040826155744.GA4250@lst.de> <20040826160638.GJ5733@mail.shareable.org> <20040826161303.GA4716@lst.de> <Pine.LNX.4.58.0408260919380.2304@ppc970.osdl.org>
+Date: Thu, 26 Aug 2004 10:32:46 -0700 (PDT)
+Message-ID: <Pine.LNX.4.58.0408261030350.2304@ppc970.osdl.org>
+References: <Pine.LNX.4.44.0408261315240.27909-100000@chimarrao.boston.redhat.com>
+ <Pine.LNX.4.58.0408261019580.2304@ppc970.osdl.org> <20040826172703.GR5733@mail.shareable.org>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S269298AbUHZRdG@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.58.0408260919380.2304@ppc970.osdl.org>
+Return-path: <reiserfs-list-return-20740-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <20040826172703.GR5733@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, Alex Zarochentsev <zam@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Jamie Lokier <jamie@shareable.org>
+Cc: Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Linus Torvalds wrote:
-> And it would be perfectly ok for O_DIRECTORY to open such a file, as long
-> as it opens the directory branch, not the special device.
 
-What about:
 
-    cd /dev/into_directory_branch/
-    run_setuid_program
-
-        -> calls pwd
-           pwd opens("."), (".."), ("../..") etc.
- 
-        -> the setuid program thus ends up opening a device or fifo,
-           when it does pwd's path walk.  Yes it could use the getcwd
-           syscall, but some programs do their own path walk.
-
-> I advocated (long ago) something like this for /dev handling, just because
-> I think it would make sense to have
+On Thu, 26 Aug 2004, Jamie Lokier wrote:
+> Linus Torvalds wrote:
+> > 
+> > No no. The stream you get from a directory is totally _independent_ of the 
+> > contents of the directory. Anything else would be pointless.
 > 
-> 	/dev/hda	<- special file
-> 	/dev/hda/part1	<- partition 1 (aka /dev/hda1)
-> 
-> which just seems like a very obvious and intuitive interface to me. Of 
-> course, we have so much legacy in /dev that there's no real point to doing 
-> this, but it's still an appealing approach, I think.
+> Surely it depends on the directory?
 
-It also fits the container idea very well:
+Well, you _could_ make it do a "tar", but what's the point? That really 
+doesn't add any value as far as user space is concerned.
 
-        /dev/hda/part1/ <- the filesystem inside partition 1
+Think of it this way: if the directory and the "default stream" associated 
+with it aren't independent, then user space already has the information, 
+and the stream is pointless. In fact, the stream is _worse_ than 
+pointless, because it hides the fact that there is no independent 
+information.
 
-That's not a contrivance, it's what I'd expect to happen if
-/dev/hda is an ordinary file containing a disk image:
+See my point? 
 
- 	image.bin	 <- hard disk image (a regular file)
- 	image.bin/part1	 <- partition 1
- 	image.bin/part1/ <- the filesystem inside partition 1
-
-That's assuming there's a format handler which recognises that image.
-
--- Jamie
+		Linus
