@@ -1,81 +1,30 @@
-From: Mike Benoit <mikeb@netnation.com>
-Subject: Re: tuning a fs for large number of small files
-Date: 06 Nov 2002 09:16:10 -0800
-Message-ID: <1036602970.13296.254.camel@mikeb.staff.netnation.com>
-References: <Pine.LNX.4.44.0211061711290.2873-100000@gamay.kronodoc.fi>
+From: Andreas Happe <andreashappe@gmx.net>
+Subject: [reiser4] sub_from_sb_unallocated - error [zam528]
+Date: Wed, 6 Nov 2002 19:16:04 +0100
+Sender: news <news@main.gmane.org>
+Message-ID: <slrnasin32.45l.andreashappe@marvin.homelinux.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11933-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11934-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.44.0211061711290.2873-100000@gamay.kronodoc.fi>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Marko Asplund <aspa@kronodoc.fi>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-On Wed, 2002-11-06 at 07:25, Marko Asplund wrote:
-> On Wed, 6 Nov 2002, Ragnar Kj=F8rstad wrote:
->=20
-> > ...
-> > If you have the chance you can tar together all the files, and extract
-> > them again. This will help in two ways:
-> > - reduce fragmentation
-> > - write files to the filesystem in reiserfs-optimal order.
-> >   If you create the files in the increasing hash-order access will
-> >   typlicly be much faster. If you create a tar of the files from a
-> >   reiserfs-filesystem (with the same hash) you will accomplish just
-> >   that.
->=20
-> i was thinking about using something like the following method for=20
-> migrating the files to the new filesystem:
-> tar clf - /mnt/oldext3fs | tar xf -
->=20
-> this should reduce fragmentation but will it write the files in
-> filesreiserfs-optimal order?
->=20
-> > What hash-function to use doesn't really matter unless you have a lot o=
-f
-> > files in a single directory. Do you have that? Is there any typlical
-> > "pattern" for the filenames, and the order they are created in?
->=20
-> there shouldn't be particularly many files in a single directory. the
-> filesystem is actually a hierarchy "database" for our backup system
-> (Arkeia) and it replicates the filesystem trees of the machines being
-> backed up. i can't come up with a typical file naming or creation order
-> patterns. most of the directory hierarchies are quite static except for
-> the home directories perhaps.
->=20
+my computer crashed while copying a kernel tree from a reiserfs to a
+reiser4 partition with the following message:
 
-Speak of the devil. (Arkeia) We have a similar setup to what you
-described, our Arkeia server handles about 1TB of data per full backup,
-consisting of over 25 million files. We keep the Arkeia database on
-reiserfs 3.x using these mount options:=20
+| Kernel panic: reiser4 panicked cowardly: <0> reiser4 [(pdflush(7)]:
+| sub_from_sb_unallocated (fs/reiser4/block_alloc.c:161) [zam-528]
 
-defaults,noatime,notail,nodiratime
+there are no new files on the reiser4 partition.
 
-Though reiserfs handles all the small files without a problem, we found
-that hacking the kernel to disable fdatasync was the only way to get
-decent speeds from Arkeia. Beware though, Arkeia does like to crash
-often, so this usually means more database restores (like I'm doing
-right now), but our backup just wouldn't fit in the window otherwise.=20
+i'm using debian unstable, kernel 2.5.46 with reiser4 patch from
+5.11.2002.
 
-Regardless, Arkeia just can't handle our load well at all, it's database
-is just way to inefficient and there support is terrible at best.
-Honestly I wouldn't recommend Arkeia to my worst enemy if they need to
-backup more then a few gigs.
+Andreas
 
---=20
-Best Regards,
-=20
-Mike Benoit
-NetNation Communication Inc.
-Systems Engineer
-Tel: 604-684-6892 or 888-983-6600
- ---------------------------------------
-=20
- Disclaimer: Opinions expressed here are my own and not=20
- necessarily those of my employer
 
