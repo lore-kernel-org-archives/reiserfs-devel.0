@@ -1,59 +1,45 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: vpf-10680, minor corruptions
-Date: Wed, 18 Jun 2003 19:26:26 +0400
-Message-ID: <20030618152626.GA17240@namesys.com>
-References: <3EF07AFB.8060303@g-house.de>
+From: Bryan Henderson <hbryan@us.ibm.com>
+Subject: Re: FIFO files
+Date: Wed, 18 Jun 2003 08:34:17 -0700
+Message-ID: <OFBDB76739.EEEB11B5-ON87256D49.005440F0-88256D49.00557BBC@us.ibm.com>
+References: <3EF04F96.7030406@gmx.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14611-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14612-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3EF07AFB.8060303@g-house.de>
+In-Reply-To: <3EF04F96.7030406@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christian Kujau <evil@g-house.de>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
+Cc: Cyrille Chepelov <cyrille@chepelov.org>, Oleg Drokin <green@namesys.com>, linux-fsdevel@vger.kernel.org, Hans Reiser <reiser@namesys.com>, Ragnar =?ISO-8859-1?Q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>, reiserfs-list@namesys.com
 
-Hello!
 
-On Wed, Jun 18, 2003 at 04:45:15PM +0200, Christian Kujau wrote:
-> i'm running linux 2.5.70/2.5.72 and have a 2GB fs with Reiserfs on it.
-> from time to time reiserfsck the fs and some corrutions came up, which 
-> were fixed as suggested by --fix-fixable.
-> how comes? the data on the fs is not that important, it's a cache for 
-> Debian packages. I'm just curious _why_ there are corruptions anyway, 
-> since there is not even heavy load on the fs.
 
-Hm, interesting. Do you had crashes/unexpected shutdowns before corruptions appears
-or are they appear without any reason at all?
 
-> /debian/dists/woody/main/binary-powerpc/Packages.gzvpf-10680: The file 
-> [2256 3144] has the wrong block count in the StatData (3344), should be 
-> (1680)
-> /source/Sources.gzvpf-10680: The file [2275 2349] has the wrong block 
-> count in the StatData (1432), should be (720)
-> /contrib/binary-powerpc/Packages.gzvpf-10680: The file [2225 523] has 
-> the wrong block count in the StatData (80), should be (40)
-> /source/Sources.gzvpf-10680: The file [2246 2785] has the wrong block 
-> count in the StatData (48), should be (24)
-> /non-free/binary-powerpc/Packages.gzvpf-10680: The file [2289 2782] has 
-> the wrong block count in the StatData (104), should be (56)
-> /source/Sources.gzvpf-10680: The file [2310 2471] has the wrong block 
-> count in the StatData (56), should be (32)
-> /non-US/dists/woody/non-US/main/binary-powerpc/Packages.gzvpf-10680: The 
-> file [2627 2495] has the wrong block count in the StatData (88), should 
-> be (48)
-> finished 
 
-Are there more files on this fs at the time of check?
+>> XFS uses an ioctl to punch holes, dm_punch_hole, but it's prototype is
+>> specific to XDSM.
+>
+>make_hole or zap_range would be alternative names.
 
-> the machine was booted yesterday evening, and is booted once in a week 
-> or so. it's an Alpha/EV45, Debian testing on it, glibc 2.3.1.
+The concept is a good one, and a separate system call, defined in a
+filesystem-type-independent way, is better than an ioctl or fcntl, but the
+interface should not be defined in terms of making holes.  At the highest
+level, a file is just a stream of bytes.  A continuous stream.  So what
+this interface should be seen as, and named as, is something that simply
+clears a region of the file to zeroes.  In a particular implementation, if
+it makes sense, this can be implemented by deallocating blocks that back
+that region of the file.
 
-Well, I guess it's time to clear the dust off our alpha and do some testing.
+Note that in some filesystem types, there may not be any concept of
+allocated blocks or sparse vs dense files.
 
-Bye,
-    Oleg
+AIX has a system call for this and it is called fclear().  I like that
+better than any alternative I've seen.
+
+Bryan Henderson                         IBM Almaden Research Center
+San Jose CA                             Filesystems
+
