@@ -1,28 +1,28 @@
 From: Valdis.Kletnieks@vt.edu
 Subject: Re: duplicate files and recent changes
-Date: Thu, 06 Jun 2002 13:58:15 +0000
-Message-ID: <85256BD0.00604FFF.00@patapsco.com>
+Date: Thu, 06 Jun 2002 13:54:22 +0000
+Message-ID: <85256BD0.00606FF1.00@patapsco.com>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- Boundary="0__=ps8GoyHrOlvV1dk0YWaeB7oS3SkZ6x9VKZ8QEJ7nOfVs0Xitu7CfGHXQ"
-Return-path: <reiserfs-list-return-10560-reiserfs=m.gmane.org@namesys.com>
+ Boundary="0__=j1PonAjvwzCS7cfu6bUpoP4kv3IHQFW8LkHhheuAFGv5GKImKvjM97f5"
+Return-path: <reiserfs-list-return-10561-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Oleg Drokin <green@namesys.com>
-Cc: "S. Alexander Jacobson" <alex@shop.com>, reiserfs-list@namesys.com
+To: "S. Alexander Jacobson" <alex@shop.com>
+Cc: reiserfs-list@namesys.com
 
---0__=ps8GoyHrOlvV1dk0YWaeB7oS3SkZ6x9VKZ8QEJ7nOfVs0Xitu7CfGHXQ
+--0__=j1PonAjvwzCS7cfu6bUpoP4kv3IHQFW8LkHhheuAFGv5GKImKvjM97f5
 Content-type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
                                                                   
  (Embedded                                                        
  image moved   Valdis.Kletnieks@vt.edu                            
- to file:      06/06/2002 09:58 AM                                
- pic04969.pcx)                                                    
+ to file:      06/06/2002 09:54 AM                                
+ pic30124.pcx)                                                    
                                                                   
 
 
@@ -34,8 +34,8 @@ Content-Disposition: inline
 
  (Embedded
  image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic08117.pcx)
+ to file:      06/06/2002 09:54 AM
+ pic23278.pcx)
 
 
 
@@ -47,8 +47,8 @@ Content-Disposition: inline
 
  (Embedded
  image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic11628.pcx)
+ to file:      06/06/2002 09:54 AM
+ pic03814.pcx)
 
 
 
@@ -60,8 +60,8 @@ Content-Disposition: inline
 
  (Embedded
  image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic06033.pcx)
+ to file:      06/06/2002 09:54 AM
+ pic14574.pcx)
 
 
 
@@ -73,8 +73,8 @@ Content-Disposition: inline
 
  (Embedded
  image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic18619.pcx)
+ to file:      06/06/2002 09:54 AM
+ pic07359.pcx)
 
 
 
@@ -86,8 +86,8 @@ Content-Disposition: inline
 
  (Embedded
  image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic14738.pcx)
+ to file:      06/06/2002 09:54 AM
+ pic07726.pcx)
 
 
 
@@ -99,8 +99,8 @@ Content-Disposition: inline
 
  (Embedded
  image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic07549.pcx)
+ to file:      06/06/2002 09:54 AM
+ pic14099.pcx)
 
 
 
@@ -112,8 +112,8 @@ Content-Disposition: inline
 
  (Embedded
  image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic26942.pcx)
+ to file:      06/06/2002 09:54 AM
+ pic20730.pcx)
 
 
 
@@ -125,8 +125,8 @@ Content-Disposition: inline
 
  (Embedded
  image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic27268.pcx)
+ to file:      06/06/2002 09:54 AM
+ pic28349.pcx)
 
 
 
@@ -138,8 +138,8 @@ Content-Disposition: inline
 
  (Embedded
  image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic24632.pcx)
+ to file:      06/06/2002 09:54 AM
+ pic26147.pcx)
 
 
 
@@ -148,30 +148,33 @@ Content-Disposition: inline
 
 
 
-On Thu, 06 Jun 2002 13:25:05 +0400, Oleg Drokin said:
 
-> But MD5 may be identical for different files.
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic06027.pcx)
 
-Only a 2**128 chance of that.  If you know a way to force a hash collision
-more frequently than that, the crypto world wants to hear from you.. ;)
 
-> Also this buys you nothing.
-> You write file in chunks, once file is identical to other file,
-> one of the files deleted. Looks like just more extra work (but some saved
-space
-> of course).
 
-A much more productive way to save space is file-system compression.  AIX
-supports LZ-compressing each 4K block and then only saving as many 512 byte
-fragments as actually needed.  It's a big win - /usr (even with all the
-binaries)
-needs about 30% less space, and I've seen over 50% for file systems with
-source trees in them...
+
+
+
+
+
+On Thu, 06 Jun 2002 01:30:46 EDT, "S. Alexander Jacobson" <alex@shop.com>  said:
+
+> 1. Can reiserfs detect that I have two copies of
+> the same file on disk and store tham as one file
+> (doing a lazy copy) if someone writes to one of
+> them?
+
+Something I'd like to see even more than that would be VMS-style version
+numbers on files.
 --
                     Valdis Kletnieks
                     Computer Systems Senior Engineer
                     Virginia Tech
 
 
---0__=ps8GoyHrOlvV1dk0YWaeB7oS3SkZ6x9VKZ8QEJ7nOfVs0Xitu7CfGHXQ--
+--0__=j1PonAjvwzCS7cfu6bUpoP4kv3IHQFW8LkHhheuAFGv5GKImKvjM97f5--
 
