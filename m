@@ -1,58 +1,98 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: hashes in reiser3.6
-Date: Sun, 28 Nov 2004 14:30:36 -0500
-Message-ID: <41AA275C.7030909@suse.com>
-References: <2f4958ff041118114530134bff@mail.gmail.com>	 <419D031D.9050807@novell.com> <2f4958ff04112015003b0bca9e@mail.gmail.com>
+From: Bernhard Prell <BernhardPrell@vantagefilm.com>
+Subject: Re: Question on Reiser4 regarding power failures
+Date: Mon, 29 Nov 2004 10:25:10 +0100
+Message-ID: <200411291025.11004.BernhardPrell@vantagefilm.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-22607-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-22610-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <2f4958ff04112015003b0bca9e@mail.gmail.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="macroman"; format="flowed"
-To: =?UTF-8?B?R3J6ZWdvcnogSmHFm2tpZXdpY3o=?= <gryzman@gmail.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-LS0tLS1CRUdJTiBQR1AgU0lHTkVEIE1FU1NBR0UtLS0tLQpIYXNoOiBTSEExCgpHcnplZ29yeiBK
-YcWba2lld2ljeiB3cm90ZToKfCBPbiBUaHUsIDE4IE5vdiAyMDA0IDE1OjE2OjI5IC0wNTAwLCBK
-ZWZmIE1haG9uZXkgPGplZmZtQG5vdmVsbC5jb20+IHdyb3RlOgp8CnwKfD5JZiB0aGUgZmlsZXN5
-c3RlbSBpcyBhbHJlYWR5IGVzdGFibGlzaGVkLCB5b3UgY2FuJ3Qgc3dpdGNoIGhhc2hlcy4gVGhl
-Cnw+aGFzaCBpcyBnbG9iYWwgdG8gdGhlIGZpbGVzeXN0ZW0sIHNvIGlmIHlvdSB3ZXJlIHRvIGNo
-YW5nZSBpdCwgbG9va3Vwcwp8PndvdWxkIGZhaWwgYW5kIHlvdSB3b3VsZG4ndCBiZSBhYmxlIHRv
-IGZpbmQgYW55IG9mIHlvdXIgZmlsZXMuCnw+Cnw+SWYgeW91J3JlIGNyZWF0aW5nIGEgbmV3IGZp
-bGVzeXN0ZW0sIHlvdSBjYW4gdXNlIHRoZSAtLWhhc2ggYXJndW1lbnQgdG8KfD5ta3JlaXNlcmZz
-LiBVbmRlciBtb3N0IGNpcmN1bXN0YW5jZXMsIHRoZSBmaWxlc3lzdGVtIGNvZGUgd2lsbAp8PmF1
-dG9tYXRpY2FsbHkgZGlzY292ZXIgd2hpY2ggaGFzaCB5b3UncmUgdXNpbmcgYXQgbW91bnQgdGlt
-ZS4KfAp8CnwgVGhhbmtzLCBidXQgdGhlIHRyaWNrIGlzIHRoYXQgSSB3b3VsZCBsaWtlIHRvIHN3
-aXRjaCBvdmVyIGV4aXN0aW5nCnwgcGFydGl0aW9uIHRvIG90aGVyIGhhc2guCnwgSSBrbm93LCBJ
-IGNhbiBjb3B5IG92ZXIgYWxsIGRhdGEgb24gc2lkZSwgYW5kIHJlY3JlYXRlIHBhcnRpdGlvbiBm
-cm9tCnwgc2NyYXRjaCwgYnV0IGl0J3MganVzdCB3YXkgdG9vIHBhaW5mdWxsLiBJdCBzaG91bGQg
-YmUgcG9zc2libGUgdG8gZG8KfCB0aGlzIGluIG11Y2ggZWFzaWVyIHdheS4KfCBTbyB5b3Ugc2F5
-LCB0aGF0IHJlaXNlcmZzIGRvZXNuJ3Qgc3RvcmUgZmlsZW5hbWVzIGluIHN0cnVjdXJlcywgYnV0
-CnwgdXNlcyBqdXN0IGhhc2hlcyB0byBsb29rdXAgPyBTaG91bGRuJ3QgaXQgYmUgcG9zc2libGUg
-dG8gZ28gdGhyb3VnaAp8IGFsbCBzdHJ1Y3R1cmVzIG9uIHRoZSBwYXJ0aXRpb24sIGFuZCByZWNy
-ZWF0ZSBoYXNoZXMsIGJ1dCB1c2luZwp8IGRpZmZlcmVudCBrZXkgZnVuY3Rpb24gPwp8IEkgYW0g
-cHJlcGFyZWQgdG8gc3BlbmQgc29tZSB0aW1lLGFuZCBkbyB0aGlzLgp8CgpBcyBWbGFkaW1pciBz
-YWlkLCB5b3UnZCBuZWVkIHRvIHdyaXRlIGEgc3BlY2lhbCB0b29sIHRvIGRvIHRoaXMuIEl0Cndv
-dWxkIGJlIGZhciBtb3JlIGNvc3QgZWZmZWN0aXZlIHRvIHVzZSBhIHNwYXJlIGRyaXZlIG9yIHRh
-cGUgYmFja3VwIHRvCmJhY2t1cCB5b3VyIGZpbGVzeXN0ZW0gYW5kIHJlc3RvcmUgaXQgYWdhaW4u
-CgpUbyBoaWdobGlnaHQgd2h5IHRoaXMgd291bGQgYmUgc3VjaCBhIGNvbXBsZXggb3BlcmF0aW9u
-LCBjb25zaWRlciB0aGF0CnRoZSBoYXNoZWQgZW50cmllcyBhcmUgc29ydGVkIGJ5IHRoZSBoYXNo
-LiBXaXRoIHNtYWxsIGRpcmVjdG9yaWVzLCB0aGlzCmlzIGZhaXJseSB0cml2aWFsIHNpbmNlIHlv
-dSBjYW4ganVzdCBzaHVmZmxlIHRoZSBlbnRyaWVzIGFyb3VuZCBpbnNpZGUKdGhlIHNhbWUgaXRl
-bS4gSG93ZXZlciwgd2l0aCBhIGxhcmdlIGRpcmVjdG9yeSAod2hlcmUgbGFyZ2UgaXMgZGVmaW5l
-ZAphcyB0aGUgbGVuZ3RoIG9mIGFsbCBmaWxlbmFtZXMgKyBhc3NvY2lhdGVkIGtleXMgaXMgbGFy
-Z2VyIHRoYW4gYSBkaXNrCmJsb2NrKSwgdGhlIGRpcmVjdG9yeSBjYW4gYmUgc3BsaXQgb3ZlciBz
-ZXZlcmFsIG5vZGVzLiBPbmNlIHlvdSBzdGFydApzaHVmZmxpbmcgbm9kZXMgYXJvdW5kLCB5b3Un
-cmUgZXNzZW50aWFsbHkgcmVidWlsZGluZyB0aGUgdHJlZSwgYW5kCnRoYXQncyBmYXIgbW9yZSBj
-b21wbGV4IGFuZCB0aW1lIGNvbnN1bWluZyB0aGFuIHNpbXBseSBjb3B5aW5nIHRoZSBkYXRhCm9m
-ZiBhbmQgcmVzdG9yaW5nIGl0IGJhY2suCgpTb3JyeSB3ZSBkb24ndCBoYXZlIGFuIGVhc2llciBh
-bnN3ZXIgZm9yIHlvdS4gOigKCi0gLUplZmYKCi0gLS0KSmVmZiBNYWhvbmV5ClN1U0UgTGFicwot
-LS0tLUJFR0lOIFBHUCBTSUdOQVRVUkUtLS0tLQpWZXJzaW9uOiBHbnVQRyB2MS4yLjUgKEdOVS9M
-aW51eCkKQ29tbWVudDogVXNpbmcgR251UEcgd2l0aCBUaHVuZGVyYmlyZCAtIGh0dHA6Ly9lbmln
-bWFpbC5tb3pkZXYub3JnCgppRDhEQlFGQnFpZGNMUFd4bHl1VEQ3SVJBbmI5QUo5M2xBeW1hRmQy
-TzZqb3RCVS81Nm5VNzdlNWJnQ2RGMTI0Ckt6cEg5SUtxUituRzBjK2pJR0RUTjk4PQo9VURuVQot
-LS0tLUVORCBQR1AgU0lHTkFUVVJFLS0tLS0K
+
+Thank you very much for your feedback so far!
+
+Kerin Millar wrote:
+> For this reason, and because I believe that the stability of reiserfs
+> was improved drastically in later revisions of the 2.4 kernel, I would
+> urge that you consider using a modern 2.4 kernel and the latest reiserfs
+> tools if possible!
+
+I don't want to describe why we are still using such an outdated system :-)=
+=20
+but we will move to Gentoo with a current 2.6.x kernel and reiser4 soon. I =
+
+just wanted to know if this will eliminate the problem once and for all - a=
+t=20
+least in theory - because of the new concepts in reiser4 (atomic=20
+transactions). =20
+
+------
+
+Christian Mayrhuber wrote:
+> I'd suggest to do the following for pull the plug scenarios on productive
+> systems with reiserfs:
+
+> 1) Disable write caching for ide drives with "hdparm -W 0 /dev/hdX"
+> =A0 =A0This is the most important thing to do.
+
+Will this really help to protect against partially written sectors and from=
+=20
+there resulting read-errors (If a disk loses power while writing a sector t=
+he=20
+CRC-Check will fail and the disk reports an read-error that's not caused by=
+ a=20
+real hardware defect)? Changing the write cache strategy just "moves" the=20
+problem "in time" - maybe the propability that something happens is lower, =
+
+because the amount of data that gets written at a certain point of time is =
+
+smaller.=20
+
+> 4) If you want to prevent data corruption and not just filesystem
+> =A0 =A0corruption, use a recent 2.6.x kernel which incoporates Chris Maso=
+n's
+> =A0 =A0data logging patches.
+> =A0 =A0Alternatively you could use a newer SuSE which has the data logging
+> =A0 =A0patches in the 2.4 kernel series, too. Maybe the installation of a
+> =A0 =A0a newer 2.4.x kernel rpm from ftp.suse.com will work for you.
+
+> As reiser4 is atomic in it's operations it should protect your data even =
+
+more=20
+> than ext3/reiserfs with the data=3Djournal mount option, unless you don't=
+ have
+> write cache for ide drives enabled. Reiser4 is still beta.
+
+I am not concerned about the current beta quality, we will migrate early ne=
+xt=20
+year and someday the bugs will be fixed. Updating a SuSE system is quite a =
+
+pain I experienced (without reinstalling), it will be easier with Gentoo to=
+=20
+keep a reasonable current system.
+
+> Since 2.6.9 the write barrier patches are in the kernel. These should
+> protect better from data loss with disks that have write caching enabled.
+> The only two filesystems supporting write barrier are ext3 with the mount
+> option "barrier=3D1" and reiserfs with the mount option "barrier=3Dflush".
+
+Our problem is not loss of (user) data. If someone pulls the plug before al=
+l=20
+unsaved data is written or before the write cache is flushed - I don't care=
+.=20
+But it would be nice if the system would boot again... and all system files=
+=20
+are sane. As I understand it, reiser4 recognizes if a certain transaction w=
+as=20
+completed successfully. But will it fix a partially written sector?
+
+Bye,
+
+Bernhard
+
