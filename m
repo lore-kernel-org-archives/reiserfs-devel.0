@@ -1,11 +1,11 @@
-From: "Elsie Colvin" <ecolvinqz@johansondesign.se>
-Subject: Did you=?ISO-8859-1?B?IGZpbmQgdGhlIGZpbA==?=e?
-Date: Fri, 29 Aug 2003 05:13:06 -0500
-Message-ID: <b30401c36e16$80f0da16$7a79d8f4@l21t45v>
+From: "Ines Dolan" <inesdolan_cb@cc2.kuleuven.ac.be>
+Subject: =?ISO-8859-1?b?V2hhdGV2ZXIgd28=?=rks
+Date: Fri, 29 Aug 2003 14:12:03 +0400
+Message-ID: <27c801c36e15$3c18b6c3$20889306@hltpo63>
 Mime-Version: 1.0
 Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0370_4B0F7422.FE1E7DA2"
-Return-path: <reiserfs-list-return-15490-reiserfs=m.gmane.org@namesys.com>
+	boundary="----=_NextPart_000_0C82_C5D23803.124EEB60"
+Return-path: <reiserfs-list-return-15491-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -13,10 +13,10 @@ Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-list@namesys.com
 
-------=_NextPart_000_0370_4B0F7422.FE1E7DA2
+------=_NextPart_000_0C82_C5D23803.124EEB60
 Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 
 
-------=_NextPart_000_0370_4B0F7422.FE1E7DA2--
+------=_NextPart_000_0C82_C5D23803.124EEB60--
 
