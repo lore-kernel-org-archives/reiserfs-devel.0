@@ -1,34 +1,59 @@
-From: Andrea Arcangeli <andrea@suse.de>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 00:59:33 +0200
-Message-ID: <20040825225933.GD5618@nocona.random>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <1093467601.9749.14.camel@leto.cs.pocnet.net>
+From: Christophe Saout <christophe@saout.de>
+Subject: Re: repacker
+Date: Thu, 26 Aug 2004 01:01:33 +0200
+Message-ID: <1093474893.12518.4.camel@leto.cs.pocnet.net>
+References: <1093474401.12559.0.camel@localhost>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20537-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-MTyvb7nBVWZomO0eRMGD"
+Return-path: <reiserfs-list-return-20538-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1093467601.9749.14.camel@leto.cs.pocnet.net>
+In-Reply-To: <1093474401.12559.0.camel@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe Saout <christophe@saout.de>
-Cc: viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: redeeman@metanurb.dk
+Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-On Wed, Aug 25, 2004 at 11:00:00PM +0200, Christophe Saout wrote:
-> It should be completely forbidden to link into a meta-directory or out
-> of such a directory. [..]
+--=-MTyvb7nBVWZomO0eRMGD
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-agreed.
+Am Donnerstag, den 26.08.2004, 00:53 +0200 schrieb Redeeman:
 
-> Yes, I don't think it was a good idea either. Probably someone should
+> hey, i notice its possible to activate the repacker in reiser4, and i
+> tried it, on a not-important partition, and it didnt seem to cause any
+> harm, is this generalyl safe? :)
 
-I personally would like plugins only if the API they use wouldn't allow
-them to corrupt the underlying fs, I'm not sure if this is the case with
-reiserfs4.
+Well, I just played around with it. The system locked up under memory
+pressure and when running it backwards it produced tons of extents that
+should have been merged (an fsck fixed that). And I managed to get an
+Oops in end_io_handler. I can provide a screenshot if someone is
+interested (if this really shouldn't have happene despite the repacker
+not being ready yet).
 
-About the backwards compatibility, another option is to add a O_FILEDIR
-and have bash learn about it when you cd into a file. No magic with the
-slashes then.
+But: It didn't damage a single bit of data. The storage tree itself
+seems really robust.
+
+Under normal conditions the left-to-right repacker seems to work just
+fine.
+
+echo -n 1 > /sys/fs/reiser4/<fill in device>/repacker/start
+
+I was playing with the version in the -mm tree.
+
+
+--=-MTyvb7nBVWZomO0eRMGD
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQBBLRpNZCYBcts5dM0RAickAJ4kFL7usZnMfA4DiX5Ol9xNzc2TBQCfYuES
+5GTAZyqZAxuIGzd4WNqeID4=
+=05yn
+-----END PGP SIGNATURE-----
+
+--=-MTyvb7nBVWZomO0eRMGD--
+
