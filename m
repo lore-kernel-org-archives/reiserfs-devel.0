@@ -1,51 +1,69 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Reiser4 status as of this weekend
-Date: Sat, 15 May 2004 19:07:42 -0500
-Message-ID: <40A6B0CE.40300@slaphack.com>
-References: <003a01c4377d$d653eac0$7d02a8c0@toronto.chantrynetworks.com> <40A68F75.2030306@namesys.com> <40A6A748.4030002@gmx.net>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Namesys now accepts Visa cards on our website (support questions
+ and donations both)
+Date: Sun, 16 May 2004 10:07:28 -0700
+Message-ID: <40A79FD0.3090904@namesys.com>
+References: <409AC2FF.7080800@lindows.com> <1083917932.14089.281.camel@tribesman.namesys.com> <409BB690.6030604@namesys.com> <409BBDC9.3030809@lindows.com> <409FB387.8080804@namesys.com> <40A19147.4010703@lindows.com> <40A257DA.2010903@namesys.com> <40A26D45.2010707@lindows.com> <40A30B00.8020103@namesys.com> <C10E654E-A518-11D8-BD91-000A95CD704C@wagland.net> <20040513201142.GT29226@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18726-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18731-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40A6A748.4030002@gmx.net>
+In-Reply-To: <20040513201142.GT29226@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Christian <evilninja@gmx.net>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, Reiserfs mail-list <Reiserfs-List@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+ From the email below I realized I had forgotten to announce this.  We=20
+will answer any question we can answer in half an hour for $25
 
-| Hans Reiser wrote:
-|
-|> We would probably have it ready to ship this week, but Nikita is
-|> leaving Namesys after having done a great job here for way too little
-|> pay, and
-|
-|
-| wow, these are sad news....time to say bye & Thanks! for always being
-| very helpful and the just-in-time support on this list.
+More below.
 
-Amen.  Being a hapless user, I gave up trying to say something -- you
-said it.
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Markus T=F6rnqvist wrote:
 
-iQIVAwUBQKawy3gHNmZLgCUhAQIhnA//SzAWwszYkbj9Q3dHQPOgb3mV0f4ONDSo
-REQUMZpXydfw/sL24tq3gE4grc4OCwn9qdC3RR/fNtonJzVRtlo99xe4WQDitwoP
-fhxMWQRylKwytaKmFPaZxNd1v+oBUDjw0rTV0iFeUH+6JtaulIISo4pTMBQl68fA
-uHUnN5anTSVw3v2dLdt8yJYScL8/wGArLUDDZlki1Ir1TrXn45w+pkmIdKO+ZWr/
-V9K/4ara76tWd3myC7XMUmPkQlQavI7C5VOMGZoz+8AOTLeHYAxzeBtiSE1TxXuZ
-e1jeyPo+t4hBdXuQD4fmvt6ms70U+Cm1PuTthIqhg4nldGxgJp1vDYcOGDSWWz8j
-dUumsjs+uneOJsQIQoz3Tzz3wp0ap94Jf+6JPTWbHtQqZeQ30thXbr7cDn1A6rPF
-WWL+z0p+njLiGv2OhOif4TNNx83NXG5k50n9xmDRUs8P1esO0ozHXMfrggMmZOqO
-yIokrAGVsh1r6shLowqKFXUURPiRdbpti9hJXjnAW6FTB8w7yFRw+VJy7bBfM/xR
-Xahg99nBZdFmRrM0yNokzjQ2NuTcyEINyNN0F9C5wVrtc0iF4PjupAN4Bm6fXfWy
-Yzk3G8cYh2uBLogL2nf0i49zXuQxXs+mCv0deebGpnrdmuM1p4W5tmgkMSBaSMF4
-AevMQug0xNc=
-=Mbpc
------END PGP SIGNATURE-----
+>On Thu, May 13, 2004 at 10:04:34PM +0200, Paul Wagland wrote:
+> =20
+>
+>>Just a thought... Have you considered a "pledge" page? I.e, put up a=20
+>>list of features, and then allow people to "pledge" donations for when=20
+>>those features are finished. I for one would pledge 10USD for the=20
+>>repacker/disk optimiser, and yes, I know it isn't much, but you already=20
+>>have my donation for nothing :-) And, people often prefer to give money=20
+>>"to a cause".
+>>   =20
+>>
+>
+>Pass the hat around :)
+>
+>Problem just is that the repacker is probably commercial for a reason.
+>The reason being that it provides income at a steady pace. If it were
+>"pledged" it would give some money, sure, but not at a steady pace.
+>
+>I'm surprised if Hans hasn't given this some thought, being the logical
+>extension of the $25 helpdesk.
+>
+>Maybe the biggest problem is safe money transactions. You don't just
+>deal to a foreign country, you deal out of the European Union.
+>
+>And then there's this one country with a fairly large population that=20
+>STILL hasn't moved beyond money checks. The one with fifty states.
+>
+> =20
+>
+I haven't been able to get a large enough amount from distros to support=20
+us (but thanks to Lindows for being a major help), and darpa sponsors=20
+research not resizers, so I am thinking I might try selling the=20
+resizer.  Our fiscal situation remains quite awful, and the resizer=20
+might be a way to fund the enhanced semantics.  I guess it is time to=20
+try the mixed model in which we sell base code that is better than=20
+winfs/ext3, and some non-essential addons (like a resizer, maybe some=20
+non-essentail plugins, etc., ) are for sale and they fund the free=20
+stuff.  I really want to see free software work as a business, so I keep=20
+trying things.  Governments are not really set up to fund free software=20
+effectively yet, they fund research which is not quite the same as=20
+products that are usable.
+
+Support does not make much money, a few hundred a month.....  hopefully=20
+us accepting visa cards will improve this.
