@@ -1,38 +1,50 @@
-From: Oliver Neukum <oliver@neukum.org>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Fri, 3 Sep 2004 10:30:58 +0200
-Message-ID: <200409031030.58319.oliver@neukum.org>
-References: <20040826150202.GE5733@mail.shareable.org> <4137BE36.5020504@slaphack.com> <20040903091352.A2288@infradead.org>
+From: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Fri, 3 Sep 2004 10:32:07 +0200
+Message-ID: <2f4958ff04090301326e7302c1@mail.gmail.com>
+References: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com> <200408290004.i7T04DEO003646@localhost.localdomain> <20040901224513.GM31934@mail.shareable.org> <20040903082256.GA17629@kroah.com>
+Reply-To: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21413-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21414-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040903091352.A2288@infradead.org>
-Content-Disposition: inline
+In-Reply-To: <20040903082256.GA17629@kroah.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christoph Hellwig <hch@infradead.org>
-Cc: David Masover <ninja@slaphack.com>, Spam <spam@tnonline.net>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Greg KH <greg@kroah.com>
+Cc: Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Am Freitag, 3. September 2004 10:13 schrieb Christoph Hellwig:
-> On Thu, Sep 02, 2004 at 07:43:34PM -0500, David Masover wrote:
-
-> > | There's no need to do that in kernel, unless you want to be able
-> > | to force it unto users.
-> > 
-> > And on apps.  Should I teach OpenOffice.org to do version control?
-> > Seems a lot easier to just do it in the kernel, and teach everything to
-> > do version control in one fell swoop.
+On Fri, 3 Sep 2004 10:22:57 +0200, Greg KH <greg@kroah.com> wrote:
+> On Wed, Sep 01, 2004 at 11:45:13PM +0100, Jamie Lokier wrote:
+> > Horst von Brand wrote:
+> > > What happened to "code talks, bullshit walks"?
+> >
+> > devfs is a fine example of why code isn't enough.  With devfs the code
+> > came first, the >1 year of strategic bullshit politics from the "it's
+> > not traditional unix" crowd came later, then it went in, then lots of
+> > people used it, then it was replaced by something which still doesn't
+> > work as well as 2.4 does with or without devfs, and people are still
+> > using it despite it's faults.
 > 
-> Just add a post-save trigger that can check it into any SCM you want.
+> What is udev's faults that have an issue with?
+> 
+> Yes, we don't do module autoloading when opening a device node, but
+> that's well known, documented, and the way the kernel has evolved to
+> anyway.
 
-That depends on whom you refer to. If you want to impose the RCS
-on the users as an administrative measure and force compliance, then
-you'll need to do it in kernel.
-I see some nasty issues with disk quotas there.
+devfs was very natural, and simple solution. But to have it right, it
+would have to be the only /dev filesystem.
+But no, we like choices, so we have chaos. 
+Udev is just another thing adding to that chaos.
 
-	Regards
-		Oliver
+Someone was numbering things that are good in BSD design, in that
+thread. One of those things was going for devfs. No cheap solutions.
+One fs for /dev. And it works great.
+
+Sorry for bit of trolling.
+
+-- 
+GJ
