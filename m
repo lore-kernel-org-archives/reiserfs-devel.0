@@ -1,51 +1,90 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: LVM array, one disk failed
-Date: Sat, 28 Dec 2002 11:39:42 +0300
-Message-ID: <20021228113942.A6599@namesys.com>
-References: <1041044851.5964.32.camel@ganga>
+From: Raphael Bosshard <whistler@fnord.ch>
+Subject: Re: windows ate my superblock (try 2)
+Date: Sat, 28 Dec 2002 16:20:29 +0100
+Message-ID: <3E0DC13D.7030103@fnord.ch>
+References: <3E08FEC5.2060608@fnord.ch> <200212271819.SAA09071@wg.pu.ru>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12253-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12254-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1041044851.5964.32.camel@ganga>
+In-Reply-To: <200212271819.SAA09071@wg.pu.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tuomas Jormola <tjormola@cc.hut.fi>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
 
-Hello!
+Hi there!
 
-On Sat, Dec 28, 2002 at 05:07:31AM +0200, Tuomas Jormola wrote:
-> I have a 110GiB LVM array constructed using EVMS. It consists of three
-> IDE hard disks from which the last one died the other day. The
-> filesystem is ReiserFS, of course. Array is a linear one and there was
-> about 15GiB free space when disk died so I'm hoping there was a somewhat
-> resonable way to recover the data on two disks that are full and in
-> front of the array. The failed disk is totally dead, not just a couple
-> of bad sectors. It spins but it's not detected on boot. When I try to
-> mount the volume with only two disks connected, it get this:
-> sh-2029: reiserfs read_bitmaps: bitmap block (#19234816) reading failed
-> reiserfs_read_super: unable to read bitmap
+that did it. It took ages to restore the whole filesystem but now almost 
+everthing is back in place. At least the important things. Many, many 
+"thank you"s to you all (from my brother too ;)  )
 
-This is hardware problem ;)
+And if I can help you by translating something (to german); please feel 
+free to mail me.
 
-But if your raid setup does not use any stripping, this is possible to
-rercover from such a situation.
-The easiest way that comes to mind is to add another disk instead failed one so
-that all of the FS blocks still accessible.
-Then you can mount the FS and all the data would be intact (only bitmaps and
-other stuff from failed disk would be corrupted).
+Happy new year!
 
-If you do not plan to add anymore drives or if you just don't have
-spare drive, you probably can run reiserfsck --rebuild-sb and after
-couple of questions it will write updated superblock that
-respects changed filesystem size (actually for this to work you first need
-to tell your LVM to report current volume size that is now shorter
-than it was at creation time).
+Raphael
 
-Bye,
-    Oleg
+
+Vitaly Fertman wrote:
+
+>On Wednesday 25 December 2002 03:41, Raphael Bosshard wrote:
+>  
+>
+>>Hi there!
+>>    
+>>
+>
+>Hi, I am on vacation now, sorry for my keeping silence. I guess, that if you take 
+>reiserfsprogs-3.6.5-pre1 and run reiserfsck --rebuild-sb /dev/xxx 
+>(without no-journal-available option), then you should have it all recovered. 
+>If not, I am afraid I will be able to give a proper ansrew why only after 5th, when 
+>get back to work and have a look at the 16th block of your fs. 
+>
+>  
+>
+>>My little brother tried to install windows on my computer this morning
+>>("don't touch my linux-partitions" i told him) but he let windows eat
+>>them anyway. my reiserfs-data partition also. (scandisk checking and
+>>"repairing", only partly AFAIK, AFAIH)
+>>
+>>Mount failed with:
+>>mount: wrong fs type, bad option, bad superblock on /dev/hdb,
+>>      or too many mounted file systems
+>>
+>>so I tried a reiserfsck which resulted in a
+>>
+>>reiserfs_open: neither new nor old reiserfs format found on /dev/hdd2
+>>reiserfsck: could not open filesystem on "/dev/hdd2"
+>>
+>>Some digging in the mailinglist pointed out that the superblock was
+>>destroyed, so I tried to rebuild it with:
+>>
+>>reiserfsck --no-journal-available --rebuild-sb
+>>
+>>reiserfsck now recognises the reiserfs-partition, but fails because
+>>there is no journal/wrong journal parameters.
+>>
+>>(Filesystem with standard journal found, --no-journal-available is ignored
+>>reiserfs_open_journal: wrong journal parameters found in the super block.)
+>>
+>>
+>>Finaly my question: Is there a way to find out the right parameters and
+>>create a new journal?
+>>
+>>Any help is appreciated, really. ;)
+>>Happy new year!
+>>
+>>Raphael
+>>
+>>(Please CC me, I'm not on the list.)
+>>    
+>>
+>
+>  
+>
+
+
