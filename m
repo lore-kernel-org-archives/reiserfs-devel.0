@@ -1,85 +1,57 @@
-From: Bennett Todd <bet@rahul.net>
+From: Martin Wilck <Martin.Wilck@Fujitsu-Siemens.com>
 Subject: Re: Carrying Attributes too Far
-Date: Fri, 19 Sep 2003 09:46:31 -0400
-Message-ID: <20030919134631.GG544@rahul.net>
-References: <3F6A1606.9070707@mrs.umn.edu> <7936815179-BeMail@cr593174-a>
+Date: 19 Sep 2003 17:13:12 +0200
+Message-ID: <1063984392.6518.42.camel@biker.psw.pdb.fsc.net>
+References: <39249798517-BeMail@cr593174-a>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Az4VpBrmI9+OyhK/"
-Return-path: <reiserfs-list-return-15704-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15705-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <7936815179-BeMail@cr593174-a>
+In-Reply-To: <39249798517-BeMail@cr593174-a>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Reiser FS Mailing List <reiserfs-list@namesys.com>
 
---Az4VpBrmI9+OyhK/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Am Fre, 2003-09-19 um 15.27 schrieb Alexander G. M. Smith:
 
-2003-09-18T17:44:13 Alexander G. M. Smith:
-> They need to be hidden sometimes. [...] Or be prepared for them to
-> make a mess, like storing all their e-mail inside an attribute on
-> an e-mail icon.
+> > What about '"' or even ' '?
+> 
+> No, they cause problems with various shell special characters.  
+> So you'd have to escape them with a preceeding backslash if you used 
+> them. That's awkward (even more than using a shifted letter like "_").
 
-And that thought provoked some pondering in me.
+That was a joke. I just wanted to express that I consider the other
+suggestions awkward, too.
 
-I've been thinking about these new semantics in Reiserfs v4 in terms
-of the ability to take a file, and attach some addenda on it by
-viewing it as a directory instead.
+> .reiserfs-metadata is English.
 
-As a Maildir user, your above comment turned that view upside down
---- you're saying someone will attach an icon to the directory that
-happens to be their Maildir folder. Viewing directories (non-leaf
-nodes of the tree) as files is the dual, the same concept viewed
-backwards, as viewing files (leaves) as directories.
+So what? Whoever understands '.,' or similar can understand English (at
+that level) as well.
 
-There's a nice satisfying generality to this vision, but I'm sorta
-pondering, what semantics are right to show in the POSIX API?
+> And it's also ReiserFS specific
 
-For attributes like owner/group/perm, clearly they get projected
-into the pretend inode structure for the file they're attached to,
-the file shows up as a file, not a directory, when you stat it, so
-archivers like tar, tree-walkers like find, directory listers like
-ls, etc. see what they expect.
+Call it .metadata if you wish. I just wanted to say that a reasonable
+English name will be easier to understand than ".," for almost
+everybody.
 
-If someone were to want to attach an icon to a directory describing
-what it contained, that'd be an opposite case; stat should still
-report the internal node as a directory, you shouldn't see the icon
-unless you explicitly tried to open that internal node with a file
-open syscall.
+> Saving typing effort on teletype keyboards is an ancient Unix tradition.
 
-Perhaps this distinction makes it a little more concrete what sorts
-of uses of this file/directory duality are going to be good
-engineering? Or is it just that only a subset of Reiserfs V4's
-brilliant new semantics will remain a good, comfortable fit for
-POSIX semantic expectations, able to be cleanly and pleasantly
-reflected back through a compatibility layer; more daring
-applications will depart more pervasively from POSIX.
+The question is if that tradition is really so important in this
+context. Will that file name be typed more often than, say,
+'.xsession-errors' or '.nautilus-metafile.xml'?
 
-If both sorts of operations I described above are going to be
-permissible and possible, its at least easy to distinguish which
-view should be reflected back through the compatibility api --- that
-would be, whichever view was created first. If you create a file
-then attach attributes to it, it'll show up as a file. If you create
-a directory then attach a file to it, it'll show up as a directory.
+Martin
 
--Bennett
+-- 
+Martin Wilck                Phone: +49 5251 8 15113
+Fujitsu Siemens Computers   Fax:   +49 5251 8 20409
+Heinz-Nixdorf-Ring 1	    mailto:Martin.Wilck@Fujitsu-Siemens.com
+D-33106 Paderborn           http://www.fujitsu-siemens.com/primergy
 
---Az4VpBrmI9+OyhK/
-Content-Type: application/pgp-signature
-Content-Disposition: inline
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.7 (GNU/Linux)
 
-iD8DBQE/awi3HZWg9mCTffwRAulbAJ459ZjjuXe2Sa5KTllLxVAUQsCLxACgpe8Y
-v9XCWbULp/QTG0/5wsh2IpI=
-=zuWJ
------END PGP SIGNATURE-----
 
---Az4VpBrmI9+OyhK/--
+
