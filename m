@@ -1,31 +1,56 @@
-From: Rik van Riel <riel@redhat.com>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 13:16:22 -0400 (EDT)
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <Pine.LNX.4.44.0408261315240.27909-100000@chimarrao.boston.redhat.com>
-References: <20040826190548.3e67726f.diegocg@teleline.es>
+Date: Thu, 26 Aug 2004 18:20:29 +0100
+Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <20040826172029.GP5733@mail.shareable.org>
+References: <20040825200859.GA16345@lst.de> <20040825203516.GB4688@backtop.namesys.com> <20040825205149.GA17654@lst.de> <412DA2CF.2030204@namesys.com> <20040826124119.GA431@lst.de> <20040826134812.GB5733@mail.shareable.org> <20040826155744.GA4250@lst.de> <20040826160638.GJ5733@mail.shareable.org> <20040826161303.GA4716@lst.de> <Pine.LNX.4.58.0408260919380.2304@ppc970.osdl.org>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040826190548.3e67726f.diegocg@teleline.es>
+Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S269298AbUHZRdG@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.58.0408260919380.2304@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Diego Calleja <diegocg@teleline.es>
-Cc: jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, Alex Zarochentsev <zam@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, 26 Aug 2004, Diego Calleja wrote:
+Linus Torvalds wrote:
+> And it would be perfectly ok for O_DIRECTORY to open such a file, as long
+> as it opens the directory branch, not the special device.
 
-> All this looks like reinventing the file/directory concept wheel.
-> Instead of adding support for streams and "use files as directories",
-> why not orientate it to "use directories as files? Streams could very
-> well be provided by directories containing files,
+What about:
 
-So all I need to do is "cat /bin | gzip -9 > /path/to/backup.tar.gz" ?
+    cd /dev/into_directory_branch/
+    run_setuid_program
 
-This is getting surreal.
+        -> calls pwd
+           pwd opens("."), (".."), ("../..") etc.
+ 
+        -> the setuid program thus ends up opening a device or fifo,
+           when it does pwd's path walk.  Yes it could use the getcwd
+           syscall, but some programs do their own path walk.
 
--- 
-"Debugging is twice as hard as writing the code in the first place.
-Therefore, if you write the code as cleverly as possible, you are,
-by definition, not smart enough to debug it." - Brian W. Kernighan
+> I advocated (long ago) something like this for /dev handling, just because
+> I think it would make sense to have
+> 
+> 	/dev/hda	<- special file
+> 	/dev/hda/part1	<- partition 1 (aka /dev/hda1)
+> 
+> which just seems like a very obvious and intuitive interface to me. Of 
+> course, we have so much legacy in /dev that there's no real point to doing 
+> this, but it's still an appealing approach, I think.
 
+It also fits the container idea very well:
+
+        /dev/hda/part1/ <- the filesystem inside partition 1
+
+That's not a contrivance, it's what I'd expect to happen if
+/dev/hda is an ordinary file containing a disk image:
+
+ 	image.bin	 <- hard disk image (a regular file)
+ 	image.bin/part1	 <- partition 1
+ 	image.bin/part1/ <- the filesystem inside partition 1
+
+That's assuming there's a format handler which recognises that image.
+
+-- Jamie
