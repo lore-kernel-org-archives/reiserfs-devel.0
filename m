@@ -1,33 +1,31 @@
-From: Rik van Riel <riel@redhat.com>
-Subject: Re: Using fs views to isolate untrusted processes: I need an assistant
- architect in the USA for Phase I of a DARPA funded linux kernel project
-Date: Wed, 25 Aug 2004 16:25:24 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com>
-References: <410D96DC.1060405@namesys.com>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: silent semantic changes with reiser4
+Date: Wed, 25 Aug 2004 22:25:39 +0200
+Message-ID: <20040825202539.GA17107@lst.de>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <20040825201929.GA16855@lst.de> <Pine.LNX.4.58.0408251323170.17766@ppc970.osdl.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20513-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20514-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <410D96DC.1060405@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.58.0408251323170.17766@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Sun, 1 Aug 2004, Hans Reiser wrote:
+On Wed, Aug 25, 2004 at 01:24:36PM -0700, Linus Torvalds wrote:
+> Now this I agree with, in the sense that I think that if we want to 
+> support this, it should be supported at a VFS layer. 
+> 
+> On the other hand, I think doing it inside the filesystem with ugly hacks 
+> is an acceptable way to prototype the idea before it's been proven to 
+> really be workable. Maybe it has more problems with legacy apps than we'd 
+> expect..
 
-> You can think of this as chroot on steroids.
-
-Sounds like what you want is pretty much the namespace stuff
-that has been in the kernel since the early 2.4 days.
-
-No need to replicate VFS functionality inside the filesystem.
-
--- 
-"Debugging is twice as hard as writing the code in the first place.
-Therefore, if you write the code as cleverly as possible, you are,
-by definition, not smart enough to debug it." - Brian W. Kernighan
+Oh, I'm the last person to tell anyone how to prototype things.  I just
+don't want such inconsistancies in the mainline kernel.
 
