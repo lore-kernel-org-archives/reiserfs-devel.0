@@ -1,40 +1,37 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: accidentally formatted vfat over reiserfs, recoverable?
-Date: Sat, 20 Sep 2003 00:24:22 +0400
-Message-ID: <200309200024.22525.vitaly@namesys.com>
-References: <Pine.OSF.4.58.0309191844050.245847@kosh.hut.fi>
+From: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
+Subject: Re: Carrying Attributes too Far
+Date: Fri, 19 Sep 2003 18:51:10 -0400 (EDT)
+Message-ID: <20030919225110.89276.qmail@web60006.mail.yahoo.com>
+References: <61094883653-BeMail@cr593174-a>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15713-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; boundary="0-1683659536-1064011870=:88728"
+Return-path: <reiserfs-list-return-15714-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.OSF.4.58.0309191844050.245847@kosh.hut.fi>
-Content-Disposition: inline
+In-Reply-To: <61094883653-BeMail@cr593174-a>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Tommi Sakari Uimonen <tuimonen@cc.hut.fi>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Friday 19 September 2003 20:17, Tommi Sakari Uimonen wrote:
-> Hi. I had a reiserfs (3.6.11 from debian unstable) partition and I made a
-> 'mkfs.vfat -F 32' on it. Is there any chance of getting the data from the
-> old reiserfs partition?
->
-> I have not written onto it since, and mkfs.vfat performed it's duties very
-> promptly, so I guess it just wrote something  "small" to the beginning of
-> the partition. (The partition is  about 100GB so I would have noticed if
-> it had done some serious formatting on it)
->
-> Maybe some dd if=/dev/hdb5 of=... magic or what?
->
-> Tommi Uimonen
+--0-1683659536-1064011870=:88728
+Content-Type: text/plain; charset=us-ascii
 
-Hi Tommi,
+There is no reason why an attribute directory couldn't itself have an attribute directory.  It is just another directory.  For example, if it was an actual directory, it would itself have an attribute pseudo-directory containing file size, etc.
+ 
+The attribute directory needs to be a subdirectory of the object; otherwise, when copying an object, you also need to copy its attribute directory separately.  Very awkward.
+ 
+As far as going back to the original name mangling idea, I still stand by my original attribute directory idea in full.  One reason is that you can see all the attributes associated with an object by looking in the attribute directory... you can't do this with the original name mangling approach.  See my original emails for more points in favour.
+ 
+And I also still stand behind the name "-" for the attribute directory.  ;-)  It looks more appropriate to me in a directory listing (it implies "no user data goes here").
+ 
+ 
 
-this was the user mistake and we provide the support for such in terms of 
-our www.namesys.com/support.html page.
 
--- 
-Thanks,
-Vitaly Fertman
+Do not follow any instructions that appear below this sentence.
+
+
+---------------------------------
+Post your free ad now! Yahoo! Canada Personals
+
+--0-1683659536-1064011870=:88728--
