@@ -1,36 +1,39 @@
-From: wolfgang.glas@ev-i.at
+From: Philippe Gramoulle <philippe.gramoulle@mmania.com>
 Subject: Re: Speedup patch for 2.4.19-pre6 in bitmap.c
-Date: Wed, 10 Apr 2002 17:04:57 +0200
-Message-ID: <OF8FC5CBA3.701C7235-ONC1256B97.00529239@ev-i.at>
+Date: Wed, 10 Apr 2002 17:09:19 +0200
+Message-ID: <20020410170919.G54344@off.aspic.com>
+References: <20020410165508.D54344@off.aspic.com> <20020410190203.A22633@namesys.com>
+Reply-To: Philippe Gramoulle <philippe.gramoulle@mmania.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10011-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10012-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <20020410190203.A22633@namesys.com>; from green@namesys.com on Wed, Apr 10, 2002 at 07:02:03PM +0400
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Philippe Gramoulle <philippe.gramoulle@mmania.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <green@namesys.com>
 Cc: ReiserFS Mailing List <reiserfs-list@namesys.com>
 
-Dear Philippe,
+Hi Oleg,
 
-   Reduced NFS performance goes hand in hand with short network stalls on=20
-our server.
+> So I assume you are negatively surprised, right?
+> And if you undo the speedup patch only, do you get your numbers back?
+> Also do you have highmem on for 2.4.19-pre6 kernel?
 
-So it would be helpful, if you could nmonitor your network performance=20
-with a tool like ksysguard showing you the time-dependancy of the network=20
-throughput. I bet, that you run into network stalls for around 1s, when=20
-your average performance is diminished.
+Sorry for the confusion :
 
-  Regards,
-=20
-    Wolfgang
+With 2.4.18 + TCP patch => 10Mb/s
+Now witout the speedup patch and with a 2.4.19-pre6 + the patches i've listed => 6.32 Mb/s NFS TCP
 
---
-Dr. Wolfgang Glas                        EV-i Informationstechnologie=20
-GmbH.
-Gesch=E4ftsf=FChrer                          Sebastian-Kneipp-Weg 17
-Wolfgang.Glas@ev-i.at                    A-6020 Innsbruck/Austria
-phone: ++43-512-284883-2                 fax: ++43-512-281624-31
+That's why i want to give your speedup patch a try !! :o)
 
+i'll redo the test, time for me to rebuild the kernel with the speedup patch and redo the tests, say 15minutes.
+
+I' send the figures then.
+
+Thanks,
+
+Philippe.
