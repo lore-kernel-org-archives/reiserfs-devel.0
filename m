@@ -1,42 +1,32 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Fibration questions
-Date: Thu, 22 Jul 2004 14:10:25 +0400
-Message-ID: <200407221410.25043.vitaly@namesys.com>
-References: <40FE0B47.3010600@slaphack.com> <20040721083232.GA4990@nysv.org> <40FF3DAD.6020100@slaphack.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: reiser4 as module
+Date: Thu, 22 Jul 2004 13:13:57 +0300
+Message-ID: <20040722101357.GD4990@nysv.org>
+References: <20040721231748.46066.qmail@web60310.mail.yahoo.com> <1090461647.1676.16.camel@jeff> <40FF397C.1000402@slaphack.com> <1090470129.1676.56.camel@jeff>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19741-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19742-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40FF3DAD.6020100@slaphack.com>
 Content-Disposition: inline
+In-Reply-To: <1090470129.1676.56.camel@jeff>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>, Markus =?utf-8?q?T=C3=B6rnqvist?= <mjt@nysv.org>
-Cc: David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Jeff Davis <reiser-list@empires.org>
+Cc: reiserfs-list@namesys.com
 
-> First question:  Can I manually enable/disable a particular plugin for a
-> particular directory?  (like how cryptocompress is supposed to be...)
+On Wed, Jul 21, 2004 at 09:22:10PM -0700, Jeff Davis wrote:
+>Thanks. I think I'll try UML, I've been meaning to try that for a while.
 
-you can change a plugin for a file if it does not destroy its structure. 
-Thus for an empty directory you can :
-	# cat somedir/metas/plugin/hash ; echo
-	1 r5 r5 hash
-	# echo -e "tea\0" > somedir/metas/plugin/hash
-	# cat somedir/metas/plugin/hash ; echo
-	2 tea tea hash
+High hopes for the future now that the auto-snapshots are against
+an mm which has UML ;)
 
-> Second question:  Would such a setting be recursive?  Can I tell it
-> whether to recurse or not?
-
-plugins are inherited at the creation time from the parent of the object 
-being created. Thus in the above example all subdirs would have the
-hash r5 before changing the 'somedir' hash to 'tea' and will have the
-'tea' hash after.
+BTW, didn't some pretty important things change after the latest stable?
+I'm not talking radix here, but I can never remember when psets were
+implemented... May be of quite some importance when developing plugins..
 
 -- 
-Thanks,
-Vitaly Fertman
+mjt
 
