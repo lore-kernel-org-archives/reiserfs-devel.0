@@ -1,10 +1,10 @@
 From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: [PATCH]: reiser4 [2/8] export generic_forget_inode()
-Date: Thu, 31 Oct 2002 19:03:01 +0300
-Message-ID: <15809.21557.995835.880171@laputa.namesys.com>
+Subject: [PATCH]: reiser4 [1/8] export fsync_super()
+Date: Thu, 31 Oct 2002 19:03:05 +0300
+Message-ID: <15809.21561.25201.754130@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11862-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11864-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -16,43 +16,23 @@ Cc: Linux Kernel Mailing List <Linux-Kernel@Vger.Kernel.ORG>, Reiserfs mail-list
 
 Hello, Linus,
 
-    Following patch exports fs/inode.c:generic_forget_inode(). 
-
-    Without this, file system that needs ->drop_inode() super block method
-    would have to duplicate manipulations with &inode_unused, inodes_stat, and
-    &inode_lock.
+    Following patch exports fsync_super() function. fsync_super() is
+    required for reiser4, because during umount we want to perform some
+    tasks after ->writepage has been called on all pages dirtied through
+    mmap (that is, after fsync_super()), but before inodes
+    destruction. As a result, reiser4 cannot use kill_block_super() and
+    has to call fsync_super() explicitly.
 
 Please apply.
 Nikita.
-diff -rup -X dontdiff linus-bk-2.5/fs/inode.c linux-2.5-reiser4/fs/inode.c
---- linus-bk-2.5/fs/inode.c	Tue Oct 15 20:56:58 2002
-+++ linux-2.5-reiser4/fs/inode.c	Mon Oct 21 13:43:49 2002
-@@ -938,7 +938,7 @@ void generic_delete_inode(struct inode *
- }
- EXPORT_SYMBOL(generic_delete_inode);
+--- linus-bk-2.5/fs/buffer.c	Thu Oct 17 03:01:42 2002
++++ linux-2.5-reiser4/fs/buffer.c	Mon Oct 21 13:43:49 2002
+@@ -224,6 +224,7 @@ int fsync_super(struct super_block *sb)
  
--static void generic_forget_inode(struct inode *inode)
-+void generic_forget_inode(struct inode *inode)
- {
- 	struct super_block *sb = inode->i_sb;
- 
-@@ -965,6 +965,7 @@ static void generic_forget_inode(struct 
- 	clear_inode(inode);
- 	destroy_inode(inode);
+ 	return sync_blockdev(sb->s_bdev);
  }
-+EXPORT_SYMBOL(generic_forget_inode);
++EXPORT_SYMBOL(fsync_super);
  
  /*
-  * Normal UNIX filesystem behaviour: delete the
-diff -rup -X dontdiff linus-bk-2.5/include/linux/fs.h linux-2.5-reiser4/include/linux/fs.h
---- linus-bk-2.5/include/linux/fs.h	Sat Oct 19 03:01:12 2002
-+++ linux-2.5-reiser4/include/linux/fs.h	Tue Oct 29 12:41:00 2002
-@@ -1200,7 +1200,7 @@ extern struct inode * igrab(struct inode
- extern ino_t iunique(struct super_block *, ino_t);
- extern int inode_needs_sync(struct inode *inode);
- extern void generic_delete_inode(struct inode *inode);
--
-+extern void generic_forget_inode(struct inode *inode);
- extern struct inode *ilookup5(struct super_block *sb, unsigned long hashval,
- 		int (*test)(struct inode *, void *), void *data);
- extern struct inode *ilookup(struct super_block *sb, unsigned long ino);
+  * Write out and wait upon all dirty data associated with this
+
