@@ -1,50 +1,48 @@
-From: Chris Humphries <chris@burst.net>
-Subject: Re: we need a slogan for our reiser4 t-shirt
-Date: Thu, 24 Jun 2004 12:24:38 -0400
-Message-ID: <40DB0046.9080405@burst.net>
-References: <3DF9165145FACB4C96977FF650C1E9040C46A0A2@its-mail1.its.corp.gwl.com> <40DA7F4E.1050700@namesys.com> <40D9E7B0.6070108@lindows.com> <40DAFB92.9090706@namesys.com>
+From: "Burnes, James" <james.burnes@gwl.com>
+Subject: RE: we need a slogan for our reiser4 t-shirt
+Date: Thu, 24 Jun 2004 10:25:41 -0600
+Message-ID: <3DF9165145FACB4C96977FF650C1E9040C46A0B2@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19347-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-19348-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40DAFB92.9090706@namesys.com>
+content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Clifford Beshers <clifford.beshers@lindows.com>, "Burnes, James" <james.burnes@gwl.com>, Marcel Hilzinger <marcel@hilzinger.hu>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, reiserfs-list@namesys.com
 
-thanks to hans reiser and all the reiserfs developers for building
-a great filesystem :D
+Yeah, I was thinking about that double-entendre.  To rise is to go up,
+escalate etc.  But I was thinking about how to say it.  Yours is pretty
+close.
 
-now if only debian would change their options for the filesystem
-choice on the bf install images that has ext3 as a more mature fs
-and reiserfs as a less mature fs.. heh.
+"The Reising Tide!" as in the old saying...
 
-at my last job, we have many government services running on debian
-linux with reiserfs, and were very happy with it. just thought i
-would point that out :D (company is devis.com)
+"The rising tide floats all boats"
 
-Hans Reiser wrote:
-> Clifford Beshers wrote:
-> 
->> Hans Reiser wrote:
->>
->>> Sounds like an ad, we want a t-shirt people want to wear.  Maybe, "My 
->>> filesystem is faster than yours...."?
->>
->>
->>
->>
->> Everything you always wanted in a filesystem, but were afraid to pay for.
->>
->> Cliff
->>
->>
->>
-> Not bad.
-> 
-> 
-> 
+We are the boats...
+
+
+
+jim burnes
+security engineer
+great-west, denver
+=20
+
+> -----Original Message-----
+> From: Peter Foldiak [mailto:Peter.Foldiak@st-andrews.ac.uk]
+> Sent: Thursday, June 24, 2004 3:36 AM
+> To: reiserfs-list@namesys.com
+> Subject: Re: we need a slogan for our reiser4 t-shirt
+>=20
+> > Sounds like an ad, we want a t-shirt people want to wear.  Maybe,
+"My
+> > filesystem is faster than yours...."?
+>=20
+> not bad. but how about
+>=20
+> "Smarter, Faster, Reiser" ?
+>=20
+
