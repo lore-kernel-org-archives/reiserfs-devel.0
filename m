@@ -1,25 +1,34 @@
-From: BLuEGoD <bluegod@linuxwaves.com>
-Subject: (reiser4)install on root
-Date: Fri, 26 Nov 2004 00:58:28 -0800 (PST)
-Message-ID: <20041126085828.DE0DB37CF0@sitemail.everyone.net>
-Reply-To: bluegod@linuxwaves.com
+From: "Albert van Dam" <albert@ipdevelopers.co.za>
+Subject: Max file size of ReiserFS
+Date: Fri, 26 Nov 2004 11:21:56 +0200
+Message-ID: <!~!UENERkVCMDkAAQACAAAAAAAAAAAAAAAAABgAAAAAAAAA7qkEW8r6qESntkvtAlH3GMKAAAAQAAAAGfQduNxlJ0Gtz6kjnubMHgEAAAAA@ipdevelopers.co.za>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22582-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22583-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
+Hi
 
- Hi, i want to know how to install reiser4 on root with only 1 HD.. I use mkfs.reiser4 from the reiser4 utils after compile and install kernel & patches on a debian woody 2.2.. with a scsi HD, but it crashes (errors found doing mkfs.reiser4 on root device and on next boot I saw a kernel panic).. Note: I did it with the root mounted.. because i need to boot with that HD..
+I want to know what the maximum file size is of any file on a ReiserFS
+partition.
 
-Thx
+I'm using SuSE 9.1, with kernel 2.6. Don't know which ReiserFS but it is the
+stock one - If you need the version, tell me how to get it and I will gladly
+comply.
 
-_____________________________________________________________
-Get your FREE, LinuxWaves.com Email Now! --> http://www.LinuxWaves.com
-Join Linux Discussions! --> http://Community.LinuxWaves.com
+TIA
+
+Albert
+
+---
+Outgoing mail is certified Virus Free.
+Checked by AVG anti-virus system (http://www.grisoft.com).
+Version: 6.0.799 / Virus Database: 543 - Release Date: 2004/11/19
+ 
+
