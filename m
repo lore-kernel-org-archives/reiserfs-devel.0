@@ -1,36 +1,55 @@
-From: Dan Labute <dan@discreet.com>
-Subject: Creating large numbers of files
-Date: Mon, 10 Jan 2005 17:34:21 -0500
-Message-ID: <41E302ED.9040606@discreet.com>
-References: <1105395827.2871.ezmlm@namesys.com>
+From: Andreas Dilger <adilger@clusterfs.com>
+Subject: Re: Creating large numbers of files
+Date: Mon, 10 Jan 2005 16:18:53 -0700
+Message-ID: <20050110231853.GB8098@schnapps.adilger.int>
+References: <1105395827.2871.ezmlm@namesys.com> <41E302ED.9040606@discreet.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23108-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
+Return-path: <reiserfs-list-return-23109-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1105395827.2871.ezmlm@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <41E302ED.9040606@discreet.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+To: Dan Labute <dan@discreet.com>
+Cc: reiserfs-list@namesys.com
 
-Hi all,
+--oyUTqETQ0mS9luUI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm a developer trying to create large numbers of *empty* files 
-(~100000).  What is the fastest way to perform such an operation other 
-than a simple open().  Will using multiple threads to perform concurrent 
-operations help significantly, or am I just awell-off using a single thread?
+On Jan 10, 2005  17:34 -0500, Dan Labute wrote:
+> I'm a developer trying to create large numbers of *empty* files=20
+> (~100000).  What is the fastest way to perform such an operation other=20
+> than a simple open().  Will using multiple threads to perform concurrent=
+=20
+> operations help significantly, or am I just awell-off using a single thre=
+ad?
 
-Are there any extensions that could be used?  What about writing my own 
-filesystem plugin?
+If you call 'mknod("/path/to/file", S_IFREG | 0666, 0)' from a program
+it avoids the overhead of doing both an open and a close.
 
-Similarly, I'd like to create and destroy large numbers of hard & soft 
-links.  What are my options?
+Cheers, Andreas
+--
+Andreas Dilger
+http://sourceforge.net/projects/ext2resize/
+http://members.shaw.ca/adilger/             http://members.shaw.ca/golinux/
 
-(Apologies if these questions have been asked in other thread.)
 
-Thanks,
+--oyUTqETQ0mS9luUI
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
-Dan
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
 
+iD8DBQFB4w1dpIg59Q01vtYRAp8nAKCAhXsxe7XFP4Etzq68hxxQUdXEnACg74OO
+uIE61dt2zEyYMIIG3Bus1V4=
+=6oIW
+-----END PGP SIGNATURE-----
+
+--oyUTqETQ0mS9luUI--
