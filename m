@@ -1,69 +1,42 @@
-From: Paul Jackson <pj@sgi.com>
+From: Christoph Hellwig <hch@lst.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 02:21:37 -0700
-Message-ID: <20040826022137.1504ffb7.pj@sgi.com>
-References: <Pine.LNX.4.44.0408252052420.13240-100000@chimarrao.boston.redhat.com>
-	<412D968B.9030107@hist.no>
+Date: Thu, 26 Aug 2004 11:24:14 +0200
+Message-ID: <20040826092413.GA28854@lst.de>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <20040825201929.GA16855@lst.de> <412DA25E.9090405@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20602-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20603-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <412D968B.9030107@hist.no>
+Content-Disposition: inline
+In-Reply-To: <412DA25E.9090405@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Helge Hafting <helge.hafting@hist.no>
-Cc: riel@redhat.com, mikulas@artax.karlin.mff.cuni.cz, torvalds@osdl.org, hch@lst.de, reiser@namesys.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Helge wrote:
-> So an old "tar" won't get this right as it will assume that an object
-> is either file or directory.
+On Thu, Aug 26, 2004 at 01:42:06AM -0700, Hans Reiser wrote:
+> Christoph Hellwig wrote:
+> 
+> >
+> >Over the last at least five years we've taken as much as possible
+> >semantics out of the filesystems and into the VFS layer, thus having
+> >a separation between the semantical layer (VFS) and the low level
+> >filesystem.
+> >
+> VFS is the common filesystem layer.  The only reason you think semantics 
+> belong in the common filesystem layer is that you are not innovating in 
+> your semantics, and feel content with stasis.
+> 
+> I don't.  I expect that semantics will get radically changed over the 
+> next few years as we compete with Giampaolo and whatever lesser lights 
+> are working at Microsoft.
 
-There are many backup apps, not just one.  I've written a few myself,
-none of which will ever be worthy of notice.  The sourceforge
-Topic.System.Archiving.Backup lists 335 projects at present.
+Hans, please stop the gooddamn personal attack bullshit.
 
-I find the idea that most backup tools and scripts will silently
-stop working correctly to be pretty scary.  
+How do you for example suggestion exporting your semantics over the
+network if they're not done at the VFS level?  How do you want some
+clusterfilesystem support them or tmpfs?
 
-And then there's archiving, installation, distribution, administration,
-emulation, file system and partition managers, and on and on.
-
-===
-
-I wonder if we can make this "modal" somehow.
-
-The one consistency I see is that apps that want the "enhanced" view
-need to ask for it, somehow.  It is the new views of the data that are
-being added - let the app announce to the kernel (usually via
-specialized code in some shared library that the app is using to get the
-alternate views) that either per-task, or per-file descriptor, it is to
-see the "enhanced" view, as a side affect of trying to access it.
-
-Old stuff, or even new stuff that is content to work with the "classic"
-view that a file is a single data stream, and that directories only
-have pathnames, not data, would by default see that view, and see
-_all_ the data, presented somehow in that view, perhaps as additional
-files with magic names.
-
-This still leaves the breakage that such tools don't know, and don't
-preserve, the magic linkage between such magic files.  But that is
-much less of an issue, in my view.  Programs such as backups that are
-manipulating the files of apps they know nothing about already have
-to presume that all the files are important in inscrutable ways, and
-just be careful to preserve or copy or backup all of them.
-
-Yeah - I realize that there will be a few followups denouncing modal
-architectures.  I might even agree with some of them.
-
-If this were easy, it would have been done years ago.
-
-The onus should be on the new stuff to request the enhanced view,
-rather than on the old dogs to learn new tricks.
-
--- 
-                          I won't rest till it's the best ...
-                          Programmer, Linux Scalability
-                          Paul Jackson <pj@sgi.com> 1.650.933.1373
