@@ -1,73 +1,54 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Subject: Re: Recursive modified-timestamp?
-Date: Sat, 01 Jan 2005 13:59:14 -0500 EST
-Message-ID: <4329085595-BeMail@cr593174-a>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Recursive modfied-timestamp?
+Date: Sat, 01 Jan 2005 13:49:22 -0800
+Message-ID: <41D71AE2.6050808@namesys.com>
+References: <200412311047.14634.namesys.Sch@ttgen.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23021-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23022-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200412311047.14634.namesys.Sch@ttgen.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Fred Schaettgen <namesys.Sch@ttgen.net>
+Cc: reiserfs-list@namesys.com
 
-Fred Schaettgen wrote on Sat, 1 Jan 2005 12:56:33 +0100:
-> Do you know if this service was actually provided by the file system or was it 
-> just a clever use of a more simple feature of the fs which allows to do that?
-> There are certainly a lot of things which could be done, if changed files can 
-> be found quickly, but those things don't need to go into fs itself.
+Fred Schaettgen wrote:
 
-It was part of the file system.  The kernel / file system interface API has
-a function that your file system calls to post a change notification, taking
-a change code and up to three file inode numbers (useful for renaming
-operations that move a file to a new directory) and a string:
+>Hi,
+>
+>Does reiser4 support something like recursive last-modified-timestamps? What I 
+>mean is an attribute which contains the latest modification date of all 
+>subdirectories and files below a given directory.
+>
+>Actually I am also curios if there are any other linux file system which 
+>support that. The reason I'm asking on the reiserfs mailinglist is that 
+>reiser4 seems to be the filesystem which is most open for new features.
+>Could this be implemented as some sort of plugin for reiser4? Or does/will 
+>reiser4 support any other concepts which can be used for that purpose?
+>
+>The purpose btw. is to find all modified files in a tree as fast as possible. 
+>There are quite a lot of application which would benefit from it: desktop 
+>search engines, locate, build systems, tools which visualize contents of a 
+>file system (like fsview in KDE), backup tools etc.
+>
+>I know that modifying an attibute recursively on every update of the stat data 
+>would have a huge perfomance impact, but there are many things that could be 
+>done to keep the extra load low for most of the time.
+>It seem very likely that this is an idea which was discussed over and over 
+>again already, but I really didn't find much about it. As a KDE developer, 
+>I'm not much involved in filesystems, so maybe I'm just looking for the wrong 
+>keywords?
+>
+>Fred
+>
+>  
+>
+We intend to implement inheritance of metadata, which could  be made to 
+accomplish what you are asking for I think.  Nobody is coding that at 
+the moment though....
 
-int notify_listener (int op, nspace_id nsid, vnode_id vnida, vnode_id vnidb,
-vnode_id vnidc, const char *name);
-
-The kernel would then take care of building and sending messages to
-interested programs, or do nothing if there were no listeners.  The API
-for query updates is similar.
-
-
-> With "change notification flag" I didn't mean to have the send messages, but 
-> put links to the file into a folder, so a daemon can poll for changes. I 
-> guess polling is better in this case, since it limits the overhead even in 
-> persence of many changes.
-
-Kind of like stored notifcations, saved for later use?  That could be a
-concept to explore in general.  I can see making a special index that
-would collect files which match a standing query, with the unusual option
-of allowing the user to empty the index when they wish.  Cool.  Thanks for
-the inspiration!  Now offline programs can catch up on changes that
-happened while they weren't running.  I'll have to add it to my experimental
-file system along with magic directories showing query results, whenever I
-get time :-(.
-
-An alternative would be to have attributes on files - some flag that gets
-set during a build and cleared when you edit the source.  Or if the text
-editor can't do attributes (or the kernel can't auto-wipe an attribute when
-the file is changed), you could store the build date in the attribute
-and compare it with the file modified date to find all files that are out
-of date.  Or for that matter, just store the last build date somewhere
-global and look for source files for your project which are more recent
-using an index.  A path match or another attribute would mark files as
-belonging to a particular project.
-
-(last_modified>=2004.12.31)&&(Project=="MyProject")
-
-
-> I claim that the approach I described...
-> - ...allows all these things to be done efficiently in userspace.
-> - ...is the smallest change to the fs neccessary for it.
-> - ...could be implemented in reiser4 without significant performance losses.
-
-Possibly.  But I'd like to generalize it a bit.  Percolated attributes are
-perhaps a better more general idea.  We already have inherited attributes
-(such as security of children being inherited from the parent) so going in
-the other direction isn't all that big step, it just needs an application,
-like your modification detection system.
-
-- Alex
+We are indeed open to semantic enhancements.
