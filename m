@@ -1,93 +1,101 @@
-From: Isaac Chanin <chanin@WPI.EDU>
-Subject: Re: AMD64/Reiser4 testing and problems
-Date: Wed, 08 Dec 2004 03:04:07 -0500
-Message-ID: <41B6B577.4080904@wpi.edu>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: making reiser4/AMD64 hardlock
+Date: Wed, 8 Dec 2004 19:24:29 +0300
+Message-ID: <20041208162429.GK5368@backtop.namesys.com>
+References: <1099472359.8158.36.camel@localhost> <20041103201825.GY30438@hvs.envisage.co.za> <1099561964.1492.20.camel@tribesman.namesys.com> <1100073674.31776.21.camel@localhost> <1100102927.1659.64.camel@tribesman.namesys.com> <1100115940.16965.3.camel@localhost> <20041207122043.GI5368@backtop.namesys.com> <1102456018.17113.3.camel@localhost>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22717-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22719-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <1102456018.17113.3.camel@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jake Maciejewski <maciejej@msoe.edu>
+Cc: reiserfs-list@namesys.com
 
-Hey Alex,
+Hi
 
-Thanks for the patch, I wish there was more I could say, but so far I 
-haven't been able to produce any problems whatsoever with this new patch 
-on reiser4/amd64.  The things I tried were Jake Maciejewski's kernel 
-compiling command which I modified slightly to better suit my system. 
-The following ran for at least 30 minutes and a couple of iterations of 
-kernel compiling: for i in `seq 1 20` ; do make mrproper ; cat 
-/boot/2.6.10-r4-mm-config > .config ; make ; echo $i ; done & for i in 
-`seq 1 5` ; do dd; if=/dev/zero of=large_file bs=1M count=20k ; rm 
-large_file ; echo $i ; done
+On Tue, Dec 07, 2004 at 03:46:58PM -0600, Jake Maciejewski wrote:
+> With this patch get
+> 
+> reiser4[cc1(10284)]: check_blocks_bitmap
+> (fs/reiser4/plugin/space/bitmap.c:1174)[zam-623]:
+> code: -2 at fs/reiser4/search.c:1285
+> reiser4 panicked cowardly: assertion failed: reiser4_find_next_zero_bit(bnode_working_data(bnode), end_offset, start_offset) >= end_offset
 
-I also tried filling the filesystem, and testing for data retention from 
-forced umounts.  For fun I also tried running ext2 and a second resier4 
-mounted on files inside the reiser4 filesystem.  Everything worked fine, 
-I was unable to produce a single error in the logs.
+did you begin the tests with mkfs.reiser4 /dev/.... ?
 
-The only thing that could possibly have been said to have gone wrong, 
-was when I tried force umounting with open file handles, that didn't 
-work out quite as well - however, for all sane usage resier4 seems 
-rather stable on amd64 to me.
+> 
+> details at
+> http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/12-07-04/zam-patch/
+> 
+> which is pretty much the same thing documented in 11-20-04/sync_mount/ ,
+> 11-10-04/with_bitmap.c.diff/ , 11-09-04/ , 11-08-04/test2/ ,
+> 11-04-04/all-R4/ , and 11-04-04/R3-R4/
+> 
+> 
+> When I also used Vladimir's "10 Nov 2004 19:08:47 +0300" bitmap.c.diff,
+> my logs filled (~1.7 million lines) with 
+> 
+> WARNING: Wrong level found in node: 1 != 0
+> reiser4[cc1(11554)]: parse_node40
+> (fs/reiser4/plugin/node/node40.c:767)[nikita-494]:
+> code: -2 at fs/reiser4/search.c:1312
+> 
+> see 12-07-04/both-patches/
+> 
+> The only other time I've seen an error like this was 11-08-04/test1/
+> repeating
+> 
+> WARNING: Failed to delete file body 84672
+> reiser4[make(22140)]: parse_node40
+> (fs/reiser4/plugin/node/node40.c:767)[nikita-494]:
+> code: -2 at fs/reiser4/search.c:1278
+> 
+> 
+> If you want, I'll run it again and probably hit the
+> reiser4_find_next_zero_bit error instead. I didn't bother with
+> fsck.reiser4 --build-fs and --check because now that I think about it,
+> this isn't the sort of thing fsck needs to be able to fix. If fsck
+> should be able to handle these cases, someone speak up and I'll provide
+> more reports like 11-20-04/sync_mount/corruption/.
+> 
+> On Tue, 2004-12-07 at 15:20 +0300, Alex Zarochentsev wrote:
+> > On Wed, Nov 10, 2004 at 01:45:40PM -0600, Jake Maciejewski wrote:
+> > > Does this show what you want?
+> > > http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/11-10-04/with_bitmap.c.diff/
+> > 
+> > Please apply the patch below. it definitely fixes one reiser4/amd64 bug. 
+> > 
+> > 
+> > ===== plugin/space/bitmap.c 1.183 vs edited =====
+> > --- 1.183/plugin/space/bitmap.c	Wed Oct 13 17:22:01 2004
+> > +++ edited/plugin/space/bitmap.c	Sun Dec  5 00:18:55 2004
+> > @@ -170,7 +170,7 @@
+> >  static int
+> >  find_next_zero_bit_in_word(ulong_t word, int start_bit)
+> >  {
+> > -	unsigned int mask = 1 << start_bit;
+> > +	ulong_t mask = 1 << start_bit;
+> >  	int i = start_bit;
+> >  
+> >  	while ((word & mask) != 0) {
+> > @@ -234,7 +234,7 @@
+> >  /* search for the first set bit in single word. */
+> >  static int find_last_set_bit_in_word (ulong_t word, int start_bit)
+> >  {
+> > -	unsigned bit_mask;
+> > +	ulong_t bit_mask;
+> >  	int nr = start_bit;
+> >  
+> >  	assert ("zam-965", start_bit < BITS_PER_LONG);
+> -- 
+> Jake Maciejewski <maciejej@msoe.edu>
+> 
 
-I will try running an entire linux system on it once I get the time, and 
-perhaps then will be able to give you some more feedback.
-
-So once again, thanks for the patch, and best of luck with resier4,
-
-Isaac
-
-
-Alex Zarochentsev wrote:
-
- > Hello Isaac
- >
- > On Thu, Dec 02, 2004 at 06:13:39PM -0500, Isaac Chanin wrote:
- >
- >> Hi,
- >>
- >> I did some testing with Resier4 on AMD and was wondering if perhaps 
-debug information or anything on this could help with getting Resier4 
-stable and working on AMD64.
- >>
- >> I have read that if AMD would give an AMD64 cpu that would be a big 
-help, but it doesn't seem inheriantly impossible to fix the problem from 
-error reports and such.
- >>
- >> Anyways, here are the results for my testing.  I used a mm 
-2.6.10-rc2 kernel and the filesystem was in a file mounted by loopback.
- >>
- >> http://users.wpi.edu/~chanin/r4log.txt
- >
- >
- >
- > thanks a lot for the report.  can you try the following patch?
- >
- > ===== plugin/space/bitmap.c 1.183 vs edited =====
- > --- 1.183/plugin/space/bitmap.c    Wed Oct 13 17:22:01 2004
- > +++ edited/plugin/space/bitmap.c    Sun Dec  5 00:18:55 2004
- > @@ -170,7 +170,7 @@
- >  static int
- >  find_next_zero_bit_in_word(ulong_t word, int start_bit)
- >  {
- > -    unsigned int mask = 1 << start_bit;
- > +    ulong_t mask = 1 << start_bit;
- >      int i = start_bit;
- >
- >      while ((word & mask) != 0) {
- > @@ -234,7 +234,7 @@
- >  /* search for the first set bit in single word. */
- >  static int find_last_set_bit_in_word (ulong_t word, int start_bit)
- >  {
- > -    unsigned bit_mask;
- > +    ulong_t bit_mask;
- >      int nr = start_bit;
- >
- >      assert ("zam-965", start_bit < BITS_PER_LONG);
- >
-
+-- 
+Alex.
