@@ -1,53 +1,52 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Reiser4 installation & kernel patching
-Date: Thu, 19 Jun 2003 20:30:58 +0400
-Message-ID: <200306192030.58137.vitaly@namesys.com>
-References: <000e01c33621$2ced8490$0200a8c0@xpstation> <200306191537.30489.vitaly@namesys.com> <002101c3367b$2aab90f0$0200a8c0@xpstation>
+From: Stephen Smalley <sds@epoch.ncsc.mil>
+Subject: Re: xattr
+Date: 19 Jun 2003 13:25:15 -0400
+Message-ID: <1056043514.1071.199.camel@moss-huskers.epoch.ncsc.mil>
+References: <200306162226.39701.russell@coker.com.au>
+	 <1056030719.6758.97.camel@tiny.suse.com>
+	 <200306200046.52292.russell@coker.com.au>
+	 <1056035446.1071.143.camel@moss-huskers.epoch.ncsc.mil>
+	 <1056036084.6758.114.camel@tiny.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14630-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14631-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <002101c3367b$2aab90f0$0200a8c0@xpstation>
-Content-Disposition: inline
+In-Reply-To: <1056036084.6758.114.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Fred -- Speed Up -- <speedup@free.fr>, ReiserFS ML <reiserfs-list@namesys.com>
+To: Chris Mason <mason@suse.com>
+Cc: Russell Coker <russell@coker.com.au>, reiserfs-list@namesys.com
 
-On Thursday 19 June 2003 19:55, Fred -- Speed Up -- wrote:
-> Thank you for your answers ;)
->
-> Now I'd like to know how I could just patch my 2.5.72-mm1 kernel, do you
-> plan to release kernel patch snapshot as you do for reiserprogs ?
+On Thu, 2003-06-19 at 11:21, Chris Mason wrote:
+> Ok, so in the new api, the xattr information is available at the time of
+> the create.  reiserfs would be able to include it all into the same
+> transaction but doesn't do it right now.
 
-Yes, we are going to release a such soon, for now you can find in that 
-snapshot directory some for a bit older kernels.
+This was true of the old API as well; the only difference is whether the
+attribute is specified as a parameter to an extended open/mkdir/etc call
+or whether it is set separately as a process attribute that is applied
+to subsequent ordinary open/mkdir/etc calls.  Including the setxattr in
+the same transaction as the create is not strictly necessary, although
+it would be nice.  The SELinux API change didn't change the create+set
+atomicity, which is still provided by performing the set before the
+parent directory semaphore is released.
 
-> I just tried to install libaal & reiserprogs from the latest snapshot, and
-> reiserprogs ./configure stops after libaal detection without any error
-> message else than "libaal vx.xx detection ... no". There should be an error
+> First we need to get the data logging code in (which Hans has agreed
+> to), getting the xattr code in depends on Hans, Jeff Mahoney will be
+> maintaining as an external patch otherwise.
 
-it means that needed libaal version has not been detected - 'no' - likely 
-because you fogot to run ldconfig after libaal installation.
-
-> message or something, and the library has been compiled and installed
-> though. Hopefully this will be fixed in the upcomming snapshots ;).
->
-> How far are you from achieving the Darpa-related features, so that you
-> could launch the first beta-test ? I just saw on your website "Reiser4 is
-> due June 30, 2003!" : you're not serious, Hans told me a few weeks ago the
-> beta-testing process should take about two month from the first beta if
-> everything's working well, and the first beta is still to come ...
-
-It is difficult to say.
-
-> Another thing : you should update you're website "download" section, so
-> that the reiser4 progs links point to the official snapshots url.
-
-oh, thank you, we will do.
+My impression (possibly wrong) is that Hans prefers a EA-as-file model,
+which I understand is also the Solaris model.  The key question then
+becomes whether mainline reiser{3,4} will ever support the xattr inode
+operations (e.g. implementing them as reads/writes of the EA files
+associated with the inode).  If not, then neither the SELinux "module"
+nor the SELinux userland will be able to access file security attributes
+on reiser{3,4} in the same manner as on ext[23], xfs, or jfs.
 
 -- 
-Thanks,
-Vitaly Fertman
+Stephen Smalley <sds@epoch.ncsc.mil>
+National Security Agency
+
