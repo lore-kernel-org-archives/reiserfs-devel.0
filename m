@@ -1,29 +1,35 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Timeframe for 2.4.21 quota patches?
-Date: 16 Jun 2003 10:56:19 -0400
-Message-ID: <1055775378.24111.652.camel@tiny.suse.com>
-References: <20030616112420.GA13558@jsambrook>
-	 <1055763879.23697.645.camel@tiny.suse.com>
-	 <200306161645.50047.christian.mayrhuber@gmx.net>
+From: "Ripin Natani" <rnatani@platformlogic.com>
+Subject: Revised Question About Security ...
+Date: Mon, 16 Jun 2003 12:15:58 -0400
+Message-ID: <00d101c33422$92c60810$3b0aa8c0@yourn3ty7athd5>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14564-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_00CE_01C33401.0B7FEA90"
+Return-path: <reiserfs-list-return-14565-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200306161645.50047.christian.mayrhuber@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs <reiserfs-list@namesys.com>
 
-On Mon, 2003-06-16 at 10:45, Christian Mayrhuber wrote:
+------=_NextPart_000_00CE_01C33401.0B7FEA90
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> What has happened to 10-quota-link-fix.diff? Is it not necessary any more?
-> I'm asking because it is still mentioned in the README, but seems to have
-> been replaced by 10-quota_nospace_fix.diff
+Hi,=20
+    Regarding the question about security, What I really want is :
+1.  Are there any current security issues in reiserfs ?
+2. Is there a listing or history of security issues that I can access =
+and
+review?  Can you point me to them ?
+3. In your knowledge, how would reiserfs be less or more secure than =
+say, ext2 ?
 
-Whoops, I screwed that up.
+Thanks,
+-Ripin.
+
+
+------=_NextPart_000_00CE_01C33401.0B7FEA90--
 
