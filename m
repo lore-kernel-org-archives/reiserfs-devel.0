@@ -1,59 +1,55 @@
 From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: BUG: Replaying ReiserFS log causes hard lockup
-Date: Thu, 25 Mar 2004 15:55:09 +0300
-Message-ID: <1080219309.1976.304.camel@tribesman.namesys.com>
-References: <20040325204836.07bcf910.a.nielsen@optushome.com.au>
-	 <1080213348.1976.277.camel@tribesman.namesys.com>
-	 <20040325221423.6296bc84.a.nielsen@optushome.com.au>
+Subject: Re: secure delete?
+Date: Thu, 25 Mar 2004 16:00:46 +0300
+Message-ID: <1080219646.1977.308.camel@tribesman.namesys.com>
+References: <Pine.LNX.4.44.0403240625080.18021-100000@potato.zayda.com>
+	 <40613E9A.9090605@namesys.com>
+	 <1080115473.1976.219.camel@tribesman.namesys.com>
+	 <1080170284.11768.1306.camel@arabia.home.lan>  <20040325034937.GB8473@zero>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17467-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17468-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040325221423.6296bc84.a.nielsen@optushome.com.au>
+In-Reply-To: <20040325034937.GB8473@zero>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Adam Nielsen <a.nielsen@optushome.com.au>
+To: Tom Vier <tmv@comcast.net>
 Cc: reiserfs-list@namesys.com
 
 Hello
 
+On Thu, 2004-03-25 at 06:49, Tom Vier wrote:
+> On Thu, Mar 25, 2004 at 12:18:08AM +0100, Enrique Perez-Terron wrote:
+> > So, even a fairly cheap and quick encryption system combined with a
+> > "secure delete" facility makes it many orders of magnitude more
+> > expensive to recover any information from the disk. While it is hardly
+> > the first priority, there might still be many customers that will one
+> > day be willing to pay for this.
+> 
+> i really like the idea of a per file key in the inode. the fs could wipe the
+> key field itself, using the gutmann method, without too much trouble (like
+> wiping the entire file from within the kernel; that could be gigs and take
+> hours).
+> 
+> could this be implimented using plugins?
+> 
+> also, it was mentioned that reiserfs doesn't reserve space. so all
+> structures (except the superblock and journal, of course) are dynamic and
+> regular files can overwrite old nodes? if so, then wipe could use a regular
+> file to wipe free space fairly effectively. if not, maybe i could use the
+> reiserfsprogs libs to figure out what blocks are free (before it's mounted
+> of course).
+> 
+> btw, anyone know what the block coherancy is in 2.6? if i write to a blkdev,
+> then mount it, will the fs driver see the writes?
 
-On Thu, 2004-03-25 at 15:14, Adam Nielsen wrote:
-> Hi,
-> 
-> Thanks for your reply!
-> 
-> > Is sda1 your root filesystem?
-> > For the beginning you should boot without mounting it and reiserfsck
-> > it
-> 
-> Yes, it's the only partition (apart from sda2 which is swap.)  I've done
-> some more fiddling around with it, and I'm starting to think that
-> perhaps after all it's not ReiserFS.  I disconnected and reconnected the
-> SATA cable, and suddenly it got past that point where it locked up
-> before. Now I can mostly read data off the drive fine, but I still
-> can't boot from it.  Lilo only gets as far as "LIL", and when booting
-> the kernel over the network it seems to run fine until I try reading
-> from /boot/bzImage where most of the time it will cause the hard lockup.
-> 
-> So I'm not sure whether it's ReiserFS "crashing" when it can't read the
-> data, the sil3112 module misbehaving, or a physical hardware problem
-> (which seemed unlikely until wiggling the SATA cable helped...!)  I
-> would've assumed though, that a loose SATA cable would cause the drive
-> to either work or not work - but working fine except for booting and
-> reading certain files seems a little weird (it also locked up when I
-> loaded X11.)
-> 
-> Any more ideas?  I don't really know what to do next...!
-> 
+No, it will not. Until blkdev flushes its changes.
 
-You should boot off not using /dev/sda1 and reiserfsck it
-
-> Thanks,
-> Adam.
-> (please CC replies)
-> 
+> i know if the fs writes to
+> the blkdev, reading the blkdev from userspace can return stale cache. too
+> bad you can't do something like umount; bsync; (now safely read/write the
+> blkdev).
 
