@@ -1,35 +1,38 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: possible bug - fsck shows perfect results, linux refuses to mount
-Date: Mon, 31 Mar 2003 17:57:13 +0400
-Message-ID: <20030331175713.A9187@namesys.com>
-References: <20030331113446.A31858@namesys.com> <20030331074957.GD22731@cherenkov.orbis-terrarum.net> <20030331120014.C25533@namesys.com> <20030331083758.GA23518@cherenkov.orbis-terrarum.net> <20030331125652.H25533@namesys.com> <20030331091621.GA23666@cherenkov.orbis-terrarum.net> <20030331132454.L25533@namesys.com> <20030331101714.GA23949@cherenkov.orbis-terrarum.net> <20030331143623.R25533@namesys.com> <20030331111332.GC23949@cherenkov.orbis-terrarum.net>
+From: Edward Shushkin <edward@namesys.com>
+Subject: Re: Proposal for keying encrypted filesystem
+Date: Mon, 31 Mar 2003 17:58:04 +0400
+Sender: edward
+Message-ID: <3E88496C.E83B780F@namesys.com>
+References: <200303282026.23543.phma@webjockey.net> <200303291155.40419.phma@webjockey.net> <3E85E338.CEAA7DC7@namesys.com> <200303301130.24136.phma@webjockey.net> <3E8824B4.55C63A55@namesys.com> <3E88300C.22B54FD7@namesys.com> <20030331133618.GO8452@hvs.envisage.co.za>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13486-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13487-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030331111332.GC23949@cherenkov.orbis-terrarum.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Robin H. Johnson" <robbat2@orbis-terrarum.net>
+To: Hendrik Visage <hvisage@envisage.co.za>
 Cc: reiserfs-list@namesys.com
 
-Hello!
+Hendrik Visage wrote:
+> 
+> On Mon, Mar 31, 2003 at 04:09:48PM +0400, Edward Shushkin wrote:
+> > > > There isn't any guarantee with all 20 either,
+> > >
+> > > Yes of course, but with all the 20 bytes I have a guarantee of SHA1 stability
+> > > announced in appropriate papers, and I do have nothing for 19 bytes..
+> >
+> > So from this standpoint I would rather prefer 16-byte ID created by full-grade md5,
+> > then 19-byte ID created by restricted SHA1. Maybe this standpoint is too conservative,
+> > but this is right..
+> 
+> The question that should be answered:
+> 
+>  Are the design suppose to withstand scrutiny from people like the NSA
+> and other crypto gurus, or just for the mom-a-pop-shops ?
 
-On Mon, Mar 31, 2003 at 03:13:32AM -0800, Robin H. Johnson wrote:
-
-> At the present rate, it looks like it will be at least 50% compression,
-> I'm thinking more since the drive was about 60% full.
-
-Ok, so we have found that your filesystem have relocated journal
-enabled for some reason.
-"reiserfstune --make-journal-standard /dev/hdb1" should make the partition mountable.
-Another question is how did you got it to this state. We are failing to see it yet.
-Do you have any idea?
-BTW we are still interested in copy of your filesystem.
-
-Bye,
-    Oleg
+I didn't invent something new..
+I don't understand what should withstand scrutiny from crypto gurus.. md5? SHA?
+Edward.
