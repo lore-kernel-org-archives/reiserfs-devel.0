@@ -1,10 +1,10 @@
 From: "Burnes, James" <james.burnes@gwl.com>
-Subject: RE: a hosed reiserfs
-Date: Tue, 6 Jul 2004 10:25:20 -0600
-Message-ID: <3DF9165145FACB4C96977FF650C1E9040C46A14E@its-mail1.its.corp.gwl.com>
+Subject: RE: 2.6.7 reiser4 patch ?
+Date: Tue, 6 Jul 2004 10:26:57 -0600
+Message-ID: <3DF9165145FACB4C96977FF650C1E9040C46A14F@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19530-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19531-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -12,35 +12,22 @@ Errors-To: flx@namesys.com
 content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>, Bruce Israel <israel@tux.org>
-Cc: reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>, Alexander Lyamin aka FLX <flx@namesys.com>
+To: =?iso-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, Mikael Cluseau <nwrk@nwrk.dyndns.org>
+Cc: reiserfs-list@namesys.com
 
-Speaking of which.  Does ReiserFS receive funding from the Linux Fund?
-(The MasterCard which sends a percentage of all of your MC transactions
-to open source projects?)
-
-
+Is namesys et al trying for 2.6.8 inclusion for Reiser4?
 
 jim burnes
 security engineer
 great-west, denver
 =20
 
-> -----Original Message-----
-> From: Hans Reiser [mailto:reiser@namesys.com]
-> Sent: Sunday, July 04, 2004 4:57 PM
-> To: Bruce Israel
-> Cc: reiserfs-list@namesys.com; Vitaly Fertman; Alexander Lyamin aka
-FLX
-> Subject: Re: a hosed reiserfs
 >=20
-> Bruce Israel wrote:
+> The -mm tree is used because -mm stuff goes into mainline and
+> that's what the Reiser4 people are trying to accomplish...
 >=20
-> >On Mon, Jun 28, 2004 at 10:46:05AM -0700, Hans Reiser wrote:
-> >
-> >
-> >>www.namesys.com/support.html takes credit cards.  Thanks for being
-our
-> >>customer.
-> >>
+> There's nothing wrong with sticking to what Namesys gives :)
+>=20
+> --
+> mjt
 
