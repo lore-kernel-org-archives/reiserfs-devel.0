@@ -1,96 +1,80 @@
-From: John Wilkes <john@wilkes.com>
-Subject: Re: Cannot open root device
-Date: Mon, 3 May 2004 22:22:37 -0700 (PDT)
-Message-ID: <Pine.LNX.4.33.0405032124200.1663-100000@bi165.wilkes.com>
-References: <200405041346.43920.Michael.James@csiro.au>
+From: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2004@gmx.net>
+Subject: Re: Fwd: reiser4 non-free?
+Date: Tue, 04 May 2004 09:52:25 +0200
+Message-ID: <40974BB9.1000509@gmx.net>
+References: <13518599fb1119aa327235ecc3e01dc7@bouncing.localnet>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18417-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18420-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200405041346.43920.Michael.James@csiro.au>
+In-Reply-To: <13518599fb1119aa327235ecc3e01dc7@bouncing.localnet>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="windows-1252"
+To: MJ Ray <mjr@dsl.pipex.com>
+Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-On Tue, 4 May 2004, Michael James wrote:
+MJ Ray wrote:
+> On 2004-05-03 22:53:05 +0100 Carl-Daniel Hailfinger
+> <c-d.hailfinger.kernel.2004@gmx.net> wrote:
+>=20
+>> MJ Ray wrote:
+>>
+>>> because of its dumb developers who won't answer simple questions abou=
+t
+>>
+>>                  ^^^^^^^^^^^^^^^
+>> Hey, can you do anything else but insult people?
+>=20
+>=20
+> I'm not sure what you mean. I've reread the email and I'm surprised tha=
+t
+> you think there are "at least 3 insults" in it. I count one and that wa=
+s
+> an intentional illustration of the unnecessarily insulting language it
+> was replying to.
+>=20
+>   Dumb \Dumb\, a. [...]
+>=20
+>      2. Not willing to speak; mute; silent; not speaking; not
+>         accompanied by words;
 
-> There have been a lot of kernel patches out lately,
->  have you somehow got a mismatch between the kernel
->  and its reiser or disk driver modules?
+I'm sorry to have misunderstood you. The meaning of dumb I was referring
+to is slightly different.
 
-I don't think so.  The system had booted successfully only two or
-three days before.  I'm a mere user; I don't do any sort of software
-development, so it's extremely unlikely that I would have managed to
-create a mismatch between kernel and other stuff.
+Quoting from dictionary.reference.com:
+--------------------------------------
+dumb    ( P )
+adj. dumb=B7er, dumb=B7est
 
-> Suse boots by starting the kernel and mounting an initrd,
->  a compressed vestigial root filesystem.
+1.a Lacking the power of speech. Used of animals and inanimate objects.
+1.b Often Offensive. Incapable of using speech; mute. Used of humans. See=
 
-Can I do that too?  In other words, can I mount /boot/initrd and have
-a look at what's there?  How do I mount it?
-
-> Installing an new kernel using Yast should run "mkinitrd"
->  to update the modules in your initrd to match.
-
-It does.  Yast2 prints a little status line at the bottom of the
-window, and at one point it says "creating initrd" or something
-similar.  Also, when booting my /dev/hdb system, I can mount /dev/hda1
-and see that the datestamps on both vmlinuz and initrd have been
-updated.
-
-> Note, the CD kernel (and initrd) are the "deflt" version.
-
-Yast2 on the intallation CD warns me not to use deflt unless I really
-know what I am doing.  Nevertheless, I installed it and get the same
-result.  It's been a while, but I'm pretty sure I selected the athlon
-kernel when I originally installed SuSE 8.2 about a year ago and it
-just worked with reiserfs partitions.
-
->   don't boot to the CD's "rescue system" use the CD to "boot
-> installed system" That will use the CD's kernel AND modules but give
-> you the real root filesystem.
-
-I tried that too, but it just hangs with no message on the screen.
-Two LEDs on the keyboard are blinking on and off, which also happens
-when the kernel panics booting off of hda.  I assume it silently has
-the same problem.
-
-> Hope this helps,
-> michaelj
-
-Thanks; it does help, even though the problem isn't solved.
-
-Some questions I have:
-
-I'm guessing that the boot process does "rdev /dev/hda3" at some
-point.  How is "rdev" different from "mount"?  (Apart from the
-obvious, that one sets the root file system while the other simply
-makes the filesystem available.)  Does "rdev" read or write any
-special block that fsck doesn't look at?
-
-I'm wondering if reformating the partition would cure the problem.
-
-Here's how I would go about it:
-
-1. boot alternate system on hdb
-2. mount /dev/hda3 /mnt
-3. cd /mnt
-4. tar czvf ~/rootfs.tar .
-5. umount /mnt
-6. mkfs -t reiserfs /dev/hda3
-7. mount /dev/hda3 /mnt
-8. cd /mnt
-9. tar xzvf ~/rootfs.tar
-
-Does that look like it will work?  Any reiserfs specific options
-needed for mkfs?
-
-/jw
--- 
-John Wilkes
-john at wilkes dot com
+    Usage Note at mute.
+2. Temporarily speechless, as with shock or fear: I was dumb with disbeli=
+ef.
+3. Unwilling to speak; taciturn.
+[...]
+6. Conspicuously unintelligent; stupid: dumb officials; a dumb decision.
+[...]
+Our Living Language In ordinary spoken English, a sentence such as He is
+dumb will be interpreted to mean =93He is stupid=94 rather than =93He lac=
+ks the
+power of speech.=94 =93Lacking the power of speech=94 is, however, the or=
+iginal
+sense of the word, but it has been eclipsed by the meaning =93stupid.=94
+--------------------------------------
 
 
+> It seems an apt description of how some XFree86 developers reacted to
+> questions. They went dumb. Other XFree86 developers were helpful, but
+> they are not the reason I plan to stop using it, so I do not blame them=
+=2E
+
+I mistook your phrase "its dumb developers" as referring to all XFree86
+developers. Now that you clarified it, it doesn't look like an insult
+anymore.
+
+Carl-Daniel
