@@ -1,42 +1,28 @@
-From: Pallavi Dalya <pallavidalya@yahoo.com>
-Subject: when is it decided that extent pointer is to be created in reiser4
-Date: Mon, 21 Feb 2005 17:26:15 +0000 (GMT)
-Message-ID: <20050221172615.70993.qmail@web60109.mail.yahoo.com>
+From: Mark Junker <mjscod@gmx.de>
+Subject: Re: where are reiser4 sources
+Date: Mon, 21 Feb 2005 18:59:21 +0100
+Message-ID: <421A2179.202@gmx.de>
+References: <421A096F.5040603@gmx.de> <b65fbb130502210910567ff32@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <b65fbb130502210910567ff32@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiser-list mailing <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-hello,
+Sander Sweers schrieb:
 
-     as far as i know tree based file systems use
-extents for managing free space. does reiser4 use a
-bitmap based method or extents to keep track of used
-and free blocks.
-      another issue is that when i tried storing a
-small file an extent pointer was created for the file
-which was also the case for a large file. but to my
-knowledge extent pointers are created for large files
-and in some file systems there is a fixed limit to the
-file size after which it is assigned an extent
-pointer.
-wat is the policy used in reiser4 to decide which
-files should be stored using extent pointers and which
-should not.
-      also from what i have observed each file has a
-unique key representing it in reiser4. is there any
-specific key generation algorithm for file names and
-if yes where could i find it. is it possible that
-instead of passing single file names to the key
-generation algorithms we could pass the entire path to
-generate a unique key.
+>I have been using the tarball from ftp://ftp.namesys.com/pub/reiser4-for-2.6/.
+>Have not had any problems with this but I do not know how up to date it is.
+>  
+>
+I already found this but I just wanted to download the version *not* 
+consisting of just the linux kernel patches. Just the plain sources.
 
-________________________________________________________________________
-Yahoo! Messenger - Communicate instantly..."Ping" 
-your friends today! Download Messenger Now 
-http://uk.messenger.yahoo.com/download/index.html
+Regards,
+Mark
+
