@@ -1,45 +1,29 @@
-From: Anders Widman <andewid@tnonline.net>
+From: Dirk Mueller <dmuell@gmx.net>
 Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
-Date: Wed, 12 Feb 2003 19:20:58 +0100
-Message-ID: <142121073531.20030212192058@tnonline.net>
-References: <93F527C91A6ED411AFE10050040665D0049C06D5@corpusmx1.us.dg.com>
- <200302130522.35829.sam@vilain.net> <51115850843.20030212175355@tnonline.net>
- <3E4A823E.9010609@namesys.com> <20118619984.20030212184004@tnonline.net>
- <20030212181533.GA18878@matrix.wg>
-Reply-To: Anders Widman <andewid@tnonline.net>
+Date: Wed, 12 Feb 2003 19:15:33 +0100
+Message-ID: <20030212181533.GA18878@matrix.wg>
+References: <93F527C91A6ED411AFE10050040665D0049C06D5@corpusmx1.us.dg.com> <200302130522.35829.sam@vilain.net> <51115850843.20030212175355@tnonline.net> <3E4A823E.9010609@namesys.com> <20118619984.20030212184004@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12732-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12730-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030212181533.GA18878@matrix.wg>
+Content-Disposition: inline
+In-Reply-To: <20118619984.20030212184004@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-> On Mit, 12 Feb 2003, Anders Widman wrote:
+On Mit, 12 Feb 2003, Anders Widman wrote:
 
->>   Just a question. (I know lots of people will shout at me for asking,
->>   but please don't :) Will V3/4 be ported to Windows, or are we doomed
->>   to use the new MS database with integrated Palladium software?
+>   Just a question. (I know lots of people will shout at me for asking,
+>   but please don't :) Will V3/4 be ported to Windows, or are we doomed
+>   to use the new MS database with integrated Palladium software?
 
-> very unlikely. porting a filesystem is about the same work as writing it
-> from scratch. 
-
-  Depends  what  is  the most difficult part; to develop a good system
-  and algorithms, or to write the code. :)
-
-  Anyway,  I  see your point and I know my request was far fetched. It
-  is  more  likely  that  Adobe  port their programs to Linux than the
-  other way around.
-
-   - Anders
+very unlikely. porting a filesystem is about the same work as writing it 
+from scratch. 
 
 
-> Dirk
-
-
-
-
+Dirk
