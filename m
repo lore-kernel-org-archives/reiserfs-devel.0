@@ -1,38 +1,47 @@
-From: J.Strohschnitter <svebu@gmx.de>
-Subject: Kernel Oplocks and ReiserFS
-Date: Mon, 10 Jun 2002 12:02:54 +0200
-Message-ID: <E17HM0l-0007xZ-00@m-fra02.rhg.de>
+From: Chris Worley <chrisw@lnxi.com>
+Subject: Re: 2GB limit won't go away
+Date: 10 Jun 2002 08:00:34 -0600
+Message-ID: <1023717639.6253.7.camel@localhost.localdomain>
+References: <1023708533.4654.301.camel@xserver>
+	<20020609183534.GC14168@turbolinux.com>
+	<1023754229.4654.1831.camel@xserver> <20020609231608.B8386@namesys.com>
+	<1023780454.3999.52.camel@xserver> <20020610085822.A10921@namesys.com> 
+	<20020610054252.GD20388@turbolinux.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-10706-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10707-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <20020610054252.GD20388@turbolinux.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hi there,
+On Sun, 2002-06-09 at 23:42, Andreas Dilger wrote:
+> Note that you should probably strace the failing "dd" command to ensure
+> it is opening the file with O_LARGEFILE.  If not, it isn't a kernel
+> problem but a tool problem instead.
 
-are there any problems with Kernel Oplocks, activated in samba 2.2.4 and 
-ReiserFS (3.x.0b) ?
-When I activate kernel oplocks in the globat section of smb.conf, all DOS- 
-applications will hang, when two or more clients uses the same file to
-write/read.
-What can I do to make samba work with reiserFS - or is this no reiserFS
-problem ? 
-My environment:
+# strace dd if=/dev/zero of=./test.bigfile bs=1024 count=5242880
+...
+open("./test.bigfile", O_WRONLY|O_CREAT|O_TRUNC|O_LARGEFILE, 0666) = 1
+...
 
-SuSE - Linux 7.2
-Kernel 2.4.16
-samba 2.2.4
-reiserfs-3.x.1b-32
+But, it was a good suggestion.  The dd/seek does speed testing.
 
+Thanks,
 
+Chris
 
--- 
+> On Jun 10, 2002  08:58 +0400, Oleg Drokin wrote:
+> > Would following sequence of commans help?
+> > dd if=/dev/zero of=./test.bigfile bs=1024 count=5242880
+> 
+> Just as a tip for LFS testers, it is much easier to test with a sparse
+> file instead of waiting for 2GB to be written to disk:
+> 
+> dd if=/dev/zero of=./test.bigfile bs=1k seek=1023M
+> 
+> (this puts you just short of the 2GB limit in case your seek is broken).
 
-SET THE CONTROLS 
-	FOR THE HEART OF THE SUN
-
-Jens
