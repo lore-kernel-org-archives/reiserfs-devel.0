@@ -1,10 +1,10 @@
 From: "darren" <teodarren@myrealbox.com>
 Subject: OT: simple file operations in C
-Date: Mon, 10 Mar 2003 03:33:21 +0000
-Message-ID: <1047267201.c3ecdd60teodarren@myrealbox.com>
+Date: Mon, 10 Mar 2003 03:34:02 +0000
+Message-ID: <1047267242.c3ecdd60teodarren@myrealbox.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13162-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13163-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -27,5 +27,4 @@ Any suggestions?
 
 Regards
 Darren
-
 
