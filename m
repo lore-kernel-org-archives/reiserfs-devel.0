@@ -1,35 +1,29 @@
-From: Anders Widman <andewid@tnonline.net>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: Is the nolog-Optiion usable now ?
-Date: Tue, 25 Mar 2003 12:48:18 +0100
-Message-ID: <177422083171.20030325124818@tnonline.net>
+Date: Tue, 25 Mar 2003 14:53:26 +0300
+Message-ID: <20030325145325.A20438@namesys.com>
 References: <20030325124423.22b61f8c.norbert_wolff@t-online.de>
-Reply-To: Anders Widman <andewid@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13374-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13375-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 In-Reply-To: <20030325124423.22b61f8c.norbert_wolff@t-online.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Norbert Wolff <norbert_wolff@t-online.de>
+Cc: reiserfs-list@namesys.com
 
-> Hi !
+Hello!
+
+On Tue, Mar 25, 2003 at 12:44:23PM +0000, Norbert Wolff wrote:
+
 > Can anyone tell if the nolog-Option of ReiserFS is usable now ?
-> I use reliable Hardware,
 
-I did not know there were such ;)
+No, it is not usable.
 
-> mount the FS in sync-Mode and backup every day ;
-> so I think I don't really need the logging-Facilities of ReiserFS.
-
-//Anders
-   
-
-
-
---------
-PGP public key: https://tnonline.net/secure/pgp_key.txt
-
+Bye,
+    Oleg
