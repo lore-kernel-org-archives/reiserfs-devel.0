@@ -1,41 +1,35 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: Horrible ftruncate performance
-Date: Fri, 11 Jul 2003 17:27:25 +0200
-Message-ID: <200307111727.25642.Dieter.Nuetzel@hamburg.de>
-References: <20030710052931.GA17957@namesys.com> <200307111716.56823.Dieter.Nuetzel@hamburg.de> <20030711152431.GF17180@namesys.com>
+From: Jan Kara <jack@ucw.cz>
+Subject: Re: 32bit UID/GID's Quota in 2.4!
+Date: Fri, 11 Jul 2003 17:31:05 +0200
+Message-ID: <20030711153105.GC30463@atrey.karlin.mff.cuni.cz>
+References: <200307102119.11860.christian.mayrhuber@gmx.net> <20030711000807.58fa86a7.philippe.gramoulle@mmania.com> <20030711053910.GA12924@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14888-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14889-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030711152431.GF17180@namesys.com>
 Content-Disposition: inline
+In-Reply-To: <20030711053910.GA12924@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Oleg Drokin <green@namesys.com>
-Cc: Szakacsits Szabolcs <szaka@sienet.hu>, reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
+Cc: Philippe Gramoull? <philippe.gramoulle@mmania.com>, Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list <reiserfs-list@namesys.com>
 
-Am Freitag, 11. Juli 2003 17:24 schrieb Oleg Drokin:
-> Hello!
->
-> On Fri, Jul 11, 2003 at 05:16:56PM +0200, Dieter N?tzel wrote:
-> > OK some "hand work"...
->
-> Actually I did it already, as data-logging patches can be applied to
-> 2.4.22-pre3 (where this truncate patch was included).
+  Hello,
 
-No -aaX.
+> On Fri, Jul 11, 2003 at 12:08:07AM +0200, Philippe Gramoull? wrote:
+> 
+> > I haven't had time to look how "new" this quota code is and if it differs
+> > from what is actually available through external patches though.
+> 
+> I see that the Config.in stuff is a bit different. Also comment says
+> it is 2.5 backport, not quotav2 for 2.4 patches that were floating
+> around.  I plan to look at it closer soon and port reiserfs quota to
+> new interface if necessary.
+  Quota code in 2.5 kernel is almost the same as the 2.4 I have at my
+ftp site. The code that got merged has some minor differences which I'm
+now discussing with Marcelo.
 
-> > Maybe it _IS_ time for this _AND_ all the other data-logging patches?
-> > 2.4.22-pre5?
->
-> It's Chris turn. I thought it is good idea to test in -ac first, though
-> (even taking into account that these patches are part of SuSE's stock
-> kernels).
-
-I don't think -ac would make it => No big Reiser involved...
-
--Dieter
-
+								Honza
