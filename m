@@ -1,40 +1,40 @@
-From: Fuzzy <fuzzy77@free.fr>
-Subject: Re: Snapshot against 2.6.1 released [someone has a patch against
- -mm4 ?]
-Date: Mon, 19 Jan 2004 16:36:34 +0100
-Message-ID: <400BF982.2050407@free.fr>
-References: <16395.60465.989777.981597@laputa.namesys.com>
+From: Mike Fedyk <mfedyk@matchmail.com>
+Subject: Re: Snapshot against 2.6.1 released [someone has a patch against -mm4 ?]
+Date: Mon, 19 Jan 2004 07:56:49 -0800
+Sender: Mike Fedyk <mfedyk@srv-lnx2600.matchmail.com>
+Message-ID: <20040119155649.GK1748@srv-lnx2600.matchmail.com>
+References: <16395.60465.989777.981597@laputa.namesys.com> <400BF982.2050407@free.fr>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16565-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16566-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16395.60465.989777.981597@laputa.namesys.com>
+Content-Disposition: inline
+In-Reply-To: <400BF982.2050407@free.fr>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Nikita Danilov <Nikita@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Fuzzy <fuzzy77@free.fr>
+Cc: Nikita Danilov <Nikita@namesys.com>, reiserfs-list@namesys.com
 
-Is there any chance that namesys will also provide a patch against the 
--mm tree ? Or even better: is there already a timeline for integration 
-of reiser4 in -mm ?
-I usually fix the - usually minor - rejects by hand at each new release 
-but if testing could be made a bit easier, that would be really nice...  ;-)
+On Mon, Jan 19, 2004 at 04:36:34PM +0100, Fuzzy wrote:
+> Is there any chance that namesys will also provide a patch against the 
+> -mm tree ? Or even better: is there already a timeline for integration 
+> of reiser4 in -mm ?
+> I usually fix the - usually minor - rejects by hand at each new release 
+> but if testing could be made a bit easier, that would be really nice...  ;-)
 
-Best regards,
+Well, if I were them, I wouldn't.
 
-Vince
+Right now the -mm tree has some stuff that's just waiting for 2.7, or is in
+initial testing/merging into stock 2.6.
 
-Nikita Danilov wrote:
-> Hello,
-> 
-> new snapshot against 2.6.1 kernel is at
-> 
-> http://namesys.com/snapshots/2004.01.19/
-> 
-> look into READ.ME file for details.
-> 
-> Nikita.
+You really should be testing against stock 2.6 with the reiser4 filesystem
+so that you don't get hit by one of the (600 in 2.6.1-mm4) patches in the
+-mm series.
 
+That way, you can help spot bugs better, and reiser4 will be merged into -mm
+sooner so you'll be happy. :)
+
+Mike
