@@ -1,41 +1,34 @@
 From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Wed, 31 Mar 2004 11:43:35 +0300
-Message-ID: <20040331084335.GE5229@nysv.org>
-References: <200403310620.i2V6K7D9018881@sirius.cs.pdx.edu>
+Date: Wed, 31 Mar 2004 11:52:42 +0300
+Message-ID: <20040331085242.GF5229@nysv.org>
+References: <200403311027.30359.christian.mayrhuber@gmx.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17615-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17616-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200403310620.i2V6K7D9018881@sirius.cs.pdx.edu>
+In-Reply-To: <200403311027.30359.christian.mayrhuber@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Elliot Mitchell wrote:
+Christian Mayrhuber wrote:
 
->But how often do you need to access meta information directly from a
->shell? Most of the time it would be a GUI tool accessing the extra data,
->do you normally need to use `file` before doing anything?
+>The most important thing is that once there is an access pattern to meta
+>information it is the same for all filesystems on Linux.
 
-Assumptions are bad things. If I understood this correctly, in my
-caffeine-depraved just-woken-up state.
-(So I'm making an assumption too ;)
+Next to impossible to implement probably. How many filesystems have
+accessible metadata at the moment?
 
-It seems a GUY tool accessing the extra data is way off in the future.
-I might write some pyglade toy for this some day, but in general I
-don't use GUI software. I know many others who don't either.
+Besides, in different filesystems the metadata layout will probably
+vary, even more than in Reiser4 with its plugin architecture.
 
-So the shell is the way to go.
-
-On a sort-of other note:
-I'm not sure either what Hans Reiser meant by a macro, does that mean
-a settable variable? It's a decent compromise, I think. As someone
-else stated, let's just hope for an inoffensive default.
+However, it would be GREAT if Reiser4 defined a standard here, because
+the current layout is poetically beautiful.
 
 -- 
 mjt
