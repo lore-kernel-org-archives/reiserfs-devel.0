@@ -1,43 +1,31 @@
-From: Philippe Gramoulle <philippe.gramoulle@mmania.com>
-Subject: Re: Speedup patch for 2.4.19-pre6 in bitmap.c
-Date: Wed, 10 Apr 2002 21:09:33 +0200
-Message-ID: <20020410210933.A11599@off.aspic.com>
-References: <20020410165508.D54344@off.aspic.com> <20020410190203.A22633@namesys.com> <20020410170919.G54344@off.aspic.com> <20020410191356.A22756@namesys.com> <20020410204848.N54344@off.aspic.com> <20020410230527.B23934@namesys.com>
-Reply-To: Philippe Gramoulle <philippe.gramoulle@mmania.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Degrading performance?
+Date: Wed, 10 Apr 2002 23:37:00 +0400
+Message-ID: <20020410233700.A24113@namesys.com>
+References: <20020410172502.29765.qmail@web10006.mail.yahoo.com> <3CB48000.1070805@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10019-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10020-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <20020410230527.B23934@namesys.com>; from green@namesys.com on Wed, Apr 10, 2002 at 11:05:27PM +0400
+In-Reply-To: <3CB48000.1070805@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <green@namesys.com>
-Cc: ReiserFS Mailing List <reiserfs-list@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: bill@billrees.com, reiserfs-list@namesys.com
 
-On Wed, Apr 10, 2002 at 11:05:27PM +0400, Oleg Drokin wrote:
-> Hello!
-> 
-> On Wed, Apr 10, 2002 at 08:48:48PM +0200, Philippe Gramoulle wrote:
->  
-> > I'll send the missing test ( without speedup patch and without Highmem) later tonight.
-> > PS: i'll also redo some tests with 2.4.18 +NFS_ALL and try with UDP as well.
-> 
-> Ok. Can you also try to measure writing speed without NFS in between?
-> (like dd if=/dev/zero of=/localfs/file ...)
-> With and without speedup & highmem
-> 
-> Thank you.
-> 
-> Bye,
->     Oleg
+Hello!
 
-Yes , i'll do that.
+On Wed, Apr 10, 2002 at 10:10:08PM +0400, Hans Reiser wrote:
 
-Hopefully , i should be done with all tests tomorrow.
+> This is a very interesting measurement.  Please experiment with the 
+> patch to bitmap.c that Oleg is experimenting with (I think it was put on 
+> the reiserfs mailing list recently).
 
-Thanks,
+No, What I put on list is different stuff we was working on with Chris Mason.
+Though it may also help.
 
-Philippe.
+Bye,
+    Oleg
