@@ -1,62 +1,88 @@
-From: Hendrik Visage <hvisage@envisage.co.za>
+From: Edward Shushkin <edward@namesys.com>
 Subject: Re: Proposal for keying encrypted filesystem
-Date: Tue, 1 Apr 2003 11:31:41 +0200
-Message-ID: <20030401093141.GE11927@hvs.envisage.co.za>
-References: <200303282026.23543.phma@webjockey.net> <200303311511.40537.phma@webjockey.net> <20030331213104.GZ8452@hvs.envisage.co.za> <200303311740.24288.phma@webjockey.net>
+Date: Tue, 01 Apr 2003 16:28:05 +0400
+Sender: edward
+Message-ID: <3E8985D5.7CA598FF@namesys.com>
+References: <200303282026.23543.phma@webjockey.net> <200303291155.40419.phma@webjockey.net> <3E85E338.CEAA7DC7@namesys.com> <200303301130.24136.phma@webjockey.net> <3E8824B4.55C63A55@namesys.com> <3E88300C.22B54FD7@namesys.com> <20030331133618.GO8452@hvs.envisage.co.za> <3E88496C.E83B780F@namesys.com> <20030331164502.GU8452@hvs.envisage.co.za>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13509-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13510-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200303311740.24288.phma@webjockey.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Pierre Abbat <phma@webjockey.net>
-Cc: reiserfs-list@namesys.com
+To: Hendrik Visage <hvisage@envisage.co.za>
+Cc: reiserfs-list@namesys.com, reiserfs-dev@namesys.com
 
-On Mon, Mar 31, 2003 at 05:40:24PM -0500, Pierre Abbat wrote:
-> On Monday 31 March 2003 16:31, Hendrik Visage wrote:
-> > On Mon, Mar 31, 2003 at 03:11:40PM -0500, Pierre Abbat wrote:
-> > > You need to add the PID to the tuple used to ask for the key. That way a
-> > > process and its children can access a file, but other processes running
-> > > with the same UID cannot. This is necessary for trusted encrypted backup.
-> >
-> > Agreed.
-> >
-> > However if the key database/engine doesn't have access to an
-> > already decrypted key, then it would return an error. That way the backups
-> > would only be able to copy the file verbatim (ie. un-decryptable) to the
-> > backup medium. Ie. the backups run while the user haven't logged in to
-> > enable decryption. Or am I missing the definition of "trusted encrypted
-> > backups"?
+Hendrik Visage wrote:
 > 
-> I don't understand "if the key database/engine doesn't have access to an 
-> already decrypted key".
+> On Mon, Mar 31, 2003 at 05:58:04PM +0400, Edward Shushkin wrote:
+> > I didn't invent something new..
+> > I don't understand what should withstand scrutiny from crypto gurus.. md5? SHA?
+> 
+> The keying implementation as proposed.
 
-ie. for your example below, a reiserfskey haven't yet executed.
+I agree, but keying implementation is not ready, just in discussion process, so there is 
+nothing that should withstand scrutiny for a while.. I want to clear up some order in 
+addition to the design document I have posted.
+  First we would like to specify the minimal crypto interface that kernel should know about.
+Our policy is that it should be exactly *minimal*, so kernel shouldn't worry about key
+management. When user tries to open a crypto file by special reiser4_open() system call,
+kernel calls appropriate method which checks if the key passed by user is valid. I have 
+described the identification mechanism earlier, it uses disk key ID calculated by share or
+private key during creation (when kernel creates, or opens a crypto file, it doesn't need to
+distinguish, if the key is share or private). With a big probability (which is provided by
+using of crypto-stable hash function) kernel makes a right conclusion if the key is valid or
+invalid. If passed key is valid, kernel load this key into its own memory, and installs the
+pointer to the inode. It means that user has got an access to this file i.e. he can read and
+write file's data using this key. At the end of session reiser4_close() method zeroes and frees
+the memory allocated for the key. All read(), write() internals I have described earlier. 
+ There is an opinion that is *all* what kernel should know about crypto-files. Although one
+more thing that kernel also should do (in order to support public-private interface) is
+distinguish what key should be used for reading, and what one should be used for writing.
+The current list of parameters which should be passed to the kernel via reiser4_open syscall
+(including compression info) is:
 
-Note, my view on the key database is that it shouldn't be limited to
-single instance/machine, rather it would be able to communicate with
-others or a central key database to exchange keys.
+crypto_id crypto;            / id of the reiser4 crypto-plugin /
+crypto_hash_id hash;         / id of the reiser4 crypto-hash plugin /
+compression_id compression;  / id of the reiser4 compression plugin /
+__u8 *pr_key;                / pointer to the private(share) key /
+__u16 pr_key_size;           / private(share) key size /
+__u8 *pub_key;               / pointer to the public key /
+__u16 pub_key_size;          / public key size /
+__u8 *keyid_string;          / pointer to the identification string (secret string randomly
+                               generated by appropriate key generation routine) /
+__u8  keyid_length ;         / the length of identification string /
+__u8  cluster_shift;         / cluster parameter /
 
-> Here's the protocol I'm thinking of:
-> Alice starts an SSH session to Bob, the backup server. Alice tells Bob to run 
-> "reiserkey -a 1 pa55phrase", which puts the passphrase in the key database as 
-> being accessible by the SSH session. Alice then starts rsync and tells it to 
-> use the already existing SSH session (I don't know how to do this, but it 
-> might be doable) to start rsync on Bob. Alice backs up her data to Bob, but 
-> no process that is not a child of the SSH session can read the backup on Bob, 
-> even if Bob becomes the UID that Alice is using. When she is finished, Alice 
-> runs reiserkey again to remove the passphrase from the key database.
+Key ID size is defined by crypto-hash plugin (it is just an output size of appropriate hash
+function). All other needed information is contained in specified crypto-plugin (if used
+crypto-algorithm is symmetric or asymmetric, how to install keys to the inode, etc..)
+So we would like to see the following:
+   
+1) Any opinions whether this crypto-file interface is full enough to implement public-private
+keing (or maybe I have missed something that will be needed for some useful features), etc..
 
-A very specific case, which could be easily handled with some PAM magic 
-to negate the need for a reiserkey execution by the user as it could be
-done on the fly, but that is getting OT as it would/should be part of an
-external process (read key database specific :) that would make the decision.
+2) Any remarks about possible security holes in the reiser4 internals of main system calls I
+have described. I don't think this is the only crypto guru who can do this.
 
-The case I had in mind was where you are backing up encrypted files to tape.
+3) Any proposals about crypto-directory plugin implementation. Obviously, encryption of directory
+entries (which is so desirable by everyone) should be implemented as a new directory plugin. 
+This is the main directory plugin methods (->create_child() and ->lookup() responsible for 
+new entry creation and name resolution) who will call crypto-plugin (I hope we don't need
+to compress file names). Perhaps, it is possible to implement the scheme when all directory entries
+and appropriate files are encrypted by the same key which is loaded once for all these files, and
+the appropriate key ID is verified once and saved once in directory disk stat-data instead of 
+its saving in disk stat-data of each file.
 
-Hendrik
+4) Proposals about integrating with a PKI infrastructure.
+
+5) Proposals about user level support.
+
+As I understand, currently we need 1), 2) and 5). Other will be need in future.	
+Anyway thanks for all your posts, although some of them I can not comment since the topic is beyond
+the scope of DARPA contract.
+
+Edward.
