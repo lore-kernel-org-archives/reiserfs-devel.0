@@ -1,50 +1,43 @@
-From: Bill Schrier <wschrier@neolinear.com>
-Subject: Re: reiserfsck failure
-Date: Wed, 15 Jan 2003 15:15:13 -0500
-Sender: wschrier@neolinear.com
-Message-ID: <3E25C151.CE31D219@neolinear.com>
-References: <3E247A12.4E479B64@neolinear.com> <3E247AB6.89265382@neolinear.com> <20030115095925.A23036@namesys.com>
+From: Chris Mason <mason@suse.com>
+Subject: [PATCH] data logging patches available for 2.4.21-preX
+Date: 15 Jan 2003 16:20:58 -0500
+Message-ID: <1042665658.31095.1374.camel@tiny.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12366-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12367-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: it@neolinear.com, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Unfortunatly, the console was completely hosed up and I couldn't even get any
-display on it to record any messages to stderr.  Sorry - don't think I can help
-there...
+Hello all,
 
-Bill
+I've updated the data logging patches to 2.4.21-pre3, once the suse
+mirror is done updating, you can download them from:
 
-Oleg Drokin wrote:
+ftp.suse.com/pub/people/mason/patches/data-logging/2.4.21
 
-> Hello!
->
-> On Tue, Jan 14, 2003 at 04:01:42PM -0500, Bill Schrier wrote:
->
-> > > I am sending along both the --logfile and the core file from a recent
-> > > reiserfsck we were running on our Redhat 7.2 raidzone machine.
->
-> Can you say what exact version was that?
-> Also just before dumping core it should have output some more info on stderr
-> about assertion failure, we are interested in that message too.
->
-> Thank you.
->
-> Bye,
->     Oleg
+Changes:
 
---
-William J. Schrier              Phone: 412.968.5780 x151
-Neolinear, Inc.                 Fax:   412.968.5788
-583 Epsilon Drive               Email: wschrier@neolinear.com
-Pittsburgh, PA  15238
+mount -o remount can switch between data modes.
 
+transaction overflow bug fix (BUG in journal_mark_dirty)
+
+fix for -ENOSPC hang when the block size < page size (ia64, alpha)
+
+integration with akpm's b_journal_head code from -ac.  Should make it
+possible for these patches to work both on vanilla kernels and Alan's
+branch.  I haven't tried this yet though, so testers would be
+appreciated.
+
+commit_super is now sync_fs
+
+I had to rework some of the data=ordered buffer handling code to merge
+with the changes in 2.4.21-preX, so use some caution with this code.
+
+-chris
 
 
