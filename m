@@ -1,76 +1,116 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: Snapshot against 2.6.1 released.
-Date: Mon, 19 Jan 2004 22:13:51 +0300
-Message-ID: <16396.11375.115895.934750@laputa.namesys.com>
-References: <16395.60465.989777.981597@laputa.namesys.com>
-	<16396.1113.203997.785571@laputa.namesys.com>
-	<400C2ABD.20106@libero.it>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: v3 experimental data=ordered and logging speedups for 2.6.1
+Date: Mon, 19 Jan 2004 23:53:03 +0100
+Message-ID: <200401192353.03670.Dieter.Nuetzel@hamburg.de>
+References: <1074530725.29546.178.camel@tiny.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16575-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-16576-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <400C2ABD.20106@libero.it>
+In-Reply-To: <1074530725.29546.178.camel@tiny.suse.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Domenico Andreoli <cavok@libero.it>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list@namesys.com, green@linuxhacker.ru, Gerd Knorr <kraxel@suse.de>, Jeff Mahoney <jeffm@suse.com>
 
-Domenico Andreoli writes:
- > Nikita Danilov wrote:
- > > Nikita Danilov writes:
- > >  > Hello,
- > >  > 
- > >  > new snapshot against 2.6.1 kernel is at
- > >  > 
- > >  > http://namesys.com/snapshots/2004.01.19/
- > >  > 
- > >  > look into READ.ME file for details.
- > > 
- > > Please also apply last-minute-fix.diff from there: it fixes some bug
- > > that slipped into snapshot.
- > > 
- > > last-minute-fix.diff should be applied from fs/reiser4:
- > > 
- > > $ cd /somewhere/fs/reiser4
- > > $ patch -p1 < /somewhereelse/last-minute-fix.diff
- > > 
- > > 
- > 
- > ehm.. my existing reiser4 partition is not mountable now that i recompiled 
- > 2.6.1 using latest snapshot. it did not contain anything so i formatted 
- > it, but nothing new happened.
- > 
- > # mkfs.reiser4 /dev/hdc6
+Am Montag, 19. Januar 2004 17:45 schrieb Chris Mason:
+> Hello everyone,
+>
+> I've got most of data=3Dordered finished, there are a few paths like
+> writepage and O_DIRECT that need tweaking.  Thanks to Oleg's file_write
+> work in 2.6.x, the data=3Djournal patch is much cleaner than 2.4, it is
+> almost done but not included in the bunch of patches I just uploaded to
+> ftp.suse.com.  Oleg is cc'd in case he wants to look over the changes to
+> reiserfs_file_write in reiserfs-jh-2.
+>
+> The code has survived a weekend of moderate load, but you still want it
+> very far away from production servers.  I'm headed off to linux world in
+> NYC for the rest of the week, and I wanted to post this for review and
+> the few brave souls out there who might want to give it a try.
+>
+> ftp.suse.com/pub/people/mason/patches/data-logging/experimental/2.6.1
+>
+> The README:
+>
+> Experimental reiserfs data=3Dordered and logging speedups against 2.6.1
 
-Is this mkfs.reiser4 from the 2004.01.19 snapshot?
+Success.
 
- > mkfs.reiser4 0.4.20
- > Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by 
- > reiser4progs/COPYING.
- > 
- > Block size 4096 will be used. 
- > 
- > Linux 2.6.1-reiser4 is detected. 
- > 
- > Uuid 81a2b014-f272-4f6e-adad-e323c0cb10eb will be used. 
- > 
- > Reiser4 is going to be created on /dev/hdc6. 
- > 
- > (Yes/No): yes
- > Creating reiser4 on /dev/hdc6...done
- > # mount /dev/hdc6 /mnt/extra2
- > mount: you must specify the filesystem type
- > # mount /dev/hdc6 /mnt/extra2 -t reiser4
- > mount: wrong fs type, bad option, bad superblock on /dev/hdc6,
- >         or too many mounted file systems
- > #
+I applied them against the SuSE 9.0 2.6.1-0 kernel from Gerd.
 
-What is in the kernel logs (dmesg, /var/log/messages)?
+> Apply these in order:
+>
+> 01-reiserfs-journal-writer
+> removes old stale debugging code, very safe
+>
+> 02-reiserfs-nesting
+> Adds support for nested transactions in reiserfs, needed for the quota
+> code, and ported from 2.4.x by Jeff Mahoney
+>
+> 03-reiserfs-iosize
+> Changes reiserfs to tell userspace the default io size is 4k.  Works arou=
+nd
+> a bug in bdb hit by rpm users
 
- > 
- > 
+02 and 03 where already applied.
 
-Nikita.
+So NOT need, here.
+
+> 04-reiserfs-balance_dirty
+> Changes reiserfs_file_write to throttle writers the way the rest of linux
+> does.  This patch has already been sent for inclusion, it should get in
+> soon
+
+Goes in clean.
+
+> 05-reiserfs-logging
+> Logging speedups for small transactions and fsync heavy applications.  Mo=
+st
+> experimental patch of the bunch, since it changes the way the log does
+> metadata writeback
+>
+> 06-reiserfs-jh-2
+> Adds data=3Dordered support, along with a journal header attached to
+> the buffer head.  This allows for more efficient data=3Dordered support
+> than I had in 2.4.x.
+
+05 and 06 needed some handwork 'cause the SuSE kernel inclues xattrs and po=
+six=20
+acl's but nothing special.
+
+An EXPORT was missing in linux/fs/buffer.c to compile ReiserFS 3.x.x as mod=
+ul=20
+(inode.c, unresolved symbol):
+
+[-]
+int try_to_release_page(struct page *page, int gfp_mask)
+{
+        struct address_space * const mapping =3D page->mapping;
+
+        if (!PageLocked(page))
+                BUG();
+        if (PageWriteback(page))
+                return 0;
+
+        if (mapping && mapping->a_ops->releasepage)
+                return mapping->a_ops->releasepage(page, gfp_mask);
+        return try_to_free_buffers(page);
+}
+EXPORT_SYMBOL(try_to_release_page);
+[-]
+
+Up and running.
+
+Greetings,
+	Dieter
+
+BTW Gerd "released" 2.6.1-1 already...
+
+
+=2D-=20
+Dieter N=FCtzel
+@home: <Dieter.Nuetzel () hamburg ! de>
