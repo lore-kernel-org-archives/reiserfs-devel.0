@@ -1,52 +1,48 @@
-From: Philipp =?iso-8859-1?q?G=FChring?= <p.guehring@futureware.at>
-Subject: Re: Unicode policy
-Date: Fri, 2 May 2003 03:18:33 +0200
-Message-ID: <200305020118.h421Ip205033@linux1.futureware.at>
-References: <200305011538.h41FcFn01653@linux1.futureware.at> <20030501154819.GA15670@namesys.com> <3EB1C209.1050808@namesys.com>
-Reply-To: p.guehring@futureware.at
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: RE : RE : some troubles with mounting reiserfs
+Date: Fri, 2 May 2003 12:05:03 +0400
+Message-ID: <20030502080502.GC20656@namesys.com>
+References: <20030429054044.GI1231@namesys.com> <000101c3100a$d9356b60$0832a8c0@dell8100>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13920-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13922-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3EB1C209.1050808@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <000101c3100a$d9356b60$0832a8c0@dell8100>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Serge Rodrigues <serge@onpoi.net>
 Cc: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hello!
 
-Am Freitag, 2. Mai 2003 02:55 schrieben Sie:
-> It is a VFS issue.  We just conform.  VFS can't handle / and null being
-> in a filename, so Unicode can't work in Linux.  If you get VFS to handle
-> Unicode, I'll make ReiserFS work.  Linus is the one to convince, not us.
+On Thu, May 01, 2003 at 07:55:22PM +0200, Serge Rodrigues wrote:
+> > ReiserFS version 3.6.25
+> > hdb: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+> > hdb: dma_intr: error=0x40 { UncorrectableError }, LBAsect=142082111,
+> > sector=142082048
+> > end_request: I/O error, dev 03:41 (hdb), sector 142082048
+> > hdb: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+> > hdb: dma_intr: error=0x40 { UncorrectableError }, LBAsect=147587135,
+> > sector=147587072
+> > end_request: I/O error, dev 03:41 (hdb), sector 147587072
+> > sh-2029: reiserfs read_bitmaps: bitmap block (#17760256) reading
+> failed
+> > reiserfs_read_super: unable to read bitmap
+> >>These are sure sign of something cannot be read from your disk.
+> >>Though I am not sure why badblocks outputs no info.
+> >>How about running badblocks without specifying start offset and device
+> size?
+> After a very very very long badblocks -n -s -b 4096 /dev/hdb1, it found
+> some badblocks. What I need to do for recover my HDD if any solution
+> exist ?
 
-Hi Hans,
+Well, you can read reiserfs-list archives for a solution that are posted there from 
+time to time, or you can go to http://www.namesys.com/support.html and
+use our paid services if you prefer to get direct instructions from us.
 
-UTF-8 (is also Unicode) has no nulls in it, and does not=20
-generate '/' or other problematic charakters, and is actually working on=20
-Reiserfs.
-
-The problem with a migration to Unicode is that we either have to switch al=
-l=20
-applications at once, or have the information in the filesystem, in which=20
-encoding the filenames are ...
-
-But you are right, it's a VFS issue ...
-
-Many greetings,
-- --=20
-~ Philipp G=FChring              p.guehring@futureware.at
-~ http://www.livingxml.net/       ICQ UIN: 6588261
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.6 (GNU/Linux)
-Comment: For info see http://www.gnupg.org
-
-iD8DBQE+scdqlqQ+F+0wB3oRAn8gAKCBNzPvsRsaxJT96fCEGvO6MXeFKgCdEXY1
-xmMW0hHJZTkHM7GhQj0FcdI=3D
-=3DU423
------END PGP SIGNATURE-----
+Bye,
+    Oleg
