@@ -1,35 +1,54 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: On a free repacker
-Date: Fri, 21 May 2004 21:49:26 +0300
-Message-ID: <20040521184926.GT24604@nysv.org>
-References: <20040519192831.GL24604@nysv.org> <200405201028.13184.reiser@namesys.com> <20040520184054.GR24604@nysv.org> <40AEBBA0.6060606@namesys.com> <1085154485.11303.6.camel@redeeman.kaspersandberg.com> <40AEC1B5.4010308@namesys.com> <1085155359.11303.9.camel@redeeman.kaspersandberg.com>
+Date: Fri, 21 May 2004 15:02:05 -0400
+Message-ID: <200405211902.i4LJ25RI016978@turing-police.cc.vt.edu>
+References: <20040519192831.GL24604@nysv.org> <200405201028.13184.reiser@namesys.com> <20040520184054.GR24604@nysv.org> <40AEBBA0.6060606@namesys.com>
+            <20040521184451.GS24604@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18812-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_-414161018P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18813-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1085155359.11303.9.camel@redeeman.kaspersandberg.com>
+In-Reply-To: Your message of "Fri, 21 May 2004 21:44:51 +0300."
+             <20040521184451.GS24604@nysv.org> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Redeeman <redeeman@metanurb.dk>
-Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
 
-On Fri, May 21, 2004 at 06:02:39PM +0200, Redeeman wrote:
+--==_Exmh_-414161018P
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
 
->but i dont think there are better methods.
->maybe contacting firms using linux, and tell me what you can do for them
+On Fri, 21 May 2004 21:44:51 +0300, Markus =3D?UNKNOWN?Q?T=3DF6rnqvist?=3D=
+ said:
 
-One thing that tangents closely to this is to have some proprietary
-closed product which would benefit enough to sponsor a free product.
+> However, large customers should be able to see that there's a corporate=
 
-Of course one can see that as betraying principles. Then there's the
-problem of coming up with a separate proprietary closed-source
-revenue-generating product that one has time to develop, maybe even
-primarily...
+> pricing as well. If someone from a major ISP wants to buy a private
+> license for $5, it's a warning that they may abuse this :)
+> =
 
--- 
-mjt
+> I just hope it stays affordable and simple for private people and
+> profitable for corporations :)
 
+Larry McVoy's BitKeeper licensing might be an interesting model to follow=
+=2E
+Not sure if you can make it work for a repacker thought....
+
+--==_Exmh_-414161018P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFArlItcC3lWbTT17ARAkBDAJ9udCf52uVRZvR0xbMZEgY/ipK9ZACg8JZk
+BgZZvGUFUEYHOKRPd+Sdb8E=
+=oq/C
+-----END PGP SIGNATURE-----
+
+--==_Exmh_-414161018P--
