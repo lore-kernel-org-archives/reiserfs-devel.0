@@ -1,53 +1,43 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: reiserfsprogs-3.6.4-pre2
-Date: Tue, 17 Sep 2002 17:23:08 +0400
-Message-ID: <200209171723.09026.vitaly@namesys.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Copy time comparison 2.4.20-pre6 <-> 2.4.19+data-logging (was:Compatibility of  current 2.4.19.pending ...)
+Date: Tue, 17 Sep 2002 18:00:35 +0400
+Message-ID: <20020917180035.A15755@namesys.com>
+References: <3D7FDEA5.7040806@mb.tu-ilmenau.de> <3D81076E.6090408@mb.tu-ilmenau.de> <20020913113735.A6022@namesys.com> <3D826FB9.7030909@mb.tu-ilmenau.de> <20020914130239.D26664@namesys.com> <3D867C14.5060404@mb.tu-ilmenau.de> <20020917103321.C25766@namesys.com> <3D87347D.8030504@mb.tu-ilmenau.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11494-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11495-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <3D87347D.8030504@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
+Hello!
 
-Hi all,
+On Tue, Sep 17, 2002 at 03:56:13PM +0200, Manuel Krause wrote:
+> >>not?! I calculated these values manually based upon the timings & df 
+> >>values after copying. Yes, I want to show my personal engagement for the 
+> >>reiserfs community, too.
+> >Hm. Are you sure you are hitting write-speed limit?
+> >May be you are read-speed bounded? Can you please check that?
+> How can I check this? E.g. with some dd process? I just don't know.
 
-A new reiserfsprogs pre release is available at
-ftp.namesys.com/pub/reiserfsprogs/pre/reiserfsprogs-3.6.4-pre2.tar.gz
+Copy same amount of data from RAM/nowhere to FS.
+E.g. make a file with file names and sizes and write a script that
+writes this amount of data from /dev/zero with these same names and needed sizes
+into FS. (or just use RAMFS as your source if you have not much data and huge
+RAM)
+Compare 2.4.20-pre[67] if you see any difference.
+Ah, also copy your data from original disk location to /dev/null and measure
+time of that operation to know how much of total time is occupied by reads.
 
-Changes went into 3.6.4-pre2:
+Also you can calculate read and write throughput separately this way.
+And if reads are slower than writes - ...
 
-fix-fixable sets correct item formats in item headers if needed.
-rebuild got some extra checks for invalid tails on pass0.
-fsck check does not complain on wrong file sizes if safelink exists.
-check dma mode/spead of harddrive and warn the user if it descreased 
-  -- it could happen due to some hardware problem.
-
-Bugs:
-
-during conversion tails to indirect items on pass2 and back conversion 
-  on semantic pass.
-not proper cleaning flags in item headers.
-during relocation of shared objects.
-new block allocating on pass2 (very rare case).
-
-Changes went into 3.6.4-pre1:
-
-Correction of nlinks on fix-fixable was disabled, because
-  fix-fixable zeroes nlinks on the first pass and wants to
-  increment them on semantic pass. But semantic pass is skipped
-  if there are fatal corruptions.
-Exit codes were fixed.
-Warning/error messages were changed to more user friendly form.
-
-Changes which got into 3.6.3-pre1, but were not included into the 
-release:
-
-Great speedups for pass2 of reiserfsck.
-
-Thanks,
-Vitaly Fertman
+Bye,
+    Oleg
