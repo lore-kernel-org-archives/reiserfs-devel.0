@@ -1,40 +1,50 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Getopt improvements
-Date: Fri, 28 Feb 2003 15:41:57 +0300
-Message-ID: <20030228154157.A10830@namesys.com>
-References: <3E5D26A2.7010804@suse.com> <20030227092551.C28643@namesys.com> <3E5E312C.50406@suse.com> <3E5E730C.7030804@namesys.com> <3E5E84B2.90708@suse.com> <3E5E92BA.4090307@namesys.com> <20030228100147.A878@namesys.com> <3E5F504A.6010902@namesys.com>
+From: "Szabolcs Szasz" <sz@szasz.hu>
+Subject: Re: ReiserFS causes CPU high usage?!
+Date: Fri, 28 Feb 2003 13:23:12 +0100
+Message-ID: <009a01c2df24$29cd91f0$6400a8c0@twister>
+References: <200302280011.14488.liviu.voicu@huji.ac.il> <3E5F50F3.2040907@namesys.com> <200302281411.38967.liviu.voicu@huji.ac.il> <200302281313.09102.m.c.p@gmx.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12985-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12986-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3E5F504A.6010902@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Jeff Mahoney <jeffm@suse.com>, Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-Hello!
+Well, as man nice says:
 
-On Fri, Feb 28, 2003 at 03:04:26PM +0300, Hans Reiser wrote:
-> >>>  For the simple cases (which also happen to be all we have right 
-> >>>now), yes, I think that my implementation is cleaner. It allows the 
-> >>>simple use of mutually exclusive options, through the "no" prefix, and 
-> >>>clearing of the other bits in a multivalue option.  For now, that's 
-> >>>all we need - and it's a valid argument for using my code. However, 
-> >>>what I like about Oleg's implementation is that if you have an option 
-> >>>that excludes other options (even when it's not multivalue), it can 
-> >>>clear those bits as well.
-> >>It clears them without failing, yes?  Not sure I like that.
-> >Hm, why should it fail?
-> Incompatible options should fail as they represent error.  Feel free to 
-> argue with that.
+    "Range goes from -20 (highest priority) to 19 (lowest)."
 
-Hm, I am not going to argue. But we never had this kind of logic.
-Usually the latest-specified option was taking effect.
+So why is that such a surprise that CPU goes up
+to the sky? Why else -20 is there for? (Or am I
+missing something?)
 
-Bye,
-    Oleg
+Cheers,
+Sab
+
+
+----- Original Message -----
+From: "Marc-Christian Petersen" <m.c.p@gmx.net>
+To: "Voicu Liviu" <liviu.voicu@huji.ac.il>; "Hans Reiser" <reiser@namesys.c=
+om>; "Oleg Drokin" <green@namesys.com>
+Cc: <reiserfs-list@namesys.com>
+Sent: 2003. febru=E1r 28. 13:13
+Subject: Re: ReiserFS causes CPU high usage?!
+
+
+On Friday 28 February 2003 13:11, Voicu Liviu wrote:
+
+Hi Voicu,
+
+> Already using this :-)
+> Any way, the system works great but if I change the "nice" value of some
+> process then the CPU almost becomes slave of this process.........
+out of sheer curiosity: Why you are nicing emerge to -20?!
+
+You are using the O(1) scheduler so I see absolute no need to do so.
+
+ciao, Marc
+
