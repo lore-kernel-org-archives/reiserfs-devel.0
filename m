@@ -1,47 +1,40 @@
-From: "Burnes, James" <james.burnes@gwl.com>
-Subject: RE: Reiser 4 Apple
-Date: Mon, 14 Feb 2005 09:32:11 -0700
-Message-ID: <DC09DB522D858648AC430F0DBC51F6320800B7@its-exmail1.its.corp.gwl.com>
+From: Laurynas Biveinis <Laurynas.Biveinis@mif.vu.lt>
+Subject: Re: Partial data loss with reiserfs3
+Date: Mon, 14 Feb 2005 18:38:29 +0200
+Message-ID: <1108399109.4210d40511ea6@webmail.vu.lt>
+References: <1108315756.420f8e6ce67b0@webmail.vu.lt> <200502141544.34513.vitaly@namesys.com> <1108392048.4210b87003405@webmail.vu.lt> <200502141921.58903.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Class: urn:content-classes:message
+In-Reply-To: <200502141921.58903.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Michael James <Michael.James@csiro.au>, reiserfs-list@namesys.com
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Sounds like a great idea, but didn't they hire the filesystem architect
-from BeOS a few years ago to re-design the native MacOS X filesystem?
+Cituojant Vitaly Fertman <vitaly@namesys.com>:
 
-I believe the idea was to clone the database-centric BeFS functions.  I
-believe this functionality is on the plate sometime in the future with
-Reiser4 and also (some decade) with the next version of WinFS.
+> > [root@laurynas-pc ~]# mkfs -t reiserfs /dev/hda6
+> 
+> did you shrink ntfs under win and reboot?
 
-Jim Burnes
+NTFS was shrinked several reboots ago under Linux with
+ntfsresize/fdisk.
 
+> what happened between the last boot and mkfs? 
 
-> -----Original Message-----
-> From: Michael James [mailto:Michael.James@csiro.au]
-> Sent: Sunday, February 13, 2005 7:01 PM
-> To: reiserfs-list@namesys.com
-> Subject: Reiser 4 Apple
->=20
-> Dear Hans,
->=20
-> Have you ever thought of porting reiser4 to BSD?
->=20
-> Apple have:
-> 	Bags of money
-> 	A current filesystem that totally sucks
-> 	An OS that cries out for plugins to satisfy its quirks
->=20
-> Could be a good marriage,
-> michaelj
->=20
-> --
-> Michael James                         michael.james@csiro.au
-> System Administrator                    voice:  02 6246 5040
-> CSIRO Bioinformatics Facility             fax:  02 6246 5166
+I do not remember well and .bash_history isn't very helpful there. It's
+very likely that mkfs was the first thing after boot.
+
+> did you run fdisk then? did you reboot after that fdisk run?
+
+I'm not sure what does "then" mean? After "mkfs -t reiserfs /dev/hda6"?
+No, I didn't run fdisk or reboot then - I copied data.
+
+--
+Thanks,
+Laurynas
+
