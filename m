@@ -1,35 +1,41 @@
-From: Michael Weissenbacher <webmaster@dermichi.com>
+From: "David Dabbs" <david@dabbs.net>
 Subject: Re: fsck.reiser4 problem (was: reiser4 corruption problem)
-Date: Tue, 31 Aug 2004 17:04:41 +0200
-Message-ID: <41349389.8080308@dermichi.com>
-References: <20040831012446.631CB15E2E@mail03.powweb.com>	 <200408311209.43653.IOBuf@gmx.de>	 <1093955415.2716.476.camel@tribesman.namesys.com>	 <200408311603.56537.IOBuf@gmx.de> <1093963404.2716.480.camel@tribesman.namesys.com>
+Date: Tue, 31 Aug 2004 16:18:16 -0000
+Message-ID: <20040831161821.4ECB515F84@mail03.powweb.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21161-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21162-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1093963404.2716.480.camel@tribesman.namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS List <reiserfs-list@namesys.com>
-Cc: Vladimir Saveliev <vs@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Michael Weissenbacher <webmaster@dermichi.com>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: ReiserFS-Dev@Namesys.com
 
 > 
-> Would you please try with the attached patch.
+> My pleasure. Thank /you/ for helping to debug!
 > 
-hooray, i just tried it, your patch fixes my problem! after recompiling 
-reiser4progs:
+*-*-*-*-*-*-*-*-*-*
+if have a rather long answer this time, this is a test run i made today. 
+i wanted to include full details. i'm wondering if there is still 
+something these files have in common. first i created some test files on 
+a spare partition with "touch":
+*-*-*-*-*-*-*-*-*-*
 
-criminal mnt # fsck.reiser4 /dev/sda1
-...
-***** fsck.reiser4 finished at Tue Aug 31 16:59:05 2004
-Closing fs...done
+Michael, thank you for taking the time to retest and for sending the detailed traces. From the look of the messages like the following:
 
-FS is consistent.
+FSCK: Directory [29:0:2a] (dir40), node [24], item [1], unit [13]: entry has wrong offset
+[2a:0(NAME):131323334353637:3839303132333435:20c8b16c855]. Should be
+[2a:0(NAME):131323334353637:3839303132333435:20c8b1617a5].
 
-i'm planning to move my / partition to reiser4 soon if no other problems 
-occur.
-kind regards,
-Michael
+the problem directory entries differ in the final key element, which is the hash value as I mentioned before. If I had access to the source I could look into this further. My suspicion is that the reiserfstools have slightly different hash calculation or some hash variance caused when extended ASCII chars appear in the hashed portion of a filename. 
+
+Can anyone at Namesys comment on Michael's posts? 
+
+David
+
+
+
