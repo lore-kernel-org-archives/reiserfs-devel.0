@@ -1,72 +1,174 @@
-From: "David Dabbs" <david@dabbs.net>
-Subject: Was able to reproduce "cp: cannot stat file.x: Input/output error"
-Date: Thu, 5 Aug 2004 23:54:38 -0500
-Message-ID: <20040806045809.E195B15C9F@mail03.powweb.com>
+From: "Tracey Schulz" <jmuolbxkgx@yahoo.com>
+Subject: Investors Profile; facts not fiction
+Date: Fri, 06 Aug 2004 03:28:09 -0300
+Message-ID: <200408060620.i766KP40054327@stack.comstar.ru>
+Reply-To: "Tracey Schulz" <jmuolbxkgx@yahoo.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20032-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="--86192333997198294679"
+Return-path: <reiserfs-list-return-20033-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Alias: 48277636270984995
+In-Reply-To: "interrogate astigmatism expelling beef compelling"
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: 'ReiserFS List' <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com, reiser@namesys.com, reynoza@namesys.com, umka@namesys.com, vitaly@namesys.com, vs@namesys.com, wreiserfs-dev@namesys.com
+
+----86192333997198294679
+Content-Type: text/plain;
+	charset="iso-0346-2"
+Content-Transfer-Encoding: quoted-printable
+
+Penny Stock News 
+Volume 5 | Issue 8 | August 2004
+
+**Rsgc****Rsgc****Rsgc****Rsgc**
+
+RS Gr0up of Companies, Inc. (RSGC)
+
+Symbol: OTCBB: RSGC
+Our Rating: Strong B'uy
+Recommended Price: .90
+Estimated 60-Day High: 2.40
+Shares Outstanding: 15.2 MILLI0N
 
 
-Ran 
+Institutional  Investment  Groups  Purchase  $8.5  MILLI0N  of RSGC Restri=
+cted
+Shares at 3-TIMES MARKET PRICE!
 
-./mongo.pl INFO_R4=rc2-mm2 FSTYPE=reiser4 LOG=/home/ddabbs/mongo/reiser4.log
-dev=/dev/hdb1 dir=/mnt/testfs file_size=8000 bytes=512000000 NPROC=3
-REP_COUNTER=3 SYNC=off WRITE_BUFFER=4096 GAMMA=0.0 DD_MBCOUNT=768
-PHASE_MKDIRS=on PHASE_MKFILES=on PHASE_COPY=cp PHASE_OVERWRITE=on
-PHASE_APPEND=on PHASE_READ=find PHASE_DELETE=rm PHASE_MODIFY=on
-MAX_FNAME_LEN=23 RUN
+RSGC Acquires High  Margin  Specialty  Insurers  and  Launches  Product  L=
+ine,
+Immediately  Jolting  Revenues  From Zero to $40 MILLI0N with the Potentia=
+l of
+Over $100 MILLI0N!
 
-Somewhere during PHASE_COPY, errors similar to the following (the ones I saw
-the other day) spewed across the terminal:
+These activities are RECENT  and  unknown  by  millions of investors who w=
+ould
+kill to load up before it's too late.  RS  GR0UP  of  Companies,  Inc.  (R=
+SGC)
+played  all the right cards by utilizing institutional funding and transfo=
+rmed
+the future of their business operations in  a 60 days. It won't take that =
+long
+for  word  to  spread  based  on  upcoming  news  and  earnings  reports  =
+ for
+profit-savvy  players  to  grab blocks of shares and fan the flames of a p=
+rice
+explosion.
 
-cp: cannot stat
-`/mnt/testfs/testdir0-0-0/d00000000/d000000000000000022/d0000000000023/f1461
-8.d': Input/output error
+A private placement of $5 Million of financing quickly became over-subscri=
+bed,
+resulting  in  a  frenzy  with   institutional  investors  and  their  pri=
+vate
+investment groups spending $8.5 Million. If these "smart-money"  players  =
+were
+eager  to  pounce  on  convertible  preferred  shares  at  $  .80 that mus=
+t be
+exercised into common by adding on average $1.50 and $2.25 per share, ther=
+e is
+no doubt that they are  expecting  nothing  less  than  $5  to $7 per shar=
+e to
+insure a 200% - 300% GAIN! Most companies  at  this  price  level  hold  t=
+heir
+breath  and  pray  that one day an institution may come along with interes=
+t in
+their stock. This  excited  investment  GR0UP  is  going  to wind up provi=
+ding
+another $20 MILLI0N in funding upon conversion of preferred  to  common,  =
+thus
+enriching  the  Company  treasury  with abundant resources to make substan=
+tial
+cash and earnings driven acquisitions.
 
-I can cat and ls the file:
+Examining the perfectly timed  maneuvers  reveals  an impressive break-dow=
+n of
+major holdings, revenues, cash flow, and the capturing of a solid presence=
+  in
+the Lloyd's of London in-surance arena. In chronological order, RSGC purch=
+ased
+Canadian  Intermediaries Limited (CIL) which will add a minimum of $25 MIL=
+LI0N
+in  revenues,  acquired  49%  of  Dashwood,   Brewer,  and  Phipps  Ltd.  =
+-  a
+consistently profitable, 70-year old Lloyd's Specialty Insurer  with  reve=
+nues
+to  RSGC  of  $4  MILLI0N  that  is  expected  to  grow  to  over  $58 MIL=
+LI0N
+encompassing an increasing growth phase,  and generated $9 MILLI0N in reve=
+nues
+following the lead, for example, of companies like GE Capital, by placing =
+$300
+MILLI0N for a specialized  indemnity  program  with  a  recognized  "A"  r=
+ated
+provider  in  the international market. To top off these accomplishments, =
+RSGC
+secured $1.6 BILLI0N  in  underwriting  availability  from Lloyd's of Lond=
+on's
+oldest Member, Tyser and Co., founded in 1820, in a binding agreement  set=
+ting
+the  stage  for  revenues that would vault RSGC into the status of the pre=
+mier
+leaders in the industry.
 
--rw-r--r--  1 root root 7512 2004-08-05 21:54
-/mnt/testfs/testdir0-0-0/d00000000/d000000000000000022/d0000000000023/f14622
-.c
-
-Other than the following log items
-
-...
-Aug  5 22:06:09 linux kernel: reiser4[cp(1088)]: cbk_level_lookup
-(fs/reiser4/search.c:1033)[vs-3533]:
-Aug  5 22:06:09 linux kernel: WARNING: Keys are inconsistent. Fsck?
-Aug  5 22:06:09 linux kernel: ]: key_warning
-(fs/reiser4/plugin/object.c:97)[nikita-717]:
-Aug  5 22:06:09 linux kernel: WARNING: Error for inode 137388 (-5)
-Aug  5 22:06:09 linux kernel: reiser4[cp(1087)]: cbk_level_lookup
-(fs/reiser4/search.c:1033)[vs-3533]:
-Aug  5 22:06:09 linux kernel: WARNING: Keys are inconsistent. Fsck?
-Aug  5 22:06:09 linux kernel: reiser4[cp(1087)]: key_warning
-(fs/reiser4/plugin/object.c:97)[nikita-717]:
-Aug  5 22:06:09 linux kernel: WARNING: Error for inode 137404 (-5)
-Aug  5 22:06:09 linux kernel: reiser4[cp(1087)]: cbk_level_lookup
-(fs/reiser4/search.c:1033)[vs-3533]:
-Aug  5 22:06:09 linux kernel: WARNING: Keys are inconsistent. Fsck?
-...
-
-I could find nothing to indicate there was any sort of disk/ide hardware
-error. Yes, there were some of the (apparently) innocuous driver artifacts
-as Nikita called them.
-
-All the relevant info I could pull together is available at
-http://dabbs.net/reiser4/stat_error_mongo.tar.bz2. Other than gathering this
-info, I have left the system as is. Let me know if you need more info, for
-me to poke around or run commands, retest, etc.
-
-BTW, built with yesterday's r4 snapshot.
-
-David
+Total sales  for  RSGC  with  15  MILLI0N  shares  outstanding  are  prime=
+d to
+formulate at least $3 per share in revenue. This figure is in line  with  =
+what
+the  institutions  were  willing  to pay to sink their teeth into a block =
+that
+matches the size of their wallet. This convergence of revenues could trans=
+late
+into a net earnings estimate of $  .50 per share, leading to prices betwee=
+n $5
+and $9 while taking into account market momentum. We don't  believe  that =
+ the
+brightest  institutions  would  risk  $8.5  MILLI0N  just  to lose another=
+ $20
+MILLI0N upon exercising into common. Looking at  the 16 to 20 PE Multiples=
+ for
+In-surance Industry Performers, investors missing the boat will need luck =
+ and
+speed trying to catch the price per share!
 
 
+The  Penny St0ck News cautions that micro-cap st0cks are high-risk investm=
+ents
+and that some or all investment dollars  can be lost. We suggest you consu=
+lt a
+professional investment ADVIS0R before  purchasing  any  stock.  All  opin=
+ions
+expressed  on the featured company are the opinions of PSN. PSN recommends=
+ you
+use the information found  here  as  an  initial starting point for conduc=
+ting
+your 0WN research and your 0WN due diligence on the featured company in  o=
+rder
+to determine your OWN personal 0pinion of the company before investing. PS=
+S is
+not  an  Investment  ADVIS0R,  Financial Planning Service or a St0ck Br0ke=
+rage
+Firm and  in  accordance  with  such  is  not  offering  investment  advic=
+e or
+promoting any investment strategies. PSN is not offering securities  for  =
+sale
+or  s0licitation  of  any  0ffer to b'uy or sell securities. PSN has re-ce=
+ived
+Sixteen thousand d0llars from an  unaffiliated third party for the prepara=
+tion
+of this company profile.Since we  have  re-ceived  compensation  there  is=
+  an
+inherent  conflict of interest in our statements and opinions. Readers of =
+this
+publication are cautioned  not  to  place  undue  reliance  on F0RWARD loo=
+king
+statements, which are based on certain assumptions and expectations  invol=
+ving
+various risks and uncertainties, that could cause results to differ materi=
+ally
+from those set forth in the F0RWARD looking statements.
+
+
+----86192333997198294679--
