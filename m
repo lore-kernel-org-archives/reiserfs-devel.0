@@ -1,82 +1,49 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: file as a directory
-Date: Wed, 15 Dec 2004 08:57:27 -0800
-Message-ID: <41C06CF7.2020102@namesys.com>
-References: <200412151328.iBFDSQoH011241@laptop11.inf.utfsm.cl>
+From: lJoublanc@softhome.net
+Subject: reiser4progs-1.0.3 : superblock backups
+Date: Wed, 15 Dec 2004 11:30:38 -0700
+Message-ID: <courier.41C082CE.00004F63@softhome.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22790-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22791-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200412151328.iBFDSQoH011241@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; format="flowed"; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Horst von Brand wrote:
+Regarding the new release of reiser4progs: 
 
->Hans Reiser <reiser@namesys.com> said:
->  
->
->>Horst von Brand wrote:
->>    
->>
->>>Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk> said:
->>>      
->>>
->
->  
->
->>>[...]
->>>      
->>>
->
->  
->
->>>>Perhaps a better way to think about this is that instead of talking
->>>>about directories and files, we just talk about objects.
->>>>        
->>>>
->
->  
->
->>>Then you have a collection of interrelated objects, i.e., a database.
->>>Operating systems that work on databases (no filesystem) have been done,
->>>and are a nice idea... but are far, far away from Unix.
->>>      
->>>
->
->  
->
->>A journey of a thousand leagues begins with a single step.
->>    
->>
->
->Right.  But you need to know where you are going, and why.
->
->  
->
->>Actually, databases are the wrong solution because they are relational, 
->>    
->>
->
->Says who?
->  
->
-Read the
+it's unclear to me from the release announcement whether prevoius versions 
+of reiser4progs correctly backup superblocks or not. You imply it's been 
+corrected - so it wasn't working before? 
 
-www.namesys.com/future_vision.html
+i.e. if I had previously used libaal 1.0.2, and my superblock got corrupted, 
+could I rebuild it from teh backup if upgarded to 1.0.3? 
 
-paper for why relational is the wrong model.
+I'm asking because recently that's exactly what happened to me. My disc is 
+failing due to hardware level problems, the superblock is wrecked, it won't 
+mount, and I need to recover my stuff! 
 
->  
->
->>and what is needed is a semi-structured query language that is upwardly 
->>compatible with Unix hierarchical semantics, ala 
->>www.namesys.com/future_vision.html
->>    
->>
+In a final rescue effort, I've updated to 1.0.3, but if I run fsck.reiser4 
+ --build-sb, I get: 
 
+[...]
+Warn : A new master superblock is created on '/dev/hdd1'.
+Enter the key plugin name [key_large]:
+Error: Can't read bitmap block 18. Input/output error.
+Error: Can't load ondisk bitmap.
+Error: Can't initialize block allocator.
+Fatal: Failed to open the block allocator. 
+
+
+Can anyone tell me what it means? Is the problem to do with reiser4 
+superblocks or is the disk so buggered it can't write the table anymore? 
+
+Any help is greatly appreciated... 
+
+Luciano 
+
+p.s. shame I'm having these hardware problems, as besides that r4 has worked 
+pretty well! 
