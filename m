@@ -1,47 +1,57 @@
-From: Russell Coker <bofh@coker.com.au>
-Subject: Fwd: Re: [reiserfs-list] Reiserfs with Samba vs NetApp Filer
-Date: Fri, 11 Oct 2002 20:30:49 +0200
-Message-ID: <200210112030.49400.bofh@coker.com.au>
-Reply-To: Russell Coker <bofh@coker.com.au>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Reiserfs with Samba vs NetApp Filer
+Date: Sat, 12 Oct 2002 00:00:43 +0400
+Message-ID: <3DA72DEB.4040809@namesys.com>
+References: <Pine.LNX.4.33L2.0210100853240.1670-100000@localhost.localdomain> <20021010165854.4381ed7e.philippe.gramoulle@mmania.com> <3DA5B971.3040400@namesys.com> <200210112022.27319.russell@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11656-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11657-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Russell Coker <russell@coker.com.au>
+Cc: reiserfs-list@namesys.com
 
-On Fri, 11 Oct 2002 12:40, Lars Marowsky-Bree wrote:
-> > BTW, Hans, what you would recommand : LVM or EVMS ?
+Russell Coker wrote:
+
+>On Thu, 10 Oct 2002 19:31, Hans Reiser wrote:
+>  
 >
-> With 2.4, go with LVM1. The jury is still out whether the successor will be
-> EVMS or LVM2 in 2.5/2.6, but I personally have decided to quite like EVMS.
+>>I would say that WAFL is an absolutely superb filesystem for the purpose
+>>of RAID NFS fileserving.  Reiser4 may give it some serious competition
+>>after some time has passed and we have time for such things as carefully
+>>benchmarking NFS, etc., but WAFL is a great filesystem for NFS RAID as
+>>it is right now.  That said, mp3.com saved $22 million dollars by using
+>>Linux+reiserfs instead of Netapps and Veritas.  They may be good, but
+>>reiser3 is cheaper.  A lot cheaper.  Do the math, and you'll buy Linux
+>>instead I think.;-)
+>>
+>>Nobody has done reiser3 vs. WAFL benchmarks.
+>>    
+>>
+>
+>One thing that should be stated here is that you can use some of the money you 
+>save to buy more powerful hardware.  If ReiserFS is running on drives that 
+>have a higher rotational speed and there are more drives in the RAID then it 
+>should beat WAFL on most tests regardless of issues of file system 
+>efficiency.
+>
+except that WAFL (at least it was in 1996 when I last benchmarked one) 
+is memory bandwidth bound, not disk or CPU bound, when configured with 
+14 disk drives.  They do a nice job of zero-copy optimizing from what I 
+understand.
 
-My opinion based on playing with LVM1 in a vain attempt at getting it to work
-and on reading the code in a vain attempt at fixing the bugs that stopped it
-working for me is that LVM1 is not something I would trust my data with.
+So, in a minor correction, instead of buying a WAFL server, you can buy 
+3 reiserfs servers, and this may or may not overcome the memory 
+bandwidth limitation, but it will certainly do a nicer job with the disk 
+space limitation.;-)
 
-Something that operates like LVM is complex, runs at a low level, has
-potantial to be seriously destructive, and needs to be fixable with minimal
-tools.
+I should also mention that actually most of these fileservers are disk 
+space bound not performance bound for most of their users, at least that 
+was true when I was a sysadmin back in the old days....
 
-My opinion of the quality of LVM1 is that it is not adequate to serve such
-needs for me.  Therefore I have just avoided using such functionality!
-
-One of the main programmers on LVM2 is someone who I have a lot of respect
-for, and he has assured me that he will fix the deficiencies in LVM1.  While
-I trust him a lot LVM1 left me with such a bad impression that I would feel
-happier using anything that's not LVM.
-
-EVMS seems to be done right all the way, and seems to be a product that I can
-trust.  However I have not read the code yet...
-
---
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
+Hans
 
