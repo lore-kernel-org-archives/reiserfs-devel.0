@@ -1,61 +1,63 @@
 From: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
 Subject: Re: Congratulations! we have got hash function screwed up
-Date: Thu, 30 Dec 2004 13:40:53 +0100
-Message-ID: <m38y7gx8kq.fsf@merlin.emma.line.org>
+Date: Thu, 30 Dec 2004 15:18:00 +0100
+Message-ID: <m3sm5nj2ef.fsf@merlin.emma.line.org>
 References: <77912E9FD42896419D1CEF15E1C397A58AFCF1@london.jaguarfreightservices.local>
+	<m38y7gx8kq.fsf@merlin.emma.line.org>
+	<20041230235911.4911a20c.hihone@bigpond.net.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22947-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22951-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <77912E9FD42896419D1CEF15E1C397A58AFCF1@london.jaguarfreightservices.local>
-	(Yiannis Mavroukakis's message of "Thu, 30 Dec 2004 11:52:58 -0000")
+In-Reply-To: <20041230235911.4911a20c.hihone@bigpond.net.au>
+	(hihone@bigpond.net.au's message of "Thu, 30 Dec 2004 23:59:11 +1100")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yiannis Mavroukakis <yiannis@jaguarfreight.com>
-Cc: reiserfs-list@namesys.com
+To: hihone@bigpond.net.au
+Cc: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>, reiserfs-list@namesys.com
 
-"Yiannis Mavroukakis" <yiannis@jaguarfreight.com> writes:
+Cal <hihone@bigpond.net.au> writes:
 
-> Your "proven" reasoning sounds a bit strange to me..Microsoft (aka
-> major distributor at least in my books) had her filesystems "in the
-> field" for ages, does this prove any of them good (or bad for that
-> matter)?
+> ----------
+> and then at Thu, 30 Dec 2004 13:40:53 +0100, it was written ...
+>  ... 
+>  >Anyone is free to choose the file system, and as the simple
+>  >demonstration code posted earlier shows a serious flaw in reiserfs,
+>  >Hans's response was boldfaced, I ditched reiserfs3. End of story.
+>  >
+>
+> Your policy and philosophy on file system selection are yours to enjoy as
+> you see fit, but the anger and angst ... ?   Phew!! 
 
-My reasoning mentioned a /required/, but not a /sufficient/ criterion.
+I have no interest to deal with systems that have known and reproducible
+cases of failure that are nondeterministic in practical use.
 
-In other words: not before it is proven in the field will I consider it
-for production use.
+And Marc's documentation showed this is a real-world problem, not an
+ivory tower problem.
 
-Remember the Linux 2.2 reiserfs 3.5 NFS woes?
-Remember the early XFS-NFS woes?
+The reiserfs story is over for me. All private machines I deal with are
+reiserfs-free as of a few hours ago.
 
-These are all reasons to avoid a shiny new file system for serious work.
+It was just one bug too many, and it was handled unprofessionally,
+unlike many bugs before which had been dealt with on short notice
+usually, or at least accepted for looking into.
 
-> I don't think I'd wait for a distributor to shove reiser4 down my
-> throat, just because the distributor seems to trust it, so the logical
-> course would be for me to try it out. I'll grant you that I am not
-> using it on the mission critical server, because our hosting provider
-> will not support it (ext3 addicts..oh well)
+I'll phase reiser3 out on my work machines as I see fit.
 
-For practical recovery reasons (error on root FS after a crash), ext3fs
-is easier to handle. You can fsck the (R/O) root partition just fine
-(e2fsck then asks you to reboot right away); for reiserfs, you'll have
-to boot into some emergency or rescue system...
+I have seen too many bugs in reiserfs3.
 
-> but I do have it on my development server, that does house critical
-> code and receives all kinds of hammering from yours truly; And I use
-> it at home.
+I do believe reiserfs4 fixes some design flaws of reiser3, and when the
+implementation issues are all shaken out in one or two years' time, it
+may be a good file system and I will look at it - I trust the reiserfs
+team can learn from their mistakes.
 
-I reformatted my last "at home" reiserfs an hour ago and unloaded the
-reiserfs kernel module, as the way how Hans has responded to the error
-report is inacceptable.
+I hope they learn that THIS handling of the error was wrong.
 
-Anyone is free to choose the file system, and as the simple
-demonstration code posted earlier shows a serious flaw in reiserfs,
-Hans's response was boldfaced, I ditched reiserfs3. End of story.
+"Who cares, not us for the past five years" is not a proper response to
+a real-world problem.
 
 -- 
 Matthias Andree
