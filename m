@@ -1,27 +1,61 @@
-From: carlos@fisica.ufpr.br (Carlos Carvalho)
-Subject: Re: "df -i" support
-Date: Sat, 15 May 2004 13:28:58 -0300
-Message-ID: <16550.17738.922150.577886@hoggar.fisica.ufpr.br>
-References: <20040513093432.52d3d7a3.turtle.power@wanadoo.es>
-	<1084439945.14090.6209.camel@tribesman.namesys.com>
-	<20040514173227.5b0541b5.turtle.power@wanadoo.es>
-	<200405141655.i4EGtrAT007250@turing-police.cc.vt.edu>
-	<20040514194040.22389128.turtle.power@wanadoo.es>
-	<1084557009.3263.7.camel@localhost.localdomain>
-	<20040514202627.18ddc7b2.turtle.power@wanadoo.es>
-	<16549.4325.245161.553231@laputa.namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Date: Sat, 15 May 2004 10:13:19 -0700
+Message-ID: <200405151013.19473.reiser@namesys.com>
+References: <20040329185901.62166.qmail@web25008.mail.ukl.yahoo.com> <40A587FF.30103@namesys.com> <40A520DB.4080200@lindows.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18715-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18716-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16549.4325.245161.553231@laputa.namesys.com>
+In-Reply-To: <40A520DB.4080200@lindows.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: Clifford Beshers <clifford.beshers@lindows.com>
+Cc: reiserfs-list@namesys.com
 
-The number of files can be obtained from the quota control as well.
-It's more complicated to extract the number but gives more detailed
-user information.
+You are probably right about scp specifically, but in general @ is used by 
+some things that expect it to mean user@host.  @ could be used, I think 
+clearcase used it, I just don't see it as better than "metas".
+
+Hans
+
+On Friday 14 May 2004 12:41, Clifford Beshers wrote:
+> Hans Reiser wrote:
+> > Grant Miner wrote:
+> >> Someone mentioned earlier, and I like just the at sign: @ Think of it
+> >> short for "attributes".
+> >>
+> >> file/@/uid
+> >>
+> >> The nice thing about @ is it shows up early lexicographically, it's
+> >> short and unlikely to be used.  This name is important to pick well
+> >> because it will likely set a long precedent.
+> >
+> > It would be a problem for utilities like scp....
+>
+> Hans, are you sure?  I tried some examples and had no troubles.  From my
+> history:
+>
+>       588  cd ~/tmp
+>       589  mkdir -p foo/@
+>       590  touch foo/@/uid
+>       591  scp -rp foo/@/uid stan:/tmp
+>       592  ssh stan 'mkdir -p /tmp/foo/@ ; touch /tmp/foo/@/uid'
+>       593  scp -rp stan:/tmp/foo/@ .
+>
+> I'm not sure if @ is a good choice or not, but I don't think it would
+> actually cause trouble syntactically, because everything expecting
+> hostnames looks for a colon.
+>
+> --
+>
+> This message contains information which may be confidential and privileged.
+> Unless you are the addressee (or authorized to receive for the addressee),
+> you may not use, copy or disclose to anyone the message or any information
+> contained in the message. If you have received the message in error, please
+> advise the sender and delete the message.  Thank you.
+
