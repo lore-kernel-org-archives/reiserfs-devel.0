@@ -1,12 +1,12 @@
 From: Yury Umanets <umka@namesys.com>
 Subject: Re: reiserfsprogs compilation on PPC
-Date: Thu, 30 Jan 2003 16:24:51 +0300
-Message-ID: <3E3927A3.1010902@namesys.com>
+Date: Thu, 30 Jan 2003 16:48:35 +0300
+Message-ID: <3E392D33.1010701@namesys.com>
 References: <1043546126.3e33400e786b1@webmail.cazort.net> <3E37B8F6.9020607@namesys.com> <3E37C7D4.5030906@namesys.com> <3E3891F3.BBBEE09C@cazort.net>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- boundary="------------020102080804090208000901"
-Return-path: <reiserfs-list-return-12559-reiserfs=m.gmane.org@namesys.com>
+ boundary="------------000208050108060904080601"
+Return-path: <reiserfs-list-return-12560-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -17,7 +17,7 @@ To: cazort@cazort.net
 Cc: reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>
 
 This is a multi-part message in MIME format.
---------------020102080804090208000901
+--------------000208050108060904080601
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -100,29 +100,24 @@ Alexander Cazort Zorach wrote:
 >>Hello Alex,
 >>
 >>Can you specify the message gcc said?
->>
-Thank you for report. It seems I've fixed the bug. Actually it appeared 
-on all bigendiang platforms.
-See attachment for a patch.
-
 >>    
 >>
 >
 >
 >  
 >
+This is more reliable patch. See attachment please.
 
-
---------------020102080804090208000901
+--------------000208050108060904080601
 Content-Type: text/plain;
- name="reiserfsprogs-3.6.4-be.patch"
+ name="reiserfsprogs-3.6.4-be1.patch"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
- filename="reiserfsprogs-3.6.4-be.patch"
+ filename="reiserfsprogs-3.6.4-be1.patch"
 
-diff -rupN ./reiserfsprogs-3.6.4-orig/include/misc.h reiserfsprogs-3.6.4/include/misc.h
+diff -rupN ./reiserfsprogs-3.6.4-orig/include/misc.h ./reiserfsprogs-3.6.4/include/misc.h
 --- ./reiserfsprogs-3.6.4-orig/include/misc.h	Fri Sep 13 14:09:28 2002
-+++ reiserfsprogs-3.6.4/include/misc.h	Thu Jan 30 14:42:50 2003
++++ ./reiserfsprogs-3.6.4/include/misc.h	Thu Jan 30 16:38:20 2003
 @@ -64,12 +64,12 @@ int le_find_next_zero_bit (const void *v
  # define le64_to_cpu(val)                 (val)
  #elif __BYTE_ORDER == __BIG_ENDIAN
@@ -142,23 +137,32 @@ diff -rupN ./reiserfsprogs-3.6.4-orig/include/misc.h reiserfsprogs-3.6.4/include
  #else
  # error "nuxi/pdp-endian archs are not supported"
  #endif
-diff -rupN ./reiserfsprogs-3.6.4-orig/include/swab.h reiserfsprogs-3.6.4/include/swab.h
+diff -rupN ./reiserfsprogs-3.6.4-orig/include/swab.h ./reiserfsprogs-3.6.4/include/swab.h
 --- ./reiserfsprogs-3.6.4-orig/include/swab.h	Wed Aug  7 13:12:07 2002
-+++ reiserfsprogs-3.6.4/include/swab.h	Thu Jan 30 15:54:17 2003
-@@ -4,5 +4,9 @@
++++ ./reiserfsprogs-3.6.4/include/swab.h	Thu Jan 30 16:39:21 2003
+@@ -4,5 +4,19 @@
  #ifndef _REISERFS_SWAB_H_
  #define _REISERFS_SWAB_H_
  
++#include <endian.h>
++
++#if __BYTE_ORDER == __BIG_ENDIAN
++
 +#define extern static
 +#define __BYTEORDER_HAS_U64__
  #include <linux/byteorder/swab.h>
 +#undef extern
 +
++#else
++
++#include <linux/byteorder/swab.h>
++
++#endif
++
  #endif /* _REISERFS_SWAB_H_ */
-Binary files ./reiserfsprogs-3.6.4-orig/reiserfscore/.prints.c.swp and reiserfsprogs-3.6.4/reiserfscore/.prints.c.swp differ
-diff -rupN ./reiserfsprogs-3.6.4-orig/reiserfscore/includes.h reiserfsprogs-3.6.4/reiserfscore/includes.h
+diff -rupN ./reiserfsprogs-3.6.4-orig/reiserfscore/includes.h ./reiserfsprogs-3.6.4/reiserfscore/includes.h
 --- ./reiserfsprogs-3.6.4-orig/reiserfscore/includes.h	Fri Aug 16 15:07:11 2002
-+++ reiserfsprogs-3.6.4/reiserfscore/includes.h	Thu Jan 30 15:40:45 2003
++++ ./reiserfsprogs-3.6.4/reiserfscore/includes.h	Thu Jan 30 16:38:20 2003
 @@ -18,3 +18,5 @@
  #include "io.h"
  #include "misc.h"
@@ -166,5 +170,5 @@ diff -rupN ./reiserfsprogs-3.6.4-orig/reiserfscore/includes.h reiserfsprogs-3.6.
 +#include "swab.h"
 +
 
---------------020102080804090208000901--
+--------------000208050108060904080601--
 
