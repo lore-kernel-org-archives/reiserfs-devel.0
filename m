@@ -1,39 +1,33 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: anyone port data-logging patches to -rc3?
-Date: Fri, 23 May 2003 20:24:03 +0400
-Message-ID: <20030523162403.GA9829@namesys.com>
-References: <20030523003033.GC6586@zero> <20030523094633.GA1005@namesys.com> <20030523181504.34631d87.pgramoul@nerim.net>
+From: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
+Subject: Re: 2.4.21-rc3
+Date: Fri, 23 May 2003 19:43:26 +0200
+Message-ID: <m3adddftj5.fsf@merlin.emma.line.org>
+References: <200305232256.17604.russell@coker.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14232-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14234-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030523181504.34631d87.pgramoul@nerim.net>
+In-Reply-To: <200305232256.17604.russell@coker.com.au> (Russell Coker's
+ message of "Fri, 23 May 2003 22:56:17 +1000")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Philippe Gramoull? <pgramoul@nerim.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+Russell Coker <russell@coker.com.au> writes:
 
-On Fri, May 23, 2003 at 06:15:04PM +0200, Philippe Gramoull? wrote:
->   | Ok, replacement patches are in
->   | ftp://ftp.namesys.com/pub/reiserfs-for-2.4/testing/data-logging-and-quota-2.4.21-rc3/
->   | 
-> Patches apply fine but i have compile errors after applying the quota patches for 2.4.21-rc3 starting after 07...
-> Says: can't find files
-> 
-> <linux/dqblk_xfs.h>
-> <linux/dqblk_v1.h>
-> <linux/dqblk_v2.h>
+> I've noticed that the modules ide-taskfile.o and ide-io.o depend on each other 
+> if you compile the 2.4.21-rc3 with IDE as modules.
+>
+> Is this a bug in the kernel or are we supposed to use a new module loader that 
+> can resolve such things?
 
-Ah, stupid me.
-I see.
-Ok, then apply Chris' version of 07-... patch and then apply
-07-quota_nospace_fix.diff.gz patch from our ftp that I just put there on top of it.
+Kernel bug. IDE doesn't work as a module currently. IMHO, the
+corresponding configuration option should be made "yes/no" rather than
+"yes/module/no" for the time being. I posted such a suggestion to
+linux-kernel earlier today ("yesterday" for Australians at home :-)
 
-Bye,
-    Oleg
+-- 
+Matthias Andree
