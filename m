@@ -1,83 +1,59 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: silent semantic changes with reiser4
-Date: Fri, 03 Sep 2004 01:15:48 -0400
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: The argument for fs assistance in handling archives
+Date: Thu, 02 Sep 2004 22:22:15 -0700
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <87sma0vsor.fsf@uhoreg.ca>
-References: <200408261034.38509.vda@port.imtp.ilyichevsk.odessa.ua> <Pine.LNX.4.44.0408260736080.23532-100000@chimarrao.boston.redhat.com>
- <20040826121223.GG30449@mail.shareable.org>
- <4137F4D9.7040206@pointblue.com.pl>
+Message-ID: <4137FF87.8080002@namesys.com>
+References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain> <20040902203854.GA4801@janus> <1094160994.31499.19.camel@shaggy.austin.ibm.com> <20040902214806.GA5272@janus> <20040902220027.GD23987@parcelfarce.linux.theplanet.co.uk> <4137B5F5.8000402@slaphack.com> <Pine.LNX.4.58.0409021717220.2295@ppc970.osdl.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.58.0409021717220.2295@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="macroman"
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: David Masover <ninja@slaphack.com>, viro@parcelfarce.linux.theplanet.co.uk, Frank van Maarseveen <frankvm@xs4all.nl>, Dave Kleikamp <shaggy@austin.ibm.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
->>>>> "Grzegorz" =3D=3D Grzegorz Ja=C5=9Bkiewicz <gj@pointblue.com.pl> =
-writes:
+Linus Torvalds wrote:
 
-Grzegorz> Jamie Lokier wrote:
->> Note that file-as-directory doesn't imply that you can store just
->> anything into those directories.
->>=20
->> Is it a problem to decree that "file data MUST NOT be stored in a
->> metadata directory; only non-essential metadata and data computed
->> from the file data may be stored"?
+>On Thu, 2 Sep 2004, David Masover wrote:
+>  
+>
+>>reiser4 kernel will contain knowledge of fs type contained in a file.
+>>    
+>>
+Whoa!  No it won't.  It will allow you to create a metafile named type 
+if you choose.  Or maybe a metadirectory named types, I don't really 
+care much about this stuff yet, we need to do other things to the 
+semantics more urgently than this, Typing requires a lot of cooperation 
+from user space apps.  I don't really expect to have that much social 
+pull on the issue, but if someone chooses to design their app to use a 
+types metadirectory, I don't mind accomodating on it.  I apologize if  
+from my saying that I gave the impression that I think files should be 
+strongly typed.
 
-Grzegorz> That's exactly what folks seem to lost in this debate.
-Grzegorz> We (developers) want to have files as dirs to:
-Grzegorz> * be able to extract/modify file part on fly. For instance,
-Grzegorz> simple .iso file, without need to mount it over loop (btw, if
-Grzegorz> someone is going to redesign VFS, can we handle that kinda
-Grzegorz> case too please?), .tar, or unzipped (kernel can handle zips)
-Grzegorz> "streams". File is a stream, why shouldn't I have a chance to
-Grzegorz> grab a stream out of archive/image than ?
+I am quite well aware of the disadvantages of OS/400 hindering usability 
+with type information, as well the advantages of having types available 
+for those that want to look at them.....
 
-I'm not entirely convinced that it's a good idea.  At least, I agree
-with those who say that they don't want a tar parser in the kernel.  I
-would only want this to happen if the parsing is handled in a
-user-space helper that somehow connects to the kernel.
+>
+>That's a disaster, btw.
+>  
+>
+In every implementation so far it has been a net disaster, because OS 
+designers who type things have been willing to make users pay attention 
+to type when they don't want to.  Sometimes trying to make too much out 
+of something makes it a mistake when being a bit more laid back would 
+make it ok.  Me, I am so laid back, I prefer to work on other features 
+for a few years first.....;-)
 
-Grzegorz> * be able to store metadata, that doesn't matter on copy, and
-Grzegorz> even should not be copied sometimes. Things like thumbnails,
-Grzegorz> metainformation (used for search). All of these extracted fro=
-m
-Grzegorz> acctual file (either by VFS 'plugins', or by userspace
-Grzegorz> application), and saved there so that it can be used later
-Grzegorz> on. So we save some time on extracting it.
+>There is no one "fs type" of a file. Files have at _least_ one type
+>(bytestream), but most have more. Which is why automatically doing the
+>right thing (in the sense you seem to want) in kernel space is simply not
+>possible.
+>
+>			Linus
+>
+>
+>  
+>
 
-Yes.  I think that file-as-dir is useful for things like when Nautilus
-wants to store a thumbnail, or annotations (their "emblems", notes,
-etc.).  In the situation right now, if you copy something using cp, you
-lose all that information already.  If file-as-dir is implemented, then
-when you cp on a filesystem that supports it, you don't lose your notes=
-=2E
-If you cp to a filesystem that doesn't support it, well, you would have
-lost that information under the old scheme anyways.
-
-I also think that file-as-dir is also useful for exporting new metadata=
-,
-like acl's or other access control schemes.  Again, if you copy to a
-filesystem that doesn't implement these, then you would have lost that
-information anyways.  But it presents a nice consistent interface.  But
-in this way, you get an easy way to access this stuff that programmers
-won't have to spend (much) time to learn about.  (Only time spent shoul=
-d
-be learning the naming convention.)
-
-Of course, you could do all this with openat(), but people who are
-reading this thread should already know my opinions on openat(), so
-we'll leave that out.
-
---=20
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-=46ingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
--
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
