@@ -1,43 +1,36 @@
-From: Steven Pratt <slpratt@austin.ibm.com>
-Subject: Re: dbench regression in 2.6
-Date: Thu, 04 Sep 2003 09:13:03 -0500
-Message-ID: <3F57486F.70107@austin.ibm.com>
-References: <3F5636F5.4060000@austin.ibm.com> <20030903224230.GF16361@matchmail.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: precise characterization of ext3 atomicity
+Date: Thu, 04 Sep 2003 18:20:57 +0400
+Message-ID: <3F574A49.7040900@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15547-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15548-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030903224230.GF16361@matchmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Mike Fedyk <mfedyk@matchmail.com>
-Cc: reiserfs-list@namesys.com
+To: ReiserFS <reiserfs-list@namesys.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Mike Fedyk wrote:
+Is it correct to say of ext3 that it guarantees and only guarantees 
+atomicity of writes that do not cross page boundaries?
 
->On Wed, Sep 03, 2003 at 01:46:13PM -0500, Steven Pratt wrote:
->  
->
->>Is anyone looing into the dbench multitheaded regression in 2.6 that I 
->>reported here a couple of weeks ago?  I don't see any change in the 
->>latest trees.
->>
->>http://ausgsa.ibm.com/projects/l/ltcperformance/2003benchmarks/regression/results/history-graphs/dbench.reiser.throughput.plot.16.png
->>
->>    
->>
->
-> host ausgsa.ibm.com
-> ausgsa.ibm.com does not exist, try again
-> 
->
-Sorry, my bad.  This is the internal site where we generate the data.  
-The public site is:
+I am trying to define the difference between "Atomic Reiser4" and ext3, 
+as it seems to be a frequently asked question, and I am thinking of 
+saying something like:
 
-http://ltcperf.ncsa.uiuc.edu/data/history-graphs/dbench.reiser.throughput.plot.16.png
+    Reiser4 allows you to define a set of up to A separate arbitrary 
+filesystem operations (where A by default is not allowed to exceed 64) 
+that are to be committed to disk atomically.  Every individual 
+filesystem operation is atomic without the need to specify it.
 
-Steve
+    By contrast, ext3 only guarantees the atomicity of a single write 
+that does not span a page boundary, and it guarantees that its internal 
+metadata will not be corrupted even if your applications data is 
+corrupted after the crash.
+
+-- 
+Hans
+
 
