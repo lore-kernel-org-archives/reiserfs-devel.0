@@ -1,69 +1,50 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Recursive modified-timestamp?
-Date: Thu, 06 Jan 2005 16:31:38 -0600
-Message-ID: <41DDBC4A.6020305@slaphack.com>
-References: <4329085595-BeMail@cr593174-a> <41D834E1.6030404@namesys.com>
+From: Shoshannah Forbes <xslf@xslf.com>
+Subject: rebuild-tree working for more then 3 days- what to do?
+Date: Fri, 07 Jan 2005 10:50:23 +0200
+Message-ID: <2AEAD962-6089-11D9-A3E5-003065C0167C@xslf.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23054-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-list-return-23058-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41D834E1.6030404@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: "Alexander G. M. Smith" <agmsmith@rogers.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hi all. Newbie here :-)
+Here is my problem:
+I have a Linux gentoo box with a 60GB HD using ReiserFS 3.6. Last 
+Sunday, I attempted to do an emerge sync (which is HD intensive), and 
+my system froze. After the 2nd time my system froze doing an emerge 
+sync, I booted without X and attempted again. This time, just before 
+the system froze, I got a panic error about trouble writing to the HD 
+(I didn't write it down, so I don't have the exact error message).
 
-Hans Reiser wrote:
-| Alexander G. M. Smith wrote:
-|
-|>
-|> Possibly.  But I'd like to generalize it a bit.  Percolated attributes
-|> are
-|> perhaps a better more general idea.  We already have inherited attributes
-|> (such as security of children being inherited from the parent) so
-|> going in
-|> the other direction isn't all that big step, it just needs an
-|> application,
-|> like your modification detection system.
-|>
-|>
-| The general form of inheritance should not be restricted to inheriting
-| from parents.  Parents should merely be a default if nothing is
-| specified as what one inherits from.  And when one inherits, one can
-| write through to what one inherits from, at least by default.
+So I booted from a DSL CD which I had, and ran reiserfsck, whic 
+complained about a few problems. So I ran reiserfsck --fix-fixable, 
+which told me that there are problems that it will need to run 
+--rebuild-tree in order to fix.
 
-Right.  Thinking back to the recursive-mtimes, one possible way to get
-an mtime for a tree is to have every modification to one of its files
-percolate back up the tree (child-to-parent), meaning a parent is
-"inheriting" that attribute from each of its children.
+I googled a bit, and as DSL has an old version of the reiserFS tools, I 
+went ahead, and using another machine downloaded the latest version of 
+knoppix, booted from it, and ran reiserfsck --rebuild-tree. I switched 
+to another desktop, but when I attempted to switch back to the original 
+one to see the progress, X didn't let me, so I left the reiserfsck 
+running, thinking that I would return to it when it will finish.
+After 3 days, the HD stopped making noise, but the HD light (and the 
+cdrom light, where knoppix is running from) are still on. The Machine 
+does answer pings, but still doesn't let me switch to the other 
+desktop, and CTRL+ALT+Fx doesn't switch out of X into a virtual 
+terminal.
 
-This could be made fast by merely having a flag that says "this file has
-been modified since this program last checked", so that the change-flag
-doesn't have to go all the way back up the tree each time.
+So, I am wondering- what to do now? How to minimize (and hopefully fix) 
+any damage to that disk?
 
-One possible way to do this is to give each file/directory a list of
-links to each of its parents.  How hard would that be to add?
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Thanks!
 
-iQIVAwUBQd28SXgHNmZLgCUhAQLBfBAAlRBz2RKpBpYxqI5D1LXUQsv6/pDPO3kF
-ROlGCaS4lbFIsVHuJazS1uVW+JSY/7FQWRBx06PpsM3jB8RHCKnlhx8WUgGEt9sb
-r7AQ+u91nPk2Oh638X6tNgFPbiUMCFpRZXuQ7e7SmyxIuqEEwUsIsEIirqo6uru5
-KN7/2JiABMlUIQAF8SbPB4RwNxUbAP1d//khAhhseLlq4b7nyT426kLVmxQY5hjq
-QiMxJWvODm9ifuKu+Kwe2DhZa+s/jKAHCIdKNP25rzUTSaOtRnqX90zAJmO/vtL6
-HKGAW3+YpuVv+wV7wcSfKNoCRSdr1m2HxgmIoyF5I7Z1G4/hMCqilroK+2lii2aA
-DhjvSSUFlLwnvZcvWwnsE8T/pRXICT5RR/pvmtIiji+HJUJEufn75+QxPk/IFYNk
-HboXahafDm669tQiOPvHhBIRNxblXmO4BsumJ5C8b3Qt6Xpx434VkHfqWmcgnTjg
-a/wyXSa5/AiD4KrMR9GcN1PkOVP6Kr42o2w/iGEUZqQfM11kWCLAvYA/8fcYgxWm
-der1Pa+jrw9/t4eJFTEPE0jKNau7MXlA/yeIXXVh+0T51fApdXuPsOCs8J5GWzCZ
-8EUaXS7FO7FrI4/ynarnewlOtVvAOGiit1aMDdN89fF1WlTWU3aze8pCPgJ+EQb8
-T8Sb9/eLWJM=
-=hNoL
------END PGP SIGNATURE-----
+---
+Shoshannah Forbes
+http://www.xslf.com
+
