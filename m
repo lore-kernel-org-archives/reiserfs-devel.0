@@ -1,361 +1,497 @@
-From: Julia Wolf <julia@virtadpt.net>
-Subject: Re: making reiser4/AMD64 hardlock
-Date: Sat, 20 Nov 2004 00:35:09 -0500 (EST)
-Message-ID: <Pine.LNX.4.51.0411200018160.5646@leandra.the-lab.virtadpt.net>
-References: <1099472359.8158.36.camel@localhost>  <20041103201825.GY30438@hvs.envisage.co.za>
- <1099561964.1492.20.camel@tribesman.namesys.com>
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Subject: mongo.pl: 2.6.9-cko3, xattrs + journaling
+Date: Sat, 20 Nov 2004 17:42:25 +0100
+Message-ID: <200411201742.25912.christian.mayrhuber@gmx.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22444-reiserfs=m.gmane.org@namesys.com>
+Content-Type: Multipart/Mixed;
+  boundary="Boundary-00=_xP3nB0zBAMjfoPG"
+Return-path: <reiserfs-list-return-22447-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1099561964.1492.20.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+To: reiserfs-list@namesys.com
+
+--Boundary-00=_xP3nB0zBAMjfoPG
+Content-Type: text/plain;
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: Jake Maciejewski <maciejej@msoe.edu>, reiserfs-list@namesys.com
+Content-Disposition: inline
+
+Hi,
+
+I did some runs of mongo to see how the journaling filesystems compare to each 
+other on a recent kernel.
+My focus has been how the fs's compare with enabled acls and xattrs.
+
+Summary:
+--------
+1) data=ordered + acl: reiserfs is best for writing, ext3 for reading.
+   I guess reiserfs becomes slow on reading with acls because it has to
+   open two files?
+   Reiserfs halfes the stat performance when acl's are enabled.
+2) No data=ordered, but acl: jfs seems to be best.
+   I also tried jfs with the case-insensitive mount option, with neglectable
+   different results.
+   xfs cannot win over jfs, even for large files.
+3) data=ordered, no acl: reiserfs outperforms even jfs 
+
+I've been using the ck "overloaded" patch to get reiser4 into the stable 
+kernel. Reiser4 is the one from 2.6.9-mm1 and it's in just for curiosity.
+Reiser4 is best on space, but slow on modify, overwrite and delete
+Maybe there is something wrong with this specific patch.
+
+Ext3 is very quick for stat operations.
+
+Athlon XP 1900+
+512MB RAM
+12GB loopback device on reiserfs
+Take these results with care, as they have been run on a 12GB loopback device.
+Kernel has been run with elevator=as, preempt disabled.
+All fs that offer acl's have them enabled.
+The filesize is 16900 bytes because it's the average file size on my disk.
+
+-- 
+lg, Chris
 
 
-On Thu, 4 Nov 2004, Vladimir Saveliev wrote:
-> Please try to get as much debugging information as you can.
-> sysrq+t's output may help to understand the problem. Do you have "File
-> systems" -> "Reiser4" -> "Enable reiser4 debug options" -> "Assertions"
-> turned on? If no, please turn it, it may also help. Try to catch its
-> output, via serial console if it will not be stored in logs.
+--Boundary-00=_xP3nB0zBAMjfoPG
+Content-Type: text/html;
+  charset="us-ascii";
+  name="results.html"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="results.html"
 
-  With 2.6.10-rc2-mm2 I'm still getting hardlocks on my Athlon XP (a
-32-bit K7). I finnaly hooked up a serial console, and the output of a
-Sysrq+T is below. Sysrq+T was hit just before the machine locked up.. ata2
-is the SATA drive that was being written to at the time. Assertions were
-turned on in Reiser4 (as well as all of the other debug option) but
-Reiser4 said nothing in the log/console at the time of the lock-up. (It
-spews lots of other stuff in normal usage though.)
+<html><style>
+DT{font-weight: bold}
+</style>
+<body text=black>
+<dl>
+<dt>reiser4  </dt>
+<dd>2.6.9-cko3</dd>
+<dt>mem total</dt>
+<dd>516532</dd>
+<dt>machine  </dt>
+<dd>byblos</dd>
+<dt>kernel   </dt>
+<dd>2.6.9-k7-cko3 #1 Fri Nov 19 20:13:50 CET 2004</dd>
+<dt>date     </dt>
+<dd>Fre 19 Nov 2004 21:37:51 CET</dd>
+<dt>.config  </dt>
+<dd>PLEASE take care to make .config file available when you publish benchmark results. At namesys, .config should be stored somewhere in the internal benchmark directory (intbenchmarks/mongo/), and link to it is added to the resulting html document.</dd>
+</dl>
+<table cols=29 cellpadding=2 cellspacing=2 noborder>
+<tr><td bgcolor=black colspan=29><font color=white></td></tr>
+<tr>
+<th bgcolor=#303030 colspan=29 align=left><font color=white>A. FSTYPE=reiserfs MKFS=mkfs.reiserfs -q MOUNT_OPTIONS="user_xattr,acl,attrs"</font></th>
+</tr>
+<tr>
+<th bgcolor=#303030 colspan=29 align=left><font color=white>B. FSTYPE=ext3 MKFS=mkfs.ext3 -q -O dir_index,filetype,has_journal,sparse_super -q MOUNT_OPTIONS="user_xattr,acl"</font></th>
+</tr>
+<tr>
+<th bgcolor=#303030 colspan=29 align=left><font color=white>C. FSTYPE=xfs MKFS=mkfs.xfs -f MOUNT_OPTIONS="defaults"</font></th>
+</tr>
+<tr>
+<th bgcolor=#303030 colspan=29 align=left><font color=white>D. FSTYPE=jfs MKFS=mkfs.jfs -q MOUNT_OPTIONS="defaults"</font></th>
+</tr>
+<tr>
+<th bgcolor=#303030 colspan=29 align=left><font color=white>E. FSTYPE=reiserfs MKFS=mkfs.reiserfs -q MOUNT_OPTIONS="notail,nouser_xattr,noacl,noattrs,nodiratime,noatime"</font></th>
+</tr>
+<tr>
+<th bgcolor=#303030 colspan=29 align=left><font color=white>F. FSTYPE=ext3 MKFS=mkfs.ext3 -q -O dir_index,filetype,has_journal,sparse_super -q MOUNT_OPTIONS="noatime,nouser_xattr,noacl"</font></th>
+</tr>
+<tr>
+<th bgcolor=#303030 colspan=29 align=left><font color=white>G. FSTYPE=reiser4 MKFS=mkfs.reiser4 -q MOUNT_OPTIONS="defaults"</font></th>
+</tr>
+<tr> <td colspan=29 bgcolor=#606060><b><font color=white>#0:FSTYPE=reiserfs MKFS=mkfs.reiserfs -q MOUNT_OPTIONS="user_xattr,acl,attrs" </font></b></td></tr>
+<tr align=center bgcolor=#C0C0C0> <td></td>
+<td colspan=7><b>REAL_TIME</b></td>
+<td colspan=7><b>CPU_TIME</b></td>
+<td colspan=7><b>CPU_UTIL</b></td>
+<td colspan=7><b>DF</b></td>
+</tr>
+<tr align=center bgcolor=#C0C0C0> <td></td>
+<td><b>A</b></td><td><b>B/A </b></td><td><b>C/A </b></td><td><b>D/A </b></td><td><b>E/A </b></td><td><b>F/A </b></td><td><b>G/A </b></td>
+<td><b>A</b></td><td><b>B/A </b></td><td><b>C/A </b></td><td><b>D/A </b></td><td><b>E/A </b></td><td><b>F/A </b></td><td><b>G/A </b></td>
+<td><b>A</b></td><td><b>B/A </b></td><td><b>C/A </b></td><td><b>D/A </b></td><td><b>E/A </b></td><td><b>F/A </b></td><td><b>G/A </b></td>
+<td><b>A</b></td><td><b>B/A </b></td><td><b>C/A </b></td><td><b>D/A </b></td><td><b>E/A </b></td><td><b>F/A </b></td><td><b>G/A </b></td>
+</tr>
+<tr>
+<td bgcolor=#C0C0C0><b>CREATE</b></td>
+<td bgcolor=#E0E0C0 align=right><tt>336.71</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.969 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.649 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.612 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.711 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.711 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.403</U> </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>38.11</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.701 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.645 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.447</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.896 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.697 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.134 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>17.57</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.894</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.451 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.204 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.311 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.176 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      2.739 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>3563436</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.031 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      1.018 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.027 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      1.012 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.031 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.978</U> </font></tt></td>
+</tt></td>
+</tr>
+<tr>
+<td bgcolor=#C0C0C0><b>COPY</b></td>
+<td bgcolor=#E0E0C0 align=right><tt>446.56</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.175 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.089 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.969 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.808</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.135 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.866 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>47.25</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.680 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.777 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.516</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.931 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.655 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.255 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>19.29</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.736</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.923 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.815 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.160 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.730</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.354 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>7126920</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.031 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      1.018 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.027 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      1.012 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.031 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.978</U> </font></tt></td>
+</tt></td>
+</tr>
+<tr>
+<td bgcolor=#C0C0C0><b>APPEND</b></td>
+<td bgcolor=#E0E0C0 align=right><tt>1044.31</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.045 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.935 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.867</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.868</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      1.019 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.980 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>47.25</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.616 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.581 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.424</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.864 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.606 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.423 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>8.52</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.829</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      0.982 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.905 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.062 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.836</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.561 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><U> 10491608</U></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.020</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.009</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.015</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.006</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.020</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.007</U> </font></tt></td>
+</tt></td>
+</tr>
+<tr>
+<td bgcolor=#C0C0C0><b>MODIFY</b></td>
+<td bgcolor=#E0E0C0 align=right><tt>1509.01</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.057 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.840 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.809</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.850 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.925 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.468 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>15.48</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.716 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.924 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.522</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.693 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.641 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.392 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><U> 2.60</U></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.015</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.285 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.227 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.038 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.008</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      2.642 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><U> 10492004</U></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.020</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.009</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.015</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.006</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.020</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.007</U> </font></tt></td>
+</tt></td>
+</tr>
+<tr>
+<td bgcolor=#C0C0C0><b>OVERWRITE</b></td>
+<td bgcolor=#E0E0C0 align=right><tt>1548.84</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.245 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.816 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.788</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.811 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.211 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.731 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>44.71</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.817 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.838 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.611</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.874 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.780 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.483 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>7.99</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.900 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.235 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.069 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.163 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.795 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.758</U> </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><U> 10492736</U></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      1.020 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.009</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.015</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.006</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      1.020 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      0.997</U> </font></tt></td>
+</tt></td>
+</tr>
+<tr>
+<td bgcolor=#C0C0C0><b>READ</b></td>
+<td bgcolor=#E0E0C0 align=right><tt>1631.94</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.465 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.524 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.627 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.419</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.432 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.631 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>30.05</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.720 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.936 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.662</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.865 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.649</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.426 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><U> 6.68</U></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.672 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.585 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.274 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.811 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.626 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.412 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><U> 10492736</U></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      1.020 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.009</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.015</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.006</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      1.020 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      0.997</U> </font></tt></td>
+</tt></td>
+</tr>
+<tr>
+<td bgcolor=#C0C0C0><b>STATS</b></td>
+<td bgcolor=#E0E0C0 align=right><tt>142.18</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.224</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.400 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.703 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.493 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.224</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.600 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>4.83</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.874 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.932 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.839</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.907 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.828</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.215 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><U> 5.70</U></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      2.674 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      3.528 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.063 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.337 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      2.582 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.411 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><U> 10492736</U></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      1.020 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.009</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.015</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.006</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      1.020 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      0.997</U> </font></tt></td>
+</tt></td>
+</tr>
+<tr>
+<td bgcolor=#C0C0C0><b>DELETE</b></td>
+<td bgcolor=#E0E0C0 align=right><tt>45.45</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      8.237 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.696 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.726 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.501</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      7.788 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>     15.589 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>18.12</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.638 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.848 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.482</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      0.998 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.571 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      2.161 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>41.06</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.120 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.331 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.444 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.929 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.092</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.158 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><U> 0</U></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>0/0</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>63400/0</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>9068/0</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>0/0</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>0/0</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>4/0</tt></td>
+</tt></td>
+</tr>
+<tr> <td colspan=29 bgcolor=#606060><b><font color=white>#1:DD_MBCOUNT=9216 </font></b></td></tr>
+<tr align=center bgcolor=#C0C0C0> <td></td>
+<td colspan=7><b>REAL_TIME</b></td>
+<td colspan=7><b>CPU_TIME</b></td>
+<td colspan=7><b>CPU_UTIL</b></td>
+<td colspan=7><b>DF</b></td>
+</tr>
+<tr align=center bgcolor=#C0C0C0> <td></td>
+<td><b>A</b></td><td><b>B/A </b></td><td><b>C/A </b></td><td><b>D/A </b></td><td><b>E/A </b></td><td><b>F/A </b></td><td><b>G/A </b></td>
+<td><b>A</b></td><td><b>B/A </b></td><td><b>C/A </b></td><td><b>D/A </b></td><td><b>E/A </b></td><td><b>F/A </b></td><td><b>G/A </b></td>
+<td><b>A</b></td><td><b>B/A </b></td><td><b>C/A </b></td><td><b>D/A </b></td><td><b>E/A </b></td><td><b>F/A </b></td><td><b>G/A </b></td>
+<td><b>A</b></td><td><b>B/A </b></td><td><b>C/A </b></td><td><b>D/A </b></td><td><b>E/A </b></td><td><b>F/A </b></td><td><b>G/A </b></td>
+</tr>
+<tr>
+<td bgcolor=#C0C0C0><b>dd_writing_largefile</b></td>
+<td bgcolor=#E0E0C0 align=right><tt>1625.04</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.862 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.915 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      1.009 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.872 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.874 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.774</U> </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>108.98</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.410 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.809</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.063 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.979 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.469 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.044 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><U> 17.53</U></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.396 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.015</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.052 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.127 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.354 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.270 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><U> 9446568</U></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.000</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.006</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.000</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.000</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.000</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      0.999</U> </font></tt></td>
+</tt></td>
+</tr>
+<tr>
+<td bgcolor=#C0C0C0><b>dd_reading_largefile</b></td>
+<td bgcolor=#E0E0C0 align=right><tt>891.95</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.942</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.078 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.950</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.945</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.934</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.936</U> </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>88.07</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.869 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.841</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.856</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.972 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.862 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green>      0.945 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt>22.70</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.022 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=green> <U>      0.924</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      1.004 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.048 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black>      1.012 </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=red>      1.140 </font></tt></td>
+</tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><U> 9446568</U></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.000</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.006</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.000</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.000</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      1.000</U> </font></tt></td>
+<td bgcolor=#E0E0C0 align=right><tt><font color=black> <U>      0.999</U> </font></tt></td>
+</tt></td>
+</tr>
+<tr><td bgcolor=black colspan=29><font color=white></td></tr>
+<tr><td colspan=29 align=right> 
+<tr> <td colspan=29 bgcolor=#303030><b><font color=white>NPROC=1 DIR=/mnt SYNC=off REP_COUNTER=3 GAMMA=0.2 DEV=/dev/loop0 DD_MBCOUNT=9216 WRITE_BUFFER=4096 BYTES=1000000000 FILE_SIZE=16900 </td></tr>
+<tr><td colspan=29 align=right> <font size=-2>Produced by <a href=http://namesys.com/mongo>Mongo</a> benchmark suite.</font></td></tr>
+</table>
+<!--
+<p><b>Legend:</b> <font color="green">green</font> color means the result is
+better (less) than reference value from the first column, results
+marked as <font color="red">red</font> are worse than reference value,
+best results are <u>underlined</u> other results which fit into 2%
+margin of the best result are underlined also.</p>
+--></body></html>
 
-  I also tried mounting the filesystem syncronously ( -o sync) and with
-the filesystem always sync'ing it does *not* lock up.
-
-  I was running mkisofs to make a cd image, reading from /dev/sdd
-(reiserfs3) and writing to /dev/sdb (reiser4) it locks up consistantly
-after about 400M. But any large write to disk will cause this crash.
-
-SysRq : Show State
-
-                                               sibling
-  task             PC      pid father child younger older
-init          S C06C7200  4888     1      0     2               (NOTLB)
-dff31e74 00000046 dff31e88 c06c7200 dff31e74 00000246 00000000 dff31e50
-       c0116236 c06c939c dff31e94 0000238c a67004ad 00000060 dff08a50 dff08bf4
-       00013b2f dff31e88 0000000b dff31ed0 c05e094c 00000000 000000d0 de2c5e48
-Call Trace:
- [<c05e094c>] schedule_timeout+0x8c/0xe0
- [<c018a802>] do_select+0x232/0x3d0
- [<c018ac63>] sys_select+0x293/0x510
- [<c01039e7>] syscall_call+0x7/0xb
-ksoftirqd/0   S 00000000  7292     2      1             3       (L-TLB)
-dff33fbc 00000046 c013546e 00000000 c06c8620 00000000 c07bb4e8 0000000a
-       dff33f9c c0123b83 00000001 0000024c cff839d5 00000060 dff0ba50 dff0bbf4
-       dff32000 dff31f4c 00000000 dff33fc8 c0123d12 dff32000 dff33fec c013a985
-Call Trace:
- [<c0123d12>] ksoftirqd+0x72/0x90
- [<c013a985>] kthread+0x95/0xa0
- [<c0101291>] kernel_thread_helper+0x5/0x14
-events/0      R running  6912     3      1             4     2 (L-TLB)
-khelper       S DFF20F88  7072     4      1             9     3 (L-TLB)
-dff63f38 00000046 00000003 dff20f88 00000001 00000003 dff63f38 00000086
-       00000246 00000000 00000000 00000862 575eaf6a 0000003b dff21a50 dff21bf4
-       dff63f9c dff20f38 dff20f64 dff63fc8 c0133d5b 00000000 00000082 00000000
-Call Trace:
- [<c0133d5b>] worker_thread+0x3eb/0x410
- [<c013a985>] kthread+0x95/0xa0
- [<c0101291>] kernel_thread_helper+0x5/0x14
-kthread       S DFEBAF88  7148     9      1    17     148     4 (L-TLB)
-dff75f38 00000046 00000003 dfebaf88 00000001 00000003 dff75f38 00000086
-       00000246 00000000 00000000 00000073 35cc2d61 00000050 dff4ca50 dff4cbf4
-       dff75f9c dfebaf38 dfebaf64 dff75fc8 c0133d5b 00000000 00000082 00000000
-Call Trace:
- [<c0133d5b>] worker_thread+0x3eb/0x410
- [<c013a985>] kthread+0x95/0xa0
- [<c0101291>] kernel_thread_helper+0x5/0x14
-kacpid        S DFED3A50  7836    17      9           135       (L-TLB)
-dfef7f38 00000046 dfef6000 dfed3a50 dfef7f38 c012f533 dfed3a50 00000296
-       00000246 00000296 c01168c7 000002f8 0b543e50 0000000a dfed3a50 dfed3bf4
-       dfef7f9c c1728f38 c1728f64 dfef7fc8 c0133d5b dfef7f74 00000082 00000000
-Call Trace:
- [<c0133d5b>] worker_thread+0x3eb/0x410
- [<c013a985>] kthread+0x95/0xa0
- [<c0101291>] kernel_thread_helper+0x5/0x14
-kblockd/0     S DF99CF88  7004   135      9           269    17 (L-TLB)
-c1769f38 00000046 00000003 df99cf88 00000001 00000003 c1769f38 00000086
-       00000246 00000000 0000005e 00000dc4 e04dadde 00000060 c1746a50 c1746bf4
-       c1769f9c df99cf38 df99cf64 c1769fc8 c0133d5b 00000000 00000082 00000000
-Call Trace:
- [<c0133d5b>] worker_thread+0x3eb/0x410
- [<c013a985>] kthread+0x95/0xa0
- [<c0101291>] kernel_thread_helper+0x5/0x14
-khubd         S C048806E  6220   148      1           270     9 (L-TLB)
-dfa8bf90 00000046 dfa8bf90 c048806e 00000000 00000000 00000246 00000283
-       c011eb85 dfa8bf78 c011e971 000068c6 bf8cf91e 0000000c dfa5ca50 dfa5cbf4
-       dfa8bfc0 ffffe000 dfa8a000 dfa8bfec c04884de c067b46c dfa8a000 00000000
-Call Trace:
- [<c04884de>] hub_thread+0xbe/0x110
- [<c0101291>] kernel_thread_helper+0x5/0x14
-pdflush       S 0000000F  5488   269      9           271   135 (L-TLB)
-df44ff70 00000046 c07b60a0 0000000f c07b60a0 c7f60a50 df44ff70 00000282
-       df44ff44 35cc3278 00000050 000000b2 35cc345e 00000050 df421a50 df421bf4
-       df44ffa8 df44ffb4 df44e000 df44ffa0 c014ffb3 00000000 df44ffc8 c05df659
-Call Trace:
- [<c014ffb3>] __pdflush+0x133/0x5f0
- [<c015048e>] pdflush+0x1e/0x20
- [<c013a985>] kthread+0x95/0xa0
- [<c0101291>] kernel_thread_helper+0x5/0x14
-aio/0         S DF432A50  7836   271      9           922   269 (L-TLB)
-df463f38 00000046 df462000 df432a50 df463f38 c012f533 df432a50 00000296
-       00000246 0e6a2e7a 0000000b 000001c8 0e6a2e7a 0000000b df432a50 df432bf4
-       df463f9c df431f38 df431f64 df463fc8 c0133d5b df463f74 00000082 00000000
-Call Trace:
- [<c0133d5b>] worker_thread+0x3eb/0x410
- [<c013a985>] kthread+0x95/0xa0
- [<c0101291>] kernel_thread_helper+0x5/0x14
-kswapd0       D DF451B5C  6444   270      1           867   148 (L-TLB)
-df451b60 00000046 00000000 df451b5c 00000096 a26da156 df451b44 c01169da
-       c07b60a0 00000000 c1012760 0003651a a301d3bb 00000060 df424a50 df424bf4
-       df451c2c df451c34 00000246 df451bbc c05deca2 0000001d d2009edc d2009fcc
-Call Trace:
- [<c05deca2>] __down+0x122/0x320
- [<c05df212>] __down_failed+0xa/0x10
- [<c02638fd>] .text.lock.entd+0x15/0x58
- [<c0242dd7>] reiser4_writepage+0x597/0x5e0
- [<c0156e26>] pageout+0x96/0xe0
- [<c0157060>] shrink_list+0x1f0/0x420
- [<c01574a5>] shrink_cache+0x215/0x750
- [<c01585fa>] shrink_zone+0xba/0xe0
- [<c0158a20>] balance_pgdat+0x220/0x2c0
- [<c0158ba1>] kswapd+0xe1/0x100
- [<c0101291>] kernel_thread_helper+0x5/0x14
-kseriod       S 00000292  7924   867      1           924   270 (L-TLB)
-df609f90 00000046 c01293cd 00000292 df608000 00000000 00000246 df609f90
-       c011eb85 df609f78 c011e971 00001187 2b936863 0000000b df54ba50 df54bbf4
-       df609fc0 ffffe000 df608000 df609fec c041816e c0676be5 df608000 00000000
-Call Trace:
- [<c041816e>] serio_thread+0xbe/0x110
- [<c0101291>] kernel_thread_helper+0x5/0x14
-ata/0         S DEBC1F88  7672   922      9          6016   271 (L-TLB)
-dea1bf38 00000046 00000003 debc1f88 00000001 00000003 dea1bf38 00000086
-       00000246 00000000 dea1bf28 0000a946 7e8d2d2c 0000000c de9cda50 de9cdbf4
-       dea1bf9c debc1f38 debc1f64 dea1bfc8 c0133d5b 00000000 00000082 00000000
-Call Trace:
- [<c0133d5b>] worker_thread+0x3eb/0x410
- [<c013a985>] kthread+0x95/0xa0
- [<c0101291>] kernel_thread_helper+0x5/0x14
-scsi_eh_0     S DFF08A50  7800   924      1           925   867 (L-TLB)
-deb9df14 00000046 00000000 dff08a50 dff08a50 21001342 deb9def8 c01169da
-       c07b60a0 00000003 c07b60a0 0000056b 210018f3 0000000c debc5a50 debc5bf4
-       deb9dfb0 deb9c000 00000246 deb9df70 c05defda 00000086 dff31dc0 00000001
-Call Trace:
- [<c05defda>] __down_interruptible+0x13a/0x368
- [<c05df222>] __down_failed_interruptible+0xa/0x10
- [<c04687de>] .text.lock.scsi_error+0x39/0x5b
- [<c0101291>] kernel_thread_helper+0x5/0x14
-scsi_eh_1     S DFF08A50  7800   925      1           932   924 (L-TLB)
-debfff14 00000046 00000000 dff08a50 dff08a50 21717534 debffef8 c01169da
-       c07b60a0 00000003 c07b60a0 0000037c 21717731 0000000c debcfa50 debcfbf4
-       debfffb0 debfe000 00000246 debfff70 c05defda 00000086 dff31dc0 00000001
-Call Trace:
- [<c05defda>] __down_interruptible+0x13a/0x368
- [<c05df222>] __down_failed_interruptible+0xa/0x10
- [<c04687de>] .text.lock.scsi_error+0x39/0x5b
- [<c0101291>] kernel_thread_helper+0x5/0x14
-scsi_eh_2     S DFF08A50  7800   932      1           933   925 (L-TLB)
-de411f14 00000046 00000000 dff08a50 dff08a50 51943c0b de411ef8 c01169da
-       c07b60a0 00000003 c07b60a0 0000047e 51943f6a 0000000c debdea50 debdebf4
-       de411fb0 de410000 00000246 de411f70 c05defda 00000086 dff31dc0 00000001
-Call Trace:
- [<c05defda>] __down_interruptible+0x13a/0x368
- [<c05df222>] __down_failed_interruptible+0xa/0x10
- [<c04687de>] .text.lock.scsi_error+0x39/0x5b
- [<c0101291>] kernel_thread_helper+0x5/0x14
-scsi_eh_3     S DFF08A50  7800   933      1           983   932 (L-TLB)
-de463f14 00000046 00000000 dff08a50 dff08a50 5207e30f de463ef8 c01169da
-       c07b60a0 00000003 c07b60a0 0000037e 5207e503 0000000c de436a50 de436bf4
-       de463fb0 de462000 00000246 de463f70 c05defda 00000086 dff31dc0 00000001
-Call Trace:
- [<c05defda>] __down_interruptible+0x13a/0x368
- [<c05df222>] __down_failed_interruptible+0xa/0x10
- [<c04687de>] .text.lock.scsi_error+0x39/0x5b
- [<c0101291>] kernel_thread_helper+0x5/0x14
-kjournald     S DE27ECAC  6516   983      1          1092   933 (L-TLB)
-de475f30 00000046 00000003 de27ecac 00000001 00000003 00000246 00000282
-       00000000 00000000 d26774d8 00000e2c e1df0a05 00000054 de442a50 de442bf4
-       de27ebf8 00000000 00000001 de475fec c02fd254 00000000 00000005 00000000
-Call Trace:
- [<c02fd254>] kjournald+0x4b4/0x6a0
- [<c0101291>] kernel_thread_helper+0x5/0x14
-devfsd        S C06D1DE8  7012  1092      1          5989   983 (NOTLB)
-ddf65ed4 00000046 00000003 c06d1de8 00000001 00000003 ddf65ed4 00000282
-       00000000 00000000 c0383a73 00002006 57b1a33b 0000003b ddf32a50 ddf32bf4
-       ddf64000 c06d1d80 c06d1de8 ddf65f78 c0317a84 00000000 ddf65f54 ddf65f60
-Call Trace:
- [<c0317a84>] devfsd_read+0xd4/0x4c0
- [<c01717cf>] vfs_read+0xbf/0x140
- [<c0171aa1>] sys_read+0x41/0x70
- [<c01039e7>] syscall_call+0x7/0xb
-login         S 00000000  6216  5989      1  6007    5990  1092 (NOTLB)
-de593f08 00000046 ffffffff 00000000 c011b0d6 de593ef0 ddc2bb48 d9e02f3c
-       00000004 d7b4ca50 de593ef8 00001b37 a3863375 00000017 de7f2a50 de7f2bf4
-       de7f2b04 00000004 fffffe00 de593f94 c01222b8 de593fc4 c0632c18 00000007
-Call Trace:
- [<c01222b8>] do_wait+0x178/0x470
- [<c0122670>] sys_wait4+0x30/0x40
- [<c01226a7>] sys_waitpid+0x27/0x29
- [<c01039e7>] syscall_call+0x7/0xb
-agetty        S 000A1E2C  6492  5990      1          5991  5989 (NOTLB)
-dddb1e30 00000046 de268718 000a1e2c 00000003 00000001 dddb1e28 de268718
-       00000002 dddb1e64 c0381f5e 000051ed 46581b01 00000011 ddc7ba50 ddc7bbf4
-       d7c8a000 7fffffff 7fffffff dddb1e8c c05e0997 ddc7ba50 000a0000 00000003
-Call Trace:
- [<c05e0997>] schedule_timeout+0xd7/0xe0
- [<c03f79a2>] read_chan+0xc82/0xda0
- [<c03ef448>] tty_read+0xc8/0xe0
- [<c01717cf>] vfs_read+0xbf/0x140
- [<c0171aa1>] sys_read+0x41/0x70
- [<c01039e7>] syscall_call+0x7/0xb
-agetty        S 000A7E2C  6956  5991      1          5992  5990 (NOTLB)
-ddfa7e30 00000046 dffdf198 000a7e2c 00000003 00000001 ddfa7e28 dffdf198
-       00000002 ddfa7e64 c0381f5e 0000ee12 4666f2d4 00000011 ddf7ca50 ddf7cbf4
-       d7b0d000 7fffffff 7fffffff ddfa7e8c c05e0997 ddf7ca50 000a0000 00000003
-Call Trace:
- [<c05e0997>] schedule_timeout+0xd7/0xe0
- [<c03f79a2>] read_chan+0xc82/0xda0
- [<c03ef448>] tty_read+0xc8/0xe0
- [<c01717cf>] vfs_read+0xbf/0x140
- [<c0171aa1>] sys_read+0x41/0x70
- [<c01039e7>] syscall_call+0x7/0xb
-agetty        S 000A1E2C  6956  5992      1          5993  5991 (NOTLB)
-db521e30 00000046 dffdfad8 000a1e2c 00000003 00000001 db521e28 dffdfad8
-       00000002 db521e64 c0381f5e 0000e20d 466e0342 00000011 db482a50 db482bf4
-       d765f000 7fffffff 7fffffff db521e8c c05e0997 db482a50 000a0000 00000003
-Call Trace:
- [<c05e0997>] schedule_timeout+0xd7/0xe0
- [<c03f79a2>] read_chan+0xc82/0xda0
- [<c03ef448>] tty_read+0xc8/0xe0
- [<c01717cf>] vfs_read+0xbf/0x140
- [<c0171aa1>] sys_read+0x41/0x70
- [<c01039e7>] syscall_call+0x7/0xb
-agetty        S 000A3E2C  6928  5993      1          5994  5992 (NOTLB)
-d8b93e30 00000046 dd917bd8 000a3e2c 00000003 00000001 d8b93e28 dd917bd8
-       00000002 d8b93e64 c0381f5e 0000e456 467ca467 00000011 ddf96a50 ddf96bf4
-       d744d000 7fffffff 7fffffff d8b93e8c c05e0997 ddf96a50 000a0000 00000003
-Call Trace:
- [<c05e0997>] schedule_timeout+0xd7/0xe0
- [<c03f79a2>] read_chan+0xc82/0xda0
- [<c03ef448>] tty_read+0xc8/0xe0
- [<c01717cf>] vfs_read+0xbf/0x140
- [<c0171aa1>] sys_read+0x41/0x70
- [<c01039e7>] syscall_call+0x7/0xb
-agetty        S 000AFE2C  6892  5994      1          6013  5993 (NOTLB)
-d8b9fe30 00000046 dd917d98 000afe2c 00000003 00000001 d8b9fe28 dd917d98
-       00000002 d8b9fe64 c0381f5e 0000efce 467581b6 00000011 ddf19a50 ddf19bf4
-       d7fc0000 7fffffff 7fffffff d8b9fe8c c05e0997 ddf19a50 000a0000 00000003
-Call Trace:
- [<c05e0997>] schedule_timeout+0xd7/0xe0
- [<c03f79a2>] read_chan+0xc82/0xda0
- [<c03ef448>] tty_read+0xc8/0xe0
- [<c01717cf>] vfs_read+0xbf/0x140
- [<c0171aa1>] sys_read+0x41/0x70
- [<c01039e7>] syscall_call+0x7/0xb
-bash          S 00000000  6148  6007   5989  6053               (NOTLB)
-d6b2df08 00000046 ffffffff 00000000 d2631a50 d6b2df04 161cc000 d3f3b990
-       00000006 ddf3e93f 00000043 00004d40 ddf41f0c 00000043 d7b4ca50 d7b4cbf4
-       d7b4cb04 00000006 fffffe00 d6b2df94 c01222b8 0000007b d61ccf7c d6b2df24
-Call Trace:
- [<c01222b8>] do_wait+0x178/0x470
- [<c0122670>] sys_wait4+0x30/0x40
- [<c01226a7>] sys_waitpid+0x27/0x29
- [<c01039e7>] syscall_call+0x7/0xb
-ktxnmgrd:sdb: S C021A790  7620  6013      1          6014  5994 (L-TLB)
-d673de6c 00000046 d673de48 c021a790 d673de80 d673de54 d673de6c c020f760
-       d673de80 d658df38 d673de80 0000058a e03e6b11 00000060 d61e4a50 d61e4bf4
-       d673df30 d673c000 00000246 d673dec8 c05defda 00000000 00000000 00000000
-Call Trace:
- [<c05defda>] __down_interruptible+0x13a/0x368
- [<c05df222>] __down_failed_interruptible+0xa/0x10
- [<c02455ef>] .text.lock.kcond+0x22/0x73
- [<c024afd5>] ktxnmgrd+0x2f5/0x670
- [<c0101291>] kernel_thread_helper+0x5/0x14
-ent:sdb!      D C042F1AD  4956  6014      1          6047  6013 (L-TLB)
-d634db0c 00000046 d634dad4 c042f1ad 00000000 d634db14 c0431d98 de40de0c
-       00000202 c043136c de40de0c 002931b1 a1d1faf4 00000060 ddc0ca50 ddc0cbf4
-       d046f760 de40de4c 00000000 d634db14 c05e082e d634db70 c0432295 00000001
-Call Trace:
- [<c05e082e>] io_schedule+0xe/0x20
- [<c0432295>] get_request_wait+0xa5/0xd0
- [<c04330d5>] __make_request+0x1c5/0x5f0
- [<c0433caa>] generic_make_request+0x21a/0x2d0
- [<c0433db9>] submit_bio+0x59/0xf0
- [<c024191f>] reiser4_submit_bio_helper+0x1f/0x30
- [<c023895a>] write_jnodes_to_disk_extent+0x33a/0x740
- [<c0238e12>] write_jnode_list+0xb2/0x130
- [<c0249d9e>] write_fq+0x13e/0x240
- [<c022c74f>] flush_current_atom+0x78f/0xe80
- [<c021e91e>] flush_some_atom+0x52e/0x9b0
- [<c0262e13>] entd_flush+0x63/0xd0
- [<c0261f24>] entd+0x384/0x870
- [<c0101291>] kernel_thread_helper+0x5/0x14
-reiserfs/0    S D25DDA50  7836  6016      9          6054   922 (L-TLB)
-d2607f38 00000046 d2606000 d25dda50 d2607f38 c012f533 d25dda50 00000296
-       00000246 00000296 c01168c7 000001cf ab2e82bc 00000038 d25dda50 d25ddbf4
-       d2607f9c d25dcf38 d25dcf64 d2607fc8 c0133d5b d2607f74 00000082 00000000
-Call Trace:
- [<c0133d5b>] worker_thread+0x3eb/0x410
- [<c013a985>] kthread+0x95/0xa0
- [<c0101291>] kernel_thread_helper+0x5/0x14
-syslog-ng     R running  6072  6047      1                6014 (NOTLB)
-mkisofs       D C042F1AD  4016  6053   6007                     (NOTLB)
-d2605494 00000046 d260545c c042f1ad 00000000 d260549c c0431d98 de40de0c
-       00000202 e03d81ca 00000060 00088a17 e03e33a5 00000060 d2631a50 d2631bf4
-       d046f710 de40de4c 00000000 d260549c c05e082e d26054f8 c0432295 00000001
-Call Trace:
- [<c05e082e>] io_schedule+0xe/0x20
- [<c0432295>] get_request_wait+0xa5/0xd0
- [<c04330d5>] __make_request+0x1c5/0x5f0
- [<c0433caa>] generic_make_request+0x21a/0x2d0
- [<c0433db9>] submit_bio+0x59/0xf0
- [<c024191f>] reiser4_submit_bio_helper+0x1f/0x30
- [<c0241d60>] page_io+0x70/0x1b0
- [<c025e2d7>] emergency_flush+0x457/0xc50
- [<c02429fd>] reiser4_writepage+0x1bd/0x5e0
- [<c0156e26>] pageout+0x96/0xe0
- [<c0157060>] shrink_list+0x1f0/0x420
- [<c01574a5>] shrink_cache+0x215/0x750
- [<c01585fa>] shrink_zone+0xba/0xe0
- [<c0158680>] shrink_caches+0x60/0x70
- [<c0158736>] try_to_free_pages+0xa6/0x170
- [<c014e1f9>] __alloc_pages+0x269/0x3a0
- [<c014e352>] __get_free_pages+0x22/0x50
- [<c015148a>] kmem_getpages+0x1a/0xc0
- [<c0152e44>] cache_grow+0x134/0x350
- [<c0153675>] cache_alloc_refill+0x245/0x3a0
- [<c0153d3f>] kmem_cache_alloc+0x6f/0x90
- [<c01eecfe>] jnew_unformatted+0xe/0xf0
- [<c01efd66>] find_get_jnode+0x16/0x120
- [<c02b1101>] extent_write_flow+0x1c1/0x10a0
- [<c02dcb4c>] append_and_or_overwrite+0x38c/0x760
- [<c02dcfad>] write_flow+0x8d/0xe0
- [<c02dd2e1>] write_file+0x91/0x100
- [<c02dd748>] write_unix_file+0x3f8/0x770
- [<c025be5d>] reiser4_write+0x14d/0x3c0
- [<c01719df>] vfs_write+0xbf/0x140
- [<c0171b11>] sys_write+0x41/0x70
- [<c01039e7>] syscall_call+0x7/0xb
-pdflush       S 00000400  6444  6054      9                6016 (L-TLB)
-cd245f70 00000046 00000000 00000400 00000000 00000000 00000000 00000000
-       00000000 00000005 00000286 000008cc b3e50d7e 00000060 c7f60a50 c7f60bf4
-       cd245fa8 cd245fb4 cd244000 cd245fa0 c014ffb3 00000000 cd245fc8 c05df659
-Call Trace:
- [<c014ffb3>] __pdflush+0x133/0x5f0
- [<c015048e>] pdflush+0x1e/0x20
- [<c013a985>] kthread+0x95/0xa0
- [<c0101291>] kernel_thread_helper+0x5/0x14
-ata2: command timeout
+--Boundary-00=_xP3nB0zBAMjfoPG--
