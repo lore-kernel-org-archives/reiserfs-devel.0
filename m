@@ -1,34 +1,62 @@
-From: Timothy Webster <tdwebste2@yahoo.com>
-Subject: Reiserfs in 2.6.4-mm
-Date: Mon, 15 Mar 2004 22:58:53 -0800 (PST)
-Message-ID: <20040316065853.93681.qmail@web60304.mail.yahoo.com>
-Reply-To: tdwebste2@yahoo.com
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: reiser modification for file queuing
+Date: Tue, 16 Mar 2004 10:05:36 +0300
+Message-ID: <4056A740.2010300@namesys.com>
+References: <003101c40b10$3d8fc0f0$c435a5d1@energy>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17234-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17235-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <003101c40b10$3d8fc0f0$c435a5d1@energy>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: jenn sirp <sirpj@ecs.csus.edu>
+Cc: reiserfs-list@namesys.com
 
-I noticed from Andrews change log:
+jenn sirp wrote:
 
-Reiserfs updates: mainly new features.
+>>Can  you tell me a little bit about this? ;-)  Welcome.
+>>    
+>>
+>
+>
+>Hi,
+>
+>Thank You. How great. I am adding a built in queuing mechanism to your
+>system. 
+>
+Are queues directories?  Are you doing it for V4 (strongly 
+recommended)?  Others need this functonality....
 
-Does that mean reiserfs4 is "almost" part of 2.6.4-mm?
-Is it something in the works for later this year?
+>The idea is to have the built in functionality so that as files are
+>created they are placed in a queue (implemented as a linked list); this
+>queue always returns the next file to be processed. It is intended to speed
+>up an existing application that resides in user space and dumps query files
+>on to a database for further processing.
+>
+>In a lot of ways it doesn't necessarily make sense. It should be probably be
+>a part of the VFS, akin to all file systems. Or just left in user space. But
+>it is an Intern project and it is so very cool. I asked to build a small FS
+>from the ground-up -- so if I have success here I will be doing that this
+>summer.
+>
+>I started poking into your namei.c file (reiserfs_add_entry) and I've been
+>having some good results. Everything will probably get moved into ioctl
+>later but I am still trying to figure things out.
+>
+>Your code is nice,
+>
+>Jenn
+>
+>
+>
+>  
+>
 
-I know you guys are tight for cash. Try giving your
-good name a plug on my tour of companies this up
-coming week.
 
--regards
--tim
+-- 
+Hans
 
-__________________________________
-Do you Yahoo!?
-Yahoo! Mail - More reliable, more storage, less spam
-http://mail.yahoo.com
