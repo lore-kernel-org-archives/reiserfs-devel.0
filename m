@@ -1,32 +1,32 @@
-From: Zheng BaoJian <bjzheng@ict.ac.cn>
-Subject: Reiserfs on NFS
-Date: Wed, 22 May 2002 16:22:27 +0800
-Message-ID: <3CEB5543.2090109@ict.ac.cn>
+From: Richard Emslie <rxe@ukshells.co.uk>
+Subject: Download recommendation
+Date: Wed, 22 May 2002 14:52:32 +0100 (BST)
+Message-ID: <Pine.LNX.4.30.0205221446260.14729-100000@vortex.ukshells.co.uk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10396-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10397-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-
-Hello:
-Now i compare the performance of reiserfs and ext3 on a raid,it looks
-very well access file on local reiserfs file system,but on nfs , it
-seems that ext3 is well than reiserfs ,why this?
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
 
--- 
-Baojian Zheng 
-Institute of Computing Technology 
-Chinese Academy of Sciences 
-P.O. Box 2704-25 
-Beijing, China,100080 
-Tel: 86-10-62565533 ex. 9311 
-E-mail: bjzheng@ict.ac.cn
+Hi,
+
+I am about to run some benchmarks...
+
+I was wondering if
+
+4. If you use RedHat Linux distribution version 7.x (or any other
+distribution that ships gcc 2.96), make sure you have your gcc upgraded to
+2.96-85  (as in RedHat 7.2)
 
 
+is absolutely necessary?  I thought 2.96 subsequent RedHat7.0 was OK.
 
+Thanks,
+Richard.
 
