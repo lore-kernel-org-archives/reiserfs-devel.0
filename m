@@ -1,50 +1,48 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Resier Fragmentation Effects (was compression vs performance)
-Date: Fri, 09 Apr 2004 14:13:36 -0400
-Message-ID: <1081534415.16461.10.camel@watt.suse.com>
-References: <3DF9165145FACB4C96977FF650C1E9040C469DBF@its-mail1.its.corp.gwl.com>
-	 <40763A44.4040107@namesys.com>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: Longhorn FS being removed to Blackcomb (end of decade)
+Date: Fri, 09 Apr 2004 15:26:15 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <877jwp54x4.fsf@uhoreg.ca>
+References: <3DF9165145FACB4C96977FF650C1E9040C469DD0@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17818-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17819-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40763A44.4040107@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: "Burnes, James" <james.burnes@gwl.com>, Stewart Smith <stewart@flamingspork.com>, Tom Vier <tmv@comcast.net>, Scott Young <youngs1@sunyit.edu>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-On Fri, 2004-04-09 at 01:53, Hans Reiser wrote:
-> Burnes, James wrote:
-> 
-> >I thought nearly all filesystems designed since Berkeley FFS were nearly
-> >immune to fragmentation problems.
-> >
-> >After reading the following analysis at Harvard, it seems that
-> >fragmentation is still a problem.
-> >
-> >http://www.eecs.harvard.edu/~keith/research/tr94.html
-> >
-> >  
-> >
-> Yeah, I wish I had read this in 94.  V3 suffers from the same problems 
-> as FFS does as described in the abstract (all that I read, sorry about 
-> that, I really am a bit busy, so unless someone suggests I should read 
-> more.... ) .  V4 cures it though.
+>>>>> "James" == Burnes, James <james.burnes@gwl.com> writes:
 
-I put out some patches last week that try to deal with this in v3.  Take
-a look through the archives for mail from me.
+James> Just thought this might be interesting to some of you.  The
+James> database-like FS for Longhorn has just been delayed until the end
+James> of the decade.  That's great.  It means that Microsoft's attempt
+James> to copy the BeOS filesystem is not meeting with much success.
 
-The v3 patches are an attempt to do better under common workloads.  I
-think they are a big improvement, and I doubt there's much more that can
-(or should) be done beyond simple tweaking.
+From the article[1]:
 
-v4 does a better job, and even if it doesn't, it should at least have
-enough info in the metadata such that any problems can be fixed.
+  The current plan calls for the file system to work on PCs but not
+  extend to files shared over a corporate network.
 
--chris
+[1] http://yahoo.businessweek.com/magazine/content/04_16/b3879009_mz001.htm
 
+So it looks like WinFS will still be in Longhorn, but with scaled-back
+capabilities.  (Of course, with Microsoft, you never really know what to
+expect.)  So it sounds like Reiser6, without the Reiser5 stuff (IIRC,
+Reiser6 adds the database capabilities, and Reiser5 is a distributed
+filesystem, and the order in which they will appear depends on
+funding).
+
+Given how long it took Reiser4 to materialize, I'm not too confident
+that Reiser6 will appear before Longhorn.  But then again, Reiser4 was
+a complete rewrite, while Reiser6 should be mostly just new plugins.
+
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
