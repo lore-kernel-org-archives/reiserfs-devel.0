@@ -1,51 +1,82 @@
-From: Oleg Drokin <green@namesys.com>
+From: "Robin H. Johnson" <robbat2@orbis-terrarum.net>
 Subject: Re: possible bug - fsck shows perfect results, linux refuses to mount
-Date: Mon, 31 Mar 2003 13:24:54 +0400
-Message-ID: <20030331132454.L25533@namesys.com>
-References: <20030331072250.GC22731@cherenkov.orbis-terrarum.net> <20030331113446.A31858@namesys.com> <20030331074957.GD22731@cherenkov.orbis-terrarum.net> <20030331120014.C25533@namesys.com> <20030331083758.GA23518@cherenkov.orbis-terrarum.net> <20030331125652.H25533@namesys.com> <20030331091621.GA23666@cherenkov.orbis-terrarum.net>
+Date: Mon, 31 Mar 2003 02:17:14 -0800
+Message-ID: <20030331101714.GA23949@cherenkov.orbis-terrarum.net>
+References: <20030331072250.GC22731@cherenkov.orbis-terrarum.net> <20030331113446.A31858@namesys.com> <20030331074957.GD22731@cherenkov.orbis-terrarum.net> <20030331120014.C25533@namesys.com> <20030331083758.GA23518@cherenkov.orbis-terrarum.net> <20030331125652.H25533@namesys.com> <20030331091621.GA23666@cherenkov.orbis-terrarum.net> <20030331132454.L25533@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13470-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
+Return-path: <reiserfs-list-return-13471-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20030331091621.GA23666@cherenkov.orbis-terrarum.net>
+In-Reply-To: <20030331132454.L25533@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Robin H. Johnson" <robbat2@orbis-terrarum.net>
-Cc: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: "Robin H. Johnson" <robbat2@orbis-terrarum.net>, reiserfs-list@namesys.com
 
-Hello!
+--IJpNTDwzlM2Ie8A6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 31, 2003 at 01:16:21AM -0800, Robin H. Johnson wrote:
+On Mon, Mar 31, 2003 at 01:24:54PM +0400, Oleg Drokin wrote:
+> > No change in the output of debugreiserfs.
+> Ok, plase run it under strace, kind of like this:
+> "strace -o /tmp/out debugreiserfs -p /dev/hdb1 >/dev/null" and
+> send me this /tmp/out file.
+http://www.orbis-terrarum.net/~robbat2/reiserfs/debugreiserfs.strace.bz2
 
-> > What if you run that debugreiserfs command again and see if it
-> > complains about being unable to read 18th block?
-> No change in the output of debugreiserfs.
+> Hmm, I also wonder what happens if you dd the whole partition (/dev/hdb1)=
+ to
+> some file and then run debugreiserfs on that file will it succeed?
+Same output from debugreiserfs.=20
+http://www.orbis-terrarum.net/~robbat2/reiserfs/debugreiserfs.run.fromfile
+I did an strace as well on this (it IS different somewhere, didn't look
+at the output myself tho, just the md5sum):
+http://www.orbis-terrarum.net/~robbat2/reiserfs/debugreiserfs-fromfile.stra=
+ce.bz2
 
-Ok, plase run it under strace, kind of like this:
-"strace -o /tmp/out debugreiserfs -p /dev/hdb1 >/dev/null" and
-send me this /tmp/out file.
+MD5SUMS for everything:
+http://www.orbis-terrarum.net/~robbat2/reiserfs/MD5SUMS
 
-> > > But I suspect that may be a much larger task (and I certianly don't want
-> > > my drives and RAID arrays ever getting that full in the first place).
-> > Repacker is not that trivialindeed, if you read this list for some
-> > time already, you might have noticed discussion in which Hans and
-> > Chris have agreed that while repacker is cool and can be implemented,
-> > nobody knows what layout for the data should be chosen.
-> Nope, I just subscribed to the list today, when I had this problem.
-> I've taken the system home for now, I so I can hack on it some more.
-> Mostly to find what was causing the reboots previously, but also so this
-> can get worked on.
+You can just browse that directory to grab things again.
 
-Hmm, I also wonder what happens if you dd the whole partition (/dev/hdb1) to
-some file and then run debugreiserfs on that file will it succeed?
-If not, then probably you can compress the file and somehow make it available for
-download?
-If it will succeed, then there is certainly some interaction between harware and
-debugreiserfs is going on.
+> If not, then probably you can compress the file and somehow make it avail=
+able for
+> download?
+> If it will succeed, then there is certainly some interaction between harw=
+are and
+> debugreiserfs is going on.
+Ok, I think we can rule out hardware since it still happens anyway.
 
-Bye,
-    Oleg
+Next step is getting that data to you. I'm running bzip2 -9vvkz on the
+dd'd contents of the drive now, I expect that to take a few hours.
+
+Depending on the size of the output, I'll either see about getting the
+data up on a relatively high speed site somewhere, or splitting it into
+two parts and sending them to you on DVD-R if you can accept those?
+
+--=20
+Robin Hugh Johnson
+E-Mail     : robbat2@orbis-terrarum.net
+Home Page  : http://www.orbis-terrarum.net/?l=3Dpeople.robbat2
+ICQ#       : 30269588 or 41961639
+GnuPG FP   : 11AC BA4F 4778 E3F6 E4ED  F38E B27B 944E 3488 4E85
+
+--IJpNTDwzlM2Ie8A6
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.0 (GNU/Linux)
+Comment: Robbat2 @ Orbis-Terrarum Networks
+
+iD8DBQE+iBWqsnuUTjSIToURAoMcAKCx+o8yV8HhnZZ9Qs0MBoWibnl9JQCbBGQL
+z1Un8btous38WteJpWbAxS0=
+=lAD6
+-----END PGP SIGNATURE-----
+
+--IJpNTDwzlM2Ie8A6--
