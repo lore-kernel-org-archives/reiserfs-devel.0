@@ -1,55 +1,90 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: [PATCH] ReiserFS v3 I/O error handling
-Date: Wed, 22 Sep 2004 20:52:50 +0400
-Message-ID: <20040922165249.GK5137@backtop.namesys.com>
-References: <41461B2F.7080100@suse.com> <20040915131133.GD5137@backtop.namesys.com> <41484801.2000204@suse.com> <20040915141202.GF5137@backtop.namesys.com> <41485220.7050602@suse.com> <41485230.1080002@namesys.com> <1095788792.28057.232.camel@watt.suse.com> <41519C9A.8030407@namesys.com>
+From: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
+Subject: [PATCH] make fs/reiser4/search.c compile with gcc 4.0
+Date: Wed, 22 Sep 2004 20:45:55 +0200
+Message-ID: <2f4958ff0409221145524aed7b@mail.gmail.com>
+Reply-To: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21873-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21874-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <41519C9A.8030407@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Chris Mason <mason@suse.com>, Jeff Mahoney <jeffm@suse.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Wed, Sep 22, 2004 at 08:39:06AM -0700, Hans Reiser wrote:
-> Chris Mason wrote:
-> 
-> >On Wed, 2004-09-15 at 10:31, Hans Reiser wrote:
-> > 
-> >
-> >>Jeff Mahoney wrote:
-> >>
-> >>   
-> >>
-> >>>Alex Zarochentsev wrote:
-> >>>|> I assume that was tested with some simulated i/o errors, wasn't it?.
-> >>>
-> >>>Of course. The debugging code is since removed, but every place there
-> >>>was a !buffer_uptodate(bh) check, I added a trigger such that I could
-> >>>trigger each error path individually. I triggered various error paths
-> >>>while running fsx, stress.sh, and/or ltp's fsstress.
-> >>>     
-> >>>
-> >>Your patch is much needed stuff.  Would be nice to see it for reiser4 
-> >>someday.....;-)
-> >>   
-> >>
-> >
-> >;-) Any objections if we start by sending this to Andrew for v3?
+Here's full message, this is linux 2.6.9-rc2-mm1
+ gcc -Wp,-MD,fs/reiser4/.search.o.d -nostdinc -iwithprefix include
+-D__KERNEL__ -Iinclude  -Wall -Wstrict-prototypes -Wno-trigraphs
+-fno-strict-aliasing -fno-common -O2 -fomit-frame-pointer
+-Wdeclaration-after-statement -pipe -msoft-float
+-mpreferred-stack-boundary=2 -fno-unit-at-a-time -march=pentium3
+-Iinclude/asm-i386/mach-default -Wformat -Wundef -Wunused -Wcomment
+-Wno-nested-externs -Wno-write-strings -Wno-sign-compare
+-Wuninitialized   -DKBUILD_BASENAME=search -DKBUILD_MODNAME=reiser4 -c
+-o fs/reiser4/.tmp_search.o fs/reiser4/search.c
+fs/reiser4/search.c: In function 'cbk_node_lookup':
+fs/reiser4/search.c:1111: error: invalid storage class for function 'key_is_ld'
 
-no objections. 
+gcc --version
+gcc (GCC) 4.0.0 20040922 (experimental)
+Copyright (C) 2004 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-> >
-> >-chris
-> >
-> I'll let zam answer for me.
+I know gcc 4.0 is still in it's alphas.
+Obvious solution is to move function declared in other function
+up-wards. Since it's static anyway, it won't make any diffrence.
+Please consider applying to repo.
+Thanks.
+
+-----
+
+--- fs/reiser4/search.c    2004-09-22 20:38:04 +0200
++++ fs/reiser4/search.new.c        2004-09-22 20:37:26 +0200
+@@ -1088,6 +1088,20 @@
+ }
+ #endif
+
++/* true if @key is left delimiting key of @node */
++static int key_is_ld(znode * node, const reiser4_key * key) {
++       int ld;
++
++        assert("nikita-1716", node != NULL);
++        assert("nikita-1758", key != NULL);
++
++        RLOCK_DK(znode_get_tree(node));
++        assert("nikita-1759", znode_contains_key(node, key));
++        ld = keyeq(znode_get_ld_key(node), key);
++        RUNLOCK_DK(znode_get_tree(node));
++        return ld;
++}
++
+ /* Process one node during tree traversal.
+
+    This is called by cbk_level_lookup(). */
+@@ -1107,19 +1121,6 @@
+        /* result */
+        int result;
+
+-       /* true if @key is left delimiting key of @node */
+-       static int key_is_ld(znode * node, const reiser4_key * key) {
+-               int ld;
+-
+-                assert("nikita-1716", node != NULL);
+-                assert("nikita-1758", key != NULL);
+-
+-                RLOCK_DK(znode_get_tree(node));
+-                assert("nikita-1759", znode_contains_key(node, key));
+-                ld = keyeq(znode_get_ld_key(node), key);
+-                RUNLOCK_DK(znode_get_tree(node));
+-                return ld;
+-       }
+        assert("nikita-379", h != NULL);
+
+        active = h->active_lh->node;
 
 
 -- 
-Alex.
+GJ
