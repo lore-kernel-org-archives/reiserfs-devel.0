@@ -1,36 +1,61 @@
-From: viro@parcelfarce.linux.theplanet.co.uk
+From: Tonnerre <tonnerre@thundrix.ch>
 Subject: Re: silent semantic changes with reiser4
-Date: Sun, 29 Aug 2004 19:57:44 +0100
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040829185744.GQ21964@parcelfarce.linux.theplanet.co.uk>
-References: <Pine.LNX.4.44.0408271043090.10272-100000@chimarrao.boston.redhat.com> <412F7D63.4000109@namesys.com> <20040827230857.69340aec.pj@sgi.com> <20040829150231.GE9471@alias> <4132205A.9080505@namesys.com> <20040829183629.GP21964@parcelfarce.linux.theplanet.co.uk>
+Date: Sun, 29 Aug 2004 21:10:44 +0200
+Message-ID: <20040829191044.GA10090@thundrix.ch>
+References: <1453776111.20040826131547@tnonline.net> <200408272358.i7RNweGh002703@localhost.localdomain>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
+Return-path: <reiserfs-list-return-21080-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040829183629.GP21964@parcelfarce.linux.theplanet.co.uk>
+In-Reply-To: <200408272358.i7RNweGh002703@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: flx@msu.ru, Paul Jackson <pj@sgi.com>, riel@redhat.com, ninja@slaphack.com, torvalds@osdl.org, diegocg@teleline.es, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Sun, Aug 29, 2004 at 07:36:29PM +0100, viro@parcelfarce.linux.theplanet.co.uk wrote:
-> > he wants without recompiling to do it.  This kind of a view requires no 
-> > coding because you can just mount the root filesystem two ways, one with 
-> > the -nopseudos mount option, and one without it.
-> 
-> *What*?
-> 
-> OK, now I want detailed explanation of the reasons why that doesn't create
-> cache coherency problems.
-> 
-> Do you have an analysis of locking in the entire thing?
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And I am very, very serious about that - we are talking about very nasty
-minefield and design choices in that area have fundamental impact on the
-entire layer, wherever it is located.
+Salut,
 
-It's *NOT* something that you can leave until later and hope it somehow
-falls into place - it can be merged in steps, but you MUST know the goal
-on that level.  To rearchitect later might be possible (even though you
-will a hell of a time avoiding plugins breakage), but it will be *hard*.
+On Fri, Aug 27, 2004 at 07:58:40PM -0400, Horst von Brand wrote:
+> >   Also,  you  are thinking _very_ narrowly now. There are thousands of
+> >   file  formats.  Implementing  the  support  for  meta-data/ streams/
+> >   attributes  in  the  kernel  will  make  it  possible  to  use  this
+> >   generically for all files.
+>=20
+> So the _kernel_ has to know about thousands of formats, just in case it
+> some blue day it comes across a strange file? Better leave that to the
+> applications.
+
+I'd  do  that  quite  differently:  Collect metadata  about  files  in
+extended attributes (which are  rather universally useable), and do it
+=66rom  an userspace daemon/application/file  manager plugin  which uses
+dynamically   loadable   plugins   for   the  different   file   types
+differentiated by libmagic.
+
+This has nothing to do in the kernel.
+
+			    Tonnerre
+
+
+--wRRV7LY7NUeQGEoC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.9.2 (GNU/Linux)
+
+iD8DBQFBMio0/4bL7ovhw40RApOOAJ47ZDBdx50JTQ01PLD/kyxc53UacwCgmDxF
+GjOjLO50MeUI0HKv9T/biWw=
+=pwyS
+-----END PGP SIGNATURE-----
+
+--wRRV7LY7NUeQGEoC--
