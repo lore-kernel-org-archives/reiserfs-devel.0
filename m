@@ -1,45 +1,81 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiserfsck aborts in pass1
-Date: Thu, 2 May 2002 18:53:13 +0400
-Message-ID: <E173Hye-00029R-00@main.gmane.org>
-References: <1020349828.915.69.camel@vorab>
+From: Dax Kelson <dax@gurulabs.com>
+Subject: Bad Sectors during log replay, help?
+Date: Thu, 2 May 2002 22:33:12 -0600 (MDT)
+Message-ID: <Pine.LNX.4.44.0205022227220.22979-100000@mooru.gurulabs.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-10212-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10213-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <1020349828.915.69.camel@vorab>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Oliver Jehle <oliver.jehle@monex.li>, reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
 
-Hi, 
+I have a kernel 2.4.18 trying to mount a reiserfs filesytem with 
+important data on it.
 
-It is probably fixed in the last pre version of reiserfsprogs. 
-Could you run 
+I NEED to get some data off this filesystem, what can I do?
 
-debugreiserfs -p /dev/sdb1 | bzip2 -c > sdb_metadata.bz2 
+# mount -o ro -t reiserfs /dev/hda3 /mnt/tmp
 
-and put the metadata somewhere for downloading. I will check how
-the latest fsck will work for your case.
+reiserfs: checking transaction log (device 03:03) ...
+Warning, log replay starting on readonly filesystem
+hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=613153, 
+sector=26408
+end_request: I/O error, dev 03:03 (hda), sector 26408
+hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=613153, 
+sector=26416
+end_request: I/O error, dev 03:03 (hda), sector 26416
+hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=613153, 
+sector=26424
+end_request: I/O error, dev 03:03 (hda), sector 26424
+hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=613153, 
+sector=26432
+end_request: I/O error, dev 03:03 (hda), sector 26432
+hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=613153, 
+sector=26440
+end_request: I/O error, dev 03:03 (hda), sector 26440
+hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=613153, 
+sector=26448
+end_request: I/O error, dev 03:03 (hda), sector 26448
+hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=613153, 
+sector=26456
+end_request: I/O error, dev 03:03 (hda), sector 26456
+hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=613153, 
+sector=26464
+end_request: I/O error, dev 03:03 (hda), sector 26464
+hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=613153, 
+sector=26472
+end_request: I/O error, dev 03:03 (hda), sector 26472
+hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=613153, 
+sector=26480
+end_request: I/O error, dev 03:03 (hda), sector 26480
+hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=613153, 
+sector=26488
+end_request: I/O error, dev 03:03 (hda), sector 26488
+hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=613153, 
+sector=26496
+end_request: I/O error, dev 03:03 (hda), sector 26496
+is_tree_node: node level 1 does not match to the expected one 4
+vs-5150: search_by_key: invalid format found in block 14806. Fsck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat 
+data of [1 2 0x0 SD]
+Using r5 hash to sort names
+ReiserFS version 3.6.25
 
--- 
+(and the mount fails)
 
-Thanks,
-Vitaly Fertman
-
-
-On Thursday 02 May 2002 18:30, Oliver Jehle wrote:
-> i've got some problems with the filesystem, so i check the filesystem
-> with the reiserfsck. i'm on kernel 2.4.18 . but i think, the filesystem
-> was corrupted by an older kernel (2.4.14)...
->
->
->
-> laax:~ # reiserfsck --rebuild-tree /dev/sdb1
->
-> <-------------reiserfsck, 2002------------->
-> reiserfsprogs 3.x.1b
->
