@@ -1,24 +1,27 @@
-From: Zygo Blaxell <eazgwmir@umail.furryterror.org>
-Subject: Re: read-only drive with reiserfs partiton not mountable
-Date: Sat, 05 Jul 2003 22:25:06 -0400
-Message-ID: <pan.2003.07.05.22.25.04.781785.16446@umail.hungrycats.org>
-References: <3F046341.8000408@ncsu.edu>
+From: Grant Miner <mine0057@mrs.umn.edu>
+Subject: A file-based interface for mount
+Date: Sat, 05 Jul 2003 21:52:33 -0500
+Message-ID: <3F078EF1.6090908@mrs.umn.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-14836-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14837-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-On Thu, 03 Jul 2003 13:09:21 -0400, Joel Ebel wrote:
-> Ok.  I've got an unusual problem.  My hard drive decided yesterday to
-> turn read-only.  I can't write anything to it.  The data seems to be all
->   there and readable, but any write to the drive fails.  
+Would it make sense to use a file interface in the file system to 
+control mounting?  Have a file that exists per-directory named ..mount 
+(or something).  Then, to mount /dev/sda on /home, echo "/dev/sda rw" > 
+/home/..mount
+To unmount the file system, remove the line from the ..mounts file.  You 
+could also do plan 9 layered mounts (with priorities) by putting 2 or 
+more lines in that file.  The advantage is you could set access controls 
+on each file to easily let non-root users perform mount at certain 
+directories, and you don't need the mount and unmount commands anymore.
 
-Have you by any chance tried 'hdparm -r0 /dev/whatever'?  IDE disks have
-a software read-only mode which may be turned on or off by hdparm or
-similar commands.
+What do you think?
+
