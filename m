@@ -1,57 +1,70 @@
-From: "Dale Farnsworth" <Dale.Farnsworth@mvista.com>
-Subject: Re: mips requires alignment for ext2_*_bit functions
-Date: Fri, 29 Mar 2002 10:10:11 -0700
-Message-ID: <20020329171011.GK5732@cuzco.az.mvista.com>
-References: <20020328234354.GJ5732@cuzco.az.mvista.com> <20020329122034.A7428@namesys.com>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: reiserfs 3.5.x partition and corruption - please help
+Date: Fri, 29 Mar 2002 21:09:45 +0100
+Message-ID: <200203292109.46370.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <20020329122034.A7428@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <green@namesys.com>
-Cc: Dale Farnsworth <Dale.Farnsworth@mvista.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Rajesh Fowkar <rfowkar@goatelecom.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, Mar 29, 2002 at 12:20:34PM +0300, Oleg Drokin wrote:
-> Hello!
-> 
-> On Thu, Mar 28, 2002 at 04:43:54PM -0700, Dale Farnsworth wrote:
-> 
-> > We see immediate alignment failures using reiserfs on mips systems.
-> > The problems go away with the following patch.
-> 
-> Thank you for the report.
-> 
-> The question is should all MIPS processors be threated this way or
-> is there are smaller subset that suffers from this problems
-> (and I believe kernel should allow unaligned accesses from inside of the kernel
-> itself (by emulating perhaps). That's what I learned from lkml recently)
-> 
-> > -#if BITS_PER_LONG == 64 || defined(__s390__) || defined(__hppa__)
-> > +#if BITS_PER_LONG == 64 || defined(__s390__) || defined(__hppa__) || defined(__mips__)
-> 
-> Bye,
->     Oleg
+On Friday, 29. March 2002 07:58:32, Rajesh Fowkar wrote:
+> Hi,
+>
+> I have got a primary partition of 1.5 GB on which I created reiserfs file
+> system. I created the file system using mkreiserfs which came with the
+> reiserfsprogs package distributed with woody. It was working fine for last
+> 6 months.
+>
+> Today suddenly when I tried to mount and list the contents, it gave me
+> error saying that some of the files could not be stated. I downloaded the
+> latest version of e2fsprogs from woody tree and ran reiserfsck /dev/hda2,
+> error still persisted. I even tried --fix-fixable, --rebuild-tree.
+>
+> Now my position is I cannot mount the patition at all. I have got lot of
+> stuff from woody downloaded on my dial-up link in that partition. Please
+> help me to somehow mount that partition.
+>
+> Here are some details :
+>
+> --------------------------------------------------------------------------
+> debian:~# mount /mnt/hda2/
+> mount: wrong fs type, bad option, bad superblock on /dev/hda2,
+>       or too many mounted file systems
+> debian:~#=20
+> --------------------------------------------------------------------------
+> --------------------------------------------------------------------------
+> debian:~# dpkg -l |grep reiser
+> ii  reiserfsprogs  3.x.1a-2       User-level tools for ReiserFS filesyste=
+ms
 
-Hi Oleg,
+Hello,
 
-Indeed, if unaligned accesses were supported for all accesses across all
-archectures, we wouldn't need this #if at all.
+first of all I think that you should start with the latest reiserfprogs too=
+ls=20
+and let debian woody's e2fsprogs alone.
 
-Reiserfs uses ext2_set_bit()*.  There is no requirement for this
-operation to be atomic.  However, some architectures, including s390 
-and little-endian mips, implement it by calling test_and_set_bit(),
-which is atomic.  On little-endian mips, test_and_set_bit() uses
-the ll and sc instructions which have alignment requirements and
-there is no way to efficiently emulate unaligned versions.
+ftp://ftp.namesys.com/pub/reiserfsprogs/pre
+reiserfsprogs-3.x.1c_pre1.tar.gz
+or
+reiserfsprogs-3.x.1b.tar.gz (final)
 
-* Similarly for ext2_clear_bit(), and ext2_test_bit().
+When all is smooth again you could switch to 3.6 format (kernel 2.4) with=20
+mount -conv.
 
-While it may be better in the long run to modify the ext2_*_bit()
-functions, adding __mips__ to the current list is expedient and
-consistent with the BITS_PER_LONG==64, __s390__, and __hppa__ cases.
+Happy Easter!
 
--Dale
+-Dieter
+
+--=20
+Dieter N=FCtzel
+Graduate Student, Computer Science
+
+University of Hamburg
+Department of Computer Science
+@home: Dieter.Nuetzel@hamburg.de
+
