@@ -1,50 +1,41 @@
-From: Jamie Lokier <jamie@shareable.org>
+From: Rik van Riel <riel@redhat.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 17:00:53 +0100
-Message-ID: <20040826160053.GI5733@mail.shareable.org>
-References: <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <412DA40B.5040806@namesys.com> <20040826140500.GA29965@fs.tum.de> <1093530313.11694.56.camel@leto.cs.pocnet.net> <20040826150434.GF5733@mail.shareable.org> <1093533175.11694.77.camel@leto.cs.pocnet.net>
+Date: Thu, 26 Aug 2004 11:54:51 -0400 (EDT)
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com>
+References: <20040826154446.GG5733@mail.shareable.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20707-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1093533175.11694.77.camel@leto.cs.pocnet.net>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20040826154446.GG5733@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Saout <christophe@saout.de>
-Cc: Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Jamie Lokier <jamie@shareable.org>
+Cc: Christophe Saout <christophe@saout.de>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Christophe Saout wrote:
-> I'm just thinking about something. While you can't cut bytes out of unix
-> iles a lot of filesystems can do this (holes). Most of them only on a
-> block boundary, reiser4 on a byte boundary. If the filesystems could
-> export this functionality using an enhanced API we could implement a
-> compression plugin and other things on the VFS level that works with
-> every filesystem supporting the required mechanisms, not only reiser4.
-> And those features would take advantage of reiser4's storage mechanisms.
-> I think Hans made the plugins reiser4-only because only reiser4 has a
-> similar API at that time (and obviously because he didn't even think
-> about doing it otherwise).
+On Thu, 26 Aug 2004, Jamie Lokier wrote:
+> Christophe Saout wrote:
 
-Yes.  In some cases the compression or re-archiving algorithm would
-choose different parameters, depending on the alignment capabilities
-of the underlying filesystem.  In some cases, that alignment is
-"offset 0 is the only one you can have", which is a severe special
-case where truncate and rewrite is required for changes.
-
-> > By the way, can reiser4 share parts of files between different files?
+> > And if you read test.compound (the main stream) you get a special format
+> > that contains all the components. You can copy that single stream of
+> > bytes to another (reiser4) fs and then access test.compound/test.txt
+> > again.
 > 
-> At the moment a file is exactly one object. But someone could write
-> another file plugin that spans a file across multiple objects, then yes,
-> multiple files could share parts.
+> (To Rik especially), this is the design which more or less satisfies
+> lots of different goals at once.
 
-Nice.  That's useful for files which appear as themselves and also as
-part of a container.
+And if an unaware application reads the compound file
+and then writes it out again, does the filesystem
+interpret the contents and create the other streams ?
 
-And also for revision managed filesystems :)
+Unless I overlook something (please tell me what), the
+scheme just proposed requires filesystems to look at
+the content of files that is being written out, in
+order to make the streams work.
 
--- Jamie
+-- 
+"Debugging is twice as hard as writing the code in the first place.
+Therefore, if you write the code as cleverly as possible, you are,
+by definition, not smart enough to debug it." - Brian W. Kernighan
+
 
