@@ -1,45 +1,24 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: reiser4progs 1.0.4
-Date: Sun, 20 Feb 2005 13:44:41 +0300
-Message-ID: <200502201344.41656.vitaly@namesys.com>
-Mime-Version: 1.0
+From: Gagan Rajpal <gagandeep_rajpal@hotmail.com>
+Subject: selinux with reiser4
+Date: Sun, 20 Feb 2005 16:49:19 -0500
+Message-ID: <BAY102-DAV10411ABFB77FAF077F07ACEE600@phx.gbl>
+Mime-Version: 1.0 (Apple Message framework v619.2)
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+Message-Id: <4e04aab5680983495f894e2bb21dae2a@hotmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hello All
+Hi,
 
-The new reiser4progs package is available on our ftp 
-site (ftp://ftp.namesys.com/pub/reiser4progs/). 
+Can reiser4 be used with an selinux enabled kernel. I read somewhere 
+that with reiserfs v3 there was some problem because of xattr.
 
-It includes:
-
-Bugfixes:
-- in file body/extent item truncate code;
-- in backup handling & traverse code;
-- in journal unpack code;
-- in node repair code;
-- in not aligned access to on-disk data;
-- in extent item-by-item insertion code;
-- in tree balancing code;
-- in SuperBlock handling code;
-- in syncing code;
-- in file body convertion code.
-
-Enable libminimal by default.
-Do not configure/install empty utils(resizer, cpfs).
-
-
-A reiser4 support for grub 0.96 is available in
-ftp://ftp.namesys.com/pub/reiser4progs/grub
-
--- 
 Thanks,
-Vitaly Fertman
+Gagan
+
 
