@@ -1,50 +1,37 @@
-From: Bernd Petrovitsch <bernd@firmix.at>
+From: Christoph Hellwig <hch@infradead.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 11:03:46 +0200
-Message-ID: <1093597426.18604.86.camel@tara.firmix.at>
-References: <20040825233739.GP10907@legion.cup.hp.com>
-	 <20040825234629.GF2612@wiggy.net> <1939276887.20040826114028@tnonline.net>
-	 <20040826024956.08b66b46.akpm@osdl.org>
-	 <839984491.20040826122025@tnonline.net> <m3llg2m9o0.fsf@zoo.weinigel.se>
-	 <1906433242.20040826133511@tnonline.net> <20040826113332.GL2612@wiggy.net>
-	 <1211039639.20040826134354@tnonline.net>
-	 <1093592467.18603.6.camel@tara.firmix.at>  <20040827084910.GA21968@lst.de>
+Date: Fri, 27 Aug 2004 10:16:38 +0100
+Message-ID: <20040827101638.A29672@infradead.org>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <20040825201929.GA16855@lst.de> <412DA25E.9090405@namesys.com> <1093527487.21878.270.camel@watt.suse.com> <412E780F.7000009@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20897-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20898-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040827084910.GA21968@lst.de>
+Content-Disposition: inline
+In-Reply-To: <412E780F.7000009@namesys.com>; from reiser@namesys.com on Thu, Aug 26, 2004 at 04:53:51PM -0700
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christoph Hellwig <hch@lst.de>
-Cc: Spam <spam@tnonline.net>, Wichert Akkerman <wichert@wiggy.net>, Christer Weinigel <christer@weinigel.se>, Andrew Morton <akpm@osdl.org>, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Chris Mason <mason@suse.com>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, 2004-08-27 at 10:49 +0200, Christoph Hellwig wrote:
+On Thu, Aug 26, 2004 at 04:53:51PM -0700, Hans Reiser wrote:
+> >If the early linux filesystems had taken the same attitude you have
+> >(don't write new filesystems, only write plugins), there would be no
+> >framework allowing the wealth of filesystems we do have, including
+> >reiser4.
+> >
+> >  
+> >
+> Au contraire, with my approach, there would be 10x as many filesystems, 
+> because people would be easily able to mix-and-match different methods 
+> and plugins from different filesystems together, and if you wanted the 
+> MySQL semantics, you would mount mysql, and if you wanted the zope 
+> semantics you would mount zope.
 
-> On Fri, Aug 27, 2004 at 09:41:07AM +0200, Bernd Petrovitsch wrote:
-> > > > UNIX doesn't have a copy systemcall, applications copy the data
-> > > > manually.
-> > > 
-> > >   Oh, this is very unfortunate and should be a bigger issue to fix.
-> > 
-> > Then you have to rewrite POSIX und SuSv3.
-> 
-> They don't say 'you must now have a copy syscall'.  Having one that's
-> actually used by system tools would be a great optimization for many
-> network or distributed filesystems.
+And if you wanted to make free love you'd make free love you'd make free love
+and there would be piece on all earth..
 
-ACK. But actually spam apparently assumes that the kernel - userspace
-interface is at the wrong abstraction level. And this is conceptually
-bound IMHO to POSIX.
-And it does not solve the problem, that the read() and write() sys-calls
-will not vanish. Even if a copy() sys-call exists.
-
-	Bernd
--- 
-Firmix Software GmbH                   http://www.firmix.at/
-mobil: +43 664 4416156                 fax: +43 1 7890849-55
-          Embedded Linux Development and Services
-
+You seem to have lost contact to reality a little.
