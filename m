@@ -1,34 +1,48 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: [PATCH CFT] tons of logging patches
-Date: 20 Jun 2002 20:25:59 -0400
-Message-ID: <1024619159.2123.94.camel@tiny>
+From: berthiaume_wayne@emc.com
+Subject: RE: different block sizes and badblocks
+Date: Fri, 21 Jun 2002 10:35:25 -0400
+Message-ID: <93F527C91A6ED411AFE10050040665D0049BFBD5@corpusmx1.us.dg.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10774-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10776-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <1024340679.18666.36.camel@tiny>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Chris Mason <mason@suse.com>
-Cc: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>, tomlins@cam.org, reiserfs-list <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: green@namesys.com
+Cc: reiserfs-list@namesys.com, newsmail@satimex.tvnet.hu
+
+	How does reiserfs normally handle a bad block encountered on a read
+at this time?
+
+-----Original Message-----
+From: Oleg Drokin [mailto:green@namesys.com]
+Sent: Thursday, June 20, 2002 12:22 PM
+To: Newsmail
+Cc: reiserfs-list@namesys.com
+Subject: Re: [reiserfs-list] different block sizes and badblocks
 
 
-ftp.suse.com/pub/people/mason/patches/data-logging has a new
-beta-data-logging-10.diff.gz
+Hello!
 
-This one:
+On Thu, Jun 20, 2002 at 02:05:11PM +0100, Newsmail wrote:
+> I have two questions: I see that in reiserfsprogs 3.x.1c-pre5 we have the 
+> option to make filesystem with different block sizes than the default 4096
 
-compiles as a module (thanks Jeff Mahoney)
+> bytes. what does this mean? I can choose whatever blocksize I want? or it 
+> has to be a multiple of 4096? actually as I heard if I have a filesystem 
 
-has a highmem bug fixed with data=journal (help from Andrea)
+Right now kernel lacks support for blocksize other than 4096 bytes.
 
-Fixes a problem with relocated/different sized journal devices.  This
-was a merge error on my part.
+> the other question is about badblocks. we have badblock support in 
+> reiserfsprogs 3.x.1c-pre5, but its disabled by default. Oleg, could you 
+> give me some infos about it, how can I reenable it, or how does it work 
+> actually? it would be really nice :)
 
-One tester reports a hang that I can't reproduce here, I'm still trying.
+Right now badblocks support is disabled on purpose.
+It conflicts with savelinks and we have not decided how to solve that yet.
+But we will announce badblocks support once we think it is ready.
 
--chris
-
-
+Bye,
+    Oleg
