@@ -1,54 +1,38 @@
-From: Tom Lanyon <tomlanyon@gmail.com>
-Subject: Re: Apache2 problems
-Date: Tue, 10 Aug 2004 03:29:17 +0930
-Message-ID: <cd32a06204080910594f9db8f@mail.gmail.com>
-References: <cd32a06204080910256de4cc0e@mail.gmail.com> <20040809172923.GQ1284@nysv.org> <4117B948.7050708@namesys.com>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output error"
+Date: Mon, 9 Aug 2004 21:59:35 +0400
+Message-ID: <20040809175934.GI9811@backtop.namesys.com>
+References: <4116BEED.8050804@namesys.com> <20040809024233.2557A15D98@mail03.powweb.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20097-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20098-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4117B948.7050708@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <20040809024233.2557A15D98@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Markus =?unknown-8bit?q?T=F6rnqvist?= <mjt@nysv.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Dabbs <david@dabbs.net>
+Cc: 'Hans Reiser' <reiser@namesys.com>, 'ReiserFS List' <reiserfs-list@namesys.com>
 
-Hehe yeah I understood too... i'm compiling new kernel with newer
-reiser4 now to see if it helps..
+On Sun, Aug 08, 2004 at 09:38:29PM -0500, David Dabbs wrote:
+> 
+> 
+> One other somewhat related FYI. In the recent fibration discussion you
+> thought it would probably be good to make FIBRATION_EXT_1 the default
+> fibration plugin instead of FIBRATION_DOT_O, but dot-O is still the default:
+> 
+> 	[PSET_FIBRATION] = {
+> 		.type = REISER4_FIBRATION_PLUGIN_TYPE,
+> 		.id   = FIBRATION_DOT_O
+> 	},
 
-On Mon, 09 Aug 2004 10:50:00 -0700, Hans Reiser <reiser@namesys.com> wrote:
-> Markus T=F6rnqvist wrote:
->=20
-> >On Tue, Aug 10, 2004 at 02:55:55AM +0930, Tom Lanyon wrote:
-> >
-> >
-> >>This is reiser4-2004.07.23-19.37-linux-2.6.8-rc2-bk4.diff  on a
-> >>2.6.8-rc2 kernel.
-> >>
-> >>
-> >
-> >I would suggest
-> >
-> forgot the not ;-), but I at least understood you.
->=20
->=20
->=20
-> > using such an old snapshot.
-> >
-> >According to Namesys (Zam iirc) the bug has been fixed.
-> >
-> >
-> >
-> >>I'm about to try the latest snapshot on a vanilla 2.6.8-rc3 and see if
-> >>it helps..
-> >>
-> >>
-> >
-> >Please do.
-> >
-> >
-> >
->=20
->
+mkfs.reiser4 sets the fs-wide default fibration plugin.
+
+> David
+> 
+
+-- 
+Alex.
