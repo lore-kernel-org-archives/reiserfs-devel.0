@@ -1,50 +1,42 @@
-From: Alexander Lyamin <flx@msu.ru>
-Subject: Re:  accidentally formatted vfat over reiserfs, recoverable?
-Date: Mon, 22 Sep 2003 16:34:58 +0400
-Message-ID: <20030922163458.A10869@t-raenon.nmd.msu.ru>
-References: <Pine.OSF.4.58.0309191844050.245847@kosh.hut.fi> <200309200024.22525.vitaly@namesys.com>
-Reply-To: flx@msu.ru
+From: lrc1@st-andrews.ac.uk
+Subject: Re: Carrying Attributes too Far
+Date: Mon, 22 Sep 2003 14:28:30 +0100
+Message-ID: <1064237310.3f6ef8fe4ba0e@webmail.st-andrews.ac.uk>
+References: <20030919225110.89276.qmail@web60006.mail.yahoo.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15718-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-15719-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200309200024.22525.vitaly@namesys.com>
+In-Reply-To: <20030919225110.89276.qmail@web60006.mail.yahoo.com>
+Content-Transfer-Encoding: 8bit
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: Tommi Sakari Uimonen <tuimonen@cc.hut.fi>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Sat, Sep 20, 2003 at 12:24:22AM +0400, Vitaly Fertman wrote:
-> On Friday 19 September 2003 20:17, Tommi Sakari Uimonen wrote:
-> > Hi. I had a reiserfs (3.6.11 from debian unstable) partition and I made a
-> > 'mkfs.vfat -F 32' on it. Is there any chance of getting the data from the
-> > old reiserfs partition?
-> >
-> > I have not written onto it since, and mkfs.vfat performed it's duties very
-> > promptly, so I guess it just wrote something  "small" to the beginning of
-> > the partition. (The partition is  about 100GB so I would have noticed if
-> > it had done some serious formatting on it)
-> >
-> > Maybe some dd if=/dev/hdb5 of=... magic or what?
-> >
-> > Tommi Uimonen
-> 
-> Hi Tommi,
-> 
-> this was the user mistake and we provide the support for such in terms of 
-> our www.namesys.com/support.html page.
-theres no easy way around, but i think you should 
+I'm back to play Banquo's ghost. This talk about syntax is all very well, but
+does anyone have answers for questions like the following:
 
-1. backup the partiution with dd.
-and then...
-try to recreate superblock
-and then fsck with  rebuild-tree.
-altough i'm not vitaly and not expert there
+* Will
 
--- 
-"the liberation loophole will make it clear.."
-lex lyamin
+	chmod u-rwx somefile; chmod u+rwx somefile
+
+still work? What special-case behaviour will be needed to make it work?
+
+* Will it be possible to make a attribute file the child of
+/pub/some_ordinary_directory via a hard link? Will it be possible to make an
+attribute file into an attribute file for some other file? That has completely
+different permissions? And is owned by a different user? What will have to
+happen, in either case, at the time the file is hard-linked to its new parent?
+
+* What will prevent a supposedly unprivileged user from chowning a file to any
+other user - for example, chowning a setuid binary to root?
+
+Any takers?
+
+Leo Comerford.
+
+-----------------------------------------------------------------
+University of St Andrews Webmail: http://webmail.st-andrews.ac.uk
