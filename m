@@ -1,46 +1,42 @@
-From: Grant Miner <mine0057@mrs.umn.edu>
+From: "John D. Heintz" <jheintz@pobox.com>
 Subject: Re: Do xml-like namespaces make sense for Reiser4? (re: metas thread)
-Date: Tue, 13 Apr 2004 13:36:28 -0500
-Message-ID: <407C332C.9000500@mrs.umn.edu>
-References: <407AB9AE.3060801@pobox.com> <407ADCBF.8000609@namesys.com> <407AEA05.50004@pobox.com> <407BFBEA.5010006@pobox.com> <407C15D9.1080705@namesys.com> <407C1BE9.8010509@pobox.com> <407C1E1F.30708@mrs.umn.edu> <407C2CD6.2070002@pobox.com>
+Date: Tue, 13 Apr 2004 13:47:12 -0500
+Message-ID: <407C35B0.3080109@pobox.com>
+References: <407AB9AE.3060801@pobox.com> <407ADCBF.8000609@namesys.com> <407AEA05.50004@pobox.com> <407BFBEA.5010006@pobox.com> <407C15D9.1080705@namesys.com> <407C1BE9.8010509@pobox.com> <407C279A.3060303@namesys.com> <407C3004.3070401@pobox.com> <407C316B.80606@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17904-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17905-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <407C2CD6.2070002@pobox.com>
+In-Reply-To: <407C316B.80606@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "John D. Heintz" <jheintz@pobox.com>
+To: Hans Reiser <reiser@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-John D. Heintz wrote:
+Hans Reiser wrote:
 
-> Hi Grant,
-> 
-> No, I'm not familiar with this. I was trying to frame my questions 
-> strictly in terms of Reiser4 naming constructs (the '/' operator only).
+> John D. Heintz wrote:
+>
+>>
+>> Does some sort of syntactic shorthand actually break the set 
+>> theoretic naming system rules?  Or is this just something you view as 
+>> needless complexity?
+>
+>
+> precisely what syntactic shorthand?
 
-I only bring it up because extended attributes seem to have dealt with 
-your mentioned problem, potential name conflicts, without trouble.  They 
-use a "." as name separator but it is immaterial.
 
-> 
-> Do the extended attributes show up as file system paths? Or is there a 
-> separate API to access them? If they show up as paths then I think they 
-> are very loosely like what I'm talking about: a shorthand syntax that by 
-> convention disabiguates similiar names.
 
-They are invisible through normal POSIX API.  They have new system 
-calls: getxattr, setxattr, listxattr, and removexattr which get, set 
-list, and remove extended attributes.
+foo/nsa:permissions -> foo/nsa.gov/secure-linux/permissions
 
-> 
-> Thanks for the reference, I'll look into this when time permits.
-> 
-> John
-> 
-Thanks
+This assumes a mapping from "nsa" -> "nsa.gov/security/".
 
+The characters up to the ':' would be looked up in a namespaces map, and 
+if found the substituion would occur before further name-> object 
+resolution. I don't think this breaks the goals set out in the "Future 
+Vision" white paper, but I guess that is exactly what I am asking you ;-)
+
+John
