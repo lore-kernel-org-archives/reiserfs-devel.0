@@ -1,44 +1,31 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 18:23:54 +0200
-Message-ID: <20040826162354.GA4891@lst.de>
-References: <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com> <20040826014542.4bfe7cc3.akpm@osdl.org> <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <20040826144422.GD5733@mail.shareable.org> <20040826160306.GA4326@lst.de> <20040826161911.GK5733@mail.shareable.org>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: reiser4 plugins (was: silent semantic changes with reiser4)
+Date: Thu, 26 Aug 2004 17:25:28 +0100
+Message-ID: <20040826172528.A21345@infradead.org>
+References: <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <1093527307.11694.23.camel@leto.cs.pocnet.net> <20040826134034.GA1470@lst.de> <1093528683.11694.36.camel@leto.cs.pocnet.net> <20040826153748.GA3700@lst.de> <1093535334.5482.1.camel@leto.cs.pocnet.net> <20040826160601.GB4326@lst.de> <1093536859.5482.13.camel@leto.cs.pocnet.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20717-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20718-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040826161911.GK5733@mail.shareable.org>
+In-Reply-To: <1093536859.5482.13.camel@leto.cs.pocnet.net>; from christophe@saout.de on Thu, Aug 26, 2004 at 06:14:19PM +0200
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Christophe Saout <christophe@saout.de>
+Cc: Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-On Thu, Aug 26, 2004 at 05:19:11PM +0100, Jamie Lokier wrote:
-> Remember that reiser4 allows you to operate on little pieces of data,
-> glueing and rearranging them inside files (something like that).
-> 
-> No other filesystem has that capability, and it's a data model which
-> the fancy features (when they exist) will use.
-> 
-> You can map those pieces to underlying directories and files and
-> renames and unlinks, so that the fancy stuff works on other
-> filesystems, but it would be a useless model because those other
-> filesystems wouldn't be recognisably "ordinary" files any more.
-> 
-> For reiser4 to expose that model through a VFS interface, and the
-> fancy stuff to use it through the VFS interface, and for the fancy
-> stuff to work (even imperfectly) on other filesystems which don't
-> offer those operations, some kind of fall-back "store metadata and
-> fragment rearrangements in auxiliary files with special names" layer
-> would be requied.  That's a big job.
+On Thu, Aug 26, 2004 at 06:14:19PM +0200, Christophe Saout wrote:
+> Ok, I see your point. aops. Sorry.
+> Looking at the code this could be done. The wrappers that dispatch the
+> operations are really small and call the plugin that is registered with
+> the inode of the mapping. Instead it could have directly set the
+> corresponding operations. Right. The wrappers are doing a few things
+> before calling the plugin. That could be done the other way round too.
+> But that's more of an implementation issue and could still be changed.
 
-I seem to miss those files in the current implementation.  But again the
-big question is how will the interface look?  If the smaller objects
-interact with normal files (link/rename, contained in normal
-directories), they will have to obey the same locking protocols.  If not
-a filesystem could experiment with it of course.
-
+I agree that it's an implementation issue.  But it's also a good proof
+for how Hans tries to ignore all the existing infrastructure for various
+reasons.
