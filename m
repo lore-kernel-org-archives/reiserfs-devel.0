@@ -1,66 +1,129 @@
-From: Nikita Danilov <nikita@clusterfs.com>
-Subject: Re: Problem - reiser4(2004.08.13), apache(2.0.50) and "AllowOverride All"
-Date: Wed, 25 Aug 2004 19:54:10 +0400
-Message-ID: <16684.46626.197582.409595@gargle.gargle.HOWL>
-References: <412B71F6.6020603@zappa.cx>
-	<1093373015.9503.3.camel@leto.cs.pocnet.net>
-	<20040825074246.GO5154@backtop.namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Wed, 25 Aug 2004 12:53:28 -0700
+Message-ID: <412CEE38.1080707@namesys.com>
+References: <20040824202521.GA26705@lst.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20503-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20504-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040825074246.GO5154@backtop.namesys.com>
+In-Reply-To: <20040824202521.GA26705@lst.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: Christophe Saout <christophe@saout.de>, Andreas Sundstrom <sunkan@zappa.cx>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Christoph Hellwig <hch@lst.de>
+Cc: akpm@osdl.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Alex Zarochentsev writes:
- > On Tue, Aug 24, 2004 at 08:43:35PM +0200, Christophe Saout wrote:
- > > Am Dienstag, den 24.08.2004, 18:51 +0200 schrieb Andreas Sundstrom:
- > > 
- > > > If I enable "AllowOverride All" in apache it can no longer serve files
- > > > from reiser4 filesystems.
- > > > 
- > > > Here's an error from apache:
- > > > 
- > > > (13)Permission denied: /var/www/htdocs/valid-xhtml11.png/.htaccess pcfg_openfile: unable to check htaccess file, ensure it is 
- > > > readable, referer: http://zappa.cx/
- > > 
- > > Well, this as a ENOTDIR vs. EPERM problem.
- > > 
- > > Apache2 expects the filesystem to return ENOTDIR when it tries to access
- > > some_file/.htaccess. reiser4 returns EPERM and apache2 thinks that
- > > some_file is actually a directory but doesn't have permissions to access
- > > that directory.
- > 
- > yes. exactly.  It is strange that reiser4 passes -ENOTDIR to upper levels
- > in that case. 
+I had not intended to respond to this because I have nothing positive to 
+say, but Andrew said I needed to respond and suggested I should copy 
+Linus. Sigh.
 
-Actual problem is that open(path, O_DIRECTORY) always succeeds in
-reiser4, see fs/namei.c:
+Dear Christoph,
 
-		if (lookup_flags & LOOKUP_DIRECTORY) {
-			err = -ENOTDIR; 
-			if (!inode->i_op || !inode->i_op->lookup)
-				break;
-		}
+Let me see if I can summarize what you and your contingent are saying, 
+and if I misconstrue anything, let me know.;-)
 
-so all applications using this flag to check whether file is directory
-or not are bound to fail.
+You ignored everything I said during the discussion of xattrs about how 
+there is no need to have attributes when you can just have files and 
+directories, and that xattrs reflected a complete ignorance of name 
+space design principles.  When I said we should just add some nice 
+optional features to files and directories so that they can do 
+everything that attributes can do if they are used that way, you just 
+didn't get it.  You instead went for the quick ugly hack called xattrs.  
+You then got that ugly hack done first, because quick hacks are, well, 
+quick.  I then went about doing it the right way for Reiser4, and got 
+DARPA to fund doing it.  I was never silent about it.
 
-In this case, apache calls
+Making files into directories caused only two applications out of the 
+entire OS to notice the change, and that was because of a bug in what 
+error code we returned that we are going to fix.  You think that was a 
+disaster; I think it was a triumph.
 
-    open("/var/www/htdocs/valid-xhtml11.png", O_DIRECTORY)
+Now a cleanly architected filesystem with no attributes and just files 
+and directories that can do everything attributes are used for exists.  
+You don't want it to have the competitive advantage.  Instead, you want 
+it to have its clean design excised until you have something that 
+duplicates it ready to go, and only then should it be allowed that users 
+will use the features of your competitor's filesystem which you 
+disdained implementing for so long.
 
-it returns without error, so apache thinks that valid-xhtml11.png is a
-directory and proceeds with accessing .htaccess file in it.
+Since you never studied or understood namespace design principles (or 
+you would not have created and supported xattrs), you want to rename it 
+to be called VFS, rewrite what we have done, and take over as the 
+maintainer, mangling its design in a committee clusterfuck as you go. 
 
- > 
- > -- 
- > Alex.
+We have just implemented very trivial semantic enhancements of the FS 
+namespace, nothing like as ambitious as www.namesys.com/whitepaper.html 
+or WinFS, and you are already pissing your pants.
 
-Nikita.
+Is that a fair summary?
+
+Eat my dust. 
+
+Hans
+
+PS
+
+I should of course qualify what I have said.  The use of files and 
+directories in place of attributes is not a finished work.  It has bugs, 
+sys_reiser4() does not yet work, and there are little features still 
+missing like having files readdir ignores.
+
+Still, except for the bugs, what we have is usable, and there are a lot 
+of happy reiser4 users right now even with the bugs. It will need a 
+little bit more time, and then all the pieces will be in place.
+
+PPS
+
+If you implement your filesystems as reiser4 plugins, and rename 
+reiser4's plugin code to be called "vfs", your filesystems will go 
+faster.  Not as fast as reiser4 though, because it has a better layout 
+and that affects performance a lot, but faster is faster....  See 
+www.namesys.com/benchmarks.html for details.
+
+PPPS
+
+ Since we have such a performance lead, Namesys is about to change its 
+focus from the storage layer to semantics, look at 
+www.namesys.com/whitepaper.html for details.  Semantic enhancements are 
+the important stuff, and finally Namesys is where we have all the 
+storage layer prerequisites done right, and the real work can begin.  
+The gap between us is about to widen further.
+
+
+
+Christoph Hellwig wrote:
+
+>After looking trough the code and mailinglists I'm quite unhappy with
+>a bunch of user-visible changes that Hans sneaked in and make reiser4
+>incompatible with other filesystems 
+>
+if we leave you in the dust, run faster.... not my problem....
+
+
+>Given these problems I request that these interfaces are removed from
+>reiser4 for the kernel merge, and if added later at the proper VFS level
+>after discussion on linux-kernel and linux-fsdevel, like we did for
+>xattrs.
+>
+>
+>  
+>
+If you can't help fight WinFS, then get out of the way.  Namesys is on 
+the march.  Read www.namesys.com/whitepaper.html.
+
+Or, be smart, recognize that reiser4 is faster and more flexible than 
+your storage layers because we are older and wiser and worked harder at 
+it, join the team, and start contributing plugins that tap into the 
+higher performance it offers.
+
+Microsoft tried to build a storage layer that could handle small objects 
+without losing performance, failed, and gave up at considerable cost to 
+their architecture and pocketbook.
+
+We just broke a hole in the enemy line.  You could come swarming through 
+it with us, but it sounds like you prefer complaining to HQ that we are 
+getting too far in front of you.
+
