@@ -1,39 +1,56 @@
-From: Jens Benecke <jens@spamfreemail.de>
-Subject: Re: Errors requiring --rebuild-tree in 2.4.23
-Date: Sat, 13 Dec 2003 18:38:29 +0100
-Sender: news <news@sea.gmane.org>
-Message-ID: <brfiql$orq$1@sea.gmane.org>
-References: <br9soe$h0h$1@sea.gmane.org> <1071152521.11147.88.camel@tiny.suse.com> <bra6s2$9ug$1@sea.gmane.org> <3FD8C398.6040903@namesys.com>
+From: "Jedi Ninja" <jedi@ninja.dynup.net>
+Subject: fsck.reiser4 errors
+Date: Sat, 13 Dec 2003 12:02:46 -0600
+Message-ID: <20031213180246.3042.qmail@ninja.dynup.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16342-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16343-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; format="flowed"; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hans Reiser wrote:
+trinity root # fsck.reiser4 /dev/hda8
+ *** note about $25 support *** 
 
-> errors like this are not due to a lack of data-logging.
->=20
-> Dec  1 06:26:05 artus kernel: is_leaf: item location seems wrong (second
-> one): *3.6* [113366 113466 0x1 DIRECT], item_len 280, item_location 1216,
-> free_space(entry_count) 65535
+Fscking the /dev/hda8 block device.
+Will check the consistency of the Reiser4 SuperBlock.
+Will check the consistency of the Reiser4 FileSystem.
+Will use (default) params.
+Continue?
+(Yes/No): Yes
+Fatal: Device operation "read" isn't implemented.
+Fatal: Can't read master super block.
+Fatal: Failed to open teh master super block.
+Fatal: Cannot open the FileSystem on (/dev/hda8).
+Segmentation fault 
 
-Hello Hans,
+trinity root # ls -l /dev/hda8
+lr-xr-xr-x    1 root ... /dev/hda8 -> ide/host0/bus0/target0/lun0/part8
+trinity root # ls -l /dev/ide/host0/bus0/target0/lun0/part8
+brw-------    1 root ... /dev/ide/... 
 
-can you imagine a hardware failure causing these errors that does not show
-up in the logs? Usually IDE disk failures are accompanied with IDE layer
-errors, unless the disk is totally down (which it isn't in this case).
+ 
 
+I get the same errors if I try to fsck the long (devfs-style) device. 
 
+ --check
+ --fix
+ --build-sb
+ --build-fs 
 
---=20
-Jens Benecke (jens at spamfreemail.de)
-http://www.hitchhikers.de - Europaweite kostenlose Mitfahrzentrale
-http://www.spamfreemail.de - 100% saubere Postf=E4cher - garantiert!
-http://www.rb-hosting.de - PHP ab 9? - SSH ab 19? - g=FCnstiger Traffic
+None of these work, though --build-sb says it can't find the superblock 
+(after the error about read not being implemented) and offers to make a new 
+one. 
 
+I can read from the device, even make a backup, but mounting it causes 
+problems (mount hangs forever).  I know I'm not supposed to keep important 
+stuff there, and I do make backups, but there's still several hours of work 
+on that partition.  I'm certainly willing to spend the $25 if you think you 
+can get this back.  (In truth, I'd kind of rather break out the hex editor 
+or a grep of the raw filesystem than nuke that partition.) 
+
+(No PGP signature because keyring was on that partition.)
