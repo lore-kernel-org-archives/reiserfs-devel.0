@@ -1,44 +1,84 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: precise characterization of ext3 atomicity
-Date: 05 Sep 2003 09:47:20 -0400
-Message-ID: <1062769640.31951.209.camel@tiny.suse.com>
-References: <3F574A49.7040900@namesys.com>
-	 <20030904085537.78c251b3.akpm@osdl.org> <3F576176.3010202@namesys.com>
-	 <20030904091256.1dca14a5.akpm@osdl.org> <3F57676E.7010804@namesys.com>
-	 <20030904181540.GC13676@matchmail.com> <3F578656.60005@namesys.com>
-	 <20030904132804.D15623@schatzie.adilger.int> <3F57AF79.1040702@namesys.com>
-	 <20030904160344.E15623@schatzie.adilger.int>
+From: Steven Pratt <slpratt@austin.ibm.com>
+Subject: Re: dbench regression in 2.6
+Date: Fri, 05 Sep 2003 10:24:46 -0500
+Message-ID: <3F58AABE.5050800@austin.ibm.com>
+References: <3F5636F5.4060000@austin.ibm.com> <3F563B3B.6060406@namesys.com> <200309041138.40795.vs@namesys.com> <3F574AEE.7080402@austin.ibm.com> <20030904175853.GB13676@matchmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15576-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15577-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030904160344.E15623@schatzie.adilger.int>
+In-Reply-To: <20030904175853.GB13676@matchmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Andreas Dilger <adilger@clusterfs.com>
-Cc: Hans Reiser <reiser@namesys.com>, Mike Fedyk <mfedyk@matchmail.com>, Andrew Morton <akpm@osdl.org>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Mike Fedyk <mfedyk@matchmail.com>
+Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
 
-On Thu, 2003-09-04 at 18:03, Andreas Dilger wrote:
-> On Sep 05, 2003  01:32 +0400, Hans Reiser wrote:
-> > Andreas Dilger wrote:
-> > >It is possible to do the same with ext3, namely exporting journal_start()
-> > >and journal_stop() (or some interface to them) to userspace so the application
-> > >can start a transaction for multiple operations.  We had discussed this in
-> > >the past, but decided not to do so because user applications can screw up in
-> > >so many ways, and if an application uses these interfaces it is possible to
-> > >deadlock the entire filesystem if the application isn't well behaved.
-> >
-> > That's why we confine it to a (finite #defined number) set of 
-> > operations within one sys_reiser4 call.  At some point we will allow 
-> > trusted user space processes to span multiple system calls (mail server 
-> > applicances, database appliances, etc., might find this useful).  You 
-> > might consider supporting sys_reiser4 at some point.
+Mike Fedyk wrote:
 
-Please rename sys_reiser4 if you want it to be a generic use syscall ;-)
+>On Thu, Sep 04, 2003 at 09:23:42AM -0500, Steven Pratt wrote:
+>  
+>
+>>Vladimir Saveliev wrote:
+>>
+>>    
+>>
+>>>Hi
+>>>
+>>>On Wednesday 03 September 2003 23:04, Hans Reiser wrote:
+>>>
+>>>      
+>>>
+>>>>Steven Pratt wrote:
+>>>>
+>>>>        
+>>>>
+>>>>>Is anyone looking into the dbench multitheaded regression in 2.6 that I 
+>>>>>reported here a couple of weeks ago? 
+>>>>>    
+>>>>>
+>>>>>          
+>>>>>
+>>>Sorry, I was unable to find your report in mail archives. Could you, 
+>>>please, remind what is the problem?
+>>>
+>>>I don't see any change in the 
+>>>
+>>>      
+>>>
+>>>>>latest trees.
+>>>>>
+>>>>>    
+>>>>>
+>>>>>          
+>>>>>
+>>The problem showed up in 2.6.0-test1, and every kernel since.  The 
+>>problem is that from 2.5.65 (earliest data I have) to 2.5.69 dbench on 
+>>reiserfs with 16 clients got a throughput of ~200MB/sec.  In 2.5.70 
+>>through 2.5.75 the score went up to ~280MB/sec, a good thing.  But in 
+>>2.6.0-test1 the throughput dropped to below 50 MB/sec.  Since then it 
+>>has risen slightly but still at only around 60MB/sec.  Single client 
+>>dbench showed similar, although much less dramatic changes.  No other 
+>>file system exhibited a change in the 2.6.0-test1 kernel so this seems 
+>>to be unique to reiserfs.
+>>    
+>>
+>
+>Did anything change in the testing at all?  Can you try again with your
+>current software versions on 2.5.75, and reproduce the higher speeds?
+>  
+>
+No, nothing changed in the test setup.  Same dbench, same disk, same 
+distro, just different kernel. 
 
--chris
+>Check the diffstat for the test1 release and see if there are any reiserfs
+>changes...
+>
+I believe that Oleg already said there were no changes that look like 
+they would have caused this.  More likely the behavior of something 
+reiser is using changed which is having a bad effect on resierfs.
 
+Steve
 
