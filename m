@@ -1,41 +1,34 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: ReiserFS Bug - Big Problem
-Date: Mon, 17 Jun 2002 13:43:57 +0400
-Message-ID: <20020617134357.A29338@namesys.com>
-References: <000001c215e1$df905c00$b44f5ec2@Schleppi>
+From: Alexander Saers <alex@saers.com>
+Subject: bad blocks
+Date: Mon, 17 Jun 2002 17:19:18 +0200 (CEST)
+Message-ID: <20020617171628.C74247-100000@doriath.saers.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10757-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10758-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <000001c215e1$df905c00$b44f5ec2@Schleppi>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sebastian Weitzel <sebastian.weitzel@fh-stralsund.de>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+Hello
 
-On Mon, Jun 17, 2002 at 11:32:17AM +0200, Sebastian Weitzel wrote:
+It seams that my harddrive have some bad sectors. I therefore made some
+researche on how to handle it. I found this peace of information
 
-> I was unpacking a big file (700 MB) and in this operation the system
-> crashed. 
+http://www.reiserfs.org/bad-block-handling.html
 
-What is the kernel version you are using?
+But this only makes the sectors busy and the next reiserfsck will then
+detect this and remove the bussy mark. Isnt there a way to create files on
+the bad sectors so that nobody uses them. Not even in the future after a
+reiserfsck. Like if i have a folder on the drive that says
+/badblocks/sector8004
+/badblocks/sector8010
+etc etc
 
-> To prevent errors I did a reiserfsck, but this stops with:
-> get_next_directory_item: 41005 275370 0x1 DIR is not found
+Thanx fo a good filesystem
 
-What reiserfsck version do you use?
+/Alexander
 
-> I did an reiserfsck --rebuildtree but this don't worked also, now every
 
-What error reiserfsck --rebuildtree have produced for you?
-Or was it succesful?
-
-Thank you for the report.
-
-Bye,
-    Oleg
