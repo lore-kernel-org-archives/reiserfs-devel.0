@@ -1,55 +1,64 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
+From: Linus Torvalds <torvalds@osdl.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Sun, 29 Aug 2004 23:12:06 -0400
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <1093835526.8099.217.camel@lade.trondhjem.org>
-References: <Pine.LNX.4.44.0408271043090.10272-100000@chimarrao.boston.redhat.com>
-	 <412F7D63.4000109@namesys.com> <20040827230857.69340aec.pj@sgi.com>
-	 <20040829150231.GE9471@alias> <4132205A.9080505@namesys.com>
-	 <20040829183629.GP21964@parcelfarce.linux.theplanet.co.uk>
-	 <20040829185744.GQ21964@parcelfarce.linux.theplanet.co.uk>
-	 <41323751.5000607@namesys.com>
-	 <20040829212700.GA16297@parcelfarce.linux.theplanet.co.uk>
-	 <Pine.LNX.4.58.0408291431070.2295@ppc970.osdl.org>
-	 <1093821430.8099.49.camel@lade.trondhjem.org>
-	 <Pine.LNX.4.58.0408291641070.2295@ppc970.osdl.org>
-	 <1093830135.8099.181.camel@lade.trondhjem.org>
-	 <Pine.LNX.4.58.0408291919450.2295@ppc970.osdl.org>
+Date: Sun, 29 Aug 2004 20:55:02 -0700 (PDT)
+Message-ID: <Pine.LNX.4.58.0408292042380.2295@ppc970.osdl.org>
+References: <4132205A.9080505@namesys.com> <20040829183629.GP21964@parcelfarce.linux.theplanet.co.uk>
+ <20040829185744.GQ21964@parcelfarce.linux.theplanet.co.uk> <41323751.5000607@namesys.com>
+ <20040829212700.GA16297@parcelfarce.linux.theplanet.co.uk>
+ <Pine.LNX.4.58.0408291431070.2295@ppc970.osdl.org> <1093821430.8099.49.camel@lade.trondhjem.org>
+ <Pine.LNX.4.58.0408291641070.2295@ppc970.osdl.org> <1093830135.8099.181.camel@lade.trondhjem.org>
+ <Pine.LNX.4.58.0408291919450.2295@ppc970.osdl.org>
+ <20040830030157.GE16297@parcelfarce.linux.theplanet.co.uk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.58.0408291919450.2295@ppc970.osdl.org>
+Return-path: <reiserfs-list-return-21100-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <20040830030157.GE16297@parcelfarce.linux.theplanet.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Alexander Viro <viro@parcelfarce.linux.theplanet.co.uk>, Hans Reiser <reiser@namesys.com>, flx@msu.ru, Paul Jackson <pj@sgi.com>, riel@redhat.com, ninja@slaphack.com, diegocg@teleline.es, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, Linux Filesystem Development <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: viro@parcelfarce.linux.theplanet.co.uk
+Cc: Trond Myklebust <trond.myklebust@fys.uio.no>, Hans Reiser <reiser@namesys.com>, flx@msu.ru, Paul Jackson <pj@sgi.com>, riel@redhat.com, ninja@slaphack.com, diegocg@teleline.es, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, Linux Filesystem Development <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-P=E5 su , 29/08/2004 klokka 22:31, skreiv Linus Torvalds:
 
-> So together with the fact that nobody really _wants_ hardlinks to=20
-> directories, I think the right answer is "no". It's not a problem as
-> long as the attributes streams are always tied to the file/directory
-> they are attributes of - then the "directory link" is really just a
-> file link, and can't cause any cycles.
 
-Right.
+On Mon, 30 Aug 2004 viro@parcelfarce.linux.theplanet.co.uk wrote:
+> > 
+> > So I don't see any way to extend pathname semantics to distinguish between 
+> > "directory contents" and "directory attribute stream". 
+> 
+> I do, actually.  There might be a way and it is kinda-sorta similar to
+> your openat() variant, but lives in normal namespace.  No, I'm not too
+> fond of that, but since we are discussing weird variants anyway...
+> 
+> 	a) associated directory tree of object is not automounted on top
+> of it.  Instead of that, we always do detached vfsmount (and do it on demand -
+> see below)
+> 	b) we have a bunch of pseudo-symlinks in /proc/<pid>/fd/ - same
+> kind as what we already have there, but instead of (file->f_vfsmount,
+> file->f_dentry) they lead to associated vfsmount (allocated if needed).
+> Once we get a reference to such guy, we can
+> 	* do further lookups
+> 	* chdir there and poke around
+> 	* hell, we can even bind it someplace (that will require slight change
+> in attach_mnt() logics, but it's not hard) and get it permanently mounted
 
-> Do we have any servers that implement it? I think NFSv4 might be a go=
-od=20
-> test-case if so.
+Well, the above _is_ the same as "openat()", really. It's just using a
+filesystem starting point to emulate a new system call. Same thing
+conceptually. You could do pretty much any system call as a filesystem
+action if you wanted to ;)
 
-I believe Solaris Express already has an implementation, so I should
-have at least one server implementation available in the basement.
-So probably does Hummingbird, since their NFSv4 server runs on Windows.
+I don't disagree with doing so - as a way to expose the new system call to
+scripts. But I don't think you're being entirely intellectually honest if
+you think this suddendly makes it be "one namespace". It's still a
+secondary namespace rooted in an entry in the normal ones - exactly like
+"openat()". 
 
-CITI is working on the Linux code, but I'm not sure how far they've com=
-e
-on the server side. I'll ask Bruce in the morning...
+For a non-script, a native "openat()" interface would be more efficient
+and less confusing, and conceptually no different from yours.  No reason
+we couldn't have both, since they are 100% equivalent and would share the
+same code anyway...
 
-Cheers,
-  Trond
--
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+		Linus
