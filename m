@@ -1,48 +1,51 @@
-From: Mariusz Mazur <mmazur@kernel.pl>
-Subject: Invalid use of asm/unaligned.h
-Date: Wed, 11 Aug 2004 21:48:42 +0200
-Message-ID: <200408112148.42125.mmazur@kernel.pl>
+From: Spam <spam@tnonline.net>
+Subject: Re: implementing reiserfs in C++ for a new OS
+Date: Wed, 11 Aug 2004 22:21:38 +0200
+Message-ID: <695292334.20040811222138@tnonline.net>
+References: <71d3364904080706112e72fb6b@mail.gmail.com>
+ <20040809172437.GP1284@nysv.org> <71d3364904080922267e8c14af@mail.gmail.com>
+ <200408101312.48888.reiserfs-list@quinnh.org> <4119273E.1040104@namesys.com>
+ <20040810211951.GU1284@nysv.org> <41194690.5050908@namesys.com>
+ <1365645117.20040811065416@tnonline.net> <4119B7D1.7000705@namesys.com>
+Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20211-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20213-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <4119B7D1.7000705@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-I'm the linux-libc-headers* maintainer and after the release of version 
-reiserfsprogs 3.6.18 I was informed that they don't build correctly against 
-llh. A couple of months ago a patch was added to reiserfsprogs that fixed 
-access to unaligned memory on ia64. Fact of the matter is that 
-asm/unaligned.h is *not* a userland header (and as such was removed from llh) 
-and you can call good luck the fact that it's userland friendly on ia64. On 
-most archs that it's needed on (those that do not support unaligned memory 
-access) the header will either not work cause it requires some kernel 
-internal stuff, or will not work cause it's plain marked as kernel only 
-(ifdefed __KERNEL__ as on arch-ppc).
+<snip>
 
-Now the nice thing to do would be to switch to some more userland friendly way 
-of accessing unaligned memory, since using kernel headers for such things is 
-not a good idea. I don't have too much options for making those headers 
-userland friendly and adding them to llh, since I can't call any external 
-functions (like memcpy) from llh and I don't believe adding lots of asm code 
-by coding my own functions for that is a good idea (neither have I the 
-expertise nor the resources to do it correctly).
-So - what will it be? :)
+> If  you  translate  a  poem  into  french,  it  is  still rightfully
+> copyright protected by the original author.
 
-Oh, and please do cc me with any replies since I'm not subscribed to this 
-list.
+  Indeed.  But  I  could write another poem which is based on the same
+  ideas.  Another  example  would  be  an  idea about a cool 3D GUI it
+  doesn't  mean  no  one else can implement that idea. I would have to
+  patent  it (in those countries that allow software patents) in order
+  to protect the idea.
 
-* http://ep09.pld-linux.org/~mmazur/linux-libc-headers
+  Perhaps the line where copyright is applicable or not is very faint.
+
+> But  hey,  these guys are just doing this work for academic purposes
+> they  say and not releasing it to the world, so I think they are not
+> going  to be violating the GPL, so it is all nothing to worry about.
+> Maybe  this  sort  of  thing  makes for a good student assignment in
+> their view, I don't know....
+
+  It  would probably be a good student assignment. Reiser4 is a modern
+  and very advanced file system with many interesting aspects. I think
+  this  discussion  for most of us is on the theoretical level on what
+  is acceptable or not?
+
+> Hans
 
 
--- 
-In the year eighty five ten
-God is gonna shake his mighty head
-He'll either say,
-"I'm pleased where man has been"
-Or tear it down, and start again
+
+
