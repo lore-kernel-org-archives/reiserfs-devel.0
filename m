@@ -1,40 +1,32 @@
-From: Soeren Sonnenburg <reiserfs@nn7.de>
-Subject: free space seems wrong...
-Date: 05 Mar 2003 18:53:24 +0100
-Message-ID: <1046886804.23752.25.camel@calculon>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: reiserfsprogs 3.6.5-pre2 release.
+Date: Wed, 5 Mar 2003 21:10:55 +0300
+Message-ID: <200303052110.55512.vitaly@namesys.com>
+References: <200302251650.22469.vitaly@namesys.com> <b43hko$qeg$1@satsuki.furryterror.org> <200303051848.25635.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13081-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-13082-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200303051848.25635.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Dieter =?utf-8?q?N=C3=BCtzel?= <Dieter.Nuetzel@hamburg.de>, reiserfs-list@namesys.com
 
-Hi.
+> Same here with all my "normal" SCSI disks.
+> See my former "reiserfsprogs-3.6.5-pre2: volumes do not mount during boot"
+> post.
+>
+> Should I try reiserfsck --rebuild-tree?
+>
+> Thanks,
+> 	Dieter
 
-I get
+No, you should run reiserfsck --check manually and follow the instructions.
 
-is_leaf: free space seems wrong: level=1, nr_items=7, free_space=3468 rdkey 
-vs-5150: search_by_key: invalid format found in block 4792161. Fsck?
-is_leaf: free space seems wrong: level=1, nr_items=7, free_space=3468 rdkey 
-vs-5150: search_by_key: invalid format found in block 4792161. Fsck?
+-- 
 
-when accessing a certain directory using du and on the prompt
-Input/output error.
-
- This does not happen when I iterate over the files by just using find /
-...
- 
-The disk was full somewhen but now is only half full.
-
-Should I be worried / is it necessary to fix the filesystem ?
-The problem is, this filesystem is like 2-3 years old and was converted
-to reiserfs 3.6 maybe a year ago...but as it is a production environment
-I would not want to put it down at all...
-
-Thanks for any help,
-Soeren.
-
+Thanks,
+Vitaly Fertman
