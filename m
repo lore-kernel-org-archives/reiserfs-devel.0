@@ -1,11 +1,11 @@
-From: Vitaly Fertman <vitaly@namesys.com>
+From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
 Subject: Re: a hosed reiserfs
-Date: Fri, 25 Jun 2004 20:06:55 +0400
-Message-ID: <200406252006.55426.vitaly@namesys.com>
+Date: Fri, 25 Jun 2004 18:48:32 +0200
+Message-ID: <200406251848.32172.Dieter.Nuetzel@hamburg.de>
 References: <20040625115258.A27445@tux.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19381-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19382-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,11 +14,10 @@ In-Reply-To: <20040625115258.A27445@tux.org>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Bruce Israel <israel@tux.org>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: Bruce Israel <israel@tux.org>
 
-Hello, 
-
-On Friday 25 June 2004 19:52, Bruce Israel wrote:
+Am Freitag, 25. Juni 2004 17:52 schrieb Bruce Israel:
 > OK, I've been hosed.  I had a disk crash, and my ReiserFS /home partition
 > doesn't mount (/dev/hdf8 on my machine).
 >
@@ -54,29 +53,13 @@ On Friday 25 June 2004 19:52, Bruce Israel wrote:
 > dd_rescue the partition prior to running "reiserfsck --rebuild-tree"?
 > Maybe incrementing the byte count by 1K and writing in 1K of 0's?  Or
 > another invocation that would get it to read the data?
->
-> Or something else that would get the data back?
->
-> Also, if anyone has any advice on *things to avoid* that might potentially
-> lower the probability of data recovery, I'd appreciate it.  I've been very
-> cautious in what I do so that I don't exacerbate the problem. Thanks.
->
-> Bruce
->
-> ======== reiserfsck output
->
-> reiserfsck 3.6.11 (2003 www.namesys.com)
 
-It would be better to use a newer version of reiserfsprogs.
+You can try dd_rescue in revers mode, too.
+So you could get your "complete" partition eventually back.
 
-> bread: Cannot read the block (4161536): (Input/output error).
+Used that several times (some tries in normal and then some in reverse mode).
+Then a --rebuild-tree run.
 
-what do you see in the syslog? any related message about IO 
-error or about an access beyond end of the device? It could also 
-be the case that the partition end is beyond the harddrive size. 
-check it please.
+Good luck.
 
--- 
-Thanks,
-Vitaly Fertman
-
+-Dieter
