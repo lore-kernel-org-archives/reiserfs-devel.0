@@ -1,43 +1,24 @@
-From: Alexander Lyamin <flx@msu.ru>
-Subject: Re: confirmation
-Date: Mon, 14 Jul 2003 12:36:58 +0400
-Message-ID: <20030714123658.A28645@t-raenon.nmd.msu.ru>
-References: <E19bBVM-00035q-00@grouse.mail.pas.earthlink.net>
-Reply-To: flx@msu.ru
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Horrible ftruncate performance
+Date: Mon, 14 Jul 2003 12:45:29 +0400
+Message-ID: <3F126DA9.3060004@namesys.com>
+References: <200307112151.05829.Dieter.Nuetzel@hamburg.de> <Pine.LNX.4.30.0307120213080.30730-100000@divine.city.tvnet.hu> <20030713125804.GB6061@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14924-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14925-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <E19bBVM-00035q-00@grouse.mail.pas.earthlink.net>
+In-Reply-To: <20030713125804.GB6061@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: TristanWW@SmileAtYou.com
-Cc: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Oleg Drokin <green@namesys.com>
+Cc: Szakacsits Szabolcs <szaka@sienet.hu>, Dieter N?tzel <Dieter.Nuetzel@hamburg.de>, Chris Mason <mason@suse.com>, Marc-Christian Petersen <m.c.p@gmx.net>, reiserfs-list@namesys.com, Philippe Gramoull? <philippe.gramoulle@mmania.com>
 
-
-sorry. evaluated.
-
-Fri, Jul 11, 2003 at 08:57:00PM -0700, TristanWW@SmileAtYou.com wrote:
-> Confirmation for reiserfs-list@namesys.com
-> 
-> Thank you for your interest in my work.  After you complete the verification below you will be added to my list to receive updates whenever a piece is completed.
-> 
-> If you didn't sign up, perhaps a friend added you.
-> 
-> Reply to this email and type 'Yes Please' in the body and you will be added.  Do nothing and you will be forgotten.
-> 
-> Derek Olson
-> Tristan Woodworks
-> Your soul speaks Art.
-> http://www.SmileAtYou.com
-> Highlands Ranch, Colorado
-> 
-> 
+reiser4 is the cure for this.  soon, very soon.
 
 -- 
-everything zen
-lex lyamin
+Hans
+
+
