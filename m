@@ -1,42 +1,42 @@
-From: Oleg Drokin <green@namesys.com>
+From: Matthew Bloch <matthew@bytemark.co.uk>
 Subject: Re: How to recover data with a dead journal?
-Date: Fri, 6 Sep 2002 16:17:17 +0400
-Message-ID: <20020906161717.A14965@namesys.com>
-References: <200209061313.24892.matthew@bytemark.co.uk>
+Date: Fri, 6 Sep 2002 13:43:04 +0100
+Message-ID: <200209061343.04582.matthew@bytemark.co.uk>
+References: <200209061313.24892.matthew@bytemark.co.uk> <20020906161717.A14965@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11385-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11386-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200209061313.24892.matthew@bytemark.co.uk>
+In-Reply-To: <20020906161717.A14965@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Matthew Bloch <matthew@bytemark.co.uk>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+On Friday 06 September 2002 13:17, Oleg Drokin wrote:
+> Hello!
+>
+> On Fri, Sep 06, 2002 at 01:13:24PM +0100, Matthew Bloch wrote:
+> > Here's a problem; my drive is on its way out but the latest corrupt
+> > sector is the ReiserFS journal (from the ReiserFS in kernel 2.4.18):
+>
+> Usually we deal with HW problems based on http://namesys.com/support.html
+> terms.
+> Similar questions were answered on this list already, though, so you might
+> want to check the archive.
 
-On Fri, Sep 06, 2002 at 01:13:24PM +0100, Matthew Bloch wrote:
-> Here's a problem; my drive is on its way out but the latest corrupt sector is 
-> the ReiserFS journal (from the ReiserFS in kernel 2.4.18):
+Fair enough; I thought there might be some experienced users here who could 
+help as well.  I'm trying dd with a different set of options to try to make 
+it leave gaps where it can't read, so hopefully that should sort it.  If it 
+doesn't I'll put a few dollars your way and make an official support request 
+out of it.
 
-Usually we deal with HW problems based on http://namesys.com/support.html
-terms.
-Similar questions were answered on this list already, though, so you might
-want to check the archive.
+cheers,
 
->   dd if=/dev/hdb3 of=deaddrive conv=noerror
+-- 
+Matthew Bloch         Bytemark Computer Consulting Limited
+                                http://www.bytemark.co.uk/
+                                  tel. +44 (0) 8707 455026
 
-dd still corrupts data in such a case.
-
->   mount deaddrive /old/ -t reiserfs -o loop
-> but mount reports, somewhat cryptically that /old isn't a directory, which it 
-> plainly is :)
-
-Data is shifted, so FS structure is destroyed.
-
-Bye,
-    Oleg
