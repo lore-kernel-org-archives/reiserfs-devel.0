@@ -1,58 +1,38 @@
-From: Ookhoi <ookhoi@humilis.net>
-Subject: Re: Read only rootfs after reiserfsck
-Date: Wed, 12 Nov 2003 12:42:56 +0100
-Message-ID: <20031112114256.GS21370@favonius>
-References: <000001c3a707$58db90e0$7dea1d97@delta> <3FAEA7CA.4000301@gmx.net> <011b01c3a89d$28e03520$0100007f@delta> <3FB19C6E.7030109@gmx.net>
-Reply-To: ookhoi@humilis.net
+From: John Dalbec <jpdalbec@ysu.edu>
+Subject: Re: getting UUID and label of a filesystem
+Date: Wed, 12 Nov 2003 08:35:10 -0500
+Message-ID: <3FB2370E.4000102@ysu.edu>
+References: <3FAAB330.5040503@nrao.edu> <1068152277.2556.13.camel@redeeman.linux.dk> <1068152634.2455.37.camel@dragonball> <3FAFEE88.3040002@ysu.edu> <20031110134246.N10197@schatzie.adilger.int>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16057-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16058-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3FB19C6E.7030109@gmx.net>
+In-Reply-To: <20031110134246.N10197@schatzie.adilger.int>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
-Cc: Paolo Azzaroli <paoloazzaroli@libero.it>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Andreas Dilger <adilger@clusterfs.com>
+Cc: Brian Tinsley <btlists@emageon.com>, reiserfs-list@namesys.com
 
-Carl-Daniel Hailfinger wrote (ao):
-> Can anyone else shed some light on the issue?
+Andreas Dilger wrote:
+> "mount" has not been updated to use libblkid.  I had always intended on
+> doing that, but it was never in the top 10 on my todo list.  I had agreement
+> in principle from Andries Brouwer to use a libblkid in mount instead of
+> having a duplicate set of LABEL/UUID parsing code there, but just lacked
+> the time/incentive to do that part.
+> 
+> It would probably benefit all reiserfs users to get this working, so that
+> you can finally mount reiserfs filesystems by LABEL/UUID, so if someone
+> has some time and wants to contribute back to reiserfs this is a fairly
+> easy project (not kernel hacking ;-).
 
-What is in /etc/fstab, and what does 'fdisk -l /dev/hda' say?
+Brian Tinsley wrote:
+> I use labels on SuSE with no problem. Could be an incompatibility with 
+> your mount command, but I'm not sure.
 
+Has SuSE already updated the mount command to use libblkid then?  Or did they 
+insert duplicate LABEL/UUID parsing code for ReiserFS?
+John
 
-> Paolo Azzaroli wrote:
-> > Dear Sir:, I apreciated Your suggestion, I tried it,  but it doesn't
-> > fix my problem.
-> > Anyway, many thank for your kindly attention
-> > Paolo Azzaroli
-> > 
-> > ----- Original Message -----
-> > From: "Carl-Daniel Hailfinger" <c-d.hailfinger.kernel.2003@gmx.net>
-> > To: "Paolo Azzaroli" <paoloazzaroli@libero.it>
-> > Cc: <reiserfs-list@namesys.com>
-> > Sent: Sunday, November 09, 2003 9:47 PM
-> > Subject: Re: Read only rootfs after reiserfsck
-> > 
-> > 
-> > 
-> >> Paolo Azzaroli wrote:
-> >> 
-> >>> Dear Sir, My Linux box has a distro SuSE 8.1, and its HD has 1 swap
-> >>> partition, 3 reiserfs partitions, apart from a NTFS partition (where
-> >>> resides Win2K).
-> >>> Some days ago the Linux box  filesystem had triubles, maybe because
-> >>> of not correct shutdown.
-> >>> After then I repaired the fs (reiserfsck --check etc . . . ); the
-> >>> check operation reported successfull.
-> >>> But when booting the Linux box, the linux root partitions is 
-> >>> "read-only"; the contents of /etc/mtab and /proc/mounts are
-> >>> different. I can mount the root partition (mount -n -o remount,rw 
-> >>> /dev/hda3), but attempt to mount/umount other partitions are
-> >>> frustated by messages as "already mounted or busy"/ "not mounted".
-> >> 
-> >> Delete all lines in /etc/mtab which reference filesystems other than
-> >> your root partition. That should fix it.
