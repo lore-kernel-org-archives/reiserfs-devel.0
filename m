@@ -1,33 +1,35 @@
-From: Toby Dickenson <tdickenson@geminidataloggers.com>
-Subject: Re: Reiserfs, highquality meds source, low rates
-Date: Mon, 19 Apr 2004 13:39:08 +0100
-Message-ID: <200404191339.08313.tdickenson@geminidataloggers.com>
-References: <000001c425b0$1750e0b8$4fa9aa0e@fluridden.com> <20040419115902.GD15007@alias.nmd.msu.ru>
+From: Alexander Lyamin <flx@msu.ru>
+Subject: Re:  Reiserfs, highquality meds source, low rates
+Date: Mon, 19 Apr 2004 17:34:44 +0400
+Message-ID: <20040419133444.GA57@alias.nmd.msu.ru>
+References: <000001c425b0$1750e0b8$4fa9aa0e@fluridden.com> <20040419115902.GD15007@alias.nmd.msu.ru> <4083C0B0.6090607@mweb.co.za>
+Reply-To: flx@msu.ru
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18052-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18053-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040419115902.GD15007@alias.nmd.msu.ru>
 Content-Disposition: inline
+In-Reply-To: <4083C0B0.6090607@mweb.co.za>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: flx@msu.ru, "Grosbeak E. Collating" <roadside@fluridden.com>
+Content-Transfer-Encoding: 7bit
+To: Cami <camis@mweb.co.za>
 Cc: Reiserfs <reiserfs-list@namesys.com>
 
-On Monday 19 April 2004 12:59, Alexander Lyamin wrote:
-> i am just not sure how to kill THIS messages which look so....
-> they dont look like spam, even to me upon first look.
+Mon, Apr 19, 2004 at 02:06:08PM +0200, Cami wrote:
+> >i am just not sure how to kill THIS messages which look so....
+> >they dont look like spam, even to me upon first look.
+> 
+> If you were using SpamAssasin, you wouldn't get these..
+oh sure :)
 
-You need more software....
+would you mind and check the headers ? :)
+if we would not use spamassassin we would have 160+ more
+(what is actually more then daily traffic in this list)
 
-For me, spambayes nailed the original message as spam, and your reply 
-(helpfully quoting all of the orginal) was classified as ham.
-
-http://spambayes.sourceforge.net/
 
 -- 
-Toby Dickenson
-
+"the liberation loophole will make it clear.."
+lex lyamin
