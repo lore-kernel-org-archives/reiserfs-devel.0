@@ -1,30 +1,47 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Problem mounting ReiserFS as root partition
-Date: Mon, 16 Jun 2003 13:21:44 +0400
-Message-ID: <20030616092144.GB12314@namesys.com>
-References: <200306151508.57384.till@tantalo.net> <20030616063609.GA12592@namesys.com> <200306161117.02910.till@tantalo.net>
+From: Jonathan Sambrook <jonathan.sambrook@dsvr.co.uk>
+Subject: Timeframe for 2.4.21 quota patches?
+Date: Mon, 16 Jun 2003 12:24:20 +0100
+Sender: Jonathan Sambrook <jonathan@jsambrook>
+Message-ID: <20030616112420.GA13558@jsambrook>
+Reply-To: Jonathan Sambrook <jonathan.sambrook@dsvr.co.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14556-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=_mail.dsvr.co.uk-14552-1055762069-0001-2"
+Return-path: <reiserfs-list-return-14557-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200306161117.02910.till@tantalo.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+
+--=_mail.dsvr.co.uk-14552-1055762069-0001-2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi,
+
+As ever the Linux lockin bites:
+
+	My hardware needs 2.4.21 and my development work (now) needs reiserfs +
+quota.
+
+Any idea if/when to expect an updated patch?
+
+Regards,
+Jonathan
+
+--=_mail.dsvr.co.uk-14552-1055762069-0001-2
+Content-Type: application/pgp-signature
 Content-Transfer-Encoding: 7bit
-To: Till Gerken <till@tantalo.net>
-Cc: reiserfs-list@namesys.com
+Content-Disposition: inline
 
-Hello!
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.1 (GNU/Linux)
 
-On Mon, Jun 16, 2003 at 11:16:52AM +0200, Till Gerken wrote:
+iD8DBQE+7ajkSrN2iQFE+lgRAmJ5AJ9pAMhseaksj3z9Vui9SUKob138egCeOz9S
+En4Vhobv71RecMF/v8laN2Y=
+=4ox0
+-----END PGP SIGNATURE-----
 
-> kernel (hd0,0)/boot/vmlinuz-2.4.21 root=/dev/hda1,rw hdc=ide-scsi pci=biosirq 
-> idebus=66
-
-I suggest you to replace the comma between "root=/dev/hda1" and "rw" with space.
- 
-Bye,
-    Oleg
+--=_mail.dsvr.co.uk-14552-1055762069-0001-2--
