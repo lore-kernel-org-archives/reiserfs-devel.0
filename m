@@ -1,39 +1,34 @@
 From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: [PATCH]: reiser4 [8/8] reiser4 code
-Date: Thu, 31 Oct 2002 19:12:59 +0300
-Message-ID: <15809.22155.408140.213679@laputa.namesys.com>
-References: <15809.21549.198584.599023@laputa.namesys.com>
-	<Pine.GSO.4.21.0210311107230.16688-100000@weyl.math.psu.edu>
+Subject: [PATCH]: reiser4 [5/8] export remove_from_page_cache()
+Date: Thu, 31 Oct 2002 19:03:03 +0300
+Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <15809.21559.295852.205720@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11865-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <Pine.GSO.4.21.0210311107230.16688-100000@weyl.math.psu.edu>
+Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Alexander Viro <viro@math.psu.edu>
-Cc: Linus Torvalds <Torvalds@Transmeta.COM>, Linux Kernel Mailing List <Linux-Kernel@vger.kernel.org>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: Linus Torvalds <Torvalds@Transmeta.COM>
+Cc: Linux Kernel Mailing List <Linux-Kernel@Vger.Kernel.ORG>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Alexander Viro writes:
- > 
- > 
- > On Thu, 31 Oct 2002, Nikita Danilov wrote:
- > 
- > > Hello, Linus, hyva poika,
- > > 
- > > Reiser4 code proper is 2M. Patch is available at
- > > 
- > > http://namesys.com/snapshots/2002.10.31/fs_reiser4.diff
- > > 
- > > If you want, we can send it to you as source tar ball.
- > 
- > And you want that to be reviewed until tonight?
- > 
+Hello, Linus,
 
-No. But changes to the core are not very complicated. If Linus "reviews"
-and accepts them life of reiser4 would be much simpler.
+    Following patch exports remove_from_page_cache(). reiser4 stores all
+    meta-data in the page cache. When piece of meta-data is removed,
+    corresponding page has to be removed from the page cache (this is
+    similar to truncate, but for meta-data), explicit call to
+    remove_from_page_cache() is required at this point.
 
+Please apply.
 Nikita.
+diff -rup -X dontdiff linus-bk-2.5/mm/filemap.c linux-2.5-reiser4/mm/filemap.c
+--- linus-bk-2.5/mm/filemap.c   Fri Oct 18 03:00:41 2002
++++ linux-2.5-reiser4/mm/filemap.c      Tue Oct 29 17:16:22 2002
+@@ -97,6 +97,7 @@ void remove_from_page_cache(struct page 
+ 	__remove_from_page_cache(page);
+ 	write_unlock(&mapping->page_lock);
+ }
++EXPORT_SYMBOL(remove_from_page_cache);
+ 
+ static inline int sync_page(struct page *page)
+ {
