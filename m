@@ -1,43 +1,46 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: can't find a reiserfs file ssytem!
-Date: Wed, 17 Mar 2004 13:10:25 +0300
-Message-ID: <1079518225.2215.3.camel@tribesman.namesys.com>
-References: <20040317004935.565332B2B57@ws5-7.us4.outblaze.com>
+From: "mite pascoff" <ttl@linuxmail.org>
+Subject: Re: can't find a reiserfs file ssytem! 2
+Date: Wed, 17 Mar 2004 16:03:09 +0200
+Message-ID: <20040317140309.ABECF3982E7@ws5-1.us4.outblaze.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17268-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17269-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040317004935.565332B2B57@ws5-7.us4.outblaze.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: mite pascoff <ttl@linuxmail.org>
+To: Vladimir Saveliev <vs@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Hello
+Ok I did what you sad but some problems accur:
 
-On Wed, 2004-03-17 at 03:49, mite pascoff wrote:
-> please help:
-> after a crash I can't mount my secont partition on which is located my /home dir ... 
+> create a copy of that partition on spare device
+> dd if=problemdevice of=sparedevice
 
-> mount reports: "read_super_block: can't find a reiserfs file ssytem" ... 
+my problem partition is 15GB large and dd stoped after copying 2GB of data with a messige like:
+File size limit exceeded
+So I began testing this part/image of the problem partition
 
-> in the man page it says to run reiserfsck with option --rebuild-sb ... 
+> get the latest reiserfsprogs
+> (ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.13.tar.gz)
 
-> am I going to lose all the data on this partition if I run reiserfsck --rebuild-sb 
+did that
 
-No.
+> reiserfsck --rebuild-sb sparedevice
+> reiserfsck --rebuild-tree sparedevice
 
-> and what it means "to recover a superblock on a reiserfs partition... if yes how can I save my data from being lost ?!
+did that too
 
-create a copy of that partition on spare device
-dd if=problemdevice of=sparedevice
-get the latest reiserfsprogs
-(ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.13.tar.gz)
-reiserfsck --rebuild-sb sparedevice
-reiserfsck --rebuild-tree sparedevice
+> Lets us know the result
+ 
+A LOT of messages came out and after --rebuild-sb and --rebuild-tree reiserfsck --check reports that "No corruptions found" ... but now I cant mount this imige file ... the command I try is "mount -t reiserfs image.file /mnt/test -o loop" even -o loop=/dev/loop[0-3] ... mount exits with the usual error and nothing happens ... so what should I do now ... perform these actions on the problem partition or to find a way to mount the image.file and see if aeverything is OK there ?
+-- 
+______________________________________________
+Check out the latest SMS services @ http://www.linuxmail.org 
+This allows you to send and receive SMS through your mailbox.
 
-Lets us know the result
 
+Powered by Outblaze
