@@ -1,53 +1,37 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: EACCESS vs ENOENT for nonexistent files-within-files
-Date: Wed, 15 Sep 2004 15:40:02 -0700
-Message-ID: <4148C4C2.7070906@namesys.com>
-References: <20040915151803.vl9es48kkosg4k88@www.wagland.net> <16712.21927.550122.367489@thebsh.namesys.com> <41486A99.7050204@poelzi.org>
+From: "Steve Milo" <slavik914@mrbrklyn.com>
+Subject: Reiserfsck --rebuild-tree rendered machine unbootable.
+Date: Wed, 15 Sep 2004 18:53:51 -0500
+Message-ID: <20040915224812.M91258@mrbrklyn.com>
+Reply-To: slavik914@mrbrklyn.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21796-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21797-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41486A99.7050204@poelzi.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "daniel.poelzleithner" <poelzi@poelzi.org>
-Cc: Nikita Danilov <nikita@clusterfs.com>, Paul Wagland <paul@kungfoocoder.org>, evilninja <evilninja@gmx.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-daniel.poelzleithner wrote:
+Hello, I was trying to erase some files in /var/run/sysconfig and
+/var/run/smpppd on my Suse 9.1 box.  Logged in as root I would get 'permission
+denied' when 'ls -l' or 'rm -f'.
+I figured perhaps the filesystem had become corrupted somehow so I decided to
+do  a reiserfsck --rebuild-sb.  That didnt fix what I persumed was a
+permissions issue.
+I then ran a reiserfsck --rebuild-tree and it found quiet a few problems and
+appeared to have fixed them.  I decided to reboot and found that my machine
+was rendered unbootable.  It goes into grub and I can get a grub prompt but I
+receive 'hd(0,0) wrong filesystem' or something to that effect.
+I did not make a backup copy of my filesystem like I should have, I figured I
+could get away with not doing so.  I guess I was wrong.
 
-> Nikita Danilov wrote:
->
-> |  > attributes? Even if the file is world readable? Does this really
-> make sense?
-> |
-> | To make things clear: I have described in my message how things actually
-> | do work in reiser4, so I don't see the point of your questions. If you
-> | think reiser4 semantics is wrong (I am not happy with it too, by the
-> | way), propose to Namesys something better.
->
-> I would suggest to allow lookups when the user can read the file. The x
-> bit should remain for exec on file objects, because console would be
-> pain when every file must have a exec bits to access meta data.
-> When the user can read a file, i don't think that the meta data can be
-> security risk, he has already access to the file.
-> And therefor not write access to file/metas without +w.
->
-> No, its not perfect, but i think more unix like than +x for lookups on
-> files.]
+Any help in this matter would be appreciated.
 
-I like this for access to the builtin metafiles (whose permissions 
-should normally be determined not individually but pased on the plugin 
-and its permissions, but what about files within file-directories?  For 
-them I think we need to allow sys_reiser4 to change the bits 
-independently, and for apps that don't know how to distinguish the 2 
-bits, oh well, change one change the other.
+Thanks,
+Steve M
 
-What are your thoughts?
-
->
-> regards
-> ~ Daniel
+--
+Open WebMail Project (http://openwebmail.org)
 
