@@ -1,50 +1,57 @@
-From: Chris Dukes <pakrat@www.uk.linux.org>
-Subject: Re: Rapid system transfers
-Date: Sat, 20 Mar 2004 02:49:11 +0000
-Sender: <pakrat@www.linux.org.uk>
-Message-ID: <20040320024911.GA30755@parcelfarce.linux.theplanet.co.uk>
-References: <20040320015410.GB10665@mrball.net>
+From: Redeeman <redeeman@redeeman.linux.dk>
+Subject: Re: Reiserfs in 2.6.4-mm
+Date: Sat, 20 Mar 2004 11:46:17 +0100
+Message-ID: <1079779576.17766.0.camel@redeeman.linux.dk>
+References: <20040316065853.93681.qmail@web60304.mail.yahoo.com>
+	 <4056A7A0.1050003@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17337-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17338-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040320015410.GB10665@mrball.net>
+In-Reply-To: <4056A7A0.1050003@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-On Fri, Mar 19, 2004 at 05:54:10PM -0800, Todd Lyons wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
+On Tue, 2004-03-16 at 08:07, Hans Reiser wrote:
+> Timothy Webster wrote:
 > 
-> Recently we've had the need to move a few machine instances from one
-> physical machine to a more powerful machine.  These machines use Reiser
-> (an old version, don't know exactly which one, but it's probably RH 8.0)
-> because a portion of the fs contains a lot of small files.  It requires
-> us to basically bring the system down (database) and rsync it over to
-> another box.  On boxes where we have ext3 filesystems, we can do
-> dump/restore and have the systems up and running in a couple of hours.
-> We don't have the same luxury with this Reiser system.  rsyncing a few
-> million files (100 GB) across a 100 Mbit link is much slower than a
-> comparable dump/restore.
+> >I noticed from Andrews change log:
+> >
+> >Reiserfs updates: mainly new features.
+> >
+> >Does that mean reiserfs4 is "almost" part of 2.6.4-mm?
+> >  
+> >
+> Our tester keeps finding just one more bug before we release, so we 
+> haven't sent it to Andrew yet.
+i guess this means reiser4 is ready for root filesystem within a month
+or so? :) i am really looking forward to it
 > 
-> What do others do to handle this situation?  Are there tools and
-> utilities out there that I'm not aware of?
-
-If most of the files remain unchanged, I'd make an initial copy
-with cpio while things are running and use rsync to copy the changes
-while the database is shut down.
-
-(cpio is somewhat faster for initial copy.  rsync is much better
-for copying the changes).
-Worked great for backing up clearcase VOBs.
-You can test the timing while things are still in production.
-
-
+> >Is it something in the works for later this year?
+> >
+> >I know you guys are tight for cash. Try giving your
+> >good name a plug on my tour of companies this up
+> >coming week.
+> >  
+> >
+> Thanks Tim.
+> 
+> >-regards
+> >-tim
+> >
+> >__________________________________
+> >Do you Yahoo!?
+> >Yahoo! Mail - More reliable, more storage, less spam
+> >http://mail.yahoo.com
+> >
+> >
+> >  
+> >
 -- 
-Chris Dukes
-Been there, done that, got the slightly-charred t-shirt. -- Crowder
+Regards, Redeeman
+redeeman@metanurb.dk
+
