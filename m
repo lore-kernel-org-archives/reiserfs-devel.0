@@ -1,55 +1,39 @@
-From: Soeren Sonnenburg <reiserfs@nn7.de>
-Subject: Re: nfsd-fh: found a name that I didn't expect
-Date: 29 Mar 2003 19:45:34 +0100
-Message-ID: <1048963534.2888.24.camel@fortknox>
-References: <200303281828.55093.bernd-schubert@web.de>
-	 <200303291509.23681.bernd-schubert@web.de>
-	 <20030329171321.A15899@namesys.com>
-	 <200303291606.54910.bernd-schubert@web.de>
-	 <20030329203711.A16762@namesys.com>
+From: Jim Wisniewski <wisnij@rpi.edu>
+Subject: Possible bug (assertion failed)
+Date: Sat, 29 Mar 2003 15:31:14 EST
+Message-ID: <200303292031.h2TKVEQ9000888@smtp3.server.rpi.edu>
+Reply-To: Jim Wisniewski <wisnij@rpi.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13439-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13440-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030329203711.A16762@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: Bernd Schubert <bernd-schubert@web.de>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-On Sat, 2003-03-29 at 18:37, Oleg Drokin wrote:
-> Hello!
-> 
-> On Sat, Mar 29, 2003 at 04:06:54PM +0100, Bernd Schubert wrote:
-> > > The problems seems to have something to do with strange dentries appearing
-> > > in dentry cache, also you have verified that this is not because of fs
-> > > error.
-> > > What kernel are you running?
-> > 2.4.20 with the ptrace patch.
-> 
-> Ok.
+On a system with SuSE 8.0 and some definite filesystem errors, booting from
+the install CD and running "reiserfsck --check /dev/hda6" results in the
+following:
 
-here it is 2.4.20 with ext3 umount patch.
 
-> > > I think may be race with iget4 might cause this, but I am not sure.
-> > > We have a patch for this iget4 race, and if you are willing to test it, I
-> > > can send it to you.
-> > Yes of course I am. I hope the other admins won't kill me, but I guess they 
-> > know that I willing to do experiments from time to time ;-)
-> > Could something worse happen when I try the patch, that could not be fixed by 
-> > simple rebooting ?
-> 
-> See the patch below.
-> It should not break anything.
+reiserfsck 3.x.1b (2002)
+Will read-only check consistency of the filesystem on /dev/hda6
+Will put log info to 'stdout'
 
-Well, we keep getting this error in massess too... and in our case it is
-very likely that clients access the same file from all the clients...
+Do you want to run this program?[N/Yes] (note need to type Yes):Yes
+###########
+reiserfsck --check started at Sat Mar 29 14:17:51 2003
+###########
+Replaying journal..
+0 transactions replayed
+Checking S+tree.. /  1 (of   3)/  2 (of 128)/ 83 (of 170)bit 2015394848,
+bitsize 2430532
+reiserfsck: bitmap.c:160: reiserfs_bitmap_test_bit: Assertion `bit_number <
+bm->bm_bit_size' failed.
+Aborting
 
-However I cannot quickly test that atm but if it is really safe I might
-test it next week.
-
-Soeren.
 
