@@ -1,49 +1,47 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: MAX_TRANS_AGE tuning
-Date: Wed, 06 Oct 2004 14:37:33 +0400
-Message-ID: <1097059052.13026.19.camel@tribesman.namesys.com>
-References: <e96ff12004100405291b9f174c@mail.gmail.com>
-	 <e96ff1200410040532787d4c62@mail.gmail.com>
+From: Jure =?ISO-8859-2?Q?Pe=5Far?= <pegasus@nerv.eu.org>
+Subject: Re: reiserfs on Redhat Enterprise Linux
+Date: Wed, 6 Oct 2004 15:24:01 +0200
+Message-ID: <20041006152401.5cb2c4a7.pegasus@nerv.eu.org>
+References: <1096987891.4297.383.camel@ketil>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22007-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-22008-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e96ff1200410040532787d4c62@mail.gmail.com>
+In-Reply-To: <1096987891.4297.383.camel@ketil>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Ash <ashrat@gmail.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-Hello
+On Tue, 05 Oct 2004 15:51:32 +0100
+Ketil Froyn <reiserfs@ketil.froyn.name> wrote:
 
-On Mon, 2004-10-04 at 16:32, Ash wrote:
-> Sorry, accidently sent the previous message before completing the compose. :-(
-> 
-> What is the difference between JOURNAL_MAX_TRANS_AGE and JOURNAL_MAX_COMMIT_AGE 
-> defined in reiserfs_fs.h ?
-> 
-> I see that both are set to 30 as default. Would reducing the either of
-> them to lower
-> values give more persistency in filesystem operations in post-crash scenarios ?
-> 
+> Hi,
+>=20
+> I am investigating a migration of a system relying on reiserfs to Redhat
+> Enterprise Linux 3. As I understand it, reiserfs is unsupported in
+> RHEL3, but is available anyway in a kernel-unsupported package or
+> something like that. However, it seems the reiserfs-utils package is not
+> available.
 
-Reducing JOURNAL_MAX_TRANS_AGE should cause transactions to flush
-earlier. Once a transaction is flushed - it will be replaied on
-post-crash reboot.
+They still keep it in their source tree, but it's at the same level as it is
+in base kernel RHEL is built upon.=20
 
-> What are the side-effects of changing these values ?
-> 
-> Thanks,
-> Ash
-> 
-> 
-> On Mon, 4 Oct 2004 17:59:48 +0530, Ash <ashrat@gmail.com> wrote:
-> > Hi
-> > 
-> > What is the difference between
-> >
-> 
+I have 2.4.21-9.EL kernel here that i've patched with reiserfs from 2.4.27 i
+think and is working ok in production (large mail server). If you want, i
+can put the tarball somewhere online.
 
+> Which version of reiserfsprogs should I use to make sure I have one that
+> works for me? For instance, should I always go for the latest one (which
+> is 3.6.18 today), or do I need to match reiserfs-utils version to kernel
+> version in some fashion?
+
+Latest, of course :)
+
+
+--=20
+
+Jure Pe=E8ar
+http://jure.pecar.org/
