@@ -1,38 +1,51 @@
-From: "James H. Cloos Jr." <cloos@jhcloos.com>
-Subject: Re: "Metas"
-Date: Fri, 16 Apr 2004 14:11:21 -0400
-Message-ID: <m3smf3oks6.fsf@lugabout.jhcloos.org>
-References: <20040413180301.77098.qmail@web25010.mail.ukl.yahoo.com>
-	<407C2C37.30903@namesys.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: [PATCH] reiserfs v3 fixes and features
+Date: Fri, 16 Apr 2004 14:54:26 -0400
+Message-ID: <1082141666.27614.1448.camel@watt.suse.com>
+References: <1081274618.30828.30.camel@watt.suse.com>
+	 <1081989006.27614.110.camel@watt.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18002-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18003-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <407C2C37.30903@namesys.com> (Hans Reiser's message of "Tue, 13
- Apr 2004 11:06:47 -0700")
+In-Reply-To: <1081989006.27614.110.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
+To: linux-kernel@vger.kernel.org
 Cc: reiserfs-list@namesys.com
 
-Just to add to this, as someone who is eagerly anticipating r4:
 
-While .metas or .meta might be OK, metas or meta is not.
+Hello all,
 
-No reserved name should lack an initial dot.
+I've uploaded some new code to:
 
-Netapp's .snapshot dir was mentioned in this tread.  That only works
-because of the initial dot in the name.  Had it been just snapshot
-or snapshots it would not have gone over nearly as well.
+ftp.suse.com/pub/people/mason/patches/reiserfs/2.6.5-mm6
 
-I cannot see even those w/o a posix background finding metas any
-easier than .metas.
+Only reiserfs-group-alloc-9 has changed.
 
-I also suspect you will find it easier to get past Linus.
+preallocation now enforces minimum allocations too, which cuts down on
+fragmentation when applications send small writes.
 
--JimC
--- 
-James H. Cloos, Jr. <cloos@jhcloos.com> <http://jhcloos.com>
+The mount options are slightly different.  mount -o packing_groups
+changed to mount -o alloc=packing_groups.  This makes the new options
+more consistent and easier to control via remount and such.
+
+More importantly, the default has changed too.  Once you apply
+reiserfs-group-alloc-9, the default is:
+
+mount -o alloc=skip_busy:dirid_groups:packing_groups
+
+If you want the old default:
+
+mount -o alloc=skip_busy
+
+Both reiserfs-group-alloc-9 and reiserfs-search-reada-5 should be stable
+now, at least I haven't been able to trigger problems with them in -suse
+or -mm.
+
+-chris
+
+
