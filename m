@@ -1,24 +1,32 @@
-From: Russell Coker <russell@coker.com.au>
-Subject: 2.4.20 and data logging
-Date: Tue, 3 Dec 2002 12:38:32 +0100
-Message-ID: <200212031238.32403.russell@coker.com.au>
-Reply-To: Russell Coker <russell@coker.com.au>
+From: "darren" <teodarren@myrealbox.com>
+Subject: other OS
+Date: Tue, 3 Dec 2002 12:11:06 +0800
+Message-ID: <001501c29a82$0126a110$0101a8c0@bummer>
+References: <3DEBB725.4070907@charter.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-12088-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12089-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3DEBB725.4070907@charter.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-How is data logging work going?  Is there a patch for 2.4.20?
+Hi all,
 
--- 
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
+Was just wondering about the possibilities of using reiserfs on my
+Solaris 6 machine.
+
+Any chance of that?
+
+I am having problems with FS performance (large number, 20K of small
+files in folder with constant writes and deletes) on the Sun Machine and
+was thinking if this can help me.
+
+The only way I know is to use a Linux machine running reiser and NFS it
+over. But performance will surely be degraded this way....any other
+suggestions?
 
