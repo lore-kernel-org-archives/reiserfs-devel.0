@@ -1,39 +1,61 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: [PATCH] use S_ISDIR() in link_path_walk() to decide whether the last path component is a directory
-Date: Mon, 13 Sep 2004 11:49:22 +0400
-Message-ID: <20040913074921.GA2252@backtop.namesys.com>
+From: Will Smith <will@willsmith.org>
+Subject: [patch]  measurefs.reiser4 --data-frag does not run
+Date: Mon, 13 Sep 2004 16:53:56 +0800
+Message-ID: <41456024.8070103@willsmith.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21708-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ boundary="------------000809030400050200060001"
+Return-path: <reiserfs-list-return-21709-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+
+--------------000809030400050200060001
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@osdl.org>, viro@parcelfarce.linux.theplanet.co.uk
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Hi,
+Minor patch, measurefs.reiser4-v1.0.0's --data-frag
+was always returning -ENOMEM and not running, due to missing
+curly brackets.
 
-This patch does not allow open(name, O_DIRECTORY) to be successful for
-non-directories in reiser4.  It replaces ->i_op->lookup != NULL "is dir" check
-for the last path component by explicit S_ISDIR(->i_mode) check. 
 
-Regardless to reiser4, S_ISDIR() looks more clear there.
 
-Thanks in advance.
+Will Smith
 
-===== fs/namei.c 1.104 vs edited =====
---- 1.104/fs/namei.c	Tue Aug 10 16:59:38 2004
-+++ edited/fs/namei.c	Sun Sep 12 11:00:18 2004
-@@ -816,7 +816,7 @@
- 			break;
- 		if (lookup_flags & LOOKUP_DIRECTORY) {
- 			err = -ENOTDIR; 
--			if (!inode->i_op || !inode->i_op->lookup)
-+			if (!S_ISDIR(inode->i_mode))
- 				break;
- 		}
- 		goto return_base;
+
+-- 
+1400 high resolution textures - http://www.mayang.com/textures
+Panoramic travel photos       - http://www.willsmith.org/pano
+
+
+
+
+
+
+--------------000809030400050200060001
+Content-Type: text/plain;
+ name="measurefs_datafrag_enomem_bug.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="measurefs_datafrag_enomem_bug.patch"
+
+--- measurefs.c.orig	2004-09-13 16:38:00.128518704 +0800
++++ measurefs.c	2004-09-13 16:35:36.695323864 +0800
+@@ -653,9 +653,10 @@ errno_t measurefs_data_frag(reiser4_fs_t
+ 			aal_gauge_create(aux_gauge_handlers[GT_PROGRESS],
+ 					 NULL, NULL, 0, "Data fragmentation "
+ 					 "... ");
+-		if (!frag_hint.gauge)
++		if (!frag_hint.gauge) {
+ 			aal_fatal("Out of memory!");
+ 			return -ENOMEM;
++		}
+ 	}
+ 
+ 	frag_hint.flags = flags;
+
+--------------000809030400050200060001--
+
