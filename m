@@ -1,32 +1,64 @@
 From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Wed, 1 Sep 2004 22:43:15 +0100
-Message-ID: <20040901214315.GJ31934@mail.shareable.org>
-References: <412D9FE6.9050307@namesys.com> <200408261812.i7QICW8r002679@localhost.localdomain>
+Date: Wed, 1 Sep 2004 22:59:39 +0100
+Message-ID: <20040901215939.GK31934@mail.shareable.org>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <41352279.7020307@slaphack.com> <20040901045922.GA512@elf.ucw.cz> <20040901161456.GA31934@mail.shareable.org> <20040901201824.GB11838@atrey.karlin.mff.cuni.cz>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21231-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21232-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200408261812.i7QICW8r002679@localhost.localdomain>
+In-Reply-To: <20040901201824.GB11838@atrey.karlin.mff.cuni.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
+To: Pavel Machek <pavel@suse.cz>
+Cc: David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Horst von Brand wrote:
-> Build an experimental OS showing how to use it, and through that see
-> if the ideas hold any water _in real, day-to-day, down-to-earth, practice_.
+Pavel Machek wrote:
+> > Can I do these already using uservfs?
+> > 
+> >    cd
+> >    less foo.zip/contents/bar.c
+> 
+> less foo.zip#uzip/contents/bar.c
+> 
+> >    less /usr/portage/distfiles/perl-5.8.5.tar.gz/contents/toke.c
+> 
+> less /usr/portage/distfiles/perl-5.8.5.tar.gz#utar/contents/toke.c
+>
+> >    grep -R obscure_label ~/RPMS
+> 
+> I do not think you'd want this. How would you tell grep obscure label
+> without entering archives, then? 
 
-Hey, if you can think of a way to build an experimental OS and get it
-used in real, day-to-day, down-to-earth, practice - i.e. used by a
-diverse audience of thousands of vocal groups doing different things
-with it, please let me know.
+Granted, this is where we need "grep --recurse-into-files" or, more
+generally useful, a find option.
 
-Until you do we have to lobby for some things to be tried in Linux
-before we know if they really work.
+> > No I can't.
+> 
+> > Even using the right "#" names for uservfs ('foo.zip#zip' etc.), I can
+> > only do the above with convenient paths, completion etc. if I mount
+> > my
+> 
+> Well, you can... or at least I had version somewhere that
+> automagically prepended /overlay when file was not found. That way,
+> normal requests were fast and uservfs were used whenever it was
+> needed... At the price of little uglyness and slowing down -ENOENTs.
+
+There you go... a kernel hook to prepend /overlay works :)
+These hook I keep mentioning, they are really very simple :)
+
+> > So all I am asking for is a facility to auto-mount with
+> > file-as-directory, and the ability for a userspace daemon to be
+> > notified of regular file modifications synchronously.  Both can be
+> > added later, once file-as-directory and moveable mounts are
+> 
+> If the userspace daemon is synchronously notified of file
+> modification... will not that lead to very ugly deadlocks?
+
+Not if it's written properly.
 
 -- Jamie
