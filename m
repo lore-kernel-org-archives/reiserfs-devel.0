@@ -1,24 +1,26 @@
-From: Jan Kara <jack@suse.cz>
+From: "Sergey S. Kostyliov" <rathamahata@ehouse.ru>
 Subject: Re: [2.6.11-rc2] kernel BUG at fs/reiserfs/prints.c:362
-Date: Thu, 27 Jan 2005 12:26:48 +0100
-Message-ID: <20050127112647.GA20806@atrey.karlin.mff.cuni.cz>
+Date: Thu, 27 Jan 2005 15:52:47 +0300
+Message-ID: <200501271552.48586.rathamahata@ehouse.ru>
 References: <200501271024.13778.rathamahata@ehouse.ru> <1106821035.3270.30.camel@tribesman>
+Reply-To: "Sergey S. Kostyliov" <rathamahata@ehouse.ru>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-23219-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23220-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 In-Reply-To: <1106821035.3270.30.camel@tribesman>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Vladimir Saveliev <vs@namesys.com>
-Cc: "Sergey S. Kostyliov" <rathamahata@ehouse.ru>, reiserfs-list@namesys.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, admin@list.net.ru
+Cc: reiserfs-list@namesys.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, admin@list.net.ru
 
-  Hello,
-
+On Thursday 27 January 2005 13:17, Vladimir Saveliev wrote:
+> Hello
+> 
 > On Thu, 2005-01-27 at 10:24, Sergey S. Kostyliov wrote:
 > > Hello all,
 > > 
@@ -31,14 +33,8 @@ Cc: "Sergey S. Kostyliov" <rathamahata@ehouse.ru>, reiserfs-list@namesys.com, "l
 > > REISERFS: panic (device sdb2): journal_begin called without kernel lock held
 > 
 > Would you check whether this patch helps, please?
-  BTW: What are the exact rules where lock_kernel() should be held for
-reiserfs? Is there a doc somewhere? I suspect we might need the lock
-also for reiserfs_quota_read() (reiserfs_quota_write() should be
-already protected by your fix).
-  Hmm, I should also check ext2/ext3 whether it needs the lock...
-
-								Honza
+That fixes it. Thank you!
 
 -- 
-Jan Kara <jack@suse.cz>
-SuSE CR Labs
+Sergey S. Kostyliov <rathamahata@ehouse.ru>
+Jabber ID: rathamahata@jabber.org
