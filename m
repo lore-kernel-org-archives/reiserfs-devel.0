@@ -1,71 +1,78 @@
-From: Yury Umanets <umka@namesys.com>
-Subject: Re: Reiser4 input/output errors...
-Date: Tue, 02 Sep 2003 09:03:24 +0400
-Message-ID: <1062479004.31361.3.camel@haron.namesys.com>
-References: <1062453181.2791.17.camel@mikeb.staff.netnation.com>
+From: Alexander Lyamin <flx@msu.ru>
+Subject: Re: Newbiw question on write barriers and ordered write barriers
+Date: Tue, 2 Sep 2003 15:48:48 +0400
+Message-ID: <20030902154848.A8083@t-raenon.nmd.msu.ru>
+References: <000501c370c4$94165ba0$fe0aa8c0@lancaster.beardandsandals.co.uk>
+Reply-To: flx@msu.ru
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15508-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15509-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1062453181.2791.17.camel@mikeb.staff.netnation.com>
+Content-Disposition: inline
+In-Reply-To: <000501c370c4$94165ba0$fe0aa8c0@lancaster.beardandsandals.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: mikeb@netnation.com
+Content-Transfer-Encoding: 7bit
+To: Roger James <rogerjames99@btinternet.com>
 Cc: reiserfs-list@namesys.com
 
-On Tue, 2003-09-02 at 01:53, Mike Benoit wrote:
-> I assume this isn't supposed to happen?
+Mon, Sep 01, 2003 at 09:06:37PM +0100, Roger James wrote:
+> Hi,
 > 
-> [root@mikeb home]# mkfs.reiser4 /dev/hda8
-> mkfs.reiser4 0.4.12
-> Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by
-> reiser4progs/COPYING.
+>  
 > 
-> Information: Reiser4 is going to be created on /dev/hda8.
-> (Yes/No): Yes
-> Creating reiser4 on /dev/hda8...done
-> Synchronizing /dev/hda8...done
+> Ever since I updated my SuSE Linux 8.1 set up with the latest patches
+> from SuSE I have been seeing the following messages at boot up time
+> (once only for each drive).
 > 
-> [root@mikeb home]# mount -t reiser4 /dev/hda8 /home/test2
-> [root@mikeb test2]# cd /home/test2
-> [root@mikeb test2]# cp /usr/src/linux-2.6.0-test4.tar.bz2 ./
-> [root@mikeb test2]# tar jxf linux-2.6.0-test4.tar.bz2
+>  
 > 
-> [root@mikeb test2]# rm -rf linux-2.6.0-test4/
-> rm: reading directory `linux-2.6.0-test4//drivers/net/e100':
-> Input/output error
-> rm: reading directory `linux-2.6.0-test4//drivers/net/sk98lin':
-> Input/output error
-> rm: cannot remove directory `linux-2.6.0-test4//drivers/net': Directory
-> not empty
+> <4>hda: drive_cmd: status=0x51 { DriveReady SeekComplete Error }
 > 
-> I tried this on two different partitions (/dev/hda7 and /dev/hda8) the
-> exact same files had the error on both, so it seems to be reproducible.
-> It does however work fine if I use ext3 on the said partitions. This is
-> a brand new HD (about a week old) so I doubt it has any bad blocks
-> (badblocks /dev/hda8 doesn't report anything).
+> <4>hda: drive_cmd: error=0x04 { DriveStatusError }
 > 
-> [root@mikeb home]# mkfs.reiser4 --version
-> mkfs.reiser4 0.4.12
+> <4>hda:saw err in ide_end_drive_cmd, disabling write barriers
 > 
-> Kernel: 2.6.0-test4 #5 Mon Sep 1 14:20:14 PDT 2003 i686 unknown unknown
-> GNU/Linux
+> <4>hda: drive_cmd: status=0x51 { DriveReady SeekComplete Error }
 > 
-> CONFIG_REISER4_FS=y
-> CONFIG_REISER4_LARGE_KEY=y
+> <4>hda: drive_cmd: error=0x04 { DriveStatusError }
 > 
-> CPU:
-> cpu family      : 6
-> model           : 8
-> model name      : AMD Athlon(tm) Processor
-> stepping        : 1
-> cpu MHz         : 1662.612
-> cache size      : 256 KB
+> <4>hda:saw err in ide_end_drive_cmd, disabling write barriers
 > 
-> Distro: Mandrake 9.2beta.
+> <4>reiserfs: using ordered data mode
+> 
+> <4>Using r5 hash to sort names
+> 
 
-There is something interesting in kernel logs?
+To me and my expirience, it seeems like your hard drive about to fail.
+And it seems like its about to fail in area where jdata stored.
 
+
+do backup (dd_rescue) , then try to run vendor utilities which relocate
+bad blocks ( i dont know if they have something like that for MAXTOR,
+but for IBM/HITACHI it would be DFT utility, and for most of hard-drives
+ONTRACK Tech. does something that matches DFT functionality.
+
+> I have struggled to find out whether I should be worried about this. I
+> guess this is something to do with journaling and ordered writes, but
+> the messages are somewhat cryptic. Is this the kernel detecting a
+> problem with the drive based controllers (they are both Maxtor 6Y120L0s)
+> or the motherboard chipset (Nvidia NForce) and disabling the
+> functionality? I don't see the message again, but one of the reasons I
+> did upgrade the kernel was that I was having occasional disk
+> corruptions. Are there any switches/parameters I should be setting?
+> 
+>  
+> 
+> Can anyone give me a heads up on this.
+> 
+>  
+> 
+> Roger
+> 
+
+-- 
+"the liberation loophole will make it clear.."
+lex lyamin
