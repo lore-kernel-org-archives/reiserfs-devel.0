@@ -1,59 +1,49 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Unattended mongo benchmark?
-Date: Fri, 30 Jul 2004 22:19:38 -0700
-Message-ID: <410B2BEA.6090508@namesys.com>
-References: <20040730204212.19E6015E7C@mail03.powweb.com>
+Subject: Re: Reiser4 changes meaning of ENOENT/EACCES, breaking gcc?
+Date: Fri, 30 Jul 2004 22:22:48 -0700
+Message-ID: <410B2CA8.6070905@namesys.com>
+References: <41098E4C.9070007@kundert.ca>            <410A9A1F.1090406@namesys.com> <200407302057.i6UKvLAu000714@turing-police.cc.vt.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19883-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19884-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040730204212.19E6015E7C@mail03.powweb.com>
+In-Reply-To: <200407302057.i6UKvLAu000714@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Dabbs <david@dabbs.net>
-Cc: reiserfs-list@namesys.com
+To: Valdis.Kletnieks@vt.edu
+Cc: Perry Kundert <perry@kundert.ca>, reiserfs-list@namesys.com
 
-David Dabbs wrote:
+Valdis.Kletnieks@vt.edu wrote:
 
->I was wondering about a solution to running mongo benchmarks unattended.
->If one does not exist, how about the following as a 'straw man' approach?
->
->Create a script (say mongo_auto.sh) that takes one numeric parameter. The
->parameter would indicate which action/mongo script to perform next. The
->parameters and their associated actions might be something like the
->following:
->
->Parameter: N=0
->- Make a copy of /etc/inittab
->- Add a 'sysinit' entry in /etc/inittab that runs "/path/mongo_auto.sh 1"
->- Reboot
->
->
->Parameter: N
->- Run the Nth mongo run (specified in a case statement in mongo_auto.sh)0.
->- If (ran_without_error)
->     N = N + 1
->     if ( N <= Last_Run_Number)
->        - Update /etc/inittab entry to run "/path/mongo_auto.sh N"
->        - Reboot
->     else
->        - Clean up/restore /etc/inittab
->        - Run /path/to/mongo_parse.sh 1.log 2.log... > comparison.html
->
->
->Or, to limit inittab mods to the start/end, the script could read/write a
->.mongo_auto file that specifies the next run number to take.
->
->
->David
->
->
->
->
+>On Fri, 30 Jul 2004 11:57:35 PDT, Hans Reiser said:
 >
 >  
 >
-sounds good.
+>>>   By the way, his suggested workaround was effective...
+>>>      
+>>>
+>>Can you talk the glibc guys into adopting it?  That would be best.
+>>    
+>>
+>
+>Somebody should also check the POSIX spec and see if it requires a
+>particular semantic there.
+>
+>Also, pushing it off to the glibc people is quite possibly the wrong
+>way to go about it.  Do you *really* want to sit there and tell every
+>other app that turns up with a similar problem that they have to fix
+>it to run on one particular filesystem, when every OTHER filesystem
+>doesn't need help?  That doesn't sound like a good plan - if 4 or 5
+>apps turn up, it will turn people away "because stuff breaks if you
+>use reiser4"....
+>
+>  
+>
+That is the cost of progress.  Just look at all the confusion caused by 
+phasing out horse whips and using gas pedals instead.....
+
+We are adding functionality.  The standards will adjust to that in 5 
+years.  I am 40, 5 years seems like not so long....
