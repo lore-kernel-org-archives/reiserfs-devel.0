@@ -1,54 +1,37 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: Getopt improvements
-Date: Fri, 28 Feb 2003 08:26:12 -0500
-Message-ID: <3E5F6374.9040003@suse.com>
-References: <3E5D26A2.7010804@suse.com> <20030227092551.C28643@namesys.com> <3E5E312C.50406@suse.com> <3E5E730C.7030804@namesys.com> <3E5E84B2.90708@suse.com> <3E5E92BA.4090307@namesys.com> <20030228100147.A878@namesys.com> <3E5F504A.6010902@namesys.com> <20030228154157.A10830@namesys.com> <3E5F5B81.1040602@namesys.com> <20030228161535.C10830@namesys.com>
+From: Ookhoi <ookhoi@humilis.net>
+Subject: Re: ReiserFS causes CPU high usage?!
+Date: Fri, 28 Feb 2003 14:26:30 +0100
+Message-ID: <20030228142630.K24291@humilis>
+References: <200302280011.14488.liviu.voicu@huji.ac.il> <20030228140036.H24291@humilis> <200302281504.09746.liviu.voicu@huji.ac.il> <200302281513.49045.liviu.voicu@huji.ac.il>
+Reply-To: ookhoi@humilis.net
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13008-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13009-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030228161535.C10830@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <200302281513.49045.liviu.voicu@huji.ac.il>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Oleg Drokin <green@namesys.com>
-Cc: Hans Reiser <reiser@namesys.com>, Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Voicu Liviu <liviu.voicu@huji.ac.il>
+Cc: ookhoi@humilis.net, reiserfs-list@namesys.com
 
-Oleg Drokin wrote:
-> Hello!
-> 
-> On Fri, Feb 28, 2003 at 03:52:17PM +0300, Hans Reiser wrote:
-> 
-> 
->>>>Incompatible options should fail as they represent error.  Feel free to 
->>>>argue with that.
->>>
->>>Hm, I am not going to argue. But we never had this kind of logic.
->>>Usually the latest-specified option was taking effect.
->>
->>Conflicts in the same command line should fail, latest command line 
->>should override.  Yes?
-> 
-> 
-> Ok, I will think on how to implement that.
-> 
-> Bye,
->     Oleg
+Voicu Liviu wrote (ao):
+> This is my .config file of the kernel 2.4.20..,maybe you can find some
+> wrong in here..........
 
-No, just the opposite. I'm suggesting that if smalltail and largetail 
-were _not_ mutually exclusive they should be first level options. Since 
-they _are_ mutually exclusive, then they are well suited for a second 
-level option.
+> # CONFIG_MPENTIUMIII is not set
+> # CONFIG_MPENTIUMIII31 is not set
+> # CONFIG_MPENTIUM4 is not set
+> CONFIG_MPENTIUM431=y
 
-	I think that the appearance of assignment involved in specifying a 
-second level option makes it intuitive to believe that only the most 
-recently used option is the active one.
+What cpu is this? This is not in a 2.4.20 kernel. Are you sure this is
+the right .config?
+You should use CONFIG_MPENTIUM4 I think.
 
-	-Jeff
+> CONFIG_BLK_DEV_IDEDISK=y
+> CONFIG_IDEDISK_MULTI_MODE=y
 
--- 
-jeffm@suse.com
-jeffm@csh.rit.edu
-
+Why this one?
