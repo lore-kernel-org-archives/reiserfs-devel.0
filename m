@@ -1,87 +1,54 @@
-From: Newton Hammet <newton@hammet.net>
-Subject: [Fwd: Re: [alg] reiserfs and filesystem labels]
-Date: 16 Mar 2003 14:36:23 -0600
-Message-ID: <1047846988.2691.12.camel@localhost.localdomain>
+From: Andreas Dilger <adilger@clusterfs.com>
+Subject: Re: [Fwd: Re: [alg] reiserfs and filesystem labels]
+Date: Sun, 16 Mar 2003 15:58:56 -0700
+Message-ID: <20030316155856.F12806@schatzie.adilger.int>
+References: <1047846988.2691.12.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13286-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13287-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <1047846988.2691.12.camel@localhost.localdomain>; from newton@hammet.net on Sun, Mar 16, 2003 at 02:36:23PM -0600
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Newton Hammet <newton@hammet.net>
+Cc: reiserfs-list@namesys.com
 
-Hello Reiserfs people,
+On Mar 16, 2003  14:36 -0600, Newton Hammet wrote:
+> However when I create a reiserfs filesystem in the following manner:
+> 
+> /sbin/mkreiserfs --label bigfs_0035 /dev/hdg8
+> 
+> and attempt a mount in the following manner:mount: no such partition
+> found
+> 
+> 
+> mount -L bigfs_0035 /mnt/bkup
+> 				-or-
+> mount LABEL=bigfs_0035 /mnt/bkup
+> 
+> I get the following message:
+> 
+> mount: no such partition found
 
-   I am trying to build a system with all filesystems including the swap
-partition hopefully being labeled filesystems. My goal is a bootable
-backup drive that can be booted from any ide channel or slot on the
-system (all fs's being labeled).
+The "mount" command doesn't understand labels for reiserfs.  A while ago,
+I managed to get labels and UUIDs added to the reiserfs superblock, but
+I never followed through with adding support for reading these in "mount".
+You can simply add support directly to mount for reading the UUID and
+LABEL fields from the reiserfs superblock.
 
-   ext3 is no problem.  I can create labeled filesystems all day
-long and mount them via:
+Alternately, the current e2fsprogs work-in-progress (WIP) release _finally_
+has the libblkid library included in it, and it should be pretty easy to
+change mount over to using this library, which has support for identifying
+all sorts of LABEL/UUID identifiers (this is what fsck will now use for
+doing fsck-by-label).
 
-mount LABEL=root_0035 /mnt/bkup
-
-for example will find the partition labeled 'root_0035' regardless
-of what disk it is on or which partition it happens to be.
-
-However when I create a reiserfs filesystem in the following manner:
-
-/sbin/mkreiserfs --label bigfs_0035 /dev/hdg8
-
-and attempt a mount in the following manner:mount: no such partition
-found
-
-
-mount -L bigfs_0035 /mnt/bkup
-				-or-
-mount LABEL=bigfs_0035 /mnt/bkup
-
-I get the following message:
-
-mount: no such partition found
-
-I checked out the partition in the following manner:
-dd if=/dev/hdg8|strings -td -n 8 |grep boot_0035
-  65636 bigfs_0035
-  77924 bigfs_0035
-  94308 bigfs_0035
- 106596 bigfs_0035
- 118884 bigfs_0035
- 131172 bigfs_0035
-
-
-Note that I do a similar protocol for ext3 filesystems, exact same
-mount command format and have no problem.
-
-Here is some other background information that might help :::
-
-rpm -qa|grep -E 'reiserfs|mount|kernel'
-
-kernel-2.4.18-14
-kernel-utils-2.4-8.13
-kernel-pcmcia-cs-3.1.31-9
-kernel-doc-2.4.18-14
-kernel-source-2.4.18-14
-kernel-debug-2.4.18-14
-mount-2.11r-10
-reiserfs-utils-3.6.2-2
-kernel-uml-2.4.18-14
-
-My distro is RedHat 8.0. 
-
-I will continue to research this on my own but if any of you have
-seen this before or have not and know of something either obvious or
-not that I am missing let me know.  It may be an actual bug and I
-simply need a fix for it.(i.e., bug in mount, and/or reiserfs-utils)
-
-Let me know if you need more information from me. If there is already
-a fix for this problem please let me know or point me in the right direction
-for getting the appropriate fix.
-
-Regards, Newton
-
+Cheers, Andreas
+--
+Andreas Dilger
+http://sourceforge.net/projects/ext2resize/
+http://www-mddsp.enel.ucalgary.ca/People/adilger/
 
