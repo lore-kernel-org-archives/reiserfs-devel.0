@@ -1,121 +1,111 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: The argument for fs assistance in handling archives
-Date: Fri, 03 Sep 2004 19:13:31 -0500
-Message-ID: <413908AB.90103@slaphack.com>
-References: <20040826150202.GE5733@mail.shareable.org>	 <200408282314.i7SNErYv003270@localhost.localdomain>	 <20040901200806.GC31934@mail.shareable.org>	 <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>	 <1094118362.4847.23.camel@localhost.localdomain>	 <20040902161130.GA24932@mail.shareable.org>	 <Pine.LNX.4.61.0409030028510.23011@fogarty.jakma.org>	 <1835526621.20040903014915@tnonline.net>	 <1094165736.6170.19.camel@localhost.localdomain>	 <32810200.20040903020308@tnonline.net>	 <Pine.LNX.4.61.0409030112080.23011@fogarty.jakma.org>	 <142794710.20040903023906@tnonline.net> <1094216718.2679.30.camel@shaggy.austin.ibm.com>
+Date: Fri, 03 Sep 2004 19:25:44 -0500
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <41390B88.2040307@slaphack.com>
+References: <20040826150202.GE5733@mail.shareable.org>	 <200408282314.i7SNErYv003270@localhost.localdomain>	 <20040901200806.GC31934@mail.shareable.org>	 <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>	 <1094118362.4847.23.camel@localhost.localdomain>	 <20040902161130.GA24932@mail.shareable.org>	 <1094146912.31495.13.camel@shaggy.austin.ibm.com>	 <4137B9FC.7040708@slaphack.com> <1094215839.2680.17.camel@shaggy.austin.ibm.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21452-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <1094216718.2679.30.camel@shaggy.austin.ibm.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <1094215839.2680.17.camel@shaggy.austin.ibm.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Dave Kleikamp <shaggy@austin.ibm.com>
-Cc: Spam <spam@tnonline.net>, Paul Jakma <paul@clubi.ie>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jamie Lokier <jamie@shareable.org>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Jamie Lokier <jamie@shareable.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
 Dave Kleikamp wrote:
-| On Thu, 2004-09-02 at 19:39, Spam wrote:
+| On Thu, 2004-09-02 at 19:25, David Masover wrote:
 |
+|>Dave Kleikamp wrote:
+|>[...]
+|>| Please don't tell me that we have expectations to run make from within a
+|>| tar file.  This is getting silly.  tar does a pretty good job of
+|>| extracting files into real directories, and putting them back into an
+|>| archive.  I don't see a need to teach the kernel how to deal with
+|>| compound files when user space can do it very easily.
 |>
-|>
-|>
-|>>On Fri, 3 Sep 2004, Spam wrote:
-|>
-|>>> Yes, some archive types can't be partially unzipped either. But my
-|>>> point is that it wouldn't be transparent to the application/user in
-|>>> the same way.
-|>
-|>>It doesnt matter whether it is transparent to the application. It can
-|>>be the application which implements the required level of
-|>>transparency.
-|>
-|>>User doesnt care what provides the transparency or how it's
-|>>implemented.
-|>
-|>  Indeed. I hope I didn't say otherwise :). Just that I think it will
-|>  be very difficult to have this transparency in all apps.
+|>Suppose I've got a tar file with an index attached.  Suppose it's
+|>something like /usr/src/linux.  Am I expected to extract all code for
+|>all architectures, with all drivers, all docs, etc?  Now, yes -- or I
+|>have to figure out exactly which ones I need before I extract them
+|>manually, one by one.
 |
 |
-| You're missing the point.  We don't need transparency in all apps.  You
-| can write an application to be as transparent as you want, but you don't
-| need every app to to understand every file format.
+| I don't think it's unreasonable to expect someone to either extract the
+| whole tar file, or identify what files they want from it.  If you think
+| there is too much in the tar file, roll your own with only the files you
+| need.
 
-You don't need every app to understand every filesystem, either.  Come
-to think of it, why would I want anything other than CD burning software
-and file browsers to understand a CD drive?
+That is not a solution, that is exactly the opposite of a solution.
+"Roll my own" implies that I must download the tar file, extract the
+whole thing, grab what I need, and then tar it up again.  Then I extract
+it again.  Doh!
 
-Let's all just wait -- quietly -- for the powers that be to work out
-whether it's feasable and sane to support it in all apps.  Because
-wouldn't that be better?
+More seriously, suppose it's a format like zip, where I don't have to
+decompress the whole file to get a listing.  And suppose I want to
+compile some little example from it, but the file itself is huge -- half
+a gig, say, and I only need ten megabytes.
 
-|> Just
-|>  thinking of "nano file.jpg/description.txt" or "ls
-|>  file.tar/untar/*.doc".
+But the only way I'm going to find out _which_ ten megabytes I need is
+to extract the Makefile, read it, then go find all the other little
+Makefiles, not to mention the configure script, the header files, and so
+on...
+
+But suppose that make can _transparently_ extract _only_ the files I
+need for this?
+
+|>But with tar support for make (and so on), files can be extracted on
+|>demand.  It's possible to do this in userspace, with named pipes, but
+|>that's much slower and insanely clumsy.
 |
 |
-| I don't do much image editting, but I'm sure there are applications that
-| let you edit the description in a text file.  You can even create a
-| script that extracts it, runs nano, and puts it back into the jpeg.
+| This doesn't justify bloating the kernel.  untar the darn thing and user
+| space does fine.
 
-That is a PITA.  Because you'll need to make more scripts.  And still more.
+Does it really bloat the kernel?  My kernel doesn't feel bloated, and
+it's got reiser4 and much of what's needed for this.
 
-Say you want to grep for a jpeg with a particular description.  Say you
-want to copy the description from one jpeg into another.
+Remember, saying "I can access foo.zip/contents" doesn't mean "zip is in
+the kernel".
 
-Maybe you could make a general-purpose command, like "jpeg_run", which
-runs a command on the jpeg description, but it'd still be hackish, slow,
-and more to type and remember.  Consider that you might have no idea
-what "jpeg_run" is called, but you can always do "ls file.jpeg/metas" to
-find out how to edit it.
-|
-| This works for me:
-| tar -tf file.tar | grep '\.doc'
-
-And then you need to run "tar -tf" a minute later, this time looking for
-*.xls.  Maybe file.tar is actually a several gigabyte file.tar.bz2.
-
-|> Sure in some environments like Gnome it could
-|>  work, but it still doesn't for the rest of the flora of Linux
-|>  programs.
+|>This has further implications -- imagine a desktop, binary distro
+|>shipped with all files except the very most basic stuff as package
+|>archives.  They can all be extracted, on demand -- the first time I run
+|>OpenOffice.org, it's installed.  If there needs to be post-installation,
+|>that's handled by the .deb plugin (or whatever).
 |
 |
-| Just choose the right program.  tar groks tar files, not ls.
+| Are you saying install it on demand the first time it's run?  This
+| doesn't take any new kernel function.
 
-tar groks tar.  bzip2 groks bz2.  gzip groks gz.  "mount -o loop" groks
-images.  zip groks zip.  rar groks rar.  openoffice groks .sxw, unless
-staroffice does.  xmms can read id3 info from mp3s.  gcc compiles C.
+It does for it to appear installed.  And to only install the pieces that
+are needed at that time.
 
-If the file is an object, it's easier.  You can ask the file what it is,
-and what you can do with it.  And you can tell it to do certain standard
-things.  You can do all of this while reading almost no documentation on
-what the file is.  At the end of the day, it won't matter to you whether
-a file is zip, rar, or tar -- it's an archive, and you can extract it by
-copying files out of its /contents directory.
+| Or are you saying that the files are never installed on the filesystem,
+| but always accessed from the package archives?  In this case, why not
 
-Your way (the traditional way) means you have to learn to use which
-program is the right program and how to use that program, and you'll
-have to remember it constantly.
+No, only that if I only wanted OpenOffice writer, why should I install
+all of OpenOffice?  Yes, it could be broken into smaller packages.  What
+I'm talking about is exactly the pieces of an installation that you need
+- -- insanely fine granularity -- done automatically, on demand.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQTkIq3gHNmZLgCUhAQJaNRAAnp/o0Wr+SJK5tkgYFCuc+CKIP+eALJo/
-9wHnqK0nLdnji+vG0Czd9TUj1vWtoMrUichAwFoguMHHg3VeZGu61YwZoZ4idLNM
-QbZ+CuQdUygNmyT0byGMFemP+cSbyvff1PRMy2BlSHKW3gUhvnQyggLGVKxpMRWf
-VNnEHvkvJeA9PpEm6QGi1VRNp5bc0+Ocl4kO4CJk5ZYZ9D+BV6NwN/MZwqwlsu+Y
-RZsYYEa6mLiCnU4rEo0tEAvvwMdC0e/9s9TQMcmJbT6JnybkWIRFMrTS4pmSabKg
-uYGG9p1WrX8/V8WRNnaodlvx35gRPQj5S5SWDBoSWr999nmq31Y5RZ9QwbVj0d+U
-yB4yNu0NpvFBJfwg8nVIKUa+bhPLCkdY5w+GnlEYGweSN20FYOaLiqiPtXBqJm8a
-PP+8OCL35zy+1X7t/tq+JG/K91fYbECPR/qrAyHDXzNSuxdqidvBjfsEPBHOGwu6
-RpsPoKyEvkzdXgauotWbVzWLt1ijGmYd/8Uk19OnmiloggViQhUWAJTIVGcvMNt8
-Tnk8ESQMzGHbbVOIu3gB6DZD6P0IEEN4L6+gOZWoYqe2nvaYKvIL1My/i4BMU5Ml
-cxDkzzeq58iVK07Has8lwgFp0U9iD1LrbIT5p0ZJn/52EXqlX4dJCYSSNaHzUqE8
-hcLG4aDELEI=
-=Wcyv
+iQIVAwUBQTkLiHgHNmZLgCUhAQK7+A//TATQvQ3U61VA/mdVqylnrkWC7tNOewwq
+MqF+KKU3Cc/n54mOlGTpph2qpPJTzv1y4KlVgcDM/d0bn1cDPx41n//xEe9QXlqu
+vOywb8g11HSlAhKmbl4APwCHFHr1HibHgYqM7PmeVSD+Xfy5gJvIW5Oc44f16+q9
+agEXWAk0EgM0WCAKEQFxN56i8e7qHq28PPGzcpGcn08xmBmD9Ik71jjpLY88csYy
+kjH32ExEy+uABq+Tglfr0EBZR4RDuqkxsei7cL3Rn58O8twJtn8UP3VcukTLciZw
+jb7If3ekuO7BXYJbwB/foFEESFql68jNKH7c7+Bzeb5pREloreVine/2rRM1iekD
+FUeTv78kn+6G/INl9XwUB2ER0KZOy8n2wZut35T5w94GtZgmdHpm+3mCOscS6BdG
+JNx/HRGJJXfm0P/7tKbgZ/3wjQlFzbC5HcByn9Ocfm8qrNsoLxwtF/8aId/9ctD9
+lEmDMUHYuVC51/m5ka+i/XUQeuzgbtY5QKoNsxWXYZfeBNQfMqfMOsVWP1wFMlpB
+mPmf6w+4idp1aIYwgvPyQee1BZiXmkbncglcnY+J4y46AZ+tDEO5eqjJrEU9kA7v
+NNVfCehCZ2IIo1TMHcQizsHQ53NEmZ5gwCYXvymGS1+6fyE0SqcP9EolVuUfnRN9
+yNdulMJ0gDg=
+=TeOM
 -----END PGP SIGNATURE-----
