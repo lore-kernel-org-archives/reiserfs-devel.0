@@ -1,131 +1,82 @@
-From: Henning Westerholt <henning-04@die.informatik.uni-siegen.de>
-Subject: i/o error (lost+found) with reiser4
-Date: Sun, 22 Feb 2004 23:38:23 +0100
-Message-ID: <200402222338.23623.henning-04@die.informatik.uni-siegen.de>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: [PATCH] updated data=ordered patch for 2.6.3
+Date: Mon, 23 Feb 2004 10:42:08 +0100
+Message-ID: <200402231042.08173.Dieter.Nuetzel@hamburg.de>
+References: <1077165373.22253.45.camel@watt.suse.com>
 Mime-Version: 1.0
-Content-Type: Multipart/Mixed;
-  boundary="Boundary-00=_f9SOACBR/Jy9HtI"
-Return-path: <reiserfs-list-return-16879-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16885-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1077165373.22253.45.camel@watt.suse.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
+Cc: Chris Mason <mason@suse.com>
 
---Boundary-00=_f9SOACBR/Jy9HtI
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Am Donnerstag, 19. Februar 2004 05:36 schrieb Chris Mason:
+> Hello everyone,
+>
+> I've updated the reiserfs logging speedups and data=ordered support to
+> 2.6.3, and fixed a few bugs:
+>
+> i_block count not properly updated on files with holes
+> oops when the disk is full
+> small files were not being packed into tails
+>
+> Also, the code has some extra performance tweaks to smooth out
+> performance both with and without data=ordered.  There are new
+> mechanisms to trigger metadata/commit block writeback and to help
+> throttle writers.  The goal is to reduce the huge bursts of io during a
+> commit and during data=ordered writeback.
 
-Hello all,
+On-top of SuSE 9.0, kernel 2.6.3-0:
 
-after the regular stat data error, i try to fix the fs as usual. Today the 
-fsck program complains the first time about a fatal corruption. I attached 
-the output from the first fsck run.
+01-reiserfs-journal-writer
 
-I run fsck with option "build-fs" as recommended, and it seems to fix the 
-error. But now a "ls" in the root of the reiser4 partiton complains about a 
-input/ output error on the directory "lost+found". 
-Output from the system log:
-
-+++++++++
-reiser4[ls(14750)]: check_open_format40 
-(fs/reiser4/plugin/disk_format/disk_format40.c:551)[vpf-1360]:
-WARNING: The object with the oid 3441763 greater then the max used oid 3441762 
-found.
-reiser4[ls(14831)]: check_open_format40 
-[...the same with stat, bash...]
-+++++++++
-
-Error messages from ls, stat..:
-
-+++++++++
-# ls /var/tmp/
-ls: /var/tmp/lost+found: Input/output error  
-ccache  distfiles  emerge-webrsync  kdecache-party  portage  portage-pkg  sync 
-
-# stat /var/tmp/lost+found
-stat: cannot stat `/var/tmp/lost+found': Input/output error
-
-# cd /var/tmp/lost+found
--bash: cd: /var/tmp/lost+found: Input/output error
-
-#fsck.reiser4 /dev/hdd8 
-...
-No corruption found.
-+++++++++
-
-Should i rebuild the partition? Is this a know problem?
+Apply clean.
 
 
-Best regards,
+02-reiserfs-nesting
+03-reiserfs-iosize
 
-Henning
+Are in.
 
---Boundary-00=_f9SOACBR/Jy9HtI
-Content-Type: text/plain;
-  charset="us-ascii";
-  name="fsck.hdd8.out"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="fsck.hdd8.out"
 
-*******************************************************************
-This is an EXPERIMENTAL version of fsck.reiser4. Read REAMDE first.
-*******************************************************************
+04-reiserfs-logging
+05-reiserfs-jh-3
 
-Fscking the /dev/hdd8 block device.
-Will fix minor corruptions of the Reiser4 SuperBblock.
-Will fix minor corruptions of the Reiser4 FileSystem.
-Continue?
-(Yes/No): Yes
-***** Openning the fs.
-Reiser4 fs was detected on the /dev/hdd8.
-Master super block (16):
-magic:          ReIsEr4
-blksize:        4096
-format:         0x0 (format40)
-uuid:           921a81ba-f1aa-47b8-846c-71af014be94d
-label:          <none>
+Need some handwork due to ACLs.
 
-Format super block (17):
-plugin:         format40
-description:    Disk-format for reiser4, ver. 0.5.0
-magic:          ReIsEr40FoRmAt
-flushes:        0
-mkfs id:        0x46a0ee0e
-blocks:         2441872
-free blocks:    1450517
-root block:     510075
-tail policy:    0x4 (smart)
-next oid:       0x348463
-file count:     214556
-tree height:    4
-key policy:     LARGE
 
-***** Tree Traverse Pass: scanning the reiser4 internal tree.
-        Read nodes 116088
-        Nodes left in the tree 116087
-                Leaves of them 113839, Twigs of them 2205
-        Nodes with wrong delimiting keys 1
-                Leaves of them 1, Twigs of them 0
-        Time interval: Sun Feb 22 22:50:17 2004 - Sun Feb 22 22:51:53 2004
-***** TwigScan Pass: checking extent pointers of all twigs.
-        Read twigs 2205
-        Time interval: Sun Feb 22 22:51:53 2004 - Sun Feb 22 22:51:54 2004
+You've forgotten in linux/fs/buffer.c
+EXPORT_SYMBOL(try_to_release_page);
+again ;-)
 
-Error: Node (1073153): The first key [3220ba:4(FB):7374616e646172:3220d1:af] is not equal to 
-the left delimiting key [347a51:4(FB):706d736f6c6964:347db5:80]. 
-Error: Node (1073073), item (49), unit (0): Points to the node [1073153] with wrong delimiting
-keys. The whole subtree is skipped. 
 
-Fatal corruptions were found. Semantic pass is skipped.
-***** fsck.reiser4 finished at Sun Feb 22 22:51:54 2004
-Closing fs...done
+And the FIX in stree.c:
 
-1 fatal corruptions were detected in FileSystem. Run with --build-fs option
-to fix them.
---Boundary-00=_f9SOACBR/Jy9HtI--
+--- linux.test/fs/reiserfs/stree.c.1    2004-02-16 09:26:33.643567752 -0500
++++ linux.test/fs/reiserfs/stree.c      2004-02-16 09:27:24.166887040 -0500
+@@ -1754,7 +1754,7 @@
+          reiserfs_update_sd(th, p_s_inode) ;
+ 
+          journal_end(th, p_s_inode->i_sb, orig_len_alloc) ;
+-         journal_begin(th, p_s_inode->i_sb, orig_len_alloc) ;
++         journal_begin(th, p_s_inode->i_sb, JOURNAL_PER_BALANCE_CNT * 5) ;
+          reiserfs_update_inode_transaction(p_s_inode) ;
+        }
+     } while ( n_file_size > ROUND_UP (n_new_file_size) &&
+
+
+> I'm very interested in benchmarks here and info about how the patches
+> feel for interactive performance.
+
+Not, yet.
+But same as with stree.c on 2.6.2-6.
+
+Greetings,
+	Dieter
