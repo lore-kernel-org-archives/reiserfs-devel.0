@@ -1,53 +1,52 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: using of XATTRs instead of pseudo files for accessing
-Date: Wed, 7 Apr 2004 10:55:24 +0300
-Message-ID: <20040407075524.GY5229@nysv.org>
-References: <1081253603.4977.77.camel@watt.suse.com>
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Subject: Re: reiserfs v3 patches updated - Bug
+Date: Wed, 7 Apr 2004 11:28:17 +0200
+Message-ID: <200404071128.17846.christian.mayrhuber@gmx.net>
+References: <1081210239.4994.69.camel@watt.suse.com> <200404061838.05099.christian.mayrhuber@gmx.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17777-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17778-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200404061838.05099.christian.mayrhuber@gmx.net>
 Content-Disposition: inline
-In-Reply-To: <1081253603.4977.77.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Chris Mason wrote:
+On Tuesday 06 April 2004 18:38, Christian Mayrhuber wrote:
 
->But, there are existing apps using the xattrs, it makes sense to get
->them for a relatively small programming effort in reiser4 instead of
->having to modify each one and get patches up stream.
+> On Tuesday 06 April 2004 02:10, Chris Mason wrote:
+>
+> Seem to run fine so far with
+I've to correct myself. There seems to be a problem with
+install. Version: install (coreutils) 5.0.91
 
-As Alex Zarochentsev pointed out, he just wanted to present an alternative
-in xattrs and that someone would implement them if they were considered
-good.
+install: cannot change owner of ,,/tmp/mkinitrd.18919/initrd/bin/echo" : 
+operation not permitted
 
-Hans Reiser (a bit rudely, if you don't mind me saying, but I'll
-say it anyway) shot this down.
+I can change the owner with chown without problems.
+I tried with the mount options "rw,noatime,nodiratime,data=writeback".
 
-I haven't had time to investigate this matter, but is it possible to
-map the Reiser4 API onto the xattrs API? I may be way out of my league
-here, but isn't the Reiser4 API mostly a better ("better") xattrs
-implementation?
+"data=writeback" seems to get ignored. The fs always mounts with 
+data=ordered.
 
-A transparent layer in between would probably please most parties,
-and if Namesys isn't interested, someone else would do it, no?
+This is a bug that has been introduced somewhere between 2.6.4 + data-logging
+and 2.6.5 + data-logging, as install works fine unter 2.6.4 + data=ordered.
 
-Reiser4, as superb as it is, is pretty borderline to some standards.
-I think it paramount to acknowledge this and minimize upstream patches.
+It has nothing to do with acl's, because this bug appears with and without
+the acl mount option. The block allocator does not matter, too.
 
-Upstream patches may piss off a lot of people, especially in cases
-where they have written something minor for themselves and compensating
-for this is more work than what seems ok.
 
-IMO, Reiser4 should be able to work just as any other fs in those cases
-when it's needed, without having to worry about the sexy details
-which people will use in other cases.
+PS: If invalid mount options are specified to reiserfs it mounts "ro", but the 
+invalid options show up in /proc/mounts. This makes it impossible to do a
+mount -o remount,ro /
+because all the wrong options are retained.
+==> fstab cannot be fixed, reboot with other kernel required.
+I suggest to print a warning for the invalid options and to ignore them
+during mount.
 
 -- 
-mjt
-
+lg, Chris
