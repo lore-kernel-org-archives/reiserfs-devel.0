@@ -1,93 +1,49 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: reiser4 mount issue
-Date: Wed, 3 Sep 2003 14:11:45 +0400
-Message-ID: <16213.48737.591215.500942@laputa.namesys.com>
-References: <sf5582b5.032@gwia201.syr.edu>
+From: Lars Marowsky-Bree <lmb@suse.de>
+Subject: Re: reiser4 data journalling?
+Date: Wed, 3 Sep 2003 12:52:11 +0200
+Message-ID: <20030903105211.GC5762@marowsky-bree.de>
+References: <3F4E3AF9.2060100@tupshin.com> <16206.16138.72832.920045@laputa.namesys.com> <3F4E6AA4.3030900@namesys.com> <20030829001814.GB9019@zero> <20030829131250.GU24767@marowsky-bree.de> <3F55170E.1080603@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15526-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-15527-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <sf5582b5.032@gwia201.syr.edu>
+Content-Disposition: inline
+In-Reply-To: <3F55170E.1080603@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Michael Konrad <mkonrad@syr.edu>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Reiserfs List <reiserfs-list@namesys.com>
 
-Michael Konrad writes:
- > Hello Yury,
- > 
- > This is what occurs in kernel log, when I try the reiser4 mount: 
- > 
- > Sep  3 05:48:14 [kernel]  reiser4[mount(16746)]: get_ready_format40
- > (fs/reiser4/plugin/disk_format/disk_format40.c:229)[nikita-3228]:
- > 
- > Here is the part of my .config file with reiserfs:
- > 
- > CONFIG_REISER4_FS=y
- > # CONFIG_REISER4_FS_SYSCALL is not set
- > # CONFIG_REISER4_LARGE_KEY is not set
+On 2003-09-03T02:17:50,
+   Hans Reiser <reiser@namesys.com> said:
 
-Flip CONFIG_REISER4_LARGE_KEY
+> No, isolation is not yet implemented and won't be unless we come up with =
 
- > # CONFIG_REISER4_CHECK is not set
- > # CONFIG_REISER4_USE_EFLUSH is not set
- > # CONFIG_REISER4_BADBLOCKS is not set
- > CONFIG_REISERFS_FS=y
- > # CONFIG_REISERFS_CHECK is not set
- > # CONFIG_REISERFS_PROC_INFO is not set
- > 
- > Thank you,
- > Michael
- > 
- > Michael Konrad
- > Systems Administrator
- > College of Visual and Performing Arts
- > Syracuse University
- > >>> Yury Umanets <umka@namesys.com> 09/03/03 01:25 AM >>>
- > On Wed, 2003-09-03 at 05:17, Michael Konrad wrote:
+> some more funding from somewhere.  The txnmgr seems to be structured to=20
+> handle isolation, but....
 
-Nikita.
+Ah, okay. Sorry, I think I had older plans in mind and hadn't checked
+how far the current roadmap matched up to them ;-)
 
- > 
- > Hello,
- > 
- > 
- > > Compile of linux-2.6.0-test4 with reiser4 is good. 
- > > Compile of libaal-0.4.9 is good
- > > Compile of reiser4fsprogs-0.4.12 is good.
- > > 
- > > mkfs.reiser4 /dev/hda8 is good. 
- > > 
- > > When I issue the following command:
- > > 
- > > mount -t reiser4 /dev/hda8 /mnt/lfs  or
- > 
- > > mount -t reiserfs /dev/hda8 /mnt/lfs 
- > You should not be trying to mount it as reiserfs. Reiser4 is fully
- > different filesystem.
- > > 
- > > I get the following error: 
- > > 
- > > mount: wrong fs type, bad option, bad superblock on /dev/hda8, or too
- > many mounted file systems
- > > 
- > > cat /proc/filesystems 
- > > 
- > > list both reiserfs and reiser4
- > > 
- > > Am I missing something simple here?
- > > 
- > > Thank you,
- > > Michael
- > 
- > You should be aware, that mkfs.reiser4 creates filesystem with large
- > keys by default. What key policy have you turned on when building
- > kernel? And what does kernel log say?
- > 
- > Regards.
- > 
- > 
- > 
+> The new thing with reiser4 is that if you do that write of 1MB to a=20
+> file, and perhaps updates to 63 other files as well, as part of an atom, =
+
+> it will either all survive a crash, or none of it will.  We have=20
+> considered using the term "transcrash" for this.
+
+So it's ACD and not ACID ;-) Sounds good. How is this weak transaction
+exported to userspace, ie how do I signal BEGIN and COMMIT/ABORT?
+
+
+
+Sincerely,
+    Lars Marowsky-Br=E9e <lmb@suse.de>
+
+--=20
+High Availability & Clustering		ever tried. ever failed. no matter.
+SuSE Labs				try again. fail again. fail better.
+Research & Development, SuSE Linux AG		-- Samuel Beckett
+
