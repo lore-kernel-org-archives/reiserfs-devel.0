@@ -1,41 +1,77 @@
-From: Guido Schimmels <guido.schimmels@freenet.de>
-Subject: Re: Will Reiser4 support a "hidden" attribute?
-Date: Thu, 20 Nov 2003 20:45:55 +0100
-Message-ID: <20031120194555.GA23113@Benine>
-References: <20031120005844.GC8854@Benine> <1069305523.11497.37.camel@faith> <20031120142353.GA1253@Benine> <3FBC6050.3050600@namesys.com> <16317.3267.987713.833145@laputa.namesys.com>
+From: Steven Poulakos <poulakos@uiuc.edu>
+Subject: Re: Fatal File System Corruption -Software RAID + NFS
+Date: Thu, 20 Nov 2003 13:59:25 -0600
+Message-ID: <3FBD1D1D.2020103@uiuc.edu>
+References: <3FB7AE00.4070409@uiuc.edu> <3FB7CFEB.9080705@g-house.de> <3FB8DF75.4020802@insightbb.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-16137-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16138-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <16317.3267.987713.833145@laputa.namesys.com> (from Nikita@Namesys.COM on Don, Nov 20, 2003 at 19:49:39 +0100)
+In-Reply-To: <3FB8DF75.4020802@insightbb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="Flowed"; delsp="Yes"; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Dan Oglesby <d.oglesby@insightbb.com>
+Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-Am 20.11.2003 19:49:39 schrieb(en) Nikita Danilov:
-> Hans Reiser writes:
->  > Nikita, please update us all on how far we have gotten in
-> implementing this.
-> 
-> OK.
-> 
-> We currently don't have ability to hide particular file. That is,
-> there
-> is no way to somehow mark file hidden at the kernel level. If I am
-> allowed to humbly voice my opinion, usages shown by participants of
-> this
-> thread (trimming down list of files visible in the GUI front-end)
-> should
-> be done at the user level. In UNIX ls(1) command hides dot files for
-> ages.
+Thanks, Dan and Christian, for the offered advice (below).  It turns out 
+that my problems were hardware related and not with Reiserfs.  One of 
+the IDE cables had a small knick in it with exposed wire.  This was 
+probably the source of errors that caused the file system corruption.
 
-I have outlined why this is not an option. Handling this above the  
-kernel/libc level means maintaining dozens of patches to consistently  
-hide files throughout the GUI. And for Acrobat Reader e.g. you  would  
-still need LD_PRELOAD trickery which means you are again down at the  
-libc level. Thinking of it, an even better example is Sun's Java,  
-which, though the sources are available, I'm not allowed to hack on.
+Unfortunately, I can't be absolutely certain of this because I also 
+upgraded my motherboard to one that supports a 66MHz PCI bus.  This 
+allows the Promise ATA/100 controller card to work at full speed. 
+
+My newly rebuilt system has been up and running for three days now.  So 
+far, there aren't any errors.
+
+Thanks, again!
+
+Steve
+
+Dan Oglesby wrote:
+
+> Christian Kujau wrote:
+>
+>> Steven Poulakos wrote:
+>> [...]
+>>
+>>> Here are snippets of the errors that just repeat over and over...
+>>>
+>>> Nov  9 06:47:34 ctdev kernel: hdc: status error: status=0x58 { 
+>>> DriveReady SeekComplete DataRequest }
+>>> Nov  9 06:47:34 ctdev kernel:
+>>> Nov  9 06:47:34 ctdev kernel: hdc: status error: status=0x58 { 
+>>> DriveReady SeekCo
+>>
+>>
+>>
+>> hardware errors, i'd say :-(
+>> try to dd / dd_rescue to a working disk, then go on with newest 
+>> reiserfsprogs or /bin/cat...
+>>
+>> Christian.
+>> -
+>
+>
+> I saw these types of errors on my software RAID-5 array when I first 
+> brought it online.  The array is made up of four 20GB hard drives from 
+> four different manufacturers, two drives to an IDE channel.  Some of 
+> the drives didn't want to play nice when sharing the IDE channel.
+>
+> Using hdparm, I found that not all drives were enabling DMA or 32-bit 
+> transfers, so I forced all of the hard drives to run 32-bit with DMA. 
+> This solved the problem.
+>
+> Another interesting thing I found (while I'm talking about my goofy 
+> array) was that the system performed MUCH better when I disabled write 
+> caching on all of the hard drives.
+>
+> The filesystem is ReiserFS 3.6, of course.
+>
+> --Dan
+
+
