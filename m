@@ -1,91 +1,84 @@
 From: "Yura Umanets" <umanets@priocom.com>
 Subject: Re: about crash
-Date: Thu, 25 Apr 2002 19:17:15 +0300
-Message-ID: <3CC82C0B.7030604@priocom.com>
-References: <3CC8173B.8030507@priocom.com> <1061290531.20020425170549@tnonline.net> <3CC81E0F.90000@priocom.com> <1672863140.20020425173202@tnonline.net> <3CC82770.4050607@priocom.com> <1294772062.20020425180352@tnonline.net>
+Date: Thu, 25 Apr 2002 19:40:34 +0300
+Message-ID: <3CC83182.4020500@priocom.com>
+References: <3CC8173B.8030507@priocom.com> <1061290531.20020425170549@tnonline.net> <3CC81E0F.90000@priocom.com> <1672863140.20020425173202@tnonline.net> <3CC82770.4050607@priocom.com> <1294772062.20020425180352@tnonline.net> <3CC82C0B.7030604@priocom.com> <1685846437.20020425182146@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10175-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10176-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Anders Widman <andewid@tnonline.net>
-Cc: reiserfs-list@namesys.com
+To: ReiserFS List <reiserfs-list@namesys.com>
 
 Anders Widman wrote:
-> Hello again!
+> ok.. This is the output I get when running "debugreiserfs
+> /dev/Server/FTPRoot -B"
 > 
-> Wouldn't debugreiserfs -B exytract all bad blocks to a file? 
-debugreiserfs -B some_block just will be trying to show contains of the 
-given block. If this block contains direntry, then it will show it.
+> 
+> <-------------debugreiserfs, 2002------------->
+> reiserfsprogs 3.x.1c-pre2
+> 
+> debugreiserfs: option requires an argument -- B
+> 
+> Filesystem state: consistent
+> 
+> Reiserfs super block in block 16 on 0x3a00 of format 3.6 with standard journal
+> Count of blocks on the device: 213532672
+> Number of bitmaps: 6517
+> Blocksize: 4096
+> Free blocks (count of blocks - used [journal, bitmaps, data, reserved] blocks): 
+> 20694828
+> Root block: 67992
+> Filesystem is cleanly umounted
+> Tree height: 5
+> Hash function used to sort names: "r5"
+> Objectid map size 550, max 972
+> Journal parameters:
+>         Device [0x0]
+>         Magic [0x0]
+>         Size 8193 blocks (including 1 for journal header) (first block 18)
+>         Max transaction length 0 blocks
+>         Max batch size 0 blocks
+>         Max commit age 0
+> Blocks reserved by journal: 0
+> Fs state field: 0x0
+> sb_version: 2
+> inode generation number: 52783
+> UUID: ce0c6cd1-e381-4597-bd30-edc0074968ab
+> LABEL: 
+> Set flags in SB:
+> 
+> 
+> 
+> This is what I get when running "debugreiserfs /dev/Server/FTPRoot -B
+> 669227":
+> 
+> 
+> [root@server /]# debugreiserfs /dev/Server/FTPRoot -B 669227
+> 
+> <-------------debugreiserfs, 2002------------->
+> reiserfsprogs 3.x.1c-pre2
+> 
+> Will try to extract list of bad blocks and save it to '669227' file
+> Done
+> 
+> 
+> I end up with a file called 669227 which is 0 bytes long. I'll try
+> with the same version of debugreiserfs as you are running.
+> 
+> 
 
 
-This is a part of my root:
+You should be using
 
-[root@banshee tmp]$ debugreiserfs /dev/hda1 -B 13715
-
-<-------------debugreiserfs, 2002------------->
-reiserfsprogs 3.x.1b-pre4
-
-13715 is used in ondisk bitmap
-
-===================================================================
-LEAF NODE (13715) contains level=1, nr_items=6, free_space=140 rdkey 
-(real items 6)
--------------------------------------------------------------------------------
-|###|type|ilen|f/sp| loc|fmt|fsck|                   key 
-       |
-|   |    |    |e/cn|    |   |need| 
-       |
--------------------------------------------------------------------------------
-|  0|1 2 0x0 SD (0), len 44, location 4052 entry count 0, fsck need 0, 
-format new|
-(NEW SD), mode drwxr-xr-x, size 448, nlink 16, mtime 04/21/2002 04:23:03 
-blocks 1, uid 0
--------------------------------------------------------------------------------
-|  1|1 2 0x1 DIR (3), len 448, location 3604 entry count 18, fsck need 
-0, format old|
-###: Name                     length    Object key           Hash 
-Gen number
-   0: ".                        "(  1)                 1 2           0 
-   1, loc 440, state 4 not set
-   1: "..                       "(  2)                 0 1           0 
-   2, loc 432, state 4 not set
-   2: "bin                      "(  3)             2 16950     2318336 
-   0, loc 424, state 4 "r5"
-   3: "dev                      "(  3)             2 17415     2354688 
-   0, loc 416, state 4 "r5"
-   4: "etc                      "(  3)                2 18     2401792 
-   0, loc 408, state 4 "r5"
-   5: "lib                      "(  3)               2 517     2529152 
-   0, loc 400, state 4 "r5"
-   6: "mnt                      "(  3)             2 18693     2563328 
-   0, loc 392, state 4 "r5"
-   7: "tmp                      "(  3)             2 17418     2711168 
-   0, loc 384, state 4 "r5"
-   8: "var                      "(  3)             2 17417     2730880 
-   0, loc 376, state 4 "r5"
-   9: "usr                      "(  3)                 2 3     2744576 
-   0, loc 368, state 4 "r5"
-  10: "boot                     "(  4)             2 17127    25652864 
-   0, loc 360, state 4 "r5"
-  11: "home                     "(  4)             2 18692    27051904 
-   0, loc 352, state 4 "r5"
-  12: "proc                     "(  4)             2 17416    29009280 
-   0, loc 344, state 4 "r5"
-  13: "sbin                     "(  4)                2 47    29360256 
-   0, loc 336, state 4 "r5"
-  14: "root                     "(  4)             2 18708    29415552 
-   0, loc 328, state 4 "r5"
-  15: ".autofs                  "(  7)             2 16939   294236416 
-   0, loc 320, state 4 "r5"
-  16: "quota.group              "( 11)            2 426388  1105062784 
-   0, loc 304, state 4 "r5"
-  17: "quota.user               "( 10)             2 23274  2056011904 
-   0, loc 288, state 4 "r5"
+debugreiserfs /dev/Server/FTPRoot -1 669227
 
 
-
+-- 
+Yury Umanets,
+IT Engeneer of Priocom Corp.
+Phone: +380 44 4924636, ICQ: 55494590
 
