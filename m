@@ -1,50 +1,53 @@
-From: Chris Dukes <pakrat@www.uk.linux.org>
-Subject: Re: PLEASE: take me out of this nightmare!!!
-Date: Thu, 11 Jul 2002 12:48:47 +0100
-Sender: <pakrat@www.linux.org.uk>
-Message-ID: <20020711124847.B12793@parcelfarce.linux.theplanet.co.uk>
-References: <20020711033313.GA21061@willow.seitz.com> <Pine.LNX.4.44.0207111448120.12693-100000@avon.timetraveller.org>
+From: "Brian" <brian@english-bay.com>
+Subject: My mistake....
+Date: Thu, 11 Jul 2002 06:02:35 -0700
+Message-ID: <000b01c228db$3a1b1f00$0e01a8c0@englishbay.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10970-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10971-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44.0207111448120.12693-100000@avon.timetraveller.org>; from robert@timetraveller.org on Thu, Jul 11, 2002 at 02:53:47PM +1000
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Robert Brockway <robert@timetraveller.org>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Thu, Jul 11, 2002 at 02:53:47PM +1000, Robert Brockway wrote:
-[Suggestion to spam assassin snipped]
-The "Well it works for me" attitude really doesn't help Linux or Open
-Source.
+Hi:
 
-Filtering just removes the spam, not the spammers.
-Tracking down and applying a LART to the originating ISP and the open relay
-puts the spammer out of business and decreases future spam.
-Because this list CONTINUES to remove relevant headers it is impossible
-to shutdown spammer ISPs and open relays.  It is also impossible to
-quickly track down mailloops.
+Will try to make a long story short.
 
-For the past 2 months my only source of SPAM has been the reiserfs mailing
-list.  It has been the first SPAM source where I could not LART the offending
-relays and ISPs since I was stuck with Lotus Notes at IBM.
+I had a 20 gig HD partitioned into 2 10 gig partitons both employing
+reiserfs - it was employed as a samba fileserver for a few Windows boxes.
+All the files were huge and written contiguously - not fragmented.
 
-If the reiserfs list continues to trim useful headers after 23:00 GMT July 
-15th, I will attempt to unsubscribe.  If I continue to receive SPAM through
-the reiserfs list after 23:00 GMT July 17th I will be forced to report
-namesys.com to its upstream provider as an open relay and an injection
-point for SPAM.
+While doing a new install of Slackware 8.1 (stock Linux kernel 2.4.18) on
+the samba fileserver I accidently formatted over one of the partitions with
+ext3 (EXT3 2.4-0.9.17) - I didn't do surface integrity testing during the
+format.
 
-I would prefer to avoid such measures, but it has been months since
-minor modifications to the list to provide SPAM countermeasures have been 
-suggested, approved by Hans, and completely ignored by the list maintainer.
-Because those measures have been ignored, the only documented source of
-the SPAM is namesys.com.
--- 
-Chris Dukes
-The Information Technology field is similar to a Marx Brothers sketch.
-As a sysadmin, I fill in for Harpo Marx.  -- me.
+After I discovered my error, a quick scan of the raw disk showed the files
+still resident although all the journals appeared overwritten.
+
+I deleted the partition, rebooted and repartioned exactly as before. I have
+run reiserfsck and rebuilt everything BUT when I try to mount the partition
+"mount" insists it's still an empty ext3 filesystem.
+
+How do I restore the reiserfs format without undoing all the rebuilding I
+have done? (60 directories and 2500 files)
+
+The partition remains unmounted and unused but I would love to get those
+files back and also use of the partition.
+
+The first partition and reiser filesystem (reiserfs version 3.6.25 with r5
+hash) works perfectly.
+
+Feel free to tell me what an idiot I am for making such a blunder as long as
+you can offer some constructive advice.
+
+Any hints/help much appreciated.
+
+Best regards,
+
+Brian
+BSFH
+
