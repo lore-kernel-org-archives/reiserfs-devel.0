@@ -1,51 +1,61 @@
-From: Benjamin Scott <bscott@ntisys.com>
-Subject: Re: Silly question, defrag
-Date: Thu, 4 Apr 2002 17:34:09 -0500 (EST)
-Sender: bscott@ntisys.com
-Message-ID: <Pine.LNX.4.44.0204041721530.1352-100000@dragon.inside.ntisys.com>
-References: <20020404105440.F27377@ultraviolet.org>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: Question on IICACHE and mount info (2.4.19-pre5)
+Date: Fri, 05 Apr 2002 02:00:03 +0200
+Message-ID: <3CACE903.30901@mb.tu-ilmenau.de>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020404105440.F27377@ultraviolet.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list <reiserfs-list@namesys.com>
+
+Hi!
+
+Is there only the addidional mount option "iicache" with this patch:
+ftp://ftp.namesys.com/pub/reiserfs-for-2.4/testing/linux-2.4.19p4-iicache-new-5.patch 
+?
+
+There were some more in the early versions of iicache, IIRC.
+
+But at the moment it works very well with 2.4.19-pre5 + 
+rml.preempt+lock-break + aa.vm-33 + some other aa patches and some akpm 
+ones.
+
+When I put ",iicache" to the fstab lines of my reiserfs partitions I 
+don't get a response from
+
+# cat "/proc/fs/reiserfs/ide0(3,11)/super"
+state:  REISERFS_VALID_FS
+mount options:  BORDER NO_TAILS LOG
+...
+
+# cat "/proc/fs/reiserfs/ide0(3,7)/super"
+state:  REISERFS_VALID_FS
+mount options:  BORDER NO_TAILS LOG
+...
+
+# cat /proc/mounts
+/dev/root / reiserfs rw,noatime 0 0
+/dev/hda11 /mnt/beta reiserfs rw,noatime,nosuid,nodev 0 0
+...
+
+only # mount says:
+/dev/hda7 on / type reiserfs (rw,noatime,notail,iicache)
+...
+/dev/hda11 on /mnt/beta type reiserfs 
+(rw,nosuid,nodev,noatime,notail,iicache)
+...
+
+Seems like some things have gone with the latest patches which worked 
+before? It's o.k., of course, if "iicache" doesn't show up for now, I 
+know it's for testing only (yes, it would be very nice!). But the 
+"notail" thing worked before!
 
 
-  It occurs to me that people are treating the answer to this question as a
-single binary value.  I think that is an incorrect approach.
+Best regards,
 
-  By definition, any filesystem which is capable of storing files in
-non-contiguous allocations can become fragmented.  The questions are, how
-likely and how bad will it be?  It seems likely to me that different
-filesystem implementations will have different behaviors with regards to
-fragmentation, and those behaviors further vary depending on filesystem
-usage patterns.
-
-  So one question becomes, "Given a particular usage pattern, how fragmented
-will a given filesystem become per unit of time?"  To use everyone's
-favorite example, FAT's policy of simply allocating free blocks as it finds
-them is practically worst-case for fragmentation.  I imagine it likely that
-a more intelligent filesystem implementation would do better at this.
-
-  Another question is, "Once a given filesystem becomes fragmented to a
-given extent, what kind of performance impact do you see?"  This seems
-likely to be an easier question to answer; you can do things like calculate
-average seeks given various conditions, or just plain time a benchmark.  I
-think it would seem likely that, once a filesystem does become fragmented,
-performance is going to suck mud.  So most of it comes back to that first
-question: Just how bad will the fragmentation get?
-
-  I highly doubt this issue can be resolved to a single "yes or no" answer.
-
--- 
-Ben Scott <bscott@ntisys.com>
-| The opinions expressed in this message are those of the author and do not |
-| necessarily represent the views or policy of any other person, entity or  |
-| organization.  All information is provided without warranty of any kind.  |
-
+Manuel
 
 
