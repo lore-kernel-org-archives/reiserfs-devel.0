@@ -1,54 +1,41 @@
 From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Yet another oops with reiser4...
-Date: Tue, 10 Feb 2004 13:26:30 +0300
-Message-ID: <200402101326.30810.vitaly@namesys.com>
-References: <4021964D.3030707@free.fr> <200402061800.08136.vitaly@namesys.com> <4027F5B0.70300@free.fr>
+Subject: reiserfsprogs-3.6.12 release
+Date: Tue, 10 Feb 2004 20:10:04 +0300
+Message-ID: <200402102010.04479.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16743-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16744-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4027F5B0.70300@free.fr>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Vince <fuzzy77@free.fr>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Tuesday 10 February 2004 00:03, Vince wrote:
-> Vitaly Fertman wrote:
-> > Hello Vince,
-> >
-> > would you try the fsck from the latest reiser4progs snapshot:
-> > http://www.namesys.com/snapshots/2004.02.06/
->
-> Well I tried the new reiser4progs and the fsck did finish... but I was
-> unfortunately running a kernel with the 2004.01.19-fixed snapshot and it
-> looks like it was a bad idea (?). I enclose the fsck log in attachment
-> in case it could help.
->
-> Then I could mount my partition but any access failed with I/O Error. :-(
->
-> Then I booted my new kernel... now mounting the partition is also ok but
-> the partition looks empty... except that df reports that my files are
-> still there:
->
-> /dev/ide/host0/bus1/target0/lun0/part3
->                        86757988  21631724  65126264  25% /mnt/goinfre
->
-> Now, fsck -build-fs with this kernel (new snapshot) fails with:
+Hi all, 
 
-> ***** Semantic Traverse Pass: reiser4 semantic tree checking.
-> Error: Semantic pass failed: cannot create 'lost+found' directory.
->
-> Now the question is: is it still possible to recover my data on this
-> partition ?
+The new reiserfsprogs release is available on our ftp site (ftp.namesys.com).
 
-would you run 
-	debugfs.reiser4 -P /dev/xxx | bzip2 -c > xxx.bz2
-and provide it for downloading? I will try to fix it locally.
+It includes:
+* bad block support, documentation is available at 
+http://www.namesys.com/bad-block-handling.html
+
+*reiserfsck is able to repair ro mounted filesystems.
+
+* UUID support is rewritten -- link to the libuuid instead of our own code.
+
+* a few bugs were fixed:
+  - fix for shrinking the filesystem;
+  - fix for making the filesystem with blocksize greater then 4k;
+  - fix for making the journal of minimal size;
+  - fix in reiserfsck --rebuild-sb;
+  - fix in mount entry detection code;
+  - fix for the new fs size calculation in resizer; 
+  - fix for parsing the new fs size parameter correctly in resizer;
+  - fix for checking if the new fs size is correct in resizer;
+  - fix for handling the very last block on the device if formatted on pass2.
 
 -- 
 Thanks,
