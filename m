@@ -1,28 +1,28 @@
-From: Richard Thornton <richard@sun2.programming-analytics.org>
+From: "S. Alexander Jacobson" <alex@shop.com>
 Subject: Re: duplicate files and recent changes
-Date: Thu, 06 Jun 2002 18:28:01 +0000
-Message-ID: <85256BD0.006620B0.00@patapsco.com>
+Date: Thu, 06 Jun 2002 18:14:11 +0000
+Message-ID: <85256BD0.00664203.00@patapsco.com>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- Boundary="0__=AvhWF01AQ2zU1kPGlWECekxISfNXuiYr8EiOIwn7PpROYO3DRPsoxviM"
-Return-path: <reiserfs-list-return-10614-reiserfs=m.gmane.org@namesys.com>
+ Boundary="0__=sf6PKAOFaX26rkjEhy24cB4dMuLkA1mwVP5y8SRJEVZXhEdZfM9pXFJF"
+Return-path: <reiserfs-list-return-10615-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Valdis.Kletnieks@vt.edu
-Cc: Oleg Drokin <green@namesys.com>, "S. Alexander Jacobson" <alex@shop.com>, reiserfs-list@namesys.com
+Cc: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
 
---0__=AvhWF01AQ2zU1kPGlWECekxISfNXuiYr8EiOIwn7PpROYO3DRPsoxviM
+--0__=sf6PKAOFaX26rkjEhy24cB4dMuLkA1mwVP5y8SRJEVZXhEdZfM9pXFJF
 Content-type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
                                                                   
  (Embedded                                                        
- image moved   Richard Thornton                                   
- to file:      <richard@sun2.programming-analytics.org>           
- pic15312.pcx) 06/06/2002 02:28 PM                                
+ image moved   "S. Alexander Jacobson" <alex@shop.com>            
+ to file:      06/06/2002 02:14 PM                                
+ pic22470.pcx)                                                    
                                                                   
 
 
@@ -31,39 +31,54 @@ Content-Disposition: inline
 
 
 
-Will you quit sending this shit?
 
-RT
+ (Embedded
+ image moved   "S. Alexander Jacobson" <alex@shop.com>
+ to file:      06/06/2002 02:14 PM
+ pic24877.pcx)
 
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   "S. Alexander Jacobson" <alex@shop.com>
+ to file:      06/06/2002 02:14 PM
+ pic29705.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   "S. Alexander Jacobson" <alex@shop.com>
+ to file:      06/06/2002 02:14 PM
+ pic25352.pcx)
+
+
+
+
+
+
+
+
+Can someone turn this off?
+I am recieving large amounts of duplicate mail
+from Valdis Kletnieks through the namesys
+listserv.
+
+-Alex-
 
 On Thu, 6 Jun 2002 Valdis.Kletnieks@vt.edu wrote:
 
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic01575.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic26184.pcx)
->
->
->
->
->
->
->
->
 >
 >  (Embedded
 >  image moved   Valdis.Kletnieks@vt.edu
@@ -350,5 +365,10 @@ On Thu, 6 Jun 2002 Valdis.Kletnieks@vt.edu wrote:
 >
 >
 
---0__=AvhWF01AQ2zU1kPGlWECekxISfNXuiYr8EiOIwn7PpROYO3DRPsoxviM--
+___________________________________________________________________
+S. Alexander Jacobson                   i2x Media
+1-212-787-1914 voice                    1-603-288-1280 fax
+
+
+--0__=sf6PKAOFaX26rkjEhy24cB4dMuLkA1mwVP5y8SRJEVZXhEdZfM9pXFJF--
 
