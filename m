@@ -1,7 +1,7 @@
-From: Yury Umanets <umka@namesys.com>
+From: Daniel Egger <degger@fhm.edu>
 Subject: Re: Reiser4 status: benchmarked vs. V3 (and ext3)
-Date: Sat, 26 Jul 2003 18:54:34 +0400
-Message-ID: <1059231274.28094.40.camel@haron.namesys.com>
+Date: 26 Jul 2003 17:21:37 +0200
+Message-ID: <1059232897.10692.37.camel@sonja>
 References: <3F1EF7DB.2010805@namesys.com>
 	 <1059062380.29238.260.camel@sonja>
 	 <16160.4704.102110.352311@laputa.namesys.com>
@@ -12,49 +12,83 @@ References: <3F1EF7DB.2010805@namesys.com>
 	 <1059181687.10059.5.camel@sonja>
 	 <1059203990.21910.13.camel@haron.namesys.com>
 	 <1059228808.10692.7.camel@sonja>
+	 <1059231274.28094.40.camel@haron.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15054-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-4Llnxx98VMlh9NY1CLNH"
+Return-path: <reiserfs-list-return-15055-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1059228808.10692.7.camel@sonja>
+In-Reply-To: <1059231274.28094.40.camel@haron.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Daniel Egger <degger@fhm.edu>
+To: Yury Umanets <umka@namesys.com>
 Cc: Nikita Danilov <Nikita@Namesys.COM>, Hans Reiser <reiser@namesys.com>, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, reiserfs mailing list <reiserfs-list@namesys.com>
 
-On Sat, 2003-07-26 at 18:13, Daniel Egger wrote:
-> Am Sam, 2003-07-26 um 09.19 schrieb Yury Umanets:
-> 
-> > I think this is more then enough for running reiser4. Reiser4 is a linux
-> > filesystem first of all, and linux is able to be ran on even worse
-> > hardware then you have.
-> 
+--=-4Llnxx98VMlh9NY1CLNH
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> Linux is running just fine one the system, thanks. My question is
-> whether reiserfs is suitable for flash devices. The chances to get some
-> usable answers seem to be incredible low though...
+Am Sam, 2003-07-26 um 16.54 schrieb Yury Umanets:
 
-Reiserfs cannot be used efficiently with flash, as it uses block size 4K
-(by default) and usual flash block size is in range 64K - 256K.
+Now we're talking. :)
 
-Also reiserfs does not use compression, that would be very nice of it
-:), because flash has limited number of erase cycles per block (in range
-100.000) and it is about three times as expensive as SDRAM.
+> Reiserfs cannot be used efficiently with flash, as it uses block size 4K
+> (by default) and usual flash block size is in range 64K - 256K.
 
-So, it is better to use something more convenient. For instance jffs2.
+Don't confuse block size with erase size. The former is the layout of
+the fs' data on the medium while the latter is the granulariy of the
+erase command which is important insofar that flash has to be erased (in
+most cases) before one can write new data on it.
 
-But, if you are still want to use reiserfs for flash device, you should
-do at least the following: 
+However since you said that one can plug in a different block allocation
+scheme, I think it might be possible to work around that limitation by
+writing a block allocator which works around the limitations of the
+erase size.
 
-(1) Make the journal substantial smaller of size.
-(2) Don't turn tails off. This is useful to prolong flash live.
+> Also reiserfs does not use compression, that would be very nice of it
+> :), because flash has limited number of erase cycles per block (in range
+> 100.000)
 
+I don't see what the compression has to do with the limited number of
+erase/write cycles.
 
-Regards.
+>  and it is about three times as expensive as SDRAM.
 
--- 
-We're flying high, we're watching the world passes by...
+That's true but not important to us. The system right now fits nicely on
+a 128MB CF card when using ext2 or on 64MB when using JFFS2. The latter
+is far more stable and reliable but dogslow. Since the price difference
+between 128MB and 64CF is rather small and the cost of the overall
+system relatively high this is no argument for us.
+
+> So, it is better to use something more convenient. For instance jffs2.
+
+Convenient only insofar that it's more reliable. It's a pain in the neck
+to setup for non hardwired flash chips and to boot, it also takes
+forever to mount and to write on it.
+
+> (1) Make the journal substantial smaller of size.
+> (2) Don't turn tails off. This is useful to prolong flash live.
+
+Thanks. But first I'll have a look at your plugin architecture to see
+how feasible a different implementation of block allocation especially
+for flash devices would be.
+
+--=20
+Servus,
+       Daniel
+
+--=-4Llnxx98VMlh9NY1CLNH
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.2 (GNU/Linux)
+
+iD8DBQA/IpyBchlzsq9KoIYRAlF+AKDUk/SLYoFmESbW9H9zLigW/Q5kigCfcqaF
+uFAF6dMHjG79LYbl3CFk/Tg=
+=GgTC
+-----END PGP SIGNATURE-----
+
+--=-4Llnxx98VMlh9NY1CLNH--
 
