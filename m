@@ -1,36 +1,69 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Fwd: Re: [reiserfs-list] superblock problem
-Date: Wed, 26 Jun 2002 22:08:02 +0400
-Message-ID: <200206262208.02793.vitaly@namesys.com>
+From: "Henrique Faria" <henrique@streamworks.com.br>
+Subject: Re: Data loss during power off
+Date: Wed, 26 Jun 2002 15:34:49
+Message-ID: <20020626183449.28888.qmail@hm47.locaweb.com.br>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-10858-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10859-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+References: 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="macroman"
-To: Jakub =?utf-8?q?Ambro=C5=BCewicz?= <ja@vigor.com.pl>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+Cc: nikita@namesys.com
 
-CkhpLCBpdCBzZWVtcyB5b3UgZGlkIG5vdCBnZXQgbXkgZmlyc3QgZW1haWwuCgotLS0tLS0tLS0t
-ICBGb3J3YXJkZWQgTWVzc2FnZSAgLS0tLS0tLS0tLQoKU3ViamVjdDogUmU6IFtyZWlzZXJmcy1s
-aXN0XSBzdXBlcmJsb2NrIHByb2JsZW0KRGF0ZTogV2VkLCAyNiBKdW4gMjAwMiAxNjozNzoxOCAr
-MDQwMApGcm9tOiBWaXRhbHkgRmVydG1hbiA8dml0YWx5QG5hbWVzeXMuY29tPgpUbzogSmFrdWIg
-QW1icm/FvGV3aWN6IDxqYUB2aWdvci5jb20ucGw+CgpIaSBKYWt1YiwKCndoaWNoIHZlcnNpb24g
-b2YgcmVpc2VyZnNwcm9ncyBkbyB5b3UgdXNlPwpZb3UgZ290IHdyb25nIHN1cGVyIGJsb2NrIGZv
-cm1hdCBpbiBibG9jayAxNiwKd2hhdCBkaWQgeW91IGFuc3dlciBvbiB0aGUgcXVlc3Rpb24gYWJv
-dXQKc3VwZXIgYmxvY2sgZm9ybWF0IGJlZm9yZSByZWJ1aWxkaW5nPwoKPiBIaQo+Cj4gSSBqdXN0
-IGxvc3QgbXkgc3VwZXJibG9jay4gTm90IGEgYmlnIGRlYWwsIGkKPiByZWlzZXJmc2NrIC0tcmV1
-aWxkLXNiIGl0LCB0aGVuIC0tcmVidWlsZC10cmVlLgo+IEFmdGVyIHRoYXQgaSBtYWRlIC0tY2hl
-Y2sgYW5kIGl0IGZvdW5kIG5vCj4gZXJyb3JzLiBCdXQgaXQncyB1bm1vdW50YWJsZS4uLgo+IER1
-cmluZyBib290IG15IGtlcm5lbCAoMi40LjE4LCBEZWJpYW4vV29vZHkpIHN0YXRlczoKPgo+IHN1
-cGVyLTQ1OTogcmVhZF9zdXBlcl9ibG9jazogc3VwZXIgZm91bmQgYXQgYmxvY2sgMTYKPiBpcyB3
-aXRoaW4gaXRzIG93biBsb2cuIEl0IG11c3Qgbm90IGJlIG9mIHRoaXMgdHlwZS4KPiByZWFkX3N1
-cGVyX2Jsb2NrOiBjYW4ndCBmaW5kIGEgcmVpc2VyZnMgZmlsZXN5c3RlbQo+IG9uIGRldiAxNjo0
-MiBibG9jayA4LCBzaXplIDEwMjQKPgo+IFNvIGkgdGhvdWdodCBtYXliZSBpIHVzZWQgd3Jvbmcg
-dmVyc2lvbiBhbmQgdHJpZWQKPiBhbGwgb2YgdGhlIG9wdGlvbnMsIHN0aWxsIG5vIHJlc3VsdC4g
-QW5kIG5vdyBpIHN0dWNrCj4gd2l0aCBkaXNrIGZ1bGwgb2YgZGF0YSB3aGljaCBpIGNhbid0IGdl
-dC4KPiBTbywgaXMgdGhlcmUgYSBtZXRob2QgdG8gbW91bnR8Zml4IHRoaXMgcGFydGl0aW9uLCBv
-cgo+IGNvcHkgZmlsZXMgb3V0IGZyb20gaXQ/Cj4KPiBKQQoKLS0KClRoYW5rcywKVml0YWx5IEZl
-cnRtYW4KCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0KCi0tIAoKVGhhbmtzLApWaXRhbHkgRmVydG1hbgo=
+Does changing JOURNAL_MAX_TRANS_AGE and JOURNAL_MAX_COMMIT_AGE values make
+any sense? Well, at least, it seemed to.
+I read something about Reiser4 APIs to handle transactions, in the reiser
+FAQs (question 47). Nikita Danilov wrote some words mentioning this feature.
+I wonder if it could solve my problems.
+By the way, when reiser4 will be available?
+Thank you all,
+
+Henrique R. Faria
+
+On Wed, 26 Jun 2002 09:08:29 +0400, Oleg Drokin <green@namesys.com> escreveu
+:
+
+> De: Oleg Drokin <green@namesys.com>
+> Data: Wed, 26 Jun 2002 09:08:29 +0400
+> Para: Henrique Faria <henrique@streamworks.com.br>
+> Assunto: Re: [reiserfs-list] Data loss during power off
+> 
+> Hello!
+> 
+>    This (almost) cannot be done. Of course you may resort to
+>    opening files with O_SYNC or issuing sync/fsync calls after each write,
+>    this way you'd lose even less data by the cost of speed of fs
+operations.
+>    At least with this approach you may be sure that after sync/fsync
+returned
+>    (or write in case of oepning with O_SYNC), data are safe on the media.
+>    (This is assuming that your flash memory card does not do any cheating
+>     and does not report it have completed command before actual writing).
+> 
+> Bye,
+>     Oleg
+> On Tue, Jun 25, 2002 at 09:09:04PM +0000, Henrique Faria wrote:
+> > Hello!
+> > We're using reiserfs 3.6.25 and linux 2.4.18, in a 256 MB flash memory
+card,
+> > to develop a game. Data is written all the time, in local files, by the
+main
+> > process. The "power off" test has to be done, for the machines will be
+> > turned off with no shutdown process.
+> > What's happening: pressing the power off button (during data writing)
+makes
+> > data to be lost. Is it possible to force the data to be written in the
+file
+> > system? I tried to change the JOURNAL_MAX_TRANS_AGE and the
+> > JOURNAL_MAX_COMMIT_AGE consts. Less data is lost, but I still get some
+loss.
+> > Thanks,
+> > 
+> > Henrique R. Faria
+> 
+> 
+> 
