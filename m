@@ -1,49 +1,43 @@
-From: Matt Mackall <mpm@selenic.com>
-Subject: Re: silent semantic changes with reiser4
-Date: Wed, 25 Aug 2004 23:44:25 -0500
-Message-ID: <20040826044425.GL5414@waste.org>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy>
-Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20568-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1093480940.2748.35.camel@entropy>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+From: Kyle Moffett <mrmacman_g4@mac.com>
+Subject: Re: Using fs views to isolate untrusted processes: I need an assistant architect in the USA for Phase I of a DARPA funded linux kernel project
+Date: Thu, 26 Aug 2004 00:52:37 -0400
+Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <C08CA144-F71B-11D8-A7C9-000393ACC76E@mac.com>
+References: <410D96DC.1060405@namesys.com> <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com> <20040825205618.GA7992@hockin.org> <30958D95-F6ED-11D8-A7C9-000393ACC76E@mac.com> <412D2BD2.2090408@sun.com> <EAB989A6-F6F9-11D8-A7C9-000393ACC76E@mac.com> <20040825180615.Z1973@build.pdx.osdl.net> <BCE1F8F8-F716-11D8-A7C9-000393ACC76E@mac.com> <20040826042936.GR21964@parcelfarce.linux.theplanet.co.uk>
+Mime-Version: 1.0 (Apple Message framework v619)
 Content-Transfer-Encoding: 7bit
-To: Nicholas Miell <nmiell@gmail.com>
-Cc: Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S267542AbUHZEwx@vger.kernel.org>
+In-Reply-To: <20040826042936.GR21964@parcelfarce.linux.theplanet.co.uk>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: viro@parcelfarce.linux.theplanet.co.uk
+Cc: Chris Wright <chrisw@osdl.org>, LKML <linux-kernel@vger.kernel.org>, Rik van Riel <riel@redhat.com>, Tim Hockin <thockin@hockin.org>, Mike Waychison <Michael.Waychison@Sun.COM>, ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>
 
-On Wed, Aug 25, 2004 at 05:42:21PM -0700, Nicholas Miell wrote:
-> On Wed, 2004-08-25 at 16:46, Wichert Akkerman wrote:
-> > Previously Jeremy Allison wrote:
-> > > Multiple-data-stream files are something we should offer, definately (IMHO).
-> > > I don't care how we do it, but I know it's something we need as application
-> > > developers.
-> > 
-> > Aside from samba, is there any other application that has a use for
-> > them? 
-> > 
-> 
-> Anything that currently stores a file's metadata in another file really
-> wants this right now. Things like image thumbnails, document summaries,
-> digital signatures, etc.
+On Aug 26, 2004, at 00:29, viro@parcelfarce.linux.theplanet.co.uk wrote:
+> Files and directories are not different in that respect - the only 
+> overhead
+> is price of hash lookup when crossing the binding in either case.  1000
+> bindings shouldn't be a problem - it's 3--5 per hash chain.  Wrt 
+> memory,
+> it's one struct vfsmount allocated per binding - IOW, about 80Kb total
+> for 1000 of those.
 
-That is _highly_ debatable. I would much rather have my cp and grep
-and cat and tar and such continue to work than have to rewrite every
-tool because we've thrown the file-is-a-stream-of-bytes concept out
-the window. Never mind that I've got thumbnails, document summaries,
-and digital signatures already.
+Where would I increase the hash size if I wanted to increase the number
+of bindings by an order of magnitude or so?  I'm very interested in
+pursuing this possibility, because when combined with the procedure I
+described earlier, plus a little bit of extra work with capabilities 
+and such
+it's very easy to build incredibly flexible and basically indestructible
+chroot environments with not much code.
 
-While the number of annoying properties of files with forks is
-practically endless, the biggest has got to be utter lack of
-portability. How do you stick the thing in an attachment or on an ftp
-site? Well you can't because it's NOT A FILE. 
+Cheers,
+Kyle Moffett
 
-A file is a stream of bytes.
+-----BEGIN GEEK CODE BLOCK-----
+Version: 3.12
+GCM/CS/IT/U d- s++: a17 C++++>$ UB/L/X/*++++(+)>$ P+++(++++)>$
+L++++(+++) E W++(+) N+++(++) o? K? w--- O? M++ V? PS+() PE+(-) Y+
+PGP+++ t+(+++) 5 X R? tv-(--) b++++(++) DI+ D+ G e->++++$ h!*()>++$ r  
+!y?(-)
+------END GEEK CODE BLOCK------
 
--- 
-Mathematics is the supreme nostalgia of our time.
