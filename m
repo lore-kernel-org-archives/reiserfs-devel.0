@@ -1,20 +1,18 @@
 From: Christian Placzek <kris@cp-data.de>
-Subject: Re: reiserfs3 rebuild-tree successful but no files
-Date: Fri, 11 Feb 2005 08:32:28 +0100
-Message-ID: <200502110832.28847.kris@cp-data.de>
-References: <200502082321.07706.kris@cp-data.de> <200502101603.00268.kris@cp-data.de> <200502101825.06588.vitaly@namesys.com>
+Subject: Re: reiserfs3 rebuild-tree successful but no files - SOLVED
+Date: Fri, 11 Feb 2005 08:38:56 +0100
+Message-ID: <200502110838.56864.kris@cp-data.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23370-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23371-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200502101825.06588.vitaly@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Vitaly Fertman <vitaly@namesys.com>
+To: "E.Gryaznova" <grev@namesys.com>
 Cc: reiserfs-list@namesys.com
 
 On Thursday 10 February 2005 16:25, you wrote:
@@ -91,18 +89,19 @@ On Thursday 10 February 2005 16:25, you wrote:
 > >        or too many mounted file systems
 >
 > after rebuilding the tree, does 'reiserfsck --check <device>' see these
-> files? 
-Yes, see my original email from 08.02.2005 23:21. The original output has a 
+> files?
+
+Yes, see my original email from 08.02.2005 23:21. The original output has a
 length of about 13000 lines. A extract looks like this:
 
 ...
-rebuild_semantic_pass: The entry [741258 1025777] ("www.firstname.de.ico") in 
+rebuild_semantic_pass: The entry [741258 1025777] ("www.firstname.de.ico") in
 directory [296134 741258] points to nowhere - is removed
 rewrite_file: 2 items of file [741258 1041142] moved to [741258 93475]
-The entry [741258 1041142] ("deltab.de.ico") in directory [296134 741258] 
+The entry [741258 1041142] ("deltab.de.ico") in directory [296134 741258]
 updated to point to [741258 93475]
 rewrite_file: 2 items of file [741258 1041137] moved to [741258 93569]
-The entry [741258 1041137] ("www.bild.t-online.de.ico") in directory [296134 
+The entry [741258 1041137] ("www.bild.t-online.de.ico") in directory [296134
 741258] updated to point to [741258 93569]
 ...
 
@@ -126,9 +125,10 @@ Syncing..finished
 reiserfsck finished at Tue Feb  8 17:40:05 2005
 ...
 
-Most of the files were removed by 'reiserfsck --check <device>'. 
+Most of the files were removed by 'reiserfsck --check <device>'.
 
 > do you have a reiserfs support in the kernel?
+
 Sure, one of my data partition is reiserfs:
 
 ...
@@ -142,21 +142,21 @@ Reiserfs super block in block 16 on 0x307 of format 3.6 with standard journal
 Count of blocks on the device: 4393769
 ...
 
->
 > what if you zero the first 64K with
 >  dd conv=notrunc if=/dev/zero of=<device> bs=4096 count=16
 > can you mount it now? (rebuild-tree should already complete by the mount
 > time).
-Hurray, this is the trick! I don't understand why, but I can see hundreds of 
+
+Hurray, this is the trick! I don't understand why, but I can see hundreds of
 directories and thousends of files. Thanks a lot!!!
 
->
 > do you have anything related in the syslog about the mount time?
+
 This is the first time 'dmesg' gives an output:
 
 ReiserFS: sdc5: found reiserfs format "3.6" with standard journal
 ReiserFS: sdc5: using ordered data mode
-ReiserFS: sdc5: journal params: device sdc5, size 8192, journal first block 
+ReiserFS: sdc5: journal params: device sdc5, size 8192, journal first block
 18, max trans len 1024, max batch 900, max commit age 30, max trans age 30
 ReiserFS: sdc5: checking transaction log (sdc5)
 ReiserFS: sdc5: Using r5 hash to sort names
@@ -165,6 +165,6 @@ ReiserFS: sdc5: Using r5 hash to sort names
 
 Could you give me a technical describtion why this worked?
 
-Again, thank you very much! 
+Again, thank you very much!
 
 Kris
