@@ -1,36 +1,32 @@
-From: Chris Mason <mason@suse.com>
-Subject: [PATCH] finally... data logging for 2.4.20-pre10
-Date: 15 Oct 2002 15:24:42 -0400
-Message-ID: <1034709883.5053.920.camel@tiny>
+From: Russell Coker <bofh@coker.com.au>
+Subject: back up to disk
+Date: Tue, 15 Oct 2002 23:05:44 +0200
+Message-ID: <200210152305.44936.bofh@coker.com.au>
+Reply-To: Russell Coker <bofh@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11698-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11699-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: ReiserFS <reiserfs-list@namesys.com>
 
-Hello all,
-
-I've uploaded new data logging code against 2.4.20-pre10 to 
-
-ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20
-
-The mirror might take a little while to update.
-
-This code is lightly tested, use with caution for a few days.  The
-journal relocation patches are not complete yet, I haven't integrated
-them with the new options parsing code in 2.4.20-pre, so you can't pass
--o jdev= when mounting the FS.
-
-Aside from merging into the latest kernel, there are a few bug fixes for
-corner case oopsen hit during suse testing.
-
--chris
+Here's an interesting article I just read.  It's just a device with a bunch of 
+ATA drives inside, up to 2T of storage.  Probably anyone here could produce 
+something based on ReiserFS to compete with it...
 
 
+Storage start-up Avamar Technologies is launching an appliance 
+this week that it claims backs up network data more quickly and 
+less expensively than tape. 
+http://www.nwfusion.com/news/2002/1014avamar.html?net
 
+-- 
+http://www.coker.com.au/bonnie++/     Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/       Postal SMTP/POP benchmark
+http://www.coker.com.au/projects.html Projects I am working on
+http://www.coker.com.au/~russell/     My home page
 
