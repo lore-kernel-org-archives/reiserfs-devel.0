@@ -1,13 +1,13 @@
-From: Matthew Palmer <mpalmer@hezmatt.org>
-Subject: Re: Debian: reiser4 non-DFSG-free. !?!
-Date: Fri, 7 May 2004 09:32:39 +1000
-Message-ID: <20040506233239.GB25081@hezmatt.org>
-References: <kkKLVD.A.2NF.qPomAB@murphy> <409A90A5.30600@almg.gov.br> <409A914D.1020301@namesys.com>
+From: Raul Miller <moth@debian.org>
+Subject: Re: reiser4 non-free?
+Date: Thu, 6 May 2004 19:40:15 -0400
+Message-ID: <20040506194015.R13880@links.magenta.com>
+References: <4097CCA4.4060707@namesys.com> <87fzag139k.fsf@aule.evenmere.org> <4099A868.9030406@slaphack.com> <20040506.083242.41632888.wlandry@ucsd.edu> <87k6zpy8ke.fsf@aule.evenmere.org> <20040506143643.GB25505@raptus.homelinux.org> <877jvpy08v.fsf@aule.evenmere.org> <409A7F98.7040609@namesys.com> <20040506232310.GA25081@hezmatt.org>
 Mime-Version: 1.0
 Return-path: <bounce-debian-legal=debian-legal=m.gmane.org@lists.debian.org>
 Content-Disposition: inline
-In-Reply-To: <409A914D.1020301@namesys.com>
-Resent-Message-ID: <uu_54.A.-iB.TtsmAB@murphy>
+In-Reply-To: <20040506232310.GA25081@hezmatt.org>; from mpalmer@hezmatt.org on Fri, May 07, 2004 at 09:23:10AM +1000
+Resent-Message-ID: <mXNK2.A.U3C.gzsmAB@murphy>
 List-Id: <reiserfs-devel.vger.kernel.org>
 List-Post: <mailto:debian-legal@lists.debian.org>
 List-Help: <mailto:debian-legal-request@lists.debian.org?subject=help>
@@ -16,43 +16,28 @@ List-Unsubscribe: <mailto:debian-legal-request@lists.debian.org?subject=unsubscr
 List-Archive: <http://lists.debian.org/debian-legal/>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
+To: debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-On Thu, May 06, 2004 at 12:26:05PM -0700, Hans Reiser wrote:
-> Another example:
+On Fri, May 07, 2004 at 09:23:10AM +1000, Matthew Palmer wrote:
+> Q: Where is the limit between displaying the credits where the user won't
+> necessarily see them, and forcing the user to read them?
 > 
-> reiser@linux:~/reiser4progs-0.5.3> /sbin/mkreiserfs -V
-> mkreiserfs 3.6.9 (2003 www.namesys.com)
+> Likely Answer: Umm...
 > 
-> A pair of credits:
-> Edward Shushkin wrote the encryption and compression  file plugins,  and 
-> the V3
-> journal relocation code.
-> 
-> Vladimir Demidov wrote the parser for sys_reiser4(), the V3 alpha port, 
-> part of
-> the V3  journal  relocation code,  and helped  Hans keep  the business  
-> side of
-> things running.
+> Actual Answer: ???
 
-I note that you appear to have put a random selection of credits in the
-output on each invocation (at least, two invocations on 3.6.13 give me
-different credits).  This makes the definition of what "credits" are, and
-"giving equal prominence" to all of them even harder.  As a contributor, if
-I care that much about getting my name "in lights", and part of the
-mandatory output of a program, the chances are I don't want to possibly miss
-that chance on a lot of eyeballs and place myself subject to the vagaries of
-a random number generator.
+Other things to consider:  how long must they be displayed?  What fonts
+can be used?  What colors?  What orientations are allowed for the text?
+What sort of display devices or mechanisms are ok to use (imagine systems
+with no monitor and no serial terminal, or systems with a 3d interface
+and not text)?
 
-Of course, in this case I would imagine that all of your contributors have
-said it's OK, but would you consider this modification OK if you hadn't made
-it?  It certainly would be failing the letter of "equal prominence to all",
-but you've done it yourself?  A basic tenet of software freedom (IMO) is
-that modifications should be OK no matter who does them -- this allows
-everyone the power to fork if they so choose.
+Or imagine systems for the blind -- what volume must these credits be
+played at?  What speech rates are ok to use?  What quality of rendition
+to phonemes is required?
 
-Oh dear, I appear to have become embroiled in a long thread...
+Just scratching the surface, ...
 
-- Matt
+-- 
+Raul Miller
 
