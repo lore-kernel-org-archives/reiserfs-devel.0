@@ -1,31 +1,30 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiserfs vs NTFS vs WAFL
-Date: Thu, 22 May 2003 21:22:23 +0400
-Message-ID: <3ECD074F.8040009@namesys.com>
-References: <3ECBC1DF.3060607@namesys.com> <003b01c32070$052d59b0$0101a8c0@bummer> <20030522170723.GH7706@vestdata.no>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14210-reiserfs=m.gmane.org@namesys.com>
+From: "Chris [ www.LiFEFORCE.de ]" <chris@lifeforce.de>
+Subject: raiserfsck using --rebuild-tree & --fix-fixable
+Date: Thu, 22 May 2003 19:29:56 +0200
+Message-ID: <000a01c32087$c3dcb100$025ca8c0@clf>
+Return-path: <reiserfs-list-return-14211-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030522170723.GH7706@vestdata.no>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-15?Q?Ragnar_Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
-Cc: darren <teodarren@myrealbox.com>, 'reiserfs' <reiserfs-list@namesys.com>, 'Mike Jadon' <mikej@umem.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Ragnar Kj=F8rstad wrote:
+Hi !
 
->
->Alternatively SPEC sfs is probably a good way to test NFS-performance
->(but it costs $$).
->
-I am told it is free now.
+After my system had crashed, I used reiserfsck with options
+--rebuild-tree & --fix-fixable (first).
 
+The files I had lost could be found again. But there have been lot of
+identical files.
 
---=20
-Hans
+The system could be started after running the program.
+Only the during the crash opened files could not be reconstructed.
+
+Just as feedback :)
+
 
 
