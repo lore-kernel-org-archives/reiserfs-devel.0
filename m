@@ -1,64 +1,39 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: vs-8115: get_num_ver: not directory item
-Date: Thu, 06 May 2004 14:43:22 +0400
-Message-ID: <1083840202.14090.231.camel@tribesman.namesys.com>
-References: <20040506114621.1f2805b4@philou.gramoulle.local>
+From: Walter Landry <wlandry@ucsd.edu>
+Subject: Re: reiser4 non-free?
+Date: Thu, 06 May 2004 08:32:42 -0400 (EDT)
+Message-ID: <20040506.083242.41632888.wlandry@ucsd.edu>
+References: <4097CCA4.4060707@namesys.com>
+	<87fzag139k.fsf@aule.evenmere.org>
+	<4099A868.9030406@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18484-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18485-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040506114621.1f2805b4@philou.gramoulle.local>
+In-Reply-To: <4099A868.9030406@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Philippe =?ISO-8859-1?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Cc: ReiserFS Mailing List <reiserfs-list@namesys.com>
+Content-Type: Text/Plain; charset="us-ascii"
+To: ninja@slaphack.com
+Cc: bts@alum.mit.edu, reiser@namesys.com, mjr@dsl.pipex.com, debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-Hello
+David Masover <ninja@slaphack.com> wrote:
+> First and foremost:  Hans, this is your project.  Someone willing to
+> replace entire APIs with things that feel like files is obviously not
+> afraid of creating something new.  So at the end of the day, it
+> shouldn't matter too much that it's in Debian Non-free, especially if
+> (assuming I heard correctly) XFree86 is also non-free.
 
-On Thu, 2004-05-06 at 13:46, Philippe Gramoull=E9 wrote:
-> Hello,
->=20
-> Today after i dist-upgraded my Debian box, i rebuilt the Nvidia module an=
-d saw that on screen
-> right after:
->=20
-> May  6 10:23:38 kernel  kernel: vs-8115: get_num_ver: not directory item
-> May  6 10:23:38 kernel  kernel: vs-8115: get_num_ver: not directory item
->=20
+People seem to be missing this issue, so I'll bring it up again.  The
+problem is not so much whether the license is free or not.  The
+problem is that it is incompatible with the GPL.  That means that
+Debian can't distribute it _at all_.  Not in main, not in non-free.
+Not at all.
 
-I guess that warning became obsolete when Oleg <green@clusterfs.com>
-added possibility to insert long indirect items.
+The license may be perfectly free (e.g. the IBM CPL), but if it is
+incompatible with the GPL, then Debian can't distribute it.
 
->=20
-> Kernel is vanilla 2.6.6-rc3. HW is Dell workstation 530MT, SCSI disk, SMP
->=20
-> I already had that some weeks ago, with a previous 2.6.6rcX kernel but i =
-didn't pay too much attention
-> after the latest reiserfsck told me that my fs had 0 corruption. Now that=
- i think of this, it was also after the Nvidia
-> installer so maybe this is a good workload to trigger this. ( Nvidia inst=
-aller version is 5336 )
->=20
-> Checking the archives, i only found a post on 12/26/2001 with reply from =
-Oleg saying that it looked like a race and
-> he posted a fix. Maybe this is different but hopefully, this isn't causin=
-g any corruption.
->=20
-> Thanks,
->=20
-> Philippe
->=20
-> --
->=20
-> Philippe Gramoull=E9
-> philippe.gramoulle@mmania.com
-> Senior System and Network Architect
-> Lycos Europe
->=20
->=20
->=20
->=20
-
+Regards,
+Walter Landry
+wlandry@ucsd.edu
