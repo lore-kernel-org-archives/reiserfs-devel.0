@@ -1,55 +1,41 @@
-From: Fong Vang <FVang@Zantaz.com>
-Subject: RE: Write-once file system
-Date: Fri, 27 Jun 2003 09:07:53 -0700
-Message-ID: <12C7D768CC8ED4118A9200508BEEC6FB033776CA@zanexch.zantaz.com>
+From: Russell Coker <russell@coker.com.au>
+Subject: Re: Red Hat Enterprise Linux AS (v. 2.1) and  > 2 GB files
+Date: Sat, 28 Jun 2003 02:10:46 +1000
+Message-ID: <200306280210.46008.russell@coker.com.au>
+References: <1056635615.1967.377.camel@atlas.vinterbro.com> <20030627065918.GA20771@namesys.com> <20030627125003.A32245@t-raenon.nmd.msu.ru>
+Reply-To: Russell Coker <russell@coker.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14737-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14738-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20030627125003.A32245@t-raenon.nmd.msu.ru>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: 'Oleg Drokin' <green@namesys.com>
-Cc: "'reiserfs-list@namesys.com'" <reiserfs-list@namesys.com>
+To: flx@msu.ru
+Cc: reiserfs-list@namesys.com
 
-it should be mandantory.  root should not be able to change it.
+On Fri, 27 Jun 2003 18:50, Alexander Lyamin wrote:
+> > No, I believe there was kernel update last month that upgraded RHAS
+> > kernel up to 2.4.18.
+> > Anyway RHAS 2.4.9 kernel does not have that much in common with vanilla
+> > 2.4.9.
+>
+> If there's nothing much in common with vanilla linux, then they should not
+> mislead their customers with "linux" label on it, but should fork and do
+> something like Reddix or Hattix 2.4.9 .
 
------Original Message-----
-From: Oleg Drokin [mailto:green@namesys.com]
-Sent: Friday, June 27, 2003 8:46 AM
-To: Fong Vang
-Cc: 'reiserfs-list@namesys.com'
-Subject: Re: Write-once file system
+In that case we will have Susix, Red Hattix, Debianix, etc and no-one will be 
+using "Linux".  Then we will all get sued by the idiots who own the copyright 
+to some second-rate French comics and then be forced to call it Linux again.  
+:-#
 
+-- 
+http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
+http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
+http://www.coker.com.au/~russell/  My home page
 
-Hello!
-
-On Fri, Jun 27, 2003 at 08:43:06AM -0700, Fong Vang wrote:
-> We rely heavily on reiserfs for some of our critical file systems.  I'm
-just
-> wondering what work would be involved and how difficult it would be to add
-> an option (perhaps at mount time) to reiserfs that will allow a file to be
-> written only once, i.e. once a file is created it should not be allowed to
-> be modified or deleted (including the inode).  We may consider paying for
-> this modification.
-
-Is the extended attributes support (man chattr) does what you want by any
-chance?
-
-Bye,
-    Oleg
-
-
-This e-mail has been captured and archived by the ZANTAZ Digital Safe(tm)
-service.  For more information, visit us at www.zantaz.com. 
-IMPORTANT: This electronic mail message is intended only for the use of the
-individual or entity to which it is addressed and may contain information
-that is privileged, confidential or exempt from disclosure under applicable
-law.  If the reader of this message is not the intended recipient, or the
-employee or agent responsible for delivering this message to the intended
-recipient, you are hereby notified that any dissemination, distribution or
-copying of this communication is strictly prohibited.  If you have received
-this communication in error, please notify the sender immediately by
-telephone or directly reply to the original message(s) sent.  Thank you.
