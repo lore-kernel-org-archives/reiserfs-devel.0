@@ -1,40 +1,24 @@
-From: Sander <sander@humilis.net>
-Subject: Re: Mail System Error - Returned Mail
-Date: Fri, 25 Feb 2005 17:04:34 +0100
-Message-ID: <20050225160434.GB2978@favonius>
-References: <200502250820.58562.tomlins@cam.org>
-Reply-To: sander@humilis.net
-Mime-Version: 1.0
+From: "Tiffany Hadley" <ringside@yahoo.ec>
+Subject: PIAGET CARTIER - Look Just Like The Real Thing - Louis Vuitton Omega Logines - 742441
+Date: Sat, 26 Feb 2005 14:18:42 -0700
+Message-ID: <1766B702.ECF9392B@tridity.org>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200502250820.58562.tomlins@cam.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ed Tomlinson <tomlins@cam.org>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: vs@namesys.com, reiser@namesys.com
 
-Ed Tomlinson wrote (ao):
-> Reiserfs is a mailing list. And yes some spam does get relayed by it
-> This mess itself, sent to the list, is SPAM. _Please_ check before
-> sending messages like this.
+p415EX44
 
-LoL!
+PIAGET CARTIER - So Real You Cannot Tell the Difference - Louis Vuitton Omega Logines - 461612  
 
-You don't seem to be aware of the fact that the message below is sent by
-a virus ;-)
+You gotta see this - http://bremsstrahlung.jjddfjmc.com/?DVF99IE4bcKL67Dwaterman
 
+no more - http://goa.kfhefkdn.com/kingpin?6o888bDzabde5CCosseous
 
-> On Thursday 24 February 2005 11:57, jthiehoff@dcccd.edu wrote:
-> > Dear user reiserfs-list@namesys.com,
-> > 
-> > Your e-mail account was used to send a large amount of spam messages during this week.
-> > Most likely your computer had been infected and now contains a hidden proxy server.
-> > 
-> > Please follow the instructions in order to keep your computer safe.
-> > 
-> > Best regards,
-> > namesys.com user support team.
+Y535OW62
