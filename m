@@ -1,80 +1,52 @@
-From: Clifford Beshers <clifford.beshers@lindows.com>
+From: "Lamont R. Peterson" <lamont@gurulabs.com>
 Subject: Re: Speaking of credits...
-Date: Fri, 07 May 2004 15:07:26 -0700
-Message-ID: <409C089E.2040807@lindows.com>
-References: <1083959971.9092.0.camel@localhost.localdomain>	 <409BFAAC.3050404@lindows.com> <1083966665.2985.43.camel@wraith.lrp.advansoft.us>
+Date: Fri, 07 May 2004 16:33:46 -0600
+Message-ID: <1083969226.2985.48.camel@wraith.lrp.advansoft.us>
+References: <1083959971.9092.0.camel@localhost.localdomain>
+	 <409BFAAC.3050404@lindows.com>
+	 <1083966665.2985.43.camel@wraith.lrp.advansoft.us>
+	 <409C089E.2040807@lindows.com>
+Reply-To: lamont@gurulabs.com
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
- boundary="------------060700060102090106010805"
-Return-path: <reiserfs-list-return-18548-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-hHRz0m9m7Q7AHHMziVOI"
+Return-path: <reiserfs-list-return-18549-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1083966665.2985.43.camel@wraith.lrp.advansoft.us>
+In-Reply-To: <409C089E.2040807@lindows.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: lamont@gurulabs.com
-Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
---------------060700060102090106010805
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--=-hHRz0m9m7Q7AHHMziVOI
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Sloppy of me.  Sorry.
+On Fri, 2004-05-07 at 16:07, Clifford Beshers wrote:
+> Sloppy of me.  Sorry.
 
-Lamont R. Peterson wrote:
+NP :-).
 
->On Fri, 2004-05-07 at 15:07, Clifford Beshers wrote:
->[SNIP]
->  
->
->>Case in point:  I'm removing lilo and putting in grub right now.  Grub 
->>puts up its name and version number on the top of the boot screen.  I 
->>can just imagine Michael trying to explain to Walmart, ``Umm... yes, 
->>GRUB stands for Grand Universal Boot Loader...''  Uh hunh.
->>    
->>
->
->See http://www.gnu.org/directory/grub.html :
->GRUB stands for GRand Unified Bootloader
->[SNIP]
->  
->
+Given that this thread was concerning the renaming of projects/products,
+I did not want someone to come along and wonder if the acronym for GRUB
+was being renamed by the Lindows people, which I was sure from your
+message it was not (at least, not at this point).
+--=20
+Lamont R. Peterson <lamont@gurulabs.com>
+Senior Instructor
+Guru Labs, L.C. http://www.GuruLabs.com/
 
---------------060700060102090106010805
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+--=-hHRz0m9m7Q7AHHMziVOI
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
-  <title></title>
-</head>
-<body text="#000000" bgcolor="#ffffff">
-Sloppy of me.&nbsp; Sorry.<br>
-<br>
-Lamont R. Peterson wrote:<br>
-<blockquote type="cite"
- cite="mid1083966665.2985.43.camel@wraith.lrp.advansoft.us">
-  <pre wrap="">On Fri, 2004-05-07 at 15:07, Clifford Beshers wrote:
-[SNIP]
-  </pre>
-  <blockquote type="cite">
-    <pre wrap="">Case in point:  I'm removing lilo and putting in grub right now.  Grub 
-puts up its name and version number on the top of the boot screen.  I 
-can just imagine Michael trying to explain to Walmart, ``Umm... yes, 
-GRUB stands for Grand Universal Boot Loader...''  Uh hunh.
-    </pre>
-  </blockquote>
-  <pre wrap=""><!---->
-See <a class="moz-txt-link-freetext" href="http://www.gnu.org/directory/grub.html">http://www.gnu.org/directory/grub.html</a> :
-GRUB stands for GRand Unified Bootloader
-[SNIP]
-  </pre>
-</blockquote>
-</body>
-</html>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
 
---------------060700060102090106010805--
+iD8DBQBAnA7KRK8Q4zt1QRURAgBqAKClHrmLrd+v9ECoAr38Dz8HUKucVACgmmCD
+LzRQI/K2D5PO/+Di7FFy2zE=
+=LIy2
+-----END PGP SIGNATURE-----
+
+--=-hHRz0m9m7Q7AHHMziVOI--
 
