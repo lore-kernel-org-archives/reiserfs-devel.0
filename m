@@ -1,46 +1,51 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 09 Sep 2004 22:22:51 -0700
+Subject: Re: [RFC] Pathname Semantics with //
+Date: Thu, 09 Sep 2004 22:40:03 -0700
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <41413A2B.9020405@namesys.com>
-References: <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <412DA40B.5040806@namesys.com> <20040826140500.GA29965@fs.tum.de> <20040826150202.GE5733@mail.shareable.org> <41410DE7.3090100@techsource.com>
+Message-ID: <41413E33.5000501@namesys.com>
+References: <20040910030206.E29B015D9E@mail03.powweb.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <41410DE7.3090100@techsource.com>
+In-Reply-To: <20040910030206.E29B015D9E@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Timothy Miller <miller@techsource.com>
-Cc: Jamie Lokier <jamie@shareable.org>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+To: David Dabbs <david@dabbs.net>
+Cc: linux-fsdevel@vger.kernel.org, 'ReiserFS List' <reiserfs-list@namesys.com>, Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
 
-A friend asked me a question, and because he is very bright it reminded 
-me that I have not done a good job of reviewing the history of the 
-design's evolution.
+David Dabbs wrote:
 
-He asked me, why not just access a filename's size as filename/size?
+>  
+>
+>
+> Do you have a proposal to
+>expose metadata on a directory such that it 
+>
+>a) allows one to distinguish a directory entry from directory metadata,
+>  
+>
+this should be only a style convention, not a deep semantic difference. 
+Maybe Peter can comment on this.
 
-So, the original idea was to access metafiles as just files within a 
-directory, and it actually remains that way. However, I first decided to 
-make the standard unix metafiles less intrusive on the namespace. So 
-that led to calling it filename/..size and filename/..owner, etc. In 
-this scheme, the use of '..' was just a style convention for metafiles, 
-and not a requirement in anyway.
+>b) uses only already-reserved pathname character(s),
+>  
+>
+this is not important in practice
 
-This was actually pretty decent as a design, but then a user on the 
-mailing list suggested replacing the '..' prefix with a subdirectory 
-prefix. I forget who suggested this and what the prefix was exactly. So 
-we then created a '..metas' subdirectory, and this had the advantage 
-that one could ls it to see all the builtins supported by a given 
-plugin. This is not an important advantage, and I encourage others to 
-critique it.
+>c) doesn't require any reserved name,
+>  
+>
+this is not important in practice
 
-So, instead of filename/size we have filename/..metas/size. The only 
-thing gained by this is that 'size' has a rarer name of '..metas/size'. 
-The use of the '..metas/' prefix is purely a non-mandated style 
-convention. File plugins that dislike it are free to violate the 
-convention. There is no deep semantic to it, just a cowardly aversion to 
-intruding on current namespace usage with something as common as 'size'. 
-It has the significant disadvantage of being a longer name than 'size' 
-or '..size'. I could be talked out of it.
+>d) is the same delimiter used for file metadata and
+>  
+>
+?
 
-Hans
+>e) doesn't butt heads with Sus?
+>  
+>
+standards are not the future, they are efforts to make the past less 
+painful.
+
+
