@@ -1,47 +1,80 @@
-From: "David R. Bergstein" <dbergstein@comcast.net>
-Subject: RE: LFS and Large File Support for reiserfs 3.6
- (kernel 2.4.19)
-Date: Sun, 08 Sep 2002 08:53:07 -0400
-Message-ID: <IMELKMOINBOOFMGACNMDKEOBCLAA.dbergstein@comcast.net>
-References: <3D7A94EB.1590F710@baldauf.org>
+From: "David Boutcher" <boutcher@us.ibm.com>
+Subject: Re: [reiserfs-list] Memory Corruption
+Date: Sun, 8 Sep 2002 12:51:35 -0500
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <OF3896E1D4.0E34D814-ON86256C2E.0061BEB5-86256C2E.00621B7A@rchland.ibm.com>
+References: <1030628426.17778.337.camel@tiny>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Return-path: <reiserfs-list-return-11403-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-reply-to: <3D7A94EB.1590F710@baldauf.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <1030628426.17778.337.camel@tiny>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <mason@suse.com>
+Cc: linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com, Michael Ranweiler <mranweil@us.ibm.com>
 
-> -----Original Message-----
-> From: Xuan Baldauf [mailto:xuan--reiserfs@baldauf.org]
-> Sent: Saturday, September 07, 2002 8:08 PM
-> To: Oleg Drokin
-> Cc: David R. Bergstein; ReiserFS List
-> Subject: Re: [reiserfs-list] LFS and Large File Support for reiserfs 3.6
-> (kernel 2.4.19)
-[snip]
+                                                                                                                                       
+                      Chris Mason                                                                                                      
+                      <mason@suse.com>         To:       David Boutcher/Rochester/IBM@IBMUS                                            
+                                               cc:       reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org                      
+                      08/29/2002 08:40         Subject:  Re: [reiserfs-list] Memory Corruption                                         
+                      AM                                                                                                               
+                                                                                                                                       
+                                                                                                                                       
+
+
+
+
+
+
+
+
+>On Wed, 2002-08-28 at 17:00, David Boutcher wrote:
+>>
+>> >On Mon, 2002-08-19 at 12:50, Dave Boutcher wrote:
+>> >> Hi,
+>> >>
+>>> I'm chasing a wierd memory corruption problem on a ppc64 system.  The
+>>> first byte of a slab_t structure keeps getting stepped on (zeroed,
+>>> actually.)  This happens during a testcase that copies a large file
+>>> called "junk" between file systems (a mix of ext2 and reiser) on a
+>>> 2.4.13 kernel.  I know that's REALLY REALLY old, but it's whats in
+>>> SuSE's SLES-7 release that we have customers running...
+>>
+>>Any chance the test case involves renames?
+>>
+>>-chris
+>>
+>>So I posted my problem with memory corruption a few weeks ago....and the
+>>problem turned out to be a REALLY old/moldy set of userland reiser tools.
+>>I don't know exactly why that caused memory corruption in the kernel, but
+>>updating the tools fixed everything right up.
+>Well, that shouldn't fix it ;-)  Which version of reiserfsprogs were you
+>running before?
 >
-> Maybe samba is limiting here? Usually, the copy operation should
-> fail with "No
-> space left on device" if the library or kernel is unable to
-> handle the file size,
-> it should not officially succeed and silently fail.
->
+>Are the filesystems getting checked during boot at all (you would see
+>reiserfsck messages during boot)?
 
-I was able to solve this issue by locally building samba-2.2.5.  It is
-definitely not reiserfs, but Mandrake's samba-2.2.3 release that did not
-have LFS enabled.
+The fixed tools show:
+[root@linux102 /root]# reiserfsck -V
 
+<-------------reiserfsck, 2002------------->
+reiserfsprogs 3.6.3
 
-David R. Bergstein
-Systems Engineer and Blues Musician -
-http://mywebpages.comcast.net/dbergstein/
-Heart of Blue - bookings on-line at http://www.heartofblue.com
-OpenPGP Public Key 0xE1F138CA - For info see http://www.gnupg.org
-Key fingerprint = C86E CA2A 4171 AC73 91D7  3DCE 8832 D764 E1F1 38CA
+The broken tools show:
+[root@linux102 /root]# /sbin/reiserfsck.org -V
+
+<-------------reiserfsck, 2002------------->
+reiserfsprogs 3.x.1a
+
+[root@linux102 /root]# ls -l /sbin/reiserfsck*
+-rwxr-xr-x    1 root     root       719431 Aug 21 10:16 /sbin/reiserfsck*
+-rwxr-xr-x    1 root     root       265740 Feb 28  2002
+/sbin/reiserfsck.org*
+[root@linux102 /root]#
+This was Turbolinux...the broken tools are the ones shipped with their 6.5
+distribution.
+
+Dave B
 
 
