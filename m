@@ -1,35 +1,31 @@
-From: prj@po.cwru.edu (Paul Jarc)
-Subject: Re: attrib +A doesn't work
-Date: Wed, 23 Oct 2002 17:03:31 -0400
-Message-ID: <m3iszseukm.fsf@multivac.cwru.edu>
-References: <20020905034320.GA11951@yzero>
-	<15735.10894.167461.158961@laputa.namesys.com>
-	<20020905140132.A19752@namesys.com>
+From: John Dalbec <jpdalbec@ysu.edu>
+Subject: Re: [PATCH] finally... data logging for 2.4.20-pre10
+Date: Wed, 23 Oct 2002 15:01:35 -0400
+Message-ID: <3DB6F20F.3060500@ysu.edu>
+References: <1034709883.5053.920.camel@tiny>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11741-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11742-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20020905140132.A19752@namesys.com> (Oleg Drokin's message of
- "Thu, 5 Sep 2002 14:01:32 +0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-[Old thread.]
+Chris Mason wrote:
+> Hello all,
+> 
+> I've uploaded new data logging code against 2.4.20-pre10 to 
+> 
+> ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20
+> 
+> The mirror might take a little while to update.
 
-Oleg Drokin <green@namesys.com> wrote:
-> On Thu, Sep 05, 2002 at 01:57:34PM +0400, Nikita Danilov wrote:
->> Support for inode attributes was introduced between 2.4.18 and
->> 2.4.19. Take latest reiserfsprogs from ftp.namesys.com, run
->> /sbin/reiserfsck --clean-attributes /your-device, and after that
->> finishes mount with -attrs option.
->
-> mount -o attrs in fact.
+What mirror?  I haven't found any sites that mirror /pub/people.
 
-Should -o attrs be used just once, or every time afterwards?
+I'd also appreciate a backport to 2.4.19.
+Thanks,
+John Dalbec
 
-
-paul
