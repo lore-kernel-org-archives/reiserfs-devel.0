@@ -1,60 +1,59 @@
-From: "John D. Heintz" <jheintz@pobox.com>
-Subject: Re: Do xml-like namespaces make sense for Reiser4? (re: metas thread)
-Date: Tue, 13 Apr 2004 13:09:26 -0500
-Message-ID: <407C2CD6.2070002@pobox.com>
-References: <407AB9AE.3060801@pobox.com> <407ADCBF.8000609@namesys.com> <407AEA05.50004@pobox.com> <407BFBEA.5010006@pobox.com> <407C15D9.1080705@namesys.com> <407C1BE9.8010509@pobox.com> <407C1E1F.30708@mrs.umn.edu>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Date: Tue, 13 Apr 2004 11:14:48 -0700
+Message-ID: <407C2E18.5070009@namesys.com>
+References: <20040413180732.7450.qmail@web25004.mail.ukl.yahoo.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17899-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17900-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <407C1E1F.30708@mrs.umn.edu>
+In-Reply-To: <20040413180732.7450.qmail@web25004.mail.ukl.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Grant Miner <mine0057@mrs.umn.edu>
-Cc: reiserfs-list@namesys.com
+To: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
+Cc: Beni Cherniavsky <cben@users.sf.net>, reiserfs-list@namesys.com
 
-Hi Grant,
+Narcoleptic Electron wrote:
 
-No, I'm not familiar with this. I was trying to frame my questions 
-strictly in terms of Reiser4 naming constructs (the '/' operator only).
-
-Do the extended attributes show up as file system paths? Or is there a 
-separate API to access them? If they show up as paths then I think they 
-are very loosely like what I'm talking about: a shorthand syntax that by 
-convention disabiguates similiar names.
-
-Thanks for the reference, I'll look into this when time permits.
-
-John
-
-Grant Miner wrote:
-
+>Beni Cherniavsky wrote: 
 >
-> Are you familiar with the extended attribute name space?  An extended 
-> attribute name has the form of namespace.attribute, eg. 
-> user.mime-type, trusted.md5sum, or system.posix_acl_access. Currently 
-> the user, trusted, and system extended attribute classes are defined; 
-> more may be defined in the future.
+>  
 >
-> User  attributes  may  be  assigned to files and directories for 
-> storing arbitrary  additional  information such  as  the  mime  type,  
-> character set or encoding of a file. The  access  permissions  for 
-> user attributes  are defined by the file permission bits.
+>>Note that changing the magic name (dynamically or
+>>even by recompiling) 
+>>can create a confilict with an *exisiting* file on a
+>>reiserfs4 partition 
+>>(the file could have been created when another name
+>>was magic).  The FS 
+>>code should be ready to handle it, preferably giving
+>>some escape route 
+>>way to access the colliding file (e.g.
+>>``foo/my_metas/escape`` could 
+>>give access to the file known as ``foo/my_metas``
+>>before you changed the 
+>>magic name to ``my_metas``).
+>>    
+>>
 >
-> Trusted attributes  are  visible  and  accessible only  to  processes 
-> that have the CAP_SYS_ADMIN capability (the super user usually has 
-> this capability). Attributes in  this  class  are  used to implement 
-> mechanisms in user space (i.e., outside the kernel) which keep 
-> information in extended attributes to which ordinary processes should 
-> not have access.
->
-> System attributes are used by the kernel to store system  objects such 
-> as Access Control Lists and Capabilities. Read and write access 
-> permissions to system attributes depend on the policy implemented for 
-> each system attribute implemented in the kernel.
+>That is a very good point, and I think your solution
+>is the right way to get around it.
 >
 >
+>______________________________________________________________________ 
+>Post your free ad now! http://personals.yahoo.ca
+>
+>
+>  
+>
+I think we should have a /metasoff hidden directory that presents the 
+filesystem tree but without the metas.
+
+Of course, now that we have funding for views, when that is completed 
+you will be able to specify a view that cannot access metas.
+
+-- 
+Hans
 
