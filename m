@@ -1,40 +1,35 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: v3 experimental data=ordered and logging speedups for 2.6.1
-Date: Tue, 20 Jan 2004 20:50:39 -0500
-Message-ID: <1074649838.3378.3.camel@tiny.suse.com>
-References: <1074530725.29546.178.camel@tiny.suse.com>
-	 <200401192353.03670.Dieter.Nuetzel@hamburg.de>
+From: Chris wakefield <c_wakefield@shaw.ca>
+Subject: R4 won't mount.
+Date: Tue, 20 Jan 2004 18:30:23 -0800
+Message-ID: <400DE43F.4070502@shaw.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16593-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-list-return-16594-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200401192353.03670.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Cc: reiserfs-list@namesys.com, green@linuxhacker.ru, Gerd Knorr <kraxel@suse.de>, Jeff Mahoney <jeffm@suse.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On Mon, 2004-01-19 at 17:53, Dieter N=FCtzel wrote:
+Hello.
+I'm trying out R4, and I'm having no luck mounting the device with the 
+R4 filesystem.
+I've managed to compile libaal from /FIXED/ (./configure;make;make install).
+reiser4progs-0.4.20 is compiled with:
+ --disable-debug --disable-fnv1-hash --disable-rupasov-hash 
+--disable-tea-hash --disable-deg-hash --disable-short-keys 
+--disable-specia --with-libaal=/usr/local/lib
+then:  make;make install
 
-> 05 and 06 needed some handwork 'cause the SuSE kernel inclues xattrs and =
-posix=20
-> acl's but nothing special.
->=20
+My problem is, that after making a R4 filesystem on a partition, it 
+won't mount.  I've tried various options, but still doesn't work.
+I wonder if I am missing something?
+I'm running debian testing on an athlon64
+Can someone suggest some options or strategies?
+Thank you,
+Chris w.
 
-Good to hear.  I wasn't expecting the suse merge to be difficult,
-luckily it doesn't have many patches in it yet.  Jeff and I will look at
-getting them into the suse kernel once data=3Djournal is done as well.
-
-> An EXPORT was missing in linux/fs/buffer.c to compile ReiserFS 3.x.x as m=
-odul=20
-> (inode.c, unresolved symbol):
->=20
-
-Thanks, I'll add it into the patch when I get back from linux world.
-
--chris
 
 
