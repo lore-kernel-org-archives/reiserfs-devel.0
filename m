@@ -1,54 +1,97 @@
-From: William Stearns <wstearns@pobox.com>
-Subject: Re: silent semantic changes in reiser4 (brief attempt to document
- the idea of what reiser4 wants to do with metafiles and why
-Date: Tue, 7 Sep 2004 17:05:01 -0400 (EDT)
-Message-ID: <Pine.LNX.4.58.0409071658120.2985@sparrow>
-References: <41323AD8.7040103@namesys.com> <20040831131201.GA1609@elf.ucw.cz>
- <413E170F.9000204@namesys.com>
-Reply-To: William Stearns <wstearns@pobox.com>
+From: Spam <spam@tnonline.net>
+Subject: Re: silent semantic changes with reiser4
+Date: Tue, 7 Sep 2004 23:29:35 +0200
+Message-ID: <2010165891.20040907232935@tnonline.net>
+References: Message from Hans Reiser <reiser@namesys.com>    of "Tue, 07 Sep
+ 2004 12:14:44 MST." <413E08A4.9020005@namesys.com>
+ <200409072102.i87L2K4u005503@laptop11.inf.utfsm.cl>
+Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21591-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21592-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <413E170F.9000204@namesys.com>
+In-Reply-To: <200409072102.i87L2K4u005503@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Andrew Morton <akpm@digeo.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@osdl.org>, ML-reiserfs <reiserfs-list@namesys.com>, William Stearns <wstearns@pobox.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Hans Reiser <reiser@namesys.com>, Christer Weinigel <christer@weinigel.se>, David Masover <ninja@slaphack.com>, Tonnerre <tonnerre@thundrix.ch>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Good day, all,
 
-On Tue, 7 Sep 2004, Hans Reiser wrote:
+  
 
-> >What about choosing just "..." instead of "metas"? "metas" is string
-> >that needs translation etc, while "..." is nicely neutral.
-> >
-> >cat /sound_of_silence.mp3/.../author
-> >
-> >does not look bad, either...
-> >
-> "..." is pretty good, but I think it has been used by others, but I 
-> really forget who.  I could live with "...", but I think "metas" and 
+> Hans Reiser <reiser@namesys.com> said:
+>> Horst von Brand wrote:
+>> >Hans Reiser <reiser@namesys.com> said:
+>> >>Horst von Brand wrote:
+>> >>>Spam <spam@tnonline.net> said:
+>> >>>>Christer Weinigel <christer@weinigel.se> said:
 
-	Some trojans and rootkits have used it to store files; 
-/usr/lib/... , /usr/doc/... , /usr/sbin/... , /usr/local/bin/... , 
-/dev/... , and /usr/include/... are used by bobkit.
-	This might trigger false positives for rootkit detection tools 
-like chkrootkit and rootkit-hunter.
-	Cheers,
-	- Bill
+> [...]
 
----------------------------------------------------------------------------
-        "What is the most effective Windows NT remote management tool? 
-A car."
-        -- Network Intrusion Detection, An Analyst's Handbook
-           2nd Edition, 2000
-           Stephen Northcutt et al, page 147
-(Courtesy of Rodrigo Goya <lucent@securenet.com.mx>)
---------------------------------------------------------------------------
-William Stearns (wstearns@pobox.com).  Mason, Buildkernel, freedups, p0f,
-rsync-backup, ssh-keyinstall, dns-check, more at:   http://www.stearns.org
---------------------------------------------------------------------------
+>> >>>>>2. How do we want to expose named streams?
+>> >>>>>  One suggestion is file-as-directory in some form.
+
+>> >>>Which is broken, as it forbids hard links to files.
+
+>> >>No, it forbids hard links to the directory aspect of the file-directory
+>> >>duality.
+
+>> >How do you distinguish a "hard link to the directory personality" from
+>> >"hard link to the file personality"?
+
+>> Put in (undoubtedly overly) simple terms, if you can do it to a file you
+>> can do it to the file personality, but if you currently can only do it
+>> to a directory and get an error from attempting it to a file then in the
+>> new scheme doing it to the hard link only gives the same error.
+
+> Let me sort this out: If it can't be done POSIXly to a directory, it can't
+> be done in Reiser4 to a file (which really is a directory too). So there
+> can be exactly _one_ hard link to a file. Way borken.
+
+  But you can make a hard link to a file in reiser4, and you can
+  access the metadata in both. I did this test:
+  echo "moooo" > test
+  ln test moo
+  chmod +x moo test
+  echo "0700" > test/metas/rwx
+  dir moo test
+      -rwx------  2 root root 10 Sep  7 23:17 moo*
+      -rwx------  2 root root 10 Sep  7 23:17 test*
+      
+  echo "0777" > test/metas/rwx
+  dir moo test
+      -rwxrwxrwx  2 root root 10 Sep  7 23:17 moo*
+      -rwxrwxrwx  2 root root 10 Sep  7 23:17 test*
+      
+  rm moo test
+  mkdir test
+  ln test moo
+      ln: `test': hard link not allowed for directory
+
+  If this is the intended behaviour I do not know, but it shows that
+  hard links works as normal.
+
+  You can also do linking to meta-data:
+
+  echo moo > moo
+  ln -s moo/metas/rwx test
+  dir
+      -rwxrwxrwx   1 root    root      0 Sep  7 23:24 moo*
+      lrwxrwxrwx   1 root    root     13 Sep  7 23:25 test -> moo/metas/rwx
+  echo 0700 > test
+  dir moo
+      -rwx------   1 root    root      0 Sep  7 23:24 moo*
+
+      
+>> Or, we can ask Alexander to help us use his deadlock detection algorithm
+>> and try to do things right....
+
+> Good luck with that one. I'd suspect if it can be made to work, it will
+> have _huge_ overhead, so much that it is useless. I'd love to be proven
+> wrong, but I won't hold my breath.
+
+
+
