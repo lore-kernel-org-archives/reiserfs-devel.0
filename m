@@ -1,10 +1,10 @@
 From: "David Dabbs" <david@dabbs.net>
 Subject: Performance improvements to key comparison functions
-Date: Wed, 23 Jun 2004 03:43:55 -0500
-Message-ID: <20040712084128.DAD3A15E61@mail03.powweb.com>
+Date: Mon, 12 Jul 2004 03:48:45 -0500
+Message-ID: <20040712084615.29D4915F82@mail03.powweb.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19578-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19579-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
