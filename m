@@ -1,67 +1,40 @@
-From: Ed Tomlinson <tomlins@cam.org>
-Subject: Fwd: Re: 2.5.39-mm1
-Date: Sun, 29 Sep 2002 21:27:06 -0400
-Message-ID: <200209292127.06400.tomlins@cam.org>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: fsck mode halfway between --fix-fixable and --rebuild-tree ?
+Date: Mon, 30 Sep 2002 10:18:24 +0400
+Message-ID: <20020930101824.A3895@namesys.com>
+References: <H356C4$4F46E50E852BF25DA1E850A48426FCDF@voila.fr> <20020929172335.L32363@noris.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11559-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11560-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <20020929172335.L32363@noris.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Matthias Urlichs <smurf@noris.de>
+Cc: reiserfs-list@namesys.com
 
-Forgot the reiserfs list...  Looks like this will be a problem in -39 bk too.
+Hello!
 
-----------  Forwarded Message  ----------
+On Sun, Sep 29, 2002 at 05:23:35PM +0200, Matthias Urlichs wrote:
 
-Subject: Re: 2.5.39-mm1
-Date: Sun, 29 Sep 2002 21:24:12 -0400
-From: Ed Tomlinson <tomlins@cam.org>
-To: Andrew Morton <akpm@digeo.com>, lkml <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
-Cc: Ingo Molnar <mingo@elte.hu>
+> The only way to fix this, at the moment, seems to be --rebuild-tree, which
+> is overkill since it scans _everything_, and thus reconnected the stuff I
+> deleted last week back into /lost+found.  It also takes too long.  :-/
 
-On September 29, 2002 04:26 pm, Andrew Morton wrote:
-> There is a reiserfs compilation problem at present.
+No, it does not behave like this. It may take long time though, anyway.
 
-make[2]: Entering directory `/poole/src/39-mm1/fs/reiserfs'
-  gcc -Wp,-MD,./.bitmap.o.d -D__KERNEL__ -I/poole/src/39-mm1/include -Wall
- -Wstrict-prototypes -Wno-trigraphs -O2 -fomit-frame-pointer
- -fno-strict-aliasing -fno-common -pipe -mpreferred-stack-boundary=2
- -march=k6 -I/poole/src/39-mm1/arch/i386/mach-generic -nostdinc -iwithprefix
- include    -DKBUILD_BASENAME=bitmap   -c -o bitmap.o bitmap.c In file
- included from bitmap.c:8:
-/poole/src/39-mm1/include/linux/reiserfs_fs.h:1635: parse error before
- `reiserfs_commit_thread_tq'
- /poole/src/39-mm1/include/linux/reiserfs_fs.h:1635: warning: type defaults
- to `int' in declaration of `reiserfs_commit_thread_tq'
- /poole/src/39-mm1/include/linux/reiserfs_fs.h:1635: warning: data definition
- has no type or storage class make[2]: *** [bitmap.o] Error 1
-make[2]: Leaving directory `/poole/src/39-mm1/fs/reiserfs'
-make[1]: *** [reiserfs] Error 2
-make[1]: Leaving directory `/poole/src/39-mm1/fs'
-make: *** [fs] Error 2
+> A good way to avoid this problem would be a scan mode which behaves like
+> --rebuild-tree, but which scans only those nodes reachable through the
+> existing tree instead of "everything".
 
-which is:
+--rebuild-tree does exactly what you suggested this new mode should do.
 
-extern task_queue reiserfs_commit_thread_tq ;
+In order ot get full partition scan you need to run reiserfsck with 
+--rebuild-tree -S options sequence.
 
-from bk chanages:
-
-ChangeSet@1.644, 2002-09-29 11:00:25-07:00, mingo@elte.hu
-  [PATCH] smptimers, old BH removal, tq-cleanup
-
-<omitted>
-
-   - removed the ability to define your own task-queue, what can be done is
-     to schedule_task() a given task to keventd, and to flush all pending
-     tasks.
-
-Ingo?
-
-Ed Tomlinson
-
--------------------------------------------------------
-
+Bye,
+    Oleg
