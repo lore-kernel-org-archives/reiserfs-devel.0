@@ -1,59 +1,55 @@
 From: Valdis.Kletnieks@vt.edu
-Subject: Re: secure delete?
-Date: Mon, 29 Mar 2004 20:10:08 -0500
-Message-ID: <200403300110.i2U1A8Ug005681@turing-police.cc.vt.edu>
-References: <1079691239.5767.7.camel@pear.st-and.ac.uk> <405AD31A.7070304@mweb.co.za> <20040319110748.GA30491@chihiro.cern.ch> <405AD9B5.80102@namesys.com> <405F94DD.80004@botz.org> <405FD7C2.5030605@namesys.com> <200403241820.i2OIKlDG008088@turing-police.cc.vt.edu>
-            <20040325031616.GA8473@zero>
+Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Date: Mon, 29 Mar 2004 20:32:14 -0500
+Message-ID: <200403300132.i2U1WEIb006442@turing-police.cc.vt.edu>
+References: <20040329185901.62166.qmail@web25008.mail.ukl.yahoo.com>
+            <406885F1.9040409@mrs.umn.edu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_83107920P";
+Content-Type: multipart/signed; boundary="==_Exmh_91550282P";
 	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17582-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17583-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Wed, 24 Mar 2004 22:16:16 EST."
-             <20040325031616.GA8473@zero> 
+In-Reply-To: Your message of "Mon, 29 Mar 2004 14:24:17 CST."
+             <406885F1.9040409@mrs.umn.edu> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Tom Vier <tmv@comcast.net>
+To: Grant Miner <mine0057@mrs.umn.edu>
 Cc: reiserfs-list@namesys.com
 
---==_Exmh_83107920P
+--==_Exmh_91550282P
 Content-Type: text/plain; charset=us-ascii
 
-On Wed, 24 Mar 2004 22:16:16 EST, Tom Vier <tmv@comcast.net>  said:
-> On Wed, Mar 24, 2004 at 01:20:47PM -0500, Valdis.Kletnieks@vt.edu wrote:
-> > That's our official government recommendation for what's sufficient when
-> > we're throwing away stuff that the Other Guys might actually do this to.
-> > I have to assume that if the DoD or RCMP thought this wasn't sufficient
-> > to protect *our* secrets, they'd have a stricter standard.
+On Mon, 29 Mar 2004 14:24:17 CST, Grant Miner <mine0057@mrs.umn.edu>  said:
+> Someone mentioned earlier, and I like just the at sign: @ Think of it 
+> short for "attributes".
 > 
-> they do, complete destruction. that's what they do with secret stuff.
+> file/@/uid
+> 
+> The nice thing about @ is it shows up early lexicographically, it's 
+> short and unlikely to be used.  This name is important to pick well 
+> because it will likely set a long precedent.
 
-http://www.irwin.army.mil/ac/LSS/DoD_Publications.html
+Don't use the MH mail handler on that filesystem then.  It uses a
+symlink called '@' to point to "the current mail item". For instance, this
+reply:
 
-http://www.irwin.army.mil/ac/Electronic_Publications/DoD_Pubs/DoD%205220-22-M/cp8.pdf
+$ ls -l ~/@
+1 lrwxrwxrwx  1 valdis valdis 28 Mar 29 20:30 /home/valdis/@ -> /home/valdis/Mail/reiser/849
 
-Pages 14 and 15 note methods "a, b, d, and m" sanitizing fixed drives,
-and continues:
 
-d. Overwrite all addressable locations with a character, its complement, then a random character and verify. THIS
-   METHOD IS NOT APPROVED FOR SANITIZING MEDIA THAT CONTAINS TOP SECRET INFORMA-
-   TION.
-
-Implying that it is acceptable at lower classification levels.....
-
---==_Exmh_83107920P
+--==_Exmh_91550282P
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Exmh version 2.5 07/13/2001
 
-iD8DBQFAaMjwcC3lWbTT17ARAnyRAKD9/4UTeEa1cGQ0tZPopgNhiy8dSgCfd+q2
-q7pYyXhHENT3qJ4JDep88mM=
-=Xf4K
+iD8DBQFAaM4ecC3lWbTT17ARAqeLAJ9N07RTK+6s669QFlwx0C7mptueggCguQkj
+pX1cD0JNgNBuMEqMuwd01OI=
+=tuD5
 -----END PGP SIGNATURE-----
 
---==_Exmh_83107920P--
+--==_Exmh_91550282P--
