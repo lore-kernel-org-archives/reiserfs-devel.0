@@ -1,65 +1,31 @@
-From: Alexander Lyamin <flx@msu.ru>
-Subject: Re:   reiser4 plugins (was: silent semantic changes with reiser4)
-Date: Sat, 28 Aug 2004 23:03:50 +0400
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040828190350.GA14152@alias>
-References: <412D9FE6.9050307@namesys.com> <20040826014542.4bfe7cc3.akpm@osdl.org> <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <20040828105929.GB6746@alias> <Pine.LNX.4.58.0408281011280.2295@ppc970.osdl.org>
-Reply-To: flx@msu.ru
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: reiser4 plugins (was: silent semantic changes with reiser4)
+Date: Sat, 28 Aug 2004 21:09:01 +0200
+Message-ID: <20040828190901.GA18083@lst.de>
+References: <20040826014542.4bfe7cc3.akpm@osdl.org> <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <20040828105929.GB6746@alias> <Pine.LNX.4.58.0408281011280.2295@ppc970.osdl.org> <20040828190350.GA14152@alias>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Return-path: <reiserfs-list-return-21011-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.58.0408281011280.2295@ppc970.osdl.org>
+In-Reply-To: <20040828190350.GA14152@alias>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Alexander Lyamin <flx@msu.ru>, Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: flx@msu.ru, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-
-Sat, Aug 28, 2004 at 10:18:44AM -0700, Linus Torvalds wrote:
->
->
-> On Sat, 28 Aug 2004, Alexander Lyamin wrote:
-> >
-> > VFS never was "an integral part" of ANY filesystem. my dog knows it.
->
-> That's not really true.
-
-Theres some truth. And its really arguably, but I think, I see your point.
-
-And taking on the situation with reiser4 with "smartmost VFS" approach,
-time should pass and with time and expirience on hands it will be evident what
-should go in VFS. Now its may be too early.
-
-Considering "amazing PR skills" of Hans Reiser it was the only viable way
-to get this changes in VFS. Cause, ironically, mr. Hellwig that currently
-demand it to be scrapped out or go in VFS would instakill Hans Reiser
-(i know many people would:) if he only touched holy cow of VFS for any
-reiser4 purpose.
-
-As I told before, some technically right things just do not work in this
-imperfect world. You have to count with social issues, and Hans Reiser
-wont, he just avoid them whenever its possible. 
-
-> Name handling (dentry layer, mounting) is very much an integral part of
-> the filesystem. Almost everything else in the VFS is "helper functions",
-> ie a filesystem can choose to ignore buffer heads, page cache etc, but a 
-> filesystem really cannot ignore or override the VFS naming stuff.
+On Sat, Aug 28, 2004 at 11:03:50PM +0400, Alexander Lyamin wrote:
+> And taking on the situation with reiser4 with "smartmost VFS" approach,
+> time should pass and with time and expirience on hands it will be evident what
+> should go in VFS. Now its may be too early.
 > 
-> (Arguably the page cache isn't part of the VFS layer at all, it's really a 
-> memory management thing, although it's so intertwined with the VFS helper 
-> functions that you can't really draw the line).
-> 
-> > its just unified INTERFACE TO any filesystem (including reiser4).
-> 
-> True, but that's not the whole truth. It's way more than just an
-> interface. It's a set of rules, and it's in many way the controlling
-> party.
-> 
-> 		Linus
+> Considering "amazing PR skills" of Hans Reiser it was the only viable way
+> to get this changes in VFS. Cause, ironically, mr. Hellwig that currently
+> demand it to be scrapped out or go in VFS would instakill Hans Reiser
+> (i know many people would:) if he only touched holy cow of VFS for any
+> reiser4 purpose.
 
-"True, but thats not the whole truth."
+Could you please stop talking such inproven crap?
 
--- 
-"the liberation loophole will make it clear.."
-lex lyamin
