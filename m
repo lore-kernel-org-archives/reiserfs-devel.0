@@ -1,67 +1,91 @@
-From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Subject: Re: labels like those in gmail
-Date: 10 Sep 2004 10:13:49 +0100
-Message-ID: <1094807629.11803.53.camel@pear.st-and.ac.uk>
-References: <f18a8d9804090913107d67b94d@mail.gmail.com>
+From: Jamie Lokier <jamie@shareable.org>
+Subject: Re: [SPAM] RE: [RFC] Pathname Semantics with //
+Date: Fri, 10 Sep 2004 10:53:55 +0100
+Message-ID: <20040910095355.GA20383@mail.shareable.org>
+References: <20040909230333.GB8464@mail.shareable.org> <20040910013246.BF49B15ED9@mail03.powweb.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21671-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21672-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <f18a8d9804090913107d67b94d@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20040910013246.BF49B15ED9@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: bedros@computer.org
-Cc: reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: David Dabbs <david@dabbs.net>
+Cc: 'Christian Mayrhuber' <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org
 
-On Thu, 2004-09-09 at 21:10, Bedros Hanounik wrote:
-> I use reiserfs but not familiar with the technical details. I'm
-> wondering if it's possible to use meta tags in reiser4 fs to add
-> labels to files.
-> 
-> for example, I could have labels: photo, work, personal, vacation....
-> 
-> then a jpg file from work would have the labels photo and work.
-> 
-> it allows searching my files easier. no need to create different
-> directories for different subjects. All files are in the same
-> directory and I could browse them using labels.
-> 
-> another advantage is that many files may fall in two categories and
-> rather than have multiple copies one in each category, I just apply
-> multiple labels for a single copy of the file.
-> 
-> if the answer is yes, does it require a core change to reiserfs or can
-> be a plugin.
+David Dabbs wrote:
+> After our magic mods, VFS will parse the // escape, see that it is
+> NOT file:// and then what? When we were talking strictly about
+> filesystem access this wasn't an issue.
 
-This is exactly the problem that Han's Future Vision whitepaper
-http://www.namesys.com/whitepaper.html
-is about and what you need is what Hans called "set vicinity
-intersection" or grouping.
+Obviously it'll access whatever is mounted on //http:/, which is
+probably a proxy to a daemon which handles HTTP.
 
-You should be able to store your photo associated to
-(photo, work, personal, vacation)
-and then you will be able to browse them by typing
-[photo work personal]
-together with all other personal work photos.
+Note: you can do this _today_ with no changes.  Just mount such a
+daemon on /http: .
 
-(Actually, if we go my way, using feature sets for inheritance then you
-should probably associate
-   ([photo], work, personal, vacation)
-but that is a detail.)
+Similarly, you can make the suggestions of //file:/ and //:/ resolve
+_today_ by simply putting the appropriate mounts on /file: and /: .
 
-I don't know whethet its implementation will involve anything like what
-you mean by "meta tag labels".
+So is there any point in making // special?
 
-> another question, is the meta tag structure is xml? should it be? XML
-> documents waste a lot of space and require more cpu cycles to process,
-> but they are extensible and I hope reiser4 tags are also extensible
+> We certainly don't want the kernel in the business of being a protocol
+> proxy, so any non-file:// pathnames could simply return EFAULT or ENOTDIR,
+> or ELNKURL, which indicates that the target is a URL. Apps that want to do
+> something /useful/ with the target resource (i.e. desktops) will have
+> http/ftp/etc libraries. They are free to stat() the file, get the linked-to
+> URL and use whatever protocol client lib they wish to access the URL. 
 
+What is the point in putting anything at all in the common filesystem,
+if the visible content of pseudo-files depends on the application
+accessing them?
 
-We can probably map an XML structure into Reiser6 syntax using an XML
-plugin. Peter
+If you go down the road of requiring every application to use a
+library, then there is simply no need for anything at all in the VFS.
 
+Of course, that way we get the Gnome-VFS / KDE / emacs mess that vwe
+have now, where paths that work in one program don't work in another,
+making them a whole lot less useful.  There's also the unreliability
+of having every filesystem operation go through an library prior to
+calling the kernel -- what happens when a new fd-using syscall is
+added to libc (like fgetxattr) and the intercepting library doesn't
+know about it?  What about chdir and fchdir?  If you intercept those,
+then you must intercept every syscall that uses a path for
+consistency, even mount, fadvise so on.  Or alternatively, when
+programs are required to call uservfs_open, uservfs_read etc., then
+you have problems passing fds to libraries which don't call those.
 
+In other words, doing it without kernel assistence is flaky.  Although
+it does work, it's very hard to do it well and consistently, and it's
+subject to silent breakage as libcs and the kernel evolve.
+
+That's really why the kernel has to act as a proxy (even if it's only
+using NFS, FiST, CODA or whatever mounts).  To get a unified
+namespace, to ensure all accesses to a named object call the same code
+(i.e. a daemon), and that path semantics are consistent even with
+chdir and links inside a proxied directory.
+
+> Shooting from the hip here. If we want to unify namespaces in a UNIXy way,
+> what if we make the VFS expose all the non-file "protocol" namespaces
+> through one mount point, device node or whatever. A filesystem, perhaps
+> something built using FiST [http://www.filesystems.org/], would "handle" a
+> protocol. Another, perhaps preferred, option is to steer in the direction of
+> Plan9, where ftp can be mounted and handled by a user-space filesystem,
+> ftpfs. 
+> See http://plan9.bell-labs.com/magic/man2html/4/ftpfs
+
+You can already do it, something like this:
+
+    mkdir /http:; mount none /http: -t uservfs -o view=http
+    mkdir /ftp:;  mount none /ftp:  -t uservfs -o view=ftp
+
+I don't see any compelling reason to make "//" special for this.
+However, if there is such a reason, then you could just mount protocol
+handlers on "//http:" and so on, and make "//" a normal directory with
+a special name.
+
+-- Jamie
