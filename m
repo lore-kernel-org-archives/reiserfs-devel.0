@@ -1,35 +1,43 @@
 From: Linus Torvalds <torvalds@osdl.org>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Thu, 2 Sep 2004 10:43:57 -0700 (PDT)
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <Pine.LNX.4.58.0409021041440.2295@ppc970.osdl.org>
-References: <20040826150202.GE5733@mail.shareable.org>
- <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org>
- <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <20040902002431.GN31934@mail.shareable.org>
- <413694E6.7010606@slaphack.com> <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org>
- <4136A14E.9010303@slaphack.com> <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org>
- <4136C876.5010806@namesys.com> <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org>
- <4136E0B6.4000705@namesys.com>
+Subject: Re: The argument for fs assistance in handling archives (was: silent
+ semantic changes with reiser4)
+Date: Thu, 2 Sep 2004 10:46:32 -0700 (PDT)
+Message-ID: <Pine.LNX.4.58.0409021045210.2295@ppc970.osdl.org>
+References: <20040826150202.GE5733@mail.shareable.org> 
+ <200408282314.i7SNErYv003270@localhost.localdomain> 
+ <20040901200806.GC31934@mail.shareable.org>  <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
+ <1094118362.4847.23.camel@localhost.localdomain>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <4136E0B6.4000705@namesys.com>
+Return-path: <reiserfs-list-return-21296-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <1094118362.4847.23.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
 
 
-On Thu, 2 Sep 2004, Hans Reiser wrote:
+On Thu, 2 Sep 2004, Alan Cox wrote:
 >
-> Apple does not have this problem....
+> On Mer, 2004-09-01 at 21:50, Linus Torvalds wrote:
+> > and quite frankly, I think you can do the above pretty much totally in
+> > user space with a small library and a daemon (in fact, ignoring security
+> > issues you probably don't even need the daemon). And if you can prototype
+> > it like that, and people actually find it useful, I suspect kernel support
+> > for better performance might be possible.
+> 
+> Gnome already supports this in the gnome-vfs2 layer. "MC" has supported
+> it since the late 1990's.
 
-Deep, Hans. Deep.
+And nobody has asked for kernel support that I know of.
 
-You're ignoring the issue. You're flaming about not "embracing progress", 
-when I was talking about how progress happens. You don't seem to 
-understand _how_ people embrace progress, Hans. Railing at windmills isn't 
-real smart.
+So either "it just works" in user space, or people haven't figured out the 
+kernel could help them. Or decided it's not worth it, exactly because 
+they'd still have to support systems/filesystems that can't be converted.
 
 		Linus
