@@ -1,70 +1,71 @@
-From: Vince <fuzzy77@free.fr>
-Subject: Re: [PATCH] updated data=ordered patch for 2.6.3
-Date: Mon, 23 Feb 2004 20:35:08 +0100
-Message-ID: <403A55EC.1050005@free.fr>
-References: <1077165373.22253.45.camel@watt.suse.com>	 <200402231042.08173.Dieter.Nuetzel@hamburg.de> <1077563494.23061.163.camel@watt.suse.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: [PATCHES] 2.6.1 Cleanups
+Date: Mon, 23 Feb 2004 21:55:08 -0500
+Message-ID: <403ABD0C.2090408@suse.com>
+References: <4003176A.3070901@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16900-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16901-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1077563494.23061.163.camel@watt.suse.com>
+In-Reply-To: <4003176A.3070901@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
-Cc: Chris Mason <mason@suse.com>
+To: ReiserFS Mailing List <reiserfs-list@namesys.com>
 
-Chris Mason wrote:
-
-> Also fixed.  Patches 00* will get submitted to Andrew as soon as namesys
-> reviews them.
+Jeff Mahoney wrote:
+> Hey all -
 > 
-> There are going into the suse kernel now too, it's time for some broader
-> testing.
+> Now that the 2.6.0 hurdle has been cleared and Linus seems to be more
+> open to cleanup-type patches, I have these to submit for comment.
 > 
-> -chris
+> I have 4 patches, descriptions follow:
+> * cleanup-01-basic-cleanup
+>     -- This cleans up journal.c such that the ugly 50+ character
+>     macro/derefs that are used repeatedly are evaluated once and
+>     then accessed using a temporary variable. The resulting code
+>     should be identical and makes it quite a bit nicer to read.
 > 
+> * cleanup-01-sb-opts
+>     -- This eliminates individual #defines for superblock/mount
+>     options and instead uses an enum. It's not like the actual
+>     values of the mount options matter, and this just makes a list
+>     of them. Accordingly, since the values aren't apparently in the
+>     include, I added a BUG_ON to bail out of the value passes beyond
+>     the size of the mount_opts variable.
 > 
-
-  Those patches make use of the ->journal_info field ... which is on the 
-other hand removed in the reiser4 kernel patch, so both patches conflict :-/
-  Is there any way to get both reiser4 and reiser3+data-logging in the 
-same kernel ? Would adding back the journal_info field be enough ?
-
-Compilation with a reiser4-patched kernel fails with:
-
-/usr/src/linux$ make
-   CHK     include/linux/version.h
-   CC      scripts/empty.o
-   MKELF   scripts/elfconfig.h
-   HOSTCC  scripts/file2alias.o
-   HOSTCC  scripts/modpost.o
-   HOSTCC  scripts/sumversion.o
-   HOSTLD  scripts/modpost
-   CC      arch/i386/kernel/asm-offsets.s
-   CHK     include/asm-i386/asm_offsets.h
-   CHK     include/linux/compile.h
-   CC      fs/buffer.o
-   CC      fs/reiserfs/bitmap.o
-In file included from fs/reiserfs/bitmap.c:8:
-include/linux/reiserfs_fs.h: In function `reiserfs_transaction_running':
-include/linux/reiserfs_fs.h:1753: error: structure has no member named 
-`journal_info'
-make[2]: *** [fs/reiserfs/bitmap.o] Error 1
-make[1]: *** [fs/reiserfs] Error 2
-make: *** [fs] Error 2
+> * cleanup-02-bh-bits
+>     -- This patch makes all the accesses for bh->b_state use the
+>     appropriate macros, rather than accessing them directly.
+> 
+> * cleanup-03-bh-cleanup
+>     -- This patch eliminates the local macro implementation for the
+>     bh->b_state accessors/mutators and uses the FNS_BUFFER
+>     implementation in fs.h, which automatically creates the macros
+>     with on line of code.
+> 
+> * cleanup-04-sb-journal-elimination
+>     -- This patch is similar to the basic-cleanup, except that it
+>     focuses on the use of SB_JOURNAL(super) everywhere, and replaces
+>     it with a local "journal" variable. Again, this makes the code
+>     much easier to look at.
+> 
+> Opinions? Comments?
+> 
+> Patches can be found at
+> ftp://ftp.suse.com/pub/people/jeffm/reiserfs/kernel-v2.6/2.6.1/
+> 
+> -Jeff
+> 
+> I apologize if this posted twice. The first message had the patches
+> attached, and crossed the post size limit. I haven't received a bounce yet.
 
 
-/usr/src/linux$ zgrep journal_info ../2004.02.06.all.diff.gz
--       current->journal_info = handle;
--               current->journal_info = NULL;
--       current->journal_info = NULL;
--       .journal_info   = NULL,
--       return current->journal_info;
--       void *journal_info;
-+       result = init_journal_info(s);
-+               done_journal_info(s);
-+       done_journal_info(s);
+Hey all -
 
+I never got any sort of response on these. Shall I send them on to 
+Linus? They still apply cleanly to 2.6.3.
+
+-Jeff
