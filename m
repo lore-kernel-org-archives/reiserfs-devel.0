@@ -1,41 +1,59 @@
-From: Russell Coker <russell@coker.com.au>
-Subject: Re: Recent spam
-Date: Mon, 2 Jun 2003 18:59:39 +1000
-Message-ID: <200306021859.39138.russell@coker.com.au>
-References: <3EDAEEBE.3050202@netscape.net> <200306020833.40614.m.c.p@gmx.net> <1054538668.8091.8.camel@localhost>
-Reply-To: Russell Coker <russell@coker.com.au>
+From: Asheesh Laroia <asheesh@asheesh.org>
+Subject: Re: OT: Recent spam
+Date: Mon, 2 Jun 2003 09:02:27 -0400 (EDT)
+Message-ID: <Pine.LNX.4.53.0306020857570.2635@renaissance>
+References: <3EDAEEBE.3050202@netscape.net> <200306020833.40614.m.c.p@gmx.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14366-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14367-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1054538668.8091.8.camel@localhost>
-Content-Disposition: inline
+In-Reply-To: <200306020833.40614.m.c.p@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Soeren Sonnenburg <reiserfs@nn7.de>, reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Marc-Christian Petersen <m.c.p@gmx.net>
+Cc: reiserfs-list <reiserfs-list@namesys.com>, Manuel Krause <manuelkrause@netscape.net>
 
-On Mon, 2 Jun 2003 17:24, Soeren Sonnenburg wrote:
-> I don't know about you, but I did not see any spam not tagged as spam.
->
-> May I suggest to use procmail to filter/remove that kind of stuff and
-> stop annoying the list with these useless replies ?
+I have a filter in procmail that precedes my spam filtering.  It goes like
+this:
 
-I am getting some spam through this list that is not tagged as spam.
+#----------------------------------------------------------------------
+# eliminate duplicate messages.
+#----------------------------------------------------------------------
+:0 Wh: msgid.lock
+| formail -D 32768 msgid.cache
 
-I have configured my mail server to reject messages tagged as spam, when I get 
-spam I report it to spamcop.  As the list server removes all the relevant 
-headers SpamCop regards the list server as a spam machine and blocks it 
-occasionally.
+This removes mails with duplicate Message-ID headers.  I think I got it
+from the 'pgen' suite of Procmail tools.
 
-Eventually either the list server will be fixed or due to SpamCop I'll be 
-unsubscribed.
+It discards messages with duplicate Message-IDs, which has removed some
+~25 spams or so from reiserfs-list for me in the past day or two.  The
+first one hits my CaughtBySpamAssassin mail folder, and the other ones
+just disappear.  It's quite nice.
+
+Sorry for the off-topic discussion, Namesys.
+
+-- Asheesh.
 
 -- 
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
+Q:	How many surrealists does it take to change a light bulb?
+A:	Two, one to hold the giraffe, and the other to fill the bathtub
+	with brightly colored machine tools.
+
+	[Surrealist jokes just aren't my cup of fur.  Ed.]
+
+On Mon, 2 Jun 2003, Marc-Christian Petersen wrote:
+
+> On Monday 02 June 2003 08:29, Manuel Krause wrote:
+>
+> Hi Manuel,
+>
+> > Whats up with these rows of spam mails I receive from reiserfs list the
+> > last days/weeks? Does this list spam itself now or what new anti-spam
+> > algorithm did I miss?
+> my offer to fix this for $25 is still open ;)
+>
+> ciao, Marc
 
