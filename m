@@ -1,37 +1,59 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Subject: Re: Journaling mode
-Date: Wed, 11 Aug 2004 19:39:02 +0200
-Message-ID: <200408111939.02611.christian.mayrhuber@gmx.net>
-References: <d68fdf7d04081110265ea9db94@mail.gmail.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: implementing reiserfs in C++ for a new OS
+Date: Wed, 11 Aug 2004 10:36:51 -0700
+Message-ID: <411A5933.90408@namesys.com>
+References: <71d3364904080706112e72fb6b@mail.gmail.com>	<20040809172437.GP1284@nysv.org>	<71d3364904080922267e8c14af@mail.gmail.com>	<200408101312.48888.reiserfs-list@quinnh.org>	<4119273E.1040104@namesys.com>	<20040810211951.GU1284@nysv.org>	<41194690.5050908@namesys.com>	<1365645117.20040811065416@tnonline.net>	<4119B7D1.7000705@namesys.com>	<16665.61639.659924.562747@laputa.namesys.com>	<411A4CA1.9090604@namesys.com> <16666.20331.980571.419171@gargle.gargle.HOWL>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20201-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20202-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <d68fdf7d04081110265ea9db94@mail.gmail.com>
-Content-Disposition: inline
+In-Reply-To: <16666.20331.980571.419171@gargle.gargle.HOWL>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Nikita Danilov <nikita@clusterfs.com>
+Cc: Spam <spam@tnonline.net>, reiserfs-list@namesys.com
 
-On Wednesday 11 August 2004 19:26, Vijayan Prabhakaran wrote:
-> Hi,
+Nikita Danilov wrote:
+
+>Hans Reiser writes:
+> > Nikita Danilov wrote:
+> > 
+> > >
+> > >Copyright to result of translation belongs to the translator. At
+> > >least, according to Russian law.
+> > >
+> > >  
+> > >
+> > I may be completely wrong legally, esp. in Russia.  I personally think 
+> > it should belong to the original author if the original copyright is 
+> > still valid.
+> > 
+> > Otherwise harry potter can get translated and no need to pay rowling.
 >
-> I'm new to Reiserfs. I think this question might have been answered
-> before but I couldn't find it.
+>`Otherwise' is non-sequitur. One pays royalties to get a permission to
+>produce and/or sell derived work. But copyright to derived work lies
+>with translator.
+> 
+>Otherwise, copyright to reiser4 (re-)implementation of allocate-on-flush
+>belongs to SGI.
+>  
 >
-> I'd like to run Reiserfs with different journaling modes
-> (data/ordered/writeback). Are these different journaling modes
-> supported only in Linux 2.6 or are they available in Linux 2.4 ?
-No, they aren't.
-You need the following patches for kernel 2.4.25 - 2.4.27: 
-ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.25/
+I would feel more guilty about that if their team had not gone so far 
+out of their way to encourage me to learn and use their most valuable 
+innovation when I visited SGI.  I try to credit SGI on that generally, 
+but folks are welcome to point out where an additional credit is needed 
+(it is too easy to neglect such things).  I do think that I took their 
+idea to the next level....
 
-data=ordered is only in kernel 2.6.6 upwards and 
-data=journal is only in kernel 2.6.7 upwards, if I remember right.
-
--- 
-lg, Chris
+> > 
+> > Hans
+>
+>Nikita.
+>
+>
+>  
+>
 
