@@ -1,104 +1,38 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Carrying Attributes too Far
-Date: Fri, 05 Dec 2003 15:38:37 +0300
-Message-ID: <3FD07C4D.6090401@namesys.com>
-References: <1065247084.3f7e616c94ec9@webmail.st-andrews.ac.uk> <3FCE3716.8000509@namesys.com> <1070584227.3fcfd1a3d67f4@webmail.st-andrews.ac.uk>
+Subject: Re: The x Bit Problem
+Date: Fri, 05 Dec 2003 15:44:37 +0300
+Message-ID: <3FD07DB5.6090708@namesys.com>
+References: <16333.14692.61778.304155@pc7.dolda2000.com>	 <3FCD47C4.50500@ninja.dynup.net> <3FCE39B8.20307@namesys.com>	 <16334.15412.686909.927196@laputa.namesys.com> <1070580817.8344.140.camel@arabia.home.lan> <3FD00086.90607@ninja.dynup.net> <3FD01679.3040007@mrs.umn.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16241-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16242-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1070584227.3fcfd1a3d67f4@webmail.st-andrews.ac.uk>
+In-Reply-To: <3FD01679.3040007@mrs.umn.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: lrc1@st-andrews.ac.uk
-Cc: reiserfs-list@namesys.com
+To: Grant Miner <mine0057@mrs.umn.edu>
+Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-lrc1@st-andrews.ac.uk wrote:
+Grant Miner wrote:
 
->Quoting Hans Reiser <reiser@namesys.com>:
+> An interesting thing I discovered is that Windows simply ignores the 
+> 'x' bit (I should say the Windows equivalent of the 'x' bit, called 
+> "traverse folder / execute file"), but there is a policy setting that 
+> overrides this attribute.
 >
->...
->
->  
->
->>lrc1@st-andrews.ac.uk wrote:
->>
->>    
->>
->>>Sorry for the delay in replying.
->>>
->>>Quoting Hubert Chan <hubert@uhoreg.ca>:
->>>      
->>>
->
->...
->
->  
->
->>>Yes, it is impossible to hard-link between two files on different volumes
->>>(except at mount points) in the Unix filesystem, but it shouldn't be. (More
->>>generally, with the necessary permissions it should be possible to make any
->>>      
->>>
->>file
->>    
->>
->>>the child of any directory via a hard link, except where doing so would
->>>      
->>>
->>create a
->>    
->>
->>>cycle.) 
->>>
->>>      
->>>
->>This implies that two filesystems can share an identification number
->>between them.
->>    
->>
->
->I would suggest that for every link to a file on a different filesystem, the
->linking directory should store both an identifier for the child file's
->filesystem and the child file's on-disk inumber on that filesystem.* The reverse
->links would be stored in the same way. 
->
-I can accept a patch that does this.
-
->That way, filesystems don't have to
->understand other filesystems' identifier schemes, or coordinate their own
->schemes with them. (The obvious alternative approach - maintaining a list of
->unique identifiers for all files on all mounted filesystems - is undesirable for
->a number of reasons. For one thing, it is limiting and unsafe to assume that all
->mounted filesystems are willing and able to provide an accurate list of all
->their files in a reasonable time.)
->
->This leaves one significant problem: what happens when a file is moved from one
->filesystem to another? What will prevent the cross-filesystem hard links to the
->file from breaking? Cleaning up cross-filesystem links after explicit file
->deletion is a related but simpler problem. I think a good but not ideal solution
->to this problem is possible. I'll go into detail if anyone is interested.
->  
->
-More interested in patches....
-
->* Actually filesystems should hand out file identifiers for external linking
->which may or may not be the same as their on-disk inumbers.
->
->...
->
->Leo.
->
->-----------------------------------------------------------------
->University of St Andrews Webmail: http://webmail.st-andrews.ac.uk
+> I know users get tripped up on this a lot in Unix, like when they 
+> don't understand why the webserver can't read their public_html 
+> directory.  It might be a good option for Linux.
 >
 >
->  
 >
-
+The right solution is to have a separate readdir permission, so that a 
+file-directory can be not executable but be listable, and vice-versa.  
+The problem comes from overloading the bit and also changing whether 
+objects can be simultaneously files and directories.
 
 -- 
 Hans
