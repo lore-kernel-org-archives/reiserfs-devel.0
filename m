@@ -1,35 +1,35 @@
-From: Jamie Lokier <jamie@shareable.org>
+From: Linus Torvalds <torvalds@osdl.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 18:08:22 +0100
-Sender: linux-kernel-owner@vger.kernel.org
-Message-ID: <20040826170822.GO5733@mail.shareable.org>
-References: <412D9FE6.9050307@namesys.com> <20040826014542.4bfe7cc3.akpm@osdl.org> <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <20040826144422.GD5733@mail.shareable.org> <20040826160306.GA4326@lst.de> <20040826161911.GK5733@mail.shareable.org> <20040826162354.GA4891@lst.de>
+Date: Thu, 26 Aug 2004 10:20:36 -0700 (PDT)
+Message-ID: <Pine.LNX.4.58.0408261019580.2304@ppc970.osdl.org>
+References: <Pine.LNX.4.44.0408261315240.27909-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S269254AbUHZRUR@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20040826162354.GA4891@lst.de>
+Return-path: <reiserfs-list-return-20735-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <Pine.LNX.4.44.0408261315240.27909-100000@chimarrao.boston.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Rik van Riel <riel@redhat.com>
+Cc: Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Christoph Hellwig wrote:
-> If the smaller objects interact with normal files (link/rename,
-> contained in normal directories), they will have to obey the same
-> locking protocols.  If not a filesystem could experiment with it of
-> course.
 
-I think the smaller objects will consist of special files, which are
-magic attributes like the ones you currently see in reiser4, and
-ordinary files (which might themselves be containers).
 
-Link/rename/locking etc. should work as usual on the ordinary smaller
-files, but probably aren't allowed at all on the special attribute
-files, except where there's an appropriate meaning.  (For example
-locking certain attributes might have an appropriate meaning).
+On Thu, 26 Aug 2004, Rik van Riel wrote:
+>
+> On Thu, 26 Aug 2004, Diego Calleja wrote:
+> 
+> > All this looks like reinventing the file/directory concept wheel.
+> > Instead of adding support for streams and "use files as directories",
+> > why not orientate it to "use directories as files? Streams could very
+> > well be provided by directories containing files,
+> 
+> So all I need to do is "cat /bin | gzip -9 > /path/to/backup.tar.gz" ?
 
-It would make sense for the special attributes file to not identify as
-"regular files" (S_IFREG), but there aren't many mode bits to play
-with.  They should also be harder to find than ordinary smaller files.
+No no. The stream you get from a directory is totally _independent_ of the 
+contents of the directory. Anything else would be pointless.
 
--- Jamie
+		Linus
