@@ -1,61 +1,50 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: reiserfs bug? ALSO Reiser4 bug!?
-Date: Fri, 27 Aug 2004 20:45:55 +0300
-Message-ID: <20040827174555.GB1284@nysv.org>
+From: Hendrik Visage <hvisage@envisage.co.za>
+Subject: Re: [SPAM] Re: silent semantic changes with reiser4
+Date: Fri, 27 Aug 2004 19:59:40 +0200
+Message-ID: <20040827175940.GV17498@hvs.envisage.co.za>
+References: <412EEB75.1030401@namesys.com> <Pine.LNX.4.44.0408271043090.10272-100000@chimarrao.boston.redhat.com> <1888171711.20040827171520@tnonline.net> <20040827154156.GA31757@mail.shareable.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20923-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20924-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
+In-Reply-To: <20040827154156.GA31757@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Jamie Lokier <jamie@shareable.org>
+Cc: Spam <spam@tnonline.net>, Rik van Riel <riel@redhat.com>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Hi
+On Fri, Aug 27, 2004 at 04:41:56PM +0100, Jamie Lokier wrote:
+> 
+> It is helpful for the OS, or a naming convention, to indicate what
+> _is information_ though.
+> 
+> It makes no sense to backup two or more copies of the _same
+> information_, and it makes even less sense to try to restore them as
+> it'll either be slow, fail (you can't always write to alternative
+> presentations), or cause unwanted side effects.
 
-I set up a symlink /var/log -> /boot/log where /boot is a reiserfs
-system. That was because Reiser4 lost log data when we were chasing the
-last bug with VS.
+You sure you don't mean what is data (on disk) and what is information, ie.
+interpretted data?
 
-Now the partition grew full and it was shown by my computer completely
-locking up. Out of the blue. At least that's what I assume caused the
-lock-up and the following.
+Following this whole threat is quite interesting, but I think there are
+two things that need to be pointed out (which I might've missed) is that
+hardlinks would be backed up multiple times if the archiver doesn't know
+the semantics of the filesystem. This is the reason why the <fs-of-choice>dump
+usually are faster than tar/cpio/etc. as they understand the low level and
+can optimize at that level.
 
-On a reboot I got a trace on the screen from dmesg dying. Unfortunately
-I can't use netconsole for some reason, but it was there.
-Sometimes it boots but screams a lot that the logfiles are not found,
-and for some reason /boot never mounted. 
+Also, a user might only have access to a certain subset of information, 
+which he might to backup but not the rest of the stream/data, and such the
+choice should be the user's.
 
-That's mysterious because /boot must be mounted for the kernel to be
-loaded, I don't have a copy in the mount point directory, but dmesg says
-nothing about anything but Reiser4 being mounted on /
+> Just like when you backup a dynamic web site.  You store the files
+> which the server is using.  You don't use "wget" to store the
+> generated pages, that's not a useful backup and you can't restore from it.
 
-I don't frankly have the time now to reproduce this, it is somewhat
-sporadic and I tried it too many times already. The system is a Debian
-Sid (Unstable) and the command was
-dmesg -s 524288 > /var/log/dmesg on a full reiserfs /var/log -> /boot/log
-partition/directory.
-
-Now that I got my system up, it did not mount /boot or /home/mjt, only /
-and it also lost the host name. (none):/etc# is my prompt.
-
-The filesystem is 128480 blocks with just as many used.
-
-Hope this helps in any way!
-
-PS.
-Now that I kicked in a reboot, I'm getting:
-reiser4[run-parts(2707)]: traverse_tree (fs/reiser4/search.c:755)[nikita-1481]:
-WARNING: Too many iterations: 1048576
-
-Where the iteration count varies. Warnings are usually not lethal, right?
-But this seems to end never. Time for the sync-umount-reboot sysrq magic..
-
-Thanks!
-
--- 
-mjt
+That depends ;^)
+But in the general case it's true.
 
