@@ -1,39 +1,48 @@
-From: bscott@ntisys.com
-Subject: RE: Write-once file system
-Date: Fri, 27 Jun 2003 14:41:43 -0400 (EDT)
-Sender: bscott@ntisys.com
-Message-ID: <Pine.LNX.4.44.0306271437540.18120-100000@dragon.inside.ntisys.com>
-References: <Pine.LNX.4.44.0306271700140.3922-100000@potato.zayda.com>
+From: Christian Kujau <evil@g-house.de>
+Subject: Re: vpf-10680, minor corruptions
+Date: Fri, 27 Jun 2003 21:20:57 +0200
+Message-ID: <3EFC9919.8020308@g-house.de>
+References: <20030625054031.GA11576@namesys.com> <3EF9A0F6.4030401@g-house.de> <3EF9E939.1050501@g-house.de> <20030626092608.GA12252@namesys.com> <3EFAE933.6040206@g-house.de> <20030627092821.GA29715@namesys.com> <3EFC361A.4030009@g-house.de> <20030627122556.GA8753@namesys.com> <3EFC396A.7080808@g-house.de> <20030627123800.GA9214@namesys.com> <20030627161344.GA13908@namesys.com>
+Reply-To: evil@g-house.de
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14756-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14757-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.44.0306271700140.3922-100000@potato.zayda.com>
+In-Reply-To: <20030627161344.GA13908@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: ReiserFS Mailing List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, 27 Jun 2003, at 5:09pm, jason@lunkwill.org wrote:
-> So what you're asking for is something beyond root's control that can tell
-> him "no" when he asks to write to an immutable file.
+hi,
 
-  That is acknowledged.  However, the EXT2/3 filesystem drivers still
-prevent *any* process from writing to an immutable file, privileged or
-otherwise.  Of course, root can simply remove the immutable bit, but the
-idea is that it has to be a *deliberate* action.
+2.5.72 with your patch applied compiled and booted.
+but, i'm almost afraid to say it: vpf-10680 is not gone :-(
 
-  Protecting against mistakes done by an operator running as "root" is also
-valid, even if one cannot protect against an attacker running as "root".
+https://ephigenie.kicks-ass.net/browse/reiserfs/vpf-10680/test.log
 
-  Thus, I submit that a "write once" or "append only" mechanism should be
-honored by the filesystem driver, even if the process has root privileges.
+is the output of "reiserfsck -l test.log test.img".
+test.img is a 200MB file, right after booting i created a fs on it and 
+copied files to it.
 
--- 
-Ben Scott <bscott@ntisys.com>
-| The opinions expressed in this message are those of the author and do  |
-| not represent the views or policy of any other person or organization. |
-| All information is provided without warranty of any kind.              |
+again, i'll put some files under ../reiserfs/diffs2 just in case the 
+corruptions are different now.
+
+sorry,
+Christian.
+
+
+
+evil@prinz:~$ ssh alpha
+
+BOFH excuse #439:
+
+Hot Java has gone cold
+
+lila:~# uname -a
+Linux lila 2.5.72 #8 Fri Jun 27 19:39:58 CEST 2003 alpha GNU/Linux
+lila:~#
+
 
