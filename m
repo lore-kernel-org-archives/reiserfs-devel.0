@@ -1,36 +1,29 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: new block allocator for 2.4.18
-Date: 11 Apr 2002 09:39:42 -0400
-Message-ID: <1018532382.28340.93.camel@tiny>
-References: <20020411173101.A1150@namesys.com>
+From: Frank Baumgart <frank.baumgart@esc-electronics.de>
+Subject: reiserfsprogs-3.x.1b severe installation bug
+Date: Thu, 11 Apr 2002 15:40:32 +0200
+Sender: frank
+Message-ID: <3CB59250.943A3487@esc-electronics.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10029-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10030-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020411173101.A1150@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com, jeffm@suse.com
+To: reiserfs-list@namesys.com
 
-On Thu, 2002-04-11 at 09:31, Oleg Drokin wrote:
-> Hello!
-> 
->    Hans thinks it is about the time to release new bitmap allocator, I was
->    working with for some time (and which I originally inherited from zam).
+To test some own modifications to the reiserfs tools I
+unpacked reiserfsprogs-3.x.1b.tar.gz and configured it
+with "--prefix=/opt/reiserfs".
 
-I think Hans is right.  From the description, this code has what we need
-to help reduce fragmentation over time and the skip_busy option should
-cut down on CPU usage as the FS gets full.
+After "make install", indeed the man pages are installed
+correctly into /opt/reiserfs/man but my SYSTEM BINARIES
+in /sbin are overwritten!
 
-It would be great if everyone with experimental machines could give this
-a try and help find the best option for their workload. I know I will
-(but I'll start by reading it ;-).
+The bug did not appear in around 3.0 where binaries were
+installed into what --prefix told.
 
-Jeff, do you still have those fragmentation measuring tools?
+Regards,
 
--chris
-
-
+Frank
