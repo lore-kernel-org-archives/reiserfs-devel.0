@@ -1,40 +1,39 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: using reiserfs as a DB
-Date: Tue, 23 Apr 2002 10:46:41 +0400
-Message-ID: <20020423104641.B2930@namesys.com>
-References: <20020421205328.GA8407@vega.ipal.net> <20020422172009.A1109@namesys.com> <20020422174449.GC8407@vega.ipal.net> <3CC45294.2060806@priocom.com> <20020422231645.GD8407@vega.ipal.net>
+Subject: Re: Permission Denied errors in ReiserFS
+Date: Tue, 23 Apr 2002 10:51:32 +0400
+Message-ID: <20020423105132.C2930@namesys.com>
+References: <20020422084257.GC25655@flex.com.au> <20020422124902.A8689@namesys.com> <20020422160215.GB27862@flex.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10140-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10141-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <20020422231645.GD8407@vega.ipal.net>
+In-Reply-To: <20020422160215.GB27862@flex.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Phil Howard <phil-reiserfs@ipal.net>
-Cc: Yura Umanets <umanets@priocom.com>, reiserfs-list@namesys.com
+To: David Khoury <dave@hal.flex.com.au>
+Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Mon, Apr 22, 2002 at 06:16:45PM -0500, Phil Howard wrote:
-> | The first component is identifier of directory where given object (file 
-> | or directory) lies. Second - identifier of the given object. Third 
-> | component - offset inside object. If object is file, then offset is 
-> | offset inside this file, if directory - hashed name of first entry in 
-> | this direntry. And finally last component is type of the item (statdata, 
-> | direntry, direct item, indirect item).
-> How is the application going to know what the key is for a particular
-> file?  How is the application going to translate what it has as a key,
+On Tue, Apr 23, 2002 at 02:02:15AM +1000, David Khoury wrote:
+>  Run reiserfsck --fix-fixable on your ReiserFS partition.  Make sure you're
+>  using at least verion 3.x.1c-pre2 of the reiserfsprogs.  You'll have to boot
 
-It seems I used wrong word. What was used to acces files were in fact
-md5 sums of their names (the URL in squid case).
+No! In fact there is a reason we have pre versions separate from releases.
+Latest pre version should only be used if latest release does not work.
+Some prior consulting in this list might help, too.
 
-> into the kind of key the raw interface uses?  How costly is this lookup?
+>  from a floppy or cdrom, if your ReiserFS partiton is the root partition.
+>  Remounting the root filesystem as 'ro' isn't enough.
+>  (this is obvious to me now, when I consider metadata cacheing.  It's a
+>  bummer, because it would have been wonderful to do an fsck on a 'ro' mounted
+>  filesystem).
 
-Once Nikita will appear, he can explain better because he invented the code,
-I believe.
+New pivot_root stuff in should cure that. Because you can actually unmount
+root. (or should be able to do it, anyway).
 
 Bye,
     Oleg
