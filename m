@@ -1,58 +1,62 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Sat, 04 Sep 2004 00:37:59 -0500
+Subject: Re: silent semantic changes with reiser4
+Date: Sat, 04 Sep 2004 01:03:37 -0500
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <413954B7.7050502@slaphack.com>
-References: <200409032145.i83LjdXG002843@localhost.localdomain>
+Message-ID: <41395AB9.1090804@slaphack.com>
+References: <Pine.LNX.4.44.0408261011410.27909-100000@chimarrao.boston.redhat.com> <200408261819.59328.vda@port.imtp.ilyichevsk.odessa.ua> <1093789802.27932.41.camel@localhost.localdomain> <1093804864.8723.15.camel@lade.trondhjem.org> <20040829193851.GB21873@jeremy1> <20040901201945.GE31934@mail.shareable.org> <20040901202641.GJ4455@legion.cup.hp.com> <1094118524.4842.27.camel@localhost.localdomain> <20040904011012.GA27405@pants.nu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <200409032145.i83LjdXG002843@localhost.localdomain>
+In-Reply-To: <20040904011012.GA27405@pants.nu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Spam <spam@tnonline.net>, Dave Kleikamp <shaggy@austin.ibm.com>, Paul Jakma <paul@clubi.ie>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jamie Lokier <jamie@shareable.org>, Linus Torvalds <torvalds@osdl.org>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Brad Boyer <flar@allandria.com>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Jeremy Allison <jra@samba.org>, Jamie Lokier <jamie@shareable.org>, Trond Myklebust <trond.myklebust@fys.uio.no>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, Linus Torvalds <torvalds@osdl.org>, reiser@namesys.com, hch@lst.de, Linux Filesystem Development <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Horst von Brand wrote:
-[...]
-| Use an editor that knows about encrypted files. Decrypt/edit/encrypt if no
+Brad Boyer wrote:
+| On Thu, Sep 02, 2004 at 10:48:46AM +0100, Alan Cox wrote:
+|
+|>What I don't understand is the tie between Linux having such streams and
+|>Windows doing it for Samba to work. Netatalk has always handle this for
+|>Macintosh and portably. Presumably any Samba support would need to
+|>handle OS's without wacky files for portability too ?
+|
+|
+| I'm not 100% sure on the samba side, but I think there is a pretty
+| significant difference. On the Mac, the problem of copying forks and
+| metadata onto non-Mac systems was recognized early on. There are several
+| standard formats for serialized versions of this data. If you take the
+| files that netatalk writes and copy them directly to a Mac separately,
+| there are tools that can convert them back to the original format with
+| all the data intact. I've never seen such a thing for NTFS named streams.
 
-You use emacs.  I use vim.  My brother uses gedit.  My parents use
-abiword.  Perhaps I should patch them all?  If that was so easy, why is
-there cryptoloop/dm-crypt?
+I had an idea for how to solve this.  Search the archives for
+"serialization" or "serialize".
 
-| is rare. FS plugins are kernel modules, AFAIU, and are subject to the same
-| problems.
-
-Actually, FS plugins currently cannot be modules.  They are currently
-called "plugins" because they share some concepts with browser plugins,
-and it sounds great in marketing.
-
-| If you can't find concrete uses for specific plugins, they are the
-| proverbial solution searching for a problem.
-
-Fine, let them be.  They are just very well structured code.  If you use
-reiser4 and don't look in the source or the "metas" dir, they are
-completely invisible to you.  I used the betas for months, and "metas"
-never burned me.
+Basically, it involves creating a better interface to a better "dump".
+You do
+	cat foo/serialize > foo.img
+and send foo.img over the network.  Or you just tell mutt/scp/whatever
+to grab foo/serialize instead of foo.  Can't be worse than a mac
+resource fork, and it looks more user-friendly to me.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQTlUt3gHNmZLgCUhAQJVGhAAki5RLZckm5jiZnw7MXQLqURBvm+cz7wU
-eFPfGyOE0SpFKJLFntWr0zrAgyK5ClgwqB7wsJEldWUfGBPdYpH5lroOQEHVEGBs
-4X+ze/xyUOL6z3S07a85jNibYamDeoCDc5P0Vc6GWrdpsU7FQGXrHykNyglDxFJ1
-MiYEQkB8NYDzQukl+7HPR3qPhQpAl5hx3XtmOcC5w0/88ATMqXg81DoVzPAPlsrL
-IPu4ai7KjXRaY1sKo8SU4orj7iQHmmkiFJJg+QwVU9sO2GMBGpXZRSr3KcUL3ux5
-nr+++ceVXyLADZaJRYp5LoTxL0KPJUKhaa9ABLmN2zQ5hT/v6AlQmKKD3s6ca02a
-A8MQxy69hG50RVSeJm9yjRYQQBvATEXslCQXPXSAlLJGrPZ1FZgQdYyo2wNboD23
-ep+JP2qTPdyTFFl2TOtoeR7fIsjg6DF5Bq0uh0maqC0UXXIo1GRO/OQGsNMfCN88
-pevDg0GvE+bdeL8CEZYfDzu4aaUs+ltzZSPEKlXHCGFORL9iSuYhqdUCRPbcKYOy
-uyhE7fgZoPYsOZLfChmXllEF69Cs5Vm5R0ymIgHqprfAjfqYf4ypbU0fukFDQ5dS
-GGFTfxketTHdhYr7ATAfZg08ZMP819UnvcwISflLlDBwvpL4BDAWOrnDFnbHSugk
-lPAxyPnfECM=
-=h24Y
+iQIVAwUBQTlauHgHNmZLgCUhAQK7Iw//SAi7I84OIz4xHh5S7i1xc+JugPvELyh2
+dvrVkETvQlvRcABZ0GYlCQQPPzL+QcTVnruMRAUZGrGCPJdTkxfae41tX5KDS8/4
+OpPWEDki+FSJrv+Mn9Pbm3I5Bxlhu0+nuNOIS0HSULo+/IBV4f/ldv8TUKSbXeXJ
+YjAXJJECpWTlYwF8sTvM/ALHpo+6xEtJq5gQxoUFnw4Pio8eycalS9m2cDs/N6rq
+PYcOjb7pWjGEk+9qimmwIcX5LnBXl8L9OhXqMQoR3Of+blniIrEOtg/0WLrwzu62
+rW+rBxDAfoDxIZZvquf/gyJ6stO8QzGeQqoxxTUXhbI5PUtD+qGO+tWT6+/EljHF
+qNri65JwB8PetbqdjWmsTO3V+FVSRy3hu4/vTNpnmwnR8H+yilWWDc7Tnsjql+dh
+9j4ycfT5xDAA9dC6APOSV5AEgI9z8FntQZzOCPe1lyLD7Qwjdak+3Nw2I3yNS+Pl
+Xa5ijSm3IKJ+JqKpZKRzCRyXRQdeAj2kGaWQP4Ui3D/RwBEHtn7shwdJ9Hku6KkN
+9ZyiTPqY5XGiyLrJWqRc9MraepGhuxxtYcq65A+vdJq2fxA5+XRF8UGbYc9KW5lF
+1fYSXA2DBNJjeNEvZw8LWI54OrIMSlhj3dWLX8WkkXog2gWO7ly0E6OiA0odZV6M
+i9sDeRClqlM=
+=CFb4
 -----END PGP SIGNATURE-----
