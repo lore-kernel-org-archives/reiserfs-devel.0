@@ -1,109 +1,73 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: --rebuild-tree always finds errors --check is ok
-Date: Thu, 06 Jan 2005 15:06:43 +0300
-Message-ID: <1105013202.3261.26.camel@tribesman.namesys.com>
-References: <41D71C4E.6000209@hanaden.com>
-	 <1104849038.32178.54.camel@tribesman.namesys.com>
-	 <41DAD195.1080306@hanaden.com>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: Congratulations! we have got hash function screwed up
+Date: Thu, 6 Jan 2005 15:45:06 +0300
+Message-ID: <20050106124505.GE5352@backtop.namesys.com>
+References: <20041228221218.GA6412@schmorp.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23043-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23044-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41DAD195.1080306@hanaden.com>
+Content-Disposition: inline
+In-Reply-To: <20041228221218.GA6412@schmorp.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: hanasaki <hanasaki@hanaden.com>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: " Marc A. Lehmann " <pcg@goof.com>
+Cc: reiserfs-list@namesys.com, stefan@hello-penguin.com
 
-Hello
+Hello,
 
-On Tue, 2005-01-04 at 20:25, hanasaki wrote:
-> Version of reiserfsk
-> ======================
-> == From debian sarge
-> /sbin/reiserfsck -V
-> reiserfsck 3.6.19 (2003 www.namesys.com)
-> == also used the version in knoppix 3.7 with similar results
+On Tue, Dec 28, 2004 at 11:12:18PM +0100,  Marc A. Lehmann  wrote:
+> Hi!
 > 
-> the output of two consecutive runs of --rebuild-tree on the same 
-> unmounted partition are attached.  Below is the diff
+> When trying to upgrade or reinstall the xfonts-75dpi,
+> xfonts-75dpi-transcoded or 100dpi & transcoded debian packages on my
+> 2.6.10-rc3 amd64 reiserfsv3 host, I get the following errors:
 > 
-> diff data00-run1 data00-run0
-> 14c14
-> < 172168 directory entries were hashed with "r5" hash.
-> ---
->  > 172167 directory entries were hashed with "r5" hash.
+>    dpkg: error processing
+>    /var/cache/apt/archives/xfonts-75dpi_4.3.0.dfsg.1-10_all.deb (--unpack):
+>     unable to make backup link of
+>     `./usr/X11R6/lib/X11/fonts/75dpi/lutBS19-ISO8859-1.pcf.gz' before
+>     installing new version: Device or resource busy
+>     dpkg-deb: subprocess paste killed by signal (Broken pipe)
+>    Preparing to replace xfonts-75dpi-transcoded 4.3.0.dfsg.1-10 (using
+>          .../xfonts-75dpi-transcoded_4.3.0.dfsg.1-10_all.deb) ...
+>    dpkg: error processing /var/cache/apt/archives/xfonts-75dpi-transcoded_4.3.0.dfsg.1-10_all.deb (--unpack):
+>     unable to make backup link of `./usr/X11R6/lib/X11/fonts/75dpi/lutBS19-ISO8859-10.pcf.gz' before installing new version: Device or resource busy
+>    dpkg-deb: subprocess paste killed by signal (Broken pipe)
+>    Errors were encountered while processing:
+>     /var/cache/apt/archives/xfonts-75dpi_4.3.0.dfsg.1-10_all.deb
+>     /var/cache/apt/archives/xfonts-75dpi-transcoded_4.3.0.dfsg.1-10_all.deb
 > 
+> And at the same time, I get this in my kernel log:
 > 
-> Vladimir Saveliev wrote:
-> > Hello
-> > 
-> > On Sun, 2005-01-02 at 00:55, hanasaki wrote:
-> > 
-> >>Running reiser3 on kernel 2.6.10 and 2.6.9 with Debian sarge and unstable.
-> >>
-> >>the --rebuild-tree always finds errors and corrects them.  even when run
-> >>more than once consecutively without mounting the partition in between.
-> >>
-> > 
-> > Please provide reiserfsck --rebuild-tree output.
-> > What is version of your reiserfsck? (reiserfsck -V)
-> > 
-> > 
-> >>--check says all is good.
-> >>
-> >>
-> >>
-> >>
-> > 
-> > 
+>    ReiserFS: hdg2: warning: reiserfs_add_entry: Congratulations! we have got hash function screwed up
 > 
-> 
-> ______________________________________________________________________
-> ####### Pass 0 #######
-> block 254411: The number of items (21) is incorrect, should be (1) - corrected
-> block 254411: The free space (1) is incorrect, should be (2256) - corrected
-> pass0: vpf-10110: block 254411, item (0): Unknown item type found [0 251658496 0x1001800 ??? (15)] - deleted
-> block 1574493: The number of items (18) is incorrect, should be (0) - corrected
-> block 1574493: The free space (1184) is incorrect, should be (4072) - corrected
-> block 2206239: The number of items (1) is incorrect, should be (0) - corrected
-> block 2206239: The free space (0) is incorrect, should be (4072) - corrected
-> block 2844875: The number of items (2) is incorrect, should be (1) - corrected
-> block 2844875: The free space (0) is incorrect, should be (4048) - corrected
-> pass0: vpf-10110: block 2844875, item (0): Unknown item type found [16777472 16780544 0x200 ??? (15)] - deleted
-> block 3326501: The number of items (1) is incorrect, should be (0) - corrected
-> block 3326501: The free space (0) is incorrect, should be (4072) - corrected
-> 172167 directory entries were hashed with "r5" hash.
-> ####### Pass 1 #######
-> ####### Pass 2 #######
-> ####### Pass 3 #########
-> ####### Pass 3a (lost+found pass) #########
-> 
-> ______________________________________________________________________
-> ####### Pass 0 #######
-> block 254411: The number of items (21) is incorrect, should be (1) - corrected
-> block 254411: The free space (1) is incorrect, should be (2256) - corrected
-> pass0: vpf-10110: block 254411, item (0): Unknown item type found [0 251658496 0x1001800 ??? (15)] - deleted
-> block 1574493: The number of items (18) is incorrect, should be (0) - corrected
-> block 1574493: The free space (1184) is incorrect, should be (4072) - corrected
-> block 2206239: The number of items (1) is incorrect, should be (0) - corrected
-> block 2206239: The free space (0) is incorrect, should be (4072) - corrected
-> block 2844875: The number of items (2) is incorrect, should be (1) - corrected
-> block 2844875: The free space (0) is incorrect, should be (4048) - corrected
-> pass0: vpf-10110: block 2844875, item (0): Unknown item type found [16777472 16780544 0x200 ??? (15)] - deleted
-> block 3326501: The number of items (1) is incorrect, should be (0) - corrected
-> block 3326501: The free space (0) is incorrect, should be (4072) - corrected
-> 172168 directory entries were hashed with "r5" hash.
-> ####### Pass 1 #######
-> ####### Pass 2 #######
-> ####### Pass 3 #########
-> ####### Pass 3a (lost+found pass) #########
+> Sure sounds like a filesystem bug to me. Is this 2.6.10-rc3-specific or a
+> generic bug in handling hash collisions?
 
-Can you do:
-debugreiserfs -p that-device | gzip -c > fs.gz and make fs.gz
-downloadable. That would allow us to fix reiserfsck bug faster.
+Tea hash is designed to be more resistant.  
 
+there is a generic problem with overloading of the generation counter, but
+tea hash should mix file names better and have less chances to 'screw the hash
+function up'.  
 
+Does the debian install all X font files into one dir? May be you have your own
+font files installed in the same dir? I suggest to split the dir into several
+ones.
+
+> Deleteing the fonts and installing the package works, but the next upgrade
+> makes the error appear again.
+> 
+> -- 
+>                 The choice of a
+>       -----==-     _GNU_
+>       ----==-- _       generation     Marc Lehmann
+>       ---==---(_)__  __ ____  __      pcg@goof.com
+>       --==---/ / _ \/ // /\ \/ /      http://schmorp.de/
+>       -=====/_/_//_/\_,_/ /_/\_\      XX11-RIPE
+
+-- 
+Alex.
