@@ -1,53 +1,54 @@
-From: "David Dabbs" <david@dabbs.net>
-Subject: Re: fsck.reiser4 problem (was: reiser4 corruption problem)
-Date: Tue, 31 Aug 2004 01:24:46 -0000
-Message-ID: <20040831012446.631CB15E2E@mail03.powweb.com>
+From: Will Dyson <will_dyson@pobox.com>
+Subject: Re: Separating Indexing and Searching (was silent semantic changes
+ with reiser4)
+Date: Mon, 30 Aug 2004 21:57:17 -0400
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <4133DAFD.9060704@pobox.com>
+References: <584702172685-BeMail@cr593174-a>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21136-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <584702172685-BeMail@cr593174-a>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Michael Weissenbacher <webmaster@dermichi.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Cc: akpm@osdl.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com, reiser@namesys.com
 
+Alexander G. M. Smith wrote:
 
-| Michael Weissenbacher 
-> David Dabbs wrote:
-> Even though both file sets contain umlauts, or perhaps more accurately extended
-> ASCII chartacters, there is something distinctive in the "failure" set: the 
-> umlauts/extended characters appear after the 15th character. If you are using 
-> REISER4_LARGE_KEYS, the first fifteen characters will be shifted into the second
-> and third key elements with the final key el containing the hash of the remaining
-> characters 
-| exactly! the problem occurs when using extended characters that appear
-| after the 15th character!
+> Not only bloat, but time wasted reinventing the wheel.  For my 
+> experimental file system 
+> (http://members.rogers.com/agmsbeos/AGMSRAMFileSystem.readme - see 
+> the Nifty Features chapter), I had to figure out the BFS query
 
-> Code in fs/reiser4/kassign.c assembles the key and uses your chosen hash, R5 
-> being the default. If you created the files without failure, could read/opened
-> them okay but then FSCK reported problems, could this point to a difference in
-> the hash code (w.r.t. extended ASCII)? I'm on holiday now, so cannot check 
-> to see if this suspicion holds any water. 
+I had a look. Cool stuff!
 
-| yes, create/read/open works ok, a diff shows no difference. after my 
-| first tests i panicked because fsck.reiser4 reported "fatal corruptions" 
-| and used --build-fs as suggested. fsck.reiser4 then moved these files to 
-| the lost+found directory. fsck.reiser4 didn't report corruoption after 
-| that, but there was no way of finding out where the files were before or 
-| what their names were. so with this bug fsck.reiser4 is unusable for my 
-| situation.
-| 
-| would it do any good trying without the REISER4_LARGE_KEYS option?
-| 
+> I like that.  Put the indexing and a related attribute change update 
+> notification mechanism into the kernel.  User land libraries can 
+> build on that to implement whatever query language you want, thus 
+> saving work and having a common language for all file system 
+> varieties that support indices.
 
-Probably not. All that will do is drop the third key element, so you will then likely see problems with names where the extended character(s) appear after the seventh character. If you feel energetic and want to do it, try disabling LARGE_KEY, and retesting. Before doing so, however, try setting the filesystem's default fibration plugin to none or whatever the 'no fibration' option is. This will remove fibration code from the suspect list if the retest is successful. 
+Yeah, thats basicly what I was thinking. Right now I'm trying to think
+of any kind of filesystem that could support the general concept of 
+"Fast Searching", but be somehow unable to export this capability as a 
+set of indices on file attributes....
 
-| thanks for your time,
-| Michael
+Ok. I give up. It seems like the right abstraction to me.
 
-My pleasure. Thank /you/ for helping to debug!
+> However, one of my (unfinished) experiments was to have magic 
+> directories that show query results as their contents.  One attribute
+>  of the directory (or even its name) would be the query string.  That
+>  way even old software (like "ls") could use queries!  Implementing 
+> queries-as-directories might require moving some things back into the
+>  kernel, or at least into some plug-in level.
 
-David D.
+That is a pretty awesome idea. It should be done in its own specialized
+filesystem though. QueryFS. If the change-notification mechanism in the
+kernel was robust enough (a big if), the rest could be done with a
+userspace filesystem (via FUSE). Mount a query, cd into it, run grep,
+write a little bash script... Very unixy.
+
+-- 
+Will Dyson
+"Back off man, I'm a scientist!" -Dr. Peter Venkman
