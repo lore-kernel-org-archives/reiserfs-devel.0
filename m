@@ -1,49 +1,68 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: Getopt improvements
-Date: Thu, 27 Feb 2003 16:35:46 -0500
-Message-ID: <3E5E84B2.90708@suse.com>
-References: <3E5D26A2.7010804@suse.com> <20030227092551.C28643@namesys.com> <3E5E312C.50406@suse.com> <3E5E730C.7030804@namesys.com>
+From: Voicu Liviu <liviu.voicu@huji.ac.il>
+Subject: ReiserFS causes CPU high usage?!
+Date: Fri, 28 Feb 2003 00:11:14 +0200
+Message-ID: <200302280011.14488.liviu.voicu@huji.ac.il>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12957-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12958-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E5E730C.7030804@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Oleg Drokin <green@namesys.com>, Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Hans Reiser wrote:
-> Jeff Mahoney wrote:
-> 
->>
->>     Oleg -
->>         I like the ability to specify the bits that should be cleared. 
-> 
-> 
-> What do you mean by that, forgive me for not reading closely
->> It's more flexible than my solution, and doesn't involve looping after 
->> each option. 
-> 
-> 
-> Doesn't yours do a better job of handling "no"?
+Hi guys,
 
-	For the simple cases (which also happen to be all we have right now), 
-yes, I think that my implementation is cleaner. It allows the simple use 
-of mutually exclusive options, through the "no" prefix, and clearing of 
-the other bits in a multivalue option.  For now, that's all we need - 
-and it's a valid argument for using my code. However, what I like about 
-Oleg's implementation is that if you have an option that excludes other 
-options (even when it's not multivalue), it can clear those bits as 
-well. What I don't like is how it makes the descriptor definition for 
-each argument pretty long and really ugly.
+I have beed working on my gentoo using ext3 for all partitions so then I have 
+heard that ReiserFS is much better/faster and indeed it is BUT since I 
+switched to ReiserFS I can't do:
+Code:
+# nice -n -20 emerge some_app_name
 
-	-Jeff
+The idea is I can do this BUT can't do any thing else...notice to your self 
+that I never had this problem while using ext3.
+
+While I have used ext3 I could do "nice -n -10 emerge some_app" and also use 
+xfree+xfce4 without problems but with ReiserFS if I do use value less than 0 
+for "nice" then the cpu jumps to 100% usage and blocks me out from doing 
+something else :-(
+
+Any clue what is going on?
+Maybe ReiserFS uses the cpu harder?
+
+(
+I have to fix the CPU usage icon_sad.gif I makes me crazy...simple emerge 
+loads the CPU to 90 ~ 95%
+)
+
+INFO:
+-------
+$ uname -a
+Linux localhost.localhomain 2.4.20-ck3 #1 Thu Feb 27 22:09:05 IST 2003 i686 
+Intel(R) Pentium(R) 4 CPU 1.50GHz GenuineIntel GNU/Linux
+(default-x86-1.4, gcc-3.2.2, glibc-2.3.1-r2)
+
+My kernel is vanilla-sources from kernel.org and with the following patches:
+$ ls
+001_o1_pe_ll_021215_ck_2.4.20.patch.bz2    008_vh_021217_ck_2.4.20.patch.bz2
+002_aavm_021215_ck_2.4.20.patch.bz2        010_tune_021217_ck_2.4.20.patch.bz2
+003_rl2_021215_ck.2.4.20.patch.bz2         011_vt_021217_ck_2.4.20.patch.bz2
+005_supermount_021215_ck_2.4.20.patch.bz2  13_gcc31-compile-optimizations
+007_acpi_021215_ck_2.4.20.patch.bz2
+
+COMPILER="gcc3"
+CHOST="i686-pc-linux-gnu"
+CFLAGS="-march=pentium4 -O3 -pipe -fomit-frame-pointer -mfpmath=sse"
+CXXFLAGS="-march=pentium4 -O3 -pipe -fomit-frame-pointer -mfpmath=sse"
+
+Best Regards
 
 -- 
-jeffm@suse.com
-jeffm@csh.rit.edu
+Voicu Liviu
 
+Hebrew University of Jerusalem
+Rothberg International School
+Assistant Programmer & Network Support
