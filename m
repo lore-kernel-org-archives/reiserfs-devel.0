@@ -1,56 +1,147 @@
-From: Simon Raffeiner <sturmflut@lieberbiber.de>
-Subject: Re: Severe problem with fsck.reiser4 1.0.3
-Date: Sat, 15 Jan 2005 00:15:03 +0100
-Message-ID: <1105744503.41e85277c61f6@www.hosting-agency.de>
-References: <1105475609.41e4381953cbe@www.hosting-agency.de> <200501141726.53425.vitaly@namesys.com> <1105737328.41e836703c607@www.hosting-agency.de> <200501150108.25073.vitaly@namesys.com>
+From: "E.Gryaznova" <grev@namesys.com>
+Subject: Re: Erased start of voulme...
+Date: Sat, 15 Jan 2005 05:49:59 +0300
+Message-ID: <41E884D7.7050402@namesys.com>
+References: <Pine.LNX.4.61.0501140818350.24028@holly.rdwarf.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-23148-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23149-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200501150108.25073.vitaly@namesys.com>
+In-Reply-To: <Pine.LNX.4.61.0501140818350.24028@holly.rdwarf.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Vitaly Fertman <vitaly@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Louis Erickson <lerickson@rdwarf.net>
 Cc: reiserfs-list@namesys.com
 
-Zitat von Vitaly Fertman <vitaly@namesys.com>:
+Louis Erickson wrote:
 
-
-> > ATM fsck.reiser4 is still running --build-fs and does the storage tree
-> > cleanup, lots of nodes got zeroed, does this mean data has been lost? I
+>Wow, thanks for the fast responses, everyone.  I'll try and consolidate 
+>them all in to one reply, in the order I got them here.
 >
-> if I recall correctly the fsck log, some data blocks were pointed more then
-> once from different places. in such a case only 1 of these pointers is left,
-> other are zeroed. but fsck does not know exactly which is the correct one.
-> so it could lead to file data corruptions. although chances that buggy
-> pointers were zeroes are pretty high.
-
-In fact the data loss is 100%, the only thing left after fsck.reiser4 --build-fs
-is the "lost+found" folder. I'll take this as a chance to reinstall my Gentoo
-from scratch and create separate partitions for / and /home this time with /
-being ReiserFS as long as Reiser4 doesn't _really_ get stable. This strange
-behaviour has somewhat changed my confidence in Reiser4.
-
-> > have got recent backups so it's no problem, but do you have some idea where
-> > this corruption came from? Doesn't look like hard drive failure, maybe an
+>Silly me forgot to start ssh on the afflicted box, so I can't get to it 
+>until I get home.  I do have another near-identical machine that I've 
+>checked versions and such on, and can use to build tools if need be.
 >
-> the most strange corruption was that 2 leaves in the tree had pointers
-> to themselves. this happens extremely rare, I even do not remember
-> if I have seen a such before.
+>On Fri, 14 Jan 2005, Sander <sander@humilis.net> wrote:
 >
-> > unclean shutdown or some issues with Kernel 2.6.10-mm1.
+>  
 >
-> shutdown should not be a problem, if it is this is a problem with reiser4
-> journalling which is quite stable now. but 2.6.10-mm1 is not the most stable
-> thing in the world. I am afraid only some tests will reveal the truth to you.
+>>What arguments did you use?
+>>    
+>>
+>
+>reiserfsck --check /dev/md2
+>
+>  
+>
+>>What version of reiserfsck?
+>>    
+>>
+>
+>How do I find that out?  It isn't in the help or visible as an option.  
+>If I ask mkfs.reiserfs it tells me it's 3.x.1b (2002).  I suspect it's 
+>quite old.
+>  
+>
+please try the latest reiserfsprogs-3.6.19.tar.gz from 
+ftp://namesys.com/pub/reiserfsprogs
 
-I'll stay with 2.6.9-mm1 which has run stable for over a month with Reiser4,
-there's no real reason for me to switch  to a newer kernel except for some
-security updates.
+>Should I build new tools (on another similar machine) and use those 
+>instead?
+>  
+>
+>  
+>
+>>And what filesystem?
+>>    
+>>
+>
+>It's /dev/md2, mounting on /var.  Linux is unhappy without it, although it 
+>does come up to single user mode.  Much of the important data is on /home, 
+>and I can therefore get off if I have to completely rebuild, but there's a 
+>couple of things (/var/mail, for instance) that would be good to rescue.  
+>I'd like to try and get a gander at /var/log too, to see if I can suss out 
+>what happened.
+>
+>All of this is running on software raid, but the volumes are all up and 
+>good, and the raid component isn't complaining at all.
+>
+>Or is that not the question you're asking?
+>
+>  
+>
+>>_And_ it is a lesson why backups are important :-)
+>>    
+>>
+>
+>Yes it is.  It is past time to fix this astonishing lack in our 
+>infrastructure.
+>
+>On Fri, 14 Jan 2005, Alex Zarochentsev <zam@namesys.com> wrote:
+>
+>  
+>
+>>reiserfsck --rebuild-sb can re-create the super block.
+>>    
+>>
+>
+>I saw that, but it looked dangerous, and I didn't want to try it until my 
+>copy had finished.
+>
+>On Fri, 14 Jan 2005, E.Gryaznova <grev@namesys.com> wrote:
+>
+>  
+>
+>>I would prefer to do the following :
+>>dd if=/dev/problem_partition of=/dev/sparedevice
+>>sparedevice can be usual disk partition
+>>    
+>>
+>
+>I don't have a spare partition large enough in this system.  I have done:
+>
+>dd if=/dev/problem_partition of=/home/scratch/rescue.dat
+>
+>I'll then use the loopback file system to create a device entry for that 
+>file, and work on that.  It was a suggestion made earlier on this very 
+>mailing list, and it sounded like a wise one to me.  If the loopback 
+>doesn't work, I'll fiddle around with hardware to make a spare partition 
+>large enough available.
+>
+>  
+>
+>>then
+>>reiserfsck --rebuild-sb /dev/sparedevice
+>>reiserfsck --check /dev/sparedevice
+>>    
+>>
+>
+>The help screen for --rebuild-sb says that a --rebuild-sb will require a 
+>--rebuild-tree afterwards.  Should I try that, or the --check? 
+>
+new reiserfsck (3.6.19)  asks to run  --check after --rebuild-sb
 
-Regards,
+> Or will 
+>--check do the --rebuild-sb as needed?
+>
+>Also, there's a -S/--scan-whole-partition option... should I use that to 
+>make sure no files are missed, or would it best not to add that?
+>  
+>
+if you have a copy of corrupted fs -- you may try both ways (w/ and w/o 
+-S) and see what way is more successful
 
-Simon Raffeiner
+Good luck!
+Lena
+
+>Again, thank you all for your quick replies.  It's been very helpful, and 
+>very positive to hear there are things I can at least try, rather than 
+>that I am simply hosed.
+>
+>  
+>
+
+
