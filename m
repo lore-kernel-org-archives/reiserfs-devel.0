@@ -1,16 +1,35 @@
-From: Dax Kelson <dax@gurulabs.com>
-Subject: Bad Sectors during log replay, help?
-Date: Thu, 2 May 2002 22:33:12 -0600 (MDT)
-Message-ID: <Pine.LNX.4.44.0205022227220.22979-100000@mooru.gurulabs.com>
+From: Will Stowe <will.stowe@intec-telecom-systems.com>
+Subject: RE: Bad Sectors during log replay, help?
+Date: Fri, 3 May 2002 00:34:40 -0400
+Message-ID: <8287102CFE5C31418556A13A4E5BEE91E957D0@sphynx.git.compgen.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10213-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10214-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: 'Dax Kelson' <dax@gurulabs.com>, reiserfs-list@namesys.com
+
+Try turning off dma using hdparm -d 0 /dev/had, then try remounting
+
+
+Will Stowe
+Systems Administrator
+Intec Telecom Systems
+5775 Peachtree-Dunwoody Road
+Atlanta, GA 30342
+Work:(404) 705-2867
+Email: Will.Stowe@intec-telecom-systems.com 
+ 
+ 
+
+-----Original Message-----
+From: Dax Kelson [mailto:dax@gurulabs.com] 
+Sent: Friday, May 03, 2002 12:33 AM
 To: reiserfs-list@namesys.com
+Subject: [reiserfs-list] Bad Sectors during log replay, help?
 
 
 I have a kernel 2.4.18 trying to mount a reiserfs filesytem with 
@@ -78,4 +97,3 @@ Using r5 hash to sort names
 ReiserFS version 3.6.25
 
 (and the mount fails)
-
