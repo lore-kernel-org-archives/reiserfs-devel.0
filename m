@@ -1,50 +1,60 @@
-From: "daniel.poelzleithner" <poelzi@poelzi.org>
+From: Andreas Dilger <adilger@clusterfs.com>
 Subject: Re: reiser4 metas/bmap problem
-Date: Fri, 30 Jul 2004 04:30:20 +0200
-Message-ID: <4109B2BC.4040600@poelzi.org>
-References: <Pine.GSO.4.44L.0407281754290.11129-100000@unix2.cc.ksu.edu> <20040729012549.GE1439@schnapps.adilger.int> <4108B029.4030008@namesys.com>
+Date: Thu, 29 Jul 2004 22:42:02 -0400
+Message-ID: <20040730024202.GO1439@schnapps.adilger.int>
+References: <Pine.GSO.4.44L.0407281754290.11129-100000@unix2.cc.ksu.edu> <20040729012549.GE1439@schnapps.adilger.int> <4108B029.4030008@namesys.com> <4109B2BC.4040600@poelzi.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19863-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ECfFjUQjeBf+wxqf"
+Return-path: <reiserfs-list-return-19864-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4108B029.4030008@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <4109B2BC.4040600@poelzi.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: Andreas Dilger <adilger@clusterfs.com>, Matt Stegman <matts@ksu.edu>, reiserfs-list@namesys.com
+To: "daniel.poelzleithner" <poelzi@poelzi.org>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, Matt Stegman <matts@ksu.edu>, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+--ECfFjUQjeBf+wxqf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Vladimir V. Saveliev wrote:
+On Jul 30, 2004  04:30 +0200, daniel.poelzleithner wrote:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Vladimir V. Saveliev wrote:
+> | reiser4 should do the same, i agree. However, reiser4 has another
+> | feature we call relocation (flush may allocate another disk blocks for a
+> | file if it finds it more optimal) which is undesirable for bmapped file=
+s.
+> | We will probably have to invent some woraround for that.
+>=20
+> Whats about a flag that can be set through metas, that will prevent the
+> relocation ?  That would be no workaround, that would be a feature :)
 
-| reiser4 should do the same, i agree. However, reiser4 has another
-| feature we call relocation (flush may allocate another disk blocks for a
-| file if it finds it more optimal) which is undesirable for bmapped files.
-| We will probably have to invent some woraround for that.
+Lilo knows to set "notail" on files that it is bmapping so that the tail
+is unpacked into a real block that won't move.  That attribute could be
+re-used for this purpose and all would be well.
 
-Whats about a flag that can be set through metas, that will prevent the
-relocation ?
-That would be no workaround, that would be a feature :)
+Cheers, Andreas
+--
+Andreas Dilger
+http://sourceforge.net/projects/ext2resize/
+http://members.shaw.ca/adilger/             http://members.shaw.ca/golinux/
 
-regards
-~ Daniel
 
-- --
-Once the philosopher stone has fallen from the tree,
-~  nonsense appeared to fix the courious fear.
+--ECfFjUQjeBf+wxqf
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
-.. . .. ... . . .. . ... . .. . ... . . .
-pgp key @ http://files.poelzi.org/pgp.txt
-ED80 E53D 5269 4BB1 1E73 3A53 CBF9 A421 0A7B 003D
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Debian - http://enigmail.mozdev.org
+Version: GnuPG v1.2.3 (GNU/Linux)
 
-iD8DBQFBCbK8y/mkIQp7AD0RAtdYAJ4nvuykJ/jt22xaab8BWfnY1qSXzQCeO31N
-O/J1M9fctbmDK3SiX/Ac7IE=
-=wK7J
+iD8DBQFBCbV6pIg59Q01vtYRApjoAJ9k6VW63AV3NmlR9Z7DR0wwgIJcYQCgqBxw
+74aLCxtfCH8OLW4nsiBWEig=
+=V7vs
 -----END PGP SIGNATURE-----
+
+--ECfFjUQjeBf+wxqf--
