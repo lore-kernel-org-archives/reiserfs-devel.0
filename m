@@ -1,96 +1,72 @@
-From: Domenico Andreoli <cavok@tiscali.it>
-Subject: Fwd: reiser4 non-free?
-Date: Sat, 24 Apr 2004 21:32:46 +0200
-Sender: Domenico Andreoli <cavok@libero.it>
-Message-ID: <20040424193246.GA2490@raptus.homelinux.org>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: "Metas"
+Date: Sat, 24 Apr 2004 23:38:05 -0500
+Message-ID: <408B40AD.2050701@slaphack.com>
+References: <20040423203515.GK19049@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18192-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18196-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <20040423203515.GK19049@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Sami Liedes <sliedes@cc.hut.fi>, ed@debian.org, debian-legal@lists.debian.org, reiserfs-list@namesys.com
-
-hi Hans,
-
-  we have bad news for your filesystems :(( it happens that some sections
-of the license are not compatible with Debian Free Software Guidelines [0].
-
-Even more grave is that something makes them also not suited for debian's
-non-free archive.
-
-I'm sorry but if thing do not get fixed, this stuff won't ship with
-next distribution release.
-
-Here follows the message posted to debian-legal mailing list which
-starts the thread.
-
-cheers
-domenico
-
-[0] http://www.debian.org/social_contract
-
------ Forwarded message from Sami Liedes <sliedes@cc.hut.fi> -----
-
-Date: Sat, 24 Apr 2004 14:40:13 +0300
-From: Sami Liedes <sliedes@cc.hut.fi>
-To: debian-legal@lists.debian.org
-Cc: ed@debian.org, cavok@debian.org
-Subject: reiser4 non-free?
-
-[Cc:'d to the reiser4progs maintainers. Please Cc: me when replying,
-I'm not subscribed to -legal.]
-
-There has previously been discussion at least in April 2003 on this
-list about the freeness of reiserfs.
-
-It seems a further "clarification" has been added to the license (GPL
-+ clarifications) in both reiser4progs and kernel-patch-2.6-reiser4
-since then. This is the section that has been modified:
-
-> Finally, nothing in this license shall be interpreted to allow you to
-> fail to fairly credit me, or to remove my credits such as by creating
-> a front end that hides my credits from the user or renaming mkreiser4
-> to mkyourcompanyfs or even just make_filesystem, without my
-> permission, unless you are an end user not redistributing to others.
-> If you have doubts about how to properly do that, or about what is
-> fair, ask.  (Last I spoke with him Richard was contemplating how best
-> to address the fair crediting issue in the next GPL version.)
-
-New here is the "such as by creating a front end that hides [...] or
-even just make_filesystem". The controversy last year was created by
-mkreiserfs printing an overly verbose (tens of lines of sponsor
-credits and other non-licensing information) advertisement when
-running from the command line and Mr. Reiser's assertion that removing
-it violates the GPL.
-
-To me, these new "clarifications" seem non-free. (IANADD, and I
-believe the other IANA* goes without saying. :-)
-
-Another section has been added after the above one:
-
-> Also, a clustering file system built to work on top of this file
-> system shall be considered a derivative work for the purposes of
-> interpreting the GPL license granted herein.  Plugins are also to be
-> considered derivative works.  Share code or pay money, we give you the
-> choice.
-
-Surely a license cannot add anything to the set of derived works (if
-the other work is not derived, the license obviously doesn't apply to
-it and hence never gets to say it is derived; if it is, it is even
-without the license saying so). However I believe -legal has not
-considered text like this a problem before (I might be wrong though).
-
-	Sami
-
------ End forwarded message -----
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
+Cc: reiserfs-list@namesys.com
 
 
------[ Domenico Andreoli, aka cavok
- --[ http://people.debian.org/~cavok/gpgkey.asc
-   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
+>
+>What's so terribly bad about having the name for it in /proc or /sys
+>or wherever and having it global from the kernel config?
+>  
+>
+Imagine if I had to do
+    cd `cat /sys/names/parent_directory`
+instead of
+    cd ..
+Or even
+    cd $parent_directory
+or
+    cd $parent
+
+The fact is, for the usability to be sane in a text world, you're going 
+to have to stomp on somebody's namespace.  If we were talking about 
+scripts, it'd be different, but we're talking about something that I 
+know I'd find a _manual_ use for.  Even if you say that I can set it to 
+'...' myself, there's the problem of everyone having different 
+definitions of that.  Imagine if, before I could even 'cd ..', I had to 
+make sure that '..' was really '..'?  Or I might accidentally 'rm -rf 
+../something' and have it mean something entirely different, because I'm 
+on a different machine?
+
+Note that in creating /proc/sys/names, I may have stomped on somebody 
+anyway.  And here we have the chicken-and-egg thing of
+    cd `cat /sys/\`/sys/names\``
+and so on...
+
+I vote for '...' if Hans/Linus/the Powers that Be will allow it.
+
+>This is such a waste of time, really.
+>  
+>
+Not really.  We already have 'metas' working, and now people want to 
+change it.  There are a few choices here, if we wanted to "not waste time":
+    Change it to the most popular idea, then change it again, and again, 
+until people stop bickering.  They won't, and this is just confusing to 
+users.
+    Leave it the same until someone comes up with a generally accepted idea.
+    Hans arbitrarily picks an idea.
+
+Option #2 is what appears to be happening, and is the right thing to do 
+-- make something that works (somewhat) so that other development may 
+continue, then don't waste any more coding time on it until the design 
+is solid.
+
+Or, if you mean that bickering is a waste of time, get used to it -- 
+we're human.  On top of that, if reiser4 is successful, no one may 
+remember us, but they will use what we create here every day.
+
+I appologize -- I shouldn't have said "we create".  I do little more 
+than bicker.
