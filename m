@@ -1,80 +1,77 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Mike Hodson <mike@mystica.cx>
 Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
-Date: Wed, 12 Feb 2003 03:12:33 +0300
-Message-ID: <3E499171.8080201@namesys.com>
-References: <NDBBJPAGKLCMDEIEKOPBAEIMKFAA.mailinglists@websitemanagers.com.au> <3452483515.20030212001747@tnonline.net>
+Date: Tue, 11 Feb 2003 19:02:21 -0600
+Message-ID: <20030211171139.A5B3.MIKE@mystica.cx>
+References: <20030211144144.A5A9.MIKE@mystica.cx> <NDBBJPAGKLCMDEIEKOPBAEIMKFAA.mailinglists@websitemanagers.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12693-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12694-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3452483515.20030212001747@tnonline.net>
+In-Reply-To: <NDBBJPAGKLCMDEIEKOPBAEIMKFAA.mailinglists@websitemanagers.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Anders Widman <andewid@tnonline.net>
+Content-Type: text/plain; charset="us-ascii"
+To: Adam Goryachev <mailinglists@websitemanagers.com.au>
 Cc: reiserfs-list@namesys.com
 
-Anders Widman wrote:
+> I can't comment on your experience, but personally if I have a drive with
+> any number of badblocks (which are showing up to the fs layer, not invisibly
+> re-mapped by the drive) then I take the drive back and get a replacement, or
+> bin the drive.
+I'd have liked to do that, but 2 problems. 1, the drive was an OEM drive,
+and the reseller I bought it from went out of business- Western Digital
+wouldn't accept an RMA directly from an end-user on that drive. and 2, I
+didn't even notice errors until one day it wouldnt work properly. At
+that time I thought it was a reiserfs inconstancy, and I fscked. at that
+point I noticed a few {DriveReady -SeekComplete} errors and then most of
+the data on the drive nulled itself out.
 
->>>I've used ReiserFS in the past, but have also used ext3 on my
->>>user's important
->>>data (/home) after a good chunk of one drive was converted to
->>>sparse/null files due to a screwup stemming from no 'badblocks' support
->>>in reiserfs.  Since then, i've used ext3 as well as Reiser but recently
->>>      
->>>
->
->  
->
->>I can't comment on your experience, but personally if I have a drive with
->>any number of badblocks (which are showing up to the fs layer, not invisibly
->>re-mapped by the drive) then I take the drive back and get a replacement, or
->>bin the drive.
->>    
->>
->
->However,  the FS SHOULD support handling of bad blocks/clusters at the
->FS  layer,  even  while running in a production system. Bad blocks can
->pop  up  at any give time for no particular reason, and it is at these
->times  you  (we) need a strong and reliable filesystem that can handle
->and logically remap broken blocks/sectors.
->
->Sure,  a  disk  with physical errors should be replaced, but until you
->find out about the error on the drive the FS HAS TO HANDLE these kinds
->of problems.
->
-> - Anders
->
->
->
->
->
->  
->
-We have gotten better at this over time.  There was a point in time when 
-some of our guys reviewed all the bad block handling.  We still find 
-cases where we could be better though. 
+> I suppose that if you continue to have a growing number of FS errors, then
+> you either have faulty hardware, or are using a buggy version of
+> software.... If you already admit to badblocks, then I would blame
+> hardware..
+The case I outlined at the beginning of my message involved 2 specific
+drives. The drive that completely failed was a WD 6.4 gig. The 20gig was
+a Maxtor that I've had for 2.5 years, that to my knowledge does not have
+media errors, but there have been some FS corruptions. I don't think its
+media since I never see any 'DriveReady-seekcomplete' errors that you
+usually get with bad sectors.
 
-For some users it would be better to boot to a corrupted filesystem 
-because running fsck is more of a problem than putting their data at 
-higher risk.  For datalogging, it is probably conceivable to just toss 
-the journal and lose the more recent updates to it.  For the default 
-metadata journaling, this just does not seem prudent.
+> Hmmm, so apart from finding a number of errors and doing it's best to fix
+> them (putting them into lost+found) and recovering all of your other files
+> even with hardware issues present, you recovered all of your data? The
+> problem here is?
+The fact that the filesystem got so many errors in the first place. And
+as ive said, hardware issues are AFAIK not the cause.
 
-I really prefer making users understand that they have a problem they 
-need to do something about.  This is just my style.  I want them to fail 
-to boot, and after some effort learn that there is this thing called 
-fsck, and dd_rescue, and that it is time to buy another hard drive and 
-chuck their current one.  It would be best though if they were given 
-detailed instructions about how they need to do this when the code hits 
-that bad block.  Vitaly, please work on that.
+If a harddrive is showing badblocks and then the disk vendors tool shows no
+errors, I think a simple dd over the whole disk or similar would really show
+the true story....
+If i haven't made myself clear, the badblocks problem was with a
+different drive.  The thought occured to me that there may have been bad
+blocks due to the sporadic corruption, but I don't have any error
+messages to back up that thought.
 
-If we handle the journal block error without downtime, the user will 
-never chuck the hard drive, and that is bad in the longterm.
+> ext2 requires periodic fsck's which are also rather dis-concerting when you
+> are never quite sure whether you need to allow a few hours downtime for a
+> kernel upgrade this time, or perhaps it is only a few minutes.
+
+Well one way of being completely sure is to reset the mount count in the
+filesystem before rebooting, or to set the fstab to never automatically
+fsck. then on some set  schedule, fsck along with a kernel upgrade, and
+schedule the downtime
+
+> Finally, I find it interesting to see people who swear they will never use
+> reiserfs again to be on the reiserfs mailing list :).
+I may use it at some point, when its as well proven as the second
+extended filesystem is currently. Its interesting to see how many people
+have errors, and when that number gets lower and more people start
+posting good things I may reevaluate it at some point :)
+
+Mike
 
 -- 
-Hans
-
+Mike Hodson  <mike@mystica.cx>  ICQ: 18145059
 
