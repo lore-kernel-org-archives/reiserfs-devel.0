@@ -1,35 +1,72 @@
-From: viro@parcelfarce.linux.theplanet.co.uk
-Subject: Re: Using fs views to isolate untrusted processes: I need an assistant architect in the USA for Phase I of a DARPA funded linux kernel project
-Date: Thu, 26 Aug 2004 06:01:45 +0100
-Sender: <viro@www.linux.org.uk>
-Message-ID: <20040826050145.GT21964@parcelfarce.linux.theplanet.co.uk>
-References: <410D96DC.1060405@namesys.com> <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com> <20040825205618.GA7992@hockin.org> <30958D95-F6ED-11D8-A7C9-000393ACC76E@mac.com> <412D2BD2.2090408@sun.com> <EAB989A6-F6F9-11D8-A7C9-000393ACC76E@mac.com> <20040825180615.Z1973@build.pdx.osdl.net> <BCE1F8F8-F716-11D8-A7C9-000393ACC76E@mac.com> <20040826042936.GR21964@parcelfarce.linux.theplanet.co.uk> <C08CA144-F71B-11D8-A7C9-000393ACC76E@mac.com>
+From: Nicholas Miell <nmiell@gmail.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Wed, 25 Aug 2004 22:09:08 -0700
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <1093496948.2748.69.camel@entropy>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
+	 <20040825152805.45a1ce64.akpm@osdl.org>
+	 <112698263.20040826005146@tnonline.net>
+	 <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org>
+	 <1453698131.20040826011935@tnonline.net>
+	 <20040825163225.4441cfdd.akpm@osdl.org>
+	 <20040825233739.GP10907@legion.cup.hp.com>
+	 <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy>
+	 <20040826044425.GL5414@waste.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20569-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <C08CA144-F71B-11D8-A7C9-000393ACC76E@mac.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20040826044425.GL5414@waste.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Kyle Moffett <mrmacman_g4@mac.com>
-Cc: Chris Wright <chrisw@osdl.org>, LKML <linux-kernel@vger.kernel.org>, Rik van Riel <riel@redhat.com>, Tim Hockin <thockin@hockin.org>, Mike Waychison <Michael.Waychison@Sun.COM>, ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>
+To: Matt Mackall <mpm@selenic.com>
+Cc: Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Thu, Aug 26, 2004 at 12:52:37AM -0400, Kyle Moffett wrote:
-> Where would I increase the hash size if I wanted to increase the number
-> of bindings by an order of magnitude or so?  I'm very interested in
-> pursuing this possibility, because when combined with the procedure I
-> described earlier, plus a little bit of extra work with capabilities 
-> and such
-> it's very easy to build incredibly flexible and basically indestructible
-> chroot environments with not much code.
+On Wed, 2004-08-25 at 21:44, Matt Mackall wrote:
+> On Wed, Aug 25, 2004 at 05:42:21PM -0700, Nicholas Miell wrote:
+> > On Wed, 2004-08-25 at 16:46, Wichert Akkerman wrote:
+> > > Previously Jeremy Allison wrote:
+> > > > Multiple-data-stream files are something we should offer, definately (IMHO).
+> > > > I don't care how we do it, but I know it's something we need as application
+> > > > developers.
+> > > 
+> > > Aside from samba, is there any other application that has a use for
+> > > them? 
+> > > 
+> > 
+> > Anything that currently stores a file's metadata in another file really
+> > wants this right now. Things like image thumbnails, document summaries,
+> > digital signatures, etc.
+> 
+> That is _highly_ debatable. I would much rather have my cp and grep
+> and cat and tar and such continue to work than have to rewrite every
+> tool because we've thrown the file-is-a-stream-of-bytes concept out
+> the window. Never mind that I've got thumbnails, document summaries,
+> and digital signatures already.
+> 
+> While the number of annoying properties of files with forks is
+> practically endless, the biggest has got to be utter lack of
+> portability. How do you stick the thing in an attachment or on an ftp
+> site? Well you can't because it's NOT A FILE. 
+> 
+> A file is a stream of bytes.
 
-*shrug*
+"OMG! It breaks tar and email!!!" argument doesn't fly. Things break all
+the time and are fixed. It's called progress.
 
-fs/namespace.c::mnt_init().  Right now it allocates 1 page for hash table
-(order = 0), you can easily raise that.  You might want to try and change
-the order of checks in lookup_mnt() loop - depending on your setup it
-might speed the things up, but I doubt that it would be noticable win.
+cp, grep, cat, and tar will continue to work just fine on files with
+multiple streams.
+
+tar and cp will lose the extra streams until somebody fixes them, but
+they lose ACLs and xattrs right now, and I don't hear anybody suggesting
+that ACLs and xattrs be removed from the kernel because of this.
+
+Fixing programs that do recursive filesystem traversals is a matter of a
+glibc patch to nftw(3) and a modification to their option processing.
+
+Holding back a useful feature because you don't want to upgrade
+coreutils is just plain dumb.
+
+(BTW, for email, multipart/parallel is a start, but a specific multipart
+content type for multi-stream file attachments would probably be more
+appropriate.)
+
