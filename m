@@ -1,57 +1,41 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Can compression at filesystem level improve overall
-Date: Mon, 22 Mar 2004 12:14:02 +0300
-Message-ID: <405EAE5A.8020600@namesys.com>
-References: <200403212317.i2LNHrJo010166@sirius.cs.pdx.edu>
-Reply-To: reiser@namesys.com
+From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: 2.6.4 corruption
+Date: Mon, 22 Mar 2004 12:21:42 +0100
+Message-ID: <200403221221.42413.Dieter.Nuetzel@hamburg.de>
+References: <20040322005555.GA509@zero>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17370-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-17372-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200403212317.i2LNHrJo010166@sirius.cs.pdx.edu>
+In-Reply-To: <20040322005555.GA509@zero>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
-Cc: sean@gutenpress.org, Edward Shishkin <edward@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Tom Vier <tmv@comcast.net>
+Cc: reiserfs-list@namesys.com
 
-The Amazing Dragon (Elliott Mitchell) wrote:
-
->>From: Sean Johnson <sean@gutenpress.org>
->>On Fri, 2004-03-19 at 11:53, Nikita Danilov wrote:
->>    
->>
->>>That's common misconception. :)
->>>
->>>The goal of compression is to conserve disk bandwidth rather than space.
->>>
->>>By compressing it is possible to transfer data (== uncompressed data
->>>user works with), at a rate higher than raw device bandwidth.
->>>      
->>>
->>I am far from any kind of authority on filesystems, but doesn't compression
->>make data corruption a significantly nastier bugaboo?
->>    
->>
+Am Montag, 22. M=E4rz 2004 01:55 schrieb Tom Vier:
+> after rebooting (no umount, sysreq wouldn't respond) due to a radeon
+> problem, some files had their data blocks switched. one file was truncate=
+d,
+> and what was truncated (it's mounted notail, btw) was attached to another
+> file. one file was completely corrupt. this isn't considered normal
+> behavior, i assume.
 >
->Potentially. Depending upon the encoding losing one block of encoded data
->maps to losing many blocks of decoded data. Also losing the first block
->of data might make it impossible to recover later blocks.
->  
->
-I think it will just make you lose the compression atom, but Edward can 
-say more when he gets back from vacation.
+> i'm currently bootstrapping an altroot, so i can run reiserfsck.
 
->But these aren't issues since you do error correction near the physical
->layer, and backups just you make sure. You do, don't you?
->
->
->  
->
+Use the data-logging patches for 2.6.4 up or "wait" or 2.6.5/2.6.6.
 
+http://marc.theaimsgroup.com/?l=3Dreiserfs&m=3D107967943828838&w=3D2
+and
+http://marc.theaimsgroup.com/?l=3Dreiserfs&m=3D107981018429164&w=3D2
 
--- 
-Hans
+BTW I'm with DRI-Devel since the beginning and data-logging WORKS even with=
+=20
+2.4.
 
+Regards,
+	Dieter
