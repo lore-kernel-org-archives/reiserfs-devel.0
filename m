@@ -1,44 +1,50 @@
-From: Paolo Correnti <paolunix@yahoo.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: REISER4 - A simple test with a filesystem and Oracle
-Date: Fri, 16 Jan 2004 11:15:26 -0800 (PST)
-Message-ID: <20040116191526.47585.qmail@web21502.mail.yahoo.com>
-References: <20040116162055.GL1693@backtop.namesys.com>
+Date: Fri, 16 Jan 2004 22:27:42 +0300
+Message-ID: <40083B2E.8040608@namesys.com>
+References: <20040116145551.GH1693@backtop.namesys.com> <20040116151144.86109.qmail@web21501.mail.yahoo.com> <20040116152209.GJ1693@backtop.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16554-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16555-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040116162055.GL1693@backtop.namesys.com>
+In-Reply-To: <20040116152209.GJ1693@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Alex Zarochentsev <zam@namesys.com>
-Cc: reiserfs-list@namesys.com
+Cc: Paolo Correnti <paolunix@yahoo.com>, reiserfs-list@namesys.com
 
-Sorry for delay in my answers (I'm at home now ...).
+Alex Zarochentsev wrote:
 
-> "df" or "du" ?
- 
- du (I made a typing mistake with df)
+>On Fri, Jan 16, 2004 at 07:11:44AM -0800, Paolo Correnti wrote:
+>  
+>
+>>"Alex Zarochentsev" wrote
+>>
+>>    
+>>
+>>>can you try sync(1) and see does it help to recover
+>>>free space ?
+>>>      
+>>>
+>>Of course, but how do you use sync (I mean with what
+>>option) ?
+>>    
+>>
+>
+>
+>just /bin/sync, it should force commit of reiser4 transactions  and, thereby, 
+>free space.
+>  
+>
+Reiser4 should do this automatically when it runs out of disk space, I 
+think I said this before, but folks were probably busy with other things 
+when I said it....  Please correct it.
 
-> what processes were accessing the fs those 5-7 min? 
-> oracle was?
 
-Oracle processes only, with no particular activities.
-I made also a backup vith Oracle RMAN with data and
-backup paths on the same partition and all went fine,
-but after having seen good du result.
-
-Next days I'll make the same test with another PC,
-kernel 2.6.1 and  a larger reiser4 partition
- 
-Have a nice week-end
-
-Paolo
+-- 
+Hans
 
 
-__________________________________
-Do you Yahoo!?
-Yahoo! Hotjobs: Enter the "Signing Bonus" Sweepstakes
-http://hotjobs.sweepstakes.yahoo.com/signingbonus
