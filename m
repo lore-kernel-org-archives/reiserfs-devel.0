@@ -1,66 +1,81 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: The argument for fs assistance in handling archives
-Date: Thu, 02 Sep 2004 19:25:32 -0500
-Message-ID: <4137B9FC.7040708@slaphack.com>
-References: <20040826150202.GE5733@mail.shareable.org>	 <200408282314.i7SNErYv003270@localhost.localdomain>	 <20040901200806.GC31934@mail.shareable.org>	 <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>	 <1094118362.4847.23.camel@localhost.localdomain>	 <20040902161130.GA24932@mail.shareable.org> <1094146912.31495.13.camel@shaggy.austin.ibm.com>
+Date: Thu, 02 Sep 2004 19:35:08 -0500
+Message-ID: <4137BC3C.4010207@slaphack.com>
+References: <20040826150202.GE5733@mail.shareable.org>	 <200408282314.i7SNErYv003270@localhost.localdomain>	 <20040901200806.GC31934@mail.shareable.org>	 <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>	 <20040902002431.GN31934@mail.shareable.org> <413694E6.7010606@slaphack.com>	 <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org>	 <4136A14E.9010303@slaphack.com>	 <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org>	 <4136C876.5010806@namesys.com>	 <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org>	 <4136E0B6.4000705@namesys.com>  <14260000.1094149320@flay> <1094154744.12730.64.camel@voyager.localdomain>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21371-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21372-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1094146912.31495.13.camel@shaggy.austin.ibm.com>
+In-Reply-To: <1094154744.12730.64.camel@voyager.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Dave Kleikamp <shaggy@austin.ibm.com>
-Cc: Jamie Lokier <jamie@shareable.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Steve Bergman <steve@rueb.com>
+Cc: "Martin J. Bligh" <mbligh@aracnet.com>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, reiserfs <reiserfs-list@namesys.com>
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Dave Kleikamp wrote:
+Steve Bergman wrote:
 [...]
-| Please don't tell me that we have expectations to run make from within a
-| tar file.  This is getting silly.  tar does a pretty good job of
-| extracting files into real directories, and putting them back into an
-| archive.  I don't see a need to teach the kernel how to deal with
-| compound files when user space can do it very easily.
+| In following this thread, I may be missing huge chunks of concept.
 
-Suppose I've got a tar file with an index attached.  Suppose it's
-something like /usr/src/linux.  Am I expected to extract all code for
-all architectures, with all drivers, all docs, etc?  Now, yes -- or I
-have to figure out exactly which ones I need before I extract them
-manually, one by one.
+You are, but don't worry.  You aren't the only one.  (Before I get
+assaulted for this, let me say that there are people on this list
+smarter than me and I miss concept chunks quite frequently.)
 
-But with tar support for make (and so on), files can be extracted on
-demand.  It's possible to do this in userspace, with named pipes, but
-that's much slower and insanely clumsy.
+| 1. The file as directory thing adds complexity that the administrator
+| has to deal with.  Symlinks are useful, but it's still aggravating to
+| tar off a directory structure, take it somewhere, and then realize that
+| all you have is links to something not in the archive because you didn't
+| get your tar switches just right.  Now we're talking about adding
+| another set of "files which are not really files" to the semantics.
+| More complexity.  I'll take simplicity over some ivory tower ideal of
+| "unified name space" any day.
 
-This has further implications -- imagine a desktop, binary distro
-shipped with all files except the very most basic stuff as package
-archives.  They can all be extracted, on demand -- the first time I run
-OpenOffice.org, it's installed.  If there needs to be post-installation,
-that's handled by the .deb plugin (or whatever).
+You want simplicity?  How does this strike you:
+	scp file/serialize daemon@bsd:~/file.img
 
-I don't know offhand how big OOo is.  I think it's something like this:
-~ The installer is at most half (and maybe only a third) of the full
-installation. That's a HUGE optimization!
+You don't have to worry about "file is not a file".  You don't have to
+worry about fifos or device nodes.  You don't have to worry about files
+in files.  In fact, you don't have to worry about any new kind of file
+added, ever.
+
+| 2. The use of multiple streams within files by Linux apps would make
+| Linux as cross-platform unfriendly as MS is trying to be.  Say these
+
+The use of ext3 as a filesystem isn't cross-platform.  Every disk-write
+is platform-specific!  We should all be using captive-ntfs instead!
+
+Seriously, this isn't hard -- it's called a "library".  And anything as
+bloated as OO.org has got to already be modular enough to add this sort
+of thing.
+
+| features start getting used and you copy an OO.org document from a Linux
+| box to a BSD box.  It's broken.  Of course, OO.org wouldn't use the
+| streams in the first place because it would destroy their cross platform
+
+If that was so, OO.org wouldn't use a GUI, because that isn't
+cross-platform.  They'd use a purely commandline interface, because that
+is universal.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQTe5/HgHNmZLgCUhAQI5vQ/+NyU/tbW1Dyaf/OlDUEScH8jHghdcMPQQ
-qcyBbzid9hMT0pm4fRX4CQJ/vm+VLhfvYzEmgRUCyNY3JybCKeS/EynRt/ybdblu
-aB+hO8meFitBmAa7kYrj1UhWvoSvDSZgAwC9k50DYPuQO1kVZFjFYcPee1P54iwJ
-UMn9RE01aeufCt1+jWFxhsEZKfNWvXDCaQtqa483A2AWWzklwF25ZW2kSfp6G+i0
-g1jND8pPDkQcP8ujGTuDxEI8LsN62glNzVZ8MhPa65lZI1vO5Ll2dDL2QKgNwziK
-MqtMMJD1d3HWa7QBHwMegJ0teR/hiqJ62SgQr3QpW4Xy9Ss0VUVH1HNuhxwPB2rl
-YYomqw2yO/GGSDs5XuXm/cRM5E9d+nvu1V8bsrSa5LK/64Vlp6huLkLNvOZ3y6vK
-38ELPBxbmIA3iWTgaYDPANX/vrpnA0K8JQU9M4LMveaHhxfEcDbH+iZHtpjsYqF3
-allfHH2SEZRFlXGxKBNZsXTcrudAHjoyEOQ+UiI9QLCM83G4bFGr1WEGOEHmD0ry
-hBETe8GkwuQK1CfxFm5obgFUmE4TwVRIWVD71EvoJFuBS+dlezO6GOZ5mDf91tSe
-goPS2f/9XKwyYfOnEnnfXT17k5SYjTB9m0upi6q7dJpxvg1535E6N1nCqdLZzTcJ
-mVkdhfFsUqI=
-=YjJH
+iQIVAwUBQTe8PHgHNmZLgCUhAQKiNQ//Zo6BLeGK6/GBbYzcgyp51Ra4fRf2xoVo
+0aOve2vinVl+RRzFGWSa66p+/rHd339BhxTPYhlLkm9SWbU9Et80J0R/bySYtc17
+RmUHhmukSEXhJx+py7Vc99jXr03zr2fNaA3UBIfpMiAlj1UB2yOls5iwJgqfPVnX
++YwYcVRfZXc3KWqH9SGcY9q+NX38wXoQh3rbeJ0OEzaIxnvPWlMvUFEN4OF92cub
+on+n0h+JKptwtXOhLh9HaKAzG9fDhy4tJwmN3GIemSzKpEZ0ZGS4+Pz4dcnRXP+S
+C6cMxpsmCnm5WVzmeoyBYBY28Fmnji00ShvxDGRFYOp48RPFhNaoMbVhLkQFoYfX
+a5k3iedhbjaWOLmpfNGaDNdpKFtqD3LJO1xOSkXz3sndAiLW9ArKhuu2+63ASAQy
+wlFknP09k13UHzD2iL5kPUPzy0A/BLqZPSpX4tXnF0xcSp4X8RoLnyu8BmrqaTjG
+fi7FkEsoVEB7BWslNNtKrH596sDhWCP+BQdkAYqOBh0fzSIJ+0uyo2nJRw3d8FEi
+/ynNVUqZEN8Xj08WHI+ucwUmRpTnh6spwXZC42K2tokAQa+95nSTegx3uNkypcGU
+l12s+BtIHFB25BKDaBReyGoBqUj0sdFvoHVkRNc/3DNY6MfRHV3rdgjz5NieT4gH
+uwMwLNstv8c=
+=O3r8
 -----END PGP SIGNATURE-----
