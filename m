@@ -1,77 +1,35 @@
-From: "JP Howard" <jh_lists@fastmail.fm>
-Subject: Re: file-nr, file-max, and ReiserFS
-Date: Tue, 22 Oct 2002 20:20:05 UT
-Message-ID: <20021022202005.18E47DF81@server2.fastmail.fm>
+From: prj@po.cwru.edu (Paul Jarc)
+Subject: Re: attrib +A doesn't work
+Date: Wed, 23 Oct 2002 17:03:31 -0400
+Message-ID: <m3iszseukm.fsf@multivac.cwru.edu>
+References: <20020905034320.GA11951@yzero>
+	<15735.10894.167461.158961@laputa.namesys.com>
+	<20020905140132.A19752@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11740-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11741-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <20020905140132.A19752@namesys.com> (Oleg Drokin's message of
+ "Thu, 5 Sep 2002 14:01:32 +0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Eric Whiting <eric_whiting@amis.com>, Oleg Drokin <green@namesys.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-On Tue, 22 Oct 2002 08:02:10 -0600, "Eric Whiting"
-<eric_whiting@amis.com> said:
-> JP,
-> 
-> Were both boxes running cyrus/postfix? Postfix relies heavily on several
-> different mailqueue dirs.
-> 
-The source of the problem was actually a Postfix bug, which Wietse had
-provided a patch for on the mailing list, but I hadn't yet applied. The
-bug caused an infinite loop that opened thousands of LMTP processes on
-our backend, causing it to run out of file handles. It was nothing to do
-with ReiserFS.
-> 
-> Oleg Drokin wrote:
-> > 
-> > Hello!
-> > 
-> > On Tue, Oct 22, 2002 at 04:41:17AM +0000, JP Howard wrote:
-> > 
-> > > The ReiserFS server (running Cyrus and Postfix) has been hitting our max
-> > > FDs (/proc/sys/fs/file-max) a few times, which is set at 90,000. However,
-> > > we have an Ext3 server with almost the same # of users and overall load,
-> > > and it has only hit 20,000 open files (according to
-> > > /proc/sys/fs/file-nr).
-> > 
-> > Filesystems itself does not consume file descriptors.
-> > 
-> > > Does ReiserFS use more file handles for some reason? Is there any
-> > 
-> > Not likely.
-> > 
-> > > downside to setting file-max to something really big to avoid running out
-> > > of FDs? Do you think that this may actually indicate some problem with
-> > 
-> > More fds you use, more RAM they consume ;)
-> > 
-> > > our configuration, or this normal for ReiserFS?
-> > 
-> > There must be the difference between your ext3 based and reiserfs based systems
-> > that will explain FD usage difference. Something in userspace most probably.
-> > 
-> > > Also, I checked with `lsof | wc -l` to see how many files it reported as
-> > > open. On the ReiserFS server it only showed 45,000 files as open (when
-> > > the system had actually used all 90,000 handles). On the Ext3 server is
-> > 
-> > If the system is really used all 90000  handles, you would not be able to look
-> > at /proc/sys/fs/file-nr content, so perhaps the peak was over already at a time
-> > you reviewed it?
-> > 
-> > > showed 30,000 files as open (when the system had actually only used
-> > > 20,000 handles according to file-nr). I guess I'm wrong to be thinking
-> > > that lsof and file-nr should show the same number of open files, but
-> > > could someone explain why?
-> > 
-> > Well, file descriptors might be shared between processes/threads, but
-> > lsof does not know about this
-> > 
-> > Bye,
-> >     Oleg
-> 
+[Old thread.]
+
+Oleg Drokin <green@namesys.com> wrote:
+> On Thu, Sep 05, 2002 at 01:57:34PM +0400, Nikita Danilov wrote:
+>> Support for inode attributes was introduced between 2.4.18 and
+>> 2.4.19. Take latest reiserfsprogs from ftp.namesys.com, run
+>> /sbin/reiserfsck --clean-attributes /your-device, and after that
+>> finishes mount with -attrs option.
+>
+> mount -o attrs in fact.
+
+Should -o attrs be used just once, or every time afterwards?
+
+
+paul
