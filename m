@@ -1,49 +1,56 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: Mongo error while building HTML results
-Date: Sat, 14 Aug 2004 18:37:18 +0400
-Message-ID: <20040814143718.GH13834@backtop.namesys.com>
-References: <20040806152923.4a4eedc7@philou.gramoulle.local> <20040808063358.GE9811@backtop.namesys.com> <20040808151456.7765b337@philou.gramoulle.local>
+From: Milan =?ISO-8859-1?Q?Holz=E4pfel?= - Personal reply info see sig <lists@mjh.name>
+Subject: 2004.08.13 Snapshot for 2.6.8[.1]
+Date: Sat, 14 Aug 2004 16:56:01 +0200
+Sender: news <news@sea.gmane.org>
+Message-ID: <20040814165601.79260f07.lists@mjh.name>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20286-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20287-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040808151456.7765b337@philou.gramoulle.local>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Philippe Gramoull? <philippe.gramoulle@mmania.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-On Sun, Aug 08, 2004 at 03:14:56PM +0200, Philippe Gramoull? wrote:
-> 
-> Hello alex,
-> 
-> On Sun, 8 Aug 2004 10:33:58 +0400
-> Alex Zarochentsev <zam@namesys.com> wrote:
-> 
->   | > http://philou.org/linux/reiser4/mongo/reiser4.tbl
->   | > http://philou.org/linux/reiser4/mongo/reiserfs.tbl
->   | > http://philou.org/linux/reiser4/mongo/ext3.tbl
->   | > http://philou.org/linux/reiser4/mongo/config-2.6.8-rc2-mm2
->   | 
->   | did you use LOG= option? where those *.tbl files are from? 
-> 
-> These are the file i got with LOG=reiser4.tbl, etc.
-> 
-> Maybe .tbl were a misleading extensions and i should have chosen .log.
-> 
-> These file are log files from standard mongo runs.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-can you try new mongo version? 
-http://namesys.com/benchmarks/mongo-2004.08.14.tar.gz
+Hello all,
 
-> 
-> Thanks,
-> 
-> philippe
+For those of you who want to use Reiser4 with a vanilla kernel: I have
+rediffed the yesterdays "official" snapshot from
+<URL:http://namesys.com/snapshots/2004.08.13/> against 2.6.8[.1]:
+<URL:http://linux.mjh.name/kernel/patches/reiser4/2004.08.13_2.6.8.1/>
 
--- 
-Alex.
+I had one compile error complaining about a missing attribute of the
+inode struct in reiser4/plugins/object.c:992, but since this seems to be
+sth. only present in the mm series but not used by Reiser4 outcommenting
+the line did the job for me. (Well according to the fixme beloning to it
+I probably should not have gotten it anyway...)
+
+Regards,
+Milan
+
+- --=20
+
+                   Milan Holz=E4pfel alias jagdfalke alias jag
+
+Meine eMail-Adresse ist hier zu              You can find my eMail-address
+                      finden:                here:
+Kontaktinfos sowie                                   Contact infos as well =
+as
+=D6ff GnuPG-Schl=FCssel    <URL:http://con.mjh.name/>    GnuPG Public Key
+GnuPG Fingerabdruck     4C8A 5FAF 5D32 6125 89D1     GnuPG Fingerprint
+                        0CE5 DB0C AF4F 6583 7966
+
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQFBHigB2wyvT2WDeWYRAsEEAJ45mWixDe+GKYNXvIhXq2OvOvPs9QCfYVAU
+uaXstH17Y3yvjvXCXPmlgNw=3D
+=3Du9cm
+-----END PGP SIGNATURE-----
+
