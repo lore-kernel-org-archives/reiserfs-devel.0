@@ -1,35 +1,71 @@
-From: =?iso-8859-1?Q?Oscar_Garc=EDa?= <ogarcia@atlasit.com>
-Subject: ReiserFS read-only
-Date: Mon, 27 Oct 2003 16:13:16 +0100
-Message-ID: <2FBA4AD7F303234AB0C9AA5AB1F618C640A801@ex01.int.atlassolutions.net>
+From: altaa@t-online.de (J. Paul Grube)
+Subject: reiserfs--panik
+Date: Mon, 27 Oct 2003 16:41:42 +0100
+Message-ID: <3F9D3CB6.3030104@t-online.de>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="----_=_NextPart_001_01C39C9C.D92A11B0"
-Return-path: <reiserfs-list-return-15896-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15897-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
-Cc: Enric Ramos <eramos@atlasit.com>
 
-------_=_NextPart_001_01C39C9C.D92A11B0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+this is what i get...
+Linux version 2.4.20-4GB-athlon (root@Athlon.suse.de) (gcc version 3.3 
+20030226 (prerelease) (SuSE Linux)) #1 Wed Aug 6 18:27:52 UTC 2003
 
-Hi,
-=20
-We have serveral reiserfs partitions in a big shared FC storage. It's a =
-cluster system with Convolo. We want to make backups of the information. =
-Can we mount the partitions readonly from another machine, while the =
-system is up (ie. another machine has the partition mounted readwrite) =
-and make the backup up this way?
-=20
-If not, is there a way to do so?
-=20
-Thanks a lot!
+linux:/ # reiserfsck --rebuild-tree --scan-whole-partition /dev/md0
+reiserfsck 3.6.4 (2002 www.namesys.com)
+  *************************************************************
+  ** Do not run rebuild-tree unless something is broken  and **
+  ** MAKE A BACKUP before using it.  If you have bad sectors **
+  ** on a drive  it is usually a bad idea  to continue using **
+  ** it.  Then you probably should get a working hard drive, **
+  ** copy the file system from the bad drive to the good one **
+  ** -- dd_rescue is  a good tool for  that -- and only then **
+  ** run this program.                                       **
+  ** Additional ReiserFS support can be obtained from SuSE   **
+  ** or at www.namesys.com                                   **
+  *************************************************************
 
-------_=_NextPart_001_01C39C9C.D92A11B0--
+Will rebuild the filesystem (/dev/md0) tree
+Will put log info to 'stdout'
+
+Do you want to run this program?[N/Yes] (note need to type Yes if you 
+do):Yes
+Replaying journal..
+0 transactions replayed
+###########
+reiserfsck --rebuild-tree started at Mon Oct 27 12:04:22 2003
+###########
+
+Pass 0:
+####### Pass 0 #######
+The whole partition (78144128 blocks) is to be scanned
+Skipping 10595 blocks (super block, journal, bitmaps) 78133533 blocks 
+will be read
+0%....20%....40%...                                            left 0, 
+11312 /seccsecccccseccccc
+23132 directory entries were hashed with "r5" hash.
+        "r5" hash is selected
+Flushing..finished
+        Read blocks (but not data blocks) 78133533
+                Leaves among those 51093
+                        - corrected leaves 3
+                pointers in indirect items to wrong area 585 (zeroed)
+                Objectids found 25964
+
+Pass 1 (will try to insert 51093 leaves):
+####### Pass 1 #######
+Looking for allocable blocks .. fininshed
+0%....20%....40%....60%....80%....pass1.c 405 pass1_correct_leaf 1516, 
+258 /sec
+pass1_correct_leaf: block 75467236, item 0, pointer 88: The wrong 
+pointer (3128855093) in the file [211 215]. Must be fixed on pass0.
+Aborted
+linux:/ #
+
+
