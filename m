@@ -1,53 +1,55 @@
-From: "David Dabbs" <david@dabbs.net>
-Subject: Unattended mongo benchmark?
-Date: Fri, 30 Jul 2004 15:37:02 -0500
-Message-ID: <20040730204212.19E6015E7C@mail03.powweb.com>
-References: <410A6652.9050009@namesys.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Reiser4 changes meaning of ENOENT/EACCES, breaking gcc?
+Date: Fri, 30 Jul 2004 16:57:21 -0400
+Message-ID: <200407302057.i6UKvLAu000714@turing-police.cc.vt.edu>
+References: <41098E4C.9070007@kundert.ca>
+            <410A9A1F.1090406@namesys.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_-1116623000P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19878-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19879-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <410A6652.9050009@namesys.com>
+In-Reply-To: Your message of "Fri, 30 Jul 2004 11:57:35 PDT."
+             <410A9A1F.1090406@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Perry Kundert <perry@kundert.ca>, reiserfs-list@namesys.com
+
+--==_Exmh_-1116623000P
+Content-Type: text/plain; charset=us-ascii
+
+On Fri, 30 Jul 2004 11:57:35 PDT, Hans Reiser said:
+
+> >    By the way, his suggested workaround was effective...
+> 
+> Can you talk the glibc guys into adopting it?  That would be best.
+
+Somebody should also check the POSIX spec and see if it requires a
+particular semantic there.
+
+Also, pushing it off to the glibc people is quite possibly the wrong
+way to go about it.  Do you *really* want to sit there and tell every
+other app that turns up with a similar problem that they have to fix
+it to run on one particular filesystem, when every OTHER filesystem
+doesn't need help?  That doesn't sound like a good plan - if 4 or 5
+apps turn up, it will turn people away "because stuff breaks if you
+use reiser4"....
 
 
+--==_Exmh_-1116623000P
+Content-Type: application/pgp-signature
 
-I was wondering about a solution to running mongo benchmarks unattended.
-If one does not exist, how about the following as a 'straw man' approach?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-Create a script (say mongo_auto.sh) that takes one numeric parameter. The
-parameter would indicate which action/mongo script to perform next. The
-parameters and their associated actions might be something like the
-following:
+iD8DBQFBCrYxcC3lWbTT17ARAqWXAKCl4jbaL0Lp5vRu04srlZ0V0tVCzQCfSK65
+1GjvFBDaPOTwunxUw41I81Y=
+=dnRN
+-----END PGP SIGNATURE-----
 
-Parameter: N=0
-- Make a copy of /etc/inittab
-- Add a 'sysinit' entry in /etc/inittab that runs "/path/mongo_auto.sh 1"
-- Reboot
-
-
-Parameter: N
-- Run the Nth mongo run (specified in a case statement in mongo_auto.sh)0.
-- If (ran_without_error)
-     N = N + 1
-     if ( N <= Last_Run_Number)
-        - Update /etc/inittab entry to run "/path/mongo_auto.sh N"
-        - Reboot
-     else
-        - Clean up/restore /etc/inittab
-        - Run /path/to/mongo_parse.sh 1.log 2.log... > comparison.html
-
-
-Or, to limit inittab mods to the start/end, the script could read/write a
-.mongo_auto file that specifies the next run number to take.
-
-
-David
-
-
-
+--==_Exmh_-1116623000P--
