@@ -1,72 +1,49 @@
-From: evilninja <evilninja@gmx.net>
+From: Chris Worley <cworley@symbionsys.com>
 Subject: Re: SUSE 9.1 with ReiserFS:  / won't fsck, but is otherwise fine
-Date: Tue, 28 Sep 2004 00:16:53 +0200
-Message-ID: <41589155.1050405@gmx.net>
-References: <1095996040.10293.18.camel@xserver.local.net>	 <200409241116.09066.vitaly@namesys.com>	 <1096032016.17001.4.camel@xserver.local.net>	 <200409271844.11580.vitaly@namesys.com> <1096301165.9096.14.camel@xserver.local.net>
+Date: Mon, 27 Sep 2004 16:40:02 -0600
+Message-ID: <1096324801.9096.41.camel@xserver.local.net>
+References: <1095996040.10293.18.camel@xserver.local.net>
+	 <200409241116.09066.vitaly@namesys.com>
+	 <1096032016.17001.4.camel@xserver.local.net>
+	 <200409271844.11580.vitaly@namesys.com>
+	 <1096301165.9096.14.camel@xserver.local.net>  <41589155.1050405@gmx.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21942-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21943-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1096301165.9096.14.camel@xserver.local.net>
+In-Reply-To: <41589155.1050405@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Chris Worley <cworley@symbionsys.com>
+To: evilninja <evilninja@gmx.net>
+Cc: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Mon, 2004-09-27 at 16:16, evilninja wrote:
+> ah, now this is funny. dd doesn't care about the filesystem and can't even
+> read the device. 
+> this does not seem like a (reiser-)fs issue, more like a
+> corrupted partition table / device
 
-Chris Worley wrote:
-> On Mon, 2004-09-27 at 08:44, Vitaly Fertman wrote:
-> 
->>># ./fsck/reiserfsck  /dev/system/lvol0
->>>reiserfsck 3.6.18 (2003 www.namesys.com)
->>>
->>>Failed to open the device '/dev/system/lvol0': No such device or address
->>
->>it seems 
->>	open ('/dev/system/lvol0', O_RDONLY);
->>returns "No such device or address". You can check it with strace.
->>
->>what if you run
->>	reiserfsck /dev/mapper/system-lvol0
-> 
-> 
-> 
->         The strace dies on the open:
-> 
-> ...
-> open("/dev/mapper/system-lvol0", O_RDONLY|O_LARGEFILE) = -1 ENXIO (No such device or address)
-> ...
-> 
->         Not even dd can open it:
->         
-> # dd if=/dev/mapper/system-lvol0 bs=1024 count=1024 | sum
-> dd: opening `/dev/mapper/system-lvol0': No such device or address
+I agree that it's not a reiser issue... but, how did it get mounted in
+the first place?
 
-ah, now this is funny. dd doesn't care about the filesystem and can't even
-read the device. this does not seem like a (reiser-)fs issue, more like a
-corrupted partition table / device (if the data on
-/dev/mapper/system-lvol0 is not (!) important, you could play around with
+>  (if the data on
+> /dev/mapper/system-lvol0 is not (!) important, you could play around with
 
-  $ mkfs.{ext3|xfs|reiserfs} /dev/mapper/system-lvol0
+I find the root partition an invaluable part of the system.  So, I'm not
+going to destroy it on purpose.  I'm not quite sure how to boot without
+a root partition ;)
 
-and see what it gives. (probably won't work too)
+I'm really looking for a non-destructive way to test/repair whatever has
+happened.  The partitioning seems fine (an ext3 boot directory of a few
+MB, an 8GB swap, and the root partition):
 
-good luck,
-Christian.
-- --
-BOFH excuse #180:
+   Device Boot      Start         End      Blocks   Id  System
+/dev/hda1   *           1           5       40131   83  Linux
+/dev/hda2               6         979     7823655   82  Linux swap
+/dev/hda3             980       30515   237247920   8e  Linux LVM
 
-ether leak
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Chris
 
-iD8DBQFBWI5oC/PVm5+NVoYRAhM1AJ9Vwr+oX8Z7SaiRqzK5TPDn2tnS3gCg7K3K
-VFq2Eped9ceUjbCWyOi+/+k=
-=qVnK
------END PGP SIGNATURE-----
