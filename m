@@ -1,77 +1,42 @@
-From: Will Dyson <will_dyson@pobox.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 14:20:29 -0400
+Date: Fri, 27 Aug 2004 11:27:46 -0700
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <412F7B6D.6010305@pobox.com>
-References: <20040824202521.GA26705@lst.de>	<412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com> <412E10A2.1020801@pobox.com> <412EEC07.30707@namesys.com>
+Message-ID: <412F7D22.5050101@namesys.com>
+References: <Pine.LNX.4.44.0408271010300.10272-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <412EEC07.30707@namesys.com>
+In-Reply-To: <Pine.LNX.4.44.0408271010300.10272-100000@chimarrao.boston.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Rik van Riel <riel@redhat.com>
+Cc: David Masover <ninja@slaphack.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Hans Reiser wrote:
-> Will Dyson wrote:
+Rik van Riel wrote:
+
+>On Fri, 27 Aug 2004, Hans Reiser wrote:
+>
+>  
+>
+>>Why are you guys even considering going to any pain at all to distort 
+>>semantics for the sake of backup?  tar is easy, we'll fix it and send in 
+>>a patch. 
+>>    
 >>
->> In the original BeOS, they solved the problem by having the filesystem 
->> driver itself take a text query string and parse it, returning a list 
->> of inodes that match. The whole business of parsing a query string in 
->> the kernel (let alone in the filesystem driver) has always seemed ugly 
->> to me. 
-> 
-> Why?
+>
+>Because not everybody uses tar.  Quite a few people use a
+>network backup system, while others use duplicity, RPM uses
+>cpio internally and big companies tend to use proprietary
+>network backup suites.
+>
+>Breaking people's setup is something to worry about.
+>
+>  
+>
+It is the tail that should not wag the dog.  New semantics are going to 
+break backups other than dd.   We need a LOT of new semantics if we 
+don't want to be inferior to Apple and MS.
 
-Hmm. Trying to explain aesthetic judgments is always fun, but I'll try.
-
-String parsing bloats the kernel with code that will be called rarely, 
-and doing it inside the filesystem module makes for duplicate code if 
-more than one filesystem does it. But a good common parser routine (or a 
-kernel api that takes a pre-compiled parse tree) would reduce the bad taste.
-
-The real objection I have is that it puts the kernel in the position of 
-doing more work than it has to for the system to operate correctly and 
-efficiently. The user wants to know what files match a certain set of 
-criteria. The filesystem provides special features which can greatly 
-accelerate some searches. Does it make more sense to move the 
-functionality of /usr/bin/find into the kernel, or to export the index 
-information so that an enhanced version of find can make use of it?
-
-I don't think having find in the kernel would be worth the cost or 
-complexity.
-
-However, now that I've had to think about it while writing the above, it 
-occurs to me that if we wanted to offer something like the beos's live 
-queries, doing it in the kernel might be the way to go.
-
-For the 99.9% of people who were not beos users back in the day, the 
-"live query" was a way to register a query string with the kernel, so 
-that you got notifications when the list of files matching the query 
-changed. It was pretty cool, but this is really just blue-skying since I 
-am not stepping up to write such a beast any time soon.
-
->> However, the best alternative I've come up with is to simply export 
->> the index data as a special file (perhaps in sysfs?) and have 
->> userspace responsible for searching the index.
-> 
-> That is the best implementation suggestion I've heard for splitting the 
-> filesystem into two parts, one in user space and one in kernel, but I 
-> still don't trust it to work well.
-
-Why not? And if it really splits the filesystem into two parts depends 
-on which of the two following statements you agree with more:
-
-"Fast searching is a feature of the filesystem"
-"Maintaining indexes is a feature of the filesystem"
-
-
-PS.
-The file-as-directory attribute/stream/whatever model is a much better 
-fit for befs's internals than the xattr api. If the kernel supported it, 
-I would enable support for it in befs.
-
--- 
-Will Dyson
-"Back off man, I'm a scientist!" -Dr. Peter Venkman
+We should implement backup plugin methods though, so that we only have 
+to break things once....
