@@ -1,78 +1,63 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: ReiserFS and NFS?
-Date: Wed, 4 Sep 2002 10:10:12 +0400
-Message-ID: <20020904101012.A10223@namesys.com>
-References: <18030661062.20020903175652@tnonline.net>
+From: Xuan Baldauf <xuan--reiserfs@baldauf.org>
+Subject: Re: Feature request: online fsync disable
+Date: Wed, 04 Sep 2002 13:39:30 +0200
+Message-ID: <3D75F0F2.77AF5FDA@baldauf.org>
+References: <3D661C89.C8A805D7@baldauf.org>
+		<15718.8710.244926.960377@laputa.namesys.com>
+		<20020823155658.A962@namesys.com> <3D6623BE.4040500@namesys.com> 
+		<15718.9718.736822.978374@laputa.namesys.com>
+		<1030108119.17778.8.camel@tiny>  <3D667A7D.5BD60783@baldauf.org> <1030216521.17780.83.camel@tiny>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11366-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11367-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <18030661062.20020903175652@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Anders Widman <andewid@tnonline.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Chris Mason <mason@suse.com>
+Cc: Nikita Danilov <Nikita@namesys.com>, Hans Reiser <reiser@namesys.com>, Oleg Drokin <green@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>, zam@thebsh.namesys.com
 
-Hello!
 
-On Tue, Sep 03, 2002 at 05:56:52PM +0200, Anders Widman wrote:
-> 
->    I am trying to use ReiserFS with NFS to work nicely, but I ran into
->    troubles  exporting root (/). I am getting the following error when
->    a   client   tries  to  connect  to  the  root  export  (I am using
->    ReiserFS on root filesystem):
->       rpc.mountd: getfh failed: Operation not permitted
->    After  browsing around different mailing lists and read suggestions
->    about Kernel and NFS utils I found that someone said that there was
->    needed patches to use ReiserFS with NFS?
 
-Hmmm.
-What kernel are you using? What nfs server?
-2.4.19 with stock knfsd:
-angband:~ # cat /etc/exports
-/ (ro)
+Chris Mason wrote:
 
-bowl:~# mount angband:/ /mnt/testfs -t nfs
-bowl:~# ls /mnt/testfs/
-.   bin   cdrecorder  dev  floppy  lib    mnt  proc    root  testfs0  tmp  var
-..  boot  cdrom       etc  home    media  opt  rescue  sbin  testfs1  usr
+> On Fri, 2002-08-23 at 14:10, Xuan Baldauf wrote:
+>
+> > > Xuan, you could try the data logging patches in either data=3Dwrite=
+back or
+> > > data=3Djournal.  Either one will be significantly faster than stock=
 
-Changing config:
-angband:~ # cat /etc/exports
-/ (rw,no_root_squash,insecure)
-angband:~ # exportfs -a
-exportfs: No host name given with / (rw,no_root_squash,insecure), suggest *(rw,no_root_squash,insecure) to avoid warning
+> > > 2.4.19.
+> >
+> > Thank you. I guess "data=3Dwriteback" will result in the desired beha=
+viour.
+> >
+> > Are these patches tested?
+>
+> Yes, although I've now got 3 or 4 bug fixes from testing in the suse
+> kernel that I need to put into the pure 2.4.19 patch.  I'm doing the
+> last of the fixes today, and I'll start merging back into the main code=
 
-bowl:~# ls /mnt/testfs/
-.    boot        dev     home   mnt   rescue  testfile  tmp
-..   cdrecorder  etc     lib    opt   root    testfs0   usr
-bin  cdrom       floppy  media  proc  sbin    testfs1   var
+> on monday.  This was all supposed to happen last week, but I got
+> diverted by some important other suse work.
+>
+> If your application is very fsync heavy and doesn't do many non-fsync
+> writes data=3Djournal will probably be much faster.
+>
+> -chris
 
-Everything works ok.
+Hello Chris,
 
-But now (/rescue is another mount point):
-bowl:~# mount angband:/rescue /mnt/testfs -t nfs
+I've been searching for the loggin patches at ftp://ftp.namesys.com/ and =
+below,
+but could not find any patch named "logging" or containg the word "writeb=
+ack".
+Can you point me to the logging patches?
 
-Sep  4 10:06:17 angband rpc.mountd: authenticated mount request from 212.16.7.82:916 for /rescue (/)
-Sep  4 10:06:17 angband rpc.mountd: getfh failed: Operation not permitted
+Thank you. :-)
 
->    Right now my exports file looks like this:
->          /usr/src/       192.168.0.100(rw,no_root_squash,insecure)
->          /               192.168.0.100(rw,no_root_squash,insecure)
+Xu=E2n.
 
->    Is this something someone might know how to fix?
 
-What if you allow anyone to connect (use * instead of address?)
-Look into logs on on nfs server side for more clues, enable debug.
-
-Basically I do not think yo are experiencing reiserfs problem, but it rather
-looks like nfs server configuration problem.
-
-I hope you have not forgot to to 'exportfs -a' after changing /etc/exports.
-
-Bye,
-    Oleg
