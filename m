@@ -1,58 +1,54 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiser4 enabled livecd
-Date: Wed, 14 Apr 2004 10:59:20 -0700
-Message-ID: <407D7BF8.9080308@namesys.com>
-References: <Pine.LNX.4.21.0404141338510.31309-100000@mlf.linux.rulez.org>
+From: Enrique Perez-Terron <enrique.perez-terron@norway.online.no>
+Subject: Re: Do xml-like namespaces make sense for Reiser4? (re:
+	metas	thread)
+Date: Thu, 15 Apr 2004 01:39:58 +0200
+Message-ID: <1081985995.6745.110.camel@arabia.home.lan>
+References: <407AB9AE.3060801@pobox.com> <407ADCBF.8000609@namesys.com>
+	 <407AEA05.50004@pobox.com> <407BFBEA.5010006@pobox.com>
+	 <407C15D9.1080705@namesys.com> <407C1BE9.8010509@pobox.com>
+	 <407C279A.3060303@namesys.com> <407C3004.3070401@pobox.com>
+	 <407C316B.80606@namesys.com> <407C35B0.3080109@pobox.com>
+	 <200404132031.i3DKVqRg009355@turing-police.cc.vt.edu>
+	 <1081909092.6753.64.camel@arabia.home.lan>  <407D5369.5090509@pobox.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17951-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17952-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.21.0404141338510.31309-100000@mlf.linux.rulez.org>
+In-Reply-To: <407D5369.5090509@pobox.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Szakacsits Szabolcs <szaka@sienet.hu>
-Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: "John D. Heintz" <jheintz@pobox.com>
+Cc: reiserfs-list@namesys.com
 
-Szakacsits Szabolcs wrote:
+On Wed, 2004-04-14 at 17:06, John D. Heintz wrote:
+> Enrique Perez-Terron wrote:
+> > On Tue, 2004-04-13 at 22:31, Valdis.Kletnieks@vt.edu wrote:
+> >>On Tue, 13 Apr 2004 13:47:12 CDT, "John D. Heintz" said:
+> >>
+> >>>foo/nsa:permissions -> foo/nsa.gov/secure-linux/permissions
+> >>>
+> >>>This assumes a mapping from "nsa" -> "nsa.gov/security/".
+> > 
+> > 
+> > Implementing a mapping "nsa" -> "nsa.gov/security/" does not remove the
+> > headache of what to do with a tarball containing a directory named
+> > "nsa".
+> 
+> 
+> A directory or file named "nsa" doesn't conflict with this scheme, look 
+> more closely at the left hand side: foo/nsa:permissions
 
->Hello,
->
->Talking about livecd's, I'd mention that Recovery Is Possible has also
->Reiser4. It's very often updated, kernel 2.6.5 and as I noticed it always
->has the latest from everything and only 26 MB download:
->
->      http://www.tux.org/pub/people/kent-robotti/looplinux/rip/
->
->I made some "real world" ntfsclone benchmarks what I use very often during
->NTFS development (e.g. test suite). It reads the NTFS allocation bitmap,
->seeks to the used data positions on the source device, seeks to the same
->position in the destination sparse file or block device and copy the data
->thus the clone is immediately mountable.
->
->Resiser4 beat everybody: ext2, ext3, xfs, reiserfs, jfs and even including
->raw cloning between partitions! I've never seen such before for any
->filesystem, it _indeed_ optimizes the disk seeks significantly.
->
->It was about 5% faster than raw cloning and at least 10% faster then the
->next fastest filesytems (ext2 and xfs). I can send full details if one is
->interested.
->  
->
-Sure, I would be curious.
+You are right, thank you.
 
->Congratulations!
->
->	Szaka
->
->
->
->  
->
-thanks.
+> However, a tarball containing "secure-linux/nsa:src/*.c" would indeed 
+> break my scheme. I'm suggesting this is an ignorably small likelyhood. 
+> Others are free to disagree with this of course.
 
--- 
-Hans
+I agree.
+
+Regards,
+Enrique
 
