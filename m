@@ -1,65 +1,74 @@
-From: "David Dabbs" <david@dabbs.net>
-Subject: RE: [RFC] Pathname Semantics with //
-Date: Thu, 9 Sep 2004 20:37:27 -0500
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040910013246.BF49B15ED9@mail03.powweb.com>
-References: <20040909230333.GB8464@mail.shareable.org>
+From: Timothy Miller <miller@techsource.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 09 Sep 2004 22:13:59 -0400
+Message-ID: <41410DE7.3090100@techsource.com>
+References: <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <412DA40B.5040806@namesys.com> <20040826140500.GA29965@fs.tum.de> <20040826150202.GE5733@mail.shareable.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040909230333.GB8464@mail.shareable.org>
+Return-path: <reiserfs-list-return-21659-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <20040826150202.GE5733@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: 'Jamie Lokier' <jamie@shareable.org>, 'Christian Mayrhuber' <christian.mayrhuber@gmx.net>
-Cc: reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jamie Lokier <jamie@shareable.org>
+Cc: Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
 
-> From: Jamie Lokier [mailto:jamie@shareable.org]
+
+Jamie Lokier wrote:
+[snip
+> When a simple "cd" into .tar.gz or .iso is implemented properly, it
+> will have _no_ performance penalty after you have first looked in the
+> file, so long as it remains in the on-disk cache.  And, the filesystem
+> will manage that cache intelligently.
 > 
-> Christian Mayrhuber wrote:
-> > //http://somehost:port/foo/bla
+> Imagine: for looking at source files and such, you probably won't
+> bother untarring in future, and you won't bother keeping untarred
+> source trees in your home directory for easy access to things you look
+> at often.  Why waste the space?  You could install whole applications
+> as a .tar and run them from within it, with no performance penalty.
 > 
-> While we're here, I'll point out that http://somehost/foo/bla and
-> http://somehost/foo/bla/ are valid, distinct URLs.
+> Similarly, the filesystem will be able to archive directories
+> automatically that haven't been touched in a long time, with no
+> visible change except increased storage space.  "grep" will be a bit
+> slower, but you'll have a useful search tool by then (using coherent
+> indexes) which will be more useful than grep, and much faster.
 > 
->... snip
-> 
-> Food for thought.
-> 
-> -- Jamie
 
-While I think there are bigger fish to fry before tackling URLish stuff
-beyond filesystem access, I'll dive in.
+[Again, pardon me for being 5000 messages behind.]
 
-Handwaving over changes to create() and many other apis that enable this,
-what happens when you type the following commands? 
+Anyhow, I recall reading an article about 'unified name spaces', and I'm 
+not referring to what's on namesys.com.  It mentioned how putting device 
+nodes into the file system is a very powerful innovation of UNIX. 
+Having files and devices in the same name space simplifies tools and 
+makes the environment much more powerful, because you can connect data 
+sources and targets together more arbitarily.
 
-  ln -s //http://dabbs.net/foo/ MyPage
-  cat MyURL
+If I recall correctly, the article mentioned something about Plan9 
+taking things to a greater extreme than UNIX.
 
-The first command works just fine today sans /any/ changes. Cat of course
-fails (today) because it calls open("MyURL") which will follow the link
-provided O_NOFOLLOW was not passed. After our magic mods, VFS will parse the
-// escape, see that it is NOT file:// and then what? When we were talking
-strictly about filesystem access this wasn't an issue.
+Going along with what you said, Jamie, if "containers" like tar files 
+could be accessed like directories without being first extracted, it 
+would increase the power and flexibility of the whole system.  Windows 
+XP does something like this with the way it presents ZIP files as 
+directories, and although I'm sure the Windows way isn't nearly as 
+efficient and universal as how Linux would do it, I find the feature to 
+be INCREDIBLY useful.
 
-We certainly don't want the kernel in the business of being a protocol
-proxy, so any non-file:// pathnames could simply return EFAULT or ENOTDIR,
-or ELNKURL, which indicates that the target is a URL. Apps that want to do
-something /useful/ with the target resource (i.e. desktops) will have
-http/ftp/etc libraries. They are free to stat() the file, get the linked-to
-URL and use whatever protocol client lib they wish to access the URL. 
+Of course, we don't necessarily want codecs for every archive format 
+ever invented to be embedded in the kernel.  Instead, we need to do 
+something like how you can mount an ISO on a loopback device, only more 
+transparently and more flexibly, and with the less performance-critical 
+codecs being implemented as daemons in userspace.
 
-Shooting from the hip here. If we want to unify namespaces in a UNIXy way,
-what if we make the VFS expose all the non-file "protocol" namespaces
-through one mount point, device node or whatever. A filesystem, perhaps
-something built using FiST [http://www.filesystems.org/], would "handle" a
-protocol. Another, perhaps preferred, option is to steer in the direction of
-Plan9, where ftp can be mounted and handled by a user-space filesystem,
-ftpfs. 
-See http://plan9.bell-labs.com/magic/man2html/4/ftpfs
-
-
-David
-
+Also, there would be limitations.  For instance, many such 
+pseudo-directories would be read-only, and some would be writable only 
+when on some file systems (like writing to a compressed archive might be 
+much easier to implement on Reiser4 than something else, or perhaps the 
+ext3 version would have to do a lot more copying, while the Reiser 
+version could take advantage of Reiser-specific features like inserting 
+in the middle of a file).
 
