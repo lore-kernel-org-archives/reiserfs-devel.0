@@ -1,47 +1,66 @@
 From: Russell Coker <russell@coker.com.au>
-Subject: Re: Advangates (A file-based interface for mount)
-Date: Fri, 11 Jul 2003 17:30:39 +1000
-Message-ID: <200307111730.39630.russell@coker.com.au>
-References: <3F078EF1.6090908@mrs.umn.edu> <20030710025545.GB1160@vestdata.no> <200307110759.52384.tdickenson@geminidataloggers.com>
+Subject: Re: How to mount reiserfs with a relocated journal? -- Figured out
+Date: Fri, 11 Jul 2003 17:43:21 +1000
+Message-ID: <200307111743.21259.russell@coker.com.au>
+References: <003701c3477d$33239580$6401a8c0@doug>
 Reply-To: Russell Coker <russell@coker.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14880-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14881-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200307110759.52384.tdickenson@geminidataloggers.com>
+In-Reply-To: <003701c3477d$33239580$6401a8c0@doug>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Toby Dickenson <tdickenson@geminidataloggers.com>, reiserfs-list@namesys.com
+To: Doug Bazarnic <doug@cavecreek.net>
+Cc: ReiserFS <reiserfs-list@namesys.com>
 
-On Fri, 11 Jul 2003 16:59, Toby Dickenson wrote:
-> > not all filesystems it will be possible to corrupt the metadata in a way
-> > that will make the kernel crash or lock up - in some cases it may even
-> > be possible to corrupt the data in such a way that it becomes a
-> > security-problem? How could this be solved?
->
-> I would hope that the filesystems commonly used on removable media would
-> try to defend against this. Is this hoping too much?
+I'm replying to the list because I believe that this will interest other 
+people and that it is not something you desired to keep secret.  Also if I 
+get something wrong then someone will correct me.  ;)
 
-I expect that the VFAT and other drivers for MS based file systems would 
-perform reasonably well in this regard.  MS-DOS floppy disks have a history 
-of being stuffed up in every imaginable way.
+On Fri, 11 Jul 2003 17:22, Doug Bazarnic wrote:
+> Are you aware if these cards require drivers under linux?
 
-Ext2/3 seem to do reasonably well in this regard.  It's been a long time since 
-I saw an Ext2 file system that could kill a kernel.
+There is a driver in the stock kernel.  Enable CONFIG_BLK_DEV_UMEM.
 
-ReiserFS does poorly in this regard.  I have just replaced some defective RAM 
-in my laptop.  When the RAM got corrupted and corrupted a file system it was 
-common for a ReiserFS file system to get in a state whereby mounting it or 
-performing regular operations on it would crash the kernel (not even Oops it, 
-but lock it solid).  The same machine also had Ext3 file systems which gave 
-no problems under the same situation.
+> I've just read the literature on the flash cards and they mtbf is
+> 1,000,000 hours, not writes.
 
-I have been told that it is not possible to make ReiserFS do all checks on 
-such data.  I hope that Reiser4 will be more resiliant in this regard.
+That sounds reasonably good, although it might be based on "typical usage 
+patterns"...
+
+BTW  Did you know that disk life depends on altitude?  If you run a hard drive 
+at the top of a mountain or below sea level then that may dramatically 
+decrease it's life.  Due to manufacturing issues some drives in a series will 
+work better in mountains than others, manufacturers are capable of supplying 
+such drives if they feel inclined.  If you get a drive that due to 
+manufacturing issues will work best below sea level and run it on a mountain 
+you won't expect it to last the MTBF time.
+
+Unless you are doing exactly what the manufacturer thinks a "typical" user 
+will do then don't count on getting a MTBF.
+
+> Do you know if having a larger journal slows things down, or speeds
+> things up?
+
+If there is no seek time (as is the case with Flash and umem cards) then there 
+is no penalty to making it larger AFAIK.  Whether there is any benefit is 
+another issue.
+
+For my client I designed a system with a 1G umem card which would be used for 
+32M journals for two important file systems and the other 960M was to be used 
+for a partition mounted under /var/spool for performance critical data that 
+was to be written synchronously.  I judged that 960M of virtually instant 
+storage (that did not affect the speed of the other partitions in the RAID 
+device in any way) would be of much greater benefit than larger journals.
+
+If you are using a database that has it's own journalling system then maybe 
+you could have the database journal on the umem device, which may give better 
+performance gains than anything you could do at the FS level.
 
 -- 
 http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
