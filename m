@@ -1,86 +1,100 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Fri, 03 Sep 2004 09:09:14 -0400
-Message-ID: <200409031309.i83D9EMg003329@laptop11.inf.utfsm.cl>
-References: <ninja@slaphack.com>
-Return-path: <reiserfs-list-return-21428-reiserfs=m.gmane.org@namesys.com>
+From: Spam <spam@tnonline.net>
+Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
+Date: Fri, 3 Sep 2004 15:16:19 +0200
+Message-ID: <642078516.20040903151619@tnonline.net>
+References: <20040826150202.GE5733@mail.shareable.org>
+ <200408282314.i7SNErYv003270@localhost.localdomain>
+ <20040901200806.GC31934@mail.shareable.org>
+ <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
+ <1094118362.4847.23.camel@localhost.localdomain>
+ <20040902161130.GA24932@mail.shareable.org>
+ <Pine.LNX.4.61.0409030028510.23011@fogarty.jakma.org>
+ <1835526621.20040903014915@tnonline.net>
+ <1094165736.6170.19.camel@localhost.localdomain>
+ <32810200.20040903020308@tnonline.net>
+ <Pine.LNX.4.61.0409030112080.23011@fogarty.jakma.org>
+ <142794710.20040903023906@tnonline.net>
+ <1094216718.2679.30.camel@shaggy.austin.ibm.com>
+Reply-To: Spam <spam@tnonline.net>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21429-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from David Masover <ninja@slaphack.com> 
-   of "Thu, 02 Sep 2004 23:37:19 EST." <4137F4FF.3070608@slaphack.com> 
+In-Reply-To: <1094216718.2679.30.camel@shaggy.austin.ibm.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
-Cc: Chris Dukes <pakrat@www.uk.linux.org>, Spam <spam@tnonline.net>, viro@parcelfarce.linux.theplanet.co.uk, Frank van Maarseveen <frankvm@xs4all.nl>, Dave Kleikamp <shaggy@austin.ibm.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Dave Kleikamp <shaggy@austin.ibm.com>
+Cc: Paul Jakma <paul@clubi.ie>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jamie Lokier <jamie@shareable.org>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-David Masover <ninja@slaphack.com> said:
-> Chris Dukes wrote:
-> | On Thu, Sep 02, 2004 at 08:28:20PM -0500, David Masover wrote:
-> |
-> |>So implement a plugin which knows how to talk to a userland program
-> |>which knows about metadata.  The plugin controls access to file-type.
-> |>
-> |>Maybe there ought to be a general-purpose userland plugin interface?  So
-> |>that the only things left in the kernel are things that have to be there
-> |>for speed and/or sanity reasons?  (Things like cryptocompress and
-> |>standard file/directory plugins.)
-> |
-> |
-> | Ahem,
-> | Wasn't this the goal of GNU HURD?
 
-> The goal of GNU HURD was to take everything out of the kernel and make
-> it entirely daemons.  That's a far cry from keeping a file-type database
-> (historically the realm of file managers) out of the kernel.
+  
 
-Yep. Traditional microkernel.
+> On Thu, 2004-09-02 at 19:39, Spam wrote:
+>>   
+>> 
+>> > On Fri, 3 Sep 2004, Spam wrote:
+>> 
+>> >>  Yes, some archive types can't be partially unzipped either. But my
+>> >>  point is that it wouldn't be transparent to the application/user in
+>> >>  the same way.
+>> 
+>> > It doesnt matter whether it is transparent to the application. It can
+>> > be the application which implements the required level of 
+>> > transparency.
+>> 
+>> > User doesnt care what provides the transparency or how it's 
+>> > implemented.
+>> 
+>>   Indeed. I hope I didn't say otherwise :). Just that I think it will
+>>   be very difficult to have this transparency in all apps.
 
-[...]
+> You're missing the point.  We don't need transparency in all apps.  You
+> can write an application to be as transparent as you want, but you don't
+> need every app to to understand every file format.
 
-> | I really think you should ask them why they haven't delivered
-> | something useful, then come back to this thread.
+  No, but not every user "can write an application" either, or even
+  have the skills to apply patches. What I was talking about wasn't
+  just tar, which itself isn't the best example anyway, but the idea
+  that users can load plugins that will extend the functionality of
+  their filesystems. That idea seem to be to be _much_ better than
+  trying to teach every user how to write applications or patch
+  existing ones.
 
-> Honestly?  I think it's mostly got nothing to do with architecture.  I
-> think it's mostly got to do with politics.  Most people would rather
-> hack on Linux, which is already done, than try to develop HURD, which is
-> something new.  Most people also enjoy working with Linus (or prefer
-> Linus to the FSF).
+>>  Just
+>>   thinking of "nano file.jpg/description.txt" or "ls
+>>   file.tar/untar/*.doc".
 
-Partly right. Hurd is _much_ older than Linux, and didn't start from
-scratch (Mach was around, and worked). Yet I remember hearing "any day now"
-for Hurd from 86 or 87... and as of now, AFAIU even the people hacking on
-Hurd prefer Linux (because Linux does work, Hurd doesn't).
+> I don't do much image editting, but I'm sure there are applications that
+> let you edit the description in a text file.  You can even create a
+> script that extracts it, runs nano, and puts it back into the jpeg.
 
-> I do not like how Linux is monolithic.  I do not like having to reboot
-> to upgrade the kernel,
+> This works for me:
+> tar -tf file.tar | grep '\.doc'
 
-Tough luck. An upgrade of the core will _always_ mean rebooting. Plus you
-can replace modules in Linux without a reboot.
+> There are userland tools that deal with hundreds of file formats. Use
+> the tool you need, rather than try to have the kernel do everything.
 
->                        and I do not like having to run closed software
-> (the nvidia drivers) in the kernel (as in, full privelages, can crash
-> entire system, yadda yadda).
+  No, but if I wanted to have an encryption plugin active for some of
+  my files or directories then why should I not be able to? I still
+  want to edit, view and save my encrypted files.
 
-Me neither. But that is not exactly Linux' fault, binary drivers are quite
-strongly discouraged.
+  Again, this was just an example of what could be done with plugins.
+  It is not said that every conceivable plugin will be written, nor
+  loaded per default. Even though plugins cannot today be dynamically
+  used, they will be eventually. Reiser4 is still very young.
 
->                               But Linux is the best we have.
+  Please separate your thoughts for specific plugins from those of the
+  idea to have plugins at all.
 
-By far.
+  ~S
 
-> The HURD people have delivered at least something.  I think there's even
-> a Debian/HURD distro.  Whether it's useful probably has to do with
-> whether it's stable/fast, which isn't likely.  You hear of Linux news
-> every day, you hear of HURD maybe once in a lifetime -- "Hey, HURD
-> exists!"
+>>  Sure in some environments like Gnome it could
+>>   work, but it still doesn't for the rest of the flora of Linux
+>>   programs.
 
-It is still vaporware, some 20 years later.
--- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+> Just choose the right program.  tar groks tar files, not ls.
+
+
