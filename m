@@ -1,59 +1,113 @@
-From: Tim Small <tim@digitalbrain.com>
-Subject: Re: access beyond end of device again
-Date: Wed, 10 Jul 2002 19:04:09 +0100
-Message-ID: <3D2C7719.8060907@digitalbrain.com>
-References: <1951319530634.20020624073524@redefine.org> <Pine.LNX.4.44.0206250034070.28871-100000@avon.timetraveller.org> <20020624184843.A896@namesys.com>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Fwd: Re: 2.4.19-rc1-jam2 (-rc1aa2)
+Date: Thu, 11 Jul 2002 02:35:22 +0200
+Message-ID: <200207110235.22875.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10955-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10957-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Chris Mason <mason@suse.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>, Andrea Arcangeli <andrea@suse.de>, "J.A. Magallon" <jamagallon@able.es>
 
-I've seen this sort of problem before, with a 160G disk.  I'd installed 
-a kernel with IDE patches to enable access to all 160G of the device, 
-and created a reiserfs on it.  Then one of my colleagues decided to 
-install our 'standard' kernel on it.  Sadly, the entire filesystem was 
-turned to cheese, and reiserfsck didn't get much back.
+Hello Chris,
 
-However, this looks to be a LONG way beyond the end of the device, but 
-"cat /proc/partitions" might still be worth doing...
+symbol clash between latest -AA (-jam2, 00-aa-rc1aa2) kernel and your=20
+data-logging stuff ;-(
 
+Regards,
+	Dieter
 
-Tim.
+----------  Forwarded Message  ----------
 
-Oleg Drokin wrote:
+Subject: Re: 2.4.19-rc1-jam2 (-rc1aa2)
+Date: Thu, 11 Jul 2002 02:26:03 +0200
+From: Dieter N=FCtzel <Dieter.Nuetzel@hamburg.de>
+To: "J.A. Magallon" <jamagallon@able.es>
+Cc: Andrea Arcangeli <andrea@suse.de>
 
->Hello!
+On Thursday 11 July 2002 02:01, J.A. Magallon wrote:
+> On 2002.07.11 Dieter N=FCtzel wrote:
+> >fs/fs.o(__ksymtab+0x10): multiple definition of `__ksymtab_balance_dirty'
+> >kernel/kernel.o(__ksymtab+0x870): first defined here
+> >fs/fs.o(.kstrtab+0x47): multiple definition of `__kstrtab_balance_dirty'
+> >kernel/kernel.o(.kstrtab+0x23c7): first defined here
+
+[-]
+
+> I think your gcc is making one other definition of balance_dirty from thi=
+s:
 >
->On Tue, Jun 25, 2002 at 12:37:02AM +1000, Robert Brockway wrote:
->  
+> kernel/ksyms.c:EXPORT_SYMBOL(balance_dirty);
 >
->>>I'm getting these errors again:
->>>  attempt to access beyond end of device
->>>  38:01: rw=0, want=2052028788, limit=58633312
->>>      
->>>
->>What sort of device is this supposed to be? :)  38:01 is either a "Myricom 
->>PCI Myrinet board" or something "reserved for Linux/AP+" (and I'm assuming 
->>we're talking about a block device rather than a character device here :)
->>    
->>
->
->Numbers printed are in hex, so this is:
->    block       Fifth IDE hard disk/CD-ROM interface
->                  0 = /dev/hdi          Master: whole disk (or CD-ROM)
->                 64 = /dev/hdj          Slave: whole disk (or CD-ROM)
->
->                Partitions are handled the same way as for the first
->                interface (see major number 3).
->
->Bye,
->    Oleg
->  
->
+> gcc, binutils version ?
 
+Reading specs from /usr/lib/gcc-lib/i486-suse-linux/2.95.3/specs
+gcc version 2.95.3 20010315 (SuSE)
+
+GNU ld version 2.11.90.0.29 (with BFD 2.11.90.0.29)
+
+> Are you building with someting like -fnocommon ?
+
+Not that I know.
+
+Same flags as with 2.4.19rc1aa1.
+
+I use latest ReiserFS stuff, but same code works fine with 2.4.19rc1aa1.
+Even Page Coloring works.
+Only new stuff is -aa2 (XFS, not enabled, I dropped it before 'cause I do n=
+ot
+use it) and jam2.
+
+SunWave1 src/linux# grep -r balance_dirty kernel fs
+kernel/ksyms.c:EXPORT_SYMBOL(balance_dirty);
+=DCbereinstimmungen in Bin=E4rdatei kernel/ksyms.o.
+=DCbereinstimmungen in Bin=E4rdatei kernel/kernel.o.
+fs/xfs/pagebuf/page_buf_io.c:   balance_dirty();
+fs/xfs/pagebuf/page_buf_io.c:   int need_balance_dirty =3D 0;
+fs/xfs/pagebuf/page_buf_io.c:           need_balance_dirty =3D 1;
+fs/xfs/pagebuf/page_buf_io.c:   if (need_balance_dirty) {
+fs/xfs/pagebuf/page_buf_io.c:                   balance_dirty();
+=DCbereinstimmungen in Bin=E4rdatei fs/fs.o.
+=DCbereinstimmungen in Bin=E4rdatei fs/reiserfs/reiserfs.o.
+fs/reiserfs/inode.c:    int need_balance_dirty =3D 0 ;
+fs/reiserfs/inode.c:                need_balance_dirty =3D 1;
+fs/reiserfs/inode.c:    if (need_balance_dirty) {
+fs/reiserfs/inode.c:        balance_dirty() ;
+fs/reiserfs/inode.c:    int partial =3D 0, need_balance_dirty =3D 0;
+fs/reiserfs/inode.c:            need_balance_dirty =3D 1;
+fs/reiserfs/inode.c:    if (need_balance_dirty)
+fs/reiserfs/inode.c:    balance_dirty();
+=DCbereinstimmungen in Bin=E4rdatei fs/reiserfs/inode.o.
+fs/reiserfs/do_balan.c:     tb->need_balance_dirty =3D 1;
+fs/reiserfs/do_balan.c:    tb->need_balance_dirty =3D 0;
+fs/buffer.c:static int balance_dirty_state(void)
+fs/buffer.c:void balance_dirty(void)
+fs/buffer.c:    int state =3D balance_dirty_state();
+fs/buffer.c:EXPORT_SYMBOL(balance_dirty);
+fs/buffer.c:/* atomic version, the user must call balance_dirty() by hand
+fs/buffer.c:            balance_dirty();
+fs/buffer.c:    int partial =3D 0, need_balance_dirty =3D 0;
+fs/buffer.c:                            need_balance_dirty =3D 1;
+fs/buffer.c:    if (need_balance_dirty)
+fs/buffer.c:            balance_dirty();
+fs/buffer.c:    if (balance_dirty_state() >=3D 0)
+=DCbereinstimmungen in Bin=E4rdatei fs/buffer.o.
+
+Thanks and good night.
+
+-Dieter
+
+-------------------------------------------------------
+
+--=20
+Dieter N=FCtzel
+Graduate Student, Computer Science
+
+University of Hamburg
+Department of Computer Science
+@home: Dieter.Nuetzel@hamburg.de
 
