@@ -1,77 +1,107 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
-Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: Fri, 03 Sep 2004 17:45:39 -0400
-Message-ID: <200409032145.i83LjdXG002843@localhost.localdomain>
-References: <spam@tnonline.net>
-Return-path: <reiserfs-list-return-21456-reiserfs=m.gmane.org@namesys.com>
+From: Stuart Young <cef-lkml@optusnet.com.au>
+Subject: Re: silent semantic changes with reiser4
+Date: Sat, 4 Sep 2004 15:03:57 +1000
+Message-ID: <200409041504.00112.cef-lkml@optusnet.com.au>
+References: <200409031917.i83JHodv010368@laptop11.inf.utfsm.cl>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21457-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Spam <spam@tnonline.net> 
-   of "Fri, 03 Sep 2004 15:16:19 +0200." <642078516.20040903151619@tnonline.net> 
+In-Reply-To: <200409031917.i83JHodv010368@laptop11.inf.utfsm.cl>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Spam <spam@tnonline.net>
-Cc: Dave Kleikamp <shaggy@austin.ibm.com>, Paul Jakma <paul@clubi.ie>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jamie Lokier <jamie@shareable.org>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: linux-kernel@vger.kernel.org
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Helge Hafting <helge.hafting@hist.no>, Theodore Ts'o <tytso@mit.edu>, Jeremy Allison <jra@samba.org>, Jamie Lokier <jamie@shareable.org>, Trond Myklebust <trond.myklebust@fys.uio.no>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, Linus Torvalds <torvalds@osdl.org>, reiser@namesys.com, hch@lst.de, Linux Filesystem Development <linux-fsdevel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
 
-Spam <spam@tnonline.net> said:
-> Dave Kleikamp <shaggy@austin.ibm.com> said:
-> >Spam <spam@tnonline.net> said:
+On Sat, 4 Sep 2004 05:17, Horst von Brand wrote:
+> Stuart Young <cef-lkml@optusnet.com.au> said:
+> > Hence why I was suggesting the idea of disposable data in streams. As
+> > long as people KNOW it's disposable, but useful to keep around as it cuts
+> > down the time needed to do stuff, then apps will start to pick up
+> > transporting streams properly. Least then (hopefully) no real information
+> > will get lost that is important. Once transporting streams becomes
+> > commonplace, then perhaps streams can be used for more useful things.
+>
+> How will you prevent people putting the "real" data under some random
+> stream, "just because it is a prettier name"?
 
-[...]
+This is a function of exporting something complex like file streams through a 
+namespace like 'file-as-directory'. As soon as you start putting complex 
+things like file streams through an 'easy to use' interface, you will get 
+people using it in ways you don't expect. Sure, it has to be useful, and 
+relatively easy, but you don't need to make it insanely so.
 
-> > You're missing the point.  We don't need transparency in all apps.  You
-> > can write an application to be as transparent as you want, but you don't
-> > need every app to to understand every file format.
+And if it's all considered volatile, the only ones that NEED to know about it 
+are system admins, power users and programmers, all of which have a much 
+higher chance of understanding a complex object like a file stream.
 
->   No, but not every user "can write an application" either, or even
->   have the skills to apply patches. What I was talking about wasn't
->   just tar, which itself isn't the best example anyway, but the idea
->   that users can load plugins that will extend the functionality of
->   their filesystems. That idea seem to be to be _much_ better than
->   trying to teach every user how to write applications or patch
->   existing ones.
+> (Yes, I've seen Windows users 
+> exporting everything because they found the folder + hand icon
+> prettier...).  Short answer: You can't. And if you did, then it would be
+> (another) hell to go through when you start using streams for "useful
+> data".
 
-Why compare "write application or apply patches" to "load plugin"? It
-would be locical to compare running applications with loading plugins (and
-even so, loading plugins is presumably root-only).
+Interesting you should say that. Pretty much every stream in Windows at the 
+moment is considered to be volatile, as the information could be lost in a 
+transfer to a networked machine or filesystem that is not stream enabled. 
+Once Windows NT and Win98/ME are 'out of the picture', and FAT* filesystems 
+vanish, this sort of behaviour could possibly be expected to change. Notice 
+that it's a timeframe over about 5 yrs that they've been (almost silently) 
+doing this already. They'll have much the same problem. Since I seriously 
+doubt that streams are going to pop up in Linux overnight, with all the app 
+support that this entails, we'll have the benefit of seeing just how the 
+behemoth handles it, and be able to learn from their mistakes.
 
-[...]
+Of note on this, the ability to create/manipulate/read/etc streams should 
+almost certainly require it's own set of ACL's beyond blindly assuming that 
+the standard permissions/ACL's can cover it as is. Document creators should 
+be able to create/manipulate a stream, but a searching service does not 
+necessarily need to do more than read it. You could even have the ability to 
+access or write to a stream other than the default covered by a capability.
 
-> > There are userland tools that deal with hundreds of file formats. Use
-> > the tool you need, rather than try to have the kernel do everything.
+> > The point of such information in my examples is that a stream can store
+> > information in a particular format (ie: an index) that is common to one
+> > indexing app/library.
+>
+> Great. Now you just need to convince everybody and Aunt Tillie to use that
+> same format.
 
->   No, but if I wanted to have an encryption plugin active for some of
->   my files or directories then why should I not be able to? I still
->   want to edit, view and save my encrypted files.
+Welcome to standardisation. And in fact it's not so much necessary that 
+everyone uses the same index format, as long as the same index format is used 
+on one machine. In fact, it's not even that necessary, as each index format 
+could use it's own stream to store it's version of the information. Yes it's 
+duplication, but who isn't already used to that? (KDE/Gnome, vi/emacs, 
+ext3/XFS/reiser/etc). You choose the format for the job, and by personal 
+preference. If the apps don't support the format you want, you just lose 
+whatever abilities the format gains you, but at least you don't lose the raw 
+data.
 
-Use an editor that knows about encrypted files. Decrypt/edit/encrypt if no
-other option (I'm sure emacs can be coerced to do that transparently ;-). I
-for one would be _way_ more confortable with my users doing that than them
-loading random modules into the kernel. Besides, if one of my users doesn't
-trust the system encryption programs, and prefers hers, she can be happy.
+> >                       Such an index can be used by ANY app that knows the
+> > index format to search the document. This is almost exactly what MS will
+> > do (if they haven't done it already) with the File Indexing Service. As
+> > it's ONE library, then any new user app that creates data can add index
+> > creation by adding one library. And any app that wants to search these
+> > indexes would need only to add one library, not every library for every
+> > format that it wants to search. It's essentially an n^2 vs 2n problem.
+>
+> Doable if you can just go and force a format/stream layout/application
+> suite on each and every user. Won't happen in Linux (and I'm happy for
+> that).
 
->   Again, this was just an example of what could be done with plugins.
->   It is not said that every conceivable plugin will be written, nor
->   loaded per default. Even though plugins cannot today be dynamically
->   used, they will be eventually. Reiser4 is still very young.
+As above.
 
-Modules of the kernel were supposed to have all those magic properties too,
-until there were nasty races... and it was _seriously_ considered to take
-them out. They stayed because they are root-only business, and (un)loading
-is rare. FS plugins are kernel modules, AFAIU, and are subject to the same
-problems.
+My personal view of streams (if we MUST have it under Linux, and I'm in no way 
+at all convinced of that fact) is that it should in many ways be like 
+journaling or hash trees in ext3. They're useful functions, but they are not 
+'necessary' to the actual storage of data. Sure, they make it easy (and in 
+some cases significantly easier) to recover or access data, but they are 
+features that do not ultimately stop you using the core of the filesystem, 
+it's main objective, which is storing data.
 
->   Please separate your thoughts for specific plugins from those of the
->   idea to have plugins at all.
-
-If you can't find concrete uses for specific plugins, they are the
-proverbial solution searching for a problem.
 -- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+ Stuart Young (aka Cef)
+ cef-lkml@optusnet.com.au is for LKML and related email only
