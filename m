@@ -1,49 +1,37 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
+From: Linus Torvalds <torvalds@transmeta.com>
 Subject: Re: [PATCH]: reiser4 [5/8] export remove_from_page_cache()
-Date: Thu, 31 Oct 2002 21:25:24 +0300
-Message-ID: <15809.30100.403073.595578@laputa.namesys.com>
-References: <15809.21559.295852.205720@laputa.namesys.com>
-	<20021031161826.A9747@infradead.org>
-	<15809.22856.534975.384956@laputa.namesys.com>
-	<20021031163104.A9845@infradead.org>
-	<20021031173311.GA23959@clusterfs.com>
+Date: Thu, 31 Oct 2002 10:57:36 -0800 (PST)
+Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <Pine.LNX.4.44.0210311053170.1526-100000@penguin.transmeta.com>
+References: <20021031163104.A9845@infradead.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11872-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <20021031173311.GA23959@clusterfs.com>
+Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
+In-Reply-To: <20021031163104.A9845@infradead.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Andreas Dilger <adilger@clusterfs.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Linus Torvalds <Torvalds@Transmeta.COM>, Linux Kernel Mailing List <Linux-Kernel@Vger.Kernel.ORG>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Nikita Danilov <Nikita@Namesys.COM>, Linux Kernel Mailing List <Linux-Kernel@Vger.Kernel.ORG>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Andreas Dilger writes:
- > On Oct 31, 2002  16:31 +0000, Christoph Hellwig wrote:
- > > On Thu, Oct 31, 2002 at 07:24:40PM +0300, Nikita Danilov wrote:
- > > > Reiser4 stores meta-data in a huge balanced tree. This tree is kept
- > > > (partially) in the page cache. All pages in this tree are attached to
- > > > "fake" inode. Sometimes you need to remove node from the tree. At this
- > > > moment page has to be removed from the fake inode mapping.
- > > 
- > > What about chaing truncate_inode_pages to take an additional len
- > > argument so you don't have to remove all pages past an offset?
- > 
- > That would be what we have been calling "punch", and is quite useful
- > for putting holes in files (i.e. making them sparse again).  This
- > can be used for InterMezzo (among other things) so that the KML log
- > file can be growing at the end, but being punched out at the start
- > so it doesn't use up a lot of disk space.
 
-Abusing truncate for such things will remain abuse exactly. Separate
-interface is required.
+On Thu, 31 Oct 2002, Christoph Hellwig wrote:
 
- > 
- > Not that I'm holding my breath on getting this in the kernel, but
- > it is definitely useful.
- > 
- > Cheers, Andreas
+> On Thu, Oct 31, 2002 at 07:24:40PM +0300, Nikita Danilov wrote:
+> > Reiser4 stores meta-data in a huge balanced tree. This tree is kept
+> > (partially) in the page cache. All pages in this tree are attached to
+> > "fake" inode. Sometimes you need to remove node from the tree. At this
+> > moment page has to be removed from the fake inode mapping.
+> 
+> What about chaing truncate_inode_pages to take an additional len
+> argument so you don't have to remove all pages past an offset?
 
-Nikita.
+Actually, we may want that for other reasons anyway. In particular, I can
+well imagine why a networked filesystem in particular might want to
+invalidate a range of a file cache, but not necessarily all of it.
+
+(Yeah, I don't know of any network filesystem that does invalidation on
+anything but a file granularity, but I assume such filesystems have to
+exist. Especially in cluster environments it sounds like a sane thing to
+do invalidates on a finer granularity)
+
+			Linus
