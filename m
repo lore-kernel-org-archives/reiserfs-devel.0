@@ -1,126 +1,62 @@
-From: Bernd Schubert <bernd-schubert@web.de>
+From: Chris Mason <mason@suse.com>
 Subject: Re: large files
-Date: Tue, 18 May 2004 15:42:06 +0200
-Sender: Bernd Schubert <Bernd.Schubert@tc.pci.uni-heidelberg.de>
-Message-ID: <200405181544.36152.bernd-schubert@web.de>
-References: <200405172148.33162.bernd-schubert@web.de> <1084824741.20437.368.camel@watt.suse.com>
+Date: Tue, 18 May 2004 09:57:56 -0400
+Message-ID: <1084888676.20437.1477.camel@watt.suse.com>
+References: <200405172148.33162.bernd-schubert@web.de>
+	 <1084824741.20437.368.camel@watt.suse.com>
+	 <200405181544.36152.bernd-schubert@web.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1;
-  boundary="Boundary-02=_ENhqAjf9LzcQKzL";
-  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18745-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18746-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1084824741.20437.368.camel@watt.suse.com>
+In-Reply-To: <200405181544.36152.bernd-schubert@web.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Chris Mason <mason@suse.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Bernd Schubert <bernd-schubert@web.de>
 Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
 
---Boundary-02=_ENhqAjf9LzcQKzL
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Description: signed data
-Content-Disposition: inline
+On Tue, 2004-05-18 at 09:42, Bernd Schubert wrote:
+> Hello Chris,
+> 
+> >
+> > As a comparison data point, could you please try 2.6.6-mm3?  I realize
+> > you don't want to run this kernel in production, but it would tell us if
+> > I understand the problems at hand.
+> 
+> the results in 2.6.6-mm3 are below, we almost consider to run this kernel 
+> version.
+> 
+> Here are two other interesting facts:
+> 
+> 1.) During the filecreation in 2.4.26 the load on the system was around 3-4, 
+> whereas in 2.6.6-mm3 the load was at about 8-9.
+> 
+Which procs contributed to this load?  The simple dd should have kept
+the load at one.
 
-Hello Chris,
+> 2.) When the dd file creation process finished (2.4.26 was running) the system 
+> became so unresponsible, that the drdb connection timed out and a resync 
+> process automatically started when the system became responsible again. I 
+> don't have any comparism to 2.6.6-mm3 since we would need another drbd 
+> version. Also, I don't know if this happend when dd finished or when 
+> rm-started, since both were running from a script.
+> 
+Probably the rm.
 
->
-> As a comparison data point, could you please try 2.6.6-mm3?  I realize
-> you don't want to run this kernel in production, but it would tell us if
-> I understand the problems at hand.
+[ 2.6.6-mm3 is much faster ]
 
-the results in 2.6.6-mm3 are below, we almost consider to run this kernel=20
-version.
+> Do you have any ideas how we could improve 2.4.x? 
+> 
 
-Here are two other interesting facts:
+2.6.6-mm has a few key improvements.  There's less metadata
+fragmentation thanks to some block allocator fixes.  More importantly,
+during the rm, metadata blocks are read in 16 at a time instead of 1 at
+a time.  I'd be happy to give someone pointers on porting the metadata
+readahead bits back to 2.4.
 
-1.) During the filecreation in 2.4.26 the load on the system was around 3-4=
-,=20
-whereas in 2.6.6-mm3 the load was at about 8-9.
-
-2.) When the dd file creation process finished (2.4.26 was running) the sys=
-tem=20
-became so unresponsible, that the drdb connection timed out and a resync=20
-process automatically started when the system became responsible again. I=20
-don't have any comparism to 2.6.6-mm3 since we would need another drbd=20
-version. Also, I don't know if this happend when dd finished or when=20
-rm-started, since both were running from a script.
-
-Here are the measured times for file creation and file deleting
-
-=3D=3D=3D=3D=3D> 2.4.26:
-
-taylor:~# cat test.out-2.4.26
-time dd if=3D/dev/zero of=3D/worka/testfile.dd bs=3D1M count=3D300000
-300000+0 records in
-300000+0 records out
-314572800000 bytes transferred in 5746.266841 seconds (54743855 bytes/sec)
-
-real	95m46.275s
-user	0m0.760s
-sys	29m57.800s
+-chris
 
 
-time rm -fr /worka/testfile.dd
-
-real	11m20.589s
-user	0m0.000s
-sys	4m59.850s
-
-
-=3D=3D=3D=3D=3D> 2.6.6-mm3
-
-
-taylor:~# cat test.out-2.6.6-mm3
-time dd if=3D/dev/zero of=3D/worka/testfile.dd bs=3D1M count=3D300000
-300000+0 records in
-300000+0 records out
-314572800000 bytes transferred in 4902.873869 seconds (64160900 bytes/sec)
-
-real	81m46.211s
-user	0m1.172s
-sys	22m26.010s
-
-
-time rm -fr /worka/testfile.dd
-
-real	1m38.000s
-user	0m0.000s
-sys	1m5.872s
-
-
-
-Do you have any ideas how we could improve 2.4.x?=20
-
-
-Thanks,
-	Bernd
-
-
-=2D-=20
-Bernd Schubert
-Physikalisch Chemisches Institut / Theoretische Chemie
-Universit=E4t Heidelberg
-INF 229
-69120 Heidelberg
-e-mail: bernd.schubert@pci.uni-heidelberg.de
-
---Boundary-02=_ENhqAjf9LzcQKzL
-Content-Type: application/pgp-signature
-Content-Description: signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQBAqhNEC8BUnAF+ydYRAsMDAJ9syvt+82PwoQr410+pAMgaGt6cGACfWxvh
-+/H3quWGsazEigAk44G3JYk=
-=jUkJ
------END PGP SIGNATURE-----
-
---Boundary-02=_ENhqAjf9LzcQKzL--
