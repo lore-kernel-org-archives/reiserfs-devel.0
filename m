@@ -1,40 +1,35 @@
-From: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
-Subject: Re: BUG: Replaying ReiserFS log causes hard lockup
-Date: Thu, 25 Mar 2004 19:51:58 +0100
-Message-ID: <m3lllohi9d.fsf@merlin.emma.line.org>
-References: <20040325204836.07bcf910.a.nielsen@optushome.com.au>
+From: Bernd Schubert <bernd-schubert@web.de>
+Subject: Re: reiserfs logging patches udpated
+Date: Thu, 25 Mar 2004 19:59:02 +0100
+Sender: Bernd Schubert <Bernd.Schubert@tc.pci.uni-heidelberg.de>
+Message-ID: <200403251959.04804.bernd-schubert@web.de>
+References: <1080149399.14737.77.camel@watt.suse.com> <200403251911.24983.bernd-schubert@web.de> <1080238798.26669.12.camel@watt.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17473-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-17474-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040325204836.07bcf910.a.nielsen@optushome.com.au> (Adam
- Nielsen's message of "Thu, 25 Mar 2004 20:48:36 +1000")
+In-Reply-To: <1080238798.26669.12.camel@watt.suse.com>
+Content-Description: clearsigned data
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Adam Nielsen <a.nielsen@optushome.com.au>
+Content-Type: Text/Plain; charset="us-ascii"
+To: Chris Mason <mason@suse.com>
 Cc: reiserfs-list@namesys.com
 
-Adam Nielsen <a.nielsen@optushome.com.au> writes:
 
-> The drive itself is a Western Digital SATA drive, connected via an
-> onboard Silicon Image 3512A (which uses the under-development sil3112
-> (I think) driver, so I guess there's a chance it could be the driver's
-> fault, however I have not had any problems at all before this.)  The
-> board itself is a Gigabyte GA-7N400 Pro 2 (rev 2.0) with an nForce 2
-> chipset.
+> reiserfs: using ordered data mode
 
-CMD/Silicon Image hardware, at least the SATA stuff, is said to be utter
-crap, with hardware bugs that require workaround and all that. Get the
-latest 2.6 kernel you can fish (-bk variants included) and retry in the
-hope the more recent kernel already has the needed workaround.
+This message doesn't tell that something has changed in recent kernel=20
+versions.
 
-Better yet, ditch SATA, buy SCSI, that will actually work and perform
-well. Linux SATA support hasn't quite made it from the cradle.
+Actually I thought of something more eye-catching, maybe=20
 
--- 
-Matthias Andree
+"Attention: data logging is enabled be default since 2.6.5-mm"=20
 
-Encrypt your mail: my GnuPG key ID is 0x052E7D95
+or so.=20
+
+
+Bernd
