@@ -1,41 +1,74 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiserfsck 3.6.8 + corrupted filesystem
-Date: Thu, 3 Jul 2003 22:10:03 +0400
-Message-ID: <200307032210.03901.vitaly@namesys.com>
-References: <pan.2003.07.02.13.31.41.846811.20132@umail.hungrycats.org> <200307031516.44549.vitaly@namesys.com> <pan.2003.07.03.11.46.40.824752.5077@umail.hungrycats.org>
+From: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
+Subject: Re: read-only drive with reiserfs partiton not mountable
+Date: Thu, 03 Jul 2003 22:44:23 +0200
+Message-ID: <3F0495A7.3070704@gmx.net>
+References: <3F046341.8000408@ncsu.edu> <3F04668C.8090603@gmx.net> <3F046798.7070906@gmx.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14822-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14823-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <pan.2003.07.03.11.46.40.824752.5077@umail.hungrycats.org>
-Content-Disposition: inline
+In-Reply-To: <3F046798.7070906@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Zygo Blaxell <eazgwmir@umail.furryterror.org>
-Cc: reiserfs-list@namesys.com
+To: ReiserFS List <reiserfs-list@namesys.com>
+Cc: Joel Ebel <jbebel@ncsu.edu>
 
-> > Actually in-memory data only are conserned here, they are not written to
-> > disk and read again, trey all the time in the memory and just a part of
-> > them will be written to disk at the end of fscking.
->
-> Uhhh, I've observed a lot of writes to otherwise idle disks while running
-> reiserfsck.  I had assumed that it was reiserfsck doing those writes,
-> although I haven't attached strace to be sure.  When reiserfsck says
-> various things are "deleted" in pass0, has it not modified something on
-> the disk at that time?
+Carl-Daniel Hailfinger wrote:
+> [Sorry, I hit send a bit too early]
+> Carl-Daniel Hailfinger wrote:
+> 
+>>Joel Ebel wrote:
+>>
+>>
+>>>Ok.  I've got an unusual problem.  My hard drive decided yesterday to
+>>> turn read-only.  I can't write anything to it.  The data seems to be
+>>>all there and readable, but any write to the drive fails.  I have 
+>>>partitions of NTFS, FAT32, ext3, and reiserfs.  I'm able to mount all
+>>> the other partitions and copy files off of them, but the reiserfs 
+>>>partition refuses to mount saying wrong fs type, bad superblock,
+>>>etc... Is there a reason that a reiserfs partition on a read-only
+>>>drive wouldn't mount?  I'd sure like to get what data I can off of
+>>>it.  Any ideas?
+>>
+>>
+>>Use UML (user-mode Linux) and arrange for writable backing store on 
+>>another fs.
+> 
+> 
+> To be more clear, the block device with reiserfs is the base for a COW
+> (copy on write) device which can be used under UML. For the writes, you
+> need to provide a file on a writable fs which will store the differences.
+> ReiserFS inside the UML will not notice the fact that you tricked it.
 
-Yes, fsck does these writes but these corruptions happen with in-memory 
-data, not those which are written to disk. 
+If /dev/hdb8 is your read-only filesystem, try this:
 
-If you check you RAM and find no problems could you run 
-    debugreiserfs -p /dev/xxx | bzip2 -c > xxx.bz2
-and make it available for downloading. I will take it (file will contain reiserfs
-metadata) and debug it locally. (At the beginning of the next week already as 
-I will not work these few days).
+./linux ubd1=reiser_cow,/dev/hdb8
 
+and once you have booted the linux instance,
+
+mount /dev/ubd1 /mnt
+
+Another option is to copy the partition to a file on a writable fs and
+loop mount it from there.
+
+dd if=/dev/hdb8 of=/tmp/fsbackup
+mount -o loop /tmp/fsbackup /mnt
+
+The last option for coping with a readonly disk is to copy it over
+completely with dd. Assuming /dev/hdb is your damaged disk and /dev/hdc is
+your new shiny IDENTICAL model, you can also
+
+dd if=/dev/hdb of=/dev/hdc
+
+Note: If you are someone longing for SPEED, you can add bs=1M to the dd
+commands. That should help quite a bit.
+
+
+HTH,
+Carl-Daniel
 -- 
-Thanks,
-Vitaly Fertman
+http://www.hailfinger.org/
+
