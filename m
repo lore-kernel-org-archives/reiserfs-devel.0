@@ -1,35 +1,51 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: EVMS Reiser FSIM
-Date: Thu, 30 May 2002 16:56:33 +0400
-Message-ID: <3CF62181.1000802@namesys.com>
-References: <OF7550755B.8F3C611F-ON85256BC8.0056E5DC@pok.ibm.com> <20020530095323.GA1076@gnu.org>
+From: Anders Widman <andewid@tnonline.net>
+Subject: Re[3]: Problem with my HDD
+Date: Thu, 30 May 2002 15:35:46 +0200
+Message-ID: <471328546.20020530153546@tnonline.net>
+References: <10512850437.20020529194929@starfall.de>
+ <Pine.LNX.4.44.0205300905050.22928-100000@avon.timetraveller.org>
+ <20020530091410.B3922@namesys.com> <1782653645.20020530135824@starfall.de>
+Reply-To: Anders Widman <andewid@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10453-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10454-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <1782653645.20020530135824@starfall.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Andrew Clausen <clausen@gnu.org>
-Cc: Steve Pratt <slpratt@us.ibm.com>, Yury Umanets <umka@namesys.com>, reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Cookie-Monster <cookie.monster@starfall.de>
+Cc: reiserfs-list@namesys.com
 
-Andrew Clausen wrote:
+> Hi,
 
->On Wed, May 29, 2002 at 11:28:38AM -0500, Steve Pratt wrote:
->  
->
->>I want to use the code approved by the owners of the file system.
->>    
->>
->
->Me too.  Just the ext2 maintainer doesn't like this approach, so
->I'm going to need to push a bit harder (and I don't have time now)
->
-I can imagine why he doesn't want to depend on the ext2 guys to find 
-time for reading his code, and you should not assume he is without good 
-reasons on this.   I have watched people try to get code into ext2.....
+>>> If you can I'd consider getting an image of the drive.  It may help with 
+>>> data recovery later.  something like:
+>>> dd if=/dev/sda1 of=/bigfilesystem/diskimage
 
-Hans
+>> That does not work on bad hard drives, resulting image would be almost useless.
+>> BTW, this way it stops on first read error.
 
+> I made an image of the disk. It's 3GB. Can I do anything with this
+> thing now? i.e.: formatting the HDD and putting the image back on it.
+> Then there would be no unreadable blocks anymore.
+
+Formatting  would  not  repair the broken sectors. If the drive itself
+has spare sectors left, then they would be used instead.
+
+If  there  are  bad sectors you should really have this disk replaced.
+IBM  has  5  years warranty on all SCSI drives. You can fill out a RMA
+form at http://www.storage.ibm.com/hdd/support/index.htm
+
+And,  as  Oleg  wrote,  use ddrescue to make a complete backup of your
+harddrive.  Make  a  backup of that image too, so you can recover data
+from one of the images. 
+
+//Anders
+
+> --
+> Cookie-Monster
+> cookie.monster@starfall.de
+> http://www.starfall.de/
 
