@@ -1,46 +1,57 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: other OS
-Date: Wed, 04 Dec 2002 06:46:31 +0300
-Message-ID: <3DED7A97.4060700@namesys.com>
-References: <001501c29a82$0126a110$0101a8c0@bummer> <200212031849.30808.russell@coker.com.au> <3DED28C4.1030207@namesys.com> <2147483647.1038931499@[66.45.99.178]>
+From: "Jason Mancini" <jayrusman@hotmail.com>
+Subject: 640.0 GB symlink
+Date: Tue, 03 Dec 2002 21:02:38 -0800
+Message-ID: <F166w0wQDoKK0jocxmW00010062@hotmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12100-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12101-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <001501c29a82$0126a110$0101a8c0@bummer>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Scott R. Every" <scott@blast.com>
-Cc: Russell Coker <russell@coker.com.au>, darren <teodarren@myrealbox.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Scott R. Every wrote:
 
-> Now, if we could just get reiserfs for OS X!  It would be so nice to 
-> have a firewire device which could work on linux and OS X.  Just 
-> missing a common FS.
->
-> Who should we bug to get this happening? Apple?
->
-> <ot>
-> Any opinions on the new journalling HFS+ filesystem that was added in 
-> 10.2.2
-> </ot>
->
-Funny you should mention that.....
+$ tar czvlf root.tgz /
+...
+tar: memory exhaused
 
-I gave them a 5.5 hour reiser4 presentation last month.  I don't know 
-yet if they will buy a reiser4 port (I hope so, it would be a lot of fun 
-to work with them, they aren't afraid to innovate....), but they did 
-make pretty darn sure they understood reiser4....  
+Hmmm.  The short story, tar dies on libz.so symlink.
 
-I bcc'd Dominic (the guy they hired from BeFS) just in case he finds 
-this thread interesting....;-)
+$ ls -l /usr/lib/libz.*
 
-BeFS also pushes the envelope in its own ways, so working with them 
-would be rather interesting.
+-rwxr-xr-x    1 root     root        72302 Jun  7 06:33 /usr/lib/libz.a*
+lrwxrwxrwx    1 root     root 687194767373 Jun  9 16:36 /usr/lib/libz.so -> 
+libz.so.1.1.4*
+lrwxrwxrwx    1 root     root           23 Jun  9 16:36 
+/usr/lib/libz.so.1.1.4 -> ../../lib/libz.so.1.1.4*
 
-Hans
+$ ls -l ../../lib/libz.*
+
+lrwxrwxrwx    1 root     root           13 Jun  9 16:36 ../../lib/libz.so.1 
+-> libz.so.1.1.4*
+-rwxr-xr-x    1 root     root        57584 Jun  7 06:33 
+../../lib/libz.so.1.1.4*
+
+I rebooted with init=/bin/bash
+"reiserfsck --check /dev/hda1" revealed no errors.
+
+Mandrake kernel 2.4.19-19mdk.
+reiserfsprogs-3.6.3-1mdk
+
+Should I just erase and remake the symlink?
+It wasn't like this in July (my last backup, *cough*).
+
+In the mean time, I will use tar's --exclude option...
+
+Thanks,
+Jason Mancini
+<jayrusman@hotmail.com>
+
+
+_________________________________________________________________
+Protect your PC - get McAfee.com VirusScan Online 
+http://clinic.mcafee.com/clinic/ibuy/campaign.asp?cid=3963
 
