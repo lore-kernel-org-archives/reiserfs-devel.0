@@ -1,95 +1,96 @@
-From: Humberto Massa <humberto.massa@almg.gov.br>
-Subject: Debian: reiser4 non-DFSG-free. !?!
-Date: Thu, 06 May 2004 16:23:17 -0300
-Message-ID: <409A90A5.30600@almg.gov.br>
-References: <kkKLVD.A.2NF.qPomAB@murphy>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Fwd: reiser4 non-free?
+Date: Thu, 06 May 2004 12:22:12 -0700
+Message-ID: <409A9064.6010209@namesys.com>
+References: <3971c4f493d64f3bde792f195de87deb@bouncing.localnet>	<409A8996.20809@namesys.com> <16538.35671.358031.600872@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18498-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18499-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <kkKLVD.A.2NF.qPomAB@murphy>
+In-Reply-To: <16538.35671.358031.600872@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
+To: Nikita Danilov <Nikita@Namesys.COM>
+Cc: MJ Ray <mjr@dsl.pipex.com>, debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-@ 06/05/2004 15:29 : wrote Hans Reiser :
+Vitaly, change the paragraph Nikita complained of to:
 
->I just modified the Reiser4 license to be the following:
+Continuing core development of ReiserFS is  mostly paid for by Hans 
+Reiser from
+money made selling licenses  in addition to the GPL to companies who 
+don't want
+it known that they use ReiserFS  as a foundation for their proprietary 
+product.  We
+thank those anonymous companies.  Hans Reiser and Namesys also perform
+consulting to companies who miscellaneous kernel work done, and we thank 
+those
+companies also.
+
+Nikita Danilov wrote:
+
+>Hans Reiser writes:
+> > MJ Ray wrote:
+> > 
+> > > On 2004-05-04 18:47:02 +0100 Hans Reiser <reiser@namesys.com> wrote:
+> > >
+> > >> Our licenses are free and not plagiarizable.  GPL V2 is plagiarizable 
+> > >> in the view of folks at debian who felt free to remove the credits.
+> > >
+> > >
+> > > Can someone give a conclusive statement of what actually happened? The 
+> > > bug report 152547 looks like someone moved an advert into the docs 
+> > > accompanying, rather than removed any attribution. Now, if you call 
+> > > that advert "the credits" then I think you have a different view to 
+> > > many people.
+> > 
+> > Show me the line in those credits where it said "buy Coca-Cola cheaper 
+> > here".  They were credits, not advertisements.
 >
->The Anti-Plagiarism License
+>----------------------------------------------------------------------
+>...
+>And my lawyer asked 'People pay you money for this?'.  Yup.  Hee Hee.
+>Life is good.  If you buy ReiserFS, you can focus on your value add
+>rather than reinventing an entire FS.  You should buy some free software
+>too....
+>----------------------------------------------------------------------
+>
+>If these are credits, then Coca-cola is gpled. This is just _noise_,
+>spewed on each invocation.
 >  
 >
-etc.
+Those sales make it possible every once in a long while to pay salaries....
 
-Mr. Heiser,
-
-I am a software developer, a paralegal, and a Debian user. Recently, 
-I've participated in various technical discussions in debian-devel and 
-in various licensing discussions in -legal. While I have sent you, both 
-by way of the lists and personally, some questions about the reasoning 
-of your licenses, you have up to the present moment refrained to answer me.
-
-I stated in those e-mails that I am a great admirer of your work. I 
-stated, also, that I agree with your concerns about plagiarism. I said, 
-moreover, that I think that your work and the other reiser[34] 
-contributors' work is important. Important to Debian. Important to the 
-Linux community. Important to the Linux users. It's certainly important 
-to me.
-
-What I don't understand is _why_ are you doing this in such a beligerant 
-manner. I repeat: please, let's work our differences out. Let us reach 
-consensus and move forward.
-
-Reading all the lists archives and bug reports, it appears to me that 
-(at least part of) the problem is the following: some of your filesystem 
-utilities displayed, unconditionally, a big (by some measure, but 
-greater than 3 lines) attribution of credits. This was too much to some 
-package maintainers, and they transferred said text to a file in the 
-documentation directory for the package. You filed a bug, the maintainer 
-gave you the shoulder, flames ensued, etc.
-
-I don't agree with you that this is plagiarism. I'm sorry to say, but, 
-in my dictionary (and in the jurisdiction I live in) plagiarism would 
-be, for instance, remove *all* the credit attributions in the packages, 
-or substituting them for some credits crediting the wrong person or 
-persons. In this case, here in Brasil at least, the person commiting 
-such acts would be subject to one to four years in jail and a fine.
-
-The legal part of this remembers me of another problem, with your old 
-"clarifications" over the GPL and with your new Anti-Plagiarism License: 
-it's a GPL-incompatible license ... for a work (reiser4) which is 
-derived from a GPL'd work (linux).
-
-This pretty much renders your product (reiser4) undistributable by any 
-person other than yourself. And, in principle, even by yourself. And I 
-think this is a very big loss.
-
-About the credits: if the credits attribution is too long to fit by the 
-standards of the package's maintainer (who is the proper authority in 
-the case, seemingly), what other solution there is? Just putting a line 
-like:
-
-"Many people contributed to this project. Please look: 
-/usr/share/doc/reiserfsprogs/CREDITS."
-
-is not enough? I mean, instead of the 20+ lines of the current display 
-in dispute? As someone noticed in debian-legal, many people leave the 
-theather before the credits roll. They know it's a (for instance) George 
-Lucas' movie, but they won't know the name of the cameramen. Isn't it 
-the same thing? If you want to see the credits, go and see them. It's 
-not like Debian did make them disappear.
-
-Now, I have only one question: is there a way you could back out in your 
-opinion and return to the old licensing for your products, provided a 
-consensus on moment and size of the credits attribution is reached? If 
-the answer is yes, I volunteer to mediate the discussions between you 
-and the affected package(s) maintainer(s).
-
--- 
-best regards,
-Humberto Massa
+> > 
+> > >
+> > > Their new condition clause 4, which says you cannot use their name, 
+> > > even for accurate reporting. Normally, this would just be a false 
+> > > statement, but this licence makes it a condition of the grant. I've 
+> > > not seen that mistake committed by anyone else yet.
+> > 
+> > Can you supply their full verbatim phrasing so that we can discuss it 
+> > accurately? I'd like to understand whether your characterization is correct.
+> > 
+> > >
+> > >> And call it a credit clause, not an advertising clause.  
+> > >> Advertisements sell products, credits describe who made the project 
+> > >> happen.
+> > >
+> > >
+> > > No, it is advertising for the XFree86 Project, Inc. In addition to 
+> > > acknowledging their copyright (the credit), that advert may have to 
+> > > appear.
+> > >
+> > You seem to understand the difference between credit and advertisement 
+> > as advertisements are credits for those you dislike.  If they are 
+> > putting their name on their software or its documentation, then surely 
+> > it is a credit not an advertisement.
+>
+>Nikita.
+>
+>
+>  
+>
 
