@@ -1,80 +1,82 @@
-From: Spam <spam@tnonline.net>
-Subject: Re: Congratulations! we have got hash function screwed up
-Date: Fri, 31 Dec 2004 00:25:38 +0100
-Message-ID: <144678391.20041231002538@tnonline.net>
-References: <77912E9FD42896419D1CEF15E1C397A58AFCF1@london.jaguarfreightservices.local>
- <m38y7gx8kq.fsf@merlin.emma.line.org>
- <20041230235911.4911a20c.hihone@bigpond.net.au>
- <m3sm5nj2ef.fsf@merlin.emma.line.org> <87is6jpvdu.fsf@quasar.esben-stien.name>
- <20041230174732.GB5206@favonius> <234966540.20041230192607@tnonline.net>
- <m3brcbqsz6.fsf@merlin.emma.line.org>
-Reply-To: Spam <spam@tnonline.net>
+From: Laurent Riffard <laurent.riffard@free.fr>
+Subject: Re: reiser4 for 2.6.10 and reiser4 update for 2.6.10-rc3-mm1
+Date: Fri, 31 Dec 2004 00:36:01 +0100
+Message-ID: <41D490E1.2000808@free.fr>
+References: <41B4A035.2020509@namesys.com> <1104430148.7086.11.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-22985-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="------------enig3449B93A0225A599AD95927B"
+Return-path: <reiserfs-list-return-22986-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <m3brcbqsz6.fsf@merlin.emma.line.org>
+In-Reply-To: <1104430148.7086.11.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: "reiserfs-dev@namesys.com" <reiserfs-dev@namesys.com>, reiserfs-list@namesys.com, grev@namesys.com
+
+--------------enig3449B93A0225A599AD95927B
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
+Hello,
 
-> Spam <spam@tnonline.net> writes:
+I applied reiser4-update-for-2.6.10-rc3-mm1-2.gz on top of my 
+2.6.10-rc3-mm1 tree and then tried to compile :
 
->>   In any case. Undelete has been since ages on many platforms. It IS a
->>   useful feature. Accidents CAN happen for many reasons and in some
->>   cases you may need to recover data.
->>
->>   Besides, a deletion does not fully remove the data, but just unlinks
->>   it. In Reiser where there is tailing etc for small files this can be
->>   a problem. Either the little file might not be able to be recovered
->>   (shouldn't the data still exist, even if it is tailed), or the user
->>   need to use a non-tailing policy?
+linux-2.6$ make
+[...]
+  Building modules, stage 2.
+  MODPOST
+*** Warning: "find_get_pages" [fs/reiser4/reiser4.ko] undefined!
+*** Warning: "find_get_pages_tag" [fs/reiser4/reiser4.ko] undefined!
+  LD [M]  fs/reiser4/reiser4.ko
 
-> A working undelete can either hog disk space or die the moment some
-> large write comes in. And if you're at that point, make it a versioning
-> file system - but then don't complain about space efficiency.
+linux-2.6$ grep REISER4 .config
+CONFIG_REISER4_FS=m
+# CONFIG_REISER4_CHECK is not set
 
-  Yes, When data is overwritten then it is overwritten. The longer the
-  user waits to try to recover data, the more risk of this happening.
-  Undelete has existed a long time and people know it is not a
-  foolproof thing. I do not think anyone asked for automatic backup
-  features, but just tools that can try to recover accidental deletions.
+The following patch fixed it :
 
->>   well, overwritten data is not so easy to get back. But from what I
->>   understand in Linux, is that many applications actually write
->>   another file and then unlinks the old file? If that is the case then
->>   it may even be possible to get back some overwritten files!
+--- linux-2.6/mm/filemap.c~	2004-12-13 22:15:33.074988832 +0100
++++ linux-2.6/mm/filemap.c	2004-12-31 00:20:21.760733816 +0100
+@@ -636,6 +636,7 @@ unsigned find_get_pages(struct address_s
+ 	read_unlock_irq(&mapping->tree_lock);
+ 	return ret;
+ }
++EXPORT_SYMBOL(find_get_pages);
+ 
+ /*
+  * Like find_get_pages, except we only return pages which are tagged with
+@@ -657,6 +658,7 @@ unsigned find_get_pages_tag(struct addre
+ 	read_unlock_irq(&mapping->tree_lock);
+ 	return ret;
+ }
++EXPORT_SYMBOL(find_get_pages_tag);
+ 
+ /*
+  * Same as grab_cache_page, but do not wait if the page is unavailable.
 
-> I see enough applications to just overwrite an output file.=20
 
-  Yes, This was an example only.
+~~
+laurent
 
-  In any case. If there were tools that could scan and recover, even
-  partly, deleted files then I would welcome them. I am sure lots of
-  other people do too.
 
-  It is very easy to say you need backups of your data, that you need
-  versioning filesystems etc. But not all of this is possible for
-  everyone. Just take a laptop as example. Making backups is not so
-  easy to do frequently - especially not when traveling.
+--------------enig3449B93A0225A599AD95927B
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-  Sure, if you run in a corporate environment you can do shadow
-  copying or use other versioning systems and mount that over the
-  network. But for the normal "home" or "small business" users this is
-  not really what you can expect...
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
 
-> This whole discussion doesn't belong here until someone talks about
-> implementing a whole versioning system for reiser4.
+iD8DBQFB1JDtUqUFrirTu6IRAnKyAKCaQUNHLfd0pgF/2QRHpZLTSZyAXQCfVsIf
+qEmUgNwAPyrtlK+pbaNOkJY=
+=fajq
+-----END PGP SIGNATURE-----
 
-  I think someone said they wanted undelete recovery features in
-  reiser4 - which was what started this discussion?
-
-=B4
-
---=20
-
+--------------enig3449B93A0225A599AD95927B--
