@@ -1,69 +1,86 @@
-From: Brian Thomas Sniffen <bts@alum.mit.edu>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: reiser4 non-free?
-Date: Thu, 06 May 2004 12:43:44 -0400
-Message-ID: <877jvpy08v.fsf@aule.evenmere.org>
-References: <4097CCA4.4060707@namesys.com> <87fzag139k.fsf@aule.evenmere.org>
-	<4099A868.9030406@slaphack.com>
-	<20040506.083242.41632888.wlandry@ucsd.edu>
-	<87k6zpy8ke.fsf@aule.evenmere.org>
-	<20040506143643.GB25505@raptus.homelinux.org>
+Date: Thu, 06 May 2004 11:10:32 -0700
+Message-ID: <409A7F98.7040609@namesys.com>
+References: <4097CCA4.4060707@namesys.com> <87fzag139k.fsf@aule.evenmere.org>	<4099A868.9030406@slaphack.com>	<20040506.083242.41632888.wlandry@ucsd.edu>	<87k6zpy8ke.fsf@aule.evenmere.org>	<20040506143643.GB25505@raptus.homelinux.org> <877jvpy08v.fsf@aule.evenmere.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18489-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18490-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040506143643.GB25505@raptus.homelinux.org> (Domenico
- Andreoli's message of "Thu, 6 May 2004 16:36:43 +0200")
+In-Reply-To: <877jvpy08v.fsf@aule.evenmere.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiser@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Brian Thomas Sniffen <bts@alum.mit.edu>
 Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-Domenico Andreoli <cavok@debian.org> writes:
+I just modified the Reiser4 license to be the following:
 
-> On Thu, May 06, 2004 at 09:44:01AM -0400, Brian Thomas Sniffen wrote:
->> Walter Landry <wlandry@ucsd.edu> writes:
->> 
->> > David Masover <ninja@slaphack.com> wrote:
->> >> First and foremost:  Hans, this is your project.  Someone willing to
->> >> replace entire APIs with things that feel like files is obviously not
->> >> afraid of creating something new.  So at the end of the day, it
->> >> shouldn't matter too much that it's in Debian Non-free, especially if
->> >> (assuming I heard correctly) XFree86 is also non-free.
->> >
->> > People seem to be missing this issue, so I'll bring it up again.  The
->> > problem is not so much whether the license is free or not.  The
->> > problem is that it is incompatible with the GPL.  That means that
->> > Debian can't distribute it _at all_.  Not in main, not in non-free.
->> > Not at all.
->> >
->> > The license may be perfectly free (e.g. the IBM CPL), but if it is
->> > incompatible with the GPL, then Debian can't distribute it.
->> 
->> You're right, Walter, and thank you for the clarification.  To clarify
->> further, Debian can't distribute a derivative work of the Linux kernel
->> which is not licensed under the GPL.
->
-> if linux kernel distributes itself such a derivative work why debian
-> can't?
+The Anti-Plagiarism License
 
-Someone who is the sole copyright holder of the Linux Kernel can
-distribute it linked with some other program which is not under a
-GPL-compatible license.  But nobody is in that position.
+Pre-amble:
 
-It is not Debian's business to attempt to control what the kernel
-folks do -- we're all grateful for shier contributions, and that's
-about that.
+At the time of writing (2004), distros commonly remove, diminish, or obscure
+the credits of original authors from many programs so as to ensure that the
+user has brand awareness primarily of the distro. They have a strong
+marketing incentive to do so, and there is no shame shown by them in the 
+act.
+This is a very real problem which has already affected many programs
+(e.g. KDE, ReiserFS, many others). Western academia has a strong 
+tradition of
+opposing plagiarism, and there are good societal reasons for ensuring that
+persons are known for what they have done with precision. Individual users
+don't benefit as significantly from knowing who produced their software, and
+so one cannot say that there is a market demand for better credits that is
+sufficient to overpower the desire of the distros to be the only source 
+users
+know of to turn to for all their needs. While individuals may not be well
+motivated to ensure prominent and full crediting, society as a whole is.
+Crediting is a powerful incentive to produce good works, and many have 
+written
+about the power of fame as a motivator for producing free software. Society
+needs accuracy in its recognition of its contributors.
 
-Reiser can distribute his filesystem and tools, because they depend
-only on components included with the OS, and others can redistribute
-for the same reason -- but Debian, as an OS distributor, can't do
-that.  It's part of why we require OpenSSL-targeted license extensions
-from GPL'd work which links against libcrypto.
+The License: The Anti-plagiarism license is the Gnu Public License Version 2
+with the following modification: you may not modify, remove, or obscure any
+credits in the software unless your modification causes those credits to 
+remain
+equally prominent and to retain their wording. You are not required to 
+display
+the credits if the computer has no effective display mechanism, or if 
+you do not
+distribute the software to others.
 
--Brian
+FAQ:
 
--- 
-Brian Sniffen                                       bts@alum.mit.edu
+Q: Will this license lead to ads?
+
+A: No, credits describe the contribution made to a project. Ads describe a
+product someone wants you to buy. Ads are not the same as credits, and their
+preservation is not protected by this license.
+
+Q: Can we the distro preserve the credits but send the credits to /dev/null.
+
+A: No. How can you even ask such a question?
+
+Q: Can I change the font? Can I move the credits to a different moment 
+in the
+user interaction to suit my installer?
+
+A: Yes, if you make sure the credits make an equally effective/frequent
+impression on the user. If you have doubts about whether your changes are
+fair, be courteous and ask the author and you'll find that most authors are
+reasonable.
+
+Q: What in this license prevents persons from making their name display
+excessively annoyingly throughout the running of the program? Isn't that a
+flaw in the license?
+
+A: The shovel doesn't stop the digger from creating a pit in the road that
+endangers other people. The license is a tool. Whether you make an ass out
+of yourself using it on the software you write is up to you. No compiler 
+makes
+broken programs work....
+
