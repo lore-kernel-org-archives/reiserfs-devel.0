@@ -1,46 +1,92 @@
-From: Andreas Dilger <adilger@clusterfs.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Object Oriented FS
-Date: Mon, 27 Oct 2003 11:56:22 -0700
-Message-ID: <20031027115622.A17778@schatzie.adilger.int>
-References: <200310271604.h9RG4D3h008698@eastgate.starhub.net.sg> <3F9D629A.6050508@namesys.com>
+Date: Mon, 27 Oct 2003 22:01:12 +0300
+Message-ID: <3F9D6B78.2090001@namesys.com>
+References: <200310271843.KAA08513@amber.he.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15904-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15905-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3F9D629A.6050508@namesys.com>; from reiser@namesys.com on Mon, Oct 27, 2003 at 09:23:22PM +0300
+In-Reply-To: <200310271843.KAA08513@amber.he.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: darren <teodarren@myrealbox.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Mike Young <myoung@wildernessvoice.com>
+Cc: 'darren' <teodarren@myrealbox.com>, reiserfs-list@namesys.com
 
-On Oct 27, 2003  21:23 +0300, Hans Reiser wrote:
-> darren wrote:
-> > allows very high throughput by scaling
+Mike Young wrote:
+
+>Hans,
 >
-> Do you know what that  means?  (Seriously, I don't....)
+>Do you believe this is just a marketing convention to refer to a file-system
+>as an object oriented one? 
+>
+No.  Also, note that they aren't saying the fs is object oriented, they 
+are saying the storage system is not a block device but an object server.
 
-Panasas (from what little I have seen of it) looks to be very similar to
-Lustre.  Clients do not access disks directly, but rather have a mapping
-layer between offsets and actual data on disk (similar to LVM and VM
-abstractions of block devices/memory).  Once client has this mapping (very
-small in lustre, on the order of a few hundred bytes at most), it
-can do IO directly to one or more storage devices hence scaling of
-throughput proportional to number of storage targets.
+> Bear in mind that Microsoft is supposed to
+>enrich their NTFS with object support from SQL Server in their next OS.
+>
+Reiser4 and MS are talking about different layers than Panassas when we 
+talk about being object oriented.  MS objects and Reiser4 plugins might 
+be similar notions, I am not an NTFS expert.....
 
-In Lustre at least, the client knows nothing about the physical layout of
-blocks in the file on disk, but rather just accesses one or more objects
-via object identifyer, offset, length so the actual layout of the on disk
-data can change.
+>  The
+>code name for this is Longhorn.
+>
+>I really can't tell what this means to a file system in terms of support.
+>It sounds like it's intended to provide support for really large numbers of
+>files in a single directory
+>
+Uh, reiser4 does that without objects having anything to do with it.  
+Large numbers of files in a single directory means one should use trees 
+not linear searches.....
 
-Lustre is GPL, don't know about Panasas.
+> vs. nested ones.  But I'm just not sure.  Do you
+>see a limitation, going forward, with Reiser4 and large numbers of files?
+>  
+>
+We have trouble with more than 2^60 files in the filesystem. 
 
-Cheers, Andreas
---
-Andreas Dilger
-http://sourceforge.net/projects/ext2resize/
-http://www-mddsp.enel.ucalgary.ca/People/adilger/
+;-)
+
+An interesting question though is at how many files in a directory being 
+read does dcache start to croak and sys_reiser4 becomes a performance 
+necessity....?  Maybe in a few weeks Mr. Demidov can measure that.
+
+>Thanks,
+>
+>Mike
+>
+>-----Original Message-----
+>From: Hans Reiser [mailto:reiser@namesys.com] 
+>Sent: Monday, October 27, 2003 10:23 AM
+>To: darren
+>Cc: reiserfs-list@namesys.com
+>Subject: Re: Object Oriented FS
+>
+>darren wrote:
+>
+>  
+>
+>>allows very high
+>>throughput by scaling
+>>
+>>
+>>
+>> 
+>>
+>>    
+>>
+>Do you know what that  means?  (Seriously, I don't....)
+>
+>  
+>
+
+
+-- 
+Hans
+
 
