@@ -1,39 +1,34 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: iozone reality check: was zam, please discuss this
-Date: Thu, 24 Jun 2004 00:11:20 -0700
-Message-ID: <40DA7E98.1070707@namesys.com>
-References: <40D8EB0D.6050109@namesys.com> <20040623063049.GA5080@backtop.namesys.com> <40DA58BC.1060203@namesys.com> <40D9C5F5.7010605@comcast.net> <40DA62E0.2050803@namesys.com> <40D9CDC0.30503@comcast.net>
+Subject: Re: we need a slogan for our reiser4 t-shirt
+Date: Thu, 24 Jun 2004 00:14:22 -0700
+Message-ID: <40DA7F4E.1050700@namesys.com>
+References: <3DF9165145FACB4C96977FF650C1E9040C46A0A2@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19318-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19319-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40D9CDC0.30503@comcast.net>
+In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C46A0A2@its-mail1.its.corp.gwl.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: George Beshers <gbeshers@comcast.net>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: "Burnes, James" <james.burnes@gwl.com>
+Cc: Marcel Hilzinger <marcel@hilzinger.hu>, reiserfs-list@namesys.com
 
-George Beshers wrote:
+Burnes, James wrote:
 
+>How about,
+>
+>"Plug-in To Reiser4!"
 >
 >
-> Hans Reiser wrote:
+>jim burnes
+>security engineer
+>great-west, denver
+> 
 >
->>
->> When you say lots, do you mean close to or more than physical ram?
->>
-> My recollection is that it was on the order of 70% of physical ram; there
-> was significant other activity on the system so it was getting flushed to
-> disk some of the time, but I was not actually measuring that.  I was 
-> looking
-> at cache-coherency across processor nodes and noticed that most of
-> the pages in the mmap'd area were touched (modified).
+>  
 >
->
->
->
->
-Ok, this qualifies as an app where it matters.
+Sounds like an ad, we want a t-shirt people want to wear.  Maybe, "My 
+filesystem is faster than yours...."?
