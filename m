@@ -1,98 +1,137 @@
-From: Spam <spam@tnonline.net>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Fri, 3 Sep 2004 23:50:05 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <7410262046.20040903235005@tnonline.net>
-References: <helge.hafting@hist.no> <413829DF.8010305@hist.no>
- <200409031741.i83HfASY017164@laptop11.inf.utfsm.cl>
- <518050016.20040903213038@tnonline.net>
- <20040903210757.GK32697@ZenIV.linux.org.uk>
-Reply-To: Spam <spam@tnonline.net>
+From: =?ISO-8859-1?Q?Xu=E2n_Baldauf?=
+ <xuan--2004.09.03--reiserfs-list--namesys.com@baldauf.org>
+Subject: BUG|crash
+Date: Sat, 04 Sep 2004 00:57:29 +0200
+Message-ID: <4138F6D9.6060606@baldauf.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040903210757.GK32697@ZenIV.linux.org.uk>
+Return-path: <reiserfs-list-return-21448-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Chris Dukes <pakrat@www.uk.linux.org>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Helge Hafting <helge.hafting@hist.no>, Oliver Hunt <oliverhunt@gmail.com>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Reiserfs List <reiserfs-list@namesys.com>
+
+Hello,
+
+when connecting a digital camera using usb-storage in order to download 
+photos, there is a good chance to lock-up the machine with a stack trace 
+where reiserfs is involved. I first suspected bad memory, but the 
+problem persists after removing slower memory and still running with 
+conservative memory timings. memtest does not show any errors. Kernel is 
+2.6.8.1. This is such a stack trace:
 
 
-  
-
-> On Fri, Sep 03, 2004 at 09:30:38PM +0200, Spam wrote:
->> 
->>   
->> 
->> > Helge Hafting <helge.hafting@hist.no> said:
->> 
->> > [...]
->> 
->> >> The only new thing needed is the ability for something to be both
->> >> file and directory at the same time.
->> 
->> > Then why have files and directories in the first place?
->> 
->>   Good point, we don't need them :) Directories are just a visible
->>   grouping of files to make it easier for the user to manage. But some
->>   things aren't really that intuitive with todays layout - especially
->>   for non-unix users.
->> 
->>   Just an example where the user needs to edit config file for some
->>   program. Where should he look?
->>   /etc/app.conf ?
->>   /etc/app/app.conf ?
->>   /etc/conf.d/app.conf ?
->>   /var/lib/app/app.conf ?
->>   and so on....
->> 
->>   Using file-as-dir isn't really that much of a change. It isn't those
->>   that will confuse people anyway.
->> 
-
-> If the non-computer literate user is expected to edit the config file,
-> a pretty interface that hides the internals from the user should be provided.
-> For the sake of power users, users that believe themselves to be power users,
-> and configuration changes on multiple systems.
-> 1) Track the location of the config file with the native package management
-> system.
-> 2) Keep a human readable/editable format.
-> 3) Provide APIs or schema so that the files may be parsed for correctness,
-> or edited or created programatically.
-> 4) Provide a tool that not only checks for a parseable file, but does
-> sanity checks such as (Does file exist).
-
-> I'm at a loss as to how any of this has anything to do with filesystems.
-> The closest I see is one implementation of the above (gconf2) happens to
-> use the filesystem for it's default hierarchical database backend.
-
-  The relevance was as to the presentation of meta-data, streams and
-  such and their implication on users.
-
-  I just used the example of config files because there are not so
-  much of a standard among them. Administrators still need to learn
-  and remember where and what to backup. This wouldn't be so much of a
-  change if they decide to introduce some usage for meta-data or named
-  streams.
-
-  Remember, even if the functionality exist you do not have to use
-  everything of it.
-  
-> As for developers that are too stupid/lazy to provide the GUI and meet
-> the other criteria...  I suggest extensive use of cattle prods on
-> them as they attend an automata class.
-
-  Lets all start with the bash(ing) ;).
-
-  But really. What you say is true. The users do not care so much
-  about what is going on below the curtains. Here is where the clash
-  between different groups of Linux users and developers appear most
-  vivid.
-
-  Sure KDE and Gnome are on their way, but their efforts still have a
-  long way to go. They still don't talk to eachother to strive for a
-  comon goal - but competes instead (which may even be a good thing).
-
-  ~S
-
+Sep  4 00:28:13 router kernel: usb 1-2: new full speed USB device using 
+address 2
+Sep  4 00:28:13 router kernel: usb 1-2: Product: USB Mass Storage
+Sep  4 00:28:13 router kernel: usb 1-2: SerialNumber: 
+Y-558^^^^^031106XFPX0009029074
+Sep  4 00:28:14 router /etc/hotplug/usb.agent[7248]: need a device for 
+this command
+Sep  4 00:28:20 router kernel: Initializing USB Mass Storage driver...
+Sep  4 00:28:20 router kernel: scsi0 : SCSI emulation for USB Mass 
+Storage devices
+Sep  4 00:28:20 router kernel:   Vendor: FUJIFILM  Model: 
+USB-DRIVEUNIT     Rev: 1.00
+Sep  4 00:28:20 router kernel:   Type:   
+Direct-Access                      ANSI SCSI revision: 02
+Sep  4 00:28:20 router kernel: SCSI device sda: 256000 512-byte hdwr 
+sectors (131 MB)
+Sep  4 00:28:20 router kernel: sda: assuming Write Enabled
+Sep  4 00:28:20 router kernel: sda: assuming drive cache: write through
+Sep  4 00:28:20 router kernel:  /dev/scsi/host0/bus0/target0/lun0: p1
+Sep  4 00:28:20 router /etc/hotplug/block.agent[7334]: try 1 while 
+waiting for /block/sda's bus_id 0:0:0:0
+Sep  4 00:28:20 router kernel: Attached scsi removable disk sda at 
+scsi0, channel 0, id 0, lun 0
+Sep  4 00:28:20 router kernel: Attached scsi generic sg0 at scsi0, 
+channel 0, id 0, lun 0,  type 0
+Sep  4 00:28:20 router kernel: usbcore: registered new driver usb-storage
+Sep  4 00:28:20 router kernel: USB Mass Storage support registered.
+Sep  4 00:28:21 router /etc/hotplug/block.agent[7350]: new block device 
+/block/sda/sda1
+Sep  4 00:28:21 router /etc/hotplug/block.agent[7334]: waiting for 
+/var/lock/block.agent.lock, process 7350 holds it
+Sep  4 00:28:30 router /etc/hotplug/block.agent[7350]: mount 
+by-path/usb-storage-Y558^^^^^031106XFPX0009029074:0:0:0p1
+Sep  4 00:28:30 router kernel: subfs 0.9
+Sep  4 00:28:30 router /etc/hotplug/block.agent[7334]: new block device 
+/block/sda
+Sep  4 00:30:00 router /USR/SBIN/CRON[7660]: (root) CMD ( test -x 
+/usr/lib/cron/run-crons && /usr/lib/cron/run-crons )
+Sep  4 00:35:41 router kernel: ------------[ cut here ]------------
+Sep  4 00:35:41 router kernel: kernel BUG at fs/reiserfs/journal.c:1455!
+Sep  4 00:35:41 router kernel: invalid operand: 0000 [#1]
+Sep  4 00:35:41 router kernel: PREEMPT
+Sep  4 00:35:41 router kernel: Modules linked in: snd_mixer_oss snd 
+soundcore nls_iso8859_15 nls_cp437 vfat fat subfs usb_storage lp 
+ethertap joydev sg sr_mod ide_cd cdrom floppy nvram ipt_MASQUERADE 
+ipt_TCPMSS ipt_TOS ipt_length iptable_mangle ip_nat_ftp ip_conntrack_ftp 
+ipt_REJECT iptable_filter iptable_nat nls_cp850 ip_conntrack 
+nls_iso8859_1 ip_tables smbfs freq_table pppoe pppox parport_pc via_agp 
+uhci_hcd parport agpgart af_packet ppp_generic 8139too mii usbcore crc32 
+hisax isdn slhc sd_mod scsi_mod softdog evdev rtc capability commoncap 
+psmouse pcips2 md5 ipv6 8250 serial_core unix
+Sep  4 00:35:41 router kernel: CPU:    0
+Sep  4 00:35:41 router kernel: EIP:    
+0060:[dirty_one_transaction+71/128]    Not tainted
+Sep  4 00:35:41 router kernel: EIP:    0060:[<c01b7947>]    Not tainted
+Sep  4 00:35:41 router kernel: EFLAGS: 00010246   (2.6.8.1)
+Sep  4 00:35:41 router kernel: EIP is at dirty_one_transaction+0x47/0x80
+Sep  4 00:35:41 router kernel: eax: 00000000   ebx: c822e120   ecx: 
+3d646967   edx: c822e240
+Sep  4 00:35:41 router kernel: esi: c5c602e0   edi: 00000001   ebp: 
+c11a9e30   esp: c11a9e2c
+Sep  4 00:35:41 router kernel: ds: 007b   es: 007b   ss: 0068
+Sep  4 00:35:41 router kernel: Process pdflush (pid: 44, 
+threadinfo=c11a8000 task=c776cb70)
+Sep  4 00:35:41 router kernel: Stack: c80f3000 c11a9e64 c01b6e53 
+c63ed000 c6643000 00000282 c6643000 c5c602f8
+Sep  4 00:35:41 router kernel:        00000001 c111c600 c4858b74 
+00000000 00000000 c111c600 c11a9ed4 c01bba0c
+Sep  4 00:35:41 router kernel:        c5c603e0 00002012 c6643000 
+c62b42b8 c5c602f8 c11a8000 000003fa 000022a3
+Sep  4 00:35:41 router kernel: Call Trace:
+Sep  4 00:35:41 router kernel:  [show_stack+155/176] show_stack+0x9b/0xb0
+Sep  4 00:35:41 router kernel:  [<c01061db>] show_stack+0x9b/0xb0
+Sep  4 00:35:41 router kernel:  [show_registers+277/368] 
+show_registers+0x115/0x170
+Sep  4 00:35:41 router kernel:  [<c0106325>] show_registers+0x115/0x170
+Sep  4 00:35:41 router kernel:  [die+130/240] die+0x82/0xf0
+Sep  4 00:35:41 router kernel:  [<c0106492>] die+0x82/0xf0
+Sep  4 00:35:41 router kernel:  [do_invalid_op+156/160] 
+do_invalid_op+0x9c/0xa0
+Sep  4 00:35:41 router kernel:  [<c01067dc>] do_invalid_op+0x9c/0xa0
+Sep  4 00:35:41 router kernel:  [error_code+45/64] error_code+0x2d/0x40
+Sep  4 00:35:41 router kernel:  [<c0105e2d>] error_code+0x2d/0x40
+Sep  4 00:35:41 router kernel:  [flush_commit_list+547/1008] 
+flush_commit_list+0x223/0x3f0
+Sep  4 00:35:41 router kernel:  [<c01b6e53>] flush_commit_list+0x223/0x3f0
+Sep  4 00:35:41 router kernel:  [do_journal_end+2796/2864] 
+do_journal_end+0xaec/0xb30
+Sep  4 00:35:41 router kernel:  [<c01bba0c>] do_journal_end+0xaec/0xb30
+Sep  4 00:35:41 router kernel:  [journal_end_sync+55/128] 
+journal_end_sync+0x37/0x80
+Sep  4 00:35:41 router kernel:  [<c01ba597>] journal_end_sync+0x37/0x80
+Sep  4 00:35:41 router kernel:  [reiserfs_sync_fs+75/144] 
+reiserfs_sync_fs+0x4b/0x90
+Sep  4 00:35:41 router kernel:  [<c01a3c2b>] reiserfs_sync_fs+0x4b/0x90
+Sep  4 00:35:41 router kernel:  [sync_supers+206/224] sync_supers+0xce/0xe0
+Sep  4 00:35:41 router kernel:  [<c015a45e>] sync_supers+0xce/0xe0
+Sep  4 00:35:41 router kernel:  [wb_kupdate+49/272] wb_kupdate+0x31/0x110
+Sep  4 00:35:41 router kernel:  [<c013d041>] wb_kupdate+0x31/0x110
+Sep  4 00:35:41 router kernel:  [__pdflush+236/528] __pdflush+0xec/0x210
+Sep  4 00:35:41 router kernel:  [<c013da9c>] __pdflush+0xec/0x210
+Sep  4 00:35:41 router kernel:  [pdflush+30/32] pdflush+0x1e/0x20
+Sep  4 00:35:41 router kernel:  [<c013dbde>] pdflush+0x1e/0x20
+Sep  4 00:35:41 router kernel:  [kthread+133/176] kthread+0x85/0xb0
+Sep  4 00:35:41 router kernel:  [<c012c985>] kthread+0x85/0xb0
+Sep  4 00:35:41 router kernel:  [kernel_thread_helper+5/16] 
+kernel_thread_helper+0x5/0x10
+Sep  4 00:35:41 router kernel:  [<c0103265>] kernel_thread_helper+0x5/0x10
+Sep  4 00:35:41 router kernel: Code: 0f 0b af 05 5e b9 30 c0 8b 13 85 d2 
+74 06 0f ba 32 0d 8b 13
 
