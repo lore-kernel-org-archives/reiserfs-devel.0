@@ -1,46 +1,40 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: reiser4 plugins (was: silent semantic changes with reiser4)
-Date: Thu, 26 Aug 2004 15:40:34 +0200
-Message-ID: <20040826134034.GA1470@lst.de>
-References: <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com> <20040826014542.4bfe7cc3.akpm@osdl.org> <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <1093527307.11694.23.camel@leto.cs.pocnet.net>
+From: Jamie Lokier <jamie@shareable.org>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 26 Aug 2004 14:48:12 +0100
+Message-ID: <20040826134812.GB5733@mail.shareable.org>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <20040825203516.GB4688@backtop.namesys.com> <20040825205149.GA17654@lst.de> <412DA2CF.2030204@namesys.com> <20040826124119.GA431@lst.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20672-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20673-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1093527307.11694.23.camel@leto.cs.pocnet.net>
+In-Reply-To: <20040826124119.GA431@lst.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Saout <christophe@saout.de>
-Cc: Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, Alex Zarochentsev <zam@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, Aug 26, 2004 at 03:35:07PM +0200, Christophe Saout wrote:
-> > If you want your
-> > filesystem core portable it does to a certain extent make sense to
-> > abstract them out, but as someone who's worked on a few such 'portable'
-> > filesystems I can tell you that it doesn't work out as expected.
+Christoph Hellwig wrote:
+>  you need to fstat after open to really check that no one swtiched the
+>  path below you to a fifo or device, O_DIRECTORY gets that directly in
+>  the open call, with the additional benefit of making sure you don't
+>  get any of the sideeffects at all that would happen if you're opening
+>  a device file.
 > 
-> That's your opinion. reiser4 seems to work very well.
+>  the current reiser4 semantics break that and as soon as you're having a
+>  world-writeable (e.g. /tmp) dir on it and someone is doing an opendir
+>  on it he's lost.
 
-So how many OSes is it ported to currently?  The problem is not that it
-doesn't work but that it's really hard to maintain.  And remember that
-this maintaince overhead is not just for Hans but for everyone that does
-VFS-level work.  Unless of course we get a blanko permission to break it
-as soon as fixing the mess becomes non-trivial.
+How does the current reiser4 semantics break that?
 
-> What I understood is that you can select exactly one plugin that e.g.
-> handles the file data. The default plugin is optimized for normal files,
-> another one could implement transparent compression or encryption. Some
-> of these plugins also give the storage layer hints how to group files
-> together to optimized performance. Neither of these things mess with the
-> VFS.
+In a reiser4 filesystem, a file _is_ a directory.
+opendir() is supposed to succeed on it.
 
-compression or encryption must sit below the pagecache to work nicely,
-and this hint things that usually sit at the pagecache level.  But let's
-assume you have a valid use for different file_operations, why don't you
-simply add in different file_operations instead of adding another
-internal dispatch layer?  
+There's bound to be some security issue, but I'm not sure what you're
+getting at with /tmp.  What sort of sort of security problem arises
+with a world-writeable directory such as /tmp, that cannot arise with
+the standard fs semantics?
 
+-- Jamie
