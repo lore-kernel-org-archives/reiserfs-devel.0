@@ -1,64 +1,68 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: when is it decided that extent pointer is to be created in reiser4
-Date: Mon, 21 Feb 2005 10:24:23 -0800
-Message-ID: <421A2757.4000408@namesys.com>
-References: <20050221172615.70993.qmail@web60109.mail.yahoo.com>
+From: Alex Adriaanse <alex.adriaanse@gmail.com>
+Subject: Re: Odd data corruption problem with LVM/ReiserFS
+Date: Mon, 21 Feb 2005 15:28:51 -0600
+Message-ID: <93ca306705022113287f424edb@mail.gmail.com>
+References: <93ca3067050220212518d94666@mail.gmail.com>
+	<20050221151852.GE14097@agk.surrey.redhat.com>
+Reply-To: Alex Adriaanse <alex.adriaanse@gmail.com>,
+	device-mapper development <dm-devel@redhat.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <20050221172615.70993.qmail@web60109.mail.yahoo.com>
+In-Reply-To: <20050221151852.GE14097@agk.surrey.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Pallavi Dalya <pallavidalya@yahoo.com>
-Cc: reiser-list mailing <reiserfs-list@namesys.com>
+List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
+	<mailto:dm-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/dm-devel>
+List-Post: <mailto:dm-devel@redhat.com>
+List-Help: <mailto:dm-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
+	<mailto:dm-devel-request@redhat.com?subject=subscribe>
+Sender: dm-devel-bounces@redhat.com
+Errors-To: dm-devel-bounces@redhat.com
+Content-Type: text/plain; charset="us-ascii"
+To: Alasdair G Kergon <agk@redhat.com>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, dm-devel@redhat.com
 
-Pallavi Dalya wrote:
+Alasdair,
 
->hello,
->
->     as far as i know tree based file systems use
->extents for managing free space. does reiser4 use a
->bitmap based method or extents to keep track of used
->and free blocks.
->  
->
-bitmap.
+Thanks for the tips.  Do you think it's possible DM's snapshots
+could've caused this corruption, or do you think the problem lies
+elsewhere?
 
->      another issue is that when i tried storing a
->small file an extent pointer was created for the file
->which was also the case for a large file. but to my
->knowledge extent pointers are created for large files
->and in some file systems there is a fixed limit to the
->file size after which it is assigned an extent
->pointer.
->  
->
-we store in formatted nodes until the file reaches ~16k in size.
+Alex
 
->wat is the policy used in reiser4 to decide which
->files should be stored using extent pointers and which
->should not.
->      also from what i have observed each file has a
->unique key representing it in reiser4. is there any
->specific key generation algorithm for file names and
->if yes where could i find it. is it possible that
->instead of passing single file names to the key
->generation algorithms we could pass the entire path to
->generate a unique key.
->  
->
-If you have a limit on the path length, or you make keys variable in 
-length, yes.
 
->________________________________________________________________________
->Yahoo! Messenger - Communicate instantly..."Ping" 
->your friends today! Download Messenger Now 
->http://uk.messenger.yahoo.com/download/index.html
+On Mon, 21 Feb 2005 15:18:52 +0000, Alasdair G Kergon <agk@redhat.com> wrote:
+> On Sun, Feb 20, 2005 at 11:25:37PM -0600, Alex Adriaanse wrote:
+> > This morning was the first time my backup script took
+> > a snapshot since upgrading to 2.6.10-ac12 (yesterday I had taken a few
+> > snapshots myself for testing purposes, this seemed to work fine).
+> 
+> a) Activating a snapshot requires a lot of memory;
+> 
+> b) If a snapshot can't get the memory it needs you have to back it
+> out manually (using dmsetup - some combination of resume, remove &
+> possibly reload) to avoid locking up the volume - what you have to do
+> depends how far it got before it failed;
+> 
+> c) You should be OK once a snapshot is active and its origin has
+> successfully had a block written to it.
+> 
+> Work is underway to address the various problems with snapshot activation
+> - we think we understand them all - but until the fixes have worked their
+> way through, unless you've enough memory in the machine it's best to avoid
+> them.
+> 
+> Suggestions:
+>   Only do one snapshot+backup at once;
+>   Make sure logging in as root and using dmsetup does not depend on access
+>   to anything in /var or /home (similar to the case of hard NFS mounts with
+>   the server down) so you can still log in;
+> 
+> BTW Also never snapshot the root filesystem unless you've mounted it noatime
+> or disabled hotplug etc. - e.g. the machine can lock up attempting to
+> update the atime on /sbin/hotplug while writes to the filesystem are blocked
+> 
+> Alasdair
+> --
+> agk@redhat.com
 >
->
->  
->
-
