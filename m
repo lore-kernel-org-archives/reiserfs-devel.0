@@ -1,61 +1,65 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: labels like those in gmail
-Date: Thu, 09 Sep 2004 17:53:07 -0700
-Message-ID: <4140FAF3.1000805@namesys.com>
-References: <f18a8d9804090913107d67b94d@mail.gmail.com>
+From: "David Dabbs" <david@dabbs.net>
+Subject: RE: [RFC] Pathname Semantics with //
+Date: Thu, 9 Sep 2004 20:37:27 -0500
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040910013246.BF49B15ED9@mail03.powweb.com>
+References: <20040909230333.GB8464@mail.shareable.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21655-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <f18a8d9804090913107d67b94d@mail.gmail.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20040909230333.GB8464@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: bedros@computer.org
-Cc: reiserfs-list@namesys.com, Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+Content-Type: text/plain; charset="us-ascii"
+To: 'Jamie Lokier' <jamie@shareable.org>, 'Christian Mayrhuber' <christian.mayrhuber@gmx.net>
+Cc: reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org
 
-I think that simple file and directory syntax provides what you need.
 
-Just keep in mind that in reiser4, storing labels in files is effective 
-to do.
+> From: Jamie Lokier [mailto:jamie@shareable.org]
+> 
+> Christian Mayrhuber wrote:
+> > //http://somehost:port/foo/bla
+> 
+> While we're here, I'll point out that http://somehost/foo/bla and
+> http://somehost/foo/bla/ are valid, distinct URLs.
+> 
+>... snip
+> 
+> Food for thought.
+> 
+> -- Jamie
 
-Hans
+While I think there are bigger fish to fry before tackling URLish stuff
+beyond filesystem access, I'll dive in.
 
-Bedros Hanounik wrote:
+Handwaving over changes to create() and many other apis that enable this,
+what happens when you type the following commands? 
 
->I use reiserfs but not familiar with the technical details. I'm
->wondering if it's possible to use meta tags in reiser4 fs to add
->labels to files.
->
->for example, I could have labels: photo, work, personal, vacation....
->
->then a jpg file from work would have the labels photo and work.
->
->it allows searching my files easier. no need to create different
->directories for different subjects. All files are in the same
->directory and I could browse them using labels.
->
->another advantage is that many files may fall in two categories and
->rather than have multiple copies one in each category, I just apply
->multiple labels for a single copy of the file.
->
->if the answer is yes, does it require a core change to reiserfs or can
->be a plugin.
->
->another question, is the meta tag structure is xml? should it be? XML
->documents waste a lot of space and require more cpu cycles to process,
->but they are extensible and I hope reiser4 tags are also extensible
->
->Thanks,
->
->
->-Bedros
->
->btw, awesome work hans and all reiserfs developers.
->
->
->  
->
+  ln -s //http://dabbs.net/foo/ MyPage
+  cat MyURL
+
+The first command works just fine today sans /any/ changes. Cat of course
+fails (today) because it calls open("MyURL") which will follow the link
+provided O_NOFOLLOW was not passed. After our magic mods, VFS will parse the
+// escape, see that it is NOT file:// and then what? When we were talking
+strictly about filesystem access this wasn't an issue.
+
+We certainly don't want the kernel in the business of being a protocol
+proxy, so any non-file:// pathnames could simply return EFAULT or ENOTDIR,
+or ELNKURL, which indicates that the target is a URL. Apps that want to do
+something /useful/ with the target resource (i.e. desktops) will have
+http/ftp/etc libraries. They are free to stat() the file, get the linked-to
+URL and use whatever protocol client lib they wish to access the URL. 
+
+Shooting from the hip here. If we want to unify namespaces in a UNIXy way,
+what if we make the VFS expose all the non-file "protocol" namespaces
+through one mount point, device node or whatever. A filesystem, perhaps
+something built using FiST [http://www.filesystems.org/], would "handle" a
+protocol. Another, perhaps preferred, option is to steer in the direction of
+Plan9, where ftp can be mounted and handled by a user-space filesystem,
+ftpfs. 
+See http://plan9.bell-labs.com/magic/man2html/4/ftpfs
+
+
+David
+
 
