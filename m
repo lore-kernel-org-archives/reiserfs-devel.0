@@ -1,62 +1,83 @@
-From: Milan =?ISO-8859-1?Q?Holz=E4pfel?= <lists@mjh.name>
-Subject: ReiserFS and Reiser4 on AMD64?
-Date: Wed, 18 Aug 2004 15:23:42 +0200
-Sender: news <news@sea.gmane.org>
-Message-ID: <20040818152342.4be1c0ef.lists@mjh.name>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: NFSv2 problem? initctl problem?
+Date: Wed, 18 Aug 2004 17:51:03 +0300
+Message-ID: <20040818145103.GE1284@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20376-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20377-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-fai@rrz.uni-koeln.de, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hi!
 
-Hello,
+I've been trying, quite desperately, to get FAI working but there appears
+to be some bad karma.
 
-I would like know whether you can tell me some state of ReiserFS and
-Reiser4 on AMD64.  I'm asking the the former because the gentoo docs say
-that ReiserFS on AMD64 is not really stable so far ([1]) and the latter
-because I have no idea of Reiser4's state on AMD64.  (but given that
-there was some guy experimenting with Reiser4 on some Sparc 64 Bit
-system and AMD64 is still a little endian system (isn't it?) I'd guess
-that the chance of at least getting it to work would be rather good...)
+The server exports /usr/local/share/fai with async,rw and
+/usr/lib/fai/nfsroot with async,rw,no_root_squash
+Originally I had ro, but that did not seem to matter.
 
-I'm asking because my new AMD64 hardware will shipped the next days and
-I plan mainly using gentoo Linux in 64-Bit mode with ReiserFS (for a
-"backup" system install) and Reiser4 (for the rest except backups and
-personal data) as far as possible and advisable.
+I get to the point where the 2.4.24-fai kernel of Debian boots, but it
+stalls after the FAI_FLAGS: syslogd=1 line.
 
-Any hints are appreciated.
-Thanks,
-Milan
+According to Ethereal, the big problem is in getting a getattr response
+from the server. It looks like this:
 
-[1]: <URL:http://www.gentoo.org/proj/en/base/amd64/technotes.xml?part=3D2&c=
-hap=3D3#doc_chap3>
+mount: RPC: Remote system error - Connection timed out
+/fai/class not found. Aborting.
 
-- --=20
+It did not abort, though; it still sends out the getattr query
+and gets a response.
 
-                   Milan Holz=E4pfel alias jagdfalke alias jag
+According to the tcpdump, the file id in question is 147491.
 
-Meine eMail-Adresse ist hier zu              You can find my eMail-address
-                      finden:                here:
-Kontaktinfos sowie                                   Contact infos as well =
-as
-=D6ff GnuPG-Schl=FCssel    <URL:http://con.mjh.name/>    GnuPG Public Key
-GnuPG Fingerabdruck     4C8A 5FAF 5D32 6125 89D1     GnuPG Fingerprint
-                        0CE5 DB0C AF4F 6583 7966
+mjt@hinkistan:~$ find /usr/lib/fai/nfsroot/ -inum 147491 | xargs file
+find: /usr/lib/fai/nfsroot/var/spool/cron/crontabs: Permission denied
+find: /usr/lib/fai/nfsroot/root/.ssh: Permission denied
+/usr/lib/fai/nfsroot/dev/initctl: fifo (named pipe)
 
+On the server side I'm running Debian Sarge with 2.4.18-bf2.4, all
+clear, and trying to use 2.4.24-fai for the installer, which should
+be clear as well.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
+It doesn't matter whether I use the kernel- or user-space NFS implementation,
+it still dies on me, except that I'd rather use the kernel-space one.
 
-iD8DBQFBI1he2wyvT2WDeWYRAkU/AKCxipimQKHVTk26Mt10kBxQq4Dw5QCguZ6e
-z2nkN3sS6sg7OvpLKDYEi28=3D
-=3DMqL5
------END PGP SIGNATURE-----
+Now what I'm wondering about is where is the error?
+
+Is it possible there's some issue with NFSv2; should I use NFSv3 instead?
+
+How can I force the client to use only NFSv3? rpc.mountd -N2 -V3 should
+work, right? But it still speaks v2 according to the traffic AND affects
+only the server-side, in theory, if not in practice apparently.
+
+The underlying filesystem is ReiserFS, so I'm sending a copy of this
+mail to the ReiserFS list as well, to see if anyone over there knows
+anything about this. If need be, I can reinstall the FAI server to use
+some other FS, but I would not like to do that.
+
+With the user-space NFS implementation I got the file id of 1476542499
+which does not have a file in the file system at all. Might this be
+because of ReiserFS? An ancient curse? NFS just being broken?
+
+Any help is greatly appreciated here, I have a deadline coming up for
+this installation and just out of principle I would dislike doing it
+from a CD as I'm going to install a lot more of these Debians and need
+FAI working...
+
+PS.
+Semi-off topic, what's the status of NFSv4? rpc.mountd supports something
+like it but is it in Linux already?
+Should I seek answers elsewhere than in 0d NFS protocols?
+
+Thanks a million!
+
+-- 
+mjt
 
