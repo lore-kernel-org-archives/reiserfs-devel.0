@@ -1,10 +1,10 @@
 From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: [PATCH]: reiser4 [0/8] overview
-Date: Thu, 31 Oct 2002 19:02:49 +0300
-Message-ID: <15809.21545.509551.601735@laputa.namesys.com>
+Subject: [PATCH]: reiser4 [8/8] reiser4 code
+Date: Thu, 31 Oct 2002 19:02:53 +0300
+Message-ID: <15809.21549.198584.599023@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11856-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11857-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,18 +14,13 @@ Content-Type: text/plain; charset="us-ascii"
 To: Linus Torvalds <Torvalds@Transmeta.COM>
 Cc: Linux Kernel Mailing List <Linux-Kernel@Vger.Kernel.ORG>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Hello, Linus,
+Hello, Linus, hyva poika,
 
-This message starts set of 8 patches against your current BK tree to
-include reiser4.
+Reiser4 code proper is 2M. Patch is available at
 
-Changes to the core code are fairly small and trivial: mostly function
-exports, plus one patch to share ->journal_info pointer with Ext3.
+http://namesys.com/snapshots/2002.10.31/fs_reiser4.diff
 
-All patches are available at http://namesys.com/snapshots/2002.10.31/,
-they can be applied in any order.
+If you want, we can send it to you as source tar ball.
 
-Utilities, including mkfs.reiser4 are available at
-http://namesys.com/snapshots/2002.10.31/reiser4progs-0.1.0.tar.gz
-
+Please apply,
 Nikita.
