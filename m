@@ -1,49 +1,36 @@
-From: Florian Engelmann <mailinglists@d-g-c.de>
-Subject: Re: Reiser4fs and SPARC64?
-Date: Mon, 21 Feb 2005 15:13:38 +0100
-Message-ID: <4219EC92.4000908@d-g-c.de>
-References: <421347FD.6000204@d-g-c.de> <20050216140944.GZ7482@backtop.namesys.com> <200502161724.16258.vitaly@namesys.com> <4219D2BD.1030004@d-g-c.de> <20050221134434.GA5760@backtop.namesys.com>
+From: Jindrich Makovicka <makovick@kmlinux.fjfi.cvut.cz>
+Subject: Re: reiser4progs 1.0.4
+Date: Mon, 21 Feb 2005 15:35:11 +0100
+Message-ID: <4219F19F.1030106@kmlinux.fjfi.cvut.cz>
+References: <200502201344.41656.vitaly@namesys.com> <20050221131024.GA43266@xs4all.nl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050221134434.GA5760@backtop.namesys.com>
+In-Reply-To: <20050221131024.GA43266@xs4all.nl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: reiserfs-list@namesys.com
+Cc: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
 
-Alex Zarochentsev schrieb:
+Ookhoi wrote:
 
->hello
->
->On Mon, Feb 21, 2005 at 01:23:25PM +0100, mailinglists@d-g-c.de wrote:
->
->  
->
->>These 2 patches are no more needed for me and my sparc64 since you 
->>released 1.0.4?
->>Today i compiled my 2.6.10-mm3-reiser4 kernel and it works fine. Only 
->>    
->>
->
->have you tried reiser4?
->  
->
+ > Fatal: Failed to open the reiser4 backup.
+ > Fatal: Cannot open the FileSystem on (/dev/hda1).
+ >
+ > 1 fatal corruptions were detected in SuperBlock. Run with --build-sb 
+option to fix them.
 
-no i couldn't cause the reiser4progs did not compile :(
 
->  
->
->>problem left is LVM cause the kernel gets too big (>3.5MB) with LVM 
->>compiled in it. So my root filesystem will be no LVM...
->>
->>greetz Florian
->>    
->>
->
->  
->
+Anyway, what is the preferred way to convert reiser4 to this new backup 
+layout? I have all reiser4 partitions created with reiserfsprogs 1.0.0, 
+so 1.0.3 & 1.0.4 bail out. Using fsck.reiser4 --build-sb from 
+reiser4progs 1.0.3 rendered the filesystem created under 1.0.0 unusable, 
+I still didn't try fsck 1.0.4. I also found the -C option of 
+debugfs.reiser4, but it didn't help either, and subsequent fsck also 
+botched the filesystem. Were there any fixes in 1.0.4 regarding this?
 
+Thanks,
+-- 
+Jindrich Makovicka
