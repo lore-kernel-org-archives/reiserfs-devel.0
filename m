@@ -1,31 +1,132 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiserfs with Samba vs NetApp Filer
-Date: Tue, 15 Oct 2002 17:43:04 +0400
-Message-ID: <3DAC1B68.6050103@namesys.com>
-References: <200210121052.22603.bofh@coker.com.au> <200210142252.09438.bofh@coker.com.au> <20021014225812.GA11337@tapu.f00f.org> <200210151457.58520.bofh@coker.com.au>
+Subject: Re: /proc/fs/reiserfs question
+Date: Tue, 15 Oct 2002 17:44:23 +0400
+Message-ID: <3DAC1BB7.5060306@namesys.com>
+References: <20021014160435.344ca55b.philippe.gramoulle@mmania.com>	<15786.54223.785138.49029@laputa.namesys.com>	<3DAB018D.2070904@namesys.com> <15787.47495.344267.487496@laputa.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11695-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11696-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Russell Coker <bofh@coker.com.au>
-Cc: Chris Wedgwood <cw@f00f.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: Nikita Danilov <Nikita@Namesys.COM>
+Cc: Philippe Gramoulle' <philippe.gramoulle@mmania.com>, reiserfs <reiserfs-list@namesys.com>
 
-Russell Coker wrote:
+Nikita Danilov wrote:
 
->See the following graph:
->http://www.coker.com.au/~russell/hardware/46g.png
+>Hans Reiser writes:
+> > Nikita Danilov wrote:
+> >=20
+> > >Philippe Gramoull=E9 writes:
+> > > > Hi,
+> > > >=20
+> > > > Is there any documentation that gives the description for each line=
+=20
+> > > > of each file in /proc/fs/reiserfs/sd(x,x)/*
+> > > >=20
+> > > > like what is the meaning of s_fix_nodes ? etc..
+> > >
+> > >I am afraid one has to dig it out of the sources. Here is description =
+of
+> > >some fields displayed in "super", they pertain to the in-core
+> > >super-block:
+> > >
+> > >			"state": REISERFS_VALID_FS/REISERFS_ERROR_FS
+> > >
+> > >			"mount options": options given to mount
+> > >
+> > >			"gen. counter": file system "generation acounter"---this is
+> > >			incremented with each balancing.
+> > >
+> > >			"s_kmallocs": how many kmallocs (calls to general purpose
+> > >			kernel memory allocator) were performed by reiserfs code
+> > >
+> > >			"s_disk_reads": not maintained
+> > >
+> > >			"s_disk_writes": not maintained
+> > >
+> > >			"s_fix_nodes": how many time "fix-nodes" (1st phase of
+> > >			balancing) was performed.
+> > >
+> > >			"s_do_balance": how many times "do-balance" (2nd phase of
+> > >			balancing) was performed
+> > >
+> > >			"s_unneeded_left_neighbor": not maintained
+> > >
+> > >			"s_good_search_by_key_reada": not maintained
+> > >
+> > >			"s_bmaps": not maintained
+> > >
+> > >			"s_bmaps_without_search": not maintained
+> > >
+> > >			"s_direct2indirect": how many direct->indirect converions
+> > >			were performed
+> > >
+> > >			"s_indirect2direct": how many indirect->direct converions
+> > >			were performed
+> > >
+> > >			"max_hash_collisions": maximal hash collision met so far.
+> > >
+> > >			"breads": not maintained
+> > >
+> > >			"bread_misses": not maintained
+> > >
+> > >			"search_by_key": how many times search_by_key (main tree
+> > >			traversal routine) was called.
+> > >
+> > >			"search_by_key_fs_changed": how many times search_by_key was
+> > >			performed concurrently to balancing.
+> > >
+> > >			"search_by_key_restarted": how many times search_by_key had
+> > >			to restart due to concurrent balancing.
+> > >
+> > >			"insert_item_restarted"-------+
+> > >			"paste_into_item_restarted"   +
+> > >			"cut_from_item_restarted"     +-> how many times particular
+> > >			"delete_solid_item_restarted" +   balancing operation had to
+> > >			"delete_item_restarted"-------+   restart
+> > >
+> > >			"leaked_oid": how many object-ids (unique identifiers
+> > >			assigned to files) were missed
+> > >
+> > >			"leaves_removable": how many times three leaf nodes of the
+> > >			balanced tree were mergeable into one
+> > >
+> > >I guess we should keep this information somewhere on the web-site. If
+> > >you need more detailed info, let me know.
+> > >
+> > > >=20
+> > > > Thanks much,
+> > > >=20
+> > > > Philippe.
+> > >
+> > >Nikita.
+> > >
+> > >
+> > > =20
+> > >
+> > The unmaintained fields should be removed.  Put into post-Halloween tod=
+o=20
+> > list.
 >
->This shows testing a single 46G drive, two drives on different buses at the 
->same time, and two drives on the same bus at the same time.  zcav (part of 
->Bonnie++) was used to perform the tests.
+>What about making them "maintained", in stead? Should be trivial.
 >
->  
+Review which ones look like they would be genuinely informative, and=20
+then maintain just those, ok?  After Halloween.
+
+>
+> >=20
+> > Hans
+> >=20
+>
+>Nikita.
+>
+>
+> =20
 >
 
-How many CPUs in this test?
+
 
