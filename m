@@ -1,96 +1,54 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
+From: Bennett Todd <bet@rahul.net>
 Subject: Re: some basic questions
-Date: Wed, 5 Nov 2003 19:02:08 +0300
-Message-ID: <16297.7936.285488.363349@laputa.namesys.com>
-References: <1067880381.17873.9.camel@redeeman.linux.dk>
-	<1068044839.32072.0.camel@redeeman.linux.dk>
-	<3FA91326.2060407@gmx.net>
-	<1068047082.32079.2.camel@redeeman.linux.dk>
-	<16297.7138.770007.332337@laputa.namesys.com>
-	<1068047560.32072.6.camel@redeeman.linux.dk>
-	<1068047896.32076.8.camel@redeeman.linux.dk>
+Date: Wed, 5 Nov 2003 11:08:01 -0500
+Message-ID: <20031105160801.GD548@rahul.net>
+References: <1067880381.17873.9.camel@redeeman.linux.dk> <1068044839.32072.0.camel@redeeman.linux.dk> <3FA91326.2060407@gmx.net> <1068047082.32079.2.camel@redeeman.linux.dk> <16297.7138.770007.332337@laputa.namesys.com> <1068047560.32072.6.camel@redeeman.linux.dk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15984-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="0IvGJv3f9h+YhkrH"
+Return-path: <reiserfs-list-return-15985-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1068047896.32076.8.camel@redeeman.linux.dk>
+Content-Disposition: inline
+In-Reply-To: <1068047560.32072.6.camel@redeeman.linux.dk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: redeeman@metanurb.dk
+To: Redeeman <redeeman@metanurb.dk>
 Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Redeeman writes:
- > and sorry that i send all these messages, another thing (and  last
- > thing) is, what kernel contains reiser4?
+--0IvGJv3f9h+YhkrH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-reiser4 is only available as a set of patches for now. Latest are at
-http://namesys.com/snapshots/2003.10.17/. Please read READ.ME,
-especially "WARNING" bit.
+2003-11-05T10:52:40 Redeeman:
+> will reiser4 be the most secure filesystem if the power dies,
+> because i live in denmark, and not in the city, so the power dies
+> quite often, and i want my data to be secure :)
 
- > 
- > On Wed, 2003-11-05 at 16:52, Redeeman wrote:
- > > ok, i got some more questions then :-)
- > > 
- > > will reiser4 be the most secure filesystem if the power dies, because i
- > > live in denmark, and not in the city, so the power dies quite often, and
- > > i want my data to be secure :)
- > > 
- > > and a question about the filesystem itself:
- > > i read its a atomic filesystem, and that it doesent work as other
- > > filesystems, isnt it something about that it doesent have a fixed
- > > cluster size? so that you use alot more of the hd, and faster stuff :-)
- > > 
- > > On Wed, 2003-11-05 at 16:48, Nikita Danilov wrote:
- > > > Redeeman writes:
- > > >  > you say reiserfs and reiser4 is two diffrent things, is reiser4 a
- > > >  > totally new filesystem?
- > > > 
- > > > It was re-written from the scratch. But it is based on the same main
- > > > design principles as reiserfs. It is different file system from the user
- > > > point of view (one cannot mount reiser4 as reiserfs and visa versa).
- > > > 
- > > >  > 
- > > >  > On Wed, 2003-11-05 at 16:11, Carl-Daniel Hailfinger wrote:
- > > >  > > Redeeman wrote:
- > > >  > > > nobody seems to answer :(
- > > >  > > > 
- > > >  > > > On Mon, 2003-11-03 at 18:26, Redeeman wrote:
- > > >  > > > 
- > > >  > > >>i am wondering about a few things. i am seriously thinking of change to
- > > >  > > >>reiserfs. i experience bad stuff happen to fat32 often, and i have got
- > > >  > > >>tired of it. i have a kernel with version 3.6 of reiserfs.
- > > >  > > >>
- > > >  > > >>will it be possible to convert to reiserfs4?
- > > >  > > 
- > > >  > > Not at this time. Actually reiserfs 3.6 and reiser4 are two totally
- > > >  > > different entities, so it's highly unlikely.
- > > >  > > 
- > > >  > > >>is it possible to defragment a partition with reiserfs (or will it be in
- > > >  > > >>version 4?)
- > > >  > > 
- > > >  > > backup with tar, delete everything, restore backup.
- > > >  > > 
- > > >  > > >>is it possible to undelete stuff?
- > > >  > > 
- > > >  > > no.
- > > >  > > 
- > > >  > > >>is it the correct choice for my use? (mp3, movies, cd images)
- > > >  > > 
- > > >  > > should be.
- > > >  > > 
- > > >  > > >>is there anything i should know?
- > > >  > > 
- > > >  > > Yes. reiser4 is not yet stable. This will not affect you if you use
- > > >  > > reiserfs 3.6
- > > >  > > 
- > > >  > > >>thanks, and have a nice day
- > > >  > > 
- > > >  > > Regards,
- > > >  > > Carl-Daniel
- > > > 
+Once Reiser4 is stable and mature, it should be on the short list of
+the very best filesystems in this regard.
 
-Nikita.
+However, if you want something today, I recommend ext3.
 
+Reiserfs4 should, we hope, eat its lunch eventually. But ext3
+performs quite well, for the sort of simple stuff you want to do it
+should be fine (and vastly better than vfat). And ext3 right now has
+pretty mature and stable journaling, that in my experience leaves it
+effectively crashproof. Or at least highly crash-resistent.
+
+-Bennett
+
+--0IvGJv3f9h+YhkrH
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
+
+iD8DBQE/qSBhHZWg9mCTffwRAnWnAKCMGHneOSKtJm0vSTHIfu6HVQrzEQCfSIvG
+hD2fjlgjCNQbFNzgI0Ku1G8=
+=Pwyb
+-----END PGP SIGNATURE-----
+
+--0IvGJv3f9h+YhkrH--
