@@ -1,44 +1,34 @@
-From: Ookhoi <ookhoi@humilis.net>
-Subject: build problem BK reiser4progs: /usr/include/features.h:218:52: operator '==' has no left operand
-Date: Thu, 16 Jan 2003 10:27:43 +0100
-Message-ID: <20030116102742.I7526@humilis>
-Reply-To: ookhoi@humilis.net
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: reiserfsck failure
+Date: Thu, 16 Jan 2003 12:32:55 +0300
+Message-ID: <20030116123255.A16554@namesys.com>
+References: <3E247A12.4E479B64@neolinear.com> <3E247AB6.89265382@neolinear.com> <20030115095925.A23036@namesys.com> <3E25C151.CE31D219@neolinear.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12373-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12374-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
+In-Reply-To: <3E25C151.CE31D219@neolinear.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Reiserfs-List@namesys.com
+To: Bill Schrier <wschrier@neolinear.com>
+Cc: it@neolinear.com, reiserfs-list@namesys.com
 
-Hi all,
+Hello!
 
-A fresh BK reiser4progs gives me the following error. It is not obvious
-to me what is wrong :-/
+On Wed, Jan 15, 2003 at 03:15:13PM -0500, Bill Schrier wrote:
+> Unfortunatly, the console was completely hosed up and I couldn't even get any
+> display on it to record any messages to stderr.  Sorry - don't think I can help
+> there...
 
-Please only deal with this if you have time. I can use the snapshot
-progs just fine.
+Hm. You still have not told us what version of reiserfsck was that.
+Also can you please capture metadata snapshot for us
+(debugreiserfs -p /dev/yourdevice | bzip2 -9c >metadata.bz2 )
+and make it available for us to download?
+Thank you.
 
-Tnx!
-
-
-$ make
-make  all-recursive
-make[1]: Entering directory `/usr/src/reiser4progs'
-Making all in libaal
-make[2]: Entering directory `/usr/src/reiser4progs/libaal'
-/bin/sh ../libtool --mode=compile gcc -DHAVE_CONFIG_H -I. -I. -I.. -I../include    -D_REENTRANT -D_FILE_OFFSET_BITS= -g -W -Wall -Wno-unused -Werror -DPLUGIN_DIR=\"/usr/local/lib/reiser4\" -c device.c
-gcc -DHAVE_CONFIG_H -I. -I. -I.. -I../include -D_REENTRANT -D_FILE_OFFSET_BITS= -g -W -Wall -Wno-unused -Werror -DPLUGIN_DIR=\"/usr/local/lib/reiser4\" -Wp,-MD,.deps/device.pp -c device.c -o device.o
-In file included from /usr/include/stdint.h:26,
-                 from ../include/aal/aal.h:46,
-                 from device.c:8:
-/usr/include/features.h:218:52: operator '==' has no left operand
-make[2]: *** [device.lo] Error 1
-make[2]: Leaving directory `/usr/src/reiser4progs/libaal'
-make[1]: *** [all-recursive] Error 1
-make[1]: Leaving directory `/usr/src/reiser4progs'
-make: *** [all-recursive-am] Error 2
+Bye,
+    Oleg
