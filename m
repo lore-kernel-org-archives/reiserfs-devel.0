@@ -1,62 +1,30 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Subject: Re: Mongo error while building HTML results
-Date: Tue, 17 Aug 2004 13:03:49 +0200
-Message-ID: <20040817130349.0a4b95a4@philou.gramoulle.local>
-References: <20040806152923.4a4eedc7@philou.gramoulle.local>
-	<20040808063358.GE9811@backtop.namesys.com>
-	<20040808151456.7765b337@philou.gramoulle.local>
-	<20040814143718.GH13834@backtop.namesys.com>
-	<20040815022406.01ca4cf7@philou.gramoulle.local>
-	<20040817053053.GL4703@backtop.namesys.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: Bug in data journaling patch ?!
+Date: Tue, 17 Aug 2004 09:01:34 -0400
+Message-ID: <1092747694.12138.1510.camel@watt.suse.com>
+References: <d68fdf7d04081608477fc84e06@mail.gmail.com>
+	 <1092672478.12138.245.camel@watt.suse.com>
+	 <d68fdf7d040816092378a16ee9@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20352-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20353-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040817053053.GL4703@backtop.namesys.com>
+In-Reply-To: <d68fdf7d040816092378a16ee9@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: Vijayan Prabhakaran <pvijayan@gmail.com>
+Cc: reiser@namesys.com, vijayan@cs.wisc.edu, reiserfs-list@namesys.com
+
+On Mon, 2004-08-16 at 12:23, Vijayan Prabhakaran wrote:
+> Yes, this happens only on the first transaction after the mount. For
+> all other later transactions it works fine.
+
+Perfect, thanks for the verification, I'll cook up patches for both
+2.6.x and 2.4.x.
+
+-chris
 
 
-Hello Alex,
-
-On Tue, 17 Aug 2004 09:30:54 +0400
-Alex Zarochentsev <zam@namesys.com> wrote:
-
-  | > No problem with mongo-2004.07.26.tar.gz though.
-  | Actually, 2004.07.24.tar.gz has the same bug, update-flist.pl was missing.
-  | the "copy" phase did not work if phase_copy=cp.
-  | 
-  | Please try 
-  | http://thebsh.namesys.com/benchmarks/dist/mongo-2004.08.17.tar.gz
-
-Great ! it's working fine now :)
-
-Updated Mongo results can be found here (somewhat old snapshot though):
-
-http://philou.org/linux/reiser4/mongo/mongo.html
-
-The mongo log files are here:
-
-http://philou.org/linux/reiser4/mongo/reiser4.log (new)
-http://philou.org/linux/reiser4/mongo/reiser4-old.log (old)
-http://philou.org/linux/reiser4/mongo/reiserfs.log
-http://philou.org/linux/reiser4/mongo/ext3.log
-
-and the kernel config file is here:
-
-http://philou.org/linux/reiser4/mongo/config-2.6.8-rc2-mm2
-
-For the record, i first wanted to mimic the benchmark from David (http://dabbs.net/reiser4/mongo.html),
-but i remember Hans asking about 8K file size runs.
-
-Could you provide me standard Mongo runs  that you would like me to try, because with so many parameters,
-i'd like rather both not waste my CPU cycles with mongo runs you don't care about but instead report valuable feedback to you :)
-
-Thanks,
-
-Philippe
