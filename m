@@ -1,162 +1,76 @@
-From: Joachim Reichelt <Reichelt@gbf.de>
-Subject: Re: Archiver
-Date: Mon, 28 Apr 2003 13:22:56 +0200
-Message-ID: <3EAD0F10.8050505@gbf.de>
-References: <3EACFF00.6030507@gbf.de> <3EAD0062.7060603@namesys.com> <3EAD05FD.3080107@gbf.de> <161351974.20030428125026@tnonline.net> <3EAD0A80.2030605@gbf.de> <561202089.20030428131424@tnonline.net>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: disk failure
+Date: Mon, 28 Apr 2003 16:43:44 +0400
+Message-ID: <3EAD2200.7000203@namesys.com>
+References: <web-2465822@elet.polimi.it> <200304281421.57850.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13857-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13858-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <561202089.20030428131424@tnonline.net>
+In-Reply-To: <200304281421.57850.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Anders Widman <andewid@tnonline.net>
-Cc: reiserfs-list@namesys.com
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: Vincenzo Martena <martena@elet.polimi.it>, reiserfs-list@namesys.com
 
+Vitaly Fertman wrote:
 
-
-Anders Widman schrieb am 04/28/2003 01:14 PM:
-
+>Hi, 
+>
 >  
 >
->>Anders Widman schrieb am 04/28/2003 12:50 PM:
+>>bread: Cannot read a block # 218118.
+>>
+>>Aborted
+>>-------------------------------------------------------------------------
+>>
+>>Now the problem is that I cannot acces my hard disk,
+>>because the journal is totally absent. Do you know if
+>>there is some option I can give to reiserfsck in order to
+>>ignore the hardware error and keep rebuilding the tree?
 >>    
 >>
 >
->  
+>we are still working on badblock support in reiserfs, but it 
+>is not finished yet. So if your partition has some badblocks
+>you should dd_rescue this partition to some spare partition 
+>and fsck the copy. 
 >
->>> 
->>>
->>>      
->>>
->>>>Hans Reiser schrieb am 04/28/2003 12:20 PM:
->>>>   
->>>>
->>>>        
->>>>
->>> 
->>>
->>>      
->>>
->>>>>Joachim Reichelt wrote:
->>>>>
->>>>>     
->>>>>
->>>>>          
->>>>>
->>>>>>Dear all,
->>>>>>
->>>>>>I know, it is a little bit out of topic, but we are looking for 
->>>>>>Software to archive our data held on
->>>>>>~400GB reiser fs.
->>>>>>We want to have exact one copy on tape of each file that is on our 
->>>>>>system at e.g. midnight.
->>>>>>Only new or changed files should go to tape.
->>>>>>Tapes are in an robot system of ~2TB.
->>>>>>
->>>>>>       
->>>>>>
->>>>>>            
->>>>>>
->>>>>lvm snapshots and dd or tar?
->>>>>
->>>>>     
->>>>>
->>>>>          
->>>>>
->>>>The data are on hardware raid, no lvm.
->>>>Tar: How to exclude all file the are on tape jet?
->>>>Where/How to find old files?
->>>>I think of features as seen in legatho, something like a HSM system
->>>>   
->>>>
->>>>        
->>>>
->>>  How  can  you without snapshots of the filesystem be able to backup
->>>  from one point in time? I mean if the filesystem changes during the
->>>  backup  you may loose (miss to backup) data that is changing/moving
->>>  or get partial files.
->>>
->>>      
->>>
->>The data to backup are produced during experiments. There is no need to 
->>get all files at a given time.
->>We only want to have all files on tape some days after creation.
->>    
->>
+>Alternatively, you can try to write to this block with dd, then 
+>the drive will probably remap this block and it will disappear.
 >
->  
->
->>>  Otherwise  it  should  not be such a big problem to use tar to copy
->>>  files  that  are  changed after a certain date (last backup). Check
->>>  the tar manpage :)
->>>
->>>      
->>>
->>I did this. But how to get file back? How to find them
->>    
->>
->
->
->  How  do you mean get the file back? The idea with backup is that you
->  have  them  in  case  you  loose files, corrupt or overwrite them by
->  accident?
->
-The problem is: If i have the data written some time ago, find the tape 
-the file is on.
-We have a changer for 48 tapes and it takes some time to check all of them!
-You know that usernever know exact data of there files.
-So I have to setup mysql for it or somethink like that.
-
->  
->  
->
->>What about files copied over remote from WIN of created by progs that
->>reset a and m times?
->>    
->>
->
->  This  is  a  problem with Samba/Windows. You could make Samba to not
->  change  the  access/create  times,  or  control how it should update
->  them. It is a little tricky though, and might not help.
->
-The files are mostly from WIN and we need the original timestamps, that 
-is the problem.
+Can you have the tool you write prompt the user, ask if the user would 
+like that attempted, and if it works then inform the user that it worked?
 
 >
->  //Anders
+>If you need more details you can either look through reiserfs-list
+>mail archive or pay us for the support on the base of our 
+>support.html terms.
 >
->--------
->PGP public key: https://tnonline.net/secure/pgp_key.txt
 >  
 >
+>>Thanks a lot for your help.
+>>
+>>Vinxe
+>>
+>>P.S. reiserfsck version is:
+>>
+>><-------------reiserfsck, 2002------------->
+>>reiserfsprogs 3.6.3
+>>    
+>>
+>
+>This is an old version of reiserfsprogs, get the latest one from 
+>our ftp site please.
+>
+>  
+>
+
 
 -- 
-Mit freundlichen Gruessen                         Best Regards
- 
-         Joachim Reichelt
-
-			SB  - Strukturbiologie
-              GBF - Gesellschaft fuer Biotechnologische Forschung
-                    German Research Centre for Biotechnology
-
-WWW: http://www.gbf.de         _/_/_/   _/_/_/   _/_/_/_/
-EMAIL: REICHELT@gbf.de       _/    _/  _/   _/  _/
-                            _/        _/   _/  _/
-Mascheroder Weg 1          _/  _/    _/_/_/   _/_/_/
-D-38124 Braunschweig      _/    _/  _/   _/  _/
-Tel: +(49) 531 6181 352  _/    _/  _/   _/  _/
-FAX: +(49) 531 2612 388   _/_/_/  _/_/_/   _/
-
-http://struktur.gbf.de/
-
--- Disclaimer --
-Standard > Keyword : Opinions, my own, nobody else's, whatsoever ...
-
-Man muss sich notfalls jemand mieten,
-hat man an Geist selbst nichts zu bieten!     (Heinz Erhardt)
+Hans
 
 
