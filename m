@@ -1,88 +1,76 @@
-From: Bennett Todd <bet@rahul.net>
-Subject: software packaging and ReiserFS v4
-Date: Wed, 3 Sep 2003 12:54:09 -0400
-Message-ID: <20030903165409.GD4714@rahul.net>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: reiser4 data journalling?
+Date: Wed, 03 Sep 2003 20:56:05 +0400
+Message-ID: <3F561D25.1080705@namesys.com>
+References: <3F4E3AF9.2060100@tupshin.com> <16206.16138.72832.920045@laputa.namesys.com> <3F4E6AA4.3030900@namesys.com> <20030829001814.GB9019@zero> <20030829131250.GU24767@marowsky-bree.de> <3F55170E.1080603@namesys.com> <20030903105211.GC5762@marowsky-bree.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="61jdw2sOBCFtR2d/"
-Return-path: <reiserfs-list-return-15531-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-15532-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <20030903105211.GC5762@marowsky-bree.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: Lars Marowsky-Bree <lmb@suse.de>
+Cc: Reiserfs List <reiserfs-list@namesys.com>
 
---61jdw2sOBCFtR2d/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Lars Marowsky-Bree wrote:
 
-I've got this thought that ReiserFS v4 may make it possible to
-implement a _really_ trivial software package management system,
-with even better power than rpm.
+>On 2003-09-03T02:17:50,
+>   Hans Reiser <reiser@namesys.com> said:
+>
+> =20
+>
+>>No, isolation is not yet implemented and won't be unless we come up with =
 
-I'm building myself a new Linux distrib; my proximate motivation is
-that while there's lots I like about Red Hat --- in particular, rpm
-is the best software package mgmt tool I've used or heard of ---
-there's still a lot of accumulated cruft there.
+>>some more funding from somewhere.  The txnmgr seems to be structured to=20
+>>handle isolation, but....
+>>   =20
+>>
+>
+>Ah, okay. Sorry, I think I had older plans in mind and hadn't checked
+>how far the current roadmap matched up to them ;-)
+>
+> =20
+>
+>>The new thing with reiser4 is that if you do that write of 1MB to a=20
+>>file, and perhaps updates to 63 other files as well, as part of an atom, =
 
-As I've gotten deeper into the project, I've had my nose rubbed in
-the fact that rpm is the accumulating cruft heart; it's the worst.
-Way, way overdue for a rewrite.
+>>it will either all survive a crash, or none of it will.  We have=20
+>>considered using the term "transcrash" for this.
+>>   =20
+>>
+>
+>So it's ACD and not ACID ;-) Sounds good. How is this weak transaction
+>exported to userspace, ie how do I signal BEGIN and COMMIT/ABORT?
+>
+>
+>
+>Sincerely,
+>    Lars Marowsky-Br=E9e <lmb@suse.de>
+>
+> =20
+>
+sys_reiser4 allows various operations such as assignment, and=20
+transactions are indicated using a delimiter.  I am still trying to=20
+figure out what is the best delimiter to use, it needs to be a delimiter=20
+pair, but what?
 
-So I started fantasizing about the replacement. Some bits are easy;
-rather than trying to write a parser for yet another poorly
-documented subtle and complex file format like rpm spec files, the
-spec file will simply be a Lua <URL:http://www.lua.org/> source file
-that exports the necessary data.
+Perhaps t{ and }t
 
-Then I started thinking about the database that a good software
-packging tool needs to maintain. After a bit, it hit me that
-ReiserFS 4 would be _killer_!
+?
 
-Let the package install process deposit the "spec file" (lua data
-decl) in /var/lib/pkg/{pkgname}. Addenda like e.g. the checksums,
-and pre- and post-install scripts can be
-/var/lib/pkg/{pkgname}/sha1, /var/lib/pkg/{pkgname}/pre,
-/var/lib/pkg/{pkgname}/post, etc. Whatever open-ended addenda the
-package should wish to keep track of on a per-package basis can be
-simply added there.
+I worry that users will let a legitimate t variable name get too close=20
+to the {}'s.....
 
-The one tricky bit --- and it's the performance downfall of the
-current rpm --- is the reverse-mapping database, the one that maps a
-pathname of an installed file to the package that installed it.
-Maintaining that, and ensuring its consistency with the forward
-database, makes rpm slow.
+There is a symbol shortage unfortunately.
 
-With ReiserFS v4 its as natural as can be; a file /usr/bin/foo,
-installed by a package foo, would simply have a symlink
+Probably I should use x{ and }x as a convention for new kinds of=20
+delimiters, and let x be t in the case of delimiting transactions.
 
-	/usr/bin/foo/pkg -> /var/lib/pkg/foo
+--=20
+Hans
 
-Besides scaling elegantly and staying wonderfully simple, this has
-the additional otherwise-impossible feature that the package
-attribution automatically correctly updates if you move the file
-(although the forward mappings within /var/lib/pkg/foo wouldn't
-update automagically).
 
-I'm continuing to do the preliminary, basic dev of my new distrib on
-Reiser 3 w/ rpm, because they're what I've got, but when v4 comes
-around I'm seriously hoping to re-wrap the whole schmeer taking full
-advantage of v4 to make a very simple new package manager.
-
--Bennett
-
---61jdw2sOBCFtR2d/
-Content-Type: application/pgp-signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.7 (GNU/Linux)
-
-iD8DBQE/VhyxHZWg9mCTffwRAjiBAJwJUlu5fyKhYrIgu1TpmCnxWA+XugCfWXWA
-Ue3FcstpLIMCAMCgbXVh6fU=
-=1fUO
------END PGP SIGNATURE-----
-
---61jdw2sOBCFtR2d/--
