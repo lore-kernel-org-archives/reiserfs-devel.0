@@ -1,34 +1,31 @@
-From: Christoph Hellwig <hch@lst.de>
+From: Wichert Akkerman <wichert@wiggy.net>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 12:59:14 +0200
-Message-ID: <20040826105914.GA30795@lst.de>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <Pine.LNX.4.58.0408260204050.22259@artax.karlin.mff.cuni.cz> <Pine.LNX.4.58.0408251723540.17766@ppc970.osdl.org> <412DA11B.2070303@namesys.com> <20040826105330.GB30449@mail.shareable.org>
+Date: Thu, 26 Aug 2004 13:01:41 +0200
+Sender: Wichert Akkerman <wichert@levante.wiggy.net>
+Message-ID: <20040826110141.GI2612@wiggy.net>
+References: <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826012230.GA19957@jeremy1>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20626-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20627-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040826105330.GB30449@mail.shareable.org>
+In-Reply-To: <20040826012230.GA19957@jeremy1>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Jeremy Allison <jra@samba.org>
+Cc: Nicholas Miell <nmiell@gmail.com>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Thu, Aug 26, 2004 at 11:53:30AM +0100, Jamie Lokier wrote:
-> Hans Reiser wrote:
-> > being able to cat dirname/pseudos/cat and get a 
-> > concatenation of all of the files is nice, and being able to cat 
-> > dirname/pseudos/tar and get an archive of the directory is nice
-> 
-> Yes.  Being able to cd into filename.tar.gz and filename.iso is also
-> nice, but all of these features should be supported by the VFS
-> generically, not in any specific filesystem, and there should be a
-> hook to invoke the various fun filesystem-independent handlers by name.
+Previously Jeremy Allison wrote:
+> Which is exactly how Windows apps have started to use streams.
 
-It doesn't belong into the kernel at all.  If at all it belongs into a
-userspace filesystems, but even in that case the magic detection of
-which one to use is kinda hard.  You absoutely don't want to hardcode
-file formats in the kernel.
+Interesting I can not find a way using the .NET framework, which is
+supposed to be The Future, to use streams.
+
+Wichert.
+
+-- 
+Wichert Akkerman <wichert@wiggy.net>    It is simple to make things.
+http://www.wiggy.net/                   It is hard to make things simple.
