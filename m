@@ -1,61 +1,39 @@
-From: Will Smith <will@willsmith.org>
-Subject: [patch]  measurefs.reiser4 --data-frag does not run
-Date: Mon, 13 Sep 2004 16:53:56 +0800
-Message-ID: <41456024.8070103@willsmith.org>
+From: Michael Weissenbacher <webmaster@dermichi.com>
+Subject: serious data corruption when doing "mount -o remount,ro /"
+Date: Mon, 13 Sep 2004 13:16:37 +0200
+Message-ID: <41458195.8080506@dermichi.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------000809030400050200060001"
-Return-path: <reiserfs-list-return-21709-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21710-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
---------------000809030400050200060001
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+After running reiser4 as / filesystem for some time i got a serious 
+problem yesterday. In short: the FS didn't survive a "mount -o 
+remount,ro /". Here is what I did:
+# init 1
+# mount -o remount,ro /
+# fsck.reiser4 /dev/hda7
+fsck complained about not finding the root directory and said that the 
+tree height of 4 was incorrect because it should be 255. I thought this 
+would be a temporary problem as i had worked with my system until 30 
+seconds before without a problem. So i rebooted, which was really not a 
+good idea. The FS was unmountable after that. After running fsck from a 
+livecd to repair the FS, which took about 2 hours, the FS was restored 
+almost completely, but then i went back to a backup to be safe.
+I am still able to reproduce random corruption by doing a remount ro. I 
+also get this problem if i use the "magic sysreq key" to do the remount. 
+If i remount the FS rw again and shutdown after that the FS does NOT get 
+corrupted at all.
+I am not posting details about my system since i was able to get the 
+same corruption on two completely different systems. Also i'm not 
+including fsck output as the corruption is random and reports different 
+things every time.
+Any ideas what could be causing this?
 
-Minor patch, measurefs.reiser4-v1.0.0's --data-frag
-was always returning -ENOMEM and not running, due to missing
-curly brackets.
-
-
-
-Will Smith
-
-
--- 
-1400 high resolution textures - http://www.mayang.com/textures
-Panoramic travel photos       - http://www.willsmith.org/pano
-
-
-
-
-
-
---------------000809030400050200060001
-Content-Type: text/plain;
- name="measurefs_datafrag_enomem_bug.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="measurefs_datafrag_enomem_bug.patch"
-
---- measurefs.c.orig	2004-09-13 16:38:00.128518704 +0800
-+++ measurefs.c	2004-09-13 16:35:36.695323864 +0800
-@@ -653,9 +653,10 @@ errno_t measurefs_data_frag(reiser4_fs_t
- 			aal_gauge_create(aux_gauge_handlers[GT_PROGRESS],
- 					 NULL, NULL, 0, "Data fragmentation "
- 					 "... ");
--		if (!frag_hint.gauge)
-+		if (!frag_hint.gauge) {
- 			aal_fatal("Out of memory!");
- 			return -ENOMEM;
-+		}
- 	}
- 
- 	frag_hint.flags = flags;
-
---------------000809030400050200060001--
-
+Michael
