@@ -1,47 +1,56 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: How to use external journal?
-Date: Mon, 23 Dec 2002 19:19:16 +0300
-Message-ID: <20021223191916.B1645@namesys.com>
-References: <20021223155704.GC18464@dei.inf.uc3m.es>
+Subject: Re: BUG() in _get_block_create_0
+Date: Mon, 23 Dec 2002 19:26:02 +0300
+Message-ID: <20021223192602.C1645@namesys.com>
+References: <3E073A4D.4090704@paradigmashift.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12225-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12226-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20021223155704.GC18464@dei.inf.uc3m.es>
+In-Reply-To: <3E073A4D.4090704@paradigmashift.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Luis Gregorio Muniz Rodriguez <kreator@dei.inf.uc3m.es>
+To: Nick Wellnhofer <nick@paradigmashift.com>
 Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Mon, Dec 23, 2002 at 04:57:04PM +0100, Luis Gregorio Muniz Rodriguez wrote:
-> I have recently discovered that the journal can be placed on an external
-> device (i.e, `mkreiserfs --journal-device <FILE>'), but I haven't found
-> any doc about it.
+On Mon, Dec 23, 2002 at 05:31:09PM +0100, Nick Wellnhofer wrote:
 
-If you do not use 2.5 kernels, you need to apply separate patch to your tree.
+> I'm using ReiserFS with the old 3.5 format on a web server. The system 
+> has been running fine for 2 years. About 1 month ago I upgraded from 
+> Linux 2.2.16 to 2.4.18 (SuSE 8.1 default kernel). Some weeks ago I got 
+> reiserfs error messages in syslog suggesting a fsck and I had some files 
+> which couldn't be accessed or deleted. So last week I ran reiserfsck 
+> --rebuid-tree. At first everything worked fine. The problematic files 
+> could be accessed again.
 
-> I'm currently using ReiserFS on top of LVM partitions, and I am
-> wondering if I can use the same shared journal device for a number of
-> small partitions.  
+What was reiserfsck version?
 
-No, you cannot.
+> After about 3 hours I got an oops report in my syslog, but the system 
+> kept running normally. Again 3 hours later the machine crashed with 
+> another oops. It turned out that the BUG() in _get_block_create_0 in 
+> fs/reiserfs/inode.c was hit both times. According to the value of EAX
+>   le_key_k_type (version, key)
+> is TYPE_ANY (0x0f) but TYPE_DIRECT (0x02) is expected.
 
-> Note that I'm not trying to move all the journals to the same device
-> (this should be easy using `--journal-device' and `--journal-offset',
-> isn't it?).  Rather, I try to share the same 32Mb journal between small
-> filesystems and/or filesystems with infrequent writes (such as </usr>,
-> </usr/local>, </var/www>, and so on).
-> Is that possible?  And convenient?
+Hm, sounds like FS corruption.
 
-This is not possible.
-But you can divide these "shared" 32M into four separate parts 
-and use these with --journal-offset.
+> The machine is a web server in production and I have only remote access, 
+> so I couldn't run reiserfsck again.
+> Any suggestions?
+
+We'd be interested in metadata snapshot
+(debugreiserfs -p /dev/your_device | bzip2 -9c >metadata.bz2).
+You probably can even do this on readonly-mounted device.
+Probably it will even work on read-write mounted device, but
+make sure no much write activity is performed on that fs at the time
+of snapshot. Also avoid writing metadata to the same fs you are taking
+this metadata from ;)
 
 Bye,
     Oleg
