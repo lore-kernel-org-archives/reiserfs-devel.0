@@ -1,39 +1,39 @@
-From: Alejandro Sanchez Acosta <asanchez@gnome.org>
-Subject: Some more basic questions.
-Date: 10 Nov 2003 05:15:20 +0100
-Message-ID: <1068437719.3362.24.camel@voyager>
+From: "Hariolf =?ISO-8859-1?Q?H=E4fele?=" <hariolf.haefele@gmx.net>
+Subject: Loop Device and Reiser4
+Date: Sun, 9 Nov 2003 20:58:10 +0100 (MET)
+Message-ID: <8526.1068407890@www54.gmx.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16026-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-16027-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
 Hello,
 
-I don't understand so well how the dancing trees work. I've seen in the
-documentation that are faster than B+ trees, but I don't understand the
-reason. Somebody can explain me how does it work a dancing tree and
-where does reiserfs use it?
+I noticed that mounting an ISO9660 image doesn't work if the image is on a
+reiser4 partition. When I do
 
-Other thing that I don't understand is the cache design, where are used
-caches in the filesystem? 
+mount -oloop img.iso /mnt/test/
 
-And why is better to use extents than BLOBs? A lot of databases use
-BLOB's to storage the data and get good performance with.
+I get:
 
-What security features provide reiser4? I have seen that you can use
-crypto support and crypto compressing, does it support other security
-features? does it use the new CryptoAPI? 
+ioctl: LOOP_SET_FD: Invalid argument
 
-And other thing, if I want to do a new plugin, what I have to do? Any
-documentation related?
+Apologies if this was already known.
+Thanks,
 
-Thanks in advance.
--- 
-Alejandro Sanchez Acosta <asanchez@gnome.org>
+Hariolf
+
+--=20
+NEU F=DCR ALLE - GMX MediaCenter - f=FCr Fotos, Musik, Dateien...
+Fotoalbum, File Sharing, MMS, Multimedia-Gru=DF, GMX FotoService
+
+Jetzt kostenlos anmelden unter http://www.gmx.net
+
++++ GMX - die erste Adresse f=FCr Mail, Message, More! +++
 
