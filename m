@@ -1,48 +1,36 @@
-From: James Bruce <bruce@andrew.cmu.edu>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Thu, 02 Sep 2004 08:50:10 -0400
-Message-ID: <41371702.8030704@andrew.cmu.edu>
-References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <20040902002431.GN31934@mail.shareable.org> <413694E6.7010606@slaphack.com> <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org> <4136A14E.9010303@slaphack.com> <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org> <4136C876.5010806@namesys.com> <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: silent semantic changes in reiser4 (brief attempt to document the idea of what reiser4 wants to do with metafiles and why
+Date: Thu, 2 Sep 2004 16:32:34 +0300
+Message-ID: <20040902133234.GO26192@nysv.org>
+References: <41323AD8.7040103@namesys.com> <20040831131201.GA1609@elf.ucw.cz> <200408311536.00948.christian.mayrhuber@gmx.net> <41370B17.40304@nwrk.dyndns.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21278-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-21279-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org>
+Content-Disposition: inline
+In-Reply-To: <41370B17.40304@nwrk.dyndns.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: =?iso-8859-1?Q?Mika=EBl?= Cluseau <nwrk@nwrk.dyndns.org>
+Cc: reiserfs-list@namesys.com
 
-Linus Torvalds wrote:
+On Thu, Sep 02, 2004 at 01:59:19PM +0200, Mika=EBl Cluseau wrote:
+>Why not a kernel option (accessible through /proc if needed for scripts=20
+>or the like) ?
 
->...
->But _my_ point is, no user program is going to take _advantage_ of
->anything that only one filesystem on one system offers.
->
->So there's no point.
->
->It's much saner (from _any_ app standpoint) to roll their own database in 
->user space - that way it just works.
->
->In other words, nobody is really ever going to take advantage of this. 
->This is _not_ how technical advanncement happens. The way you get people 
->to take advantage of something is to have a nice gradual ramp-up, not a 
->sudden new feature that they can't realistically use.
->...
->
+What if there has to be a patch for find so it accesses metadata as well,
+it seems sort of ugly that it has to check /proc or /sys or somesuch
+to access the name.
 
-Sure, but there are plenty of existing interfaces that you could 
-emulate.  One could make a small library to use a transactional 
-filesystem to implement the Berkely DB interface (libdb) for example.  
-So on filesystems without such support your app could use the regular 
-userspace database, but on a transactional filesystem it'd just use 
-regular files, which would simplify database management and likely 
-increase performance over the userspace-only version (libdb is pretty 
-slow).  In terms of functionality it'd just be a drop-in replacement, 
-just like math libraries that use MMX/SSE when available.
+Same thing with the kernel exporting a read-only environment variable.
 
-    - Jim Bruce
+Hans is pretty stubborn about this and I guess we'll just have to live
+with some custom-patched or default name until we see progs that are
+dependant on a single name...
+
+--=20
+mjt
 
