@@ -1,75 +1,58 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+From: Christophe Saout <christophe@saout.de>
 Subject: Re: Quicker alternative to "find /"?
-Date: Mon, 16 Aug 2004 14:29:26 +0200
-Message-ID: <200408161429.27131.christian.mayrhuber@gmx.net>
-References: <20040815231640.3c926886.felix.klee.reiserfs@gmx.net> <411FF929.7040405@slaphack.com> <20040816140420.11dc210c.felix.klee.reiserfs@gmx.net>
+Date: Mon, 16 Aug 2004 14:52:45 +0200
+Message-ID: <1092660765.28417.4.camel@leto.cs.pocnet.net>
+References: <20040815231640.3c926886.felix.klee.reiserfs@gmx.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20323-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-hpRY7OvylaYmoCZv7GGx"
+Return-path: <reiserfs-list-return-20324-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040816140420.11dc210c.felix.klee.reiserfs@gmx.net>
-Content-Disposition: inline
+In-Reply-To: <20040815231640.3c926886.felix.klee.reiserfs@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com, "Felix E. Klee" <felix.klee.reiserfs@gmx.net>
+To: "Felix E. Klee" <felix.klee.reiserfs@gmx.net>
+Cc: reiserfs-list@namesys.com
 
-On Monday 16 August 2004 14:04, Felix E. Klee wrote:
-> On Sun, 15 Aug 2004 19:00:41 -0500 <didn't post to the list> wrote:
-> > In that case, you may want to try a recursive "ls".  But for the same
-> > format as "find", try using "locate" with "updatedb" on a cron job.
->
-> Thanks for the hints. I did some benchmarks:
->
-> find / >/tmp/find.dirtree:
->     3:44 (1st run)
->     3:47 (repeated run)
-> updatedb -u --output=/tmp/updatedb.dirtree:
->     8:51
->     8:47
-> ls -R / >/tmp/ls.dirtree:
->     6:16
->     6:55
->
-> With less than 4 minutes find is by far the fastest of these
-> methods.
->
-> Why am I not using updatedb in a cron job? Because
-> 1. the data is needed for a backup and thus needs to be current.
-> 2. updatedb is annoying when it runs in the background and I have some
->    actual work to do (the system is not running at night, so a nightly
->    cron job is not an option).
-> 3. I usually don't need locate. If I need to quickly find something
->    that's not in my home directory, then often I can find it by greping
->    the package database (Slackware).
->
-> So, I guess I'll stick with find. I was hoping for a tool, though, that
-> is optimized for ReiserFS.
->
-> Felix
->
-> PS: To contact me off list don't reply but send mail to "felix.klee" at
-> the domain "inka.de". Otherwise your email to me might get automatically
-> deleted!
+--=-hpRY7OvylaYmoCZv7GGx
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-For a backup?
-If you use tar, you can list it's contents after the backup.
+Am Sonntag, den 15.08.2004, 23:16 +0200 schrieb Felix E. Klee:
 
-I use star to backup file system meta data (rights, acl's, attributes), 
-because our stupid commercial backup software looses the directory rights 
-(that's what you have a backup software for).
-http://freshmeat.net/projects/star/
+> I'd like to store the directory structure of a partition formatted as
+> ReiserFS into a file. Currently, I use
+>=20
+>     find / >file
+>=20
+> This process takes approximately 5 minutes (the result is 26MB of
+> data). Are there any alternative *quicker* ways to do this?
 
-for backup:
-"/usr/bin/star -c -M -z -meta artype=exustar f=meta-backup.star.gz /"
+The main problem is that find only uses one thread. This thread only
+reads one directory at once and as a result of that you'll get a lot of
+seeks.
 
-for restore:
-/usr/bin/star -x -z -U -meta f=meta-backup.star.gz
+This can usually be improved *a lot* by doing a massively multi-threaded
+search with a lot of threads trying to read a lot of directories at
+once. The disk io scheduler will then linearize all the outstanding read
+requests.
 
-You may want to try it, I doubt that it's faster than find, though.
+I've done something similar to speed up a diff -r using a shell script
+(not for find but for reading the file content that should be compared).
 
--- 
-lg, Chris
+
+--=-hpRY7OvylaYmoCZv7GGx
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQBBIK4dZCYBcts5dM0RAttqAJ9ANMxdfh8wocxrd9r8E6LdSg5V1gCfVSk+
+AY6tMOwcuYm/qUtFWBrJXjc=
+=UDza
+-----END PGP SIGNATURE-----
+
+--=-hpRY7OvylaYmoCZv7GGx--
 
