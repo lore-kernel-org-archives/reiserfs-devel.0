@@ -1,35 +1,38 @@
-From: "Matt Ryan" <mryan@debian.org>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: plagiarism of reiserfs by Debian
-Date: Sun, 20 Apr 2003 20:39:09 +0100
-Message-ID: <006101c30774$83615260$a2b89bd9@banana.org.uk>
-References: <200304181604.28955.vitaly@namesys.com> <3EA17427.7040300@namesys.com> <20030419172906.GX2528@phunnypharm.org> <00f001c306a9$47d22560$a2b89bd9@banana.org.uk> <20030419205640.GZ2528@phunnypharm.org>
+Date: Mon, 21 Apr 2003 10:03:15 +0400
+Message-ID: <20030421100315.A23789@namesys.com>
+References: <143CBAC4-7291-11D7-ADF3-00050285B655@ncpro.com> <3EA19DEC.3090202@techhouse.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13738-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13741-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <3EA19DEC.3090202@techhouse.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Ben Collins <bcollins@debian.org>
-Cc: Hans Reiser <reiser@namesys.com>, Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com, debian-testing@lists.debian.org, Ed Boraas <ed@debian.org>, debian-devel@lists.debian.org
+Content-Transfer-Encoding: 7bit
+To: Travis Crump <pretzalz@techhouse.org>
+Cc: Marcel Weber <mmweber@ncpro.com>, Hans Reiser <reiser@namesys.com>, Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com, debian-testing@lists.debian.org, Ed Boraas <ed@debian.org>, debian-devel@lists.debian.org
 
-> > Dude,
-> >
-> >     You really need to calm down. Twice now recently you have opened
-your
-> > mouth and stuck your foot in when there really wasn't any need to. Take
-a
-> > Valium and do something less stressful.
->
-> Are you talking to me?
+Hello!
 
-You are the one with the foot hanging out of your mouth so by a process of
-elimination it has to be you. Really we don't need to alienate upstream
-software authors with flame responses. Point out that he can file a bug and
-leave it at that.
+On Sat, Apr 19, 2003 at 03:05:16PM -0400, Travis Crump wrote:
+> You mean a bug report like 
+> <http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=152547>?  Oh, wait... 
+>  What if someone wanted to write a gtk frontend to mkreiserfs?  The 
 
+Last time we spoke with EVMS folks about this kind of stuff, we agreed that they'd open
+a pipe to mkreiserfs and then will show the mkreiserfs' output in separate window.
+(in fact not only mkreiserfs's output, but output of all tools they run).
 
-Matt.
+Flames to /dev/null.
 
+And there are (were?) another set of tools for making/modifying reiserfs filesystems
+(except that there is no fsck) called progsreiserfs. (not being developed anymore, I think, but it
+works as is). Use that, if you like it more.
+
+Bye,
+    Oleg
