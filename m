@@ -1,66 +1,79 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: bug: reiserfsck reports "neither new nor old reiserfs format found"
-Date: Fri, 25 Oct 2002 17:18:29 +0400
-Message-ID: <200210251718.29370.vitaly@namesys.com>
-References: <m3n0p23lqn.fsf@gateway.askos>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: how do plugins work?
+Date: Fri, 25 Oct 2002 18:10:00 +0400
+Sender: edward
+Message-ID: <3DB950B8.611CC982@namesys.com>
+References: <Pine.LNX.4.33.0210241624300.2792-100000@mitte.informatik.hu-berlin.de> <3DB81095.25F0C662@namesys.com> <3DB8816C.10400@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11773-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11774-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <m3n0p23lqn.fsf@gateway.askos>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Moritz Franosch <mail@Franosch.org>, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: gregor@zeitlinger.de, reiserfs mailing list <reiserfs-list@namesys.com>
 
+Hans Reiser wrote:
+> 
+> Edward Shishkin wrote:
+> 
+> >Gregor Zeitlinger wrote:
+> >
+> >
+> >>Hi,
+> >>
+> >>I'm new to this list. I'm wondering how the file plugins work. Are they
+> >>just a means of accessing the file contents or are they also designed to
+> >>save the file differently.
+> >>
+> >>For example, could you create a plugin that automatically zips each
+> >>text/plain file, which is totally transparent to the user?
+> >>
+> >>
+> >
+> >Yeah, we could. Although transparentness means a bit worse compression..
+> >
+> ?
+> 
+> You mean because of choosing to use compression atoms
 
-Hi, 
+Yes, but it is not the only reason.
 
-> I've installed the system with Suse 8.0, the system booted (many
-> times), then hang and I switched off.
->
-> The next boot, the kernel paniced with the message
->
-> read_super_block: can't find a reiserfs filesystem on (dev 03:02, block 64,
-> size 1024)
->
-> Thus I've downloaded reiserfsprogs-3.6.3.tar.gz and did
+> that are node sized?
 
-Please take the last 3.6.4 version of reiserfsprogs.
+No, compression atoms are limited by common sense ;)
+Obviously, it doesn't make sense to choose it less then node size, if you
+want to compress a file presented by tails. On the other hand, I am not
+sure if you will be delighted from transparent compression supported by 256K
+clusters even for larger files.
 
-> reiserfsck --check --logfile check.log /dev/hda2
->
-> It reported (I've to type from the screen):
->
-> reiserfs_open: neither new nor old reiserfs format found on /dev/hda2
-> reiserfsck: could not open filesystem on "/dev/hda2"
+>  Maybe it might be more precise to say that efficient random
+> access motivates small compression atoms which are less efficient?
+>  (Assuming that I understood you.)
 
-Your super block got corrupted somehow or you have your partition table 
-changed so that the blocknumber of the superblock was changed.
+There is one more obscured reason that makes transparent compression worser.
+I have to remind that its primary assignment is the same: to provide more 
+efficient disk space usage. Let's take a look how transparent compression 
+and the package using the same compression algorithm will provide it:
+Suppose we want to compress a 8S-byte file, and both transparent compression
+and package is supported by 4-blocks clusters, S - block size.
 
-To rebuild the corrupted superblock you can use reiserfsck --rebuild-sb.
+ File system:
+divides the file into 2 clusters, suppose each cluster was compressed up to
+(2S+1) bytes, so compressed file occupies 6 blocks.
+ Package:
+makes compressed file which occupies 2*(2S+1) = 4S+2 bytes and passes it
+to the file system, which places it (aieee!) into 5 blocks..
 
-> "echo $?" reported 0 as exit status, check.log has size 0.
->
-> According to the man page, reportig 0 as an exit status in this case
-> is a bug:
-> man reiserfsck says:
->   2.  Run reiserfsck --check --logfile check.log /dev/hda1.  If
->   reiserfsck --check exits with status 0 it means no errors were
->   discovered.
+  So we do have the actual compression ratio produced by the file system is
+6/8 = 25% against actual ones (5/8 = 37,5%) produced by the package. The user
+can observe this effect only by using "du" (when he does "df", he see that
+file system and package produce the same compression ratio 37,5%).
+This is another effect caused by the specific of packing policy (for the
+ext2 files, reiserfs files presented by indirect items, etc..) Obviously
+we can avoid this by using bigger cluster (8 blocks). 
 
-We decided to not provide a special exit code for corrupted super block
-to avoid an automation of super block recovery. This is a difficult case 
-and should be done manually. 
-
->
-> Thank you,
->
-> Moritz
-
--- 
-
-Thanks,
-Vitaly Fertman
+Edward.
