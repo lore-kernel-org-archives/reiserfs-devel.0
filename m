@@ -1,148 +1,78 @@
-From: Mike Waychison <Michael.Waychison@Sun.COM>
-Subject: Re: Using fs views to isolate untrusted processes: I need an assistant
- architect in the USA for Phase I of a DARPA funded linux kernel project
-Date: Wed, 25 Aug 2004 20:16:18 -0400
-Message-ID: <412D2BD2.2090408@sun.com>
-References: <410D96DC.1060405@namesys.com>
- <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com>
- <20040825205618.GA7992@hockin.org>
- <30958D95-F6ED-11D8-A7C9-000393ACC76E@mac.com>
+From: Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 26 Aug 2004 02:18:49 +0200 (CEST)
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <Pine.LNX.4.58.0408260204050.22259@artax.karlin.mff.cuni.cz>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
+ <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20547-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-reply-to: <30958D95-F6ED-11D8-A7C9-000393ACC76E@mac.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Kyle Moffett <mrmacman_g4@mac.com>
-Cc: Tim Hockin <thockin@hockin.org>, LKML <linux-kernel@vger.kernel.org>, Rik van Riel <riel@redhat.com>, ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
 
-Kyle Moffett wrote:
-> On Aug 25, 2004, at 16:56, Tim Hockin wrote:
->
->> On Wed, Aug 25, 2004 at 04:25:24PM -0400, Rik van Riel wrote:
->>
->>>> You can think of this as chroot on steroids.
->>>
->>>
->>> Sounds like what you want is pretty much the namespace stuff
->>> that has been in the kernel since the early 2.4 days.
->>>
->>> No need to replicate VFS functionality inside the filesystem.
->>
->>
->> When I was at Sun, we talked a lot about this.  Mike, does Sun have any
->> iterest in this?
->>
->> We found a lot of shortcomings in implementing various namespace-ish
->> things.
->
->
-> Here's a simple way to do what you want in userspace:
-> 1) Apply the kernel bind mount options fix (*)
-> 2) Run the following shell script
->
-> cat <<'EOF' >fsviews.bash
-> #! /bin/bash
-> # First make the subdirectories
-> mkdir /fsviews_orig
-> mount -t tmpfs tmpfs /fsviews_rw
-> mkdir /fsviews_orig/dir1
-> mkdir /fsviews_orig/dir2
-> mkdir /fsviews_orig/old
->
-> # Now make it read-only with a copy in /fsviews
-> mkdir /fsviews
-> mount --bind /fsviews_orig /fsviews
->
-> # Put directories in /fsviews
-> mount --bind /somewhere/dir1 /fsviews/dir1
-> mount --bind -o ro /otherplace/dir2 /fsviews/dir2
->
-> # Start the process in a new namespace
-> clone_prog bash <<'BACK_TO_OLD_NAMESPACE'
->
-> mount -o ro,remount /fsviews_orig
-> pivot_root /fsviews /fsviews/old
-> umount -l /fsviews/old
-> /dir1/myscript &
->
-> BACK_TO_OLD_NAMESPACE
->
-> # Remove the extra dirs in this namespace
-> umount -l /fsviews
-> umount -l /fsviews_orig
-> rmdir /fsviews
-> rmdir /fsviews_orig
->
-> EOF
->
-> This assumes that clone_prog is a short C program that does a clone()
-> syscall
-> with the CLONE_NEWNS flag and executes a new process.
->
-> Once this is done, "/dir2/script" is running in a _completely_ new
-> namespace
-> with a read-only root directory and two directories from other parts of
-> the vfs.
->
-> (*) IIRC currently bind-mount rw/ro options are those of the underlying
-> mount,
-> the bind-mount options fix provides a separate set of options for each
-> bound
-> copy.  There is only one minimal security implication without said
-> patch, that
-> root can still 'mount -o rw,remount /' to get root writeable again, but
-> since it's
-> on tmpfs, that doesn't matter much.  You could also just take away some
-> capabilities, but otherwise except for the shared process tables this
-> acts very
-> much like a completely new, separate computer.  I've used this to
-> thoroughly
-> secure minimally trusted daemons before. :-D
->
-> Cheers,
-> Kyle Moffett
 
-This provides minimal protection if any: the user may remount any block
-devices on any given tree in his 'namespace' (in the sense of "that is
-what we call a mount-table in Linux").  *
+On Wed, 25 Aug 2004, Linus Torvalds wrote:
 
-If I understand what Hans is looking to get done, he's asking for
-someone to architect a system where any given process can be restricted
-to seeing/accessing a subset of the namespace (in the sense of "a tree
-of directories/files").  Eg: process Foo is allowed access to write to
-/etc/group, but _not_ allowed access to /etc/shadow, under any
-circumstances && Foo will be run as root.  Hell, maybe Foo is never able
-to even _see_ /etc/shadow (making it a true shadow file :).
+> On Wed, 25 Aug 2004, Christoph Hellwig wrote:
+> >
+> > For one thing _I_ didn't decide about xattrs anyway.  And I still
+> > haven't seen a design from you on -fsdevel how you try to solve the
+> > problems with files as directories.
+>
+> Hey, files-as-directories are one of my pet things, so I have to side with
+> Hans on this one. I think it just makes sense. A hell of a lot more sense
+> than xattrs, anyway, since it allows scripts etc standard tools to touch
+> the attributes.
+>
+> It's the UNIX way.
+>
+> And yes, the semantics can _easily_ be solved in very unixy ways.
+>
+> One way to solve it is to just realize that a final slash at the end
+> implies pretty strongly that you want to treat it as a directory. So what
+> you do is:
+>
+>  - without the slash, a file-as-dir won't open with O_DIRECTORY (ENOTDIR)
+>  - with the slash, it won't open _without_ O_DIRECTORY (EISDIR)
+>
+> Problem solved. Very user-friendly, and very intuitive.
 
-Hans, correct me if I misunderstood.
+Stupid question: who will use it? And why?
 
-[*] Somebody really should s/struct namespace/struct mounttable/g (or
-even mounttree) on the kernel sources.  'Namespace' isn't very
-descriptive and it leads to confusion :(
+Anyone can write an userspace library, that implements function
+set_attribute(char *file, char *attribute, char *value), that creates
+directory ".attr/file" in file's directory and stores attribute there.
+(and you can get list of attributes from shell too:
+ls `echo "$filename" |sed 's/\/\([^\/]*\)$/\/\.attr\/\1/'`
+). There's no need to add extra functionality to kernel and filesystem.
 
-- --
-Mike Waychison
-Sun Microsystems, Inc.
-1 (650) 352-5299 voice
-1 (416) 202-8336 voice
-http://www.sun.com
+Advantage:
+- you don't add bloat to kernel or filesystem
+- you don't need to teach tar/cp -a/mc about attributes
+- you won't lose attributes after editing file in vim (it creates another
+file and renames it over original one)
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-NOTICE:  The opinions expressed in this email are held by me,
-and may not represent the views of Sun Microsystems, Inc.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
+> Will it potentially break something? Sure. Do we care? Me, I'll take that
+> kind of extension _any_ day over xattrs, that are fundamentally flawed in
+> my opinion and totally useless. The argument that applications like "tar"
+> won't understand the file-as-directory thing is _flawed_, since legacy
+> apps won't understand xattrs either.
 
-iD8DBQFBLSvRdQs4kOxk3/MRAnopAJ91xpTEqf1I/jaRdqbjbgfnNuPpugCfbkvz
-VeJUBr2UuagZ5UGMGC1nebw=
-=XuQT
------END PGP SIGNATURE-----
+The only way xattrs are useful is that backup/restore software doesn't
+have to know about every filesystem with it's specific attributes and
+every magic ioctl for setting them. Instead it can save/restore
+filesystem-specific attributes without understanding what do they mean.
+However there's no need why application should use them. And no
+application does.
+
+I can't imagine anyone shipping an application with "this app requires
+reiser4" prerequisite. Why should anyone use it if he can store attributes
+in ".attr" directory or whereever and make the application work on any OS
+and any filesystem?
+
+Mikulas
