@@ -1,146 +1,52 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Do xml-like namespaces make sense for Reiser4? (re: metas thread)
-Date: Tue, 13 Apr 2004 09:31:21 -0700
-Message-ID: <407C15D9.1080705@namesys.com>
-References: <407AB9AE.3060801@pobox.com> <407ADCBF.8000609@namesys.com> <407AEA05.50004@pobox.com> <407BFBEA.5010006@pobox.com>
+Subject: Re: Reiser4 can't compile glibc
+Date: Tue, 13 Apr 2004 09:34:51 -0700
+Message-ID: <407C16AB.4000804@namesys.com>
+References: <Pine.LNX.4.21.0404131641470.22275-100000@mlf.linux.rulez.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17888-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17889-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <407BFBEA.5010006@pobox.com>
+In-Reply-To: <Pine.LNX.4.21.0404131641470.22275-100000@mlf.linux.rulez.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "John D. Heintz" <jheintz@pobox.com>
-Cc: reiserfs-list@namesys.com
+To: Szakacsits Szabolcs <szaka@sienet.hu>
+Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
 
-John D. Heintz wrote:
+Szakacsits Szabolcs wrote:
 
+>On Tue, 13 Apr 2004, Vladimir Saveliev wrote:
+>  
 >
-> Hans,
->
-> If I understand the naming system primitives correctly then the ":" 
-> introduces a new sequence operator and does evil things to closure, 
-> right?
->
-> Let's use an example that is likely to conflict: Security plugins 
-> introducing a name "permissions" to objects.
->
-> Here is my list of how to expose this:
-> 1) foo.txt/permissions
-> * likely to conflict with end-user names and other security provider 
-> names
-
-this would be foo/metas/permissions/owner, does that resolve the problem 
-in your eyes?
-
-> 2) foo.txt/white-hat-permissions
-> * verbose, but negligible risk of conflicts
-> 3) foo.txt/white-hat-security/permissions
-> * nested namespace to provide isolation
-> 4) foo.txt/<wh-sec>permissions
-> * syntax implying substitution before name resolution
-> * could be some other syntax like foo.txt/wh-sec:permissions
->
-> I don't like 1) or 2), and I also don't see much real difference 
-> between 3) and 4).
->
-> I'm guessing that the syntax of 4) is problem: like the ":" is 
-> introduces new sequencial operations. I'm viewing it as just a 
-> syntactic shorthand with a clear translation to the actual name.
->
-> Thanks,
-> John
->
->
-> John D. Heintz wrote:
->
->> Ah, I didn't do a good job of explaining the key benefit that I see 
->> in something like this.
->>
->> "foo.txt/reiser4:uid"
->> is syntactic magic for
->> "foo.txt/www.namesys.com/meta/uid"
->>
->> when "reiser:" means "www.namesys.com/meta/uid" and ignoring URI prefix.
->>
->> To me this is all about
->> 1) a correct mechanism to both unify namespaces
->> 2) _and_ avoid name conflicts
->> 3) _and_ keep nice short file paths.
->>
->> The chance that somebody else is going to name a file "meta" or 
->> "metas" is really high, the chance that someone will name a file 
->> "www.namesys.com/meta" is really low. But I don't want to type that 
->> in all the time.
->>
->> I've drank the cool-aid about unified namespaces, but I feel that 
->> naming conflicts is still way too big a problem to just say "it's not 
->> a big deal" over.
->>
->> Thanks,
->> John
->>
->> Hans Reiser wrote:
->>
->>> Mhy colon instead of / ?
->>>
->>> There is no reason for it.  Implementing a storage layer to make XML 
->>> storage more efficient might be commercially interesting, but XML is 
->>> not what we should copy for namespace style.
->>>
->>> Hans
->>>
->>> John D. Heintz wrote:
->>>
->>>> Hi all,
->>>>
->>>> I work with XML quite a lot in my job and deal with XML namespaces 
->>>> often. While I think they have some problems in the XML world (poor 
->>>> integration with XML InfoSet) they might be useful for Reiser4 and 
->>>> they seem to play well with the Set Theoretic underlying models (as 
->>>> far as I can tell :).
->>>>
->>>> Here's what I'm thinking:
->>>> Instead of `cat foo.txt/metas/uid`
->>>> it would be `cat foo.txt/reiser4:metas/uid` or perhaps `cat 
->>>> foo.txt/reiser4:uid`.
->>>>
->>>> Here the "reiser4" shorthand would map to 
->>>> "http://www.namesys.com/v4" or whatever Hans and team decided.
->>>>
->>>> The reiser4 namespace could be hardcoded or compiled in  and 
->>>> exposed via `cat /proc/fs/reiser4/namespace`.
->>>>
->>>> Other namespaces could be added to files/directories and I'd assume 
->>>> something like:
->>>> `cat foo.txt/reiser4:namespaces` would list all the namespaces 
->>>> available for a particular file.
->>>> Something like:
->>>> reiser4    http://www.namesys.com/v4
->>>> streams   http://www.evil-empire.com/streams
->>>> snapcm   http://www.snapcm.com/snapcm
->>>>
->>>> John D. Heintz
->>>>
->>>> ps - SnapCM is the name of a versioned linking model that I 
->>>> developed some time ago and hope one day to build a plugin for 
->>>> Reiser4. I'm being optimistic listing it in the available 
->>>> namespaces. ;-)
->>>>
->>>>
->>>
->>>
->>
->>
+>>yes, reiser4 by default has the same time resolution as ext[23] and
+>>reiserfs.
+>>    
 >>
 >
+>Hmmm, so the kernel's nanosec timestamps can bite Reiser4 as well?
+>
+>  http://groups.google.com/groups?selm=1GgcQ-4k1-17%40gated-at.bofh.it
+>
+>  
+>
+>>However, I think that i found the problem already. The attached patch
+>>for fs/reiser4/plugin/item/tail.c should help.
+>>    
+>>
+>
+>That's great :)
+>	
+>	Szaka
 >
 >
 >
-
+>  
+>
+Interesting.  vs, describe the storage of these in the various reiserfs 
+versions.
 
 -- 
 Hans
