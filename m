@@ -1,30 +1,45 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+From: Marc-Christian Petersen <m.c.p@gmx.net>
 Subject: Re: power loss -> corruption
-Date: Thu, 8 May 2003 14:39:59 +0200
-Message-ID: <200305081439.59652.Dieter.Nuetzel@hamburg.de>
-References: <93F527C91A6ED411AFE10050040665D007AA853B@corpusmx1.us.dg.com> <545657241.20030508143414@tnonline.net>
+Date: Thu, 8 May 2003 14:38:33 +0200
+Message-ID: <200305081437.25656.m.c.p@gmx.net>
+References: <93F527C91A6ED411AFE10050040665D007AA853B@corpusmx1.us.dg.com> <m1bryd1uve.fsf@orchid.mirar.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14009-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14010-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <545657241.20030508143414@tnonline.net>
+In-Reply-To: <m1bryd1uve.fsf@orchid.mirar.org>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Anders Widman <andewid@tnonline.net>, reiserfs-list@namesys.com
-Cc: Mirar <mirar-yg@mirar.org>
+To: Mirar <mirar-yg@mirar.org>, berthiaume_wayne@emc.com
+Cc: Dieter.Nuetzel@hamburg.de, reiserfs-list@namesys.com
 
-Am Donnerstag, 8. Mai 2003 14:34 schrieb Anders Widman:
-> > "data=journal" will also work. You'll need to use the data logging
+On Thursday 08 May 2003 14:32, Mirar wrote:
+
+Hi Mirar,
+
+> berthiaume_wayne@emc.com writes:
+> > 	"data=journal" will also work. You'll need to use the data logging
 > > patches that Chris Mason has put together.
 >
->   When will data logging be included in stock kernels?
+> Thanks.
+>
+> I assume it's the ones I found here?
+> ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20
+>
+> Do I need all of them or just 03-data-logging?
+>
+> Any reason why they haven't entered the official 2.4.21 (or have they)?
+2.4.21 isn't released yet. It's in -rc1 stage and there are still tons of 
+outstanding bugs which have to be fixed (I am afraid they won't).
 
-See "Data-logging for 2.4.21-rc1+", "Data-logging for 2.4.21-rc1+ (again), 
-"Data-logging and md as / fs bug".
+However, there are 2.4.21-rc1 patches. See:
+ftp://namesys.com/pub/reiserfs-for-2.4/testing/data-logging-and-quota-2.4.21-rc1
 
-Regards,
-	Dieter
+--
+ciao, Marc
+
+
