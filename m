@@ -1,65 +1,42 @@
-From: Jeffrey Yasskin <jyasskin@mail.utexas.edu>
-Subject: Typos, etc in http://namesys.com/v4/v4.html
-Date: Thu, 21 Aug 2003 21:16:33 -0500
-Message-ID: <3F457D01.9080506@mail.utexas.edu>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: reiserfsprogs (3.6.9, .10, .11) installation problems
+Date: Fri, 22 Aug 2003 12:18:21 +0400
+Message-ID: <200308221218.21594.vitaly@namesys.com>
+References: <m3n0e3ript.fsf@multivac.cwru.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15385-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15386-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <m3n0e3ript.fsf@multivac.cwru.edu>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Paul Jarc <prj@po.cwru.edu>
+Cc: reiserfs-list@namesys.com
 
-I've found some typos and bugs in your Reiser4 page. I have tried to 
-keep the comments in page order and label them by the heading they are 
-contained in.
+On Thursday 21 August 2003 03:51, Paul Jarc wrote:
+> If pdksh is being used to run reiserfsprogs' ./configure, the script
+> triggers a bug in pdksh.  This line triggers the bug:
+> 		fprintf(fout, "\t\\\" "\n");
+> AFAICT, this is supposed to become a C string containing tab,
+> backslash, an newline.  Right?  Then this will work for both bash and
+> pdksh:
+> 		fprintf(fout, "\\t\\\\\\n");
+>
+> Also, this earlier line is misspelled:
+> #define _GNU_SOURSE
+> It should be:
+> #define _GNU_SOURCE
+>                  ^
+> But since it works even when it's misspelled, it probably doesn't need
+> to be there at all.
 
---Jeffrey
+Hi Paul,
 
+thanks for the report, all is fixed and will be included 
+into the next release.
 
-In the first sentence in the Items, the "them"at the end is ambiguous 
-and should be replaced with "the objects" (or reworded).
-
-I think the reference to bodies and body items in the Items:Units 
-section should be about tails since they're tail items in the source. 
-Actually, it looks like both the Types of Items and Units sections just 
-need to be updated.
-
-"Height Balancing versus Space Balancing" should just be "Height 
-Balancing" since it never mentions space balancing.
-
-In several places you say you don't compress keys or tail items, but I 
-think you do. (ctails and lcomp nodes)
-
-The titles of both cache design principles are slightly confusing. IMHO, 
-"Reiser's Untie The Uncorrelated Principle of Cache Design" should be 
-"Reiser's Untie-The-Uncorrelated Principle of Cache Design" (note the 
-hyphens to connect the principle's name), and the other should be 
-renamed similarly.
-
-In "Reiser's Maximize The Variance Principle of Cache Design", you talk 
-about temperatures before you define them, and the definition is hidden 
-in parentheses.
-
-In the "BLOBs Unbalance the Tree..." section: I think the "(Never accept 
-that "..." argument...)" comment refers to an older version of this 
-page, but first-time readers will just be confused. It should be 
-explained or excised.
-"Gray and Reuter say the criterion...": I think it's a goal, not a 
-criterion. Or maybe the "criterion for fast searching of..."
-
-The picture under "Procrastination..." should be above it.
-
-The Repacker section says that V4.1 will modify the repacker to add air 
-holes while in other places you say the repacker won't even be written 
-till 4.1.
-
-In the Link Taxonomy section significantly farther down the page, I 
-think the names of the link types should use hyphens (count-links 
-instead of countlinks) because in other parts of the file you string 4 
-prefixes together with hyphens. (which is somewhat confusing but 
-probably necessary)
-
+Vitaly Fertman
