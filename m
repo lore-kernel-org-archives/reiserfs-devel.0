@@ -1,54 +1,55 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Nicholas Miell <nmiell@comcast.net>
 Subject: Re: silent semantic changes with reiser4
-Date: Sun, 29 Aug 2004 13:06:41 -0700
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <41323751.5000607@namesys.com>
-References: <Pine.LNX.4.44.0408271043090.10272-100000@chimarrao.boston.redhat.com> <412F7D63.4000109@namesys.com> <20040827230857.69340aec.pj@sgi.com> <20040829150231.GE9471@alias> <4132205A.9080505@namesys.com> <20040829183629.GP21964@parcelfarce.linux.theplanet.co.uk> <20040829185744.GQ21964@parcelfarce.linux.theplanet.co.uk>
+Date: Sun, 29 Aug 2004 13:14:50 -0700
+Message-ID: <1093810490.2766.8.camel@entropy>
+References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com>
+	 <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org>
+	 <20040828170515.GB24868@hh.idb.hist.no>
+	 <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org>
+	 <4131074D.7050209@namesys.com>
+	 <Pine.LNX.4.58.0408282159510.2295@ppc970.osdl.org>
+	 <4131A3B2.30203@namesys.com>
+	 <Pine.LNX.4.58.0408291055140.2295@ppc970.osdl.org>
+	 <41323436.80007@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040829185744.GQ21964@parcelfarce.linux.theplanet.co.uk>
+Return-path: <reiserfs-list-return-21084-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <41323436.80007@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: viro@parcelfarce.linux.theplanet.co.uk
-Cc: flx@msu.ru, Paul Jackson <pj@sgi.com>, riel@redhat.com, ninja@slaphack.com, torvalds@osdl.org, diegocg@teleline.es, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Linus Torvalds <torvalds@osdl.org>, Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com, Al Viro <viro@parcelfarce.linux.theplanet.co.uk>
 
-viro@parcelfarce.linux.theplanet.co.uk wrote:
+On Sun, 2004-08-29 at 12:53, Hans Reiser wrote:
+> With your model, can I do:
+> 
+> cat filenameA/metas/permissions > filenameB/metas/permissions
+> 
 
->On Sun, Aug 29, 2004 at 07:36:29PM +0100, viro@parcelfarce.linux.theplanet.co.uk wrote:
->  
->
->>>he wants without recompiling to do it.  This kind of a view requires no 
->>>coding because you can just mount the root filesystem two ways, one with 
->>>the -nopseudos mount option, and one without it.
->>>      
->>>
->>*What*?
->>
->>OK, now I want detailed explanation of the reasons why that doesn't create
->>cache coherency problems.
->>
->>Do you have an analysis of locking in the entire thing?
->>    
->>
->
->And I am very, very serious about that - we are talking about very nasty
->minefield and design choices in that area have fundamental impact on the
->entire layer, wherever it is located.
->
->It's *NOT* something that you can leave until later and hope it somehow
->falls into place - it can be merged in steps, but you MUST know the goal
->on that level.  To rearchitect later might be possible (even though you
->will a hell of a time avoiding plugins breakage), but it will be *hard*.
->
->
->  
->
-How about if you educate me on the problems you see for a bit before I 
-respond? I think it might help us move into a constructive discussion.
+runat filenameA "cat permissions" | runat filenameB "cat > permissions"
 
-You are more experienced with your code than I am.... but I firmly 
-believe that having different views of the same filesystem in which some 
-files are visible in one view but not in another is technically feasible 
-for some VFS, though I'd like to learn about the problems you see for 
-doing it in the current VFS.
+> find / -exec cat {}/permissions \; | grep 4777 | wc -l
+
+find / -exec runat {} "cat permissions" \; | grep 4777 | wc -l
+
+Although, whether or not the kernel exposes file permissions as an
+attribute named permissions is up to the filesystem. (And the wrong
+thing to do, in my opinion, but that's irrelevant.)
+
+> If yes, then we are talking past each other somehow rather than 
+> disagreeing. If metafiles can be opened with both open and openat() in 
+> your model, then we are discussing some small detail.
+
+It can be opened by both, but in order to do it via open(2), you need to
+fchdir(2) to the attribute directory as returned by openat(2) and then
+use a relative pathname.
+
+> I think the answer is no though, in which case you are missing the point 
+> of the new design. Is the answer no?
+-- 
+Nicholas Miell <nmiell@comcast.net>
+
