@@ -1,75 +1,49 @@
-From: Heinz-Josef Claes <hjclaes@web.de>
-Subject: RE: Snapshots a la NetApp?
-Date: 26 Mar 2003 19:29:07 +0100
-Message-ID: <1048703346.8495.44.camel@kakapo.schnulli.de>
-References: <08628CA53C6CBA4ABAFB9E808A5214CB0142B6D8@mercury.infiniconsys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Reiser4 crypto-compression design
+Date: Wed, 26 Mar 2003 21:33:51 +0300
+Message-ID: <3E81F28F.2050409@namesys.com>
+References: <3E80B384.2190B074@namesys.com> <200303260730.34330.phma@webjockey.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13394-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13395-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <08628CA53C6CBA4ABAFB9E808A5214CB0142B6D8@mercury.infiniconsys.com>
+In-Reply-To: <200303260730.34330.phma@webjockey.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "Barry, Christopher" <cbarry@infiniconsys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Pierre Abbat <phma@webjockey.net>
+Cc: reiserfs-list@namesys.com, reiserfs-dev@namesys.com
 
-Am Mit, 2003-03-26 um 18.54 schrieb Barry, Christopher:
-> cruft snippage....
-> 
-> >>>  
-> >>>
-> >> Flx, should we try this for our backups?
-> 
-> >If you test it, I would be glad to hear about your experiences, because
-> >I believe that you must be a stress tester by birth :-)
-> >
-> >btw: The only handycap of the used method is that all the links to a
-> >file can have only *one* set of permissions (chmod, chown). Will it be
-> >possible to change this with a loadable module in reiser4?
-> >
-> >best regards,
-> >HJC
-> 
-> 
-> HJC,
-> 
-> 
-> Under what circumstances would this be a handicap? Do you currently have the same file in multiple locations with different perms? Shouldn't this be controllable via groups?
-> 
-> 
-> --
-> Christopher Barry
-> Manager of Information Systems
-> InfiniCon Systems
-> http://www.infiniconsys.com
-> 
+Pierre Abbat wrote:
 
-I never saw the problem in real live. But it can happen:
-
-Users 'tim' and 'bob' have the same file in their directories.
-In this example both of them have set the permissions to 0600.
-In the backup, only one file exists with permissions 0600 and belongs to
-one of them, let's say 'bob'.
-
-So 'tim' is not able to restore the file by simply copying it with a
-file browser (or simply cp).
-
-With the tool 'storeBackupRecover.pl', which must run as root and uses a
-table for restoring the users and permissions, it's no problem. (btw, it
-can also restore hard links.)
-
-It's not controllable via groups because the two users perhaps are not
-and must not be in the same group. The file can e.g. be transported via
-email. I think, it could be controlled via ACLs, but they are not
-standarised. One the other hand, the problem will not pop up often and
-can be resolved easily (=restoring the file(s)) with the system
-administrator.
+>On Tuesday 25 March 2003 14:52, Edward Shushkin wrote:
+>  
+>
+>>  When user creates a crypto-file, the file system asks for a secret
+>>key and calculates its id (128-bit word) which supposed to be stored
+>>in file's stat-data on disk.
+>>  When user opens crypto-file, the file system asks for a secret key,
+>>checks (by the id) if it is valid, and places a pointer to the
+>>crypto-file info to the reiser4 specific part of inode. This info
+>>includes cpu key words created by special method of the crypto plugin
+>>by the valid secret key.
+>>    
+>>
+>
+>Can a directory be marked as encrypted, so that all new files in the directory 
+>will be encrypted with the same key? Can a process hold an encryption key, so 
+>that all its children automatically can read files encrypted with that key?
+>
+>
+>
+>  
+>
+Both of these are desirable features.  We need to work out the details 
+of integrating with a PKI infrastructure.
 
 -- 
-Heinz-Josef Claes                     hjclaes@web.de
-project: http://sourceforge.net/projects/storebackup
-      -> snapshot-like backup to another disk
+Hans
+
 
