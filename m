@@ -1,73 +1,88 @@
-From: Radovan Garabik <garabik@melkor.dnp.fmph.uniba.sk>
-Subject: mount reiserfs3 REALLY read only?
-Date: Mon, 6 Dec 2004 13:37:06 +0100
-Message-ID: <20041206123706.GA25176@melkor.dnp.fmph.uniba.sk>
+From: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
+Subject: Re: reiser4 for windows
+Date: Mon, 06 Dec 2004 14:55:28 +0000
+Message-ID: <41B472E0.2010205@futuretg.com>
+References: <20041204211059.41930.qmail@web50908.mail.yahoo.com>	 <1102300289.19084.7.camel@titania.zlynx.org> <c7ef32a7041205201729feacb5@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-22684-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22685-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <c7ef32a7041205201729feacb5@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Tierra <etierra@gmail.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>
+
+Tierra wrote:
+
+>On Sun, 05 Dec 2004 19:31:29 -0700, Jonathan Briggs <jbriggs@esoft.com> wrote:
+>  
+>
+>>There are ext2/3 and reiserfs access programs for Windows.  They are not
+>>implemented as Windows filesystem drivers.  I do not know if this is
+>>because of technical difficulties or Windows vs. GPL licensing problems.
+>>
+>>Most of them bring up the filesystem in a Windows Explorerish interface.
+>>You can then copy files in or out.
+>>    
+>>
+>
+>You mean much like rfstool?
+>http://www.p-nand-q.com/download/rfstool.html
+>  
+>
+This seems cool. May be there are a use with programs like Ghost that backup
+also Linux partitions, and probably now will found all the Linux partitions
+including reiserfs.
+
+I don't see other use.
+
+What was interesting was to install MS Windows on a ReiserFS partitions
+and probably there are a way to do using GNU/Linux, not windows.
+
+I neither see any screeshot  on this website regarding the program.
+
+Under pictures, I found images about Florence, Rome, and other ruins.
+
+Seems this person loves ruins and want to enable them in futuristic
+technologies
+like Reiser.
+
+... Is better to discard Ruins. Ruins represent the past like MS Windows
+:-) :-D
+
+Thanks,
+Giovanni.
+
+>I've seen other reiserfs GUI tools, all pretty much are a wrapper
+>around the above library (including my own). But I've never seen
+>anything with write access, just read-only. Also, AFAIK, Gerson Kurz
+>has no plans of working on that project anymore, so it's a limited few
+>who could pull off a Reiser4 Windows library.
+>
+>Bryan Petty
+>
+>  
+>
 
 
-My problem: I have a 1.1TB RAID (Promise UltraTrak 15000),=20
-with one huge, half full reiserfs3 partition. Suddenly,=20
-it crashed, and after some debugging I found out that
-reading from the disk (cat /dev/sdc >/dev/null) works,
-but apparently when mounting reiserfs, it writes
-something somewhere, and the SCSI bus timeouts and hangs=20
-until rebot (probably a harware error)
+-- 
 
-I have a place to copy the data, but I sem unable to mount the
-partition, I tried using -o ro,nolog but no luck.
-RFSTOOL segfaults when accessing the partition, debugreiserfs
-prints a lot of seemingly normal information (so the data could be salvaged=
-, perhaps).
 
-I can simulate the read only status with my USB flash key:
+-- 
+-- 
 
-kassiopeia:12:# mount /dev/sda /mnt -o ro,nolog
-ReiserFS: sda: found reiserfs format "3.6" with standard journal
-ReiserFS: sda: using ordered data mode
-ReiserFS: sda: journal params: device sda, size 8192, journal first
-block 18, max trans len 1024, max batch 900, max commit age 30, max
-trans age 30
-ReiserFS: sda: checking transaction log (sda)
-SCSI error : <0 0 0 0> return code =3D 0x8000002   # the real system hangs =
-at this point
-Current sda: sense key Data Protect
-Additional sense: Write protected
-end_request: I/O error, dev sda, sector 65680
-Buffer I/O error on device sda, logical block 8210
-lost page write due to I/O error on sda
-ReiserFS: sda: warning: journal-837: IO error during journal replay
-ReiserFS: sda: warning: Replay Failure, unable to mount
-ReiserFS: sda: warning: sh-2022: reiserfs_fill_super: unable to
-initialize journal space
-mount: wrong fs type, bad option, bad superblock on /dev/sda,
-       or too many mounted file systems
-      =20
-What I need to try is to mount it without any actual need for
-write. Are there any options or possibilities, perhaps
-to tell reiserfs to ignore journal completely? Perhaps some #ifdef in
-the code...
+Check FT Websites ... http://www.futuretg.com  - ftp://ftp.futuretg.com
+http://www.FTLinuxCourse.com
+    http://www.FTLinuxCourse.com/Certification
+http://www.rpmparadaise.org
+http://GNULinuxUtilities.com
+http://www.YourPersonalOperatingSystem.com
 
-Of course, the obvious possibility, copying the partition somewhere and
-mounting as a loop would probably work, but I do not have those needed=20
-continuous 1.1TB of diskspace...
+WorldWide Global Mobile: +39 393 665 4239
 
-thank you for any ideas
+-- 
 
---=20
- -----------------------------------------------------------
-| Radovan Garab=EDk http://melkor.dnp.fmph.uniba.sk/~garabik/ |
-| __..--^^^--..__    garabik @ melkor.dnp.fmph.uniba.sk     |
- -----------------------------------------------------------
-Antivirus alert: file .signature infected by signature virus.
-Hi! I'm a signature virus! Copy me into your signature file to help me spre=
-ad!
+
