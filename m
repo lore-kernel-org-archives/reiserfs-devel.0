@@ -1,47 +1,28 @@
-From: Fong Vang <FVang@Zantaz.com>
-Subject: File system corruption!
-Date: Thu, 19 Feb 2004 17:33:08 -0800
-Message-ID: <12C7D768CC8ED4118A9200508BEEC6FB03377A50@zanexch.zantaz.com>
+From: Tom Vier <tmv@comcast.net>
+Subject: Re: $25 question - ReiserFS 3.6 data errors on 2.4.23
+Date: Thu, 19 Feb 2004 20:41:53 -0500
+Message-ID: <20040220014153.GB14838@zero>
+References: <20040218093510.GD21098@backtop.namesys.com> <1077098911.5090.38.camel@tribesman.namesys.com> <c0verm$ps6$1@sea.gmane.org> <40336855.1030400@dsvr.net> <c0vpvs$lir$1@sea.gmane.org>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16862-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16863-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <c0vpvs$lir$1@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "'reiserfs-list@namesys.com'" <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Currently, we have a couple of hundred systems with this configuration (per
-server):
+On Wed, Feb 18, 2004 at 02:42:08PM +0100, Jens Benecke wrote:
+> And we don't run reiserfsck at boot time, only manually. ("0 0" in fstab)
 
-* RedHat Linux 7.1
-* Linux 2.4.20 kernel (from RedHat).  ReiserFS version 3.6.25
-* Dual Xeon processors on SuperMicro motherboards
-* 4 GB of RAM
-* ~1 TB of storage allocated to ReiserFS (8 drives in RAID-10 configuration)
+if it's done after it boots and it's been mounted rw, you could be reading
+stale data.
 
-Although most of the systems are performing without hiccups, we've had 2-3
-systems loosing the ~1TB ReiserFS file system after a reboot.  3ware reports
-all drives are performing optimally.  Mounting the ~1TB ReiserFS file system
-is successful but the file system is blank (the actual file system is empty,
-not the mount point).  Anyone has any idea how this could happen?
-
-I'm just wondering how many places ReiserFS store the meta data (superinode,
-inode, etc.)?
-
-Any help is appreciated.
-
-
-This e-mail has been captured and archived by the ZANTAZ Digital Safe(tm)
-service.  For more information, visit us at www.zantaz.com. 
-IMPORTANT: This electronic mail message is intended only for the use of the
-individual or entity to which it is addressed and may contain information
-that is privileged, confidential or exempt from disclosure under applicable
-law.  If the reader of this message is not the intended recipient, or the
-employee or agent responsible for delivering this message to the intended
-recipient, you are hereby notified that any dissemination, distribution or
-copying of this communication is strictly prohibited.  If you have received
-this communication in error, please notify the sender immediately by
-telephone or directly reply to the original message(s) sent.  Thank you.
+-- 
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0xE6CB97DA
