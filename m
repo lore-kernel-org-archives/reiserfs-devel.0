@@ -1,65 +1,92 @@
-From: Yury Umanets <umka@namesys.com>
+From: Henning Westerholt <henning@skalatan.de>
 Subject: Re: reiser4 snapshot
-Date: Tue, 12 Aug 2003 12:25:58 +0400
-Message-ID: <1060676758.21147.23.camel@haron.namesys.com>
+Date: Tue, 12 Aug 2003 10:28:07 +0200
+Message-ID: <200308121028.11231.henning@skalatan.de>
 References: <16183.48363.884605.564937@laputa.namesys.com>
-	 <pan.2003.08.12.00.32.11.185228@math.ubc.ca>
-	 <20030812060542.GA5363@namesys.com> <20030812072220.GA29079@chepelov.org>
-	 <1060673517.21149.7.camel@haron.namesys.com>
-	 <20030812080212.GA23206@chepelov.org>
+Reply-To: henning@skalatan.de
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-15292-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15293-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030812080212.GA23206@chepelov.org>
+In-Reply-To: <16183.48363.884605.564937@laputa.namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Cyrille Chepelov <cyrille@chepelov.org>
-Cc: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-On Tue, 2003-08-12 at 12:02, Cyrille Chepelov wrote:
-> Le Tue, Aug 12, 2003, =E0 11:31:57AM +0400, Yury Umanets a =E9crit:
->=20
-> > > I have a problem: reiserfs4progs doesn't seem to pay attention to the
-> > > --prefix when it comes to locating libaal.
-> >=20
-> > --prefix is not the prefix libraries are looked at. It is the prefix of
-> > where package libraries and includes will be installed.
->=20
-> yes, of course. However, you saw that it's not the only problem.
->=20
-> > >  When I force it a little by prepending the call to
-> > > ./configure with suitable CFLAGS and LDFLAGS, it goes past locating l=
-ibaal,
-> > > but chokes on locating <aal/aal.h>.
-> > This will be fixed. Thanks. temporary cure is to specify CFLAGS durring
-> > make:
-> >=20
-> > make CFLAGS=3D"-I/scratch/riesling/reiser4-inst/include/aal"
->=20
-> can't be done, as there is no Makefile until configure completes -- and it
-> can't complete as it doesnt pay attention to things like
-> 	CFLAGS=3D"-I/.../include" ./configure=20
->=20
-> I got past that, though.
->=20
-> Another little glitch is that the configure.in explicitly checks for 0.4.8
-> while the provided libaal is 0.4.9. No biggie, just requires modifying the
-> configure.in and re-running autoconf (you might want to add a check again=
-st
-> that condition in your pre-upload QA scripts).
+Am Montag, 11. August 2003 17:57 schrieb Nikita Danilov:
+> Hello,
+>
+> new reiser4 snapshot is available at
+>
+> http://thebsh.namesys.com/snapshots/2003.08.11/
+>
 
-Hello,
+Hi,
 
-Everything is fixed and new snapshot is in
-http://thebsh.namesys.com/snapshots/2003.08.11/.
+thank you for the snapshot.
 
-See ./configure --help for new option --with-libaal.
+I've tested the reiser4.diff patch, it apply cleanly on my system. 
+
+1)
+The option "CONFIG_REISER4_FS_SYSCALL" breaks the build on my system.
+
+[...]
+  CC      fs/reiser4/sys_reiser4.o
+In file included from include/asm/hardirq.h:6,
+                 from include/linux/interrupt.h:10,
+                 from include/asm/highmem.h:24,
+                 from include/linux/highmem.h:14,
+                 from include/linux/pagemap.h:10,
+                 from fs/reiser4/sys_reiser4.c:15:
+include/linux/irq.h:69: warning: size of `irq_desc' is 28672 bytes
+fs/reiser4/sys_reiser4.c:45:27: parser/parser.h: file not found
+fs/reiser4/sys_reiser4.c:54:32: parser/parser.code.c: file not found
+fs/reiser4/sys_reiser4.c: In function `sys_reiser4':
+fs/reiser4/sys_reiser4.c:75: warning: implicit declaration of function 
+`reiser4_pars_init'
+fs/reiser4/sys_reiser4.c:75: warning: assignment makes pointer from integer 
+without a cast
+fs/reiser4/sys_reiser4.c:80: dereferencing pointer to incomplete type
+fs/reiser4/sys_reiser4.c:81: warning: implicit declaration of function 
+`PTRACE'
+fs/reiser4/sys_reiser4.c:82: warning: implicit declaration of function 
+`yyparse'
+fs/reiser4/sys_reiser4.c:83: warning: implicit declaration of function 
+`reiser4_pars_free'
+fs/reiser4/sys_reiser4.c:66: warning: unused variable `Gencode'
+make[2]: *** [fs/reiser4/sys_reiser4.o] Error 1
+make[1]: *** [fs/reiser4] Error 2
+make: *** [fs] Error 2
 
 
-Thanks for reports one more time.
+2)
+Without this option the build finish, but it gave also many warnings about a 
+include from include/asm/hardirq.h
 
+
+3)
+I'm also unable to build reiser4 as module:
+[...]
+include/linux/irq.h:69: warning: size of `irq_desc' is 28672 bytes
+  LD [M]  fs/reiser4/reiser4.o
+  LD      fs/built-in.o
+  GEN     .version
+  CHK     include/linux/compile.h
+  UPD     include/linux/compile.h
+  CC      init/version.o
+  LD      init/built-in.o
+  LD      .tmp_vmlinux1
+arch/i386/kernel/built-in.o(.data+0x7c0): In function `sys_call_table':
+: undefined reference to `sys_reiser4'
+make: *** [.tmp_vmlinux1] Error 1
+
+
+Are this know issues?
+
+
+Henning
 
