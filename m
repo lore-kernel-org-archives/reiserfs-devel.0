@@ -1,50 +1,43 @@
-From: Christian Kujau <evil@g-house.de>
-Subject: Re: vpf-10680, minor corruptions
-Date: Wed, 18 Jun 2003 20:01:12 +0200
-Message-ID: <3EF0A8E8.2000209@g-house.de>
-References: <3EF07AFB.8060303@g-house.de> <20030618152626.GA17240@namesys.com>
-Reply-To: evil@g-house.de
+From: "Fred -- Speed Up --" <speedup@free.fr>
+Subject: Reiser4 installation & kernel patching
+Date: Thu, 19 Jun 2003 07:11:00 +0200
+Message-ID: <000e01c33621$2ced8490$0200a8c0@xpstation>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14616-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_000B_01C33631.F0285BA0"
+Return-path: <reiserfs-list-return-14618-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030618152626.GA17240@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: ReiserFS ML <reiserfs-list@namesys.com>
 
-Oleg Drokin schrieb:
-> Hm, interesting. Do you had crashes/unexpected shutdowns before corruptions appears
-> or are they appear without any reason at all?
+------=_NextPart_000_000B_01C33631.F0285BA0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-i had this issue once before -- did a check and noticed vpf-10680/some 
-corruptions. but these must have been from an crash.
-but now, i think as i rebooted the machine yesterday (because i upgraded 
-to kernel 2.5.72) the journal was checked (replayed?) anyway at boot:
+Hello !
 
-found reiserfs format "3.6" with standard journal
-Reiserfs journal params: device sde2, size 8192, journal first block 18, 
-max trans len 1024, max batch 900, max commit age 30, max trans age 30
-reiserfs: checking transaction log (sde2) for (sde2)
-Using r5 hash to sort names
+I just downloaded the 2.5.72 kernel sources and applied the -mm1 patch, =
+now I'd want to include Reiser4 in my kernel. I tried to compile the =
+reiserprogs sources from the bk repositery, but autoconf and then =
+./configure failed.
+I don't really know how to patch the kernel though ... do I simply have =
+to copy the reiser4 folder in the kernel's /fs folder, and then apply =
+the linux-[...].patch ? This one does not work on my kernel, and I don't =
+know if it's the right way to go.
+I'd just like you to make a little howto to merge reiser4 into an =
+existing kernel (I don't want to download the whole Reiser4 kernel tree =
+...) and then correctly compile the reiser4progs.
 
-(from dmesg, booting process)
+Thank you in advance,
+Fred
 
-and i thought the fs is "O.K." at least after boot, because ReiserFS 
-cares about consistency for itsself. if not, the corruptions are likely 
-from the unclean shutdowns. but that would mean, that i still have to 
-manually reiserfsck from time to time.
-
-btw, is there a switch like "Maximum mount counft before doing the next 
-fsck while booting"?
-
-> Well, I guess it's time to clear the dust off our alpha and do some testing.
-
-hehe, should it be architecture related?
-
-Thank you,
-Christian.
+PS : What are the lilo and grub patches in the reiserprogs source tree =
+for ? Do they bring boot support for reiser4 partitions, so that grub =
+for instance will be able to fetch its menu.lst file from a reiser4 =
+partition ?
+------=_NextPart_000_000B_01C33631.F0285BA0--
 
