@@ -1,68 +1,137 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: Squid eating up all CPU
-Date: Tue, 7 Sep 2004 19:03:47 +0400
-Message-ID: <20040907150347.GD6294@backtop.namesys.com>
-References: <200409071528.06971.rmeijer@internet.gr> <20040907125235.GC6294@backtop.namesys.com> <200409071650.46311.rmeijer@internet.gr>
-Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21572-reiserfs=m.gmane.org@namesys.com>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
+Subject: Re: silent semantic changes with reiser4
+Date: Tue, 07 Sep 2004 11:30:12 -0400
+Message-ID: <200409071530.i87FUCP1003927@laptop11.inf.utfsm.cl>
+References: <spam@tnonline.net>
+Return-path: <reiserfs-list-return-21573-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200409071650.46311.rmeijer@internet.gr>
+In-Reply-To: Message from Spam <spam@tnonline.net> 
+   of "Tue, 07 Sep 2004 14:33:46 +0200." <1183150024.20040907143346@tnonline.net> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Raymond A. Meijer" <rmeijer@internet.gr>
-Cc: reiserfs-list@namesys.com
+To: Spam <spam@tnonline.net>
+Cc: Christer Weinigel <christer@weinigel.se>, David Masover <ninja@slaphack.com>, Tonnerre <tonnerre@thundrix.ch>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Tue, Sep 07, 2004 at 04:50:46PM +0300, Raymond A. Meijer wrote:
-> On Tue 7 September 2004 15:52, Alex Zarochentsev wrote:
-> 
-> Hi Alex,
-> 
-> > > Everything seems to work well, except..the Squid process is eating up all CPU:
-> > > 
-> > >   PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
-> > >  4787 proxy     39   0 45700  10m 2580 R 87.7  1.4   7:12.94 squid
-> 
-> > can you boot the kernel with profile=2 boot parameter and get profile info for
-> > the period when nothing except squid is active?
-> > 
-> > echo 1 > /proc/profile
-> > sleep 300
-> > cat /proc/profile  | readprofile -m [<actual system map file> | sort -rn | head -n 20
-> > 
-> > I think reiser4 should be built not as a module otherwise System.map would not
-> > contain reiser4 symbols.
-> 
-> I don't think Reiser4 is at fault here:
-> 
-> I found out that the Weatherfox plugin for Firefox had caused Firefox to
-> crash, and therefore every time I started Firefox the Quality Feedback 
-> Agent tried to send a message.
-> 
-> For some reason that didn't work, and the following entries showed up in 
-> Squid's access.log after a LONG time:
-> 
-> 1094561818.215 1041126 127.0.0.1 TCP_MISS/504 1467 POST http://talkback.mozilla.org/spiral-bin/Collector.dll - DIRECT/207.126.111.208 text/html
-> 1094561860.054 1004601 127.0.0.1 TCP_MISS/504 1467 POST http://talkback.mozilla.org/spiral-bin/Collector.dll - DIRECT/207.126.111.208 text/html
-> 1094561860.054 945630 127.0.0.1 TCP_MISS/504 1467 POST http://talkback.mozilla.org/spiral-bin/Collector.dll - DIRECT/207.126.111.208 text/html
-> 
-> Apparently the QFA continued to do this even after closing both its window
-> and Firefox, without any relevant processes showing up with ps..?!
-> 
-> Does this sound familiar?
+Spam <spam@tnonline.net> said:
+> Christer Weinigel <christer@weinigel.se> said:
 
-there should be the QFA process, I think. 
+[...]
 
-> 
-> After I uninstalled the Weatherfox extension the symptoms disappeared.
-> 
-> I'll try to reproduce it though..
-> 
-> Ray
+> > Could you please try summarize a few of the arguments that you find
+> > especially compelling?  This thread has gotten very confused since
+> > there are a bunch of different subjects all being intermixed here.
 
+>   Indeed. We are discussion changes to the heart of Linux. It is bound
+>   to get a little heated :/
+
+True. But without any specific applications, just "this would be nice to
+have", the discussion can't go forward.
+
+> > What are we discussing?
+
+> > 1. Do we want support for named streams?
+> 
+> >    I belive the answer is yes, since both NTFS and HFS (that's the
+> >    MacOS filesystem, isn't it?) supports streams we want Linux to
+> >    support this if possible.
+> 
+> >    Anyone disagreeing?
+> 
+>      No :)
+
+There are many people around here who disagree (that is precisely the heart
+of the discussion). I for one don't think Linux has to get $RANDOM_FEATURE
+just because $SOME_OTHER_OS has got it. Either the feature stands on its
+own _in the context of POSIX/Unix/Linux_ (possibly as an extension or
+modification of said standards) or it isn't worth it.
+
+> > 2. How do we want to expose named streams?
+> 
+> >    One suggestion is file-as-directory in some form.
+
+Which is broken, as it forbids hard links to files.
+
+It also has quite interesting issues with moving streams around among
+containers, or renaming them. How would you handle permissions on streams
+inside containers? Links to streams? What happens if the principal stream
+is deleted? Renamed? Moved into another container?
+
+Now you have 3 principal types of objects: Directories, containers (files
+with streams), and files (no streams). What is the essential difference
+between containers and directories? Same for containers vs plain files? If
+none, containers are just complicating stuff, and should not exist at all.
+
+If you add streams to directories, you get 4 types. Again, tell what the
+exact differences are, and what each one can do none of the others can.
+
+In the preceding two exercises, it is not enough to show something that
+would be dificult or messy to do with what we have now, it must also be
+some operation(s) that are natural and common enough to warrant the extra
+complexity (in kernel, in applications, in wetware). Consider support in
+form of existing or to-be-written tools for the task. What of all this can
+the GUI hide from (or fake for) the unsuspecting end-user?
+
+Also, there have been suggestions of cached data in streams (like thumbnail
+version of graphic file, contents listing of archive, ...), where losing
+the stream is of no real consecuence (except performance). There have also
+been requests for metadata that can't be recovered from the file (author,
+comments on the file, older versions of the file (i.e., some form of file
+version control), permissions). And finally there have been requests for
+structured contents manipulable in other forms (f.ex. .tar.bz2 file in
+unpacked form, where you can directly read or even modify the contents).
+Some suggestions go for a limited number of small(ish), even standardized,
+extra streams with no further structure, others ask for full directories
+under streams (which could even be much larger than the principal stream,
+like the tar.bz2 case). And there is the possibility of recursive
+application: If you want to be consecuent, the files under a .tar.bz2
+should again be able to be .tar.bz2'es with their own streams, or files
+with streams in them.
+
+What permissions should apply to streams? The ones of the file (i.e., I can
+see the icon stream of a file I can't read), or extra permissions (i.e.,
+icon is writable to me (so I can adjust it to taste) but I can't write to
+the file; now I can screw up the icon for everybody...). Streams on a
+per-user basis (i.e., icon stream for each user)?
+
+We need to sort out exactly how far it makes sense to go, by showing
+concrete, down to earth uses for whatever substructure we want. Then show
+the effect can't be easily gotten through tools for power users or faking
+it for unsuspecting users via GUI, and that overall the complexity and
+performance cost is less than the win. Note that the success of the Unix
+way is in large part due to its use of few, simple concepts that can be
+combined endlessly; and tools following the same strategy. Adding extra
+concepts that current tools can't naturally handle has to be considered
+with extreme care.
+
+[-- much snippage --]
+
+> > The suggested problems of not getting an up to date query response can
+> > be handled by just asking the daemon "are you done with indexing yet".
+> > The design of such a daemon and the support it needs from the kernel
+> > can definitely be discussed.  But to put the indexer itself in the
+> > kernel sounds like a bad idea.  Even adding an API to query the
+> > indexer into the kernel sounds pointless, why do that instead of just
+> > opening a Unix socket to the indexer and asking it directly?
+
+>   I think that we do not need a indexer with Reiser4 anyway. It is
+>   already a database that could be queried directly. There shouldn't
+>   be any need to build a database on top of Reiser4 (like the
+>   updatedb) that holds the same information already existing in
+>   Reiser4.
+
+Indexing/general queries of the filesystem are _hard_ (you need a complete
+database behind it for this, plus handling transactions for full
+functionality). Applications who _really_ need this use DBMSes, and are
+prepared to pay the ensuing cost. They are far in between, in any case.
+
+Besides, this is completely orthogonal to the streams discussion.
 -- 
-Alex.
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
