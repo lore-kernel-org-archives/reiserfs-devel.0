@@ -1,65 +1,35 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: ReiserFS Maximum file size (in practice)
-Date: Tue, 18 May 2004 16:40:42 -0400
-Message-ID: <40AA74CA.5040306@suse.com>
+From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
+Subject: vs-7000 errors after disks forced online in a RAID5 HW setup
+Date: Wed, 19 May 2004 01:49:33 +0200
+Message-ID: <20040519014933.4d9b5d3e@philou.gramoulle.local>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------070703090207090507010801"
-Return-path: <reiserfs-list-return-18754-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18755-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
-
---------------070703090207090507010801
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS Mailing List <reiserfs-list@namesys.com>
 
 
-Hey all -
+ Hello,
 
-The ReiserFS FAQ that we quote and point people to when they ask 
-questions about limits in ReiserFS states that the maxmimum file size 
-for a reiserfs v3 filesystem is 2^60-1. However, the actual limits, in 
-practice, are far less.
+Yesterday, we were hit with a hardware failure that left us with no choice that forcing a failed disk online
+, in a HW RAID5 setup on one of our NFS server.
 
-I tried to create a 3 TB sparse file, and ended up getting told it was 
-too large. 2 TB was too large also, just under 2 TB was ok.
+Now, logs are filled with :
 
-This is a result of super->s_maxbytes = (512LL << 32) - s->s_blocksize;, 
-in fs/reiserfs/super.c, which is set so that i_blocks isn't overflowed.
+vs-7000: search_by_entry_key: search_by_key returned item position == 0<4>zam-7001: io error in reiserfs_find_entry
+vs-7000: search_by_entry_key: search_by_key returned item position == 0<4>zam-7001: io error in reiserfs_find_entry
+vs-7000: search_by_entry_key: search_by_key returned item position == 0<4>zam-7001: io error in reiserfs_find_entry
 
-Other filesystems that have the ability to cross the 2 TB limit on file 
-sizes simply ignore the limit and allow i_blocks to wrap. There's really 
-no reason we can't do the same.
+etc...
 
-The patch is attached.
+Can i skip the reiserfsck --check and do directly a reiserfsck --rebuild-tree ?
+(around 470Go of data , 70% of the available space)
 
--Jeff
+Thanks,
 
--- 
-Jeff Mahoney
-SuSE Labs
-
---------------070703090207090507010801
-Content-Type: text/plain;
- name="reiserfs-large-file.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="reiserfs-large-file.diff"
-
---- linux-2.6.5/fs/reiserfs/super.c	2004-05-14 15:32:49.000000000 -0400
-+++ linux-2.6.5.fix/fs/reiserfs/super.c	2004-05-18 12:07:25.000000000 -0400
-@@ -1204,7 +1204,7 @@
-     /* new format is limited by the 32 bit wide i_blocks field, want to
-     ** be one full block below that.
-     */
--    s->s_maxbytes = (512LL << 32) - s->s_blocksize ;
-+    s->s_maxbytes = MAX_LFS_FILESIZE;
-     return 0;
- }
- 
-
---------------070703090207090507010801--
+Philippe
