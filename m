@@ -1,81 +1,64 @@
-From: David Masover <ninja@slaphack.com>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: Plugin for corruption resistance?
-Date: Thu, 17 Feb 2005 21:43:08 -0600
-Message-ID: <4215644C.4000602@slaphack.com>
+Date: Thu, 17 Feb 2005 23:28:09 -0500
+Message-ID: <200502180428.j1I4S92I019716@turing-police.cc.vt.edu>
 References: <e692861c05021110583585f84e@mail.gmail.com> <loom.20050215T213823-62@post.gmane.org> <42141928.7080608@slaphack.com> <200502171153.43403.chrivers@iversen-net.dk>
+            <4215644C.4000602@slaphack.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1108700888_3974P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200502171153.43403.chrivers@iversen-net.dk>
+In-Reply-To: Your message of "Thu, 17 Feb 2005 21:43:08 CST."
+             <4215644C.4000602@slaphack.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Christian Iversen <chrivers@iversen-net.dk>
-Cc: reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: Christian Iversen <chrivers@iversen-net.dk>, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+--==_Exmh_1108700888_3974P
+Content-Type: text/plain; charset=us-ascii
 
-Christian Iversen wrote:
-| On Thursday 17 February 2005 05:10, David Masover wrote:
-|
-|>Adam wrote:
-|>| Hans Reiser <reiser <at> namesys.com> writes:
-|>|>Its on the legitimate wish list, if someone wants to code it, let me
-|>|> know.
-|>|
-|>| Hans, does this mean that you think that this type of functionality
-|>
-|>should be
-|>
-|>| implemented as a Reiser4 plugin and therefore in kernelspace?  Why
-|>
-|>wouldn't this
-|>
-|>| be better implemented in userspace via a daemon that is notified of file
-|>| modification via dnotify/inotify?
-|>
-|>Because dnotify/inotify don't scale.  I don't think they lock on event,
-|>either, whereas a plugin could guarentee that the hash was up-to-date
-|>(no race conditions).
-|>
-|>We've been over this before.  There's a reason reiser4 and its plugins
-|>are in kernel space, and not in something like Fuse.
-|
-|
-| And, surely, updating a hash value when 1 byte changes in a gigabyte
-file,
-| would be much faster from kernel space where you can actually see the
-| changeset?
+On Thu, 17 Feb 2005 21:43:08 CST, David Masover said:
 
-Wouldn't it be sane to just export the changeset to userland?
+> This way is easier, though.  But I was thinking about accessing the
+> file.  I don't know of any hashes that can be easily updated from part
+> of the file, unless you're hashing only pieces of the file in the first
+> place, but it'd be nice to not bother hashing at all until the hash is
+> needed, especially if we are hashing the whole file.
 
-This way is easier, though.  But I was thinking about accessing the
-file.  I don't know of any hashes that can be easily updated from part
-of the file, unless you're hashing only pieces of the file in the first
-place, but it'd be nice to not bother hashing at all until the hash is
-needed, especially if we are hashing the whole file.
+There's plenty of CRC functions that are quite easily set up for an
+incremental update (see RFCs 1141 and 1624 on how to do it for the CRC function
+used for Internet IP packets).  You'd of course not want to use that CRC-16,
+but the same basic principle applies to other CRC functions.
 
-Plus, there's the race condition thing.  Definitely a lot of reasons to
-put more stuff in the kernel.
+The problem is that most CRC functions aren't very much good at detecting
+multi-bit errors, and when you're talking about hundreds of gigabytes of
+disk on a modern RAID, the CRC functions are hardly bulletproof.
+
+On the flip side, hash functions like MD5 or the SHA family are fairly bulletproof,
+but are essentially impossible to develop an incremental update for (if there
+existed a fast incremental update for the hash function, that would imply a
+very low preimage resistance, rendering it useless as a cryptographic hash).
+
+Also, there's another issue - unlike standard ECC codes that can actually *fix*
+the problem (for at least small number of bit errors), it's unclear what you should
+do if you find a mismatch between the hash of a block and the block contents, as
+you don't know whether it's the actual data or the hash that's corrupted....
+
+
+--==_Exmh_1108700888_3974P
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Version: GnuPG v1.4.0 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-iQIVAwUBQhVkS3gHNmZLgCUhAQIMNA/+IgaEx9p3bceATrrYDEweAB+N4K98dFyM
-BgDAtxFS2vzaw6lsF9vtEiHEuhvp5raCAhxcoEO1KgRh21Yc6cR+Yu5FaRc7BV4n
-WleJtNk521XFwUsmQXs5nYYHzfNlfJbQax9RBqX4IllbXbHX6YUHDAof/Zy8M4MJ
-Wytp10igur9QVcqXSeEYoRbYHXS3MRyT3cIl6Y1VXAdZRYu/ItlLf0ItRPkRyfB7
-1yVK4kOaR4c6U95gaHL0S08tLddtiep+9XIAJ+JXdhnP8yfEH43ItoM/KxrGSc/K
-PWcgIDicYek6kWWNb8H5dTYIknaW8fYwStuoBdfaLt/9aGO00O4sNmg97skW8H2q
-+87d22MTiCFtbHyYnD5cV6EzKe+IdUqcTaISOMbctltQmBsPcQjeAlU+BmaLbzEF
-sN91egbv/iuirroO1/OzCCQrihE6u8/9tK6LO2Y+LGO2N+ZpB10ZHaGa8uHqMFy1
-w19r9XcTIJHo+mjuWhM4hnRrna8cwsCepf++tyKE26ZD3iPPaUzB8h+U81R+59y0
-TXNLKLCfJfuOBs4IK2MgmcSkvxEpzBos3vJJdlvA3s4aMz6ZAP8vp5Wgj/BvMrxj
-QhFdy/IPCdDLHc5EO3rOZo3b8e/GZcfxgOJ54nuMMzk0xFrlIbtBtYCBU41o9jiq
-yP/8bcQ4cqY=
-=UEM3
+iD8DBQFCFW7YcC3lWbTT17ARAiEIAKCQGhYX8aZNcQJU56yKzVeBa6jH1ACfZpw0
+DmSwHCqxOyhD9zGGm9xMuAc=
+=BXbt
 -----END PGP SIGNATURE-----
+
+--==_Exmh_1108700888_3974P--
