@@ -1,12 +1,12 @@
 From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: ReConfigurable Directory Structure & Agrregation of files
  according to semantic.
-Date: Wed, 17 Mar 2004 12:04:15 -0500
+Date: Wed, 17 Mar 2004 12:19:11 -0500
 Sender: news <news@sea.gmane.org>
-Message-ID: <87y8pzjtgw.fsf@uhoreg.ca>
-References: <20040317075333.96561.qmail@web60404.mail.yahoo.com> <40580A55.7030809@cse.iitd.ernet.in>
+Message-ID: <87u10njss0.fsf@uhoreg.ca>
+References: <94121091767-BeMail@cr593174-a> <40586501.1070005@slaphack.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17277-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17278-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -16,28 +16,31 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
->>>>> "Nishant" == Nishant Sharma <nishantt@cse.iitd.ernet.in> writes:
+>>>>> "David" == David Masover <ninja@slaphack.com> writes:
 
-Nishant>     I wonder if it is possible to put this "plugin
-Nishant> infrastructure" in the user space rather than kernel space, by
-Nishant> putting it in the glibc implementation. ...
+David> Alexander G. M. Smith wrote:
+Alexander> ...  I (and others) think it would be better for this to be
+Alexander> done at the file system level.  That way you can leverage all
+Alexander> sorts of other utilities and
 
-I've thought about this too, but I think it would be harder to put this
-in glibc.  Something like gnome-vfs is able to use plugins easily,
-because it uses a URL-like syntax, and so it can tell what plugin to use
-based on the format of the filename.  But for the type of stuff we
-would want to do, glibc would have to make a bunch of kernel calls to
-determine up to when, in the filename, the kernel can handle, and when
-it has to start doing its processing.  So if you requested the file:
-/home/hubert/music/foo.mp3/..albumcover/cover.jpg, I imagine the
-sequence of events would have to be something like:
-- glibc asks the kernel for /home/.../cover.jpg
-- kernel returns "file not found"
-- glibc asks the kernel for /home/.../..albumcover
-- kernel returns "file not found"
-- glibc asks the kernel for /home/.../foo.mp3
-- kernel returns file handle
-- glibc does its processing to extract the album cover.
+David> What about a reiser4 plugin?
+
+I would think that would count as being in the filesystem level.
+
+David> What about a plugin that is mostly in userspace?
+
+That just reminded me of lufs[1], which allows you to create a userspace
+daemon that communicates with the lufs module to provide access to a
+(virtual) filesystem.  They say that it's slow, because it uses UNIX
+domain sockets for the communication, so it's more suitable for mounting
+remote filesystems, where network lag would dominate.  (You also
+wouldn't get all the nifty stuff that Reiser4 gives you, like
+pseudo-files.)  But I bet that (at this point in time) it's probably
+easier to write a lufs daemon than a reiser4 plugin, so it might be good
+for prototyping.  Faraz might want to look at using that for his
+project.
+
+[1] http://lufs.sourceforge.net/lufs/
 
 -- 
 Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
