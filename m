@@ -1,74 +1,62 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiser4 and linux 2.6.0
-Date: Sat, 09 Aug 2003 19:45:38 +0400
-Message-ID: <3F351722.2000108@namesys.com>
-References: <3F1EF7DB.2010805@namesys.com>	<3F1F6005.4060307@tupshin.com>	<1059021113.7911.13.camel@localhost>	<3F1F66F0.1050406@tupshin.com>	<1059024090.9728.22.camel@localhost>	<16159.48809.812634.455756@laputa.namesys.com>	<3F1FF6DB.2090104@tupshin.com>	<20030724152649.GB12647@work.bitmover.com>	<3F1FFBF9.2050308@tupshin.com>	<20030724155432.GE12647@work.bitmover.com>	<20030801161520.GA17083@pillars.net>	<3F2A94F1.2010502@tupshin.com> <16170.38409.267629.396781@laputa.namesys.com>
+From: Helge Hafting <helgehaf@aitel.hist.no>
+Subject: Re: FS Corruption with VIA MVP3 + UDMA/DMA
+Date: Sat, 9 Aug 2003 17:57:08 +0200
+Message-ID: <20030809155708.GA3606@hh.idb.hist.no>
+References: <16128.19218.139117.293393@charged.uio.no> <3F007EBF.9020506@sbcglobal.net> <3F10729F.7070701@sbcglobal.net> <3F34E6D1.7030900@sbcglobal.net> <1060439826.4938.88.camel@dhcp22.swansea.linux.org.uk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15263-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15264-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16170.38409.267629.396781@laputa.namesys.com>
+Content-Disposition: inline
+In-Reply-To: <1060439826.4938.88.camel@dhcp22.swansea.linux.org.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: reiserfs mailing list <reiserfs-list@Namesys.COM>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Wes Janzen <superchkn@sbcglobal.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
 
-Nikita Danilov wrote:
-
->Tupshin Harper writes:
-> > Robert August Vincent II wrote:
+On Sat, Aug 09, 2003 at 03:37:07PM +0100, Alan Cox wrote:
+> On Sad, 2003-08-09 at 13:19, Wes Janzen wrote:
+> > I don't know why I didn't google for this in the first place, but it 
+> > looks like it is a known issue.  Just apparently not well-known.
 > > 
-> > >Could you explain, in simple terms, to somebody who is unfamiliar with
-> > >bitkeeper, how to pull the latest 2.6.0 and reiser4 code and do
-> > >whatever you did to merge them?
-> > >
-> > >I'm not working on any SCM, and therefore downloaded bitkeeper using
-> > >the "free" license.
-> > >
-> > >But I'm unclear (even after perusing the FAQ and docs) on how to do
-> > >what you just described.
-> > >
-> > >Perhaps it would be as simple as:
-> > >
-> > >bk clone http://linux.bkbits.net/linux-2.5
-> > >bk clone bk://bk.namesys.com/bk/reiser4-linux-2.5 linux-2.5
-> > >cd linux-2.5/fs
-> > >bk clone bk://bk.namesys.com/bk/reiser4
-> > >
-> > >But I doubt it...
-> > >
-> > Larry was kind enough to send me the patch of his results of this merge, 
-> > but unfortunately it suffered from the same incompleteness problems that 
-> > the recent diffs on the namesys ftp site do. They apply cleanly, but 
-> > they completely omit the contents of the fs/reiser4 directory which has 
-> > the bulk of the code. It seem that the problem resides with the reiser 
-> > folks. Maybe they have some more complicated structure involving two 
-> > trees. Not sure, but a correct patch looks like it has to come from the 
-> > reiser4 team.
->
->This is because Larry only made a diff against
->bk://bk.namesys.com/bk/reiser4-linux-2.5 which is a repository
->containing changes needed by the reiser4 in the core kernel code.
->
->Bulk of reiser4 code (content of fs/reiser4) is in
->bk://bk.namesys.com/bk/reiser4 repository.
->
-> > 
-> > -Tupshin
-> > 
->
->Nikita.
->
->
->  
->
-make more effort to make this well documented for users.  If they are 
-asking these questions, it means that you failed to document.
+> > Probably not especially important though, I wonder just how many people 
+> > are still running this setup...  With Linux, I'd say even fewer.
+> 
+> I'm running MVP4 without problems. I've got an old MVP3 board I need to
+> dig out and play with. Certainly MVP3 has problems with some AGP and
+> some other high load PCI situations. 
 
--- 
-Hans
+I have a pc with a VIA MVP3, that I use as an x-terminal.
+Using dma is not an option, I got the impression that ide
+developers consider the chip so broken they don't want to
+try make that work. That is ok with me, I wouldn't consider
+running anything needing good io performance on that old thing.
 
+What is worse is that 2.6 ide don't work with it at all.
+Booting attempts die early of io errors, sometimes it don't
+even find the root fs superblock, other times dies a little later.
+So it is sort of left behind, running 2.5.69-mm3 which at least works
+in pio mode. The harddisk is a old 240MB thing with debian
+shoehorned onto it.
+
+There is no AGP card in the machine, so AGP is clearly not necessary
+to get io trouble.
+
+Here's the lspci output, if anyone is interested:
+00:00.0 Host bridge: VIA Technologies, Inc. VT82C598 [Apollo MVP3] (rev 04)
+00:01.0 PCI bridge: VIA Technologies, Inc. VT82C598/694x [Apollo MVP3/Pro133x 
+AGP]
+00:07.0 ISA bridge: VIA Technologies, Inc. VT82C586/A/B PCI-to-ISA [Apollo VP] 
+(rev 41)
+00:07.1 IDE interface: VIA Technologies, Inc. VT82C586/B/686A/B PIPC Bus 
+Master IDE (rev 06)
+00:07.3 Bridge: VIA Technologies, Inc. VT82C586B ACPI (rev 10)
+00:0a.0 Ethernet controller: 3Com Corporation 3c905B 100BaseTX [Cyclone] (rev 
+64)
+00:0b.0 VGA compatible controller: S3 Inc. ViRGE/DX or /GX (rev 01)
+
+Helge Hafting
 
