@@ -1,76 +1,53 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: 2.6.0-test6 crash while reading files in /proc/fs/reiserfs/sda1
-Date: Tue, 30 Sep 2003 23:18:55 +0400
-Message-ID: <3F79D71F.2020901@namesys.com>
-References: <1064936688.4222.14.camel@localhost.localdomain> <200309302006.32584.vitaly@namesys.com>
+From: Antonino Sergi <voyaser@tiscalinet.it>
+Subject: Heavy performance loss after crash
+Date: 01 Oct 2003 08:44:31 +0200
+Message-ID: <1064990671.2161.29.camel@darwin.roma1.infn.it>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15754-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15755-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200309302006.32584.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: Zan Lynx <zlynx@acm.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, nikita@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Vitaly Fertman wrote:
+Hi,
 
->Hi
->
->On Tuesday 30 September 2003 19:44, Zan Lynx wrote:
->  
->
->>I was interested in the contents of the files in /proc/fs/reiserfs/sda1,
->>so I did these commands:
->>
->>cd /proc/fs/reiserfs/sda1
->>grep . *
->>
->>(I like using the grep . * because it labels the contents of each file
->>with the filename.)
->>
->>I did this as a regular user and also as root.  Both times the system
->>crashed and immediately rebooted.  I tried it again as root and the
->>system froze instead.
->>    
->>
->
->which kernel do you use? some patches? could you look into syslog and
->send us all relevant information.
->
->would you also run cat on all files there separately to detect the fault one.
->
->  
->
->>The system is basically RedHat 9.  The kernel was compiled with GCC
->>3.2.2.  I attached a compressed lsmod and kernel configuration to this
->>message.
->>    
->>
->
->no you do not.
->
->  
->
->>The CPU is an Athlon XP 2000+, the SCSI adapter is a LSI Logic 53c1010
->>Ultra3 64 bit adapter running on a 32 bit bus.  (lspci output is also
->>attached.)  The SCSI drive is a Seagate X15.3.
->>
->>Thanks for looking at this.
->>    
->>
->
->  
->
-nikita, if vitaly doesn't solve it before you get in, it is yours to solve.
+I'm new to this list and I'm not sure it is the right one.
 
-Vitaly, what configuration did you fail to replicate it using (I hope 
-you attempted it on your machine before asking the user all this)?
+I have a 120GB disk with only 1 reiserfs(70GB used) from 2.4.18-14
+(RH8).
+
+During heavy I/O (copy of 1GB from this partition to the same one) I
+noticed that updatedb started(by anacron) and, trying to get out of an
+application (in development) I caused a kernel crash (keybord leds
+blinking).
+
+After restarting the PC I found some ext3 corruption on other partitions
+and:
+
+1)it takes about 2 minutes to mount the reiserfs partition.
+2)reiserfsck --check takes long time (10 minutes) and, looking at
+indexes during tree scan, several times it stops for several seconds,
+but it does not detect any problem.
+3)during any file seek operation for some file it get stuck for several
+minutes. For example: I'm trying to copy the copyable to another disk
+and there are files that are copied, let's say, 5MB in less than a
+second and then it wait for minutes (HD led on and no actual heads
+activity, by hears and hand touch) to write another "packet".
+4)I tried hdparm -T -t: after 2-3 minutes I got ~650MB/s about cache,
+and I have not waited enough to see the other response
+
+I tried --fix-fixable anyway, but not --rebuild-tree nor -S (not before
+copying the copyable).
+
+I do not understand if the problem is about reiserfs corruption or if it
+is a hardware problem.
+
+Any idea, suggestion or information is appreciated 
 
 -- 
-Hans
-
+Antonino Sergi <voyaser@tiscalinet.it>
 
