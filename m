@@ -1,47 +1,40 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Reiser4 on SuSE 9.1
-Date: Mon, 07 Jun 2004 09:41:17 -0400
-Message-ID: <1086615676.22636.3810.camel@watt.suse.com>
-References: <200406041414.HAA14660@amber.he.net>
-	 <1086359021.22636.3685.camel@watt.suse.com>
-	 <200406071600.40914.Michael.James@csiro.au>
+From: Casey Callendrello <cdc2107@columbia.edu>
+Subject: Re: can't ls, then rebuild-tree fails, no hardware error (kow)
+Date: Mon, 07 Jun 2004 11:51:14 -0400
+Message-ID: <40C48EF2.3080006@columbia.edu>
+References: <40C3FC52.2050404@columbia.edu> <200406071332.55981.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19065-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19066-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200406071600.40914.Michael.James@csiro.au>
+In-Reply-To: <200406071332.55981.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Michael.James@csiro.au
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Vitaly Fertman <vitaly@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-On Mon, 2004-06-07 at 02:00, Michael James wrote:
+Vitaly Fertman wrote:
 
-> > We're interested in v4 of course, as things stabilize we'll consider
-> > including it.  This doc is fairly up to date, and it might help you
-> > figure out the suse build setup:
-> > 
-> > http://www.suse.de/~agruen/kernel-doc/
-> 
-> Thanks for the link. I'll try and get the modules compiled.
-> I'd also like to use a kernel as close to suse's as possible.
-> 
-> I'll be bringing up a sub-cluster to test Suse 9.1 soon.
-> Currently the cluster nodes run Suse 8.2.
-> 
-> I'd love to use reiser4 to hold the genetic database files.
-> 
+>Is this /dev/hdb1 the original /home ?
+>So you had it mountable and you could cat some files there but could
+>not ls the root of the /home, getting no error into the syslog (?) and
+>then you run reiserfsck --rebuild-tree and it found no metadata?
+>
+>It looks like before rebuilding the partition table was altered. Did 
+>you use some partition editor or another program that could change 
+>the partition table? To tell for sure I need to look at the partition itself.
+>
+>  
+>
+I figured out what is probably the error.
+The drive is 180 gigs, but the mobo only recognizes 137.  However, linux 
+recognized 180 gigs through and through...
+and now is only recognizing 137.
 
-Testing of both suse and reiser4 is a good thing, but honestly at this
-stage in the reiser4 development it might be best to test on whatever
-kernels namesys releases with.  
+However, Soyo says it should be readable.  I guess not.  I'm going to 
+try an -S and give up otherwise, creating a new 137 gig partition.
 
-Bug reports against the suse kernel are just going to distract them away
-from their prime focus (reiser4 bugs in mainline).
-
--chris
-
-
+Thanks, Casey.
