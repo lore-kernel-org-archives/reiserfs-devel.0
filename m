@@ -1,49 +1,63 @@
-From: "Allen H. Ibara" <aibara@thibs.menloschool.org>
-Subject: Re: attrib +A doesn't work
-Date: Sat, 7 Sep 2002 17:35:26 -0700
-Message-ID: <20020908003526.GA19852@thibs.menloschool.org>
-References: <20020905034320.GA11951@yzero> <15735.10894.167461.158961@laputa.namesys.com> <20020905140132.A19752@namesys.com>
-Reply-To: "Allen H. Ibara" <aibara@ucsd.edu>
+From: "David R. Bergstein" <dbergstein@comcast.net>
+Subject: RE: LFS and Large File Support for reiserfs 3.6
+ (kernel 2.4.19)
+Date: Sat, 07 Sep 2002 21:37:46 -0400
+Message-ID: <IMELKMOINBOOFMGACNMDAEOACLAA.dbergstein@comcast.net>
+References: <20020907202709.A28312@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11398-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-list-return-11399-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20020905140132.A19752@namesys.com>
+In-Reply-To: <20020907202709.A28312@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-> mount -o attrs in fact.
+> -----Original Message-----
+> From: Oleg Drokin [mailto:green@namesys.com]
+> Sent: Saturday, September 07, 2002 12:27 PM
+> To: David R. Bergstein
+> Cc: ReiserFS List
+> Subject: Re: [reiserfs-list] LFS and Large File Support for
+> reiserfs 3.6 (kernel 2.4.19)
+>
+>
+> Hello!
+>
+> On Sat, Sep 07, 2002 at 12:09:21PM -0400, David R. Bergstein wrote:
+>
+> > I seem to have hit a file size limit on my system where files
+> exceed 4GB in
+> > size.  I do have an LFS capable glibc (glibc-2.2.4-10.1mdk) on
+> Mandrake 8.1,
+>
+> 4Gb? Hm, strange number, usually LFS problems manifest themselves at
+> 2Gb size.
+>
+> > running stock kernel 2.4.19, w/o additional patches applied.
+> This prevents
+> > me from backing up a large directory of video files over the
+> network, since
+> > the file truncates itself after 4GB is exceeded.  Any hints to
+> solve this
+>
+> What tool do you use, have you tried something other?
+>
+> Bye,
+>     Oleg
+>
 
-I'm not sure if this is the right place to report this...
+Hi Oleg,
 
-The 'attrs' mount option is broken with kernels 2.4.20-pre2 through -pre5 (the
-latest as of this email).
+I was running a Win2k ntbackup job over the network via samba.  I remember
+fixing this issue quite some time ago by building samba locally, but it
+appears that the version of samba may be at fault (samba-2.2.2-3.2mdk, from
+Mandrake Update).  I will check to see if there is any separate issues by
+running a dd command to create a large dummy file in the meantime.
 
-See "license cleanup" patch found here:
+- David
 
-ftp://ftp.namesys.com/pub/reiserfs-for-2.4/2.4.19.pending/01-license_cleanup.diff
 
-It contains a re-work of reiserfs_parse_options() in super.c that removes
-the 'attrs' option. Perhaps a merge error or simple omission.
-
-Trivial fix:
-
-diff -ur linux-2.4.19-orig/fs/reiserfs/super.c linux-2.4.19/fs/reiserfs/super.c
---- linux-2.4.19-orig/fs/reiserfs/super.c	Sat Sep  7 17:29:12 2002
-+++ linux-2.4.19/fs/reiserfs/super.c	Sat Sep  7 13:44:27 2002
-@@ -560,6 +560,7 @@
-     char * pos;
-     opt_desc_t opts[] = {
- 		{"tails", 't', tails, -1},
-+		{"attrs", 0, 0, REISERFS_ATTRS},
- 		{"notail", 0, 0, -1}, /* Compatibility stuff, so that -o notail for old setups still work */
- 		{"conv", 0, 0, REISERFS_CONVERT}, 
- 		{"nolog", 0, 0, -1},
-
---Allen Ibara
