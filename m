@@ -1,38 +1,47 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiserfs with Samba vs NetApp Filer
-Date: Sat, 12 Oct 2002 13:59:10 +0400
-Message-ID: <3DA7F26E.4050207@namesys.com>
-References: <Pine.LNX.4.33L2.0210100853240.1670-100000@localhost.localdomain> <200210112022.27319.russell@coker.com.au> <3DA72DEB.4040809@namesys.com> <200210121052.22603.bofh@coker.com.au>
+From: Russell Coker <bofh@coker.com.au>
+Subject: Re: Fwd: Re: [reiserfs-list] Reiserfs with Samba vs  NetApp Filer
+Date: Sat, 12 Oct 2002 15:53:23 +0200
+Message-ID: <200210121553.23053.bofh@coker.com.au>
+References: <200210112028.52316.bofh@coker.com.au> <3DA80F7A.B4E7D94D@amis.com>
+Reply-To: Russell Coker <bofh@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11659-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11660-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3DA80F7A.B4E7D94D@amis.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Russell Coker <bofh@coker.com.au>
+Content-Type: text/plain; charset="us-ascii"
+To: Eric Whiting <ewhiting@amis.com>
 Cc: reiserfs-list@namesys.com
 
-Russell Coker wrote:
+On Sat, 12 Oct 2002 14:03, Eric Whiting wrote:
+> > Also with a device such as a NetApp you have a limited choice of what
+> >  hardware you can get.  You generally can't choose from all available
+> > sizes of drives, and I have been told that there is no supported option
+> > for upgrading a NetApp device to bigger drives (while doing so on Linux
+> > software RAID is easy and I've done it many times with both ReiserFS and
+> > Ext2/3).
+>
+> We run netapp boxes with mixed size drive -- 9,18,36,72 all in the same
+> box. (even the same shelf) Maybe I didn't understand what you are
+> saying...
 
->  
->
->>I should also mention that actually most of these fileservers are disk
->>space bound not performance bound for most of their users, at least that
->>was true when I was a sysadmin back in the old days....
->>    
->>
->
->I think that's about to change (if it hasn't already).  3ware sells RAID 
->controllers that do 8 or 12 drives.  200G ATA drives are now on sale, and 
->320G drives will be available soon.
->
->12 * 320G should solve the disk space issue for most people...
->
->  
->
-I don't think users will ever have enough disk space....
+OK, having tiny 9G drives in the same shelf as newer and faster 72G drives 
+makes no sense.  So what you want to do is move the data off the 9G drives 
+and onto 72G drives.
 
+I take it from the fact that you still have 9G drives in operation that this 
+is not possible.
+
+Running mixed disk sizes is not desirable.  You want to have the newest drives 
+possible for best performance and reliability.
+
+-- 
+http://www.coker.com.au/bonnie++/     Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/       Postal SMTP/POP benchmark
+http://www.coker.com.au/projects.html Projects I am working on
+http://www.coker.com.au/~russell/     My home page
 
