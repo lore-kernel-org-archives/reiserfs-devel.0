@@ -1,58 +1,53 @@
-From: Mike Fedyk <mfedyk@matchmail.com>
-Subject: Re: Status of fsync() wrt mail servers
-Date: Thu, 11 Sep 2003 10:25:09 -0700
-Message-ID: <20030911172509.GB18399@matchmail.com>
-References: <20030910002953.C14172@unbeatenpath.net> <20030910105102.GA535@rahul.net> <1063192474.18154.355.camel@tiny.suse.com> <20030910114103.GA26767@rahul.net> <1063197048.18155.357.camel@tiny.suse.com> <20030910101821.A15923@unbeatenpath.net> <20030910213244.GD1461@matchmail.com> <20030910173343.A16677@unbeatenpath.net> <20030910234927.GE1461@matchmail.com> <m3ekynbj3e.fsf@merlin.emma.line.org>
+From: Fong Vang <FVang@Zantaz.com>
+Subject: root access complains about permission
+Date: Thu, 11 Sep 2003 11:04:06 -0700
+Message-ID: <3F60B916.6040408@zantaz.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15633-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15634-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <m3ekynbj3e.fsf@merlin.emma.line.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
-Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+To: reiserfs-list@namesys.com
 
-On Thu, Sep 11, 2003 at 02:33:25PM +0200, Matthias Andree wrote:
-> Does reiserfs3.6 support dirsync? I thought it was ext3-specific until
-> now.
-> 
+Any thoughts as to why permission would be denied for root when 
+accessing a file on a ReiserFS file system?  Here's a sample output
 
-That was what I was asking too.
+[root@sc15-172-31 log]# id
 
-> Please take care to distinguish (file) meta data from directory data.
-> 
+uid=0(root) gid=0(root)
+groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel)
+[root@sc15-172-31 /root]# cd /var/log
+[root@sc15-172-31 log]# ls
+ls: wtmp: Permission denied
+ls: messages: Permission denied
+ls: messages.1: Permission denied
+ls: messages.2: Permission denied
+ls: messages.3: Permission denied
+ls: maillog: Permission denied
+ls: spooler.1: Permission denied
+ls: secure.4: Permission denied
+ls: secure: Permission denied
+ls: maillog.2: Permission denied
+ls: maillog.3: Permission denied
 
-Hmm, it seems to me, that all meta-data relating to the file fsync() was
-called on should be sent to the disk and waited for by the call.
 
-> Basically, what we know is that with Linux 2.4, ext3fs, reiserfs and XFS
-> will flush all pending transactions (per file system) that were
-> requested prior to a synchronous operation (fsync, sync, umount, ...)
-> out to disk.
-> 
-> This can heftily bite your back if you're running your MTA's queue on a
-> large file system that has other sustained write load (logging, data
-> bases, ...).
-> 
-> I recently helped one qmail user debug this; the symptom was that the
-> first mail in a burst of mails took 2 seconds to queue, subsequent mails
-> were queued much quicker (70 ms). He was using ext3fs, and had one huge
-> / (root) file system and so the "synch the whole file system" behaviour
-> made his qmail-queue synch *all* his dirty blocks to disk...
+kernel is 2.4.19.  Reiserfs ver 3.6.25.  File system is mounted 
+read-write.  No ACL.  This is a production system that's been up for 2-3 
+months.  Any help would be appreciated.
 
-Can you be sure the MTA wasn't calling sync() just to be sure (Many MTAs are
-funny in that they think the spool is on a seperate disk and filesystem).
-fsync() shouldn't be flushing anything not relating to the file it was
-called on (that includes directory entries related to the file also IMHO).
 
-Also, if the MTA wasn't running as root, it shouldn't be able to make sync()
-affect the entire system.  Is there anything that says that sync() can't
-just flush the user's buffers unless you're running as root or with some
-CAP_ capability?
-
-Mike
+This e-mail has been captured and archived by the ZANTAZ Digital Safe(tm)
+service.  For more information, visit us at www.zantaz.com. 
+IMPORTANT: This electronic mail message is intended only for the use of the
+individual or entity to which it is addressed and may contain information
+that is privileged, confidential or exempt from disclosure under applicable
+law.  If the reader of this message is not the intended recipient, or the
+employee or agent responsible for delivering this message to the intended
+recipient, you are hereby notified that any dissemination, distribution or
+copying of this communication is strictly prohibited.  If you have received
+this communication in error, please notify the sender immediately by
+telephone or directly reply to the original message(s) sent.  Thank you.
