@@ -1,66 +1,61 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: [ANNOUNCE] new reiser4 snapshot released.
-Date: Tue, 30 Mar 2004 11:24:12 +0400
-Message-ID: <1080631451.16246.106.camel@tribesman.namesys.com>
-References: <16484.24086.167505.94478@laputa.namesys.com>
-	 <1080321833.19218.7.camel@localhost.localdomain>
-	 <16484.29281.375363.39808@laputa.namesys.com>
-	 <40646424.7000407@namesys.com> <20040329050047.GB19805@chepelov.org>
-	 <40684CAC.3030702@namesys.com>  <20040330050415.GA15017@chepelov.org>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Date: Tue, 30 Mar 2004 15:35:46 +0300
+Message-ID: <20040330123546.GA5229@nysv.org>
+References: <1080620527.31924.117.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-17589-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17591-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040330050415.GA15017@chepelov.org>
+Content-Disposition: inline
+In-Reply-To: <1080620527.31924.117.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Cyrille Chepelov <cyrille@chepelov.org>
-Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Hello
+Scott Young wrote:
 
-On Tue, 2004-03-30 at 09:04, Cyrille Chepelov wrote:
-> Le Mon, Mar 29, 2004, =C3  08:19:56AM -0800, Hans Reiser a =E9crit:
->=20
->=20
-> > >Wouldn't it be slightly beneficial to expand this policy to not just
-> > >look for extensions matching .*\.(?) but .*\.(.*) as well?
->=20
-> > I thought about that, but other than compiles I don't know of an=20
-> > application that would benefit from this performance wise, and compiles=
-=20
-> > usually have . as the penultimate character in their fileset filenames.=
- =20
-> > I would actually much like to get feedback from others on this.
->=20
-> I see. A little question on the importanceness of solving this right up
-> front: is it possible to change the fibration policy of a mounted and act=
-ive
-> file system?
+>/home//attribute would be the an attribute on the home directory. 
+...
+>Could ..metas be renamed to a null string to get this effect on
+>directories?
 
-Changing fibration policy applies only to empty directory
+This sounds like the way it used to be, before the metas/ directory.
+Please also note that it's metas/ officially now, not ..metas/
 
->  Does such a change affect the repacker (as in: swapping the
-> fibration policy causes the repacker to start shuffling things around
-> according to the new policy)?=20
+..metas/ is through Piotr Neuman's patch, which has gained some
+popularity, but it's not official yet.
 
-repacker does not get affected
+I think a double slash is a terrible idea. They are, probably by some
+standard, interpreted as a single one in most cases.
+As good as Reiser4 already is, it also poses threats to standards
+and even some solid security issues with reserving names from the
+filesystem.[1]
 
-> If that's the case, then I guess there's some
-> wiggle room for imperfection...
->=20
-> (in fact, on second thought, my request wouldn't necessarily cause the be=
-st
-> performance to happen. Norton Defrag used to have a "sort by type" option
-> ca. 1994, and I remember that on my PC, it didn't give the best
-> performance).=20
->=20
-> Just out of curiosity, is it possible to create a fibration policy based =
-on=20
-> atime/mtime/ctime?
->=20
-> 	-- Cyrille
+One concise directory is definitely the best way and I still stand
+behind ..metas/ because it's most likely not to be clashed. Some
+already pointed out problems with @ and .metas and such.
+
+It's not good to think about lexicographic ordering, btw, because
+readdir must not find this directory. Consider the following
+times a million when taking a backup:
+mjt@shrike:~/..metas/plugin/crypto/..metas/plugin/crypto/..metas$
+
+[1]
+Will there be a plugin suitable for for example html documentroots,
+that disables the meta directory from its children?
+It is unfair, to say the least, to have future users rewrite their
+stupid php upload scripts, and every writing script for that matter,
+to check that they don't conflict with metas.
+
+It is also a good idea to implement a plugin like this if many people
+will take up the habit of renaming their metas/ directories; one
+server may have it by another name and that breaks hard-coded checks
+in server software.
+
+-- 
+mjt
 
