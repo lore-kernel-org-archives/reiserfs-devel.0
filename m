@@ -1,74 +1,117 @@
-From: Dirk Schenkewitz <Dirk.Schenkewitz@interface-ag.com>
+From: Anders Widman <andewid@tnonline.net>
 Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
-Date: Wed, 12 Feb 2003 14:25:44 +0100
-Message-ID: <3E4A4B58.8504BAB3@interface-ag.com>
-References: <93F527C91A6ED411AFE10050040665D0049C06D5@corpusmx1.us.dg.com> <3E4A266E.2A258472@interface-ag.com> <3E4A28F8.2030506@namesys.com> <3E4A35E9.1585BB5@interface-ag.com> <3E4A413A.9090609@namesys.com>
+Date: Wed, 12 Feb 2003 14:42:19 +0100
+Message-ID: <11104354750.20030212144219@tnonline.net>
+References: <NDBBJPAGKLCMDEIEKOPBKEKHKFAA.mailinglists@websitemanagers.com.au>
+Reply-To: Anders Widman <andewid@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12713-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12714-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <NDBBJPAGKLCMDEIEKOPBKEKHKFAA.mailinglists@websitemanagers.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Reiserfs List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Hi Hans,
+>> Anders Widman wrote:
+>> >>If we handle the journal block error without downtime, the user will
+>> >>never chuck the hard drive, and that is bad in the longterm.
+>> >  But  a  user  never  knows  he  has  a media error before his system
+>> >  crashes  (or  do  a surface scan), or monitor his logs very closely.
+>> >  Not all users does this.
+>> >
+>> >  To  me  a FS should be able to handle both read and write errors and
+>> >  be  able to reallocate these errors to a sane are of the media. When
+>> >  this  occurs then it should be noted in the kernel log (or similar).
+>> >
+>> >  Then  users can run a cron job to monitor the log after exactly this
+>> >  error message.
 
-I should be more careful about what I optimize out from an email...
+> [SNIP]
 
-Hans Reiser schrieb:
-> 
->Dirk Schenkewitz wrote:
-> 
-> >Hans Reiser schrieb:
-> > >
-> > >and if you can fit more data onto reiserfs partitions than onto
-> > >ext3 partitions?
-> > >
-> >
-> >That's what I'm looking for!
-> >
-> > >Is it a fair comparison to compare at equal percents full?
-> >
-> >Considered that way: No. Comparison should be between absolute
-> >bytes I can put on a reiser-filesystem against an ext3-filesystem
-> >while the partition sizes are equal. Hm. Please excuse me if this
-> >is a FAQ: Can you give me a hint where to find such a comparison?
-> >To put it in other words: How much more bytes can I put on a
-> >reiser-fs compared to an ext3-fs when the partition sizes are
-> >equal?
-> >
-> That depends on your file size distribution, and on whether you
-> use the tails mount option.  Probably ~10% more.
+> While this is all perfectly true, there also remains the question of "If we
+> *know* the media is faulty in this spot, how do we know the media isn't
+> faulty in these spots?"
 
-~10%! Not bad!!
+> ie, once you are on faulty hardware, you never really know what is the
+> correct course of action for this specific fault.
 
-> Forgive me, it has been a while since it was measured. 
-> Elena, can you copy the kernel source code onto a partition until 
-> it fills up, make it a large partition please, and compare ext3 
-> to reiserfs V3/V4?
+> I can conceive of a few things that *might* be the right thing in various
+> circumstances:
 
-Uhh - I didn't want to disturb something, even less to cause extra
-work - now I feel guilty...
+> A) Immediately re-mount the drive read-only, and wait for the sysadmin to
+> either re-mount rw or to do some other data recovery/repair
 
-> >But even then: If I have more space available, I will happily
-> >use it, so even if I can put 500 MB more on it, I will manage
-> >to fill it up - what will happen then?
->
-> I am not answering this because jeff improved things a lot, 
-> and I don't know how good/bad they are currently....
+This  would be devastating for some form of servers and cause downtime
+and  loss  of  work  for  plenty. Consider an application server, or a
+document  server within a company. If writes were prohibited then lots
+of programs do stop function, or saving fails.
 
-I see. Thank you VERRRY MUCH - I stay tuned 8-)
+There  are  millions  of other examples I can think of too, that would
+make me not choose this option.
 
-Happy coding & best wishes
-	dirk
--- 
-Dirk Schenkewitz 
+Unplanned downtime do cause lot of harm to any business.
 
-InterFace AG                 fon: +49 (0)89 / 610 49 - 126
-Leipziger Str. 16            fax: +49 (0)89 / 610 49 - 83
-D-82008 Unterhaching         
-http://www.interface-ag.de   mailto:dirk.schenkewitz@interface-ag.de
+> B) Immediately dis-mount the drive and wait
+
+Urg.. Even worse than the above case.
+
+> C) OK, I tried to write to sector 1324 so lets just try each consecutive
+> available sector until it doesn't return an error (possibly marking the
+> sectors bad/used as we go)
+
+Yes, or use another algorithm to find safe/free sectors.
+
+> D) Just return an error to the application
+
+This  would  at  least  allow  some  services/applications to continue
+running. Still, important data and services may not work.
+
+> Of course, all of the above would *also* log an error message to the kernel
+> log.
+
+> Now, some options might be suitable if for example the head of the disk has
+> crashed into the surface and hence the more you attempt to
+> read/write/seek/etc the more damage you do (as opposed to immediately
+> stopping all access to the disk and thereby preserving the data).
+> Some options are more suitable for example you have a system which
+> absolutely needs to run 20 hours/7days and it is only writing to disk as a
+> informational log.
+
+Agreed.  There  are  many  different  cases  that  should  be met with
+different approaches.
+
+> Of course, it all depends on the reason the hardware error has showed it's
+> ugly face, and what your individual circumstances are. Perhaps re-mapping is
+> just making the corruption worse (for every write the drive gets more
+> confused and scribbles in the wrong spot)...
+
+I  am  not  sure about that. You certainly do not write on top of user
+data,  but  on (marked) free space. If the drive cannot write, then no
+harm  would  be  done  to  the  user data anyway. Of course in case of
+electronics failure/firmware failure then you would perhaps get random
+writes  instead  of  where  you want them. However I believe you would
+have more serious problems before then (like not being able to read).
+
+> Like most things MS do, they just take the common approach and pretend that
+> it will work for everyone.
+
+Easy  to  blame  MS, but Bad Blocks handling from FAT12 and ever since
+has probably saved more data than not having it.
+
+Just  because  MS  does  things it does not mean they are bad and that
+Linux   world  should  refuse  to  do  something similar. That is just
+shooting yourself in the foot.
+
+> Just my 0.02c worth.
+
+How about 0.00c? ;)
+
+- Anders
+
+
+
+
