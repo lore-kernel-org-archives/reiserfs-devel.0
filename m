@@ -1,53 +1,114 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: fsck mode halfway between --fix-fixable and --rebuild-tree
- ?
-Date: Tue, 01 Oct 2002 22:43:42 +0400
-Message-ID: <3D99ECDE.7050904@namesys.com>
-References: <H356C4$4F46E50E852BF25DA1E850A48426FCDF@voila.fr> <20020929172335.L32363@noris.de> <20020930101824.A3895@namesys.com> <3D98318B.8000905@namesys.com> <20020930131744.X32363@noris.de> <20020930152204.A26742@namesys.com> <20020930150854.Z32363@noris.de> <3D984F92.4010509@namesys.com> <15769.17050.863426.305725@laputa.namesys.com> <3D998037.8030508@namesys.com> <20021001141508.L32363@noris.de>
+From: jeff leads <jleads@yahoo.com>
+Subject: Re: File Corruption
+Date: Tue, 1 Oct 2002 21:07:34 -0700 (PDT)
+Message-ID: <20021002040734.30121.qmail@web10501.mail.yahoo.com>
+References: <20021001101050.A5833@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11597-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11598-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20021001101050.A5833@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Matthias Urlichs <smurf@noris.de>
-Cc: Nikita Danilov <Nikita@Namesys.COM>, Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Matthias Urlichs wrote:
+Hi!  Below is the abbreviated version of my output
+from --check.  Is it safe to run --fix-fixable?
+ What do the bad nlink numbers mean?  Should I be
+concerned about the dirty buffers?
 
->Hi,
->
->Hans Reiser:
->  
->
->>>Actually, B-link trees (B-trees with sibling pointers) don't require any
->>>additional io for sibling pointers maintenance. Just draw a picture of
->>>what is going on during insertion of new node or node deletion and you
->>>will see. 
->>>
->>>      
->>>
->>They have constraints we do not desire.  Also, I think they link in only 
->>one direction.  Am I right?
->>
->>    
->>
->Whether you use just a forward-pointing link or also a back-pointing link
->(or nothing at all) is up to you. Personally I like sibling and parent
->links because it is very easy to walk the tree iteratively (just follow
->the "next" or "prev" pointer when you're done with a node). Trees which
->only use downward-pointing links need to be walked recursively.
->
->On the other hand, you're a multitasking file system, therefore you need
->locking, therefore side pointers won't be of much use to you for anything
->(except additional redundancy for error recovery).
->
->  
->
-Oh, it is not nearly so simple an argument.... Please read the b-link 
-literature.  It is at least interesting, even if we did something else.
+Thanks again in advance!
+
+Jeff 
+
+], SD has bad nlink number
+/  4 (of 143)bad_stat_data: block 46863, [124457 36663
+0x0 SD (0)], SD has bad n
+link number
+/  5 (of 143)bad_stat_data: block 44550, [124457
+101732 0x0 SD (0)], SD has bad
+nlink number
+bad_stat_data: block 44550, [124457 114743 0x0 SD
+(0)], SD has bad nlink number
+bad_stat_data: block 44550, [124457 124458 0x0 SD
+(0)], SD has bad nlink number
+bad_stat_data: block 44550, [124457 124469 0x0 SD
+(0)], SD has bad nlink number
+/  6 (of 143)bad_stat_data: block 63760, [124457
+151128 0x0 SD (0)], SD has bad
+nlink number
+/125 (of 160)/ 32 (of 163)bad_stat_data: block 47631,
+[143160 155080 0x0 SD (0)]
+, SD has bad nlink number
+bad_stat_data: block 47631, [143160 155192 0x0 SD
+(0)], SD has bad nlink number
+ok
+Comparing bitmaps..ok
+Checking Semantic tree...
+/tmp/recover.2.30031file 9 106855 has wrong sd_size
+56377344, has to be 60522496
+file 9 106855 has wrong sd_blocks 0, has to be 118208
+ok
+There were found 102 corruptions which can be fixed
+with --fix-fixable
+check_and_free_buffer_mem: dirty buffer (3 16) found
+###########
+reiserfsck finished at Tue Oct  1 19:32:45 2002
+--- Oleg Drokin <green@namesys.com> wrote:
+> Hello!
+> 
+> On Mon, Sep 30, 2002 at 12:52:27PM -0700, jeff leads
+> wrote:
+> > Ok, I'm running RedHat 7.1, gcc 2.96-85, kernel
+> > 2.4.9-21 (redhat's version) and ReiserFSProgs
+> 3.6.3 (
+> 
+> I do not know what is included into 2.4.9-21, but
+> can you upgrade to
+> 2.4.18-10 (I think this is latest RedHat errata
+> kernel for 7.x series of
+> their distro).
+> 
+> > I'm starting to get file corruption here and
+> there. 
+> > My next question is, where do I go from here? 
+> What
+> 
+> You need to upgrade kernel to something that
+> includes all of our fixes at least
+> up to 2.4.18.
+> 
+> > can I do to rectify this issue?  Do I run a
+> rebuild at
+> > this point?  What caused this?  
+> 
+> This is hard to tell what have caused this.
+> Can you please send us reiserfsck output from the
+> same partition,
+> but take reiserfsck from ReiserFSProgs 3.6.3?
+> 
+> > Sep 30 14:03:11 goku kernel: is_tree_node: node
+> level
+> > 64680 does not match to the expected one 1
+> 
+> This is on disk metadata corruption, but the reason
+> is unknown
+> 
+> > [root@goku /root]# reiserfsck /dev/ida/c0d0p5
+> > <-------------reiserfsck, 2001------------->
+> > reiserfsprogs 3.x.0j
+> 
+> This is too old to be used today.
+> 
+> Bye, 
+>     Oleg 
 
 
+__________________________________________________
+Do you Yahoo!?
+New DSL Internet Access from SBC & Yahoo!
+http://sbc.yahoo.com
