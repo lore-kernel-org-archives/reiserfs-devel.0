@@ -1,30 +1,31 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Degrading performance?
-Date: Wed, 10 Apr 2002 23:37:46 +0400
-Message-ID: <20020410233746.B24113@namesys.com>
-References: <20020410172502.29765.qmail@web10006.mail.yahoo.com>
+From: system_lists@nullzone.org
+Subject: Re: speedup patch for 2.4.19-pre6
+Date: Wed, 10 Apr 2002 21:50:33 +0200
+Message-ID: <5.1.0.14.2.20020410214822.00caf8f8@192.168.2.131>
+References: <20020410111633.A19320@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10021-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10022-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <20020410172502.29765.qmail@web10006.mail.yahoo.com>
+In-Reply-To: <20020410111633.A19320@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 Content-Transfer-Encoding: 7bit
-To: bill@billrees.com
-Cc: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
 
-Hello!
 
-On Wed, Apr 10, 2002 at 10:25:02AM -0700, Bill Rees wrote:
+Same for 2.5.8-pre2 with the 1-6 reiserfs patchs instaled(ReiserFS Bug 
+Fixes 6 of 6)?
 
-> fills, the number of megabytes the application can
-> write per second gradually degrades from around 8.5
-> mb/sec when the disk is 2% full to 1.3 mb/sec at 23%
+At 11:16 10/04/2002 +0400, Oleg Drokin wrote:
+>Hello!
+>
+>    attached the combined speedup patch for 2.4.19-pre6
+>
+>Bye,
+>     Oleg
 
-What kernel version are you using?
 
-Bye,
-    Oleg
+
+
