@@ -1,64 +1,46 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: nfs with reiserfs and ufs on freebsd
-Date: Wed, 18 Feb 2004 12:49:01 -0800
-Message-ID: <4033CFBD.8010605@namesys.com>
-References: <20040218201515.80924.qmail@web80005.mail.yahoo.com>
+From: "Bostjan Skufca @ domenca.com" <bostjan.skufca@domenca.com>
+Subject: Quota patches will not do against 2.4.25
+Date: Wed, 18 Feb 2004 23:16:49 +0100
+Message-ID: <1077142609.4033e4519f02c@www.domenca.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16842-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-16843-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040218201515.80924.qmail@web80005.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: cmc2slack-lvm@yahoo.com
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-cmc2slack-lvm@yahoo.com wrote:
+Command and results:
 
->--- Hans Reiser <reiser@namesys.com> wrote:
->  
->
->>cmc2slack-lvm@yahoo.com wrote:
->>
->>    
->>
->>>I'm using ReiserFS on Slackware 9.1 and would
->>>like to be able to nfs mount filesystems on
->>>my FreeBSD 4.8 system. From what I've read 
->>>ReiserFS doesn't do this now,
->>>
->>>      
->>>
->>where did you read this?
->>    
->>
->
->Thanks for the quick reply Hans.
->
->I read about it searching the FreeBSD lists after
->I had trouble mounting my FreeBSD filesystem, but I
->didn't pursue it very far. Does nfs work with UFS
->in the current version?
->
->(I am pretty new to journalled filesystems on linux, 
->just learning my way around)
->  
->
-I think it is inaccurate, but since you say you had problems doing it, 
-maybe you should tell us more.  We don't use FreeBSD
+# gunzip -c ../linux-patches-2.4.23/reiserfs/06-kinoded-9.diff.gz | patch -p1
+patching file fs/inode.c
+Hunk #1 succeeded at 503 (offset 32 lines).
+Hunk #3 succeeded at 787 (offset 33 lines).
+Hunk #4 FAILED at 821.
+Hunk #5 succeeded at 1252 (offset 59 lines).
+Hunk #6 succeeded at 1306 (offset 33 lines).
+Hunk #7 succeeded at 1441 (offset 64 lines).
+1 out of 7 hunks FAILED -- saving rejects to file fs/inode.c.rej
 
->
->
->=====
->Chris Conn
->cmc2goat@swbell.net
->http://storm.cadcam.iupui.edu/~cmcgoat
->Austin, TX, USA
->
->
->  
->
+
+Best regards,
+
+Bostjan Skufca
+system administrator
+
+Domenca d.o.o.
+Phone: +386 4 5835444
+Fax: +386 4 5831999
+http://www.domenca.com
+
+
+
+
+
+------------------------------
+http://webmail.domenca.com
+------------------------------
 
