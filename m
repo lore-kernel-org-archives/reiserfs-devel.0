@@ -1,130 +1,66 @@
-From: Steve Felt <steve@circlepix.com>
-Subject: kernel bug
-Date: Fri, 18 Feb 2005 12:38:05 -0700
-Message-ID: <1108755484.23313.77.camel@sfelt>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Plugin for corruption resistance?
+Date: Fri, 18 Feb 2005 17:09:00 -0500
+Message-ID: <200502182209.j1IM904m016607@turing-police.cc.vt.edu>
+References: <e692861c05021110583585f84e@mail.gmail.com> <loom.20050215T213823-62@post.gmane.org> <42141928.7080608@slaphack.com> <200502171153.43403.chrivers@iversen-net.dk> <4215644C.4000602@slaphack.com> <200502180428.j1I4S92I019716@turing-police.cc.vt.edu>
+            <e692861c0502180536270fcee2@mail.gmail.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1108764540_6251P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: Your message of "Fri, 18 Feb 2005 08:36:51 EST."
+             <e692861c0502180536270fcee2@mail.gmail.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Gregory Maxwell <gmaxwell@gmail.com>
+Cc: reiserfs-list@namesys.com
 
-I'm getting the following "kernel BUG" on SuSE 9.1 Pro (and on 9.2):
+--==_Exmh_1108764540_6251P
+Content-Type: text/plain; charset=us-ascii
 
-[first, the hw/sw details]
-  LSI 929x (7202xp)
-  Large array of drives (1.4TB)
+On Fri, 18 Feb 2005 08:36:51 EST, Gregory Maxwell said:
 
-  cat /proc/meminfo
-	MemTotal:      1036148 kB
+> Tree hashes.
+> Divide the file into blocks of N bytes. Compute size/N hashes. 
+> Group hashes into pairs. Compute N/2 N' hashes, this is fast because
+> hashes are small. Group N' hashes into pairs compute N'/2 N'' hashes
+> etc.. Reduce to a single hash.
 
-  cat /proc/cpuinfo
-	processor       : 0
-	vendor_id       : AuthenticAMD
-	cpu family      : 6
-	model           : 6
-	model name      : AMD Athlon(tm) MP 2000+
+You get massively I/O bound real fast this way.  You may want to re-evaluate
+whether this *really* buys you anything, especially if you're not using some
+sort of guarantee that you know what's actually b0rked...
 
-  cat /proc/mpt/version
-	mptlinux-3.01.14.23
-	Fusion MPT base driver
-	Fusion MPT SCSI host driver
+> In my initial suggestion I offered that hashes could be verified by a
+> userspace daemon, or by fsck (since it's an expensive operation)...
+> Such policy could be controlled in the daemon.
+> In most cases I'd like it to make the file inaccessible until I go and
+> fix it by hand.
 
-  cat /etc/SuSE-release
-	SuSE Linux 9.1 (i586)
-	VERSION = 9.1
+You're still missing the point that in general, you don't have a way to tell whether
+the block the file lived in went bad, or the block the hash lived in went bad.
 
-  dmesg | grep -i reiser | grep sda
-	ReiserFS: sda1: found reiserfs format "3.6" with standard 	journal
-	ReiserFS: sda1: using ordered data mode
-	ReiserFS: sda1: journal params: device sda1, size 8192, 	journal first
-block 18, max trans len 1024, max batch 900, max 	commit age 30, max
-trans age 30
-	ReiserFS: sda1: checking transaction log (sda1)
-	reiserfs: disabling flush barriers on sda1
-	ReiserFS: sda1: Using r5 hash to sort names
+Sure, if the file *happens* to be ascii text, you can use Wetware 1.5 to scan
+the file and tell which one went bad.  However, you'll need Wetware 2.0 to
+do the same for your multi-gigabyte Oracle database... :)
 
-Symptoms:
-   I can do an initial rsync of a large amount of data (~300MB) from
-another host, but subsequent rsync attempts fail after about 1hour (when
-files are actually being copied over/ replaced etc.) with the following:
+(And yes, I *have* seen cases where Tripwire went completely and totally bananas
+and claimed zillions of files were corrupted, when the *real* problem was that
+the Tripwire database itself had gotten stomped on - so it's *not* a purely
+theoretical issue....
 
- kernel: ------------[ cut here ]------------
- kernel: kernel BUG at fs/reiserfs/namei.c:1291!
- kernel: invalid operand: 0000 [#1]
- kernel: CPU: 0
- kernel: EIP: 0060:[__crc_device_suspend+2680266/3186568] Not tainted
- kernel: EIP: 0060:[] Not tainted
- kernel: EFLAGS: 00010296 (2.6.5-7.111.19-default)
- kernel: EIP is at reiserfs_rename+0x299/0x7d0 [reiserfs]
- kernel: eax: ffffffff ebx: 00008000 ecx: e88a7cf0 edx: e88a7cf0
- kernel: esi: 00000000 edi: e88a7ca0 ebp: e4aa5dcc esp: e88a7be8
- kernel: ds: 007b es: 007b ss: 0068
- kernel: Process rsync (pid: 3062, threadinfo=e88a6000 task=f13de220)
- kernel: Stack: 00000009 00000009 00000001 00008180 f5b49018 00001000
-00000000 00000000
- kernel: 00000000 f5b4bb4c e4a84080 f5b4bb4c 00000000 00000000 c1a0e400
-00000001
- kernel: 00000000 0000003b 00002b5b 00000000 00000000 e88a7c3c e88a7c3c
-e88a7d50
- kernel: Call Trace:
- kernel: [__crc_device_suspend+2716835/3186568]
-reiserfs_allocate_blocks_for_region+0xf32/0x1320 [reiserfs]
- kernel: [] reiserfs_allocate_blocks_for_region+0xf32/0x1320 [reiserfs]
- kernel: [__crc_device_suspend+2692640/3186568] inode2sd+0x12f/0x140
-[reiserfs]
- kernel: [] inode2sd+0x12f/0x140 [reiserfs]
- kernel: [__crc_device_suspend+2772063/3186568] pathrelse+0x1e/0x30
-[reiserfs]
- kernel: [] pathrelse+0x1e/0x30 [reiserfs]
- kernel: [autoremove_wake_function+0/48]
-autoremove_wake_function+0x0/0x30
- kernel: [] autoremove_wake_function+0x0/0x30
- kernel: [__crc_device_suspend+2807928/3186568]
-do_journal_end+0x1f7/0xc40 [reiserfs]
- kernel: [] do_journal_end+0x1f7/0xc40 [reiserfs]
- kernel: [__crc_device_suspend+2812134/3186568] journal_end+0x65/0xc0
-[reiserfs]
- kernel: [] journal_end+0x65/0xc0 [reiserfs]
- kernel: [__crc_device_suspend+2719325/3186568]
-reiserfs_file_write+0x5cc/0x639 [reiserfs]
- kernel: [] reiserfs_file_write+0x5cc/0x639 [reiserfs]
- kernel: [vfs_rename_other+149/272] vfs_rename_other+0x95/0x110
- kernel: [] vfs_rename_other+0x95/0x110
- kernel: [vfs_rename+335/896] vfs_rename+0x14f/0x380
- kernel: [] vfs_rename+0x14f/0x380
- kernel: [sys_rename+575/704] sys_rename+0x23f/0x2c0
- kernel: [] sys_rename+0x23f/0x2c0
- kernel: [__pollwait+0/208] __pollwait+0x0/0xd0
- kernel: [] __pollwait+0x0/0xd0
- kernel: [sys_close+112/208] sys_close+0x70/0xd0
- kernel: [] sys_close+0x70/0xd0
- kernel: [sysenter_past_esp+82/121] sysenter_past_esp+0x52/0x79
- kernel: [] sysenter_past_esp+0x52/0x79
- kernel:
- kernel: Code: 0f 0b 0b 05 35 d0 10 f9 8b 84 24 58 02 00 00 8b 8c c4 60
-02
+--==_Exmh_1108764540_6251P
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.0 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
---------------------------------------------
+iD8DBQFCFmd8cC3lWbTT17ARAiH+AJ9b3eHNwI9xktimI4G6AcYEnZ7JCACdHWzj
+dOy7dcYMytFf+nHMLfJ3BXw=
+=4Bef
+-----END PGP SIGNATURE-----
 
-
-I am open to any suggestions and I DO appreciate the hard work that's
-gone into ReiserFS. I'm not above paying for the core developers' help,
-if it comes to that (yes, I've read 
-http://www.namesys.com/support.html
-and
-http://www.namesys.com/faq.html
-). Also, I am open to suggestions, such as "you need to recompile the
-kernel with..." or "why don't you read..." or "the hardware has to be
-replaced..."
-
-Thanks for reading!
-("Blagodaryu za vnimanie!")
-
--steve
-
-
+--==_Exmh_1108764540_6251P--
