@@ -1,31 +1,82 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: reiser4 plugins (was: silent semantic changes with reiser4)
-Date: Sat, 28 Aug 2004 21:09:01 +0200
-Message-ID: <20040828190901.GA18083@lst.de>
-References: <20040826014542.4bfe7cc3.akpm@osdl.org> <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <20040828105929.GB6746@alias> <Pine.LNX.4.58.0408281011280.2295@ppc970.osdl.org> <20040828190350.GA14152@alias>
+From: Linus Torvalds <torvalds@osdl.org>
+Subject: Re: silent semantic changes with reiser4
+Date: Sat, 28 Aug 2004 12:16:47 -0700 (PDT)
+Message-ID: <Pine.LNX.4.58.0408281201290.2295@ppc970.osdl.org>
+References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com>
+ <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org> <20040828170515.GB24868@hh.idb.hist.no>
+ <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org>
+ <20040828182954.GJ21964@parcelfarce.linux.theplanet.co.uk>
+ <Pine.LNX.4.58.0408281132480.2295@ppc970.osdl.org>
+ <20040828185613.GK21964@parcelfarce.linux.theplanet.co.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21011-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21012-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040828190350.GA14152@alias>
+In-Reply-To: <20040828185613.GK21964@parcelfarce.linux.theplanet.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: flx@msu.ru, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: viro@parcelfarce.linux.theplanet.co.uk
+Cc: Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
 
-On Sat, Aug 28, 2004 at 11:03:50PM +0400, Alexander Lyamin wrote:
-> And taking on the situation with reiser4 with "smartmost VFS" approach,
-> time should pass and with time and expirience on hands it will be evident what
-> should go in VFS. Now its may be too early.
+
+
+On Sat, 28 Aug 2004 viro@parcelfarce.linux.theplanet.co.uk wrote:
+>
+> On Sat, Aug 28, 2004 at 11:44:52AM -0700, Linus Torvalds wrote:
+> > Going back to O_XATTR: that would end up doing the "special vfsmount"  
+> > magic at the beginning of the lookup. If the dentry you started with
+> > wasn't marked D_HYBRID, it would just return -ENOTDIR.
 > 
-> Considering "amazing PR skills" of Hans Reiser it was the only viable way
-> to get this changes in VFS. Cause, ironically, mr. Hellwig that currently
-> demand it to be scrapped out or go in VFS would instakill Hans Reiser
-> (i know many people would:) if he only touched holy cow of VFS for any
-> reiser4 purpose.
+> OK, let me restate the question - what do we get from pwd if we do
+> fchdir() to such beast?
 
-Could you please stop talking such inproven crap?
+We'll see the "attribute path". We could (if we want to) mark the point 
+where we walked into attribute space somehow (since we can see it by just 
+looking at the vfsmount: d_root/d_mountpoint being the same), but even if 
+we don't, we'll get a sane-looking path.
 
+(It's not just "getcwd()", it's /proc interfaces too, for opening files,
+and we already have the notion of magic markers like "(deleted)" to show
+human-readable information).
+
+The question about what to do at the "attribute point" (and there may
+actually be several, if the filesystem supports attributes on attribute
+files) likely depends on whether we support the previously discussed
+"lookup()" magic for attributes.
+
+So if we do support it, I think we should just make the attribute point
+look exactly like a normal directory, since that path would work as-is. If
+we don't support it (and at directory points), we might want to just
+consider it a special root.
+
+NOTE! Anybody who tries to use the "getcwd()" string as a real path is 
+already broken - you have pathname permissions that may not make it 
+possible to look up the path you see.
+
+So we have multiple options:
+
+ - support "file/attribute" lookup: show the path as-is, so you'd show it 
+   as
+	"/path/to/file/attribute"
+
+ - alternatively, even if you _do_ support the normal lookup, show it with 
+   a double slash (which will still be a valid path), just as a visual 
+   clue:
+	"/path/to/file//attribute"
+
+ - for directories, or if we do _not_ support the extended lookup format,
+   we could show it the same way we show deleted files, something like 
+   this:
+	"/path/to/file/attribute (attr)"
+
+ - using "http notation" for non-standard-namespaces (we already do this
+   for sockets and pipes, for example)
+
+	"attr:attribute@/path/to/file"
+
+pick your poison.
+
+		Linus
