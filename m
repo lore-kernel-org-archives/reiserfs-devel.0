@@ -1,77 +1,62 @@
-From: D_i_F_i@gmx.de
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: "no space left" but df -k shows plenty of free space
-Date: Tue, 20 May 2003 00:24:42 +0200 (MEST)
-Message-ID: <23414.1053383082@www3.gmx.net>
+Date: Tue, 20 May 2003 13:44:52 +0400
+Message-ID: <20030520094452.GA14828@namesys.com>
+References: <23414.1053383082@www3.gmx.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-14169-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14176-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <23414.1053383082@www3.gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="johab"
-To: mason@suse.com, green@namesys.com
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: D_i_F_i@gmx.de
+Cc: mason@suse.com, reiserfs-list@namesys.com
 
-SGVsbG8sCgptYW55IHRoYW5rcyBmb3IgeW91ciBxdWljayByZXNwb25zZXMhIFNvcnJ5IHRoYXQg
-SSBjb3VsZG60dCB1c2UganVzdCB0aGUKcmVwbHktZnVuY3Rpb24gb2YgbXkgZU1haWwtQ2xpZW50
-LCBidXQgSbRtIGN1cnJlbnRseSBvbiBhIGJ1c2luZXNzCnRyYXZlbCBhbmQgSSBkb260dCBoYXZl
-IGZ1bGwgYWNjZXNzIHRvIG15IGVNYWlscy4KCkhlcmUgYXJlIHNvbWUgb2YgdGhlIGluZm9ybWF0
-aW9ucyB5b3UgYXNrZWQgZm9yOgoKPj4gTm93IHdlIGNhbiB1c2UgdGhlIGZpbGVzeXN0ZW0gd2l0
-aG91dCBwcm9ibGVtcyBidXQgSSBmZWFyIHRoYXQgd2UKPj4gd2lsbCBydW4gaW50byBwcm9ibGVt
-cyB3aGVuIHRoZSBmaWxlc3lzdGVtIHJlYWNoZXMgNzclIHVzYWdlIGFnYWluLgo+Cj5IbSwgaXQg
-d2lsbCBiZSBpbnRlcmVzdGluZyBpZiB5b3UgdHJ5Lgo+TWF5IGJlIGl0IHdpbGwgc3RvcCB3b3Jr
-aW5nIHdoZW4gdGhlcmUgaXMgMjQ5ODA3MiBibG9ja3MgbGVmdCBhZ2Fpbi4KClNvcnJ5LCBidXQg
-SSBjYW60dCBmaWxsIHVwIHRoZSBmaWxlc3lzdGVtIHVudGlsIGl0tHMgZnVsbCBiZWNhdXNlIHdl
-Cm5lZWQgdGhlIGZpbGVzeXN0ZW0gZm9yIG91ciBkYWlseSB3b3JrLiBJZiBJIHJlYWx5IHNob3Vs
-ZCB0cnkgdGhpcywgSSAKaGF2ZSB0byB3YWl0IHVudGlsIHRoZSBuZXh0IHdlZWtlbmQuIEFsc28g
-SSBoYXZlIHRvIGFzayBzZXZlcmFsIGNvbGxlZ3VlcywKaWYgaXS0cyBvayBpZiBJtG0gZ29pbmcg
-dG8gZG8gdGhpcyB0ZXN0IGF0IHRoZSBuZXh0IHdlZWtlbmQuIEJ1dCBpZiB5b3UKdGhpbmssIHRo
-aXMgdGVzdCB3aWxsIGJyaW5nIHVzIGEgc3RlcCBmdXJ0aGVyLCBJIHdpbGwgdHJ5IHRvIGdldCBh
-biAiT0siCmZvciB0aGlzIHRlc3QuCgoKPj4gSSdtIHVzaW5nIHJlaXNlcmZzIHZlcnNpb24gMy42
-LjI1IFtidWlsdCBpbnRvIGtlcm5lbF0gb2YgYQo+PiBTTEVTNy1EaXN0cmlidXRpb24gKFN1U0Up
-IG9uIElCTSB6U2VyaWVzICh6OTAwLCB6L1ZNKSBpbgo+PiA2NC1CaXQtTW9kZSAoczM5MHgpLiBU
-aGUgZmlsZXN5c3RlbSBoYXMgYmVlbiByZXNpemVkCj4KPkhtLCB3aGF0IGtlcm5lbCB2ZXJzaW9u
-IGRvIHRoZXkgc2hpcD8KPgoKV2UgdXNlICJrX2RlZmx0LTIuNC4xNy00NSIsIGFzICJycG0gLXFp
-IiBzaG93czoKCk5hbWUgICAgICAgIDoga19kZWZsdCAgICAgICAgICAgICAgICAgICAgICBSZWxv
-Y2F0aW9uczogKG5vdCByZWxvY2F0ZWFibGUpClZlcnNpb24gICAgIDogMi40LjE3ICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIFZlbmRvcjogU3VTRSBBRywgTnVlcm5iZXJnLApHZXJtYW55ClJl
-bGVhc2UgICAgIDogNDUgICAgICAgICAgICAgICAgICAgICAgICAgICAgQnVpbGQgRGF0ZTogVGh1
-IDA1IERlYyAyMDAyCjA5OjU5OjE0IFBNIENFVApJbnN0YWxsIGRhdGU6IEZyaSAxNCBGZWIgMjAw
-MyAwMjoxMzoyMSBQTSBDRVQgICAgICBCdWlsZCBIb3N0OgpzMzkwenZpNzIuc3VzZS5kZQpHcm91
-cCAgICAgICA6IEJhc2UvS2VybmVsICAgICAgICAgICAgICAgICAgIFNvdXJjZSBSUE06CmtfZGVm
-bHQtMi40LjE3LTQ1LnNyYy5ycG0KU2l6ZSAgICAgICAgOiA5OTM4OTg3ICAgICAgICAgICAgICAg
-ICAgICAgICAgICBMaWNlbnNlOiBHUEwgKyBJQk0gT0NPCkxJQ0VOU0UKUGFja2FnZXIgICAgOiBm
-ZWVkYmFja0BzdXNlLmRlClN1bW1hcnkgICAgIDogVGhlIHN0YW5kYXJkIFN1U0Uga2VybmVsCkRl
-c2NyaXB0aW9uIDoKVGhlIHN0YW5kYXJkIFN1U0Uga2VybmVsCgpTdVNFIHNlcmllczogaW1hZ2Vz
-CgoKPiBDb3VsZCB5b3UgcGxlYXNlIHJ1biBkZWJ1Z3JlaXNlcmZzIC1wIC9kZXYveHh4IHwgZ3pp
-cCAtYyA+Cj4gZGYtZXJyb3ItZnMuZ3osIGFuZCBtYWtlIGl0IGF2YWlsYWJsZSBzb21ld2hlcmUg
-Zm9yIHVzIHRvIGRvd25sb2FkLiAgSWYKPiB5b3UgYXJlIHVzaW5nIHJlaXNlcmZzcHJvZ3MgMy54
-LjBqIG9yIHNvIHRoZSBvdXRwdXQgY2FuIGNvbnRhaW4gYWN0dWFsCj4gZmlsZSBkYXRhLCBzbyB5
-b3UgcHJvYmFibHkgd2FudCB0byBwdXQgdGhlIGltYWdlIG9udG8gYSBwYXNzd29yZAo+IHByb3Rl
-Y3RlZCBwYWdlLgo+Cj4gVGhpcyB3aWxsIHRha2UgYSBtZXRhZGF0YSBkdW1wIG9mIHRoZSBmaWxl
-c3lzdGVtLCBJJ2QgbGlrZSB0byBjaGVjayBpdC4KCkkgZ3Vlc3MsIEkgY2FuIGV4ZWN1dGUgdGhp
-cyBjb21tYW5kIHdoaWxlIHRoZSBmaWxlc3lzdGVtIGlzIG1vdW50ZWQgYW5kCmluIHVzZS4gSXMg
-dGhpcyBjb3JyZWN0PyBBbHNvIEm0dmUgdG8gY2hlY2sgZmlyc3QsIGlmIHRoZXJlIHdpbGwgYmUg
-YW55CiJjb25maWRlbnRpYWwiIGRhdGEgaW4gdGhlIG91dHB1dCBvZiB0aGUgZGVidWctY29tbWFu
-ZCwgd2hpY2ggSbRtIG5vdAphbGxvd2VkIHRvIGRpc3RyaWJ1dGUuIEFuZCBhcyB0aGUgY29tbWFu
-ZCBjYXVzZXMgc29tZSBzeXN0ZW0gbG9hZCwgSSBtYXkgCmhhdmUgdG8gd2FpdCB1bnRpbCB0aGUg
-bmV4dCB3ZWVrZW5kLCB0byBnZW5lcmF0ZSB0aGlzIGRhdGEuCiAKQnkgdGhlIHdheSwgV2UgYXJl
-IHVzaW5nIHRoZSBmb2xsb3dpbmcgUlBNOgoKTmFtZSAgICAgICAgOiByZWlzZXJmcyAgICAgICAg
-ICAgICAgICAgICAgIFJlbG9jYXRpb25zOiAobm90IHJlbG9jYXRlYWJsZSkKVmVyc2lvbiAgICAg
-OiAzLnguMWIgICAgICAgICAgICAgICAgICAgICAgICAgICAgVmVuZG9yOiBTdVNFIEFHLCBOdWVy
-bmJlcmcsCkdlcm1hbnkKUmVsZWFzZSAgICAgOiAxNiAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICBCdWlsZCBEYXRlOiBTYXQgMjAgQXByIDIwMDIKMDE6MjM6MDcgQU0gQ0VTVApJbnN0YWxsIGRh
-dGU6IFdlZCAxMiBGZWIgMjAwMyAwNDo0Nzo0OSBQTSBDRVQgICAgICBCdWlsZCBIb3N0OgpzMzkw
-ejA2LnN1c2UuZGUKR3JvdXAgICAgICAgOiBTeXN0ZW0vRmlsZXN5c3RlbXMgICAgICAgICAgICBT
-b3VyY2UgUlBNOgpyZWlzZXJmcy0zLnguMWItMTYuc3JjLnJwbQpTaXplICAgICAgICA6IDE1NzEx
-NzcgICAgICAgICAgICAgICAgICAgICAgICAgIExpY2Vuc2U6IEhhbnMgUmVpc2VyClBhY2thZ2Vy
-ICAgIDogZmVlZGJhY2tAc3VzZS5kZQpTdW1tYXJ5ICAgICA6IHJlaXNlcmZzIHV0aWxpdGllcwpE
-ZXNjcmlwdGlvbiA6CnJlaXNlcmZzIHV0aWxpdGllczogbWFraW5nIHRoZSBmaWxlIHN5c3RlbSAo
-bWtyZWlzZXJmcyksIGNoZWNraW5nIGZvcgpjb25zaXN0ZW5jeSAocmVpc2VyZnNjayksIGFuZCBy
-ZXNpemluZyAocmVzaXplX3JlaXNlcmZzKQoKU3VTRSBzZXJpZXM6IGEKCgoKQWZ0ZXIgSbR2ZSBn
-b3QgY2xlYXJhbmNlIGZvciBhbGwgdGhlc2UgcXVlc3Rpb25zIEkgd291bGQgc2VuZCB5b3UgYW4K
-YXBwcm9yaWF0ZSBtZXNzYWdlLgoKUmVnYXJkcywKRGlyawoKLS0gCisrKyBHTVggLSBNYWlsLCBN
-ZXNzYWdpbmcgJiBtb3JlICBodHRwOi8vd3d3LmdteC5uZXQgKysrCkJpdHRlIGzkY2hlbG4hIEZv
-dG9nYWxlcmllIG9ubGluZSBtaXQgR01YIG9obmUgZWlnZW5lIEhvbWVwYWdlIQoK
+Hello!
+
+On Tue, May 20, 2003 at 12:24:42AM +0200, D_i_F_i@gmx.de wrote:
+> >> Now we can use the filesystem without problems but I fear that we
+> >> will run into problems when the filesystem reaches 77% usage again.
+> >Hm, it will be interesting if you try.
+> >May be it will stop working when there is 2498072 blocks left again.
+> Sorry, but I can?t fill up the filesystem until it?s full because we
+> need the filesystem for our daily work. If I realy should try this, I 
+> have to wait until the next weekend. Also I have to ask several collegues,
+> if it?s ok if I?m going to do this test at the next weekend. But if you
+> think, this test will bring us a step further, I will try to get an "OK"
+> for this test.
+
+Please try.
+Alternatively if you can create another reiserfs filesystem that would not be in use
+by anyone and try to fill it and see how soon it will report "out of space",
+that should be sufficient too.
+
+> > Could you please run debugreiserfs -p /dev/xxx | gzip -c >
+> > df-error-fs.gz, and make it available somewhere for us to download.  If
+> > you are using reiserfsprogs 3.x.0j or so the output can contain actual
+> > file data, so you probably want to put the image onto a password
+> > protected page.
+> > This will take a metadata dump of the filesystem, I'd like to check it.
+> I guess, I can execute this command while the filesystem is mounted and
+> in use. Is this correct? Also I?ve to check first, if there will be any
+
+Yes, you can.
+
+> "confidential" data in the output of the debug-command, which I?m not
+> allowed to distribute. And as the command causes some system load, I may 
+> have to wait until the next weekend, to generate this data.
+
+This is ok.
+
+> After I?ve got clearance for all these questions I would send you an
+> approriate message.
+
+Ok, thank you.
+
+Bye,
+    Oleg
