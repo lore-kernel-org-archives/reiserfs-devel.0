@@ -1,47 +1,35 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Need some help on reiserfs failure
-Date: 28 Oct 2002 08:17:55 -0500
-Message-ID: <1035811075.1005.234.camel@tiny>
-References: <1035562356.3711.30.camel@preston>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Online Resizing Failure
+Date: Mon, 28 Oct 2002 19:26:35 +0300
+Message-ID: <20021028192635.A1171@namesys.com>
+References: <Pine.GSO.4.33L.0210251403010.28840-100000@unix2.cc.ksu.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11807-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11808-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1035562356.3711.30.camel@preston>
+Content-Disposition: inline
+In-Reply-To: <Pine.GSO.4.33L.0210251403010.28840-100000@unix2.cc.ksu.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Preston Lord <webmaster@t2.net>
+Content-Transfer-Encoding: 7bit
+To: Matt Stegman <matts@ksu.edu>
 Cc: reiserfs-list@namesys.com
 
-On Fri, 2002-10-25 at 12:12, Preston Lord wrote:
-> Hi List,
-> 
-> On my home pc I am running SuSE 8 Pro.
-> I have my root partition using reiserfs.
-> When I woke up this morning the computer was frozen and after rebooting
-> it tells me there is no root partition defined. I pulled the hdd from
-> the machine and slaved it into another SuSE 8 pc. If I use Yast2-
-> Partition Utilities I can see the partitions are defined and the fs is
-> still being listed as reiserfs on the failed root on the home hdd.
-> 
-> I tried using reiserfsck as follows:
-> 
-> resiserfsck --check /dev/hda4
-> 
->  reiserfs_open: bread failed reading block 2
->  reiserfs_open: bread failed reading block 16
+Hello!
 
-These two indicate some hardware issue.  reiserfs is unable to read from
-the disk at all.  This doesn't mean your disk is gone, but you do need
-to look further in your logs for hardware related issues.
+On Fri, Oct 25, 2002 at 02:10:01PM -0500, Matt Stegman wrote:
+> I cannot resize a mounted reiserfs filesystem.  I'm trying to grow a
+> reiserfs filesystem on an LVM volume.  I've extended the volume with
+> lvextend, and resize_reiserfs -v reports "remount failed: Invalid
+> argument."  Looking in dmesg, I see "can't shrink filesystem on-line." I'm
+> using kernel 2.4.20-pre10-ac2 on Gentoo Linux, reiserfsprogs 3.6.3. I know
+> reisers supports online growing, but I don't know what I'm doing wrong.
 
-Does the kernel detect the drive at all?  If so, please post the
-relevant messages. 
+resize_reiserfs is sure that you are trying to shrink the FS.
+How did you specified new size, can you give us more info on what are you doing,
+what commands you given, and other useful info?
 
--chris
-
-
-
+Bye,
+    Oleg
