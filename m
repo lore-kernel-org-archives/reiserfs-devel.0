@@ -1,62 +1,40 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Debugreiserfs Security Question (3.6.7-pre1)
-Date: Mon, 23 Jun 2003 12:20:26 +0400
-Message-ID: <3EF6B84A.5070302@namesys.com>
-References: <3EF27041.6060401@netscape.net>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: vpf-10680, minor corruptions
+Date: Mon, 23 Jun 2003 13:02:58 +0400
+Message-ID: <20030623090258.GA12259@namesys.com>
+References: <3EF07AFB.8060303@g-house.de> <20030618152626.GA17240@namesys.com> <3EF0A8E8.2000209@g-house.de> <20030619054535.GA23852@namesys.com> <3EF6AE67.5090502@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14663-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14664-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3EF27041.6060401@netscape.net>
+Content-Disposition: inline
+In-Reply-To: <3EF6AE67.5090502@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Manuel Krause <manuelkrause@netscape.net>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Christian Kujau <evil@g-house.de>, ReiserFS List <reiserfs-list@namesys.com>
 
-Manuel Krause wrote:
+Hello!
 
-> Hi!
->
-> If I currently use debugreiserfs -p  /dev/xxx | gzip -c > xxx.gz and
-> later for testing gunzip -c xxx.gz | unpack /dev/yyy  I get the same
-> filenames on the last target partition. (with reiserfsprogs 3.6.7-pre1)
->
->
-> If I don't want to spread info about
->  /home/manuel/my_car/tech_overview/lies_for_BMW_&_DC/engine.259.fake.jpg
-> anywhere else than only on my HDD, shouldn't this file be converted to
->  /d98/d4/d2/d65/d1/23.file
-> e.g., or something like that (random directory & filenames) within
-> debugreiserfs, in general?!
->
-> I don't know if that is a serious security issue. But it is one.
->
-> No no, I don't doubt your developers' debugging cyle and purpose at all.
-> But I don't need you (and others if we couldn't establish a secure
-> connection) to read our filenames. In case of real failure we may not
-> be able to rename anything any more, you know..
->
->
-> Best regards,
->
-> Manuel Krause
->
->
-> (The filenames mentioned above have NO real meaning in ANY sense.)
->
->
->
-If you are considering the use of reiserfs for secure government 
-purposes then your government should sponsor the on staff addition of a 
-reiserfs developer with the security clearances your government 
-needs.;-)   Forgive me for thinking that only governments have a lot of 
-data that cannot be risked with strangers working in Russia, I know it 
-is not entirely true.
+On Mon, Jun 23, 2003 at 11:38:15AM +0400, Hans Reiser wrote:
+> >Well, normally reiserfs is caring about consistency.
+> >There are two noticeable omissions, though:
+> >1. if the unexpected shutdown was because of power loss and you have write 
+> >cache enabled
+> >  and your write reorders write requests, then it is possible invalid data 
+> >  gets
+> >  written to disk, before "transaction is finished" mark is written to the 
+> >  drive.
+> >  (there is a way to avoid this with some drives, by explicitly flushing
+> >   drive cache in some cases, but this method seems to create some problems
+> >   on itself. So this is not yet merged in any mainstream kernel).
+> Can you provide details on this not being merged?
 
--- 
-Hans
+It was never submitted to inclusion into mainstream kernel. Hence it was never merged.
+I saw that Jens Axboe (I think) posted the code for public review/verification, but that's it.
 
-
+Bye,
+    Oleg
