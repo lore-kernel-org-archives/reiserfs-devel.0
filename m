@@ -1,49 +1,93 @@
-From: Stephen Smalley <sds@epoch.ncsc.mil>
-Subject: Re: xattr
-Date: 19 Jun 2003 14:52:42 -0400
-Message-ID: <1056048762.1071.263.camel@moss-huskers.epoch.ncsc.mil>
-References: <200306162226.39701.russell@coker.com.au>
-	 <1056030719.6758.97.camel@tiny.suse.com>
-	 <200306200046.52292.russell@coker.com.au>
-	 <1056035446.1071.143.camel@moss-huskers.epoch.ncsc.mil>
-	 <1056036084.6758.114.camel@tiny.suse.com>
-	 <1056043514.1071.199.camel@moss-huskers.epoch.ncsc.mil>
-	 <1056045995.6758.139.camel@tiny.suse.com>
+From: Christian Kujau <evil@g-house.de>
+Subject: Re: vpf-10680, minor corruptions -- oooh!
+Date: Thu, 19 Jun 2003 20:55:36 +0200
+Message-ID: <3EF20728.2080905@g-house.de>
+References: <3EF07AFB.8060303@g-house.de> <20030618152626.GA17240@namesys.com> <3EF0A8E8.2000209@g-house.de> <20030619054535.GA23852@namesys.com>
+Reply-To: evil@g-house.de
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14633-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14634-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1056045995.6758.139.camel@tiny.suse.com>
+In-Reply-To: <20030619054535.GA23852@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Chris Mason <mason@suse.com>
-Cc: Russell Coker <russell@coker.com.au>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, 2003-06-19 at 14:06, Chris Mason wrote:
-> Ok, I get it.  You would need a special reiserfs xattr add on patch to
-> get the atomicity right.
+Oleg Drokin schrieb:
+> Well, normally reiserfs is caring about consistency.
+> There are two noticeable omissions, though:
+> 1. if the unexpected shutdown was because of power loss and you have write cache enabled
+>    and your write reorders write requests, then it is possible invalid data gets
+>    written to disk, before "transaction is finished" mark is written to the drive.
 
-I don't think so.  If you crash between the create and the setxattr,
-you'll just have an empty file that has no xattr, which will effectively
-just cause it to be mapped to a default security label until an xattr is
-set administratively.  No real harm.
+yes, the on-disk write cache. this could be indeed a problem hard to
+cover from any fs. i could disable it, yes.
 
-> The reiserfsv3 xattr patches maintained by SuSE implement the xattr api
-> (acl.bestbits.at).  The xattrs happen to be implemented as individual
-> files on disk because reiserfs is so well suited for it, and because it
-> allowed Jeff to code them without changing the v3 disk format.
-> 
-> But, these files are only available through the xattr api right now, and
-> they are not visible via tools like ls etc.
+> So can you say check/fix the fs, mount it write some files to it,
+> unmount it and run fsck again to see if everything is ok?
 
-Which is what we would want.  SELinux userland will only access them via
-xattr API (actually via a SELinux API wrapped around the xattr calls to
-encapsulate the use of xattr and the specific xattr name).
+oh, oh! i was about to answer this question with a plain "Yes". ok, with
+--fix-fixable the corruptions got fixed, a reiserfsck went O.K. with "no
+corruptions". i mounted the device yesterday, but no files were written
+to it until today. now, i've just unmounted the partition, reiserfsck
+went O.K. again, no corruptions. mounted again, i created a directory on
+the fs and copied 329 files into it (cp -a /lib /path-to-reiser-fs/).
 
--- 
-Stephen Smalley <sds@epoch.ncsc.mil>
-National Security Agency
+unmounted, reiserfsck found 131 corruptions in an instant:
+
+
+lila:~# reiserfsck /dev/sde2
+<--------reiserfsck 3.6.6, 2003-------->
+
+[...]
+
+Do you want to run this program?[N/Yes] (note need to type Yes if you
+do):Yes
+###########
+reiserfsck --check started at Thu Jun 19 16:51:49 2003
+###########
+Replaying journal..
+0 transactions replayed
+Checking internal tree..finished
+Comparing bitmaps..vpf-10640: The on-disk and the correct bitmaps differs.
+Checking Semantic tree:
+/temp/lib/libnss_files-2.3.1.sovpf-10680: The file [3214 3538] has the
+wrong block count in the StatData (104), should be (56)
+
+[...]
+
+finished
+
+131 found corruptions can be fixed with --fix-fixable
+###########
+reiserfsck finished at Thu Jun 19 16:52:04 2003
+###########
+lila:~# find /lib/ | wc -l
+     329
+lila:~#
+
+
+the pathnames (/temp/lib/...) are the same files i just copied to the
+fs. i was not aware of a reproduceable bug (?) at all on this issue.
+
+the fs is used once in a week very often, but rarely _during_ week. this
+could be the cause, that i never recognized the errors before or were
+fixed by a journal replay at boot time.
+
+fyi only: i have _one_ weird issue with this alpha: it has 128 MB RAM
+inside, but only 64 MB are recognized. putting 64 MB into it gives 32
+MB, but 32 MB is still 32MB. this is odd, but kernel compiling / heavy
+load causes no ooopses, well i got some with 2.5.6x kernels, but this is
+long ago. and: the hd is a little old, it's a ST34573N (SCSI, 2 GB). but
+there are no odd kernel messages or failures in the log.  i say this,
+because often "bad RAM" or other issues are often on-topic here.
+
+
+Thank you,
+Christian.
+
+PS: sorry for the delay. mail probs.
 
