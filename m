@@ -1,90 +1,72 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Tue, 31 Aug 2004 20:10:04 -0500
-Message-ID: <4135216C.5090308@slaphack.com>
-References: <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <20040826100530.GA20805@taniwha.stupidest.org> <20040826110258.GC30449@mail.shareable.org> <20040827210638.GE709@openzaurus.ucw.cz> <4133CDA6.4060105@slaphack.com> <20040831082144.GA535@elf.ucw.cz>
+Date: Tue, 31 Aug 2004 20:14:33 -0500
+Message-ID: <41352279.7020307@slaphack.com>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21191-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21192-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040831082144.GA535@elf.ucw.cz>
+In-Reply-To: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Pavel Machek wrote:
-| Hi!
+Horst von Brand wrote:
+| Pavel Machek <pavel@ucw.cz> said:
+|
+|>David Masover <ninja@slaphack.com> said:
 |
 |
-|>| uservfs does
-|>|
-|>| cd foo.deb#uar
-|>cd foo.deb/ar
-|>| vs.
-|>| cd foo.deb#udeb
-|>cd foo.deb/deb
-|>
-|>and why would you want that, instead of just:
-|>cd foo.deb	# for the ar
-|>dpkg -i foo.deb	# for the deb
-|
-|
-| Because I want to see contents of that .deb package, nicely parsed?
-|
-|
-|>Just want to extract the tar file?  Maybe something like
-|>cat foo.tgz/gunzip
-|>In which case (of course) foo.tgz/gunzip has exactly the same directory
-|>contents as foo.tgz
-|
-|
-| Yes, that would work.
-|
-|
-|>In fact, for just about any syntax anyone could suggest, I can't really
-|>see why you can't just replace all weird symbols with a slash and a
-|>symbol.  Instead of
-|>	foo.tgz#utar
-|>you have
-|>	foo.tgz/#/utar
-|>Only difference is, some things which used to require special tools can
-|>now be serviced by less than what's in busybox.
-|
-|
-| That would work, too. I do not get your comment about busybox.
+| [...]
+[...]
+| You do need extra tools anyway, placing them in the kernel is cheating
+(and
+| absolutely pointless, IMHO).
 
-Busybox is a bare minimum of unix tools, yet still includes things like
-tar/bz2.  With such a system, you can use the most basic (sub-GNU)
-versions of tools like cp, cat, sh, ls, and so on, to do much more
-complex operations.  What's more, you can see everything you can do to a
-file just by looking at it.  I can certainly imagine doing
-	cat foo.tgz/metas/README
-rather than a google search for tgz, followed by a "man tar" and "man
-gzip". Assuming I know nothing about tar/gzip files, it's a lot easier
-as a new user to have one common interface for everything -- including
-docs.  Fewer commands to memorize, faster to learn new stuff.
+Repeat after me:  plugins in kernel does NOT equal tools in kernel.
+
+It's not hard to, for instance, imagine a generic plugin for archive
+manipulation which talks to a userspace daemon/library.  The kernel
+doesn't know anything other than (maybe) a list of extensions that are
+archives.  All else is handled in userspace -- the idea that "this is a
+zipfile" and "zipfiles can be extracted with the 'zip' command" are all
+in userspace.
+
+It's not about the kernel, it's about the interface.  And see my other mail:
+	cat foo.zip/README
+	less foo.zip/contents/bar.c
+is a lot easier than
+	lynx http://google.com/search?q=zip
+	emerge zip
+	man zip
+	unzip foo.zip
+	cat bar.c
+which already assumes quite a lot of expertise.
+
+
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQTUha3gHNmZLgCUhAQKRJw/7BUEm41gKZGoVj7gOkcUVe/SRdTs9WtTL
-jkjCX8Zzr/1nnAKTHLqNJEiAJ68Ndf+dRhDfL5y6dDHhOy/Dx+38SzsWz+dQnMJ0
-Fiq5fFDO/DTd0UPecXYPhBrtVeCdfjyyENhgRgJud6D8F39qvLWrZFUsIkjAA3lj
-nzZ/48jRPDWT/mF6JJmv0RfVvNtMWh9HUcW/i0+n4WZU1yFp6jyiF5ExCOP84z3x
-yXQ4Q9hnjgt52MDJTrGsCDvfCSQscQilxvXbl0iaozquIhG9Jz1XNYpij2XUygFi
-RDc1LA1k74VvbWahlkdfbTI+3P4qeMYGBblmfwXVDRwW0i4NH7X0/6xcnr1QjaK/
-f/7EHBz0wnkIG4OpcGWzu9ik4WOR0WXapKrd938XC/mG+WzIluJlQsxG1A2HoRqg
-R66E/mVMVvHJWnJjrW6s10WIemPiKnuXgeIVPifsw81DLXlZ3wxjlZU3iuo7xked
-O6wNDFQBWQR8kv+EMDIt3gtbUdB+5KpxGR+Yli0AjxEdpdk3oZTfe5XQiNdJhcl5
-xrcomVKXGvR96IlNUwHy1EsQk5LySMl101vJIS4z6i7lAIM5CQ1d6eOZrPp/DBOP
-Rw0KoQaiPd3SKNMgoyWSKQL6h85i1PRUN62WH0T2NRU1fZ3EazpiRZr+fuaFqFT9
-Wk2lkDvm5yw=
-=ShWo
+iQIVAwUBQTUieXgHNmZLgCUhAQLj8Q//VEuRWg9RB/PVg/M1t36SraKIRdbrgGq6
+0DYLZwwVWkfz+UKGhUkACNGQzhHG3ySn/lRjqXCsJhzMOzfgmte2CwgGxunHYqdp
+W69OSZ1vv0ZLpdpzEkVdMfRhhg8RBL54Ewj6fQu7G1ZzJ0J0HUFCEZIsVoL4zJfk
++GFl4M+vvc+152HipEDsvrrPasc0dSxmryyzPbyABrfPRi3l2E3Okfewn/4MCC1E
+H/L04nmvJQ2OSZYu1eSMSpnLrgQdZJbYefRuSinpqfKhjpwQXjj2rnfcPm+xc3hh
+FDMlAUPA/DAlthTuhxd9+8iDPEARY57/FAMFTalYVhBEv0NWieMMn9V6R8BbnhZW
+8y9EWu0Nvoowg9qElkVjWEt5M1Rbeuq4TDviyVyPYg/KcTKDGpjLuyQQbWv6hMVM
+WAx6THtRK8Ji/XLCj4Kh6qDOEYP1nuwqLYSWv13BtNAJ3bVeKryOJ4Er4AmuJomA
+uydBPQVsrtzTNmk7Eul2ZjrxXdESpUnUIAbu7H1Gbn51uP4rQTdlXkdPTv6s/wvG
+OSOMWKs28GBFsG3+IJLnoN2wxrffpgTBEAaPwbh9TRFKLIH+pkCFSx2cIkTj93nr
+RjETFObjYdJGhGygrq0xOmN5e7iprdxhxd3/+fvjQxnZGxXT3fZLUwhVX9/zhaXG
+cxau2Onr3jc=
+=MrR9
 -----END PGP SIGNATURE-----
