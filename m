@@ -1,38 +1,68 @@
 From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 20:28:29 -0400
-Message-ID: <200408280028.i7S0STl1024054@localhost.localdomain>
+Date: Fri, 27 Aug 2004 19:58:40 -0400
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <200408272358.i7RNweGh002703@localhost.localdomain>
 References: <spam@tnonline.net>
-Return-path: <reiserfs-list-return-21055-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 In-Reply-To: Message from Spam <spam@tnonline.net> 
-   of "Thu, 26 Aug 2004 13:19:43 +0200." <14210549944.20040826131943@tnonline.net> 
+   of "Thu, 26 Aug 2004 13:15:47 +0200." <1453776111.20040826131547@tnonline.net> 
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Spam <spam@tnonline.net>
-Cc: Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
 Spam <spam@tnonline.net> said:
-> > Chris Wedgwood wrote:
+> Andrew Morton <akpm@osdl.org> said:
 
 [...]
 
-> >   Gnome, KDE, Emacs and Bash all see different virtual filesystems.
-> >   (All but Bash implement their own virtual filesystem extensions).
-> >   That makes them much less useful than they could be.
+> > For example, some image file formats already support embedded metadata, do
+> > they not?
 
->   Exactly,  and  I  doubt  they  have the ability to join together and
->   create  a  common  uniform standard out of it either. They have just
->   far to different views on Linux and how they want things to be done.
+>   Yes, JPEG, TIFF and PNG files for example. But, if you modify any of
+>   these  with  an application that doesn't support the extensions then
+>   you will loose them.
 
-And the solution is... inventing yet another, incompatible way of doing
-things that nobody outside its followers will ever use. Inside the kernel.
-Should have thought of that before.
+As you will each time you muck around with your files-are-directories.
+Nothing new there.
+
+>   Also,  you  are thinking _very_ narrowly now. There are thousands of
+>   file  formats.  Implementing  the  support  for  meta-data/ streams/
+>   attributes  in  the  kernel  will  make  it  possible  to  use  this
+>   generically for all files.
+
+So the _kernel_ has to know about thousands of formats, just in case it
+some blue day it comes across a strange file? Better leave that to the
+applications.
+
+You will _not_ be able to define a single format for extra data about the
+file, there will be differing extra data for different users (do you
+suggest a root-only file with special writable pouches for "graphical icon
+for the file" for each user on the system?!), so the idea in itself is
+doomed from the start.
+
+>   I  use  this  in  Windows  quite much.
+
+Then use it and be happy. No need to screw up Linux for that.
+
+>                                          I put information description
+>   fields  for  lots  of  different  files. These descriptions are then
+>   searchable etc. I could use the command prompt to copy the files and
+>   the descriptions would still be there.
+
+The descriptions might make sense to _you_, _now_. No guarantee they make
+any sense (or are in the least useful) for other users on your system, and
+I might want them in arabic or some such. The descriptions might make no
+sense to you in a couple of years.
+
+>   Secondly, do you expect file managers like Nautilus and Konqueror to
+>   support  every piece of file format on the planet so they could read
+>   information directly from the documents?
+
+That's their (self-selected) job, yes.
 -- 
 Dr. Horst H. von Brand                   User #22616 counter.li.org
 Departamento de Informatica                     Fono: +56 32 654431
