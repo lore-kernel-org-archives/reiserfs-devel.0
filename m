@@ -1,42 +1,41 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: Where to put the journal
-Date: Mon, 02 Aug 2004 13:27:19 +0400
-Message-ID: <410E08F7.9020303@namesys.com>
-References: <410CCFCA.1030309@baldauf.org>
+From: Peter Nelson <pnelson@andrew.cmu.edu>
+Subject: Re: Again, some bad Reiser4 (ReiserFS) 'reviews'
+Date: Mon, 02 Aug 2004 12:09:22 -0500
+Message-ID: <410E7542.70602@andrew.cmu.edu>
+References: <200407150025.30908.Dieter.Nuetzel@hamburg.de> <40F6C548.7030805@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19914-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19917-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <410CCFCA.1030309@baldauf.org>
+In-Reply-To: <40F6C548.7030805@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?Xu=E2n_Baldauf?= <xuan--2004.08.01--reiserfs-list--namesys.com@baldauf.org>
-Cc: Reiserfs List <reiserfs-list@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Hello
+Dieter N=FCtzel wrote:
 
-Xu=E2n Baldauf wrote:
-> Hello,
->=20
-> I want to setup a Linux software RAID 5 over disks of different speed=20
-> with reiserfs on top. I know that the journal has to be accessed=20
-> frequently for comparably small accesses. That's why I'm considering to=
-=20
-> "offload" the journal onto an extra partition on a faster disk of the=20
-> RAID set.
->=20
-> Thus, the journal would not be protected by the RAID, but this is not s=
-o=20
-> important for me.
->=20
-> Is this kind of reasoning sane? Would there be any speedup by offloadin=
-g=20
-> the journal?
->=20
+> http://rufus.hackish.org/wiki/2.6FileSystemBenchmarks
+>
+> Greetings,
+>     Dieter
 
-Person who did some tests on non standard journal is on vacation. He is e=
-xpected to come back today. Maybe he remembers benchmark results,
+Hi, sorry for the late reply, but I've been on vacation for the past=20
+month.  When I originally ran these benchmarks a few months ago I had=20
+posted them to the LKML and this list, but it was linked to a different=20
+website (which has been renamed a few times now).  After a good amount=20
+of discussion on the LKML, this benchmark was actually what prompted=20
+Hans "to add a nice little optimization for compiles to Reiser4 as a=20
+result of thinking about compile benchmarks" (sorting by the last=20
+character).  Anyway, I'm going to be building a new system in around 1=20
+months time which will be the perfect opportunity to rerun all these=20
+benchmarks.  If anyone has suggestions on how to make the test better,=20
+feel free to pass them along.  The thing I'd be most interested in=20
+testing is if there's a way to flush file caches to see how much of a=20
+difference having the file cached in ram compared to reading off disk makes.
+
+-Peter Nelson
 
