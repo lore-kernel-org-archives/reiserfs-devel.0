@@ -1,11 +1,11 @@
 From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: More on Hard Links
-Date: Tue, 09 Dec 2003 21:53:59 -0500
+Date: Tue, 09 Dec 2003 22:05:30 -0500
 Sender: news <news@sea.gmane.org>
-Message-ID: <87u149wfg8.fsf@uhoreg.ca>
-References: <87k755y8xf.fsf@uhoreg.ca> <20031209234740.27534.qmail@web25010.mail.ukl.yahoo.com>
+Message-ID: <87n0a1wex1.fsf@uhoreg.ca>
+References: <20031209234740.27534.qmail@web25010.mail.ukl.yahoo.com> <20031210001327.54822.qmail@web25005.mail.ukl.yahoo.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16315-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16316-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -19,34 +19,27 @@ To: reiserfs-list@namesys.com
 
 [...]
 
-Narcoleptic> If there is a way to quickly and reliably verify that two
-Narcoleptic> files are identical (or not), then when committing a
-Narcoleptic> transaction, each file in the sync list can be resolved as
-Narcoleptic> follows: ...
+Narcoleptic> Think of the non-writable, offline file as a "cached"
+Narcoleptic> version of the file, and you can make a copy for
+Narcoleptic> modification if you wish.  I don't see a usability issue
+Narcoleptic> here.
 
-I'm temporarily confused and can't think straight.  I'll reply to this
-proposal later.  My immediate reaction is that it doesn't solve the
-problem that I brought up, but I'll think about it later.
+Here's a use case: there's a shared file, "foo.txt", that I am working
+with collaboratively with a bunch of other people.  It resides on a
+network volume.  I decide I want a local copy on my laptop, so I make a
+hardlink on my local disk.  Now I take my laptop home, so it's no
+longer connected to the network.  The other guys want to make some
+changes, but since the file has a remote link that isn't mounted, it's
+unwritable.  The guys are annoyed at having to copy the file, leaving
+"foo.txt" hanging there.  (They're even more annoyed when they find out
+that I had mass-hardlinked the whole directory.)  They track me down
+and beat me up. :-P
 
-[...]
+It's even worse if "foo.txt" was, say, actually a configuration file in
+/etc, so you can't just copy it and make changes, because the program
+won't be able to find the new version.
 
->> >> It's hard to differentiate that from the volume just being
->> unmounted.
-
-Narcoleptic> There is no need to differentiate from a volume going down
-Narcoleptic> and just being unmounted.
-
-There is, because if a volume is just unmounted, then you can go ahead
-and prevent writes to a file that is shared on that volume.  But if the
-volume dies for some reason, the filesystem should allow writes, since
-you can't mount the dead volume to re-allow writes.  So that file
-becomes perpetually unwritable.
-
-I suppose that you could write a recovery program such that you enter a
-dead volume's ID, and it searches through the other volumes and cleans
-up the now-dead links.  It might be annoying to have to do that, but I
-suppose it's doable.  Of course, that's assuming you've recorded the
-volume ID... :-/
+It's a bit of a contrived example, but not *completely* ridiculous.
 
 -- 
 Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
