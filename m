@@ -1,295 +1,603 @@
-From: Jonathan Briggs <jbriggs@esoft.com>
-Subject: Reiser4 oops on cat ./..plugin/..readdir
-Date: Thu, 26 Feb 2004 18:34:41 -0700
-Message-ID: <1077845680.6801.4.camel@localhost.localdomain>
+From: "Thorsten Kohfeldt" <thorsten.kohfeldt@gmx.de>
+Subject: bug+fix in reiserfsck - reiserfscore/journal.c
+Date: Fri, 27 Feb 2004 04:13:15 +0100
+Message-ID: <004301c3fcdf$b3932f60$e91ba8c0@thk.local>
+Reply-To: "Thorsten Kohfeldt" <thorsten.kohfeldt@gmx.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-plgDQbAkxhHzMFuQQC5q"
-Return-path: <reiserfs-list-return-16949-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0040_01C3FCE8.05C53B90"
+Return-path: <reiserfs-list-return-16950-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: reiserfs-list@namesys.com
 
---=-plgDQbAkxhHzMFuQQC5q
-Content-Type: multipart/mixed; boundary="=-JHd/w/i1KIyRoWcZU/A0"
-
-
---=-JHd/w/i1KIyRoWcZU/A0
-Content-Type: text/plain
+------=_NextPart_000_0040_01C3FCE8.05C53B90
+Content-Type: text/plain;
+	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 
-Filesystem is on a RAID 0 MD device.
-Config is attached.
-Kernel compiled with:
-
-# gcc34 --version
-gcc34 (GCC) 3.4.0 20040129 (Red Hat Linux 3.4.0-0.3)
-Copyright (C) 2004 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-Problem Description:
-A clean, fresh boot into single user mode, no tainted modules:
-# cd /home
-# cat ./..plugin/..readdir
-Oops: 0000 [#1]
-CPU:    0
-EIP:    0060:[<00000000>]    Not tainted
-EFLAGS: 00010286
-EIP is at 0x0
-eax: df2dfe58   ebx: 00000000   ecx: df287140   edx: c03967f0
-esi: c1720280   edi: df2dfe68   ebp: df2dfee4   esp: df2dfe28
-ds: 007b   es: 007b   ss: 0068
-Process cat (pid: 5389, threadinfo=3Ddf2de000 task=3Ddfd3a0c0)
-Stack: c02031f4 df287140 df2dfe58 df2dfe68 00000000 00000001 df2de000 00000=
-296
-       00000000 df2de000 c013f934 df287140 c036eefd 00000001 dffec150 dffef=
-80c
-       00000001 000000d0 dffef814 000000d0 dffef800 dffef800 00000286 df4ed=
-300
-Call Trace:
- [<c02031f4>] readdir_start+0x64/0x1a0
- [<c013f934>] cache_alloc_refill+0x4e4/0x560
- [<c01753b8>] seq_read+0x178/0x310
- [<c01ddb0f>] reiser4_read+0x8f/0xf0
- [<c01562ca>] vfs_read+0x10a/0x150
- [<c0156582>] sys_read+0x42/0x70
- [<c0108249>] sysenter_past_esp+0x52/0x71
-                                                                           =
-    =20
-Code:  Bad EIP value.
-
-Another one, while in GUI running Nvidia drivers and VMware modules:
-# cat ./..plugin/..readdir
-Segmentation fault
-
-Oops: 0000 [#1]
-CPU:    0
-EIP:    0060:[<00000000>]    Tainted: PF
-EFLAGS: 00010286
-EIP is at 0x0
-eax: c375de58   ebx: 00000000   ecx: cc6d3e00   edx: c03967f0
-esi: d3611c40   edi: c375de68   ebp: c375dee4   esp: c375de28
-ds: 007b   es: 007b   ss: 0068
-Process cat (pid: 9365, threadinfo=3Dc375c000 task=3Dc907a080)
-Stack: c02031f4 cc6d3e00 c375de58 c375de68 00000000 00000202 00000000 c0390=
-e74
-       c0390e74 0000015f d5693174 cc6d3e00 c036eefd 00000001 c375de5c c375d=
-ef0
-       00000000 00000000 c907a080 00000010 c03910bc 00000000 000000d2 00000=
-000
-Call Trace:
- [<c02031f4>] readdir_start+0x64/0x1a0
- [<c01753b8>] seq_read+0x178/0x310
- [<c01ddb0f>] reiser4_read+0x8f/0xf0
- [<c01562ca>] vfs_read+0x10a/0x150
- [<c0156582>] sys_read+0x42/0x70
- [<c0108249>] sysenter_past_esp+0x52/0x71
+To whom it may (should!) concern,                                        =
+26/27-FEB-2004
 =20
-Code:  Bad EIP value.
+after having been annoyed for quite some time by corrupt /var file =
+systems after
+(simulated) powerloss in a SuSE 9.0 setup with reiserfs, I finally =
+tracked the
+problem down to a nasty bug in reiserfsck - reiserfscore/journal.c
+=20
+Turned out that the journal is not always correctly replayed by =
+reiserfsck !
+=20
+This may be the case when the filesystem has not experienced a lot of =
+transactions
+after it has been mounted and so there are more than one mount_id to be =
+found in
+the journal. In that case, the function replay_journal() might =
+accidentally step over
+the transactions it is supposed to replay and that way those =
+transactions are
+completely and forever ignored.
+=20
+The following fix prevents the search loop from stepping too far:
+(check also the MIME attachment down below)
+The diff is valid for SuSE 9.0 reiserfsprogs 3.6.9+ and also valid for
+reiserfsprogs 3.6.13.
 
-# lsmod
-Module                  Size  Used by
-vmnet                  26768  -
-vmmon                  88245  -
-usbnet                 26824  -
-snd_pcm_oss            47460  -
-snd_mixer_oss          16096  -
-nfs                   100848  -
-lockd                  57608  -
-sunrpc                119048  -
-ide_cd                 35172  -
-cdrom                  34464  -
-agpgart                23720  -
-via_rhine              17512  -
-mii                     4032  -
-nvidia               2070312  -
-it87                   19592  -
-i2c_sensor              2080  -
-i2c_isa                 1472  -
-i2c_core               17764  -
-parport_pc             29372  -
-lp                      9384  -
-parport                36136  -
-snd_intel8x0           26372  -
-snd_ac97_codec         58788  -
-snd_pcm                86084  -
-snd_timer              20580  -
-snd_page_alloc          8580  -
-snd_mpu401_uart         5824  -
-snd_rawmidi            19488  -
-snd                    43172  -
-soundcore               6400  -
-md5                     3584  -
-ipv6                  228288  -
-autofs4                12896  -
-sis900                 17060  -
-crc32                   3680  -
-iptable_filter          1856  -
-ip_tables              16640  -
-hid                    23296  -
-ehci_hcd               32068  -
-uhci_hcd               28076  -
-usbcore                96284  -
+############# snip ##############
+--- reiserfsprogs-3.6.13/reiserfscore/journal.c 2004-02-17 =
+13:06:23.000000000 +0100
++++ replayFix/reiserfscore/journal.c 2004-02-27 00:11:44.000000000 +0100
+@@ -784,7 +784,9 @@
+  if (control.mount_id =3D=3D cur.mount_id && control.trans_id =3D=3D 0 =
+&&=20
+      control.desc_blocknr =3D=3D 0)
+      break;
+-=20
++ if (cur.mount_id =3D=3D control.mount_id && cur.trans_id =3D=3D =
+control.trans_id + 1)
++     break;
++
+  ret =3D next_transaction (fs, &cur, newest);
+ =20
+  if (ret !=3D TRANS_FOUND)
+@@ -792,8 +794,9 @@
+     }
+=20
+     while (ret =3D=3D TRANS_FOUND) {
+- if (control.mount_id !=3D cur.mount_id || control.trans_id !=3D 0 ||=20
+-     control.desc_blocknr !=3D 0)=20
++ if ((control.mount_id !=3D cur.mount_id || control.trans_id !=3D 0 ||=20
++      control.desc_blocknr !=3D 0) &&
++     (cur.mount_id !=3D control.mount_id || cur.trans_id !=3D =
+control.trans_id + 1))
+  {
+      ret =3D next_transaction (fs, &cur, newest);
+     =20
+@@ -821,7 +824,8 @@
+         replayed ++;
+     }
+=20
+-    reiserfs_warning (stderr, "%d transactions replayed\n", replayed);
++    reiserfs_warning (stderr, "Journal in %s (1st block: %d) - %d =
+transactions replayed\n",
++     fs->fs_j_file_name, get_jp_journal_1st_block (sb_jp =
+(fs->fs_ondisk_sb)), replayed);
+ =20
+     mark_buffer_dirty (fs->fs_super_bh);
+     bwrite (fs->fs_super_bh);=20
+############# pins ##############
+
+The fix was extensively tested by copying mounted reiser filesystems to
+(XOR- !) loop devices and then reiserfsck-ing them.
+The fixed reiserfsck version always created the same results or, when =
+the bugged
+version did replay 0 transactions, the fixed version replayed the =
+correct amount
+of transactions.
+=20
+The unfortunate thing about the SuSE setup is, that reiserfsck is =
+executed before
+the filesystem gets mounted. The kernel "mount" code itself seems to =
+know the trick,
+but that doesn't help if reiserfsck is discarding those transactions =
+before the
+mount can perform its correct replay!
+Only the root filesystem gets replayed correctly because it will be =
+mounted
+read-only first. On initiation of a mount, the log will always be =
+replayed even if
+the mount is supposed to be read-only in order to achieve consistency as =
+early
+as possible !
+
+For a quick fix of a SuSE 9.0 system, install the reiserfs(progs) source =
+with yast2,
+untar the (source only) attachment to a directory of your choice and run
+./createSuSEreiserfs. Then install the new reiserfsck into /sbin/.
+IMPORTANT NOTE: Make sure that /sbin/reiserfsck AND /sbin/fsck.reiserfs
+are hardlinked to each other again (ls -li shows the same inode) !
+The boot code calls fsck.reiserfs instead of reiserfsck.
+=20
+=20
+Also, I would like to start a discussion about the 32-bit wrap-around of =
+the
+journal transaction id.
+I DO expect that is a non-academic scenario given the following =
+assumption:
+A system that would do 200 transactions per second, 12 hours a day,
+5 days a week would reach the wrap around in only two years !
+Of course that is a worst case calculation but it is quite probable that =
+a
+long term running system might touch that boundary. And that id survives
+a reboot. So the amounts accumulate over time.
+=20
+I saw several code sections that assume that the "newer" transaction has
+also the higher transaction id. That is NOT the case during a =
+wrap-around.
+I'm curious what y'all think about that issue.
+=20
+For a starter, I added a patch that fixes one wrap around issue inside
+journal.c. Take it or leave it.
+
+############# snip ##############
+--- replayFix/reiserfscore/journal.c 2004-02-27 00:11:44.000000000 +0100
++++ wrapSafer/reiserfscore/journal.c 2004-02-27 00:18:06.000000000 +0100
+@@ -136,14 +136,15 @@
+     __u32 newest_trans_id, oldest_trans_id, trans_id;
+     int trans_nr;
+=20
++    memset(oldest, 0, sizeof(*oldest));
++    memset(newest, 0, sizeof(*newest));
++    newest_trans_id =3D oldest_trans_id =3D 0; // keep compiler quiet
++
+     sb =3D fs->fs_ondisk_sb;
+    =20
+     j_start =3D get_jp_journal_1st_block (sb_jp (sb));
+     j_size =3D get_jp_journal_size (sb_jp (sb));
+    =20
+-    oldest_trans_id =3D 0xffffffff;
+-    newest_trans_id =3D 0;
+-
+     trans_nr =3D 0;
+     for (j_cur =3D 0; j_cur < j_size; j_cur ++) {
+  d_bh =3D bread (fs->fs_journal_dev, j_start + j_cur, =
+fs->fs_blocksize);
+@@ -152,10 +153,14 @@
+      continue;
+  }
+=20
++ trans_id =3D get_desc_trans_id (d_bh);
++ if (!trans_nr) {
++     oldest_trans_id =3D trans_id;
++     newest_trans_id =3D trans_id;
++ }
+  trans_nr ++;
+=20
+- trans_id =3D get_desc_trans_id (d_bh);
+- if (trans_id < oldest_trans_id) {
++ if (((__u32)(oldest_trans_id - trans_id)) < 0x80000000UL) {
+      oldest_trans_id =3D trans_id;
+=20
+      oldest->mount_id =3D get_desc_mount_id (d_bh);
+@@ -166,7 +171,7 @@
+      oldest->next_trans_offset =3D next_desc_expected (fs, d_bh) - =
+j_start;
+  }
+=20
+- if (trans_id > newest_trans_id) {
++ if (((__u32)(trans_id - newest_trans_id)) < 0x80000000UL){
+      newest_trans_id =3D trans_id;
+=20
+      newest->mount_id =3D get_desc_mount_id (d_bh);=20
+############# pins ##############
+
+For REISER 4, I guess, a 48-bit or 64-bit transaction id is an =
+adviseable
+choice !
 
 
---=20
-Jonathan Briggs
-jbriggs@esoft.com
+Thorsten Kohfeldt (gmx|de)
+=20
 
---=-JHd/w/i1KIyRoWcZU/A0
-Content-Disposition: attachment; filename=config.gz
-Content-Type: application/x-gzip; name=config.gz
+
+ATTACHMENT: tar file with 3 patchdiffs and one script
+
+
+MIME-Version: 1.0
+Content-Type: application/octet-stream; =
+name=3D"reiserReplayFix20040227.tar.gz"
 Content-Transfer-Encoding: base64
+Content-Disposition: attachment; =
+filename=3D"reiserReplayFix20040227.tar.gz"
 
-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
-0Z95+x8I12B2C3EAAA==
+H4sIAMmSPkAAA+0Za2/bSC5f7V/BeNvAji1bkh+JkyZo0cddF9t0kaQ44LYLQZZGtmpZ0ukRJ=
+338
+9yNn9LL8SPb6usOJCCJrhuRwSA7JoQJmhyy4ZL6j372yb3t73wFkeSAfDYf4lOWj0WDlmcCeI=
+svK
+0VBRVEXZkxW131f3YPg9hClDHEZ6ALAXzeY78e6b/x+FoGR/RZY+eHHg6o60DHT/SrdY0DVty=
+/qK
+NWQ07mgw2GZ/dTRI7Y8vaHj8hS6zB/I32+UO+D+3vyRJEGTWF95ghYYXsF7iB12jpqI5JFmV1=
+COQ
+5RNFORkMutnRhTbZt95utyHzmAcyOj6RR2uMnj4FSemPOsoA2vw5hKdP60CgaXFfBZctWRhpU=
+aC7
+oWabHfAcc3Ug/XUqyGw3SobcAIfqbRpcsEXIoqag7YDcgdD+yDyreSiGWq3TFUSx6gqiGMoQS=
+3LB
+WVkwHJFPa70ezBnzwfAWvu2wAP4V2yyqt4Ws4QSxrFA6t0LNc007nGvhJNmH+P9BI4+NEG3KI=
+u2D
+ryXq1RRcauJ4xhya4QQn6EHCpVQo9ToRH92AX5fo/4YN3FoJnAqU9V3LOCOYpEoXg3zI8gJof=
+tCM
+WAyC+PkkkS99b7db8KkONVObzBBvEjDdhGaillR0k910Mm20BWUn1R1XBLHEDXGPGqodBV1MG=
+fbJ
+s8ijaiSP4bmR7cYMxat9Id+oFXZCukIFGPnumiQRGbxmW9DcTzdI0rZrmzWWO6PAWFdYEQNlq=
+GVq
+a7fJXaWHiSRxkbLhJ2VRhIyE02zyg9RqloWVMlFaLWQg3x4nR/Pdb8Ie9+0QVnCk84UXu1FJ8=
+Gws
+FZybZzTqHKF1jhR8ZMZJ2bjsNl3Qsyw8jciPj3GG7NZnRsS4g3SAM8WdJI6R2rWknfOyGTZop=
+6CW
+MvKadlLl7DIurOA8UDnfO/6X8788zvJ/lha+d/7vD9U0/49Udcjzf39Y5f8fASL/i2TtB940l=
+Prd
+UVfp35fBlSNQ+pi+T9T+xlLgm9QUFBmOjgcUGegxFpGBDimF7cBzuvkZOgMM//n7wQGkOPlhx=
+IxD
+E4XQT/P84PF8QZkKcVoJAqWdOQXWJDKsLEALloWgRRGnuOCaEG1QWkkmSPhj5q8FeUzjmLoR2=
+Z4r
+ItoBz2tJsUHxLNEB0eyfwfXls4sr7dXbdxcvWkJjY7VzjBobpxojoBjIfyxnWHQI4rNVYoyA0=
+mbl
+7peU+/nz+r72Sbk4gTy2KpdwWpDG2a9bRqhw1zoHBwnSquH2NxiOVioabn+L4cgz0lD/l0zGS=
+yoy
+zrFKGa59rA7QRqlxBDs6MJjFeNJPTSaJKXGCtKUeuLY7xUItMlmAKzQem1BYPMy4vHcbnewlL=
+VB3
+8PlVnEssleFxCE0sJYEr8wQem5RNd60jmNfS6kyz0ME0V1+wzv0VarnSbbVWxCZf5zW4Hsy1S=
+Wzh
+1UIz7SC6yyjD2Mcxnio55mQZ2BHbNP2zI+1/J5Tzv4ExKWJX8dXL1Fu+fg2K5Tv6P/2RnOT/P=
+iYF
+hfI/jlT3/x8Cv+z3Jrbbm+jhrP4LXM/sEOj8gu6a/EcIh1lBeMgLQVDxzq52KX8jBdYMN7aJY=
+Wty
+B9HMC8KIud25N7OYY0ZPpwssHln9F0TcWljiMre4jA7obbYXh8Ry4rAFZioWsCxoGXNksvRix=
+4SL
+t9dJkFgNSphVohmDZBlY6iG4XkTbcFDAyAMdWRgsiHQMcxi3mRvBHYu6OPoKr6XsVl/4uHVyf=
+hh3
+5WQ1h+k3qA94/vby8t3v19C7QX/5/dnl9evr128vKGIaeoh7BM9CLN9b4pXe0m0nRuFD1Ejk3=
+IFu
+RTiqo9QTz+MLXqOgDZ5/GphqTIaLBfMQfwYBXmaIBA0gBAhjw2C4AVxJ7BpDN3LA12imR3x1j=
+NCT
+OIKlHc1wmDbQKSgO0KjslhkxXZIsG21E3JGFEGum31AymDDmgj11sUwzwXMNRibNmXTIvLhSU=
+ePE
+Anfpshtkg2YzWBgisT4lBVuBt1ixx369jkcNU8JZoxhfGjTqxzi6XoeOG/UQqZHvWaMXh0EvD=
+Iye
+rxtzfcrC3tXbd5fPX1416nW0/B/QeKQ0KHM3GiDp+Zsk/M1gDfgTTusokVuvMWPmQeNdiHxO4=
+JEM
+f2RYfzZw9taOQKlbdsJ5H6QAHiWS9B59EgJ/6eKzO/24xpZsK5AhkZW3PR4JMljElF0ZGhBDD=
+3fN
+/XRNNV+Ty79N/GCBElmcI+qTEy3mmBjTEapE/TicmdnAec9kNz03dhwqdmgxbg2Qbm8+Wtv3V=
+qud
+4w+OpJXnuo43rdcNM9tYxtjXI2MGkq/Ak4yzrIibhcwPPfLtdnscT+Z8tpBgOjLtKJQMPIVu7=
+Ava
+jFTZTqpKi3nqTxLvsJVo1e20fbGccyfFLj+izCwR97cTD3A1L9K10Ex6UJJaIh5sJx5KgWMv7=
+Ega
+DSZ2WeLhdrpRkSCnGG2nOJL0OPK0gmZysqMyGdZVOId/8nEWxMU1sSTi8XbKbeE/Jx5vJd76U=
+aJM
+3O1h2W7ZU4y9NQKazkY4xkKfiyk+R2/CjX3PNwuHBP16tvBMkC4hbi+zg4Ynzc3PlLRYYJyTh=
+iBF
+dz6ecZSa0cnEWgYkCrjghCA58OkLvD+FzzDFnYN0A0KiLp7+KA5/cl261v/ZaOGvW+Oe/s+wr=
++Tf
+f5ThEeIPR0pV//0Q2Nz/Ge/o2vQlDB7KCJTRSX980pdXujZq1v75ti0l3iPuDKFN/+ja3DvEu=
+/Eh
+PPf8u8CezjB1ytRMQvGobPk71ihwyZfrgGMbzA2pxJl6WKi4oljFW+sm8sFDyQHJV3bZu3z57=
+MWb
+lzTRq4vL/uBY4R8d+FPJrvvbvvEkX6vow4K4RdMlWjSmcbtZp4AQ7FDLbvMfAm2hT21DC6NA3=
+Orx
+Gk3NHChA7xDE1Y4KbZ8ZNhZkvNCnstigwi2r01D89gpp76Gk9SIZNUhwFJTTXJIvkLP+wvVEz=
+ax8
+s7lesiZC2gwB5mD1yZXzkM1z9Y9V6rUMxv30owKRI6Kx8OkjVLpqZ23RVv65Y0fT5BXdj+7wx=
+rPg
+lTdgJHFNPTAzTVpYPJiIiKxqjWXgITXfJd4UuCItm+XImHrQ06j9wps3BQ84TXpquULbxXc1+=
+caR
+9oxo60O53xlDeygXe4A6OqrtRqiDg03NmsbjsLwuJ8vdcsO3Q9HIEVp/Ar9iRX7x7DftzesL7=
+er1
+P1+KnuID+k6okeZjJ26JrhP/wiq0hzeRDbpqJBppZErrvnffJHU13fkc8kq8HrmCLc5expiqs=
+faY
+xLZjSngE0XuTt3W2vh6gAvByRHwba32stY+m1Bwsqq5D/cmv3XYjMXNjh6/cu21qz3Eu/8EWx=
+AEo
+25Q3Qk9Fzzpxx8T1uOMpfR7yhkrR8wyqouFMPJO6eOMJLH623eZ2m79zo1gP2SKcCyHEAd9ho=
+hdo
+fv5VMdX5iiPmh9X0WNpmiMinMh+iq69AQzNc8Y/UidTc4m1hbfGS2y1hnM+RDVOWD/Hhsusmt=
+Nt0
+WNTPRj9f85GswU9aTEPRt9xtJ23uF/3jYfJv9/V1V083sMGRRdgjdx71eRwVD/LmvxRJxfZap=
+2kj
+n5wZN7QlULZ3o/Bzd5/X/uPZ5cXri7+dQBphEtWi1u2QK74jNJ/5FF5h7AUhxr7vBUWHz0i7u=
+BmU
+qbMtFLQfzombdxevcvUgrxoFyxi6eaWMZ0zHjVMh8bPr6AoqqKCCCiqooIIKKqigggoqqKCCC=
+iqo
+oIIKKqigggoqqKCCCiqooIIKKqigggoq+JHwb17W0/4AUAAA
 
---=-JHd/w/i1KIyRoWcZU/A0--
 
---=-plgDQbAkxhHzMFuQQC5q
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+------=_NextPart_000_0040_01C3FCE8.05C53B90
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.3 (GNU/Linux)
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META content=3D"text/html; charset=3Diso-8859-1" =
+http-equiv=3DContent-Type>
+<META content=3D"MSHTML 5.00.3810.1700" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2>To whom it may (should!)=20
+concern,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;=20
+26/27-FEB-2004<BR>&nbsp;<BR>after having been annoyed for quite some =
+time by=20
+corrupt /var file systems after<BR>(simulated) powerloss in a SuSE 9.0 =
+setup=20
+with reiserfs, I finally tracked the<BR>problem down to a nasty bug in=20
+reiserfsck - reiserfscore/journal.c<BR>&nbsp;<BR>Turned out that the =
+journal is=20
+not always correctly replayed by reiserfsck !<BR>&nbsp;<BR>This may be =
+the case=20
+when the filesystem has not experienced a lot of transactions<BR>after =
+it has=20
+been mounted and so there are more than one mount_id to be found =
+in<BR>the=20
+journal. In that case, the function replay_journal() might accidentally =
+step=20
+over<BR>the transactions it is supposed to replay and that way those=20
+transactions are<BR>completely and forever ignored.<BR>&nbsp;<BR>The =
+following=20
+fix prevents the search loop from stepping too far:<BR>(check also the =
+MIME=20
+attachment down below)<BR>The diff&nbsp;is valid for SuSE 9.0 =
+reiserfsprogs=20
+3.6.9+&nbsp;and also valid for<BR>reiserfsprogs 3.6.13.<BR></FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>############# snip =
+##############<BR>---=20
+reiserfsprogs-3.6.13/reiserfscore/journal.c&nbsp;2004-02-17 =
+13:06:23.000000000=20
++0100<BR>+++ replayFix/reiserfscore/journal.c&nbsp;2004-02-27 =
+00:11:44.000000000=20
++0100<BR>@@ -784,7 +784,9 @@<BR>&nbsp;&nbsp;if (control.mount_id =3D=3D =
+cur.mount_id=20
+&amp;&amp; control.trans_id =3D=3D 0 &amp;&amp; =
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=20
+control.desc_blocknr =3D=3D 0)<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=20
+break;<BR>-&nbsp;<BR>+&nbsp;if (cur.mount_id =3D=3D control.mount_id =
+&amp;&amp;=20
+cur.trans_id =3D=3D control.trans_id + 1)<BR>+&nbsp;&nbsp;&nbsp;&nbsp;=20
+break;<BR>+<BR>&nbsp;&nbsp;ret =3D next_transaction (fs, &amp;cur,=20
+newest);<BR>&nbsp;&nbsp;<BR>&nbsp;&nbsp;if (ret !=3D TRANS_FOUND)<BR>@@ =
+-792,8=20
++794,9 @@<BR>&nbsp;&nbsp;&nbsp;&nbsp; =
+}<BR>&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;=20
+while (ret =3D=3D TRANS_FOUND) {<BR>-&nbsp;if (control.mount_id !=3D =
+cur.mount_id ||=20
+control.trans_id !=3D 0 || <BR>-&nbsp;&nbsp;&nbsp;&nbsp; =
+control.desc_blocknr !=3D=20
+0) <BR>+&nbsp;if ((control.mount_id !=3D cur.mount_id || =
+control.trans_id !=3D 0 ||=20
+<BR>+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; control.desc_blocknr !=3D 0)=20
+&amp;&amp;<BR>+&nbsp;&nbsp;&nbsp;&nbsp; (cur.mount_id !=3D =
+control.mount_id ||=20
+cur.trans_id !=3D control.trans_id +=20
+1))<BR>&nbsp;&nbsp;{<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ret =3D =
+next_transaction=20
+(fs, &amp;cur, newest);<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <BR>@@ -821,7 =
++824,8=20
+@@<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; replayed=20
+++;<BR>&nbsp;&nbsp;&nbsp;&nbsp; }<BR>&nbsp;<BR>-&nbsp;&nbsp;&nbsp;=20
+reiserfs_warning (stderr, "%d transactions replayed\n",=20
+replayed);<BR>+&nbsp;&nbsp;&nbsp; reiserfs_warning (stderr, "Journal in =
+%s (1st=20
+block: %d) - %d transactions replayed\n",<BR>+&nbsp;&nbsp;&nbsp;=20
+&nbsp;fs-&gt;fs_j_file_name, get_jp_journal_1st_block (sb_jp=20
+(fs-&gt;fs_ondisk_sb)), =
+replayed);<BR>&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;=20
+mark_buffer_dirty (fs-&gt;fs_super_bh);<BR>&nbsp;&nbsp;&nbsp;&nbsp; =
+bwrite=20
+(fs-&gt;fs_super_bh); </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>############# pins =
+##############</FONT></DIV>
+<DIV>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>The fix was extensively tested by =
+copying mounted=20
+reiser filesystems to<BR>(XOR- !) loop devices and then reiserfsck-ing=20
+them.<BR>The fixed reiserfsck version always created the same results =
+or, when=20
+the bugged<BR>version did replay 0 transactions, the fixed version =
+replayed the=20
+correct amount<BR>of transactions.<BR>&nbsp;<BR>The unfortunate thing =
+about the=20
+SuSE setup is, that reiserfsck is executed before<BR>the filesystem gets =
 
-iD8DBQBAPp6wG8fHaOLTWwgRAkMMAJ41CPrRlm2krQ2rQmF7M/djBSUQlACgp0iC
-sh47VEzpFitKXJhOD/Cv8Lg=
-=x5lG
------END PGP SIGNATURE-----
+mounted. The kernel "mount" code itself seems to know the trick,<BR>but =
+that=20
+doesn't help if reiserfsck is discarding those transactions before =
+the<BR>mount=20
+can perform its correct replay!</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Only the root filesystem gets =
+replayed</FONT><FONT=20
+face=3DArial size=3D2> correctly because it will be mounted</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>read-only first.&nbsp;On initiation of =
+a=20
+mount,</FONT><FONT face=3DArial size=3D2> the log will always be =
+replayed&nbsp;even=20
+if</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>the mount is supposed to be =
+read-only</FONT><FONT=20
+face=3DArial size=3D2> in order to achieve consistency as =
+early</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>as possible !<BR><BR>For a quick fix of =
+a SuSE 9.0=20
+system, install the reiserfs(progs) source with yast2,<BR>untar the =
+(source=20
+only) attachment to a directory of your choice and =
+run<BR>./createSuSEreiserfs.=20
+Then install the new reiserfsck into /sbin/.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>IMPORTANT NOTE: Make sure=20
+that&nbsp;/sbin/reiserfsck&nbsp;AND /sbin/fsck.reiserfs</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>are hardlinked to each other again (ls =
+-li shows=20
+the same inode) !</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>The boot</FONT><FONT face=3DArial =
+size=3D2> code calls=20
+fsck.reiserfs instead of reiserfsck.<BR>&nbsp;<BR>&nbsp;<BR>Also, I =
+would like=20
+to start a discussion about the 32-bit wrap-around of the<BR>journal =
+transaction=20
+id.<BR>I DO expect that is a non-academic scenario given the following=20
+assumption:<BR>A system that would do 200 transactions per second, 12 =
+hours a=20
+day,<BR>5 days a week would reach the wrap around in only two years =
+!<BR>Of=20
+course that is a worst case calculation but it is quite probable that =
+a<BR>long=20
+term running system might touch that boundary. And that id survives<BR>a =
+reboot.=20
+So the amounts accumulate over time.<BR>&nbsp;<BR>I saw several code =
+sections=20
+that assume that the "newer" transaction has<BR>also the higher =
+transaction id.=20
+That is NOT the case during a wrap-around.<BR>I'm curious what y'all =
+think about=20
+that issue.<BR>&nbsp;<BR>For a starter, I added a patch that fixes one =
+wrap=20
+around issue inside<BR>journal.c. Take it or leave =
+it.<BR><BR>############# snip=20
+##############<BR>--- replayFix/reiserfscore/journal.c&nbsp;2004-02-27=20
+00:11:44.000000000 +0100<BR>+++ =
+wrapSafer/reiserfscore/journal.c&nbsp;2004-02-27=20
+00:18:06.000000000 +0100<BR>@@ -136,14 +136,15 =
+@@<BR>&nbsp;&nbsp;&nbsp;&nbsp;=20
+__u32 newest_trans_id, oldest_trans_id, =
+trans_id;<BR>&nbsp;&nbsp;&nbsp;&nbsp;=20
+int trans_nr;<BR>&nbsp;<BR>+&nbsp;&nbsp;&nbsp; memset(oldest, 0,=20
+sizeof(*oldest));<BR>+&nbsp;&nbsp;&nbsp; memset(newest, 0,=20
+sizeof(*newest));<BR>+&nbsp;&nbsp;&nbsp; newest_trans_id =3D =
+oldest_trans_id =3D=20
+0;&nbsp;// keep compiler quiet<BR>+<BR>&nbsp;&nbsp;&nbsp;&nbsp; sb =3D=20
+fs-&gt;fs_ondisk_sb;<BR>&nbsp;&nbsp;&nbsp;&nbsp; =
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;=20
+j_start =3D get_jp_journal_1st_block (sb_jp =
+(sb));<BR>&nbsp;&nbsp;&nbsp;&nbsp;=20
+j_size =3D get_jp_journal_size (sb_jp (sb));<BR>&nbsp;&nbsp;&nbsp;&nbsp; =
 
---=-plgDQbAkxhHzMFuQQC5q--
+<BR>-&nbsp;&nbsp;&nbsp; oldest_trans_id =3D =
+0xffffffff;<BR>-&nbsp;&nbsp;&nbsp;=20
+newest_trans_id =3D 0;<BR>-<BR>&nbsp;&nbsp;&nbsp;&nbsp; trans_nr =3D=20
+0;<BR>&nbsp;&nbsp;&nbsp;&nbsp; for (j_cur =3D 0; j_cur &lt; j_size; =
+j_cur ++)=20
+{<BR>&nbsp;&nbsp;d_bh =3D bread (fs-&gt;fs_journal_dev, j_start + j_cur, =
+
+fs-&gt;fs_blocksize);<BR>@@ -152,10 +153,14 =
+@@<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=20
+continue;<BR>&nbsp;&nbsp;}<BR>&nbsp;<BR>+&nbsp;trans_id =3D =
+get_desc_trans_id=20
+(d_bh);<BR>+&nbsp;if (!trans_nr) {<BR>+&nbsp;&nbsp;&nbsp;&nbsp; =
+oldest_trans_id=20
+=3D trans_id;<BR>+&nbsp;&nbsp;&nbsp;&nbsp; newest_trans_id =3D=20
+trans_id;<BR>+&nbsp;}<BR>&nbsp;&nbsp;trans_nr =
+++;<BR>&nbsp;<BR>-&nbsp;trans_id =3D=20
+get_desc_trans_id (d_bh);<BR>-&nbsp;if (trans_id &lt; oldest_trans_id)=20
+{<BR>+&nbsp;if (((__u32)(oldest_trans_id - trans_id)) &lt; 0x80000000UL) =
+
+{<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; oldest_trans_id =3D=20
+trans_id;<BR>&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =
+oldest-&gt;mount_id =3D=20
+get_desc_mount_id (d_bh);<BR>@@ -166,7 +171,7=20
+@@<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; oldest-&gt;next_trans_offset =3D=20
+next_desc_expected (fs, d_bh) - =
+j_start;<BR>&nbsp;&nbsp;}<BR>&nbsp;<BR>-&nbsp;if=20
+(trans_id &gt; newest_trans_id) {<BR>+&nbsp;if (((__u32)(trans_id -=20
+newest_trans_id)) &lt; 0x80000000UL){<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=20
+newest_trans_id =3D =
+trans_id;<BR>&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=20
+newest-&gt;mount_id =3D get_desc_mount_id (d_bh); </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>############# pins =
+##############</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>For REISER 4, I guess, a 48-bit or =
+64-bit=20
+transaction id is an adviseable</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>choice !</FONT></DIV>
+<DIV>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>Thorsten Kohfeldt =
+(gmx|de)<BR>&nbsp;</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>ATTACHMENT: tar file with 3 patchdiffs =
+and one=20
+script</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>MIME-Version: 1.0<BR>Content-Type:=20
+application/octet-stream;=20
+name=3D"reiserReplayFix20040227.tar.gz"<BR>Content-Transfer-Encoding:=20
+base64<BR>Content-Disposition: attachment;=20
+filename=3D"reiserReplayFix20040227.tar.gz"</FONT></DIV>
+<DIV>&nbsp;</DIV>
+<DIV><FONT face=3DArial=20
+size=3D2>H4sIAMmSPkAAA+0Za2/bSC5f7V/BeNvAji1bkh+JkyZo0cddF9t0kaQ44LYLQZZG=
+tmpZ0ukRJ338<BR>9yNn9LL8SPb6usOJCCJrhuRwSA7JoQJmhyy4ZL6j372yb3t73wFkeSAfD=
+Yf4lOWj0WDlmcCeIsvK<BR>0VBRVEXZkxW131f3YPg9hClDHEZ6ALAXzeY78e6b/x+FoGR/RZ=
+Y+eHHg6o60DHT/SrdY0DVty/qK<BR>NWQ07mgw2GZ/dTRI7Y8vaHj8hS6zB/I32+UO+D+3vyR=
+JEGTWF95ghYYXsF7iB12jpqI5JFmV1COQ<BR>5RNFORkMutnRhTbZt95utyHzmAcyOj6RR2uM=
+nj4FSemPOsoA2vw5hKdP60CgaXFfBZctWRhpUaC7<BR>oWabHfAcc3Ug/XUqyGw3SobcAIfqb=
+RpcsEXIoqag7YDcgdD+yDyreSiGWq3TFUSx6gqiGMoQS3LB<BR>WVkwHJFPa70ezBnzwfAWvu=
+2wAP4V2yyqt4Ws4QSxrFA6t0LNc007nGvhJNmH+P9BI4+NEG3KIu2D<BR>ryXq1RRcauJ4xhy=
+a4QQn6EHCpVQo9ToRH92AX5fo/4YN3FoJnAqU9V3LOCOYpEoXg3zI8gJoftCM<BR>WAyC+Pkk=
+kS99b7db8KkONVObzBBvEjDdhGaillR0k910Mm20BWUn1R1XBLHEDXGPGqodBV1MGfbJ<BR>s=
+8ijaiSP4bmR7cYMxat9Id+oFXZCukIFGPnumiQRGbxmW9DcTzdI0rZrmzWWO6PAWFdYEQNlqG=
+Vq<BR>a7fJXaWHiSRxkbLhJ2VRhIyE02zyg9RqloWVMlFaLWQg3x4nR/Pdb8Ie9+0QVnCk84U=
+Xu1FJ8Gws<BR>FZybZzTqHKF1jhR8ZMZJ2bjsNl3Qsyw8jciPj3GG7NZnRsS4g3SAM8WdJI6R=
+2rWknfOyGTZop6CW<BR>MvKadlLl7DIurOA8UDnfO/6X8788zvJ/lha+d/7vD9U0/49Udcjzf=
+39Y5f8fASL/i2TtB940lPrd<BR>UVfp35fBlSNQ+pi+T9T+xlLgm9QUFBmOjgcUGegxFpGBDi=
+mF7cBzuvkZOgMM//n7wQGkOPlhxIxD<BR>E4XQT/P84PF8QZkKcVoJAqWdOQXWJDKsLEALloW=
+gRRGnuOCaEG1QWkkmSPhj5q8FeUzjmLoR2Z4r<BR>ItoBz2tJsUHxLNEB0eyfwfXls4sr7dXb=
+dxcvWkJjY7VzjBobpxojoBjIfyxnWHQI4rNVYoyA0mbl<BR>7peU+/nz+r72Sbk4gTy2KpdwW=
+pDG2a9bRqhw1zoHBwnSquH2NxiOVioabn+L4cgz0lD/l0zGSyoy<BR>zrFKGa59rA7QRqlxBD=
+s6MJjFeNJPTSaJKXGCtKUeuLY7xUItMlmAKzQem1BYPMy4vHcbnewlLVB3<BR>8PlVnEssleF=
+xCE0sJYEr8wQem5RNd60jmNfS6kyz0ME0V1+wzv0VarnSbbVWxCZf5zW4Hsy1SWzh<BR>1UIz=
+7SC6yyjD2Mcxnio55mQZ2BHbNP2zI+1/J5Tzv4ExKWJX8dXL1Fu+fg2K5Tv6P/2RnOT/PiYF<=
+BR>hfI/jlT3/x8Cv+z3Jrbbm+jhrP4LXM/sEOj8gu6a/EcIh1lBeMgLQVDxzq52KX8jBdYMN7=
+aJYWty<BR>B9HMC8KIud25N7OYY0ZPpwssHln9F0TcWljiMre4jA7obbYXh8Ry4rAFZioWsCx=
+oGXNksvRix4SL<BR>t9dJkFgNSphVohmDZBlY6iG4XkTbcFDAyAMdWRgsiHQMcxi3mRvBHYu6=
+OPoKr6XsVl/4uHVyfhh3<BR>5WQ1h+k3qA94/vby8t3v19C7QX/5/dnl9evr128vKGIaeoh7B=
+M9CLN9b4pXe0m0nRuFD1Ejk3IFu<BR>RTiqo9QTz+MLXqOgDZ5/GphqTIaLBfMQfwYBXmaIBA=
+0gBAhjw2C4AVxJ7BpDN3LA12imR3x1jNCT<BR>OIKlHc1wmDbQKSgO0KjslhkxXZIsG21E3JG=
+FEGum31AymDDmgj11sUwzwXMNRibNmXTIvLhSUePE<BR>Anfpshtkg2YzWBgisT4lBVuBt1ix=
+x369jkcNU8JZoxhfGjTqxzi6XoeOG/UQqZHvWaMXh0EvDIye<BR>rxtzfcrC3tXbd5fPX1416=
+nW0/B/QeKQ0KHM3GiDp+Zsk/M1gDfgTTusokVuvMWPmQeNdiHxO4JEM<BR>f2RYfzZw9taOQK=
+lbdsJ5H6QAHiWS9B59EgJ/6eKzO/24xpZsK5AhkZW3PR4JMljElF0ZGhBDD3fN<BR>/XRNNV+=
+Ty79N/GCBElmcI+qTEy3mmBjTEapE/TicmdnAec9kNz03dhwqdmgxbg2Qbm8+Wtv3Vqud<BR>=
+4w+OpJXnuo43rdcNM9tYxtjXI2MGkq/Ak4yzrIibhcwPPfLtdnscT+Z8tpBgOjLtKJQMPIVu7=
+Ava<BR>jFTZTqpKi3nqTxLvsJVo1e20fbGccyfFLj+izCwR97cTD3A1L9K10Ex6UJJaIh5sJx=
+5KgWMv7Ega<BR>DSZ2WeLhdrpRkSCnGG2nOJL0OPK0gmZysqMyGdZVOId/8nEWxMU1sSTi8Xb=
+KbeE/Jx5vJd76UaJM<BR>3O1h2W7ZU4y9NQKazkY4xkKfiyk+R2/CjX3PNwuHBP16tvBMkC4h=
+bi+zg4Ynzc3PlLRYYJyThiBF<BR>dz6ecZSa0cnEWgYkCrjghCA58OkLvD+FzzDFnYN0A0KiL=
+p7+KA5/cl261v/ZaOGvW+Oe/s+wr+Tf<BR>f5ThEeIPR0pV//0Q2Nz/Ge/o2vQlDB7KCJTRSX=
+980pdXujZq1v75ti0l3iPuDKFN/+ja3DvEu/Eh<BR>PPf8u8CezjB1ytRMQvGobPk71ihwyZf=
+rgGMbzA2pxJl6WKi4oljFW+sm8sFDyQHJV3bZu3z57MWb<BR>lzTRq4vL/uBY4R8d+FPJrvvb=
+vvEkX6vow4K4RdMlWjSmcbtZp4AQ7FDLbvMfAm2hT21DC6NA3Orx<BR>Gk3NHChA7xDE1Y4Kb=
+Z8ZNhZkvNCnstigwi2r01D89gpp76Gk9SIZNUhwFJTTXJIvkLP+wvVEzax8<BR>s7lesiZC2g=
+wB5mD1yZXzkM1z9Y9V6rUMxv30owKRI6Kx8OkjVLpqZ23RVv65Y0fT5BXdj+7wxrPg<BR>lTd=
+gJHFNPTAzTVpYPJiIiKxqjWXgITXfJd4UuCItm+XImHrQ06j9wps3BQ84TXpquULbxXc1+caR=
+<BR>9oxo60O53xlDeygXe4A6OqrtRqiDg03NmsbjsLwuJ8vdcsO3Q9HIEVp/Ar9iRX7x7Dftz=
+esL7er1<BR>P1+KnuID+k6okeZjJ26JrhP/wiq0hzeRDbpqJBppZErrvnffJHU13fkc8kq8Hr=
+mCLc5expiqsfaY<BR>xLZjSngE0XuTt3W2vh6gAvByRHwba32stY+m1Bwsqq5D/cmv3XYjMXN=
+jh6/cu21qz3Eu/8EWxAEo<BR>25Q3Qk9Fzzpxx8T1uOMpfR7yhkrR8wyqouFMPJO6eOMJLH62=
+3eZ2m79zo1gP2SKcCyHEAd9hohdo<BR>fv5VMdX5iiPmh9X0WNpmiMinMh+iq69AQzNc8Y/Ui=
+dTc4m1hbfGS2y1hnM+RDVOWD/HhsusmtNt0<BR>WNTPRj9f85GswU9aTEPRt9xtJ23uF/3jYf=
+Jv9/V1V083sMGRRdgjdx71eRwVD/LmvxRJxfZap2kj<BR>n5wZN7QlULZ3o/Bzd5/X/uPZ5cX=
+ri7+dQBphEtWi1u2QK74jNJ/5FF5h7AUhxr7vBUWHz0i7uBmU<BR>qbMtFLQfzombdxevcvUg=
+rxoFyxi6eaWMZ0zHjVMh8bPr6AoqqKCCCiqooIIKKqigggoqqKCCCiqo<BR>oIIKKqigggoqq=
+KCCCiqooIIKKqigggoq+JHwb17W0/4AUAAA</FONT></DIV>
+<DIV>&nbsp;</DIV></BODY></HTML>
+
+------=_NextPart_000_0040_01C3FCE8.05C53B90--
 
