@@ -1,37 +1,37 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 22:56:07 +0200
-Message-ID: <200408272256.07619.christian.mayrhuber@gmx.net>
-References: <Pine.LNX.4.44.0408271010300.10272-100000@chimarrao.boston.redhat.com>
+Date: Fri, 27 Aug 2004 23:53:32 +0300
+Message-ID: <20040827205332.GD1284@nysv.org>
+References: <412D9FE6.9050307@namesys.com> <200408261812.i7QICW8r002679@localhost.localdomain> <20040827203216.GC1284@nysv.org> <Pine.LNX.4.58.0408271335421.14196@ppc970.osdl.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20945-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20946-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.44.0408271010300.10272-100000@chimarrao.boston.redhat.com>
 Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.58.0408271335421.14196@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Friday 27 August 2004 16:12, Rik van Riel wrote:
+On Fri, Aug 27, 2004 at 01:38:28PM -0700, Linus Torvalds wrote:
+>
+>Heh. Considering that WinFS seems to be delayed yet more, I don't think 
+>that's a very strong argument.
 
-> Because not everybody uses tar.  Quite a few people use a
-> network backup system, while others use duplicity, RPM uses
-> cpio internally and big companies tend to use proprietary
-> network backup suites.
-Big backup systems support scripts that can be run prior to
-backup and post restore. You aready have to use star to
-do a metadata backup the acl's/ea into some tgz, which
-can be unpacked after restore.
+But there's Mac OS and isn't Solaris doing something along these lines?
 
-> Breaking people's setup is something to worry about.
-Yeah, maybe. But as usual on UN*X  like systems most admins
-are able to come up with a quick shell/perl script to solve their
-particular problem.
+Microsoft isn't alone there ;)
+
+>scare people with MS activities. Linux kernel developers do what's right 
+>because it is _right_, not because somebody else does it.
+
+Never really doubted that, mind you.
+I just think this is both right and a competition situation.
 
 -- 
-lg, Chris
+mjt
+
