@@ -1,44 +1,77 @@
-From: Hubert Chan <hubert@uhoreg.ca>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Wed, 01 Sep 2004 01:23:12 -0400
+Date: Tue, 31 Aug 2004 22:50:25 -0700
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <871xhmlfzz.fsf@uhoreg.ca>
+Message-ID: <41356321.4030307@namesys.com>
 References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <41352279.7020307@slaphack.com>
- <20040901045922.GA512@elf.ucw.cz>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <41352279.7020307@slaphack.com>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Masover <ninja@slaphack.com>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
->>>>> "Pavel" == Pavel Machek <pavel@ucw.cz> writes:
+Linus, you are looking at this like a lieutenant instead of an HQ 
+staffer, which is unusual of you.
 
-Pavel> If you only want nice user interface, you can have that
-Pavel> today. Its done using coda, and hosted at uservfs.sf.net.
+You are saying, 1-2% simpler and better, no biggie, why work so hard to 
+get it?
 
-Hmmm.  Last activity seems to be about three years ago.  Any idea if it
-works with Linux 2.6?  Is there any chance at all that it will be
-merged into the kernel?
+And we are saying, 1-2% simpler and better, times thousands of 
+applications, wow! That's a lot!
 
-Can anyone comment on the speed?  I don't have the ability right now to
-try out any new kernel stuff.
+Yes, changing cat to use openat() is no big deal. 1-2% additional coding 
+cost for cat, who cares? But if you add 1-2% coding cost to every 
+application which might access an attribute/stream/whatever, well, that 
+totals more than the effort of authoring emacs. Can you see that?
 
-The user interface isn't that nice either.  There's no browsability for
-the methods.  (Hmm.  I have this strange .deb file.  How do I look at
-the contents?  #utar? #ugz? ...)  And honestly, I think that "#" hack
-is pretty ugly.  There's also possible name conflicts -- although it's
-highly unlikely --  if I have a file that just happens to be called
-foo.tar.gz#utar, I can't browse foo.tar.gz.
+Namespace simplifications and empowerments are force multipliers. They 
+don't add to Linux like writing a new app adds to Linux, they add to 
+Linux like adding percentage improvements to every app in Linux adds to 
+Linux. HQ staffer types know that if you collect enough itty bitty 
+little force multipliers, you win the war. Whether the troops have to 
+spend five minutes a day polishing their shoes because their type of 
+shoe needs polishing, that matters more than losing a tank battalion, 
+when you are a major power. Linux is a major power.
 
-There may be some nice ideas in there, but from a quick lookover, it
-seems to be lacking in execution.  I'll probably give it a try anyways,
-during my next round of kernel compiling/testing.
+This is a software engineering issue. We are discussing improvements 
+that because they are diffused throughout the OS in their impact, seem 
+like no big deal. But they are a big deal. One of the major determinants 
+of an organization's efficiency is whether the management can recognize 
+widely diffused inefficiencies as well as it can recognize focused 
+inefficiencies of the same magnitude.
 
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+David is so very right about the usability issues. Usability is all 
+about trivia. Usability battles feature no dragons, they feature armies 
+of spiders. If you add one step to what a user needs to do to get to the 
+data with an app, that matters a lot. That's doubling the spider army. 
+Making a 2 step process to access data into a one step process to access 
+the data halves the time cost of accessing the data. Lifestyle 
+efficiency is mostly about reducing the cost of trivia, because trivia 
+is most of what we do. Most people have as much interest in reading the 
+man page for tar as you have in learning how to turn the hand crank to 
+start your car. Just the look of "tar -xf" turns them away. Crypto-Geek 
+gobbledy-gook is what it is. Let's value their time, there are a lot of 
+them.
 
+Hans
+
+David Masover wrote:
+
+>
+>
+> It's not about the kernel, it's about the interface. And see my other 
+> mail:
+> cat foo.zip/README
+> less foo.zip/contents/bar.c
+> is a lot easier than
+> lynx http://google.com/search?q=zip
+> emerge zip
+> man zip
+> unzip foo.zip
+> cat bar.c
+> which already assumes quite a lot of expertise.
+>
+>
