@@ -1,61 +1,83 @@
-From: Wichert Akkerman <wichert@wiggy.net>
+From: Andrew Morton <akpm@osdl.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 12:54:05 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040826105404.GH2612@wiggy.net>
-References: <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1939276887.20040826114028@tnonline.net> <20040826024956.08b66b46.akpm@osdl.org> <839984491.20040826122025@tnonline.net>
+Date: Thu, 26 Aug 2004 03:55:00 -0700
+Message-ID: <20040826035500.00b5df56.akpm@osdl.org>
+References: <20040824202521.GA26705@lst.de>
+	<412CEE38.1080707@namesys.com>
+	<20040825152805.45a1ce64.akpm@osdl.org>
+	<112698263.20040826005146@tnonline.net>
+	<Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org>
+	<1453698131.20040826011935@tnonline.net>
+	<20040825163225.4441cfdd.akpm@osdl.org>
+	<20040825233739.GP10907@legion.cup.hp.com>
+	<20040825234629.GF2612@wiggy.net>
+	<1939276887.20040826114028@tnonline.net>
+	<20040826024956.08b66b46.akpm@osdl.org>
+	<839984491.20040826122025@tnonline.net>
+	<20040826032457.21377e94.akpm@osdl.org>
+	<742303812.20040826125114@tnonline.net>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <839984491.20040826122025@tnonline.net>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20625-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <742303812.20040826125114@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Spam <spam@tnonline.net>
-Cc: Andrew Morton <akpm@osdl.org>, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Cc: wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Previously Spam wrote:
->   Because  having user space tools and code will make it not work with
->   everything. Keeping stuff in the kernel should make the new features
->   transparent to the applications.
+Spam <spam@tnonline.net> wrote:
+>
+> 
+> 
+> > Spam <spam@tnonline.net> wrote:
+> >>
+> >> 
+> >> 
+> >> > Spam <spam@tnonline.net> wrote:
+> >> >>
+> >> >>    Yes,  for  example  documents,  image  files  etc. The multiple data
+> >> >>    streams  can  contain thumbnails, info about who is editing the file
+> >> >>    (useful for networked files) etc. Could be used for version handling
+> >> >>    and much more.
+> >> 
+> >> > All of which can be handled in userspace library code.
+> >> 
+> >> > What compelling reason is there for doing this in the kernel?
+> >> 
+> >> 
+> >>   Because  having user space tools and code will make it not work with
+> >>   everything. Keeping stuff in the kernel should make the new features
+> >>   transparent to the applications.
+> >> 
+> >>   Applications  that support the new features will benefit, all others
+> >>   will continue to work without destroying data.
+> 
+> > Sorry, but that all sounds a bit fluffy.   Please provide some examples.
+> 
+>   We  already had the examples with cp and mv. Both should continue to
+>   work and the files will still be copied. The same with Konqueror and
+>   Nautilus.  Files  and  their  meta-files/streams/attributes  will be
+>   retained as long as applications are using the OS API.
+> 
+>   However,  if  things  are  to  implemented  in  user-space, then old
+>   applications  will not work correctly and there is risk that all the
+>   extra information will be lost or corrupted.
+> 
+>   You  said  it  would be socially hard. I think it would be very much
+>   close to impossible to get it right. Imagine that Gnome and Nautilus
+>   would  implement  support  for  these. I doubt that cp, mv, KDE, mc,
+>   app-xyz  would  implement  this anytime soon and in the meantime the
+>   data is at risk.
+> 
 
-But having it in the kernel has the same problem. If you read the
-Solaris documentation you will see that a bunch of utilties had to
-get a new commandline option to be able to access the metadata and
-a special utility was added for other applications. If you look
-at windows you will see that you need to use a filename like
-<realfilename>:<streamname>:$DATA (which obviously does not work for
-single-character filenames).
+No.  All of the applications which you initially identified can be
+implemented by putting the various bits of data into a single file and
+getting applications to agree on the format of that file.
 
-Ignoring samba for a bit which just needs streams to stay compatible
-with windows I see few reasons for using streams:
+For example, some image file formats already support embedded metadata, do
+they not?
 
-* files are more complex these days and tend to include multiple
-  different things: images with thumbnails and exif data, 'office'
-  documents containing both text and images
-
-* standard way to add common metadata to a file which can be used for
-  searching tools (author, copyright, keywords, etc.)
-
-But both can already be done in userland (modern image formats can store
-thumbnails and exif data internally, applications use tar or zip-like
-files for documents, etc.). The metadata part is a lot more complicated
-as well since the behaviour of attributes might need to be complex:
-if I change an image using an application that is not stream-aware, what
-should happen to its thumbnail? 
-
-The only common benefits I can see are standardisation and optimization:
-instead of every file format or application defining a way to specify 
-metadata for a file you get a common API defined by the OS (but you'll
-still need to standardize on attribute names and formats, so plenty of
-room that will still not help), and instead of parsing different files
-or XML streams you can directly access a bit of metadata.
-
-So far I'm not convinced that streams are worth the effort. Not that my
-opinion is all that relevant here, but still :)
-
-Wichert.
-
--- 
-Wichert Akkerman <wichert@wiggy.net>    It is simple to make things.
-http://www.wiggy.net/                   It is hard to make things simple.
