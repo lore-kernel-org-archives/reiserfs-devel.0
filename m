@@ -1,37 +1,45 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Mount and file system size issue
-Date: Fri, 7 Jun 2002 23:26:50 +0400
-Message-ID: <20020607232650.A2630@namesys.com>
-References: <8287102CFE5C31418556A13A4E5BEE91E95A77@sphynx.git.compgen.com> <3CFFB2CA.6020300@namesys.com> <001201c20d9e$73e5d070$5701a8c0@bomoon> <20020607112121.C12869@namesys.com> <000801c20e3a$df840b20$5701a8c0@bomoon> <20020607200220.A1657@namesys.com> <001601c20e41$b06afd60$5701a8c0@bomoon>
+From: Ed Tomlinson <tomlins@cam.org>
+Subject: [BUG] tons of logging patches
+Date: Fri, 7 Jun 2002 23:32:29 -0400
+Message-ID: <200206072332.29892.tomlins@cam.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10679-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-10681-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <001601c20e41$b06afd60$5701a8c0@bomoon>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: bo <bo@sosnetwork.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: Chris Mason <mason@suse.com>
 
-Hello!
+Hi,
 
-On Fri, Jun 07, 2002 at 09:38:01AM -0700, bo wrote:
+On pre10-ac2 with your:
 
-> one is RAM shortage for bitmap, another is to use Linux2.4.13 or above for
-> ARM platform.
-> Could it be both?
+01-relocation-3.diff  
+02-commit_super-8-relocation.diff  
+03-beta-data-logging-7.diff
 
-It is unclear.
+Adpated for the O(1) scheduler which required replacing code in two places
+in journal.c with yield() and with by slab_in_lru patch, I found this in my log:
 
-> Could you help me what( or how) I need to investigate?
+Jun  7 07:21:33 oscar kernel:  printing eip:
+Jun  7 07:21:33 oscar kernel: c016d2ff
+Jun  7 07:21:33 oscar kernel: Oops: 0000
+Jun  7 07:21:33 oscar kernel: CPU:    0
+Jun  7 07:21:33 oscar kernel: EIP:    0010:[flush_commit_list+31/812]    Tainted: P
+Jun  7 07:21:33 oscar kernel: EFLAGS: 00010286
+Jun  7 07:21:33 oscar kernel: eax: 00000000   ebx: 00000000   ecx: db71a124   edx: e2a910d8
+Jun  7 07:21:33 oscar kernel: esi: df2ea000   edi: df2ea000   ebp: c99d99c0   esp: dceb3f20
+Jun  7 07:21:33 oscar kernel: ds: 0018   es: 0018   ss: 0018
+Jun  7 07:21:33 oscar kernel: Process newsplex (pid: 4524, stackpage=dceb3000)
+Jun  7 07:21:33 oscar kernel: Stack: 00000580 df2ea000 000e7995 c99d99c0 000e7995 c66ae000 d1ff24a0 dceb2000
+Jun  7 07:21:33 oscar kernel:        00000000 00000000 c017102d df2ea000 00000000 00000001 00000000 c99d99c0
+Jun  7 07:21:33 oscar kernel:        00000000 c99d9a2c 00000000 00000000 00000000 000149b0 00000000 00001000
+Jun  7 07:21:33 oscar kernel: Call Trace: [reiserfs_commit_for_inode+217/228] [reiserfs_sync_file+66/84] [sys_fsync+98/164] [s
+ystem_call+51/64]
+Jun  7 07:21:33 oscar kernel:
+Jun  7 07:21:33 oscar kernel: Code: 8b 6b 2c 68 1f c7 20 c0 e8 4c fc ff ff 8b 43 14 83 c4 04 85
 
-First try 2.4.18, if the symptoms are the same, try to profile a kernel
-(man readprofile).
-
-BTW, what kind of ARM system do you have?
-
-Bye,
-    Oleg
+Ed Tomlinson
