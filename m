@@ -1,44 +1,35 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: snapshot, checkpoints
-Date: Wed, 09 Jun 2004 22:20:57 -0700
-Message-ID: <40C7EFB9.1040609@namesys.com>
-References: <20040527065259.99429.qmail@web51306.mail.yahoo.com>	<1085641393.1915.199.camel@tribesman.namesys.com>	<20040527092727.GO4990@nysv.org>	<20040604131005.hmvps8wcw4sccgcs@www.wagland.net>	<200406041925.i54JPZgp025255@turing-police.cc.vt.edu>	<40C14E9C.4000706@slaphack.com>	<116CD3CA-B709-11D8-A933-000A95CD704C@kungfoocoder.org>	<40C78D86.2060305@slaphack.com> <20040610065427.622450fb@rayanne>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: The situation at hand and in the future
+Date: Thu, 10 Jun 2004 11:23:33 +0300
+Message-ID: <20040610082333.GU4990@nysv.org>
+References: <20040528063324.GT4990@nysv.org> <40B89C9C.5050307@slaphack.com> <873c5j0zm3.fsf@uhoreg.ca> <40B91A65.2060302@slaphack.com> <200405311827.i4VIRdlS001316@turing-police.cc.vt.edu> <40BBA23D.7000109@slaphack.com> <87ekp0ghbo.fsf@uhoreg.ca> <40C1510F.5020608@slaphack.com> <200406050730.i557UouE026516@turing-police.cc.vt.edu> <40C788AD.4000800@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19131-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19132-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040610065427.622450fb@rayanne>
+Content-Disposition: inline
+In-Reply-To: <40C788AD.4000800@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Pierre Etchemaite <petchema@concept-micro.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Masover <ninja@slaphack.com>
+Cc: Valdis.Kletnieks@vt.edu, Hubert Chan <hubert@uhoreg.ca>, reiserfs-list@namesys.com
 
-Pierre Etchemaite wrote:
+On Wed, Jun 09, 2004 at 05:01:17PM -0500, David Masover wrote:
 
->Le Wed, 09 Jun 2004 17:21:58 -0500, David Masover <ninja@slaphack.com> a
->=E9crit :
->
-> =20
->
->>Good, then we don't have to immediately rewrite the wheel.  But I still
->>would rather that we do this eventually.  My concept has the changes
->>stored on the same partition, seems like it may be faster, and opens the
->>door for a filesystem-based cvs.
->>   =20
->>
-This phrase made me thing you might want to be aware of=20
-http://www.namesys.com/blackbox_security.html which got darpa funding=20
-recently....
+>Of course, most of the time people can just buy a new CPU.
 
->
->Look for "copy-on-write links" (cow links for short) in archives, or with
->Google; You'll find many hits, including a message from 2000 suggesting the
->idea has been around since at least 1997...
->
->
-> =20
->
+Or don't encrypt the game data.
+
+>Should we take this off-list?
+
+Please don't, I'm not sure if I'm the only one who finds this
+discussion too interesting not to be readable by everyone.
+
+It also relates to Reiser4.
+
+-- 
+mjt
 
