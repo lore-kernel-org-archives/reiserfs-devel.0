@@ -1,54 +1,30 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
+From: Chris wakefield <c_wakefield@shaw.ca>
 Subject: Re: R4 won't mount.
-Date: Wed, 21 Jan 2004 12:08:15 +0300
-Message-ID: <16398.16767.736267.213891@laputa.namesys.com>
-References: <20040121080522.85547.qmail@web21507.mail.yahoo.com>
-	<400E3700.2090802@shaw.ca>
+Date: Wed, 21 Jan 2004 01:13:42 -0800
+Message-ID: <400E42C6.4050305@shaw.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16597-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-list-return-16598-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <400E3700.2090802@shaw.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Chris wakefield <c_wakefield@shaw.ca>
-Cc: Paolo Correnti <paolunix@yahoo.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
+Cc: paolunix@yahoo.com
 
-Chris wakefield writes:
- > Hi Paolo.
- > Thanks for your reply.  I'm mounting a new reiser4 partition.  I just 
- > recreated another partition with cfdisk  (not rewriting R4 over the 
+Hi Paolo.
+Ok, I re-compiled a fresh 2.6.1 kernel, ran the command: 
+wget http://www.namesys.com/snapshots/2004.01.19/all.diff.gz -q -O - 
+|       zcat | patch -p1
+ The R4 partitions mount fine, so all is fine now.
+What I had done before, I remembered, was patch a 2.6.0 kernel with 
+patch-2.6.1-bk4.bz2, which I suspect was the wrong patch.
+Sorry for the unnecessary posts.
 
-Let's get this straight:
+Ok, so now I can have some fun with R4!
 
-1. partition (/dev/hda7) was created by cfdisk.
-2. mkfs.reiser4 /dev/hda7 was executed
-3. now mount fails
+Chris W.
 
-right?
 
- > previous one) and still won't mount.  I'm getting the usual error 
- > report:  "mount: wrong fs type, bad option, bad superblock on 
- > /dev/hda7.....etc"
-
-What is in your kernel logs? (Use dmesg command or look into file like
-/var/log/messages.)
-
- > I also recompiled my 2.6.1 kernel & reiser4progs-0.4.20 as well.
- > I have noticed that the kernel compile is complaining though, now that I 
- > think about it I remember the original patching coming up with "hunk  
- > #1, etc, succeeding, etc and I had about 6 or 8 of those.  I ignored 
- > them as I assumed the word "succeeding" meant that things went ok.
- > So my next step will be to repatch a fresh kernel.
-
-That shouldn't matter.
-
- > Chris W.
- >  
-
-Nikita.
-
- > 
