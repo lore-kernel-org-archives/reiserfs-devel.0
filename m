@@ -1,43 +1,64 @@
-From: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
+From: Ragnar =?iso-8859-15?Q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
 Subject: Re: How to build a big file server
-Date: Thu, 05 Jun 2003 10:25:30 +0200
-Message-ID: <3EDEFE7A.1090502@gmx.net>
+Date: Thu, 5 Jun 2003 10:33:01 +0200
+Message-ID: <20030605083301.GB4849@vestdata.no>
 References: <1054800852.1997.15.camel@wusel.schnulli.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14406-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-14407-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 In-Reply-To: <1054800852.1997.15.camel@wusel.schnulli.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 To: Heinz-Josef Claes <hjclaes@web.de>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Heinz-Josef Claes wrote:
-> 
+On Thu, Jun 05, 2003 at 10:14:13AM +0200, Heinz-Josef Claes wrote:
+> Here are some questions:
+>=20
 > - I plan to build a system with IDE 250GB drives. 7 of them for raid 5
 > and one hot spare. The OS will be on separate hardware raid 1 on smaller
-> disks. Does anybody have experience with IDE controllers for the big
+> disks. Does anybody have experience with IDE controlers for the big
 > disks? Is it better to use hardware raid oder software raid
 > (performance)?
 
-As long as you don't buy pseudo raid solutions like those from promise,
-you should be better off using hardware raid, especially if one of the
-disks fails. Performance-wise linux software raid may be faster.
+Some controllers will be limited by the 127 GB IDE limitation.
 
-> - BTW: I'm using a ZIP drive on the parallel port with reiserfs. Does it
-> make sense to put the journal for the ZIP drive on the hard disk of the
-> laptop?
+For read-performance, software-raid will be just fine. (it could in
+fact be better than some crappy controllers).
 
-NO. If you ever plan to use a zip disk with external journal on another
-PC, you are completely out of luck.
+For write-performance, you need a hardware RAID-controller with
+battery-backed writeback-cache. A hardware RAID-controller that
+doesn't use writeback-cache is not likely to be faster than
+software-RAID.
 
+Writeback-cache is not very common on PCI/IDE-controllers, but more
+common on SCSI/IDE and FC/IDE external RAIDs. External RAIDs also
+has managability-advantages, but of course they are more expensive.
 
-HTH,
-Carl-Daniel
--- 
-http://www.hailfinger.org/
+> - At this time, we plan to use reiserfs. What are the advantages /
+> disadvantages of using the raid 1 for journaling for the (big) raid 5
+> (performance, recovery)? The system will be heavily used with
+> storebackup (www.sf.net/projects/storebackup) witch means that lots of
+> hard links have to be created as fast as possible.
 
+Tricky question.
+
+Without writeback-cache on your RAID5, lots of tiny syncronous writes
+is surely going to kill performance.
+
+The writes to the actual filesystem should be async, so they should be
+less of a problem. And there is nothing you can do about it anyway :-/
+
+My guess is that the writes to the journal _would_ be a problem, and
+that writing them to a seperate (RAID1)-device would help significantly.
+
+I would be curious to see a benchmark on this though.
+
+--=20
+Ragnar Kj=F8rstad
+Zet.no
