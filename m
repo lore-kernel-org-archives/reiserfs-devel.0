@@ -1,58 +1,72 @@
-From: Russell Coker <bofh@coker.com.au>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Reiserfs with Samba vs NetApp Filer
-Date: Sun, 13 Oct 2002 01:27:32 +0200
-Message-ID: <200210130127.32489.bofh@coker.com.au>
-References: <200210122302.g9CN23BD000383@sirius.cs.pdx.edu>
-Reply-To: Russell Coker <bofh@coker.com.au>
+Date: Sun, 13 Oct 2002 05:23:01 +0400
+Message-ID: <3DA8CAF5.7050203@namesys.com>
+References: <Pine.LNX.4.33L2.0210100853240.1670-100000@localhost.localdomain> <200210121052.22603.bofh@coker.com.au> <20021012150028.G14731@vestdata.no> <200210121600.39712.bofh@coker.com.au> <3DA89A37.2070801@namesys.com> <20021012222950.GK3045@clusterfs.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11669-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11670-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200210122302.g9CN23BD000383@sirius.cs.pdx.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "The Amazing Dragon (Elliott Mitchell)" <ehem@cs.pdx.edu>
-Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Andreas Dilger <adilger@clusterfs.com>
+Cc: Russell Coker <bofh@coker.com.au>, =?windows-1252?Q?Ragnar_=3F?= <reiserfs@ragnark.vestdata.no>, reiserfs-list@namesys.com
 
-On Sun, 13 Oct 2002 01:02, The Amazing Dragon (Elliott Mitchell) wrote:
-> > S-ATA should solve the cable issue.  PCI-X should solve the PCI
-> > bottleneck. Then it'll be interesting to see what the bottleneck is.
+Andreas Dilger wrote:
+
+>On Oct 13, 2002  01:55 +0400, Hans Reiser wrote:
+>  
 >
-> <cough>  <cough>         (about PCI-X) Yeah riiiight.
+>>Someday not too long from now, it will look like one filesystem even 
+>>though it is in multiple cases.  Whether that is in reiser5 or reiser6 
+>>depends on what sponsors fund first.
+>>    
+>>
 >
-> I believe PCI-X is still 64-bits wide (I haven't seen anything mention
-> this so I assume it is unchanged) and up to 133MHz, so theoretical
-> bandwidth of 1066MBps. So 7 Serial ATA drives, perhaps 10 drives if you
-> take into account the real performance of drives.
+>Hans,
+>you should take a look at Lustre - www.lustre.org.  We are basically
+>already developing what you are suggesting - a distributed filesystem
+>which is built atop two or more local filesystems.  The aggregate
+>throughput of N lustre storage servers is basically N times the
+>throughput of a single server (clients communicate directly with the
+>storage targets, so the cross-sectional bandwidth in perfectly
+>scalable on a switched network).
+>
+>Like Intermezzo, Lustre can be stacked on top of journaling local
+>filesystems, so it would be possible to use reiserfs for both the
+>metadata and storage targets.
+>
+>We are deploying on a 1000-node cluster early next year, and expect
+>total throughput around 4GB/s (we have already made a limited test
+>at 1.4GB/s) with 90TB of storage - on a 2.4 kernel.  Because we are
+>using multiple separate filesystems, we are not hampered by the
+>2TB block device limit, and we get all sorts of parallelisms that
+>are not possible with a single large server.
+>
+>Cheers, Andreas
+>--
+>Andreas Dilger
+>http://www-mddsp.enel.ucalgary.ca/People/adilger/
+>http://sourceforge.net/projects/ext2resize/
+>
+>
+>
+>  
+>
+I really don't understand what is the advantage of object based disk 
+storage.  It seems like its main effect is to prevent people from coming 
+up with optimizations the drive manufacturer did not think of.  I don't 
+at all understand these supposed metadata advantages.  We are lucky that 
+we don't have in disk drives the sort of innovation inhibiting 
+separation of compilers and CPUs that our compatriots in the language 
+design business suffer from.  The more smarts that go into the drive, 
+the more our field will ossify, unless they work closely with FS authors.
 
-Currently people who are using 3ware RAID controllers are finding that PCI is 
-a serious bottleneck.  PCI-X is apparently twice as fast as PCI which helps.  
-Then you can have multiple PCI-X buses (as high end motherboards now have 
-multiple PCI buses).
+I enjoyed reading about your project, thanks for the URL.
 
-> Then you've got to add network, gigabit ethernet is 250MBps (total, full
-> duplex). There is ten gigabit coming in the near future which half duplex
-> is 1250MBps, I guess you're going to need a second PCI-X bus just to
-> handle /most/ of the network bandwidth.
+Hans
 
-I still haven't heard of anyone getting more than 50% throughput out of 1Gb 
-Ethernet, I doubt that a PC will use any portion of 10Gb Ethernet at any time 
-in the near future.
-
-> What astonishes me is that 66MHz 64-bit PCI is *still* confined
-> exclusively to high end motherboards, when even the low-end motherboards
-> are struggling against the bandwidth monster.
-
-Yes, that sucks!  It seems that they think that we only want performance for 
-graphics (which AGP satisfies).  Maybe we need a RAID controller that plugs 
-into an AGP port?  ;)
-
--- 
-http://www.coker.com.au/bonnie++/     Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/       Postal SMTP/POP benchmark
-http://www.coker.com.au/projects.html Projects I am working on
-http://www.coker.com.au/~russell/     My home page
 
