@@ -1,58 +1,47 @@
-From: Jeremy Hankins <nowan@nowan.org>
-Subject: Re: Fwd: reiser4 non-free?
-Date: Fri, 30 Apr 2004 10:12:40 -0400
-Message-ID: <878ygdk10n.fsf@wasp.nowan.org>
-References: <20040424193246.GA2490@raptus.homelinux.org>
-	<4091DAFE.5030809@namesys.com>
-	<20040430055619.GD7487@archimedes.ucr.edu>
-	<40923D1C.3090003@namesys.com>
+From: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
+Subject: Re: reiser4 non-free?
+Date: Fri, 30 Apr 2004 10:55:49 -0400 (EDT)
+Message-ID: <20040430145549.25985.qmail@web25005.mail.ukl.yahoo.com>
+References: <20040430.082021.71090903.wlandry@ucsd.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18319-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18320-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40923D1C.3090003@namesys.com> (Hans Reiser's message of "Fri,
- 30 Apr 2004 04:48:44 -0700")
+In-Reply-To: <20040430.082021.71090903.wlandry@ucsd.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
+To: Walter Landry <wlandry@ucsd.edu>, reiser@namesys.com
+Cc: cavok@tiscali.it, sliedes@cc.hut.fi, ed@debian.org, debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-Hans Reiser <reiser@namesys.com> writes:
+Walter Landry wrote: 
 
-> What alternative do you offer to ensure that attribution occurs?
-> None.  There is no alternative actually.
+> The largest problem is that with the
+> "clarification", you seem to have
+> changed the license, making it slightly more
+> restrictive than the
+> plain old GPL.  The combination of Reiser4 and the
+> kernel triggers GPL
+> Section 2.  That means that Debian will not be able
+> to distribute
+> Reiser4 at all.
 
-Exactly: we offer no alternative.  This is not a disagreement about
-which method of ensuring attribution is correct and acceptable, but a
-disagreement about whether or not it is appropriate to force attribution
-according to some particular standard.
+ReiserFS is heading down the same road as XFree86.
 
-It is entirely within your rights as copyright holder to push whatever
-social agenda you wish with your software license -- but debian-legal's
-position is that that will make the license non-free.  If you wish to
-require that it not be used in nuclear facilities, fine: non-free.  If
-you require that people who use the software spend a moment to think
-about the plight of the homeless, fine: non-free.  Just as, when you
-require attribution in a particular format and with a particular text,
-that's fine, but non-free.
+You won't get any recognition, Hans, if nobody is
+using ReiserFS.
 
-Though it may not be obvious given the rhetoric surrounding the issue,
-this is at its heart about pragmatism and compromise.  In a free society
-we allow others freedoms that we sincerely hope they will not avail
-themselves of.  But we allow it, because people disagree, and
-disagreement is (or can be, at least) good and productive.  We prefer to
-use arguments rather than force (whether legal or physical) to get our
-points across, because in doing so we improve everyones understanding of
-the issues (including our own).
+> If you changed the clarification to a request, then
+> Debian would have
+> no problems distributing it, even with the blurb.
 
-If we disagree on the above paragraph, we disagree on fundamental
-principles.  If, however, you agree there (though perhaps not with the
-rest) please explain where you think the disagreement shows up, because
-we may be able to make sense of things.
+There is still hope.  Please do not make ReiserFS a
+curious footnote in the history of Linux.  It is far
+too brilliant.
 
--- 
-Jeremy Hankins <nowan@nowan.org>
-PGP fingerprint: 748F 4D16 538E 75D6 8333  9E10 D212 B5ED 37D0 0A03
+
+
+______________________________________________________________________ 
+Post your free ad now! http://personals.yahoo.ca
