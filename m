@@ -1,53 +1,86 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: External journals and NVRAM devices
-Date: 04 Nov 2002 08:16:31 -0500
-Message-ID: <1036415792.14291.12.camel@tiny>
-References: <20021101213703.D142A50D503@server5.fastmail.fm>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: We need help benchmarking and debugging reiser4
+Date: Mon, 4 Nov 2002 21:14:43 +0300
+Message-ID: <15814.47379.35523.580531@laputa.namesys.com>
+References: <reiser@namesys.com>
+	<3DBF98A7.8060906@namesys.com>
+	<200211012236.gA1MaqT20507@mail.osdl.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11910-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11911-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021101213703.D142A50D503@server5.fastmail.fm>
+In-Reply-To: <200211012236.gA1MaqT20507@mail.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: JP Howard <jh_lists@fastmail.fm>
-Cc: Edward Shishkin <edward@namesys.com>, Andreas Dilger <adilger@clusterfs.com>, ReiserFS List <reiserfs-list@namesys.com>, Oleg Drokin <green@namesys.com>
+To: Cliff White <cliffw@osdl.org>
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Oleg Drokin <green@namesys.com>, Benoit Poulot-Cazajous <Benoit.Poulot-Cazajous@Jaluna.COM>
 
-On Fri, 2002-11-01 at 16:37, JP Howard wrote:
- 
-> Apologies to all for my lack of reading comprehension. Yes, of course
-> that shows 32M...
-> 
-> When the 2.4.20 journal-size patches are out I'll try and do some
-> benchmarking with larger journals on NVRAM devices. We use Cyrus IMAPd
-> which is very fsync intensive, so I expect an NVRAM journal may make a
-> big difference...
-> 
+Cliff White writes:
+ > > Can some of you help us by doing such things as replicating our 
+ > > benchmarks, and helping us debug it as we enter the last stretch before 
+ > > Halloween?
+ > > 
+ > 
+ > We are interested in helping, but i haven't seen the follow-up mail 
+ > mentioned below - if you could send us some more specifics, we'd be
+ > glad to join the fun.
 
-The data logging patches include a ton of reiserfs writeback changes
-that allow good performance with small transactions (like mail server
-workloads) and small log sizes.
+Sorry for delay.
 
-With ext3, a 128M or bigger log can really improve performance because
-so much of the writeback is done through bdflush/kupdate.  With a bigger
-log, it is much more likely things will already be written to the main
-disk by the time you need to wrap around and reuse part of the log for a
-new transaction.  So a big log, and tuning bdflush to trigger writeback
-quickly can really help ext3 performance.
+Benchmarks Hans is talking about consist of reading some directory tree
+from given file system (foofs, foo={reiser{4,fs},ext{2,3}}). Reading is
+done by copying data to the ramfs. One can do the same with tar, but be
+warned that "tar cf /dev/null ." is special cased in gnu tar: no actual
+reads take place if output is /dev/null.
 
-(note, this gives ext3 some memory pressure advantages)
+Another (very important, as it turned out) point is that directory tree
+has to be in read optimal order for foofs: files were created in the
+order of their directory entries.
 
-With data logging reiserfs a mail server will rarely need more than a
-32MB log.  A larger log can help when you've got a very full tree
-(millions of files), since those transactions will be slightly larger,
-or when you are doing fsyncs on big files.
+Probably example is the best way to describe this: to create
+read-optimal directory tree in foofs do:
 
-Andrew Morton's synctest program is a pretty good tool for benchmarking
-optimal transaction parameters.
+$ cd /mnt/foofs-mount-point
+$ cp -a /somewhere/directory-tree .
+$ tar cf directory-tree /somewhere/directory-tree-foofs-read-optimal.tar
+$ cd /
+$ umount /mnt/foofs-mount-point
+$ /sbin/mkfs.foofs /dev/device
+$ mount /dev/device /mnt/foofs-mount-point
+$ cd /mnt/foofs-mount-point
+$ tar xf /somewhere/directory-tree-foofs-read-optimal.tar
 
--chris
+Now, /mnt/foofs-mount-point/directory-tree contains read-optimal
+directory tree for foofs.
 
+We are also generally interested in results of any standard file system
+benchmarks/stress tests.
 
+Reiser4 has known rough corners with running out of disk space.
+
+And of course, SMP scalability measurements on OSDL hardware would be
+very interesting. Just simple kernel compilation would pass as rough
+test, I think.
+
+ > cliffw
+ > OSDL
+ > 
+ > > Nikita and Oleg will describe the details of what to do to replicate the 
+ > > benchmarks, please be sure to use reiser4 readdir order for writes to 
+ > > reiser4 (that means don't use tarballs made from ext2 (Remember that 
+ > > writes determine subsequent read performance.)), and to use the latest 
+ > > hard drives and fast processors with udma 5 turned on.  We are quite 
+ > > sensitive to transfer speed since we do a good job of avoiding seeks.  
+ > > We are sensitive to readdir order because we sort directory entries 
+ > > (which is necessary for having efficient large directory lookups).   In 
+ > > reiser4.1 we will ship a repacker, and then it won't matter what order 
+ > > you do writes in so long as the repacker gets a chance to run at night.  
+ > > 
+ > > -- 
+ > > Hans
+ > > 
+
+Nikita.
