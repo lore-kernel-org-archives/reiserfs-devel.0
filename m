@@ -1,30 +1,35 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Status of data-logging for 2.5.x?
-Date: 25 Sep 2002 13:59:07 -0400
-Message-ID: <1032976747.13899.66.camel@tiny>
-References: <20020925174802.UKLL16629.rwcrmhc51.attbi.com@rwcrwbc55>
+From: prj@po.cwru.edu (Paul Jarc)
+Subject: Re: Reserved Blocks
+Date: Wed, 25 Sep 2002 14:07:41 -0400
+Message-ID: <m31y7ij62k.fsf@multivac.cwru.edu>
+References: <20020916102742.6538D2926@hofmann.snowcra.sh>
+	<15749.46844.233761.653142@laputa.namesys.com>
+	<20020916125116.B8E96297C@hofmann.snowcra.sh>
+	<15749.56464.253411.12957@laputa.namesys.com>
+	<20020916174109.A21027@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11539-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11540-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20020925174802.UKLL16629.rwcrmhc51.attbi.com@rwcrwbc55>
+In-Reply-To: <20020916174109.A21027@namesys.com> (Oleg Drokin's message of
+ "Mon, 16 Sep 2002 17:41:09 +0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: jordan.breeding@attbi.com
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-On Wed, 2002-09-25 at 13:48, jordan.breeding@attbi.com wrote:
-> Hello,
-> 
->   Does anyone know the current status of the data-
-> logging patches being ported to 2.5.x?  Thanks.
+Oleg Drokin <green@namesys.com> wrote:
+> Also consider there is set uid application that outputs data.
+> I just do setuid_app >>/fs_to_fill/somefile
+> and repeat it that much times to fill the fs.
 
-They are finally ported to 2.4.20-pre7 (in testing now on my local
-box).  2.5.x is a few weeks away but it is very high up there on my
-list.
+That won't work.  The open() for the ">>" output redirection is done
+by the shell, not the setuid program.  But if the setuid program lets
+the user specify a filename to write to, then it could be vulnerable,
+and it would still be vulnerable even if the program check permissions
+with access().
 
--chris
 
+paul
