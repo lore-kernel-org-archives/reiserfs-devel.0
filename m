@@ -1,43 +1,33 @@
-From: Andreas Dilger <adilger@clusterfs.com>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: How to build a big file server
-Date: Thu, 5 Jun 2003 02:55:54 -0600
-Message-ID: <20030605025554.J1522@schatzie.adilger.int>
-References: <1054800852.1997.15.camel@wusel.schnulli.de> <3EDEFE7A.1090502@gmx.net>
+Date: Thu, 5 Jun 2003 13:04:35 +0400
+Message-ID: <20030605090435.GE7950@namesys.com>
+References: <1054800852.1997.15.camel@wusel.schnulli.de> <20030605083301.GB4849@vestdata.no> <20030605084643.GA5869@namesys.com> <1054803014.1995.31.camel@wusel.schnulli.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14414-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14415-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3EDEFE7A.1090502@gmx.net>; from c-d.hailfinger.kernel.2003@gmx.net on Thu, Jun 05, 2003 at 10:25:30AM +0200
+In-Reply-To: <1054803014.1995.31.camel@wusel.schnulli.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
-Cc: Heinz-Josef Claes <hjclaes@web.de>, ReiserFS List <reiserfs-list@namesys.com>
+To: Heinz-Josef Claes <hjclaes@web.de>
+Cc: Ragnar Kj?rstad <reiserfs@ragnark.vestdata.no>, reiserfs-list@namesys.com
 
-On Jun 05, 2003  10:25 +0200, Carl-Daniel Hailfinger wrote:
-> Heinz-Josef Claes wrote:
-> > - I plan to build a system with IDE 250GB drives. 7 of them for raid 5
-> > and one hot spare. The OS will be on separate hardware raid 1 on smaller
-> > disks. Does anybody have experience with IDE controllers for the big
-> > disks? Is it better to use hardware raid oder software raid
-> > (performance)?
-> 
-> As long as you don't buy pseudo raid solutions like those from promise,
-> you should be better off using hardware raid, especially if one of the
-> disks fails. Performance-wise linux software raid may be faster.
+Hello!
 
-The other problem I've heard of with hardware RAID is that if you do not
-have another of exactly the same RAID controller, it may be impossible to
-get your data back if the controller fails.  If you are planning on making
-many similar servers, that may not be a problem, but is always something
-to be aware of with hardware RAID.
+On Thu, Jun 05, 2003 at 10:50:15AM +0200, Heinz-Josef Claes wrote:
+> > > My guess is that the writes to the journal _would_ be a problem, and
+> > > that writing them to a seperate (RAID1)-device would help significantly.
+> > And with journal on battery-backed RAM it would be even faster ;)
+> The target is to have a cheep solution :/
 
-Cheers, Andreas
---
-Andreas Dilger
-http://sourceforge.net/projects/ext2resize/
-http://www-mddsp.enel.ucalgary.ca/People/adilger/
+The cheapest solution to get speed is to put journal and all data on ramdisk
+(or even into ramfs).
+This is not the safest one, though.
 
+Bye,
+    Oleg
