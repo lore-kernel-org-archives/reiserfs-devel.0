@@ -1,33 +1,52 @@
-From: Oleg Drokin <green@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Recent spam
-Date: Fri, 6 Jun 2003 09:31:11 +0400
-Message-ID: <20030606053111.GA23859@namesys.com>
-References: <3EDAEEBE.3050202@netscape.net> <200306020833.40614.m.c.p@gmx.net> <1054538668.8091.8.camel@localhost> <200306021859.39138.russell@coker.com.au> <3EDF450A.1060003@namesys.com> <20030605145709.GM15761@parcelfarce.linux.theplanet.co.uk> <1054825912.23132.152.camel@tiny.suse.com> <20030605152948.GC22550@vestdata.no>
+Date: Fri, 06 Jun 2003 12:08:34 +0400
+Message-ID: <3EE04C02.2090707@namesys.com>
+References: <3EDAEEBE.3050202@netscape.net> <1054820341.23131.126.camel@tiny.suse.com> <3EDF5618.5090904@namesys.com> <200306060548.44154.russell@coker.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14467-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14468-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030605152948.GC22550@vestdata.no>
+In-Reply-To: <200306060548.44154.russell@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ragnar Kj?rstad <reiserfs@ragnark.vestdata.no>
-Cc: Chris Mason <mason@suse.com>, Chris Dukes <pakrat@www.uk.linux.org>, Hans Reiser <reiser@namesys.com>, Russell Coker <russell@coker.com.au>, Soeren Sonnenburg <reiserfs@nn7.de>, reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Alexander Lyamin <flx@namesys.com>
+Cc: Russell Coker <russell@coker.com.au>, reiserfs-list <reiserfs-list@namesys.com>
 
-Hello!
+Russell Coker wrote:
 
-On Thu, Jun 05, 2003 at 05:29:48PM +0200, Ragnar Kj?rstad wrote:
+>On Fri, 6 Jun 2003 00:39, Hans Reiser wrote:
+>  
+>
+>>Demidov's computer so that it can run with the case on it, etc.  Giving
+>>him the additional task of dealing with spamcop is just asinine.
+>>    
+>>
+>
+>I hope you realise that you are proving the administrators of SpamCop to be 
+>correct.  They believe that SPAM will only be accepted as a problem and dealt 
+>with if reacted to forcefully.  Other services have nicer methods and don't 
+>get the results.
+>
+>After this issue has been discussed many times the only positive response I 
+>have received from you has been after using SpamCop.  I conclude that I am 
+>correct to use it.
+>
+>No-one has asked the administrators of your mailing list to do anything 
+>special, just to refrain from doing unusual things.
+>
+>If you want a quick temporary fix then change the list address.  The 
+>subscribers will be able to deal with it well enough (it's happened before) 
+>but the spammers will take some time to catch up.
+>
+>  
+>
+Remove Russell from the list.
 
-> Moving the list to sourceforge or another simular service may be useful
-> to reduce the amount of systemadministration.
+-- 
+Hans
 
-They do not do good spamfiltering as well which is easily visible in
-e.g. user-mode-linux-* lists.
-Besides, they do not accept mail from me claiming that they cannot resolve my hostname
-(yes, I have valid A record for my hostname).
 
-Bye,
-    Oleg
