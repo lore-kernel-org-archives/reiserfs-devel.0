@@ -1,28 +1,28 @@
-From: Richard Thornton <richard@sun2.programming-analytics.org>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: duplicate files and recent changes
-Date: Thu, 06 Jun 2002 18:28:01 +0000
-Message-ID: <85256BD0.00688739.00@patapsco.com>
+Date: Thu, 06 Jun 2002 13:54:22 +0000
+Message-ID: <85256BD0.0068894E.00@patapsco.com>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- Boundary="0__=osyvdsuz1Rz41XTlMo64XBbFyT4LZyh9fl4bfvOflAisL6YmuywBG1Ts"
-Return-path: <reiserfs-list-return-10633-reiserfs=m.gmane.org@namesys.com>
+ Boundary="0__=eatgLmooHKIHbdF6zcmmC5meslzT9RbFo2pmuhhwfVI93CO515km1xpf"
+Return-path: <reiserfs-list-return-10634-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Valdis.Kletnieks@vt.edu
-Cc: Oleg Drokin <green@namesys.com>, "S. Alexander Jacobson" <alex@shop.com>, reiserfs-list@namesys.com
+To: "S. Alexander Jacobson" <alex@shop.com>
+Cc: reiserfs-list@namesys.com
 
---0__=osyvdsuz1Rz41XTlMo64XBbFyT4LZyh9fl4bfvOflAisL6YmuywBG1Ts
+--0__=eatgLmooHKIHbdF6zcmmC5meslzT9RbFo2pmuhhwfVI93CO515km1xpf
 Content-type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
                                                                   
  (Embedded                                                        
- image moved   Richard Thornton                                   
- to file:      <richard@sun2.programming-analytics.org>           
- pic00900.pcx) 06/06/2002 02:28 PM                                
+ image moved   Valdis.Kletnieks@vt.edu                            
+ to file:      06/06/2002 09:54 AM                                
+ pic28045.pcx)                                                    
                                                                   
 
 
@@ -33,9 +33,9 @@ Content-Disposition: inline
 
 
  (Embedded
- image moved   Richard Thornton
- to file:      <richard@sun2.programming-analytics.org>
- pic31969.pcx) 06/06/2002 02:28 PM
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic07659.pcx)
 
 
 
@@ -46,9 +46,9 @@ Content-Disposition: inline
 
 
  (Embedded
- image moved   Richard Thornton
- to file:      <richard@sun2.programming-analytics.org>
- pic15312.pcx) 06/06/2002 02:28 PM
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic01596.pcx)
 
 
 
@@ -57,324 +57,332 @@ Content-Disposition: inline
 
 
 
-Will you quit sending this shit?
 
-RT
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic31865.pcx)
 
 
-On Thu, 6 Jun 2002 Valdis.Kletnieks@vt.edu wrote:
 
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic01575.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic26184.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic13257.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic00081.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic15154.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic07244.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic00072.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic31655.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic01253.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic19373.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic27832.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic30803.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic04969.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic08117.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic11628.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic06033.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic18619.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic14738.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic07549.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic26942.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic27268.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic24632.pcx)
->
->
->
->
->
->
->
->
-> On Thu, 06 Jun 2002 13:25:05 +0400, Oleg Drokin said:
->
-> > But MD5 may be identical for different files.
->
-> Only a 2**128 chance of that.  If you know a way to force a hash collision
-> more frequently than that, the crypto world wants to hear from you.. ;)
->
-> > Also this buys you nothing.
-> > You write file in chunks, once file is identical to other file,
-> > one of the files deleted. Looks like just more extra work (but some saved
-> space
-> > of course).
->
-> A much more productive way to save space is file-system compression.  AIX
-> supports LZ-compressing each 4K block and then only saving as many 512 byte
-> fragments as actually needed.  It's a big win - /usr (even with all the
-> binaries)
-> needs about 30% less space, and I've seen over 50% for file systems with
-> source trees in them...
-> --
->                     Valdis Kletnieks
->                     Computer Systems Senior Engineer
->                     Virginia Tech
->
->
 
---0__=osyvdsuz1Rz41XTlMo64XBbFyT4LZyh9fl4bfvOflAisL6YmuywBG1Ts--
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic16144.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic09442.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic09063.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic04806.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic10465.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic17079.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic10007.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic16147.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic11308.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic15841.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic20581.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic19402.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic30124.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic23278.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic03814.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic14574.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic07359.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic07726.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic14099.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic20730.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic28349.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic26147.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:54 AM
+ pic06027.pcx)
+
+
+
+
+
+
+
+
+On Thu, 06 Jun 2002 01:30:46 EDT, "S. Alexander Jacobson" <alex@shop.com>  said:
+
+> 1. Can reiserfs detect that I have two copies of
+> the same file on disk and store tham as one file
+> (doing a lazy copy) if someone writes to one of
+> them?
+
+Something I'd like to see even more than that would be VMS-style version
+numbers on files.
+--
+                    Valdis Kletnieks
+                    Computer Systems Senior Engineer
+                    Virginia Tech
+
+
+--0__=eatgLmooHKIHbdF6zcmmC5meslzT9RbFo2pmuhhwfVI93CO515km1xpf--
 
