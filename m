@@ -1,75 +1,50 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Stacked Reiser4 filesystems
-Date: Tue, 27 Apr 2004 18:36:51 +0400
-Message-ID: <200404271836.51084.vitaly@namesys.com>
-References: <40898898.3000907@gmx.net>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary additional
+ namespace to ReiserFS
+Date: Tue, 27 Apr 2004 10:29:19 -0700
+Message-ID: <408E986F.90506@namesys.com>
+References: <1082750045.12989.199.camel@watt.suse.com> <408D3FEE.1030603@namesys.com> <20040426203314.A6973@infradead.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18244-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18248-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40898898.3000907@gmx.net>
-Content-Disposition: inline
+In-Reply-To: <20040426203314.A6973@infradead.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2004@gmx.net>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Chris Mason <mason@suse.com>, Linus Torvalds <torvalds@osdl.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, akpm@osdl.org
 
-On Saturday 24 April 2004 01:20, Carl-Daniel Hailfinger wrote:
-> Hi,
 
-Hello
 
-> one of the really bad (read: unecpected) deficiencies of reiserfs is the
-> fact that storing the image of another reiserfs filesystem as a file on a
-> reiserfs filesystem will confuse reiserfsck --rebuild-tree to no end.
+Christoph Hellwig wrote:
+
+>On Mon, Apr 26, 2004 at 09:59:26AM -0700, Hans Reiser wrote:
+>  
 >
-> IIRC somebody said this cannot happen with reiser4 anymore. Is this true?
+>>The xattr namespace offers zero functional advantage over the file 
+>>namespace.  The use of '.' instead of '/' is idiotic, see the very short 
+>>paper "The Hideous Name" by Rob Pike  ( www.cs.bell-labs.com/cm/cs/doc/ 
+>>) for why mindlessly varying the separators in hierarchical names 
+>>throughout an OS is a bad idea. 
+>>    
+>>
 >
-> And what happens if I store an (incomplete) image of a certain reiser4
-> partition as a file on the very same partition? Will the metadata from the
-> file confuse fsck.reiser4 in rebuild-tree mode?
+>Hans, where have you been the last three years?  Hiding under a rock?
 >
-> Since reiser4 is now heading for inclusion in mainline, I would like to
-> know whether the above flaws in reiserfs are fixed in reiser4.
+>  
+>
 
-This all does not usually happen with reiser4 due to the following: 
-1) fsck.reiser4 does not rebuild the storage tree from the scratch on 
-rebuilding, it traverses the tree and analyzes only this fs metadata
-trying to fix evth on-place in the tree.
+>As for ACLs in v3 that's a decision of the maintainer, currently you're
+>the formal maintainer, but I don't remember a single patch from you.
+>Most of the linux 2.6 work has been done by Chris and quite a bit of
+>work by your employees.  Chris is paid for doing a stable and working
+>reiserfs variant for SuSE so he seems to be qualified for doing that, to..
+>  
+>
+Did you notice that V4 blows XFS and ReiserFS V3 away in benchmarks?    
+That is what I have been doing for 3 years....
 
-2) formatted blocks have a fs-specific id generated at the mkfs 
-time--mkfs id. 
-
-It still can happen if
-1) the part of the storage reiser4 tree that points the reiser4 image file
-is broken, fsck cuts this broken tree part off initialliy, then scans blocks 
-for this fs metadata, and insert found ones into the tree. 
-
-Note: mkfs id stored in formatted blocks must match the one in 
-the SuperBlock.
-
-2) mkfs id stored in the super block and all its backup copies is broken.
-there is no valid mkfs id so metadata blocks of this fs cannot be separated
-from other fs. Although it is difficult to lose the super block and all its copies.
-
-3) mkfs id of the reiser4 image file is the same as the mkfs id of the reiser4 
-fs this file is stored in. It can happen if you keep a part of the fs on the same
-fs in not compressed, not encrypted form (do you really need it ?) or if you 
-unpack the reiser4 metadata with debugfs into the file on the same fs (seems 
-that only reiser4 developpers need it).
-
-If you really need some extra protection we could add smth like another 
-field 'block number' into the header of formatted reiser4 blocks or smth 
-like that.
-
-Although you can always enable an encryption or a compression for 
-this particular file.
-1) use loop file encryption, XOR will help;
-2) use reiser4 crypto-compression plugin.
-
--- 
-Thanks,
-Vitaly Fertman
-
+See www.namesys.com for details.
