@@ -1,35 +1,88 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: Online Resizing Failure
-Date: Mon, 28 Oct 2002 19:26:35 +0300
-Message-ID: <20021028192635.A1171@namesys.com>
-References: <Pine.GSO.4.33L.0210251403010.28840-100000@unix2.cc.ksu.edu>
+Subject: Re: Regarding the resize_reiserfs
+Date: Mon, 28 Oct 2002 19:29:54 +0300
+Message-ID: <20021028192954.B1171@namesys.com>
+References: <A56BCCA3A5C2D411B18A00508BDE9C9B04D6F518@bla.satyam.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11808-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11809-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <Pine.GSO.4.33L.0210251403010.28840-100000@unix2.cc.ksu.edu>
+In-Reply-To: <A56BCCA3A5C2D411B18A00508BDE9C9B04D6F518@bla.satyam.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matt Stegman <matts@ksu.edu>
-Cc: reiserfs-list@namesys.com
+To: Narasimha_Subban <Narasimha_Subban@Satyam.com>
+Cc: Asheesh Laroia <asheesh@asheesh.org>, reiserfs-list@namesys.com
 
 Hello!
 
-On Fri, Oct 25, 2002 at 02:10:01PM -0500, Matt Stegman wrote:
-> I cannot resize a mounted reiserfs filesystem.  I'm trying to grow a
-> reiserfs filesystem on an LVM volume.  I've extended the volume with
-> lvextend, and resize_reiserfs -v reports "remount failed: Invalid
-> argument."  Looking in dmesg, I see "can't shrink filesystem on-line." I'm
-> using kernel 2.4.20-pre10-ac2 on Gentoo Linux, reiserfsprogs 3.6.3. I know
-> reisers supports online growing, but I don't know what I'm doing wrong.
-
-resize_reiserfs is sure that you are trying to shrink the FS.
-How did you specified new size, can you give us more info on what are you doing,
-what commands you given, and other useful info?
+   In this case you must unmount *all* filesystems mounted on that harddrive
+   then run fdisk again and do something unimportant, then write partition
+   table again and kernel will reread the information about partitions.
+   After that you can mount everything back.
 
 Bye,
     Oleg
+On Sat, Oct 26, 2002 at 02:03:41PM +0530, Narasimha_Subban wrote:
+> HI,
+>   Thanks for ur suggestions. In our requirement i shouldn't reboot the
+> system at any cost. I would appreciate any better way to do without
+> rebooting the system. 
+> 
+> Thanks and Rgds
+> Narasimha Subban K.V
+> 
+> > -----Original Message-----
+> > From:	Asheesh Laroia [SMTP:asheesh@asheesh.org]
+> > Sent:	Saturday, October 26, 2002 12:18 PM
+> > To:	Narasimha_Subban
+> > Cc:	reiserfs-list@namesys.com
+> > Subject:	Re: [reiserfs-list] Regarding the resize_reiserfs
+> > 
+> > Under Linux, you may need to restart your computer to have the new
+> > partition size show up for /dev/hd*.  (At least, I know we had to do that
+> > back in the 2.2.x days.)
+> > 
+> > So, try restarting (and I mean re-initializing the kernel, not just going
+> > to single-user mode) and trying this; that may fix it.
+> > 
+> > -- Asheesh.
+> > 
+> > On Sat, 26 Oct 2002, Narasimha_Subban wrote:
+> > 
+> > > Hi,
+> > >    I am using the reiserfs-3.6.3 version on Linux-2.4.7-10 kernel
+> > version. I
+> > > need some information on resize_reiserfs command.
+> > > I have a partition (assume /dev/hda8 with 1000 blocks) having reiserfs
+> > > filesystem.
+> > > I increased the partition size (Now /dev/hda8 with 2000 blocks) in the
+> > > partition table using the fdisk command. Now i tried to resize the
+> > > filesystem using (resize_reiserfs -s+xxM  /dev/hda8) so that increased
+> > > partition size in partition table is reflected in filesystem. The error
+> > is
+> > > as below
+> > > /dev/hda8 is of XXXXXX blocks size only with reiserfs of XXXXXX blocks
+> > size
+> > > on it. You are trying to expant reiserfs up to YYYYYY size. You probably
+> > > forgot to expand your partition size.
+> > > But i shouldnot delete the partition bcoz the contents shouldn't be
+> > lost.
+> > >    It will be great if anyone gives some ideas to make resize_reiserfs
+> > work.
+> > >
+> > >
+> > > Thanks and Rgds
+> > > Narasimha Subban K.V
+> ************************************************************************** 
+> This email (including any attachments) is intended for the sole use of the
+> intended recipient/s and may contain material that is CONFIDENTIAL AND
+> PRIVATE COMPANY INFORMATION. Any review or reliance by others or copying or
+> distribution or forwarding of any or all of the contents in this message is
+> STRICTLY PROHIBITED. If you are not the intended recipient, please contact
+> the sender by email and delete all copies; your cooperation in this regard
+> is appreciated.
+> **************************************************************************
