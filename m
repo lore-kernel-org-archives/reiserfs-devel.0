@@ -1,30 +1,30 @@
-From: encieno@mirage.org
-Subject: Re: Reiser questions on possible corruptions / sparc + scsi
-Date: Thu, 17 Jun 2004 14:00:25 -0500 (CDT)
-Message-ID: <Pine.LNX.4.60.0406171358290.29674@surreal.mirage.org>
-References: <Pine.LNX.4.60.0406171212440.28356@surreal.mirage.org>
- <200406172251.39615.vitaly@namesys.com>
+From: "David Dabbs" <david@dabbs.net>
+Subject: Reiser4 and 2.6.7?
+Date: Thu, 17 Jun 2004 19:47:19 -0500
+Message-ID: <20040618004731.8ABD5161E2@mail03.powweb.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19240-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-19242-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200406172251.39615.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
-> what do you mean 'with no luck' ? I have just tested that fix-fixable can
-> fix broken objectid map, reiserfsprogs-3.6.17. Do you run check just after
-> --fix-fixable and get the same error messages? Or you mean that such
-> errors appear again after using fs for a while?
 
-Yeah, no luck as in, when it's complete, I run a --check again, and it 
-still reports the exact same errors. The only thing I've noticed is that 
-occasionaly it will dump a few things into lost+found.
+Hello,
 
+Do the instructions at http://namesys.com/install_v4.html still apply to
+kernel 2.6.7?
 
--dave
+Are there any configure, CONFIG_REISER4_* options or incremental updates
+(e.g. http://www.namesys.com/snapshots/2004.06.14-internal.testing/)
+required for stability, etc?
+=A0
+Thanks much,
+=A0
+David
+
 
