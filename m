@@ -1,38 +1,51 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Subject: Re: More on Hard Links (was A bold idea (Re: Carrying Attributes too
- Far))
-Date: Sat, 06 Dec 2003 21:42:16 -0500 EST
-Message-ID: <5450026541-BeMail@cr593174-a>
-References: <3FD27DA3.7030309@ninja.dynup.net>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: Carrying Attributes too Far
+Date: Sat, 06 Dec 2003 21:48:41 -0500
+Sender: news <news@sea.gmane.org>
+Message-ID: <874qwds5py.fsf@uhoreg.ca>
+References: <1065247084.3f7e616c94ec9@webmail.st-andrews.ac.uk> <3FCE3716.8000509@namesys.com>
+ <1070584227.3fcfd1a3d67f4@webmail.st-andrews.ac.uk>
+ <3FD07C4D.6090401@namesys.com>
+ <1070753637.3fd267652753f@webmail.st-andrews.ac.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16270-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16271-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FD27DA3.7030309@ninja.dynup.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: David Masover <jedi@ninja.dynup.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-David Masover wrote on Sat, 06 Dec 2003 19:08:51 -0600:
-> Most of the time, rename over an existing file needs only a single 
-> deletion, and renaming over a directory is (last I checked) impossible 
-> with standard tools without removing or renaming the directory first.  
+>>>>> "Leo" == lrc1  <lrc1@st-andrews.ac.uk> writes:
 
-Correct.  But that's just a convention.  Perhaps it could be changed
-to distinguish between  move a b/  and  mv a b  where one would move
-"a" into "b" and the other would overwrite "b".
+[...]
 
-> Can we do that?  Last I checked, the file utilities (or maybe the fs 
-> itself) won't let you move a directory to a child of itself, or a child 
-> of a child of itself.
+Leo> Second, before implementing hard linking across directories you're
+                                                     ^^^^^^^^^^^
+I assume you meant "filesystems" there?
 
-Actually, if you try that with the BeOS file system I was talking
-about, it will detect the isolation of a large part of the name
-space (by doing the graph traversal) and reject the operation.  It
-could just as easily allow it (it would delete the isolated files and directories), but that would be a bad design choice for normal users.
+Leo> really going to need two-way links between directories and their
+Leo> children.
 
-- Alex
+I don't see why you would need this.  Can you explain?
+
+Leo> * You'll also need explicit file deletion and if possible weak
+Leo> non-symbolic links (..loose links).
+
+What do you mean by "loose links"/"weak non-symbolic links"?
+
+Leo> * More precisely, you'll need the call to discover the parents of a
+Leo> given file.  The actual reference from child to parent is only
+Leo> absolutely necessary for links across filesystems; on internal
+Leo> links it's basically a performance optimisation.
+
+Again, I do not see why this is needed.
+
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
