@@ -1,41 +1,34 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: ReiserFS problems
-Date: Fri, 8 Aug 2003 13:56:13 +0400
-Message-ID: <20030808095613.GB4607@namesys.com>
-References: <20030806182055.A28562@bitwizard.nl> <20030806164852.GA14719@namesys.com> <20030806191806.A31496@bitwizard.nl> <20030806172834.GA15024@namesys.com> <3F3252A4.4010104@namesys.com> <20030807181227.GA23303@matchmail.com>
+Subject: Re: Fwd: Re: Reiser FS performance thingy.
+Date: Fri, 8 Aug 2003 14:00:00 +0400
+Message-ID: <20030808100000.GC4607@namesys.com>
+References: <20030807205854.A20124@bitwizard.nl>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15243-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15244-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20030807181227.GA23303@matchmail.com>
+In-Reply-To: <20030807205854.A20124@bitwizard.nl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Fedyk <mfedyk@matchmail.com>
-Cc: Hans Reiser <reiser@namesys.com>, Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>, reiserfs-list@namesys.com, copy@harddisk-recovery.nl
+To: Rogier Wolff <R.E.Wolff@BitWizard.nl>
+Cc: reiser@namesys.com, mfedyk@matchmail.com, reiserfs-list@namesys.com, copy@harddisk-recovery.nl
 
 Hello!
 
-On Thu, Aug 07, 2003 at 11:12:27AM -0700, Mike Fedyk wrote:
-> > >Well. This is actually unfortunate, I agree. In such a case you'd better
-> > >move your reiserfs images to some other place for the time of reiserfsck 
-> > >--rebuild-tree run.
-> > or compress them.
-> But if there was at any time an uncompressed reiserfs image within the outer
-> reiserfs filesystem you're fscking, won't that screw it up too?
+On Thu, Aug 07, 2003 at 08:58:54PM +0200, Rogier Wolff wrote:
+> > OK Rogier, please search through the archive, and post the URL of your
+> > previous report.  That will be most helpful.
+> I searched my own mail archive, remembering that I got an Email
+> from someone named Hans. Do you know him? :-)
 
-Yes.
-The fs in file will be completely destroyed.
-Some stuff from it may appear in outer fs. (possibly in lost + found,
-no actual file data, just the names and directory structure).
-
-> So you can compress it, but if you uncompress it to work with it, it still
-> fscks fsck...  Right? :-/
-
-Yes.
+I am still interested in a metadata snapshot from the filesystem that
+makes slow block allocations with 2.4.20+ kernels.
+Do you still have one?
+Thank you.
 
 Bye,
     Oleg
