@@ -1,57 +1,86 @@
-From: Fong Vang <FVang@Zantaz.com>
-Subject: reiserfs errors
-Date: Mon, 8 Sep 2003 09:36:09 -0700
-Message-ID: <3F5CAFF9.9020205@zantaz.com>
+From: Roland =?iso-8859-1?q?H=E4der?= <webmaster@autoinstaller.de>
+Subject: Re: Fwd: Bad root block 0
+Date: Mon, 8 Sep 2003 18:55:53 +0200
+Message-ID: <200309081855.53308.webmaster@autoinstaller.de>
+References: <200309071446.32049.webmaster@autoinstaller.de> <200309081715.01529.webmaster@autoinstaller.de> <20030908153427.GA28885@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15595-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15596-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20030908153427.GA28885@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Could someone tell me what these error messages mean (these messages 
-appear on the console and in /var/log/messages)?
+Hello,
 
-    Aug 30 15:49:51 fongtest kernel: is_leaf: free space seems wrong: 
-level=1, nr_items=58, free_space=12 rdkey
-    Aug 30 15:49:51 fongtest kernel: vs-5150: search_by_key: invalid 
-format found in block 15395. Fsck?
-    ...
-    ...
-    Aug 30 15:49:51 fongtest kernel: vs-5150: search_by_key: invalid 
-format found in block 15395. Fsck?
-    Aug 30 15:49:51 fongtest kernel: vs-13070: reiserfs_read_inode2: i/o 
-failure occurred trying to find stat data of [6 86762 0x0 SD]
-    Aug 30 15:49:51 fongtest kernel:  [6 86779 0x0 SD]
-    ...
+> > Opps: Vanilla 2.4.21 with cryptoloop (not patched, it's compiled
+> > alone and installed into /lib/modules/2.4.21/xxxxx)
+>
+> Ah, ok.
+:-)
 
-It doesn't say which device is giving this error message.
+> What debugfs command found the metadata? Was it just plain
+> "debugreiserfs -p"? How much leaves/internal nodes were found?
 
-This is the system configuration:
+debugreiserfs /dev/loop3:
 
-    Dual 2.4 Intel Xeon Processors (on SuperMicro motherboard)
-    RedHat Linux 7.1
-    RedHat's 2.4.18-24.7.xsmp kernel
-    ReiserFS version 3.6.25
+debugreiserfs 3.6.11 (2003 www.namesys.com)
+ 
+ 
+Filesystem state: consistency is not checked after last mounting
+ 
+Reiserfs super block in block 16 on 0x703 of format 3.6 with standard journal
+Count of blocks on the device: 24492
+Number of bitmaps: 1
+Blocksize: 4096
+Free blocks (count of blocks - used [journal, bitmaps, data, reserved] blocks): 24492
+Root block: 0
+Filesystem is cleanly umounted
+Tree height: 65535
+Hash function used to sort names: "r5"
+Objectid map size 2, max 972
+Journal parameters:
+        Device [0x0]
+        Magic [0x9cdd049]
+        Size 8193 blocks (including 1 for journal header) (first block 18)
+        Max transaction length 1024 blocks
+        Max batch size 900 blocks
+        Max commit age 30
+Blocks reserved by journal: 0
+Fs state field: 0xfa02:
+        FATAL corruptions exist.
+sb_version: 2
+inode generation number: 0
+UUID: 7691903f-ec2b-4c06-9cf2-eaa545c7db77
+LABEL: Haspa-Banking
+Set flags in SB:
+        ATTRIBUTES CLEAN
 
+debugreiserfs -d /dev/loop3:
 
-Any help would be appreciated.
+debugreiserfs 3.6.11 (2003 www.namesys.com)
+ 
+Loading on-disk bitmap .. 8216 bits set - done
+super block..ok
+bitmaps..(1).. ok
+journal (from 18 to 8210)..ok
+Super block, bitmaps, journal - 8195 blocks - done, 23 blocks left
+0%....20%....40%....60%....80%....100%                           left 0, 0 /sec
+Packed 8195 blocks:
+        compessed 0
+        full blocks 8195
+                leaves with broken block head 0
+                corrupted leaves 0
+                internals 0
+                descriptors 0
+data packed with ratio 1.00
 
+Hope this is enougth?
 
+Roland
 
-
-This e-mail has been captured and archived by the ZANTAZ Digital Safe(tm)
-service.  For more information, visit us at www.zantaz.com. 
-IMPORTANT: This electronic mail message is intended only for the use of the
-individual or entity to which it is addressed and may contain information
-that is privileged, confidential or exempt from disclosure under applicable
-law.  If the reader of this message is not the intended recipient, or the
-employee or agent responsible for delivering this message to the intended
-recipient, you are hereby notified that any dissemination, distribution or
-copying of this communication is strictly prohibited.  If you have received
-this communication in error, please notify the sender immediately by
-telephone or directly reply to the original message(s) sent.  Thank you.
