@@ -1,52 +1,59 @@
 From: "Lamont R. Peterson" <lamont@gurulabs.com>
-Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary
-	additional namespace to ReiserFS
-Date: Fri, 07 May 2004 11:29:43 -0600
-Message-ID: <1083950982.2985.24.camel@wraith.lrp.advansoft.us>
-References: <1082750045.12989.199.camel@watt.suse.com>
-	 <408D3FEE.1030603@namesys.com> <20040426203314.A6973@infradead.org>
-	 <408E986F.90506@namesys.com> <20040427183400.A20221@infradead.org>
-	 <408E9F42.2080804@namesys.com>  <40927B6C.9020600@slaphack.com>
+Subject: Re: 2 Terabyte install
+Date: Fri, 07 May 2004 11:38:34 -0600
+Message-ID: <1083951514.2985.28.camel@wraith.lrp.advansoft.us>
+References: <409AC2FF.7080800@lindows.com>
+	 <1083917932.14089.281.camel@tribesman.namesys.com>
+	 <409BB690.6030604@namesys.com>  <409BBDC9.3030809@lindows.com>
 Reply-To: lamont@gurulabs.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-GCyJiCvkw7ADhUtMNrZ+"
-Return-path: <reiserfs-list-return-18540-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-0Ch1uQEXQC4hKYqDyFNn"
+Return-path: <reiserfs-list-return-18541-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40927B6C.9020600@slaphack.com>
+In-Reply-To: <409BBDC9.3030809@lindows.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+To: Reiserfs mail-list <Reiserfs-List@namesys.com>
 
---=-GCyJiCvkw7ADhUtMNrZ+
+--=-0Ch1uQEXQC4hKYqDyFNn
 Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2004-04-30 at 10:14, David Masover wrote:
-[SNIP]
-> I haven't run any benchmarks against "real" databases like mysql, but if
-> we want to talk about what V4 obsoletes, it obsoletes things which
-> haven't even been developed/released yet (WinFS on Longhorn).
+On Fri, 2004-05-07 at 10:48, Clifford Beshers wrote:
+> Thanks Hans, but no need.  I found the page in the FAQ about three=20
+> minutes after I posted.  I get so used to google finding me the right=20
+> things, I occasionally forget to just go to the place I know should have=20
+> the answers.
 
-Microsoft has publicly postponed WinFS to the next version of Windows
-past Longhorn, which is not scheduled for release until 2010.
+I know how you feel.  You are not alone in this :-).
+
+> So far, I know that sfdisk choked on creating the partition, but that=20
+> fdisk succeeded.  After that the install proceeded normally, but the=20
+> system didn't reboot.  I have to go get details on why, but my guessis=20
+> either lilo or a missing module in the initrd.
+
+I have found sfdisk to be less than useful, most of the time.  Though I
+have not tried it with a 2TB device before, I was not surprised by this,
+at all.
+[SNIP]
 --=20
 Lamont R. Peterson <lamont@gurulabs.com>
 Senior Instructor
 Guru Labs, L.C. http://www.GuruLabs.com/
 
---=-GCyJiCvkw7ADhUtMNrZ+
+--=-0Ch1uQEXQC4hKYqDyFNn
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.3 (GNU/Linux)
 
-iD8DBQBAm8eGRK8Q4zt1QRURAgR4AKCW9jwPZ1JSLMqgbzF4sjKsJprmkgCgnTQV
-G4IbIRc7in/Sv+B0n7Umvsk=
-=k1Mh
+iD8DBQBAm8maRK8Q4zt1QRURAqwvAJ4oayH6vg7Mgv4OrppDKata+wDmxwCg2VQz
+YeTnTEaxOCSfSKWsG87sAww=
+=4wf3
 -----END PGP SIGNATURE-----
 
---=-GCyJiCvkw7ADhUtMNrZ+--
+--=-0Ch1uQEXQC4hKYqDyFNn--
 
