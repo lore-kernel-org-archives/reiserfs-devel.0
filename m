@@ -1,57 +1,66 @@
-From: "Rudy L. Zijlstra" <rudy@edsons.demon.nl>
-Subject: Re: implementing reiserfs in C++ for a new OS
-Date: Wed, 11 Aug 2004 11:55:01 +0200
-Message-ID: <4119ECF5.4060605@edsons.demon.nl>
-References: <71d3364904080706112e72fb6b@mail.gmail.com> <20040809172437.GP1284@nysv.org> <71d3364904080922267e8c14af@mail.gmail.com> <200408101312.48888.reiserfs-list@quinnh.org> <4119273E.1040104@namesys.com> <20040810211951.GU1284@nysv.org> <41194690.5050908@namesys.com> <1365645117.20040811065416@tnonline.net> <20040811073959.GV1284@nysv.org> <4119D468.8080104@futuretg.com> <20040811090033.GX1284@nysv.org> <4119EA9B.7090503@futuretg.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output error"
+Date: Wed, 11 Aug 2004 14:03:57 +0400
+Message-ID: <4119EF0D.7030907@namesys.com>
+References: <20040810212733.4BA8315C56@mail03.powweb.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20179-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20180-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4119EA9B.7090503@futuretg.com>
+In-Reply-To: <20040810212733.4BA8315C56@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
-Cc: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Dabbs <david@dabbs.net>
+Cc: 'Alex Zarochentsev' <zam@namesys.com>, 'Hans Reiser' <reiser@namesys.com>, 'ReiserFS List' <reiserfs-list@namesys.com>
 
-Dr. Giovanni A. Orlando wrote:
+Hello
 
-> Markus T=F6rnqvist wrote:
->
->> On Wed, Aug 11, 2004 at 10:10:16AM +0200, Dr. Giovanni A. Orlando wrote:
->> =20
+David Dabbs wrote:
+> 
+>>-----Original Message-----
+>>From: Alex Zarochentsev [mailto:zam@namesys.com]
+>>Sent: Tuesday, August 10, 2004 4:07 PM
+>>To: David Dabbs
+>>Cc: 'Hans Reiser'; 'ReiserFS List'
+>>Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output
+>>error"
 >>
->>>> The reason Bell got his product pushed to the market was that he
->>>> could patent it first.
->>>>    =20
->>>
->>> False.
->>>  =20
+>>On Tue, Aug 10, 2004 at 04:06:24PM -0500, David Dabbs wrote:
 >>
+>>>I have been running benchmarks with SYNC=off, as the mongo page
+>>>recommends against doing so. In configs where SYNC=ON we would
+>>>omit the syncs/waits, yes?
 >>
->> Why then?
+>>not sure. metadata need to be synched still.
 >>
->> Meucci did not have enough money to push it?
->> So Meucci had bad luck, that's life, unfortunately.
->> =20
->>
-> Meucci open the file for copyright before Bell, but seems it is=20
-> necessary to renew each year.
->
-> Therefore, he don't renew.
->
-> The word "inventor" in the US, means generally "rich". This have=20
-> another sense outside America, or
-> for immigrant people.
->
->
-Aren't the two of you confusing copyright and patents? In my shortened=20
-laymen terms, a copyright is about the expression, a patent about the=20
-idea (and the expressions of it).
+>>Alex.
+> 
+> 
+> Saw following recently on LKML re. ext3. Does r4 O_SYNC not sync metadata?
+> 
 
-Cheers,
+It does. Well, it should.
 
-Rudy
+>  
+>>From Theodore Ts'o
+> Subject Re: ext3 and SPEC SFS Run rules. 
+> 
+> On Mon, Jul 26, 2004 at 10:12:01AM +0100, Tigran Aivazian wrote:
+> 
+>>On Mon, 26 Jul 2004, Andrew Morton wrote:
+>>
+>>>ext3 should be fully syncing data and metadata for both fsync()
+>>>and O_SYNC writes in all three journalling modes.  
+>>>If not, that's a big bug.
+> 
+> 
+> David
+> 
+> 
+> 
+> 
+
 
