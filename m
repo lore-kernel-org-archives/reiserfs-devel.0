@@ -1,83 +1,59 @@
 From: Alexander Lyamin <flx@msu.ru>
-Subject: Re: Support on further bug catching and bugfixing - plus reiser4 enabled livecd
-Date: Wed, 14 Apr 2004 15:24:16 +0400
-Message-ID: <20040414112416.GA15922@alias.nmd.msu.ru>
-References: <1081894775.5464.5.camel@redeeman.linux.dk>
+Subject: Re:  viewprinting processes and process oriented permissions got funded by DARPA
+Date: Wed, 14 Apr 2004 15:37:41 +0400
+Message-ID: <20040414113741.GB15922@alias.nmd.msu.ru>
+References: <407C304F.4080804@namesys.com> <m31xmrefug.fsf@averell.firstfloor.org> <407C930D.5010407@namesys.com> <20040414022248.GA92870@colin2.muc.de>
 Reply-To: flx@msu.ru
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17923-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17924-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1081894775.5464.5.camel@redeeman.linux.dk>
+In-Reply-To: <20040414022248.GA92870@colin2.muc.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kasper Sandberg <postmaster@metanurb.dk>
-Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: Andi Kleen <ak@muc.de>
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
 
-
-Hi guys,
-basically I created (for my own joy) suse 9.0 proffesional CD1 which with some minor
-"console magic" may be used as install CD for system with reiser4.
-
-basically its 2.6.5 kernel + v4 latest snapshot + reiser4progs
-in initrd image (so you can create reiser4 partition and then point
-suse autoyast to install on it).
-
-two things that left to solve:
-
- - modularize the kernel (so it become multiplatform, and multihardware).
- - RPM'ize the kernel and put it on CD (so you can install it right out
-of autoyast installer).
-
-
-and one question needed to be answered:
-
- - what would SuSE say if we will publish this CD image.
-
-
-Wed, Apr 14, 2004 at 12:19:35AM +0200, Kasper Sandberg wrote:
+Wed, Apr 14, 2004 at 04:22:48AM +0200, Andi Kleen wrote:
+> On Tue, Apr 13, 2004 at 06:25:33PM -0700, Hans Reiser wrote:
+> > Andi Kleen wrote:
+> > 
+> > >Amazing. You managed to write all this without ever mentioning
+> > >that linux 2.6 already has per process name spaces (=views) in
+> > >form of CLONE_NS.
+> > >
+> > >-Andi
+> > Can you specify exclude *.c in them?  I think that your =views is a 
+> > simplistic statement.
 > 
-> hi Hans, and other reiser4 folks.
-> 
-> as you probably know, there is a patchset for the linux kernel thats
-> called love-sources.
-> this is a kernel tree that among other patches, focuses mainly on
-> reiser4, and general functionality.
-> 
-> we are quite many that uses reiser4, and more are to come, just waiting
-> for a thing to install with.
-> therefore i have created a gentoo livecd, it has the linux 2.6.5 kernel,
-> patched with reiser4, and the
-> tail fix.
-> 
-> as this cd is not only meant as Gentoo installation cd, i have also
-> included some common system tools.
-> to make life easier to its users.
-> 
-> we, in #love-sources, freenode believe that working closely together
-> with namesys, in the final debugging
-> of reiser4, will ensure a more determined bug catching process.
-> 
-> i have no location on the livecd yet, i dont have hosting.
-> my plan is something about bittorrent, and maybe i can find some
-> hosting. but i will have to lookup both stuff. untill then. the livecd
-> is only availiable if you contact me, either via irc, or via
-> redeeman@<nospam>metanurb.dk and then we arrange something.
-> 
-> i hope you will find it useful
-> 
-> -- 
-> Regards			  - Kasper Sandberg
-> postmaster@metanurb.dk	  - PGP-Key is available on request
-> ()  ascii ribbon campaign - against html e-mail 
-> /\                        - against microsoft attachments
+> You can add any files/directories you want (mount --bind). Excluding
+> is not directly supported. 
+>  
+> Doing it by directories is more natural though as it works with mount 
+> points. Basically it mirrors the plan9 implementation and in
+> plan9 it is extensively used. I don't know of any uses in Linux
+> so far, but the infrastructure is there in the kernel.
+
+"prior work" is bold declaration.
+idea is trivial. admit it. yet implementation is tricky.
+especially implementation that would not kill perfomance/usability.
 
 
+... there is nice english word "reinventing".
 
+> I don't doubt that your proposal is more powerful (and more complicated
+> and vapour right now), but I think you should mention prior work
+theres two kinds of vapour.
+just vapour and vapour with underlying infrastructure.
+sounds just same, but really different.
+
+> in linux and plan9 before discussing clearcase at least.
+
+n.b. just my private oppinion.
 -- 
 "the liberation loophole will make it clear.."
 lex lyamin
