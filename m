@@ -1,36 +1,48 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 02 Sep 2004 12:01:54 +0100
-Message-ID: <1094122912.4970.7.camel@localhost.localdomain>
-References: <Pine.LNX.4.44.0408261011410.27909-100000@chimarrao.boston.redhat.com>
-	 <20040901202641.GJ4455@legion.cup.hp.com>
-	 <1094118524.4842.27.camel@localhost.localdomain>
-	 <200409021313.11063.oliver@neukum.org>
+From: James Bruce <bruce@andrew.cmu.edu>
+Subject: Re: The argument for fs assistance in handling archives
+Date: Thu, 02 Sep 2004 08:50:10 -0400
+Message-ID: <41371702.8030704@andrew.cmu.edu>
+References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <20040902002431.GN31934@mail.shareable.org> <413694E6.7010606@slaphack.com> <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org> <4136A14E.9010303@slaphack.com> <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org> <4136C876.5010806@namesys.com> <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21276-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21278-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200409021313.11063.oliver@neukum.org>
+In-Reply-To: <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Oliver Neukum <oliver@neukum.org>
-Cc: Jeremy Allison <jra@samba.org>, Jamie Lokier <jamie@shareable.org>, Trond Myklebust <trond.myklebust@fys.uio.no>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, Linus Torvalds <torvalds@osdl.org>, reiser@namesys.com, hch@lst.de, Linux Filesystem Development <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Iau, 2004-09-02 at 12:13, Oliver Neukum wrote:
-> Am Donnerstag, 2. September 2004 11:48 schrieb Alan Cox:
-> > What I don't understand is the tie between Linux having such streams and
-> > Windows doing it for Samba to work. Netatalk has always handle this for
-> > Macintosh and portably. Presumably any Samba support would need to
-> > handle OS's without wacky files for portability too ?
-> 
-> Can you do an atomic rename of all streams without kernel support?
+Linus Torvalds wrote:
 
-That depends how SAMBA chooses to handle the problem internally and how
-it chooses to store the data. The netatalk people have atomicity from
-the view of clients but not from the unix fs internal view.
+>...
+>But _my_ point is, no user program is going to take _advantage_ of
+>anything that only one filesystem on one system offers.
+>
+>So there's no point.
+>
+>It's much saner (from _any_ app standpoint) to roll their own database in 
+>user space - that way it just works.
+>
+>In other words, nobody is really ever going to take advantage of this. 
+>This is _not_ how technical advanncement happens. The way you get people 
+>to take advantage of something is to have a nice gradual ramp-up, not a 
+>sudden new feature that they can't realistically use.
+>...
+>
 
-Alan
+Sure, but there are plenty of existing interfaces that you could 
+emulate.  One could make a small library to use a transactional 
+filesystem to implement the Berkely DB interface (libdb) for example.  
+So on filesystems without such support your app could use the regular 
+userspace database, but on a transactional filesystem it'd just use 
+regular files, which would simplify database management and likely 
+increase performance over the userspace-only version (libdb is pretty 
+slow).  In terms of functionality it'd just be a drop-in replacement, 
+just like math libraries that use MMX/SSE when available.
+
+    - Jim Bruce
 
