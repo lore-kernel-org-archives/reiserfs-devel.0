@@ -1,33 +1,38 @@
-From: Alex Veber <vibir@012.net.il>
-Subject: ld.so error with mkfs.reiser4
-Date: Tue, 22 Apr 2003 10:54:28 +0300
-Message-ID: <200304221054.28028.vibir@012.net.il>
+From: Wolfgang Winkler <Wolfgang.Winkler@digital-concepts.at>
+Subject: Partitions corrupted - try getting original filenames
+Date: Tue, 22 Apr 2003 12:32:58 +0200
+Message-ID: <200304221232.58881.Wolfgang.Winkler@digital-concepts.at>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13750-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-13754-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
-Hi,
-Trying to run a fresh BK pulled mkfs.reiser4 I get
+Hi!
 
-Inconsistency detected by ld.so: ../sysdeps/i386/dl-machine.h: 611:
-elf_machine_rel_relative: Assertion `((reloc->r_info) & 0xff) == 8' failed!
+Yesterday our server crashed and corrupted our 2 raid partitions with=20
+reiserfs. When I do a reiserfsck --rebuild-sb and reiserfsck --rebuild-tree=
+=20
+=2DS a lot of files are deleted and the rest goes to lost+found with this=20
+inode-names.=20
 
-my system is a athlon tbird 1200, GLIBC 2.3.2 with NPTL support, GCC 3.2.2, 
-binutils 2.13.90.0.20 and kernel 2.5.67. This is the first time this sort of 
-thing happens to me.
+Is there a possibility to extract the original names of the files? Or, even=
+=20
+better, can I do something different to restore the partition without havin=
+g=20
+everything in lost+found?
 
-Thanks,
-	Alex Veber
-
-btw: Please CC me.
-
-
-
+Thanks wiwo
+=2D-=20
+Digital Concepts
+Ideen-Konzepte-L=F6sungen
+Wolfgang.Winkler@digital-concepts.com
+www.digital-concepts.com
+Mobil: +43 699 / 20 88 13 51
+B=FCro: +43 732 / 77 27 27
