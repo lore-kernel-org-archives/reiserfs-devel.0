@@ -1,50 +1,55 @@
-From: Dave Poirier <dpoirier@dsfm.mb.ca>
-Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Wed, 07 Apr 2004 13:22:20 -0500
-Message-ID: <a9e27b0360.b0360a9e27@cyberschools.ca>
+From: Chris Mason <mason@suse.com>
+Subject: Re: reiserfs v3 patches updated - Bug
+Date: Wed, 07 Apr 2004 19:58:03 -0400
+Message-ID: <1081382282.5111.9.camel@watt.suse.com>
+References: <1081210239.4994.69.camel@watt.suse.com>
+	 <200404071128.17846.christian.mayrhuber@gmx.net>
+	 <1081343236.30811.516.camel@watt.suse.com>
+	 <200404071714.39187.christian.mayrhuber@gmx.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Return-path: <reiserfs-list-return-17784-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17789-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-language: fr
-Content-Disposition: inline
+In-Reply-To: <200404071714.39187.christian.mayrhuber@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com
 
+On Wed, 2004-04-07 at 11:14, Christian Mayrhuber wrote:
+> On Wednesday 07 April 2004 15:07, you wrote:
+> > On Wed, 2004-04-07 at 05:28, Christian Mayrhuber wrote:
+> > > On Tuesday 06 April 2004 18:38, Christian Mayrhuber wrote:
+> > > > On Tuesday 06 April 2004 02:10, Chris Mason wrote:
+> > > >
+> > > > Seem to run fine so far with
+> > >
+> > > I've to correct myself. There seems to be a problem with
+> > > install. Version: install (coreutils) 5.0.91
+> > >
+> > > install: cannot change owner of ,,/tmp/mkinitrd.18919/initrd/bin/echo" :
+> > > operation not permitted
+> > >
+> > > I can change the owner with chown without problems.
+> >
+> > Could you please strace the failing function?
+> 
+> Attached. 
+> 
+> The function is
+> chown32("/tmp/wavesearch-deb.log.bz2", -1, -1) = -1 EPERM (Operation not 
+> permitted)
+> 
+> The same install works fine on 2.6.4 + data=ordered.
+> The disk is mounted with data=ordered.
 
------ Original Message -----
-From: Hubert Chan <hubert@uhoreg.ca>
-Date: Wednesday, April 7, 2004 1:07 pm
-Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Strange stuff, we can't reproduce it here.  Are you sure you've got the
+whole patch set applied (maybe missing permission-reiserfs?)
 
-(snip!)
-> Well, I don't know exactly what Mr. Demidov was thinking, but I know
-> that one common complaint about Perl is the punctuation in front of
-> variable names.  However, for UNIX filesystems, there's a lot of
-> precedent for at least a single leading dot in filenames, so I don't
-> think it should be a problem to call it ".metas".  It is also not
-> something that would be extremely common, so it wouldn't be like
-> havinga Perl program pocked with punctuation.  (Alliteration
-> unintentional.)
-> The leading dot also flags the file as being somewhat "special" -- two
-> leading dots would flag it as being more so.  Although my own personal
-> sense of aesthetics is biased against two dots, using two dots
-> would be
-> well justified, and I personally wouldn't consider it a critical
-> issue.
-(snip!)
+Thanks for the strace, we'll have to debug this when you get back.
 
-I was thinking from a user point of view when browsing a directory structure or even simply listing files, normally files/directories starting with a single dot are hidden (by default), and in graphical modes their icons are shaded to signify they are special files/directories.
+-chris
 
-I believe it would make sense to have the "metas" folder hidden or shaded rather than always displayed, it would be less intrusive for users not requiring access to those files.
-
-Sorry for the intrusion, I'm kindof new to this list, looking forward to collaborate with you all,
-
-Dave Poirier
-Unununium Operating System
-http://unununium.org/
 
