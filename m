@@ -1,49 +1,44 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: fsck.reiser4 segfaults
-Date: Thu, 15 Jul 2004 23:26:49 +0400
-Message-ID: <200407152326.49988.vitaly@namesys.com>
-References: <200407151559.41256.kos@supportwizard.com> <200407152245.57083.kos@supportwizard.com> <200407152309.10968.vitaly@namesys.com>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: [benchmark] seek optimization
+Date: Thu, 15 Jul 2004 14:45:27 -0500
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <40F6DED7.3010009@slaphack.com>
+References: <Pine.LNX.4.21.0407152106570.16445-100000@mlf.linux.rulez.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19644-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <200407152309.10968.vitaly@namesys.com>
-Content-Disposition: inline
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.21.0407152106570.16445-100000@mlf.linux.rulez.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: kos@supportwizard.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Szakacsits Szabolcs <szaka@sienet.hu>
+Cc: Jens Axboe <axboe@suse.de>, Bryan Henderson <hbryan@us.ibm.com>, Guy <bugzilla@watkins-home.com>, linux-fsdevel@vger.kernel.org, 'Marcel Hilzinger' <mhilzinger@linuxnewmedia.de>, 'Per Olofsson' <pelle@dsv.su.se>, reiserfs-list@namesys.com
 
-On Thursday 15 July 2004 23:09, Vitaly Fertman wrote:
-> On Thursday 15 July 2004 22:45, Konstantin Sobolev wrote:
-> > On Thursday 15 July 2004 16:21, Vitaly Fertman wrote:
-> > > would you try the latest reiser4progs from
-> > > www.namesys.com/snapshots/2004.07.13-internal.testing/
-> >
-> > It worked OK but now I can't mount it :(
->
-> ahh, last internal releases of reiser4progs -- 0.5.5 you tried
-> before and the current 0.5.6 -- should be used with the last
-> autosnapshots only:
-> 	http://www.namesys.com/auto-snapshots/
-> earlier reiser4 versions do not support plugin sets. After fscking
-> the root directory got such a pset and as a result the fs cannot be
-> mounted with an old reiser4 code anymore.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-you can either build the kernel with the latest reiser4 auto-snapshot
-or get reiser4progs-0.5.4. If later, fsck.reiser4-0.5.4 should be able 
-to fix the root directory to the old format -- it has worked for my 
-test now at least.
 
-> > Unable to handle kernel NULL pointer dereference at virtual address
-> > 00000008 followed by registers dump and call trace
-> >
-> > I guess my laptop is dead until new LiveCD with fresh reiser4 snapshot
-> > that will be able to mount it..
 
--- 
-Thanks,
-Vitaly Fertman
 
+Uh oh.  Which scheduler is best for reiser4?  Advantages/disadvantages
+if said scheduler is used with some other fs (UDFfs on CDRWs, anyone?)
+
+
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iQIVAwUBQPbe13gHNmZLgCUhAQIdVw//UxiM8Y4XJC1U8h+2whMCYcDhpAsiRkqQ
+0aAn8iMzv+QzYSo6uwRCvDy7iyY3PD+Z1t7/DDkFzNsaVoEWH1lg7vE7pYH9z7Vn
+eS599CvECV10tuf+xg3j8+fJTiiK3YgcjnLqpcUDEa8YEQiXHz75IxhLRORntsyq
+tcdDW7a8nsDKpdJI2RSrQyPTKjoMDtaREamrQhFC+qLpgorQ5c48uuX7lLMvS0l2
+hc6ldI8dN9+5Sl4EtJUF304Z1Prtrqc98p1x80OhkJSqNW0JVG+8bMJ6dfiiwc3y
+rDdyaSv3HFyCBinEX0GmKyFCXpvwYPbI3D8VtBW7HkSLG0+C4Mv0T2QCtAPE4Axm
+oyj/N0qf/F3Ydb8z7IJRio80oOKfLU8pvOlLR7FkXfEbAWiFNVUXo2BQuy0O97Hh
+YgKtXzdvezdVco13/M5JKsm2ghMGK2MrzVs17nV6+b8gBQ2B7o5uQ0ZgJ2MzAD3+
+GHcSgGWOX1DEUe+oferVwaCALqsgEp1CFXyzkGzWdHsZ54psEDXKJ9iOarshYe9B
+vrutQoIrRZ7i3zUhlDR0oeWIrNXHZ9M5HqiqL0fsZhO0WYJ6ukPp5Ru8n41pa4H9
+44Ntr5bJni5Tt9BDWwmVOzGcZ+FtERL6QS6ZIZNrCMb9dhj+hnt0EJ+1/IZF+kbo
+xA+dROthMaQ=
+=H+gQ
+-----END PGP SIGNATURE-----
