@@ -1,68 +1,99 @@
-From: Soeren Sonnenburg <reiserfs@nn7.de>
+From: Heinz-Josef Claes <hjclaes@web.de>
 Subject: Re: How to build a big file server
-Date: 05 Jun 2003 12:07:27 +0200
-Message-ID: <1054807646.14700.9.camel@localhost>
+Date: 05 Jun 2003 12:13:03 +0200
+Message-ID: <1054807982.1995.56.camel@wusel.schnulli.de>
 References: <1054800852.1997.15.camel@wusel.schnulli.de>
-	 <1054806353.558.16.camel@chtephan.cs.pocnet.net>
+	 <200306051959.45126.russell@coker.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14423-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14424-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1054806353.558.16.camel@chtephan.cs.pocnet.net>
+In-Reply-To: <200306051959.45126.russell@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Russell Coker <russell@coker.com.au>
+Cc: reiserfs-list@namesys.com
 
-On Thu, 2003-06-05 at 11:45, Christophe Saout wrote:
-
+Am Don, 2003-06-05 um 11.59 schrieb Russell Coker:
+> On Thu, 5 Jun 2003 18:14, Heinz-Josef Claes wrote:
+> > Here are some questions:
+> >
 > > - I plan to build a system with IDE 250GB drives. 7 of them for raid 5
 > > and one hot spare. The OS will be on separate hardware raid 1 on smaller
 > > disks. Does anybody have experience with IDE controlers for the big
 > > disks? Is it better to use hardware raid oder software raid
 > > (performance)?
 > 
-> I'm successfully running a bunch of servers with Promise
-> Ultra100/Ultra133 controllers and software raid on it (and LVM but
-> that's another story).
+> The sonsensus of opinion on the large-ide-arrays mailing list is that 3ware 
+> controllers are the best for hardware RAID on IDE.
+> 
+> Software RAID performs better in almost all areas, however for RAID-5 the 
+> reliability of software RAID isn't as good as that of hardware RAID (NB only 
+> hardware RAID with NV-RAM write-back cache does the right thing - non-caching 
+> hardware RAID-5 is equal to software RAID-5 for reliability).
+> 
+> Why have the OS on a different device?  On all the RAID installations I've 
+> used which I regard as successful the OS has been on the same hardware.
+> 
+My question also was about hardware or software raid. If I'm using
+software raid, a hardware raid 1 for the OS is not a too bad idea.
+The other point is, that with the data (= raid 5 disks in my example),
+separated from the OS, you are more flexible in case of a hardware
+failure of the system. (I do not mean a disk failure.)
 
-iiiieeeek! I don't know how you get them running stably but here two
-ultra tx2 only caused trouble and were quickly thrown away.
-so the message is KEEP AWAY FROM PROMISE CONTROLLERS.
+> > - At this time, we plan to use reiserfs. What are the advantages /
+> > disadvantages of using the raid 1 for journaling for the (big) raid 5
+> > (performance, recovery)? The system will be heavily used with
+> > storebackup (www.sf.net/projects/storebackup) witch means that lots of
+> > hard links have to be created as fast as possible.
+> 
+> umem non-volatile RAM devices should perform best for journals.  If you use 
+> journalled-data in ReiserFS (need patches - it's not in the main kernels) and 
+> put the journal on a umem device you should get some significant performance 
+> increases - better than you get for having a separate hardware setup for the 
+> OS.  Also for 2.4.20 there are a few ReiserFS patches that you need for 
+> decent performance (which come along with the data-journalling patch).  These 
+> patches have more than doubled the performance of some of my machines.  I 
+> would expect that the SUSE kernel would include them already.
+> 
+I use SuSE 8.2. It's much faster than the SuSE kernel in 8.1, even on my
+ZIP drive at the parallel port ;)
 
-> The only problem you'll probably run into is that the PCI slots get full
-> because you should only have one hard disk per cable to get the best
-> performance.
+> Also if using a umem device you want to try and move your most volatile data 
+> to it (EG a mail spool).  A 1G umem device has space for a lot more than 
+> ReiserFS journals.
+> 
+> The write-back cache in hardware RAID seems to be no more than about 128M.  
+> This isn't much when you have sustained disk writes of 2M/s (and due to the 
+> way RAID-5 works you need to cache at least twice as much data as you are 
+> writing for small writes).
+> 
+> Finally, having more than one busy file system on the same physical device is 
+> going to hurt performance.  The OS partition won't be very busy (turn off 
+> atime, set syslogd to allow write-back caching, and give your server a decent 
+> amount of RAM and it can go for minutes without a single disk access).  If 
+> you want good performance then you don't want to be swapping at all, RAM is 
+> cheap, much cheaper than fast hard drives.
+> 
+That's true.
 
-well 6 pci slots gives you 12 disks with el cheapo controllers (hpt37x
-based ones etc...) so that is not the problem, BUT pci bus speed. I have
-a software raid5 running here with only 5 disks and on heavy disk io
-nothing else works on the PCI bus... (e.g. watching tv via pci-tv card
-is impossible then).
+> I suggest that for good performance and a reasonable price you look at a 3ware 
+> RAID controller with a single RAID-5 device comprised of 7 disks as you 
+> suggested.  Then you have a umem device for the journal of the data 
+> filesystem and for a small filesystem for volatile data.  That and plenty of 
+> RAM should solve most of the performance problems.
+> 
+Do you have experiences with serial ATA from 3ware? Is it a good idea
+not to use parallel ATA?
 
-> The only problem with that solution is that when one disk fails you'll
-> have to turn of the machine and exchange the disk, and after turning it
-> on fdisk it (I love the raid autodetection) and raidhotadd that disk
-> manually.
+> Finally, there are some kernel bugs that choke performance on big machines.  
+> 2.4.20 running with 4G of RAM and serious IO load will usually waste large 
+> amounts of CPU time on kswapd.  The kernel patch that SUSE uses solves this, 
+> also I think that 2.4.21-rc kernels may have code to address this.
 
-or use a spare and do it at night :-)
+Thanks for your responce!
 
-> I don't have enough hard disks here to play with them now, but on a raid
-> 10 configuration here (striping over two raid1 pairs of 200 GB 7200 rpm
-> disks that can do about 50MB/sec each) a cp -al takes about one minute
-> over 80.000 files/directories.
-
-the raid5 has about the same speed... reading/writing is 40-50M/s.
-rebuilding a 5*80G raid takes about an hour.
-
-Another solution would be to take these transtec external raids which
-are ide intern scsi extern. I have one (1.2TB) here and it is althoug a
-bit slower pretty reliable so far...
-
-I've had no bad experience with reiserfs on x86 hardware so far and it
-gets pretty intensively used...
-
-Soeren.
 
