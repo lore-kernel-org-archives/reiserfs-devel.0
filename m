@@ -1,67 +1,38 @@
-From: Frederick Page <fpage@thebetteros.oche.de>
-Subject: Re: r5 hash detected, unable to force r5 hash
-Date: Sun, 21 Apr 2002 22:13:41 +0200
-Message-ID: <20020421201341.GA9840@thebetteros.oche.de>
-References: <20020419185715.GA3936@thebetteros.oche.de> <20020420150339.A28989@namesys.com> <20020420190025.GA6982@thebetteros.oche.de> <20020421134801.A2257@namesys.com>
+From: Matthew Toseland <mtoseland@blueyonder.co.uk>
+Subject: Re: copying partition to partition, sector by sector, live
+Date: Mon, 22 Apr 2002 02:07:33 +0100
+Message-ID: <20020422010733.GA2379@amphibian.dyndns.org>
+References: <20020421181614.GA11239@vega.ipal.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10100-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
+Return-path: <reiserfs-list-return-10101-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <20020421134801.A2257@namesys.com>
+In-Reply-To: <20020421181614.GA11239@vega.ipal.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Phil Howard <phil-reiserfs@ipal.net>
+Cc: reiserfs-list@namesys.com
 
-Hi Oleg,
+--nFreZHaLTZJo0R7j
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Oleg Drokin wrote on Sun, Apr 21 2002:
+Ummm, LVM snapshots? (man lvcreate).
 
->You hit the kernel error that was fixed already.
+--nFreZHaLTZJo0R7j
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
-Thank you for the info. Although super.c says:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
 
-        } else if (reiserfs_r5_hash(s) && code != R5_HASH) {
-            printk("REISERFS: Error, r5 hash detected, "
-                   "unable to force r5 hash\n") ;
-            code = UNSET_HASH ;
-        }
+iD8DBQE8w2JVmlVGrEH/+qIRAsGHAJ93/gqblAcCV0Pzz+WpJNXyctJI9wCcCY5Q
+HcubrFay3Ze9B+63whGMeOw=
+=Zr8E
+-----END PGP SIGNATURE-----
 
->Seriously, you run old kernel, went into problems, and instead of
->upgrading to recommended kernel with recommended patches you just
->wrote your original letter.
-
-Please take a look at the original mail. As soon as I ran into
-problems, I followed the advice on the home-page and upgraded to
-2.4.18, it's near the bottom of my original mail. I also stated, that
-nothing changed, I did not run any buggy "official" kernel, but an
-Alan Cox one. I'm still very reluctant on running the official 2.4.18,
-since 2.4 linux has gone Windows :-/
-
->I think Linux is mostly "do/figure out it yourself" thing
-
-Yes.
-
->you are either able to solve your problems based on information
->located elsewhere, or just do not touch anything without consulting
->with knowledgeable person.
-
-I do consider myself being able to solve (most of) my own problems.
-But as you stated earlier: there are still some bugs in the kernel,
-that interact with reiserfs.
-
->If you touched something you was not sure about and it broke - bah,
->bad luck.
-
-Sure. But it did not hurt asking here, I got my data back and can now
-experiment with the "tea" hash, because the partition's main purpose
-is the files of the freedb (550000 little files in about 10
-directories). ext2 is waaaay to slow and wastes much space (2.2 GB).
-
-Thanks and kind regards
-
-Frederick
-
-
+--nFreZHaLTZJo0R7j--
