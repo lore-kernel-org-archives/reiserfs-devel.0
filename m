@@ -1,64 +1,46 @@
-From: Jamie Lokier <jamie@shareable.org>
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: silent semantic changes with reiser4
-Date: Wed, 1 Sep 2004 22:59:39 +0100
-Message-ID: <20040901215939.GK31934@mail.shareable.org>
-References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <41352279.7020307@slaphack.com> <20040901045922.GA512@elf.ucw.cz> <20040901161456.GA31934@mail.shareable.org> <20040901201824.GB11838@atrey.karlin.mff.cuni.cz>
+Date: Wed, 01 Sep 2004 18:05:03 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <87wtzdbq7k.fsf@uhoreg.ca>
+References: <Pine.LNX.4.44.0408261011410.27909-100000@chimarrao.boston.redhat.com> <200408261819.59328.vda@port.imtp.ilyichevsk.odessa.ua>
+ <1093789802.27932.41.camel@localhost.localdomain>
+ <1093804864.8723.15.camel@lade.trondhjem.org>
+ <20040829193851.GB21873@jeremy1>
+ <20040901201945.GE31934@mail.shareable.org>
+ <20040901202641.GJ4455@legion.cup.hp.com>
+ <20040901203101.GG31934@mail.shareable.org>
+ <20040901203543.GK4455@legion.cup.hp.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21232-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21233-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040901201824.GB11838@atrey.karlin.mff.cuni.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Machek <pavel@suse.cz>
-Cc: David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Pavel Machek wrote:
-> > Can I do these already using uservfs?
-> > 
-> >    cd
-> >    less foo.zip/contents/bar.c
-> 
-> less foo.zip#uzip/contents/bar.c
-> 
-> >    less /usr/portage/distfiles/perl-5.8.5.tar.gz/contents/toke.c
-> 
-> less /usr/portage/distfiles/perl-5.8.5.tar.gz#utar/contents/toke.c
->
-> >    grep -R obscure_label ~/RPMS
-> 
-> I do not think you'd want this. How would you tell grep obscure label
-> without entering archives, then? 
+>>>>> "Jeremy" == Jeremy Allison <jra@samba.org> writes:
 
-Granted, this is where we need "grep --recurse-into-files" or, more
-generally useful, a find option.
+Jeremy> Good question. It depends if the Microsoft ftp client is
+Jeremy> streams-aware, and understands the Microsoft OLE structured
+Jeremy> storage format and will do the linearisation on demand or not. I
+Jeremy> must confess I haven't tested this, as I don't ever run Windows
+Jeremy> other than on vmware sessions for Samba testing these days :-).
 
-> > No I can't.
-> 
-> > Even using the right "#" names for uservfs ('foo.zip#zip' etc.), I can
-> > only do the above with convenient paths, completion etc. if I mount
-> > my
-> 
-> Well, you can... or at least I had version somewhere that
-> automagically prepended /overlay when file was not found. That way,
-> normal requests were fast and uservfs were used whenever it was
-> needed... At the price of little uglyness and slowing down -ENOENTs.
+Jeremy> Probably a non-Microsoft ftp client would lose part of the word
+Jeremy> doc.
 
-There you go... a kernel hook to prepend /overlay works :)
-These hook I keep mentioning, they are really very simple :)
+What about email.  If someone uses a non-MS mail client, it'll lose
+part of the Word doc?  Does that mean nobody can email me Word docs any
+more?   <pause>  Wait a sec, that's a good thing! ;-)
 
-> > So all I am asking for is a facility to auto-mount with
-> > file-as-directory, and the ability for a userspace daemon to be
-> > notified of regular file modifications synchronously.  Both can be
-> > added later, once file-as-directory and moveable mounts are
-> 
-> If the userspace daemon is synchronously notified of file
-> modification... will not that lead to very ugly deadlocks?
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
-Not if it's written properly.
-
--- Jamie
