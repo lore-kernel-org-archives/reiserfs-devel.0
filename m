@@ -1,27 +1,32 @@
 From: Pierre Abbat <phma@webjockey.net>
-Subject: Re: OT: BEYYa ZAMcMoT TuRzf mEF
-Date: Fri, 28 Mar 2003 20:14:41 -0500
-Message-ID: <200303282014.42001.phma@webjockey.net>
-References: <200303281913.23239.phma@webjockey.net> <200303290032.h2T0WwFD019119@turing-police.cc.vt.edu>
+Subject: Proposal for keying encrypted filesystem
+Date: Fri, 28 Mar 2003 20:26:23 -0500
+Message-ID: <200303282026.23543.phma@webjockey.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13418-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13419-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200303290032.h2T0WwFD019119@turing-police.cc.vt.edu>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-On Friday 28 March 2003 19:32, Valdis.Kletnieks@vt.edu wrote:
-> Probably 8859-1 or -whatever-is-cyrillic chars with the high order bit set
-> and then smashed off to 7bit..
+Each file has a four-byte key ID in its inode and is encrypted with a longer 
+key. (One way to make these keys is to hash a passphrase with SHA1 and use 
+four bytes for the key ID and the rest for the key.) Each process may hold 
+any number of credentials consisting of the key ID and the key. When a 
+process attempts to open an encrypted file, the kernel checks whether it or 
+any of its ancestors has a credential that matches the file's key ID.
 
-Neither ISO-8859 nor KOI would produce a mishmash of case. One would produce 
-inverted case, and one would produce readable text.
+A utility called reiserkey is used to set and unset these keys. It can set or 
+unset the key in itself or any of its ancestors running under the same uid, 
+or if it's running as root, in any of its ancestors. reiserkey -a n sets the 
+key in the nth ancestor; reiserkey -p n sets the key in process n. The 
+default is -a 1; if reiserkey is run from a shell script, this sets the key 
+in the shell script. To set it system-wide, use -p 1.
 
 phma
 -- 
