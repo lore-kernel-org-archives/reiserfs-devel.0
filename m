@@ -1,30 +1,27 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Sat, 15 May 2004 14:10:10 +0300
-Message-ID: <20040515111010.GI1232@nysv.org>
-References: <20040329185901.62166.qmail@web25008.mail.ukl.yahoo.com> <406885F1.9040409@mrs.umn.edu> <40A587FF.30103@namesys.com> <40A520DB.4080200@lindows.com>
+From: carlos@fisica.ufpr.br (Carlos Carvalho)
+Subject: Re: "df -i" support
+Date: Sat, 15 May 2004 13:28:58 -0300
+Message-ID: <16550.17738.922150.577886@hoggar.fisica.ufpr.br>
+References: <20040513093432.52d3d7a3.turtle.power@wanadoo.es>
+	<1084439945.14090.6209.camel@tribesman.namesys.com>
+	<20040514173227.5b0541b5.turtle.power@wanadoo.es>
+	<200405141655.i4EGtrAT007250@turing-police.cc.vt.edu>
+	<20040514194040.22389128.turtle.power@wanadoo.es>
+	<1084557009.3263.7.camel@localhost.localdomain>
+	<20040514202627.18ddc7b2.turtle.power@wanadoo.es>
+	<16549.4325.245161.553231@laputa.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18712-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18715-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <40A520DB.4080200@lindows.com>
+In-Reply-To: <16549.4325.245161.553231@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Clifford Beshers <clifford.beshers@lindows.com>
-Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
+To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-On Fri, May 14, 2004 at 12:41:15PM -0700, Clifford Beshers wrote:
->I'm not sure if @ is a good choice or not, but I don't think it would 
->actually cause trouble syntactically, because everything expecting 
->hostnames looks for a colon.
-
-This has been discussed. There is the mailer that uses an @-named
-symlink to the current message. Can't remember which one.
-
--- 
-mjt
-
+The number of files can be obtained from the quota control as well.
+It's more complicated to extract the number but gives more detailed
+user information.
