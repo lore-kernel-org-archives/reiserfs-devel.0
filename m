@@ -1,16 +1,17 @@
 From: David Masover <jedi@ninja.dynup.net>
-Subject: Re: A bold idea (Re: Carrying Attributes too Far)
-Date: Fri, 05 Dec 2003 19:38:27 -0600
-Message-ID: <3FD13313.9010506@ninja.dynup.net>
-References: <1065247084.3f7e616c94ec9@webmail.st-andrews.ac.uk> <3FCE3716.8000509@namesys.com> <1070584227.3fcfd1a3d67f4@webmail.st-andrews.ac.uk> <3FD00272.7040607@ninja.dynup.net> <1070617453.5605.13.camel@schlappix.schnulli.de> <3FD08F73.4070404@ninja.dynup.net> <87zne7xltp.fsf@uhoreg.ca>
+Subject: Garbage collection for files (was Re: More on Hard Links (was A bold
+ idea (Re: Carrying Attributes too Far)))
+Date: Fri, 05 Dec 2003 19:50:45 -0600
+Message-ID: <3FD135F5.804@ninja.dynup.net>
+References: <2342084747-BeMail@cr593174-a>	<3FD0912C.1090700@ninja.dynup.net>	<16336.37772.88198.217245@laputa.namesys.com>	<3FD0AB30.6060305@namesys.com> <16336.45022.572929.274859@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16257-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16258-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <87zne7xltp.fsf@uhoreg.ca>
+In-Reply-To: <16336.45022.572929.274859@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
@@ -18,66 +19,75 @@ To: reiserfs-list@namesys.com
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Hubert Chan wrote:
 
->>>>>>"David" == David Masover <jedi@ninja.dynup.net> writes:
->>>>>>            
->>>>>>
+I will step aside and let the smart people figure this out.  Only one 
+real suggestion -- most directories will not have loops.  I'm not sure 
+how, but I'd imagine it's possible to use refcounts there and other 
+forms of garbage collection elsewhere.  I felt my refcount-based idea 
+was clean and cool-looking, but I have had approximately 10-15 mins of 
+experience in this subject.
+
+Only one question -- does it work for rm -rf?
+
+Thread below:
+
+Nikita Danilov wrote:
+
+>Hans Reiser writes:
+> > Nikita Danilov wrote:
+> > 
+> > > But if multiple hard-links to the directories
+> > >are allowed, file system is an arbitrary graph. It makes little sense to
+> > >try to stretch reference counting to work in this situation. There are
+> > >much more efficient forms of garbage collection for this.
+> > >
+> > >Nikita.
+> > >
+> > >
+> > >  
+> > >
+> > Educate us, I am curious.
 >
->[...]
+>http://citeseer.nj.nec.com/jones03garbage.html is a recent bibliography
+>in this subject, containing more than 20000 references. I am afraid this
+>is little too much for a brief description. But basically, instead of
+>reclaiming garbage when "last reference" goes out, collectors typically
+>run periodically trying to find unreachable objects. Common way to do so
+>is to find -reachable- ones, and then to declare the rest
+>unreachable. Also, do avoid scanning the whole heap^Wfile system,
+>objects are segregated into "generations", and allocation is tuned so
+>that there are no references from object older generation to younger
+>one. Some smart techniques (like colored pointers) are used to avoid
+>garbage collection to proceed concurrently with mutators. And so
+>on. Large field for an experimentation.
 >
->David> Now, why would I use separate filesystems in the first place?
->David> Two reasons: performance and security.  Right now, it's a lot
->David> easier to have /var be a certain sized partition rather than
->David> trying to enforce disk quotas. ...
+> > 
+> > -- 
+> > Hans
+> > 
 >
->There's more to security and good administration than just disk quotas.
->You can have different partitions mounted read-only.[1] You have
+>Nikita.
+>
+> > 
 >  
 >
-And how is that different than chmod -x?  Root can remount a partition 
-writable just as easily as chmod'ing a file, unless the partition is 
-something like iso9660.
 
->different mount attributes such as nodev, nosuid, noexec.  You may even
->want to take advantage of the fact that you can't hardlink across
->partitions (you don't want users to be able to hardlink programs from
->/usr/bin).  Separate partitions also allows you to easily reinstall by
->  
->
-Why not?  (Naive question -- I can't see any problem here.)
-
->blowing away your root partition (after copying your /etc), e.g. if
->your system gets compromised.  And so forth.
->  
->
-There are many ways of doing this, including:  copy to a network server, 
-make a temporary partition (after resizing the main one), burning a CD, etc.
-
->[1] This presents another problem to hardlinking across partitions.
->What if you try to hardlink a file from a read-only partition onto a
->read-write partition (or vice versa)?  A hardlink is supposed to be
->  
->
-I argued not for hardlinking across partitions, but for improving 
-flexibility and raw speed to where none of the usual reasons for having 
-multiple partitions (or for hardlinking across partitions) matters.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.3 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBP9EzFQisZLIF6uqOAQLvfRAAmzFz71o9ur9nfysFutnEoEY1sD5s8KQh
-Jyc1BqK2skLKs5RNZJbKJ3AsGnkdZ/ABR265k99Bt/CKkM+KuNy8gqsG6Y6qwNFA
-gWYbeXgkhm0ql9ih0VQ/+exm9AhLL2/DzgEf6ND7yYCFxnfxqmH6uGAQxq64yIU+
-G64+JtoIbALODSv4a29VPDIjXfgEr5YZFFIDjw0tMX/KV98n419CVJUfg9qeIWN8
-Oi2XJQzXVyOXx9kt2YxXVOPqLUh5Vody6GC5vckO5CNut6G4FdolW8V6NkJo8A3t
-Yeg995M1v4B4h6a4HjH/OrYOllAB7zmyMw5v4gZI0MSmChLwpLnwXuxPsyaLcOJy
-PVFtZMrHgk/fmH3Ur0HxaJxofiToZOOsh+Bc9vGcKQek8B/+zzeakEu+L6hwYdsq
-FCC1BryKz7guRBgXexr1DCalYH7w+NrZsELUYt6ocrBuB48dJMSVoqcLcW4DPgHD
-fZZozuWDT2Psnn8NGlGhQFs/CapSyMwaWjcUtFxKrRu8hc1ZfXS18tUoFtlVLctP
-1NQ43MhQ8VME0Rg6k54CXNjq7boi2Zn3pvtupWIN+ZE5ZmzCZTVP97Yz0X25cBYF
-YquetvWZLQrsI6nFSZYrLmUe7IsMgNuJa7CZZdxhPrl0Zpnx+2Y6RGnHMYEsvolv
-cEDSKfEpdmY=
-=n7JO
+iQIVAwUBP9E1+QisZLIF6uqOAQJ4VQ/+MZizcUlDJ2Zbb7zteUP8upK3f9a2Z/qY
+hEtWrTAqP2/zpLf68GR0OkfPnwe7g3h9NYvCWSJ5j3tt3lr7TS/PcPoMWn8cv+7j
+wQoJRwI6rVb7FkCuOu/s8qSMG47dww/3Ao1jc2eFngT16ghIgDPEBBL0DwwqSbsG
+NrNevs1yDqO+qRlsoHbe6oqz+55BEtwc/APnBKHzXj8dDNevv5PEx7WwH12A+tRe
+etMxXygc7OTqk7miH00OTH5+afnJEgF0JiWwMDUsDiYTT54Cl4a9E+nUzm0kp5SI
+R0VYHgNkxTQ692SPE2Zdl+xSVaPq9N9byfDZdTO4jfSp9zx3PA6HfG+Lc30o0IAZ
+VGKfV3+wV0jnIE/Ek3pFDv1Xn1gAtM3htfIvFZSvysEC4Km0UkvIOgsQyZByh3fq
+Dzop9pjmM/CMLfu/Z+4APQ4j8Mt3nCSvEPnTgrp8D7ptpkq/1nhCzS1Ej42+XQZ+
+h/7pyE15wrC8EyVUgVQMDZa1n6R1k+w/VvsNhMqfuTaTfXJBWaiq0Chj6QMfX6nx
+kBRjzudFkh5Sg2Kf7vwwv+aH/wd0F953BnFq6Ceg2FAV6Mt308aHI9JnBSP08uIz
+my/p1fLxhwyEZ1MzBJC97rQivRa2WUXrDwnC6duHbTg8A913tiW5lXIvEIooarOR
+IFSQ2vdEzio=
+=X4Fs
 -----END PGP SIGNATURE-----
 
