@@ -1,30 +1,36 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: How to build a big file server
-Date: Thu, 5 Jun 2003 12:46:43 +0400
-Message-ID: <20030605084643.GA5869@namesys.com>
-References: <1054800852.1997.15.camel@wusel.schnulli.de> <20030605083301.GB4849@vestdata.no>
+Subject: Re: [Fwd: Re: How to build a big file server]
+Date: Thu, 5 Jun 2003 12:48:01 +0400
+Message-ID: <20030605084801.GB5869@namesys.com>
+References: <1054802685.1997.29.camel@wusel.schnulli.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14411-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14412-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20030605083301.GB4849@vestdata.no>
+In-Reply-To: <1054802685.1997.29.camel@wusel.schnulli.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ragnar Kj?rstad <reiserfs@ragnark.vestdata.no>
-Cc: Heinz-Josef Claes <hjclaes@web.de>, reiserfs-list@namesys.com
+To: Heinz-Josef Claes <hjclaes@web.de>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
 Hello!
 
-On Thu, Jun 05, 2003 at 10:33:01AM +0200, Ragnar Kj?rstad wrote:
- 
-> My guess is that the writes to the journal _would_ be a problem, and
-> that writing them to a seperate (RAID1)-device would help significantly.
+On Thu, Jun 05, 2003 at 10:44:47AM +0200, Heinz-Josef Claes wrote:
+> > > - BTW: I'm using a ZIP drive on the parallel port with reiserfs. Does it
+> > > make sense to put the journal for the ZIP drive on the hard disk of the
+> > > laptop?
+> > NO. If you ever plan to use a zip disk with external journal on another
+> > PC, you are completely out of luck.
+> I do not want to use it on another PC, that would be ok. But if I would
+> do this, is only the journal lost or the whole disk?
 
-And with journal on battery-backed RAM it would be even faster ;)
+Journal will be lost (and if it was not empty, then some metadat corruption might
+be present too).
+Also you will need to create another journal on another PC.
 
 Bye,
-    Oleg
+    Olege
