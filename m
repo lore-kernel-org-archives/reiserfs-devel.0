@@ -1,71 +1,50 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Re: [PATCH] new data logging and quota patches available
-Date: Thu, 06 Mar 2003 05:03:26 +0100
-Message-ID: <3E66C88E.40207@mb.tu-ilmenau.de>
-References: <1045870331.16048.325.camel@tiny.suse.com>	 <200302221341.23799.Dieter.Nuetzel@hamburg.de>	 <1045926958.16042.366.camel@tiny.suse.com>	 <1045930351.16042.377.camel@tiny.suse.com>	 <3E581AD7.30000@mb.tu-ilmenau.de>  <3E581E07.3050407@mb.tu-ilmenau.de>	 <1046020695.16048.409.camel@tiny.suse.com>	 <3E59787F.2030009@mb.tu-ilmenau.de>	 <1046095718.16047.440.camel@tiny.suse.com>	 <3E5A5A31.5070008@mb.tu-ilmenau.de> <3E5A9A7A.5040806@mb.tu-ilmenau.de>	 <3E5F196C.1040001@mb.tu-ilmenau.de>	 <1046439149.2163.21.camel@tiny.suse.com>	 <3E66B73D.6030008@mb.tu-ilmenau.de> <1046922372.2161.275.camel@tiny.suse.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: free space seems wrong...
+Date: Thu, 6 Mar 2003 09:47:05 +0300
+Message-ID: <20030306094705.A5417@namesys.com>
+References: <1046886804.23752.25.camel@calculon>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13107-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13108-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <1046886804.23752.25.camel@calculon>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Soeren Sonnenburg <reiserfs@nn7.de>
+Cc: reiserfs-list@namesys.com
 
-On 03/06/2003 04:46 AM, Chris Mason wrote:
-> On Wed, 2003-03-05 at 21:49, Manuel Krause wrote:
-> 
->>On 02/28/2003 02:32 PM, Chris Mason wrote:
->>
->>>>>Comparing data-logging-35 vs data-logging-36+kinoded-9+dirty_inode I 
->>>>>have a performance increase of 2.5% for the new data-logging. Like you 
->>>>>say above.
->>>>
->>>>But... though you were right with 2.4.21 data-logging performance 
->>>>relations: --> What was causing that performance loss between 2.4.19 
->>>>+data-logging and now???
->>>>
->>>
->>>Did you exclude your changing dataset as a potential cause?  If not I'm
->>>very interested in the details.
->>
->>Please, tell me how to respond to this question!
->>
-> 
-> Sorry, I wasn't clear.  It sounds like you've got two very different
-> copy speeds on two possibly different data sets.  The problem will be
-> significantly easier to debug and discuss if you boot a 2.4.19 + data
-> logging kernel, do the test, and then do the test again on a 2.4.21-pre
-> data logging kernel.
-> 
-> I know this is a pain, I want to reduce the number of variables in
-> place.
-> 
+Hello!
 
-Yes. That all is why I asked. I'll try to find and retest the old things 
-tomorrow night. The new setup will go fine with 2.4.21-pre5 ? Or is this 
-one more step of irritation? Mmm. Or should I wait for the patches you 
-announce below?
+On Wed, Mar 05, 2003 at 06:53:24PM +0100, Soeren Sonnenburg wrote:
 
-Thank you, good "night",
+> is_leaf: free space seems wrong: level=1, nr_items=7, free_space=3468 rdkey 
+> vs-5150: search_by_key: invalid format found in block 4792161. Fsck?
+> is_leaf: free space seems wrong: level=1, nr_items=7, free_space=3468 rdkey 
+> vs-5150: search_by_key: invalid format found in block 4792161. Fsck?
+> when accessing a certain directory using du and on the prompt
+> Input/output error.
 
-Manuel
+This is a sign of filesystem corruption,
 
-> 
->>P.S.: Do the data-logging things go to namesys now? (Me, watching Olegs 
->>recent engagements...)
-> 
-> Oleg is making patches for the -ac series.  He also merged a special set
-> for Philippe, they pay namesys for support ;-)
+> The disk was full somewhen but now is only half full.
 
-My additional thanks go to Philippe ! :-)))
+This "free space" relates to in-tree nodes, not general filesystem situation.
 
-> I'm remerging my work over the last week and should have a new set of
-> patches out soon.
-> 
-> -chris
+> Should I be worried / is it necessary to fix the filesystem ?
 
+Sure, you'd better run reiserfsck and follow it's advices.
+Be sure to use latest reiserfsprogs.
 
+> The problem is, this filesystem is like 2-3 years old and was converted
+> to reiserfs 3.6 maybe a year ago...but as it is a production environment
+> I would not want to put it down at all...
+
+You can run reiserfs --check even on readonly mounted fs just to get idea
+on how broken it is and then to plan what to do next.
+
+Bye,
+    Oleg
