@@ -1,62 +1,78 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: v3 logging speedups for 2.6
-Date: Thu, 11 Dec 2003 13:42:39 -0500
-Message-ID: <1071168158.10849.131.camel@tiny.suse.com>
-References: <1071166228.11147.122.camel@tiny.suse.com>
-	 <200312111930.49910.Dieter.Nuetzel@hamburg.de>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Errors requiring --rebuild-tree in 2.4.23
+Date: Thu, 11 Dec 2003 22:20:56 +0300
+Message-ID: <3FD8C398.6040903@namesys.com>
+References: <br9soe$h0h$1@sea.gmane.org> <1071152521.11147.88.camel@tiny.suse.com> <bra6s2$9ug$1@sea.gmane.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16336-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16337-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200312111930.49910.Dieter.Nuetzel@hamburg.de>
+In-Reply-To: <bra6s2$9ug$1@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jens Benecke <jens@spamfreemail.de>
+Cc: reiserfs-list@namesys.com, mason <mason@suse.com>
 
-On Thu, 2003-12-11 at 13:30, Dieter N=FCtzel wrote:
-> Am Donnerstag, 11. Dezember 2003 19:10 schrieb Chris Mason:
-> > Hello everyone,
-> >
-> > This is part one of the data logging port to 2.6, it includes all the
-> > cleanups and journal performance fixes.  Basically, it's everything
-> > except the data=3Djournal and data=3Dordered changes.
-> >
-> > The 2.6 merge has a few new things as well, I've changed things around
-> > so that metadata and log blocks will go onto the system dirty lists.
-> > This should make it easier to improve log performance, since most of the
-> > work will be done outside the journal locks.
-> >
-> > The code works for me, but should be considered highly experimental.  In
-> > general, it is significantly faster than vanilla 2.6.0-test11, I've done
-> > tests with dbench, iozone, synctest and a few others.  streaming writes
-> > didn't see much improvement (they were already at disk speeds), but most
-> > other tests did.
-> >
-> > Anyway, for the truly daring among you:
-> >
-> > ftp.suse.com/pub/people/mason/patches/data-logging/experimental/2.6.0-t=
-est11
-> >
-> > The more bug reports I get now, the faster I'll be able to stabilize
-> > things.  Get the latest reiserfsck and check your disks after each use.
->=20
-> Chris,
->=20
-> with which kernel should I start on my SuSE 9.0?
-> A special SuSE 2.6.0-test11 + data logging?
-> Or plane native? --- There are such much patches in SuSE kernels...
+Jens Benecke wrote:
 
-For the moment you can only try it on vanilla 2.6.0-test11.   The suse
-2.6 rpms have acls/xattrs and the new logging stuff won't apply.
+>Chris Mason wrote:
+>
+>  
+>
+>>On Thu, 2003-12-11 at 08:51, Jens Benecke wrote:
+>>    
+>>
+>>>Hi,
+>>>
+>>>I posted earlier about quota problems. WE updated to 2.4.23 b ecause of
+>>>the logging patches because some power failures made our /home partition
+>>>spew out these: (QUESTIONS at the end of the mail)
+>>>      
+>>>
+>>Sorry, before we got to the questions, what was the order of the events
+>>above?
+>>    
+>>
+>
+>Oops. I guess I was a bit too confused myself. :)
+>
+>1. Errors on /home in syslog, cron jobs running wild with i/o failures
+>     system kept running for a couple days because nobody was there 
+>     to fix it, though
+>     Those errors were probably caused by power outages and 
+>     a non-data-logging ReiserFS kernel.
+>  
+>
+errors like this are not due to a lack of data-logging.
 
-Jeff and I will fix that when the logging merge is really complete.  At
-the rate I'm going, that should be by the end of next week, this part of
-the merge was the really tricky bits.
+Dec  1 06:26:05 artus kernel: is_leaf: item location seems wrong (second
+one): *3.6* [113366 113466 0x1 DIRECT], item_len 280, item_location 1216,
+free_space(entry_count) 65535
 
--chris
+>2. Backup what's left of /home to firewire harddisk.
+>3. Update to 2.4.23 with Chris' patches for data logging/quota
+>4. Repartition hda2..4 (was needed anyway for drbd), 
+>     reformat new /home (drbd), restore /home on drbd device
+>5. crash of the server overnight, reboot (don't know why yet)
+>6. couldn't reboot because root partition was totally b0rken
+>7. reiserfsck --rebuild-tree under Knoppix, killed a couple files
+>8. still running Knoppix, secondary server took over and is running now
+>
+>btw: Is there a "reiserfs stress test" kind of thing to make sure a
+>configuration works before sending it two time zones away for production? I
+>plan on doing that in the next couple weeks. =;)
+>Would bonnie++ accomplish this or are there better tests?
+>
+>
+>
+>  
+>
+
+
+-- 
+Hans
 
 
