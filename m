@@ -1,148 +1,47 @@
 From: jbingemer@oilgear.de
-Subject: WG: Re: Problems with reiserfsck 3.6.9 (Newbie)
-Date: Mon, 21 Jul 2003 12:58:38 +0200
-Message-ID: <OFFBF9C9C6.A022DDD4-ONC1256D6A.003C338F-C1256D6A.003C5F91@oilgear.de>
+Subject: Antwort: Re: Antwort: Re: Problems with reiserfsck 3.6.9 (Newbie)
+Date: Mon, 21 Jul 2003 13:10:11 +0200
+Message-ID: <OF6EB751F0.4C39EA74-ONC1256D6A.003D01A3-C1256D6A.003D6E1E@oilgear.de>
+References: <1058785102.30131.3.camel@haron.namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; boundary="=_alternative 003C5F90C1256D6A_="
-Return-path: <reiserfs-list-return-14975-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; boundary="=_alternative 003D6E1DC1256D6A_="
+Return-path: <reiserfs-list-return-14976-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1058785102.30131.3.camel@haron.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-list@namesys.com
 
---=_alternative 003C5F90C1256D6A_=
+--=_alternative 003D6E1DC1256D6A_=
 Content-Type: text/plain; charset="US-ASCII"
 
-Hello, 
+Yury Umanets <umka@namesys.com> schrieb am 21.07.2003 12:58:23:
 
 
-here are the informations:
+> > Jul  6 02:01:47 bi kernel: is_tree_node: node level 17747 does not
+> > match to the expected one 1
+> > Jul  6 02:01:47 bi kernel: vs-5150: search_by_key: invalid format
+> > found in block 42752. Fsck?
+> Yes, this definitely means, that you have corrupted some formatted nodes
+> on your reiserfs partition.
 
-System: SuSE Linux 8.1 (i386)
-Kernel:  2.4.19-64GB-SMP
-Hardware:
-Mainboard - Gigabyte GA686 BX-D with two P3 450 Mhz
-Memory - 256 MB
-Harddisk - Connected to a Promise UDMA 100 Controller
+This does not sound very good.
 
-I checked the system log for every entry from July 20th, and there are no 
-messages about errors, but on the beginning of July there are some 
-messages like:
 
-Jul  6 02:01:47 bi kernel: is_tree_node: node level 17747 does not match 
-to the expected one 1
-Jul  6 02:01:47 bi kernel: vs-5150: search_by_key: invalid format found in 
-block 42752. Fsck?
+> > Just to be sure nothing is missing, I uploaded the output of dmesg to
+> > http://www.baetmaen.de/dmsg.tar.gz (6kb)
+> Sorry, but we need system log. Something like /var/log/messages. 
 
-But none of these messages appeared after July 6th.
+Oh, I wanted to give you some information on the hardware in case I missed 
+something.
 
-Just to be sure nothing is missing, I uploaded the output of dmesg to 
-http://www.baetmaen.de/dmsg.tar.gz (6kb)
+OK here is the syslog, I have no idea on how to sort out relevant 
+information, sorry about that.
 
-Best regards
-Joerg Bingemer
+http://www.baetmaen.de/syslog.tar.gz (40K)
 
-Yury Umanets <umka@namesys.com> schrieb am 21.07.2003 12:15:48:
-
-> On Mon, 2003-07-21 at 13:47, jbingemer@oilgear.de wrote:
-> > Hello,
-> > 
-> > I've problems with my big harddisk in my home server.
-> > 
-> > The problem started with accessing an CD image stored on that disk 
-over a 
-> > NFS share. The same directory is also shared over SAMBA for my 2000 
-box. 
-> > (The Disk is a Samsung 120GB drive, half a year old).
-> > 
-> > The server just stopped responding when I tried to burn this image (at 
-
-> > 176MB the buffer turned empty and cdrdao stopped responding). I was 
-not 
-> > able to access the samba share or the nfs share of that volume any 
-more.
-> > 
-> > So I restarted the server, unmounted the volume and started 
-reiserfsck. 
-> > The output told me to run --rebuild-tree, so I tried this, but @ Block 
-
-> > 25268519 it just stopped doing anything for 2h. I wasn't able to 
-restart 
-> > the server anymore, so I switched it off yesterday evening.
-> > 
-> > This morning I installed the newest reiserfsprogs from your Homepage 
-and 
-> > tried the --rebuild-tree again. It hangs again, but on a different 
-block. 
-> > Here is the output of 'reiserfsck /dev/hde5 --rebuild-tree' :
-> > 
-> > --SNIP--
-> > bi:~ # reiserfsck /dev/hde5 --rebuild-tree
-> > 
-> > <-------------reiserfsck, 2003------------->
-> > reiserfsprogs 3.6.9
-> > 
-> >   *************************************************************
-> >   ** Do not  run  the  program  with  --rebuild-tree  unless **
-> >   ** something is broken and MAKE A BACKUP  before using it. **
-> >   ** If you have bad sectors on a drive  it is usually a bad **
-> >   ** idea to continue using it. Then you probably should get **
-> >   ** a working hard drive, copy the file system from the bad **
-> >   ** drive  to the good one -- dd_rescue is  a good tool for **
-> >   ** that -- and only then run this program.                 **
-> >   ** If you are using the latest reiserfsprogs and  it fails **
-> >   ** please  email bug reports to reiserfs-list@namesys.com, **
-> >   ** providing  as  much  information  as  possible --  your **
-> >   ** hardware,  kernel,  patches,  settings,  all reiserfsck **
-> >   ** messages  (including version),  the reiserfsck logfile, **
-> >   ** check  the  syslog file  for  any  related information. **
-> >   ** If you would like advice on using this program, support **
-> >   ** is available  for $25 at  www.namesys.com/support.html. **
-> >   *************************************************************
-> > 
-> > Will rebuild the filesystem (/dev/hde5) tree
-> > Will put log info to 'stdout'
-> > 
-> > Do you want to run this program?[N/Yes] (note need to type Yes if you 
-> > do):Yes
-> > Replaying journal..
-> > 0 transactions replayed
-> > ###########
-> > reiserfsck --rebuild-tree started at Mon Jul 21 10:23:02 2003
-> > ###########
-> > 
-> > Pass 0:
-> > ####### Pass 0 #######
-> > Loading on-disk bitmap .. ok, 25871679 blocks marked used
-> > Skipping 9105 blocks (super block, journal, bitmaps) 25862574 blocks 
-will 
-> > be read
-> > 0%block 42751: The number of items (38) is incorrect, should be (5) - 
-> > corrected
-> > block 42751: The free space (36) is incorrect, should be (3508) - 
-> > corrected
-> > pass0: block 42751, item 1: The file [26801 41683] has the wrong mode 
-> > (?rwxrw-r-x), corrected to (-rwxrw-r-x)
-> > pass0: block 42751, item 3: The file [26801 41687] has the wrong mode 
-> > (c---rw-rw-), corrected to (----rw-rw-)
-> >                                                      left 25269095, 
-6381 
-> > /sec
-> > --SNIP--
-> > 
-> > Is there anything I can try or did I make a mistake ?
-> Hello,
-> 
-> First of all we need some information. And exactly: what kernel do you
-> running? and do you have some messages in your system log about
-> unability to read some sectors due to IO error?
-> > 
-> > Best regards
-> > Joerg Bingemer
-> -- 
-> We're flying high, we're watching the world passes by...
-> 
-
---=_alternative 003C5F90C1256D6A_=--
+Regards
+joerg
+--=_alternative 003D6E1DC1256D6A_=--
