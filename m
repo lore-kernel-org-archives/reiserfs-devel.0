@@ -1,63 +1,63 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Wed, 01 Sep 2004 22:46:59 -0500
-Message-ID: <413697B3.4050502@slaphack.com>
-References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <20040902002431.GN31934@mail.shareable.org> <Pine.LNX.4.58.0409011800270.2295@ppc970.osdl.org>
+Subject: Re: silent semantic changes with reiser4
+Date: Wed, 01 Sep 2004 22:52:49 -0500
+Message-ID: <41369911.1030503@slaphack.com>
+References: <20040829191044.GA10090@thundrix.ch>	 <3247172997-BeMail@cr593174-a> <20040831081528.GA14371@thundrix.ch>	 <20040901201608.GD31934@mail.shareable.org> <1094070506.28509.24.camel@shaggy.austin.ibm.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21246-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21247-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.58.0409011800270.2295@ppc970.osdl.org>
+In-Reply-To: <1094070506.28509.24.camel@shaggy.austin.ibm.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Dave Kleikamp <shaggy@austin.ibm.com>
+Cc: Jamie Lokier <jamie@shareable.org>, Tonnerre <tonnerre@thundrix.ch>, "Alexander G. M. Smith" <agmsmith@rogers.com>, spam@tnonline.net, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, Linus Torvalds <torvalds@osdl.org>, reiser@namesys.com, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com, vonbrand@inf.utfsm.cl
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Linus Torvalds wrote:
-[...]
-| This is why I want to have stronger reasons for real VFS support. I see
-| the Samba argument, and I buy that one, if only because it has such a high
-| consistency requirement (let's face it, people expect more guarantees of
-| their file servers than of most other things). But on the other hand, the
-| Samba guys apparently _are_ happy with "openat()", so they don't
-| necessarily need any normal namespace stuff.
+Dave Kleikamp wrote:
+| On Wed, 2004-09-01 at 15:16, Jamie Lokier wrote:
+|
+|>(For example, if I edit an HTML file which is encoded in iso-8859-1,
+|>change it to utf-8 and indicate that in a META element, and save it
+|>under the same name, the full content-type should change from
+|>"text/html; charset=iso-8859-1" to "text/html; charset=utf-8".)
+|>
+|>I don't see how you can do that without kernel support.
+|
+|
+| Your html editor should do that.
 
-I see your Samba and I raise you an NFS.
+Isn't the kernel faced with the same issues here as userland programs
+without meta attribute support?  How do you read the META element before
+you know the encoding?
 
-For that matter, how about every distributed FS to come.
+Is there property attached to each file descriptor that defines what
+encoding it's using?  I know there is in perl, but I doubt it's at the
+OS level.  If it is at the OS level, the kernel should use that.
 
-All it needs to do is support transactions (which most try to anyway)
-and files-as-directories to support _all_ future FS features transparently.
+Otherwise I agree -- the html editor should do that.  Although I'd hate
+to see Vim patched to do that.  Maybe save it as file/utf8?
 
-It might ask the fs for a non-recursive serialization/dump of a file
-rather than just reading it directly -- this makes things like named
-pipes and device nodes sane.  This would be optional and only supported
-when the client and server both have support for the same fs -- other,
-more hack-ish things would be needed to support Samba.
-
-It would also use the best caching mechanism discussed earlier.  (I'm
-not yet arrogant enough to insist that mine is the best.)
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQTaXs3gHNmZLgCUhAQIG5g/+MEHPsNK41goKI8yJPwKdigbRbrfGf3sj
-xpFGR15/DAW4b4qxr1BIt5hyAQoFLq13POM/lCV12hKp1RSo9atuKim6DyUhOX1c
-0xUK6efY0ew+mvYHKaJUgwrD8BV7XYaTS+5y/4wbpgdOlPHsx06lHVh90KtAUAE7
-vdsFWRAgHT/g34rSRBJfHAaom/7VtDce25roLrB3CNI2v+9tERYee+xkBPoy2+Y1
-5tLgoInDi05z7bUu0lCJ+Rq2LCHuKGmgInI86gul5BfHlO3j2zYnJ5VYT8QR6onM
-iThiPzFrrpoXEjQRRo7E4WHQCD/2BGXzQdS78JzwTt1B8oNrIkZR9/tcv6keNzr6
-fyUhtQef5TZJtwpON1gZPqraBUiTDUdWHJSXGLB5+78vMy+bS7gHqXN5DR049+7b
-urQFtnZBhi3zY8cpT0hTPnW2PcGnDuGMt9qUiFBn8Hx9Tkti6y+7Jl42a40jgBAW
-z4hSHPKVzu8d/qeBapVHtqIkaLTdim1JnmFY+SCiiuCPEMOELDxw+o/rcwTIls9s
-3TBJ5lqL/+84W8JU6t1CpzEgF+dRhPSBNyrG5msVixT7cmB2GO87rLBfchM1cotq
-lBMyuDwmwO6RanwkEvOV//3wsG8POMw5f2Gx8eljqU9uzSpYcKry+Is2ZVmHKJ/1
-24eqEXIB24Y=
-=GSMf
+iQIVAwUBQTaZEHgHNmZLgCUhAQLmHxAAif/DzI3HDPPixHEJURTW8LMSBYi+RhgC
+Rsldit8G6N9Sx1wKReSZqoTI27OYUodVcXjgtSYbzr9w0dw2ifuLaU87550nCcwl
+p/3ivEiPww3Pqc6PgN2PpAhYT2b/xnZrWJSU3g9siGp9D4APBZ4yxz8GO9N8pAgg
+a/juHtLCNCtPKD8/IdjCYRn9W7Ka7uWF7cEHp58Yyj0R70EG4ljIRbJRhqKGT2Ew
+6EIFcieStmuveA2Kna4Od4gAXIE5CrKEO8whRvplOsvHAlsZMp0zkgUGiKzBzQU0
+K7ICkddo3Bnos1pc7BQ/7F595tNCNREqnlvCkWGVifLPdcyujULZ/U/OAVdD7zSJ
+AvhZs5A1/hPFYTEqrzSNsYteDsTSc0TJsiWS8gx+qyGzOzaVMAOIuf86jQGKzBT7
+WSYutU4itrE1QYvdJ9XXeess8m9aSY1A9G1EkhtWmaRDq/SuCpSf01cNjZZVu52v
+Q1h6faCC9JTHM1pDPMBlMjeQOnhrhv/AuhrZnOfXmrODK06l+ZhQ/LSUTRAZwzkv
+UV6PSc+Pbq7ijYrurH4attPI8IkelzExhIPHziGQCTMnIN3pXSr6RT2zEtDG7LNR
+98MHtKkuNC8bsuYFhyqGRbMLr9GANiByzu3rh1ccHuMbB42FR8/Z7X6UCDVZtP80
+Bp4g6WwVG6A=
+=xNYt
 -----END PGP SIGNATURE-----
