@@ -1,86 +1,125 @@
-From: Nikita Danilov <nikita@clusterfs.com>
-Subject: Re: reiser4 oops on unmount
-Date: Wed, 25 Aug 2004 17:14:59 +0400
-Message-ID: <16684.37075.119565.392623@gargle.gargle.HOWL>
-References: <1093361937.12138.3263.camel@watt.suse.com>
+From: Milan =?ISO-8859-1?Q?Holz=E4pfel?= <lists@mjh.name>
+Subject: reiser4: traverse_tree (fs/reiser4/search.c:755)[nikita-1481]:
+ WARNING: Too many iterations
+Date: Wed, 25 Aug 2004 15:29:21 +0200
+Sender: news <news@sea.gmane.org>
+Message-ID: <20040825152921.6cfa3493.lists@mjh.name>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20501-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20502-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1093361937.12138.3263.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-Chris Mason writes:
- > Hello everyone,
- > 
- > I was testing reiser4 in the suse kernel and hit an oops during
- > unmount.  This could be a problem with my local merge, but I wanted to
- > send here in case it is obvious.
- > 
- > The workload was create a few files and dirs, delete them, create 1
- > million files in a single dir, sync, unmount.
- > 
- > Unable to handle kernel NULL pointer dereference at virtual address 00000010
- >  printing eip:
- > f8a1826c
- > *pde = 00000000
- > Oops: 0000 [#1]
- > SMP
- > Modules linked in: reiser4 dm_mod
- > CPU:    0
- > EIP:    0060:[<f8a1826c>]    Tainted: G  U
- > EFLAGS: 00010246   (2.6.8-0-testing)
- > EIP is at safe_link_locality+0xc/0x30 [reiser4]
- > eax: 00000000   ebx: 00000000   ecx: 00000000   edx: 00000000
- > esi: d6a83340   edi: d6a83340   ebp: e65f7c94   esp: e65f7c90
- > ds: 007b   es: 007b   ss: 0068
- > Process umount (pid: 13346, threadinfo=e65f6000 task=f755d2d0)
- > Stack: 00000000 e65f7cb4 f8a182be e65f7cbc 00000000 d6a83340 04271204 d6a83340
- >        d6a83340 e65f7ce4 f8a184a6 00000000 00000000 00000000 00000000 00000000
- >        00000000 00000000 00000000 04271204 00000000 e65f7d20 f8a19cae 00000000
- > Call Trace:
- >  [<c0106ed6>] show_stack+0xa6/0xb0
- >  [<c0107057>] show_registers+0x157/0x1c0
- >  [<c01071ec>] die+0x9c/0x160
- >  [<c011726c>] do_page_fault+0x3cc/0x53b
- >  [<c0106b4d>] error_code+0x2d/0x38
- >  [<f8a182be>] build_link_key+0x2e/0xa0 [reiser4]
- >  [<f8a184a6>] safe_link_del+0x16/0x30 [reiser4]
- >  [<f8a19cae>] common_object_delete_no_reserve+0xee/0x120 [reiser4]
- >  [<f8a19d3e>] delete_object+0x5e/0x70 [reiser4]
- >  [<f8a101e7>] reiser4_delete_inode+0x67/0x70 [reiser4]
- >  [<f8a1a67b>] delete_inode_common+0xdb/0x2c0 [reiser4]
- >  [<f8a1a8af>] drop_common+0x3f/0x50 [reiser4]
- >  [<f8a0ffb9>] reiser4_drop_inode+0x19/0x30 [reiser4]
- >  [<c0180716>] iput+0x56/0x80
- >  [<c017bc1f>] dput+0x8f/0x320
- >  [<c017c5bd>] prune_dcache+0x20d/0x370
- >  [<c017ccbd>] shrink_dcache_parent+0xd/0x20
- >  [<c0168bda>] generic_shutdown_super+0x2a/0x260
- >  [<c0169f2a>] kill_block_super+0x1a/0x40
- >  [<c0168a08>] deactivate_super+0x68/0xa0
- >  [<c01835a9>] sys_umount+0x59/0x80
- >  [<c01835e9>] sys_oldumount+0x19/0x20
- >  [<c0106071>] sysenter_past_esp+0x52/0x71
- > Code: 8b 48 10 8b 81 50 ff ff ff 8b 49 20 89 c2 31 c0 09 da 09 c8
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-This looks very familiar to me. I think I discussed this with Vladimir a
-couple of weeks ago. Problem is that ->delete_inode() does a truncate
-after root dentry was destroyed. This shouldn't happen, because there
-should be no reiser4 dentries/inodes pending deletion at this
-point. Confusingly enough, I see that deactivate_super() calls
-kill_block_super() directly... There used to be reiser4_kill_super()
-that called kill_block_super() after making sure all inodes/dentries are
-removed.
+Hello,
 
- > 
- > 
- > 
+I've started building a new gentoo system (on my new Athlon64, but since
+there is some stupid binary only driver by some even more stupid company
+as usual x86-arch) and I'd like to make heavy use of Reiser4.  These are
+my partitions:
 
-Nikita.
+| /dev/sd/c0b0t0u0p8    999M  7.7M  992M   1% /mnt/gentoo
+| /dev/sd/c0b0t0u0p12   130M   13K  123M   1% /mnt/gentoo/boot
+| /dev/sd/c1b0t0u0p16   254M  112K  254M   1% /mnt/gentoo/home
+| /dev/sd/c1b0t0u0p8    999M  148K  999M   1% /mnt/gentoo/opt
+| /dev/sd/c1b0t0u0p15   157M  108K  157M   1% /mnt/gentoo/root
+| /dev/sd/c0b0t0u0p13   127M  108K  127M   1% /mnt/gentoo/tmp
+| /dev/sd/c0b0t0u0p11   3.9G   33M  3.9G   1% /mnt/gentoo/usr
+| /dev/sd/c1b0t0u0p11   3.0G  477M  2.5G  16% /mnt/gentoo/usr/src/pkg
+| /dev/sd/c1b0t0u0p12   246M  112K  246M   1% /mnt/gentoo/usr/portage
+| /dev/sd/c0b0t0u0p10   4.9G  296K  4.9G   1% /mnt/gentoo/usr/portage/pkg
+| /dev/sd/c1b0t0u0p10   4.9G  296K  4.9G   1% /mnt/gentoo/usr/portage/tmp
+| /dev/sd/c1b0t0u0p13   187M  644K  186M   1% /mnt/gentoo/var
+| /dev/sd/c1b0t0u0p14   403M  124K  403M   1% /mnt/gentoo/var/tmp
+
+/boot is ext2, everything else Reiser4.  Yesterday I unpacked a stage1
+tarball, and did a bootstrap without any problems in sight.  (this means
+gcc, glibc, binutils and a few others things were compiled and installed
+and used afterwards.)
+
+Today I wanted to go on with emerge system (which builds installs all the u=
+sual
+systems utilites, like grep, make etc) but I ran into the following
+problem:  CPU usage goes up to 100% (system) and I get the following in
+the syslog: (this is with all debugging options except the memory copy
+one enabled)
+
+| Aug 25 13:30:22 bombax reiser4[portageq(7214)]: traverse_tree (fs/reiser4=
+/search.c:755)[nikita-1481]:
+| Aug 25 13:30:22 bombax code: -2 at fs/reiser4/search.c:1305
+| Aug 25 13:30:22 bombax WARNING: Too many iterations: 128
+| Aug 25 13:30:22 bombax key: (11473:4:6c642e736f2e63:0:12b28:1000)[file bo=
+dy]
+| Aug 25 13:30:22 bombax reiser4[portageq(7214)]: traverse_tree (fs/reiser4=
+/search.c:755)[nikita-1481]:
+| Aug 25 13:30:22 bombax code: -2 at fs/reiser4/search.c:1305
+| Aug 25 13:30:22 bombax WARNING: Too many iterations: 256
+| Aug 25 13:30:22 bombax key: (11473:4:6c642e736f2e63:0:12b28:1000)[file bo=
+dy]
+| Aug 25 13:30:22 bombax reiser4[portageq(7214)]: traverse_tree (fs/reiser4=
+/search.c:755)[nikita-1481]:
+| Aug 25 13:30:22 bombax code: -2 at fs/reiser4/search.c:1305
+| Aug 25 13:30:22 bombax WARNING: Too many iterations: 512
+| Aug 25 13:30:22 bombax key: (11473:4:6c642e736f2e63:0:12b28:1000)[file bo=
+dy]
+
+(it continues until I press the reset button - killing the process hangs
+the kill process and shutdown wants to sync, which hangs too. In addtion
+ps aux hangs when printing all the processes when this has happended.)
+
+Kernel have been a few now, amongst others 2.6.8.1-mm4, fsck after the
+last reset with this kernel shows all partitions are consistent.
+
+So far I have replaced the /usr/portage and the /var filesystem with
+reiserfs v3.6, but no change.  (/usr/portage is where gentoo's portage
+system stores its ebuilds which describe how packages are built, and in
+/var there is some cache of portage consisting of many small files)  I
+also re-mkfs-d /usr and still the same.
+
+Now I have no idea what to, also since the message doesn't give me any
+pointer which fs it occured on.=20
+
+Since I'll leave Friday for two weeks and I'd like to have that machine
+up and running ASAP (school starts again after these two weeks...)  I
+think I'll stick with ReiserFS v3.6 for now.  (but fortunately all these
+partitions are on two brand-new 120 GB disks so I'll have plenty of
+space to move things around...)=20
+
+One more note:  I'm not using gentoo's usual "stable" branch here but a
+more or less unofficial profile which uses gcc 3.4 (which isn't marked
+as stable for x86) and some version of glibc 2.3.4 which isn't marked
+stable for x86 so far (a few olders are) so this is not a usual
+environment, but I don't think any user space app should be able to
+cause such a kind of a lock, shouldn't it?
+
+Regards,
+Milan
+
+- --=20
+
+                   Milan Holz=E4pfel alias jagdfalke alias jag
+
+Meine eMail-Adresse ist hier zu              You can find my eMail-address
+                      finden:                here:
+Kontaktinfos sowie                                   Contact infos as well =
+as
+=D6ff GnuPG-Schl=FCssel    <URL:http://con.mjh.name/>    GnuPG Public Key
+GnuPG Fingerabdruck     4C8A 5FAF 5D32 6125 89D1     GnuPG Fingerprint
+                        0CE5 DB0C AF4F 6583 7966
+
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQFBLJQx2wyvT2WDeWYRAgr8AJ0Wmyf97mUjkXW+WmHev9pfYlrDVQCfZXo8
+zDZhNZovsfUQ3W3CdX5jMSI=3D
+=3D7t1F
+-----END PGP SIGNATURE-----
+
