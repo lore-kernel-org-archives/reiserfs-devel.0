@@ -1,128 +1,66 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Bugs on big endian systems
-Date: Thu, 04 Mar 2004 03:21:46 +0300
-Message-ID: <4046769A.9030806@namesys.com>
-References: <4045D745.8070204@sysgo.com> <40464E3F.4030809@suse.com>
+From: Ryan Underwood <nemesis-lists@icequake.net>
+Subject: Re: Problems with reiserfs when start OpenAFS 1.2.11-fc1 Segmentation fault with kernel 2.4.22-1.2174.nptl
+Date: Wed, 3 Mar 2004 18:28:04 -0600
+Message-ID: <20040304002804.GA5722@dbz.icequake.net>
+References: <20040304005117.M99283@soltis.cc> <20040304005913.M1858@soltis.cc>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17062-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
+Return-path: <reiserfs-list-return-17063-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40464E3F.4030809@suse.com>
+Content-Disposition: inline
+In-Reply-To: <20040304005913.M1858@soltis.cc>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Pavel Bartusek <pba@sysgo.com>, Reiserfs-List@namesys.com
+To: reiserfs-list@namesys.com
 
-Thanks Jeff and Pavel.  Nikita, send Pavel the usual agreement, and 
-we'll send to Linus unless someone finds an objection.  Edward, read 
-this patch, test it on alpha,
- and approve it.  Elena, test it on x86.
-
-Hans
-
-Jeff Mahoney wrote:
-
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
->
->
-> Pavel -
->
-> Thanks. The good news is that the filesystem wouldn't have panicked
-> because of the SB_ONDISK_RESERVED_FOR_JOURNAL(s) bug. The bad news is
-> that it wouldn't have mattered because the filesystem could never have
-> been mounted anyway due to the journal header version mismatch.
->
-> I'm surprised nobody's ever tried to mount a relocated journal enabled
-> filesystem on a big endian machine.
->
-> Hans -
->
-> This bug appears in both 2.4 and 2.6 kernels and should be fixed in both.
->
-> - -Jeff
->
-> Pavel Bartusek wrote:
-> | Hi list,
-> |
-> | The attached patch will fix the bugs which appears only on big endian
-> | systems in the kernel 2.4.25.
-> |
-> | regards
-> |
-> |
-> | Pavel Bartusek
-> | Software Engineering
-> |
-> | SYSGO Real-Time Solutions AG | Embedded and Real-Time Software
-> | Lise-Meitner-Str.15
-> | 89081 Ulm, Germany
-> |
-> | Voice: +49-731-9533-1295
-> | FAX:   +49-731-94683-10
-> | www.sysgo.com | www.elinos.com | www.osek.de
-> |
-> |
-> | 
-> ------------------------------------------------------------------------
-> |
-> | --- linux.ori/fs/reiserfs/journal.c    Mon Aug 25 13:44:43 2003
-> | +++ linux/fs/reiserfs/journal.c    Wed Mar  3 13:26:23 2004
-> | @@ -2094,7 +2094,7 @@
-> |
-> |      /* make sure that journal matches to the super block */
-> |      if (is_reiserfs_jr(rs) &&
-> | -        jh->jh_journal.jp_journal_magic != sb_jp_journal_magic(rs)) {
-> | +        le32_to_cpu (jh->jh_journal.jp_journal_magic) !=
-> sb_jp_journal_magic(rs)) {
-> |      char jname[ 32 ];
-> |      char fname[ 32 ];
-> |     
-> | @@ -2102,7 +2102,7 @@
-> |      strcpy( fname, kdevname( p_s_sb->s_dev ) );
-> |      printk("journal-460: journal header magic %x (device %s) does 
-> not "
-> |             "match magic found in super block %x (device %s)\n",
-> | -        jh->jh_journal.jp_journal_magic, jname,
-> | +        le32_to_cpu (jh->jh_journal.jp_journal_magic), jname,
-> |          sb_jp_journal_magic(rs), fname);
-> |      brelse (bhjh);
-> |      goto free_and_return;
-> | --- linux.ori/include/linux/reiserfs_fs.h    Mon Aug 25 13:44:44 2003
-> | +++ linux/include/linux/reiserfs_fs.h    Wed Mar  3 13:25:45 2004
-> | @@ -219,7 +219,7 @@
-> |  #define SB_ONDISK_JOURNAL_DEVICE(s) \
-> |           le32_to_cpu ((SB_ONDISK_JP(s)->jp_journal_dev))
-> |  #define SB_ONDISK_RESERVED_FOR_JOURNAL(s) \
-> | -         le32_to_cpu
-> ((SB_V1_DISK_SUPER_BLOCK(s)->s_reserved_for_journal))
-> | +         le16_to_cpu
-> ((SB_V1_DISK_SUPER_BLOCK(s)->s_reserved_for_journal))
-> |
-> |  #define is_block_in_log_or_reserved_area(s, block) \
-> |           block >= SB_JOURNAL_1st_RESERVED_BLOCK(s) \
->
->
-> - --
-> Jeff Mahoney
-> SuSE Labs
-> jeffm@suse.com
-> -----BEGIN PGP SIGNATURE-----
-> Version: GnuPG v1.2.2 (GNU/Linux)
-> Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
->
-> iD8DBQFARk4/LPWxlyuTD7IRAkIZAJ0VR8aYna2n3EK/BfZ2SBwKOe9OPQCfYzDH
-> c8D4gSwDzr93HivtH2FMx5M=
-> =Jj1U
-> -----END PGP SIGNATURE-----
->
->
+--UlVJffcvxoiEqYs2
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 
--- 
-Hans
+On Wed, Mar 03, 2004 at 07:00:06PM -0600, jds wrote:
+> Hi: Iam compile OpenAFS 1.2.11-fc1 with kernel 2.4.22-1.2174.nptl is OK
+>=20
+> problems with reiserfs 3.6 and Fedora Core 1
+> the problems is when start the client AFS recive the messages:
+>=20
+> [root@angelinux modload]# service afs start
+> Found libafs-2.4.22-1.2174.nptl-i686.o from SymTable... Loading...
+> Starting AFS services.....
+> /etc/init.d/afs: line 305:  3300 Segmentation fault      /usr/vice/etc/af=
+sd
+> ${AFSD_OPTIONS}
 
+You can't use the OpenAFS client on a ReiserFS filesystem.  It currently
+only supports ext2/ext3 filesystems.  If you only have reiser
+filesystems, just make a big empty file:
+# dd if=3D/dev/zero of=3D/var/afscache
+and make an ext2 filesystem on it:
+# mke2fs -F /var/afscache
+and loop-mount it wherever your afs cache needs to be.
+# mount -o loop,rw /var/afscache /usr/vice/cache
 
+You can automate this in your fstab:
+/var/afscache /usr/vice/cache ext2 defaults,loop 0 0
+
+--=20
+Ryan Underwood, <nemesis@icequake.net>
+
+--UlVJffcvxoiEqYs2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQFARngUIonHnh+67jkRAmvuAJ0QBtiwLsCDPH0KshGPsUn37Vr45QCgj5QG
+ppP63o1GyallM1autV9Hink=
+=57T/
+-----END PGP SIGNATURE-----
+
+--UlVJffcvxoiEqYs2--
