@@ -1,29 +1,50 @@
-From: Dirk Mueller <dmuell@gmx.net>
-Subject: Re: 2.4.19-pre7 / corruption on unwanted reboot
-Date: Mon, 6 May 2002 14:36:38 +0200
-Message-ID: <20020506123638.GA15023@matrix.wg>
-References: <20020504211147.GA20092@matrix.wg> <1020564448.3946.609.camel@tiny>
+From: Chris Mason <mason@suse.com>
+Subject: Re: fsync() Performance Issue
+Date: 06 May 2002 08:40:27 -0400
+Message-ID: <1020688827.3947.2087.camel@tiny>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10252-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10253-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <1020564448.3946.609.camel@tiny>
+In-Reply-To: <3CD3F76D.4000708@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: berthiaume_wayne@emc.com, reiserfs-list@namesys.com, green@namesys.com
 
-On Sam, 04 Mai 2002, Chris Mason wrote:
+On Sat, 2002-05-04 at 10:59, Hans Reiser wrote:
+>
+> So how about if you revise fsync so that it always sends data blocks to 
+> the journal not to the main disk?
 
-> Hmmm, not good at all.  Are these 3 systems IDE or scsi?  Do they run
-> additional patches on top of pre7?  What kernels < pre7 have you tried
-> that didn't show this problem?
+This gets a little sticky.
 
-All IDE. The kernel that didn't show this problem was 2.4.16 (plain). No 
-additional patches on 2.4.19-pre7. 
+Once you log a block, it might be replayed after a crash.  So, you have
+to protect against corner cases like this:
+
+write(file)
+fsync(file) ; /* logs modified data blocks */
+write(file) ; /* write the same blocks without fsync */
+sync ;        /* use expects new version of the blocks on disk */
+<crash>
+
+During replay, the logged data blocks overwrite the blocks sent to disk
+via sync().
+
+This isn't hard to correct for, every time a buffer is marked dirty, you
+check the journal hash tables to see if it is replayable, and if so you
+log it instead (the 2.2.x code did this due to tails).  This translates
+to increased CPU usage for every write.
+
+I'd rather not put it back in because it adds yet another corner case to
+maintain for all time.  Most of the fsync/O_SYNC bound applications are
+just given their own partition anyway, so most users that need data
+logging need it for every write.
+
+-chris
 
 
-Dirk
+
+
