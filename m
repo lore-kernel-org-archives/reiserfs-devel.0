@@ -1,68 +1,42 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: FW: reiser4 plugin for maildir
-Date: Thu, 4 Dec 2003 13:21:53 +0300
-Message-ID: <16335.2753.106491.311055@laputa.namesys.com>
-References: <3DF9165145FACB4C96977FF650C1E90409633541@its-mail1.its.corp.gwl.com>
-	<1070483327.27597.121.camel@tiny.suse.com>
+From: Jens Benecke <jens-unibw@spamfreemail.de>
+Subject: Re: Strange errors with 2.4.22 patches (from Chris) and bonnie++
+Date: Thu, 04 Dec 2003 13:44:32 +0100
+Sender: news <news@sea.gmane.org>
+Message-ID: <bqna7g$8gg$1@sea.gmane.org>
+References: <bq8f7u$ufn$1@sea.gmane.org> <1070286549.12807.22.camel@tiny.suse.com> <bqhisl$7il$1@sea.gmane.org> <1070478784.27611.105.camel@tiny.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16222-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-16223-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1070483327.27597.121.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Chris Mason <mason@suse.com>
-Cc: "Burnes, James" <james.burnes@gwl.com>, "'reiserfs-list@namesys.com'" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-Chris Mason writes:
- > [reiser4 plugins to make mail delivery faster]
- > 
- > There are a few basic things that slow down mail servers when they talk
- > to filesystems:
- > 
- > 1) multiple threads delivering to the same directory contend for the
- > directory semaphore for creating new files
- > 
- > 2) atomic creation of an entire file
- > 
- > 3) high load leads to numerous small synchronous filesystem operations
- > when multiple threads all try to deliver at once.
- > 
- > #1 is best fixed at the VFS level, basically allowing more fine grained
- > directory locks (lustre needs this as well I think).  It could be dealt
- > with entirely inside reiser4, but this is a generic need for linux as a
- > whole I think.
+Chris Mason wrote:
 
-I don't think that i_sem issue can be resolved within file system
-back-end. For one thing, VFS (for example, open_namei()) uses i_sem to
-serialize lookups within directory that can be satisfied without going
-to the file system at all (from dcache). Releasing i_sem inside of file
-system operations will break this serialization.
+>> so... the worst-case impact on this bug is that reiserfs will report
+>> "disk full" when you still have some space available. Right? No data
+>> loss, corruption, or similar Bad Things(tm)?
+>>=20
+> Correct.  I'll have a fix available today along with a remerge of data
+> logging and quota against 2.4.23.
 
- > 
- > #2 and #3 could be dealt with in a reiser4 transaction subsystem. 
- > Basically the mail server would deliver a number of messages and trigger
- > commits at regular intervals, and reiser4 would make sure the files were
- > created atomically in the FS.  The mail server would not report the file
- > as delivered to the smtp client until the commit had completed.
- > 
- > So, I definitely think you could use reiser4 to gain significant mail
- > delivery performance.  But you probably don't need  a specific plugin
- > outside the transaction subsystems.  The obvious benefit of only using
- > the transaction systems is that you won't need to teach mail clients
- > about the reiser4 plugin.
- > 
- > There's lots of other plugin topics related to teaching the FS about
- > various file formats.  This may or may not be a good idea in some cases,
- > but it is a good place for research.  I'd start by looking at the xattr
- > interfaces and Hans' ideas for FS-as-a-database.
- > 
- > -chris
- > 
+Thank you!
+=20
+>> btw, what are the patches that SuSE uses? IIRC, SuSE ships with
+>> data-logging enabled, right?
+> SUSE ships data logging and the xattr patches, along with a few others.
 
-Nikita.
+What patches exactly?=20
+Are they available in public to be applied to a vanilla kernel?
 
- > 
+
+--=20
+Jens Benecke (jens-unibw@spamfreemail.de)
+http://www.hitchhikers.de - Europaweite kostenlose Mitfahrzentrale
+http://www.spamfreemail.de - 100% saubere Postf=E4cher - garantiert!
+http://www.rb-hosting.de - PHP ab 9? - SSH ab 19? - g=FCnstiger Traffic
+
