@@ -1,24 +1,33 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Horrible ftruncate performance
-Date: Mon, 14 Jul 2003 12:45:29 +0400
-Message-ID: <3F126DA9.3060004@namesys.com>
-References: <200307112151.05829.Dieter.Nuetzel@hamburg.de> <Pine.LNX.4.30.0307120213080.30730-100000@divine.city.tvnet.hu> <20030713125804.GB6061@namesys.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: kernel error messages
+Date: Mon, 14 Jul 2003 12:46:57 +0400
+Message-ID: <20030714084657.GA13365@namesys.com>
+References: <200307140806.14775.russell@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14925-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14926-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030713125804.GB6061@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <200307140806.14775.russell@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Oleg Drokin <green@namesys.com>
-Cc: Szakacsits Szabolcs <szaka@sienet.hu>, Dieter N?tzel <Dieter.Nuetzel@hamburg.de>, Chris Mason <mason@suse.com>, Marc-Christian Petersen <m.c.p@gmx.net>, reiserfs-list@namesys.com, Philippe Gramoull? <philippe.gramoulle@mmania.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Russell Coker <russell@coker.com.au>
+Cc: ReiserFS <reiserfs-list@namesys.com>
 
-reiser4 is the cure for this.  soon, very soon.
+Hello!
 
--- 
-Hans
+On Mon, Jul 14, 2003 at 08:06:14AM +1000, Russell Coker wrote:
+> kernel: is_tree_node: node level 35586 does not match to the expected one 1
+> kernel: vs-5150: search_by_key: invalid format found in block 107509. Fsck?
+> kernel: is_tree_node: node level 35586 does not match to the expected one 1
+> kernel: vs-5150: search_by_key: invalid format found in block 107509. Fsck?
+> Messages such as the above should include information on which file system has 
+> the error, otherwise we don't know which one to fsck...
 
+Fixed in 2.4.22-pre3
 
+Bye,
+    Oleg
