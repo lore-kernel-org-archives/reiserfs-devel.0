@@ -1,60 +1,59 @@
-From: Valdis.Kletnieks@vt.edu
+From: Edward Shishkin <edward@namesys.com>
 Subject: Re: External journals and NVRAM devices
-Date: Fri, 01 Nov 2002 15:57:42 -0500
-Message-ID: <200211012057.gA1Kvgf2001695@turing-police.cc.vt.edu>
+Date: Sat, 02 Nov 2002 00:57:56 +0300
+Sender: edward
+Message-ID: <3DC2F8E4.AD84886F@namesys.com>
 References: <20021101203805.C5E7245609B@server5.fastmail.fm>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1465480856P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11900-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11901-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Fri, 01 Nov 2002 20:38:05 GMT."
-             <20021101203805.C5E7245609B@server5.fastmail.fm> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 To: JP Howard <jh_lists@fastmail.fm>
-Cc: Edward Shishkin <edward@namesys.com>, Andreas Dilger <adilger@clusterfs.com>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Andreas Dilger <adilger@clusterfs.com>, ReiserFS List <reiserfs-list@namesys.com>, green@namesys.com
 
---==_Exmh_1465480856P
-Content-Type: text/plain; charset=us-ascii
-
-On Fri, 01 Nov 2002 20:38:05 GMT, JP Howard said:
-
+JP Howard wrote:
+> 
+> On Fri, 01 Nov 2002 17:30:18 +0300, "Edward Shishkin"
+> <edward@namesys.com> said:
+> > Yes. And the experience said that external logging brings a bit better
+> > effect for this journal mode then for other ones.
+> >
+> > > >Is there a command to show the current journal size?
+> >
+> > #debugreiserfs main_device
+> >
+> Hmmm...
+> ----
 > Blocksize: 4096
 > <...>
 > Journal parameters:
 > <...>
-> 	Size 8193 blocks (including 1 for journal header) (first block
-> 	18)
+>         Size 8193 blocks (including 1 for journal header) (first block
+>         18)
 > ----
 > 
-> So my journal is only 32k? With Ext3 I used 192MB journal in data=journal
+> So my journal is only 32k?
 
-That's 32M, not 32K.
+Yes. Standard journal can be only 32K.
 
-Note that the required size of the journal file depends in part on the maximum
-amount of data in the journal that isn't stored to permanent locations yet.
-As a result, if the journal commit process uses a "small and often" scheme,
-you'll need less journal than one that makes large commits on a rare basis.
--- 
-				Valdis Kletnieks
-				Computer Systems Senior Engineer
-				Virginia Tech
+ With Ext3 I used 192MB journal in data=journal
+> mode. Should I be using a size around that when using data=journal with
+> ReiserFS too? Why is the default so low?--is it because the data logging
+> patches don't automatically change it?
 
+Reiserfs journal size doesn't depend on journal mode. 
 
---==_Exmh_1465480856P
-Content-Type: application/pgp-signature
+> >
+> > The journal size remains the same unless you specify another one by
+> > reiserfstune utility.
+> >
+> And non-standard journal sizes don't work under 2.4, right? Or are there
+> patches for this that are reasonably stable?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.7 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQE9wurGcC3lWbTT17ARApWnAJ0QXtRVyJbxTaGbEfh05m6lCkJwMACgm3lH
-VnHn795VWjFGvp0Nr5S+ZvU=
-=6s5o
------END PGP SIGNATURE-----
-
---==_Exmh_1465480856P--
+Yes they are. Let me specify it on next week unless Oleg will do it earlier.
+Edward.
