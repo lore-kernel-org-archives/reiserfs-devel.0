@@ -1,157 +1,57 @@
 From: Spam <spam@tnonline.net>
-Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 22:44:04 +0200
-Message-ID: <1732169380.20040827224404@tnonline.net>
-References: Message from Hans Reiser <reiser@namesys.com>    of "Thu, 26 Aug
- 2004 01:31:34 MST." <412D9FE6.9050307@namesys.com>
+Subject: Re[2]: silent semantic changes with reiser4
+Date: Fri, 27 Aug 2004 22:48:28 +0200
+Message-ID: <227095222.20040827224828@tnonline.net>
+References: <412D9FE6.9050307@namesys.com>
  <200408261812.i7QICW8r002679@localhost.localdomain>
+ <20040827203216.GC1284@nysv.org>
+ <Pine.LNX.4.58.0408271335421.14196@ppc970.osdl.org>
 Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20943-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20944-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200408261812.i7QICW8r002679@localhost.localdomain>
+In-Reply-To: <Pine.LNX.4.58.0408271335421.14196@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-9"
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: =?ISO-8859-1?B?TWFya3VzIFT2cm5xdmlzdA==?= <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
 
-> Hans Reiser <reiser@namesys.com> said:
->> Andrew Morton wrote:
+> On Fri, 27 Aug 2004, Markus T=F6rnqvist wrote:
+>>=20
+>> People will say it when people stop using Linux on servers because
+>> they can integrate metadata easier in other operating systems ;)
 
-> [...]
+> Heh. Considering that WinFS seems to be delayed yet more, I don't think
+> that's a very strong argument.
 
->> > The fact that one filesystem will offer features which other
->> > filesystems do not and cannot offer makes me queasy for some reason.
+> Hell will freeze over before Microsoft does a filesystem right. Besides,
+> WinFS is likely almost in user mode anyway, ie mostly a library, rather
+> like the gnome people are already doing with nome storage.
 
-> Not me. As long as it is clearly experimental stuff that can be removed at
-> the head hacker's whim, that is. 2.7 material.
+  Yes, it is mostly in user land. But, It is still integrated with the
+  Windows  API.  This  means that normal programs that use the Windows
+  API  will  be  able to use most of the new features (like displaying
+  thumbnails, filtered views, etc when you do file operations)
 
->> Andrew, we need to compete with WinFS and Dominic Giampaolo's filesystem
->> for Apple,
+  Besides,  NTFS  is  not  that  bad. It does have both encryption and
+  compression  and a big set of ACL features that aren't in most Linux
+  filesystems today.
 
-> Says who?
+> So there's really no point in trying to push your agenda by trying to
+> scare people with MS activities. Linux kernel developers do what's right
+> because it is _right_, not because somebody else does it.
 
-  At  least  I  as  a user see the benefits largely. The workstation /
-  desktop  user has much more need for such features, than perhaps the
-  normal Linux sysadmin.
+  I  agree.  Things  should be done because they are good, not because
+  you are threatened to.
 
->>            and that means we need to put search engine and database
->> functionality into the filesystem.
+  It  is  a shame really that so many people hate Microsoft (or Apple)
+  so much they fail to see things that actually are good.
 
-> Please don't. Unix works and is extremely popular because it _doesn't_ try
-> to be smart (policy vs mechanism distinction, simple abstractions that can
-> be combined endlessly). If you add this to the filesystems, you either redo
-> _all_ userland to understand _one_ particular way of doing "smart things"
-> (which will turn out to be almost exactly the dumbest possible for some
-> uses, and then you are stuck), or get lots of shards from broken apps (and
-> users, and sysadmins).
-
-  Indeed.  But  you forget one thing. Combining lots of small userland
-  tools can actually make things more complex - at least for the user.
-
-  That said, I do not see that anyone has suggested to remove this way
-  of  working with applications.
-
-  Are the new and old features mutually exclusive?
-
->>                                     It takes 11 years of serious 
->> research to build a clean storage layer able to handle doing that.
-
-> Great! Build an experimental OS showing how to use it, and through that see
-> if the ideas hold any water _in real, day-to-day, down-to-earth, practice_.
-
-  There  are  many  uses already. It could be encryption, compression,
-  meta-data,  file streams, sorting, searching and a multitude of uses
-  and ideas that haven't been discovered yet.
-
->> Reiser4 has done that, finally.  None of the other Linux filesystems
->> have.
-
-> How come nobody before you in the almost 30 years of Unix has ever seen the
-> need for this indispensable feature?
-
-  I,  as  a  user, have for a long time. Do not drag everyone over the
-  same  edge.  Users  have  different  needs.  We  should try to be as
-  forthcoming as possible to provide the tools and options for them.
-
->>        The next major release of ReiserFS is going to be bursting with
->> semantic enhancements, because the prerequisites for them are in place
->> now.  None of the other Linux filesystems have those prerequisites.
-
-> To me that would mean that ReiserFS has no place in Linux.
-
-  Why  do  you say this? I thought Linux embraced advancements and new
-  technologies.
-
->> They won't be able to keep up with the semantic enhancements.  This
->> metafiles and file-directories stuff is actually fairly trivial stuff.
-
-> Maybe. But the question of it being of any use aren't trivially answered
-> "yes". My gut feeling is that the answer is a resounding "no", but that's
-> just me. Direcories are directories, if you want to ship directory-like
-> stuff around, use directories (or tarfiles, or whatever). Just look what
-> happened to the much, much easier stuff of splitting SUID/SGID into
-> capabilities: Nothing at all whatsoever, because they have no decent place
-> to stay in the hallowed Unix APIs. Sure, Linux is now large enough to be
-> able to _define_ APIs to follow, but even so it isn't at all easy to do so.
-
-  Exactly.  The  problem  I see in this discussion is the lack of just
-  this - APIs. Because the lack of good APIs we cannot make any larger
-  changes or bring new features because old applications will break.
-
-  I think that Linux should make new API that will completely separate
-  applications  from the storage media. This way we will not as easily
-  break  applications  when new features are developed. This should be
-  the main priority.
-
-  Perhaps  over a transition period the old ways will be allowed while
-  applications  are  ported  to  the new APIs. The change is certainly
-  going  to be needed at one point or Linux won't be able to evolve as
-  quickly as its users are demanding it.
-
-  Application  breakage  has  happened  before between virtually every
-  kernel change. It isn't new. Just take devfs and sysfs.
-
-
->> Look guys, in 1993 I anticipated the battle would be here, and I build
->> the foundation for a defensive tower right at the spot MS and Apple are
->> now maneuvering towards.
-
-> Why place a protective tower around the pit into which they are trying
-> desperately to throw themselves? ;-)
-
-  It  is easy to say this. But the fact is that users can actually use
-  these new features for good things.
-
->>                           Help me get the next level on the tower before
->> they get here.  It is one hell of a foundation, they won't be able to
->> shake it, their trees are not as powerful.  Don't move reiser4 into vfs,
->> use reiser4 as the vfs.  Don't write filesystems, write file plugins and
->> disk format plugins and all the other kinds of plugins, and you won't be
->> missing any expressive power that you really want....
-
-> Better write libraries handling whatever weird format you have in mind for
-> each use. Even applications. I don't expect to be able to use emacs to edit
-> a JPEG or PostgreSQL database. Neither do I expect gimp to be able to edit
-> a poem. The current trend (which I heartily agree with) is to take stuff
-> _out_ of the kernel (for flexibility, access, development ease, even
-> performance).
-
-  If  I  want  to  be able to quickly find files by a certain author I
-  could   search  the  meta-data fields (if they are used) with normal
-  tools such as grep.
-
-  Compression or encryption is another example.
-
-  Would  you  rather  patch  every  application  there is for Linux to
-  enable support for reading these files and directories?
-
-  
-
+>         Linus
 
 
