@@ -1,141 +1,57 @@
-From: Helge Hafting <helge.hafting@hist.no>
+From: Alex Zarochentsev <zam@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Mon, 30 Aug 2004 15:56:53 +0200
-Message-ID: <41333225.7070801@hist.no>
-References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org> <20040828170515.GB24868@hh.idb.hist.no> <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org>
+Date: Mon, 30 Aug 2004 18:10:56 +0400
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040830141055.GS5108@backtop.namesys.com>
+References: <Pine.LNX.4.58.0408260919380.2304@ppc970.osdl.org> <XFMail.20040827111855.pochini@shiny.it>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21108-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <XFMail.20040827111855.pochini@shiny.it>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com, Al Viro <viro@parcelfarce.linux.theplanet.co.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Giuliano Pochini <pochini@shiny.it>
+Cc: Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Hans Reiser <reiser@namesys.com>, Jamie Lokier <jamie@shareable.org>, Christoph Hellwig <hch@lst.de>
 
-Linus Torvalds wrote:
+On Fri, Aug 27, 2004 at 11:18:55AM +0200, Giuliano Pochini wrote:
+> 
+> On 26-Aug-2004 Linus Torvalds wrote:
+> 
+> > I advocated (long ago) something like this for /dev handling, just because
+> > I think it would make sense to have
+> >
+> >       /dev/hda        <- special file
+> >       /dev/hda/part1  <- partition 1 (aka /dev/hda1)
+> 
+> This breaks the r4 semantics if I understood it correctly. 
 
->On Sat, 28 Aug 2004, Helge Hafting wrote:
->  
->
->>>I think that lack of distinguishing power is more serious for 
->>>directories. The more I think I think about it, the more I wonder whether 
->>>Solaris did things right - having a special operation to "cross the 
->>>boundary".
->>>
->>>I suspect Solaris did it that way because it's a hell of a lot easier to 
->>>do it like that, but regardless, it would solve the issue of real 
->>>directories having both real children _and_ the "extra streams".
->>>      
->>>
->>There are many ways of doing this. Several extra streams to a directory
->>that aren't ordinary files in the directory?
->>    
->>
->
->Well.. Yes. We already have "." and "..", which are "special extra
->streams" in a sense. However, people expect them, and know to ignore them. 
->The same wouldn't be true of new naming.
->
->  
->
->>It seems to me that we can get a lot of nice functionality in a simpler way:
->>Instead of thinking about a number of streams attached to something
->>that is either an ordinary file or directory, just say that the only
->>change will be that a directory may have a _single_ file stream in
->>addition to being a plain directory.
->>    
->>
->
->That doesn't really help us. What would the name be, and how could you 
->avoid clashes? 
->  
->
-The name for the file stream and the directory would be the same,
-distinguished by how they're used.  I.e. fopen("filedirname", "rw")
-gets the stream, while chdir("filedirname") changes into the directory.
-fopen("filedirname/substream", "rw"); opens some stream inside
-the directory - as usual.
+Reiser4 currently links /metas/ directory under each reiser4 fs object. 
+Reiser4 "silently" allows regular file to be a directory for that.
 
-My idea is that the "extra streams" aren't special at all, they
-are simply files in a directory and will therefore work with
-any normal tool.  cd'ing into such a directory won't be special
-either - because it is a plain directory. A collection of named streams
-is usually a bunch of files in a directory - nothing new there.
+That is only an example how an fs object may link its internal hierarchical
+structure to the fs tree.  /dev/hda/-as-a-dir is another example, but, I am
+afraid, it is not a reiser4 business to look into the devices.  Devfs or its
+successor may do it. 
 
-Someone serving files for clients using
-other os'es may attach special meaning to them, but I don't see the need
-for a special meaning under linux.
+> Because
+> /partN are not simply associated to the file, they are part of the
+> file. ie. when I modify /dev/hda I also change /dev/hda/partN and
+> vice-versa. I don't see any pratical problem, though.
+> 
+> 
+> > Still, I really do like the idea of merging the notion of file and
+> > directory into one notion of "container". I absolutely _detest_ files with
+> > internal structure that tools have to know about (ie I hate seeing all
+> > those embedded formats that I can't use "grep" on - MIME being one case).
+> > I'd much rather see a "group of files"  and a "file with a grouping of
+> > information".
+> 
+> You're actually looking for a database with a legacy fs-like interface :)
+> 
+> 
+> --
+> Giuliano.
 
-So the only new thing is that the directory have a stream of
-its own.  Then there must be a way to turn a ordinary
-file into such a directory - people may then implement
-thumbnails, summaries and so on as substreams.  Where
-the substreams really are plain files in this slightly
-special directory.
-
-Perhaps mkdir with an existing filename could succeed,
-creating a mixed file/directory, if the underlying fs support it.
-
->  
->
->>If the VFS is to be extended in order to support file-as-directory (or
->>vice versa) then hopefully it can be done in a simple way.
->>    
->>
->
->I'm pretty confident that we can extend the VFS layer to support named
->streams (see the technical discussion with Al, rather than the flames in
->this thread). I also clearly believe that it is worth it, but I'm starting
->to wonder if we should have a special open flag to make people select the
->stream.
->
->If you look at the Solaris interface, the _nice_ part about "openat()" is 
->that you can do something like
->
->	file = open(filename, O_RDONLY);
->	if (file < 0)
->		return -ENOENT;
->	icon = openat(file, "icon", O_RDONLY | O_XATTR);
->	if (icon < 0)
->		icon = default_icon_file;
->	..
->
->and it will work regardless of whether "filename" is a directory or a 
->regular file, if I've understood correctly.
->  
->
-An alternative: support open("filename/icon", O_CREAT);
-and have this turn "filename" into file-as-directory if it wasn't so
-already.  Then it works both with files and directories.
-A new flag might be needed if old programs somehow depend on the stuff
-above failing for plain files.
-
->Now, I think that makes sense for several reasons:
-> - single case
-> - race-free (think "stat()" vs "fstat()" races).
-> - I think we want to do "openat()" regardless of whether we ever 
->   support extended attributes or not ("openat()" is nice for doing 
->   "namei()" in user space even in the absense of any attributes or 
->   named streams).
->
->So what we can do is
-> - implement openat() regardless, and expect to do the Solaris thing for 
->   it if we ever do streams.
-> - _also_ support the "implied named attributes" for regular files, so 
->   that you don't have to use "openat()" to access them.
->
->Comments? Does anybody hate "openat()" for any reason (regardless of 
->attributes)? We can easily support it, we'd just need to pass in the file 
->to use as part of the "nameidata" thing or add an argument (it would also 
->possibly be cleaner if we made "fs->pwd" be a "struct file").
->
->  
->
-No problem with openat()
-
-Helge Hafting
-
+-- 
+Alex.
