@@ -1,52 +1,89 @@
-From: Andreas Dilger <adilger@clusterfs.com>
-Subject: Re: precise characterization of ext3 atomicity
-Date: Thu, 4 Sep 2003 13:28:04 -0600
-Message-ID: <20030904132804.D15623@schatzie.adilger.int>
-References: <3F574A49.7040900@namesys.com> <20030904085537.78c251b3.akpm@osdl.org> <3F576176.3010202@namesys.com> <20030904091256.1dca14a5.akpm@osdl.org> <3F57676E.7010804@namesys.com> <20030904181540.GC13676@matchmail.com> <3F578656.60005@namesys.com>
+From: Mike Benoit <mikeb@netnation.com>
+Subject: Re: Reiser4 input/output errors...
+Date: Thu, 04 Sep 2003 12:52:39 -0700
+Message-ID: <1062705159.4903.6.camel@mikeb.staff.netnation.com>
+References: <1062453181.2791.17.camel@mikeb.staff.netnation.com>
+	 <1062479004.31361.3.camel@haron.namesys.com>
+	 <1062521517.1987.5.camel@mikeb.staff.netnation.com>
+	 <1062567211.2107.14.camel@haron.namesys.com>
+	 <1062603920.3148.125.camel@mikeb.staff.netnation.com>
+	 <1062651147.16134.1.camel@haron.namesys.com>
+Reply-To: mikeb@netnation.com
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15560-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15561-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3F578656.60005@namesys.com>; from reiser@namesys.com on Thu, Sep 04, 2003 at 10:37:10PM +0400
+In-Reply-To: <1062651147.16134.1.camel@haron.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Mike Fedyk <mfedyk@matchmail.com>, Andrew Morton <akpm@osdl.org>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+To: Yury Umanets <umka@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-On Sep 04, 2003  22:37 +0400, Hans Reiser wrote:
-> Mike Fedyk wrote:
-> >And how does reiser4 do this [export atomic ops to userspace]
-> >without changing the userspace apps?
->
-> We don't.  We just make the hovercraft, we don't force you to go over 
-> the water.....
+[root@mikeb root]# debugfs.reiser4 -t /dev/hda8
+debugfs.reiser4 0.4.12
+Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by
+reiser4progs/COPYING.
 
-It is possible to do the same with ext3, namely exporting journal_start()
-and journal_stop() (or some interface to them) to userspace so the application
-can start a transaction for multiple operations.  We had discussed this in
-the past, but decided not to do so because user applications can screw up in
-so many ways, and if an application uses these interfaces it is possible to
-deadlock the entire filesystem if the application isn't well behaved.
+NODE (21) LEVEL=2 ITEMS=1 SPACE=4020 MKFS=0x103e447b
+FLUSH=0x4001b90100000000
+(0) NODEPTR PLUGIN=nodeptr40 LEN=8, KEY=[29:1:0:2a:0:SD] UNITS=1
+[22]
 
-If the app doesn't eventually say "end the transaction", the filesystem might
-wait indefinitely.  You could start adding more plumbing like "if the file
-is closed (maybe because the process crashed), cancel the transaction",
-and "if the process doesn't complete the transaction in time, cancel the
-transaction", etc.  How do you guarantee in advance that the application
-will be able to complete all of the operations it needs (i.e. if it runs
-out of space in the filesystem or something)?
+NODE (22) LEVEL=1 ITEMS=2 SPACE=3838 MKFS=0x103e447b
+FLUSH=0xbfffe57800000000
+(0) STATDATA PLUGIN=stat40 LEN=48, KEY=[29:1:0:2a:0:SD] UNITS=1
+exts:           2
+mask:           0x3
+plugin:         sdext_lw
+offset:         2
+len:            14
+mode:           drwxr-xr-x
+nlink:          3
+size:           2
+plugin:         sdext_unix
+offset:         16
+len:            32
+uid:            0
+gid:            0
+atime:          Tue Sep  2 09:39:26 2003
+mtime:          Tue Sep  2 09:39:26 2003
+ctime:          Tue Sep  2 09:39:26 2003
+rdev:           0
+bytes:          100
+(1) CDE PLUGIN=cde_large LEN=102, KEY=[2a:0:0:0:0:NAME] UNITS=2
+NR  NAME              OFFSET HASH                              SDKEY
+------------------------------------------------------------------------------
+  0 .                     54 0000000000000000:0000000000000000
+0000291:000002a
+  1 ..                    78 002e2e0000000000:0000000000000000
+0000291:000002a
 
-I suppose at worst, the application doesn't get its multi-op atomicity
-guarantee, but I'm guessing that apps which use this interface depend on
-it working properly or they wouldn't be using it.
 
-Cheers, Andreas
---
-Andreas Dilger
-http://sourceforge.net/projects/ext2resize/
-http://www-mddsp.enel.ucalgary.ca/People/adilger/
+Let me know if you need any more information. I'm also on IRC during PST
+business hours, if that would be better for you to debug this issue.
+
+On Wed, 2003-09-03 at 21:52, Yury Umanets wrote:
+> On Wed, 2003-09-03 at 19:45, Mike Benoit wrote:
+> 
+> > > Can you run debugfs.reiser4 on /dev/hda8? What does it say?
+> > > 
+> 
+> Can you print the tree?
+> 
+> debugfs.reiser4 -t /dev/hda8?
+> 
+-- 
+Best Regards,
+ 
+Mike Benoit
+NetNation Communications Inc.
+Systems Engineer
+Tel: 604-684-6892 or 888-983-6600
+ ---------------------------------------
+ 
+ Disclaimer: Opinions expressed here are my own and not 
+ necessarily those of my employer
 
