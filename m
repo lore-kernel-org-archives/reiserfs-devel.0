@@ -1,39 +1,38 @@
-From: Domenico Andreoli <cavok@tiscali.it>
-Subject: Re: fsck.reiser4 can't fix 1 fixable corruption
-Date: Thu, 22 Apr 2004 14:37:28 +0200
-Sender: Domenico Andreoli <cavok@libero.it>
-Message-ID: <20040422123728.GA30694@raptus.homelinux.org>
-References: <200404201733.51809.rmeijer@internet.gr> <200404220113.28246.vitaly@namesys.com> <20040421215822.GA26861@raptus.homelinux.org> <200404221446.21162.vitaly@namesys.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: online fsck
+Date: Thu, 22 Apr 2004 09:34:14 -0400
+Message-ID: <1082640853.12989.54.camel@watt.suse.com>
+References: <20040422150042.5b49c6c3.pegasus@nerv.eu.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18149-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18151-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200404221446.21162.vitaly@namesys.com>
+In-Reply-To: <20040422150042.5b49c6c3.pegasus@nerv.eu.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Jure =?iso-8859-2?Q?Pe=E8ar?= <pegasus@nerv.eu.org>
+Cc: reiserfs-list@namesys.com
 
-On Thu, Apr 22, 2004 at 02:46:21PM +0400, Vitaly Fertman wrote:
-> > is it legal for debian to distribute libaal and libreiser4 packages
-> > compiled with this option?
-> 
-> yes. Although new changes are tested not in the stand-alone mode
-> first, and the stand-alone support may be delayed sometimes.
+On Thu, 2004-04-22 at 09:00, Jure Pe=E8ar wrote:
+> Hi all,
+>=20
+> Is it theoretically posible?
+>=20
+> Like, does it need a drastic redesing of reiserfs or just sufficient $$
+> directed to the team to be implemented?
+>=20
+>=20
+> Because i think that reiserfsck --check in 12h + --rebuild-tree in 18h is
+> still waaay too much downtime for a 500gb mail server...
 
-i just uploaded new libaal 0.5.1-2 and reiser4progs 0.5.4-2 packages
-to debian experimental, they now provide stand alone libraries.
+Online check is easy, just use lvm or evms to make a snapshot and then
+check the snapshot.  Online rebuild tree would be impossible by
+definition (since it throws out everything above the leaf level and
+rebuilds).
 
-they are going to be available on debian archives starting from tonight
-and immediately at http://incoming.debian.org and my own homepage
-http://people.debian.org/~cavok/ .
+-chris
 
-cheers
-domenico
 
------[ Domenico Andreoli, aka cavok
- --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
-   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
