@@ -1,35 +1,38 @@
-From: Stas Baldin <sts@sao.ru>
-Subject: Re: hdd problem - reiserfs or hardware?
-Date: Mon, 7 Jun 2004 13:06:34 +0400 (MSD)
-Message-ID: <Pine.LNX.4.44.0406071245200.21021-100000@mail.sao.ru>
-References: <200406071126.19442.rmeijer@internet.gr>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: reiserfsck failing at 3299032 consistently
+Date: Mon, 7 Jun 2004 13:06:06 +0400
+Message-ID: <200406071306.06182.vitaly@namesys.com>
+References: <200406060953.54417.richard.dunn@arkona.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19058-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19059-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200406071126.19442.rmeijer@internet.gr>
+In-Reply-To: <200406060953.54417.richard.dunn@arkona.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Richard Dunn <richard.dunn@arkona.com>, reiserfs-list@namesys.com
 
-Hi Ray,
+Hello Richard, 
 
-> > I don't understand - what is the reason of my problem?
-> 
-> This indicates a hardware error...please check all cables; make sure they're 
-> inserted properly. If that doesn't solve the problem it's time to backup the 
-> data and get a new disk...
+On Sunday 06 June 2004 19:53, Richard Dunn wrote:
+> I performed a "reiserfsck --rebuild-tree /dev/sda1" on an external Western
+> Digital harddrive via firewire after the --check report errors only fixable
+> by --rebuild-tree. The reiserfsck scan failed at block 3299032 and to send
+> the bug report only if the second dies at the same place with the same
+> block number. I ran --rebuild-tree again:
+>
+> [root@rcdunn:18:22:42:~]# reiserfsck --quiet --logfile reiser_sda1.log
+> --rebuild-tree /dev/sda1
+> reiserfsck 3.6.13 (2003 www.namesys.com)
 
+Could you update your reiserfsprogs to the latest available on
+ftp://ftp.namesys.com/pub/reiserfsprogs/ and try it?
 
-But it's a new Seagate drive...!? After weekend i'd found my hanging PC
-and try to localize the problem. It restart successfully and restore
-reiserfs journal without proplems, although i don't touch anything - cables 
-etc. As i understood i can strike off reiserfs bug from reason list?
-
-wbr,
-Stas
-
+-- 
+Thanks,
+Vitaly Fertman
 
