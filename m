@@ -1,140 +1,58 @@
-From: Jamie Lokier <jamie@shareable.org>
+From: viro@parcelfarce.linux.theplanet.co.uk
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 20:09:42 +0100
-Message-ID: <20040826190942.GV5733@mail.shareable.org>
-References: <Pine.LNX.4.44.0408261315240.27909-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408261019580.2304@ppc970.osdl.org> <20040826172703.GR5733@mail.shareable.org> <Pine.LNX.4.58.0408261030350.2304@ppc970.osdl.org>
+Date: Thu, 26 Aug 2004 20:13:23 +0100
+Sender: <viro@www.linux.org.uk>
+Message-ID: <20040826191323.GY21964@parcelfarce.linux.theplanet.co.uk>
+References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com> <200408262128.41326.vda@port.imtp.ilyichevsk.odessa.ua> <Pine.LNX.4.58.0408261132150.2304@ppc970.osdl.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20763-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20764-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.58.0408261030350.2304@ppc970.osdl.org>
+In-Reply-To: <Pine.LNX.4.58.0408261132150.2304@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Linus Torvalds <torvalds@osdl.org>
-Cc: Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Cc: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Linus Torvalds wrote:
-> Well, you _could_ make it do a "tar", but what's the point? That really 
-> doesn't add any value as far as user space is concerned.
+[reposted in thread]
+
+On Thu, Aug 26, 2004 at 11:46:33AM -0700, Linus Torvalds wrote:
+> Note that we could try this out with existing filesystems with very 
+> minimal changes:
 > 
-> Think of it this way: if the directory and the "default stream" associated 
-> with it aren't independent, then user space already has the information, 
-> and the stream is pointless. In fact, the stream is _worse_ than 
-> pointless, because it hides the fact that there is no independent 
-> information.
+>  - make directory bind mounts work on top of files ("graft_tree()")
+>  - make open_namei() and friend _not_ do the mount-point following for the 
+>    last component if it's a non-directory.
+>  - probably some trivial fixups I haven't thought about. There might be 
+>    some places that use "S_ISDIR()" to check for whether something can be 
+>    looked up, but the main path walking already just checks whether there
+>    is a ".lookup" operation or not.
 > 
-> See my point? 
+> This would already allow people to "try out" how different applications 
+> would react to a file that can show up both as a directory and a file. The 
+> patch might end up being less than 25 lines or so, the difficulty is in 
+> finding all the right places.
 
-I see your point, but I agree 50%.
+The real issue is what to do with unlink() et.al. on these guys.  Note
+that "unlink is OK if all we have there is a bunch of directory mounts"
+won't work well - we have no good way to check that condition.
 
-(1) One of the uses of "streams" is to have extra information which
-    accompanies a file, and is separate from the flat file's information.
+Even funnier one is what we do if we have directory mounted there *and*
+have something mounted on stuff in that directory.
 
-    For example, metadata like "this C source file is in UTF-8",
-    "the author is Jamie (nowhere to put it in the data file)" and
-    "Jamie's signature".
+Yes, that's one of the probable directions for such stuff, but there's a
+lot of fun semantics questions and answers to them will matter a lot.
 
-(2) Filesystem settings like "compress this", and perhaps "permissions".
-
-(3) Filesystem information like "this file has been compressed by 59%,
-    uses 5 1k blocks".
-
-(4) Another use, which is more akin to containers, is to _present_ the
-    information of the flat file in a different way.
-
-    For example, the id tags and comments of any media file, the component
-    parts of any media file, license (of course :), and expanded or
-    decoded views such as inside an archive file, filesystem image, or
-    other structured storage file (.doc :).
-
-    Those alternate views are useful just because they can be accessed
-    using ordinary unix tools, no matter what the obscure codec format
-    provided it's supported.  With a bit of effort a standard
-    presentation for certain kinds of data may arise.
-
-(5) There is also data which is _calculated_ from the flat file or its
-    extra metadata, and which the kernel guarantees is either
-    consistent with the file, not set at all, or at least is
-    invalidated if the file is changed.  It may be calculated on demand
-    through the kernel interface, or applications may simply have to
-    calculate it themselves when they don't have an up to date value.
-
-    For example MD5 or SHA1 digests of the flat file, or of its parts.
-    The key thing is that these are always up to date, not dependent
-    on weak tests like mtime.
-
-    Partial checksums for speeding up rsync and other delta algorithms.
-    Computed thumbnails, MP3 average power levels, character encoding
-    extracted from parsing old HTML META tags.  Anything really that
-    can be calculated and usefully cached.
-
-    This is similar to (4), but I'm emphasising things that
-    may take a while to compute, may be cached with the filesystem
-    itself helping to decide when to evict, and writing them won't
-    affect the data they're calculated from, if writing is allowed at all.
-
-    The only really important of these are MD5 or SHA1 digests, or
-    some other way of tracking modifications like a strong serial number.
-
-    All other computed cached data can be maintained by applications
-    elsewhere, if they know when the data has been modified since the
-    last time.  (Though there are advantages to making the data
-    disappear if the file is deleted, or move if it's renamed).
-
-
-The thing with these different categories is that we want different
-behaviour when serialising the data for a backup or to copy it.
-
-We probably always (1) to be copied.
-
-(2) is questionable: it's like unix file permissions, you might want
-to copy it; you might not.
-
-(3) Shouldn't be copied or stored except for special reasons.  It's a
-bit like /proc: it's not meant to be stored on your backup CD and it's
-definitely not meant to be written during a restore. :)
-
-(4) Should never be copied if you're copying the flat file, because
-it's exactly the same information, just accessed differently.  You
-might want to copy it by itself for some reason though, and you
-certainly would like to work with it from scripts and applications.
-These streams are special in another way: they might themselves
-decompose into further streams.  Just think of a AVI file containing
-an OGG file containing a FLAC containing metadata and data streams, or
-something like that.  They happen.
-
-(5) shouldn't be copied if you're transmitting a file, as a matter of
-data integrity among other things.  You might want it on the backup,
-then again maybe only some of the values.  Probably never the crypto digests.
-
-
-To summarise: most data inside a directory-as-file should _not_
-usually be copied and transported.  A little of it, (1), should be
-copied if the serialised form will have it, and some of the other
-metadata should be copied under special circumstances.
-
-I've suggested that we could simply not have (1), and recommend that
-only reproducible, non-essential data appears inside the directory.
-Everything essential would be part of the serialised, flat file.
-
-However, you seem to like (1), metadata which should be serialised and
-copied around, and which is not part of the flat file.
-
-Note that (1) will only be copied around on systems which handle
-"extra forks" anyway -- things like Samba and MacOS compatibility.
-FTP and HTTP obviously won't copy the metadata of (1), although HTTP
-WebDAV might allow it to be visible as properties.
-
-All that suggests a common structure for the directory inside a
-"container" -- one where the metadata to be copied by default is
-clearly distinguished from the metadata which should never by copied,
-or which is cached, or which is a view.  Possibly it should be
-distinguished by name, although permission bits or (not sure I like
-this) meta-metadata could serve the same role without being name
-dependent.
-
--- Jamie
+Hey, if we lose the "can't unlink/rmdir/rename over something that is
+a mountpoint in other life" - I'm happy and we can get a lot of much
+more interesting stuff to work.  It will take some work (e.g. making
+sure we can find all vfsmounts over given mountpoint and sorting out
+the locking issues, which won't be trivial), but the main obstacle in
+that direction is not in architecture - it's in SuS and tradition; as
+the matter of fact, our life would be much easier if we stopped trying
+to give -EBUSY here and just dissolved all subtrees mounted on anything
+that has that dentry.
