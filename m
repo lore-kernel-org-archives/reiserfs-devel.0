@@ -1,33 +1,132 @@
-From: Philipp Morger <philipp.morger@dolphins.ch>
-Subject: Re: Reiser4 on Loop Device
-Date: Wed, 9 Mar 2005 14:49:09 +0100
-Message-ID: <20050309134908.GA18005@atlantis.dolphins.ch>
-References: <20050309074755.GA10678@atlantis.dolphins.ch> <200503091317.03619.vitaly@namesys.com>
-Reply-To: Philipp Morger <philipp.morger@dolphins.ch>
+From: Junfeng Yang <yjf@stanford.edu>
+Subject: Re: [CHECKER] Do ext2, jfs and reiserfs respect mount -o sync/dirsync
+ option? (fwd)
+Date: Thu, 10 Mar 2005 13:30:31 -0800 (PST)
+Message-ID: <Pine.GSO.4.44.0503101327540.12813-100000@elaine24.Stanford.EDU>
+References: <Pine.GSO.4.44.0503090049240.3755-100000@elaine24.Stanford.EDU>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200503091317.03619.vitaly@namesys.com>
+In-Reply-To: <Pine.GSO.4.44.0503090049240.3755-100000@elaine24.Stanford.EDU>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: reiserfs-list@namesys.com, mc@cs.Stanford.EDU
 
-Hi Vitaly
 
-okay, the problem was rather silly... I got a stoneage old binary which
-installed in some state of dilirium ages ago which was called when I
-typed mkfs.reiser4 / fsck.reiser4. I now removed those binaries and it
-works fine...=20
+Hi, our mail server had some problems the last few days.  I'm not sure if
+you guys have received my message or not.  Can you please send me an ACK,
+even if you haven't gotten time to diagnose the error yet?
 
-On Mit, M=C3=A4r 09, 2005 at 13:17:03 +0300, Vitaly Fertman wrote:
-> please update your libaal & reiser4progs to the latest version.
-> (ftp://ftp.namesys.com/pub/reiser4progs/)
+Thanks a lot,
+-Junfeng
 
-Thanks & Regards!
-Philipp
+On Wed, 9 Mar 2005, Junfeng Yang wrote:
+
+>
+> Let me know if you need any more information to reproduce the warning.  I
+> would really appreciate it if you can cc me once you figure out if it is a
+> bug.
+>
+> -Junfeng
+>
+> On Sun, 6 Mar 2005, Junfeng Yang wrote:
+>
+> >
+> > Hi Vladimir, are you able to reproduce the problem?
+> >
+> > Thanks,
+> > -Junfeng
+> >
+> > On Sat, 5 Mar 2005, Junfeng Yang wrote:
+> >
+> > > > I just made the follong test on reiserfs (2.6.11-rc4-mm1):
+> > > > mkreiserfs /dev/hda6
+> > > > mount /dev/hda6 /mnt -o sync
+> > > > touch /mnt/file
+> > > > mkdir /mnt/d
+> > > > echo Hello > /mnt/hello
+> > > > reboot -f -n
+> > >
+> > > Here is what I do to reproduce the same problem:
+> > >
+> > > 1. mkreiserfs on a partition
+> > > 2. issue several file system operations
+> > > 3. "crash" and resart the machine
+> > > 4. run reiserfsck --fix-fixable --yes to recover
+> > > 5. mount the recovered partition.
+> > >
+> > > It appears that step 4 is _important_ in reproducing the problem.  If I
+> > > just mount the crashed disk, everything appears to be fine.  However,
+> > > attempt to recover the crashed image using reiserfsck result in
+> > > metadata/data loss.
+> > >
+> > > Details are attached below.  Let me know if you need any more information.
+> > >
+> > > The script I use (run as root)
+> > > #!/bin/sh
+> > > umount /dev/hda9
+> > > /sbin/mkreiserfs -f /dev/hda9
+> > > mount -t reiserfs /dev/hda9 /mnt/sbd1 -o sync,dirsync
+> > > ln -s /mnt/sbd1 /mnt/sbd1/0001
+> > > touch /mnt/sbd1/0002
+> > > mkdir /mnt/sbd1/0003
+> > > reboot -f -n
+> > >
+> > > uname -a shows:
+> > > Linux notus 2.6.11 #1 Sat Mar 5 04:39:12 PST 2005 i686 GNU/Linux
+> > >
+> > > reiserfsck output is:
+> > > reiserfsck 3.6.19 (2003 www.namesys.com)
+> > >
+> > > *************************************************************
+> > > ** If you are using the latest reiserfsprogs and  it fails **
+> > > ** please  email bug reports to reiserfs-list@namesys.com, **
+> > > ** providing  as  much  information  as  possible --  your **
+> > > ** hardware,  kernel,  patches,  settings,  all reiserfsck **
+> > > ** messages  (including version),  the reiserfsck logfile, **
+> > > ** check  the  syslog file  for  any  related information. **
+> > > ** If you would like advice on using this program, support **
+> > > ** is available  for $25 at  www.namesys.com/support.html. **
+> > > *************************************************************
+> > >
+> > > Will check consistency of the filesystem on /dev/hda9
+> > > and will fix what can be fixed without --rebuild-tree
+> > > Will put log info to 'stdout'
+> > > ###########
+> > > reiserfsck --fix-fixable started at Sat Mar  5 12:16:12 2005
+> > > ###########
+> > > Replaying journal..
+> > > No transactions found
+> > > Checking internal tree..finished
+> > > Comparing bitmaps..finished
+> > > Checking Semantic tree:
+> > > finished
+> > > No corruptions found
+> > > There are on the filesystem:
+> > >         Leaves 1
+> > >         Internal nodes 0
+> > >         Directories 1
+> > >         Other files 0
+> > >         Data block pointers 0 (0 of them are zero)
+> > >         Safe links 0
+> > > ###########
+> > > reiserfsck finished at Sat Mar  5 12:16:15 2005
+> > > ###########
+> > >
+> > > second mount of the crashed disk shows:
+> > > ReiserFS: hda9: found reiserfs format "3.6" with standard journal
+> > > ReiserFS: hda9: using ordered data mode
+> > > ReiserFS: hda9: journal params: device hda9, size 8192, journal first block 18, max trans len 1024, max batch 900, max commit age 30, max trans age 30
+> > > ReiserFS: hda9: checking transaction log (hda9)
+> > > ReiserFS: hda9: Using r5 hash to sort names
+> > >
+> > >
+> >
+> >
+>
+>
 
