@@ -1,61 +1,39 @@
-From: Michael Gaughen <mgaughen@polyserve.com>
-Subject: Re: BUG in reiserfs_write_full_page().
-Date: Mon, 21 Jul 2003 14:24:44 -0700
-Message-ID: <3F1C5A1C.4070607@polyserve.com>
-References: <3F1712F6.7080204@polyserve.com>	 <1058477610.4012.333.camel@tiny.suse.com> <3F171ABF.6080601@polyserve.com>	 <1058534583.7878.351.camel@tiny.suse.com>	 <16151.63980.766223.769053@laputa.namesys.com> <1058536844.7878.371.camel@tiny.suse.com> <3F183F99.7080405@polyserve.com>
+From: "Rob Mueller" <robm@fastmail.fm>
+Subject: Re: 2.4.22pre7aa1 ;-) Mit O(1) aber leider kein pre-emption
+Date: Tue, 22 Jul 2003 15:32:33 +1000
+Message-ID: <001c01c35012$abcc9250$2b8bddcb@lifebook>
+References: <200307211639.32418.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14985-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14986-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F183F99.7080405@polyserve.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: Michael Gaughen <mgaughen@polyserve.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: =?iso-8859-15?Q?Dieter_N=FCtzel?= <Dieter.Nuetzel@hamburg.de>, Chris Mason <mason@suse.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Michael Gaughen wrote:
+> Data-logging in the works?
 
-> Chris Mason wrote:
->
->> On Fri, 2003-07-18 at 09:45, Nikita Danilov wrote:
->>  
->>
->>> > > But, we shouldn't have to.  Other parts of the OS should be 
->>> protecting
->>> > us from a writepage being called at this time, which is why the 
->>> bug is
->>> > there.  Someone did a non GFP_NOFS allocation with a transaction
->>>
->>> __bread()->__getblk()->__find_get_block()->find_get_page() allocates
->>> page with bdev->bd_inode->i_mapping->gfp_flags, which is GFP_USER, that
->>> includes GFP_FS.
->>>   
->>
->>
->> You're in 2.5 land ;-)  There seem to be a few problems there, I've got
->> an oops in find_inode and a deadlock under load, but I still need to
->> read the (huge) sysrq-t to figure things out.
->>
->
-> But, in 2.4, the page fault handling code also gets the gfp_mask from 
-> the inode's
-> address_space gfp_mask (in ->page_cache_read()->page_cache_alloc()).  
-> It looks
-> like clean_inode() sets the gfp_mask to GFP_HIGHUSER, which also includes
-> GFP_FS, and unless I am missing something, I don't see that GFP_FS is 
-> ever
-> cleared in this case. 
+I've managed to get this working. Patched to 2.4.22-pre7-aa and then applied
+the data logging patches for 2.4.22-pre5 (see
+ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.22) which seems
+to work fine. I saw two problems though, a function (can't remember which
+one) was duplicate defined in mm/filemap.c (exactly the same code appeared
+twice), and an EXPORT_SYMBOL() from mm/filemap.c had to be removed as well.
+However removing them seemed to work fine.
 
 
-And to take this a step further (if what I described is indeed the 
-problem),
-GFP_NOFS could be cleared, in inode->i_mapping->gfp_mask, inside of
-reiserfs_read_inode2() and reiserfs_new_inode().  Then you don't have to
-rely on the core kernel for protection, and you truly guarantee that write-
-page will not be called in this case.  Does that sound reasonable?
+The patches I applied:
 
--Mike
+04-reiserfs-sync_fs-4.diff
+05-data-logging-39.diff
+06-logging-export.diff
+06-reiserfs-jh-3.diff
+06-write_times.diff
+search_reada-5.diff
+
+Rob
 
