@@ -1,50 +1,49 @@
-From: siddharth kothari <sidkot@yahoo.com>
-Subject: how to linking and traversing the inmemory tree
-Date: Sat, 12 Mar 2005 22:58:17 -0800 (PST)
-Message-ID: <20050313065817.13797.qmail@web30405.mail.mud.yahoo.com>
+From: Naveen Nathan <naveen@cox.net>
+Subject: Large Filesystem Support?
+Date: Sun, 13 Mar 2005 01:13:11 -0800
+Message-ID: <20050313091306.GB4160@naveen-osx.lan>
 Mime-Version: 1.0
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-hi. 
-i am trying to create an in-memory for Reiser4. from
-the code i understand the following:
-1) Znode is the inmemory representation of the actual
-node.
-2) children have pointers to thier parents and alsso
-maintain their position in parents.
-3) Znodes also have the de-limiting keys
-and other fields.
+Hey Reiser team  & fellow Reiser users.
 
-now my questions are:
+iI have a system with 3x 3TB HW RAID5 volumes, using the latest
+2.6.11.2 kernel & reiser4-utils 1.0.4.
 
-1) from where do you start traversing the tree?
-2) are these nodes actually linked in memory as they
-are in a tree.
-3) once you get a key for a file how do u locate the
-lock where the data for that file is to be found.
+Using mdadm I've created a raid0 for all 3 volumes which is /dev/md0.
+This makes quite a large 9TB partition. Reading the FAQ on Reiser (3.6),
+I was expecting to be well within the limits of the 17TB partition size
+limit.
 
-you obviously compare with the de-limiting keys to get
-to the node then wat.... how do u reach any other
-level since there are no down pointers.
+These are the results from trying to create the partition:
 
-regards,
-siddharth
+# mkfs.reiser4 /dev/md0
+mkfs.reiser4 1.0.4
+Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing governed by 
+reiser4progs/COPYING. 
 
-When I was small I thought everything was either
-Black or White,
-Good or Bad,
-But I grew up to find out everthing was just Grey....
+Block size 4096 will be used.                                                 
+Linux 2.6.11.2 is detected.                                                   
+Uuid f15dfd7a-8112-4f0a-96af-5ab781bdd2e4 will be used.                       
+Fatal: The partition size is too big.                                         
+Reiser4 is going to be created on /dev/md0.                                   
+(Yes/No): yes
+Fatal: The partition size is too big.                                         
+Error: Can't initialize block allocator. 
+Error: Can't create filesystem on /dev/md0.
 
+Unfortunately reiser4 cannot make the large partition. I have yet to use
+reiser3.6 assuming that reiser4 is the successor.
 
-		
-__________________________________ 
-Do you Yahoo!? 
-Yahoo! Small Business - Try our new resources site!
-http://smallbusiness.yahoo.com/resources/ 
+Could someone please advise how I would get reiserfs on my large partition.
+
+Thanks,
+Naveen Nathan
