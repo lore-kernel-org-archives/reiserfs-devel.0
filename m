@@ -1,64 +1,65 @@
-From: "Marco Berizzi" <pupilla@hotmail.com>
-Subject: Re: ReiserFS corruption with samba 3.0.2a
-Date: Wed, 18 Feb 2004 18:33:47 +0100
-Message-ID: <Sea2-DAV66JL947FR7m000009bc@hotmail.com>
-References: <Sea2-DAV22IBirXXeQM0000aeb5@hotmail.com><87fzd8tx0q.fsf@dps11.gnuyork.org><Sea2-DAV63halxyPyF100008503@hotmail.com> <87smh8tmts.fsf@dps11.gnuyork.org>
+From: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2004@gmx.net>
+Subject: Re: resier4 performance with dbt-2
+Date: Sat, 14 Feb 2004 01:41:17 +0100
+Message-ID: <402D6EAD.20901@gmx.net>
+References: <200402132351.i1DNpOE27923@mail.osdl.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16832-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16833-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200402132351.i1DNpOE27923@mail.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Billy O'Connor <billyoc@gnuyork.org>
-Cc: Tomas Szepe <szepe@pinerecords.com>, Nikita Danilov <Nikita@Namesys.COM>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Content-Type: text/plain; charset="iso-8859-1"
+To: markw@osdl.org
+Cc: Dieter.Nuetzel@hamburg.de, reiserfs-list@namesys.com
 
-Billy O'Connor wrote:
-
-> "Marco Berizzi" <pupilla@hotmail.com> writes:
+markw@osdl.org wrote:
+> On 14 Feb, Dieter N=FCtzel wrote:
 >=20
-> >> > I'm experimenting this problem with samba 3.0.2a and linux 2.4.24
-> >> > with ReiserFS. When I copy (put) a large file (5GB) from a =
-Windows NT
-> >> > terminal server edition sp6a machine to the samba-linux box I get =
-this
-> >> > error:
-> >> >
-> >> > Feb 17 18:01:11 Mimas kernel: ide0(3,8):vs-4080: =
-reiserfs_free_block: free_block (0308:4999052)[dev:blocknr]: bit already =
-cleared
-> >> > Feb 17 18:01:11 Mimas kernel: ide0(3,8):vs-4080: =
-reiserfs_free_block: free_block (0308:4997935)[dev:blocknr]: bit already =
-cleared
-> >> > Feb 17 18:02:48 Mimas kernel: ide0(3,8):vs-4080: =
-reiserfs_free_block: free_block (0308:902445)[dev:blocknr]: bit already =
-cleared
-> >> > Feb 17 18:02:48 Mimas kernel: ide0(3,8):vs-4080: =
-reiserfs_free_block: free_block (0308:902286)[dev:blocknr]: bit already =
-cleared
-> >> >
-> >> > Samba 2.2.8a doesn't show this behaviour.
-> >>=20
-> >> Do any other windows clients exhibit this behavior?
-> >
-> > Sorry for the late response. I have tried with Windows 2000 and the =
-copy
-> > operation was ok.
+>>Am Freitag, 13. Februar 2004 18:31 schrieb markw@osdl.org:
+>>
+>>>http://developer.osdl.org/markw/fs/dbt2_stp_results.html
+>>>
+>>>I have some data (at the link above) with the reiser4 2004.02.06
+>>>snapshot applied to linux-2.6.2 with our DBT-2 (OLTP) workload on 4-wa=
+y
+>>>and 8-way systems.  On the 4-way systems, the results of the workload
+>>>seem comparable to other filesystems.  On the 8-way systems, the resul=
+ts
+>>>of the workload drop about 28%.
+>>>
+>>>I have readprofile and oprofile (w/ annotated assembly) data with the
+>>>results.  If there's anything else I can provide let me know.
+>>
+>>Where are the ReiserFS 3.xx plus data-logging results?
+>>Several sites have them in production.
 >=20
-> Oh, boy, that's a problem for me, I don't have NT.  Have you posted
-> this problem to the samba mailing list?  I'm sure they'd want to hear
-> about it.
+>=20
+> Unfortunitely we've been running into linux kernel problems that we
+> think is more of the fault of the aacraid driver on our systems than th=
+e
+> reiserfs 3.xx, so I don't have any results for that.  It's just odd tha=
+t
+> only reiserfs 3.xx triggers it.  I'll copy that here for reference:
 
-No. I haven't posted. I have just rebooted the
-linux box.
-Now this error doesn't appear anymore.
-The only relevant thing is that yesterday there
-were samba 2.2.8a running on this Slackware linux
-box.
-Then I stopped & removed the samba 2.2.8a package.
-I haven't rebooted the system. I have updated and
-started samba 3.0.2a. Here I got the ReiserFS problem
-coping a file from NT ---> to samba 3.0.2a box.
-Now I'm keeping an eye on this system.
+I know several admins who will not use adaptec cards even if they receive=
+
+death threats. Regardless how high/low the load is, the machines will
+eventually lock up when using adaptec SCSI controllers. No idea whether i=
+t
+is the driver or the hardware, but replacing the controller with the same=
+
+model didn't fix it while exchanging it against another brand always fixe=
+d it.
+
+Buggy hardware, buggy driver, I don't care. If it doesn't work out of the=
+
+box, another manufacturer gets the money next time.
+
+
+Carl-Daniel
+
+
