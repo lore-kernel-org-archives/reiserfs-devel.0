@@ -1,11 +1,11 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Degrading performance?
-Date: Wed, 10 Apr 2002 22:10:08 +0400
-Message-ID: <3CB48000.1070805@namesys.com>
+Date: Wed, 10 Apr 2002 22:10:40 +0400
+Message-ID: <3CB48020.20403@namesys.com>
 References: <20020410172502.29765.qmail@web10006.mail.yahoo.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10015-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10016-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -70,11 +70,7 @@ Bill Rees wrote:
 >http://taxes.yahoo.com/
 >
 >
-This is a very interesting measurement.  Please experiment with the 
-patch to bitmap.c that Oleg is experimenting with (I think it was put on 
-the reiserfs mailing list recently).
-
-I think you will find the various mount options of interest.
+Oleg, try to replicate his result, and ask him for the program.
 
 Hans
 
