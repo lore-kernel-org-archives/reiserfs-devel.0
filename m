@@ -1,54 +1,152 @@
 From: Kevin Bealer <kevinbealer@yahoo.com>
 Subject: Re: Split Trees (my design, similar to binary treaps)
-Date: Fri, 23 May 2003 11:56:41 -0700 (PDT)
-Message-ID: <20030523185641.91230.qmail@web40020.mail.yahoo.com>
-References: <10375659311-BeMail@cr593174-a>
+Date: Fri, 23 May 2003 12:24:40 -0700 (PDT)
+Message-ID: <20030523192440.7221.qmail@web40015.mail.yahoo.com>
+References: <3ECD05DF.8090107@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14236-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14237-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <10375659311-BeMail@cr593174-a>
+In-Reply-To: <3ECD05DF.8090107@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Alexander G. M. Smith" <agmsmith@rogers.com>, Hans Reiser <reiser@namesys.com>
+To: Hans Reiser <reiser@namesys.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>
 Cc: reiserfs-list@namesys.com
 
+Sorry, last message was accidentally sent prematurely.
 
-As Alexander said, data can be in the node or
-elsewhere in
-either a skip list or skip tree.  Skip List nodes are
-variable
-sized; skip tree nodes are uniform, three pointers +
-data.
-(Unless the data is variable sized).
+To continue:
 
-Skip Lists look like:
+Skip lists (turned 90 degrees) look like:
 
-XX-----X-----X
-X--X--X--X--X--X--X--X
+topnode--x------x
+C0
+A1-----A1-----A1
+C2
+C3
+B4-----B4
+C5
+A6-----A6-----A6
+C7
+C8
+B9-----B9
+C11
+A12----A12----A12
 
+With pointers vertically between all aligned letters
+(conceptually at least).
 
---- "Alexander G. M. Smith" <agmsmith@rogers.com>
-wrote:
-> Hans Reiser wrote on Fri, 23 May 2003 02:48:05
+Now here is the reason why SkipTrees do NOT need
+variable sized nodes:
+
+The Pointer from A1 to A6 is used, so is the pointer
+from A1 to B4 and from B4 to C5.
+
+However, the pointers from C2 and C3 to B4, B4 to A6,
+and B9 to A12 are NEVER USED for example.  You are
+sacrificing
+pointers to get to a binary tree, but the pointers you
+lose
+are the pointers you don't need anyway.
+
+In SkipList, you need those pointers only to copy
+their value to
+other pointers which will not be used.  The nodes
+can't shrink,
+because an insertion changes which pointers are used
+and which
+are not.
+
+If * is a wildcard, the rule is:
+
+No pointer from C* to B* or B* to A* is ever used.  If
+you were
+going to get to A6, you would have gotten there while
+traversing
+the "A" list, and if you are at the C list level, you
+have already left 
+the A and B lists behind.
+
+To convert a Skip List to a Skip Tree, note that every
+decision
+you need to make is based on a NODE->VALUE comparison.
+After each decision, processing can go in two
+directions, so there
+are two "edges" from that decision.
+
+Decisions become binary tree nodes.  EDGES become left
+and
+right pointers.
+
+The first decision in following the skip list is "Is
+the search
+value greater than "1" (i.e. node A1's value is 1). 
+Thus the
+top node of the Skip Tree is A1.  If the value is less
+than 1,
+we look at C0.  Thus C0 is on the left hand side of
+A1.
+
+Just traverse the skip list, and wherever you make a
+decision
+based on a value, there is a node.  Note that this
+skip list is
+not really balanced.  Due to the extra pointers, the
+policy is
+normally to have FEWER high-level nodes in a Skip List
+than
+would be predicted by the (1/2, 1/4, 1/8) progression
+from the
+bottom up.  Usually 3/4 on the bottom level, then 3/4
+of the
+remaining on the next level, etc.
+
+With a skip tree, we actually want the balanced
+version, i.e.
+ratios of 1/2 on each level, although other ratios can
+be used.
+
+Kevin
+
+--- Hans Reiser <reiser@namesys.com> wrote:
+> Alexander G. M. Smith wrote:
+> 
+> >Hans Reiser wrote on Thu, 22 May 2003 19:30:16
 > +0400:
-> > Do nodes contain both pointers and data?
+> >  
+> >
+> >>Forgive me for asking some bonehead questions.....
+> >>
+> >>Are skip lists height balanced?  (All paths to the
+> leaves are equal?)
+> >>    
+> >>
+> >
+> >Only on the average, at least in the original skip
+> list algorithm.  The
+> >height is determined randomly when the node is
+> created; there is no
+> >rebalancing.  The random distribution is defined as
+> you would expect,
+> >50% of the nodes have 1 level, 25% have 2 levels,
+> ... 0.5**n of the
+> >nodes have n levels.  Surprisingly, this works
+> fairly well.
+> >
+> >- Alex
+> >
+> >
+> >  
+> >
+> To have a level means to be on that level or lower?
 > 
-> Yes, that's a common way of doing skip lists.  Or
-> the node could contain
-> the level pointers and a data pointer.  The nodes
-> are also awkwardly
-> variable sized due to the random number of levels. 
-> That leads to
-> allocation fragmentation unless extra steps are
-> taken.
+> -- 
+> Hans
 > 
-> I don't know how the split trees approach does it.
 > 
-> - Alex
 
 
 __________________________________
