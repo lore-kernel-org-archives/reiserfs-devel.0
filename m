@@ -1,65 +1,112 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: merge 2.4.21-pre4 with Direct IO bug fix
-Date: Tue, 4 Mar 2003 11:18:07 +0300
-Message-ID: <20030304111807.A18814@namesys.com>
-References: <20030304013450.249cc096.philippe.gramoulle@mmania.com>
+From: Julian Hall <jules@acris.co.uk>
+Subject: Hangs and crashes, reiserfsck --rebuild-tree fails?
+Date: Tue, 04 Mar 2003 14:25:46 +0000
+Message-ID: <3E64B76A.6030109@acris.co.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13057-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13059-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030304013450.249cc096.philippe.gramoulle@mmania.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Philippe Gramoull? <philippe.gramoulle@mmania.com>
-Cc: Chris Mason <mason@suse.com>, reiserfs <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Hello!
+Hi,
 
-On Tue, Mar 04, 2003 at 01:34:50AM +0100, Philippe Gramoull? wrote:
+I seem to have some corruption on one of my file systems and don't seem 
+to be able to fix it.  The problem manifests itself by (apparently) 
+random crashes and hangs whenever the file system is mounted, usually 
+within 10-15 minutes of the last reboot.
 
-> Could you please rediff the patch for the DIRECT IO bug fix (pre5) against 2.4.21-pre4 + 
-> data-logging patches ? ( I've tried to merge it manually, but there are too many non trivial rejects
-> for me to dare feeling comfortable :o)
+I tried to fix the problem using reiserfsck, and it advised me that I 
+needed to use --rebuild-tree, so I ran that.  These are the messages 
+that were produced:
 
-Is it possible for you to use 2.4.21-pre5 instead of 2.4.21-pre4?
-Patches from ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.21
-should apply just fine, except that you need to apply my version of 05-data-logging... patch.
-You can get it from ftp://namesys.com/pub/reiserfs-for-2.4/testing/05-2.4.21-pre5-data-logging-36.diff.gz
+root@vengeance:/# reiserfsck --rebuild-tree /dev/hdd2
 
-Also we have not merged that journal overflow patch (deleting highly-fragmented files) anywhere yet,
-as you reported you had hangs with it and running quotacheck. Below is the patch you should apply on top of
-all Chris' patches for this overflow fix.
+<-------------reiserfsck, 2002------------->
+reiserfsprogs 3.6.4
 
-Also another patch you probably want to apply is my iget5_locked bugfix for 2.4,
-You can find it at ftp://namesys.com/pub/reiserfs-for-2.4/testing/iget5_locked_for_2.4.21-pre5-datalogging.diff.gz
-it should be applied on top of datalogging/quota stuff I mentioned above.
+  *************************************************************
+  ** Do not run rebuild-tree unless something is broken  and **
+  ** MAKE A BACKUP before using it.  If you have bad sectors **
+  ** on a drive  it is usually a bad idea  to continue using **
+  ** it.  Then you probably should get a working hard drive, **
+  ** copy the file system from the bad drive to the good one **
+  ** -- dd_rescue is  a good tool for  that -- and only then **
+  ** run this program.                                       **
+  ** If you are using the latest reiserfsprogs and  it fails **
+  ** please  email bug reports to reiserfs-list@namesys.com, **
+  ** providing  as  much  information  as  possible --  your **
+  ** hardware,  kernel,  patches,  settings,  all reiserfsck **
+  ** messages  (including version),  the reiserfsck logfile, **
+  ** check  the  syslog file  for  any  related information. **
+  ** If you would like advice on using this program, support **
+  ** is available  for $25 at  www.namesys.com/support.html. **
+  *************************************************************
 
-Bye,
-    Oleg
+Will rebuild the filesystem (/dev/hdd2) tree
+Will put log info to 'stdout'
 
---- fs/reiserfs/stree.c.orig	Tue Mar  4 10:55:33 2003
-+++ fs/reiserfs/stree.c	Tue Mar  4 10:57:30 2003
-@@ -1125,6 +1125,19 @@
- 		put_block_num(p_n_unfm_pointer, 0, 0);
- 		journal_mark_dirty (th, p_s_sb, p_s_bh);
- 		reiserfs_free_block(th, inode, tmp, 1);
-+		/* In case of big fragmentation it is possible that each block
-+		   freed will cause dirtying of one more bitmap and then we will
-+		   quickly overflow our transaction space. This is a
-+		   counter-measure against that scenario */
-+		if (journal_transaction_should_end(th, th->t_blocks_allocated)) {
-+		    int len = th->t_blocks_allocated;
-+		    pathrelse(p_s_path) ;
-+		    reiserfs_restart_transaction(th, len) ;
-+		    reiserfs_update_inode_transaction(inode) ;
-+		    need_research = 1;
-+		    break;
-+		}
-+
- 		if ( item_moved (&s_ih, p_s_path) )  {
- 			need_research = 1;
- 			break ;
+Do you want to run this program?[N/Yes] (note need to type Yes if you 
+do):Yes
+Replaying journal..
+0 transactions replayed
+###########
+reiserfsck --rebuild-tree started at Tue Mar  4 15:17:12 2003
+###########
+
+Pass 0:
+####### Pass 0 #######
+Loading on-disk bitmap .. ok, 4997800 blocks marked used
+Skipping 8363 blocks (super block, journal, bitmaps) 4989437 blocks will 
+be read
+0%.pass0: block 281565, item 2 397 0x1 DIR (3), len 286, location 3778 
+entry count 11, fsck need 0, format old: 9 entries were deleted
+...20%....40%....60%....80%....100%                         left 0, 688 /sec
+187986 directory entries were hashed with "tea" hash.
+        "tea" hash is selected
+Flushing..finished
+        Read blocks (but not data blocks) 4989437
+                Leaves among those 60572
+                Objectids found 187545
+
+Pass 1 (will try to insert 60572 leaves):
+####### Pass 1 #######
+Looking for allocable blocks .. fininshed
+0%....20%....40%....60%....80%....100%                          left 0, 
+97 /sec
+Flushing..finished
+        60572 leaves read
+                59102 inserted
+                        - pointers in indirect items pointing to 
+metadata 5 (zeroed)
+                1470 not inserted
+        non-unique pointers in indirect items (zeroed) 1
+####### Pass 2 #######
+
+Pass 2:
+0%....20%....40%....60%....Not enough allocable blocks, checking 
+bitmap...there are 0 allocable blocks, btw
+
+out of disk space
+Aborted
+root@vengeance:/# df
+Filesystem         1024-blocks  Used Available Capacity Mounted on
+/dev/hda1            2476090 2244793   103283     96%   /
+/dev/hda2            2516186 2264563   123607     95%   /apps
+/dev/hda4            4637018 4145260   251728     94%   /work
+
+I'm running pretty close to capacity on all my partitions, and it seems 
+that the one with the problem is too full for a rebuild tree operation 
+to succeed.  And now I cannot mount the partition to fix the problem.
+
+What should I do?
+
+Thanks
+
+Julian
+
+
