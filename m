@@ -1,49 +1,56 @@
-From: Andreas Dilger <adilger@clusterfs.com>
+From: Chris Worley <chrisw@lnxi.com>
 Subject: Re: 2GB limit won't go away
-Date: Sun, 9 Jun 2002 12:35:34 -0600
-Message-ID: <20020609183534.GC14168@turbolinux.com>
-References: <1023708533.4654.301.camel@xserver>
+Date: Sun, 9 Jun 2002 18:52:25 +0000 (UTC)
+Message-ID: <1023754048.4654.1821.camel@xserver>
+References: <1023708533.4654.301.camel@xserver> 
+	<200206091608.g59G8ISI021286@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10696-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10697-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <1023708533.4654.301.camel@xserver>
+In-Reply-To: <200206091608.g59G8ISI021286@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Chris Worley <chrisw@lnxi.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Jun 10, 2002  05:28 -0600, Chris Worley wrote:
-> I'm Running Linux 2.4.10-4GB on SuSE 7.3 with reiserfsprogs-3.x.0j-1
-> (using 3.5.x disk format...ReiserFS version 3.6.25) atop
-   ^^^^^^^^^^^^^^^^^^^^^^^
+I'm using glibc-2.2.4-21; would that be the problem?
 
-It is my understanding that you cannot use >2GB files with 3.5 disk
-format.  The only way to "upgrade" is to backup restore.  If you
-mount with the "conv" mount option, you apparently will be able to
-create _new_ files in the 3.6 format (i.e. they can be > 2GB), but
-existing files cannot grow past 2GB.
+My ulimits:
 
-You could "solve" this problem by doing something like:
+#  ulimit -a
+core file size (blocks)     0
+data seg size (kbytes)      unlimited
+file size (blocks)          unlimited
+max locked memory (kbytes)  unlimited
+max memory size (kbytes)    unlimited
+open files                  1024
+pipe size (512 bytes)       8
+stack size (kbytes)         unlimited
+cpu time (seconds)          unlimited
+max user processes          8192
+virtual memory (kbytes)     unlimited
 
-tar cf - /home | tar xf - -C /tmp
-rm -r /home/*
-mv /tmp/home/* /home/*
-rmdir /tmp/home
+Thanks,
 
-Which will re-create all of your files with the 3.6 format "inodes"
-and get rid of your old format inodes.  You have to be careful if
-you do this, because you run the risk of accidentally deleting all
-of your files if you do the wrong thing.  If you have enough free
-space in another partition, you may as well just format it with
-3.6 format and copy everything over and delete the old partition.
+Chris
 
-Cheers, Andreas
---
-Andreas Dilger
-http://www-mddsp.enel.ucalgary.ca/People/adilger/
-http://sourceforge.net/projects/ext2resize/
+On Sun, 2002-06-09 at 10:08, Valdis.Kletnieks@vt.edu wrote:
+> On Mon, 10 Jun 2002 05:28:53 MDT, Chris Worley <chrisw@lnxi.com>  said:
+> 
+> > But,  I can't create a file greater than 2GB.
+> 
+> Two quick guesses:
+> 
+> 1) Old/busticated/crufty libc that doesn't have large-file support
+> 1a) other userspace tools that don't have it (dd, cat, etc)
+> 
+> 2) a 'ulimit -f' value for max filesize.
+> -- 
+> 				Valdis Kletnieks
+> 				Computer Systems Senior Engineer
+> 				Virginia Tech
+> 
+
 
