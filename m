@@ -1,12 +1,12 @@
 From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: silent semantic changes in reiser4 (brief attempt to document
  the idea of what reiser4 wants to do with metafiles and why
-Date: Tue, 31 Aug 2004 14:35:09 -0400
+Date: Tue, 31 Aug 2004 14:51:01 -0400
 Sender: news <news@sea.gmane.org>
-Message-ID: <87isazma02.fsf@uhoreg.ca>
-References: <41323AD8.7040103@namesys.com> <413486B0.4050101@sun.com>
+Message-ID: <87eklnm99m.fsf@uhoreg.ca>
+References: <41323AD8.7040103@namesys.com> <200408312055.56335.v13@priest.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21167-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21168-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -17,29 +17,47 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 Cc: linux-kernel@vger.kernel.org
 
->>>>> "Mike" == Mike Waychison <Michael.Waychison@Sun.COM> writes:
+>>>>> "V13" == V13  <v13@priest.com> writes:
 
-Mike> Hans Reiser wrote:
->>
-> Why Openat Sucks:
->> 
->> because you can't go cat filenameA/metas/permissions >
->> filenameB/permissions
->> 
->> If cat doesn't work, then we are suffering exactly the problem with
->> namespace fragmentation that this whole scheme was invented to avoid.
+V13> Maybe I'm crazy but:
 
-Mike> Sure you can.  All you need to do is fix your shell.
+V13>  You're talking about a major change in the way filesystems work if
+V13> this is going to be used by other FSs too. If I understand this
+V13> correctly it is a completely new thing and trying to do it by
+V13> patching existing well-known 'primitives' may be wrong.
 
-And you'll have to fix every other program that you want to use to edit
-metadata/attributes/streams.
+V13>   AFAIK and AFAICS the metadata are not files or directories. You
+V13> can look at them as files/dirs but they are not, just like a tar is
+V13> not a directory. I believe that the correct thing to do (tm) is to
+V13> add a new 'concept' named 'metadata' (which already exists). ...
 
-The whole point of avoiding namespace fragmentation is to avoid having
-to fix programs.
+And you'll need a new 'concept' named 'streams'.  And a new concept for
+every extension you want/need to add to the filesystem.  By exposing
+everything through the normal filesystem interface, you don't need to
+make any modifications to your programs to use the new concepts.
+Everything just works as expected.  (With the possible exception of
+backup-like software, but it is easier to fix just the backup software
+than every other program that's out there.)
 
-Like I said in another post, the world is bigger than just the command
-line.  The command line just gives really easy examples of why Hans (and
-others) thinks about things the way he does.
+The hypothetical object /usr/bin/xterm/icon.png looks like a file,
+smells like a file, and quacks like a file.  Why shouldn't it be a file?
+
+V13> This way you'll have files, directories and metadata (or whatever
+V13> you call them). So, each directory can have metadatas and files and
+V13> each file can have metadatas. Then you have to provide some new
+V13> methods of accessing them and not to use chdir() etc. (lets say
+V13> chdir_meta() to enter the meta dir which will work for files
+V13> too). After entering the 'metadir' you'll be able to use existing
+V13> methods etc to access its 'files'.
+
+V13>   This approach doesn't mess with existing things and can be
+V13> extended for other filesystems too.
+
+Either way, filesystems that want to implement that interface will need
+to be changed.  The question is just what kind of interface we will
+expose to the users/programs.  And since that's what the question is,
+it seems to me that we want to expose it through an interface that the
+users are already used to.
 
 -- 
 Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
