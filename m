@@ -1,51 +1,44 @@
-From: viro@parcelfarce.linux.theplanet.co.uk
-Subject: Re: silent semantic changes with reiser4
-Date: Wed, 25 Aug 2004 22:25:18 +0100
-Sender: <viro@www.linux.org.uk>
-Message-ID: <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Problem - reiser4(2004.08.13), apache(2.0.50) and "AllowOverride All"
+Date: Wed, 25 Aug 2004 17:27:15 -0400
+Message-ID: <200408252127.i7PLRGeI026701@turing-police.cc.vt.edu>
+References: <412B71F6.6020603@zappa.cx> <1093373015.9503.3.camel@leto.cs.pocnet.net>
+            <1093375229.9503.6.camel@leto.cs.pocnet.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20528-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_-386481728P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20529-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org>
+In-Reply-To: Your message of "Tue, 24 Aug 2004 21:20:28 +0200."
+             <1093375229.9503.6.camel@leto.cs.pocnet.net> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Christophe Saout <christophe@saout.de>
+Cc: Andreas Sundstrom <sunkan@zappa.cx>, reiserfs-list@namesys.com
 
-On Wed, Aug 25, 2004 at 02:00:01PM -0700, Linus Torvalds wrote:
-> Of course, the dcache introduces some new problems of its own wrt
-> directory aliasing, but I don't actually think that should be fundamental
-> either. Treating them more as a "static mountpoint" from an FS angle and
-> less as a traditional Unix hardlink should be doable, I'd have thought.
+--==_Exmh_-386481728P
+Content-Type: text/plain; charset=us-ascii
 
-Yeah, if we ditch the "mountpoints are busy and untouchable" stuff.  Which
-I'd love to, but it's a hell of a visible (and admin-visible) change.
+On Tue, 24 Aug 2004 21:20:28 +0200, Christophe Saout said:
 
-FWIW, current deadlocks are unrelated to actual operation succeeding.
-Look: we have sys_link() making sure that parent of target is a directory
-(PATH_LOOKUP, in a "it has ->lookup()" sense), then locking target's parent,
-then checking that it has ->link() (everyone on reiser4 does) and then
-checking that source (old link to file) is *not* a directory (in S_ISDIR
-sense).  Then we lock source.
+> Sorry, this was already known. My current apache 2.0.50 seems to call
+> lstat first though.
 
-Note that currently it's OK - we get "all non-directories are always locked
-after all directories".  With filesystem that provides hybrid objects with
-non-NULL ->link() it's not true and we are in deadlock country.  Before
-we get anywhere near fs code.
+Note that doing an lstat first still has a race condition.....
 
-I'm not saying that this particular instance is hard to fix, but it wasn't
-even looked at.  All it would take is checking the description of current
-locking scheme and looking through the proof of correctness (present in the
-tree).  That's the first point where said proof breaks if we have hybrids.
-And it's what, about 4 screenfuls of text?
+--==_Exmh_-386481728P
+Content-Type: application/pgp-signature
 
-I have no problems with discussing such stuff and no problems with having it
-merged if it actually works.  But let's start with something better than
-"let's hope nothing breaks if we just add such objects and do nothing else,
-'cause hybridi files/directories are good, mmmkay?"
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFBLQQzcC3lWbTT17ARAmomAKD9quVehKxzhgglUs7PRS26CJiHUgCfWWCd
+Z8bEmAc8EUUg8OufIGs4kq4=
+=hhgm
+-----END PGP SIGNATURE-----
+
+--==_Exmh_-386481728P--
