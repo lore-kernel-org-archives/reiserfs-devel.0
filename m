@@ -1,45 +1,40 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: [PATCH] finally... data logging for 2.4.20-pre10
-Date: 24 Oct 2002 09:12:50 -0400
-Message-ID: <1035465170.30133.95.camel@tiny>
-References: <1034709883.5053.920.camel@tiny> <3DB6F20F.3060500@ysu.edu>
-	<3DB71BB6.9060700@mb.tu-ilmenau.de>  <3DB7ECDB.5070905@ysu.edu>
+From: Russell Coker <bofh@coker.com.au>
+Subject: Re: extended attributes
+Date: Thu, 24 Oct 2002 15:12:05 +0200
+Message-ID: <200210241512.05581.bofh@coker.com.au>
+References: <200210231916.18976.bofh@coker.com.au> <20021024014522.GD28822@clusterfs.com> <1035464747.28715.92.camel@tiny>
+Reply-To: Russell Coker <bofh@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11752-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11753-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3DB7ECDB.5070905@ysu.edu>
+In-Reply-To: <1035464747.28715.92.camel@tiny>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: John Dalbec <jpdalbec@ysu.edu>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: Chris Mason <mason@suse.com>, Andreas Dilger <adilger@clusterfs.com>
+Cc: ReiserFS <reiserfs-list@namesys.com>
 
-On Thu, 2002-10-24 at 08:51, John Dalbec wrote:
-> Manuel Krause wrote:
-> > On 10/23/2002 09:01 PM, John Dalbec wrote:
-> > 
-> >> Chris Mason wrote:
-> >>
-> >>> Hello all,
-> >>>
-> >>> I've uploaded new data logging code against 2.4.20-pre10 to
-> >>> ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20
-> 
-> Does anyone know what kernel was used for the patches in 
-> ftp.suse.com/pub/people/mason/patches/data-logging ?  Are they against 
-> 2.4.19?  The README doesn't say.
+On Thu, 24 Oct 2002 15:05, Chris Mason wrote:
+> We did it without changing the metadata format at all, which means
+> putting each xattr into a file.  The patches are mired in dependencies
+> from other parts of the suse kernel, we're trying to pull it all out.
+>
+> Until then you can grab the kernels/source at
+> ftp.suse.com/pub/people/mantel/next (warning, these are the suse
+> bleeding edge kernels).
 
-They are against 2.4.19, but it is a slightly older set of patches. 
-They are good for benchmarking, but I would suggest using the 2.4.20-pre
-patches for serious testing.
+Unfortunately that will probably conflict with the LSM kernel patch.  LSM 
+touches so many things that almost any patch of moderate size will conflict.  
+:(
 
-I'll try and upload the latest stuff against 2.4.19 today, this is what
-the current suse kernel is based on, so it is by far the best tested of
-the data logging series.
+I look forward to seeing this get extracted out in a minimal form.
 
--chris
-
+-- 
+http://www.coker.com.au/bonnie++/     Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/       Postal SMTP/POP benchmark
+http://www.coker.com.au/projects.html Projects I am working on
+http://www.coker.com.au/~russell/     My home page
 
