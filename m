@@ -1,41 +1,81 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: duplicate files and recent changes
-Date: Thu, 06 Jun 2002 11:47:22 +0400
-Message-ID: <3CFF138A.9040303@namesys.com>
-References: <Pine.WNT.4.43.0206060127230.1296-100000@fanatic> <20020606094504.A851@namesys.com>
+Date: Thu, 06 Jun 2002 11:50:38 +0400
+Message-ID: <3CFF144E.1010403@namesys.com>
+References: <Pine.WNT.4.43.0206060333540.1296-100000@fanatic>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10535-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10536-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Oleg Drokin <green@namesys.com>
-Cc: "S. Alexander Jacobson" <alex@shop.com>, reiserfs-list@namesys.com
+To: "S. Alexander Jacobson" <alex@shop.com>
+Cc: Robert Brockway <robert@timetraveller.org>, reiserfs-list@namesys.com
 
-Oleg Drokin wrote:
+S. Alexander Jacobson wrote:
 
->Hello!
->
->
->On Thu, Jun 06, 2002 at 01:30:46AM -0400, S. Alexander Jacobson wrote:
+>On Thu, 6 Jun 2002, Robert Brockway wrote:
 >  
 >
->>I just joined this list.  Two question:
->>1. Can reiserfs detect that I have two copies of
->>the same file on disk and store tham as one file
+>>>On Thu, Jun 06, 2002 at 01:30:46AM -0400, S. Alexander Jacobson wrote:
+>>>      
+>>>
+>>>>I just joined this list.  Two question:
+>>>>1. Can reiserfs detect that I have two copies of
+>>>>the same file on disk and store tham as one file
+>>>>        
+>>>>
+>>>Hm, you mean, each time you create a file, reiserfs should scan all
+>>>other files and see if there is exactly a file like you just wrote?
+>>>Hm, even something more complicated as you are writing to a file in
+>>>4k chunks.
+>>>Definitely no.
+>>>      
+>>>
+>>And besides, how could it even know whether you even want them to be the
+>>same or not. 
+>>
+windows uses a signature.
+
+>> I keen plenty of identical files around (online backups,
+>>etc) and I'd be mighty upset if the filesystem started hard linking them
+>>together :)
 >>    
 >>
 >
->Hm, you mean, each time you create a file, reiserfs should scan all
->other files and see if there is exactly a file like you just wrote?
->Hm, even something more complicated as you are writing to a file in
->4k chunks.
->Definitely no.
+>That is why I said lazy copy on write. 
 >
-It is in windows.  Patented I think.  It may be the only innovation in 
-Windows (CTRL-ALT-DELETE was not invented by MS).
+This is not patented, it is an old thread, everyone agrees that it 
+should be done, no sponsor at the moment though.
+
+> One
+>implementation would be for the file system to
+>keep a ref count of how many different files the
+>user intended.  When an applicatiion writes to a
+>file, the file system checks the ref count.  If
+>the ref count is greater than 1, the file system
+>copies the file, decrements the ref-count, and
+>gives the writing application a pointer to the new
+>copy.
+>
+>I'm sure there are smarter implementations, but
+>the point is that the file system can certainly
+>differentiate in theory between user hard links
+>and actual hard links.
+>
+>-Alex-
+>
+>___________________________________________________________________
+>S. Alexander Jacobson                   i2x Media
+>1-212-787-1914 voice                    1-603-288-1280 fax
+>
+>
+>
+>
+>  
+>
 
 
 
