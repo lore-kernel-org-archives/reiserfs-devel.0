@@ -1,74 +1,61 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: "Metas"
-Date: Wed, 28 Apr 2004 02:49:12 -0400
-Sender: news <news@sea.gmane.org>
-Message-ID: <87d65sbnrr.fsf@uhoreg.ca>
-References: <no.id> <200404280506.i3S56jXb022934@sirius.cs.pdx.edu>
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary additional namespace to ReiserFS
+Date: Wed, 28 Apr 2004 10:22:36 +0200
+Message-ID: <200404281022.36081.christian.mayrhuber@gmx.net>
+References: <1082750045.12989.199.camel@watt.suse.com> <408E9F42.2080804@namesys.com> <20040427190439.A20646@infradead.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18264-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18266-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20040427190439.A20646@infradead.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
->>>>> "Elliot" =3D=3D The Amazing Dragon (Elliott Mitchell) <ehem@cs.pdx.ed=
-u> writes:
+On Tuesday 27 April 2004 20:04, Christoph Hellwig wrote:
+> I also still think someone who does most work in the last years on a fs
+> (Chris on reiserfs v3) should be considered maintainer, but that's just my
+> 2cents and I'd rather leave that to you guys.
+I wonder if Novell/SuSE would take over full Reiserfs3 maintainership as
+namesys is now concentrating on the next big step: Reiser4.
 
-[...]
+>
+> The important part is xattr/acl/namespace semantics.  In Linux those
+> semantics are at the _VFS_ level, not at the individual filesystem,
+> in fact if a fs can mess with namespace semantics I'd almost considere
+> that a bug.
+As Hans mentioned, bad semantics cripple useability, but what's even worse
+is if there is no standard way of doing things - at least from a user point of 
+view.
+Reiser4 does not support the xattr/acl interface and is therefore worse
+than Reiserfs3 + xattr patch. Offering an additional, cleaner approach
+is great, but acl/xattr is in the official kernel and a long time will pass by 
+till this interface can be deprecated and removed.
+Imagine some filemanagers using xattr/acl interface because it is in the 2.6 
+kernel release. Such stuff would work on every linux filesystem, but Reiser4.
 
-Elliot> I think we've provided evidence that it might well be one in one
-Elliot> thousand. Pretty much any filename that `ls` without the "-a"
-Elliot> option will display will be unacceptable.
+>
+> So if you want different xattr/acl semantics after you ignored all the
+> discussion has been going on the last years start *now* to discuss you
+> proposal on -fsdevel, and acl-devel, explaining why your semantics are
+> better and hash out the implementation details to support both
+> transparently.
 
-metas is not returned by readdir(), so won't show up in ls.
-Nevertheless, I'm still in favour of adding a leading dot (or two).  I
-don't think that allowing renames is a good idea, especially given that
-the metas directory is not returned by readdir -- the user (or
-application) has no way of discovering what the name is.
+I like the filesystem namespace very much and I guess I'm not alone, because  
+procfs, sysfs, etc. are there. It even follows the the tradition of unix in 
+accessing devices as special files.
+Hans should win such a discussion hands down ;-)
 
->> From: mjt@nysv.org (Markus T=F6rnqvist)
+>
+> Funneling in new semantics through a low level driver is pretty much
+> always wrong.
+Someone has to experiment with the new semantics somehow. Rewriting
+vfs would be overkill.
 
->> What's so terribly bad about having the name for it in /proc or /sys
->> or wherever and having it global from the kernel config?
-
-Elliot> open()/read()/write()/stat()/readdir() are system calls, but
-Elliot> fairly cheap operations. getcwd() is a library call, almost
-Elliot> certainly making *hundreds* of system calls, and quite possibly
-Elliot> *thousands*. In order to use a /proc or /sys interface you'd
-Elliot> need to use getcwd(), if you're accessing many files this would
-Elliot> be extremely expensive.
-
-I don't see why putting the name in /proc or /sys requires getcwd().
-Can you explain in more detail?
-
-Oh.  I think you're talking about something different from what Markus
-is talking about.  I think you're talking about putting metadata for
-/foo/bar into, say, /proc/metas/foo/bar.  What Markus is talking about
-is having a file called, say /proc/fs/reiser4/metas, and if you cat
-that file, it will spit out the name of the metas directory.
-
-I don't like it because I think that Reiser4 should be consistent.
-Making users look up the name from /proc/fs/reiser4/metas I think is a
-lot worse than making them use a long name for the metas directory.  And
-"ls foo/`cat /proc/fs/reiser4/metas`", or even "ls foo/$metas", where
-$metas is the cached value of /proc/fs/reiser4/metas, is a lot uglier
-than "ls foo/.metas".
-
-Yet another option is to standardize on a long, extremely unlikely to
-clash name as the standard way to access the metadata (maybe something
-like "sys.metadata"), and define a short name, which is probably defined
-at compile time, which can be looked up through something like
-/proc/fs/reiser4/metas_abbrev.  That way, users (and scripts) get a
-consistent interface, but if they want to save typing, they can look up
-the short name.
-
---=20
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+-- 
+lg, Chris
 
