@@ -1,46 +1,57 @@
-From: Hubert Chan <hubert@uhoreg.ca>
+From: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
 Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Wed, 31 Mar 2004 13:46:56 -0500
-Sender: news <news@sea.gmane.org>
-Message-ID: <878yhgrh0f.fsf@uhoreg.ca>
-References: <87y8phtxk6.fsf@uhoreg.ca> <200403310620.i2V6K7D9018881@sirius.cs.pdx.edu>
+Date: Wed, 31 Mar 2004 14:23:23 -0500 (EST)
+Message-ID: <20040331192323.58066.qmail@web25009.mail.ukl.yahoo.com>
+References: <200403312037.38276.cmayr@iicm.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17631-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17633-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200403312037.38276.cmayr@iicm.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: reiserfs-list@namesys.com
 
->>>>> "Elliott" == The Amazing Dragon (Elliott Mitchell) <ehem@cs.pdx.edu> writes:
+Christian Mayrhuber wrote:=20
 
-[...]
+> On Wednesday 31 March 2004 18:35, Narcoleptic
+> Electron wrote:
+>
+> > "Metas" is only meaningful in English.
+>
+> No, according to babelfish
+>=20
+> translation from
+>=20
+> English: meta information=20
+>=20
+> to
+>=20
+> Spanish: informaci=F3n del meta
+> French: l'information de m=E9ta
+> German: Metainformationen
+> Italian: le informazioni del meta
+> Portuguese: informa=E7=E3o do meta
+>=20
+> I've not tried how the plural translates...
+> I've not understood the chinese, korean and japanese
+> icons. :-)
 
-Elliott> Though you do have a point that the GUI tools filenames with
-Elliott> '&' or '!'  becomes more common. '\' does have the advantage of
-Elliott> simply needing to by typed twice (rather than one key followed
-Elliott> by shift-number combo). Useful if you need to tell the tell the
-Elliott> GUI what the file actually is.
+Yeah, I guess we can forget about those Chinese,
+Korean and Japanese users.  [/sarcasm]
 
-Yes.  I think that \ is nice because you just have to type it twice in
-the shell.  It is also a reserved character in DOS/Windows, so at least
-Windows users won't be in the habit of naming their files with \.  (It's
-also an uncommon character to begin with.)
+What I intended to say was: "Meta" is not meaningful
+in all non-English languages.
 
-One other problem, though, that I forgot to mention in my last post, is
-that in the shell, or in a script, you would have to type it twice,
-whereas in a GUI, you only have to type it once, which may lead to
-confusion.
+While we're on the subject: it would not be necessary
+to localize anything in the meta folder, as this is
+for "system" use and essentially represents an API for
+the parent object.  The meta folder itself, however,
+occurs in user space.
 
-Overall, I in general don't like the idea of adding a new separator
-character, but if we did, I think \ would be the way to go.
 
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
+______________________________________________________________________=20
+Post your free ad now! http://personals.yahoo.ca
