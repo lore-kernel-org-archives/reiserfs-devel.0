@@ -1,10 +1,10 @@
 From: Christian <evil@g-house.de>
 Subject: file corruption, advice needed
-Date: Thu, 02 Oct 2003 12:11:54 +0200
-Message-ID: <3F7BF9EA.3090404@g-house.de>
+Date: Thu, 02 Oct 2003 12:22:36 +0200
+Message-ID: <3F7BFC6C.5080906@g-house.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15762-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15763-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -13,64 +13,14 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hi,
+ > this is with Debian/stable i386 (AMD K7 SMP), reiserfsprogs 3.6.11.
 
-recently i noticed some corrupt (only 1 really, about 9 MB big) or even 
-disappeared (say a dozen or perhaps more).
-i run reiserfsck on the very partition while it was mounted RO, no 
-corruptions were found. should i trust it (and blame some application 
-for the messed up files) or should i try with --rebuild-sb (needs a 
---rebuild-tree afterwards, right?) ?
+oh, i forgot: kernel 2.4.21-5-k7-smp (Debian Kernel) is running. this 
+seems to be vanilla with some patches applied, details available here:
 
-i have to admit, that i had "not so good" experience with --rebuild-* 
-operations, but this was 1 or 2 years ago.
+http://nerdbynature.de/bits/README.Debian.1st.gz
 
-so, can you give me advice on this? should i still backup this parition?
-(it's my root ( / ) partition, so it's not that important)
-
-this is with Debian/stable i386 (AMD K7 SMP), reiserfsprogs 3.6.11.
-debugreiserfs on this rw mounted parition shows:
-
---------
-root@atlant:~# debugreiserfs /dev/sda1
-debugreiserfs 3.6.11 (2003 www.namesys.com)
-
-
-Filesystem state: consistency is not checked after last mounting
-
-Reiserfs super block in block 16 on 0x801 of format 3.6 with standard 
-journal
-Count of blocks on the device: 2239484
-Number of bitmaps: 69
-Blocksize: 4096
-Free blocks (count of blocks - used [journal, bitmaps, data, reserved] 
-blocks): 680307
-Root block: 36301
-Filesystem is NOT cleanly umounted
-Tree height: 5
-Hash function used to sort names: "r5"
-Objectid map size 26, max 972
-Journal parameters:
-         Device [0x0]
-         Magic [0x6961a7e1]
-         Size 8193 blocks (including 1 for journal header) (first block 18)
-         Max transaction length 1024 blocks
-         Max batch size 900 blocks
-         Max commit age 30
-Blocks reserved by journal: 0
-Fs state field: 0x0:
-sb_version: 2
-inode generation number: 5996064
-UUID: 00000000-0000-0000-0000-000000000000
-LABEL:
-Set flags in SB:
-root@atlant:~#
------------
-
-i can provide more information / fsdumps if there is interest. but i 
-think it's rather hard to do anything now, because i don't even know if 
-it is a filesystem thing anyway.
-
-Thank you for your time,
+Thanks,
 Christian.
+
 
