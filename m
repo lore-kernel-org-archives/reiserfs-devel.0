@@ -1,67 +1,67 @@
-From: Russell Coker <bofh@coker.com.au>
-Subject: Fwd: Re: [reiserfs-list] Reserved Blocks
-Date: Mon, 16 Sep 2002 17:29:19 +0200
-Message-ID: <200209161729.19198.bofh@coker.com.au>
-Reply-To: Russell Coker <bofh@coker.com.au>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Reserved Blocks
+Date: Mon, 16 Sep 2002 11:35:34 -0400
+Message-ID: <200209161535.g8GFZYM4004165@turing-police.cc.vt.edu>
+References: <20020916102742.6538D2926@hofmann.snowcra.sh> <200209161450.g8GEorM4003750@turing-police.cc.vt.edu>
+            <200209161713.52352.russell@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11474-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_-1901158394P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11475-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: Your message of "Mon, 16 Sep 2002 17:13:52 +0200."
+             <200209161713.52352.russell@coker.com.au> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS <reiserfs-list@namesys.com>
+To: Russell Coker <russell@coker.com.au>
+Cc: Sam Vilain <sam@vilain.net>, 'reiserfs-list' <reiserfs-list@namesys.com>
 
-BTW  Can someone please configure the mailing list to allow postings from my 
-regular email address?
+--==_Exmh_-1901158394P
+Content-Type: text/plain; charset=us-ascii
 
-----------  Forwarded Message  ----------
+On Mon, 16 Sep 2002 17:13:52 +0200, Russell Coker said:
 
-Subject: Re: [reiserfs-list] Reserved Blocks
-Date: Mon, 16 Sep 2002 17:13:52 +0200
-From: Russell Coker <russell@coker.com.au>
-To: Valdis.Kletnieks@vt.edu, Sam Vilain <sam@vilain.net>
-Cc: "'reiserfs-list'" <reiserfs-list@namesys.com>
+> Alternately use quotas, speaking of which, do Quotas work on ReiserFS without 
+> additional patches yet?  Quotas really are an essential feature.
 
-On Mon, 16 Sep 2002 16:50, Valdis.Kletnieks@vt.edu wrote:
-> If you're worried about security enough to not want users doing a
-> denial-of-service attack by filling the disk, then DON'T HAVE a
-> world-writable directory on a partition that will cause trouble if it gets
-> full.
+Quotas are a Good Thing - but note that quite often you get into the
+situation where you want to "overcommit" a partition (for instance, 2G of
+disk, and 10 users each of which have a 500M limit).  It helps, but you're
+still open to attacks by collusion (intentional, accidental, or by hijacking
+3 other userids to help).
 
-Alternately use quotas, speaking of which, do Quotas work on ReiserFS without
-additional patches yet?  Quotas really are an essential feature.
+> Solar Designer's OpenWall kernel patch addresses this issue by prohibiting 
+....
+> Also the LSM patch includes NSA Security enhanced Linux.  In the default SE 
+> Linux policy a user in the default un-priviledged role (user_r) with the 
+> defalt security domain for that role (user_t) will not be allowed to even 
 
-> Among other things, if there's a world-writable directory on the same
-> filesystem, you get exposed to a whole raft of hard-link attacks that
-> simply Wont Work if (for example) /tmp is a separate filesystem.  You'd
+Ahh, both are very nice, but alas, neither is part of the base kernel yet.
 
-Solar Designer's OpenWall kernel patch addresses this issue by prohibiting
-hard links to files with a different UID being created in a directory that
-has the sticky bit set.  http://www.openwall.com/linux/
+> A machine with an adequate security setup and with correctly configured quotas 
+> should be able to operate correctly with hostile local users even if it only 
+> has a single file system.
 
-OpenWall is ported to the recent 2.4.x kernels and some 2.5.x kernels in the
-form of the Linux Security Modules (LSM) kernel patch.
-http://lsm.immunix.org/
+Granted.  However, my point was that I've never seen a Unixoid system that was
+safe to run with only one big partition without extensive kernel hacking to
+make it safe. I'll be more than happy to change my stance as soon as SELinux
+ships as part of the base system ;)
 
-Also the LSM patch includes NSA Security enhanced Linux.  In the default SE
-Linux policy a user in the default un-priviledged role (user_r) with the
-defalt security domain for that role (user_t) will not be allowed to even
-stat /etc/shadow or other files with the type shadow_t, and will not be
-allowed to link files with type etc_t (which includes /etc/passwd).
+/Valdis
 
-A machine with an adequate security setup and with correctly configured
- quotas should be able to operate correctly with hostile local users even if
- it only has a single file system.
+--==_Exmh_-1901158394P
+Content-Type: application/pgp-signature
 
-If anyone disagrees then I will be happy to setup a test machine and
- challenge them to prove me wrong.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
+iD8DBQE9hfpFcC3lWbTT17ARAkpTAJ9tDbdS84bwRMvnxKjUI/lvMDugtgCg9lus
+mVOxNcE5v6sxvXahQUhh4g8=
+=IlwS
+-----END PGP SIGNATURE-----
 
-Russell Coker
-
-
-PS  SE Linux is why I haven't done much Bonnie++ work for ages...
-
+--==_Exmh_-1901158394P--
