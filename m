@@ -1,40 +1,48 @@
-From: eazgwmir@umail.furryterror.org (Zygo Blaxell)
-Subject: Re: reiserfsck --rebuild-tree on a big filesystem
-Date: Fri, 20 Dec 2002 16:12:01 +0000 (UTC)
-Message-ID: <atvfgh$9tr$1@genki.hungrycats.org>
-References: <20021125143634.GC9006@mail.cekit.cz> <atsteb$44s$1@genki.hungrycats.org> <20021219200020.A7258@namesys.com> <att918$u36$1@genki.hungrycats.org>
-Return-path: <reiserfs-list-return-12188-reiserfs=m.gmane.org@namesys.com>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: Re: 2.4.20 and data logging
+Date: Sat, 21 Dec 2002 10:30:48 +0100
+Message-ID: <3E0434C8.2050800@mb.tu-ilmenau.de>
+References: <200212031238.32403.russell@coker.com.au>	<1038932472.1508.4.camel@tiny>  <17043452890.20021203231413@tnonline.net> <1039707458.2058.2.camel@tiny>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12189-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-In article <att918$u36$1@genki.hungrycats.org>,
-Zygo Blaxell <eazgwmir@umail.furryterror.org> wrote:
->I guess I'll find out in 7 hours what the semantic pass will be like.
->Fortunately I don't need to use this particular filesystem until 2003,
->so there is time to run little experiments like this...
+On 12/12/2002 04:47 PM, Chris Mason wrote:
+> On Tue, 2002-12-03 at 17:14, Anders Widman wrote:
+> 
+>>>On Tue, 2002-12-03 at 06:38, Russell Coker wrote:
+>>>
+>>>>How is data logging work going?  Is there a patch for 2.4.20?
+>>>
+>>>I'm trying to sort out a complete fix for the transaction overflow bug
+>>>Philippe hit, but other than that the patches are considered stable.
+>>
+>>Are these complete and working yet?
+> 
+> 
+> The current status is they are almost ready.  The mmania guys hit a
+> slightly different overflow bug which we've also fixed, and we are
+> waiting on some final testing to say for sure.
+> 
 
-reiserfsck has gotten to pass 3 and is now doing a search of the
-filesystem tree file-by-file.  It appears to be progressing without
-any major CPU or memory problems.  
+Can you, then, please, post it to the list as soon as, err, beta!?
 
-Traversing the filesystem tree on this machine (e.g. with 'find')
-normally takes 3 days, so I guess we'll know if it works just in time
-for Christmas.  ;-)
+Maybe the recent wishes can be included as well according "data=..."
+( /proc/fs/reiserfs/ide*(*,*) display, reiserfs-option data=ordered 
+mounting / by default again without rootflags=data=ordered neede AND 
+finally showing the complete namesys stuff in mount, but that's their 
+stuff, of course).
 
-Is it normal to see hundreds of 
 
-	vpf-10680: The file [5029518 5034490] has the wrong block count in the StatData (16) - corrected to (8)
+Thank you,
 
-messages?
+Manuel.
 
--- 
-Opinions expressed are my own, I don't speak for my employer, and all that.
-Encrypted email preferred.  Go ahead, you know you want to.  ;-)
-OpenPGP at work: 3528 A66A A62D 7ACE 7258 E561 E665 AA6F 263D 2C3D
