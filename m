@@ -1,62 +1,57 @@
-From: Alex Malinovich <demonbane@the-love-shack.net>
-Subject: Re: reiserfsck "block is in the tree already" error
-Date: 21 Mar 2003 20:44:50 -0600
-Message-ID: <1048301090.925.1.camel@Thief>
-References: <1048266314.8146.18.camel@Thief>
-	 <200303212014.29775.vitaly@namesys.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: datalogging and quota patches port to 2.4.21-pre6
+Date: Sat, 22 Mar 2003 10:29:31 +0300
+Message-ID: <20030322102931.A7246@namesys.com>
+References: <20030320181301.A7170@namesys.com> <3E7BA735.5090604@mb.tu-ilmenau.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-AQLtBikDfi5UFbNv0akq"
-Return-path: <reiserfs-list-return-13328-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13329-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200303212014.29775.vitaly@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <3E7BA735.5090604@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
---=-AQLtBikDfi5UFbNv0akq
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hello!
 
-On Fri, 2003-03-21 at 11:14, Vitaly Fertman wrote:
-> Hi,=20
->=20
-> On Friday 21 March 2003 20:05, Alex Malinovich wrote:
-> > I've been trying to rebuild the tree on a reiserfs partition that seems
-> > to have gotten corrupted during a resize operation. Unfortunately, I've
-> > gone from having one or two directories not accessible to having the
-> > whole partition not accessible now. Everything seems to go ok until pas=
-s
-> > 2. At this point I start getting this error:
-> >
-> > "do_pass_2: The block (4901823) is in the tree already. Should not
-> > happen."
->=20
-> It seems that reiserfsck was built on another computer, which has some=20
-> other libs version, not statically. Would you try to rebuild it and try=20
-> again.
+On Sat, Mar 22, 2003 at 12:58:45AM +0100, Manuel Krause wrote:
 
-I just downloaded the source and built it and it worked! Thank you VERY
-much!
+> GRIN !!!  I really would like to enjoy these, but you seem to be far 
+> away in future. Still no "official" patch seems to be out -- at least 
+> for me on here. (Yes, I'll wait and would not use bk.)
+> Have your previously pending patches been included into 2.4.21-pre6
+> (they are: 02-trivial1.diff
+>            03-more-mount-checks.diff
+>            01-journal-overflow-fix.diff
+>  from    ftp://ftp.namesys.com/pub/reiserfs-for-2.4/testing :
+>           iget5_locked_for_2.4.21-pre5-datalogging.diff.gz
+>  and posted to our ML @ "Wed, 12 Mar 2003 10:46:42 +0300" :
+>             direct-io-fix-II.diff
+> ) ?
 
---=20
-Alex Malinovich
-Support Free Software, delete your Windows partition TODAY!
-Encrypted mail preferred. You can get my public key from any of the
-pgp.net keyservers. Key ID: A6D24837
+Only patches that are visible at 
+ftp://ftp.namesys.com/pub/reiserfs-for-2.4/2.4.20-pending
+were included into 2.4 tree.
+iget5_locked patch is in testing right now.
+direct-io-fix-II.diff have triggered some old long known minor metadata
+updating problems in case of unexpected crash and I am looking how to resolve
+that and trying various stuff.
 
---=-AQLtBikDfi5UFbNv0akq
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+> My question only results from beeing unable to get them all applied to 
+> 2.4.21-pre5 with data-logging without rejects and me feeling unsafe to 
+> adjust them manually.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.1 (GNU/Linux)
+Well, if you apply all of those patches from
+ftp://ftp.namesys.com/pub/reiserfs-for-2.4/2.4.20-pending on clean 2.4.20
+(or whatever is needed for 2.4.21-pre5 only frpm
+ftp://ftp.namesys.com/pub/reiserfs-for-2.4/2.4.21-pre5.pending)
+and then apply data logging patches as if you have 2.4.21-pre6,
+and then iget5_locked stuff, it should work.
 
-iD8DBQA+e84iBPYwh6bSSDcRAto6AJ9xS9uDMp+TGzSgoDlhzDKswouiYgCfUmWN
-jDG9XEpwCFTMgHGar8KAijo=
-=8TbG
------END PGP SIGNATURE-----
-
---=-AQLtBikDfi5UFbNv0akq--
-
+Bye, 
+    Oleg
