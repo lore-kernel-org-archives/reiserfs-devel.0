@@ -1,42 +1,48 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: 2.6.0test3mm2 reiserfs3.6.11 usb-storage
-Date: Tue, 19 Aug 2003 12:19:00 +0400
-Message-ID: <20030819081900.GK10536@namesys.com>
-References: <Pine.LNX.4.56.0308181527391.13602@hosting.rdsbv.ro> <20030818135827.GA22255@namesys.com> <Pine.LNX.4.56.0308190912140.29654@hosting.rdsbv.ro>
+Subject: Re: another seriously corrupt ext3 -- pesky journal
+Date: Tue, 19 Aug 2003 13:28:01 +0400
+Message-ID: <20030819092801.GA30729@namesys.com>
+References: <200308181639.h7IGdkWq019919@filer.fsl.cs.sunysb.edu> <20030818181354.GC10270@think> <20030818201609.GB10320@matchmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15375-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15376-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.56.0308190912140.29654@hosting.rdsbv.ro>
+In-Reply-To: <20030818201609.GB10320@matchmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Catalin BOIE <util@deuroconsult.ro>
+To: Mike Fedyk <mfedyk@matchmail.com>
 Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Tue, Aug 19, 2003 at 09:13:02AM +0300, Catalin BOIE wrote:
-> > > Failed to open the journal device ((null)).
-> > > I expect reiserfsck to treat this device as any other device.
-> > > Mount /dev/sda1 works.
-> > What is "debugreiserfs /dev/sda1" output?
-> debugreiserfs -d /dev/sda1
-> debugreiserfs 3.6.11 (2003 www.namesys.com)
-> debugreiserfs: Failed to open the fs journal.
-> bash-2.05b# debugreiserfs /dev/sda1
-> debugreiserfs 3.6.11 (2003 www.namesys.com)
-> debugreiserfs: Failed to open the fs journal.
-> I created the fs with command: mkreiserfs -s 513 /dev/sda1
+On Mon, Aug 18, 2003 at 01:16:09PM -0700, Mike Fedyk wrote:
 
-I see. Looks like there is a bug in reiserfsprogs.
-We will work on a fix and will let you know after we are done.
-2.6.4 appears to work, though, so you might downgrade to this version for now.
+> IIUC, reiserfs uses a logical journal, and it only does meta-data
+> journaling, but not to the level of ext3's writeback mode.          
 
-Thank you.
+You probably meant ext3's jordered mode.
+ext3's writeback mode is somewhat like reiserfs' default mode of operations
+without extra journaling patches.
+
+> There are patches to add ext3-like data journaling to reiserfs that are
+> planned to be submitted for one of the next couple 2.4-pre kernels.
+
+True.
+Also Chris should be working on porting those to 2.6. At least I hope so.
+
+> I'd be very interested in how reiserfs (and reiserfsck!) might handle a
+> similar scenario. 
+
+We do not have journal inode. If you get your journal header or superblock
+corrupted, you need to run "reiserfsck --rebuild-sb" and answer some questions
+about what was your FS look like (amount of questions depends on how much
+journal header and superblock were damaged).
+All other corruptions (bitmaps and stuff) should be handled by usual reiserfsck modes.
+(reiserfsck --rebuild-tree, if corruption was not trivial)
 
 Bye,
     Oleg
