@@ -1,35 +1,33 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: production use of reiserfs
-Date: Mon, 01 Dec 2003 10:26:36 -0500
-Message-ID: <1070292395.12807.80.camel@tiny.suse.com>
-References: <200311280846.12697.ivan@t1.unisoftbg.com>
-	 <16327.6650.487369.786012@laputa.namesys.com>
-	 <200311281242.18139.ivan@t1.unisoftbg.com>
-	 <16327.13886.709901.444317@laputa.namesys.com>
-	 <3FC6DB90.7080408@namesys.com>  <1070285623.12809.6.camel@tiny.suse.com>
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Subject: Re: Strange errors with 2.4.22 patches (from Chris) and bonnie++
+Date: Mon, 01 Dec 2003 17:00:23 +0100
+Message-ID: <3FCB6597.8010604@gmx.net>
+References: <bq8f7u$ufn$1@sea.gmane.org>  <3FC8F31A.7000501@gmx.net> <1070285425.12810.2.camel@tiny.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16190-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16191-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1070285623.12809.6.camel@tiny.suse.com>
+In-Reply-To: <1070285425.12810.2.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Nikita Danilov <Nikita@namesys.com>, ivan <ivan@t1.unisoftbg.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On Mon, 2003-12-01 at 08:33, Chris Mason wrote:
 
-> Hans, please send along details for the xattr bugs you think are in the
-> suse kernel.  We have no open bug reports for them, and they work pretty
-> well.
+> I've had to remove reiserfs-jh-3, it caused problems in the suse kernel
+> and a week or so of hunting wasn't able to track it down.  All my effort
+> right now is on fixing it in my 2.6 branch.
+Nice, to see data logging in 2.6.
 
-That's what I get for sending email before reading my entire inbox.  I
-found the recent XATTR thread, I thought we had resolved that but I'll
-wait for Jeff to comment.
+So one is more safe without reiserfs-jh-3 than with it?
 
--chris
-
+I sometimes get permission denied messages on some files if I read from 
+LVM snapshots. This happens rather seldom and goes away if I redo a
+snapshot. I could ask an admin to have a look for the console messsages, 
+if this is the same problem you are facing.
+I had no corruption.
+-- 
+lg, Chris
 
