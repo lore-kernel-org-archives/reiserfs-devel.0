@@ -1,71 +1,140 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCHES] 2.6.1 Cleanups
-Date: Mon, 23 Feb 2004 21:55:08 -0500
-Message-ID: <403ABD0C.2090408@suse.com>
-References: <4003176A.3070901@suse.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: Bug report
+Date: Tue, 24 Feb 2004 12:22:37 +0300
+Message-ID: <200402241222.37219.vitaly@namesys.com>
+References: <200402211348.42786.grahame@wildpossum.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16901-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16902-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4003176A.3070901@suse.com>
+In-Reply-To: <200402211348.42786.grahame@wildpossum.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS Mailing List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: "Grahame M. Kelly" <grahame@wildpossum.com>, reiserfs-list@namesys.com
 
-Jeff Mahoney wrote:
-> Hey all -
-> 
-> Now that the 2.6.0 hurdle has been cleared and Linus seems to be more
-> open to cleanup-type patches, I have these to submit for comment.
-> 
-> I have 4 patches, descriptions follow:
-> * cleanup-01-basic-cleanup
->     -- This cleans up journal.c such that the ugly 50+ character
->     macro/derefs that are used repeatedly are evaluated once and
->     then accessed using a temporary variable. The resulting code
->     should be identical and makes it quite a bit nicer to read.
-> 
-> * cleanup-01-sb-opts
->     -- This eliminates individual #defines for superblock/mount
->     options and instead uses an enum. It's not like the actual
->     values of the mount options matter, and this just makes a list
->     of them. Accordingly, since the values aren't apparently in the
->     include, I added a BUG_ON to bail out of the value passes beyond
->     the size of the mount_opts variable.
-> 
-> * cleanup-02-bh-bits
->     -- This patch makes all the accesses for bh->b_state use the
->     appropriate macros, rather than accessing them directly.
-> 
-> * cleanup-03-bh-cleanup
->     -- This patch eliminates the local macro implementation for the
->     bh->b_state accessors/mutators and uses the FNS_BUFFER
->     implementation in fs.h, which automatically creates the macros
->     with on line of code.
-> 
-> * cleanup-04-sb-journal-elimination
->     -- This patch is similar to the basic-cleanup, except that it
->     focuses on the use of SB_JOURNAL(super) everywhere, and replaces
->     it with a local "journal" variable. Again, this makes the code
->     much easier to look at.
-> 
-> Opinions? Comments?
-> 
-> Patches can be found at
-> ftp://ftp.suse.com/pub/people/jeffm/reiserfs/kernel-v2.6/2.6.1/
-> 
-> -Jeff
-> 
-> I apologize if this posted twice. The first message had the patches
-> attached, and crossed the post size limit. I haven't received a bounce yet.
+On Saturday 21 February 2004 05:48, Grahame M. Kelly wrote:
+> Hi. I hope all these details are OK.
+
+Hello,
+
+could you run
+	deubgreiserfs -p /dev/hdb1 | bzip2 -c > hdb1.bz2
+and provide it for download, I would debug this out of disk space 
+locally then.
+
+-- 
+Thanks,
+Vitaly Fertman
+
+> I only have a problem with /dev/hdb1 - I get the following message with
+> terminates the --rebuild-tree or --fix-fixable directives:
+>
+> Replaying journal..
+> 0 transactions replayed
+> Checking internal tree..
+> Bad root block 0. (--rebuild-tree did not complete)
+> Aborted
+>
+>
+> If I run --rebuild-sb I get:
+>
+> Do you want to run this program?[N/Yes] (note need to type Yes if you
+> do):Yes rebuild-sb: wrong tree height occured (65535), zeroed
+>
+> rebuild-sb: You either have a corrupted journal or have just changed
+> the start of the partition with some partition table editor. If you are
+> sure that the start of the partition is ok, rebuild the journal header.
+> Do you want to rebuild the journal header? (y/n)[n]: y
+> Reiserfs super block in block 16 on 0x341 of format 3.5 with standard
+> journal Count of blocks on the device: 2560351
+> Number of bitmaps: 79
+> Blocksize: 4096
+> Free blocks (count of blocks - used [journal, bitmaps, data, reserved]
+> blocks): 2560351
+> Root block: 0
+> Filesystem is clean
+> Tree height: 0
+> Hash function used to sort names: "r5"
+> Objectid map size 4, max 1004
+> Journal parameters:
+>         Device [0x0]
+>         Magic [0x0]
+>         Size 8193 blocks (including 1 for journal header) (first block 18)
+>         Max transaction length 1024 blocks
+>         Max batch size 900 blocks
+>         Max commit age 30
+> Blocks reserved by journal: 0
+> Fs state field: 0xfa03:
+>         FATAL corruptions exist.
+>          some corruptions exist.
+> sb_version: 0
+> Is this ok ? (y/n)[n]: y
+> The fs may still be unconsistent. Run reiserfsck --check.
+>
+>
+> Cheers, Grahame
+>
+> ---- Details ----
+>
+> Linux glider 2.4.21-166-athlon #1 Wed Jan 7 03:05:30 UTC 2004 i686 athlon
+> i386 GNU/Linux (SuSE 9.0 Pro Distribution).
+>
+> top - 13:38:30 up 1 day,  2:55, 11 users,  load average: 0.19, 0.59, 0.61
+> Tasks: 137 total,   3 running, 132 sleeping,   0 stopped,   2 zombie
+> Cpu(s):   6.2% user,   2.8% system,   0.0% nice,  91.1% idle
+> Mem:   1032852k total,   312016k used,   720836k free,    47240k buffers
+> Swap:  1036152k total,    60648k used,   975504k free,    67296k cached
+>
+> Disk /dev/hdb: 41.1 GB, 41174138880 bytes
+> 255 heads, 63 sectors/track, 5005 cylinders
+> Units = cylinders of 16065 * 512 = 8225280 bytes
+>
+> Device Boot    Start       End    Blocks   Id  System
+> /dev/hdb1             1      1275  10241406   83  Linux
+> /dev/hdb2          1276      2550  10241437+  83  Linux
+> /dev/hdb3          2551      3825  10241437+  83  Linux
+> /dev/hdb4          3826      5005   9478350   83  Linux
+>
+> glider:/ # rpm -qa|grep reiser
+> reiserfs-3.6.9-33
+>
+> glider:/proc/ide # cat drivers
+> ide-cdrom version 4.59-ac1
+> ide-floppy version 0.99.newide
+> ide-disk version 1.17
+> ide-default version 0.9.newide
+>
+> glider:/proc/ide # cat amd74xx
+> ----------AMD BusMastering IDE Configuration----------------
+> Driver Version:                     2.11
+> South Bridge:                       PCI device 10de:0065 (nVidia
+> Corporation) Revision:                           IDE 0xa2
+> Highest DMA rate:                   UDMA100
+> BM-DMA base:                        0xf000
+> PCI clock:                          33.3MHz
+> -----------------------Primary IDE-------Secondary IDE------
+> Prefetch Buffer:              yes                 yes
+> Post Write Buffer:            yes                 yes
+> Enabled:                      yes                 yes
+> Simplex only:                  no                  no
+> Cable Type:                   80w                 80w
+> -------------------drive0----drive1----drive2----drive3-----
+> Transfer Mode:       UDMA      UDMA       PIO       PIO
+> Address Setup:       30ns      30ns      30ns      30ns
+> Cmd Active:          90ns      90ns      90ns      90ns
+> Cmd Recovery:        30ns      30ns      30ns      30ns
+> Data Active:         90ns      90ns      90ns      90ns
+> Data Recovery:       30ns      30ns      30ns      30ns
+> Cycle Time:          20ns      20ns     120ns     120ns
+> Transfer Rate:   99.9MB/s  99.9MB/s  16.6MB/s  16.6MB/s
+>
+> glider:/proc/ide # lsmod | grep ide
+> ide-cd                 32416   0  (autoclean)
+> videodev                6272   8  (autoclean) [bttv]
+> cdrom                  29216   0  (autoclean) [ide-cd sr_mod]
 
 
-Hey all -
-
-I never got any sort of response on these. Shall I send them on to 
-Linus? They still apply cleanly to 2.6.3.
-
--Jeff
