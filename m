@@ -1,27 +1,59 @@
-From: Marc-Christian Petersen <m.c.p@gmx.net>
-Subject: Re: [PATCH] new data logging and quota patches available
-Date: Sun, 23 Feb 2003 18:37:37 +0100
-Message-ID: <200302231837.37418.m.c.p@gmx.net>
-References: <1045870331.16048.325.camel@tiny.suse.com> <3E581E07.3050407@mb.tu-ilmenau.de> <1046020695.16048.409.camel@tiny.suse.com>
+From: Guillermo Torreiro <gtorreiro@yahoo.com>
+Subject: What is reiserfsck telling me?
+Date: Sun, 23 Feb 2003 10:14:51 -0800 (PST)
+Message-ID: <20030223181451.28117.qmail@web9807.mail.yahoo.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12875-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12876-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1046020695.16048.409.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Chris Mason <mason@suse.com>, Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: Chris Mason <mason@namesys.com>, reiserfs-list <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list <reiserfs-list@namesys.com>
 
-On Sunday 23 February 2003 18:18, Chris Mason wrote:
+Hi!
 
-Hi Chris,
+I run reiserfsck to check a partition and this
+happened:
 
-> I've attached a new kinoded-9.diff.gz, it will apply to both -aa and
-> vanilla.  Please give it a try.
-do you consider telling us the changes? ;)
+<-------------reiserfsck, 2002------------->
+reiserfsprogs 3.x.1b
 
-ciao, Marc
+Will read-only check consistency of the filesystem on
+/dev/hda7
+Will put log info to 'stdout'
+
+Do you want to run this program?[N/Yes] (note need to
+type Yes):Yes
+###########
+reiserfsck --check started at Sun Feb 23 11:28:32 2003
+###########
+Replaying journal..
+0 transactions replayed
+Checking S+tree../ 27 (of  40)/ 37 (of 170)
+pass_through_tree: unable to read 11434 block on
+device 0x3
+
+
+
+Aborted
+
+<---END :)---->
+
+So... ok, I got a problem there with block 11434, I
+can't read it, but why? what is that mean? block 11434
+turned to be a bad block? Can I find a work around to
+this so I could get to read that block? Anyone can
+explain that to me? How do I proceed with this kind of
+problems?
+
+Best Regard,
+
+Guillermo
+
+__________________________________________________
+Do you Yahoo!?
+Yahoo! Tax Center - forms, calculators, tips, more
+http://taxes.yahoo.com/
