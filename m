@@ -1,74 +1,35 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: silent semantic changes in reiser4 (brief attempt to document
- the idea of what reiser4 wants to do with metafiles and why
-Date: Wed, 01 Sep 2004 01:07:34 -0700
-Message-ID: <41358346.20507@namesys.com>
-References: <185110393004-BeMail@cr593174-a>
+From: claus@xn--frber-gra.muc.de (=?ISO-8859-1?Q?Claus_F=E4rber?=)
+Subject: Re: silent semantic changes with reiser4
+Date: 31 Aug 2004 13:01:00 +0200
+Sender: news <news@sea.gmane.org>
+Message-ID: <9FuGrTY3cDD@3247.org>
+References: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com>
+	<412E4999.1050504@sover.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21204-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21205-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <185110393004-BeMail@cr593174-a>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 
-Alexander G. M. Smith wrote:
+Stephen Wille Padnos <spadnos@sover.net> schrieb/wrote:
+> How does the file manager / chooser decide whether you're trying to
+> move into a directory, or the meta-data-directory for a directory?
+> It's not just files that should have metadata - directories need* them
+> too.  Making it possible to see attributes as a directory under a file
+> is great, but you'd still need an O_META flag for accessing directory
+> metadata (since there are already files under a directory).
 
->Hans Reiser wrote on Mon, 30 Aug 2004 23:43:13 -0700:
->  
->
->>Alexander G. M. Smith wrote:
->>    
->>
->>>Are you sneaking in file types there?  Just how does a file know which
->>>plugins it supports?
->>>      
->>>
->>we have plugins with pluginids, is that what you mean by file type? I 
->>think they are a bit different from file types.
->>    
->>
->
->>From your white-paper: "Every file possesses a plugin id, and every
->directory possesses a plugin id.  This plugin id will identify a set
->of methods."
->
->Functionally this is very close to a file type.
->
-A file type is based on semantics of the contents, and a plugin id is 
-based on methods of the object.
+A simple convention that meta data files start with, say ".$", would be  
+enough.
 
->  It classifies the
->files into related groups, maybe not as finely as a MIME file type
->which can distinguish between multiple varieties of text files.
->
->A file type would tell us that a file is a text file and can be opened
->by certain applications (text/e-mail can be opened by e-mail reader,
->text editor, etc) and have other properties (lists of standard
->attributes, default icon).  A plugin ID says that the file can use text
->related plugins (like a word count, or XML structure as a subdirectory).
->
->In both cases there is a global repository (I assume) that associates
->the file type or plugin ID with a list of things about it.
->
->You could combine the two concepts, just have a file type ID that in the
->global repository specifies what plugins it can use as well as the
->userland properties (MIME string, etc) of that kind of file.  Or at least
->make the type ID available to userland so it can be used there.
->
->Or is this binding irrelevant?  How often does the file type the user
->sees not match the plugins desired for the file?  Or can a new subtype
->be defined for just that file?  Which may mean that we need something
->better than MIME strings for types (something which has inheritance).
->
->- Alex
->
->
->  
->
-I think that there may be some good use for a filename/metas/type metafile.
+Claus
+-- 
+http://www.faerber.muc.de
+
+
