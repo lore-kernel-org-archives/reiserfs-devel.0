@@ -1,38 +1,34 @@
-From: pll@lanminds.com
-Subject: reiserfs equivalent of ext2's -m?
-Date: Tue, 09 Jul 2002 15:02:30 -0400
-Sender: pll@lanminds.com
-Message-ID: <20020709190230.D4AA7F59E@tater>
-Reply-To: pll@lanminds.com
-Return-path: <reiserfs-list-return-10939-reiserfs=m.gmane.org@namesys.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: reiserfs equivalent of ext2's -m?
+Date: Wed, 10 Jul 2002 09:06:55 +0400
+Message-ID: <20020710090655.A4451@namesys.com>
+References: <20020709190230.D4AA7F59E@tater>
+Mime-Version: 1.0
+Return-path: <reiserfs-list-return-10943-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <20020709190230.D4AA7F59E@tater>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: pll@lanminds.com
+Cc: reiserfs-list@namesys.com
 
+Hello!
 
-Hi all,
+On Tue, Jul 09, 2002 at 03:02:30PM -0400, pll@lanminds.com wrote:
 
-Does ReiserFS have something equivalent to ext2fs' -m switch which 
-allows you to manipulate the 'min-free' overhead?
+> Does ReiserFS have something equivalent to ext2fs' -m switch which 
+> allows you to manipulate the 'min-free' overhead?
 
-Does ReiserFS even have a reserved overhead allocation?
+No.
 
-Thanks
+> Does ReiserFS even have a reserved overhead allocation?
 
+There is 200 blocks reserved for FSs purposes that user cannot use, but
+fsck can use for example. That's all for now.
 
--- 
-
-Seeya,
-Paul
-----
-	It may look like I'm just sitting here doing nothing,
-   but I'm really actively waiting for all my problems to go away.
-
-	 If you're not having fun, you're not doing it right!
-
-
+Bye,
+    Oleg
