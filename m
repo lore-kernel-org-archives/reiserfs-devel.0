@@ -1,46 +1,38 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiserfsprogs-3.6.12 release
-Date: Thu, 12 Feb 2004 14:31:26 +0300
-Message-ID: <200402121431.26019.vitaly@namesys.com>
-References: <200402102010.04479.vitaly@namesys.com> <200402120134.20591.vitaly@namesys.com> <20040211230435.GB8237@lostlogicx.com>
+From: Alexander Lyamin <flx@msu.ru>
+Subject: Re: bk
+Date: Thu, 12 Feb 2004 14:33:36 +0300
+Message-ID: <20040212143336.B11891@t-raenon.nmd.msu.ru>
+References: <m3r7x64fbq.fsf@lugabout.jhcloos.org>
+Reply-To: flx@msu.ru
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16772-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16773-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040211230435.GB8237@lostlogicx.com>
 Content-Disposition: inline
+In-Reply-To: <m3r7x64fbq.fsf@lugabout.jhcloos.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Brandon Low <lostlogic@gentoo.org>, Henning Westerholt <henning@skalatan.de>
+Content-Transfer-Encoding: 7bit
+To: "James H. Cloos Jr." <cloos@jhcloos.com>
 Cc: reiserfs-list@namesys.com
 
-> bash-2.05b# /sbin/reiserfsck -a /dev/hda3
->
-> Failed to open the filesystem.
->
-> If the partition talbe has not been changed, and the partition is
-> valid  and  it really  contains  a reiserfs  partition,  then the
-> superblock  is corrupted and you need to run this utility with
-> --rebuild-sb.
->
-> Aborted
->
-> bash-2.05b# /sbin/reiserfsck -a /dev/root
-> Reiserfs superblock in block 16 on 0x303 of format 3.6 with standard
-> journal Blocks (total/free): 4390223/6461997 by 4096 bytes
-> Filesystem is cleanly mounted
-> Paritition /dev/root is mounted with write permissions, cannot check it
+Sat, Feb 07, 2004 at 06:53:13PM -0500, James H. Cloos Jr. wrote:
+> Any update on this?
+> 
+> Why not setup a bkbits site to house the public repos, at least until
+> this gets fixed?  A single push a day would be enough if there is any
+> concerns about wasting developer time with an international push each
+> time a commit is done....  It could even be pushed via cron.
 
-hm, interesting, would you run 
-	stat /dev/hda3 (Henning, put here your root partition please)
-	stat /dev/root
-	stat /
-at bootup and when booted.
+we have some problems with chrooted version of BK , since its turned 3.0.4
+and working with bitmover on resolving this problem...
+hopefully it will be solved by weekend.
 
---
-Thanks,
-Vitaly Fertman
+> 
+> -JimC
 
+-- 
+"the liberation loophole will make it clear.."
+lex lyamin
