@@ -1,35 +1,39 @@
-From: Russell Coker <russell@coker.com.au>
-Subject: Re: [SPAM] Business Marketing on The Web
-Date: Wed, 7 May 2003 20:02:19 +1000
-Message-ID: <200305072002.19171.russell@coker.com.au>
-References: <20030507095556.15470gmx1@mx016-rz3.gmx.net> <200305071159.19381.m.c.p@gmx.net>
-Reply-To: Russell Coker <russell@coker.com.au>
+From: Chris Mason <mason@suse.com>
+Subject: Re: Data-logging and md as / fs bug
+Date: 07 May 2003 08:34:00 -0400
+Message-ID: <1052310840.14616.344.camel@tiny.suse.com>
+References: <3EB30852.6090402@netscape.net>
+	 <200305062134.42520.christian.mayrhuber@gmx.net>
+	 <1052250298.14612.235.camel@tiny.suse.com>
+	 <200305062253.11535.christian.mayrhuber@gmx.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13981-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13983-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200305071159.19381.m.c.p@gmx.net>
-Content-Disposition: inline
+In-Reply-To: <200305062253.11535.christian.mayrhuber@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Marc-Christian Petersen <m.c.p@gmx.net>, reiserfs-list@namesys.com
+To: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-On Wed, 7 May 2003 19:59, Marc-Christian Petersen wrote:
-> On Wednesday 07 May 2003 11:55, Marketing Now wrote:
->
-> again I'll configure your spam assassin the right way for $25.
+On Tue, 2003-05-06 at 16:53, Christian Mayrhuber wrote:
 
-Just configure your mail server to reject messages with subject " [SPAM]" and 
-then use spamcop to report any spam that gets through.
+> > Interesting, this isn't a known bug.  Could you please try two things:
+> >
+> > 1) try to reproduce without any patches past 06-write_times.diff applied
+> > (in other words, without the quota)
+> >
+> > 2) try to reproduce with only 02-akpm-b_journal_head-1.diff and
+> > 03-2.4.21-rc1-relocation-6.diff applied.
 
-It seems the only thing to do with this list.
+> The bug already appears in case 2) with akpm and relocation only applied.
 
--- 
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
+I'd like to make sure I'm tracking the right problem.  Could you please
+send me the exact kernel messages from the failed shutdown?
+
+-chris
+
 
