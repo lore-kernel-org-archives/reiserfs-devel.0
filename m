@@ -1,30 +1,55 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Subject: Re: using of XATTRs instead of pseudo files for accessing
- reiser4	=?us-ascii?q?file?= attributes.
-Date: Mon, 05 Apr 2004 18:41:45 -0400 EDT
-Message-ID: <38261445506-BeMail@cr593174-a>
-References: <1081169185.3548.373.camel@watt.suse.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: testing/questions about latest Reiser4
+Date: Mon, 05 Apr 2004 19:00:23 -0400
+Message-ID: <200404052300.i35N0NTT025232@turing-police.cc.vt.edu>
+References: <4070E534.9010509@mrs.umn.edu>
+            <1081178588.1162.47.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; boundary="==_Exmh_2089346634P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17733-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17735-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1081169185.3548.373.camel@watt.suse.com>
+In-Reply-To: Your message of "Mon, 05 Apr 2004 19:23:08 +0400."
+             <1081178588.1162.47.camel@tribesman.namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
-Cc: Chris Mason <mason@suse.com>
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: Grant Miner <mine0057@mrs.umn.edu>, reiserfs-list@namesys.com
 
-Chris Mason wrote on Mon, 05 Apr 2004 08:46:26 -0400:
-> xattrs are the current linux api, you'll make it much easier for people
-> to use reiser4 by supporting it (in addition to whatever new and cool
-> API you develop).
+--==_Exmh_2089346634P
+Content-Type: text/plain; charset=us-ascii
 
-One of the big points is to cut down on the number of APIs and gain
-in saved effort.  Listing attributes?  Just use good old ReadDir().
-With a common name space, you can use grep and other well developed
-tools to deal with attributes.  And so on.
+On Mon, 05 Apr 2004 19:23:08 +0400, Vladimir Saveliev said:
 
-- Alex
+> >   Are 
+> > pseudo files just representation of stat data stored a special way? 
+> 
+> Pseudo files are not stored anywhere
+
+Subtle distinction here - the data in a pseudo file has to be stored
+*somewhere* if you want it to persist across reboots, and even for things that
+don't survive a reboot, the data has to be saved *someplace* in memory, even if
+it's only in a variable or a dentry structure or something like that....
+
+So more accurate might be to say "The content of pseudo files is created on the
+fly from metadata that is managed (and possibly saved) by the file system".
+
+(Sorry to be pedantic, but it's a point that will cause a lot of confusion if you
+don't really understand it)...
+
+--==_Exmh_2089346634P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFAceUHcC3lWbTT17ARAjn9AKC2ldqz2CTbKqekHW3fhusPiq6RUwCg+KTF
+fMaRwsaBqYmmqaoZ6Dbf2Ho=
+=vQ4z
+-----END PGP SIGNATURE-----
+
+--==_Exmh_2089346634P--
