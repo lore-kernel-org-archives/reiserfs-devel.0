@@ -1,43 +1,77 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <d.nuetzel@wearabrain.de>
-Subject: Re: ReiserFS is not suitable for a root FS.
-Date: Mon, 19 May 2003 22:42:07 +0200
-Message-ID: <200305192242.07474.d.nuetzel@wearabrain.de>
-References: <Pine.LNX.4.44.0305191544380.7975-100000@dragon.inside.ntisys.com>
+From: D_i_F_i@gmx.de
+Subject: Re: "no space left" but df -k shows plenty of free space
+Date: Tue, 20 May 2003 00:24:42 +0200 (MEST)
+Message-ID: <23414.1053383082@www3.gmx.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14167-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-14169-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.44.0305191544380.7975-100000@dragon.inside.ntisys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: bscott@ntisys.com, ReiserFS <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="johab"
+To: mason@suse.com, green@namesys.com
+Cc: reiserfs-list@namesys.com
 
-Am Montag, 19. Mai 2003 21:55 schrieb bscott@ntisys.com:
->   Observation: Unix and its clones (such as Linux) have, traditionally,
-> done poorly when the root filesystem is not safe and sane.  The stance
-> appears to be (have been) that, if the root is damaged, the system doesn't
-> have enough marbles left to reliably repair itself.  At that point, you
-> must boot from some other filesystem.
-
-=46ormer and current FSs of the "other OS" not?
-NTFS is so stupid that it couldn't wake up itself when=20
-WINNT/system32/AUTOCHK.EXE is missing (on the root partition or rescue CD) =
-or=20
-when it can't find a sane mft (master file table =3D=3D inode table) even w=
-hen=20
-there are intact copies of it on the disk.
-
-But current NTFS patches for Linux can handle this...
-
-Greetings,
-	Dieter
-
-=2D-=20
-Dieter N=FCtzel
-Leiter F&E, WEAR-A-BRAIN GmbH, Wiener Str. 5, 28359 Bremen, Germany
-Mobil: 0162 673 09 09
-
+SGVsbG8sCgptYW55IHRoYW5rcyBmb3IgeW91ciBxdWljayByZXNwb25zZXMhIFNvcnJ5IHRoYXQg
+SSBjb3VsZG60dCB1c2UganVzdCB0aGUKcmVwbHktZnVuY3Rpb24gb2YgbXkgZU1haWwtQ2xpZW50
+LCBidXQgSbRtIGN1cnJlbnRseSBvbiBhIGJ1c2luZXNzCnRyYXZlbCBhbmQgSSBkb260dCBoYXZl
+IGZ1bGwgYWNjZXNzIHRvIG15IGVNYWlscy4KCkhlcmUgYXJlIHNvbWUgb2YgdGhlIGluZm9ybWF0
+aW9ucyB5b3UgYXNrZWQgZm9yOgoKPj4gTm93IHdlIGNhbiB1c2UgdGhlIGZpbGVzeXN0ZW0gd2l0
+aG91dCBwcm9ibGVtcyBidXQgSSBmZWFyIHRoYXQgd2UKPj4gd2lsbCBydW4gaW50byBwcm9ibGVt
+cyB3aGVuIHRoZSBmaWxlc3lzdGVtIHJlYWNoZXMgNzclIHVzYWdlIGFnYWluLgo+Cj5IbSwgaXQg
+d2lsbCBiZSBpbnRlcmVzdGluZyBpZiB5b3UgdHJ5Lgo+TWF5IGJlIGl0IHdpbGwgc3RvcCB3b3Jr
+aW5nIHdoZW4gdGhlcmUgaXMgMjQ5ODA3MiBibG9ja3MgbGVmdCBhZ2Fpbi4KClNvcnJ5LCBidXQg
+SSBjYW60dCBmaWxsIHVwIHRoZSBmaWxlc3lzdGVtIHVudGlsIGl0tHMgZnVsbCBiZWNhdXNlIHdl
+Cm5lZWQgdGhlIGZpbGVzeXN0ZW0gZm9yIG91ciBkYWlseSB3b3JrLiBJZiBJIHJlYWx5IHNob3Vs
+ZCB0cnkgdGhpcywgSSAKaGF2ZSB0byB3YWl0IHVudGlsIHRoZSBuZXh0IHdlZWtlbmQuIEFsc28g
+SSBoYXZlIHRvIGFzayBzZXZlcmFsIGNvbGxlZ3VlcywKaWYgaXS0cyBvayBpZiBJtG0gZ29pbmcg
+dG8gZG8gdGhpcyB0ZXN0IGF0IHRoZSBuZXh0IHdlZWtlbmQuIEJ1dCBpZiB5b3UKdGhpbmssIHRo
+aXMgdGVzdCB3aWxsIGJyaW5nIHVzIGEgc3RlcCBmdXJ0aGVyLCBJIHdpbGwgdHJ5IHRvIGdldCBh
+biAiT0siCmZvciB0aGlzIHRlc3QuCgoKPj4gSSdtIHVzaW5nIHJlaXNlcmZzIHZlcnNpb24gMy42
+LjI1IFtidWlsdCBpbnRvIGtlcm5lbF0gb2YgYQo+PiBTTEVTNy1EaXN0cmlidXRpb24gKFN1U0Up
+IG9uIElCTSB6U2VyaWVzICh6OTAwLCB6L1ZNKSBpbgo+PiA2NC1CaXQtTW9kZSAoczM5MHgpLiBU
+aGUgZmlsZXN5c3RlbSBoYXMgYmVlbiByZXNpemVkCj4KPkhtLCB3aGF0IGtlcm5lbCB2ZXJzaW9u
+IGRvIHRoZXkgc2hpcD8KPgoKV2UgdXNlICJrX2RlZmx0LTIuNC4xNy00NSIsIGFzICJycG0gLXFp
+IiBzaG93czoKCk5hbWUgICAgICAgIDoga19kZWZsdCAgICAgICAgICAgICAgICAgICAgICBSZWxv
+Y2F0aW9uczogKG5vdCByZWxvY2F0ZWFibGUpClZlcnNpb24gICAgIDogMi40LjE3ICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIFZlbmRvcjogU3VTRSBBRywgTnVlcm5iZXJnLApHZXJtYW55ClJl
+bGVhc2UgICAgIDogNDUgICAgICAgICAgICAgICAgICAgICAgICAgICAgQnVpbGQgRGF0ZTogVGh1
+IDA1IERlYyAyMDAyCjA5OjU5OjE0IFBNIENFVApJbnN0YWxsIGRhdGU6IEZyaSAxNCBGZWIgMjAw
+MyAwMjoxMzoyMSBQTSBDRVQgICAgICBCdWlsZCBIb3N0OgpzMzkwenZpNzIuc3VzZS5kZQpHcm91
+cCAgICAgICA6IEJhc2UvS2VybmVsICAgICAgICAgICAgICAgICAgIFNvdXJjZSBSUE06CmtfZGVm
+bHQtMi40LjE3LTQ1LnNyYy5ycG0KU2l6ZSAgICAgICAgOiA5OTM4OTg3ICAgICAgICAgICAgICAg
+ICAgICAgICAgICBMaWNlbnNlOiBHUEwgKyBJQk0gT0NPCkxJQ0VOU0UKUGFja2FnZXIgICAgOiBm
+ZWVkYmFja0BzdXNlLmRlClN1bW1hcnkgICAgIDogVGhlIHN0YW5kYXJkIFN1U0Uga2VybmVsCkRl
+c2NyaXB0aW9uIDoKVGhlIHN0YW5kYXJkIFN1U0Uga2VybmVsCgpTdVNFIHNlcmllczogaW1hZ2Vz
+CgoKPiBDb3VsZCB5b3UgcGxlYXNlIHJ1biBkZWJ1Z3JlaXNlcmZzIC1wIC9kZXYveHh4IHwgZ3pp
+cCAtYyA+Cj4gZGYtZXJyb3ItZnMuZ3osIGFuZCBtYWtlIGl0IGF2YWlsYWJsZSBzb21ld2hlcmUg
+Zm9yIHVzIHRvIGRvd25sb2FkLiAgSWYKPiB5b3UgYXJlIHVzaW5nIHJlaXNlcmZzcHJvZ3MgMy54
+LjBqIG9yIHNvIHRoZSBvdXRwdXQgY2FuIGNvbnRhaW4gYWN0dWFsCj4gZmlsZSBkYXRhLCBzbyB5
+b3UgcHJvYmFibHkgd2FudCB0byBwdXQgdGhlIGltYWdlIG9udG8gYSBwYXNzd29yZAo+IHByb3Rl
+Y3RlZCBwYWdlLgo+Cj4gVGhpcyB3aWxsIHRha2UgYSBtZXRhZGF0YSBkdW1wIG9mIHRoZSBmaWxl
+c3lzdGVtLCBJJ2QgbGlrZSB0byBjaGVjayBpdC4KCkkgZ3Vlc3MsIEkgY2FuIGV4ZWN1dGUgdGhp
+cyBjb21tYW5kIHdoaWxlIHRoZSBmaWxlc3lzdGVtIGlzIG1vdW50ZWQgYW5kCmluIHVzZS4gSXMg
+dGhpcyBjb3JyZWN0PyBBbHNvIEm0dmUgdG8gY2hlY2sgZmlyc3QsIGlmIHRoZXJlIHdpbGwgYmUg
+YW55CiJjb25maWRlbnRpYWwiIGRhdGEgaW4gdGhlIG91dHB1dCBvZiB0aGUgZGVidWctY29tbWFu
+ZCwgd2hpY2ggSbRtIG5vdAphbGxvd2VkIHRvIGRpc3RyaWJ1dGUuIEFuZCBhcyB0aGUgY29tbWFu
+ZCBjYXVzZXMgc29tZSBzeXN0ZW0gbG9hZCwgSSBtYXkgCmhhdmUgdG8gd2FpdCB1bnRpbCB0aGUg
+bmV4dCB3ZWVrZW5kLCB0byBnZW5lcmF0ZSB0aGlzIGRhdGEuCiAKQnkgdGhlIHdheSwgV2UgYXJl
+IHVzaW5nIHRoZSBmb2xsb3dpbmcgUlBNOgoKTmFtZSAgICAgICAgOiByZWlzZXJmcyAgICAgICAg
+ICAgICAgICAgICAgIFJlbG9jYXRpb25zOiAobm90IHJlbG9jYXRlYWJsZSkKVmVyc2lvbiAgICAg
+OiAzLnguMWIgICAgICAgICAgICAgICAgICAgICAgICAgICAgVmVuZG9yOiBTdVNFIEFHLCBOdWVy
+bmJlcmcsCkdlcm1hbnkKUmVsZWFzZSAgICAgOiAxNiAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBCdWlsZCBEYXRlOiBTYXQgMjAgQXByIDIwMDIKMDE6MjM6MDcgQU0gQ0VTVApJbnN0YWxsIGRh
+dGU6IFdlZCAxMiBGZWIgMjAwMyAwNDo0Nzo0OSBQTSBDRVQgICAgICBCdWlsZCBIb3N0OgpzMzkw
+ejA2LnN1c2UuZGUKR3JvdXAgICAgICAgOiBTeXN0ZW0vRmlsZXN5c3RlbXMgICAgICAgICAgICBT
+b3VyY2UgUlBNOgpyZWlzZXJmcy0zLnguMWItMTYuc3JjLnJwbQpTaXplICAgICAgICA6IDE1NzEx
+NzcgICAgICAgICAgICAgICAgICAgICAgICAgIExpY2Vuc2U6IEhhbnMgUmVpc2VyClBhY2thZ2Vy
+ICAgIDogZmVlZGJhY2tAc3VzZS5kZQpTdW1tYXJ5ICAgICA6IHJlaXNlcmZzIHV0aWxpdGllcwpE
+ZXNjcmlwdGlvbiA6CnJlaXNlcmZzIHV0aWxpdGllczogbWFraW5nIHRoZSBmaWxlIHN5c3RlbSAo
+bWtyZWlzZXJmcyksIGNoZWNraW5nIGZvcgpjb25zaXN0ZW5jeSAocmVpc2VyZnNjayksIGFuZCBy
+ZXNpemluZyAocmVzaXplX3JlaXNlcmZzKQoKU3VTRSBzZXJpZXM6IGEKCgoKQWZ0ZXIgSbR2ZSBn
+b3QgY2xlYXJhbmNlIGZvciBhbGwgdGhlc2UgcXVlc3Rpb25zIEkgd291bGQgc2VuZCB5b3UgYW4K
+YXBwcm9yaWF0ZSBtZXNzYWdlLgoKUmVnYXJkcywKRGlyawoKLS0gCisrKyBHTVggLSBNYWlsLCBN
+ZXNzYWdpbmcgJiBtb3JlICBodHRwOi8vd3d3LmdteC5uZXQgKysrCkJpdHRlIGzkY2hlbG4hIEZv
+dG9nYWxlcmllIG9ubGluZSBtaXQgR01YIG9obmUgZWlnZW5lIEhvbWVwYWdlIQoK
