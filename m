@@ -1,27 +1,44 @@
-From: "Steve Milo" <slavik914@mrbrklyn.com>
-Subject: Re: Reiserfsck --rebuild-tree rendered machine unbootable.
-Date: Thu, 16 Sep 2004 09:18:27 -0500
-Message-ID: <20040916131643.M15014@mrbrklyn.com>
-References: <20040915224812.M91258@mrbrklyn.com> <1095316434.1359.304.camel@tribesman.namesys.com>
-Reply-To: slavik914@mrbrklyn.com
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: Benchmark : ext3 vs reiser4 and effects of fragmentation.
+Date: Thu, 16 Sep 2004 16:08:09 +0300
+Message-ID: <20040916130809.GI26192@nysv.org>
+References: <4148BC0E.5010509@willsmith.org> <20040916085248.GI5137@backtop.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21810-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21811-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1095316434.1359.304.camel@tribesman.namesys.com>
+Content-Disposition: inline
+In-Reply-To: <20040916085248.GI5137@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: Alex Zarochentsev <zam@namesys.com>
+Cc: Will Smith <will@willsmith.org>, reiserfs-list@namesys.com
 
-> Did you try to boot of Suse 9,1 disk and to recover?
+On Thu, Sep 16, 2004 at 12:52:49PM +0400, Alex Zarochentsev wrote:
 
-No I did not, I did not have the disks handy to do so.  
-But I will try tonight.
+>> 3) the repacker can bring performance of reiser4 back
+>>    to full speed, but only if run several times.
+>yes, we had similar results.  it is so cool that reiser4 repacker effect
+>is visible outside namesys :)
 
-Thanks,
-Steve M
+S'cuse me, but why does it have to be run several times?
+A bug to be fixed?
+
+>> 4) the repacker is not yet stable - I had to run fsck
+>>    a few times after repacking, and once got a kernel
+>>    stack trace during repacking resulting in an
+>>    un-unmountable filesystem.
+>unmergable units shouldn't be problem for the reiser4 kernel code.
+
+What are their significance; what do they mean?
+
+Basically warnings are scary, even if they were harmless :)
+
+Thanks!
+
+-- 
+mjt
 
