@@ -1,48 +1,55 @@
 From: Anders Widman <andewid@tnonline.net>
 Subject: Re: Error messages.
-Date: Thu, 6 Mar 2003 09:43:32 +0100
-Message-ID: <76121382843.20030306094332@tnonline.net>
+Date: Thu, 6 Mar 2003 09:46:18 +0100
+Message-ID: <40121548859.20030306094618@tnonline.net>
 References: <7473069171.20030305201818@tnonline.net>
- <20030306095743.B5417@namesys.com> <170120728875.20030306093238@tnonline.net>
- <20030306114045.B12355@namesys.com>
+ <20030305204105.GA14382@willow.seitz.com>
+ <7478652593.20030305215122@tnonline.net> <1046905350.1692.7.camel@fortknox>
 Reply-To: Anders Widman <andewid@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13118-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13119-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030306114045.B12355@namesys.com>
+In-Reply-To: <1046905350.1692.7.camel@fortknox>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-> Hello!
+> On Wed, 2003-03-05 at 21:51, Anders Widman wrote:
+>> > On Wed, Mar 05, 2003 at 08:18:18PM +0100, Anders Widman wrote:
+>>    New Promise controllers
+>>        PDC20268 (Ultra 100Tx2)
 
-> On Thu, Mar 06, 2003 at 09:32:38AM +0100, Anders Widman wrote:
+> does that mean you only tested on these pdc's ?
 
->> > And for this case I am sure this was a scratchy CD-ROM disk in my CD-ROM drive.
->>    Well, have no CD-ROM. :)
+I  changed  from  Three  Ultra100  to  Ultra100Tx2. Now I only use two
+boards in this particular system.
 
-> /dev/hdg is one of my CD-ROMs ;)
+> If so then then drop this damn PDC controller and get one that is
+> supported under linux (e.g. hpt370 based controllers).
 
->> > Probably same stuff can be get when drive is busy remapping bad sectors?
->> > Use smartctl to find out how these messages corellate with remapped bad sectors counts?
->>   Very strange. Would mean all of my harddrives would be broken, or on
->>   their  way  to  get  broken.  I  do  not  believe that.  Most of the
->>   hardware, including the cabling has been replaced and changed.
+> I had the very same problems with these PDC20268 controllers. When I
+> switched to anything above MDMA0 (note not even UDMA) the system was
+> freezing from time to time.
 
-> Well, seems as Wayne have noticed, you have one common part:
-> Promise controllers. How about using different kind of controller
-> on one of the boxes and see if it helps?
+This happens here too...
 
-Perhaps,  but  the  same  happens on the internal controller. In fact,
-the  internal  controller  (either VIA or the Intel) causes the system
-to freeze when it happens to many times.
+> On the internal controller your drives should work all fine (via/intel
+> chipsets work nicely), also on hpt based chipsets and also cmd is
+> supporting linux... but forget about promise. This company just does not
+> support linux.
 
-> Bye,
->     Oleg
+> I was using kernels 2.4.19/20/21pre1/21pre4/21pre4-ac5 and all had the
+> very same problem. When I heard from others that they had problems with
+> promise I switched... and I am now enjoying a rock stable system.
+
+It  might  just  have  to  come  to this, but I do not want to buy new
+hardware :)
+
+> Soeren.
 
 
    
