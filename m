@@ -1,81 +1,114 @@
-From: Spam <spam@tnonline.net>
-Subject: Re: silent semantic changes with reiser4
-Date: Tue, 7 Sep 2004 15:52:25 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <16310505631.20040907155225@tnonline.net>
-References: <200409070206.i8726vrG006493@localhost.localdomain>
- <413D4C18.6090501@slaphack.com> <m3d60yjnt7.fsf@zoo.weinigel.se>
- <1183150024.20040907143346@tnonline.net> <m38ybmjiyz.fsf@zoo.weinigel.se>
-Reply-To: Spam <spam@tnonline.net>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: Reiser4 and NFS
+Date: Tue, 07 Sep 2004 18:00:46 +0400
+Message-ID: <1094557437.1340.65.camel@tribesman.namesys.com>
+References: <413C5DBA.1070207@fh-landshut.de>
+	 <1094543842.1340.61.camel@tribesman.namesys.com>
+	 <413D6BDC.80006@fh-landshut.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <m38ybmjiyz.fsf@zoo.weinigel.se>
+Content-Type: multipart/mixed; boundary="=-nTTAGCkJEOzfqkJ0kBA/"
+Return-path: <reiserfs-list-return-21570-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <413D6BDC.80006@fh-landshut.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Christer Weinigel <christer@weinigel.se>
-Cc: David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Tonnerre <tonnerre@thundrix.ch>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Oliver Korpilla <okorpil@fh-landshut.de>
+Cc: reiserfs-list@namesys.com
+
+--=-nTTAGCkJEOzfqkJ0kBA/
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+
+Hello
+
+On Tue, 2004-09-07 at 12:05, Oliver Korpilla wrote:
+> Hello Vladimir,
+> 
+> I guess not.
+> 
+> Both my clients are embedded systems, and both didn't work.
+> 
+> Client/Target one is a Motorola MVME2100 board with an MPC8240 PowerPC CPU @ 200
+> MHz.
+> 
+> Client/Target two is a Motorola MVME5500 board with an MPC7455 PowerPC CPU @ 1GHz.
+> 
+> Both failed to mount their root filesystem via NFS from a Reiser4 on the
+> server/host, but worked fine with an ext3 over NFS.
+> 
+> Either this is a NFSv3/Reiser4/2.6.8.1 server vs. NFSv3/2.4.21 client problem,
+> or it has something to do with endianness (PowerPC is big-endian, Intel P4 box
+> is little-endian). I know ext* has absolutely no issues with endianness, neither
+> as RAM disk nor over NFS, but perhaps Reiser4 has?
+> 
+Yes, that could be a problem.
+Would you please try to patch reiser4/vfs_ops.c with the attached patch
+and let us know whether it makes any effect?
 
 
-  
+> Do both your client and your server have kernel 2.6.x? Are both Reiser4 patched?
+> 
+> Maybe Linux 2.6.x has new LOOKUP operation semantics in order to support Reiser4
+> that Linux 2.4.2x hasn't?
+> 
+> On a side note:
+> 
+> It would be nice if we could reproduce the error, since I like Reiser4. I did a
+> large egrep over the whole /usr subtree, and didn't hear a sound from my hard
+> drive because accesses seemed to be well-ordered (no superfluous head
+> movements). I first thought the operation failed. ;)
+> 
+> With kind regards,
+> Oliver Korpilla
+> 
+> Vladimir Saveliev wrote:
+> > I have no problems with exporting reiser4 via NFS. Could it be that you
+> > have problem because your client is embedded?
+> 
+> 
 
-> Spam <spam@tnonline.net> writes:
+--=-nTTAGCkJEOzfqkJ0kBA/
+Content-Disposition: attachment; filename=vfs_ops.c.diff
+Content-Type: text/plain; name=vfs_ops.c.diff; charset=
+Content-Transfer-Encoding: 7bit
 
->> > Additionally, files-as-directores does not solve the problem of 
->> > "cp a b" losing named streams.  There is curently no copyfile syscall
->> > in the Linux kernel, "cp a b" essentially does "cat a >b".  So unless
->> > cp is modified we don't gain anything.  If cp is modified to know
->> > about named streams, it really does not matter if named streams are
->> > accessed as file-as-directories, via openat(3) or via a shared library
->> > with some other interface.
->> 
->>   One suggestion is missed. It is to provide system calls for copy.
->>   That would also solve the problem. Named streams and metas would
->>   then be handled correctly. It also allows further changes to
->>   filesystems without having to patch applications yet again.
+===== vfs_ops.c 1.732 vs edited =====
+--- 1.732/vfs_ops.c	2004-08-30 17:05:53 +04:00
++++ edited/vfs_ops.c	2004-09-07 15:38:55 +04:00
+@@ -1564,12 +1564,16 @@
+ 	addr = (char *)data;
+ 
+ 	need = encode_inode_size(inode);
+-	if (need < 0)
++	if (need < 0) {
++		printk("reiser4_encode_fh-1: need=%d\n", need);
+ 		return NFSERROR;
++	}
+ 	if (need_parent) {
+ 		delta = encode_inode_size(parent);
+-		if (delta < 0)
++		if (delta < 0) {
++			printk("reiser4_encode_fh-2: delta=%d\n", delta);
+ 			return NFSERROR;
++		}
+ 		need += delta;
+ 	}
+ 
+@@ -1584,9 +1588,11 @@
+ 		 * handle. */
+ 		*lenp = (need + sizeof(__u32) - 1) >> 2;
+ 		result = need_parent ? FH_WITH_PARENT : FH_WITHOUT_PARENT;
+-	} else
++	} else {
+ 		/* no enough space in file handle */
++		printk("reiser4_encode_fh-3: need=%d, lenp=%d\n", need, *lenp);
+ 		result = NFSERROR;
++	}
+ 	reiser4_exit_context(&context);
+ 	return result;
+ }
 
-> But this still solves only part of the problem.  A backup application
-> won't have any use for a copyfile syscall, it will need to be taught
-> about streams.
-
-  Yes, but backup programs always needed to be taught about new
-  features. Be it new type of files, attributes or meta-data. I think
-  that teaching backup applications is far better than teaching every
-  application.
-
->>   A copy system call would also be large beneficial for networked
->>   filesystems (NFS, Samba, etc) as data wouldn't have to be
->>   transferred over the network and back.
-
-> Definitely.  
-
->>   Can we make a plugin infrastructure that will let user-space plugins
->>   to be loaded for certain directories or files? If we can, then it
->>   would present a much cleaner and easier way for the user to access
->>   data he wants. In this particular example it was a tar file.
-
-> In that case I'd argue that:
-
->     mount -t userfs -o driver=tarfs foo /tmp/foo
-
-> is a rather good kernel interface for plugins.  userfs (or something
-> based on userfs) is the plugin API and tarfs is a plugin. :-)
-
-> To make this efficient, well have to allow non-root users to perform
-> the mount syscall (with the limitation that they can only mount on top
-> of directories they own and that the mounts have the nosuid and nodev
-> flags set).
-
-  Yes, this seem to be one solution. It isn't very dynamic in usage
-  though. You can't use this directly from applications wihout
-  manually doing the mount.
-
-  This is only a solution to browsing contents of files. It doesn't
-  provide a solution for using meta-data streams or other things like
-  this.
-
-  ~S
-
->   /Christer
-
+--=-nTTAGCkJEOzfqkJ0kBA/--
 
