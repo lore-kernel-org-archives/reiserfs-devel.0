@@ -1,76 +1,51 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: Some more basic questions.
-Date: Mon, 10 Nov 2003 15:17:43 +0300
-Message-ID: <20031110121743.GA1408@backtop.namesys.com>
-References: <1068437719.3362.24.camel@voyager>
+From: "E. Gryaznova" <grev@namesys.com>
+Subject: Re : Loop Device and Reiser4
+Date: Mon, 10 Nov 2003 19:07:19 +0300
+Sender: grev
+Message-ID: <3FAFB7B6.8393F0E1@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16031-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-16032-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1068437719.3362.24.camel@voyager>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alejandro Sanchez Acosta <asanchez@gnome.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-9"
+To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-On Mon, Nov 10, 2003 at 05:15:20AM +0100, Alejandro Sanchez Acosta wrote:
+Hello,
+
+Thank you. This is known. Currently the loop devices are not supported
+by reiser4.
+
+Thanks,
+Lena.
+
+
 > Hello,
- 
-> I don't understand so well how the dancing trees work. I've seen in the
-> documentation that are faster than B+ trees, but I don't understand the
-> reason. Somebody can explain me how does it work a dancing tree and
-> where does reiserfs use it?
 
-Reiser4 tree has no strict invariant that each node (except root) should be
-filled by more than 50%.  Instead it has a rule that ordinary tree modification
-deletes node only if it is empty.  Modified nodes are not written to disk until
-jnode_flush() packs them more tighty.  The idea is to make ordinary tree
-operations (insert, delete) cheaper and still have on-disk tree well packed,
-because tree packing saves i/o operations.
+> I noticed that mounting an ISO9660 image doesn't work if the image is
+on a
+> reiser4 partition. When I do
 
-> Other thing that I don't understand is the cache design, where are used
-> caches in the filesystem? 
+> mount -oloop img.iso /mnt/test/
 
-? 
+> I get:
 
-Basically, reiser4 reads nodes from disk (into page cache),  nodes remain in
-memory until system releases them and frees memory.  It is pache cache
-functionality.
- 
-> And why is better to use extents than BLOBs? A lot of databases use
-> BLOB's to storage the data and get good performance with.
+> ioctl: LOOP_SET_FD: Invalid argument
 
-acessing BLOBs require one disk op than accessing meta data.  In reiser4 you
-see an attempt to implement "equal access cost" for all data, including file
-bodies.
- 
-> What security features provide reiser4? 
+> Apologies if this was already known.
+> Thanks,
 
-IFAIK, currently only traditional unix security checks are implemented.
+> Hariolf
 
-> I have seen that you can use
-> crypto support and crypto compressing, does it support other security
-> features? does it use the new CryptoAPI? 
+> --
+> NEU F=DCR ALLE - GMX MediaCenter - f=FCr Fotos, Musik, Dateien...
+> Fotoalbum, File Sharing, MMS, Multimedia-Gru=DF, GMX FotoService
 
-no.
- 
-> And other thing, if I want to do a new plugin, what I have to do? Any
-> documentation related?
+> Jetzt kostenlos anmelden unter http://www.gmx.net
 
-Write new plugins using existing ones as template.  
+> +++ GMX - die erste Adresse f=FCr Mail, Message, More! +++
 
-What is bad is that reiser4 has no external API to bind reiser4 object and
-plugins of different types.  I think Hans will agree with me that should be
-fixed soon.
 
-> Thanks in advance.
-> -- 
-> Alejandro Sanchez Acosta <asanchez@gnome.org>
-> 
-
--- 
-Alex.
