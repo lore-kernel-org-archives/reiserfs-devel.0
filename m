@@ -1,41 +1,53 @@
 From: Sander <sander@humilis.net>
 Subject: Re: Some ReiserFS failure situations and questions
-Date: Fri, 5 Mar 2004 07:47:34 +0100
-Message-ID: <20040305064734.GD15906@favonius>
-References: <20040303224848.GF31472@dbz.icequake.net> <4046F8F0.2010204@namesys.com> <20040304220945.GA23425@dbz.icequake.net>
+Date: Fri, 5 Mar 2004 07:58:37 +0100
+Message-ID: <20040305065837.GE15906@favonius>
+References: <20040303224848.GF31472@dbz.icequake.net>
 Reply-To: sander@humilis.net
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17092-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17093-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040304220945.GA23425@dbz.icequake.net>
+In-Reply-To: <20040303224848.GF31472@dbz.icequake.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Ryan Underwood <nemesis-lists@icequake.net>
+Cc: reiserfs-list@namesys.com
 
 Ryan Underwood wrote (ao):
-> The reason I posted is to find out some general Reiser recovery
-> strategy.
+> I have another problem with reiserfs that happens occasionally. On
+> reiserfs and only reiserfs partitions, when a crash and journal
+> recovery happens, occasionally two files that were open will have
+> their contents "exchanged". For example, a piece of the text file I
+> was editing ends up in a licq contact file, or an emule download gets
+> a piece of a web page from opera in it. Is this a common problem, and
+> what is the best way to keep it from happening?
 
-Backups are a good thing for this. If you don't have money for a
-usb/firewire disk, cd burner or old second computer, you can also store
-your files in your homedir at the university.
+The 'problem' is that reiserfs only does meta-data journaling. This
+gives you a consistent filesystem after a crash from the computers'
+point of view. Your data is still a bit toast though.
 
-Computer hardware will die for sure. You just never know when, but when
-it does, it is a real PITA.
-Backups not only protect against user error, but also bad programs,
-power failures, broken hardware, etc. You can't do without.
+Nowadays (with a current kernel and some patches?) you have a few extra
+mount options for reiserfs. The default with the old kernels is
+'data=writeback'. In this mode the data can be written after the
+metadata is commited.
 
-> I had two filesystems corrupted in unusual ways as I described, and in
-> both cases reiserfsck --rebuild-tree was mostly useless in recovering
-> the data.
+With the patched kernel, the default is 'data=ordered'. In this mode the
+data hits the disk before the metadata hits the disk. This should give
+much more consistent data after a crash.
 
-Did you try the newest reiserfsprogs? They are at 3.6.13 now, and seem
-to get quite a bit better every release.
+With the patched kernel you can also choose 'data=journal'. Then
+meta-data and data is journalled, and thus fs consistency is more or
+less certain.
+
+In general it is assumed that the first one is the fastest, and the last
+one the slowest, but in some situations this differs.
+
+The new default (ordered) is a great improvement IMHO.
 
 -- 
 Humilis IT Services and Solutions
