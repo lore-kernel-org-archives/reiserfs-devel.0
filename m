@@ -1,41 +1,42 @@
-From: Ross Vandegrift <ross@willow.seitz.com>
-Subject: Re: [ANNOUNCE]: reiser4
-Date: Tue, 29 Oct 2002 21:29:44 -0500
-Message-ID: <20021030022944.GE31928@willow.seitz.com>
-References: <15806.51536.985203.709475@laputa.namesys.com>
+From: Tom Vier <tmv@comcast.net>
+Subject: Re: Behavior of tails with respect to shred, wipe, etc
+Date: Tue, 29 Oct 2002 21:32:17 -0500
+Message-ID: <20021030023217.GA9548@yzero>
+References: <HDEFILEPHCPLCAGPLCEMIELIDFAA.icycle@charter.net>
+ <15801.26994.705639.374241@laputa.namesys.com>
+ <20021025200014.A1763@namesys.com>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11830-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-list-return-11831-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-reply-to: <20021025200014.A1763@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <15806.51536.985203.709475@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nikita Danilov <Nikita@namesys.com>
-Cc: Reiserfs-List@namesys.com
+To: reiserfs-list@namesys.com
 
-On Tue, Oct 29, 2002 at 08:45:52PM +0300, Nikita Danilov wrote:
-> It is still crasheable. Do not put critical data on it.
+On Fri, Oct 25, 2002 at 08:00:14PM +0400, Oleg Drokin wrote:
+> > I guess we should address this issue in reiser4. This is -security-
+> > feature after all. Hans? It is not clear how to intehgrate this with
+> > journalling though.
+> 
+> Zero out all freed blocks (mount option). This will kill write performance
+> though.
 
-How crashable?  I'd like to play around with this on the /home partition
-on my personal workstation.
+you could add support for the +s attr. zero-out current contents on delete.
+it's sloppy, but like hans said, anyone serious about it should never let it
+hit the disk unencrypted.
 
-Is it resiliant enough to be used if I have a cron job make backups
-every 12 hours?  How about every 2 hours?
-
-Sounds like it'll be cool - thanks for the coolest filesystem on the
-planet.
+i'm the author of (one) wipe (aka ya-wipe, there's more than one "wipe") and
+i made a point to be clear in the docs and on wipe.sf.net that encryption is
+the only complete solution. my app is most useful for using on whole drives,
+if you're going to sell it on ebay or something, and you want non-secret
+personal stuff off (or at least invisible to almost all).
 
 -- 
-Ross Vandegrift
-ross@willow.seitz.com
-
-A Pope has a Water Cannon.				 It is a Water Cannon.
-He fires Holy-Water from it.			    It is a Holy-Water Cannon.
-He Blesses it.				       It is a Holy Holy-Water Cannon.
-He Blesses the Hell out of it.		It is a Wholly Holy Holy-Water Cannon.
-He has it pierced.		  It is a Holey Wholly Holy Holy-Water Cannon.
-Batman and Robin arrive.				       He shoots them.
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0xE6CB97DA
