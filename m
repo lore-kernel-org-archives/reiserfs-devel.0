@@ -1,11 +1,11 @@
 From: "Henning Westerholt" <henning-04@die.informatik.uni-siegen.de>
-Subject: problems with reiserfs4
-Date: Wed, 18 Feb 2004 23:27:17 +0100 (CET)
-Message-ID: <47002.127.0.0.1.1077143237.squirrel@www.die.informatik.uni-siegen.de>
+Subject: fsck.reiser4 - can't find item plugin error
+Date: Thu, 19 Feb 2004 00:03:04 +0100 (CET)
+Message-ID: <47352.127.0.0.1.1077145384.squirrel@www.die.informatik.uni-siegen.de>
 Reply-To: henning-04@die.informatik.uni-siegen.de
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-16844-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16845-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -16,32 +16,54 @@ To: reiserfs-list@namesys.com
 
 Hello,
 
-i'm using kernel 2.6.2 with the snapshot from 06.02, and set up a two
-reiser4 partitions as build/ tmp dir for my system.
+after three days with only minor load on this fs, fsck refuse to check my
+/tmp partition. Fsck.reiser4 produce the following error message:
 
-1.
-Every few hours, or few days (depend on the system load), during the
-compiling of projects like kde or gcc, i noticed many stat data error. Is
-this a known issue?
+Fscking the /dev/hdd6 block device.
+Will check the consistency of the Reiser4 SuperBlock.
+Will check the consistency of the Reiser4 FileSystem.
+Continue? Yes
+***** Opening the fs.
+Reiser4 was detected on the /dev/hdd6.
+Master super block (16):
+magic:       ReIsEr4
+blksize:     4096
+format:      0x0 (format40)
+label:       <none>
 
-I reported these errors on the list some time ago, but got no reply.
-Please refer to
-http://marc.theaimsgroup.com/?l=reiserfs&m=107619080428445&w=2
-for excepts from the logfile and fsck output.
+Format super block (17):
+plugin:      format40
+magic:       ReIsEr40FoRmAt
+flushes:     0
+mkfs id:     0x373cff3b
+blocks:      204820
+free blocks: 204464
+root block:  505
+tail policy: 0x4 (smart)
+next oid:    0x26a4d
+file count:  37
+tree hight:  2
+key policy:  LARGE
+
+***** Tree Traverse Pass: scanning the reiser4 internal tree.
+Error: Can't find item plugin by its id 0x8.
+Error: Node(501): Failed to open the item(1).
+Error: Can't find item plugin by its id 0x8.
+Read Nodes...
 
 
-2.
-Sometimes during the shutdown process, after the unmounting of the
-partitions, i noticed the many of the following errors on the console:
+****** Twig Scan:
 
-Warning: flushing like mad: 2097152
-reiser4[ktxnmgrd:run(2566):commit_current_atom(fs/reiser4/txnmgr.c: 
-[nikita-3176]
-...
+****** Semantic Traverse Pass:
+Error: Can't find item plugin by its id 0x8.
+Time...
+Closing fs...done
 
+Operational error occured while fscking.
+-----
 
-Beside these two errors work this snapshot of reiser4 very stable for me,
-the fsck could fix the mentioned errors.
+Oh, and the --auto or --preen option of fsck doesn't work for me. Is this
+a know issue?
 
 
 Best regards,
