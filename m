@@ -1,64 +1,38 @@
-From: Chris Mason <mason@suse.com>
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: [PATCH] reiserfs v3 fixes and features
-Date: Wed, 14 Apr 2004 20:30:06 -0400
-Message-ID: <1081989006.27614.110.camel@watt.suse.com>
-References: <1081274618.30828.30.camel@watt.suse.com>
+Date: Wed, 14 Apr 2004 22:53:16 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <874qrmkl43.fsf@uhoreg.ca>
+References: <1081274618.30828.30.camel@watt.suse.com> <1081989006.27614.110.camel@watt.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17955-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17956-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1081274618.30828.30.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
+Cc: linux-kernel@vger.kernel.org
 
-Hello all,
+On 2.6.5, it still fails:
 
-I've uploaded some new code to:
+...
+  CC      fs/reiserfs/bitmap.o
+In file included from fs/reiserfs/bitmap.c:8:
+include/linux/reiserfs_fs.h: In function `reiserfs_transaction_running':
+include/linux/reiserfs_fs.h:1752: error: structure has no member named `journal_info'
+make[3]: *** [fs/reiserfs/bitmap.o] Error 1
+make[2]: *** [fs/reiserfs] Error 2
+make[1]: *** [fs] Error 2
 
-ftp.suse.com/pub/people/mason/patches/reiserfs/2.6.5-mm5
+(all patches applied, except for reiserfs-group-alloc-8 and
+reiserfs-search_reada-5)
 
-series.linus tells you which patches are needed for 2.6.5.  If you're
-working off a recent pull of bitkeeper, or the mm trees, use series.mm,
-since data=ordered patches were recently applied.
-
-(note, I haven't tested 2.6.5 with this patch set yet, -mm is my target
-right now)
-
-reiserfs-group-alloc-8 and reiserfs-search_reada-5 are still
-experimental, and are only for the brave.
-
-Most of the changes were to reiserfs-group-alloc-8, which tries to
-improve the reiserfs allocator to reduce fragmentation.  The mount
-options to enable the new code haven't changed, but I switched to using
-the existing in-core bitmap book keeping to decide if a given packing
-locality is full.  This is much more accurate, I'm not sure why I didn't
-think of it before.
-
-Also mount -o alloc=dirid_groups:skip_busy now tries to get metadata
-into the same bitmap as the data blocks.  This really cuts down on
-fragmentation among the leaf nodes.  More details are in the docs at the
-top of the patch.
-
-My goal is to make -o alloc=dirid_groups:skip_busy,packing_groups the
-new default, it is working nicely here.  Testers and benchmarkers would
-be appreciated.
-
-Other new patches:
-reiserfs-search_reada-5 -  it should make deletes and directory reads
-faster by doing some metadata readahead.
-
-reiserfs-delayed-work - a huge performance boost to synchronous
-workloads that trigger transaction commits.
-
-reiserfs-no-sleep-on - removes the last sleep_on user in reiserfs.
-
-I'll submit these last two to Andrew after the whole thing passes some
-more tests.
-
--chris
-
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
