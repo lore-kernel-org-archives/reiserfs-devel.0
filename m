@@ -1,36 +1,84 @@
-From: viro@parcelfarce.linux.theplanet.co.uk
-Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: Thu, 2 Sep 2004 23:33:24 +0100
-Sender: <viro@www.linux.org.uk>
-Message-ID: <20040902223324.GG23987@parcelfarce.linux.theplanet.co.uk>
-References: <1094118362.4847.23.camel@localhost.localdomain> <20040902203854.GA4801@janus> <1094160994.31499.19.camel@shaggy.austin.ibm.com> <20040902214806.GA5272@janus> <20040902220027.GD23987@parcelfarce.linux.theplanet.co.uk> <20040902220242.GA5414@janus> <20040902220640.GE23987@parcelfarce.linux.theplanet.co.uk> <20040902221133.GB5414@janus> <20040902221722.GF23987@parcelfarce.linux.theplanet.co.uk> <20040902222650.GA5523@janus>
-Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21346-reiserfs=m.gmane.org@namesys.com>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 02 Sep 2004 18:00:44 -0400
+Message-ID: <200409022200.i82M0ihC026321@laptop11.inf.utfsm.cl>
+References: <rlrevell@joe-job.com>
+Return-path: <reiserfs-list-return-21347-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040902222650.GA5523@janus>
+In-Reply-To: Message from Lee Revell <rlrevell@joe-job.com> 
+   of "Thu, 02 Sep 2004 16:01:17 -0400." <1094155277.11364.92.camel@krustophenia.net> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Frank van Maarseveen <frankvm@xs4all.nl>
-Cc: Dave Kleikamp <shaggy@austin.ibm.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Lee Revell <rlrevell@joe-job.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Spam <spam@tnonline.net>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jamie Lokier <jamie@shareable.org>, David Masover <ninja@slaphack.com>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, Sep 03, 2004 at 12:26:50AM +0200, Frank van Maarseveen wrote:
-> On Thu, Sep 02, 2004 at 11:17:22PM +0100, viro@parcelfarce.linux.theplanet.co.uk wrote:
-> > 
-> > What knowledge does the kernel have about fs type that could deal with the
-> > contents of given device?  Details, please.
+Lee Revell <rlrevell@joe-job.com> said:
+> To: Pavel Machek <pavel@ucw.cz>
+> Cc: Spam <spam@tnonline.net>, Horst von Brand <vonbrand@inf.utfsm.cl>,
+>         Jamie Lokier <jamie@shareable.org>, David Masover <ninja@slaphack.com>,
+>         Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk,
+>         Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>,
+>         Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org,
+>         linux-kernel <linux-kernel@vger.kernel.org>,
+>         Alexander Lyamin aka FLX <flx@namesys.com>,
+>         ReiserFS List <reiserfs-list@namesys.com>
+> X-Mailer: Ximian Evolution 1.4.6 
+> Date: Thu, 02 Sep 2004 16:01:17 -0400
 > 
-> Try a "make tags;grep SUPER_MAGIC tags".
-> Or is it there for a different purpose?
+> On Thu, 2004-09-02 at 15:49, Pavel Machek wrote:
 
-RTFS and you'll see.  Individual fs generally knows how to check if it
-would be immediately unhappy with given image (not all types do, BTW).
-Exact form of checks depends on fs type; for crying out loud, there's
-not even a promise that they are mutually exclusive!
+[...]
 
-Read the fucking source.  Read through the code that "chooses" fs type
-of root fs.  Look at it.  Then use whatever you have between your ears.
+> > You really need archive support in find. At the very least you need
+> > option "enter archives" vs. "do not enter archives". Entering archives
+> > automagically is seriously wrong.
+
+I have used find(1) for quite some time now, and have never (or very
+rarely) missed this.
+
+> But is it efficient to make every application that reads files have to
+> know how to get inside a tar file, just to read its contents?
+
+Totally ridiculous, especially if you factor in .gz, .bz2, .zip, .a,
+.whatever.new.format.they.come.up.with.tomorrow. But then again, this would
+presumably reside in a (shared) library, so it isn't so bad...
+
+>                                                                That
+> seems like a massive duplication of effort.
+
+Right. tar, gzip, bunzip, et al are already around.
+
+>                                              Better to have the contents
+> accessible via a separate stream, in the same namespace.  Fix it once in
+> the kernel vs. fix it in umpteen apps.
+
+Dead wrong. It is better to fix it in userspace (via a library, if
+required; could call random unpacking etc programs at will, even be
+configured on a user-by-user basis through ~/.wacky-file-handling or
+environment) than force this junk into the kernel. Kernel code is _always_
+resident, extremely security critical, and hard to get right. Besides, not
+everybody will want to carry this around, and so it will forever stay a
+"weird Linux kernel configuration only" feature, i.e., useless in practice.
+
+> The key point here is that the expressive power of the system is greatly
+> reduced by having a fragmented namespace.  Of course there are any
+> number of ways for an app to find out what is in a tar file, but
+> exporting all of that information in a unified namespace is nontrivial
+> and much more interesting.
+
+I don't see how it is "nontrivial": "tar tf some.tar" is quite enough to
+find out what is inside, in a customary format.
+
+Placing random junk in the kernel doesn't magically make it fast, right, or
+useful. Quite a lot of work is required for that, much more than for
+getting the same in userland.
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
