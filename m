@@ -1,41 +1,108 @@
-From: Bernd Schubert <bernd-schubert@web.de>
-Subject: Re: quota support
-Date: Tue, 9 Dec 2003 17:59:59 +0100
-Sender: Bernd Schubert <Bernd.Schubert@tc.pci.uni-heidelberg.de>
-Message-ID: <200312091759.59923.bernd-schubert@web.de>
-References: <1070553889.27611.147.camel@tiny.suse.com> <200312081524.45112.bernd-schubert@web.de> <200312091214.13325.bostjan.skufca@domenca.si>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: More on Hard Links
+Date: Tue, 09 Dec 2003 13:48:44 -0500
+Sender: news <news@sea.gmane.org>
+Message-ID: <87vfopyghf.fsf@uhoreg.ca>
+References: <5450026541-BeMail@cr593174-a> <20031209052107.58404.qmail@web25009.mail.ukl.yahoo.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16301-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16302-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200312091214.13325.bostjan.skufca@domenca.si>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Tuesday 09 December 2003 12:14, Bostjan Skufca (at) domenca.si wrote:
-> Hello,
->
-> Below you will find patches for kernels 2.4.20-23
-> ftp://ftp.suse.com/pub/people/mason/patches/data-logging/
->
+>>>>> "Narcoleptic" == Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk> writes:
 
-Hello Bostjan,
+[...]
 
-yeah I know about those patches, but actually I want to know about general 
-quota support status:
+Narcoleptic> A. Symlinks:
+Narcoleptic> ============
 
-1.)  So is there vanilla-kernel quota support for reiserfs since 2.4.21? 
+[...]
 
-2.1.)If not, why are there no quota patches on ftp.namesys.com for 
-2.4.{21-23}? 
+Narcoleptic> 2. By file (i.e. volume id and file id).  File id is a
+Narcoleptic> unique identifier for the file on the volume (eg.  inode
+Narcoleptic> number).  Not sure if there is a way to uniquely identify a
+Narcoleptic> volume reliably...
 
-2.2) If there is quota support for these versions, what does the patch from 
-Chris improve?
+I don't think it's a good idea to classify these as symlinks.  For one
+thing, it's called a "symbolic" link, because the link contains a
+symbol: a path name.  Also, it works differently from regular
+symlinks.  IMHO, it would be better to give it another name.  (This is
+what I would call a "firmlink", and I think what Leo calls a "weak
+link".)
 
-Thanks,
-	Bernd
+[...]
+
+Narcoleptic> 2. Linking to a file on a different ReiserX
+Narcoleptic> volume.
+Narcoleptic> ---------------------------------------------------
+
+I believe the plan is to have Reiser5 be a distributed filesystem,
+which will basically (AFAICT) solve all our problems and eliminates the
+need for cross-ReiserFSx hard links.  IMHO this is the better way to do
+things, since a distributed filesystem will already take into account a
+lot of problems that we have.
+
+Not to say that you (or Leo) shouldn't pursue this idea.  You may not
+want to use the distributed stuff, or you may want to implement it as a
+proof of concept to convince other FS maintainers to add it to their
+FS, or etc.
+
+[...]
+
+Narcoleptic> My idea: Each volume can contain a "synchronized" copy of
+Narcoleptic> the underlying file.
+
+My first reaction: "Bwaa!  Wasted space!  Consistency problems!"
+
+Wasted space, you're of course aware of.  But then, the number of
+hardlinks is probably not that large, so we won't have that many
+duplicates.
+
+Consistency problems you've dealt with, sort of.  I'm a bit wary of
+preventing the file from being changed if not all the involved volumes
+are mounted.  Also, if one volume dies and needs to be reformatted, or
+removed, you need to have some way of recovering.  It's hard to
+differentiate that from the volume just being unmounted.
+
+[...]
+
+Narcoleptic> The principle of least privilege applies: if a file is on a
+Narcoleptic> non-writable volume, no files synchronized with it are
+Narcoleptic> modifiable.
+
+So then you have the case where you have a file that's on a read-write
+partition, has all the bits necessary for writing, but is read-only.
+I'm not convinced this is the best thing to do.  But if you must have
+cross-filesystem hardlinks, I think this is what you must do.
+
+Really, it's a compromise.  I look at this situation and say: this is
+why we can't have cross-filesystem hardlinks.  Others may look at it
+and say: I really want cross-filesystem hardlinks, and so this is what
+I will do, which is reasonable, and doesn't completely suck.
+
+[...]
+
+Narcoleptic> 3. Linking to a file on a different non-ReiserX
+Narcoleptic> volume.
+Narcoleptic> -------------------------------------------------------
+
+Narcoleptic> Not possible (because "file synchronization" management
+Narcoleptic> code would be unique to ReiserX).  User either has to use a
+Narcoleptic> symlink or make a copy.
+
+Well, if you implement it on ReiserFSx in a reasonably portable way,
+you may be able to convince other FS maintainers to use it (if they
+aren't completely opposed to the idea of cross-filesystem hardlinks).
+
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
