@@ -1,103 +1,55 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: Problem with my HDD
-Date: Fri, 31 May 2002 18:28:27 +0200
-Message-ID: <200205311828.27837.Dieter.Nuetzel@hamburg.de>
+From: Yury Umanets <umka@namesys.com>
+Subject: My gpg public key
+Date: Fri, 31 May 2002 21:04:10 +0400
+Message-ID: <3CF7AD0A.4010706@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10469-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ boundary="------------090802070206000709040300"
+Return-path: <reiserfs-list-return-10470-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Billy Transue <bill@black9.net>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-dev <reiserfs-list@namesys.com>
 
-On Friday 31 May 2002 04:20,  Billy Transue wrote:
+--------------090802070206000709040300
+Content-Type: text/plain; charset=KOI8-R; format=flowed
+Content-Transfer-Encoding: 7bit
 
-[-]
-> I've suffered a very similar problem and posted to the list earlier, I
-> did, dd_resuce -l dd.log /dev/hdd5 ./hdd5 and winded up w/ this:
-> dd_rescue: (info): ipos:         0.0k, opos:         0.0k,
-> xferd:         0.0k
->                    errs:      0, errxfer:         0.0k,
-> succxfer:         0.0k
->              +curr.rate:        0kB/s, avg.rate:        0kB/s,
-> avg.load:  0.0%
->
-> it never changed, the file created hdd5 was 65536 bytes large.  The log
-> file was empty.  Am I doing something wrong?  Any info would be
-> appreciated.  Thanks in advance.
 
-Bill, have you ever tried the (r)evers mode?
-A valid run on a 859.412k partition should look like this:
 
-SunWave1 /tmp# time dd_rescue -r -l dd_rescue-sdb8.log /dev/sdb8 sdb8
-dd_rescue: (info): ipos:    859446.0k, opos:    859446.0k, xferd:         0=
-.0k
-             -  *  errs:      0, errxfer:         0.0k, succxfer:         0=
-.0k
-             +curr.rate:        0kB/s, avg.rate:        0kB/s, avg.load: 96=
-.1%
-dd_rescue: (warning): /dev/sdb8 (859446.0k): Input/output error!
-dd_rescue: (info): ipos:    859445.5k, opos:    859445.5k, xferd:         0=
-.5k
-             -  *  errs:      1, errxfer:         0.5k, succxfer:         0=
-.0k
-             +curr.rate:      197kB/s, avg.rate:        0kB/s, avg.load: 96=
-.0%
-dd_rescue: (warning): /dev/sdb8 (859445.5k): Input/output error!
-dd_rescue: (info): ipos:    859445.0k, opos:    859445.0k, xferd:         1=
-.0k
-             -  *  errs:      2, errxfer:         1.0k, succxfer:         0=
-.0k
-             +curr.rate:      252kB/s, avg.rate:        0kB/s, avg.load: 95=
-.9%
-dd_rescue: (warning): /dev/sdb8 (859445.0k): Input/output error!
-dd_rescue: (info): ipos:    859444.5k, opos:    859444.5k, xferd:         1=
-.5k
-             -  *  errs:      3, errxfer:         1.5k, succxfer:         0=
-.0k
-             +curr.rate:      261kB/s, avg.rate:        1kB/s, avg.load: 95=
-.8%
-dd_rescue: (warning): /dev/sdb8 (859444.5k): Input/output error!
-dd_rescue: (info): ipos:        54.0k, opos:        54.0k, xferd:    859392=
-.0k
-             -     errs:      4, errxfer:         2.0k, succxfer:    859390=
-.0k
-             +curr.rate:     2413kB/s, avg.rate:     2219kB/s, avg.load:  4=
-.5%
-Summary for /dev/sdb8 -> sdb8:
-dd_rescue: (info): ipos:         0.0k, opos:         0.0k, xferd:    859446=
-.0k
-             -     errs:      4, errxfer:         2.0k, succxfer:    859444=
-.0k
-             +curr.rate:     2201kB/s, avg.rate:     2217kB/s, avg.load:  4=
-.5%
-0.530u 16.960s 6:27.67 4.5%     0+0k 0+0io 122pf+0w
+--------------090802070206000709040300
+Content-Type: text/plain;
+ name="umka.asc"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="umka.asc"
 
-SunWave1 /tmp# l dd_rescue-sdb8.log sdb8
--rw-r-----    1 root     root         1713 Mai 31 18:15 dd_rescue-sdb8.log
--rw-r-----    1 root     root     880072704 Mai 31 18:15 sdb8
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
 
-Are you sure that you had write permission and enough space (!!!) on your=20
-destination (in your case the current working directory)?
+mQGiBDz0x1YRBADxB+UQ0YaqSlDXShVwmQ7xvEBHfhQymj3sD5qnmrt2DcYQpwWo
+BPjDc7NUTm2gfZc9tMzD5WzZGChY6ubSUl/WzhxAgP24R27B2pvJJvQAFGqFCbey
+ED9HLk0i95y50htSGhMISe4MYfbR29FVFNWiBTxV+JPPW5+rQnJnxUHHpwCgwJSU
+CWEiY+NCAdVkIv1Le3ifukkEALM4XreCNSnjoUT0TiqkbO3CE2ShvsegNmRNiYKp
+GcSoTApdQAq00GRrVtoXJUaHLKfkU348QrLTalgiwKm6VYWKMdzzJ6GUpxlYVOhK
+nGNjTkNPxrVNbdPW2s0Isc7Z0ASp/RMdGzGnsy8N6cG2b9HHR1/jP6MkZAY3zohg
+z+4aA/9Z0d6V25p5jqjuwwiOWiJSUCf5wJckIGtiNzg28HE+qpupU+C38AwmQr2B
+YY8YwvL6Jmi9WkvSwu5sGDxaapijQppFO4VxILfk0TFCiIs7xVQ6CsBNmmVnddWq
+HLyikQAjaZ4OfopeSkNgtLgZakxE79FqlHZph4x1nCIsNYBtDLQfWXVyeSBVbWFu
+ZXRzIDx1bWthQGFsdGxpbnV4LnJ1PohXBBMRAgAXBQI89MdWBQsHCgMEAxUDAgMW
+AgECF4AACgkQ96QCXp+d6dKWawCgmkdEufLYlAv0gy0x/NGSTXa7v6EAn0ZSVHEc
+JiqhPAxs30X/kNXU7JsTuQENBDz0x1gQBAD+qDFqt3P5DejhcE1omAvHZaW7h4Zl
+NWL8o9/X5rwIkQKu2OC20561QAyynCFyUJhdCrQdTCqeY+XrLV2kbLxx5CW/S20X
+xB86joN9YWFaSCFyBc+eIAByvnL5o0uym2J6XCVRymTqGA1tnYu9fmhioqNfXLYF
+IEF/+rByZnGzzwAEDQQAr7nPNhvNQQRvNA4Qfyrhc1S7y9BKFNTE0OlIoqhInqlv
+56AfvoGcL1NuiET3yKjkeBDSmxzOqEg7QvdIiNXjkazW4jsPB4vdeRUmGCOnKazO
+pKloIdN10PnUMOiRttXLWzxsfTLt8ugTm+/+TtOrHDmm1Id5wlF5MJSuWNDgfB6I
+RgQYEQIABgUCPPTHWAAKCRD3pAJen53p0qLeAJ9B1FL2Eb+bUYnQuL4ar6E8yp3g
+DwCdG85Bir1K8luDSVpcwDLwZUCO4yo=
+=dx6Q
+-----END PGP PUBLIC KEY BLOCK-----
 
-dd_rescue seems to allocate the whole needed disk space at the beginning!
+--------------090802070206000709040300--
 
-Good luck!
-
--Dieter
-
-BTW I've had "recovered" several (Winbloze) disks of our customers with=20
-dd_rescue. But *nix FSes are much better to recover because of the better F=
-S=20
-redundancy and fsck tools after the dd_rescue run.
-
---=20
-Dieter N=FCtzel
-Graduate Student, Computer Science
-
-University of Hamburg
-Department of Computer Science
-@home: Dieter.Nuetzel@hamburg.de
