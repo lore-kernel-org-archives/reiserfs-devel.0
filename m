@@ -1,87 +1,101 @@
-From: Paul Wagland <paul@wagland.net>
-Subject: Re: reiser4 and megaraid problems with debian 2.6.5
-Date: Sat, 17 Apr 2004 09:38:00 +0200
-Message-ID: <26F302F3-9042-11D8-8B4A-000A95CD704C@wagland.net>
-References: <20040416203937.GY14134@nysv.org>
-Mime-Version: 1.0 (Apple Message framework v613)
-Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha1; boundary="Apple-Mail-17-801065258"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18019-reiserfs=m.gmane.org@namesys.com>
+From: Bob Vincent <bob@html.com>
+Subject: Patch for 2.6.5
+Date: Sat, 17 Apr 2004 09:34:38 -0400
+Message-ID: <20040417133438.GA12585@pillars.net>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="=_server.pillars-12595-1082208878-0001-2"
+Return-path: <reiserfs-list-return-18020-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040416203937.GY14134@nysv.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Markus TXrnqvist <mjt@nysv.org>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
---Apple-Mail-17-801065258
+--=_server.pillars-12595-1082208878-0001-2
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Disposition: inline
 
+After downloading
+http://ftp.kernel.org/pub/linux/kernel/v2.6/linux-2.6.5.tar.bz2 and
+applying the patches in
+http://thebsh.namesys.com/snapshots/LATEST/all.diff.gz, the attached
+additional patch allowed a clean compile.
 
-On Apr 16, 2004, at 22:39, Markus TXrnqvist wrote:
+Not sure if it's *right*, but it does compile and run.
 
-> Paul Wagland wrote:
->
->> Bonnie: drastic I/O error (re write(2)): No such file or directory
->
-> I applied http://mjt.nysv.org/reiser/bonnie.patch which may or may
-> not help. Nikita gave it on IRC, but without either of us having
-> time at the moment to do much about it (so it'll wait until Monday,
-> at least).
->
-> Guess the point of this email is that I won't forget the results I
-> got by then :)
+-- 
+Robert August Vincent II
+(pronounced "Bob" or "Bob-Vee")
+The web is like Usenet, but
+the elephants are untrained.
 
-As such, I will also add my results to this thread... please note that 
-I am not with my main machine at the moment, so can't post the numbers 
-:-\
+--=_server.pillars-12595-1082208878-0001-2
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="all.2.6.5.diff"
 
-Anyway, I also have applied the above patch, and rerun my bonnie test, 
-but this time on a 4GB partition.
+Only in linux-2.6.5-reiser4-patched: .config
+Only in linux-2.6.5-reiser4: Makefile.orig
+Only in linux-2.6.5-reiser4/arch/ppc/kernel: process.c.orig
+diff -urbw linux-2.6.5-reiser4/arch/sparc/kernel/init_task.c linux-2.6.5-reiser4-patched/arch/sparc/kernel/init_task.c
+--- linux-2.6.5-reiser4/arch/sparc/kernel/init_task.c	2004-04-17 00:07:51.000000000 -0400
++++ linux-2.6.5-reiser4-patched/arch/sparc/kernel/init_task.c	2004-04-16 11:24:55.000000000 -0400
+@@ -24,4 +24,4 @@
+ union thread_union init_thread_union
+ 	__attribute__((section (".text")))
+ 	__attribute__((aligned (THREAD_SIZE)))
+-	= { INIT_THREAD_INFO(init_task) };
++  = { INIT_THREAD_INFO(init_task, init_thread_union.thread_info) };
+Only in linux-2.6.5-reiser4/arch/sparc/kernel: init_task.c.orig
+Only in linux-2.6.5-reiser4/arch/sparc/kernel: init_task.c.rej
+Only in linux-2.6.5-reiser4/fs: fs-writeback.c.orig
+diff -urbw linux-2.6.5-reiser4/fs/reiser4/as_ops.c linux-2.6.5-reiser4-patched/fs/reiser4/as_ops.c
+--- linux-2.6.5-reiser4/fs/reiser4/as_ops.c	2004-04-17 00:07:51.000000000 -0400
++++ linux-2.6.5-reiser4-patched/fs/reiser4/as_ops.c	2004-04-16 11:30:29.000000000 -0400
+@@ -567,7 +567,7 @@
+ 	/* work around infinite loop in pdflush->sync_sb_inodes. */
+ 	/* Problem: ->writepages() is supposed to submit io for the pages from
+ 	 * ->io_pages list and to clean this list. */
+-	mapping->dirtied_when = jiffies|1;
++	mapping->host->dirtied_when = jiffies|1;
+ 	spin_lock(&inode_lock);
+ 	list_move(&mapping->host->i_list, &mapping->host->i_sb->s_dirty);
+ 	spin_unlock(&inode_lock);
+diff -urbw linux-2.6.5-reiser4/fs/reiser4/plugin/item/tail.c linux-2.6.5-reiser4-patched/fs/reiser4/plugin/item/tail.c
+--- linux-2.6.5-reiser4/fs/reiser4/plugin/item/tail.c	2004-04-17 00:07:51.000000000 -0400
++++ linux-2.6.5-reiser4-patched/fs/reiser4/plugin/item/tail.c	2004-04-16 11:30:47.000000000 -0400
+@@ -463,18 +463,24 @@
+ 	}
+ 
+ 	inode = mapping->host;
+-	if (get_key_offset(&f->key) > inode->i_size)
++	if (get_key_offset(&f->key) > inode->i_size) {
++		assert("vs-1649", f->user == 1);
+ 		INODE_SET_FIELD(inode, i_size, get_key_offset(&f->key));
++	}
++	if (f->user != 0) {
++		/* this was writing data from user space. Update timestamps, therefore. Othrewise, this is tail
++		   conversion where we should not update timestamps */
+ 	inode->i_ctime = inode->i_mtime = CURRENT_TIME;
+ 	result = reiser4_update_sd(inode);
+ 	if (result)
+ 		return result;
++	}
+ 
+ 	/* FIXME-VS: this is temporary: the problem is that bdp takes inodes
+ 	   from sb's dirty list and it looks like nobody puts there inodes of
+ 	   files which are built of tails */
+ 	if (back_to_dirty) {
+-		mapping->dirtied_when = jiffies|1;
++		mapping->host->dirtied_when = jiffies|1;
+ 		spin_lock(&inode_lock);
+ 		list_move(&inode->i_list, &inode->i_sb->s_dirty);
+ 		spin_unlock(&inode_lock);
+Only in linux-2.6.5-reiser4/include/asm-ppc: thread_info.h.orig
+Only in linux-2.6.5-reiser4/include/linux: mm.h.orig
+Only in linux-2.6.5-reiser4/include/linux: sched.h.orig
 
-I am still getting failures, but nothing is being printed in dmesg or 
-/var/log/kern.log
-
-What happens is that the character output works, and creates four 
-files, 3x1Gb and 1x512MB. In another window I have a df loop running, 
-and I can see that there is about 495MB free. So far so good :-) Now 
-the "intelligent writing" starts, and after about 10 seconds it fails 
-with the "drastic IO error...no such file or directory" error, looking 
-at the df window I can see that when it fails there is 3.5GB free on 
-that disk, I.e. about 480MB had been used. Since it is a one second 
-loop in both cases then I am imagining that bonnie was able to write 
-out 4GB of data.
-
-What I think is happening in this case is that reiser4 is that although 
-the old files have been deleted, and the online disk maps have been 
-updated to show that there is enough free disk, the logs used to create 
-those original files have not been freed. Does that make sense? Maybe 
-it might help some of the more knowledgeable in determining what is 
-happening?
-
-Let me know if I can run any further tests to further determine what is 
-happening.
-
-Cheers,
-Paul
-
---Apple-Mail-17-801065258
-content-type: application/pgp-signature; x-mac-type=70674453;
-	name=PGP.sig
-content-description: This is a digitally signed message part
-content-disposition: inline; filename=PGP.sig
-content-transfer-encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (Darwin)
-
-iD8DBQFAgN7dtch0EvEFvxURAuYMAJ9tRLP0Z2txUkuGfRztOn/U2u3YvQCfbh7s
-74lB2JvWy9i25vo5yA1udpY=
-=IGR6
------END PGP SIGNATURE-----
-
---Apple-Mail-17-801065258--
-
+--=_server.pillars-12595-1082208878-0001-2--
