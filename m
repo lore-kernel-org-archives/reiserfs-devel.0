@@ -1,297 +1,54 @@
-From: Valdis.Kletnieks@vt.edu
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: duplicate files and recent changes
-Date: Thu, 06 Jun 2002 13:54:22 +0000
-Message-ID: <85256BD0.0062CEEB.00@patapsco.com>
+Date: Thu, 06 Jun 2002 13:51:46 -0400
+Sender: news <news@main.gmane.org>
+Message-ID: <87ofeo70st.fsf@labatt.uhoreg.ca>
+References: <20020606094504.A851@namesys.com> <Pine.WNT.4.43.0206060328570.1296-100000@fanatic>
+ <20020606132505.A2647@namesys.com>
+ <200206061358.g56DwF0H001550@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- Boundary="0__=JUdix9JGVChs7WC6PBE9vcvMBhcbaxYWakvY6x693AEjaM7rXzmNqjru"
-Return-path: <reiserfs-list-return-10582-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha1; protocol="application/pgp-signature"
+Return-path: <reiserfs-list-return-10583-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "S. Alexander Jacobson" <alex@shop.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
---0__=JUdix9JGVChs7WC6PBE9vcvMBhcbaxYWakvY6x693AEjaM7rXzmNqjru
-Content-type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-                                                                  
- (Embedded                                                        
- image moved   Valdis.Kletnieks@vt.edu                            
- to file:      06/06/2002 09:54 AM                                
- pic04806.pcx)                                                    
-                                                                  
+>>>>> "Valdis" =3D=3D Valdis Kletnieks <Valdis.Kletnieks@vt.edu> writes:
 
+Valdis> On Thu, 06 Jun 2002 13:25:05 +0400, Oleg Drokin said:
+>> But MD5 may be identical for different files.
 
+Valdis> Only a 2**128 chance of that.  If you know a way to force a hash
+Valdis> collision more frequently than that, the crypto world wants to
+Valdis> hear from you.. ;)
 
+You probably wanted to say "one in 2**128 chance".  2**128 is a pretty
+big probability that it would happen! :-)
 
+Technically, the probability is actually somewhere between one in 2**128
+and one in 2**127 (depending on how many files you have), due to the
+birthday attack.  But one in 2**127 is still pretty small.
 
+=2D-=20
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
+--=-=-=
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
 
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic10465.pcx)
+iD8DBQE8/6E3rynHGRJLYfoRAgvQAJ4vkiSf7PDSinXZ1hRR9CtskUzFNgCfcOtp
+PLDlN1JAgb9Bbyapl+oRjNM=
+=Irwx
+-----END PGP SIGNATURE-----
+--=-=-=--
 
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic17079.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic10007.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic16147.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic11308.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic15841.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic20581.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic19402.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic30124.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic23278.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic03814.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic14574.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic07359.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic07726.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic14099.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic20730.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic28349.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic26147.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:54 AM
- pic06027.pcx)
-
-
-
-
-
-
-
-
-On Thu, 06 Jun 2002 01:30:46 EDT, "S. Alexander Jacobson" <alex@shop.com>  said:
-
-> 1. Can reiserfs detect that I have two copies of
-> the same file on disk and store tham as one file
-> (doing a lazy copy) if someone writes to one of
-> them?
-
-Something I'd like to see even more than that would be VMS-style version
-numbers on files.
---
-                    Valdis Kletnieks
-                    Computer Systems Senior Engineer
-                    Virginia Tech
-
-
---0__=JUdix9JGVChs7WC6PBE9vcvMBhcbaxYWakvY6x693AEjaM7rXzmNqjru--
 
