@@ -1,32 +1,48 @@
-From: hkj@dmkuhlen.de
-Subject: no space left, rebuild-tree not finished, partition not mountable
-Date: Sat, 1 May 2004 15:38:38 +0200
-Message-ID: <200405011338.i41Dcc515982@p15097155.pureserver.info>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: Reiserfs concurrent write problems
+Date: Sat, 1 May 2004 16:52:29 +0200
+Message-ID: <200405011652.29753.Dieter.Nuetzel@hamburg.de>
+References: <20040426172648.GA22918@em.ca> <1083356649.30344.479.camel@watt.suse.com> <20040430214410.GA790@em.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18350-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18351-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20040430214410.GA790@em.ca>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
+Cc: Chris Mason <mason@suse.com>, Bruce Guenter <lists-reiserfs-list@bruce-guenter.dyndns.org>
 
-Hi List!
+Am Freitag, 30. April 2004 23:44 schrieb Bruce Guenter:
+> On Fri, Apr 30, 2004 at 04:24:10PM -0400, Chris Mason wrote:
+> > Thanks.  One thing I didn't notice before:
+> >
+> > Filesystem partition: 72GB on a software RAID-1 array of Fujitsu SCSI
+> > 15kRPM disks.
+> > Journal partition: 400MB on a software RAID-1 array of Quantum Atlas 10K
+> > SCSI disks.
+> >
+> > So the external log is on slower disks?  That might explain why it is
+> > sometimes slower to have reiserfs on the external log.
+>
+> Yes, the journal is on a slower array.  That's what was available when
+> building the system.  They're still not *SLOW* disks, though, at 10kRPM
+> and 32MB/sec transfer rate.
 
-I want to mount a partition to delete some files, because there isn't
-any space on the partition anymore. I cannot mount it, because
---rebuild-tree didn't finish. It didn't finish, because there isn't
-enought space on the partition anymore. So what should I do?
+I have the former Fujitsu, too.
+So the Atlas are "very" slow disks. ;-)
 
-It's a ~110G Partition. I did dd_rescue to another device and
---rebuild-tree but still having the same problems.=20
+One of my Fujitsu MASxxxx:
 
-Any hints?
+SunWave1 /home/nuetzel# hdparm -tT /dev/sdb2
 
-Best regards
+/dev/sdb2:
+ Timing buffer-cache reads:   1064 MB in  2.00 seconds = 531.55 MB/sec
+ Timing buffered disk reads:  214 MB in  3.00 seconds =  71.30 MB/sec
 
-Hans Kuhlen
-
-P.S.: ReiserFS 3.6? (SuSE9)
+Cheers,
+	Dieter
