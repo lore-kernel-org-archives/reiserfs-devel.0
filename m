@@ -1,55 +1,57 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: testing/questions about latest Reiser4
-Date: Mon, 05 Apr 2004 19:00:23 -0400
-Message-ID: <200404052300.i35N0NTT025232@turing-police.cc.vt.edu>
-References: <4070E534.9010509@mrs.umn.edu>
-            <1081178588.1162.47.camel@tribesman.namesys.com>
+From: Chris Mason <mason@suse.com>
+Subject: reiserfs v3 patches updated
+Date: Mon, 05 Apr 2004 20:10:39 -0400
+Message-ID: <1081210239.4994.69.camel@watt.suse.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_2089346634P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17735-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17737-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Mon, 05 Apr 2004 19:23:08 +0400."
-             <1081178588.1162.47.camel@tribesman.namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: Grant Miner <mine0057@mrs.umn.edu>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
---==_Exmh_2089346634P
-Content-Type: text/plain; charset=us-ascii
+Hello everyone,
 
-On Mon, 05 Apr 2004 19:23:08 +0400, Vladimir Saveliev said:
+These aren't really data=ordered specific anymore, so I've moved them
+around a little in my ftp directory.  You can download the set of
+experimental reiserfs v3 patches from:
 
-> >   Are 
-> > pseudo files just representation of stat data stored a special way? 
-> 
-> Pseudo files are not stored anywhere
+ftp://ftp.suse.com/pub/people/mason/patches/reiserfs/2.6.5
 
-Subtle distinction here - the data in a pseudo file has to be stored
-*somewhere* if you want it to persist across reboots, and even for things that
-don't survive a reboot, the data has to be saved *someplace* in memory, even if
-it's only in a variable or a dentry structure or something like that....
+Since some of these are in -mm and some are not, there are two series
+files.  series.linus gives you the patches needed for mainline 2.6.5,
+and series.mm gives you the patches needed for 2.6.5-mm1
 
-So more accurate might be to say "The content of pseudo files is created on the
-fly from metadata that is managed (and possibly saved) by the file system".
+Most of these are from Jeff Mahoney and I, they include:
 
-(Sorry to be pedantic, but it's a point that will cause a lot of confusion if you
-don't really understand it)...
+bug fixes
+logging optimizations
+data=ordered support
+xattrs
+acls
+quotas
+error messages with device names (based on Oleg's 2.4 patch)
+block allocator improvements
 
---==_Exmh_2089346634P
-Content-Type: application/pgp-signature
+Hans, could you please comment on the xattr and acl patches?  Something
+more substantial then "I don't want xattrs in v3" is needed.  If there
+is some technical objection to the patches I'd really like to discuss
+it.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+The block allocator improvements is our attempt to reduce
+fragmentation.  The patch defaults to the regular 2.6.5 block allocator,
+but has options documented at the top of the patch that allow grouping
+of blocks by packing locality or object id.  It also has an option to
+inherit lightly used packing localities across multiple subdirs, which
+keeps things closer together in the tree if you have a bunch of subdirs
+without much in them.
 
-iD8DBQFAceUHcC3lWbTT17ARAjn9AKC2ldqz2CTbKqekHW3fhusPiq6RUwCg+KTF
-fMaRwsaBqYmmqaoZ6Dbf2Ho=
-=vQ4z
------END PGP SIGNATURE-----
+If anyone is interested in experimenting with the block allocator stuff,
+please let me know.
 
---==_Exmh_2089346634P--
+-chris
+
+
