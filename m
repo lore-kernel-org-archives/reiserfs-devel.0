@@ -1,49 +1,44 @@
-From: Marcel Hilzinger <marcel@hilzinger.hu>
-Subject: Re: Some kind of benchmark
-Date: Wed, 2 Jun 2004 17:11:34 +0200
-Message-ID: <200406021711.34994.marcel@hilzinger.hu>
-References: <200406011832.30163.marcel@hilzinger.hu> <1086168950.24589.4.camel@tribesman.namesys.com> <1086182176.22636.3449.camel@watt.suse.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: The situation at hand and in the future
+Date: Wed, 2 Jun 2004 18:15:51 +0300
+Message-ID: <20040602151551.GE4990@nysv.org>
+References: <40B6670D.9060408@slaphack.com> <20040528063324.GT4990@nysv.org> <40B89C9C.5050307@slaphack.com> <20040529154917.GW4990@nysv.org> <40B919DF.3040408@slaphack.com> <20040530122713.GX4990@nysv.org> <40BA802C.5070907@slaphack.com> <40BC83AF.2030504@namesys.com> <20040602080556.GC4990@nysv.org> <40BDCD5F.7000706@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18971-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18970-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1086182176.22636.3449.camel@watt.suse.com>
 Content-Disposition: inline
+In-Reply-To: <40BDCD5F.7000706@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+To: Edward Shushkin <edward@namesys.com>
+Cc: David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, reiserfs-list@namesys.com
 
-2004. j=FAnius 2. 15.16 d=E1tummal Chris Mason ezt =EDrta:
-> On Wed, 2004-06-02 at 05:35, Vladimir Saveliev wrote:
-> > Suse kernel differs from stock one substantially. I guess. So, it is
-> > very likely that those changes (which are not reiserfs only, certainly)
-> > are responsible for that difference.
-> > When suse experts will wake up they will say more details about what
-> > might cause overwrite speedup
->
-> Well, the suse kernel has a lot of patches that are supposed to make
-> things faster.  Try benchmarking against 2.6.6 or 2.6.7-rc1, which has
-> most of them included.
+On Wed, Jun 02, 2004 at 04:51:43PM +0400, Edward Shushkin wrote:
+>Markus T=F6rnqvist wrote:
+>>Is there any chance of this looking more like a crypto/ directory
+>>than a crypto file?
+>'Looking more' sounds incorrect here (does  directory  look more then=20
+>file? )
+>You might want special (directory) object plugin. All ideas should be=20
+>implemented via its methods..
 
-I tried to build 2.6.7-rc1 (with patch from auto-snapshot), but I got this=
-=20
-error message:
+I meant what it looks like to the end user.
+crypto/ directory where we have files like seed and whatnot.
 
-  CC      fs/reiser4/plugin/object.o
-fs/reiser4/plugin/object.c: In function `delete_inode_common':
-fs/reiser4/plugin/object.c:979: error: structure has no member named=20
-`i_sb_list'
-make[2]: *** [fs/reiser4/plugin/object.o] Error 1
-make[1]: *** [fs/reiser4] Error 2
-make: *** [fs] Error 2
+Even if the difference between these two are somewhat diffuse
+in Reiser4 ;)
 
-Thanks.
-Marcel
+>>I really liked David Masover's ideas and I'd like to hear if they
+>>are somehow infeasible.
+>I am a bit confused: usually I inspire everyone that something is=20
+>feasible ;)
 
-=2D-=20
-=DCdv=F6zlettel -- Mit freundlichen Gr=FCssen,
-Marcel Hilzinger
+Well, I think they are feasible ;)
+
+--=20
+mjt
 
