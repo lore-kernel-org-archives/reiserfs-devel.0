@@ -1,46 +1,57 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Hangs and crashes, reiserfsck --rebuild-tree fails?
-Date: Tue, 4 Mar 2003 17:40:15 +0300
-Message-ID: <20030304174015.A8888@namesys.com>
-References: <3E64B76A.6030109@acris.co.uk>
+From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
+Subject: Re: merge 2.4.21-pre4 with Direct IO bug fix
+Date: Tue, 4 Mar 2003 16:29:10 +0100
+Message-ID: <20030304162910.2bd2f5bc.philippe.gramoulle@mmania.com>
+References: <20030304013450.249cc096.philippe.gramoulle@mmania.com>
+	<20030304111807.A18814@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13062-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13063-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3E64B76A.6030109@acris.co.uk>
+In-Reply-To: <20030304111807.A18814@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julian Hall <jules@acris.co.uk>
-Cc: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
 
-Hello!
 
-On Tue, Mar 04, 2003 at 02:25:46PM +0000, Julian Hall wrote:
+Hi Oleg,
 
-> I seem to have some corruption on one of my file systems and don't seem 
-> to be able to fix it.  The problem manifests itself by (apparently) 
-> random crashes and hangs whenever the file system is mounted, usually 
-> within 10-15 minutes of the last reboot.
+On Tue, 4 Mar 2003 11:18:07 +0300
+Oleg Drokin <green@namesys.com> wrote:
 
-Is it produsing any kernel messages, Can we get a sample please?
 
-> I tried to fix the problem using reiserfsck, and it advised me that I 
-> needed to use --rebuild-tree, so I ran that.  These are the messages 
-> that were produced:
-> Pass 2:
-> 0%....20%....40%....60%....Not enough allocable blocks, checking 
-> bitmap...there are 0 allocable blocks, btw
-> out of disk space
-> Aborted
+  | Hello!
+  | 
+  | On Tue, Mar 04, 2003 at 01:34:50AM +0100, Philippe Gramoull? wrote:
+  | 
+  | > Could you please rediff the patch for the DIRECT IO bug fix (pre5) against 2.4.21-pre4 + 
+  | > data-logging patches ? ( I've tried to merge it manually, but there are too many non trivial rejects
+  | > for me to dare feeling comfortable :o)
+  | 
+  | Is it possible for you to use 2.4.21-pre5 instead of 2.4.21-pre4?
+[snip]
 
-Hm. Can you send us metadata snapshot for this FS?
-just do debugreiserfs -p /dev/your_device | bzip2 -c >metadata.bz2
-and then make this metadata.bz2 file available for download.
-Thank you.
+Kernel is up and running with all patches applied for about 1h30, and so far it rocks ;)
+while at the same time other non patched kernels still continue oops ( normal ,as nothing changed )
 
-Bye,
-    Oleg 
+The other good news are : Load average is significantly lower, down from 4 or 6 to less than 1
+on the filer that caused us most of the problems.
+
+I didn't changed the journaling default (ordered) and FYI, mount options are as follow:
+defaults,noatime,nodiratime,notail,grpquota
+
+I don't want to say "hurra" too early but signs are really positive that the bugs that we hit
+have been fixed and i can't congratulate you more are people were starting to get mad around me ;o)
+
+I'll let it run for a little while now and upgrade all other servers so we'll be almost sure wether ot not
+this problem has been fixed for good :o)
+
+I'll also run a quotacheck early tomorrow at the most off hours and will send a report then.
+
+Thanks again for all efforts that were put to solve this issue.
+
+Philippe
