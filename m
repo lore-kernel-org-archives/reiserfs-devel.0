@@ -1,281 +1,53 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: duplicate files and recent changes
-Date: Thu, 06 Jun 2002 13:58:15 +0000
-Message-ID: <85256BD0.00625403.00@patapsco.com>
+From: Kurt <kpalmer@advance.net>
+Subject: Filesystem Corruption
+Date: Thu, 6 Jun 2002 14:00:01 -0400
+Message-ID: <200206061400.01445.kpalmer@advance.net>
+Reply-To: kpalmer@advance.net
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- Boundary="0__=xIPBlfV2Adu2DMa0laoLV4yn8iGIEN1rVjXPegFhPNMsagfjty9u7sWr"
-Return-path: <reiserfs-list-return-10576-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10577-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Oleg Drokin <green@namesys.com>
-Cc: "S. Alexander Jacobson" <alex@shop.com>, reiserfs-list@namesys.com
-
---0__=xIPBlfV2Adu2DMa0laoLV4yn8iGIEN1rVjXPegFhPNMsagfjty9u7sWr
-Content-type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-                                                                  
- (Embedded                                                        
- image moved   Valdis.Kletnieks@vt.edu                            
- to file:      06/06/2002 09:58 AM                                
- pic15154.pcx)                                                    
-                                                                  
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic07244.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic00072.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic31655.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic01253.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic19373.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic27832.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic30803.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic04969.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic08117.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic11628.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic06033.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic18619.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic14738.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic07549.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic26942.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic27268.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Valdis.Kletnieks@vt.edu
- to file:      06/06/2002 09:58 AM
- pic24632.pcx)
-
-
-
-
-
-
-
-
-On Thu, 06 Jun 2002 13:25:05 +0400, Oleg Drokin said:
-
-> But MD5 may be identical for different files.
-
-Only a 2**128 chance of that.  If you know a way to force a hash collision
-more frequently than that, the crypto world wants to hear from you.. ;)
-
-> Also this buys you nothing.
-> You write file in chunks, once file is identical to other file,
-> one of the files deleted. Looks like just more extra work (but some saved
-space
-> of course).
-
-A much more productive way to save space is file-system compression.  AIX
-supports LZ-compressing each 4K block and then only saving as many 512 byte
-fragments as actually needed.  It's a big win - /usr (even with all the
-binaries)
-needs about 30% less space, and I've seen over 50% for file systems with
-source trees in them...
---
-                    Valdis Kletnieks
-                    Computer Systems Senior Engineer
-                    Virginia Tech
-
-
---0__=xIPBlfV2Adu2DMa0laoLV4yn8iGIEN1rVjXPegFhPNMsagfjty9u7sWr--
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+
+Hello all,
+=09I currently have a system configured as follows :-
+1) LVM version 1.0.1-rc4(ish)(03/10/2001)
+2) /dev/PROJ/proj on /proj type reiserfs (rw,noatime,notail)
+3) /dev/PROJ/proj        239G  142G   97G  60% /proj
+4) 2.4.17 with reiserfs tools 3.x.0k
+5) Reiserfs compiled in (CONFIG_REISERFS_CHECK set to NO)
+6) 256 MB RAM ("sar -r" shows memory usage is not abnormal for this box)
+7)Tuns of very small files based on log processing
+I am told by my co-worker that the system unresponsive and showed reiserf=
+s=20
+related errors on the console.
+Upon restart they noticed that the file=20
+/proj/webtrends/receive/bama/www3/access.01Jun.r.gz was unreadable by roo=
+t=20
+(permission denied).
+I did a reiserfsck on the drive and noticed that access.01Jun.r.gz return=
+ed an=20
+error stating the file pointed to nowhere.
+I was unable to complete a reiserfsck --fix-fixable because of the length=
+ of=20
+time that this (fsck) process took since this was an unscheduled downtime=
+=2E
+During the weekend i will attempt to do the fsck again, however i really=20
+needed to know if this problem has been observed by anyone else, and what=
+=20
+steps they took to fix the problem.
+-Kurt
+
+
+
+--=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Kurt Palmer                                      SysAdmin
+kpalmer@advance.net                Advance Internet
+201-459-2846
 
