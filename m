@@ -1,65 +1,87 @@
-From: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2004@gmx.net>
-Subject: Re: resier4 performance with dbt-2
-Date: Sat, 14 Feb 2004 01:41:17 +0100
-Message-ID: <402D6EAD.20901@gmx.net>
-References: <200402132351.i1DNpOE27923@mail.osdl.org>
+From: Jonathan Briggs <jbriggs@esoft.com>
+Subject: Bug report: Reiser4 freezes during file copy
+Date: Wed, 18 Feb 2004 11:13:14 -0700
+Message-ID: <1077127993.7063.6.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16833-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-LXa01nwFDVu+bKD6sjs8"
+Return-path: <reiserfs-list-return-16834-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200402132351.i1DNpOE27923@mail.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: markw@osdl.org
-Cc: Dieter.Nuetzel@hamburg.de, reiserfs-list@namesys.com
+To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Cc: Nikita Danilov <Nikita@Namesys.COM>
 
-markw@osdl.org wrote:
-> On 14 Feb, Dieter N=FCtzel wrote:
->=20
->>Am Freitag, 13. Februar 2004 18:31 schrieb markw@osdl.org:
->>
->>>http://developer.osdl.org/markw/fs/dbt2_stp_results.html
->>>
->>>I have some data (at the link above) with the reiser4 2004.02.06
->>>snapshot applied to linux-2.6.2 with our DBT-2 (OLTP) workload on 4-wa=
-y
->>>and 8-way systems.  On the 4-way systems, the results of the workload
->>>seem comparable to other filesystems.  On the 8-way systems, the resul=
-ts
->>>of the workload drop about 28%.
->>>
->>>I have readprofile and oprofile (w/ annotated assembly) data with the
->>>results.  If there's anything else I can provide let me know.
->>
->>Where are the ReiserFS 3.xx plus data-logging results?
->>Several sites have them in production.
->=20
->=20
-> Unfortunitely we've been running into linux kernel problems that we
-> think is more of the fault of the aacraid driver on our systems than th=
-e
-> reiserfs 3.xx, so I don't have any results for that.  It's just odd tha=
-t
-> only reiserfs 3.xx triggers it.  I'll copy that here for reference:
+--=-LXa01nwFDVu+bKD6sjs8
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-I know several admins who will not use adaptec cards even if they receive=
+The software:
+Linux kernel 2.6.3 with Reiser4 patch dated February 6th.
+Compiled with gcc 3.4.0 20040129
+(I know the GCC is still in testing, but Reiser3 works fine with it,
+so...)
 
-death threats. Regardless how high/low the load is, the machines will
-eventually lock up when using adaptec SCSI controllers. No idea whether i=
-t
-is the driver or the hardware, but replacing the controller with the same=
+After I'd created a new Reiser4 filesystem, I was copying my backup
+files onto it.  While I was doing that, it just stopped.
 
-model didn't fix it while exchanging it against another brand always fixe=
-d it.
+Here is the cp process from a process dump:
+cp            D C83F583C     0 20232  20159                     (NOTLB)
+c83f57b4 00200082 dd505014 c83f583c c83f58ec 00000002 00000000 00000002
+       00000002 00000002 00072f8f 972dc381 000021ec d0ffad00 d0ffaec0 c83f5=
+f0c
+       00200292 c83f4000 d0ffad00 c010714b c83f5f14 00000001 d0ffad00 c011c=
+620
+Call Trace:
+ [<c010714b>] __down+0x7b/0x110
+ [<c011c620>] default_wake_function+0x0/0x20
+ [<c01f6356>] extent_size+0x96/0xa0
+ [<c0107088>] __down_failed+0x8/0xc
+ [<c01c2f9b>] .text.lock.lock+0xf/0x14
+ [<c01c90e7>] atom_wait_event+0x57/0x80
+ [<c01ea84f>] plugin_by_coord_node40+0x2f/0x40
+ [<c01d5dd8>] write_fq+0x18/0x1d0
+ [<c01c2487>] longterm_unlock_znode+0xa7/0x140
+ [<c01cc720>] write_prepped_nodes+0x50/0x60
+ [<c01cfb27>] flush_current_atom+0x757/0xbc0
+ [<c01de320>] reiser4_writepages+0x0/0xc0
+ [<c01c9d14>] flush_some_atom+0x174/0x290
+ [<c01da903>] reiser4_sync_inodes+0xb3/0x120
+ [<c0177d26>] sync_sb_inodes+0x16/0x30
+ [<c0177ed9>] writeback_inodes+0x49/0x92
+ [<c013db8e>] balance_dirty_pages_ratelimited+0x8e/0x190
+ [<c01f3e7d>] item_balance_dirty_pages+0xbd/0x190
+ [<c01f9bdd>] write_extent+0x89d/0xf10
+ [<c0206fcb>] hint_validate+0xab/0xd0
+ [<c0206739>] equal_to_rdk+0x29/0x60
+ [<c01ea84f>] plugin_by_coord_node40+0x2f/0x40
+ [<c0207d13>] write_flow+0x253/0x460
+ [<c01f9340>] write_extent+0x0/0xf10
+ [<c01c8396>] all_grabbed2free+0x36/0x40
+ [<c0208148>] write_unix_file+0x178/0x2a0
+ [<c01dd72f>] reiser4_write+0x8f/0x100
+ [<c01dd6a0>] reiser4_write+0x0/0x100
+ [<c015642a>] vfs_write+0x10a/0x150
+ [<c0156522>] sys_write+0x42/0x70
+ [<c0108249>] sysenter_past_esp+0x52/0x71
 
-Buggy hardware, buggy driver, I don't care. If it doesn't work out of the=
 
-box, another manufacturer gets the money next time.
+--=20
+Jonathan Briggs
+jbriggs@esoft.com
 
+--=-LXa01nwFDVu+bKD6sjs8
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
-Carl-Daniel
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
 
+iD8DBQBAM6s4G8fHaOLTWwgRAtJJAJ9uX7WEfP+nPOs5sZRoRxrXHFea3ACdEqBB
+J93syMTNi3ziRNMcNMm7Nrk=
+=48pI
+-----END PGP SIGNATURE-----
+
+--=-LXa01nwFDVu+bKD6sjs8--
 
