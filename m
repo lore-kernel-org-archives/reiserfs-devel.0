@@ -1,125 +1,35 @@
-From: David Lang <dlang@digitalinsight.com>
+From: Sriram Karra <karra@shakti.homelinux.net>
 Subject: Re: silent semantic changes with reiser4
-Date: Tue, 7 Sep 2004 23:51:43 -0700 (PDT)
-Message-ID: <Pine.LNX.4.60.0409072336330.11722@dlang.diginsite.com>
-References: <200409080007.i880745c002997@localhost.localdomain>
+Date: Wed, 08 Sep 2004 13:21:45 +0530
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <xeq3656pnqpa.fsf@codc1-xdm1.cisco.com>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
+	<41352279.7020307@slaphack.com> <41356321.4030307@namesys.com>
+	<Pine.LNX.4.61.0409030037540.23011@fogarty.jakma.org>
+	<413809EF.8060102@namesys.com>
+	<20040903070034.GM23987@parcelfarce.linux.theplanet.co.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21621-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <200409080007.i880745c002997@localhost.localdomain>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20040903070034.GM23987@parcelfarce.linux.theplanet.co.uk> (viro@parcelfarce.linux.theplanet.co.uk's
+ message of "Fri, 3 Sep 2004 08:00:34 +0100")
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Christer Weinigel <christer@weinigel.se>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Spam <spam@tnonline.net>, Tonnerre <tonnerre@thundrix.ch>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: viro@parcelfarce.linux.theplanet.co.uk
+Cc: Hans Reiser <reiser@namesys.com>, Paul Jakma <paul@clubi.ie>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Tue, 7 Sep 2004, Horst von Brand wrote:
+viro@parcelfarce.linux.theplanet.co.uk writes:
 
-> David Lang <david.lang@digitalinsight.com> said:
->> so far the best answer that I've seen is a slight varient of what Hans is
->> proposing for the 'file-as-a-directory'
+> On Thu, Sep 02, 2004 at 11:06:39PM -0700, Hans Reiser wrote:
+>> Linus, did you get the email in which I (I think....) answered all
+>> the problems with files as directories that you and Viro had
+>> raised?
+>> 
+>> You and Viro did not respond to it....
 >
->> make the base file itself be a serialized version of all the streams and
->> if you want the 'main' stream open file/. (or some similar varient)
->
-> Serialized how? cpio(1), tar(1), cat(1)ed together, ...? Ship it via FTP or
-> something, how do you unpack on a traditional filesystem? On a wacky
-> filesystem?
->
+> Message-ID, please.  There was a lot of mails from you in this
+> thread and I probably have missed one that did address *any*
+> problems.  If such mail had ever existed, that is.
 
-as I said elsewhere in the origional post the owner of the file sets the 
-tool to use to serialize it. if you want tar set it to use tar, if you 
-want cpio set that. in both cases it would be a call out to userspace
+Perhaps this is one? Message-ID: <413578C9.8020305@namesys.com>
 
-> Note that this has the same performance implications as the targzfilesystem
-> concept, just the other way around: Instead of unpacking on the fly it is
-> packing on the fly. And paying a (possibly huge) cost for "simple, everyday
-> operations" in some cases that can't be distinguished from ones where there
-> is no such cost is very wrong to me.
-
-this is a (huge) oppurtunity for the filesystem to provide for an 
-optimization. if it is able to maintain a serialized version then this 
-could turn into a simple read. no it's not always the simple obvious 
-thing, but very few things are.
-
-the problem of things having unexpected side effects in an uncontrolled 
-server already are out there.
-
->> this doesn't address the hard-link issue,
->
-> It has to be solved!
-
-I never disputed that, in fact I pointed out that that issue remained, 
-with the idea (since disproved) that this suggestion would settle the 
-other issues sufficiantly to let everyone concentrate on the link issue.
-
->
->>                                           but it should handle the backup
->> problems (your backup software just goes through the files and what it
->> gets is suitable for backups).
->
-> But how do you recreate the original "files" later? You only get the
-> serialized version back. Even worse, if you unpack on top of the original
-> wacky file, you'd get a wacky file, where the main stream is the serialized
-> version of the original... Rinse and repeat. [Shudder]
-
-how smart if the filesystem plugin? can the filesystem recognise compound 
-filetypes? if so then it can tell what's happening and do the right thing 
-when recreating the file
-
->> you will ask what serializer to user, and my answer is to let one of the
->> streams tell you, and have the kernel make a call out to userspace to
->> execute the appropriate program (note that this means that tar is not put
->> into the kernel)
->
-> If I want to see it serialized via tar(1), and you via cpio(1), and
-> somebody else via "take the icon stream, discard everything else", how do
-> you handle that?
-
-the owner of the file decides (or whoever that owner grants the 
-permissions to to change it to a different system)
-
->> in fact it may make sense to just open file/file to get at the 'main'
->> stream of the file (there may be cases where the concept of a single main
->> stream may not make sense)
->
-> What do you do then?
-
-the backup doesn't really care. if you refrence files by file/file then 
-you can't really say that file/foo is any more the 'main' stream then 
-file/bar. but if you call it file/. then you do have to define what 
-themain version is.
-
->> so if this solves the tool/backup problem
->
-> It makes it much worse, AFAICS.
-
-
-
->>                                            then we can look and figure out
->> if there's a reasonable way to solve the hard-link problem
->
-> Right. And if none is found, can we drop this madness?
-
-solutions are known , it's just not known if any solution can be 
-implemented with suitable performance (lock the entire filesystem when you 
-go to do a dangerous action goes a _long_ way towards solving the 
-problems, but it's not acceptable due to performance issues)
-
-the fundamental problem with hard links and directories (maintaining a 
-sane path) is the exact same problem that the *notify tools need solved so 
-that a program can setup notification on a directory tree that it's 
-interested in without tieing up a large number of file handles. it's a odd 
-problem, but if it can be solved there are several doors that open up.
-
-David Lang
-
-
-
--- 
-"Debugging is twice as hard as writing the code in the first place.
-Therefore, if you write the code as cleverly as possible, you are,
-by definition, not smart enough to debug it." - Brian W. Kernighan
