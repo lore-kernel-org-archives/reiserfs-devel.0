@@ -1,53 +1,42 @@
 From: Domenico Andreoli <cavok@tiscali.it>
-Subject: Re: reiser4 disk formats (was http://www.namesys.com/snapshots/2004.08.09-internal.testing/)
-Date: Mon, 16 Aug 2004 01:50:54 +0200
-Message-ID: <20040815235054.GA6721@raptus.homelinux.net>
-References: <20040813171827.GA15303@raptus.homelinux.net> <200408160113.38791.frbiscani@jumpy.it> <20040815232751.GA3627@raptus.homelinux.net> <200408160138.30792.frbiscani@jumpy.it>
+Subject: Re: 2004.08.13 Snapshot for 2.6.8[.1]
+Date: Mon, 16 Aug 2004 01:57:54 +0200
+Message-ID: <20040815235754.GA6889@raptus.homelinux.net>
+References: <20040814165601.79260f07.lists@mjh.name> <20040814164727.GA1826@raptus.homelinux.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20313-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20314-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200408160138.30792.frbiscani@jumpy.it>
+In-Reply-To: <20040814164727.GA1826@raptus.homelinux.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
-On Mon, Aug 16, 2004 at 01:38:30AM +0200, Francesco Biscani wrote:
-> Hi,
-> 
-> On Monday 16 August 2004 01:27, Domenico Andreoli wrote:
-> > what is confusing me is Vitaly saying:
-> >
-> > "The converter (debugfs.reiser4 -C) is supposed to be run on consistent
-> >  fs of course, so probably it is worth to check/fix it with the current
-> >  reiser4progs before any update."
-> >
-> > probably with "... any update." he meant also the update of the
-> > reiser4progs package to 1.0.0, doesn't him?
-> >
-> 
-> Yes, I think he meant that. Maybe you could just put a message to be printed 
-> when reiser4progs 1.x is being installed: "Make sure you checked your reiser4 
-> partition(s) if upgrading to this version of reiser4progs from 0.5.x: 
-> avoiding to do this may lead to data loss!". This could be made interactive 
-> (i.e., "Type 'Yes' to continue"). 
-> 
+On Sat, Aug 14, 2004 at 06:47:27PM +0200, Domenico Andreoli wrote:
+> On Sat, Aug 14, 2004 at 04:56:01PM +0200, Milan Holz=E4pfel - Personal re=
+ply info see sig wrote:
+> >=20
+> > For those of you who want to use Reiser4 with a vanilla kernel: I have
+> > rediffed the yesterdays "official" snapshot from
+> > <URL:http://namesys.com/snapshots/2004.08.13/> against 2.6.8[.1]:
+> > <URL:http://linux.mjh.name/kernel/patches/reiser4/2004.08.13_2.6.8.1/>
+> >=20
+>=20
+> i have also made the same work, it is now in kernel-patch-2.6-reiser4
+> 20040813-2 debian package.
+>=20
+> i've also fixed the usual read_lock vs spin_lock & co warnings.
 
-i already tried this way but users did not like the installation being
-interrupted. currently i have no time to make the thing polite, i have
-to make the upload in the next two days otherwise it risks to miss the
-next stable release.
+only today i saw the new 2.6.8.1 kernel version, indeed the correspondent
+patch is in debian package 20040813-3 (currently available at
+http://incoing.debian.org).
 
-> Just a thought :)
-
-grazie comunque ;) 
-
-ciao
-dom
+cheers
+domenico
 
 -----[ Domenico Andreoli, aka cavok
  --[ http://people.debian.org/~cavok/gpgkey.asc
