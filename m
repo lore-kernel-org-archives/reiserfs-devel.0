@@ -1,57 +1,52 @@
-From: Christophe Saout <christophe@saout.de>
+From: Lee Revell <rlrevell@joe-job.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 22:36:10 +0200
-Message-ID: <1093552570.13881.41.camel@leto.cs.pocnet.net>
-References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com>
-	 <200408262128.41326.vda@port.imtp.ilyichevsk.odessa.ua>
-	 <Pine.LNX.4.58.0408261132150.2304@ppc970.osdl.org>
-	 <20040826191323.GY21964@parcelfarce.linux.theplanet.co.uk>
-	 <20040826203228.GZ21964@parcelfarce.linux.theplanet.co.uk>
+Date: Thu, 26 Aug 2004 16:38:26 -0400
+Message-ID: <1093552705.5678.96.camel@krustophenia.net>
+References: <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de>
+	 <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>
+	 <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk>
+	 <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org>
+	 <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk>
+	 <20040826001152.GB23423@mail.shareable.org>
+	 <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk>
+	 <20040826010049.GA24731@mail.shareable.org>
+	 <20040826100530.GA20805@taniwha.stupidest.org>
+	 <20040826110258.GC30449@mail.shareable.org>  <412E06B2.7060106@pobox.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-93ZxXzE7cHUjN/kDvYMF"
-Return-path: <reiserfs-list-return-20792-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20793-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826203228.GZ21964@parcelfarce.linux.theplanet.co.uk>
+In-Reply-To: <412E06B2.7060106@pobox.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: viro@parcelfarce.linux.theplanet.co.uk
-Cc: Linus Torvalds <torvalds@osdl.org>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Will Dyson <will_dyson@pobox.com>
+Cc: Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
---=-93ZxXzE7cHUjN/kDvYMF
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2004-08-26 at 11:50, Will Dyson wrote:
+> Jamie Lokier wrote:
+> 
+> > However, as far as I know it's not accessible in a file-as-directory
+> > form as yet.  In my opinion that is the most natural form and it would
+> > be very intuitive to use.  I hope we can pick a useful semantics for
+> > them, and also provide filesystem-independent plugins with GNU
+> > Hurd-like per-user extensibility.
+> > 
+> > -- Jamie
+> > 
+> > * plenty == too much.
+> >   Gnome, KDE, Emacs and Bash all see different virtual filesystems.
+> >   (All but Bash implement their own virtual filesystem extensions).
+> >   That makes them much less useful than they could be.
+> 
+> It has always bugged me that Gnome and KDE implement their own VFS layers.
+> 
 
-Am Donnerstag, den 26.08.2004, 21:32 +0100 schrieb :
+Same here.  This always seemed like something the kernel should be able
+to handle.  It seems to me that if reiser4 had been available at the
+time the Gnome and KDE developers would not have needed to do this.
 
-> Argh...  OK, now I remember why I went for -EBUSY for unlink() (we obviou=
-sly
-> are not bound by SuS on that one).  Consider the following scenario:
-> 	* local file foo got something else bound on it for a while
-> 	* we are tight on space - time to clean up
-> 	* oh, look - contents of foo is junk
-> 	* rm foo
-> 	* ... oh, fuck, there goes the underlying file.
-
-Right. Good thinking. You can't delete a directory while there regular
-files in it either.
-
-Another question: /mnt/test is a mountpoint. Why can I rename `mnt' but
-can't rename `test'?
-
-
---=-93ZxXzE7cHUjN/kDvYMF
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQBBLkm6ZCYBcts5dM0RApvcAKCMxROH+ugJZw6LlUMzRKlSInpwkQCfQg1I
-KW/2Ax+hEGewrv+vJCSoCKs=
-=F9+H
------END PGP SIGNATURE-----
-
---=-93ZxXzE7cHUjN/kDvYMF--
+Lee
 
