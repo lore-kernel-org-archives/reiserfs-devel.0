@@ -1,57 +1,98 @@
-From: Christophe Saout <christophe@saout.de>
+From: Linus Torvalds <torvalds@osdl.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 22:38:12 +0200
-Message-ID: <1093552692.13881.43.camel@leto.cs.pocnet.net>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
-	 <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com>
-	 <20040826014542.4bfe7cc3.akpm@osdl.org> <412DAC59.4010508@namesys.com>
-	 <1093548414.5678.74.camel@krustophenia.net>
-	 <20040826203017.GA14361@school.ioffe.ru>
+Date: Thu, 26 Aug 2004 13:40:14 -0700 (PDT)
+Message-ID: <Pine.LNX.4.58.0408261315110.2304@ppc970.osdl.org>
+References: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-iRiqRY6UDa+JwpiIC1hF"
-Return-path: <reiserfs-list-return-20794-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20795-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826203017.GA14361@school.ioffe.ru>
+In-Reply-To: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Dmitry Baryshkov <mitya@school.ioffe.ru>
-Cc: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
-
---=-iRiqRY6UDa+JwpiIC1hF
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-Am Freitag, den 27.08.2004, 00:30 +0400 schrieb Dmitry Baryshkov:
-
-> Another example: Can ext2/etx3/reiserfsv3/xfs be implemented as reiser4
-> plugins? From Hans' words it seems so. If this is correct, then maybe
-> reiser4 core should be updated to completely replace current VFS layer?
-> Then it's a good point to create a branch (in old development model it
-> would be 2.7, dunno for new :), replace VFS layer with reiser4 core, and
-> rewrite all (or at least most used) FS as reiser4 plugins. Then
-> everybody will be happy.
->=20
-> But this looks too good to be true. Perhaps I misunderstood Hans' words
-> aboud 'new disk format', did I?
-
-No. You can change the format the reiser4 storage tree is stored in. As
-long as other filesystems don't use the same underlying storage tree
-this is not possible.
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Rik van Riel <riel@redhat.com>
+Cc: Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
 
---=-iRiqRY6UDa+JwpiIC1hF
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
+On Thu, 26 Aug 2004, Rik van Riel wrote:
+> 
+> Thinking about it some more, how would file managers and file chosers
+> handle this situation ?
 
-iD8DBQBBLko0ZCYBcts5dM0RAifHAJoDtiifngYh4ZiRKhfWPv/yKHeNBACfSpa/
-dzAAXkO7oaVv7W4rgMIhrk8=
-=h/iE
------END PGP SIGNATURE-----
+The same way they already handle it on other platforms that support it? By 
+taking advantage of it..
 
---=-iRiqRY6UDa+JwpiIC1hF--
+People literally use this for icon and preview information, so some of the
+stuff shows up very much in file managers. And I'd assume that a normal
+double-click would just open the main file, and you can right-click for 
+management information, including opening the file.
 
+If you want an entity that acts as a directory, you create a directory. 
+
+Directories don't go away - you still have S_ISDIR() and S_ISREG(), and 
+they still return information. A file that has associated information is 
+still a _file_, and people should treat it that way, it's just that it 
+also has a list of named sub-streams. You can open it as a directory, but 
+the stat information clearly says it is a file, and the "directory" view 
+is very much associated with _that_ file.
+
+I definitely don't think you want the file manager to act as if a named 
+stream is exactly the same as a stand-alone file. They have all the same 
+operations, but there's no question that there are differences too. 
+Especially on a conceptual level - but for most filesystems there are 
+likely real technical differences too.
+
+For example, it's likely that most filesystems would _not_ allow linking 
+of a named stream anywhere else. And you might not be able to change the 
+permissions or date on the named stream either, since it may or may not 
+have a separate date/permission thing from the container.
+
+So don't believe that just because the named streams are _named_ like real 
+files, that they suddenly have any existence beyond the container that 
+they are part of.
+
+There may be other limitations too - again depending on how the filesystem
+actually implements named streams. It might not support more than one
+level of naming, for example - so you might not be able to create a
+directory structure within the named streams, for example.
+
+In short: the fact that the VFS layer exposes the _capability_ to see the 
+named streams as a full POSIX filesystem of its own does _not_ mean that 
+the low-level filesystem necessarily allows the full possible semantics. 
+So you shouldn't design your apps that know about named streams to think 
+they are normal directories.
+
+The directory thing is just a very powerful naming scheme, and one that 
+fits into the existing UNIX model.
+
+> Do we really want to have a file paradigm that's different
+> from the other OSes out there ?
+
+Different from what other OSes?
+
+Last I looked, Windows, Solaris, and OSX all supported named streams. What 
+other OS's are out there that you care about? 
+
+In other words, this is _not_ a different paradigm from what others do.  
+The discussion is whether we want to implement it at all, and more
+importantly about syntactic issues (ie we clearly already implement
+extended attributes, just with a much more limited syntactic power).
+
+We don't have to go all the way. Solaris has "openat()", which is kind of 
+a half-way there - not really directly available in the same namespace, 
+but at least the result is available as a real file interface (as opposed 
+to the Linux "xattr" interfaces that are _totally_ special-cased system 
+calls).
+
+In other words - the paradigm is already there. It's just that currently
+it's pretty much unusable under Linux, because it requires so much
+specialized knowledge that it's not worth it to modify existing apps. And
+the interfaces are really very limited, so even if you _do_ end up using 
+the specialized Linux interfaces, you can't actually do a lot of what you 
+might want to do.
+
+			Linus
