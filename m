@@ -1,43 +1,34 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Again, some bad Reiser4 (ReiserFS) 'reviews'
-Date: Fri, 16 Jul 2004 21:43:14 -0700
-Message-ID: <40F8AE62.5010908@namesys.com>
-References: <200407150025.30908.Dieter.Nuetzel@hamburg.de> <40F6C548.7030805@namesys.com> <20040715182209.GK21140@backtop.namesys.com> <20040716092927.GQ4990@nysv.org>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: v4 resizer?
+Date: Sat, 17 Jul 2004 11:08:51 +0300
+Message-ID: <20040717080850.GT4990@nysv.org>
+References: <40F79A88.1040803@slaphack.com> <20040716113450.GS4990@nysv.org> <40F8327E.8030304@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19665-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19666-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040716092927.GQ4990@nysv.org>
+Content-Disposition: inline
+In-Reply-To: <40F8327E.8030304@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?UTF-8?B?TWFya3VzIFTDtnJucXZpc3Q=?= <mjt@nysv.org>
-Cc: Alex Zarochentsev <zam@namesys.com>, Dieter N?tzel <Dieter.Nuetzel@hamburg.de>, reiserfs-list@namesys.com, Nikita Danilov <Nikita@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Masover <ninja@slaphack.com>
+Cc: reiserfs-list@namesys.com
 
-Markus T=C3=B6rnqvist wrote:
+On Fri, Jul 16, 2004 at 02:54:38PM -0500, David Masover wrote:
+>
+>Only if someone can assure me that the on-disk format will not change
+>until there's a resizer available.
 
->On Thu, Jul 15, 2004 at 10:22:09PM +0400, Alex Zarochentsev wrote:
-> =20
->
->>>zam, would you confirm that the fibration plugin is our current default =
+It has also been said on many occasions that the on-disk format will
+not change. Not in the sense that it would require mkfs.
 
->>>plugin?
->>>     =20
->>>
->>"dot-o fibrate" is default.
->>   =20
->>
->
->This always puzzles me. Would not ext-1-fibre give the same results for
->
->This always puzzles me. Would not ext-1-fibre give the same results for
->.o files but also the same bonus with all source code and such with .c
->and .h?
->
->I at least overrode the default because of that :)
->
-> =20
->
-nikita, is there a reason, or did inertia rule and we should change it?
+However, what I would _really_ like an answer to is what will happen
+when hsets get implemented, since psets brought a minor fsck-fixable
+change with them. Is it sure that we won't have to mkfs then either?
+
+-- 
+mjt
+
