@@ -1,50 +1,55 @@
-From: Bingner Sam J Contractor CAF CSS/SCHE <Sam.Bingner@hickam.af.mil>
-Subject: RE: back up to disk
-Date: Tue, 15 Oct 2002 21:17:38 -0000
-Message-ID: <A6B0BFA3B496A24488661CC25B9A0EFA333CF6@himl07.hickam.pacaf.ds.af.mil>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: Re: [PATCH] finally... data logging for 2.4.20-pre10
+Date: Wed, 16 Oct 2002 00:16:55 +0200
+Message-ID: <3DAC93D7.4060508@mb.tu-ilmenau.de>
+References: <1034709883.5053.920.camel@tiny>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11700-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11701-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: 'Russell Coker' <bofh@coker.com.au>, ReiserFS <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list <reiserfs-list@namesys.com>, Dieter Nuetzel <Dieter.Nuetzel@hamburg.de>
 
-can anybody say SAN?
+On 10/15/2002 09:24 PM, Chris Mason wrote:
+> Hello all,
+> 
+> I've uploaded new data logging code against 2.4.20-pre10 to 
+> 
+> ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20
+> 
+> The mirror might take a little while to update.
+> 
+> This code is lightly tested, use with caution for a few days.  The
+> journal relocation patches are not complete yet, I haven't integrated
+> them with the new options parsing code in 2.4.20-pre, so you can't pass
+> -o jdev= when mounting the FS.
+> 
+> Aside from merging into the latest kernel, there are a few bug fixes for
+> corner case oopsen hit during suse testing.
+> 
+> -chris
 
-SAN:  Acronym: Storage Area Network
+Hi Chris and all others,
 
-This looks like it is just a SAN, and a little software to show when the
-same data is written twice and reference the first instance instead of
-writing it again...  I suspect it could use any filesystem on the drives you
-wanted...
+I was so very glad to see your patches appear on the server that I 
+immediately needed to apply them.  ;-)
 
-	Sam Bingner
-	PACAF CSS/SCHE
+At the moment I'm not very glad with the solution that "data=ordered" 
+specified in /etc/fstab on  / partitions isn't supported any more. I 
+need to specify a rootflags append to my lilo.conf again to get this 
+mode like in the past. (In the same way I'm not glad with skipping 
+"data=ordered" as default mount option -- but...)
 
------Original Message-----
-From: Russell Coker [mailto:bofh@coker.com.au]
-Sent: Tuesday, October 15, 2002 11:06 AM
-To: ReiserFS
-Subject: [reiserfs-list] back up to disk
+...After reading the README on your servers directory I saw the words 
+"beta" and "for testers" again so I should be more patient.
 
 
-Here's an interesting article I just read.  It's just a device with a bunch
-of 
-ATA drives inside, up to 2T of storage.  Probably anyone here could produce 
-something based on ReiserFS to compete with it...
+Thank you very much for your work,
 
+Manuel
 
-Storage start-up Avamar Technologies is launching an appliance 
-this week that it claims backs up network data more quickly and 
-less expensively than tape. 
-http://www.nwfusion.com/news/2002/1014avamar.html?net
-
--- 
-http://www.coker.com.au/bonnie++/     Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/       Postal SMTP/POP benchmark
-http://www.coker.com.au/projects.html Projects I am working on
-http://www.coker.com.au/~russell/     My home page
