@@ -1,101 +1,77 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 14:12:32 -0400
-Message-ID: <200408261812.i7QICW8r002679@localhost.localdomain>
-References: <reiser@namesys.com>
-Return-path: <reiserfs-list-return-20938-reiserfs=m.gmane.org@namesys.com>
+From: Andreas Dilger <adilger@clusterfs.com>
+Subject: Re: Quicker alternative to "find /"?
+Date: Fri, 27 Aug 2004 14:19:08 -0600
+Message-ID: <20040827201908.GC4654@schnapps.adilger.int>
+References: <20040815231640.3c926886.felix.klee.reiserfs@gmx.net> <411FF929.7040405@slaphack.com> <20040816140420.11dc210c.felix.klee.reiserfs@gmx.net> <200408161429.27131.christian.mayrhuber@gmx.net> <1093634500.2851.225.camel@localhost.localdomain>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="g7w8+K/95kPelPD2"
+Return-path: <reiserfs-list-return-20939-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
-   of "Thu, 26 Aug 2004 01:31:34 MST." <412D9FE6.9050307@namesys.com> 
+Content-Disposition: inline
+In-Reply-To: <1093634500.2851.225.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: "Lamont R. Peterson" <lamont@gurulabs.com>
+Cc: reiserfs-list@namesys.com
 
-Hans Reiser <reiser@namesys.com> said:
-> Andrew Morton wrote:
+--g7w8+K/95kPelPD2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[...]
+On Aug 27, 2004  13:21 -0600, Lamont R. Peterson wrote:
+> On Mon, 2004-08-16 at 06:29, Christian Mayrhuber wrote:
+> > On Monday 16 August 2004 14:04, Felix E. Klee wrote:
+> > > Thanks for the hints. I did some benchmarks:
+> > >
+> > > find / >/tmp/find.dirtree:
+> > >     3:44 (1st run)
+> > >     3:47 (repeated run)
+> > > updatedb -u --output=3D/tmp/updatedb.dirtree:
+> > >     8:51
+> > >     8:47
+> > > ls -R / >/tmp/ls.dirtree:
+> > >     6:16
+> > >     6:55
+> > >
+> > > With less than 4 minutes find is by far the fastest of these
+> > > methods.
+>=20
+> Interesting.  I wonder what ls is doing that find is not.  The updatedb
+> result does not surprise me in the least.
 
-> > The fact that one filesystem will offer features which other
-> > filesystems do not and cannot offer makes me queasy for some reason.
+Have a look at "strace ls" and you will see that "ls" is doing a stat of
+all the files.  I know this because it is a slowdown on a network filesystem
+when you do an "ls" in a gigantic directory and you have to stat all of the
+files instead of just dumping the directory contents.
 
-Not me. As long as it is clearly experimental stuff that can be removed at
-the head hacker's whim, that is. 2.7 material.
+Try something like "\ls -fR" so that you don't get colorization (which needs
+the stat data) and it doesn't do sorting (which requires that you read in
+the whole directory before displaying any part of it).  I think GNU ls will
+still only show the directory contents after reading the whole thing even
+when it isn't sorting, but that isn't a big deal unless you have large
+directories.
 
-> Andrew, we need to compete with WinFS and Dominic Giampaolo's filesystem 
-> for Apple,
+Cheers, Andreas
+--
+Andreas Dilger
+http://sourceforge.net/projects/ext2resize/
+http://members.shaw.ca/adilger/             http://members.shaw.ca/golinux/
 
-Says who?
 
->            and that means we need to put search engine and database 
-> functionality into the filesystem.
+--g7w8+K/95kPelPD2
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
-Please don't. Unix works and is extremely popular because it _doesn't_ try
-to be smart (policy vs mechanism distinction, simple abstractions that can
-be combined endlessly). If you add this to the filesystems, you either redo
-_all_ userland to understand _one_ particular way of doing "smart things"
-(which will turn out to be almost exactly the dumbest possible for some
-uses, and then you are stuck), or get lots of shards from broken apps (and
-users, and sysadmins).
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
 
->                                     It takes 11 years of serious 
-> research to build a clean storage layer able to handle doing that.  
+iD8DBQFBL5c8pIg59Q01vtYRAnF/AKCkmbiNgE3BobXhanednNJsEf220QCfXJ1v
+/RWvjqQ/OTXrve8PJm1R1AM=
+=OucS
+-----END PGP SIGNATURE-----
 
-Great! Build an experimental OS showing how to use it, and through that see
-if the ideas hold any water _in real, day-to-day, down-to-earth, practice_.
-
-> Reiser4 has done that, finally.  None of the other Linux filesystems 
-> have.
-
-How come nobody before you in the almost 30 years of Unix has ever seen the
-need for this indispensable feature?
-
->        The next major release of ReiserFS is going to be bursting with 
-> semantic enhancements, because the prerequisites for them are in place 
-> now.  None of the other Linux filesystems have those prerequisites.  
-
-To me that would mean that ReiserFS has no place in Linux.
-
-> They won't be able to keep up with the semantic enhancements.  This 
-> metafiles and file-directories stuff is actually fairly trivial stuff.
-
-Maybe. But the question of it being of any use aren't trivially answered
-"yes". My gut feeling is that the answer is a resounding "no", but that's
-just me. Direcories are directories, if you want to ship directory-like
-stuff around, use directories (or tarfiles, or whatever). Just look what
-happened to the much, much easier stuff of splitting SUID/SGID into
-capabilities: Nothing at all whatsoever, because they have no decent place
-to stay in the hallowed Unix APIs. Sure, Linux is now large enough to be
-able to _define_ APIs to follow, but even so it isn't at all easy to do so.
-
-> Look guys, in 1993 I anticipated the battle would be here, and I build 
-> the foundation for a defensive tower right at the spot MS and Apple are 
-> now maneuvering towards.
-
-Why place a protective tower around the pit into which they are trying
-desperately to throw themselves? ;-)
-
->                           Help me get the next level on the tower before 
-> they get here.  It is one hell of a foundation, they won't be able to 
-> shake it, their trees are not as powerful.  Don't move reiser4 into vfs, 
-> use reiser4 as the vfs.  Don't write filesystems, write file plugins and 
-> disk format plugins and all the other kinds of plugins, and you won't be 
-> missing any expressive power that you really want....
-
-Better write libraries handling whatever weird format you have in mind for
-each use. Even applications. I don't expect to be able to use emacs to edit
-a JPEG or PostgreSQL database. Neither do I expect gimp to be able to edit
-a poem. The current trend (which I heartily agree with) is to take stuff
-_out_ of the kernel (for flexibility, access, development ease, even
-performance).
--- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+--g7w8+K/95kPelPD2--
