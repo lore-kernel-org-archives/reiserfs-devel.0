@@ -1,57 +1,108 @@
-From: Spam <spam@tnonline.net>
-Subject: Re: Need Warm Fuzzies, ReiserFS (3)
-Date: Mon, 20 Dec 2004 17:32:38 +0100
-Message-ID: <1046303449.20041220173238@tnonline.net>
-References: <41C66615.5010206@simutronics.com>
- <200412201331.25180.christian.mayrhuber@gmx.net> <20041220153840.GA11409@zero>
- <200412201725.03216.christian.mayrhuber@gmx.net>
-Reply-To: Spam <spam@tnonline.net>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: hmm, dependencies
+Date: Mon, 20 Dec 2004 09:14:28 -0800
+Message-ID: <41C70874.9030001@namesys.com>
+References: <1103226970.704.1.camel@localhost>	 <1103291711.3589.32.camel@tribesman.namesys.com>	 <1103296970.12405.0.camel@localhost>	 <1103304658.3589.109.camel@tribesman.namesys.com>	 <1103306958.12423.1.camel@localhost> <1103308669.3589.117.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22853-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22854-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200412201725.03216.christian.mayrhuber@gmx.net>
+In-Reply-To: <1103308669.3589.117.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: redeeman@metanurb.dk, Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
+Vladimir Saveliev wrote:
 
-  
+>Hello
+>
+>On Fri, 2004-12-17 at 21:09, Redeeman wrote:
+>  
+>
+>>On Fri, 2004-12-17 at 20:30 +0300, Vladimir Saveliev wrote:
+>>    
+>>
+>>>Hello
+>>>
+>>>On Fri, 2004-12-17 at 18:22, Redeeman wrote:
+>>>      
+>>>
+>>>>On Fri, 2004-12-17 at 16:55 +0300, Vladimir Saveliev wrote:
+>>>>        
+>>>>
+>>>>>Hello
+>>>>>
+>>>>>On Thu, 2004-12-16 at 22:56, Redeeman wrote:
+>>>>>          
+>>>>>
+>>>>>>hello.. reiser4 is now in mm, but i realize that nearly all of the stuff
+>>>>>>that was mm specific when the move to mm was made, are probably merged
+>>>>>>into upstream by now, i wonder, can anyone tell me exactly what from mm
+>>>>>>it depends on?
+>>>>>>
+>>>>>>thanks
+>>>>>>
+>>>>>>            
+>>>>>>
+>>>>>reiser4 got included into mm not because it needed something of it, but
+>>>>>rather because it is supposed that being in mm for certain amount of
+>>>>>time reiser4 will get a lot of testing and will prove that it is worth
+>>>>>to get included into stock kernel. 
+>>>>>          
+>>>>>
+>>>>im aware, however, the reiser4 patches in mm are against mm, which means
+>>>>it depends on something from it, and i'd like to find out what :D so
+>>>>that i can take it out and apply to vanilla along with reiser4
+>>>>        
+>>>>
+>>>did you see ftp.namesys.com/pub/reiser4-for-2.6/2.6.9?
+>>>It contains all things which reiser4 depends on.
+>>>      
+>>>
+>>nice
+>>    
+>>
+>>>If you would like to add reiser4 to vanilla kernel yourself you would
+>>>have to add reiser4 patches of mm kernel to vanilla one:
+>>>
+>>>people/akpm/patches/2.6/2.6.X/2.6.X-mmY/broken-out/reiser4-*
+>>>and add the patch i am attaching to this email.
+>>>
+>>>      
+>>>
+>>yeah i tried that, however they dont patch against latest vanilla, it
+>>would seem the vfs has changed abit.. i just wondered if anyone knew
+>>exactly which of the mm patches was needed to make up for this, but, now
+>>you gave me that url :) never mind..
+>>
+>>    
+>>
+>
+>Ah, yes, you are right, there is a patch which rejects.
+>But, I guess that if we keep ftp.namesys.com/pub/reiser4-for-2.6/
+>uptodate - that would be ok and we would not have to release separate
+>patches for vanilla kernel
+>  
+>
+How is this a one step install process for users?  Anything that 
+diverges from a one step install process is bad with the amount badness 
+proportional to the number of steps.  Minimize the badness.
 
-> On Monday 20 December 2004 16:38, Tom Vier wrote:
->> On Mon, Dec 20, 2004 at 01:31:25PM +0100, Christian Mayrhuber wrote:
->> > The barrier mount option should provide protection against a corrupted
->> > journal during power failure for drives with write caching enabled.
->> > (Mostly IDE)
->> 
->> There's a mount option for write barriers? It should be enabled by default.
->> Otherwise, that's asking for tons of users with corruption. 
-> http://www.kernel.org/pub/linux/kernel/v2.6/ChangeLog-2.6.9
+Give the task to vitaly though.
 
-> Before disk barriers you had to disable harddisk write caching to prevent
-> journal corruption. This is what nearly no one did and blamed the
-> filesystems instead.
-
-> Disk barriers are only in since 2.6.9, so maybe these get turned on per
-> default after some more testing. That did happen to the data=ordered journal
-> mode.
-
-  What happen with the performance when these barriers are active?
-
-  Is it only during power failure the data in the write cache is lost?
-  
-  Also, does anyone know if the data in the disk write cache is
-  written out if the system crashes/freezes. Power failure is not a
-  very common occurrence, but crashes are much more so.
-  
-  Is it possible to detect if filesystem was unmounted due to power
-  failure or due to a kernel crash?
-
-  ~S
-
-
--- 
+>
+>  
+>
+>>thanks
+>>    
+>>
+>
+>
+>
+>  
+>
 
