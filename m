@@ -1,50 +1,36 @@
-From: "Szabolcs Szasz" <sz@szasz.hu>
+From: Ookhoi <ookhoi@humilis.net>
 Subject: Re: ReiserFS causes CPU high usage?!
-Date: Fri, 28 Feb 2003 13:23:12 +0100
-Message-ID: <009a01c2df24$29cd91f0$6400a8c0@twister>
-References: <200302280011.14488.liviu.voicu@huji.ac.il> <3E5F50F3.2040907@namesys.com> <200302281411.38967.liviu.voicu@huji.ac.il> <200302281313.09102.m.c.p@gmx.net>
+Date: Fri, 28 Feb 2003 13:45:31 +0100
+Message-ID: <20030228134531.E24291@humilis>
+References: <200302280011.14488.liviu.voicu@huji.ac.il> <200302281439.24760.liviu.voicu@huji.ac.il> <20030228133836.D24291@humilis> <200302281442.06876.liviu.voicu@huji.ac.il>
+Reply-To: ookhoi@humilis.net
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12986-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12987-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <200302281442.06876.liviu.voicu@huji.ac.il>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Voicu Liviu <liviu.voicu@huji.ac.il>
+Cc: ookhoi@humilis.net, reiserfs-list@namesys.com
 
-Well, as man nice says:
+Voicu Liviu wrote (ao):
+> > Ok. Can you provide top output?
+> 
+> Not right now because the computer is 40 minutes far away of me but I
+> can connect via ssh and try to install 'mozilla' for example with nice
+> -10 and post here the top snapshot
+> OK?
 
-    "Range goes from -20 (highest priority) to 19 (lowest)."
+Perfect. Can you also post the output of the following to the list?
 
-So why is that such a surprise that CPU goes up
-to the sky? Why else -20 is there for? (Or am I
-missing something?)
+cat /proc/cpuinfo
+cat /proc/meminfo 
+hdparm /dev/hda
+dmesg
 
-Cheers,
-Sab
-
-
------ Original Message -----
-From: "Marc-Christian Petersen" <m.c.p@gmx.net>
-To: "Voicu Liviu" <liviu.voicu@huji.ac.il>; "Hans Reiser" <reiser@namesys.c=
-om>; "Oleg Drokin" <green@namesys.com>
-Cc: <reiserfs-list@namesys.com>
-Sent: 2003. febru=E1r 28. 13:13
-Subject: Re: ReiserFS causes CPU high usage?!
-
-
-On Friday 28 February 2003 13:11, Voicu Liviu wrote:
-
-Hi Voicu,
-
-> Already using this :-)
-> Any way, the system works great but if I change the "nice" value of some
-> process then the CPU almost becomes slave of this process.........
-out of sheer curiosity: Why you are nicing emerge to -20?!
-
-You are using the O(1) scheduler so I see absolute no need to do so.
-
-ciao, Marc
-
+And top output before, during, and after the install please.
