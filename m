@@ -1,46 +1,89 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: Where are the plugins?
-Date: Tue, 2 Sep 2003 16:54:13 +0400
-Message-ID: <16212.37621.284660.998958@laputa.namesys.com>
-References: <3F51080F.7060901@mail.utexas.edu>
+From: Mike Benoit <mikeb@netnation.com>
+Subject: Re: Reiser4 input/output errors...
+Date: Tue, 02 Sep 2003 08:17:57 -0700
+Message-ID: <1062515877.3100.3.camel@mikeb.staff.netnation.com>
+References: <1062453181.2791.17.camel@mikeb.staff.netnation.com>
+	 <1062479004.31361.3.camel@haron.namesys.com>
+Reply-To: mikeb@netnation.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15512-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15513-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F51080F.7060901@mail.utexas.edu>
+In-Reply-To: <1062479004.31361.3.camel@haron.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jeffrey Yasskin <jyasskin@mail.utexas.edu>
+To: Yury Umanets <umka@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Jeffrey Yasskin writes:
- > I've been looking at the reiser4 source code for a few days, and I can't 
- > find any non-essential plugins.
- > 
- > For example: You say on the website that you've written several security 
- > plugins for DARPA, but the only files in fs/reiser4/plugin/security/ are 
- > acl.c and perm.{c,h}, and acl.c is empty.
- > On the website you also suggest writing a plugin so /etc/passwd can be 
- > split in to individually-permissioned sub-files. Is that plugin written 
- > yet, or is it just an idea?
+On Mon, 2003-09-01 at 22:03, Yury Umanets wrote:
+> On Tue, 2003-09-02 at 01:53, Mike Benoit wrote:
+> > I assume this isn't supposed to happen?
+> > 
+> > [root@mikeb home]# mkfs.reiser4 /dev/hda8
+> > mkfs.reiser4 0.4.12
+> > Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by
+> > reiser4progs/COPYING.
+> > 
+> > Information: Reiser4 is going to be created on /dev/hda8.
+> > (Yes/No): Yes
+> > Creating reiser4 on /dev/hda8...done
+> > Synchronizing /dev/hda8...done
+> > 
+> > [root@mikeb home]# mount -t reiser4 /dev/hda8 /home/test2
+> > [root@mikeb test2]# cd /home/test2
+> > [root@mikeb test2]# cp /usr/src/linux-2.6.0-test4.tar.bz2 ./
+> > [root@mikeb test2]# tar jxf linux-2.6.0-test4.tar.bz2
+> > 
+> > [root@mikeb test2]# rm -rf linux-2.6.0-test4/
+> > rm: reading directory `linux-2.6.0-test4//drivers/net/e100':
+> > Input/output error
+> > rm: reading directory `linux-2.6.0-test4//drivers/net/sk98lin':
+> > Input/output error
+> > rm: cannot remove directory `linux-2.6.0-test4//drivers/net': Directory
+> > not empty
+> > 
+> > I tried this on two different partitions (/dev/hda7 and /dev/hda8) the
+> > exact same files had the error on both, so it seems to be reproducible.
+> > It does however work fine if I use ext3 on the said partitions. This is
+> > a brand new HD (about a week old) so I doubt it has any bad blocks
+> > (badblocks /dev/hda8 doesn't report anything).
+> > 
+> > [root@mikeb home]# mkfs.reiser4 --version
+> > mkfs.reiser4 0.4.12
+> > 
+> > Kernel: 2.6.0-test4 #5 Mon Sep 1 14:20:14 PDT 2003 i686 unknown unknown
+> > GNU/Linux
+> > 
+> > CONFIG_REISER4_FS=y
+> > CONFIG_REISER4_LARGE_KEY=y
+> > 
+> > CPU:
+> > cpu family      : 6
+> > model           : 8
+> > model name      : AMD Athlon(tm) Processor
+> > stepping        : 1
+> > cpu MHz         : 1662.612
+> > cache size      : 256 KB
+> > 
+> > Distro: Mandrake 9.2beta.
+> 
+> There is something interesting in kernel logs?
 
-These plugins will be written later. For now, reiser4 has only plugins
-necessary to implement basic file system semantics: regular files,
-directories, special files, etc. There are also "pseudo" files used to
-access meta data. Plugin for crypto-compressed files is currently work
-in progress.
+Nothing at all in the kernel logs throughout the entire process. Should
+I try enabling CONFIG_REISER4_CHECK? 
 
- > 
- > I'd like to write a few plugins to move mp3s' and oggs' meta-data into 
- > the filesystem, and it'd be a lot easier if there were an example to 
- > copy from. (Would it be better just to move that kind of plugin into a 
- > userspace callback?)
- > 
- > Thanks,
- > Jeffrey
- > 
+-- 
+Best Regards,
+ 
+Mike Benoit
+NetNation Communications Inc.
+Systems Engineer
+Tel: 604-684-6892 or 888-983-6600
+ ---------------------------------------
+ 
+ Disclaimer: Opinions expressed here are my own and not 
+ necessarily those of my employer
 
-Nikita.
