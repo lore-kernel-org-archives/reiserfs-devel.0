@@ -1,58 +1,43 @@
-From: "Martin J. Bligh" <mbligh@aracnet.com>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 13:44:06 -0700
-Message-ID: <45010000.1093553046@flay>
-References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408261101110.2304@ppc970.osdl.org>
+Date: Thu, 26 Aug 2004 21:48:41 +0100
+Message-ID: <20040826204841.GC5733@mail.shareable.org>
+References: <Pine.LNX.4.58.0408261217140.2304@ppc970.osdl.org> <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20796-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20797-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.58.0408261101110.2304@ppc970.osdl.org>
 Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Linus Torvalds <torvalds@osdl.org>, Rik van Riel <riel@redhat.com>
-Cc: Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Rik van Riel <riel@redhat.com>
+Cc: Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
---On Thursday, August 26, 2004 11:15:19 -0700 Linus Torvalds <torvalds@osdl.org> wrote:
-> On Thu, 26 Aug 2004, Rik van Riel wrote:
->> 
->> It's a relief to know that nobody's taking my humorous
->> suggestion seriously, but now we still have the "standard
->> Unix tools can't manipulate files" problem...
+Rik van Riel wrote:
+> For objects that do both, how does the user choose ?
 > 
-> I disagree. They can manipulate the files a whole lot better than they can 
-> manipulate xattr's.
-> 
-> For example, you _could_ probably (but hey, maybe "tar" tries to strip
-> slashes off the end of filenames, so this might not work due to silly
-> reasons like that) back up a compound file with
-> 
-> 	tar cvf file.tar file file/
-> 
-> although unpacking it would require that tar be taught about the thing. 
-> And you definitely could write a script to do the thing, ie even with an 
-> unmodified tar you could do
-> 
-> 	tar cvf file-archive.tar file
-> 	cd file
-> 	tar cvf ../attribute-archive.tar .
-> 
-> which is a hell of a lot better than what you can do with the fsattr 
-> interfaces and unmodified legacy applications.
-> 
-> So one of the advantages of "dir-as-file/file-as-dir" is exactly that you
-> _can_ manipulate the data with legacy tools. Sure, things that traverse a
-> directory tree might need some (likely fairly trivial) modifications if
-> they really want to take advantage of the subfiles, but that's still
-> likely to be _much_ less of an issue than with fsattr's that have a 
-> totally different model entirely.
+> Do we really want to have a file paradigm that's different
+> from the other OSes out there ?
 
-What would "test -d" and "test -f" return on these magic beasties? I can't
-think of any combinations that wouldn't confuse the crap out of userspace.
+What does MacOS X do?  Someone said that documents are directories in
+it; it must know how to handle that.
 
-M.
+What does Windows do when you click on a .zip file and WinZIP is
+installed?  It opens the .zip file and lets you explore inside.  When
+you click on a .doc file, though, it opens a viewer or editor -- you
+don't get the option to look inside.
 
+> What happens when users want to transfer data from Linux
+> to another system ?
+
+This is why I favour storing all essential metadata (about the file's
+content) inside the file's contents, the primary stream.
+
+We have another problem: what happens when users want to transfer data
+from Windows (with secondary streams) and MacOS (with resource forks)?
+
+-- Jamie
