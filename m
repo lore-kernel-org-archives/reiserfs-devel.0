@@ -1,34 +1,55 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output error"
-Date: Fri, 6 Aug 2004 10:31:17 +0300
-Message-ID: <20040806073117.GD1284@nysv.org>
-References: <20040806045809.E195B15C9F@mail03.powweb.com>
+From: Avinesh Kumar <avinesh_kumar@persistent.co.in>
+Subject: Re: problem in mounting reiserfs
+Date: Fri, 06 Aug 2004 15:37:36 +0530
+Message-ID: <41135868.90608@persistent.co.in>
+References: <41120713.7040706@persistent.co.in> <200408051306.29248.christian.mayrhuber@gmx.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20036-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20037-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040806045809.E195B15C9F@mail03.powweb.com>
+In-Reply-To: <200408051306.29248.christian.mayrhuber@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Dabbs <david@dabbs.net>
-Cc: 'ReiserFS List' <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On Thu, Aug 05, 2004 at 11:54:38PM -0500, David Dabbs wrote:
+but that's not true ... i tried with block sizes 512 bytes, 1024 bytes 
+and is working just fine.
+is anyone who can shed some bright light on this topic ?
+
+
+Christian Mayrhuber wrote:
+
+>On Thursday 05 August 2004 12:08, Avinesh Kumar wrote:
 >
->All the relevant info I could pull together is available at
->http://dabbs.net/reiser4/stat_error_mongo.tar.bz2. Other than gathering this
->info, I have left the system as is. Let me know if you need more info, for
->me to poke around or run commands, retest, etc.
+>  
+>
+>>ReiserFS is successfully created on /dev/hda6.
+>>~ $ mount -t reiserfs /dev/hda6 /rfs
+>>mount: wrong fs type, bad option, bad superblock on /dev/hda6,
+>>       or too many mounted file systems
+>>~ $
+>>
+>>           but the same steps worked when i chose block size of 4096
+>>bytes. please, help me out.
+>>    
+>>
+>
+>If I remember right Reiserfs cannot use blocksize != page size and page size 
+>is 4096 @ x86.
+>The only way to use reiserfs is with its default blocksize of 4096.
+>
+>  
+>
 
-I dunno if you have it there already, but the metadata of the filesystem
-is usually good to have included..
-
-My just-woke-up two cents :)
 
 -- 
-mjt
+regards
+avinesh
+
+====================================
+EVEN IMPOSSIBLE SAYS -- I M POSSIBLE
+====================================
 
