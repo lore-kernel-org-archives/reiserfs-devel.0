@@ -1,45 +1,33 @@
-From: Jan Engelhardt <jengelh@linux01.gwdg.de>
+From: Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>
 Subject: Re: file as a directory
-Date: Wed, 24 Nov 2004 15:05:15 +0100 (MET)
-Message-ID: <Pine.LNX.4.53.0411241501080.2693@yvahk01.tjqt.qr>
-References: <2c59f00304112205546349e88e@mail.gmail.com>  <41A1FFFC.70507@hist.no>
- <41A21EAA.2090603@dbservice.com>  <41A23496.505@namesys.com>
- <1101287762.1267.41.camel@pear.st-and.ac.uk>
+Date: Wed, 24 Nov 2004 16:02:05 +0100
+Message-ID: <4d8e3fd304112407023ff0a33d@mail.gmail.com>
+References: <2c59f00304112205546349e88e@mail.gmail.com>
+	 <41A1FFFC.70507@hist.no> <41A21EAA.2090603@dbservice.com>
+	 <41A23496.505@namesys.com>
+	 <1101287762.1267.41.camel@pear.st-and.ac.uk>
+Reply-To: Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-22548-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S262753AbUKXPEa@vger.kernel.org>
 In-Reply-To: <1101287762.1267.41.camel@pear.st-and.ac.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="utf-8"
-To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Peter Foldiak <peter.foldiak@st-andrews.ac.uk>
+Cc: Hans Reiser <reiser@namesys.com>, Tomas Carnecky <tom@dbservice.com>, Helge Hafting <helge.hafting@hist.no>, Amit Gud <amitgud1@gmail.com>, Linus Torvalds <torvalds@osdl.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
->I think something like
->
->/etc/passwd/[username]
->
->would be a really nice extension. The idea is more general, it would
->unify the namespace for file selection and part-of-file selection.
+On 24 Nov 2004 09:16:03 +0000, Peter Foldiak
+<peter.foldiak@st-andrews.ac.uk> wrote:
+[...] 
+> I would really like to implement this for the next version of Hans' file
+> system.
 
-Yeah, and where will you do that? (Possible answers are: kernel space, user
-space).
+I don't undersand how you want to use Xpath for not XML file.
+I agree with you that the idea behind Xpath is cool but I fail to
+unserstand how it can be applied to anything but XML
 
-I honestly vote against *these* kinds of plugins (i.e. reading .tar files,
-/etc, and such). For one, it is to be done in kernel space, which means the
-module code can not be swapped out. Debugging is more complex, segfaults will
-kill the machine -- thus it's more open to blackhat hackers.
-
-Also simply because it (the module code) would be a reinvention of wheel, it's
-all been written before.
-
-
-
-
-Jan Engelhardt
 -- 
-Gesellschaft für Wissenschaftliche Datenverarbeitung
-Am Fassberg, 37077 Göttingen, www.gwdg.de
+Paolo
+Picasa users groups: www.picasa-users.tk
+join the blog group: http://groups-beta.google.com/group/blog-users
