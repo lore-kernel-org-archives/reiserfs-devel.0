@@ -1,49 +1,49 @@
-From: Michael Gaughen <mgaughen@polyserve.com>
-Subject: Re: BUG in reiserfs_write_full_page().
-Date: Fri, 18 Jul 2003 11:42:33 -0700
-Message-ID: <3F183F99.7080405@polyserve.com>
-References: <3F1712F6.7080204@polyserve.com>	 <1058477610.4012.333.camel@tiny.suse.com> <3F171ABF.6080601@polyserve.com>	 <1058534583.7878.351.camel@tiny.suse.com>	 <16151.63980.766223.769053@laputa.namesys.com> <1058536844.7878.371.camel@tiny.suse.com>
+From: Whit Blauvelt <whit@transpect.com>
+Subject: Marking bad blocks
+Date: Sat, 19 Jul 2003 23:30:04 -0400
+Message-ID: <20030720033004.GA6519@free.transpect.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14967-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14968-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1058536844.7878.371.camel@tiny.suse.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: Nikita Danilov <Nikita@Namesys.COM>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Chris Mason wrote:
+Hi,
 
->On Fri, 2003-07-18 at 09:45, Nikita Danilov wrote:
->  
->
->> > 
->> > But, we shouldn't have to.  Other parts of the OS should be protecting
->> > us from a writepage being called at this time, which is why the bug is
->> > there.  Someone did a non GFP_NOFS allocation with a transaction
->>
->>__bread()->__getblk()->__find_get_block()->find_get_page() allocates
->>page with bdev->bd_inode->i_mapping->gfp_flags, which is GFP_USER, that
->>includes GFP_FS.
->>    
->>
->
->You're in 2.5 land ;-)  There seem to be a few problems there, I've got
->an oops in find_inode and a deadlock under load, but I still need to
->read the (huge) sysrq-t to figure things out.
->
+I'm trying to use the add-bad-blocks.c script provided on the site, but with
+both gcc 2.95.3 and 3.2.2 I get:
 
-But, in 2.4, the page fault handling code also gets the gfp_mask from 
-the inode's
-address_space gfp_mask (in ->page_cache_read()->page_cache_alloc()).  It 
-looks
-like clean_inode() sets the gfp_mask to GFP_HIGHUSER, which also includes
-GFP_FS, and unless I am missing something, I don't see that GFP_FS is ever
-cleared in this case.
+"undefinded reference to `concat'" 
 
--Mike
+when I try to do "gcc add-bad-blocks.c".
 
+Is there something else I need to do to compile it successfully? Or is it
+just bad code? Why isn't whatever the necessary step is spelled out on the
+site?
+
+And, the instruction page only mentions patches to old versions of the
+kernel. Is the patch to support this now standard in the Reiserfs of kernel
+2.4.21? 
+
+I like Reiserfs a lot, and use it extensively, but for the second time I'm
+having serious trouble because of its lack of bad block handling. The
+Website is full of posturing about "If you have a problem, it's probably
+your hardware, not a real bug." Fine, this is hardware. The first time
+around a drive problem totally trashed a system. Now it looks like the
+Reiser code is better (in 2.4.21 it doesn't crash the system as it does on
+the same drive with 2.4.19 - looks like something was improved either in
+Reiser or general file system support in the kernel). But an out of date
+page on handling bad blocks with a utility that doesn't compile doesn't
+evidence thorough care.
+
+Thanks for any advice on how to actually take care of this problem short of
+throwing out a drive (or going to another file system) just because a couple
+of blocks are bad.
+
+Whit
