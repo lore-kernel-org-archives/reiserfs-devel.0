@@ -1,65 +1,69 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: [PATCH] updated 2.6 reiserfsv3 patch set
-Date: Fri, 5 Mar 2004 01:05:27 +0100
-Message-ID: <200403050105.28086.Dieter.Nuetzel@hamburg.de>
-References: <1078364753.3928.188.camel@watt.suse.com>
+From: Ryan Underwood <nemesis-lists@icequake.net>
+Subject: Re: [OpenAFS] Re: Problems with reiserfs when start OpenAFS 1.2.11-fc1 Segmentation fault with kernel 2.4.22-1.2174.nptl
+Date: Thu, 4 Mar 2004 19:40:44 -0600
+Message-ID: <20040305014044.GA27737@dbz.icequake.net>
+References: <20040304005117.M99283@soltis.cc> <20040304005913.M1858@soltis.cc> <20040304002804.GA5722@dbz.icequake.net> <20040304014303.M64769@soltis.cc> <4046A6A8.2000609@matchmail.com> <20040304071846.GB324@dbz.icequake.net> <20040304230725.GA19887@internet2.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-17083-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
+Return-path: <reiserfs-list-return-17084-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1078364753.3928.188.camel@watt.suse.com>
 Content-Disposition: inline
+In-Reply-To: <20040304230725.GA19887@internet2.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
-Cc: Chris Mason <mason@suse.com>
+To: Dan Pritts <danno@internet2.edu>
+Cc: Mike Fedyk <mfedyk@matchmail.com>, jds <jds@soltis.cc>, Ryan Underwood <nemesis-lists@icequake.net>, reiserfs-list@namesys.com, openafs-info@openafs.org
 
-Am Donnerstag, 4. M=E4rz 2004 02:45 schrieb Chris Mason:
-> Hello everyone,
->
-> ftp.suse.com/pub/people/mason/patches/data-logging/experimental/2.6.3
->
-> Has updated patches for reiserfs v3.  New in this set:
->
-> reiserfs-lock-lat-2 -- updated to give better latencies during a delete
-> reiserfs-search-restart-2 -- better schedule detection
-> reiserfs-write-sched-bug -- schedule detection fix
-> reiserfs-jh-5 -- shouldn't hang during lilo anymore
->
-> The lilo fix for reiserfs-jh-5 is below as an incremental.
+--J2SCkAp4GZ/dPZZf
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Up and running. ;-)
+On Thu, Mar 04, 2004 at 06:07:25PM -0500, Dan Pritts wrote:
+> >=20
+> > You might also think about bigger than 100MB cache file.  A big cache
+> > helps out AFS client performance tremendously.  But definitely use ext2
+> > and not ext3 as others have said.
+>=20
+> I realize it won't work out of the box, but has anyone given any
+> thought to putting the cache in tmpfs?
+>=20
+> Seems like this might be the best of both worlds - when the system is low
+> on RAM it can use swap, but when you've got plenty of RAM you avoid the
+> overhead of writing the cache files to disk.
 
-Linux version 2.6.3-16-smp-DN (geeko@buildhost) (gcc version 3.3.1 (SuSE=20
-Linux)) #1 SMP Fri Mar 5 00:30:35 CET 2004
+I thought about it, and indeed it would be beneficial when running a
+server with no writeable medium.  But there was some discussion on the
+OpenAFS list a while back, and it would take some work to make the cache
+manager work with tmpfs.  Basically it's the same problem with tmpfs as
+with reiser, xfs, etc as a cache; the cache manager was developer rather
+closely coupled to ext2, and other filesystems just don't support the
+operations that the cache manager currently needs.
 
-time dd if=3D/dev/zero of=3Dsparse bs=3D1 seek=3D200G count=3D1
-1+0 Records ein
-1+0 Records aus
-0.000u 2.802s 0:04.24 66.0%     0+0k 0+0io 0pf+0w
+I'm not sure if there are any plans to fix that at the moment, perhaps
+bigger fish to fry, such as getting some real AFS functionality going
+for 2.6 users.  For 2.6, we need a per-process credentials API as well
+as a way for the OpenAFS module to install its hooks.  I haven't seen=20
+anything happening recently except for the very feature-limited kAFS
+client (no authentication, no cache, etc).
 
-insgesamt 288711
-drwxrwxr-x    5 root     root          200 2004-03-05 01:00 .
-drwxr-xr-x    3 root     root           72 2004-01-12 13:53 ..
-drwxr-xr-x    2 nuetzel  users         856 2003-12-27 14:51 bench
-drwxr-xr-x    3 nuetzel  users          72 2003-09-07 20:37 dri-trunk
-=2Drw-r--r--    1 nuetzel  users    214748364801 2004-03-05 01:00 sparse
-=2Dr--r--r--    1 root     root     295631743 2004-02-27 01:42=20
-SPECViewperf7.1.1.tar.gz
-drwxr-xr-x   15 nuetzel  users         392 2004-01-17 04:24 viewperf-6.1.2
+--=20
+Ryan Underwood, <nemesis@icequake.net>
 
-time rm sparse
-0.000u 7.713s 0:21.52 35.8%     0+0k 0+0io 0pf+0w
+--J2SCkAp4GZ/dPZZf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
-Mouse is _smooth_ now but 'rm' takes longer.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
 
-top
-  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  WCHAN     COMM=
-AND
-12786 nuetzel   18   0  1772  540 1620 D 37.8  0.1   0:02.28 io_schedu rm
+iD8DBQFAR9qbIonHnh+67jkRAkgoAKCvR9CWk6gNoVETOcJmczT+yOkLRgCglgNr
+XGAHk80a1jWYfQmFNf/SIWY=
+=8FwQ
+-----END PGP SIGNATURE-----
 
-Cheers,
-	Dieter
+--J2SCkAp4GZ/dPZZf--
