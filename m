@@ -1,43 +1,39 @@
-From: Domenico Andreoli <cavok@tiscali.it>
-Subject: Re: 2004.08.13 Snapshot for 2.6.8[.1]
-Date: Mon, 16 Aug 2004 01:57:54 +0200
-Message-ID: <20040815235754.GA6889@raptus.homelinux.net>
-References: <20040814165601.79260f07.lists@mjh.name> <20040814164727.GA1826@raptus.homelinux.net>
+From: Hans Reiser <reiser@namesys.com>
+Subject: viewprinting: what format should views be stored in?
+Date: Sun, 15 Aug 2004 17:15:48 -0700
+Message-ID: <411FFCB4.2060400@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20314-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20315-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040814164727.GA1826@raptus.homelinux.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: George Beshers <gbeshers@comcast.net>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Sat, Aug 14, 2004 at 06:47:27PM +0200, Domenico Andreoli wrote:
-> On Sat, Aug 14, 2004 at 04:56:01PM +0200, Milan Holz=E4pfel - Personal re=
-ply info see sig wrote:
-> >=20
-> > For those of you who want to use Reiser4 with a vanilla kernel: I have
-> > rediffed the yesterdays "official" snapshot from
-> > <URL:http://namesys.com/snapshots/2004.08.13/> against 2.6.8[.1]:
-> > <URL:http://linux.mjh.name/kernel/patches/reiser4/2004.08.13_2.6.8.1/>
-> >=20
->=20
-> i have also made the same work, it is now in kernel-patch-2.6-reiser4
-> 20040813-2 debian package.
->=20
-> i've also fixed the usual read_lock vs spin_lock & co warnings.
+It is very important that we have something simple that reuses code for 
+this purpose, and it also needs to be scalable.  That is, we need to be 
+able to determine in insignificant time whether a file passes through a 
+mask consisting of a million files.
 
-only today i saw the new 2.6.8.1 kernel version, indeed the correspondent
-patch is in debian package 20040813-3 (currently available at
-http://incoing.debian.org).
+One approach would be to use a format similar to that for chroot, that 
+is, to keep the format we use for directory trees now, and use it for 
+storing the mask.  This raises the question: how would the format for 
+the mask differ from that of the underlying filesystem.
 
-cheers
-domenico
+Another approach is to use stem compressed names, or some other unique 
+within the fs format for the mask.
 
------[ Domenico Andreoli, aka cavok
- --[ http://people.debian.org/~cavok/gpgkey.asc
-   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
+We need to be able to support specifying a mask that allows any file 
+within a given directory to be visible.  That is, we need to support 
+dirname/* but we don't yet need to support dirname/foo.*
+
+We probably don't want to allow symbolic links to be followed unless 
+where they point to is within the mask.
+
+I want minimal code but I want it to be treelike in its performance 
+scalability.
+
+Ideas?
