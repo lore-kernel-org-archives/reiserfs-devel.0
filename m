@@ -1,56 +1,39 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Neil Brown <neilb@cse.unsw.edu.au>
 Subject: Re: silent semantic changes with reiser4
-Date: Mon, 06 Sep 2004 23:32:05 -0700
+Date: Tue, 7 Sep 2004 16:43:11 +1000
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <413D55E5.1090103@namesys.com>
-References: <200409061814.i86IEcPJ005086@laptop11.inf.utfsm.cl> <413CB219.5030800@slaphack.com>
+Message-ID: <16701.22655.230704.534640@cse.unsw.edu.au>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
+	<Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
+	<20040901194445.GM26192@nysv.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <413CB219.5030800@slaphack.com>
+In-Reply-To: message from Markus    =?ISO-8859-1?Q?=20T=F6rnqvist?= on Wednesday September 1
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Masover <ninja@slaphack.com>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Spam <spam@tnonline.net>, Tonnerre <tonnerre@thundrix.ch>, Christer Weinigel <christer@weinigel.se>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Markus  =?ISO-8859-1?Q?=20T=F6rnqvist?= <mjt@nysv.org>
+Cc: Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Pavel Machek <pavel@ucw.cz>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-David Masover wrote:
+On Wednesday September 1, mjt@nysv.org wrote:
+> On Tue, Aug 31, 2004 at 01:05:40PM -0700, Linus Torvalds wrote:
+> >
+> >There's no point to having the kernel export information that is already 
+> >inherent in the main stream.
 
->
-> There are some things which can't be solved without patching.  Version
-> control is one such thing.
+Having read this quote a few times in this thread I finally figured
+out what was wrong with it.
 
-You can do most of the version control stuff without patching, for 
-instance selecting a version by name is easy (see Clearcase).  Clearcase 
-users mostly do not patch user space binaries.  But your point is 
-generally true that there are features that knowing about them allows 
-you to better employ them.
+It seems to imply that "iso9660" shouldn't be in the kernel.  After
+all, it just exports information that is already in the underlying
+device. 
+It doesn't provide any "mediate multiple access" benefit as a
+read-only filesystem doesn't require any mediation between users.
+It might provide some caching benefit, but I somehow don't think that
+is the reason that it is in the kernel.
 
-> But then there can be more generic patches
-> -- as soon as the transaction API is done, you only have to patch apps
-> to use that, and have a version control reiser4 plugin.
->
-> | I'd go the other way around: Get userspace to agree on a common 
-> framework,
-> | make it work in userspace; if (extensive, hopefully) experience 
-> shows that
-> | a pure userspace solution has issues that can't be solved except by 
-> kernel
-> | assistance, so be it.
->
-> We already have such a framework -- it's called "VFS".
+Now I'm happy to agree that there is a case for "iso9660" but not for
+"tarfs", but I don't think it is that "there's no point to having the
+kernel export information that is already [there]"
 
-If doing it in the kernel is so hard, why hasn't it stopped us yet? ;-)
-
-I am not asking other people to contibute their labor to making this 
-thing they view as infeasible work, I am just asking them to get out of 
-the way please, and let the users decide whether they like it.
-
-Nothing significant about the reiserfs project was thought likely to 
-work by sensible people before it worked.  I am a bit used to that.  
-After all, Oracle's IFS and several similar projects proved filesystems 
-on top of balanced trees cannot  perform well....;-)
-
-Anyone who complains about kernel bloat should first consider that 
-reiser4 is not by any means the largest filesystem in the kernel.
-
-Hans
+NeilBrown
