@@ -1,38 +1,31 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: help recover filesystem corrupted by failing ide controller
-Date: Sat, 15 Mar 2003 11:21:38 +0300
-Message-ID: <20030315112138.B24872@namesys.com>
-References: <200303141942.00679.phma@webjockey.net> <3E728FFB.90905@mb.tu-ilmenau.de> <200303142143.58096.phma@webjockey.net>
+From: Yury Umanets <umka@namesys.com>
+Subject: Re: I go to America on Sunday, back around April 24th, will probably
+ be hard to reach by email during much of that time period
+Date: Sat, 15 Mar 2003 12:20:28 +0300
+Message-ID: <3E72F05C.9050900@namesys.com>
+References: <3E725EDC.8060904@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13273-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13275-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200303142143.58096.phma@webjockey.net>
+In-Reply-To: <3E725EDC.8060904@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Pierre Abbat <phma@webjockey.net>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: ReiserFS <reiserfs-list@namesys.com>
 
-Hello!
+Hans Reiser wrote:
 
-On Fri, Mar 14, 2003 at 09:43:58PM -0500, Pierre Abbat wrote:
-> > If you already did a --rebuild-tree with that _old_ (~2years!!!)
-> > reiserfsck I pray you have a backup somewhere.
-> If I couldn't cat a single file without the cat hanging, how could I make a 
-> backup?
+> I should be flying into DC right at around the time when some people 
+> are guessing will be the start of the war, hopefully I won't hit 
+> anything.....;-)
+>
+I'm sure you will fine :)
 
-You could have made a copy of whole partition with dd.
+-- 
+Yury Umanets
 
-> I have 3.6.4 on this laptop. I can modify the spell and recast it. Is it OK to 
-> copy the binary to the other box (they're both AMD processors) and run it? 
 
-We saw some reports about problems arising if glibc is notably different.
-So you should either gave statically linked reiserfsck or run in on the system close
-to one where reiserfsck was built.
-
-Bye,
-    Oleg
