@@ -1,45 +1,71 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: 3.6.25 - Journal replayed back to 3 weeks ago
-Date: Thu, 15 Jan 2004 14:35:02 -0500
-Message-ID: <1074195302.29549.57.camel@tiny.suse.com>
-References: <1073933244.2405.44.camel@neilvaiogt.superbase.co.uk>
-	 <1073934293.32706.861.camel@tiny.suse.com>
-	 <1074144196.2397.38.camel@neilvaiogt.superbase.co.uk>
-	 <1074178426.29550.19.camel@tiny.suse.com>
-	 <1074184418.2397.84.camel@neilvaiogt.superbase.co.uk>
-	 <1074189367.29546.40.camel@tiny.suse.com>
-	 <1074194392.5141.99.camel@neilvaiogt.superbase.co.uk>
+From: David Bernick <bernz@bernztech.org>
+Subject: Re: incomplete fsck
+Date: Thu, 15 Jan 2004 15:59:19 -0500
+Message-ID: <4006FF27.4090701@bernztech.org>
+References: <4005985C.5080509@bernztech.org> <200401142329.46801.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16532-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16533-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1074194392.5141.99.camel@neilvaiogt.superbase.co.uk>
+In-Reply-To: <200401142329.46801.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Neil Robinson <neilr@superbase.co.uk>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 Cc: reiserfs-list@namesys.com
 
-On Thu, 2004-01-15 at 14:19, Neil Robinson wrote:
-
-> Uh oh, I think I now know what happened. Ouch. I was not clear what the
-> REDO files were for, since I seemed to have lots of them taking up a
-> considerable amount of drive space. I deleted them (probably taking all
-> of my changes with them). On the whole, I am quite relieved. Although I
-> did it to myself (this is my first experience using vmware), I realize
-> now what happened and it won't happen again. Even more important, it
-> seems my problems have nothing to do with the Reiser File System which
-> is also a relief. I wish to apologize to you and everyone on the list
-> for taking up your time with soething that, as it turns out, has nothing
-> really to do with you.
+Vitaly Fertman wrote:
+> Hello David, 
 > 
-> Thanks for all of your help.
+> On Wednesday 14 January 2004 22:28, David Bernick wrote:
+> 
+>>I'm using kernel 2.4.23 and reiserfsck 3.6.11.
+>>
+>>I'm doing a --rebuild-tree. After pass0 i get this error. Why could this
+>>be?
+>>
+>>2 directory entries were hashed with not set hash.
+>>6449077 directory entries were hashed with "r5" hash.
+>>         "r5" hash is selected
+>>Flushing..finished
+>>         Read blocks (but not data blocks) 122328324
+>>                 Leaves among those 344205
+>>                         - corrected leaves 249
+>>                         - leaves all contents of which could not be saved
+>>and deleted 5
+>>                 pointers in indirect items to wrong area 1536 (zeroed)
+>>                 Objectids found 6449102
+>>
+>>Pass 1 (will try to insert 344200 leaves):
+>>####### Pass 1 #######
+>>Looking for allocable blocks .. finished
+>>0%pass1.c 408 pass1_correct_leaf                         left 342029, 1085
+>>/sec pass1_correct_leaf: block 1733582, item 36, pointer 0: The wrong
+>>pointer (1395601712) in the file [7068 52052]. Must be fixed on pass0.
+>>Aborted
 
-Good news, I wasn't looking forward to hunting that as an FS bug ;-) 
-Thanks for the details.
+Ifigured out what went wrong. The machine was a RAID5 and one of the disks had 
+bad blocks. I figured out which disk it was by just scanning each device 
+individually. I swapped the disk out and all was good.
 
--chris
+Now i'm running the rebuild-tree and it's already on pass3, which is far further 
+than before. thanks for all your help!
+
+d
+
+
+-- 
+David Bernick
+bernz@bernztech.org
+
+cretin /kret'in/ or /kree'tn/ n.
+
+  Congenital loser;
+    an obnoxious person; someone who can't do anything right.  It has
+    been observed that many American hackers tend to favor the British
+    pronunciation /kret'in/ over standard American /kree'tn/; it is
+    thought this may be due to the insidious phonetic influence of
+    Monty Python's Flying Circus.
 
 
