@@ -1,69 +1,84 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Directory updates in filesystems
-Date: Fri, 29 Oct 2004 14:15:32 -0700
-Message-ID: <4182B2F4.2080607@namesys.com>
-References: <1098955408.29128.TMDA@h34.zynet2.co.uk>
+From: Redeeman <redeeman@metanurb.dk>
+Subject: Re: when will it end?
+Date: Sat, 30 Oct 2004 18:23:32 +0200
+Message-ID: <1099153412.14113.1.camel@localhost>
+References: <417EF280.10003@slaphack.com>
+	 <20041027033443.GE25932@backtop.namesys.com>
+	 <417F3C7C.2020408@slaphack.com> <1406818064.20041027103126@tnonline.net>
+	 <417FD40B.2050807@namesys.com>  <418054C8.5020104@slaphack.com>
+Reply-To: redeeman@metanurb.dk
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22218-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22224-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1098955408.29128.TMDA@h34.zynet2.co.uk>
+In-Reply-To: <418054C8.5020104@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Simon Waters <simonw@zynet.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-Simon Waters wrote:
+On Wed, 2004-10-27 at 21:09 -0500, David Masover wrote:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+> 
+> Hans Reiser wrote:
+> | Spam wrote:
+> |
+> |>
+> |>  Windows 2000 and later comes with a lite version of Diskeeper from
+> |>  Executive Software.
+> |>
+> | MS charges for the OS, so that business model works for them.  Nobody
+> | will buy a heavy resizer from us if there is a lite one.  That would be
+> | as likely to happen as their buying a support contract. The lite
+> | software is reiser4 without a resizer.
+> |
+> | Such is my feel of the market.
+> 
+> Perhaps.  I'd just feel a little cheated.  Currently, without a
+> repacker/resizer, I would have to borrow/buy another hard drive to get
+> my data off reiser4, and it seems that it would slowly become more
+> fragmented.
+hmm.. well you would certainly need that with another filesystem too
 
->There is discussion on maildir happening in the dovecot mailing list.
->
->My question is mostly curiosity driven as I thought I understood "enough" 
->about filesystems to answer such questions, and not reiserfs specific (but I 
->know it is dear to your hearts).
->
->The discussion focuses on the use of renaming files to add attributes to the 
->end of the filename.
->
->If you have multiple processes simultaneously accessing a directory with 
->rename of contents (additions and removals add more fun), a simple 
->opendir/readir loop will on occasion fail to find a file that exists (i.e. 
->the stem part of the file name is the same) because the file has been 
->renamed, on most filesystems on most *nix like systems tested.
->
->This seems to be a result of readdir without locks not being atomic on most 
->filesystems, but reading a set amount of directory entries then rereading 
->further at a later stage.
->
->AIUI BSD FFS is suppose to try and ensure that new records are added to the 
->end of list the pointer points to, so that at worst a file is seen twice, but 
->this doesn't seem to completely address the problem when testing the most 
->general case.
->
->Are there any file systems that fully address this issue
->
-I think no.  It is quite fixable in a variety of ways.  If someone wants 
-to fix it or have it fixed, let me know.
-
-> or POSIX calls that 
->guaranteed to make an atomic readdir, without specific locking, or must a 
->lock be obtained on the directory to ensure that the read is consistent. I 
->think that locking is needed in the application if complete consistency is 
->required because the underlying behaviour of the OSes/filesystems is so 
->variable in this regard, but I'd be interested in understanding what 
->characteristics a filesystem would have to have to avoid this.
->
->I think a lock and full read will have significant performance implications, 
->since the problem only manifests itself on busy directories, but in a 
->journalled metadata environment all it wants is a consistent read, if we 
->later stat the file and it is missing we can look for renamed versions.
->
->Of course in a real filesystem you'd just store the attributes in something 
->designed for storing custom attributes..... :)
->
->
->  
->
+> 
+> What about plugins?  Application patches?  The repacker seems sort of
+> essential, and definitely a lot of work, but your expertise would also
+> be very useful for things like, say, a reiser4 backend to a traditional
+> SQL database.  I sincerely doubt people would be willing to pay much for
+> something that they see as "free" with Windows, while there's some real
+you do pay in windows, but also, its more needed with ntfs and fat32 i
+believe
+> potential here to create something entirely unique.  Not unique in its
+> benchmarks, but in its usability.
+> 
+> I know I'm somewhat biased, but I do prefer something entirely
+> proprietary to something which is sort of "half-open", like
+> WineX/Cedega, Lustre, etc.  It leaves a really bad taste in my mouth
+> when I start to get hooked on a product, only to find later on that I
+> have to buy some really critical feature.  Like all those "GI-Joe
+> Grenade Launcher" with "GI-Joe sold separately" fine-print labels.
+> -----BEGIN PGP SIGNATURE-----
+> Version: GnuPG v1.2.6 (GNU/Linux)
+> Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+> 
+> iQIVAwUBQYBUyHgHNmZLgCUhAQJDOg/+NIjPua8z9iAOszVpAhMxV672uSrEjTZq
+> uGjPySFxjbc0UtDBHrGexIchiUnTF8L6tSzgJKoYF4lpoZ+/cMMosZ9Qxk0Agn8n
+> smhvRKz+pWr5my0PVMUxcUrsYtfhqiHEO+zRSLX/LJ22b6Qiy3yOxKgV74AylpSi
+> ZtINahQicT0sbok0n0UAt5Zk4yzJPj3+R7J3TUEAgatisZhWGwr5w9WIVIGHVsYa
+> YwXsX8AparnfLhh700DSg5k0OWCBf1gZs+iXN1Oy1G6x1z7cVtqB+nHjZPPYEoFx
+> B3zRYYm1M2LGuNe6tqpLwM0jufBZ2ZOMbsGA0Kbg2c/zSBviOjZfq+oTrtUdiFKU
+> Log4sVRH/rk8H1B4DqG0iEwLwjZ4Q+q3DAs9c2GKPS7VQ+fb/UjATd1HlBFYCVtG
+> hN12UHI2Tg6wTsn2fhp9Q48BKd/D4g5LEKbZ4fYhtrPOqDSVV3d3lMPTp1Lxtv0j
+> AXyEyouClEOvAr0eLTLTX31M5Negg+MX+z82NwW3kTigw/DFVsTY3jo3qJqZ9iHT
+> NKAbF3hHYarhC1w+Z607of2CO1dQqkC3Gs0XgN3qKQ0yN4kRJcWyXeVzAtkOOinY
+> Ymou+1v70t3ZVNgraV+znIVQelT2xHWNuK58D6WLALZPHN3kXrzIZvQNpt72ZwqM
+> RnPLTLuSX4o=
+> =BGb5
+> -----END PGP SIGNATURE-----
+> 
+-- 
+Redeeman <redeeman@metanurb.dk>
 
