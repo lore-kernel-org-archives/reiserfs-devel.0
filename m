@@ -1,33 +1,60 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: inode generation numbers
-Date: Thu, 11 Sep 2003 11:03:19 +0400
-Message-ID: <20030911070319.GA28563@namesys.com>
-References: <200309092108.37805.bernd-schubert@web.de> <20030909140751.E18851@schatzie.adilger.int> <200309100053.23352.bernd-schubert@web.de>
+From: Yury Umanets <umka@namesys.com>
+Subject: Re: user-space cmd/lib to compute hash filename ordering?
+Date: Thu, 11 Sep 2003 11:17:49 +0400
+Message-ID: <1063264669.29645.4.camel@haron.namesys.com>
+References: <20030910140451.GB6663@rahul.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15626-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15627-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200309100053.23352.bernd-schubert@web.de>
+In-Reply-To: <20030910140451.GB6663@rahul.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Bernd Schubert <bernd-schubert@web.de>
-Cc: Andreas Dilger <adilger@clusterfs.com>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Bennett Todd <bet@rahul.net>
+Cc: reiserfs-list@namesys.com
 
-Hello!
+On Wed, 2003-09-10 at 18:04, Bennett Todd wrote:
+> I'm continuing to work on my new software packaging system.
+> 
+> I'm going to have to make a custom archive-builder, stock cpio isn't
+> suitable even though the file format will be cpio, since the pkg
+> creator needs to have explicit control over the owner/group/perms
+> of the files installed without having the package building user
+> actually able to set those perms on real files.
+> 
+> Since I'm going to need to create my own cpio file builder, and
+> since I've decided to teach it how to order files in the archives
+> (so it can put the metadata and manifest info up at the front for
+> quick access) I'm thinking it'd be sexy to add a --reiser option
+> that orders all the files in the archive in reiserfs hash order, so
+> a simple naive unpack will deposit files in the most efficient
+> fashion into a Reiserfs filesystem.
+> 
+Hello,
 
-On Wed, Sep 10, 2003 at 12:53:22AM +0200, Bernd Schubert wrote:
+> Is there a library routine or cmdline utility I can use to compute
+> this ordering?
 
-> It also works for reiserfs-partitions with the very same call, @reiserfs-team, 
-> this won't change in the future, will it?
+Actually you can use libreiserfs (progsreierfs package) or standard
+reiserfsprogs. They both contains routines for generating hashes,
+reiserfs supports them.
 
-Yes, it is in there just to be compatible with ext2.
+But probably it is better to cut them out and write small and simple cmd
+tool for hashes generating.
 
-Be warned that on v3.5 filesystems this generation stuff is weakly implemented
-and defaults to object id of parent directory.
+Besides, there should lots of tools for generating different hashes.
+They (tools) are used for discovering for instance how often particular
+hash function generates collided hashes.
 
-Bye,
-    Oleg
+If you are interested, I will find out details.
+> 
+> Thanks,
+> 
+> -Bennett
+
+-- 
+umka
+
