@@ -1,31 +1,39 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Simple preformance test
-Date: Thu, 11 Apr 2002 22:26:47 +0400
-Message-ID: <20020411222647.B3408@namesys.com>
-References: <Pine.LNX.4.44.0204111506300.2077-100000@magic.vamo.orbitel.bg> <20020411165627.A992@namesys.com> <3CB598A3.483349D2@vamo.orbitel.bg> <20020411181205.A1971@namesys.com> <3CB5C66F.D802E45A@vamo.orbitel.bg>
+From: Ivan Ivanov <ivandi@vamo.orbitel.bg>
+Subject: Large Partition Performance Test
+Date: Thu, 11 Apr 2002 22:28:04 +0300
+Sender: ivandi@idi.vamo.orbitel.bg
+Message-ID: <3CB5E3C4.6A887534@vamo.orbitel.bg>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10043-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10044-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <3CB5C66F.D802E45A@vamo.orbitel.bg>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ivan Ivanov <ivandi@vamo.orbitel.bg>
+To: mtfbwy_1968@yahoo.com
 Cc: reiserfs-list@namesys.com
 
-Hello!
+May be you have bad or very long disk cables.
+I remember that some years ago I had the similar problem with one
+machine.
+I used Norton Disk Doctor for DOS to check the IDE drive - read/write
+test.
+The check speed that disk doctor shows in the begining of the drive was
+more then
+2 times higher then the check speed at the end of the disk.
+When I replaced IDE cable with a shorter one the differense was much
+lower - about 20%.
 
-   Finaly!!! At least some good news ;)
 
-Bye,
-    Oleg
-On Thu, Apr 11, 2002 at 08:22:55PM +0300, Ivan Ivanov wrote:
-> By the way, I patched my kernel with speedup patch.
-> Netscape loads about 30% faster - great !
-> 
-> Ivan
-> 
-> 
+And if it is posible for you to try the same test on a smaller part of
+the disks (about 20Gb for each drive).
+I made my  test on 1.2GB partition in the middle of a 6GB hdd,  so the
+influence of the phisical
+disk geometry is lower.
+
+Regards
+Ivan
+
+
+
