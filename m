@@ -1,27 +1,38 @@
-From: Grant Miner <mine0057@mrs.umn.edu>
-Subject: The x Bit Problem
-Date: Thu, 04 Dec 2003 23:24:09 -0600
-Message-ID: <3FD01679.3040007@mrs.umn.edu>
-References: <16333.14692.61778.304155@pc7.dolda2000.com>	 <3FCD47C4.50500@ninja.dynup.net> <3FCE39B8.20307@namesys.com>	 <16334.15412.686909.927196@laputa.namesys.com> <1070580817.8344.140.camel@arabia.home.lan> <3FD00086.90607@ninja.dynup.net>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: Carrying Attributes too Far
+Date: Fri, 05 Dec 2003 00:27:43 -0500
+Message-ID: <87llprj0kw.fsf@uhoreg.ca>
+References: <1065247084.3f7e616c94ec9@webmail.st-andrews.ac.uk> <3FCE3716.8000509@namesys.com>
+ <1070584227.3fcfd1a3d67f4@webmail.st-andrews.ac.uk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16237-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16238-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FD00086.90607@ninja.dynup.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
-Cc: linux-kernel@vger.kernel.org
 
-An interesting thing I discovered is that Windows simply ignores the 'x' 
-bit (I should say the Windows equivalent of the 'x' bit, called 
-"traverse folder / execute file"), but there is a policy setting that 
-overrides this attribute.
+>>>>> "Leo" == lrc1  <lrc1@st-andrews.ac.uk> writes:
 
-I know users get tripped up on this a lot in Unix, like when they don't 
-understand why the webserver can't read their public_html directory.  It 
-might be a good option for Linux.
+[...]
+
+Leo> Cleaning up cross-filesystem links after explicit file deletion is
+Leo> a related but simpler problem.
+
+This breaks hard linking semantics.  When one side of the link is
+deleted, the file should still be accessible from the other side.
+(When you create a hard link, both the original and the link become
+indistinguishable.)
+
+I do not think there is *any* good way of implementing hard linking
+across filesystems that does not break in one case or another.
+
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
