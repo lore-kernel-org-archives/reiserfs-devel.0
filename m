@@ -1,59 +1,53 @@
-From: Szakacsits Szabolcs <szaka@sienet.hu>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: Filesystem Tests
-Date: Sat, 9 Aug 2003 07:12:07 +0200 (MEST)
-Message-ID: <Pine.LNX.4.30.0308090609370.19108-100000@divine.city.tvnet.hu>
-References: <20030809010950.GD26375@mail.jlokier.co.uk>
+Date: Sat, 9 Aug 2003 10:33:37 +0100
+Message-ID: <20030809093337.GA28566@mail.jlokier.co.uk>
+References: <20030809010950.GD26375@mail.jlokier.co.uk> <Pine.LNX.4.30.0308090609370.19108-100000@divine.city.tvnet.hu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15258-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15259-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030809010950.GD26375@mail.jlokier.co.uk>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.30.0308090609370.19108-100000@divine.city.tvnet.hu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
+To: Szakacsits Szabolcs <szaka@sienet.hu>
 Cc: Andrew Morton <akpm@osdl.org>, Grant Miner <mine0057@mrs.umn.edu>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
+Szakacsits Szabolcs wrote:
+> I just can't believe reiser4 is so fast on an unloaded system (from the
+> numbers one could also expect it's the slowest on loaded systems and JFS
+> seems to be the winner on those).
 
-On Sat, 9 Aug 2003, Jamie Lokier wrote:
-> Szakacsits Szabolcs wrote:
-> > I run the results through some scripts to make it more readable.
->
-> I think that instead of giving the CPU percentage, you should give the
-> CPU time used:
->
-> 	CPU time used = CPU percentage * total time
+reiser4 is using approximately twice the CPU percentage, but completes
+in approximately half the time, therefore it uses about the same
+amount of CPU time at the others.
 
-In that case, the next time one could complain similarly, "instead of
-giving the CPU time used, you should give the CPU percentage". Probably
-that's the reason usually both is given, CPU time used in user and system
-space as well.
+Therefore on a loaded system, with a load carefully chosen to make the
+test CPU bound rather than I/O bound, one could expect reiser4 to
+complete in approximately the same time as the others, _not_ slowest.
 
-> This would give a more accurate measure of how much CPU is used by the
-> different filesystems.
+That's why it's misleading to draw conclusions from the CPU percentage alone.
 
-The CPU percentages were given as integers in Grant's original numbers and
-in same cases as 0. Doing mindless math with those would have given (even
-more) bogus and misleading results.
+> Disks have a speed/seek limits. To be faster, one must ignore
+> 'sync', do less IO (file/tail packing, compression, etc) and/or
+> optimise seek times.
 
-> As someone said, if certain operations are faster with reiser4, you
-> expect a greater percentage of CPU time to be spent in the disk driver
-> etc. - if the amount of I/O is the same, that is.
+reiser4 literature claims that it does less IO (wandering logs) and
+suggests better seek patterns (deferred allocation).
 
-I just can't believe reiser4 is so fast on an unloaded system (from the
-numbers one could also expect it's the slowest on loaded systems and JFS
-seems to be the winner on those). Disks have a speed/seek limits. To be
-faster, one must ignore 'sync', do less IO (file/tail packing, compression,
-etc) and/or optimise seek times.
+> > Another interesting statistic would be the number of blocks read and
+> > written during the test.
+> 
+> Yes, but I would collect those stats after these short term tests for an
+> additional X seconds to make sure no additional "optimization" is involved
+> (aka data is indeed on the disk).
 
-> Another interesting statistic would be the number of blocks read and
-> written during the test.
+Indeed.  Even sync() is not guaranteed to flush the data to disk in
+its final form, if the filesystem state is already committed to the
+journal.
 
-Yes, but I would collect those stats after these short term tests for an
-additional X seconds to make sure no additional "optimization" is involved
-(aka data is indeed on the disk).
-
-	Szaka
-
+-- Jamie
