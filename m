@@ -1,33 +1,32 @@
-From: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
-Subject: Re: online fsck
-Date: Fri, 23 Apr 2004 01:20:12 +0200
-Message-ID: <20040422232011.GA9372@merlin.emma.line.org>
-References: <20040422150042.5b49c6c3.pegasus@nerv.eu.org>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Subject: RE: ".meta." as a Name Prefix
+Date: Thu, 22 Apr 2004 20:18:36 -0400 EDT
+Message-ID: <2452111248-BeMail@cr593174-a>
+References: <3DF9165145FACB4C96977FF650C1E9040C469E75@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18166-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18167-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040422150042.5b49c6c3.pegasus@nerv.eu.org>
+In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C469E75@its-mail1.its.corp.gwl.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: "Burnes, James" <james.burnes@gwl.com>
+Cc: reiserfs-list@namesys.com
 
-On Thu, 22 Apr 2004, Jure Pe??ar wrote:
+Burnes, James wrote on Wed, 21 Apr 2004 17:10:00 -0600:
+> In the same way that 'ls <directory>' is ambigous.  Does it mean I want
+> to look at the attributes of the directory itself, or does it mean that
+> I'm referring to the contents of the directory?  That's why they
+> invented 'ls -d'
 
-> Is it theoretically posible?
+Good analog.  There would have to be some OS and application level
+changes to support having both read/writeable data and child objects.
+For backwards compatiblity, calling ReadDir() would likely hint that
+you want a list of child objects, and read() means you want the data.
+The feature I want is that you can do both to any file system object.
+Plus of course indexing of attributes and other BeOS style goodies.
 
-It is actually implemented in the BSD kernels, for UFS. Look for
-"softdep" or "softupdates".
-
-As for other file systems, when crashing while the write cache is
-enabled (unfortunately, it is in FreeBSD for instance), it can royally
-screw up your file system. Beyond repair, to a "use your backup" state.
-
--- 
-Matthias Andree
-
-Encrypt your mail: my GnuPG key ID is 0x052E7D95
+- Alex
