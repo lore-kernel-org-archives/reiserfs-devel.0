@@ -1,28 +1,40 @@
-From: "E.Gryaznova" <grev@namesys.com>
-Subject: We can't reproduce benchmarks by Corbet of lwn, can others help us?
-Date: Tue, 19 Oct 2004 22:36:40 +0400
-Message-ID: <41755EB8.9010707@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Reiser4 journal replay stats
+Date: Tue, 19 Oct 2004 13:21:11 -0700
+Message-ID: <41757737.3050604@namesys.com>
+References: <200410162209.12163.sikkh@wp.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22106-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22107-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200410162209.12163.sikkh@wp.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
-Cc: Jonathan Corbet <lwn-fedora-test@lwn.net>
+To: Piotr Neuman <sikkh@wp.pl>
+Cc: reiserfs-list@namesys.com, Clifford Beshers <clifford.beshers@lindows.com>
 
-Hello.
+Piotr Neuman wrote:
 
-We can't reproduce benchmarks by J.Corbet of lwn 
-(http://lwn.net/Articles/99232/ ).
-Our results :
-http://namesys.com/intbenchmarks/untar-build-find/2004.10.11/Corbet.benchmark.results
+>Hi
+>
+>This small patch is will print out nuber of transartions replied from logs 
+>after a crash, quite like reiserfs 3.6 does:
+>
+>http://kem.p.lodz.pl/~peter/reiser4_replay_stats.patch
+>
+>Thanks to Nikita Danilov for guidance.
+>
+>
+>  
+>
+Do the members of the list view this as useful?  I worry that to average 
+persons, who don't know what a transaction is, this is vaguely scary.
 
-Can others help us?
+Clifford, I cc'd you because your intuition is better than mine for this.
 
-Thanks,
-Lena.
-
+Perhaps it should say something reassuring, like "All went well in the 
+filesystem aspect of recovering from what seems to have been an 
+improperly shutdown or crashed system."
