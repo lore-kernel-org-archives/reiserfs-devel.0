@@ -1,48 +1,41 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: problem with overwriting large files
-Date: Thu, 24 Jul 2003 19:12:56 +0400
-Message-ID: <20030724151256.GB21786@namesys.com>
-References: <DAEMLNOMDHGLGENEIALPGELLCAAA.suman@broadware.com>
+From: Larry McVoy <lm@bitmover.com>
+Subject: Re: Reiser4 status: benchmarked vs. V3 (and ext3)
+Date: Thu, 24 Jul 2003 08:26:49 -0700
+Message-ID: <20030724152649.GB12647@work.bitmover.com>
+References: <3F1EF7DB.2010805@namesys.com> <3F1F6005.4060307@tupshin.com> <1059021113.7911.13.camel@localhost> <3F1F66F0.1050406@tupshin.com> <1059024090.9728.22.camel@localhost> <16159.48809.812634.455756@laputa.namesys.com> <3F1FF6DB.2090104@tupshin.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15027-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15028-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <DAEMLNOMDHGLGENEIALPGELLCAAA.suman@broadware.com>
+In-Reply-To: <3F1FF6DB.2090104@tupshin.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Suman Puthana <suman@broadware.com>
-Cc: reiserfs-list@namesys.com
+To: Tupshin Harper <tupshin@tupshin.com>
+Cc: Nikita Danilov <Nikita@Namesys.COM>, Shawn <core@enodev.com>, Hans Reiser <reiser@Namesys.COM>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, reiserfs mailing list <reiserfs-list@Namesys.COM>
 
-Hello!
+On Thu, Jul 24, 2003 at 08:10:19AM -0700, Tupshin Harper wrote:
+> Nikita Danilov wrote:
+> 
+> >Shawn writes:
+> >> Looks like the 2.5.74 is the last one of any respectable size. I'm
+> >> thinking someone forgot a diff switch (N?) over at namesys...
+> >> 
+> >> Hans? Time to long-distance spank someone?
+> >
+> >Can you try following the instructions on the
+> >http://www.namesys.com/code.html (requires bitkeeper)?
+> >
+> >Nikita.
+> >
+> I'm sorry, but I don't have a bitkeeper license. Please let me know if a 
+> fixed patch is available.
 
-On Mon, Jul 21, 2003 at 08:30:19AM -0700, Suman Puthana wrote:
-> We do not see any problem when we are writing into empty space(using the
-> "write" call in a C program) as the file is extending( the "write" operation
-> takes less than 3 ms), but for a certain part of the application we need to
-> over-write these files and we find that the "write" operation is taking
-> about 200-300 ms every few minutes, sometimes every few seconds depending on
-> the system load.
-
-The description is very nice, but it would be even more nice if you can
-provide a sample test code that we can run and just see the problem.
- 
-> 3.) Would writing in file system blocks(4096 bytes?) or multiples of blocks
-> help this situation?  From some basic tests it doesn't seem to help by much.
-> >From the file system performance point of view, is it better to write
-> sixteen 4K chunks or one 64K chunk?
-
-Actually rewriting should be way more faster just because you are not allocating stuff
-and only changing mtime. So... I'd really appreciate a sample code
-that demonstrates a problem.
-
-Also give an info about what kernel you are trying to use that shows the problem
-andstuff like that.
-
-Thank you.
-
-Bye,
-    Oleg
+If someone can tell me what it is that you need and I'll do it and send you
+a patch.  I'm cloning that tree now.
+-- 
+---
+Larry McVoy              lm at bitmover.com          http://www.bitmover.com/lm
