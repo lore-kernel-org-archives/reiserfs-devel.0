@@ -1,80 +1,50 @@
-From: Laurynas Biveinis <Laurynas.Biveinis@mif.vu.lt>
+From: Vitaly Fertman <vitaly@namesys.com>
 Subject: Re: Partial data loss with reiserfs3
-Date: Mon, 14 Feb 2005 17:16:54 +0200
-Message-ID: <1108394214.4210c0e62a52c@webmail.vu.lt>
-References: <1108315756.420f8e6ce67b0@webmail.vu.lt> <200502141544.34513.vitaly@namesys.com>
+Date: Mon, 14 Feb 2005 19:21:58 +0300
+Message-ID: <200502141921.58903.vitaly@namesys.com>
+References: <1108315756.420f8e6ce67b0@webmail.vu.lt> <200502141544.34513.vitaly@namesys.com> <1108392048.4210b87003405@webmail.vu.lt>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200502141544.34513.vitaly@namesys.com>
+In-Reply-To: <1108392048.4210b87003405@webmail.vu.lt>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: Laurynas Biveinis <Laurynas.Biveinis@mif.vu.lt>, reiserfs-list@namesys.com
+To: Laurynas Biveinis <Laurynas.Biveinis@mif.vu.lt>
+Cc: reiserfs-list@namesys.com
 
-And I have just found following syslog entries:
+On Monday 14 February 2005 17:40, Laurynas Biveinis wrote:
+> Hello,
+>
+> Cituojant Vitaly Fertman <vitaly@namesys.com>:
+> > reboot is required between repartitioning a drive and starting to use
+> >
+> > moved/created partitions. without that the kernel may continue to
+> > use
+> > old partition table. so it would be great to recall step-by-step
+> > history
+> > of your copings, removes, repatitionings and reboots.
+>
+> Starting from the last successful cpio between old and new /home
+> partitions - can I assume that data was intact at this point if cpio
+> succeeded?
+>
+> At this point the disk has, in order of physical layout: /dev/hda5
+> (NTFS), 4GB /dev/hda6 (no FS), 2GB /dev/hda7 (reiser).
+>
+> I tried my best to reconstruct this history, but there might be some
+> mistakes, of course.
+>
+> [root@laurynas-pc ~]# mkfs -t reiserfs /dev/hda6
 
-Feb 13 17:59:31 laurynas-pc kernel: ReiserFS: hda6: warning: vs-4080:
-reiserfs_free_block: free_block (hda6:491640)[dev:blocknr]: bit already
-cleared
----
-The message above repeats several hundred timws with different
-blocknr's.
----
-Feb 13 17:59:58 laurynas-pc kernel: ReiserFS: hda6: warning: vs-13060:
-reiserfs_update_sd: stat data of object [2 12 0x0 SD] (nlink == 1) not
-found (pos 0)
-Feb 13 17:59:58 laurynas-pc kernel: ReiserFS: hda6: warning: vs-13060:
-reiserfs_update_sd: stat data of object [2 12 0x0 SD] (nlink == 1) not
-found (pos 1)
-Feb 13 17:59:58 laurynas-pc kernel: ReiserFS: hda6: warning: vs-4080:
-reiserfs_free_block: free_block (hda6:32781)[dev:blocknr]: bit already
-cleared
-Feb 13 17:59:58 laurynas-pc kernel: ReiserFS: hda6: warning: vs-5150:
-search_by_key: invalid format found in block 32769. Fsck?
-Feb 13 17:59:58 laurynas-pc kernel: ReiserFS: hda6: warning: vs-13050:
-reiserfs_update_sd: i/o failure occurred trying to update [2 105 0x0
-SD] stat data
-Feb 13 17:59:59 laurynas-pc kernel: ReiserFS: hda6: warning: vs-5150:
-search_by_key: invalid format found in block 32769. Fsck?
-Feb 13 17:59:59 laurynas-pc kernel: ReiserFS: hda6: warning: vs-13050:
-reiserfs_update_sd: i/o failure occurred trying to update [2 105 0x0
-SD] stat data
-Feb 13 17:59:59 laurynas-pc kernel: ReiserFS: hda6: warning: vs-13060:
-reiserfs_update_sd: stat data of object [2 12 0x0 SD] (nlink == 1) not
-found (pos 1)
-Feb 13 17:59:59 laurynas-pc kernel: ReiserFS: hda6: warning: vs-5150:
-search_by_key: invalid format found in block 32769. Fsck?
-Feb 13 17:59:59 laurynas-pc kernel: ReiserFS: hda6: warning: vs-13050:
-reiserfs_update_sd: i/o failure occurred trying to update [2 106 0x0
-SD] stat data
-Feb 13 17:59:59 laurynas-pc kernel: ReiserFS: hda6: warning: vs-5150:
-search_by_key: invalid format found in block 32769. Fsck?
-Feb 13 17:59:59 laurynas-pc kernel: ReiserFS: hda6: warning: vs-5657:
-reiserfs_do_truncate: i/o failure occurred trying to truncate [2 106
-0xfffffffffffffff DIRECT]
-Feb 13 17:59:59 laurynas-pc kernel: ReiserFS: hda6: warning: vs-5150:
-search_by_key: invalid format found in block 32769. Fsck?
-Feb 13 17:59:59 laurynas-pc kernel: ReiserFS: hda6: warning: zam-7001:
-io error in reiserfs_find_entry
-Feb 13 17:59:59 laurynas-pc kernel: ReiserFS: hda6: warning: vs-5150:
-search_by_key: invalid format found in block 32769. Fsck?
-----
-The last two lines repeat many times
-----
-Feb 13 18:00:07 laurynas-pc kernel: ReiserFS: hda6: warning: zam-7001:
-io error in reiserfs_find_entry
-Feb 13 18:00:07 laurynas-pc kernel: ReiserFS: hda6: warning: clm-2100:
-nesting info a different FS
-Feb 13 18:08:05 laurynas-pc kernel: ReiserFS: hda6: warning: vs-4080:
-reiserfs_free_block: free_block (hda6:32998)[dev:blocknr]: bit already
-cleared
+did you shrink ntfs under win and reboot?
+what happened between the last boot and mkfs? 
+did you run fdisk then? did you reboot after that fdisk run?
 
-
---
+-- 
 Thanks,
-Laurynas
+Vitaly Fertman
 
