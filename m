@@ -1,26 +1,46 @@
-From: Dirk Mueller <dmuell@gmx.net>
-Subject: Re: 2.4.19-pre7 / corruption on unwanted reboot
-Date: Mon, 6 May 2002 20:37:03 +0200
-Message-ID: <20020506183703.GA29001@matrix.wg>
-References: <20020504211147.GA20092@matrix.wg> <1020564448.3946.609.camel@tiny> <20020506123638.GA15023@matrix.wg> <1020689642.1511.2100.camel@tiny> <20020506135941.GA16598@matrix.wg> <1020695160.3946.2155.camel@tiny>
+From: "Daniel Christiansen" <christiansen@albion.edu>
+Subject: Re: Error Code 255 and "Permission Denied"
+Date: Mon, 06 May 2002 15:12:09 -0400
+Message-ID: <scd69d55.074@gwd.albion.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10264-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10265-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <1020695160.3946.2155.camel@tiny>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Mon, 06 Mai 2002, Chris Mason wrote:
+Everything seems to work by using the 3.x.1b version of reisfsck with
+--rebuild-tree.  Thank you very much, Oleg, for taking the time to solve
+my problem.
 
-> Any suggestions on how I might reproduce locally?
+I don't know anything about the "write cache enabled" issue below.  Is
+this something I have to change with a jumper, a bios setting, or a
+software configuration?
 
-not much. maybe try a lot of open, unlinked files when pressing reset and 
-then check the md5sum's of all files..
+Thanks again.
+
+> > Other indications of a problem:  I ran the dmesg program from /bin
+and
+> > got "Warning log replay starting on readonly filesystem" and lots of
+> > "i/o failure trying to find stat data" messages.
+> Your filesystem was corrupted by something. Do you have Windows on
+that
+> box,
+> too?
+> I have windows on the first drive, which I rarely use, and a vfat
+> windows partition on the second drive so that I could transfer files.
+> I'm not sure, but I think my problems started after a power outage.
+
+Hm. Do you have write cache enabled on your harddrive? That may explain
+your problems (and yes, most of drive manufacturers do enable write
+caching
+by default).
 
 
-Dirk
+
+
+
