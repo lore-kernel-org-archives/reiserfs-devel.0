@@ -1,57 +1,45 @@
-From: Linus Torvalds <torvalds@osdl.org>
-Subject: Re: silent semantic changes with reiser4
-Date: Sat, 28 Aug 2004 12:46:10 -0700 (PDT)
-Message-ID: <Pine.LNX.4.58.0408281244340.2295@ppc970.osdl.org>
-References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com>
- <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org> <20040828170515.GB24868@hh.idb.hist.no>
- <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org>
- <20040828182954.GJ21964@parcelfarce.linux.theplanet.co.uk>
- <Pine.LNX.4.58.0408281132480.2295@ppc970.osdl.org>
- <20040828185613.GK21964@parcelfarce.linux.theplanet.co.uk>
- <Pine.LNX.4.58.0408281201290.2295@ppc970.osdl.org> <20040828194129.GA7713@pclin040.win.tue.nl>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: reiser4 plugins
+Date: Sat, 28 Aug 2004 14:41:12 -0700
+Message-ID: <4130FBF8.8070005@namesys.com>
+References: <20040826014542.4bfe7cc3.akpm@osdl.org> <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <20040828105929.GB6746@alias> <Pine.LNX.4.58.0408281011280.2295@ppc970.osdl.org> <20040828190350.GA14152@alias> <20040828190901.GA18083@lst.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21020-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21021-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040828194129.GA7713@pclin040.win.tue.nl>
+In-Reply-To: <20040828190901.GA18083@lst.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andries Brouwer <aebr@win.tue.nl>
-Cc: viro@parcelfarce.linux.theplanet.co.uk, Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Christoph Hellwig <hch@lst.de>, flx@msu.ru, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
+I think it is reasonable to make the -nopseudos (turns off the metafiles 
+) mount option mandatory, until the bugs are resolved.
 
+Our testing did not find these metafile/VFS bugs because of the reason 
+for all our bugs, we screwed up. 
 
-On Sat, 28 Aug 2004, Andries Brouwer wrote:
-> 
-> If I see it correctly, you want to group a file and some
-> ancillary files together.
-> 
-> The Unix way would be to make a directory and put them all there:
-> 	xterm/xterm
-> 	xterm/xterm.icon
-> 
-> But you are unsatisfied and want
-> 	xterm
-> 	xterm/xterm.icon
-> 
-> As long as we agree that the latter really means the former,
-> there are no problems in finding out what should happen.
-> 
-> The conclusion is, that a directory carries an additional bit
-> that says "if I am opened as a regular file then use the file
-> of the same name inside".
-> 
-> Now there is no attribute space, just a shorthand.
+There is a distinct difference between some persons and I, which is that 
+some think all of reiser4 should be excluded until metafiles are 
+implemented by VFS some long time from now, and I, in that I merely 
+think buggy optional features should be turned off until they are 
+fixed.  I, being renowned for my paranoia and asininity as I am, think 
+these persons find it convenient as an excuse to keep us from competing, 
+and I think that if we were slower there would be less hassle every time 
+we try to get into the kernel. 
 
-It's more than a shorthand, though. _Much_ more.
+While reiser4 has some significant roughnesses remaining in its 
+performance, I think the average user would find it performs better than 
+other filesystems, and is stable enough for, say, a laptop, and I 
+predict that by the time we have it stable enough for mission critical 
+servers, all the roughness in various important corner cases will be 
+gone.  
 
-There's the small issue of atomicity and locking.
+Persons benchmarking it with tarballs, please be sure to use tarballs 
+created on reiser4, not ext2 tarballs, readdir order matters a lot for 
+sorted directory filesystems.
 
-There's the small issue of hardlinks.
-
-Both of those are why it would need special support.
-
-		Linus
+Hans
