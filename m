@@ -1,28 +1,51 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Disk full and writting to pre-allocated area on ReiserFS
-Date: Mon, 18 Oct 2004 13:54:55 +0300
-Message-ID: <20041018105455.GL26192@nysv.org>
-References: <1097876157.6553.22.camel@sphere.site> <41713CB3.3010005@namesys.com> <1098095855.3638.41.camel@tribesman.namesys.com>
+From: frbiscani@jumpy.it
+Subject: Re: reiser4 - Non-removable files in lost+found
+Date: Mon, 18 Oct 2004 15:50:33 +0200
+Message-ID: <40FC740900080188@mail13.jumpyint.it>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22089-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-22091-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1098095855.3638.41.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: "reiserfs-dev@namesys.com" <reiserfs-dev@namesys.com>, reiserfs-list@namesys.com
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: Michael Weissenbacher <webmaster@dermichi.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Mon, Oct 18, 2004 at 02:45:10PM +0400, Vladimir Saveliev wrote:
->Could someone please forward this mail to peter@mysql.com (for unknown
->reasons I can not send anything to some addresses).
+Sorry for the mail-mess... I hate webmail :/
 
-Forwarded.
+On Friday 15 October 2004 14:29, Vitaly Fertman wrote:
+> On Friday 15 October 2004 12:07, Michael Weissenbacher wrote:
+> >
+> > had the same problem, it is related to fsck which computes hashes the=
 
--- 
-mjt
+> > wrong way if filenames are too long (and/or contain non-ascii
+> > characters). vladimir sent a patch to the mailing list that corrected=
+
+> > this bug for me. not sure if this is already available in the
+> > pre-version of reiser4progs.
+>
+> yes, the fix is included into reiser4progs-1.0.2-pre1.
+
+Thank you all for the feedback. I installed reiser4progs-1.0.2-pre1 and
+it 
+found the same number of corruptions as the number of undeletable files
+
+in /lost+found. Should I run fsck with --build-fs then? Also, can this be=
+
+
+done when the partition is mounted read-only? I'm asking this because I
+have to run reiser4progs from a chrooted environment where my / partition=
+
+is mounted read-only.
+
+Thanks again,
+
+  Francesco
+
+________________________________________
+Crea la tshirt con il tuo nick! http://www.mediasetshop.it/JumpyChat/
+
 
