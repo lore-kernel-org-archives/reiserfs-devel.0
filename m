@@ -1,32 +1,70 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Christophe Saout <christophe@saout.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 15:26:41 -0700
-Message-ID: <412E63A1.7080307@namesys.com>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040826135319.GA28811@halcrow.us>
+Date: Fri, 27 Aug 2004 00:29:55 +0200
+Message-ID: <1093559395.13881.96.camel@leto.cs.pocnet.net>
+References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com>
+	 <200408262128.41326.vda@port.imtp.ilyichevsk.odessa.ua>
+	 <20040826193617.GA21248@arlut.utexas.edu>
+	 <20040826201639.GA5733@mail.shareable.org>
+	 <1093551956.13881.34.camel@leto.cs.pocnet.net>
+	 <16686.23053.559951.815883@thebsh.namesys.com>
+	 <1093556917.13881.78.camel@leto.cs.pocnet.net>
+	 <16686.25191.635556.817958@gargle.gargle.HOWL>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20829-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-D6kG2LwCayW5XS4asSLE"
+Return-path: <reiserfs-list-return-20830-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826135319.GA28811@halcrow.us>
+In-Reply-To: <16686.25191.635556.817958@gargle.gargle.HOWL>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Michael Halcrow <mahalcro@us.ibm.com>
-Cc: Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Nikita Danilov <nikita@clusterfs.com>
+Cc: Jamie Lokier <jamie@shareable.org>, Jonathan Abbey <jonabbey@arlut.utexas.edu>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Michael Halcrow wrote:
+--=-D6kG2LwCayW5XS4asSLE
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> This is an issue that directly affects work I am doing in extended
->
->cryptfs:
->
->http://www.linuxsymposium.org/2004/view_abstract.php?content_key=55
->http://halcrow.us/~mhalcrow/ols2004.pdf
->http://halcrow.us/~mhalcrow/ols_cryptfs.sxi
->
->  
->
-Reiser4 has an encryption plugin that will ship sometime this year.  You 
-might want to talk to edward@namesys.com about it.
+Am Freitag, den 27.08.2004, 02:21 +0400 schrieb Nikita Danilov:
+
+>  > BTW, I can do a cd metas/metas/metas/metas/plugin/metas... I don't thi=
+nk
+>  > this makes sense. :)
+>=20
+> Why? foo/metas is a file system object just like foo. It has owner,
+> permission bits, so access to its meta-data should be provided, and
+> uniform way to provide access to the file system object meta-data is to
+> have these little magic files inside metas directory, which is a file
+> system object just like metas. It has owner^@^@^@^@*** - Lisp stack
+> overflow. RESET
+
+Yes, of course. But who's going to need that? The meta files are there
+to describe regular unix files. They're just exported using a file
+system name space. I don't think we need metadata to describe metadata.
+Assuming someone adds a directory inside a file where user can add some
+attributes/streams/resource forks. As Linus said, they are just
+attributes, even if they seem to behave like normal files, they're not,
+they belong to the real file. Adding attributes to attributes to
+attributes? That would be like adding ACLS to ACLS. Hello the
+madness. ;-)
+
+There really should be a point where you can't recurse further. Assume
+there is a backup application that always tries to open every dentry it
+finds as directory and then recurse. Oops. :-)
+
+
+--=-D6kG2LwCayW5XS4asSLE
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQBBLmRiZCYBcts5dM0RApIGAJ4jufroIN+i0L2H8c8vIRGwdYWjDQCfewZF
+SyA1ccDnXD0lIqK251DcNwY=
+=uBJS
+-----END PGP SIGNATURE-----
+
+--=-D6kG2LwCayW5XS4asSLE--
+
