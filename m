@@ -1,48 +1,69 @@
-From: Domenico Andreoli <cavok@tiscali.it>
-Subject: Re: Bug#263348: linux-kernel-headers: asm/unaligned.h on powerpc is useless if __KERNEL__ is undefined
-Date: Thu, 12 Aug 2004 15:57:30 +0200
-Message-ID: <20040812135730.GA2949@raptus.homelinux.net>
-References: <20040806220432.GA2291@raptus.homelinux.net> <20040809175027.GB2072@raptus.homelinux.net> <200408101539.10117.vitaly@namesys.com> <200408121720.54226.vitaly@namesys.com>
+From: "Rodolfo Sikora" <sikora@inova.com.br>
+Subject: Re[5]: Is there a way to change root inode from -1 to what ever    it    will    work?
+Date: 12 Aug 2004 11:32:08 -0300
+Message-ID: <20040812143208.5990.qmail@qmail-local.inova.com.br>
+References: <200408121417.16087.vitaly@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20227-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20228-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200408121720.54226.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
 
-On Thu, Aug 12, 2004 at 05:20:54PM +0400, Vitaly Fertman wrote:
-> Hi Domenico, 
+Vitaly,
 
-hi Vitaly,
+When I saw bzip2 problems.. I also thought about RAM.. I went to our IDC an=
+d changed our RAM and it worked pretty well.
 
-> seems that the problem will be solved in the linux-libc-headers finally,
-> as reiserfsprogs need a fix anyway, I am going to include the attached
+Vitaly, thank you very much for your help, and I'm sorry if I did u waste t=
+ime with this issue!!
 
-i did not understand you had the bug also out of debian, i would have
-replied earlier :)
+Regards!
+[]s
 
-> one, it looks better than _PPC_ERRNO_H, doesn't it? unfortunately
 
-yes, it does a lot. of course.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>De:Vitaly Fertman <vitaly@namesys.com>
+>Para:"Rodolfo Sikora" <sikora@inova.com.br>, <reiserfs-list@namesys.com>
+>Assunto:Re: Re[3]: Is there a way to change root inode from -1 to what eve=
+r    it    will    work?
+>
+>Hi,
+>
+>I think you have some problem with ram.
+>1 - fsck aborts on different places all the time
+>on your computer;
+>2 - first bz2 failed to bunzip2 on my computer;
+>3 - second bz2 had some problems on unpacking
+>with 'debugreiserfs -u'
+>also, I just jumped them over in gdb so was able
+>to unpack most of the data;
+>4 - fsck (3.6.18) worked fine for me on your
+>metadata.
+>
+>in the case of a hardware problem, I want to
+>point to the fact that=20
+>we deal with them under
+>www.namesys.com/support.html terms.
+>
+>--=20
+>Thanks,
+>Vitaly Fertman
 
-> I do not have hardware to test building. if you have, try it please and
-> tell me what you think about it.
 
-my powerpc hardware is actually that of debian, which is currently
-a little busy (wild and massive rebuild of packages) due to imminent
-release of the distribution. as soon as i'm able to check i will report
-you (in this moment i not even able to login).
 
-regards
-domenico
+Rodolfo Sikora - Desenvolvimento e Opera=E7=E3o
+Departamento de Opera=E7=F5es e Tecnologia
+Inova Tecnologias - http://www.inova.com.br
 
------[ Domenico Andreoli, aka cavok
- --[ http://people.debian.org/~cavok/gpgkey.asc
-   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
+
+
+****************************************************
+*Velop* - administra=E7=E3o, controle e monitoramento da=20
+sua comunica=E7=E3o na Internet.
+http://www.inova.com.br
