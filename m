@@ -1,89 +1,48 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: Fibration etc
-Date: Fri, 16 Apr 2004 17:12:02 +0400
-Message-ID: <16511.56226.412834.375701@laputa.namesys.com>
-References: <20040415200243.GX14134@nysv.org>
+From: Yury Umanets <umka@namesys.com>
+Subject: Re: Gnu Parted error, Kernel Panic, Reiserfs
+Date: Fri, 16 Apr 2004 16:23:06 +0300
+Message-ID: <1082121768.7920.24.camel@firefly>
+References: <Pine.LNX.4.21.0404161253580.16938-100000@mlf.linux.rulez.org>
+	 <1082120726.7920.17.camel@firefly>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-17991-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17992-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040415200243.GX14134@nysv.org>
+In-Reply-To: <1082120726.7920.17.camel@firefly>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-9"
-To: Markus =?koi8-r?B?VPZybnF2aXN0KQ==?= <mjt@nysv.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Szakacsits Szabolcs <szaka@sienet.hu>
+Cc: Alan Chu <alanchu@MIT.EDU>, Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com, bug-parted@gnu.org
 
-Markus T=F6rnqvist writes:
- > Hi!
- >=20
- > I think this may be of some interest to other people too, so I won't just
- > take it up on IRC.
- >=20
- > What's up with this:
- > mjt@shrike:~/tmp$ echo -e 'lexicographic\0' > ..metas/plugin/fibration
- > mjt@shrike:~/tmp$ cat ..metas/plugin/fibration=20
- > 1 dot-o fibrate .o files separatelymjt@shrike:~/tmp$=20
- >=20
- > I actually noticed that it changes the behavior of empty directories.
- > Maybe the READ.ME should mention this?
+On Fri, 2004-04-16 at 16:05, Yury Umanets wrote:
+> On Fri, 2004-04-16 at 14:30, Szakacsits Szabolcs wrote:
+> > On Fri, 16 Apr 2004, Yury Umanets wrote:
+> > > 
+> > > I'm on-like, but seems missed mentioned emails somehow.
+> > 
+> > You answered the same. I've never resized reiserfs so I don't know. I'm
+> > just seeing the issue popping up everywhere. 
+> 
+> What I can say, I have not seen any details, sorry. Only claims that
+> there are some problems and promises that details will be presented. 
+> 
+> But anyway, send me emails to the following addresses:
+> 
+> umka@namesys.com
+> umka@clustrefs.com
+> torque@ukrpost.ent
 
-Yes, it should.
+Correct ones are: 
 
- >=20
- > Is there any means of refibrating populated directories or do I have to
- > bounce everything by some tmp directory?
+umka@clusterfs.com
+torque@ukrpost.net
+> 
 
-There is no kernel mechanism.
+-- 
+umka
+-- 
+umka
 
- >=20
- > This is then also correct, it just fails because directories are
- > populated with dot-o?
-
-Correct.
-
- >=20
- > /dev/hda1       /               reiser4 defaults,plugin.fibration=3Dext-1
- > 0       0
- >=20
- > However, if I do an mkdir after having mounted like that, shouldn't
- > all new directories be ext-1 by default, not dot-o?
-
-Err.... this mount option is a left-over from old times. Fibration of a
-new directory is controlled by fibration of its parent.
-
- >=20
- > How does the fibration work with links? Does it fibrate names of files
- > or contents of files together? How about hardlinks? Does it follow
- > symlinks?
-
-Fibration affects
-
-   * names,
-
-   * bodies of files "located in" the directory.
-
-Names are always sorted according to the fibration.
-
-File is "located" within directory where it was created. If file is
-hard-linked from another directory D2, its new name will be stored
-according to D2's fibration, but body would remain intact.
-
-Content of symbolic link is treated exactly like every other file in
-this respect, and target of symbolic link is.. not related.
-
- >=20
- > Is there some way of check that with some debug tool?
-
-debugfs.reiser4 -t
-
- >=20
- > Thanks!
- >=20
- > --=20
- > mjt
- >=20
-
-Nikita.
