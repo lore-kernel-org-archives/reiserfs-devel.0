@@ -1,90 +1,60 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Performance question
-Date: Sun, 5 May 2002 19:07:39 +0400
-Message-ID: <20020505190739.A13452@namesys.com>
-References: <200205051420.g45EKKo02315@linux1.futureware.at>
+From: "Daniel Christiansen" <christiansen@albion.edu>
+Subject: Error Code 255 and "Permission Denied"
+Date: Sun, 05 May 2002 12:18:28 -0400
+Message-ID: <scd52321.066@gwd.albion.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10246-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10247-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <200205051420.g45EKKo02315@linux1.futureware.at>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Philipp G?hring <p.guehring@futureware.at>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+I am using Mandrake 8.2 with the 2.4.18-6mdk kernel and reiserfsck
+3.x.0j.  I have a reiser file system on my / drive hdb2 and /home hdb6. 
+These are on a new 40G IBM hard drive.
 
-On Sun, May 05, 2002 at 04:20:13PM +0200, Philipp G?hring wrote:
+Whenever I boot up sysinit cannot write to several files in /var/log, in
+particular to dmesg.  I get a "Permission Denied" message. The same is
+true when I try to access these five or six files as root.  I don't
+think this is a permission problem; permissions are
+/var/log drwxr-xr-x root root.
 
-> Let's say I have a directory with 100.000 files in it.
-> The filenames look like
-> name1_name2_name3_id
-> So I have
-> 001_41052_50125_1
-> 001_63216_1212_1
-> I have to create a search engine, that serves for example the 4th Block of 10 
-> files that match the query "001_*_1212_1". The how query would result to 100 
-> files, that are spread across the directory.
-> Now my question:
-> Is it faster with ReiserFS to do a bsd_glob("001_*_1212_1") first, which 
-> should result to about 100 entries, and then take the entries 40 to 49 from 
-> the resulting array? 
-> (Is ReiserFS able to directly return 100 files out of 100000 with the 
-> globbing function, or is it an iteration over all files in the directory?)
+I ran reiserfsck from the rescue disk.  "Echo $?" showed error code 255.
+ I can't find what this means.
 
-*glob functions are implemented by various library functions, that do full
-readdir scans at least once, I believe.
+The message in the logfile was"Node (8272) with wrong level (0) found in
+the tree (should be 1)." [There was also a message on the screen of
+"pass_through_tree: unable to read 2949119 block on device 0x4."]  The
+--fix-fixable option didn't seem to do anything.
+[Although, if I recall correctly, there was a message having to do with
+resizing that I didn't understand.]
 
-> Or should I do 2 opendir-readdir loops, one to read over the first 39 
-> results, that I do not need, and the second one to geht the results 40 to 49?
+I started to use the --rebuild-tree option but was dissuaded by the
+message about only using it if I was desperate.  Perhaps I need to take
+a deep breath and use this option.
 
-In fact I do not see why do you need to do 2 opendir-readdir loops.
-One loop should be enough.
-You just compare each filename returned against your query and and if it matched
-remember it in separate list. So at the end of readdir loop you have a list of
-all names in a directory that match your query. And you can apply any additional
-check in place just not to remember unnecesary files.
+Other indications of a problem:  I ran the dmesg program from /bin and
+got "Warning log replay starting on readonly filesystem" and lots of
+"i/o failure trying to find stat data" messages.
 
-> The problem here is that I have to readdir about 50000 files (40000 to get 
-> through the unneeded results, and 10000 to get the 10 results i need)
-> But on the other hand, I do not have to remember 100 files, from which I only 
-> need 10.
+Every hour or so I get about 25 new messages in /usr/var/messages like
+the following (all having to do with block 8272):
 
-I am completely missing the idea on where these numbers are from. Can you
-explain in more details.
+"kernel: is_tree_node: node level 0 does not match to the expected one 1
+kernel: vs-5150: search_by_key: invalid format found in block 8272.
+Fsck?"
 
-> If ReiserFS has to iterate over 100000 files (the whole directory) to do a 
-> "001_*_1212_1" glob, because the binary tree only speeds up known files, but 
-> not patterns, then opendir-readdir should be faster, I guess.
+I would appreciate any suggestions as to how fix my problem.
 
-Binary tree is only helps when you know filename, I believe. You calculate
-a hash and out of that hash you can quickly find desired location.
-You you come up with a hash that places all filenames like your one near one,
-this will help, then.
+[I tried to accurately transcribe the messages but as they are from my
+office machine and I am sending this from home, I may have made a typo
+or two.]
 
-> Another option would be to use subdirectories like
-> name1/name2/name3/id
-> So the glob would be "001/*/1212/1", which should be faster, anyway.
-> But on the other hand, I would have to do a lot more directory management, 
-> creating and deleting directories ...
-> And implementing an opendir-readdir search through "001/*/1212/1" will be 
-> more work too.
+Thanks.
 
-Readdir would require less iterations through 001/*, because number of
-entries will be only 100 as you described above.
-You get all these 100 entries and then loop 100 times trying to open
-001/${next_name}/1212/1 and deciding whenever you need this file or not.
-(If it exists of course, or you might get -ENOENT and proceed to next
-directory).
-Also deleting directories would be an overkill.
-I think this might be faster in many circumfstances.
-Also what you've descrived looks very like to what squid does. And squid people
-went to reiserfs-raw interface and are quite happy with it.
-
-
-Bye,
-    Oleg
+Dan Christiansen
+Albion College
