@@ -1,50 +1,53 @@
-From: <pcg( Marc)@goof(A.).(Lehmann )com>
+From: Esben Stien <b0ef@esben-stien.name>
 Subject: Re: Congratulations! we have got hash function screwed up
-Date: Thu, 30 Dec 2004 18:02:55 +0100
-Message-ID: <20041230170255.GA23354@schmorp.de>
-References: <20041228221218.GA6412@schmorp.de> <20041229185529.GA7513@hello-penguin.com> <41D31C22.9060400@namesys.com> <20041229214324.GA5206@schmorp.de> <41D36287.4080900@namesys.com>
+Date: Thu, 30 Dec 2004 18:07:41 +0100
+Message-ID: <87is6jpvdu.fsf@quasar.esben-stien.name>
+References: <77912E9FD42896419D1CEF15E1C397A58AFCF1@london.jaguarfreightservices.local>
+	<m38y7gx8kq.fsf@merlin.emma.line.org>
+	<20041230235911.4911a20c.hihone@bigpond.net.au>
+	<m3sm5nj2ef.fsf@merlin.emma.line.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22954-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22955-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <41D36287.4080900@namesys.com>
+In-Reply-To: <m3sm5nj2ef.fsf@merlin.emma.line.org> (Matthias Andree's
+ message of "Thu, 30 Dec 2004 15:18:00 +0100")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com, Stefan Traby <stefan@hello-penguin.com>
+To: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
+Cc: hihone@bigpond.net.au, reiserfs-list@namesys.com
 
-On Wed, Dec 29, 2004 at 06:05:59PM -0800, Hans Reiser <reiser@namesys.com> wrote:
-> >
-> >Again, this is a lame excuse for a bug. First you declare some features on
-> >your filesystem, later, when it turns out that it isn't being delivered,
-> >you act as if this were a known condition.
-> > 
-> >
-> Well this is true, you are right.  Reiser4 is the fix though.
+Matthias Andree <ma@dt.e-technik.uni-dortmund.de> writes:
 
-So that what happens to the filesystems develop once you have a new toy. Good
-to know when planning my next server :)
+> All private machines I deal with are reiserfs-free as of a few hours
+> ago.
 
-> >(Even if it were ok to fail file creation, the error generated is still
-> >wrong. It is a bug, no matter how you try to twist it).
-> > 
-> Blame Alan Cox for that, he changed it from -EHASHCOLLISION (or some 
-> such error I invented, I forget) over my objections.
+What do you use instead?
 
-Blaming Cox for trying to fix your code and not getting it completely
-right is not nice. After all, Cox also found that the error code is
-inadequate. The point is that EBUSY is still bad, for open. ENOSPC is a
-much better code, as it is a documented error code for open, whereas EBUSY
-is not.
+I really don't like that there is no undelete feature in reiserfs -
+it's not planned for reiserfs-4 either. I see desperate users all the
+time trying to get back what they mistakenly removed. It shouldn't be
+hard with reiserfs either. There should be a selection of what files
+to restore, so we can avoid the file merging problem with rebuilding
+the tree from leaf nodes.
+
+> I have seen too many bugs in reiserfs3.
+
+Is there a list of these current issues?
+
+> "Who cares, not us for the past five years" is not a proper response
+> to a real-world problem.
+
+I also reacted to this response. 
+
+A flaw in the filesystem, in my opinion, is equivalent to the space
+ship crashing and all crew members die.
 
 -- 
-                The choice of a
-      -----==-     _GNU_
-      ----==-- _       generation     Marc Lehmann
-      ---==---(_)__  __ ____  __      pcg@goof.com
-      --==---/ / _ \/ // /\ \/ /      http://schmorp.de/
-      -=====/_/_//_/\_,_/ /_/\_\      XX11-RIPE
+Esben Stien is b0ef@esben-stien.name
+http://www.esben-stien.name
+irc://irc.esben-stien.name/%23contact
+[sip|iax]:b0ef@esben-stien.name
