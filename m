@@ -1,54 +1,75 @@
-From: Mike Waychison <Michael.Waychison@Sun.COM>
-Subject: Re: silent semantic changes in reiser4 (brief attempt to document the
- idea of what reiser4 wants to do with metafiles and why
-Date: Tue, 31 Aug 2004 10:09:52 -0400
-Message-ID: <413486B0.4050101@sun.com>
-References: <41323AD8.7040103@namesys.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: fsck.reiser4 problem (was: reiser4 corruption problem)
+Date: Tue, 31 Aug 2004 18:43:25 +0400
+Message-ID: <1093963404.2716.480.camel@tribesman.namesys.com>
+References: <20040831012446.631CB15E2E@mail03.powweb.com>
+	 <200408311209.43653.IOBuf@gmx.de>
+	 <1093955415.2716.476.camel@tribesman.namesys.com>
+	 <200408311603.56537.IOBuf@gmx.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21158-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="=-m/Wu/3uv6edjfQ6uZ9+v"
+Return-path: <reiserfs-list-return-21159-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-reply-to: <41323AD8.7040103@namesys.com>
+In-Reply-To: <200408311603.56537.IOBuf@gmx.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Andrew Morton <akpm@digeo.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@osdl.org>, reiserfs-list@namesys.com
+To: Andreas <IOBuf@gmx.de>
+Cc: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+--=-m/Wu/3uv6edjfQ6uZ9+v
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-Hans Reiser wrote:
+Hello
 
->
-> Why Openat Sucks:
->
-> because you can't go cat filenameA/metas/permissions >
-> filenameB/permissions
->
-> If cat doesn't work, then we are suffering exactly the problem with
-> namespace fragmentation that this whole scheme was invented to avoid.
->
+On Tue, 2004-08-31 at 18:03, Andreas wrote:
+> Hello,
+>=20
+> > Would you, please, provide exact sequences of operations which confuses
+> > reiser4?
+>=20
+> mkfs.reiser4 /dev/discs/disc0/part2
+> mount /dev/discs/disc0/part2 /mnt/d0p2
+> touch /mnt/d0p2/abcdefghijklmnopq=E4=F6=FC=DF=DF=DF=DF
+> umount /mnt/d0p2
+> fsck.reiser4 /dev/discs/disc0/part2
+>=20
+>=20
+> And as I now realize "fsck.reiser4 --build-fs" produces always a segmenta=
+tion=20
+> fault here, even on a newly created Reiser4 filesystem.
+>=20
 
-Sure you can.  All you need to do is fix your shell.
+Would you please try with the attached patch.
 
-- --
-Mike Waychison
-Sun Microsystems, Inc.
-1 (650) 352-5299 voice
-1 (416) 202-8336 voice
-http://www.sun.com
+> Bye
+>  Andreas
+>=20
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-NOTICE:  The opinions expressed in this email are held by me,
-and may not represent the views of Sun Microsystems, Inc.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
+--=-m/Wu/3uv6edjfQ6uZ9+v
+Content-Disposition: attachment; filename=r5_hash.c.diff
+Content-Type: text/plain; name=r5_hash.c.diff; charset=
+Content-Transfer-Encoding: 7bit
 
-iD8DBQFBNIavdQs4kOxk3/MRAmvAAJ9sZfEgIOfINZsT23pa+Y3nQ4lfMACgmN3q
-sdgPzBUg9i/c+roWDrXq5BI=
-=poSJ
------END PGP SIGNATURE-----
+--- reiser4progs-1.0.0/plugin/hash/r5_hash/r5_hash.c.orig	2004-08-31 18:48:01.749889832 +0400
++++ reiser4progs-1.0.0/plugin/hash/r5_hash/r5_hash.c	2004-08-31 18:46:08.864051088 +0400
+@@ -9,10 +9,12 @@
+ uint64_t r5_hash_build(char *name, uint32_t len) {
+ 	uint32_t i;
+ 	uint64_t a = 0;
++	unsigned char *uname;
+ 	
++	uname = (unsigned char *)name;
+ 	for (i = 0; i < len; i++) {
+-		a += name[i] << 4;
+-		a += name[i] >> 4;
++		a += uname[i] << 4;
++		a += uname[i] >> 4;
+ 		a *= 11;
+ 	}
+     
+
+--=-m/Wu/3uv6edjfQ6uZ9+v--
+
