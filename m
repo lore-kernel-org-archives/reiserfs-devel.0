@@ -1,55 +1,47 @@
 From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output error"
-Date: Tue, 10 Aug 2004 13:20:22 +0400
-Message-ID: <20040810092022.GN9811@backtop.namesys.com>
-References: <20040807065039.5BF4E15CBC@mail03.powweb.com> <41148997.4070404@namesys.com> <200408100321.i7A3LHxu027087@turing-police.cc.vt.edu>
+Subject: Re: Apache2 problems
+Date: Tue, 10 Aug 2004 15:31:21 +0400
+Message-ID: <20040810113120.GP9811@backtop.namesys.com>
+References: <cd32a06204080910256de4cc0e@mail.gmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20118-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20119-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200408100321.i7A3LHxu027087@turing-police.cc.vt.edu>
+In-Reply-To: <cd32a06204080910256de4cc0e@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Valdis.Kletnieks@vt.edu
-Cc: Hans Reiser <reiser@namesys.com>, David Dabbs <david@dabbs.net>, 'ReiserFS List' <reiserfs-list@namesys.com>
+To: Tom Lanyon <tomlanyon@gmail.com>
+Cc: reiserfs-list@namesys.com
 
-On Mon, Aug 09, 2004 at 11:21:17PM -0400, Valdis.Kletnieks@vt.edu wrote:
-> On Sat, 07 Aug 2004 00:49:43 PDT, Hans Reiser said:
+On Tue, Aug 10, 2004 at 02:55:55AM +0930, Tom Lanyon wrote:
+> Hello,
 > 
-> > >I think I have discovered the problem - unless there was a reason mongo was
-> > >issuing mount/unmount commands at the start/end of a mongo 'run' as well as
-> > >before/after _each phase_.
+> Can someone please inform me of how to stop the dreaded sendfile
+> issues while using reiser4 and apache2?
 > 
-> > Probably someone wanted to separate the measurement of the phases.  It 
-> > has been a while since I read mongo.....
-> 
-> Note that an unmount/mount pair will force a flush of all dirtied pages in the
-> in-memory file cache, and *really* not return until it's really done and really
-> out on disk.  In addition, sync() will force stuff to disk, but *not* invalidate
-> in-cache pages - more drastic measures are needed if you want to benchmark
-> with a cold cache (which is almost a must if you're doing actual filesystem
-> benchmarking, as otherwise you're benching the in-core cache instead).
+> I just setup reiser4 on a nice new hard drive and tried to run apache2
+> and ended up with many kernel panics and then the machine locked up.
 
-That was designed to have result in each phase as independent as we can.  For
-example, if we have read slowdown in mongo, we will analyze only reads and,
-probably, fs fragmentation, we won't deal with unmeasurable cache state before
-the read phase. Known and persistent "cold cache effect" is better than unknown
-hot cache one :)  And, mongo phases are designed to be long and keep the cold
-cache effect at minimum.
+I used ab2 test tool, apache2 from SuSE9.1 and the latest reiser4 code.
+It works fine for me.
 
-> As an aside, although the Linux fs/buffer:do_sync() won't return until it's
-> all really done, there is no mandate that the sync() syscall wait (and in fact,
-> is the source of the old "type 'sync' three times, then 'halt'" - the second
-> and third times you typed sync and hit return hopefully gave the I/O scheduled
-> by the *first* sync time to complete.  At least one 'Unix for Dummies' book
-> proved their lack of depth of understanding when they recommended:
 > 
-> # sync;sync;sync;halt
+> I thought this issue was fixed in reiser4? If not, how can I go about
+> stopping this from happening?
 > 
+> This is reiser4-2004.07.23-19.37-linux-2.6.8-rc2-bk4.diff  on a
+> 2.6.8-rc2 kernel.
+> I'm about to try the latest snapshot on a vanilla 2.6.8-rc3 and see if
+> it helps..
+> 
+> 
+> Thanks for any help,
+> 
+> Tom.
 
 -- 
 Alex.
