@@ -1,43 +1,48 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 01:40:29 -0700
-Message-ID: <412DA1FD.4010507@namesys.com>
-References: <Pine.LNX.4.44.0408252052420.13240-100000@chimarrao.boston.redhat.com>
+Date: Thu, 26 Aug 2004 01:41:32 -0700
+Message-ID: <412DA23C.7090702@namesys.com>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826010355.GB24731@mail.shareable.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20585-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20586-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.44.0408252052420.13240-100000@chimarrao.boston.redhat.com>
+In-Reply-To: <20040826010355.GB24731@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Rik van Riel <riel@redhat.com>
-Cc: Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Jamie Lokier <jamie@shareable.org>
+Cc: Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Rik van Riel wrote:
+Jamie Lokier wrote:
 
+>Nicholas Miell wrote:
+>  
 >
+>>Anything that currently stores a file's metadata in another file really
+>>wants this right now. Things like image thumbnails, document summaries,
+>>digital signatures, etc.
+>>    
+>>
 >
->If your backup program dives into the file despite stat()
->saying it's a file and you restore your backup, how are the
->"file is a file" semantics preserved ?
+>Additionally, all of those things you describe should be deleted if
+>the file is modified -- to indicate that they're no longer valid and
+>should be regenerated if needed.
 >
->Obviously this is something that needs to be sorted out at
->the VFS layer.
+>Whereas there are some other kinds of metadata which should not be
+>deleted if the file is modified.
 >
-It needs to be sorted out, whether it is sorted out at the VFS layer is 
-unimportant.
-
->  A filesystem specific backup and restore
->program isn't desirable, if only because then there'd be
->no way for Hans's users to switch to reiser5 in 2010 ;)
+>-- Jamie
+>
 >
 >  
 >
-It might be that we need a filenameA/metas/backup method for all of our 
-file plugins, which if cat'd gives a set of instructions which if 
-executed are adequate for restoring filenameA.
+Yes, I agree.
 
-Hans
+Actually we plan to have a whole link taxonomy, and one expected feature 
+is that some links don't count towards the refcount needed to keep an 
+object in existence (For instance, the links between key words and text 
+documents, you don't want to have to explicitly unlink every keyword in 
+order to delete a document).
