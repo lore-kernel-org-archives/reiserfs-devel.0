@@ -1,36 +1,76 @@
-From: Viktors Rotanovs <viktors@rotanovs.com>
-Subject: filesystem <-> database
-Date: Mon, 12 Jan 2004 23:33:38 +0200
-Message-ID: <400312B2.9040301@rotanovs.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCHES] 2.6.1 Cleanups
+Date: Mon, 12 Jan 2004 16:53:46 -0500
+Message-ID: <4003176A.3070901@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16464-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16465-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+To: ReiserFS Mailing List <reiserfs-list@namesys.com>
 
-Hi,
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-I recently converted filesystem (reiser3.6) containing lots of small 
-files (400000 files, about 10 bytes each, Cyrus IMAP quota files) to CDB 
-database format (http://cr.yp.to/cdb.html plus some patching to make it 
-read-write), thus gaining significant performance improvement (load avg 
-was 5, became 3).
-What is the best way to do the same for other similar small files, using 
-Reiser4? As far as I can understand, I could:
-1) just put everything on Reiser4, with no changes
-2) write some plugin for Reiser4
-Is it possible to reduce file size on disk by not saving file ownership, 
-modification time, etc.?
-How much kernel's VFS interface, switching to kernel and back, directory 
-caching, etc. does slow down these operations?
+Hey all -
 
-Best Wishes,
-Viktors
+Now that the 2.6.0 hurdle has been cleared and Linus seems to be more
+open to cleanup-type patches, I have these to submit for comment.
 
+I have 4 patches, descriptions follow:
+* cleanup-01-basic-cleanup
+	-- This cleans up journal.c such that the ugly 50+ character
+	macro/derefs that are used repeatedly are evaluated once and
+	then accessed using a temporary variable. The resulting code
+	should be identical and makes it quite a bit nicer to read.
 
+* cleanup-01-sb-opts
+	-- This eliminates individual #defines for superblock/mount
+	options and instead uses an enum. It's not like the actual
+	values of the mount options matter, and this just makes a list
+	of them. Accordingly, since the values aren't apparently in the
+	include, I added a BUG_ON to bail out of the value passes beyond
+	the size of the mount_opts variable.
 
+* cleanup-02-bh-bits
+	-- This patch makes all the accesses for bh->b_state use the
+	appropriate macros, rather than accessing them directly.
+
+* cleanup-03-bh-cleanup
+	-- This patch eliminates the local macro implementation for the
+	bh->b_state accessors/mutators and uses the FNS_BUFFER
+	implementation in fs.h, which automatically creates the macros
+	with on line of code.
+
+* cleanup-04-sb-journal-elimination
+	-- This patch is similar to the basic-cleanup, except that it
+	focuses on the use of SB_JOURNAL(super) everywhere, and replaces
+	it with a local "journal" variable. Again, this makes the code
+	much easier to look at.
+
+Opinions? Comments?
+
+Patches can be found at
+ftp://ftp.suse.com/pub/people/jeffm/reiserfs/kernel-v2.6/2.6.1/
+
+- -Jeff
+
+I apologize if this posted twice. The first message had the patches
+attached, and crossed the post size limit. I haven't received a bounce yet.
+
+- --
+Jeff Mahoney
+SuSE Labs
+jeffm@suse.com
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.2 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iD8DBQFAAxdqLPWxlyuTD7IRAuedAKCETcQI8uv3l2+KV2dZuuTsO3jVmQCcCaEZ
+9TZxgECJvfcr/9CwHwrRLWw=
+=i605
+-----END PGP SIGNATURE-----
