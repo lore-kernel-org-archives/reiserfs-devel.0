@@ -1,17 +1,16 @@
 From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: assembling a file out of debugreiserfs's map
-Date: Mon, 31 May 2004 11:16:09 +0400
-Message-ID: <1085987769.1198.31.camel@tribesman.namesys.com>
-References: <20040528165533.GA12618%alexy.khrabrov@setup.org>
-	 <20040528192320.GA14111%alexy.khrabrov@setup.org>
+Subject: Re: immutability
+Date: Mon, 31 May 2004 11:40:39 +0400
+Message-ID: <1085989239.1198.44.camel@tribesman.namesys.com>
+References: <20040529152153.GA20663%alexy.khrabrov@setup.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18925-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18926-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040528192320.GA14111%alexy.khrabrov@setup.org>
+In-Reply-To: <20040529152153.GA20663%alexy.khrabrov@setup.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Alexy Khrabrov <list+reiserfs@setup.org>
@@ -19,47 +18,35 @@ Cc: ReiserFS List <reiserfs-list@namesys.com>
 
 Hello
 
-On Fri, 2004-05-28 at 23:23, Alexy Khrabrov wrote:
-> I realized how IND chains lead to more blocks, so the question remaining
-> is, whether it can be assembled automatically?  Why are they repeated
-> several times with seemingly the same block number/counts, and what does
-> the fractioned one mean,
+On Sat, 2004-05-29 at 19:21, Alexy Khrabrov wrote:
+> About immutability...
 > 
-> block 1271, item 0: 2572 2573 0x32e001 IND (1), len 228, location 3868 entry count 0, fsck need 0, format new
-> 57 pointers
-> [ 2055746(9) 2055756(48)]
+> Now I have to confess, I've deleted those two files while trying to
+> make them immutable whith chattr.  I didn't realize it applies to
+> ext2/3 filesystems, and lsattr did show ..-i-...  Seeing i, I did rm,
+> and there they went.  On the good side, I know what to do now if I
+> accidentally delete a file on Linux, which is no small feat -- for years,
+> I just thought, forget it.  Unix approach to recovery was, and still is,
+> "backup", and if you didn't, you're an idiot whose files are not worth
+> recovery anyway.  :)  Undoing an rm on Linux is a deeply vindicating
+> experience :).  I wonder what v4 offers in that area.  And even with
+> the current routine, as can be easily seen, there could be automated
+> assembly scripts.
 > 
-> as compared to
-> 
-> block 1270, item 0: 2572 2573 0x1 IND (1), len 3256, location 192 entry count 0, fsck need 0, format new
-> 814 pointers
-> [ 2054932(814)]
-> 
-> -- also note, that the last chain for p5270916.jpg,
-> 
-> block 8002, item 0: 2572 2573 0x32e001 IND (1), len 228, location 3868 entry count 0, fsck need 0, format new
-> 57 pointers
-> [ 2055746(9) 2055756(48)]
-> 
-> mentioned the same block number 8002 which the safefly recovered p5270917.jpg
-> mentions:
-> 
-> block 8002, item 0: 2572 2574 0x1 IND (1), len 3348, location 476 entry count 0, fsck need 0, format new
-> 837 pointers
-> [ 2055804(837)]
-> 
+> So, just to confirm -- is there chattr or a similar way to make files
+> immutable? 
 
-Reiserfs does not keep metadata at the same place all the time. It keeps
-metadata in the tree, which rebalances whenever one changes filesystem.
-So, file's metadata migrates even though you did not touch that file for
-a long time.
-So, the trick in recovering files in from metadata is to choose proper
-sequence of metadata given that there might by a lot of them. They may
-overlap also. So, it is not very easy to automate such file recovering.
+reiserfs has mount option attrs (mount -o attrs). chattr and lsattr
+starts to work then. You may have to run reiserfsck --clean-attributes
+before using it, though
 
-> Isn't there a tool/script to assemble those chains into a file by, um,
-> a computer?  :)  I mean I'd hack a python script to do dd ... >> file,
-> but I bet 1000 rubles/30 euros/40 dollars it exists somewhere!
-
-I am not aware of any
+>  I use a RAID to store digital photographs, running LVM on
+> top of it consisting of the RAID physical volume only, and reiserfs in
+> the logical volume spanning the only volume group spanning the RAID.
+> The idea was, I'll just get those logical extents I need in case I
+> need a used part of it -- here I'd need help from reiserfs's bitmap,
+> still have to figure that out, that's what my original "partial dd"
+> question was about.  I'd like to make the files "write once" via some
+> kind of automated process.  Is there any way simpler than remounting
+> the thing read-only after each write from a CF card?
 
