@@ -1,31 +1,66 @@
-From: Grant Miner <mine0057@mrs.umn.edu>
+From: "John D. Heintz" <jheintz@pobox.com>
 Subject: Re: "Metas"
-Date: Wed, 21 Apr 2004 12:14:16 -0500
-Message-ID: <4086ABE8.4090806@mrs.umn.edu>
-References: <408045B8.7000102@mrs.umn.edu> <20040418033328.24278.qmail@web25006.mail.ukl.yahoo.com> <c5t3lg$g9g$1@satsuki.furryterror.org> <40869EAD.9020806@namesys.com>
+Date: Wed, 21 Apr 2004 13:15:50 -0500
+Message-ID: <4086BA56.7060900@pobox.com>
+References: <35813986328-BeMail@cr593174-a> <407C1A80.2090207@namesys.com> <4086A487.7050500@pobox.com> <4086A8AA.9020904@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18130-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18131-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40869EAD.9020806@namesys.com>
+In-Reply-To: <4086A8AA.9020904@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Hans Reiser <reiser@namesys.com>
 Cc: reiserfs-list@namesys.com
 
+Yes, exactly.
+
+
+Thanks,
+John D. Heintz
+
 Hans Reiser wrote:
 
-> so if rename works on metas, are you guys happy?  that is, if mv 
-> filename/metas filename/... works, are you less worried about the one in 
-> 10 million users who will actually hit the reserved keyword?
+> So you want some sort of ....this_name_will_never_collide_with_anything 
+> that is a synonym for metas, so that metas can be renamed?
+> 
+> I don't think programmers will bother to code for it in their apps.  
+> Otherwise it would be okay with me.
+> 
+> Hans
+> 
+> John D. Heintz wrote:
+> 
+>> How would we look up the current name of the "metas" pseudo directory? 
+>> This affects tools (GUI, scripts) that would need to reliably find the 
+>> "metas" pseudo directory regardless of renames.
+>>
+>> If there is a good answer to this question I think I would be 
+>> absolutely happy.
+>>
+>> Thanks,
+>> John D. Heintz
+>>
+>>
+>> >> -----Original Message-----
+>> >> From: Hans Reiser [mailto:reiser@namesys.com]
+>> >> Sent: Wednesday, April 21, 2004 10:18 AM
+>> >> To: reiserfs-list@namesys.com
+>> >> Subject: Re: "Metas"
+>> >>
+>> >> so if rename works on metas, are you guys happy?  that is, if mv
+>> >> filename/metas filename/... works, are you less worried about the one
+>>
+>> in
+>>
+>> >> 10 million users who will actually hit the reserved keyword?
+>>
+>>
+>>
+> 
+> 
 > 
 
-That sounds like the best solution to the rare case where you would need 
-to use a file named "metas".
-
-But...what about the UNIX security issues where files that aren't 
-executable can't have their "metas" accessed?  I suppose that will 
-require extensive VFS changes and coordination with Al Viro?
