@@ -1,57 +1,48 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: Reiserfs Data Recovery
-Date: Wed, 10 Mar 2004 14:41:11 +0300
-Message-ID: <1078918871.9476.116.camel@tribesman.namesys.com>
-References: <404E8665.7090305@nsanity.com>
+From: Joachim Reichelt <Reichelt@gbf.de>
+Subject: undelete open file
+Date: Wed, 10 Mar 2004 13:22:49 +0100
+Message-ID: <404F0899.2040000@gbf.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17156-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17158-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <404E8665.7090305@nsanity.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Nick Vahalik <nick@nsanity.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Hello
+Dear all,
 
-On Wed, 2004-03-10 at 06:07, Nick Vahalik wrote:
-> 'lo All,
-> 
-> I've been doing some reading through some of the "hidden features" in 
-> the source code...
-> 
-> Are these features tested?  
+is there a way to undelete a file, that is still open?
+lsof -C ... gives
+Bragi   29736  jre   15r   REG        3,8  6828032    480646 
+/home/jre/susanne_h/Model.md_ntr.mdcrd (deleted)
 
-Most of these things were added quickly to solve certain user problems.
-To use them one is to understand what they were created for.
+-- 
+Mit freundlichen Gruessen                         Best Regards
+ 
+         Joachim Reichelt
 
-> Is there any more documentation on them 
-> besides just what's in the comments?
+WWW: http://www.gbf.de         _/_/_/   _/_/_/   _/_/_/_/
+WWW: http://www.gbf.de/sb    _/    _/  _/   _/  _/
+                            _/        _/   _/  _/
+Mascheroder Weg 1          _/  _/    _/_/_/   _/_/_/
+D-38124 Braunschweig      _/    _/  _/   _/  _/
+Tel: +(49) 531 6181 352  _/    _/  _/   _/  _/
+FAX: +(49) 531 2612 388   _/_/_/  _/_/_/   _/
 
-no.
+			SB  - Strukturbiologie
+              GBF - Gesellschaft fuer Biotechnologische Forschung
+                    German Research Centre for Biotechnology
 
->   Are there any good sites to read 
-> up some more on reiserfs v3.6 internals? 
+See me at:
+EMAIL: REICHELT@gbf.de    WWW:  http://www.gbf.de/sb/Reichelt.htm
 
-namesys.com had description of reiserfs internals. But now it does not.
-read source code instead
+-- Disclaimer --
+Standard > Keyword : Opinions, my own, nobody else's, whatsoever ...
 
->  I've become determined to get 
-> this data back.  I've got a couple ideas that I'd like to try but look 
-> at some of these commands I see that some of the things I'd like to 
-> access may already be written.
-> 
-> If the problem is that there are sections of my tree missing, why can't 
-> we just chop the bad sections off and salvage the data that is still 
-> there?  Are there any tools that do this?
-> 
-
-did you try reiserfsck?
-
-> Nick Vahalik
-> 
+Man muss sich notfalls jemand mieten,
+hat man an Geist selbst nichts zu bieten!     (Heinz Erhardt)
 
