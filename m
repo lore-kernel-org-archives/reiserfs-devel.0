@@ -1,80 +1,58 @@
-From: "Chris Haynes" <chris@harvington.org.uk>
+From: Matthew Johnson <matthew@psychohorse.com>
 Subject: Re: what do you do that stresses your filesystem?
-Date: Mon, 23 Dec 2002 16:33:31 -0000
-Message-ID: <002001c2aaa1$08650550$0200000a@ringo>
+Date: Mon, 23 Dec 2002 10:54:22 -0800
+Message-ID: <200212231054.22044.matthew@psychohorse.com>
 References: <3E06F360.7000708@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12227-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12228-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3E06F360.7000708@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: ReiserFS <reiserfs-list@namesys.com>
+To: ReiserFS <reiserfs-list@namesys.com>
 
-Hans,
+Some others I can think of...
 
-Thanks for asking!
+Running Wine and winex applications
 
-I'm about to deploy an on-line transaction-based service.. All
-service-specific software is in 1000+ Java classes. The OS is SuSE
-7.3, and Java version 1.4
+Running games, such as ut2003. I don't mean card games. Running game serv=
+ers=20
+too...
 
-The heavist uses of the file store are:
+Starting large Window managers like KDE.
 
-During development:
-+ javadoc
+Mat
 
-During service deployment / update:
-+ rsync
-+ When using a tripwire-like Java program which checks the SHA digest
-of all deployable files against zipped JARs
-
-During production operation:
-+ atomic, synchronized writes to multiple files (typically 3 - 4 files
-in different directories, the first is the creation of a new 4 kb
-file, others are usually updates of existing files - growing typically
-1kb per update). This files system is mounted on a RAID-1 pair.
-+ rsync
-+ Successive reading of all files in a directory sub-tree (up to 10M
-files)
-in filestore-defined order (i.e. the program makes no demands or
-assumptions about the order - it uses the order supplied by Java's
-File.files()).
-
-
-The greatest performance concern I have is with the file writes. As
-these are atomic transactions, I use a separate thread for each file's
-write (to give the kernel's escalator a chance to work), and require
-that the write operations be individually hardware-synchronized  using
-Java's FileDescriptor.sync() method. I then use a counter to detect
-when all threads have reported that their files have been written -
-this indicating successful commitment of the transaction.
-
-I handle read-and write-locking in the application.
-
-Usually, there are no lock conflicts, so there can be many concurrent
-transaction commitments. I use a thread pool of  50 threads to handle
-the individual file writes (the 50 being a guess at the likely point
-of diminishing returns).
-
-My expectation/hope is that, so long as there are enough threads
-available in this pool, all transactions will be completed within one
-disk rotation period(regardless of the number of concurrent
-transactions or number of files per transaction and the fact that I'm
-using software RAID-1). I've not yet been able to validate this
-(theoretically or practically).
-
-I would *really* like  to be able to group all the file writes for a
-transaction  into a single logical  API call and have the kernel/file
-system report successful completion of all data and metadata aspects
-of the transaction using a single application thread.
-
-HTH
-
-Chris Haynes
-
+On Monday 23 December 2002 03:28 am, Hans Reiser wrote:
+> We were discussing how to optimize reiser4 best, and came to realize
+> that us developers did not have a good enough intuition for what users
+> do that stresses their filesystem enough that they care about its
+> performance.
+>
+> If you just do edits of files it probably does not matter too much what
+> fs you use.
+>
+> Booting the machine seems like one activity that many users end up
+> waiting on the FS for.  Yes?
+>
+> Starting up complex and big applications like xemacs and mozilla would
+> be another.  Yes?
+>
+> Others?
+>
+> Hans
+>
+> PS
+>
+> reiser4 performance is up a lot recently, and within two weeks I think
+> cp -r will have been optimized as much as is worth doing.  cp -r
+> accesses files in readdir order, and that does indeed seem worth
+> optimizing, but soon we will need to optimize more sophisticated access
+> patterns than that.....
+>
+> Hans
 
