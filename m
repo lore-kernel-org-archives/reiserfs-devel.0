@@ -1,69 +1,44 @@
-From: kenny gorman <kgorman@panix.com>
-Subject: Re: corruption?  how do I fix?
-Date: Tue, 12 Nov 2002 21:38:51 -0800
-Message-ID: <3DD1E56B.6080603@panix.com>
-References: <3DD1DEEF.6030903@panix.com>
+From: Todd Lyons <todd@mrball.net>
+Subject: Re: [ANNOUNCE]: reiser4 snapshot
+Date: Wed, 13 Nov 2002 00:14:43 -0800
+Message-ID: <20021113081443.GB4267@mrball.net>
+References: <15825.8526.652377.341227@laputa.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11978-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11979-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <15825.8526.652377.341227@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; x-action="pgp-signed"
+Content-Transfer-Encoding: 7bit
+To: Reiserfs mail-list <Reiserfs-List@namesys.com>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>
 
-Just to add a bit to this.  I ran reiserfsck, and it returned 0.  Does 
-that mean the filesystem is actually ok? Thats what the man pages see to 
-suggest...
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-byte 286719: bm1: ffffffbd bm2 ffffffff
-on-disk bitmap does not match to the correct one. 102400 bytes differ
-ok
-Checking Semantic tree...ok
-# echo $?
-0
+Nikita Danilov wanted us to know:
 
+>Hello,
+>new reiser4 snapshot is available at:
+>http://namesys.com/snapshots/2002.11.12/
 
-kenny gorman wrote:
-> I am running a semi-large oracle database on reiserfs and lvm.  I 
-> started receiving block corruption messages in oracle.  So I started 
-> checking out the filesystem.  I ran debugreiserfs and I get the 
-> following.  Is this bad?  I can't seem to find docs on 
-> repair/restoration of reiserfs filesystems around.. am I just missing 
-> em?  We are down so any help would be really great.  Thx!
-> 
-> See output of debugreiserfs:
-> 
-> # debugreiserfs /dev/datagrp/datavol
-> 
-> <-------------debugreiserfs, 2001------------->
-> reiserfsprogs 3.x.0j
-> reiserfs_open: bitmap 45 was marked free
-> <repeated until>
-> reiserfs_open: bitmap 69 was marked free
-> Super block of format 3.5 found on the 0x3 in block 16
-> Block count 7752704
-> Blocksize 4096
-> Free blocks 2361789
-> Busy blocks (skipped 16, bitmaps - 237, journal blocks - 8193
-> 1 super blocks, 5382468 data blocks
-> Root block 8384
-> Journal block (first) 18
-> Journal dev 0
-> Journal orig size 8192
-> Filesystem state ERROR
-> Tree height 4
-> Hash function used to sort names: "r5"
-> Objectid map size 2, max 1004
-> Version 0
-> 
-> 
-> 
-> 
-> .
-> 
+Can you add the following option to your httpd.conf to make it show the
+whole filename instead of just the first 20 characters?
 
+IndexOptions NameWidth=*
+- -- 
+Blue skies...	Todd 	Public key: http://www.mrball.net/todd.asc
+...and I will strike down upon thee with great vengeance and furious
+ anger, those who attempt to poison and destroy my binaries, and you 
+    will know my name is root, when I lay my vengeance upon thee.
+   Linux kernel 2.5.46-1   1 user,  load average: 0.00, 0.00, 0.00
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
 
-
+iD8DBQE90gnzIBT1264ScBURAlm/AJ9BePOVGt72nGtH8LFq88KKur2uwQCfa0AS
+XlDvqe0WfAfaUMVLZAr4lZk=
+=XYus
+-----END PGP SIGNATURE-----
