@@ -1,36 +1,56 @@
-From: Jeremy Allison <jra@samba.org>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Sun, 29 Aug 2004 12:38:51 -0700
-Message-ID: <20040829193851.GB21873@jeremy1>
-References: <Pine.LNX.4.44.0408261011410.27909-100000@chimarrao.boston.redhat.com> <200408261819.59328.vda@port.imtp.ilyichevsk.odessa.ua> <1093789802.27932.41.camel@localhost.localdomain> <1093804864.8723.15.camel@lade.trondhjem.org>
-Reply-To: Jeremy Allison <jra@samba.org>
+Date: Sun, 29 Aug 2004 12:53:26 -0700
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <41323436.80007@namesys.com>
+References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org> <20040828170515.GB24868@hh.idb.hist.no> <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org> <4131074D.7050209@namesys.com> <Pine.LNX.4.58.0408282159510.2295@ppc970.osdl.org> <4131A3B2.30203@namesys.com> <Pine.LNX.4.58.0408291055140.2295@ppc970.osdl.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21081-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1093804864.8723.15.camel@lade.trondhjem.org>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, Linus Torvalds <torvalds@osdl.org>, reiser@namesys.com, hch@lst.de, Linux Filesystem Development <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.58.0408291055140.2295@ppc970.osdl.org>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com, Al Viro <viro@parcelfarce.linux.theplanet.co.uk>
 
-On Sun, Aug 29, 2004 at 02:41:04PM -0400, Trond Myklebust wrote:
-> 
-> NFSv4 has an OPENATTR call which acts on files to return a filehandle
-> that works fine with both READDIR and LOOKUP, so if a VFS interface for
-> streams existed, we could code up full support tomorrow.
-> As it is, we're having to shoehorn this into the xattr interface. 8-(
+Linus Torvalds wrote:
 
-Yeah, that's what I'm really trying to avoid for Samba.
-We're currently using the xattr interface for DOS attributes,
-and soon for NT ACL support, but it doesn't really fit as
-a streams interface (no lseek() support) although someone in
-HP coded up a test interface to NT streams that map into xattrs
-(most of the streams in a Word file for instance are quite
-small) - but I really don't want to have to do this :-).
+>On Sun, 29 Aug 2004, Hans Reiser wrote:
+>  
+>
+>>>Realize that openat() works independently of any special streams, it's
+>>>fundamentally a "look up name starting from this file" (rather than
+>>>"starting from root" or "starting from cwd").
+>>>      
+>>>
+>>well, isn't that namespace fragmentation by definition?
+>>    
+>>
+>
+>No.
+>
+>There's no difference between
+>
+>	fd = open("/usr/bin/yes", O_RDWR);
+>
+>and
+>
+>	dirfd = open("/usr/bin", O_RDONLY | O_DIRECTORY);
+>	fd = openat(dirfd, "yes", O_RDWR);
+>  
+>
+The difference is that cat uses open() not openat().
 
-Jeremy.
+With your model, can I do:
+
+cat filenameA/metas/permissions > filenameB/metas/permissions
+
+find / -exec cat {}/permissions \; | grep 4777 | wc -l
+
+If yes, then we are talking past each other somehow rather than 
+disagreeing. If metafiles can be opened with both open and openat() in 
+your model, then we are discussing some small detail.
+
+I think the answer is no though, in which case you are missing the point 
+of the new design. Is the answer no?
+
