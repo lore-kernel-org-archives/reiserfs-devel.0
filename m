@@ -1,103 +1,53 @@
-From: Michael Milverton <camel78@iprimus.com.au>
-Subject: Re: On a free repacker
-Date: Tue, 25 May 2004 09:12:34 +0800
-Message-ID: <200405250912.40950.camel78@iprimus.com.au>
-References: <20040519192831.GL24604@nysv.org> <20040524203016.GA4990@nysv.org> <40B25DF0.2090400@gmx.net>
-Reply-To: camel78@iprimus.com.au
+From: "Jenna Lois" <cpqqw70gariy@kendra.com>
+Subject: THE CHEAPEST POPULAR SOFTWARES U EVER SEE, FROM $20 BUCKS pseudology
+Date: Tue, 25 May 2004 12:11:29 +0500
+Message-ID: <32780fncbsi9e1xp5hsmg2@caseworkpretense>
+Reply-To: "Jenna Lois" <cpqqw70gariy@kendra.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1;
-  boundary="Boundary-02=_I2psAZMWLW/Vvn9";
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18836-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="--944044493081059"
+Return-path: <reiserfs-list-return-18837-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40B25DF0.2090400@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-list@namesys.com
 
---Boundary-02=_I2psAZMWLW/Vvn9
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+----944044493081059
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
-On Tue, 25 May 2004 04:41 am, Carl-Daniel Hailfinger wrote:
-> Markus T=F6rnqvist wrote:
-> > On Fri, May 21, 2004 at 03:02:05PM -0400, Valdis.Kletnieks@vt.edu wrote:
-> >>Larry McVoy's BitKeeper licensing might be an interesting model to
-> >> follow. Not sure if you can make it work for a repacker thought....
-> >
-> > I must look into this. (Note, you can also enlighten me on this, since
-> > I don't think I'll look into it yet).
-> >
-> > All I know about BitKeeper is that it's not as simple to use as
-> > subversion and subversion is free in all senses of the word. So I don't
-> > use BK. And I wouldn't if Namesys wouldn't force me.
->
-> Oh, that is interesting. I think we agree that CVS is not simple to use.
-> But I'm interested in how subversion can be simpler than bitkeeper.
->
-> # bk clone bk://some.url/of/the/project
-> and you have a directory "project"
-> # cd project
-> # ./configure; make; make install
-> for updates:
-> # cd project
-> # bk pull
-> some projects may have a default of source not checked out, do it now
-> # bk -r get
->
-> Can it get simpler than this? I'm truly interested in anything that makes
-> my life simpler.
-I realise that this may have been a rhetorical question but I still can't=20
-resist answering. This is really a note to those people who would like an R=
-CS=20
-similar to BK but want something that is GPL free. I recommend giving DARCS=
- a=20
-try.
+aitchbone nonlexical applicant stays almshouse fluff unabused satyriasis castrated khmer nearest oryzopsis vail unalluring ostler errare embroidery 
+jeopard pricket salmon behavior unshaken agir rypticus dissension topsails gobiidae cestus osculate tarsitis sprang denizen gingiva shyster color 
 
-David's Advanced Revision Control System
-http://abridgegame.org/darcs/
+----944044493081059
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
-It seems as simple to use ( I have not used BK so I am only looking at the=
-=20
-steps above and they seem similar ) and its GPL. It is a distributed RCS wi=
-th=20
-some original ideas behind it, eg a theory of patches etc. It is still=20
-reaching maturity, nearly at the big 1.0 release,  but I already use it and=
- I=20
-love it a lot.
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text; charset=iso-8859-1">
+</head><awninged philohela impulsion effluxion >
+<body><fluttering surly bundling >
+<table border=0 cellspacing=0 cellpadding=10 width=600><folly scalawag indulged fascicle crouching adiabatic welshmen board gula loveliness sessile afrikaans mutuality >
+<tr><td bgcolor=FFFFD7><primo unfair inanna paleness >
+<font color=000000 size=2 face=arial><marcid mundation orifice homogenize montevideo sorrow aftershock hanker tenoretic >
+<font color=FF3C3C size=5 face=arial><b><center>Chheap softtwares for you, all are original 0EM</b><br><font size=4 color=0000ff>Major titles from MICR0S0FT and AD0BE for Rock Bottom prriice<br><font color=FF80C0 size=3>Great Bargaain Sa1e! Variety discoount softtwares at wholesale chaeap pricing!</center></font></font></font><br>
+<b>Microsoft Wind0ws XP PR0fessional</b> - <font color=0000F2><b>my priice: $50</b></font><br>normal priice: $270.99 ; <font color=FF8D1C><b>you savve $220</b></font><br><br>
+<b>Microsoft 0ffice XP PR0fessional</b> - <font color=0000F2><b>my priice: $100</b></font><br>normal priice: $579.99 ; <font color=FF8D1C><b>you savve $480</b></font><br><br>
+<b>Ad0be photosh0p 7</b> - <font color=0000F2><b>my priice: $80</b></font><br>normal priice: $609.99 ; <font color=FF8D1C><b>you savve $550</b></font><br>
+<br>
+28 More P0PULAR titles >> <b><a href=http://epuration.nextgenerals.com target=_blank><font color=D20000 size=4 face=arial><u>cliickk here for more titles</u></font></a></b><br><br>
+<font color=000000 size=2>
+<b>Wonder why our priices are unbelievably L0W?</b><br>
+We are currently clearing our goods at incredibily cheeap sa1e-priice in connection with the shutdown of our shop and the closure of the stockhouse. Don't missss your lucky chance to get the best priicce on discoouunt software!<br><br>
+We are the authorized agent and an established reseller offering OEM Licensing software.<br><br>
+We possesses all the necessary certificates issued to verify the authenticity of genuine OEM products and granting the right for us to resell OEM software products.<br><br>
+<center><a href=http://reentry.nextgenerals.com target=_blank><font color=D20000 size=4 face=verdana><u><b>Super Cheaep MICR0S0FT, AD0BE & all kind soft here<br><br>Cliickk here to enjoy our Superb Discouunnt!</u></font></a></center>
+</font>
+</td></tr></table></simulation prevent pastime iceland gush conference sacrosanct idiom freelance >
+</body>
+</html>
 
-P.S I know this subject is offtopic but I have found useful links to progra=
-ms=20
-that others have recommended so I hope that someone finds this useful.  =20
->
-> Regards,
-> Carl-Daniel
-
-Thankyou
-Michael Milverton
-=2D-=20
-GNU/Linux: Secure, Stable, Free
-Michael <camel78@iprimus.com.au>
-
---Boundary-02=_I2psAZMWLW/Vvn9
-Content-Type: application/pgp-signature
-Content-Description: signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iQCVAwUAQLKdiDbWs3O08JjCAQIHswP/f/9gGQ5c9idNupOYGYwWKf+J96Nmx7LI
-ebLMF9ur2YTKwOfwCPJeSCeB/YB4eyBDPQxY6E15L6/BcQsABcFy36NqDGfdqLPt
-4u6C5Z8Tlq0foPTMKEg0O7JCO01QOTXQ+BCNfdsp6ESfZC+zh+HvTD+0zpti4J+Q
-fAc1kfta5oY=
-=BB9K
------END PGP SIGNATURE-----
-
---Boundary-02=_I2psAZMWLW/Vvn9--
+----944044493081059--
