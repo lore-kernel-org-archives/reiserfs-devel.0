@@ -1,34 +1,43 @@
-From: matthew johnson <matthew@psychohorse.com>
+From: Ross Vandegrift <ross@willow.seitz.com>
 Subject: Re: Silly question, defrag
-Date: Wed, 3 Apr 2002 11:33:59 -0800 (PST)
-Message-ID: <Pine.LNX.4.33.0204031103550.21801-100000@barn.psychohorse.com>
-References: <3CAB48E5.9050001@namesys.com>
+Date: Wed, 3 Apr 2002 15:30:39 -0500
+Message-ID: <20020403203039.GA25023@willow.seitz.com>
+References: <200204030017.12595@X-Message-Flag:> <3CAABBA6.3030101@swelltech.com> <200204030740.05950@X-Message-Flag:>
 Mime-Version: 1.0
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <3CAB48E5.9050001@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <200204030740.05950@X-Message-Flag:>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
+To: Matthew Johnson <matthew@psychohorse.com>
 Cc: reiserfs-list@namesys.com
 
+On Wed, Apr 03, 2002 at 08:08:21AM -0800, Matthew Johnson wrote:
+> On Wednesday 03 April 2002 00:21, Joe Cooper wrote:
+> > "Don't"
+> >
+> 
+> Well I don't, but when newbies who are used to computing on win32 systems 
+> hear that they may not just accept the word don't. Actually its hard to find 
+> the reasons exactly why one does not defrag.
 
-> There are ways in which Windows is better than Linux.  This is one.  To
-> think that Linux is better for not having defrag is wishful innacurate
-> thinking.  Such is life.  Send us $30k and defrag will go into v4.0
-> instead of 4.1.:)
->
+Depending on the elevator algorithms in Linux (sorry, I'm not very
+familiar with them), performance can actually be *increased* by
+some bit of fragmentation.  If the data is spread out over the disk,
+I've heard it allows some elevator algorithms to improve their queuing
+stategies.  I'm pretty sure this is the case on Novell Netware.
 
-Thanks for the answers, obviously 4.1 will be good thing. As for the cash,
-well *cough* I can defiantely wait :). Although I imagine that filesystems
-fragment differently depending on a number of factors (and that others are
-more prone to more fragmentation...). Does ReiserFS deal with
-fragmentation in any special way to minimise (ack, in USA thats minimize)
-it?
+Unfortunately I don't have enough technical knowledge about elevator
+algorithms to really know if it helps or hurts us.  However, I do know
+that back in the days when I was just getting into Linux stuff
+(around 2.0.0-ish era), it was generally said that ext2 driver did basic
+defrag on write and it limited fragmentation to pathological filesystem
+usage.
 
-Again, thanks so much!
+Again, not sure that this is still the case.
 
-Matt
-
+Ross Vandegrift
+ross@willow.seitz.com
