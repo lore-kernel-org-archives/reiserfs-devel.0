@@ -1,47 +1,115 @@
-From: Yury Umanets <umka@namesys.com>
-Subject: Re: reiser4 snapshot
-Date: Tue, 12 Aug 2003 15:44:57 +0400
-Message-ID: <1060688697.21149.44.camel@haron.namesys.com>
-References: <16183.48363.884605.564937@laputa.namesys.com>
-	 <pan.2003.08.12.00.32.11.185228@math.ubc.ca>
-	 <20030812060542.GA5363@namesys.com> <20030812072220.GA29079@chepelov.org>
-	 <1060673517.21149.7.camel@haron.namesys.com>
-	 <20030812080212.GA23206@chepelov.org>
-	 <1060676758.21147.23.camel@haron.namesys.com>
-	 <20030812094852.GB22491@chepelov.org>
-	 <1060682068.21149.40.camel@haron.namesys.com>
-	 <20030812114407.GB31702@chepelov.org>
+From: Locke <locke@oceanfree.net>
+Subject: Filesystem corruption
+Date: Thu, 14 Aug 2003 00:05:28 +0800
+Message-ID: <3F3A61C8.4060504@oceanfree.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-15302-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+ boundary="------------070108010801020502040705"
+Return-path: <reiserfs-list-return-15303-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030812114407.GB31702@chepelov.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Cyrille Chepelov <cyrille@chepelov.org>
-Cc: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Tue, 2003-08-12 at 15:44, Cyrille Chepelov wrote:
-> Le Tue, Aug 12, 2003, =E0 01:54:28PM +0400, Yury Umanets a =E9crit:
-> > > It can be debated whether --with-libaal=3D/foo/bar should imply
-> > > LD_LIBRARY_PATH=3D$LD_LIBRARY_PATH:/foo/bar/lib or not (it doesn't se=
-em it
->=20
-> > I guess, it is not the job for configure script, but rather for
-> > user/administrator. At least I don't even one project that do so :)
->=20
-> fair enough
->=20
-> I successfully built 2.6.0-test3 with yesterday's patch. I don't know when
-> I'll be able to give it a spin, but at least here's some partial=20
-> progress/success feedback, FWIW.
-> =09
-> 	-- Cyrille
+--------------070108010801020502040705
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Thanks Cyrille.
---=20
-We're flying high, we're watching the world passes by...
+  Hi,
+
+    I've got a problem with reiserfs today while I was trying to access 
+my network files. I tried browsing my network drive and found out that 
+some of my directories were empty. So I unmounted the partition and ran 
+reiserfsck(3.6.8), it said I had 4 corruptions and told me to run 
+--rebuild-tree. And so I did and it recovered only 7.8GB of 47.8GB of 
+the files. I'm guessing the reason why it recovered so little was 
+because that because I was running a 7.8GB+40GB LVM and the 40GB 
+pyhsical volume wasn't working and left it with only 7.8GB.
+
+Here's the specs of my system:   linux-2.4.21, reisfs-3.6.8, LVM-1.0.7 
+(7.8GB + 40GB)
+Partitions:
+    /dev/hda (ext2)    /   3.2GB
+    /dev/hdb+/dev/hdg => /dev/main_vg/storage_lv(reiserfs)   
+/mnt/storage   47.8GB
+
+Here's some output of dmesg at the point where I discovered the problem:
+
+is_tree_node: node level 0 does not match to the expected one 1
+vs-5150: search_by_key: invalid format found in block 8838461. Fsck?
+is_tree_node: node level 0 does not match to the expected one 1
+vs-5150: search_by_key: invalid format found in block 8838461. Fsck?
+is_tree_node: node level 0 does not match to the expected one 1
+vs-5150: search_by_key: invalid format found in block 11534730. Fsck?
+is_tree_node: node level 0 does not match to the expected one 1
+vs-5150: search_by_key: invalid format found in block 8838461. Fsck?
+is_tree_node: node level 0 does not match to the expected one 1
+vs-5150: search_by_key: invalid format found in block 8838461. Fsck?
+is_tree_node: node level 0 does not match to the expected one 1
+vs-5150: search_by_key: invalid format found in block 3412777. Fsck?
+is_tree_node: node level 0 does not match to the expected one 1
+vs-5150: search_by_key: invalid format found in block 11534730. Fsck?
+is_tree_node: node level 0 does not match to the expected one 1
+vs-5150: search_by_key: invalid format found in block 11604101. Fsck?
+is_tree_node: node level 0 does not match to the expected one 1
+vs-5150: search_by_key: invalid format found in block 11534730. Fsck?
+
+reiserfs: checking transaction log (device 3a:00) ...
+is_tree_node: node level 32769 does not match to the expected one 1
+vs-5150: search_by_key: invalid format found in block 5505049. Fsck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat 
+data of [1 2 0x0 SD]
+Using r5 hash to sort names
+is_tree_node: node level 0 does not match to the expected one 2
+vs-5150: search_by_key: invalid format found in block 2412772. Fsck?
+vs-2140: finish_unfinished: search_by_key returned -2
+ReiserFS version 3.6.25
+reiserfs: checking transaction log (device 3a:00) ...
+is_leaf: free space seems wrong: level=1, nr_items=1, free_space=778 rdkey
+vs-5150: search_by_key: invalid format found in block 5505049. Fsck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat 
+data of [1 2 0x0 SD]
+Using r5 hash to sort names
+is_tree_node: node level 0 does not match to the expected one 2
+vs-5150: search_by_key: invalid format found in block 2412772. Fsck?
+vs-2140: finish_unfinished: search_by_key returned -2
+ReiserFS version 3.6.25
+VFS: Can't find ext3 filesystem on dev lvm(58,0).
+reiserfs: checking transaction log (device 3a:00) ...
+is_leaf: free space seems wrong: level=1, nr_items=1, free_space=778 rdkey
+vs-5150: search_by_key: invalid format found in block 5505049. Fsck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat 
+data of [1 2 0x0 SD]
+Using r5 hash to sort names
+is_tree_node: node level 0 does not match to the expected one 2
+vs-5150: search_by_key: invalid format found in block 2412772. Fsck?
+vs-2140: finish_unfinished: search_by_key returned -2
+ReiserFS version 3.6.25
+
+And also when rebooting after the corruption I saw several error 
+messages for all drives, hda, hdb and hdg
+**
+
+hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+hda: dma_intr: error=0x84 { DriveStatusError BadCRC }
+hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+hda: dma_intr: error=0x84 { DriveStatusError BadCRC }
+
+**The messages are copied from the FAQ in namesys.com because they 
+looked similar so I'm not sure if they're the exactly same.
+
+I tried loading a previous kernel(2.4.20) and the error messages were 
+gone, this was probably because of some errors I made when configuring 
+the 2.4.21 kernel. It was the first time I've compiled the kernel 
+without thoroughly checking the configurations and now I suffer the 
+consequences.
+
+Is there anything I can try to recover more data?
+
+Regards,
+Kent
+
+--------------070108010801020502040705--
 
