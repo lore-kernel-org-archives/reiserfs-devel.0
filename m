@@ -1,61 +1,67 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
 Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Tue, 30 Mar 2004 15:35:46 +0300
-Message-ID: <20040330123546.GA5229@nysv.org>
-References: <1080620527.31924.117.camel@localhost.localdomain>
+Date: Tue, 30 Mar 2004 15:13:01 +0200
+Message-ID: <200403301513.01851.christian.mayrhuber@gmx.net>
+References: <20040330123546.GA5229@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17591-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17592-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20040330123546.GA5229@nysv.org>
 Content-Disposition: inline
-In-Reply-To: <1080620527.31924.117.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Scott Young wrote:
+What about introducing an separator for meta information, like
+it is / for directories.
+This separator could be turned into a mount option to avoid
+breakage of some apps.
 
->/home//attribute would be the an attribute on the home directory. 
-...
->Could ..metas be renamed to a null string to get this effect on
->directories?
+My suggestion is "@" to become the default separator, because XPath uses
+it for attributes and it is THE accepted standard so far.
+Filesystems are just a new domain.
 
-This sounds like the way it used to be, before the metas/ directory.
-Please also note that it's metas/ officially now, not ..metas/
+On Tuesday 30 March 2004 14:35, Markus TXrnqvist wrote:
+> Scott Young wrote:
+> >/home//attribute would be the an attribute on the home directory.
+"/home@attribute" would be my favour notion in this regard.
+A listing of all attributes could be obtained by the notion "/home@*"
 
-..metas/ is through Piotr Neuman's patch, which has gained some
-popularity, but it's not official yet.
+I'm not sure if this naming clashes with the reiser4
+"A directory is a file" notion.
+It won't clash if it is impossible to have
+# ls -l 
+drwxr-xr-x   11 foo     foo           712 2004-01-21 14:45 bla
+-rw-r--r--   11 foo     foo           712 2004-01-21 14:45 bla
+on reiser4.
 
-I think a double slash is a terrible idea. They are, probably by some
-standard, interpreted as a single one in most cases.
-As good as Reiser4 already is, it also poses threats to standards
-and even some solid security issues with reserving names from the
-filesystem.[1]
+>
+> One concise directory is definitely the best way and I still stand
+> behind ..metas/ because it's most likely not to be clashed. Some
+> already pointed out problems with @ and .metas and such.
+the clash of "@" does only occur if the notion is "/home/@", but not
+with "/home@".
+With the separator being a mount option, this can be turned into 
+a non issue.
+The separator must turn into an illegal char for filenames, which is not
+too limiting, I guess.
 
-One concise directory is definitely the best way and I still stand
-behind ..metas/ because it's most likely not to be clashed. Some
-already pointed out problems with @ and .metas and such.
+> It's not good to think about lexicographic ordering, btw, because
+> readdir must not find this directory. Consider the following
+> times a million when taking a backup:
+> mjt@shrike:~/..metas/plugin/crypto/..metas/plugin/crypto/..metas$
+readdir must not see names with are denoted as meta information.
 
-It's not good to think about lexicographic ordering, btw, because
-readdir must not find this directory. Consider the following
-times a million when taking a backup:
-mjt@shrike:~/..metas/plugin/crypto/..metas/plugin/crypto/..metas$
+With the @ separator access to plugin/crypto/ would turn into
+mjt@shrike:~@plugin/crypto/
 
-[1]
-Will there be a plugin suitable for for example html documentroots,
-that disables the meta directory from its children?
-It is unfair, to say the least, to have future users rewrite their
-stupid php upload scripts, and every writing script for that matter,
-to check that they don't conflict with metas.
-
-It is also a good idea to implement a plugin like this if many people
-will take up the habit of renaming their metas/ directories; one
-server may have it by another name and that breaks hard-coded checks
-in server software.
+PS: I don't know if the introduction of a new separator for meta information 
+breaks the vfs standard in any way.
 
 -- 
-mjt
+lg, Chris
 
