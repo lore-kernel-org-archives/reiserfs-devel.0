@@ -1,41 +1,49 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
-Date: Wed, 19 Feb 2003 01:18:21 +0300
-Message-ID: <3E52B12D.2040009@namesys.com>
-References: <3E4AA902.86F15815@interface-ag.com> <200302151600.35675.vitaly@namesys.com> <3E528EA1.60604@namesys.com> <200302182305.08021.vitaly@namesys.com>
+Date: Wed, 19 Feb 2003 01:23:20 +0300
+Message-ID: <3E52B258.80509@namesys.com>
+References: <3E4AA902.86F15815@interface-ag.com> <b2h7dc$ipp$1@satsuki.furryterror.org> <3E4C392A.2070909@namesys.com> <20030214111829.A21849@namesys.com> <20030214031316.L22930@schatzie.adilger.int> <20030214131746.H10351@namesys.com> <20030214035034.M22930@schatzie.adilger.int> <3E4CF04A.2030904@namesys.com> <20030214120630.O22930@schatzie.adilger.int> <3E4D4129.8040103@namesys.com>            <20030215153710.A1723@schatzie.adilger.int> <200302182117.h1ILHHhC000658@turing-police.cc.vt.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12830-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12831-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200302182305.08021.vitaly@namesys.com>
+In-Reply-To: <200302182117.h1ILHHhC000658@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Vitaly Fertman <vitaly@namesys.com>
+To: Valdis.Kletnieks@vt.edu
 Cc: Andreas Dilger <adilger@clusterfs.com>, Oleg Drokin <green@namesys.com>, Zygo Blaxell <eazgwmir@umail.furryterror.org>, reiserfs-list@namesys.com
 
-Vitaly Fertman wrote:
+Valdis.Kletnieks@vt.edu wrote:
 
->>>If fix-fixable finds fatal corruptions it sets FS_FATAL what means that
->>>the second run of fix-fixable will not help to avoid another fsck run at
->>>the next boot.
->>>      
->>>
->>Can you repeat what you said (more clearly).
->>    
->>
->
->If fs was not fixed, you do not want to have another run of fsck at 
->the next boot. you already know that there are fatal corruptions and
->you need to run rebuild-tree manually. So a special flag saying that 
->would be helpful.
+>On Sat, 15 Feb 2003 15:37:10 MST, Andreas Dilger said:
 >
 >  
 >
-ok, along with special messages clearly explaining it to the user at 
-each boot, yes?
+>>I guess the shortcoming in the ext2 case is that it counts mounts and
+>>not crashes.  If it were counting the number of times the filesystem
+>>was uncleanly shut down instead of normal shutdowns, would that be more
+>>acceptable?  The reason I'm still interested in crashes, even if they
+>>are not filesystem-related crashes, is because there had to be _something_
+>>which caused a crash (bad code, bad hardware, whatever), and once you have
+>>any driver corrupting memory the chance that it is also corrupting filesystem
+>>memory exists.
+>>    
+>>
+>
+>ext2/3 *intentionally* counts mounts rather than crashes.
+>
+>It's possible for a filesystem to get non-noticably corrupted without
+>a crash (remember the Linux 2.4.11 mangle-on-shutdown bug?)  - it's stuff
+>like that (and slowly failing media) that it tries to catch by counting
+>mounts.
+>  
+>
+Making users who often reboot to windows run fsck more often because of 
+it is not very clever, in fact, it is just annoying, and I remember it 
+well from my old ext2 days.
 
 -- 
 Hans
