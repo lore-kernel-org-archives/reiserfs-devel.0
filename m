@@ -1,20 +1,36 @@
-From: SteelRat <steelrat@almakor.ru>
-Subject: Quota
-Date: Wed, 25 Jun 2003 18:22:00 +0800
-Message-ID: <59107826456.20030625182200@almakor.ru>
-Reply-To: SteelRat <steelrat@almakor.ru>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Quota
+Date: Wed, 25 Jun 2003 14:28:25 +0400
+Message-ID: <20030625102825.GA24561@namesys.com>
+References: <59107826456.20030625182200@almakor.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-14693-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14694-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <59107826456.20030625182200@almakor.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="koi8-r"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: SteelRat <steelrat@almakor.ru>
+Cc: reiserfs-list@namesys.com
 
-SGkuCkNhbiB5b3UgaGVscCBtZS4KSG93IGNhbiBpIHNldCBxdW90YXMgdG8gcmVpc2VyZnM/CgoK
-CvrE0sHX09TX1crUxSwgcmVpc2VyZnMtbGlzdC4KCvDPxNPLwdbJ1MUg0MzaCuvByyDSxcHMydrP
-18HU2CDL18/U2SDOwSByZWlzZXJmcz8KCgotLSAK8yDV18HWxc7Jxc0sCiBTdGVlbFJhdCAgICAg
-ICAgICAgICAgICAgICAgICAgICAgbWFpbHRvOnN0ZWVscmF0QGFsbWFrb3IucnUKCgoK
+Hello!
+
+On Wed, Jun 25, 2003 at 06:22:00PM +0800, SteelRat wrote:
+
+> Can you help me.
+> How can i set quotas to reiserfs?
+
+Patches for recent kernels (2.4.21+) are available at
+ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.21
+Patches for 2.4.20 are available at
+ftp://namesys.com/pub/reiserfs-for-2.4/testing/quota-2.4.20
+
+Apply the patches, recompile your kernel with quota support, upgrade your quota
+tools if needed and follow directions from Quota-HOWTO.
+
+Bye,
+    Oleg
