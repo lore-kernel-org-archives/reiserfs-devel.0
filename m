@@ -1,74 +1,54 @@
-From: Voicu Liviu <liviu.voicu@huji.ac.il>
-Subject: Re: ReiserFS causes CPU high usage?!
-Date: Fri, 28 Feb 2003 14:03:39 +0200
-Message-ID: <200302281403.43093.liviu.voicu@huji.ac.il>
-References: <200302280011.14488.liviu.voicu@huji.ac.il> <20030228105145.C1234@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Getopt improvements
+Date: Fri, 28 Feb 2003 15:04:26 +0300
+Message-ID: <3E5F504A.6010902@namesys.com>
+References: <3E5D26A2.7010804@suse.com> <20030227092551.C28643@namesys.com> <3E5E312C.50406@suse.com> <3E5E730C.7030804@namesys.com> <3E5E84B2.90708@suse.com> <3E5E92BA.4090307@namesys.com> <20030228100147.A878@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12970-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12971-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030228105145.C1234@namesys.com>
-Content-Description: clearsigned data
-Content-Disposition: inline
+In-Reply-To: <20030228100147.A878@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: Text/Plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Oleg Drokin <green@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Oleg Drokin <green@namesys.com>
+Cc: Jeff Mahoney <jeffm@suse.com>, Reiserfs List <reiserfs-list@namesys.com>
 
-=2D----BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Oleg Drokin wrote:
 
-On Friday 28 February 2003 09:51, Oleg Drokin wrote:
-> Hello!
+>Hello!
 >
-> On Fri, Feb 28, 2003 at 12:11:14AM +0200, Voicu Liviu wrote:
-> > Any clue what is going on?
-> > Maybe ReiserFS uses the cpu harder?
+>On Fri, Feb 28, 2003 at 01:35:38AM +0300, Hans Reiser wrote:
+>  
 >
-> reiserfs is using more CPU than ext2/ext3. It's maintaining its metadata =
-in
-> balanced tree. Each tree update often requires shifting of some of the da=
-ta
-> between or inside of tree nodes. That's where CPU time is going.
-
-So, you will not suggest me convert my Pentium2 300 Mhz from ext3 to Reiser=
-=46S=20
-will you?
-I really wanna try it but I am afraid that the FS will kill my CPU.
-
-> > I have to fix the CPU usage icon_sad.gif I makes me crazy...simple emer=
-ge
-> > loads the CPU to 90 ~ 95%
+>>>   For the simple cases (which also happen to be all we have right 
+>>>now), yes, I think that my implementation is cleaner. It allows the 
+>>>simple use of mutually exclusive options, through the "no" prefix, and 
+>>>clearing of the other bits in a multivalue option.  For now, that's 
+>>>all we need - and it's a valid argument for using my code. However, 
+>>>what I like about Oleg's implementation is that if you have an option 
+>>>that excludes other options (even when it's not multivalue), it can 
+>>>clear those bits as well.
+>>>      
+>>>
+>>It clears them without failing, yes?  Not sure I like that.
+>>    
+>>
 >
-> Make sure you do not have "CONFIG_REISERFS_CHECK" enabled in you kernel
-> config, as this enables lots of extra checks in reiserfs code that consume
-> even more CPU.
+>Hm, why should it fail?
+>
+>Bye,
+>    Oleg
+>
+>
+>  
+>
+Incompatible options should fail as they represent error.  Feel free to 
+argue with that.
 
-Did not checked this in kernel...will you suggest me try vanilla kernel=20
-(2.4.20 from kernel.org) without all those patches I have applyed? Maybe th=
-is=20
-will help or not?
+-- 
+Hans
 
-Regards
-Liviu
-
-> Bye,
->     Oleg
-
-=2D --=20
-Voicu Liviu
-
-Hebrew University of Jerusalem
-Rothberg International School
-Assistant Programmer & Network Support
-=2D----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.1 (GNU/Linux)
-
-iD8DBQE+X1AeczD4Ii52ssMRAjViAJ4g4O+dIDJ0GAAED/tU09RWQeDwYACeLaJB
-4Jy34dAjEeP4whfw+5rFR/g=3D
-=3Dpo/F
-=2D----END PGP SIGNATURE-----
 
