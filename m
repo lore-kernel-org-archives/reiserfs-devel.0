@@ -1,50 +1,33 @@
-From: Hans Reiser <reiser@namesys.com>
+From: George Beshers <gbeshers@comcast.net>
 Subject: Re: iozone reality check: was zam, please discuss this
-Date: Wed, 23 Jun 2004 22:13:04 -0700
-Message-ID: <40DA62E0.2050803@namesys.com>
-References: <40D8EB0D.6050109@namesys.com> <20040623063049.GA5080@backtop.namesys.com> <40DA58BC.1060203@namesys.com> <40D9C5F5.7010605@comcast.net>
+Date: Wed, 23 Jun 2004 14:36:48 -0400
+Message-ID: <40D9CDC0.30503@comcast.net>
+References: <40D8EB0D.6050109@namesys.com> <20040623063049.GA5080@backtop.namesys.com> <40DA58BC.1060203@namesys.com> <40D9C5F5.7010605@comcast.net> <40DA62E0.2050803@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19311-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19312-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40D9C5F5.7010605@comcast.net>
+In-Reply-To: <40DA62E0.2050803@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: George Beshers <gbeshers@comcast.net>
+To: Hans Reiser <reiser@namesys.com>
 Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-George Beshers wrote:
+
+
+Hans Reiser wrote:
 
 >
-> Caveat: I have not looked at the iozone test so this is purely in 
-> response
-> to Han's description.
+> When you say lots, do you mean close to or more than physical ram?
 >
-> The examples I know of are apps that allocate an mmap'd area for garbage
-> collection: ocaml, sml-nj, and I believe ghc (Haskell) do this.  While 
-> these
-> systems usually have generational GCs at some point major collections
-> happen and then I *believe* that you will see lots of dirty pages.
->
-> Note: the 'believe' is based on some experiments on an SGI ccNuma
-> system with profiling tools---I was looking at local access issues and
-> noticed the pattern of changes to flag objects as "marked" in a 
-> mark/sweep
-> collector.  I then tried ocaml as an experiment and saw something
-> similar.
->
->
-> I have not look at Boehm conservative collector in some time, but if
-> memory serves me correctly it uses separate arrays to hold the bits;
-> using mmap is an option---I don't know if it is in common use.
->
-> Some 18-20 months ago I spent some time looking at the Java GC
-> but I don't remember its using mmap() and I no longer have the source
-> available.
->
-> George Besher
+My recollection is that it was on the order of 70% of physical ram; there
+was significant other activity on the system so it was getting flushed to
+disk some of the time, but I was not actually measuring that.  I was looking
+at cache-coherency across processor nodes and noticed that most of
+the pages in the mmap'd area were touched (modified).
 
-When you say lots, do you mean close to or more than physical ram?
+
+
