@@ -1,77 +1,81 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: Consistent corruptions with 2.6.3/Reiser4/LATEST
-Date: Tue, 02 Mar 2004 11:32:20 +0300
-Message-ID: <1078216339.1634.73.camel@tribesman.namesys.com>
-References: <32862.68.10.246.123.1077992082.squirrel@webmail4.pair.com>
+From: Jean-Michel Bonnefond <bon@teamlog.Fr>
+Subject: Reiserfs corruption problem.
+Date: Tue, 2 Mar 2004 10:35:44 +0100
+Message-ID: <200403021035.45201.bon@teamlog.Fr>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17001-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17002-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <32862.68.10.246.123.1077992082.squirrel@webmail4.pair.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: bobvin@pillars.net
-Cc: reiserfs-list@namesys.com
-
-Hello
-
-On Sat, 2004-02-28 at 21:14, Bob Vincent wrote:
-> I'm seeing consistent data corruption with Reiser4 on linux 2.6.3 with
-> all patches from http://thebsh.namesys.com/snapshots/LATEST/ applied.
-> 
-> Finally got a debugging trace uploaded to my website; you can find it
-> at:
-> 
->         http://pillars.net/debugfs.reiser4.-P.dev.hda1.bz2
-> 
-> Other files which you may find relevant:
-> 
->         http://pillars.net/lspci.-v.bz2
->         http://pillars.net/proc.config.gz
-> 
-> The problem seems to appear when I boot into a reiser4 filesystem.
-> 
-> As long as my boot/root partition is reiserfs or ext2, I can create,
-> mount, read, write, and unmount reiser4 filesystems with no problem.
-> 
-> But when I set that same reiser4 filesystem as my root partition,
-> either the system hangs on bootup, or critical files become unreadable
-> with the warning from /fs/reiser4/plugin/file/file.c tagged "vs-1297",
-> "File (ino xxxxxx) has unknown state: 3".
-> 
-
-Yes, thanks, we are working on a fix for this
-
-> Running "debugfs.reiser4 --build-fs /dev/hda1" produces multiple
-> warnings as discussed before:
-> 
->         Warning: Can't find stat data extension plugin by its id 0x4.
-> 
-> I am curious about other errors it sometimes reports, such as:
-> 
->         Error: failed to open the object [object-id]
-> 
-> or:
-> 
->         Error: the object [object-id] (reg40), node (node-id), item
->         (76): the found item [item-id] of the plugin
->         (extent40) does not match the detected tail policy (smart).
->         Converted.
-> 
-> By the way, in order to get the patches in /snapshots/LATEST/extra/ to
-> compile, I had to resolve two patch rejects and also add a
-> 
->         #include <asm/current.h>
-> 
-> to the file /usr/src/linux/include/sched.h.
-
-You might want to follow instructions from
-http://thebsh.namesys.com/snapshots/2004.02.25/READ.ME
+To: reiserfs-list@namesys.com
 
 
+Hi all,
+
+I have a 40Go ide disk that is mounted with one big partition containing all 
+my clients datas on a linux debian woody. I was working as usual on the 
+server when I suddenly couldn't no more list the contents of the root mount 
+point (/part) but could continue working and looking into the files all under 
+the root, (/part/distrib) and can cd into all the sub-directories. I just 
+can't access to the root partition contents with an error message that I 
+unfortunately haven't keep.
+
+I decide to reboot the server in order to plug another ide disk to copy all 
+data to this disk but, as soon as I umount the disk, I was unable to remount 
+it. It replies me :
+mount: is not a repertory (traduction of the french error message).
+
+The reiserfsck do reply :
+
+root@interne:~# reiserfsck /dev/hdc1
+<--------reiserfsck 3.6.4, 2002-------->
+
+Will read-only check consistency of the filesystem on /dev/hdc1
+Will put log info to 'stdout'
+
+Do you want to run this program?[N/Yes] (note need to type Yes if you do):Yes
+
+******************************************************
+* Warning: The dma on your hard drive is turned off. *
+* This may really slow down the fsck process.        *
+******************************************************
+###########
+reiserfsck --check started at Tue Mar  1 15:19:46 2004
+###########
+Replaying journal..
+0 transactions replayed
+Checking internal tree../  1 (of   2)bad_internal: vpf-10320: block 8384, 
+items 5 and 6: The wrong order of items: [2 2310 0x52a2001 IND (1)], [0 2311 
+0x69db001 IND (1)]
+ the problem in the internal node occured (8384), whole subtree is skipped
+finished
+Comparing bitmaps..vpf-10640: The on-disk and the correct bitmaps differs.
+Bad nodes were found, Semantic pass skipped
+1 found corruptions can be fixed only during --rebuild-tree
+###########
+reiserfsck finished at Tue Mar  2 10:20:00 2004
+###########
+root@interne:~#
+
+So I does a dd_rescue of the disk to another one wich hadn't notice any 
+hardware problem, all the physical disk can be acceseed well. 
+and then I launch a --rebuild-tree.
+
+The first stage seem to pass correctly but the second pass loop infinitely on 
+message :
+
+do_pass_2: The block (level=28869, nr_item=905, free_space=49895 rdkey), 
+marked as a leaf on the first two passe, is not a leaf! Will be skipped.
 
 
+So do you have any suggestion on what I can do now and how I can acces again 
+to my datas, even temporarily to copy them eslewhere? 
+
+Thanks for your help.
+Jean-Michel.
 
