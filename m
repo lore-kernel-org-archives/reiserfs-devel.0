@@ -1,50 +1,30 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: reiserfs logging patches udpated
-Date: Thu, 25 Mar 2004 02:14:28 +0100
-Message-ID: <200403250214.28736.Dieter.Nuetzel@hamburg.de>
-References: <1080149399.14737.77.camel@watt.suse.com> <200403250147.54246.bernd-schubert@web.de> <1080176455.14737.140.camel@watt.suse.com>
+From: Tom Vier <tmv@comcast.net>
+Subject: Re: secure delete?
+Date: Wed, 24 Mar 2004 22:16:16 -0500
+Message-ID: <20040325031616.GA8473@zero>
+References: <1079691239.5767.7.camel@pear.st-and.ac.uk> <405AD31A.7070304@mweb.co.za> <20040319110748.GA30491@chihiro.cern.ch> <405AD9B5.80102@namesys.com> <405F94DD.80004@botz.org> <405FD7C2.5030605@namesys.com> <200403241820.i2OIKlDG008088@turing-police.cc.vt.edu>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-17453-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17455-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1080176455.14737.140.camel@watt.suse.com>
 Content-Disposition: inline
+In-Reply-To: <200403241820.i2OIKlDG008088@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
-Cc: Chris Mason <mason@suse.com>, Bernd Schubert <bernd-schubert@web.de>, Andrew Morton <akpm@osdl.org>
 
-Am Donnerstag, 25. M=E4rz 2004 02:00 schrieb Chris Mason:
-> On Wed, 2004-03-24 at 19:47, Bernd Schubert wrote:
-> > -----BEGIN PGP SIGNED MESSAGE-----
-> > Hash: SHA1
-> >
-> > > It does, but the code has been in testing -suse and on the reiserfs
-> > > list.  This dooesn't mean data=3Dordered is perfect, but it's not qui=
-te
-> > > day one either.  I can switch the default back, but I'd rather have a
-> > > trial by fire ;-)
-> >
-> > Oh please not, just have a look at german newsgroups, there are real
-> > flamewars about the stability of reiserfs. Everytime someone has a disk
-> > problem and a reiserfs partion is affected by it, then there are more
-> > than a dozen answers that its the fault of reiserfs. PLEASE, don't prove
-> > them right.
->
-> The code just won't get tested if it isn't turned on.  I think I've got
-> all the major issues fixed, and I'm sending to -mm to try and prove
-> that.  When we're all happy with the stability of the patches, they can
-> go to -linus.
->
-> But there are just as many threads about reiserfs not having
-> data=3Dordered support.  It's an important feature that has been out of
-> mainline for far too long.
+On Wed, Mar 24, 2004 at 01:20:47PM -0500, Valdis.Kletnieks@vt.edu wrote:
+> That's our official government recommendation for what's sufficient when
+> we're throwing away stuff that the Other Guys might actually do this to.
+> I have to assume that if the DoD or RCMP thought this wasn't sufficient
+> to protect *our* secrets, they'd have a stricter standard.
 
-=46ull Ack!  --- And works for ages, even in 2.4 (SuSE).
+they do, complete destruction. that's what they do with secret stuff.
 
-Thanks for all _your_ effort!
-
-=2DDieter
+-- 
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0x15741ECE
