@@ -1,40 +1,90 @@
-From: "David Dabbs" <david@dabbs.net>
-Subject: RE: Was able to reproduce "cp: cannot stat file.x: Input/output error"
-Date: Tue, 10 Aug 2004 17:05:15 -0500
-Message-ID: <20040810221319.F1A0D15C0D@mail03.powweb.com>
-References: <411944EF.7000504@namesys.com>
+From: Sonny Rao <sonny@burdell.org>
+Subject: Re: Odd Block allocation behavior on Reiser3
+Date: Tue, 10 Aug 2004 19:00:37 -0400
+Message-ID: <20040810230037.GA72782@kevlar.burdell.org>
+References: <20040809201939.GA55683@kevlar.burdell.org> <1092083451.10651.218.camel@watt.suse.com> <20040809220459.GA57121@kevlar.burdell.org> <41187657.7030709@namesys.com> <20040810154514.GA67591@kevlar.burdell.org> <41190B5A.7070503@namesys.com> <1092162318.10651.365.camel@watt.suse.com> <411924A3.8010305@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20163-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20164-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <411944EF.7000504@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <411924A3.8010305@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: 'Hans Reiser' <reiser@namesys.com>
-Cc: 'Alex Zarochentsev' <zam@namesys.com>, 'ReiserFS List' <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-
-
-> -----Original Message-----
-> From: Hans Reiser [mailto:reiser@namesys.com]
-> Sent: Tuesday, August 10, 2004 4:58 PM
-> To: David Dabbs
-> Cc: 'Alex Zarochentsev'
-> Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output
-> error"
+On Tue, Aug 10, 2004 at 12:40:19PM -0700, Hans Reiser wrote:
+> Chris Mason wrote:
 > 
-> Do you report the time spent on wait as a separate metric or?
+> >On Tue, 2004-08-10 at 13:52, Hans Reiser wrote:
+> > 
+> >
+> >>Sonny Rao wrote:
+> >>
+> >>   
+> >>
+> >>>On Tue, Aug 10, 2004 at 12:16:39AM -0700, Hans Reiser wrote:
+> >>>
+> >>>
+> >>>     
+> >>>
+> >>>>Interesting.What happens without overwrite, that is, if you write more 
+> >>>>files without deleting the old ones?
+> >>>>  
+> >>>>
+> >>>>       
+> >>>>
+> >>>Below I made 24 one gigabyte files in sequence
+> >>>All of them are similarly fragmented: 
+> >>>data # filefrag *
+> >>>datafile0: 268 extents found
+> >>>
+> >>>     
+> >>>
+> >>this could explain some reiser3 performance problems.   This is what 
+> >>happens when I spend all my time chasing funding and don't spend it 
+> >>reviewing code and benchmarks, sigh.
+> >>
+> >>Thanks for spotting this.  I would be curious if this is occuring near 
+> >>the transition between unformatted nodes and their parents, or something 
+> >>else.
+> >>   
+> >>
+> >
+> >There have been a few threads on this on reiserfs-list
+> >
+> >singer:/data # dd if=/dev/zero of=foo bs=1MB count=1000
+> >1000+0 records in
+> >1000+0 records out
+> >singer:/data # filefrag foo
+> >foo: 1 extent found
+> >
+> >The new allocator really should be doing a better job here.
+> >
+> >-chris
+> >
+> >
+> >
+> >
+> > 
+> >
+> Well, this explains why we haven't cured the problem, we can't reproduce 
+> it, yes?
 > 
-> Hans
-> 
+> We need to figure out what Sonny is doing, and maybe have elena try on 
+> yet another machine.
 
-No, there is nothing like that now and it didn't occur to me. Alex's earlier
-message proposed timing the umount, but nothing regarding the wait. There is
-(an undoc?) mongo option for EXTENDED_STATISTICS, but I think that strictly
-deals with disk fragmentation.
+As far as reproducing these results, I have been able to reproduce
+those results on another machine running an older 2.6.4 kernel using a
+simple dd command line to produce the files :
 
-david
+for i in $(seq 0 10) ; do dd if=/dev/zero of=file${i} bs=1k count=$[
+1024 * 1024 ] ; done
 
+All 11 files had 268 extents.
+
+Sonny
