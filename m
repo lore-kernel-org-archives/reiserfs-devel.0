@@ -1,81 +1,203 @@
-From: Alex Zarochentsev <zam@namesys.com>
+From: Jonathan Briggs <jbriggs@esoft.com>
 Subject: Re: Bug report: Reiser4 freezes during file copy
-Date: Wed, 18 Feb 2004 21:43:22 +0300
-Message-ID: <20040218184322.GK21098@backtop.namesys.com>
+Date: Wed, 18 Feb 2004 12:19:06 -0700
+Message-ID: <1077131946.7063.10.camel@localhost.localdomain>
 References: <1077127993.7063.6.camel@localhost.localdomain>
+	 <20040218184322.GK21098@backtop.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16835-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-ngpEmO4GDE3WQAmiIRuH"
+Return-path: <reiserfs-list-return-16836-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1077127993.7063.6.camel@localhost.localdomain>
+In-Reply-To: <20040218184322.GK21098@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jonathan Briggs <jbriggs@esoft.com>
+To: Alex Zarochentsev <zam@namesys.com>
 Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-hi,
-
-On Wed, Feb 18, 2004 at 11:13:14AM -0700, Jonathan Briggs wrote:
-> The software:
-> Linux kernel 2.6.3 with Reiser4 patch dated February 6th.
-> Compiled with gcc 3.4.0 20040129
-> (I know the GCC is still in testing, but Reiser3 works fine with it,
-> so...)
-> 
-> After I'd created a new Reiser4 filesystem, I was copying my backup
-> files onto it.  While I was doing that, it just stopped.
-
-Did you create reiser4 on a loopback or RAID/LVM device?
-
-> 
-> Here is the cp process from a process dump:
-> cp            D C83F583C     0 20232  20159                     (NOTLB)
-> c83f57b4 00200082 dd505014 c83f583c c83f58ec 00000002 00000000 00000002
->        00000002 00000002 00072f8f 972dc381 000021ec d0ffad00 d0ffaec0 c83f5f0c
->        00200292 c83f4000 d0ffad00 c010714b c83f5f14 00000001 d0ffad00 c011c620
-> Call Trace:
->  [<c010714b>] __down+0x7b/0x110
->  [<c011c620>] default_wake_function+0x0/0x20
->  [<c01f6356>] extent_size+0x96/0xa0
->  [<c0107088>] __down_failed+0x8/0xc
->  [<c01c2f9b>] .text.lock.lock+0xf/0x14
->  [<c01c90e7>] atom_wait_event+0x57/0x80
->  [<c01ea84f>] plugin_by_coord_node40+0x2f/0x40
->  [<c01d5dd8>] write_fq+0x18/0x1d0
->  [<c01c2487>] longterm_unlock_znode+0xa7/0x140
->  [<c01cc720>] write_prepped_nodes+0x50/0x60
->  [<c01cfb27>] flush_current_atom+0x757/0xbc0
->  [<c01de320>] reiser4_writepages+0x0/0xc0
->  [<c01c9d14>] flush_some_atom+0x174/0x290
->  [<c01da903>] reiser4_sync_inodes+0xb3/0x120
->  [<c0177d26>] sync_sb_inodes+0x16/0x30
->  [<c0177ed9>] writeback_inodes+0x49/0x92
->  [<c013db8e>] balance_dirty_pages_ratelimited+0x8e/0x190
->  [<c01f3e7d>] item_balance_dirty_pages+0xbd/0x190
->  [<c01f9bdd>] write_extent+0x89d/0xf10
->  [<c0206fcb>] hint_validate+0xab/0xd0
->  [<c0206739>] equal_to_rdk+0x29/0x60
->  [<c01ea84f>] plugin_by_coord_node40+0x2f/0x40
->  [<c0207d13>] write_flow+0x253/0x460
->  [<c01f9340>] write_extent+0x0/0xf10
->  [<c01c8396>] all_grabbed2free+0x36/0x40
->  [<c0208148>] write_unix_file+0x178/0x2a0
->  [<c01dd72f>] reiser4_write+0x8f/0x100
->  [<c01dd6a0>] reiser4_write+0x0/0x100
->  [<c015642a>] vfs_write+0x10a/0x150
->  [<c0156522>] sys_write+0x42/0x70
->  [<c0108249>] sysenter_past_esp+0x52/0x71
-> 
-> 
-> -- 
-> Jonathan Briggs
-> jbriggs@esoft.com
+--=-ngpEmO4GDE3WQAmiIRuH
+Content-Type: multipart/mixed; boundary="=-aFiRLmg0Gum0kC+braxw"
 
 
+--=-aFiRLmg0Gum0kC+braxw
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Alex.
+On Wed, 2004-02-18 at 11:43, Alex Zarochentsev wrote:
+> hi,
+>=20
+> On Wed, Feb 18, 2004 at 11:13:14AM -0700, Jonathan Briggs wrote:
+> > The software:
+> > Linux kernel 2.6.3 with Reiser4 patch dated February 6th.
+> > Compiled with gcc 3.4.0 20040129
+> > (I know the GCC is still in testing, but Reiser3 works fine with it,
+> > so...)
+> >=20
+> > After I'd created a new Reiser4 filesystem, I was copying my backup
+> > files onto it.  While I was doing that, it just stopped.
+>=20
+> Did you create reiser4 on a loopback or RAID/LVM device?
+
+I knew I should have included more details!  Sorry...
+Yes, it was on a MD device on top of two SCSI drives.  RAID 0.
+
+I will also attach my kernel configuration, which I meant to do earlier.
+--=20
+Jonathan Briggs
+jbriggs@esoft.com
+
+--=-aFiRLmg0Gum0kC+braxw
+Content-Disposition: attachment; filename=config.gz
+Content-Type: application/x-gzip; name=config.gz
+Content-Transfer-Encoding: base64
+
+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
+0Z95+x8I12B2C3EAAA==
+
+--=-aFiRLmg0Gum0kC+braxw--
+
+--=-ngpEmO4GDE3WQAmiIRuH
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+
+iD8DBQBAM7qpG8fHaOLTWwgRAhdpAJ9A5hvoWEFSB8205mvMyY3y6RKKpQCgmbDl
+ocXzTQCp9hwvv6bMXxb8A6A=
+=zjT7
+-----END PGP SIGNATURE-----
+
+--=-ngpEmO4GDE3WQAmiIRuH--
+
