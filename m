@@ -1,246 +1,98 @@
-From: Miguel <turtle.power@wanadoo.es>
-Subject: Re: "df -i" support
-Date: Sun, 23 May 2004 15:54:49 +0200
-Message-ID: <20040523155449.3cc9937d.turtle.power@wanadoo.es>
-References: <20040513093432.52d3d7a3.turtle.power@wanadoo.es>
-	<1084439945.14090.6209.camel@tribesman.namesys.com>
-	<20040514173227.5b0541b5.turtle.power@wanadoo.es>
-	<200405141655.i4EGtrAT007250@turing-police.cc.vt.edu>
-	<20040514194040.22389128.turtle.power@wanadoo.es>
-	<1084557009.3263.7.camel@localhost.localdomain>
+From: Levent Serinol <lserinol@gmail.com>
+Subject: mkfs.reiser4 bus error on sparc64
+Date: Mon, 24 May 2004 16:51:09 +0300
+Message-ID: <2c1942a7040524065133e61534@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="Multipart=_Sun__23_May_2004_15_54_49_+0200_c_djAXW6.K4zKOs+"
-Return-path: <reiserfs-list-return-18825-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18828-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1084557009.3263.7.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Jonathan Briggs <jbriggs@esoft.com>
-Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com, Nikita Danilov <nikita@namesys.com>
 
---Multipart=_Sun__23_May_2004_15_54_49_+0200_c_djAXW6.K4zKOs+
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: quoted-printable
+morphou reiser4progs-0.5.3 # gdb /usr/local/sbin/mkfs.reiser4
+GNU gdb 6.0
+Copyright 2003 Free Software Foundation, Inc.
+GDB is free software, covered by the GNU General Public License, and you are
+welcome to change it and/or distribute copies of it under certain conditions.
+Type "show copying" to see the conditions.
+There is absolutely no warranty for GDB.  Type "show warranty" for details.
+This GDB was configured as "sparc-unknown-linux-gnu"...Using host
+libthread_db library "/lib/libthread_db.so.1".
 
-On Fri, 14 May 2004 11:50:09 -0600
-Jonathan Briggs <jbriggs@esoft.com> wrote:
+(gdb) set args /dev/hda5
+(gdb) r
+Starting program: /usr/local/sbin/mkfs.reiser4 /dev/hda5
+/usr/local/sbin/mkfs.reiser4 0.5.3
+Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing
+governed by reiser4progs/COPYING.
 
-> On Fri, 2004-05-14 at 11:40, Miguel wrote:
-> > On Fri, 14 May 2004 12:55:53 -0400
-> > Valdis.Kletnieks@vt.edu wrote:
-> >=20
-> > > On Fri, 14 May 2004 17:32:27 +0200, Miguel said:
-> > >=20
-> > > > We are migrating our mtas from ext3 to reiserfs and the
-> > > > monitorization(a plugin) relies on the output of df -i, this
-> > > > output is very diferent between those filesystems, because
-> > > > reiserfs always return -1 as a total number of inodes.
-> > >=20
-> > > The only reason you care about df -i is because on ext[23] and
-> > > similar, it is possible to run out of inodes before you run out of
-> > > files.  Since reiserfs allocates inodes as needed, you can't run
-> > > out of them unless you run out of space - in which case your
-> > > monitoring system should be flagging that.
-> >=20
-> > No, we check this value to know how many files are in that
-> > partition (well an aproximation). I hope that this is true for
-> > ext2/3, isn't?
-> >=20
->=20
-> Would this help you?
->=20
-> # cat /proc/fs/reiserfs/md1/oidmap
->=20
-> At the end of oidmap is a line like this:
-> total:  46 [46/972] used: 176147 [exact]
->=20
-> I think the used: 176147 is pretty close to what you want.  The number
-> goes up and down when I create or remove files.  When I ran 'find /
-> -xdev | wc -l' I got 174425.  I'm not sure where the extra 1,000+
-> comes from. =20
->=20
-
-i'm tring that on a 2.6.6 kernel and those files show bad info.
-
-cat /proc/fs/reiserfs/hda7/oidmap
-.
-.
-.
-total:  166 [166/972] used: 764910 [exact]
-
-bash-2.05b$ sudo find /disk/ | wc -l
-128171
-
-
-This method is usable on 2.6.x kernels?
-
-proc info from this partition is attached.
-
-tnx
-
-> You would need to have CONFIG_REISERFS_PROC_INFO set in your kernel,
-> and of course you would need to replace md1 with whatever device you
-> were using.
-> --=20
-> Jonathan Briggs
-> jbriggs@esoft.com
->=20
+Block size 8192 will be used.
+Linux 2.6.6-mm2 is detected.
+Uuid 224dba85-fc0b-4db7-a126-5a7a6163cb0b will be used.
+Reiser4 is going to be created on /dev/hda5.
+(Yes/No): Yes
+Creating reiser4 on /dev/hda5...
+Program received signal SIGBUS, Bus error.
+0x7009aa54 in cde40_insert_units (place=0xefffdb78, hint=0xefffe050)
+at cde40.c:768
+768                     ha_set_ordering(entry, ord, pol);
+(gdb) bt full
+#0  0x7009aa54 in cde40_insert_units (place=0xefffdb78,
+hint=0xefffe050) at cde40.c:768
+        off = 17293782402568881536
+        ord = 0
+        hash = (reiser4_key_t *) 0xefffe158
+        objid = (void *) 0x4e5b0
+        oid = 10470042052
+        object = (reiser4_key_t *) 0x700e67e8
+        entry = (void *) 0x4e596
+        pol = 4
+        i = 0
+        offset = 28
+        entry_hint = (entry_hint_t *) 0xefffe100
+#1  0x700890cc in node40_modify (entity=0x50580, pos=0x35d00,
+hint=0xefffe050, modify_func=0x7009a630 <cde40_insert_units>)
+    at node40.c:631
+        ih = (void *) 0x50552
+        res = 0
+        pol = 4
+        len = 52
+        write = 8074533261320020944
+        place = {pos = {item = 0, unit = 0}, node = 0x50580, body =
+0x4e594, len = 52, flags = 0, key = {plug = 0x70105e0c,
+    body = {11529777996021891072, 0, 0, 0}, adjust = 1}, plug = 0x70106828}
+#2  0x700892ec in node40_insert (entity=0x50580, pos=0x35d00,
+hint=0xefffe050) at node40.c:655
+        ins_func = 0x50552
+(gdb)
 
 
---=20
-La resistencia es f=FAtil todos ser=E9is asimilados
 
 
---Multipart=_Sun__23_May_2004_15_54_49_+0200_c_djAXW6.K4zKOs+
-Content-Type: text/plain;
- name="reiserfsproc"
-Content-Disposition: attachment;
- filename="reiserfsproc"
-Content-Transfer-Encoding: base64
 
-LS0tLS0tLS0tLS0tLS0tLS0tLSAvcHJvYy9mcy9yZWlzZXJmcy9oZGE3L2JpdG1hcCAtLS0tLS0t
-LS0tLS0tLS0tLS0tLS0KZnJlZV9ibG9jazogMAogIHNjYW5fYml0bWFwOiAgICAgICAgICB3YWl0
-ICAgICAgICAgIGJtYXAgICAgICAgICByZXRyeSAgICAgICAgc3RvbGVuICBqb3VybmFsX2hpbnRq
-b3VybmFsX25vaGludAogICAgICAgICAgICAgIDAgICAgICAgICAgICAgIDAgICAgICAgICAgICAg
-IDAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgIDAgICAgICAgICAg
-ICAgIDAKLS0tLS0tLS0tLS0tLS0tLS0tLSAvcHJvYy9mcy9yZWlzZXJmcy9oZGE3L2pvdXJuYWwg
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tCmpwX2pvdXJuYWxfMXN0X2Jsb2NrOiAJMTgKanBfam91cm5h
-bF9kZXY6IAloZGE3WzBdCmpwX2pvdXJuYWxfc2l6ZTogCTgxOTIKanBfam91cm5hbF90cmFuc19t
-YXg6IAkxMDI0CmpwX2pvdXJuYWxfbWFnaWM6IAk3NjEyMDc5ODUKanBfam91cm5hbF9tYXhfYmF0
-Y2g6IAk5MDAKanBfam91cm5hbF9tYXhfY29tbWl0X2FnZTogCTMwCmpwX2pvdXJuYWxfbWF4X3Ry
-YW5zX2FnZTogCTAKal8xc3RfcmVzZXJ2ZWRfYmxvY2s6IAkxOApqX3N0YXRlOiAJMApqX3RyYW5z
-X2lkOiAJMTE1MzczMApqX21vdW50X2lkOiAJMTI0NQpqX3N0YXJ0OiAJMjEzMApqX2xlbjogCTAK
-al9sZW5fYWxsb2M6IAkwCmpfd2NvdW50OiAJMApqX2Jjb3VudDogCTAKal9maXJzdF91bmZsdXNo
-ZWRfb2Zmc2V0OiAJMjEyNwpqX2xhc3RfZmx1c2hfdHJhbnNfaWQ6IAkxMTUzNzI4CmpfdHJhbnNf
-c3RhcnRfdGltZTogCTAKal9saXN0X2JpdG1hcF9pbmRleDogCTIKal9tdXN0X3dhaXQ6IAkwCmpf
-bmV4dF9mdWxsX2ZsdXNoOiAJMApqX25leHRfYXN5bmNfZmx1c2g6IAkwCmpfY25vZGVfdXNlZDog
-CTEKal9jbm9kZV9mcmVlOiAJMTYzODMKCmluX2pvdXJuYWw6IAkgICAgICAgICAgIDAKaW5fam91
-cm5hbF9iaXRtYXA6IAkgICAgICAgICAgIDAKaW5fam91cm5hbF9yZXVzYWJsZTogCSAgICAgICAg
-ICAgMApsb2NrX2pvdXJuYWw6IAkgICAgICAgICAgIDQKbG9ja19qb3VybmFsX3dhaXQ6IAkgICAg
-ICAgICAgIDAKam91cm5hbF9iZWdpbjogCSAgICAgICAgICAgMgpqb3VybmFsX3JlbG9ja193cml0
-ZXJzOiAJICAgICAgICAgICAwCmpvdXJuYWxfcmVsb2NrX3djb3VudDogCSAgICAgICAgICAgMApt
-YXJrX2RpcnR5OiAJICAgICAgICAgICAxCm1hcmtfZGlydHlfYWxyZWFkeTogCSAgICAgICAgICAg
-MAptYXJrX2RpcnR5X25vdGpvdXJuYWw6IAkgICAgICAgICAgIDAKcmVzdG9yZV9wcmVwYXJlZDog
-CSAgICAgICAgICAgMApwcmVwYXJlOiAJICAgICAgICAgICAxCnByZXBhcmVfcmV0cnk6IAkgICAg
-ICAgICAgIDAKLS0tLS0tLS0tLS0tLS0tLS0tLSAvcHJvYy9mcy9yZWlzZXJmcy9oZGE3L29pZG1h
-cCAtLS0tLS0tLS0tLS0tLS0tLS0tLS0KdXNlZDogWyAxIC4uIGIxYWJmICkKZnJlZTogWyBiMWFi
-ZiAuLiBiMWFjMCApCnVzZWQ6IFsgYjFhYzAgLi4gYjFiZTAgKQpmcmVlOiBbIGIxYmUwIC4uIGIx
-YmUxICkKdXNlZDogWyBiMWJlMSAuLiBiM2Q3ZSApCmZyZWU6IFsgYjNkN2UgLi4gYjNkN2YgKQp1
-c2VkOiBbIGIzZDdmIC4uIGI2MTNmICkKZnJlZTogWyBiNjEzZiAuLiBiNjE0MCApCnVzZWQ6IFsg
-YjYxNDAgLi4gYjY1OWIgKQpmcmVlOiBbIGI2NTliIC4uIGI2NTljICkKdXNlZDogWyBiNjU5YyAu
-LiBiYTg0NiApCmZyZWU6IFsgYmE4NDYgLi4gYmE4NDcgKQp1c2VkOiBbIGJhODQ3IC4uIGJhODcx
-ICkKZnJlZTogWyBiYTg3MSAuLiBiYTg3MiApCnVzZWQ6IFsgYmE4NzIgLi4gYmFhYmUgKQpmcmVl
-OiBbIGJhYWJlIC4uIGJhYWJmICkKdXNlZDogWyBiYWFiZiAuLiBiYWFjMCApCmZyZWU6IFsgYmFh
-YzAgLi4gYmFhYzIgKQp1c2VkOiBbIGJhYWMyIC4uIGJhYWU0ICkKZnJlZTogWyBiYWFlNCAuLiBi
-YWFlNSApCnVzZWQ6IFsgYmFhZTUgLi4gYmFhZTYgKQpmcmVlOiBbIGJhYWU2IC4uIGJhYWY2ICkK
-dXNlZDogWyBiYWFmNiAuLiBiYWFmNyApCmZyZWU6IFsgYmFhZjcgLi4gYmFhZjkgKQp1c2VkOiBb
-IGJhYWY5IC4uIGJhYjBiICkKZnJlZTogWyBiYWIwYiAuLiBiYWIwYyApCnVzZWQ6IFsgYmFiMGMg
-Li4gYmFiMWMgKQpmcmVlOiBbIGJhYjFjIC4uIGJhYjFkICkKdXNlZDogWyBiYWIxZCAuLiBiYWIx
-ZiApCmZyZWU6IFsgYmFiMWYgLi4gYmFiMjIgKQp1c2VkOiBbIGJhYjIyIC4uIGJhYjIzICkKZnJl
-ZTogWyBiYWIyMyAuLiBiYWIyNCApCnVzZWQ6IFsgYmFiMjQgLi4gYmFiMjUgKQpmcmVlOiBbIGJh
-YjI1IC4uIGJhYjI3ICkKdXNlZDogWyBiYWIyNyAuLiBiYWI0MyApCmZyZWU6IFsgYmFiNDMgLi4g
-YmFiNDQgKQp1c2VkOiBbIGJhYjQ0IC4uIGJhYjRjICkKZnJlZTogWyBiYWI0YyAuLiBiYWI0ZCAp
-CnVzZWQ6IFsgYmFiNGQgLi4gYmFiODIgKQpmcmVlOiBbIGJhYjgyIC4uIGJhYjgzICkKdXNlZDog
-WyBiYWI4MyAuLiBiYWI4NCApCmZyZWU6IFsgYmFiODQgLi4gYmFiODcgKQp1c2VkOiBbIGJhYjg3
-IC4uIGJhYjg4ICkKZnJlZTogWyBiYWI4OCAuLiBiYWI4YyApCnVzZWQ6IFsgYmFiOGMgLi4gYmFi
-OGQgKQpmcmVlOiBbIGJhYjhkIC4uIGJhYmEwICkKdXNlZDogWyBiYWJhMCAuLiBiYWJhMSApCmZy
-ZWU6IFsgYmFiYTEgLi4gYmFiYTIgKQp1c2VkOiBbIGJhYmEyIC4uIGJhYmEzICkKZnJlZTogWyBi
-YWJhMyAuLiBiYWJiYiApCnVzZWQ6IFsgYmFiYmIgLi4gYmFiYmMgKQpmcmVlOiBbIGJhYmJjIC4u
-IGJhYzFhICkKdXNlZDogWyBiYWMxYSAuLiBiYWMxYiApCmZyZWU6IFsgYmFjMWIgLi4gYmFjMWMg
-KQp1c2VkOiBbIGJhYzFjIC4uIGJhYzFkICkKZnJlZTogWyBiYWMxZCAuLiBiYWMyMSApCnVzZWQ6
-IFsgYmFjMjEgLi4gYmFjMjIgKQpmcmVlOiBbIGJhYzIyIC4uIGJhYzIzICkKdXNlZDogWyBiYWMy
-MyAuLiBiYWMyNCApCmZyZWU6IFsgYmFjMjQgLi4gYmFjMjUgKQp1c2VkOiBbIGJhYzI1IC4uIGJh
-YzI2ICkKZnJlZTogWyBiYWMyNiAuLiBiYWMyNyApCnVzZWQ6IFsgYmFjMjcgLi4gYmFjMjggKQpm
-cmVlOiBbIGJhYzI4IC4uIGJhYzJiICkKdXNlZDogWyBiYWMyYiAuLiBiYWMyZCApCmZyZWU6IFsg
-YmFjMmQgLi4gYmFjMmUgKQp1c2VkOiBbIGJhYzJlIC4uIGJhYzMyICkKZnJlZTogWyBiYWMzMiAu
-LiBiYWMzNCApCnVzZWQ6IFsgYmFjMzQgLi4gYmFjMzUgKQpmcmVlOiBbIGJhYzM1IC4uIGJhYzM2
-ICkKdXNlZDogWyBiYWMzNiAuLiBiYWMzOCApCmZyZWU6IFsgYmFjMzggLi4gYmFjMzkgKQp1c2Vk
-OiBbIGJhYzM5IC4uIGJhYzcxICkKZnJlZTogWyBiYWM3MSAuLiBiYWM3YyApCnVzZWQ6IFsgYmFj
-N2MgLi4gYmFjN2QgKQpmcmVlOiBbIGJhYzdkIC4uIGJhYzdlICkKdXNlZDogWyBiYWM3ZSAuLiBi
-YWM3ZiApCmZyZWU6IFsgYmFjN2YgLi4gYmFjODAgKQp1c2VkOiBbIGJhYzgwIC4uIGJhYzgxICkK
-ZnJlZTogWyBiYWM4MSAuLiBiYWM4OCApCnVzZWQ6IFsgYmFjODggLi4gYmFjOGIgKQpmcmVlOiBb
-IGJhYzhiIC4uIGJhY2RlICkKdXNlZDogWyBiYWNkZSAuLiBiYWNkZiApCmZyZWU6IFsgYmFjZGYg
-Li4gYmFjZTcgKQp1c2VkOiBbIGJhY2U3IC4uIGJhY2U4ICkKZnJlZTogWyBiYWNlOCAuLiBiYWNl
-OSApCnVzZWQ6IFsgYmFjZTkgLi4gYmFjZWEgKQpmcmVlOiBbIGJhY2VhIC4uIGJhY2ViICkKdXNl
-ZDogWyBiYWNlYiAuLiBiYWNlYyApCmZyZWU6IFsgYmFjZWMgLi4gYmFjZWQgKQp1c2VkOiBbIGJh
-Y2VkIC4uIGJhY2VlICkKZnJlZTogWyBiYWNlZSAuLiBiYWNmMCApCnVzZWQ6IFsgYmFjZjAgLi4g
-YmFjZjUgKQpmcmVlOiBbIGJhY2Y1IC4uIGJhY2Y2ICkKdXNlZDogWyBiYWNmNiAuLiBiYWNmNyAp
-CmZyZWU6IFsgYmFjZjcgLi4gYmFjZmMgKQp1c2VkOiBbIGJhY2ZjIC4uIGJhZDAxICkKZnJlZTog
-WyBiYWQwMSAuLiBiYWQwMyApCnVzZWQ6IFsgYmFkMDMgLi4gYmFkMDQgKQpmcmVlOiBbIGJhZDA0
-IC4uIGJhZDA1ICkKdXNlZDogWyBiYWQwNSAuLiBiYWQwNiApCmZyZWU6IFsgYmFkMDYgLi4gYmFk
-MDcgKQp1c2VkOiBbIGJhZDA3IC4uIGJhZDA5ICkKZnJlZTogWyBiYWQwOSAuLiBiYWQwYSApCnVz
-ZWQ6IFsgYmFkMGEgLi4gYmFkMGIgKQpmcmVlOiBbIGJhZDBiIC4uIGJhZDBjICkKdXNlZDogWyBi
-YWQwYyAuLiBiYWQwZCApCmZyZWU6IFsgYmFkMGQgLi4gYmFkMGUgKQp1c2VkOiBbIGJhZDBlIC4u
-IGJhZDBmICkKZnJlZTogWyBiYWQwZiAuLiBiYWQxMCApCnVzZWQ6IFsgYmFkMTAgLi4gYmFkMTEg
-KQpmcmVlOiBbIGJhZDExIC4uIGJhZDEyICkKdXNlZDogWyBiYWQxMiAuLiBiYWQxMyApCmZyZWU6
-IFsgYmFkMTMgLi4gYmFkMTQgKQp1c2VkOiBbIGJhZDE0IC4uIGJhZDE1ICkKZnJlZTogWyBiYWQx
-NSAuLiBiYWQxNiApCnVzZWQ6IFsgYmFkMTYgLi4gYmFkMTcgKQpmcmVlOiBbIGJhZDE3IC4uIGJh
-ZDE4ICkKdXNlZDogWyBiYWQxOCAuLiBiYWQxOSApCmZyZWU6IFsgYmFkMTkgLi4gYmFkMWMgKQp1
-c2VkOiBbIGJhZDFjIC4uIGJhZDFkICkKZnJlZTogWyBiYWQxZCAuLiBiYWQxZSApCnVzZWQ6IFsg
-YmFkMWUgLi4gYmFkMjEgKQpmcmVlOiBbIGJhZDIxIC4uIGJhZDIyICkKdXNlZDogWyBiYWQyMiAu
-LiBiYWQyMyApCmZyZWU6IFsgYmFkMjMgLi4gYmFkMjQgKQp1c2VkOiBbIGJhZDI0IC4uIGJhZDI1
-ICkKZnJlZTogWyBiYWQyNSAuLiBiYWQyNiApCnVzZWQ6IFsgYmFkMjYgLi4gYmFkMjcgKQpmcmVl
-OiBbIGJhZDI3IC4uIGJhZDI4ICkKdXNlZDogWyBiYWQyOCAuLiBiYWQyOSApCmZyZWU6IFsgYmFk
-MjkgLi4gYmFkMmEgKQp1c2VkOiBbIGJhZDJhIC4uIGJhZDJiICkKZnJlZTogWyBiYWQyYiAuLiBi
-YWQyYyApCnVzZWQ6IFsgYmFkMmMgLi4gYmFkMmQgKQpmcmVlOiBbIGJhZDJkIC4uIGJhZDJlICkK
-dXNlZDogWyBiYWQyZSAuLiBiYWQyZiApCmZyZWU6IFsgYmFkMmYgLi4gYmFkMzAgKQp1c2VkOiBb
-IGJhZDMwIC4uIGJhZDMxICkKZnJlZTogWyBiYWQzMSAuLiBiYWQzMiApCnVzZWQ6IFsgYmFkMzIg
-Li4gYmFkMzMgKQpmcmVlOiBbIGJhZDMzIC4uIGJhZDM2ICkKdXNlZDogWyBiYWQzNiAuLiBiYWQz
-OSApCmZyZWU6IFsgYmFkMzkgLi4gYmFkM2EgKQp1c2VkOiBbIGJhZDNhIC4uIGJhZDNiICkKZnJl
-ZTogWyBiYWQzYiAuLiBiYWQzYyApCnVzZWQ6IFsgYmFkM2MgLi4gYmFkM2QgKQpmcmVlOiBbIGJh
-ZDNkIC4uIGJhZDNlICkKdXNlZDogWyBiYWQzZSAuLiBiYWQzZiApCmZyZWU6IFsgYmFkM2YgLi4g
-YmFkNDAgKQp1c2VkOiBbIGJhZDQwIC4uIGJhZDQxICkKZnJlZTogWyBiYWQ0MSAuLiBiYWQ0MiAp
-CnVzZWQ6IFsgYmFkNDIgLi4gYmFkNDMgKQpmcmVlOiBbIGJhZDQzIC4uIGJhZDQ0ICkKdXNlZDog
-WyBiYWQ0NCAuLiBiYWQ0NSApCmZyZWU6IFsgYmFkNDUgLi4gYmFkNDYgKQp1c2VkOiBbIGJhZDQ2
-IC4uIGJhZDQ3ICkKZnJlZTogWyBiYWQ0NyAuLiBiYWQ0YiApCnVzZWQ6IFsgYmFkNGIgLi4gYmFk
-NTYgKQpmcmVlOiBbIGJhZDU2IC4uIGJhZDg1ICkKdXNlZDogWyBiYWQ4NSAuLiBiYWQ4NiApCmZy
-ZWU6IFsgYmFkODYgLi4gYmFkODkgKQp1c2VkOiBbIGJhZDg5IC4uIGJhZDhhICkKZnJlZTogWyBi
-YWQ4YSAuLiBiYWQ4ZiApCnVzZWQ6IFsgYmFkOGYgLi4gYmFkOTAgKQpmcmVlOiBbIGJhZDkwIC4u
-IGZmZmZmZmZmICkKdG90YWw6IAkxNjYgWzE2Ni85NzJdIHVzZWQ6IDc2NDkxMCBbZXhhY3RdCi0t
-LS0tLS0tLS0tLS0tLS0tLS0gL3Byb2MvZnMvcmVpc2VyZnMvaGRhNy9vbi1kaXNrLXN1cGVyIC0t
-LS0tLS0tLS0tLS0tLS0tLS0tLQpibG9ja19jb3VudDogCTI5Mjk4NDYKZnJlZV9ibG9ja3M6IAky
-MTIyMTYKcm9vdF9ibG9jazogCTIwNTI0MDIKYmxvY2tzaXplOiAJNDA5NgpvaWRfbWF4c2l6ZTog
-CTk3MgpvaWRfY3Vyc2l6ZTogCTE2Ngp1bW91bnRfc3RhdGU6IAkyCm1hZ2ljOiAJIFJlSXNFcjJG
-cwpmc19zdGF0ZTogCTAKaGFzaDogCXI1CnRyZWVfaGVpZ2h0OiAJNQpibWFwX25yOiAJOTAKdmVy
-c2lvbjogCTIKZmxhZ3M6IAkxW2F0dHJzX2NsZWFyZWRdCnJlc2VydmVkX2Zvcl9qb3VybmFsOiAJ
-MAotLS0tLS0tLS0tLS0tLS0tLS0tIC9wcm9jL2ZzL3JlaXNlcmZzL2hkYTcvcGVyLWxldmVsIC0t
-LS0tLS0tLS0tLS0tLS0tLS0tLQpsZXZlbAkgICAgIGJhbGFuY2VzIFtzYms6ICByZWFkcyAgIGZz
-X2NoYW5nZWQgICByZXN0YXJ0ZWRdICAgZnJlZSBzcGFjZSAgICAgICAgaXRlbXMgICBjYW5fcmVt
-b3ZlICAgICAgICAgbG51bSAgICAgICAgIHJudW0gICAgICAgbGJ5dGVzICAgICAgIHJieXRlcyAg
-ICAgZ2V0X25laWcgZ2V0X25laWdfcmVzICBuZWVkX2xfbmVpZyAgbmVlZF9yX25laWcKMAkgICAg
-ICAgICAgICAwICAgICAgICAgICAgMiAgICAgICAgICAgIDAgICAgICAgICAgICAwICAgICAgICAg
-NDQyNCAgICAgICAgICAgMjEgICAgICAgICAgICAwICAgICAgICAgICAgMCAgICAgICAgICAgIDAg
-ICAgICAgICAgICAwICAgICAgICAgICAgMCAgICAgICAgICAgIDAgICAgICAgICAgICAwICAgICAg
-ICAgICAgMCAgICAgICAgICAgIDAKMQkgICAgICAgICAgICAwICAgICAgICAgICAgMiAgICAgICAg
-ICAgIDAgICAgICAgICAgICAwICAgICAgICAgIDY0MCAgICAgICAgICAzMTIgICAgICAgICAgICAw
-ICAgICAgICAgICAgMCAgICAgICAgICAgIDAgICAgICAgICAgICAwICAgICAgICAgICAgMCAgICAg
-ICAgICAgIDAgICAgICAgICAgICAwICAgICAgICAgICAgMCAgICAgICAgICAgIDAKMgkgICAgICAg
-ICAgICAwICAgICAgICAgICAgMiAgICAgICAgICAgIDAgICAgICAgICAgICAwICAgICAgICAgMzc4
-NCAgICAgICAgICAxODEgICAgICAgICAgICAwICAgICAgICAgICAgMCAgICAgICAgICAgIDAgICAg
-ICAgICAgICAwICAgICAgICAgICAgMCAgICAgICAgICAgIDAgICAgICAgICAgICAwICAgICAgICAg
-ICAgMCAgICAgICAgICAgIDAKMwkgICAgICAgICAgICAwICAgICAgICAgICAgMiAgICAgICAgICAg
-IDAgICAgICAgICAgICAwICAgICAgICAgODA4MCAgICAgICAgICAgIDIgICAgICAgICAgICAwICAg
-ICAgICAgICAgMCAgICAgICAgICAgIDAgICAgICAgICAgICAwICAgICAgICAgICAgMCAgICAgICAg
-ICAgIDAgICAgICAgICAgICAwICAgICAgICAgICAgMCAgICAgICAgICAgIDAKNAkgICAgICAgICAg
-ICAwICAgICAgICAgICAgMCAgICAgICAgICAgIDAgICAgICAgICAgICAwICAgICAgICAgICAgMCAg
-ICAgICAgICAgIDAgICAgICAgICAgICAwICAgICAgICAgICAgMCAgICAgICAgICAgIDAgICAgICAg
-ICAgICAwICAgICAgICAgICAgMCAgICAgICAgICAgIDAgICAgICAgICAgICAwICAgICAgICAgICAg
-MCAgICAgICAgICAgIDAKLS0tLS0tLS0tLS0tLS0tLS0tLSAvcHJvYy9mcy9yZWlzZXJmcy9oZGE3
-L3N1cGVyIC0tLS0tLS0tLS0tLS0tLS0tLS0tLQpzdGF0ZTogCVJFSVNFUkZTX1ZBTElEX0ZTCm1v
-dW50IG9wdGlvbnM6IAlCT1JERVIgU01BTExfVEFJTFMgCmdlbi4gY291bnRlcjogCTAKc19rbWFs
-bG9jczogCTAKc19kaXNrX3JlYWRzOiAJMApzX2Rpc2tfd3JpdGVzOiAJMApzX2ZpeF9ub2Rlczog
-CTAKc19kb19iYWxhbmNlOiAJMApzX3VubmVlZGVkX2xlZnRfbmVpZ2hib3I6IAkwCnNfZ29vZF9z
-ZWFyY2hfYnlfa2V5X3JlYWRhOiAJMApzX2JtYXBzOiAJMApzX2JtYXBzX3dpdGhvdXRfc2VhcmNo
-OiAJMApzX2RpcmVjdDJpbmRpcmVjdDogCTAKc19pbmRpcmVjdDJkaXJlY3Q6IAkwCgptYXhfaGFz
-aF9jb2xsaXNpb25zOiAJMApicmVhZHM6IAkwCmJyZWFkX21pc3NlczogCTAKc2VhcmNoX2J5X2tl
-eTogCTIKc2VhcmNoX2J5X2tleV9mc19jaGFuZ2VkOiAJMApzZWFyY2hfYnlfa2V5X3Jlc3RhcnRl
-ZDogCTAKaW5zZXJ0X2l0ZW1fcmVzdGFydGVkOiAJMApwYXN0ZV9pbnRvX2l0ZW1fcmVzdGFydGVk
-OiAJMApjdXRfZnJvbV9pdGVtX3Jlc3RhcnRlZDogCTAKZGVsZXRlX3NvbGlkX2l0ZW1fcmVzdGFy
-dGVkOiAJMApkZWxldGVfaXRlbV9yZXN0YXJ0ZWQ6IAkwCmxlYWtlZF9vaWQ6IAkwCmxlYXZlc19y
-ZW1vdmFibGU6IAkwCi0tLS0tLS0tLS0tLS0tLS0tLS0gL3Byb2MvZnMvcmVpc2VyZnMvaGRhNy92
-ZXJzaW9uIC0tLS0tLS0tLS0tLS0tLS0tLS0tLQozLjYgZm9ybWF0CXdpdGggY2hlY2tzIG9mZgo=
+Linux morphou 2.6.6-mm2 #6 Sat May 22 12:03:51 EEST 2004 sparc64 sun4u
+TI UltraSparc IIi (Sabre) GNU/Linux
 
---Multipart=_Sun__23_May_2004_15_54_49_+0200_c_djAXW6.K4zKOs+--
+Reading specs from /usr/lib/gcc-lib/sparc-unknown-linux-gnu/3.2.3/specs
+Configured with:
+/var/tmp/portage/gcc-3.2.3-r2/work/gcc-3.2.3/configure --prefix=/usr
+--bindir=/usr/sparc-unknown-linux-gnu/gcc-bin/3.2
+--includedir=/usr/lib/gcc-lib/sparc-unknown-linux-gnu/3.2.3/include
+--datadir=/usr/share/gcc-data/sparc-unknown-linux-gnu/3.2
+--mandir=/usr/share/gcc-data/sparc-unknown-linux-gnu/3.2/man
+--infodir=/usr/share/gcc-data/sparc-unknown-linux-gnu/3.2/info
+--enable-shared --host=sparc-unknown-linux-gnu
+--target=sparc-unknown-linux-gnu --with-system-zlib
+--enable-languages=c,c++,f77,objc --enable-threads=posix
+--enable-long-long --disable-checking --enable-cstdio=stdio
+--enable-clocale=generic --enable-__cxa_atexit
+--enable-version-specific-runtime-libs
+--with-gxx-include-dir=/usr/lib/gcc-lib/sparc-unknown-linux-gnu/3.2.3/include/g++-v3
+--with-local-prefix=/usr/local --enable-shared --enable-nls
+--without-included-gettext
+Thread model: posix
+gcc version 3.2.3 20030422 (Gentoo Linux 1.4 3.2.3-r2, propolice)
