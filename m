@@ -1,80 +1,75 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
-Date: Wed, 12 Feb 2003 13:59:04 +0300
-Message-ID: <3E4A28F8.2030506@namesys.com>
-References: <93F527C91A6ED411AFE10050040665D0049C06D5@corpusmx1.us.dg.com> <3E4A266E.2A258472@interface-ag.com>
+From: "Adam Goryachev" <mailinglists@websitemanagers.com.au>
+Subject: RE: Corrupted/unreadable journal: reiser vs. ext3
+Date: Wed, 12 Feb 2003 22:12:36 +1100
+Message-ID: <NDBBJPAGKLCMDEIEKOPBKEKHKFAA.mailinglists@websitemanagers.com.au>
+References: <3E4A2634.8020609@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12706-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12707-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E4A266E.2A258472@interface-ag.com>
+In-Reply-To: <3E4A2634.8020609@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Dirk Schenkewitz <Dirk.Schenkewitz@interface-ag.com>
-Cc: Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Dirk Schenkewitz wrote:
+> Anders Widman wrote:
+> >>If we handle the journal block error without downtime, the user will
+> >>never chuck the hard drive, and that is bad in the longterm.
+> >  But  a  user  never  knows  he  has  a media error before his system
+> >  crashes  (or  do  a surface scan), or monitor his logs very closely.
+> >  Not all users does this.
+> >
+> >  To  me  a FS should be able to handle both read and write errors and
+> >  be  able to reallocate these errors to a sane are of the media. When
+> >  this  occurs then it should be noted in the kernel log (or similar).
+> >
+> >  Then  users can run a cron job to monitor the log after exactly this
+> >  error message.
 
->Wayne,
->
->berthiaume_wayne@emc.com schrieb:
->  
->
->>     Dirk, I'd be interested in hearing from you your performance
->>experience with ext3 when it reaches 96% full.
->>    
->>
->
->Well (*shrug*), there seems to be nothing special about it. I did
->not do any timing test when such a fileysytem went full. In fact,
->becoming 100% full is not "mormal", it happens when I put stuff
->on it just to have it out of the way for some time. The filesystem
->is then used as some kind of "storage cellar".
->
->Aside from that - speed becomes noticeable (I believe, at least)
->when using 'xv' on a directory with lots of pictures, say, between
->2000 and 3000, and the thumbnails are loaded during the first access.
->This takes more than a minute (estimated, I did not look at the
->clock).
->
->Another thing is when 'xv' creates the thumbnails. A few times it
->happened that a filesystem which was rather full ran out of space
->when creating the thumbnails. (That's not critical, all you "loose"
->are some of the thumbnails, which can be recreated any time later.)
->But I don't know how/when 'xv' stores the thumbnails, I only know 
->that they are kept in memory as long as they are in use. Then linux
->itself does some buffering, so only the first access on a directory
->can make a testimony. That said, I can can only talk of my subjec-
->tive impressions, and I have not noticed any slowdown until there
->are 0 bytes left. But it is hard to tell, because the difference
->between 96% and 100% are only 320 MB on a 8 GB partition, and that
->space fills up rather fast.
->
->While you ask - what are the "amounts" of slowdown if a reiserfs
->gets more than 96% full? 
-> - Less than 4% percent? (I might not notice that.)
-> - between 4% and 8%? (I might notice, but I can live with that
->   easily. Then again, ext3 doesn't seem to have such problems.)
-> - more than 8%, maybe much more? (That might become annoying.
->   In that case I believe that ext3 is better for my purposes.)
->
->You see, I'm not an expert, I'm "just using filesystems". Please
->take the mentioned percentages as guesses - depending on the
->situation, I might not even notice 10% slowdown...
->
->Hope that answers your question - does it?
->
->Happy coding
->	dirk
->  
->
-and if you can fit more data onto reiserfs partitions than onto ext3 
-partitions?  Is it a fair comparison to compare at equal percents full?
+[SNIP]
 
--- 
-Hans
+While this is all perfectly true, there also remains the question of "If we
+*know* the media is faulty in this spot, how do we know the media isn't
+faulty in these spots?"
 
+ie, once you are on faulty hardware, you never really know what is the
+correct course of action for this specific fault.
+
+I can conceive of a few things that *might* be the right thing in various
+circumstances:
+
+A) Immediately re-mount the drive read-only, and wait for the sysadmin to
+either re-mount rw or to do some other data recovery/repair
+
+B) Immediately dis-mount the drive and wait
+
+C) OK, I tried to write to sector 1324 so lets just try each consecutive
+available sector until it doesn't return an error (possibly marking the
+sectors bad/used as we go)
+
+D) Just return an error to the application
+
+Of course, all of the above would *also* log an error message to the kernel
+log.
+
+Now, some options might be suitable if for example the head of the disk has
+crashed into the surface and hence the more you attempt to
+read/write/seek/etc the more damage you do (as opposed to immediately
+stopping all access to the disk and thereby preserving the data).
+Some options are more suitable for example you have a system which
+absolutely needs to run 20 hours/7days and it is only writing to disk as a
+informational log.
+
+Of course, it all depends on the reason the hardware error has showed it's
+ugly face, and what your individual circumstances are. Perhaps re-mapping is
+just making the corruption worse (for every write the drive gets more
+confused and scribbles in the wrong spot)...
+
+Like most things MS do, they just take the common approach and pretend that
+it will work for everyone.
+
+Just my 0.02c worth.
 
