@@ -1,118 +1,64 @@
-From: Kurt <kpalmer@advance.net>
-Subject: Filesystem Corruption
-Date: Thu, 06 Jun 2002 18:00:01 +0000
-Message-ID: <85256BD0.00659CE2.00@patapsco.com>
-Reply-To: kpalmer@advance.net
+From: Sami Farin <zi5n04xtl001@sneakemail.com>
+Subject: Re: Spew ala patapsco's lotus notes server....
+Date: Thu, 6 Jun 2002 21:30:32 +0300
+Message-ID: <20020606183032.GC7759@ruutana.ratol.fi>
+References: <85256BD0.0061CBBC.00@patapsco.com> <20020606185701.G23235@parcelfarce.linux.theplanet.co.uk>
+Reply-To: Sami Farin <zi5n04xtl001@sneakemail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- Boundary="0__=hYkomrWMjqarnOtWvgCUEtfnPjXCjFGNjXST83UOoN6lXml1uhbmVJ0N"
-Return-path: <reiserfs-list-return-10609-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10610-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
+In-Reply-To: <20020606185701.G23235@parcelfarce.linux.theplanet.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
---0__=hYkomrWMjqarnOtWvgCUEtfnPjXCjFGNjXST83UOoN6lXml1uhbmVJ0N
-Content-type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Thu, Jun 06, 2002 at 06:57:01PM +0100, Chris Dukes wrote:
+> On Thu, Jun 06, 2002 at 01:58:15PM +0000, Valdis.Kletnieks@vt.edu wrote:
+> [Spew SNEEPED]
+> 
+> Is there any chance that the mailing list engine be modified to show the
+> Received: lines that were on the email BEFORE the list processor chews
+> on the email.  It would make it a lot simpler to apply a LART the guilty 
+> part(y|ies) for the duplicate files SPEW.  Don't say it can't be done 
+> because the netdev folks did it for their list a few months ago.
 
-                                                                  
- (Embedded                                                        
- image moved   Kurt <kpalmer@advance.net>                         
- to file:      06/06/2002 02:00 PM                                
- pic08003.pcx)                                                    
-                                                                  
+FAQ.idx says:
 
+--- 8< ---
 
+9.7 Limiting `Received:'' headers in outgoing messages.
 
+  Sendmail still is being used on the majority of mail hubs. Sendmail
+  has very primitive loop detection, bouncing messages based on
+  excessive ``hopcount''.  The ``hopcount'' is determined by counting
+  ``Received:'' headers. ezmlm by default propagates ``Received:''
+  headers to facilitate message tracking. Thus, messages, especially
+  from a sublist, can have a number of ``Received:'' headers that
+  exceeds the ``hopcount'' set on poorly configured sendmail hosts.
+  Subscription confirmation requests, warning, and probe messages have
+  fewer ``Received:'' headers. Thus, a user may be able to receive
+  these, but not (some of the) list messages. Of course, the best is to
+  correct the configuration on the bouncing host, but this is often
+  under the control of neither list owner nor user.
 
+  To compensate for this problem, ezmlm-send(1) of ezmlm-idx->=0.313 by
+  default removes all ``Received:'' headers except the top one.  They
+  are still written to the archive, an can be retrieved from there using
+  the ``-getv'' command.  To cause ezmlm-send(1) to pass on all the
+  ``Received:'' headers, use the ezmlm-send(1) ``-r'' switch.
 
+--- 8< ---
 
+so try
 
+echo|mail reiserfs-list-getv.10572@namesys.com
 
- (Embedded
- image moved   Kurt <kpalmer@advance.net>
- to file:      06/06/2002 02:00 PM
- pic04883.pcx)
+HTH
 
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Kurt <kpalmer@advance.net>
- to file:      06/06/2002 02:00 PM
- pic11654.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Kurt <kpalmer@advance.net>
- to file:      06/06/2002 02:00 PM
- pic24262.pcx)
-
-
-
-
-
-
-
-
-
- (Embedded
- image moved   Kurt <kpalmer@advance.net>
- to file:      06/06/2002 02:00 PM
- pic13835.pcx)
-
-
-
-
-
-
-
-
-Hello all,
-     I currently have a system configured as follows :-
-1) LVM version 1.0.1-rc4(ish)(03/10/2001)
-2) /dev/PROJ/proj on /proj type reiserfs (rw,noatime,notail)
-3) /dev/PROJ/proj        239G  142G   97G  60% /proj
-4) 2.4.17 with reiserfs tools 3.x.0k
-5) Reiserfs compiled in (CONFIG_REISERFS_CHECK set to NO)
-6) 256 MB RAM ("sar -r" shows memory usage is not abnormal for this box)
-7)Tuns of very small files based on log processing
-I am told by my co-worker that the system unresponsive and showed reiserfs
-related errors on the console.
-Upon restart they noticed that the file
-/proj/webtrends/receive/bama/www3/access.01Jun.r.gz was unreadable by root
-(permission denied).
-I did a reiserfsck on the drive and noticed that access.01Jun.r.gz returned an
-error stating the file pointed to nowhere.
-I was unable to complete a reiserfsck --fix-fixable because of the length of
-time that this (fsck) process took since this was an unscheduled downtime.
-During the weekend i will attempt to do the fsck again, however i really
-needed to know if this problem has been observed by anyone else, and what
-steps they took to fix the problem.
--Kurt
-
-
-
---
-================================================
-Kurt Palmer                                      SysAdmin
-kpalmer@advance.net                Advance Internet
-201-459-2846
-
---0__=hYkomrWMjqarnOtWvgCUEtfnPjXCjFGNjXST83UOoN6lXml1uhbmVJ0N--
-
+-- 
+Safari - zi5n04xtl001@sneakemail.com
+"Talk is cheap. Show me the code." - Linus Torvalds
