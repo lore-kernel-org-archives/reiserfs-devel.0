@@ -1,65 +1,46 @@
-From: Linus Torvalds <torvalds@osdl.org>
-Subject: Re: [some sanity for a change] possible design issues for hybrids
-Date: Thu, 26 Aug 2004 16:57:01 -0700 (PDT)
-Message-ID: <Pine.LNX.4.58.0408261652240.2304@ppc970.osdl.org>
-References: <Pine.LNX.4.58.0408261132150.2304@ppc970.osdl.org>
- <20040826191323.GY21964@parcelfarce.linux.theplanet.co.uk>
- <20040826203228.GZ21964@parcelfarce.linux.theplanet.co.uk>
- <Pine.LNX.4.58.0408261344150.2304@ppc970.osdl.org>
- <20040826212853.GA21964@parcelfarce.linux.theplanet.co.uk>
- <Pine.LNX.4.58.0408261436480.2304@ppc970.osdl.org>
- <20040826223625.GB21964@parcelfarce.linux.theplanet.co.uk>
- <Pine.LNX.4.58.0408261538030.2304@ppc970.osdl.org>
- <20040826225308.GC21964@parcelfarce.linux.theplanet.co.uk>
- <Pine.LNX.4.58.0408261619230.2304@ppc970.osdl.org>
- <20040826234048.GD21964@parcelfarce.linux.theplanet.co.uk>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 26 Aug 2004 16:59:37 -0700
+Message-ID: <412E7969.8080109@namesys.com>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1939276887.20040826114028@tnonline.net> <20040826024956.08b66b46.akpm@osdl.org> <839984491.20040826122025@tnonline.net> <20040826032457.21377e94.akpm@osdl.org> <742303812.20040826125114@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20856-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20857-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826234048.GD21964@parcelfarce.linux.theplanet.co.uk>
+In-Reply-To: <742303812.20040826125114@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: viro@parcelfarce.linux.theplanet.co.uk
-Cc: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Spam <spam@tnonline.net>
+Cc: Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
+What is important is that it all be one packaged solution from the same 
+maintainer.  That is necessary for coherency of solution.
 
+There is also benefit to it being one coherent body of code, but this is 
+harder to articulate.  It is always hard to articulate why functionality 
+belongs in the same program rather than split into multiple programs.  
+Filesystems should provide primitives for ordering, structuring, and 
+naming objects.  It is hard to say why we should do all of that, but on 
+some level I just know it is our task.
 
-On Fri, 27 Aug 2004 viro@parcelfarce.linux.theplanet.co.uk wrote:
+Hans
 
-> On Thu, Aug 26, 2004 at 04:24:51PM -0700, Linus Torvalds wrote:
-> > So basically: the "d_mounted++" just makes sure we get into
-> > "lookup_mnt()". That's where we will usually find the actual mount thing.
-> > 
-> > And that's also where the special case comes in: if we _don't_ find the 
-> > mount thing there, that's where we need to create it. That will only 
-> > happen if somebody looks it up using another namespace, though, so it 
-> > should be rare.
-> 
-> No.  Trivial example:
-> 
-> mount --bind /foo /bar
-> mount /dev/sda1 /bar/baz
-> 
-> do lookup for /foo/baz.  No namespaces involved, no vfsmounts found, d_mounted
-> positive and we certainly do *not* want anything to be created at that point.
+Spam wrote:
 
-Right. We obviously need to mark the dentry somehow, and only do the 
-"create vfsmount" special case in this special case. If we didn't do that, 
-then it wouldn't be a special case, now would it?
+>
+>
+>  You  said  it  would be socially hard. I think it would be very much
+>  close to impossible to get it right. Imagine that Gnome and Nautilus
+>  would  implement  support  for  these. I doubt that cp, mv, KDE, mc,
+>  app-xyz  would  implement  this anytime soon and in the meantime the
+>  data is at risk.
+>
+>
+>  
+>
+>  
+>
 
-So clearly lookup_mnt() needs to check the dentry in the failure case. The 
-marking could be in any of three places
- - mark the dentry itself by just using a dentry flag ("DCACHE_AUTOVFSMNT")
-   or by having a dentry operation for this.
- - mark the inode itself (same logic as dentry)
- - look up the first vfsmount (on the inode list), and look if that one is 
-   of the automatic type.
-
-Clearly we should not _always_ create a vfsmount, that would just break 
-the existign logic.
-
-		Linus
