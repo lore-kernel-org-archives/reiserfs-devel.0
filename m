@@ -1,37 +1,24 @@
 From: Chris Wright <chrisw@osdl.org>
-Subject: Re: Using fs views to isolate untrusted processes: I need an assistant architect in the USA for Phase I of a DARPA funded linux kernel project
-Date: Wed, 25 Aug 2004 18:06:15 -0700
-Message-ID: <20040825180615.Z1973@build.pdx.osdl.net>
-References: <410D96DC.1060405@namesys.com> <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com> <20040825205618.GA7992@hockin.org> <30958D95-F6ED-11D8-A7C9-000393ACC76E@mac.com> <412D2BD2.2090408@sun.com> <EAB989A6-F6F9-11D8-A7C9-000393ACC76E@mac.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Wed, 25 Aug 2004 18:13:26 -0700
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040825181326.A1973@build.pdx.osdl.net>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20559-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <EAB989A6-F6F9-11D8-A7C9-000393ACC76E@mac.com>; from mrmacman_g4@mac.com on Wed, Aug 25, 2004 at 08:50:25PM -0400
+In-Reply-To: <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk>; from viro@parcelfarce.linux.theplanet.co.uk on Thu, Aug 26, 2004 at 01:30:55AM +0100
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kyle Moffett <mrmacman_g4@mac.com>
-Cc: Mike Waychison <Michael.Waychison@Sun.COM>, LKML <linux-kernel@vger.kernel.org>, Rik van Riel <riel@redhat.com>, Tim Hockin <thockin@hockin.org>, ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>
+To: viro@parcelfarce.linux.theplanet.co.uk
+Cc: Jamie Lokier <jamie@shareable.org>, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-* Kyle Moffett (mrmacman_g4@mac.com) wrote:
-> I would find this much more useful if there was a really lightweight 
-> bind
-> mount called a "filebind" or somesuch that could only bindmount files 
+* viro@parcelfarce.linux.theplanet.co.uk (viro@parcelfarce.linux.theplanet.co.uk) wrote:
+> On Thu, Aug 26, 2004 at 01:11:52AM +0100, Jamie Lokier wrote:
+> > Is this a problem if we treat entering a file-as-directory as crossing
+> > a mount point (i.e. like auto-mounting)?
+> 
+> Yes - mountpoints can't be e.g. unlinked.
 
-This already works.
-
-# cd /tmp
-# echo foo > a
-# touch b
-# mount --bind a b
-# cat b
-foo
-
-thanks,
--chris
--- 
-Linux Security Modules     http://lsm.immunix.org     http://lsm.bkbits.net
+Could it be essentially MNT_DETACH'd?
