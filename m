@@ -1,33 +1,76 @@
-From: Jeremy Allison <jra@samba.org>
+From: Christophe Saout <christophe@saout.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 13:52:18 -0700
-Message-ID: <20040826205218.GE1570@legion.cup.hp.com>
-References: <Pine.LNX.4.58.0408261217140.2304@ppc970.osdl.org> <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com> <20040826204841.GC5733@mail.shareable.org>
-Reply-To: Jeremy Allison <jra@samba.org>
+Date: Thu, 26 Aug 2004 23:09:07 +0200
+Message-ID: <1093554547.13881.55.camel@leto.cs.pocnet.net>
+References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com>
+	 <Pine.LNX.4.58.0408261101110.2304@ppc970.osdl.org>
+	 <45010000.1093553046@flay>
+	 <Pine.LNX.4.58.0408261348500.2304@ppc970.osdl.org>
+	 <57730000.1093554054@flay>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20801-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-c14bBX2vCs/ZAYJFr6ee"
+Return-path: <reiserfs-list-return-20806-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040826204841.GC5733@mail.shareable.org>
+In-Reply-To: <57730000.1093554054@flay>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Rik van Riel <riel@redhat.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: "Martin J. Bligh" <mbligh@aracnet.com>
+Cc: Linus Torvalds <torvalds@osdl.org>, Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Thu, Aug 26, 2004 at 09:48:41PM +0100, Jamie Lokier wrote:
-> 
-> This is why I favour storing all essential metadata (about the file's
-> content) inside the file's contents, the primary stream.
-> 
-> We have another problem: what happens when users want to transfer data
-> from Windows (with secondary streams) and MacOS (with resource forks)?
+--=-c14bBX2vCs/ZAYJFr6ee
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-I can tell you that - right now we (Samba) has to drop all but the primary stream,
-because the Linux filesystems don't have data stream support. Oh look,
-we're losing user data (that's a *bad* thing :-).
+Am Donnerstag, den 26.08.2004, 14:00 -0700 schrieb Martin J. Bligh:
 
-Jeremy.
+> > "It's a feature".
+> >=20
+> > The S_ISDIR/S_ISREG tests show real information: it shows not only user
+> > intent ("you should consider this a file, even if it has attributes"), =
+but
+> > also whether it is a directory or a container.
+> >=20
+> > And there's a real technical difference there: the streams contained
+> > within a file are bound to that file. The files contained within a
+> > directory are _independent_ of that directory. Big difference. HUGE
+> > difference.
+> >=20
+> > So it's not confusing. If it tests as a file, you think of it as a file=
+. =20
+> > It may have attributes aka named streams associated with it, and you ma=
+y
+> > be able to open those attributes by treating the file as a directory, b=
+ut
+> > that doesn't really change the fact that it's a file.
+> >=20
+> > The _big_ difference is that when you can make the compound object _loo=
+k_=20
+> > like a directory, that means that you can now manage the attributes wit=
+h=20
+> > standard tools. They are still attributes, though.
+>=20
+> I think what you're saying is that they'd both return positive, right?
+
+No. A file is still a file and S_ISREG will thus return false.
+The application should just try to open it as a directory if it wants to
+access the assiociated embedded attribute files. If the open fails,
+well, it knows that the filesystem (or Linux version, whatever) doesn't
+support this feature.
+
+
+--=-c14bBX2vCs/ZAYJFr6ee
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQBBLlFzZCYBcts5dM0RAiA9AKCISYg9TLy0K3f80r0kl/zZ+RXsTQCghu2h
+RbkLsuBUPit/G6UyNlW7lIo=
+=5zQ2
+-----END PGP SIGNATURE-----
+
+--=-c14bBX2vCs/ZAYJFr6ee--
+
