@@ -1,65 +1,47 @@
-From: Chris Mason <mason@suse.com>
-Subject: v3 experimental data=ordered and logging speedups for 2.6.1
-Date: Mon, 19 Jan 2004 11:45:26 -0500
-Message-ID: <1074530725.29546.178.camel@tiny.suse.com>
+From: markw@osdl.org
+Subject: Re: linux-2.6.0 + reiser4 oops
+Date: Mon, 19 Jan 2004 09:29:09 -0800 (PST)
+Message-ID: <200401191729.i0JHTJo24262@mail.osdl.org>
+References: <16395.42887.514077.642497@laputa.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16571-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16572-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <16395.42887.514077.642497@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com, green@linuxhacker.ru
+Content-Type: TEXT/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Nikita@Namesys.COM
+Cc: reiserfs-list@Namesys.COM, linux-lvm@sistina.com
 
-Hello everyone,
+On 19 Jan, Nikita Danilov wrote:
+> markw@osdl.org writes:
+>  > I was testing our DBT-2 workload on linux-2.6.0 with LVM2 and reiser4
+>  > and got the following oops when I attempted to create a database with
+>  > PostgreSQL.  Let me know if I can provide any additional information:
+>  > 
+>  > Unable to handle kernel NULL pointer dereference at virtual address 00000000
+>  >  printing eip:                                                       
+>  > c014c607      
+>  > *pde = 00104001
+>  > *pte = 00000000
+>  > Oops: 0000 [#1]
+> 
+> This looks much like another bug report we had for
+> reiser4-on-top-of-raid0. A fix (tentative) for that was to use
+> bio_add_page() while constructing bios, and it will be included into
+> next reiser4 snapshot (that, I hope, will be released
+> to-day---2004.01.19).
 
-I've got most of data=ordered finished, there are a few paths like
-writepage and O_DIRECT that need tweaking.  Thanks to Oleg's file_write
-work in 2.6.x, the data=journal patch is much cleaner than 2.4, it is
-almost done but not included in the bunch of patches I just uploaded to
-ftp.suse.com.  Oleg is cc'd in case he wants to look over the changes to
-reiserfs_file_write in reiserfs-jh-2.
+Hi Nikita,
 
-The code has survived a weekend of moderate load, but you still want it
-very far away from production servers.  I'm headed off to linux world in
-NYC for the rest of the week, and I wanted to post this for review and
-the few brave souls out there who might want to give it a try.
+I ran the 2004.01.19 snapshot against 2.6.1 and now I get the following
+error when I attempt to mount the reiser4 parition:
 
-ftp.suse.com/pub/people/mason/patches/data-logging/experimental/2.6.1
+reiser4[mount(17176)]: _init_read_super (fs/reiser4/init_super.c:166)[nikita-2608]:
+WARNING: Wrong master super block magic.
 
-The README:
-
-Experimental reiserfs data=ordered and logging speedups against 2.6.1
-
-Apply these in order:
-
-01-reiserfs-journal-writer
-removes old stale debugging code, very safe
-
-02-reiserfs-nesting
-Adds support for nested transactions in reiserfs, needed for the quota code,
-and ported from 2.4.x by Jeff Mahoney
-
-03-reiserfs-iosize
-Changes reiserfs to tell userspace the default io size is 4k.  Works around
-a bug in bdb hit by rpm users
-
-04-reiserfs-balance_dirty
-Changes reiserfs_file_write to throttle writers the way the rest of linux
-does.  This patch has already been sent for inclusion, it should get in soon
-
-05-reiserfs-logging
-Logging speedups for small transactions and fsync heavy applications.  Most
-experimental patch of the bunch, since it changes the way the log does
-metadata writeback
-
-06-reiserfs-jh-2
-Adds data=ordered support, along with a journal header attached to
-the buffer head.  This allows for more efficient data=ordered support
-than I had in 2.4.x.
-
--chris
-
-
+Thanks,
+Mark
