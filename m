@@ -1,34 +1,54 @@
-From: Andreas Dilger <adilger@clusterfs.com>
-Subject: Re: Fsck over Telnet is slow.
-Date: Fri, 31 May 2002 03:16:22 -0600
-Message-ID: <20020531091622.GA597@turbolinux.com>
-References: <1073646515.20020531102130@tnonline.net>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: EVMS Reiser FSIM
+Date: Fri, 31 May 2002 13:26:51 +0400
+Message-ID: <20020531132651.A9201@namesys.com>
+References: <OFDCF5C080.996B2948-ON85256BC9.005E8AA0@pok.ibm.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10463-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10464-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <1073646515.20020531102130@tnonline.net>
+In-Reply-To: <OFDCF5C080.996B2948-ON85256BC9.005E8AA0@pok.ibm.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anders Widman <andewid@tnonline.net>
+To: Steve Pratt <slpratt@us.ibm.com>
 Cc: reiserfs-list@namesys.com
 
-On May 31, 2002  10:21 +0200, Anders Widman wrote:
->    Is  it just me, but I think reiserfsck is slow over telnet, or even
->    slower   over  ssh. It seems as it would be better to not print the
->    progress as fast, if the connection to the terminal is slow.
+Hello!
 
-e2fsck used to have the same problem when you enabled the "progress
-meter".  What it does now is only update the progress on the screen
-every 10th of a second (or whatever) by checking how long ago the last 
-update was.
+On Thu, May 30, 2002 at 12:14:03PM -0500, Steve Pratt wrote:
 
-Cheers, Andreas
---
-Andreas Dilger
-http://www-mddsp.enel.ucalgary.ca/People/adilger/
-http://sourceforge.net/projects/ext2resize/
+> >Yes, I know this.
+> >I just want to confirm that the only way to look at it right now is to get
+> >latest CVS version out of their cvs repository.
+> At the moment CVS is the only place this is available.  I wanted to give
+> you guys a heads up that it was coming.  We should be doing a version 1.1
+> package in the next couple of weeks and the ReiserFS FSIM will be included
+> in that.
 
+Ok, I had a look into the CVS and I have few comments.
+
+First is that mkfs output might exceed 10k buffer you have assigned to it,
+and if messages that mkfs print would exceed 10k+pipe buffer size,
+then mkfs process would block and you'd never get it to return
+(and I do not see you have any way to exit on timeout or send a signal
+ to hung process on timeout).
+
+Then I believe Hans asked you to display credits not only for reiserfsck, but
+also for mkreiserfs. (and other reiserfs utilities if you run them).
+
+Also just a note, you can return your own errors as negative exit codes
+and pass utilities exit codes as it is.
+So if the exit code of child process is bigger than 128, you can substract
+this value from 255 and decide what error was caused that tool was not run.
+Also you'd avoid a clash between EPERM vs FSCK_CORRECTED this way.
+
+Ah, and please change recommended version of reiserfsprogs to 3.x.1b,
+because 3.x.1a is not recommended in fact and have some known problems.
+
+Thank you.
+
+Bye,
+    Oleg
