@@ -1,57 +1,60 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: error compiling reiserfsprogs
-Date: Thu, 01 May 2003 14:00:58 -0400
-Message-ID: <200305011800.h41I0wxj005681@turing-police.cc.vt.edu>
-References: <00e001c30f5a$91f71bf0$0f02a8c0@observer> <200304302124.h3ULOi5J009954@turing-police.cc.vt.edu>
-            <20030501062527.GA22815@namesys.com>
+From: Klaus Dieter Wolfinger <kd.wolfinger@gmx.de>
+Subject: Problems with reiserfs partition after systemcrash -- I need help
+Date: Thu, 1 May 2003 19:19:44 +0200
+Message-ID: <200305011848.48027.kd.wolfinger@gmx.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1207321422P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13915-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-13917-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Thu, 01 May 2003 10:25:27 +0400."
-             <20030501062527.GA22815@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Oleg Drokin <green@namesys.com>
-Cc: Network Operations <downtown@cwo.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
---==_Exmh_1207321422P
-Content-Type: text/plain; charset=us-ascii
+Hello experts,
+after a systemcrash I can't mount a partition (hdb2) with reiserfs.
 
-On Thu, 01 May 2003 10:25:27 +0400, Oleg Drokin said:
-
-> > Did you install whatever kernel-headers package your release of *GCC* (*not
-*
-> > the kernel itself) wants installed?  If not, do so.
-> 
-> Well, in fact kernel headers are supplied with glibc, otherwise I agree that 
-error looks like
-> missing kernel headers installed.
-
-At least under RedHat, the kernel headers that come with gcc are shipped
-in a seperate RPM glibc-kernheaders, the numbering of which doesn't follow
-anything else:
-
-% rpm -q glibc glibc-kernheaders kernel
-glibc-2.3.2-27.9
-glibc-kernheaders-2.4-8.10
-kernel-2.4.20-9
+Technical details:
+reiserfsck 3.6.2 (2002)
+SuSE Linux 8.1; Kernel 2.4
 
 
---==_Exmh_1207321422P
-Content-Type: application/pgp-signature
+#> reiserfsck --rebuild-sb /dev/hdb2
+Count of blocks on the device: 1636621
+Number of bitmaps: 50
+Blocksize: 4096
+Free blocks (....): 393153
+Root block: 33419
+Filesystem is NOT clean
+Tree height: 5
+=2E
+=2E
+=2E
+=2E
+Superblock seems to be correct
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.1 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+#> reiserfsck --rebuild-tree /dev/hdb2
 
-iD8DBQE+sWDZcC3lWbTT17ARAjlPAJwIDtd0HFOnYEs5Vvpc/8bEqJOUAwCgpivY
-qzFXoteCu1QeG8GVBNK8TS8=
-=EWqz
------END PGP SIGNATURE-----
+pass0 -> interrupts with the message:
+cannot read block 12252
 
---==_Exmh_1207321422P--
+badblocks -b 4096 /dev/hdb2
+98
+99
+=2E.... long list of numbers
+
+23954
+=2E
+23966
+
+-----------------------------------------------
+Is it possible to retrieve the data on this partition ?
+
+thanks a lot in advance
+with best regards
+Klaus Dieter Wolfinger
+--
+kd.wolfinger@gmx.de
+
