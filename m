@@ -1,47 +1,50 @@
-From: Claudio Martins <ctpm@rnl.ist.utl.pt>
-Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Mon, 29 Mar 2004 10:17:51 +0100
-Message-ID: <200403291017.51872.ctpm@rnl.ist.utl.pt>
-References: <200403271537.52955.sikkh@wp.pl> <40670001.60302@namesys.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: [PATH] "metas" in reiserfs v4 snapsot 2004.03.26
+Date: Mon, 29 Mar 2004 13:43:59 +0300
+Message-ID: <20040329104359.GP5229@nysv.org>
+References: <40670001.60302@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17555-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17556-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40670001.60302@namesys.com>
 Content-Disposition: inline
+In-Reply-To: <40670001.60302@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
-Cc: Hans Reiser <reiser@namesys.com>, Piotr Neuman <sikkh@wp.pl>
 
+Hans Reiser wrote:
 
-On Sunday 28 March 2004 17:40, Hans Reiser wrote:
-> Piotr Neuman wrote:
-> >The new naming scheme for plugins ("metas" in snapshot 2004.03.26) may on
-> >certain occasions cause name clashes. This patch changes "metas" into
-> >"..metas" which should avoid this problem in most cases.
->
-> The name clashing is less important than the greater user friendliness.
-> Users on the mailing list convinced me of this.
+>The name clashing is less important than the greater user friendliness.  
+>Users on the mailing list convinced me of this.
 
-  Please note that the supposed "user friendliness" you gain will go away the 
-moment a user tries to unpack a source tarball for some project which happens 
-to contain a directory named "metas". How are you going to fix it? You'll 
-have the trouble of not getting the content of the "metas" directory which 
-was inside the tarball and which tar failed to write to the directory, and 
-you won't be able to build your project unless you modify it. This is just 
-one example of many...
+As an avid fan and supporter, active member on the IRC channel, I must
+disagree.
 
-  So IMO it is much better to have a "..metas" and prevent all the trouble you 
-*will* get for sure if using "metas".
+There have been good points here on the list, about tar balls which
+may contain a metas/ directory and that less special directories
+are MORE user-friendlyness.
 
-  After all, unix filesystems have always been nice because they don't impose 
-much restrictions on user filenames. As Filipe Almeida pointed out, why now 
-reproduce the mess that exists in Windows with "aux" and such other special 
-filenames?
+It may superficially seem equal, if there's a directory that's invisible,
+but still exists. I mean, the name of the directory may seem unimportant.
 
-Claudio
+It is not. Anyone who wants to use the metas will know how to do it,
+no matter what the name. I think Piotr Neuman's patch is a prerequisite
+for getting this baby into the mainline kernel.
+
+..pseudo/ was a good solution, ..metas/ is more descriptive and just
+as inoffensive.
+
+I ask you to reconsider your take on this and I for one will continue
+to use ..metas/ just because I want to be able to trust my computer.
+It is my tool to do my bidding, not to think for me or make assumptions,
+like "Gee, that mjt fool will never want a directory named metas/"
+
+Thank you!
+
+-- 
+mjt
 
