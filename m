@@ -1,74 +1,56 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: reiser4 and bonnie problems
-Date: Tue, 20 Apr 2004 18:51:58 +0400
-Message-ID: <20040420145158.GC1579@backtop.namesys.com>
-References: <20040416203937.GY14134@nysv.org> <26F302F3-9042-11D8-8B4A-000A95CD704C@wagland.net> <2EB65FD6-924A-11D8-8B4A-000A95CD704C@wagland.net> <16516.54935.159587.423283@laputa.namesys.com> <61B07E02-92A8-11D8-8B4A-000A95CD704C@wagland.net> <16517.10147.704572.959551@laputa.namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: viewprinting processes and process oriented permissions got funded
+ by DARPA
+Date: Tue, 20 Apr 2004 08:26:53 -0700
+Message-ID: <4085413D.4030007@namesys.com>
+References: <407C304F.4080804@namesys.com>	<m31xmrefug.fsf@averell.firstfloor.org>	<407C930D.5010407@namesys.com>	<20040414022248.GA92870@colin2.muc.de>	<20040414113741.GB15922@alias.nmd.msu.ru>	<20040414125340.GA7737@colin2.muc.de>	<20040414150052.GB19430@alias.nmd.msu.ru>	<20040414152804.GA2180@colin2.muc.de>	<20040414155342.GC19430@alias.nmd.msu.ru>	<16510.30611.752735.235549@laputa.namesys.com>	<407E7CBB.1020907@edsons.demon.nl>	<407EFF68.2060900@namesys.com> <16511.46245.167983.848763@laputa.namesys.com> <4084B8C8.2070608@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18082-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18083-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <16517.10147.704572.959551@laputa.namesys.com>
+In-Reply-To: <4084B8C8.2070608@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: Paul Wagland <paul@wagland.net>, reiserfs-list@Namesys.COM
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Nikita Danilov <Nikita@Namesys.COM>, "Rudy L. Zijlstra" <rudy@edsons.demon.nl>, ReiserFS <reiserfs-list@namesys.com>
 
-On Tue, Apr 20, 2004 at 05:37:39PM +0400, Nikita Danilov wrote:
-> Paul Wagland writes:
->  > 
->  > On Apr 20, 2004, at 9:51, Nikita Danilov wrote:
->  > 
->  > > Paul Wagland writes:
->  > >> Bonnie: drastic I/O error (write(2)): No space left on device
->  > >
->  > > Err.. this is completely different from what we had previously: "No
->  > > space left on device" is understandable where not reasonable. What is
->  > > completely mysterious is "No such file or directory" error that you
->  > > reported before.
->  > 
->  > Yes, last night I could not get that "No such file or directory" error 
->  > to appear. I will try to reproduce that particular error again later 
->  > tonight. However, this other problem happens at exactly the same time, 
->  > and is an error in the reiser4.
->  > 
->  > Just to summarise everything that is written below, this is what bonnie 
->  > is doing:
->  > 1. write 3.5 GB onto a 4GB partition. This works
->  > 2. delete 3.5 GB from a 4GB partition. This works.
-> 
-> Disk blocks freed during transaction are not actually freed until
-> transaction commits.
-> 
->  > 3. I check using df that the disk space is free. That works.
-> 
-> But that "delayed freeing" confused users (they did cp, rm, but df has
-> still showed that space is used), so that statfs(2) (system call used by
-> df) was modified to take these delayed blocks into account and pretend
-> that they are free.
-> 
->  > 4. write 3.5GB onto a 4GB partition. This fails.
-> 
-> Try to repeat this with sync before step 4.
-> 
->  > 
->  > At the time of failure, according to df there is stiff 3.5 GB
->  > free. So, I say that reiser4 has a problem.
-> 
-> df lies.
+Hans Reiser wrote:
 
-reiser4_statfs() was changed to report deleted blocks as free space immediately
-after rm(1).  
-
-It was done because reiser4_write() should trigger fs commit and recover free
-space.   If commit does not happen, it is a reiser4 bug.
-
->  > Paul
-> 
-> Nikita.
-
--- 
-Alex.
+> Nikita Danilov wrote:
+>
+>> Hans Reiser writes:
+>> > Is there a URL on King Arthur being Attila?  This doesn't sound 
+>> right to > me,;-)  but of course, he who wins gets to speak the oral 
+>> history....
+>>
+>> Disgooglexic, eh? :)
+>>
+>> http://www.uwo.ca/english/florilegium/vol-xi/ridley.pdf
+>>
+>> Nikita.
+>>
+>>
+>>  
+>>
+> Florence Ridley seems to typify the sort of literary analysis that 
+> dominates western academia, and discredits it in the eyes of many 
+> including me.
+>
+> Her style of analysis is far from scientifically rigorous.  She 
+> suggests that they are one not really because it is reasonable to 
+> think that they are, but because it is provocative and truth has 
+> little import for her kind.
+>
+> There is a whole cast of literary analysis professors who lack the 
+> ability to produce literature themselves, and have a love for 
+> literature that allows them to invent as they please when analyzing 
+> it.  Thus they love Henry James.
+>
+>
+>
+>
+Probably I forgot to take Nikita's remark in the good humor it was 
+intended.;-)
