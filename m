@@ -1,39 +1,66 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Reiser4 mount support, Grub support
-Date: Tue, 24 Aug 2004 19:51:03 +0400
-Message-ID: <200408241951.03100.vitaly@namesys.com>
-References: <e7963922040819082125b7d8aa@mail.gmail.com> <e796392204081923407c8b8938@mail.gmail.com> <e7963922040819234234cca45f@mail.gmail.com>
+From: Andreas Sundstrom <sunkan@zappa.cx>
+Subject: Problem - reiser4(2004.08.13), apache(2.0.50) and "AllowOverride
+ All"
+Date: Tue, 24 Aug 2004 18:51:02 +0200
+Message-ID: <412B71F6.6020603@zappa.cx>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20481-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20483-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e7963922040819234234cca45f@mail.gmail.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Stefan Schweizer <sschweizer@gmail.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On Friday 20 August 2004 10:42, Stefan Schweizer wrote:
-> > Ah, and symlinks are grub related also?
->
-> Sure, they are grub related - but many people have a /usr/src/linux -
-> so if someone really had tried the grub patch he would have recognized
-> it. In fact it does not work at its current stage if I cannot boot a
-> kernel Image and if I cannot boot it from the symlink ..
+If I enable "AllowOverride All" in apache it can no longer serve files
+from reiser4 filesystems.
 
-I detected the problem with symlinks -- 32K that grub provides gets 
-too fragmeted when grub is trying to get the kernel image through 
-a symlink. I have changed the allocation in libaal a bit (enabled only
-with configure --enable-memory-manager) and it works for me now. 
-You can obtain the snapshot from: 
-	http://www.namesys.com/snapshots/2004.08.24/
-It also includes a pair of bugfixes. Try it please and report me about 
-the result.
+Here's an error from apache:
 
--- 
-Thanks,
-Vitaly Fertman
+(13)Permission denied: /var/www/htdocs/valid-xhtml11.png/.htaccess pcfg_openfile: unable to check htaccess file, ensure it is 
+readable, referer: http://zappa.cx/
 
+Some info about the file:
+sunkan@zappa:~$ ls -il /var/www/htdocs/valid-xhtml11.png
+72832 -rw-r--r--  1 root root 1917 Sep 14  2001 /var/www/htdocs/valid-xhtml11.png
+
+sunkan@zappa:~$ file /var/www/htdocs/valid-xhtml11.png
+/var/www/htdocs/valid-xhtml11.png: PNG image data, 88 x 31, 8-bit colormap, non-interlaced
+
+I found this post to be interesting:
+http://marc.theaimsgroup.com/?l=reiserfs&m=109114584717552&w=2
+
+I used this patch to get reiser4 support in my kernel:
+http://linux.mjh.name/kernel/patches/reiser4/2004.08.13_2.6.8.1/
+
+So I'm running vanilla 2.6.8.1 except for reiser4.
+
+sunkan@zappa:~/kernel/linux-2.6.8.1-reiser4$ grep REISER .config
+CONFIG_REISER4_FS=y
+CONFIG_REISER4_LARGE_KEY=y
+# CONFIG_REISER4_CHECK is not set
+CONFIG_REISERFS_FS=y
+# CONFIG_REISERFS_CHECK is not set
+# CONFIG_REISERFS_PROC_INFO is not set
+CONFIG_REISERFS_FS_XATTR=y
+CONFIG_REISERFS_FS_POSIX_ACL=y
+# CONFIG_REISERFS_FS_SECURITY is not set
+
+sunkan@zappa:~/kernel/linux-2.6.8.1-reiser4$ grep 4KSTACK .config
+# CONFIG_4KSTACKS is not set
+
+My guess is that apache tries to open every file as an directory and
+if that works it checks wether an .htaccess file is present but that
+fails in my case beacause it isn't an directory but a file.
+
+Who's to blame? ;)
+
+Let me know if I need to gather more information about this.
+
+I'm currently not on the list so please CC me if you want fast
+responses. (otherwise I read the archives)
+
+Thanks for any help..
+/Andreas Sundstrom
