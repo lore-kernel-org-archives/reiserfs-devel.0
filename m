@@ -1,28 +1,35 @@
-From: Nick Urbanik <nicku@vtc.edu.hk>
-Subject: How tell what version of reiserfs my filesystem is?
-Date: Wed, 03 Apr 2002 18:19:49 +0800
-Sender: nicku@nicksbox.tyict.vtc.edu.hk
-Message-ID: <3CAAD745.447646E4@vtc.edu.hk>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: How tell what version of reiserfs my filesystem is?
+Date: Wed, 3 Apr 2002 15:18:13 +0400
+Message-ID: <20020403151813.A4949@namesys.com>
+References: <3CAAD745.447646E4@vtc.edu.hk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <3CAAD745.447646E4@vtc.edu.hk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Nick Urbanik <nicku@vtc.edu.hk>
+Cc: reiserfs-list@namesys.com
 
-Dear team,
+Hello!
 
-How do I tell whether each of my file systems is 3.5 or 3.6?
+On Wed, Apr 03, 2002 at 06:19:49PM +0800, Nick Urbanik wrote:
 
---
-Nick Urbanik   RHCE                                  nicku@vtc.edu.hk
-Dept. of Information & Communications Technology
-Hong Kong Institute of Vocational Education (Tsing Yi)
-Tel:   (852) 2436 8576, (852) 2436 8579          Fax: (852) 2436 8526
-PGP: 53 B6 6D 73 52 EE 1F EE EC F8 21 98 45 1C 23 7B     ID: 7529555D
-GPG: 7FFA CDC7 5A77 0558 DC7A 790A 16DF EC5B BB9D 2C24   ID: BB9D2C24
+> How do I tell whether each of my file systems is 3.5 or 3.6?
 
+If you run 2.2.x kernel, then you have reiserfs v3.5
+If you have 2.[45].x kernel, then look it to the dmesg output
+(or in the boot logs). If there is following message appears
+after reiserfs mount messages: 'reiserfs: using 3.5.x disk format',
+it means that filesystem is v3.5 format,
+otherwise it is v3.6 format.
 
+Also with recent 2.4 kernels (2.4.17+), you can lookup this info
+in the /proc filesystem if you have enabled CONFIG_REISERFS_PROC_INFO.
 
+Bye,
+    Oleg
