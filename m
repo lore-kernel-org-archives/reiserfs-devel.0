@@ -1,41 +1,39 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: compatibility of 2.4.20-pre2/.19.pending & data-logging ?
-Date: Thu, 15 Aug 2002 08:56:59 +0400
-Message-ID: <20020815085659.A4232@namesys.com>
-References: <20020814184938.A12116@namesys.com> <3D5B1600.2020405@mb.tu-ilmenau.de>
+From: Michel Angelo da Silva Pereira <michelpereira@netsite.com.br>
+Subject: Quota dosen't working
+Date: Thu, 15 Aug 2002 10:48:12 -0300
+Message-ID: <3D5BB11C.3090901@netsite.com.br>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11190-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11191-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3D5B1600.2020405@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>, Chris Mason <mason@suse.com>, reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Hello!
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On Thu, Aug 15, 2002 at 04:46:24AM +0200, Manuel Krause wrote:
+	Here I have a mail server running 2.4.19-pre7-rmap13 with quota patches.
+	But when I set a quota value for a user, I can see that it's configured
+correctly, but when I sent a mail, the quota blocks info dosen't update.
+	What test can I do to surely confirm if the quota is working?
 
-> are the introduced patches in 2.4.20-pre2 and/or 2.4.19.pending 
-> compatible with Chris' patches? I didn't give them or 2.4.20-pre2 a try, 
-> so far.
+Bye
+- --
+========================================
+Netsite S/A - Security Officer
+Profissional Certificado Conectiva Linux
+www.kidmumu.com.br - UIN 4553082
+========================================
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
 
-The core code is still compatible with what's went into 2.4.20-pre2, but options
-parser code have changed.
-reiserfs_file_write() inplementation is not compatible with datalogging
-patches.
+iD8DBQE9W7EcKFcUl0ru4isRAkcnAKDlDW8q49aHkW9gVJD9pVnWadmIYgCfTt2I
+EX2lxT995KjMqjxBzPLFE8s=
+=XQmB
+-----END PGP SIGNATURE-----
 
-> Am I right to better wait until Chris is back and updates his 
-> data-logging stuff for the actual pre-kernel, namesys-patches and more - 
-> wait for the outstanding merge?? Anyone having experiences yet?
-
-You won't be able to use data-logging stuff with 2.4.20-pre2, until Cris will
-make a merge.
-
-Bye,
-    Oleg
