@@ -1,56 +1,36 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Multiple data streams...
-Date: Fri, 04 Apr 2003 01:53:27 +0400
-Message-ID: <3E8CAD57.50800@namesys.com>
-References: <6167696812.20030402112847@tnonline.net> <200304030732.31133.russell@coker.com.au> <3E8C84D9.3000401@namesys.com> <200304040557.56832.russell@coker.com.au>
+From: Pierre Abbat <phma@webjockey.net>
+Subject: Re: Proposal for keying encrypted filesystem
+Date: Thu, 3 Apr 2003 18:22:11 -0500
+Message-ID: <200304031822.12677.phma@webjockey.net>
+References: <200303282026.23543.phma@webjockey.net> <3E89B908.1070106@namesys.com> <200304031614.h33GE7S7004132@turing-police.cc.vt.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13562-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13563-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200304040557.56832.russell@coker.com.au>
+In-Reply-To: <200304031614.h33GE7S7004132@turing-police.cc.vt.edu>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Russell Coker <russell@coker.com.au>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com, reiserfs-dev@namesys.com
 
-Russell Coker wrote:
+On Thursday 03 April 2003 11:14, Valdis.Kletnieks@vt.edu wrote:
+> A better bet would be to use the LSM security framework to create a module
+> that carries the tokens around for the process - this could even allow you
+> to do things like add a new key token to a process group leader and have
+> it propagate to already-running children (which is a phenomenally useful
+> thing to do that you can't do with an environment variable).  So for
+> instance, you could add a new key to your X login process, and all the
+> myriad subshells would get it - and thus any processes THEY launch) without
+> the need to log out from X and log back in again...
 
->On Fri, 4 Apr 2003 05:00, Hans Reiser wrote:
->  
->
->>>OS/2 used EA's for icons and description text in 1992.  There's no reason
->>>why EAs can't be used for this purpose today as well.
->>>      
->>>
->>Implement inherited stat data, hidden directory entries, and files and
->>directories and you don't need EAs.... yes?
->>    
->>
->
->That sounds like EAs the hard way...
->
->  
->
-It is the difference between architecting and incrementally evolving in 
-response to each separate feature request.
+What's LSM? This sounds like it can do what I want with rsync. Is it possible 
+to add a new key token to init and have it propagate to all processes?
 
-Sharing stat data and hiding directory entries are useful for a lot more 
-than streams.
-
-Atomic transactions are also useful for a lot more than EAs.....
-
-I work by carefully defining easily recombinable primitives.  Others 
-work by asking what does Unix have and copying it.
-
-This is why it took far longer for us in the beginning, and why over the 
-next 30 years we will develop faster than other filesystems.  That is 
-why ext2 currently has more market share --- a lot of people benefited 
-from them getting something out quick that was usable...
-
+phma
 -- 
-Hans
-
-
+.i toljundi do .ibabo mi'afra tu'a do
+.ibabo damba do .ibabo do jinga
+.icu'u la ma'atman.
