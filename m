@@ -1,49 +1,45 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Mounting reiserfs with nonstandard journal size
- fails
-Date: Thu, 31 Oct 2002 00:29:29 +0300
-Message-ID: <3DC04F39.1030709@namesys.com>
-References: <1035934581.1487.1409.camel@rivendell.arnor.net> <20021030093911.B5560@namesys.com>
+Subject: Re: Online Resizing Failure
+Date: Thu, 31 Oct 2002 00:31:24 +0300
+Message-ID: <3DC04FAC.8000803@namesys.com>
+References: <20021028192635.A1171@namesys.com> <Pine.GSO.4.33L.0210281040001.29849-100000@unix2.cc.ksu.edu> <20021028214750.B1925@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11844-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11845-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1035934581.1487.1409.camel@rivendell.arnor.net>
+In-Reply-To: <20021028192635.A1171@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Oleg Drokin <green@namesys.com>
-Cc: Torrey Hoffman <thoffman@arnor.net>, Linux Kernel <linux-kernel@vger.kernel.org>, Reiserfs List <reiserfs-list@namesys.com>
+Cc: Matt Stegman <matts@ksu.edu>, reiserfs-list@namesys.com, umka <umka@thebsh.namesys.com>
 
 Oleg Drokin wrote:
 
 >Hello!
 >
->On Tue, Oct 29, 2002 at 03:36:20PM -0800, Torrey Hoffman wrote:
+>On Mon, Oct 28, 2002 at 11:02:49AM -0600, Matt Stegman wrote:
+>
 >  
 >
->>I'm having trouble mounting a reiserfs filesystem created with a
->>nonstandard (smaller) journal size.  But if I use the default journal
->>size, it works fine.
+>>What fooled me was that resize_reiserfs didn't give any output at all for
+>>online growing, while growing offline produces some output - I guess it's
+>>just a summary of the fs blocks.  Why doesn't online resizing produce any
+>>output?
 >>    
 >>
 >
->Sure. Non-standard journal is only supported in 2.5 kernel for now.
+>Well, actually it does return exit status ;)
 >
 >Bye,
 >    Oleg
->-
->To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->the body of a message to majordomo@vger.kernel.org
->More majordomo info at  http://vger.kernel.org/majordomo-info.html
->Please read the FAQ at  http://www.tux.org/lkml/
 >
 >
 >  
 >
-That should be in the queue for the next pre1, yes?
+Put it in umka's todo list to fix after halloween.
 
 -- 
 Hans
