@@ -1,36 +1,59 @@
-From: Francisco Javier Cabello Torres <fjcabello@visual-tools.com>
-Subject: Re: data logging and kernel 2.4.20
-Date: Tue, 6 Jul 2004 09:29:06 +0200
-Message-ID: <200407060929.06695.fjcabello@visual-tools.com>
-References: <200407051213.05033.fjcabello@visual-tools.com> <200407051346.32673.cmayr@iicm.edu>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: --rebuild-tree
+Date: Tue, 06 Jul 2004 12:56:18 +0400
+Message-ID: <40EA6932.7090606@namesys.com>
+References: <200407060828.56801.aotto1968@onlinehome.de> <40EA5193.2040604@mweb.co.za>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19523-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19524-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200407051346.32673.cmayr@iicm.edu>
-Content-Disposition: inline
+In-Reply-To: <40EA5193.2040604@mweb.co.za>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
-Cc: Christian Mayrhuber <cmayr@iicm.tu-graz.ac.at>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Cami <camis@mweb.co.za>
+Cc: reiserfs-list@namesys.com
 
+Hello
 
-> I'd not suggest to use these, those patches are really old and are likely
-> to have bugs.
-> Use ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.25/
-> and a kernel >=3D 2.4.25 with them.
-> I have them running on several production systems with a 2.4.26 kernel.
+Cami wrote:
+> Hi All,
+> 
+> Last night i done monthly maintence on all of my
+> mailhosts and after doing a reiserfsck, it looks
+> like i'll have to rebuild the tree on one of my
+> mail clusters (the other 8 clusters were fine)..
+> 
+> [mailhost01][/root]# df -h
+> Filesystem            Size  Used Avail Use% Mounted on
+> /dev/emcpowera1       152G   35G  117G  23% /var/spool/virtual
+> 
+> Can anyone tell me roughly how dangerous this is
 
-do Suse patches include reiserfs bug fixes?=20
+it is not dangerous. Just, please, make sure you have recent reiserfsck.
 
+> and roughly how long something like this will take?
 
-=2D-=20
-Premature Optimization is the root of all evil (Donald Knuth)=20
-=2D Yo tambi=E9n quiero una Europa libre de Patentes de Software -
-=2D-------------------------------------------------------------
- EuropeSwPatentFree - http://EuropeSwPatentFree.hispalinux.es=20
-=2D-------------------------------------------------------------
+hard to say. It depends on hardware. Given that 35 gb is not too much 
+reiserfsck --rebuild-tree should not take too much. 2 hours? Vitaly may 
+want to correct me, though
+
+> The filesystem stores all the users mailboxes in
+> maildir format so there are millions of files..
+> 
+> Any tips/comments would be appreciated..
+> 
+
+PS: please do not forget that backuping is important when dealing with 
+user mailboxes even if you are running super reliable hardward and 
+bugless software.
+
+> Regards,
+> Cami
+> 
+> 
+> 
+
 
