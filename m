@@ -1,55 +1,53 @@
-From: Domenico Andreoli <cavok@tiscali.it>
-Subject: Re: fsck.reiser4 can't fix 1 fixable corruption
-Date: Sun, 25 Apr 2004 22:31:51 +0200
-Sender: Domenico Andreoli <cavok@libero.it>
-Message-ID: <20040425203151.GA2515@raptus.homelinux.org>
-References: <200404201733.51809.rmeijer@internet.gr> <200404211259.01802.rmeijer@internet.gr> <200404211547.08993.vitaly@namesys.com> <200404211509.20290.rmeijer@internet.gr> <13790.212.0.249.130.1082549980.squirrel@webmail.xs4all.nl> <4086CBBF.8010406@xs4all.nl> <20040421194414.GB6215@raptus.homelinux.org> <40880F5C.6080207@namesys.com> <20040423012224.GA18666@raptus.homelinux.org> <408BE7FE.3040602@namesys.com>
+From: Redeeman <redeeman@metanurb.dk>
+Subject: Re: Debian and non-free
+Date: Sun, 25 Apr 2004 23:34:24 +0200
+Message-ID: <1082928864.9534.2.camel@redeeman.kaspersandberg.com>
+References: <20040425145238.GQ19049@nysv.org>
+Reply-To: redeeman@metanurb.dk
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18215-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18216-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <408BE7FE.3040602@namesys.com>
+In-Reply-To: <20040425145238.GQ19049@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-On Sun, Apr 25, 2004 at 09:31:58AM -0700, Hans Reiser wrote:
-> Vitaly, please install your system using grub, write down every step as 
-> you do it, and create a web page.  Hint: try to eliminate the need for 
-> reading your instructions.  I would like to see your instructions 
-> consist of:
-> 
-> 1: install grub by doing XXX
-> 
-> 2: install reiser4 by doing YYY
-> 
-> Use grub normally and it works.
-> 
-> I haven't followed the details of your conversation with Domenico, but 
-> it looks way more complicated for him than it should be.  Please fix.
+On Sun, 2004-04-25 at 16:52, Markus T=F6rnqvist wrote:
+> Hi
+>=20
+> IANADD and all that, so where can I read about why Reiser4 is unsuitable
+> for even non-free?
 
-i'd be happy also with these steps:
+debian in a nutcase :)
+>=20
+> The way I read the license of Reiser4 is that it's GPL but one can write
+> plugins, derivative works of GPL, but keep the sources by paying money?
+>=20
+> This seems like an internal conflict in the license itself; without having
+> paying money as a forced bribe of sorts to keep the source closed, it wou=
+ld
+> seem like a BSD-style license. BSD should be ok by Debian Free even.
+>=20
+> So why is it disqualified?
+>=20
+> Debian is often seen as the distro for people who like stability and secu=
+rity.
+> Reiser4 has stabilized by the bucket and at latest views will bring along
+> the strictest of security.
+>=20
+> It would be a shame if Debian users, such as I, would have to continue
+> bootstrapping Debian onto Reiser4 instead of just installing.
+> And there are a lot of Debian users out there as a target audience.
+>=20
+> Does Debian have anything against third party installers which would use
+> Reiser4? Probably not? Considering the centuries it would take for Debian
+> to validate Reiser4 for installer-inclusion.
+--=20
+Regards, Redeeman
+()  ascii ribbon campaign - against html e-mail=20
+/\                        - against microsoft attachments
 
-  1. install reiser4 (with stand alone libraries)
-
-  2. build a patched grub
-
-  3. install grub
-
-  4. use grub
-
-my problem is that if something doesn't work i'm not able to say where
-is it :/
-
-thanks
-domenico
-
-ps: surely Vitaly is hating me... :(
-
------[ Domenico Andreoli, aka cavok
- --[ http://people.debian.org/~cavok/gpgkey.asc
-   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
