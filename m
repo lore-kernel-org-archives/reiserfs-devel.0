@@ -1,39 +1,83 @@
-From: Sami Farin <7atbggg02@sneakemail.com>
-Subject: Re: Linux-2.6.9-rc2-bk7 Oops - ReiserFS: warning: vs-500: unknown uniqueness 126844928
-Date: Fri, 1 Oct 2004 22:38:25 +0300
-Message-ID: <20041001193825.GA6441@m.safari.iki.fi>
-References: <20040922225859.GA12833@m.safari.iki.fi>
+From: "Markus Perl" <markus@mex-web.de>
+Subject: error in latest reiserfsck while rebuilding tree
+Date: Sat, 2 Oct 2004 17:19:27 +0200 (CEST)
+Message-ID: <61173.217.238.31.35.1096730367.squirrel@mycc.dyndns.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21983-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-21986-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040922225859.GA12833@m.safari.iki.fi>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Thu, Sep 23, 2004 at 01:58:59AM +0300, Sami Farin wrote:
-> I got no replies for messages <20040713110437.GA4571@m.safari.iki.fi>
-> and <20040714214146.GA23531@m.safari.iki.fi> to LKML,
-> so I try again with latest releases.  Now using 2.6.9-rc2-bk7, and I
+Hello people,
 
-Now I compiled kernel with gcc-2.95.3 and:
- 22:37:12 up 7 days, 22:34,  2 users,  load average: 0.40, 0.41, 0.43
+I hope you can help me!
 
-So, gcc 3.4 and kernel 2.6 do not like each others.
-Finding the actual bug (in kernel or compiler) left as an exercise
-for some brave hacker.
+My problem is, that the free space was not shown correctly, so I started
+rebuilding the Tree with "--rebuild-tree". That runs correctly and I got
+the message "Pass 0:
+####### Pass 0 #######
+Loading on-disk bitmap .. ok, 17038928 blocks marked used
+Skipping 8730 blocks (super block, journal, bitmaps) 17030198 blocks will
+be rea
+0%....20%....40%....block 9654256: The free space (4096) is incorrect,
+should be (4072) - corrected"
 
-I know what Documentation/Changes says about GCC versions.
-It's just that I am stubborn and I hoped 3.4.x would just work,
-since 3.0, 3.1, 3.2 and 3.3 series have produced perfectly working
-2.4.x kernels (and 3.4.x has produced perfectly working non-kernel
-stuffs).
+So I started reiserfsck with "--rebuild-tree -z". This fails with an error
+"out of disc space"
+
+every time now, i start to rebuild the tree i get this error.
+
+Output:
+-----------------------------------------------------
+###### Pass 0 #######
+Loading on-disk bitmap .. ok, 17038928 blocks marked used
+Skipping 8730 blocks (super block, journal, bitmaps) 17030198 blocks will
+be rea
+0%....20%....40%....block 9654256: The free space (4096) is incorrect,
+should be (4072) - corrected
+60%....80%....100%                       left 0, 10179 /sec
+195482 directory entries were hashed with "r5" hash.
+        "r5" hash is selected
+Flushing..finished
+        Read blocks (but not data blocks) 17030198
+                Leaves among those 57461
+                        - leaves all contents of which could not be saved
+and deleted 1
+                Objectids found 195494
+
+Pass 1 (will try to insert 57460 leaves):
+####### Pass 1 #######
+Looking for allocable blocks .. finished
+0%....20%....40%....60%....80%....Not enough allocable blocks, checking
+bitmap...there are 1 allocable blocks, btw
+
+out of disk space
+Aborted
+-----------------------------------------------------
+
+So i cannot mount the partition now!
+
+What can I do?
+
+I'm using reiserfsck 3.6.18
+System: Suse 91
+Kernel: 2.6
+HDD: 120 GB
+Partition: hda7 (65 GB)
+
+I hope to hear from you soon
+
+greets
+Markus Perl
+
 
 -- 
-Recursive die() failure while reading ~/.signature.
-
+Markus Perl
+markus at mex-web.de
+www.mex-web.de
+PGP-Key: www.mex-web.de/markus.gpg
