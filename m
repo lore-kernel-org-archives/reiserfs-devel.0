@@ -1,74 +1,63 @@
-From: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
-Subject: Re: Status of fsync() wrt mail servers
-Date: Thu, 11 Sep 2003 14:33:25 +0200
-Message-ID: <m3ekynbj3e.fsf@merlin.emma.line.org>
-References: <20030910002953.C14172@unbeatenpath.net>
-	<20030910105102.GA535@rahul.net>
-	<1063192474.18154.355.camel@tiny.suse.com>
-	<20030910114103.GA26767@rahul.net>
-	<1063197048.18155.357.camel@tiny.suse.com>
-	<20030910101821.A15923@unbeatenpath.net>
-	<20030910213244.GD1461@matchmail.com>
-	<20030910173343.A16677@unbeatenpath.net>
-	<20030910234927.GE1461@matchmail.com>
+From: Bennett Todd <bet@rahul.net>
+Subject: Re: user-space cmd/lib to compute hash filename ordering?
+Date: Thu, 11 Sep 2003 09:16:40 -0400
+Message-ID: <20030911131640.GA556@rahul.net>
+References: <20030910140451.GB6663@rahul.net> <1063264669.29645.4.camel@haron.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15628-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
+Return-path: <reiserfs-list-return-15629-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030910234927.GE1461@matchmail.com> (Mike Fedyk's message of
- "Wed, 10 Sep 2003 16:49:27 -0700")
+Content-Disposition: inline
+In-Reply-To: <1063264669.29645.4.camel@haron.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mike Fedyk <mfedyk@matchmail.com>
+To: Yury Umanets <umka@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Mike Fedyk <mfedyk@matchmail.com> writes:
+--fdj2RfSjLxBAspz7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> During the processing of a message the MTA will do several renames, moves,
-> and other calls that manipulate its directory entry. 
+2003-09-11T03:17:49 Yury Umanets:
+> If you are interested, I will find out details.
 
-Different MTAs implement their queue differently. Postfix doesn't rename
-the file into place, unlike qmail, it just drops a file, fsync()s it and
-that's it.
+Thanks anyway, I get the message that a stock, standard distro of
+ReiserFS doesn't have a single, consistent way to lay hands on the
+available hashes for purposes like this, so if I do ever do it, I'll
+be making my tool dependent on the ReiserFS dev tooling.
 
-> Without dirsync, it is up to the filesystem and memory pressure to
-> determine when the meta-data from those calls actually makes it to the
-> disk.  (5 seconds with ext3 and 30 seconds with reiserfs3).  With
-> dirsync, once the directory operation call is made, it will not return
-> to the userspace program until the meta-data has made it the disk
-> (because during the rename and directory operation calls, there is no
-> data only meta-data which is filesystem accounting data (directory
-> entries and etc.))
+If someone wanted to enhance ReiserFS to make this job easier for
+people, I've got a recommendation: include a reiserfs_hashsort
+filter, reads a list of full pathnames from stdin, takes a hash name
+as a cmdline arg, and prints the files sorted according to that
+hash; slap that between the find that generates filenames and the
+cpio that packs 'em, and you get a ReiserFS-tuned archive order.
 
-Does reiserfs3.6 support dirsync? I thought it was ext3-specific until
-now.
+I may pursue doing that eventually, but it's somewhere pretty far
+down on my priority list at the moment. In other words, if it had
+been there, I'd have used it, but it'll take me a while to get
+around to coding it up myself.
 
-Please take care to distinguish (file) meta data from directory data.
+Thanks again for the very helpful answer --- "no, what you want
+isn't there, here's how you'd go about constructing it" is every bit
+as valuable as "yes, here's where to find it". Maybe even more so,
+negative answers are harder to research.
 
-> So nothing about the effect of fsync() was mentioned, only that with -o sync
-> it was pointless, since each write() call was already syncronous, and
-> without -o sync, you would have the data, but not nessicarily know what its
-> delivery state is (if the crash is at the wrong time).
+-Bennett
 
-Basically, what we know is that with Linux 2.4, ext3fs, reiserfs and XFS
-will flush all pending transactions (per file system) that were
-requested prior to a synchronous operation (fsync, sync, umount, ...)
-out to disk.
+--fdj2RfSjLxBAspz7
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
-This can heftily bite your back if you're running your MTA's queue on a
-large file system that has other sustained write load (logging, data
-bases, ...).
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
 
-I recently helped one qmail user debug this; the symptom was that the
-first mail in a burst of mails took 2 seconds to queue, subsequent mails
-were queued much quicker (70 ms). He was using ext3fs, and had one huge
-/ (root) file system and so the "synch the whole file system" behaviour
-made his qmail-queue synch *all* his dirty blocks to disk...
+iD8DBQE/YHW3HZWg9mCTffwRAn9/AJwIbjb18krb5x91T52Db6XJx5mRAACcDWXF
+uI8WnnTpBgIcBJNws2kYnK4=
+=ujKh
+-----END PGP SIGNATURE-----
 
--- 
-Matthias Andree
-
-Encrypt your mail: my GnuPG key ID is 0x052E7D95
+--fdj2RfSjLxBAspz7--
