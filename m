@@ -1,10 +1,12 @@
-From: Mike Fedyk <mfedyk@matchmail.com>
-Subject: Re: software packaging and ReiserFS v4
-Date: Fri, 5 Sep 2003 13:35:47 -0700
-Message-ID: <20030905203547.GE19041@matchmail.com>
+From: Bennett Todd <bet@rahul.net>
+Subject: OT: package scripts (was Re: software packaging and ReiserFS v4)
+Date: Fri, 5 Sep 2003 16:39:50 -0400
+Message-ID: <20030905203950.GA12183@rahul.net>
 References: <20030903165409.GD4714@rahul.net> <3F565A8F.4010209@botz.org> <20030903213742.GA13146@rahul.net> <3F58D2CD.3050801@mrs.umn.edu> <20030905194413.GA19041@matchmail.com> <20030905201806.GV31864@vestdata.no>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15583-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
+Return-path: <reiserfs-list-return-15584-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -12,47 +14,34 @@ Errors-To: flx@namesys.com
 Content-Disposition: inline
 In-Reply-To: <20030905201806.GV31864@vestdata.no>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ragnar Kj?rstad <reiserfs@ragnark.vestdata.no>
-Cc: Grant Miner <mine0057@mrs.umn.edu>, Bennett Todd <bet@rahul.net>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Fri, Sep 05, 2003 at 10:18:06PM +0200, Ragnar Kj?rstad wrote:
-> On Fri, Sep 05, 2003 at 12:44:13PM -0700, Mike Fedyk wrote:
-> > On Fri, Sep 05, 2003 at 01:15:41PM -0500, Grant Miner wrote:
-> > > If you are making a packaging system, I recommend you do not allow 
-> > > scipts, since they open up a whole can of worms.  (They're impossible to 
-> > > invert, introduce security problems, make additional work for GUI 
-> > > package managers, and cause too many problems.)
-> > 
-> > What do you replace them with then?
-> 
-> I think if scripts were to be removed from the packaging system you
-> would have to add a package-feature for every single thing that scripts
-> are currently used for. 
-> 
-> If you look through a collection of packages I think you will find that
-> they typically do things like:
-> - create users
-> - start / stop deamons
-> and so on.
-> 
-> So the package-system would need a way to specify that a user is part of
-> the package (that would be very easy with a /etc/passwd.d-system) and
-> that deamons that are part of the package should be started at install
-> and stopped at uninstall-time.
-> 
-> There are probably dozens of other examples of common operations - and
-> you would not be able to remove the script-feature unless 99% of what
-> they are used for is not needed anymore - so it's a complicated task.
+--gBBFr7Ir9EOA20Yy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Great, so now you have a scripting language in the installer.  What did you
-just achieve?
+2003-09-05T16:18:06 Ragnar Kj?rstad:
+> I think if scripts were to be removed from the packaging system
+> you would have to add a package-feature for every single thing
+> that scripts are currently used for.
 
-If you want gui integration of the scripts, just make nice wrappers of the
-standard unix utilities that create a window saying "creating user x", or
-prompting the user for data, or printing a notice.
+Ok, you've convinced me to this extent: when I get to a point where
+I have to add such capabilities to my new packaging tool, they will
+be added by the ability to invoke canned reusable scripts that are
+part of the packaging system, not one-off per-package scripts.
 
-You could probably even take the ncurses library, and add the wrappers there.
+-Bennett
 
-But let the people who want to do this choose the best way...
+--gBBFr7Ir9EOA20Yy
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
+
+iD8DBQE/WPSWHZWg9mCTffwRAuESAJ9MJchx/uxo0EcacOX87HFmlqLnvgCgqJ7v
+eqc82pRs5uTEGW9J0PV4eUk=
+=61yI
+-----END PGP SIGNATURE-----
+
+--gBBFr7Ir9EOA20Yy--
