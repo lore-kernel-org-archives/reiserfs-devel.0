@@ -1,32 +1,36 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Subject: Re: silent semantic changes in reiser4 (brief attempt to document the idea of what reiser4 wants to do with metafiles and why
-Date: Tue, 31 Aug 2004 15:36:00 +0200
-Message-ID: <200408311536.00948.christian.mayrhuber@gmx.net>
-References: <41323AD8.7040103@namesys.com> <20040831131201.GA1609@elf.ucw.cz>
+From: Andreas <IOBuf@gmx.de>
+Subject: Re: fsck.reiser4 problem (was: reiser4 corruption problem)
+Date: Tue, 31 Aug 2004 16:03:56 +0200
+Message-ID: <200408311603.56537.IOBuf@gmx.de>
+References: <20040831012446.631CB15E2E@mail03.powweb.com> <200408311209.43653.IOBuf@gmx.de> <1093955415.2716.476.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21156-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-21157-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040831131201.GA1609@elf.ucw.cz>
+In-Reply-To: <1093955415.2716.476.camel@tribesman.namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-9"
 To: reiserfs-list@namesys.com
-Cc: Pavel Machek <pavel@ucw.cz>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-On Tuesday 31 August 2004 15:12, Pavel Machek wrote:
+Hello,
 
-> What about choosing just "..." instead of "metas"? "metas" is string
-> that needs translation etc, while "..." is nicely neutral.
-> 
-> cat /sound_of_silence.mp3/.../author
+> Would you, please, provide exact sequences of operations which confuses
+> reiser4?
 
-Feel free to read these rather lengthy threads:
-http://marc.theaimsgroup.com/?l=reiserfs&m=108039830904541&w=2
-http://marc.theaimsgroup.com/?l=reiserfs&m=108112390327773&w=2
+mkfs.reiser4 /dev/discs/disc0/part2
+mount /dev/discs/disc0/part2 /mnt/d0p2
+touch /mnt/d0p2/abcdefghijklmnopq=E4=F6=FC=DF=DF=DF=DF
+umount /mnt/d0p2
+fsck.reiser4 /dev/discs/disc0/part2
 
--- 
-lg, Chris
+
+And as I now realize "fsck.reiser4 --build-fs" produces always a segmentati=
+on=20
+fault here, even on a newly created Reiser4 filesystem.
+
+Bye
+ Andreas
