@@ -1,41 +1,64 @@
-From: Giuseppe Bilotta <bilotta78@hotpop.com>
+From: Linus Torvalds <torvalds@osdl.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 21:06:43 +0200
-Sender: linux-kernel-owner@vger.kernel.org
-Message-ID: <MPG.1b98216351280e1f9896d7@news.gmane.org>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826010355.GB24731@mail.shareable.org>
+Date: Thu, 26 Aug 2004 12:23:41 -0700 (PDT)
+Message-ID: <Pine.LNX.4.58.0408261217140.2304@ppc970.osdl.org>
+References: <Pine.LNX.4.44.0408261457320.27909-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S269448AbUHZTSR@vger.kernel.org>
+Return-path: <reiserfs-list-return-20767-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <Pine.LNX.4.44.0408261457320.27909-100000@chimarrao.boston.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org
-Cc: reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Rik van Riel <riel@redhat.com>
+Cc: Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Jamie Lokier wrote:
-> Nicholas Miell wrote:
-> > Anything that currently stores a file's metadata in another file really
-> > wants this right now. Things like image thumbnails, document summaries,
-> > digital signatures, etc.
+
+
+On Thu, 26 Aug 2004, Rik van Riel wrote:
 > 
-> Additionally, all of those things you describe should be deleted if
-> the file is modified -- to indicate that they're no longer valid and
-> should be regenerated if needed.
+> Hmmm, I just straced  "cp /bin/bash /tmp".
+> One line stood out as a potential problem:
+> 
+> open("/tmp/bash", O_WRONLY|O_CREAT|O_LARGEFILE, 0100755) = 4
+> 
+> What do we do with O_CREAT ?
+> 
+> Do we always allow both a directory and a file to be created with
+> the same name ?
 
-In principle, not all of them. For example, a document summary 
-for a text document or a long (textual) description of a video 
-clip might remain the same when the user is only working on the 
-finishing details.
+Either I am confused, or you are.
 
-Maybe the metadata needs an attribute to determine how 
-'immutable' it should be wrt changes on the file? (Can you 
-spell meta-meta-data <g>)
+To me, a filesystem that allows this thing doesn't really _have_ the 
+concept of "directory vs file". It's just a "filesystem object", and it 
+can act as _both_ a directory and a file.
 
--- 
-Giuseppe "Oblomov" Bilotta
+So when you create "/tmp/bash" - assuming /tmp supports the file-as-dir 
+semantics at all, you're just creating a new inode - the same you always 
+have. When you write to that inode, it writes to the default stream. 
+There's no special cases here.
 
-Can't you see
-It all makes perfect sense
-Expressed in dollar and cents
-Pounds shillings and pence
-                  (Roger Waters)
+Now, after you have your regular /tmp/bash, you can then start adding 
+named streams to it, ie you can do
+
+	open("/tmp/bash/icon", O_WRONLY|O_CREAT|O_LARGEFILE, 0755);
+
+and that will create the "icon" named stream. See? 
+
+So "/tmp/bash" is _not_ two different things. It is _one_ entity, that
+contains both a standard data stream (the "file" part) _and_ pointers to
+other named streams (the "directory" part).
+
+Hey, think of it as a wave-particle duality. Both "modes" exist at the
+same time, and cannot be separated from each other. Which one you see
+depends entirely on your "experiment", ie how you open the file.
+
+> Does this create a new class of "symlink attack" style security
+> holes ?
+
+I don't believe so. 
+
+		Linus
