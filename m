@@ -1,45 +1,36 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: Strange Syslog messages
-Date: Tue, 17 Sep 2002 10:14:49 +0400
-Message-ID: <20020917101449.A30035@namesys.com>
-References: <MSGID_2=3a263=2f950_ed7e4e2d@fidonet.org>
+Subject: Re: weird symlink problem persists...
+Date: Tue, 17 Sep 2002 10:18:25 +0400
+Message-ID: <20020917101825.B30035@namesys.com>
+References: <Pine.LNX.4.44L1.0209162228450.13963-100000@sequence.stanford.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11487-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11488-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <MSGID_2=3a263=2f950_ed7e4e2d@fidonet.org>
+In-Reply-To: <Pine.LNX.4.44L1.0209162228450.13963-100000@sequence.stanford.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sean Rima <fido@tcob1.net>
-Cc: reiserfs-list@namesys.com
+To: Troy Wu <troy@sequence.stanford.edu>
+Cc: ReiserFS at NameSys <reiserfs-list@namesys.com>, NFS at SourceForge <NFS@lists.sourceforge.net>
 
 Hello!
 
-On Tue, Sep 17, 2002 at 12:09:48AM +0000, Sean Rima wrote:
+On Mon, Sep 16, 2002 at 11:07:51PM -0700, Troy Wu wrote:
+> I'm using the nfs-utils-1.0.1 tools on a 2.4.10 kernel (relatively stock
+> SuSE-7.3 kernel) with ReiserFS 3.6.25 (but using the 3.5.x disk format).
 
-> I am using a stock 2.4.19 kernel, on a system with reiserfs only. I have started 
-> getting a lot of:
-> vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat data of 
-> [21003 21048 0x0 SD]
-> is_leaf: wrong item type for item *3.5*[21003 21047 0x1 IND], item_len 8, 
-> item_location 2214, free_space(entry_count) 0 vs-5150: search_by_key: invalid 
-> format found in block 16616. Fsck? vs-13070: reiserfs_read_inode2: i/o failure 
-> occurred trying to find stat data of [21003 21048 0x0 SD]
+Linux kernel version 2.4.10 (even patched by SuSE) is way out of date and
+should not be used.
+There are updated kernels available from SuSE right now to which yo should
+upgrade. Pick at least 2.4.16 from SuSE updates or 2.4.18 if you choose to
+switch to vanilla kernels.
 
-Do you see any other messages from kernel at this same time?
-
-> if I boot into a rescue disk and run reiserfsck, I get no errors at all to be 
-> fixed running check only
-
-What reiserfsprogs version do you have?
-
-> Is this serious, a problem with the HD or what??
-
-Hard to tell right now.
+Also right after kernel switch check your reiserfs filesystems with updated
+reiserfsprogs to make sure there is no corruptions left from old kernels.
 
 Bye,
     Oleg
