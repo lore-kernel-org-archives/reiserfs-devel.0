@@ -1,113 +1,114 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: XATTR bugs
-Date: Tue, 09 Dec 2003 18:31:35 -0500
-Message-ID: <3FD65B57.8040603@suse.com>
-References: <16323.62343.428966.858580@pc7.dolda2000.com>
+From: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
+Subject: Re: More on Hard Links
+Date: Tue, 9 Dec 2003 18:47:40 -0500 (EST)
+Message-ID: <20031209234740.27534.qmail@web25010.mail.ukl.yahoo.com>
+References: <87k755y8xf.fsf@uhoreg.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16307-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16308-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16323.62343.428966.858580@pc7.dolda2000.com>
+In-Reply-To: <87k755y8xf.fsf@uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Fredrik Tolf <fredrik@dolda2000.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hubert Chan wrote: 
 
-Fredrik Tolf wrote:
-| Hi!
-|
-| I just applied the ReiserFS xattr patches to my 2.6.0-test10 Linux
-| kernel, and I found what appears to be two bugs.
-|
-| The patches were those from
-| ftp://ftp.suse.com/pub/people/jeffm/reiserfs/aclea/
-|
-| Since there is no mention of this URL on the namesys.com home page, I
-| don't know if these patches are "official". If they aren't, please
-| tell me so and I will turn elsewhere, and if you know where to mail it
-| instead, please tell me that too.
-|
-| Anyway, I'm going to ramble on as if they were official.
+> "Narcoleptic" == Narcoleptic Electron writes:
+> 
+> Narcoleptic> You can copy the hard link, then use it
+> as a regular local
+> Narcoleptic> file (the sync list doesn't get copied
+> with the file).  You
+> Narcoleptic> can also delete the hard link if you
+> want (thus replacing
+> Narcoleptic> the actual file with that "NULL"
+> placeholder if its
+> Narcoleptic> reference count is 0).
+> 
+> I think that scheme may result in space wastage
+> since you have
+> to maintain the NULL placeholder, and can't reclaim
+> the space.
 
-As much as I'd like them to see "official" testing, Hans is very much
-against these patches against a V3 filesystem.
+If there is a way to quickly and reliably verify that
+two files are identical (or not), then when committing
+a transaction, each file in the sync list can be
+resolved as follows:
+- If a volume ID is not found, don't commit anything
+(as per the current proposal).
+- Otherwise, if a file ID for a given volume ID refers
+to a file not identical to the current file (or is not
+found), remove the file from the sync list.
 
-I've just posted updates to the patches on my (the above) FTP site.
+This way, we don't need the "NULL" placeholder...
+simply delete the file when its reference count
+reaches 0, as usual.  This removes space reclamation
+issues if a volume goes down.
 
-| The first bug was in inode.c and was really simple. The only thing was
-| that #include <linux/quotaops.h> was missing. It is necessary for
-| DQUOT_TRANSFER, which is used by the xattr patch, and as such the
-| module won't load.
+This is a far better solution, because there is no
+need to worry about global uniqueness of volume IDs or
+file ID reuse within volumes.
 
-This bug was fixed in the updated patches.
+> But my concern with that was that if one partition
+> needs to be
+> reformatted, then the other instances of the link
+> become unwritable.
+> So if you want to recover, you would have to copy
+> the file and manually
+> re-link everything.  There's no way to automatically
+> recover.
 
-| The second one was a bit more subtle. I'm using this ReiserFS to serve
-| NFS, and I discovered that there was an ACL-related bug in
-| reiserfs_setattr (also from inode.c). In the end of that function
-| (line 2464 in my kernel), it makes a call to reiserfs_acl_chmod, like
-| this:
-[...]
-| The thing is that I don't know ReiserFS, and so I don't really know
-| what I'm doing. If you think this breaks anything, please tell me
-| so. In any other case, I guess it would be a good thing to change the
-| patches into this.
+It would be pretty easy to write a script to do this. 
+This script would be pretty useful, in fact... good
+thinking.
 
-This bug, however, I don't believe is a bug in my code. This code works
-fine on 2.4 kernels, and after a few minutes of searching, I've found
-the difference.
+> Narcoleptic> ... Each file could have a pseudo-file
+> attribute (i.e.
+> Narcoleptic> "+/Online") ...
+>               ^^^
+> 
+> Oh great.  Are we going to get into the debate on
+> how to name
+> attributes again? ;-)
 
-This follows behavior on ext[23], which is part of the "official" 2.6
-kernel. The reason for this is as follows:
+Well, although the subject line has been changed many
+times, I believe we are still on that thread!  ;-)
 
-fs/nfsd/vfs.c:nfsd_setattr() is responsible for NFS server setattr()
-behavior on both 2.4 and 2.6 kernels.
-The following chunk of code handles the chmod:
-~        if (!check_guard || guardtime == inode->i_ctime) {
-~                err = notify_change(dentry, iap);
-~                err = nfserrno(err);
-~        }
+> >> It's hard to differentiate that from the volume
+> just being unmounted.
 
-The culprit as to why you're seeing this behavior is in nfserrno().
+There is no need to differentiate from a volume going
+down and just being unmounted.
 
-On v2.4 kernels, the structure that handles the error mapping ends like
-this:
-~                { nfserr_stale, -ESTALE },
-~                { nfserr_dropit, -ENOMEM },
-~                { nfserr_notsupp, -EOPNOTSUPP },
-~                { nfserr_notsupp, -ENOTSUPP },
-~                { -1, -EIO }
+> Narcoleptic> Shouldn't all files on a read-only
+> partition automatically
+> Narcoleptic> have their permission bits set to
+> read-only (or at least
+> Narcoleptic> appear that way)?
+> 
+> Hmm.  I don't think so.  I'm not sure.  I don't have
+> any r-o partitions
+> right now, so I can't check.
 
-On v2.6 kernels, the structure that handles the error mapping ends like
-this:
-~                { nfserr_stale, -ESTALE },
-~                { nfserr_dropit, -EAGAIN },
-~                { nfserr_dropit, -ENOMEM },
-~                { -1, -EIO }
+If it doesn't work this way, I think it should.
 
-... thus the -EOPNOTSUPP isn't mapped to a non-fatal error, and defaults
-to -EIO.
+> Narcoleptic> If so, then all files will have the
+> permission bits set
+> Narcoleptic> identically, and no problem.
+> 
+> But then you run into the problem that you can't
+> change the permissions
+> on a file that's on a read-write partition, which
+> would be unexpected
+> behaviour, IMHO.
 
-The problem needs to be addressed there, not in the ReiserFS code. I'll
-check out when and why that bit of code became errnoneous in the 2.6
-kernel later this evening; I'm headed out the door at the moment.
+It wouldn't be expected for offline files, which would
+be clearly denoted as such.
 
-- -Jeff
 
-- --
-Jeff Mahoney
-SuSE Labs
-jeffm@suse.com
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.2 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iD8DBQE/1ltXLPWxlyuTD7IRAtJ7AJ9W4anIDLlZB62cF4s62btfXdiVNACdEgh3
-a/kF/6BytHVd4fOBr3VoY4o=
-=ZInn
------END PGP SIGNATURE-----
+______________________________________________________________________ 
+Post your free ad now! http://personals.yahoo.ca
