@@ -1,29 +1,30 @@
-From: "David Dabbs" <david@dabbs.net>
-Subject: 5 Aug auto-snapshot w/rc2-mm1?
-Date: Thu, 5 Aug 2004 18:10:22 -0500
-Message-ID: <20040805231710.3280E15D5F@mail03.powweb.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: does anyone know what versions of 2.6 reiserfs is unstable in,
+	we need it for our download page warnings....
+Date: Thu, 05 Aug 2004 19:50:56 -0400
+Message-ID: <1091749855.10651.40.camel@watt.suse.com>
+References: <4112BD47.60602@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20028-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20030-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <4112BD47.60602@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
+On Thu, 2004-08-05 at 19:05, Hans Reiser wrote:
+> Thanks,
 
-Yesterday=92s snapshot READ.ME indicates that it works with =
-2.6.8-rc2-mm2
-version of Linux kernel e.g. linux-2.6.8-rc2.tar.bz2 and
-2.6.8-rc2-mm2/2.6.8-rc2-mm2.bz2 but today's auto-snapshot is labeled as=20
+The stream of bugfixes started in 2.6.4.  I would advise against using
+versions before 2.6.5.  For hardcore production use, I'd start with
+2.6.7 or 2.6.8, but that carries for the kernel as a whole.  suse also
+fixed ext3/ext2 bugs during the QA cycles for sles9.
 
-	linux-2.6.8-rc2-mm1.diff.gz
-
-Is this a typo?
-
-=A0
-David
+-chris
 
 
