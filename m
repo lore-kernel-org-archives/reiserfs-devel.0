@@ -1,49 +1,62 @@
-From: David Greaves <david@dgreaves.com>
-Subject: Re: implementing reiserfs in C++ for a new OS
-Date: Wed, 11 Aug 2004 23:04:47 +0100
-Message-ID: <411A97FF.9050205@dgreaves.com>
-References: <71d3364904080706112e72fb6b@mail.gmail.com> <41151698.3020508@namesys.com> <71d3364904080907361d3d7064@mail.gmail.com> <41178FA8.80107@futuretg.com> <20040809151252.GN1284@nysv.org> <411796CC.6070509@futuretg.com> <20040809153556.GO1284@nysv.org> <20040809170145.GE5429@parcelfarce.linux.theplanet.co.uk> <20040809172437.GP1284@nysv.org> <71d3364904080922267e8c14af@mail.gmail.com>
+From: Mariusz Mazur <mmazur@kernel.pl>
+Subject: Re: Invalid use of asm/unaligned.h
+Date: Thu, 12 Aug 2004 00:27:12 +0200
+Message-ID: <200408120027.12385.mmazur@kernel.pl>
+References: <200408112148.42125.mmazur@kernel.pl> <411A87A5.7020608@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20220-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20221-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <71d3364904080922267e8c14af@mail.gmail.com>
+In-Reply-To: <411A87A5.7020608@suse.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ramachandra K <ariston@gmail.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Jeff Mahoney <jeffm@suse.com>
 Cc: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On =B6roda 11 sierpie=F1 2004 22:55, Jeff Mahoney wrote:
+> Can you provide examples of what you consider depending on "kernel
+> internal stuff" ? When I look through include/asm*/unaligned.h, I see no
+> references to functions not provided in a standard C library. I also
+> don't see any assembly code, so I'm not sure why you'd need to code
+> assembly for each architecture.
 
-Ramachandra K wrote:
+Haven't checked good enough (just saw ifdef __KERNEL__ in {linux,asm}/strin=
+g.h=20
+and didn't bother to check what's exactly inside - but that was just memcpy=
+).
 
-|Let me clarify that the nature of Capital project is academic research.
-|
-|rgds
-|Ram
+> There are other instances of libc headers defining macros that expand to
+> standard libc functions. Why should the presence of memcpy/memmove calls
+> be an exception to this? If you truly feel the need to create
+> "userspace" headers for unaligned access, you can lift the kernel
+> headers wholesale. If that's not desirable, take a look in
+> asm-generic/unaligned.h and include that instead.
 
-As an enquiry - why not use the GPL? Your messages imply that you are
-concerned about using it and want to avoid that.
+I don't like adding dependencies (even if it's libc), but what the heck. I'=
+ll=20
+add asm*/unaligned.h in llh 2.6.8.0 (whenever linus will release 2.6.8).
 
-A lot of people are sensitive about the morals around GPL code.
-Although I have no standing here I'd be interested to hear and it may
-help calm those who worry.
+> That said, I don't believe the problem is the inclusion of
+> asm/unaligned.h at all, but rather the fact that the PPC developers
+> decided to surround the code with ifdef KERNEL. They're the only arch to
+> do so, which is odd considering it's a no-op anyway.
 
-Your messages to the list can be interpreted in various ways - and
-some interpretations are not in keeping with the philosophical basis
-of the GPL - maybe you could clarify :)
+I've got used to checking against ppc if I'm not sure whether a header is o=
+r=20
+isn't kernel only (contrary to other archs the ppc guys do separate kernel =
 
-David
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+and userland stuff). The asm/unaligned.h header was always included as kern=
+el=20
+stuff (+ ppc defined it as kernel only) which got me fooled.
 
-iD8DBQFBGpf/8LvjTle4P1gRAoePAJ9h8eEvQbuTUASm67Qok/sf/u+PewCfd8lI
-eyDtXXCd8faMORDXH1tmO1I=
-=T1qi
------END PGP SIGNATURE-----
 
+--=20
+In the year eighty five ten
+God is gonna shake his mighty head
+He'll either say,
+"I'm pleased where man has been"
+Or tear it down, and start again
