@@ -1,65 +1,52 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: Why is Reiser4 slower then ReiserFS v3
-Date: Mon, 27 Dec 2004 18:53:30 -0500
-Message-ID: <200412272353.iBRNrUcv002561@turing-police.cc.vt.edu>
-References: <231dafb5041227123867a2c873@mail.gmail.com>
+From: Sander <sander@humilis.net>
+Subject: Re: reiser4 and apache (was: Re: Reiser4 and ZFS)
+Date: Tue, 28 Dec 2004 12:12:39 +0100
+Message-ID: <20041228111239.GA10511@favonius>
+References: <20041215064608.66493.qmail@web50901.mail.yahoo.com> <200412152000.iBFK0CHH016500@turing-police.cc.vt.edu> <20041227122814.GA7388@favonius> <200412271533.iBRFXpmT011625@turing-police.cc.vt.edu>
+Reply-To: sander@humilis.net
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-1243707358P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22916-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22920-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Mon, 27 Dec 2004 13:38:12 MST."
-             <231dafb5041227123867a2c873@mail.gmail.com> 
+Content-Disposition: inline
+In-Reply-To: <200412271533.iBRFXpmT011625@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Dark Shadow <shadowofdarkness@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Valdis.Kletnieks@vt.edu
 Cc: reiserfs-list@namesys.com
 
---==_Exmh_-1243707358P
-Content-Type: text/plain; charset=us-ascii
+Valdis.Kletnieks@vt.edu wrote (ao):
+> On Mon, 27 Dec 2004 13:28:15 +0100, Sander said:
+> > Valdis.Kletnieks@vt.edu wrote (ao):
+> > > For many shops, it's quite likely that a ZFS with "more scalability
+> > > and administration" is The Right Choice, especially if it does *NOT*
+> > > include lots of odd new features and quirks that might break
+> > > production code (remember the joys in getting Apache running on
+> > > reiser4, until it was discovered that the 'file-as-directory' stuff
+> > > broke programs that weren't expecting it?).
+> > 
+> > I just got bitten by this. Is it possible to get apache to run on
+> > reiser4, and if so, how?
+> 
+> I think the archives have pointers to both a reiser4 patch that disables
+> the "file as directory", and a patch to apache to deal with the situation...
 
-On Mon, 27 Dec 2004 13:38:12 MST, Dark Shadow said:
+I can't find it in the archives, nor with google or on the Namesys
+website (namely download, getting started with v4, and the FAQ).
 
-> I have three hard drives so I took a file from one and copied it to
-> the others and timed it
-> source drive /dev/hda Reiser3 Western Digital 40gb 7200rpm
-> target1 drive /dev/hdb Reiser4 Western Digital 80gb 7200rpm
-> target2 drive /dev/sda Reiser3 Seagate 160gb 7200rpm (SATA but still
-> same rpm as rest so it should be the same)
+I did find this mail from Hans about the issue and his request for a
+patch for apache:
+http://www.dragoninc.on.ca/mail-archives/reiserfs/2004-08/0583.html
 
-You may wish to run 'hdparm -T -t' on each drive and see what the *raw* speed
-is.  All drives are not created equal... ;)
+That thread doesn't contain a patch unfortunately.
 
-> time cp ~/800mb.file /target1
-> real    0m41.409s
-> user    0m0.010s
-> sys     0m4.364s
+Can somebody please point me to a patch to disable the file as a
+directory feature?
 
-> time cp ~/800mb.file /target2
-> real    0m38.318s
-> user    0m0.017s
-> sys     0m5.627s
+Hans, would this be something for a mount option? And shouldn't more
+info on this be on the website?
 
-Similarly, you should try each one 3-5 times and get an average (for
-starters, if you have more than 800M of memory, the second time around it
-may all still be in cache, so the second time gets a hot-cache boost). It
-may be useful to run the command once and *ignore* its times, and then
-re-run the command 3 times and average those results (so all 3 times you
-actually *use* start from the same "previous command just finished" cache state).
-
---==_Exmh_-1243707358P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFB0KB6cC3lWbTT17ARAgLVAKDTxDhIrsYHMGdXlABtgKzKB7z9jwCfcFHb
-r3+oeQ7uY0haZmSXMauG2PE=
-=zRoY
------END PGP SIGNATURE-----
-
---==_Exmh_-1243707358P--
+Thanks in advance.
