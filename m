@@ -1,78 +1,55 @@
-From: Spam <spam@tnonline.net>
-Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: Mon, 6 Sep 2004 16:59:23 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <164628888.20040906165923@tnonline.net>
-References: <20040826150202.GE5733@mail.shareable.org>
- <200408282314.i7SNErYv003270@localhost.localdomain>
- <20040901200806.GC31934@mail.shareable.org>
- <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
- <1094118362.4847.23.camel@localhost.localdomain> <20040902203854.GA4801@janus>
- <200409022319.i82NJlTN025039@turing-police.cc.vt.edu>
- <1076230617.20040903014302@tnonline.net> <20040906144358.GC29886@thundrix.ch>
-Reply-To: Spam <spam@tnonline.net>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: "wrong bytes" with files >=4GiB
+Date: Mon, 06 Sep 2004 19:03:16 +0400
+Message-ID: <1094482996.1342.132.camel@tribesman.namesys.com>
+References: <413C5521.6080700@dermichi.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040906144358.GC29886@thundrix.ch>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21532-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <413C5521.6080700@dermichi.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Tonnerre <tonnerre@thundrix.ch>
-Cc: Valdis.Kletnieks@vt.edu, Frank van Maarseveen <frankvm@xs4all.nl>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Michael Weissenbacher <webmaster@dermichi.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
+Hello
 
-  
+On Mon, 2004-09-06 at 16:16, Michael Weissenbacher wrote:
+> I'm using kernel 2.6.9-rc1-mm1 (patched for the page-size bug) and 
+> reiser4progs1.0.0. I am able to reproduce a "wrong bytes" problem by 
+> doing the following:
+> # dd if=/dev/urandom bs=4096 count=1048576 of=/mnt/tmp/testfile
+> # umount /mnt/tmp
+> # fsck.reiser4 /dev/sda1
+> ...
+> FSCK: Node (45223670), item (3), [2a:7465737466696c:1000f] (stat40): 
+> wrong bytes(4294967296), Should be (0).
+> ...
+> 1 fixable corruptions were detected in the FileSystem. Run with --fix 
+> option to fix them.
+> 
+> When doing a fsck.reiser4 with --fix parameter it says
+> FSCK: Node (45223670), item (3), [2a:7465737466696c:1000f] (stat40): 
+> wrong bytes
+> (4294967296), Fixed to (0).
+> 
+> and after that it says that the fs is consistent. I cannot find any 
+> difference in the file on the filesystem though.
+> Is this actually harmful or is it just "statistic" data?
+> If i'm doing the same test with count=1048575 no corruption is reported 
+> and if i'm doing it for files >4GiB i always get the problem (with 
+> different numbers of course).
+> I can sent the full fsck output if needed.
+> BTW this problem also occurs with kernel 2.6.8.1-mm2.
+> 
 
-> Salut,
+This is reiser4progs problem. It will be fixed soon
 
-> On Fri, Sep 03, 2004 at 01:43:02AM +0200, Spam wrote:
->>   Yes why not? If there was any filesystem drivers for the AudioCD
->>   format then it could.
->> 
->>   I had such a driver for Windows 9x which would display several
->>   folders and files for inserted AudioCD's:
->> 
->>   D: (cdrom)
->>     Stereo
->>       22050
->>         Track01.wav
->>         Track02.wav
->>         ...
->>       44100
->>         Track01.wav
->>         ...
->>     Mono
->>       22050
->>         Track01.wav
->>         ...
->>       44100
->>         Track01.wav
->>         ...
-
-> So you'd like the kernel to know  about raw CD PCM and RIFF PCM format
-> and conversion? Great.. That's really Solarisish!
-
-  If it could be done in userland, and still be accessible for most
-  applications then that is great.
-
-  If the user things that such a plugin is of value for him then I do
-  not see why he should not be able to use it? Again these are example
-  of stuff that could be done if there was a plugin/extensible
-  interface.
-
-  You make it sound like everything on the planet should be predefined
-  and included in the kernel. This is not what I was saying or wanted.
-
-  From what I understood from Hans, there will be a way to load
-  plugins without having to recompile reiser4 module (or the kernel).
-  This is what I'd like to see.
-
-  Some things/plugins may even be partially user-space.
-
-  ~S
-
-  
-
-> 			    Tonnerre
-
+> regards
+> Michael
+> 
 
