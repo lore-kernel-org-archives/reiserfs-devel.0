@@ -1,43 +1,48 @@
-From: Mathieu Segaud <matt@minas-morgul.org>
-Subject: Re: Crypto(compress) plugin stability
-Date: Thu, 12 Aug 2004 21:30:39 +0200
-Message-ID: <87ekmcgnmo.fsf@barad-dur.crans.org>
-References: <87isbogqfs.fsf@barad-dur.crans.org>
-	<200408122302.51432.edward@namesys.com>
+From: Francesco Biscani <frbiscani@jumpy.it>
+Subject: Re: fsck.reiser4 wrong size error (?)
+Date: Thu, 12 Aug 2004 21:38:46 +0200
+Message-ID: <200408122138.46787.frbiscani@jumpy.it>
+References: <cd32a06204080910256de4cc0e@mail.gmail.com> <200408102156.00690.vitaly@namesys.com> <200408102009.39695.frbiscani@jumpy.it>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20239-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20240-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200408122302.51432.edward@namesys.com> (Edward Shishkin's
- message of "Thu, 12 Aug 2004 23:02:50 -0700")
+In-Reply-To: <200408102009.39695.frbiscani@jumpy.it>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Edward Shishkin <edward@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: Vitaly Fertman <vitaly@namesys.com>
 
-Edward Shishkin <edward@namesys.com> writes:
-
-> On Thursday 12 August 2004 11:29, Mathieu Segaud wrote:
->> Hi !
->>
->> I've got a question about Reiser4 encryption ? Is it stable enough to run
->> other things than test run or benchmarks ? :)
->>
+On Tuesday 10 August 2004 20:09, Francesco Biscani wrote:
+> Hi,
 >
-> Not yet. 
-> Currently we are working on fast compression support. 
-> Hans wants benchmark results for main operations (which actually
-> promise to be interesting). Then we'll concentrate on cipher support
-> and stability.
-> Edward.
+> > are messages about 'wrong size' or about 'wrong bytes' or both?
+>
+> I'm _almost_ sure it's about "wrong bytes". I'll confirm ASAP. Are they
+> potentially harmful?
+>
+> Oh, BTW, "debugfs -C" worked ok here.
+>
+> Regards,
+>
+>   Francesco
 
-Thanks to both of you for your quick answers.
-I will then wait. :)
-I will take a look at the code, such good results are sure worth of it
+An update for those interested:
 
--- 
-Mathieu Segaud
+- it was a "wrong bytes" message. All the bytes of affected objects were 
+doubled. Corrected with --fix and using now auto-snapshot for 2.6.8-rc4-mm1. 
+Let's see if it happens again.
+- debugfs -C worked ok also on my / partition.
 
+BTW, debugfs -p showed also that the default plugin for fibration was changed, 
+from dot-o to ext-1. But if I create a dir it is still dot-o-fibrated. Am I 
+missing something here? Should I mount with some special options to have 
+ext-1 fibration as default?
+
+Thanks,
+
+  Francesco
