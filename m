@@ -1,30 +1,35 @@
-From: Pierre Abbat <phma@webjockey.net>
-Subject: Re: Bugs on big endian systems
-Date: Wed, 3 Mar 2004 20:59:49 -0500
-Message-ID: <200403032059.49989.phma@webjockey.net>
-References: <4045D745.8070204@sysgo.com> <4046769A.9030806@namesys.com> <1078365334.1526.2.camel@boadicea>
+From: Mike Fedyk <mfedyk@matchmail.com>
+Subject: Re: Problems with reiserfs when start OpenAFS 1.2.11-fc1 Segmentation
+ fault with kernel 2.4.22-1.2174.nptl
+Date: Wed, 03 Mar 2004 19:46:48 -0800
+Message-ID: <4046A6A8.2000609@matchmail.com>
+References: <20040304005117.M99283@soltis.cc> <20040304005913.M1858@soltis.cc> <20040304002804.GA5722@dbz.icequake.net> <20040304014303.M64769@soltis.cc>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17068-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17070-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1078365334.1526.2.camel@boadicea>
-Content-Disposition: inline
+In-Reply-To: <20040304014303.M64769@soltis.cc>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs-List@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: jds <jds@soltis.cc>
+Cc: Ryan Underwood <nemesis-lists@icequake.net>, reiserfs-list@namesys.com, openafs-info@openafs.org
 
-On Wednesday 03 March 2004 20:55, Richard Heycock wrote:
-> On Thu, 2004-03-04 at 11:21, Hans Reiser wrote:
-> > Thanks Jeff and Pavel.  Nikita, send Pavel the usual agreement, and
-> > we'll send to Linus unless someone finds an objection.  Edward, read
-> > this patch, test it on alpha,
->
-> The Alpha is a little endian machine.
+jds wrote:
+> Hi Ryan:
+> 
+>    Thanks for your help, the client openafs working again.
+> 
+> loop: loaded (max 8 devices)
+> Journalled Block Device driver loaded
+> kjournald starting.  Commit interval 5 seconds
+> EXT3 FS 2.4-0.9.19, 19 August 2002 on loop(7,0), internal journal
+> EXT3-fs: mounted filesystem with ordered data mode.
 
-True, but it is also an eight-byte machine, which is different from the Intel, 
-so it should be tested. Macs are big-endian.
+No, if you're going to be stacking filesystems, use ext2, not ext3.  You 
+will get better performance, and there's no use in having two levels of 
+journaling in this case.
 
-phma
+Mike
