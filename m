@@ -1,65 +1,55 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Final test on v4 reiserfs ?
-Date: Mon, 23 Jun 2003 13:12:05 +0400
-Message-ID: <3EF6C465.6020703@namesys.com>
-References: <53797.203.186.23.91.1056328735.squirrel@sml.dyndns.org>
+Subject: Re: vpf-10680, minor corruptions
+Date: Mon, 23 Jun 2003 13:28:31 +0400
+Message-ID: <3EF6C83F.6060702@namesys.com>
+References: <3EF07AFB.8060303@g-house.de> <20030618152626.GA17240@namesys.com> <3EF0A8E8.2000209@g-house.de> <20030619054535.GA23852@namesys.com> <3EF6AE67.5090502@namesys.com> <20030623090258.GA12259@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14666-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14667-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <53797.203.186.23.91.1056328735.squirrel@sml.dyndns.org>
+In-Reply-To: <20030623090258.GA12259@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Thomas Graham <lkthomas@sml.dyndns.org>
-Cc: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: Christian Kujau <evil@g-house.de>, ReiserFS List <reiserfs-list@namesys.com>
 
-Thomas Graham wrote:
+Oleg Drokin wrote:
 
->anyone did a final test yet ? what's known problem right now ?
->Thanks
+>Hello!
+>
+>On Mon, Jun 23, 2003 at 11:38:15AM +0400, Hans Reiser wrote:
+>  
+>
+>>>Well, normally reiserfs is caring about consistency.
+>>>There are two noticeable omissions, though:
+>>>1. if the unexpected shutdown was because of power loss and you have write 
+>>>cache enabled
+>>> and your write reorders write requests, then it is possible invalid data 
+>>> gets
+>>> written to disk, before "transaction is finished" mark is written to the 
+>>> drive.
+>>> (there is a way to avoid this with some drives, by explicitly flushing
+>>>  drive cache in some cases, but this method seems to create some problems
+>>>  on itself. So this is not yet merged in any mainstream kernel).
+>>>      
+>>>
+>>Can you provide details on this not being merged?
+>>    
+>>
+>
+>It was never submitted to inclusion into mainstream kernel. Hence it was never merged.
+>I saw that Jens Axboe (I think) posted the code for public review/verification, but that's it.
+>
+>Bye,
+>    Oleg
 >
 >
 >  
 >
-Sigh, releasing by LinuxTag will be tight.
-
-Current issues off the top of my head.
-
-extent overwrite code writes data twice  needlessly (no need to get more 
-exact, it is being fixed).
-
-we need to steal on capture (that is, if a block is in a transaction 
-being committed, we need to copy it if another transaction wants it 
-rather than wait on the commit)
-
-we need to figure out why experimental code written last week to order 
-filebodies by filenames isn't working.
-
-I need to perform complete reading from beginning to end of all code.  
-Who knows what I will find.
-
-All FIXMEs in the code need to get fixed.
-
-delete performance needs to be fixed at least up to reiser3 levels.
-
-It would be nice if CPU consumption could drop a bit, and it would be 
-nice to test on a highly smp machine.
-
-It would be nice if our txnmgr code improved in regards to locking.
-
-For us to (beta) release at LinuxTag three conditions have to be met:
-
-1) I have to feel that I would choose to use it over V3 in regards to 
-performance.
-
-2) We have to be unable to crash it inside Namesys using all of our 
-testing scripts.
-
-3) I have to be sure that the right key assignment algorithm is chosen 
-as the default.
+Please pursue the matter with Jens and Chris.
 
 -- 
 Hans
