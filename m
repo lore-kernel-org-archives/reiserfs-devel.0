@@ -1,48 +1,80 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: silent semantic changes with reiser4
-Date: Wed, 01 Sep 2004 13:10:17 +0100
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <1094040615.2474.50.camel@localhost.localdomain>
-References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
-	 <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
+From: Giuseppe Bilotta <bilotta78@hotpop.com>
+Subject: Re: silent semantic changes in reiser4 (brief attempt to document the idea of what reiser4 wants to do with metafiles and why
+Date: Wed, 1 Sep 2004 15:18:11 +0200
+Sender: news <news@sea.gmane.org>
+Message-ID: <MPG.1b9fea81a3b9001c9896dd@news.gmane.org>
+References: <41323AD8.7040103@namesys.com> <20040831190814.GA15493@thundrix.ch> <111617109.20040831213808@tnonline.net> <200409010511.31597.robin.rosenberg.lists@dewire.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-21209-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Pavel Machek <pavel@ucw.cz>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
+Cc: linux-kernel@vger.kernel.org
 
-On Maw, 2004-08-31 at 21:05, Linus Torvalds wrote:
-> In a graphical environment, the "icon" stream is a good example of this.  
-> It literally has _nothing_ to do with the data in the main stream. The
-> only linkage is a totally non-technical one, where the user wanted to
-> associate a secondary stream with the main stream _without_ altering the
-> main one. THAT is where named streams make sense.
+Robin Rosenberg wrote:
+> On Tuesday 31 August 2004 21.38, Spam wrote:
+> > > Salut,
+> > >
+> > > On Tue, Aug 31, 2004 at 08:17:36PM +0200, Spam wrote:
+> > >> =A0 How =A0are =A0things =A0done on Windows platforms when there are=
+ files and
+> > >> =A0 directories =A0with the same name? In Unix that is imposible. Ho=
+w does
+> > >> =A0 it =A0work =A0for =A0environments =A0like =A0Cygwin =A0etc? What=
+ happen to tools
+> > >> =A0 that run in them?
+> > >
+> > > In =A0NTFS it's =A0illegal =A0IIRC. =A0At least =A0the =A0fs correcti=
+on =A0utilities
+> > > complain about a block being assigned to two files.
+> >
+> > =A0 I =A0meant =A0a =A0file =A0and a directory with the same name, not =
+two files
+> > =A0 with the same name :) subtle but important difference.
+> >
+> > =A0 ie, =A0you can have a file named "foo" and a directory named "foo" =
+and
+> > =A0 they won't collide.
+>=20
+> You can't have a file and a directory with the same name in W*.
+>=20
+> Alternative data streams don't appear in a normal directory. You
+> need special API:s and tools to see them. If you know the name of and ADS
+> you can however access them with standard tools, including cygwin.
+>=20
+> echo foo >a.txt
+> echo bar >a.txt:b.txt
+>=20
+> You can also have ADS's on directories. Not sure how Reiserfs4 does that.
+>=20
+> mkdir foo
+> echo bar >foo:a.txt
 
-The icon doesn't belong in the document, that was a catastrophic
-disaster in early MacOS (although they only use an index). Users want to
-manage their icon choices, tags, tooltip notes and attached labels, and
-you cannot do that in the file if you don't own the file. 
+The problem with this approach is that some tools will not=20
+recognize the file:ADS syntax, and complain. This is what=20
+happens under Windows, at least. Would the same happen under=20
+Linux, I wonder?
 
-Also the icon is *not* unrelated to the file in a modern GUI, eg rox and
-nautilus uses scaled versions of the content for many media types and
-will show you pictures, frames from a movie etc to help you remember the
-content. On top they then add user specific annotations.
+Say that we choose a reserved character (say, #; is # a=20
+reserved character?) to mark the frontier between the file and=20
+the ADS/attributes/whatever. Would old programs still be able=20
+to parse the (commandline or anywhere else) "URL" specification=20
+and get to the ADS/attribute/whatever?
 
-The things that are more independant are:
+Say, would cat somefile#an_ads work, or would cat (as it is=20
+now) complain in some way?
 
-"This file was created by OpenOffice 1.2"
-"This is a text/plain file in UTF-8"
-"This file has a UUID of ...."
+--=20
+Giuseppe "Oblomov" Bilotta
 
-The type has dragons because you get heirarchical typing within
-documents (consider XML containing namespaces)
-
-(UUIDs being one really useful thing we don't tag everywhere onto files
-that would be a godsend on the desktop providing they moved with the
-file on rename)
-
-Alan
+Can't you see
+It all makes perfect sense
+Expressed in dollar and cents
+Pounds shillings and pence
+                  (Roger Waters)
 
