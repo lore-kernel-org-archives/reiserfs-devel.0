@@ -1,47 +1,48 @@
 From: Chris Mason <mason@suse.com>
-Subject: Re: Error Code 255 and "Permission Denied"
-Date: 06 May 2002 21:53:42 -0400
-Message-ID: <1020736422.988.74.camel@tiny>
-References: <scd69d55.074@gwd.albion.edu> 
-	<3CD725AC.6000708@mb.tu-ilmenau.de>
+Subject: Re: fsync() Performance Issue
+Date: 06 May 2002 22:04:56 -0400
+Message-ID: <1020737096.988.86.camel@tiny>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10272-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10273-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <3CD725AC.6000708@mb.tu-ilmenau.de>
+In-Reply-To: <3CD72B37.2010408@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: Daniel Christiansen <christiansen@albion.edu>, Oleg Drokin <green@namesys.com>, reiserfs-list <reiserfs-list@namesys.com>
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list <reiserfs-list@namesys.com>
 
-On Mon, 2002-05-06 at 20:54, Manuel Krause wrote:
-> On 05/06/2002 09:12 PM, Daniel Christiansen wrote:
+On Mon, 2002-05-06 at 21:17, Manuel Krause wrote:
+> On 05/07/2002 12:57 AM, Chris Mason wrote:
+>
 > 
-> > Everything seems to work by using the 3.x.1b version of reisfsck with
-> > --rebuild-tree.  Thank you very much, Oleg, for taking the time to solve
-> > my problem.
-> > 
-> > I don't know anything about the "write cache enabled" issue below.  Is
-> > this something I have to change with a jumper, a bios setting, or a
-> > software configuration?
-> > 
-
-Most new IDE drives have this on by default.  You can turn it off with
-hdparm -W 0, which will make you more able to withstand power failures.
-
+> Hi, Chris & Hans!
 > 
-> Or is it somekind of connected to Chris Masons thread "2.4.19-pre7 / 
-> corruption on unwanted reboot"??? If Chris and Jens found bugs on IDE 
-> interaction with ReiserFS they should really put out a patch soon... ;-)
+> Don't think this somekind of destructive discussion would lead to 
+> anything useful for now, can you post a diff for 
+> 2.4.19-pre7+latest-related-pending +compound-patch-from-ftp?
 > 
-> Chris M.? Is that related eventually? Just a doubt!
+> I'll try it and report if that leads to more security and/or less 
+> performance on my every day use with NS6 and so on if there is any.
 
-I haven't been able to reproduce problems after a crash with pre7, but
-Dirk is not often wrong when we reports about a bug.  If anyone can
-reliably reproduce I'd be grateful.
+The current data logging patches are at:
+
+ftp.suse.com/pub/people/mason/patches/data-logging
+
+They are against 2.4.19-pre7, and contain versions of the major (stable)
+speedups.  The patch is pretty big, so I'm not likely to merge with the
+namesys pending directories.  The namesys guys add things frequently,
+and I think it would get confusing for people trying to figure out which
+patches to apply.
+
+The data logging stuff is beta code, if you have a good test bed where
+it's ok if things go wrong I can make you a special patch with the
+pending stuff merged.
 
 -chris
+
+
 
 
