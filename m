@@ -1,43 +1,44 @@
-From: Gregor Zeitlinger <zeitling@informatik.hu-berlin.de>
-Subject: Reiser4 as positional B-Tree
-Date: Mon, 3 Nov 2003 21:12:07 +0100 (CET)
-Message-ID: <Pine.LNX.4.33.0311032059251.3088-100000@mitte.informatik.hu-berlin.de>
-Reply-To: Gregor Zeitlinger <gregor@zeitlinger.de>
+From: Kristian Koehntopp <kris@koehntopp.de>
+Subject: Strange directories after reisferfsck
+Date: Tue, 4 Nov 2003 07:59:50 +0100
+Message-ID: <20031104065949.GA11108@p15104972.pureserver.info>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15966-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15967-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs mailing list <reiserfs-list@namesys.com>
-
-Hi,
-
-I've already been on this mailing list a year ago. I was wondering wheater
-I could make my native xml database a file plugin in reiser4.
-
-Now, that the code base is much more matured and that reiser4 is almost
-ready (as I understand), this seems much more feasable.
-
-Those are my questions
-1) As part of my xml database, I still need a positional B-Tree. Since
-files in reiserfs are stored in a (kinda) B+-Tree, I was wondering wheater
-a positional B-Tree could be made a file plugin. It's basically the same
-as the unix file plugin, with the exception that you'd need the additional
-operation of inserting (not overwriting) data in the middle of a file.
-
-2) If the plugin architecture is flexible enough, I'm wondering wheater I
-could port my xml database to being a file plugin. It uses a custom page
-layout and custom balance, split and merge algorithms. Also, I use c++,
-but the source could be ported to c, since I don't make heavy use of
-object oriented features. I haven't put the source code online, since it's
-not mature enough for that, but I can give to anyone interested.
-
--- 
-Gregor Zeitlinger
-gregor@zeitlinger.de
+To: reiserfs-list@namesys.com
 
 
+Yesterday my / and /home crashed (Suse Linux 9.0 with reiserfs
+for everything except /boot) due to problems with the Nvidia 8x
+AGP driver. Reiserfs was able to recover / after a
+--fix-fixable, but needed a rebuild for /home. I was able to
+recover with almost no data loss and have disabled the Nvidia
+driver since.
+
+After the rebuild, I found lots of strange directories
+obviously belonging to a / partition in my /home. Some theories,
+which one is plausible:
+
+- The memory corruption due to the AGP problems brought about 800
+  MB worth of data down on /home during some erraneous sync (I
+  have one GB of RAM).
+
+- The /home partition holds lots of vmdk (VMware virtual disk
+  files). reiserfsck looked through all blocks during the
+  rebuild and interpreted contents of the vmdk files as valid
+  leaf nodes, installing them into the /home proper instead.
+
+- Part of the disk was used as a / a few years ago. (But the
+  file dates I saw were not consistent with that, they were less
+  than a month old).
+
+What happened?
+
+Kristian
