@@ -1,57 +1,51 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: filenames that can be safely stolen (was Re: starting with ".."
- could break stuff)
-Date: Sat, 03 Apr 2004 10:05:22 -0800
-Message-ID: <406EFCE2.8000108@namesys.com>
-References: <200404010546.i315kEvY019805@sirius.cs.pdx.edu> <20040402035617.GC2158@zero> <8765ciqr6v.fsf@uhoreg.ca> <20040402220250.GB4668@rahul.net>
+From: cami <camis@mweb.co.za>
+Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Date: Sat, 03 Apr 2004 21:34:08 +0200
+Message-ID: <406F11B0.5090902@mweb.co.za>
+References: <20040402172735.76368.qmail@web25009.mail.ukl.yahoo.com> <406EFB72.6000009@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17680-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17681-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040402220250.GB4668@rahul.net>
+In-Reply-To: <406EFB72.6000009@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Bennett Todd <bet@rahul.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Bennett Todd wrote:
-
->2004-04-02T16:29:12 Hubert Chan:
->  
->
->>Tom> i bet there's a few apps that, when trying to skip .., only check
->>Tom> the first two chars of the name. this may or may not be a problem.
+>>>> 1. Leave the "metas" directory as it is, for storing
+>>>> the meta data hierarchy.
+>>>
+>>> We will do 1.
 >>
->>Then those apps are broken.  ..foo has always been a valid filename
->>(though highly uncommon).  ..metas doesn't introduce anything new -- it
->>only makes ..files more common.
->>    
+>> What is the plan for addressing the name clash
+>> problems that this causes?  (eg. I copy a directory,
+>> that happens to contain a "metas" directory, to my
+>> Reiser4 partition)
 >>
->
->Yup.
->
->For another example, AFS steals "@sys"; it's a special black-magic
->voodoo name that acts like a symlink to a machine-specific value,
->used to set up baroque symlink trees so one uniform network
->filesystem can support dispatching to appropriate versions of
->machine-specific files like executables.
->
->So another possibility worth considering might be @metas, with the
->prior art of AFS to cite to people who complain about theoretical
->problems:-).
->
->-Bennett
->  
->
-i care more about people 20 years from now complaining that reiserfs is 
-ugly in its aesthetics than about unreal problems.
+> these problems will not exist significantly in reality.  Look at netapps 
+> and snapshots and clearcase and other filesystems, I remember wondering 
+> if .snapshot could be a problem when netapps were new and it was never a 
+> problem.
+> 
+> People who find it is a problem can #define it to something else.  If 5 
+> people bother to do so, I will be surprised.
+> 
+> Many languages have reserved keywords.....
 
-punctuation in method names is uglier than "metas"
+Not sure if anyone  has bothered to check if this would
+impose the  limitation  that  people are worried about.
 
--- 
-Hans
+ From a  quick glance,  none  of  the linux distro's have
+ever  had  a  file / directory  called  "metas"  before.
+`metas`  isn't even a real a word anyway  (at  least not
+an english word) so the chances of  it being a big issue
+are very very  small..  freshmeat.net's search shows not
+even one hit  for  the word  metas and  that pretty much
+the majority of linux/coding related projects..
 
+Regards,
+Cami
 
