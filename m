@@ -1,41 +1,35 @@
-From: "David Dabbs" <david@dabbs.net>
-Subject: Re: viewprinting: what format should views be stored in?
-Date: Sat, 21 Aug 2004 07:38:18 -0000
-Message-ID: <20040821073818.D5EB115CBA@mail03.powweb.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: Reoccuring corruption problem
+Date: Sat, 21 Aug 2004 10:59:37 +0300
+Message-ID: <20040821075937.GF1284@nysv.org>
+References: <200408192046.27223.zyrax@home.se> <20040819194222.GC29745@favonius> <200408210743.41317.zyrax@home.se>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20449-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20450-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
+In-Reply-To: <200408210743.41317.zyrax@home.se>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>, George Beshers <gbeshers@comcast.net>
-Cc: Valdis.Kletnieks@vt.edu, David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Dan Nilsson <zyrax@home.se>
+Cc: sander@humilis.net, reiserfs-list@namesys.com
 
-
->Hans Reiser wrote:
->We only do filesystem isolation because that is our specialty, 
->filesystems, and it is better to do less well.
+On Sat, Aug 21, 2004 at 07:43:41AM +0200, Dan Nilsson wrote:
 >
->We fundamentally differ from other approaches because I don't think the 
->problem is in developing tools to allow people to fine grain security if 
->they take the time to do it, I think the problem is that nobody has the 
->time to specify fine grained security for the executables on their 
->computers, and our focus is on the filesystem aspects of automating the 
->specification of the fine grained security for an executable.  
->Researchers after us can generalize our approach to things outside the 
->filesystem namespace, or, better, put those things into the filesystem 
->namespace.;-)
+>After running the test I fsck:ed to remove the corruptions, then proceeded by 
+>removed my /usr/portage tree (where corruptions seem to easily occur) and 
+>reinstalled all the files (with rsync). The same type of corruption occured 
+>but now to a different directory than "usual". 
 
-Sounds like your approach will differ a) in scope, in that you are only concerned with securing filesystem access and b) in that you will provide "wizards" where the other approaches provide none or the ones they provide suck. If this is the case, then why are we talking about mask interpreters and how they will moderate file access? Why aren't we focusing on your "sweet spot"; the wizards that assist the clueless/lazy/overworked admin in profiling a process in order to create and maintain the viewprint/mask?
+I think you should provide the metadata dump of the filesystem with and
+without breakage to Namesys, so they can look at it when their new network
+is up and running. This has usually been the next logical step :)
 
-If your ultimate concern is truly in providing tools that make it easy to deploy
-comprehensive security, then it seems the approach to take is to contribute wizards/whatever that make implementing your process-oriented fs security vision incredibly simple under LSM or other framework. If you're only going to focus on your metier, filesystems, and exclusively on your own filesystem, at least contribute something that doesn't reinvent any wheels and which "plays well with others." People do need to secure more than the filesystem. Reiser4's adoption curve would seem to benefit if people can implement advanced filesystem security and also use the same framework to secure other aspects.  
+Did you have any debugging options turned on?
 
-
-David
-
+-- 
+mjt
 
