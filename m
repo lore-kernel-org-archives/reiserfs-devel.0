@@ -1,39 +1,47 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: Processes dying?
-Date: Sat, 5 Jun 2004 00:23:12 +0300
-Message-ID: <20040604212312.GI4990@nysv.org>
+Date: Fri, 04 Jun 2004 17:33:18 -0400
+Message-ID: <200406042133.i54LXIXN031219@turing-police.cc.vt.edu>
 References: <20040604203925.GF4990@nysv.org> <200406042050.i54KoDYD029229@turing-police.cc.vt.edu> <20040604210130.GH4990@nysv.org> <40C0E503.6010904@gmx.net>
+            <20040604212312.GI4990@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19023-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_1397250256P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19024-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <40C0E503.6010904@gmx.net>
+In-Reply-To: Your message of "Sat, 05 Jun 2004 00:23:12 +0300."
+             <20040604212312.GI4990@nysv.org> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2004@gmx.net>
-Cc: Valdis.Kletnieks@vt.edu, reiserfs-list@namesys.com
+To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
+Cc: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2004@gmx.net>, reiserfs-list@namesys.com
 
-On Fri, Jun 04, 2004 at 11:09:23PM +0200, Carl-Daniel Hailfinger wrote:
->echo t >/proc/sysrq-trigger
->
->Or did you mean something different?
+--==_Exmh_1397250256P
+Content-Type: text/plain; charset=us-ascii
 
-Thanks!
+On Sat, 05 Jun 2004 00:23:12 +0300, Markus =?UNKNOWN?Q?T=F6rnqvist?= said:
 
-However, it never commited to the disk. I must come up with some way.
+> The syslog is corrupted as is always the case with reset-button boots,
+> but I took a copy of the syslog file which vanished into thin air.
 
-The syslog is corrupted as is always the case with reset-button boots,
-but I took a copy of the syslog file which vanished into thin air.
+echo t > /proc/sysrq-trigger     (to produce a traceback)
+echo s > /prog/sysrq-trigger     (to sync the disks)
 
-So I must really come up with a way to save it. Sure as hell ain't
-gonna write it by hand :)
+Of course, if your syslogd is one of the processes wedged up, you won't get much....
 
-Any way of forcing a journal commit?
+--==_Exmh_1397250256P
+Content-Type: application/pgp-signature
 
--- 
-mjt
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
+iD8DBQFAwOqecC3lWbTT17ARAuiZAKDOhnr1Qj1QhZml4v4EuiaYT+ArJACg+/tg
+o9Ip+IPUwSf9sWRihjkTiEY=
+=LmbV
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1397250256P--
