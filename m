@@ -1,54 +1,47 @@
-From: "Vitaly Fertman" <vitaly@namesys.com>
+From: Gerald Roth <gerald.roth@aon.at>
 Subject: Re: fsck.reiser4 error
-Date: Thu, 14 Nov 2002 20:54:19 +0300
-Message-ID: <001201c28c06$e078c9e0$ed7b55c2@figwam>
-References: <200211141643.gAEGhgS09039@mail.osdl.org>
+Date: Thu, 14 Nov 2002 19:09:48 +0100
+Message-ID: <200211141909.48960.gerald.roth@aon.at>
+References: <200211141643.gAEGhgS09039@mail.osdl.org> <001201c28c06$e078c9e0$ed7b55c2@figwam>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11997-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11998-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <001201c28c06$e078c9e0$ed7b55c2@figwam>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com, Cliff White <cliffw@osdl.org>
+To: reiserfs-list@namesys.com
 
-Hi,
+hi
 
-Thank you for your report. Actually fsck.reiser4 is supposed to be ready
-in a few months only. Yura, I thought we decided to have fsck excluded
-from the distribution for now, right?
+please try to ship a stable reiser4fsck as soon as reiser4 has stabilized=
+=2E
+it is really important to have the chance to repair the fs _if_ something=
+ goes=20
+wrong, without the danger to damage it even more...=20
 
-Thanks,
-Vitaly Fertman
+thanks for your great work! =20
 
+although i didn't run any real benchmarks i can say that reiser4 feels a =
+lot=20
+faster than any fs i tried before....
 
-> This happens every time:
-> # fsck.reiser4 /dev/hdb1
+regards,
+gerald roth =20
+
+On Thursday 14 November 2002 18:54, Vitaly Fertman wrote:
+> Hi,
 >
-> Will check consistency of the filesystem on (/dev/hdb1).
-> Will use (default40) profile.
-> Information: Continue?
-> (Yes/No): Yes
-> ##########
-> reiserfsck --check started at Thu Nov 14 03:55:03 2002
-> ##########
-> umka-360: Assertion (format != NULL) at format.c:227 in function
-> reiser4_format_get_len() failed.
-> (Ignore/Cancel): i
-> Segmentation fault
-> -----------------------
-> Kernel is 2.5.47 + latest reiser4 snapshot.
-> System is VALinux 2x 800MHZ Intel Xeon
-> 256 MB memory
-> Base distro is RH 7.3
-> reiserfsprogs is from snapshot.
+> Thank you for your report. Actually fsck.reiser4 is supposed to be read=
+y
+> in a few months only. Yura, I thought we decided to have fsck excluded
+> from the distribution for now, right?
 >
-> cliffw
-
-
-
-
+> Thanks,
+> Vitaly Fertman
+>
+>
 
