@@ -1,49 +1,52 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: New to reiserfs
-Date: 14 May 2002 09:10:46 -0400
-Message-ID: <1021381846.20175.572.camel@tiny>
-References: <200205132153.59075.Dieter.Nuetzel@hamburg.de>
-	<3CE028A3.3080002@namesys.com> 
-	<200205132324.24309.Dieter.Nuetzel@hamburg.de>
+From: Matthew Toseland <mtoseland@blueyonder.co.uk>
+Subject: Re: Howto mount without replay?
+Date: Tue, 14 May 2002 23:21:55 +0100
+Message-ID: <20020514222155.GD12918@amphibian.dyndns.org>
+References: <Pine.LNX.4.44.0205022236450.22979-100000@mooru.gurulabs.com> <Pine.LNX.4.44.0205022252320.22979-100000@mooru.gurulabs.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10306-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Km1U/tdNT/EmXiR1"
+Return-path: <reiserfs-list-return-10307-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <200205132324.24309.Dieter.Nuetzel@hamburg.de>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44.0205022252320.22979-100000@mooru.gurulabs.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Cc: Hans Reiser <reiser@namesys.com>, Oleg Drokin <green@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, JPASTORM@esade.edu
+To: Dax Kelson <dax@gurulabs.com>
+Cc: reiserfs-list@namesys.com
 
-On Mon, 2002-05-13 at 17:24, Dieter N=FCtzel wrote:
+--Km1U/tdNT/EmXiR1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> >
-> > You should put squid into one big directory (not using their kludge tha=
-t
-> > avoids making directories too large by using a tree)
+On Thu, May 02, 2002 at 10:53:52PM -0600, Dax Kelson wrote:
 >=20
-> So you understand me right...;-)
+> I don't care about this filesystem or drive other than I need to get a fe=
+w=20
+> files off of it.
 >=20
-> > unless you have multiple processors (in which case the VFS directory gi=
-ant
-> > lock will hurt you).
+> Is there anyway to mount it without it attempting the log replay?
+Can you dd the whole partition to a (writable) file somewhere, then mount -=
+o loop
+that?
 >=20
-> BKL?
+> Dax
 >=20
-> Where is the limit 2, 4, or even more CPUs?
-> I'll have two in some days.
+>=20
 
-You probably want one directory per squid process.  The VFS layer does
-semaphore locking to prevent races between people reading the directory
-and people changing the directory.  If you've just got one big
-directory, all the squid processes will end up waiting on each other.
+--Km1U/tdNT/EmXiR1
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
-More directories mean more time wasted changing the directory stat data,
-and ram wasted on reading the stat data.  You see this more with
-hundreds or thousands of directories.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
 
--chris
+iD8DBQE84Y4DmlVGrEH/+qIRAosjAJ48yhPGZFXyElVBRQgtnYhLdRmY/ACfdwp3
+wYDlrLBU0MjVsngnAuKzeZU=
+=GFf+
+-----END PGP SIGNATURE-----
 
-
+--Km1U/tdNT/EmXiR1--
