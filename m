@@ -1,48 +1,55 @@
-From: Oleg Drokin <green@namesys.com>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: other OS
-Date: Tue, 3 Dec 2002 19:15:36 +0300
-Message-ID: <20021203191536.A14650@namesys.com>
-References: <3DEBB725.4070907@charter.net> <001501c29a82$0126a110$0101a8c0@bummer>
+Date: Tue, 03 Dec 2002 11:16:04 -0500
+Message-ID: <200212031616.gB3GG4Np004811@turing-police.cc.vt.edu>
+References: <001501c29a82$0126a110$0101a8c0@bummer>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12090-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_145291612P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12091-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <001501c29a82$0126a110$0101a8c0@bummer>
+In-Reply-To: Your message of "Tue, 03 Dec 2002 12:11:06 +0800."
+             <001501c29a82$0126a110$0101a8c0@bummer> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: darren <teodarren@myrealbox.com>
 Cc: reiserfs-list@namesys.com
 
-Hello!
+--==_Exmh_145291612P
+Content-Type: text/plain; charset=us-ascii
 
-On Tue, Dec 03, 2002 at 12:11:06PM +0800, darren wrote:
-
+On Tue, 03 Dec 2002 12:11:06 +0800, darren <teodarren@myrealbox.com>  said:
 > Was just wondering about the possibilities of using reiserfs on my
 > Solaris 6 machine.
+> 
 > Any chance of that?
 
-If you can convice SUN to pay for the porting of reiserfs to SUN
-then it is possible.
-Alternativey you can follow htp://namesys.com/support.html instructions.
+Almost none.  Unless you're clued enough about Solaris kernel internals to
+port a filesystem, in which case you'd not be asking.
 
-> I am having problems with FS performance (large number, 20K of small
-> files in folder with constant writes and deletes) on the Sun Machine and
-> was thinking if this can help me.
+You might want to look into whether Solaris 7, 8, or 9 address your
+performance concerns - Solaris 6 is quite ancient.
 
-Linux is able to run on SUN boxes too, and reiserfs is available for
-Linux on any supported hardware if it is littleendian or bigendian.
 
-> The only way I know is to use a Linux machine running reiser and NFS it
-> over. But performance will surely be degraded this way....any other
-> suggestions?
+-- 
+				Valdis Kletnieks
+				Computer Systems Senior Engineer
+				Virginia Tech
 
-Switch the OS, switch the OS and the hardware or pay for the porting.
-(This is assuming that you did all the necessary tuning of your solaris box
-already).
 
-Bye,
-    Oleg
+--==_Exmh_145291612P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.1 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQE97NjEcC3lWbTT17ARAiNwAKDEyt7CG8rhaVp1/K4F6sM/nFEwVwCePGWQ
+475vgIB6SRljoFPpFXENGbY=
+=1oAu
+-----END PGP SIGNATURE-----
+
+--==_Exmh_145291612P--
