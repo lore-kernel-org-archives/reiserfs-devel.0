@@ -1,45 +1,68 @@
-From: Chris Dukes <pakrat@www.uk.linux.org>
-Subject: Re: we need a slogan for our reiser4 t-shirt
-Date: Thu, 24 Jun 2004 17:53:50 +0100
-Sender: <pakrat@www.linux.org.uk>
-Message-ID: <20040624165350.GF19037@parcelfarce.linux.theplanet.co.uk>
-References: <3DF9165145FACB4C96977FF650C1E9040C46A0B3@its-mail1.its.corp.gwl.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: repost for readdir
+Date: Thu, 24 Jun 2004 21:20:51 +0400
+Message-ID: <40DB0D73.3070605@namesys.com>
+References: <1088032186.12051.8.camel@murdock.llnl.gov>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19352-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19354-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C46A0B3@its-mail1.its.corp.gwl.com>
+In-Reply-To: <1088032186.12051.8.camel@murdock.llnl.gov>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Burnes, James" <james.burnes@gwl.com>
-Cc: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: jenn sirp <sirp1@llnl.gov>
+Cc: reiserfs-list@namesys.com
 
-On Thu, Jun 24, 2004 at 10:37:22AM -0600, Burnes, James wrote:
+Hello
+
+jenn sirp wrote:
+> Hi,
 > 
-> Think about it.  A t-shirt that has iozone stats on it versus one that
-> has a picture of a hard drive platter burning rubber like a
-> high-performance tire.  Which one appeals to you emotionally?  Which one
-> indicates speed better to the emotional mind?
+> I'd like to thank you guys for your help earlier this year with the
+> initial phase of my project. I was able to implement FIFO queueing
+> functionality in Reiser v3. It is not very elegant, but I am still
+> learning. I was able to steer my supervisor in the direction of Reiser4.
+> It appears that the design principles of the new system will make it very
+> valuable for many at the Lab.
+> 
+> That said, and back to Hans' suggestion of a readdir implementation for
+> FIFO and LIFO file queuing... I have some questions. If anyone can answer
+> them, has advice, or suggestions that would be so great.
+> 
+> Here's where I am at, and what I don't know:
+> 
+>>From what I can tell, files in the reiserfs 'Directory Item' aren't preserved in
+> the order they are written due to deletes and other operations. So if I
+> were to access the Directory Item to generate a list for readdir I couldn't be certain that they would be in first
+> created -to- last created order.
+> 
+> If readdir has to sort the files in the directory every time it is called
+> it seems like it would be a bit of a performance hit.
 
-I don't know.  The latter makes it sound like Reiserfs causes the harddrive
-to release the sacred blue smoke.
+Do you mean readdir library function? It reads directory and fills 
+dirent structures. It does not sort anything. It even does not stat 
+files names of which it reads.
 
-May I make the following suggestions in the interest of this thread.
+  Should another
+> structure be maintained that preserves the order as the files are
+> written... and should readdir use that as it's basis for returning the
+> directory contents?
+> 
 
-If the goal is to create a slogan that will attract PHBs, hire a professional
-marketing team and be done with it.
+Are you trying to optimize ls -l?
 
-If the goal is to create a t-shirt that thinkgeek would like to sell,
-get it on slashdot.
+Please describe in more details what are you trying to do.
 
-Me, I'd rather know about
-"Does Reiserfs4 allow unmodified samba to provide Windows ACLs?"
-"Does Reiserfs4 come with quota support at this point?"
-"How does reiserfs4 cope with catastrophic events?"
--- 
-Chris Dukes
-Been there, done that, got the slightly-charred t-shirt. -- Crowder
+> If this is a question that doesn't belong here... please let me know and I apologize.
+> 
+> Thanks,
+> 
+> Jenn
+> 
+> 
+> 
+
+
