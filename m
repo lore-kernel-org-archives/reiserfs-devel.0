@@ -1,78 +1,47 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary	additional namespace to ReiserFS
-Date: Tue, 27 Apr 2004 21:00:35 +0300
-Message-ID: <20040427180035.GC29226@nysv.org>
-References: <1082750045.12989.199.camel@watt.suse.com> <408D3FEE.1030603@namesys.com> <1083000711.30344.44.camel@watt.suse.com> <408D51C4.7010803@namesys.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary additional namespace to ReiserFS
+Date: Tue, 27 Apr 2004 19:04:39 +0100
+Message-ID: <20040427190439.A20646@infradead.org>
+References: <1082750045.12989.199.camel@watt.suse.com> <408D3FEE.1030603@namesys.com> <20040426203314.A6973@infradead.org> <408E986F.90506@namesys.com> <20040427183400.A20221@infradead.org> <408E9F42.2080804@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18254-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18255-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <408D51C4.7010803@namesys.com>
+In-Reply-To: <408E9F42.2080804@namesys.com>; from reiser@namesys.com on Tue, Apr 27, 2004 at 10:58:26AM -0700
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Hans Reiser <reiser@namesys.com>
 Cc: Chris Mason <mason@suse.com>, Linus Torvalds <torvalds@osdl.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, akpm@osdl.org
 
-On Mon, Apr 26, 2004 at 11:15:32AM -0700, Hans Reiser wrote:
+On Tue, Apr 27, 2004 at 10:58:26AM -0700, Hans Reiser wrote:
+> Ask the users whether their laptops, etc.,  seem to go a lot faster with 
+> V4.  They seem to be pretty happy with it.
+> 
+> V4 fixed all of V3's serious performance flaws, and totally obsoletes 
+> it.    I am very happy with it.
 
->The ReiserFS maintainer (me, in case you forgot;-) ) decided what 
->release acls would go into, and you disregarded it and wrote an 
->implementation that was inconsistent with the one planned.
+Hans, that's not what we're discussing in this thread.  I don't give a shit
+whether filesystem A is fater than filesystem B on task C.  Really, how
+fast a fs is an implementation details.
 
-Surely this can not be such a bad thing.
+I also still think someone who does most work in the last years on a fs
+(Chris on reiserfs v3) should be considered maintainer, but that's just my
+2cents and I'd rather leave that to you guys.
 
-There's a lot of stuff flying around for the kernel that's not included
-for one reason or another, probably because some maintainer doesn't like
-it. What do people do? They patch it in by themselves.
+The important part is xattr/acl/namespace semantics.  In Linux those
+semantics are at the _VFS_ level, not at the individual filesystem,
+in fact if a fs can mess with namespace semantics I'd almost considere
+that a bug.
 
-If there's demand for something and someone provides it, what's the big
-deal? It's still not supported by the maintainer, but it is maintained,
-and it complies with standards.
+So if you want different xattr/acl semantics after you ignored all the
+discussion has been going on the last years start *now* to discuss you
+proposal on -fsdevel, and acl-devel, explaining why your semantics are
+better and hash out the implementation details to support both
+transparently.
 
-Not that different from using some other scheduler or something than what's
-provided in the mainline kernel. It can then be developed and possibly
-make it into the mainline. Possibly. If the maintainer wants it.
-
-Besides, Reiser4 was, and maybe is in the grand scheme of things, something
-of the future and maybe interim solutions shouldn't be disregarded.
-
->ReiserFS portion.  ReiserFS did not go down the xattr path, and declared 
->that it would not do so long at the very beginning.  You are continuing 
->to try to force us down that path, and now you are claiming that because 
-
-I hardly see this as forcing anyone to do anything.
-
-No-one takes away anyone's freedom of choice, in fact, the very idea of
-free software has been embodied here.
-
->V4 took longer than hacking V3 that means that xattrs are a pre-existing 
->api that we are heretically not conforming to.  Love it.
-
-If xattrs were there first, why wouldn't they be pre-existing?-)
-
-If Reiser4 attributes are better and stand a chance at becoming the new
-standard, you should by Bog stand behind them and embrace this competition.
-
-Let SuSE keep their customers happy and have people see that Reiser4
-attributes are better.
-
->patches disregarded.  Stable branches do not get new semantics added to 
->them just before new major releases with preferred semantics come out.
-
-This is of course only natural. But you allowed this to happen in your
-choice of license and that's not a bad thing. Quite the contrary.
-
->Please consider contributing to enriching the collection of files that 
->act as attributes of other files in V4 instead of pulling your oars in 
->the other direction.  If you do, you will be (as usually) a valued 
->contributor.
-
-Amen to that.
-
--- 
-mjt
-
+Funneling in new semantics through a low level driver is pretty much
+always wrong.
