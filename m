@@ -1,34 +1,44 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: [2.4.18]: Reiserfs: vs-2120: add_save_link: insert_item
-	returned -28
-Date: Fri, 16 Jan 2004 19:26:34 +0300
-Message-ID: <1074270394.2251.167.camel@tribesman.namesys.com>
-References: <200401091622.41352.lkml@kcore.org>
-	 <1074241063.2251.41.camel@tribesman.namesys.com>
-	 <200401161620.i0GGK2MT022923@turing-police.cc.vt.edu>
+From: Paolo Correnti <paolunix@yahoo.com>
+Subject: Re: REISER4 - A simple test with a filesystem and Oracle
+Date: Fri, 16 Jan 2004 11:15:26 -0800 (PST)
+Message-ID: <20040116191526.47585.qmail@web21502.mail.yahoo.com>
+References: <20040116162055.GL1693@backtop.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16553-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16554-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200401161620.i0GGK2MT022923@turing-police.cc.vt.edu>
+In-Reply-To: <20040116162055.GL1693@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Valdis.Kletnieks@vt.edu
-Cc: Jan De Luyck <lkml@kcore.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Alex Zarochentsev <zam@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-On Fri, 2004-01-16 at 19:19, Valdis.Kletnieks@vt.edu wrote:
-> On Fri, 16 Jan 2004 11:17:43 +0300, Vladimir Saveliev said:
-> 
-> > This is just a warning. You should be able to free some disk space by
-> > removing some files.
-> 
-> Is this just the *obvious* "removing files frees space", or is there some sort
-> of garbage collection that will be triggered, so removing a 1K file will make it
-> redo tables/linked lists/whatever and return lots of blocks that used to contain
-> metadata?
+Sorry for delay in my answers (I'm at home now ...).
 
-This is the *obvious* "removing files frees space".
+> "df" or "du" ?
+ 
+ du (I made a typing mistake with df)
 
+> what processes were accessing the fs those 5-7 min? 
+> oracle was?
+
+Oracle processes only, with no particular activities.
+I made also a backup vith Oracle RMAN with data and
+backup paths on the same partition and all went fine,
+but after having seen good du result.
+
+Next days I'll make the same test with another PC,
+kernel 2.6.1 and  a larger reiser4 partition
+ 
+Have a nice week-end
+
+Paolo
+
+
+__________________________________
+Do you Yahoo!?
+Yahoo! Hotjobs: Enter the "Signing Bonus" Sweepstakes
+http://hotjobs.sweepstakes.yahoo.com/signingbonus
