@@ -1,83 +1,80 @@
 From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiserfsck bug
-Date: Thu, 6 May 2004 13:18:04 +0400
-Message-ID: <200405061318.04964.vitaly@namesys.com>
-References: <40994D84.1010901@users.sf.net> <200405061159.59882.vitaly@namesys.com> <4099F3FE.5080902@users.sf.net>
+Subject: Re: Bad root block 0, reiserfsck aborts...partition very slow, errors, HELP!
+Date: Thu, 6 May 2004 13:27:15 +0400
+Message-ID: <200405061327.15604.vitaly@namesys.com>
+References: <1329-49005@sneakemail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18480-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18481-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4099F3FE.5080902@users.sf.net>
+In-Reply-To: <1329-49005@sneakemail.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Kir Kostuchenko <kir@users.sourceforge.net>, reiserfs-list@namesys.com
+To: {RoC} MasterMind <bve95001@sneakemail.com>, reiserfs-list@namesys.com
 
-On Thursday 06 May 2004 12:14, Kir Kostuchenko wrote:
-> Vitaly Fertman wrote:
-> >Hello,
-> >
-> >On Thursday 06 May 2004 00:24, Kir Kostuchenko wrote:
-> >>    hi, I've got error message from the reiserfsck 'out of disk space',
-> >>in the rebuild tree mode.
-> >>
-> >>    I think it's a bug of reiserfsck, I can send you bzip2'ed image of
-> >>the partition.
-> >>
-> >>    Please help.
-> >
-> >If a file item offset is broken this sometimes looks like some items
-> >are lost and the hole is inserted, the needed space is proportional to
-> >the hole size in reiserfs, this is why fsck may run of disk space. The
-> >standard solution here is to find a larger partition, zero it (or enlarge
-> >the existent one and zero the added part), make a raw copy of the
-> >problem partition to it, run reiserfsck --rebuild-sb and then reiserfsck
-> >--rebuild-tree.
+On Thursday 06 May 2004 08:16, {RoC} MasterMind wrote:
+> Today I logged on, and noticed things were very slow...that meaning that
+> reads from the disk were very slow.  DMA was on, and I switched to a
+> virtual terminal to see things like "dma_intr    {DriveReady, SeekComplete
+> Error}" hda: dma_intr error 0x40 {uncorrectable error}
+
+this looks like a harddrive problem, if so it would be better to replace it,
+dd the problem partition to the new drive and fsck it. If you are going to 
+live with dying drive have a look at 
+	http://www.namesys.com/bad-block-handling.html
+
+> LBA 269868649 HIGH=16 LOW=1433193 SECTOR 1443288 end request I/O error
+> ide (3,3):vs-13070: reiserfs_read_inode2:i/o failure occured trying to find
+> stat data of [5749 151067 0x0 SD]
 >
->     Thanks.
+> I am also having "permission denied" errors when using ls, and files
+> disappearing, then reappearing.
 >
->     So, if I only have a file with raw copy of my partition, I should do
-> something like:
+> I tried running reiserfsck /dev/hda, but it aborted, which is scary:
+> reiserfsck /dev/hda
+> reiserfsck 3.6.14 (2003 www.namesys.com)
 >
-> // make 1 gb additional space
-> # dd if=/dev/zero of=additional_space bs=1000k count=1000
-
-with a file you can 
-  dd if=/dev/zero of=the_copy bs=1k count=1 seek=X
-where X=the current size in kilos + 1G. 
-
-with a partition:
-  dd if=/dev/zero of=the_copy bs=1M seek=X
-where X=the current size in megabytes (be sure you do not zero some 
-data of the current fs there)
-
-> // add to my raw bad partition copy
-> # cat additional_space >> bad_partition
+> *************************************************************
+> ** If you are using the latest reiserfsprogs and  it fails **
+> ** please  email bug reports to reiserfs-list@namesys.com, **
+> ** providing  as  much  information  as  possible --  your **
+> ** hardware,  kernel,  patches,  settings,  all reiserfsck **
+> ** messages  (including version),  the reiserfsck logfile, **
+> ** check  the  syslog file  for  any  related information. **
+> ** If you would like advice on using this program, support **
+> ** is available  for $25 at  www.namesys.com/support.html. **
+> *************************************************************
 >
-> // map to the loop device
-> # losetup /dev/loop0 bad_partition
-
-not necessary, you can fsck the file itselt.
-
-> // run reiserfsck with --rebuild-sb
-> # reiserfsck --rebuild-sb --rebuild-tree /dev/loop0
-
-reiserfsck --rebuild-sb /dev/loop0 | reiserfsck --rebuild-sb the_copy
-reiserfsck --rebuild-tree /dev/loop0 | reiserfsck --rebuild-tree the_copy
-
->     Am I right?
+> Will read-only check consistency of the filesystem on /dev/hda
+> Will put log info to 'stdout'
 >
-> >Although it could be another reason, if you make the packed metadata:
-> >	debugreiserfs -p /dev/xxx | bzip2 -c > xxx.bz2
-> >and provide them for downloading, I will investigate if there is some
-> >bug.
+> Do you want to run this program?[N/Yes] (note need to type Yes if you
+> do):Yes ###########
+> reiserfsck --check started at Wed May  5 22:53:37 2004
+> ###########
+> Replaying journal..
+> No transactions found
+> Zero bit found in on-disk bitmap after the last valid bit.
+> Checking internal tree..
 >
->     If my previous step will cause an error, send metadata to you?
-
-yes.
+> Bad root block 0. (--rebuild-tree did not complete)
+>
+> Aborted
+>
+> My version of reiserfsprogs is 3.6.14-3 (debian).  This should be the
+> latest available, as apt manages my packages.
+>
+> reiserfsck reported I may have a corrupt or missing superblock (and
+> journal?), so I ran reiserfsck --rebuild-sb, and now reiserfsck doesn't
+> error out immediately, but nothing I have done has fixed the system.
+>
+> Does anyone know what is wrong, and how I can fix this?  Whatever happened,
+> happened suddenly, as the system was fine when I left it a few hours
+> before!
 
 -- 
 Thanks,
