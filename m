@@ -1,65 +1,61 @@
-From: Redeeman <redeeman@metanurb.dk>
-Subject: Re: hmm, dependencies
-Date: Fri, 17 Dec 2004 19:09:18 +0100
-Message-ID: <1103306958.12423.1.camel@localhost>
-References: <1103226970.704.1.camel@localhost>
-	 <1103291711.3589.32.camel@tribesman.namesys.com>
-	 <1103296970.12405.0.camel@localhost>
-	 <1103304658.3589.109.camel@tribesman.namesys.com>
-Reply-To: redeeman@metanurb.dk
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: file as a directory
+Date: Fri, 17 Dec 2004 10:09:47 -0800
+Message-ID: <41C320EB.1050400@namesys.com>
+References: <200411301631.iAUGVT8h007823@laptop11.inf.utfsm.cl>	 <41ACA7C9.1070001@namesys.com>	 <1103043518.21728.159.camel@pear.st-and.ac.uk>	 <41BF21BC.1020809@namesys.com>	 <1103059622.2999.17.camel@grape.st-and.ac.uk>	 <41BFC1C5.1070302@slaphack.com>	 <1103102854.30601.12.camel@pear.st-and.ac.uk>	 <41C0CF3B.1030705@slaphack.com>  <41C1D870.2020407@namesys.com> <1103223664.2336.335.camel@pear.st-and.ac.uk>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22820-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22821-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1103304658.3589.109.camel@tribesman.namesys.com>
+In-Reply-To: <1103223664.2336.335.camel@pear.st-and.ac.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+Cc: David Masover <ninja@slaphack.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-On Fri, 2004-12-17 at 20:30 +0300, Vladimir Saveliev wrote:
-> Hello
-> 
-> On Fri, 2004-12-17 at 18:22, Redeeman wrote:
-> > On Fri, 2004-12-17 at 16:55 +0300, Vladimir Saveliev wrote:
-> > > Hello
-> > > 
-> > > On Thu, 2004-12-16 at 22:56, Redeeman wrote:
-> > > > hello.. reiser4 is now in mm, but i realize that nearly all of the stuff
-> > > > that was mm specific when the move to mm was made, are probably merged
-> > > > into upstream by now, i wonder, can anyone tell me exactly what from mm
-> > > > it depends on?
-> > > > 
-> > > > thanks
-> > > > 
-> > > 
-> > > reiser4 got included into mm not because it needed something of it, but
-> > > rather because it is supposed that being in mm for certain amount of
-> > > time reiser4 will get a lot of testing and will prove that it is worth
-> > > to get included into stock kernel. 
-> > im aware, however, the reiser4 patches in mm are against mm, which means
-> > it depends on something from it, and i'd like to find out what :D so
-> > that i can take it out and apply to vanilla along with reiser4
-> 
-> did you see ftp.namesys.com/pub/reiser4-for-2.6/2.6.9?
-> It contains all things which reiser4 depends on.
-nice
-> 
-> If you would like to add reiser4 to vanilla kernel yourself you would
-> have to add reiser4 patches of mm kernel to vanilla one:
-> 
-> people/akpm/patches/2.6/2.6.X/2.6.X-mmY/broken-out/reiser4-*
-> and add the patch i am attaching to this email.
-> 
-yeah i tried that, however they dont patch against latest vanilla, it
-would seem the vfs has changed abit.. i just wondered if anyone knew
-exactly which of the mm patches was needed to make up for this, but, now
-you gave me that url :) never mind..
+Peter Foldiak wrote:
 
-thanks
+>On Thu, 2004-12-16 at 18:48, Hans Reiser wrote:
+>  
+>
+>>David Masover wrote:
+>>    
+>>
+>>>Speaking of which, how much speed is lost by starting up a process?
+>>>
+>>>The idea of caching is that running
+>>>
+>>>cat *; cat *; cat *; cat *; cat *
+>>>
+>>>is probably slower than
+>>>
+>>>cat * > baz; cat baz; cat baz; cat baz; cat baz; cat baz
+>>>      
+>>>
+>>Only for small files where the per file overhead of a read is significant.
+>>    
+>>
+>
+>But if the glued "file" is a stream (or pipe?) you can't do everything
+>with it (e.g. seek() ) that you could do with a proper file, right?
+>  
+>
+It does not need to be a pipe-like file.  Seek can be implemented for a 
+composite (glued) file.
 
--- 
-Redeeman <redeeman@metanurb.dk>
+>You may want to do everything with it that you can do with a proper
+>file.
+>
+>-
+>To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>the body of a message to majordomo@vger.kernel.org
+>More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>Please read the FAQ at  http://www.tux.org/lkml/
+>
+>
+>  
+>
 
