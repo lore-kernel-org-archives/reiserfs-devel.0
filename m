@@ -1,54 +1,36 @@
-From: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 3 Sep 2004 11:14:51 +0200
-Message-ID: <2f4958ff04090302141bc222e5@mail.gmail.com>
-References: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com> <200408290004.i7T04DEO003646@localhost.localdomain> <20040901224513.GM31934@mail.shareable.org> <20040903082256.GA17629@kroah.com> <2f4958ff04090301326e7302c1@mail.gmail.com> <41383142.4080201@hist.no>
-Reply-To: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
+Date: Fri, 3 Sep 2004 11:42:05 +0200
+Message-ID: <20040903094205.GB11021@atrey.karlin.mff.cuni.cz>
+References: <rlrevell@joe-job.com> <1094079071.1343.25.camel@krustophenia.net> <200409021425.i82EPn9i005192@laptop11.inf.utfsm.cl> <1535878866.20040902214144@tnonline.net> <20040902194909.GA8653@atrey.karlin.mff.cuni.cz> <1094155277.11364.92.camel@krustophenia.net> <20040902204351.GE8653@atrey.karlin.mff.cuni.cz> <1094158060.1347.16.camel@krustophenia.net> <20040902205857.GF8653@atrey.karlin.mff.cuni.cz> <1094164385.6163.4.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-21420-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21421-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41383142.4080201@hist.no>
+Content-Disposition: inline
+In-Reply-To: <1094164385.6163.4.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-To: Helge Hafting <helge.hafting@hist.no>
-Cc: Greg KH <greg@kroah.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Lee Revell <rlrevell@joe-job.com>, Spam <spam@tnonline.net>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jamie Lokier <jamie@shareable.org>, David Masover <ninja@slaphack.com>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, 03 Sep 2004 10:54:26 +0200, Helge Hafting <helge.hafting@hist.no> w=
-rote:
-> Grzegorz Ja=C5=9Bkiewicz wrote:
->=20
-> >
-> >devfs was very natural, and simple solution. But to have it right, it
-> >would have to be the only /dev filesystem.
-> >But no, we like choices, so we have chaos.
-> >Udev is just another thing adding to that chaos.
-> >
-> >Someone was numbering things that are good in BSD design, in that
-> >thread. One of those things was going for devfs. No cheap solutions.
-> >One fs for /dev. And it works great.
-> >
-> >Sorry for bit of trolling.
-> >
-> >
-> Devfs was a ver good idea.  The implementation of it
-> was a problem, and after some time nobody maintained it.
-> No surprise it had to go.  Now udev+tmpfs can do the same
-> job, and more.
+Hi!
 
-udef is a one big mistake, having need for userspace tool to use FS is
-at least silly.
-I can understeand need for some things in kernel to have userspace
-daemon. But FS is out of question the least one.
+> > Uservfs.sf.net.
+> > 
+> > Unlike alan, I do not think that "do it all in library" is good
+> > idea. I put it in the userspace as "codafs" server, and let
+> > applications see it as a regular filesystem.
+> 
+> That works for me too, providing someone has fixed all the user mode fs
+> deadlocks with paging
 
-I am supprised noone wanted to maintain devfs. Maybe because people
-didn't want to go to devfs only. But still to have classic /dev. It's
-also silly, because person writing driver needs to choose between, or
-implement all. That's more than bad. Once I have loads of time, and no
-work in KDE, I can take over devfs happily :-)
+Its okay: coda works on whole file granularity, and files are backed
+by real disk, so there are no deadlocks with paging. We only block
+open() and similar syscalls, and those are not in paging paths. It
+should be safe.
+								Pavel
 
---=20
-GJ
