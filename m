@@ -1,33 +1,70 @@
-From: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
-Subject: Re: Converter program from V3 to V4 ?
-Date: Wed, 23 Apr 2003 11:36:52 +0200
-Message-ID: <m33ck9wo5n.fsf@merlin.emma.line.org>
-References: <50020.61.238.161.206.1051113325.squirrel@sml.dyndns.org>
+From: Yury Umanets <umka@namesys.com>
+Subject: Re: ld.so error with mkfs.reiser4
+Date: Wed, 23 Apr 2003 13:54:47 +0400
+Message-ID: <3EA662E7.9050806@namesys.com>
+References: <200304221054.28028.vibir@012.net.il> <3EA5446F.8070309@namesys.com> <200304230148.11610.vibir@012.net.il>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13766-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13767-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <50020.61.238.161.206.1051113325.squirrel@sml.dyndns.org> (Thomas
- Graham's message of "Wed, 23 Apr 2003 17:55:25 +0200 (CEST)")
+In-Reply-To: <200304230148.11610.vibir@012.net.il>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Alex Veber <vibir@012.net.il>
+Cc: reiserfs-list@namesys.com
 
-"Thomas Graham" <lkthomas@sml.dyndns.org> writes:
+Alex Veber wrote:
 
-> reiserfs 4 will be release soon, I got almost 90GB data on a HD that is
-> using reiserfs3, how could I install v4 on this HD ? would it have a
-> converter program to concert from V3 to V4 ? Thanks.
-
-You should have a backup which you can use to restore your data onto
-ReiserFS v4 once that's released. Personally, I'd be chary about going
-ReiserFS v4 short after the release. It took ReiserFS v3 a long time
-(years) to mature; and although I expect ReiserFS v4 to take not that
-long, you shouldn't trust important data to a new file system driver
-from the first day. Start with recoverable data first.
+>On Tuesday 22 April 2003 16:32, you wrote:
+>  
+>
+>>Alex Veber wrote:
+>>    
+>>
+>>>Hi,
+>>>      
+>>>
+>>Hello Alex,
+>>
+>>    
+>>
+>>>Trying to run a fresh BK pulled mkfs.reiser4 I get
+>>>
+>>>Inconsistency detected by ld.so: ../sysdeps/i386/dl-machine.h: 611:
+>>>elf_machine_rel_relative: Assertion `((reloc->r_info) & 0xff) == 8'
+>>>failed!
+>>>
+>>>my system is a athlon tbird 1200, GLIBC 2.3.2 with NPTL support, GCC
+>>>3.2.2, binutils 2.13.90.0.20 and kernel 2.5.67. This is the first time
+>>>this sort of thing happens to me.
+>>>
+>>>Thanks,
+>>>	Alex Veber
+>>>
+>>>btw: Please CC me.
+>>>      
+>>>
+>>We have fixed this bug in the last commit of reiser4progs and now it
+>>works fine on gcc -3.x too. Can you try it one more time?
+>>    
+>>
+>
+>Yes. it works fine now.
+>
+>	Alex Veber.
+>
+>
+>
+>  
+>
+Thanks.
 
 -- 
-Matthias Andree
+Yury Umanets
+"We're flying high, we're watching the world passes by..."
+
+
+
