@@ -1,116 +1,96 @@
-From: Noyan Ilmen <Noyan@Ilmen.de>
-Subject: dead inode read from disk [1 2 0x0 SD]. This is likely to be race with knfsd. Ignore
-Date: Tue, 11 Mar 2003 19:43:43 +0100
-Message-ID: <30370000.1047408223@bidolor>
-Reply-To: Noyan Ilmen <Noyan@Ilmen.de>
+From: Chris Mason <mason@suse.com>
+Subject: Re: [PATCH] various allocator optimizations
+Date: 11 Mar 2003 14:00:35 -0500
+Message-ID: <1047409234.8218.375.camel@tiny.suse.com>
+References: <1047400482.8215.312.camel@tiny.suse.com>
+	 <20030311194205.A4493@namesys.com>
+	 <1047403968.8219.337.camel@tiny.suse.com>
+	 <20030311210400.A4859@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="==========877300887=========="
-Return-path: <reiserfs-list-return-13191-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13192-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20030311210400.A4859@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
---==========877300887==========
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+On Tue, 2003-03-11 at 13:04, Oleg Drokin wrote:
+> Hello!
+> 
+> On Tue, Mar 11, 2003 at 12:32:48PM -0500, Chris Mason wrote:
+> > > > changes blocknrs_and_prealloc_arrays_from_search_start into three
+> > > > passes.  pass1 goes from the hint to the end of the disk, pass2 goes
+> > > > from the border to the hint, and pass3 goes from the start of the disk
+> > > > to the border.
+> > > As you probably remember, we decided to drop border stiff all together
+> > > because of all the extra seeking it incurrs.
+> > The border does do extra seeks for some cases (search_reada helps), but
+> > no border at all spreads tree blocks all over.  That too does a lot of
+> 
+> I'd say that no border makes tree blocks to appear near file data locations
+> (at least at file time creation, items might be shifted away later).
+> 
 
-Ignore - ha ha very funny
-Ignore means: can't mount ("no mount dir" or somethimg like that)
-I've got 80GB Data lost.
+Well, we know it puts them near some file, but many tree nodes point to
+more than one file (especially as you go higher in the tree).  I'm not
+really sure if there is a good spot on the disk for them, it seems like
+the leaves would benefit the most from being next to the file data they
+point to, except for directory item leaves, which should be near the
+stat data they point to.
 
-nfs with reiserfs seems to be still buggy and corrupts data.
+But, my sense is that spreading them over the disk usually puts tree
+nodes far apart from other tree nodes, and the extra seeking is why you
+can see the performance difference from debugreiserfs.
 
-What happens:
-  day 1:
-   (syslog)(see attachment 1)
-Mar  9 21:31:16 outa kernel: vs-5150: search_by_key: invalid format found in block 7843968. Fsck?
-Mar  9 21:31:16 outa kernel: vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat data of [220650 220800 0x0 SD]
-Mar  9 21:31:17 outa kernel: vs-5150: search_by_key: invalid format found in block 7843968. Fsck?
-Mar  9 21:31:17 outa kernel: vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat data of [220650 220805 0x0 SD]
-.
-.
-.
-   (reiserfsck --check)(see attachment 2)
-node (7843968) with wrong level (44655) found in the tree (should be 1)
-whole subtree skipped
-free block count 3902051 mismatches with a correct one 3953043.
-on-disk bitmap does not match to the correct one.
+> > > > Overall, I believe this will significantly improve fragmentation over
+> > > > time.  oid_groups should only be used if your FS has a small number of
+> > > I hope we won't have read-access speed degradation with these.
+> > It does, but so does skip_busy alone.  You don't see the problem with
+> 
+> But we save on cpu here, I think. No?
+> I am surprised this is noticeable at all.
+> 
 
-eh??? (h=E4???)
+It really depends on the working data set.  If the new things you are
+creating are roughly the same size as the holes from stuff you've
+deleted, things tend to work out and skip_busy doesn't do too badly. 
 
-   (reiserfsck --fix-fixable)(see attachment 3)
-node (7843968) with wrong level (44655) found in the tree (should be 1)
-whole subtree skipped
-free block count 3902051 mismatches with a correct one 3953043.
-on-disk bitmap does not match to the correct one.
+This is especially true when your dataset includes lots of files < 64k
+or so, since you tend to get a somewhat fragmented first 16k, followed
+by two or three chunks of 9 blocks thanks to preallocation.  The fibmap
+histogram shows this kind of thing nicely.
 
-eh??? (h=E4???)
+As a test, I did a stress.sh -n 20 -s and let it run for a few
+iterations.  This filled my disk roughly 20%.
 
-this above takes me hours: rtfms, null-info-reiser-docs, net,...
-what the hell is "...reiserfsck returns 1 to  indicate..." Do you
-think I write functions to eval your return values?
+Then I created two 500MB files with dd and measured the fragmentation on
+those files.  With skip_busy the 500MB files were 30% fragmented.  With
+dirid_groups the 500MB files were 2% fragmented.
 
-shutdown
+> > skip_busy during a mongo run, but run stress.sh -n 1 <data set that uses
+> > 50% of the disk> for a few hours and then run mongo again without
+> > deleting the stress.sh data set.
+> 
+> Hm.
+> 
 
-day 2:
-   can't mount local reiser disk
+Sorry, that should be stress.sh -n 2 or higher.
 
-much more hours
+> > The 2.4.20 default is great on a clean FS but breaks down over time,
+> > just like the 2.4.19 allocator did.  Various people have demonstrated it
+> > with benchmarks.
+> 
+> Yes, and this is sad. But it appars that almost every FS suffers this problem ;)
 
-   (reiserfsck --check)(see attachment 4)
-bad_stat_data: block 9160, [1 2 0x0 SD (0)], directory SD has bad nlink number
-bad_stat_data: block 9160, [2 4 0x0 SD (0)], SD has bad nlink number
-.
-205300 lines later
-.
-bad_stat_data: block 22978597, [310954 310965 0x0 SD (0)], SD has bad nlink number
-free block count 3902037 mismatches with a correct one 3953043.
-on-disk bitmap does not match to the correct one.
+Very true.  I'm hoping we can improve things slightly though ;-)
 
-   (reiserfsck --rebuild-tree)(see attachment 5/6)
-   reed your warnings about your buggy-beta-loose-all-data-software and say "Yes",
-   because there wasn't any more to backup. Btw it takes about 3 days to backup
-   the 80G with my DDS3 streamer.
-####### Pass 0 #######
-"r5" got 206443 hits
-####### Pass 1 #######
-####### Pass 2 #######
-are_file_items_correct: convert the indirect item back to direct 208191 208307
-####### Pass 3 #########
-are_file_items_correct: convert the indirect item back to direct 67929 7778
-.
-.
-.
-are_file_items_correct: convert the indirect item back to direct 258907 258912
-####### Pass 3a (lost+found pass) #########
-
-takes about 2 hours and I was able to mount the partition.
-If there is lost data? I don't know, but it would not be the first time I lost
-data with reiserfs.
+-chris
 
 
-system-setup:
-server with:
- debian sarge
- kernel 2.4.20-686 / ReiserFS version 3.6.25
- reiserfsprogs 3.6.3-1
- nfs-kernel-server 1.0.2-1
- samba 2.2.3a-12
 
-client with:
- debian sarge
- kernel 2.4.19-smp
- nfs-kernel-server 1.0.2-1
- samba 2.2.3a-6
-
-Please don't annoy me with mails.
-my only desire is to convert to ext2/3. Spricht hier jemand deutsch?
-
-Noyan
- 
---==========877300887==========--
 
