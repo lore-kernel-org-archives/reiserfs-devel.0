@@ -1,59 +1,47 @@
-From: Henning Westerholt <henning-04@die.informatik.uni-siegen.de>
-Subject: Re: very messed up reiserfs with bad blocks
-Date: Tue, 15 Jun 2004 22:52:00 +0200
-Message-ID: <200406152252.00958.henning-04@die.informatik.uni-siegen.de>
-References: <Pine.GHP.4.44.0406152042570.27727-100000@elektron.its.tudelft.nl>
+From: sirpj@ecs.csus.edu
+Subject: FIFO and LIFO directory plug-in
+Date: Tue, 15 Jun 2004 19:12:37 -0700 (PDT)
+Message-ID: <47456.68.126.218.147.1087351957.squirrel@gaia.ecs.csus.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19203-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-19205-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.GHP.4.44.0406152042570.27727-100000@elektron.its.tudelft.nl>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
-Cc: Sebastiaan <S.Breedveld@ewi.tudelft.nl>
 
-Am Dienstag, 15. Juni 2004 20:51 schrieb Sebastiaan:
-> High,
+Hi,
 
-Hello,
+I'd like to thank you guys for your help earlier this year with the
+initial phase of my project. I was able to implement FIFO queueing
+functionality in Reiser v3. It is not very elegant, but I am still
+learning. I was able to steer my supervisor in the direction of Reiser4.
+It appears that the design principles of the new system will make it very
+valuable for many at the Lab.
 
-just returning from the football match on tv, 1:1 - not so bad.. ;-)
+That said, and back to Hans' suggestion of a readdir implementation for
+FIFO and LIFO file queuing... I have some questions. If anyone can answer
+them, has advice, or suggestions that would be so great.
 
-> > have you followed the instruction from
-> > http://namesys.com/bad-block-handling.html ?
-> >
-> > Probably you have bad blocks in a system area, this is not supported by
-> > reiserfs. Backup the partition with dd_rescue, and use fsck.reiserfs on
-> > the backup.
->
-> thanks, I read it, but without succes.
->
-> Making an image of the drive and running the reiserfsck --rebuild-tree on
-> that seems to have succes. Thanks for the hint.
+Here's where I am at, and what I don't know:
 
-Good to hear that.
+From what I can tell, files in the 'directory Item' aren't preserved in
+the order they are written due to deletes and other operations. So if I
+were to access the Item I couldn't be certain that they would be in first
+created -> last created order.
 
-> However, with current huge sizes of harddisks it is not always possible or
-> hard to make an image on another harddisk. Now I am not an expert, but
-> isn't it possible to add an option to fsck.reiserfs that can handle drives
-> with bad blocks, i.e. when it encounters a bad block, treat it as zeros,
-> sort of an emergency solution?
->
-> Greetz,
-> Sebastiaan
+If readdir has to sort the files in the directory every time it is called
+it seems like it would be a bit of a performance hit. Should another
+structure be maintained that preserves the order as the files are
+written... and should readdir use that as it's basis for returning the
+directory contents?
+If so, that would be cool cause I kinda' have that now.
 
-Reiser4 have badblock support build in, hopefully it is ready soon. I don't 
-know if its possible to modify the fsck, perhaps someone from namesys could 
-answer this?
+Thanks a lot,
 
-But i think they would like to concentrate on the new code.
+Jenn
 
 
-Best regards,
-
-Henning
