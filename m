@@ -1,57 +1,49 @@
-From: Christian Iversen <chrivers@iversen-net.dk>
-Subject: Re: reiser4 for windows
-Date: Wed, 2 Feb 2005 09:02:21 +0100
-Message-ID: <200502020902.21492.chrivers@iversen-net.dk>
-References: <20041204211059.41930.qmail@web50908.mail.yahoo.com> <200502011059.37435.chrivers@iversen-net.dk> <42002A7F.3020305@slaphack.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: missing files?
+Date: Wed, 02 Feb 2005 14:08:40 +0300
+Message-ID: <1107340795.3919.22.camel@tribesman.namesys.com>
+References: <1107318853.18354.214122527@webmail.messagingengine.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42002A7F.3020305@slaphack.com>
-Content-Disposition: inline
+In-Reply-To: <1107318853.18354.214122527@webmail.messagingengine.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: michael@styer.net
+Cc: reiserfs-list@namesys.com
 
-On Wednesday 02 February 2005 02:18, David Masover wrote:
-> Christian Iversen wrote:
-> | On Tuesday 01 February 2005 09:52, Markus T=F6rnqvist wrote:
-> |>On Tue, Jan 18, 2005 at 08:37:13AM -0800, Hans Reiser wrote:
-> |>>>Could reiser4 support case-crushing, so it would be more
-> |>>>"windows-native"?
-> |>>
-> |>>It could, as a plugin.
-> |>
-> |>Reiser4 has a sys interface already, why not add echo 1 > case_crush or
-> |>somesuch? Shouldn't take a long time to code, but it shouldn't be a
-> |>priority and no one would really want it, I guess...
-> |
-> | I support your idea, but keep in mind that, to make matters worse,
->
-> windows
->
-> | uses case-insentivity, not case-crushing. This means that the original
->
-> case
->
-> | has to be saved, but the crushed case has to be searched.
-> |
-> | I don't know if that's easy with a hash function, but it seems mightly
->
-> slow to
->
-> | me.
->
-> Who said anything about messing with the hash?  Why not just add
-> original case as metadata and feed pre-crushed case to the existing
-> hash?  Don't think overhead is huge if you're already creating a file.
+Hello
 
-Well, thinking about it, you seem to be right. I was thinking about somethi=
-ng=20
-else :)
+On Wed, 2005-02-02 at 07:34, michael@styer.net wrote:
+> Hello.
+> 
+> I'm using reiser4 on a Gentoo home system with a 2.6.9 kernel. Until
+> recently, I had everything except /boot on one partition. My small disk
+> was getting full, so I purchased another slightly bigger disk last week
+> and moved /usr onto a new partition. 
+> 
+> All seemed fine, until I noticed that my nightly cron job that runs the
+> Gentoo emerge program to check for software updates was failing. After
+> investigating I discovered that a number of directories were missing.
+> That is, they appeared when using 'ls' with no options, but using 'ls
+> -l' produced multiple 'No such file or directory' results. 
+> 
+> Now it appears I'm unable to remove those directories. 'rm -f
+> <filename>' doesn't work, and rmdir reports the directory isn't empty. I
+> can rename the directory, but that doesn't fix the apparent corruption
+> in the filesystem. Also, fsck.reiser4 doesn't report any problems.
+> 
+> Can anyone explain why this might have happened and what I might be able
+> to do to fix it?
+> 
 
-=2D-=20
-Regards,
-Christian Iversen
+Is there anything about reiser4 in kernel logs?
+
+> thanks!
+> 
+> Mike
+> 
+
