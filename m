@@ -1,50 +1,51 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: Reiserfs fs corruption with 2.5.49
-Date: Wed, 27 Nov 2002 16:22:59 +0300
-Message-ID: <15844.50995.61298.126680@laputa.namesys.com>
-References: <200211270810.06553.tomlins@cam.org>
+From: Mira Tempir <mira-list@cekit.cz>
+Subject: Re: reiserfsck --rebuild-tree on a big filesystem
+Date: Wed, 27 Nov 2002 14:38:35 +0100
+Message-ID: <20021127133835.GA358@mail.cekit.cz>
+References: <20021125143634.GC9006@mail.cekit.cz> <20021126225625.GB16567@mail.cekit.cz> <20021127103315.A3712@namesys.com> <200211271546.47417.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12055-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12056-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200211270810.06553.tomlins@cam.org>
+Content-Disposition: inline
+In-Reply-To: <200211271546.47417.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Ed Tomlinson <tomlins@cam.org>
-Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
 
-Ed Tomlinson writes:
- > Hi,
- > 
- > I am seeing reiserfs (3.6 r5 hash) fs corruption in 2.5.49
- > 
- > oscar% ls alsa*
- > zsh: no matches found: alsa*
- > oscar% ls mod*
- > alsa-driver-0.9+0beta4-4
- > oscar% rm "alsa-driver-0.9+0beta4-4"
- > rm: cannot remove `alsa-driver-0.9+0beta4-4': No such file or directory
+Hi!
 
-This can be explained if you have file alsa-driver-0.9+0beta4-4 within
-directory named modSOMETHING, right? Can you try 
+Vitaly Fertman - 27/11/02 15:46 napsal:
+| 
+| Did you run fsck some times during last days and you had the 
+| same low speed, right?
 
-$ ls -d ls mod*
+Last night, I tried older r-fsck 3.6.2 (I was quite desperate)
+and after 14hours, it was still more than 100 blocs per sec.
+(which was great in comparison with current r-fsck, but still
+not enough to rebuild whole FS in few weeks)
 
-?
+| memmove is called when an item is removed and when an objectid 
+| is marked as used in objectid map. Backtraces say that it is 
+| the second case here, strange. Could you run reiserfsck again, 
+| wait for such a low speed and look at map->m_page_count and 
+| map->m_used_slots_count from mark_objectid_really_used.
+| 
+| And it is strange also that there are so many wrong tails. 
+| Which kernels did you use before? Which kernel do you think 
+| you used when the most amount of files were created? 
 
- > 
- > The fs with the above error passed an reiserfsck (3.6.4) 2 and a half days 
- > ago (just before the last reboot) - when I had to do a rebuild tree after 
- > booting 2.5.49-mm1, which did oops.  Looks like the bug is not just in -mm1 
- > though.
- > 
- > 
- > What info can I gather before fixing this fs?
- > 
- > Ed Tomlinson
- > 
+I'm not sure about the first used with reiserfs, it could be
+something like 2.4.1x, most files were created under 2.4.18 (and .17).
 
-Nikita.
+
+Thanks
+
+-- 
+   mira tempir <mira#cekit,cz> -- cekit s.r.o.
+   bratislavska 2, 602 00 brno, czech republic
+
