@@ -1,36 +1,54 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: on-disk bitmap does not match to the correct one
-Date: Wed, 3 Apr 2002 15:20:43 +0400
-Message-ID: <20020403152043.B4949@namesys.com>
-References: <3CAAD714.3223F1B6@vtc.edu.hk>
+From: Tom Oehser <tom@toms.net>
+Subject: RE: Symbol collisions in patch?
+Date: Wed, 3 Apr 2002 06:51:23 -0500 (EST)
+Message-ID: <Pine.LNX.4.44.0204030639310.647-100000@conn6m.toms.net>
+References: <NDBBJPAGKLCMDEIEKOPBMEPGGNAA.mailinglists@websitemanagers.com.au>
 Mime-Version: 1.0
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <3CAAD714.3223F1B6@vtc.edu.hk>
+In-Reply-To: <NDBBJPAGKLCMDEIEKOPBMEPGGNAA.mailinglists@websitemanagers.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nick Urbanik <nicku@vtc.edu.hk>
+To: Adam Goryachev <mailinglists@websitemanagers.com.au>
 Cc: reiserfs-list@namesys.com
 
-Hello!
 
-On Wed, Apr 03, 2002 at 06:19:00PM +0800, Nick Urbanik wrote:
+> If anyone was paranoid enough to *not* move up past 2.0.x then surely they
 
-> I am concerned by a constant recurence of the output of reiserfsck run
-> on two of my partitions, shown at the end of this mail.
-> I do not understand what the bitmaps are, nor what to do about the
-> mismatch.
+Paranoia likely has nothing to do with it- think about embedded systems,
+there are still situations where *1.x* kernels are in use on 2-megabyte
+machines.
 
-It means you have more free space than it is reported in the free blocks
-counters.
-Bitmaps are maps with which FS is tracking blocks usage.
-If you are running kernel 2.4.16 or older, this might be because
-some aplication deleted some files, but still have the files open,
-andthen crash occured.
-2.4.16 or earlier kernels are not recommended to use.
+> Why spend the next 6 months/12 months (I have no idea how long) developing
+> support for 2.0 and 2.2 kernels with reiserfs when by that stage, even the
 
-Bye,
-    Oleg
+It wouldn't take that long to fix the symbol collisions and apply the
+known-missing patch.  It probably wouldn't take that long to backport the
+3.6 stuff.
+
+> left, but really, is it worth a few hundred people working on code that will
+> be used by only one or two people ??
+
+Hyperbole.  It wouldn't take hundreds of people to make the 2.2.20 patch
+stable.  Fixing the symbol collisions and applying the umount locking?
+Hundresds of people and 6/12 months?
+
+> Fine, but since what is supported by 2.2 that is not supported in 2.4?? ie,
+> why would you build a rescue disk (ie assume this is supposed to be a one size
+> fits all rescue disk) based on a 2.2 kernel and not use a 2.4 kernel???
+
+If the kernel wasn't bloating by hundreds of K for a feature-equivalent
+build, of course I would use 2.4.  With the exact same feature set, a 2.4
+kernel is much much bigger,  approaching *twice the size* of a 2.0 kernel.
+
+Look, not backporting 3.6 support to 2.2.x, I can understand, if not agree
+with.  Nor do I agree it would take "6 months/12 months" or "a few hundred
+people working on code".  But not maintaining the basic usability, leaving
+in the oops producing bugs, not fixing the symbol collisions- that makes
+me skittish.  You should just take the 2.2.x patches completely off the
+web site, not leave them up for people to oops.
+
+-Tom
+
