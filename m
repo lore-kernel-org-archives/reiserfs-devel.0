@@ -1,43 +1,55 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Corruptions on every filesystem with 02-reiserfs_file_write.diff.gz
-Date: Wed, 21 Aug 2002 20:41:41 +0400
-Message-ID: <20020821204141.A919@namesys.com>
-References: <20020820151701.GA15499@jerry.boludo.cjb.net> <20020821101343.B10765@namesys.com> <20020821163122.GA6628@jerry.boludo.cjb.net>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Corruption: --fix-fixable results in all nlink
+ values = 0
+Date: Wed, 21 Aug 2002 21:14:49 +0400
+Message-ID: <3D63CA89.3050002@namesys.com>
+References: <m3k7mpreij.fsf@merlin.emma.line.org> <3D5E9D69.1030109@namesys.com> <20020819092023.B1815@namesys.com> <3D60AF63.6040809@namesys.com> <20020819124649.A2585@namesys.com> <3D60B6E2.7050006@namesys.com> <20020819132252.A4346@namesys.com> <3D60C35E.7000903@namesys.com> <20020819142035.A5741@namesys.com> <1029875053.12387.521.camel@tiny> <20020821100452.A10765@namesys.com> <3D636C80.4030605@namesys.com> <3D63BD2D.1070602@web.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11272-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11273-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20020821163122.GA6628@jerry.boludo.cjb.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Javier Marcet <jmarcet@pobox.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: degerrit@web.de
+Cc: reiserfs-list@namesys.com, vitaly@thebsh.namesys.com
 
-Hello!
+Gerrit Hannaert wrote:
 
-On Wed, Aug 21, 2002 at 06:31:22PM +0200, Javier Marcet wrote:
+> Hans Reiser wrote:
+>
+>> It is not that I oppose putting it into the tree with a fixed key for 
+>> the file holding it, it is that I want us to work on other things 
+>> instead.
+>>
+>> Hans
+>
+>
+>
+> Why not just run 'badblocks' (or the failure mechanism which now 
+> aborts with "bread: Cannot read a block") as an (optional) part of 
+> fsck and use the output in a bad-block-marking phase? 
 
-> > You said XFS, does that mean you had XFS patched in too in all cases?
-> No, that was the first patch I removed - or didn't add, since I began
-> from scratch again -, since I only wanted to test it and being such a
-> big piece of code which modified so many things, there were good chances
-> for it to be the culprit.
+This is good UI design.  Vitaly....
 
-Ok, one thing off the equation.
- 
-> If you tell me any way to further investigate this situation and find a
-> possible solution, I'll be glad to. My only fear is running a kernel
-> with the patch applied for too long. After all I value my date and do
-> want to keep it safe, not only access to it fast.
+> Then you don't need to store the list of bad blocks anywhere, at least 
+> not for fsck anyway ;-). Personally though, as a user, I'd like to 
+> confirm the list of bad blocks in this case (in case it's too large I 
+> might decide not to do it...)
+>
+> It wasn't even clear to me until last week that the hard disk *also* 
+> did remapping of bad blocks, whether automatically or with some 
+> vendor-tool. Perhaps any fsck failure due to hardware error should 
+> recommend using low-level disk-checking tools provided by hard disk 
+> vendors prior to taking any action itself?
+>
+> - Gerrit
+>
+>
+>
+>
 
-Can you try compiling your kernel with gcc 2.95.3? (I just don't have
-gcc 3.2 at hand, that's it).
-To avoid risking your data - you may have empty scratch partition, on which
-you can test and boot off rescue CD-ROM, so that your data will be safe.
 
-Bye,
-    Oleg
+
