@@ -1,63 +1,44 @@
-From: Spam <spam@tnonline.net>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Fri, 3 Sep 2004 16:01:17 +0200
-Message-ID: <112181186.20040903160117@tnonline.net>
-References: <20040826150202.GE5733@mail.shareable.org>
- <200408282314.i7SNErYv003270@localhost.localdomain>
- <20040901200806.GC31934@mail.shareable.org>
- <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
- <1094118362.4847.23.camel@localhost.localdomain> <20040902203854.GA4801@janus>
- <1094160994.31499.19.camel@shaggy.austin.ibm.com> <20040902214806.GA5272@janus>
- <20040902220027.GD23987@parcelfarce.linux.theplanet.co.uk>
- <4137B5F5.8000402@slaphack.com> <16696.30683.207905.803165@gargle.gargle.HOWL>
-Reply-To: Spam <spam@tnonline.net>
+From: Jon Smirl <jonsmirl@gmail.com>
+Subject: Re: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
+Date: Fri, 3 Sep 2004 11:17:30 -0400
+Message-ID: <9e4733910409030817311e58ef@mail.gmail.com>
+References: <20040901200806.GC31934@mail.shareable.org>
+	 <200409021407.i82E70hx004899@laptop11.inf.utfsm.cl>
+	 <20040902173214.GB24932@mail.shareable.org>
+	 <m3pt54il82.fsf@zoo.weinigel.se>
+	 <20040902214731.GF24932@mail.shareable.org>
+	 <1094164023.6163.2.camel@localhost.localdomain>
+Reply-To: Jon Smirl <jonsmirl@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21434-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21435-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16696.30683.207905.803165@gargle.gargle.HOWL>
+In-Reply-To: <1094164023.6163.2.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: John Stoffel <stoffel@lucent.com>
-Cc: David Masover <ninja@slaphack.com>, viro@parcelfarce.linux.theplanet.co.uk, Frank van Maarseveen <frankvm@xs4all.nl>, Dave Kleikamp <shaggy@austin.ibm.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Jamie Lokier <jamie@shareable.org>, Christer Weinigel <christer@weinigel.se>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
+On Thu, 02 Sep 2004 23:27:06 +0100, Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
+> On Iau, 2004-09-02 at 22:47, Jamie Lokier wrote:
+> >     - Can the daemon keep track of _every_ file on my disk like this?
+> >       That's more than a million files, and about 10^5 directories.
+> >       dnotify would require the daemon to open all the directories.
+> >       I'm not sure what inotify offers.
+> 
+> This is currently a real issue for both desktop search and for virus
+> scanners. They want a "what changed and where" system wide (or at least
+> per namespace/mount).
 
-  
+In the database work everything is a transaction and the transactions
+are logged. Reiser4 is fully atomic and logged. So to get the "what
+changed and where" you just process the transaction logs from the
+point of your last marked checkpoint. Hot backup db servers work this
+way too by listening to the transaction log stream. You don't need a
+daemon in this model.
 
->>>>>> "David" == David Masover <ninja@slaphack.com> writes:
-
-David>> File-as-a-dir has numerous advantages, but enough have been
-David>> discussed.  Short list is image mounts, tarballs, streams,
-David>> metas, and namespace unification.  Longer list and explanations
-David>> can be found if you RTFA.
-
-> And it has numerous dis-advantages as well, since it doesn't have a
-> good set of semantics and syntax defined yet, nor does it explain
-> except by vigorous handwaving the performance and security impacts it
-> can have.
-
-> My personal feeling is that the mount(8) command should be the tool
-> used to extract and expose the internal namespace of files like this
-> and to then graft it onto the standard Unix namespace with gross Unix
-> semantics, but it's own wacky internal semantics.  This way, standard
-> tools don't care, but special tools which know how to handle it can do
-> what they want.
-
-
->> mount -t tarfs /some/place/on/disk/foo.tar.gz /mnt/tar
->> cp /var/tmp/img.gif .
->> umount /mnt/tar
-
-> Oops!  Someone did a rm /some/place/on/disk/foo.tar.gz between steps
-> one and two.  Now what happens?  Please define those semantics...
-
-  Uhm, can you delete a file (loop) that is mounted?
-
-> John
-
-
-
-
+Jon Smirl
+jonsmirl@gmail.com
