@@ -1,38 +1,41 @@
-From: Russell Coker <russell@coker.com.au>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: ReiserFS problems
-Date: Fri, 8 Aug 2003 10:18:31 +1000
-Message-ID: <200308081018.31525.russell@coker.com.au>
-References: <20030806182055.A28562@bitwizard.nl> <3F3252A4.4010104@namesys.com> <20030807181227.GA23303@matchmail.com>
-Reply-To: russell@coker.com.au
+Date: Fri, 8 Aug 2003 13:56:13 +0400
+Message-ID: <20030808095613.GB4607@namesys.com>
+References: <20030806182055.A28562@bitwizard.nl> <20030806164852.GA14719@namesys.com> <20030806191806.A31496@bitwizard.nl> <20030806172834.GA15024@namesys.com> <3F3252A4.4010104@namesys.com> <20030807181227.GA23303@matchmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15242-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15243-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030807181227.GA23303@matchmail.com>
 Content-Disposition: inline
+In-Reply-To: <20030807181227.GA23303@matchmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Mike Fedyk <mfedyk@matchmail.com>
-Cc: reiserfs-list@namesys.com
+Cc: Hans Reiser <reiser@namesys.com>, Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>, reiserfs-list@namesys.com, copy@harddisk-recovery.nl
 
-On Fri, 8 Aug 2003 04:12, Mike Fedyk wrote:
-> But if there was at any time an uncompressed reiserfs image within the
-> outer reiserfs filesystem you're fscking, won't that screw it up too?
->
+Hello!
+
+On Thu, Aug 07, 2003 at 11:12:27AM -0700, Mike Fedyk wrote:
+> > >Well. This is actually unfortunate, I agree. In such a case you'd better
+> > >move your reiserfs images to some other place for the time of reiserfsck 
+> > >--rebuild-tree run.
+> > or compress them.
+> But if there was at any time an uncompressed reiserfs image within the outer
+> reiserfs filesystem you're fscking, won't that screw it up too?
+
+Yes.
+The fs in file will be completely destroyed.
+Some stuff from it may appear in outer fs. (possibly in lost + found,
+no actual file data, just the names and directory structure).
+
 > So you can compress it, but if you uncompress it to work with it, it still
 > fscks fsck...  Right? :-/
 
-Fortunately the crypto support in the kernel is getting good now.  So you 
-could just use a crypto-loopback device from a file on the ReiserFS file 
-system for storing a file-system image.  If you use an XOR encryption method 
-it won't even hurt performance either.  :-#
+Yes.
 
--- 
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
-
+Bye,
+    Oleg
