@@ -1,53 +1,35 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Subject: Reiserfs kernel config description outdated
-Date: Tue, 16 Nov 2004 13:32:00 +0100
-Message-ID: <200411161332.00722.christian.mayrhuber@gmx.net>
+From: Mathieu Segaud <matt@minas-morgul.org>
+Subject: 2.6.10-rc2-mm1: oops when accessing reiser4 fs's (maybe fix provided)
+Date: Tue, 16 Nov 2004 19:53:30 +0100
+Message-ID: <874qjptyl1.fsf@barad-dur.crans.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22389-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22390-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
+Cc: linux-kernel@vger.kernel.org, akpm@osdl.org
 
 
-I think the sentence "Additional patches are needed
-for NFS and quotas, please see <http://www.namesys.com/> for links."
-should be dropped in 2.6.
+I tried 2.6.10-rc2-mm1 and the last reiser4 updates gave some (many many)
+oopses flooding my screen :).
+I tried reverting reiser4-fix-deadlock.patch and oopses are gone.
 
-Full message:
-========================================================================
+I tried this one because thru the quick traces on my screen, I saw a reference
+to get_current_context.
+The speed of the traces and the unasibility of the box prevented me from
+making differences between "real" oopses and BUG_ON(), sorry for that...
 
-Reiserfs support (REISERFS_FS)
+If you want some traces I can provide them ASAP (e.g. tomorrow)
 
-Stores not just filenames but the files themselves in a balanced
-tree. Uses journaling.
-
-Balanced trees are more efficient than traditional file system
-architectural foundations.
-
-In general, ReiserFS is as fast as ext2, but is very efficient with
-large directories and small files. Additional patches are needed
-for NFS and quotas, please see <http://www.namesys.com/> for links.
-
-It is more easily extended to have features currently found in
-database and keyword search systems than block allocation based file
-systems are. The next version will be so extended, and will support
-plugins consistent with our motto ``It takes more than a license to
-make source code open.''
-
-Read <http://www.namesys.com/> to learn more about reiserfs.
-
-Sponsored by Threshold Networks, Emusic.com, and Bigstorage.com.
-
-If you like it, you can pay us to add new features to it that you
-need, buy a support contract, or pay us to port it to another OS.
-
-========================================================================
+Best,
 
 -- 
-lg, Chris
+"I am getting pretty good at running diff and patch now."
+
+	- Jeff Merkey
+
