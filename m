@@ -1,37 +1,49 @@
-From: Frank van Maarseveen <frankvm@xs4all.nl>
+From: Spam <spam@tnonline.net>
 Subject: Re: The argument for fs assistance in handling archives
-Date: Mon, 6 Sep 2004 15:01:13 +0200
-Message-ID: <20040906130113.GA32306@janus>
-References: <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain> <20040902203854.GA4801@janus> <1094160994.31499.19.camel@shaggy.austin.ibm.com> <20040902214806.GA5272@janus> <413C5DDD.6070005@tequila.co.jp> <1544176737.20040906145732@tnonline.net> <413C5F2D.6080802@tequila.co.jp>
+Date: Mon, 6 Sep 2004 15:03:01 +0200
+Message-ID: <1387164213.20040906150301@tnonline.net>
+References: <200408282314.i7SNErYv003270@localhost.localdomain>
+ <20040901200806.GC31934@mail.shareable.org>
+ <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
+ <1094118362.4847.23.camel@localhost.localdomain> <20040902203854.GA4801@janus>
+ <1094160994.31499.19.camel@shaggy.austin.ibm.com> <20040902214806.GA5272@janus>
+ <413C5DDD.6070005@tequila.co.jp> <1544176737.20040906145732@tnonline.net>
+ <413C5F2D.6080802@tequila.co.jp> <20040906130113.GA32306@janus>
+Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21522-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21523-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <413C5F2D.6080802@tequila.co.jp>
+In-Reply-To: <20040906130113.GA32306@janus>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Clemens Schwaighofer <cs@tequila.co.jp>
-Cc: Spam <spam@tnonline.net>, Frank van Maarseveen <frankvm@xs4all.nl>, Dave Kleikamp <shaggy@austin.ibm.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Frank van Maarseveen <frankvm@xs4all.nl>
+Cc: Clemens Schwaighofer <cs@tequila.co.jp>, Dave Kleikamp <shaggy@austin.ibm.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Mon, Sep 06, 2004 at 09:59:25PM +0900, Clemens Schwaighofer wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
-> 
-> Spam wrote:
-> 
-> | thats why we have automount.
-> |
-> |
-> |>   Which still needs to be setup in fstab, right?
-> 
-> no, in /etc/automount* actually. I have no fstab entry here and still I
-> can mount various samba shares, cdroms, etc ...
 
-but can you access images that way?
+  
 
--- 
-Frank
+> On Mon, Sep 06, 2004 at 09:59:25PM +0900, Clemens Schwaighofer wrote:
+>> -----BEGIN PGP SIGNED MESSAGE-----
+>> Hash: SHA1
+>> 
+>> Spam wrote:
+>> 
+>> | thats why we have automount.
+>> |
+>> |
+>> |>   Which still needs to be setup in fstab, right?
+>> 
+>> no, in /etc/automount* actually. I have no fstab entry here and still I
+>> can mount various samba shares, cdroms, etc ...
+
+> but can you access images that way?
+
+  Probably, but only predefined ones.. IE, no random automount?
+
+  ~S
+
+
