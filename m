@@ -1,161 +1,188 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: BUG in submit_ordered_buffer at fs/reiserfs/journal.c:616!
-Date: Fri, 11 Mar 2005 19:20:15 -0500
-Message-ID: <423235BF.1010209@suse.com>
-References: <20050311224936.GK1220@austin.ibm.com> <42322C38.1040106@namesys.com>
+From: Junfeng Yang <yjf@stanford.edu>
+Subject: Re: [CHECKER] Do ext2, jfs and reiserfs respect mount -o sync/dirsync
+ option? (fwd)
+Date: Fri, 11 Mar 2005 22:24:54 -0800 (PST)
+Message-ID: <Pine.GSO.4.44.0503112223560.6801-100000@elaine24.Stanford.EDU>
+References: <42317EA1.1030905@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42322C38.1040106@namesys.com>
+In-Reply-To: <42317EA1.1030905@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Linas Vepstas <linas@austin.ibm.com>, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, Chris Mason <mason@suse.com>, vitaly@thebsh.namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "E.Gryaznova" <grev@namesys.com>
+Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com, mc@cs.Stanford.EDU, reiser@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
 
-Hans -
+Thanks a lot guys.  Please keep me posted on this.
+-Junfeng
 
-Most of the error messages make it pretty clear that the problems are
-hardware related. The BUG() at the end *is* a software error; This is a
-valid bug report. I'll take a look at it on Monday.
+On Fri, 11 Mar 2005, E.Gryaznova wrote:
 
-That said, I don't think that kernel error messages are the best place
-for data recovery howtos. Even so, ReiserFS is not the only filesystem
-affected by I/O errors; every disk filesystem is. ext3's failure
-messages are very similar, and I haven't heard much confusion over them.
-
-- -Jeff
-
-Hans Reiser wrote:
-> Chris/Jeff, can you modify your code to whenever it sees an I/O error,
-> to say "I/O errors usually indicate bad hardware not bad software,
-> probably you need to get a new disk and use dd_rescue to copy everything
-> to it."?
-> 
+> Hello, Junfeng.
+>
+> Thank you for the report and sorry for delay.
+>
+> Yes, the problem exists somewhere, but this is not reiserfsck
+> --fix-fixable problem.
+> I just modified the set of commands by the following way:
+>
+> mkreiserfs dev && mount dev /mnt -o sync && touch /mnt/file && mkdir
+> /mnt/d && echo Hello >/mnt/hello && reboot -fn
+> After boot it is reasonable to pack the reiserfs metada and compare
+> "mount" and "reiserfsck --fix-fixable" results on _one_ crashed filesystem.
+> # debugreiserfs -p dev | gzip -c  > metadata.gz
+> 1.
+> mount the crashed disk and see data
+>
+> 2.
+> umount
+> dd if=/dev/zero of=dev
+> gunzip -c metadata.gz | debugreiserfs -u dev
+> reiserfsck --fix-fixable dev
+> mount the recovered  filesystem and see data
+>
+> I this case the results of "mount" and "fsck --fix-fixable && mount "are
+> equal.
+> Nevetheless, the "sync" problem exists somewhere. Because (yes, you are
+> right), sometimes there are no correct data on filesystem after such
+> "crash". I run this test several times and see that sometimes data is
+> lost after reboot -fn.
+>
+> We are working on this problem now.
+>
 > Thanks,
-> 
-> Hans
-> 
-> Linas Vepstas wrote:
-> 
-> 
->>Hi,
->>
->>I've been experimenting with automatic bus error recovery in the
->>2.6.11 kernel.  During one of my failed experiments, I tripped over
->>a Reiserfs bug, below.  Basically, my error recovery failed, which
->>means a SCSI disk went permanently offline, which, admitedly,
->>is pretty catastrophic, but shouldn't be a kernel panic.  It seems
->>that reiser hits a 'BUG_ON' in this case.
->>
->>FWIW, in my limited experience with ext3 in the same exact situation, 
->>it seems that ext3 handles this gracefully, returning -EIO to all 
->>affected apps accessing the disk.
->>
->>Unfortunately, I don't know how to tell you how to reproduce this :)
->>
->>--linas
->>
->>
->>Here's dmesg leading up to the failure, and the stack traces are shown below.
->>
->><4>sym0:8:0: HOST RESET operation timed-out.
->><6>scsi: Device offlined - not ready after error recovery: host 0 channel 0 id 8 lun 0
->><3>scsi0 (8:0): rejecting I/O to offline device
->><3>scsi0 (8:0): rejecting I/O to offline device
->><3>Buffer I/O error on device sda3, logical block 8210
->><4>lost page write due to I/O error on sda3
->><4>ReiserFS: sda3: warning: journal-837: IO error during journal replay 
->><2>REISERFS: abort (device sda3): Write error while updating journal header in flush_journal_list
->><2>REISERFS: Aborting journal for filesystem on sda3
->><3>scsi0 (8:0): rejecting I/O to offline device
->><3>Buffer I/O error on device sda3, logical block 741
->><4>lost page write due to I/O error on sda3
->><3>Buffer I/O error on device sda3, logical block 742
->><4>lost page write due to I/O error on sda3
->><3>Buffer I/O error on device sda3, logical block 743
->><4>lost page write due to I/O error on sda3
->><3>Buffer I/O error on device sda3, logical block 744
->><4>lost page write due to I/O error on sda3
->><3>Buffer I/O error on device sda3, logical block 745
->><4>lost page write due to I/O error on sda3
->><3>Buffer I/O error on device sda3, logical block 746
->><4>lost page write due to I/O error on sda3
->><3>Buffer I/O error on device sda3, logical block 747
->><4>lost page write due to I/O error on sda3
->><3>Buffer I/O error on device sda3, logical block 748
->><4>lost page write due to I/O error on sda3
->><3>Buffer I/O error on device sda3, logical block 749
->><4>lost page write due to I/O error on sda3
->><3>scsi0 (8:0): rejecting I/O to offline device
->><4>ReiserFS: sda3: warning: clm-6006: writing inode 346759 on readonly FS
->><4>ReiserFS: sda3: warning: clm-6006: writing inode 346759 on readonly FS
->><4>ReiserFS: sda3: warning: clm-6006: writing inode 346759 on readonly FS
->><4>ReiserFS: sda3: warning: clm-6006: writing inode 346759 on readonly FS
->><4>ReiserFS: sda3: warning: clm-6006: writing inode 346759 on readonly FS
->><4>ReiserFS: sda3: warning: clm-6006: writing inode 346759 on readonly FS
->><2>kernel BUG in submit_ordered_buffer at fs/reiserfs/journal.c:616!
->><3>scsi0 (8:0): rejecting I/O to offline device
->>
->>
->>cpu 0x1: Vector: 700 (Program Check) at [c00000000fcef740]
->>   pc: c000000000132ac8: .write_ordered_chunk+0xa4/0x100
->>   lr: c000000000133274: .write_ordered_buffers+0x348/0x364
->>   sp: c00000000fcef9c0
->>  msr: 9000000000029032
->> current = 0xc00000000fea87b0
->> paca    = 0xc00000000053b400
->>   pid   = 953, comm = reiserfs/1
->>kernel BUG in submit_ordered_buffer at fs/reiserfs/journal.c:616!
->>enter ? for help
->>1:mon> t
->>[c00000000fcefa60] c000000000133274 .write_ordered_buffers+0x348/0x364
->>[c00000000fcefc30] c000000000133af0 .flush_commit_list+0x80c/0x8cc
->>[c00000000fcefd10] c000000000138ac0 .flush_async_commits+0xf0/0xf4
->>[c00000000fcefdb0] c00000000006d2fc .worker_thread+0x258/0x32c
->>[c00000000fcefee0] c000000000073d80 .kthread+0x174/0x1c8
->>[c00000000fceff90] c000000000014240 .kernel_thread+0x4c/0x6c
->>1:mon>
->>1:mon> c
->>cpus stopped: 0-3
->>1:mon> c 0
->>0:mon> t
->>[c0000000004efdd0] c00000000000f948 .cpu_idle+0x3c/0x54
->>[c0000000004efe50] c00000000000c188 .rest_init+0x3c/0x58
->>[c0000000004efed0] c00000000049b7dc .start_kernel+0x27c/0x2fc
->>[c0000000004eff90] c00000000000c000 .__setup_cpu_power3+0x0/0x4
->>0:mon> c 2
->>2:mon> t
->>[c00000000424fe80] c00000000000f948 .cpu_idle+0x3c/0x54
->>[c00000000424ff00] c00000000003a878 .start_secondary+0x108/0x148
->>[c00000000424ff90] c00000000000bd28 .enable_64b_mode+0x0/0x28
->>2:mon> c 3
->>3:mon> t
->>[c000000004253e80] c00000000000f948 .cpu_idle+0x3c/0x54
->>[c000000004253f00] c00000000003a878 .start_secondary+0x108/0x148
->>[c000000004253f90] c00000000000bd28 .enable_64b_mode+0x0/0x28
->>
->>
->>
->> 
->>
-> 
-> 
-> 
+> Lena
+>
+> Junfeng Yang wrote:
+>
+> >Hi, our mail server had some problems the last few days.  I'm not sure if
+> >you guys have received my message or not.  Can you please send me an ACK,
+> >even if you haven't gotten time to diagnose the error yet?
+> >
+> >Thanks a lot,
+> >-Junfeng
+> >
+> >On Wed, 9 Mar 2005, Junfeng Yang wrote:
+> >
+> >
+> >
+> >>Let me know if you need any more information to reproduce the warning.  I
+> >>would really appreciate it if you can cc me once you figure out if it is a
+> >>bug.
+> >>
+> >>-Junfeng
+> >>
+> >>On Sun, 6 Mar 2005, Junfeng Yang wrote:
+> >>
+> >>
+> >>
+> >>>Hi Vladimir, are you able to reproduce the problem?
+> >>>
+> >>>Thanks,
+> >>>-Junfeng
+> >>>
+> >>>On Sat, 5 Mar 2005, Junfeng Yang wrote:
+> >>>
+> >>>
+> >>>
+> >>>>>I just made the follong test on reiserfs (2.6.11-rc4-mm1):
+> >>>>>mkreiserfs /dev/hda6
+> >>>>>mount /dev/hda6 /mnt -o sync
+> >>>>>touch /mnt/file
+> >>>>>mkdir /mnt/d
+> >>>>>echo Hello > /mnt/hello
+> >>>>>reboot -f -n
+> >>>>>
+> >>>>>
+> >>>>Here is what I do to reproduce the same problem:
+> >>>>
+> >>>>1. mkreiserfs on a partition
+> >>>>2. issue several file system operations
+> >>>>3. "crash" and resart the machine
+> >>>>4. run reiserfsck --fix-fixable --yes to recover
+> >>>>5. mount the recovered partition.
+> >>>>
+> >>>>It appears that step 4 is _important_ in reproducing the problem.  If I
+> >>>>just mount the crashed disk, everything appears to be fine.  However,
+> >>>>attempt to recover the crashed image using reiserfsck result in
+> >>>>metadata/data loss.
+> >>>>
+> >>>>Details are attached below.  Let me know if you need any more information.
+> >>>>
+> >>>>The script I use (run as root)
+> >>>>#!/bin/sh
+> >>>>umount /dev/hda9
+> >>>>/sbin/mkreiserfs -f /dev/hda9
+> >>>>mount -t reiserfs /dev/hda9 /mnt/sbd1 -o sync,dirsync
+> >>>>ln -s /mnt/sbd1 /mnt/sbd1/0001
+> >>>>touch /mnt/sbd1/0002
+> >>>>mkdir /mnt/sbd1/0003
+> >>>>reboot -f -n
+> >>>>
+> >>>>uname -a shows:
+> >>>>Linux notus 2.6.11 #1 Sat Mar 5 04:39:12 PST 2005 i686 GNU/Linux
+> >>>>
+> >>>>reiserfsck output is:
+> >>>>reiserfsck 3.6.19 (2003 www.namesys.com)
+> >>>>
+> >>>>*************************************************************
+> >>>>** If you are using the latest reiserfsprogs and  it fails **
+> >>>>** please  email bug reports to reiserfs-list@namesys.com, **
+> >>>>** providing  as  much  information  as  possible --  your **
+> >>>>** hardware,  kernel,  patches,  settings,  all reiserfsck **
+> >>>>** messages  (including version),  the reiserfsck logfile, **
+> >>>>** check  the  syslog file  for  any  related information. **
+> >>>>** If you would like advice on using this program, support **
+> >>>>** is available  for $25 at  www.namesys.com/support.html. **
+> >>>>*************************************************************
+> >>>>
+> >>>>Will check consistency of the filesystem on /dev/hda9
+> >>>>and will fix what can be fixed without --rebuild-tree
+> >>>>Will put log info to 'stdout'
+> >>>>###########
+> >>>>reiserfsck --fix-fixable started at Sat Mar  5 12:16:12 2005
+> >>>>###########
+> >>>>Replaying journal..
+> >>>>No transactions found
+> >>>>Checking internal tree..finished
+> >>>>Comparing bitmaps..finished
+> >>>>Checking Semantic tree:
+> >>>>finished
+> >>>>No corruptions found
+> >>>>There are on the filesystem:
+> >>>>        Leaves 1
+> >>>>        Internal nodes 0
+> >>>>        Directories 1
+> >>>>        Other files 0
+> >>>>        Data block pointers 0 (0 of them are zero)
+> >>>>        Safe links 0
+> >>>>###########
+> >>>>reiserfsck finished at Sat Mar  5 12:16:15 2005
+> >>>>###########
+> >>>>
+> >>>>second mount of the crashed disk shows:
+> >>>>ReiserFS: hda9: found reiserfs format "3.6" with standard journal
+> >>>>ReiserFS: hda9: using ordered data mode
+> >>>>ReiserFS: hda9: journal params: device hda9, size 8192, journal first block 18, max trans len 1024, max batch 900, max commit age 30, max trans age 30
+> >>>>ReiserFS: hda9: checking transaction log (hda9)
+> >>>>ReiserFS: hda9: Using r5 hash to sort names
+> >>>>
+> >>>>
+> >>>>
+> >>>>
+> >>>
+> >>>
+> >>
+> >>
+> >
+> >
+> >
+> >
+> >
+>
+>
 
-
-- --
-Jeff Mahoney
-SuSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQFCMjW/LPWxlyuTD7IRAtQSAJ4yBQxFRPZcMmU/vo4mUcki6aZ/KgCfZrXP
-qF9JJ+nVRQtT4vE0OIAtGlM=
-=EtXb
------END PGP SIGNATURE-----
