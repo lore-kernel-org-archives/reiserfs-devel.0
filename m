@@ -1,69 +1,53 @@
-From: Tonnerre <tonnerre@thundrix.ch>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: silent semantic changes with reiser4
-Date: Tue, 31 Aug 2004 10:15:28 +0200
-Message-ID: <20040831081528.GA14371@thundrix.ch>
-References: <20040829191044.GA10090@thundrix.ch> <3247172997-BeMail@cr593174-a>
+Date: Tue, 31 Aug 2004 10:21:44 +0200
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040831082144.GA535@elf.ucw.cz>
+References: <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <20040826100530.GA20805@taniwha.stupidest.org> <20040826110258.GC30449@mail.shareable.org> <20040827210638.GE709@openzaurus.ucw.cz> <4133CDA6.4060105@slaphack.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
-Return-path: <reiserfs-list-return-21146-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <3247172997-BeMail@cr593174-a>
+In-Reply-To: <4133CDA6.4060105@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Cc: spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com, vonbrand@inf.utfsm.cl
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Masover <ninja@slaphack.com>
+Cc: Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
---2oS5YaxWCcQjTEyO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi!
 
-Salut,
+> | uservfs does
+> |
+> | cd foo.deb#uar
+> cd foo.deb/ar
+> | vs.
+> | cd foo.deb#udeb
+> cd foo.deb/deb
+> 
+> and why would you want that, instead of just:
+> cd foo.deb	# for the ar
+> dpkg -i foo.deb	# for the deb
 
-On Sun, Aug 29, 2004 at 08:39:25PM -0400, Alexander G. M. Smith wrote:
-> I mostly  agree, like I was  saying earlier, file  types are needed!
-> The kernel  doesn't have  to know  about all of  them, just  some of
-> them.  It should be possible to  attach a file type to everything so
-> you  know what  kind of  thing it  is, not  just block  or character
-> device or file, but something like a MIME type.
+Because I want to see contents of that .deb package, nicely parsed?
 
-Then store the value computed  by libmagic into an extended attribute,
-if you  like. I still  don't see why  the kernel should even  care. It
-shouldn't read things from files anyway, as a kernel shall be bootable
-on a busybox  system (and *Step) as  well, so we don't rely  on the fs
-layout in any way.
+> Just want to extract the tar file?  Maybe something like
+> cat foo.tgz/gunzip
+> In which case (of course) foo.tgz/gunzip has exactly the same directory
+> contents as foo.tgz
 
-> Optionally the  kernel could  also maintain the  global list  of all
-> file types  and their  properties (such as  which ones  are indexed,
-> which are computed),  though that could also be  done in userland if
-> you  aren't doing  indexing or  computed attributes  or  other fancy
-> operations.
+Yes, that would work.
 
-Quel horreur!
+> In fact, for just about any syntax anyone could suggest, I can't really
+> see why you can't just replace all weird symbols with a slash and a
+> symbol.  Instead of
+> 	foo.tgz#utar
+> you have
+> 	foo.tgz/#/utar
+> Only difference is, some things which used to require special tools can
+> now be serviced by less than what's in busybox.
 
-Do it in userland, really.
-
-If I  get the time,  I'll write you  a small daemon based  on libmagic
-which  stores  the  file  attributes  in xattrs,  or  if  they're  not
-supported, in some MacOS/Xish per-directory files. Even a file manager
-("finder") can do that, there's not even the need for a daemon.
-
-				Tonnerre
-
---2oS5YaxWCcQjTEyO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.9.2 (GNU/Linux)
-
-iD8DBQFBNDOg/4bL7ovhw40RAgGhAKDBMz1je85kPUBL+xUiQc1M5GtBdACePQDt
-sBmrUtWy1Sa2nFBaOd/2eY4=
-=lcuu
------END PGP SIGNATURE-----
-
---2oS5YaxWCcQjTEyO--
+That would work, too. I do not get your comment about busybox.
+								Pavel
+-- 
+People were complaining that M$ turns users into beta-testers...
+...jr ghea gurz vagb qrirybcref, naq gurl frrz gb yvxr vg gung jnl!
