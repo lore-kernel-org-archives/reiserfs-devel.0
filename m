@@ -1,40 +1,55 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: AMD64 testing
-Date: Thu, 23 Dec 2004 15:10:00 +0300
-Message-ID: <20041223121000.GN5368@backtop.namesys.com>
-References: <20041222131123.GW26192@nysv.org>
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Subject: Re: data corruption on reiserfs
+Date: Thu, 23 Dec 2004 13:18:50 +0100
+Message-ID: <200412231318.50712.christian.mayrhuber@gmx.net>
+References: <000001c4e8a3$39dc03d0$9e61a8c0@pcp40702>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-22889-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22890-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <000001c4e8a3$39dc03d0$9e61a8c0@pcp40702>
 Content-Disposition: inline
-In-Reply-To: <20041222131123.GW26192@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Markus =?koi8-r?Q?T=F6rnqvist?= <mjt@nysv.org>
-Cc: reiserfs-list@namesys.com, maciejej@msoe.edu
+Content-Type: text/plain; charset="us-ascii"
+To: sujeet.kumar@patni.com, reiserfs-list@namesys.com
 
-Hello.
+On Thursday 23 December 2004 04:55, Sujeet Kumar wrote:
+> patni Stationery
+> 
+> 
+> Hi ,
+> 
+> My log file reported data corruption on reiserfs filesystem.
+> 
+> The reiserfs version used by log file was 3.6.2-41 where the reported
+> 
+> defect took place . I ran it again on reiserfs version 3.6.9-33 , but this
+> time it ran all fine.
+> 
+> So can u tell me what all fixes have taken place between 3.6.2-41 and
+> 3.6.9-33 which could have
+> 
+> resolved data corruption issues if any.
 
-On Wed, Dec 22, 2004 at 03:11:23PM +0200, Markus T=F6rnqvist wrote:
-> Hi guys!
->=20
-> Now that I moved along to AMD64 and still have my home directory
-> as Reiser4, I have a big incentive to get this baby stable on Reiser4.
->=20
-> What bugs can I help to reproduce? What test cases are there?
+The changelog of the reiserfs filesystem itself can be found at
+http://www.kernel.org/pub/linux/kernel in the various
+kernel changelogs.
+If you are using some distribution specific vendor kernel you will have 
+to look at their changelogs.
 
-what fsck.reiser4 r/o check reports?
+The version numbers above indicate to be the one of the reiserfsprogs
+utility programs. Usually their changelog can be found in
+/usr/share/doc/reiserfsprogs/.
 
->=20
-> Let's make this work, shall we :)
->=20
-> --=20
-> mjt
->=20
+The versions for reiserfs usage are:
+- Official Kernel 2.4.24 and later
+- for vendor kernels ask the vendor
+- latest reiserfsprogs, currently 3.6.19
 
---=20
-Alex.
+Hope this helps.
+
+-- 
+lg, Chris
