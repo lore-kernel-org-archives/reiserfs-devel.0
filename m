@@ -1,9 +1,9 @@
 From: Nick Urbanik <nicku@vtc.edu.hk>
-Subject: Re: on-disk bitmap does not match to the correct one
-Date: Fri, 05 Apr 2002 09:35:34 +0800
+Subject: Re: How tell what version of reiserfs my filesystem is?
+Date: Fri, 05 Apr 2002 09:37:44 +0800
 Sender: nicku@nicksbox.tyict.vtc.edu.hk
-Message-ID: <3CACFF66.5361BD3@vtc.edu.hk>
-References: <3CAAD714.3223F1B6@vtc.edu.hk> <20020403152043.B4949@namesys.com> <3CAB6FA3.C6769B4F@vtc.edu.hk> <20020404085310.A5629@namesys.com>
+Message-ID: <3CACFFE8.6D1AA53B@vtc.edu.hk>
+References: <3CAAD745.447646E4@vtc.edu.hk> <20020403151813.A4949@namesys.com> <3CAB6EE8.E8B48CAB@vtc.edu.hk> <20020404091003.A5663@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
@@ -11,35 +11,26 @@ list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Cc: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: ReiserFS <reiserfs-list@namesys.com>
 
 Oleg Drokin wrote:
 
-> Hello!
+> > > Also with recent 2.4 kernels (2.4.17+), you can lookup this info
+> > > in the /proc filesystem if you have enabled CONFIG_REISERFS_PROC_INFO.
+> > I had it off.
+> > About CONFIG_REISERFS_PROC_INFO, Configure.help says: "This also
+> > increases amount of kernel memory required for each mount."
+> > By approximately how much does it do so?  For six large reiserfs file
+> > systems?
 >
-> On Thu, Apr 04, 2002 at 05:09:56AM +0800, Nick Urbanik wrote:
-> > > Bitmaps are maps with which FS is tracking blocks usage.
-> > > If you are running kernel 2.4.16 or older, this might be because
-> > > some aplication deleted some files, but still have the files open,
-> > > andthen crash occured.
-> > > 2.4.16 or earlier kernels are not recommended to use.
-> > I have been using 2.4.19-pre5, though I had a couple of crashes over the
-> > years with earlier 2.4.x kernels.
-> > So what should/can I do about this mismatch?
+> +8Kb of code (ie, common for no matter how much reiserfs fses you have)
+> plus ~440 bytes for each filesystem mounted for counters.
 >
-> Get latest reiserfsprogs package (3.x.1b) and run reiserfsck --rebuild-tree
-> on your partition.
+> Of course there is little performance hit (cpu time eaten) to
+> actually increment these counters.
 
-Beautiful!  It worked!  While I was at it, I did a lot of LVM volume resizing,
-and at one stage lost the root directory of my /var/ftp partition, but
-thankfully (wipes panicky sweat from brow!!!!), reiserfsck --rebuild-tree
-rebuilt it successfully.
-
-The spec file in the tarball made building an RPM package a snap; it's really
-well written.
-
-Thank you very much, Oleg.  As we say in Australia, "Your blood's worth
-bottling!" :-)
+I'll enable it in my future kernel builds.  Thank you again, Oleg.
 
 --
 Nick Urbanik   RHCE                                  nicku@vtc.edu.hk
