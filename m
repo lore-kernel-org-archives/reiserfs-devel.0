@@ -1,42 +1,42 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: attrib +A doesn't work
-Date: Thu, 24 Oct 2002 10:33:37 +0400
-Message-ID: <15799.37953.280992.61682@laputa.namesys.com>
-References: <20020905034320.GA11951@yzero>
-	<15735.10894.167461.158961@laputa.namesys.com>
-	<20020905140132.A19752@namesys.com>
-	<m3iszseukm.fsf@multivac.cwru.edu>
+From: John Dalbec <jpdalbec@ysu.edu>
+Subject: Re: [PATCH] finally... data logging for 2.4.20-pre10
+Date: Thu, 24 Oct 2002 08:51:39 -0400
+Message-ID: <3DB7ECDB.5070905@ysu.edu>
+References: <1034709883.5053.920.camel@tiny> <3DB6F20F.3060500@ysu.edu> <3DB71BB6.9060700@mb.tu-ilmenau.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11749-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11750-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <m3iszseukm.fsf@multivac.cwru.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Paul Jarc <prj@po.cwru.edu>
-Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list <reiserfs-list@namesys.com>
 
-Paul Jarc writes:
- > [Old thread.]
- > 
- > Oleg Drokin <green@namesys.com> wrote:
- > > On Thu, Sep 05, 2002 at 01:57:34PM +0400, Nikita Danilov wrote:
- > >> Support for inode attributes was introduced between 2.4.18 and
- > >> 2.4.19. Take latest reiserfsprogs from ftp.namesys.com, run
- > >> /sbin/reiserfsck --clean-attributes /your-device, and after that
- > >> finishes mount with -attrs option.
- > >
- > > mount -o attrs in fact.
- > 
- > Should -o attrs be used just once, or every time afterwards?
- > 
+Manuel Krause wrote:
+> On 10/23/2002 09:01 PM, John Dalbec wrote:
+> 
+>> Chris Mason wrote:
+>>
+>>> Hello all,
+>>>
+>>> I've uploaded new data logging code against 2.4.20-pre10 to
+>>> ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20
 
-On each mount. Does attribute support actually works for you?
+Does anyone know what kernel was used for the patches in 
+ftp.suse.com/pub/people/mason/patches/data-logging ?  Are they against 
+2.4.19?  The README doesn't say.
 
- > 
- > paul
+> But, if you search for a mirror try the data-logging directory @
+> 
+> ftp://ftp.gwdg.de/pub/linux/suse/ftp.suse.com/people/mason/patches/data-logging/ 
 
-Nikita.
+Thanks!
+
+> That seems to be faster than the main SuSE server 
+
+Yes, the main server seems to hit its 600-connection limit quite often.
+
+John
+
