@@ -1,102 +1,128 @@
-From: "jds" <jds@soltis.cc>
-Subject: Problems with reiserfs when start OpenAFS 1.2.11-fc1 Segmentation fault with kernel 2.4.22-1.2174.nptl
-Date: Wed, 3 Mar 2004 19:00:06 -0600
-Message-ID: <20040304005913.M1858@soltis.cc>
-References: <20040304005117.M99283@soltis.cc>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Bugs on big endian systems
+Date: Thu, 04 Mar 2004 03:21:46 +0300
+Message-ID: <4046769A.9030806@namesys.com>
+References: <4045D745.8070204@sysgo.com> <40464E3F.4030809@suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17061-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17062-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040304005117.M99283@soltis.cc>
+In-Reply-To: <40464E3F.4030809@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: Pavel Bartusek <pba@sysgo.com>, Reiserfs-List@namesys.com
 
-Hi: Iam compile OpenAFS 1.2.11-fc1 with kernel 2.4.22-1.2174.nptl is OK
+Thanks Jeff and Pavel.  Nikita, send Pavel the usual agreement, and 
+we'll send to Linus unless someone finds an objection.  Edward, read 
+this patch, test it on alpha,
+ and approve it.  Elena, test it on x86.
 
-problems with reiserfs 3.6 and Fedora Core 1
-the problems is when start the client AFS recive the messages:
+Hans
 
-[root@angelinux modload]# service afs start
-Found libafs-2.4.22-1.2174.nptl-i686.o from SymTable... Loading...
-Starting AFS services.....
-/etc/init.d/afs: line 305:  3300 Segmentation fault      /usr/vice/etc/afsd
-${AFSD_OPTIONS}
-[root@angelinux modload]# lsmod
-Module                  Size  Used by    Tainted: PF
-libafs-2.4.22-1.2174.nptl-i686  483360   0  (unused)
-parport_pc             18756   1  (autoclean)
-etc,etc
+Jeff Mahoney wrote:
 
-In log messages:
-Starting AFS cache scan...Can't open inode 135536
-Unable to handle kernel paging request at virtual address ffffffff
-printing eip:
-f093e1b0
-*pde = 00002067
-*pte = 00000000
-Oops: 0002
-libafs-2.4.22-1.2174.nptl-i686 parport_pc lp parport autofs tg3 floppy sg
-keybdev hid ehci-hcd usb-uhci usbcore mousedev input i830 agpgart reiserfs
-ata_piix
-CPU:    0
-EIP:    0060:[<f093e1b0>]    Tainted: PF
-EFLAGS: 00010282
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+>
+>
+> Pavel -
+>
+> Thanks. The good news is that the filesystem wouldn't have panicked
+> because of the SB_ONDISK_RESERVED_FOR_JOURNAL(s) bug. The bad news is
+> that it wouldn't have mattered because the filesystem could never have
+> been mounted anyway due to the journal header version mismatch.
+>
+> I'm surprised nobody's ever tried to mount a relocated journal enabled
+> filesystem on a big endian machine.
+>
+> Hans -
+>
+> This bug appears in both 2.4 and 2.6 kernels and should be fixed in both.
+>
+> - -Jeff
+>
+> Pavel Bartusek wrote:
+> | Hi list,
+> |
+> | The attached patch will fix the bugs which appears only on big endian
+> | systems in the kernel 2.4.25.
+> |
+> | regards
+> |
+> |
+> | Pavel Bartusek
+> | Software Engineering
+> |
+> | SYSGO Real-Time Solutions AG | Embedded and Real-Time Software
+> | Lise-Meitner-Str.15
+> | 89081 Ulm, Germany
+> |
+> | Voice: +49-731-9533-1295
+> | FAX:   +49-731-94683-10
+> | www.sysgo.com | www.elinos.com | www.osek.de
+> |
+> |
+> | 
+> ------------------------------------------------------------------------
+> |
+> | --- linux.ori/fs/reiserfs/journal.c    Mon Aug 25 13:44:43 2003
+> | +++ linux/fs/reiserfs/journal.c    Wed Mar  3 13:26:23 2004
+> | @@ -2094,7 +2094,7 @@
+> |
+> |      /* make sure that journal matches to the super block */
+> |      if (is_reiserfs_jr(rs) &&
+> | -        jh->jh_journal.jp_journal_magic != sb_jp_journal_magic(rs)) {
+> | +        le32_to_cpu (jh->jh_journal.jp_journal_magic) !=
+> sb_jp_journal_magic(rs)) {
+> |      char jname[ 32 ];
+> |      char fname[ 32 ];
+> |     
+> | @@ -2102,7 +2102,7 @@
+> |      strcpy( fname, kdevname( p_s_sb->s_dev ) );
+> |      printk("journal-460: journal header magic %x (device %s) does 
+> not "
+> |             "match magic found in super block %x (device %s)\n",
+> | -        jh->jh_journal.jp_journal_magic, jname,
+> | +        le32_to_cpu (jh->jh_journal.jp_journal_magic), jname,
+> |          sb_jp_journal_magic(rs), fname);
+> |      brelse (bhjh);
+> |      goto free_and_return;
+> | --- linux.ori/include/linux/reiserfs_fs.h    Mon Aug 25 13:44:44 2003
+> | +++ linux/include/linux/reiserfs_fs.h    Wed Mar  3 13:25:45 2004
+> | @@ -219,7 +219,7 @@
+> |  #define SB_ONDISK_JOURNAL_DEVICE(s) \
+> |           le32_to_cpu ((SB_ONDISK_JP(s)->jp_journal_dev))
+> |  #define SB_ONDISK_RESERVED_FOR_JOURNAL(s) \
+> | -         le32_to_cpu
+> ((SB_V1_DISK_SUPER_BLOCK(s)->s_reserved_for_journal))
+> | +         le16_to_cpu
+> ((SB_V1_DISK_SUPER_BLOCK(s)->s_reserved_for_journal))
+> |
+> |  #define is_block_in_log_or_reserved_area(s, block) \
+> |           block >= SB_JOURNAL_1st_RESERVED_BLOCK(s) \
+>
+>
+> - --
+> Jeff Mahoney
+> SuSE Labs
+> jeffm@suse.com
+> -----BEGIN PGP SIGNATURE-----
+> Version: GnuPG v1.2.2 (GNU/Linux)
+> Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+>
+> iD8DBQFARk4/LPWxlyuTD7IRAkIZAJ0VR8aYna2n3EK/BfZ2SBwKOe9OPQCfYzDH
+> c8D4gSwDzr93HivtH2FMx5M=
+> =Jj1U
+> -----END PGP SIGNATURE-----
+>
+>
 
-EIP is at osi_Panic [libafs-2.4.22-1.2174.nptl-i686] 0x20
-(2.4.22-1.2174.nptl)
-eax: 00000018   ebx: e7bd2580   ecx: 00000001   edx: e80d6000
-esi: ea666b80   edi: ea666c08   ebp: 00000400   esp: e80d7c14
-ds: 0068   es: 0068   ss: 0068
-Process afsd (pid: 3300, stackpage=e80d7000)
-Stack: f095c03c 00021170 c0341640 c0341640 ea666b80 ea666c08 c19b4800
-f0948130
-     f095c03c 00021170 c0341640 c0341640 ef724c10 00000000 00000000
-00000000
-     f0b5b000 00000000 00000001 f090e52d 00021170 00000000 00000ce4
-00000ce4
-Call Trace:   [<f095c03c>] .rodata.str1.1 [libafs-2.4.22-1.2174.nptl-i686]
-0xe0c (0xe80d7c14)
-[<f0948130>] osi_UFSOpen [libafs-2.4.22-1.2174.nptl-i686] 0x120 (0xe80d7c30)
-[<f095c03c>] .rodata.str1.1 [libafs-2.4.22-1.2174.nptl-i686] 0xe0c
-(0xe80d7c34)
-[<f090e52d>] afs_InitCacheFile [libafs-2.4.22-1.2174.nptl-i686] 0x10d
-(0xe80d7c60)
-[<f006d260>] reiserfs_file_operations [reiserfs] 0x0 (0xe80d7c7c)
-[<f006d260>] reiserfs_file_operations [reiserfs] 0x0 (0xe80d7c80)
-[<f0910efb>] afs_InitVolumeInfo [libafs-2.4.22-1.2174.nptl-i686] 0x5b
-(0xe80d7c90)
-[<f094c7de>] afs_syscall_call [libafs-2.4.22-1.2174.nptl-i686] 0x5ce
-(0xe80d7cb0)
-[<c013a94b>] activate_page [kernel] 0xab (0xe80d7ce4)
-[<c0146189>] getblk [kernel] 0x59 (0xe80d7d00)
-[<c0146460>] bread [kernel] 0x20 (0xe80d7d24)
-[<f0054b74>] is_tree_node [reiserfs] 0x74 (0xe80d7d40)
-[<f0055131>] search_by_key [reiserfs] 0x5b1 (0xe80d7d54)
-[<f005e2b7>] journal_end [reiserfs] 0x27 (0xe80d7d94)
-[<f004ca3e>] reiserfs_dirty_inode [reiserfs] 0x7e (0xe80d7da
-[<f00405a8>] search_by_entry_key [reiserfs] 0xc8 (0xe80d7dd4)
-[<f0054861>] pathrelse [reiserfs] 0x21 (0xe80d7df4)
-[<f0048077>] reiserfs_readdir [reiserfs] 0x3c7 (0xe80d7e04)
-[<c013c2f4>] __alloc_pages [kernel] 0x64 (0xe80d7e44)
-[<c013c2f4>] __alloc_pages [kernel] 0x64 (0xe80d7e68)
-[<c0131013>] vm_enough_memory [kernel] 0x33 (0xe80d7e84)
-[<c026762f>] rb_insert_color [kernel] 0x8f (0xe80d7ea0)
-[<c013043d>] do_wp_page [kernel] 0x4d (0xe80d7ebc)
-[<c0130dd9>] handle_mm_fault [kernel] 0xf9 (0xe80d7ee0)
-[<c0117bf8>] do_page_fault [kernel] 0x138 (0xe80d7f0c)
-[<f094cec0>] afs_syscall [libafs-2.4.22-1.2174.nptl-i686] 0x190 (0xe80d7f40)
-[<c0117ac0>] do_page_fault [kernel] 0x0 (0xe80d7fb0)
-[<c0109747>] system_call [kernel] 0x33 (0xe80d7fc0)
 
-Code: c6 05 ff ff ff ff 2a 83 c4 1c c3 90    74 26 00 b8 1e bd 95
+-- 
+Hans
 
-with kernel 2.4.22-2166 and is the same version OpenAFS working good and
-startup client AFS good.
-
-Helpme please.
-------- End of Forwarded Message -------
 
