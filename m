@@ -1,54 +1,52 @@
-From: Bruce Guenter <lists-reiserfs-list@bruce-guenter.dyndns.org>
-Subject: Re: Reiserfs concurrent write problems
-Date: Fri, 30 Apr 2004 15:44:10 -0600
-Message-ID: <20040430214410.GA790@em.ca>
-References: <20040426172648.GA22918@em.ca> <1083000970.30344.50.camel@watt.suse.com> <20040427161544.GA27873@em.ca> <1083088841.30344.131.camel@watt.suse.com> <20040430195405.GB23648@em.ca> <1083356649.30344.479.camel@watt.suse.com>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: Fwd: reiser4 non-free?
+Date: Fri, 30 Apr 2004 17:39:27 -0500
+Message-ID: <4092D59F.80604@slaphack.com>
+References: <20040424193246.GA2490@raptus.homelinux.org> <200405010026.59064.camel78@iprimus.com.au> <200405010223.51457.jstubbs@gentoo.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
-Return-path: <reiserfs-list-return-18338-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18339-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1083356649.30344.479.camel@watt.suse.com>
+In-Reply-To: <200405010223.51457.jstubbs@gentoo.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jason Stubbs <jstubbs@gentoo.org>
+Cc: reiserfs-list@namesys.com
 
---5vNYLRcllDrimb99
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On Fri, Apr 30, 2004 at 04:24:10PM -0400, Chris Mason wrote:
-> Thanks.  One thing I didn't notice before:
->=20
-> Filesystem partition: 72GB on a software RAID-1 array of Fujitsu SCSI
-> 15kRPM disks.=20
-> Journal partition: 400MB on a software RAID-1 array of Quantum Atlas 10K
-> SCSI disks.=20
->=20
-> So the external log is on slower disks?  That might explain why it is
-> sometimes slower to have reiserfs on the external log.
 
-Yes, the journal is on a slower array.  That's what was available when
-building the system.  They're still not *SLOW* disks, though, at 10kRPM
-and 32MB/sec transfer rate.
---=20
-Bruce Guenter <bruceg@em.ca> http://em.ca/~bruceg/ http://untroubled.org/
-OpenPGP key: 699980E8 / D0B7 C8DD 365D A395 29DA  2E2A E96F B2DC 6999 80E8
+| that legalities are always open to such vast interpretation. I will
+find it
+| very interesting to see if the alleged attribution-restricted "GPL v3"
+will
+| be accepted as being free.
 
---5vNYLRcllDrimb99
-Content-Type: application/pgp-signature
-Content-Disposition: inline
-
+Not that this needs to be said, but it'd be interesting to watch Debian
+(free) try to remain a distro of anything if they reject some variant of
+the GPL.  They'd certainly have to abandon (or fork) Linux, at least if
+Linux adopted the new version -- and I'm guessing he would, considering
+that he develops (last I checked) on BitKeeper, which is (again, last I
+checked) proprietary.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iD8DBQFAksiq6W+y3GmZgOgRAs1QAJ43poQ16v9XI5Oa9nsBZ6zQh7wf9QCdElv1
-whtLw+x7O+bJJkv+CNklovk=
-=PAZM
+iQIVAwUBQJLVnXgHNmZLgCUhAQIIGA//Y80dY8LYRywOyTqglnrFQ1jaGEGuuQ/W
+1VNimqYFhm87vSsa66QO8LAsifaVSdDvI5beQyTJicaV/O4+B2Y+32rNy75WWoxh
+buwhkY9MFXQig7ikS9XJc5ASHswa0YjgKt8bkYy+XqJikGpuiGiut6gvantZoqnE
+20FK+LTvRhpIdHOwfKnBSSZ4PovjItsHsHvwqzz1beLNYGGJj4Uc6Ai6x6b6ez2R
+MmrsERuaHwaw1Mu7x0fmycHFGcMR5BU1hLdF5qM0l6MZ3zWvZqjPUiKST1SJOfRl
+poIEbBHqh1x/G8T20Pl79Y5yDPr7ej/nd39E3XXt5hG9oJ9wleD8PJiMODKRsEk2
+e8og2TqvVCNLeGi4Ib2v/LyqUBQAIoKTwV8MtCp9A419CinA6E1XxcAw6EKYLINu
+A0cyG+FBv1RjV8xIQoJeQAE19lKc9fjhXWryWfiLfXKG0+yeBGgGZ4dMiTEmigcu
+ndHROej4mJtTpsZ2qnwgaNoko+gxzrXPl2mLoRG6fFJJOa0d7jNAVMQ7D86Puaek
+dnVuJvinwfQ0HI+aAptsFkLwazVPvbP5yUapihMHMPeItd+BmkbbFh/zAbzv4EST
+nulPbKVid7V+G2ezwCQ8nzONVQ8RgTfFEluRRh6DDO+KAm5zWQ3rul34sbxPClgb
+Cf7Muwe9omc=
+=vg/C
 -----END PGP SIGNATURE-----
-
---5vNYLRcllDrimb99--
