@@ -1,233 +1,118 @@
-From: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: implementing reiserfs in C++ for a new OS
-Date: Wed, 11 Aug 2004 14:12:50 +0200
-Message-ID: <411A0D42.8020204@futuretg.com>
-References: <71d3364904080922267e8c14af@mail.gmail.com> <200408101312.48888.reiserfs-list@quinnh.org> <4119273E.1040104@namesys.com> <20040810211951.GU1284@nysv.org> <41194690.5050908@namesys.com> <1365645117.20040811065416@tnonline.net> <20040811073959.GV1284@nysv.org> <4119D468.8080104@futuretg.com> <20040811090033.GX1284@nysv.org> <4119EA9B.7090503@futuretg.com> <20040811105442.GY1284@nysv.org>
+Date: Wed, 11 Aug 2004 15:39:09 +0300
+Message-ID: <20040811123909.GZ1284@nysv.org>
+References: <4119273E.1040104@namesys.com> <20040810211951.GU1284@nysv.org> <41194690.5050908@namesys.com> <1365645117.20040811065416@tnonline.net> <20040811073959.GV1284@nysv.org> <4119D468.8080104@futuretg.com> <20040811090033.GX1284@nysv.org> <4119EA9B.7090503@futuretg.com> <20040811105442.GY1284@nysv.org> <411A0D42.8020204@futuretg.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20186-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20187-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040811105442.GY1284@nysv.org>
+Content-Disposition: inline
+In-Reply-To: <411A0D42.8020204@futuretg.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
+Content-Type: text/plain; charset="iso-8859-1"
+To: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
 Cc: reiserfs-list@namesys.com
 
-Markus T=F6rnqvist wrote:
+On Wed, Aug 11, 2004 at 02:12:50PM +0200, Dr. Giovanni A. Orlando wrote:
 
->On Wed, Aug 11, 2004 at 11:44:59AM +0200, Dr. Giovanni A. Orlando wrote:
->
-> =20
->
->>Meucci open the file for copyright before Bell, but seems it is=20
->>necessary to renew each year.
->>   =20
->>
->
->Copyrights are not filed, patents are.
-> =20
->
-Yes. is the patent, not the copyright.
+>Yes. is the patent, not the copyright.
+>He don't have the money to pay the renew the patent.
 
-He don't have the money to pay the renew the patent.
+That sucks then.
 
->Are you sure you're not mistaken in words here?
->
-> =20
->
->>Therefore, he don't renew.
->>   =20
->>
->
->How stupid of him.
->
-> =20
->
->>The word "inventor" in the US, means generally "rich". This have another =
+Maybe he should have had someone market and promote it better, maybe
+he would not have needed a patent at all, then.
 
->>sense outside America, or
->>for immigrant people.
->>   =20
->>
->
->I have never heard of a rich inventor, except the chance to get money
->by producing the invention.
-> =20
->
-Well. If an inventor have no money is a BIG problem, however actually
-in the GPL times, it is very easy to release a software also with no money.
+Or he would have gotten money for a patent through marketing.
 
->>>"Tekij=E4noikeus suojaa teoksen kirjallista tai muuta asua, ei asiasis=
-=E4lt=F6=E4."
->>>Copyright protects the literary or other presentation of a work, not the
->>>factual content.
->>>     =20
->>>
->>This is bad. The code or documentation explains the ideas, and must be=20
->>copyright in the same mode are the ideas itself.
->>   =20
->>
->
->The idea is not copyrighted or patented or protected in any way, but the
->code is.
->
-This is bad and incorrect for me.
+Remember, Philips pushed the CD out with cheap prices, everyone could
+use CDs cheaply, so there was no real competition. It was the superior
+solution for cheap.
 
-> There is a difference there.
->Of course the idea can be patented in some degenerate country like the US
->and it seems the EU is making the same mistake, but technically the idea
->can not be protected. And should not be.
-> =20
->
-The US is not a degeneated country. Do you stay in the US sometime?
+It did not become common because of forcing it on customers, nor did
+it become common like the VHS tape because JVC bought a big market
+presence.
 
-> =20
->
->>Yes. Actually today it is also possible to configure the kernel=20
->>graphically, but my idea is better.
->>I need time that I have no actually.
->>   =20
->>
->
->I know how you're feeling.
->
->I have also many projects for which I haven't had time, so I've given
->them away to see if anyone else would do it and I would help and give
->ideas. All in freedom and free software.
->
->Maybe you should talk to the KDE guys about your idea that they would
->implement it more like you would, both of you would win.
->
->
-> =20
->
->>If you comment to KDE people something that does not exist, and after=20
->>your comment exist something similar
->>you need simply do a small sum: 2+2.
->>Be stoled by someone that re-offer it under GPL your idea, cause some=20
->>bad humor.
->>   =20
->>
->
->You gave it to them, whose fault is that?
->
-> =20
->
-I comment what we will do. They release a version. However, actually is=20
-not important.
+>Well. If an inventor have no money is a BIG problem, however actually
+>in the GPL times, it is very easy to release a software also with no money.
 
->>>Respect should come from respecting someone else.
->>>     =20
->>>
->>In 1987 or so, Chinese and people for Taiwan and Japan go around the=20
->>world and comment:
->>"We will copy your product and do it better". Today, Taiwan and Japan is =
+Or release the specs for some other invention so cheap that you make
+much money through huge sales.
 
->>probably the best
->>place for electronic components worldwide.
->>   =20
->>
->
->Sure. And we let them do it, whose fault is that?
->
-> =20
->
->>Different companies here in Italy, about manufacturing suffering some=20
->>fraud from Chinese companies
->>that re-produce the hardware for car testing and stole the clients. Do=20
->>   =20
->>
->
->Fraud?
->
->If they do it better, where's the fraud?
-> =20
->
-No they copy 100% the same machine for car test.
+>>The idea is not copyrighted or patented or protected in any way, but the
+>>code is.
+>This is bad and incorrect for me.
 
->I mean, what's stopping Italy from doing it better than China?
->Berlusconi? C'mon, you could still compete with China, it's not like the
->world's biggest army is holding you in siege.
->
-> =20
->
->>will someone open a case on China
->>for copyright contacting chinese attorneys?. Very complex and expensive.
->>   =20
->>
->
->I don't know how the car is patented, I'm sure it is, but still everyone
->has the right to set up a car shop and build the things.
-> =20
->
+I have heard much better arguments for why it's good that ideas can NOT
+be protected, not one good argument for why they should be.
 
->This is one of the points of free trade. Everyone's equal and free,
->so if someone pushes out better products, you respond by making an even
->better product.
->
->I fail to see the point in whining about something as glorious as this.
->
-> =20
->
->>I see the entire software industry going to disaster because some young=20
->>boy release a similar program
->>at no cost. No one may compete with free. In any this is a complex=20
->>global problem.
->>   =20
->>
->
->Of course you can compete with free, fight free with free, make a better
->free solution.
->
->It's like a*x=3Da*y =3D> x=3Dy
->
-> =20
->
->>>I must confess I haven't seen Tron...
->>>     =20
->>>
->>You don't know Tron, because probably you are too young.
->>Tron was made by Walt Disney (Buena ventura). It is dated 1982.
->>   =20
->>
->
->I know such a movie exists, but not much more. I'm also born in 1982 ;)
->
-> =20
->
->>Jeff Bridges, a young programmer in a small company was stoled by its=20
->>game program. A friend of him write a program
->>that inspect information, and also some time ... the owner of the=20
->>company was fired because he claim to be the author
->>of the game and Jeff Bridge then get the 'expected' money and respect.
->>   =20
->>
->
->Yeah, I should see it.
->
-> =20
->
-OK.
+I'd like to hear that one good argument.
 
-Thanks,
-Giovanni
+People have the same ideas independently, person A and person B.
+Person A patents it and person B can't compete with person A.
+Person A makes a bad implementation and no one can do anything about it,
+no one can do it better.
 
+Your idea about protecting ideas starts to sound like Microsoft, doesn't
+it?
+
+Only that Microsoft and maybe some pantent-holders just abused their big
+money to suppress competition.
+
+>>Of course the idea can be patented in some degenerate country like the US
+>>and it seems the EU is making the same mistake, but technically the idea
+>>can not be protected. And should not be.
+>The US is not a degeneated country. Do you stay in the US sometime?
+
+I've never been there.
+
+But look at the Digital Millennium Copyright Act and others.
+USA was supposed to be the land of the free, now it's the land of the
+rich and powerful, where some people are more free than others and some
+people are more equal than others.
+
+Every honest individual who makes an invention may get sued over patents
+because someone else can claim the most stupid patent ever.
+
+There's a term G=F6tterd=E4mmerung Capitalism which is such abuse of a fine
+thing, and that's what they're into across the Atlantic.
+
+The point is not in culminating a lot of money and spending it stupidly
+or not at all, it's about how money is moved smartly into good causes.
+
+Maybe it's unfair to generalize the States, I know there's a lot of
+good and smart people there, but the country is ran by a monkey, among
+other flaws.
+
+Maybe some libertarian-like state could be found, where it would be good
+to live.
+
+>>You gave it to them, whose fault is that?
+>I comment what we will do. They release a version. However, actually is=20
+>not important.
+
+But this is a chance for co-operation, you can ask the KDE guys to
+do as you say if your system is better.
+
+They will get a better system and you will see your brainchild become
+a used application.
+
+Everyone wins.
+
+>>Fraud?
+>>If they do it better, where's the fraud?
+>No they copy 100% the same machine for car test.
+
+So? Everyone else copies them too.
+
+Copy something back from China.
+
+It should not be seen as a bad thing but as a good thing.
 
 --=20
-
---=20
-
---
-Check FT Websites ...=20
-http://www.futuretg.com  - ftp://ftp.futuretg.com
-http://www.FTLinuxCourse.com
-	http://www.FTLinuxCourse.com/Certification
-http://www.rpmparadaise.org
-http://GNULinuxUtilities.com
-http://www.YourPersonalOperatingSystem.com
-
---
+mjt
 
