@@ -1,48 +1,31 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: Reiserfs concurrent write problems
-Date: Sat, 1 May 2004 16:52:29 +0200
-Message-ID: <200405011652.29753.Dieter.Nuetzel@hamburg.de>
-References: <20040426172648.GA22918@em.ca> <1083356649.30344.479.camel@watt.suse.com> <20040430214410.GA790@em.ca>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: can't compile with reiser4
+Date: Sat, 1 May 2004 21:45:45 +0300
+Message-ID: <20040501184545.GP29226@nysv.org>
+References: <4092DCD1.6000107@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18351-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18352-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040430214410.GA790@em.ca>
 Content-Disposition: inline
+In-Reply-To: <4092DCD1.6000107@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Chris Mason <mason@suse.com>, Bruce Guenter <lists-reiserfs-list@bruce-guenter.dyndns.org>
+Content-Transfer-Encoding: 7bit
+To: David Masover <ninja@slaphack.com>
+Cc: reiserfs-list@namesys.com
 
-Am Freitag, 30. April 2004 23:44 schrieb Bruce Guenter:
-> On Fri, Apr 30, 2004 at 04:24:10PM -0400, Chris Mason wrote:
-> > Thanks.  One thing I didn't notice before:
-> >
-> > Filesystem partition: 72GB on a software RAID-1 array of Fujitsu SCSI
-> > 15kRPM disks.
-> > Journal partition: 400MB on a software RAID-1 array of Quantum Atlas 10K
-> > SCSI disks.
-> >
-> > So the external log is on slower disks?  That might explain why it is
-> > sometimes slower to have reiserfs on the external log.
->
-> Yes, the journal is on a slower array.  That's what was available when
-> building the system.  They're still not *SLOW* disks, though, at 10kRPM
-> and 32MB/sec transfer rate.
+On Fri, Apr 30, 2004 at 06:10:09PM -0500, David Masover wrote:
+>glibc) on my system now either fail to install, continue trying to
+>install forever (make caught in an infinite loop), or install but don't
 
-I have the former Fujitsu, too.
-So the Atlas are "very" slow disks. ;-)
+This has been fixed.
 
-One of my Fujitsu MASxxxx:
+I have a copy of the patch here:
+http://mjt.nysv.org/reiser/tail.c.diff
 
-SunWave1 /home/nuetzel# hdparm -tT /dev/sdb2
+-- 
+mjt
 
-/dev/sdb2:
- Timing buffer-cache reads:   1064 MB in  2.00 seconds = 531.55 MB/sec
- Timing buffered disk reads:  214 MB in  3.00 seconds =  71.30 MB/sec
-
-Cheers,
-	Dieter
