@@ -1,50 +1,40 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: [OT] Re: inode problem?
-Date: Thu, 26 Jun 2003 20:59:06 +0400
-Message-ID: <16123.9818.818695.358007@laputa.namesys.com>
-References: <20030626152946.GN21580@rdlg.net>
-	<16123.5139.767962.494409@laputa.namesys.com>
-	<3EFB2452.4040401@g-house.de>
+From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: udpated data logging available
+Date: Thu, 26 Jun 2003 19:19:58 +0200
+Message-ID: <200306261919.58508.Dieter.Nuetzel@hamburg.de>
+References: <1055764071.24111.650.camel@tiny.suse.com> <200306261342.08725.Dieter.Nuetzel@hamburg.de> <1056632026.20899.39.camel@tiny.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14718-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-14719-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3EFB2452.4040401@g-house.de>
+In-Reply-To: <1056632026.20899.39.camel@tiny.suse.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: evil@g-house.de
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Chris Mason <mason@suse.com>
+Cc: Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com
 
-Christian Kujau writes:
- > Nikita Danilov schrieb:
- > >  > {0}:Documentation>host www.reiserfs.org
- > >  > www.reiserfs.org does not exist, try again
- > > 
- > > $ host www.reiserfs.org
- > > www.reiserfs.org has address 212.16.7.65
- > 
- > evil@prinz:~$ host www.reiserfs.org
- > www.reiserfs.org does not exist, try again
- > 
- > > (you can also use namesys.com)
- > 
- > yes, that's what im doing because reiserfs.org.
- > could you tell me your favourite nameserver?
+Am Donnerstag, 26. Juni 2003 14:53 schrieb Chris Mason:
+> On Thu, 2003-06-26 at 07:42, Dieter N=FCtzel wrote:
+> > > Great to hear, thanks for giving it a try.  io-stalls-6 helped most
+> > > when you've got multiple devices and a streaming write to one was
+> > > slowing down all the others.  -7 added in a tweaked form of Andrea's
+> > > elevator latency fixes, and they make a big difference when there's a
+> > > lot of writes to the drive you're trying to read from.
+> >
+> > So, does it apply to 2.4.21-aa1 (latest is 2.4.21rc8aa1) cleanly? ;-)
+>
+> No, io-stalls-7 is mostly in rc8aa1 already.  The major difference is
+> that andrea changed blk_finished_io and I added a new func to keep
+> compatibility for external drivers.  There are a few areas where he and
+> I chose different ways of doing things, if you're interested in helping
+> add some measurements to our debate, I can make you a patch against aa1.
 
-$ nslookup
-Default Server:  ns.msu.net
-Address:  212.16.0.1
+Yes, please.
+Should I start with rc8aa1 or does Andrea have something newer?
 
- > 
- > Thanks,
- > Christian.
- > 
- > evil@prinz:~$ whois reiserfs.org
- > NOTICE: Access to .ORG WHOIS information is provided to assist persons
+=2DDieter
 
-[...]
-
-Nikita.
