@@ -1,50 +1,50 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+From: Todd Lyons <todd@mrball.net>
 Subject: Re: Hard disk crash and solution
-Date: Tue, 04 Feb 2003 04:05:19 +0100
-Message-ID: <3E3F2DEF.2040506@mb.tu-ilmenau.de>
-References: <IKENJBHCILNPNAGHKCHFOEDMCCAA.Art@chello.nl> <200302030711.13593.amosf@mrbean.net.au> <20030203054928.W2964@humilis> <200302041131.20008.amosf@mrbean.net.au>
+Date: Mon, 3 Feb 2003 19:08:01 -0800
+Message-ID: <20030204030801.GC1144@mrball.net>
+References: <IKENJBHCILNPNAGHKCHFOEDMCCAA.Art@chello.nl> <20030127055331.E976@humilis> <20030127100349.B22720@namesys.com> <200302030711.13593.amosf@mrbean.net.au> <20030203054928.W2964@humilis>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12631-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12632-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <20030203054928.W2964@humilis>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; x-action="pgp-signed"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-On 02/04/2003 02:31 AM, tim fairchild wrote:
-> On Monday 03 Feb 2003 2:49 pm, Ookhoi wrote:
-> 
->>A lot? Sometimes you can hear a disk recalibrate, which is not bad, but
->>that should be only now and then.
-> 
-> It has always made an occasional whir which I assumed was a disk recalibrate - 
-> this happens a couple of times an hour I suppose. 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-A "whir(r/l)"? I'm not very used to english sound descriptions. My 
-notebooks spare disk IBM-DARA-218000 makes that noise when coming out of 
-any kind of standby state.
+Ookhoi wanted us to know:
 
-> Just lately it has made a loud double clicking sound. So far only heard 
-> twice... 
+>A lot? Sometimes you can hear a disk recalibrate, which is not bad, but
+>that should be only now and then.
 
-This my above mentioned disk does this, too, randomly. Sometimes under 
-high load, sometimes after only a simple sync. Dunno. Maybe _that's_ the 
-"recalibrating". No errors so far. But this disk may be quite old (18GB, 
-purchased approx. 4 years ago) - made of steel.
+If you're hearing what I have heard, it's the sound your ears hear when
+you're scratching your head.  At that point it's trying to read a bad
+sector and multiple reads/writes seemingly have stacked up in the queue
+and the machine has come nearly to a halt.  It's still running, but
+barely, more like crawling.
 
->>Do you have disk related errors in your logs?
-> 
-> Nothing yet. So far appears in perfect condition. I have reiser, ext3 and fat 
-> partitions. 
-> 
-> Maybe just worried by all the comments on IBM drives :-)
-> 
-> tim
+>Try to run an ibm drive fitness program and see what it tells you about
+>the disk.
 
-Best wishes!
+They refer to it as DFT and they have a couple of different versions as
+I remember.  It's good software too.  Boots from PC-DOS :)
+- -- 
+Blue skies...	Todd 	Public key: http://www.mrball.net/todd.asc
+...and I will strike down upon thee with great vengeance and furious
+ anger, those who attempt to poison and destroy my binaries, and you 
+    will know my name is root, when I lay my vengeance upon thee.
+   Linux kernel 2.4.19-16mdk   3 users,  load average: 0.00, 0.02, 0.18
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
 
-Manuel
-
+iD8DBQE+Py6RIBT1264ScBURAqd5AKCoW/QHfvqAiIQNmdcMxUJVT4VKiACgucMx
+PeceAr3qu73ZAU08mssAUDY=
+=VJP/
+-----END PGP SIGNATURE-----
