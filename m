@@ -1,60 +1,44 @@
-From: Jamie Lokier <jamie@shareable.org>
+From: Andrea Arcangeli <andrea@suse.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 13:12:23 +0100
-Message-ID: <20040826121223.GG30449@mail.shareable.org>
-References: <200408261034.38509.vda@port.imtp.ilyichevsk.odessa.ua> <Pine.LNX.4.44.0408260736080.23532-100000@chimarrao.boston.redhat.com>
+Date: Thu, 26 Aug 2004 14:16:30 +0200
+Message-ID: <20040826121630.GN5618@nocona.random>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <1093467601.9749.14.camel@leto.cs.pocnet.net> <20040825225933.GD5618@nocona.random> <412DA0B5.3030301@namesys.com> <20040826112818.GL5618@nocona.random> <1093520699.9004.11.camel@leto.cs.pocnet.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20647-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20648-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44.0408260736080.23532-100000@chimarrao.boston.redhat.com>
+In-Reply-To: <1093520699.9004.11.camel@leto.cs.pocnet.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rik van Riel <riel@redhat.com>
-Cc: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Christophe Saout <christophe@saout.de>
+Cc: Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Rik van Riel wrote:
-> > cat <a >b does not preserve following file properties even on standard
-> > UNIX filesystems: name,owner,group,permissions.
+On Thu, Aug 26, 2004 at 01:44:59PM +0200, Christophe Saout wrote:
+> I think you're not exactly understanding what a reiser4 "plugin" is.
 > 
-> Losing permissions is one thing.  Annoying, mostly.
+> Currently plugins are not modules. It just means that there's a defined
+> interface between the reiser4 core and the plugins. Just like you could
+> see filesystems as "VFS plugins".
 
-I find losing mtime annoying.  That's why I don't use Mozilla's
-download manager (and Navigator's before it) because they presumed
-that mtime isn't worth copying.  ncftp and wget do the right thing,
-but it's annoying that I can't use the fancy tools and get the
-metadata _I_ want transferred by them.
+but filesystems are exactly always modules (in precompiled kernels at
+least).
 
-> However, actual losing file data during such a copy is
-> nothing short of a disaster, IMHO.  
+Anyways I don't see any visible EXPORT_SYMBOL in reiser4.
 
-Note that file-as-directory doesn't imply that you can store just
-anything into those directories.
+> 
+> In fact, reiser4 plugins are
+> - users of the reiser4 core API
+> - some of them are implementing Linux VFS methods (thus being some sort
+> of glue code between the Reiser4 storage tree and the Linux VFS)
 
-Is it a problem to decree that "file data MUST NOT be stored in a
-metadata directory; only non-essential metadata and data computed from
-the file data may be stored"?
+then it seems a bit misleading to call those things plugins.
 
-> In my opinion we shouldn't merge file-as-a-directory
-> semantics into the kernel until we figure out how to
-> fix the backup/restore problem and keep standard unix
-> utilities work.
-
-Same as xattrs, for data that should be stored.
-
-But, unlike xattrs, while permissions and C-source-encoding should be
-stored, some of this metadata should _not_ be stored when making an
-archive and perhaps not when making a backup either.
-
-Personally I wouldn't want an archive containing a file to save and
-restore recomputable metadata like cached, extracted-on-demand MP3 id
-tags and email headers-as-metadata.  I'd rather they were recalculated
-when needed, implying a stronger guarantee about their relationship to
-the data from which they're extracted - and implying that a user
-program might not be allowed to set them to inconsistent values.
-
--- Jamie
+As you wrote those are "users of the reiser4 core API", with plugins I
+always meant dynamically loadable things, like plugins for web browers
+(hence kernel modules in kernel space). While here apparently you can't
+plugin anything at runtime, it's just code that uses the reiser4 core
+API that can be modified with a kernel patch as usual.
