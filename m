@@ -1,32 +1,46 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Sleeping harddrives?
-Date: Mon, 3 Jun 2002 14:02:01 +0400
-Message-ID: <20020603140201.A6099@namesys.com>
-References: <19839880843.20020602023406@tnonline.net> <20020602214927.A17000@namesys.com> <5231869796.20020602225651@tnonline.net>
+From: Chris Mason <mason@suse.com>
+Subject: Re: [PATCH CFT] tons of logging patches
+Date: 03 Jun 2002 08:26:01 -0400
+Message-ID: <1023107161.6829.1802.camel@tiny>
+References: <1023076301.22608.1778.camel@tiny> 
+	<m37klglpfo.fsf@merlin.emma.line.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10486-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10487-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <5231869796.20020602225651@tnonline.net>
+In-Reply-To: <m37klglpfo.fsf@merlin.emma.line.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
+Cc: reiserfs-list@namesys.com
 
-Hello!
+On Mon, 2002-06-03 at 04:46, Matthias Andree wrote:
+> Chris Mason <mason@suse.com> writes:
+> 
+> > Hello everyone,
+> >
+> > ftp.suse.com/pub/people/mason/data-logging
+> 
+> You seem to mean:
+> 
+> ftp://ftp.suse.com/pub/people/mason/patches/data-logging/
 
-On Sun, Jun 02, 2002 at 10:56:51PM +0200, Anders Widman wrote:
-> >>    How  would  ReiserFS  react  when  a user/program/anything tries to
-> >>    access a file on a harddrive that is spin down?
-> > Linux IDE/SCSI layer issupposed to spind the drive up.
-> It  is  supposed  to,  yes.  When I tried this before, it did spin the
-> drives up, but didn't wait enough before trying to access it, so I got
-> strange errors.
-> My question is simple. Is this something that still occur today?
+Correct, thanks.
 
-At least it works for me on IDE.
+> 
+> > optimizations to keep kupdate from triggering commits every 5 seconds
+> 
+> Does this mean the current released ReiserFS versions are causing the
+> persistent write activity at 5 s interval that I observe?
+> 
+> Or is it ext3fs also?
 
-Bye,
-    Oleg
+No, there is a dirty flag on the super struct that should get cleaned
+after all commits are done.  The commit_super-8 patch might fix a bug
+where we are not properly cleaning the flag.
+
+-chris
+
+
