@@ -1,49 +1,46 @@
 From: Florian Engelmann <mailinglists@d-g-c.de>
 Subject: Re: Reiser4fs and SPARC64?
-Date: Mon, 21 Feb 2005 15:12:48 +0100
-Message-ID: <4219EC60.5090705@d-g-c.de>
-References: <421347FD.6000204@d-g-c.de> <200502161724.16258.vitaly@namesys.com> <4219D560.9090904@d-g-c.de> <200502211617.26270.vitaly@namesys.com>
+Date: Mon, 21 Feb 2005 15:13:38 +0100
+Message-ID: <4219EC92.4000908@d-g-c.de>
+References: <421347FD.6000204@d-g-c.de> <20050216140944.GZ7482@backtop.namesys.com> <200502161724.16258.vitaly@namesys.com> <4219D2BD.1030004@d-g-c.de> <20050221134434.GA5760@backtop.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200502211617.26270.vitaly@namesys.com>
+In-Reply-To: <20050221134434.GA5760@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Vitaly Fertman <vitaly@namesys.com>
+To: Alex Zarochentsev <zam@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Vitaly Fertman schrieb:
+Alex Zarochentsev schrieb:
 
->>libaal-1.0.4.tar.gz compiled fine without any patches.
->>but reiser4progs-1.0.4 did not (also no patches!):
->>    
->>
+>hello
 >
->do you have a mix of several installed versions in the system?
->uninstall, check that nothing left and another try will probably help.
+>On Mon, Feb 21, 2005 at 01:23:25PM +0100, mailinglists@d-g-c.de wrote:
 >
 >  
 >
-you mean of libaal?
-no i don't have. I just compiled the kernel today what worked fine (also 
-i lost my serial console output cause i don't know what drivers i need).
-After that i had a look at your ftp and found the new libaal-1.0.4 and 
-reiser4progs-1.0.4 so i decided to install the newer once. I tried to 
-patch them with the 2 patches you emaild me but i figured out they are 
-already patched, aren't they?
-The libaal compiled and installed withount any probs but the 
-reiser4progs didn't.
-Should i try to compile 1.0.3? Would reiser4progs 1.0.3 work with libaal 
-1.0.4???
+>>These 2 patches are no more needed for me and my sparc64 since you 
+>>released 1.0.4?
+>>Today i compiled my 2.6.10-mm3-reiser4 kernel and it works fine. Only 
+>>    
+>>
+>
+>have you tried reiser4?
+>  
+>
 
-thx Florian
+no i couldn't cause the reiser4progs did not compile :(
 
->>format40.c:255: warning: type defaults to `int' in declaration of `__tmp'
->>format40.c:255: warning: initialization makes integer from pointer
->>without a cast
+>  
+>
+>>problem left is LVM cause the kernel gets too big (>3.5MB) with LVM 
+>>compiled in it. So my root filesystem will be no LVM...
+>>
+>>greetz Florian
 >>    
 >>
 >
