@@ -1,43 +1,50 @@
-From: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: reiser4 non-free?
-Date: Thu, 6 May 2004 16:03:25 -0400 (EDT)
-Message-ID: <20040506200325.46576.qmail@web25007.mail.ukl.yahoo.com>
-References: <409A9867.7040105@almg.gov.br>
+Date: Thu, 06 May 2004 16:08:11 -0400
+Message-ID: <200405062008.i46K8Bja026035@turing-police.cc.vt.edu>
+References: <pHiWpB.A.zfD.ypomAB@murphy>
+            <409A9867.7040105@almg.gov.br>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18510-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_1261188805P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18511-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <409A9867.7040105@almg.gov.br>
+In-Reply-To: Your message of "Thu, 06 May 2004 16:56:23 -0300."
+             <409A9867.7040105@almg.gov.br> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Humberto Massa <humberto.massa@almg.gov.br>, Hans Reiser <reiser@namesys.com>
-Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com, Richard Stallman <rms@gnu.org>
+To: Humberto Massa <humberto.massa@almg.gov.br>
+Cc: Hans Reiser <reiser@namesys.com>, debian-legal@lists.debian.org, reiserfs-list@namesys.com, Richard Stallman <rms@gnu.org>
 
-Humberto Massa wrote: 
+--==_Exmh_1261188805P
+Content-Type: text/plain; charset=us-ascii
 
-> Rule of thumb to
-> derived works: could 
-> them (plugins) be created (as they are, not in a
-> different way) if the 
-> original work (reiser4) was not created? Yes =
-> derived; no = original. 
+On Thu, 06 May 2004 16:56:23 -0300, Humberto Massa said:
 
-I believe that is incorrect.  It should be: yes =
-original; no = derived.
+> It's the same case as Windows NDIS drivers loading on linux. They were 
+> created in a different environment, and would exist as they are even if 
+> linux did not exist. Provided GPL'd glue code, you can load them in the 
+> linux kernel, and they are _not_ derivative works.
 
-> Likewise, could reiser4 be created as it is now, had
-> linux not been 
-> created? Yes = reiser4 is a derived work on linux;
-> no = it's an original 
-> work.
+And in fact, the fact that the NDIS or NVidia drivers *did* start off as Windows
+code and have a properly GPL'ed glue layer is the only reason why they're
+tolerated at all by the kernel community.  Linus has said on several occasions
+words to the effect that "if NVidia hadn't convinced him that all of the closed
+.o files were basically of Windows/other heritage, they'd have heard from a lawyer"...
 
-Again, that should be: yes = it's an original work; no
-= reiser4 is a derived work on linux.
+--==_Exmh_1261188805P
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
+iD8DBQFAmpsrcC3lWbTT17ARAk4+AJ9+uf06oIV5awqjLKIqUpMKHWgdKgCguSJZ
+c0k35cwDLS78jkDtGTdUZ54=
+=eN+V
+-----END PGP SIGNATURE-----
 
-______________________________________________________________________ 
-Post your free ad now! http://personals.yahoo.ca
+--==_Exmh_1261188805P--
