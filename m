@@ -1,79 +1,142 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: [Fwd: [reiserfs-list] reiserfs-list-unsubscribe@namesys.com : I cant
- use this...!]
-Date: Sun, 30 Jun 2002 05:16:22 +0400
-Message-ID: <3D1E5BE6.5050601@namesys.com>
+Subject: Credit Card fraud involving namesys.com registration
+Date: Sun, 30 Jun 2002 08:35:54 +0400
+Message-ID: <3D1E8AAA.7080507@namesys.com>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- boundary="------------070307050700040109020400"
-Return-path: <reiserfs-list-return-10885-reiserfs=m.gmane.org@namesys.com>
+ boundary="------------080702080906010801050808"
+Return-path: <reiserfs-list-return-10887-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Oleg Drokin <green@namesys.com>
-Cc: flx@thebsh.namesys.com, ttsoares@brturbo.com, reiserfs-list@namesys.com
+To: JI <jens@sci.fi>
+Cc: reiserfs-list@namesys.com, flx@thebsh.namesys.com
 
---------------070307050700040109020400
+--------------080702080906010801050808
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Oleg, please track down flx and get this dealt with one way or another.
+Jens, do you have an explanation for using my credit card number to 
+register europe-24h.com and linux-24h.com?
 
-Flx, we need the anti-spam filters now.  We seem to be listed as an 
-official target.
+As I understand it, you are a professional cybersquatter who has used my 
+credit card information to register other domain names.  You originally 
+contacted us saying that you had discovered that the names which 
+represent my business were unclaimed, and that you had registered them 
+for me without asking me if I wanted you to do so.  You then talked me 
+into paying the registration fees in return for your agreeing to 
+transfer them to me.  You never quite performed the transfer somehow. 
+ Now you have somehow used register.com  to use my credit card to renew 
+other domains, and sweet register.com tells me that if I file a claim of 
+credit card fraud with them they will sieze all of the domains 
+registered with a credit card (including namesys.com) for a year whether 
+I want this or not.
+
+Is there any reason I should not consider you and register.com to be 
+engaging in a conspiracy to commit credit card fraud, and report this to 
+both credit agencies and the authorities?
+
+I ask, because although the contents of europe-24h.com look like those 
+of a cybersquatter, one never knows what innocent explanation there 
+might be until one asks
+
+At any rate, if the members of the list see namesys.com disappear, this 
+is why, and what name we might reappear under I don't know yet, but 
+searching the web will probably find us.
+
+It seems that the misguided reiserfs fan does not describe Jens as we 
+had hoped, and professional cybersquatter does.  But maybe this is 
+incorrect, and Jens has an innocent explanation and a transfer of the 
+domain name in progress, so I ask and find out....
 
 -- 
 Hans
 
 
---------------070307050700040109020400
+--------------080702080906010801050808
 Content-Type: message/rfc822;
- name="[reiserfs-list] reiserfs-list-unsubscribe@namesys.com : I cant use this...!"
+ name="DOMAIN NAME REGISTRATION RENEWAL RECEIPT"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
- filename="[reiserfs-list] reiserfs-list-unsubscribe@namesys.com : I cant use this...!"
+ filename="DOMAIN NAME REGISTRATION RENEWAL RECEIPT"
 
 X-Mozilla-Status2: 00000000
-Return-Path: <reiserfs-list-return-10884-reiser=namesys.com@namesys.com>
+Return-Path: <invoice@register.com>
 Delivered-To: reiser@namesys.com
-Received: (qmail 2119 invoked by uid 501); 30 Jun 2002 00:49:31 -0000
-Mailing-List: contact reiserfs-list-help@namesys.com; run by ezmlm
-Precedence: bulk
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-X-Mailing-List: reiserfs-list@namesys.com
-Delivered-To: mailing list reiserfs-list@namesys.com
-Received: (qmail 2112 invoked from network); 30 Jun 2002 00:49:30 -0000
-From: "Thomas T. Soares" <ttsoares@brturbo.com>
-To: reiserfs-list@namesys.com
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-X-Mailer: Ximian Evolution 1.0.5 
-Date: 29 Jun 2002 21:49:24 -0300
-Message-Id: <1025398165.7486.86.camel@dentro>
-Mime-Version: 1.0
-Subject: [reiserfs-list] reiserfs-list-unsubscribe@namesys.com : I cant use this...!
+Received: (qmail 27049 invoked from network); 29 Jun 2002 20:38:46 -0000
+Received: from unknown (HELO e0.rndel01.nyat.register.com) (216.21.228.13)
+  by thebsh.namesys.com with SMTP; 29 Jun 2002 20:38:46 -0000
+Received: (from batch@localhost)
+	by e0.rndel01.nyat.register.com (8.9.3/8.9.3) id QAA05620
+	for reiser@namesys.com; Sat, 29 Jun 2002 16:38:40 -0400
+Date: Sat, 29 Jun 2002 16:38:40 -0400
+From: invoice@register.com
+Message-Id: <200206292038.QAA05620@e0.rndel01.nyat.register.com>
+X-Authentication-Warning: e0.rndel01.nyat.register.com: batch set sender to invoice@register.com using -f
+To: reiser@namesys.com
+Subject: DOMAIN NAME REGISTRATION RENEWAL RECEIPT
+Subject: DOMAIN NAME REGISTRATION RENEWAL RECEIPT
 
-I sent several emails for the
+                                 Date:   2002/6/29
+Domain(s)
+linux-24h.com
 
-reiserfs-list-unsubscribe@namesys.com
+5918 Marden Lane
+Oakland, CA 94611
+US
 
-and no reply and no unsubscription...
+Order ID: 22864685
 
-I cant stand anymore the spam at this list!
-
-Please, remove me ASAP.
-
--- 
-| Thomas Tschoepke Soares                   |     //   En brujas no
-|               ttsoares AT brturbo DOT com |(~~~//'~)    acreo...
-|--UIN:961141-------------------------------| \     /  pero que las hay,
-| The fact is a secondary aspect of reality |  `\_/'          las hay !
+FROM:
+register.com
+575 8th Avenue
+New York,  NY 10018
+United States
 
 
 
+	E-MAIL INVOICE FOR DOMAIN REGISTRATION/RENEWAL
 
---------------070307050700040109020400--
+Please see the register.com Services Agreement (link below).
+
+register.com is in receipt of valid  credit card information for
+payment and confirms the following:
+
+Domain Name:             linux-24h.com
+Subscription Length:     1 year
+Period From:             06/28/2002
+Period To:               06/28/2003
+Amount Charged (US$):    $34.99
+
+
+Total:  $34.99
+
+If you feel that this charge is in error or do not wish to renew 
+the domain name(s) listed above, please contact register.com 
+immediately in one of the following ways:
+
+Contact a Customer Support representative online by
+visiting:
+
+http://www.register.com/sr_credit.cgi?12f7067e820f82e1c0bc4ce1b53111997985e9346a8ae561
+
+Or call:
+Toll free in the U.S. and Canada: (800) 899-9723
+Outside the U.S. and Canada: +1 (902) 749-2777
+
+-----------------------------------------------------------------
+
+Registrant agrees to the terms and conditions of the current
+Services Agreement.
+
+To access the register.com Services Agreement, please visit 
+http://www.register.com/service-agreement.cgi.
+
+
+
+
+
+
+--------------080702080906010801050808--
 
