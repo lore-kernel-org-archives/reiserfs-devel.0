@@ -1,55 +1,40 @@
-From: Peter Nelson <pnelson@andrew.cmu.edu>
-Subject: Re: Desktop Filesystem Benchmarks in 2.6.3
-Date: Tue, 02 Mar 2004 11:34:15 -0500
-Message-ID: <4044B787.7080301@andrew.cmu.edu>
-References: <4044119D.6050502@andrew.cmu.edu> <4044366B.3000405@namesys.com>
+From: markw@osdl.org
+Subject: Re: AS performance with reiser4 on 2.6.3
+Date: Tue, 2 Mar 2004 09:07:25 -0800 (PST)
+Message-ID: <200403021707.i22H7ZE21826@mail.osdl.org>
+References: <16447.35731.535168.298454@laputa.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17006-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17007-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4044366B.3000405@namesys.com>
+In-Reply-To: <16447.35731.535168.298454@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, ext2-devel@lists.sourceforge.net, ext3-users@redhat.com, jfs-discussion@oss.software.ibm.com, reiserfs-list@namesys.com, linux-xfs@oss.sgi.com
+Content-Type: TEXT/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Nikita@Namesys.COM
+Cc: piggin@cyberone.com.au, reiserfs-list@Namesys.COM, linux-kernel@vger.kernel.org
 
-Hans Reiser wrote:
+On 27 Feb, Nikita Danilov wrote:
+> The rest is not that clear. Probably you workload results in highly
+> fragmented file(s). This is consistent with high CPU consumption by
+> lookup_extent (http://khack.osdl.org/stp/288741/profile/profile-tick.sort).
+> 
+> If test doesn't delete its working files before exiting, can you execute
+> 
+> measurefs.reiser4 -T /device-with-reiser4
+> measurefs.reiser4 -D /device-with-reiser4
+> 
+> and, if number of files on the file system is sane
+> 
+> measurefs.reiser4 -D -E /device-with-reiser4
 
-> Are you sure your benchmark is large enough to not fit into memory, 
-> particularly the first stages of it?  It looks like not.  reiser4 is 
-> much faster on tasks like untarring enough files to not fit into ram, 
-> but (despite your words) your results seem to show us as slower unless 
-> I misread them....
+Sorry this took a couple of days, but you can view the output of those
+commands towards the end of the log file here:
+	http://khack.osdl.org/stp/289045/logs/run-log.txt
 
-I'm pretty sure most of the benchmarking I am doing fits into ram, 
-particularly because my system has 1GB of it, but I see this as 
-realistic.  When I download a bunch of debs (or rpms or the kernel) I'm 
-probably going to install them directly with them still in the file 
-cache.  Same with rebuilding the kernel after working on it.
+You should be able to find the output by searching for the 'measurefs'
+commands.
 
-For untarring reiser4 is the fastest other than ext2.  A somewhat less 
-ambiguous conclusion:
-
-    * Reiser4 is exceptionally fast at copying the system and the
-      fastest other than Ext2 at untaring, but is very slow at the
-      real-world debootstrap and kernel compiles.
-
-> Reiser4 performs best on benchmarks that use the disk drive, and we 
-> usually only run benchmarks that use the disk drive.
-
-I'm confused as to why performing a benchmark out of cache as opposed to 
-on disk would hurt performance?
-
-> Here is summary of the results based upon what I am calling "dead" 
-> time calculated as `total time - user time`.
->
-> You should be able to script out the user time.
-
-I'm working with a friend of mine here at CMU doing hard drive research 
-to create a execution trace and test that directly instead of performing 
-all of the script actions.
-
--Peter Nelson
+Mark
