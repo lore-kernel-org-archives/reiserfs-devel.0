@@ -1,28 +1,34 @@
-From: Basil Chupin <blchupin@tpg.com.au>
-Subject: What does this mean?
-Date: Mon, 08 Jul 2002 23:30:13 +1000
-Message-ID: <3D2993E5.6030707@tpg.com.au>
+From: "Yurick A. Zaitsev" <yurick@oblik.dp.ua>
+Subject: Re[2]: reiserfsck --rebuild-tree fails
+Date: Mon, 8 Jul 2002 18:00:45 +0300 (EEST)
+Message-ID: <Pine.LNX.4.44.0207081754530.854-100000@dino.oblik.dp.ua>
+References: <20020708153140.A2245@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10925-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10926-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <20020708153140.A2245@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
-
-I am running SuSE 8 and the HD is being accessed every 5 seconds by 
-"something". I thought I would just do a quick check of the reiserfs but 
-on executing "reiserfsck --check --logfile check.log  /dev/hda7" this 
-produces the error message "/dev/hda7 is mounted w/ write permissions, 
-can not check it." I cannot find this message documented so am wondering 
-what it means, and what do I need to do in order to be able to check the 
-integrity of the reiserfs on my sytem. Can anyone please help?
-
-Cheers.
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
 
-
+OD> >    Pass 1 (will try to insert 21881 leaves):
+OD> >    ####### Pass 1 #######
+OD> >    Looking for allocable blocks .. ok
+OD> >    0%.build_the_tree: nothing but leaves are expected. Block 9938 - ??
+OD> >    ...20%....40%....
+OD> >    mark_block_used: (448579) used already
+OD>
+OD> This one is very clear sign of broken memory or broken data exchange between
+OD> HDD and the box itself.
+OD> Try changing IDE cable/replacing memory/putting the HDD into other box.
+    Thank you, I've tried other box and it helps. I am believe in reiserfs
+again! :)
+    Wouldn't be better to add advice about possible broken hardware to
+reiserfsck when it prints such message?
 
 
