@@ -1,61 +1,76 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiser filesystem crashed
-Date: Fri, 14 Nov 2003 00:46:31 +0300
-Message-ID: <200311140046.31951.vitaly@namesys.com>
-References: <E1AKFkr-0002Ad-00@parato.holisticas.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: porting to alternate OSs and relational semantics
+Date: Thu, 13 Nov 2003 02:24:33 -0800
+Message-ID: <3FB35BE1.2080006@namesys.com>
+References: <20031113201925.GB1423@europa.lair>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16080-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16081-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <E1AKFkr-0002Ad-00@parato.holisticas.com>
-Content-Disposition: inline
+In-Reply-To: <20031113201925.GB1423@europa.lair>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Usuario Jose <jose@holisticas.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Phil Frost <indigo@bitglue.com>
 Cc: reiserfs-list@namesys.com
 
-On Thursday 13 November 2003 14:33, Usuario Jose wrote:
-> Hi, friends:
->
-> My copmputer has a hard disk with the following partition schema:
->
->
-> 	/dev/hda1		windows backup
-> 	/dev/hda2		windows xp ntfs
->
-> /dev/hda3		win95 ext'd (LBA)
-> 	/dev/hda5		linux swap
-> 	/dev/hda6		linux  - resiserfs
->
-> The linux partition crashed (my suspicions are after opening a 5MB pdf
-> file). Following are the messages given by reiserfsck:
->
->
-> #reiserfs --check /dev/hda6
-> Bad root block 4294967295
->
-> #reiserfs --rebuild-tree /dev/hda6
-> .....
-> Pass 0:
-> ##### Pass 0 #####
-> Loading on-disk bitmap .. ok, 963801 blocks marqued used
-> Skipping 8406 blocks (superblock, journal.....) 955395 blocks will be read
-> 0% =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0left =A0955077, 318
-> /sec bread: Cannot read a block # 13236
+Phil Frost wrote:
 
-it seems you use pretty old reiserfsprogs version. update it please.
-this message means there are unreadable blocks on the fs.
-read our bad block faq=20
-    www.namesys.com/bad-block-handling.html
-if you need our assistance please visit=20
-    www.namesys.com/support.html
+>My name is Phil Frost and I am looking at ReiserFS as a potential filesystem                                                        
+>for an OS called Unununium (http://uuu.sf.net/) in the early stages of                                                              
+>development.
+>
+Do you have funding from anywhere?  Are you private or university or?
 
-=2D-=20
-Thanks,
-Vitaly Fertman
+> From the beginning, we have planned to make the filesystem an                                                          
+>integral part of the system as a whole. Thus we came to many of the same                                                            
+>conclusions as ReiserFS: the filesystem should be an efficient database.                                                            
+>                                                                                                                                    
+>Work had begun on a filesystem of our own making, but after reading about                                                           
+>Reiser4 I came to realize that ReiserFS wasn't just another filesystem that                                                         
+>performed better at doing the same useless FS stuff, but rather exactly what                                                        
+>we wanted, only years advanced :-) So, I am now aiming to get the ReiserFS                                                          
+>code working for our OS. Any information on how to proceed would be                                                                 
+>appreciated.                                                                                                                         
+>                                                                                                                                    
+>Furthermore, because we are developing an entirely new OS, we aren't                                                                 
+>restricted by backwards compatibility or tradition. I would like (and will                                                          
+>definitely need, in order to sell this idea to the other members of the                                                             
+>project) to see the database features of ReiserFS develop, in particular,                                                           
+>relational semantics.                                                                                                               
+>                                                                                                                                    
+>I don't know what progress or ideas have been made in this idea, but as I                                                           
+>see it, a traditional hierarchal layout is a subset of a relational                                                                
+>database, only that the only usable relation is "child-of". Our primary goal                                                        
+>was to allow information to be found quickly by a key other than the name,                                                          
+>such as finding all music by "Pink Floyd" or all songs from "The Wall".  
+>
+Please read www.namesys.com/whitepaper.html, which describes the 
+semantics intended for reiser6.
+
+>                                                           
+>                                                                                                                                    
+>To this end I'd like to do whatever I can to assist. I'd rather contribute                                                          
+>to ReiserFS than produce a redundant effort. Other members of the Unununium                                                         
+>effort have expressed concerns about the suitability of ReiserFS to our task                                                        
+>and the time it may take to mature. Any remarks you can make to quell their                                                         
+>restlessness would be greatly appreciated and may convert a talented                                                                 
+>developer to your cause :-)
+>  
+>
+Reiser4 is getting installed on my desktop sometime this week, so I 
+don't think you should worry about the time to mature, unless you mean 
+the time required to implement semi-structured semantics on top of the 
+existing storage layer.
+
+>
+>  
+>
+thanks kindly for your interest in ReiserFS
+
+-- 
+Hans
 
 
