@@ -1,43 +1,56 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: REISER4 corruptions errors
-Date: Mon, 26 Jan 2004 18:51:49 +0300
-Message-ID: <20040126155148.GC21337@backtop.namesys.com>
-References: <16405.7504.491020.659611@laputa.namesys.com> <20040126142528.22476.qmail@web21509.mail.yahoo.com> <20040126152607.GB21337@backtop.namesys.com> <401541FA.5060309@gmx.net>
+From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
+Subject: reiserfsprogs 3.6.11 compile failure. 3.6.12-pre3 compiles ok
+Date: Tue, 27 Jan 2004 15:13:46 +0100
+Message-ID: <20040127151346.674f4843@philou.gramoulle.local>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16628-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16631-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <401541FA.5060309@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2004@gmx.net>
-Cc: Paolo Correnti <paolunix@yahoo.com>, REISER LIST <reiserfs-list@namesys.com>
+To: reiserfs <reiserfs-list@namesys.com>
 
-On Mon, Jan 26, 2004 at 05:36:10PM +0100, Carl-Daniel Hailfinger wrote:
-> Alex Zarochentsev wrote:
-> 
-> > this patch should help (! not tested):
-> > 
-> > ===== tree.c 1.562 vs edited =====
-> > --- 1.562/tree.c        Wed Jan 14 11:46:20 2004
-> > +++ edited/tree.c       Mon Jan 26 18:24:39 2004
-> > @@ -1468,7 +1468,7 @@
-> >                 if ((result != 0) && (result != -E_NO_NEIGHBOR))
-> >                         break;
-> >                 /* Check can we delete the node as a whole. */
-> > -               if (iterations && znode_get_level(node) == LEAF_LEVEL &&
-> > +               if (0 && iterations && znode_get_level(node) == LEAF_LEVEL &&
-> >                     UNDER_RW(dk, current_tree, read,
-> >                              keyle(from_key, znode_get_ld_key(node)))) {
-> >                         result = delete_node(next_node_lock.node,
-> 
-> Was it your intention to disable the above code path?
 
-no, it will be fixed in proper way. my fix is a temporary solution.
+ Hi,
 
--- 
-Alex.
+While installing a box to start playing with reiser4 i got a compile error
+while trying to build reiserfsprogs 3.6.11. This the first time this happens as
+i had already compiled it successfully on other Debian Unstable boxes.
+
+I guess i may be because of a newly installed development package that breaks
+some macro.
+
+Reiserfsprogs 3.6.12-pre3 compiles fine.
+
+Thanks,
+
+Philippe
+
+boogie:/usr/src/reiserfsprogs-3.6.11# make
+Making all in include
+make[1]: Entering directory `/usr/src/reiserfsprogs-3.6.11/include'
+make  all-am
+make[2]: Entering directory `/usr/src/reiserfsprogs-3.6.11/include'
+make[2]: Leaving directory `/usr/src/reiserfsprogs-3.6.11/include'
+make[1]: Leaving directory `/usr/src/reiserfsprogs-3.6.11/include'
+Making all in lib
+make[1]: Entering directory `/usr/src/reiserfsprogs-3.6.11/lib'
+if gcc -DHAVE_CONFIG_H -I. -I. -I../include     -g -O2 -Wall -MT io.o -MD -MP -MF ".deps/io.Tpo" \
+  -c -o io.o `test -f 'io.c' || echo './'`io.c; \
+then mv ".deps/io.Tpo" ".deps/io.Po"; \
+else rm -f ".deps/io.Tpo"; exit 1; \
+fi
+if gcc -DHAVE_CONFIG_H -I. -I. -I../include     -g -O2 -Wall -MT misc.o -MD -MP -MF ".deps/misc.Tpo" \
+  -c -o misc.o `test -f 'misc.c' || echo './'`misc.c; \
+then mv ".deps/misc.Tpo" ".deps/misc.Po"; \
+else rm -f ".deps/misc.Tpo"; exit 1; \
+fi
+misc.c: In function `count_blocks':
+misc.c:431: error: parse error before '[' token
+make[1]: *** [misc.o] Error 1
+make[1]: Leaving directory `/usr/src/reiserfsprogs-3.6.11/lib'
+make: *** [all-recursive] Error 1
+boogie:/usr/src/reiserfsprogs-3.6.11# 
