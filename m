@@ -1,39 +1,35 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Russell Coker <russell@coker.com.au>
 Subject: Re: Multiple data streams...
-Date: Thu, 03 Apr 2003 23:50:57 +0400
-Message-ID: <3E8C90A1.1010305@namesys.com>
-References: <6167696812.20030402112847@tnonline.net>	 <3E8B0BED.2070004@suse.com>	<3E8B1572.1010001@namesys.com>	 <1049303242.15216.1023.camel@tiny.suse.com>	 <16011.6694.600468.304009@laputa.namesys.com>	 <3E8C7F64.8020008@namesys.com> <1049396559.15217.1127.camel@tiny.suse.com>
+Date: Fri, 4 Apr 2003 05:57:56 +1000
+Message-ID: <200304040557.56832.russell@coker.com.au>
+References: <6167696812.20030402112847@tnonline.net> <200304030732.31133.russell@coker.com.au> <3E8C84D9.3000401@namesys.com>
+Reply-To: Russell Coker <russell@coker.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13558-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13559-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1049396559.15217.1127.camel@tiny.suse.com>
+In-Reply-To: <3E8C84D9.3000401@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: Nikita Danilov <Nikita@Namesys.COM>, Jeff Mahoney <jeffm@suse.com>, Anders Widman <andewid@tnonline.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Chris Mason wrote:
+On Fri, 4 Apr 2003 05:00, Hans Reiser wrote:
+> >OS/2 used EA's for icons and description text in 1992.  There's no reason
+> > why EAs can't be used for this purpose today as well.
+>
+> Implement inherited stat data, hidden directory entries, and files and
+> directories and you don't need EAs.... yes?
 
->
->I know that you were concerned about the v3 acl support being a
->compatibility problem in v4, but given the acls/xattrs can easily be
->exported to a neutral format and then reimported into whatever v4
->supports, I don't think it will be a problem.  If it is, we'll work with
->you to help fix it.
->
->
->  
->
-We will both work to ensure problems are kept small in this area, and I 
-think it is best to spend our time coding rather than worrying about 
-this when we are not at any decision point in the process.   Hopefully 
-it will not be substantive as a problem.
+That sounds like EAs the hard way...
 
 -- 
-Hans
-
+http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
+http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
+http://www.coker.com.au/~russell/  My home page
 
