@@ -1,74 +1,39 @@
-From: Helge Hafting <helge.hafting@hist.no>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Wed, 08 Sep 2004 11:56:37 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <413ED755.6090204@hist.no>
-References: <20040902203854.GA4801@janus> <1094160994.31499.19.camel@shaggy.austin.ibm.com> <20040902214806.GA5272@janus> <20040902220027.GD23987@parcelfarce.linux.theplanet.co.uk> <20040902220242.GA5414@janus> <20040902220640.GE23987@parcelfarce.linux.theplanet.co.uk> <20040902221133.GB5414@janus> <20040902221722.GF23987@parcelfarce.linux.theplanet.co.uk> <20040902222650.GA5523@janus> <20040902223324.GG23987@parcelfarce.linux.theplanet.co.uk> <20040902225634.GA5756@janus> <41382EC0.8080309@hist.no> <4139045B.8080307@slaphack.com>
+From: "Raymond A. Meijer" <rmeijer@internet.gr>
+Subject: Re: Squid eating up all CPU
+Date: Wed, 8 Sep 2004 13:19:10 +0300
+Message-ID: <200409081319.13313.rmeijer@internet.gr>
+References: <200409071528.06971.rmeijer@internet.gr> <200409071650.46311.rmeijer@internet.gr> <20040907150347.GD6294@backtop.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <4139045B.8080307@slaphack.com>
+Return-path: <reiserfs-list-return-21627-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <20040907150347.GD6294@backtop.namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Masover <ninja@slaphack.com>
-Cc: Frank van Maarseveen <frankvm@xs4all.nl>, viro@parcelfarce.linux.theplanet.co.uk, Dave Kleikamp <shaggy@austin.ibm.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-David Masover wrote:
+On Tue 7 September 2004 18:03, Alex Zarochentsev wrote:
 
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
->
-> Helge Hafting wrote:
-> [...]
-> | You don't need kernel support for cd'ing into fs images.
-> | You need a shell (or GUI app) that:
-> | 1. notices that user tries to CD into a file, not a directory
-> | 2. Attempts fs type detection and do a loop mount.
-> | 3. Give error message if it wasn't a supported fs image.
->
-> You can argue this about FS plugins, too.  You don't need kernel support
-> for cryptocompress, for example.  Just have a fifo farm.  Every file
-> that has compression turned on is actually a named pipe, the original
-> file is hidden (starts with a dot), and you have a script running to
-> each fifo which runs zcat.
+> > Apparently the QFA continued to do this even after closing both its
+> > window and Firefox, without any relevant processes showing up with ps..?!
 
-Eww.  A shell/filemanager supporting fs images is one running program.
-The fifo farm is one per file.  Ouch.
+> there should be the QFA process, I think.
 
->
-> The kernel support (read: interface) is just cleaner in some ways.
->
-> In the loop mount example, it isn't universal -- the user can't CD into
-> a file if they use the wrong shell, and two different shells might make
-> two different mounts.  How many mounts before we run out of loop devices?
+I thought so too, but I really couldn't find anything with ps, netstat or 
+lsof...
 
-This limitation apply to the kernel interface too.  But you can 
-configure for an
-arbitrary number of loop mounts anyway. The user will have to mount
-using the correct tool - after that the door is opened for anything.
+Anyway, I don't think the problem's with Reiser4, but rather with QFA or 
+Squid. I'll try to reproduce it later.
 
->
-> In the cryptocompress example, there's no caching or compress-on-flush
-> optimization, and it isn't entirely transparent to anything.  It doesn't
-> look like a file, it looks like a fifo.  ls will make it look yellow. 
+On topic: my machine crashed hard several hours ago because its UPS suddenly 
+died. I'm happy to report that my file systems didn't have a single error at 
+all! (I rebooted with "init=/bin/bash" to check them before mounting them)
 
 
-Even the kernel supported "cd into fs images" has problems.  How should
-the kernel know which files you want to support with mounting, and which
-ones are the wast majority of plain files?   A file manager doesn't
-have to do this fully automatic, it can have a button/hotkey for "loop 
-mount this".
-So the user will have to tell it what to do, but in a much easier way
-than typing "mount -o loop . . . "  The file manager can also ask for
-encryption keys - something the kernel cannot do because it doesn't
-know what user interface(s) is in use by the process that attempts the "cd".
-There may be one interface (stdin, X) there may be both, i.e. something
-started from an xterm can use both, there may be none, (the 
-web/ftp/file-server
-got a request for something inside a encrypted fs image.)
+Thanks,
 
-And even if the kernel can figure out the correct user interface, do we
-want it to contain an X client for asking for keys? :-/
-
-Helge Hafting
-
+Ray
