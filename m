@@ -1,56 +1,91 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary additional namespace to ReiserFS
-Date: Thu, 29 Apr 2004 13:35:14 +0200
-Message-ID: <200404291335.14711.christian.mayrhuber@gmx.net>
-References: <1082750045.12989.199.camel@watt.suse.com> <20040428094435.GE29226@nysv.org> <1083156321.30344.162.camel@watt.suse.com>
-Mime-Version: 1.0
+From: Boyd Waters <bwaters+mac@aoc.nrao.edu>
+Subject: Re: metas Permission Denied
+Date: Thu, 29 Apr 2004 09:02:25 -0600
+Message-ID: <39CF0546-99EE-11D8-8CFE-000A95C88606@aoc.nrao.edu>
+References: <E38393BE-9950-11D8-B39A-000A95C88606@aoc.nrao.edu> <16528.46352.173184.528623@laputa.namesys.com>
+Mime-Version: 1.0 (Apple Message framework v613)
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18281-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18282-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1083156321.30344.162.camel@watt.suse.com>
-Content-Disposition: inline
+In-Reply-To: <16528.46352.173184.528623@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list <reiserfs-list@namesys.com>
 
-On Wednesday 28 April 2004 14:45, you wrote:
-> On Wed, 2004-04-28 at 05:44, Markus TXrnqvist wrote:
-> > On Wed, Apr 28, 2004 at 10:22:36AM +0200, Christian Mayrhuber wrote:
-> > >I wonder if Novell/SuSE would take over full Reiserfs3 maintainership as
-> > >namesys is now concentrating on the next big step: Reiser4.
-> >
-> > This would be an EXCELLENT idea; something that a SuSEist should take
-> > seriously if reading this list.
+
+On Apr 29, 2004, at 1:56 AM, Nikita Danilov wrote:
+
+> Boyd Waters writes:
+>> Perhaps this is obvious, but why am I getting "Permission Denied"
+>> errors on the "metas" pseudo for some -- but not all -- of the files 
+>> on
+>> a reiser4 volume?
+>>
+>> (doing this as root)
 >
-> SUSE has been a major reiserfs v3 contributor for a long time, in code,
-> testing and userbase.  My goal here is not to change our working
-> relationship with namesys, only to convince Hans that he needs to
-> rethink the way v3 has been maintained.
-Good Luck!
-Hans seems to fear xattrs like the devil fears holy water.
+> Can you provide more details?
 
-The additional unnecessary namespace is not needed by users, but acl's
-are - at least for the ones operating a samba server.
+Sorry, I know I was not very specific, but I thought perhaps there was 
+a quick obvious answer.
 
-The Reiserfs stabilization process lasted till midlife of 2.4. With that
-experience in mind Reiser4 will be a NO-NO for server usage till kernel 
-2.8.1x. If there are no acl's available for Reiserfs its server users will 
-turn their tide towards a fs that has data=ordered + acl support.
-The only linux filesystem that has both features is ext3.
-I prefer reiserfs over ext3 for server usage, mostly because it can do online 
-growing which is  a valueable feature in the combination with lvm. The only 
-other linux filesystem able to do that is xfs.
-Data integrity trough data=ordered + acl's + online growing would make 
-Reiserfs the best enterprise fs available for Linux, at least until Reiser4 
-is stable enough.
+Here is a simple case: a directory that holds three files; I can see 
+the metas dir on one of the files and not on another one.
 
-Due to the great work of Namesys and SuSE engineers Reiserfs has developed 
-that far, denying features that make sense and that are an implementation of 
-an accepted interface in the linux vfs layer, is just sad.
+It's like this all over this file system. I cannot predict which files 
+will let me look at their "metas" pseudo. All directories seem to 
+support the metas pseudo consistently.
 
--- 
-lg, Chris
+
+
+> lurch __ # ls backup/
+> backup.sh*  fsplit*  fsplit.c
+
+> lurch __ # ls backup/fsplit.c/metas
+> ls: backup/fsplit.c/metas: Permission denied
+
+> lurch __ # ls backup/fsplit/metas
+> bmap  items  locality  nlink  pagecache/  pseudo   rwx   uid
+> gid   key    new       oid    plugin/     readdir  size
+
+> lurch __ # file backup/fsplit.c
+> backup/fsplit.c: ASCII C program text
+
+> lurch __ # stat backup/fsplit.c
+>   File: `backup/fsplit.c'
+>   Size: 4794            Blocks: 10         IO Block: 65536  regular 
+> file
+> Device: 701h/1793d      Inode: 265994      Links: 1
+> Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    
+> root)
+> Access: 2004-04-29 08:57:56.765859214 -0600
+> Modify: 2004-01-19 15:04:51.000000000 -0700
+> Change: 2004-04-23 00:16:43.922694256 -0600
+
+> lurch __ # file backup/fsplit
+> backup/fsplit: ELF 32-bit LSB executable, Intel 80386, version 1 
+> (SYSV), for GNU/Linux 2.4.1, dynamically linked (uses shared libs), 
+> not stripped
+
+> lurch __ # stat backup/fsplit
+>   File: `backup/fsplit'
+>   Size: 11191           Blocks: 22         IO Block: 65536  regular 
+> file
+> Device: 701h/1793d      Inode: 265992      Links: 1
+> Access: (0755/-rwxr-xr-x)  Uid: (    0/    root)   Gid: (    0/    
+> root)
+> Access: 2004-04-29 08:58:05.118418514 -0600
+> Modify: 2004-01-19 15:05:16.000000000 -0700
+> Change: 2004-04-23 00:16:43.915696302 -0600
+
+
+> # uname -a
+> Linux lurch 2.6.5-Redeiser4 #3 Fri Apr 23 17:55:28 MDT 2004 i686 AMD 
+> Duron(tm) Processor AuthenticAMD GNU/Linux
+
+using Redeeman's patches.
+
+~ boyd
 
