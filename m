@@ -1,67 +1,70 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: fsck.reiser4 can't fix 1 fixable corruption
-Date: Wed, 28 Apr 2004 13:09:37 +0400
-Message-ID: <200404281309.37465.vitaly@namesys.com>
-References: <200404201733.51809.rmeijer@internet.gr> <20040423012224.GA18666@raptus.homelinux.org> <408BE7FE.3040602@namesys.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: "Metas"
+Date: Wed, 28 Apr 2004 12:32:08 +0300
+Message-ID: <20040428093208.GD29226@nysv.org>
+References: <200404280506.i3S56jXb022934@sirius.cs.pdx.edu> <87d65sbnrr.fsf@uhoreg.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18267-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18268-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <408BE7FE.3040602@namesys.com>
 Content-Disposition: inline
+In-Reply-To: <87d65sbnrr.fsf@uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>, Domenico Andreoli <cavok@tiscali.it>
+Content-Transfer-Encoding: 7bit
+To: Hubert Chan <hubert@uhoreg.ca>
 Cc: reiserfs-list@namesys.com
 
-On Sunday 25 April 2004 20:31, Hans Reiser wrote:
-> Domenico Andreoli wrote:
-> >On Thu, Apr 22, 2004 at 11:30:52AM -0700, Hans Reiser wrote:
-> >>Domenico Andreoli wrote:
-> >>>how hard is to have reiser4 support built in grub?
-> >>
-> >>Yury told me it was done....  Yury....
-> >
-> >FYI, i had to enable also libaal memomry manager (configure option
-> >--enable-memory-manager) to build the right stand alone library for grub
-> >reiser4 stage1.5, without it linker complains on missing malloc and free.
-> >
-> >updated libaal and reiser4progs packages together with a reiser4 enabled
-> >grub package are available at http://people.debian.org/~cavok/reiser4/.
-> >
-> >hmmm... btw, i've never been able to use a stage1.5, any hint?
-> >
-> >cheers
-> >domenico
-> >
-> >-----[ Domenico Andreoli, aka cavok
-> > --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
-> >   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
->
-> Vitaly, please install your system using grub, write down every step as
-> you do it, and create a web page.  Hint: try to eliminate the need for
-> reading your instructions.  I would like to see your instructions
-> consist of:
->
-> 1: install grub by doing XXX
->
-> 2: install reiser4 by doing YYY
->
-> Use grub normally and it works.
+On Wed, Apr 28, 2004 at 02:49:12AM -0400, Hubert Chan wrote:
+>/foo/bar into, say, /proc/metas/foo/bar.  What Markus is talking about
+>is having a file called, say /proc/fs/reiser4/metas, and if you cat
+>that file, it will spit out the name of the metas directory.
 
-ok, I will.
+Yes, were it for the current directory (/sys always changing its contents)
+or one global name.
 
-> I haven't followed the details of your conversation with Domenico, but
-> it looks way more complicated for him than it should be.  Please fix.
+The current directory mv-supporting thing is like death itself and should
+not be implemented. Nor should mv support be implemented without sys
+support because then people may forget their metadata directory name
+without any chance of looking it up, except for maybe something in debugfs
+or somewhere, which is not implemented afaik.
 
-Probably this is complicated due to some bug, probably in progs. 
-Although if I understand correctly grub works for Domenico without 
-stage1_5, right?
+Consider how much work this would be due to bickering.
+
+>I don't like it because I think that Reiser4 should be consistent.
+
+I agree.
+
+>Making users look up the name from /proc/fs/reiser4/metas I think is a
+>lot worse than making them use a long name for the metas directory.  And
+
+Mmmmyeah, but I don't think having the directory name exported in 
+something like that is a bad idea per-se, as long as it exports a
+global, static name. If we have a situation where different people
+use different names. Which will happen if we have a clashing ./metas/
+directory.
+
+>Yet another option is to standardize on a long, extremely unlikely to
+>clash name as the standard way to access the metadata (maybe something
+>like "sys.metadata"), and define a short name, which is probably defined
+>at compile time, which can be looked up through something like
+>/proc/fs/reiser4/metas_abbrev.  That way, users (and scripts) get a
+>consistent interface, but if they want to save typing, they can look up
+>the short name.
+
+And the abbreviation would never conflict, because when a process tries
+to write to the abbreviated name, the file system realizes this and
+goes "oh shit, I must make way to tar xf, *poof*"?
+
+Incredible amounts of work again in vain.
+
+Besides, length has little to do with it. Consider ..metas. It's not
+long but what are the odds of accidental clashing?
+
+Just my two cents, which I seem to contribute over and over again ;)
 
 -- 
-Thanks,
-Vitaly Fertman
+mjt
 
