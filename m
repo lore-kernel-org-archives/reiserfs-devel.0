@@ -1,66 +1,65 @@
-From: Melis van den Brink <m.vd.brink@worldonline.nl>
-Subject: Corrupted reiserfs filesystem: please help to solve this ?
-Date: Wed, 18 Aug 2004 17:06:07 +0200
-Message-ID: <200408181706.07347.m.vd.brink@worldonline.nl>
-Reply-To: m.vd.brink@worldonline.nl
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: ReiserFS and Reiser4 on AMD64?
+Date: Wed, 18 Aug 2004 11:47:55 -0400
+Message-ID: <41237A2B.4080607@suse.com>
+References: <20040818152342.4be1c0ef.lists@mjh.name>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20378-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20380-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <20040818152342.4be1c0ef.lists@mjh.name>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?Milan_Holz=E4pfel?= <lists@mjh.name>
+Cc: reiserfs-list@namesys.com
 
-Dear reiserfs-list readers,
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-I'm following this list for a few years mostly in "lurker"-mode just to see 
-what happens with reiserfs. I've been using reiserfs (version 3) for many 
-years now without much problems. Up until now... :-(.
-Last week I ran into diskspace problems and I decided to make a new volume 
-where I could place all my multimedia stuff (movies, audio and pictures). I 
-fdisk-ed a new disk and made few partitions. After that I used LVM 1.0.7 
-(pvcreate, vgcreate and lvcreate) to get me some logical volumes and used 
-mkreiserfs (version 3.6.10) to get a filesystem on it. All looked well and I 
-started moving my data to those new filesystems. Even this looked ok up until 
-I experienced a locked-up system. No way to shut it down in a nice way I was 
-forced to power-down and power-up and that's where the shit hitted the fan 
-:-(.
-Recovery of my older filesystems worked like a charm but the newly made stuff 
-was nowhere in sight. In hindsight the only thing I could think of I did 
-wrong in making the new filesystems was I forgot to reboot after fdisk-ing 
-the disk.
-It turned out that LVM couldn't find the newly created volume-group and the 
-logical volumes it contained. Subsequently neither could reiserfs find it's 
-(or rather my)  precious filesystems. Using vgcfgrestore I eventually could 
-recover the LVM-data so that at least LVM was consistent again. The 
-reiserfs-filesystems however I just can't seem to get them back. Using 
-reiserfsck in --check, --rebuild-sb, --fix-fixable or --rebuild-tree-mode 
-eventually turned out in the following message:
-        No reiserfs metadata found.  If you are sure that you had the reiserfs
-        on this partition,  then the start  of the partition  might be changed
-        or all data were wiped out. The start of the partition may get changed
-        by a partitioner  if you have used one.  Then you probably rebuilt the
-        superblock as there was no one.  Zero the block at 64K offset from the
-        start of the partition (a new super block you have just built) and try
-        to move the start of the partition a few cylinders aside  and check if
-        debugreiserfs /dev/xxx detects a reiserfs super block. If it does this
-        is likely to be the right super block version.
-        If this makes you nervous, try  www.namesys.com/support.html,  and for
-        $25 the author of fsck,  or a colleague  if he is out,  will  step you
-        through it all.
+Milan Holz=E4pfel wrote:
+| Hello,
+|
+| I would like know whether you can tell me some state of ReiserFS and
+| Reiser4 on AMD64.  I'm asking the the former because the gentoo docs say
+| that ReiserFS on AMD64 is not really stable so far ([1]) and the latter
+| because I have no idea of Reiser4's state on AMD64.  (but given that
+| there was some guy experimenting with Reiser4 on some Sparc 64 Bit
+| system and AMD64 is still a little endian system (isn't it?) I'd guess
+| that the chance of at least getting it to work would be rather good...)
+|
+| I'm asking because my new AMD64 hardware will shipped the next days and
+| I plan mainly using gentoo Linux in 64-Bit mode with ReiserFS (for a
+| "backup" system install) and Reiser4 (for the rest except backups and
+| personal data) as far as possible and advisable.
+|
+| Any hints are appreciated.
+| Thanks,
+| Milan
+|
+| [1]:
+<URL:http://www.gentoo.org/proj/en/base/amd64/technotes.xml?part=3D2&chap=
+=3D3#doc_chap3>
+|
 
-I tried some other suggestions in previous messages in this list, but always 
-came back to the above sequence of reiserfsck-commands.
+I'm not sure what "problems" gentoo users are seeing because they've
+never been reported to this list, but I have several AMD64 systems and I
+haven't seen any problems on them. Outside of the nebulous Gentoo
+"reiserfs is unstable on amd64" comments, I haven't heard of any
+problems either.
 
-Could anybody please help (suggestions, examples, other commands) with this 
-annoying problem ?
-I will happily supply other information (machine, kernel, versions, 
-filesystem-dumps) if needed.
--- 
-Regards,
+- -Jeff
 
-Melis van den Brink
+- --
+Jeff Mahoney
+SuSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iD8DBQFBI3orLPWxlyuTD7IRAi+9AJ0cdmf7owmHetwgMZ1NuGUsvIO0kwCeOWmI
+kGY2A1I9Trphr+EEvc/6Ylg=3D
+=3DLrYI
+-----END PGP SIGNATURE-----
