@@ -1,54 +1,107 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: journal-2018 trouble?
-Date: Tue, 25 Mar 2003 09:32:30 +0300
-Message-ID: <20030325093230.A32093@namesys.com>
-References: <200303242255.48998.gustavo@zacarias.com.ar>
+From: Yury Umanets <umka@namesys.com>
+Subject: Re: "Unformat" a ReiserFS partition : a testimony :-)
+Date: Tue, 25 Mar 2003 12:29:28 +0300
+Message-ID: <3E802178.7010802@namesys.com>
+References: <3E7F5E33.4020709@info.ucl.ac.be> <3E7F9FD1.7060801@namesys.com> <3E7FA75F.3000808@mb.tu-ilmenau.de> <3E7FB063.2010205@namesys.com> <3E7FB90E.7010408@mb.tu-ilmenau.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13368-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13369-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200303242255.48998.gustavo@zacarias.com.ar>
+In-Reply-To: <3E7FB90E.7010408@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Gustavo Zacarias <gustavo@zacarias.com.ar>
-Cc: reiserfs-list@namesys.com, grev@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-Hello!
+Manuel Krause wrote:
 
-On Mon, Mar 24, 2003 at 10:55:48PM -0300, Gustavo Zacarias wrote:
+> On 03/25/2003 02:26 AM, Yury Umanets wrote:
+>
+>> Manuel Krause wrote:
+>>
+>>> On 03/25/2003 01:16 AM, Yury Umanets wrote:
+>>>
+>>>> Nicolas Vanderavero wrote:
+>>>
+> [...]
+>
+>>>>
+>>>>> while reinstalling a Debian on a new hard drive, I made the 
+>>>>> mistake to format in reiserfs my good old /home which was on 
+>>>>> /dev/sda7 instead of formatting the new /dev/hda7. Gasp ! Eight 
+>>>>> gigabytes lost ...
+>>>>>
+>>>>> Or ... maybe it was not totally lost :-) I immediately made a dump 
+>>>>> of the partition with 'dd' and started grepping some known text on 
+>>>>> it. It seemed that no data was really lost. I didn't know what to 
+>>>>> do. So I read the man pages and found the reiserfsck command quite 
+>>>>> interesting :-)
+>>>>
+>>>>
+>>>> You have lost the super block and probably old root node. I said 
+>>>> "probably" because it might be not used in teh time you did format.
+>>>
+>>>
+>>> Can you be more clear on this? In which cases does SB get used? Or, 
+>>> how would this change Nicholas scenario in practical use? E.g. would 
+>>> a blank mount (just mount+umount) change the story so that the 
+>>> partition would not be recoverable? 
+>>
+>>
+>> I'm sure that usual mount+umount cannot do bad things like this. But 
+>> why did you ask me about that? I mean that Nicolas has explicitly 
+>> formatted 
+>
+>
+> No, sorry, for bothering again with my unclear questions.
+>
+> I meant mounts happening just after a mkreiserfs run in failure and
+> wanted to make sure for myself that they don't destroy more.
+> (Rest of the story: Acoustically a mount after mkreiserfs does MORE on
+> disk than a mount of a previously mounted fs. So I just only thought of
+> a first mount changing Nicholas' circumstances before successful 
+> recovery.) 
 
-> I'm getting loads of journal-2018 kernel messages when mounting a reiser 
-> filesystem from a lvm block device.
-> ---snip---
-> Mar 24 22:22:30 anubis kernel: reiserfs: checking transaction log (device 
-> 3a:00) ...
-> Mar 24 22:22:30 anubis kernel: journal-2018: Bad transaction length 7 
-> encountered, ignoring transaction
-> ---
+Probably you mean journal replaying in new filesystem on mount? If so, 
+then it is not big deal, due to journal is created empty.
 
-Argh, you have formatted your filesystem with some old fsck version that does not put
-correct journal information into superblock.
-So it thinks journal size is zero and rejects to replay any transactions.
-Hm, I wonder how that problem escaped our tests.
+>
+>
+>> his partition by means of using mkreiserfs. And I know that 
+>> mkreiserfs creates new super block at 16 block and also leaf for root 
+>> node, first bitmap and journal.
+>>
+>> As old bitmap is corrupted, --rebuild-tree -S will be apparently needed.
+>
+> [...]
+>
+>> So the plan is the following:
+>>
+>> (1) Backup your data.
+>> (2) Rebuild super block if it had some special like relocated journal.
+>> (3) Rebuild tree with partition scanning --rebuild-tree -S.
+>>
+>> This should reanimate your old partition but expect, that you will 
+>> found some of your data in the /lost+found directory.
+>
+> [...]
+>
+> Thank you, 
 
-> ---reiserfsck 3.6.5 snip---
-> reiserfs_open_journal: journal parameters from super block does not match to
-> journal parameters from journal.
-> Either make journal partition available or use --no-journal-available
-> If you have the standard journal or if your partition is available
-> and you specified it correctly, you must run rebuild-sb.
-> ---
-> 05-more-mount-checks
+You are wellcome.
 
-Please either do not apply this patch or follow the rebuild-sb advance (it will ask you
-if you want to update journal paremreters and you should agree).
+>
+>
+> Manuel
+>
+>
+>
 
-I will come up with the fix shortly.
-Also this have nothing to do with LVM
 
-Bye,
-    Oleg
+-- 
+Yury Umanets
+
+
