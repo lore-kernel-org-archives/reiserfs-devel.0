@@ -1,37 +1,39 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: new v3 2.6.4  logging/xattr patches
-Date: Fri, 19 Mar 2004 10:21:56 -0500
-Message-ID: <1079709715.11057.150.camel@watt.suse.com>
-References: <1079679539.11055.101.camel@watt.suse.com>
-	 <405AA885.3030000@namesys.com>  <1079705006.11062.134.camel@watt.suse.com>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: secure delete?
+Date: Fri, 19 Mar 2004 11:04:01 -0500
+Sender: news <news@sea.gmane.org>
+Message-ID: <87u10k4ydq.fsf@uhoreg.ca>
+References: <1079691239.5767.7.camel@pear.st-and.ac.uk> <405AD31A.7070304@mweb.co.za>
+ <20040319110748.GA30491@chihiro.cern.ch> <405AD9B5.80102@namesys.com>
+ <1079697068.5812.13.camel@pear.st-and.ac.uk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17324-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17325-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1079705006.11062.134.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Fri, 2004-03-19 at 09:03, Chris Mason wrote:
-> On Fri, 2004-03-19 at 03:00, Hans Reiser wrote:
-> > Chris Mason wrote:
-> > 
-> > >Hello everyone,
-> > >
-> > >I've just uploaded all the reiserfs patches from the suse 2.6 kernel to:
-> > >
-> > >ftp.suse.com/pub/people/mason/patches/data-logging/experimental/2.6.4
-> > >
-> > >(they should also apply to 2.6.5-rc1 and 2.6.5-rc1-mm2)
+>>>>> "Peter" == Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk> writes:
 
-Since 2.6.5-rc1-mm2 includes some of these patches, I've put a series.mm
-file in the ftp directory to tell you which ones are needed when you
-want to apply to Andrew's tree.
+Peter> On Fri, 2004-03-19 at 11:29, Hans Reiser wrote:
+>> Encrypt everything is what will work best.
 
--chris
+Peter> I guess you would have to use an encrypted swap area as well,
+Peter> right?  Would the performance be ok for that? Peter
 
+If you have any sensitive information, then encrypted swap is a good
+idea.  I'm using encrypted swap, and I'm not experiencing any noticeable
+performance hits.  But I have sufficient RAM (374MB) so it doesn't swap
+often.  If your machine swaps a lot, I would assume that performance
+would be bad (but it's probably already bad if you swap a lot).
+
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
