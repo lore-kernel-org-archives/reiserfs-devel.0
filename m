@@ -1,110 +1,76 @@
 From: Alex Zarochentsev <zam@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Sun, 29 Aug 2004 15:17:12 +0400
-Message-ID: <20040829111711.GI5108@backtop.namesys.com>
-References: <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <1093527307.11694.23.camel@leto.cs.pocnet.net> <20040826134034.GA1470@lst.de> <1093528683.11694.36.camel@leto.cs.pocnet.net> <412E786E.5080608@namesys.com> <16687.9051.311225.697109@thebsh.namesys.com> <412F7A59.8060508@namesys.com> <16687.33718.571411.76990@thebsh.namesys.com>
+Date: Sun, 29 Aug 2004 15:42:26 +0400
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040829114226.GJ5108@backtop.namesys.com>
+References: <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <1093527307.11694.23.camel@leto.cs.pocnet.net> <20040826134034.GA1470@lst.de> <1093528683.11694.36.camel@leto.cs.pocnet.net> <412E786E.5080608@namesys.com> <16687.9051.311225.697109@thebsh.namesys.com> <412F7A59.8060508@namesys.com> <1093645747.17445.19.camel@voyager.localdomain>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21047-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <16687.33718.571411.76990@thebsh.namesys.com>
+In-Reply-To: <1093645747.17445.19.camel@voyager.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nikita Danilov <nikita@clusterfs.com>
-Cc: Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Steve Bergman <steve@rueb.com>
+Cc: Hans Reiser <reiser@namesys.com>, Nikita Danilov <nikita@clusterfs.com>, Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs <reiserfs-list@namesys.com>
 
-On Fri, Aug 27, 2004 at 10:55:50PM +0400, Nikita Danilov wrote:
-> Hans Reiser writes:
->  > Nikita Danilov wrote:
->  > 
->  > >Hans Reiser writes:
->  > > > Christophe Saout wrote:
->  > > > 
->  > > > >
->  > > > >
->  > > > >I don't know, ask Hans. How could the VFS know it a filesystem wants to
->  > > > >do something specific with a file that is completely transparent to the
->  > > > >VFS?
->  > > > >
->  > > > >  
->  > > > >
->  > > > To know what method to use, you must determine the pluginid, and then 
->  > > > find the method within that plugin for that vfs operation.
->  > > > 
->  > > > As for overhead, well, who eats whose dust in the benchmarks....?
->  > >
->  > >Whoever sponsors the benchmark usually wins. Had you forgotten that
->  > >mongo setup used by http://www.namesys.com/benchmarks.html was specially
->  > >`tuned' to reach peak reiser4 performance? Remember why you decided to
->  > >turn OVERWRITE and MODIFY phases off? People on #reiser4 report 90
->  > >_second_ stalls with reiser4 under high io loads (large atom is
->  > >obviously being flushed and everyone waits on it...). In my opinion, it
->  > >is such things that are of utmost importance for real reiser4
->  > >acceptance, not how to name `metas' sub-directory.
->  > >
->  > >Nikita.
->  > >
->  > >
->  > >  
->  > >
->  > If you ask real users, they say that reiser4 is fast, and their 
->  > experience matches our benchmark.  You can criticize the benchmark if 
+On Fri, Aug 27, 2004 at 05:29:07PM -0500, Steve Bergman wrote:
+> On Fri, 2004-08-27 at 11:15 -0700, Hans Reiser wrote:
+> > >
+> > If you ask real users, they say that reiser4 is fast, and their 
+> > experience matches our benchmark.  You can criticize the benchmark if 
+> > you want, but then you should run your own and publish it.
+> > 
 > 
-> They experience 90 second stalls. And please, do not tell me how fast
-> reiser4 is, I spent a lot of time working with it, and I know very well
-> when it's fast, and when it's deadly slow.
 > 
->  > you want, but then you should run your own and publish it.
+> As a "real" desktop user who just converted all his partitions from ext3
+> to reiser4, I have not, as yet, noticed any startling performance
+> increase.  Being slightly slightly irked to hear that the benchmark
+> numbers that have been paraded around on Slashdot and the internet in
+> general, at ext3's expense, have had reiser4's "bad" results surgically
+> extracted, I am running my own benchmarks to get the real story on
+> reiser4/ext3 mongo performance on my, rather average, desktop hardware.
 > 
-> I did, after which you told me to turn OVERWRITE and MODIFY phases off,
-> beause performance was horrible.
-
-Hmm, I think not the modify/overwrite phases performance were the problem.  The
-modify and overwrite mongo phases fragment the filesystem too much, it had a
-bad effect visible in the read phase and even in delete phase.  
-
-We measured/optimized read performance  in assumption that fs is not
-fragmented, why we should measure bad effect of overwrite instead?  
-
-other fs do not relocate already allocated blocks, negative effect of 
-file set overwrite is zero for them.  We could do the same for reiser4
-by tuning flush algorithm and journal blocks allocation.
-
-If users want to see read and delete performance as they are, overwrite phase
-should be excluded, at least until we teach flush algorithm to not break good
-block allocation.
-
-If one wants to measure overwite performance, it is easy to enable overwrite
-phase in mongo, but read and delete speed will be affected (it was so when I
-tried to optimize delete).
-
-> I not criticizing mongo benchmark per se. I think that it is
-> fundamentally wrong to use results that were deliberatly manipulated to
-> get best appearance to reiser4 (by omitting work-loads where it performs
-> poorly) as an argument. It's not clear who will, according to your
-> colorful expression, `eat dust' as a result of this. 
-> Or do you think
-> that users never overwrite of modify files in real life?
-
-not whole file set.  I mean it is unusual to overwrite all files in the fs.
-
->  > The 90 second stalls, those should be fixed by debugging copy on capture 
->  > and turning it on, yes?  You can hardly claim I failed to push for the 
+> I am using the latest Mongo on FC/rawhide and the 2.6.8.1-mm4 kernel.
 > 
-> No. I described so many times to you, why COC is ineffectual here.
-
-There are other ideas :) but, it seems to me, if we will focus on benchmarks,
-we never complete plugins, metafiles and other useful things.  What I want
-from reiser4 is a possiblity to encrypt and compress ~/Mail/ :).
-
+> Unfortunately, I get an error from mongo.pl that "Done" is not a numeric
+> argument at line 439.
 > 
->  > Hans
+> I have done this to fix it:
 > 
-> Nikita.
+> 
+> --- mongo.pl    2004-08-27 17:07:01.681723313 -0500
+> +++ mongo_fixed.pl      2004-08-27 17:06:51.369306735 -0500
+> @@ -429,8 +429,8 @@
+>         if ( -e ${ERR_FILE}) {
+>             &DIE ("\nEXITED WITH FAIL\n");
+>         }
+> -       my $real = (split ' ', $time_output[0])[1];
+> -       my $cpu  = (split ' ', $time_output[2])[1];
+> +       my $real = (split ' ', $time_output[1])[1];
+> +       my $cpu  = (split ' ', $time_output[3])[1];
+>   
+>         unless ( $real =~ /\s*\d+/ && $cpu =~ /\s*\d+/) {
+>           LOG "@time_output";
+> 
+> 
+> What it gets me is the "real" line of the "time" output for "STAT
+> REAL_TIME" and the "sys" line of the "time" output for "STAT CPU_TIME".
+> i.e. only system time is counted. I believe this was the intent of the
+> original code, but want to verify before continuing.
+
+it works on our test servers which are SuSE9.0/9.1.
+
+I think there is a dependency on system utilities,  "Done" is not printed by
+mongo.pl or any other program from the mongo package.
+
+It would be nice to tell us what linux distro you are using and what mongo
+phase fails. 
+
+> Thanks,
+> Steve Bergman
+
+Thanks.
 
 -- 
 Alex.
