@@ -1,38 +1,35 @@
-From: Domenico Andreoli <cavok@libero.it>
-Subject: libaal & libreiser4 sonames
-Date: Tue, 23 Dec 2003 13:08:07 +0100
-Message-ID: <3FE83027.4090008@libero.it>
+From: Viktors Rotanovs <Viktors@Rotanovs.com>
+Subject: Re: reiser4 snapshot
+Date: Tue, 23 Dec 2003 14:22:12 +0200
+Message-ID: <3FE83374.8070803@Rotanovs.com>
+References: <16360.8933.883691.281877@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16390-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16391-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <16360.8933.883691.281877@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+To: Reiserfs-List@Namesys.COM
 
-hi,
+Nikita Danilov wrote:
 
-i just built libaal and libreiser4 from 2003.12.23 snapshot.
+>new reiser4 snapshot (for 2.6.0) is available at the
+>http://www.namesys.com/snapshots/2003.12.23/
+>See READ.ME file there for more instructions.
+>  
+>
+What areas are still not ready for production?
+How risky it would be to put, say, 20000 e-mail users (cyrus imap and 
+nothing else) on reiser4 partition?
+Reiser4 works very very well on my desktop pc, so I'm eager to try it on 
+something bigger.
 
-i see that now the sonames include the full version of the libraries, 
-making their upgrade somewhat more tricky in package and distribution 
-contexts.
+Also, does lack of sendfile in the current snapshot mean that Apache 
+will lose in performance when serving from Reiser4 partition?
 
-which is the plan to manage changes of the library interfaces? you use 
-both -version-info and -release libtool params, how do you update them?
-
-actually this matter has little relevance but in future, when more 
-software will use these libraries, you won't surely want to break anything 
-only because you released a fix update and changed the version (and hence 
-the soname) of the shared library, will you?
-
-cheers
-domenico
-
------[ Domenico Andreoli, aka cavok
---[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
-   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
-
+Best Wishes,
+Viktors
