@@ -1,84 +1,39 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Mount and file system size issue
-Date: Fri, 7 Jun 2002 20:02:20 +0400
-Message-ID: <20020607200220.A1657@namesys.com>
-References: <8287102CFE5C31418556A13A4E5BEE91E95A77@sphynx.git.compgen.com> <3CFFB2CA.6020300@namesys.com> <001201c20d9e$73e5d070$5701a8c0@bomoon> <20020607112121.C12869@namesys.com> <000801c20e3a$df840b20$5701a8c0@bomoon>
+From: Jan Kara <jack@ucw.cz>
+Subject: Re: Quota and reiserfs status
+Date: Fri, 7 Jun 2002 18:20:10 +0200
+Message-ID: <20020607162010.GI27843@atrey.karlin.mff.cuni.cz>
+References: <3D00B880.E3A7B770@cri74.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10673-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10674-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <000801c20e3a$df840b20$5701a8c0@bomoon>
+In-Reply-To: <3D00B880.E3A7B770@cri74.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bo <bo@sosnetwork.net>
-Cc: reiserfs-list@namesys.com
+To: Fabien Salvi <fabien@cri74.org>
+Cc: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-Hello!
+  Hello,
+  
+> I've tried some tests with quota using reiserfs filesystems.
+> It works very well...
+> 
+> I have attached a very little documentation (2 ascii texts) about simple
+> configuration.
+> Hope it can help somebody.
+  The text is nice :)
+  
+> I have one question :
+> Now, you must patch linux kernel to have quota with reiserfs enabled.
+> 
+> Is it provided to the near future, or maybe not before the next stable
+> release of lk ?
+  Currently VFS side of the patches is in 2.5 kernel and I
+suppose Chris will commit Reiserfs part soon. I plan to backport patches
+from 2.5 kernel to 2.4 (but it's not certain Marcello will agree with it
+and I'm also not sure about Reiserfs part of the patches).
 
-   reiserfs reading all of the bitmaps immediately and stick bitmaps in the RAM.
-   So if reading all of the bitmaps on 120G volume, that means
-   reading 960 4k sectors off the media (each 32M there is bitmap on disk).
-   That would eat at least 4 megabytes of RAM.
-   Actually if you can do a profiling to see what reiserfs does during mounting,
-   that would be interesting.
-   Also you have not answered what kind of media you are using.
-
-   ext2/3 read bitmap blocks on demand on the other side.
-
-Bye,
-    Oleg
-On Fri, Jun 07, 2002 at 08:49:13AM -0700, bo wrote:
-> It is our new product.
-> When I use ext2fs it mounts 120G filesystem successfully in about 3-4
-> seconds,
-> but I waited for about an hour with the REISERFS, never came back.
-> 
-> I know Linux 2.4.5 is far behind from the release. I want to know the reason
-> why
-> I have this MOUNTproblem for the big FS.
-> 
-> Thanks,
-> 
-> Bo
-> ----- Original Message -----
-> From: "Oleg Drokin" <green@namesys.com>
-> To: "bo" <bo@sosnetwork.net>
-> Cc: <reiserfs-list@namesys.com>
-> Sent: Friday, June 07, 2002 12:21 AM
-> Subject: Re: [reiserfs-list] Mount and file system size issue
-> 
-> 
-> > Hello!
-> >
-> > On Thu, Jun 06, 2002 at 02:09:31PM -0700, bo wrote:
-> >
-> > > I am running the ARM-Linux, which is based on Debian 2.4.5.
-> >
-> > 2.4.5 is way too outdated for purposes of using reiserfs.
-> >
-> > > I tried to make and mount the reiserfs on 20G size, it was OK.
-> > > However, for 120G size, it is OK to make the file system but
-> > > I can not mount it.
-> >
-> > What do you mean by "cannot mount"?
-> > What is the error message if you get one?
-> >
-> > > Most of time it never come back from "mount -reiserfs ".
-> >
-> > Ah, so it just mounts, but does very slow.
-> > BTW, how you get 120GB on your ARM system?
-> > Do you have IDE controller and HDD attached to it or is this something
-> > accessed over network?
-> >
-> > > Is it really a problem of Linux revision?
-> > > Should I upgrade my linux to 2.4.13 or above to make the REISERFS work?
-> >
-> > Upgrading to 2.4.18 is highly advisable.
-> >
-> > Bye,
-> >     Oleg
-> >
-> 
+								Honza
