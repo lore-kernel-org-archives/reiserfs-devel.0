@@ -1,45 +1,34 @@
-From: "David Dabbs" <david@dabbs.net>
-Subject: RE: Was able to reproduce "cp: cannot stat file.x: Input/output error"
-Date: Fri, 6 Aug 2004 01:53:39 -0500
-Message-ID: <20040806065705.E5A6515C76@mail03.powweb.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output error"
+Date: Fri, 6 Aug 2004 10:31:17 +0300
+Message-ID: <20040806073117.GD1284@nysv.org>
+References: <20040806045809.E195B15C9F@mail03.powweb.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20035-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20036-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: 
+Content-Disposition: inline
+In-Reply-To: <20040806045809.E195B15C9F@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: 'ReiserFS List' <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: David Dabbs <david@dabbs.net>
+Cc: 'ReiserFS List' <reiserfs-list@namesys.com>
 
+On Thu, Aug 05, 2004 at 11:54:38PM -0500, David Dabbs wrote:
+>
+>All the relevant info I could pull together is available at
+>http://dabbs.net/reiser4/stat_error_mongo.tar.bz2. Other than gathering this
+>info, I have left the system as is. Let me know if you need more info, for
+>me to poke around or run commands, retest, etc.
 
-This is definitely reproducible. I rebooted and reran the script. Same
-result at about the same point in the sequence (part way into first COPY
-iteration).
+I dunno if you have it there already, but the metadata of the filesystem
+is usually good to have included..
 
-Right now I'm running identical mongo config against reiserfs and it appears
-to be running just fine into the second copy iteration.
+My just-woke-up two cents :)
 
-Should someone from Namesys downloads the bzip tar I mentioned before here's
-a summary of the changes in my version of mongo:
-
-reiser_fract_tree.c
-- added extensions to generated filenames bay adding rnd to a base
-  char of backtick. Extensions generated should be in the range of 
-  'a' to 'a' + MAX_NAME_LEN.
-
-mongo.pl
-- added PHASE_MKDIRS
-  Makes directories on the target device from a static list.
-- added PHASE_MKFILES
-  Makes files on the target device from a static list.
-- added MAX_FNAME_LEN option
-  Allows me to use something different than a hard coded value of 6.
-  I ran it with 23.
-- Some extra LOG calls so I can see commands being executed.
-
-David
-
+-- 
+mjt
 
