@@ -1,37 +1,39 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: can't find a reiserfs file ssytem! 3.b
-Date: Thu, 18 Mar 2004 14:16:27 +0300
-Message-ID: <200403181416.27564.vitaly@namesys.com>
-References: <20040317145013.B6D3B3982E7@ws5-1.us4.outblaze.com>
+From: Domenico Andreoli <cavok@tiscali.it>
+Subject: Re: can't find a reiserfs file ssytem!
+Date: Thu, 18 Mar 2004 12:59:01 +0100
+Sender: Domenico Andreoli <cavok@libero.it>
+Message-ID: <20040318115900.GA19944@raptus.homelinux.org>
+References: <20040317004935.565332B2B57@ws5-7.us4.outblaze.com> <1079518225.2215.3.camel@tribesman.namesys.com> <200403171948.28885.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17293-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17294-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040317145013.B6D3B3982E7@ws5-1.us4.outblaze.com>
 Content-Disposition: inline
+In-Reply-To: <200403171948.28885.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: mite pascoff <ttl@linuxmail.org>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-> > what do you see in the syslog related to this mount failure?
->
-> This is what "says" syslog when I try to mount the 2GB image.file of the
-> problem partition: 
-> Mar 17 16:27:37 ttl kernel: reiserfs: checking transaction log (device 07:00) ... 
-> Mar 17 16:27:37 ttl kernel: reiserfs: journal-837: IO error during journal replay 
-> Mar 17 16:27:37 ttl kernel: Replay Failure, unable to mount 
-> Mar 17 16:27:37 ttl kernel: reiserfs_read_super: unable to initialize journal space
+On Wed, Mar 17, 2004 at 07:48:28PM +0100, Dieter N?tzel wrote:
+> E.g. when will we see 3.6.14 (even for RAID)?
+> 
 
-it looks like some hardware problem (bad block, cable, etc) on the partition where 
-you have this fat32.  reiserfsck just did not touch this block and evth was fine then.
+i'm also interested in a quick release of 3.6.14, if it has any important
+fix. debian is near to the freeze of new distribution and i'd like it
+had the most recent and hopefully fixed releases.
 
-please make the full copy first to a relable partition, to a block device itselt or to 
-a regular file.
+btw, we finally have reiser4progs in testing (aka the next debian
+distribution). as soon as kernel patch for reiser4 is accepted and
+reaches testing, debian will have a somewhat good (the best achievable
+until reiser4 gets merged in linus' tree) support for reiser4 in the
+hope of widen the testing user base :))
 
--- 
-Thanks,
-Vitaly Fertman
+thanks
+domenico
+
+-----[ Domenico Andreoli, aka cavok
+ --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
+   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
