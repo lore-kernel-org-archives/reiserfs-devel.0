@@ -1,20 +1,20 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: The situation at hand and in the future
-Date: Mon, 31 May 2004 16:15:57 -0500
-Message-ID: <40BBA08D.5000404@slaphack.com>
-References: <20040527200127.GS4990@nysv.org> <200405272105.i4RL5LDh026210@turing-police.cc.vt.edu> <40B6670D.9060408@slaphack.com> <20040528063324.GT4990@nysv.org> <40B89C9C.5050307@slaphack.com> <20040529154917.GW4990@nysv.org>            <40B919DF.3040408@slaphack.com> <200405311831.i4VIV1H7031045@turing-police.cc.vt.edu>
+Date: Mon, 31 May 2004 16:23:09 -0500
+Message-ID: <40BBA23D.7000109@slaphack.com>
+References: <20040527200127.GS4990@nysv.org> <200405272105.i4RL5LDh026210@turing-police.cc.vt.edu> <40B6670D.9060408@slaphack.com> <20040528063324.GT4990@nysv.org> <40B89C9C.5050307@slaphack.com> <873c5j0zm3.fsf@uhoreg.ca>            <40B91A65.2060302@slaphack.com> <200405311827.i4VIRdlS001316@turing-police.cc.vt.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18938-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18939-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200405311831.i4VIV1H7031045@turing-police.cc.vt.edu>
+In-Reply-To: <200405311827.i4VIRdlS001316@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Valdis.Kletnieks@vt.edu
-Cc: =?ISO-8859-1?Q?Markus=5FT=F6rnqvist?= <mjt@nysv.org>, reiserfs-list@namesys.com
+Cc: Hubert Chan <hubert@uhoreg.ca>, reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
@@ -22,34 +22,54 @@ Hash: SHA1
 
 
 Valdis.Kletnieks@vt.edu wrote:
-| On Sat, 29 May 2004 18:16:47 CDT, David Masover said:
+| On Sat, 29 May 2004 18:19:01 CDT, David Masover said:
 |
 |
-|>$ ln -s /tmp/foobar cipher
-|>
-|>Of course, the nice thing here is that at least 'ln' refuses to create a
-|>broken symlink, not sure about more low-level things.
-[...]
-| What did you mean by "broken" in that context?
+|>Files are not encrypted by default, so encrypted files should allow a
+|>passphrase to be checked by default.  In balancing security and
+|>convenience, make convenience the default.
+|
+|
+| Note that if 98% of the files on a file system are plaintext, then
+| somebody can infer quite a bit merely by knowing what 2% are
+| in fact encrypted.  If they're all encrypted, an attacker can't
+| leverage that knowledge.
 
-Exactly what you meant.  Not sure where I got that idea, though I didn't
-actaully test it.
+Fine, so some people will encrypt the entire filesystem, except perhaps
+the scripts necessary for entering the passphrase.  But then you're
+vulnerable because people can figure out exactly what size all of your
+files are, or at least what size they are when compressed...
+
+For most of us, well, I don't give a flying ... er, purple people eater
+... whether people know that my pgp key is encrypted, or my ssh keys, or
+a little folder called "secret".
+
+Also, I'm not sure how relevent it is today, but I know the Germans
+limited the length of an Enigma message, because a longer message means
+more redundancy.
+
+But back to the point.  No encryption by default.  My grandmother would
+wonder why  her computer is so slow, and if you told her it's so that
+the FBI can't read anything when they sieze her computer, she wouldn't
+be happy.  Except for the fact that my grandmother is a very patient
+woman, so she might not care that it's slow.  But my brother would, and
+he plays games, so...
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQLugjHgHNmZLgCUhAQINOw//b479rqnxQQHWvEkDHyOc9iE1Hq5+65c+
-A2TpcTzGyxUIrHr8FbqSLC0HIysLnu8+hL1JE6XG5awn1/2N6twkOhu2ff4cFevM
-84V1qI7luXwbHlhuge+RSIPCezkj+XoO35HCUbmdW70YPgpMezbEAZoYcXyMBuK7
-824hQ82nMibPIdC+6UmL114zaDVBnOs/VH+9yhhRq0fTFQxE6LL9eSbr57Ef0iDh
-wVcUs5UDwlh3+DuuFsG3YuuPlzOSYhGJynIQNARUllvmlhC7QRnAPpx3urly2jzH
-qqx4G6TgyZX/HVijZiyU+hnHmcC4WLpnXRRFDl3YsFsigENNc+jg+6ddvZLcxggw
-8h5rMNmCcUgKYYifDSaP5P9afALgMS2FL7mNT5U0wfkxFyZM+lvOqB1KBuhhyZgq
-QCkpMRxvpyNwwDSj5YngB/ZAzM3zZFto8PkXwyrgnC4+0nd2QNTyYe+Ot1FUdBeZ
-yOCVlQxEdGPaDY4JlFgws3+Z/gTaPEXKWCYI099ULJ05N+yKd9zoViwMYB9ID9+Z
-gCo+0sOsTwR/johGrBMoqQYYGhXkWzw2WuKYp2SpImzbmdJ3Vesdcy7zfE5JfvKD
-wapPly/25foVCKhuP6ODNG7tXT9Q/NIvPMEAlQa5cPMA+iiOwyZQwr3KiaBgxXcT
-y8bgfuqfgAY=
-=7HMS
+iQIVAwUBQLuiPXgHNmZLgCUhAQLeWQ/8DCs+jdS2OeKwbeDOqk8t6SnfOY9SMVpx
+uqHOgOMYupAL1gkKnXLLVz3JKK23OK/QXmbVRj54g6oX4vNDsAFonbQ5O6DHlDTP
+3uSBLFbYFKROIhIW4+DaSlsDBPPUdP0HSNQ+HvBVmhFQluNOcJHvuO+1QO2UBM54
+u53PjlEpgLRTTzYl9IjCAOHO/6Do62DOgjKa2l3b1pUob/BMXJd42lpaks5h0NS3
+PZPktA/EYEiTwCmPMIGAZW6skxu4P5CFx+YveTbn43bPQt1yVH+KTBqhphoMScwB
+sMpVR5FACBSHsS/xM3sZYMQUoV2jpRJZXL2ACdq7R7HiCmvykrtqW0xVPcuPnXMH
+7DUqHGaFt2j0QcdY2+pQ55KdpuiwR1Bhlf5q78QYOkbY0F5eD+wmBUvVZEJYrjfy
+oVLYihPs6m08qq5Q2yvkaqLPwQIzIynQzUdYC+BoV+scJkM8OMuzjc87vGNgHRs5
+tQa9uEWZn5kYRR6iaOaixhCrEeJMQCWxz0ppq1G5VxbX/Pf0SaCXPIt3HmjjajMn
+Vpk605Slln6b14hJ4pJfQogYV/CNcO+aKkCX5Wz42/qvlnx7XykQ1jSh18A5LE1c
+m8j85Glt8FbfwgalMLSVV6UV2G61IeJfU/6VblTkRDodW8UrFs574/kqg76V7hRC
+ALWqFagD0Cw=
+=wOXX
 -----END PGP SIGNATURE-----
