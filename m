@@ -1,73 +1,143 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Mon, 06 Sep 2004 13:53:13 -0500
+Date: Mon, 06 Sep 2004 14:14:59 -0500
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <413CB219.5030800@slaphack.com>
-References: <200409061814.i86IEcPJ005086@laptop11.inf.utfsm.cl>
+Message-ID: <413CB733.1040702@slaphack.com>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>	<Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>	<m3eklm9ain.fsf@zoo.weinigel.se> <20040905111743.GC26560@thundrix.ch>	<1215700165.20040905135749@tnonline.net>	<20040905115854.GH26560@thundrix.ch>	<1819110960.20040905143012@tnonline.net>	<20040906105018.GB28111@atrey.karlin.mff.cuni.cz>	<6010544610.20040906143222@tnonline.net>	<m3wtz7h2l6.fsf@zoo.weinigel.se>	<826067315.20040906171320@tnonline.net> <m3sm9vh06b.fsf@zoo.weinigel.se>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <200409061814.i86IEcPJ005086@laptop11.inf.utfsm.cl>
+In-Reply-To: <m3sm9vh06b.fsf@zoo.weinigel.se>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Spam <spam@tnonline.net>, Tonnerre <tonnerre@thundrix.ch>, Christer Weinigel <christer@weinigel.se>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Christer Weinigel <christer@weinigel.se>
+Cc: Spam <spam@tnonline.net>, Pavel Machek <pavel@suse.cz>, Tonnerre <tonnerre@thundrix.ch>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Horst von Brand wrote:
-| Spam <spam@tnonline.net> said:
-|
-| [...]
+Christer Weinigel wrote:
+| Spam <spam@tnonline.net> writes:
 |
 |
-|>  The problem with the userspace library is standardization. What
-|>  would be needed is a userspace library that has a extensible plugin
-|>  interface that is standardized. Otherwise we would need lots of
-|>  different libraries, and I seriously doubt that 1) this will happen
-|>  and 2) we get all Linux programs to be patched to use it.
+|>>When you add a new shared namespace, userspace must be taught about it
+|>>anyways.  So start with a userspace library, convince people to use
+|>>it, and when you know what people want, _then_ put it into the kernel
+|>>to increase performance or security.
+|>
+|>  Several aspects of this;
+|>
+|>  1) Programs will need to actually be coded against this shared
+|>  library which probably will be more advanced that just usning normal
+|>  file access code.
 |
 |
-| What is the difference with a kernel implementation? Not by being
-in-kernel
-| will it make all the incompatible ways of doing this magically vanish, and
-| give outstanding performance. Plus handling and maintaining the in-kernel
-| stuff is _much_ harder than userspace libraries.
+| Not at all.  As many others have already shown, trying to use files as
+| directories won't work since then you can't have named streams or
+| attributes for real directories.  What does foo/icon refer to when foo
 
-First of all, only the interface has to be in the kernel.  I haven't
-heard anyone suggest otherwise.
+Oh yes, you can.  That's what "metas" is for.  I wanted to call it ...
+| is a directory?  There must be some way of differentiating between
 
-Second, there are quite a few things which I might want to do, which can
-be done with this interface and without patching programs, but would
-require massive patches to userspace.  There have been numerous examples.
+When foo is a directory, foo/icon is a normal file.  But foo/metas/icon
+(or foo/.../icon if you like) is the metadata.
 
-There are some things which can't be solved without patching.  Version
-control is one such thing.  But then there can be more generic patches
-- -- as soon as the transaction API is done, you only have to patch apps
-to use that, and have a version control reiser4 plugin.
+This already works.  I can use it right now for file permissions:
 
-| I'd go the other way around: Get userspace to agree on a common framework,
-| make it work in userspace; if (extensive, hopefully) experience shows that
-| a pure userspace solution has issues that can't be solved except by kernel
-| assistance, so be it.
+echo 755 > /bin/bash/metas/rwx
+echo 755 > ./metas/rwx
 
-We already have such a framework -- it's called "VFS".
+| Besides, it will probably break a lot of security critical assumptions
+| in todays software.  What if you have a filter in your web server that
+| excludes executable files or files that end with .php, can you imagine
+| the mess if you could just open "foo.php/main-stream" instead?
+
+Why would you have a foo.php/main-stream?
+
+And what would be so hard about allowing read access to foo, but not
+access to foo's metas?  This is essentially the same as having mode 6 on
+a directory.
+
+[...]
+|>  Plugins were just another thing that could extend the functionality
+|>  of these streams and meta data. Reiser4 has a plugin architecture,
+|>  although not yet any run-time support for loading them. Is this so
+|>  bad that we have to prevent it?
+|
+|
+| Take an example: "expose a tar-file as streams below the file" which
+| as been suggested here is IMNSHO plain silly.  I'm not saying anything
+| about mounting a tar file via userfs somewhere else in the file
+| system, that is quite ok, but trying to mount it on top of the same
+| file which suddenly and automagically turns into a sort-of-directory
+| breaks too many thing.  Let your file manager do the choice instead,
+
+What things?  It's just dangerously different thinking.  I don't see it
+breaking anything on my system right now.  If anything, the nvidia
+binary drivers are a bigger issue...
+
+| based on the users preferences.  For example, with a tar.gz-file, I'd
+| like to have a choice of "open file as a seekable file" which would
+| do:
+|
+|     mount -t userfs -o driver=gunzip foo.tar.gz /tmp/xyzzy
+|
+| Then I can work with /tmp/xyzzy as a normal file (maybe even with
+| write access if the userfs driver can handle this).  Another choice in
+| the same file manager would be "open file as a directory" which would
+| mount the same file in _another place_ as a directory, and I can even
+| have different views of the same file mounted at the same time.  With
+| the named streams junk that have been suggested here, having two
+| different views would be impossible.
+|
+| Sure, we could say that we add another level of indirection to the
+| named streams, so that we specify the driver as the first component of
+| te magic file-as-directory, i.e. foo.tar.gz/ungzipped would refer to
+| the ungzipped stream and foo.tar.gz/ungzipped-and-untarred would show
+| the tar file as a directory, but really, this isn't any more useful
+| than doing a userfs mount.  The userfs mount does not break existing
+
+Yes, it is more useful than doing a userfs mount.  The userfs mount has
+to be done manually or by a file manager.  I do not use a file manager.
+~ I am not alone here.  Unless you're going to have the entire FS mounted
+userfs and have that be the file manager, which wouldn't be nearly as
+fast as plugins.
+
+I've heard autofs mentioned -- which only works on specific files which
+it's been preconfigured for.  Not good here.
+
+| semantics (anymore than mount -o loop does today), and it will work
+| with the existing infrastructure in the linux kernel.  The only
+
+That's true -- it's easier to implement if you ignore the number of apps
+which need patching.
+
+There's also the fact that most people here won't be patching apps,
+they'll just be breathing a sigh of relief that they didn't have to
+patch the kernel.
+
+Just because someone else has to do it doesn't make it any less work.
+
+| advantage of files-as-directories with magic plugins in the kernel is
+| that one can look at it and say "look, how neat, the filenames look
+| almost the same".
+
+And this is a usability issue.  Not all newbies use Nautilus.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQTyyGXgHNmZLgCUhAQLUeQ/8D3tWL9l/zQeGylpVbOe6SkcSPOOmlIFR
-tcjh0y1Y4ET17ATFKbKbzQYYDgd49AqU/gZnro27jYun3Yi6U0fWGGQFfi1A9O5E
-gSCmsjSWjfDfx4gu3EU1x0Bhkd6Mo8GCrC7L5gj5C+L4c5ZAnffeGloF8nM4hCex
-Wsb0PgOSxXuoQcd2EELVEXYdq0RCnxrmuszl1B2SE6w1ImONWMoXJ9fDGDf0aIUu
-rwrrZnlH4zp0bQ0dXDGXqUYYT5h5DAhbh96IWLrPbWMB0vLBqIP+95P2/vTHb7EL
-RwVKBV1UuuZ2ANPbImoIuxHWF+PCx/HwFs/mUolw0D2Yn3u2HgmPVFemyPnlCfeX
-yGPhJgnieRuGntgUZcfbqk7ZO3y0y5eRDq6N4eMHMlWYV9LC5kyP7OxcQ8SAF8P6
-Sk4iylYN1AMiy5Bp9odScauST0NT9CLmi1Ps0DYwgVN1H+ldS1l+4ITokb1Ex1+4
-ZLq1HhPNaYYWoA4VPuwxl0XrB4wGrMbOt1w4+TNM3AG9MvzqTGgSrh2rXfXkPHGZ
-7LNHuinRyJt3dcF0vPS4WHG6FtVsO8XVPaY55tYQIYZEBtZl3mattBb9gM3WDJmw
-M/pxbAQTDZHloR9/7TGEF8gD3AjPBexTfvojqVHK2VvRu4/2Ku17wvK82v68LuyU
-bFxxxgj9IgY=
-=BxAT
+iQIVAwUBQTy3MngHNmZLgCUhAQJ/lQ//UmQOJLZAmsFFD8TJehD8WitMrImrcrBC
+SJ/mCkIaPq5JNo9R/ovd1UoGlf47JUvaaT5G1d/yOMA+/0kPNqjJL49Km9A3Ze+C
+00Uq12yP8yp6NjBzq9HKAjvyHVghl1A5ZllIdiwuc8Fywbl6UKUHlN1D4PpUp1uA
+znKPjmGpBOsTzgNWJYbAfjns60C7DHZoD/S+ldt3af2PsJKOpx0v4fusV8Y2+XRG
+kWybZLl1YPwPLfJLCaa3KpbY1KkSuk6TSeut90+zRV6s1WJ8LE98NpDBGUDt/+cm
+AXcp/zyrUmbpvQtZBaUFYwZ8imizspiSHYnBwdhVm9tfERFOFI9diBidvanHk/s0
+D+FSJhnQSeo/hMnbHlfv4E6p4k1jDvJk06XJ/U45sEym4hCp9roDPB0tUic7bOnE
+mxNxzogp92KHfsVPuqkidq255ztAjRbzdnt8zsBOPImqTgfsO3xVfT3svIixNxWv
++qaAlrR7dAri9bi3wNLCjzRhp3id0fspetLJrrCHI/8hMlu7a6nsIHLocuvG069W
+OzdXtTPRYsV8YlElsdL5d/3grZSL3CWNpQxoRb9gzj0hKHHPjrXw9ACcQthiknNc
+DkjjcLxV2gPqhKq3WgMTKXHhLDWEfJpFVQ8PccJHsKaaUgGtDUg0ETBT54h8Mo8E
+I0bkcYOLtHk=
+=o3vQ
 -----END PGP SIGNATURE-----
