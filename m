@@ -1,40 +1,66 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: fsck mode halfway between --fix-fixable and --rebuild-tree ?
-Date: Mon, 30 Sep 2002 10:18:24 +0400
-Message-ID: <20020930101824.A3895@namesys.com>
-References: <H356C4$4F46E50E852BF25DA1E850A48426FCDF@voila.fr> <20020929172335.L32363@noris.de>
+From: "=?iso-8859-1?Q?arthur.chereau?=" <arthur.chereau@voila.fr>
+Subject: =?iso-8859-1?Q?Re:__Reiserfs/emacs_incompatibility/bug_=3F?=
+Date: Mon, 30 Sep 2002 08:34:20 +0200
+Message-ID: <H38NL8$7E21F734BCE1FC3CA596D1CF9DE21BC4@voila.fr>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11560-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11561-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20020929172335.L32363@noris.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Matthias Urlichs <smurf@noris.de>
-Cc: reiserfs-list@namesys.com
+To: =?utf-8?Q?reiserfs-list?= <reiserfs-list@namesys.com>
 
-Hello!
+>Did you look at the file contents? (Modify the file and look at the SHA1
+> or MD5 digests.)
 
-On Sun, Sep 29, 2002 at 05:23:35PM +0200, Matthias Urlichs wrote:
+Yes, I edit the file. To be more precise here's what's observed:
 
-> The only way to fix this, at the moment, seems to be --rebuild-tree, which
-> is overkill since it scans _everything_, and thus reconnected the stuff I
-> deleted last week back into /lost+found.  It also takes too long.  :-/
+With the following  .emacs:
+$ cat .emacs
+(setq backup-by-copying t)
+$
 
-No, it does not behave like this. It may take long time though, anyway.
+On ext2 (correct behavior):
 
-> A good way to avoid this problem would be a scan mode which behaves like
-> --rebuild-tree, but which scans only those nodes reachable through the
-> existing tree instead of "everything".
+$ emacs test
+$ cat test
+version 1
+$ ls -i test*
+2971971 test
+$ emacs test
+$ cat test
+version 2
+$ ls -i test*
+2971971 test 2971972 test~
+$ emacs test
+$ cat test
+version 3
+$ ls -i test*
+2971971 test 2971973 test~
 
---rebuild-tree does exactly what you suggested this new mode should do.
+On Reiserfs (problem):
+$ emacs test
+$ cat test
+version 1
+$ ls -i test*
+1505188 test
+$ emacs test
+$ cat test
+version 2
+$ ls -i test*
+1505190 test 1505189 test~
+$ emacs test
+$ cat test
+version 3
+$ ls -i test*
+1505191 test 1505189 test~
 
-In order ot get full partition scan you need to run reiserfsck with 
---rebuild-tree -S options sequence.
+The fact that it doesn't happen on ext2 makes me think it's related to Reiserfs.
 
-Bye,
-    Oleg
+------------------------------------------
+
+Faites un voeu et puis Voila ! www.voila.fr 
+
