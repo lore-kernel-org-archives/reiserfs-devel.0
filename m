@@ -1,40 +1,44 @@
 From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: broken out archives
-Date: Fri, 01 Apr 2005 16:01:20 +0400
-Message-ID: <1112356879.3754.15.camel@tribesman.namesys.com>
-References: <1112308041.4916.6.camel@gentoo>
+Subject: Re: kernel BUG 362
+Date: Fri, 01 Apr 2005 16:26:54 +0400
+Message-ID: <1112358403.3757.43.camel@tribesman.namesys.com>
+References: <435.921-16966-1988335017-1112349396@seznam.cz>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23750-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23751-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1112308041.4916.6.camel@gentoo>
+In-Reply-To: <435.921-16966-1988335017-1112349396@seznam.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jake Maciejewski <maciejej@msoe.edu>
+To: Ralf <ralf@seznam.cz>
 Cc: reiserfs-list@namesys.com
 
 Hello
 
-On Fri, 2005-04-01 at 02:27, Jake Maciejewski wrote:
-> The broken out archives for reiser4 on vanilla (eg.
-> ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.11/reiser4-for-2.6.11-broken-out.2.gz ) should be renamed to indicate that they're gzipped tarballs, not gzipped diffs.
+On Fri, 2005-04-01 at 13:56, Ralf wrote:
+> hi, i have problems:
 > 
-renamed to reiser4-for-2.6.11-broken-out.2.tar.gz
+> file "bugs.txt" in attachment (or here http://147.229.196.80/tmp/bugs.txt) - some of error messages i got, i had to reboot my system due this errors
+> 
+> i use debian unstable, linux kernel 2.6.11.6, reiser 3.6 fs, reiser V3, reiserfsprogs 1.3.6.19, i does not use quotas
+> 
+> the patch in the attachment (or here http://147.229.196.80/tmp/reiser-lock-fix.diff) does not work for me
+> 
+Please provide more details of the problem:
 
-> It would also be convenient if Namesys supplied complete patches as was
-> done with previous vanilla port releases.
+can you reproduce it?
+what did your system do when it happened?
+what filesystems did you have mounted when system crashed?
+do you have messages starting with "REISERFS: panic.." in system logs?
 
-ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.11/reiser4-for-2.6.11-3.patch.gz
-(this contains 3 bug fixes:
-support for mount -o sync
-bug in safe link handling
-fix for deadlock reported in
-http://marc.theaimsgroup.com/?l=reiserfs&m=111213523422408&w=2)
 
-Sorry, no broken-out version for this.
 
-Thanks
+> 
+> ____________________________________________________________
+> http://www.bezpecnyinternet.cz
+> http://ad.seznam.cz/clickthru?spotId=94734
+> 
 
