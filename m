@@ -1,90 +1,52 @@
-From: F Peeters <Francesco@FamPeeters.com>
-Subject: Return receipt (was Re: Failed ReiserFS)
-Date: Thu, 10 Feb 2005 08:19:04 +0100
-Message-ID: <420B0AE8.7090805@FamPeeters.com>
-References: <200502100535.01814.rikjoh@norweb.se> <1108016768.395.257.camel@tribesman.namesys.com> <200502100756.48506.rikjoh@norweb.se>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: ReiserFS V3 and linux-kernel-2.6
+Date: Thu, 10 Feb 2005 11:01:22 +0300
+Message-ID: <20050210080122.GO7482@backtop.namesys.com>
+References: <139119350.20050209110514@kgpa.ru> <20050209144446.GK7482@backtop.namesys.com> <8510493009.20050209170924@kgpa.ru> <20050209155626.GL7482@backtop.namesys.com> <749879259.20050210083605@kgpa.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200502100756.48506.rikjoh@norweb.se>
+Content-Disposition: inline
+In-Reply-To: <749879259.20050210083605@kgpa.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: reiserfs-list@namesys.com
-Cc: Rikard Johnels <rikjoh@norweb.se>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "Oleg O. Ossovitskii" <oleg@kgpa.ru>
+Cc: ReiserFS-List <reiserfs-list@namesys.com>
 
-Rikard Johnels wrote:
+On Thu, Feb 10, 2005 at 08:36:05AM +0200, Oleg O. Ossovitskii wrote:
+> Hello, Alex!
+> 
+> Wednesday, February 9, 2005, 5:56:26 PM, you wrote:
+> 
+> >> >>   VFS: Cannot open root device "hdc8" or unknown-block(0,0)
+> >> >>   Please append a correct "root=" boot option
+> >> >>   Kernel panic - not syncing: VFS: Unable to mount root fs on
+> >> >>   unknown-block(0,0)
+> >>
+> >> AZ> please make sure that the rootfs block device driver (IDE disk) was compiled
+> >> AZ> into the kernel.
+> 
+> yes it compiled in the kernel
+> 
+> AZ> can you try to following?
+> 
+> AZ> 1) boot w/o devfs
+> 
+> No, my /dev directory is empty without devfs. It's mountpoint only
+> 
+> AZ> 2) check that the block device driver is loaded successfully
+> AZ>    and partition table is read properly
+> AZ>    (look at kernel boot messages)
+> 
+> As I can see (messages disappears too fast and Ctrl-PgUp don't work)
+> ide driver loaded, but I'm not sure. How can I see kernel messages
+> after kernel panic?
 
->On Thursday 10 February 2005 07.26, Vladimir Saveliev wrote:
-> =20
->
->>Hello
->>
->>On Thu, 2005-02-10 at 07:35, Rikard Johnels wrote:
->>   =20
->>
->>>Hello all.
->>>I am new to the list so please have patience with me for maybe asking
->>>obvious questions.
->>>
->>>I tried a recovery as described in the manpages;
->>>
->>>talen:~ # reiserfsck --rebuild-tree -S /dev/hdc1
->>>--logfile /root/reisercheck.logfile
->>>     =20
->>>
->>Why did you use -S?
->>
->>   =20
->>
->>>It ran as excpected (i hope) right up until the end where it barfed wi=
-th;
->>>
->>>Pass 3a (looking for lost dir/files):
->>>Looking for lost directories:
->>>Looking for lost files:
->>>lost+found.c 348 pass_3a_look_for_lost
->>>look_for_lost: The entry 'lost+found' could not be found in the root
->>>directory.
->>>Aborted
->>>
->>>What is wrong?
->>>     =20
->>>
->>You have hit reiserfsck bug.
->>
->>   =20
->>
->>>What can i do?
->>>     =20
->>>
->>Which reiserfsck do you have?
->>   =20
->>
->
->reiserfsck 3.6.13
->I used -S to scan the whole partition, as per man page
->A bug heh.. :(
->So is there any fix for it?
->
->
-> =20
->
-Rikard,
+1. serial console.
+2. netconsole  (linux-src/Documentation/networking/netconsole.txt)
 
-Can you please turn of return receipts for this list? I'd appreciate not =
-
-having to press NO every time I read one of your messages...
-
-Tack s=E5 mycket!
-
-Francesco Peeters
-http://www.fampeeters.com
-----
-GPG Key =3D AA69 E7C6 1D8A F148 160C  D5C4 9943 6E38 D5E3 7704
-If your program doesn't recognize my signature, please visit=20
-http://www.CAcert.org/index.php?id=3D3 to retrieve the Root CA certificat=
-e.
-
+-- 
+Alex.
