@@ -1,50 +1,44 @@
-From: Spam <spam@tnonline.net>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 11:40:28 +0200
-Message-ID: <1939276887.20040826114028@tnonline.net>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
- <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net>
- <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org>
- <1453698131.20040826011935@tnonline.net>
- <20040825163225.4441cfdd.akpm@osdl.org>
- <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net>
-Reply-To: Spam <spam@tnonline.net>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: repacker
+Date: Thu, 26 Aug 2004 12:41:22 +0300
+Message-ID: <20040826094122.GV1284@nysv.org>
+References: <1093474401.12559.0.camel@localhost> <1052307503.20040826113111@wp.pl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20608-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20610-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040825234629.GF2612@wiggy.net>
+Content-Disposition: inline
+In-Reply-To: <1052307503.20040826113111@wp.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Wichert Akkerman <wichert@wiggy.net>
-Cc: Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Maciej Soltysiak <pysiak.satriani@wp.pl>
+Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
+On Thu, Aug 26, 2004 at 11:31:11AM +0200, Maciej Soltysiak wrote:
+>Is there a glossary list somewhere about the terms?
 
+This is definitely something I would like to see, not that I'd
+need it the most, but still it has to exist.
 
-> Previously Jeremy Allison wrote:
->> Multiple-data-stream files are something we should offer, definately (IMHO).
->> I don't care how we do it, but I know it's something we need as application
->> developers.
+Also a list of mount options and such.
 
-> Aside from samba, is there any other application that has a use for
-> them?
+As Andrew Morton pointed out elsewhere, a bullet list of technical
+features would be nice as well.
 
-  Yes,  for  example  documents,  image  files  etc. The multiple data
-  streams  can  contain thumbnails, info about who is editing the file
-  (useful for networked files) etc. Could be used for version handling
-  and much more.
+A few lines below will be the proof that this stuff sort of exists,
+but Mr. Morton also said, I believe, that the "true" documentation
+is not concise enough.
 
-  Also, just because we do not see all the benefits right now, doesn't
-  mean there won't be any.
+>What does the repacker do?
 
-  ~S
+http://namesys.com/v4/v4.html#repacker
 
-> Wichert.
+Redeeman mentioned that he got a notable performance increase from using
+it but in contrast other guys mentioned problems.
 
-
-
-
+-- 
+mjt
 
