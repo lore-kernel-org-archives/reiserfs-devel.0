@@ -1,70 +1,124 @@
-From: Grant Miner <mine0057@mrs.umn.edu>
-Subject: Re: OT: package scripts (was Re: software packaging and ReiserFS
- v4)
-Date: Fri, 05 Sep 2003 16:37:12 -0500
-Message-ID: <3F590208.5060900@mrs.umn.edu>
-References: <20030903165409.GD4714@rahul.net> <3F565A8F.4010209@botz.org> <20030903213742.GA13146@rahul.net> <3F58D2CD.3050801@mrs.umn.edu> <20030905194413.GA19041@matchmail.com> <20030905201806.GV31864@vestdata.no> <20030905203950.GA12183@rahul.net>
+From: Roland =?iso-8859-1?q?H=E4der?= <webmaster@autoinstaller.de>
+Subject: Bad root block 0
+Date: Sun, 7 Sep 2003 14:23:56 +0200
+Message-ID: <200309071423.56015.webmaster@autoinstaller.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15585-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-15586-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030905203950.GA12183@rahul.net>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
-I'm excited about your packaging system.  I hope you make something very 
-useful.  Here are some ideas I have had about packaging and operating 
-system design; they might be interesting to you.  Comments, suggestion, 
-other ideas are wanted.
+Hello,
 
-Ideally, each user's home dir would mirror the system directories (i.e. 
-users have their own bin, share, lib and var).  This way, users can 
-install a package (and it would be local to them) and root could install 
-the exact same package (and it would be global to the system).  Right 
-now, on every distribution, only root can install packages; this is a 
-place where a new packaging system could have huge advantages.
+I have created an image on this way:
 
-Ideally, users' directories would get unioned to system's directories 
-(in their namespace) upon login, so / would be their "home", /bin would 
-be system's bin plus user's bin, etc.  This way programs ALWAYS know the 
-"right path" to everything (which has always been an annoying problem in 
-Unix).
+dd if=3D/dev/urandom of=3Dimage.file bs=3D1k count=3D98288
 
-Packages contain file sets only.  This avoids side-effects of scripts. 
-Well-designed programs do not need pre- and post-install scripts.  If 
-you want to install apache, say as www user, root would create that 
-user, switch users to www, and then install apache as www.
+And I have latest 3.6.11 ReiserFS tools. So I setup the loop-back device:
 
-/sbin would go away; all sbin programs go to appropriate bin directories 
-(because non-root users often need programs like fdisk, etc).
+losetup -e rc6 /dev/loop3 image.file
 
-/etc, /bin, /lib and /boot all have the files only necessary for bootup.
-Users can have an rc.d script directory in /etc (who gets to have rc.d 
-scripts would be up to the sys admin) for launching services upon 
-runlevel changes.  Perhaps it would be better to put these dirs as 
-/boot/bin, /boot/lib, etc, and use /bin for system-wide bin (i.e., like 
-the present /usr/bin).
+RC6 need a keysize. I use 256 Bits and entered a password.
 
-/share/etc-defaults would contain default configurations, instead of 
-cluttering up /etc (which is just stuff needed for booting and launching 
-services).  /share/etc-defaults could be mounted below user's /etc.
+I created a ReiserFS on it: mkreiserfs /dev/loop3
 
-(optional) /share/etc-mandatory could be mounted above user's /etc, for 
-settings users should not be able to change (sometimes called "lock-down").
+This happens all yesterday.
 
-Environment variables are replaced by files, ala Plan 9.  Instead of 
-$EDITOR have /etc/default-applications/text-editor, web-browser, etc. 
-TIdeally no programs should use environment variables for configuration; 
-their existence is not obvious to the user, and neither is their 
-possible values. (Shell scripts of course would still use env vars.) 
-Programs should watch their configuration files for changes, to achive 
-that instant-apply effect.
+I never used any resizer tools and I did not run reiserfschk while it was m=
+ounted. Also my box did not crash while it was mounted.
 
-I'm most excited for that once we have a stable Reiser4 system with 
-files as dirs, it should be easy to write a universal configurator tool 
-using files as keys.
+Today I setup the loop-back device on same way (and same password!) again a=
+nd try to mount it:
+
+$: mount /dev/loop3 /mnt
+mount: Not a directory
+$:
+
+Well, /mnt *is* definely a directory...
+
+When I do a reiserfschk --rebuild-tree I got this:
+
+Replaying journal..
+0 transactions replayed
+###########
+reiserfsck --rebuild-tree started at Sun Sep  7 14:22:00 2003
+###########
+=20
+Pass 0:
+####### Pass 0 #######
+Loading on-disk bitmap .. ok, 8211 blocks marked used
+Skipping 8211 blocks (super block, journal, bitmaps) 0 blocks will be read
+=20
+Could not find a hash in use. Using "r5"
+        "r5" hash is selected
+=46lushing..finished
+        Read blocks (but not data blocks) 0
+                Leaves among those 0
+                Objectids found 2
+=20
+Pass 1 (will try to insert 0 leaves):
+####### Pass 1 #######
+Looking for allocable blocks .. finished
+=20
+=46lushing..finished
+        0 leaves read
+                0 inserted
+####### Pass 2 #######
+=46lushing..finished
+=20
+=20
+No reiserfs metadata found. ... ... ...
+
+And debugreiserfs -d /dev/loop3 shows me this:
+
+debugreiserfs 3.6.11 (2003 www.namesys.com)
+=20
+=20
+=46ilesystem state: consistency is not checked after last mounting
+=20
+Reiserfs super block in block 16 on 0x703 of format 3.6 with standard journ=
+al
+Count of blocks on the device: 24492
+Number of bitmaps: 1
+Blocksize: 4096
+=46ree blocks (count of blocks - used [journal, bitmaps, data, reserved] bl=
+ocks): 24492
+Root block: 0
+=46ilesystem is cleanly umounted
+Tree height: 65535
+Hash function used to sort names: "r5"
+Objectid map size 2, max 972
+Journal parameters:
+        Device [0x0]
+        Magic [0x9cdd049]
+        Size 8193 blocks (including 1 for journal header) (first block 18)
+        Max transaction length 1024 blocks
+        Max batch size 900 blocks
+        Max commit age 30
+Blocks reserved by journal: 0
+=46s state field: 0xfa02:
+        FATAL corruptions exist.
+sb_version: 2
+inode generation number: 0
+UUID: 7691903f-ec2b-4c06-9cf2-eaa545c7db77
+LABEL: Haspa-Banking
+Set flags in SB:
+        ATTRIBUTES CLEAN
+65534 expected, 0 found in 0
+Block 0 contains unformatted data
+print_disk_tree: bad block type (level=3D0, nr_items=3D0, free_space=3D0 rd=
+key)
+=46ile system uses 0 internal + 0 leaves + 0 unformatted nodes =3D 0 blocks
+
+So, how can I safely fix the image? Or restore needed data (like my Online =
+Banking Keyfile)
+
+Chears,
+  Roland H=E4der
 
