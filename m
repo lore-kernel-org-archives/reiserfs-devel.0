@@ -1,52 +1,74 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Copy time comparison 2.4.20-pre6 <-> 2.4.19+data-logging (was:Compatibility of  current 2.4.19.pending ...)
-Date: Fri, 13 Sep 2002 11:37:35 +0400
-Message-ID: <20020913113735.A6022@namesys.com>
-References: <3D7FDEA5.7040806@mb.tu-ilmenau.de> <3D81076E.6090408@mb.tu-ilmenau.de>
+From: luferbu@fluidsignal.com (Luis Bustamante)
+Subject: reiserfsck aborts when rebuilding filesystem tree
+Date: Fri, 13 Sep 2002 16:17:53 -0500
+Message-ID: <87admlk2ri.fsf@zealot.fluidsignal.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11438-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11439-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3D81076E.6090408@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Hello!
+Hi list,
 
-On Thu, Sep 12, 2002 at 11:30:22PM +0200, Manuel Krause wrote:
+I got my partition table deleted, but I knew the exact size of each
+partition, so I created again the table. But I was unable to mount one
+ReiserFS partition (/home duh!), I got the error "read_super_block:
+can't find a reiserfs file system", so I rebuilded the superblock with
+--rebuild-sb option without problems. After that I'm trying to rebuild
+the entire filesystem tree using:
+reiserfsck --logfile rebuild.log --rebuild-tree /dev/hda8
+but it aborts with the message "No reiserfs metadata found". I'm able to
+dump the metadata with the command: 
+debugreiserfs -p /dev/hda8 |gzip -c > metadata.gz
+and it's about 33Mb compressed. Any ideas why I can't rebuild the
+filesystem tree? it seems metadata is still there, if you want I can
+put the dump of debugreiserfs somewhere so you can have a look. I'm
+using reiserfsprogs 3.6.3 (default Debian unstable package) and kernel
+2.4.18.
 
-> >When I see the discussion about the new block-allocator, the testing 
-> >directory etc. I assume a definite "No." (Please, please, correct me, if 
-> ;-) You really didn't correct me so far. Mmh. :-(
+Cheers,
 
-Datalogging is incompatible with stuff in testing directory. It won't apply
-cleanly to new block allocatior, but that's can be easily fixed.
+-- 
+Luis Bustamante                       mailto:luferbu@debian.org
+The Debian Project            http://people.debian.org/~luferbu
 
-> >So, for the overnight change to pre-kernel 7, where are the new 
-> >data-logging patches Hans even announced to lkml?
-> So I really got a 2.4.20-pre6 compiled with the 
-> preempt-kernel-rml-2.4.20-pre5-1.patch and Olegs fix he sent to the list 
-> yesterday. BTW, have the testing patches from -pre5 gone into -pre6? It 
-> isn't clear to me.
 
-Testing patches were merged into -pre6 by Marcelo's mistake and -pre7
-have these patches removed already.
 
-> Application startup timings of NS-7.0 and OOo-1.0.1 didn't increase. :-))
+Output from reiserfsck:
+Replaying journal..
+0 transactions replayed
+###########
+reiserfsck --rebuild-tree started at Fri Sep 13 15:59:11 2002
+###########
 
-Sure, read code path did not changed at all.
+Pass 0:
+Loading on-disk bitmap .. ok, 8266 blocks marked used
+Skipping 8266 blocks (super block, journal, bitmaps) 0 blocks will be
+read
 
-> I hope I don't need to comment on the values...
+        "r5" hash is selected
+Flushing..done
+        Read blocks (but not data blocks) 0
+                Leaves among those 0
+                Objectids found 2
 
-Sure. datalogging and new file_write code are not solutions to same problem.
-These are solutions for different problems and can be used together (after
-merging of course) for even better performance, I hope ;)
+Pass 1 (will try to insert 0 leaves):
+Looking for allocable blocks .. ok
 
-Bye,
-    Oleg
+Flushing..done
+        0 leaves read
+                0 inserted
+Flushing..done
+
+
+
+No reiserfs metadata found
+
+
+Aborted
+
