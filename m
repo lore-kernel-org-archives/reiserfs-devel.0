@@ -1,18 +1,17 @@
 From: Anders Widman <andewid@tnonline.net>
 Subject: ReiserFS BUG.
-Date: Mon, 22 Apr 2002 12:11:20 +0200
-Message-ID: <1185216281.20020422121120@tnonline.net>
+Date: Mon, 22 Apr 2002 12:17:57 +0200
+Message-ID: <1775613750.20020422121757@tnonline.net>
 Reply-To: ReiserFS List <reiserfs-list@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10115-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10116-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
-
 
   I have installed kernel 2.4.19-7 with reiserfstools 3.x.1c-pre2.
 
@@ -66,6 +65,12 @@ Apr 22 11:09:24 server kernel:    [sys_fcntl64+72/144] [system_call+51/56]
 Apr 22 11:09:24 server kernel:    [<c0142f28>] [<c010899b>]
 Apr 22 11:09:24 server kernel:
 Apr 22 11:09:24 server kernel: Code: 0f 0b 88 04 6e 88 27 c0 8b 84 24 cc 01 00 00 8b 94 c4 d0 01
-  
+
+
+I forgot to add that I just made a "rebuild-sb, and rebuild-tree" to
+recover data from the volume. It created about 50-100 folders. But
+when I tried to enter, or move a folder it would disappear (the
+kernel-dump). That's why I ran fsck again.
+
 //Anders
 
