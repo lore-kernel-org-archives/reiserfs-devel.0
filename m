@@ -1,43 +1,39 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: ReiserFS problems
-Date: Wed, 6 Aug 2003 23:40:50 +0400
-Message-ID: <200308062340.50625.vitaly@namesys.com>
-References: <20030806182055.A28562@bitwizard.nl> <3F314BE8.50300@suse.com> <20030806212107.A3975@bitwizard.nl>
+From: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
+Subject: Re: r4 v. ext3, quick speed vs. cpu experiments
+Date: Wed, 06 Aug 2003 22:30:55 +0200
+Message-ID: <m3u18usf40.fsf@merlin.emma.line.org>
+References: <Pine.LNX.4.30.0308052329440.6739-100000@divine.city.tvnet.hu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15202-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15203-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030806212107.A3975@bitwizard.nl>
-Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.30.0308052329440.6739-100000@divine.city.tvnet.hu> (Szakacsits
+ Szabolcs's message of "Tue, 5 Aug 2003 23:35:12 +0200 (MEST)")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>, Jeff Mahoney <jeffm@suse.com>
-Cc: Hans Reiser <reiser@namesys.com>, Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>, reiserfs-list@namesys.com, copy@harddisk-recovery.nl
+Content-Transfer-Encoding: 7bit
+To: Szakacsits Szabolcs <szaka@sienet.hu>
+Cc: Brandon Low <lostlogic@gentoo.org>, Grant Miner <mine0057@mrs.umn.edu>, reiserfs-list@namesys.com
 
-On Wednesday 06 August 2003 23:21, Rogier Wolff wrote:
-> On Wed, Aug 06, 2003 at 02:41:44PM -0400, Jeff Mahoney wrote:
-> > What is the workload that is producing the horrible slowdowns?
->
-> write at 20Mb per second into files of 1Gb each.
->
-> It was reported, and you guys told me it was a bug that had
-> been fixed.  we refused to upgrade to the recommended version
-> back then. But we might have gotten an upgrade due to a general
-> kernel upgrade since then. But we try to keep the filesystem
-> at < 90% full anyway.
->
-> Recommendation: Make that "10%" a variable, settable by the
-> "reserved-for-root" parameter...
->
-> Is there a way that allows me to see the fill-percentage of
-> our block groups?
+Szakacsits Szabolcs <szaka@sienet.hu> writes:
 
-debugreiserfs -m prints out bitmap blocks, so
-debugreiserfs -m /dev/xxx | grep "^used" would do so.
+> Yes, if you have enough CPU capacity (aka you don't run anything else, just
+> bechmarking filesystems). Otherwise it seems to be slower. That's I was
+> refering to.
+
+This has been the situation with reiserfs 3.5/3.6 before, and it got
+resolved, or so it appears. I haven't ext3-vs-reiserfs3.6 figures at
+hand, but I'm not aware of CPU bottlenecks in reiserfs3.6 code. Just
+wait a couple of months until the reiserfs gurus got their reiserfs4
+beast stable and debugged and can focus on tuning.
+
+To a previous post about code size and execution speed: it's not
+generally true that larger code is also slower. It depends how that code
+is arranged. If you have many abstractions, then maybe it's slower. If
+you have many specialized functions in an otherwise flat profile, it can
+be a good deal faster than a simpler (less complex) code.
 
 -- 
-Thanks,
-Vitaly Fertman
+Matthias Andree
