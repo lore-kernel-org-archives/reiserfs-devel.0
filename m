@@ -1,60 +1,121 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Horrible ftruncate performance
-Date: Thu, 10 Jul 2003 14:01:11 +0400
-Message-ID: <20030710100111.GA825@namesys.com>
-References: <20030710092112.GA837@namesys.com> <Pine.LNX.4.30.0307101001150.26018-100000@divine.city.tvnet.hu>
+From: Timothy Webster <tdwebste2@yahoo.com>
+Subject: Re: Advangates (A file-based interface for mount)
+Date: Thu, 10 Jul 2003 05:22:31 -0700 (PDT)
+Message-ID: <20030710122231.96931.qmail@web80501.mail.yahoo.com>
+References: <3F0C89FC.8060604@mrs.umn.edu>
+Reply-To: tdwebste2@yahoo.com
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14864-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14865-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.30.0307101001150.26018-100000@divine.city.tvnet.hu>
+In-Reply-To: <3F0C89FC.8060604@mrs.umn.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Szakacsits Szabolcs <szaka@sienet.hu>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+Hi Grant, 
 
-On Thu, Jul 10, 2003 at 10:17:40AM +0200, Szakacsits Szabolcs wrote:
-> > angband:/mnt # time dd if=/dev/zero of=sparse bs=1 seek=200G count=1
-> > 1+0 records in
-> > 1+0 records out
-> > real    0m19.205s
-> > user    0m0.000s
-> > sys     0m7.130s
-> Interesting. For me, the real and the system time was always [almost] the
-> same.
+I really like this file-base mounting. Thanks for
+contributing to reiserfs. I am look forward to the
+many kool features possible with reiserfs4.
 
-May be this is because when system time was very big, the difference looked like a noise? ;)
+-tim. 
 
-> > > > (on 4k blocksize)
-> > > AFAIK, reiserfs supports only 4 kB blocksizes. At least the
-> > > 'man mkreiserfs' said always so.
-> > may be you just have old reiserfsprogs version.
-> Yes, I have whatever the latest distros ship. Right now I could check out
-> only Red Hat 9 and SuSE 8.2, they both have 3.6.4. The latest reiserfsprogs
-> is 3.6.8.
 
-Actually 3.6.4 has support for blocksizes other than 4k, this is controlled by
--b switch of mkreiserfs (run it without arguments and it will tell you)
-man page on mkreiserfs (in SuSE 8.2 at least) have it listed too.
+--- Grant Miner <mine0057@mrs.umn.edu> wrote:
+> Hubert Chan wrote:
+> 
+> >>>>>>"Nikita" == Nikita Danilov
+> <Nikita@Namesys.COM> writes:
+> >>>>>>            
+> >>>>>>
+> >
+> >[...]
+> >
+> >Nikita> But what exactly is an advantage of this
+> interface?  If user is
+> >Nikita> allowed to mount arbitrary file system at
+> /some-place, it can
+> >Nikita> mount something containing suid binary and
+> here we go.
+> >
+> >I'm also wondering what advantages this interface
+> would have.  As far
+> >as I can tell, you lose more than you gain -- can't
+> specify mount
+> >options, file system type, etc.  It also seems very
+> unintuitive to me.
+> >>From what I can see, the only advantages that you
+> gain would be more
+> >easily done by writing a custom SUID binary, which
+> reads some
+> >configuration file somewhere to determine if the
+> user has proper
+> >permissions, etc.
+> >  
+> >
+> Ideally, the file would use the same format as mtab
+> (minus the mount point) so that it retains all mount
+> options.  
+> 
+> Two reasons why this is nice:
+> First, the permissions of ..mount could be
+> inherited, so that users would be able to mount
+> things in their home directories but not system
+> directories.
+> 
+> Second, the file format makes is intuitive for
+> specifying layered mounts like plan 9.
+> 
+> Imagine a system where cat /..mount gives:
+> /dev/hda1 reiserfs rw 0 0
+> 
+> and cat /bin/..mount gives:
+> /usr/bin bind ro 0 0
+> /usr/local/bin bind ro 0 0
+> /opt/bin bind ro 0 0
+> /dev/hda1 reiserfs rw 0 0    <---- this one is
+> inherited from /
+> 
+> Now, say you want to access file 'ls' out of /bin. 
+> First, we look in /usr/bin because it's the top
+> item.  If it is there, then we found it.  Otherwise,
+> we keep going down the stack until we find it or
+> reach the bottom and not find one.
+> 
+> If there are two instances of ls, say one in
+> /opt/bin and one in /usr/bin, we use the one from
+> /usr/bin because it is higher up.
+> 
+> If we write the file 'ls', it won't work if a copy
+> of 'ls' exists in any of the read-only layers.  If
+> the only instance of a file named 'ls' were in the
+> filesystem on /dev/hda1, then it would get written
+> there.  If there were no copy of ls in any layer, it
+> would get created in the first read+write layer, in
+> this case the filesystem on /dev/hda1.
+> 
+> It's really appealing with a per-process namespace. 
+> Lets say I'm a user.  The OS layers my home
+> directory read+write on MY instance of / , and a
+> read-only copy of /bin, /usr/bin, etc. on MY
+> instance of /bin .  Now, I don't need any
+> environment variables like $HOME or $PATH.  I know
+> (and more importantly, my programs know) that my
+> home is always at / and my binaries always are in
+> /bin .  I can throw my files in / .  They may be
+> really stored in /home/users/grant or
+> /mnt/foo/bar/etc but I don't have to know that.  One
+> cool thing is this way users can install RPMs
+> without affecting the main system files and quotas
+> still apply.
+> 
+> 
 
-> > There are support for variable blocksizes in 2.5, and there is separate
-> > patch for 2.4
-> Cool. The max 4 kB block size was a long time common deficiency of the main
-> Linux filesystems.
-
-The 4k blocksize is not FS limit, this is VFS limit related to the fact that
-buffer size cannot be bigger than PAGE_SIZE. PAGE_SIZE is 4k on x86,
-but it is bigger on some other architectures (e.g. 8k on alphas).
-Also there is an effort by William Lee Irwin III to create "clustered page cache"
-or something like that (the patchset is named pgcl-something) for 2.5 kernels,
-that one allows to cluster several physical pages into one logical, that will
-allow to use blocksizes other than hardware PAGE_SIZE, too.
-
-Bye,
-    Oleg
+__________________________________
+Do you Yahoo!?
+SBC Yahoo! DSL - Now only $29.95 per month!
+http://sbc.yahoo.com
