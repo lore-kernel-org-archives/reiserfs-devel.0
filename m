@@ -1,39 +1,105 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Tree issues, fsck output
-Date: Tue, 29 Jun 2004 23:19:56 +0300
-Message-ID: <20040629201956.GK4990@nysv.org>
+From: Ashish <ashish_pspl@yahoo.com>
+Subject: Re: ReiserFS on Linux 2.6.7 kernel
+Date: Tue, 29 Jun 2004 23:13:55 -0700 (PDT)
+Message-ID: <20040630061355.89760.qmail@web53310.mail.yahoo.com>
+References: <200406282207.01984.camel78@iprimus.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19449-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19451-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <200406282207.01984.camel78@iprimus.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
-Cc: sikkh@wp.pl
 
-Hi!
+Hi,
+Thanks for the information. I still am not entirely
+clear about the versioning and have a couple of
+questions.
 
-***** Tree Traverse Pass: scanning the reiser4 internal tree.
-FSCK: Node (2013064): The last key [377f5f:4(FB):2e616339375f63:3a45d8:99] in 2 the node is greater then the right delimiting key [2fa6e:4(FB):6c69626d70342e:1e88ad:1f7c].
-FSCK: Node (469959), item (28), unit (0): Points to the node [2013064] with wrong delimiting keys. The whole subtree is skipped.
-Error: Can't open node 2014146.
-FSCK: Node (2014146): failed to open the node pointed by the node (469959), item(29), unit (0) on the level (2). The whole subtree is skipped.
-Error: Can't open node 2014147.
-FSCK: Node (2014147): failed to open the node pointed by the node (469959), item(30), unit (0) on the level (2). The whole subtree is skipped.
-FSCK: Node (469959), item (31), unit (0): Points to the block (2014148) which isin the tree already. The whole subtree is skipped.
+1. As you said, reiserfs is included in the 2.6.7
+kernel. Does that mean that the reiserfs bundled with
+this kernel has all the latest updates and patches ?
+Is there any kind of version information maintained to
+this effect ?  How do I know if I am in need of any
+updates to the reiserfs I have in my kernel tree ?
 
-How deep is the shit I'm in? :P
+2. I am aware that 3.6.17 is reiserfstools as you
+mentioned. Is that the latest one available ?
 
-What brought this on?
+Thanks in advance
+Ashish
+                      
 
-I'll just send this post now, I'll send a follow-up when I'm re-doing
-fsck with some switches. This was just a basic fsck /dev/hda1, so maybe
-no need to panic yet...
+--- Michael Milverton <camel78@iprimus.com.au> wrote:
+> Hi Ashish,
+> 	There are two reiser filesystems, a new one that is
+> still being debugged and 
+> an older one that is in wide use. The older one is
+> the one that is in the 
+> kernel you reffered to, the new one is not. The new
+> filesystem is called 
+> Reiser4. This is very new and is not yet in wide
+> use. 
+> 
+> As far as I know the 3.6.17 you are referring to is
+> the reiserfsprogs, eg the 
+> tools that manage the reiserfs filesystem. These
+> should come with your 
+> distribution. Apart from that just compile reiserfs
+> into you kernel and you 
+> should up and running.
+> 
+> On Mon, 28 Jun 2004 09:31 pm, Ashish Rathi wrote:
+> > Hi
+> >
+> > I am pretty new to ReiserFS and have a very basic
+> > question to ask.
+> >
+> > I recently upgraded to the 2.6.7 kernel available
+> on
+> > kernel.org. On the ReiserFS download page, I see
+> that
+> > ReiserFS 4 is being still listed as "experimental"
+> for
+> > the Linux 2.6 kernel.
+> > So what version of ReiserFS does the 2.6.7 kernel
+> > include ? Is it 3.6.17 ? Where do I look in order
+> to
+> > find this info ?
+> >
+> > I'll be glad if someone could help me out here.
+> >
+> > Thanks
+> > Ashish
+> >
+> >
+> >
+> >
+> >
+> >
+> >
+> >
+> > __________________________________
+> > Do you Yahoo!?
+> > New and Improved Yahoo! Mail - Send 10MB messages!
+> > http://promotions.yahoo.com/new_mail
+> 
+> -- 
+> GNU/Linux: Secure, Stable, Free
+> Michael <camel78@iprimus.com.au>
+> 
 
--- 
-mjt
+> ATTACHMENT part 2 application/pgp-signature 
 
+
+
+
+		
+__________________________________
+Do you Yahoo!?
+Yahoo! Mail Address AutoComplete - You start. We finish.
+http://promotions.yahoo.com/new_mail 
