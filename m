@@ -1,61 +1,81 @@
-From: "Raymond A. Meijer" <rmeijer@internet.gr>
-Subject: Re: Squid eating up all CPU
-Date: Tue, 7 Sep 2004 16:50:46 +0300
-Message-ID: <200409071650.46311.rmeijer@internet.gr>
-References: <200409071528.06971.rmeijer@internet.gr> <20040907125235.GC6294@backtop.namesys.com>
+From: Spam <spam@tnonline.net>
+Subject: Re: silent semantic changes with reiser4
+Date: Tue, 7 Sep 2004 15:52:25 +0200
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <16310505631.20040907155225@tnonline.net>
+References: <200409070206.i8726vrG006493@localhost.localdomain>
+ <413D4C18.6090501@slaphack.com> <m3d60yjnt7.fsf@zoo.weinigel.se>
+ <1183150024.20040907143346@tnonline.net> <m38ybmjiyz.fsf@zoo.weinigel.se>
+Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21568-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <20040907125235.GC6294@backtop.namesys.com>
-Content-Disposition: inline
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <m38ybmjiyz.fsf@zoo.weinigel.se>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-
-On Tue 7 September 2004 15:52, Alex Zarochentsev wrote:
-
-Hi Alex,
-
-> > Everything seems to work well, except..the Squid process is eating up all CPU:
-> > 
-> >   PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
-> >  4787 proxy     39   0 45700  10m 2580 R 87.7  1.4   7:12.94 squid
-
-> can you boot the kernel with profile=2 boot parameter and get profile info for
-> the period when nothing except squid is active?
-> 
-> echo 1 > /proc/profile
-> sleep 300
-> cat /proc/profile  | readprofile -m [<actual system map file> | sort -rn | head -n 20
-> 
-> I think reiser4 should be built not as a module otherwise System.map would not
-> contain reiser4 symbols.
-
-I don't think Reiser4 is at fault here:
-
-I found out that the Weatherfox plugin for Firefox had caused Firefox to
-crash, and therefore every time I started Firefox the Quality Feedback 
-Agent tried to send a message.
-
-For some reason that didn't work, and the following entries showed up in 
-Squid's access.log after a LONG time:
-
-1094561818.215 1041126 127.0.0.1 TCP_MISS/504 1467 POST http://talkback.mozilla.org/spiral-bin/Collector.dll - DIRECT/207.126.111.208 text/html
-1094561860.054 1004601 127.0.0.1 TCP_MISS/504 1467 POST http://talkback.mozilla.org/spiral-bin/Collector.dll - DIRECT/207.126.111.208 text/html
-1094561860.054 945630 127.0.0.1 TCP_MISS/504 1467 POST http://talkback.mozilla.org/spiral-bin/Collector.dll - DIRECT/207.126.111.208 text/html
-
-Apparently the QFA continued to do this even after closing both its window
-and Firefox, without any relevant processes showing up with ps..?!
-
-Does this sound familiar?
-
-After I uninstalled the Weatherfox extension the symptoms disappeared.
-
-I'll try to reproduce it though..
+To: Christer Weinigel <christer@weinigel.se>
+Cc: David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Tonnerre <tonnerre@thundrix.ch>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
 
-Ray
+  
+
+> Spam <spam@tnonline.net> writes:
+
+>> > Additionally, files-as-directores does not solve the problem of 
+>> > "cp a b" losing named streams.  There is curently no copyfile syscall
+>> > in the Linux kernel, "cp a b" essentially does "cat a >b".  So unless
+>> > cp is modified we don't gain anything.  If cp is modified to know
+>> > about named streams, it really does not matter if named streams are
+>> > accessed as file-as-directories, via openat(3) or via a shared library
+>> > with some other interface.
+>> 
+>>   One suggestion is missed. It is to provide system calls for copy.
+>>   That would also solve the problem. Named streams and metas would
+>>   then be handled correctly. It also allows further changes to
+>>   filesystems without having to patch applications yet again.
+
+> But this still solves only part of the problem.  A backup application
+> won't have any use for a copyfile syscall, it will need to be taught
+> about streams.
+
+  Yes, but backup programs always needed to be taught about new
+  features. Be it new type of files, attributes or meta-data. I think
+  that teaching backup applications is far better than teaching every
+  application.
+
+>>   A copy system call would also be large beneficial for networked
+>>   filesystems (NFS, Samba, etc) as data wouldn't have to be
+>>   transferred over the network and back.
+
+> Definitely.  
+
+>>   Can we make a plugin infrastructure that will let user-space plugins
+>>   to be loaded for certain directories or files? If we can, then it
+>>   would present a much cleaner and easier way for the user to access
+>>   data he wants. In this particular example it was a tar file.
+
+> In that case I'd argue that:
+
+>     mount -t userfs -o driver=tarfs foo /tmp/foo
+
+> is a rather good kernel interface for plugins.  userfs (or something
+> based on userfs) is the plugin API and tarfs is a plugin. :-)
+
+> To make this efficient, well have to allow non-root users to perform
+> the mount syscall (with the limitation that they can only mount on top
+> of directories they own and that the mounts have the nosuid and nodev
+> flags set).
+
+  Yes, this seem to be one solution. It isn't very dynamic in usage
+  though. You can't use this directly from applications wihout
+  manually doing the mount.
+
+  This is only a solution to browsing contents of files. It doesn't
+  provide a solution for using meta-data streams or other things like
+  this.
+
+  ~S
+
+>   /Christer
+
+
