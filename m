@@ -1,44 +1,47 @@
 From: Oleg Drokin <green@namesys.com>
 Subject: Re: access beyond end of device again
-Date: Tue, 25 Jun 2002 09:11:50 +0400
-Message-ID: <20020625091150.B4240@namesys.com>
-References: <1951319530634.20020624073524@redefine.org> <20020624183557.A2171@namesys.com> <20020624144501.GA28013@matrix.wg> <20020624184948.B896@namesys.com> <3D174CD6.5000407@namesys.com>
+Date: Tue, 25 Jun 2002 09:54:09 +0400
+Message-ID: <20020625095409.A6209@namesys.com>
+References: <Pine.LNX.4.44.0206250044360.28871-100000@avon.timetraveller.org> <661330051733.20020624103045@redefine.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10826-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10827-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <3D174CD6.5000407@namesys.com>
+In-Reply-To: <661330051733.20020624103045@redefine.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Dirk Mueller <dmuell@gmx.net>, reiserfs-list@namesys.com
+To: Kevin <coggy@redefine.org>
+Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Mon, Jun 24, 2002 at 08:46:14PM +0400, Hans Reiser wrote:
-> >reiserfs does not allocates any blocks past the partition size,
-> >so I cannot even imagine what are you speaking about ;)
-> This can be caused by fdisk followed by mkreiserfs without a reboot 
-> between fdisk and mkreiserfs, yes?
+On Mon, Jun 24, 2002 at 10:30:45AM -0700, Kevin wrote:
 
-Similar problem, but not this exact one, I'd say.
-But sequence of events should be this:
-have a hdd with several partitions. Have some of the partitions mounted.
-(or at least one).
-Destroy one of the partitions and create smaller one instead.
-(or just resize partition down).
-mkfs the partition without rebooting.
-But if resizing have removed more than 132 Mb of space,
-then such a partition won't mount on next reboot just because not of all
-bitmaps can be readed. (and messages indicated that requested sector is far
-away from partition end).
+> > Can we see an fdisk -l of the relevant disk to see how big the filesystem 
+> > *should be* :)
+> I reformatted the partition since the last time it rebooted, but I
 
-The main thins there is for HDD to be mounted (at least one partition).
-If nothing were mounted off the HDD, then kernel is able to correctly
-re-read partition table.
+Reformatted as in mkreiserfs?
+
+> haven't changed the actual partition.  The only time I see the error
+> is when trying to read certain files.  Everything else seems to work
+
+Yeah, ones that contains invalid blocknumbers in metadata.
+
+> fine.  The drive is a 60g maxtor attached to an hpt366.  It is the
+> master on its channel, and there is no slave.  I'm running 2.4.18 with
+> reiserfsprogs 3.x.1c-pre4.
+> fdisk -l /dev/hdi1
+> Disk /dev/hdi: 16 heads, 63 sectors, 116336 cylinders
+> Units = cylinders of 1008 * 512 bytes
+>    Device Boot    Start       End    Blocks   Id  System
+> /dev/hdi1             1    116336  58633312+  83  Linux
+> /dev/hdi1             58631516  39128508  19503008  67% /opt
+
+Numbers looks correct.
 
 Bye,
     Oleg
