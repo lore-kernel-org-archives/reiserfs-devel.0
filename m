@@ -1,11 +1,10 @@
-From: Ash <ashrat@gmail.com>
-Subject: Open bugs ?
-Date: Tue, 5 Oct 2004 15:45:15 +0530
-Message-ID: <e96ff12004100503152514e99f@mail.gmail.com>
-Reply-To: Ash <ashrat@gmail.com>
+From: Ketil Froyn <reiserfs@ketil.froyn.name>
+Subject: reiserfs on Redhat Enterprise Linux
+Date: Tue, 05 Oct 2004 15:51:32 +0100
+Message-ID: <1096987891.4297.383.camel@ketil>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22000-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22001-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,21 +13,22 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hello all, 
+Hi,
 
-Is there any kind of list giving open/outstanding bugs against
-ReiserFS, specifcally against
-ReiserFS V3 (Linux kernel 2.6.7) ?
-Is there any kind of bug tracking system being used which can be
-browsed for reference ?
-If not, is there any document regarding documented limitations / open
-bugs  and the planned
-improvements/tasks ?
+I am investigating a migration of a system relying on reiserfs to Redhat
+Enterprise Linux 3. As I understand it, reiserfs is unsupported in
+RHEL3, but is available anyway in a kernel-unsupported package or
+something like that. However, it seems the reiserfs-utils package is not
+available.
 
-I checked the FAQ on namesys, but it does not give any information
-about currently
-open bugs and known limitations.
-It will be a big help if someone could point me to this information.
+Which version of reiserfsprogs should I use to make sure I have one that
+works for me? For instance, should I always go for the latest one (which
+is 3.6.18 today), or do I need to match reiserfs-utils version to kernel
+version in some fashion?
 
-Thanks
-Ash
+Thanks,
+
+Ketil Froyn
+ketil@froyn.name
+http://ketil.froyn.name/
+
