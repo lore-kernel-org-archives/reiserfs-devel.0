@@ -1,36 +1,46 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Quota problem
-Date: 13 May 2002 10:07:07 -0400
-Message-ID: <1021298827.16587.87.camel@tiny>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: New to reiserfs
+Date: Mon, 13 May 2002 21:53:59 +0200
+Message-ID: <200205132153.59075.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10300-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10301-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020513085414.A32129@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: Rasmus B?g Hansen <moffe@amagerkollegiet.dk>, ReiserFS Mailing List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Chris Mason <mason@suse.com>, Oleg Drokin <green@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, JPASTORM@esade.edu
 
-On Mon, 2002-05-13 at 00:54, Oleg Drokin wrote:
-> Hello!
-> 
-> On Fri, May 10, 2002 at 03:13:18PM +0200, Rasmus B?g Hansen wrote:
-> 
-> > May  6 12:39:03 carlsberg kernel: VFS: find_free_dqentry(): Data block full but it shouldn't.
-> > May  6 12:39:03 carlsberg kernel: VFS: Error -5 occured while creating quota.
-> 
-> error -5 means I/O error.
-> Any reiserfs related messages in logs?
-> 
-> Also please try to run latest reiserfsck on that partition and see if it finds
-> any problems.
+On Monday 13 May 2002 10:07, Hans Reiser wrote:
+> >>4.- I have a PIII 1 GHz, 512 MB RAM, SCSI server where I run sendmail,
+> >>bind and squid. Will I have problems with performance if I migrate to
+> >>reiserfs?
+> >>
+> sendmail will be lower in performance when using reiserfs unless you use =
 
-Running quotacheck should fix the errors.  You'll need to run it after
-each crash.
+> the latest not yet released patches and turned data journaling on.
 
--chris
+More speed numbers on this to come with related post.
+> Do you really push the performance limits of the machine as a mail server?
 
+You mean if it is worth?
+
+> squid will benefit from your putting all files in one directory.
+
+So I should clobber my squid partition/dir and reconfigure to put all files=
+=20
+into only one directory and let the squid hierarchy alone?
+
+Thanks,
+	Dieter
+
+--=20
+Dieter N=FCtzel
+Graduate Student, Computer Science
+
+University of Hamburg
+Department of Computer Science
+@home: Dieter.Nuetzel@hamburg.de
 
