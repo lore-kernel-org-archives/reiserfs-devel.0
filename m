@@ -1,59 +1,74 @@
-From: Dax Kelson <dax@gurulabs.com>
-Subject: 33 bad sectors kills 20GB
-Date: Sat, 4 May 2002 08:58:22 -0600 (MDT)
-Message-ID: <Pine.LNX.4.44.0205032353051.25287-100000@mooru.gurulabs.com>
-References: <Pine.LNX.4.44.0205032307120.25287-100000@mooru.gurulabs.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: fsync() Performance Issue
+Date: Sat, 04 May 2002 18:59:57 +0400
+Message-ID: <3CD3F76D.4000708@namesys.com>
+References: <93F527C91A6ED411AFE10050040665D0049BF9B4@corpusmx1.us.dg.com>	<1020463205.3946.252.camel@tiny>  <3CD341EC.9080906@namesys.com> <1020517884.3947.266.camel@tiny>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10238-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10239-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <Pine.LNX.4.44.0205032307120.25287-100000@mooru.gurulabs.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: berthiaume_wayne@emc.com, reiserfs-list@namesys.com, green@namesys.com
 
+Chris Mason wrote:
 
-This is a 20GB filesystem, used dd_rescue to make an image of the drive:
+>On Fri, 2002-05-03 at 22:05, Hans Reiser wrote:
+>
+>  
+>
+>>>The barrier option doesn't make much difference because the write cache
+>>>is off.  With write cache on, the barrier code should allow you to be
+>>>faster than with the caching off, but without risking the data (Jens and
+>>>I are working on final fsync safety issues though).
+>>>
+>>>Hans, data=journal turns on the data journaling.  The data journaling
+>>>
+>>>      
+>>>
+>>and the reason it is faster is....
+>>    
+>>
+>
+>Any time you append X number of bytes followed by an fsync (or O_SYNC),
+>you trigger a commit for the modified metadata, and then a seek to write
+>the data block.  You wait on the log blocks (usually 5 or 6 of them
+>total in the transaction) and then you wait for the data block to hit
+>the main disk area.
+>
+>With data logging, you also write the data block to the log, and that
+>means you can wait a while to flush it back to the main disk.  This
+>increases the size of the transaction by 1, but writing 7 blocks to the
+>log is almost no different from writing 6.
+>
+>You don't have to seek back to the main disk until you need to flush the
+>transaction.  The new code also flushes metadata from more the one
+>transaction at once, leading to less waiting overall.
+>
+>The new code is smarter about triggering updates to the journal header
+>block, it happens much less frequently now, leading to fewer seeks and
+>less waiting.
+>
+>As the size of the O_SYNC/fsync write increases, the benefit goes down. 
+>A 16k write only gets around 30% improvement with the new patches. 
+>Since a 1k write still needs to write a whole block, it should be the
+>same speed as a 4k write.
+>
+>Wayne, you might want to try the 1k test mounted with -o notail.
+>
+>-chris
+>
+>
+>
+>
+>  
+>
+So how about if you revise fsync so that it always sends data blocks to 
+the journal not to the main disk?
 
-Summary for /dev/hda3 -> hda3.img:
-dd_rescue: (info): 
-ipos:  19711944.0k
-opos:  19711944.0k
-xferd:  19711944.0k
-errs:     33
-errxfer:        16.5k
-succxfer:  19711927.5k
-avg.rate:    11743kB/s
-
-I then ran reiserfsck on the image file:
-
-look_for_lost: 6 files seem to left not linked to lost+found
-        Objects without names 1377
-        Empty lost dirs removed 10
-        Dirs linked to /lost+found: 149
-                Dirs without stat data found 5
-        Files linked to /lost+found 1228
-Pass 4 - done         left 298, 0 /sec
-        Deleted unreachable items 117
-Syncing..done
-Done
-
-(That took 3+ hours on a PIII 900, 512MB ram box)
-
-I mounted the image, and pretty much everything is gone.  
-
-Is it normal for 33 bad sectors (16.5k) of data (out of 19711944k) to 
-completely kill the fs?
-
-Would I have better luck if I used the -A option on dd_rescue?
-
-"        -A         Always write blocks, zeroed if err (def=no);"
-
-Any suggestions greatly appreciated.
-
-Dax Kelson
-Guru Labs
+Hans
 
 
