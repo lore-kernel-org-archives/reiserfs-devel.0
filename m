@@ -1,47 +1,35 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiserfsprogs release
-Date: Wed, 26 Jun 2002 13:17:10 +0400
-Message-ID: <200206261317.10813.vitaly@namesys.com>
-References: <200206251829.25799.vitaly@namesys.com> <20020625165254.GA30301@matrix.wg>
+From: =?ISO-8859-2?Q?Jakub_Ambro=BFewicz?= <ja@vigor.com.pl>
+Subject: superblock problem
+Date: Wed, 26 Jun 2002 13:22:21 +0200
+Message-ID: <3D19A3ED.6040201@vigor.com.pl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-10851-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10852-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020625165254.GA30301@matrix.wg>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-On Tuesday 25 June 2002 20:52, Dirk Mueller wrote:
-> On Die, 25 Jun 2002, Vitaly Fertman wrote:
-> > that reiserfsprogs-3.x.1c-pre6 which you can find on our ftp
-> > site seems to be stable and they are going to become a new
-> > release within next few days. We encourge you to test it and
-> > to report about any possible problem.
->
-> changelog ?
+Hi
 
-The most of changes are just bug fixes and speedups.
-    StatData got wrong values sometimes.
-    Tails were not converted back if had been converted to internal.
-    Lost+found was not accessible sometimes due to wrong flag in 
-    metadata.
-    Extra checks on --check and fixes on --fix-fixable were added 
-    for wrong st_nlinks, some info in internal tree.
-    Some multiple checks during overwriting and relocation were 
-    eliminated.
-    Etc.
+I just lost my superblock. Not a big deal, i
+reiserfsck --reuild-sb it, then --rebuild-tree.
+After that i made --check and it found no
+errors. But it's unmountable...
+During boot my kernel (2.4.18, Debian/Woody) states:
 
-Added different block size support - 1k, 2k and for Alpha 8k. 
-We are going to include the kernel patch after 2.4.19.
+super-459: read_super_block: super found at block 16
+is within its own log. It must not be of this type.
+read_super_block: can't find a reiserfs filesystem
+on dev 16:42 block 8, size 1024
 
-Support for bad block lists was added also but disabled for now 
-due to some conflicts with the current kernel, which have not been 
-solved yet.
+So i thought maybe i used wrong version and tried
+all of the options, still no result. And now i stuck
+with disk full of data which i can't get.
+So, is there a method to mount|fix this partition, or
+copy files out from it?
 
--- 
+JA
 
-Thanks,
-Vitaly Fertman
