@@ -1,61 +1,44 @@
-From: Paul Wagland <paul@wagland.net>
-Subject: Re: reiser4 and megaraid problems with debian 2.6.5 (*solved*)
-Date: Mon, 19 Apr 2004 00:36:16 +0200
-Message-ID: <1082327775.2003.5.camel@morsel.kungfoocoder.org>
-References: <36927C82-8DE0-11D8-A41D-000A95CD704C@wagland.net>
-	 <20040414090547.GB13578@raptus.homelinux.org>
-	 <6699459A-8E10-11D8-A41D-000A95CD704C@wagland.net>
-	 <16509.14375.539110.986025@laputa.namesys.com>
-	 <295743F0-8E17-11D8-A41D-000A95CD704C@wagland.net>
-	 <1081987184.11193.87.camel@morsel.kungfoocoder.org>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Subject: ".meta." as a Name Prefix
+Date: Sun, 18 Apr 2004 19:16:53 -0400 EDT
+Message-ID: <2407572152-BeMail@cr593174-a>
+References: <200404170255.i3H2ts1S011836@sirius.cs.pdx.edu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-YGH7GBhT02j08IrkG0cH"
-Return-path: <reiserfs-list-return-18036-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18037-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1081987184.11193.87.camel@morsel.kungfoocoder.org>
+In-Reply-To: <200404170255.i3H2ts1S011836@sirius.cs.pdx.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: reiserfs-list@Namesys.COM, Linux SCSI mailing list <linux-scsi@vger.kernel.org>, Atul Mukker <atulm@lsil.com>, Domenico Andreoli <cavok@libero.it>, Hans Reiser <reiser@Namesys.COM>, Linux kernel mailing list <linux-kernel@vger.kernel.org>
+To: reiserfs-list@namesys.com
 
---=-YGH7GBhT02j08IrkG0cH
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Elliott Mitchell wrote on Fri, 16 Apr 2004 19:55:54 -0700 (PDT):
+> > From: Grant Miner <mine0057@mrs.umn.edu>
+> > I like "metas".
+> 
+> Chalk me up as neutral about the name itself. That is I'm neutral about
+> ".metas" or "..metas", I'm firmly against using "metas" (or any other
+> name) without at least a leading period. I suspect Linus et al might very
+> well reject such a FS because this would be a fatal flaw. I'm concerned
+> about using such a short and therefore precious name for filesystem
+> functions, but OTOH it might well be accessed often by a user and
+> therefore appropriate.
 
-Hi all,
+I agree, it needs to start with a period.  I'd also drop the idea
+of having a separate directory for metadata and just use a common
+name prefix.  ".meta.mime" for example, rather than ".meta/mime".
 
-well partly solved anyway... I am just posting this so that if anyone
-finds this thread later they can also find this conclusion... There is
-still more work to be done before this problem can be properly closed,
-but at least now I am certain that it has nothing to do with the
-hardware :-)
+I'm probably repeating myself, but the trouble is that the .meta
+directory isn't a full directory - you can't add attributes to it.
+In BeOS, that's useful - the directory's GUI window coordinates
+are stored as attributes on the directory.  I'd like to use the
+standard GUI file explorer to also check on attributes!  With a
+.meta directory, it seems good in a psychological organizational
+way but it breaks the object model.  That breakage will cause more
+programming annoyances than using a prefix instead, in my humble
+opinion.
 
-It appears (my own unsupported theory) that the problem is that reiser4
-is taking some time to free up the free blocks that are currently in use
-by the wandering log. Since I was running a test that causes a lot of
-wandering log to be created, and I was doing it on a filesystem with
-very little free space, then I was running into the problem.
-
-Rerunning the test with either a) more space, or b) a smaller data set
-solved the problem. On the reiserfs-list we are now trying to find out
-exactly why this is happening, and how to solve the problem properly.
-
-Cheers,
-Paul
-
---=-YGH7GBhT02j08IrkG0cH
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQBAgwLftch0EvEFvxURAp5AAJ47g0pYpmfoLzcxbUJ4eymWDYhcbACfSMII
-hSKeT05AHFB7jFC7SJuGIgE=
-=covQ
------END PGP SIGNATURE-----
-
---=-YGH7GBhT02j08IrkG0cH--
-
+- Alex
