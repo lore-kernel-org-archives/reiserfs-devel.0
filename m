@@ -1,73 +1,71 @@
-From: Enrique Perez-Terron <enrique.perez-terron@norway.online.no>
-Subject: Split trees and locking during insertions
-Date: 09 Jun 2003 18:09:39 +0200
-Message-ID: <1055174978.20597.321.camel@arabia.home.lan>
+From: "Brian G. Olson" <bgo@cwru.edu>
+Subject: Re: Fixing corrupt reiserfs partition when it registers as full
+Date: Mon, 9 Jun 2003 12:44:28 -0400
+Message-ID: <20030609164427.GB2834@jade.cwru.edu>
+References: <20030604221436.GA19187@pals.cwru.edu> <20030605074823.GA10373@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14503-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14504-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <20030605074823.GA10373@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: kevinbealer@yahoo.com
+Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <green@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-A question from Hans Reiser made me think of some advantages that could
-be obtained for skip lists, skip trees and split trees by making the
-level a predictable function of the key. 
+Hello
 
-One could for instance seed the random number generator with a hash of
-the key just before generating the next level number. Then the level
-should still have the same distribution and randomness, yet if two
-processes simultaneously try to insert the same key they compute the
-same level for the key.  Those versed in number theory might know of far
-more efficient computations than this, but this shows that at least one
-method exists.
+On Thu, Jun 05, 2003 at 11:48:23AM +0400, Oleg Drokin wrote:
+> Hello!
+> 
+> On Wed, Jun 04, 2003 at 06:14:36PM -0400, Brian G. Olson wrote:
+> > Okay, I've got a reiserfs partition that went bad. I'm don't know how,
+> > but for some reason the partition became completely full.  Showing up as
+> > 100% full using df -h. However checking all the files on the partition
+> > (using du -shc) it should have been a little more than half full (2.4G
+> > partition), just as I remember df -h showing the last time I checked. So
+> > I unmounted it, and checked with reiserfsck --check.  Sure enough, it
+> > said I had a problem and told me to do use --rebuild-tree.  Okay, I do
+> > that and pass 1 completes. Then on pass 2 it says it wants to add a
+> > bunch of leaves (on the order of 10,000 leaves), but of course the
+> > partition registers as full so it fails. That is where I am currently
+> > stuck. I can't even mount it anymore, mount says it's 'not a directory'. 
+> > I'm currently using reiserfsck version 3.6.6 from the Knoppix v3.2 cd.
+> > Now I'm gonna try to find a newer version to use, but in the mean time,
+> > if anyone has any ideas I'd really appreciate it. Thanks
+> 
+> Hm, the easiest solution is to copy entire partition with 'dd' to a bigger partition
+> or to a file (and then append a file with some zeroes like this:
+> "dd if=/dev/zero bs=4096 count=11000 | cat >>filewithpartition.img"),
+> then run "reiserfsck --rebuild-sb" on the resulting partition or file,
+> it will ask you some questions and you need to agree to a proposed fs size and you must say "no"
+> to a question that asks if you did a resize.
+> This will add some more space for fsck to work with.
+> Then retry "reiserfsck --rebuild-tree" operation.
+> 
+> If you choose to copy image into a file, you will be able to mount the image
+> using the loop device driver (-o loop option to mount command) after succesful
+> finish of "reiserfsck --rebuild-tree" operation.
+> 
+> Bye,
+>     Oleg
+> 
 
-Without such seeding we have the following:
+Thanks for your help Oleg! I had some time to work on the problem this
+weekend, and your tips really helped. I brought the HD with the bad
+partition to another computer which had enough free space to make a
+temporary partition. Copied the bad partition to the new one (which had
+more space) using dd, fixed the superblock, then fixed it with
+reiserfsck --rebuild-tree. I then shrunk it with resize_reiserfs so it
+would fit on the original partition, dd'd it back to the original
+partition, ran resize_resierfs again to make sure it was using the
+entire partition, and now all is well. Oh, and after each step I used
+reiserfsck --check to make sure everything was okay. 
 
-During insertion, if duplicated keys are to be avoided, the algorithm
-first finds the position P in the tree where the new node will be
-placed, then searches the tree below P to see if there is already
-another node with the same key.
+Thanks again.
 
-It would be an error to lock P only after the nodes below have been
-inspected and the decision to insert below P has been taken. While the
-algorithm descends the subtrees below P another process could insert a
-node with the same key anywhere above the node we are currently
-inspecting. So, we have to write lock the node above the assigned level
-of the new node, and keep the node locked while we descend the levels to
-see if the key is already present. 
-
-If we keep P locked, a competing process cannot insert a new node with
-the same key above P, (say at P') because it too has to look below P' to
-see if there is already a node with that key, and then it will have to
-wait on P to be released, and it will find the key we are inserting.
-
-With seeding, when we find the location where we want to insert the new
-node, we need not look any further to make the decision. We can begin
-the insertion right away. The algorithm does no longer need to be
-two-pass or one-and-a-half-pass. 
-
-Once the decision to do the insertion is made, the procedure is the same
-with or without seeding. The node above the new node can be released as
-soon as the new node is inserted into the tree and write locked. The
-lock on the new node can be released when both child pointers have been
-assigned its final value and the nodes having the left and right
-receiver pointer have been write locked. When a right receiver pointer
-is assigned to, the new right receiver pointer is found and its owner
-node is write locked before the lock on the old right receiver pointer
-owner is released.
-
-If the level function is sufficiently cheap, also lookups might benefit
-slightly, by first computing the level of the key we are looking for and
-then deciding the node is not there if it is not at that level.
-
-This would save one comparison half the times, plus two comparisons a
-quarter of the time, etc.  But most comparisons are cheap when the keys
-are different.
-
-Regards, Enrique
-
+Brian
