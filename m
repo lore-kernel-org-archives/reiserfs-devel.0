@@ -1,43 +1,48 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Getopt improvements
-Date: Fri, 28 Feb 2003 15:04:26 +0300
-Message-ID: <3E5F504A.6010902@namesys.com>
-References: <3E5D26A2.7010804@suse.com> <20030227092551.C28643@namesys.com> <3E5E312C.50406@suse.com> <3E5E730C.7030804@namesys.com> <3E5E84B2.90708@suse.com> <3E5E92BA.4090307@namesys.com> <20030228100147.A878@namesys.com>
+Subject: Re: ReiserFS causes CPU high usage?!
+Date: Fri, 28 Feb 2003 15:07:15 +0300
+Message-ID: <3E5F50F3.2040907@namesys.com>
+References: <200302280011.14488.liviu.voicu@huji.ac.il> <20030228105145.C1234@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12971-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12972-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030228100147.A878@namesys.com>
+In-Reply-To: <20030228105145.C1234@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Oleg Drokin <green@namesys.com>
-Cc: Jeff Mahoney <jeffm@suse.com>, Reiserfs List <reiserfs-list@namesys.com>
+Cc: Voicu Liviu <liviu.voicu@huji.ac.il>, reiserfs-list@namesys.com
 
 Oleg Drokin wrote:
 
 >Hello!
 >
->On Fri, Feb 28, 2003 at 01:35:38AM +0300, Hans Reiser wrote:
+>On Fri, Feb 28, 2003 at 12:11:14AM +0200, Voicu Liviu wrote:
+>
 >  
 >
->>>   For the simple cases (which also happen to be all we have right 
->>>now), yes, I think that my implementation is cleaner. It allows the 
->>>simple use of mutually exclusive options, through the "no" prefix, and 
->>>clearing of the other bits in a multivalue option.  For now, that's 
->>>all we need - and it's a valid argument for using my code. However, 
->>>what I like about Oleg's implementation is that if you have an option 
->>>that excludes other options (even when it's not multivalue), it can 
->>>clear those bits as well.
->>>      
->>>
->>It clears them without failing, yes?  Not sure I like that.
+>>Any clue what is going on?
+>>Maybe ReiserFS uses the cpu harder?
 >>    
 >>
 >
->Hm, why should it fail?
+>reiserfs is using more CPU than ext2/ext3. It's maintaining its metadata in
+>balanced tree. Each tree update often requires shifting of some of the data
+>between or inside of tree nodes. That's where CPU time is going.
+>
+>
+>  
+>
+>>I have to fix the CPU usage icon_sad.gif I makes me crazy...simple emerge 
+>>loads the CPU to 90 ~ 95%
+>>    
+>>
+>
+>Make sure you do not have "CONFIG_REISERFS_CHECK" enabled in you kernel config,
+>as this enables lots of extra checks in reiserfs code that consume even more CPU.
 >
 >Bye,
 >    Oleg
@@ -45,8 +50,8 @@ Oleg Drokin wrote:
 >
 >  
 >
-Incompatible options should fail as they represent error.  Feel free to 
-argue with that.
+using notail option will reduce CPU usage, improve read performance, and 
+waste some disk space (still better than ext*).
 
 -- 
 Hans
