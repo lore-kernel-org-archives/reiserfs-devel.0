@@ -1,68 +1,48 @@
 From: Anders Widman <andewid@tnonline.net>
-Subject: Re: Slightly off topic.
-Date: Wed, 5 Mar 2003 19:46:22 +0100
-Message-ID: <15271152843.20030305194622@tnonline.net>
-References: <15543129984.20030305115919@tnonline.net>
- <200303060524.33398.sam@vilain.net> <7163181578.20030305173331@tnonline.net>
- <200303051842.54392.Dieter.Nuetzel@hamburg.de>
+Subject: Error messages.
+Date: Wed, 5 Mar 2003 20:18:18 +0100
+Message-ID: <7473069171.20030305201818@tnonline.net>
 Reply-To: Anders Widman <andewid@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13083-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13084-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200303051842.54392.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: =?ISO-8859-1?B?RGlldGVyIE78dHplbA==?= <Dieter.Nuetzel@hamburg.de>
-Cc: reiserfs-list@namesys.com
-
-> Am Mittwoch, 5. M=E4rz 2003 17:33 schrieb Anders Widman:
->> > On Thu, 06 Mar 2003 05:04, Christian Mayrhuber wrote:
->> >> Am Mittwoch, 5. M=E4rz 2003 11:59 schrieb Anders Widman:
->> >> >    Does  anyone  know  where to find a driver for the new Promise S=
-ATA
->> >> >    150  controller  for  2.4  or  2.5 kernels? So far I have not fo=
-und
->> >> >    anything  on  the promise website, nor does the built-in drivers=
- in
->> >> >    current kernels support the new promise controllers? The chip mo=
-del
->> >> >    is  PDC20376,  but  the  kernels  seem to only support PDC202xx =
-not
->> >> >    PDC203xx.
->> >>
->> >> No drivers exist for Promise SATA controllers and it seems that none
->> >> will be written. See
->> >> http://kt.dlut.edu.cn/kernel-traffic/kt20030223_206.html#6
->> >
->> > Or wait for Serial SCSI.  IDE has always sucked :-).  My system running
->> > with a Symbios SCSI controller and a 10MBps bus seems damned faster and
->> > more responsive than when I was running on a UDMA66 HD.  I largely put=
- it
->> > down to Tagged Command Queuing
->>
->> Which is in ATA-100 and above. Just tha Linux has not yet support this
->> feature.
-
-> Not true.
-> IBM disks support it for ages.
-
-I  was  under the impression that the host OS also has to support TCQ,
-but maybe I was mistaken about that.
-
-> Linux and Free (?) BSD was first.
-
-I only noticed support in late 2.4.1x kernels?
-
-> Regards,
->         Dieter
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
 
-  =20
+   This  has  come up on this list a number of times, and no one still
+   seem to have found the true answer to the problem.
 
+   kernel: status error: status=0x58 { DriveReady SeekComplete DataRequest }
+
+   Most  seem  to  say  this is a bad block on the harddrive. I am not
+   convinced  though.  Using  Linux on three machines here, and I have
+   seen  this error on all of them, with lots of disks. The error seem
+   to   come  random,  but  does  cause  system  lockups  and  broken
+   filesystems.
+
+   Have  about  20  disks, and have replaced and upgraded them several
+   times  too.  This error has shown on most of them. But when testing
+   them  with tools like IBM DFT, Maxtor Powermax, badblocks or chkdsk
+   in Windows none show up to be with errors on.
+
+   Sometimes  it  seem  to  help to disable DMA and or lower UDMA mode
+   (all  drives are ATA-100 or ATA-133). But then after a few days, or
+   a  few  minutes  the  kernel  starts spitting out these status=0x58
+   errors.
+
+   After  looking  online  on  different forums it does seem that many
+   people are experiencing them.
+
+   What  exactly does this status=0x58 error mean, and what can one do
+   to solve the problem?
+
+   //Anders
 
 
 --------
