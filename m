@@ -1,61 +1,41 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
-Date: Wed, 12 Feb 2003 20:19:58 +0300
-Message-ID: <3E4A823E.9010609@namesys.com>
-References: <93F527C91A6ED411AFE10050040665D0049C06D5@corpusmx1.us.dg.com> <200302130522.35829.sam@vilain.net> <51115850843.20030212175355@tnonline.net>
+Date: Wed, 12 Feb 2003 20:13:21 +0300
+Message-ID: <20030212201321.A25086@namesys.com>
+References: <NDBBJPAGKLCMDEIEKOPBAEIMKFAA.mailinglists@websitemanagers.com.au> <3452483515.20030212001747@tnonline.net> <200302121925.56902.vitaly@namesys.com> <48116033718.20030212175658@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12728-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12727-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <51115850843.20030212175355@tnonline.net>
+Content-Disposition: inline
+In-Reply-To: <48116033718.20030212175658@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Anders Widman <andewid@tnonline.net>
 Cc: reiserfs-list@namesys.com
 
-We are doing ok financially until summer, during which I need to come up 
-with more money from somewhere.
+Hello!
 
-There is a lot of fiscal uncertainty in a project like ours.  We get 
-money in big chunks with no knowledge of how long we need to make it 
-last.  There is this nagging worry that I could get unlucky for the 
-wrong 6 month stretch, and have to lay off everyone.  This worry is 
-especially acute during the midst of a tech bust (sponsors dry up even 
-for successful projects) which is also during the debugging phase for 
-reiser4 (will it be debugged by June, or will it take as long as V3, or 
-longer....).
+On Wed, Feb 12, 2003 at 05:56:58PM +0100, Anders Widman wrote:
+ 
+> > So it would be possible to do some actions to 1) get some blocks back in the described
+> > way, 1.1) write to really bad blocks should have remaped them already here if there is
+> > a space in remap area 2) save bad blocks to badblock list in fs if they are still bad -
+> > out of remap area. 
+> > Would be not bad to try to recover in this way already remapped blocks - do not know how
+> > to get the list of them only.
+> > Ok, but what if the IO error you got is not a bad block, but a bad cable? Do you want
+> > the fs to work in the described way? Trying to fix all automatically? I am not sure.
+>   How about trial and (then) error? :)
 
-For V3 we are going to fix any bugs that come in (one known bug remains 
-that seems to be elusive and will distract our lead programmer from V4 
-this month), put in Oleg's write patch and chris's patches, fix fsck 
-when it fails, and that is it.  V3 will be our feature frozen FS for 
-mission critical servers.
+That might be suitable for fsck, but not for kernel I am sure.
+Kernel should just probably return error or try to use different block (if it was
+doing write) and if certain number of attempts failed, return error too.
+Also remount R/O if write error is in system area (journal, superblock, bitmaps)
+or special mount option was given that demands remounting R/O on io errors.
 
-Every resource we have is going to go into getting V4 done and stable so 
-that we can sell it in the summer.  Hopefully we will make it.  One 
-worry is that while V4 will be much more stable by design (transactions, 
-fsck friendly node format with mkfsids and transaction ids (that make it 
-easier to figure out when two version of a file collide which one to 
-keep), etc.), V3 will be more stable in implementation for quite some time.
-
->>It must suck having a free project get only slight funding.  All of a
->>sudden a whole load of geeks get very angry and demanding.  I wish I could
->>help, but hey it's more fun to troll.^H^H^H I've got better things to do.
->>    
->>
->
->You are free to donate your hard earned money to them.
->
-> - Anders
->
->  
->
-
-
--- 
-Hans
-
-
+Bye,
+    Oleg
