@@ -1,76 +1,51 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Odd Block allocation behavior on Reiser3
-Date: Tue, 10 Aug 2004 14:50:13 -0400
-Message-ID: <1092163813.10651.372.camel@watt.suse.com>
-References: <20040809201939.GA55683@kevlar.burdell.org>
-	 <1092083451.10651.218.camel@watt.suse.com>
-	 <20040809220459.GA57121@kevlar.burdell.org> <41187657.7030709@namesys.com>
-	 <20040810154514.GA67591@kevlar.burdell.org>  <41190B5A.7070503@namesys.com>
-	 <1092162318.10651.365.camel@watt.suse.com>
+From: Quinn Harris <reiserfs-list@quinnh.org>
+Subject: Re: implementing reiserfs in C++ for a new OS
+Date: Tue, 10 Aug 2004 13:12:48 -0600
+Message-ID: <200408101312.48888.reiserfs-list@quinnh.org>
+References: <71d3364904080706112e72fb6b@mail.gmail.com> <20040809172437.GP1284@nysv.org> <71d3364904080922267e8c14af@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20140-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20141-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1092162318.10651.365.camel@watt.suse.com>
+In-Reply-To: <71d3364904080922267e8c14af@mail.gmail.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Sonny Rao <sonny@burdell.org>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Tue, 2004-08-10 at 14:25, Chris Mason wrote:
-> On Tue, 2004-08-10 at 13:52, Hans Reiser wrote:
-> > Sonny Rao wrote:
-> > 
-> > >On Tue, Aug 10, 2004 at 12:16:39AM -0700, Hans Reiser wrote:
-> > >  
-> > >
-> > >>Interesting.What happens without overwrite, that is, if you write more 
-> > >>files without deleting the old ones?
-> > >>    
-> > >>
-> > >
-> > >Below I made 24 one gigabyte files in sequence
-> > >All of them are similarly fragmented: 
-> > >data # filefrag *
-> > >datafile0: 268 extents found
-> > >
-> > this could explain some reiser3 performance problems.   This is what 
-> > happens when I spend all my time chasing funding and don't spend it 
-> > reviewing code and benchmarks, sigh.
-> > 
-> > Thanks for spotting this.  I would be curious if this is occuring near 
-> > the transition between unformatted nodes and their parents, or something 
-> > else.
-> 
-> There have been a few threads on this on reiserfs-list
-> 
-> singer:/data # dd if=/dev/zero of=foo bs=1MB count=1000
-> 1000+0 records in
-> 1000+0 records out
-> singer:/data # filefrag foo
-> foo: 1 extent found
-> 
-> The new allocator really should be doing a better job here.
+ReiserFS is a copyrighted work distributed under a GPL license and possibly 
+others as the copyright holder Hans Reiser sees fit.  Copyright law protects 
+an expression of an idea, as in the actual code, not the idea itself.  In 
+other words, copyright law provides no legal means to restrict someone else 
+from implementing the ideas in ReiserFS.  Patents on the other hand provide 
+such power.  But I strongly doubt Hans holds any patents that would restrict 
+the reimplementation of ReiserFS.
 
-Hmpf, that's what I get for expecting filefrag to work properly on
-amd64.  The actual number of extents is 199, which is still better then
-268.  Using fibmap, the fragmentation percentage is still the same as
-ext3 (99.99% unfragmented) meaning the length between the extents is
-quite small.
+I believe it is your right to reimplement ReiserFS and I expect at least US 
+law would back that up.  Despite this, I would question the cost 
+effectiveness of doing so.  Reimplementing ReiserFS or any other file system 
+is far from trivial.  You should strongly consider negotiating an alternative 
+license for ReiserFS for a reasonable fee.  In doing so, you could have an 
+excellent functional file system for Capitol OS in a very short time at a 
+cost that could be subsantially lower than what it would take you to 
+reimplement it.  It would also be much easier to transform a fully functional 
+C code base into a C++ equivalent.
 
-If you mount with:
+Considering that you would like to start from a fully functional file system 
+design, I would assume that the file system design isn't a core part of the 
+research in this project.  What I would expect you need is a good file system 
+with a C++ interface to the rest of your kernel.  It should be vastly easier 
+to create that interface on the existing code base than reimplement the 
+entire file system in C++.
 
-mount -o alloc=skip_busy:oid_groups
-
-You get 8 extents on a 1GB file.
-
-This is because the oid grouping tries much harder to isolate the file
-data from data from other files and metadata.  It is far from optimal
-for normal usage, but for huge files it works nicely.
-
--chris
+- Quinn
 
 
+On Monday 09 August 2004 11:26 pm, Ramachandra K wrote:
+> Let me clarify that the nature of Capital project is academic research.
+>
+> rgds
+> Ram
