@@ -1,73 +1,110 @@
-From: reiser <reiser@namesys.com>
-Subject: Re: We need help benchmarking and debugging reiser4
-Date: Sat, 02 Nov 2002 17:09:09 -0800
-Message-ID: <3DC47735.9060206@namesys.com>
-References: <200211012236.gA1MaqT20507@mail.osdl.org>
-Reply-To: reiser@namesys.com
+From: Dikshie <dikshie@ppk.itb.ac.id>
+Subject: quota problem
+Date: Mon, 4 Nov 2002 19:10:34 +0700
+Message-ID: <20021104121034.GA96760@ppk.itb.ac.id>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11908-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11909-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200211012236.gA1MaqT20507@mail.osdl.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Cliff White <cliffw@osdl.org>
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Oleg Drokin <green@namesys.com>, Nikita Danilov <Nikita@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com, ext3-users@redhat.com
 
-Cliff White wrote:
 
->>Can some of you help us by doing such things as replicating our 
->>benchmarks, and helping us debug it as we enter the last stretch before 
->>Halloween?
->>
->>    
->>
->
->We are interested in helping, but i haven't seen the follow-up mail 
->mentioned below - if you could send us some more specifics, we'd be
->glad to join the fun.
->cliffw
->OSDL
->
->  
->
->>Nikita and Oleg will describe the details of what to do to replicate the 
->>benchmarks, please be sure to use reiser4 readdir order for writes to 
->>reiser4 (that means don't use tarballs made from ext2 (Remember that 
->>writes determine subsequent read performance.)), and to use the latest 
->>hard drives and fast processors with udma 5 turned on.  We are quite 
->>sensitive to transfer speed since we do a good job of avoiding seeks.  
->>We are sensitive to readdir order because we sort directory entries 
->>(which is necessary for having efficient large directory lookups).   In 
->>reiser4.1 we will ship a repacker, and then it won't matter what order 
->>you do writes in so long as the repacker gets a chance to run at night.  
->>
->>-- 
->>Hans
->>
->>
->>-
->>To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->>the body of a message to majordomo@vger.kernel.org
->>More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>Please read the FAQ at  http://www.tux.org/lkml/
->>
->>    
->>
->
->
->
->
->  
->
-Cliff, has there been a russian timezone working day since you requested 
-it?  (I don't have access to your original email at the moment.) If 
-there has been, then Nikita, please explain why the request was lost, 
-and assure me that next time it goes into someone's todo list, and gets 
-responded to on the same day.
 
-Hans
+
+Hello,
+What am I missing ?
+
+thanks !
+
+-dikshie-
+
+@fisbum:/usr/bin$ uname -a
+Linux fisbum 2.4.18 #3 Tue Mar 19 16:55:23 JAVT 2002 i686 unknown
+
+@fisbum:/usr/bin$ mount
+/dev/hda1 on / type ext3 (rw,errors=remount-ro)
+/dev/hda3 on /usr type reiserfs (rw)
+/dev/hda5 on /home type reiserfs (rw,nosuid,usrquota)
+/dev/hda6 on /var type reiserfs (rw,usrquota)
+/dev/hda7 on /tmp type reiserfs (rw)
+/dev/hdb1 on /data1 type reiserfs (rw)
+/dev/hdb2 on /data2 type reiserfs (rw)
+/dev/hdb3 on /data3 type reiserfs (rw)
+none on /dev/pts type devpts (rw,gid=5,mode=620)
+none on /proc type proc (rw)
+
+
+
+kjournald starting.  Commit interval 5 seconds
+EXT3-fs: mounted filesystem with ordered data mode.
+VFS: Mounted root (ext3 filesystem) readonly.
+Freeing unused kernel memory: 220k freed
+Adding Swap: 265064k swap-space (priority -1)
+EXT3 FS 2.4-0.9.17, 10 Jan 2002 on ide0(3,1), internal journal
+reiserfs: checking transaction log (device 03:03) ...
+Using r5 hash to sort names
+reiserfs: using 3.5.x disk format
+ReiserFS version 3.6.25
+reiserfs: checking transaction log (device 03:05) ...
+Using r5 hash to sort names
+reiserfs: using 3.5.x disk format
+ReiserFS version 3.6.25
+reiserfs: checking transaction log (device 03:06) ...
+Using r5 hash to sort names
+reiserfs: using 3.5.x disk format
+ReiserFS version 3.6.25
+reiserfs: checking transaction log (device 03:07) ...
+Using r5 hash to sort names
+reiserfs: using 3.5.x disk format
+ReiserFS version 3.6.25
+reiserfs: checking transaction log (device 03:41) ...
+Using r5 hash to sort names
+reiserfs: using 3.5.x disk format
+ReiserFS version 3.6.25
+reiserfs: checking transaction log (device 03:42) ...
+Using r5 hash to sort names
+reiserfs: using 3.5.x disk format
+ReiserFS version 3.6.25
+reiserfs: checking transaction log (device 03:43) ...
+Using r5 hash to sort names
+reiserfs: using 3.5.x disk format
+ReiserFS version 3.6.25
+VFS: Quota for id 1114 referenced but not present.
+VFS: Can't read quota structure for id 1114.
+VFS: Quota for id 1116 referenced but not present.
+VFS: Can't read quota structure for id 1116.
+VFS: Quota for id 1115 referenced but not present.
+VFS: Can't read quota structure for id 1115.
+VFS: Inserting already present quota entry (block 12).
+VFS: Error -5 occured while creating quota.
+VFS: Quota for id 1113 referenced but not present.
+VFS: Can't read quota structure for id 1113.
+VFS: Quota for id 1116 referenced but not present.
+VFS: Can't read quota structure for id 1116.
+VFS: Inserting already present quota entry (block 12).
+VFS: Error -5 occured while creating quota.
+VFS: Inserting already present quota entry (block 12).
+VFS: Error -5 occured while creating quota.
+VFS: Quota for id 1115 referenced but not present.
+VFS: Can't read quota structure for id 1115.
+VFS: Quota for id 1118 referenced but not present.
+VFS: Can't read quota structure for id 1118.
+VFS: Quota for id 1001 referenced but not present.
+VFS: Can't read quota structure for id 1001.
+VFS: Inserting already present quota entry (block 12).
+VFS: Error -5 occured while creating quota.
+VFS: Quota for id 1118 referenced but not present.
+VFS: Can't read quota structure for id 1118.
+VFS: Quota for id 1113 referenced but not present.
+VFS: Can't read quota structure for id 1113.
+VFS: Inserting already present quota entry (block 12).
+VFS: Error -5 occured while creating quota.
+VFS: Quota for id 1113 referenced but not present.
+VFS: Can't read quota structure for id 1113.
 
