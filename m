@@ -1,52 +1,42 @@
-From: f00bar <f00bar@sbcglobal.net>
-Subject: Re: resizefs.reiser4
-Date: Mon, 2 Aug 2004 15:45:00 -0700 (PDT)
-Message-ID: <20040802224500.35985.qmail@web80804.mail.yahoo.com>
-References: <410D9964.9010004@namesys.com>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: Using fs views to isolate untrusted processes: I need an
+ assistant architect in the USA for Phase I of a DARPA funded linux kernel
+ project
+Date: Mon, 02 Aug 2004 20:04:34 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <873c35nl2l.fsf@uhoreg.ca>
+References: <410D96DC.1060405@namesys.com> <200408021112.08981.christian.mayrhuber@gmx.net>
+ <87r7qpo3dj.fsf@uhoreg.ca> <410EBBD5.4080308@dgreaves.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19927-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19928-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <410D9964.9010004@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hans,
+>>>>> "David" == David Greaves <david@dgreaves.com> writes:
 
-I responded to your inquiry for more information
-outside of this mailing list. I have not yet received
-a response, so I will attempt once more via the
-mailing list, just in case you do not answer or
-receive direct emails.
+David> It sounds like running exe's setgid (or addgid?) and then having acls.
+David> But then the acls are not tied to the file objects, more appended
+David> to the file acl list by 'pattern' according to the exe.
 
-If you did not receive my email or it was filtered,
-let me know, otherwise I will assume you do not have
-any interest in my project.
+Possibly.  But, from my understanding of views, apache would not even
+be able to see that /etc/passwd exists -- it is not just limited to not
+being able to read it.  I don't think you can do that with acls, and
+still allow apache to see some entries in /etc.
 
-Regards,
-John Baxter
+It also seems much easier to administer, since the permissions are tied
+to the executable, rather than being tied to the file object.  (Say I
+want to see what files apache can read as part of a security audit --
+with acls, I would have to do a search over the whole filesystem.)
 
-
---- Hans Reiser <reiser@namesys.com> wrote:
-> f00bar wrote:
-> 
-> >I am considering writing a evms fsim (plugin) for
-> the
-> >Reiser4 fs. I was wondering how I might obtain
-> >(licen$e) the code for resizefs and any other user
-> >space tools which are *not implemented yet*.
-> >
-> >
-> >
-> >  
-> >
-> Tell me about your business.  Do you sell
-> proprietary software or?  Who 
-> do you work for?
-> 
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
