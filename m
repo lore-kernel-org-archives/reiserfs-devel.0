@@ -1,32 +1,54 @@
-From: Tom Vier <tmv@comcast.net>
-Subject: Re: need attrs patch for 2.5.44-ac3
-Date: Tue, 29 Oct 2002 17:01:30 -0500
-Message-ID: <20021029220130.GA9007@yzero>
-References: <20021026230215.GA3258@yzero> <20021028193322.C1171@namesys.com>
- <20021029000923.GA527@yzero> <20021029090433.A5090@namesys.com>
-Reply-To: Tom Vier <tmv@comcast.net>
+From: Torrey Hoffman <thoffman@arnor.net>
+Subject: Mounting reiserfs with nonstandard journal size fails
+Date: 29 Oct 2002 15:36:20 -0800
+Message-ID: <1035934581.1487.1409.camel@rivendell.arnor.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Return-path: <reiserfs-list-return-11828-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11829-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-reply-to: <20021029090433.A5090@namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: Linux Kernel <linux-kernel@vger.kernel.org>, Reiserfs List <reiserfs-list@namesys.com>
 
-On Tue, Oct 29, 2002 at 09:04:33AM +0300, Oleg Drokin wrote:
-> In order for attributes to work you need to mount the volume with -o attrs.
-> Without that you can only get/set attributes value.
+I'm having trouble mounting a reiserfs filesystem created with a
+nonstandard (smaller) journal size.  But if I use the default journal
+size, it works fine.
 
-i'm using the same /etc/fstab with attrs for 2.4 and it works. i haven't
-tried mounting another reiserfs, so i don't know if it's just the rootfs
-that's affected.
+The filesystem is on a 64 MB compact flash attached to a USB reader. It
+has a single partition, which appears as /dev/sda1.
 
--- 
-Tom Vier <tmv@comcast.net>
-DSA Key ID 0xE6CB97DA
+I've done a little detective work with strace'ing mount (8). It calls
+mount (2) which fails with EINVAL, which seems to indicate a bad
+superblock in this case.  It appears that the in-kernel superblock
+parsing for reiserfs does not understand non-standard journal sizes.
+
+My kernel is an updated Red Hat 7.3 (2.4.18-10) and my reiserfsprogs are
+3.6.3, downloaded from www.namesys.com and compiled locally.  My mount
+program is version 2.11n, the standard Red Hat version.
+
+Is this fixed in later kernels?
+
+Another strange thing I noticed: if I strace a successful mount of the
+normal reiserfs, I see two calls to mount (2) in the output.  The first
+returns ENOSYS, which is not documented on the mount(2) manpage, but the
+second identical call succeeds.  Weird.  Time to have a look at the
+mount sourcecode I guess...
+
+successful mount strace output:
+...
+mount("/dev/sda1", "/mnt/flash", "reiserfs", 0xc0ed0000, 0) = -1 ENOSYS
+(Function not implemented)
+mount("/dev/sda1", "/mnt/flash", "reiserfs", 0xc0ed0000, 0) = 0
+...
+
+Torrey Hoffman
+thoffman@arnor.net
+torrey.hoffman@myrio.com
+
+
+
+
+
