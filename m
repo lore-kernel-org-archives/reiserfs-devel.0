@@ -1,52 +1,33 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Reiserfs versions
-Date: Tue, 19 Nov 2002 10:51:23 +0300
-Message-ID: <20021119105123.A3473@namesys.com>
-References: <3DD97831.4030607@panix.com> <20021119093526.A32026@namesys.com> <3DD9EC4B.70907@panix.com>
+From: "Vitezslav T. Se'm" <travis@inway.cz>
+Subject: Strange message in log
+Date: Tue, 19 Nov 2002 15:17:41 +0100
+Message-ID: <3DDA4805.5080700@inway.cz>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12019-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12020-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3DD9EC4B.70907@panix.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kenny gorman <kgorman@panix.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Hello!
+Hi.
 
-On Mon, Nov 18, 2002 at 11:46:19PM -0800, kenny gorman wrote:
+        Last Friday I installed my new workstation (RH7.3/redhat kernel 
+2.4.18-18.7.x) and everytime I use mkreiserfs -h r5 /dev/partition it 
+writes a bit strange message into syslog.
 
-> I poked around suse's site, and found the 'certified kernel' with:
-> 2.4.16-64gb smp
+*******
+Nov 19 15:10:30 biker kernel: attempt to access beyond end of device
+Nov 19 15:10:30 biker kernel: 16:41: rw=0, want=80413328, limit=80413326
+*******
 
-This one is ok.
+        Partition is formated, mounted, used - everything OK. Is there 
+any problem with that syslog message?
 
-> reiserfs-3.x.0k_pre10-8
+Thanx
 
-This one is not.
+Vitezlav T. Se'm
 
-> See any reason why this combination is not a good idea?
-
-reiserfs-3.x.0k_pre10 sounds like something very old.
-
-> How do the version numbers work? I am confused about the 3.x notation 
-> and the 3.6 notation you used below...I upgraded my reiserfsprogs to 
-> 3.6.4 just in case, but the filesystem rpm is still 3.x.0k_pre10-8 right?
-
-The 3.x notation is the obsoletted one which was supposed to mean 3.5 and 3.6,
-recently we changed that confusing scheme to just 3.6.
-
-
-You can get reiserfsprogs 3.6.4 from our ftp site, build build rpm from it,
-and then replace your reiserfs package with fersly built one,
-so that your RPM database is in consistent state with what you actually have.
-
-Or may be SuSE people have newer reiserfsprogs already in updates.
-
-Bye,
-    Oleg
