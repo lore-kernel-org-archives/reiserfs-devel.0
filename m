@@ -1,32 +1,43 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Sun, 04 Apr 2004 08:50:41 -0400
-Sender: news <news@sea.gmane.org>
-Message-ID: <87smfjc3fi.fsf@uhoreg.ca>
-References: <406EFB72.6000009@namesys.com> <20040404032233.86328.qmail@web25010.mail.ukl.yahoo.com>
- <87u100e58d.fsf@uhoreg.ca> <406F96F0.8000107@mrs.umn.edu>
+From: Domenico Andreoli <cavok@tiscali.it>
+Subject: snapshot 2004.03.26 + linux 2.6.5 = build error
+Date: Sun, 4 Apr 2004 18:10:30 +0200
+Sender: Domenico Andreoli <cavok@libero.it>
+Message-ID: <20040404161030.GA21978@raptus.homelinux.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17691-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17693-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
->>>>> "Grant" == Grant Miner <mine0057@mrs.umn.edu> writes:
+hi there,
 
-Grant> You mean /sys/fs/reiser4/metas?  :P
+today i applied latest snapshot to linux kernel 2.6.5 and tried to
+build it.
 
-My /sys doesn't even have a fs subdirectory.  So I'm pretty sure I mean
-/proc (unless you can tell me why it should be in /sys.  But AFAICT /sys
-deals more with accessing hardware properties.).
+patch didn't apply cleanly, there were some hunks and a reject on
+arch/sparc/kernel/init_task.c which looked trivial to fix.
 
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+problem arrived on reiser4 kernel module (i'm using as module with no
+problems), build error follows:
 
+
+  CC [M]  fs/reiser4/as_ops.o
+fs/reiser4/as_ops.c: In function `move_inode_out_from_sync_inodes_loop':
+fs/reiser4/as_ops.c:570: error: structure has no member named `dirtied_when'
+make[4]: *** [fs/reiser4/as_ops.o] Error 1
+
+
+any hotfix for this?
+
+cheers
+domenico
+
+-----[ Domenico Andreoli, aka cavok
+ --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
+   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
