@@ -1,50 +1,80 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: A question about slum and relocate
-Date: Mon, 24 Nov 2003 05:04:10 -0800
-Message-ID: <3FC201CA.9090700@namesys.com>
-References: <Pine.GSO.4.58.0311241820230.6503@bingsun2.cc.binghamton.edu>
+From: Angel <angel666@socal.rr.com>
+Subject: Re: -mm issues with Reiserfs and deleting files.
+Date: Mon, 24 Nov 2003 21:59:16 -0800
+Message-ID: <20031124215916.173a79bb.angel666@socal.rr.com>
+References: <20031121145843.60cb83c0.angel666@socal.rr.com>
+	<20031121151005.35c17e58.akpm@osdl.org>
+	<16321.62257.896533.575451@laputa.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16157-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ boundary="Multipart=_Mon__24_Nov_2003_21_59_16_-0800_Z4WbbZuhDZEV6xjF"
+Return-path: <reiserfs-list-return-16159-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.GSO.4.58.0311241820230.6503@bingsun2.cc.binghamton.edu>
+In-Reply-To: <16321.62257.896533.575451@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Zhihui Zhang <bf20761@binghamton.edu>
-Cc: reiserfs-list@namesys.com, zam@thebsh.namesys.com
+To: Nikita Danilov <Nikita@Namesys.COM>
+Cc: Andrew Morton <akpm@osdl.org>, Reiserfs developers mail-list <Reiserfs-Dev@Namesys.COM>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Zhihui Zhang wrote:
+--Multipart=_Mon__24_Nov_2003_21_59_16_-0800_Z4WbbZuhDZEV6xjF
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
->Hi,
->
->After reading some code, it seems to me that a slum does not have to be
->relocated.  If a slum is small , it will use the overwrite strategy.  Is
->this understanding correct?  Also, at the leaf level, if the number of
->dirty nodes exceeds FLUSH_RELOCATE_THRESHOLD (64), they are always
->relocated.  Is there any similar threshold for an internal level?  Does
->Reiser4 relocate internal nodes separately (i.e. not as part of the slum
->involving leaf nodes.  
->
-zam will answer the above.
+> 1. are there any messages in the kernel log?
+None that I can find relating to reiserfs
 
->Note a slum can grow backwards if a dirty node is
->the leftmost child of a parent at an internal level)? 
->
-Can you say more on this point, I don't quite understand you?
+> 2. with what options reiserfs is mounted (cat /proc/mounts)?
+/dev/root / reiserfs rw,noatime 0 0
 
-> Thanks for your
->enlightenment.
->
->-Zhihui
->
->  
->
-thanks for reading our code in such depth.
+> 3. send us output of "strace rm config.log"
+I have attached the full output but the following lines stick out to me.
 
--- 
-Hans
+access("config.log", W_OK)              = 0
+unlink("config.log")                    = -1 EACCES (Permission denied)
+write(2, "rm: ", 4rm: )                     = 4
+write(2, "cannot remove `config.log\'", 26cannot remove `config.log') = 26
+write(2, ": Permission denied", 19: Permission denied)     = 19
 
 
+On Mon, 24 Nov 2003 15:01:53 +0300
+Nikita Danilov <Nikita@Namesys.COM> wrote:
+
+> Andrew Morton writes:
+>  > Angel <angel666@socal.rr.com> wrote:
+>  > >
+>  > > angel velocity-0.1 # rm config.log
+>  > > rm: cannot remove `config.log': Permission denied
+>  > > angel velocity-0.1 # whoami
+>  > > root
+>  > > angel velocity-0.1 #
+> 
+> [Andrew, please forward reiserfs bug reports to the
+> Reiserfs-Dev@Namesys.COM and Reiserfs-List@Namesys.COM, this has better
+> chances to get fast response.]
+> 
+>  > > 
+>  > > All files from a certain directory are unable to be deleted.  I have since tested it in other kernels such as 2.4 and back tracked through the -mm series (of versions I had installed) to where I could still remove files.  It works in 2.6.0-test7-mm1 but fails in 2.6.0-test9-mm3, 2.6.0-test9-mm4, and 2.6.0-test9-mm5.  touch also fails in this directory.  The directorys where this weird behavior is happening isn't unique and seems randomly spread throughout the filesystem.  I have run the filesystem through reiserfsck and it turned out clean.  I hope I have sent the bug report to the proper person and I thank you for all your hard work.
+>  > > 
+> 
+> We had similar report recently, also about -mm kernels. In that case
+> user fixed it by doing 
+> 
+> $ chown -R someuser.somegroup /directory-with-unkillable-file
+> 
+> I wasn't able to trace causes of this problem. May be we shall be
+> luckier this time:
+> 
+> 1. are there any messages in the kernel log?
+> 2. with what options reiserfs is mounted (cat /proc/mounts)?
+> 3. send us output of "strace rm config.log"
+> 
+>  > 
+>  > Nikita works on reiserfs...
+>  > 
+>  > He'll probably ask you to test 2.6.0-test9.
+> 
+> Nikita.
+
+--Multipart=_Mon__24_Nov_2003_21_59_16_-0800_Z4WbbZuhDZEV6xjF--
