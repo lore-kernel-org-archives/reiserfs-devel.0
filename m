@@ -1,83 +1,52 @@
-From: Brian Marr <cabernet@internode.on.net>
-Subject: Re: Filesystem errors
-Date: Tue, 16 Jul 2002 03:37:23 +0930
-Message-ID: <200207160337.23572.cabernet@internode.on.net>
-References: <200207160146.01440.cabernet@internode.on.net> <200207160222.50147.cabernet@internode.on.net> <3D3268FF.5040505@namesys.com>
+From: Zeljko Brajdic <zorz@iskon.hr>
+Subject: Quota support for UID >65534
+Date: 15 Jul 2002 12:11:40 +0200
+Message-ID: <1026727900.18163.61.camel@max>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11001-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11002-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <3D3268FF.5040505@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs list <reiserfs-list@namesys.com>
+To: ReiserFS-list <reiserfs-list@namesys.com>
 
-I have looked at the FAQ. I have not touched fdisk.
-I am thinking of backing up the partition, reformatting and copying back =
-the=20
-data. I had to do this on another drive recently.
-Brian Marr
+Hello,
 
-Current useage
-Filesystem            Size  Used Avail Use% Mounted on
-/dev/hda2              14G  2.5G   11G  17% /
+I've applied quota patches for vanilla kernel-2.4.18 found at
+ftp://ftp.suse.com/pub/people/mason/patches/reiserfs/quota-2.4/2.4.18/
+Everything works perfectly except for checking quota with command `quota
+-v username' if username have UID >65534. Interesting is that `repquota'
+doesn't have that problem and showing.
 
-On Monday 15 July 2002 15:47, you wrote:
-> Brian Marr wrote:
-> >What reiserfsck paramaters should I try ? Do I have to do --rebuild-tr=
-ee ?
-> >Brian Marr
-> >
-> >On Monday 15 July 2002 15:36, you wrote:
-> >>Brian Marr wrote:
-> >>>Can anyone help interpret these logs ? They have just started appear=
-ing
-> >>> on my Suse 8.0 system. I have made some tentative exploration with
-> >>> reiserfsck --check. The results were
-> >>>reiserfsck......check started on Mon
-> >>>Replaying journal
-> >>>0 transactions replayed
-> >>>checking S+tree..../1(of 2 ) / 1(of 164)/ 51(of 166)
-> >>>pass_through_tree: Unable to read block 52842 block on device 0x3
-> >>>
-> >>>The system is working but something is obviously wrong. Also the xse=
-rver
-> >>>is taking ages to start.
-> >>
-> >>Probably you have bad blocks on your reiserfs partition. And because =
-of
-> >>this your xserver starts so slowly. Kernel trying to reread a block a=
-nd
-> >>can't do it, because it is bad.
->
-> Please, read on www.namesys.com about this problem. Right now I may
-> suggest you to try to kill old xserver binary and copy it again.
->
-> >>>Brian Marr
-> >>>
-> >>>(snip)=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>>VFS: Disk change detected on device sr(11,0)
-> >>>hda: dma_intr: status=3D0x51 { DriveReady SeekComplete Error }
-> >>>hda: dma_intr: error=3D0x40 { UncorrectableError }, LBAsect=3D487003=
-,
-> >>>sector=3D422736
-> >>>end_request: I/O error, dev 03:02 (hda), sector 422736
-> >>>hda: dma_intr: status=3D0x51 { DriveReady SeekComplete Error }
-> >>>hda: dma_intr: error=3D0x40 { UncorrectableError }, LBAsect=3D487003=
-,
-> >>>sector=3D422736
-> >>>end_request: I/O error, dev 03:02 (hda), sec
-> >>>
-> >>>
-> >>>(snip)=3D=3D=3D=3D=3D=3D
-> >>>hda: dma_intr: status=3D0x51 { DriveReady SeekComplete Error }
-> >>>hda: dma_intr: error=3D0x40 { UncorrectableError }, LBAsect=3D474244=
-,
-> >>>sector=3D409984
-> >>>end_request: I/O error, dev 03:02 (hda), sector 409984
-> >>>vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find =
-stat
-> >>>data of [96126 168017 0x0 SD]
+This is output of `quota':
+
+root@led 12:02 (/usr/src/linux) > quota -v bureq
+quota: Error while getting quota from /dev/sda4 for 200000: Invalid argument
+Disk quotas for user bureq (uid 200000): none
+
+
+Strace output is (last few lines):
+
+stat64("/dev/sda4", {st_mode=S_IFBLK|0660, st_rdev=makedev(8, 4), ...}) = 0
+getuid32()                              = 0
+quotactl(0xd00 /* Q_??? */|USRQUOTA, "/dev/sda4", 0, {0, 0, 2, 0, 0, 2538116, 0, 0}) = 0
+quotactl(0x900 /* Q_??? */|USRQUOTA, "/dev/sda4", 0, {604800, 604800, 0, 2476, 0, 2475, 3221224236, 134536589}) = 0
+geteuid32()                             = 0
+quotactl(0xd00 /* Q_??? */|USRQUOTA, "/dev/sda4", 200000, {1073780232, 1073821628, 1073823040, 1, 0, 0, 0, 0}) = -1 EINVAL (Invalid argument)
+write(2, "quota: ", 7quota: )                  = 7
+write(2, "Error while getting quota from /"..., 70Error while getting quota from /dev/sda4 for 200000: Invalid argument
+) = 70
+fstat64(1, {st_mode=S_IFCHR|0600, st_rdev=makedev(136, 0), ...}) = 0
+old_mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x40014000
+write(1, "Disk quotas for user bureq (uid "..., 46Disk quotas for user bureq (uid 200000): none
+) = 46
+munmap(0x40014000, 4096)                = 0
+_exit(0)                                = ?
+
+
+-- 
+v            ,   v  v
+Zeljko Brajdic - Zorz
 
