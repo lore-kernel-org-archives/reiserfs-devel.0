@@ -1,58 +1,108 @@
-From: Tupshin Harper <tupshin@tupshin.com>
-Subject: Re: small problem configuring and installing reiser4progs
-Date: Tue, 26 Aug 2003 22:47:39 -0700
-Message-ID: <3F4C45FB.4090305@tupshin.com>
-References: <3F4C052A.2010200@tupshin.com> <1061961830.15513.22.camel@haron.namesys.com>
+From: Ian Wienand <ianw@gelato.unsw.edu.au>
+Subject: Re: reiser4 snapshot for August 26th.
+Date: Wed, 27 Aug 2003 15:52:04 +1000
+Sender: ianw@cse.unsw.edu.au
+Message-ID: <20030827055204.GA18114@cse.unsw.EDU.AU>
+References: <20030826102233.GA14647@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15451-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15452-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1061961830.15513.22.camel@haron.namesys.com>
+Content-Disposition: inline
+In-Reply-To: <20030826102233.GA14647@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Yury Umanets <umka@namesys.com>
-Cc: Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-dev@namesys.com, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-Yury Umanets wrote:
+On Tue, Aug 26, 2003 at 02:22:33PM +0400, Oleg Drokin wrote:
+> Fixed some bugs. And finally reiser4 should compile on 64bit boxes
+> (hm. somebody try it, as I am unable to build any 2.6 kernel for
+> ia64).
 
->On Wed, 2003-08-27 at 05:11, Tupshin Harper wrote:
->  
->
->>I just downloaded and installed reiser4progs-0.4.12 and libaal-0.4.9. 
->>This was the first install of either of these, and I ran into the 
->>following problem:
->>configured and make installed libaal-0.4.9
->>configure of reiser4progs ends with the following:
->>checking whether -falign-loops works... yes
->>checking for aal_device_open in -laal... yes
->>checking aal/aal.h usability... yes
->>checking aal/aal.h presence... yes
->>checking for aal/aal.h... yes
->>checking for libaal version = 0.4.9... no
->>
->>It ends there, without any indication that there was a fatal error, but 
->>it didn't build the Makefiles. So, two problems...insufficient error 
->>reporting, as well as a slight problem with the process. After running 
->>ldconfig, configure works just fine.
->>
->>-Tupshin
->>
->>
->>    
->>
->
->That is because your ldcache is still not updated. Run ldconfig under root first.
->
->Regards.
->
->
->  
->
-Uh...yeah...I thought I was clear that that was exactly what I did. 
-Thanks, though.
+I built this with IA64 2.6.0-test4, it works but there were lots of
+warnings (I can put up a log if you want it).  This was on a dual
+processor Itanium 2 box.
 
--Tupshin
+First up, I tried a little test to make a few files, but once I had
+unmounted the disk I couldn't re-mount it.
 
+--- example testing below ---
+bash-2.05b# mkfs.reiser4 /dev/sda5
+mkfs.reiser4 0.4.12
+Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by reiser4progs/COPYING.
+ 
+Information: Reiser4 is going to be created on /dev/sda5.
+(Yes/No): Yes
+Creating reiser4 on /dev/sda5...
+mkfs.reiser4(5676): unaligned access to 0x60000000000242f2, ip=0x20000000000f7661
+mkfs.reiser4(5676): unaligned access to 0x60000000000242fa, ip=0x20000000000f77a1
+mkfs.reiser4(5676): unaligned access to 0x6000000000024302, ip=0x20000000000f78e1
+mkfs.reiser4(5676): unaligned access to 0x60000000000242f2, ip=0x20000000000f2671
+done
+Synchronizing /dev/sda5...done
+bash-2.05b# mount -t reiser4 /dev/sda5 /mnt
+bash-2.05b# cd /mnt
+bash-2.05b# time for i in `seq 1 10000` ; do touch $i ; done
+ 
+real    0m18.577s
+user    0m5.910s
+sys     0m12.657s
+
+[do ls, all looks ok]
+
+bash-2.05b# umount /mnt
+bash-2.05b# mount -t reiser4 /dev/sda5 /mnt
+mount: wrong fs type, bad option, bad superblock on /dev/sda5,
+       or too many mounted file systems
+
+--- end example testing ---
+The console popped up with :
+
+reiser4[mount(15688)]: reiser4_fill_super (fs/reiser4/vfs_ops.c:1229)[nikita-2608]:
+WARNING: Wrong magic: 10000 != 62533452
+
+when I tried to mount it.
+
+I repeated this, but this time thought I'd try 'sync' before
+unmounting the disk; the sync command just hung and from that point
+nothing could seem to access disk, even on different partitions (so
+each program became unresponsive as soon as it tried to open a file).
+
+Then I tried the mongo.pl script just for something else, I used the
+parameters given in the sample config, i.e.
+
+FSTYPE=reiser4
+BYTES=250000000
+FILE_SIZE=4096
+
+It just seemed to hang in "PHASE Create" and after, say a minute or
+two, made the machine unresponsive in the same way as 'sync' above --
+as soon as anything tried to access disk it just hung.
+
+So I retried this, and did a ls in the mounted directory just after I
+started mongo to try and poke at what it was up to; ls hung in the
+same way but this time I got messages :
+
+ reiser4[ls(30795)]: traverse_tree (fs/reiser4/search.c:488)[nikita-1481]:
+WARNING: Too many iterations: 128
+ reiser4[ls(30795)]: traverse_tree (fs/reiser4/search.c:488)[nikita-1481]:
+WARNING: Too many iterations: 256
+ reiser4[ls(30795)]: traverse_tree (fs/reiser4/search.c:488)[nikita-1481]:
+WARNING: Too many iterations: 512
+ reiser4[ls(30795)]: traverse_tree (fs/reiser4/search.c:488)[nikita-1481]:
+WARNING: Too many iterations: 1024
+ reiser4[ls(30795)]: traverse_tree (fs/reiser4/search.c:488)[nikita-1481]:
+WARNING: Too many iterations: 2048
+
+that just kept climbing ...
+
+I'm happy to help more, but I think a little more targetting debugging
+is required.  Could you suggest what would be helpful for me to try?
+
+-i
+ianw@gelato.unsw.edu.au
+http://www.gelato.unsw.edu.au
