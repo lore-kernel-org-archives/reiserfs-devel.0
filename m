@@ -1,49 +1,30 @@
-From: lJoublanc@softhome.net
-Subject: reiser4progs-1.0.3 : superblock backups
-Date: Wed, 15 Dec 2004 11:30:38 -0700
-Message-ID: <courier.41C082CE.00004F63@softhome.net>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: file as a directory
+Date: Wed, 15 Dec 2004 21:11:12 +0200
+Message-ID: <20041215191112.GJ26192@nysv.org>
+References: <200412151328.iBFDSQoH011241@laptop11.inf.utfsm.cl> <41C06CF7.2020102@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22791-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22792-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <41C06CF7.2020102@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-Regarding the new release of reiser4progs: 
+On Wed, Dec 15, 2004 at 08:57:27AM -0800, Hans Reiser wrote:
 
-it's unclear to me from the release announcement whether prevoius versions 
-of reiser4progs correctly backup superblocks or not. You imply it's been 
-corrected - so it wasn't working before? 
+>www.namesys.com/future_vision.html
 
-i.e. if I had previously used libaal 1.0.2, and my superblock got corrupted, 
-could I rebuild it from teh backup if upgarded to 1.0.3? 
+404.
 
-I'm asking because recently that's exactly what happened to me. My disc is 
-failing due to hardware level problems, the superblock is wrecked, it won't 
-mount, and I need to recover my stuff! 
+http://www.namesys.com/whitepaper.html
 
-In a final rescue effort, I've updated to 1.0.3, but if I run fsck.reiser4 
- --build-sb, I get: 
+-- 
+mjt
 
-[...]
-Warn : A new master superblock is created on '/dev/hdd1'.
-Enter the key plugin name [key_large]:
-Error: Can't read bitmap block 18. Input/output error.
-Error: Can't load ondisk bitmap.
-Error: Can't initialize block allocator.
-Fatal: Failed to open the block allocator. 
-
-
-Can anyone tell me what it means? Is the problem to do with reiser4 
-superblocks or is the disk so buggered it can't write the table anymore? 
-
-Any help is greatly appreciated... 
-
-Luciano 
-
-p.s. shame I'm having these hardware problems, as besides that r4 has worked 
-pretty well! 
