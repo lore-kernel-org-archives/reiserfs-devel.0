@@ -1,23 +1,29 @@
-From: Radim Kolar <hsn@cybermail.net>
-Subject: Re: problems with /var/lib/dpkg/info
-Date: Sun, 11 Aug 2002 10:17:43 +0200
-Message-ID: <20020811081742.GA7672@home>
-References: <20020810090529.GA411@home> <20020810133256.A1897@namesys.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: reiserfsprogs release
+Date: Mon, 12 Aug 2002 14:42:19 +0400
+Message-ID: <200208121442.19656.vitaly@namesys.com>
+References: <200206251829.25799.vitaly@namesys.com> <200206261317.10813.vitaly@namesys.com> <200207101206.48370.vitaly@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11159-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11160-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20020810133256.A1897@namesys.com>
+In-Reply-To: <200207101206.48370.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
+Cc: linux-kernel@vger.kernel.org
 
-> reiserfs have no problems with large directories generally speaking.
-> What are the problems you are experience?
-inaccessible files (shown in directory but can not be read). In some
-cases both source and rdisted copy was corrupted on the same files.
-I am now using tar+gz for backup instead rdist :)
+
+Hi all,
+
+a critical bug was fixed in reiserfsck journal replay process, 
+so we decided to release a new 3.6.3 progs with just 2 bug 
+fixes related to it.
+
+-- 
+
+Thanks,
+Vitaly Fertman
