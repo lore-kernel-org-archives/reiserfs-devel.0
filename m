@@ -1,121 +1,60 @@
-From: Christophe Saout <christophe@saout.de>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 14:00:27 +0200
-Message-ID: <1093521627.9004.23.camel@leto.cs.pocnet.net>
-References: <Pine.LNX.4.44.0408260736080.23532-100000@chimarrao.boston.redhat.com>
+Date: Thu, 26 Aug 2004 13:12:23 +0100
+Message-ID: <20040826121223.GG30449@mail.shareable.org>
+References: <200408261034.38509.vda@port.imtp.ilyichevsk.odessa.ua> <Pine.LNX.4.44.0408260736080.23532-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-wqpJ0jQK10SAdFjTAomn"
-Return-path: <reiserfs-list-return-20646-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20647-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 In-Reply-To: <Pine.LNX.4.44.0408260736080.23532-100000@chimarrao.boston.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Rik van Riel <riel@redhat.com>
 Cc: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
---=-wqpJ0jQK10SAdFjTAomn
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-Am Donnerstag, den 26.08.2004, 07:42 -0400 schrieb Rik van Riel:
-
-> > > I like cat < a > b. You can keep your progress.
-> >=20
+Rik van Riel wrote:
 > > cat <a >b does not preserve following file properties even on standard
 > > UNIX filesystems: name,owner,group,permissions.
->=20
+> 
 > Losing permissions is one thing.  Annoying, mostly.
->=20
+
+I find losing mtime annoying.  That's why I don't use Mozilla's
+download manager (and Navigator's before it) because they presumed
+that mtime isn't worth copying.  ncftp and wget do the right thing,
+but it's annoying that I can't use the fancy tools and get the
+metadata _I_ want transferred by them.
+
 > However, actual losing file data during such a copy is
-> nothing short of a disaster, IMHO. =20
->=20
+> nothing short of a disaster, IMHO.  
+
+Note that file-as-directory doesn't imply that you can store just
+anything into those directories.
+
+Is it a problem to decree that "file data MUST NOT be stored in a
+metadata directory; only non-essential metadata and data computed from
+the file data may be stored"?
+
 > In my opinion we shouldn't merge file-as-a-directory
 > semantics into the kernel until we figure out how to
 > fix the backup/restore problem and keep standard unix
 > utilities work.
 
-Well, again, what about xattrs and ACLs...?
+Same as xattrs, for data that should be stored.
 
-Actually, reiser4 doesn't currently implement storage of arbitrary user
-data under a file.
+But, unlike xattrs, while permissions and C-source-encoding should be
+stored, some of this metadata should _not_ be stored when making an
+archive and perhaps not when making a backup either.
 
-It's just some sysfs-like information that can be retrieved, some
-properties can be changed. If you copy a file the worst thing that can
-happen right now is that you lose the information whether that file
-should be encrypted or compressed. You don't lose data.
+Personally I wouldn't want an archive containing a file to save and
+restore recomputable metadata like cached, extracted-on-demand MP3 id
+tags and email headers-as-metadata.  I'd rather they were recalculated
+when needed, implying a stronger guarantee about their relationship to
+the data from which they're extracted - and implying that a user
+program might not be allowed to set them to inconsistent values.
 
-In case some people are wondering, this is what you can find in the
-reiser4 metas:
-
-leto:/home/chtephan/.muttrc/metas > la
-insgesamt 1
-dr-xr-xr-x  1 chtephan users   0 26. Aug 13:52 .
--rwx------  1 chtephan users 290 12. Jan 2004  ..
--r--r--r--  1 chtephan users   0 26. Aug 13:52 bmap
--rw-r--r--  1 chtephan users   0 26. Aug 13:52 gid
--r--r--r--  1 chtephan users   0 26. Aug 13:52 items
--r--r--r--  1 chtephan users   0 26. Aug 13:52 key
--r--r--r--  1 chtephan users   0 26. Aug 13:52 locality
---w-------  1 chtephan users   0 26. Aug 13:52 new
--r--r--r--  1 chtephan users   0 26. Aug 13:52 nlink
--r--r--r--  1 chtephan users   0 26. Aug 13:52 oid
-dr-xr-xr-x  1 chtephan users   0 26. Aug 13:52 plugin
--r--r--r--  1 chtephan users   0 26. Aug 13:52 pseudo
--r--r--r--  1 chtephan users   0 26. Aug 13:52 readdir
--rw-r--r--  1 chtephan users   0 26. Aug 13:52 rwx
--r--r--r--  1 chtephan users   0 26. Aug 13:52 size
--rw-r--r--  1 chtephan users   0 26. Aug 13:52 uid
-
-Some of them are reiser4 specific things (items, key, locality, oid)
-which can only be queried anyway.
-
-The rest is what you can also get using other VFS calls.
-
-leto:/home/chtephan/.muttrc/metas/plugin > la
-insgesamt 0
-dr-xr-xr-x  1 chtephan users 0 26. Aug 13:52 .
-dr-xr-xr-x  1 chtephan users 0 26. Aug 13:52 ..
--rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 compression
--rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 crypto
--rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 digest
--rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 dir
--rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 dir_item
--rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 fibration
--rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 file
--rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 formatting
--rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 hash
--rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 perm
--rwxr-xr-x  1 chtephan users 0 26. Aug 13:54 sd
-
-Here you can change reiser4 specific things. Here you can change some
-properties how the file is stored in the reiser4 tree. For example you
-can activate compression, encryption or authentication or set some hints
-to optimize speed.
-
-You can't create or remove these pseudo-files, just like in sysfs.
-
-I don't know, but if someone wants to store user data I think you would
-have to implement a directory "userdata" or something where you can
-store it.
-
-Not all of the information does make a lot sense inside a modified tar.
-Who is interested in the bmap information of the file or some other
-read-only information?
-
-
---=-wqpJ0jQK10SAdFjTAomn
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQBBLdDbZCYBcts5dM0RAizLAJoDIUG7l/J0r/+Q7Qhvys/jNCeB7QCePDbv
-vUQPq1FsqrzE2TSkcAxFkYc=
-=MYx8
------END PGP SIGNATURE-----
-
---=-wqpJ0jQK10SAdFjTAomn--
-
+-- Jamie
