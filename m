@@ -1,52 +1,39 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Subject: Re:  Reiserfs, highquality meds source, low rates
-Date: Wed, 21 Apr 2004 14:53:42 +0200
-Message-ID: <20040421145342.22e7cfdc@philou.gramoulle.local>
-References: <3DF9165145FACB4C96977FF650C1E9040C469E4E@its-mail1.its.corp.gwl.com>
-	<20040421124028.GA7460@alias.nmd.msu.ru>
+From: Domenico Andreoli <cavok@tiscali.it>
+Subject: reiser4progs 0.5.4 build error (was Re: fsck.reiser4 can't fix 1 fixable corruption)
+Date: Wed, 21 Apr 2004 15:30:55 +0200
+Sender: Domenico Andreoli <cavok@libero.it>
+Message-ID: <20040421133055.GA29283@raptus.homelinux.org>
+References: <200404201733.51809.rmeijer@internet.gr> <200404211255.41388.vitaly@namesys.com> <200404211259.01802.rmeijer@internet.gr> <200404211547.08993.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18115-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18116-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040421124028.GA7460@alias.nmd.msu.ru>
+Content-Disposition: inline
+In-Reply-To: <200404211547.08993.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: flx@msu.ru
-Cc: "Burnes, James" <james.burnes@gwl.com>, Cami <camis@mweb.co.za>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
+On Wed, Apr 21, 2004 at 03:51:56PM +0400, Vitaly Fertman wrote:
+> 
+> I have put another internal reiser4progs snapshot with some more 
+> fixes into the www.namesys.com/snapshots/2004.04.21-internal.testing/
+> I have no problems with it, try it please.
+> 
 
-Hello,
+bad news, you must have forgotten something. there is no obj40_repair.h
+in reiser4progs tarball :/
 
-Being a sysadmin myself, i tend to find dspam way too complicated to set up
-, read too time consuming to get a system up and running. (note that i didn't even tried
-it for a Mailing-List setup).
+ i386-linux-gcc -DHAVE_CONFIG_H -I. -I. -I../../.. -I../../../include -D_REENTRANT -D_FILE_OFFSET_BITS=64 -DENABLE_SYMLINKS -DENABLE_SPECIAL -DENABLE_R5_HASH -DENABLE_FNV1_HASH -DENABLE_RUPASOV_HASH -DENABLE_TEA_HASH -DENABLE_DEG_HASH -DENABLE_LARGE_KEYS -DENABLE_SHORT_KEYS -O0 -g -W -Wall -Wno-unused-parameter -Wredundant-decls -MT libobj40_static_la-obj40_repair.lo -MD -MP -MF .deps/libobj40_static_la-obj40_repair.Tpo -c obj40_repair.c -o libobj40_static_la-obj40_repair.o
+obj40_repair.c:8:26: obj40_repair.h: No such file or directory
+[all sort of errors]
 
-On the other hand, crm114 was a : Read the 8 steps in the FAQ and i was up & running 5 minutes later,
-with the shameless advantage of crm114 being already into the Debian package repository :)
+cheers
+domenico
 
-So if you're short on time, then i'd advise to look at crm114 first and then dspam if crm114 doesn't fit
-your needs.
-
-Thanks,
-
-Philippe
-
-On Wed, 21 Apr 2004 16:40:28 +0400
-Alexander Lyamin <flx@msu.ru> wrote:
-
-  | Tue, Apr 20, 2004 at 03:39:36PM -0600, Burnes, James wrote:
-  | > SpamAssasin is really running out of steam right now, that is why they
-  | > have spent quite a bit of effort in developing the 'dspam' package.
-  | 
-  | this saying convinced me to evaluate dspam once again.
-  | thanks!
-  | > It might have a chance at killing most spam.  Some people have their
-  | > doubts, but hope springs eternal....
-  | 
-  | -- 
-  | "the liberation loophole will make it clear.."
-  | lex lyamin
-  | 
+-----[ Domenico Andreoli, aka cavok
+ --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
+   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
