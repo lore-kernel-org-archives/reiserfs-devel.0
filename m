@@ -1,39 +1,35 @@
-From: Till Gerken <till@tantalo.net>
-Subject: Re: Problem mounting ReiserFS as root partition
-Date: Mon, 16 Jun 2003 14:31:24 +0200
-Message-ID: <200306161431.27002.till@tantalo.net>
-References: <200306151508.57384.till@tantalo.net> <200306161117.02910.till@tantalo.net> <20030616092144.GB12314@namesys.com>
+From: Ookhoi <ookhoi@humilis.net>
+Subject: Re: Timeframe for 2.4.21 quota patches?
+Date: Mon, 16 Jun 2003 14:35:31 +0200
+Message-ID: <20030616143531.G5669@humilis>
+References: <20030616112420.GA13558@jsambrook> <1055763879.23697.645.camel@tiny.suse.com>
+Reply-To: ookhoi@humilis.net
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14561-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14562-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030616092144.GB12314@namesys.com>
-Content-Description: clearsigned data
 Content-Disposition: inline
+In-Reply-To: <1055763879.23697.645.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: Text/Plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <mason@suse.com>
+Cc: Jonathan Sambrook <jonathan.sambrook@dsvr.co.uk>, reiserfs-list@namesys.com
 
-On Monday 16 June 2003 11:21, Oleg Drokin wrote:
-> On Mon, Jun 16, 2003 at 11:16:52AM +0200, Till Gerken wrote:
-> > kernel (hd0,0)/boot/vmlinuz-2.4.21 root=3D/dev/hda1,rw hdc=3Dide-scsi
-> > pci=3Dbiosirq idebus=3D66
->
-> I suggest you to replace the comma between "root=3D/dev/hda1" and "rw" wi=
-th
-> space.
+Chris Mason wrote (ao):
+> On Mon, 2003-06-16 at 07:24, Jonathan Sambrook wrote:
+> > As ever the Linux lockin bites:
+> > 
+> > 	My hardware needs 2.4.21 and my development work (now) needs
+> > 	reiserfs + quota.
+> > 
+> > Any idea if/when to expect an updated patch?
+> 
+> I've got Oleg's merge of the data logging code at
+> 
+> ftp.suse.com/pub/people/mason/patches/data-logging/2.4.21
 
-You are right, that did the trick. Since I have been using that configurati=
-on=20
-file for well over a year, I assumed it to be correct - especially since it=
-=20
-worked as expected.
-
-Thanks for the tip,
-
-Till
-
+Chris, thanks a lot. Your patches on 2.4.21 make quota work here. Very
+nice.
