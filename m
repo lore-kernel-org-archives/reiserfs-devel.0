@@ -1,49 +1,40 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Fwd: Re: Segmentation Fault when mounting ataraid
-Date: Thu, 30 Jan 2003 11:48:54 +0300
-Message-ID: <3E38E6F6.6030100@namesys.com>
-References: <3E36E3EB.4040305@mb.tu-ilmenau.de> <3E381188.8080701@namesys.com> <20030130094225.A17582@namesys.com>
+From: Alexander Lyamin <flx@msu.ru>
+Subject: Re: problems receiving mails
+Date: Thu, 30 Jan 2003 14:14:33 +0300
+Message-ID: <20030130141433.B10502@t-raenon.nmd.msu.ru>
+References: <200301271941.03093.m.c.p@gmx.net>
+Reply-To: flx@msu.ru
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12555-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12556-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030130094225.A17582@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <200301271941.03093.m.c.p@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Marc-Christian Petersen <m.c.p@gmx.net>
+Cc: reiserfs-list@namesys.com
 
-Oleg Drokin wrote:
+Mon, Jan 27, 2003 at 07:41:03PM +0100, Marc-Christian Petersen wrote:
+> Hi there,
+> 
+> well, I am subscribed to the list, at least I think I am ;) but don't get any 
+> mail from the mailinglist. Can someone who has the rights for ezmlm check 
+> this please? 
+> 
+> thank you! :)
 
->Hello!
->
->On Wed, Jan 29, 2003 at 08:38:16PM +0300, Hans Reiser wrote:
->
->  
->
->>Well, that certainly looks like a bug in mount options parsing code.  
->>Edward and Oleg, please review and fix.
->>    
->>
->
->There is another decoded output that makes much more sence to me.
->And it suggest something gone wrong within block layer.
->(And in the one you are referring to parse_options's address is only
->stored in registers, not in bactrace. Also starting from 2.4.20,
->there is no function named parse_optinos in reiserfs code).
->
->Bye,
->    Oleg
->
->
->  
->
-Oops, I guess I didn't read it slowly enough.
+I think we sorted that out.
+Right Marc ?
+
+As i told you "life is full of wierd things" :)
+
+> 
+> ciao, Marc
 
 -- 
-Hans
-
-
+"Cache remedies via multi-variable logic shorts will leave you crying."(cl)
+Lex Lyamin
