@@ -1,42 +1,24 @@
-From: Francois-Rene Rideau <fare@tunes.org>
-Subject: Re: mkreiserfs -s 1024 makes unmountable partitions
-Date: Mon, 27 Jan 2003 12:42:50 +0100
-Sender: Francois-Rene Rideau <fare@Samaris.tunes.org>
-Message-ID: <20030127114250.GB10556@hell.mine.nu>
-References: <20030118080941.B5575@humilis> <20030118115724.GA946@Kadath> <20030121213336.GA6756@hell.mine.nu> <20030122065712.D5575@humilis> <20030122100342.GA14100@hell.mine.nu> <20030124222823.GA15643@hell.mine.nu> <20030126181816.GA1274@Kadath> <20030127095957.A22720@namesys.com> <20030127112651.GA10556@hell.mine.nu> <20030127143305.A26767@namesys.com>
-Reply-To: Francois-Rene Rideau <fare@tunes.org>
+From: Marc-Christian Petersen <m.c.p@gmx.net>
+Subject: Quota
+Date: Mon, 27 Jan 2003 13:21:50 +0100
+Message-ID: <200301271320.26487.m.c.p@gmx.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12506-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12507-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030127143305.A26767@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-On Mon, Jan 27, 2003 at 02:33:05PM +0300, Oleg Drokin wrote:
-> But given the trend that lots of users are using distro kernels only,
-> and e.g. SuSE ships these patches for some time already, such a warning
-> will cause lots of confusion.
-Hum. Then maybe SuSE could also patch back the mkreiserfs to not produce
-a warning? And/or you could and a note in the man page that would explain
-things better than a warning could -- the man page is the first thing one
-reads in case of trouble. Anyway.
+Hi all,
 
-> So far we have not found any good way to print warning only
-> when it is really needed.
-> Always printing the warning is not very good idea in my opinion.
-I understand that.
+are there any plans to release quota patches for ReiserFS ontop of:
+http://marc.theaimsgroup.com/?l=3Dreiserfs&m=3D104266573924286&w=3D2
+?
 
-Cheers!
+Thanks in advance.
 
-[ Fran=E7ois-Ren=E9 =D0VB Rideau | Reflection&Cybernethics | http://fare.tu=
-nes.org ]
-[  TUNES project for a Free Reflective Computing System  | http://tunes.org=
-  ]
-If Java had true garbage collection, most programs would delete themselves
-upon execution. -- Robert Sewell
+ciao, Marc
