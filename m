@@ -1,41 +1,50 @@
-From: Lars Grobe <grobe@gmx.net>
-Subject: Quota-patches for 2.4.20 conflict with evms (?)
-Date: Thu, 12 Jun 2003 15:20:30 +0200 (MEST)
-Message-ID: <21554.1055424030@www65.gmx.net>
+From: Christophe Saout <christophe@saout.de>
+Subject: Re: Quota-patches for 2.4.20 conflict with evms (?)
+Date: 12 Jun 2003 15:37:23 +0200
+Message-ID: <1055425043.2059.6.camel@chtephan.cs.pocnet.net>
+References: <21554.1055424030@www65.gmx.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14511-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14512-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <21554.1055424030@www65.gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Lars Grobe <grobe@gmx.net>
+Cc: reiserfs-list@namesys.com
 
-Hi there,
+Hi!
 
-just setting up a test machine, we got a recent kernel (2.4.20),
-quota-patches
-from ftp://ftp.namesys.com/pub/reiserfs-for-2.4/testing/quota-2.4.20, the
-newest evms (2.0.1) with the device-mapper patches (2.4.20-10).
+> , obviously a result from changes in the Quota-patches
+> 05_quota-patch-2.4.15-1-2.4.16
+> that are to enable quota support for reiser.
+> 
+> So I wonder if anyone out there has been able to get reiserfs (3.x) with
+> quotas on
+> evms (2.x) - or am I really the first with this crazy idea?
 
-When I make vmlinux, I get
+No, you aren't. I'm not exactly sure what the current status for the
+quota patches for reiserfs unter linux 2.4 is, but the last time I
+checked, you needed to upgrade the quota implementation (some macros
+were renamed, like DQUOT_SYNC).
 
-fs/fs.o: In function `fsync_dev_lockfs':
-fs/fs.o(.text+0x39f0): undefined reference to `DQUOT_SYNC'
+Did you get any rejects while applying the patches (look for .rej files
+with find -name \*.rej)?
 
-, obviously a result from changes in the Quota-patches
-05_quota-patch-2.4.15-1-2.4.16
-that are to enable quota support for reiser.
+What patches did you exactly try to apply?
 
-So I wonder if anyone out there has been able to get reiserfs (3.x) with
-quotas on
-evms (2.x) - or am I really the first with this crazy idea?
+If the only problem is in fs/buffer.c:
 
-CU Lars.
+The DQUOT_SYNC in fsync_super has to be changed to DQUOT_SYNC_DB.
+The ones in fsync_dev and fsync_dev_lockfs into DQUOT_SYNC_DEV.
 
---=20
-+++ GMX - Mail, Messaging & more  http://www.gmx.net +++
-Bitte l=E4cheln! Fotogalerie online mit GMX ohne eigene Homepage!
+I assume that the evms code adds the VFS locking patch, which introduces
+the function fsync_dev_lockfs, so I suppose you just need to change the
+DQUOT_SYNC to DQUOT_SYNC_DEV in this file.
+
+-- 
+Christophe Saout <christophe@saout.de>
 
