@@ -1,62 +1,59 @@
-From: The Amazing Dragon (Elliott Mitchell) <ehem@cs.pdx.edu>
+From: Anders Widman <andewid@tnonline.net>
 Subject: Re: Silly question, defrag
-Date: Wed, 3 Apr 2002 21:19:22 -0800 (PST)
-Message-ID: <200204040519.VAA14445@sirius.cs.pdx.edu>
-References: <3CAC3C22.30357.D03D9F@localhost>
+Date: Thu, 4 Apr 2002 11:16:51 +0200
+Message-ID: <20972156.20020404111651@tnonline.net>
+References: <200204030017.12595@X-Message-Flag:>
+ <3CAABBA6.3030101@swelltech.com> <200204030740.05950@X-Message-Flag:>
+ <20020403154906.A21821@ultraviolet.org>
+Reply-To: ReiserFS List <reiserfs-list@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <3CAC3C22.30357.D03D9F@localhost> from "rod@tpgi.com.au" at Apr 04, 2002 11:42:26 AM
+In-Reply-To: <20020403154906.A21821@ultraviolet.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: rod@tpgi.com.au
+To: Tracy R Reed <treed@ultraviolet.org>
 Cc: reiserfs-list@namesys.com
 
-> From: rod@tpgi.com.au
-> 
-> <snip>
-> 
-> > I have to wonder about your motives here, Hans. You are the one who stands
-> > to gain by capitalizing on newbie Unix/Linux users misunderstanding of
-> > filesystems based on their experience with DOS and Windows and here you
-> > are promoting defrag as a feature which puts your FS above others. They
-> > have learned to compulsively defrag their disks once a week and you are
-> > looking to feed their addiction. I think reiserfs is really great and a
-> > defrag/repacker will be nice but the above strikes me as a bit strange.
-> > How long has ext2 been around as the stock Linux filesystem?  More than
-> > long enough for people to have realized whether a defragger would be
-> > useful. Yet I can't think of a single distribution (of Linux or Unix in
-> > general) that comes with a defragger. Stephen Tweedie wrote one for it but
-> > nobody bothers to use it or even to include it with their distro.
+> On Wed, Apr 03, 2002 at 08:08:21AM -0800, Matthew Johnson wrote:
+>> On Wednesday 03 April 2002 00:21, Joe Cooper wrote:
+>> > "Don't"
+>> >
+>> 
+>> Well I don't, but when newbies who are used to computing on win32 systems 
+>> hear that they may not just accept the word don't. Actually its hard to find 
+>> the reasons exactly why one does not defrag.
 
-> This leaves the the only option to defrag once the file has been 
-> completed OR at some user defined interval. Some fs may try to 
-> reduce the incidence of this but cant prevent it happening. 
+> It is more useful to look at why one DID defrag back in the bad ol' days
+> of DOS and Windows. IIRC, the FAT filesystem would scan through it's
+> equivalient of the free block list and start writing at the first free
+> block. If it wrote for a while and then there was other data in the way it
+> stop and go to the next free space. This way fragmentation was practically
+> guarenteed and it happened rapidly. Modern filesystems use much smarter
+> ways of laying out data on the disk so that fragmentation happens much
+> less often. Now you will almost certainly waste more time by defragmenting
+> than you would suffering whatever performance hit the little fragmentation
+> there is causes. I've been using Linux/Unix for 10 years and I have never
+> (not once!) defragged a filesystem.
 
-True. Some of the measures that are taken can be quite effective.
-Reserving 10% overhead which only root is allowed to write in is
-extremely effective with SunOS's flavor of UFS.
+>> Perhaps I should aim this message to the kernel mailing list, so that I can 
+>> get response from a wider array of people who like other filesystems. But its 
+>> not kernel related. 
 
-> Currently the only way to defrag an ext2 fs (or reiserfs) is a copy 
-> off, mke2fs and copy back cycle - hardly ideal.  BTW if you are 
-> interested in scripts that capable of totally framenting an ext2 
-> partition (as reported by chke2fs and demonstrated by timing a  
-> grep) and also a discussion of the problem - check the archives.
+> I wouldn't recommend doing that. The answer is pretty much the same
+> regardless of the filesystem. If it's a non-FAT fs you probably don't have
+> to worry about fragmentation.
 
-Not true, there is a e2defrag out there. Now, e2defrag will defragment a
-filesystem, however the problem is that it greatly promotes future
-fragmentation (got to maybe 2% fragmentation after months of use, but
-within a week of running e2defrag it hit 8% fragmentation). I must
-theorize that it packs files tightly rather than using the headroom
-leading to the effect seen.
+I do not agree. I run a fileserver with a 814GB filesystem using
+ReiserFS (I have run NTFS and ext2/3 also). Modern filesystems might
+be smarter in storing new files by not packing them tightly.
 
+In my case that workes fine up to a certain percentage, after that ALL
+new files are beeing fragmented due to the fact that there is only
+small blocks of space between all files. I don't see any filesystem
+that don't need defragmentation. Not in my case.
 
---
-|\__/|\__/|\______          --=> 8-) EHM <=--          ______/|\__/|\__/|
-\    |    |       | EHeM@cs.pdx.edu      PGP 8881EF59 |       |    |    /
-  \   \   | ______| -O #include <stddisclaimer.h> O-  |______ |   /   /
-    \___\_|/82 04 A1 3C C7 B1 37 2A   E3 6E 84 DA 97 4C 40 E6\|_/___/
-
+//Anders
 
