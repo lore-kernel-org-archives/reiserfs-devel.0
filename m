@@ -1,70 +1,59 @@
-From: Yury Umanets <umka@namesys.com>
-Subject: Re: ld.so error with mkfs.reiser4
-Date: Wed, 23 Apr 2003 13:54:47 +0400
-Message-ID: <3EA662E7.9050806@namesys.com>
-References: <200304221054.28028.vibir@012.net.il> <3EA5446F.8070309@namesys.com> <200304230148.11610.vibir@012.net.il>
+From: Joshua Masiko <joshua@dsmagic.com>
+Subject: can't mount repaired reiserfs partition
+Date: Wed, 23 Apr 2003 15:23:55 +0300 (EAT)
+Message-ID: <Pine.LNX.4.21.0304231506000.3962-100000@entandikwa.ds.co.ug>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13767-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13771-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200304230148.11610.vibir@012.net.il>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Alex Veber <vibir@012.net.il>
-Cc: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Alex Veber wrote:
+One of the partition on a harddisk that had SuSE 7.2 got corrupted. I
+connected it as a secondary drive on a SuSE 8.1 machine and run reiserfsck
+--check which found an error and said it was fixable by
+--fix-fixable. Below is the output of --fix-fixable
 
->On Tuesday 22 April 2003 16:32, you wrote:
->  
->
->>Alex Veber wrote:
->>    
->>
->>>Hi,
->>>      
->>>
->>Hello Alex,
->>
->>    
->>
->>>Trying to run a fresh BK pulled mkfs.reiser4 I get
->>>
->>>Inconsistency detected by ld.so: ../sysdeps/i386/dl-machine.h: 611:
->>>elf_machine_rel_relative: Assertion `((reloc->r_info) & 0xff) == 8'
->>>failed!
->>>
->>>my system is a athlon tbird 1200, GLIBC 2.3.2 with NPTL support, GCC
->>>3.2.2, binutils 2.13.90.0.20 and kernel 2.5.67. This is the first time
->>>this sort of thing happens to me.
->>>
->>>Thanks,
->>>	Alex Veber
->>>
->>>btw: Please CC me.
->>>      
->>>
->>We have fixed this bug in the last commit of reiser4progs and now it
->>works fine on gcc -3.x too. Can you try it one more time?
->>    
->>
->
->Yes. it works fine now.
->
->	Alex Veber.
->
->
->
->  
->
-Thanks.
+reiserfsck --fix-fixable /dev/hdd6
+reiserfsck 3.6.2 (2002)
+Will check consistency of the filesystem on /dev/hdd6
+Will fix what can be fixed w/o --rebuild-tree
+Will put log info to 'stdout'
 
--- 
-Yury Umanets
-"We're flying high, we're watching the world passes by..."
+Do you want to run this program?[N/Yes] (note need to type Yes):Yes
+###########
+reiserfsck --fix-fixable started at Wed Apr 23 15:00:00 2003
+###########
+Replaying journal..
+No transactions found
+Checking S+tree..ok
+Comparing bitmaps..ok
+Checking Semantic tree...
+/usr/lib/pgsql/server.logfile 220879 152051 has wrong sd_size 2147483648,
+has to be 2147483648           /X11R6/share/icons/pnok
+No corruptions found
+There are on the filesystem:
+        Leaves 43634
+        Internal nodes 288
+        Directories 39283
+        Other files 126570
+        Data block pointers 1955254 (26582 of them are zero)
+        Safe links 0
+###########
+reiserfsck finished at Wed Apr 23 15:03:33 2003
+###########
+
+Now when I do a:
+
+ mount -t reiser fs -o ro /dev/hdd6 /mnt/recover/
+
+I get the following output
+mount: wrong fs type, bad option, bad superblock on /dev/hdd6,
+       or too many mounted file systems
 
 
 
