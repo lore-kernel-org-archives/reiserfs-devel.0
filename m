@@ -1,31 +1,39 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: data=writeback/data=journal
-Date: Mon, 26 Aug 2002 16:39:38 +0400
-Message-ID: <3D6A218A.8020000@namesys.com>
-References: <5.1.1.6.2.20020826143859.02174948@pop.tvnet.hu>
+From: Reiserml <reiserml@hlf.net>
+Subject: Problem mounting fs after a crash
+Date: Mon, 26 Aug 2002 16:59:07 +0200
+Message-ID: <4.3.1.2.20020826165410.030df008@mail.hlf.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11322-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11323-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Newsmail <newsmail@satimex.tvnet.hu>
-Cc: reiserfs-list@namesys.com, mason <mason@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Newsmail wrote:
+Hi List
 
-> hey guys, maybe I should just search a bit on the reiserfs homepage, 
-> but what those options data=writeback/data=journal do exactly? its 
-> something about full data journaling right?
-> greg
->
->
->
-It seems we have a documentation bug.  Chris, can you fix it?
+i have a big problem
 
-Hans
+after my system crachs i=B4m unabel to mount my disk again
+the disk is a VG with 3 * 80 GB HD`s if i try to mount
+
+mount -t reiserfs /dev/vg2/video /video
+
+i get
+Segmantation Fault
+
+Thats it afer that i=B4m unable to mount or unmount anything
+
+i use Suse Linux 7.2 Kernel 2.4x
+
+i checked the filesystem 10 times but nothing goes
+
+Please Help
+
+Thanks
+Thomas
 
 
