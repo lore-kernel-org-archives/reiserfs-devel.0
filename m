@@ -1,70 +1,42 @@
-From: Henning Westerholt <henning-04@die.informatik.uni-siegen.de>
-Subject: Re: reiserfsprogs-3.6.12 release
-Date: Thu, 12 Feb 2004 13:18:18 +0100
-Message-ID: <200402121317.53245.henning-04@die.informatik.uni-siegen.de>
-References: <200402102010.04479.vitaly@namesys.com> <20040211230435.GB8237@lostlogicx.com> <200402121431.26019.vitaly@namesys.com>
+From: Steven Cole <elenstev@mesatop.com>
+Subject: Re: Results of "bk clone" tests with 2.6.2,  reiser4, reiserfs,=?iso-8859-1?q?	ext3?=, xfs and jfs
+Date: Thu, 12 Feb 2004 05:54:53 -0700
+Message-ID: <200402120554.53381.elenstev@mesatop.com>
+References: <1076456354.1585.36.camel@spc.esa.lanl.gov> <402AB632.9080006@namesys.com> <402B2761.20500@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16774-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16775-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200402121431.26019.vitaly@namesys.com>
+In-Reply-To: <402B2761.20500@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
-Cc: Vitaly Fertman <vitaly@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com, nikita@namesys.com
 
-Am Donnerstag, 12. Februar 2004 12:31 schrieb Vitaly Fertman:
+On Thursday 12 February 2004 12:12 am, Hans Reiser wrote:
+> Hans Reiser wrote:
+> > Hmmm, we need to look into that.  Thanks Steven.  Zam, please analyze
+> > just what fs operations this benchmark performs, report it, and then
+> > analyze why we are slow.
 >
-> hm, interesting, would you run
-> 	stat /dev/hda3 (Henning, put here your root partition please)
-> 	stat /dev/root
-> 	stat /
-> at bootup and when booted.
+> Zam, ignore this, I forgot that we already figured out that it was due
+> to it being an sync intensive workload, and that bk would need to use
+> sys_reiser4 instead of fsync if it wants to go fast with reiser4.
 
-Thank you for the reply, sure, no problem.
+Thanks Hans.  When you get to where sys_reiser4 is usable, it might be
+a good idea to add some notes regarding when it would be preferable
+to the fs/Kconfig help section, or a pointer to file in Documentation.  Also,
+on the -mm vs linus tree issue, the value of sys_reiser4 would be currently
+about 277 in the -mm tree (vs 274 in linus), so that would be an additional
+complication to folks trying to test in both.
 
-=2D from an emergency shell
+Other bk-related loads to look at are:
 
-  File: `/'
-  Size: 536             Blocks: 2          IO Block: 131072 directory
-Device: 1607h/5639d     Inode: 2           Links: 21
-Access: (0755/drwxr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
+bk -r co						# recursive bk checkout
+bk export -tplain ../plain_text_tree	# export to a plain text tree
 
-  File: `/dev/hdc7' -> `ide/host0/bus1/target0/lun0/part7'
-  Size: 33              Blocks: 0          IO Block: 1024   symbolic link
-Device: ah/10d  Inode: 1322        Links: 1
-Access: (0555/lr-xr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
-
-  File: `/dev/root' -> `ide/host0/bus1/target0/lun0/part7'
-  Size: 33              Blocks: 0          IO Block: 1024   symbolic link
-Device: ah/10d  Inode: 676         Links: 1
-Access: (0555/lr-xr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
-
-
-=2D from a shell after bootup
-
-  File: ,,/"
-  Size: 536             Blocks: 2          IO Block: 131072 Verzeichnis
-Device: 1607h/5639d     Inode: 2           Links: 21
-Access: (0755/drwxr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
-
-  File: ,,/dev/hdc7" -> ,,ide/host0/bus1/target0/lun0/part7"
-  Size: 33              Blocks: 0          IO Block: 1024   symbolische=20
-Verkn=FCpfung
-Device: ah/10d  Inode: 1322        Links: 1
-Access: (0555/lr-xr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
-
-  File: ,,/dev/root" -> ,,ide/host0/bus1/target0/lun0/part7"
-  Size: 33              Blocks: 0          IO Block: 1024   symbolische=20
-Verkn=FCpfung
-Device: ah/10d  Inode: 676         Links: 1
-Access: (0555/lr-xr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
-
-Best regards,
-
-Henning
-
+Steven
