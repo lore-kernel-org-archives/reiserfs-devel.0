@@ -1,56 +1,80 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: BUG() in _get_block_create_0
-Date: Mon, 23 Dec 2002 19:26:02 +0300
-Message-ID: <20021223192602.C1645@namesys.com>
-References: <3E073A4D.4090704@paradigmashift.com>
+From: "Chris Haynes" <chris@harvington.org.uk>
+Subject: Re: what do you do that stresses your filesystem?
+Date: Mon, 23 Dec 2002 16:33:31 -0000
+Message-ID: <002001c2aaa1$08650550$0200000a@ringo>
+References: <3E06F360.7000708@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12226-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12227-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3E073A4D.4090704@paradigmashift.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nick Wellnhofer <nick@paradigmashift.com>
-Cc: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: ReiserFS <reiserfs-list@namesys.com>
 
-Hello!
+Hans,
 
-On Mon, Dec 23, 2002 at 05:31:09PM +0100, Nick Wellnhofer wrote:
+Thanks for asking!
 
-> I'm using ReiserFS with the old 3.5 format on a web server. The system 
-> has been running fine for 2 years. About 1 month ago I upgraded from 
-> Linux 2.2.16 to 2.4.18 (SuSE 8.1 default kernel). Some weeks ago I got 
-> reiserfs error messages in syslog suggesting a fsck and I had some files 
-> which couldn't be accessed or deleted. So last week I ran reiserfsck 
-> --rebuid-tree. At first everything worked fine. The problematic files 
-> could be accessed again.
+I'm about to deploy an on-line transaction-based service.. All
+service-specific software is in 1000+ Java classes. The OS is SuSE
+7.3, and Java version 1.4
 
-What was reiserfsck version?
+The heavist uses of the file store are:
 
-> After about 3 hours I got an oops report in my syslog, but the system 
-> kept running normally. Again 3 hours later the machine crashed with 
-> another oops. It turned out that the BUG() in _get_block_create_0 in 
-> fs/reiserfs/inode.c was hit both times. According to the value of EAX
->   le_key_k_type (version, key)
-> is TYPE_ANY (0x0f) but TYPE_DIRECT (0x02) is expected.
+During development:
++ javadoc
 
-Hm, sounds like FS corruption.
+During service deployment / update:
++ rsync
++ When using a tripwire-like Java program which checks the SHA digest
+of all deployable files against zipped JARs
 
-> The machine is a web server in production and I have only remote access, 
-> so I couldn't run reiserfsck again.
-> Any suggestions?
+During production operation:
++ atomic, synchronized writes to multiple files (typically 3 - 4 files
+in different directories, the first is the creation of a new 4 kb
+file, others are usually updates of existing files - growing typically
+1kb per update). This files system is mounted on a RAID-1 pair.
++ rsync
++ Successive reading of all files in a directory sub-tree (up to 10M
+files)
+in filestore-defined order (i.e. the program makes no demands or
+assumptions about the order - it uses the order supplied by Java's
+File.files()).
 
-We'd be interested in metadata snapshot
-(debugreiserfs -p /dev/your_device | bzip2 -9c >metadata.bz2).
-You probably can even do this on readonly-mounted device.
-Probably it will even work on read-write mounted device, but
-make sure no much write activity is performed on that fs at the time
-of snapshot. Also avoid writing metadata to the same fs you are taking
-this metadata from ;)
 
-Bye,
-    Oleg
+The greatest performance concern I have is with the file writes. As
+these are atomic transactions, I use a separate thread for each file's
+write (to give the kernel's escalator a chance to work), and require
+that the write operations be individually hardware-synchronized  using
+Java's FileDescriptor.sync() method. I then use a counter to detect
+when all threads have reported that their files have been written -
+this indicating successful commitment of the transaction.
+
+I handle read-and write-locking in the application.
+
+Usually, there are no lock conflicts, so there can be many concurrent
+transaction commitments. I use a thread pool of  50 threads to handle
+the individual file writes (the 50 being a guess at the likely point
+of diminishing returns).
+
+My expectation/hope is that, so long as there are enough threads
+available in this pool, all transactions will be completed within one
+disk rotation period(regardless of the number of concurrent
+transactions or number of files per transaction and the fact that I'm
+using software RAID-1). I've not yet been able to validate this
+(theoretically or practically).
+
+I would *really* like  to be able to group all the file writes for a
+transaction  into a single logical  API call and have the kernel/file
+system report successful completion of all data and metadata aspects
+of the transaction using a single application thread.
+
+HTH
+
+Chris Haynes
+
+
