@@ -1,221 +1,295 @@
-From: Laurent Riffard <laurent.riffard@free.fr>
-Subject: fixable corruption when re-creating file on reiser4 FS
-Date: Sun, 18 Jan 2004 23:58:25 +0100
-Message-ID: <400B0F91.4040607@free.fr>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: linux-2.6.0 + reiser4 oops
+Date: Mon, 19 Jan 2004 12:46:47 +0300
+Message-ID: <16395.42887.514077.642497@laputa.namesys.com>
+References: <200401162045.i0GKjEo26460@mail.osdl.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------010406070800080804060005"
-Return-path: <reiserfs-list-return-16562-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16563-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200401162045.i0GKjEo26460@mail.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Reiserfs-List@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: markw@osdl.org
+Cc: reiserfs-list@namesys.com, linux-lvm@sistina.com
 
---------------010406070800080804060005
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+markw@osdl.org writes:
+ > I was testing our DBT-2 workload on linux-2.6.0 with LVM2 and reiser4
+ > and got the following oops when I attempted to create a database with
+ > PostgreSQL.  Let me know if I can provide any additional information:
+ > 
+ > Unable to handle kernel NULL pointer dereference at virtual address 00000000
+ >  printing eip:                                                       
+ > c014c607      
+ > *pde = 00104001
+ > *pte = 00000000
+ > Oops: 0000 [#1]
 
-Hello,
+This looks much like another bug report we had for
+reiser4-on-top-of-raid0. A fix (tentative) for that was to use
+bio_add_page() while constructing bios, and it will be included into
+next reiser4 snapshot (that, I hope, will be released
+to-day---2004.01.19).
 
-When a file is re-created (ovrerwritten) on a reiser4 FS, its size 
-seems to be handled uncorrectly.
+If you are interested, here is the patch (to be applied from fs/reiser4):
+----------------------------------------------------------------------
+===== page_cache.c 1.265 vs edited =====
+--- 1.265/page_cache.c	Wed Dec 24 17:57:42 2003
++++ edited/page_cache.c	Tue Jan 13 15:48:58 2004
+@@ -499,17 +499,18 @@
+ 		assert("nikita-2275", blocknr != (reiser4_block_nr) 0);
+ 		assert("nikita-2276", !blocknr_is_fake(&blocknr));
+ 
+-		bio->bi_sector = blocknr * (blksz >> 9);
+ 		bio->bi_bdev = super->s_bdev;
+-		bio->bi_io_vec[0].bv_page = page;
+-		bio->bi_io_vec[0].bv_len = blksz;
+-		bio->bi_io_vec[0].bv_offset = 0;
+ 
+-		bio->bi_vcnt = 1;
+-		/* bio -> bi_idx is filled by bio_init() */
+-		bio->bi_size = blksz;
++		if (!bio_add_page(bio, page, blksz, 0)) {
++			warning("nikita-3452",
++				"Single page bio cannot be constructed");
++			return ERR_PTR(RETERR(-EINVAL));
++		}
+ 
+-		bio->bi_end_io = (rw == READ) ? end_bio_single_page_read : end_bio_single_page_write;
++		bio->bi_sector = blocknr * (blksz >> 9);
++		/* bio -> bi_idx is filled by bio_init() */
++		bio->bi_end_io = (rw == READ) ?
++			end_bio_single_page_read : end_bio_single_page_write;
+ 
+ 		return bio;
+ 	} else
+===== wander.c 1.229 vs edited =====
+--- 1.229/wander.c	Tue Jan 13 14:02:11 2004
++++ edited/wander.c	Tue Jan 13 16:18:31 2004
+@@ -527,6 +527,26 @@
+ 	return ret;
+ }
+ 
++static void
++undo_bio(struct bio *bio)
++{
++	int i;
++
++	for (i = 0; i < bio->bi_vcnt; ++i) {
++		struct page *pg;
++		jnode *node;
++
++		pg = bio->bi_io_vec[i].bv_page;
++		ClearPageWriteback(pg);
++		node = jprivate(pg);
++		LOCK_JNODE(node);
++		JF_CLR(node, JNODE_WRITEBACK);
++		JF_SET(node, JNODE_DIRTY);
++		UNLOCK_JNODE(node);
++	}
++	bio_put(bio);
++}
++
+ #if REISER4_COPY_ON_CAPTURE
+ 
+ extern spinlock_t scan_lock;
+@@ -715,11 +735,7 @@
+ 	ON_TRACE (TRACE_IO_W, "write of %d blocks starting from %llu\n",
+ 		  nr, (unsigned long long)block);
+ 
+-#if REISER4_USER_LEVEL_SIMULATION
+-	max_blocks = nr;
+-#else
+ 	max_blocks = bdev_get_queue(super->s_bdev)->max_sectors >> (super->s_blocksize_bits - 9);
+-#endif
+ 
+ 	while (nr > 0) {
+ 		struct bio *bio;
+@@ -731,6 +747,7 @@
+ 		if (!bio)
+ 			return RETERR(-ENOMEM);
+ 
++		bio->bi_bdev = super->s_bdev;
+ 		for (nr_used = 0, i = 0; i < nr_blocks; i++) {
+ 			struct page *pg;
+ 			ON_DEBUG(int jnode_is_releasable(jnode *));
+@@ -749,18 +766,27 @@
+ 			if (!JF_ISSET(cur, JNODE_WRITEBACK)) {
+ 				assert("zam-912", !JF_ISSET(cur, JNODE_WRITEBACK));
+ 				assert("nikita-3165", !jnode_is_releasable(cur));
++				UNLOCK_JNODE(cur);
++				if (!bio_add_page(bio,
++						  pg, super->s_blocksize, 0))
++					/*
++					 * underlying device is satiated. Stop
++					 * adding pages to the bio.
++					 */
++					break;
++
++				LOCK_JNODE(cur);
+ 				JF_SET(cur, JNODE_WRITEBACK);
+ 				JF_CLR(cur, JNODE_DIRTY);
+ 				UNLOCK_JNODE(cur);
+ 
+ 				SetPageWriteback(pg);
+-				
++
+ 				spin_lock(&pg->mapping->page_lock);
+ 
+-#if REISER4_STATS
+-				if (!PageDirty(pg))
++				if (REISER4_STATS && !PageDirty(pg))
+ 					reiser4_stat_inc(pages_clean);
+-#endif
++
+ 				/* don't check return value: submit page even if
+ 				   it wasn't dirty. */		
+ 				test_clear_page_dirty(pg);
+@@ -771,10 +797,7 @@
+ 				spin_unlock(&pg->mapping->page_lock);
+ 				
+ 				unlock_page(pg);
+-				
+-				bio->bi_io_vec[nr_used].bv_page = pg;
+-				bio->bi_io_vec[nr_used].bv_len = super->s_blocksize;
+-				bio->bi_io_vec[nr_used].bv_offset = 0;
++				nr_used ++;
+ 			} else {
+ 				/* jnode being WRITEBACK might be replaced on
+ 				   ovrwr_nodes list with jnode CC. We just
+@@ -790,31 +813,18 @@
+ 			cur = capture_list_next(cur);
+ 			if (!capture_list_end(head, cur))
+ 				JF_SET(cur, JNODE_SCANNED);
+-			else {
+-				/* end of overwrite list reached */
+-				assert("", i == nr_blocks - 1);
+-				assert("", nr_used + 1 == nr);
+-			}
+ 			spin_unlock(&scan_lock);
+-			nr_used ++;
+ 		}
+ 		if (nr_used > 0) {
+ 			bio->bi_sector = block * (super->s_blocksize >> 9);
+-			bio->bi_bdev = super->s_bdev;
+-			bio->bi_size = super->s_blocksize * nr_used;
+-			bio->bi_vcnt = nr_used;
++			assert("nikita-3455",
++			       bio->bi_size = super->s_blocksize * nr_used);
++			assert("nikita-3456", bio->bi_vcnt == nr_used);
+ 
+ 			/* Check if we are allowed to write at all */
+-			if ( super->s_flags & MS_RDONLY ) {
+-				int i;
+-				for ( i = 0; i < nr_used ; i++) {
+-					struct page *pg = bio->bi_io_vec[i].bv_page;
+-					ClearPageWriteback(pg);
+-					JF_CLR((jnode *)pg->private, JNODE_WRITEBACK);
+-					JF_SET((jnode *)pg->private, JNODE_DIRTY);
+-				}
+-				bio_put(bio);
+-			} else {
++			if (super->s_flags & MS_RDONLY)
++				undo_bio(bio);
++			else {
+ 				add_fq_to_bio(fq, bio);
+ 				reiser4_submit_bio(WRITE, bio);
+ 			}
+@@ -1142,11 +1152,7 @@
+ 	ON_TRACE (TRACE_IO_W, "write of %d blocks starting from %llu\n",
+ 		  nr, (unsigned long long)block);
+ 
+-#if REISER4_USER_LEVEL_SIMULATION
+-	max_blocks = nr;
+-#else
+ 	max_blocks = bdev_get_queue(super->s_bdev)->max_sectors >> (super->s_blocksize_bits - 9);
+-#endif
+ 
+ 	while (nr > 0) {
+ 		struct bio *bio;
+@@ -1158,6 +1164,7 @@
+ 		if (!bio)
+ 			return RETERR(-ENOMEM);
+ 
++		bio->bi_bdev = super->s_bdev;
+ 		for (nr_used = 0, i = 0; i < nr_blocks; i++) {
+ 			struct page *pg;
+ 			ON_DEBUG(int jnode_is_releasable(jnode *));
+@@ -1169,6 +1176,13 @@
+ 
+ 			lock_and_wait_page_writeback(pg);
+ 
++			if (!bio_add_page(bio, pg, super->s_blocksize, 0))
++				/*
++				 * underlying device is satiated. Stop adding
++				 * pages to the bio.
++				 */
++				break;
++
+ 			LOCK_JNODE(cur);
+ 			ON_DEBUG_MODIFY(znode_set_checksum(cur, 1));
+ 			assert("nikita-3166",
+@@ -1183,10 +1197,9 @@
+ 
+ 			spin_lock(&pg->mapping->page_lock);
+ 
+-#if REISER4_STATS
+-			if (!PageDirty(pg))
++			if (REISER4_STATS && !PageDirty(pg))
+ 				reiser4_stat_inc(pages_clean);
+-#endif
++
+ 			/* don't check return value: submit page even if it
+ 			   wasn't dirty. */		
+ 			test_clear_page_dirty(pg);
+@@ -1198,34 +1211,19 @@
+ 
+ 			unlock_page(pg);
+ 
+-			bio->bi_io_vec[nr_used].bv_page = pg;
+-			bio->bi_io_vec[nr_used].bv_len = super->s_blocksize;
+-			bio->bi_io_vec[nr_used].bv_offset = 0;
+-
+ 			cur = capture_list_next(cur);
+ 			nr_used ++;
+ 		}
+ 		if (nr_used > 0) {
+ 			bio->bi_sector = block * (super->s_blocksize >> 9);
+-			bio->bi_bdev = super->s_bdev;
+-			bio->bi_size = super->s_blocksize * nr_used;
+-			bio->bi_vcnt = nr_used;
++			assert("nikita-3453",
++			       bio->bi_size == super->s_blocksize * nr_used);
++			assert("nikita-3454", bio->bi_vcnt == nr_used);
+ 
+ 			/* Check if we are allowed to write at all */
+-			if ( super->s_flags & MS_RDONLY ) {
+-				int i;
+-				for ( i = 0; i < nr_used ; i++) {
+-					struct page *pg = bio->bi_io_vec[i].bv_page;
+-					struct jnode *j;
+-
+-					j = jprivate(pg);
+-					ClearPageWriteback(pg);
+-					JF_CLR(j, JNODE_WRITEBACK);
+-					ON_DEBUG_MODIFY(znode_set_checksum(j, 1));
+-					JF_SET(j, JNODE_DIRTY);
+-				}
+-				bio_put(bio);
+-			} else {
++			if (super->s_flags & MS_RDONLY)
++				undo_bio(bio);
++			else {
+ 				add_fq_to_bio(fq, bio);
+ 				reiser4_submit_bio(WRITE, bio);
+ 			}
+----------------------------------------------------------------------
 
-Steps to reproduce the problem :
-o create a reiser4 FS and mount it.
-o create a file on it
-o unmount the fs, remount it
-o recreate the file (do not erase it, just overwrite it with new data)
-o unmount the fs and fsck
+ > CPU:    7      
+ > EIP:    0060:[<c014c607>]    Not tainted
+ > EFLAGS: 00010086                        
 
-System :
-kernel 2.6.1 + supermount + resiser4 (23-Dec-2003)
-reiser4progs 0.4.20
-
-Attachments:
-o output of debugfs -t
-o detailed steps and outputs
-
--- 
-laurent
-(please CC me for any reply)
-
-
---------------010406070800080804060005
-Content-Type: text/plain;
- name="debugfs.log"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="debugfs.log"
-
-NODE (22) LEVEL=2 ITEMS=2 SPACE=3976 MKFS ID=0x32cfc610 FLUSH=0x0
-#0  NPTR (nodeptr40): [29:1(SD):0:2a:0] OFF 28, LEN=8, flags=0x0 UNITS=1
-[23]
-------------------------------------------------------------------------------
-#1  NPTR (nodeptr40): [2a:4(FB):74657374000000:10000:e50] OFF 36, LEN=8, flags=0x0 UNITS=1
-[26]
-==============================================================================
-NODE (23) LEVEL=1 ITEMS=4 SPACE=0 MKFS ID=0x32cfc610 FLUSH=0x0
-#0  SD (stat40): [29:1(SD):0:2a:0] OFF 28, LEN=44, flags=0x0 UNITS=1
-exts:		2
-mask:		0x3
-plugin:		sdext_lw
-offset:		2
-len:		14
-mode:		drwxr-xr-x
-nlink:		3
-size:		3
-plugin:		sdext_unix
-offset:		16
-len:		28
-uid:		0
-gid:		0
-atime:		Sun Jan 18 23:08:41 2004
-mtime:		Sun Jan 18 23:09:34 2004
-ctime:		Sun Jan 18 23:09:34 2004
-rdev:		150
-bytes:		150
-------------------------------------------------------------------------------
-#1  DENTRY (cde40): [2a:0(NAME):0:0:0] OFF 72, LEN=152, flags=0x0 UNITS=3
-NR  NAME              OFFSET HASH                              SDKEY             
-  0 .                     80 0000000000000000:0000000000000000 0000291:000002a
-  1 ..                   104 0000000000000000:0000000000000000 0000291:000002a
-  2 test                 128 0000000000000000:0000000000000000 00002a1:0010000
-------------------------------------------------------------------------------
-#2  SD (stat40): [2a:1(SD):74657374000000:10000:0] OFF 224, LEN=56, flags=0x0 UNITS=1
-exts:		3
-mask:		0x7
-plugin:		sdext_lw
-offset:		2
-len:		14
-mode:		-rw-r--r--
-nlink:		1
-size:		6120
-plugin:		sdext_unix
-offset:		16
-len:		28
-uid:		0
-gid:		0
-atime:		Sun Jan 18 23:09:34 2004
-mtime:		Sun Jan 18 23:10:35 2004
-ctime:		Sun Jan 18 23:10:35 2004
-rdev:		12240
-bytes:		12240
-plugin:		sdext_lt
-offset:		44
-len:		12
-atime:		461999488
-mtime:		253757736
-ctime:		253757736
-------------------------------------------------------------------------------
-#3  TAIL (tail40): [2a:4(FB):74657374000000:10000:0] OFF 280, LEN=3664, flags=0x0 
-==============================================================================
-NODE (26) LEVEL=1 ITEMS=1 SPACE=1574 MKFS ID=0x32cfc610 FLUSH=0x0
-#0  TAIL (tail40): [2a:4(FB):74657374000000:10000:e50] OFF 28, LEN=2456, flags=0x0 
-==============================================================================
-
-
---------------010406070800080804060005
-Content-Type: text/plain;
- name="steps.txt"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="steps.txt"
-
-root# mkfs.reiser4 /dev/hda8
-mkfs.reiser4 0.4.20
-Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by 
-reiser4progs/COPYING. 
-
-Block size 4096 will be used.                                                 
-Linux 2.6.1 is detected.                                                      
-Uuid 0d637d6a-d8fb-4250-a2cc-22c9daf87bec will be used.                       
-Reiser4 is going to be created on /dev/hda8.                                  
-(Yes/No): y
-Creating reiser4 on /dev/hda8...done
-
-root# fsck.reiser4 /dev/hda8
-[..]
-No corruption found.
-
-root# mount -treiser4 /dev/hda8 /mnt/disk
-root# ps aux > /mnt/disk/test
-root# ls -l /mnt/disk
-total 6
--rw-r--r--    1 root     root         6120 jan 18 23:09 test
-root# umount /dev/hda8
-root# fsck.reiser4 /dev/hda8
-[..]
-No corruption found.
-
-root# # Ok, once again :
-root# mount -treiser4 /dev/hda8 /mnt/disk
-root# ps aux > /mnt/disk/test
-root# ls -l /mnt/disk
-total 12
--rw-r--r--    1 root     root         6120 jan 18 23:10 test
-root# umount /dev/hda8
-root# fsck.reiser4 /dev/hda8
-  *************************************************************
-  ** If you are using the latest reiser4progs and  it fails **
-  ** please  email bug reports to reiserfs-list@namesys.com, **
-  ** providing  as  much  information  as  possible --  your **
-  ** hardware,  kernel,  patches,  settings,  all  reiserfsk **
-  ** messages  (including version), the reiser4fsck logfile, **
-  ** check  the  syslog file  for  any  related information. **
-  ** If you would like advice on using this program, support **
-  ** is available  for $25 at  www.namesys.com/support.html. **
-  *************************************************************
-
-Fscking the /dev/hda8 block device.
-Will check the consistency of the Reiser4 SuperBlock.
-Will check the consistency of the Reiser4 FileSystem.
-Continue? 
-
-(Yes/No): y
-***** Openning the fs.
-Reiser4 fs was detected on the /dev/hda8.
-Master super block (16):
-magic:          R4Sb
-blksize:        4096
-format:         0x0 (format40)
-uuid:           0d637d6a-d8fb-4250-a2cc-22c9daf87bec
-label:          <none>
-
-Format super block (17):
-plugin:         format40
-description:    Disk-format for reiser4, ver. 0.4.20
-magic:          R4Sb-Default
-flushes:        0
-mkfs id:        0x32cfc610
-blocks:         248999
-free blocks:    248950
-root block:     22
-tail policy:    0x4 (smart)
-next oid:       0x10001
-file count:     1
-tree height:    2
-key policy:     LARGE
-
-***** Tree Traverse Pass: scanning the reiser4 internal tree.                 
-        Read nodes 3                                                          
-        Nodes left in the tree 3
-                Leaves of them 2, Twigs of them 1
-        Time interval: Sun Jan 18 23:12:07 2004 - Sun Jan 18 23:12:07 2004
-***** TwigScan Pass: checking extent pointers of all twigs.
-        Read twigs 1                                                          
-        Time interval: Sun Jan 18 23:12:07 2004 - Sun Jan 18 23:12:07 2004
-***** Semantic Traverse Pass: reiser4 semantic tree checking.                 
-Error: Node (23), item (2): StatData of the file [2a:74657374000000:10000] has 
-the wrong bytes (12240), Should be (6120). Plugin (stat40). 
-        Time interval: Sun Jan 18 23:12:07 2004 - Sun Jan 18 23:12:07 2004    
-***** fsck.reiser4 finished at Sun Jan 18 23:12:07 2004
-Closing fs...done
-
-1 fixable corruptions were detected in the FileSystem. Run with --fix option to fix them.
-
-
-
---------------010406070800080804060005--
-
+Nikita.
