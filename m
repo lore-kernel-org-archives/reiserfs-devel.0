@@ -1,54 +1,93 @@
-From: Radovan Garabik <garabik@melkor.dnp.fmph.uniba.sk>
-Subject: Re: reiser4 for windows
-Date: Wed, 8 Dec 2004 08:50:20 +0100
-Message-ID: <20041208075020.GA14238@melkor.dnp.fmph.uniba.sk>
-References: <20041207060730.GA1344@zg.cz> <1102408162.12503.25.camel@localhost> <965622991.20041208024010@tnonline.net> <41B68530.7090807@slaphack.com>
+From: Isaac Chanin <chanin@WPI.EDU>
+Subject: Re: AMD64/Reiser4 testing and problems
+Date: Wed, 08 Dec 2004 03:04:07 -0500
+Message-ID: <41B6B577.4080904@wpi.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-22716-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22717-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <41B68530.7090807@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-On Tue, Dec 07, 2004 at 10:38:08PM -0600, David Masover wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
->=20
-> Spam wrote:
-> |>On Mon, 2004-12-06 at 22:07 -0800, Jiri Klouda wrote:
-> |>
-> |>>>Also, is it a given that reiser4 for windows would work without help
-> |>>>from MS?  I've just never seen a third-party filesystem driver for
-> |>>>windows.  You'd think that at least one other filesystem, one of the
-> |>>>Linux/BSD/etc ones, would have done this, if it was feasable.
-> |
-> |
-> |   Aren't there? Isn't there various compression systems, not to
-> |   mention PGP disk? Maybe it is not the same thing...
->=20
-> Not exactly.  Is there an XFS for Windows?  What about JFS?  What about
-> Minix?  Sure, some filesystems have apps that allow access, but I don't
-> think I've seen one that provides an actual filesystem driver (not
-> plugin).  I do occasionally hear of them, though.
+Hey Alex,
 
-There is an ext2 filesystem for Win98. I used it extensively some time
-ago. It had reliable read-only support and an experimental read write
-one (which I did not try).
-However, I do not remember if it supported symlinks (it for sure did not
-support unix permissions - it could not, if you think about it)
+Thanks for the patch, I wish there was more I could say, but so far I 
+haven't been able to produce any problems whatsoever with this new patch 
+on reiser4/amd64.  The things I tried were Jake Maciejewski's kernel 
+compiling command which I modified slightly to better suit my system. 
+The following ran for at least 30 minutes and a couple of iterations of 
+kernel compiling: for i in `seq 1 20` ; do make mrproper ; cat 
+/boot/2.6.10-r4-mm-config > .config ; make ; echo $i ; done & for i in 
+`seq 1 5` ; do dd; if=/dev/zero of=large_file bs=1M count=20k ; rm 
+large_file ; echo $i ; done
+
+I also tried filling the filesystem, and testing for data retention from 
+forced umounts.  For fun I also tried running ext2 and a second resier4 
+mounted on files inside the reiser4 filesystem.  Everything worked fine, 
+I was unable to produce a single error in the logs.
+
+The only thing that could possibly have been said to have gone wrong, 
+was when I tried force umounting with open file handles, that didn't 
+work out quite as well - however, for all sane usage resier4 seems 
+rather stable on amd64 to me.
+
+I will try running an entire linux system on it once I get the time, and 
+perhaps then will be able to give you some more feedback.
+
+So once again, thanks for the patch, and best of luck with resier4,
+
+Isaac
 
 
---=20
- -----------------------------------------------------------
-| Radovan Garab=EDk http://melkor.dnp.fmph.uniba.sk/~garabik/ |
-| __..--^^^--..__    garabik @ melkor.dnp.fmph.uniba.sk     |
- -----------------------------------------------------------
-Antivirus alert: file .signature infected by signature virus.
-Hi! I'm a signature virus! Copy me into your signature file to help me spre=
-ad!
+Alex Zarochentsev wrote:
+
+ > Hello Isaac
+ >
+ > On Thu, Dec 02, 2004 at 06:13:39PM -0500, Isaac Chanin wrote:
+ >
+ >> Hi,
+ >>
+ >> I did some testing with Resier4 on AMD and was wondering if perhaps 
+debug information or anything on this could help with getting Resier4 
+stable and working on AMD64.
+ >>
+ >> I have read that if AMD would give an AMD64 cpu that would be a big 
+help, but it doesn't seem inheriantly impossible to fix the problem from 
+error reports and such.
+ >>
+ >> Anyways, here are the results for my testing.  I used a mm 
+2.6.10-rc2 kernel and the filesystem was in a file mounted by loopback.
+ >>
+ >> http://users.wpi.edu/~chanin/r4log.txt
+ >
+ >
+ >
+ > thanks a lot for the report.  can you try the following patch?
+ >
+ > ===== plugin/space/bitmap.c 1.183 vs edited =====
+ > --- 1.183/plugin/space/bitmap.c    Wed Oct 13 17:22:01 2004
+ > +++ edited/plugin/space/bitmap.c    Sun Dec  5 00:18:55 2004
+ > @@ -170,7 +170,7 @@
+ >  static int
+ >  find_next_zero_bit_in_word(ulong_t word, int start_bit)
+ >  {
+ > -    unsigned int mask = 1 << start_bit;
+ > +    ulong_t mask = 1 << start_bit;
+ >      int i = start_bit;
+ >
+ >      while ((word & mask) != 0) {
+ > @@ -234,7 +234,7 @@
+ >  /* search for the first set bit in single word. */
+ >  static int find_last_set_bit_in_word (ulong_t word, int start_bit)
+ >  {
+ > -    unsigned bit_mask;
+ > +    ulong_t bit_mask;
+ >      int nr = start_bit;
+ >
+ >      assert ("zam-965", start_bit < BITS_PER_LONG);
+ >
+
