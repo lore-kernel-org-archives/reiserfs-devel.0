@@ -1,38 +1,30 @@
-From: Christoph Hellwig <hch@infradead.org>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 11:52:29 +0100
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040826115229.A18013@infradead.org>
-References: <20040824202521.GA26705@lst.de> <20040825163225.4441cfdd.akpm@osdl.org> <1093510983.23289.6.camel@imp.csi.cam.ac.uk> <200408261245.47734.christian.mayrhuber@gmx.net>
+Date: Thu, 26 Aug 2004 11:53:30 +0100
+Message-ID: <20040826105330.GB30449@mail.shareable.org>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <Pine.LNX.4.58.0408260204050.22259@artax.karlin.mff.cuni.cz> <Pine.LNX.4.58.0408251723540.17766@ppc970.osdl.org> <412DA11B.2070303@namesys.com>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Return-path: <reiserfs-list-return-20623-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200408261245.47734.christian.mayrhuber@gmx.net>; from christian.mayrhuber@gmx.net on Thu, Aug 26, 2004 at 12:45:47PM +0200
+In-Reply-To: <412DA11B.2070303@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Cc: reiserfs-list@namesys.com, Anton Altaparmakov <aia21@cam.ac.uk>, linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+To: Hans Reiser <reiser@namesys.com>
+Cc: Linus Torvalds <torvalds@osdl.org>, Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, Aug 26, 2004 at 12:45:47PM +0200, Christian Mayrhuber wrote:
-> There is the reiser4() syscall which you surely don't want to implement for 
-> other filesystems.
+Hans Reiser wrote:
+> being able to cat dirname/pseudos/cat and get a 
+> concatenation of all of the files is nice, and being able to cat 
+> dirname/pseudos/tar and get an archive of the directory is nice
 
-Actually a syscall that goes into filesystem code is the last thing we want.
-But it's not in the submission, so let's keep that flame^H^H^H^Hdiscussion
-for later.
+Yes.  Being able to cd into filename.tar.gz and filename.iso is also
+nice, but all of these features should be supported by the VFS
+generically, not in any specific filesystem, and there should be a
+hook to invoke the various fun filesystem-independent handlers by name.
 
-> Once there is some experience with this new fancy stuff the dust what
-> is useful/insecure, etc. and what is not will settle and can be condensed
-> into a vfs api.
-> Apps like samba and user scripts will have to be adapted once this is
-> the case, but this should not be to big a problem if this stuff is marked 
-> experimental.
-> 
-> People which want something stable can continue to use xattrs and a
-> magnitude of filesystems for now.
-
-Sure, no one stops you from playing around with new semantics.  But please
-don't add them to the linux kernel stable series until we have semantics we
-a) want to stick to for a while and b) actually work.
-
+-- Jamie
