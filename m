@@ -1,57 +1,93 @@
 From: Yury Umanets <umka@namesys.com>
-Subject: Re: reiser4 mount issue
-Date: Wed, 03 Sep 2003 09:23:28 +0400
-Message-ID: <1062566608.2107.7.camel@haron.namesys.com>
-References: <sf55090d.092@gwia201.syr.edu>
+Subject: Re: Reiser4 input/output errors...
+Date: Wed, 03 Sep 2003 09:33:31 +0400
+Message-ID: <1062567211.2107.14.camel@haron.namesys.com>
+References: <1062453181.2791.17.camel@mikeb.staff.netnation.com>
+	 <1062479004.31361.3.camel@haron.namesys.com>
+	 <1062521517.1987.5.camel@mikeb.staff.netnation.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15523-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15524-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <sf55090d.092@gwia201.syr.edu>
+In-Reply-To: <1062521517.1987.5.camel@mikeb.staff.netnation.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Michael Konrad <mkonrad@syr.edu>
+To: mikeb@netnation.com
 Cc: reiserfs-list@namesys.com
 
-On Wed, 2003-09-03 at 05:17, Michael Konrad wrote:
+On Tue, 2003-09-02 at 20:51, Mike Benoit wrote:
+> Since I enabled all the debugging options that would compile, I re-ran
+> the mkfs.reiser4 /dev/hda8, then attempted to untar the linux kernel
+> again, however it didn't like that very much:
+> 
+> Here is what I got from the log:
+> 
+> lookup inode: 65897 "de4x5.c"
+> creating "de4x5.c" in 65897
+> reiser4 panicked cowardly: assertion failed:
+> carry_level_invariant(doing, CARRY_DOING)
+> 
+> Hopefully this is enough information to help you track down the problem.
+> 
+> On Mon, 2003-09-01 at 22:03, Yury Umanets wrote:
+> > On Tue, 2003-09-02 at 01:53, Mike Benoit wrote:
+> > > I assume this isn't supposed to happen?
+> > > 
+> > > [root@mikeb home]# mkfs.reiser4 /dev/hda8
+> > > mkfs.reiser4 0.4.12
+> > > Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by
+> > > reiser4progs/COPYING.
+> > > 
+> > > Information: Reiser4 is going to be created on /dev/hda8.
+> > > (Yes/No): Yes
+> > > Creating reiser4 on /dev/hda8...done
+> > > Synchronizing /dev/hda8...done
+> > > 
+> > > [root@mikeb home]# mount -t reiser4 /dev/hda8 /home/test2
+> > > [root@mikeb test2]# cd /home/test2
+> > > [root@mikeb test2]# cp /usr/src/linux-2.6.0-test4.tar.bz2 ./
+> > > [root@mikeb test2]# tar jxf linux-2.6.0-test4.tar.bz2
+> > > 
+> > > [root@mikeb test2]# rm -rf linux-2.6.0-test4/
+> > > rm: reading directory `linux-2.6.0-test4//drivers/net/e100':
+> > > Input/output error
+> > > rm: reading directory `linux-2.6.0-test4//drivers/net/sk98lin':
+> > > Input/output error
+> > > rm: cannot remove directory `linux-2.6.0-test4//drivers/net': Directory
+> > > not empty
+> > > 
+> > > I tried this on two different partitions (/dev/hda7 and /dev/hda8) the
+> > > exact same files had the error on both, so it seems to be reproducible.
+> > > It does however work fine if I use ext3 on the said partitions. This is
+> > > a brand new HD (about a week old) so I doubt it has any bad blocks
+> > > (badblocks /dev/hda8 doesn't report anything).
+> > > 
+> > > [root@mikeb home]# mkfs.reiser4 --version
+> > > mkfs.reiser4 0.4.12
+> > > 
+> > > Kernel: 2.6.0-test4 #5 Mon Sep 1 14:20:14 PDT 2003 i686 unknown unknown
+> > > GNU/Linux
+> > > 
+> > > CONFIG_REISER4_FS=y
+> > > CONFIG_REISER4_LARGE_KEY=y
+> > > 
+> > > CPU:
+> > > cpu family      : 6
+> > > model           : 8
+> > > model name      : AMD Athlon(tm) Processor
+> > > stepping        : 1
+> > > cpu MHz         : 1662.612
+> > > cache size      : 256 KB
+> > > 
+> > > Distro: Mandrake 9.2beta.
+> > 
+> > There is something interesting in kernel logs?
 
 Hello,
 
-
-> Compile of linux-2.6.0-test4 with reiser4 is good. 
-> Compile of libaal-0.4.9 is good
-> Compile of reiser4fsprogs-0.4.12 is good.
-> 
-> mkfs.reiser4 /dev/hda8 is good. 
-> 
-> When I issue the following command:
-> 
-> mount -t reiser4 /dev/hda8 /mnt/lfs  or
-
-> mount -t reiserfs /dev/hda8 /mnt/lfs 
-You should not be trying to mount it as reiserfs. Reiser4 is fully
-different filesystem.
-> 
-> I get the following error: 
-> 
-> mount: wrong fs type, bad option, bad superblock on /dev/hda8, or too many mounted file systems
-> 
-> cat /proc/filesystems 
-> 
-> list both reiserfs and reiser4
-> 
-> Am I missing something simple here?
-> 
-> Thank you,
-> Michael
-
-You should be aware, that mkfs.reiser4 creates filesystem with large
-keys by default. What key policy have you turned on when building
-kernel? And what does kernel log say?
-
-Regards.
+Can you run debugfs.reiser4 on /dev/hda8? What does it say?
 
 
