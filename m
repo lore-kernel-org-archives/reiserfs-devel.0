@@ -1,31 +1,51 @@
-From: Mike Fedyk <mfedyk@matchmail.com>
+From: Nikita Danilov <Nikita@Namesys.COM>
 Subject: Re: Test suite?
-Date: Wed, 21 Jan 2004 13:05:33 -0800
-Sender: Mike Fedyk <mfedyk@srv-lnx2600.matchmail.com>
-Message-ID: <20040121210533.GM23765@srv-lnx2600.matchmail.com>
+Date: Thu, 22 Jan 2004 16:23:54 +0300
+Message-ID: <16399.52970.948058.252595@laputa.namesys.com>
 References: <50D19C3AC815734C9E19FE4C4F6128A602A567ED@orsmsx403.jf.intel.com>
+	<200401212017.i0LKH9o13925@mail.osdl.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16604-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16605-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <50D19C3AC815734C9E19FE4C4F6128A602A567ED@orsmsx403.jf.intel.com>
+In-Reply-To: <200401212017.i0LKH9o13925@mail.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Villalovos, John L" <john.l.villalovos@intel.com>
-Cc: reiserfs-list@namesys.com
+To: markw@osdl.org
+Cc: john.l.villalovos@intel.com, reiserfs-list@namesys.com
 
-On Wed, Jan 21, 2004 at 11:06:15AM -0800, Villalovos, John L wrote:
-> Is there a test suite for ReiserFS?
-> 
-> For regression testing and the like?
-> 
-> I am just wondering if there is something that I can run after making
-> modifications that would help give me a warm-fuzzy feeling :)
+markw@osdl.org writes:
+ > On 21 Jan, Villalovos, John L wrote:
+ > > Is there a test suite for ReiserFS?
+ > > 
+ > > For regression testing and the like?
 
-I know namesys at least mentioned having a test that shows if they'll have
-problems serving files over nfs, but I don't remember if it's posted for the
-public.
+We use various stress tests and benchmarks for this:
+
+bonnie   (http://www.textuality.com/bonnie/)
+bonnie++ (http://www.coker.com.au/bonnie++/)
+fsx      (http://www.zip.com.au/~akpm/linux/patches/stuff/fsx-linux.c)
+iozone   (http://www.iozone.org/)
+dbench   (http://freshmeat.net/projects/dbench/)
+mongo    (http://www.namesys.com/benchmarks/mongo_readme.html)
+cerberus (http://sourceforge.net/projects/va-ctcs/)
+fsstress (http://cvs.sourceforge.net/viewcvs.py/ltp/ltp/testcases/kernel/fs/fsstress/)
+
+And some scripts/programs that were created specifically on purpose. I
+put few of them (without any support or documentation) into
+ftp://ftp.namesys.com/pub/testtools
+
+Plus scripts to start a bunch of concurrent kernel compilations,
+bitkeeper pulls, tars, gzips, etc.
+
+ > > 
+ > > I am just wondering if there is something that I can run after making
+ > > modifications that would help give me a warm-fuzzy feeling :)
+ > > 
+ > > John
+ > > 
+
+Nikita.
