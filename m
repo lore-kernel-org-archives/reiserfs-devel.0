@@ -1,57 +1,32 @@
-From: Nikita Danilov <nikita@clusterfs.com>
+From: Felipe Alfaro Solana <lkml@felipe-alfaro.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 01:33:52 +0400
-Message-ID: <16686.22336.829096.678178@thebsh.namesys.com>
-References: <20040824202521.GA26705@lst.de>
-	<412CEE38.1080707@namesys.com>
-	<20040825152805.45a1ce64.akpm@osdl.org>
-	<412D9FE6.9050307@namesys.com>
-	<20040826014542.4bfe7cc3.akpm@osdl.org>
-	<412DAC59.4010508@namesys.com>
-	<1093548414.5678.74.camel@krustophenia.net>
-	<20040826203017.GA14361@school.ioffe.ru>
-	<1093552692.13881.43.camel@leto.cs.pocnet.net>
+Date: Thu, 26 Aug 2004 23:34:37 +0200
+Message-ID: <200408262334.38791.lkml@felipe-alfaro.com>
+References: <20040825163225.4441cfdd.akpm@osdl.org> <412E0AC9.2020203@andrew.cmu.edu> <20040826165818.GN5733@mail.shareable.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20815-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20816-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1093552692.13881.43.camel@leto.cs.pocnet.net>
+In-Reply-To: <20040826165818.GN5733@mail.shareable.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christophe Saout <christophe@saout.de>
-Cc: Dmitry Baryshkov <mitya@school.ioffe.ru>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Jamie Lokier <jamie@shareable.org>
+Cc: James Bruce <bruce@andrew.cmu.edu>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Christophe Saout writes:
- > Am Freitag, den 27.08.2004, 00:30 +0400 schrieb Dmitry Baryshkov:
- > 
- > > Another example: Can ext2/etx3/reiserfsv3/xfs be implemented as reiser4
- > > plugins? From Hans' words it seems so. If this is correct, then maybe
- > > reiser4 core should be updated to completely replace current VFS layer?
- > > Then it's a good point to create a branch (in old development model it
- > > would be 2.7, dunno for new :), replace VFS layer with reiser4 core, and
- > > rewrite all (or at least most used) FS as reiser4 plugins. Then
- > > everybody will be happy.
- > > 
- > > But this looks too good to be true. Perhaps I misunderstood Hans' words
- > > aboud 'new disk format', did I?
- > 
- > No. You can change the format the reiser4 storage tree is stored in. As
- > long as other filesystems don't use the same underlying storage tree
- > this is not possible.
+On Thursday 26 August 2004 18:58, Jamie Lokier wrote:
+> James Bruce wrote:
+> > moving 1MB of attributes/streams just to change a 20 character
+> > author attribute seems a bit silly.
+>
+> That's what we do now.  Try editing an MP3's id tags.
 
-Wrong, plugin is called just below entry point from the VFS to the
-file-system back-end. It can use reiser4 tree, or any storage layer it
-wants. Or none at all: think about pseudo-files like
-foo/metas/uid---they are also implemnted by plugins.
-
-Programmer dedicated enough can (besides programming Fortran in any
-language), write reiser4 plugin for any file-system. I will leave
-description of this activity to people with better command over English
-language.
-
-Nikita.
-
- > 
+What's the problem? Let's say a file has three streams/forks/whatever: the 
+unnamed one, and two additional named. The filesystem can treat these three 
+streams like three independent (but related) files on disk so, if the author 
+attribute belongs to the first named stream, only the first named stream (and 
+its corresponding file on the backend) would need to be modified. No need to 
+move MBs of data around.
