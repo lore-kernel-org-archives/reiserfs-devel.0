@@ -1,47 +1,38 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: warning: Invalid hash for xattr (system.posix_acl_access) associated
- with [1070 1541 0x0 SD] after extending device
-Date: Sun, 21 Nov 2004 09:06:50 -0800
-Message-ID: <41A0CB2A.1000602@namesys.com>
-References: <200411171931.52943.js@jetsys.de> <419BCCCB.40103@novell.com> <200411210905.36202.js@jetsys.de>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: Another panic!
+Date: Sun, 21 Nov 2004 19:20:31 +0200
+Message-ID: <20041121172031.GW26192@nysv.org>
+References: <20041121163755.GV26192@nysv.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-22467-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22468-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200411210905.36202.js@jetsys.de>
+Content-Disposition: inline
+In-Reply-To: <20041121163755.GV26192@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?J=F6rg_Spilker?= <js@jetsys.de>
-Cc: Jeff Mahoney <jeffm@novell.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-J=F6rg Spilker wrote:
+On Sun, Nov 21, 2004 at 06:37:55PM +0200, Markus T=F6rnqvist wrote:
+>Nov 21 18:27:31 shrike kernel:  <1>Unable to handle kernel paging request =
+at virtual address cf607e50
+>Nov 21 18:27:31 shrike kernel:  printing eip:
 
->Am Mittwoch, 17. November 2004 23:12 schrieben Sie:
->
->Hello Jeff,
->
-> =20
->
->>You can use debugreiserfs to track down the file with that key by using
->>debugreiserfs -d <device> and looking for the objectid. Once you find
->>the directory listing with that key, you should be able to find the file.
->>
->>When you've located the filename, a setfattr -x system.posix_acl_access
->><file> followed by the appropriate setfacl command will reset the ACL.
->>   =20
->>
->
->thanks for your help. I could fix the problem using debugreiserfs
->
->Greetings, J=F6rg
->
->btw: your email is bouncing (unknown user).
->
->
-> =20
->
-I am concerned that this constitutes ignoring a bug report by fixing the=20
-symptoms and not finding the bug.
+Just for the record, seems to be totally reproducible; This time I didn't
+get any info out of it before it totally locked.
+
+Except for this:
+
+Nov 21 19:28:21 shrike kernel: reiser4[http(12259)]: ext_by_ext_coord (fs/r=
+eiser4/plugin/item/extent_file_ops.c:26)[vs-1650]:
+
+Hope there's a cure for this :P
+
+Thanks!
+
+--=20
+mjt
+
