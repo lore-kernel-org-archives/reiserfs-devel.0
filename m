@@ -1,39 +1,46 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Bug report with its cancellation?
-Date: Mon, 5 Jul 2004 12:02:32 +0300
-Message-ID: <20040705090232.GW4990@nysv.org>
-References: <20040704172135.GR4990@nysv.org> <200407050010.22574.henning-04@die.informatik.uni-siegen.de>
+From: Francisco Javier Cabello Torres <fjcabello@visual-tools.com>
+Subject: data logging and kernel 2.4.20
+Date: Mon, 5 Jul 2004 12:13:05 +0200
+Message-ID: <200407051213.05033.fjcabello@visual-tools.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19509-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-19510-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200407050010.22574.henning-04@die.informatik.uni-siegen.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Henning Westerholt <henning-04@die.informatik.uni-siegen.de>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
+Cc: Francisco Javier Cabello <fjcabello@visual-tools.com>
 
-On Mon, Jul 05, 2004 at 12:10:22AM +0200, Henning Westerholt wrote:
->access to a reiser4 partition produce a kernel oops, something about an 
->assertion error.
+Hello,
+I would like to use data logging feature on a 2.4.20-vanilla kernel.=20
 
-This seems highly irratic, as I seem to recall I only had a null
-pointer dereference and paging oops...
+I have tried patches from SUSE and everything goes ok.
 
->My kernel source has also the mentioned static variable. I'll try tomorow to 
->remove the static definition. Perhaps it makes a difference..
+ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20/
 
-With any luck it will be automagicated in the next auto-snapshot :)
+The problem is that until now, I was using patches from this url:
 
-I ran some benchmarks with bonnie++ and slow.c on the 2004.07.02 after
-I had it working and it was blazingly fast.
+ftp://ftp.namesys.com/pub/reiserfs-for-2.4/2.4.20-pending
 
-Things look good on this front again, keep up the good work :)
+in order to fix known bugs. I have tried to apply both set of patches, but =
+I=20
+get a lot of conflicts. Should I apply fix patches with suse data logging=20
+patches or suse patch include all of them?
 
--- 
-mjt
+Thanks in advance.
+
+=46ranciso J. Cabello
+
+
+=2D-=20
+Premature Optimization is the root of all evil (Donald Knuth)=20
+=2D Yo tambi=E9n quiero una Europa libre de Patentes de Software -
+=2D-------------------------------------------------------------
+ EuropeSwPatentFree - http://EuropeSwPatentFree.hispalinux.es=20
+=2D-------------------------------------------------------------
+
 
