@@ -1,144 +1,71 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Some more questions about Reiser4 ;)
-Date: Sat, 10 May 2003 22:36:49 +0400
-Message-ID: <3EBD46C1.9080801@namesys.com>
-References: <001e01c313fd$975e7730$9900a8c0@xpstation> <3EBB9121.5060304@namesys.com> <007201c31709$4f36c5c0$9900a8c0@xpstation> <3EBD2427.4000806@namesys.com> <000201c31721$3aca6c50$9900a8c0@xpstation>
+Date: Sat, 10 May 2003 22:43:46 +0400
+Message-ID: <3EBD4862.2@namesys.com>
+References: <008f01c311bb$a60b70b0$9900a8c0@xpstation>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14059-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14060-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <000201c31721$3aca6c50$9900a8c0@xpstation>
+In-Reply-To: <008f01c311bb$a60b70b0$9900a8c0@xpstation>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Fred -- Speed Up -- <speedup@free.fr>
-Cc: reiserfs-list@namesys.com
+Cc: reiserfs-list@namesys.com, NIKITA DANILOV <nikitadanilov@mail.ru>
 
 Fred -- Speed Up -- wrote:
 
 >
->  
+>- Could you please describe the overall structure of Reiser4fs, with a diagram or a little text, where the superblock is, the wandering logs, the storage tree and semantic graph, just sort of a picture of the hard drive to know where and how data and structures are kept and ordered ... ;)
 >
->>>When you're speaking of a graph used by the semantic layer, would it be
->>>      
->>>
->part
->  
->
->>>of the VFS caching process ?
->>>      
->>>
->>Probably you mean dentry cache?
->>    
->>
->Should be ;)
->VFS seems to be very intrusive (I mean, it does a lot of the file-handling
->process) ... doesn't it limit your initiatives in implementing new
->structures ?\
->
-Yes.  We manage somehow though.
+Elena, can you draw a diagram or somehow document the disk layout for 
+reiser4.  We seem to describe the pieces but not the whole.
 
 >
->  
+>- How does your semantic graph work : is it a cache contaning parts of the semantic tree (containing the user-side paths : /foo/bar/...), and updated when the filesystem is being used to reduce paths resolution time and eventually cache some data, resolving path the "old fashion" way when the path is not in the graph, by browsing the storage tree looking for the desired folders and fetching their information, or does the semantic graph allready contain the whole path structure, so that it is not necessary to store directory (I mean, the way VFS understands what a directory is) informations (list of files and subfolders) in the storage tree ?
 >
->>>Another thing I could hardly understand : does Reiser4 keep directories
->>>apart from files so that path can be cached or are they kept with the
->>>      
->>>
->same
->  
->
->>>status normal files got ?
->>>      
->>>
->>I can't understand you.
->>    
->>
->The reason why I asked this was because I didn't knew that VFS was the one
->and only responsible for the path resolving ;)
->
-That is too strong a statement.  VFS delegates parts of the task to us, 
-particularly directory lookup.
+VFS does caching of the semantic graph in something called dcache.  We 
+cache data and semantics the same way in the FS without trying to 
+understand what is data and what is semantics.  We often discuss how we 
+should cache internal nodes of the tree longer than leaf nodes, but I 
+think we have not implemented that yet in Reiser4.  Nikita, please look 
+into that.
 
 >
->  
+>- Considering the semantic graph, as you choose to use a generic graph, you would be able to link paths together to shorten access to some files that are often used : does Reiser4 implement some algorithms that reduces access time to most acceded files (at least path resolution) other than caching paths ? For example, if "/foo/bar/1/2/3/file" file is being used very often, does the semantic graph make a link directly between the root and the file ?
 >
->>>I didn't noticed the difference, thank you for pointing this out. I
->>>understand the "balancing" process, which is documented on your website,
->>>meaning packing dirty memory items on flushing, but I don't understand
->>>      
->>>
->what
->  
->
->>>you mean by "tree should not be singular" :
->>>does this mean a twig should
->>>contain more than one item ?
->>>      
->>>
->>This means, that tree is as minimal height as possible. Suppose we have
->>tree of height 3. Root level (3) contains one item and 2 sevel has  one
->>item. This tree is singular. That it is because,  we need only two
->>levels in this case. Tree like this is possible in balancing time. Flush
->>will care about that in its time.
->>    
->>
->OK, now how do you balance the tree when items are deleted, or added ? This
->operation must be very complex, 
->
-yes, it is.
-
->as you don't have enough time to rebalance
->the whole tree on every commit considering performance issues. I read tree
->balancing (I mean keeping it consistent ;)) was done periodically, you're
->saying it's done at flush time, but how can you achieve such a complex
->operation in short enough time not to affect performance ?
->
-we only squeeze what is being flushed to disk.  The CPU is faster than 
-the disk drive, so it works.
+No, semantic layers do not concern themselves with access patterns and 
+should not.
 
 >
->  
+>- How do you keep the storage tree balanced, as it is constantly evolving ? Even with balancing at flush time, some important tree changes would take too much time to rebalance the tree : 
 >
->>>The really interesting thing (the mysterious one :-D) is the
->>>consistency-keeping process. I didn't really understood the
->>>      
->>>
->left-delimiting
->  
+I don't agree.
+
+>if this occurs, does the storage tree remain unbalanced, scheduling tree balancing later ? Could you graphically (or with a short text ...) tell how the tree evolves, and what the balancing operation really consists in ?
 >
->>>key concept, I guess it's something like a path in the storage tree
->>>      
->>>
->>You are right :)
->>    
->>
->You can't guess how happy I am ||:-D
+www.namesys.com/v4/v4.html describes the difference between height 
+balancing and space usage balancing.  I will be writing more on space 
+usage balancing over the coming months.
+
 >
->  
+>- When storing really big files, one extent pointer is not enough : 
 >
->>>In a consistent tree, do all the inodes got the same left-delimiting
->>>key depth ?
->>>
->>>      
->>>
->>We do not have inodes in storage tree. We have nodes instead.
->>
->>Left delimiting key means,  that if node pointer item in the index part
->>of tree (levels from tree height through to 2) points to some node, then
->>node pointer item key equal to leftmost key of the node node pointer
->>points to.
->>    
->>
->All right ;)
+fragmentation not size of the file determines number of extents needed.
+
+>does Reiser4 manage big files the same way ext2 does, with 2-level indirection pointers, storing only the first one in the tree ?
+>
+no.
+
+> If so, wouldn't this be considered as a Blob behaviour ?
 >
 >
->Thank you,
+>Thank you ;)
+>
 >Fred
->
->
 >
 >  
 >
