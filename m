@@ -1,46 +1,51 @@
-From: Boyd Waters <bwaters+moz@nrao.edu>
-Subject: getting UUID and label of a filesystem
-Date: Thu, 06 Nov 2003 13:46:40 -0700
-Message-ID: <3FAAB330.5040503@nrao.edu>
+From: Brian Tinsley <btlists@emageon.com>
+Subject: Re: getting UUID and label of a filesystem
+Date: Thu, 06 Nov 2003 14:54:01 -0600
+Message-ID: <1068152041.2327.34.camel@dragonball>
+References: <3FAAB330.5040503@nrao.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15996-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; boundary="=-3d6AGe45iTOL8UrXsfqg"
+Return-path: <reiserfs-list-return-15997-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3FAAB330.5040503@nrao.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+--=-3d6AGe45iTOL8UrXsfqg
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Perhaps this is obvious, but I cannot find a way to print out the UUID
-or the label of a mounted reiser filesystem, in a manner similar to
-xfs_admin.
+On Thu, 2003-11-06 at 14:46, Boyd Waters wrote:
 
-Best way to do this?
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+> 
+> Perhaps this is obvious, but I cannot find a way to print out the UUID
+> or the label of a mounted reiser filesystem, in a manner similar to
+> xfs_admin.
+> 
+> Best way to do this?
 
-On a mounted filesystem?
 
-As non-root user?
+debugreiserfs /dev/xxx
 
-Thanks!
 
-~ - boyd
+> 
+> On a mounted filesystem?
 
-Boyd Waters
-http://www.aoc.nrao.edu/~bwaters
-National Radio Astronomy Observatory
-Socorro, New Mexico
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.3 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+Yes.
 
-iD8DBQE/qrMw0is8k1r0QeURAhekAJ9N7Q7USe7Hull5ydP99vdS/uYO2gCgrj0v
-v5MuJNmUlLEJyYWUaVjqn2M=
-=J7uc
------END PGP SIGNATURE-----
+
+> 
+> As non-root user?
+
+
+Doubtful
+
+
+--=-3d6AGe45iTOL8UrXsfqg--
 
