@@ -1,31 +1,43 @@
-From: Wichert Akkerman <wichert@wiggy.net>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 13:01:41 +0200
-Sender: Wichert Akkerman <wichert@levante.wiggy.net>
-Message-ID: <20040826110141.GI2612@wiggy.net>
-References: <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826012230.GA19957@jeremy1>
+Date: Thu, 26 Aug 2004 12:02:58 +0100
+Message-ID: <20040826110258.GC30449@mail.shareable.org>
+References: <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <20040826100530.GA20805@taniwha.stupidest.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20627-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20628-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040826012230.GA19957@jeremy1>
+In-Reply-To: <20040826100530.GA20805@taniwha.stupidest.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeremy Allison <jra@samba.org>
-Cc: Nicholas Miell <nmiell@gmail.com>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Chris Wedgwood <cw@f00f.org>
+Cc: viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Previously Jeremy Allison wrote:
-> Which is exactly how Windows apps have started to use streams.
+Chris Wedgwood wrote:
+> On Thu, Aug 26, 2004 at 02:00:49AM +0100, Jamie Lokier wrote:
+> 
+> > One of the big potential uses for file-as-directory is to go inside
+> > archive files, ELF files, .iso files and so on in a convenient way.
+> 
+> Arguably this belongs in userspace --- and people have put it there.
 
-Interesting I can not find a way using the .NET framework, which is
-supposed to be The Future, to use streams.
+I agree that these belong in userspace, and that there's plenty* of
+userspace code doing a similar thing already.  I don't think there's
+any argument over it.
 
-Wichert.
+However, as far as I know it's not accessible in a file-as-directory
+form as yet.  In my opinion that is the most natural form and it would
+be very intuitive to use.  I hope we can pick a useful semantics for
+them, and also provide filesystem-independent plugins with GNU
+Hurd-like per-user extensibility.
 
--- 
-Wichert Akkerman <wichert@wiggy.net>    It is simple to make things.
-http://www.wiggy.net/                   It is hard to make things simple.
+-- Jamie
+
+* plenty == too much.
+  Gnome, KDE, Emacs and Bash all see different virtual filesystems.
+  (All but Bash implement their own virtual filesystem extensions).
+  That makes them much less useful than they could be.
