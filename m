@@ -1,123 +1,146 @@
-From: Dan Oglesby <d.oglesby@insightbb.com>
-Subject: Re: ReiserFS v3 + millions of files?
-Date: Tue, 28 Oct 2003 08:50:59 -0600
-Message-ID: <3F9E8253.4020203@insightbb.com>
+From: =?ISO-8859-1?Q?S=E6valdur?= Gunnarsson <addi@root.is>
+Subject: libaal compile fails
+Date: Wed, 29 Oct 2003 04:33:57 +0000
+Message-ID: <1067402036.4704.4.camel@plutonia>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15918-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-U3Fq4VIKLBPWAeVQMIeF"
+Return-path: <reiserfs-list-return-15919-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: reiserfs-list@namesys.com
 
-> Dan Oglesby writes:
->  > On Monday 27 October 2003 5:42 am, you wrote:
->  > > Dan Oglesby writes:
->  > >  > Greetings...
->  > >  >
->  > >  > Long time ReiserFS user, first time I've had a problem.  Signed up for
->  > >  > the mailing list last week, and was surprised to see so little traffic
->  > >  > (might be a good thing?).
->  > >  >
->  > >  > I'm running Red Hat 7.3 using a Red Hat 2.4.20 kernel.  The system has a
->  > >  > RAID-5 array via 3Ware 7500 controller, and three Western Digital 120GB
->  > >  > "Special Edition" hard drives.  The array is one filesystem, ReiserFS. 
->  > >  > The operating system, swap, and other files are stored on a hard drive
->  > >  > that is on the primary IDE controller off of the motherboard.
->  > >  >
->  > >  > The system is a single board computer, with a P4 3.06 GHz hyperthreaded
->  > >  > processor (kernel is SMP enabled), 512MB of RAM, and contains a mix of
->  > >  > ReiserFS and EXT2 filesystems on the primary drive (ReiserFS only on the
->  > >  > array).  No NFS.
->  > >  >
->  > >  > The array is used to store what will basically amount to more than one
->  > >  > million files with an average size of sixty kilobytes.
->  > >  >
->  > >  > During simulations for file writes, I'm seeing write performance begin
->  > >  > to drop dramatically after 800,000 files have been stored on the
->  > >  > filesystem.
->  > >
->  > > Reiserfs (both v3 and v4) stores directory entries (names within
->  > > directory) sorted by a hash of the file name. If files are created in
->  > > the "random" order, that is, if hashes of names aren't more or less
->  > > monotonic, reiserfs will have to modify the same block many times during
->  > > insertion of large number of files. As blocks with names stop fitting
->  > > into memory this means that the same block has to be fetched many times
->  > > from the disk.
->  > >
->  > > To confirm that this is really what the cause of your problem, please
->  > > answer following questions:
->  > >
->  > > 1. are all your files in the same directory?
->  > 
->  > For now, yes.
->  > 
->  > > 2. how names of files are generated?
->  > 
->  > Filenames are very long, based on site ID, internal codes, date and time.  A 
->  > generic example would be:
-> 
-> [I would prefer to have this discussion continued on the our mailing
-> list (Reiserfs mail-list <Reiserfs-List@Namesys.COM>), so if you don't
-> object, please CC reply there.]
+--=-U3Fq4VIKLBPWAeVQMIeF
+Content-Type: multipart/alternative; boundary="=-jA2Uc8KRIkQTEDdDWL/G"
 
-Sorry about that.  I must have missed the headers on one of my replies.
 
-> 
->  > 
->  > 		siteID.1234.4321.20031028123456789.ext
-> 
-> I wasn't precise enough in forming the question. How file names are
-> changing through time? That is, how these sequences of digits above
-> depend on time? I can guess that "20031028" is a date, but what about
-> other parts?
-> 
+--=-jA2Uc8KRIkQTEDdDWL/G
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Basically, the siteID doesn't change, and I don't believe the next two 
-sections ("1234.4321" in the example above) don't change much either. 
-The only part of the filename that changes constantly is the date/time 
-section, just before the end.
+When I try building libaal it fails with the following error message:
 
-> Can you modify file name patterns so that name's initial prefix
-> increases (in lexicographical order) through time? Like this:
-> 
-> YYYYMMDDHHmmss.sequential-no.siteID.rest.ext
-> 
-> this should get rid of, or at least alleviate the problem you have
-> described.
-> 
+make[2]: Entering directory
+`/raid/disc0/usr/src/linux-2.6.0-test9/libaal-0.4.13/src'
+source=3D'file.c' object=3D'libaal_la-file.lo' libtool=3Dyes \
+depfile=3D'.deps/libaal_la-file.Plo'
+tmpdepfile=3D'.deps/libaal_la-file.TPlo' \
+depmode=3Dgcc3 /bin/sh ../depcomp \
+/bin/sh ../libtool --mode=3Dcompile gcc -DHAVE_CONFIG_H -I. -I. -I..
+-I../include   -D_REENTRANT -D_FILE_OFFSET_BITS=3D64 -O0 -g -W -Wall
+-Wno-unused-parameter -Wredundant-decls -Werror -c -o libaal_la-file.lo
+`test -f file.c || echo './'`file.c
+rm -f .libs/libaal_la-file.lo
+gcc -DHAVE_CONFIG_H -I. -I. -I.. -I../include -D_REENTRANT
+-D_FILE_OFFSET_BITS=3D64 -O0 -g -W -Wall -Wno-unused-parameter
+-Wredundant-decls -Werror -c file.c -MT libaal_la-file.lo -MD -MP -MF
+.deps/libaal_la-file.TPlo  -fPIC -DPIC -o .libs/libaal_la-file.lo
+file.c: In function `file_len':
+file.c:213: parse error before '[' token
+cc1: warnings being treated as errors
+file.c:213: warning: signed and unsigned type in conditional expression
+make[2]: *** [libaal_la-file.lo] Error 1
+make[2]: Leaving directory
+`/raid/disc0/usr/src/linux-2.6.0-test9/libaal-0.4.13/src'
+make[1]: *** [all-recursive] Error 1
+make[1]: Leaving directory
+`/raid/disc0/usr/src/linux-2.6.0-test9/libaal-0.4.13'
+make: *** [all] Error 2
+titanium /usr/src/linux/libaal-0.4.13#
 
-I don't see why that would be a problem.  I'll present this option to 
-the developers today, and will hopefully be testing very soon.
 
->  > 
->  > Most files are that size or several characters longer.
->  > 	
->  > > 3. what hash are using on reiserfs (default is r5).
->  > >
->  > 
->  > Default (r5).
->  > 
->  > > Reiserfs has another problem due to its limited capability of handling
->  > > hash collisions in file names. Reiser4 scales much better in this
->  > > respect, and generally, works fine with scores of millions of files in
->  > > one directory.
->  > >
->  > 
->  > Sounds like you guys/gals are going to have another person willing to run the 
->  > current incarnation of Reiser4 on a test machine in the very near future.
-> 
-> Reiser4 is not yet ready for production. Only use it to manipulate data
-> that can be recovered by other mean
 
-I know Reiser4 isn't ready for production, but I wouldn't mind checking 
-out the performance differences on a test machine.
+S=E6valdur Gunnarsson: RHCE
+Let justice be done; though the
+world perish
 
-Thanks for the info...  I'll see what happens when I apply your theory 
-to one of our test machines.
+--=-jA2Uc8KRIkQTEDdDWL/G
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
---Dan
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 TRANSITIONAL//EN">
+<HTML>
+<HEAD>
+  <META HTTP-EQUIV=3D"Content-Type" CONTENT=3D"text/html; CHARSET=3DUTF-8">
+  <META NAME=3D"GENERATOR" CONTENT=3D"GtkHTML/3.0.8">
+</HEAD>
+<BODY>
+When I try building libaal it fails with the following error message:<BR>
+<BR>
+make[2]: Entering directory `/raid/disc0/usr/src/linux-2.6.0-test9/libaal-0=
+.4.13/src'<BR>
+source=3D'file.c' object=3D'libaal_la-file.lo' libtool=3Dyes \<BR>
+depfile=3D'.deps/libaal_la-file.Plo' tmpdepfile=3D'.deps/libaal_la-file.TPl=
+o' \<BR>
+depmode=3Dgcc3 /bin/sh ../depcomp \<BR>
+/bin/sh ../libtool --mode=3Dcompile gcc -DHAVE_CONFIG_H -I. -I. -I.. -I../i=
+nclude&nbsp;&nbsp; -D_REENTRANT -D_FILE_OFFSET_BITS=3D64 -O0 -g -W -Wall -W=
+no-unused-parameter -Wredundant-decls -Werror -c -o libaal_la-file.lo `test=
+ -f file.c || echo './'`file.c<BR>
+rm -f .libs/libaal_la-file.lo<BR>
+gcc -DHAVE_CONFIG_H -I. -I. -I.. -I../include -D_REENTRANT -D_FILE_OFFSET_B=
+ITS=3D64 -O0 -g -W -Wall -Wno-unused-parameter -Wredundant-decls -Werror -c=
+ file.c -MT libaal_la-file.lo -MD -MP -MF .deps/libaal_la-file.TPlo&nbsp; -=
+fPIC -DPIC -o .libs/libaal_la-file.lo<BR>
+file.c: In function `file_len':<BR>
+file.c:213: parse error before '[' token<BR>
+cc1: warnings being treated as errors<BR>
+file.c:213: warning: signed and unsigned type in conditional expression<BR>
+make[2]: *** [libaal_la-file.lo] Error 1<BR>
+make[2]: Leaving directory `/raid/disc0/usr/src/linux-2.6.0-test9/libaal-0.=
+4.13/src'<BR>
+make[1]: *** [all-recursive] Error 1<BR>
+make[1]: Leaving directory `/raid/disc0/usr/src/linux-2.6.0-test9/libaal-0.=
+4.13'<BR>
+make: *** [all] Error 2<BR>
+titanium /usr/src/linux/libaal-0.4.13#<BR>
+<BR>
+<TABLE CELLSPACING=3D"0" CELLPADDING=3D"0" WIDTH=3D"100%">
+<TR>
+<TD>
+<BR>
+<TABLE BGCOLOR=3D"#ccccc0" CELLSPACING=3D"0" WIDTH=3D"80%">
+<TR>
+<TD>
+<TABLE BGCOLOR=3D"#fffff0" CELLSPACING=3D"0" CELLPADDING=3D"3" WIDTH=3D"100=
+%">
+<TR>
+<TD VALIGN=3D"top">
+<BR>
+</TD>
+<TD WIDTH=3D"100%">
+S&#230;valdur Gunnarsson: <FONT COLOR=3D"#ff0000">RHCE</FONT><BR>
+Let justice be done; though the world perish
+</TD>
+</TR>
+</TABLE>
+
+</TD>
+</TR>
+</TABLE>
+
+</TD>
+</TR>
+</TABLE>
+
+</BODY>
+</HTML>
+
+--=-jA2Uc8KRIkQTEDdDWL/G--
+
+--=-U3Fq4VIKLBPWAeVQMIeF
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.2 (GNU/Linux)
+
+iD8DBQA/n0Mz13DWV+6498URAr4LAKDUhY2uF0XfrFGBpnDhFgedMegdEQCeJXID
+fCW39XbVBpAIKGhM0hFhew4=
+=5472
+-----END PGP SIGNATURE-----
+
+--=-U3Fq4VIKLBPWAeVQMIeF--
 
