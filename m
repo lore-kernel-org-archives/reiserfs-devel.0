@@ -1,34 +1,43 @@
-From: Sander <sander@humilis.net>
-Subject: succes story reiserfsck
-Date: Wed, 17 Mar 2004 21:17:58 +0100
-Message-ID: <20040317201758.GA5080@favonius>
-Reply-To: sander@humilis.net
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: Mount fails after reiserfsck --rebuild-tree failure
+Date: Thu, 18 Mar 2004 00:31:36 +0300
+Message-ID: <200403180021.23171.vitaly@namesys.com>
+References: <40588E59.8080002@viva-solutions.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17284-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17286-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <40588E59.8080002@viva-solutions.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: KAA <kaa@viva-solutions.com>, reiserfs-list@namesys.com
 
-Hi all,
+Hello, 
 
-Reiserfs on my notebook got currupted badly, most likely due to the
-kernel version (2.5.75), but maybe bad hardware too. In the end it even
-wouldn't finish the scripts anymore at boot, during which reiserfs
-errors flooded the console.
+> so I've unmounted array fsck'ed it (unfortunately didn't save output of
+> first fsck but it failed and recommended to do --rebuild-tree)
+> since that time fsck --rebuild-tree /dev/md0 fails with the same error
+> all the time:
+>
+> build_the_tree: Nothing but leaves are expected. Block 292951 - unknown
+>
+> Aborted
+>
+> is there any way to get my data back?
+> thanks in advance!
 
-Reiserfsck (3.6.13) did a _great_ job in recovering the fs. Lots of
-files in lost+found, but the fs was usable again. Not that anything
-important was on the fs, but is was interesting and reassuring to see
-that reiserfsck is capable to fix the quite broken fs.
-
-Thanks for the fs!
+You rebuilt your raid and this problem appeared, this really looks 
+like a hardware problem, check your raid again please.
+If the problem in the code I can check how reiserfsck handles this 
+block outside of your raid if you send it to me:
+	dd if=/dev/md0 of=block.292951 count=1 bs=4096 skip=292951
 
 -- 
-Humilis IT Services and Solutions
-http://www.humilis.net
+Thanks,
+Vitaly Fertman
+
+
