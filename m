@@ -1,49 +1,50 @@
-From: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
-Subject: Re: reiserfs3 and -o sync revisited
-Date: Tue, 19 Nov 2002 17:34:19 +0100
-Message-ID: <m3heedjz78.fsf@merlin.emma.line.org>
-References: <m3ptt7m6qq.fsf@merlin.emma.line.org>
-	<20021118111011.C3827@namesys.com> <1037628696.3392.4.camel@tiny>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: Reiserfs versions
+Date: Tue, 19 Nov 2002 17:38:24 +0100
+Message-ID: <200211191738.24321.Dieter.Nuetzel@hamburg.de>
+References: <3DD97831.4030607@panix.com> <200211191722.24120.Dieter.Nuetzel@hamburg.de> <20021119192647.A519@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12032-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12033-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1037628696.3392.4.camel@tiny> (Chris Mason's message of "18
- Nov 2002 09:11:36 -0500")
+In-Reply-To: <20021119192647.A519@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Oleg Drokin <green@namesys.com>
+Cc: kenny gorman <kgorman@panix.com>, reiserfs-list@namesys.com
 
-Chris Mason <mason@suse.com> writes:
-
-> -o sync needs a little help from the filesystem, and my patches don't
-> add it.  Since we support fsync(file) after rename triggering a commit
-> on the rename, we don't really need -o sync.
+Am Dienstag, 19. November 2002 17:26 schrieb Oleg Drokin:
+> Hello!
 >
-> But yes, I did fix my O_SYNC/fsync bug in the early versions of the data
-> logging patches ;-)
+> On Tue, Nov 19, 2002 at 05:22:24PM +0100, Dieter N?tzel wrote:
+> > I can send you my 3.6.4 SPEC file so that you can create your own
+> > reiserfsprogs-3.6.4 package.
+>
+> Actually spec file is included with reiserfsprogs source.
+> I do not know about SuSE, but I've succesfully built reiserfsprogs
+> for RedHat systems using supplied spec file more than once already.
 
-So reiserfs ignores -o sync without complaining it's unimplemented. No
-wonder reiserfs has an "eats-your-data" reputation.
+OK, yes I tried it with "time rpm -ta reiserfsprogs-3.6.4.tar.gz",again and=
+ it=20
+worked.
 
-NB: I find this inacceptable. Either have it reject chattr +S and mount
--o sync or fix it. But do not pretend it would be working when in fact
-it's broken.
+17.890u 2.730s 0:25.99 79.3%    0+0k 0+0io 161106pf+0w
 
-If this bug be unfixed by the end of the month, I'll have to convert any
-r/w reiserfs systems left over to ext3fs.
+There were times where it didn't worked...;-)
 
-The Linux file system semantics issue that has been going on for years
-now is simply embarassing and awkward, be it the "dirasync" behaviour on
-ext[23] or this ignoring -o sync. Linux needs to grow up. Seriously. And
-quick.
+Don't forget the "rpm -i --force xxx" thing.
 
+Cheers,
+	Dieter
 
-I had also hoped that -o dirsync for ext2/ext3 would make it for 2.4.20,
-but looking at Marcelo's BK tree, it hasn't. :-(
+=2D-=20
+Dieter N=FCtzel
+Graduate Student, Computer Science
 
--- 
-Matthias Andree
+University of Hamburg
+Department of Computer Science
+@home: Dieter.Nuetzel at hamburg.de (replace at with @)
