@@ -1,39 +1,44 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: Re: journal log file
-Date: Mon, 20 May 2002 18:08:20 +0200
-Message-ID: <200205201808.20497.Dieter.Nuetzel@hamburg.de>
-References: <200205201602.21334.Dieter.Nuetzel@hamburg.de> <200205201652.10997.Dieter.Nuetzel@hamburg.de> <3CE91A26.9030307@namesys.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Re: BTW: 2.4.19-patches-to-come?
+Date: Mon, 20 May 2002 13:28:39 -0400
+Message-ID: <200205201728.g4KHSd1L023205@turing-police.cc.vt.edu>
+References: <200205171736.50971.Dieter.Nuetzel@hamburg.de> <200205172144.21544.Dieter.Nuetzel@hamburg.de> <20020518094440.A4435@namesys.com> <200205181518.24245.Dieter.Nuetzel@hamburg.de> <20020518202902.A6913@namesys.com> <3CE6CB57.4020002@netscape.net>
+            <20020519134454.B11030@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-10394-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_1666884632P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10395-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <3CE91A26.9030307@namesys.com>
+In-Reply-To: Your message of "Sun, 19 May 2002 13:44:54 +0400."
+             <20020519134454.B11030@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Oleg Drokin <green@namesys.com>, Chris Mason <mason@suse.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-On Monday 20 May 2002 17:45, Hans Reiser wrote:
-> Dieter Nu"tzel wrote:
-> >>>I for myself were very excited when we get this in some day 'cause than
-> >>> I have some little more space on my "boot" partition left or I can
-> >>> shrink it finally.
-> >>
-> >>You seems to be brave enough to use 2.5 kernels, it seems ;)
-> >
-> >Maybe :-)))
-> >
-> >Cheers,
-> >	Dieter
->
-> Or wait for ~ 2.4.20-pre3, which is what I would advise to do.
+--==_Exmh_1666884632P
+Content-Type: text/plain; charset=us-ascii
 
-Nobody knows for sure when we'll see the "outstanding" AA vm-fixes and the 
-O(1)-scheduler that is most important for me.
+On Sun, 19 May 2002 13:44:54 +0400, Oleg Drokin said:
 
-Thanks Hans.
+> Since usually you cannot reliable predict a crash time (note, that if you
+> can and it is SW fault, you should file a bug report instead, I think).
 
-Regards,
-	Dieter
+Wasn't there a Dilbert cartoon about a PHB that wanted advance announcement
+of unscheduled outages? ;)
+
+--==_Exmh_1666884632P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQE86TJHcC3lWbTT17ARAkBRAKDxWipoggaf5sKBI8bUk+gT75zofACfdEhr
+eAfo+DROl/ieNKQPoLszYm0=
+=DznJ
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1666884632P--
