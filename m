@@ -1,31 +1,28 @@
 From: Boyd Waters <bwaters+mac@aoc.nrao.edu>
-Subject: Re: New server Reiser4 or 3, also Reiser4 on software RAID
-Date: Thu, 15 Apr 2004 14:29:58 -0600
-Message-ID: <A9F4A120-8F1B-11D8-8778-000A95C88606@aoc.nrao.edu>
-References: <3DF9165145FACB4C96977FF650C1E9040C469E0D@its-mail1.its.corp.gwl.com>
+Subject: Re: Support on further bug catching and bugfixing - plus reiser4 enabled livecd
+Date: Thu, 15 Apr 2004 14:32:45 -0600
+Message-ID: <0D80D315-8F1C-11D8-8778-000A95C88606@aoc.nrao.edu>
+References: <1081894775.5464.5.camel@redeeman.linux.dk> <407C6952.2080704@namesys.com> <20040414163936.GF19430@alias.nmd.msu.ru>
 Mime-Version: 1.0 (Apple Message framework v613)
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17973-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17974-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C469E0D@its-mail1.its.corp.gwl.com>
+In-Reply-To: <20040414163936.GF19430@alias.nmd.msu.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list <reiserfs-list@namesys.com>
 
->
-> In other words, if I bring the machine down to single user, is there a
-> straightforward way that I can upgrade a Reiser3 fs to version 4?
+> btw, gentoo is "geekest" of all linux distros i've seen ;)
 
-Nope. It's a different system.
+Besides IRC, a number of Gentoo "geeks" discuss Reiser4 on the active 
+forums at
 
-You could create a new filesystem, of course, and have it be reiser4, 
-mount it, move everything over, and switch.
+http://forums.gentoo.org
 
-For a production machine I'm sticking to reiser3 at the moment. But 
-testing reiser4 is fine.
+Search for Resier4
 
 ~ boyd
 
