@@ -1,18 +1,34 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Plugin for corruption resistance?
-Date: Mon, 14 Feb 2005 09:45:17 -0800
-Message-ID: <4210E3AD.2070008@namesys.com>
-References: <e692861c05021110583585f84e@mail.gmail.com>
+Subject: Re: Reiser 4 Apple
+Date: Mon, 14 Feb 2005 10:49:22 -0800
+Message-ID: <4210F2B2.9010401@namesys.com>
+References: <e692861c05021110583585f84e@mail.gmail.com> <200502141301.06224.Michael.James@csiro.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e692861c05021110583585f84e@mail.gmail.com>
+In-Reply-To: <200502141301.06224.Michael.James@csiro.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Gregory Maxwell <gmaxwell@gmail.com>
+To: Michael James <Michael.James@csiro.au>
 Cc: reiserfs-list@namesys.com
 
-Its on the legitimate wish list, if someone wants to code it, let me know.
+Michael James wrote:
+
+>Dear Hans,
+>
+>Have you ever thought of porting reiser4 to BSD?
+>
+>Apple have:
+>	Bags of money
+>	A current filesystem that totally sucks
+>	An OS that cries out for plugins to satisfy its quirks
+>
+>Could be a good marriage,
+>michaelj
+>
+>  
+>
+Please convince them to pay for it and I will....
