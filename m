@@ -1,27 +1,24 @@
-From: Len Sorensen <lsorense@opengraphics.com>
-Subject: Re: External journals and NVRAM devices
-Date: Fri, 1 Nov 2002 10:33:35 -0500
-Message-ID: <20021101153335.GA13162@opengraphics.com>
-References: <20021101072944.33C2B47683B@server5.fastmail.fm> <000e01c2817b$3d531210$6501000a@kolodez>
+From: Jan Kara <jack@ucw.cz>
+Subject: Re: quota support for 2.4.20-pre11
+Date: Fri, 1 Nov 2002 19:49:29 +0100
+Message-ID: <20021101184929.GA12655@atrey.karlin.mff.cuni.cz>
+References: <x1wlm4lgx08.fsf@alone.msiu.ru>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11892-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11893-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <000e01c2817b$3d531210$6501000a@kolodez>
+In-Reply-To: <x1wlm4lgx08.fsf@alone.msiu.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Serge Kolodeznyh <mysubscribes@paradigma.ru>
+To: "Basil A. Evseenko" <evseenko@msiu.ru>
 Cc: reiserfs-list@namesys.com
 
-On Fri, Nov 01, 2002 at 10:49:42AM +0300, Serge Kolodeznyh wrote:
-> Sirs, why there are no [reiserfs-list] in subject of letters ?
-> I can't filter letters to special box, list had filled up my main inbox,
-> please, check this maillist system's configuration.
+> Are there quota patches for 2.4.20-pre11 kernel?
+> Patches for 2.4.19 doesn't applies correctly.
+  I'll make them soon.
 
-There is however a 'X-Mailing-List: reiserfs-list@namesys.com' header.
-
-Len Sorensen
+  						Honza
