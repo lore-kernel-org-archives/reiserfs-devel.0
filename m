@@ -1,45 +1,62 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Daniel Egger <degger@fhm.edu>
 Subject: Re: Reiser4 status: benchmarked vs. V3 (and ext3)
-Date: Sun, 27 Jul 2003 18:01:46 +0400
-Message-ID: <3F23DB4A.7060801@namesys.com>
-References: <3F1EF7DB.2010805@namesys.com> <3F1F6005.4060307@tupshin.com> <1059021113.7911.13.camel@localhost> <3F1F66F0.1050406@tupshin.com> <1059024090.9728.22.camel@localhost> <16159.48809.812634.455756@laputa.namesys.com> <3F23C588.10700@namesys.com> <20030727124547.GD24002@louise.pinerecords.com>
+Date: 27 Jul 2003 16:10:15 +0200
+Message-ID: <1059315015.10692.207.camel@sonja>
+References: <3F1EF7DB.2010805@namesys.com>
+	 <1059062380.29238.260.camel@sonja>
+	 <16160.4704.102110.352311@laputa.namesys.com>
+	 <1059093594.29239.314.camel@sonja>
+	 <16161.10863.793737.229170@laputa.namesys.com>
+	 <1059142851.6962.18.camel@sonja>
+	 <1059143985.19594.3.camel@haron.namesys.com>
+	 <1059181687.10059.5.camel@sonja>
+	 <1059203990.21910.13.camel@haron.namesys.com>
+	 <1059228808.10692.7.camel@sonja>  <3F23D38B.3020309@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15070-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-mMC31r85lhnL5BalAJLE"
+Return-path: <reiserfs-list-return-15071-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030727124547.GD24002@louise.pinerecords.com>
+In-Reply-To: <3F23D38B.3020309@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Tomas Szepe <szepe@pinerecords.com>
-Cc: Nikita Danilov <Nikita@namesys.com>, Shawn <core@enodev.com>, Tupshin Harper <tupshin@tupshin.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, reiserfs mailing list <reiserfs-list@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: Yury Umanets <umka@namesys.com>, Nikita Danilov <Nikita@Namesys.COM>, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, reiserfs mailing list <reiserfs-list@namesys.com>
 
-Tomas Szepe wrote:
+--=-mMC31r85lhnL5BalAJLE
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
->>[reiser@namesys.com]
->>
->>Nikita, how about phrasing this as:
->>
->>   `Dear and esteemed potential Reiser4 user, I apologize that we put a 
->>tarball on our website and let it get so obsolete, thereby wasting your 
->>time.  I am deleting it now, and will soon put a new one up.  In the 
->>meantime, can you use bitkeeper if that is convenient for you?  Here is 
->>the URL with the instructions for doing that.....'
->>
->>It is the usual American business english used in such cases.;-)
->>    
->>
->
->Standard American puke inducing pretentious florid business
->language if you want to be completely accurate.  8)
->
->  
->
-Yeah, but Nikita really could have been more helpful....
+Am Son, 2003-07-27 um 15.28 schrieb Hans Reiser:
 
--- 
-Hans
+> it is suitable for any flash device that has wear leveling built into=20
+> the hardware (e.g. all compact flash cards)
 
+Are you sure CF cards have wear leveling? I'm pretty confident that they
+have defect sector management but no wear leveling. There's a huge
+difference between those two.
+
+> or for which a wear leveling block device driver is used (I don't know
+> if one exists for Linux).
+
+This is normally done by the filesystem (e.g. JFFS2).
+
+--=20
+Servus,
+       Daniel
+
+--=-mMC31r85lhnL5BalAJLE
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.2 (GNU/Linux)
+
+iD8DBQA/I91Gchlzsq9KoIYRApAPAKC6nQ5wpfKGewY9esyRqhkzYUWFDQCg5VUe
+U7FjQAyfKtdn5AS9q2T5uPU=
+=yHsv
+-----END PGP SIGNATURE-----
+
+--=-mMC31r85lhnL5BalAJLE--
 
