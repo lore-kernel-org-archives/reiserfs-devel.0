@@ -1,148 +1,86 @@
-From: Milan =?ISO-8859-1?Q?Holz=E4pfel?= <lists@mjh.name>
-Subject: Problem with unmounting readonly-mounted Reiser4 - only when
- debugging options enabled
-Date: Wed, 25 Aug 2004 15:06:45 +0200
-Sender: news <news@sea.gmane.org>
-Message-ID: <20040825150645.06383d00.lists@mjh.name>
+From: Nikita Danilov <nikita@clusterfs.com>
+Subject: Re: reiser4 oops on unmount
+Date: Wed, 25 Aug 2004 17:14:59 +0400
+Message-ID: <16684.37075.119565.392623@gargle.gargle.HOWL>
+References: <1093361937.12138.3263.camel@watt.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20500-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20501-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1093361937.12138.3263.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Chris Mason writes:
+ > Hello everyone,
+ > 
+ > I was testing reiser4 in the suse kernel and hit an oops during
+ > unmount.  This could be a problem with my local merge, but I wanted to
+ > send here in case it is obvious.
+ > 
+ > The workload was create a few files and dirs, delete them, create 1
+ > million files in a single dir, sync, unmount.
+ > 
+ > Unable to handle kernel NULL pointer dereference at virtual address 00000010
+ >  printing eip:
+ > f8a1826c
+ > *pde = 00000000
+ > Oops: 0000 [#1]
+ > SMP
+ > Modules linked in: reiser4 dm_mod
+ > CPU:    0
+ > EIP:    0060:[<f8a1826c>]    Tainted: G  U
+ > EFLAGS: 00010246   (2.6.8-0-testing)
+ > EIP is at safe_link_locality+0xc/0x30 [reiser4]
+ > eax: 00000000   ebx: 00000000   ecx: 00000000   edx: 00000000
+ > esi: d6a83340   edi: d6a83340   ebp: e65f7c94   esp: e65f7c90
+ > ds: 007b   es: 007b   ss: 0068
+ > Process umount (pid: 13346, threadinfo=e65f6000 task=f755d2d0)
+ > Stack: 00000000 e65f7cb4 f8a182be e65f7cbc 00000000 d6a83340 04271204 d6a83340
+ >        d6a83340 e65f7ce4 f8a184a6 00000000 00000000 00000000 00000000 00000000
+ >        00000000 00000000 00000000 04271204 00000000 e65f7d20 f8a19cae 00000000
+ > Call Trace:
+ >  [<c0106ed6>] show_stack+0xa6/0xb0
+ >  [<c0107057>] show_registers+0x157/0x1c0
+ >  [<c01071ec>] die+0x9c/0x160
+ >  [<c011726c>] do_page_fault+0x3cc/0x53b
+ >  [<c0106b4d>] error_code+0x2d/0x38
+ >  [<f8a182be>] build_link_key+0x2e/0xa0 [reiser4]
+ >  [<f8a184a6>] safe_link_del+0x16/0x30 [reiser4]
+ >  [<f8a19cae>] common_object_delete_no_reserve+0xee/0x120 [reiser4]
+ >  [<f8a19d3e>] delete_object+0x5e/0x70 [reiser4]
+ >  [<f8a101e7>] reiser4_delete_inode+0x67/0x70 [reiser4]
+ >  [<f8a1a67b>] delete_inode_common+0xdb/0x2c0 [reiser4]
+ >  [<f8a1a8af>] drop_common+0x3f/0x50 [reiser4]
+ >  [<f8a0ffb9>] reiser4_drop_inode+0x19/0x30 [reiser4]
+ >  [<c0180716>] iput+0x56/0x80
+ >  [<c017bc1f>] dput+0x8f/0x320
+ >  [<c017c5bd>] prune_dcache+0x20d/0x370
+ >  [<c017ccbd>] shrink_dcache_parent+0xd/0x20
+ >  [<c0168bda>] generic_shutdown_super+0x2a/0x260
+ >  [<c0169f2a>] kill_block_super+0x1a/0x40
+ >  [<c0168a08>] deactivate_super+0x68/0xa0
+ >  [<c01835a9>] sys_umount+0x59/0x80
+ >  [<c01835e9>] sys_oldumount+0x19/0x20
+ >  [<c0106071>] sysenter_past_esp+0x52/0x71
+ > Code: 8b 48 10 8b 81 50 ff ff ff 8b 49 20 89 c2 31 c0 09 da 09 c8
 
-Hi
+This looks very familiar to me. I think I discussed this with Vladimir a
+couple of weeks ago. Problem is that ->delete_inode() does a truncate
+after root dentry was destroyed. This shouldn't happen, because there
+should be no reiser4 dentries/inodes pending deletion at this
+point. Confusingly enough, I see that deactivate_super() calls
+kill_block_super() directly... There used to be reiser4_kill_super()
+that called kill_block_super() after making sure all inodes/dentries are
+removed.
 
-| bombax mnt # mount /dev/sd/c0b0t0u0p8 gentoo/  # sd/c0b0t0u0p8 is Reiser4
-| bombax mnt # ls gentoo/
-| .   bin   dev  home  mnt  proc  sbin  tmp  var
-| ..  boot  etc  lib   opt  root  sys   usr
-| bombax mnt # find gentoo -type f -exec cat "{}" ";" >/dev/null=20
-| bombax mnt # umount gentoo
+ > 
+ > 
+ > 
 
-This works all right.
-
-| bombax mnt # mount /dev/sd/c0b0t0u0p8 gentoo/ -o ro
-| bombax mnt # ls gentoo/
-| .   bin   dev  home  mnt  proc  sbin  tmp  var
-| ..  boot  etc  lib   opt  root  sys   usr
-| bombax mnt # umount gentoo
-
-This is ok too.
-
-| bombax mnt # mount /dev/sd/c0b0t0u0p8 /mnt/gentoo/ -o ro=20
-| bombax mnt # ls gentoo=20
-| .   bin   dev  home  mnt  proc  sbin  tmp  var
-| ..  boot  etc  lib   opt  root  sys   usr
-| bombax mnt # find gentoo -type f -exec cat "{}" ";" >/dev/null=20
-| bombax mnt # umount gentoo
-
-But this produces trouble: The mount doesn't return and I get the
-following in the syslog:
-
-| Aug 25 14:46:46 bombax ef_hash_table: 8192 buckets
-| Aug 25 14:46:46 bombax z_hash_table: 8192 buckets
-| Aug 25 14:46:46 bombax z_hash_table: 8192 buckets
-| Aug 25 14:46:46 bombax j_hash_table: 16384 buckets
-| Aug 25 14:46:46 bombax loading reiser4 bitmap......done (16 jiffies)
-| Aug 25 14:46:46 bombax d_cursor_hash_table: 256 buckets
-
-(this is from mounting the partition; output from umount command starts her=
-e: )
-
-| Aug 25 14:47:06 bombax reiser4[umount(8150)]: atom_begin_andlock (fs/reis=
-er4/txnmgr.c:759)[nikita-3366]:
-| Aug 25 14:47:06 bombax WARNING: Creating atom on rofs
-| Aug 25 14:47:06 bombax [<c01e374e>] atom_begin_andlock+0x3ce/0x4b0
-| Aug 25 14:47:06 bombax [<c01e6306>] try_capture_block+0x236/0x5a0
-| Aug 25 14:47:06 bombax [<c01e6771>] try_capture+0x71/0x150
-| Aug 25 14:47:06 bombax [<c01e6a68>] try_capture_page_to_invalidate+0x58/0=
-x2b0
-| Aug 25 14:47:06 bombax [<c01b3418>] schedulable+0x8/0x80
-| Aug 25 14:47:06 bombax [<c022007d>] reiser4_invalidatepage+0xbd/0x540
-| Aug 25 14:47:06 bombax [<c01e2bd8>] txn_end+0x68/0x1a0
-| Aug 25 14:47:06 bombax [<c01b338c>] preempt_point+0xc/0x90
-| Aug 25 14:47:06 bombax [<c01e2bd8>] txn_end+0x68/0x1a0
-| Aug 25 14:47:06 bombax [<c0139f27>] do_invalidatepage+0x27/0x30
-| Aug 25 14:47:06 bombax [<c0139f8b>] truncate_complete_page+0x5b/0x60
-| Aug 25 14:47:06 bombax [<c013a14b>] truncate_inode_pages_range+0x13b/0x320
-| Aug 25 14:47:06 bombax [<c02199cc>] reiser4_destroy_inode+0xbc/0x350
-| Aug 25 14:47:06 bombax [<c013a35f>] truncate_inode_pages+0x2f/0x40
-| Aug 25 14:47:06 bombax [<c0163cd0>] dispose_list+0x80/0xa0
-| Aug 25 14:47:06 bombax [<c0163e3b>] invalidate_inodes+0x4b/0x70
-| Aug 25 14:47:06 bombax [<c01522b2>] generic_shutdown_super+0x62/0x160
-| Aug 25 14:47:06 bombax [<c0152cad>] kill_block_super+0x1d/0x40
-| Aug 25 14:47:06 bombax [<c01521d0>] deactivate_super+0x50/0x70
-| Aug 25 14:47:06 bombax [<c0166b3f>] sys_umount+0x3f/0x90
-| Aug 25 14:47:06 bombax [<c014105b>] do_munmap+0x12b/0x180
-| Aug 25 14:47:06 bombax [<c01410f4>] sys_munmap+0x44/0x70
-| Aug 25 14:47:06 bombax [<c0166ba7>] sys_oldumount+0x17/0x20
-| Aug 25 14:47:06 bombax [<c0103f3b>] syscall_call+0x7/0xb
-| Aug 25 14:47:06 bombax reiser4[umount(8150)]: atom_begin_andlock (fs/reis=
-er4/txnmgr.c:759)[nikita-3366]:
-| Aug 25 14:47:06 bombax WARNING: Creating atom on rofs
-| Aug 25 14:47:06 bombax [<c01e374e>] atom_begin_andlock+0x3ce/0x4b0
-| Aug 25 14:47:06 bombax [<c01e6306>] try_capture_block+0x236/0x5a0
-| Aug 25 14:47:06 bombax [<c01e6771>] try_capture+0x71/0x150
-| Aug 25 14:47:06 bombax [<c01e6a68>] try_capture_page_to_invalidate+0x58/0=
-x2b0
-| Aug 25 14:47:06 bombax [<c022007d>] reiser4_invalidatepage+0xbd/0x540
-| Aug 25 14:47:06 bombax [<c01e2bd8>] txn_end+0x68/0x1a0
-| Aug 25 14:47:06 bombax [<c01b338c>] preempt_point+0xc/0x90
-| Aug 25 14:47:06 bombax [<c01e2bd8>] txn_end+0x68/0x1a0
-| Aug 25 14:47:06 bombax [<c0139f27>] do_invalidatepage+0x27/0x30
-| Aug 25 14:47:06 bombax [<c0139f8b>] truncate_complete_page+0x5b/0x60
-| Aug 25 14:47:06 bombax [<c013a14b>] truncate_inode_pages_range+0x13b/0x320
-| Aug 25 14:47:06 bombax [<c02199cc>] reiser4_destroy_inode+0xbc/0x350
-| Aug 25 14:47:06 bombax [<c013a35f>] truncate_inode_pages+0x2f/0x40
-| Aug 25 14:47:06 bombax [<c0163cd0>] dispose_list+0x80/0xa0
-| Aug 25 14:47:06 bombax [<c0163e3b>] invalidate_inodes+0x4b/0x70
-| Aug 25 14:47:06 bombax [<c01522b2>] generic_shutdown_super+0x62/0x160
-| Aug 25 14:47:06 bombax [<c0152cad>] kill_block_super+0x1d/0x40
-| Aug 25 14:47:06 bombax [<c01521d0>] deactivate_super+0x50/0x70
-| Aug 25 14:47:06 bombax [<c0166b3f>] sys_umount+0x3f/0x90
-| Aug 25 14:47:06 bombax [<c014105b>] do_munmap+0x12b/0x180
-| Aug 25 14:47:06 bombax [<c01410f4>] sys_munmap+0x44/0x70
-| Aug 25 14:47:06 bombax [<c0166ba7>] sys_oldumount+0x17/0x20
-| Aug 25 14:47:06 bombax [<c0103f3b>] syscall_call+0x7/0xb
-
-I guess these two backtraces are exactly the same, and they are repeated
-until I press the reset button.  fsck before the whole thing says FS is
-consistent.  I experience this on a 2.6.8.1-mm4 with all debugging
-except CONFIG_REISER4_DEBUG_MEMCPY enabled, but without them the above
-commands work perfectly fine. =20
-
-So probably not a big problem but quite a bit annoying... =20
-
-Regards,
-Milan
-
-
-- --=20
-
-                   Milan Holz=E4pfel alias jagdfalke alias jag
-
-Meine eMail-Adresse ist hier zu              You can find my eMail-address
-                      finden:                here:
-Kontaktinfos sowie                                   Contact infos as well =
-as
-=D6ff GnuPG-Schl=FCssel    <URL:http://con.mjh.name/>    GnuPG Public Key
-GnuPG Fingerabdruck     4C8A 5FAF 5D32 6125 89D1     GnuPG Fingerprint
-                        0CE5 DB0C AF4F 6583 7966
-
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQFBLI7l2wyvT2WDeWYRAqKhAKDVV/PtczsEvoK40PDtKVap89DEqwCdGXvH
-hrjTmD9OcKZy8WwhNb5u33Y=3D
-=3DzNGW
------END PGP SIGNATURE-----
-
+Nikita.
