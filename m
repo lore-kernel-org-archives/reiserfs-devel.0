@@ -1,47 +1,30 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: corrupted 3.5 format fs
-Date: Thu, 22 Aug 2002 16:29:26 +0400
-Message-ID: <3D64D926.7060600@namesys.com>
-References: <20020822063512.54daaeaf.philippe.gramoulle@mmania.com> <20020822094356.A1660@namesys.com> <200208221555.25020.vitaly@namesys.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: Corruption: --fix-fixable results in all nlink
+	values = 0
+Date: 22 Aug 2002 08:55:38 -0400
+Message-ID: <1030020938.7820.4.camel@tiny>
+References: <m3k7mpreij.fsf@merlin.emma.line.org> <3D63BD2D.1070602@web.de>
+	<3D63CA89.3050002@namesys.com>  <200208221500.24544.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11290-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11291-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200208221500.24544.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: Vitaly Fertman <vitaly@namesys.com>
-Cc: Philippe Gramoull? <philippe.gramoulle@mmania.com>, reiserfs <reiserfs-list@namesys.com>
+Cc: Hans Reiser <reiser@namesys.com>, degerrit@web.de, reiserfs-list@namesys.com
 
-Vitaly Fertman wrote:
+On Thu, 2002-08-22 at 07:00, Vitaly Fertman wrote:
 
->On Thursday 22 August 2002 09:43, Oleg Drokin wrote:
->  
->
->>Hello!
->>
->>On Thu, Aug 22, 2002 at 06:35:12AM +0200, Philippe Gramoull? wrote:
->>    
->>
->>>So , i did and re-ran --check and came with still 1 corruption left that
->>>was said to be able to be corrected with --fix-fixable.
->>>Re-ran --fix-fixable and --check , and i still had this '1 corruption
->>>found which can be fixed with --fix-fixable'
->>>bad_stat_data: block 38372, [3955 5371 0x0 SD (0)], SD has bad nlink
->>>number
->>>      
->>>
->
->Yes, the idea to fix nlinks on fix-fixable has some problems and we decided
->to leave it for rebuild-tree as it was before.
->
->  
->
-It seems to me you have a UI bug here, and until you fix those problems 
-you need to tell users that it requires a --rebuild-tree to be fixed.
+> bad blocks are kept in the object [-1 -1] as unformatted pointers of 
+> indirect items. 
 
-Hans
+And this does not intefere with the savelink code on older kernels?
+
+-chris
 
 
