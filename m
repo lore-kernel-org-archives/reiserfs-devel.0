@@ -1,92 +1,50 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: mongo_copy: cp: cannot stat `/mnt/testfs/testdir0-0-0/f92': Input/output
- error
-Date: Wed, 04 Aug 2004 12:51:26 +0400
-Message-ID: <4110A38E.6070905@namesys.com>
-References: <20040804065840.17C7915C7C@mail03.powweb.com> <4110A0FA.3030007@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: http://www.namesys.com/snapshots/2004.08.03-internal.testing/
+Date: Wed, 04 Aug 2004 01:51:22 -0700
+Message-ID: <4110A38A.7040807@namesys.com>
+References: <200406150022.34578.vitaly@namesys.com> <200408031750.00291.vitaly@namesys.com> <20040803135805.GK1284@nysv.org> <200408031819.51600.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19963-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-19964-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4110A0FA.3030007@namesys.com>
+In-Reply-To: <200408031819.51600.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: =?KOI8-R?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, reiserfs-list@namesys.com
 
-Hello
+Vitaly Fertman wrote:
 
-Hans Reiser wrote:
-> David Dabbs wrote:
-> 
->> I was running mongo when the following occurred:
+>On Tuesday 03 August 2004 17:58, Markus T=F6rnqvist wrote:
+> =20
+>
+>>On Tue, Aug 03, 2004 at 05:50:00PM +0400, Vitaly Fertman wrote:
+>>   =20
 >>
->> cp: cannot stat `/mnt/testfs/testdir0-0-0/f92': Input/output error
->> cp: cannot stat `/mnt/testfs/testdir0-0-0/f93': Input/output error
->> cp: cannot stat `/mnt/testfs/testdir0-0-0/f94': Input/output error
->> cp: cannot stat `/mnt/testfs/testdir0-0-0/f95': Input/output error
->> cp: cannot stat `/mnt/testfs/testdir0-0-0/f97': Input/output error
->>
->>
->> I found the following in the log:
->>
->> Aug  3 21:59:58 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
->> (fs/reiser4/search.c:1033)[vs-3533]:
->> Aug  3 21:59:58 linux kernel: WARNING: Keys are inconsistent. Fsck?
->> Aug  3 21:59:58 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
->> (fs/reiser4/search.c:1033)[vs-3533]:
->> Aug  3 21:59:58 linux kernel: WARNING: Keys are inconsistent. Fsck?
->> Aug  3 21:59:58 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
->> (fs/reiser4/search.c:1033)[vs-3533]:
->> Aug  3 21:59:58 linux kernel: WARNING: Keys are inconsistent. Fsck?
->> Aug  3 21:59:58 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
->> (fs/reiser4/search.c:1033)[vs-3533]:
->> Aug  3 21:59:58 linux kernel: WARNING: Keys are inconsistent. Fsck?
->> Aug  3 21:59:58 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
->> (fs/reiser4/search.c:1033)[vs-3533]:
->> Aug  3 21:59:58 linux kernel: WARNING: Keys are inconsistent. Fsck?
->> Aug  3 21:59:58 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
->> (fs/reiser4/search.c:1033)[vs-3533]:
->> Aug  3 21:59:58 linux kernel: WARNING: Keys are inconsistent. Fsck?
->> Aug  3 21:59:58 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
->> (fs/reiser4/search.c:1033)[vs-3533]:
->> Aug  3 21:59:59 linux kernel: WARNING: Keys are inconsistent. Fsck?
->> Aug  3 21:59:59 linux kernel: reiser4[cp(10066)]: key_warning
->> (fs/reiser4/plugin/object.c:97)[nikita-717]:
->> Aug  3 21:59:59 linux kernel: WARNING: Error for inode 661097 (-5)
->> Aug  3 21:59:59 linux kernel: reiser4[cp(10066)]: 
->> write_sd_by_inode_common
->> (fs/reiser4/plugin/object.c:480)[nikita-2221]:
->> Aug  3 21:59:59 linux kernel: WARNING: Failed to save sd for 661097: -5
->> Aug  3 21:59:59 linux kernel: reiser4[cp(10066)]: create_child_common
->> (fs/reiser4/plugin/dir/dir.c:499)[nikita-2219]:
->> Aug  3 21:59:59 linux kernel: WARNING: Failed to create sd for 661097
->> Aug  3 21:59:59 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
->> (fs/reiser4/search.c:1033)[vs-3533]:
->> Aug  3 21:59:59 linux kernel: WARNING: Keys are inconsistent. Fsck?
->> Aug  3 21:59:59 linux kernel: reiser4[cp(10066)]: key_warning
->>
->> I had been switching back and forth between computers via a kvm switch. I
->> attempted to reproduce the error by rerunning the benchmark and figddling
->> with the switch, but was not able to see the same behavior.
->>
->> Running with latest auto-snapshot and reiser4fsprogs.
->>
->> David
->>
->>
->>
->>
->>  
->>
-> Well, it seems you found a bug just as we were about to ship.   Sigh.
-> 
-> 
+>>>No kernel patch is needed for the disk format change, however fsck may
+>>>report about some corruptions on an existent fs if a block was allocated
+>>>for some data and has become a backup one. Fsck.reiser4 --build-fs is
+>>>able to fix it of course, although the data in these blocks are lost the=
+n.
+>>>     =20
+>>>
+These blocks refers to blocks that were used by files and are now backup=20
+super blocks?  These blocks could be critical database files, etc.?
 
-Hans, should we solve this before sending reiser4 to Andrew?
+If yes, then please pull this off our website until you come up with a=20
+scheme that I am sure will not create more user problems than it solves,=20
+on average.
 
-
+>>What kind of probabilities and amounts of data are we talking about?
+>>   =20
+>>
+>
+>The first gig has 22 backup blocks and they are distributed expotentially.
+>The first backup copy was probably almost always used for other needs.
+>
+> =20
+>
 
