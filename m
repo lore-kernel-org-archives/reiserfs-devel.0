@@ -1,67 +1,95 @@
-From: michael@styer.net
-Subject: Re: missing files?
-Date: Wed, 02 Feb 2005 09:18:53 -0500
-Message-ID: <1107353933.2676.214151108@webmail.messagingengine.com>
-References: <1107318853.18354.214122527@webmail.messagingengine.com>   
-   <200502020533.j125X7U2016595@turing-police.cc.vt.edu>
+From: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
+Subject: Re: Impressed. Any info other than source?
+Date: Wed, 02 Feb 2005 16:05:31 +0000
+Message-ID: <4200FA4B.6010304@futuretg.com>
+References: <1107223140.28831.110.camel@cunegonde.paulshome.acculin.com> <41FFADD5.7010605@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200502020533.j125X7U2016595@turing-police.cc.vt.edu>
+In-Reply-To: <41FFADD5.7010605@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Valdis.Kletnieks@vt.edu, vs@namesys.com
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Info <info@acculin.com>, reiserfs-list@namesys.com
 
-On Wed, 02 Feb 2005 00:33:07 -0500, Valdis.Kletnieks@vt.edu said:
+Hans Reiser wrote:
+
+Hi,
+
+    I plan to wite a book about Reiser4 and how to write Reiser4 plug-ins
+    like the Vol N. 4 in our developer guide.
+
+    For now it plans to be under payment.
+
+    My be I found the time to release it for Summer: June 2005.
+
+Thanks,
+Giovanni.
+
+> Info wrote:
 >
-> > Can anyone explain why this might have happened and what I might be
-> > able to do to fix it?
+>> Hello,
+>>
+>> I am really impressed by what you're doing with Reiserfs.
+>> It is a wonderful mix of the immediately usable and great
+>> promise for the future.
+>> I am somewhat amazed that this is such a low traffic list.
+>> Am I missing some other place where this stuff is discussed?
+>>  
+>>
+> Not really.  We are in a period of stabilizing rather than designing 
+> new stuff.  Unfortunately, one always spends far more time stabilizing 
+> than designing.....
 >
-> Sounds like wonky file permissions on the directory - lack of write
-> permission *on the directory* will cause 'rm' to fail.  Remember that
-> renaming the directory requires write permission *on it's parent*, not
-> on itself.
-
-No, that's not it, but thanks for the suggestion. I'm doing this as root
-and the directory is 755, so I should be able to remove the files no
-problem. Also rm -f doesn't complain it can't remove it, just returns
-with no output. But afterward ls still reports the directory is there,
-and ls -l still can't find it.
-
-Eg.
-
-# ls parent/
-target
-# ls -l parent/
-ls: parent/target: No such file or directory
-# rm -f parent/target
-# ls parent/
-target
-# ls -l parent/
-ls: parent/target: No such file or directory
-# ls -ld parent/
-drwxr-xr-x  174 root root 174 Feb  1 23:30 parent/
-
-On Wed, 02 Feb 2005 14:08:40 +0300, "Vladimir Saveliev" <vs@namesys.com>
-said:
-> Hello
+>> Quoting from your website:
+>>  
+>>
+>>> Looking at the coin from the other side, we want to make
+>>> it an order of magnitude less work to add features to ReiserFS so 
+>>> that both users and Namesys can add at least an order of magnitude 
+>>> more of them.
+>>>   
+>>
+>>
+>> To this end is there any documentation between the general 
+>> descriptions (.../v4/v4.html and .../whitepaper.html) and
+>> the actual source code? I have searched your site and the
+>> web (although I haven't tried BitKeeper yet) and can't find
+>> anything. It is not the actual internal workings so much as
+>> how to modify a plugin that I'm interested in. Any sort of
+>> howto type documentation?
+>>  
+>>
+> The source code is intended to be very readable.  I don't think there 
+> should be any documentation besides web site and source code.
 >
-> Is there anything about reiser4 in kernel logs?
+>> Any URLs gratefully received!
+>>
+>> Regards,
+>> Paul Hilton
+>>
+>>
+>>
+>>  
+>>
+>
 
-Yes, in fact; there are lots of messages nearly identical to this:
 
-Feb  2 03:19:31 apollo reiser4[rsync(17957)]: key_warning
-(fs/reiser4/plugin/object.c:97)[nikita-717]:
-Feb  2 03:19:31 apollo WARNING: Error for inode 483238 (-2)
+-- 
 
-The only difference between the messages is the process name and pid,
-and the inode number (well, and the date and time, obviously).
 
-Does that help?
+-- 
+-- 
 
-Mike
+Check FT Websites ... http://www.futuretg.com  - ftp://ftp.futuretg.com
+http://www.FTLinuxCourse.com
+    http://www.FTLinuxCourse.com/Certification
+http://www.rpmparadaise.org
+http://GNULinuxUtilities.com
+http://www.YourPersonalOperatingSystem.com
+
+-- 
+
