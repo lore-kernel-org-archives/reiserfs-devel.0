@@ -1,54 +1,67 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: 2.4.21-rc3
-Date: Sat, 24 May 2003 17:12:23 +0200
-Message-ID: <200305241712.23316.Dieter.Nuetzel@hamburg.de>
-References: <200305232256.17604.russell@coker.com.au> <20030523161356.7986c5d6.pgramoul@nerim.net>
+From: Jure Pecar <pegasus@nerv.eu.org>
+Subject: Re: how long is reiserfsck expected to run?
+Date: Sat, 24 May 2003 22:23:24 +0200
+Message-ID: <20030524222324.2580002e.pegasus@nerv.eu.org>
+References: <200305241131.40837.pegasus@nerv.eu.org>
+	<20030524093710.GA15753@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14244-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14246-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030523161356.7986c5d6.pgramoul@nerim.net>
-Content-Disposition: inline
+In-Reply-To: <20030524093710.GA15753@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Philippe =?iso-8859-15?q?Gramoull=E9?= <pgramoul@nerim.net>, Russell Coker <russell@coker.com.au>
-Cc: reiserfs <reiserfs-list@namesys.com>, Linux Kernel List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Am Freitag, 23. Mai 2003 16:13 schrieb Philippe Gramoull=E9:
-> Hello Russell,
->
-> On Fri, 23 May 2003 22:56:17 +1000
->
-> Russell Coker <russell@coker.com.au> wrote:
->   | I've noticed that the modules ide-taskfile.o and ide-io.o depend on
->   | each other if you compile the 2.4.21-rc3 with IDE as modules.
->   |
->   | Is this a bug in the kernel or are we supposed to use a new module
->   | loader that can resolve such things?
->
-> IIRC, according to Alan Cox, on LKML, IDE shouldn't even work as a module,
-> well, if you value your data.
->
-> So why don't you include IDE statically in your kernel ?
+On Sat, 24 May 2003 13:37:10 +0400
+Oleg Drokin <green@namesys.com> wrote:
 
-Because it worked for ages and do NOT since 2.4.19 or so.
 
-I have all SCSI and need ATA/IDE only from time to time to recover bad ATA/=
-IDE=20
-disks for some friends or customers.
+> It can take pretty long time.
 
-ATA/IDE shouldn't be demanded thing in the kernel.
+It just finished, after about 40h.
 
-Regards,
-	Dieter
-=2D-=20
-Dieter N=FCtzel
-Graduate Student, Computer Science
+2859 found corruptions can be fixed only during --rebuild-tree.
 
-University of Hamburg
-Department of Computer Science
-@home: Dieter.Nuetzel at hamburg.de (replace at with @)
+yay. And manual page strongly suggest backing up the partition before
+--rebuild-tree. But i neither have 500gb handy nor time to do that ...
 
+Btw, how long is --rebuild-tree going to take? Even longer i guess? :)
+
+
+
+Anyway, here's what happened:
+
+I have a 28 fs disks in a raid10, one stripe across 14 mirrors. Disks get
+randomly kicked out of mirrors every now and then due to a driver/firmware
+issue i'm currently hunting down with qlogic. So on wednesday evening sdh
+got kicked out of md8, on early friday morning sdw, the other disk in this
+mirror, also started to act. I did a failover to the other box in order to
+sort things out, but, the horror, sw raid deceided to take sdh as a more
+recent disk than sdw, thus overwriting fresh data on sdw with ~two days old
+data from sdh.
+
+I was able to get the stripe together normally, reiserfs mounted without
+complains, but it was obvios immediately that something is wrong ... there
+were files missing that should be there, touching them returned -EPERM.
+Cyrus was complaining about its databases and didnt start ... Then i
+unmounted the partition, tried reiserfsck --check, gave up after one hour
+and went on with --fix-fixable ... 
+
+Has anyone been through something like this before? Is this fixable
+afterall?
+
+Well if it is i think i owe you (the reiserfs team) something ... what do
+you prefer? :)
+
+
+Btw this is on rh AS with their 2.4.9-e16 kernel, based on 2.4.9-ac10. I'd
+say that reiserfs code in this kernel is exactly the same as in the Alan's
+ac10. I'm using reiserfsprogs 3.6.6.
+
+-- 
+
+Jure Pecar
