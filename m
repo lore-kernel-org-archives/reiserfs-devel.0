@@ -1,42 +1,25 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: udpated data logging available
-Date: 01 Jul 2003 21:46:23 -0400
-Message-ID: <1057110382.20904.881.camel@tiny.suse.com>
-References: <1055764071.24111.650.camel@tiny.suse.com>
-	 <200306260216.41204.christian.mayrhuber@gmx.net>
-	 <1056592066.20899.10.camel@tiny.suse.com>
-	 <200306261342.08725.Dieter.Nuetzel@hamburg.de>
-	 <3F022B6B.3010801@netscape.net>
+From: Oleg Drokin <green@namesys.com>
+Subject: data-logging for 2.4.22-pre3
+Date: Wed, 2 Jul 2003 16:18:19 +0400
+Message-ID: <20030702121819.GA971@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14800-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14801-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F022B6B.3010801@netscape.net>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Manuel Krause <manuelkrause@netscape.net>
-Cc: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>, reiserfs-list <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com, mason@suse.com
 
-On Tue, 2003-07-01 at 20:46, Manuel Krause wrote:
->  
-> > Setting HZ=1000 (from 100) in linux/include/asm/param.h give me very 
-> > impressive latency boost. 2.4.21-rc1-jam1 (-rc1aa1)
-> 
-> Just tried this HZ=1000 setting, too.
-> 
-> (With the following patches "only": data-logging, search_reada-4 and
-> rml-preempt on 2.4.21-final, and AA.00_nanosleep-6.diff (THAT ONE
-> decreased my VMware+system CPU idle usage in these circumstances by
-> approx. 1/2 [from 25% to approx. 12.5%] ).
-> 
+Hello!
 
-Some userspace tools depend on the HZ value.  It's clear the io-stalls-7
-patch can't be the final one, I need to add userspace knobs to tune
-things towards latency or multi-writer throughput (basically server or
-desktop workloads).
+   Yes, I know that 2.4.22-pre3 is not out yet, but Marcelo have accepted our somewhat big patches
+   and so you can get replacement patches from ftp://namesys.com/pub/reiserfs-for-2.4/testing/data-logging-and-quota-2.4.22-pre3
+   once 2.4.22-pre3 is out ;)
+   Also starting from 2.4.22-pre3 you no longer need to apply 03-relocation-8.diff.gz patch.
 
--chris
-
+Bye,
+    Oleg
