@@ -1,75 +1,74 @@
-From: Chris Mason <mason@suse.com>
+From: "Brian" <brian@english-bay.com>
 Subject: Re: Re: My mistake...
-Date: 15 Jul 2002 15:27:14 -0400
-Message-ID: <1026761234.4752.471.camel@tiny>
-References: <001c01c22902$aef10660$0e01a8c0@englishbay.com>
-	<200207121942.41361.vitaly@namesys.com>
-	<001c01c22c26$7c0866e0$0e01a8c0@englishbay.com>
-	<3D330C2C.3060500@neuronet.pitt.edu> 
-	<005301c22c31$e69158e0$0e01a8c0@englishbay.com>
+Date: Mon, 15 Jul 2002 12:54:16 -0700
+Message-ID: <009801c22c39$6a3aed80$0e01a8c0@englishbay.com>
+References: <001c01c22902$aef10660$0e01a8c0@englishbay.com> <200207121942.41361.vitaly@namesys.com> <001c01c22c26$7c0866e0$0e01a8c0@englishbay.com> <200207151048.43793.matthew@psychohorse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11023-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11024-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <005301c22c31$e69158e0$0e01a8c0@englishbay.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Brian <brian@english-bay.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Mon, 2002-07-15 at 15:00, Brian wrote:
-> Hello:
->
-> If it's a small matter of helping out with a couple command line arguments
-> then YES!
+Hey:
 
-Shrug, I've never been wild about the namesys per support setup, but
-Hans clearly tried to err on the side of free support, and not screwing
-the users.  If your problem turns out to be a bug, the money is
-refunded.  There is a balance that needs to be maintained between
-cleaning up after user mistakes and working on new features/bugs.
+----- Original Message -----
+From: "Matthew Johnson" <matthew@psychohorse.com>
+To: <reiserfs-list@namesys.com>
+Sent: Monday, July 15, 2002 10:48 AM
+Subject: Re: [reiserfs-list] Re: My mistake...
 
-Clearly we want the FS to be easy to fix when things go wrong, so it
-does make things easier for everyone when problems are solved.
 
-> 
-> Just so we get this in perspective, I have over the years received help from
-> the developers of named (including Cricket Lui), sendmail, samba and many
-> others. On the other hand I have spent many hours online and off helping
-> total strangers with their Linux questions, sometimes spending many hours
-> helping to solve their problems.
-> 
-> So don't pull this $25 per question shit with me! I would rather suffer for
-> my mistake and change to a different filesystem where I won't be hijacked
-> for a $quarter$ every time I have a problem.
+> > Well, I am using the correct reiserfs super block version and I
+> > have deleted the ext3 superblock so that can't be it.
 
-Read through the archives of the reiserfs list, and your thread.  Almost
-nobody gets sent to the paid support link right away.  People try to
-answer the question first, and if it becomes clear the problem is
-non-trivial they are sent to the support link.  There are also many
-non-namesys people on the list who answer questions.
+> > I gather you are offering to help me if I pay $25, is that correct?
 
-From a different message in this thread:
+> > Further, I gather you have the answer but are holding out for the $25?
 
-Here is what the syslog has to say,
+> > I see.
 
-Jul 11 10:39:20 bozo kernel: super-459: read_super_block: super found at
-block 16 is within its own log. It must not be of this format type.
-Jul 11 10:39:20 bozo kernel: read_super_block: can't find a reiserfs
-filesystem
-on (dev 16:02, block 8, size 1024)
+> > Is this what open source has come to?
 
-If the super found at block 16 is within its own log, this means one of
-two things.
+> > Well, I have decided to shit-can the reiserfs partition and install ext3
+> > in it's stead. I am not going to be held for ransom by some pseudo-open
+> > source project that can only help if there is a dollar value attached.
 
-1) the log pointer in the super block is bogus
-2) The wrong format was chosen when you ran --rebuild-sb.
+> > Fuck That!
 
-run debugreiserfs /dev/xxxx and send the results.  It should be possible
-to figure out the problem.
+> > Lots of luck with your "open source project".
 
--chris
+> What does Open Source mean? Oh lets not start...
 
+It doesn't mean $25$ a pop to answer questions!
+
+> Support is very expensive and $25 is a small price to pay for
+> this imho. Lets say you had an Apple outside of warranty and
+> you needed help with some part of the OS (like changing
+> display resolutions), that one incident would cost you $49.
+
+First of all, Apple publishes copious amounts of information about their
+products going back a dozen years.
+
+Next, Apple is amply served with a number of newsgroups and lists filled
+with hundreds of skilled operators all willing to answer questions and or
+guide a user to the appropraite publication/website.
+
+Lastly, it is obvious to me that all I require is the correct combination of
+command line arguments with the appropriate utility to recover my reiser
+filesystem.
+
+> Open Source imho does not necessarily mean free support
+> beyond some form of  knowledge base.
+
+What knowledgebase? There doesn't appear to be an overly large community of
+knowledgable helpful people available to support it imho.
+
+Best regards,
+
+Brian
+BSFH
 
