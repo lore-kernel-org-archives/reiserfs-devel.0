@@ -1,77 +1,130 @@
-From: Andreas Dilger <adilger@clusterfs.com>
-Subject: Re: Quicker alternative to "find /"?
-Date: Fri, 27 Aug 2004 14:19:08 -0600
-Message-ID: <20040827201908.GC4654@schnapps.adilger.int>
-References: <20040815231640.3c926886.felix.klee.reiserfs@gmx.net> <411FF929.7040405@slaphack.com> <20040816140420.11dc210c.felix.klee.reiserfs@gmx.net> <200408161429.27131.christian.mayrhuber@gmx.net> <1093634500.2851.225.camel@localhost.localdomain>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: silent semantic changes with reiser4
+Date: Fri, 27 Aug 2004 23:32:16 +0300
+Message-ID: <20040827203216.GC1284@nysv.org>
+References: <412D9FE6.9050307@namesys.com> <200408261812.i7QICW8r002679@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="g7w8+K/95kPelPD2"
-Return-path: <reiserfs-list-return-20939-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20940-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1093634500.2851.225.camel@localhost.localdomain>
+In-Reply-To: <200408261812.i7QICW8r002679@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "Lamont R. Peterson" <lamont@gurulabs.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
---g7w8+K/95kPelPD2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Aug 26, 2004 at 02:12:32PM -0400, Horst von Brand wrote:
 
-On Aug 27, 2004  13:21 -0600, Lamont R. Peterson wrote:
-> On Mon, 2004-08-16 at 06:29, Christian Mayrhuber wrote:
-> > On Monday 16 August 2004 14:04, Felix E. Klee wrote:
-> > > Thanks for the hints. I did some benchmarks:
-> > >
-> > > find / >/tmp/find.dirtree:
-> > >     3:44 (1st run)
-> > >     3:47 (repeated run)
-> > > updatedb -u --output=3D/tmp/updatedb.dirtree:
-> > >     8:51
-> > >     8:47
-> > > ls -R / >/tmp/ls.dirtree:
-> > >     6:16
-> > >     6:55
-> > >
-> > > With less than 4 minutes find is by far the fastest of these
-> > > methods.
->=20
-> Interesting.  I wonder what ls is doing that find is not.  The updatedb
-> result does not surprise me in the least.
+>> Andrew, we need to compete with WinFS and Dominic Giampaolo's filesystem 
+>> for Apple,
+>Says who?
 
-Have a look at "strace ls" and you will see that "ls" is doing a stat of
-all the files.  I know this because it is a slowdown on a network filesystem
-when you do an "ls" in a gigantic directory and you have to stat all of the
-files instead of just dumping the directory contents.
+People will say it when people stop using Linux on servers because
+they can integrate metadata easier in other operating systems ;)
 
-Try something like "\ls -fR" so that you don't get colorization (which needs
-the stat data) and it doesn't do sorting (which requires that you read in
-the whole directory before displaying any part of it).  I think GNU ls will
-still only show the directory contents after reading the whole thing even
-when it isn't sorting, but that isn't a big deal unless you have large
-directories.
+>Please don't. Unix works and is extremely popular because it _doesn't_ try
+>to be smart (policy vs mechanism distinction, simple abstractions that can
+>be combined endlessly). If you add this to the filesystems, you either redo
 
-Cheers, Andreas
---
-Andreas Dilger
-http://sourceforge.net/projects/ext2resize/
-http://members.shaw.ca/adilger/             http://members.shaw.ca/golinux/
+Just more moving little pieces to be combined endlessly.
 
+I think it looks like Reiser4 semantics should go into VFS and not break
+legacy posix compatibility.
 
---g7w8+K/95kPelPD2
-Content-Type: application/pgp-signature
-Content-Disposition: inline
+If you don't want to use a filesystem like that, don't.
+Maybe the reason Linux hasn't developed this yet is the fact that Linux
+supports n+1 file systems and above and beyond that many userspace ones.
+So there has been enough work in maintaining and competing the old
+ones and not coming up with new ones.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.3 (GNU/Linux)
+>_all_ userland to understand _one_ particular way of doing "smart things"
+>(which will turn out to be almost exactly the dumbest possible for some
+>uses, and then you are stuck), or get lots of shards from broken apps (and
+>users, and sysadmins).
 
-iD8DBQFBL5c8pIg59Q01vtYRAnF/AKCkmbiNgE3BobXhanednNJsEf220QCfXJ1v
-/RWvjqQ/OTXrve8PJm1R1AM=
-=OucS
------END PGP SIGNATURE-----
+This is a question if implementation.
 
---g7w8+K/95kPelPD2--
+What if the files-as-dirs have a ..metas/mainstream[1] file and are handled
+by legacy applications as directories? Nothing breaks, but may look a bit
+ugly. Nothing one line of shell scripting would not cure.
+
+OTOH, the user space progs are quickly patched to support all this.
+
+>Great! Build an experimental OS showing how to use it, and through that see
+>if the ideas hold any water _in real, day-to-day, down-to-earth, practice_.
+
+Why should he?
+
+Parts of Linux are already here and susceptible to experiments in
+evolution. (Break out 2.7 for this one, the people want code! :)
+
+>How come nobody before you in the almost 30 years of Unix has ever seen the
+>need for this indispensable feature?
+
+Lack of imagination?
+Lack of need?
+Lack of drive space?
+
+And maybe someone did think among these lines back in the days, it's
+not like the current dogma of file systems is the only one that has
+ever been used.
+
+>To me that would mean that ReiserFS has no place in Linux.
+
+This is the type of argumentation I can not understand.
+Do you not have the freedom not to use it?
+
+And this is not personal, but please say Reiser4, as ReiserFS is coupled
+with versions 3.x. They are quite different.
+
+>Maybe. But the question of it being of any use aren't trivially answered
+>"yes". My gut feeling is that the answer is a resounding "no", but that's
+
+I think it's a pretty big yes, even if the technical details do need to
+be clear before anything is set in stone. That's the reason for the
+on-going discussion.
+
+>just me. Direcories are directories, if you want to ship directory-like
+>stuff around, use directories (or tarfiles, or whatever). Just look what
+
+Without a common user-space API to deal in them. Oh, joy.
+Make the common user-space API? Will never happen.
+
+>Better write libraries handling whatever weird format you have in mind for
+>each use. Even applications. I don't expect to be able to use emacs to edit
+>a JPEG or PostgreSQL database. Neither do I expect gimp to be able to edit
+>a poem. The current trend (which I heartily agree with) is to take stuff
+>_out_ of the kernel (for flexibility, access, development ease, even
+>performance).
+
+I don't think anyone's talking about using emacs to edit a picture, but
+emacs could be used to edit the picture's description.[2]
+Maybe with some userspace-hook that exports the exif data via ..metas/
+so the kernel won't have to parse it.
+
+Linus wrote about why TCP is not in userspace and I think this is a similar
+situation. Technically. But not everything has to be in kernel space
+in Reiser4. Or that's what they say and I'm not sure where I stand on
+an exif parser in the kernel...
+
+On the social side, I may be wrong in this, but not many userspace 
+filesystems have the possibility of becoming a de-facto standard. One 
+might say that's because they suck, or they suck because they're 
+implemented in userspace or they are just met with prejudice
+for the same reason.
+
+In the kernel something like this would have to be done right and people
+would put effort into doing it right.
+
+I for one would welcome that.
+
+[1] Sorry, guys, just had to use that name..
+[2] You can edit a picture in emacs already, it's just prone to break ;)
+
+-- 
+mjt
+
