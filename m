@@ -1,36 +1,37 @@
-From: Spam <spam@tnonline.net>
-Subject: nvram to protect fs during power loss?
-Date: Fri, 31 Dec 2004 00:40:08 +0100
-Message-ID: <1062660450.20041231004008@tnonline.net>
-Reply-To: Spam <spam@tnonline.net>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: Congratulations! we have got hash function screwed up
+Date: Thu, 30 Dec 2004 22:05:03 -0600
+Message-ID: <41D4CFEF.609@slaphack.com>
+References: <77912E9FD42896419D1CEF15E1C397A58AFCF1@london.jaguarfreightservices.local>	<m38y7gx8kq.fsf@merlin.emma.line.org>	<20041230235911.4911a20c.hihone@bigpond.net.au>	<m3sm5nj2ef.fsf@merlin.emma.line.org> <87is6jpvdu.fsf@quasar.esben-stien.name> <41D4602D.2050609@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22987-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22988-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <41D4602D.2050609@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Esben Stien <b0ef@esben-stien.name>, Matthias Andree <ma@dt.e-technik.uni-dortmund.de>, hihone@bigpond.net.au, reiserfs-list@namesys.com
 
+Hans Reiser wrote:
+> Esben Stien wrote:
+> 
+>>
+>> I really don't like that there is no undelete feature in reiserfs -
+>> it's not planned for reiserfs-4 either.
+>>
+> Blame Linus for that.  I would put it in, but he thinks it belongs in 
+> userspace.  I may still put it in someday and just not tell him.;-)  
+> I'll just let the users know about it and not him.;-)
 
-  There have been some discussions about recovery abilities during
-  power loss if write cache is enabled. Some recovery tool I saw once
-  used NVRAM to store progress info so that if you had a power loss it
-  would be able to resume.
+He has some good points, though.  If you're going to have a kernel, you 
+want to keep it small, put stuff in only if it needs to be there.  And 
+how much speed do we lose by putting stuff in userspace, if we do it 
+right?  C'mon, if Doom 3 can run in userspace, surely some sort of trash 
+can / recycle bin can, right?
 
-  Perhaps it would be possible for Reiser4 to store some info, like
-  time indexes etc in NVRAMwhen it send sync commands to the disk.
-  This way it might be possible to avoid corruptions by simply
-  verifying (fsck) the data stored after that time index etc?
-
-  I have no idea how often NVRAM can be written to before it goes bad.
-  Is there a limit?
-
-  ~S
-  
-
-
--- 
+Oh wait... Gnome/KDE already do that.
 
