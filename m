@@ -1,56 +1,45 @@
-From: Mihai Rusu <dizzy@roedu.net>
-Subject: Re: Reiser4 / Reiserfs bonnie++ performance comparison
-Date: Sat, 10 Jul 2004 13:40:18 +0300 (EEST)
-Message-ID: <Pine.LNX.4.58L0.0407101337220.6235@ahriman.bucharest.roedu.net>
-References: <20040709165924.27fabe63@philou.gramoulle.local>
- <200407091724.43326.marcel@hilzinger.hu> <40EEBC97.5090703@burst.net>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: 2.6.7 reiser4 patch ?
+Date: Sun, 11 Jul 2004 16:33:00 +0400
+Message-ID: <40F1337C.3070302@namesys.com>
+References: <3DF9165145FACB4C96977FF650C1E9040C46A14F@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19570-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19574-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40EEBC97.5090703@burst.net>
+In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C46A14F@its-mail1.its.corp.gwl.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Chris Humphries <chris@burst.net>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Burnes
 Cc: reiserfs-list@namesys.com
 
-On Fri, 9 Jul 2004, Chris Humphries wrote:
+Hello
 
-> WHOA!
-
-Try benchmarking XFS for deleting large files too if there is any point in 
-that :)
-
-Anyway, bonnie++ offers a very good benchmark for those interested in
-having large mail servers, web servers with tons of small filess
-created/read/deleted randomly. And that is where reiserfs3/4 shines above
-all others except the reiser4 regression with its random deletes which I
-also reported it some time ago on this list :-/
-
+Burnes, James wrote:
+> Is namesys et al trying for 2.6.8 inclusion for Reiser4?
 > 
-> Marcel Hilzinger wrote:
-> > 
-> > You mustn't belive in Benchmarks :-). Try it empirically, and you will see, 
-> > that for big files, Reiser4 is much faster, then ReiserFS was.  Some example
-> > 
-> > Deleting a 6,8GB DVD iso image (average of 10 tests):
-> > ext3			14,15 sec
-> > reiser3.6	12,67 sec
-> > reiser4		1,23 sec
-> > 
-> > Deleting 3 GB of MP3 files (4MB average file size, 10 tests):
-> > ext3			11,91 sec
-> > reiser3.6	4,56 sec
-> > reiser4		1,86 sec
-> > 
-> > Marcel
+
+We are going to send it out for inclusion into mm serie of kernel
+
+> jim burnes
+> security engineer
+> great-west, denver
+>  
+> 
+> 
+>>The -mm tree is used because -mm stuff goes into mainline and
+>>that's what the Reiser4 people are trying to accomplish...
+>>
+>>There's nothing wrong with sticking to what Namesys gives :)
+>>
+>>--
+>>mjt
+> 
+> 
 > 
 > 
 
--- 
-Mihai RUSU                                    Email: dizzy@roedu.net
-GPG : http://dizzy.roedu.net/dizzy-gpg.txt    WWW: http://dizzy.roedu.net
-                       "Linux is obsolete" -- AST
+
