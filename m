@@ -1,28 +1,34 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: vs-8115: get_num_ver: not directory item
-Date: Mon, 24 May 2004 12:21:14 -0400
-Sender: news <news@sea.gmane.org>
-Message-ID: <87k6z194p1.fsf@uhoreg.ca>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: On a free repacker
+Date: Mon, 24 May 2004 23:30:16 +0300
+Message-ID: <20040524203016.GA4990@nysv.org>
+References: <20040519192831.GL24604@nysv.org> <200405201028.13184.reiser@namesys.com> <20040520184054.GR24604@nysv.org> <40AEBBA0.6060606@namesys.com> <20040521184451.GS24604@nysv.org> <200405211902.i4LJ25RI016978@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18829-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18831-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <200405211902.i4LJ25RI016978@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Valdis.Kletnieks@vt.edu
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
 
-I got that message a few times (but not every time) while doing
-"apt-cache show ...".  Can someone tell me what that message means, and
-if I should be worried about my data?
+On Fri, May 21, 2004 at 03:02:05PM -0400, Valdis.Kletnieks@vt.edu wrote:
 
-Thanks
+>Larry McVoy's BitKeeper licensing might be an interesting model to follow.
+>Not sure if you can make it work for a repacker thought....
+
+I must look into this. (Note, you can also enlighten me on this, since
+I don't think I'll look into it yet).
+
+All I know about BitKeeper is that it's not as simple to use as subversion
+and subversion is free in all senses of the word. So I don't use BK.
+And I wouldn't if Namesys wouldn't force me.
 
 -- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+mjt
 
