@@ -1,66 +1,52 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: /proc/fs/reiserfs question
-Date: Tue, 15 Oct 2002 12:53:19 +0400
-Message-ID: <15787.55167.461533.347040@laputa.namesys.com>
-References: <20021014160435.344ca55b.philippe.gramoulle@mmania.com>
-	<15786.54223.785138.49029@laputa.namesys.com>
-	<20021015103658.6f3997ab.philippe.gramoulle@mmania.com>
+From: "JP Howard" <jh_lists@fastmail.fm>
+Subject: Recommended patches for mail server?
+Date: Tue, 15 Oct 2002 09:48:48 UT
+Message-ID: <20021015094848.0A6E71AEC146@server5.fastmail.fm>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11688-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11689-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021015103658.6f3997ab.philippe.gramoulle@mmania.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Philippe =?ISO-8859-1?B?R3JhbW91bGzp?= <philippe.gramoulle@mmania.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-Philippe Gramoull=E9 writes:
- > On Mon, 14 Oct 2002 18:25:19 +0400
- > Nikita Danilov <Nikita@namesys.com> wrote:
- >=20
- >   |  I am afraid one has to dig it out of the sources. Here is descripti=
-on of
- >   |   some fields displayed in "super", they pertain to the in-core
- >   |   super-block:
- >   | [-]
- >   |  I guess we should keep this information somewhere on the web-site. =
-If
- >   |  you need more detailed info, let me know.
- >=20
- > Thank nikita, this is fine for me.
- >=20
- > I was also looking for a way to have an idea of how many files sit on a =
-filesystem
- > without having to walk through the whole tree and list each of them.
+Hi all,
 
-/proc/fs/reiserfs/*/oidmap lists "object-id" map. If this map never
-overflowed (overflows happened during current mount are counted in
-leaked_oid field of /proc/fs/reiserfs/*/super), then, sum of lengths of
-`used' intervals is the number of files on the file system. This sum is
-shown at the very bottom of oidmap:
+We've been using Ext3 for a while at FastMail.FM, and have recently
+started playing with the htree directory index patch. IO performance
+hasn't been as good as we were hoping for, so we've started testing
+ReiserFS. Our preliminary results are positive enough that we're going to
+try switching some of our servers across to see if Real Life looks as
+good as our testing.
 
-total:  160 [160/1004] used: 178598 [exact]
+We are running kernel 2.4.19, Cyrus 2.4.9, and Postfix 1.1.11, on dual
+PIII/Athlon servers with RAID 5 arrays. I'm looking for some advice on
+which patches we should be applying to get best performance and
+reliability.
 
-178598 is total number of files.
+There's a bunch of patches in
+ftp://ftp.namesys.com/pub/reiserfs-for-2.4/2.4.19.pending/ , but only
+01-06 apply cleanly to 2.4.19. Should we be applying all of these
+patches? If so, what's the trick to getting 07-13 to apply smoothly?
 
-Generally, until one has really weird access patterns this map shouldn't
-overflow. Problem is that, due to simplistic implementation of procfs
-stuff, no file on /proc/fs/reiserfs/*/ can be larger than 4k and thus,
-if oidmap happened to be highly fragmented, it wouldn't fit completely,
-and will be ended with
+Then there's Chris Mason's data logging patches. From what I've read, it
+sounds like these should improve both speed and reliability. Are they
+well tested in production environments? Any reason for us not to use
+these? Are many people using data=journal mode? Any benchmarks in mail
+server stress tests?
 
-... and more
-total:  160 [820/1004] used: 178598 [estimation]
+Are there any other patches we should be adding? Our first priority is
+ensuring that our servers stay up and that storage is reliable even in
+the case of failure; however obviously performance improvements are nice
+too!
 
-Again, this is trivial to correct, but not before Hallowmas, I am afraid.
+Finally, has anyone using Cyrus/Postfix made the switch from/to Ext3? Any
+comments on the process and results?
 
- >=20
- > Thanks,
- >=20
- > Philippe
-
-Nikita.
+Thanks in advance for any info,
+  Jeremy Howard
+  http://FastMail.FM
