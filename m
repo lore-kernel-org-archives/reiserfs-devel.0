@@ -1,94 +1,79 @@
-From: Sonny Rao <sonny@burdell.org>
-Subject: Re: Odd Block allocation behavior on Reiser3
-Date: Tue, 10 Aug 2004 19:12:19 -0400
-Message-ID: <20040810231219.GA72358@kevlar.burdell.org>
-References: <20040809201939.GA55683@kevlar.burdell.org> <1092083451.10651.218.camel@watt.suse.com> <20040809220459.GA57121@kevlar.burdell.org> <41187657.7030709@namesys.com> <20040810154514.GA67591@kevlar.burdell.org> <41190B5A.7070503@namesys.com> <1092162318.10651.365.camel@watt.suse.com> <1092163813.10651.372.camel@watt.suse.com>
+From: Konstantin Besch <forward@zagon.com>
+Subject: Re: if xml-DB possible on Reiser4 - would be also SQL?
+Date: Tue, 10 Aug 2004 21:23:41 -0400
+Message-ID: <200408102123.41160.forward@zagon.com>
+References: <41188B66.2010609@gmx.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20165-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20166-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <41188B66.2010609@gmx.de>
 Content-Disposition: inline
-In-Reply-To: <1092163813.10651.372.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com, ulenrich@gmx.de
 
-On Tue, Aug 10, 2004 at 02:50:13PM -0400, Chris Mason wrote:
-> On Tue, 2004-08-10 at 14:25, Chris Mason wrote:
-> > On Tue, 2004-08-10 at 13:52, Hans Reiser wrote:
-> > > Sonny Rao wrote:
-> > > 
-> > > >On Tue, Aug 10, 2004 at 12:16:39AM -0700, Hans Reiser wrote:
-> > > >  
-> > > >
-> > > >>Interesting.What happens without overwrite, that is, if you write more 
-> > > >>files without deleting the old ones?
-> > > >>    
-> > > >>
-> > > >
-> > > >Below I made 24 one gigabyte files in sequence
-> > > >All of them are similarly fragmented: 
-> > > >data # filefrag *
-> > > >datafile0: 268 extents found
-> > > >
-> > > this could explain some reiser3 performance problems.   This is what 
-> > > happens when I spend all my time chasing funding and don't spend it 
-> > > reviewing code and benchmarks, sigh.
-> > > 
-> > > Thanks for spotting this.  I would be curious if this is occuring near 
-> > > the transition between unformatted nodes and their parents, or something 
-> > > else.
-> > 
-> > There have been a few threads on this on reiserfs-list
-> > 
-> > singer:/data # dd if=/dev/zero of=foo bs=1MB count=1000
-> > 1000+0 records in
-> > 1000+0 records out
-> > singer:/data # filefrag foo
-> > foo: 1 extent found
-> > 
-> > The new allocator really should be doing a better job here.
-> 
-> Hmpf, that's what I get for expecting filefrag to work properly on
-> amd64.  The actual number of extents is 199, which is still better then
-> 268.  Using fibmap, the fragmentation percentage is still the same as
-> ext3 (99.99% unfragmented) meaning the length between the extents is
-> quite small.
-> 
-> If you mount with:
-> 
-> mount -o alloc=skip_busy:oid_groups
-> 
-> You get 8 extents on a 1GB file.
-> 
-> This is because the oid grouping tries much harder to isolate the file
-> data from data from other files and metadata.  It is far from optimal
-> for normal usage, but for huge files it works nicely.
+I am interested in precisely the same development idea.
+Looked at mysql and pgsql to share and (possibly?) map their table structure
+into regular fs system. Since I like perl my examples looked as following :
+
+simple select - "SELECT * from x_table WHERE x_field LIKE 'foo' " operation=
+ ,=20
+written in perl would look like :
+"while (x_table::xfield =3D~ /foo/){print;}"
+
+assuming you have x_table mapped as /my_db/x_table file in the fs.
+
+pgsql looks more promising , since to run complex queries you would still n=
+eed=20
+to use pgsql's query optimizer and so on.=20
+So , the solution is either translation of filesystem calls into sql=20
+statements (which is really inefficient ) or writing a special=20
+client-connector for pgsqld and to use their internal (hopefully shared)=20
+functionality to meet the goal.
+Although to sql translation would be more universal , I doubt it is worth t=
+he=20
+trouble writing. This is the reply I got from Ken , developer of SQLFairy=20
+group (they wrote tool to translate different SQL's into each other) :
+" What you want would first require a substantial amount of work to add =A0=
+to=20
+our existing grammars all the rules for parsing mutation statements =A0for =
+each=20
+vendor, and then you could create some sort of Perl Producer =A0class to cr=
+eate=20
+your output. =A0It's not impossible, of course, and we'd =A0be happy if you=
+ want=20
+to contribute this. =A0I will admit that I'm =A0somewhat skeptical, however=
+ I've=20
+been wrong about other suggestions to =A0the project in the past. =A0I gues=
+s I'm=20
+generally satisfied with SQL. =A0 It's a handy domain-specific language tha=
+t is=20
+generally standardized =A0and portable, so I can't imagine wanting to rewri=
+te=20
+SQL in Perl. =A0If =A0this is something you'd like to see in SQL::Translato=
+r,=20
+you'll likely =A0have to write it. =A0:-) ".
+I have downloaded Reiser4 and looking at the plugin code. PGsql has=20
+interesting feature called "PL/Perl", maybe it is going to be enough ( for=
+=20
+now) to do what I need.=20
+
+												--Sincerely , Dean
+
+On Tuesday 10 August 2004 4:46 am, Ralph wrote:
+> Would it be possible to write a SQL-plugin for Reiser4 with all
+> typicall SQL CONSTRAINTs (foreignkeys, triggers ...etc)?
 >
-
-Is that "oid_groups" option present in the stock 2.6.7 kernel?  It
-didn't like that mount option, and a cursory grep for "oid_groups" in
-linux-2.6.7/fs/reiserfs/* doesn't show me anything.  The "skip_busy"
-option worked but didn't seem to change allocation behavior.
-
-Another piece of information that pointed me at possible fragmentation
-came from iostat.  It shows during my tests that the average request
-size is about 745 sectors while on ext3 I see an average request size
-of about 900 sectors.   
-The io size limit on the kernel was 512k, so the max size should have
-been about 1024 sectors.  On JFS and XFS I did see the average request size
-very close to 1024 sectors, and the best performance.
-
-So, even though you are probably correct about the 2 block gaps being
-metadata, the iostat data could be interpreted to indicate this
-behavior is hurting performance relative to the other filesystems on
-this particular test.
-
-I'm planning on trying out 2.6.8-rc4 soon.
-
-Sonny 
-
+> Thus data integrity a SQL-database despite a filesystem provides
+> and a (Ms)WinFS like system could be realised.
+>
+> After writing some data with a SQL-client, you could retrieve
+> a pieces of data through the filesystem interface, like:
+> # cat ../my_databasename/my_schema/my_table/my_friend/his_email
+>
+> The features of "Reiser4 Atomic Filesystem" would enable
+> SQL-Transactions when inserting data through a SQL-client.
