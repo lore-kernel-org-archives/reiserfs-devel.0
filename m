@@ -1,60 +1,49 @@
-From: Tonnerre <tonnerre@thundrix.ch>
-Subject: Re: silent semantic changes in reiser4 (brief attempt to document the idea of what reiser4 wants to do with metafiles and why
-Date: Tue, 31 Aug 2004 21:08:14 +0200
-Message-ID: <20040831190814.GA15493@thundrix.ch>
-References: <41323AD8.7040103@namesys.com> <200408312055.56335.v13@priest.com> <36793180.20040831201736@tnonline.net>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
-Return-path: <reiserfs-list-return-21169-reiserfs=m.gmane.org@namesys.com>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
+Subject: Re: silent semantic changes with reiser4
+Date: Tue, 31 Aug 2004 15:31:07 -0400
+Message-ID: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
+References: <pavel@ucw.cz>
+Return-path: <reiserfs-list-return-21170-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <36793180.20040831201736@tnonline.net>
+In-Reply-To: Message from Pavel Machek <pavel@ucw.cz> 
+   of "Tue, 31 Aug 2004 10:21:44 +0200." <20040831082144.GA535@elf.ucw.cz> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Spam <spam@tnonline.net>
-Cc: V13 <v13@priest.com>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@digeo.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@osdl.org>, reiserfs-list@namesys.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Pavel Machek <pavel@ucw.cz>
+Cc: David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
---VbJkn9YxBvnuCH5J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Pavel Machek <pavel@ucw.cz> said:
+> David Masover <ninja@slaphack.com> said:
 
-Salut,
+[...]
 
-On Tue, Aug 31, 2004 at 08:17:36PM +0200, Spam wrote:
->   How  are  things  done on Windows platforms when there are files and
->   directories  with the same name? In Unix that is imposible. How does
->   it  work  for  environments  like  Cygwin  etc? What happen to tools
->   that run in them?
+> > Just want to extract the tar file?  Maybe something like
+> > cat foo.tgz/gunzip
+> > In which case (of course) foo.tgz/gunzip has exactly the same directory
+> > contents as foo.tgz
+> 
+> Yes, that would work.
+> 
+> > In fact, for just about any syntax anyone could suggest, I can't really
+> > see why you can't just replace all weird symbols with a slash and a
+> > symbol.  Instead of
+> > 	foo.tgz#utar
+> > you have
+> > 	foo.tgz/#/utar
+> > Only difference is, some things which used to require special tools can
+> > now be serviced by less than what's in busybox.
+> 
+> That would work, too. I do not get your comment about busybox.
 
-In  NTFS it's  illegal  IIRC.  At least  the  fs correction  utilities
-complain about a block being assigned to two files.
-
-Same with HFS+.
-
-Sometimes  there seem to  be several  things with  the same  name. But
-that's because of hidden extensions (.lnk for example).
-
-I'm talking out of the book here, maybe the real-world implementations
-of Windows  are different. I can't  tell, I only used  Windows once to
-ssh into a screwed-up router.
-
-				Tonnerre
-
-
---VbJkn9YxBvnuCH5J
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.9.2 (GNU/Linux)
-
-iD8DBQFBNMyd/4bL7ovhw40RAiIcAJ9p8jLgJeKhIFuWqVmJ/ShSiz6L+ACgwTVN
-N/3DwpJuNBNtx2Sjb9xdZ8A=
-=ER/w
------END PGP SIGNATURE-----
-
---VbJkn9YxBvnuCH5J--
+You do need extra tools anyway, placing them in the kernel is cheating (and
+absolutely pointless, IMHO).
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
