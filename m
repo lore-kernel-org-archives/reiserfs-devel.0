@@ -1,43 +1,32 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Benjamin Scott <bscott@ntisys.com>
 Subject: Re: Silly question, defrag
-Date: Fri, 05 Apr 2002 19:13:39 +0400
-Message-ID: <3CADBF23.4060707@namesys.com>
-References: <Pine.LNX.4.44.0204050850170.6398-100000@dragon.inside.ntisys.com> <200204051404.g35E4L6H007366@foo-bar-baz.cc.vt.edu>
+Date: Fri, 5 Apr 2002 09:20:59 -0500 (EST)
+Sender: bscott@ntisys.com
+Message-ID: <Pine.LNX.4.44.0204050915350.6398-100000@dragon.inside.ntisys.com>
+References: <200204051404.g35E4L6H007366@foo-bar-baz.cc.vt.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <200204051404.g35E4L6H007366@foo-bar-baz.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Valdis.Kletnieks@vt.edu
-Cc: Benjamin Scott <bscott@ntisys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-Valdis.Kletnieks@vt.edu wrote:
+On Fri, 5 Apr 2002, at 9:04am, Valdis.Kletnieks@vt.edu wrote:
+> The biggest problem is identifying "idle" ...
 
->On Fri, 05 Apr 2002 08:50:35 EST, Benjamin Scott <bscott@ntisys.com>  said:
->
->>  What about using "idle time" to defragment the filesystem on a continuous
->>basis?  If the system is not doing anything else, a background daemon in the
->>kernel could move blocks around to optimize things.  While I expect this
->>
->
->A good idea, worth researching, but probably a royal pain to implement.
->The biggest problem is identifying "idle", and being careful to do things
->in a way that doesn't cause problems if the system suddenly goes un-idle.
->
->It's not as bad as doing an fsck on a live filesystem - but you do want to
->be sure that if a program suddenly decides to read the file you're currently
->moving around, that you do the right thing (writing gets a bit trickier -
->you have to worry about stuff like somebody doing an fsync() of a block
->that you're in the middle of moving around on the disk.  Race Condition City ;)
->
-Actually, we will be able to do repacking online without a lot of extra 
-code, due to our designing the right functionality into our flushing and 
-journaling algorithms.
+  This part of the algorithm could be farmed out to a userland system call.
+That is, a user process signals the kernel when to start and stop
+"background maintenance" tasks.  Said userland process could be as
+sophisticated as something that monitors load average and I/O load, or as
+simple as a cron job that runs during off-hours.
 
-Some things become a lot easier when they are architected in at the 
-beginning....
+-- 
+Ben Scott <bscott@ntisys.com>
+| The opinions expressed in this message are those of the author and do not |
+| necessarily represent the views or policy of any other person, entity or  |
+| organization.  All information is provided without warranty of any kind.  |
 
-Hans
 
