@@ -1,37 +1,40 @@
-From: Cami <camis@mweb.co.za>
-Subject: Re: Reiserfs, highquality meds source, low rates
-Date: Mon, 19 Apr 2004 15:41:21 +0200
-Message-ID: <4083D701.5050801@mweb.co.za>
-References: <000001c425b0$1750e0b8$4fa9aa0e@fluridden.com> <20040419115902.GD15007@alias.nmd.msu.ru> <4083C0B0.6090607@mweb.co.za> <20040419133444.GA57@alias.nmd.msu.ru>
+From: Alexander Lyamin <flx@msu.ru>
+Subject: Re:  Reiserfs, highquality meds source, low rates
+Date: Mon, 19 Apr 2004 17:40:32 +0400
+Message-ID: <20040419134032.GD57@alias.nmd.msu.ru>
+References: <000001c425b0$1750e0b8$4fa9aa0e@fluridden.com> <20040419115902.GD15007@alias.nmd.msu.ru> <200404191339.08313.tdickenson@geminidataloggers.com>
+Reply-To: flx@msu.ru
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18056-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18057-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040419133444.GA57@alias.nmd.msu.ru>
+Content-Disposition: inline
+In-Reply-To: <200404191339.08313.tdickenson@geminidataloggers.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Reiserfs <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Toby Dickenson <tdickenson@geminidataloggers.com>
+Cc: flx@msu.ru, "Grosbeak E. Collating" <roadside@fluridden.com>, Reiserfs <reiserfs-list@namesys.com>
 
->>>i am just not sure how to kill THIS messages which look so....
->>>they dont look like spam, even to me upon first look.
->>
->>If you were using SpamAssasin, you wouldn't get these..
+Mon, Apr 19, 2004 at 01:39:08PM +0100, Toby Dickenson wrote:
+> On Monday 19 April 2004 12:59, Alexander Lyamin wrote:
+> > i am just not sure how to kill THIS messages which look so....
+> > they dont look like spam, even to me upon first look.
 > 
-> oh sure :)
+> You need more software....
 > 
-> would you mind and check the headers ? :)
+> For me, spambayes nailed the original message as spam, and your reply 
+> (helpfully quoting all of the orginal) was classified as ham.
+> 
+> http://spambayes.sourceforge.net/
 
-Theres no way for me to tell since my spamassassin
-removes already inserted headers and then scans+inserts
-its own..
+notice that this particular message had "bayes poisoning" trap in its body ;)
+that was actually reason for my complain.
 
-> if we would not use spamassassin we would have 160+ more
-> (what is actually more then daily traffic in this list)
 
-What custom rulesets are you using?
 
-Regards,
-Cami
+-- 
+"the liberation loophole will make it clear.."
+lex lyamin
