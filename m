@@ -1,45 +1,57 @@
-From: Sonny Rao <sonny@burdell.org>
-Subject: Re: Odd Block allocation behavior on Reiser3
-Date: Tue, 10 Aug 2004 12:12:52 -0400
-Message-ID: <20040810161252.GC67591@kevlar.burdell.org>
-References: <20040809201939.GA55683@kevlar.burdell.org> <1092083451.10651.218.camel@watt.suse.com> <20040809220459.GA57121@kevlar.burdell.org> <1092142411.10651.226.camel@watt.suse.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output error"
+Date: Tue, 10 Aug 2004 10:35:58 -0700
+Message-ID: <4119077E.6070306@namesys.com>
+References: <20040807065039.5BF4E15CBC@mail03.powweb.com> <41148997.4070404@namesys.com> <200408100321.i7A3LHxu027087@turing-police.cc.vt.edu> <20040810092022.GN9811@backtop.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20128-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20129-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1092142411.10651.226.camel@watt.suse.com>
+In-Reply-To: <20040810092022.GN9811@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Alex Zarochentsev <zam@namesys.com>
+Cc: Valdis.Kletnieks@vt.edu, David Dabbs <david@dabbs.net>, 'ReiserFS List' <reiserfs-list@namesys.com>
 
-On Tue, Aug 10, 2004 at 08:53:31AM -0400, Chris Mason wrote:
-<snip>
-> Ok, the block allocator optimizations went in after 2.6.7.  I'd be
-> curious to see how 2.6.8-rc3 does in your tests.
+Alex Zarochentsev wrote:
 
-I'll try it.
-
-
-> This could be the metadata mixed in with the file data.  In general this
-> is a good
-> Still there were a number of cases the old allocator didn't do as well
-> with. thing, when you read the file sequentially, the metadata required
-> to find the next block will already be in the drive's cache.
+>On Mon, Aug 09, 2004 at 11:21:17PM -0400, Valdis.Kletnieks@vt.edu wrote:
+>  
 >
-> Whenever you're doing fragmentation tests, it helps to also identify the
-> actual effect of the fragmentation on the time it takes to read a file
-> or set of files.  It's easy to create a directory where all the files
-> are 99.99% contiguous, but that takes 3x as much time to read in.
+>>On Sat, 07 Aug 2004 00:49:43 PDT, Hans Reiser said:
+>>
+>>    
+>>
+>>>>I think I have discovered the problem - unless there was a reason mongo was
+>>>>issuing mount/unmount commands at the start/end of a mongo 'run' as well as
+>>>>before/after _each phase_.
+>>>>        
+>>>>
+>>>Probably someone wanted to separate the measurement of the phases.  It 
+>>>has been a while since I read mongo.....
+>>>      
+>>>
+>>Note that an unmount/mount pair will force a flush of all dirtied pages in the
+>>in-memory file cache, and *really* not return until it's really done and really
+>>out on disk.  In addition, sync() will force stuff to disk, but *not* invalidate
+>>in-cache pages - more drastic measures are needed if you want to benchmark
+>>with a cold cache (which is almost a must if you're doing actual filesystem
+>>benchmarking, as otherwise you're benching the in-core cache instead).
+>>    
+>>
 >
-> -chris
+>That was designed to have result in each phase as independent as we can.  For
+>example, if we have read slowdown in mongo, we will analyze only reads and,
+>probably, fs fragmentation, we won't deal with unmeasurable cache state before
+>the read phase. Known and persistent "cold cache effect" is better than unknown
+>hot cache one :)  And, mongo phases are designed to be long and keep the cold
+>cache effect at minimum.
+>  
+>
 
-In this case, I began investigating fragmentation because I noticed
-reiserfs is performing below the other filesystems I tested for some
-reason, so I belive this allocation pattern is hurting performance
-on sequential reads.
+Let me be more precise here.  Is the time spent mounting and umounting 
+included in the time for the phase?
 
-Sonny
