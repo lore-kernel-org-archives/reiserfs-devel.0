@@ -1,82 +1,52 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Re: Re: [PATCH CFT] tons of logging patches
-Date: Sun, 14 Jul 2002 02:52:01 +0200
-Message-ID: <3D30CB31.8040703@mb.tu-ilmenau.de>
-References: <200206222202.56577.Dieter.Nuetzel@hamburg.de>	<1024945533.9008.10.camel@tiny> 	<200207091552.52815.Dieter.Nuetzel@hamburg.de> 	<1026223243.5603.124.camel@tiny> <1026502991.4952.136.camel@tiny>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: What does this mean?
+Date: Sun, 14 Jul 2002 12:36:28 -0400
+Message-ID: <200207141636.g6EGaTCr017595@turing-police.cc.vt.edu>
+References: <3D2993E5.6030707@tpg.com.au> <20020708190923.A928@namesys.com> <3D29BA3F.7010201@tpg.com.au> <200207081228.56302.kuba@mareimbrium.org> <3D2E6DAB.9050400@tpg.com.au> <200207121326.g6CDQu3u003587@turing-police.cc.vt.edu>
+            <3D2FFA1B.8050302@tpg.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10993-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_508465164P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10994-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: Your message of "Sat, 13 Jul 2002 19:59:55 +1000."
+             <3D2FFA1B.8050302@tpg.com.au> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: Basil Chupin <blchupin@tpg.com.au>
+Cc: reiserfs-list@namesys.com
 
-On 07/12/2002 09:43 PM, Chris Mason wrote:
-> On Tue, 2002-07-09 at 10:00, Chris Mason wrote:
->=20
->>On Tue, 2002-07-09 at 09:52, Dieter N=FCtzel wrote:
->>
->>>On Monday, 8 July 2002 13:51, Chris Mason wrote:
->>>
->>>>On Wed, 2002-07-03 at 20:28, Manuel Krause wrote:
->>>>
->>>>
->>>>>So far the 13 prerelease works fine under rootflags boot and=20
->>>>>mount/remount option "data=3Dordered" on here.
->>>>
->>>>I think I've got the bug, it was newly introduced in -13.  New stuff
->>>>will be uploaded today.
->>>>
->>>
->>Sigh, further testing showed I'd only fixed half of the bug.  The other=
+--==_Exmh_508465164P
+Content-Type: text/plain; charset=us-ascii
 
->>half is somewhere deep writepage/truncate interaction.  I'm still tryin=
-g
->>to find it.
->=20
->=20
-> Well, after a week of fixing minor things and adding debugging code,
-> this bug still goes unsolved.  The only good news is that I can also
-> trigger it on pure 2.4.19-rc1 and ext2.  The bug seems to either be in
-> the VM or my ram, so I'm having a little memtest86 party overnight.
->=20
-> I've uploaded 03-beta-data-logging-16, it should be more stable and
-> faster than -11 and -13 were, but includes more debugging checks to try=
+On Sat, 13 Jul 2002 19:59:55 +1000, Basil Chupin <blchupin@tpg.com.au>  said:
 
-> and make sure I'm not screwing things up.  You can grab the patches at:=
+> We compared the outputs from the 'ps aux' command and what I found is 
+> that I am not running the kjournald process on any of my (3) 'systems' 
+>  while he is (on his 2 'systems') even though our setups are almost 
+> identical (with regards to running SuSE v8 ). I thought kjournald was 
+> part and parcel of reiserfs but then why isn't it running on my 
+> 'systems'? Just another mystery.
 
->=20
-> ftp://ftp.suse.com/pub/people/mason/patches/data-logging
->=20
+ext2 filesystems don't have a kernel thread.
+ext3 have one kjournald thread per file system.
+resierfs have one kreiserfsd thread per file system.
 
-Thank you, Chris!
+You don't have any because you're all reiserfs.  His two systems obviously
+have at least 1 ext3 file system (/boot or / perhaps?)
 
-It's working fine under rootflags set and mount/remount options=20
-"noatime,notail,data=3Dordered".
-Nothing got wrong on here due to data-logging-13.
+--==_Exmh_508465164P
+Content-Type: application/pgp-signature
 
-Netscape7 dropped its load time again by 3secs of (previously 14+1),=20
-OpenOffice1 increased by 1sec (of average 17secs previously). To explain =
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-the previous state: I've only changed -pre9 to -rc1 and data-logging=20
-from -10(-pre9)..13(-rc1)..11(-rc1)..16(-rc1, now!) from the old patchset=
-=2E
+iD8DBQE9MaiMcC3lWbTT17ARAkt3AKDAcDmNa7B551YiuoTHA84BEh6dQACgmADO
+DUua4tf5d979qovavHK40fU=
+=tlwN
+-----END PGP SIGNATURE-----
 
-> If anyone wants to try and reproduce my memory corruption bug (can and
-> probably will lead to FS corruption), just let 10 fsx processes run in =
-a
-> loop for ~3 hours or so on an SMP machine.
->=20
-> -chris
->=20
-
-Is this possible to be reproduced on uniprocessor machines, too ?
-
-
-Best regards,
-
-Manuel
-
+--==_Exmh_508465164P--
