@@ -1,54 +1,43 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: Comparison of notail and notail,iicache(14) 2.4.19-pre7
-Date: Fri, 26 Apr 2002 06:57:32 +0200
-Message-ID: <200204260657.32516.Dieter.Nuetzel@hamburg.de>
+From: Andrey Savochkin <saw@saw.sw.com.sg>
+Subject: question about a possible deadlock
+Date: Fri, 26 Apr 2002 15:07:26 +0400
+Message-ID: <20020426150726.A25444@castle.nmd.msu.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10180-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10181-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Manuel Krause wrote:
+Hi,
 
-[-]
-> What's really unclear is the problem with my=20
-> failing Netscape files on the living iicache-mounted FS...
+I've found a call sequence leading to what looks like a deadlock:
+open
+  reiserfs_create
+    journal_begin
+    reiserfs_new_inode
+      failure by one of multiple reasons
+      iput [note that inode->i_nlink == 0]
+        reiserfs_delete_inode
+          journal_begin
+            deadlock, waiting for previous journal_begin to end
+The code was checked by the mainstream 2.4.18 kernel.
+Any reasons why this deadlock can't happen?
 
-I had one outlier with iicache-new-13 here, too.
+My reading is that the deadlock should happen under the condition expressed
+in the code as
+  if (  (!join && SB_JOURNAL(p_s_sb)->j_must_wait > 0) ||
+     ( !join && (SB_JOURNAL(p_s_sb)->j_len_alloc + nblocks + 2) >= JOURNAL_MAX_BATCH) ||
+     (!join && atomic_read(&(SB_JOURNAL(p_s_sb)->j_wcount)) > 0 && SB_JOURNAL(p_s_sb)->j_trans_start_time > 0 &&
+      (now - SB_JOURNAL(p_s_sb)->j_trans_start_time) > JOURNAL_MAX_TRANS_AGE) ||     (!join && atomic_read(&(SB_JOURNAL(p_s_sb)->j_jlock)) ) ||
+     (!join && SB_JOURNAL(p_s_sb)->j_cnode_free < (JOURNAL_TRANS_MAX * 3)))
+I'm not a specialist in this code, but it should be possible to trigger
+this condition, shouldn't it?
 
-/etc/cups/ppds.dat
+Or is it yet another already fixed issue?
 
-couldn't be accessed. I reported back but got no response.
-
-> ...and in this line, of course, you're right: The number of applied=20
-> patches on-here exceeds my limit, too. It's ridiculous. I don't know how =
-
-> much time I'd save if I didn't like to test and configure this own setup =
-
-> to be stable. Mainline? Please, don't comment.
-> My most liked/useful patches are RML.preempt+lock-break,=20
-> AKPM.read-latency, the recent AA.vm-patches, AA.low-latency and=20
-> ReiserFS.speedup+pending!
-
-No offenses, please. I truly running much the same, here ;-)))
-Except of ReiserFS.speedup. But the new block allocation is of course=20
-interesting.
-
-Next thing could be linux-2.4.19p6-compound-speedup.patch.
-Any version for -pre7 ready?
-
-Regards,
-	Dieter
-
---=20
-Dieter N=FCtzel
-Graduate Student, Computer Science
-
-University of Hamburg
-Department of Computer Science
-@home: Dieter.Nuetzel@hamburg.de
+Best regards
+		Andrey
