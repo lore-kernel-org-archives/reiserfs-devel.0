@@ -1,67 +1,46 @@
-From: Jonathan Abbey <jonabbey@arlut.utexas.edu>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 14:36:17 -0500
-Message-ID: <20040826193617.GA21248@arlut.utexas.edu>
-References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com> <200408262128.41326.vda@port.imtp.ilyichevsk.odessa.ua>
+Date: Thu, 26 Aug 2004 20:40:46 +0100
+Message-ID: <20040826194046.GX5733@mail.shareable.org>
+References: <20040826124119.GA431@lst.de> <20040826134812.GB5733@mail.shareable.org> <20040826155744.GA4250@lst.de> <20040826160638.GJ5733@mail.shareable.org> <20040826161303.GA4716@lst.de> <Pine.LNX.4.58.0408260919380.2304@ppc970.osdl.org> <20040826172029.GP5733@mail.shareable.org> <Pine.LNX.4.58.0408261021250.2304@ppc970.osdl.org> <20040826181620.GT5733@mail.shareable.org> <Pine.LNX.4.58.0408261119480.2304@ppc970.osdl.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
-Return-path: <reiserfs-list-return-20772-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20773-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200408262128.41326.vda@port.imtp.ilyichevsk.odessa.ua>
+In-Reply-To: <Pine.LNX.4.58.0408261119480.2304@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>
-Cc: Rik van Riel <riel@redhat.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, Alex Zarochentsev <zam@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
---RnlQjJ0d97Da+TV1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Linus Torvalds wrote:
+> > It is not the kernel which decides.  The filesystem containing
+> > /dev/hda/part1 opens "the directory branch".
+> 
+> But that filesystem cannot know what the _other_ filesystem configurations 
+> are. And that's what you'd have to have to mount.
 
-On Thu, Aug 26, 2004 at 09:28:41PM +0300, Denis Vlasenko wrote:
-|
-| Is it possible to sufficiently hide "dirs inside files"
-| so that old tools will be unable to see them?
-|=20
-| I just checked:
-|=20
-| ls -d /foo  does lstat64("/foo", ...)
-| ls -d /foo/ does lstat64("/foo", ...)
-| 	but
-| ls -d /foo/. does lstat64("/foo/.", ...)
-|=20
-| Will it work out if "dir inside file" will only be visible when referred =
-as "file/."?
+At which point, userspace comes in.  Who knows what userspace chooses.
 
-I'm used to using ls symlink/. to get ls to show me the directory on
-the far side of a symbolic link.  That's a pretty analagous case to
-the one we're discussing here, I think?
+> > The obvious implementation has the userspace helper just mounting it,
+> > end of story.  If the mount command fails, it fails.  Much like autofs.
+> 
+> Yes, that would work, but it's of questionable use. If you want autofs, 
+> then just _use_ autofs.
 
- Jon
+I don't mean to imply it's useful behaviour: only that it seems to
+happen by default if you don't do anything special to prevent it, if
+you see what I mean.
 
---=20
----------------------------------------------------------------------------=
-----
-Jonathan Abbey 				              jonabbey@arlut.utexas.edu
-Applied Research Laboratories                 The University of Texas at Au=
-stin
-GPG Key: 71767586 at keyserver pgp.mit.edu, http://www.ganymeta.org/workkey=
-.gpg
+It does seem useful to have _files_ mounted automagically (using
+loopback devices): for example, cd into a .iso file and it would be
+nice to see the contents.  At this point, deciding on the preferred
+-EBUSY or not behaviour becomes relevant, as does deciding whether the
+.iso in this example is viewed using the kernel's isofs code, or using
+a userspace helper in the same way as we'd use one to browse a .zip file.
 
---RnlQjJ0d97Da+TV1
-Content-Type: application/pgp-signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.1 (SunOS)
-
-iD8DBQFBLjuxGI9EwHF2dYYRAragAJ9DcI5AB3TZLclfHo5e3Y5dS6JxdwCg0/6u
-AyQiinzuItKB7ATsWEZNni8=
-=3fHv
------END PGP SIGNATURE-----
-
---RnlQjJ0d97Da+TV1--
+-- Jamie
