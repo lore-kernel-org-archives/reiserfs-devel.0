@@ -1,56 +1,57 @@
-From: Christian Kujau <evil@g-house.de>
-Subject: Re: vpf-10680, minor corruptions
-Date: Mon, 23 Jun 2003 15:38:20 +0200
-Message-ID: <3EF702CC.9050005@g-house.de>
-References: <3EF07AFB.8060303@g-house.de> <20030618152626.GA17240@namesys.com> <3EF0A8E8.2000209@g-house.de> <20030619054535.GA23852@namesys.com> <3EF6AE67.5090502@namesys.com> <20030623090258.GA12259@namesys.com> <3EF6C83F.6060702@namesys.com>
-Reply-To: evil@g-house.de
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Subject: Re: udpated data logging available
+Date: Mon, 23 Jun 2003 18:53:03 +0200
+Message-ID: <200306231853.04098.christian.mayrhuber@gmx.net>
+References: <1055764071.24111.650.camel@tiny.suse.com> <1055944613.5545.22.camel@tiny.suse.com> <1056336342.5545.376.camel@tiny.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14671-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14672-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3EF6C83F.6060702@namesys.com>
+In-Reply-To: <1056336342.5545.376.camel@tiny.suse.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-hi again,
+Am Montag, 23. Juni 2003 04:45 schrieb Chris Mason:
+> On Wed, 2003-06-18 at 09:56, Chris Mason wrote:
+> > Hello again,
+> >
+> > ftp.suse.com/pub/people/mason/patches/data-logging/2.4.21/experimental
+> >
+> > Has two additional patches.  The first is io-stalls-logging-6.diff,
+> > which is very similar to the io stalling code I've been posting on the
+> > linux kernel list.  It's unrelated to reiserfs really, and fixes some
+> > fairness issues at the block device layer.
+> >
+> > The second is reiserfs-jh-1, which changes where the lists live for
+> > data=ordered and tail buffers.  It allows us to do a few things:
+>
+> Hello all, I've updated the reiserfs-jh patch, it's now at
+> reiserfs-jh-2.  The major changes are tested O_DIRECT + data=ordered
+> support, and a bug fix for an oops under memory pressure.
+>
+> In general the patch has had a few more hours of testing on it now, and
+> I'm less worried about it making your computer catch on fire if you give
+> it a try.
+>
+> -chris
 
-i did some further testings on this issue and the results are as follows:
+This patch does better than reiserfs-jh-1, though It didn't eat the data on my system.
+I was unable to login as root (both tty and su) for about 2 minutes after system
+boot with the -1 patch (data=ordered mode and root fs on software raid1).
 
-as stated before, the corruptions occur only on this very alpha machine, 
-i386 (2.5.72) is not affected here.
+2.4.21 + data_logging and 2.4.21+data_logging + reiserfs-jh-2 + io-stalls-logging-6 does not
+show this behaviour.
 
-i staretd the alpha then with a 2.4.21. i created an fs on /dev/sde2, 
-reiserfsck passed with no errors. i mounted the partition, copied /lib 
-to it, diff showed _no_ differences, which was good. then something 
-unexecpected happened: i unmounted the partition right after the 
-"diff..." finished and wanted to reiserfsck the patition again, but this 
-time reiserfsck complained about:
+The quota patches seem to work with the experimental data logging stuff, too.
+The system latency is bad during heavy  io, but this could hold true for all of the 2.4.x kernel series.
+You can try it yourself if you  issue the command "dd if=/dev/zero of=tst bs=102400" in a shell and
+now try to start another app. (I did this to test the user quota.)
+-- 
+lg, Chris
 
-[...]
-The problem has occurred looks like a hardware problem.
-If you have bad blocks, we advise you to get a new hard
-drive, because once you get one bad block that the disk
-[...]
-that so many blocks have gone bad that none remain in
-reserve to allocate.
- 
-
-bread: Cannot read the block (523914): (Input/output error).
-
-hah! i was not aware that the disk might have an hw problem, not a 
-single error ever showed up in my logs. this was weird. so i 
-re-partitioned the disk with a 10MB sde (to circumvent the bread error) 
-on the beginning and a 2 GB sde2. now reiserfsck/cp/diff are all working 
-fine under 2.4.21, but 2.5.72 is still erroneous.
-
-btw: i am still using reiserfsprogs 3.6.8 now (since debian/testing has 
-3.6.6) and i have compiled these utils under a 2.5.72 kernel. is it safe 
-to use them under 2.4 ?
-
-thanks,
-Christian.
 
