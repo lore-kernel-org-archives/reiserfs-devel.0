@@ -1,52 +1,71 @@
-From: "Thomas Graham" <lkthomas@sml.dyndns.org>
-Subject: Re: repacker ?
-Date: Tue, 21 Sep 2004 22:36:55 +0800 (HKT)
-Message-ID: <2760.192.168.0.27.1095777415.squirrel@sml.dyndns.org>
-References: <2487.192.168.0.27.1095730569.squirrel@sml.dyndns.org>
-    <20040921112742.GB5137@backtop.namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: ReiserFS post-crash issues
+Date: Tue, 21 Sep 2004 08:01:19 -0700
+Message-ID: <4150423F.3020804@namesys.com>
+References: <e96ff120040921013254b63c93@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-21862-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21863-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040921112742.GB5137@backtop.namesys.com>
+In-Reply-To: <e96ff120040921013254b63c93@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Alex Zarochentsev <zam@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ash <ashrat@gmail.com>
 Cc: reiserfs-list@namesys.com
 
-OK
-so I don't need to run repacker all the time?
+FS operations are not persistent unless you fsync or wait long enough. 
+That is the expected norm for unix fs design.
 
+Hans
 
-> On Tue, Sep 21, 2004 at 09:36:09AM +0800, Thomas Graham wrote:
->> hey all, I might miss some of the info, what is echo 1 > .../direction
->> use
->> for ? I know echo 1 for repacker, but what is direction ? Thanks.
+Ash wrote:
+
+>Hi
 >
-> the repacker scans whole reiser4 internal tree and repacks/relocates
-> nodes.
-> ".../direction" controls whether the repacker scans the tree forward (from
-> smallest key to the biggest one, direction=0) or backward (direction=1).
+>I have been running a few tests on ReiserFS to check durability of
+>common filesystem operations.
+>For example, create a certain number of files and crash the machine
+>(poweroff) immediately after this.
+>On rebooting, check the number of files actually present on the
+>filesystem after log replay.
 >
-> see also http://namesys.com/v4/v4.html#repacker
+>Similarly, I tried for some other operations like rename, link and delete.
+>I am using a C program with open, rename and link system calls to
+>perform these operations respectively
+>and crashing the system using a network power switch immediately after
+>my C program finishes doing its stuff.
+>So the delay in-between completion of the operations and the machine crashing
+>should be, according to me, less than 1-2 seconds (which is the time
+>required to establish a telnet connection to the power switch)
 >
->> --
->> HK Celtic Orchestra leader and coordanator: Thomas Graham Lau
->> Phone number: 852-93239670    (24hours a day, 7days a week non-stop
->> phone)
->> Web site: http://sml.dyndns.org
->> Email: lkthomas@sml.dyndns.org
+>It seems that ReiserFS operations are not durable for most of the cases I tried.
 >
-> --
-> Alex.
+>For file create, when tried with 50K, 100K and 1M files, I got
+>34224, 99492, and 998594 files respectively after system rebooted from the
+>crash. Similarly for operations like rename and link, the number of files
+>renamed or linked after reboot is less than what the filesystem reports prior
+>to the crash.
+>
+>Now introducing a fsync() after every open() call does solve the problem
+>but the performance degradation seen is very high. In fact, I did notice
+>the related discussion on the FAQ at namesys.com.
+>
+>Also, operations like rename, link and delete also seem to give problems.
+>
+>However, with other filesystems like XFS, I get much better results (almost
+>100% durability) on similar tests.
+>
+>I am using ReiserFS with linux kernel 2.6.7
+>
+>Any comments/suggestions will be helpful.
+>
+>Thanks,
+>Ash
+>
+>
+>  
 >
 
-
--- 
-HK Celtic Orchestra leader and coordanator: Thomas Graham Lau
-Phone number: 852-93239670    (24hours a day, 7days a week non-stop phone)
-Web site: http://sml.dyndns.org
-Email: lkthomas@sml.dyndns.org
