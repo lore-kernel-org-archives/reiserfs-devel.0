@@ -1,79 +1,88 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: very messed up reiserfs with bad blocks
-Date: Mon, 14 Jun 2004 14:33:47 +0400
-Message-ID: <200406141433.47772.vitaly@namesys.com>
-References: <Pine.GHP.4.44.0406122215500.13459-100000@elektron.its.tudelft.nl>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: preexisting 'metas'?
+Date: Mon, 14 Jun 2004 07:35:25 -0500
+Message-ID: <40CD9B8D.6050002@slaphack.com>
+References: <40CBB63E.4060001@slaphack.com> <200406140033.i5E0XiR2002772@turing-police.cc.vt.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19175-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19176-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.GHP.4.44.0406122215500.13459-100000@elektron.its.tudelft.nl>
-Content-Disposition: inline
+In-Reply-To: <200406140033.i5E0XiR2002772@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Sebastiaan <S.Breedveld@ewi.tudelft.nl>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Valdis.Kletnieks@vt.edu
+Cc: reiserfs-list@namesys.com
 
-On Sunday 13 June 2004 00:16, Sebastiaan wrote:
-> Hi,
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Hello, 
 
-> I have a problem with a reiserfs partition. Some days ago the drive
-> reported bad blocks, so I ran the badblocks program tried to fix the
-> filesystem with the badblocksoutput.
->
-> Assuming I fixed the badblock list with 'reiserfsck --badblocks' I tried
-> to access some (reported broken) files on that partition. This gave some
-> I/O errors, so I thought I had to rebuild the tree (reiserfsck --badblocks
-> --rebuild-tree). This failed, and the filesystem became unmountable (mount
-> fails with 'mount: Not a directory').
->
-> I ran another badblock scan, and the number of badblocks grew
-> substantially (from 11 in the first run to 177 in the second).
-> --rebuild-tree failed again and again.
->
-> Now the weird thing occured: running a third badblock scan didn't increase
-> the amount of badblocks (as I should expect, since the badblock program
-> runs on a lower level than the filesystem). It gave me 56 badblocks.
 
-it seems rebuild-tree fails because new not expected badblocks appears.
+Valdis.Kletnieks@vt.edu wrote:
+| On Sat, 12 Jun 2004 21:04:46 CDT, David Masover <ninja@slaphack.com>
+said:
+|
+|
+|>Well, the '...' in my brother's home dir had some stuff that he'd like
+|>to keep secret -- as in, he doesn't want people to know he has them.
+|
+|
+| Just as an aside, note that calling the directory '...' will only slow
+down a
+| clueless person.  Consider that 'du' and 'ls -a' and 'ls -A' will all
+show them
+| - as will 'find' and any number of other utilities...
 
-> Now the following questions raised:
-> - what causes the amount of bad blocks to fluctuate?
-> - how can I access the filesystem again?
+I think the main thing he wanted was to keep people from noticing such a
+directory existed.  And especially jaded sysads might pass over a file
+called '...' -- or, more easily, a file called '. ' or '.. '.
 
-reiserfs badblock support is useful when you have permanent list of bad 
-blocks. now your hardware is unrelable, probably the harddrive is dying, 
-probably smth else. you should fix it before dealing with filesystem. if 
-needed, make a copy of the partition (with dd_rescue) to another harddrive 
-and fsck the copy.
+Based on the content in that directory, I could just ask him what was in
+there and know by watching his reaction.  Either way, it's no big deal.
 
-> I know the drive is bad, so I am only into copying the contents off it as
-> soon as possible. I have the idea the file allocation table is corrupted.
-> Now --rebuild-tree won't help me, so I was hoping there is a backup of
-> this FAT on the drive somewhere. I couldn't find it, so how does one deal
-> with this thing under reiser?
+| And if he wants to keep it secret, he should be using at *least*
+enough things
+| to keep people *that* unclued out.  If they're unclued enough to not
+be able to
+| find a . file, how did they get *in*??/
 
-> Thanks a lot in advance!
-> Sebastiaan
->
->
-> --
->
-> English written by Dutch people is easily recognized by the improper use of
-> 'In principle ...'
->
-> The software box said 'Requires Windows 95 or better', so I installed
-> Linux.
->
-> Als Pacman in de jaren '80 de kinderen zo had be?nvloed zouden nu veel
-> jongeren rondrennen in donkere zalen terwijl ze pillen eten en luisteren
-> naar monotone electronische muziek. (Kristian Wilson, Nintendo, 1989)
+Suppose he's browsing through his home dir with someone on his shoulder,
+because he wants to show them something.  If he wasn't hiding things at
+all, he'd call it 'xxx'.  Otherwise, he'd call it something boring --
+but the shoulder-surfer might ask him what's in there...
 
--- 
-Thanks,
-Vitaly Fertman
+| If you want actual *security*, you need to be using something that
+does actual
+| crypto.  Jari Ruuso's 'loop-aes' package (on sourceforge) is one
+example of the
+| class of software you *want* to be using.
 
+Yeah right.  I'm root, he's not.  His security is the fact that I'm his
+brother.  I demonstrated this to him vividly, when I told him I really
+don't care about his password, and so I won't look if he doesn't want me
+to (when I first had him enter it) -- then I logged in as root and su'd
+to his account.  He thinks it isn't fair.  I built the computer >:)
+
+
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iQIVAwUBQM2bjXgHNmZLgCUhAQL+3xAAiTSfSEWeTBFvV0/RafdlV5TrFmcgPNUh
+I9GkCz4mUxRwEOrh8wCg7pC3jYsusWT9sXqJ4pbc9GkSopE4NnY96f3Hq/aYfBHD
+diGOi7aanSEmRS7hpNgJHzsDTPCrMBvxvqXZNPr3rZLB/ta+YL6W/VzEi3Ff0lL+
+BGFyBJKPB2OcSnRsZIpfj3WCDoLvjNkXdhV4Zm1/CFC3vms1CIZUA7R/JJ73CrXN
+6AbU533SUMO8RWwMfIoNj12h9FKsN1HB9N9iZ/IId2njF/VPuoAildT0tBk/zzbD
+BBjvoxYNQSwtJk0XbPp4szWzh45OXdl91G4fvdouNvBNff+qGMb9PUk9jqn7whV0
+xWNSezVH0SfscXpfHLEpuSTzDWfG1hu0aIamtmuWmE7ZiWioomHGVvXWcgZnUjVX
+nkIJxQm03HsvvvvZnUeWJUse2uywkxnZ24mFTxycKsApDGMy3yx9X/BEVOdWOHMb
+kpf7rmOKCU6nqqvA/QrbUD+e/deNML5uUndU2IDtp+OjBKg4QA+sp0IUJ7QaP9f8
+/HzDtVJ1lpMpDTaTnjlXeKCqCsu1vVstsQQuQycNUu5FTo+eXsq5DB5xQwHOPoR7
+7oafisQkQ0nmo+q0rSzDB6zrupSVs9DZwrUzcDZUkedqwlJzHvpKHBuMypCR6z/J
+1BJhFXeDsFE=
+=MgH3
+-----END PGP SIGNATURE-----
