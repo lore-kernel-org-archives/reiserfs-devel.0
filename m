@@ -1,31 +1,66 @@
-From: Chris Dukes <pakrat@www.uk.linux.org>
-Subject: Spew ala patapsco's lotus notes server....
-Date: Thu, 6 Jun 2002 18:57:01 +0100
-Sender: <pakrat@www.linux.org.uk>
-Message-ID: <20020606185701.G23235@parcelfarce.linux.theplanet.co.uk>
-References: <85256BD0.0061CBBC.00@patapsco.com>
+From: Kurt <kpalmer@advance.net>
+Subject: Filesystem Corruption
+Date: Thu, 06 Jun 2002 18:00:01 +0000
+Message-ID: <85256BD0.0062A314.00@patapsco.com>
+Reply-To: kpalmer@advance.net
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10580-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ Boundary="0__=mtQbOL7xDb3lmfJbiBpMIn4dbjqQkZUTdU2RESFbGLvZaRgEkcb6wg7e"
+Return-path: <reiserfs-list-return-10581-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <85256BD0.0061CBBC.00@patapsco.com>; from Valdis.Kletnieks@vt.edu on Thu, Jun 06, 2002 at 01:58:15PM +0000
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Thu, Jun 06, 2002 at 01:58:15PM +0000, Valdis.Kletnieks@vt.edu wrote:
-[Spew SNEEPED]
+--0__=mtQbOL7xDb3lmfJbiBpMIn4dbjqQkZUTdU2RESFbGLvZaRgEkcb6wg7e
+Content-type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Is there any chance that the mailing list engine be modified to show the
-Received: lines that were on the email BEFORE the list processor chews
-on the email.  It would make it a lot simpler to apply a LART the guilty 
-part(y|ies) for the duplicate files SPEW.  Don't say it can't be done 
-because the netdev folks did it for their list a few months ago.
+                                                                  
+ (Embedded                                                        
+ image moved   Kurt <kpalmer@advance.net>                         
+ to file:      06/06/2002 02:00 PM                                
+ pic13835.pcx)                                                    
+                                                                  
 
--- 
-Chris Dukes
-The Information Technology field is similar to a Marx Brothers sketch.
-As a sysadmin, I fill in for Harpo Marx.  -- me.
+
+
+
+
+
+
+Hello all,
+     I currently have a system configured as follows :-
+1) LVM version 1.0.1-rc4(ish)(03/10/2001)
+2) /dev/PROJ/proj on /proj type reiserfs (rw,noatime,notail)
+3) /dev/PROJ/proj        239G  142G   97G  60% /proj
+4) 2.4.17 with reiserfs tools 3.x.0k
+5) Reiserfs compiled in (CONFIG_REISERFS_CHECK set to NO)
+6) 256 MB RAM ("sar -r" shows memory usage is not abnormal for this box)
+7)Tuns of very small files based on log processing
+I am told by my co-worker that the system unresponsive and showed reiserfs
+related errors on the console.
+Upon restart they noticed that the file
+/proj/webtrends/receive/bama/www3/access.01Jun.r.gz was unreadable by root
+(permission denied).
+I did a reiserfsck on the drive and noticed that access.01Jun.r.gz returned an
+error stating the file pointed to nowhere.
+I was unable to complete a reiserfsck --fix-fixable because of the length of
+time that this (fsck) process took since this was an unscheduled downtime.
+During the weekend i will attempt to do the fsck again, however i really
+needed to know if this problem has been observed by anyone else, and what
+steps they took to fix the problem.
+-Kurt
+
+
+
+--
+================================================
+Kurt Palmer                                      SysAdmin
+kpalmer@advance.net                Advance Internet
+201-459-2846
+
+--0__=mtQbOL7xDb3lmfJbiBpMIn4dbjqQkZUTdU2RESFbGLvZaRgEkcb6wg7e--
+
