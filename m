@@ -1,64 +1,38 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: viewprinting: what format should views be stored in?
-Date: Tue, 17 Aug 2004 13:28:00 -0700
-Message-ID: <41226A50.3010609@namesys.com>
-References: <411FFCB4.2060400@namesys.com> <41201252.1080803@comcast.net> <412015D0.8030806@namesys.com> <41210FF5.7080605@comcast.net> <4121AEAA.8050008@namesys.com> <41225C9C.7050400@comcast.net>
+From: Chris Mason <mason@suse.com>
+Subject: Re: BUG in journal_mark_dirty on 2.6.7/ia64
+Date: Tue, 17 Aug 2004 18:10:44 -0400
+Message-ID: <1092780643.12138.1591.camel@watt.suse.com>
+References: <20040817191428.GP2136@polop.usc.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20361-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20363-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41225C9C.7050400@comcast.net>
+In-Reply-To: <20040817191428.GP2136@polop.usc.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: George Beshers <gbeshers@comcast.net>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Garrick Staples <garrick@usc.edu>
+Cc: reiserfs-list@namesys.com
 
-George Beshers wrote:
+On Tue, 2004-08-17 at 15:14, Garrick Staples wrote:
+> Hi all,
+>    I'm currently not subscribed (the list daemon isn't replying to my subscribe
+> attempts), so please CC me on replies.
+> 
+> I got a kernel panic on one of my ia64 servers last night.  It's an NFS server
+> for about 1000 clients and ~10 terabytes of data and has been running great
+> since 2.6.7 was released (Jun 15).  Last week it was rebooted to pull out an
+> unused scsi raid card.
+> 
+> Last night I got the panic message below, which caused one of my LVM LVs to
+> lock up.  Please let me know what other info you need.
 
->
->
-> Hans Reiser wrote:
->
->> George Beshers wrote:
->>
->>> We can't avoid it at some level without re-writing Linux security.  
->>> Take a moment to consider
->>> the set-UID bit on a file which is an executable and I think you 
->>> will see what I am driving at.
->>
->>
->>
->> I don't see what you are saying.  Our mask does process oriented 
->> security.  The underlying security remains a user/object/permission 
->> mapping.
->>
-> The issue is how the mask might change the semantics of sys_execve().  
-> I have spent some time
-> starting to trace code around, but more work is required.
->
-> For the moment I think we are safe if the setuid and setgroup can not 
-> be altered by the mask.
+Well, this should have been fixed, I'll have to review the transaction
+length code again.  Updating to 2.6.8 won't fix it, the good news is
+that particular panic should have kept corruption away.
 
-Ok.
+-chris
 
->
-> We only change the semantics if the real/effective uid or gid is 
-> different at some point in the
-> processes execution because of the mask---begging situations where a 
-> call to setuid happens
-> only if a certain file is not available.
-
-Say more.
-
->
-> I want to get back to understanding your second proposed strategy.
->
->
->>
->
->
->
 
