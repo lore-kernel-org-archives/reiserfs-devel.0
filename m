@@ -1,38 +1,60 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: reiser4 crash [solved?]
-Date: Sun, 1 Aug 2004 14:38:43 +0300
-Message-ID: <20040801113843.GH1375@nysv.org>
-References: <200407241827.54674.frbiscani@jumpy.it> <200408011337.37752.frbiscani@jumpy.it>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: reiser4 metas/bmap problem
+Date: Sun, 01 Aug 2004 16:18:25 +0400
+Message-ID: <410CDF91.9040708@namesys.com>
+References: <Pine.GSO.4.44L.0407281754290.11129-100000@unix2.cc.ksu.edu>	 <20040729012549.GE1439@schnapps.adilger.int> <4108AA34.70202@namesys.com>	 <4108ABDD.9010803@namesys.com> <410A955D.3030101@namesys.com>	 <410B85F6.8010107@namesys.com> <1091293724.9886.18.camel@leto.cs.pocnet.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19904-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19905-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200408011337.37752.frbiscani@jumpy.it>
+In-Reply-To: <1091293724.9886.18.camel@leto.cs.pocnet.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Francesco Biscani <frbiscani@jumpy.it>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Christophe Saout <christophe@saout.de>
 Cc: reiserfs-list@namesys.com
 
-On Sun, Aug 01, 2004 at 01:37:37PM +0200, Francesco Biscani wrote:
->I tried to reproduce the crash on my workstation and laptop (the machine on 
->which the crash showed for the 1st time). In both cases the problem did not 
->appear. Using 30/07 snapshot on both machines with all debug options enabled. 
->Nothing appears in logs. Bug solved?
+Hello
 
-I got a patch from them that fixed these issues, but as it was only
-copypasted to irc, I did not publish it. It was just deleting some lines.
+Christophe Saout wrote:
+> Am Samstag, den 31.07.2004, 15:43 +0400 schrieb Vladimir V. Saveliev:
+> 
+> 
+>>>>>>The ext3_bmap() function flushes all file data to disk when called, 
+>>>>>>and it
+>>>>>>would be prudent to do the same with reiser4, since bmap users tend 
+>>>>>>to be
+>>>>>>important and not speed critical (e.g. lilo) and failing to do so 
+>>>>>>can mean
+>>>>>>not booting later.
+>>>>>>
+>>>>>
+>>>>>Interesting point.  vs, please comment.
+>>>>>
+>>>>
+>>>>Yes, reiser4 might do something like that too. However, i am not sure 
+>>>>how we can prevent relocation for files which were bmap-ed.
+>>>>
+>>>
+>>>fsync first and then bmap?
+>>
+>>It file will be later overwritten - flush may decide to relocate it.
+>>So, if application which bmapped it will not re-bmap - there will be a confusion.
+> 
+> 
+> Are there any applications which write into a file and expect the blocks
+> to stay at the same position?
 
-Anyway, I think that got merged in 2004.07.30, or somewhere, but the only
-other source tree I have beside 2004.07.27 with the manual patch is
-the aforementioned snapshot, but I can't remember the location of the
-removals anymore :)
+I do not know
 
-But hey, they fixed the bug for me, thanks again for all that! :)
+  In case of lilo you have to rerun lilo
+> after writing a kernel because it might have changed in size. Usually
+> the old kernel has been moved any and not been overwritten anyway. My
+> personal opinion is that a filesystem sync (or implicit flusing when
+> bmap is called) should be enough.
+> 
+yes, we will change reiser4_bmap that way
 
--- 
-mjt
 
