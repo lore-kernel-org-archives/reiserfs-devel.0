@@ -1,85 +1,127 @@
-From: Yury Umanets <umka@namesys.com>
-Subject: Re: ReiserFS on a flash device?
-Date: Sun, 27 Jul 2003 15:03:22 +0400
-Message-ID: <1059303802.17567.128.camel@haron.namesys.com>
-References: <200307261640.13629.swsnyder@insightbb.com>
-	 <20030727000301.GE894@ecloud.org>
+From: Daniel Egger <degger@fhm.edu>
+Subject: Re: Reiser4 status: benchmarked vs. V3 (and ext3)
+Date: 27 Jul 2003 13:05:30 +0200
+Message-ID: <1059303929.11755.160.camel@sonja>
+References: <3F1EF7DB.2010805@namesys.com>
+	 <1059062380.29238.260.camel@sonja>
+	 <16160.4704.102110.352311@laputa.namesys.com>
+	 <1059093594.29239.314.camel@sonja>
+	 <16161.10863.793737.229170@laputa.namesys.com>
+	 <1059142851.6962.18.camel@sonja>
+	 <1059143985.19594.3.camel@haron.namesys.com>
+	 <1059181687.10059.5.camel@sonja>
+	 <1059203990.21910.13.camel@haron.namesys.com>
+	 <1059228808.10692.7.camel@sonja>
+	 <1059231274.28094.40.camel@haron.namesys.com>
+	 <1059232897.10692.37.camel@sonja>
+	 <1059301810.17567.98.camel@haron.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15060-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-f5+V2q93sXvmrZgRn9w3"
+Return-path: <reiserfs-list-return-15061-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030727000301.GE894@ecloud.org>
+In-Reply-To: <1059301810.17567.98.camel@haron.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Shawn Rutledge <e_cloud@yahoo.com>
-Cc: reiserfs-list@namesys.com
+To: Yury Umanets <umka@namesys.com>
+Cc: Nikita Danilov <Nikita@Namesys.COM>, Hans Reiser <reiser@namesys.com>, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, reiserfs mailing list <reiserfs-list@namesys.com>
 
-On Sun, 2003-07-27 at 04:03, Shawn Rutledge wrote:
-> I wanted to use ReiserFS for an embedded system, but on a 32 or 64 meg CF
-> card, v3 takes up too much of it for a journal, so it wasn't practical.
+--=-f5+V2q93sXvmrZgRn9w3
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> Is there a way to make the journal much smaller, or have it grow
-> on-demand rather than being fixed-size? 
+Am Son, 2003-07-27 um 12.30 schrieb Yury Umanets:
 
-You can use smaller journal. Say 512 blocks (2MB). And in this case you
-need patches for supporting non-standard journal. Or use last kernel pre
-or wait next kernel release.
+> So what? I mean, that if an IO request size does not equal to flash
+> erase size, then corresponding block device driver can't just submit
+> data to flash, but need maintain some cache, and cache size the same as=20
+> erase size for particular flash device. And in the case when WRITE
+> request is encountered, and write sector does not equal to start sector
+> of cached data or cache is empty, block device driver should read data
+> from flash first to fill cache up. This is redundant IO operation.
 
-If you want boot from that flash with non-standard reiserfs on it, use
-GRUB patch from our website for supporting non-standard journal.
+Right, but it should be possible to ensure (by using a special encoding)
+that a part of the erased block can be detected as empty or already
+occupied by reading just a few bytes. Sure this is a tradeoff but one
+I'd be willing to make. :)
 
+> This is some misunderstanding :) First we've spoken about reiser4, then
+> you asked how does reiserfs behave on flash devices and is it convenient
+> for flash at all.
 
->  In practice the CF card won't 
-> be written to very much (for longevity reasons), but I don't ever want 
-> an embedded system to waste time fscking itself and prompting what to 
-> do about any errors; and at the same time don't see why it should be 
-> required to be a read-only filesystem, as is often done, because it makes
-> the occasional upgrade harder.
+> Just make sure, that we're speaking about the same thing:
 
+> Plugin-based architecture is used in reiser4, not in reiserfs (reiser3).
+> Reiser4 is fully different, written from the scratch filesystem.=20
 
->   And apparently JFFS2 is only for simple 
-> memory-mapped FLASH chips without built-in write-balancing like CF cards 
-> have.
+My bad, I thought you're using the term reiserfs also for reiser4. I was
+always talking about reiser4 when I said reiserfs.
 
-As I know, JFFS2 uses compression for storing data. And if so, driver 
-cannot map flash data to memory.
+> > I don't see what the compression has to do with the limited number of
+> > erase/write cycles.
 
-> 
-> I use the mainstream ReiserFS in Linus' kernels on all my home machines
-> and love it.  It's so fast and stable as a rock, and the only problems 
-> I've had were hardware-related.
-> 
-> On Sat, Jul 26, 2003 at 04:40:13PM -0700, Steve Snyder wrote:
-> > I was taken aback by Yury Umanets' recent suggestion 
-> > (http://groups.google.com/groups?hl=en&lr=lang_en&ie=UTF-8&safe=off&th=d50aa0bf6c7f26d0&seekm=1059231274.28094.40.camel%40haron.namesys.com.lucky.linux.kernel#link11) 
-> > that ReiserFS is not an appropriate for a flash device.
-> > 
-> > I am currently using it (via Linux kernel v2.4.21) on an E-Disk 
-> > (http://www.bitmicro.com/products_edisk_35_scsiw.php) flash device as the 
-> > front-end of a low-traffic Squid Web cache.  The Squid experts recommend 
-> > the use of ReiserFS (with the notail option) for it's superior 
-> > performance in handling lots of small files.  I understand that flash has 
-> > a finite number of write cycles, but for this application performance is 
-> > critical, and disk I/O (access times, not STR) is the bottleneck in Squid 
-> > performance.
-> > 
-> > A quote from the post referred to above:
-> > 
-> > >But, if you are still want to use reiserfs for flash device, you should
-> > >do at least the following: 
-> > >
-> > >(1) Make the journal substantial smaller of size.
-> > >(2) Don't turn tails off. This is useful to prolong flash live.
-> > 
-> > More detail, please?  How is journal size a factor?  How does notails 
-> > reduce flash longevity?
-> > 
-> > Thanks.
-> > 
-> > 
--- 
-We're flying high, we're watching the world passes by...
+> Compressed data which should be written is smaller then uncompressed
+> one, thus, its writing affects smaller number of blocks. Each block will
+> be erased rarely, that will prolong flash live.
+
+Only when the data is in motion. Considering that most of the data is
+quite fixed with only some bytes of configuration being written a few
+times and an update of a few packages every now and then I'm pretty sure
+the wear affect will hardly hit. It's more important, that the
+configuration bits are spread evenly over the full filesystem.
+
+> So, you prefer speed?=20
+
+Yes. Especially startup times are important to us but also execution
+times for cachecold executables.
+
+> What do you use for this x86 box with flash?
+
+This are VIA Eden boxes with 667 Mhz fanless x86 compatible CPUs. They
+come in a booksize chassis and deliver pretty impressive performance for
+their size.
+
+> > Convenient only insofar that it's more reliable.
+> I'd not say, that ext2 is too reliable though.
+
+No it's not. Especially the fsck annoyance is a real killer because we
+can either not run it, thereby risking an inconsistent filesystem or run
+it unattended thereby risking a loss of files.
+
+> You should take a look to reiser4, not to reiserfs. Don't forget :)=20
+
+I'm aware, thanks. :)
+
+> But I don't understand, why do you want to make changes in current block
+> allocator plugin? In other words, what is wrong with current
+> implementation, which is willing to allocate blocks closer one to
+> another one?=20
+
+> I thought, if blocks lie side by side, as current block allocator does,
+> this increases probability of flash block device cache hitting (take a
+> look to drivers/mtd/mtdblock.c), what is definitely good. Isn't it?
+
+I've some doubts that placing blocks close to another wears out all of
+the flash equally. I imagine something like circular or hashed block
+allocator which ensures equal wear leveling taking the erasesize of the
+flash into account.
+
+--=20
+Servus,
+       Daniel
+
+--=-f5+V2q93sXvmrZgRn9w3
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.2 (GNU/Linux)
+
+iD8DBQA/I7H5chlzsq9KoIYRAvzOAKCbDCJdPA7tsFmO72EBeyUXsB7jawCgt6m3
+HnbwykVfILNYm+iDgh42QBQ=
+=Wd9b
+-----END PGP SIGNATURE-----
+
+--=-f5+V2q93sXvmrZgRn9w3--
 
