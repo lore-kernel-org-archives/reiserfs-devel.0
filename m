@@ -1,92 +1,32 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Object Oriented FS
-Date: Mon, 27 Oct 2003 22:01:12 +0300
-Message-ID: <3F9D6B78.2090001@namesys.com>
-References: <200310271843.KAA08513@amber.he.net>
+From: Mike Fedyk <mfedyk@matchmail.com>
+Subject: Re: new reiser4 snapshot
+Date: Mon, 27 Oct 2003 12:25:56 -0800
+Message-ID: <20031027202556.GI4511@matchmail.com>
+References: <Pine.LNX.4.44.0310191956060.15715-100000@poorvi.cse.iitd.ernet.in> <3F92D35D.3090806@namesys.com> <3F93132D.70206@gmx.net> <16275.44662.847152.412738@laputa.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15905-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15906-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200310271843.KAA08513@amber.he.net>
+Content-Disposition: inline
+In-Reply-To: <16275.44662.847152.412738@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Mike Young <myoung@wildernessvoice.com>
-Cc: 'darren' <teodarren@myrealbox.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Nikita Danilov <Nikita@Namesys.COM>
+Cc: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>, Hans Reiser <reiser@namesys.com>, Nishant Sharma <nishantt@cse.iitd.ernet.in>, Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-Mike Young wrote:
+On Mon, Oct 20, 2003 at 01:44:22PM +0400, Nikita Danilov wrote:
+> Carl-Daniel Hailfinger writes:
+>  > I thought CONFIG_REISER4_LARGE_KEY was force-enabled by now?
+> 
+> No. But:
+> 
+> 1. one has to use -o key=key_short option for mkfs.reiser4 to create
+> file system with small keys.
+> 
+> 2. lately we mostly test/care about large keys performance and
+> stability.
 
->Hans,
->
->Do you believe this is just a marketing convention to refer to a file-system
->as an object oriented one? 
->
-No.  Also, note that they aren't saying the fs is object oriented, they 
-are saying the storage system is not a block device but an object server.
-
-> Bear in mind that Microsoft is supposed to
->enrich their NTFS with object support from SQL Server in their next OS.
->
-Reiser4 and MS are talking about different layers than Panassas when we 
-talk about being object oriented.  MS objects and Reiser4 plugins might 
-be similar notions, I am not an NTFS expert.....
-
->  The
->code name for this is Longhorn.
->
->I really can't tell what this means to a file system in terms of support.
->It sounds like it's intended to provide support for really large numbers of
->files in a single directory
->
-Uh, reiser4 does that without objects having anything to do with it.  
-Large numbers of files in a single directory means one should use trees 
-not linear searches.....
-
-> vs. nested ones.  But I'm just not sure.  Do you
->see a limitation, going forward, with Reiser4 and large numbers of files?
->  
->
-We have trouble with more than 2^60 files in the filesystem. 
-
-;-)
-
-An interesting question though is at how many files in a directory being 
-read does dcache start to croak and sys_reiser4 becomes a performance 
-necessity....?  Maybe in a few weeks Mr. Demidov can measure that.
-
->Thanks,
->
->Mike
->
->-----Original Message-----
->From: Hans Reiser [mailto:reiser@namesys.com] 
->Sent: Monday, October 27, 2003 10:23 AM
->To: darren
->Cc: reiserfs-list@namesys.com
->Subject: Re: Object Oriented FS
->
->darren wrote:
->
->  
->
->>allows very high
->>throughput by scaling
->>
->>
->>
->> 
->>
->>    
->>
->Do you know what that  means?  (Seriously, I don't....)
->
->  
->
-
-
--- 
-Hans
-
-
+So why would one want short keys in the first place then?
