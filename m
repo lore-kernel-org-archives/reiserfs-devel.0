@@ -1,36 +1,43 @@
-From: Marc-Christian Petersen <m.c.p@gmx.net>
-Subject: CONFIG_REISERFS_RAW (http://www.namesys.com/config.html)
-Date: Sun, 16 Feb 2003 14:52:21 +0100
-Message-ID: <200302161452.21451.m.c.p@gmx.net>
+From: Todd Lyons <todd@mrball.net>
+Subject: Re: Error message - vs-13070
+Date: Sun, 16 Feb 2003 07:33:59 -0800
+Message-ID: <20030216153359.GA28622@mrball.net>
+References: <5.2.0.9.0.20030215000534.018ed008@mail.bogus.home> <5.2.0.9.0.20030215000534.018ed008@mail.bogus.home> <5.2.0.9.0.20030216203350.018dd7d8@mail.bogus.home>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12781-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12782-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <5.2.0.9.0.20030216203350.018dd7d8@mail.bogus.home>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; x-action="pgp-signed"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Hi all,
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-can anyone tell me where I can find this code:
+Andrew Heberle wanted us to know:
 
+>hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+>hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=6599945, 
+>sector=4286584
+>end_request: I/O error, dev 03:03 (hda), sector 4286584
+>These errors look to me like a hardware problem (bad sector on the drive).
+>Definately not a reiserfs problem, thanks for the reply Oleg.
 
-CONFIG_REISERFS_RAW
-    Setting this to yes will enable a set of ioctls that provide raw
-    interface to the ReiserFS tree, bypass the directories, and
-    automatically remove aged files. This is an experimental feature
-    designed for squid cache directories. See Documentation/filesystems/r=
-eiserfs_raw.txt
-    This was designed specifically to use ReiserFS as a back-end for
-    the Squid. The general idea is that it is possible to bypass all
-    filesystem overhead and to directly address the ReiserFS internal
-    tree. This is not in the stock kernels.=20
+Depends, is 4286584 beyond the end of what really exists, or is that in
+the middle of your valid sectors?
+- -- 
+Blue skies...	Todd 	Public key: http://www.mrball.net/todd.asc
+We're sysadmins.  To us, data is a protocol overhead.  --Mans Nilsson
+   Linux kernel 2.4.19-16mdk   3 users,  load average: 0.00, 0.00, 0.00
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
 
-?
-
-Thanks.
-
-ciao, Marc
+iD8DBQE+T69nIBT1264ScBURApNeAJ9jkcgnpp3MPQSG0epvnNpuLdLVeQCgjPRB
+qyjplPc7WRx72nbquw8LIYA=
+=oF9p
+-----END PGP SIGNATURE-----
