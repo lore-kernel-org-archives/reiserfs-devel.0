@@ -1,75 +1,77 @@
-From: Tonnerre <tonnerre@thundrix.ch>
+From: Spam <spam@tnonline.net>
 Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: Mon, 6 Sep 2004 09:56:03 +0200
-Message-ID: <20040906075603.GB28697@thundrix.ch>
-References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain> <20040902203854.GA4801@janus>
+Date: Mon, 6 Sep 2004 10:05:34 +0200
+Message-ID: <1873133500.20040906100534@tnonline.net>
+References: <20040826150202.GE5733@mail.shareable.org>
+ <200408282314.i7SNErYv003270@localhost.localdomain>
+ <20040901200806.GC31934@mail.shareable.org>
+ <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
+ <1094118362.4847.23.camel@localhost.localdomain>
+ <Pine.LNX.4.58.0409021045210.2295@ppc970.osdl.org>
+ <1591214030.20040902215031@tnonline.net> <20040906074518.GA28697@thundrix.ch>
+Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jho1yZJdad60DJr+"
-Return-path: <reiserfs-list-return-21495-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-21496-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040902203854.GA4801@janus>
+In-Reply-To: <20040906074518.GA28697@thundrix.ch>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Frank van Maarseveen <frankvm@xs4all.nl>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Tonnerre <tonnerre@thundrix.ch>
+Cc: Linus Torvalds <torvalds@osdl.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
---jho1yZJdad60DJr+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Salut,
+  
 
-On Thu, Sep 02, 2004 at 10:38:54PM +0200, Frank van Maarseveen wrote:
-> Can it do this:
->=20
-> 	cd FC2-i386-disc1.iso
-> 	ls
->=20
-> or this:
->=20
-> 	cd /dev/sda1
-> 	ls
-> 	cd /dev/floppy
-> 	ls
-> 	cd /dev/cdrom
-> 	ls
->=20
-> ?
+> Salut,
 
-Actually                  I                  see                  some
-small-security-hole-you-can-drive-a-big-yellow-truck-with-flashes-on-through
-problem.
+> On Thu, Sep 02, 2004 at 09:50:31PM +0200, Spam wrote:
+>> Their  libraries are  huge and  memory hogging  which so  many Linux
+>> users just do not like.
 
-$ cat fs_header owner_root flags_with_suid evil_program > evil.iso
-$ ls -l evil.iso/evil_program
--rwsr-xr-x    1 root     root           24 2003-11-09 16:41 evil.iso/evil_p=
-rogram
-$ evil.iso/evil_program
-Mwahaha, I got root!
-Copy-right violating IP... done.
-Hijacking administrators wife... done.
-Overwriting OS with Parachute 2010... done.
+> This  is rather  a  fud argument:  both  the gnome  VFS  code and the
+> KIOserver/KIOslave  code aren't really  large. You  don't want  to use
+> them for a busybox/tinylogin system, however.
 
-etc. pp.
+  Then it is good. Just I see no programs other than Gnome or KDE apps
+  that are using them.
 
-			    Tonnerre
+>> What if  a user doesn't want  KDE or Gnome? Would  all files created
+>> with either be broken?
 
---jho1yZJdad60DJr+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+> The files  still work well, just  that you can't access  them over the
+> old fancy URL schemes.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.9.2 (GNU/Linux)
+  No only, but if you cp then with a non KDE/Gnome app then you will
+  loose the meta-data and extra info too. That was my point.
 
-iD8DBQFBPBgS/4bL7ovhw40RArUPAKCY7/Bo0OfcjFc6hokYGvKhse9dkgCfU67o
-AZrfoXYMvu4iwhL0APkiQ1E=
-=e9Wv
------END PGP SIGNATURE-----
+>> I  doubt  that  something   like  file  streams  and  meta-data can
+>> successfully be  implemented purely in  user-space and get  the same
+>> support (ie  be used by many  programs) if this  change doesn't come
+>> from the kernel. I just do not see it happen.
 
---jho1yZJdad60DJr+--
+> Actually,  practical  discordianism.  If  you develop  a  common  API,
+> there'll always be people disagreeing.
+
+> GTK+ with all  its features is just cool. Desktop  warping is a really
+> nice  thing. But  there are  people out  there who  don't want  to use
+> it. They use QT, or even plain old Athena Widgets. So what? Will we be
+> implementing the X toolkits into the kernel?
+
+  This is certainly not what I said or wanted.
+
+> In case of marketing it's up to the distributions to provide something
+> concise  so  everyone  can  use  their  programs  through  a  coherent
+> namespace. (I.e. port all the apps they ship to gnome-vfs or kio).
+
+  Do you really believe this will happen? Good if it did. I do not
+  believe it. And I certainly do not see the thousands of man hours
+  needed to actually provide all the patches as a benefit.
+
+  ~S
+
+> 			    Tonnerre
+
