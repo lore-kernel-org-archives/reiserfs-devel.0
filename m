@@ -1,44 +1,42 @@
-From: Mike Fedyk <mfedyk@matchmail.com>
-Subject: Re: Filesystem Tests
-Date: Wed, 6 Aug 2003 12:08:50 -0700
-Message-ID: <20030806190850.GF21290@matchmail.com>
-References: <3F306858.1040202@mrs.umn.edu> <20030805224152.528f2244.akpm@osdl.org> <3F310B6D.6010608@namesys.com> <20030806183410.49edfa89.diegocg@teleline.es> <20030806180427.GC21290@matchmail.com> <20030806204514.00c783d8.diegocg@teleline.es>
+From: Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>
+Subject: Re: ReiserFS problems
+Date: Wed, 6 Aug 2003 21:21:07 +0200
+Message-ID: <20030806212107.A3975@bitwizard.nl>
+References: <20030806182055.A28562@bitwizard.nl> <3F31303A.6020408@namesys.com> <3F314BE8.50300@suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15198-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15199-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20030806204514.00c783d8.diegocg@teleline.es>
+In-Reply-To: <3F314BE8.50300@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Diego Calleja Garc?a <diegocg@teleline.es>
-Cc: reiser@namesys.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: Hans Reiser <reiser@namesys.com>, Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>, reiserfs-list@namesys.com, copy@harddisk-recovery.nl
 
-On Wed, Aug 06, 2003 at 08:45:14PM +0200, Diego Calleja Garc?a wrote:
-> El Wed, 6 Aug 2003 11:04:27 -0700 Mike Fedyk <mfedyk@matchmail.com> escribi?:
-> 
-> > 
-> > Journaled filesystems have a much smaller chance of having problems after a
-> > crash.
-> 
-> I've had (several) filesystem corruption in a desktop system with (several)
-> journaled filesystems on several disks. (They seem pretty stable these days,
-> though)
-> 
-> However I've not had any fs corrution in ext2; ext2 it's (from my experience)
-> rock stable.
-> 
-> Personally I'd consider twice the really "serious" option for a serious server.
+On Wed, Aug 06, 2003 at 02:41:44PM -0400, Jeff Mahoney wrote:
+> What is the workload that is producing the horrible slowdowns?
 
-I've had corruption caused by hardware, and nothing else.  I haven't run
-into any serious bugs.
+write at 20Mb per second into files of 1Gb each. 
 
-But with servers, the larger your filesystem, the longer it will take to
-fsck.  And that is bad for uptime.  Period.
+It was reported, and you guys told me it was a bug that had 
+been fixed.  we refused to upgrade to the recommended version
+back then. But we might have gotten an upgrade due to a general
+kernel upgrade since then. But we try to keep the filesystem
+at < 90% full anyway. 
 
-I would be running ext2 also if I wasn't running so many test kernels (and
-they do oops on you), and I've been glad that I didn't have to fsck every
-time I oopsed (though I do every once in a while, just to make sure).
+Recommendation: Make that "10%" a variable, settable by the
+"reserved-for-root" parameter...
+
+Is there a way that allows me to see the fill-percentage of
+our block groups?
+
+	Roger. 
+
+-- 
++-- Rogier Wolff -- www.harddisk-recovery.nl -- 0800 220 20 20 --
+| Files foetsie, bestanden kwijt, alle data weg?!
+| Blijf kalm en neem contact op met Harddisk-recovery.nl!
