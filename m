@@ -1,44 +1,62 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: How tell what version of reiserfs my filesystem is?
-Date: Thu, 4 Apr 2002 09:10:03 +0400
-Message-ID: <20020404091003.A5663@namesys.com>
-References: <3CAAD745.447646E4@vtc.edu.hk> <20020403151813.A4949@namesys.com> <3CAB6EE8.E8B48CAB@vtc.edu.hk>
+From: The Amazing Dragon (Elliott Mitchell) <ehem@cs.pdx.edu>
+Subject: Re: Silly question, defrag
+Date: Wed, 3 Apr 2002 21:19:22 -0800 (PST)
+Message-ID: <200204040519.VAA14445@sirius.cs.pdx.edu>
+References: <3CAC3C22.30357.D03D9F@localhost>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <3CAB6EE8.E8B48CAB@vtc.edu.hk>
+In-Reply-To: <3CAC3C22.30357.D03D9F@localhost> from "rod@tpgi.com.au" at Apr 04, 2002 11:42:26 AM
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nick Urbanik <nicku@vtc.edu.hk>
-Cc: ReiserFS <reiserfs-list@namesys.com>
+To: rod@tpgi.com.au
+Cc: reiserfs-list@namesys.com
 
-Hello!
+> From: rod@tpgi.com.au
+> 
+> <snip>
+> 
+> > I have to wonder about your motives here, Hans. You are the one who stands
+> > to gain by capitalizing on newbie Unix/Linux users misunderstanding of
+> > filesystems based on their experience with DOS and Windows and here you
+> > are promoting defrag as a feature which puts your FS above others. They
+> > have learned to compulsively defrag their disks once a week and you are
+> > looking to feed their addiction. I think reiserfs is really great and a
+> > defrag/repacker will be nice but the above strikes me as a bit strange.
+> > How long has ext2 been around as the stock Linux filesystem?  More than
+> > long enough for people to have realized whether a defragger would be
+> > useful. Yet I can't think of a single distribution (of Linux or Unix in
+> > general) that comes with a defragger. Stephen Tweedie wrote one for it but
+> > nobody bothers to use it or even to include it with their distro.
 
-On Thu, Apr 04, 2002 at 05:06:48AM +0800, Nick Urbanik wrote:
+> This leaves the the only option to defrag once the file has been 
+> completed OR at some user defined interval. Some fs may try to 
+> reduce the incidence of this but cant prevent it happening. 
 
-> I have been using 2.4.19-pre5.  What does this mean in dmesg output:
-> Using r5 hash to sort names
-> ReiserFS version 3.6.25
+True. Some of the measures that are taken can be quite effective.
+Reserving 10% overhead which only root is allowed to write in is
+extremely effective with SunOS's flavor of UFS.
 
-It means your filesystem is using r5 hash. Version information is obsolette and
-will be removed soon.
+> Currently the only way to defrag an ext2 fs (or reiserfs) is a copy 
+> off, mke2fs and copy back cycle - hardly ideal.  BTW if you are 
+> interested in scripts that capable of totally framenting an ext2 
+> partition (as reported by chke2fs and demonstrated by timing a  
+> grep) and also a discussion of the problem - check the archives.
 
-> > Also with recent 2.4 kernels (2.4.17+), you can lookup this info
-> > in the /proc filesystem if you have enabled CONFIG_REISERFS_PROC_INFO.
-> I had it off.
-> About CONFIG_REISERFS_PROC_INFO, Configure.help says: "This also
-> increases amount of kernel memory required for each mount."
-> By approximately how much does it do so?  For six large reiserfs file
-> systems?
+Not true, there is a e2defrag out there. Now, e2defrag will defragment a
+filesystem, however the problem is that it greatly promotes future
+fragmentation (got to maybe 2% fragmentation after months of use, but
+within a week of running e2defrag it hit 8% fragmentation). I must
+theorize that it packs files tightly rather than using the headroom
+leading to the effect seen.
 
-+8Kb of code (ie, common for no matter how much reiserfs fses you have)
-plus ~440 bytes for each filesystem mounted for counters.
 
-Of course there is little performance hit (cpu time eaten) to
-actually increment these counters.
+--
+|\__/|\__/|\______          --=> 8-) EHM <=--          ______/|\__/|\__/|
+\    |    |       | EHeM@cs.pdx.edu      PGP 8881EF59 |       |    |    /
+  \   \   | ______| -O #include <stddisclaimer.h> O-  |______ |   /   /
+    \___\_|/82 04 A1 3C C7 B1 37 2A   E3 6E 84 DA 97 4C 40 E6\|_/___/
 
-Bye,
-    Oleg
+
