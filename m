@@ -1,58 +1,76 @@
-From: Christophe Saout <christophe@saout.de>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 13:44:59 +0200
-Message-ID: <1093520699.9004.11.camel@leto.cs.pocnet.net>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
-	 <20040825200859.GA16345@lst.de>
-	 <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>
-	 <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk>
-	 <1093467601.9749.14.camel@leto.cs.pocnet.net>
-	 <20040825225933.GD5618@nocona.random> <412DA0B5.3030301@namesys.com>
-	 <20040826112818.GL5618@nocona.random>
+Date: Thu, 26 Aug 2004 12:48:43 +0100
+Message-ID: <20040826114843.GE30449@mail.shareable.org>
+References: <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1939276887.20040826114028@tnonline.net> <20040826024956.08b66b46.akpm@osdl.org> <839984491.20040826122025@tnonline.net> <20040826032457.21377e94.akpm@osdl.org> <742303812.20040826125114@tnonline.net> <20040826035500.00b5df56.akpm@osdl.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-3o/X0P83FpY+EEiSgBeq"
-Return-path: <reiserfs-list-return-20643-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20644-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826112818.GL5618@nocona.random>
+Content-Disposition: inline
+In-Reply-To: <20040826035500.00b5df56.akpm@osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Andrea Arcangeli <andrea@suse.de>
-Cc: Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@osdl.org>
+Cc: Spam <spam@tnonline.net>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
---=-3o/X0P83FpY+EEiSgBeq
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Andrew Morton wrote:
+> No.  All of the applications which you initially identified can be
+> implemented by putting the various bits of data into a single file and
+> getting applications to agree on the format of that file.
+> 
+> For example, some image file formats already support embedded metadata, do
+> they not?
 
-Am Donnerstag, den 26.08.2004, 13:28 +0200 schrieb Andrea Arcangeli:
+Same for MP3s and their metadata tags.  _That_ kind of data should be
+part of the contents of the file: it is intended to be transported.
 
-> then what's the difference in having the plugin fixed in stone into
-> reiserfs? That's my whole point.
+It is useful to auto-extract it from the file's data stream, using
+format-specific programs, and offer that metadata in separate files
+where it is easy to use e.g. by shell scripts and indexing programs,
+which can then work independently of file formats.
 
-I think you're not exactly understanding what a reiser4 "plugin" is.
+That kind of metadata should be _derived_ from the file's data stream,
+and ideally the extraction should be automatic, with userspace
+assistance.  It may be useful for the filesystem to record what's
+extracted, for fast access and indexing.
 
-Currently plugins are not modules. It just means that there's a defined
-interface between the reiser4 core and the plugins. Just like you could
-see filesystems as "VFS plugins".
+The same applies to thumbnails.  The only difference is that these may
+take longer to compute.  But they're the same thing: something
+calculated from the file's data stream, which may (or may not) be
+stored in the filesystem so it doesn't have to be recomputed each
+time.  It might even be worth expiring the metadata from disk if it
+hasn't been used for a while and can be recomputed.
 
-In fact, reiser4 plugins are
-- users of the reiser4 core API
-- some of them are implementing Linux VFS methods (thus being some sort
-of glue code between the Reiser4 storage tree and the Linux VFS)
+These are the same as looking into archives or structured files.  The
+only difference is that the unpacked views might not be stored on the
+filesystem (but they might be, if the filesystem knows how to cache
+views for faster future access).[*]
+
+Those are all examples of data derived from the data stream of a flat
+file.  They are useful applications, and all work fine with FTP, cp,
+cat <a >b, and email attachments, _no application changes required_.
+
+There's another kind of metadata which isn't intended for transport.
+That would be things like the classic attributes: permissions,
+timestamps.  It would also include things like author information when
+the file format cannot carry it.
+
+-- Jamie
 
 
---=-3o/X0P83FpY+EEiSgBeq
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQBBLc06ZCYBcts5dM0RAqmEAKCjJESdMq2LaHs42lDP4ePeYdtv/ACfaRLi
-OhTM+T+ZOXDAS6nlQTZhjKk=
-=AQlw
------END PGP SIGNATURE-----
-
---=-3o/X0P83FpY+EEiSgBeq--
-
+[*] - A fancier variant, which is hard without good fs support, it
+writing to structured files through a view.  I.e. modifying files
+inside a .tar.gz, or (this is useful) inside an
+{MS,Open,Gnome,K}Office container file or *SQL database table.  To do
+this efficiently, the file's main data stream is regenerated on demand
+from the view's data.  As I said, it requires good, special fs support
+to do it efficiently (fancy caching).  With appropriate userspace
+libraries you can make apps work with container files on all other
+OSes (just like .tar.gz and *Office containers at the moment) but are
+significantly faster to work with on Linux (no need to serialise and
+(de-)compress except on demand) and more visible to the standard unix
+scripting tools.
