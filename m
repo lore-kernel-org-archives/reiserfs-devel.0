@@ -1,43 +1,32 @@
-From: Hendrik Visage <hvisage@envisage.co.za>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: what do you do that stresses your filesystem?
-Date: Mon, 23 Dec 2002 14:03:57 +0200
-Message-ID: <20021223120357.GC13460@hvs.envisage.co.za>
-References: <3E06F360.7000708@namesys.com>
+Date: Mon, 23 Dec 2002 15:10:45 +0300
+Message-ID: <20021223151045.A7697@namesys.com>
+References: <3E06F360.7000708@namesys.com> <20021223120357.GC13460@hvs.envisage.co.za>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12203-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12204-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3E06F360.7000708@namesys.com>
+In-Reply-To: <20021223120357.GC13460@hvs.envisage.co.za>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
+To: Hendrik Visage <hvisage@envisage.co.za>
 Cc: ReiserFS <reiserfs-list@namesys.com>
 
-On Mon, Dec 23, 2002 at 02:28:32PM +0300, Hans Reiser wrote:
-> We were discussing how to optimize reiser4 best, and came to realize 
-> that us developers did not have a good enough intuition for what users 
-> do that stresses their filesystem enough that they care about its 
-> performance.
+Hello!
 
+On Mon, Dec 23, 2002 at 02:03:57PM +0200, Hendrik Visage wrote:
 
-> Starting up complex and big applications like xemacs and mozilla would 
-> be another.  Yes?
+> Another slowness (especially with reiserfs3 without the notails option) 
+> is "dd if=/dev/zero of=/swapfile bs=1k count=1024k"
 
-kernel/mozilla/KDE3 recompiles :)
+Well, I'd say that artrifical limiting of amount of data to be transferred
+is a cheating ;).
+Reiser4 is not vulnerable to this, though.
 
-Seriously though, those are massive packages that causes lots of I/Os.
-The Lunar/Sorcerer/SourceMage solution was a tmpfs to extract the
-sources to, and compile in the tmpfs. Thus, it would be interesting to 
-compare the two scenarios with each other.
-
-Another slowness (especially with reiserfs3 without the notails option) 
-is "dd if=/dev/zero of=/swapfile bs=1k count=1024k"
-
-Hendrik
-
-
-
+Bye,
+    Oleg
