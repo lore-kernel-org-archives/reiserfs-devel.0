@@ -1,152 +1,101 @@
-From: =?iso-8859-1?Q?Oscar_Garc=EDa?= <ogarcia@atlasit.com>
-Subject: Problem with ReiserFS + NFS + Convolo
-Date: Sat, 14 Jun 2003 14:29:21 +0200
-Message-ID: <003001c33270$967bd650$1501a8c0@int.atlassolutions.net>
-Reply-To: =?iso-8859-1?Q?Oscar_Garc=EDa?= <ogarcia@atlasit.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Problem with ReiserFS + NFS + Convolo
+Date: Sat, 14 Jun 2003 16:34:52 +0400
+Message-ID: <20030614123452.GA32756@namesys.com>
+References: <003001c33270$967bd650$1501a8c0@int.atlassolutions.net>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_002D_01C33281.58D17D80"
-Return-path: <reiserfs-list-return-14539-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="Nq2Wo0NMKNjxTN9z"
+Return-path: <reiserfs-list-return-14540-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <003001c33270$967bd650$1501a8c0@int.atlassolutions.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
-Cc: eramos@atlasit.com
+To: Oscar Garc?a <ogarcia@atlasit.com>
+Cc: reiserfs-list@namesys.com, eramos@atlasit.com
 
-------=_NextPart_000_002D_01C33281.58D17D80
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+--Nq2Wo0NMKNjxTN9z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi,
+He;;p!
 
-I'm running  a linux cluster with convolo and two nodes. One of the =
-services I offer from this cluster is nfs to a bunch of solaris =
-machines. Now every so often I get an error like this:
+On Sat, Jun 14, 2003 at 02:29:21PM +0200, Oscar Garc?a wrote:
 
+> I'm running  a linux cluster with convolo and two nodes. One of the services I offer from this cluster is nfs to a bunch of solaris machines. Now every so often I get an error like this:
+> Jun 13 13:29:44 cluster1 kernel: 0: reiserfs_unlink
+> Jun 13 13:29:44 cluster1 kernel: reiserfs[3736]: assertion !( !truncate && ( inode -> u.reiserfs_i.i_flags & i_link_saved_un
+> link_mask ) ) failed at super.c:238:add_save_link: saved link already exists for unlinked inode c16f7
+> And the uptime of the machine begins to go up, and up, and up... As soon as this happens processes begin to get blocked in the wait queue of the kernel, and the machine is still up but gives no service.
+> 2x Compaq DL360G2, 2xPIII 14.Ghz, 2Gb RAM, 2x18Gb HDD, 1 QL2000 FC Adapter
+> 1x External Storage of 1.4 Tb
+> Running RedHat 7.2, kernel 2.4.18 #12 SMP with patches for Convolo 2.0 (www.missioncrtiticallinux.com)
 
-Machine 1
+Hm. Sounds like you was bitten by iget4() race bug.
+You need to upgrade to 2.4.21 or to apply the patch I am attaching here.
 
-Jun 13 13:29:44 cluster1 kernel: 0: reiserfs_unlink
-Jun 13 13:29:44 cluster1 kernel: reiserfs[3736]: assertion !( !truncate =
-&& ( inode -> u.reiserfs_i.i_flags & i_link_saved_un
-link_mask ) ) failed at super.c:238:add_save_link: saved link already =
-exists for unlinked inode c16f7
-Jun 13 13:29:44 cluster1 kernel: invalid operand: 0000
-Jun 13 13:29:44 cluster1 kernel: CPU:    0
-Jun 13 13:29:44 cluster1 kernel: EIP:    0010:[reiserfs_panic+41/96]    =
-Not tainted
-Jun 13 13:29:44 cluster1 kernel: EIP:    0010:[<c01bb459>]    Not =
-tainted
-Jun 13 13:29:44 cluster1 kernel: EFLAGS: 00010296
-Jun 13 13:29:44 cluster1 kernel: eax: 000000c4   ebx: c02b4000   ecx: =
-f73ae000   edx: 00000001
-Jun 13 13:29:44 cluster1 kernel: esi: 00000000   edi: da597dfc   ebp: =
-00000000   esp: da597d48
-Jun 13 13:29:44 cluster1 kernel: ds: 0018   es: 0018   ss: 0018
-Jun 13 13:29:44 cluster1 kernel: Process nfsd (pid: 3736, =
-stackpage=3Dda597000)
-Jun 13 13:29:44 cluster1 kernel: Stack: c029bad0 c03783a0 c02b4000 =
-da597d6c cbbb8420 c02f5354 c01b9139 00000000
-Jun 13 13:29:44 cluster1 kernel:        c02b4000 00000e98 000000ee =
-000c16f7 0008a2eb 000bfc24 00000000 00000000
-Jun 13 13:29:44 cluster1 kernel:        002cffff 000107e0 002cffff =
-00010fd4 00000001 00000000 00000000 00000000
-Jun 13 13:29:44 cluster1 kernel: Call Trace: [add_save_link+185/592] =
-[reiserfs_unlink+384/528] [reiserfs_fh_to_dentry+384/41
-6] [in_group_p+30/48] [vfs_permission+121/288]
-Jun 13 13:29:44 cluster1 kernel: Call Trace: [<c01b9139>] [<c01aea50>] =
-[<c01b1cd0>] [<c0124dfe>] [<c0143719>]
-Jun 13 13:29:44 cluster1 kernel:    [vfs_unlink+287/384] =
-[nfsd_unlink+386/464] [nfsd3_proc_remove+187/208] [nfsd_dispatch+19
-3/429] [svc_process+1063/1599] [nfsd+522/832]
-Jun 13 13:29:44 cluster1 kernel:    [<c01457bf>] [<c018d622>] =
-[<c0191d5b>] [<c01883d1>] [<c0288947>] [<c01881da>]
-Jun 13 13:29:44 cluster1 kernel:    [kernel_thread+38/48] [nfsd+0/832]
-Jun 13 13:29:44 cluster1 kernel:    [<c0105836>] [<c0187fd0>]
-Jun 13 13:29:44 cluster1 kernel:
-Jun 13 13:29:44 cluster1 kernel: Code: 0f 0b 68 a0 83 37 c0 85 f6 74 12 =
-66 8b 46 08 25 ff ff 00 00
-Jun 13 13:29:55 cluster1 kernel:  <5>nfs: server lhnfs not responding, =
-still trying
-Jun 13 13:29:56 cluster1 kernel: nfs: server lhnfs not responding, still =
-trying
+Bye,
+    Oleg
 
-Machine 2
+--Nq2Wo0NMKNjxTN9z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="2420-race-fix.diff"
 
-Jun 13 14:23:08 cluster2 kernel: 0: reiserfs_unlink
-Jun 13 14:23:08 cluster2 kernel: reiserfs[4039]: assertion !( !truncate =
-&& ( inode -> u.reiserfs_i.i_f
-lags & i_link_saved_unlink_mask ) ) failed at super.c:238:add_save_link: =
-saved link already exists for
- unlinked inode c1751
-Jun 13 14:23:08 cluster2 kernel: invalid operand: 0000
-Jun 13 14:23:08 cluster2 kernel: CPU:    1
-Jun 13 14:23:08 cluster2 kernel: EIP:    0010:[reiserfs_panic+41/96]    =
-Not tainted
-Jun 13 14:23:08 cluster2 kernel: EIP:    0010:[<c01bb459>]    Not =
-tainted
-Jun 13 14:23:08 cluster2 kernel: EFLAGS: 00010296
-Jun 13 14:23:08 cluster2 kernel: eax: 000000c4   ebx: c02b4000   ecx: =
-f7390000   edx: 00000001
-Jun 13 14:23:08 cluster2 kernel: esi: 00000000   edi: f5bb5dfc   ebp: =
-00000000   esp: f5bb5d48
-Jun 13 14:23:08 cluster2 kernel: ds: 0018   es: 0018   ss: 0018
-Jun 13 14:23:08 cluster2 kernel: Process nfsd (pid: 4039, =
-stackpage=3Df5bb5000)
-Jun 13 14:23:08 cluster2 kernel: Stack: c029bad0 c03783a0 c02b4000 =
-f5bb5d6c d80235e0 c02f5354 c01b9139
- 00000000
-Jun 13 14:23:08 cluster2 kernel:        c02b4000 00000fc7 000000ee =
-000c1751 0008a2eb 000bfc24 00000000
- 00000000
-Jun 13 14:23:08 cluster2 kernel:        002cffff 000107e0 002cffff =
-00010f14 00000001 00000000 00000000
- 00000000
-Jun 13 14:23:08 cluster2 kernel: Call Trace: [add_save_link+185/592] =
-[reiserfs_unlink+384/528] [reiser
-fs_fh_to_dentry+384/416] [in_group_p+30/48] [vfs_permission+121/288]
-Jun 13 14:23:08 cluster2 kernel: Call Trace: [<c01b9139>] [<c01aea50>] =
-[<c01b1cd0>] [<c0124dfe>] [<c01
-43719>]
-Jun 13 14:23:08 cluster2 kernel:    [vfs_unlink+287/384] =
-[nfsd_unlink+386/464] [nfsd3_proc_remove+187/
-208] [nfsd_dispatch+193/429] [svc_process+1063/1599] [nfsd+522/832]
-Jun 13 14:23:08 cluster2 kernel:    [<c01457bf>] [<c018d622>] =
-[<c0191d5b>] [<c01883d1>] [<c0288947>] [
-<c01881da>]
-Jun 13 14:23:08 cluster2 kernel:    [kernel_thread+38/48] [nfsd+0/832]
-Jun 13 14:23:08 cluster2 kernel:    [<c0105836>] [<c0187fd0>]
-Jun 13 14:23:08 cluster2 kernel:
-Jun 13 14:23:08 cluster2 kernel: Code: 0f 0b 68 a0 83 37 c0 85 f6 74 12 =
-66 8b 46 08 25 ff ff 00 00
+===== fs/reiserfs/inode.c 1.42 vs edited =====
+--- 1.42/fs/reiserfs/inode.c	Thu Feb 13 15:42:42 2003
++++ edited/fs/reiserfs/inode.c	Thu Feb 20 17:23:24 2003
+@@ -20,6 +20,10 @@
+ static int reiserfs_get_block (struct inode * inode, long block,
+ 			       struct buffer_head * bh_result, int create);
+ 
++/* This spinlock guards inode pkey in private part of inode
++   against rae between find_actor() vs reiserfs_read_inode2 */
++static spinlock_t keycopy_lock = SPIN_LOCK_UNLOCKED;
++
+ void reiserfs_delete_inode (struct inode * inode)
+ {
+     int jbegin_count = JOURNAL_PER_BALANCE_CNT * 2; 
+@@ -898,8 +902,9 @@
+     bh = PATH_PLAST_BUFFER (path);
+     ih = PATH_PITEM_HEAD (path);
+ 
+-
++    spin_lock(&keycopy_lock);
+     copy_key (INODE_PKEY (inode), &(ih->ih_key));
++    spin_unlock(&keycopy_lock);
+     inode->i_blksize = PAGE_SIZE;
+ 
+     INIT_LIST_HEAD(&inode->u.reiserfs_i.i_prealloc_list) ;
+@@ -1220,10 +1225,27 @@
+ 				unsigned long inode_no, void *opaque )
+ {
+     struct reiserfs_iget4_args *args;
++    int retval;
+ 
+     args = opaque;
++    /* We protect against possible parallel init_inode() on another CPU here. */
++    spin_lock(&keycopy_lock);
+     /* args is already in CPU order */
+-    return le32_to_cpu(INODE_PKEY(inode)->k_dir_id) == args -> objectid;
++    if (le32_to_cpu(INODE_PKEY(inode)->k_dir_id) == args -> objectid)
++	retval = 1;
++    else
++	/* If The key does not match, lets see if we are racing
++	   with another iget4, that already progressed so far
++	   to reiserfs_read_inode2() and was preempted in
++	   call to search_by_key(). The signs of that are:
++	     Inode is locked
++	     dirid and object id are zero (not yet initialized)*/
++	retval = (inode->i_state & I_LOCK) &&
++		 !INODE_PKEY(inode)->k_dir_id &&
++		 !INODE_PKEY(inode)->k_objectid;
++
++    spin_unlock(&keycopy_lock);
++    return retval;
+ }
+ 
+ struct inode * reiserfs_iget (struct super_block * s, const struct cpu_key * key)
 
-And the uptime of the machine begins to go up, and up, and up... As soon =
-as this happens processes begin to get blocked in the wait queue of the =
-kernel, and the machine is still up but gives no service.
-
-There's something more that maybe it's linked to this. These machines =
-restart on their own every so often. I think its a hardware thing, but =
-I'm not sure. I'm handling this with compaq. The problem here is that =
-this hard reboots mayde degrade the filesystem.=20
-
-This error happened 10h after a reiserfsck --fix-fixable that fixed 2 =
-minor things.
-
-My setup uis the following:
-
-2x Compaq DL360G2, 2xPIII 14.Ghz, 2Gb RAM, 2x18Gb HDD, 1 QL2000 FC =
-Adapter
-1x External Storage of 1.4 Tb
-Running RedHat 7.2, kernel 2.4.18 #12 SMP with patches for Convolo 2.0 =
-(www.missioncrtiticallinux.com)
-
-CCRTVi-cluster2:/var/log:#gcc -v
-Reading specs from /usr/lib/gcc-lib/i386-redhat-linux/2.96/specs
-gcc version 2.96 20000731 (Red Hat Linux 7.1 2.96-98)
-
-Any help would be very appreciated!
-------=_NextPart_000_002D_01C33281.58D17D80--
-
+--Nq2Wo0NMKNjxTN9z--
