@@ -1,39 +1,77 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: ReiserFS causes CPU high usage?!
-Date: Fri, 28 Feb 2003 10:51:45 +0300
-Message-ID: <20030228105145.C1234@namesys.com>
-References: <200302280011.14488.liviu.voicu@huji.ac.il>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: Re: [PATCH] new data logging and quota patches available
+Date: Fri, 28 Feb 2003 09:10:20 +0100
+Message-ID: <3E5F196C.1040001@mb.tu-ilmenau.de>
+References: <1045870331.16048.325.camel@tiny.suse.com>	 <200302221341.23799.Dieter.Nuetzel@hamburg.de>	 <1045926958.16042.366.camel@tiny.suse.com>	 <1045930351.16042.377.camel@tiny.suse.com>	 <3E581AD7.30000@mb.tu-ilmenau.de>  <3E581E07.3050407@mb.tu-ilmenau.de>	 <1046020695.16048.409.camel@tiny.suse.com>	 <3E59787F.2030009@mb.tu-ilmenau.de> <1046095718.16047.440.camel@tiny.suse.com> <3E5A5A31.5070008@mb.tu-ilmenau.de> <3E5A9A7A.5040806@mb.tu-ilmenau.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12968-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12969-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200302280011.14488.liviu.voicu@huji.ac.il>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Voicu Liviu <liviu.voicu@huji.ac.il>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-Hello!
+On 02/24/2003 11:19 PM, Manuel Krause wrote:
+> On 02/24/2003 06:45 PM, Manuel Krause wrote: 
+>> On 02/24/2003 03:08 PM, Chris Mason wrote:
+>>> On Sun, 2003-02-23 at 20:42, Manuel Krause wrote:
+>>>> On 02/23/2003 06:18 PM, Chris Mason wrote: 
+>>>>
+>> [...]
+>>
+>>>> I see a performance decrease with my copies in data=ordered mode by 
+>>>> about 7.5% compared to the 2.4.20-pre10-data-logging (it's about 19% 
+>>>> decrease for 2.4.21-pre4 since 2.4.19-data-logging). What is causing 
+>>>> this? Partly I can blame it on the disk content distribution that 
+>>>> changed. If I removed the kinoded related patches would the 
+>>>> throughput rate increase?
+>>>
+>>> That's odd, tests here show performance increasing but I'm testing
+>>> 2.4.21-pre4 + old data logging vs 2.4.21-pre4 + new data logging
+>>>
+>>> Could I talk you into trying to narrow this down?  Perhaps starting with
+>>> a benchmark of the same dataset on both kernels?  The new data logging
+>>> code kicks kreiserfsd in sooner to service async commits.  So if your
+>>> benchmark lasts < 30 seconds, it is possible the older kernels never did
+>>> writes at all during the run.
+>>
+>> No, the copy usually takes about 9 min. to complete and I umount the 
+>> partitions to take (more) care everything went over correctly.
+> 
+> (And this time is included when I compare the timing values.)
+> 
+>> Yes, I can retest it with the old data-logging, too. But before just 
+>> one clarification for "old data logging": Do you mean just the kinoded 
+>> patches removed or even data-logging-35 instead of -36 ?
+> 
+> So you seem to agree...? ;-) O.k.
+> 
+> Comparing data-logging-35 vs data-logging-36+kinoded-9+dirty_inode I 
+> have a performance increase of 2.5% for the new data-logging. Like you 
+> say above.
 
-On Fri, Feb 28, 2003 at 12:11:14AM +0200, Voicu Liviu wrote:
+But... though you were right with 2.4.21 data-logging performance 
+relations: --> What was causing that performance loss between 2.4.19 
++data-logging and now???
 
-> Any clue what is going on?
-> Maybe ReiserFS uses the cpu harder?
+A usual problem in my mind: Due to performance issues I would like to 
+downgrade -- due to recent bugfixes and your additional enhancements, I 
+would go with a performance loss of ~16.5%...
 
-reiserfs is using more CPU than ext2/ext3. It's maintaining its metadata in
-balanced tree. Each tree update often requires shifting of some of the data
-between or inside of tree nodes. That's where CPU time is going.
+Should I really need to retest all kernels without data-logging patches 
+on here to get the truth?
 
 
-> I have to fix the CPU usage icon_sad.gif I makes me crazy...simple emerge 
-> loads the CPU to 90 ~ 95%
+Mmmh. No, I think you should know the reasons and explain them when I'm 
+just clueless upon my results...
 
-Make sure you do not have "CONFIG_REISERFS_CHECK" enabled in you kernel config,
-as this enables lots of extra checks in reiserfs code that consume even more CPU.
 
-Bye,
-    Oleg
+Best regards to you and all others,
+
+
+Manuel
+
