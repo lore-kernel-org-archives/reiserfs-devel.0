@@ -1,69 +1,80 @@
-From: "Tom Evans" <tom@23palmer.net>
-Subject: RE: Bitmap alignment issues....
-Date: Thu, 10 Feb 2005 10:29:36 -0500
-Message-ID: <3p803d$37lqf@smtp05.mrf.mail.rcn.net>
-References: <20050210084002.GP7482@backtop.namesys.com>
+From: Rikard Johnels <rikjoh@norweb.se>
+Subject: Re: Failed ReiserFS
+Date: Thu, 10 Feb 2005 19:27:24 +0100
+Message-ID: <200502101927.25189.rikjoh@norweb.se>
+References: <200502100535.01814.rikjoh@norweb.se> <200502100756.48506.rikjoh@norweb.se> <1108044080.3900.38.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050210084002.GP7482@backtop.namesys.com>
+In-Reply-To: <1108044080.3900.38.camel@tribesman.namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: 'Alex Zarochentsev' <zam@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
+On Thursday 10 February 2005 15.01, Vladimir Saveliev wrote:
+> Hello
+>
+> On Thu, 2005-02-10 at 09:56, Rikard Johnels wrote:
+> > On Thursday 10 February 2005 07.26, Vladimir Saveliev wrote:
+> > > Hello
+> > >
+> > > On Thu, 2005-02-10 at 07:35, Rikard Johnels wrote:
+> > > > Hello all.
+> > > > I am new to the list so please have patience with me for maybe asking
+> > > > obvious questions.
+> > > >
+> > > > I tried a recovery as described in the manpages;
+> > > >
+> > > > talen:~ # reiserfsck --rebuild-tree -S /dev/hdc1
+> > > > --logfile /root/reisercheck.logfile
+> > >
+> > > Why did you use -S?
+> > >
+> > > > It ran as excpected (i hope) right up until the end where it barfed
+> > > > with;
+> > > >
+> > > > Pass 3a (looking for lost dir/files):
+> > > > Looking for lost directories:
+> > > > Looking for lost files:
+> > > > lost+found.c 348 pass_3a_look_for_lost
+> > > > look_for_lost: The entry 'lost+found' could not be found in the root
+> > > > directory.
+> > > > Aborted
+> > > >
+> > > > What is wrong?
+> > >
+> > > You have hit reiserfsck bug.
+> > >
+> > > > What can i do?
+> > >
+> > > Which reiserfsck do you have?
+> >
+> > reiserfsck 3.6.13
+> > I used -S to scan the whole partition, as per man page
+> > A bug heh.. :(
+> > So is there any fix for it?
+>
+> Please try latest reiserfsck.
+> ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.19.tar.gz
 
+Same problem: 
 
-I am using what was the current 2.6.11 development line with the 
--mm patch series (that's what includes reiser4).
- 
-I am not certain if any of those patches were "required" - I just
-needed it for reiser4 support.
+ lost+found.c 348 pass_3a_look_for_lost
+look_for_lost: The entry 'lost+found' could not be found in the root directory
+Aborted
 
-I also may have spoke too soon about the patch - I tried doing a full
-kernel build and at some time during the process, it crashed and
-then that kernel directory started behaving oddly.
+This is getting more than frustrating...
+-- 
 
-I received a kernel oops - don't have it with me, and then accesses to
-that directory would "hang".
+         /Rikard
 
-
-I realize my setup may be complicated, I am using a beta kernel, on a
-non-x86,
-with reiser4 on a LVM partition, so anything in that chain can be
-responsible.
-
-I had been running that kernel for several days without issues (except for
-the alignment faults).
-
-Is there a recommended kernel to use with reiser4?
-
-Thanks again,
-
-...tom
-
------Original Message-----
-From: Alex Zarochentsev [mailto:zam@namesys.com] 
-Sent: Thursday, February 10, 2005 3:40 AM
-To: Thomas Evans
-Cc: reiserfs-list@namesys.com
-Subject: Re: Bitmap alignment issues....
-
-On Thu, Feb 10, 2005 at 12:10:14AM -0500, Thomas Evans wrote:
-> 
-> Thanks for the patch the helped with the vast majority of the fixups.
-> 
-> Now there are just a trickle occurring in various places - would it be 
-> helpful for me to track them down, or are there folks who are already
-pursuing this?
-
-which kernel are you using for alpha axp ?   did it require additional
-patches to vanilla kernel?
-
-> ...tom
-> 
---
-Alex.
+---------------------------------------------------------------
+Rikard Johnels          email   : rikjoh@norweb.se
+                        Web     : http://www.rikjoh.com/users/rikjoh
+                        Mob     : +46 735 05 51 01
+                        PGP     : 0x461CEE56
+---------------------------------------------------------------
