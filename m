@@ -1,39 +1,43 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: On a free repacker
-Date: Wed, 26 May 2004 21:10:27 -0700
-Message-ID: <40B56A33.9080306@namesys.com>
-References: <20040519192831.GL24604@nysv.org> <200405201028.13184.reiser@namesys.com> <20040520184054.GR24604@nysv.org> <40AEBBA0.6060606@namesys.com> <20040521184451.GS24604@nysv.org> <200405211902.i4LJ25RI016978@turing-police.cc.vt.edu> <20040524203016.GA4990@nysv.org>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: mount throws a nikita-3228 on me
+Date: Wed, 26 May 2004 23:40:50 +0300
+Message-ID: <20040526204050.GI4990@nysv.org>
+References: <20040525080001.GF4990@nysv.org> <1085473856.1915.99.camel@tribesman.namesys.com> <20040525211133.GG4990@nysv.org> <20040526052052.GO1583@backtop.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18859-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18860-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040524203016.GA4990@nysv.org>
+Content-Disposition: inline
+In-Reply-To: <20040526052052.GO1583@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
-Cc: Valdis.Kletnieks@vt.edu, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alex Zarochentsev <zam@namesys.com>
+Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
 
-Markus T=F6rnqvist wrote:
+On Wed, May 26, 2004 at 09:20:53AM +0400, Alex Zarochentsev wrote:
+>
+>There is a delay (up to 24h) in the public BK update. 
 
->On Fri, May 21, 2004 at 03:02:05PM -0400, Valdis.Kletnieks@vt.edu wrote:
->
-> =20
->
->>Larry McVoy's BitKeeper licensing might be an interesting model to follow.
->>Not sure if you can make it work for a repacker thought....
->>   =20
->>
->
->I must look into this. (Note, you can also enlighten me on this, since
->I don't think I'll look into it yet).
->
->All I know about BitKeeper is that it's not as simple to use as subversion
->and subversion is free in all senses of the word. So I don't use BK.
->And I wouldn't if Namesys wouldn't force me.
->
-> =20
->
-we just follow linus....
+OK. I tried it with what was suggested on the list.
+It did not, however work. I added the lines to reiser4.h; should I
+have seen some better debug info? I just did a quick boot, so I
+may have missed something...
+
+I understand times have been hectic at Namesys, so just keep on
+trying and I'll keep on testing and telling you what's up :)
+
+But I understood from IRC that this problem should really be fixed?
+So am I doing something wrong here?
+
+I just noted that I don't have large keys enabled in the kernel.
+Must have missed that one. Anyway, still it fails and says small
+keys are supported, alone.
+
+Thanks for the help, though, and I'll get back to you
+
+-- 
+mjt
+
