@@ -1,48 +1,79 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: viewprinting processes and process oriented permissions got funded
- by DARPA
-Date: Tue, 13 Apr 2004 20:34:54 -0500
-Message-ID: <407C953E.2080505@slaphack.com>
-References: <407C304F.4080804@namesys.com>
+From: Grant Miner <mine0057@mrs.umn.edu>
+Subject: Re: Reiser4 can't compile glibc
+Date: Tue, 13 Apr 2004 20:54:21 -0500
+Message-ID: <407C99CD.5060205@mrs.umn.edu>
+References: <Pine.LNX.4.21.0404121740250.13254-100000@mlf.linux.rulez.org> <1081866113.1538.45.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17913-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17914-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <407C304F.4080804@namesys.com>
+In-Reply-To: <1081866113.1538.45.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Reiserfs List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Thanks. I put on that patch and it fixes my make problem.
 
-I don't know how relevant this is to the discussion about
-filesystem-based security, but one thing I've wanted to do is limit huge
-portions of a program in security.  Imagine a browser that let
-Javascript play with everything _inside_ the browser, but had to go
-through a common interface before it could create files or connect out?
-~ At least with the files, it gives a chance to prompt the user.
+Vladimir Saveliev wrote:
 
-In general, I like that better than I like parsing out "bad code".  But
-I have never seen a method to create something like that.
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+>Hello
+>
+>On Mon, 2004-04-12 at 20:53, Szakacsits Szabolcs wrote:
+>  
+>
+>>What timestamp resolution Reiser4 has? Ext[23] can't compile gcc because
+>>[kernel bugs] and it doesn't have on-disk high resolution timestamps
+>>thus the dependency during compilation breaks.
+>>
+>>But somehow I doubt this would be the case, all modernish filesystem
+>>designed in the last 10 years has at least nanosec resolution.
+>>
+>>    
+>>
+>yes, reiser4 by default has the same time resolution as ext[23] and
+>reiserfs.
+>However, I think that i found the problem already. The attached patch
+>for fs/reiser4/plugin/item/tail.c should help.
+>
+>
+>  
+>
+>>	Szaka
+>>
+>>
+>>    
+>>
+>>------------------------------------------------------------------------
+>>
+>>--- tail.c~	2004-04-13 18:18:52.000000000 +0400
+>>+++ tail.c	2004-04-13 18:20:14.000000000 +0400
+>>@@ -463,12 +463,18 @@
+>> 	}
+>> 
+>> 	inode = mapping->host;
+>>-	if (get_key_offset(&f->key) > inode->i_size)
+>>+	if (get_key_offset(&f->key) > inode->i_size) {
+>>+		assert("vs-1649", f->user == 1);
+>> 		INODE_SET_FIELD(inode, i_size, get_key_offset(&f->key));
+>>-	inode->i_ctime = inode->i_mtime = CURRENT_TIME;
+>>-	result = reiser4_update_sd(inode);
+>>-	if (result)
+>>-		return result;
+>>+	}
+>>+	if (f->user != 0) {
+>>+		/* this was writing data from user space. Update timestamps, therefore. Othrewise, this is tail
+>>+		   conversion where we should not update timestamps */
+>>+		inode->i_ctime = inode->i_mtime = CURRENT_TIME;
+>>+		result = reiser4_update_sd(inode);
+>>+		if (result)
+>>+			return result;
+>>+	}
+>> 
+>> 	/* FIXME-VS: this is temporary: the problem is that bdp takes inodes
+>> 	   from sb's dirty list and it looks like nobody puts there inodes of
+>>    
+>>
 
-iQIVAwUBQHyVPngHNmZLgCUhAQKweA/9HzP90oiJCFydU77Ga7sYimfwHzeq3XPM
-byTiGWip0ro93ZOxAm/7O5wwCp4DlEZYL7+Su43VVfjeSP5Kz3KwmCN6GjO7BUO+
-mZORAGRoe9H0Uk8W5weTQJjhn8KYXpm8R6Ls8wu9AE0xWiLd1gqsukLoekHQjt+Z
-JrN6r7ETrXQ5rN1jaYSCC3CWzX8u0HJLmwpdNCcfhMgQ70gSUgmRjcXyIl6+d7Y+
-RyzTjMrv6i6sbw8MwHnWH2LLy26NeHt5xdr9V5CTsLEORr2wdBjATxjQC0TzQxpu
-yB/cRLDxrtsRkaYhoUUnzFIR5C6EHauPXpbevF7Yl7E4FpJQhBH7jcAbhHztKP0U
-+yDZylbj+7cTcZ7Kd9CISDX3QW0Zgl0KSWihCEtMUR/z+QHpYbHfveYZSZioCPoK
-kMUmYsg6YHUQKCwrwfrEqZYZJgS3k71/iDdpDQCQBnMW4ZAHd0MWNk4ApsdTp8N3
-1sV7UCqXPfMERMjrdeP+P/aH5h3/vCvtEUkquQVqb7C124pxrXD0nL8mhebBMVey
-mZFGqwdprUVNLhwkV8iqz2/WMqrnZt8Q2hnZybXU2dtWe77ffGBbQwb1jJgE1OZJ
-dK6ET/B0Ppy1gu9Up93Qu1BeGiwo7Jd2cJjjl0av7jM7GmbuxcqxNo5tzPkuWRHI
-S3TJpnBStIM=
-=d1qP
------END PGP SIGNATURE-----
