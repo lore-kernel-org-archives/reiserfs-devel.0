@@ -1,40 +1,35 @@
-From: wolfgang.glas@ev-i.at
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: kernel loop with lseek + LFS on reiser partition.
-Date: Mon, 22 Apr 2002 13:30:58 +0200
-Message-ID: <OF6E1F14ED.2ACEFBDE-ONC1256BA3.003EF743@ev-i.at>
+Date: Mon, 22 Apr 2002 16:10:07 +0400
+Message-ID: <20020422161007.A885@namesys.com>
+References: <OF6E1F14ED.2ACEFBDE-ONC1256BA3.003EF743@ev-i.at>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10118-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10119-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <OF6E1F14ED.2ACEFBDE-ONC1256BA3.003EF743@ev-i.at>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Oleg Drokin <green@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: wolfgang.glas@ev-i.at
 Cc: reiserfs-list@namesys.com
 
-OK, The program terminates.
-During lunchtime, I gave it a try and what I've got is:
+Hello!
 
-/home/wglas/tmp > gcc -D=5FLARGEFILE64=5FSOURCE -D=5FFILE=5FOFFSET=5FBITS=
-=3D64=20
--D=5FGNU=5FSOURCE seek.c
-/home/wglas/tmp > time ./a.out
+On Mon, Apr 22, 2002 at 01:30:58PM +0200, wolfgang.glas@ev-i.at wrote:
 
-real    11m35.661s
-user    0m0.000s
-sys     11m32.780s
+> OK, The program terminates.
 
-Seems to scale linear with CPU power......
+Good.
 
-kernel: 2.4.18+speedup patches.
+> Seems to scale linear with CPU power......
 
-   Wolfgang
+As expected. I am experimenting in 2 directions currently:
+One is to speed up the lenghtly operation itself ( got cpu time spent down
+to 8 seconds already, but some problems still persists).
+Another one is to simply allow for this process to be terminated.
 
---
-Dr. Wolfgang Glas                        EV-i Informationstechnologie=20
-GmbH.
-Gesch=E4ftsf=FChrer                          Sebastian-Kneipp-Weg 17
-Wolfgang.Glas@ev-i.at                    A-6020 Innsbruck/Austria
-phone: ++43-512-284883-2                 fax: ++43-512-281624-31
-
+Bye,
+    Oleg
