@@ -1,165 +1,73 @@
-From: George Beshers <gbeshers@comcast.net>
-Subject: Re: viewprinting: what format should views be stored in?
-Date: Wed, 18 Aug 2004 15:20:14 -0400
-Message-ID: <4123ABEE.9020001@comcast.net>
-References: <20040818075216.B920D15DBC@mail03.powweb.com>
+From: Vijayan Prabhakaran <pvijayan@gmail.com>
+Subject: Bug in writeback mode
+Date: Wed, 18 Aug 2004 14:28:59 -0500
+Message-ID: <d68fdf7d040818122869621552@mail.gmail.com>
+Reply-To: Vijayan Prabhakaran <pvijayan@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20383-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20384-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040818075216.B920D15DBC@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Dabbs <david@dabbs.net>
-Cc: reiser@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+Cc: vijayan@cs.wisc.edu
 
+Hi,
 
-Thanks for joining the discussion.  I have answered your questions
-as best I can for the moment---which in fact has been to make some
-further points and encourage you and others to ask more questions
-and make more suggestions :-)
+I'm testing the different journaling modes of Reiserfs and I came
+across the following bug in writeback mode.
 
+When a file block is overwritten synchronously, two blocks should get written:
 
-David Dabbs wrote:
+1. The file block itself.
+2. The file's stat info block - the one which contains the modification time.
 
->
->Questions
->----------------------------------------------------------------------
->Handwaving for a moment over view creation and storage particulars, it
->is pretty clear that this new security feature will rely upon reiser4 
->for masking. Does this mean that one will only be able to mask a 
->reiser4 filesystem, or will any VFS fs be "maskable?"
->  
->
-As a proof of concept reiser4---although I think that the ability to 
-work with
-multiple reiser4 mounted filesystems is relevant and important.
+Since the block is overwritten no other attributes (like size) of the
+file changes. Only the time stamps have to be updated.
 
->All file types and access methods will be supported, yes? 
->(mmap, AIO, DIRECT, pipes, hard/sym links, etc.)
->  
->
-That is the plot.  Again, we are taking the point of view that the proof 
-of concept
-does not need to be complete; links however are included.
+The problem is that the stat block is not getting written in writeback
+mode - even after a fsync!
 
->In the original proposal posted to the list Hans (I think) referred to 
->viewprinting as "chroot on steroids." Let's assume that the mask 
->creation tools deliver on making viewprint creation and maintainance 
->very easy/painless for admins. In what way will viewprinting be more 
->secure than chroot?
->  
->
-Basically, chroot as I at least normally use it, has a lot of baggage in 
-terms of
-disk consumption that we are planning to avoid by creating a view rather 
-than
-a copy.  Second, users always interact with a system via executables so
-normally the executables have taken on the security attributes of the user
-(set-UID being the major exception on Unix) but, to some extent, we are
-developing a new semantic.
+In ordered mode, everything works properly. That is, when I issue
+fsync the following happens in ordered mode:
 
-While views for DBMS, ClearCase, etc. have been around for a long time
-attaching access lists to process seems to be semi-virgin territory, at
-least for Unix systems.
+1. user process issues fsync
+2. file block written to its fixed location
+3. journal descriptor block is written to the journal
+4. file's stat block is written to the journal
+5. journal commit block is written to the journal
+6. user process returns from fsync
 
-Any and all pointers to references to prove me wrong appreciated :-)
+In writeback mode, the stat block gets written only in the first
+fsync. For later fsyncs, the following events happen:
 
->If I understand the ways admins use chroot, or would like to use it, 
->then should the design include "stackable" or "inheritable" masks? 
->This is not unlike stackable filesystems or filter pipelines. If, 
->for instance, most processes need to see /usr/local/lib/* and 
->/usr/local/bin/*, then this spec is in a 'base' mask and the mask 
->for /usr/local/bin/fooprocess would inhert from and add to this 
->base specification.
->  
->
-Something like this had occurred to me, but I think that for a proof of 
-concept
-having the tools that assist the user in creating the mask make it easy to
-include these but have each actual mask on disk be a standalone entity is
-the way to go.
+1. user process issues fsync
+2. file block written to its fixed location
+3. user process returns from fsync
 
-I think that inherited masks from a parent process are a much stronger
-requirement---think about restricted shell.
+That is, in writeback mode, the file's stat data is not updated.
 
-All questions which keep me from wasting time on an overly simplistic
-approach welcome :-)
+I also verified this by running a small workload that did:
 
->Early on in the conversation, there was discussion about 
->"permissible functionality." At a minimum, a mask, true to its name, 
->will effect filesystem object _visibility_. It was not completely 
->clear whether the mask will be proscriptive viz operations. IOW, will 
->the mask say that fooprocess "is not permitted to [attempt to] RWX 
->object bar?" I believe this is not something masks will do, but I 
->wanted clarification.
->  
->
-The attempt will be blocked with a suitable error return from the system 
-call,
-it is the responsibility of the mask administrator to get this right.
+1. write to a file synchronously
+2. cause a file system failure
+3. remount the file system
 
-There are many interesting application correctness and/or mask correctness
-questions which will need a lot more thought to bring to fruition.
+After the file system remount I noticed that the modification time of
+the file was not updated in writeback mode.
 
->Hans, in your preferred approach you referred to "a format that 
->is as if it is a subdirectory of the masked executable." Did you have
->in mind checking for something like /usr/bin/fooprocess/metas/mask 
->when exec() loads the exe, and if this exists then the files rooted 
->in this directory would be set as the process's root filesystem?
->
->Are masks capable of explicit exclusion as well as inclusion?
->If the answer is 'Yes,' then what are your thoughts as to how this 
->might be accommodated when your main tool is reiser4's semantic 
->tree layer? Inclusion would be straightforward -- if the directory 
->exists or the name exists within the directory then fall through. 
->But exclusion? If you are limited to the semantic layer, then there's 
->no stat node with which to play tricks. 
->  
->
-I think the correct answer is "anything not explicitly included is excluded"
-or on the other side of the looking glass "anything not explicitly excluded
-is included".
+Note that this does not affect the consistency of the file system as
+all the data are still accessible correctly. But, some applications
+like 'make', which depends on the modification time stamp will fail.
 
-As a user friendly interface both should be supported and the "compilation"
-layer handle the conversion.
+I'm using reiserfs from linux 2.4.25 with data journaling patch.
 
-Maybe I am not understanding the question.
+Can someone please take a look at this and see if this bug really exists ?
 
->I wonder if it would be feasible if masks only specified 
->exclusions? If, for instance, the mask wanted to exclude /foo/*, 
->then the directory foo would exist (in the mask semantic tree). 
->To exclude /etc/passwd, passwd would exist in the directory /etc. 
->Since you're already going to need to preempt dcache searches 
->(aren't you?) you can insert a search of the mask tree. If the 
->search fails, then it is not excluded and the request falls through 
->to normal VFS handling. In the /etc/passwd case above, it would find 
->/etc/passwd and so the file is excluded. Processing would stop there, returning some error. How does this sound? I need to sleep on this, 
->because it is very late here.
->  
->
-At this time I think feasible is true and useful is an open question.
+I appreciate any help regarding this.
 
-To address the useful I find that known/desirable use-case scenarios
-get the most discussion.
-
-To give a couple of examples:
-     1) A given process (say a restricted shell) can not exec() an
-         executable with the set-uid bit on.
-          - directly
-          - indirectly (e.g., via bash)
-     2) Apache can only create/write files in /var/web/incoming.
-          - files created or modified can not have any execute bit set 
-and executing chmod is excluded.
-
-This will be the topic of many future e-mails I am sure. ;-)
-
->
->David
->
->  
->
-
+thanks,
+Vijayan
