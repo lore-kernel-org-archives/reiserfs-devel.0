@@ -1,40 +1,52 @@
-From: Szakacsits Szabolcs <szaka@sienet.hu>
-Subject: Re: [benchmark] seek optimization
-Date: Thu, 15 Jul 2004 12:34:00 +0200 (MEST)
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <Pine.LNX.4.21.0407151123560.4325-100000@mlf.linux.rulez.org>
-References: <20040715055007.GD9383@suse.de>
+From: Konstantin Sobolev <kos@supportwizard.com>
+Subject: fsck.reiser4 segfaults
+Date: Thu, 15 Jul 2004 15:59:41 +0400
+Message-ID: <200407151559.41256.kos@supportwizard.com>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040715055007.GD9383@suse.de>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jens Axboe <axboe@suse.de>
-Cc: Bryan Henderson <hbryan@us.ibm.com>, Guy <bugzilla@watkins-home.com>, linux-fsdevel@vger.kernel.org, 'Marcel Hilzinger' <mhilzinger@linuxnewmedia.de>, 'Per Olofsson' <pelle@dsv.su.se>, reiserfs-list@namesys.com
+Return-path: <reiserfs-list-return-19627-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+Content-Disposition: inline
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
+Hi all,
 
-On Thu, 15 Jul 2004, Jens Axboe wrote:
+I have 2 computers running reiser4 partitions. Once I decided to check them 
+for errors, and on both machines fsck reported that SB is corrupted. I 
+suppose that's because partitions were formatted by older versions of 
+reiser4progs. --build-sb worked OK. Then fsck reported about some corruptions 
+that were successfully repaired with --build-fs on the first machine. 
+However, on the second one fsck segfaults on attempt to do a repair.
 
-> >    2) Apparently the 2.6 kernel's IO scheduler has a performance problem.
-> 
-> Which one did you test?
+The output is:
+[skip]
+***** Semantic Traverse Pass: reiser4 semantic tree checking.
+FSCK: Node (1260442), item (0), [29:0:2a] (stat40): needs pset member (3) set 
+to (smart). Added.
+FSCK: Node (1260442), item (0), [29:0:2a] (stat40): needs pset member (4) set 
+to (r5_hash). Added.
+FSCK: Node (1260442), item (0), [29:0:2a] (stat40): needs pset member (5) set 
+to (dot_o_fibre). Added.
+FSCK: Node (1260442), item (0), [29:0:2a] (stat40): needs pset member (6) set 
+to (stat40). Added.
+FSCK: Node (1260442), item (0), [29:0:2a] (stat40): needs pset member (7) set 
+to (cde40). Added.
+Segmentation fault
 
-The default in 2.6.7. It seems that one is the AS. I couldn't find any way
-to query what the IO scheduler is on a running 2.6.7 or how to change it.
-There were no 'elevator' boot time option given. All IO scheduler were
-compiled in.
+fsck version is fsck.reiser4 0.5.5, kernel is 2.6.4 with latest stable reiser4 
+snapshot
 
-The other major suspect for the 2-3% 2.6 performance degradation is the
-'block size = GCD(page size, device size)' change. AFAIR the value ended
-up to be the minimal 512 for the destination device. The 'sys' times are
-double without using any filesystems:
+I've packed fs metadata with debugfs.reiser4 -P /dev/hda6 | bzip2 -c > 
+hda6debug.bz2, it can be downloaded from
+http://www.prokhorov.org/hda6debug.bz2 , 38Mb
 
-  Fs_kernel_method      usr      sys       real   CPU
-  raw_24_seek          1.65    17.88    8:19.69    3%
-  raw_26_seek          1.80    33.49    8:27.02    6%
-
-It might or might not be related.
-
-	Szaka
-
+Partition still can be mounted but I don't know if it is risky to work with 
+it, I don't want to loose it completely.
+-- 
+/KoS
+* My other tag line is a killer!					      
