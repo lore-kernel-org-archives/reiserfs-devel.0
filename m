@@ -1,42 +1,72 @@
 From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: bad_unaligned_access_length in compiling reiserfsck for mips
-Date: Wed, 2 Feb 2005 18:43:14 +0300
-Message-ID: <200502021843.14873.vitaly@namesys.com>
-References: <1107053632.4059.241.camel@troglodyte.asianpear>
+Subject: Re: missing files?
+Date: Wed, 2 Feb 2005 19:10:15 +0300
+Message-ID: <200502021910.15862.vitaly@namesys.com>
+References: <1107318853.18354.214122527@webmail.messagingengine.com> <200502020533.j125X7U2016595@turing-police.cc.vt.edu> <1107353933.2676.214151108@webmail.messagingengine.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1107053632.4059.241.camel@troglodyte.asianpear>
+In-Reply-To: <1107353933.2676.214151108@webmail.messagingengine.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Kevin Turner <acapnotic@foobox.net>, ReiserFS list <reiserfs-list@namesys.com>
+To: michael@styer.net, Valdis.Kletnieks@vt.edu
+Cc: reiserfs-list@namesys.com
 
-On Sunday 30 January 2005 05:53, Kevin Turner wrote:
-> My cross-compile dies when it tries to link reiserfsck:
-> check_tree.o(.text+0x3a80): In function `__put_unaligned':
-> check_tree.c: undefined reference to `bad_unaligned_access_length'
+On Wednesday 02 February 2005 17:18, michael@styer.net wrote:
+> On Wed, 02 Feb 2005 00:33:07 -0500, Valdis.Kletnieks@vt.edu said:
+> > > Can anyone explain why this might have happened and what I might be
+> > > able to do to fix it?
+> >
+> > Sounds like wonky file permissions on the directory - lack of write
+> > permission *on the directory* will cause 'rm' to fail.  Remember that
+> > renaming the directory requires write permission *on it's parent*, not
+> > on itself.
 >
-> That error is from asm/unaligned.h, and is supposed to mean that someone
-> tried to put_unaligned something that wasn't 1, 2, 4, or 8 bytes, but
-> the code in check_tree.c looks to me like its using it with __u32, so
-> I'm stumped.
+> No, that's not it, but thanks for the suggestion. I'm doing this as root
+> and the directory is 755, so I should be able to remove the files no
+> problem. Also rm -f doesn't complain it can't remove it, just returns
+> with no output. But afterward ls still reports the directory is there,
+> and ls -l still can't find it.
 >
-> reiserfsprogs version: 3.6.19
-> linux-libc-headers version: 2.6.8.1
+> Eg.
 >
-> Host: linux-i686
-> Target: linux-mipsel
-> Compiler: gcc 3.3.4
-> compilation flags:
->  -fexpensive-optimizations -fomit-frame-pointer -frename-registers -O2
+> # ls parent/
+> target
+> # ls -l parent/
+> ls: parent/target: No such file or directory
+> # rm -f parent/target
+> # ls parent/
+> target
+> # ls -l parent/
+> ls: parent/target: No such file or directory
+> # ls -ld parent/
+> drwxr-xr-x  174 root root 174 Feb  1 23:30 parent/
+>
+> On Wed, 02 Feb 2005 14:08:40 +0300, "Vladimir Saveliev" <vs@namesys.com>
+>
+> said:
+> > Hello
+> >
+> > Is there anything about reiser4 in kernel logs?
+>
+> Yes, in fact; there are lots of messages nearly identical to this:
+>
+> Feb  2 03:19:31 apollo reiser4[rsync(17957)]: key_warning
+> (fs/reiser4/plugin/object.c:97)[nikita-717]:
+> Feb  2 03:19:31 apollo WARNING: Error for inode 483238 (-2)
+>
+> The only difference between the messages is the process name and pid,
+> and the inode number (well, and the date and time, obviously).
+>
+> Does that help?
 
-trying to reproduce it. 
-what packages for mipsel cross compiling have you installed? 
-probably some cross headers are needed also...
+would you pack the metadata with 
+	debugfs.reiser4 -P <device> | bzip2 -c > <device>.bz2
+and let us to download them?
 
 -- 
 Thanks,
