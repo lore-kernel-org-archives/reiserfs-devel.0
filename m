@@ -1,47 +1,84 @@
-From: Spam <spam@tnonline.net>
-Subject: Re: silent semantic changes with reiser4
-Date: Sun, 5 Sep 2004 14:30:12 +0200
-Message-ID: <1819110960.20040905143012@tnonline.net>
-References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
- <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
- <m3eklm9ain.fsf@zoo.weinigel.se> <20040905111743.GC26560@thundrix.ch>
- <1215700165.20040905135749@tnonline.net> <20040905115854.GH26560@thundrix.ch>
-Reply-To: Spam <spam@tnonline.net>
+From: Tonnerre <tonnerre@thundrix.ch>
+Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
+Date: Sun, 5 Sep 2004 15:16:11 +0200
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040905131611.GL26560@thundrix.ch>
+References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-21484-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <20040905115854.GH26560@thundrix.ch>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="1hKfHPzOXWu1rh0v"
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Tonnerre <tonnerre@thundrix.ch>
-Cc: Christer Weinigel <christer@weinigel.se>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Pavel Machek <pavel@ucw.cz>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
 
-  
+--1hKfHPzOXWu1rh0v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Salut,
+Salut,
 
-> On Sun, Sep 05, 2004 at 01:57:49PM +0200, Spam wrote:
->>   What if I do not use emacs, but vim, mcedit, gedit, or some other
->>   editor? It doesn't seem logical to have to patch every application
->>   that uses files.
+On Wed, Sep 01, 2004 at 01:50:56PM -0700, Linus Torvalds wrote:
+> 	#define MAXNAME 1024
+> 	int open_cached_view(int base_fd, char *type, char *subname)
+> 	{
+> 	        struct stat st;
+> 	        char filename[PATH_MAX];
+> 	        char name[MAXNAME];
+> 	        int len, cachefd;
+> =09
+> 	        if (fstat(base_fd, &st) < 0)
+> 	                return -1;
+> 	        sprintf(name, "/proc/self/fd/%d", base_fd);
+> 	        len =3D readlink(name, filename, sizeof(filename)-1);
+> 	        if (len < 0)
+> 	                return -1;
+> 	        filename[len] =3D 0;
+> =09
+> 	        /* FIXME! Replace '/' with '#' in "type" and "subname" */
+> 	        len =3D snprintf(name, sizeof(name),
+> 	                        "%04llx/%04llx/%s/%s/%s",
+> 	                        (unsigned long long) st.st_dev,
+> 	                        (unsigned long long) st.st_ino,
+> 	                        type ? : "default",
+> 	                        subname,
+> 	                        filename);
+> 	        errno =3D ENAMETOOLONG;
+> 	        if (len >=3D sizeof(name))
+> 	                return -1;
+> 	        cachefd =3D open(name, O_RDONLY);
+> 	        if (cachefd >=3D 0) {
+> 	                /* Check mtime here - maybe we could have kernel support=
+ */
+> 	                return cachefd;
+> 	        }
+> 	        if (errno !=3D ENOENT)
+> 	                return -1;
+> 	        /*
+> 	        .. try to generate cache file here ..
+> 	         */
 
-> We would have to do that in  either case, so let's patch them to do it
-> in a nonintrusive way. And as to reading and writing inside tar files,
-> write and/or  use a really nice  userspace library to do  it. (As does
-> MacOS/X, as does KDE, etc.)
+Around of  what I've  had in  mind. Only that  one might  use libmagic
+instead of the type argument. The  rest can be done by a corresponding
+MIME plugin.
 
-  The problem with the userspace library is standardization. What
-  would be needed is a userspace library that has a extensible plugin
-  interface that is standardized. Otherwise we would need lots of
-  different libraries, and I seriously doubt that 1) this will happen
-  and 2) we get all Linux programs to be patched to use it.
+				Tonnerre
 
-  ~S
+--1hKfHPzOXWu1rh0v
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
-> 			    Tonnerre
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.9.2 (GNU/Linux)
 
+iD8DBQFBOxGb/4bL7ovhw40RAoEfAJ9AbkigPKlAckF7oQca9IPJVLPaRwCdExly
+TqLQD7tcWT+j9XE6X3mqpL4=
+=D17r
+-----END PGP SIGNATURE-----
+
+--1hKfHPzOXWu1rh0v--
