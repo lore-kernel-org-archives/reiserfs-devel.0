@@ -1,59 +1,87 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: UNSUBSCRIBE PLEASE THANKS
-Date: Mon, 27 Jan 2003 13:53:14 -0500
-Message-ID: <200301271853.h0RIrES2005533@turing-police.cc.vt.edu>
-References: <1043651468.25547.3.camel@automatisme5> <20030127080427.GA6431@suse.de> <1043655641.25602.19.camel@automatisme5> <20030127082200.GC6431@suse.de>
-            <1043663360.29890.4.camel@automatisme5>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: Re: [PATCH] data logging patches available for 2.4.21-preX
+Date: Mon, 27 Jan 2003 19:59:20 +0100
+Message-ID: <3E358188.6060608@mb.tu-ilmenau.de>
+References: <200301271914.26312.Dieter.Nuetzel@hamburg.de> <1043692402.15680.58.camel@tiny.suse.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1039885468P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12514-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12515-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Mon, 27 Jan 2003 11:29:18 +0100."
-             <1043663360.29890.4.camel@automatisme5> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: stephane ancelot <sancelot@free.fr>
-Cc: Hubert Mantel <mantel@suse.de>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: Dieter Nuetzel <Dieter.Nuetzel@hamburg.de>, reiserfs-list <reiserfs-list@namesys.com>
 
---==_Exmh_1039885468P
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: quoted-printable
+On 01/27/2003 07:33 PM, Chris Mason wrote:
+> On Mon, 2003-01-27 at 13:14, Dieter N=FCtzel wrote:
+>=20
+>>Hello Chris,
+>>
+>>as always very nice work!
+>>I have it now running fine on top of 2.4.21-pre3-jam3 (2.4.21-pre3aa1).=
 
-On Mon, 27 Jan 2003 11:29:18 +0100, stephane ancelot said:
-> OK, May be but most of mail servers are rewriting headers and may be
-> ignoring these kinds of headers .... this may be why most of us can not=
+>>Some fiddling was necessary but went smooth after all.
+>>My /home partition is mounted with -o data=3Dordered and the performanc=
+e is=20
+>>great. Sorry, no real benchmarks, yet.
+>=20
+> Thanks for trying them out.
+>=20
+>>But some question stay open:
+>>Where is 01-akpm-sync_fs-fix-2.diff
+>=20
+> 01-akpm-sync_fs-fix-2.diff is in the 2.4.21 data logging directory you
+> linked to below.
+>=20
+>> and 01-iput-deadlock-fix.diff?
+>=20
+> This is in the namesys pending directory, but doesn't apply cleanly
+> yet.  I'm rediffing both the quota code and the data logging code on to=
+p
+> of 01-iput-deadlock-fix (or I might just steal Manuel's rediff, which i=
+s
+> still in my linuxworld backlog). =20
 
-> look at these headers .............
-
-More likely, most subscribers are using mail user agents that don't suppo=
-rt:
-
-2369 The Use of URLs as Meta-Syntax for Core Mail List Commands and
-     their Transport through Message Header Fields. G. Neufeld, J. Baer.
-     July 1998. (Format: TXT=3D30853 bytes) (Status: PROPOSED STANDARD)
+If they're o.k. just feel free to do so... :-))
 
 
--- =
+Dieter, you still aren't subscribed?
+I (only) changed the rejected things so the patches would apply and put=20
+the files
 
-				Valdis Kletnieks
-				Computer Systems Senior Engineer
-				Virginia Tech
+for 2.4.20 @
+http://manuel.krause.bei.t-online.de/downloads/2.4.20/03-data-logging-32b=
+=2Ediff.gz
+
+for 2.4.21-pre(3) @
+http://manuel.krause.bei.t-online.de/downloads/2.4.21-pre/05-data-logging=
+-33b.diff.gz
+
+on friday.
+( First apply 01-iput-deadlock-fix, then Chris' patches with the one=20
+replaced from above. )
+
+Bye,
+
+Manuel
+
+P.S.: The data=3Dordered mode (of which Chris wrote we should be careful =
+
+with) runs fine here since the patches came out! :-)
 
 
---==_Exmh_1039885468P
-Content-Type: application/pgp-signature
+>>Isn't it needed anylonger 'cause you merged them and SuSE's ftp isn't u=
+pdated=20
+>>yet? All files are the "old" one's from 15. January.
+>>ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.21
+>>
+>>What about patch-2.4.20.rfs.06.05-transaction-overflow-fix-0.diff?
+>>Should I put it on top, too?
+>=20
+> That is included in 05-data-logging-33.
+>=20
+> -chris
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.1 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQE+NYAZcC3lWbTT17ARAqxjAKDvYSl7+Affwvov4ntrZhHkVpaFxACcCUa3
-JDPQlQKsHx0Za5RqVMqeKdg=
-=mMdO
------END PGP SIGNATURE-----
-
---==_Exmh_1039885468P--
