@@ -1,44 +1,48 @@
-From: Cyrille Chepelov <cyrille@chepelov.org>
-Subject: Re: RE: Fwd: reiser4 non-free?
-Date: Wed, 5 May 2004 15:56:15 +0200
-Message-ID: <20040505135615.GB20527@chepelov.org>
-References: <3DF9165145FACB4C96977FF650C1E9040C469F25@its-mail1.its.corp.gwl.com>
+From: Redeeman <redeeman@metanurb.dk>
+Subject: Re: Sanity?
+Date: Wed, 05 May 2004 17:41:49 +0200
+Message-ID: <1083771709.10151.2.camel@redeeman.kaspersandberg.com>
+References: <4098841E.6000801@myrealbox.com>
+Reply-To: redeeman@metanurb.dk
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18464-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18465-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C469F25@its-mail1.its.corp.gwl.com>
+In-Reply-To: <4098841E.6000801@myrealbox.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: debian-legal@lists.debian.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-Le Tue, May 04, 2004, =C3=A0 01:18:35PM -0600, Burnes, James a =E9crit:
+On Wed, 2004-05-05 at 08:05, Rhyotte wrote:
+>    Hans, how do you retain any scrap of sanity? This whole thing is 
+> getting so far outta sight it is crazy. What is wrong with them simply 
+> accrediting you and the Reiser Team??????? I believe I have seen you say 
+> that Credits at install time would be fine right? @ the rest of you: 
+> What is wrong with that?? seems pretty unreasonable of all of you to say 
+> no to this. Now I will go on record as saying I definately do not want 
+> to see a list of credits every time i boot my system. That would be 
+> totaly unreasonable. In my opinion you all really need to drop the silly 
+> and counter productive argument. Act like adults, make an agreement then 
+> shake hands and be friends again. Sheesh, SOME of us would like to see 
+> Reiser4 out in the public as a full release!!
 
-> 4. How about this for a self-referential solution to the problem.  In
-> ReiserV4, you could view the ReiserV4 credits by simply looking at the
-> credits meta properties in reiser4.o or any other software.  Sounds like
-> a good idea for a plugin or default behavior.  The ability to view
-> credits like this might make software engineers recommend V4 for this
-> reason alone.   ;-)
+i have absolutely no problem the way reiser4 works now, hell, i havent
+noticed a change. but now where you announce a "monster" big problem, i
+tried follow the boot of a machine running reiser4, and i see fsck tell
+"see credits for more info", or something like that, whats wrong with
+that? hell! remove the message from reiser4progs then! i believe they
+are GPL.
 
-better yet. Make credits a subdirectory of metas, and put there a
-(virtual) file per credit entry. Only "ls" is necessary to view this.
-Make the root of the file system include a copy of that virtual
-directory under the name "reiser4_credits_virtual_directory".
+get real.
 
-Even Nautilus users will see it, and will have no trouble reading the
-contents should they choose to do so.
+> 
+> Peace
+> Gary Sheppard
+-- 
+Regards, Redeeman
+()  ascii ribbon campaign - against html e-mail 
+/\                        - against microsoft attachments
 
-Just as with Hans' opera leaflet analogy, if someone wants to glance at
-it, they'll know that ABC corporation has been generous. OTOH, I don't
-know of an opera that requires you to pick up, read and memorise the
-leaflet if you don't want to do it -- North Korean operas don't need to
-apply.
-
-	-- Cyrille
-=09
---=20
