@@ -1,57 +1,94 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: NFS issues with reiserfs 3.6? ext3 works...
-Date: Fri, 26 Mar 2004 18:33:44 +0300
-Message-ID: <1080315224.5920.17.camel@tribesman.namesys.com>
-References: <20040326115302.GD1315@mathematik.uni-bielefeld.de>
-	 <1080307106.5920.1.camel@tribesman.namesys.com>
-	 <1080308538.2822.95.camel@watt.suse.com>
-	 <20040326140939.GH1315@mathematik.uni-bielefeld.de>
-	 <1080310685.2820.104.camel@watt.suse.com>
-	 <20040326142015.GI1315@mathematik.uni-bielefeld.de>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: BUG: Replaying ReiserFS log causes hard lockup
+Date: Fri, 26 Mar 2004 10:46:40 -0500
+Message-ID: <40645060.7050707@suse.com>
+References: <20040325204836.07bcf910.a.nielsen@optushome.com.au>	<1080213348.1976.277.camel@tribesman.namesys.com>	<1080219262.14742.146.camel@watt.suse.com>	<20040326220107.333b23e8.a.nielsen@optushome.com.au> <20040326223443.2e5011fa.a.nielsen@optushome.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17500-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17501-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040326142015.GI1315@mathematik.uni-bielefeld.de>
+In-Reply-To: <20040326223443.2e5011fa.a.nielsen@optushome.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Bernhard Sadlowski <sadlowsk@mathematik.uni-bielefeld.de>, Chris Mason <mason@suse.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Adam Nielsen <a.nielsen@optushome.com.au>
 Cc: reiserfs-list@namesys.com
 
-On Fri, 2004-03-26 at 17:20, Bernhard Sadlowski wrote:
-> On 26 Mar 2004 09:18, Chris Mason <mason@suse.com> wrote:
-> > > I did compile both kernels myself from original kernel.org source. 
-> > > 
-> > Thanks for the clarification.  Running dt under strace as Vladimir
-> > suggested will help.
-> 
-> I did send him the output by private mail, because the list doesn't
-> accept bigger attachments. If you are interested, I can send you the
-> strace output too.
-> 
-> Bernhard
-> 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-I looked at straces you sent. The substantial differences start after
-sendto() I quote below. If in both cases 'dt mkdir' tries to create a
-directory on nfs mounted directory - then why does reiserfs send
-something to 127.0.0.1 whereas ext3 sends to 145.228.118.41?
+Adam Nielsen wrote:
+|>Then it locks.  Once it printed the message about INIT starting after
+|>this, so I guess it's something around this point that's causing the
+|>problem.  However since it seems to be a *really* bad lock, I don't
+|>know how to proceed :-(
+|
+|
+| Ok, I've done some more fiddling and I think I've narrowed the problem
+| down to the SATA driver.  Since the kernel used to boot, then it
+| started locking up during booting, I was trying to work out what could
+| cause this.  I tried wiggling the SATA cable again, and that fixed
+| it - I could boot Linux again.
+|
+| Wiggling the SATA cable while Linux was loaded didn't seem to cause a
+| problem, so I started dd reading off a ton of data and started fiddling
+| with the cable.  I couldn't seem to fault anything, so I tried
+| unplugging the cable altogether (as SATA is hot swappable.) Obviously
+| everything accessing the drive paused, and when I plugged the cable back
+| into the drive it seemed as though everything resumed again (because the
+| drive started reading off a ton of data due to dd running.)  However,
+| after a few seconds the drive stopped reading, and dd wouldn't
+| terminate.  I tried switching to another VT and logging in, but after I
+| typed in my login name it froze too.  It seems that if the drive gets
+| disconnected and reconnected, everything accessing it stops (I'm
+| guessing due to a driver problem.)
+|
+| I'm still not sure why it would lock up during boot, but perhaps when
+| the SATA hardware is initialised the drive disconnects and reconnects,
+| and if it hasn't reconnected by the time something (e.g. ReiserFS) wants
+| to access the disk, that causes the lockup - only since the lock happens
+| in the kernel, it completely locks everything up.  Of course, this is
+| just a wild guess, but given the behaviour it does seem like a
+| possibility.  Especially if hotswapping is a feature not yet implemented
+| in the driver (which is quite likely, as it is still only in the testing
+| stage.)
+|
+| Anyway, thanks for all your help, and I might try to find the SI3512
+| driver people and see what they think.  Wish me luck ;-)
 
-reiserfs:
-getpid()                                = 27812
-sendto(5, "\\\252\1H\0\0\0\0\0\0\0\2\0\4\224\345\0\0\0\2\0\0\0\1\0"...,
-84, 0, {sa_family=AF_INET, sin_port=htons(892),
-sin_addr=inet_addr("127.0.0.1")}, 16) = 84
+It may be a driver problem, but it could also be a shortcoming in the
+way ReiserFS currently handles write errors in the journal.
 
-ext3:
-getpid()                                = 27652
-sendto(5, "RM\347\254\0\0\0\0\0\0\0\2\0\4\224\345\0\0\0\2\0\0\0\1"...,
-68, 0, {sa_family=AF_INET, sin_port=htons(687),
-sin_addr=inet_addr("145.228.118.41")}, 16) = 68
+Even when all you're doing is reading from the disk, you're still
+writing a little bit (unless you've mounted with -onoatime,nodiratime).
+ReiserFS can't deal at all with the device going away when it's
+performing journal operations. Since updating the atime for a file
+requires altering the metadata, it uses the journal. If I had to guess,
+I'd say that you'd see ReiserFS panic in your logs, with something along
+the lines of "journal-###: buffer write failed". A panic will make all
+further access to the filesystem hang.
 
+I'm in the final stages of a patch that will allow ReiserFS to handle
+journal io-errors more gracefully. The result will be, rather than
+panicking the system on journal write, the filesystem will be forced
+read-only and all active transactions will be aborted and released. The
+filesystem will umount'able, and on re-mount will appear similar to as
+if a power failure had occured. However, since it did abort on an
+io-error, I'd recommend a reiserfsck on the aborted partition.
 
+- -Jeff
 
+- --
+Jeff Mahoney
+SuSE Labs
+jeffm@suse.com
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.2 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
+iD8DBQFAZFBgLPWxlyuTD7IRAgOYAJ4m9a2QRsUH7BuB7igHOWZf3P3j4ACfWml/
+0aYNPCreOG3UQbI4/YNJTSw=
+=Bqo5
+-----END PGP SIGNATURE-----
