@@ -1,115 +1,83 @@
-From: "Yiannis Mavroukakis" <yiannis@jaguarfreight.com>
-Subject: RE: reiser4 crash
-Date: Thu, 25 Nov 2004 17:15:58 -0000
-Message-ID: <77912E9FD42896419D1CEF15E1C397A58AFC41@london.jaguarfreightservices.local>
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Subject: Re: Question on Reiser4 regarding power failures
+Date: Thu, 25 Nov 2004 18:18:21 +0100
+Message-ID: <200411251818.21228.christian.mayrhuber@gmx.net>
+References: <200411251637.28047.bernhard.prell@gmx.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-22567-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22568-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
+In-Reply-To: <200411251637.28047.bernhard.prell@gmx.net>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-=20
-I've=20been=20seeing=20people=20having=20trouble=20with=20reiser4=20crashi=
-ng=20and=20I'm=20jealous=20:-)=20I=20want
-mine=20to=20crash=20too,=20it's=20not=20fair=20I=20haven't=20had=20a=20spo=
-t=20of=20trouble=20since=20I=20installed=20the=20
-patches=20my=20Unreal=20Tournament=20server=20hasn't=20gone=20down=20once!=
-=20:P=20:P=20:P
+On Thursday 25 November 2004 16:37, Bernhard Prell wrote:
+> Hello everybody,
+> 
+> I have a simple question about Reiser4. I already tried to find the answer 
+in 
+> http://www.namesys.com/v4/v4.html but I'm not completly sure if I understood 
+> everything :-)
+> 
+> *Background:
+> I 'm administrating about 20 computers. The installed Linux/Reiser is quite 
+> old: SuSE Linux with kernel 2.4.7(SMP) (dmesg tells me reiser 3.5.x disk 
+> format, ReiserFS version 3.6.25).
+> 
+> Obviously people often pull the plug without cleanly shutting down the 
+> systems, because maybe twice per month I have to setup a system again 
+because 
+> it doesn't want to boot anymore. The reason is always a somehow corrupted 
+> root-filesystem. Sometimes reiserfsck can repair it, sometimes not because 
+of 
+> I/O-read-errors. If that's the case I also have a look at the disk with 
+> "smartctl -t short /dev/hda" and it also reports read-errors. Then I usually 
+> do a "dd if=/dev/zero of=/dev/hda", repartition, reformat, setup the system 
+> from a tar file and everything is fine again (smartctl doesn't report 
+> read-errors anymore).
+> 
+> *Now my question, you may have guessed it:
+> Will the corruption caused by partially written sectors or other problems 
+> caused by _power failures_ be still a problem under reiser4 or are they gone 
+> forever because of the "atomic transactions" (at least in theory)?
+> (That would mean that reiserfsck is only existing to repair problems caused 
+by 
+> bugs in reiser4...)
+> 
+> Sorry if this has been asked before, I tried to find an answer in the 
+> list-archive.
 
-Yiannis.
+I'd suggest to do the following for pull the plug scenarios on productive
+systems with reiserfs:
 
------Original=20Message-----
-From:=20Vladimir=20Saveliev=20[mailto:vs@namesys.com]=20
-Sent:=2025=20November=202004=2016:55
-To:=20hihone@bigpond.net.au
-Cc:=20Markus=20T=F6rnqvist;=20reiserfs-list@namesys.com
-Subject:=20Re:=20reiser4=20crash
+1) Disable write caching for ide drives with "hdparm -W 0 /dev/hdX"
+   This is the most important thing to do.
+2) Always try to use the newest version of reiserfsck. The older, the more
+   bugs.
+3) Convert your filesystem to the newer 3.6 disk format using
+   the "conv" mount option once. The 3.5 disk format is very old and
+   has some limitations.
+4) If you want to prevent data corruption and not just filesystem
+   corruption, use a recent 2.6.x kernel which incoporates Chris Mason's
+   data logging patches.
+   Alternatively you could use a newer SuSE which has the data logging
+   patches in the 2.4 kernel series, too. Maybe the installation of a
+   a newer 2.4.x kernel rpm from ftp.suse.com will work for you.
 
-Hello
+As reiser4 is atomic in it's operations it should protect your data even more 
+than ext3/reiserfs with the data=journal mount option, unless you don't have
+write cache for ide drives enabled. Reiser4 is still beta.
 
-On=20Thu,=202004-11-25=20at=2015:35,=20Cal=20wrote:
->=20----------
->=20and=20then=20at=20Thu,=2025=20Nov=202004=2014:05:45=20+0200,=20it=20wa=
-s=20written=20...
->=20=20>ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.9/
+Since 2.6.9 the write barrier patches are in the kernel. These should
+protect better from data loss with disks that have write caching enabled.
+The only two filesystems supporting write barrier are ext3 with the mount
+option "barrier=1" and reiserfs with the mount option "barrier=flush".
 
-There=20was=20an=20update=20today.=20Please=20make=20sure=20you=20got=20pa=
-tch=20number=202.
+-- 
+lg, Chris
 
->=20=20>http://marc.theaimsgroup.com/?l=3Dreiserfs&m=3D110121057720746&w=3D=
-2
->=20=20>
->=20=20>It=20is=20possible=20the=20posted=20patch=20is=20included=20in=20t=
-he=20second=20patch=20=20>at=20
->=20namesys.
->=20=20>
->=20=20>I'd=20still=20like=20to=20know=20about=20the=20two=20-cko=20patche=
-s=20though,=20as=20I=20can't=20=20
->=20>remember=20which=20ones=20they=20were=20(I'm=20at=20the=20office)=20a=
-nd=20if=20they=20=20
->=20>should=20be=20included=20and=20whatever....
->=20=20>
->=20Cool,=20thanks!=20=20I=20found=20the=20mailing=20list=20one,=20and=20w=
-ith=20that=20applied=20to=20
->=202.6.10-rc2-mm3,=20the=20first=20run=20of=20apt-get=20update=20complete=
-d=20
->=20successfully.=20=20That's=20good!
->=20
->=20I've=20been=20looking=20after=20grandkids=20for=20a=20couple=20of=20da=
-ys,=20so=20I=20missed=20
->=20the=20recent=202.6.9=20updates=20on=20ftp.namesys.com.=20=20I'm=20more=
-=20interested=20in=20
->=202.6.10-rcx+,=20but=20l'll=20maybe=20take=20a=20look=20at=20the=202.6.9=
-=20stuff.
->=20
->=20I'm=20a=20little=20confused=20about=20the=20cko=20reference.=20=20I'm=20=
-happily=20running
->=202.6.9-cko3=20ona=20seconfd=20system,=20but=20I've=20not=20seen=20any=20=
-breakdown=20of=20the=20
->=20cko=20series=20(ie,=20the=20two=20particular=20cko=20patches=20you're=20=
-referencing).
->=20
->=20cheers,=20and=20thanks
->=20Cal
->=20
-
-
-________________________________________________________________________
-This=20e-mail=20has=20been=20scanned=20for=20all=20viruses=20by=20Star=20I=
-nternet.=20The=20service=20is=20powered=20by=20MessageLabs.
-
-Note:__________________________________________________________________
-This=20message=20is=20for=20the=20named=20person's=20use=20only.=20It=20ma=
-y=20contain
-confidential,=20proprietary=20or=20legally=20privileged=20information.=20N=
-o
-confidentiality=20or=20privilege=20is=20waived=20or=20lost=20by=20any=20mi=
-stransmission.
-If=20you=20receive=20this=20message=20in=20error,=20please=20immediately=20=
-delete=20it=20and
-all=20copies=20of=20it=20from=20your=20system,=20destroy=20any=20hard=20co=
-pies=20of=20it=20and
-notify=20the=20sender.=20You=20must=20not,=20directly=20or=20indirectly,=20=
-use,=20disclose,
-distribute,=20print,=20or=20copy=20any=20part=20of=20this=20message=20if=20=
-you=20are=20not=20the
-intended=20recipient.=20Jaguar=20Freight=20Services=20and=20any=20of=20its=
-=20subsidiaries
-each=20reserve=20the=20right=20to=20monitor=20all=20e-mail=20communication=
-s=20through=20its
-networks.
-Any=20views=20expressed=20in=20this=20message=20are=20those=20of=20the=20i=
-ndividual=20sender,
-except=20where=20the=20message=20states=20otherwise=20and=20the=20sender=20=
-is=20authorized
-to=20state=20them=20to=20be=20the=20views=20of=20any=20such=20entity.
-________________________________________________________________________
-This=20e-mail=20has=20been=20scanned=20for=20all=20viruses=20by=20Star=20I=
-nternet.=20The
-service=20is=20powered=20by=20MessageLabs.
