@@ -1,58 +1,43 @@
-From: Hubert Chan <hubert@uhoreg.ca>
+From: Christian Iversen <chrivers@iversen-net.dk>
 Subject: Re: The argument for fs assistance in handling archives
-Date: Thu, 02 Sep 2004 14:42:34 -0400
-Sender: news <news@sea.gmane.org>
-Message-ID: <87eklky0kl.fsf@uhoreg.ca>
-References: <20040826150202.GE5733@mail.shareable.org> <4136E0B6.4000705@namesys.com>
- <1117111836.20040902115249@tnonline.net>
- <200409021327.22998.v13@priest.com>
- <16695.12190.58678.877396@gargle.gargle.HOWL>
+Date: Thu, 2 Sep 2004 21:02:02 +0200
+Message-ID: <200409022102.03314.chrivers@iversen-net.dk>
+References: <20040826150202.GE5733@mail.shareable.org> <14260000.1094149320@flay> <m3llfsikis.fsf@zoo.weinigel.se>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21306-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21307-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <m3llfsikis.fsf@zoo.weinigel.se>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 
->>>>> "John" == John Stoffel <stoffel@lucent.com> writes:
+On Thursday 02 September 2004 20:38, Christer Weinigel wrote:
+> "Martin J. Bligh" <mbligh@aracnet.com> writes:
+> > > For 30 years nothing much has happened in Unix filesystem semantics
+> > > because of sheer cowardice
+> >
+> > Or because it works fine, and isn't broken.
+>
+> I've heard the same argument a lot of times.  People complaining that
+> Unix is so seventies because it sticks to the old boring philosophy of
+> everything is a file and that a file is a stream of bytes, nothing
+> more.  Modern operating systems such as VMS with basic database
+> handling in the OS itself, or MacOS or NT with named streams is so
+> much more modern.  Why don't we get with the times?
+>
+> It may be because just because of the simplicity it's fairly easy to
+> use, harder to break och does one thing well.  If you want structured
+> storage, use a database, on top of the low level primitives, or use
+> multiple files in a directory.  Why complicate things?
 
-V13> I believe you mean something simillar to:
-V13> file1.txt;1
-V13> file1.txt;2
-V13> file1.txt;3 (yeap, it's VMS)
-
-[...]
-
-John> In any case, while I do like this feature, I'm not sure how we
-John> would cleanly implement this inside the unix namespace, or if
-John> inside a new namespace, how that new namespace would be joined
-John> with a standard Unix one.
-
-  file1.txt/..version/1
-
-or, for those version control systems like svn and arch where the
-version number refers to the version of the whole project tree:
-
-  project/..version/1/file1.txt
-
-You could even export strange things like:
-
-  project/..by-date/2004-08-24/file1.txt
-
-to see what the file looked like on August 24.  Or
-
-  project/..diff/3-1/file1.txt
-
-to see a diff between version 3 and 1.
+Sounds very much like the reason for using only triangle primitives on modern 
+3D-graphics hardware. And that works :)
 
 -- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
+Regards,
+Christian Iversen
