@@ -1,40 +1,26 @@
-From: Chris Dukes <pakrat@www.uk.linux.org>
+From: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
 Subject: Re: we need a slogan for our reiser4 t-shirt
-Date: Fri, 25 Jun 2004 18:30:16 +0100
-Sender: <pakrat@www.linux.org.uk>
-Message-ID: <20040625173016.GI19037@parcelfarce.linux.theplanet.co.uk>
-References: <3DF9165145FACB4C96977FF650C1E9040C46A0CC@its-mail1.its.corp.gwl.com>
+Date: Fri, 25 Jun 2004 13:34:03 -0400 (EDT)
+Message-ID: <20040625173403.4373.qmail@web25003.mail.ukl.yahoo.com>
+References: <20040625173016.GI19037@parcelfarce.linux.theplanet.co.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19386-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19387-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C46A0CC@its-mail1.its.corp.gwl.com>
+In-Reply-To: <20040625173016.GI19037@parcelfarce.linux.theplanet.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Burnes, James" <james.burnes@gwl.com>
-Cc: Cami <camis@mweb.co.za>, reiserfs-list@namesys.com
+To: Chris Dukes <pakrat@www.uk.linux.org>, reiserfs-list@namesys.com
 
-On Fri, Jun 25, 2004 at 11:17:47AM -0600, Burnes, James wrote:
-> 
-> 
-> jim burnes
-> security engineer
-> great-west, denver
->  
-> 
-> > Reiserfs4: fsck'ing fast
-> 
-> Love that one.
+Chris Dukes wrote: 
+> Reiser4:  Fsck, no.
 
-But shouldn't it be
-Reiser4:  No fsck.
-or
-Reiser4:  Fsck, no.
+I think this is the best one so far.
 
--- 
-Chris Dukes
-Been there, done that, got the slightly-charred t-shirt. -- Crowder
+
+
+______________________________________________________________________ 
+Post your free ad now! http://personals.yahoo.ca
