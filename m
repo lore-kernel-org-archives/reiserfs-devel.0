@@ -1,52 +1,35 @@
-From: "Vitaly Fertman" <vitaly@namesys.com>
+From: Ed Tomlinson <tomlins@cam.org>
 Subject: Re: corruption?  how do I fix?
-Date: Thu, 14 Nov 2002 00:41:45 +0300
-Message-ID: <002d01c28b5d$7e5f7640$bf7b55c2@figwam>
-References: <3DD1DEEF.6030903@panix.com> <3DD2304E.70500@namesys.com> <3DD2698E.50100@panix.com> <3DD26A74.3090800@namesys.com> <3DD26C61.6000103@panix.com>
+Date: Wed, 13 Nov 2002 19:13:59 -0500
+Message-ID: <200211131913.59486.tomlins@cam.org>
+References: <3DD1DEEF.6030903@panix.com> <3DD26C61.6000103@panix.com> <002d01c28b5d$7e5f7640$bf7b55c2@figwam>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11987-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11988-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <002d01c28b5d$7e5f7640$bf7b55c2@figwam>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: kenny gorman <kgorman@panix.com>, reiserfs-list@namesys.com
+To: Vitaly Fertman <vitaly@namesys.com>, kenny gorman <kgorman@panix.com>, reiserfs-list@namesys.com
 
-Hi,
-
-> >> I am running a semi-large oracle database on reiserfs and lvm.  I
-> >> started receiving block corruption messages in oracle.  So I started
-
-Do you mean I/O error messages? reiserfsck does not check partitions
-for badblocks so I would suggest you to run /sbin/badblocks utility first.
-If you have badblocks on your device, it is a bad idea to continue using
-your harddrive, you probably should get a working one.
-
-> Yury,
+On November 13, 2002 04:41 pm, Vitaly Fertman wrote:
+> Hi,
 >
-> Thx for the quick response.  Is there a way to 'see' if the
-> reiserfsck --fix-fixable .... command would work?  like a dry run?
-
-No, there is no a such.
-
-> Running another backup is going to take a while, so I need to gauge the
-> risks.  What is this command going to do?  Is it permanent when I do it
-> (seems like it from the docs)
+> > >> I am running a semi-large oracle database on reiserfs and lvm.  I
+> > >> started receiving block corruption messages in oracle.  So I started
 >
+> Do you mean I/O error messages? reiserfsck does not check partitions
+> for badblocks so I would suggest you to run /sbin/badblocks utility first.
+> If you have badblocks on your device, it is a bad idea to continue using
+> your harddrive, you probably should get a working one.
 
-If you do not have badblocks, then the only problem is bitmaps. reiserfsck
---fix-fixable should fix it easily - it is not a severe corruption and the
-latest reiserfsck is considered as quite stable.
+Vitaly, Bad blocks on an oracle db do not (necessarily) imply io errors.  In 
+this case there is fs corruption as reported by reiserfsck 3.6.4.
 
-Thanks,
-Vitaly Fertman
+Kenny, if I were you I would make sure I have a backup and logs and they
+run with fix-fixable - reiserfsck has worked well here.
 
-
-
-
-
-
-
+Ed Tomlinsons
