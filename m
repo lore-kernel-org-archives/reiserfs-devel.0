@@ -1,63 +1,43 @@
-From: "Samuel Leuthold" <sam@asgard.ch>
-Subject: bread: Cannot read a block # 57311287.
-Date: Mon, 3 Nov 2003 19:17:14 +0100
-Message-ID: <000d01c3a236$b857c780$7801a8c0@asuncion>
+From: Gregor Zeitlinger <zeitling@informatik.hu-berlin.de>
+Subject: Reiser4 as positional B-Tree
+Date: Mon, 3 Nov 2003 21:12:07 +0100 (CET)
+Message-ID: <Pine.LNX.4.33.0311032059251.3088-100000@mitte.informatik.hu-berlin.de>
+Reply-To: Gregor Zeitlinger <gregor@zeitlinger.de>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_000E_01C3A23F.1A1C2F80"
-Return-path: <reiserfs-list-return-15965-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15966-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
-
-------=_NextPart_000_000E_01C3A23F.1A1C2F80
-Content-Type: text/plain;
-	charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: reiserfs mailing list <reiserfs-list@namesys.com>
 
-Hello
+Hi,
 
-When i would like to access to a specific path i get different errors. So i
-run reiserfsck and get the following response:
+I've already been on this mailing list a year ago. I was wondering wheater
+I could make my native xml database a file plugin in reiser4.
 
-<-------------reiserfsck, 2002------------->
-reiserfsprogs 3.6.2
+Now, that the code base is much more matured and that reiser4 is almost
+ready (as I understand), this seems much more feasable.
 
-Will check consistency of the filesystem on /dev/video_vg/video_lv
-Will fix what can be fixed w/o --rebuild-tree
-Will put log info to '/tmp/reiser.log'
+Those are my questions
+1) As part of my xml database, I still need a positional B-Tree. Since
+files in reiserfs are stored in a (kinda) B+-Tree, I was wondering wheater
+a positional B-Tree could be made a file plugin. It's basically the same
+as the unix file plugin, with the exception that you'd need the additional
+operation of inserting (not overwriting) data in the middle of a file.
 
-Do you want to run this program?[N/Yes] (note need to type Yes):Yes
-###########
-reiserfsck --fix-fixable started at Mon Nov  3 20:03:42 2003
-###########
-Replaying journal..
-No transactions found
-Checking S+tree../  3 (of   3)                          
-bread: Cannot read a block # 57311287.
+2) If the plugin architecture is flexible enough, I'm wondering wheater I
+could port my xml database to being a file plugin. It uses a custom page
+layout and custom balance, split and merge algorithms. Also, I use c++,
+but the source could be ported to c, since I don't make heavy use of
+object oriented features. I haven't put the source code online, since it's
+not mature enough for that, but I can give to anyone interested.
 
-
-
-Aborted (core dumped)
---------------------------------------
-
-
-I have three ide devices in an LVM. On this LVM is the faulty reiser
-partition. I think that the failure is only on one specific disk because i
-can access the old data on the other two drives. Does anyone know how to
-have the "old" two disks save and the new repaired? I couldn't backup the
-data because it is about 300GB but the data on the failure disk doesn't
-matter.
-
-Thank you for your help
-
-Samuel 
-
-
-
-------=_NextPart_000_000E_01C3A23F.1A1C2F80--
+-- 
+Gregor Zeitlinger
+gregor@zeitlinger.de
 
 
