@@ -1,43 +1,40 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: udpated data logging available
-Date: 25 Jun 2003 21:47:47 -0400
-Message-ID: <1056592066.20899.10.camel@tiny.suse.com>
-References: <1055764071.24111.650.camel@tiny.suse.com>
-	 <200306231853.04098.christian.mayrhuber@gmx.net>
-	 <1056568529.10097.135.camel@tiny.suse.com>
-	 <200306260216.41204.christian.mayrhuber@gmx.net>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: vpf-10680, minor corruptions
+Date: Thu, 26 Jun 2003 10:28:21 +0400
+Message-ID: <20030626062821.GA11176@namesys.com>
+References: <20030623090258.GA12259@namesys.com> <3EF6C83F.6060702@namesys.com> <3EF702CC.9050005@g-house.de> <20030624131904.GA460@namesys.com> <3EF86928.7080504@g-house.de> <20030624151940.GC21845@namesys.com> <3EF888B2.4000900@g-house.de> <3EF8EFF0.6020207@g-house.de> <20030625054031.GA11576@namesys.com> <3EF9A0F6.4030401@g-house.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14701-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14702-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200306260216.41204.christian.mayrhuber@gmx.net>
+Content-Disposition: inline
+In-Reply-To: <3EF9A0F6.4030401@g-house.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Christian Kujau <evil@g-house.de>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-On Wed, 2003-06-25 at 20:16, Christian Mayrhuber wrote:
-> Am Mittwoch, 25. Juni 2003 21:15 schrieb Chris Mason:
-> > Thanks for giving things a try.  I just uploaded io-stalls-7.diff, which
-> > should do better at fixing latency during heavy io.
-> >
-> > -chris
-> 
-> My feeling is that io-stalls-6 is where standard 2.4.21 was if it comes down to latency.
-> But io-stalls-7 makes a big improvement for me during heavy io. The directory listing
-> in Konqueror, including image preview, appears nearly immedeately even during heavy io. 
+Hello!
 
-Great to hear, thanks for giving it a try.  io-stalls-6 helped most when
-you've got multiple devices and a streaming write to one was slowing
-down all the others.  -7 added in a tweaked form of Andrea's elevator
-latency fixes, and they make a big difference when there's a lot of
-writes to the drive you're trying to read from.
+On Wed, Jun 25, 2003 at 03:17:42PM +0200, Christian Kujau wrote:
 
-Hopefully we'll be able to hash out something suitable for 2.4.22-pre.
+> under both (2.5.65+2.5.69) i was able to mkreiserfs sde2. mounting the 
+> fs went ok, but copying data (cp -a /lib /mnt/reiserfs) brought several 
+> kernel-errors (see https://ephigenie.kicks-ass.net/browse/reiserfs/).
 
--chris
+This "buffer layer error" problem was fixed in 2.5.71 or something like that, I think.
+I found it while merging "variable blocksize" patch. (that allowed me to have
+the same situation in which you are - blocksize is less than pagesize, only on x86)
 
+> but: diff -r showed _no_ differences betweeen the directories, a 
+> following reiserfsck brought no vpf-10680 anymore!
+> so i'd say the problem occurs somewhere between 2.5.69 and 2.5.70.
 
+Hm. Ok, thank you for the testing.
+I am going to read the patches submitted at that time again.
+
+Bye,
+    Oleg
