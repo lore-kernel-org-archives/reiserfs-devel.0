@@ -1,53 +1,71 @@
-From: Fong Vang <FVang@Zantaz.com>
-Subject: root access complains about permission
-Date: Thu, 11 Sep 2003 11:04:06 -0700
-Message-ID: <3F60B916.6040408@zantaz.com>
+From: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
+Subject: Re: Status of fsync() wrt mail servers
+Date: Fri, 12 Sep 2003 02:22:15 +0200
+Message-ID: <m3brtqrh3c.fsf@merlin.emma.line.org>
+References: <20030910002953.C14172@unbeatenpath.net>
+	<20030910105102.GA535@rahul.net>
+	<1063192474.18154.355.camel@tiny.suse.com>
+	<20030910114103.GA26767@rahul.net>
+	<1063197048.18155.357.camel@tiny.suse.com>
+	<20030910101821.A15923@unbeatenpath.net>
+	<20030910213244.GD1461@matchmail.com>
+	<20030910173343.A16677@unbeatenpath.net>
+	<20030910234927.GE1461@matchmail.com>
+	<m3ekynbj3e.fsf@merlin.emma.line.org>
+	<20030911172509.GB18399@matchmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15634-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15635-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20030911172509.GB18399@matchmail.com> (Mike Fedyk's message of
+ "Thu, 11 Sep 2003 10:25:09 -0700")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
+Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-Any thoughts as to why permission would be denied for root when 
-accessing a file on a ReiserFS file system?  Here's a sample output
+Mike Fedyk <mfedyk@matchmail.com> writes:
 
-[root@sc15-172-31 log]# id
+>> I recently helped one qmail user debug this; the symptom was that the
+>> first mail in a burst of mails took 2 seconds to queue, subsequent mails
+>> were queued much quicker (70 ms). He was using ext3fs, and had one huge
+>> / (root) file system and so the "synch the whole file system" behaviour
+>> made his qmail-queue synch *all* his dirty blocks to disk...
+>
+> Can you be sure the MTA wasn't calling sync() just to be sure (Many MTAs are
+> funny in that they think the spool is on a seperate disk and
+> filesystem).
 
-uid=0(root) gid=0(root)
-groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel)
-[root@sc15-172-31 /root]# cd /var/log
-[root@sc15-172-31 log]# ls
-ls: wtmp: Permission denied
-ls: messages: Permission denied
-ls: messages.1: Permission denied
-ls: messages.2: Permission denied
-ls: messages.3: Permission denied
-ls: maillog: Permission denied
-ls: spooler.1: Permission denied
-ls: secure.4: Permission denied
-ls: secure: Permission denied
-ls: maillog.2: Permission denied
-ls: maillog.3: Permission denied
+For qmail and Postfix I can be. sync(8) isn't remotely useful, because
+it's allowed to return before completion.
 
+> fsync() shouldn't be flushing anything not relating to the file it was
+> called on (that includes directory entries related to the file also
+> IMHO).
 
-kernel is 2.4.19.  Reiserfs ver 3.6.25.  File system is mounted 
-read-write.  No ACL.  This is a production system that's been up for 2-3 
-months.  Any help would be appreciated.
+It "should", but current implementations on Linux do exactly that: flush
+everything. Maybe you've got better luck with BSD softupdates, but
+that's going to munch disk I/O big time next time you reboot after a
+crash: fsck needed. It runs niced in the background so the machine boots
+up, but the box won't satisfy higher I/O demands. Looks like a "ex
+duobus malis" game.
 
+> Also, if the MTA wasn't running as root, it shouldn't be able to make sync()
+> affect the entire system.
 
-This e-mail has been captured and archived by the ZANTAZ Digital Safe(tm)
-service.  For more information, visit us at www.zantaz.com. 
-IMPORTANT: This electronic mail message is intended only for the use of the
-individual or entity to which it is addressed and may contain information
-that is privileged, confidential or exempt from disclosure under applicable
-law.  If the reader of this message is not the intended recipient, or the
-employee or agent responsible for delivering this message to the intended
-recipient, you are hereby notified that any dissemination, distribution or
-copying of this communication is strictly prohibited.  If you have received
-this communication in error, please notify the sender immediately by
-telephone or directly reply to the original message(s) sent.  Thank you.
+I'd like to see your plans that prevent DoS by local users...
+
+One machine's light load is another one's DoS attack.
+
+> Is there anything that says that sync() can't just flush the user's
+> buffers unless you're running as root or with some CAP_ capability?
+
+Does the kernel track "whose dirty buffer is this" (uid_t) at all?
+
+-- 
+Matthias Andree
+
+Encrypt your mail: my GnuPG key ID is 0x052E7D95
