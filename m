@@ -1,45 +1,32 @@
-From: "Rudy L. Zijlstra" <rudy@edsons.demon.nl>
-Subject: Re: viewprinting processes and process oriented permissions got funded
- by DARPA
-Date: Thu, 15 Apr 2004 14:14:51 +0200
-Message-ID: <407E7CBB.1020907@edsons.demon.nl>
-References: <407C304F.4080804@namesys.com>	<m31xmrefug.fsf@averell.firstfloor.org>	<407C930D.5010407@namesys.com>	<20040414022248.GA92870@colin2.muc.de>	<20040414113741.GB15922@alias.nmd.msu.ru>	<20040414125340.GA7737@colin2.muc.de>	<20040414150052.GB19430@alias.nmd.msu.ru>	<20040414152804.GA2180@colin2.muc.de>	<20040414155342.GC19430@alias.nmd.msu.ru> <16510.30611.752735.235549@laputa.namesys.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: reiser limits
+Date: Thu, 15 Apr 2004 09:00:18 -0400
+Message-ID: <1082034018.27614.145.camel@watt.suse.com>
+References: <001d01c422e2$9f7e14d0$3f32a8c0@ds.ig.com.br>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17963-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17964-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16510.30611.752735.235549@laputa.namesys.com>
+In-Reply-To: <001d01c422e2$9f7e14d0$3f32a8c0@ds.ig.com.br>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Nikita Danilov <Nikita@namesys.com>, ReiserFS <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Fabiano Reis <fsilos@ig.com>
+Cc: reiserfs-list@namesys.com
 
-Nikita Danilov wrote:
-
-> > thanks.
-> > actually its a quest for holy grail.
->
->It's always tempting to point new-fangled Knights of the Round Table to
->the fact that historic prototype of their master (King Arthur, that is)
->was Atilla the Hun---a man who murdered millions of people and almost
->reduced civilization in the West Eurasia to the dust.
->
->An identification of inevitable Aetius (because history in its infinite
->wisdom always keeps somebody to meet barbarians with mighty encounter)
->is left as an exercise to the curious reader.
->
->
+On Thu, 2004-04-15 at 08:10, Fabiano Reis wrote:
+> Hi list,
 >  
->
-See http://myron.sjsu.edu/romeweb/ROMARMY/art13.htm for more information 
-on Flavius Aetius, murdered by his own emperor AD 454.
-I was surprised by the time. I thought Attila to be earlier.
+> Someone knows how many directory can I create inside a single
+> directory?
 
-Rudy
+Both 2.4.x and 2.6.x v3 have no additional limits on subdirs, it's the
+same as the number of files you can put on the FS (~2^32).
 
->Nikita.
->  
->
+v4 might be higher, not sure.
+
+-chris
+
 
