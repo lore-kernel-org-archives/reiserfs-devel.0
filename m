@@ -1,31 +1,82 @@
-From: Tom Vier <tmv@comcast.net>
-Subject: Re: Snapshots a la NetApp?
-Date: Mon, 24 Mar 2003 19:03:02 -0500
-Message-ID: <20030325000302.GB6118@zero>
-References: <200303221822.34401.phma@webjockey.net>
- <33433.10.20.2.148.1048390681.squirrel@alpha>
- <1048411014.1427.5.camel@wusel.schnulli.de> <3E7F6F66.5050808@namesys.com>
- <1048542143.1332.31.camel@wusel.schnulli.de>
-Reply-To: Tom Vier <tmv@comcast.net>
+From: Yury Umanets <umka@namesys.com>
+Subject: Re: "Unformat" a ReiserFS partition : a testimony :-)
+Date: Tue, 25 Mar 2003 03:16:17 +0300
+Message-ID: <3E7F9FD1.7060801@namesys.com>
+References: <3E7F5E33.4020709@info.ucl.ac.be>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Return-path: <reiserfs-list-return-13359-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13360-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-reply-to: <1048542143.1332.31.camel@wusel.schnulli.de>
-Content-Disposition: inline
+In-Reply-To: <3E7F5E33.4020709@info.ucl.ac.be>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Nicolas Vanderavero <nv@info.ucl.ac.be>
+Cc: reiserfs-list@namesys.com
 
-fwiw, there's pdumpfs, which does much the same thing. it's much like
-plan9's dump (which writes snapshots to worm media). pdumpfs has worked
-great for me. i just use it for my home directory. note that many programs
-don't handle hardlinks well. specifically tar, cpio, and rsync (the last two
-use TONS of memory even if you have just a few months worth of snapshots).
+Nicolas Vanderavero wrote:
+
+> Hello,
+
+Hello Nicolas,
+
+>
+>
+> while reinstalling a Debian on a new hard drive, I made the mistake to 
+> format in reiserfs my good old /home which was on /dev/sda7 instead of 
+> formatting the new /dev/hda7. Gasp ! Eight gigabytes lost ...
+>
+> Or ... maybe it was not totally lost :-) I immediately made a dump of 
+> the partition with 'dd' and started grepping some known text on it. It 
+> seemed that no data was really lost. I didn't know what to do. So I 
+> read the man pages and found the reiserfsck command quite interesting :-)
+
+
+You have lost the super block and probably old root node. I said 
+"probably" because it might be not used in teh time you did format.
+
+>
+>
+> Ok, I am a total newbie to filesystems and to ReiserFS. So maybe it 
+> will sound trivial to you, but just in case it happens to anyone else, 
+> I just wanted to say that running a reiserfsck --rebuild-tree -S on my 
+> partition was enough to unformat it. I ended up with some file in 
+> lost+found, but a 'file *' is enough to discover what they are. 
+
+The first thing you should do in cases like this is to make backup. I 
+hope you'll find eight gigabytes for that. Now you may feel free to do 
+anything with you old partition. Then you should to do --rebuild-sb and 
+try to fsck the partition with --check key. Then follow to fsck sugestions.
+
+These should be enought for getting you partition back.
+
+>
+>
+> So, maybe it would be usefull to add an entry in the "Example of 
+> using" section of the man page of reiserfsck, saying something like : 
+> "If you reformatted by mistake a reiserFS partition, you can try to 
+> unformat it by running reiserfsck --rebuild-tree -S on it". 
+
+Sounds good. Probably Vitaly should consider about that for including it 
+in the next fsck -pre.
+
+>
+>
+> Anyway, thank you for developing this filesystem.
+> Nicolas Vanderavero.
+>
+>
+>
+>
+>
+>
+
+P.S. Please read http://www.namesys.com/support.html. Can you as for 
+support?
 
 -- 
-Tom Vier <tmv@comcast.net>
-DSA Key ID 0xE6CB97DA
+Yury Umanets
+
+
