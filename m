@@ -1,46 +1,82 @@
-From: Jamie Lokier <jamie@shareable.org>
+From: David Lang <david.lang@digitalinsight.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 22:19:18 +0100
-Message-ID: <20040826211918.GF5733@mail.shareable.org>
-References: <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com> <1093536282.5482.6.camel@leto.cs.pocnet.net> <Pine.LNX.4.60.0408261348370.27825@dlang.diginsite.com>
+Date: Thu, 26 Aug 2004 14:17:46 -0700 (PDT)
+Message-ID: <Pine.LNX.4.60.0408261414100.27825@dlang.diginsite.com>
+References: <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com>
+ <1093536282.5482.6.camel@leto.cs.pocnet.net> <412E2E86.8050909@slaphack.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20810-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20811-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.60.0408261348370.27825@dlang.diginsite.com>
+In-Reply-To: <412E2E86.8050909@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
 Content-Transfer-Encoding: 7bit
-To: David Lang <david.lang@digitalinsight.com>
-Cc: Christophe Saout <christophe@saout.de>, Rik van Riel <riel@redhat.com>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: Christophe Saout <christophe@saout.de>, Rik van Riel <riel@redhat.com>, Jamie Lokier <jamie@shareable.org>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-David Lang wrote:
-> I also don't see why the VFS/Filesystem can't decide that (for example) 
-> this tar.gz is so active that instead of storing it as a tar.gz and 
-> providing a virtual directory of the contents that it instead stores the 
-> directory of the contents and makes the tar.gz virtual (regenerating it as 
-> needed or as extra system resources are available)
+On Thu, 26 Aug 2004, David Masover wrote:
 
-Absolutely.  It could keep both views, if they're both actively being
-used.  Or more than both, if there are more.  (You could think of
-compression being an alternate view, and both compressed and
-uncompressed may as well remain on disk if there's space and it's
-being actively accessed.
+> Christophe Saout wrote:
+>
+> | Yes, the main compound stream unaware applications would see would just
+> | be a writable view of its contents. Probably not trivial to implement
+> | but doable.
+>
+> Not the main stream, I think, but we do need a way to make "eight-stream
+> octopus" files portable.  But there needs to be a copy(2) syscall, and
+> apps need to start supporting it.  After all, copy-on-write was planned
+> for Reiser4, now 4.1*.  And don't anyone dare suggest "userland library".
+>
+> | It should be a simple format. Something simliar to tar. The worst thing
+>
+> Simple, yes.  Similar to tar, no.
+>
+> How about a serializer plugin?  foo.mp3/serialize (say) should return
+> some single stream which contains all of foo.mp3.  It could work for
+> directories as well, recursively, at least on the same filesystem --
+> you'd back up by doing
+>
+> cp /serialize /backup/20040826
+>
+> This has two potential problems.  One is security -- I want to be able
+> to serialize foo.mp3 without being root, but root doesn't want me to be
+> able to serialize /etc and thus get access to shadow.
+>
+> The second problem is that in order to actually be used for backup, we
+> need snapshots, which are not done yet*.  Currently, it'd have to lock
+> the file/directory (recursively), which you don't want to do to entire
+> live filesystems...  So, no massive backups of live systems yet, but
+> definitely useful for sending around mp3s and such.
+>
+> | that can happen is people start writing plugins for every existing
+> | compound format out there. It should be the other way around, agree on a
+> | simple compound format and encourage applications to use this one if the
+> | want to use this advantage.
+>
+> For the format, I vote for whatever format we're using at the storage
+> layer.  It'd be a lot faster that way, both in execution time (I think)
+> and in development time (I'm sure).  Plus, imagine the restore:
+>
+> cat /backup/20040826 > /dev/hda5
+> resizefs_reiser4 /dev/hda5
+>
 
-> implementation wise I see headaches in doing this, but conceptually this 
-> is just an optimization that could take place in the future if we fine 
-> that it's needed.
+one of the virtual metatags should be something about the method to 
+serialize the data
 
-untarring a big source tree takes ages.  I wouldn't like to do it
-after every reboot, if there was a .tar.bz2 tree I looked at often.
-That's why I have things like glibc untarred in my home directory.
+if you are viewing a tarfile as a directory the VFS/Filesystem shoud know 
+that the link between the whole thing and the contents is tar, and it 
+should be possible for userspace programs to find this out by reading teh 
+appropriate thing inside the virtual directory (and eventually change it 
+as well, which would trigger regeneration of the base object, or at least 
+noting that the current version is wrong and needs to be regenerated)
 
-With good cacheing, I could cd into the .tar.bz2 files and
-_effectively_ have the performance of untarred source trees for the
-ones I look at often on my disk -- automatically cleaned if the space
-if needed for something else, too.  It would be quite nice.
+David Lang
 
--- Jamie
+-- 
+"Debugging is twice as hard as writing the code in the first place.
+Therefore, if you write the code as cleverly as possible, you are,
+by definition, not smart enough to debug it." - Brian W. Kernighan
