@@ -1,75 +1,165 @@
-From: Christophe Saout <christophe@saout.de>
-Subject: Re: reproducable deadlock condition (reiser4)
-Date: Wed, 29 Sep 2004 17:48:42 +0200
-Message-ID: <1096472922.11946.2.camel@leto.cs.pocnet.net>
-References: <1096116193.12503.7.camel@leto.cs.pocnet.net>
-	 <559718553.20040925144815@tnonline.net>
-	 <1096116729.12503.15.camel@leto.cs.pocnet.net>
+From: Molchanov Alexander <a.molchanov@transtelecom-nn.ru>
+Subject: reiserfsck --rebuild-tree Aborted
+Date: Thu, 30 Sep 2004 09:24:42 +0400
+Message-ID: <20040930092442.40ee8189@xor.ttknn.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-GHiaUOg9eLrXrCtdH8Un"
-Return-path: <reiserfs-list-return-21961-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21962-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1096116729.12503.15.camel@leto.cs.pocnet.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Spam <spam@tnonline.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+Cc: noc@ttknn.net
 
---=-GHiaUOg9eLrXrCtdH8Un
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hello.
 
-Am Samstag, den 25.09.2004, 14:52 +0200 schrieb Christophe Saout:
-
-> > > it seems I've found a deadlock in reiser4.
-> > >=20
-> > > I don't know how it happens, but every time i want to run "emerge php=
-"
-> > > the command compiles php and wants to install it but just before the =
-end
-> > > it hangs (when running some PEAR commands). The whole system freezes =
-a
-> > > couple of seconds after that. /var/log/messages contains some lines
-> > > saying "clong length 0" but these lines never actually get commited t=
-o
-> > > disk when the build directory is on the /var volume.
-> > >=20
-> > > Interestingly the same deadlock occurs if I try to run the build on
-> > > another volume, so it seams to be the I/O pattern that's causing the =
-problem.
-> > >=20
-> > > I've tried it four times so far, always with the same result. The
-> > > filesystems are all clean.
-> > >=20
-> > > Should I turn on debugging? I can also provide ssh access to someone =
-if
-> > > he wants to look himself.
-> >
-> >   I to had problems with rc1. For example the repacker would also
-> >   freeze my system or corrupt the disk data. But I switched to rc2-mm1
-> >   and since then I have not had any reiser4 errors at all. It could be
-> >   worth a try.
->=20
-> Ok. Let the patch-fest begin...
-
-Well, bad news.
-
-I upgraded to -rc2-mm4 and the problem is still there.
+I have a big trouble.
 
 
---=-GHiaUOg9eLrXrCtdH8Un
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
+Yesterday diskspace on a server of my company the place was terminated. After reboot and reiserfsck --fix-fixable has corrected not all mistakes. After that the server has worked a little more (I have removed some files for clearing a place) and I have noticed, that it is impossible to get access to some files and even to remove. After reloading with LiveCD and attempts --rebuild-tree it has turned out log:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-iD8DBQBBWtlaZCYBcts5dM0RAvEgAJ9fM7Z3OU0NxQlqmoFJyIKATDG9ggCeKykI
-RmuxbnJargYKFGebMZyH/Bs=
-=HyAO
------END PGP SIGNATURE-----
+# reiserfsck --rebuild-tree /dev/sda2
+reiserfsck 3.6.17 (2003 www.namesys.com)
 
---=-GHiaUOg9eLrXrCtdH8Un--
+*************************************************************
+** Do not  run  the  program  with  --rebuild-tree  unless **
+** something is broken and MAKE A BACKUP  before using it. **
+** If you have bad sectors on a drive  it is usually a bad **
+** idea to continue using it. Then you probably should get **
+** a working hard drive, copy the file system from the bad **
+** drive  to the good one -- dd_rescue is  a good tool for **
+** that -- and only then run this program.                 **
+** If you are using the latest reiserfsprogs and  it fails **
+** please  email bug reports to reiserfs-list@namesys.com, **
+** providing  as  much  information  as  possible --  your **
+** hardware,  kernel,  patches,  settings,  all reiserfsck **
+** messages  (including version),  the reiserfsck logfile, **
+** check  the  syslog file  for  any  related information. **
+** If you would like advice on using this program, support **
+** is available  for $25 at  www.namesys.com/support.html. **
+*************************************************************
+
+Will rebuild the filesystem (/dev/sda2) tree
+Will put log info to 'rebuild.log'
+
+Do you want to run this program?[N/Yes] (note need to type Yes if you do):Yes
+Replaying journal..
+Reiserfs journal '/dev/sda2' in blocks [18..8211]: 0 transactions replayed
+###########
+reiserfsck --rebuild-tree started at Wed Sep 29 20:47:21 2004
+###########
+
+Pass 0:
+Loading on-disk bitmap .. ok, 2199141 blocks marked used
+Skipping 8287 blocks (super block, journal, bitmaps) 2190854 blocks will be read
+0%....20%....40%....60%....80%....100%                        left 0, 5477 /sec
+        "r5" hash is selected
+Flushing..finished
+        Read blocks (but not data blocks) 2190854
+                Leaves among those 846943
+                Objectids found 475091
+
+Pass 1 (will try to insert 846943 leaves):
+Looking for allocable blocks .. finished
+0%....20%....40%....60%....80%....100%                        left 0, 2785 /sec
+Flushing..finished
+        846943 leaves read
+                33146 inserted
+                813797 not inserted
+
+Pass 2:
+0%....20%....40%..                                       left 818621, 4280 /sec
+Not enough allocable blocks, checking bitmap...there are 0 allocable blocks, btw
+      
+out of disk space
+Aborted
+
+
+
+
+
+# debugreiserfs -J /dev/sda2
+debugreiserfs 3.6.17 (2003 www.namesys.com)
+
+
+Filesystem state: consistency is not checked after last mounting
+
+Reiserfs super block in block 16 on 0x802 of format 3.6 with standard journal
+Count of blocks on the device: 2502304
+Number of bitmaps: 77
+Blocksize: 4096
+Free blocks (count of blocks - used [journal, bitmaps, data, reserved] blocks): 2502304
+Root block: 0
+Filesystem marked as cleanly umounted
+Tree height: 65535
+Hash function used to sort names: "r5"
+Objectid map size 972, max 972
+Journal parameters:
+        Device [0x0]
+        Magic [0x440b59d2]
+        Size 8193 blocks (including 1 for journal header) (first block 18)
+        Max transaction length 1024 blocks
+        Max batch size 900 blocks
+        Max commit age 30
+Blocks reserved by journal: 0
+Fs state field: 0xfa02:
+        FATAL corruptions exist.
+sb_version: 2
+inode generation number: 11945888
+UUID: 9f650000-0000-0000-0000-000000000000
+LABEL: /
+Set flags in SB:
+Journal header (block #8210 of /dev/sda2):
+        j_last_flush_trans_id 2908803
+        j_first_unflushed_offset 6526
+        j_mount_id 14
+        Device [0x0]
+        Magic [0x440b59d2]
+        Size 8193 blocks (including 1 for journal header) (first block 18)
+        Max transaction length 1024 blocks
+        Max batch size 900 blocks
+        Max commit age 30
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+I have undertaken some attempts and received the same result. On a hard disk of badblocks is not present (I has checked up the utility dd and dd_rescue - on other partition the image of a disk was copied). Here has laid out result of work "debugreiserfs -p /dev/sda2 > sda2.1.dump; bzip2 -9 sda2.1.dump":
+http://public.nnov.net/tmp/ibm2/sda2.1.dump.bz2
+
+Kernel is	2.4.25-gentoo-r2 on Hard drive
+and		2.4.26-gentoo-r6 on LiveCD
+
+	on Hard drive
+# reiserfsck -V
+reiserfsck 3.6.17 (2003 www.namesys.com)
+
+	on LiveCD
+# reiserfsck -V
+reiserfsck 3.6.17 (2003 www.namesys.com)
+
+/dev/sda - is SCSI hardware Raid5 massive
+
+Can you help me rebuild partition ? :(
+If it is required it is possible to remove (for clearing a diskspace):
+/var/lib/oops/ - here there is a file in 512Mb
+	and directories:
+/bin
+/lib
+/sbin
+/opt
+/usr, excluding "/usr/local" !
+
+
+-- 
+Molchanov Alexander
+TransTeleCom-NN company
+Network Operation Center: noc@ttknn.net
+phone.: +7 8312 728827 (1424)
+        +7 8312 482733 (1424)
+a.molchanov@transtelecom-nn.ru
+PGP Fingerprint = 50C7 8479 59E4 8228 F27C 5E8C EDF5 FECC 6CA2 B1E2
 
