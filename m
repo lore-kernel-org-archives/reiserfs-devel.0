@@ -1,53 +1,56 @@
-From: Marcelo Pacheco <marcelo@macp.eti.br>
-Subject: Re: implementing reiserfs in C++ for a new OS
-Date: Mon, 9 Aug 2004 12:09:13 -0300
-Message-ID: <200408091209.13793.marcelo@macp.eti.br>
-References: <71d3364904080706112e72fb6b@mail.gmail.com> <71d3364904080907361d3d7064@mail.gmail.com> <41178FA8.80107@futuretg.com>
+From: Nikita Danilov <Nikita@Clusterfs.COM>
+Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output error"
+Date: Mon, 9 Aug 2004 19:13:28 +0400
+Message-ID: <16663.38040.898214.643240@laputa.namesys.com>
+References: <20040808071141.BFDB615C8A@mail03.powweb.com>
+	<41166C28.6030402@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20082-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20083-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41178FA8.80107@futuretg.com>
-Content-Disposition: inline
+In-Reply-To: <41166C28.6030402@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: David Dabbs <david@dabbs.net>, 'ReiserFS List' <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, "E. Gryaznova" <grev@namesys.com>
 
-That's the dirtiest thing you can possibily do.
+Hans Reiser writes:
+ > David Dabbs wrote:
+ > 
+ > >  
+ > >
+ > >>-----Original Message-----
+ > >>From: Hans Reiser [mailto:reiser@namesys.com]
+ > >>Sent: Saturday, August 07, 2004 11:18 PM
+ > >>To: David Dabbs
+ > >>Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output
+ > >>error"
+ > >>
+ > >>    
+ > >>
+ > >
+ > >  
+ > >
+ > >>How about, code was X, now it is Y, with just the relevant parts of the
+ > >>code cited?
+ > >>    
+ > >>
+ > >
+ > >Probably the most significant change to mongo sources is how it generates
+ > >file names. Mongo.pl had a hard coded value of 6 for the "max_fname"
+ > >parameter passed to reiser_fract_tree. I made this a parameter one can
+ > >specify on the mongo command line. I passed it a value of 23.
+ > >  
+ > >
+ > most filenames are small.  We have an optimization in reiser4 that 
+ > assumes filenames are less than 15 characters, which most of them are.
 
-Em Seg 09 Ago 2004 11:52, Dr. Giovanni A. Orlando escreveu:
-> Ramachandra K wrote:
-> >Hans Reiser <reiser@namesys.com> wrote:
-> >>Is it a free OS, or do you need to buy a license from us in
-> >>addition to  the GPL?
-> >
-> >ReiserFS would be implemented FROM SCRATCH for Capital
-> >in C++ with the help of existing literature/documentation etc.
-> >By this I mean that no existing code would be used, that is
-> >ported or modified in any way. This should mean that GPL
-> >would not be applicable to the code written for my OS, Capital.
->
-> Opps. There are something wrong here.
->
-> Seems that Capital OS, will stole the ReiserFS idea and re-implement.
->
-> Very honest, very capital like.
->
-> Thanks,
-> Giovanni
->
-> >Is my understanding of the license correct ? Are there any
-> >other licenses that I should be aware of ?
-> >
-> >Regarding Capital OS, the source would be made available,
-> >but under a different license and not GPL.
-> >
-> >And thanks for all the information.
-> >
-> >rgds,
-> >Ram
->
-> --
+With large keys (which is the default) up to 23 characters are
+embedded into key.
+
+[...]
+
+Nikita.
