@@ -1,54 +1,81 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: [PATCH] new data logging and quota patches available
-Date: 09 Mar 2003 13:12:21 -0500
-Message-ID: <1047233540.8215.164.camel@tiny.suse.com>
-References: <1045870331.16048.325.camel@tiny.suse.com>
-	 <200302221341.23799.Dieter.Nuetzel@hamburg.de>
-	 <1045926958.16042.366.camel@tiny.suse.com>
-	 <1045930351.16042.377.camel@tiny.suse.com>
-	 <3E581AD7.30000@mb.tu-ilmenau.de>  <3E581E07.3050407@mb.tu-ilmenau.de>
-	 <1046020695.16048.409.camel@tiny.suse.com>
-	 <3E59787F.2030009@mb.tu-ilmenau.de>
-	 <1046095718.16047.440.camel@tiny.suse.com>
-	 <3E5A5A31.5070008@mb.tu-ilmenau.de> <3E5A9A7A.5040806@mb.tu-ilmenau.de>
-	 <3E5F196C.1040001@mb.tu-ilmenau.de>
-	 <1046439149.2163.21.camel@tiny.suse.com>
-	 <3E66B73D.6030008@mb.tu-ilmenau.de>
-	 <1046922372.2161.275.camel@tiny.suse.com> <3E66C88E.40207@mb.tu-ilmenau.de>
-	 <3E69FA70.5030601@mb.tu-ilmenau.de>
-	 <1047227975.8215.150.camel@tiny.suse.com>
-	 <3E6B74C0.5050702@mb.tu-ilmenau.de>
-	 <1047230647.8219.161.camel@tiny.suse.com>
-	 <3E6B7C61.9050405@mb.tu-ilmenau.de>
+From: Anders Widman <andewid@tnonline.net>
+Subject: Re: Error messages. - Possible sollution.
+Date: Mon, 10 Mar 2003 01:14:27 +0100
+Message-ID: <13190438906.20030310011427@tnonline.net>
+References: <7473069171.20030305201818@tnonline.net>
+Reply-To: Anders Widman <andewid@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13158-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13159-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E6B7C61.9050405@mb.tu-ilmenau.de>
+In-Reply-To: <7473069171.20030305201818@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Sun, 2003-03-09 at 12:39, Manuel Krause wrote:
-> > Very much, thanks.  Thanks to some work Jeff recently did, my current
-> > thought is the slow down is related to the block allocator, and the
-> > search_by_reada patch.  Jeff and I are working up numbers to see if this
-> > is right, more details on monday.
-> > 
-> 
-> I hope you don't blame the search_by_reada patch itself for a slowdown. 
-> There is a 05-search_reada-4.diff in my said 2.4.19 setup. Or didn't you 
-> integrate that patch in your other patches since then - and excluded it?
 
-Just the opposite, I think the search_reada patch helps, but not with
-the default allocator in 2.4.21.  The metadata seems to be spread too
-far apart there.  I promise, more details on monday after we get some
-additional numbers to back things up ;-)
+   It  seems  as  there  is  a compatibility problem regarding certain
+   series  of  the  Maxtor  harddrives  and  Promise  U100  Tx2 boards
+   (perhaps all U1xx ?).
 
--chris
+   The  problem  is  that Maxtors older/original series of 80, 120 and
+   160GB  models  give  system  lockups, poor transfer speeds and fail
+   SMART self test.
 
+   Newer  drives from Maxtor (those originating in Quantum technology)
+   do work. At least the 60GB 540DX model.
+
+   Seagate  and IBM drives seem to have no problem with Promise cards.
+
+   So,  all  in  all  I  believe to have found one source of problems,
+   though  there  might  still be more. I will continue to investigate
+   and post any more findings.
+
+   Regards,
+   Anders
+
+
+>    This  has  come up on this list a number of times, and no one still
+>    seem to have found the true answer to the problem.
+
+>    kernel: status error: status=0x58 { DriveReady SeekComplete DataRequest }
+
+>    Most  seem  to  say  this is a bad block on the harddrive. I am not
+>    convinced  though.  Using  Linux on three machines here, and I have
+>    seen  this error on all of them, with lots of disks. The error seem
+>    to   come  random,  but  does  cause  system  lockups  and  broken
+>    filesystems.
+
+>    Have  about  20  disks, and have replaced and upgraded them several
+>    times  too.  This error has shown on most of them. But when testing
+>    them  with tools like IBM DFT, Maxtor Powermax, badblocks or chkdsk
+>    in Windows none show up to be with errors on.
+
+>    Sometimes  it  seem  to  help to disable DMA and or lower UDMA mode
+>    (all  drives are ATA-100 or ATA-133). But then after a few days, or
+>    a  few  minutes  the  kernel  starts spitting out these status=0x58
+>    errors.
+
+>    After  looking  online  on  different forums it does seem that many
+>    people are experiencing them.
+
+>    What  exactly does this status=0x58 error mean, and what can one do
+>    to solve the problem?
+
+>    //Anders
+
+
+> --------
+> PGP public key: https://tnonline.net/secure/pgp_key.txt
+
+
+   
+
+
+
+--------
+PGP public key: https://tnonline.net/secure/pgp_key.txt
 
