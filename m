@@ -1,46 +1,92 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
+From: Felipe Alfaro Solana <felipe_alfaro@linuxmail.org>
 Subject: Re: New reiser4 snapshot (2003.09.12) is out
-Date: Sat, 13 Sep 2003 05:22:50 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44.0309130520370.29171-100000@localhost.localdomain>
-References: <20030913085201.GA13272@namesys.com>
+Date: Sat, 13 Sep 2003 13:18:21 +0200
+Message-ID: <1063451900.1285.3.camel@teapot.felipe-alfaro.com>
+References: <20030912161534.GA8439@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15644-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15645-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030913085201.GA13272@namesys.com>
+In-Reply-To: <20030912161534.GA8439@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 To: Oleg Drokin <green@namesys.com>
-Cc: Alex Zarochentsev <zam@namesys.com>, Mike Benoit <mikeb@netnation.com>, reiserfs-list@namesys.com
+Cc: reiserfs-dev@namesys.com, reiserfs-list@namesys.com, LKML <linux-kernel@vger.kernel.org>
 
-On Sat, 13 Sep 2003, Oleg Drokin wrote:
-
+On Fri, 2003-09-12 at 18:15, Oleg Drokin wrote:
 > Hello!
 > 
-> On Sat, Sep 13, 2003 at 04:38:01AM -0400, Robert P. J. Day wrote:
+>    Another reiser4 snapshot was released today. This time it is against
+>    2.6.0-test5.
+>    Please take note that DISK DORMAT IS CHANGED, so you need to recreate
+>    your reiser4 filesystems (if you have any). This involves getting new
+>    reiser4progs, too.
 > 
-> > > It is because of paranoid -Werror flag.  
-> > > ./configure --disable-werror will help you.
-> > > However, if your system will have readline (as on systems which are used by
-> > > reiser4progs developers :-) headers that warning disappear.
+>    The snapshot is available from http://www.namesys.com/snapshots/2003.09.12
 
-> > my system definitely has readline installed, and i get the same error.
-> 
-> On the other hand, you need not only readline itself, but also its
-> header files. Lots of distributions (e.g. redhat-alike) form another
-> package called (usuaully) readline-devel, that contains this necessary
-> stuff.
+I've downloaded libaal and reiser4progs as noted above. I applied the
+whole reiser4.diff to 2.6.0-test5-bk3, but, when I run:
 
-i *have* the readline-devel RPM installed (this is a red hat beta system
-that had an *everything* install, so it's unlikely it's missing anything.)
+# mkfs.reiser4 /dev/hda4
+# mount -t reiser4 /dev/hda4 /mnt
 
-in addition, i tried the "./configure --disable-werror" suggestion and,
-while the configure worked, the make produced the same error as before.
+I get the following oops:
 
-still open to suggestions.
+reiser4[mount(306)]: parse_node40
+(fs/reiser4/plugin/node/node40.c:745)[nikita-494]:
+WARNING: Wrong level found in node: 2 != 0
+ reiser4[mount(306)]: key_warning
+(fs/reiser4/plugin/object.c:86)[nikita-717]:
+WARNING: Error for inode 42 (-5)
+Unable to handle kernel NULL pointer dereference at virtual address
+00000000
+ printing eip:
+c01ae82d
+*pde = 00000000
+Oops: 0000 [#1]
+CPU:    0
+EIP:    0060:[<c01ae82d>]    Not tainted
+EFLAGS: 00010286
+EIP is at inode_detach_jnode+0x1d/0xa0
+eax: 00000000   ebx: cc627d80   ecx: cc627d80   edx: c80b8054
+esi: c16d0000   edi: 00000000   ebp: c10dd4c8   esp: c16d1c1c
+ds: 007b   es: 007b   ss: 0068
+Process mount (pid: 306, threadinfo=c16d0000 task=ce87b900)
+Stack: c10dd4c8 ffffe000 cc627d80 c16d0000 00000000 c01ae988 cc627d80
+c16d0000 
+       c01ae9cd cc627d80 cc627d80 c01cf8b8 cc627d80 cc627d80 cee30680
+c16d0000 
+       c01c2f51 00000000 00000000 00000000 00000000 00000000 00000000
+00000000 
+Call Trace:
+ [<c01ae988>] unhash_unformatted_node_nolock+0x58/0x80
+ [<c01ae9cd>] unhash_unformatted_jnode+0x1d/0x40
+ [<c01cf8b8>] reiser4_invalidatepage+0xd8/0x160
+ [<c01c2f51>] dealloc_wmap+0x31/0x40
+ [<c013fef7>] do_invalidatepage+0x27/0x30
+ [<c013ff7f>] truncate_complete_page+0x7f/0x90
+ [<c0140170>] truncate_inode_pages+0x100/0x2a0
+ [<c016c99f>] wake_up_inode+0xf/0x30
+ [<c0172d1b>] write_inode_now+0x4b/0x90
+ [<c016c4ae>] generic_forget_inode+0x14e/0x170
+ [<c016c552>] iput+0x62/0x90
+ [<c01c670d>] done_formatted_fake+0x4d/0x60
+ [<c01cddba>] reiser4_fill_super+0x44a/0x630
+ [<c0159754>] get_sb_bdev+0x124/0x160
+ [<c01ce19f>] reiser4_get_sb+0x2f/0x40
+ [<c01cd970>] reiser4_fill_super+0x0/0x630
+ [<c01599bf>] do_kern_mount+0x5f/0xe0
+ [<c016f2c8>] do_add_mount+0x78/0x160
+ [<c016f5d4>] do_mount+0x134/0x180
+ [<c016f490>] copy_mount_options+0xe0/0xf0
+ [<c016f99f>] sys_mount+0xbf/0x140
+ [<c010941b>] syscall_call+0x7/0xb
 
-rday
+Code: 8b 38 ff 46 14 8d 9f 24 ff ff ff 8b 51 14 89 0c 24 a1 5c 0d 
+ <6>note: mount[306] exited with preempt_count 2
+
+Reiser4 was built into the kernel.
 
