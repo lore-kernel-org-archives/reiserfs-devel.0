@@ -1,62 +1,58 @@
-From: Mike Fedyk <mfedyk@matchmail.com>
-Subject: Re: Desktop Filesystem Benchmarks in 2.6.3
-Date: Sat, 06 Mar 2004 20:50:47 -0800
-Message-ID: <404AAA27.5010802@matchmail.com>
-References: <4044119D.6050502@andrew.cmu.edu> <200403030700.57164.robin.rosenberg.lists@dewire.com> <1078307033.904.1.camel@teapot.felipe-alfaro.com> <200403031059.26483.robin.rosenberg.lists@dewire.com> <1078309141.863.3.camel@teapot.felipe-alfaro.com> <4047DF05.8080209@tequila.co.jp> <40480031.3080301@mweb.co.za> <4048E878.5070505@matchmail.com> <4048FF74.70508@mweb.co.za>
+From: Corey McGuire <coreyfro@coreyfro.com>
+Subject: Mount Segfaults for ReiserFS Volume
+Date: Sun, 7 Mar 2004 01:44:23 -0800
+Message-ID: <200403070144.23233.coreyfro@coreyfro.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17109-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17111-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4048FF74.70508@mweb.co.za>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: cami <camis@mweb.co.za>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-cami wrote:
->>> I've had ext3 corruptions of note.. Running ext3 on squid's caching
->>> partition (expensive hardware + raid1+0 setup), what i'd have was if
->>> any proccess wrote to that caching partition, it would lock up the
->>> process.. even an rm on any file inside that partition would lock up
->>> rm.. after shutting down the machine, and _reformatting_ that partition
->>> with mkfs, it *still* done the same thing.. After getting fed up being
->>> unable to resolve the problem, 
->>
->>
->> Did you post to the ext3-users list on this?
-> 
-> 
-> Live/Production machines leave very little time for proper debugging..
-> (so to answer your question, no..)
-> 
+I have a RAID5 that I had to do a little rebuilding on.  I rebuilt the SB and 
+the tree, but when I tried mounting it after repair, mount would segfault, 
+locking the device to the mount that i couldn't raidstop it.
 
-I would still suggest you post to the list to see if there is a 
-solution.  That allows you to try it on another machine, or do something 
-different if you setup a new production machine.
+I am running SuSE 8.2, I tried under 2.4.20, 2.4.23, and 2.6.3...
 
->> Were your processes stuck in "D" state, or did you have high systems 
->> times?
-> 
-> 
-> Even with the machine rebooted, i was still experiencing the same
-> thing..
+here is a paste from dmesg, let me know if you need more before you have an 
+idea:
 
-That doesn't say much.  If you have corruption on disk, you might get this.
+found reiserfs format "3.6" with standard journal
+Unable to handle kernel paging request at virtual address e0999004
+ printing eip:
+c019e12d
+*pde = 1fe7c067
+*pte = 00000000
+Oops: 0002 [#1]
+CPU:    0
+EIP:    0060:[<c019e12d>]    Not tainted
+EFLAGS: 00010282
+EIP is at read_old_bitmaps+0xbd/0x100
+eax: da87a4e0   ebx: e0991000   ecx: dfd3b940   edx: da87a4e0
+esi: dd619400   edi: 00001000   ebp: db847000   esp: db90fdf0
+ds: 007b   es: 007b   ss: 0068
+Process mount (pid: 833, threadinfo=db90e000 task=dbacc6e0)
+Stack: dfda9040 00001003 00001000 00000003 def6ac00 dd619400 83c30000 000000e5
+       c019ec93 dd619400 00002000 def6ac1c db90fe40 db90fe44 db90fe48 ffffffea
+       db847000 00000001 dd619510 db90fea0 00000000 00000000 00000000 c02e07b7
+Call Trace:
+ [<c019ec93>] reiserfs_fill_super+0x2c3/0x690
+ [<c01819ff>] disk_name+0xaf/0xd0
+ [<c01566ff>] sb_set_blocksize+0x1f/0x50
+ [<c01560ba>] get_sb_bdev+0xea/0x170
+ [<c019f0cf>] get_super_block+0x2f/0x40
+ [<c019e9d0>] reiserfs_fill_super+0x0/0x690
+ [<c015636b>] do_kern_mount+0x5b/0xf0
+ [<c016c3a7>] do_add_mount+0x97/0x190
+ [<c016c744>] do_mount+0x194/0x1c0
+ [<c016c52c>] copy_mount_options+0x8c/0x110
+ [<c016cb3f>] sys_mount+0xbf/0x140
+ [<c010906b>] syscall_call+0x7/0xb
 
-> 
->> If so, you could have configured squid to put fewer files in each 
->> directory, or use the htree patch (for 2.4 kernels) or it's in by 
->> default in 2.6.
-> 
-> 
-> Doesnt make much sense, even when reformatting the disk with ext3
-> again, proved to be useless.. After about 20 seconds with squid
-> running, the same issues would arise.. The machine was up for
-> about 40 days before the issues occured..
-
-What kernel version was this on?
-
-Mike
+Code: 89 44 fb 04 8b 86 64 01 00 00 8b 50 08 b8 01 00 00 00 8b 4c
