@@ -1,35 +1,43 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Subject: vs-7000 errors after disks forced online in a RAID5 HW setup
-Date: Wed, 19 May 2004 01:49:33 +0200
-Message-ID: <20040519014933.4d9b5d3e@philou.gramoulle.local>
+From: Chris Mason <mason@suse.com>
+Subject: Re: ReiserFS Maximum file size (in practice)
+Date: Tue, 18 May 2004 20:45:07 -0400
+Message-ID: <1084927507.27142.2.camel@watt.suse.com>
+References: <40AA74CA.5040306@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18755-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18757-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <40AA74CA.5040306@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS Mailing List <reiserfs-list@namesys.com>
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+
+On Tue, 2004-05-18 at 16:40, Jeff Mahoney wrote:
+> Hey all -
+> 
+> The ReiserFS FAQ that we quote and point people to when they ask 
+> questions about limits in ReiserFS states that the maxmimum file size 
+> for a reiserfs v3 filesystem is 2^60-1. However, the actual limits, in 
+> practice, are far less.
+> 
+> I tried to create a 3 TB sparse file, and ended up getting told it was 
+> too large. 2 TB was too large also, just under 2 TB was ok.
+> 
+> This is a result of super->s_maxbytes = (512LL << 32) - s->s_blocksize;, 
+> in fs/reiserfs/super.c, which is set so that i_blocks isn't overflowed.
+> 
+> Other filesystems that have the ability to cross the 2 TB limit on file 
+> sizes simply ignore the limit and allow i_blocks to wrap. There's really 
+> no reason we can't do the same.
+> 
+> The patch is attached.
+
+Are quotas happy with this?
+
+-chris
 
 
- Hello,
-
-Yesterday, we were hit with a hardware failure that left us with no choice that forcing a failed disk online
-, in a HW RAID5 setup on one of our NFS server.
-
-Now, logs are filled with :
-
-vs-7000: search_by_entry_key: search_by_key returned item position == 0<4>zam-7001: io error in reiserfs_find_entry
-vs-7000: search_by_entry_key: search_by_key returned item position == 0<4>zam-7001: io error in reiserfs_find_entry
-vs-7000: search_by_entry_key: search_by_key returned item position == 0<4>zam-7001: io error in reiserfs_find_entry
-
-etc...
-
-Can i skip the reiserfsck --check and do directly a reiserfsck --rebuild-tree ?
-(around 470Go of data , 70% of the available space)
-
-Thanks,
-
-Philippe
