@@ -1,118 +1,51 @@
-From: Nick Burrett <nick@dsvr.net>
-Subject: symlink has wrong sd_blocks count
-Date: Tue, 18 Feb 2003 10:53:25 +0000
-Message-ID: <3E5210A5.1030108@dsvr.net>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: lexicographic ordering is not always best
+Date: Tue, 18 Feb 2003 13:54:04 +0300
+Message-ID: <15954.4300.300740.395383@laputa.namesys.com>
+References: <3E517263.3030504@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12808-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12809-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3E517263.3030504@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: ReiserFS <reiserfs-list@namesys.com>
 
-I'm running a stock 2.4.20 kernel with the reiserfs quota patches applied.
+Hans Reiser writes:
+ > Suppose that you have small directories, such that the time to do linear 
+ > searching within the directory is not significant.
+ > 
+ > Suppose that you have a tendency to access files in readdir() order, and 
+ > having files laid out in an order that is the same as the directory 
+ > order is performance valuable.
+ > 
+ > Suppose that you create files too slowly for allocate on flush to fix 
+ > this problem, and access them too soon for the repacker to fix this problem.
+ > 
+ > In that case, ordering both directory entries and file bodies in a first 
+ > created first ordered order is optimal.
+ > 
+ > How much work would it be to create a reiser4 directory plugin to order 
+ > in creation time order?  Could you do this by simply setting the hash 
+ > field always to zero for that plugin, and letting the duplicate key code 
+ > handle things?  If it is trivial to do, it might be useful.  Especially 
+ > for the analysis of the performance of our algorithms on various benchmarks.
 
-Simply creating a symlink and then running reiserfsck shows errors like 
-this:
-    /foofile 2 4 has wrong sd_blocks 8, has to be 1
+I do not see how this is possible. Lookup has to find the directory
+entry given a name. If directory entries are ordered in the "creation"
+order, some component(s) of directory entry key (ones that order
+directory entry by creation) are unknown at the lookup time.
 
-I've reproduced this 100% on 100 filesystems on two servers.
+The only solutions that come to my mind are either double index
+directory entries (this will solve a bunch of other problems as well),
+or resort to a sequential scan (this is exactly what ext2 does, and, by
+the way ext2 also mostly sorts directory entries by the creation time).
 
+Have I missed something in your proposal?
 
-bash-2.05# lvcreate -L 100M -n test vol01
-lvcreate -- doing automatic backup of "vol01"
-lvcreate -- logical volume "/dev/vol01/test" successfully created
-
-bash-2.05# mkreiserfs /dev/vol01/test
-
-<-------------mkreiserfs, 2002------------->
-reiserfsprogs 3.6.2
-
-mkreiserfs: Guessing about desired format..
-mkreiserfs: Kernel 2.4.20 is running.
-Format 3.6 with standard journal
-Count of blocks on the device: 25600
-Number of blocks consumed by mkreiserfs formatting process: 8212
-Blocksize: 4096
-Hash function used to sort names: "r5"
-Journal Size 8193 blocks (first block 18)
-Journal Max transaction length 1024
-inode generation number: 0
-UUID: cae72cae-5469-4e60-9b7f-7ffd662c3967
-ATTENTION: YOU SHOULD REBOOT AFTER FDISK!
-	ALL DATA WILL BE LOST ON '/dev/vol01/test'!
-Continue (y/n):y
-Initializing journal - 0%....20%....40%....60%....80%....100%
-Syncing..ok
-[...snipped...]
-
-
-bash-2.05# reiserfsck --check /dev/vol01/test
-
-<-------------reiserfsck, 2002------------->
-reiserfsprogs 3.6.2
-
-Will read-only check consistency of the filesystem on /dev/vol01/test
-Will put log info to 'stdout'
-
-Do you want to run this program?[N/Yes] (note need to type Yes):Yes
-###########
-reiserfsck --check started at Tue Feb 18 10:47:22 2003
-###########
-Replaying journal..
-No transactions found
-Checking S+tree..ok
-Comparing bitmaps..ok
-Checking Semantic tree...
-ok
-No corruptions found
-There are on the filesystem:
-	Leaves 1
-	Internal nodes 0
-	Directories 1
-	Other files 0
-	Data block pointers 0 (0 of them are zero)
-	Safe links 0
-###########
-reiserfsck finished at Tue Feb 18 10:47:22 2003
-###########
-
-bash-2.05# mount /dev/vol01/test /mnt
-bash-2.05# cd /mnt
-bash-2.05# touch bar
-bash-2.05# ln -s bar foo
-bash-2.05# cd /
-bash-2.05# umount /mnt
-bash-2.05# reiserfsck --check /dev/vol01/test
-
-<-------------reiserfsck, 2002------------->
-reiserfsprogs 3.6.2
-
-Will read-only check consistency of the filesystem on /dev/vol01/test
-Will put log info to 'stdout'
-
-Do you want to run this program?[N/Yes] (note need to type Yes):Yes
-###########
-reiserfsck --check started at Tue Feb 18 10:48:04 2003
-###########
-Replaying journal..
-No transactions found
-Checking S+tree..ok
-Comparing bitmaps..ok
-Checking Semantic tree...
-/foofile 2 4 has wrong sd_blocks 8, has to be 1
-ok
-There were found 1 corruptions which can be fixed with --fix-fixable
-###########
-reiserfsck finished at Tue Feb 18 10:48:04 2003
-###########
-bash-2.05#
-
-
--- 
-Nick Burrett
-Network Engineer, Designer Servers Ltd.   http://www.dsvr.co.uk
-
+Nikita.
