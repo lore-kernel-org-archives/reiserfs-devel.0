@@ -1,34 +1,35 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: help recover filesystem corrupted by failing ide controller
-Date: Sun, 16 Mar 2003 18:33:00 +0300
-Message-ID: <200303161833.00381.vitaly@namesys.com>
-References: <200303141942.00679.phma@webjockey.net> <3E73C6A5.3070201@mb.tu-ilmenau.de> <200303152013.46523.phma@webjockey.net>
+From: Anders Widman <andewid@tnonline.net>
+Subject: Re: [PATCH] various allocator optimizations
+Date: Sun, 16 Mar 2003 17:25:14 +0100
+Message-ID: <53331891906.20030316172514@tnonline.net>
+References: <1047400482.8215.312.camel@tiny.suse.com>
+ <20030311194205.A4493@namesys.com> <1047499021.8219.604.camel@tiny.suse.com>
+ <3E6F9DE3.2070902@namesys.com>
+Reply-To: Anders Widman <andewid@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-13284-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13285-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200303152013.46523.phma@webjockey.net>
+In-Reply-To: <3E6F9DE3.2070902@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Pierre Abbat <phma@webjockey.net>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
+
+...
+>defragmenting tools are nice and all, but before we can write one we
+>actually have to pick a disk layout for the tool to create ;-)
+
+   Yes  and no :). A simple packer that defragments files, and perhaps
+   move  files  that  are  in the same directory together. This can be
+   done   without  knowing  usage  statistics  or  need  any  special
+   algorithms?
+
+   //Anders
 
 
-Hi,
+--------
+PGP public key: https://tnonline.net/secure/pgp_key.txt
 
-> reiserfs_open_journal: journal parameters from super block does not match
-> to journal parameters from journal.
-
-There is a new check for journal parameters were added which helps to recover
-fs with relocated journal and in a few other cases. These parameters were not
-stored correctly in old kernels before relocated journal appeared. This is 
-nothing to worry about, and you can fix with fsck --rebuild-sb help - say 
-there to fix parameters in the jouranl by ones from the super block.
-
--- 
-
-Thanks,
-Vitaly Fertman
