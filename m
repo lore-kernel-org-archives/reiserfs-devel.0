@@ -1,50 +1,33 @@
-From: Linus Torvalds <torvalds@osdl.org>
-Subject: Re: The argument for fs assistance in handling archives (was: silent
- semantic changes with reiser4)
-Date: Wed, 1 Sep 2004 18:07:36 -0700 (PDT)
-Message-ID: <Pine.LNX.4.58.0409011800270.2295@ppc970.osdl.org>
-References: <20040826150202.GE5733@mail.shareable.org>
- <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org>
- <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <20040902002431.GN31934@mail.shareable.org>
+From: Dave Kleikamp <shaggy@austin.ibm.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Wed, 01 Sep 2004 15:28:26 -0500
+Message-ID: <1094070506.28509.24.camel@shaggy.austin.ibm.com>
+References: <20040829191044.GA10090@thundrix.ch>
+	 <3247172997-BeMail@cr593174-a> <20040831081528.GA14371@thundrix.ch>
+	 <20040901201608.GD31934@mail.shareable.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21240-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21241-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040902002431.GN31934@mail.shareable.org>
+In-Reply-To: <20040901201608.GD31934@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 To: Jamie Lokier <jamie@shareable.org>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Tonnerre <tonnerre@thundrix.ch>, "Alexander G. M. Smith" <agmsmith@rogers.com>, spam@tnonline.net, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, Linus Torvalds <torvalds@osdl.org>, reiser@namesys.com, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com, vonbrand@inf.utfsm.cl
 
-
-
-On Thu, 2 Sep 2004, Jamie Lokier wrote:
+On Wed, 2004-09-01 at 15:16, Jamie Lokier wrote:
+> (For example, if I edit an HTML file which is encoded in iso-8859-1,
+> change it to utf-8 and indicate that in a META element, and save it
+> under the same name, the full content-type should change from
+> "text/html; charset=iso-8859-1" to "text/html; charset=utf-8".)
 > 
-> This is where the file-as-directory metadata stuff is so potentially
-> interesting.  It's actually a nice interface that every program can see.
+> I don't see how you can do that without kernel support.
 
-.. but you can _still_ do exactly this in a user-space library and 
-prototype it. Just take over "open" (and opendir/readdir), and you can do 
-so.
+Your html editor should do that.
+-- 
+David Kleikamp
+IBM Linux Technology Center
 
-> To be fair, the whole thing could be prototyped (with glitches, but
-> enough to demonstrate) in userspace, running everything through
-> something like uservfs or even NFS, especially with file-as-directory
-> being blessed at the VFS level.
-
-I do believe that you can prototype it even without any kernel support.
-
-This is why I want to have stronger reasons for real VFS support. I see
-the Samba argument, and I buy that one, if only because it has such a high
-consistency requirement (let's face it, people expect more guarantees of
-their file servers than of most other things). But on the other hand, the
-Samba guys apparently _are_ happy with "openat()", so they don't
-necessarily need any normal namespace stuff.
-
-And I suspect that a user-level prototype would show that what you 
-_really_ want may be something else altogether..
-
-		Linus
