@@ -1,25 +1,41 @@
-From: Ragnar =?iso-8859-15?Q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
-Subject: Re: Advangates (A file-based interface for mount)
-Date: Thu, 10 Jul 2003 04:55:45 +0200
-Message-ID: <20030710025545.GB1160@vestdata.no>
-References: <3F078EF1.6090908@mrs.umn.edu> <3F0C161B.6030707@namesys.com> <16140.7137.369855.682433@laputa.namesys.com> <877k6r8q7x.fsf@labatt.uhoreg.ca> <3F0C89FC.8060604@mrs.umn.edu>
+From: "Barry, Christopher" <cbarry@infiniconsys.com>
+Subject: RE: Advangates (A file-based interface for mount)
+Date: Wed, 9 Jul 2003 23:31:56 -0400
+Message-ID: <08628CA53C6CBA4ABAFB9E808A5214CB4BDF39@mercury.infiniconsys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14854-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14855-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3F0C89FC.8060604@mrs.umn.edu>
+content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
+This is a bit off-topic
+
+Does not the HURD enable users to all kinds of stuff, and it does not =
+affect the core system? Would this not be a cool thing in that =
+environment. Does ReiserFS even work with the HURD? Do I even need to be =
+talking here...;^)
+
+oops, sorry. wrong conference room...
+
+-C
+
+-----Original Message-----
+From: Ragnar Kj=F8rstad [mailto:reiserfs@ragnark.vestdata.no]
+Sent: Wednesday, July 09, 2003 10:56 PM
+To: reiserfs-list@namesys.com
+Subject: Re: Advangates (A file-based interface for mount)
+
+
 On Wed, Jul 09, 2003 at 04:32:44PM -0500, Grant Miner wrote:
 > Two reasons why this is nice:
-> First, the permissions of ..mount could be inherited, so that users would=
-=20
+> First, the permissions of ..mount could be inherited, so that users =
+would=20
 > be able to mount things in their home directories but not system=20
 > directories.
 
@@ -58,8 +74,8 @@ easily allow ordinary users to mount filesystems as well. (actually it
 already does - but limited to filesystems listed in fstab with the
 "user" option)
 
-> Second, the file format makes is intuitive for specifying layered mounts =
-
+> Second, the file format makes is intuitive for specifying layered =
+mounts=20
 > like plan 9.
 
 A new mount interface is certainly no requirement for layered mounts -
