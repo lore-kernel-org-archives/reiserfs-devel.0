@@ -1,16 +1,38 @@
 From: Will Stowe <will.stowe@intec-telecom-systems.com>
 Subject: RE: Bad Sectors during log replay, help?
-Date: Fri, 3 May 2002 00:34:40 -0400
-Message-ID: <8287102CFE5C31418556A13A4E5BEE91E957D0@sphynx.git.compgen.com>
+Date: Fri, 3 May 2002 00:36:23 -0400
+Message-ID: <8287102CFE5C31418556A13A4E5BEE91E957D1@sphynx.git.compgen.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10214-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10215-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Dax Kelson' <dax@gurulabs.com>, reiserfs-list@namesys.com
+To: Will Stowe <will.stowe@intec-telecom-systems.com>, 'Dax Kelson' <dax@gurulabs.com>, reiserfs-list@namesys.com
+
+Type-o, sorry 
+
+	# hdparm -d 0 /dev/hda
+
+	(stupid spellcheck!)
+
+Will Stowe
+Systems Administrator
+Intec Telecom Systems
+5775 Peachtree-Dunwoody Road
+Atlanta, GA 30342
+Work:(404) 705-2867
+Email: Will.Stowe@intec-telecom-systems.com 
+ 
+ 
+
+-----Original Message-----
+From: Will Stowe [mailto:will.stowe@intec-telecom-systems.com] 
+Sent: Friday, May 03, 2002 12:35 AM
+To: 'Dax Kelson'; reiserfs-list@namesys.com
+Subject: RE: [reiserfs-list] Bad Sectors during log replay, help?
 
 Try turning off dma using hdparm -d 0 /dev/had, then try remounting
 
