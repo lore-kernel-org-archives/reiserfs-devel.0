@@ -1,168 +1,104 @@
 From: "Nicolas Smallwood" <smallwood@maya.com>
-Subject: RE: Errors reported with dmesg using reiser4
-Date: Wed, 2 Feb 2005 13:15:29 -0500
-Message-ID: <CMEFJOIJPCAMFCEKIEOEOEPBCFAA.smallwood@maya.com>
-References: <CMEFJOIJPCAMFCEKIEOECEMJCFAA.smallwood@maya.com>
+Subject: Atomicity with reiser4?
+Date: Wed, 2 Feb 2005 14:36:49 -0500
+Message-ID: <CMEFJOIJPCAMFCEKIEOECEPFCFAA.smallwood@maya.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/related;
+	boundary="----=_NextPart_000_0000_01C50934.A10CB0C0"
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <CMEFJOIJPCAMFCEKIEOECEMJCFAA.smallwood@maya.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiser <reiserfs-list@namesys.com>
 
-Here is the output from check and build-sb
-
-joshuadev root # fsck.reiser4 --check /dev/sdc1
-*******************************************************************
-This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
-*******************************************************************
-
-Fscking the /dev/sdc1 block device.
-Will check the consistency of the Reiser4 SuperBlock.
-Will check the consistency of the Reiser4 FileSystem.
-Continue?
-(Yes/No): yes
-***** fsck.reiser4 started at Mon Jan 31 23:38:48 2005
-Fatal: Failed to open the reiser4 backup.
-Fatal: Cannot open the FileSystem on (/dev/sdc1).
-
-1 fatal corruptions were detected in SuperBlock. Run with --build-sb option
-to  fix them.
-
-joshuadev root # fsck.reiser4 --build-sb /dev/sdc1
-*******************************************************************
-This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
-*******************************************************************
-
-Fscking the /dev/sdc1 block device.
-Will build the Reiser4 SuperBlock.
-Will check the consistency of the Reiser4 FileSystem.
-Continue?
-(Yes/No): yes
-***** fsck.reiser4 started at Mon Jan 31 23:40:09 2005
-Enter the key plugin name [key_large]:
-Reiser4 fs was detected on /dev/sdc1.
-Master super block (16):
-magic:          ReIsEr4
-blksize:        4096
-format:         0x0 (format40)
-label:          <none>
-
-Format super block (17):
-plugin:         format40
-description:    Disk-format for reiser4.
-magic:          ReIsEr40FoRmAt
-flushes:        0
-mkfs id:        0x73665e9a
-blocks:         61049000
-free blocks:    34231800
-root block:     25269822
-tail policy:    0x2 (smart)
-next oid:       0x1c4f4d11
-file count:     474893555
-tree height:    5
-key policy:     LARGE
+------=_NextPart_000_0000_01C50934.A10CB0C0
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_0001_01C50934.A10CB0C0"
 
 
-CHECKING STORAGE TREE
-FSCK: Node (26425112), items (4) and (5): Wrong order of keys.
-FSCK: Node (26425112): the node is broken. Pointed from the node (26764690),
-item (64), unit (0). The whole subtree is skipped.
-        Read nodes 26805778
-        Nodes left in the tree 26805777
-                Leaves of them 26490907, Twigs of them 311160
-        Broken of them 1
-                Leaves of them 0, Twigs of them 0
-        Time interval: Mon Jan 31 23:40:28 2005 - Tue Feb  1 09:33:30 2005
-CHECKING EXTENT REGIONS.
-        Read twigs 311160
-        Time interval: Tue Feb  1 09:33:30 2005 - Tue Feb  1 10:01:39 2005
-Warn : Fatal corruptions were found. Semantic pass is skipped.
-***** fsck.reiser4 finished at Tue Feb  1 10:01:39 2005
-Closing fs...done
+------=_NextPart_001_0001_01C50934.A10CB0C0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 
-1 fatal corruptions were detected in FileSystem. Run with --build-fs option
-to fix them.
+Network BlitzHello,
 
-***************************************
+I was running a test with some in-house database software that relies on
+fsync after transactions are complete.  I noticed severe perfomance lapses,
+and have bee profiling the software for several days.   A minute ago, I
+removed the fsync from the system, only making it think it had been
+fsyncing.  This reduced my test from 15 minutes to less than 40 seconds.
 
-Running build-fs now...
+Obviously there is a performance hit with using fsync, but we are of course
+worried about database integrity.
 
-Thanks,
+Is there an avaliable paper on how reiser4 handles atomicity, or can it be
+easily explained?
+Essentially, my question is whether our database (using 4k blocksizes) will
+lose data during power loss or other occurrences if we do not fsync?
 
-Nicolas Smallwood
-
------Original Message-----
-From: Nicolas Smallwood [mailto:smallwood@maya.com]
-Sent: Tuesday, February 01, 2005 11:56 AM
-To: reiser
-Subject: RE: Errors reported with dmesg using reiser4
-
-
-The fsck.reiser4 check reported one fatal error in the superblock
-
-Running fsck.reiser4 --build-sb as I type this.
+Thank You,
 
 Nicolas Smallwood
 
 
 
------Original Message-----
-From: Alex Zarochentsev [mailto:zam@namesys.com]
-Sent: Monday, January 31, 2005 3:44 PM
-To: smallwood@maya.com
-Cc: reiserfs-list@namesys.com
-Subject: Re: Errors reported with dmesg using reiser4
+------=_NextPart_001_0001_01C50934.A10CB0C0
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE id=3DridTitle>Network Blitz</TITLE>
+<META http-equiv=3DContent-Type content=3D"text/html; =
+charset=3Diso-8859-1">
+<STYLE>BODY {
+	MARGIN-TOP: 0px; FONT-SIZE: 10pt; MARGIN-LEFT: 20px; COLOR: #333333; =
+FONT-FAMILY: Verdana, Arial
+}
+IMG {
+	MARGIN-TOP: 25px; MARGIN-LEFT: -20px
+}
+</STYLE>
 
-Hello,
+<META content=3D"MSHTML 6.00.2900.2523" name=3DGENERATOR></HEAD>
+<BODY id=3DridBody background=3Dcid:687423119@02022005-071a>
+<DIV><SPAN class=3D687423119-02022005>Hello,</SPAN></DIV>
+<DIV><SPAN class=3D687423119-02022005></SPAN>&nbsp;</DIV>
+<DIV><SPAN class=3D687423119-02022005>I was running a test with some =
+in-house=20
+database software that relies on fsync after transactions are =
+complete.&nbsp; I=20
+noticed severe perfomance lapses, and have bee profiling the software =
+for=20
+several days.&nbsp;&nbsp; A minute ago, I removed the fsync from the =
+system,=20
+only making it think it had been fsyncing.&nbsp; This reduced my test =
+from 15=20
+minutes to less than 40 seconds.</SPAN></DIV>
+<DIV><SPAN class=3D687423119-02022005></SPAN>&nbsp;</DIV>
+<DIV><SPAN class=3D687423119-02022005>Obviously there is a performance =
+hit with=20
+using fsync, but we are of course worried about database =
+integrity.</SPAN></DIV>
+<DIV><SPAN class=3D687423119-02022005></SPAN>&nbsp;</DIV>
+<DIV><SPAN class=3D687423119-02022005>Is there an avaliable paper on how =
+reiser4=20
+handles atomicity, or can it be easily explained?</SPAN></DIV>
+<DIV><SPAN class=3D687423119-02022005>Essentially, my question is =
+whether our=20
+database (using 4k blocksizes) will lose data during power loss or other =
 
-On Tue, Jan 25, 2005 at 03:28:54PM -0500, smallwood@maya.com wrote:
-> Hello, for the record, this is from a system running the following specs:
->
-> Gentoo Linux
-> 2.6.10-gentoo-r6 patched with reiser4-for-2.6.10-1
-> 3ware 7000 series card with 4 SATA 250GB Western Digitial Drives with no
-> raid configured.
->
-> I am running a test pushing millions of directories onto one of the drives
-> using a UUID as the directory name.  These all reside in the base
-> directory of the filesystem.
->
-> The directories are now being propogated by two python scripts creating
-> random data inside these folders on two of the other drives.  When about
-> 1.5gb has collected, they begin moving the folders onto the main drive.
->
-> This latest test was started last Thursday, with the drive being about 34
-> GBs full of data from related testing.
->
-> Since then, the drive has filled to 92GB, but at some point, I discovered
-> the following error:
->
-> reiser4[mv(28692)]: key_warning
-(fs/reiser4/plugin/object.c:97)[nikita-717]:
-> WARNING: Error for inode 215673251 (-2)
-> reiser4[mv(28692)]: write_sd_by_inode_common
-> (fs/reiser4/plugin/object.c:480[nikita-2221]:
-> WARNING: Failed to save sd for 215673251: -2
->
-> These messages are then repeated nine times.
->
-> Any suggestions on further checks I can make?
+occurrences if we do not fsync?</SPAN></DIV>
+<DIV><SPAN class=3D687423119-02022005></SPAN>&nbsp;</DIV>
+<DIV><SPAN class=3D687423119-02022005>Thank You,</SPAN></DIV>
+<DIV><SPAN class=3D687423119-02022005></SPAN>&nbsp;</DIV>
+<DIV><FONT face=3DArial>Nicolas Smallwood</FONT></DIV>
+<P></P><SPAN id=3D_AthCaret></SPAN>
+<P>&nbsp;</P></BODY></HTML>
 
-can you run fsck.reiser4 --check on that drive?
+------=_NextPart_001_0001_01C50934.A10CB0C0--
 
->
-> Thank You,
->
-> Nicolas Smallwood
-> smallwood@maya.com
-
---
-Alex.
-
+------=_NextPart_000_0000_01C50934.A10CB0C0--
 
