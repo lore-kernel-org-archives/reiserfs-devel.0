@@ -1,45 +1,88 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiser4 Officially Shipped - Congratulations
-Date: Tue, 24 Aug 2004 11:38:01 -0700
-Message-ID: <412B8B09.3040401@namesys.com>
-References: <06050683-F57C-11D8-9849-000A95C88606@aoc.nrao.edu> <200408241400.25396.biscani@pd.astro.it> <1973859274.20040824143317@wp.pl>
+Subject: Re: Problem - reiser4(2004.08.13), apache(2.0.50) and "AllowOverride
+ All"
+Date: Tue, 24 Aug 2004 11:42:43 -0700
+Message-ID: <412B8C23.7050208@namesys.com>
+References: <412B71F6.6020603@zappa.cx>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20485-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20486-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1973859274.20040824143317@wp.pl>
+In-Reply-To: <412B71F6.6020603@zappa.cx>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Maciej Soltysiak <pysiak.satriani@wp.pl>
+To: Andreas Sundstrom <sunkan@zappa.cx>, Alexander Lyamin aka FLX <flx@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Maciej Soltysiak wrote:
+Thanks, I think you just diagnosed one of our support requests. flx, can 
+you write and send in a patch to the apache maintainers?  (Zam has a 
+huge backlog of tasks....)  Zam, can you send the support requestor this 
+diagnosis?
 
->Hi,
->
->  
->
->>>But a ship date is worth a hearty *** Congratulations *** to the
->>>ReiserFS team for all the hard work!!
->>>      
->>>
->Let me add my warm congratulations too.
->
->So, ... when do we start reiser5 ? :-)
->
->--
->Regards,
->Maciej
->
->
->
->
->  
->
-www.namesys.com/v6/v6eu4.html and www.namesys.com/blackbox_security.html
+So, we now have 0 bug reports resulting from going into -mm. 
 
-The security one is under way, the semantic enhancements we still have a 
-hat in hand....
+Could be that we ask to go into it next week.....:)
+
+Hans
+
+Andreas Sundstrom wrote:
+
+> If I enable "AllowOverride All" in apache it can no longer serve files
+> from reiser4 filesystems.
+>
+> Here's an error from apache:
+>
+> (13)Permission denied: /var/www/htdocs/valid-xhtml11.png/.htaccess 
+> pcfg_openfile: unable to check htaccess file, ensure it is readable, 
+> referer: http://zappa.cx/
+>
+> Some info about the file:
+> sunkan@zappa:~$ ls -il /var/www/htdocs/valid-xhtml11.png
+> 72832 -rw-r--r--  1 root root 1917 Sep 14  2001 
+> /var/www/htdocs/valid-xhtml11.png
+>
+> sunkan@zappa:~$ file /var/www/htdocs/valid-xhtml11.png
+> /var/www/htdocs/valid-xhtml11.png: PNG image data, 88 x 31, 8-bit 
+> colormap, non-interlaced
+>
+> I found this post to be interesting:
+> http://marc.theaimsgroup.com/?l=reiserfs&m=109114584717552&w=2
+>
+> I used this patch to get reiser4 support in my kernel:
+> http://linux.mjh.name/kernel/patches/reiser4/2004.08.13_2.6.8.1/
+>
+> So I'm running vanilla 2.6.8.1 except for reiser4.
+>
+> sunkan@zappa:~/kernel/linux-2.6.8.1-reiser4$ grep REISER .config
+> CONFIG_REISER4_FS=y
+> CONFIG_REISER4_LARGE_KEY=y
+> # CONFIG_REISER4_CHECK is not set
+> CONFIG_REISERFS_FS=y
+> # CONFIG_REISERFS_CHECK is not set
+> # CONFIG_REISERFS_PROC_INFO is not set
+> CONFIG_REISERFS_FS_XATTR=y
+> CONFIG_REISERFS_FS_POSIX_ACL=y
+> # CONFIG_REISERFS_FS_SECURITY is not set
+>
+> sunkan@zappa:~/kernel/linux-2.6.8.1-reiser4$ grep 4KSTACK .config
+> # CONFIG_4KSTACKS is not set
+>
+> My guess is that apache tries to open every file as an directory and
+> if that works it checks wether an .htaccess file is present but that
+> fails in my case beacause it isn't an directory but a file.
+>
+> Who's to blame? ;)
+>
+> Let me know if I need to gather more information about this.
+>
+> I'm currently not on the list so please CC me if you want fast
+> responses. (otherwise I read the archives)
+>
+> Thanks for any help..
+> /Andreas Sundstrom
+>
+>
+
