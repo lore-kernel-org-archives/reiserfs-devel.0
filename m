@@ -1,105 +1,55 @@
-From: Ashish <ashish_pspl@yahoo.com>
-Subject: Re: ReiserFS on Linux 2.6.7 kernel
-Date: Tue, 29 Jun 2004 23:13:55 -0700 (PDT)
-Message-ID: <20040630061355.89760.qmail@web53310.mail.yahoo.com>
-References: <200406282207.01984.camel78@iprimus.com.au>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: Tree issues, fsck output
+Date: Wed, 30 Jun 2004 09:45:47 +0300
+Message-ID: <20040630064547.GL4990@nysv.org>
+References: <20040629201956.GK4990@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19451-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-19452-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200406282207.01984.camel78@iprimus.com.au>
+Content-Disposition: inline
+In-Reply-To: <20040629201956.GK4990@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
+Cc: sikkh@wp.pl
 
-Hi,
-Thanks for the information. I still am not entirely
-clear about the versioning and have a couple of
-questions.
+On Tue, Jun 29, 2004 at 11:19:56PM +0300, Markus T=F6rnqvist wrote:
+>
+>I'll just send this post now, I'll send a follow-up when I'm re-doing
+>fsck with some switches. This was just a basic fsck /dev/hda1, so maybe
+>no need to panic yet...
 
-1. As you said, reiserfs is included in the 2.6.7
-kernel. Does that mean that the reiserfs bundled with
-this kernel has all the latest updates and patches ?
-Is there any kind of version information maintained to
-this effect ?  How do I know if I am in need of any
-updates to the reiserfs I have in my kernel tree ?
+So I proceeded to --build-fs
 
-2. I am aware that 3.6.17 is reiserfstools as you
-mentioned. Is that the latest one available ?
+FSCK: Node (481195), item (5), [2fa6e:6c69626d70342e:1e88ae] (stat40): wrong
+bytes (939), Fixed to (0).
+FSCK: Directory [2fa68:496e7075742e64:2fa6e]: can't find the object
+[2fa6e:6c69626d70342e:1e88ad] pointed by the entry [libmp4.so]. Entry is
+removed.
 
-Thanks in advance
-Ashish
-                      
+Anyway, that finished with a consistent fs..
 
---- Michael Milverton <camel78@iprimus.com.au> wrote:
-> Hi Ashish,
-> 	There are two reiser filesystems, a new one that is
-> still being debugged and 
-> an older one that is in wide use. The older one is
-> the one that is in the 
-> kernel you reffered to, the new one is not. The new
-> filesystem is called 
-> Reiser4. This is very new and is not yet in wide
-> use. 
-> 
-> As far as I know the 3.6.17 you are referring to is
-> the reiserfsprogs, eg the 
-> tools that manage the reiserfs filesystem. These
-> should come with your 
-> distribution. Apart from that just compile reiserfs
-> into you kernel and you 
-> should up and running.
-> 
-> On Mon, 28 Jun 2004 09:31 pm, Ashish Rathi wrote:
-> > Hi
-> >
-> > I am pretty new to ReiserFS and have a very basic
-> > question to ask.
-> >
-> > I recently upgraded to the 2.6.7 kernel available
-> on
-> > kernel.org. On the ReiserFS download page, I see
-> that
-> > ReiserFS 4 is being still listed as "experimental"
-> for
-> > the Linux 2.6 kernel.
-> > So what version of ReiserFS does the 2.6.7 kernel
-> > include ? Is it 3.6.17 ? Where do I look in order
-> to
-> > find this info ?
-> >
-> > I'll be glad if someone could help me out here.
-> >
-> > Thanks
-> > Ashish
-> >
-> >
-> >
-> >
-> >
-> >
-> >
-> >
-> > __________________________________
-> > Do you Yahoo!?
-> > New and Improved Yahoo! Mail - Send 10MB messages!
-> > http://promotions.yahoo.com/new_mail
-> 
-> -- 
-> GNU/Linux: Secure, Stable, Free
-> Michael <camel78@iprimus.com.au>
-> 
+Now that I'm back in my real environment:
+mjt@shrike:~$ xmms &
+[1] 3752
+mjt@shrike:~$ /usr/lib/xmms/Input/libtonegen.so: invalid ELF header
+/usr/lib/xmms/Input/libwav.so: invalid ELF header
+/usr/lib/xmms/Effect/libecho.so: invalid ELF header
+/usr/lib/xmms/Effect/libstereo.so: invalid ELF header
+/usr/lib/xmms/Effect/libvoice.so: invalid ELF header
 
-> ATTACHMENT part 2 application/pgp-signature 
+So I try to reinstall xmms:
+mjt@shrike:~$ sudo apt-get install xmms
+Reading Package Lists... 93%
 
+And it sticks there AGAIN!
 
+So now I'll just compile the new auto-snapshot and see what happens...
 
+--=20
+mjt
 
-		
-__________________________________
-Do you Yahoo!?
-Yahoo! Mail Address AutoComplete - You start. We finish.
-http://promotions.yahoo.com/new_mail 
