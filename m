@@ -1,79 +1,37 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: problems with reiser4 snapshot from 26. febr.
-Date: Thu, 26 Feb 2004 14:07:51 +0300
-Message-ID: <1077793671.3150.87.camel@tribesman.namesys.com>
-References: <200402260118.09054.henning-04@die.informatik.uni-siegen.de>
+From: markw@osdl.org
+Subject: AS performance with reiser4 on 2.6.3
+Date: Thu, 26 Feb 2004 09:48:10 -0800 (PST)
+Message-ID: <200402261748.i1QHmJE12429@mail.osdl.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-V7heeSSYmHzoPshNmFaB"
-Return-path: <reiserfs-list-return-16943-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16945-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200402260118.09054.henning-04@die.informatik.uni-siegen.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Henning Westerholt <henning-04@die.informatik.uni-siegen.de>
-Cc: reiserfs-list@namesys.com
-
---=-V7heeSSYmHzoPshNmFaB
-Content-Type: text/plain
+Content-Type: TEXT/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: piggin@cyberone.com.au
+Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-Hello
+Hi Nick,
 
-On Thu, 2004-02-26 at 04:18, Henning Westerholt wrote:
-> Hello,
-> 
-> i tried the latest snapshot one more time with some debug options activated. 
-> Now the compiling of eg. xfree produces no errors on the filesystem. But 
-> after the compiling, i unmounted the fs, and got a error message in the 
-> syslog:
-> 
-> kernel: reiser4[umount(8437)]: reiser4_kill_super (fs/reiser4/vfs_ops.c:1377)
-> [nikita-2622]:
-> kernel: WARNING: 1607680 bytes still allocated
-> 
-One memory leak was fixed recently. It is attached. Hopefully you have
-hit this one.
+I started getting some results with dbt-2 on 2.6.3 and saw that reiser4
+is doing a bit worse with the AS elevator.  Although reiser4 wasn't
+doing well to begin with, compared to the other filesystems.  I have
+links to the STP results on our 4-ways and 8-ways here:
+	http://developer.osdl.org/markw/fs/dbt2_stp_results.html
 
-> 
-> The following fsck run found no errors. I mounted the partition again, and 
-> tried a "ls" on this filesystem. After that the reiser4 code produced so many 
-> kernel oops that i was unable to shutdown the system, as any started program 
-> segfaulted. 
-> 
-> Unfortunally reiserfs filled my logfiles (and some other files..) with 
-> garbage, data-logging in the stock kernel for reiserfs would be very nice 
-> btw. ;-)
-> 
-> I reproduced this error after a reset a few minutes later, but again reiserfs 
-> filled the output from dmegs with content from my config files. So i only 
-> attached my kernel config. 
-> I think for now i use the snapshot without debugging, as it don't crash my 
-> whole system.
-> 
-> Henning
+I noticed that __preempt_spin_lock was near the top of the profile and
+about 2 times higher the with AS, compared to deadline.
 
---=-V7heeSSYmHzoPshNmFaB
-Content-Disposition: attachment; filename=flush.c.diff
-Content-Type: text/plain; name=flush.c.diff; charset=CP1251
-Content-Transfer-Encoding: 7bit
+I'm going to run through the other filesystems to see how the elevators
+affect them.
 
-===== flush.c 1.671 vs 1.672 =====
---- 1.671/flush.c	Fri Feb 20 16:46:30 2004
-+++ 1.672/flush.c	Thu Feb 26 13:59:15 2004
-@@ -1477,8 +1477,10 @@
- 		/* stop_key is used to find what was copied and what to cut */
- 		stop_key = *min_key();
- 		ret = squalloc_extent(left, &coord, pos, &stop_key);
--		if (ret != SQUEEZE_CONTINUE)
-+		if (ret != SQUEEZE_CONTINUE) {
-+			ON_DEBUG(reiser4_kfree(vp));
- 			break;
-+		}
- 		assert("vs-1465", !keyeq(&stop_key, min_key()));
- 			
- 		/* Helper function to do the cutting. */
-
---=-V7heeSSYmHzoPshNmFaB--
-
+-- 
+Mark Wong - - markw@osdl.org
+Open Source Development Lab Inc - A non-profit corporation
+12725 SW Millikan Way - Suite 400 - Beaverton, OR 97005
+(503) 626-2455 x 32 (office)
+(503) 626-2436      (fax)
+http://developer.osdl.org/markw/
