@@ -1,44 +1,68 @@
-From: Bernd Schubert <bernd-schubert@web.de>
-Subject: quota support
-Date: Mon, 8 Dec 2003 15:24:45 +0100
-Sender: Bernd Schubert <Bernd.Schubert@tc.pci.uni-heidelberg.de>
-Message-ID: <200312081524.45112.bernd-schubert@web.de>
-References: <1070553889.27611.147.camel@tiny.suse.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: rebuild-tree
+Date: Mon, 08 Dec 2003 18:51:29 +0300
+Message-ID: <3FD49E01.9090502@namesys.com>
+References: <1070829963.2789.528.camel@larry>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16288-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16289-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1070553889.27611.147.camel@tiny.suse.com>
-Content-Disposition: inline
+In-Reply-To: <1070829963.2789.528.camel@larry>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Larry Weldon <larry@welcoin.com>
+Cc: reiserfs mailing list <reiserfs-list@namesys.com>
 
-On Thursday 04 December 2003 17:04, Chris Mason wrote:
-> Hello everyone,
+Larry Weldon wrote:
+
+>A client's production file server is set up using RAID-1 with 2 IDE
+>disks and reiserfs. The operating system is Mandrake 9.1.
 >
-> ftp.suse.com/pub/people/mason/patches/data-logging/2.4.23
+which kernel does it use?
+
+>=======================================================================
+>Unfortunately, the tree structure used is also the weak point of 
+>ReiserFS: if any of it gets corrupted, chances are that much more data
+>will be affected than under traditional FileSystems. Rather than losing
+>a single file to corruption of an inode, you may lose almost the entire
+>contents of your disk if metadata close to the root of the BTree is
+>affected. Fortunately, the likelihood of this happening due to bugs has
+>been dramatically reduced in more recent version of the driver. Hardware
+>failure caused corruption is still a serious problem, though.
+>========================================================================
+>  
 >
-> Will have a new version of the data logging and quota code as soon as
-> the suse mirror system copies it over.
+The guy who wrote this does a nice job of telling one everything about 
+himself except his email address.
+
+I don't know why he says this, and I don't think it is true.  If you 
+trash the blocks with the root directory in any filesystem you are going 
+to end up with a lot of files in lost+found, yes?
+
+Maybe others have a different experience or understanding of the remark.
+
+With reiserfs, if you corrupt the internal nodes of the tree, you have 
+to run fsck before you can use it, and in this we are more fragile, but 
+once fsck has been run it is no more fragile than anything else 
+(assuming you use the latest fsck, because fsck took a long time to 
+stabilize).
+
+>Now, I can't just stop using reiserfs and I don't want to. I think there
+>is great merit in it. So, first, with the limited info I have given,
+>what might have happened to create the problem and how likely might it
+>be to happen again? Secondly, what is the *real* hazard of corruption
+>_higher_up_ in the tree which the article says might blow away the whole
+>partition?
+>
+>Thanks and regards.
+>  
 >
 
-Hello,
 
-'official' Namesys quota-patches are only available up to 2.4.20 and actually 
-I thought that a new quota layer has been integrated in 2.4.21 and that quota 
-for reiserfs is naturally supported since that version. 
-However when I briefly looked through the quota-patch, it seems it adds basic 
-quota stuff to the reiserfs-code.
-
-Please, can someone here enlight me about current quota+reiserfs status?
+-- 
+Hans
 
 
-Thanks,
-	Bernd
-
-PS: We are currently not using quota on reiserfs, but will need to use it 
-within the next 6 weeks. 
