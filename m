@@ -1,34 +1,58 @@
-From: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
-Subject: Re: Reiser4 status as of this weekend
-Date: Thu, 20 May 2004 11:45:56 +0200
-Message-ID: <m3d64zzb1n.fsf@merlin.emma.line.org>
-References: <003a01c4377d$d653eac0$7d02a8c0@toronto.chantrynetworks.com>
-	<40A68F75.2030306@namesys.com> <20040515221017.GL1232@nysv.org>
-	<40A7A553.2020901@namesys.com> <20040519195056.GM24604@nysv.org>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: "df -i" support
+Date: Thu, 20 May 2004 14:35:11 +0400
+Message-ID: <16556.35295.955347.727516@laputa.namesys.com>
+References: <20040513093432.52d3d7a3.turtle.power@wanadoo.es>
+	<1084439945.14090.6209.camel@tribesman.namesys.com>
+	<20040514173227.5b0541b5.turtle.power@wanadoo.es>
+	<200405141655.i4EGtrAT007250@turing-police.cc.vt.edu>
+	<20040514194040.22389128.turtle.power@wanadoo.es>
+	<1084557009.3263.7.camel@localhost.localdomain>
+	<20040514202627.18ddc7b2.turtle.power@wanadoo.es>
+	<20040514184823.GG18086@schnapps.adilger.int>
+	<20040519214145.6082af87.turtle.power@wanadoo.es>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18781-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18782-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040519195056.GM24604@nysv.org> (Markus
- =?iso-8859-15?Q?T=F6rnqvist's?= message of
-	"Wed, 19 May 2004 22:50:56 +0300")
+In-Reply-To: <20040519214145.6082af87.turtle.power@wanadoo.es>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: =?iso-8859-15?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
-Cc: Hans Reiser <reiser@namesys.com>, Russell Treleaven <rtreleaven@chantrynetworks.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Miguel <turtle.power@wanadoo.es>
+Cc: Andreas Dilger <adilger@clusterfs.com>, Jonathan Briggs <jbriggs@esoft.com>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-mjt@nysv.org (Markus T=F6rnqvist) writes:
+Miguel writes:
 
-> I'm trying BK pulls. Yesterday it didn't compile, xfs seemed broken.
-> Retrying now, after bk -r get.
+[...]
 
-Try "bk -Ur get -S". That's a bit faster and doesn't check out BK stuff,
-only the actual user data (read: source).
+ > 
+ > I see your point doing an strace df -i (with a 2.6.6 kernel)
+ > reiserfs_statfs reports those values zeroed:
+ > 
+ > statfs64("/", 84, {f_type="REISERFS_SUPER_MAGIC", f_bsize=4096,
+ > f_blocks=2560271, f_bfree=497245, f_bavail=497245, f_files=0, f_ffree=0,
+ > f_fsid={0, 0}, f_namelen=255, f_frsize=4096}) = 0
+ > 
+ > f_files and f_ffree are 0???. I'm trying to do a patch that show those
+ > correctly using show_oidmap() function, but seems that other fs don't
+ > report those values correctly, it's going to be deprecated or something?
 
---=20
-Matthias Andree
+From statfs(2) man page:
+----------------------------------------------------------------------
 
-Encrypted mail welcome: my GnuPG key ID is 0x052E7D95
+       Fields that are undefined for a particular file system are
+       set to 0.
+
+----------------------------------------------------------------------
+
+Fields like
+                 long    f_files;    /* total file nodes in file system */
+                 long    f_ffree;    /* free file nodes in fs */
+
+are undefined for file systems that, like reiserfs, have no predefined
+number of available inodes.
+
+Nikita.
