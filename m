@@ -1,34 +1,42 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: The argument for fs assistance in handling archives (was:
-	silent semantic changes with reiser4)
-Date: Thu, 02 Sep 2004 23:27:06 +0100
-Message-ID: <1094164023.6163.2.camel@localhost.localdomain>
-References: <20040901200806.GC31934@mail.shareable.org>
-	 <200409021407.i82E70hx004899@laptop11.inf.utfsm.cl>
-	 <20040902173214.GB24932@mail.shareable.org>
-	 <m3pt54il82.fsf@zoo.weinigel.se>
-	 <20040902214731.GF24932@mail.shareable.org>
+From: Paul Jakma <paul@clubi.ie>
+Subject: Re: The argument for fs assistance in handling archives (was: silent
+ semantic changes with reiser4)
+Date: Fri, 3 Sep 2004 00:33:20 +0100 (IST)
+Message-ID: <Pine.LNX.4.61.0409030028510.23011@fogarty.jakma.org>
+References: <20040826150202.GE5733@mail.shareable.org>
+ <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org>
+ <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
+ <1094118362.4847.23.camel@localhost.localdomain> <20040902161130.GA24932@mail.shareable.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21354-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21355-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040902214731.GF24932@mail.shareable.org>
+In-Reply-To: <20040902161130.GA24932@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
+Content-Transfer-Encoding: 7bit
 To: Jamie Lokier <jamie@shareable.org>
-Cc: Christer Weinigel <christer@weinigel.se>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Iau, 2004-09-02 at 22:47, Jamie Lokier wrote:
->     - Can the daemon keep track of _every_ file on my disk like this?
->       That's more than a million files, and about 10^5 directories.
->       dnotify would require the daemon to open all the directories.
->       I'm not sure what inotify offers.
+On Thu, 2 Sep 2004, Jamie Lokier wrote:
 
-This is currently a real issue for both desktop search and for virus
-scanners. They want a "what changed and where" system wide (or at least
-per namespace/mount).
+> Firstly, if I have to do it from a Gnome program, about the only 
+> program where looking in a tar file is visibly useful is Nautilus. 
+> Ironically, clicking on a tar file in Nautilus doesn't work, 
+> despite having a dependency on gnome-vfs2. :/
 
+Do you have file-roller installed?
 
+I can open tar/zip/rar/etc.. files from anywhere in gnome2, eg in 
+Galeon I can click on a tar.gz URL (http or whatever) and have it 
+open it in file-roller, from where i can browse the files to my 
+hearts content.
+
+regards,
+-- 
+Paul Jakma	paul@clubi.ie	paul@jakma.org	Key ID: 64A2FF6A
+Fortune:
+Why isn't there a special name for the tops of your feet?
+ 		-- Lily Tomlin
