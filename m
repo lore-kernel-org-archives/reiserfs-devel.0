@@ -1,40 +1,82 @@
-From: markw@osdl.org
-Subject: Re: AS performance with reiser4 on 2.6.3
-Date: Fri, 27 Feb 2004 08:56:17 -0800 (PST)
-Sender: linux-kernel-owner@vger.kernel.org
-Message-ID: <200402271656.i1RGuME16838@mail.osdl.org>
-References: <16446.13520.5837.193556@laputa.namesys.com>
+From: Jonathan Briggs <jbriggs@esoft.com>
+Subject: Re: Reiser4 oops on cat ./..plugin/..readdir
+Date: Fri, 27 Feb 2004 09:59:54 -0700
+Message-ID: <1077901194.6423.2.camel@localhost.localdomain>
+References: <1077845680.6801.4.camel@localhost.localdomain>
+	 <16447.10782.595624.815422@laputa.namesys.com>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
-In-Reply-To: <16446.13520.5837.193556@laputa.namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-zAS7gj2bqzLW0JhvlkFn"
+Return-path: <reiserfs-list-return-16964-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <16447.10782.595624.815422@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nikita@Namesys.COM
-Cc: piggin@cyberone.com.au, reiserfs-list@Namesys.COM, linux-kernel@vger.kernel.org
+To: Nikita Danilov <Nikita@Namesys.COM>
+Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-On 26 Feb, Nikita Danilov wrote:
-> markw@osdl.org writes:
->  > Hi Nick,
->  > 
->  > I started getting some results with dbt-2 on 2.6.3 and saw that reiser4
->  > is doing a bit worse with the AS elevator.  Although reiser4 wasn't
->  > doing well to begin with, compared to the other filesystems.  I have
->  > links to the STP results on our 4-ways and 8-ways here:
->  > 	http://developer.osdl.org/markw/fs/dbt2_stp_results.html
-> 
-> There were no changes between 2.6.2 and 2.6.3 that could affect reiser4
-> performance, so it is not clear why numbers are so different. Probably
-> results should be averaged over several runs. Also can you run test with
-> 
-> http://www.namesys.com/snapshots/2004.02.25/extra/e_05-proc-sleep.patch
-> 
-> applied? To use it turn CONFIG_PROC_SLEEP on (depends on
-> CONFIG_FRAME_POINTER), and do "cat /proc/sleep" before and after test
-> run.
+--=-zAS7gj2bqzLW0JhvlkFn
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-http://khack.osdl.org/stp/288905/results/
+On Fri, 2004-02-27 at 04:29, Nikita Danilov wrote:
+> Jonathan Briggs writes:
+>  > Filesystem is on a RAID 0 MD device.
+>  > Config is attached.
+>  > Kernel compiled with:
+>  >=20
+>  > # gcc34 --version
+>  > gcc34 (GCC) 3.4.0 20040129 (Red Hat Linux 3.4.0-0.3)
+>  > Copyright (C) 2004 Free Software Foundation, Inc.
+>  > This is free software; see the source for copying conditions.  There i=
+s NO
+>  > warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PUR=
+POSE.
+>  >=20
+>  > Problem Description:
+>  > A clean, fresh boot into single user mode, no tainted modules:
+>  > # cd /home
+>  > # cat ./..plugin/..readdir
+>=20
+> Please try the following patch:
+> ----------------------------------------------------------------------
+> =3D=3D=3D=3D=3D plugin/pseudo/pseudo.c 1.41 vs edited =3D=3D=3D=3D=3D
+> --- 1.41/plugin/pseudo/pseudo.c	Tue Jan 27 18:40:13 2004
+> +++ edited/plugin/pseudo/pseudo.c	Fri Feb 27 14:27:54 2004
+> @@ -533,7 +533,7 @@
+>  	dotname.len  =3D 1;
+> =20
+>  	down(&host->i_sem);
+> -	if (dplug =3D=3D NULL) {
+> +	if (dplug =3D=3D NULL || dplug->build_entry_key =3D=3D NULL) {
+>  		finish(NULL);
+>  		return NULL;
+>  	}
+> ----------------------------------------------------------------------
 
-There are a set of /proc/sleep files there from a 4-way system.
+Yes, this fixed the Oops.  Thanks.
 
-Mark
+That gives me another question.  Why do I not see any plugins listed
+when I do either ls ./..plugin/ or cat ./..plugin/..readdir?
+
+Shouldn't there be at least a few default plugins?  I seem to remember
+seeing some when I was using a previous snapshot in January.
+--=20
+Jonathan Briggs
+jbriggs@esoft.com
+
+--=-zAS7gj2bqzLW0JhvlkFn
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+
+iD8DBQBAP3eJG8fHaOLTWwgRAsykAKCRCn3R/m5exU46a7Y/kkiZuT+CTACgp/eR
+xjs64jYnaCSOnfzb4MJJ1CI=
+=aedL
+-----END PGP SIGNATURE-----
+
+--=-zAS7gj2bqzLW0JhvlkFn--
+
