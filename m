@@ -1,39 +1,54 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Write-once file system
-Date: Fri, 27 Jun 2003 20:20:16 +0400
-Message-ID: <20030627162016.GB13908@namesys.com>
-References: <12C7D768CC8ED4118A9200508BEEC6FB033776C9@zanexch.zantaz.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: vpf-10680, minor corruptions
+Date: 27 Jun 2003 12:23:07 -0400
+Message-ID: <1056730986.20899.235.camel@tiny.suse.com>
+References: <20030625054031.GA11576@namesys.com>
+	 <3EF9A0F6.4030401@g-house.de> <3EF9E939.1050501@g-house.de>
+	 <20030626092608.GA12252@namesys.com> <3EFAE933.6040206@g-house.de>
+	 <20030627092821.GA29715@namesys.com> <3EFC361A.4030009@g-house.de>
+	 <20030627122556.GA8753@namesys.com> <3EFC396A.7080808@g-house.de>
+	 <20030627123800.GA9214@namesys.com>  <20030627161344.GA13908@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14740-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14741-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <12C7D768CC8ED4118A9200508BEEC6FB033776C9@zanexch.zantaz.com>
+In-Reply-To: <20030627161344.GA13908@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Fong Vang <FVang@Zantaz.com>
-Cc: 'Hans Reiser' <reiser@namesys.com>, "'reiserfs-list@namesys.com'" <reiserfs-list@namesys.com>
+To: Oleg Drokin <green@namesys.com>
+Cc: Christian Kujau <evil@g-house.de>, ReiserFS List <reiserfs-list@namesys.com>
 
-Hello!
+On Fri, 2003-06-27 at 12:13, Oleg Drokin wrote:
+> Hello!
+> 
+> On Fri, Jun 27, 2003 at 04:38:00PM +0400, Oleg Drokin wrote:
+> 
+> > I was looking in the wrong direction, when I produced that patch,
+> > so it will produce zero output.
+> > I hope to come up with ultimate fix soon enough. ;)
+> 
+> Well, there is a patch below that does *not* work for me ;)
+> But it should work.
+> I have traced the new problem to a cross compiler that compiles
+> code in a different way than native compiler for whatever reason
+> (demo is attached as test.c program, it should print "result is 1"
+> in case it is compiled correctly and stuff about unknown
+> uniqueness if it is miscompiled. In fact may be this is just correct compiler behaviour.)
+> I now think that when I compile a kernel with native compiler, it should work
+> with below patch. But I can verify that only tomorrow it seems.
+> You might try that patch as well to see if it helps you before I try it ;)
+> The patch is "obviously correct" one. (except that it does not work
+> with my cross compiler and kernel does work without patch which is really-really strange).
+> 
 
-On Fri, Jun 27, 2003 at 09:07:05AM -0700, Fong Vang wrote:
-> Once the write to the file is CLOSED the file should not be modifiable in
-> any way.  It should not be writeable by root.  Ideally, this should be
-> across reboot and across kernel.  The current requirement is that as long as
-> the modified kernel/reisefs is being used then it should NOT be modifiable
-> (if a kernel allowing modification is used then it could allow
-> modifications).
+Most of these changes are in 2.4.21, which I've been using on an AMD64
+bit box for a while without any problems.  The bug should be somewhere
+else, it looks to me like these spots aren't trying to send an unsigned
+long to disk.
 
-So basically do you think it would be better for you to have "write-once flag" in superblock
-that will make all files to be unwritable (except newly created ones) as opposed to a simple
-mount option that you'd use for filesystems with non-changeable files?
-(you need to mark filesystems that are in write-once mode somehow, because I think
-you do not need all reiserfs filesystems to be run in this mode, right?)
-Also concerning the "root should not be able to change the files", root
-will be able to overwrite files by using block devices if he'd want to.
+-chris
 
-Bye,
-    Oleg
+
