@@ -1,35 +1,69 @@
-From: Ookhoi <ookhoi@humilis.net>
-Subject: Re: kernel go-slow
-Date: Mon, 3 Feb 2003 05:53:01 +0100
-Message-ID: <20030203055301.X2964@humilis>
-References: <200302030027.40936.russell@coker.com.au>
-Reply-To: ookhoi@humilis.net
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: reiserfsck --rebuild-tree all-in-one problem.
+Date: Mon, 3 Feb 2003 13:41:42 +0300
+Message-ID: <200302031341.42752.vitaly@namesys.com>
+References: <063201c2cae9$8dfb69d0$0201010a@brian>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12610-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-12611-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200302030027.40936.russell@coker.com.au>
+In-Reply-To: <063201c2cae9$8dfb69d0$0201010a@brian>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Russell Coker <russell@coker.com.au>
-Cc: ReiserFS <reiserfs-list@namesys.com>
+To: Brian Chu <chub@dataroot.hn.org>, Brian Chu <chub@stuy.yi.org>
+Cc: reiserfs-list@namesys.com
 
-Russell Coker wrote (ao):
-> I'm running a number of machines with 2.4.20 and the ReiserFS journal
-> patches.
+On Sunday 02 February 2003 21:33, Brian Chu wrote:
+> Hello.
 >
-> One problem that has started occuring is that periodically some of the
-> machines will go really slow for a while. It's as if the CPU speed has
-> just dropped to 1% of it's regular speed. Then after 10 minutes or so
-> it will continue as normal.
+>     Last friday when I went to upgrade my server, I noticed that there had
+> been a lot of kernel messages on my server that were saying that one
+> partition was spewing this:
 >
-> Has anyone heard of such things before?
+> Jan  5 13:48:14 simmy kernel: hde: dma_intr: status=0x51 { DriveReady
+> SeekComplete Error }
+> Jan  5 13:48:14 simmy kernel: hde: dma_intr: error=0x40 {
+> UncorrectableError }, LBAsect=91887, high=0, low=91887, sector=91824
+> Jan  5 13:48:14 simmy kernel: end_request: I/O error, dev 21:01 (hde),
+> sector 91824
+> Jan  5 13:48:14 simmy kernel: vs-13070: reiserfs_read_inode2: i/o failure
+> occurred trying to find stat data of [7495 7710 0x0 SD]
+>
+>     I gave up that night, because running dd once took 7 hours and
+> reiserfsck twice took 2 hours each, so the whole day was wasted.  I had
+> read on the first time I ran --rebuild-tree that a "dd_rescue" was
+> suggested, so I downloaded it, installed it, and ran it again (since I had
+> used just plain dd the first time). I'm not sure if that made a difference
+> or not.
 
-It seems there is a 'bug' in 2.4.20 which causes the stall. (don't know
-the details, but you're not the only one).
+Right, dd seems to produce an output with just skipped bad blocks not writing 
+anything into the output.
 
-Maybe a -pre fixes it, though in your case I would wait for .21 I think.
+>     Today I started again, assuming that with dd_rescue, I would have a
+> greater chance of getting the filesystem recovered, but --check told me I
+> had to run --rebuild-tree, and this time I just did --logfile /dev/null,
+> because screen dumps during the run would make it impossible to see what's
+> going on. But again, it stopped again at the same place- Pass 2. Since the
+> logfiles spit so much STUFF out, I have none at the moment (I can remake
+> them if needed).
+>
+> Screen dump:
+>
+> Pass 2:
+> 0%....20%....40%..                                              left 36, 0
+> /sec
+>
+>     And it stops there. top indicates reiserfsck is using all of the cpu
+> cycles, even after it seemingly freezes.
+
+Looks like you built the reiserfsck on another mashine. Could you rebuild it 
+on the same mashine you run it. It is possible to suppress the logfile with 
+-n option, but I think the logfile was so big due to this endless loop.
+
+-- 
+
+Thanks,
+Vitaly Fertman
