@@ -1,42 +1,40 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+From: Nikita Danilov <Nikita@Namesys.COM>
 Subject: Re: Conversion from v3.6 to v4 of Reiserfs...
-Date: Wed, 25 Feb 2004 09:33:09 +0100
-Message-ID: <403C5DC5.4010701@gmx.net>
-References: <20040224172153.M90659@pk25.com> <Pine.LNX.4.58.0402242120330.13298@renaissance.laroia.net>
+Date: Wed, 25 Feb 2004 12:17:09 +0300
+Message-ID: <16444.26645.677420.622216@laputa.namesys.com>
+References: <no.id>
+	<200402250154.i1P1s0h3028547@sirius.cs.pdx.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16920-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16923-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.58.0402242120330.13298@renaissance.laroia.net>
+In-Reply-To: <200402250154.i1P1s0h3028547@sirius.cs.pdx.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Diaz Rodriguez, Eduardo" <ediaz@pk25.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+Cc: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>, "The Amazing Dragon (Elliott Mitchell)" <ehem@cs.pdx.edu>
 
-Asheesh Laroia wrote:
-> There is the program convertfs:
-> 	http://tzukanov.narod.ru/convertfs/
-> 
-> I don't think it suports reiser4, but you could probably write a patch or
-> ask the author nicely.  It's supposed to do in-place filesystem conversion
-> by using a sparse loopback file.
-> 
-> I've only heard good things about it, but I've never used it.
-> 
-> -- Asheesh.
-> 
+The Amazing Dragon (Elliott Mitchell) writes:
+ > > From: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
+ > >     Actually, there are no a way. You need to backup and re-write it 
+ > > your data.
+ > > 
+ > >     However, I speak with Hans and probably we will release a 
+ > > tool/utility for that purpose.
+ > 
+ > Something like dump?
 
-convertfs is in debian testing/unstable, just to let you know.
-You should have a look at:
-http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=230995
+Cf. "Universal file system convertor":
+http://tzukanov.narod.ru/convertfs/
 
-I don't think it can handle reiser4, yet.
-Reiser4 is not stable now, so if you care for your data I'd
-stick with reiserfs v3.6 for now.
+no warranty, especially given that loop-back support required for
+convertfs was added into reiser4 only recently.
 
--- 
-lg, Chris
+ > 
+ > 
+
+Nikita.
 
