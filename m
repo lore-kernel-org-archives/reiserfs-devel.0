@@ -1,66 +1,37 @@
-From: "Doug Bazarnic" <doug@cavecreek.net>
-Subject: RE: How to mount reiserfs with a relocated journal? -- Figured out
-Date: Thu, 10 Jul 2003 20:26:19 -0700
-Message-ID: <009a01c3475c$31dc9990$7000000a@hardwarehq.local>
-References: <008b01c34751$ec654a10$7000000a@hardwarehq.local>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: 32bit UID/GID's Quota in 2.4!
+Date: Fri, 11 Jul 2003 09:39:10 +0400
+Message-ID: <20030711053910.GA12924@namesys.com>
+References: <200307102119.11860.christian.mayrhuber@gmx.net> <20030711000807.58fa86a7.philippe.gramoulle@mmania.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14872-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14873-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <008b01c34751$ec654a10$7000000a@hardwarehq.local>
+Content-Disposition: inline
+In-Reply-To: <20030711000807.58fa86a7.philippe.gramoulle@mmania.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Philippe Gramoull? <philippe.gramoulle@mmania.com>
+Cc: Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list <reiserfs-list@namesys.com>
 
-I had forgotten to run lilo to actually USE the patched kernel.  Oops!
-:)
+Hello!
 
-Duh... 
+On Fri, Jul 11, 2003 at 12:08:07AM +0200, Philippe Gramoull? wrote:
 
-Any way, is there a down side to using a large journal?  8193 vs ~125000
-block size?   Right now, I've allocated the entire 512 meg flash card
-for the journal size.   
+> I haven't had time to look how "new" this quota code is and if it differs
+> from what is actually available through external patches though.
 
+I see that the Config.in stuff is a bit different. Also comment says it is 2.5 backport,
+not quotav2 for 2.4 patches that were floating around.
+I plan to look at it closer soon and port reiserfs quota to new interface if necessary.
 
-Thanks for you help,
+> Christian Mayrhuber <christian.mayrhuber@gmx.net> wrote:
+>   | Finally this should mean there is a possibility to get reiserfs data logging + quota into the 2.4 kernel, doesn't it?
 
-Doug
+Well, only if won't be counted as a new feature ;) (so I guess we need to mark it as a "bugfix")
 
-
-
-
------Original Message-----
-From: Doug Bazarnic [mailto:doug@cavecreek.net] 
-Sent: Thursday, July 10, 2003 7:13 PM
-To: reiserfs-list@namesys.com
-Subject: How to mount reiserfs with a relocated journal?
-
-Hello,  
- 
-I'm running RH7.3 with a patched 2.4.21 kernel (03-relocation-8.diff.gz
-<ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.21/03-relo
-cation-8.diff.gz> ).    
- 
-I can't get my relocated journal drive to mount.   Are there any special
-arguments I have to pass to mount?
- 
-Mount complains that it can't find a superblock on /dev/sdb1
- 
-I used  mkreiserfs /dev/sdb1 -j /dev/hda1 .   
- 
-/dev/sdb1 is my 73 gig Scsi HD, and /dev/hda1 is a 512 meg compact flash
-card hooked up to the ide port.
- 
-Mkreiserfs works fine, writes the journal to /dev/hda1, syncs and says
-"OK"
- 
-Any help would be appreciated!
- 
- 
-Thanks so much,
- 
-Doug
-
+Bye,
+    Oleg
