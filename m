@@ -1,63 +1,73 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Data-logging and md as / fs bug
-Date: 11 May 2003 08:58:30 -0400
-Message-ID: <1052657909.31450.3.camel@tiny.suse.com>
-References: <3EB30852.6090402@netscape.net>
-	 <200305062134.42520.christian.mayrhuber@gmx.net>
-	 <1052250298.14612.235.camel@tiny.suse.com>
-	 <200305062156.27595.Dieter.Nuetzel@hamburg.de>
-	 <1052400685.14617.489.camel@tiny.suse.com>  <3EBC0DBF.4050807@netscape.net>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Some more questions about Reiser4 ;)
+Date: Sun, 11 May 2003 20:27:37 +0400
+Message-ID: <3EBE79F9.30100@namesys.com>
+References: <001e01c313fd$975e7730$9900a8c0@xpstation> <3EBB9121.5060304@namesys.com> <007201c31709$4f36c5c0$9900a8c0@xpstation> <3EBD2427.4000806@namesys.com> <000201c31721$3aca6c50$9900a8c0@xpstation> <3EBD46C1.9080801@namesys.com> <007601c31726$10853fb0$9900a8c0@xpstation>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14066-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14068-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3EBC0DBF.4050807@netscape.net>
+In-Reply-To: <007601c31726$10853fb0$9900a8c0@xpstation>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Manuel Krause <manuelkrause@netscape.net>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Fred -- Speed Up -- <speedup@free.fr>
+Cc: reiserfs-list@namesys.com
 
-On Fri, 2003-05-09 at 16:21, Manuel Krause wrote:
-> Thanks for your description below about what is really useful... :-))
-> 
-> On 02/23/03 you posted a kinoded-9.diff.gz to the list that solved a 
-> "device busy" on here when umounting a partition directly after copying 
-> some GB data to it.
+Fred -- Speed Up -- wrote:
 
-kinoded-9 was fixing a symptom, the real problem  was the patch to allow
-dirty inodes to hang around instead of logging them instantly.  With the
-right workload you could reproduce the device busy on unmount problem
-with kinoded-9 applied too.
+>>>The reason why I asked this was because I didn't knew that VFS was the
+>>>      
+>>>
+>one
+>  
+>
+>>>and only responsible for the path resolving ;)
+>>>
+>>>      
+>>>
+>>That is too strong a statement.  VFS delegates parts of the task to us,
+>>particularly directory lookup.
+>>    
+>>
+>But VFS wants the directory reading task to return a list of files with
+>corresponding inodes numbers. Reiser4, in this case, has to check out the
+>tree and read the directory entries, but what about resolving a simple file
+>path : does VFS in this case want the files and subdirectory listings of
+>every directory the path consists in, or does VFS directly ask Reiser4 to
+>resolve the whole path ?
+>What does Reiser4 do to improve the path resolving and directory listing
+>performance ? Do you implement another cache even if the VFS allready got
+>one ?
+>
+You are right.  It is a problem.  It is a problem we have sidestepped 
+for a long time, but sometime in the next 5 years we will have to step 
+into that code and regut VFS, and this will probably coincide with us 
+introducing dramatic upwardly compatible changes in the semantics.
 
-> In those days you proposed to also use kinoded when not having the quota 
-> patches applied. (That were the times when dirty-inodes-for-kinoded.diff
-> was new.)
-> 
-> My questions:
-> Is kinoded really useless without quota?
+>
+>  
+>
+>>Elena, can you draw a diagram or somehow document the disk layout for
+>>reiser4.  We seem to describe the pieces but not the whole.
+>>    
+>>
+>That would be a great thing ;)
+>
+>
+>Thank you for all your previous answers ... M. Reiser ;)
+>
+>Fred
+>
+>
+>
+>  
+>
 
-Right now, yes.
 
-> Did you discontinue the kinoded-9 changes?
-
-kinoded-9 changes are still good, I need to post an updated patch.  They
-are not critical though.
-
-> Does it conflict with the recent data-logging changes?
-
-No
-
-> And, I just read on the list that Kerin Millar wrote about 
-> device/resource busy error messages and was wondering if that had 
-> something to do with it.
-> 
-
-The software raid problems are different, that was a long standing bug
-in the journal relocation code.
-
--chris
+-- 
+Hans
 
 
