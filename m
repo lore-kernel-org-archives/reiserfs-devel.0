@@ -1,118 +1,69 @@
-From: "David Dabbs" <david@dabbs.net>
-Subject: Re: [PATCH] use S_ISDIR() in link_path_walk() to decide whether the last path component is a directory
-Date: Mon, 13 Sep 2004 16:34:15 -0500
-Message-ID: <20040913213429.6813115CA8@mail03.powweb.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] ReiserFS v3 I/O error handling
+Date: Mon, 13 Sep 2004 18:11:59 -0400
+Message-ID: <41461B2F.7080100@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-21725-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21726-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: 'ReiserFS List' <reiserfs-list@namesys.com>, linux-kernel@vger.kernel.org
-Cc: viro@parcelfarce.linux.theplanet.co.uk, 'Alex Zarochentsev' <zam@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
->viro wrote
->On Mon, Sep 13, 2004 at 11:49:22AM +0400, Alex Zarochentsev wrote:
-> Hi,
->=20
-> This patch does not allow open(name, O_DIRECTORY) to be successful for
-> non-directories in reiser4.  It replaces ->i_op->lookup !=3D NULL "is =
-dir"
-> check for the last path component by explicit S_ISDIR(->i_mode) check. =
+Hey all -
 
->=20
-> Regardless to reiser4, S_ISDIR() looks more clear there.
->
->The only objection here is that right now we are guaranteed that cwd =
-and
->root of every task have non-NULL ->lookup().  With your patch all we =
-have
->is S_ISDIR().
->
->So we either need to check for non-NULL ->lookup() before the beginning =
-of
->loop in link_path_walk() or split the flag in two.  I would rather do =
-the
->former...
->=A0
+One of the most common complaints I've heard about ReiserFS is how
+graceless it is in handling critical I/O errors.
 
-I'm working on something similar, but with alternate pathname resolution
-when the path begins with exactly two slashes. Only pseudocode here =
-because
-I do not have access to my box:
+ext[23] can handle I/O errors anywhere, with the results being up to the
+system admin to determine: continue, go read only, or panic.
 
-In path_lookup()
+ReiserFS doesn't offer the admin any such choice, instead panicking on
+any I/O error in the journal.
 
-    if (*name =3D=3D '/') {
-       if (*(name+1)=3D=3D'/' && *(name+2)=3D=3D':') {
-          name+=3D3;
-          nd->flags &=3D LOOKUP_SLASHSLASH
-          if (*name!=3D'/')
-            goto relative;
-       }
-   =20
+Attached are four patches, against 2.6.9-rc2:
+* reiserfs-cleanup-buffer-heads.diff
+	- Cleans up handling of buffer head bitfields - uses
+	  the kernel supplied FNS_BUFFER macros instead.
+* reiserfs-cleanup-sb-journal.diff
+	- Cleans up accessing of the journal structure, prefering
+~          to create a temporary variable in functions that access
+~          the journal structure non-trivially. Should make 0 difference
+~          at compile time.
+* reiserfs-write-lock.diff
+	- Fixes two missing reiserfs_write_unlock() calls on error paths
+~          that are unrelated to the last patch.
+* reiserfs-io-error-handling.diff
+	- Allows ReiserFS to gracefully handle I/O errors in critical
+	  code paths. The admin has the option to go read-only or panic.
+	  Since ReiserFS has no option to ignore the use of the journal,
+~          the "continue" method is not enabled.
 
-In link_path_walk()
-    When LOOKUP_SLASHSLASH, handle names as follows:
+These patches have seen a lot of testing in the SuSE Linux Enterprise
+Server 9 kernel, and are considered ready for mainline.
 
-    If this !S_ISDIR()
+Hans - please take a look.
 
-       next.name  Behavior=20
-       ------------------------------------------------------
-       .          Same if i_op && i_op->lookup, else -ENOTDIR.
-       ..         Same.
-       ...        Okay if i_op && i_op->lookup, else -ENOTDIR.
-       otherwise  Fails with -ENOENT.
-      =20
-    If S_ISDIR()
-       any        Same behavior
+Resent: Since the namesys.com mail server refuses messages over 40k,
+I've posted the patches at
+ftp://ftp.suse.com/pub/people/jeffm/reiserfs/kernel-v2.6/io-error/
 
+- -Jeff
 
-I tested the //: & flag code and this works (in my limited testing =
-yesterday
-with bash and some test programs).=20
+- --
+Jeff Mahoney
+SuSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-This should limit "hybrid" file-directories to only one valid =
-subdirectory,
-the "special metadata" directory. Thus, if a new/modified app wants to
-create/access metadata, it would do something like the following:
-
-   # relative path
-   cd /test
-   touch foo.txt=09
-   mkdir foo.txt/...     # FAILS
-   mkdir //:foo.txt/...
-   echo JayRandom > //:foo.txt/.../Author
-
-   # absolute path
-   echo blahblah > //:/test/foo.txt/.../Title
-
-   mkdir testdir
-   mkdir //:testdir/...
-   echo no > //:testdir/.../VirusScan
-
-Yes, this means that a) ... is "removed" from the namespace and b) =
-directory
-metadata directories are visible to na=EFve applications/users while =
-those for
-files are not. But it does provide "metadata-aware" apps/users a =
-consistent
-way to access this info for both files and directories without resorting =
-to
-openat(). Since SuS provides for "implementation-specific" pathname
-resolution when pathnames begin with exactly two slashes this should be
-legal(?), if desired.
-
-This doesn't address the issue of "active" metadata objects such as =
-reiser4
-provides e.g. foo.txt/metas/perms. That's a different discussion.=20
-
-
-David
-
-
-
+iD8DBQFBRhsvLPWxlyuTD7IRAqa7AJ9ZJa+HnOGYU7OIouWMu34H2mU0MQCgn0H5
+QBdLo95dLiXsQdwojQSHAos=
+=kPTJ
+-----END PGP SIGNATURE-----
