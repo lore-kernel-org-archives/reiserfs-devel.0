@@ -1,11 +1,11 @@
 From: Alexander Lyamin <flx@msu.ru>
 Subject: Re:  Repeated mails
-Date: Sun, 5 Oct 2003 23:45:26 +0400
-Message-ID: <20031005234526.D8827@t-raenon.nmd.msu.ru>
+Date: Sun, 5 Oct 2003 23:58:18 +0400
+Message-ID: <20031005235818.E8827@t-raenon.nmd.msu.ru>
 References: <3F7EB431.4020408@gmx.net> <20031004230106.GA27026@neon> <3F7F546D.8080105@gmx.net>
 Reply-To: flx@msu.ru
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15794-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15795-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -16,12 +16,12 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
-Cc: Axel Siebenwirth <axel@pearbough.net>, ReiserFS List <reiserfs-list@namesys.com>, Alexander Lyamin <flx@namesys.com>
+Cc: Axel Siebenwirth <axel@pearbough.net>, ReiserFS List <reiserfs-list@namesys.com>, Alexander Lyamin <flx@namesys.com>, postmaster@noos.fr
 
+oh, here are  the headers, and yes, they look fishy.
+its seems like noos.fr  does something really strange, and i should 
+contact the postmaster
 
-may you send me this two duped emails with full headers.
-
-i'll look into details ;)
 
 Sun, Oct 05, 2003 at 01:14:53AM +0200, Carl-Daniel Hailfinger wrote:
 > Hello Axel,
@@ -44,6 +44,15 @@ Sun, Oct 05, 2003 at 01:14:53AM +0200, Carl-Daniel Hailfinger wrote:
 > Well, I'm only subscribed to reiserfs-list and the Received: headers
 > clearly show that the mails I'm complainig about were sent as follows:
 > orig_sender->vger.kernel.org->noos.fr->thebsh.namesys.com->reiserfs_subscribers
+
+orig->vger->noos->reiserfs-list
+    \->reiserfs-list
+
+more of like this,
+noos sends us a copy, for some-who-nows-which reason.
+
+if i'll have no response for them, i'll shitlist them.
+
 > 
 > Proof: Here are the headers.
 > 
