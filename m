@@ -1,80 +1,44 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Corruption? :-(
-Date: Wed, 9 Jun 2004 17:30:56 +0400
-Message-ID: <200406091730.56986.vitaly@namesys.com>
-References: <32908.195.137.32.205.1086776580.squirrel@server27.ukservers.net>
+From: Marcel Hilzinger <marcel@hilzinger.hu>
+Subject: Some questions about pseudo files
+Date: Wed, 9 Jun 2004 06:23:05 +0200
+Message-ID: <200406090623.05825.marcel@hilzinger.hu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19115-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-19119-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <32908.195.137.32.205.1086776580.squirrel@server27.ukservers.net>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: neil@netvis.co.uk, Neil Ferguson <info@netvis.co.uk>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-Hello,
+To change the permissions of a filesystem object without chmod one can use
 
-On Wednesday 09 June 2004 14:23, Neil Ferguson wrote:
-> Hi,
->
-> I'm using a snapshot of Reiser4 from February, and whilst doing a backup
-> last night the machine appears to have crashed, causing corruption of the
-> (root) Reiser4 partition from which the backup was being made.
->
-> As the partition is only partly backed up, I could really do with getting
-> the rest of the data off - I don't mind if its never bootable again, I
-> just want it readible once so I can grab stuff off it.  I also appreciate
-> that using a snapshot that old isn't exactly wise, would you believe I was
-> going to try and find the time to upgrade at the weekend...  Th results of
-> my attempts to recover it so far are shown below,
->
-> I've put the drive in another machine to try and recover it, which has
-> 2.6.5 patched for Reiser4 with the debian-packaged patches (appears to be
-> 20040326), and I'm using reiser4progs version 0.5.3.  Any help or
-> suggestions whatsoever would be appreciated, I know I've been stupid...
->
->
-> # fsck.reiser4 -v --check /dev/hdb4
-> Continue? (Yes)
-> Fatal: Wrong magic found in the master super block
+echo 0777 > my_object/metas/rwx
 
-you either has older reiser4 snapshot than you pointed above with old on disk
-format or got the corrupted fs or the partition table. Have you checked this fs 
-with this reiser4progs version? It was ok? Could you run 
-	dd if=/dev/xxx bs=4096 count=2 skip=16 | hexdump -C
-and send the output?
+This works great for directory objects, but if I want to change the=20
+permissions of a simple file from 744 to 644, then I can't change it any mo=
+re=20
+without chmod, as the file lacks the x bit, so I can't chdir to metas and I=
+=20
+can't read rwx.
 
-> Fatal: Failed to open the master super block.
-> Fatal: Cannot open the FileSystem on (/dev/hdb4).
->
-> 1 fatal corruptions were detected in SuperBlock. Run with --build-sb
-> option to fix them.
->
->
-> # fsck.reiser4 -v --build-sb /dev/hdb4
-> Continue? (Yes)
-> ***** Openning the fs.
-> Fatal: Wrong magic found in the master super block.
-> Master super block cannot be found.  Do you want to build a new one on
-> (/dev/hdb4)? (Yes)
-> Which block size do you want to use? [4096]: (Same as I used originally -
-> Enter)
-> Information: A new master superblock is created on (/dev/hdb4).
-> Error: Can't find disk-format plugin by its id 0xff.
-> Fatal: Cannot open the on-disk format on (/dev/hdb4)
-> umka-2649: Assertion (blocks > 0) at format40.c:236 in function
-> format40_create() failed.
+Is reiser4 designed for keeping the execution bit for each file? If yes, is=
+n't=20
+this a security problem (e.g. worms and viruses)?
 
-in the case you have corrupted super block, kill this assertion at 
-plugin/format/format40.c:236 
-	aal_assert("umka-2649", blocks > 0);
-and try again.
+*************
+my_object/metas/nlink lists the object hard links. In case of directories
+it's some time a dozen or even more. As there are no hard links in this=20
+directory, what does nlink list?
 
--- 
+
 Thanks,
-Vitaly Fertman
+Marcel
 
+
+=2D-=20
+=DCdv=F6zlettel -- Mit freundlichen Gr=FCssen,
+Marcel Hilzinger
