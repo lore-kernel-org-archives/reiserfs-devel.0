@@ -1,85 +1,62 @@
-From: liqui-D-read <liquid@nano.cz>
-Subject: reiserfs+LVM+loopAES
-Date: 07 Nov 2002 11:21:31 +0100
-Message-ID: <1036664491.13120.38.camel@ceros>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: [reiserfs-dev] Re: [ANNOUNCE] reiser4 snaphots
+Date: Thu, 7 Nov 2002 13:47:13 +0300
+Message-ID: <15818.17585.789642.675479@laputa.namesys.com>
+References: <9918235451.20021106132043@kgpa.ru>
+	<20021107090256.GC11974@mrball.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature";
-	boundary="=-jSOP/GcPGEpSNkukAXro"
-Return-path: <reiserfs-list-return-11941-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11942-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20021107090256.GC11974@mrball.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-mailing-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Todd Lyons <todd@mrball.net>
+Cc: ReiserFS-List <reiserfs-list@namesys.com>
 
+Todd Lyons writes:
+ > Oleg O. Ossovitskii wanted us to know:
+ > 
+ > >BTW: is anywhere diff to apply Reiser4 to plain 2.5.x (not bk tree) or I have to made this
+ > >manually (by hands)?
+ > 
+ > It applied for me to the 2.5.45 tree with only one reject, mm/swap.c.
+ > It wants to add a #include, but what's there is not quite like what the
+ > patch expects.  You'll actually have to add two lines, not just one.
+ > 
+ > Still compiling.  In the reiser4 code right now....well, it built and
+ > linked.  That's a good sign.
+ > 
+ > Here are the .config settings that I used:
+ > CONFIG_REISER4_FS=m
+ > CONFIG_REISER4_CHECK=y
+ > CONFIG_REISER4_DEBUG=y
+ > CONFIG_REISER4_CHECK_STACK=y
+ > CONFIG_REISER4_DEBUG_MODIFY=y
+ > CONFIG_REISER4_DEBUG_MEMCPY=y
+ > CONFIG_REISER4_DEBUG_NODE=y
+ > CONFIG_REISER4_ZERO_NEW_NODE=y
+ > CONFIG_REISER4_TRACE=y
+ > CONFIG_REISER4_STATS=y
+ > CONFIG_REISER4_DEBUG_OUTPUT=y
+ > # CONFIG_REISER4_NOOPT is not set
+ > 
+ > Curious if anybody feels that I should have chosen different values for
+ > any of the options.
 
---=-jSOP/GcPGEpSNkukAXro
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Reasonable options for debugging. Will result in dead-slow reiser4 though.
 
+Once you stop being able to tolerate it slowness, disable
+CONFIG_REISER4_DEBUG_MODIFY and CONFIG_REISER4_CHECK_STACK.
 
+ > -- 
+ > Blue skies...		Todd
+ > | Get a bigger hammer!   |  Normal?  Normal is a setting on       |
+ > | http://www.mrball.net  |  my dryer.                             |
+ > | http://faq.mrball.net  |     BayCon 2001 http://www.baycon.org  |
+ >    Linux kernel 2.5.45   1 user,  load average: 1.19, 0.88, 0.40
 
-hello
-
-i've got a following setup:=20
-
-Linux base 2.4.19 #2 Thu Nov 7 09:57:09 CET 2002 i686 unknown
-
-it's debian woody 3.0
-
-there's a LVM and loopAES in kernel also.
-
-the LVM disc is mounted via loop to make an encryption.
-
-everything worked fine, but one day i wasn't able to read some data from
-that filesystem. so unmounted it and ... attached it via losetup.
-
-(sorry for offtopic ... now comes the real part)
-
-root@base:/tmp# reiserfsck --fix-fixable /dev/loop1=20
-
-<-------------reiserfsck, 2002------------->
-reiserfsprogs 3.x.1b
-
-Will check consistency of the filesystem on /dev/loop1
-Will fix what can be fixed w/o --rebuild-tree
-Will put log info to 'stdout'
-
-Do you want to run this program?[N/Yes] (note need to type Yes):Yes
-###########
-reiserfsck --fix-fixable started at Thu Nov  7 10:59:36 2002
-###########
-Replaying journal..
-0 transactions replayed
-Checking S+tree../  4 (of   6)/ 18 (of 127)/138 (of 155)bit 90843826,
-bitsize 90840576
-reiserfsck: bitmap.c:160: reiserfs_bitmap_test_bit: Assertion
-`bit_number < bm->bm_bit_size' failed.
-Aborted
-
-kernel doesn't report any bugs/errors
-
-i don't know if it isn't a LVM or AESloop bug, but i've got last
-versions of both.
-
-please help :)
-
-l.
-
-
---=-jSOP/GcPGEpSNkukAXro
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.6 (GNU/Linux)
-Comment: For info see http://www.gnupg.org
-
-iD8DBQA9yj6qrdjTrLvTST4RAs5OAJ45bTuQ3SSysyPMYfmmilPSr2GJaACfYkfa
-p3LvRT2o3Ah6I0Xia7HlTPQ=
-=ubYq
------END PGP SIGNATURE-----
-
---=-jSOP/GcPGEpSNkukAXro--
-
+Nikita.
