@@ -1,47 +1,43 @@
-From: Andrew Clausen <clausen@gnu.org>
-Subject: Re: what do you do that stresses your filesystem?
-Date: Tue, 24 Dec 2002 08:14:03 +1100
-Message-ID: <20021223211403.GB1116@gnu.org>
-References: <3E06F360.7000708@namesys.com>
+From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: performance improvements
+Date: Mon, 23 Dec 2002 22:20:44 +0100
+Message-ID: <200212232220.44981.Dieter.Nuetzel@hamburg.de>
+References: <200212231632.26686.russell@coker.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12232-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12233-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200212231632.26686.russell@coker.com.au>
 Content-Disposition: inline
-In-Reply-To: <3E06F360.7000708@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: ReiserFS <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Russell Coker <russell@coker.com.au>, ReiserFS <reiserfs-list@namesys.com>
 
-On Mon, Dec 23, 2002 at 02:28:32PM +0300, Hans Reiser wrote:
-> We were discussing how to optimize reiser4 best, and came to realize 
-> that us developers did not have a good enough intuition for what users 
-> do that stresses their filesystem enough that they care about its 
-> performance.
+Am Montag, 23. Dezember 2002 16:32 schrieb Russell Coker:
+> One thing that could really improve system performance would be something
+> like "nice" but for disk IO.
+>
+> If you have a server that's using 90% of it's disk bandwidth with a large
+> number of clients (EG a big mail server) then a simple "find /" is usually
+> enough to give it a load average of 50+ and a delay of 1 second for every
+> disk request (which makes operations such as POP mail checks excessively
+> slow).
 
-Something else you might want to do is measure "commit latency"...
-the time between file operations being made by userland, and those
-operations becoming durable (i.e. getting committed into the log).
+What you are really looking for is the deadline IO scheduler coming with=20
+2.5/2.6.
 
-If you can benchmark this, it might give users more confidence.
-(When I clicked save, it did, actually, save!)
+Merry Christmas!
 
-This is kind of related to real-time stuff, which is another thing
-you might want to test.  Eg: audio/video playback... can reiserfs
-sustain IO bandwidth well, without falling behind occasionally?
-(i.e. maintaining low latency)
+=2DDieter
 
-XFS has (had?  I think it's only the irix port) an ioctl to tell
-the OS "I want to read 300kb/s with maximum 0.1ms latency on fd 3".
-(The ioctl() would fail if Irix couldn't guarantee that)
+=2D-=20
+Dieter N=FCtzel
+Graduate Student, Computer Science
 
-I'm not saying this is useful for everyone, just it should help
-you understand the performance better...
-
-Cheers,
-Andrew
+University of Hamburg
+Department of Computer Science
+@home: Dieter.Nuetzel at hamburg.de (replace at with @)
 
