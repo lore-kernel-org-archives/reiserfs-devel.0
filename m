@@ -1,41 +1,35 @@
-From: "David Boutcher" <boutcher@us.ibm.com>
-Subject: Re: Memory Corruption
-Date: Wed, 28 Aug 2002 16:00:15 -0500
-Message-ID: <29659.0204038241$1030568405@news.gmane.org>
-References: <1029787262.12471.390.camel@tiny>
+From: jordan.breeding@attbi.com
+Subject: [RFC] [PATCH] Label support in mount
+Date: Thu, 29 Aug 2002 05:20:41 +0000
+Message-ID: <20020829052041.GDJC14185.rwcrmhc51.attbi.com@rwcrwbc58>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11336-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="NextPart_Webmail_9m3u9jl4l_18468_1030598441"
+Return-path: <reiserfs-list-return-11337-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1029787262.12471.390.camel@tiny>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org
+To: reiserfs-list@namesys.com
 
+--NextPart_Webmail_9m3u9jl4l_18468_1030598441
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
->On Mon, 2002-08-19 at 12:50, Dave Boutcher wrote:
->> Hi,
->>
->> I'm chasing a wierd memory corruption problem on a ppc64 system.  The
->> first byte of a slab_t structure keeps getting stepped on (zeroed,
->> actually.)  This happens during a testcase that copies a large file
->> called "junk" between file systems (a mix of ext2 and reiser) on a
->> 2.4.13 kernel.  I know that's REALLY REALLY old, but it's whats in
->> SuSE's SLES-7 release that we have customers running...
->
->Any chance the test case involves renames?
->
->-chris
+Hello,
 
-So I posted my problem with memory corruption a few weeks ago....and the
-problem turned out to be a REALLY old/moldy set of userland reiser tools.
-I don't know exactly why that caused memory corruption in the kernel, but
-updating the tools fixed everything right up.
+  This patch was originally intended to try and add
+support for reiserfs labels to mount from
+util-linux-2.11u found on ftp.kernel.org.  It is not
+quite working (if I try to mount something by label the
+mount program seg. faults), and I won't have time to
+debug and look at it until at least tomorrow night.  I am
+sure there is something trivial or stupid that I have
+done wrong.  At least it is a starting point, if someone
+knows what is wrong and knows how to fix it quickly then
+feel free to fix the patch and send it back to me or send
+it to the util-linux maintainer.
 
-Dave B
+Jordan Breeding
 
-
+--NextPart_Webmail_9m3u9jl4l_18468_1030598441--
