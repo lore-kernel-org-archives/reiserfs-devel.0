@@ -1,11 +1,11 @@
 From: Kuba Ober <kuba@mareimbrium.org>
 Subject: Re: A couple of questions
-Date: Fri, 17 May 2002 11:04:33 -0400
-Message-ID: <200205171104.33045.kuba@mareimbrium.org>
+Date: Fri, 17 May 2002 11:05:00 -0400
+Message-ID: <ac36a2$o6k$2@main.gmane.org>
 References: <OF4AF5C20B.BE2F7D18-ON85256BBB.006643F3@pok.ibm.com> <200205161723.42672.kuba@mareimbrium.org> <20020516214419.GE15774@schmorp.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-10361-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10362-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
