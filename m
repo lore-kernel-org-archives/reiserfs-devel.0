@@ -1,43 +1,36 @@
-From: "Barry, Christopher" <cbarry@infiniconsys.com>
-Subject: RE: Who is the artist?
-Date: Wed, 2 Apr 2003 11:58:42 -0500
-Message-ID: <08628CA53C6CBA4ABAFB9E808A5214CB0142B913@mercury.infiniconsys.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: Multiple data streams...
+Date: 02 Apr 2003 12:07:22 -0500
+Message-ID: <1049303242.15216.1023.camel@tiny.suse.com>
+References: <6167696812.20030402112847@tnonline.net>
+	 <3E8B0BED.2070004@suse.com>  <3E8B1572.1010001@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13537-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13538-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
+In-Reply-To: <3E8B1572.1010001@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Anders Widman <andewid@tnonline.net>, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Jeff Mahoney <jeffm@suse.com>, Anders Widman <andewid@tnonline.net>, reiserfs-list@namesys.com
 
-I think it's Hans' Mom. It rocks.
+On Wed, 2003-04-02 at 11:53, Hans Reiser wrote:
+> Users should know that these will never be accepted into ReiserFS, and 
+> the reasons why are explained at www.namesys.com/v4/v4.html
 
---
-Christopher Barry
-Manager of Information Systems
-InfiniCon Systems
-http://www.infiniconsys.com
+They should also know that suse has committed to supporting the ACL and
+xattr patches.  It's an important feature to our customers, so we more
+or less had to choose between making something else the default and
+giving reiserfs the features needed for it to compete in the enterprise
+market.
 
+We chose the latter ;-)
 
-
------Original Message-----
-From: Anders Widman [mailto:andewid@tnonline.net]
-Sent: Wednesday, April 02, 2003 11:57 AM
-To: reiserfs-list@namesys.com
-Subject: OT: Who is the artist?
-
+-chris
 
 
-   Who  has  created the art that is used widely on Namesys website? I
-   find it interesting :)
 
-   //Anders
-
-
---------
-PGP public key: https://tnonline.net/secure/pgp_key.txt
 
