@@ -1,19 +1,65 @@
-From: Tupshin Harper <tupshin@tupshin.com>
-Subject: reiser4 on 2.6.0-test1?
-Date: Fri, 25 Jul 2003 17:52:25 -0700
-Message-ID: <3F21D0C9.1020406@tupshin.com>
+From: Daniel Egger <degger@fhm.edu>
+Subject: Re: Reiser4 status: benchmarked vs. V3 (and ext3)
+Date: 26 Jul 2003 03:08:08 +0200
+Message-ID: <1059181687.10059.5.camel@sonja>
+References: <3F1EF7DB.2010805@namesys.com>
+	 <1059062380.29238.260.camel@sonja>
+	 <16160.4704.102110.352311@laputa.namesys.com>
+	 <1059093594.29239.314.camel@sonja>
+	 <16161.10863.793737.229170@laputa.namesys.com>
+	 <1059142851.6962.18.camel@sonja>
+	 <1059143985.19594.3.camel@haron.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15048-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-jWv6/5sl2OQVDsCeyo9Z"
+Return-path: <reiserfs-list-return-15049-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1059143985.19594.3.camel@haron.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs mailing list <reiserfs-list@namesys.com>
+To: Yury Umanets <umka@namesys.com>
+Cc: Nikita Danilov <Nikita@Namesys.COM>, Hans Reiser <reiser@namesys.com>, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, reiserfs mailing list <reiserfs-list@namesys.com>
 
-Is there any ETA for a corrected reiser4 patch against 2.6.0-test1 or later?
+--=-jWv6/5sl2OQVDsCeyo9Z
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
--Tupshin
+Am Fre, 2003-07-25 um 16.39 schrieb Yury Umanets:
+
+> Reiser4 has plugin-based architecture. So, anybody is able to write new
+> block allocator plugin.
+
+Cool.
+
+> Speaking about possible embedded usage... What kind of embedded devices
+> do you mean. Reiser4 driver is big enough in size for some of them (for
+> instance, for mine MPIO MP3 player :))
+
+I'm talking about pretty standard ix86 hardware which has embedded like
+properties such as fanless and motorless use, hardware watchdog, flash
+memory but only few of the typical limitations like restricted memory
+(we are using 256 or 512 MB), slow CPU, few connectors.
+
+So basically we do have pretty powerful hardware with huge storage and
+memory and now need a FS which is fast and reliable even on flash
+memory. JFFS2 is nice but way too slow once one has bigger sizes.
+
+--=20
+Servus,
+       Daniel
+
+--=-jWv6/5sl2OQVDsCeyo9Z
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.2 (GNU/Linux)
+
+iD8DBQA/IdR2chlzsq9KoIYRAhXwAJ4jZLI71LujmSFRTCLS7dlVLGZ26QCgz+BU
+3fEyX/OOVaCJnMqhULy/PBc=
+=gHZP
+-----END PGP SIGNATURE-----
+
+--=-jWv6/5sl2OQVDsCeyo9Z--
 
