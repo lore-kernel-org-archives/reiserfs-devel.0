@@ -1,36 +1,32 @@
-From: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
-Subject: Re: [PATCH CFT] tons of logging patches
-Date: Mon, 03 Jun 2002 10:46:51 +0200
-Message-ID: <m37klglpfo.fsf@merlin.emma.line.org>
-References: <1023076301.22608.1778.camel@tiny>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Sleeping harddrives?
+Date: Mon, 3 Jun 2002 14:02:01 +0400
+Message-ID: <20020603140201.A6099@namesys.com>
+References: <19839880843.20020602023406@tnonline.net> <20020602214927.A17000@namesys.com> <5231869796.20020602225651@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10485-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10486-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <1023076301.22608.1778.camel@tiny> (Chris Mason's message of
- "02 Jun 2002 23:51:41 -0400")
+Content-Disposition: inline
+In-Reply-To: <5231869796.20020602225651@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Chris Mason <mason@suse.com> writes:
+Hello!
 
-> Hello everyone,
->
-> ftp.suse.com/pub/people/mason/data-logging
+On Sun, Jun 02, 2002 at 10:56:51PM +0200, Anders Widman wrote:
+> >>    How  would  ReiserFS  react  when  a user/program/anything tries to
+> >>    access a file on a harddrive that is spin down?
+> > Linux IDE/SCSI layer issupposed to spind the drive up.
+> It  is  supposed  to,  yes.  When I tried this before, it did spin the
+> drives up, but didn't wait enough before trying to access it, so I got
+> strange errors.
+> My question is simple. Is this something that still occur today?
 
-You seem to mean:
+At least it works for me on IDE.
 
-ftp://ftp.suse.com/pub/people/mason/patches/data-logging/
-
-> optimizations to keep kupdate from triggering commits every 5 seconds
-
-Does this mean the current released ReiserFS versions are causing the
-persistent write activity at 5 s interval that I observe?
-
-Or is it ext3fs also?
-
--- 
-Matthias Andree
+Bye,
+    Oleg
