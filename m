@@ -1,33 +1,50 @@
-From: Tom Vier <tmv@comcast.net>
-Subject: dirsync doesn't seem to work
-Date: Thu, 29 Jul 2004 21:15:05 -0400
-Message-ID: <20040730011505.GB4950@zero>
-Reply-To: Tom Vier <tmv@comcast.net>
+From: "daniel.poelzleithner" <poelzi@poelzi.org>
+Subject: Re: reiser4 metas/bmap problem
+Date: Fri, 30 Jul 2004 04:30:20 +0200
+Message-ID: <4109B2BC.4040600@poelzi.org>
+References: <Pine.GSO.4.44L.0407281754290.11129-100000@unix2.cc.ksu.edu> <20040729012549.GE1439@schnapps.adilger.int> <4108B029.4030008@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19861-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19863-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <4108B029.4030008@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: Andreas Dilger <adilger@clusterfs.com>, Matt Stegman <matts@ksu.edu>, reiserfs-list@namesys.com
 
-when i run this:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-while true; do touch heh; rm -f heh; done
+Vladimir V. Saveliev wrote:
 
-on reiserfs, it doesn't seem to be actually writing. the wait cpu % is very
-low when using reiserfs or normal mode ext3. when i mount ext3 using dirsync,
-and i run the loop, wait time is above 90%.
+| reiser4 should do the same, i agree. However, reiser4 has another
+| feature we call relocation (flush may allocate another disk blocks for a
+| file if it finds it more optimal) which is undesirable for bmapped files.
+| We will probably have to invent some woraround for that.
 
-this is the best test method i can think of right now. i can't hear a
-difference in the drive (which might be using write back cache, but i can't
-reformat any of my scsi drives in ext3 right now to see they make more noise
-with dirsync + write-through).
+Whats about a flag that can be set through metas, that will prevent the
+relocation ?
+That would be no workaround, that would be a feature :)
 
--- 
-Tom Vier <tmv@comcast.net>
-DSA Key ID 0x15741ECE
+regards
+~ Daniel
+
+- --
+Once the philosopher stone has fallen from the tree,
+~  nonsense appeared to fix the courious fear.
+
+.. . .. ... . . .. . ... . .. . ... . . .
+pgp key @ http://files.poelzi.org/pgp.txt
+ED80 E53D 5269 4BB1 1E73 3A53 CBF9 A421 0A7B 003D
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Debian - http://enigmail.mozdev.org
+
+iD8DBQFBCbK8y/mkIQp7AD0RAtdYAJ4nvuykJ/jt22xaab8BWfnY1qSXzQCeO31N
+O/J1M9fctbmDK3SiX/Ac7IE=
+=wK7J
+-----END PGP SIGNATURE-----
