@@ -1,37 +1,42 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: File system corruption!
-Date: Wed, 25 Feb 2004 11:01:55 +0300
-Message-ID: <403C5673.3080503@namesys.com>
-References: <2A0946C0CB543B4EA5E41C21D97D256E1663AD@zorg.corp.zantaz.com>
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Subject: Re: Conversion from v3.6 to v4 of Reiserfs...
+Date: Wed, 25 Feb 2004 09:33:09 +0100
+Message-ID: <403C5DC5.4010701@gmx.net>
+References: <20040224172153.M90659@pk25.com> <Pine.LNX.4.58.0402242120330.13298@renaissance.laroia.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16919-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16920-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <2A0946C0CB543B4EA5E41C21D97D256E1663AD@zorg.corp.zantaz.com>
+In-Reply-To: <Pine.LNX.4.58.0402242120330.13298@renaissance.laroia.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Fong Vang <fvang@corp.zantaz.com>
-Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
+To: "Diaz Rodriguez, Eduardo" <ediaz@pk25.com>
+Cc: reiserfs-list@namesys.com
 
-Fong Vang wrote:
+Asheesh Laroia wrote:
+> There is the program convertfs:
+> 	http://tzukanov.narod.ru/convertfs/
+> 
+> I don't think it suports reiser4, but you could probably write a patch or
+> ask the author nicely.  It's supposed to do in-place filesystem conversion
+> by using a sparse loopback file.
+> 
+> I've only heard good things about it, but I've never used it.
+> 
+> -- Asheesh.
+> 
 
->This is a new problem the file system isn't empty in this case but files are indeed missing (same setup.  RedHat Linux 7.1, Linux 2.4.20 kernel from RedHat, and ReiserFS 3.6.25.  SMP system with 4 GB of RAM, ~1 TB storage in RAID-10 configuration).  Although the file system isn't empty this time, we are loosing file (our application transaction log says file write completed fro last 7 files, but only four files show up in the ReiserFS file system).
->
->At the time of the problem, this was logged to the messages file:
->
->Feb 23 19:24:57 sc19-172-15 kernel: 3w-xxxx: scsi0: PCI Abort: clearing.
->Feb 23 19:26:02 sc19-172-15 kernel: 3w-xxxx: scsi0: Unit #0: Command (f73bd800) timed out, resetting card.
->Feb 23 19:26:04 sc19-172-15 kernel: 3w-xxxx: PCI Abort: clearing.
->Feb 23 19:27:03 sc19-172-15 kernel: 3w-xxxx: scsi0: Unit #0: Command (f73bd800) timed out, resetting card.
->  
->
-These look like hardware errors, see www.namesys.com/support.html for 
-help.  Soon we will take credit cards....
+convertfs is in debian testing/unstable, just to let you know.
+You should have a look at:
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=230995
+
+I don't think it can handle reiser4, yet.
+Reiser4 is not stable now, so if you care for your data I'd
+stick with reiserfs v3.6 for now.
 
 -- 
-Hans
-
+lg, Chris
 
