@@ -1,65 +1,98 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Subject: Separating Indexing and Searching (was silent semantic changes with
- reiser4)
-Date: Sat, 28 Aug 2004 11:18:08 -0400 EDT
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <584702172685-BeMail@cr593174-a>
-References: <412F7B6D.6010305@pobox.com>
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Subject: Re: reiserfs3 filesystem corruption?
+Date: Sat, 28 Aug 2004 17:28:15 +0200
+Message-ID: <200408281728.16047.christian.mayrhuber@gmx.net>
+References: <270bd0c404082806271f566342@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <412F7B6D.6010305@pobox.com>
+Return-path: <reiserfs-list-return-20992-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <270bd0c404082806271f566342@mail.gmail.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Will Dyson <will_dyson@pobox.com>
-Cc: akpm@osdl.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com, reiser@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com, leon breedt <bitserf@gmail.com>
 
-Will Dyson wrote on Fri, 27 Aug 2004 14:20:29 -0400:
-> Hans Reiser wrote:
-> > Will Dyson wrote:
-> >> In the original BeOS, they solved the problem by having the filesystem 
-> >> driver itself take a text query string and parse it, returning a list 
-> >> of inodes that match. The whole business of parsing a query string in 
-> >> the kernel (let alone in the filesystem driver) has always seemed ugly 
-> >> to me. 
-> > 
-> > Why?
+On Saturday 28 August 2004 15:27, leon breedt wrote:
+> hi,
 > 
-> Hmm. Trying to explain aesthetic judgments is always fun, but I'll try.
+> not sure if i'm going mad here:
 > 
-> String parsing bloats the kernel with code that will be called rarely, 
-> and doing it inside the filesystem module makes for duplicate code if 
-> more than one filesystem does it. But a good common parser routine (or a 
-> kernel api that takes a pre-compiled parse tree) would reduce the bad taste.
-
-Not only bloat, but time wasted reinventing the wheel.  For my experimental file system (http://members.rogers.com/agmsbeos/AGMSRAMFileSystem.readme - see the Nifty Features chapter), I had to figure out the BFS query language (it was documented but didn't have every little detail explained - some experimentation was needed), then write a tokenizer and parser for it, to convert it down to a parse tree that could be used during the query's life.  Good exercise for the programmer, but duplication of effort.
-
-I also added a few new things to the query language, but because the parsing is done by each file system separately, my "improvements" won't show up in other file systems.
-
-> For the 99.9% of people who were not beos users back in the day, the 
-> "live query" was a way to register a query string with the kernel, so 
-> that you got notifications when the list of files matching the query 
-> changed. It was pretty cool, but this is really just blue-skying since I 
-> am not stepping up to write such a beast any time soon.
-
-Kind of like that.  For performance, the query string is converted into a parse tree and then all file operations that touch any attribute mentioned in the query get evaluated against the parse tree to see if the result (in or out of the query result set) has changed.  If it changes, then a kernel facility is used to broadcast a message describing the change and file involved to all parties monitoring that query.  Of course, before becoming live, the existing files that match the query are found by iterating over an index (choosing the appropriate index is an optimization trick).
-
-> >> However, the best alternative I've come up with is to simply export 
-> >> the index data as a special file (perhaps in sysfs?) and have 
-> >> userspace responsible for searching the index.
-> > 
-> > That is the best implementation suggestion I've heard for splitting the 
-> > filesystem into two parts, one in user space and one in kernel, but I 
-> > still don't trust it to work well.
+> [ljb@imryrr]:/home/ljb $ ls -l /usr/bin/sdiff
+> -rwxr-xr-x  1 root root 24576 Apr 25  2003 /usr/bin/sdiff*
 > 
-> Why not? And if it really splits the filesystem into two parts depends 
-> on which of the two following statements you agree with more:
+> [ljb@imryrr]:/home/ljb $ cp /usr/bin/sdiff .
 > 
-> "Fast searching is a feature of the filesystem"
-> "Maintaining indexes is a feature of the filesystem"
+> [ljb@imryrr]:/home/ljb $ ls -l sdiff
+> -rwxr-xr-x  1 ljb ljb 20480 Aug 29 01:12 sdiff*
+> 
+> [ljb@imryrr]:/home/ljb $ ./sdiff
+> zsh: bus error  ./sdiff
+> 
+> [ljb@imryrr]:/home/ljb $ /usr/bin/sdiff
+> /usr/bin/sdiff: missing operand after `/usr/bin/sdiff'
+> /usr/bin/sdiff: Try `/usr/bin/sdiff --help' for more information.
+> 
+> why would the file shrink by 4096 bytes? 
+> 
+> and notice, the original is still able to run. its just when i try to
+> copy it, that it gets corrupted somehow.
+> 
+> this occurs for a fair number of random files on this filesystem
+> (affected files all shrink by 4096 bytes). reiserfsck has no
+> complaints, and i've also run reiserfsck --rebuild-tree. it occurs to
+> the same set of files every time.
+> 
+> i ran across this while trying to copy my / filesystem to a new
+> reiser4 filesystem. first thought it was a reiser4 issue, but it
+> occurs when copying to an ext3 filesystem as well.
+> 
+> i've run badblocks on the disk, with no errors. the filesystem isn't
+> mounted with any special options, just "noatime".
+> 
+> kernel: 2.6.9-rc1-mm1
+> reiserfsck: 3.6.18
+> reiserfs format: "3.6"
+> 
+> its serial ATA device on ICH5-R, if that makes any difference.
+> 
+> the relevant dmesg output:
+> 
+> ReiserFS: sda7: found reiserfs format "3.6" with standard journal
+> ReiserFS: sda7: using ordered data mode
+> ReiserFS: sda7: journal params: device sda7, size 8192, journal first
+> block 18, max trans len 1024, max batch 900, max commit age 30, max
+> trans age 30
+> ReiserFS: sda7: checking transaction log (sda7)
+> ReiserFS: sda7: Using r5 hash to sort names
+> 
+> any ideas what to try? i'm keeping this filesystem around so i have
+> the test cases available.
+> 
+> leon
+> 
 
-I like that.  Put the indexing and a related attribute change update notification mechanism into the kernel.  User land libraries can build on that to implement whatever query language you want, thus saving work and having a common language for all file system varieties that support indices.
+This is a bug in 2.6.9-rc1-mm1. See:
+http://marc.theaimsgroup.com/?l=linux-kernel&m=109360433916523&w=2
 
-However, one of my (unfinished) experiments was to have magic directories that show query results as their contents.  One attribute of the directory (or even its name) would be the query string.  That way even old software (like "ls") could use queries!  Implementing queries-as-directories might require moving some things back into the kernel, or at least into some plug-in level.
+To fix it you have to revert these patches:
 
-- Alex
+=== START Andrew Morton ===
+ftp://ftp.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.9-rc1/2.6.9-rc1-mm1/ 
+\
+broken-out/re-fix-pagecache-reading-off-by-one-cleanup.patch
+
+and then
+
+ftp://ftp.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.9-rc1/2.6.9-rc1-mm1/ 
+\
+broken-out/re-fix-pagecache-reading-off-by-one.patch
+=== END Andrew Morton ===
+Full email at: 
+http://marc.theaimsgroup.com/?l=linux-kernel&m=109368723414915&w=2
+
+-- 
+lg, Chris
