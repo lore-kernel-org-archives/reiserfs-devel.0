@@ -1,72 +1,40 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: reiserfsprogs 3.6.5-pre2 release.
-Date: Wed, 5 Mar 2003 18:48:25 +0100
-Message-ID: <200303051848.25635.Dieter.Nuetzel@hamburg.de>
-References: <200302251650.22469.vitaly@namesys.com> <b43hko$qeg$1@satsuki.furryterror.org>
+From: Soeren Sonnenburg <reiserfs@nn7.de>
+Subject: free space seems wrong...
+Date: 05 Mar 2003 18:53:24 +0100
+Message-ID: <1046886804.23752.25.camel@calculon>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13080-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13081-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b43hko$qeg$1@satsuki.furryterror.org>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
-Cc: Vitaly Fertman <vitaly@namesys.com>
 
-Am Mittwoch, 5. M=E4rz 2003 01:50 schrieb Zygo Blaxell:
-> In article <200302251650.22469.vitaly@namesys.com>,
->
-> Vitaly Fertman  <vitaly@namesys.com> wrote:
-> >this new pre-release includes:
-> >- reiserfsck -a (started at boot) replays journal, checks error flags in
-> >the superblock, bitmaps, fs size, 2 levels of internal tree and switches
-> >to fixble mode if any problem is detected. For root fs fixable cannot be
-> >performed (as fs is mounted) and just --check will be done.
->
-> I get:
->
-> 	Checking all file systems...
-> 	fsck 1.27 (8-Mar-2002)
-> 	Reiserfs super block in block 16 on 0x902 of format 3.6 with standard
-> journal Blocks (total/free): 32848/22393 by 4096 bytes
-> 	Filesystem is cleanly umounted
->
-> 	flush_buffers: device is not specifed
-> 	Warning... fsck.reiserfs for device /dev/md2 exited with signal 6.
-> 	Reiserfs super block in block 16 on 0x900 of format 3.6 with standard
-> journal Blocks (total/free): 37446896/1277098 by 4096 bytes
-> 	Filesystem is cleanly umounted
->
-> 	flush_buffers: device is not specifed
-> 	Warning... fsck.reiserfs for device /dev/md0 exited with signal 6.
->
-> 	fsck failed.  Please repair manually.
->
-> 	CONTROL-D will exit from this shell and continue system startup.
->
-> 	Give root password for maintenance
-> 	(or type Control-D for normal startup):
->
-> ...at which point booting stops.
+Hi.
 
-Same here with all my "normal" SCSI disks.
-See my former "reiserfsprogs-3.6.5-pre2: volumes do not mount during boot"=
-=20
-post.
+I get
 
-Should I try reiserfsck --rebuild-tree?
+is_leaf: free space seems wrong: level=1, nr_items=7, free_space=3468 rdkey 
+vs-5150: search_by_key: invalid format found in block 4792161. Fsck?
+is_leaf: free space seems wrong: level=1, nr_items=7, free_space=3468 rdkey 
+vs-5150: search_by_key: invalid format found in block 4792161. Fsck?
 
-Thanks,
-	Dieter
+when accessing a certain directory using du and on the prompt
+Input/output error.
 
-=2D-=20
-Dieter N=FCtzel
-Graduate Student, Computer Science
+ This does not happen when I iterate over the files by just using find /
+...
+ 
+The disk was full somewhen but now is only half full.
 
-University of Hamburg
-Department of Computer Science
-@home: Dieter.Nuetzel at hamburg.de (replace at with @)
+Should I be worried / is it necessary to fix the filesystem ?
+The problem is, this filesystem is like 2-3 years old and was converted
+to reiserfs 3.6 maybe a year ago...but as it is a production environment
+I would not want to put it down at all...
+
+Thanks for any help,
+Soeren.
+
