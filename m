@@ -1,84 +1,83 @@
-From: Dave Kleikamp <shaggy@austin.ibm.com>
-Subject: Re: The argument for fs assistance in handling archives (was:
-	silent semantic changes with reiser4)
-Date: Fri, 03 Sep 2004 08:33:00 -0500
-Message-ID: <1094218380.2678.43.camel@shaggy.austin.ibm.com>
-References: <20040826150202.GE5733@mail.shareable.org>
-	 <200408282314.i7SNErYv003270@localhost.localdomain>
-	 <20040901200806.GC31934@mail.shareable.org>
-	 <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
-	 <1094118362.4847.23.camel@localhost.localdomain>
-	 <20040902161130.GA24932@mail.shareable.org>
-	 <Pine.LNX.4.61.0409030028510.23011@fogarty.jakma.org>
-	 <1835526621.20040903014915@tnonline.net>
-	 <1094165736.6170.19.camel@localhost.localdomain>
-	 <32810200.20040903020308@tnonline.net>
-	 <Pine.LNX.4.61.0409030112080.23011@fogarty.jakma.org>
-	 <142794710.20040903023906@tnonline.net>
-	 <1094216718.2679.30.camel@shaggy.austin.ibm.com>
-	 <642078516.20040903151619@tnonline.net>
+From: "John Stoffel" <stoffel@lucent.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Fri, 3 Sep 2004 09:46:32 -0400
+Message-ID: <16696.30136.391680.920989@gargle.gargle.HOWL>
+References: <rlrevell@joe-job.com>
+	<1094155277.11364.92.camel@krustophenia.net>
+	<200409022200.i82M0ihC026321@laptop11.inf.utfsm.cl>
+	<20040902232350.GA32244@mail.shareable.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21431-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21432-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <642078516.20040903151619@tnonline.net>
+In-Reply-To: <20040902232350.GA32244@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Spam <spam@tnonline.net>
-Cc: Paul Jakma <paul@clubi.ie>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jamie Lokier <jamie@shareable.org>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Jamie Lokier <jamie@shareable.org>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Lee Revell <rlrevell@joe-job.com>, Pavel Machek <pavel@ucw.cz>, Spam <spam@tnonline.net>, David Masover <ninja@slaphack.com>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, 2004-09-03 at 08:16, Spam wrote:
-> > You're missing the point.  We don't need transparency in all apps.  You
-> > can write an application to be as transparent as you want, but you don't
-> > need every app to to understand every file format.
-> 
->   No, but not every user "can write an application" either, or even
->   have the skills to apply patches. What I was talking about wasn't
->   just tar, which itself isn't the best example anyway,
+>>>>> "Jamie" == Jamie Lokier <jamie@shareable.org> writes:
 
-That was one of the examples you gave, that and .jpg.  I believe they
-are both ridiculous.
+Jamie> Horst von Brand wrote:
+>> > > You really need archive support in find. At the very least you need
+>> > > option "enter archives" vs. "do not enter archives". Entering archives
+>> > > automagically is seriously wrong.
+>> 
+>> I have used find(1) for quite some time now, and have never (or very
+>> rarely) missed this.
 
->  but the idea
->   that users can load plugins that will extend the functionality of
->   their filesystems. That idea seem to be to be _much_ better than
->   trying to teach every user how to write applications or patch
->   existing ones.
+Jamie> I've occasionally had the need to search all files on my system
+Jamie> for the one file which contains a particular phrase -- all I
+Jamie> remember is the phrase.
 
-If I understand Hans' plugins, they are not user-loadable, but rather a
-statically built part of the kernel.
+So use glimpse and run an indexer once a night to pick up changes.  
 
-> 
->   No, but if I wanted to have an encryption plugin active for some of
->   my files or directories then why should I not be able to? I still
->   want to edit, view and save my encrypted files.
+Jamie> Just doing "grep -R" was a tedious job: at least half an hour.
 
-I would not argue against an encryption plugin.
+Ugh, esp since you're not caching any results of all that work either,
+when you need to repeat 10 minutes down the line...
 
->   Again, this was just an example of what could be done with plugins.
->   It is not said that every conceivable plugin will be written, nor
->   loaded per default.
+Jamie> Sometimes, I want to search all source files on my system for a
+Jamie> particular word, for example to search for uses of a particular
+Jamie> system call or library function.
 
-This I agree with.
+I think we want to pull this back a bit more and define this better.
+Instead of 'system' we should be thinking 'namespace' or 'hierarchy'.  
 
->  Even though plugins cannot today be dynamically
->   used, they will be eventually. Reiser4 is still very young.
+Jamie> That would require something that could search through all the
+Jamie> .tar.gz files and .zip files (nested if necessary) as well as
+Jamie> plain files.  It would take so long -- hours at least, maybe
+Jamie> more than a day -- that I've never bothered doing such a thing.
 
-As kernel modules, this would make sense.  I don't see just any
-unprivileged user being able to add code into the file system, though.
+Jamie> In other words, I'd use that capability if it was magically
+Jamie> fast, but as we expect it to be insanely slow (just grepping
+Jamie> gigabytes is slow) that makes it not so useful.
 
->   Please separate your thoughts for specific plugins from those of the
->   idea to have plugins at all.
+Jamie> However, if we ever see that search engine index thing happen,
+Jamie> it would be a most excellent capability if it searched inside
+Jamie> archive files too.  I would definitely use that.  Not often,
+Jamie> but occasionally I would.
 
-I'm not against reiser4 plugins.  I don't think file system code should
-care about the type of data in a file, and do any interpretation based
-on it.
+Is the overhead of pre-indexing all files and their contents worth it
+though?  And would the use of inotify allow us to efficiently update
+the index in a fairly quick time?
 
-Shaggy
--- 
-David Kleikamp
-IBM Linux Technology Center
+All the various arguements have been that we need a filesystem which
+magically indexes files, does queries and does it all atomically and
+without any thought on the part of the developer/user.  It could
+happen, but then we'd have such a *slow* system in general, just to
+make 1% of the usage simpler (for some measure of simple) that it
+would be a waste.
 
+Providing a simple, consistent set of semantics and syntax allows you
+to build on top of it the layer(s) you need to provide the guarenttees
+you need for your application.
+
+I don't expect that Oracle has the same needs as does my mail spool,
+or as an image store.  Sure, Oracle could do both of them, but are
+the overheads of oracle worth the slowdown in the common case?
+
+John
