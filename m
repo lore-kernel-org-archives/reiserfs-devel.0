@@ -1,52 +1,77 @@
-From: Christophe Saout <christophe@saout.de>
-Subject: Re: reproducable deadlock condition (reiser4)
-Date: Sat, 25 Sep 2004 14:52:09 +0200
-Message-ID: <1096116729.12503.15.camel@leto.cs.pocnet.net>
-References: <1096116193.12503.7.camel@leto.cs.pocnet.net>
-	 <559718553.20040925144815@tnonline.net>
+From: Milan =?ISO-8859-1?Q?Holz=E4pfel?= <lists@mjh.name>
+Subject: Re: newer r4 snapshots?
+Date: Sat, 25 Sep 2004 19:51:52 +0200
+Sender: news <news@sea.gmane.org>
+Message-ID: <20040925195152.6b27754c.lists@mjh.name>
+References: <555047326.20040924170651@wp.pl>
+	<41545B77.8040101@namesys.com>
+	<999723148.20040924205515@wp.pl>
+	<41549CF7.9060307@willsmith.org>
+	<200409242305.i8ON5gi7001773@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-i+ecOG4AmSAMFgwDfZP6"
-Return-path: <reiserfs-list-return-21920-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-21921-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <559718553.20040925144815@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Spam <spam@tnonline.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
---=-i+ecOG4AmSAMFgwDfZP6
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Am Samstag, den 25.09.2004, 14:48 +0200 schrieb Spam:
+On Fri, 24 Sep 2004 19:05:42 -0400
+Valdis.Kletnieks@vt.edu wrote:
 
->   I to had problems with rc1. For example the repacker would also
->   freeze my system or corrupt the disk data. But I switched to rc2-mm1
->   and since then I have not had any reiser4 errors at all. It could be
->   worth a try.
+> On Sat, 25 Sep 2004 06:17:27 +0800, Will Smith said:
+> > Do we have to follow -mm to obtain updates to the v4 code?
+> >=20
+> > I would rather keep a relatively stable Linux kernel but have bleeding
+> > edge reiser4 to test.
+> >=20
+> > Is such an option available?
+> >=20
+> > If not, is there a changelog describing which reiser4 changes have
+> > been integrated into each -mm kernel?
+>=20
+> [... describing some steps to rediff Reiser4 ...]
 
-Ok. Let the patch-fest begin...
+If you don't want to rediff the patches yourself against a vanilla
+kernel (or have no point to start at or whatever), there are few people
+who are publishing Reiser4 snapshots rediffed against vanilla (since it
+is not a real big task if you're a bit familiar with the stuff :) )=20
 
->   Maybe try to have the syslog on another device as a temporary
->   measure?
+Either have a look at mine
+(<URL:http://linux.mjh.name/kernel/patches/reiser4/>) or search through
+the archives for some other peole publishing such patches (I remember
+there was at least one person some time ago)
 
-Yes, when building on another volume the log gets commited, but it only
-contains a bunch of the mentioned lines, nothing else.
+Regards,
+Milan
 
 
---=-i+ecOG4AmSAMFgwDfZP6
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
+- --=20
+
+                   Milan Holz=E4pfel alias jagdfalke alias jag
+
+Antworten direkt an mich                             Answers directly to me
+gehen bitte an eine Addresse,                        go to an address one
+die man hier finden kann:                            can find here, please:
+
+Kontaktinfos sowie                                   Contact infos as well =
+as
+=D6ff GnuPG-Schl=FCssel    <URL:http://con.mjh.name/>    GnuPG Public Key
+GnuPG Fingerabdruck     4C8A 5FAF 5D32 6125 89D1     GnuPG Fingerprint
+                        0CE5 DB0C AF4F 6583 7966
+
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
+Version: GnuPG v1.2.4 (GNU/Linux)
 
-iD8DBQBBVWn5ZCYBcts5dM0RAmlZAJ9rZ6o3jwlU2MQztwoa7E2NnD4K1ACgjtmw
-zCj9zg79VrYG8A+pq9/NOdU=
-=d+y7
+iD8DBQFBVbA42wyvT2WDeWYRAuGLAJ0YSuzQmO2YX+aXBxf221N3gGTmlQCfXqs4
+JgzCQJ0Ocoh66x22UmpjuzM=3D
+=3DRnet
 -----END PGP SIGNATURE-----
-
---=-i+ecOG4AmSAMFgwDfZP6--
 
