@@ -1,36 +1,26 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: Horrible ftruncate performance
-Date: Wed, 23 Jul 2003 16:24:07 +0200
-Message-ID: <200307231624.07610.Dieter.Nuetzel@hamburg.de>
-References: <Pine.LNX.4.30.0307151407100.6563-100000@divine.city.tvnet.hu> <200307231546.38557.Dieter.Nuetzel@hamburg.de> <3F1E9308.3080108@namesys.com>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Some new numbers for V4 from LinuxTag?
+Date: Wed, 23 Jul 2003 16:27:16 +0200
+Message-ID: <200307231627.16462.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-15007-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15008-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F1E9308.3080108@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 To: Hans Reiser <reiser@namesys.com>
-Cc: Chris Mason <mason@suse.com>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Am Mittwoch, 23. Juli 2003 15:52 schrieb Hans Reiser:
-> Dieter N=FCtzel wrote:
-> >>Extents are a nice feature, but they belong in V4 not V3.
-> >
-> >Nobody asked about extents fro V3.
->
-> Extents are the proper fix for hole performance.
+Maybe your slides?
 
-OK.
+Do you think Linus will include V4, soon?
+Even under 'experimental'.
 
-But V4 is for 2.5/2.6 only...
+Thank you very much for two GREAT FS.
 
-What are our options?
-
-Regards,
-	Dieter
+-Dieter
 
