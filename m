@@ -1,49 +1,58 @@
 From: Oleg Drokin <green@namesys.com>
 Subject: Re: Problem with my HDD
-Date: Thu, 30 May 2002 09:17:29 +0400
-Message-ID: <20020530091729.C3922@namesys.com>
-References: <Pine.LNX.4.44.0205300905050.22928-100000@avon.timetraveller.org> <390726734.20020530020909@tnonline.net>
+Date: Thu, 30 May 2002 09:21:55 +0400
+Message-ID: <20020530092155.D3922@namesys.com>
+References: <10512850437.20020529194929@starfall.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10444-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10445-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <390726734.20020530020909@tnonline.net>
+In-Reply-To: <10512850437.20020529194929@starfall.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Cookie-Monster <cookie.monster@starfall.de>
+Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Thu, May 30, 2002 at 02:09:09AM +0200, Anders Widman wrote:
+On Wed, May 29, 2002 at 07:49:29PM +0200, Cookie-Monster wrote:
 
-> > If you can I'd consider getting an image of the drive.  It may help with 
-> > data recovery later.  something like:
-> > dd if=/dev/sda1 of=/bigfilesystem/diskimage
-> I've  heard  of  something  called  dd_rescue,  but  "dd  if=/dev/sda1
-> of=/path/image  conv=sync,noerror"  should  do the trick. The sync and
+> I hope you can help me. I formated on of my Server-HDDs with ReiserFS
+> version, which has been distributed in SuSE Linux 7.3. Sorry, but I
+> don't know the version, cause I'm know running SuSE Linux 8.0.
+> My Problem is, that the HDD cannot be mounted anymore:
+> 1.   fileserver:/ # mount /dev/sda1 /ftp/apps/
+> 2.   mount: Not a directory
+>       Bad root block 4294967295. (--rebuild-tree did not complete)
 
-Our attempts show that dd (even with conv=sync,noerror,notrunc) does not
-help and produces broken images, where no data inserted in image for sectors
-that cannot be read.
+Well, so you in fact run reiserfsck --rebuild-tree before.
+What caused you to run it for the first time?
 
-dd_rescue is shipped with SuSE.
-Also it can be obtained from here:
-http://www.garloff.de/kurt/linux/ddrescue/
+> The check goes on til there are 171398 (more than 60%) blocks left then it hangs
+> up for a while before continueing. From this point on it continues
+> very slow only. From 150xxx it continues fast til 13039.
+> At this point the program quits without saying anything and the HDD is
+> hung up. The old version of reiserfsck, in the SuSe Linux 7.3 Edition
+> gave out a lot of "Block could not be read" or something like this and
+> the HDD hung up.
 
-> noerror   causes  the disk-copy to continue when there are read errors
-> and  fill in with blanks instead. If you don't do this you will end up
+what does 'dmesg' output says after this?
+If you have read errors, then namesys can help you only based
+on http://namesys.com/support.html terms.
 
-No, for some reason it does not fills the blanks.
-At least for us.
+> I really need the data! Is there any possibilty of deleating the
+> unreadable blocks and rebuuilding the tree then? When this works, I
 
-> with  offset  errors  -  the  image  will be shorter than the original
-> drive, and it would be impossible to fix.
+This is possible, but all the data that was contained in these blocks would be
+lost.
 
-This is also not true, it will be possible to fix, but that would be
-more expensive ;)
+> p.s.: The HDD is a IBM DRHS36V (36GB U2W-SCSI) if that is important.
+
+Hm, I thought that only IBM DTLA-307040 and IC40... were subject to quick
+death.
 
 Bye,
     Oleg
