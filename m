@@ -1,66 +1,71 @@
-From: Jamie Lokier <jamie@shareable.org>
+From: Linus Torvalds <torvalds@osdl.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 17:44:51 +0100
-Message-ID: <20040826164451.GL5733@mail.shareable.org>
-References: <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com> <1093536282.5482.6.camel@leto.cs.pocnet.net> <20040826160750.GC4326@lst.de>
+Date: Thu, 26 Aug 2004 09:48:04 -0700 (PDT)
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <Pine.LNX.4.58.0408260936550.2304@ppc970.osdl.org>
+References: <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org>
+ <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org>
+ <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net>
+ <1093480940.2748.35.camel@entropy> <20040826044425.GL5414@waste.org>
+ <1093496948.2748.69.camel@entropy> <20040826053200.GU31237@waste.org>
+ <20040826075348.GT1284@nysv.org> <20040826163234.GA9047@delft.aura.cs.cmu.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20725-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040826160750.GC4326@lst.de>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20040826163234.GA9047@delft.aura.cs.cmu.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Rik van Riel <riel@redhat.com>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Jan Harkes <jaharkes@cs.cmu.edu>
+Cc: Markus =?iso-8859-1?Q?T=F6rnqvist?= <mjt@nysv.org>, Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Christoph Hellwig wrote:
-> or placing this into a userspace helper that the kernel can invoke
-> transparently.
 
-Yes, exactly this for most file formats.
-Ideally, with _some_ user control over the handlers for their own
-files a bit like Hurd.
 
-Not just archive files: metadata pulled from audio files, images,
-distro packages, etc.  In other words much the same as Gnome and KDE's
-things, but with more emphasis on metadata extractors and efficient
-on-disk cache interaction, and a sane page-cache coherency interface
-(possibly FUSE).
+On Thu, 26 Aug 2004, Jan Harkes wrote:
+> 
+> (btw. the same could be implemented completely in userspace, for
+> instance in glibc. Whenever an open call gets an EISDIR error, simply
+> retry the open, but this time with /_contents appended).
 
-Metadata extraction is useful for search and indexing purposes.
-(That, and a way to hook change notifications up with indexers --
-again comes with any proper coherency interface).
+Yes, and no - just to make it obvious before people jump on this, a lot of 
+things can be prototyped in user space with things like this, but once you 
+have to deal with races and mixed tool environments, user space suddenly 
+doesn't work so well any more.
 
-For new applications using a container, it's tempting to want one
-format which is optimised for this.  But really many applications want
-to write XML or compressed XML, or something else that isn't
-especially efficient but is easy to work with on many OSes.  We should
-support applications whatever format they need to work with, if
-providing an interior view as a directory is useful for them.  (This
-implies applications can introduce their own formats for files they
-need to operate on.)  By the way, lazy updating of containers is an
-even bigger advantage if you have to use XML as the flat format,
-because the savings from not serialising when you don't need to are
-more pronounced.
+I think Jan understands this distinction, I just wanted to make sure 
+everybody else is aware of the _one_ thing that kernel land does well:
 
-For some applications the "content" isn't structured in a way which
-maps naturally to a plain archive file.  Hans' /etc/passwd is a simple
-example: at least one of the "flat" representations, when there are
-enough entries, probably ought to be a DB file for faster lookup.
-(Though, it would be great if /etc/passwd could automagically get fast
-lookup due to an automagic underlying representation, while still
-appearing to be a flat file when you cat it).
+ - safely synchronize globally visible data structures
 
-Also, imagine "cd" into a MySQL table file.  It might just work.
+That's quite fundamental. 99% of what a kernel does is exactly that. TCP
+would be in user space too, if it wasn't for _exactly_ this issue. A lot
+of people think that kernels are about hardware access, and yes, that's
+the other 99% of the picture (I see the _big_ picture, remember?), but the 
+"safe access to common data" is really very fundamental.
 
-By the way, we don't need containers to waste huge amounts of space
-like the Microsoft Word "fast save" documents did.  Because our
-containers are created on demand, there is no performance advantage in
-them having unused holes, unlike the case were Word was saving changes
-periodically.
+The kernel is literally the thing that makes sure that you don't have -
+and _cannot_ have - user programs that confuse each other by modifying 
+data unsynchronized.
 
--- Jamie
+For example, a filesystem is really nothing but a way to access a disk in 
+a controlled manner - it's not so much about hardware access, as it is 
+about maintaining a coherent view of how some shared data (disk or 
+whatever) is maintained. 
 
+Same goes for caches. We could cache things in user space, but if you want 
+to _share_ your caches (so that you don't have to re-load them for every 
+new application), you need some entity that manages those shared data 
+structures in a secure manner. In other words, you need the kernel.
+
+The same goes for something like a "container file". Whether you see it as
+"dir-as-file" or "file-as-dir" (and I agree with Jan that the two are
+totally equivalent), the point of having the capability in the kernel is
+not that the operations cannot be done in user space - the point is that
+they cannot be done in user space _safely_. The kernel is kind of the
+thing that guarantees that everybody follows the rules.
+
+Imagine the security problems if a set-uid program were to (unwittingly) 
+depend on a user-space library that implements what Jan's prototype 
+library would do? Races galore, since a user-space implementation wouldn't 
+have _any_ way to do tests like the above atomically. 
+
+		Linus
