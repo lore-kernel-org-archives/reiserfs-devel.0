@@ -1,32 +1,39 @@
-From: jw schultz <jw@pegasys.ws>
-Subject: (reiser4 name) Re: Anyone up to benchmarking WinFS vs. Reiser4?
-Date: Mon, 27 Oct 2003 23:33:00 -0800
-Message-ID: <20031028073300.GQ8540@pegasys.ws>
-References: <20031028024209.GO8540@pegasys.ws> <3F9E1ABD.1050004@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: (reiser4 name) Re: Anyone up to benchmarking WinFS vs. Reiser4?
+Date: Tue, 28 Oct 2003 11:14:29 +0300
+Message-ID: <3F9E2565.6030100@namesys.com>
+References: <20031028024209.GO8540@pegasys.ws> <3F9E1ABD.1050004@namesys.com> <20031028073300.GQ8540@pegasys.ws>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15915-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15916-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3F9E1ABD.1050004@namesys.com>
+In-Reply-To: <20031028073300.GQ8540@pegasys.ws>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: jw schultz <jw@pegasys.ws>
 Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-On Tue, Oct 28, 2003 at 10:29:01AM +0300, Hans Reiser wrote:
-> You mount it as reiser4, which is why in writing documentation I get 
-> torn between calling it ReiserFS V4 and Reiser4.
+jw schultz wrote:
 
-Whether the length was intentional or not, thanks.
-Sorry about the subject line, sloppiness on my part.
+>On Tue, Oct 28, 2003 at 10:29:01AM +0300, Hans Reiser wrote:
+>  
+>
+>>You mount it as reiser4, which is why in writing documentation I get 
+>>torn between calling it ReiserFS V4 and Reiser4.
+>>    
+>>
+>
+>Whether the length was intentional or not, thanks.
+>Sorry about the subject line, sloppiness on my part.
+>
+>  
+>
+It was based on mailing list feedback that they knew it was an FS.
 
 -- 
-________________________________________________________________
-	J.W. Schultz            Pegasystems Technologies
-	email address:		jw@pegasys.ws
+Hans
 
-		Remember Cernan and Schmitt
+
