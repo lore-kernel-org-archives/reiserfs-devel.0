@@ -1,54 +1,65 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Bodo Eggert <7eggert@gmx.de>
 Subject: Re: file as a directory
-Date: Fri, 26 Nov 2004 00:09:37 +0100
-Message-ID: <20041125230937.GA2909@elf.ucw.cz>
-References: <2c59f00304112205546349e88e@mail.gmail.com> <41A1FFFC.70507@hist.no>
+Date: Fri, 26 Nov 2004 05:11:53 +0100
+Message-ID: <E1CXXSb-0000bz-00@be1.7eggert.dyndns.org>
+References: <fa.imi6gu8.1e7qkqc@ifi.uio.no> <fa.hcr9rb0.k6egam@ifi.uio.no>
+Reply-To: 7eggert@nurfuerspam.de
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22579-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7Bit
+Return-path: <reiserfs-list-return-22580-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <41A1FFFC.70507@hist.no>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Helge Hafting <helge.hafting@hist.no>
-Cc: Amit Gud <amitgud1@gmail.com>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Martin Waitz <tali@admingilde.org>, Amit Gud <amitgud1@gmail.com>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Hi!
+Martin Waitz wrote:
+> On Mon, Nov 22, 2004 at 08:34:02AM -0700, Zan Lynx wrote:
 
-> Such support may happen for a few fs'es - people who
-> want this will then use those fses.  Those who don't
-> like the ideas will use others.
+>> There are already several things in filesystems that don't strictly
+>> belong inside the kernel.  A filesystem could be implemented quite well
+>> as a user-space daemon that sat on top of the block device and
+>> communicated via sockets or shared memory just like an X server.
 > 
-> >(.tar, .tar.gz, ...) support in the VFS itself, and of course
-> >transparent to any fs and any user-land application. There are many
-> >archive FSs around, but how feasible would it be to implement the
-> >archive file support in the VFS at dentry-level? I'd be happy to share
-> >my proposal.
-> >
-> > 
-> >
-> You won't get .tar or .tar.gz support in the VFS, for a few simple reasons:
-> 1. .tar and .tar.gz are complicated formats, and are therefore better
->   left to userland.  You can get some of the same effect by using a shared
->   library that redefines fopen() and fread() though.  It'll work fine for
->   the vast majority of apps that happens to use the C library.
+> this is quite different.
+> As you need to enforce security policies when accessing the block
+> device, you have to move the filesystem into its own daemon.
+> You cannot do it in a library.
 
-It is not same effect -- with shared library you get no caching. And
-that hurts a lot.
+Only the mapping from block-nr to uid/gid/perms needs to be in the kernel.
+The rest can be done in userspace, but it would be ugly as hell.
 
->   It is hard to make a guaranteed bug-free decompressor that
->   is efficient and works with a finite amount of memory.  The kernel
->   needs all that - userland doesn't.
+> It is irrelevant for the application weather the fs resides in a
+> separate daemon or in the kernel itself.
 
-If you have bug in decompressor, you are screwed, anyway, because you
-get remote user exploit when mozilla gets the file from
-web. Oops. [Ok, you at least do not get remote root exploit, but...]
+ACK.
 
-								Pavel 
+> But support of different views on files is something different.
+> You can do that in a library, you only need an interface that is
+> capable of storing your data. The kernel already provides that
+> interface.
+
+If you want to allow users to set their default shell using some extension,
+a simple userspace library will not do the job. You'll need a central
+authority that is able to synchronize the access to the file, prevent
+unauthorized modifications, do the caching etc.
+
+I think the special file handlers should generally be daemons, but the
+access should be controlled by kernel hooks, maybe something like
+automounting a userspace filesystem. Simple meta-filesystems, e.g. those
+that could be "emulated" using mount -oloop, may reside in the kernel
+space, more complicated but common ones may be stored in the kernel
+(placed on the initramfs?) to accelerate starting the helper daemon and
+uncommon ones would be registered at runtime (maybe user-specific).
+
+Having functions in the kernel to support those filesystems in the kernel
+will help, e.g. a tgz helper daemon would need to allocate temporary
+storage for accelerating access (e.g. file tree, cache) as well as means
+to reassemble the tgz for operations on the whole file after write
+operations occured. Meta-filesystems on fs without these features can
+(off cause) be done, but I think they would be very slow or show
+inconsitencies in certain situations.
 -- 
-People were complaining that M$ turns users into beta-testers...
-...jr ghea gurz vagb qrirybcref, naq gurl frrz gb yvxr vg gung jnl!
+Bug? That's not a bug, that's a feature. 
