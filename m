@@ -1,66 +1,71 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: About direntries pointing to nowhere on reiserfs problem in 2.4
-Date: Tue, 25 Feb 2003 22:35:59 +0300
-Message-ID: <200302252235.59400.vitaly@namesys.com>
-References: <20030220175309.A23616@namesys.com> <200302251539.10847.vitaly@namesys.com> <b3gbjr$emu$1@satsuki.furryterror.org>
+From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
+Subject: Re: reiserfsprogs 3.6.5-pre2 release.
+Date: Wed, 26 Feb 2003 01:54:48 +0100
+Message-ID: <20030226015448.1efac468.philippe.gramoulle@mmania.com>
+References: <200302251650.22469.vitaly@namesys.com>
+	<200302251712.45985.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-12925-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12926-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b3gbjr$emu$1@satsuki.furryterror.org>
+In-Reply-To: <200302251712.45985.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Zygo Blaxell <eazgwmir@umail.furryterror.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-On Tuesday 25 February 2003 21:11, Zygo Blaxell wrote:
-> In article <200302251539.10847.vitaly@namesys.com>,
->
-> Vitaly Fertman  <vitaly@namesys.com> wrote:
-> >Ok, I could try to remove them faster, if you give me the list of these
-> >directories - all those messages in logs, and an account on your computer.
->
-> Handing out access to this (proprietary) data is probably not worth
-> saving 53 hours.  I have pairs of fileservers set up as mirrors of
 
-well, it would be a fast hack, not tested properly, so I would prefere to 
-control how it goes with debugger.
+Hi Vitaly,
 
-> each other.  They're meant to survive one of the machines falling off the
-> shelf and breaking all of its disks.  In the best case nobody will notice
-> the reiserfsck, and in the worst case I'll have to abort the reiserfsck
-> and live with the dangling direntries for a few more days.  Also, I need
-> to schedule a test of the automatic failover this month anyway. ;-)
->
-> I was hoping for something along the lines of "if you turn off these
-> parts of the kernel code, it will let unlink() work even if it can't
-> find an inode."  I'd then boot a kernel modified that way, delete all
-> the offending files, then switch back to a regular kernel, which could
-> all be done in a single day.
->
-> >Hm, fix-fixable works faster usually.
->
-> It does!  You should see how long --rebuild-tree takes!  ;-)
+here is an output of reiserfsck -a on a ~550 Gb Raid5 array filled about 60=
+%.
 
-there is one known bottleneck with objectid map on semantic rebuild pass 
-and I will improve it as when I will have time on it. Other things should 
-be profiled.
+# df /dev/sdb1
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/sdb1            572418604 335826568 236592036  59% /prod
 
-> >It would be not bad to get the metadata
-> >of this partition, and to profile it locally. Although, metadata dump will
-> > take some time also. If you have this time on one of your mashins, could
-> > you run debugreiserfs -p /dev/xxx | bzip2 -c > xxx.bz2
->
-> I did that once many months ago.  It ran out of space after 40 gigabytes
-> of .bz2 output, and I never tried it again (and this was with the
-> filesystem about 60% full...now it's 90% full).  It looked like it
-> had dumped about 30% of the tree data before it died.
 
-oh, looks like you have only a few kilobytes files on it. 
+#  reiserfsck -V
 
--- 
+<-------------reiserfsck, 2002------------->
+reiserfsprogs 3.6.5-pre2
+
+
+# time reiserfsck -a /dev/sdb1
+Reiserfs super block in block 16 on 0x811 of format 3.6 with standard journ=
+al
+Blocks (total/free): 143109020/59148009 by 4096 bytes
+Filesystem is cleanly umounted
+Replaying journal..
+0 transactions replayed
+Checking internal tree..finished                 =20
+
+real    0m47.890s
+user    0m6.668s
+sys     0m0.732s
+
+Hope that helps.
 
 Thanks,
-Vitaly Fertman
+
+Philippe
+
+
+On Tue, 25 Feb 2003 17:12:45 +0300
+Vitaly Fertman <vitaly@namesys.com> wrote:
+
+
+  |  Also, it would be interesting to know how much time does reiserfsck -a=
+ take
+  |   on big arrays. So if you have a such, try it also please. I mean, on =
+consistent
+  |   filsystems, otherwise reiserfsck will switch to the fix-fixable mode.
+
+--=20
+
+Philippe Gramoull=E9
+philippe.gramoulle@mmania.com
+Lycos Europe - NOC France
+
