@@ -1,33 +1,49 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Apparent race condition in do_journal_begin_r() with UL kernel
-Date: Tue, 16 Sep 2003 19:49:08 +0400
-Message-ID: <20030916154908.GA987@namesys.com>
-References: <1063725179.12929.548.camel@biker.psw.pdb.fsc.net> <1063725339.14926.125.camel@tiny.suse.com>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Subject: Re: Carrying Attributes too Far
+Date: Tue, 16 Sep 2003 15:15:59 -0400 EDT
+Message-ID: <2596553532-BeMail@cr593174-a>
+References: <874qzgt2yo.fsf@labatt.uhoreg.ca>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15675-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15676-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1063725339.14926.125.camel@tiny.suse.com>
+In-Reply-To: <874qzgt2yo.fsf@labatt.uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Chris Mason <mason@suse.com>
-Cc: Martin Wilck <Martin.Wilck@Fujitsu-Siemens.com>, Reiser FS Mailing List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Hello!
+Hubert Chan wrote on Sun, 14 Sep 2003 00:21:19 -0400:
+> Alexander> To avoid too much recursion, "ls" and other utilities should
+> Alexander> know which things are primitive things, and avoid trying to
+> Alexander> list their contents.  The easiest way to cram that in would
+> Alexander> be to add another attribute:
+> 
+> Alexander> Graphic.jpeg/MIME/Primitive contains "true", or maybe a
+> Alexander> single byte value that is non-zero.  Pick one.
+> 
+> I think that the easiest thing would be to just say that if MIME
+> doesn't contain a MIME attribute, then it's "primitive" (or whatever).
 
-On Tue, Sep 16, 2003 at 11:15:40AM -0400, Chris Mason wrote:
+Good idea.  For legitimate but not currently classified files, a MIME
+type of "application/unclassified" could be used (or just the existing
+generic "application/octet-stream").
 
-> Ok, I've been tracking the is_tree_node messages for about a week now,
-> but only on the latest beta UL kernels.  Which UL kernel exactly have
-> you been using?
+I recently thought of another way, just turn off the "x" permission bit
+for examining or changing the "directory" of a primitive attribute.
+Or perhaps deny directory type operations with a suitable error code.
+Or both.  Though that would be a hack - you couldn't tell if it was
+a primitive thing or if someone had just turned off the permissions.
 
-He is not using UL kernels, as I see.
-here's the quote from previous mail:
-"The kernel in use is SuSE 8.1 errata kernel 2.4.19, release 340."
+Unfortunately Unix has overused the "x" bit in the rwx permissions set;
+it has different interpretations depending on whether the thing is a file
+or a directory.  We'd have to add a new bit, or get rid of the x == execute
+functionality (the MIME type of the file would take over that duty).  Or
+just toss out the whole file mode thing and use ACLs and other more modern
+attribute based techniques for permissions.  Sure, they won't be as fast,
+but modern hardware (and ReiserFS!) makes it possible to take the speed
+hit in return for more flexibility in storing data.
 
-Bye,
-    Oleg
+- Alex
