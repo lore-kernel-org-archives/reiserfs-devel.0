@@ -1,74 +1,33 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Quota support for UID >65534
-Date: 16 Jul 2002 08:25:32 -0400
-Message-ID: <1026822332.4952.523.camel@tiny>
-References: <1026727900.18163.61.camel@max> 
-	<1026731371.21656.301.camel@tiny>  <1026807249.1066.31.camel@max>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Filesystem errors
+Date: Wed, 17 Jul 2002 09:42:52 +0400
+Message-ID: <20020717094252.C4841@namesys.com>
+References: <200207160146.01440.cabernet@internode.on.net> <3D326683.1000606@namesys.com> <200207160222.50147.cabernet@internode.on.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11029-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11030-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <1026807249.1066.31.camel@max>
+Content-Disposition: inline
+In-Reply-To: <200207160222.50147.cabernet@internode.on.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Zeljko Brajdic <zorz@iskon.hr>
-Cc: ReiserFS-list <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Brian Marr <cabernet@internode.on.net>
+Cc: Reiserfs list <reiserfs-list@namesys.com>
 
-On Tue, 2002-07-16 at 04:14, Zeljko Brajdic wrote:
-> On Mon, 2002-07-15 at 13:09, Chris Mason wrote:
-> > On Mon, 2002-07-15 at 06:11, Zeljko Brajdic wrote:
-> > > Hello,
-> > > 
-> > > I've applied quota patches for vanilla kernel-2.4.18 found at
-> > > ftp://ftp.suse.com/pub/people/mason/patches/reiserfs/quota-2.4/2.4.18/
-> > > Everything works perfectly except for checking quota with command `quota
-> > > -v username' if username have UID >65534. Interesting is that `repquota'
-> > > doesn't have that problem and showing.
-> > > 
-> > > This is output of `quota':
-> > > 
-> > > root@led 12:02 (/usr/src/linux) > quota -v bureq
-> > > quota: Error while getting quota from /dev/sda4 for 200000: Invalid argument
-> > > Disk quotas for user bureq (uid 200000): none
-> > 
-> > Which disk format are you using?  You can check this with debugreiserfs
-> > /dev/xxxxx
-> > 
-> root@led 13:12 (/usr/src/linux) > debugreiserfs /dev/sda4
-> 
-> <-------------debugreiserfs, 2002------------->
-> reiserfsprogs 3.x.1b
-> 
-> 
-> Filesystem state: consistency is not checked after last mounting
-> 
-> Reiserfs super block in block 16 on 0x804 of format 3.6 with standard journal
+Hello!
 
-This means your reiserfs disk can support the high uids.
+On Tue, Jul 16, 2002 at 02:22:50AM +0930, Brian Marr wrote:
 
-> 
-> 
-> We have found "error". :) In fs/dquot.c at line 2057 exists if
-> statement:
-> 
->         if (id & ~0xFFFF)
->                 goto out;
-> 
-> Is this feature or bug?! :) This have been found in vanilla kernel-2.4.18
+> What reiserfsck paramaters should I try ? Do I have to do --rebuild-tree ?
 
-This check is not in a quota patched kernel.  sys_quotactl isn't in
-fs/dquot.c with the quota patches applied.
+You hard drive is failing, so yuo should backup all the data to other
+drive first, then you might want to revive your disk, or get it replaced
+(which is even beter).
+You better not to run reiserfsck or any other programs (besides tar or
+some other backup tool) on this disk, because you might loose even more data
+this way.
 
-Did you apply all of the patches in my quota directory?  I think so,
-since the kernel wouldn't compile otherwise ;-)
-
-quota -v high_uid_user works fine for me, which version of the quota
-utils do you have installed?
-
--chris
-
-
-
-
+Bye,
+    Oleg
