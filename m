@@ -1,77 +1,47 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 16:48:10 -0700
-Message-ID: <412E76BA.9000305@namesys.com>
-References: <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1939276887.20040826114028@tnonline.net> <20040826024956.08b66b46.akpm@osdl.org> <839984491.20040826122025@tnonline.net> <20040826105404.GH2612@wiggy.net>
+Date: Thu, 26 Aug 2004 16:52:30 -0700
+Message-ID: <412E77BE.5070005@namesys.com>
+References: <20040824202521.GA26705@lst.de>	<412CEE38.1080707@namesys.com>	<20040825152805.45a1ce64.akpm@osdl.org>	<112698263.20040826005146@tnonline.net>	<Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org>	<1453698131.20040826011935@tnonline.net>	<20040825163225.4441cfdd.akpm@osdl.org>	<20040825233739.GP10907@legion.cup.hp.com>	<20040825234629.GF2612@wiggy.net>	<1939276887.20040826114028@tnonline.net>	<20040826024956.08b66b46.akpm@osdl.org>	<839984491.20040826122025@tnonline.net>	<20040826032457.21377e94.akpm@osdl.org>	<742303812.20040826125114@tnonline.net> <20040826035500.00b5df56.akpm@osdl.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20845-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20846-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826105404.GH2612@wiggy.net>
+In-Reply-To: <20040826035500.00b5df56.akpm@osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Wichert Akkerman <wichert@wiggy.net>
-Cc: Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, jra@samba.org, torvalds@osdl.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Andrew Morton <akpm@osdl.org>
+Cc: Spam <spam@tnonline.net>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Wichert Akkerman wrote:
+Andrew Morton wrote:
 
->Previously Spam wrote:
+>
+>No.  All of the applications which you initially identified can be
+>implemented by putting the various bits of data into a single file and
+>getting applications to agree on the format of that file.
+>
+>For example, some image file formats already support embedded metadata, do
+>they not?
+>
+>-
 >  
 >
->>  Because  having user space tools and code will make it not work with
->>  everything. Keeping stuff in the kernel should make the new features
->>  transparent to the applications.
->>    
->>
->
->But having it in the kernel has the same problem. If you read the
->Solaris documentation you will see that a bunch of utilties had to
->get a new commandline option to be able to access the metadata and
->a special utility was added for other applications.
->
-They did it wrong.
+and that leads to vasts numbers of file formats, all of which require 
+special code to parse them, and apps that don't duplicate that code 
+can't access the data, and it is a software engineering mistake.  
+Uniform interfaces greatly reduce the cost of an OS and increase its 
+expressive power.  Closure is the most important and least understood 
+principle of OS design.
 
-> If you look
->at windows you will see that you need to use a filename like
-><realfilename>:<streamname>:$DATA (which obviously does not work for
->single-character filenames).
->  
->
-again, they did it wrong.  See Rob Pike's "The Hideous Name" for why 
-that is wrong.
+By contrast, suppose everything was stored in files and directories.  
+Every app can afford the coding cost to learn about files and 
+directories.  Data can freely bounce from one object to another in the 
+OS because the APIs for the objects are all the same.  That's increased 
+expressive power.  The number of connections between objects determines 
+the expressive power of the OS, not the number of objects in it.  
+Unified namespaces do a lot for an OS.
 
->Ignoring samba for a bit which just needs streams to stay compatible
->with windows I see few reasons for using streams:
->
->* files are more complex these days and tend to include multiple
->  different things: images with thumbnails and exif data, 'office'
->  documents containing both text and images
->
->* standard way to add common metadata to a file which can be used for
->  searching tools (author, copyright, keywords, etc.)
->
->But both can already be done in userland (modern image formats can store
->thumbnails and exif data internally, applications use tar or zip-like
->files for documents, etc.). The metadata part is a lot more complicated
->as well since the behaviour of attributes might need to be complex:
->if I change an image using an application that is not stream-aware, what
->should happen to its thumbnail? 
->
->The only common benefits I can see are standardisation and optimization:
->instead of every file format or application defining a way to specify 
->metadata for a file you get a common API defined by the OS (but you'll
->still need to standardize on attribute names and formats, so plenty of
->room that will still not help), and instead of parsing different files
->or XML streams you can directly access a bit of metadata.
->
->So far I'm not convinced that streams are worth the effort. Not that my
->opinion is all that relevant here, but still :)
->
->Wichert.
->
->  
->
-
+Hans
