@@ -1,95 +1,87 @@
-From: Anders Widman <andewid@tnonline.net>
-Subject: Re: ReiserFS and NFS?
-Date: Wed, 4 Sep 2002 23:23:07 +0200
-Message-ID: <18158747625.20020904232307@tnonline.net>
-References: <18030661062.20020903175652@tnonline.net>
- <20020904101012.A10223@namesys.com>
-Reply-To: Anders Widman <andewid@tnonline.net>
+From: jose@tridentemonigotes.com
+Subject: Desaster Reiser
+Date: Thu, 05 Sep 2002 10:53:35 -0400
+Sender: jose@erazer.ows.es
+Message-ID: <3D776FEF.F34E655B@tridentemonigotes.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11369-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11371-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20020904101012.A10223@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: reiser <reiserfs-list@namesys.com>
 
-> Hello!
+Hello:
 
-> On Tue, Sep 03, 2002 at 05:56:52PM +0200, Anders Widman wrote:
->> 
->>    I am trying to use ReiserFS with NFS to work nicely, but I ran into
->>    troubles  exporting root (/). I am getting the following error when
->>    a   client   tries  to  connect  to  the  root  export  (I am using
->>    ReiserFS on root filesystem):
->>       rpc.mountd: getfh failed: Operation not permitted
->>    After  browsing around different mailing lists and read suggestions
->>    about Kernel and NFS utils I found that someone said that there was
->>    needed patches to use ReiserFS with NFS?
+        -I have a server 2.4.3 and something HD reiserfs. Yesterday one
+of this
+HD started to give me problems this is the message.
 
-> Hmmm.
-> What kernel are you using? What nfs server?
+kernel: vs-4080:reiserfs-free-block:free-block (0342:137252)
+(dev:blocknr); bit already cleared.
+kernel: vs-13042: reiserfs_read_inode 2: (190310 190324 0x0 SD) not
+found
+kernel:vs-13048: reiserfs_iget: bad inode stat data of (190310 190324)
+not found
 
-Using 2.4.19 with nfsd running.
+After this with reiserfs --check /dev/hdb2 this is the message that gave
+me
 
-> 2.4.19 with stock knfsd:
-> angband:~ # cat /etc/exports
-> / (ro)
+bad_leaf: block 8391 has invalid item 11: 2 42 0x1 DIR, len 452, entry
+count 17, fsck need 0,
+format old
+block 198889 is not marked as used in the disk bitmap
+block 442285 is not marked as used in the disk bitmap
+block 442286 is not marked as used in the disk bitmap
+block 442287 is not marked as used in the disk bitmap
+block 442317 is not marked as used in the disk bitmap
+block 442318 is not marked as used in the disk bitmap
+block 442319 is not marked as used in the disk bitmap
+grow_id_map: objectid map expanded: used 5120, 5 blocks
+grow_id_map: objectid map expanded: used 5120, 5 blocks
+grow_id_map: objectid map expanded: used 5120, 5 blocks
+grow_id_map: objectid map expanded: used 5120, 5 blocks
+grow_id_map: objectid map expanded: used 5120, 5 blocks
+bad_leaf: block 394534 has invalid item 0: 197285 203828 0x73b8ad80 DIR,
+len 112, entry count
+4, fsck need 0, format old
+free block count 413799 mismatches with a correct one 413826. 
+on-disk bitmap does not match to the correct one. 22 bytes differ
+check_semantic_tree: hash mismatch detected (FactEmit.MYD)
+check_semantic_tree: name "FactEmit.MYD" in directory 2 42 points to
+nowhere
+check_semantic_tree: hash mismatch detected (FactEmit.frm)
+check_semantic_tree: name "FactEmit.frm" in directory 2 42 points to
+nowhere
 
-> bowl:~# mount angband:/ /mnt/testfs -t nfs
-> bowl:~# ls /mnt/testfs/
-> .   bin   cdrecorder  dev  floppy  lib    mnt  proc    root  testfs0  tmp  var
-> ..  boot  cdrom       etc  home    media  opt  rescue  sbin  testfs1  usr
 
-> Changing config:
-> angband:~ # cat /etc/exports
-> / (rw,no_root_squash,insecure)
-> angband:~ # exportfs -a
-> exportfs: No host name given with / (rw,no_root_squash,insecure), suggest *(rw,no_root_squash,insecure) to avoid warning
+I intented debugreiserfs /dev/hdb2 and this is the out file
 
-> bowl:~# ls /mnt/testfs/
-> .    boot        dev     home   mnt   rescue  testfile  tmp
-> ..   cdrecorder  etc     lib    opt   root    testfs0   usr
-> bin  cdrom       floppy  media  proc  sbin    testfs1   var
+Super block of format 3.5 found on the 0x3 in block 16
+Block count 4650656
+Blocksize 4096
+Free blocks 413799
+Busy blocks (skipped 16, bitmaps - 142, journal blocks - 8193
+1 super blocks, 4228505 data blocks
+Root block 8403
+Journal block (first) 18
+Journal dev 0
+Journal orig size 8192
+Filesystem state ERROR
+Tree height 4
+Hash function used to sort names: "r5"
+Objectid map size 250, max 1004
 
-> Everything works ok.
 
-> But now (/rescue is another mount point):
-> bowl:~# mount angband:/rescue /mnt/testfs -t nfs
+I probed with badblocks and reiserfsck --rebuild -sd but was not
+anithing problem and my fear is I wrote that somebody have lose their HD
+with reiserfsck --rebuild -tree because after can't mount their units.I
+think that this is the last option if I have another
+Have another options before my HD is totally crash and all information
+is missing?
 
-> Sep  4 10:06:17 angband rpc.mountd: authenticated mount request from 212.16.7.82:916 for /rescue (/)
-> Sep  4 10:06:17 angband rpc.mountd: getfh failed: Operation not permitted
-
->>    Right now my exports file looks like this:
->>          /usr/src/       192.168.0.100(rw,no_root_squash,insecure)
->>          /               192.168.0.100(rw,no_root_squash,insecure)
-
->>    Is this something someone might know how to fix?
-
-> What if you allow anyone to connect (use * instead of address?)
-> Look into logs on on nfs server side for more clues, enable debug.
-
-I  don't think I tried using only a '*' instead of an address. Will do
-that.
-
-> Basically I do not think yo are experiencing reiserfs problem, but it rather
-> looks like nfs server configuration problem.
-
-I  was out of clues, therefore I posted here as there was someone that
-mentioned ReiserFS and NFS problems somewhere.
-
-> I hope you have not forgot to to 'exportfs -a' after changing /etc/exports.
-
-Of course not =).. And I tried rebooting too.
-
-Anyway, thanks for your response!
-
-Regards,
-Anders
-
-> Bye,
->     Oleg
-
+Thank Your for all and I don't hesitate.
+Best Regards
