@@ -1,72 +1,51 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Split Trees (my design, similar to binary treaps)
-Date: Mon, 02 Jun 2003 21:33:52 +0400
-Message-ID: <3EDB8A80.50306@namesys.com>
-References: <20030523185641.91230.qmail@web40020.mail.yahoo.com>
+Subject: Re: disk or reiserfs problem?
+Date: Mon, 02 Jun 2003 22:36:00 +0400
+Message-ID: <3EDB9910.7040005@namesys.com>
+References: <E19L7Co-0002Sb-00@rode.parc.com> <20030529054511.GA30925@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14375-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14376-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030523185641.91230.qmail@web40020.mail.yahoo.com>
+In-Reply-To: <20030529054511.GA30925@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Kevin Bealer <kevinbealer@yahoo.com>, ReiserFS <reiserfs-list@namesys.com>
+To: Oleg Drokin <green@namesys.com>
+Cc: Jeff Breidenbach <jbreiden@parc.com>, reiserfs-list@namesys.com
 
-Kevin Bealer wrote:
+Oleg Drokin wrote:
 
->As Alexander said, data can be in the node or
->elsewhere in
->either a skip list or skip tree.  Skip List nodes are
->variable
->sized; skip tree nodes are uniform, three pointers +
->data.
->(Unless the data is variable sized).
+>Hello!
 >
->Skip Lists look like:
->
->XX-----X-----X
->X--X--X--X--X--X--X--X
->
->
->--- "Alexander G. M. Smith" <agmsmith@rogers.com>
->wrote:
+>On Wed, May 28, 2003 at 01:07:27PM -0700, Jeff Breidenbach wrote:
 >  
 >
->>Hans Reiser wrote on Fri, 23 May 2003 02:48:05
->>+0400:
->>    
->>
->>>Do nodes contain both pointers and data?
->>>      
->>>
->>Yes, that's a common way of doing skip lists.  Or
->>the node could contain
->>the level pointers and a data pointer.  The nodes
->>are also awkwardly
->>variable sized due to the random number of levels. 
->>That leads to
->>allocation fragmentation unless extra steps are
->>taken.
->>
->>I don't know how the split trees approach does it.
->>
->>- Alex
+>>This is after a hard (power switch) reboot (due to I/O errors). The
+>>disk in question has about 125 GB of data on a single 200GB reiserfs
+>>partition. Do people think the disk is toast, or is this possibly some
+>>correctable filesystem problem? The machine is remote, so I can't
+>>hdb1: bad access: block=35, count=5
+>>end_request: I/O error, dev 03:41 (hdb), sector 35
 >>    
 >>
 >
+>Looks like disk have gone bad. If you are lucky enough, some of the data
+>still can be recovered. Try to copy entire disk into a file/to another
+>disk to see how much bad sectors are there.
 >
->__________________________________
->Do you Yahoo!?
->The New Yahoo! Search - Faster. Easier. Bingo.
->http://search.yahoo.com
+>Bye,
+>    Oleg
 >
 >
 >  
 >
-So the fanout of a skip tree is 3?  (Just got back from Italy.....)
+You should provide more details in such advice, such as telling him 
+about dd_rescue and why it is better than dd, etc.  You should also 
+explain that if it is only a few blocks that are bad, writing to the bad 
+blocks can make them go away most of the time (the drive will remap them).
 
 -- 
 Hans
