@@ -1,67 +1,123 @@
 From: Vince <fuzzy77@free.fr>
-Subject: Yet another oops with reiser4...
-Date: Thu, 05 Feb 2004 02:03:09 +0100
-Message-ID: <4021964D.3030707@free.fr>
+Subject: Re: Yet another oops with reiser4...
+Date: Thu, 05 Feb 2004 02:18:21 +0100
+Message-ID: <402199DD.8060508@free.fr>
+References: <4021964D.3030707@free.fr>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16701-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16702-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <4021964D.3030707@free.fr>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-This oops came during a compilation on my reiser4 partition.
-Is a new snapshot planned ? The current "2004.01.19-fixed" snapshot has 
-been quite unstable for me so far (and the -bk tree is still unreachable)...
-Please let me know if more information is needed.
+Following my oops, I ran fsck.reiser4 which fails on that partition:
 
-loading reiser4 bitmap......done (5014 jiffies)
-attempt to access beyond end of device
-hdc3: rw=0, want=2315589128, limit=182610855
-attempt to access beyond end of device
-hdc3: rw=0, want=2315589128, limit=182610855
-Unable to handle kernel NULL pointer dereference at virtual address 00000024
-  printing eip:
-c01fbe69
-*pde = 00000000
-Oops: 0000 [#1]
-PREEMPT
-CPU:    0
-EIP:    0060:[<c01fbe69>]    Tainted: P   VLI
-EFLAGS: 00010282
-EIP is at dealloc_blocks_bitmap+0x69/0xa0
-eax: 00000000   ebx: d6a8dd40   ecx: 00000293   edx: 00006890
-esi: 00000001   edi: d8578000   ebp: 00000001   esp: de5efd6c
-ds: 007b   es: 007b   ss: 0068
-Process ktxnmgrd:run (pid: 3223, threadinfo=de5ee000 task=de10e1c0)
-Stack: d6a8dd40 de5efd80 de5efd88 d1410b50 00000000 0001a2ea 00000000 
-00006890
-        00000001 00000000 d8578000 c01c095f d8578010 d1410b50 00000000 
-00000001
-        00000000 d338f378 00000005 d338f340 c01cf0a2 cc515e80 d338f378 
-00000000
-Call Trace:
-  [<c01c095f>] apply_dset+0x5f/0x90
-  [<c01cf0a2>] blocknr_set_iterator+0x52/0xe0
-  [<c01c09d6>] post_commit_hook+0x46/0x60
-  [<c01c0900>] apply_dset+0x0/0x90
-  [<c01c940e>] reiser4_write_logs+0x1be/0x2b0
-  [<c01c15dc>] commit_current_atom+0x12c/0x210
-  [<c011cfde>] recalc_task_prio+0x8e/0x1b0
-  [<c01c1eaa>] try_commit_txnh+0x11a/0x1b0
-  [<c01c1f6d>] commit_txnh+0x2d/0xb0
-  [<c01c11ba>] atom_should_commit+0x5a/0x60
-  [<c01c0d29>] txn_end+0x39/0x40
-  [<c01c19e1>] commit_some_atoms+0xd1/0x170
-  [<c01ce986>] scan_mgr+0x36/0x70
-  [<c01ce62c>] ktxnmgrd+0x16c/0x230
-  [<c01ce4c0>] ktxnmgrd+0x0/0x230
-  [<c0109289>] kernel_thread_helper+0x5/0xc
+[...]
+1 fatal corruptions were detected in FileSystem. Run with --build-fs 
+option to fix them.
+diablo:~# fsck.reiser4 --build-fs /dev/hdc3
+   *************************************************************
+   **     This is an experimental version of reiser4fsck.     **
+   **                 MAKE A BACKUP FIRST!                    **
+   ** Do not run rebuild unless something  is broken.  If you **
+   ** have bad sectors on a drive it is usually a bad idea to **
+   ** continue using it.  Then  you  probably  should  get  a **
+   ** working hard drive,  copy the file system from  the bad **
+   ** drive  to the good one -- dd_rescue is  a good tool for **
+   ** that -- and only then run this program.If you are using **
+   ** the latest reiser4progs and  it fails  please email bug **
+   ** reports to reiserfs-list@namesys.com, providing as much **
+   ** information  as  possible  --  your  hardware,  kernel, **
+   ** patches, settings, all reiser4fsck messages  (including **
+   ** version), the reiser4fsck  logfile,  check  the  syslog **
+   ** file for  any  related information.                     **
+   ** If you would like advice on using this program, support **
+   ** is available  for $25 at  www.namesys.com/support.html. **
+   *************************************************************
 
-Code: 24 0c 89 04 24 e8 08 f2 ff ff 8b 83 6c 01 00 00 8b 5c 24 14 8b 40 
-10 c1 e3 05 03 18 89 1c 24 e8 0e f6 ff ff 8b 54 24 1c 8b 43 10 <8b> 48 
-24 89 54 24 04 8d 04 16 89 44 24 08 83 c1 04 89 0c 24 e8
+Fscking the /dev/hdc3 block device.
+Will check the consistency of the Reiser4 SuperBlock.
+Will build the Reiser4 FileSystem.
+Continue?
+(Yes/No): Yes
+***** Openning the fs.
+Reiser4 fs was detected on the /dev/hdc3.
+Master super block (16):
+magic:          ReIsEr4
+blksize:        4096
+format:         0x0 (format40)
+uuid:           2c166267-3a92-488b-902f-30dc85f086f8
+label:          <none>
+
+Format super block (17):
+plugin:         format40
+description:    Disk-format for reiser4, ver. 0.4.20
+magic:          ReIsEr40FoRmAt
+flushes:        0
+mkfs id:        0x3f7b1d62
+blocks:         22826356
+free blocks:    17418425
+root block:     5011605
+tail policy:    0x4 (smart)
+next oid:       0x181c7
+file count:     5026
+tree height:    4
+key policy:     LARGE
+
+***** Tree Traverse Pass: scanning the reiser4 internal tree.
+         Read nodes 2502
+         Nodes left in the tree 2502
+                 Leaves of them 2420, Twigs of them 77
+         Time interval: Thu Feb  5 02:14:40 2004 - Thu Feb  5 02:14:42 2004
+***** TwigScan Pass: checking extent pointers of all twigs.
+         Read twigs 77
+         Time interval: Thu Feb  5 02:14:42 2004 - Thu Feb  5 02:14:43 2004
+***** DiskScan Pass: scanning the partition for unconnected nodes.
+         Read nodes 13217
+         Good nodes 6047
+                 Leaves of them 5947, Twigs of them 100
+         Time interval: Thu Feb  5 02:14:49 2004 - Thu Feb  5 02:14:51 2004
+***** TwigScan Pass: checking extent pointers of all twigs.
+         Read twigs 100
+         Time interval: Thu Feb  5 02:14:51 2004 - Thu Feb  5 02:14:51 2004
+***** AddMissing Pass: inserting unconnected nodes into the tree.
+         Twigs: read 5947, inserted 5947, by items 0
+         Leaves: read 100, inserted 92, by items 0
+         Time interval: Thu Feb  5 02:14:54 2004 - Thu Feb  5 02:14:56 2004
+***** Semantic Traverse Pass: reiser4 semantic tree checking.
+Error: Directory [29:0:2a], plugin [dir40], node [5165819], item [1], 
+unit [11]: entry has wrong
+offset [2a:0(NAME):1486973746f6972:652064652066616e:4a692bd1539d00a0]. 
+Should be
+[2a:0(NAME):1486973746f6972:652064652066616e:eb270a31254f1d10]. Removed.
+Error: Directory [29:0:2a], plugin [dir40], node [5165819], item [1], 
+unit [11]: entry has wrong
+offset [2a:0(NAME):1486973746f6972:6573206465206661:bda63957b477ad6]. 
+Should be
+[2a:0(NAME):1486973746f6972:6573206465206661:ac9841f54cf99746]. Removed.
+Error: Directory [29:0:2a], plugin [dir40], node [5165819], item [1], 
+unit [13]: entry has wrong
+offset [2a:0(NAME):14c6573204e756c:73202d204c27696e:c8b48b3bd9018e81]. 
+Should be
+[2a:0(NAME):14c6573204e756c:73202d204c27696e:8a9007c846a3d271]. Removed.
+Error: Directory [29:0:2a], plugin [dir40], node [5165819], item [1], 
+unit [13]: entry has wrong
+offset [2a:0(NAME):14c6573204e756c:73202d204c27696e:c8b48b3bd928e031]. 
+Should be
+[2a:0(NAME):14c6573204e756c:73202d204c27696e:8a9007c846cb2421]. Removed.
+Error: Node (5165819), item (0): StatData of the file [29:0:2a] has the 
+wrong size (17), Fixed to (0).
+Plugin (stat40).
+Error: Node (5165819), item (0): StatData of the file [29:0:2a] has the 
+wrong bytes (1100), Fixed to
+(0). Plugin (stat40).
+umka-2360: Assertion (stat_hint->extmask != 0) at stat40.c:159 in 
+function stat40_prep_insert()
+failed.
+zsh: abort      fsck.reiser4 --build-fs /dev/hdc3
 
