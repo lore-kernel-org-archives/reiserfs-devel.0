@@ -1,43 +1,32 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: reiser4 crash
-Date: Sun, 25 Jul 2004 10:41:08 +0300
-Message-ID: <20040725074108.GR4990@nysv.org>
-References: <200407241827.54674.frbiscani@jumpy.it>
+From: Spam <spam@tnonline.net>
+Subject: Using plugins for reiser4?
+Date: Sun, 25 Jul 2004 17:40:28 +0200
+Message-ID: <1604556800.20040725174028@tnonline.net>
+Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19794-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19796-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200407241827.54674.frbiscani@jumpy.it>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Francesco Biscani <frbiscani@jumpy.it>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Sat, Jul 24, 2004 at 06:27:54PM +0200, Francesco Biscani wrote:
->
->Hope this is useful. I'll be glad to give more details is asked to. 
->Regards,
 
-Try patching in
-http://mjt.nysv.org/reiser/log-write-readpage-releasepage-2.diff.gz
+  Hello,
 
-Then recompile the kernel with debugging and assertions (printing was iirc
-not required) turned on and try to reproduce it.
+  I  just been trying to understand the usage of plugins for reiser4 -
+  or   more   specifically   how   to   enable  plugins  for  certain
+  files, directories and/or to entrie devices.
 
-Note, that this may cause your system to oops and go haywire big time, so
-if you have a netconsole or something to log, it's great.
-One other method is cat /proc/kmsg > foo and scping foo elsewhere before
-the computer goes down.
+  When  I  was patching my kernel to support reiser4 I saw there was a
+  compression plugin that I'd like to know more about.
 
-The patch above is from Namesys, but I don't think it's in any of the
-auto-snapshots (should it be?) and it may or may not give more info
-on what's going on, but if it does, the output is some 512 extra lines
-of log.
+  How  can  I  use  different  plugins  and  how  can  I get a list of
+  supported  plugins.  The "mkfs.reiser4 -l" doesn't list everything I
+  found in the reiser4 kernel code.
 
--- 
-mjt
+  ~S
 
