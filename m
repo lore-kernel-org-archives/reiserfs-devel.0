@@ -1,29 +1,60 @@
-From: Rik van Riel <riel@redhat.com>
-Subject: Re: silent semantic changes with reiser4
-Date: Wed, 25 Aug 2004 17:03:59 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44.0408251703430.5145-100000@chimarrao.boston.redhat.com>
-References: <412CF96A.5040503@namesys.com>
+From: Mike Waychison <Michael.Waychison@Sun.COM>
+Subject: Re: Using fs views to isolate untrusted processes: I need an assistant
+ architect in the USA for Phase I of a DARPA funded linux kernel project
+Date: Wed, 25 Aug 2004 17:23:05 -0400
+Message-ID: <412D0339.3080601@sun.com>
+References: <410D96DC.1060405@namesys.com>
+ <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com>
+ <20040825205618.GA7992@hockin.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20526-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20527-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <412CF96A.5040503@namesys.com>
+In-reply-to: <20040825205618.GA7992@hockin.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, Nikita Danilov <Nikita@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Tim Hockin <thockin@hockin.org>
+Cc: Rik van Riel <riel@redhat.com>, Hans Reiser <reiser@namesys.com>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Wed, 25 Aug 2004, Hans Reiser wrote:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-> other filesystems in that, but Christoph is a puppy who has never 
+Tim Hockin wrote:
+> On Wed, Aug 25, 2004 at 04:25:24PM -0400, Rik van Riel wrote:
+>
+>>>You can think of this as chroot on steroids.
+>>
+>>Sounds like what you want is pretty much the namespace stuff
+>>that has been in the kernel since the early 2.4 days.
+>>
+>>No need to replicate VFS functionality inside the filesystem.
+>
+>
+> When I was at Sun, we talked a lot about this.  Mike, does Sun have any
+> iterest in this?
 
-It's not Christoph who's shown more bark than bite in this thread.
+Not that I know of.  I believe the functionality Hans is looking for has
+already been handled by SELinux.  What is needed (if it doesn't already
+exist) is a tool to gather these 'viewprints' automagically.
 
--- 
-"Debugging is twice as hard as writing the code in the first place.
-Therefore, if you write the code as cleverly as possible, you are,
-by definition, not smart enough to debug it." - Brian W. Kernighan
+- --
+Mike Waychison
+Sun Microsystems, Inc.
+1 (650) 352-5299 voice
+1 (416) 202-8336 voice
+http://www.sun.com
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+NOTICE:  The opinions expressed in this email are held by me,
+and may not represent the views of Sun Microsystems, Inc.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQFBLQM4dQs4kOxk3/MRArXMAJ0WTzw8L/vLNO3lYwkCdGJGrzRBKgCcD7l7
+w6eSrLFYVHoQ9CiAruQCV9E=
+=PVV9
+-----END PGP SIGNATURE-----
