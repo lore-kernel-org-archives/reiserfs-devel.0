@@ -1,10 +1,10 @@
 From: David T Hollis <dhollis@davehollis.com>
-Subject: Possible bug in librepair/filter.c
-Date: Thu, 28 Aug 2003 09:47:56 -0400
-Message-ID: <3F4E080C.4080901@davehollis.com>
+Subject: Ultimately meaningless warning in plugin/format/format40/format.c
+Date: Thu, 28 Aug 2003 09:52:21 -0400
+Message-ID: <3F4E0915.4050303@davehollis.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15468-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15469-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -13,8 +13,8 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Reiserfs List <reiserfs-list@namesys.com>
 
-In 'errno_t repair_filter(repair_filter_t *fd)', the variable errno_t 
-res is potentially returned with an undefined value.  It looks like it 
-should either be pre-initialized to 0, or at the end of the function, 
-just return 0 instead of returning 'res'.
+GCC complains about 'blk' possibly being used before being defined in 
+callback_clobber_block().  It looks like it ties to the initial call to 
+aal_block_init which does not actually use that variable at this time so 
+it is innocuous.  Initializing 'blk' to zero resolves the GCC warning.
 
