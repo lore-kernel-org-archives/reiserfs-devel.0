@@ -1,76 +1,92 @@
-From: Matthew Toseland <mtoseland@blueyonder.co.uk>
-Subject: Re: copying partition to partition, sector by sector, live
-Date: Tue, 23 Apr 2002 23:17:23 +0100
-Message-ID: <20020423221723.GA14171@amphibian.dyndns.org>
-References: <20020421181614.GA11239@vega.ipal.net> <20020422010733.GA2379@amphibian.dyndns.org> <20020422013955.GB8407@vega.ipal.net> <20020422224755.GA1710@amphibian.dyndns.org> <200204230034.g3N0YdQn030194@foo-bar-baz.cc.vt.edu>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Scrambled Files
+Date: Wed, 24 Apr 2002 03:02:54 +0400
+Message-ID: <3CC5E81E.7080903@namesys.com>
+References: <20020423210501.GA28270@willow.seitz.com> <20020423214642.GI7481@ariel.karmak.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
-Return-path: <reiserfs-list-return-10149-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10150-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <200204230034.g3N0YdQn030194@foo-bar-baz.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Valdis.Kletnieks@vt.edu
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Michael Carmack <karmak@karmak.org>
+Cc: Ross Vandegrift <ross@willow.seitz.com>, reiserfs-list@namesys.com
 
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Michael Carmack wrote:
 
-On Mon, Apr 22, 2002 at 08:34:39PM -0400, Valdis.Kletnieks@vt.edu wrote:
-> On Mon, 22 Apr 2002 23:47:55 BST, Matthew Toseland said:
->=20
-> > lvcreate -n <snapshotname> -L 500M -v /dev/<vgname>/<partition name>
->=20
-> You missed the -s flag.  From 'man lvcreate' (LVM 1.0.3):
-Whoops. I tried it, then miscopied it, or something :)
->=20
-> -s, --snapshot
->   Create  a  snapshot  logical  volume  (or snapshot) for an existing, so
->   called original  logical  volume  (or  origin).   Snapshots  provide  a
->   'frozen image' of the contents of the origin while the origin can still
->   be updated. They enable  consistent  backups  and  online  recovery  of
->   removed/overwritten  data/files.  The  snapshot  does not need the same
->   amount of storage the origin has. In a typical scenario,  15-20%  might
->   be enough. In case the snapshot runs out of storage, use lvextend(8) to
->   grow it. Shrinking a snapshot is supported by lvreduce(8) as well.  Run
->   lvdisplay(8)  on  the snapshot in order to check how much data is allo?
->   cated to it.
->=20
-> > dd if=3D/dev/<vgname>/snapshotname of=3D/usr/local/temp/snapshot.img bs=
-=3D1M
-> > lvremove -f /dev/<vgname>/snapshotname
->=20
-> The rest of this looks OK (although I've *NOT* tried it myself).  I'm not
-> sure what the granularity of the snapshot is - whether you need to alloca=
-te
-> space for each block that's modified, or each 4M segment, or what...
-Hmmmm. Presumably it's on the extent level, but I don't know.
->=20
->=20
-> --=20
-> 				Valdis Kletnieks
-> 				Computer Systems Senior Engineer
-> 				Virginia Tech
->=20
+>On Tue, Apr 23, 2002 at 05:05:01PM -0400, Ross Vandegrift wrote:
+>  
+>
+>>	Files all over the system have been scrabled - replaced with
+>>garbage text, other executables, sections of data files.  There doesn't
+>>seem to be a pattern to the file corruption.  There are no messages in
+>>the logs.
+>>    
+>>
+>
+>I've read about this before, and it's something I've been meaning to
+>ask about but never quite got around to. IIRC this is related to the
+>tail-packing feature of reiserfs, and there's not a whole lot that can
+>be done to salvage data once it's corrupted. Here are some questions
+>that maybe the reiser developers can answer:
+>
+>1. Is it correct that this corruption is due to tail-packing?
+>
+If you crash while writing, garbage possibly appears in the file being 
+written to.  Chris is looking at improving this with ordered writes, but 
+there is a performance cost for it.  There are those who say it can be 
+done without performance cost in V3 by ordering writes.  They have not 
+yet produced a patch for which this is true, but it won't amaze me if 
+they do so eventually.
+
+reiser4 will fix this without much performance cost.
+
+I think tails have nothing to do with it.  Probably the files that are 
+all tails have no corruption at all, because they are journaled.  
+
+If you want to be able to crash while doing an OS upgrade, and not have 
+a hosed system, you must have transactions (or take a snapshot before 
+doing it).  No FS currently supports transactions, but reiser4 will.
+
+>
+>2. Is the corruption in any way deterministic? For example, does
+>   it only affect files that have been modified since the last
+>   sync, or perhaps files that are in the process of being modified 
+>   at the time the system goes down?
+>
+>3. If a reiserfs partition is mounted with the notail option, will 
+>   it protect against this kind of corruption? How about mounting
+>   with sync instead of notail?
+>
+>4. Is it possible to specify notail in /etc/fstab for the root 
+>   partition? I seem to recall reading something along the lines
+>   of: "It is not enough to simply specify notail in /etc/fstab
+>   for the root partition, because notail is only valid for the
+>   initial mount (i.e. mount -o,remount / will not pick up notail)."
+>   Is this true? If so, how can one turn on notail for the root 
+>   partition?
+>
+>5. Are there any performance hits (other than wasted disk space) 
+>   as a result of turning on notail? I don't mind trading drive
+>   space for reliability, but speed is important to me. What exactly
+>   are the consequences of specifying notail?
+>
+>These are important questions for me, as I am currently using reiserfs
+>exclusively on all of my machines. I've been doing network backups pretty
+>religiously, but there's always this bit of apprehension in the back of 
+>my mind for some time about losing data if a machine just happens to die
+>unexpectedly.
+>
+>Thanks,
+>m.
+>
+>
+>
+>
+>  
+>
 
 
 
---2fHTh5uZTiUOsy+g
-Content-Type: application/pgp-signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.6 (GNU/Linux)
-Comment: For info see http://www.gnupg.org
-
-iD8DBQE8xd1zmlVGrEH/+qIRAk0aAJ4zTPs4gT3wJ2Ddx9c1pUCsqlJ5egCeKtVg
-K8jHkv0y5FSx6+ATtaMYORE=
-=04uR
------END PGP SIGNATURE-----
-
---2fHTh5uZTiUOsy+g--
