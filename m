@@ -1,115 +1,64 @@
-From: Laurynas Biveinis <Laurynas.Biveinis@mif.vu.lt>
-Subject: Re: Partial data loss with reiserfs3
-Date: Wed, 16 Feb 2005 18:10:05 +0200
-Message-ID: <1108570205.4213705d41816@webmail.vu.lt>
-References: <200502161622.06930.vitaly@namesys.com>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: Plugin for corruption resistance?
+Date: Wed, 16 Feb 2005 22:10:16 -0600
+Message-ID: <42141928.7080608@slaphack.com>
+References: <e692861c05021110583585f84e@mail.gmail.com> <4210E3AD.2070008@namesys.com> <loom.20050215T213823-62@post.gmane.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200502161622.06930.vitaly@namesys.com>
+In-Reply-To: <loom.20050215T213823-62@post.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Vitaly Fertman <vitaly@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Adam <kinema@gmail.com>
 Cc: reiserfs-list@namesys.com
 
-Hello,
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Cituojant Vitaly Fertman <vitaly@namesys.com>:
+Adam wrote:
+| Hans Reiser <reiser <at> namesys.com> writes:
+|
+|
+|>Its on the legitimate wish list, if someone wants to code it, let me know.
+|>
+|>
+|
+|
+| Hans, does this mean that you think that this type of functionality
+should be
+| implemented as a Reiser4 plugin and therefore in kernelspace?  Why
+wouldn't this
+| be better implemented in userspace via a daemon that is notified of file
+| modification via dnotify/inotify?
 
-> (1) copy NTFS -> ext3
-> (2) shrink NTFS
-> (3) reboot
+Because dnotify/inotify don't scale.  I don't think they lock on event,
+either, whereas a plugin could guarentee that the hash was up-to-date
+(no race conditions).
 
-> > At this point the disk has, in order of physical layout: /dev/hda5
-> > (NTFS), 4GB /dev/hda6 (no FS), 2GB /dev/hda7 (reiser).
-> 
-> was hda7 reiserfs or ext3 ??
+We've been over this before.  There's a reason reiser4 and its plugins
+are in kernel space, and not in something like Fuse.
 
-Following history as you have written it, it was ext3. There were
-following extra steps, that I have skipped, because at the end of them
-I didn't have any problems with my data.
-(3.1) create /dev/hda6 as ext3
-(3.2) copy data from /dev/hda7 to /dev/hda6
-(3.3) delete /dev/hda7
-(3.4) find out that ext3 move/resize is unsupported
-(3.5) create /dev/hda7 reiser
-(3.6) copy data from /dev/hda6 to /dev/hda7
 
-At this point I had hda7 reiser.
+===============================
+Disclaimer:  I don't work here.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.6 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-> (4) create reiserfs on former NTFS, between NTFS and ext3
-> (5) copy ext3 -> reiserfs
-
-> > It is possible that I had created, copied, destroyed partitions
-> > since last boot - but no repartitioning.
-> 
-> this is not clear: created, destroyed partitions means
-> repartitioning,
-> changing parittion table means repartitioning. Do I understand
-> correctly
-> that you mean create, copy, destroy filesystems here?
-
-Right, I meant filesystems, not partitions. Sorry.
-
-> (6) fdisk: remove hda7, remove hda6, create large hda6;
-> (7) reboot
-
-> > [root@laurynas-pc ~]# resizefs.reiserfs -f /dev/hda6 +3G
-> 
-> 3G just looks too large, there was only 2G hda7 as you have
-> mentioned.
-> right?
-
-Right. I have specified a value knowingly too big together with '-f'
-option so that fs is resized to the maximum possible size (which is
-about, but not exactly, 2G). 
-
-> (8) rezise.reiserfs
-> (9) reboot
-> (10) login failed
-> (11) lots of fs corruptions.
->  -- some lost file StatDatas 
->  -- some wrong delimiting keys
->  -- some unformatted blocks are used more then once
->  -- 1 formatted block is used more then once 
->  -- many broken bitmap blocks
-> 
-> when you run resizer, has it ever asked for confirmation?
-> like 'Do you want to continue? [y/N]:'
-
-I do not remember well, but I think there wasn't any serious warning.
-If
-there was a warning like "You specified +3G, I can resize only to +2G,
-continue?" or similar, then I had accepted it. I would have stopped on
-any more serious warning or warning that I do not understand well.
-
-> are you sure you have the relable memory? would you test it?
-
-The system generally is stable and GCC, being the notorious RAM
-checker,
-compilations do not SIGSEGV. I think I will arrange memcheck86 run to
-be sure.
-
-> the reason of the problem is not clear. resizer on expand writes only
-> 
-> to _new_ bitmap blocks and overwrites only super block, and it does 
-> not touch the fs storage tree.
-> 
-> so you can try to recover from the whole partition on the copy. Have
-> 
-> you made fs/partition backup before rebuild-tree (probably fdisk)? 
-> If no, make a copy of the hda6 partition and run
-> 	reiserfsck --rebuild-tree -S <hda6-copy> -l logfile
-> if yes, copy it back to hda6 and run on hda6.
-
-I don't partition backup before rebuild-tree. I'll make one now, but it
-will take some time, as free space is not readily available. I'll reply
-later with results.
-
---
-Thanks,
-Laurynas
-
+iQIVAwUBQhQZKHgHNmZLgCUhAQIIDA/+JtV8NjA9GJwbdr7m7yiSunjnEaecP3AP
+nK4qfOwMgwZAMyoeeWfq8b66I0AZwSY9u/pAAGoZcqsdxPzaA/1BNoxIVckT1adJ
+uszfFiVNo9NHJNdZdn28C7IQbdM8utYLoQ8QiJr4mjmfPsQevxmpqwNqLcuShHwb
++sy0Ckdkq1IjQzntZC60ZIo3J/g5agn1KuRJ1u7mhrG+jA8kEpeTka3j1I8fDbUK
+2ODnJE3nV2QIJ32U271OGPBwgC5Zvca0cui4WsYsad0aD3/8KPZibp9rA/RZc8Ud
+xD2XtILL8V4skr7Q0G81UzHoj3ISFj9HQgiwaQt7YPie8YeC68AIwOk8ISWSlTIQ
+ifyY/1d/JLTpD2qPxemh6yc6Dje71apYeic0YKoOBfd2Ck1LBgwJWwaBPoYQUsYN
+f+f41iuaYJRnXYqfI7A5sniXt8pwI/2RQQc31pGyMA6UZXVIgfJnzDZ+uZphGpFf
+kiJyRGS7RhgX0DNFVJ9V3jlYHoqIAe4zsDjwdTk3zLO4dnDFVX0M8LeiuXd8bcnM
+UA6cODryfvR3ZA3t4GKTm8ir7RYr5mQIhSwN6s0KTJjVmRMBOPWAnCsVgv9t7rjF
+cVF1fS9V1VUZFEoatlI9W1Ju1qautIe390z4lPCiBqF0SUaFfkFUa+QPir2TYbTD
+9usfiEWzPpM=
+=6prc
+-----END PGP SIGNATURE-----
