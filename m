@@ -1,20 +1,35 @@
-From: Hans Reiser <reiser@namesys.com>
+From: "Bruce A. Mallett" <bam@NightStorm.com>
 Subject: Re: Agressive selective pre-allocation
-Date: Tue, 10 Dec 2002 17:13:13 +0300
-Message-ID: <3DF5F679.1000700@namesys.com>
+Date: Tue, 10 Dec 2002 11:43:02 -0500
+Message-ID: <3DF61996.8050001@NightStorm.com>
 References: <20021210074600.J26400@vestdata.no>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12137-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12138-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021210074600.J26400@vestdata.no>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?Ragnar_Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+
+It seems to me that it would be better to have the file system keep=20
+track of this itself.  If the following is known about each file:
+   original creation date
+   current file size
+   number of times extended
+=20
+then it might be possible to compute a growth policy.  For example when=20
+extending a small file, just move and extend it.  As the file and=20
+extention frequencies increase then create larger new extents.
+
+But the problem really is that apps don't actually "grow"these files but=20
+instead rebuilds them.  Thus the file system sees a request to open a=20
+new file and not to extend an existing one.  This would make tracking=20
+the above parameters way beyond difficult.
+
+
 
 Ragnar Kj=F8rstad wrote:
 
@@ -38,19 +53,6 @@ Ragnar Kj=F8rstad wrote:
 >particular file the fs should allocate X blocks at the time? That would
 >ensure that the files only get limited fragmentation and performance
 >stays optimal.
->
-Veritas did this, and then their architect regretted that nobody=20
-actually used that code and advised me not to do it.  You may have an=20
-advantage with open source though in that you can modify the important=20
-user space programs to use it.
-
-We have some block preallocation code in V3 for files that are kept open=20
-while being written to.  You can look at that code if you want.  You can=20
-also write a plugin for v4 that does what you want.
-
-While I will not take someone off another task to work on this, I will=20
-be open to patches from others.
-
 >
 >Does the metadata-format support blocks beeing allocated but not used
 >yet? Is it sufficient to add them to the extent-map, mark them free,
@@ -80,5 +82,4 @@ be open to patches from others.
 >
 > =20
 >
-
 
