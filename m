@@ -1,45 +1,64 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: ext3 throughput woes on certain (possibly heavily fragmented)
- files
-Date: Sat, 07 Sep 2002 02:05:12 +0400
-Message-ID: <3D792698.4010401@namesys.com>
-References: <20020903092419.GA5643@vitelus.com> <20020906170614.A7946@redhat.com> <15736.57972.202889.872554@laputa.namesys.com> <3D78E44E.5020107@namesys.com> <20020906210214.GA25666@vitelus.com>
+From: berthiaume_wayne@emc.com
+Subject: RE: --rebuild-sb
+Date: Fri, 6 Sep 2002 18:13:47 -0400
+Message-ID: <93F527C91A6ED411AFE10050040665D0049BFF8C@corpusmx1.us.dg.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11390-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11391-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Aaron Lehmann <aaronl@vitelus.com>
-Cc: Nikita Danilov <Nikita@Namesys.COM>, "Stephen C. Tweedie" <sct@redhat.com>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: vitaly@namesys.com
+Cc: reiserfs-list@namesys.com
 
-Aaron Lehmann wrote:
+	I know which partitition I've targeted. I need to automate system
+recovery. You provide exit codes to indicate the possible need for
+--fix-fixable and --rebuild-tree which I'm able to key in on; however, for
+when the superblock gets corupted after a power failure the only way to
+detect the need to use --rebuild-sb will be an ugly parsing of the results
+from reiserfsck --check. This results in ugly code and some uncertainty. If
+an exit code 3, for instance, was issued I'd be able to quickly see I need
+to do a reiserfsck --rebuild-sb to start the recovery of the system. 
+Regards,
+Wayne
 
->On Fri, Sep 06, 2002 at 09:22:22PM +0400, Hans Reiser wrote:
->  
->
->>I think I prefer that we implement a repacker for reiser4 though, as 
->>that, combined with delayed allocation, will be a balanced and thorough 
->>solution.
->>    
->>
->
->How does current ReiserFS fare against extreme fragmentation? What
->about XFS? Without trying to risk a flamewar, what Linux filesystems
->are the most preventive of fragmentation?
->
->The filesystem could make a huge difference on a machine like a mail
->server...
->
->
->  
->
-Sometimes it is best to confess that one does not have the expertise 
-appropriate for answering a question. Someone on our mailing list 
-studied it carefully though. Perhaps they can comment.
+"One man can make a difference, and every man should try."  - JFK
 
-Hans
 
+-----Original Message-----
+From: Vitaly Fertman [mailto:vitaly@namesys.com]
+Sent: Saturday, August 31, 2002 10:41 AM
+To: berthiaume_wayne@emc.com; reiserfs-list@namesys.com
+Subject: Re: [reiserfs-list] --rebuild-sb
+
+
+
+Hi, 
+
+On Saturday 31 August 2002 00:49, berthiaume_wayne@emc.com wrote:
+> 	Helllo Vitaly. Going through the reiserfsck manpage I see exit codes
+> that tell me to use --fix-fixable and --rebuild-tree; however, I can't
+seem
+> to find anything for --rebuild-sb. Outside of parsing stdout, is there
+> another way to determine from an undocumented exit code the need for
+> --rebuild-sb? 	While testing a double power failure scenario I was
+able to
+> corupt the superblock and I'd like to automate my recovery scripts. So far
+> we start with a reiserfsck -q --check /dev/<something> >> <some log file>
+> and based on the exit code run a --fix-fixable or --rebuild-tree next.
+Your
+> advice would be most appreciated.
+
+rebuild-sb was not involved as in a half of cases people run reiserfsck 
+on the partition that has never contained reiserfs. I do not think that 
+you would like to get "rebuild-sb is needed" instead of "no reiserfs found" 
+when running reiserfsck on your ext2 partition. rebuild-sb should be run on 
+the partition only after you checked twice that the partition is correct.
+
+-- 
+
+Thanks,
+Vitaly Fertman
