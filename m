@@ -1,12 +1,12 @@
 From: Yury Umanets <umka@namesys.com>
 Subject: Re: Antwort: Re: Antwort: Re: Problems with reiserfsck 3.6.9
 	(Newbie)
-Date: 21 Jul 2003 15:24:30 +0400
-Message-ID: <1058786670.32372.9.camel@haron.namesys.com>
+Date: 21 Jul 2003 15:33:19 +0400
+Message-ID: <1058787199.32372.14.camel@haron.namesys.com>
 References: <OF6EB751F0.4C39EA74-ONC1256D6A.003D01A3-C1256D6A.003D6E1E@oilgear.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14977-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14978-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -43,14 +43,12 @@ On Mon, 2003-07-21 at 15:10, jbingemer@oilgear.de wrote:
 > 
 > http://www.baetmaen.de/syslog.tar.gz (40K)
 
-Okay, syslog does not contain IO errors, but contains lots of messages
-about formatted nodes corrupted. You definitely need to run fsck. 
+Yet another issue. Can you run badblocks command in maner like the
+following:
 
-What if you try to read that blocks fsck has hanged on them by dd for
-instance?
+badblocks -b 4096 -o /tmp/badblocks /dev/hde
 
-For instance:
-dd if=/dev/hda1 of=/tmp/block bs=4096 count=1 skip=BLOCK_NUMBER
+And send us /tmp/badblocks.
 > 
 > Regards
 > joerg
