@@ -1,46 +1,48 @@
-From: Pierre Abbat <phma@webjockey.net>
-Subject: Re: Reiser4 crypto-compression design
-Date: Thu, 27 Mar 2003 18:34:09 -0500
-Message-ID: <200303271834.10619.phma@webjockey.net>
-References: <3E80B384.2190B074@namesys.com> <200303261916.37039.phma@webjockey.net> <3E832713.6050004@namesys.com>
+From: Bernd Schubert <bernd-schubert@web.de>
+Subject: nfsd-fh: found a name that I didn't expect
+Date: Fri, 28 Mar 2003 18:28:55 +0100
+Message-ID: <200303281828.55093.bernd-schubert@web.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13408-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13412-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E832713.6050004@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: nfs@lists.sourceforge.net
+Cc: reiserfs-list@namesys.com
 
-On Thursday 27 March 2003 11:30, Hans Reiser wrote:
-> Pierre Abbat wrote:
-> >The way that's done in CFS is that the filenames are stored as regular
-> >directory entries, but the names are encrypted. Anyone with permission can
-> >list the contents, but without knowing the key he gets gibberish. The
-> > names are stored in hex; we could also use base64 or base85, or come up
-> > with a cipher that avoids producing nulls and slashes.
->
-> I'll take a patch;-)
+Hi,
 
-I don't know enough about ReiserFS internal to write one, nor do I have a 
-machine running Reiser4 to try it on.
+due to hardware problems I just started our fall back server and got these 
+messages for 2 files:
 
-Here's how to make a cipher that avoids producing nulls and slashes:
-Break the filename into 8-byte blocks (assuming 8 bytes in an encryption 
-block). The last block is invalid if a null is followed by a nonnull or a 
-slash occurs anywhere; all other blocks are invalid if a null or a slash 
-occurs anywhere. Encrypt each block. If a block is invalid, encrypt it again 
-until it is valid. This requires ECB mode; since this is the weakest mode, 
-the key should be different for each block, perhaps by adding the tree key 
-and the block number. This rules out Blowfish, which takes too long to set up 
-the key.
+nfsd-fh: found a name that I didn't expect: bin/uptime
+nfsd-fh: found a name that I didn't expect: bin/uptime
+nfsd: last server has exited
+nfsd: unexporting all filesystems
+nfsd-fh: found a name that I didn't expect: lib/libident.so.0
+nfsd-fh: found a name that I didn't expect: lib/libident.so.0
 
-phma
--- 
-.i toljundi do .ibabo mi'afra tu'a do
-.ibabo damba do .ibabo do jinga
-.icu'u la ma'atman.
+Well, just a small explanation how our fall back-solution works:
+	The server exports '/' (hda5) via nfs to all clients and via nbd to one of 
+its clients (the fall back server) . The exporting via nbd is used for 
+mirroring the device via a cron job (by "dd'ing" the device).
+The cron-job script also executes a 'reiserfsck --fix-fixable' and afterwards 
+a 'reiserfsck --check', so except doing the partionchecks, both devices 
+should be identical.
+However, when I started the fall-back server, it showed the messages for these 
+2 files and the clients got I/O errors for these files.
+
+The solution was to stop the nfs-server, copy the files, delete the old ones 
+and move the copies back to the old names (just as I'm used to be to do when 
+this happens to directories served by ClusterNFS).
+
+Any ideas how we can prevent this in the future ?
+
+
+Thanks,
+	Bernd
