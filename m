@@ -1,48 +1,39 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Subject: Re: Benchmark : ext3 vs reiser4 and effects of fragmentation.
-Date: Fri, 17 Sep 2004 19:01:10 +0200
-Message-ID: <20040917190110.74fe1181@philou.gramoulle.local>
-References: <4148BC0E.5010509@willsmith.org>
-	<20040916085248.GI5137@backtop.namesys.com>
-	<20040916130809.GI26192@nysv.org>
-	<20040916153835.GK5137@backtop.namesys.com>
-	<20040916155248.GM26192@nysv.org>
-	<20040916183831.GL5137@backtop.namesys.com>
-	<20040916190019.GN26192@nysv.org>
-	<414A4C07.8060802@namesys.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: silent semantic changes with reiser4
+Date: Sun, 12 Sep 2004 22:02:07 +0200
+Message-ID: <20040912200207.GA4637@openzaurus.ucw.cz>
+References: <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826044425.GL5414@waste.org> <1093496948.2748.69.camel@entropy> <20040826053200.GU31237@waste.org> <20040826075348.GT1284@nysv.org> <20040826163234.GA9047@delft.aura.cs.cmu.edu> <Pine.LNX.4.58.0408260936550.2304@ppc970.osdl.org> <4141FF13.8030009@techsource.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21835-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21836-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <414A4C07.8060802@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <4141FF13.8030009@techsource.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Markus =?ISO-8859-15?Q?T=F6rnqvist?= <mjt@nysv.org>, Alex Zarochentsev <zam@namesys.com>, Will Smith <will@willsmith.org>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Timothy Miller <miller@techsource.com>
+Cc: Linus Torvalds <torvalds@osdl.org>, Jan Harkes <jaharkes@cs.cmu.edu>, Markus =?iso-8859-2?Q?T=F6rnqvist?= <mjt@nysv.org>, Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+
+Hi!
+
+> Say there's a way to cd into a tgz file to look around.  If the 
+> access methods through the kernel get routed back to a user-space 
+> process (which probably does some amount of caching in memory and on 
+> disk of uncompressed bits of the archive), it could be a bit slower 
+> than if it were all in-kernel.  The thing is that the processing time 
+
+Exactly. See uservfs.sf.net. It is using coda hooks into the kernel.
+
+> be done in userspace.)  Besides, even if it were a LOT slower to 
+> access a tgz file without extracting it first, I would STILL think it 
+> was wonderful AND use it a LOT.
+
+Go ahead :-).
 
 
-Hello Hans,
+-- 
+64 bytes from 195.113.31.123: icmp_seq=28 ttl=51 time=448769.1 ms         
 
-On Thu, 16 Sep 2004 19:29:27 -0700
-Hans Reiser <reiser@namesys.com> wrote:
-
-  | >This is also probably related to what Nik said back in the days about
-  | >an online-fsck being impossible :)
-  | >
-  | >  
-  | >
-  | Online fsck is possible.  Will do it for SuSE for 200k.;-)
-  | 
-  | It is a very serious task.  I would not do it just for fun.  It is, 
-  | however, feasible.
-
-i really wonder why big layers haven't invested the money, because to me this is such a killer feature.
-
-It would have saved us so many times :)
-
-Thanks,
-
-Philippe
