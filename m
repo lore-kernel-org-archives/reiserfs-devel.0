@@ -1,45 +1,52 @@
-From: Tomas Szepe <szepe@pinerecords.com>
-Subject: Re: Heuristic readahead for filesystems
-Date: Wed, 11 Sep 2002 21:03:37 +0200
-Sender: linux-kernel-owner@vger.kernel.org
-Message-ID: <20020911190337.GG14900@louise.pinerecords.com>
-References: <3D7F647B.1E0707FB@baldauf.org> <Pine.LNX.4.44L.0209111340060.1857-100000@imladris.surriel.com>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: [BK] ReiserFS file write bug fix for 2.4
+Date: Wed, 11 Sep 2002 21:37:22 +0200
+Message-ID: <200209112137.22422.Dieter.Nuetzel@hamburg.de>
+References: <3D7F7783.6030804@namesys.com> <200209111934.11373.Dieter.Nuetzel@hamburg.de> <20020911215310.A1504@namesys.com>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L.0209111340060.1857-100000@imladris.surriel.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11426-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <20020911215310.A1504@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Rik van Riel <riel@conectiva.com.br>
-Cc: Xuan Baldauf <xuan--lkml@baldauf.org>, linux-kernel@vger.kernel.org, Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Oleg Drokin <green@namesys.com>
+Cc: Linux Kernel List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-> > I wonder wether Linux implements a kind of heuristic
-> > readahead for filesystems:
-> 
-> > If an application did a stat()..open()..read() sequence on a
-> > file, it is likely that, after the next stat(), it will open
-> > and read the mentioned file. Thus, one could readahead the
-> > start of a file on stat() of that file.
-> 
-> > Example: See this diff strace:
-> 
-> Your observation is right, but I'm not sure how much it will
-> matter if we start reading the file at stat() time or at
-> read() time.
-> 
-> This is because one disk seek takes about 10 million CPU
-> cycles on modern systems and we'll have completed the stat(),
-> open() and started the read() before the disk arm has started
-> moving ;)
+On Wednesday 11 September 2002 19:53, Oleg Drokin wrote:
+> Hello!
+>
+> On Wed, Sep 11, 2002 at 07:34:11PM +0200, Dieter N?tzel wrote:
+> > On Wednesday 11 September 2002 19:04, Hans Reiser wrote:
+> > > Well, at least getting the new file write code into pre6 found this b=
+ug
+> > > for us....  please apply.
+> >
+> > What is the "right" way to get the new block allocation going?
+>
+> use 2.4.19-pre2+ and it is in there ;)
 
-Please correct me if I'm missing something: I tend to assume
-that if the cost of the disk seek is known to be a relatively
-huge value, a fraction of it could be used as a timeout for disk
-read request reordering with performance not deteriorating (except
-for the heuristics overhead of course). I.e., if some code in the
-block layer were able to detect a lot of "parallel yet sequential"
-reads were going on, the amount of seeks could be minimized for
-the price of the final timeout.
+You meant 2.4.20-pre2, didn't you?
 
-T.
+> > The mount option (-o alloc=3Dprealloc min=3D4:preallocsize=3D9) only or=
+ better
+> > a "reformat"?
+>
+> Those mount options are no longer needed starting from 2.4.20-pre6.
+> They are default. Reformat is not needed, but all the blocks allocated by
+> old allocator will remain at their old places of course.
+>
+> Bye,
+>     Oleg
+
+--=20
+Dieter N=FCtzel
+Graduate Student, Computer Science
+
+University of Hamburg
+Department of Computer Science
+@home: Dieter.Nuetzel at hamburg.de (replace at with @)
+
