@@ -1,38 +1,39 @@
 From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: [PATCH]: reiser4 [1/8] export fsync_super()
-Date: Thu, 31 Oct 2002 19:03:05 +0300
-Message-ID: <15809.21561.25201.754130@laputa.namesys.com>
+Subject: Re: [PATCH]: reiser4 [8/8] reiser4 code
+Date: Thu, 31 Oct 2002 19:12:59 +0300
+Message-ID: <15809.22155.408140.213679@laputa.namesys.com>
+References: <15809.21549.198584.599023@laputa.namesys.com>
+	<Pine.GSO.4.21.0210311107230.16688-100000@weyl.math.psu.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11864-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11865-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <Pine.GSO.4.21.0210311107230.16688-100000@weyl.math.psu.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Linus Torvalds <Torvalds@Transmeta.COM>
-Cc: Linux Kernel Mailing List <Linux-Kernel@Vger.Kernel.ORG>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: Alexander Viro <viro@math.psu.edu>
+Cc: Linus Torvalds <Torvalds@Transmeta.COM>, Linux Kernel Mailing List <Linux-Kernel@vger.kernel.org>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Hello, Linus,
+Alexander Viro writes:
+ > 
+ > 
+ > On Thu, 31 Oct 2002, Nikita Danilov wrote:
+ > 
+ > > Hello, Linus, hyva poika,
+ > > 
+ > > Reiser4 code proper is 2M. Patch is available at
+ > > 
+ > > http://namesys.com/snapshots/2002.10.31/fs_reiser4.diff
+ > > 
+ > > If you want, we can send it to you as source tar ball.
+ > 
+ > And you want that to be reviewed until tonight?
+ > 
 
-    Following patch exports fsync_super() function. fsync_super() is
-    required for reiser4, because during umount we want to perform some
-    tasks after ->writepage has been called on all pages dirtied through
-    mmap (that is, after fsync_super()), but before inodes
-    destruction. As a result, reiser4 cannot use kill_block_super() and
-    has to call fsync_super() explicitly.
+No. But changes to the core are not very complicated. If Linus "reviews"
+and accepts them life of reiser4 would be much simpler.
 
-Please apply.
 Nikita.
---- linus-bk-2.5/fs/buffer.c	Thu Oct 17 03:01:42 2002
-+++ linux-2.5-reiser4/fs/buffer.c	Mon Oct 21 13:43:49 2002
-@@ -224,6 +224,7 @@ int fsync_super(struct super_block *sb)
- 
- 	return sync_blockdev(sb->s_bdev);
- }
-+EXPORT_SYMBOL(fsync_super);
- 
- /*
-  * Write out and wait upon all dirty data associated with this
-
