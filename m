@@ -1,58 +1,40 @@
-From: "Bostjan Skufca @ domenca.com" <bostjan.skufca@domenca.com>
-Subject: Re: ReiserFS 2.4 patches need few fixes
-Date: Mon, 24 Jan 2005 14:49:29 +0100
-Message-ID: <200501241449.29354.bostjan.skufca@domenca.com>
-References: <200501241246.36757.bostjan.skufca@domenca.com> <20050124132028.6CCF13F01F@philou.gramoulle.local>
+From: Derrell.Lipman@UnwiredUniverse.com
+Subject: buffers not flushed when remounting read-only?
+Date: Mon, 24 Jan 2005 16:25:11 -0500
+Message-ID: <hdl6cyfc.fsf@random.internal>
+Reply-To: Derrell.Lipman@UnwiredUniverse.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-23203-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23205-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050124132028.6CCF13F01F@philou.gramoulle.local>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Hm, these seem to work but they still have EXPORT_SYMTAB issue when buildin=
-g=20
-kernel without module support enabled.=20
+Hello.  I'm using reiserfs 3.6.19 and seem to be finding that the following
+mount() call does not flush all buffers to disk.  I'm wondering if it is
+expected that this should flush all in-memory buffers to disk:
 
-I used patches you mentioned before - but switched over as patches on Names=
-ys'=20
-=46TP are recommended by their FAQ on website and are somewhat "younger" th=
-an=20
-those on Suse's FTP server.
+   mount(device, path, "reiserfs",
+         MS_MC_VAL | MS_NOATIME | MS_REMOUNT | MS_RDONLY, NULL)
 
+The device was previously mounted for writing, much was written to it, and I do
+this mount() command in preparation for writing the device the file system is
+mounted on, to a DVD.  Once written to DVD, very occasionally, the DVD image
+has a bad file system, as detected by either "reiserfsck --check" or an attempt
+to mount it (which can hang with WCHAN = "wait_on_buffer").
 
-Regards,
-Bostjan
+I'm using Linux 2.4.27, Debian Sarge
 
+Should remounting a file system as read-only flush all in-cache buffers to
+disk?  Should I be able to copy the partition (/dev/hdaXX) in its entirety
+following this remount, and have a clean file system in the copy?
 
+Thanks,
 
+Derrell
 
-On Monday 24 January 2005 14:20, Philippe Gramoull=E9 wrote:
-> Hello,
->
-> Could you try these patches instead ( don't know if 2.4.25 data-logging
-> patches apply cleanly to 2.4.29 though) ?
->
-> ftp://ftp.suse.com:/pub/people/mason/patches/data-logging/2.4.25
->
-> Thanks,
->
-> Philippe
->
-> On Mon, 24 Jan 2005 12:46:36 +0100
->
-> "Bostjan Skufca @ domenca.com" <bostjan.skufca@domenca.com> wrote:
->   | there are 3 fuzz warnings and one reject when applying patches from
->   | ftp://ftp.namesys.com/pub/reiserfs-for-2.4/data-logging-2.4.24
->   | to vanilla 2.4.29 kernel.
->   |
->   |
->   | Here is the patch output (irelevant output is omitted):
->   | ...
-
+ps. I'm not subscribed to the list.  Please including me in any replies.
