@@ -1,63 +1,48 @@
-From: Chris Mason <mason@suse.com>
+From: Zygo Blaxell <eazgwmir@umail.furryterror.org>
 Subject: Re: reiserfs on removable media
-Date: 02 Jul 2003 15:17:13 -0400
-Message-ID: <1057173432.20903.927.camel@tiny.suse.com>
-References: <pan.2003.07.02.14.23.09.812119.20132@umail.hungrycats.org>
-	 <3F032A33.3050303@namesys.com> <1057172345.20904.923.camel@tiny.suse.com>
-	 <200307022108.49841.Dieter.Nuetzel@hamburg.de>
+Date: Wed, 02 Jul 2003 16:19:28 -0400
+Message-ID: <pan.2003.07.02.16.19.28.146493.20132@umail.hungrycats.org>
+References: <pan.2003.07.02.14.23.09.812119.20132@umail.hungrycats.org> <20030702124544.Z7414@schatzie.adilger.int> <20030702124544.Z7414@schatzie.adilger.int> <3F032A33.3050303@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14810-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-14811-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200307022108.49841.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Cc: Hans Reiser <reiser@namesys.com>, Andreas Dilger <adilger@clusterfs.com>, Zygo Blaxell <eazgwmir@umail.furryterror.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-On Wed, 2003-07-02 at 15:08, Dieter N=FCtzel wrote:
-> Am Mittwoch, 2. Juli 2003 20:59 schrieb Chris Mason:
-> > On Wed, 2003-07-02 at 14:53, Hans Reiser wrote:
-> > > >This is called ordered data mode, and exists on ext3 and also reiser=
-fs
-> > > > with Chris Mason's patches.  Under normal usage it shouldn't change
-> > > > performance compared to writeback data mode (which is what reiserfs
-> > > > does by default).
->=20
-> Chris,
->=20
-> I thought data=3Dordered is the "new" default with your patch?
->=20
-It is.
+On Wed, 02 Jul 2003 14:53:39 -0400, Hans Reiser wrote:
+> Remind me about removable media around January, and we'll write some
+> code for reiser4 to make it more graceful for it (somehow prompt the
+> user to insert disk, etc.)
 
-> > > It had some impact, I forget exactly how much, maybe Chris can
-> > > resuscitate his benchmark of it?
-> >
-> > The major cost of data=3Dordered is that dirty blocks are flushed every=
- 5
-> > seconds instead of every 30.  The journal header patch in my
-> > experimental data logging directory changes things so that only new
-> > bytes in the file are done in data=3Dordered mode (either adding a new
-> > block or appending onto the end of the file).
-> >
-> > This helps a lot in the file rewrite tests.
->=20
-> What's faster than with your patches? ordered|journal|writeback?
->=20
-> I thought is order: writeback < ordered < journal ;-)
+Ow!  Ow!  Ow!  Kernel prompting the user...  Ow!  ;-)
 
-Usually ;-)  ordered is faster in a few rare benchmarks because it helps
-keeps the number of dirty buffers lower and generally sends the dirty
-buffers to the disk in a big flood.
+Now, "kernel notifying an automounter daemon process, which talks to the
+user in user-space" is somewhere in the realm of possibility...
 
-journal is faster for some fsync heavy benchmarks.
+Actually to be clear there are two topics here:  removable _media_ and
+removable _drives_.  e.g. a typical IDE disk is non-removable media in a
+non-removable drive.
 
-For practical desktop usage, data=3Dordered and writeback are usually
-close to each other.
+A floppy disk in a typical floppy drive is removable media in a
+non-removable drive, but a floppy disk in a USB floppy drive is removable
+media in a removable drive.  Practically speaking there's not much
+difference--if the drive was removed, you'd have to assume the media was
+removed as well, if only because there's no way to receive media-change
+notifications if the drive isn't connected.
 
--chris
+The USB drive I wrote about earlier is a desktop non-removable IDE disk in
+a removable drive.
 
-
+The difference is subtle but it does allow for some interesting stuff to
+happen in the block device layer.  The hard drive has a serial number,
+which (in theory) could be queried by the USB storage layer and used as a
+unique identifier for the drive.  This could e.g. suspend all read/write
+requests to the drive while it is disconnected, and resume said requests
+when it is reconnected.  That's all I'd need for my laptop setup
+(assuming I don't connect the drive somewhere else, that is)...and it
+doesn't require changing one line of reiserfs.
