@@ -1,162 +1,174 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: reiserfsprogs patches
-Date: Tue, 17 Aug 2004 11:59:43 -0400
-Message-ID: <41222B6F.4090000@suse.com>
+From: Garrick Staples <garrick@usc.edu>
+Subject: BUG in journal_mark_dirty on 2.6.7/ia64
+Date: Tue, 17 Aug 2004 12:14:28 -0700
+Message-ID: <20040817191428.GP2136@polop.usc.edu>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------030509010408090907090304"
-Return-path: <reiserfs-list-return-20356-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="evx3vguvXs42LIaH"
+Return-path: <reiserfs-list-return-20357-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
---------------030509010408090907090304
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--evx3vguvXs42LIaH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hi all,
+   I'm currently not subscribed (the list daemon isn't replying to my subsc=
+ribe
+attempts), so please CC me on replies.
+
+I got a kernel panic on one of my ia64 servers last night.  It's an NFS ser=
+ver
+for about 1000 clients and ~10 terabytes of data and has been running great
+since 2.6.7 was released (Jun 15).  Last week it was rebooted to pull out an
+unused scsi raid card.
+
+Last night I got the panic message below, which caused one of my LVM LVs to
+lock up.  Please let me know what other info you need.
+
+reiserfsprogs 3.6.11
 
 
-Hey all -
 
-The SuSE copy of reiserfsprogs has a number of patches, mostly backports
-of fixes. The attached patches are the ones that are fixes, as of
-3.6.18, we still apply to our tree and that I feel should be considered
-for inclusion in the official reiserfsprogs release.
+ REISERFS: panic (device dm-29): journal-1413: journal_mark_dirty: j_len (1=
+024)
+is too big
+                   =20
+ kernel BUG at fs/reiserfs/prints.c:362!
+ nfsd[1820]: bugcheck! 0 [1]
+ Modules linked in: nfs reiserfs dm_mod qla2300 qla2xxx nfsd exportfs lockd
+sunrpc ipv6 e1000 e100 tg3 nls_iso885
+9_1 nls_cp437 vfat fat nls_base ohci_hcd usbcore
+                   =20
+ Pid: 1820, CPU 1, comm:                 nfsd
+ psr : 0000101008026018 ifs : 800000000000058e ip  : [<a00000020061e110>]
+Tainted: GF
+ ip is at reiserfs_panic+0xf0/0x100 [reiserfs]
+ unat: 0000000000000000 pfs : 000000000000058e rsc : 0000000000000003
+ rnat: 0009804c8a70433f bsps: 0000000000000514 pr  : 5a40015000699a55
+ ldrs: 0000000000000000 ccv : 0000000000000000 fpsr: 0009804c8a70433f
+ csd : 0000000000000000 ssd : 0000000000000000
+ b0  : a00000020061e110 b6  : a000000200325330 b7  : a00000010008a8c0
+ f6  : 1003e0000000000000002 f7  : 0ffdd8000000000000000
+ f8  : 0ffffffffc00000000000 f9  : 100018000000000000000
+ f10 : 1003e0000000000000000 f11 : 1003e0000000000000000
+ r1  : a0000001009a4970 r2  : 0000000000004000 r3  : 0000000000004000
+ r8  : 0000000000000028 r9  : ffffffffffff45b8 r10 : e0000001ff0a8e84
+ r11 : a0000001007bc200 r12 : e0000001ff0afa20 r13 : e0000001ff0a8000
+ r14 : 0000000000004000 r15 : a0000001006f73e8 r16 : e000004041e58e28
+ r17 : e000004041e58e84 r18 : a0000001007bc1f8 r19 : 0000001008022018
+ r20 : e0000001ff0af9e0 r21 : 0000000000000000 r22 : 0000000000000001
+ r23 : e000004041e58e84 r24 : e000004041e58e70 r25 : a0000001007bc1f8
+ r26 : e000004041e58078 r27 : 0000000000000000 r28 : a000000100084c10
+ r29 : a000000100801d84 r30 : 0000000000000000 r31 : e0000001000145b8
+                   =20
+ Call Trace:
+  [<a000000100019420>] show_stack+0x80/0xa0
+                                 sp=3De0000001ff0af5f0 bsp=3De0000001ff0a95=
+d0
+  [<a00000010003f810>] die+0x1d0/0x280
+                                 sp=3De0000001ff0af7c0 bsp=3De0000001ff0a95=
+a8
+  [<a00000010003fb50>] ia64_bad_break+0x230/0x340
+                                 sp=3De0000001ff0af7c0 bsp=3De0000001ff0a95=
+88
+  [<a000000100012180>] ia64_leave_kernel+0x0/0x260
+                                 sp=3De0000001ff0af850 bsp=3De0000001ff0a95=
+88
+  [<a00000020061e110>] reiserfs_panic+0xf0/0x100 [reiserfs]
+                                 sp=3De0000001ff0afa20 bsp=3De0000001ff0a95=
+18
+  [<a0000002006468c0>] journal_mark_dirty+0x2e0/0x740 [reiserfs]
+                                 sp=3De0000001ff0afa50 bsp=3De0000001ff0a94=
+d8
+  [<a0000002005e39b0>] _reiserfs_free_block+0x2f0/0x4a0 [reiserfs]
+                                 sp=3De0000001ff0afa50 bsp=3De0000001ff0a94=
+60
+  [<a0000002006303d0>] prepare_for_delete_or_cut+0x970/0x1400 [reiserfs]
+                                 sp=3De0000001ff0afa50 bsp=3De0000001ff0a93=
+a8
+  [<a000000200633110>] reiserfs_cut_from_item+0xd0/0xc20 [reiserfs]
+                                 sp=3De0000001ff0afa70 bsp=3De0000001ff0a93=
+20
+  [<a000000200634610>] reiserfs_do_truncate+0x730/0xc20 [reiserfs]
+                                 sp=3De0000001ff0afd20 bsp=3De0000001ff0a92=
+58
+  [<a0000002006329c0>] reiserfs_delete_object+0x40/0xe0 [reiserfs]
+                                 sp=3De0000001ff0afdc0 bsp=3De0000001ff0a92=
+20
+  [<a0000002005f6210>] reiserfs_delete_inode+0x2f0/0x460 [reiserfs]
+                                 sp=3De0000001ff0afdc0 bsp=3De0000001ff0a91=
+e8
+  [<a000000100165060>] generic_delete_inode+0x1e0/0x3a0
+                                 sp=3De0000001ff0afdf0 bsp=3De0000001ff0a91=
+b8
+  [<a000000100165730>] iput+0x130/0x1e0
+                                 sp=3De0000001ff0afdf0 bsp=3De0000001ff0a91=
+98
+  [<a000000100160760>] d_delete+0x260/0x2c0
+                                 sp=3De0000001ff0afdf0 bsp=3De0000001ff0a91=
+78
+  [<a00000010014c960>] vfs_unlink+0x280/0x5c0
+                                 sp=3De0000001ff0afdf0 bsp=3De0000001ff0a91=
+40
+  [<a000000200370ec0>] nfsd_unlink+0x2a0/0x640 [nfsd]
+                                 sp=3De0000001ff0afdf0 bsp=3De0000001ff0a90=
+f0
+  [<a000000200381010>] nfsd3_proc_remove+0x150/0x1c0 [nfsd]
+                                 sp=3De0000001ff0afdf0 bsp=3De0000001ff0a90=
+a8
+  [<a000000200363030>] nfsd_dispatch+0x290/0x540 [nfsd]
+                                 sp=3De0000001ff0afdf0 bsp=3De0000001ff0a90=
+58
+  [<a00000020031fde0>] svc_process+0x10a0/0x1380 [sunrpc]
+                                 sp=3De0000001ff0afdf0 bsp=3De0000001ff0a8f=
+e8
+  [<a0000002003628e0>] nfsd+0x500/0x9c0 [nfsd]
+                                 sp=3De0000001ff0afe00 bsp=3De0000001ff0a8e=
+e8
+  [<a00000010001b380>] kernel_thread_helper+0xe0/0x100
+                                 sp=3De0000001ff0afe30 bsp=3De0000001ff0a8e=
+c0
+  [<a000000100009080>] start_kernel_thread+0x20/0x40
+                                 sp=3De0000001ff0afe30 bsp=3De0000001ff0a8e=
+c0
 
-Here's the rundown:
-03-cleanly-unmounted
-	- Just a cosmetic fix to change "cleanly umounted" to "clean"
-	  in a few warnings
+And then at boot, a minor message about dm-29:
 
-04-quota_sd_blocks-2
-	- Fixes fsck incorrectly warning about block counts for
-	  symlinks when quotas are enabled
+kernel: ReiserFS: dm-29: found reiserfs format "3.6" with standard journal
+kernel: ReiserFS: dm-29: using ordered data mode
+kernel: ReiserFS: dm-29: journal params: device dm-29, size 8192, journal f=
+irst block 18, max trans len 1024, max batch 900, max commit age 30, max tr=
+ans age 30
+kernel: ReiserFS: dm-29: checking transaction log (dm-29)
+kernel: ReiserFS: dm-29: replayed 274 transactions in 2 seconds
+kernel: ReiserFS: dm-29: Using r5 hash to sort names
+kernel: ReiserFS: dm-29: Removing [1795252 1802799 0x0 SD]..done
+kernel: ReiserFS: dm-29: There were 1 uncompleted unlinks/truncates. Comple=
+ted
 
-07-auto_quiet.diff
-	- Makes -a mode run quietly
 
-10-blkgetsiz64.patch
-	- The BLKGETSIZE64 ioctl was, in earlier kernels, incorrectly
-	  prototyped with sizeof (__u64), which expanded to
-	  sizeof(sizeof (__u64)) - making it a size_t
+--=20
+Garrick Staples, Linux/HPCC Administrator
+University of Southern California
 
-Please consider applying.
+--evx3vguvXs42LIaH
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
-- -Jeff
-
-- --
-Jeff Mahoney
-SuSE Labs
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Version: GnuPG v1.2.3 (GNU/Linux)
 
-iD8DBQFBIitvLPWxlyuTD7IRAjE7AJ9z2MJB7t8W0hTeIwrBs6+nB7XZSACfatiR
-HpkOrjjiIUH8qp2g5r3ATCs=
-=cn9h
+iD8DBQFBIlkU0SBUxJbm9HMRAh+fAKClH5sRwYAQtUqoElGWkZ+w8bbjOwCfSGwS
+zVpSRQ3EkEZzI29ehoELXYM=
+=pqQw
 -----END PGP SIGNATURE-----
 
---------------030509010408090907090304
-Content-Type: text/plain;
- name="03-cleanly-unmounted.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="03-cleanly-unmounted.diff"
-
-Index: reiserfsprogs-3.6.13/fsck/main.c
-===================================================================
---- reiserfsprogs-3.6.13.orig/fsck/main.c	2004-02-17 07:06:23.000000000 -0500
-+++ reiserfsprogs-3.6.13/fsck/main.c	2004-03-08 10:40:14.382396213 -0500
-@@ -883,7 +883,7 @@ static void clean_attributes (reiserfs_f
-     time (&t);
- 
-     if (get_sb_umount_state (fs->fs_ondisk_sb) != FS_CLEANLY_UMOUNTED) {
--        fsck_progress ("Filesystem does not look cleanly umounted\n"
-+        fsck_progress ("Filesystem is not clean\n"
- 	    "Check consistency of the partition first.\n");
-         exit(EXIT_USER);
-     }
-Index: reiserfsprogs-3.6.13/reiserfscore/prints.c
-===================================================================
---- reiserfsprogs-3.6.13.orig/reiserfscore/prints.c	2004-02-17 07:06:23.000000000 -0500
-+++ reiserfsprogs-3.6.13/reiserfscore/prints.c	2004-03-08 10:41:23.648594772 -0500
-@@ -646,7 +646,7 @@ int print_super_block (FILE * fp, reiser
- 		      "bitmaps, data, reserved] blocks): %u\n", get_sb_free_blocks (sb));
- 	reiserfs_warning (fp, "Root block: %u\n", get_sb_root_block (sb));
-     }
--    reiserfs_warning (fp, "Filesystem marked as %scleanly umounted\n",
-+    reiserfs_warning (fp, "Filesystem is %sclean\n",
- 		      (get_sb_umount_state (sb) == FS_CLEANLY_UMOUNTED) ? "" : "NOT ");
- 
-     if (short_print)
-
---------------030509010408090907090304
-Content-Type: text/plain;
- name="04-quota_sd_blocks-2.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="04-quota_sd_blocks-2.diff"
-
-diff -ur reiserfsprogs-3.6.4/fsck/semantic_rebuild.c reiserfsprogs-3.6.4.suse/fsck/semantic_rebuild.c
---- reiserfsprogs-3.6.4/fsck/semantic_rebuild.c	2002-09-13 05:41:41.000000000 -0400
-+++ reiserfsprogs-3.6.4.suse/fsck/semantic_rebuild.c	2003-02-11 10:36:49.000000000 -0500
-@@ -169,7 +169,8 @@
-     int ret = 0;
- 
-     if (S_ISREG (mode) || S_ISLNK (mode) || S_ISDIR (mode)) {
--	if (*blocks != sd_blocks) {
-+	if ((!S_ISLNK(mode) && *blocks != sd_blocks) ||
-+	    (S_ISLNK(mode) && *blocks != sd_blocks && (ROUND_UP(*blocks) != sd_blocks))) {
- 	    fsck_log ("vpf-10680: The %s %K has the wrong block count in the StatData "
- 		"(%u)%s(%u)\n", S_ISDIR (mode) ? "directory" : "file",  key, sd_blocks, 
- 		fsck_mode(fs) == FSCK_CHECK ? ", should be " : " - corrected to ", *blocks);
-
---------------030509010408090907090304
-Content-Type: text/plain;
- name="07-auto_quiet.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="07-auto_quiet.diff"
-
---- progs/fsck/main.c.1	2003-09-01 12:44:41.000000000 -0400
-+++ progs/fsck/main.c	2003-09-01 12:44:46.000000000 -0400
-@@ -230,6 +230,7 @@
- 
- 	case 'a':
- 	case 'p':
-+		data->options |= OPT_QUIET;
- 		mode = FSCK_AUTO;
- 		break;
- 	
-
---------------030509010408090907090304
-Content-Type: text/plain;
- name="10-blkgetsiz64.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="10-blkgetsiz64.patch"
-
---- reiserfsprogs-3.6.13/lib/misc.c.blkgetsiz64	2004-05-18 16:50:47.000000000 +0200
-+++ reiserfsprogs-3.6.13/lib/misc.c	2004-05-18 16:53:19.000000000 +0200
-@@ -463,7 +463,13 @@
- }
- 
- #if defined(__linux__) && defined(_IOR) && !defined(BLKGETSIZE64)
--#   define BLKGETSIZE64 _IOR(0x12, 114, __u64)
-+/* Note! Despite this call being called with *64, it must be encoded to
-+ * return only sizeof(size_t), since in earlier kernel versions it was
-+ * declared _IOR(0x12, 114, sizeof(u64)), making it use sizeof(sizeof(u64)).
-+ *
-+ * However, the call itself does always return 64bit!
-+ */
-+#   define BLKGETSIZE64 _IOR(0x12, 114, size_t)
- #endif
- 
- /* To not have problem with last sectors on the block device when switching 
-
---------------030509010408090907090304--
+--evx3vguvXs42LIaH--
