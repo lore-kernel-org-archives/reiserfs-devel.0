@@ -1,82 +1,45 @@
 From: Sonny Rao <sonny@burdell.org>
 Subject: Re: Odd Block allocation behavior on Reiser3
-Date: Tue, 10 Aug 2004 11:45:14 -0400
-Message-ID: <20040810154514.GA67591@kevlar.burdell.org>
-References: <20040809201939.GA55683@kevlar.burdell.org> <1092083451.10651.218.camel@watt.suse.com> <20040809220459.GA57121@kevlar.burdell.org> <41187657.7030709@namesys.com>
+Date: Tue, 10 Aug 2004 12:12:52 -0400
+Message-ID: <20040810161252.GC67591@kevlar.burdell.org>
+References: <20040809201939.GA55683@kevlar.burdell.org> <1092083451.10651.218.camel@watt.suse.com> <20040809220459.GA57121@kevlar.burdell.org> <1092142411.10651.226.camel@watt.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20127-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20128-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <41187657.7030709@namesys.com>
+In-Reply-To: <1092142411.10651.226.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Tue, Aug 10, 2004 at 12:16:39AM -0700, Hans Reiser wrote:
-> >
-> Interesting.What happens without overwrite, that is, if you write more 
-> files without deleting the old ones?
+On Tue, Aug 10, 2004 at 08:53:31AM -0400, Chris Mason wrote:
+<snip>
+> Ok, the block allocator optimizations went in after 2.6.7.  I'd be
+> curious to see how 2.6.8-rc3 does in your tests.
 
-Below I made 24 one gigabyte files in sequence
-All of them are similarly fragmented: 
+I'll try it.
 
-x44016way1:/mnt/tmp0/data # ls -lh
-total 25G
-drwx------  2 root root  816 Aug 10 10:05 .
-drwxr-xr-x  5 root root   96 Aug 10 10:00 ..
--rwx------  1 root root 1.0G Aug 10 10:00 datafile0
--rwx------  1 root root 1.0G Aug 10 10:00 datafile1
--rwx------  1 root root 1.0G Aug 10 10:02 datafile10
--rwx------  1 root root 1.0G Aug 10 10:02 datafile11
--rwx------  1 root root 1.0G Aug 10 10:03 datafile12
--rwx------  1 root root 1.0G Aug 10 10:03 datafile13
--rwx------  1 root root 1.0G Aug 10 10:03 datafile14
--rwx------  1 root root 1.0G Aug 10 10:03 datafile15
--rwx------  1 root root 1.0G Aug 10 10:03 datafile16
--rwx------  1 root root 1.0G Aug 10 10:04 datafile17
--rwx------  1 root root 1.0G Aug 10 10:04 datafile18
--rwx------  1 root root 1.0G Aug 10 10:04 datafile19
--rwx------  1 root root 1.0G Aug 10 10:01 datafile2
--rwx------  1 root root 1.0G Aug 10 10:04 datafile20
--rwx------  1 root root 1.0G Aug 10 10:04 datafile21
--rwx------  1 root root 1.0G Aug 10 10:05 datafile22
--rwx------  1 root root 1.0G Aug 10 10:05 datafile23
--rwx------  1 root root 1.0G Aug 10 10:01 datafile3
--rwx------  1 root root 1.0G Aug 10 10:01 datafile4
--rwx------  1 root root 1.0G Aug 10 10:01 datafile5
--rwx------  1 root root 1.0G Aug 10 10:01 datafile6
--rwx------  1 root root 1.0G Aug 10 10:02 datafile7
--rwx------  1 root root 1.0G Aug 10 10:02 datafile8
--rwx------  1 root root 1.0G Aug 10 10:02 datafile9
 
-x44016way1:/mnt/tmp0/data # filefrag *
-datafile0: 268 extents found
-datafile1: 268 extents found
-datafile10: 267 extents found
-datafile11: 268 extents found
-datafile12: 268 extents found
-datafile13: 268 extents found
-datafile14: 268 extents found
-datafile15: 268 extents found
-datafile16: 268 extents found
-datafile17: 268 extents found
-datafile18: 267 extents found
-datafile19: 268 extents found
-datafile2: 267 extents found
-datafile20: 268 extents found
-datafile21: 268 extents found
-datafile22: 268 extents found
-datafile23: 267 extents found
-datafile3: 268 extents found
-datafile4: 268 extents found
-datafile5: 268 extents found
-datafile6: 268 extents found
-datafile7: 267 extents found
-datafile8: 268 extents found
-datafile9: 268 extents found
+> This could be the metadata mixed in with the file data.  In general this
+> is a good
+> Still there were a number of cases the old allocator didn't do as well
+> with. thing, when you read the file sequentially, the metadata required
+> to find the next block will already be in the drive's cache.
+>
+> Whenever you're doing fragmentation tests, it helps to also identify the
+> actual effect of the fragmentation on the time it takes to read a file
+> or set of files.  It's easy to create a directory where all the files
+> are 99.99% contiguous, but that takes 3x as much time to read in.
+>
+> -chris
 
+In this case, I began investigating fragmentation because I noticed
+reiserfs is performing below the other filesystems I tested for some
+reason, so I belive this allocation pattern is hurting performance
+on sequential reads.
+
+Sonny
