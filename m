@@ -1,47 +1,37 @@
-From: "Raymond A. Meijer" <rmeijer@internet.gr>
-Subject: Reiser4 too fragile..?
-Date: Thu, 3 Mar 2005 15:09:57 +0200
-Message-ID: <200503031509.57890.rmeijer@internet.gr>
-Mime-Version: 1.0
+From: Can Sar <csar@stanford.edu>
+Subject: Reiser4progrs Compilation
+Date: Thu, 3 Mar 2005 05:36:42 -0800
+Message-ID: <29c041fd345080bf7dd7c0daf8b3389a@stanford.edu>
+Mime-Version: 1.0 (Apple Message framework v619.2)
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hiya,
+Hi,
 
-I just converted all the Reiser4 partitions on my desktop back to 
-ReiserFS after spending most of the morning on fixing my /usr once 
-again...
+The "Getting started with Reiser4" page mentions that any reports about 
+errors while installing Reiser4 should be sent to this list. I have 
+successfully installed the correct kernel and libaal but run into 
+problems with reiser4progs. I issue the following commands, which work 
+fine until make.
 
-Nearly every time my machine crashed the past year or so (which doesn't 
-happen often) it left my Reiser4 partitions (/usr in particular) 
-riddled with file system errors.
+tar zxf reiser4progs-1.0.4.tar.gz
+cd  reiser4progs-1.0.4
+./configure
+make
 
-This morning, after a crash, reboot and fsck, I found many files 
-from /usr in /usr/lost+found and I was forced to reinstall many 
-packages.
+Make complains that there is no Makefile. This is indeed true, the only 
+Makefiles that were created by .configure are Makefile.in and 
+Makefile.am. I tried cp-ing both of these to Makefile, but neither of 
+them worked (as I had expected). I am running Ubuntu. I would be 
+extremely grateful for any help you can provide. I've been fighting 
+with this for hours but just can't get it to work.
 
-After that I decided to get it over with and reformatted all my 
-partitions. From now on I will use Reiser4 for testing purposes only 
-until it's more stable.
+Thank you very much for your help,
+Can Sar
 
-Why is it that Reiser4 file systems get damaged badly (--fix --build-fs 
-etcetera) when a kernel panic occurs and ReiserFS file systems survive 
-just fine?
-
-Almost always after an unexpected reboot I had to fsck my Reiser4 file 
-systems to fix errors. Running reiserfsck on my ReiserFS file systems 
-NEVER found any errors...
-
-Any ideas?
-
-
-Thanks,
-
-Ray
