@@ -1,45 +1,48 @@
-From: "Bostjan Skufca @ domenca.com" <bostjan.skufca@domenca.com>
-Subject: Re: kernel 2.4.27 reiserfs quotas patch
-Date: Tue, 24 Aug 2004 12:14:03 +0200
-Message-ID: <200408241214.03236.bostjan.skufca@domenca.com>
-References: <cgd0l9$6o0$1@sea.gmane.org> <200408241046.01649.bostjan.skufca@domenca.com> <200408241108.18527.christian.mayrhuber@gmx.net>
+From: "LiFe" <LiFers@optusnet.com.au>
+Subject: Re: Reiser4 Officially Shipped - Congratulations
+Date: Tue, 24 Aug 2004 20:51:17 +1000
+Message-ID: <04eb01c489c8$4b9f1d80$8f4432d2@homedom>
+References: <06050683-F57C-11D8-9849-000A95C88606@aoc.nrao.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20475-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20476-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200408241108.18527.christian.mayrhuber@gmx.net>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; format="flowed"; charset="us-ascii"; reply-type="response"
 To: reiserfs-list@namesys.com
-Cc: Christian Mayrhuber <christian.mayrhuber@gmx.net>
 
-Oh, this one... i thought i missed something although I was watching the list 
-all the time... Chris will "cook up" patches when he finds some time to do it 
-and I will not bother him as this is not really an issue for me...
+My congrats. I was a bit worried as 'shipping soon' was up there a looooong 
+time.
 
-B.
+Now when can we expect some pretty graphed benchmarks other than those from 
+26/3/04? : )
+
+Dom.
+
+----- Original Message ----- 
+From: "Boyd Waters" <bwaters+mac@aoc.nrao.edu>
+To: <reiserfs-list@namesys.com>; <reiserfs-list@revere.aoc.nrao.edu>
+Sent: Tuesday, August 24, 2004 1:16 PM
+Subject: Reiser4 Officially Shipped - Congratulations
 
 
-
-On Tuesday 24 of August 2004 11:08, Christian Mayrhuber wrote:
-> On Tuesday 24 August 2004 10:46, Bostjan Skufca @ domenca.com wrote:
-> > On machines where I do not want kernel modules enabled I solved the build
-> > problem by modifying file "fs/reiserfs/journal.c". Just comment out the
-> > first line of code like this:
-> >
-> > //#define EXPORT_SYMTAB
-> >
-> > Works for me without problems...
-> >
-> > Christian: What is all about that fsync() bug? Is it serious? Are there
-> > any special conditions to be met to actually see the results of it?
+> For the readers of this list, it is not such a big event that Reiser4 is 
+> officially released: we have been testing it for some time now. (I've been 
+> following the development of Reiser4 for four years now, off and on...)
 >
-> Have a look at:
-> http://marc.theaimsgroup.com/?l=reiserfs&m=109250555704899&w=2
+> But a ship date is worth a hearty *** Congratulations *** to the ReiserFS 
+> team for all the hard work!!
 >
-> You may want to ask Chris Mason what the state of the patch update is.
+> (blink tags mercifully omitted)
+>
+> ~ boyd
+>
+> Boyd Waters
+> National Radio Astronomy Observatory
+> Socorro, New Mexico
+> http://www.aoc.nrao.edu/~bwaters
+> 
 
