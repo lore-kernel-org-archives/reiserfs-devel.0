@@ -1,77 +1,41 @@
-From: <system_lists@nullzone.org>
-Subject: RE: reiser4 data journalling?
-Date: Fri, 29 Aug 2003 23:56:23 +0200
-Message-ID: <008201c36e78$63425bd0$0202a8c0@main>
-References: <3F4FC8FD.1050303@namesys.com>
-Reply-To: <system_lists@nullzone.org>
+From: Andi Kleen <ak@muc.de>
+Subject: Re: reiser4 data journalling?
+Date: Sat, 30 Aug 2003 20:22:18 +0200
+Message-ID: <m3oey7m2ed.fsf@averell.firstfloor.org>
+References: <3F4E3AF9.2060100@tupshin.com>
+	<16206.16138.72832.920045@laputa.namesys.com>
+	<3F4E6AA4.3030900@namesys.com> <20030829001814.GB9019@zero>
+	<3F4E9C6D.2080009@namesys.com> <20030829012322.GJ21352@matchmail.com>
+	<20030829050857.GA5755@namesys.com> <3F4F91DB.2080900@namesys.com>
+	<16207.38985.871686.419166@laputa.namesys.com>
+	<3F4FC8FD.1050303@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-15500-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15501-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F4FC8FD.1050303@namesys.com>
+In-Reply-To: <3F4FC8FD.1050303@namesys.com> (Hans Reiser's message of "Sat,
+ 30 Aug 2003 01:43:25 +0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: 'Reiserfs List' <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
 
+Hans Reiser <reiser@namesys.com> writes:
+>>
+> Because atomicity in ext3 basically consists of guaranteeing that the filesystem is consistent, and due to the disk drive implementation 4k blocks are written atomically.  So, if you span more than one block, it is not guaranteed to be atomic.
 
-> -----Mensaje original-----
-> De: Hans Reiser [mailto:reiser@namesys.com]
-> Enviado el: viernes, 29 de agosto de 2003 23:43
-> Para: Nikita Danilov
-> CC: Oleg Drokin; Mike Fedyk; Tom Vier; Reiserfs List
-> Asunto: Re: reiser4 data journalling?
->=20
-> Nikita Danilov wrote:
->=20
-> >Hans Reiser writes:
-> > > Oleg Drokin wrote:
-> > >
-> > > >Hello!
-> > > >
-> > > >On Thu, Aug 28, 2003 at 06:23:22PM -0700, Mike Fedyk wrote:
-> > > >
-> > > >
-> > > >
-> > > >>So you can have one 5k memory area that spans two pages, and it =
-will
-> act on
-> > > >>them atomically?  Or does that mean that the utils are already =
-page
-> aligned
-> > > >>by other kernel mechanisims?  Or that they'll have to use the =
-reiser
-> API to
-> > > >>do some of the above (other than the op grouping)?
-> > > >>
-> > > >>
-> > > >
-> > > >Data does not need to be page aligned for atomic operations.
-> > > >
-> > > >Bye,
-> > > >    Oleg
-> > > >
-> > > >
-> > > >
-> > > >
-> > > in reiser4
-> >
-> >Why?
-> >
-> >
-> >
-> Because atomicity in ext3 basically consists of guaranteeing that the
-> filesystem is consistent, and due to the disk drive implementation 4k
-> blocks are written atomically.  So, if you span more than one block, =
-it is
-> not guaranteed to be atomic.
->=20
-> Someone should correct me if I got it wrong, as ext3 is not my
-> specialty....
->=20
+I was told most modern disks run with 32-64K blocks internally.
 
-I think that is right.
+4K is very unlikely.
 
+Of course they don't always guarantee that a write of such a block
+is atomic, but then they also don't guarantee it for 4K.
 
+The only sure way is to wait for the disk telling you it is finished 
+(= use write barriers)  and/or turn the write buffer off.
+Even then you have to hope that the disk firmware doesn't lie to you.
+
+-Andi
