@@ -1,9 +1,9 @@
 From: <cmc4slack-jfs@yahoo.com>
-Subject: basic reiserfs commands list
-Date: Sat, 17 Jul 2004 09:12:13 -0700 (PDT)
-Message-ID: <20040717161213.35336.qmail@web80809.mail.yahoo.com>
+Subject: Re: basic reiserfs commands list
+Date: Sat, 17 Jul 2004 09:49:19 -0700 (PDT)
+Message-ID: <20040717164919.38849.qmail@web80809.mail.yahoo.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19668-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19669-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -13,15 +13,14 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: ReiserFS <reiserfs-list@namesys.com>
 
-I'm getting ready to upgrade my slackware box from
-9.1 to 10, have been using reiserfs on it and it 
-works wonderfully. But I haven't made many changes 
-to it since the original install and don't have a 
-handy commands reference, would be nice to have
-one for the new install. 
+I asked:
 
-Is there a commands list or cheat sheet available
-on the web? Thanks!
+> Is there a commands list or cheat sheet available
+> on the web? Thanks!
+
+I just found the man page section on the namesys
+site, uh, nevermind :-)
+
 
 =====
 Christopher Mark Conn
