@@ -1,10 +1,10 @@
 From: Jan Kara <jack@suse.cz>
-Subject: [PATCH] Expose reiserfs_sync_fs()
-Date: Fri, 19 Nov 2004 10:36:15 +0100
-Message-ID: <20041119093615.GB15189@atrey.karlin.mff.cuni.cz>
+Subject: [PATCH] Fix reiserfs quota debug messages
+Date: Fri, 19 Nov 2004 10:38:45 +0100
+Message-ID: <20041119093845.GC15189@atrey.karlin.mff.cuni.cz>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="gBBFr7Ir9EOA20Yy"
-Return-path: <reiserfs-list-return-22428-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="WhfpMioaduB5tiZL"
+Return-path: <reiserfs-list-return-22429-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,16 +14,14 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 To: akpm@osdl.org
 Cc: reiserfs-list@namesys.com
 
---gBBFr7Ir9EOA20Yy
+--WhfpMioaduB5tiZL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
   Hello!
 
-  Attached patch exposes reiserfs_sync_fs(). This call is needed by the
-new quota code to write data to disk on quotaoff so that userspace can
-see them afterwards. Chris Mason agrees with the patch so I hope you
-can merge it.
+  Attached patch fixes debug messages of quota code in reiserfs so that
+they compile. Chris Mason agreed the patch so I hope you can merge it.
 
 								Honza
 
@@ -31,48 +29,117 @@ can merge it.
 Jan Kara <jack@suse.cz>
 SuSE CR Labs
 
---gBBFr7Ir9EOA20Yy
+--WhfpMioaduB5tiZL
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="quota-new-2.6.10-rc2-mm1-4-reisersync.diff"
+Content-Disposition: attachment; filename="quota-new-2.6.10-rc2-mm1-3-reiserdebug.diff"
 
-Make reiserfs provide the sync_fs() function so that the quota code
-has a way to reliably force a transaction to disk.
+Fix debugging quota messages in reiserfs code so that they compile.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 
-diff -rupNX /home/jack/.kerndiffexclude linux-2.6.10-rc2-mm1-3-reiserdebug/fs/reiserfs/super.c linux-2.6.10-rc2-mm1-4-reisersync/fs/reiserfs/super.c
---- linux-2.6.10-rc2-mm1-3-reiserdebug/fs/reiserfs/super.c	2004-11-16 16:40:53.000000000 +0100
-+++ linux-2.6.10-rc2-mm1-4-reisersync/fs/reiserfs/super.c	2004-11-18 20:27:03.000000000 +0100
-@@ -62,7 +62,7 @@ static int is_any_reiserfs_magic_string 
- static int reiserfs_remount (struct super_block * s, int * flags, char * data);
- static int reiserfs_statfs (struct super_block * s, struct kstatfs * buf);
+diff -rupNX /home/jack/.kerndiffexclude linux-2.6.10-rc2-mm1-2-offadd/fs/reiserfs/bitmap.c linux-2.6.10-rc2-mm1-3-reiserdebug/fs/reiserfs/bitmap.c
+--- linux-2.6.10-rc2-mm1-2-offadd/fs/reiserfs/bitmap.c	2004-11-16 16:39:09.000000000 +0100
++++ linux-2.6.10-rc2-mm1-3-reiserdebug/fs/reiserfs/bitmap.c	2004-11-18 20:26:07.000000000 +0100
+@@ -956,14 +956,14 @@ static inline int blocknrs_and_prealloc_
+     if (!hint->formatted_node) {
+         int quota_ret;
+ #ifdef REISERQUOTA_DEBUG
+-	reiserfs_debug (s, "reiserquota: allocating %d blocks id=%u", amount_needed, hint->inode->i_uid);
++	reiserfs_debug (s, REISERFS_DEBUG_CODE, "reiserquota: allocating %d blocks id=%u", amount_needed, hint->inode->i_uid);
+ #endif
+ 	quota_ret = DQUOT_ALLOC_BLOCK_NODIRTY(hint->inode, amount_needed);
+ 	if (quota_ret)    /* Quota exceeded? */
+ 	    return QUOTA_EXCEEDED;
+ 	if (hint->preallocate && hint->prealloc_size ) {
+ #ifdef REISERQUOTA_DEBUG
+-	    reiserfs_debug (s, "reiserquota: allocating (prealloc) %d blocks id=%u", hint->prealloc_size, hint->inode->i_uid);
++	    reiserfs_debug (s, REISERFS_DEBUG_CODE, "reiserquota: allocating (prealloc) %d blocks id=%u", hint->prealloc_size, hint->inode->i_uid);
+ #endif
+ 	    quota_ret = DQUOT_PREALLOC_BLOCK_NODIRTY(hint->inode, hint->prealloc_size);
+ 	    if (quota_ret)
+@@ -1009,7 +1009,7 @@ static inline int blocknrs_and_prealloc_
+ 	    /* Free the blocks */
+ 	    if (!hint->formatted_node) {
+ #ifdef REISERQUOTA_DEBUG
+-		reiserfs_debug (s, "reiserquota: freeing (nospace) %d blocks id=%u", amount_needed + hint->prealloc_size - nr_allocated, hint->inode->i_uid);
++		reiserfs_debug (s, REISERFS_DEBUG_CODE, "reiserquota: freeing (nospace) %d blocks id=%u", amount_needed + hint->prealloc_size - nr_allocated, hint->inode->i_uid);
+ #endif
+ 		DQUOT_FREE_BLOCK_NODIRTY(hint->inode, amount_needed + hint->prealloc_size - nr_allocated);     /* Free not allocated blocks */
+ 	    }
+@@ -1029,7 +1029,7 @@ static inline int blocknrs_and_prealloc_
+ 	 nr_allocated + REISERFS_I(hint->inode)->i_prealloc_count) {
+     /* Some of preallocation blocks were not allocated */
+ #ifdef REISERQUOTA_DEBUG
+-	reiserfs_debug (s, "reiserquota: freeing (failed prealloc) %d blocks id=%u", amount_needed + hint->prealloc_size - nr_allocated - INODE_INFO(hint->inode)->i_prealloc_count, hint->inode->i_uid);
++	reiserfs_debug (s, REISERFS_DEBUG_CODE, "reiserquota: freeing (failed prealloc) %d blocks id=%u", amount_needed + hint->prealloc_size - nr_allocated - REISERFS_I(hint->inode)->i_prealloc_count, hint->inode->i_uid);
+ #endif
+ 	DQUOT_FREE_BLOCK_NODIRTY(hint->inode, amount_needed +
+ 	                         hint->prealloc_size - nr_allocated -
+diff -rupNX /home/jack/.kerndiffexclude linux-2.6.10-rc2-mm1-2-offadd/fs/reiserfs/stree.c linux-2.6.10-rc2-mm1-3-reiserdebug/fs/reiserfs/stree.c
+--- linux-2.6.10-rc2-mm1-2-offadd/fs/reiserfs/stree.c	2004-11-16 16:39:09.000000000 +0100
++++ linux-2.6.10-rc2-mm1-3-reiserdebug/fs/reiserfs/stree.c	2004-11-18 20:26:07.000000000 +0100
+@@ -1388,7 +1388,7 @@ int reiserfs_delete_item (struct reiserf
+     do_balance(&s_del_balance, NULL, NULL, M_DELETE);
  
--static void reiserfs_sync_fs (struct super_block * s)
-+static int reiserfs_sync_fs (struct super_block * s, int wait)
- {
-     if (!(s->s_flags & MS_RDONLY)) {
-         struct reiserfs_transaction_handle th;
-@@ -76,11 +76,12 @@ static void reiserfs_sync_fs (struct sup
-     } else {
-         s->s_dirt = 0;
+ #ifdef REISERQUOTA_DEBUG
+-    reiserfs_debug (p_s_sb, "reiserquota delete_item(): freeing %u, id=%u type=%c", quota_cut_bytes, p_s_inode->i_uid, head2type(&s_ih));
++    reiserfs_debug (p_s_sb, REISERFS_DEBUG_CODE, "reiserquota delete_item(): freeing %u, id=%u type=%c", quota_cut_bytes, p_s_inode->i_uid, head2type(&s_ih));
+ #endif
+     DQUOT_FREE_SPACE_NODIRTY(p_s_inode, quota_cut_bytes);
+ 
+@@ -1465,7 +1465,7 @@ void reiserfs_delete_solid_item (struct 
+ 	    do_balance (&tb, NULL, NULL, M_DELETE);
+ 	    if (inode) {	/* Should we count quota for item? (we don't count quotas for save-links) */
+ #ifdef REISERQUOTA_DEBUG
+-		reiserfs_debug (th->t_super, "reiserquota delete_solid_item(): freeing %u id=%u type=%c", quota_cut_bytes, inode->i_uid, key2type(key));
++		reiserfs_debug (th->t_super, REISERFS_DEBUG_CODE, "reiserquota delete_solid_item(): freeing %u id=%u type=%c", quota_cut_bytes, inode->i_uid, key2type(key));
+ #endif
+ 		DQUOT_FREE_SPACE_NODIRTY(inode, quota_cut_bytes);
+ 	    }
+@@ -1786,7 +1786,7 @@ int reiserfs_cut_from_item (struct reise
+ 	REISERFS_I(p_s_inode)->i_flags &= ~i_pack_on_close_mask ;
      }
-+    return 0;
- }
+ #ifdef REISERQUOTA_DEBUG
+-    reiserfs_debug (p_s_inode->i_sb, "reiserquota cut_from_item(): freeing %u id=%u type=%c", quota_cut_bytes, p_s_inode->i_uid, '?');
++    reiserfs_debug (p_s_inode->i_sb, REISERFS_DEBUG_CODE, "reiserquota cut_from_item(): freeing %u id=%u type=%c", quota_cut_bytes, p_s_inode->i_uid, '?');
+ #endif
+     DQUOT_FREE_SPACE_NODIRTY(p_s_inode, quota_cut_bytes);
+     return n_ret_value;
+@@ -1999,7 +1999,7 @@ int reiserfs_paste_into_item (struct rei
+     fs_gen = get_generation(inode->i_sb) ;
  
- static void reiserfs_write_super(struct super_block *s)
- {
--    reiserfs_sync_fs(s);
-+    reiserfs_sync_fs(s, 1);
- }
+ #ifdef REISERQUOTA_DEBUG
+-    reiserfs_debug (inode->i_sb, "reiserquota paste_into_item(): allocating %u id=%u type=%c", n_pasted_size, inode->i_uid, key2type(&(p_s_key->on_disk_key)));
++    reiserfs_debug (inode->i_sb, REISERFS_DEBUG_CODE, "reiserquota paste_into_item(): allocating %u id=%u type=%c", n_pasted_size, inode->i_uid, key2type(&(p_s_key->on_disk_key)));
+ #endif
  
- static void reiserfs_write_super_lockfs (struct super_block * s)
-@@ -526,6 +527,7 @@ struct super_operations reiserfs_sops = 
-   .clear_inode  = reiserfs_clear_inode,
-   .put_super = reiserfs_put_super,
-   .write_super = reiserfs_write_super,
-+  .sync_fs = reiserfs_sync_fs,
-   .write_super_lockfs = reiserfs_write_super_lockfs,
-   .unlockfs = reiserfs_unlockfs,
-   .statfs = reiserfs_statfs,
+     if (DQUOT_ALLOC_SPACE_NODIRTY(inode, n_pasted_size)) {
+@@ -2048,7 +2048,7 @@ error_out:
+     /* this also releases the path */
+     unfix_nodes(&s_paste_balance);
+ #ifdef REISERQUOTA_DEBUG
+-    reiserfs_debug (inode->i_sb, "reiserquota paste_into_item(): freeing %u id=%u type=%c", n_pasted_size, inode->i_uid, key2type(&(p_s_key->on_disk_key)));
++    reiserfs_debug (inode->i_sb, REISERFS_DEBUG_CODE, "reiserquota paste_into_item(): freeing %u id=%u type=%c", n_pasted_size, inode->i_uid, key2type(&(p_s_key->on_disk_key)));
+ #endif
+     DQUOT_FREE_SPACE_NODIRTY(inode, n_pasted_size);
+     return retval ;
+@@ -2081,7 +2081,7 @@ int reiserfs_insert_item(struct reiserfs
+ 	    quota_bytes = inode->i_sb->s_blocksize + UNFM_P_SIZE ;
+ 	}
+ #ifdef REISERQUOTA_DEBUG
+-	reiserfs_debug (inode->i_sb, "reiserquota insert_item(): allocating %u id=%u type=%c", quota_bytes, inode->i_uid, head2type(p_s_ih));
++	reiserfs_debug (inode->i_sb, REISERFS_DEBUG_CODE, "reiserquota insert_item(): allocating %u id=%u type=%c", quota_bytes, inode->i_uid, head2type(p_s_ih));
+ #endif
+ 	/* We can't dirty inode here. It would be immediately written but
+ 	 * appropriate stat item isn't inserted yet... */
+@@ -2127,7 +2127,7 @@ error_out:
+     /* also releases the path */
+     unfix_nodes(&s_ins_balance);
+ #ifdef REISERQUOTA_DEBUG
+-    reiserfs_debug (th->t_super, "reiserquota insert_item(): freeing %u id=%u type=%c", quota_bytes, inode->i_uid, head2type(p_s_ih));
++    reiserfs_debug (th->t_super, REISERFS_DEBUG_CODE, "reiserquota insert_item(): freeing %u id=%u type=%c", quota_bytes, inode->i_uid, head2type(p_s_ih));
+ #endif
+     if (inode)
+ 	DQUOT_FREE_SPACE_NODIRTY(inode, quota_bytes) ;
 
---gBBFr7Ir9EOA20Yy--
+--WhfpMioaduB5tiZL--
