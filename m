@@ -1,78 +1,37 @@
-From: Kuba Ober <kuba@mareimbrium.org>
-Subject: Re: 33 bad sectors kills 20GB
-Date: Mon, 6 May 2002 08:54:22 -0400
-Message-ID: <200205060854.22310.kuba@mareimbrium.org>
-References: <Pine.LNX.4.44.0205032353051.25287-100000@mooru.gurulabs.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: 2.4.19-pre7 / corruption on unwanted reboot
+Date: 06 May 2002 08:54:02 -0400
+Message-ID: <1020689642.1511.2100.camel@tiny>
+References: <20020504211147.GA20092@matrix.wg>
+	<1020564448.3946.609.camel@tiny>  <20020506123638.GA15023@matrix.wg>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-10255-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10256-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <Pine.LNX.4.44.0205032353051.25287-100000@mooru.gurulabs.com>
+In-Reply-To: <20020506123638.GA15023@matrix.wg>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Dax Kelson <dax@gurulabs.com>
-Cc: reiserfs-list@namesys.com
+To: Dirk Mueller <dmuell@gmx.net>
+Cc: reiserfs-list@namesys.com, axboe@suse.de
 
-On sobota 04 maj 2002 10:58 am, Dax Kelson wrote:
-> This is a 20GB filesystem, used dd_rescue to make an image of the drive:
->
-> Summary for /dev/hda3 -> hda3.img:
-> dd_rescue: (info):
-> ipos:  19711944.0k
-> opos:  19711944.0k
-> xferd:  19711944.0k
-> errs:     33
-> errxfer:        16.5k
-> succxfer:  19711927.5k
-> avg.rate:    11743kB/s
->
-> I then ran reiserfsck on the image file:
->
-> look_for_lost: 6 files seem to left not linked to lost+found
->         Objects without names 1377
->         Empty lost dirs removed 10
->         Dirs linked to /lost+found: 149
->                 Dirs without stat data found 5
->         Files linked to /lost+found 1228
-> Pass 4 - done         left 298, 0 /sec
->         Deleted unreachable items 117
-> Syncing..done
-> Done
->
-> (That took 3+ hours on a PIII 900, 512MB ram box)
->
-> I mounted the image, and pretty much everything is gone.
->
-> Is it normal for 33 bad sectors (16.5k) of data (out of 19711944k) to
-> completely kill the fs?
->
-> Would I have better luck if I used the -A option on dd_rescue?
->
-> "        -A         Always write blocks, zeroed if err (def=no);"
+On Mon, 2002-05-06 at 08:36, Dirk Mueller wrote:
+> On Sam, 04 Mai 2002, Chris Mason wrote:
 
-What you did without using -A is following:
+[ reiserfs corruption after a crash, 2.4.19pre7 ]
 
-fs with errors:
+> 
+> > Hmmm, not good at all.  Are these 3 systems IDE or scsi?  Do they run
+> > additional patches on top of pre7?  What kernels < pre7 have you tried
+> > that didn't show this problem?
+> 
+> All IDE. The kernel that didn't show this problem was 2.4.16 (plain). No 
+> additional patches on 2.4.19-pre7. 
 
-xxxxxpxxxxxxxxxxxxbbxxxxxxxxxxxxxxx
+Please tell us everything about your IDE config.  Jens and I are already
+trying to track down some odd reiserfs + ide problems on 2.4.19pre7, but
+so far that was only with our barrier write patches applied.
 
-after dd:
+-chris
 
-xxxxxpxxxxxxxxxxxxxxxxxxxxxxxxxxx--
-
-Now assume that p is a pointer in the fs data structures that pointed to the 
-last block (the last x). Now it points nowhere.
-
-You have reorganized your filesystem without updating all the pointers there 
-are in the metadata. Nothing is going to rescue that wreck,  lest some 
-by-hand hexediting.
-
-You *absolutely* need to use -A. Or at least that's how I understand things.
-
-You may also need to do reiserfsck with rebuild-tree, although try without it 
-first. I hope you have the latest version of reiserfstools -- if not, you 
-*have* to get the latest one.
-
-Cheers, Kuba
