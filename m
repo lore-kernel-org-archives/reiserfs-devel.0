@@ -1,80 +1,74 @@
-From: "Mark M. Hoffman" <mhoffman@lightlink.com>
-Subject: Re: LVM1 snapshots and reiserfs
-Date: Tue, 20 Apr 2004 10:42:09 -0400
-Message-ID: <20040420144208.GA22589@earth.solarsys.private>
-References: <20040409193749.GA15077@earth.solarsys.private> <1081878952.27614.42.camel@watt.suse.com>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: reiser4 and bonnie problems
+Date: Tue, 20 Apr 2004 18:51:58 +0400
+Message-ID: <20040420145158.GC1579@backtop.namesys.com>
+References: <20040416203937.GY14134@nysv.org> <26F302F3-9042-11D8-8B4A-000A95CD704C@wagland.net> <2EB65FD6-924A-11D8-8B4A-000A95CD704C@wagland.net> <16516.54935.159587.423283@laputa.namesys.com> <61B07E02-92A8-11D8-8B4A-000A95CD704C@wagland.net> <16517.10147.704572.959551@laputa.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18081-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18082-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1081878952.27614.42.camel@watt.suse.com>
+In-Reply-To: <16517.10147.704572.959551@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <mason@suse.com>
-Cc: ReiserFS <reiserfs-list@namesys.com>
+To: Nikita Danilov <Nikita@Namesys.COM>
+Cc: Paul Wagland <paul@wagland.net>, reiserfs-list@Namesys.COM
 
-Hi Chris:
+On Tue, Apr 20, 2004 at 05:37:39PM +0400, Nikita Danilov wrote:
+> Paul Wagland writes:
+>  > 
+>  > On Apr 20, 2004, at 9:51, Nikita Danilov wrote:
+>  > 
+>  > > Paul Wagland writes:
+>  > >> Bonnie: drastic I/O error (write(2)): No space left on device
+>  > >
+>  > > Err.. this is completely different from what we had previously: "No
+>  > > space left on device" is understandable where not reasonable. What is
+>  > > completely mysterious is "No such file or directory" error that you
+>  > > reported before.
+>  > 
+>  > Yes, last night I could not get that "No such file or directory" error 
+>  > to appear. I will try to reproduce that particular error again later 
+>  > tonight. However, this other problem happens at exactly the same time, 
+>  > and is an error in the reiser4.
+>  > 
+>  > Just to summarise everything that is written below, this is what bonnie 
+>  > is doing:
+>  > 1. write 3.5 GB onto a 4GB partition. This works
+>  > 2. delete 3.5 GB from a 4GB partition. This works.
+> 
+> Disk blocks freed during transaction are not actually freed until
+> transaction commits.
+> 
+>  > 3. I check using df that the disk space is free. That works.
+> 
+> But that "delayed freeing" confused users (they did cp, rm, but df has
+> still showed that space is used), so that statfs(2) (system call used by
+> df) was modified to take these delayed blocks into account and pretend
+> that they are free.
+> 
+>  > 4. write 3.5GB onto a 4GB partition. This fails.
+> 
+> Try to repeat this with sync before step 4.
+> 
+>  > 
+>  > At the time of failure, according to df there is stiff 3.5 GB
+>  > free. So, I say that reiser4 has a problem.
+> 
+> df lies.
 
-(long delay because I was on vacation last week...)
+reiser4_statfs() was changed to report deleted blocks as free space immediately
+after rm(1).  
 
-* Chris Mason <mason@suse.com> [2004-04-13 13:55:53 -0400]:
-> On Fri, 2004-04-09 at 15:37, Mark M. Hoffman wrote:
-> > Hello:
-> > 
-> > (I've already sent this to the LVM list; it was suggested that
-> > I ask here as well.)
-> > 
-> > Sometimes, but not always, I am unable to mount a snapshot.
-> > When it fails, I see the following lines in my logs...
-> > 
-> > kernel: reiserfs: checking transaction log (device 3a:06) ...
-> > kernel: clm-2076: device is readonly, unable to replay log
-> > kernel: Replay Failure, unable to mount
-> > kernel: reiserfs_read_super: unable to initialize journal space
-> > 
-> > I am using RedHat 9 with the following stock packages:
-> > 
-> > kernel-smp-2.4.20-30.9
-> > lvm-1.0.3-12
-> > reiserfs-utils-3.6.4-5
-> > 
-> > I have not tried the combination of snapshots & reiserfs with
-> > earlier RedHat packages so I don't know if this is a regression.
-> > 
-> > After some STFW, I thought I might need a "VFS lock" patch.
-> > However, it looks like this was already included by RedHat...
-> > in kernel-smp-2.4.20-30.9.src.rpm there is already this patch:
-> > linux-2.4.18-lvm-VFSlock.patch.
-> > 
-> > Is there anything else I can try or look at?
-> > 
-> Hard to say, but you might want to check their VFSlock patch for this
-> hunk (or something like it)
-> diff -ur linux.beta3.1/fs/reiserfs/super.c linux.beta3/fs/reiserfs/super.c
-> --- linux.beta3.1/fs/reiserfs/super.c	2003-03-12 08:51:25.000000000 -0500
-> +++ linux.beta3/fs/reiserfs/super.c	2003-03-12 08:43:08.000000000 -0500
-> @@ -83,7 +83,7 @@
->      reiserfs_prepare_for_journal(s, SB_BUFFER_WITH_SB(s), 1);
->      journal_mark_dirty(&th, s, SB_BUFFER_WITH_SB (s));
->      reiserfs_block_writes(&th) ;
-> -    journal_end(&th, s, 1) ;
-> +    journal_end_sync(&th, s, 1) ;
->    }
->    s->s_dirt = 0;
->    unlock_kernel() ;
+It was done because reiser4_write() should trigger fs commit and recover free
+space.   If commit does not happen, it is a reiser4 bug.
 
-Right, the above hunk is already part of RedHat's VFSlock patch.  Thanks
-for the hint though.  If there's nothing else easy or obvious to check,
-I guess I'll build kernel.org 2.4.26 for it.  I was hoping to avoid that -
-oh well.
-
-Regards,
+>  > Paul
+> 
+> Nikita.
 
 -- 
-Mark M. Hoffman
-mhoffman@lightlink.com
-
+Alex.
