@@ -1,85 +1,56 @@
-From: Jeremy West <jkwest@gmail.com>
-Subject: Re: reiser4 and reiserfs co-existence?
-Date: Tue, 9 Nov 2004 10:41:25 -0500
-Message-ID: <b28a886104110907416476fb50@mail.gmail.com>
-References: <b28a886104110808555d3f59dc@mail.gmail.com>
-	 <1099933755.13138.4.camel@localhost>
-	 <b28a886104110823161fe3a30d@mail.gmail.com>
-	 <1099997754.1373.72.camel@tribesman.namesys.com>
-Reply-To: Jeremy West <jkwest@gmail.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: Bug with fsck.reiser4 build-fs - Hangs at 100%
+Date: Tue, 09 Nov 2004 19:15:15 +0300
+Message-ID: <1100016914.1373.83.camel@tribesman.namesys.com>
+References: <Pine.LNX.4.51.0411052339130.5646@leandra.the-lab.virtadpt.net>
+	 <200411071514.50082.vitaly@namesys.com>
+	 <Pine.LNX.4.51.0411081412321.5646@leandra.the-lab.virtadpt.net>
+	 <b28a886104110811287311b7@mail.gmail.com>
+	 <Pine.LNX.4.51.0411082248520.5646@leandra.the-lab.virtadpt.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22319-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22320-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1099997754.1373.72.camel@tribesman.namesys.com>
+In-Reply-To: <Pine.LNX.4.51.0411082248520.5646@leandra.the-lab.virtadpt.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: Julia Wolf <julia@virtadpt.net>
+Cc: reiserfs-list@namesys.com
 
-Yes, I have a source code tarball that can't be built correctly.  You
-can get this file from other places, but it might be best to test
-exactly what I'm using.  I'm building php, and applying this patch.
+Hello
 
-www.jeremysplace.org/php-4.3.9.tar.bz2
-http://www.jeremysplace.org/php-4.3.6-includepath.diff
-
-To answer Markus's question.  I'm not having any bus errors .... yet. 
-At least I hope I don't get any.  I like to deal with one problem at a
-time.  I will reboot my machine into a LiveCD, and debug some reiser4
-for you.  How's best to do this anyway.  The debug script that you
-referenced won't find anything unless something odd happens, right? 
-What does the script do?  I guess this is a stupid question, huh?
-
-On Tue, 09 Nov 2004 13:55:54 +0300, Vladimir Saveliev <vs@namesys.com> wrote:
-> Hello
+On Tue, 2004-11-09 at 06:55, Julia Wolf wrote:
+> On Mon, 8 Nov 2004, Jeremy West wrote:
 > 
-> On Tue, 2004-11-09 at 10:16, Jeremy West wrote:
-> > Ok.  I think I may have found a glitch in reiser4.  It seems that my
-> > freezing coincidentally happened every time I tried installing php.
-> > Each time my system froze, the php build would crap out at the same
-> > point.  Basically the bulid would say that it was running the
-> > pear-installer program, then give me a segmentation fault.
+> > So you were experiencing the filesystem hanging and then fixed it
+> > using the latest reiser4progs?  I thought reiser4progs was basically
+> > provided mkfs.reiser4 and fsck.reiser4?  I was thinking my issue was
+> > kernel related, and not reiser4progs related.  I guess I totally
+> > missed the mark there then.
 > 
-> Do i understand correctly that you have a source code tar ball which can
-> not be built in reiser4 filesystem? Where can i find it?
+>   No, you were right the first time. There were two completely different
+> bugs I reported. One was with the kernel locking up (which still happens
+> by the way). And the other one was just the fsck.reiser4 going into an
+> infinite loop or something, the machine kept running fine otherwise.
 > 
+>   The kernel lock-ups seem to mostly happen once the filesystem is 200G
+> full (out of about 250G) and when writing large files. I can actuially see
+> when it's just about to lock up because the whole system 'pauses' but
+> interupts (like keyboard and blinking cursor on framebuffer) keep running,
+> and then after like 10 seconds or so, it locks up hard. (Framebuffer
+> cursor stops and no response to keystrokes (caps lock and alt-sysreq)
 > 
+>   When it pauses/hesitates I can alt+sysreq, but for some weird reason
+> with this kernel (Linux 2.6.9 with broken-out reiser4 pataches)
+> alt+sysrew-T and alt+sysrew-M or P, etc. don't print any information (just
+> the header)
 > 
-> >
-> > So ... it seems to me that reiser4 is having some issues handling
-> > segfault events.  I'm not sure how to tell what caused the segfault.
-> > I don't think it's memory, because it happens in the same spot of the
-> > build every time.  I've done this 4 times now.  That is not random.
-> >
-> >
-> > On Mon, 08 Nov 2004 18:09:15 +0100, Redeeman <redeeman@metanurb.dk> wrote:
-> > > On Mon, 2004-11-08 at 11:55 -0500, Jeremy West wrote:
-> > >
-> > >
-> > > > HI,
-> > > >
-> > > > I'm new to the list.  I've taken the plunge and tasted the speed of
-> > > > reiser4.  Excellent work.  I think I've stumbled upon a bug though.  I
-> > > > have another partition formatted as reiserfs 3.6.  When I mount this
-> > > > partition and listen to music from it, my reiser4 / partition stops
-> > > > responding.  I mean every command I issue to the kernel results in a
-> > > > segmentation fault.  Has anyone else had this problem?
-> > > >
-> > > > I'm using redeeman-sources, based on mm-sources patch set.
-> > > how old would this happen to be? i mean.. give a uname -a
-> > > --
-> > > Redeeman <redeeman@metanurb.dk>
-> > >
-> > >
-> >
-> 
-> 
+Would you please try to reproduce this lockup with reiser4 debug turned
+on (File systems -> Reiser4 (EXPERIMENTAL ...) -> Enable reiser4 debug
+options -> Assertions)? Can you set up serial console so that we could
+catch reiser4 output if it will be issued?
 
 
--- 
-Jeremy West
-//---------------------------
-"I had a life once... now I have a computer and DSL"
