@@ -1,27 +1,37 @@
-From: Thorsten Mauch <mauch@imkenberg.de>
-Subject: AW: rebuildfs
-Date: Tue, 5 Aug 2003 20:41:57 +0200
-Message-ID: <E5A63F34D141D111A6F4080009D70ACA346D69@imkedv_pdc>
+From: Grant Miner <mine0057@mrs.umn.edu>
+Subject: r4 v. ext3, quick speed vs. cpu experiments
+Date: Tue, 05 Aug 2003 17:06:12 -0500
+Message-ID: <3F302A54.2050204@mrs.umn.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15160-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15161-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "'reiserfs-list@namesys.com'" <reiserfs-list@namesys.com>
-Cc: 'Vitaly Fertman' <vitaly@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Hi 
-I'm really not a expert in this. I found the tip in:
+"mozilla-1.5a.tar" is mozilla 1.5alpha source tar, uncompressed. 
+Partition mkfs.ext3 or mkfs.reiser4 --keys=SHORT is run before each run. 
+Linux is 2.6.0-test2.
 
-http://www.unixwiz.net/techtips/recovering-ext2.html
+untar mozilla-1.5a.tar (file is on a reiser3 partition):
+ext3: 17.64s 28% cpu
+reiser4: 10.79s 67% cpu
+sum: reiser4 0.61x time, 2.39x cpu
 
-Maybe it helps a bit
+cp -a mozilla-src mozilla-src-copy, same partition:
+ext3: 0:56.35sec 11% cpu
+reiser4: 0:16.50 55% cpu
+sum: reiser4 0.29x time, 5x cpu
 
+tar c mozilla-src > mozilla.tar, same partition:
+ext3: 0:36.47sec 10%cpu
+reiser4: 0:16.90sec 25%cpu
+sum: reiser4 0.46x time, 2.5x cpu
 
-> Do you mean that we could just miss 
->"sync" option and got wrong result? I will test it again.
+i'm impressed!
+
 
