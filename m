@@ -1,64 +1,88 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: Two "maybe" related problems
-Date: Wed, 19 May 2004 16:09:15 +0400
-Message-ID: <1084968555.1431.127.camel@tribesman.namesys.com>
-References: <200405181657.48868.mbuesch@freenet.de>
-	 <1084892983.1431.112.camel@tribesman.namesys.com>
-	 <200405191357.37303.mbuesch@freenet.de>
+From: Jeffrey Mahoney <jeffm@suse.com>
+Subject: Re: ReiserFS Maximum file size (in practice)
+Date: Wed, 19 May 2004 08:13:15 -0400
+Message-ID: <40AB4F5B.7050109@suse.com>
+References: <40AA74CA.5040306@suse.com> <1084927507.27142.2.camel@watt.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18764-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18765-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200405191357.37303.mbuesch@freenet.de>
+In-Reply-To: <1084927507.27142.2.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Michael Buesch <mbuesch@freenet.de>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Hello
-
-On Wed, 2004-05-19 at 15:57, Michael Buesch wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
+Chris Mason wrote:
+> On Tue, 2004-05-18 at 16:40, Jeff Mahoney wrote:
 > 
-> On Tuesday 18 May 2004 17:09, you wrote:
-> > This is probably caused by the fact that system oopsed already.
-> > I would suggest you to boot of rescue system and change /etc/fstab so
-> > that /dev/hda13 does not get mounted on booting (noauto in fourth field
-> > of a /etc/fstab's record)
-> > Do so for other filesystems underlying deveices of which were
-> > repartitioned.
-> > reboot in usual way
-> > if it does not oops on boot (it should not) - mkreiserfs will not get
-> > stuck
+>>Hey all -
+>>
+>>The ReiserFS FAQ that we quote and point people to when they ask 
+>>questions about limits in ReiserFS states that the maxmimum file size 
+>>for a reiserfs v3 filesystem is 2^60-1. However, the actual limits, in 
+>>practice, are far less.
+>>
+>>I tried to create a 3 TB sparse file, and ended up getting told it was 
+>>too large. 2 TB was too large also, just under 2 TB was ok.
+>>
+>>This is a result of super->s_maxbytes = (512LL << 32) - s->s_blocksize;, 
+>>in fs/reiserfs/super.c, which is set so that i_blocks isn't overflowed.
+>>
+>>Other filesystems that have the ability to cross the 2 TB limit on file 
+>>sizes simply ignore the limit and allow i_blocks to wrap. There's really 
+>>no reason we can't do the same.
+>>
+>>The patch is attached.
 > 
-> I rebooted and updated reiserfs tools. Now it works as expected.
 > 
-> But should the kernel (reiser4 driver) be "allowed" to oops,
+> Are quotas happy with this?
 
-No.
+They should be, but aren't. The data structures support it. The on-disk 
+quota format doesn't keep track of blocks, it keeps track of bytes. The 
+DQUOT* macros do the translation based on the blocksize in the super. 
+The value to track bytes is a u64, so it should track the increased 
+maximum just fine. As expected, the places were it may get sticky are 
+when i_blocks/i_bytes are referenced. There are several places in the 
+quota code where this is done, but most are just keeping them in line 
+with its view of the world. The values will be appropriately wrong as 
+they are elsewhere after they wrap.
 
-> if someone tries to mount a non-existing partition, just because
-> there's some old and corrupt data left, from a previous filesystem?
-> Shouldn't it simply refuse to mount?
+There is one important place where they're accessed though, and that's 
+in dquot_transfer. inode_get_bytes() is used to obtain the number of 
+bytes to transfer from one quota to another, and if wrapped, will 
+contain a wrong value and the wrong transfer will occur. The 
+infrastructure allows the dq_op->transfer() call to be overridden, but 
+I'm not too wild about copying that function wholesale just to change 
+one line to be something reiserfs specific.
 
-Yes
-we shall fix it
+It seems to me that while we're not allowed to change the st_blocks 
+exported to userspace, we're allowed to change struct inode to reflect 
+the increased block count available in 2.6. We should at least be 
+tracking it correctly internally. Was it simply overlooked when the max 
+file size was increased for the entire system? Currently, i_blocks is an 
+unsigned long which makes it work fine on 64-bit systems. 
+i_blocks/i_bytes are protected by inode->i_lock, so making 32-bit 
+systems use a 64-bit value for i_blocks doesn't introduce any atomicity 
+issues. Other filesystems are wrapping i_blocks as well, but for various 
+reasons, we're just the first to see the quota problem. (JFS doesn't yet 
+support quotas, XFS uses its own implementation)
 
+The question is if being correct on a case that gets truncated when 
+exported to userspace anyway is worth adding 4 bytes to every inode, 
+when there is a workable option to get around the shortcomings.
 
-> 
-> - -- 
-> Regards Michael Buesch  [ http://www.tuxsoft.de.vu ]
-> 
-> -----BEGIN PGP SIGNATURE-----
-> Version: GnuPG v1.2.4 (GNU/Linux)
-> 
-> iD8DBQFAq0uvFGK1OIvVOP4RAn2YAJ9+AYo29gLPT8jZjFdjV7pLka88cACg0vHQ
-> tvvzO2HGeT/x73FrTbaBJ5I=
-> =Yg1o
-> -----END PGP SIGNATURE-----
-> 
+The only other limit where the data structures would allow an overflow 
+is the 16 TB limit imposed by the maximum filesystem size. 
+stat_data->sd_blocks is 32-bit, but unless blocks-in-file <= 
+blocks-in-filesystem ceases to be an invariant, this will never happen. ;)
 
+-Jeff
+
+-- 
+Jeff Mahoney
+SuSE Labs
+jeffm@suse.com
