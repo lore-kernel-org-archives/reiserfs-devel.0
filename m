@@ -1,104 +1,148 @@
-From: Emil Larsson <d99-ela@nada.kth.se>
-Subject: Re: Interesting deletion idea
-Date: Sat, 09 Oct 2004 08:43:49 +0200
-Message-ID: <416788A5.7010301@nada.kth.se>
-References: <41662BC7.80309@comcast.net> <200410082214.i98MEbfT003666@turing-police.cc.vt.edu>            <4167282E.9030901@comcast.net> <200410090022.i990Mgcj001091@turing-police.cc.vt.edu>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: [PATCH] Support for unsupported options.
+Date: Sat, 09 Oct 2004 09:21:05 -0700
+Message-ID: <41680FF1.1060502@namesys.com>
+References: <4166FB7C.9040707@novell.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22038-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22042-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200410090022.i990Mgcj001091@turing-police.cc.vt.edu>
+In-Reply-To: <4166FB7C.9040707@novell.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Valdis.Kletnieks@vt.edu
-Cc: John Richard Moser <nigelenki@comcast.net>, reiserfs-list@namesys.com
+To: Jeff Mahoney <jeffm@novell.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>, Alexander Lyamin aka FLX <flx@namesys.com>
 
-Valdis.Kletnieks@vt.edu wrote:
+Approved.  flx, please confirm that this addresses the objection you had 
+to acls in SuSE distros preventing use of vanilla kernels.
 
->On Fri, 08 Oct 2004 19:52:14 EDT, John Richard Moser said:
->
->  
->
->>I thought the DOD algorithm was 7 pass?
->>    
->>
->
->Citation please?  If you have a better reference than DOD 5220-22.M,
->feel free to share it.
->
->  
->
-To the best of my knowledge, "DOD 7-pass" or similar expressions refer 
-to the sequential use of the "e", "c" and "e" overwrite methods as 
-described in DoD 5220.22-M / NISPOM 8-306. There is no basis for this in 
-any official regulations or guidelines that I have been made privy to - 
-it's just typical "more-must-be-better" thinking.
+Hans
 
->>If this is going on rapidly, there's no point in trying to completely
->>destroy the disk for *every* logical operation; but buffering the
->>operations and then only doing the most recent one, and destroying the
->>area before that one exactly, would be OK.  The idea is that rapid
->>overwrites from userspace get collapsed into a single overwrite; and
->>then the kernel overwrites a bunch of times before flushing that data to
->>disk to securely erase it.
->>    
->>
+Jeff Mahoney wrote:
+
 >
->The point is that you have no really good way to know beforehand that
->the flurry of writes is over, and it's time to collapse the writes into
->a single write.  
+> Yes, the subject sounds silly, but it's needed.
 >
->To demonstrate using your example:
+> The set of allowable mount options shouldn't change based on the running
+> kernel configuration. The feature that the option corresponds to may be
+> unavailable, but it should be sufficient to warn the user that the the
+> feature is disabled, but the mount has succeeded.
 >
->a = open("/some/file.txt");
->seek(a, 0, 0);
->fputc(a,'N');
->seek(a, 0, 0);
->fputc(a, 'D');
->seek(a,0,0);
->fputc(a, 'X');
+> Ext3 does this for things like acl/xattr, and I feel that we should as 
+> well.
 >
->At what point do you do the overwrite?  You place it just before the
->fputc 'X' - but you can't really delay to that rather than at the
->'N' or 'D' unless you *know* that the 'X' one will happen 'Soon Enough'.
->There's also the point that fputc() is stdio and buffered by default,
->unless you've called fflush() or setlinebuf() or similar.  Even if you
->look at the read()/write() syscall level, the Linux kernel will almost
->certainly automatically do most of the needed collapsing in the buffer
->cache code (look at fs/buffer.c for the gory details) - in fact, most
->of the time, you need to use fsync() or similar to *force* the data to
->actually get to the disk (often, the data doesn't go out until long after
->the process has actually exited - and then there's the different way
->that the different I/O elevators schedule things, just to add another
->layer of unpredictability into things).  The end result is that it's
->a lot harder than it looks to get this right...
+> Fortunately, the code to implement it is trivial.
 >
->In addition, doing the overwrite at *THAT* point is *the wrong point* - as
->you're about to overwrite the block at least once *anyhow*.  You *really* need to
->be doing erasing in the handling for the unlink() and (f)truncate() syscalls,
->because *that* is the point you're freeing the disk blocks - and the point of
->erasing is to prohibit scavenging of old data off the disk.  This has the added
->benefit of being something you *can* do basically at the filesystem's leisure,
->subject to a requirement that you return blocks to the free list fast enough
->to prevent disk space exhaustion (which is trickier than it looks - under heavy
->file create/write/read/unlink loads, you need to be doing it as fast as possible
->at exactly the time you have the least idle bandwidth - at worst case, a 3-pass
->erase of all blocks will limit you to 25% of the effective write bandwidth in a
->steady-state high-load situation).
+> Attached are two patches.
+> * reiserfs-unsupported-opts.diff
+> ~  - Adds a REISERFS_UNSUPPORTED_OPT mount flag, and uses it to denote
+> ~    when a mount option is allowed, but not supported in the running
+> ~    configuration.
+> ~  - Rather than setting/clearing this bit, it's treated as special
+> ~    and issues a warning using the name of the mount option.
+> * reiserfs-unsupported-acl.diff
+> ~  - Uses the above flag to denote ACLs and user xattrs as unsupported
+> ~    when support is not compiled in.
 >
->Also, you *really* need to be *very* careful regarding write barriers and the
->like - look at the linux-kernel archives for the last few months where a *long*
->series of threads about the problems on IDE.
+> Currently, if a filesystem is mounted with -oacl and they are not
+> compiled in, the filesystem will fail to mount.
 >
->Basically, if the drive has a write cache on it, you have to either disable
->it or jump through some *real* hoops in order to get strictly correct write
->barrier semantics (and on some drives, the situation is totally impossible).
+> Hans - Please take a quick look, I'd like to get this one upstream ASAP.
 >
+> -Jeff
 >
->  
->
-/Emil
+> --
+> Jeff Mahoney
+> SuSE Labs
+
+
+ >-------------------------
+
+ >This patch uses the REISERFS_UNSUPPORTED_OPT flag to denote -o(no)acl, and
+ >-o(no)user_xattr as unsupported, but allowable, when support isn't 
+built into
+ >the kernel.
+
+ >Signed-off-by: Jeff Mahoney <jeffm@novell.com>
+
+ >diff -ruPX dontdiff linux-2.6.8/fs/reiserfs/super.c 
+linux-2.6.8.fix/fs/reiserfs/super.c
+ >--- linux-2.6.8/fs/reiserfs/super.c    2004-10-08 16:46:09.070660248 -0400
+ >+++ linux-2.6.8.fix/fs/reiserfs/super.c    2004-10-08 
+16:42:59.896419104 -0400
+ >@@ -741,11 +747,19 @@
+    {"conv",    .setmask = 1<<REISERFS_CONVERT},
+    {"attrs",    .setmask = 1<<REISERFS_ATTRS},
+    {"noattrs",    .clrmask = 1<<REISERFS_ATTRS},
+ >+#ifdef CONFIG_REISERFS_FS_XATTR
+    {"user_xattr",    .setmask = 1<<REISERFS_XATTRS_USER},
+    {"nouser_xattr",.clrmask = 1<<REISERFS_XATTRS_USER},
+ >+#else
+ >+    {"user_xattr",    .setmask = 1<<REISERFS_UNSUPPORTED_OPT},
+ >+    {"nouser_xattr",.clrmask = 1<<REISERFS_UNSUPPORTED_OPT},
+ >+#endif
+#ifdef CONFIG_REISERFS_FS_POSIX_ACL
+    {"acl",        .setmask = 1<<REISERFS_POSIXACL},
+    {"noacl",    .clrmask = 1<<REISERFS_POSIXACL},
+ >+#else
+ >+    {"acl",        .setmask = 1<<REISERFS_UNSUPPORTED_OPT},
+ >+    {"noacl",    .clrmask = 1<<REISERFS_UNSUPPORTED_OPT},
+#endif
+    {"nolog",},     /* This is unsupported */
+    {"replayonly",    .setmask = 1<<REPLAYONLY},
+
+
+ >-------------------------
+
+ >This patch adds a REISERFS_UNSUPPORTED_OPT flag to denote when a mount 
+option
+ >is allowable, but is unsupported in the running configuration. This allows
+ >the potential for the set of mount options to be consistent, regardless of
+ >what features the kernel is compiled with.
+
+ >Rather than failing the mount, a warning is issued and the mount succeeds.
+
+ >Signed-off-by: Jeff Mahoney <jeffm@novell.com>
+
+ >diff -ruPX dontdiff linux-2.6.8/fs/reiserfs/super.c 
+linux-2.6.8.fix/fs/reiserfs/super.c
+ >--- linux-2.6.8/fs/reiserfs/super.c    2004-10-08 16:46:09.070660248 -0400
+ >+++ linux-2.6.8.fix/fs/reiserfs/super.c    2004-10-08 
+16:42:59.896419104 -0400
+ >@@ -659,8 +659,14 @@
+    for (opt = opts; opt->option_name; opt ++) {
+    if (!strncmp (p, opt->option_name, strlen (opt->option_name))) {
+        if (bit_flags) {
+ >-        *bit_flags &= ~opt->clrmask;
+ >-        *bit_flags |= opt->setmask;
+ >+                if (opt->clrmask == (1 << REISERFS_UNSUPPORTED_OPT))
+ >+                    reiserfs_warning (s, "%s not supported.", p);
+ >+                else
+ >+                    *bit_flags &= ~opt->clrmask;
+ >+                if (opt->setmask == (1 << REISERFS_UNSUPPORTED_OPT))
+ >+                    reiserfs_warning (s, "%s not supported.", p);
+ >+                else
+ >+                    *bit_flags |= opt->setmask;
+        }
+        break;
+    }
+ >diff -ruPX dontdiff linux-2.6.8/include/linux/reiserfs_fs_sb.h 
+linux-2.6.8.fix/include/linux/reiserfs_fs_sb.h
+ >--- linux-2.6.8/include/linux/reiserfs_fs_sb.h    2004-10-08 
+16:46:04.541348808 -0400
+ >+++ linux-2.6.8.fix/include/linux/reiserfs_fs_sb.h    2004-10-08 
+16:31:50.641161368 -0400
+ >@@ -467,6 +467,7 @@
+    REISERFS_TEST2,
+    REISERFS_TEST3,
+    REISERFS_TEST4,
+ >+    REISERFS_UNSUPPORTED_OPT,
+};
+
+#define reiserfs_r5_hash(s) (REISERFS_SB(s)->s_mount_opt & (1 << 
+FORCE_R5_HASH))
+
 
