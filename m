@@ -1,52 +1,46 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: build failure: reiser4progs-0.1.0
-Date: Wed, 6 Nov 2002 13:23:23 +0300
-Message-ID: <15816.60827.825112.148774@laputa.namesys.com>
-References: <200211052145.gA5Ljdr32055@mail.osdl.org>
+From: "Oleg O. Ossovitskii" <oleg@kgpa.ru>
+Subject: Re[2]: [reiserfs-dev] Re: [ANNOUNCE] reiser4 snaphots
+Date: Wed, 6 Nov 2002 13:20:43 +0200
+Message-ID: <9918235451.20021106132043@kgpa.ru>
+Reply-To: "Oleg O. Ossovitskii" <oleg@kgpa.ru>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11927-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11928-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200211052145.gA5Ljdr32055@mail.osdl.org>
+Resent-Message-Id: <E189OFD-0001DM-00@main.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Cliff White <cliffw@osdl.org>
-Cc: reiserfs-dev@Namesys.COM, Reiserfs-List@Namesys.COM, Linux-Kernel@vger.kernel.org
+To: ReiserFS-List <reiserfs-list@namesys.com>
 
-Cliff White writes:
- > 
- > Attempting to test reiser4, kernel 2.5.46, using the 2002.11.05 snapshot.
+Hello Nikita,
 
-Can you please try "./configure --enable-Werror=no --without-readline"
-as workaround?
+Wednesday, November 6, 2002, 12:17:16 PM, you wrote:
 
- > --------------------------------------------------
- > gcc -DHAVE_CONFIG_H -I. -I. -I../.. -I../../include -g -O2 -D_REENTRANT 
- > -D_FILE_OFFSET_BITS=64 -g -W -Wall -Wno-unused -Werror 
- > -DPLUGIN_DIR=\"/usr/local/lib/reiser4\" -c alloc40.c -MT alloc40.lo -MD -MP 
- > -MF .deps/alloc40.TPlo  -fPIC -DPIC -o .libs/alloc40.lo
- > cc1: warnings being treated as errors
- > alloc40.c: In function `callback_fetch_bitmap':
- > alloc40.c:50: warning: signed and unsigned type in conditional expression
- > alloc40.c: In function `callback_flush_bitmap':
- > alloc40.c:209: warning: signed and unsigned type in conditional expression
- > alloc40.c: In function `callback_check_bitmap':
- > alloc40.c:376: warning: signed and unsigned type in conditional expression
- > make[3]: *** [alloc40.lo] Error 1
- > make[3]: Leaving directory `/root/cgl/kern/reiser/reiser4progs-0.1.0/plugin/all
- > oc40'
- > make[2]: *** [all-recursive] Error 1
- > make[2]: Leaving directory `/root/cgl/kern/reiser/reiser4progs-0.1.0/plugin'
- > make[1]: *** [all-recursive] Error 1
- > make[1]: Leaving directory `/root/cgl/kern/reiser/reiser4progs-0.1.0'
- > make: *** [all] Error 2
- > -------------------------------------
- > cliffw
+ND>  > > http://namesys.com/snapshots/2002.11.05/
+ND>  > 
+ND>  > This is just a fyi.
+ND>  > 
+ND>  > The reiserfsprogs in this dir don't compile to the end for me with 
+ND>  > gcc3.2:
+ND>  > gcc (GCC) 3.2 20020903 (Red Hat Linux 8.0 3.2-7)
+ND>  > 
+ND>  > redhat 8.0
+ND>  > 
+ND>  > ./configure --prefix=/ --enable-Werror=no
 
-Nikita.
+ND> Try --without-readline
 
- > 
- > 
+Or add -ltermcap after -lreadline in Makefile
+
+BTW: is anywhere diff to apply Reiser4 to plain 2.5.x (not bk tree) or I have to made this
+manually (by hands)?
+
+
+Best regards, Oleg O. Ossovitskii
+software engineer, KGPA Ltd., Kaliningrad, West Russia
+tel: +7(0112)46-23-40, fax: +7(0112)43-64-96
+mailto:oleg@kgpa.ru, icq# 33366588
+
