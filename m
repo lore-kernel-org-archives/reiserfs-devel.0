@@ -1,46 +1,56 @@
-From: Philipp =?iso-8859-1?q?G=FChring?= <p.guehring@futureware.at>
-Subject: Unicode policy
-Date: Thu, 1 May 2003 17:38:04 +0200
-Message-ID: <200305011538.h41FcFn01653@linux1.futureware.at>
-Reply-To: p.guehring@futureware.at
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Unicode policy
+Date: Thu, 1 May 2003 19:48:19 +0400
+Message-ID: <20030501154819.GA15670@namesys.com>
+References: <200305011538.h41FcFn01653@linux1.futureware.at>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13911-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13912-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <200305011538.h41FcFn01653@linux1.futureware.at>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Philipp G?hring <p.guehring@futureware.at>
+Cc: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hello!
 
-Hi,
+On Thu, May 01, 2003 at 05:38:04PM +0200, Philipp G?hring wrote:
 
-I have some question regarding the Unicode policy of filenames in filesyste=
-m,=20
-especially ReiserFS.=20
+> I have some question regarding the Unicode policy of filenames in filesystem, 
+> especially ReiserFS. 
+> Are filenames stored in UTF-8?
 
-Are filenames stored in UTF-8?
-Should they be stored in UTF-8?
-Is it a question of the filesystem?
-Is it the applications job to interpret it?
-Or is the filesystem encoding independent?
-Are there migration plans to Unicode?
+No. filenames are stored "as is". If you write those as unicode, you get unicode.
 
-Any feedback is very appreciated.
+There are several restrictions on filenames in Unix/Linux:
+You cannot use 0-byte and '/'-byte as part of filename.
 
-Many greetings,
-- --=20
-~ Philipp G=FChring              p.guehring@futureware.at
-~ http://www.livingxml.net/       ICQ UIN: 6588261
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.6 (GNU/Linux)
-Comment: For info see http://www.gnupg.org
+> Should they be stored in UTF-8?
 
-iD8DBQE+sT9elqQ+F+0wB3oRAkm+AJwJbu/dNttqDRA5zPfBmAASndS1TgCgjQJW
-Q1hj0U8sHOKgJ7Tu0ooWyOQ=3D
-=3DPvVE
------END PGP SIGNATURE-----
+You decide how do you want to store your filenames.
+
+> Is it a question of the filesystem?
+
+Some filesystems do it, but I doubt FS should do it.
+
+> Is it the applications job to interpret it?
+
+It is debatable. Kernel/VFS/some library might do this as well.
+
+> Or is the filesystem encoding independent?
+
+Some filesystems are encoding-dependent and some are not (because they do not know anything about encoding at all).
+
+> Are there migration plans to Unicode?
+
+Migration of what? Migration of reiserfs to unicode is not planned.
+Same for reiser4. You can write whatever plugin to store filenames in any way
+you might imagine in reiser4.
+
+Bye,
+    Oleg
