@@ -1,88 +1,66 @@
-From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+From: Helge Hafting <helge.hafting@hist.no>
 Subject: Re: file as a directory
-Date: 24 Nov 2004 09:16:03 +0000
-Message-ID: <1101287762.1267.41.camel@pear.st-and.ac.uk>
-References: <2c59f00304112205546349e88e@mail.gmail.com>
-	 <41A1FFFC.70507@hist.no> <41A21EAA.2090603@dbservice.com>
-	 <41A23496.505@namesys.com>
+Date: Wed, 24 Nov 2004 11:32:13 +0100
+Message-ID: <41A4632D.4060608@hist.no>
+References: <2c59f00304112205546349e88e@mail.gmail.com>	 <41A1FFFC.70507@hist.no> <2c59f003041122222038834d7e@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22543-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22544-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41A23496.505@namesys.com>
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <2c59f003041122222038834d7e@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Tomas Carnecky <tom@dbservice.com>, Helge Hafting <helge.hafting@hist.no>, Amit Gud <amitgud1@gmail.com>, Linus Torvalds <torvalds@osdl.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Amit Gud <amitgud1@gmail.com>
+Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-On Mon, 2004-11-22 at 18:48, Hans Reiser wrote:
-> Tomas Carnecky wrote:
-> > Helge Hafting wrote:
-> >> I recommend looking at archived threads about file as directory,
-> >> you'll find many more arguments.  Currently there is one kind
-> >> of support for archive files - loop mounts over files containing
-> >> filesystem images.  These are not compressed though.
-> >
-> > Isn't reiserfs trying to implement such things? I've read that in some 
-> > next version of reiserfs one will be able to open 
-> > /etc/passwd/[username]  and get the informations about [username], 
-> > like UID, GID, home directory etc.
-> > Still true? And when can we except such a version of reiserfs?
-> > tom
-> >
-> It was more that we said we would like to implement the functionality 
-> necessary for doing that (e.g. inheritance), not that we would 
-> specifically do /etc/passwd.  And that functionality will trickle in 
-> over time.
+Amit Gud wrote:
+
+>On Mon, 22 Nov 2004 16:04:28 +0100, Helge Hafting <helge.hafting@hist.no> wrote:
+>
+>  
+>
+>>You won't get .tar or .tar.gz support in the VFS, for a few simple reasons:
+>>1. .tar and .tar.gz are complicated formats, and are therefore better
+>>   left to userland.  
+>>    
+>>
+>
+>Agreed that .tar.gz is a complicated format, but zlib is already in
+>the kernel. It _should_ simplify inflate and deflate of files. And as
+>compared to .gz format, .tar is much simpler, I guess.
+>
+>  
+>
+>>   It is hard to make a guaranteed bug-free decompressor that
+>>   is efficient and works with a finite amount of memory.  The kernel
+>>   needs all that - userland doesn't.
+>>    
+>>
+>
+>I think, finite amount of memory is the concern of worry, not the rest
+>... if we could rely on zlib.
 > 
-> Hans
+>  
+>
+>>2. Both .tar and .gz  file formats may improve with time.  Getting a new
+>>    version of tar og gunzip is easy enough - getting another compression
+>>    algorithm into the kernel won't be that easy.
+>>    
+>>
+>
+>Doesn't zlib in the kernel gets updated as the formats change? If not,
+>.tar formats would be worth trying first as proof of concept.
+>
+This is not so easy, as you have to audit the new version for
+correctness.  It is not the end of the world if tar or gzip
+occationally crashes on some corner case.   The kernel
+must not do that though.
 
+And then there is the much more complicated issues when
+writing into such an archive.  You skipped that part, or
+are you looking for a read-only solution only?
 
-I think something like
-
-/etc/passwd/[username]
-
-would be a really nice extension. The idea is more general, it would
-unify the namespace for file selection and part-of-file selection.
-
-So if you have a file named "/home/peter/book", you should be able to
-look at its Introduction as "/home/peter/book/Introduction" or chapter
-3, paragraph 2 as
-/home/peter/book/chapter[3]/paragraph[2]
-
-(this may not be the ideal syntax, but something like this should be
-good.)
-
-In this case you could use 
-/home/peter/book/chapter[3]/paragraph[2]
-as a "real" file, read it, even edit it in a text editor. When you later
-look at the whole book as /home/peter/book , you should see your
-changes.
-
-The idea is related to the W3C "XPath"
-http://www.w3.org/TR/xpath
-http://www.w3schools.com/xpath/
-XPath only applies within XML files, but it is mostly a superset of
-current Unix file naming, so it would be natural to unify the two
-namespaces. The idea is that you would use the same syntax for selecting
-file and part-of-file in a way that the user doesn't even need to know
-at which level they "cross over" to selecting within the file.
-In the above example, it may be that each chapter is stored in a
-separate "real" file. We don't even need to know. In a sense, the whole
-concept of a "file" becomes a bit blurred. (What we need to think about
-is which fragments to store metadata for, and which fragments should
-simply inherit their metadata from the parent.)
-Hans' tree-based file system is really ideal for this kind of thing.
-I am not sure how closely we would want to follow the XPath syntax (it
-has some nice ideas), but it should then be easy to write an plugin
-doing XPath really efficiently on top of this.(And it could be made to
-work for non-XML files as well.)
-
-I would really like to implement this for the next version of Hans' file
-system.
- Peter
-
+Helge Hafting
