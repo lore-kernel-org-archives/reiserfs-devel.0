@@ -1,53 +1,29 @@
-From: Antonino Sergi <voyaser@tiscalinet.it>
-Subject: Heavy performance loss after crash
-Date: 01 Oct 2003 08:44:31 +0200
-Message-ID: <1064990671.2161.29.camel@darwin.roma1.infn.it>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: 2.6.0-test6 crash while reading files in /proc/fs/reiserfs/sda1
+Date: Wed, 1 Oct 2003 14:11:47 +0400
+Message-ID: <200310011411.47723.vitaly@namesys.com>
+References: <1064936688.4222.14.camel@localhost.localdomain> <200309302006.32584.vitaly@namesys.com> <3F79D71F.2020901@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15755-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15756-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3F79D71F.2020901@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Zan Lynx <zlynx@acm.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, nikita@namesys.com
 
-Hi,
+> nikita, if vitaly doesn't solve it before you get in, it is yours to solve.
+>
+> Vitaly, what configuration did you fail to replicate it using (I hope
+> you attempted it on your machine before asking the user all this)?
 
-I'm new to this list and I'm not sure it is the right one.
-
-I have a 120GB disk with only 1 reiserfs(70GB used) from 2.4.18-14
-(RH8).
-
-During heavy I/O (copy of 1GB from this partition to the same one) I
-noticed that updatedb started(by anacron) and, trying to get out of an
-application (in development) I caused a kernel crash (keybord leds
-blinking).
-
-After restarting the PC I found some ext3 corruption on other partitions
-and:
-
-1)it takes about 2 minutes to mount the reiserfs partition.
-2)reiserfsck --check takes long time (10 minutes) and, looking at
-indexes during tree scan, several times it stops for several seconds,
-but it does not detect any problem.
-3)during any file seek operation for some file it get stuck for several
-minutes. For example: I'm trying to copy the copyable to another disk
-and there are files that are copied, let's say, 5MB in less than a
-second and then it wait for minutes (HD led on and no actual heads
-activity, by hears and hand touch) to write another "packet".
-4)I tried hdparm -T -t: after 2-3 minutes I got ~650MB/s about cache,
-and I have not waited enough to see the other response
-
-I tried --fix-fixable anyway, but not --rebuild-tree nor -S (not before
-copying the copyable).
-
-I do not understand if the problem is about reiserfs corruption or if it
-is a hardware problem.
-
-Any idea, suggestion or information is appreciated 
+yes I did, 2.4.22 works fine for me.
 
 -- 
-Antonino Sergi <voyaser@tiscalinet.it>
-
+Thanks,
+Vitaly Fertman
