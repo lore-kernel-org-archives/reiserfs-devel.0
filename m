@@ -1,39 +1,62 @@
-From: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
-Subject: Re: reiserfs logging patches udpated
-Date: Thu, 25 Mar 2004 20:22:17 +0100
-Message-ID: <m3d670hguu.fsf@merlin.emma.line.org>
-References: <1080149399.14737.77.camel@watt.suse.com>
-	<200403250147.54246.bernd-schubert@web.de>
-	<1080176455.14737.140.camel@watt.suse.com>
-	<200403251911.24983.bernd-schubert@web.de>
-	<1080238798.26669.12.camel@watt.suse.com>
+From: Jonathan Briggs <jbriggs@esoft.com>
+Subject: Re: Reiser4 panic at fs/reiser4/lock.c:434
+Date: Thu, 25 Mar 2004 12:41:54 -0700
+Message-ID: <1080243714.31969.6.camel@localhost.localdomain>
+References: <1080175834.13000.10.camel@localhost.localdomain>
+	 <16482.50006.976095.680498@laputa.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17477-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-N2Xah8eMYddUBpwoNOs9"
+Return-path: <reiserfs-list-return-17478-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1080238798.26669.12.camel@watt.suse.com> (Chris Mason's
- message of "Thu, 25 Mar 2004 13:19:58 -0500")
+In-Reply-To: <16482.50006.976095.680498@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Chris Mason <mason@suse.com>
-Cc: Bernd Schubert <bernd-schubert@web.de>, reiserfs-list@namesys.com
+To: Nikita Danilov <Nikita@Namesys.COM>
+Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Chris Mason <mason@suse.com> writes:
+--=-N2Xah8eMYddUBpwoNOs9
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> reiserfs: using ordered data mode
-> Reiserfs journal params: device dm-0, size 8192, journal first block 18,
-> max trans len 1024, max batch 900, max commit age 30, max trans age 30
-> reiserfs: checking transaction log (dm-0) for (dm-0)
-> Using r5 hash to sort names
->
-> Something like that?
+On Thu, 2004-03-25 at 04:32, Nikita Danilov wrote:
+> Jonathan Briggs writes:
+>  > The system is running Linux kernel 2.6.5-rc2.  It's tainted by Nvidia
+>  > drivers.
+>  >=20
+>  > The system was compiling the kernel, and Reiser4 panicked.
+>=20
+> Was compilation multi-threaded (make -j)?
 
-Reiserfs stuff is way too verbose already. Don't bloat it.
+No, it was just plain make.  There were other programs using the disk at
+the same time, though.  Evolution, rhythmbox, other desktop stuff.
 
--- 
-Matthias Andree
+[snip]
+> Please try following patch:
+[patch snipped]
 
-Encrypt your mail: my GnuPG key ID is 0x052E7D95
+I tried to apply the patch, but it must be against a newer version of
+Reiser4.  I haven't been following the internal-testing snapshots.=20
+Should I have been?  I'm still using the 2004-02-25 snapshot.  What
+should I be using to apply your patch to?
+
+Thanks.
+--=20
+Jonathan Briggs
+jbriggs@esoft.com
+
+--=-N2Xah8eMYddUBpwoNOs9
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+
+iD8DBQBAYzYCG8fHaOLTWwgRApc7AKCOrVg6Y4G46RiwQH2oOOk/lbfWegCfeAQ6
+ipdrrZ+5edGOpODGRtjVKq4=
+=j1pd
+-----END PGP SIGNATURE-----
+
+--=-N2Xah8eMYddUBpwoNOs9--
+
