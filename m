@@ -1,74 +1,33 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: fsync() Performance Issue
-Date: Sat, 04 May 2002 18:59:57 +0400
-Message-ID: <3CD3F76D.4000708@namesys.com>
-References: <93F527C91A6ED411AFE10050040665D0049BF9B4@corpusmx1.us.dg.com>	<1020463205.3946.252.camel@tiny>  <3CD341EC.9080906@namesys.com> <1020517884.3947.266.camel@tiny>
+From: Dirk Mueller <dmuell@gmx.net>
+Subject: 2.4.19-pre7 / corruption on unwanted reboot
+Date: Sat, 4 May 2002 23:11:47 +0200
+Message-ID: <20020504211147.GA20092@matrix.wg>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10239-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10240-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: berthiaume_wayne@emc.com, reiserfs-list@namesys.com, green@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Chris Mason wrote:
+Hi, 
 
->On Fri, 2002-05-03 at 22:05, Hans Reiser wrote:
->
->  
->
->>>The barrier option doesn't make much difference because the write cache
->>>is off.  With write cache on, the barrier code should allow you to be
->>>faster than with the caching off, but without risking the data (Jens and
->>>I are working on final fsync safety issues though).
->>>
->>>Hans, data=journal turns on the data journaling.  The data journaling
->>>
->>>      
->>>
->>and the reason it is faster is....
->>    
->>
->
->Any time you append X number of bytes followed by an fsync (or O_SYNC),
->you trigger a commit for the modified metadata, and then a seek to write
->the data block.  You wait on the log blocks (usually 5 or 6 of them
->total in the transaction) and then you wait for the data block to hit
->the main disk area.
->
->With data logging, you also write the data block to the log, and that
->means you can wait a while to flush it back to the main disk.  This
->increases the size of the transaction by 1, but writing 7 blocks to the
->log is almost no different from writing 6.
->
->You don't have to seek back to the main disk until you need to flush the
->transaction.  The new code also flushes metadata from more the one
->transaction at once, leading to less waiting overall.
->
->The new code is smarter about triggering updates to the journal header
->block, it happens much less frequently now, leading to fewer seeks and
->less waiting.
->
->As the size of the O_SYNC/fsync write increases, the benefit goes down. 
->A 16k write only gets around 30% improvement with the new patches. 
->Since a 1k write still needs to write a whole block, it should be the
->same speed as a 4k write.
->
->Wayne, you might want to try the 1k test mounted with -o notail.
->
->-chris
->
->
->
->
->  
->
-So how about if you revise fsync so that it always sends data blocks to 
-the journal not to the main disk?
+I've seen HEAVY file corruption on unwanted reboots (like pressing the reset 
+button accidently) on reiserfs with this kernel on 3 machines now. 
 
-Hans
+The symptom is that it finds a LOT of files to "unlink" on journal replay, 
+which I find suspicious as those machines are lightly loaded. 
+
+I didn't follow the development too closely the last few weeks, but I 
+believe that something turned worse in this respect lately. 
+
+Note that reiserfsck doesn't find any error in the file system structure 
+before and after the journal replay on reboot, 
+still many files (especially those that were not touched for several hours 
+before the reboot) contain complete garbage after the journal replay. 
 
 
+Dirk
