@@ -1,56 +1,58 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Horrible ftruncate performance
-Date: 23 Jul 2003 12:20:46 -0400
-Message-ID: <1058977246.2690.4.camel@tiny.suse.com>
-References: <Pine.LNX.4.30.0307151407100.6563-100000@divine.city.tvnet.hu>
-	 <200307151848.59027.Dieter.Nuetzel@hamburg.de>
-	 <20030715170540.GA1213@namesys.com>  <3F1D69AC.5040302@namesys.com>
-	 <1058892649.5042.29.camel@tiny.suse.com>  <3F1D7DD8.3010806@namesys.com>
-	 <1058898249.2749.2.camel@tiny.suse.com>  <3F1E27BA.3070603@namesys.com>
-	 <1058971137.2624.9.camel@tiny.suse.com>  <3F1EA1DB.2020505@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Reiser4 status: benchmarked vs. V3 (and ext3)
+Date: Thu, 24 Jul 2003 01:02:19 +0400
+Message-ID: <3F1EF7DB.2010805@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15013-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15014-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F1EA1DB.2020505@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Oleg Drokin <green@namesys.com>, Dieter N?tzel <Dieter.Nuetzel@hamburg.de>, Szakacsits Szabolcs <szaka@sienet.hu>, Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: linux-kernel@vger.kernel.org, reiserfs mailing list <reiserfs-list@namesys.com>, Linus Torvalds <torvalds@transmeta.com>, Marcelo Tosatti <marcelo@conectiva.com.br>
 
-On Wed, 2003-07-23 at 10:55, Hans Reiser wrote:
+Please look at http://www.namesys.com/benchmarks/v4marks.html
 
-> >They have pointers to 4k blocks, we have pointers to 4k blocks, our
-> >pointers should be able to do everything their pointers can do ;-)
-> >
-> >  
-> >
-> If you have to write 200MB of zeros to a file instead of 32 bytes, 
-> performance is going to be bad no matter what you do.
-> 
-> We don't have resources for duplicating work, or even supporting 
-> duplicate work.  We don't have funding right now from anyone.
-> 
-> V4 works.  V4 is faster than anything else out there by a lot.  If we 
-> get it debugged, we might have one of those licenses in addition to the 
-> GPL come out of nowhere again, and survive.   We have no resources for 
-> any other activity besides debugging and shipping and promoting V4, or 
-> fixing V3 bugs.  Hole performance improvement using extents is a feature 
-> not a bug.
+In brief, V4 is way faster than V3, and the wandering logs are indeed 
+twice as fast as fixed location logs when performing writes in large 
+batches.
 
-Hans, my point is that other people might be interested in doing the
-work and testing the code, or at least discussing ways to fix the
-problem without format changes.  Please don't shoot these discussions
-down, and give the people interested in improvements to v3 a chance to
-discuss it.
+We are able to perform all filesystem operations fully atomically, while 
+getting dramatic performance improvements.  (Other attempts at 
+introducing transactions into filesystems are said to have failed for 
+performance reasons.)
 
-v4 is beta and not in any way a viable choice for people today.  It
-might end up being the coolest filesystem ever made, but we need to be
-realistic about supporting the users we've already got.
+Balancing at flush time works well, not using blobs works well, 
+allocating at flush time works well.  CPU time is good enough to get by, 
+and it will improve over the next few months as we tweak a lot of little 
+details, but the IO performance is what matters, and this performance is 
+quite good enough to use.  In all the places where V3 sacrifices 
+performance to save disk space, V4 saves more disk space and gains 
+rather than loses performance. 
 
--chris
+The plugin infrastructure works well, expect lots of plugins over the 
+next year or two.
+
+Look for a repacker to come out in a few weeks that will make these 
+numbers especially good for filesystems that have 80% of their files 
+unmoving for long periods of time (which is to say most systems), and 
+might otherwise suffer from fragmentation.
+
+These benchmarks mean to me that our performance is now good enough to 
+ship V4 to users (which means we need persons willing to try to crash it 
+so that the stability can become good enough to ship to users).  
+Sometime during the next week or two we will probably send a patch in, 
+and ask for inclusion.  We need to run another round of stress tests 
+after our latest tweaks, and kill off two bugs that got added just 
+recently, and then we will ask for testers. 
+
+I will be going to Budapest to discuss filesystem semantics with Peter 
+Foldiak for a week, so V4 may get sent in for inclusion by members of my 
+team while I am absent.  If so, please include it in 2.5/2.6.
+
+-- 
+Hans
 
 
