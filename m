@@ -1,114 +1,79 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Can compression at filesystem level improve overall	performance?
-Date: Mon, 22 Mar 2004 23:04:40 +0300
-Message-ID: <405F46D8.1040607@namesys.com>
-References: <405B02ED.4010602@solidcode.net>	 <1079713790.9729.1.camel@redeeman.linux.dk>	 <16475.9613.375262.677576@laputa.namesys.com> <1079978427.4658.63.camel@localhost.localdomain>
-Reply-To: reiser@namesys.com
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: ReConfigurable Directory Structure & Agrregation of files
+ according to semantic.
+Date: Mon, 22 Mar 2004 16:08:51 -0500
+Sender: news <news@sea.gmane.org>
+Message-ID: <87hdwgr3mk.fsf@uhoreg.ca>
+References: <20040316224523.39093.qmail@web60408.mail.yahoo.com> <20040317024931.GB5731@exavio.com.cn>
+ <87k71kt8pv.fsf@uhoreg.ca>
+ <200403201754.i2KHsCBX004402@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17385-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17386-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1079978427.4658.63.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Scott Young <youngs1@sunyit.edu>
-Cc: reiserfs-list@namesys.com, Edward Shishkin <edward@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Scott Young wrote:
+>>>>> "Valdis" == Valdis Kletnieks <Valdis.Kletnieks@vt.edu> writes:
 
->>That's common misconception. :)
->>
->>The goal of compression is to conserve disk bandwidth rather than space.
->>
->>By compressing it is possible to transfer data (== uncompressed data
->>user works with), at a rate higher than raw device bandwidth.
->>    
->>
->
->I will be doing some research on an algorithm that speeds up data
->transfers over a network by adaptively selecting a compression
->algorithm.  It can be applied to filesystem reads and writes too.  When
->the send queue is reasonably full on the server, it starts compressing
->data at the tail of the queue while sending the data at the head of the
->queue.  If the output stream catches up to segment currently being
->compressed, then that segment is sent uncompressed.  If the compressed
->data is not significantly smaller, then the uncompressed data is sent
->instead.  For network applications that are not network interface bound
->(like rsync over a 100mbit connection), the buffer will be empty most of
->the time and therefore little compression would be needed or wanted as
->it would only slow the application down.  Compression is chosen from a
->pool of algorithms and varied depending on the history of buffer
->overflows and under-runs.  Slower, better compression algorithms are
->used when the buffer is mostly full and the compression is observably
->effective.  The idea here is to minimize the time between the client
->requesting the data and having the usable data in a minimal amount of
->time.  This can be seen as a time-verses-amount-of-usable-data-on-client
->graph, and some applications prefer a low latency for the initial stream
->of data (such as a web page) whereas some prefer the time to retrieve a
->very large piece of data (such as scp scott@1.2.3.4/SomeBigDocument.sxw
->/home/scott over a 56k modem).
->
->Adapting this to filesystem concepts, the server can be seen as the
->write process and the client can be seen as the read process. 
->
-I don't understand.  Why not view the client as the disk drive and the 
-bus as the network?
+Valdis> On Tue, 16 Mar 2004 23:10:04 EST, Hubert Chan <hubert@uhoreg.ca>
+Valdis> said:
+Hubert> And document files too.  I'm looking forward to being able to
+Hubert> being able to scrap this strange hierarchy system that I'm
+Hubert> currently using for all my documents.  Email, too, would do well
+Hubert> with this system.  Just toss all the mail in a single folder,
+Hubert> and have your MUA query the filesystem for mails from the
+Hubert> ReiserFS list, or mails from friends, etc.
 
-> The idea
->can be applied to Reiser4 by compressing the overwrite set while the
->journal data is being written, and then compressing the tail of the
->relocate set moving backwards until the write stream catches up to the
->compression.  It could also take into account the estimated
->decompression time when reading the data back, and use it for deciding
->whether the compression ratio is good enough to write the compressed
->data instead of the uncompressed data.
->  
->
-I didn't understand the above.
+Valdis> Ad-hoc query support in the file system (or even in user space)
+Valdis> is always a problematic issue, because there's so many corner
+Valdis> cases that result in a DWIM interface problem.
 
->Another interesting twist would be to cache the compressed data if the
->same data is going to be sent from the server several times.  This
->reduces CPU overhead on the server (and possibly it's memory
->requirements for caching the data, and reduces the amount of data that
->needs to be read from the drive), but it is complicated in the context
->of a network algorithm and is mostly application-dependent.  This is
->research for another day, maybe in the form of a derived-data plugin for
->ReiserFS where an application tells the filesystem how to construct the
->file, and the filesystem can store the original, the result, or both,
->depending on space needs and performance analysis, with copy-on-write
->metadata flags when appropriate.
->  
->
-I didn't understand the above.
+Yes.  When I wrote what I wrote, I was assuming that you have good
+metadata that the filesystem can use.  I assume that semantic analysis,
+DWIM, mind reading, etc., is out of the scope of the filesystem layer,
+but anyone is free to implement a plugin that does what they want.
 
->I haven't started coding the adaptive compression algorithm yet, but I
->have a general idea about how I am going to implement it.  For the
->proof-of-concept, I want to write this using sockets and some basic
->library compression algorithms (gzip, bzip2, and maybe a simple MTF +
->Adaptive Huffman).  Later variants may work with TCP or other protocols
->around that layer.  Any suggestions will be appreciated.
->  
->
-I think we need to use adaptive compression in Reiser4, based on the 
-type of file being compressed,  and anyone who finds it interesting to 
-develop heuristics for selecting compression strategies is welcome to 
-help and join the fun.
+So when I say "mails from friends," I'm skipping most of the details,
+which I think most people don't care about.  I'm really saying that I
+would give the filesystem a list of email addresses of people that I
+consider "friends," and get the filesystem to find all mails from those
+addresses.  If someone from Zanzibar starts flooding me with the
+virus-du-jour, then I refine my filter so that it excludes mails that
+clamav detects viruses in.  (Actually, I would just configure clamav to
+delete all mails that contain viruses.)  If my old college friend drops
+me a mail, and I decide I want his mails to show up in my "friends"
+query, then I add his email address to the list.  (Or add him to my
+address book, mark him as "friend," and let the filesystem do the join.)
 
->
->Scott Young
->
->
->
->
->
->
->  
->
+(Actually, I don't think I personally would use a "mails from friends"
+query.  I would generally just use a "mails to/from person x.")
 
+[...]
+
+Valdis> And how does it know, other than simple word-indexing schemes (I
+Valdis> already use 'glimpse', but even that gets painful when your
+Valdis> e-mail archive goes back 15 years and totals over a gigabyte -
+Valdis> compound searches take *forever*.
+
+Well, Reiser4(? - with the appropriate plugin?) will let you add
+arbitrary attributes through the everything-is-a-file-and-a-directory
+mechanism, so you can add, for example, a "tags" attribute.  For all the
+mails dealing with supercomputing, you add the supercomputing tag.  For
+all security mails (that aren't already handled by your
+security-mailing-list, etc. filters), you can add the security tag.
+Then you tell the filesystem that the "tags" attribute is a handy thing
+to index.  Again, I'm assuming that the user provides the filesystem
+with useful metadata.  I don't assume that the filesystem can read your
+mails and do automatic classification with 100% accuracy.
 
 -- 
-Hans
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
