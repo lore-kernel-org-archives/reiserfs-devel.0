@@ -1,50 +1,99 @@
 From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 14:17:03 -0400
-Message-ID: <200408261817.i7QIH35O002702@localhost.localdomain>
-References: <helge.hafting@hist.no>
-Return-path: <reiserfs-list-return-20937-reiserfs=m.gmane.org@namesys.com>
+Date: Thu, 26 Aug 2004 14:12:32 -0400
+Message-ID: <200408261812.i7QICW8r002679@localhost.localdomain>
+References: <reiser@namesys.com>
+Return-path: <reiserfs-list-return-20938-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Helge Hafting <helge.hafting@hist.no> 
-   of "Thu, 26 Aug 2004 10:31:54 +0200." <412D9FFA.6030307@hist.no> 
+In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
+   of "Thu, 26 Aug 2004 01:31:34 MST." <412D9FE6.9050307@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Helge Hafting <helge.hafting@hist.no>
-Cc: Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-Helge Hafting <helge.hafting@hist.no> said:
-> Matt Mackall wrote:
+Hans Reiser <reiser@namesys.com> said:
+> Andrew Morton wrote:
 
 [...]
 
-> >Find some silly person with an iBook and open a shell on OS X. Use cp
-> >to copy a file with a resource fork. Oh look, the Finder has no idea
-> >what the new file is, even though it looks exactly identical in the
-> >shell. Isn't that _wonderful_? 
+> > The fact that one filesystem will offer features which other
+> > filesystems do not and cannot offer makes me queasy for some reason.
 
-> It is what I'd expect.
+Not me. As long as it is clearly experimental stuff that can be removed at
+the head hacker's whim, that is. 2.7 material.
 
-Great. That means that all the tools of the trade stop working. Sounds like
-show-killer feature to me.
+> Andrew, we need to compete with WinFS and Dominic Giampaolo's filesystem 
+> for Apple,
 
->                         Now, use cp -R to copy  the file
-> _with its directory_,
+Says who?
 
-Either it is a file or a directory. Make up your mind. If you have no clear
-distinction, you'll only get messed up. Badly.
+>            and that means we need to put search engine and database 
+> functionality into the filesystem.
 
->                       and see if that fares better.  If not - bad
-> implementation of fs and/or cp.  The way I see file-as -directory
-> is that _file_ operations (like the reads issued by cat) only
-> work on the file part.  You want the directory part?  Use
-> directory operations such as those "cp -R" use.
+Please don't. Unix works and is extremely popular because it _doesn't_ try
+to be smart (policy vs mechanism distinction, simple abstractions that can
+be combined endlessly). If you add this to the filesystems, you either redo
+_all_ userland to understand _one_ particular way of doing "smart things"
+(which will turn out to be almost exactly the dumbest possible for some
+uses, and then you are stuck), or get lots of shards from broken apps (and
+users, and sysadmins).
 
-Excuse me, I must grab my sickness bag here.
+>                                     It takes 11 years of serious 
+> research to build a clean storage layer able to handle doing that.  
+
+Great! Build an experimental OS showing how to use it, and through that see
+if the ideas hold any water _in real, day-to-day, down-to-earth, practice_.
+
+> Reiser4 has done that, finally.  None of the other Linux filesystems 
+> have.
+
+How come nobody before you in the almost 30 years of Unix has ever seen the
+need for this indispensable feature?
+
+>        The next major release of ReiserFS is going to be bursting with 
+> semantic enhancements, because the prerequisites for them are in place 
+> now.  None of the other Linux filesystems have those prerequisites.  
+
+To me that would mean that ReiserFS has no place in Linux.
+
+> They won't be able to keep up with the semantic enhancements.  This 
+> metafiles and file-directories stuff is actually fairly trivial stuff.
+
+Maybe. But the question of it being of any use aren't trivially answered
+"yes". My gut feeling is that the answer is a resounding "no", but that's
+just me. Direcories are directories, if you want to ship directory-like
+stuff around, use directories (or tarfiles, or whatever). Just look what
+happened to the much, much easier stuff of splitting SUID/SGID into
+capabilities: Nothing at all whatsoever, because they have no decent place
+to stay in the hallowed Unix APIs. Sure, Linux is now large enough to be
+able to _define_ APIs to follow, but even so it isn't at all easy to do so.
+
+> Look guys, in 1993 I anticipated the battle would be here, and I build 
+> the foundation for a defensive tower right at the spot MS and Apple are 
+> now maneuvering towards.
+
+Why place a protective tower around the pit into which they are trying
+desperately to throw themselves? ;-)
+
+>                           Help me get the next level on the tower before 
+> they get here.  It is one hell of a foundation, they won't be able to 
+> shake it, their trees are not as powerful.  Don't move reiser4 into vfs, 
+> use reiser4 as the vfs.  Don't write filesystems, write file plugins and 
+> disk format plugins and all the other kinds of plugins, and you won't be 
+> missing any expressive power that you really want....
+
+Better write libraries handling whatever weird format you have in mind for
+each use. Even applications. I don't expect to be able to use emacs to edit
+a JPEG or PostgreSQL database. Neither do I expect gimp to be able to edit
+a poem. The current trend (which I heartily agree with) is to take stuff
+_out_ of the kernel (for flexibility, access, development ease, even
+performance).
 -- 
 Dr. Horst H. von Brand                   User #22616 counter.li.org
 Departamento de Informatica                     Fono: +56 32 654431
