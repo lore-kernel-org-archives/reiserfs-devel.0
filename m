@@ -1,44 +1,127 @@
-From: Ookhoi <ookhoi@humilis.net>
-Subject: Re: rfs4, 2.5.53: jnode_flush failed with err = -12
-Date: Mon, 6 Jan 2003 15:52:43 +0100
-Message-ID: <20030106155242.C19841@humilis>
-References: <20030106122217.A19841@humilis> <20030106143058.A9262@namesys.com> <20030106125500.B19841@humilis> <20030106150310.A10661@namesys.com>
-Reply-To: ookhoi@humilis.net
+From: Chris Mason <mason@suse.com>
+Subject: Re: what do you do that stresses your filesystem?
+Date: 06 Jan 2003 10:14:30 -0500
+Message-ID: <1041866070.16279.47.camel@tiny.suse.com>
+References: <3E06F360.7000708@namesys.com>
+	 <002001c2aaa1$08650550$0200000a@ringo>  <3E082A86.8050501@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12284-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12285-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030106150310.A10661@namesys.com>
+In-Reply-To: <3E082A86.8050501@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <green@namesys.com>
-Cc: Ookhoi <ookhoi@humilis.net>, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Chris Haynes <chris@harvington.org.uk>, ReiserFS <reiserfs-list@namesys.com>
 
-Oleg Drokin wrote (ao):
-> On Mon, Jan 06, 2003 at 12:55:01PM +0100, Ookhoi wrote:
-> > I don't have swap space. Could that be a problem?
-> 
-> Not likely. We were able (in fact we do that quite often) to untar
-> compiled kernel source that is bigger than your tar file both
-> compressed and uncompressed on 240M system. I guess we need to release
-> another snapshot with current code and see if it will break for you
-> again.
-> I am now merging our kernel bits to see how 2.5.54 will live with
-> reiser4.
+On Tue, 2002-12-24 at 04:36, Hans Reiser wrote:
 
-Would love to try. I pulled reiser4 and 2.5 from bk (and plain 2.5.54).
-It gives me this error:
+> Chris Haynes wrote:
+> >
+> >I'm about to deploy an on-line transaction-based service.. All
+> >service-specific software is in 1000+ Java classes. The OS is SuSE
+> >7.3, and Java version 1.4
 
-ookhoi $ make > /dev/null
-fs/reiser4/flush.c:772: macro `write_syscall_trace' used with just one arg
-fs/reiser4/flush.c:1087: macro `write_syscall_trace' used with just one arg
-make[2]: *** [fs/reiser4/flush.o] Error 1
-make[1]: *** [fs/reiser4] Error 2
-make: *** [fs] Error 2
+You'll get better performance from the suse update kernels (or anything
+with the data logging patches.
 
-Unfortunately source code is almost like Russian (or Chinese) to me, so
-I guess I'll just wait for a new snapshot :-)
+> >
+> >The heavist uses of the file store are:
+> >
+> >During development:
+> >+ javadoc
+> >
+> >During service deployment / update:
+> >+ rsync
+> >+ When using a tripwire-like Java program which checks the SHA digest
+> >of all deployable files against zipped JARs
+> >
+> >During production operation:
+> >+ atomic, synchronized writes to multiple files (typically 3 - 4 files
+> >in different directories, the first is the creation of a new 4 kb
+> >file, others are usually updates of existing files - growing typically
+> >1kb per update). This files system is mounted on a RAID-1 pair.
+
+Is this the only type of write being done?  If so, mounting with
+data=journal will give you a pretty big boost.  Regardless of which data
+mode you use, the io pattern you want to try for looks like this:
+
+write(file1)
+write(file2)
+write(fileX) ...
+fsync(fileX)
+fsync(fileX-1) ...
+fsync(file1)
+
+This allows for the biggest transaction before the fsync comes in and
+forces a commit.  By doing an fsync on the newest file first, you
+greatly increase the chances that all the transactions for all the old
+files will be committed by the fsync(fileX).  When this happens, the
+rest of the fsyncs just trigger writes on the data blocks.
+
+If you are using data=journal, the rest of the fsyncs become noops,
+since the fsync(fileX) will also commit all the data blocks of all the
+previous writes.
+
+If there are other types of writes going on (large non-synchronous
+writes), data=journal will hurt performance because it involves writing
+all the data blocks twice.  In this case your best bet will be a
+dedicated logging device.
+
+If the synchronous writes for a single transaction are the only writes
+to the FS, and you are doing writes to many different files, you can
+also just do all the writes/creates, and then run sync().
+
+This will get all the data block writes scheduled at once, and then
+write to the log.
+
+> >+ rsync
+> >+ Successive reading of all files in a directory sub-tree (up to 10M
+> >files)
+> >in filestore-defined order (i.e. the program makes no demands or
+> >assumptions about the order - it uses the order supplied by Java's
+> >File.files()).
+> >
+> >
+> >The greatest performance concern I have is with the file writes. As
+> >these are atomic transactions, I use a separate thread for each file's
+> >write (to give the kernel's escalator a chance to work), and require
+> >that the write operations be individually hardware-synchronized  using
+> >Java's FileDescriptor.sync() method. I then use a counter to detect
+> >when all threads have reported that their files have been written -
+> >this indicating successful commitment of the transaction.
+> >
+> >I handle read-and write-locking in the application.
+> >
+> >Usually, there are no lock conflicts, so there can be many concurrent
+> >transaction commitments. I use a thread pool of  50 threads to handle
+> >the individual file writes (the 50 being a guess at the likely point
+> >of diminishing returns).
+> >
+> >My expectation/hope is that, so long as there are enough threads
+> >available in this pool, all transactions will be completed within one
+> >disk rotation period(regardless of the number of concurrent
+> >transactions or number of files per transaction and the fact that I'm
+> >using software RAID-1). I've not yet been able to validate this
+> >(theoretically or practically).
+
+It won't happen, you've got a chance in data=journal mode, but otherwise
+there will be seeks to and from the log area as you write and wait on
+the data blocks and the log blocks.
+
+> >
+> >I would *really* like  to be able to group all the file writes for a
+> >transaction  into a single logical  API call and have the kernel/file
+> >system report successful completion of all data and metadata aspects
+> >of the transaction using a single application thread.
+> >
+
+The kernel doesn't have this right now, but the aio code in 2.5.x is
+close.  
+
+-chris
+
+
