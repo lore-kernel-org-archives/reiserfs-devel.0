@@ -1,56 +1,60 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: ReiserFS V3 and linux-kernel-2.6
-Date: Wed, 9 Feb 2005 18:56:26 +0300
-Message-ID: <20050209155626.GL7482@backtop.namesys.com>
-References: <139119350.20050209110514@kgpa.ru> <20050209144446.GK7482@backtop.namesys.com> <8510493009.20050209170924@kgpa.ru>
+From: "Tom Evans" <tom@23palmer.net>
+Subject: Bitmap alignment issues....
+Date: Wed, 9 Feb 2005 12:59:17 -0500
+Message-ID: <E1Cyw7x-00073N-00@smtp03.mrf.mail.rcn.net>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <8510493009.20050209170924@kgpa.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Oleg O. Ossovitskii" <oleg@kgpa.ru>
-Cc: ReiserFS-List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Wed, Feb 09, 2005 at 05:09:24PM +0200, Oleg O. Ossovitskii wrote:
-> Hello, Alex!
-> 
-> Wednesday, February 9, 2005, 4:44:46 PM, you wrote:
-> 
-> >>
-> >>   --------------------------------
-> >>   # For booting GNU/Linux
-> >>   title  GNU/Linux-2.6.x
-> >>   kernel (hd0,1)/vmlinuz root=/dev/hdc8 rw devfs=mount
-> >>
-> >>   title  GNU/Linux-2.4.x
-> >>   kernel (hd0,1)/vmlinuz-2.4 root=/dev/hdc8 rw devfs=mount
-> >>  ----------------------------------
-> >>
-> >>   I can boot into 2.4.x kernel, but when I try to boot to 2.6.10
-> >>   kernel I get error message & kernel panic:
-> >>
-> >>
-> >>   VFS: Cannot open root device "hdc8" or unknown-block(0,0)
-> >>   Please append a correct "root=" boot option
-> >>   Kernel panic - not syncing: VFS: Unable to mount root fs on
-> >>   unknown-block(0,0)
-> 
-> AZ> please make sure that the rootfs block device driver (IDE disk) was compiled
-> AZ> into the kernel. 
 
-can you try to following?
+Hi All -
 
-1) boot w/o devfs
-2) check that the block device driver is loaded successfully 
-   and partition table is read properly
-   (look at kernel boot messages)
+I am new to the list - I have been using Reiser4 on Linux/Alpha
+for several months now and like very much what it offers.
 
-btw, I have no troubles switching my system between 2.4.x and 2.6.x
+(I use a -mm kernel from kernel.org with a Debian distro)
 
--- 
-Alex.
+Recently I became aware or a large number or alignment fixups
+occurring in the kernel, specifically in the reiser4 code.
+
+(My machine(s) would occasionally slow to a crawl when doing
+ intense disk i/o - I thought it was because I had recently
+ started using IDE drives in my systems (the IDE controllers
+ on these boards are notoriously slow) ).
+
+I determined that 50k+ alignment faults were happening
+per second - I traced the majority down to these 3 functions:
+
+1) reiser4_find_next_set_bit  (in fs/reiser4/plugins/space/bitmap.c)
+2) find_next_zero_bit (in asm/bitops.h)
+3) replace_extent (in fs/reiser4/plugins/item/extent.c)
+
+The first 2 accounted for ~4million faults during boot - essentially,
+the base address of the bit array is not aligned properly
+for ulong accesses on Alpha (which are 64bit).
+
+I worked around this by using "get_unaligned()" for the array
+accesses in #1 and implemented a version of "find_next_zero_bit"
+local to reiser4 that handles unaligned base addresses (no need
+for all other users of the function to suffer the same performance hit).
+
+Those 2 changes brought the number of alignment fixups to 0 on a boot - 
+the #3 issue accounts for a very small number of fixups - I have not
+yet found the exact location.
+
+While these changes eliminated the faults, they are not optimal,
+get_unaligned() adds many cycles over a standard load.
+
+I wanted to see if anyone here was already familiar with this issue and
+what the process would be for getting it addressed.
+
+Thanks for your patience!
+
+...tom
+
