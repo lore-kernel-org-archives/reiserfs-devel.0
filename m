@@ -1,88 +1,62 @@
-From: Casey Callendrello <cdc2107@columbia.edu>
-Subject: can't ls, then rebuild-tree fails, no hardware error (kow)
-Date: Mon, 07 Jun 2004 01:25:38 -0400
-Message-ID: <40C3FC52.2050404@columbia.edu>
+From: Michael James <Michael.James@csiro.au>
+Subject: Re: Reiser4 on SuSE 9.1
+Date: Mon, 7 Jun 2004 16:00:40 +1000
+Message-ID: <200406071600.40914.Michael.James@csiro.au>
+References: <200406041414.HAA14660@amber.he.net> <1086359021.22636.3685.camel@watt.suse.com>
+Reply-To: Michael.James@csiro.au
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19050-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19051-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1086359021.22636.3685.camel@watt.suse.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hello all,
+On Sat, 5 Jun 2004 12:23 am, Chris Mason wrote:
+> On Fri, 2004-06-04 at 10:14, Mike Young wrote:
+> > Has anyone put Reiser4 on the latest SuSE 9.1 release?  I'd like to use it
+> > there without having to patch a pristine kernel.  Preferably, I'd like to be
+> > able to use their RPM build environment so I can continue to take updates
+> > from SuSE.
+> > 
+> > I've placed a couple of requests into their support group, but have gotten
+> > nowhere with them.
+> > 
+> > Anyone got a suggestion.  I can patch kernels.  I just haven't deciphered
+> > the build environment.  I'm use to doing this in a chroot environment.
+> 
+> We're interested in v4 of course, as things stabilize we'll consider
+> including it.  This doc is fairly up to date, and it might help you
+> figure out the suse build setup:
+> 
+> http://www.suse.de/~agruen/kernel-doc/
 
-    I'd been using Reiserfs on a 180 GiB partition.  One day my computer 
-hung while I was out.  I came home and had to hard-reboot it.  Fine.  
-(Unfortunately, this is not the / partition but /home!  egad!)  
-Unfortunately, when I rebooted I could not ls in the /home directory, 
-which is mount --bind 'ed to /mnt/big/home (big? get it!)  sensing a 
-major problem, I had to hard-reboot to kill the ls which was hung on 
-waiting for IO (with no errors in /var/log/messages or the error console). 
+Thanks for the link. I'll try and get the modules compiled.
+I'd also like to use a kernel as close to suse's as possible.
 
-I ran fsck and it found some errors, so I ran fsck --fix-fixable.  The 
-whole directory structure was there, I saw it flash by during the fsck 
-(well, as far as I could tell.  There certainly wasn't anything obvious 
-missing).  So, I remount it and try to cat a file I know is in there, 
-and it shows up fine.  I feel better.
+I'll be bringing up a sub-cluster to test Suse 9.1 soon.
+Currently the cluster nodes run Suse 8.2.
 
-But, I still can't ls.  I can't log in with a non-root user since it 
-hangs waiting for IO.  I figure it's a problem with the tree (I 
-shouldn't jump to conclusions).  So I run rebuild-tree and it fails.  
-Now i'm up *** creek. 
-I don't have a hard drive large enough to copy this to.  I also don't 
-believe it is a hardware issue.  I started copying with dd_rescue, 
-telling it to halt on all errors, and managed to copy 2.5 gigs before I 
-was convinced there weren't any critical hardware issues.  i have about 
-50 gigs I can scrap together for recovery on multiple disks... but the 
-partition was 180(ish) GiB.  Only 38 GiB was used though.  Here's what 
-happens:
+I'd love to use reiser4 to hold the genetic database files.
 
+These I download from Genbank as gz text files
+ then use scripts to automatically index and load them for searching.
 
-####### Pass 0 #######
-Could not find a hash in use. Using "r5"
-####### Pass 1 #######
-####### Pass 2 #######
-Will rebuild the filesystem (/dev/hdb1) tree
-Will put log info to 'stdout'
-Replaying journal..
-Reiserfs journal '/dev/hdb1' in blocks [18..8211]: 0 transactions replayed
-###########
-reiserfsck --rebuild-tree started at Mon Jun  7 01:15:31 2004
-###########
-Pass 0:
-Loading on-disk bitmap .. ok, 27189 blocks marked used
-Skipping 9701 blocks (super block, journal, bitmaps) 17488 blocks will 
-be read
+So they can be re-created and re-loaded anytime.
+The filesystem will get flogged (mainly reading)
+I'll see if there are performance gains
+ compared with reiserfs.
 
-**does the reading here**
-"r5" hash is selected
-Flushing..finished
-    Read blocks (but not data blocks) 17488
-        Leaves among those 0
-        Objectids found 2
+It's an ideal situation to test a filesystem.
 
+michaelj
 
-Pass 1 (will try to insert 0 leaves):
-Looking for allocable blocks .. finished
-
-Flushing..finished
-    0 leaves read
-        0 inserted
-
-Flushing..finished
-
-No reiserfs metadata found.  If you are sure that you had the reiserfs
-on this partition...
-
-
-
-Will running with -S get it back?  Like I said, I'm almost certain 
-there's no hardware issue, and I'd really like to get this data back.
-
-
-Thanks a lot,
-    Casey Callendrello
+-- 
+Michael James                         michael.james@csiro.au
+System Administrator                    voice:  02 6246 5040
+CSIRO Bioinformatics Facility             fax:  02 6246 5166
