@@ -1,10 +1,10 @@
 From: Dirk Schenkewitz <Dirk.Schenkewitz@interface-ag.com>
 Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
-Date: Wed, 12 Feb 2003 21:05:22 +0100
-Message-ID: <3E4AA902.86F15815@interface-ag.com>
+Date: Wed, 12 Feb 2003 21:57:20 +0100
+Message-ID: <3E4AB530.A11BB7D5@interface-ag.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12734-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12735-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -13,50 +13,37 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Reiserfs List <reiserfs-list@namesys.com>
 
-Looks like i'm under a curse...
 
-I can post, but I don't get any messages from the mailing list, 
-only those that are explicitely addressed to me. I got to know
-about all these other messages only because I requested the last
-100 messages again :-/ Hmpf.
+Oleg Drokin wrote (in response to Anders Widman):
 
-Back to the point:
+> > > So it would be possible to do some actions to 
+> > > 1) get some blocks back in the described way, 
+> > > 1.1) write to really bad blocks should have remaped them 
+> > >      already here if there is a space in remap area 
+> > > 2) save bad blocks to badblock list in fs if they are still bad -
+> > >    out of remap area. 
+> > > Would be not bad to try to recover in this way already remapped 
+> > > blocks - do not know how to get the list of them only.
+> > > Ok, but what if the IO error you got is not a bad block, but 
+> > > a bad cable? Do you want the fs to work in the described way? 
+> > > Trying to fix all automatically? I am not sure.
+> >
+> >   How about trial and (then) error? :)
+> 
+> That might be suitable for fsck, but not for kernel I am sure.
+> Kernel should just probably return error or try to use different 
+> block (if it was doing write) and if certain number of attempts
+> failed, return error too.
+> Also remount R/O if write error is in system area (journal, 
+> superblock, bitmaps) or special mount option was given that demands 
+> remounting R/O on io errors.
 
-Hans Reiser wrote (in response to Anders Widman):
-
-> For some users it would be better to boot to a corrupted filesystem 
-> because running fsck is more of a problem than putting their data at 
-> higher risk.  For datalogging, it is probably conceivable to just toss 
-> the journal and lose the more recent updates to it.  For the default 
-> metadata journaling, this just does not seem prudent.
-
-But I think that not everybody will know about if it's better to toss
-the journal or to keep it. I wouldn't, and I know some people who are
-much less interested in filesystems and the stuff around them than me.
-Even SysOps.
-
-> I really prefer making users understand that they have a problem they 
-> need to do something about.  This is just my style.  I want them to fail 
-> to boot, and after some effort learn that there is this thing called 
-> fsck, and dd_rescue, and that it is time to buy another hard drive and 
-> chuck their current one.
-
-For me, it was alarming enough seeing ext3 drop the journal. In fact,
-THAT was the point where I went to investigate in other directions
-instead of blaming the filesystem. 
-
-> It would be best though if they were given detailed instructions about
-> how they need to do this when the code hits that bad block.
-
-Agreed! The only problem is, that putting a bad drive to eternal rest
-might not solve the problem, as long as the REASON for the drive gone
-bad stays uncovered. (I had that said drive in use for less than 4
-months (if my memory servers, er, serves my well) - it was like new.
-
-> If we handle the journal block error without downtime, the user will 
-> never chuck the hard drive, and that is bad in the longterm.
-
-Not agreed, unless you continue without a warning.
+I still feel that the system area should be DESIGNED to be extra-
+robust against everything, because it is vital for the whole fs.
+Btw, might such thoughts be the reason that ext2 has superblock
+backups? I agree that a bad block in the system area is a good
+reason for all kinds of alarm, but a really good fs should overcome
+more than one without (unrecoverable) damage to the fs in whole.
 
 happy coding
 	dirk
