@@ -1,42 +1,42 @@
-From: Sander Sweers <sander.sweers@gmail.com>
-Subject: Re: where are reiser4 sources
-Date: Mon, 21 Feb 2005 18:10:36 +0100
-Message-ID: <b65fbb130502210910567ff32@mail.gmail.com>
-References: <421A096F.5040603@gmx.de>
-Reply-To: Sander Sweers <sander.sweers@gmail.com>
+From: Pallavi Dalya <pallavidalya@yahoo.com>
+Subject: when is it decided that extent pointer is to be created in reiser4
+Date: Mon, 21 Feb 2005 17:26:15 +0000 (GMT)
+Message-ID: <20050221172615.70993.qmail@web60109.mail.yahoo.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <421A096F.5040603@gmx.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Mark Junker <mjscod@gmx.de>
-Cc: reiserfs-list@namesys.com
+To: reiser-list mailing <reiserfs-list@namesys.com>
 
-I have been using the tarball from ftp://ftp.namesys.com/pub/reiser4-for-2.6/.
-Have not had any problems with this but I do not know how up to date it is.
+hello,
 
-Sander
+     as far as i know tree based file systems use
+extents for managing free space. does reiser4 use a
+bitmap based method or extents to keep track of used
+and free blocks.
+      another issue is that when i tried storing a
+small file an extent pointer was created for the file
+which was also the case for a large file. but to my
+knowledge extent pointers are created for large files
+and in some file systems there is a fixed limit to the
+file size after which it is assigned an extent
+pointer.
+wat is the policy used in reiser4 to decide which
+files should be stored using extent pointers and which
+should not.
+      also from what i have observed each file has a
+unique key representing it in reiser4. is there any
+specific key generation algorithm for file names and
+if yes where could i find it. is it possible that
+instead of passing single file names to the key
+generation algorithms we could pass the entire path to
+generate a unique key.
 
-On Mon, 21 Feb 2005 17:16:47 +0100, Mark Junker <mjscod@gmx.de> wrote:
-> Hi,
-> 
-> where are the Reiser4 sources? I just want to use Reiser4 in a separate
-> application and don't like the idea of extracting the sources from the
-> linux 2.6 patch.
-> 
-> Regards,
-> Mark
-> 
-> 
-
-
--- 
-After a time, you may find that "having" is not so pleasing a thing,
-after all, as "wanting." It is not logical, but it is often true.
-
-Spock, "Amok Time"
-stardate 3372.7
+________________________________________________________________________
+Yahoo! Messenger - Communicate instantly..."Ping" 
+your friends today! Download Messenger Now 
+http://uk.messenger.yahoo.com/download/index.html
