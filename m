@@ -1,80 +1,84 @@
 From: Ryan Underwood <nemesis-lists@icequake.net>
 Subject: Re: Reiserfs Data Recovery
-Date: Mon, 8 Mar 2004 15:59:19 -0600
-Message-ID: <20040308215919.GB11093@dbz.icequake.net>
-References: <404C81B9.4050504@nsanity.com> <20040308184124.GE5817@dbz.icequake.net> <404CC8AA.9020405@nsanity.com>
+Date: Mon, 8 Mar 2004 19:13:11 -0600
+Message-ID: <20040309011311.GA15226@dbz.icequake.net>
+References: <404C81B9.4050504@nsanity.com> <20040308184124.GE5817@dbz.icequake.net> <404CC8AA.9020405@nsanity.com> <20040308215919.GB11093@dbz.icequake.net> <404CF46B.10000@nsanity.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="eJnRUKwClWJh1Khz"
-Return-path: <reiserfs-list-return-17128-reiserfs=m.gmane.org@namesys.com>
+	protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
+Return-path: <reiserfs-list-return-17129-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <404CC8AA.9020405@nsanity.com>
+In-Reply-To: <404CF46B.10000@nsanity.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Nick Vahalik <nick@nsanity.com>
 Cc: reiserfs-list@namesys.com
 
---eJnRUKwClWJh1Khz
+--1yeeQ81UyVL57Vl7
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 08, 2004 at 01:25:30PM -0600, Nick Vahalik wrote:
-> >
-> >Note: whatever you do, do _not_ touch the second drive of your array
-> >with reiserfsck.  Assuming it is still in the state where it was before
-> >...
-> >
-> I thought I mentioned that this was a Raid 0.  There is no mirroring. =20
-> It's a stripe.
-> I know.  Just tell me what I already assumed:  I'm screwed.=20
 
-Whoops.  In your initial post:
-----------------
-Hello,
+On Mon, Mar 08, 2004 at 04:32:11PM -0600, Nick Vahalik wrote:
+> Same here.  Of course, now I'm wondering if the crash had anything to do=
+=20
+> with a possible faulty drive.  It's one of those IBM Deathstars!  I=20
+> forgot about it until about 2 am this morning when I found my receipt. =
+=20
+> Eh, well at least I had my code backed up...
 
-System: Slackware 9.1
-Dual P3 1Ghz/133Mhz FSB
-1 GB Ram PC133 Ram
-Running Hardware Raid1 on top of a highpoint 37x2 raid controller
-2x80 GB Drives
-----------------
+Oh wow, you do definitely want to run IBM DFT as soon as possible.  That
+might be the only thing that is wrong... usually you would see some
+syslog errors though when you tried to mount the drives if the system
+was having problems reading from the drive(s).  DFT should not destroy
+any data or make anything worse, but it will try to relocate the sector
+if it is having trouble reading it.
 
-:-(
-Yeah, if it's raid 0, you don't have much of a chance besides giving the
-filesystem as it is to someone who knows exactly what they are doing wrt
-ReiserFS.
+this firmware upgrade was released a while ago and corrects some
+deathstar crashing if you have one of the listed drives:
+http://www-1.ibm.com/support/docview.wss?rs=3D0&q=3DDTLA&uid=3Dpsg1MIGR-441=
+95
 
-I'm having trouble figuring out how exactly a system crash would have
-wiped out your super-block...
+> Well, I was thinking about doing more of a raw data recovery.  We have=20
+> tools that will just simply look for files minus the structure and dump=
+=20
+> the results out into a spare drive.  I did this once to another web=20
+> server I had.  It recovered 80% of my code... and the MBR/SB was=20
+> completely eradicated on that drive as well.
 
-> Well, I was thinking more of forensics analysis tools... (Network=20
-> Security Major at ***********) and we have some neat=20
-> equipment/software over there... but I'm not sure how much of it will=20
-> work with ReiserFS...
+Yeah, I guess you can try something if you have the tools, but just
+guessing that to get anything serious done you will need tools that
+understand Reiser structures.  Otherwise all you can do in a general
+case is to find contiguous allocation blocks and try to piece together
+files from those.  That approach might get all of your data, though
+pieceing it together would be loads of fun...
 
-Without something that understands the logical structures of the
-specific filesystem in question (Reiser), it will be difficult to get
-anything done.  I can't really offer any help myself because I was in
-the same boat you were a few weeks ago.  Fortunately, it was just /usr,
-not my life work.  Plus, it was apparently a conspiracy on my part to
-destroy my data, judging from the steps I took (wiping out 2 perfectly
-good backups in the process of trashing it); it wasn't my system
-randomly borking itself like yours seems to have.
+> Well you replied, and I guess this is just another lesson to backup,=20
+> backup, backup!  In all honesty, I don't think the filesystem itself is=
+=20
+> damaged, I still think it's just the superblock.  I've had this problem=
+=20
+> before with another drive... it just decided to MBR/Root SB... It was=20
+> also an Hitachi (IBM) Drive.  *sigh*  Oh well, I'll just set the drives=
+=20
+> aside and leave em.  Maybe in a week or two I'll have enough money to=20
+> actually afford $25.=20
 
-I wish I could offer more help, but my advice based on my own experience
-is to not do anymore damage than has already been done and to get expert
-help.  In the end I could barely retrieve anything from my filesystem
-and in the process messed up any chances anyone else would have had to
-help me out.  Doh! :)
+I think you might try the DFT approach before giving up, but definitely
+don't do anymore damage with reiserfsck. :)  Also, since this is a
+stripe set, is the md device able to start the raid successfully?  If
+so, and if it only fails when you try to mount the filesystem on the
+raid, you will have better chances than if md can't even figure out that
+you have a stripe set spanning those disks.
 
 --=20
 Ryan Underwood, <nemesis@icequake.net>
 
---eJnRUKwClWJh1Khz
+--1yeeQ81UyVL57Vl7
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 Content-Disposition: inline
@@ -82,9 +86,9 @@ Content-Disposition: inline
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 
-iD8DBQFATOy2IonHnh+67jkRAtUhAJ9AwyR4I1PaK3yKqCv++MgqmRsmvwCghKtl
-t+eQDu7voWw7ytpHLA8EPW0=
-=YFFe
+iD8DBQFATRonIonHnh+67jkRAlUoAJ9cnNKtz3I9vke27xbMmI4Qx7Oz2gCaA2R6
+c2vyR87jtEuTQObvoqfKSRQ=
+=2fMo
 -----END PGP SIGNATURE-----
 
---eJnRUKwClWJh1Khz--
+--1yeeQ81UyVL57Vl7--
