@@ -1,156 +1,88 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: how do plugins work?
-Date: Sat, 26 Oct 2002 19:46:24 +0400
-Message-ID: <3DBAB8D0.904@namesys.com>
-References: <Pine.LNX.4.33.0210241624300.2792-100000@mitte.informatik.hu-berlin.de> <3DB81095.25F0C662@namesys.com> <3DB8816C.10400@namesys.com> <3DB950B8.611CC982@namesys.com> <3DB9DE71.7000503@namesys.com> <3DBAA71B.667E2EE8@namesys.com>
+From: Philippe =?ISO-8859-1?B?R3JhbW91bGzp?= <philippe.gramoulle@mmania.com>
+Subject: Reiserfsck 3.6.4 --rebuild-tree statistics
+Date: Sat, 26 Oct 2002 21:42:18 +0200
+Message-ID: <20021026214218.0aebf86a.philippe.gramoulle@mmania.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11801-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11802-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Edward Shishkin <edward@namesys.com>
-Cc: gregor@zeitlinger.de, reiserfs mailing list <reiserfs-list@namesys.com>
-
-Edward Shishkin wrote:
-
->Hans Reiser wrote:
->  
->
->>Edward Shishkin wrote:
->>
->>    
->>
->>>Hans Reiser wrote:
->>>
->>>
->>>      
->>>
->>>>Edward Shishkin wrote:
->>>>
->>>>
->>>>
->>>>        
->>>>
->>>>>Gregor Zeitlinger wrote:
->>>>>
->>>>>
->>>>>
->>>>>
->>>>>          
->>>>>
->>>>>>Hi,
->>>>>>
->>>>>>I'm new to this list. I'm wondering how the file plugins work. Are they
->>>>>>just a means of accessing the file contents or are they also designed to
->>>>>>save the file differently.
->>>>>>
->>>>>>For example, could you create a plugin that automatically zips each
->>>>>>text/plain file, which is totally transparent to the user?
->>>>>>
->>>>>>
->>>>>>
->>>>>>
->>>>>>            
->>>>>>
->>>>>Yeah, we could. Although transparentness means a bit worse compression..
->>>>>
->>>>>
->>>>>
->>>>>          
->>>>>
->>>>?
->>>>
->>>>You mean because of choosing to use compression atoms
->>>>
->>>>
->>>>        
->>>>
->>>Yes, but it is not the only reason.
->>>
->>>
->>>
->>>      
->>>
->>>>that are node sized?
->>>>
->>>>
->>>>        
->>>>
->>>No, compression atoms are limited by common sense ;)
->>>Obviously, it doesn't make sense to choose it less then node size, if you
->>>want to compress a file presented by tails. On the other hand, I am not
->>>sure if you will be delighted from transparent compression supported by 256K
->>>clusters even for larger files.
->>>
->>>
->>>
->>>      
->>>
->>>>Maybe it might be more precise to say that efficient random
->>>>access motivates small compression atoms which are less efficient?
->>>>(Assuming that I understood you.)
->>>>
->>>>
->>>>        
->>>>
->>>There is one more obscured reason that makes transparent compression worser.
->>>I have to remind that its primary assignment is the same: to provide more
->>>efficient disk space usage. Let's take a look how transparent compression
->>>and the package using the same compression algorithm will provide it:
->>>Suppose we want to compress a 8S-byte file, and both transparent compression
->>>and package is supported by 4-blocks clusters, S - block size.
->>>
->>>File system:
->>>divides the file into 2 clusters, suppose each cluster was compressed up to
->>>(2S+1) bytes, so compressed file occupies 6 blocks.
->>>Package:
->>>makes compressed file which occupies 2*(2S+1) = 4S+2 bytes and passes it
->>>to the file system, which places it (aieee!) into 5 blocks..
->>>
->>> So we do have the actual compression ratio produced by the file system is
->>>6/8 = 25% against actual ones (5/8 = 37,5%) produced by the package. The user
->>>can observe this effect only by using "du" (when he does "df", he see that
->>>file system and package produce the same compression ratio 37,5%).
->>>This is another effect caused by the specific of packing policy (for the
->>>ext2 files, reiserfs files presented by indirect items, etc..) Obviously
->>>we can avoid this by using bigger cluster (8 blocks).
->>>
->>>Edward.
->>>
->>>
->>>
->>>
->>>      
->>>
->>Or by not block aligning the clusters, which might be the right
->>solution,
->>    
->>
->
->It is impossible for the files presented by indirect items, since
->it means you'll place dead space in memory per file.
->
-We don't use indirect items.  It is not impossible in any event, the 
-problem is with being efficient in reads while also ensuring that we 
-read whole compression atoms at a time.
-
-> 
->  
->
->>and might allow for compression atoms larger than nodes.
->> Please consider that approach.
->>
->>Hans
->>    
->>
->
->
->  
->
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs <reiserfs-list@namesys.com>
 
 
+Hi,
 
+I just wanted to give these figures for those who might wonder how much time can
+take a --rebuild-tree. Of course these figures should be taken with precaution and
+may not reflect you particular environment.
+
+Setup : ~500Go Raid volume ( DELL PowerVault 210S RAID5 (2x5 spanned disks + 2 hot spares)
+filled with 170Go of quite deeply nested data & directories
+Controller DELL 2450: PIII 1GHz SMP 1Go RAM
+
+Time it took to make the --rebuild-tree: 8 hours 30 minutes.
+
+Philippe.
+
+0 transactions replayed
+###########
+reiserfsck --rebuild-tree started at Fri Oct 25 15:22:56 2002
+###########
+
+Pass 0:
+Loading on-disk bitmap .. ok, 42809069 blocks marked used
+Skipping 12578 blocks (super block, journal, bitmaps) 42796491 blocks will be read
+0%....20%....40%....60%....80%....100%
+        "r5" hash is selected
+Flushing..finished
+        Read blocks (but not data blocks) 42796491
+                Leaves among those 620311
+                        - corrected leaves 1
+                        - leaves all contents of which could not be saved and deleted 621
+                pointers in indirect items to wrong area 46 (zeroed)
+                Objectids found 3261439
+
+Pass 1 (will try to insert 619690 leaves):
+Looking for allocable blocks .. fininshed
+0%....20%....40%....60%....80%....100%
+Flushing..finished
+        619690 leaves read
+                616003 inserted
+                        - pointers in indirect items pointing to metadata 9 (zeroed)
+                3687 not inserted
+        non-unique pointers in indirect items (zeroed) 1035
+
+Pass 2:
+0%....20%....40%....60%....80%....100%
+Flushing..finished
+        Leaves inserted item by item 3687
+Pass 3 (semantic):
+Flushing..finished
+        Files found: 2410869
+        Directories found: 535225
+        Symlinks found: 12
+        Others: 157
+        Files with fixed size: 3
+        Names pointing to nowhere (removed): 22
+Pass 3a (looking for lost dir/files):
+Looking for lost directories:
+Looking for lost files:
+Flushing..finished
+        Objects without names 83728
+        Empty lost dirs removed 292596
+        Dirs linked to /lost+found: 8146
+                Dirs without stat data found 1
+        Files linked to /lost+found 56884
+        Objects having used objectids: 45
+                files fixed 5
+Pass 4 - finished
+        Deleted unreachable items 870
+Flushing..finished
+Syncing..finished
+###########
+reiserfsck finished at Fri Oct 25 23:49:35 2002
+###########
