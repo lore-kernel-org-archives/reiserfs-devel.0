@@ -1,57 +1,40 @@
-From: bscott@ntisys.com
-Subject: Re: Raid5, LVM and Reiserfs
-Date: Mon, 21 Oct 2002 12:30:37 -0400 (EDT)
-Sender: bscott@ntisys.com
-Message-ID: <Pine.LNX.4.44.0210211224470.14785-100000@dragon.inside.ntisys.com>
-References: <3DB429F2.4090301@eprocess.fr>
+From: "JP Howard" <jh_lists@fastmail.fm>
+Subject: file-nr, file-max, and ReiserFS
+Date: Tue, 22 Oct 2002 04:41:17 UT
+Message-ID: <20021022044118.074F5ECC7@server2.fastmail.fm>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11733-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11734-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3DB429F2.4090301@eprocess.fr>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: ReiserFS Mailing List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-On Mon, 21 Oct 2002, at 6:23pm, fcombernous@eprocess.fr wrote:
->> Funny you should mention that.  I was just discussing this last week on
->> the <poweredge-linux@dell.com> mailing list.  Apparently, not all RAID
->> controllers are created equal.  In particular, the design of the
->> integrated Adaptec RAID controller used in many Dell servers apparently
->> sucks mud when it comes to performance.  The AMI/LSI MegaRAID controllers
->> that Dell uses as add-in cards do much better.
->
-> Can you give us an URL to look at history of your discussion. I'm
-> interested by RAID controler provided by Dell servers.
+We're currently testing ReiserFS on one of our servers. It's holding up
+pretty well so far, except that we're seeing one perculiarity...
 
-  You can search the archives here:
+The ReiserFS server (running Cyrus and Postfix) has been hitting our max
+FDs (/proc/sys/fs/file-max) a few times, which is set at 90,000. However,
+we have an Ext3 server with almost the same # of users and overall load,
+and it has only hit 20,000 open files (according to
+/proc/sys/fs/file-nr).
 
-http://lists.us.dell.com/htdig/
+Does ReiserFS use more file handles for some reason? Is there any
+downside to setting file-max to something really big to avoid running out
+of FDs? Do you think that this may actually indicate some problem with
+our configuration, or this normal for ReiserFS?
 
-  A search on, e.g., "RAID performance", will yield many questions but few 
-answers, I am afraid.
+Also, I checked with `lsof | wc -l` to see how many files it reported as
+open. On the ReiserFS server it only showed 45,000 files as open (when
+the system had actually used all 90,000 handles). On the Ext3 server is
+showed 30,000 files as open (when the system had actually only used
+20,000 handles according to file-nr). I guess I'm wrong to be thinking
+that lsof and file-nr should show the same number of open files, but
+could someone explain why?
 
-  The two messages I have posted on this are here:
-
-http://lists.us.dell.com/pipermail/linux-poweredge/2002-October/004340.html
-http://lists.us.dell.com/pipermail/linux-poweredge/2002-October/004427.html
-
-but they do not say much more than I already have here.  I did receive a
-couple of off-list replies to my first message, which is what I base my
-information on.
-
-  Dell kinda sorta acknowledges the problem here
-
-http://lists.us.dell.com/fom-serve/cache/28.html
-
-but they are very tight-lipped about it.  Typical vendor grumble grumble.
-
--- 
-Ben Scott <bscott@ntisys.com>
-| The opinions expressed in this message are those of the author and do not |
-| necessarily represent the views or policy of any other person, entity or  |
-| organization.  All information is provided without warranty of any kind.  |
-
+TIA,
+  Jeremy
