@@ -1,49 +1,123 @@
-From: "Yury V. Umanets" <umka@namesys.com>
-Subject: Re: [jedi@ninja.dynup.net: Re: V4 status]
-Date: Fri, 05 Dec 2003 12:20:05 +0300
-Message-ID: <1070616004.15376.9.camel@firefly>
-References: <20031205085814.GD1926@backtop.namesys.com>
+From: Heinz-Josef Claes <hjclaes@web.de>
+Subject: Re: A bold idea (Re: Carrying Attributes too Far)
+Date: Fri, 05 Dec 2003 10:44:14 +0100
+Sender: hjclaes@web.de
+Message-ID: <1070617453.5605.13.camel@schlappix.schnulli.de>
+References: <1065247084.3f7e616c94ec9@webmail.st-andrews.ac.uk>
+	 <3FCE3716.8000509@namesys.com>
+	 <1070584227.3fcfd1a3d67f4@webmail.st-andrews.ac.uk>
+	 <3FD00272.7040607@ninja.dynup.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16239-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16240-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20031205085814.GD1926@backtop.namesys.com>
+In-Reply-To: <3FD00272.7040607@ninja.dynup.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: jedi@ninja.dynup.net
+To: David Masover <jedi@ninja.dynup.net>
 Cc: reiserfs-list@namesys.com
 
-On Fri, 2003-12-05 at 11:58, Alex Zarochentsev wrote:
-> Fredrik Tolf wrote:
+Am Fr, 2003-12-05 um 04.58 schrieb David Masover:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
 > 
-Hello,
-> >May I ask what the current stability status is for V4? Is there mayhap
-> >a HTTP resource for it that I have not found?
-> >
-> >Fredrik Tolf
-> >
-> > 
-> >
+> lrc1@st-andrews.ac.uk wrote:
 > 
-> I believe patching your kernel will not hurt anything else, and mounting 
-> a filesystem will probably not hurt anything else.
+>  >Quoting Hans Reiser <reiser@namesys.com>:
+>  >
+>  >...
+>  >
+>  >
+>  >
+>  >>lrc1@st-andrews.ac.uk wrote:
+>  >>
+>  >>
+>  >>
+>  >>>Sorry for the delay in replying.
+>  >>>
+>  >>>Quoting Hubert Chan <hubert@uhoreg.ca>:
+>  >>>
+>  >>>
+>  >
+>  >...
+>  >
+>  >
+>  >
+>  >>>Yes, it is impossible to hard-link between two files on different 
+> volumes
+>  >>>(except at mount points) in the Unix filesystem, but it shouldn't 
+> be. (More
+>  >>>generally, with the necessary permissions it should be possible to 
+> make any
+>  >>>
+>  >>>
+>  >>file
+>  >>
+>  >>
+>  >>>the child of any directory via a hard link, except where doing so would
+>  >>>
+>  >>>
+>  >>create a
+>  >>
+>  >>
+>  >>>cycle.)
+>  >>>
+>  >>>
+>  >>>
+>  >>This implies that two filesystems can share an identification number
+>  >>between them.
+>  >>
+>  >>
+>  >
+>  >I would suggest that for every link to a file on a different 
+> filesystem, the
+>  >linking directory should store both an identifier for the child file's
+>  >filesystem and the child file's on-disk inumber on that filesystem.* 
+> The reverse
+>  >
+>  >
+>  >
+> Here's a crazy idea -- maybe performance can be improved to the point
+> where it's actually more efficient to have one large partition to begin
+> with?  Back to hda1 is /boot, hda2 is /, and hda3 is swap?
 > 
-> I have a laptop on which I use Reiser4 for everything but /boot (as v4 
-> is not supported by grub
-It is supported, however patch is not yet sent to GRUB maintainer. The
-reason is that, reiser4 support for GRUB is based on our libreiser4 and
-its interface is under development now. Yet another reason, GRUB
-maintainer had some troubles with moving to another country some time
-ago and was not able to accept any emails.
+> That gets rid of the hardlink problem, and also the problem of making
+> decisions about partitioning.  Other features of Reiser4 like plugins
+> eliminate any need that might arise from things like Cryptoloop.  In
+> fact, maybe other filesystems will be implemented as Reiser4 plugins to
+> a .img file, but that's probably going a bit far.
+> 
+If you want to have a flexible size for a filesystem, the are
+possiblities with LVM (or others) which gives you also the possibility
+to create a raid - which you normally want on such filesystems.
+Hardlinks between different partitions gives another problem: What is,
+if the other partition is not available (unmounted or crashed)? What is,
+if the other partition is an NFS-mounted partition with all the
+possiblities that can happen?
+ 
+> I agree that hardlinking directories should be allowed, and I think it's
+> worth it to check whether it creates a loop, unless rm can be modified
+I think hard linking directories is a very good idea. The should be a
+count for the number of hard links and it should be handled like with
+normal files. I directly have an application with would have a great
+benefit of this kind of hard linked directories, but up to now they are
+not available in linux :-(
 
->  and v3 was never supported very well). 
-I thought, that it is supported good enough :) Can you be more specific
-on this?
+
+> to simply rm the directory, and the filesystem (and maybe VFS) would be
+> modified to have directories have link counts that don't include . or
+> .., so when a directory is to be deleted, the system does its own manual
+> deletion of each of the files within it.  Then, if I type 'rm loop' and
+> it removes the link of 'loop/loop' to 'loop', there are now no more
+> links to 'loop' and it gets destroyed.
+> 
+
+Heinz-Josef Claes                     hjclaes@web.de
+project: http://sourceforge.net/projects/storebackup
+      -> snapshot-like backup to another disk
 
 
--- 
-umka
 
