@@ -1,74 +1,76 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Subject: [PATCH] Re:
- http://www.namesys.com/snapshots/2004.07.13-internal.testing/
-Date: Tue, 13 Jul 2004 12:54:01 +0200
-Message-ID: <20040713125401.1ac99b7f@philou.gramoulle.local>
-References: <200406150022.34578.vitaly@namesys.com>
-	<200407131427.58912.vitaly@namesys.com>
+From: Nikita Danilov <nikita@clusterfs.com>
+Subject: Re: Performance improvements to key comparison functions
+Date: Mon, 12 Jul 2004 16:00:22 +0400
+Message-ID: <16626.32086.481761.496932@gargle.gargle.HOWL>
+References: <16624.33598.532028.839701@gargle.gargle.HOWL>
+	<20040712220400.7273415F22@mail03.powweb.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="Multipart=_Tue__13_Jul_2004_12_54_01_+0200_mHzGquLY3OeqcN2/"
-Return-path: <reiserfs-list-return-19595-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19596-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200407131427.58912.vitaly@namesys.com>
+In-Reply-To: <20040712220400.7273415F22@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: David Dabbs <david@dabbs.net>
+Cc: 'Nikita Danilov' <nikita@clusterfs.com>, reiserfs-list@namesys.com
 
---Multipart=_Tue__13_Jul_2004_12_54_01_+0200_mHzGquLY3OeqcN2/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+David Dabbs writes:
+ > 
+ > 
+ > 
+ > >  I'm curious about testing znode->version before and then after the call
+ > >  to 
+ > >  > znode_contains_strict (when it returns true). Is there a reason this is
+ > > not
+ > >  > done e.g. extra call to znode_contains is a small price to pay vs.
+ > >  > speculative, protected read of each cached node's version member?
+ > > 
+ > > I don't quite follow, can you elaborate? What znode_contains_strict()'s
+ > > call site are you talking about?
+ > > 
+ > > Nikita.
+ > 
+ > [David Dabbs] 
+ > 
+ > The function that scans cached znodes before embarking on a full tree search
+ > is the site I had in mind. It locks the cache, then calls
+ > znode_contains_key_strict if the h->level == cached_node->level (or
+ > something similar). All search key/cached node comparisons are done without
+ > locking each cached node. If a cached node is found, the code then locks the
+ > node, rechecks znode->level, recalls znode_contains_key_strict and, I think,
+ > checks for ZNODE_HEARD_BANSHEE, etc. 
+ > 
+ > Assuming the search key is an invariant, it seems as though one could grab a
+ > copy of cached_node->version _before_ calling znode_contains. If z_c_k_s
+ > finds a match and the version member is unchanged, then one need not recall
+ > z_c_k_s. If it is different, then recheck z_c_k_s as is done now.
 
+I see now. Problem is that znode->version is protected by long-term lock
+itself. That is, invariant
 
-Hello Vitally,
+    "znode content change implies znode->version bump"
 
-I needed the following patch in order to compile reiser4progs-0.5.6 correctly.
+is maintained under long-term lock on znode. In particular, following
+sequence of actions is valid:
 
-Thanks,
+(1) obtain long term lock on znode Z
 
-Philippe
+(2) modify Z's content
 
-On Tue, 13 Jul 2004 14:27:58 +0400
-Vitaly Fertman <vitaly@namesys.com> wrote:
+(3) bump Z->version
 
-  | Hello All,
-  | 
-  | This snapshot contains updated reiser4progs-0.5.6 and libaal-0.5.3.
-  | Grub patch is the same.
-  | 
-  | It includes many bug fixes against the previous snapshot, also 
-  | improved gauges and user wanrnings and some speedups.
-  | 
-  | and again, it should be used with the last auto reiser4 snapshots 
-  | only as the latest 'stable' reiser4 snapshot (2004.03.26) does not 
-  | support plugin sets in StatDatas.
-  | 
-  | -- 
-  | Thanks,
-  | Vitaly Fertman
-  | 
-  | 
+(4) modify Z's content again
 
---Multipart=_Tue__13_Jul_2004_12_54_01_+0200_mHzGquLY3OeqcN2/
-Content-Type: text/plain;
- name="gauge.c.diff"
-Content-Disposition: attachment;
- filename="gauge.c.diff"
-Content-Transfer-Encoding: 7bit
+(5) release long-term lock (without increasing Z->version for the second
+    time)
 
---- gauge.c.orig	2004-07-13 12:51:10.000000000 +0200
-+++ gauge.c	2004-07-13 12:50:00.000000000 +0200
-@@ -4,7 +4,7 @@
-    gauge.c -- common for all progs gauge metods. */
- 
- #ifndef ENABLE_STAND_ALONE
--#include <aal/aal.h>
-+#include <aal/libaal.h>
- #include <aux/gauge.h>
- 
- aal_gauge_handler_t aux_gauge_handlers[GT_LAST];
+If first call to z_c_k_s() happens between (3) and (4), re-checking
+->version is not enough.
 
+ > 
+ > David
 
---Multipart=_Tue__13_Jul_2004_12_54_01_+0200_mHzGquLY3OeqcN2/--
+Nikita.
