@@ -1,67 +1,46 @@
-From: Valdis.Kletnieks@vt.edu
+From: Russell Coker <bofh@coker.com.au>
 Subject: Re: Reserved Blocks
-Date: Mon, 16 Sep 2002 11:35:34 -0400
-Message-ID: <200209161535.g8GFZYM4004165@turing-police.cc.vt.edu>
-References: <20020916102742.6538D2926@hofmann.snowcra.sh> <200209161450.g8GEorM4003750@turing-police.cc.vt.edu>
-            <200209161713.52352.russell@coker.com.au>
+Date: Mon, 16 Sep 2002 17:44:05 +0200
+Message-ID: <200209161744.05987.bofh@coker.com.au>
+References: <20020916102742.6538D2926@hofmann.snowcra.sh> <200209161713.52352.russell@coker.com.au> <200209161535.g8GFZYM4004165@turing-police.cc.vt.edu>
+Reply-To: Russell Coker <bofh@coker.com.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-1901158394P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11475-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11476-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Mon, 16 Sep 2002 17:13:52 +0200."
-             <200209161713.52352.russell@coker.com.au> 
+In-Reply-To: <200209161535.g8GFZYM4004165@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Russell Coker <russell@coker.com.au>
+Content-Type: text/plain; charset="us-ascii"
+To: Valdis.Kletnieks@vt.edu
 Cc: Sam Vilain <sam@vilain.net>, 'reiserfs-list' <reiserfs-list@namesys.com>
 
---==_Exmh_-1901158394P
-Content-Type: text/plain; charset=us-ascii
+On Mon, 16 Sep 2002 17:35, Valdis.Kletnieks@vt.edu wrote:
+> On Mon, 16 Sep 2002 17:13:52 +0200, Russell Coker said:
+> > Alternately use quotas, speaking of which, do Quotas work on ReiserFS
+> > without additional patches yet?  Quotas really are an essential feature.
+>
+> Quotas are a Good Thing - but note that quite often you get into the
+> situation where you want to "overcommit" a partition (for instance, 2G of
+> disk, and 10 users each of which have a 500M limit).  It helps, but you're
+> still open to attacks by collusion (intentional, accidental, or by
+> hijacking 3 other userids to help).
 
-On Mon, 16 Sep 2002 17:13:52 +0200, Russell Coker said:
+Group quotas should help that.  Put all the untrusted users in a group that 
+has a quota which is small enough to not allow any damage.
 
-> Alternately use quotas, speaking of which, do Quotas work on ReiserFS without 
-> additional patches yet?  Quotas really are an essential feature.
+> Ahh, both are very nice, but alas, neither is part of the base kernel yet.
 
-Quotas are a Good Thing - but note that quite often you get into the
-situation where you want to "overcommit" a partition (for instance, 2G of
-disk, and 10 users each of which have a 500M limit).  It helps, but you're
-still open to attacks by collusion (intentional, accidental, or by hijacking
-3 other userids to help).
+LSM will be part of the base kernel soon, the code merge has already 
+started...  Whether SE Linux and OpenWall get included is still up for 
+discussion.  But that's OK, once LSM is in the base kernel it'll be trivial 
+to add SE Linux (no more patch conflicts).
 
-> Solar Designer's OpenWall kernel patch addresses this issue by prohibiting 
-....
-> Also the LSM patch includes NSA Security enhanced Linux.  In the default SE 
-> Linux policy a user in the default un-priviledged role (user_r) with the 
-> defalt security domain for that role (user_t) will not be allowed to even 
+-- 
+http://www.coker.com.au/bonnie++/     Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/       Postal SMTP/POP benchmark
+http://www.coker.com.au/projects.html Projects I am working on
+http://www.coker.com.au/~russell/     My home page
 
-Ahh, both are very nice, but alas, neither is part of the base kernel yet.
-
-> A machine with an adequate security setup and with correctly configured quotas 
-> should be able to operate correctly with hostile local users even if it only 
-> has a single file system.
-
-Granted.  However, my point was that I've never seen a Unixoid system that was
-safe to run with only one big partition without extensive kernel hacking to
-make it safe. I'll be more than happy to change my stance as soon as SELinux
-ships as part of the base system ;)
-
-/Valdis
-
---==_Exmh_-1901158394P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.7 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQE9hfpFcC3lWbTT17ARAkpTAJ9tDbdS84bwRMvnxKjUI/lvMDugtgCg9lus
-mVOxNcE5v6sxvXahQUhh4g8=
-=IlwS
------END PGP SIGNATURE-----
-
---==_Exmh_-1901158394P--
