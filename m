@@ -1,45 +1,58 @@
-From: Philippe =?ISO-8859-1?B?R3JhbW91bGzp?= <philippe.gramoulle@mmania.com>
-Subject: Re: Quota support for UID >65534
-Date: Wed, 17 Jul 2002 14:52:02 +0200
-Message-ID: <20020717145202.29e6e070.philippe.gramoulle@mmania.com>
-References: <1026727900.18163.61.camel@max>
-	<1026731371.21656.301.camel@tiny>
-	<1026807249.1066.31.camel@max>
+From: Moritz Angermann <moritz.angermann@gmx.net>
+Subject: Permission denied !? - will i ever update my system again ?
+Date: 17 Jul 2002 23:54:10 +0200
+Sender: Moritz Angermann <cone@caos.mine.nu>
+Message-ID: <1026942850.826.13.camel@prototype>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11037-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11038-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <1026807249.1066.31.camel@max>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-On 16 Jul 2002 10:14:08 +0200
-Zeljko Brajdic <zorz@iskon.hr> wrote:
 
+well 
+hi all,
+now after using reiserFS for a very long term without any problems
+i'm facing a totaly new one and i'm helpless.
+the problem is, while apt-get dist-upgrade, you all know this
+command,[or not]
+i get : 
+can't access ./usr/include/arpa/telnet.h (...): permission denied
 
-Following Honza recommandations , we simply stripped out the 
-"if (id & ~0xFFFF)" line by hand and we now use quota ith 32bits UIDs without
-any problem :o)
+so i did ls -lah /usr/include/arpa/
+the result : ( as root )
+---
+#>ls -lah /usr/include/arpa/
+ls: /usr/include/arpa/telnet.h: Permission denied
+ls: /usr/include/arpa/tftp.h: Permission denied
+insgesamt 51K
+drwxr-xr-x    2 root     root          181 2002-07-17 23:21 .
+drwxr-xr-x   92 root     root         6.2K 2002-07-17 23:21 ..
+-rw-r--r--    1 root     root         3.4K 2002-06-24 18:57 ftp.h
+-rw-r--r--    1 root     root         4.3K 2002-06-24 18:57 inet.h
+-rw-r--r--    1 root     root         5.9K 2002-06-24 18:57
+nameser_compat.h
+-rw-r--r--    1 root     root          20K 2002-06-24 18:57 nameser.h
+(root@prototype/Wed Jul 17//home/cone/4)
+#>
+---
 
-It's not a bug , more likely a test that's been there for long at the time
-of 32bit UIDs were not ready , it think.
+doesn't look any good, does it !? ...
+so i tryed my HD-vendors tool.
+WesternDigital...
+but it told me my disk was 100% ok.
+( it did also tell me a while ago, my dist had errors, so it corrected
+em, awesome tool :p )
+---
+but now, what can i do about it ? reiserfsck ? well it keeps telling me
+about unsable and i shall not use it ...
 
-Thanks,
+so any ideas ? 
 
-Philippe.
+thanks.
 
-  |  We have found "error". :) In fs/dquot.c at line 2057 exists if
-  |  statement:
-  |  
-  |          if (id & ~0xFFFF)
-  |                  goto out;
-  |  
-  |  Is this feature or bug?! :) This have been found in vanilla kernel-2.4.18
-  |  -- 
-  |  v            ,   v  v
-  |  Zeljko Brajdic - Zorz
-  |  
-  |  
+-moritz
