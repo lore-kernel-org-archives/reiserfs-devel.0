@@ -1,37 +1,24 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: quotas in 2.4.20
-Date: Tue, 3 Dec 2002 12:48:10 +0300
-Message-ID: <20021203124810.A13658@namesys.com>
-References: <01ca01c29a58$4784a4b0$4902a8c0@consensys.com>
+From: Russell Coker <russell@coker.com.au>
+Subject: 2.4.20 and data logging
+Date: Tue, 3 Dec 2002 12:38:32 +0100
+Message-ID: <200212031238.32403.russell@coker.com.au>
+Reply-To: Russell Coker <russell@coker.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12087-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-12088-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <01ca01c29a58$4784a4b0$4902a8c0@consensys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jason Zebchuk <jason@consensys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+How is data logging work going?  Is there a patch for 2.4.20?
 
-On Mon, Dec 02, 2002 at 06:12:25PM -0500, Jason Zebchuk wrote:
-> I was trying to apply the reiserfs-quota-22 patch to a 2.4.20 kernel and it
-> didn't work.  I tried to find out why failed, and to see if I could fix the
-> problem, but it seems that significant changes were made to the file
-> bitmap.c .  I couldn't even find some of the functions that were being
-> patched.
-> Does the 2.4.20 kernel require this patch, or a similar one to work with
-> quota's?  Will such a patch me made?
+-- 
+http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
+http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
+http://www.coker.com.au/~russell/  My home page
 
-I have a testing version available at
-ftp://namesys.com/pub/reiserfs-for-2.4/testing/quota-2.4.20
-
-You can try it and report to me if it breaks (but I hope it won't)
-
-Bye,
-    Oleg
