@@ -1,76 +1,41 @@
-From: Christophe Saout <christophe@saout.de>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 23:09:07 +0200
-Message-ID: <1093554547.13881.55.camel@leto.cs.pocnet.net>
-References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com>
-	 <Pine.LNX.4.58.0408261101110.2304@ppc970.osdl.org>
-	 <45010000.1093553046@flay>
-	 <Pine.LNX.4.58.0408261348500.2304@ppc970.osdl.org>
-	 <57730000.1093554054@flay>
+Date: Thu, 26 Aug 2004 22:00:27 +0100
+Message-ID: <20040826210027.GD5733@mail.shareable.org>
+References: <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <20040826100530.GA20805@taniwha.stupidest.org> <20040826110258.GC30449@mail.shareable.org> <412E06B2.7060106@pobox.com> <1093552705.5678.96.camel@krustophenia.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-c14bBX2vCs/ZAYJFr6ee"
-Return-path: <reiserfs-list-return-20806-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20804-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <57730000.1093554054@flay>
+Content-Disposition: inline
+In-Reply-To: <1093552705.5678.96.camel@krustophenia.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "Martin J. Bligh" <mbligh@aracnet.com>
-Cc: Linus Torvalds <torvalds@osdl.org>, Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lee Revell <rlrevell@joe-job.com>
+Cc: Will Dyson <will_dyson@pobox.com>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
---=-c14bBX2vCs/ZAYJFr6ee
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Lee Revell wrote:
+> Same here.  This always seemed like something the kernel should be able
+> to handle.  It seems to me that if reiser4 had been available at the
+> time the Gnome and KDE developers would not have needed to do this.
 
-Am Donnerstag, den 26.08.2004, 14:00 -0700 schrieb Martin J. Bligh:
+reiser4 has prompted the discussion again, but it doesn't provide the
+virtual filesystem capabilities that we're talking about, which Gnome
+and KDE implement in userspace.  The FUSE project is much more
+relevant for that.
 
-> > "It's a feature".
-> >=20
-> > The S_ISDIR/S_ISREG tests show real information: it shows not only user
-> > intent ("you should consider this a file, even if it has attributes"), =
-but
-> > also whether it is a directory or a container.
-> >=20
-> > And there's a real technical difference there: the streams contained
-> > within a file are bound to that file. The files contained within a
-> > directory are _independent_ of that directory. Big difference. HUGE
-> > difference.
-> >=20
-> > So it's not confusing. If it tests as a file, you think of it as a file=
-. =20
-> > It may have attributes aka named streams associated with it, and you ma=
-y
-> > be able to open those attributes by treating the file as a directory, b=
-ut
-> > that doesn't really change the fact that it's a file.
-> >=20
-> > The _big_ difference is that when you can make the compound object _loo=
-k_=20
-> > like a directory, that means that you can now manage the attributes wit=
-h=20
-> > standard tools. They are still attributes, though.
->=20
-> I think what you're saying is that they'd both return positive, right?
+We had file-as-directory discussions years ago, and 5 years ago I was
+experimenting with doing virtual filesystems with that capability over NFS.
 
-No. A file is still a file and S_ISREG will thus return false.
-The application should just try to open it as a directory if it wants to
-access the assiociated embedded attribute files. If the open fails,
-well, it knows that the filesystem (or Linux version, whatever) doesn't
-support this feature.
+podfuk offered something close to Gnome and KDE but in kernel space:
+virtual filesytems accessible through the kernel, but it didn't get
+too popular.  It was based on Midnight Commander's VFS (which has
+evolved into Gnome's VFS), using the CODA filesystem interface to
+provide the kernel hooks.  It had some problems, and was a bit fiddly
+to use.  We still don't have something that's particularly nice to use
+for ordinary users.
 
-
---=-c14bBX2vCs/ZAYJFr6ee
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQBBLlFzZCYBcts5dM0RAiA9AKCISYg9TLy0K3f80r0kl/zZ+RXsTQCghu2h
-RbkLsuBUPit/G6UyNlW7lIo=
-=5zQ2
------END PGP SIGNATURE-----
-
---=-c14bBX2vCs/ZAYJFr6ee--
-
+-- Jamie
