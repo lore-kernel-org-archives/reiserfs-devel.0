@@ -1,33 +1,74 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: CPU usage problem with custom 2.6.7 kernel
-Date: Mon, 16 Aug 2004 09:48:56 -0400
-Message-ID: <1092664136.12138.64.camel@watt.suse.com>
-References: <411DE847.3070809@iinet.net.au>
-	 <1677610534.20040814123650@tnonline.net>
+From: Spam <spam@tnonline.net>
+Subject: Re: Quicker alternative to "find /"?
+Date: Mon, 16 Aug 2004 15:54:23 +0200
+Message-ID: <104591417.20040816155423@tnonline.net>
+References: <20040815231640.3c926886.felix.klee.reiserfs@gmx.net>
+ <1092660765.28417.4.camel@leto.cs.pocnet.net>
+ <216013485.20040816151904@tnonline.net>
+ <1092663168.12138.46.camel@watt.suse.com>
+Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20329-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20330-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1677610534.20040814123650@tnonline.net>
+In-Reply-To: <1092663168.12138.46.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Spam <spam@tnonline.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Sat, 2004-08-14 at 06:36, Spam wrote:
-> > 
-> You need to enable DMA and 32bit I/O!
-> Use: hdparm -d1c3 /dev/hda
-> 
 
-DMA is the major problem there.  hdparm -d1 /dev/hda should be enough to
-fix the performance problems.  The rest of the hints given in the
-message are just tuning on top of dma, I'd suggest reading the hdparm
-manpage carefully before changing any of them.
 
--chris
+> On Mon, 2004-08-16 at 09:19, Spam wrote:
+>> > Am Sonntag, den 15.08.2004, 23:16 +0200 schrieb Felix E. Klee:
+>> 
+>> >> I'd like to store the directory structure of a partition formatted as
+>> >> ReiserFS into a file. Currently, I use
+>> >> 
+>> >>     find / >file
+>> >> 
+>> >> This process takes approximately 5 minutes (the result is 26MB of
+>> >> data). Are there any alternative *quicker* ways to do this?
+>> 
+>> > The main problem is that find only uses one thread. This thread only
+>> > reads one directory at once and as a result of that you'll get a lot of
+>> > seeks.
+>> 
+>>   I am confused about this in general with most filesystems. I thought
+>>   that all filenames/foldernames etc were stored in one place and not
+>>   spread out over the intire filesystem.
+>> 
+>>   It seem to me very strange that things like find/ls -R etc takes so
+>>   so long just read/list files like this on any modern filesystem.
+
+> It varies by filesystem.  The filenames and folder names are stored in
+> one place on almost all filesystems.  But, the actual inode information
+> that tells you what kind of file it is and how to read the file are
+> sometimes stored in a different place (v3, ext[23]).
+
+> find has to read both sets of information because a recursive find has
+> to descend into all subdirectories, and the only way it can know if
+> something is a subdirectory is by reading the inode.  There is an
+> optimization that ext[23] use to store the mode information (identifying
+> things as a file or dir) in the directory listing.  reiserfs v3 doesn't
+> have this in the disk format, not sure if v4 does or not.
+
+  Yes  I understand what you are saying. I do not think this behaviour
+  is  any  good.  It  would  mean  that at least two disk reads - also
+  physically apart from eachother on the disk would need to be read to
+  retrieve   this   type   of  information.  It  seem  quite  mad  and
+  unnessesary. :) But then I am not a FS developer. There are perhaps
+  good reasons to keep thing this way?
+
+> Different directories are likely to be stored in different areas of the
+> disk.  So, a multithreaded find that tries to read multiple dirs at once
+> is likely to introduce more seeks.
+
+> -chris
+
+
+
 
 
