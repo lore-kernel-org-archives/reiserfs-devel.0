@@ -1,73 +1,85 @@
-From: Raul Miller <moth@debian.org>
+From: Paul Wagland <paul@wagland.net>
 Subject: Re: reiser4 non-free? (I throw in the towel)
-Date: Tue, 11 May 2004 09:09:47 -0400
-Message-ID: <20040511090947.Z13880@links.magenta.com>
-References: <1084025633.28080.196082736@webmail.messagingengine.com> <200405110004.05704.reiser@namesys.com>
-Mime-Version: 1.0
-Return-path: <bounce-debian-legal=debian-legal=m.gmane.org@lists.debian.org>
-Content-Disposition: inline
-In-Reply-To: <200405110004.05704.reiser@namesys.com>; from reiser@namesys.com on Tue, May 11, 2004 at 12:04:05AM -0700
-Resent-Message-ID: <vVoBM.A.Vh.DDNoAB@murphy>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Post: <mailto:debian-legal@lists.debian.org>
-List-Help: <mailto:debian-legal-request@lists.debian.org?subject=help>
-List-Subscribe: <mailto:debian-legal-request@lists.debian.org?subject=subscribe>
-List-Unsubscribe: <mailto:debian-legal-request@lists.debian.org?subject=unsubscribe>
-List-Archive: <http://lists.debian.org/debian-legal/>
-Content-Type: text/plain; charset="us-ascii"
+Date: Tue, 11 May 2004 15:50:27 +0200
+Message-ID: <291D3403-A352-11D8-BD91-000A95CD704C@wagland.net>
+References: <1084025633.28080.196082736@webmail.messagingengine.com> <200405110004.05704.reiser@namesys.com> <20040511090947.Z13880@links.magenta.com>
+Mime-Version: 1.0 (Apple Message framework v613)
+Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha1; boundary="Apple-Mail-39-749529285"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Humberto Massa <humberto.massa@almg.gov.br>, rms@gnu.org, debian-legal@lists.debian.org, Valdis.Kletnieks@vt.edu, reiserfs-list@namesys.com, vitaly@namesys.com
+Return-path: <reiserfs-list-return-18606-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <20040511090947.Z13880@links.magenta.com>
+List-Id: <reiserfs-devel.vger.kernel.org>
+To: Raul Miller <moth@debian.org>
+Cc: reiserfs-list@namesys.com, rms@gnu.org, Humberto Massa <humberto.massa@almg.gov.br>, debian-legal@lists.debian.org, Hans Reiser <reiser@namesys.com>, Valdis.Kletnieks@vt.edu, vitaly@namesys.com
 
-On Tue, May 11, 2004 at 12:04:05AM -0700, Hans Reiser wrote:
-> I think Humberto is correct in his analysis of what makes something 
-> derivative.  By the logic of that analysis though, reiserfs can be 
-> distributed even if it is licensed differently from the rest of the kernel 
-> because it is not derivative of it (It can be ported to other operating 
-> systems, and was created with the intention of performing such porting.  I 
-> did not expect Linux to be effective in earning money relative to sales to OS 
-> companies like Sun way back in 1993 when we started, and Linux was not 
-> intended to be the primary income source for Namesys.....).  By his
-> legally correct analysis, that the kernel all gets linked together is not
-> relevant.
+--Apple-Mail-39-749529285
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-  "We wrote A as an appendix to B, but we intend to also find some C
-  and have it be an appendix to that as well."
 
-I can see at least two issues with this line of thought.  Email me
-privately if you feel it important to know how I look at this.
+On May 11, 2004, at 15:09, Raul Miller wrote:
 
-> Debian's efforts to make licensing into inflexible dogma are bad, based on a 
-> lack of understanding of the tradeoffs inherent in licensing, and deserve 
-> opposition.
+> On Tue, May 11, 2004 at 12:04:05AM -0700, Hans Reiser wrote:
+>> I think Humberto is correct in his analysis of what makes something
+>> derivative.  By the logic of that analysis though, reiserfs can be
+>> distributed even if it is licensed differently from the rest of the 
+>> kernel
+>> because it is not derivative of it (It can be ported to other 
+>> operating
+>> systems, and was created with the intention of performing such 
+>> porting.  I
+>> did not expect Linux to be effective in earning money relative to 
+>> sales to OS
+>> companies like Sun way back in 1993 when we started, and Linux was not
+>> intended to be the primary income source for Namesys.....).  By his
+>> legally correct analysis, that the kernel all gets linked together is 
+>> not
+>> relevant.
+>
+>   "We wrote A as an appendix to B, but we intend to also find some C
+>   and have it be an appendix to that as well."
+>
+> I can see at least two issues with this line of thought.  Email me
+> privately if you feel it important to know how I look at this.
 
-Maybe Debian has made some signfificant mistakes.  I'm not sure
-specifically what they would be, but most people make mistakes sooner
-or later.  I'll agree that some of the arguments made to express Debian's
-issues have not been expressed very coherently.
+I think a more correct analogy (from Han's point of view at least) 
+would be:
 
-However, the "inflexibility" you are talking about is an artifact of the
-underlying legal environment.  Debian's "inflexibility" has been directed
-at retaining some community ability to distribute/maintain/develop
-software despite that environment.
+'We wrote this explanatory work "A" about work "B", it is also relevant 
+to work "C" which is on the same topic as "B"'
 
-And, given that the worst Debian can do is say "we won't deal with this",
-I think you're being a bit harsh in your charactarization of the project.
-[I'm not saying Debian is beyond criticism, mind you -- I'm saying that
-I think your criticisms are not as helpful as they could be.]
+Look at it from a QT point of view, written and distributed freely for 
+Linux, but also relevant (and paid for) on other OS'es... Given that 
+they have sold reiser3 to other unnamed companies, I think that the 
+argument can quite easily be made that reiser4 would also exist without 
+linux, but that linux is the "first target". But, as always, I am not a 
+lawyer ;-)
 
-> I will sidestep the GFDL vs. XFree86 style vs. GPLV2 docs issue by making GPL 
-> V2 docs that consist of a URL to our website.  Vitaly, see to that, and make 
-> sure we have good docs on our website....  That solution should make everyone 
-> except the users happy.  Sigh.  GFDL would be better, but I don't want to 
-> deal with that fight....  
+FWIW, I would like to publicly thank Hans for his decision to release 
+the whole shebang under a GPLv2 license. It makes me even happier that 
+I earlier sent a donation to namesys.
 
-You can, of course, make this available under multiple licenses.
+Cheers,
+Paul
 
-> Peace be with you,
+--Apple-Mail-39-749529285
+content-type: application/pgp-signature; x-mac-type=70674453;
+	name=PGP.sig
+content-description: This is a digitally signed message part
+content-disposition: inline; filename=PGP.sig
+content-transfer-encoding: 7bit
 
-And with you,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (Darwin)
 
--- 
-Raul
+iD8DBQFAoNoktch0EvEFvxURAl41AJ9ZaY9rJAi5yBFMqQk6gsIwpuHxRgCfTGWn
+ldJGd1ADB9gpnc6VfFwPQ2Y=
+=WuI1
+-----END PGP SIGNATURE-----
+
+--Apple-Mail-39-749529285--
 
