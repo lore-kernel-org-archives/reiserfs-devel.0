@@ -1,73 +1,52 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Re: Re: [PATCH CFT] tons of logging patches
-Date: Thu, 13 Jun 2002 00:32:07 +0200
-Message-ID: <3D07CBE7.5080701@mb.tu-ilmenau.de>
-References: <1023076301.22608.1778.camel@tiny>	<3CFC1CB5.8040102@mb.tu-ilmenau.de>	<1023157228.31475.38.camel@tiny> 	<3CFC33F2.7080009@mb.tu-ilmenau.de>	<1023196345.31682.81.camel@tiny> <3CFE7EFB.6080203@mb.tu-ilmenau.de> 	<3CFE8234.7010006@mb.tu-ilmenau.de> <1023322167.2920.772.camel@tiny>
+From: "bo" <bo@sosnetwork.net>
+Subject: Re: Mount and file system size issue
+Date: Wed, 12 Jun 2002 19:17:47 -0700
+Message-ID: <004b01c21280$82cf6920$5701a8c0@bomoon>
+References: <8287102CFE5C31418556A13A4E5BEE91E95A77@sphynx.git.compgen.com> <20020609230747.A8355@namesys.com> <005d01c210a6$d28bad60$5701a8c0@bomoon> <200206121133.31763.kuba@mareimbrium.org> <20020612223810.A4969@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10729-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10730-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Oleg Drokin <green@namesys.com>, Kuba Ober <kuba@mareimbrium.org>
+Cc: reiserfs-list@namesys.com
 
-On 06/06/2002 02:09 AM, Chris Mason wrote:
-> Ok, ftp.suse.com/pub/people/mason/patches/data-logging has my latest
-> updates, which have more optimizations for many threads all doing
-> synchronous transactions.
+Hi,
+
+You are right.
+My system does not have any I/O devices such as mouse or KBD.
+
+Of course you can connected to the system through ethernet(telnet).
+
+I am investigating the solution from "sysrq.txt".
+
+Thanks,
+
+Bo
+----- Original Message ----- 
+From: "Oleg Drokin" <green@namesys.com>
+To: "Kuba Ober" <kuba@mareimbrium.org>
+Cc: "bo" <bo@sosnetwork.net>; <reiserfs-list@namesys.com>
+Sent: Wednesday, June 12, 2002 11:38 AM
+Subject: Re: [reiserfs-list] Mount and file system size issue
+
+
+> Hello!
 > 
-> -chris
+> On Wed, Jun 12, 2002 at 11:33:31AM -0400, Kuba Ober wrote:
 > 
-
-Mmh. I recompiled with the new one when it appeared on the server and 
-kept the kernel append line with the obvious problem not to be able to 
-easily reboot to my ext2 maintenance partition.
-
-I had some disappearing files/dirs from /lib/modules/* and from 
-somewhere within /var/* the second time now. First occurrence is about 6 
-days ago. That takes action within a good uptime (I mean: not at startup 
-or upon special programs' interaction).
-
-Jun 12 20:52:48 firehead kernel: is_leaf: item location seems wrong 
-(second one): *3.6* [5273 5274 0x1 IND], item_len 4, item_location 2120, 
-free_space(entry_count) 0
-Jun 12 20:52:48 firehead kernel: vs-5150: search_by_key: invalid format 
-found in block 8422. Fsck?
-Jun 12 20:52:48 firehead kernel: vs-13070: reiserfs_read_inode2: i/o 
-failure occurred trying to find stat data of [5199 261934 0x0 SD]
-Jun 12 20:52:48 firehead kernel: is_leaf: item location seems wrong 
-(second one): *3.6* [5273 5274 0x1 IND], item_len 4, item_location 2120, 
-free_space(entry_count) 0
-Jun 12 20:52:48 firehead kernel: vs-5150: search_by_key: invalid format 
-found in block 8422. Fsck?
-[...] <- many many more
-Jun 12 20:54:46 firehead kernel: vs-13070: reiserfs_read_inode2: i/o 
-failure occurred trying to find stat data of [5199 261934 0x0 SD]
-Jun 12 20:54:46 firehead modprobe: modprobe: Can't open dependencies 
-file /lib/modules/2.4.19-pre9/modules.dep (Permission denied)
-
-
-I then needed to do a reiserfsck --rebuild-tree, as suggested by most 
-recent reiserfsck (3.x.1c-pre4), the 3.x.1b-one said, it was fixable by 
---fix-fixable, but I then decided to use the latest. And then I had to 
-adjust the lost&found manually. -- Huh, that took a long time, but 
-nothing's missing, if I experience my system correctly now.
-
-My system/partitions still look like the recently posted setup:
-  Kernel.2.4.19-pre9
-  ReiserFS.pending.01..03,05 (rest doesn't cooperate cleanly)
-  ReiserFS.mason.01..03 (most recent)
-  rml.preempt-kernel (maybe slightly modified for this setup)
-
-/ mounted -o noatime,notail,data=ordered
-and from applied lilo.conf: append = "... rootflags=data=ordered"
-
-
-Thanks, but the term "speedup" seems to be relative for me for now,
-
-Manuel
-
+> > > Sorry! What is "sysrq"?
+> > It's a key on your keyboard, I hope.
+> 
+> I afraid that most probably his system does not have keyboard and
+> operated through serial console of some kind.
+> Of course I might be wrong, but it seems he haev some kind of
+> embedded board (why do they use ARM CPU otherwise?)
+> 
+> Bye,
+>     Oleg
+> 
 
