@@ -1,85 +1,38 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 10 Sep 2004 10:51:27 -0700
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <4141E99F.5060303@namesys.com>
-References: <20040825200859.GA16345@lst.de>	 <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>	 <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk>	 <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org>	 <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk>	 <20040826001152.GB23423@mail.shareable.org>	 <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk>	 <20040826010049.GA24731@mail.shareable.org> <412DA40B.5040806@namesys.com>	 <20040826140500.GA29965@fs.tum.de>	 <20040826150202.GE5733@mail.shareable.org>	 <41410DE7.3090100@techsource.com>  <41413A2B.9020405@namesys.com> <1094797973.4838.4.camel@almond.st-and.ac.uk> <4141504B.8030104@namesys.com> <4141CCA2.9010005@techsource.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <4141CCA2.9010005@techsource.com>
+Date: Fri, 10 Sep 2004 13:50:05 -0400
+Message-ID: <200409101750.i8AHo5qx005157@localhost.localdomain>
+References: <wscott@bitmover.com>
+Return-path: <reiserfs-list-return-21684-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: Message from Wayne Scott <wscott@bitmover.com> 
+   of "Fri, 10 Sep 2004 10:50:40 EST." <20040910.105040.30177815.wscott@bitmover.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Timothy Miller <miller@techsource.com>
-Cc: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, Jamie Lokier <jamie@shareable.org>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Wayne Scott <wscott@bitmover.com>
+Cc: miller@techsource.com, reiser@namesys.com, Peter.Foldiak@st-andrews.ac.uk, jamie@shareable.org, bunk@fs.tum.de, viro@parcelfarce.linux.theplanet.co.uk, torvalds@osdl.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Timothy Miller wrote:
+Timothy Miller <miller@techsource.com> said:
+> > Everyone likes ':', so we'd have "problem/shoe:size".  (Don't bother to 
+> > complain about files which have : in them, because I already know it 
+> > sucks, but it's an example.)
+> 
+> [[ I just joined this discussion, so pardon if this is already known.]]
 
->
->
-> Hans Reiser wrote:
->
->> Peter Foldiak wrote:
->>
->>> On Fri, 2004-09-10 at 06:22, Hans Reiser wrote:
->>>  
->>>
->>>> He asked me, why not just access a filename's size as filename/size?
->>>>   
->>>
->>>
->>>
->>> I now understand that you need a way to distinguish between something
->>> like
->>>
->>> shoe/size
->>>
->>> and
->>>
->>> shoe/.../size   (or shoe/..size)
->>>
->>> The first one is the size of the shoe, the second is the automatically
->>> generated size of the file (object). You would get into trouble if you
->>> would not allow the user to use shoe/size for shoe size. Peter
->>>
->>>
->>>
->>>
->>>  
->>>
->> exactly.
->>
->> Of course, problem/shoe/size could refer to shoe size in centimeters 
->> of a problem shoe or the size of the problem relating to a shoe in 
->> units of reporters providing press coverage of it or....
->>
->> So there are lots of opportunities for ambiguity in semantics....
->>
->> Still, widely used builtins seem like they should be moderately 
->> evasive of commonly used names.
->
->
-> You know, if tools all need to be rewritten anyway to deal with the 
-> file metadata "directory", then why not change the symbol that 
-> delimits the metadata key?
+> One advantage of ':' is that portable programs already have to avoid
+> it because of NTFS alternate data streams:
 
-because it is useful that it is only a style convention.  Changing the 
-symbol makes it mandatory to distinguish metafiles from files.
+Portable programs working on POSIX don't give a damn that C:, CON:, etc are
+reserved in MS-DOS.
 
->
-> Everyone likes ':', so we'd have "problem/shoe:size".  (Don't bother 
-> to complain about files which have : in them, because I already know 
-> it sucks, but it's an example.)
->
-> See, unless you can come up with a way to seamlessly make old tools 
-> work with the new semantics, then there's no reason not to make more 
-> than one change to tools at at the same time.
->
-> Also, if you take the ':' example literally, then the file system 
-> would need to be able to figure out that a file whose literal name is 
-> "C:\MYPR0NDIR\BODY_PARTS.JPG" isn't referring to metadata for a file 
-> named "C".  :)
->
->
->
-
+Windows warts shouldn't infect Linux.
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
