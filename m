@@ -1,21 +1,21 @@
 From: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
 Subject: Re: "Metas"
-Date: Sat, 17 Apr 2004 23:31:50 -0400 (EDT)
-Message-ID: <20040418033150.13937.qmail@web25003.mail.ukl.yahoo.com>
-References: <40805B2D.6080300@slaphack.com>
+Date: Sat, 17 Apr 2004 23:33:28 -0400 (EDT)
+Message-ID: <20040418033328.24278.qmail@web25006.mail.ukl.yahoo.com>
+References: <408045B8.7000102@mrs.umn.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18026-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18027-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40805B2D.6080300@slaphack.com>
+In-Reply-To: <408045B8.7000102@mrs.umn.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-David Masover wrote: 
+David Masover wrote:
 
 > As far as '...', since I haven't had an opinion yet
 > -- I believe that a
