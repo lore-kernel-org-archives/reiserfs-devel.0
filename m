@@ -1,52 +1,39 @@
-From: mitya@school.ioffe.ru (Dmitry Baryshkov)
+From: viro@parcelfarce.linux.theplanet.co.uk
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 00:30:17 +0400
-Message-ID: <20040826203017.GA14361@school.ioffe.ru>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com> <20040826014542.4bfe7cc3.akpm@osdl.org> <412DAC59.4010508@namesys.com> <1093548414.5678.74.camel@krustophenia.net>
+Date: Thu, 26 Aug 2004 21:32:28 +0100
+Sender: <viro@www.linux.org.uk>
+Message-ID: <20040826203228.GZ21964@parcelfarce.linux.theplanet.co.uk>
+References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com> <200408262128.41326.vda@port.imtp.ilyichevsk.odessa.ua> <Pine.LNX.4.58.0408261132150.2304@ppc970.osdl.org> <20040826191323.GY21964@parcelfarce.linux.theplanet.co.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20788-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20789-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1093548414.5678.74.camel@krustophenia.net>
+In-Reply-To: <20040826191323.GY21964@parcelfarce.linux.theplanet.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Hello,
-On Thu, Aug 26, 2004 at 03:26:55PM -0400, Lee Revell wrote:
-> On Thu, 2004-08-26 at 05:24, Hans Reiser wrote:
-> > 
-> > Well, in V4, you can easily compose a plugin from plugin methods of 
-> > other plugins, write a little piece of code with the one thing you want 
-> > different, and add it in.  Disk format changes, no big deal, add a new 
-> > disk format plugin, or a new item plugin, or a new node plugin, etc., 
-> > and you got your new format.
-> > 
-> 
-> OK, real world example.  My roommate has an AKAI MPC-2000, a very
-> popular hardware sampler from the 90's.  The disk format is known,there
-> are a few utilities to edit the disks on a PC and extract the PCM
-> samples, but there are no tools to mount it on a modern PC.  Are you
-> saying that, since I know the MPC disk format, I could write a reiser4
-> plugin to mount an MPC drive?
-> 
+On Thu, Aug 26, 2004 at 08:13:23PM +0100, viro@parcelfarce.linux.theplanet.co.uk wrote:
+ 
+> Hey, if we lose the "can't unlink/rmdir/rename over something that is
+> a mountpoint in other life" - I'm happy and we can get a lot of much
+> more interesting stuff to work.  It will take some work (e.g. making
+> sure we can find all vfsmounts over given mountpoint and sorting out
+> the locking issues, which won't be trivial), but the main obstacle in
+> that direction is not in architecture - it's in SuS and tradition; as
+> the matter of fact, our life would be much easier if we stopped trying
+> to give -EBUSY here and just dissolved all subtrees mounted on anything
+> that has that dentry.
 
-Another example: Can ext2/etx3/reiserfsv3/xfs be implemented as reiser4
-plugins? From Hans' words it seems so. If this is correct, then maybe
-reiser4 core should be updated to completely replace current VFS layer?
-Then it's a good point to create a branch (in old development model it
-would be 2.7, dunno for new :), replace VFS layer with reiser4 core, and
-rewrite all (or at least most used) FS as reiser4 plugins. Then
-everybody will be happy.
-
-But this looks too good to be true. Perhaps I misunderstood Hans' words
-aboud 'new disk format', did I?
-
--- 
-With best wishes
-Dmitry Baryshkov
-
+Argh...  OK, now I remember why I went for -EBUSY for unlink() (we obviously
+are not bound by SuS on that one).  Consider the following scenario:
+	* local file foo got something else bound on it for a while
+	* we are tight on space - time to clean up
+	* oh, look - contents of foo is junk
+	* rm foo
+	* ... oh, fuck, there goes the underlying file.
