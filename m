@@ -1,44 +1,39 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Question on new volumes
-Date: Wed, 11 Sep 2002 10:54:28 +0400
-Message-ID: <20020911105428.A6164@namesys.com>
-References: <OF90C8A0AB.075F13E9-ON85256C30.0079AA70@pok.ibm.com>
+From: Joachim Bremer <joachim.bremer@ricardo.de>
+Subject: File corruption with 2.4.20pre6
+Date: Wed, 11 Sep 2002 12:41:25 +0200 (MEST)
+Message-ID: <200209111041.g8BAfP230329@chekov.ricardo.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11411-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11412-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <OF90C8A0AB.075F13E9-ON85256C30.0079AA70@pok.ibm.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steve Pratt <slpratt@us.ibm.com>
-Cc: reiserfs-list@namesys.com, vitaly@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+Hi all,
 
-On Tue, Sep 10, 2002 at 05:15:34PM -0500, Steve Pratt wrote:
+I've got an easy to produce file corruption with
+linux-2.4.20pre6 and then tested with the file-write
+patch on pre4. I verified the problem on 2 different machines -
+1. Uniprozessor with an Athlon XP1600+
+2. Dualprozessor with 2 Athlon MP2000+
 
-> During some EVMS testing we have run into an interesting behavior.  It
-> seems that new mkfsed Reiserfs volumes are not mountable read only.  Here
+On both machines exactly the same files are damaged.
 
-They are. It tries to replay the log and since your snapshot is readonly,
-it cannot.
+To reproduce:
 
-> If the original volume is mounted and unmount prior to taking the snapshot
-> everything is fine.
+- unpack libtool-1.4.2.tar.gz
+- switch into the resulting directory
+- enter: ./configure --prefix=/usr
 
-Journal is no longer looks like it can be replayed.
+The generated file "libtool" is damaged. Just do an
+./libtool and you will se weird errors. The same procedure
+works OK on a ext2 filesystem with the same kernel.
 
-> I know that this is not an important (or even sane)  order of events (ie
-> snapshotting a never mounted and thus empty volume) but was just something
-> that we ran across in testing.  Is there some reason that the log is not
-> fully initialized by mkfs?  fsck says it is fine.
+Bye
 
-Probably there is no specific reason. And the journal is zeroed on mkfs of
-course.
+Joachim
 
-Bye,
-    Oleg
