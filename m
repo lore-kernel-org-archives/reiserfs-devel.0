@@ -1,33 +1,73 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Fwd: reiser4 non-free?
-Date: Fri, 30 Apr 2004 05:02:19 -0700
-Message-ID: <4092404B.1080108@namesys.com>
-References: <20040424193246.GA2490@raptus.homelinux.org> <4091DAFE.5030809@namesys.com> <20040430055619.GD7487@archimedes.ucr.edu>
+From: Chris Mason <mason@suse.com>
+Subject: Re: metas Permission Denied
+Date: Fri, 30 Apr 2004 08:17:43 -0400
+Message-ID: <1083327462.30344.327.camel@watt.suse.com>
+References: <E38393BE-9950-11D8-B39A-000A95C88606@aoc.nrao.edu>
+	 <16528.46352.173184.528623@laputa.namesys.com>
+	 <39CF0546-99EE-11D8-8CFE-000A95C88606@aoc.nrao.edu>
+	 <16529.9818.916980.360020@laputa.namesys.com>
+	 <200404291614.i3TGEoAI017900@turing-police.cc.vt.edu>
+	 <16529.11188.555986.964130@laputa.namesys.com>
+	 <1083256305.30344.284.camel@watt.suse.com>  <4091E1FC.5080502@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18314-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18315-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040430055619.GD7487@archimedes.ucr.edu>
+In-Reply-To: <4091E1FC.5080502@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Don Armstrong <don@donarmstrong.com>
-Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com, Domenico Andreoli <cavok@tiscali.it>
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Nikita Danilov <Nikita@Namesys.COM>, Valdis.Kletnieks@vt.edu, reiserfs-list <reiserfs-list@namesys.com>
 
-I just want to add that I am very grateful to Domenico for the work he 
-has done in trying to aid integration.
+On Fri, 2004-04-30 at 01:19, Hans Reiser wrote:
+> Chris Mason wrote:
+> 
+> >On Thu, 2004-04-29 at 12:22, Nikita Danilov wrote:
+> >  
+> >
+> >>Valdis.Kletnieks@vt.edu writes:
+> >> > On Thu, 29 Apr 2004 19:59:22 +0400, Nikita Danilov said:
+> >> > 
+> >> > > chmod u+rx backup/fsplit.c
+> >> > > 
+> >> > > "x" bit is necessary for lookups, and "r" bit---for readdir.
+> >> > 
+> >> > This is going to be *such* a non-starter - there's many decades of
+> >> > "C files are mode 644 and executables are 755" tradition that this
+> >> > will fly against.  What this basically implies is that the 'execute'
+> >>
+> >>Eh? What I described is precisely decades old meaning of rwx bits for
+> >>directories.
+> >>
+> >>Problem is that we have to fit objects that are both regular files and
+> >>directories into access control scheme that wasn't designed for such a
+> >>mix. I don't see better solution short of inventing new bit(s).
+> >>    
+> >>
+> >
+> >Please forgive me for jumping into the end of a thread without reading
+> >the whole thing, but it seems like the r bit should be sufficient here. 
+> >If you can read the file, you should be able to read the metas.
+> >
+> >x should be for execution of the file...
+> >
+> what if the file/directory contains "real" files which are not metas, 
+> and it also has a file body?  This is possible in reiser4.
 
-It is a pity that Debian and Suse historically silently cut the 
-attributions (this was before Domenico got involved with us) rather than 
-engaging us in a dialogue about them first, thus inspiring the current 
-license.  Once it was brought to our attention, we did reduce the size 
-of the credits by using a random credit program instead of exhaustively 
-crediting everyone.  If I didn't see what RedHat was doing to KDE, and 
-didn't see cutting of developer credits as a growing trend among 
-distros, we probably would not be moving to an anti-plagiarism 
-license.   You the distros created the need for less free licensing by 
-your behavior, frankly.
+Well, that would explain needing the execute bit ;-)
 
-Hans
+I guess this is a matter of taste, but to me, the metas are really part
+of the file.  If you can read the file you should be able to at least
+read the listing of metas, for the same reasons that you can read the
+file size and atime/mtime etc.  
+
+This could hold true for /somedir/metas as well.
+
+-chris
+
+
+
+
