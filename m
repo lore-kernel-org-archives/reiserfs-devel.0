@@ -1,42 +1,87 @@
-From: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2004@gmx.net>
-Subject: Re: REISER4 corruptions errors
-Date: Mon, 26 Jan 2004 17:36:10 +0100
-Message-ID: <401541FA.5060309@gmx.net>
-References: <16405.7504.491020.659611@laputa.namesys.com> <20040126142528.22476.qmail@web21509.mail.yahoo.com> <20040126152607.GB21337@backtop.namesys.com>
+From: "Willi W." <willi.w@gmx.at>
+Subject: Re: Application Problems with Reiser4/19.01.2004-fixed (truncated)
+Date: Mon, 26 Jan 2004 16:46:01 +0100
+Message-ID: <40153639.6080609@gmx.at>
+References: <4010218C.9090006@gmx.at>	<16400.65481.167302.617050@laputa.namesys.com>	<40110710.4070100@gmx.at> <16401.3844.21706.388236@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16626-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16627-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040126152607.GB21337@backtop.namesys.com>
+In-Reply-To: <16401.3844.21706.388236@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: Paolo Correnti <paolunix@yahoo.com>, Nikita Danilov <Nikita@Namesys.COM>, REISER LIST <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Alex Zarochentsev wrote:
+Hi!
 
-> this patch should help (! not tested):
-> 
-> ===== tree.c 1.562 vs edited =====
-> --- 1.562/tree.c        Wed Jan 14 11:46:20 2004
-> +++ edited/tree.c       Mon Jan 26 18:24:39 2004
-> @@ -1468,7 +1468,7 @@
->                 if ((result != 0) && (result != -E_NO_NEIGHBOR))
->                         break;
->                 /* Check can we delete the node as a whole. */
-> -               if (iterations && znode_get_level(node) == LEAF_LEVEL &&
-> +               if (0 && iterations && znode_get_level(node) == LEAF_LEVEL &&
->                     UNDER_RW(dk, current_tree, read,
->                              keyle(from_key, znode_get_ld_key(node)))) {
->                         result = delete_node(next_node_lock.node,
+>Hmm... can you run overnet under strace (up to the failure) and send the
+>output to me?
 
-Was it your intention to disable the above code path?
+--
+
+all files in the ./temp directory should be reloaded at startup.
+
+access to the directory in the strace output:
+
+--
+
+      --
+      [pid 21379] <... write resumed> )       = 1
+      [pid 21381] stat64("/mnt/reiser4/overtest/temp",  <unfinished ...>
+      [pid 21379] write(0, "n", 1n <unfinished ...>
+      [pid 21381] <... stat64 resumed> {st_mode=S_IFDIR|S_ISVTX|0755,
+      st_size=3, ...}) = 0
+      [pid 21379] <... write resumed> )       = 1
+      [pid 21381] open("/mnt/reiser4/overtest/share.dat", O_RDONLY
+      <unfinished ...>
+      [pid 21379] write(0, "e", 1e <unfinished ...>
+      [pid 21381] <... open resumed> )        = 6
+      [pid 21379] <... write resumed> )       = 1
+      [pid 21381] lseek(6, 0, SEEK_CUR <unfinished ...>
+      [pid 21379] write(0, "t", 1t <unfinished ...>
+      [pid 21381] <... lseek resumed> )       = 0
+
+--
+
+i cannot tell if this is correct (stat64...=0)
 
 
-Carl-Daniel
--- 
-http://www.hailfinger.org/
+the whole strace is attached. (sent to nikita)
+
+after the test, the filesystem was _corrupt again_ (wasnt before) - fscp
+output attached (also sent to nikita)
+
+      ...
+      Error: Node (23), item (4): StatData of the file
+      [100de:636f6e74616374:100f1] has the wrong bytes (96966), Should be
+      (11504).
+      Plugin (stat40).
+      Error: Node (23), item (5): StatData of the file
+      [100de:667269656e642e:100f3] has the wrong bytes (55), Should be
+      (5). Plugin
+      (stat40).
+      ...
+
+--
+
+p.s. i have harddrive writecache turned on - is this good/bad/should'nt
+matter ? (again - no problems under reiser3)
+
+hdparm /dev/hdb
+
+/dev/hdb:
+   multcount    = 16 (on)
+   IO_support   =  1 (32-bit)
+   unmaskirq    =  1 (on)
+   using_dma    =  1 (on)
+   readahead    = 256 (on)
+   geometry     = 39770/16/63, sectors = 40088160, start = 0
+   AdvancedPM=no WriteCache=enabled
+
+regards
+Willi
+
 
