@@ -1,61 +1,50 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: xattr
-Date: 19 Jun 2003 11:21:24 -0400
-Message-ID: <1056036084.6758.114.camel@tiny.suse.com>
-References: <200306162226.39701.russell@coker.com.au>
-	 <1056030719.6758.97.camel@tiny.suse.com>
-	 <200306200046.52292.russell@coker.com.au>
-	 <1056035446.1071.143.camel@moss-huskers.epoch.ncsc.mil>
+From: "Fred -- Speed Up --" <speedup@free.fr>
+Subject: Re: Reiser4 installation & kernel patching
+Date: Thu, 19 Jun 2003 17:55:11 +0200
+Message-ID: <002101c3367b$2aab90f0$0200a8c0@xpstation>
+References: <000e01c33621$2ced8490$0200a8c0@xpstation> <200306191537.30489.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14628-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14629-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1056035446.1071.143.camel@moss-huskers.epoch.ncsc.mil>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Stephen Smalley <sds@epoch.ncsc.mil>
-Cc: Russell Coker <russell@coker.com.au>, reiserfs-list@namesys.com
+To: ReiserFS ML <reiserfs-list@namesys.com>
 
-On Thu, 2003-06-19 at 11:10, Stephen Smalley wrote:
+Thank you for your answers ;)
 
-> > Creating a file by creating the xattr sounds like a bad idea as you can't 
-> > control the Unix permissions of the file.  This isn't much of a big deal with 
-> > SE Linux as the security type determines who can access the file.  But for 
-> > other uses it may be a serious problem.
-> > 
-> > I agree that we need a new syscall and other people had the same idea before 
-> > either of us.
-> > 
-> > Maybe ReiserFS could be used as the first implementation of this proposed new 
-> > syscall...
-> 
-> No, this doesn't have to be done in the same transaction, even under the
-> old SELinux API.  The setting of the file security label is performed by
-> the security_inode_post_create/mkdir/... hook call in fs/namei.c, which
-> is done while the parent directory semaphore is still held.  In the old
-> API, the desired file security label was specified via
-> open_secure/mkdir_secure/etc system calls and saved in the per-task
-> security field for use by the security_inode_post_create/mkdir/...
-> hook.  In the new API, the desired file security label is specified by
-> writing it to /proc/pid/attr/fscreate and then performing an ordinary
-> open()/mkdir()/etc call.  It is an attribute of the task that is applied
-> to subsequent file creations, similar to the umask.
-> 
+Now I'd like to know how I could just patch my 2.5.72-mm1 kernel, do you
+plan to release kernel patch snapshot as you do for reiserprogs ?
+I just tried to install libaal & reiserprogs from the latest snapshot, and
+reiserprogs ./configure stops after libaal detection without any error
+message else than "libaal vx.xx detection ... no". There should be an error
+message or something, and the library has been compiled and installed
+though. Hopefully this will be fixed in the upcomming snapshots ;).
 
-Ok, so in the new api, the xattr information is available at the time of
-the create.  reiserfs would be able to include it all into the same
-transaction but doesn't do it right now.
+How far are you from achieving the Darpa-related features, so that you could
+launch the first beta-test ? I just saw on your website "Reiser4 is due June
+30, 2003!" : you're not serious, Hans told me a few weeks ago the
+beta-testing process should take about two month from the first beta if
+everything's working well, and the first beta is still to come ...
+Another thing : you should update you're website "download" section, so that
+the reiser4 progs links point to the official snapshots url.
 
-> I seem to be missing a little context; last I looked, reiser in mainline
-> kernels still didn't provide xattr support.  Will this be changing soon?
+Fred
 
-First we need to get the data logging code in (which Hans has agreed
-to), getting the xattr code in depends on Hans, Jeff Mahoney will be
-maintaining as an external patch otherwise.
-
--chris
-
+> regarding reiser4progs - they are supposed to be used from snapshots for
+now
+> from from packages in the future with ready-to-use configure script, not
+from bk
+> repository where you need to make it by you yourself and need some last
+> autoconf version for that. Probably you will prefere to get some snapshot
+from
+> http://thebsh.namesys.com/snapshots. And you will need libaal installed
+before
+> reiser4progs compiling.
+>
+> Thanks,
+> Vitaly Fertman
 
