@@ -1,32 +1,28 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+From: Christoph Hellwig <hch@infradead.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 12:21:31 +0300
-Message-ID: <20040827092131.GA1284@nysv.org>
-References: <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <20040826100530.GA20805@taniwha.stupidest.org> <20040826110258.GC30449@mail.shareable.org> <412E06B2.7060106@pobox.com> <1093552705.5678.96.camel@krustophenia.net> <1093553429.13881.48.camel@leto.cs.pocnet.net> <1093553846.5678.102.camel@krustophenia.net>
+Date: Fri, 27 Aug 2004 10:24:02 +0100
+Message-ID: <20040827102402.C29672@infradead.org>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com> <20040826014542.4bfe7cc3.akpm@osdl.org> <412DAC59.4010508@namesys.com> <1093548414.5678.74.camel@krustophenia.net> <1093548815.13881.10.camel@leto.cs.pocnet.net> <412EEB59.7010101@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20902-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20903-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1093553846.5678.102.camel@krustophenia.net>
+In-Reply-To: <412EEB59.7010101@namesys.com>; from reiser@namesys.com on Fri, Aug 27, 2004 at 01:05:45AM -0700
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lee Revell <rlrevell@joe-job.com>
-Cc: Christophe Saout <christophe@saout.de>, Will Dyson <will_dyson@pobox.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: Christophe Saout <christophe@saout.de>, Lee Revell <rlrevell@joe-job.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-On Thu, Aug 26, 2004 at 04:57:26PM -0400, Lee Revell wrote:
->On Thu, 2004-08-26 at 16:50, Christophe Saout wrote:
->> are read-only and system-wide and the user-overridden changes. I don't
->> know if all of these things would really make sense inside the kernel.
->True.  FWIW, I never use most of those features.  It's just too damn
->slow.  Windows seems to implement all of the useful features of
->GnomeVFS, and they are 10x faster.
+On Fri, Aug 27, 2004 at 01:05:45AM -0700, Hans Reiser wrote:
+> Not necessarily.  We just encourage it....  Reiser4 is a body of code 
+> that can be sliced and diced as you choose, and it is designed for easy 
+> slicing.
 
-Are they in the kernel in Windows?
-
--- 
-mjt
+So what about slicing it into a simple posix fs as a start so we can review
+that while still discussing semantic issues.  Now that would be a refreshing
+thing after all that talking, no?
 
