@@ -1,55 +1,64 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: BTW: 2.4.19-patches-to-come?
-Date: Sat, 18 May 2002 09:44:40 +0400
-Message-ID: <20020518094440.A4435@namesys.com>
-References: <200205171736.50971.Dieter.Nuetzel@hamburg.de> <200205171905.30804.Dieter.Nuetzel@hamburg.de> <20020517222846.A1514@namesys.com> <200205172144.21544.Dieter.Nuetzel@hamburg.de>
+From: Manfred Larcher <manfred.larcher@grufo.com>
+Subject: reiserfsck failed, permission denied, 3.x.1b (2002) SuSE
+Date: Sat, 18 May 2002 08:39:24 +0200
+Message-ID: <200205180839.24065.manfred.larcher@grufo.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10376-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-10377-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <200205172144.21544.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
-Cc: Chris Mason <mason@suse.com>, Manuel Krause <manuelkrause@netscape.net>, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Hello!
+Hi,
 
-On Fri, May 17, 2002 at 09:44:21PM +0200, Dieter N?tzel wrote:
+after getting the message "permission denied" as root user on some of my files 
+I startet reiserfsck and got the following error message:
 
-> > BTW, Was that you with a kernel with lot of patches applied, or
-> > you do not use anything strange on your workstations?
-> Yes, but it happen with and without data logging, preemption, aa_VM, etc.
-> I can reproduce it with some "new" page coloring stuff (only).
-> When I modprobe the page coloring module (it is under development) the system 
-> lookup from time to time during heavy (parallel) compilation for example.
-> Then I get the broken files.
+> bad_leaf: block 1607938 has invalid item 24: 158466046 65535 0xeeb0000 ??? (
+> 15), len 4248, location 0 entry count 1338, fsck need 0, format new
+> bad_leaf: block 1607938 has wrong order of items
+> ok
+> Comparing bitmaps..free block count 764152 mismatches with a correct one 764
+> 306.
+> on-disk bitmap does not match to the correct one. 154 bits differ
+> on-disk bitmap does not match to the correct one.
+> Fatal corruptions were found, Semantic pass skipped
+> There were found 49 corruptions which can be fixed only during 
+>  --rebuild-tree
 
-Well, sounds like page colouring stuff mistakenly writes some pages in wrong
-location, no?
-If you cannot reproduce without page colouring patch, that would be the most
-probably theory, I'd say.
+Ok, so I startet the --rebuild-tree and got a new error message (after waiting 
+some hours...):
 
-> > File was created, written into. So file appears after reboot (if
-> > transaction in which it was created was commited).
-> Maybe the FS should have some knowledge "build in" to "decide" that *.o files 
-> are "temper?r" and should be removed during replay?
+> 0%....10%....20%....40%..pass0.c 1212 do_pass_0       left 9626336, 625 /sec
+> not data block found, 9502720
+> Aborted
 
-No, there is absolutely no way for such kludges to go into the FS, I think.
-And it even may be the case where .o file was created, commited, and then
-journal record obsoletted, because metadata got it's way to the disk,
-so file is already in place (without the body, or with garbage instead
-of the body), but it have nothing to do with journal.
+And now I don't know what else I could do!
 
-> > BTW, I have a feeling that datalogging patches would help to get rid of
-> > garbage in the files, but files still will remain (may be of zero length).
-> Yes, Chris said this, too.
+My Systems run's with SuSE 8.0 (kernel 2.4.18 SMP) and the hard-disk which 
+causes the problem is installed as my second disk. It is an Maxtor 80 GB 
+disk. Reiserfsck-Version is 3.x.1b (2002). There is no other operating-system 
+installed.
 
-He said it will help your problem, I think. But zero length .o files will
-still confuse linker.
+Should I try a newer version of reiserfsck - and if which one?
+What else can I do, is there a way to check only from the point where it 
+stopped the last time - checking the whole disk needs several hours!?
 
-Bye,
-    Oleg
+Thank you
+Manfred
+-- 
+------------------------------------------------
+Manfred Larcher
+manfred.larcher@grufo.com
+
+Tel.: +43/699/17 10 50 50
+Fax: +43/5372/61654
+www.grufo.com
+------------------------------------------------
+www.edelweiss-grossarl.at
+www.oberlandliga.com
+www.kathrein-gmbh.com
+
