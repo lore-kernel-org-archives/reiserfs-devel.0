@@ -1,50 +1,53 @@
-From: Valdis.Kletnieks@vt.edu
+From: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
 Subject: Re: non volatile ram devices
-Date: Sat, 07 Dec 2002 05:44:55 -0500
-Message-ID: <200212071044.gB7AitI3013919@turing-police.cc.vt.edu>
-References: <200212042059.35300.russell@coker.com.au> <200212061052.59139.russell@coker.com.au> <m3wummpuzp.fsf@merlin.emma.line.org>
-            <200212071103.00132.russell@coker.com.au>
+Date: Sat, 07 Dec 2002 18:13:03 +0100
+Message-ID: <m3vg25rbvk.fsf@merlin.emma.line.org>
+References: <200212042059.35300.russell@coker.com.au>
+	<200212051000.32340.russell@coker.com.au>
+	<1039094639.8199.119.camel@tiny>
+	<200212061052.59139.russell@coker.com.au>
+	<m3wummpuzp.fsf@merlin.emma.line.org>
+	<20021207040909.GJ9512@mrball.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1747594598P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12128-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12129-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Sat, 07 Dec 2002 11:03:00 +0100."
-             <200212071103.00132.russell@coker.com.au> 
+In-Reply-To: <20021207040909.GJ9512@mrball.net> (Todd Lyons's message of
+ "Fri, 6 Dec 2002 20:09:09 -0800")
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Russell Coker <russell@coker.com.au>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
---==_Exmh_1747594598P
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: quoted-printable
+Todd Lyons <todd@mrball.net> writes:
 
-On Sat, 07 Dec 2002 11:03:00 +0100, Russell Coker <russell@coker.com.au> =
- said:
-> How does qmail not support softupdates?
+>>> I'm using a fairly vanilla kernel.  It's performance is 2 messages per =
+second=20
+>>> taken from qmail spool and delivered while there is a background load o=
+f pop=20
+>>> access and new incoming mail.  IE if there is a backlog of mail to deli=
+ver=20
+>>> the backlog gets smaller by 120 messages per minute.
+>>In my benchmarks on a plain FreeBSD ffs and a Micropolis 4345WS UWSCSI
+>>disk drive (7200/min) that was otherwise idle, qmail maxes out for
+>>remote 1-to-1 deliveries at a good 3 deliveries/s. It might improve a
+>
+> You need to increase your remoteconcurrency limit.  Unless your emails
+> are 10's of Megabytes each, 3/s is way low.
 
-I can't speak for qmail directly, but I've heard of other software that g=
-ets
-indigestion because softupdates doesn't present the exact same API and vi=
-ew
-of the world.  I think it had to do with exactly how you fsync() a direct=
-ory,
-and when the syscall returned, and when the data was *really* on disk.
+No, I don't -- most time of the test, qmail was running from 0 to 2
+qmail-remote processes. This only changes when the todo queue has been
+drained completely and no more mail needs to be preprocessed. Only after
+the todo is empty, qmail ramps up into the remoteconcurrency limit. And
+I'd certainly not raise remoteconcurrency above 20 because qmail would
+easily trample the destination host if I had many recipients in one
+domain, giving me "false" deferrals (because it's ran into the tcpserver
+limit of the MX it's talking to).
 
---==_Exmh_1747594598P
-Content-Type: application/pgp-signature
+See Andr=E9 Oppenheim's "silly qmail syndrome patch" and the corresponding
+graphs at http://www.nrg4u.com/
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.1 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQE98dEncC3lWbTT17ARAogpAKDpoB9Ui9cqZ55JKaYeGs0Lp+4uugCdEj5Y
-s7oYDcuPwDHhN5phBM8Y4r4=
-=xleX
------END PGP SIGNATURE-----
-
---==_Exmh_1747594598P--
+--=20
+Matthias Andree
