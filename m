@@ -1,75 +1,47 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Soeren Sonnenburg <reiserfs@nn7.de>
 Subject: Re: Promise raid controller writes to disk, anybody know where?
-Date: Thu, 17 Apr 2003 05:48:19 +0400
-Message-ID: <3E9E07E3.3050908@namesys.com>
-References: <Pine.LNX.4.44.0304161354460.25258-100000@dragon.inside.ntisys.com>
+Date: 17 Apr 2003 08:01:09 +0200
+Message-ID: <1050559268.13617.22.camel@fortknox>
+References: <3E9D83B7.4050904@namesys.com>
+	 <1050528366.13617.16.camel@fortknox> <78211964.20030416233820@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13694-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13695-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.44.0304161354460.25258-100000@dragon.inside.ntisys.com>
+In-Reply-To: <78211964.20030416233820@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: bscott@ntisys.com
-Cc: ReiserFS Mailing List <Reiserfs-List@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Anders Widman <andewid@tnonline.net>
+Cc: Reiserfs-List@namesys.com
 
-bscott@ntisys.com wrote:
+On Wed, 2003-04-16 at 23:38, Anders Widman wrote:
+> > Yes, I just threw 2 promise controllers away because the drivers are
+> > damn instable (at least for kernels 2.4.19- 21pre7).
+> 
+> > If you don't want to risk unnecessary crashes buy a controller that is
+> > *really* supported like the highpointech/cmd/3ware/via ones.
+> 
+>   Just a note on this. I have found that Promise controllers (at least
+>   the  Ultra  100  Tx2  ones)  have  a nasty incapability problem with
+>   Maxtor  drives.  This cause me to have all sorts of random problems.
+>   Once  I  moved  the  Maxtor  drives to the VIA controller everything
+>   runs fine so far.
 
->On Wed, 16 Apr 2003, at 8:54pm, reiser@namesys.com wrote:
->  
->
->>It is for my Mom, I want both windows and Linux, and I was hoping the
->>whole drive would get mirrored by the hardware.
->>    
->>
->
->  Not by hardware, no.  But you could configure a mirror in the Promise 
->BIOS, and it would give you an effective mirror of two drives, regardless of 
->OS or partitioning.  You would need to have drivers for all your OSes, of 
->course.  This isn't "hardware RAID", but it still might be useful.
->
-This is total crap and deceitful marketing, in my book.  Nowhere do they 
-say it is software raid....
+Well I never had random problems with these controllers (ultra tx2).
+They just did crash when I was causing to much io. (raid5 on linux
+software raid here, rebuilding the raid and running bonnie at the same
+time was enough. all I could do is go down and disable DMA or go to
+UDMA0 not sure whether that was enough). 
 
->
->  That being said, I've also had bad luck with many of these cheap "fake 
->RAID controllers" doing things like corrupting the contents of the drive.  
->While I'm not saying your particular model of Promise controller will have 
->that problem, I've been burned often enough that I won't touch them.
->
->  If you really want a hardware RAID controller for ATA drives, go with a
->3Ware Escalade, or an LSI Logic MegaRAID I4.  Both have fully supported, GPL
->drivers in the kernel.  I've also heard that the high-end Promise
->controllers (the ones that have an actual co-processor onboard) are decent,
->although I have no experience with them myself.
->
-I didn't intend to buy it, it is built into the motherboard, sigh....  
-the motherboard can support only 3 ide devices, so I would say it is IDE 
-lacking as a result of the promise device....
+>   Now I am only running Seagate and IBM on the Promise controllers and
+>   it  is  fine. The new Maxtor (which uses Quantum labeled chips) seem
+>   to work good too.
 
-I didn't really pay attention to the ide device capacity when buying it.....
+they crash at least with maxtor and wdc drives. no no it is the
+controller this time.
 
-oh well, not the end of the world.
-
->
->  
->
->>It is okay though, I will have mom use dd once a week to do it, and this
->>will protect from viruses better than a synchronous mirror.
->>    
->>
->
->  rsync might be better than a simple 'dd'.  Although I don't know if rsync
->would get messed up by the semantics of an MS-DOS filesystem.
->
->  
->
-
-
--- 
-Hans
-
+Soeren.
 
