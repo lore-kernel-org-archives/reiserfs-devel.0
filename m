@@ -1,29 +1,31 @@
-From: "Burnes, James" <james.burnes@gwl.com>
-Subject: RE: development
-Date: Tue, 6 Jan 2004 13:19:50 -0700
-Message-ID: <3DF9165145FACB4C96977FF650C1E904096335B4@its-mail1.its.corp.gwl.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: development
+Date: Tue, 06 Jan 2004 23:25:18 +0300
+Message-ID: <3FFB19AE.8080007@namesys.com>
+References: <3FFB16CD.8020805@mrs.umn.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16425-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16426-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
+In-Reply-To: <3FFB16CD.8020805@mrs.umn.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Grant Miner <mine0057@mrs.umn.edu>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Grant Miner <mine0057@mrs.umn.edu>
+Cc: reiserfs-list@namesys.com
 
-I wonder if they could use user-mode linux.
+Grant Miner wrote:
 
-Jim Burnes
+> Hey,
+> How do you guys write your file system?  Do you compile and reboot, or 
+> use an emulator?
+>
+>
+We use UML for everything it can be used for.
 
------Original Message-----
-From: Grant Miner [mailto:mine0057@mrs.umn.edu]=20
-Sent: Tuesday, January 06, 2004 1:13 PM
-To: reiserfs-list@namesys.com
-Subject: development
+-- 
+Hans
 
-Hey,
-How do you guys write your file system?  Do you compile and reboot, or=20
-use an emulator?
+
