@@ -1,98 +1,84 @@
-From: "Simon \"Sturmflut\" Raffeiner" <sturmflut@lieberbiber.de>
-Subject: Re: Reiser 4 Apple
-Date: Mon, 14 Feb 2005 23:07:20 +0100
-Message-ID: <200502142307.25356.sturmflut@lieberbiber.de>
-References: <DC09DB522D858648AC430F0DBC51F6320800B7@its-exmail1.its.corp.gwl.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: Failed ReiserFS
+Date: Tue, 15 Feb 2005 01:15:23 +0300
+Message-ID: <200502150115.23285.vitaly@namesys.com>
+References: <200502100535.01814.rikjoh@norweb.se> <200502141506.43506.vitaly@namesys.com> <200502142133.35062.rikjoh@norweb.se>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart2901079.3TEISPZiWF";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <DC09DB522D858648AC430F0DBC51F6320800B7@its-exmail1.its.corp.gwl.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
-
---nextPart2901079.3TEISPZiWF
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <200502142133.35062.rikjoh@norweb.se>
 Content-Disposition: inline
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Rikard Johnels <rikjoh@norweb.se>, reiserfs-list@namesys.com
 
-AFAIK WinFS will not enhance NTFS with some real Database-centric stuff but=
-=20
-simply save an index into a standard Microsoft SQL database somewhere in a=
-=20
-hidden place. At least the Windows Longhorn Preview Releases had a MS-SQL=20
-Server running in the background. Nobody knows what Apple exactly wants to =
-do=20
-with Spotlight, it merely sounds like a background indexing engine like=20
-WinFS. The BeOS approach was completely different in my eyes, and it was da=
-mn=20
-fast at the same time.
-
-Regards,
-Simon
-
-
-Am Montag 14 Februar 2005 17:32 schrieb Burnes, James:
-> Sounds like a great idea, but didn't they hire the filesystem architect
-> from BeOS a few years ago to re-design the native MacOS X filesystem?
+> > > > On Thursday 10 February 2005 22.03, Vitaly Fertman wrote:
+> > > > > > > > reiserfsck 3.6.13
+> > > > > > > > I used -S to scan the whole partition, as per man page
+> > > > > > > > A bug heh.. :(
+> > > > > > > > So is there any fix for it?
+> > > > > > >
+> > > > > > > Please try latest reiserfsck.
+> > > > > > > ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.19.ta
+> > > > > > >r. gz
+> > > > > >
+> > > > > > Same problem:
+> > > > > >
+> > > > > >  lost+found.c 348 pass_3a_look_for_lost
+> > > > > > look_for_lost: The entry 'lost+found' could not be found in the
+> > > > > > root directory Aborted
+> > > > > >
+> > > > > > This is getting more than frustrating...
+> > > > >
+> > > > > would you pack the metadata with
+> > > > > 	debugreiserfs -p <device> | bzip2 -c > <device>-meta.bz2
+> > > > > and provide them for downloading?
+> > > >
+> > > > the metadata and reiserfsck log are both available for download.
+> > > >
+> > > > ftp://ftp.rikjoh.com/reisercheck.logfile.bz2
+> > > > ftp://ftp.rikjoh.com/hdc1-meta.bz2
+> > >
+> > > Moved the disks to another computer with a clean install of Linux.
+> > > Reran the --rebuild-tree on that one. And i still get the same error
+> > > "look_for_lost: The entry 'lost+found' could not be found in the root"
+> > > And its the "reiserfs-3.6.13" package.
+> > > Still no luck :(
+> > >
+> > > Why cant it find the /lost+found ?
+> >
+> > no problem with your metadata.
+> > Are you sure you run reiserfsck 3.6.19?
+> > Did you obtain reiserfsprogs-3.6.19 from our ftp site?
+> > Would you check the memory on the computer you run reiserfsck
+> > on and would you check the harddrive for bad blocks?
 >
-> I believe the idea was to clone the database-centric BeFS functions.  I
-> believe this functionality is on the plate sometime in the future with
-> Reiser4 and also (some decade) with the next version of WinFS.
+> Just ran 3.6.19 on the fresh installed computer
+> Same error.
 >
-> Jim Burnes
+> ---<screen dump>---
 >
-> > -----Original Message-----
-> > From: Michael James [mailto:Michael.James@csiro.au]
-> > Sent: Sunday, February 13, 2005 7:01 PM
-> > To: reiserfs-list@namesys.com
-> > Subject: Reiser 4 Apple
-> >
-> > Dear Hans,
-> >
-> > Have you ever thought of porting reiser4 to BSD?
-> >
-> > Apple have:
-> > 	Bags of money
-> > 	A current filesystem that totally sucks
-> > 	An OS that cries out for plugins to satisfy its quirks
-> >
-> > Could be a good marriage,
-> > michaelj
-> >
-> > --
-> > Michael James                         michael.james@csiro.au
-> > System Administrator                    voice:  02 6246 5040
-> > CSIRO Bioinformatics Facility             fax:  02 6246 5166
+> Will rebuild the filesystem (/dev/hdc1) tree
+> Will put log info to '/root/reisercheck.logfile'
+>
+> Do you want to run this program?[N/Yes] (note need to type Yes if you
+> do):Yes Replaying journal..
+> Reiserfs journal '/dev/hdc1' in blocks [18..8211]: 0 transactions replayed
+> ###########
+> reiserfsck --rebuild-tree started at Mon Feb 14 21:05:44 2005
+> ###########
+>
+> Pass 0:
+> The whole partition (7504544 blocks) is to be scanned
 
-=2D-=20
-mit freundlichen Gr=FC=DFen
+ah, wait, if you run reiserfsck with -S option then matadata 
+needs to be dumped with -S also:
+	debugreiserfs -p -S <device> | bzip2 -c > <device>-meta.bz2
 
-Simon "Sturmflut" Raffeiner
+-- 
+Thanks,
+Vitaly Fertman
 
-=2D----------------------------------
-Die Weltgeschichte ist die Summe dessen, was vermeidbar gewesen w=E4re.
-                                                   -- Oscar Wilde
-
-GPG Public Key: 0xB2204FA0 @ hkp://subkeys.pgp.net
-http://www.lieberbiber.de/pubkey.gpg
-
---nextPart2901079.3TEISPZiWF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-
-iD8DBQBCESEdd2q78rIgT6ARAptyAJ994Lj0UgvRH/0lNM909/JgqaFLyQCfbehm
-rILPiomjagvgGT941imrwP4=
-=U7PL
------END PGP SIGNATURE-----
-
---nextPart2901079.3TEISPZiWF--
