@@ -1,11 +1,11 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: A couple of questions
-Date: Thu, 16 May 2002 13:42:48 +0400
-Message-ID: <3CE37F18.1050201@namesys.com>
-References: <OFDC95E87B.B541379E-ON85256BBA.0074ED07@pok.ibm.com> <20020516092034.B6880@namesys.com>
+Subject: Re: Problems with journal size option on mkfs
+Date: Thu, 16 May 2002 14:47:31 +0400
+Message-ID: <3CE38E43.1000408@namesys.com>
+References: <OFE8E86981.F03B17DE-ON85256BBA.006A1833@pok.ibm.com> <20020516091611.A6880@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10324-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10325-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -18,44 +18,31 @@ Oleg Drokin wrote:
 
 >Hello!
 >
->On Wed, May 15, 2002 at 04:22:22PM -0500, Steve Pratt wrote:
+>On Wed, May 15, 2002 at 03:12:40PM -0500, Steve Pratt wrote:
 >
 >  
 >
->>A couple of questions about the ReiserFS utilities.  First, does ReiserFS
->>support labels or not?  FAQ says no and refers to lack of space in the 3.5
->>superblock. Neither 3.5 nor 3.6 superblock appear to have a label field,
->>but mkfs has an option for it.
+>>I am in the process of writing a File System Interface Module (FSIM) for
+>>EVMS that will interface with ReiserFS and am having a problem with the -s
+>>(journal size) option on mkfs.reiserfs.  The problem is that if I specify
+>>any journal size the mkfs fails.  By fails, what I mean is that the device
+>>is not mountable, I don't actually get any error message from mkfs.  This
+>>happens even when I give it the default size of 8193 blocks.  I didn't see
 >>    
 >>
 >
->Labels are supported in reiserfs v3.6 format. (2.4 supopr was merged into
->2.4.19-pre3, if I remember correctly).
+>This is because non-standard journal support is only included in 2.5 kernel
+>series.
+>2.4 support is available as separate patch for now.
 >
->  
->
->>Second, what is the option to keep fsck from prompting for 'Yes' when
->>running.  I need to exec this without additional input.  Seems like quiet
->>should do it, but it doesn't.
->>    
->>
->
->Hans has a decision that this should not be done for now because
->reiserfsprogs are in active bugfixing stage.
->
-?
-
-I don't understand this.:-/
-
->You can circumvient this by echo Yes | reiserfsck ...
->if you need.
->
->Bye, 
->    Oleg 
+>Bye,
+>    Oleg
 >
 >
 >  
 >
+journal resizing and relocating will go into the next pre1.
 
+Hans
 
 
