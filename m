@@ -1,36 +1,46 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Stupid question
-Date: Thu, 27 May 2004 12:51:11 +0300
-Message-ID: <20040527095111.GP4990@nysv.org>
-References: <200405271138.20701.marcel@hilzinger.hu>
+From: Heinz-Josef Claes <hjclaes@web.de>
+Subject: Re: snapshot, checkpoints
+Date: Thu, 27 May 2004 12:40:07 +0200
+Message-ID: <1085654406.9477.1.camel@schlappix.schnulli.de>
+References: <20040527065259.99429.qmail@web51306.mail.yahoo.com>
+	 <1085641393.1915.199.camel@tribesman.namesys.com>
+	 <20040527092727.GO4990@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18874-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18875-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200405271138.20701.marcel@hilzinger.hu>
+In-Reply-To: <20040527092727.GO4990@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Marcel Hilzinger <marcel@hilzinger.hu>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-On Thu, May 27, 2004 at 11:38:20AM +0200, Marcel Hilzinger wrote:
->What, if someone likes to create a directory called "metas" under reiser4? 
+Am Do, den 27.05.2004 schrieb Markus T=F6rnqvist um 11:27:
+> On Thu, May 27, 2004 at 11:03:14AM +0400, Vladimir Saveliev wrote:
+>=20
+> >On Thu, 2004-05-27 at 10:52, Timothy Webster wrote:
+> >> Does reiserfs4 include features to allow
+> >> vxfs like checkpoints=20
+> >> or netapps snapshots?
+> >no
+>=20
+> I am not familiar with these mechanisms, would someone care to
+> ellaborate a bit?
+>=20
+> I can't really even hazard a guess on what a filesystem snapshot
+> or checkpoint might be, but it sounds like a backup of the file system.
+> Or maybe just a journal state...
 
-That's a can of worms opened many times too often.
+Hi,
+simply read these paragraphs:
+http://www.netapp.com/tech_library/3002.html#I34
 
->Actually this is not possible, as the system will complain about: "there is 
->already a directory metas".
+--=20
+Heinz-Josef Claes                     hjclaes@web.de
+project: http://sourceforge.net/projects/storebackup
+      -> snapshot-like backup to another disk
 
-Yes.
 
-I recommend patching it to ..metas/
-
-NEEXT!
-
--- 
-mjt
 
