@@ -1,39 +1,36 @@
-From: "darren" <teodarren@myrealbox.com>
-Subject: OT: NAS solution, Netapp vs EMC
-Date: Thu, 16 Oct 2003 21:29:51 +0800
-Message-ID: <200310161330.h9GDUgRs004592@northgate.starhub.net.sg>
-References: <1065757685.3f862bf55cc7d@www.mailshell.com>
+From: Chris Humphries <chris@burst.net>
+Subject: newbie dev requests
+Date: Thu, 16 Oct 2003 12:21:24 -0500
+Message-ID: <3F8ED394.9060708@burst.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15840-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15841-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1065757685.3f862bf55cc7d@www.mailshell.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: slugnet@lists.lugs.org.sg, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Hi all,
+hello,
 
-I am looking for a NAS server to work over NFS for 15-20 pieces of my linux
-servers.
+	from reading the code.html page on the website,
+  is there any trivial bugs/features that anyone may
+  suggest that i can do?
+	i dont really know what i want to add, but i
+  want to help. i have a strong background in backend
+  programming, especially with databases. i hope this
+  may be of help. i know a good amount about good programming
+  and design, and just want to help.
+	so if you got little stuff that is available
+  let me know and i will start hacking away at it.
+	i am new to filesystems, yet understand the concepts
+  and theory i think, just not how it all works yet. so
+  baby steps are nice :)
+	anywho, hope to hear back with things i can do,
+  not matter how trivial.
 
-These servers will be involved in heavy reading and writing (about 30Mbps up
-and down each server) of experimental data collected from a network of
-probes.
-
-I am thinking of using a NAS solution (I have got a GigE LAN already) from
-either NetApp (F825) or EMC (Celerra) as centralized storaged for all the
-servers.
-
-I am concerned about the following:
-
-1)	Fast read and write performance for consistant stream of small files
-2)	Ability to store LARGE (> 10million per 200GB) amount of small files
-3)	Reliability...should not crash or go down when under consistent
-heavy load.
-
-Any comments about their performance?
+thanks,
+chris
 
