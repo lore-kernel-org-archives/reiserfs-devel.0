@@ -1,50 +1,39 @@
-From: Anders Widman <andewid@tnonline.net>
-Subject: Error messages.
-Date: Wed, 5 Mar 2003 20:18:18 +0100
-Message-ID: <7473069171.20030305201818@tnonline.net>
-Reply-To: Anders Widman <andewid@tnonline.net>
+From: Ross Vandegrift <ross@willow.seitz.com>
+Subject: Re: Error messages.
+Date: Wed, 5 Mar 2003 15:41:05 -0500
+Message-ID: <20030305204105.GA14382@willow.seitz.com>
+References: <7473069171.20030305201818@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13084-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13085-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <7473069171.20030305201818@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Anders Widman <andewid@tnonline.net>
+Cc: reiserfs-list@namesys.com
+
+On Wed, Mar 05, 2003 at 08:18:18PM +0100, Anders Widman wrote:
+>    What  exactly does this status=0x58 error mean, and what can one do
+>    to solve the problem?
+
+You said you tried changing the disks - next step is cables and
+controllers.  There's absolutely no question that's a hardware failure -
+you just have to figure out what piece has gone bad.
 
 
-   This  has  come up on this list a number of times, and no one still
-   seem to have found the true answer to the problem.
+-- 
+Ross Vandegrift
+ross@willow.seitz.com
 
-   kernel: status error: status=0x58 { DriveReady SeekComplete DataRequest }
-
-   Most  seem  to  say  this is a bad block on the harddrive. I am not
-   convinced  though.  Using  Linux on three machines here, and I have
-   seen  this error on all of them, with lots of disks. The error seem
-   to   come  random,  but  does  cause  system  lockups  and  broken
-   filesystems.
-
-   Have  about  20  disks, and have replaced and upgraded them several
-   times  too.  This error has shown on most of them. But when testing
-   them  with tools like IBM DFT, Maxtor Powermax, badblocks or chkdsk
-   in Windows none show up to be with errors on.
-
-   Sometimes  it  seem  to  help to disable DMA and or lower UDMA mode
-   (all  drives are ATA-100 or ATA-133). But then after a few days, or
-   a  few  minutes  the  kernel  starts spitting out these status=0x58
-   errors.
-
-   After  looking  online  on  different forums it does seem that many
-   people are experiencing them.
-
-   What  exactly does this status=0x58 error mean, and what can one do
-   to solve the problem?
-
-   //Anders
-
-
---------
-PGP public key: https://tnonline.net/secure/pgp_key.txt
-
+A Pope has a Water Cannon.                               It is a Water Cannon.
+He fires Holy-Water from it.                        It is a Holy-Water Cannon.
+He Blesses it.                                 It is a Holy Holy-Water Cannon.
+He Blesses the Hell out of it.          It is a Wholly Holy Holy-Water Cannon.
+He has it pierced.                It is a Holey Wholly Holy Holy-Water Cannon.
+He makes it official.       It is a Canon Holey Wholly Holy Holy-Water Cannon.
+Batman and Robin arrive.                                       He shoots them.
