@@ -1,42 +1,85 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Desaster Reiser
-Date: Fri, 06 Sep 2002 00:02:10 +0400
-Message-ID: <3D77B842.1070702@namesys.com>
-References: <3D776FEF.F34E655B@tridentemonigotes.com> <20020905140942.B19752@namesys.com> <3D773A35.5070702@namesys.com> <3D778719.1030609@neuronet.pitt.edu>
+From: jose@tridentemonigotes.com
+Subject: [Fwd: Re: [reiserfs-list] Desaster Reiser]
+Date: Fri, 06 Sep 2002 11:41:27 -0400
+Sender: jose@erazer.ows.es
+Message-ID: <3D78CCA7.6B1C1D13@tridentemonigotes.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11380-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11381-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Rafael E. Herrera" <raffo@neuronet.pitt.edu>
-Cc: reiser <reiserfs-list@namesys.com>
-
-Rafael E. Herrera wrote:
-
-> Hans Reiser wrote:
->
->> Let's put this a bit more strongly.  2.4.3 should never have shipped 
->> to users.  It particularly has a ridiculously easy to hit bug in VFS 
->> that affected reiserfs that would have been found if there was a 
->> policy of test before shipping VFS changes.  No one should be using 
->> it, and it is definitely worth your time to upgrade.
->>
->> We also have some not so easy but still possible to hit bugs in 
->> reiserfs up until 2.4.18.  I suggest 2.4.19/18 which is known to be 
->> rock stable for us. 2.4.20-pre2 has some substantial performance 
->> improvements, but is more risky as it has not been as well tested.
->
->
-> I would suggest you add a statement like the above in your web site.
-
-We had one, but I decided that there were probably not a lot of remaing 
-2.4.3 users anymore after enough time went by.
-
-Use 2.4.18 or later kernels.  Marcelo is doing a great job and things 
-are stable by the time they stop having "pre" in their name.
+Content-Type: text/plain; charset="us-ascii"
+To: reiser <reiserfs-list@namesys.com>
 
 
+
+-------- Original Message --------
+Subject: Re: [reiserfs-list] Desaster Reiser
+Date: Fri, 06 Sep 2002 11:40:28 -0400
+From: jose@tridentemonigotes.com
+Organization: Monigotes Animacion
+To: Oleg Drokin <green@namesys.com>
+References: <3D776FEF.F34E655B@tridentemonigotes.com>
+<20020905140942.B19752@namesys.com>
+
+Oleg Drokin wrote:
+> 
+> Hello!
+> 
+> On Thu, Sep 05, 2002 at 10:53:35AM -0400, jose@tridentemonigotes.com wrote:
+> >         -I have a server 2.4.3 and something HD reiserfs. Yesterday one
+> > of this
+> > HD started to give me problems this is the message.
+> 
+> 2.4.3 kernel is very old ad is filled with known bugs both in reiserfs and other
+> parts of code. You should consider upgrading.
+> 
+> > After this with reiserfs --check /dev/hdb2 this is the message that gave
+> > me
+> 
+> What reiserfsprogs version do you have?
+> If that's not the last one (3.6.3), you should download reiserfsprogs-3.6.3 from
+> our ftp site.
+> 
+> > I probed with badblocks and reiserfsck --rebuild -sd but was not
+> > anithing problem and my fear is I wrote that somebody have lose their HD
+> > with reiserfsck --rebuild -tree because after can't mount their units.I
+> 
+> That was possible because of reiserfsck crash for example, data are still not
+> lost though partition cannot be mounted.
+> 
+> > think that this is the last option if I have another
+> > Have another options before my HD is totally crash and all information
+> > is missing?
+> 
+> Well, if you want to be on safe side, you can create metadata snapshot
+> (debugreiserfs -p /dev/device | gzip -9c >metadata.gz) and make it available for
+> us to download.
+
+I attach the file hdb2.gz after I create metadata snapshot. I hope that
+you can verify without any problem
+
+
+ and we can verify that reiserfsprogs will work as expected.
+> Make sure you use reiserfsprogs 3.6.3 version for that operation.
+
+My old version of reiserfsprog was 3.6.2 but now is 3.6.3 
+
+> Or you can download reiserfsprogs 3.6.3 and run reiserfsck --rebuild-tree
+> from there and only contact us if it will crash. (with metaadta, too).
+
+Respect this I would like another options before if that posible 
+> 
+> Also after your problems are over you will need to upgrade the kernel to avoid
+> future corruptions.
+
+You sure that after this problem I will upgrading and check the units
+every week
+> 
+>Thank You
+By
+
+Jose
