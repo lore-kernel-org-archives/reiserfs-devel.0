@@ -1,35 +1,63 @@
-From: Russell Coker <russell@coker.com.au>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
 Subject: Re: what do you do that stresses your filesystem?
-Date: Mon, 23 Dec 2002 21:12:59 +0100
-Message-ID: <200212232112.59316.russell@coker.com.au>
-References: <3E06F360.7000708@namesys.com> <20021223155640.GB773@willow.seitz.com>
-Reply-To: Russell Coker <russell@coker.com.au>
+Date: Mon, 23 Dec 2002 22:04:17 +0100
+Message-ID: <3E077A51.8000401@mb.tu-ilmenau.de>
+References: <3E06F360.7000708@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-12230-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12231-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021223155640.GB773@willow.seitz.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Ross Vandegrift <ross@willow.seitz.com>, Hans Reiser <reiser@namesys.com>
-Cc: ReiserFS <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list <reiserfs-list@namesys.com>
 
-On Mon, 23 Dec 2002 16:56, Ross Vandegrift wrote:
-> On machines with Linux md RAID arrays that need to be remirrored,
-> I do end up waiting a bit (10-30 seconds) due to read starvation, but
-> this problem is so much better than it used to be it's hardly worth
-> mentioning.
+On 12/23/2002 12:28 PM, Hans Reiser wrote:
+> We were discussing how to optimize reiser4 best, and came to realize 
+> that us developers did not have a good enough intuition for what users 
+> do that stresses their filesystem enough that they care about its 
+> performance.
+> 
+> If you just do edits of files it probably does not matter too much what 
+> fs you use.
+> 
+> Booting the machine seems like one activity that many users end up 
+> waiting on the FS for.  Yes?
+> 
+> Starting up complex and big applications like xemacs and mozilla would 
+> be another.  Yes?
+> 
+> Others?
 
-One thing I've done before is configure the boot scripts to set the RAID 
-re-sync speed very low before fsck/mount time and then set it back later.  It 
-didn't seem to do as much good as I thought it would though.
+Anyone already mentioned VMware sessions? ;-)
 
--- 
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
+Running VMware on a Linux host would be an example. The application 
+itself is no problem for the fs. But maybe the case when the VMware's 
+guest OS is under high memory usage and disk i/o and VMware swaps out to 
+a file in /tmp on the host OS. Usually this happens at the same time 
+when Linux swaps out the "unneeded" things, on here: parts of KDE and 
+Netscape7+.
+So it is no fs only stress test at all. I can suggest running SpeedDisk 
+on your fragmented Win98 disks from within VMware to have this scenario. 
+(Then, switching to a mail composer window under Linux and waiting for 
+the cursor ... takes ... some time...)
+
+Regards,
+
+Manuel
+
+> 
+> Hans
+> 
+> PS
+> 
+> reiser4 performance is up a lot recently, and within two weeks I think 
+> cp -r will have been optimized as much as is worth doing.  cp -r 
+> accesses files in readdir order, and that does indeed seem worth 
+> optimizing, but soon we will need to optimize more sophisticated access 
+> patterns than that.....
+> 
+> Hans
 
