@@ -1,135 +1,83 @@
-From: Hans Reiser <reiser@namesys.com>
+From: lrc1@st-andrews.ac.uk
 Subject: Re: Carrying Attributes too Far
-Date: Wed, 24 Sep 2003 13:35:23 +0400
-Message-ID: <3F71655B.4060704@namesys.com>
-References: <1971720372-BeMail@cr593174-a> <1064280061.3f6f9ffd2c514@webmail.st-andrews.ac.uk>
+Date: Wed, 24 Sep 2003 17:57:49 +0100
+Message-ID: <1064422669.3f71cd0d6f384@webmail.st-andrews.ac.uk>
+References: <1809297981-BeMail@cr593174-a>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15734-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-15735-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1064280061.3f6f9ffd2c514@webmail.st-andrews.ac.uk>
+In-Reply-To: <1809297981-BeMail@cr593174-a>
+Content-Transfer-Encoding: 8bit
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: lrc1@st-andrews.ac.uk
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-lrc1@st-andrews.ac.uk wrote:
+Quoth "Alexander G. M. Smith" <agmsmith@rogers.com>:
 
->Quoting "Alexander G. M. Smith" <agmsmith@rogers.com>:
->
-><snip />
->
->  
->
->>lrc1@st-andrews.ac.uk wrote on Mon, 22 Sep 2003 14:28:30 +0100:
->>    
->>
->>>* Will
->>>
->>>	chmod u-rwx somefile; chmod u+rwx somefile
->>>
->>>still work? What special-case behaviour will be needed to make it work?
->>>      
->>>
->>Likely via the Janus (two faced) view of the file system as ordinary files
->>and directories for old software.  Ideally new versions of ls, chmod (or a
->>completely new permission system), etc, would be needed for native use.
->>
->>    
->>
->
->The question wasn't "Will there still be a chmod?". Of course there can still 
->be a chmod call in the legacy interface, or a chmodlike "convenience method" 
->call in the new one. The question is whether the subfile metadata system will 
->be compatible with permissions systems in which a user is able to revoke his 
->own permissions to a file and then return them again - such as the current Unix 
->permissions system - and what bodges you would accept to make it compatible. Be 
->more specific - in all these questions, the devil shows itself in the detail.
->
-We will continue to support the VFS interface.
+> lrc1@st-andrews.ac.uk wrote on Tue, 23 Sep 2003 02:21:01 +0100:
+> > The question is whether the subfile metadata system will 
+> > be compatible with permissions systems in which a user is able to revoke
+> his 
+> > own permissions to a file and then return them again - such as the current
+> > Unix  permissions system - and what bodges you would accept to make it
+> > compatible.
+> 
+> That's a detail for deep thought, but I'll let someone else worry about it
+> for now.
+> 
+> In my shallow thoughts, I'm leaning to having attributes identical to files,
+> and permissions as a kind of attribute.  The attribute's permission would be
+> inherited from the file's permissions, if they don't have their own
+> permission attributes (same inheritance rules for file permissions too).
 
->
->  
->
->>>* Will it be possible to make a attribute file the child of
->>>/pub/some_ordinary_directory via a hard link? Will it be possible to make
->>>      
->>>
->>an
->>    
->>
->>>attribute file into an attribute file for some other file? That has
->>>      
->>>
->>completely
->>    
->>
->>>different permissions? And is owned by a different user? What will have to
->>>happen, in either case, at the time the file is hard-linked to its new
->>>      
->>>
->>parent?
->>
->>Attributes are files (actually what I call fildirute Things - file directory
->>and attribute all at once) like any other Thing.  So presumably the same hard
->>linking and permission rights apply to them as you already have for
->>conventional files 
->>    
->>
->
->I agree that attribute files should be files like any other. So attribute files 
->should certainly have the same linking and permissions rights as any other 
->file.
->
-Why?  Not at all, I would say. 
+Yes, this is probably the best approach to subfile metadata, at least on the
+face of it. Now consider the case where Alice owns a file with subfile metadata,
+and Bob has read access to the file's subfile metadata directory. What should
+happen when Bob hard-links one of the files in Alice's file's subfile metadata
+directory (you know, /home/alice/mypicture/+/thumbnail or whatever) to one of
+his directories (say /home/bob/pictures )? Alternatively, what should prevent
+this from happening?
 
-> How would you implement that?
->
->  
->
->>(the permission is part of the fildirute Thing, perhaps
->>via a plug-in).
->>    
->>
->
-><snip />
->
->If attribute files have a different permissions system to all other files, how 
->are they files like any other?
->
->If a file is both an attribute file and a child 
->of /pub/some_ordinary_directory , should it have the permissions system of an 
->ordinary file or an attribute file? What are the consequences of either choice?
->
->If an attribute file's permissions metadata is part of it, is the attribute 
->file really a simple sequence of bytes like any other file? If it is, then what 
->will prevent any user with write permissions to the attribute file from 
->changing the part of the file that records its permissions metadata to whatever 
->she wishes?
->
->As to my third question, how would a user go about changing the owner of a 
->file? How might she be prevented from doing so?
->
->  
->
->>- Alex
->>    
->>
->
->Leo.
->
->-----------------------------------------------------------------
->University of St Andrews Webmail: http://webmail.st-andrews.ac.uk
->
->
->  
->
+> 
+> A simple case would be to have only owners allowed to write, anyone to read
+> (I said it was simple).  Have an "owner" attribute.  Only the matching user
+> can write to a file marked with that attribute.  Only the matching user can
+> write to the file's contents, including data, attributes, which of course
+> includes the owner attribute itself.  Of course, this means the owner can
+> give ownership of the file away to anyone he wants to (and contents if they
+> don't have explicit permission attributes of their own).
 
+And this is a major security hole, yes? Any user who can create files can give
+any other user little presents like arbitrary setuid binaries ("and this one's
+for you, root") or a few thousand 200MB files of garbage ("Oh dear, I seem to
+have used up your quota..."). How would you fix these problems, without
+resorting to an even simpler system with no setuid and no quotas? (And a system
+without quotas is pretty much at the mercy of untrusted users anyway.)
 
--- 
-Hans
+> 
+> That's just an example of a simple security scheme.  A real one would be more
+> sophisticated.  And somebody else's problem :-)
+> 
 
+The Unix permissions system isn't exactly the acme of sophistication. Ordinary
+implementations of it are pretty straightforward. Isn't it worrying if
+implementing it using subfile metadata seems to require some kind of profound
+insight? Aren't you concerned that maybe there /is/ no really good solution,
+that all possible solutions involve nasty compromises?
 
+> - Alex
+
+Thanks for taking up the challenge, and I look forward to your next attempt. I
+apologise for stringing you along; I'm not doing it to be irritating or smug. If
+I sat down to describe all the attemptable solutions I can think of, and why
+they won't work or are bad news, I'd eventually produce another tedious
+multi-thousand-word essay, and I still wouldn't anticipate all possible objections.
+
+Leo.
+
+-----------------------------------------------------------------
+University of St Andrews Webmail: http://webmail.st-andrews.ac.uk
