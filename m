@@ -1,10 +1,9 @@
-From: Derrell.Lipman@UnwiredUniverse.com
-Subject: buffers not flushed when remounting read-only?
-Date: Mon, 24 Jan 2005 16:25:11 -0500
-Message-ID: <hdl6cyfc.fsf@random.internal>
-Reply-To: Derrell.Lipman@UnwiredUniverse.com
+From: smallwood@maya.com
+Subject: Errors reported with dmesg using reiser4
+Date: Tue, 25 Jan 2005 15:28:54 -0500 (EST)
+Message-ID: <2081.10.0.2.121.1106684934.squirrel@raven2.maya.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-23205-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23206-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,27 +13,38 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Hello.  I'm using reiserfs 3.6.19 and seem to be finding that the following
-mount() call does not flush all buffers to disk.  I'm wondering if it is
-expected that this should flush all in-memory buffers to disk:
+Hello, for the record, this is from a system running the following specs:
 
-   mount(device, path, "reiserfs",
-         MS_MC_VAL | MS_NOATIME | MS_REMOUNT | MS_RDONLY, NULL)
+Gentoo Linux
+2.6.10-gentoo-r6 patched with reiser4-for-2.6.10-1
+3ware 7000 series card with 4 SATA 250GB Western Digitial Drives with no
+raid configured.
 
-The device was previously mounted for writing, much was written to it, and I do
-this mount() command in preparation for writing the device the file system is
-mounted on, to a DVD.  Once written to DVD, very occasionally, the DVD image
-has a bad file system, as detected by either "reiserfsck --check" or an attempt
-to mount it (which can hang with WCHAN = "wait_on_buffer").
+I am running a test pushing millions of directories onto one of the drives
+using a UUID as the directory name.  These all reside in the base
+directory of the filesystem.
 
-I'm using Linux 2.4.27, Debian Sarge
+The directories are now being propogated by two python scripts creating
+random data inside these folders on two of the other drives.  When about
+1.5gb has collected, they begin moving the folders onto the main drive.
 
-Should remounting a file system as read-only flush all in-cache buffers to
-disk?  Should I be able to copy the partition (/dev/hdaXX) in its entirety
-following this remount, and have a clean file system in the copy?
+This latest test was started last Thursday, with the drive being about 34
+GBs full of data from related testing.
 
-Thanks,
+Since then, the drive has filled to 92GB, but at some point, I discovered
+the following error:
 
-Derrell
+reiser4[mv(28692)]: key_warning (fs/reiser4/plugin/object.c:97)[nikita-717]:
+WARNING: Error for inode 215673251 (-2)
+reiser4[mv(28692)]: write_sd_by_inode_common
+(fs/reiser4/plugin/object.c:480[nikita-2221]:
+WARNING: Failed to save sd for 215673251: -2
 
-ps. I'm not subscribed to the list.  Please including me in any replies.
+These messages are then repeated nine times.
+
+Any suggestions on further checks I can make?
+
+Thank You,
+
+Nicolas Smallwood
+smallwood@maya.com
