@@ -1,44 +1,68 @@
-From: Russell Coker <russell@coker.com.au>
-Subject: Re: filesystem corruption ?
-Date: Fri, 21 Mar 2003 17:00:09 +0100
-Message-ID: <200303211700.09519.russell@coker.com.au>
-References: <200303201725.14039.bernd-schubert@web.de> <200303211401.38329.bernd-schubert@web.de> <20030321160738.I17440@namesys.com>
-Reply-To: Russell Coker <russell@coker.com.au>
+From: Alex Malinovich <demonbane@the-love-shack.net>
+Subject: reiserfsck "block is in the tree already" error
+Date: 21 Mar 2003 11:05:15 -0600
+Message-ID: <1048266314.8146.18.camel@Thief>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13321-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-+NBJTtLz2H5q3tnDLAsB"
+Return-path: <reiserfs-list-return-13322-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030321160738.I17440@namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Fri, 21 Mar 2003 14:07, Oleg Drokin wrote:
-> I've learn in the school that if you put some bit amount of plumbum in
+--=-+NBJTtLz2H5q3tnDLAsB
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-It's better known in English as "lead".
+I've been trying to rebuild the tree on a reiserfs partition that seems
+to have gotten corrupted during a resize operation. Unfortunately, I've
+gone from having one or two directories not accessible to having the
+whole partition not accessible now. Everything seems to go ok until pass
+2. At this point I start getting this error:
 
-The problem with lead is that it's poisonous and soft.  Having to wash your 
-hands after touching your computer could get annoying.
+"do_pass_2: The block (4901823) is in the tree already. Should not
+happen."
 
-Other metals such as copper and steel will reduce the radiation and can also 
-be used for protection against mechanical damage.
+This keeps coming up as fast as the terminal will display it. It seems
+to be an endless loop as leaving it on for 4 hours resulted in an
+essentially infinite number of error messages with no corresponding disk
+activity. I'm running reiserfsck with the following command line:
 
-The best way to reduce radiation is by distance.  The inverse-square law 
-applies, so moving the computer further away from the experiment will reduce 
-the radiation more easily than anything else you may do.  One thing to 
-consider is disk-less X-term machines for if you need to operate a computer 
-from near the experiment, so if the X-term crashed from radiation then your 
-server with the data should continue running correctly.
+reiserfsck -z -S --rebuild-sb --rebuild-tree /dev/hda3
 
--- 
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
+I'm pretty sure that -z and --rebuild-sb are more or less unnecessary,
+but I'm trying to be thorough. Running just
+
+reiserfsck --rebuild-tree /dev/hda3
+
+results in a similar error message. I don't remember the exact wording
+of it, but it is along the lines of, "marked as a leaf but is not a
+leaf".
+
+Any suggestions are very welcome. I'd certainly hate to lose all of this
+data.
+
+p.s. My system is Debian GNU/Linux Unstable, running a 2.4.20 kernel.
+
+--=20
+Alex Malinovich
+Support Free Software, delete your Windows partition TODAY!
+Encrypted mail preferred. You can get my public key from any of the
+pgp.net keyservers. Key ID: A6D24837
+
+--=-+NBJTtLz2H5q3tnDLAsB
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.1 (GNU/Linux)
+
+iD8DBQA+e0ZKBPYwh6bSSDcRAurOAJ9SCKP7jEa8pAJyS5PL6+Nwv6pBAACeMIXn
+gQMe2phZl6Wlc6ZI3FNfrHY=
+=vexF
+-----END PGP SIGNATURE-----
+
+--=-+NBJTtLz2H5q3tnDLAsB--
 
