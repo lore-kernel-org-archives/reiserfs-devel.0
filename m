@@ -1,43 +1,44 @@
-From: Vitaly Fertman <vitaly@namesys.com>
+From: Helge Hielscher <hhielscher@unternehmen.com>
 Subject: Re: fsck.reiser4 segfault with one partition
-Date: Wed, 2 Jun 2004 22:01:52 +0400
-Message-ID: <200406022201.52387.vitaly@namesys.com>
-References: <pan.2004.06.01.11.57.09.230448@unternehmen.com> <pan.2004.06.02.10.19.28.403959@unternehmen.com> <200406022143.08104.vitaly@namesys.com>
+Date: Wed, 02 Jun 2004 22:20:13 +0200
+Sender: news <news@sea.gmane.org>
+Message-ID: <pan.2004.06.02.20.20.12.597649@unternehmen.com>
+References: <pan.2004.06.01.11.57.09.230448@unternehmen.com> <200406021658.17346.vitaly@namesys.com> <pan.2004.06.02.10.19.28.403959@unternehmen.com> <200406022143.08104.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18982-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-18984-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200406022143.08104.vitaly@namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Helge Hielscher <hhielscher@unternehmen.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Wednesday 02 June 2004 21:43, Vitaly Fertman wrote:
-> > The metadata is on its way. But what is strange, I have run fsck.reiser4
-> > directly after fsck.reiser4 and here is what I get now (ups, just noticed
-> > that I use the old version again, hope that it does not matter much)
->
-> this is a different error -- now you have the internal reiser4 tree broken.
->
-> > # fsck.reiser4 /dev/hda6
-> > ***** Tree Traverse Pass: scanning the reiser4 internal tree.
-> > Error: Node (409174), item (4): item has the wrong length (62). Should be
-> > (56). Error: Node (409174), item (4): broken item found.
-> > Error: Node (409174): the node is broken. Pointed from the node (430549),
-> > item (7), unit (0). The whole subtree is skipped.
+On Wed, 02 Jun 2004 21:43:08 +0400, Vitaly Fertman wrote:
+> the previous problem was on the semantic pass, but now:
+>> Fatal corruptions were found. Semantic pass is skipped.
+
+Aha, but I was running
+1st: fsck.reiser4 -> error at semantic pass
+2nd: debugfs.reiser4
+3rd:  -> got me the second error I posted
+
+> the only write that could happen is the journal replaying. did you umount
+> the fs while fscking?
+
+Sure. Just tried the last fsck.reiser4 again using the Gentoo LiveCD.
+
+> which reiser4 code are you using?
+
+latest stable.
 
 > probably you have upgraded to some newer snapshot?
 
-yes, the reiser4progs-0.5.4 does not know about the plugin set 
-in StatData. You have to wait for the next reiser4progs snapshot. 
-Or get rid of not standard plugins for now (i am talking about 
-one file /boot/map here which was made 'extents only').
+only installed the libaal-0.5.1.tar.gz and reiser4progs-0.5.4.tar.gz after
+you have been sugesting to try the latest version first, but I didnt
+uninstall the old version beforehand. maybe that was the mistake I made?
 
--- 
-Thanks,
-Vitaly Fertman
+Regards,
+Helge
 
