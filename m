@@ -1,29 +1,44 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: silent semantic changes with reiser4
-Date: Wed, 1 Sep 2004 07:02:01 +0200
+Date: Wed, 01 Sep 2004 01:23:12 -0400
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040901050201.GB512@elf.ucw.cz>
-References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org> <20040831203226.GB16110@elf.ucw.cz> <Pine.LNX.4.58.0408311336580.2295@ppc970.osdl.org> <20040831205422.GD16110@elf.ucw.cz> <Pine.LNX.4.58.0408311357550.2295@ppc970.osdl.org> <20040831220726.GB16428@elf.ucw.cz> <m3acwa99qz.fsf@zoo.weinigel.se>
+Message-ID: <871xhmlfzz.fsf@uhoreg.ca>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <41352279.7020307@slaphack.com>
+ <20040901045922.GA512@elf.ucw.cz>
 Mime-Version: 1.0
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <m3acwa99qz.fsf@zoo.weinigel.se>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christer Weinigel <christer@weinigel.se>
-Cc: Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Hi!
+>>>>> "Pavel" == Pavel Machek <pavel@ucw.cz> writes:
 
-> I belive the kernel could give some assistance to make it easier to
-> see if a file has been modified, I remember that a few suggestions
-> were thrown around the last time Samba and dcache aliases were
-> discussed on l-k.  I definitely belive that kind of infrastructure
-> belongs in the kernel.  But the cache manager itself, no.
+Pavel> If you only want nice user interface, you can have that
+Pavel> today. Its done using coda, and hosted at uservfs.sf.net.
 
-Well, callback "filesystem full" would be nice, too; but I guess that
-is "support user cache", too...
-								Pavel
+Hmmm.  Last activity seems to be about three years ago.  Any idea if it
+works with Linux 2.6?  Is there any chance at all that it will be
+merged into the kernel?
+
+Can anyone comment on the speed?  I don't have the ability right now to
+try out any new kernel stuff.
+
+The user interface isn't that nice either.  There's no browsability for
+the methods.  (Hmm.  I have this strange .deb file.  How do I look at
+the contents?  #utar? #ugz? ...)  And honestly, I think that "#" hack
+is pretty ugly.  There's also possible name conflicts -- although it's
+highly unlikely --  if I have a file that just happens to be called
+foo.tar.gz#utar, I can't browse foo.tar.gz.
+
+There may be some nice ideas in there, but from a quick lookover, it
+seems to be lacking in execution.  I'll probably give it a try anyways,
+during my next round of kernel compiling/testing.
+
 -- 
-When do you have heart between your knees?
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
