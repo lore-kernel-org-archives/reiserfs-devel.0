@@ -1,73 +1,126 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Some questions about Reiser4
-Date: Sat, 10 May 2003 20:16:12 +0400
-Message-ID: <3EBD25CC.4080201@namesys.com>
-References: <000c01c30b6a$d7f12590$0200a8c0@xpstation>
+Date: Sat, 10 May 2003 20:20:47 +0400
+Message-ID: <3EBD26DF.2090801@namesys.com>
+References: <000c01c30b6a$d7f12590$0200a8c0@xpstation> <3EAA8008.4020401@namesys.com> <000b01c30bf7$bf47b080$0200a8c0@xpstation> <3EAA98EB.3040702@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14052-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14053-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <000c01c30b6a$d7f12590$0200a8c0@xpstation>
+In-Reply-To: <3EAA98EB.3040702@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Fred -- Speed Up -- <speedup@free.fr>
-Cc: reiserfs-list@namesys.com
+To: Yury Umanets <umka@namesys.com>
+Cc: Fred -- Speed Up -- <speedup@free.fr>, reiserfs-list@namesys.com
 
-Fred -- Speed Up -- wrote:
+Yury Umanets wrote:
 
->Hi there ;)
+> Fred -- Speed Up -- wrote:
 >
->I've read the full official documentation about Reiser4 on the Namesys website,
+>> Now that I know that keys depend on inode numbers, I can understand some
+>> points a far better way., thanks a lot ;)
+>>
+> Inode number has the different nature in different filesystems.
 >
-I recommend reading it again.
+>>
+>> - But I didn't knew Reiser4 was using inodes, as I thought everything 
+>> was
+>> stored in the tree ... now, you say Reiser4 stores directories and small
+>> files in the tree, but isn't that kind of blobs Reiser4 would not use ?
+>>
+> Hans will answer this in monday.
+>
+>> - In the official documentation, it is said that blobs have moved out 
+>> from
+>> Reiser4, is that true ? 
+>
+Yes.
 
-> but some question still remain unanswerd. I'd like you to help me solving them :
+>>
+>>
+> And this one.
 >
->- Firstly the trees. I read that the it (the storage one, not the semantic side) grew on top, which makes the key grow in lenght.
+>> - In case of a small file being written to the disk, even if it is 
+>> kept in
+>> the tree you assign it an inode number ?
+>>
+> Of course. Each file contains of the following:
+> (1) stat data (inode in VFS notation)
+> (2) some body (tails, extents, directory items, etc)
 >
-The key is constant in size.
+> If we do not assign inode to small file, how VFS will handle it? And 
+> how reiser4 will find it in the tree? 
 
-> But what about fanout ? When a file has been deleted, can its former key be freed and reused so that the tree keeps balanced ? Does Reiser4 otpimize the tree by storing small files together in a part of the tree, or directories, or whatever organisation : when a file is being written, does Reiser4 give it the first key it finds, or does a segragation exist in order to improve performance ? For instance, small temp files are created and deleted numbers of times, does a special part of the tree keep those temp files so that only a little part of the tree is constantly changing ?
->
-no.
-
->- What do you call a 'graph' when speaking about the structure the semantic layer uses to resolve paths ? How does this part really work (it is not formally spcified in the doc) ?
->- How about folders : what status do they have ? They may be stored as other files, as they have to keep their own properties, but their information (the folder's files and subfolder list) is being kept in the semantic layer's graph : how do you handle with this ?
->- Why do you need to store the locality_id in the key ?
->
-So that objects in the same locality are near each other in their tree 
-order.
-
->- How do you handle with big files wich do not fit in contiguous bloc space, so they need more than one extended pointer ? How are those other pointers stored ?
->
-One after another in the extent items.
-
->- B+Trees are simply BTrees that do not use BLOBs, am I right ?
->
-No.  B+trees store only pointers in their internal nodes.  A Btree might 
-store data smaller than a node inside one of the internal nodes of the 
-tree along with several other data items.  That means it is not a B+tree 
-and it is not using a BLOB either.
-
->- Dancing trees are simply Balanced Trees wich are only modified in an event of memory pressure, don't they ?
->
-No.
-
->- How is the developement ? I mean, should we await the Reiser 4.0 release this summer, or do you need some more time ? What features will be included in 4.0 and which will be left for 4.1 ? Will the packer be ready for release as Reiser 4.0 comes out ?
->
-The repacker will be in 4.1.
+We assign an objectid.  We do not have inodes.
 
 >
->My goal is to provide a french, complete and exact FDL licensed documentation about Reiser4, hopefully before the next month. I'd just like you to help me, I'm sure you'll be able to.
 >
+>> - What do you really mean by "flush" : can it be considered as a 
+>> mantainance
+>> operation that's running from time to time to clean the tree ?
+>>
+> Yes. In general flush is reiser4 subsystem, supposed to flush slums 
+> (dirty pieces of tree) to the disk. Of course those slums should be 
+> served in particular maner (packing, allocation) I have written about it.
 >
->Thank you in advance,
+>> I saw that
+>> programs can ask Reiser4 to flush, does flush in this case mean 
+>> "physically
+>> write data to the disk" ?
+>>
+> It does mean and this too.
 >
->Fred
->  
+>> - When resolving a path, you still need to physically open 
+>> directories, this
+>> means searching through the tree : isn't there another data structure
+>> intended to cache path data so that resolving a path operation doesn't
+>> include searching the main tree ?
+>>
+> Actually there is so called CBK cache. This is simple mechanism to 
+> satisfy tree lookups (by a key) without searching though the tree itself.
+> But it is used not only in path serach time, but also in other cases 
+> (for instance, for seraching file body item at particular file offset).
+>
+>> I thought the semantic layer had its own
+>> structure, not directly dependent on the main tree, for performance
+>> concerns.
+>>
+>
+>> - There is no case of multiple extents use in the official doc, but 
+>> as you
+>> explained to me they are commonly used : do you need inodes to store 
+>> extent
+>> pointers,
+>
+no
+
+>> or are they kept together in the tree ? 
+>
+yes.
+
+>>
+>>
+> I can't comprehend you.
+>
+>>
+>> Be sure you'll have full regard on the documents I'm publishing about
+>> Reiser4.
+>>
+>> Than you again,
+>>
+> Okay, thanks
+>
+>>
+>> Fred
+>>
+>>
+>>
+>>  
+>>
+>
 >
 
 
