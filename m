@@ -1,92 +1,77 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: reiser4 as module
-Date: Wed, 21 Jul 2004 22:50:20 -0500
-Message-ID: <40FF397C.1000402@slaphack.com>
-References: <20040721231748.46066.qmail@web60310.mail.yahoo.com> <1090461647.1676.16.camel@jeff>
+Subject: Re: Fibration questions
+Date: Wed, 21 Jul 2004 23:08:13 -0500
+Message-ID: <40FF3DAD.6020100@slaphack.com>
+References: <40FE0B47.3010600@slaphack.com> <20040721063607.1A09015C92@mail03.powweb.com> <20040721083232.GA4990@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19732-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-19733-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1090461647.1676.16.camel@jeff>
+In-Reply-To: <20040721083232.GA4990@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jeff Davis <reiser-list@empires.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
+Cc: David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
 
 
-Jeff Davis wrote:
 
-| Does someone have a better suggestion for me? Is the unloading of
-| reiser4 problem a bug? Am I not doing it correctly (this is my first
-| kernel modification)?
+Markus T=F6rnqvist wrote:
 
-I don't think reiser4 is really able to be a module right now.  I think
-it's a bug, but not a high-priority one.  I think, I think, I think...
+| I think it'd be a great idea and people would get to learn the code
+| by really working it.
 
-I don't know how to get UML to work with reiser4, but I'm sure it can be
-done, as I've heard Namesys people say they use that to develop under.
-So there, yes, you'd have to reboot your UML kernel, but you could be
-doing other things while that happened -- and it wouldn't take long for
-it to reboot anyway.
+I do!  I do!
 
-Also, you may want to use the bitkeeper tree to develop off.  Is that
-still up?  http://namesys.com/code.html
+I've been stumbling around the reiser4 code, trying to make sense of
+things.  It looks very clean, very well implemented, sort of allright
+documentation -- no idea where to start.
 
-| As a seperate issue, the plugin I'm trying to ultimately create is one
-| where you can access a script by doing something like
-| "/path/to/script.py/pyexe" and it would execute the script and the file
-| contents would be (read only) the stdout. That would allow cool stuff
-| like having a configuration file be just data pulled from a database (as
-| an example). Is this even possible? I'm still trying to figure out how
-| I'd write it in a secure way (we don't want to execute a user's script
-| in kernel address space).
+| This would make it easier for people to implement stuff like the
+| aforementioned Lustre subset, new plugins, chdir to -x files or something.
 
-Possible, and may have some other uses.  But why would anyone want to
-put config files in a database?  With reiser4's handling of small files
-and things like NFS, I can't find a single reason.  Also, if you're
-going to start python, run a python script which accesses a database,
-take the results and send them to kernel space, then back to user space,
-you're talking about serious performance issues vs. just leaving the
-config files alone, as flat text.
+I'm thinking of doing said Lustre subset as a more generic facility.  I
+definitely want reiser4 support, though, and it'd be really nice to:
 
-Also, what you're proposing could be implemented without reiser4:
+- - support remote 'metas' dirs as if they were local
+- - have our own area inside 'metas' which is always local, to allow
+things like forcing particular files to always be in the cache
+- - have almost no speed difference between local cache reads and local fs
+reads
+- - allow separate caching of different logical pieces of a file, to
+sanely allow files which are directories
+- - share an fs between a cache and entirely local files
 
-cd /path/to
-mkfifo script.pipe
-while true; do
-	./script.py > script.pipe;
-done
+Most of that would be best implemented as some form of plugin.
 
-Run that, then go to another terminal and try 'cat'-ing
-/path/to/script.pipe instead of /path/to/script.py/pyexe.  You may have
-to ensure that script.py outputs an EOF character.
+First question:  Can I manually enable/disable a particular plugin for a
+particular directory?  (like how cryptocompress is supposed to be...)
 
-I don't know about the best way to implement it as a plugin.  Maybe keep
-most of it in userland?
+Second question:  Would such a setting be recursive?  Can I tell it
+whether to recurse or not?
 
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQP85e3gHNmZLgCUhAQLdJA//SnsJU9/sVSu56ywbnyjXTyF8B4jdr8xy
-b55zT51DRemlDvCVmEbTydc6qx58TL1g3eL67Nq2O3fXYSvuX6ROvdp2S3228PW5
-GHN2/ARaL0VoYMpgy+nXkA5iTk+KGXnyZsJE03bMkDdrh4a2uXTvnNoYuajaiFuI
-Sl3KVK/5vTD+EYZGYtGdtARGXi+mKLJeCAKsj021L35NnY508567zS9RBFAAgTDj
-trSjt+EYMzTJ9Y4mO1BkFFOvqGZQJg6kPbLzZ6oUtoFpfMJRX688fgxVw1FOSsSx
-HfjmSSa6RUJeC0JwK7aaWM2M/BSv7+00aP6lmTXC0JC8d01He0ynKU6RifCti6FS
-Vif9fZsCpurMkTxh21Mv119H/oEy0shi+O82aoh7nvsB+ZLvvXbQLdnLAoJkseAR
-pwBuryDVs7uT/gQmCA50gkWDeuRztRPCwYCyHa8C9dHQDLyLUJoWB25I/F+m1rIE
-5Go8Vpzap46T9CHIFVxJRRSjm+yudw85IDTg0MS7h9uRnDDBT7oNFQjErSK7gLJd
-IVdNg2rxHaknYN0guxyLWp5+depg4+rnl3/QIZeqe9rWi9rD0128U+FEs4P0firM
-gzTC+XfOKExhTGdb3l+VO7YvFbSGegu9Fh5qTqfNlI9/4DkYZrLrfCz/7ZxzLCJ4
-dNeKS/zPvog=
-=WfBy
+iQIVAwUBQP89rHgHNmZLgCUhAQIbWg//estyCCE5Ae0/YiSS1SXU0ZOevSSTy3Aa
+HtoGRlWCbkXWQhkpyrnyE4rMdjqDyaFuCIEh9bq3yuzIT0azHajW2nRzur8ffzmn
+allFZtPtNsMRh4w3kRuQR37s1I0BXs4zQLGstWb4KveyHp/QxegtZ1JLSiS8Jd3w
+rqaI4UusIHmVTLBJAK5ilVFcor98p14zG9NphPrsht0HDa0LXeGBKsDb9yQ1Db2F
+bWYqliZW5V/+z4JrGuHSBeqbgR+tSla5gRWHhVuDTe8s24cVAzq+Oks7m2Dxw1D3
+JKA1UiCRfWG0jpBjRMrZV37TaFHN9OCgFqQVK8VFreojuuGkPxfqOH2/64LhnYXh
+4AexfMB5+IUQHSU+rjWQ58Hm0Lv+VYXyupo2snvig4xZUi7P2RaSK0/zLNSZ61jy
+Hor+mlxn0/Qsk8GLZG3JO5loVPrdq4cYeDcx8jUaOQRV5IzeWubt7hRgscjed+HI
+P+w5pkFRXwEK1cqPn+R8BFHGqF2M/AMfmNgY3vEnRaNGrtQ/c4p05ZxQa8DBxWuT
+A0rnpZlkBkrQM2sGGUd71EzNQJIPLSxMmKiZOJH1UNo4m36IvGCdPmec3cgLQwud
+WsXAPS1pxlMbqKAIv7t2VV4X2sWJP7xNHTE7hEG0DqQ6c3T4eSEaenUjWq6Y92rf
+XwoUS85igeM=3D
+=3DjPhu
 -----END PGP SIGNATURE-----
