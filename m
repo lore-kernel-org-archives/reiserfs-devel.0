@@ -1,43 +1,105 @@
-From: Andreas Dilger <adilger@clusterfs.com>
-Subject: Re: getting UUID and label of a filesystem
-Date: Thu, 6 Nov 2003 14:07:47 -0700
-Message-ID: <20031106140747.Z10197@schatzie.adilger.int>
-References: <3FAAB330.5040503@nrao.edu>
+From: Zhihui Zhang <bf20761@binghamton.edu>
+Subject: Re: A few questions of ReiserFS
+Date: Thu, 6 Nov 2003 18:00:42 -0500 (EST)
+Message-ID: <Pine.GSO.4.58.0311061712140.29193@bingsun2.cc.binghamton.edu>
+References: <Pine.GSO.4.58.0311061302240.23244@bingsun2.cc.binghamton.edu>
+ <20031106200657.GN11516@backtop.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16000-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16001-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3FAAB330.5040503@nrao.edu>; from bwaters+moz@nrao.edu on Thu, Nov 06, 2003 at 01:46:40PM -0700
+In-Reply-To: <20031106200657.GN11516@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Boyd Waters <bwaters+moz@nrao.edu>
+To: Alex Zarochentsev <zam@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-On Nov 06, 2003  13:46 -0700, Boyd Waters wrote:
-> Perhaps this is obvious, but I cannot find a way to print out the UUID
-> or the label of a mounted reiser filesystem, in a manner similar to
-> xfs_admin.
-> 
-> Best way to do this?
-> 
-> On a mounted filesystem?
-> 
-> As non-root user?
 
-If you have a recent e2fsprogs (1.33+ I think), you can use "blkid" to dump
-the UUID/LABEL of most filesystem types (including reiserfs, XFS, JFS, ext*).
-If run as root it will create a cache of available block devices and
-their UUID/LABEL that non-root users can access even if they can't read
-the block device, so it doesn't need to be suid or anything.  You can also
-use it to locate specific devices by LABEL/UUID/TYPE from scripts, etc.
+Thanks for your reply, but I am still confused.
 
-Cheers, Andreas
---
-Andreas Dilger
-http://sourceforge.net/projects/ext2resize/
-http://www-mddsp.enel.ucalgary.ca/People/adilger/
+(1) On bitmap handling.  I just noticed that Reiser4 does not start an
+atom write until the previous one is fully committed.  In other words,
+there will never be more than one atom being written at the same time.
+This should help avoiding premature re-use of space freed by an earlier
+atom. So the commit bitmap is simply the bitmap copy to be written.  Am I
+right? If so, is your scheme somehow different/similar to the those used
+in ext3 and IBM JFS.  They also use two bitmaps: one working, one
+permanent.
 
+(2) On dancing tree.  If the number of nodes is less than 64 (the
+threshold), you make them wander.  Otherwise, you make them relocate. In
+the case of relocate, how do you determine if you want to relocate their
+parents as well? I do not understand why the relocation decision of a node
+has anything to do with its being the first child of a parent.
+
+It seems to me that the code tries to write out node in parent-first
+order, not one level at a time.  Of course, the write happens after all
+the squeeze at all levels have been done.
+
+Thanks,
+
+-Zhihui
+
+On Thu, 6 Nov 2003, Alex Zarochentsev wrote:
+
+> On Thu, Nov 06, 2003 at 01:25:11PM -0500, Zhihui Zhang wrote:
+> > Hi,
+> >
+> > First, I would like to say I am impressed by ReiserFS. ReiserFS definitely
+> > handles a file system from a different perspective from other file systems.
+> > I would appreciate if you can clarify some internals of ReiserFS for me:
+>
+> Reiser4.
+>
+> >
+> > (1) On disk space leakage.   The comment in wander.c says that the usage
+> >     information of wander blocks are not written to disk and a special
+> >     logging of the bitmaps is used to avoid space leakage.  How can you
+> >     achieve this?  Does it has anything to do with working and permanent
+> >     bitmap?
+>
+> we do not count not permanent allocations in on-disk bitmap because otherwise
+> we have to roll that allocation back after transaction replaying after a system
+> crash.  It was simple because we have two bitmaps, "working" and "commit" (you
+> said "persistent").  When working bitmap protects blocks from being allocated
+> twice we can write to commit bitmap blocks only what we want to see there after
+> transaction replaying.  We decided not to write that "garbage" of not
+> persistent allocation to disk.  Probably the comment about space leakage in
+> wander.c:107 is not correct now, I will remove it soon.
+>
+> The design of two bitmaps was invented for keeping transactions separate even
+> they alter one bitmap block.  For other blocks we have a rule that one block
+> belongs only to one transaction.
+>
+>
+> > (2) On dancing tree.   Is it true that the parent of a *dirty* node is
+> >     always relocated even if the child is not the most left child?  If
+>
+> no. it tries not to break existing good allocation, only if current allocation
+> is not good, it makes parent node relocatable.  At least it was designed that
+> way :)
+>
+> >     the child is the leftmost one, does it mean we always relocate its
+> >     parent, grand-parent, and so on?  In addition, I guess that the znode
+> >     must be ordered in order to write them sequentially.
+>
+> if some nodes sequence (in tree order) was marked as "relocate", they get their
+> new block numbers one after one; only if some bits already busy in bitmap, the
+> sequencial order of block numbers gets broken.
+>
+> > When you
+> >     allocate an ancestor, you must put it in the correct place in the list
+> >     of znode to be flushed, is this right?
+> >
+> > Thanks for your enlightenment.
+> >
+> > -Zhihui
+> >
+> > --
+>
+>
+
+-- 
