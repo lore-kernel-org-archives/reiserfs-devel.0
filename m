@@ -1,33 +1,39 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: Getopt improvements
-Date: Fri, 28 Feb 2003 10:47:56 +0300
-Message-ID: <20030228104756.B1234@namesys.com>
-References: <3E5D26A2.7010804@suse.com> <20030227092551.C28643@namesys.com> <3E5E312C.50406@suse.com> <3E5E730C.7030804@namesys.com> <3E5E84B2.90708@suse.com> <3E5E92BA.4090307@namesys.com> <3E5EAA3A.8030203@suse.com> <448183093.20030228012237@tnonline.net>
+Subject: Re: ReiserFS causes CPU high usage?!
+Date: Fri, 28 Feb 2003 10:51:45 +0300
+Message-ID: <20030228105145.C1234@namesys.com>
+References: <200302280011.14488.liviu.voicu@huji.ac.il>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12967-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12968-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <448183093.20030228012237@tnonline.net>
+In-Reply-To: <200302280011.14488.liviu.voicu@huji.ac.il>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anders Widman <andewid@tnonline.net>
+To: Voicu Liviu <liviu.voicu@huji.ac.il>
 Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Fri, Feb 28, 2003 at 01:22:37AM +0100, Anders Widman wrote:
-> >         Well, the more possible values a given multivalue option has, the more
-> > values that need to be explicitly negated for a mutually exclusive
-> > option. The descriptor lines get quite long with more than 2 options
-> > when you need to specify every value you need to clear.
->   How  about  a 'clear' option that clears out previous options passed
->   when  the fs was mounted?
+On Fri, Feb 28, 2003 at 12:11:14AM +0200, Voicu Liviu wrote:
 
-This is counter intuitive, I'd say.
+> Any clue what is going on?
+> Maybe ReiserFS uses the cpu harder?
+
+reiserfs is using more CPU than ext2/ext3. It's maintaining its metadata in
+balanced tree. Each tree update often requires shifting of some of the data
+between or inside of tree nodes. That's where CPU time is going.
+
+
+> I have to fix the CPU usage icon_sad.gif I makes me crazy...simple emerge 
+> loads the CPU to 90 ~ 95%
+
+Make sure you do not have "CONFIG_REISERFS_CHECK" enabled in you kernel config,
+as this enables lots of extra checks in reiserfs code that consume even more CPU.
 
 Bye,
     Oleg
