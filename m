@@ -1,30 +1,62 @@
 From: Mike Fedyk <mfedyk@matchmail.com>
-Subject: Re: Recommended Journal Size for Small FS?
-Date: Sat, 06 Mar 2004 21:38:54 -0800
-Message-ID: <404AB56E.1020203@matchmail.com>
-References: <200403061835.15983.warren@cs.queensu.ca>
+Subject: Re: Desktop Filesystem Benchmarks in 2.6.3
+Date: Sat, 06 Mar 2004 20:50:47 -0800
+Message-ID: <404AAA27.5010802@matchmail.com>
+References: <4044119D.6050502@andrew.cmu.edu> <200403030700.57164.robin.rosenberg.lists@dewire.com> <1078307033.904.1.camel@teapot.felipe-alfaro.com> <200403031059.26483.robin.rosenberg.lists@dewire.com> <1078309141.863.3.camel@teapot.felipe-alfaro.com> <4047DF05.8080209@tequila.co.jp> <40480031.3080301@mweb.co.za> <4048E878.5070505@matchmail.com> <4048FF74.70508@mweb.co.za>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17110-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17109-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200403061835.15983.warren@cs.queensu.ca>
+In-Reply-To: <4048FF74.70508@mweb.co.za>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jared Warren <warren@cs.queensu.ca>
+To: cami <camis@mweb.co.za>
 Cc: reiserfs-list@namesys.com
 
-Jared Warren wrote:
-> (Please excuse me if this has already been answered, I couldn't find anything 
-> pertinent in a brief archive search.)
+cami wrote:
+>>> I've had ext3 corruptions of note.. Running ext3 on squid's caching
+>>> partition (expensive hardware + raid1+0 setup), what i'd have was if
+>>> any proccess wrote to that caching partition, it would lock up the
+>>> process.. even an rm on any file inside that partition would lock up
+>>> rm.. after shutting down the machine, and _reformatting_ that partition
+>>> with mkfs, it *still* done the same thing.. After getting fed up being
+>>> unable to resolve the problem, 
+>>
+>>
+>> Did you post to the ext3-users list on this?
 > 
-> I would like to use ReiserFS on my / filesystem, which includes bin, etc, lib, 
-> sbin, and root. Right now the files on that partition only take up 40 MB, so 
-> it seems like a 32 MB journal is overkill. Some comments I've read recommend 
-> using ext3 on small file systems because supposedly the journal is 
-> proportional (I have been unable to find out what proportion), however I 
+> 
+> Live/Production machines leave very little time for proper debugging..
+> (so to answer your question, no..)
+> 
 
-It should be less than 5MB (I think ext3's mkfs will scale down to 1 or 
-2MB depending on size).
+I would still suggest you post to the list to see if there is a 
+solution.  That allows you to try it on another machine, or do something 
+different if you setup a new production machine.
+
+>> Were your processes stuck in "D" state, or did you have high systems 
+>> times?
+> 
+> 
+> Even with the machine rebooted, i was still experiencing the same
+> thing..
+
+That doesn't say much.  If you have corruption on disk, you might get this.
+
+> 
+>> If so, you could have configured squid to put fewer files in each 
+>> directory, or use the htree patch (for 2.4 kernels) or it's in by 
+>> default in 2.6.
+> 
+> 
+> Doesnt make much sense, even when reformatting the disk with ext3
+> again, proved to be useless.. After about 20 seconds with squid
+> running, the same issues would arise.. The machine was up for
+> about 40 days before the issues occured..
+
+What kernel version was this on?
+
+Mike
