@@ -1,55 +1,41 @@
-From: Russell Coker <russell@coker.com.au>
+From: Chris Mason <mason@suse.com>
 Subject: Re: non volatile ram devices
-Date: Thu, 5 Dec 2002 11:45:00 +0100
-Message-ID: <200212051145.00696.russell@coker.com.au>
-References: <200212042059.35300.russell@coker.com.au> <200212051000.32340.russell@coker.com.au> <20021205113826.B25528@vestdata.no>
-Reply-To: Russell Coker <russell@coker.com.au>
+Date: 05 Dec 2002 08:23:59 -0500
+Message-ID: <1039094639.8199.119.camel@tiny>
+References: <200212042059.35300.russell@coker.com.au>
+	<20021204212447.C20004@vestdata.no> 
+	<200212051000.32340.russell@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12117-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12118-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021205113826.B25528@vestdata.no>
+In-Reply-To: <200212051000.32340.russell@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Ragnar =?iso-8859-1?q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
-Cc: linux-ide-arrays@lists.math.uh.edu, ReiserFS <reiserfs-list@namesys.com>, Mike Jadon <mikej@umem.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Russell Coker <russell@coker.com.au>
+Cc: Ragnar =?ISO-8859-1?Q?Kj=F8rstad?= <linux-ide-arrays@ragnark.vestdata.no>, ReiserFS <reiserfs-list@namesys.com>, Mike Jadon <mikej@umem.com>
 
-On Thu, 5 Dec 2002 11:38, Ragnar Kj=F8rstad wrote:
-> On Thu, Dec 05, 2002 at 10:00:32AM +0100, Russell Coker wrote:
-> > > Even if the device is just a regular disk it should give you a real
-> > > performance boost. Depending on your RAID-setup, it may not be the
-> > > throughput, but the seeking back and forth between the journal and the
-> > > rest of the disk that kills performance. Having the journal on a
-> > > seperate disk solves that problem.
-> >
-> > True.  However I could only put in a single extra disk, and I don't want
-> > to use non-RAID...
->
-> Unless you use two ramdisks you still have a single point of failure.
+On Thu, 2002-12-05 at 04:00, Russell Coker wrote:
 
-True, but then both the RAID controller and the motherboard are single poin=
-ts=20
-of failure already.
+> In this case the machines each have 4G of RAM.  The total RAM for the mail 
+> cluster is four times what was used for the Solaris cluster, and Intel X86 
+> architecture uses less RAM than SPARC (32bit CISC vs 64bit RISC) and I 
+> suspect that the software we're now using (Qmail and Courier) is more memory 
+> efficient than Netscape too.  Overall we have heaps more cache memory than 
+> before, I'm seeing 20 reads per second and 160 writes per second at times of 
+> peak load.
 
-> Not sure exactly how the reability of the ramdrive is compared to a
-> disk?
+Have you benchmarked these machines to determine the max write load
+capacity on reiserfs?  Are you using a vanilla kernel or one with
+patches applied?
 
-The RAM drive has no moving parts and should be inherantly more reliable.  =
-I=20
-don't recall ever having RAM die on a machine that had been functioning=20
-properly except when mechanical issues apply (IE clumsy people taking=20
-machines apart).  Hard drives die regularly.  Get a busy machine like a new=
-s=20
-server or a mail server and you expect to keep replacing dead hard drives a=
-s=20
-they wear out.
+I've done a few of my own benchmarks of the data logging patches, but it
+would be great to see some independent verification of the speedups in a
+real mail server workload.
 
---=20
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
+-chris
+
 
