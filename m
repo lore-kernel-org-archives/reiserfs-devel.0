@@ -1,95 +1,44 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: metas Permission Denied
-Date: Sun, 02 May 2004 10:59:59 -0700
-Message-ID: <4095371F.3000400@namesys.com>
-References: <E38393BE-9950-11D8-B39A-000A95C88606@aoc.nrao.edu>	 <16528.46352.173184.528623@laputa.namesys.com>	 <39CF0546-99EE-11D8-8CFE-000A95C88606@aoc.nrao.edu>	 <16529.9818.916980.360020@laputa.namesys.com>	 <200404291614.i3TGEoAI017900@turing-police.cc.vt.edu>	 <16529.11188.555986.964130@laputa.namesys.com>	 <1083256305.30344.284.camel@watt.suse.com>  <4091E1FC.5080502@namesys.com> <1083327462.30344.327.camel@watt.suse.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: Reiser4 DOS
+Date: Sun, 2 May 2004 21:33:32 +0300
+Message-ID: <20040502183332.GR29226@nysv.org>
+References: <200405021539.05907.mbuesch@freenet.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18365-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18366-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1083327462.30344.327.camel@watt.suse.com>
+Content-Disposition: inline
+In-Reply-To: <200405021539.05907.mbuesch@freenet.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: Nikita Danilov <Nikita@Namesys.COM>, Valdis.Kletnieks@vt.edu, reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Michael Buesch <mbuesch@freenet.de>
+Cc: reiserfs-list@namesys.com
 
-Chris Mason wrote:
+On Sun, May 02, 2004 at 03:38:47PM +0200, Michael Buesch wrote:
+>
+>#!/bin/sh
+>mount -treiser4 /dev/hdX /mnt/reiser4
+>cd /mnt/reiser4
+>while `/bin/true`; do
+>	cd metas
+>done
 
->On Fri, 2004-04-30 at 01:19, Hans Reiser wrote:
->  
->
->>Chris Mason wrote:
->>
->>    
->>
->>>On Thu, 2004-04-29 at 12:22, Nikita Danilov wrote:
->>> 
->>>
->>>      
->>>
->>>>Valdis.Kletnieks@vt.edu writes:
->>>>        
->>>>
->>>>>On Thu, 29 Apr 2004 19:59:22 +0400, Nikita Danilov said:
->>>>>
->>>>>          
->>>>>
->>>>>>chmod u+rx backup/fsplit.c
->>>>>>
->>>>>>"x" bit is necessary for lookups, and "r" bit---for readdir.
->>>>>>            
->>>>>>
->>>>>This is going to be *such* a non-starter - there's many decades of
->>>>>"C files are mode 644 and executables are 755" tradition that this
->>>>>will fly against.  What this basically implies is that the 'execute'
->>>>>          
->>>>>
->>>>Eh? What I described is precisely decades old meaning of rwx bits for
->>>>directories.
->>>>
->>>>Problem is that we have to fit objects that are both regular files and
->>>>directories into access control scheme that wasn't designed for such a
->>>>mix. I don't see better solution short of inventing new bit(s).
->>>>   
->>>>
->>>>        
->>>>
->>>Please forgive me for jumping into the end of a thread without reading
->>>the whole thing, but it seems like the r bit should be sufficient here. 
->>>If you can read the file, you should be able to read the metas.
->>>
->>>x should be for execution of the file...
->>>
->>>      
->>>
->>what if the file/directory contains "real" files which are not metas, 
->>and it also has a file body?  This is possible in reiser4.
->>    
->>
->
->Well, that would explain needing the execute bit ;-)
->
->I guess this is a matter of taste, but to me, the metas are really part
->of the file.  If you can read the file you should be able to at least
->read the listing of metas, for the same reasons that you can read the
->file size and atime/mtime etc.  
->  
->
-Put another way, the metas should by default inherit their read 
-permission from the directory(file) they are part of.
+Do I remember something of my own, or wasn't there some discussion about
+this?
 
->This could hold true for /somedir/metas as well.
->
->-chris
->
->
->
->
->
->
->  
->
+"Should meta files have meta files"
+
+I'd say this is a bug, meta files seem like they shouldn't have meta
+data, by definition.
+
+Is this going away in the next snapshot?
+
+What about the metas dir inheriting +x from it's parent DIRECTORY, and
+not necessarily parent FILE?
+
+-- 
+mjt
 
