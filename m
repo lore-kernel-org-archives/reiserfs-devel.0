@@ -1,37 +1,70 @@
 From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: new reiser4 snapshot is available
-Date: Fri, 14 Nov 2003 16:32:59 +0300
-Message-ID: <20031114133258.GL1278@backtop.namesys.com>
-References: <20031113143438.GD1278@backtop.namesys.com> <20031114094217.GH1278@backtop.namesys.com> <1068807864.2883.1520.camel@lemsip> <20031114112027.GJ1278@backtop.namesys.com> <20031114131637.GK1278@backtop.namesys.com> <3FB4D841.5000700@gmx.net>
+Subject: Re: tail policy question
+Date: Fri, 14 Nov 2003 20:06:04 +0300
+Message-ID: <20031114170604.GQ1278@backtop.namesys.com>
+References: <Pine.GSO.4.58.0311121737100.9552@bingsun2.cc.binghamton.edu> <3FB22E06.9070500@namesys.com> <Pine.GSO.4.58.0311131322500.27178@bingsun2.cc.binghamton.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16090-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16092-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3FB4D841.5000700@gmx.net>
+In-Reply-To: <Pine.GSO.4.58.0311131322500.27178@bingsun2.cc.binghamton.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
-Cc: Gianni Tedesco <gianni@scaramanga.co.uk>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Zhihui Zhang <bf20761@binghamton.edu>
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, vs@namesys.com
 
-On Fri, Nov 14, 2003 at 02:27:29PM +0100, Carl-Daniel Hailfinger wrote:
-> Alex Zarochentsev wrote:
-> > I made a cleanup for reiser4 patches (by removing UML-specific changes),
-> > you can see result here: 
-> > 
-> > http://namesys.com/snapshots/2003.11.17/cleaned-up/
+On Thu, Nov 13, 2003 at 01:34:07PM -0500, Zhihui Zhang wrote:
 > 
-> That directory doesn't exist.
+> Thanks for your and Alex's reply.  I poke around a little bit more and
+> find out that the mkfs.c does use ITEM_TAIL40_ID, which happens to have
+> the same value as TAIL_ID (0x6) in the kernel file. 
 
-http://namesys.com/snapshots/2003.11.12/cleaned-up/
+they are from different name spaces.
+
+> However, I am confused
+> when I see the following in plugin.h:
+> 
+> PLUGIN_BY_ID(item_plugin, REISER4_ITEM_PLUGIN_TYPE, item);
+> PLUGIN_BY_ID(tail_plugin, REISER4_TAIL_PLUGIN_TYPE, tail);
+
+IFAIK above defines service functions for plugins of different types, 
+it does not define concrete plugins. tail_plugin_type should be named
+as tail_policy_plugin for better understanding.
 
 > 
-> 
-> Carl-Daniel
-> 
+> The item plugin has TAIL_ID if the item is of tail type. So what is the
+> use of a separate tail_plugin?  Plus, the tail_plugin has three IDs
+> defined: NEVER, ALWAYS, and DEFAULT, none of which has a value of 0x6. My
+> guess is that the item plugin for tails are used to manage tails (merge,
+> split, read, write?), 
 
+yes
+
+> while the tail_plugin is used to decide if a
+> conversion between tail format and extent format is needed.  If so, the
+> reiser4.h file should have:
+> 
+> #define REISER4_TAIL_PLUGIN       (DEFAULT_TAIL_ID)
+> 
+> instead of
+> 
+> #define REISER4_TAIL_PLUGIN       (ALWAYS_TAIL_ID)
+> 
+> Does this make sense? Please clarify this for me.  Thanks.
+
+what i would like to see:
+rename *_TAIL_ID to *_TAIL_POLICY_ID
+DEFAULT_TAIL_POLICY__ID renamed to SMART_TAIL_POLICY_ID
+
+#define REISER4_TAIL_POLICY_PLUGIN (one of SMART_TAIL_POLICY_ID ALWAYS_TAIL_POLICY_ID,
+ NEVER_TAIL_POLICY_ID)
+
+Does it make things more clear?
+
+Thanks.
 -- 
 Alex.
