@@ -1,53 +1,83 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: reiserfsprogs 3.6.5-pre2 release.
-Date: Wed, 26 Feb 2003 15:42:30 +0300
-Message-ID: <20030226154230.A19240@namesys.com>
-References: <200302251650.22469.vitaly@namesys.com> <200302251712.45985.vitaly@namesys.com> <20030226015448.1efac468.philippe.gramoulle@mmania.com> <20030226102934.A2659@namesys.com> <3E5CA48C.5070807@namesys.com> <1794518093.20030226131425@tnonline.net> <20030226152441.A16073@namesys.com> <865715375.20030226133422@tnonline.net>
+From: berthiaume_wayne@emc.com
+Subject: RE: reiserfsprogs 3.6.5-pre2 release.
+Date: Wed, 26 Feb 2003 10:12:41 -0500
+Message-ID: <93F527C91A6ED411AFE10050040665D0049C072B@CORPUSMX1>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12935-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12936-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <865715375.20030226133422@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Anders Widman <andewid@tnonline.net>
+Content-Type: text/plain; charset="iso-8859-1"
+To: philippe.gramoulle@mmania.com
 Cc: reiserfs-list@namesys.com
 
-Hello!
+	Philippe, how many files were on the partition?
+Regards,
+Wayne.
 
-On Wed, Feb 26, 2003 at 01:34:22PM +0100, Anders Widman wrote:
-> >> Would it be possible to lower the time it takes to mount a filesystem?
-> >> Currently it takes about 48s to mount my fs:
-> > Unfortunatelly there is no easy way.
-> > Seems that most of the time is spent reading bitmaps (one bitmap after each 128M of data),
-> > and reiserfs reads in all the bitmaps at once during mount.
-> I  only  posted  this  because it is discussed how to lower the bootup
-> time. The fsck might take a few seconds when optimised, but the actual
-> mount of the FS takes much longer.
+-----Original Message-----
+From: Philippe Gramoull=E9 [mailto:philippe.gramoulle@mmania.com]
+Sent: Tuesday, February 25, 2003 7:55 PM
+To: reiserfs-list@namesys.com
+Subject: Re: reiserfsprogs 3.6.5-pre2 release.
 
-But this is not good reason to make it even longer, what do you think?
-(and blockdev cache is flushed on last device close, so mount won't get
-these bitmap blocks from cache).
 
-> How  big  is  each  block  of bitmaps that is being read during mount?
 
-it's of blocksize size (4k for now).
+Hi Vitaly,
 
-> Would  it  be  possible  to make the reads more efficient? I mean, now
+here is an output of reiserfsck -a on a ~550 Gb Raid5 array filled =
+about
+60%.
 
-You still need to seek to every of them.
-(Other possibility is to read bitmap blocks on 1st access, but this is not very
-easy task, I'd say).
+# df /dev/sdb1
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/sdb1            572418604 335826568 236592036  59% /prod
 
-> there  would  be 6400 reads on a 800GB FS. From the sound of the disks
-> it does not seem as they work at 100% during mount?
 
-Hm. Disk cannot do anything while it is seeking. Also since the seeks are
-in one direction, you won't hear any unusual noises, I believe.
+#  reiserfsck -V
 
-Bye,
-    Oleg
+<-------------reiserfsck, 2002------------->
+reiserfsprogs 3.6.5-pre2
+
+
+# time reiserfsck -a /dev/sdb1
+Reiserfs super block in block 16 on 0x811 of format 3.6 with standard
+journal
+Blocks (total/free): 143109020/59148009 by 4096 bytes
+Filesystem is cleanly umounted
+Replaying journal..
+0 transactions replayed
+Checking internal tree..finished                 =20
+
+real    0m47.890s
+user    0m6.668s
+sys     0m0.732s
+
+Hope that helps.
+
+Thanks,
+
+Philippe
+
+
+On Tue, 25 Feb 2003 17:12:45 +0300
+Vitaly Fertman <vitaly@namesys.com> wrote:
+
+
+  |  Also, it would be interesting to know how much time does =
+reiserfsck -a
+take
+  |   on big arrays. So if you have a such, try it also please. I mean, =
+on
+consistent
+  |   filsystems, otherwise reiserfsck will switch to the fix-fixable =
+mode.
+
+--=20
+
+Philippe Gramoull=E9
+philippe.gramoulle@mmania.com
+Lycos Europe - NOC France
