@@ -1,30 +1,36 @@
-From: "Chris [ www.LiFEFORCE.de ]" <chris@lifeforce.de>
-Subject: raiserfsck using --rebuild-tree & --fix-fixable
-Date: Thu, 22 May 2003 19:29:56 +0200
-Message-ID: <000a01c32087$c3dcb100$025ca8c0@clf>
-Return-path: <reiserfs-list-return-14211-reiserfs=m.gmane.org@namesys.com>
+From: Ragnar =?iso-8859-15?Q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
+Subject: Re: reiserfs vs NTFS vs WAFL
+Date: Thu, 22 May 2003 19:44:20 +0200
+Message-ID: <20030522174420.GI7706@vestdata.no>
+References: <3ECBC1DF.3060607@namesys.com> <003b01c32070$052d59b0$0101a8c0@bummer> <20030522170723.GH7706@vestdata.no> <3ECD074F.8040009@namesys.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-14212-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <3ECD074F.8040009@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Hans Reiser <reiser@namesys.com>
+Cc: darren <teodarren@myrealbox.com>, 'reiserfs' <reiserfs-list@namesys.com>, 'Mike Jadon' <mikej@umem.com>
 
-Hi !
+On Thu, May 22, 2003 at 09:22:23PM +0400, Hans Reiser wrote:
+> Ragnar Kj=F8rstad wrote:
+>=20
+> >Alternatively SPEC sfs is probably a good way to test NFS-performance
+> >(but it costs $$).
+> >
+> I am told it is free now.
 
-After my system had crashed, I used reiserfsck with options
---rebuild-tree & --fix-fixable (first).
+If that's true I might give it ago myself, but according to
+http://www.spec.org/cgi-bin/order it is 900$.
 
-The files I had lost could be found again. But there have been lot of
-identical files.
-
-The system could be started after running the program.
-Only the during the crash opened files could not be reconstructed.
-
-Just as feedback :)
-
+That's a little too expensive for me just beeing curious.
 
 
+--=20
+Ragnar Kj=F8rstad
+Zet.no
