@@ -1,37 +1,41 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: reiser4progs-1.0.3
-Date: Thu, 9 Dec 2004 16:01:22 +0300
-Message-ID: <200412091601.22632.vitaly@namesys.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: Writing Plugins for reiserfs
+Date: Thu, 09 Dec 2004 14:14:19 +0300
+Message-ID: <1102590859.16093.46.camel@tribesman.namesys.com>
+References: <BAY101-F202205D95A64EF0AA3108C98B40@phx.gbl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22727-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22728-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <BAY101-F202205D95A64EF0AA3108C98B40@phx.gbl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Praveen M Morab <praveen_morab@hotmail.com>
+Cc: reiserfs-list@namesys.com
 
-Hi all!
+Hello
 
-Another reiser4progs release is available on our ftp site
-(ftp.namesys.com/pub/reiser4progs). It includes:
+On Mon, 2004-12-06 at 18:51, Praveen M Morab wrote:
+> Hi All,
+> 
+> I am new to this mailing list....and I am intrested in learning about how to 
+> wroie Plugins for reiserfs. 
 
-- a lot of bug fixes, 
-- correct handling of super block backups, 
-- recovery according to the super block backups,
-- demos/busy is a reiser4progs-busy-box program that is able 
-  to create/remove/copy/read/ls/etc on reiser4 working through 
-  libreiser4, without kernel reiser4 support.
+for reiser4, I guess?
 
-It happened that the previous super block backups were created 
-with a mistake and to resync them now you need to run
-	fsck.reiser4 --build-sb <device>
+> So can anyone please provide with with some 
+> document/links, where I can learn about the same.
+> 
+namesys.com
+and reiser4 source code
 
--- 
-Thanks,
-Vitaly Fertman
-
+> Thanks in advance,
+> 
+> -Praveen
+> 
+> 
+> 
 
