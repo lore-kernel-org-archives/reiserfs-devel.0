@@ -1,64 +1,52 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: --rebuild-tree
-Date: Tue, 6 Jul 2004 14:22:13 +0400
-Message-ID: <200407061422.13505.vitaly@namesys.com>
-References: <200407060828.56801.aotto1968@onlinehome.de> <40EA5193.2040604@mweb.co.za> <40EA6932.7090606@namesys.com>
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Subject: Re: data logging and kernel 2.4.20
+Date: Tue, 6 Jul 2004 13:36:39 +0200
+Message-ID: <200407061336.39535.christian.mayrhuber@gmx.net>
+References: <200407051213.05033.fjcabello@visual-tools.com> <200407061058.12918.christian.mayrhuber@gmx.net> <200407061256.38512.fjcabello@visual-tools.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19527-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-19528-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40EA6932.7090606@namesys.com>
+In-Reply-To: <200407061256.38512.fjcabello@visual-tools.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "Vladimir V. Saveliev" <vs@namesys.com>, Cami <camis@mweb.co.za>
+Content-Type: text/plain; charset="iso-8859-9"
+To: Francisco Javier Cabello Torres <fjcabello@visual-tools.com>
 Cc: reiserfs-list@namesys.com
 
-On Tuesday 06 July 2004 12:56, Vladimir V. Saveliev wrote:
-> Hello
+On Tuesday 06 July 2004 12:56, you wrote:
+> > I can confirm that these patches work reliable on 2.4.26.
+> > (At least on the two intel servers it's used on.)
 >
-> Cami wrote:
-> > Hi All,
-> >
-> > Last night i done monthly maintence on all of my
-> > mailhosts and after doing a reiserfsck, it looks
-> > like i'll have to rebuild the tree on one of my
-> > mail clusters (the other 8 clusters were fine)..
-> >
-> > [mailhost01][/root]# df -h
-> > Filesystem            Size  Used Avail Use% Mounted on
-> > /dev/emcpowera1       152G   35G  117G  23% /var/spool/virtual
-> >
-> > Can anyone tell me roughly how dangerous this is
->
-> it is not dangerous. Just, please, make sure you have recent reiserfsck.
->
-> > and roughly how long something like this will take?
->
-> hard to say. It depends on hardware. Given that 35 gb is not too much
-> reiserfsck --rebuild-tree should not take too much. 2 hours? Vitaly may
-> want to correct me, though
+> what's the reason for use 2.4.26 instead of 2.4.25? I say it because suse
+> patch (datalogging) has been made with 2.4.25.
 
-fscking 35G should take minimum 1h, usually up to 2h. However 
-semantic pass depends on the amount of files a lot, and as mailboxes 
-have many small files fsck may take several hours. 
+Security exploits:
+http://www.cve.mitre.org/cgi-bin/cvekey.cgi?keyword=3Dlinux+kernel
+As you can see there are already new ones for 2.4.26, which are
+only fixed in 2.4.27-rc3.
 
-> > The filesystem stores all the users mailboxes in
-> > maildir format so there are millions of files..
-> >
-> > Any tips/comments would be appreciated..
+The patches do no harm on 2.4.26:
+>From:=20
+>Vladimir Saveliev <vs@namesys.com>
+>Date:=20
+>21.04.2004 11:22
+>Hello
 >
-> PS: please do not forget that backuping is important when dealing with
-> user mailboxes even if you are running super reliable hardward and
-> bugless software.
+>On Wed, 2004-04-21 at 12:31, m.evers@norplex.net wrote:
+>> Helo,
+>> =A0
+>> i would like to know where i can get those patches for Kernel 2.4.26.
 >
-> > Regards,
-> > Cami
+>Patches from
+>ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.25
+>apply to 2.4.26 just fine
+>
+>> =A0
+>> Thank You
 
--- 
-Thanks,
-Vitaly Fertman
-
+=2D-=20
+lg, Chris
