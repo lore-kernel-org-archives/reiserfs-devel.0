@@ -1,25 +1,31 @@
-From: btinsley <btinsley@gmail.com>
-Subject: error message
-Date: Sat, 5 Feb 2005 21:03:54 -0600
-Message-ID: <263a8b3505020519036fd3302e@mail.gmail.com>
-Reply-To: btinsley <btinsley@gmail.com>
+From: =?iso-8859-2?B?o3VrYXN6IE1pZXJ6d2E=?= <prymitive@o2.pl>
+Subject: reiser4 disc space usage
+Date: Sun, 06 Feb 2005 11:43:32 +0100
+Message-ID: <opslruquf4t3f2uk@localhost>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; format="flowed"; delsp="yes"; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
-We are seeing this message preceeding a kernel panic:
+Hi,
 
-Feb  5 16:29:43 rcs02 kernel: vs-6030: check_internal_block_head:
-invalid item number level=2, nr_items=172, free_space=65472 rdkey
-kernel BUG at prints.c:334!
+I've just did a little testing of reiser4 vs reiserfs 3.6 space usage on my=
+ spare 40GB hard drive, this is what I've got:
 
-We have run reiserfsck on all filesystems and found no errors. Can
-someone elaborate on this error?
+reiser4
+/dev/hdd5              38016MB   20937MB   17080MB  56% /mnt/seagate
 
-Thanks!
+reiserfs
+/dev/hdd5              40007MB   21015MB   18993MB  53% /mnt/seagate
+
+I've put the same files, copied in the same order. Could You explain to me =
+why partition formatted whit reiser4 has over 1GB less free space??
+Those files take little less space on reiser4 but there is much less free s=
+pace on the same partition when r4 is used.
+
+=A3ukasz Mierzwa
