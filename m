@@ -1,36 +1,40 @@
-From: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
-Subject: Re: 2.4.24 Oops in find (maybe reiserfs related)
-Date: Wed, 21 Jan 2004 02:34:01 +0100
-Message-ID: <20040121013401.GB8877@merlin.emma.line.org>
-References: <20040120153242.GA19858@merlin.emma.line.org>
+From: Chris Mason <mason@suse.com>
+Subject: Re: v3 experimental data=ordered and logging speedups for 2.6.1
+Date: Tue, 20 Jan 2004 20:50:39 -0500
+Message-ID: <1074649838.3378.3.camel@tiny.suse.com>
+References: <1074530725.29546.178.camel@tiny.suse.com>
+	 <200401192353.03670.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16592-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-16593-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040120153242.GA19858@merlin.emma.line.org>
+In-Reply-To: <200401192353.03670.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Linux-Kernel mailing list <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Cc: reiserfs-list@namesys.com, green@linuxhacker.ru, Gerd Knorr <kraxel@suse.de>, Jeff Mahoney <jeffm@suse.com>
 
-On Tue, 20 Jan 2004, Matthias Andree wrote:
+On Mon, 2004-01-19 at 17:53, Dieter N=FCtzel wrote:
 
-> This happened during the nightly updatedb, which calls find. The hex
-> string is "resi", "locate resi" finds a file in a reiserfs file system,
-> /usr.
-> 
-> reiserfsck 3.6.11 afterwards fixed some
-> vpf-10680: The file [103048 103049] has the wrong block count in the
-> StatData (2) - corrected to (1)
+> 05 and 06 needed some handwork 'cause the SuSE kernel inclues xattrs and =
+posix=20
+> acl's but nothing special.
+>=20
 
-I have put the vmlinux, bzImage, modules and .config available, if
-anyone cares to have a look, send me a mail off-list and I'll by happy
-to return the URL. Marcello has been mailed the URL.
+Good to hear.  I wasn't expecting the suse merge to be difficult,
+luckily it doesn't have many patches in it yet.  Jeff and I will look at
+getting them into the suse kernel once data=3Djournal is done as well.
 
--- 
-Matthias Andree
+> An EXPORT was missing in linux/fs/buffer.c to compile ReiserFS 3.x.x as m=
+odul=20
+> (inode.c, unresolved symbol):
+>=20
 
-Encrypt your mail: my GnuPG key ID is 0x052E7D95
+Thanks, I'll add it into the patch when I get back from linux world.
+
+-chris
+
+
