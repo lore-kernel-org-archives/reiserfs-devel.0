@@ -1,104 +1,102 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: reiserfsprogs 3.6.5 release
-Date: Mon, 31 Mar 2003 23:29:06 +0200
-Message-ID: <200303312329.06469.Dieter.Nuetzel@hamburg.de>
-References: <200303251108.11938.Dieter.Nuetzel@hamburg.de> <200303312208.31690.vitaly@namesys.com> <200303312152.23736.Dieter.Nuetzel@hamburg.de>
+From: Hendrik Visage <hvisage@envisage.co.za>
+Subject: Re: Proposal for keying encrypted filesystem
+Date: Mon, 31 Mar 2003 23:31:04 +0200
+Message-ID: <20030331213104.GZ8452@hvs.envisage.co.za>
+References: <200303282026.23543.phma@webjockey.net> <200303310854.21695.phma@webjockey.net> <20030331163536.GS8452@hvs.envisage.co.za> <200303311511.40537.phma@webjockey.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13500-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13501-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200303312152.23736.Dieter.Nuetzel@hamburg.de>
 Content-Disposition: inline
+In-Reply-To: <200303311511.40537.phma@webjockey.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Vitaly Fertman <vitaly@namesys.com>, "Luna Kid (list-reader address)" <listreader@neuropolis.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Pierre Abbat <phma@webjockey.net>
+Cc: reiserfs-list@namesys.com
 
-Am Montag, 31. M=E4rz 2003 21:52 schrieb Dieter N=FCtzel:
-> Am Montag, 31. M=E4rz 2003 20:08 schrieb Vitaly Fertman:
-> > Hi,
-> >
-> > On Monday 31 March 2003 22:00, Luna Kid \(list-reader address\) wrote:
-> > > > All partitions wouldn't mounted due to
-> > > > "flush_buffers: device is not specified". ;-(
+On Mon, Mar 31, 2003 at 03:11:40PM -0500, Pierre Abbat wrote:
+> On Monday 31 March 2003 11:35, Hendrik Visage wrote:
+> > On Mon, Mar 31, 2003 at 08:54:21AM -0500, Pierre Abbat wrote:
+> > > On Monday 31 March 2003 08:36, Hendrik Visage wrote:
+> > > > The question that should be answered:
+> > > >
+> > > >  Are the design suppose to withstand scrutiny from people like the NSA
+> > > > and other crypto gurus, or just for the mom-a-pop-shops ?
 > > >
-> > > Any news on this topic? I've got that exact same problem
-> > > since a Debian upgrade, on a (fortunately!) completely
+> > > As I proposed it, it was not meant to withstand scrutiny from anyone. It
+> > > was meant to be modified by people who know more about kernel and
+> > > ReiserFS internals than I do. What's your current proposal for keying the
+> > > encryption?
 > >
-> > I added some debug messages in reiserfsck, and asked Dieter to send me
-> > the printed reiserfsck boot messages. Unfortunately I has not got a
-> > response yet. Could you do it for me when I send you the same debug
-> > version?
->
-> Sorry for my delay!
-> I was unexpected out for some days...
->
-> Have to reboot and write down the lines.
-> Will do, now.
+> > /dev/random for the paranoid, /dev/urandom for the lesser paranoid
+> >
+> > Each file would have a minimum 64bit (For a starter and speed
+> > on <64bit CPUs 32 bit with the top 64bits zeroed and to allow
+> > future 64bit operations) KeyID.
+> 
+> "32 bit with the top 64bits zeroed" is nonsense. I assume you mean "64 bits 
+> with the top 32 zeroed". There is no point in doing this, as it's a key ID, 
+> not a key. Use the full 64 bits.
 
-Here it comes ;-)
+Correct. It'll be for speed purposes on 32bit environments until
+the need is there for bigger space (ie more than 2^32 files/directories
+encrypted/mangled) :(
 
-[more boot log snipped]
+> > The optimization to it would be to create access groups, and then those
+> > files in the same (sub*)directory & access group could share the same
+> > keyID, if the user/operator so desire (Some would prefer the slowness to
+> > the added security of the files not sharing the same "guesable" encryption
+> > key, while others would only want to prevent disk scraping from showing
+> > something usable).
+> 
+> An access group is a group of what?
 
-reiserfs: found format "3.6" with standard journal
-reiserfs: using ordered data mode
-reiserfs: checking transaction log (sd(8,3)) for (sd(8,3))
-Using r5 hash to sort names
-VFS: Mounted root (reiserfs filesystem) readonly.
-=46reeing unused kernel memory: 108k freed
-INIT: version 2.78 booting
-Running /etc/init.d/boot
-Mounting /proc/device
-Mounting /dev/ptsblogd
-Activating swap-devices in /etc/fstab...
-Adding Swap: 1028120k swap-space (priority -1)
-Checking file systems...
-fsck 1.24a (02-Sep-2001)
+The specifics should be the key database/engine's responsibility
+to define it more precisely, but my initial idea was where two or more
+files have the same users having access to these files, these 
+users would form an accessgroup.
 
-fsck.reiserfs -a /dev/sda3
+> > To make this plugin/future prove, I'd then requested the encryption key
+> > from another process/kernel/module/etc. with at least the minimum tuple
+> > <mount-point,operation[3],KeyID[1a]> or for more expressive information
+> > <mount-point,operation[3],directory,file,UID,GID,KeyID[1a]>.
+> > The data returned from the key database would be
+> > <keyID[1b],EncryptionKey,EncryptionAlgorithm,CryptoOptions[2]>
+> 
+> You need to add the PID to the tuple used to ask for the key. That way a 
+> process and its children can access a file, but other processes running with 
+> the same UID cannot. This is necessary for trusted encrypted backup.
 
-Reiserfs super block in block 16 on 0x803 of format 3.6 with standard journ=
-al
-Blocks (total/free): 26105/6626 by 4096 bytes
-=46ilesystem is cleanly umounted
-=46ilesystem seems mounted read-only. Skipping journal replay.
-Checking internal tree..finished
+Agreed.
 
-fsck.reiserfs -a /dev/sda2
+However if the key database/engine doesn't have access to an
+already decrypted key, then it would return an error. That way the backups
+would only be able to copy the file verbatim (ie. un-decryptable) to the backup
+medium. Ie. the backups run while the user haven't logged in to enable
+decryption. Or am I missing the definition of "trusted encrypted backups"?
 
-fsck.reiserfs -a /dev/sdb1
+> What does "To make this plugin/future prove" mean?
 
-Reiserfs super block in block 16 on 0x802 of format 3.6 with standard journ=
-al
-Blocks (total/free): 379535/366247 by 4096 bytes
-=46ilesystem is cleanly umounted
+To not be limited by current design for future enhancements or needs.
 
-flush_buffers: device is not specified
-Warning... fsck.reiserfs for device /dev/sda2 exited with signal 6.
+Hmmm... made me think: The are a bit of information leakage in my data above,
+as it assumes the filenames are unencrypted.
+However, that could be fixed with the following:
+Request:
+<mount-point,operation[3],directory,file[4],PID,UID,GID,KeyID[1a]>
 
-fsck.reiserfs -a /dev/sda5
+The answer:
+<keyID[1b],FileName[4]EncryptionKey,EncryptionAlgorithm,CryptoOptions[2]>
 
-Reiserfs super block in block 16 on 0x811 of format 3.6 with standard journ=
-al
-Blocks (total/free): 255024/60978 by 4096 bytes
-=46ilesystem is cleanly umounted
+Note[4]: The key engine/database might want filenames to be mangled too.
+ The request for a new file would be the unmangled, with the response being
+ the mangled filename. The reverse would be the case in directory accesses etc.
 
-flush_buffers: device is not specified
-Warning... fsck.reiserfs for device /dev/sdb1 exited with signal 6.
+This could be used for directory names too, thus the only data available to
+the attacker (excluding the key engine) would be the mangled names and the
+place on the filesystem the data is.
 
-fsck.reiserfs -a /dev/sdb5
-
-Reiserfs super block in block 16 on 0x805 of format 3.6 with standard journ=
-al
-
-etc...
-
-fsck FAILED
-
-All partition checks fail alternating with signal 6.
-Useful for you?
-
-Regards,
-	Dieter
+Hendrik
