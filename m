@@ -1,40 +1,69 @@
-From: Matt Zimmerman <mdz@debian.org>
+From: Glenn Maynard <g_deb@zewt.org>
 Subject: Re: plagiarism of reiserfs by Debian
-Date: Sat, 19 Apr 2003 21:20:51 -0400
-Sender: Matt Zimmerman <mdz@alcor.net>
-Message-ID: <20030420012051.GO558@alcor.net>
-References: <200304181604.28955.vitaly@namesys.com> <3EA17427.7040300@namesys.com> <20030420011854.GN558@alcor.net>
+Date: Sat, 19 Apr 2003 23:41:50 -0400
+Message-ID: <20030420034150.GP32700@zewt.org>
+References: <20030419230654.GF26352@cheney.cx> <F592E162-72C9-11D7-ADF3-00050285B655@ncpro.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13733-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13734-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20030420011854.GN558@alcor.net>
+In-Reply-To: <F592E162-72C9-11D7-ADF3-00050285B655@ncpro.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>, Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com, Ed Boraas <ed@debian.org>, debian-devel@lists.debian.org
+To: debian-devel@lists.debian.org, reiserfs-list@namesys.com
+Cc: Hans Reiser <reiser@namesys.com>, Vitaly Fertman <vitaly@namesys.com>
 
-On Sat, Apr 19, 2003 at 09:18:54PM -0400, Matt Zimmerman wrote:
+Trimmed CC: little; I can't imagine why this should go to -testing ...
 
-> On Sat, Apr 19, 2003 at 08:07:03PM +0400, Hans Reiser wrote:
-> 
-> > Please explain your reasons for removing the credits and attributions 
-> > from the reiserfs utilities in violation of our copyright.
-> 
-> It appears that, in all likelihood, the credits were inadvertently omitted,
-> and not intentionally removed.  In the reiserfsprogs distribution, there is a
-> file COPYING which contains as the software license a verbatim copy of the
-> GPL, while these credits are in a separate README.  I am confident that if
-> you contact the maintainer of the package (Ed Boraas <ed@debian.org>,
-> reiserfsprogs@packages.debian.org, or via the bug tracking system), he will
-> gladly observe your wishes and include this file with the documentation.
+On Sun, Apr 20, 2003 at 02:49:36AM +0200, Marcel Weber wrote:
+> All I can say to this is: use what you like, resp. if you don't like 
+> bloated software or spamware do not use it. My point is, that it should 
+> be a right of the original authors of the software to include credits. 
+> If someone else does a complete rewrite of the software, okay than we 
+> can discuss it, but if the rewrite means only the removal of the 
+> credits it is questionable.
 
-After reading further into this thread, I see that I misunderstood which
-content you were referering to (a specific reference would have been
-helpful).  This seems to relate to Debian bug #152547.
+This is irrelevant.  We're not questioning whether Hans Reiser has the
+right to license his own software to prohibit the removal of large
+messages.  The questions being asked are:
+
+1. Is software licensed in the manner Hans intends DFSG-free?  That is,
+is it DFSG-free to require that interactive programs output a full
+page of sponsorship information?  (That's a question for debian-legal.)
+If not, it can not be distributed in Debian and will be relegated to
+non-free.
+
+2. Is the software licensed consistently?  If not, it's probably not
+legally safe to distribute at all, and will be removed entirely unless
+Hans clarifies the licensing.
+
+Another question that comes to mind: has ReiserFS used code from projects
+licensed under the GPL?  If so, he can not, in fact, place this extra
+restriction, as it would be in violation of GPL clause 6.  This isn't a
+special issue for programs under completely different licenses; they know
+they're not GPL-compatible and don't use GPL code.  However, when people
+use "modified" GPL licenses, they often don't realise that they can no
+longer use code from other GPL projects.
+
+> But first of all, before we continue this discussion: What exactly has 
+> been removed? A readme file, the outputs during boot time, the outputs 
+> of mkfs.reiserfs? Has this output any impact on the usability of the 
+> software, so that there were good reasons the remove it? Has the 
+> license been violated by removing the credits?
+
+It's been suggested that the removed message is the one referenced in
+this bug report:
+
+  http://bugs.debian.org/cgi-bin/bugreport.cgi?archive=no&bug=152547
+
+Impact and "good reasons" don't matter.  Debian requires that users be
+granted the right to do certain things regardless of whether they have
+"good reasons".  If Hans doesn't want to grant those rights to users,
+that's may be his choice, but Debian won't distribute his software.
 
 -- 
- - mdz
+Glenn Maynard
