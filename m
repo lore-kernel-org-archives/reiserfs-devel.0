@@ -1,39 +1,77 @@
-From: Cliff White <cliffw@osdl.org>
-Subject: fsck.reiser4 error
-Date: Thu, 14 Nov 2002 08:43:42 -0800
-Message-ID: <200211141643.gAEGhgS09039@mail.osdl.org>
+From: Philippe =?ISO-8859-1?B?R3JhbW91bGzp?= <philippe.gramoulle@mmania.com>
+Subject: Re: Oops with in nfsd - 2.4.19-pre6
+Date: Thu, 14 Nov 2002 18:41:53 +0100
+Message-ID: <20021114184153.3298a89b.philippe.gramoulle@mmania.com>
+References: <20021031210828.45F4A216991@server5.fastmail.fm>
+	<1036099804.14984.165.camel@tiny>
+	<20021112182949.45436c95.philippe.gramoulle@mmania.com>
+	<1037211258.288.97.camel@tiny>
+	<20021113194008.6dadeed5.philippe.gramoulle@mmania.com>
+	<1037219001.21957.151.camel@tiny>
+	<20021114170409.5f9b9108.philippe.gramoulle@mmania.com>
+	<1037291572.287.277.camel@tiny>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11994-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11995-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1037291572.287.277.camel@tiny>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list@namesys.com, jack@ucw.cz
 
+On 14 Nov 2002 11:32:51 -0500
+Chris Mason <mason@suse.com> wrote:
 
-This happens every time:
-# fsck.reiser4 /dev/hdb1
+  |  > Well, now that you mention this, i may also have it on my bug squash list :o)
+  |  > When we feed some files to a MySQL server ( 4 way box, lots of threads), sometimes the
+  |  > box does nothing , pretty much like andrea described it , so it may be that.
+  |  
+  |  Ok, that does sound like the stalling bug, especially since you've got 4
+  |  cpus.
 
-Will check consistency of the filesystem on (/dev/hdb1).
-Will use (default40) profile.
-Information: Continue?                                                        
-(Yes/No): Yes
-##########
-reiserfsck --check started at Thu Nov 14 03:55:03 2002
-##########
-umka-360: Assertion (format != NULL) at format.c:227 in function              
-reiser4_format_get_len() failed.
-(Ignore/Cancel): i
-Segmentation fault
------------------------
-Kernel is 2.5.47 + latest reiser4 snapshot.
-System is VALinux 2x 800MHZ Intel Xeon
-256 MB memory 
-Base distro is RH 7.3
-reiserfsprogs is from snapshot.
+That's what i thought too as it doesn't show up as much on other smaller boxes.
 
-cliffw
+  |   You can make it much less likely to trigger by lowering the
+  |  threshold for where bdflush jumps in,
 
+Ok.
+
+  |  but andrea's final patch should show up shortly.
+
+Excellent.
+
+  |  
+  |  >   |  
+  |  >   |  Jan and I will get an updated quota patch asap,
+  |  > 
+  |  > This is just great :o) Do you have a rough idea when it will be
+  |  > available ? couple days ? couple weeks ?
+  |  
+  |  Now that I've looked at it, I think the only reject is that parisc-32
+  |  already has one hunk applied, and x86-64 needs to have quotav2 support
+  |  added.  Neither one affects i386, but I'll do some tests here.  Jan, am
+  |  I missing something?
+
+There was indeed some rejects in parisc-32 but there were lot more than that.
+Rejects were when applying reiserfs-quota-22.diff.
+(using vanilla 2.4.20rc1 + ftp.suse.com:/pub/people/mason/patches/reiserfs/quota-2.4/2.4.19 quota
+patches)
+
+  |  > 
+  |  > So far,it's been running fine :o) but without quotas ;o))
+  |  
+  |  Ok, it survived heavier load here overnight.
+
+Excellent, moreover that i'm on duty call this week ;o)
+
+  |  
+  |  -chris
+  |  
+
+Thanks much for your help.
+
+Philippe.
