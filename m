@@ -1,33 +1,35 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: data-logging finally for 2.4.23?
-Date: Mon, 8 Sep 2003 13:28:41 +0400
-Message-ID: <20030908092841.GA18422@namesys.com>
-References: <200309031756.00137.Dieter.Nuetzel@hamburg.de>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: software packaging and ReiserFS v4
+Date: Mon, 8 Sep 2003 13:49:42 +0400
+Message-ID: <16220.20662.840850.726458@laputa.namesys.com>
+References: <20030903165409.GD4714@rahul.net>
+	<3F565A8F.4010209@botz.org>
+	<20030903213742.GA13146@rahul.net>
+	<3F58D2CD.3050801@mrs.umn.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15589-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15590-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200309031756.00137.Dieter.Nuetzel@hamburg.de>
+In-Reply-To: <3F58D2CD.3050801@mrs.umn.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
-Cc: Chris Mason <mason@suse.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Grant Miner <mine0057@mrs.umn.edu>
+Cc: Bennett Todd <bet@rahul.net>, reiserfs-list@namesys.com
 
-Hello!
+Grant Miner writes:
+ > If you are making a packaging system, I recommend you do not allow 
+ > scipts, since they open up a whole can of worms.  (They're impossible to 
+ > invert, introduce security problems, make additional work for GUI 
+ > package managers, and cause too many problems.)
 
-On Wed, Sep 03, 2003 at 05:56:00PM +0200, Dieter N?tzel wrote:
+You one has support for the user-level transactions in the underlying
+storage (_all_ storage), then scripts will at least be
+"invertible". More or less so, of course, sending packages to the
+network is hard to reverse.
 
-> What's up Chris?
-> Your latest stuff working fine on 2.4.22-rc1-rl (pre-emption; haven't time for 
-> a "newer" version, yet).
+ > 
 
-I forwarded the patch to Hans to propagate to Marcelo, but it have not went through.
-I will check with Hans after he will awake.
-I hope we will get 2.4.23 vanilla with datalogging stuff.
-
-Bye,
-    Oleg
+Nikita.
