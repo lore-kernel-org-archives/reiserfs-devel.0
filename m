@@ -1,36 +1,57 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: reiser4 non-free? (I throw in the towel)
-Date: Tue, 11 May 2004 21:41:33 +0300
-Message-ID: <20040511184133.GH29226@nysv.org>
-References: <1084025633.28080.196082736@webmail.messagingengine.com> <200405110004.05704.reiser@namesys.com> <20040511090947.Z13880@links.magenta.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: reiser4 non-free?
+Date: Tue, 11 May 2004 15:06:48 -0400
+Message-ID: <200405111906.i4BJ6mIc013385@turing-police.cc.vt.edu>
+References: <1084188152.26226.196158678@webmail.messagingengine.com> <20040510.214915.74754947.wlandry@ucsd.edu> <200405110158.i4B1wONb022531@turing-police.cc.vt.edu> <20040510.223329.108738295.wlandry@ucsd.edu> <200405111502.i4BF2qOu012463@turing-police.cc.vt.edu> <40A0F93F.8020604@namesys.com> <200405111635.i4BGZFZ1024441@turing-police.cc.vt.edu>
+            <40A113ED.8000706@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18616-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040511090947.Z13880@links.magenta.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; boundary="==_Exmh_1525011000P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-To: Raul Miller <moth@debian.org>
-Cc: Hans Reiser <reiser@namesys.com>, Humberto Massa <humberto.massa@almg.gov.br>, rms@gnu.org, debian-legal@lists.debian.org, Valdis.Kletnieks@vt.edu, reiserfs-list@namesys.com, vitaly@namesys.com
+Return-path: <bounce-debian-legal=debian-legal=m.gmane.org@lists.debian.org>
+In-Reply-To: Your message of "Tue, 11 May 2004 10:57:01 PDT."
+             <40A113ED.8000706@namesys.com> 
+Resent-Message-ID: <IK6tgB.A.zc.IRSoAB@murphy>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Post: <mailto:debian-legal@lists.debian.org>
+List-Help: <mailto:debian-legal-request@lists.debian.org?subject=help>
+List-Subscribe: <mailto:debian-legal-request@lists.debian.org?subject=subscribe>
+List-Unsubscribe: <mailto:debian-legal-request@lists.debian.org?subject=unsubscribe>
+List-Archive: <http://lists.debian.org/debian-legal/>
+To: Hans Reiser <reiser@namesys.com>
+Cc: Walter Landry <wlandry@ucsd.edu>, debian-legal@lists.debian.org, reiserfs-list@namesys.com, ed@debian.org, cavok@debian.org
 
-On Tue, May 11, 2004 at 09:09:47AM -0400, Raul Miller wrote:
->
->You can, of course, make this available under multiple licenses.
+--==_Exmh_1525011000P
+Content-Type: text/plain; charset=us-ascii
 
-When talking about experimenting with licenses in general, this is
-a superb idea.
+On Tue, 11 May 2004 10:57:01 PDT, Hans Reiser said:
 
-Consider, double licensing for all Reiser4, kernel- and userland stuff,
-GPLv2 and Anti-Plagiation.
+> Random credits are the elegant answer.  Displaying only the distro name 
+> at boot time is morally wrong.
 
-Would be interesting to see which license version is adopted by whom.
-My guess is that most people would stick to GPLv2 and not touch the
-credits and some revolutionaries would take the anti-plagiation license.
+Would be nice - the RedHat/Fedora GUI installer already supports showing the
+current install status in one pane, and scrolling through a bunch of blurbs
+in another.  It might be possible to get (at least) the Fedora side of the fence
+to include blurbs for the package contributors as well...
 
--- 
-mjt
+I'm uncomfortable with the very large leap between "a request for the distro
+to do the morally right thing" and "required by license" however.  As the old
+saying goes: "Don't let you mouth write no check your butt can't cash" - a
+distro could very well be willing to accept something under a "good faith
+best effort" basis, but be unwilling to commit to "required to under all
+circumstances"....
+
+--==_Exmh_1525011000P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFAoSRIcC3lWbTT17ARAnuyAJ4h/NNS4i+qEGwKsxqDpo8oCINweACeJIwc
+OWGG/QX0pKH9d0yHefCFrew=
+=NpoH
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1525011000P--
 
