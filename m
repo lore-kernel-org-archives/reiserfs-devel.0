@@ -1,52 +1,43 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiser4 can't compile glibc
-Date: Tue, 13 Apr 2004 09:34:51 -0700
-Message-ID: <407C16AB.4000804@namesys.com>
-References: <Pine.LNX.4.21.0404131641470.22275-100000@mlf.linux.rulez.org>
+Subject: Re: "Metas"
+Date: Tue, 13 Apr 2004 09:51:12 -0700
+Message-ID: <407C1A80.2090207@namesys.com>
+References: <35813986328-BeMail@cr593174-a>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17889-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17890-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.21.0404131641470.22275-100000@mlf.linux.rulez.org>
+In-Reply-To: <35813986328-BeMail@cr593174-a>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Szakacsits Szabolcs <szaka@sienet.hu>
-Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
+To: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Cc: reiserfs-list@namesys.com
 
-Szakacsits Szabolcs wrote:
+Alexander G. M. Smith wrote:
 
->On Tue, 13 Apr 2004, Vladimir Saveliev wrote:
+>Christian Iversen wrote on Mon, 5 Apr 2004 02:12:05 +0200:
 >  
 >
->>yes, reiser4 by default has the same time resolution as ext[23] and
->>reiserfs.
+>>Just a thought. Who on this list does NOT support "..." instead of metas?
 >>    
 >>
+I care more about the persons who have never used Linux, and what they 
+find intuitive.
+
 >
->Hmmm, so the kernel's nanosec timestamps can bite Reiser4 as well?
+>Windows has that as the parent of the parent directory.
 >
->  http://groups.google.com/groups?selm=1GgcQ-4k1-17%40gated-at.bofh.it
+>I also use it as the second parent directory in a file system that allows multiple parents, .... is the third parent directory, and so on.  But that doesn't really matter since nobody's making much use of multiple parents yet.
 >
->  
->
->>However, I think that i found the problem already. The attached patch
->>for fs/reiser4/plugin/item/tail.c should help.
->>    
->>
->
->That's great :)
->	
->	Szaka
->
+>- Alex
 >
 >
 >  
 >
-Interesting.  vs, describe the storage of these in the various reiserfs 
-versions.
+
 
 -- 
 Hans
