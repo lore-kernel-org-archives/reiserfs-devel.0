@@ -1,37 +1,35 @@
-From: Chris Mason <mason@suse.com>
-Subject: udpated data logging available
-Date: 16 Jun 2003 07:47:52 -0400
-Message-ID: <1055764071.24111.650.camel@tiny.suse.com>
+From: Russell Coker <russell@coker.com.au>
+Subject: xattr
+Date: Mon, 16 Jun 2003 22:26:39 +1000
+Message-ID: <200306162226.39701.russell@coker.com.au>
+Reply-To: Russell Coker <russell@coker.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14559-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14560-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hello all,
+What is the status of xattr support in 2.5.x?
 
-This doesn't have the data=ordered performance fixes because I got
-distracted fixing io latency problems in 2.4.21.  Those were screwing up
-my benchmarks, so I couldn't really tell if things were faster or not
-;-)  Anyway, I'm back on track now, and since 2.4.21 is out I've just
-copied Oleg's merge into my data logging directory.  I'll add the
-experimental performance patches later today.
+How is journalling of xattr's being handled?
 
-But, the code in my data logging directory now is what I would like to
-see merged into 2.4.22-pre asap (pending namesys approval), so review
-and testing would be appreciated.
+For correct operation of SE Linux we need to have the xattr that is used for 
+the security context be changed atomically, and if a file is created and 
+immediately has the xattr set then ideally we would have the file creation 
+and the xattr creation in the same journal entry.
 
-ftp.suse.com/pub/people/mason/patches/data-logging/2.4.21
+Is this possible?  If doing this requires that the file system be mounted with 
+data=journal then this will be fine.
 
-It might take a 30 minutes or so for the rsync to complete.  
-
--chris
-
-
-
+-- 
+http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
+http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
+http://www.coker.com.au/~russell/  My home page
 
