@@ -1,46 +1,29 @@
-From: Rudy Zijlstra <rudy@edsons.demon.nl>
+From: Ed Tomlinson <tomlins@cam.org>
 Subject: Re: samba
-Date: Sat, 05 Oct 2002 10:41:17 +0200
-Message-ID: <3D9EA5AD.9030302@edsons.demon.nl>
+Date: Sat, 5 Oct 2002 09:03:41 -0400
+Message-ID: <200210050903.41939.tomlins@cam.org>
 References: <3D9E8451.5010605@xs4all.nl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11611-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11612-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3D9E8451.5010605@xs4all.nl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Gertjan Vinkesteijn <gvink@xs4all.nl>
-Cc: the filesystem <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Gertjan Vinkesteijn <gvink@xs4all.nl>, the filesystem <reiserfs-list@namesys.com>
 
-
-Gert-Jan,
-
-You surprise me. You are telling me i am doing something impossible?
-
-/dev/md0 on /home type reiserfs (rw)
-/dev/md1 on /export_smb type reiserfs (rw)
-
-Both are and have been exported using samba for years, and have been 
-Reiserfs since early 2000.
-
-Cheers,
-
-Rudy
-
-Gertjan Vinkesteijn wrote:
-
+On October 5, 2002 02:18 am, Gertjan Vinkesteijn wrote:
 > Dear audience,
 >
-> Last year samba was not yet possible on reiserfs, it is on xfs from 
-> sgi though. Does anybody know if work has been done in that area? It 
-> would be very handy having (parts of) my 40GByte reiserfs filesystem 
-> letting share on our subnet with windows computers.
->
-> Appreciate your thoughts
->
+> Last year samba was not yet possible on reiserfs, it is on xfs from sgi
+> though. Does anybody know if work has been done in that area? It would
+> be very handy having (parts of) my 40GByte reiserfs filesystem letting
+> share on our subnet with windows computers.
 
+Huh?  samba on reieserfs here.  Light usage, works fine.  I am now using
+2.5.40 but, 2.4.17/8/9/20pre (and probably more) all work too.
 
-
+Ed Tomlinson
