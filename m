@@ -1,77 +1,44 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiserfsck hangs (reiser3)
-Date: Tue, 8 Feb 2005 12:08:07 +0300
-Message-ID: <200502081208.07631.vitaly@namesys.com>
-References: <Pine.LNX.4.61.0502071633170.2762@heidi.crosscode.org>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: reiserfs3, rsync and hardlinks
+Date: Tue, 8 Feb 2005 11:42:57 +0200
+Message-ID: <20050208094257.GX26192@nysv.org>
+References: <20050206034102.3956432d@polo.concept-micro.com> <42066D9C.8030908@slaphack.com> <20050206225539.0c2d0c10@polo.concept-micro.com> <4206FDC4.1060401@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.61.0502071633170.2762@heidi.crosscode.org>
 Content-Disposition: inline
+In-Reply-To: <4206FDC4.1060401@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Michael P. Cosby" <michael@crosscode.org>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: David Masover <ninja@slaphack.com>
+Cc: Pierre Etchemaite <petchema@concept-micro.com>, reiserfs-list@namesys.com
 
-On Tuesday 08 February 2005 02:10, Michael P. Cosby wrote:
-> Short description:
->  	reiserfsck --rebuild-tree hangs for over 24 hours while attempting to
-> repair my filesystem. This happens no matter how many times I run
-> reiserfsck v3.6.19
->
-> Environment:
-> linux 2.6.10 (debian)
-> reiserfsck v3.6.19
-> resize_reiserfs v3.6.19
-> LVM (v2.6 style)
->
-> long description:
->  	I had 3 200GB drives joined together into a single partition via LVM,
-> with reiserfs on top of that. At the time I was using kernel 2.6.8.1.
-> Timeline:
->
-> First day
-> -----
-> * one drive in the LVM began giving me bad sector errors
-> * bought a new drive to replace it that was 3GB smaller
-> * attempted to resize the reiser fs, which failed due to bad sectors
-> * bought a different new drive, used LVM (pvmove) to move the data from the
->  	failing drive to the new one
-> * verified the disk I took out was bad, got an RMA and shipped it back
-> * ran reiserfsck, which completed and gave me the "use --rebuild-tree
-> option" * ran reiserfsck with rebuild-tree, got bad sector errors from
-> another drive (I've since decided my problem was overheating).
->
-> A few days later (and then some)
-> -----
-> * got another drive to replace the second failing drive, used LVM (pvmove)
-> to copy the data from the failing drive to the new one
-> * ran reiserfsck --rebuild-tree
-> * about 45% of the way through pass 2, reiserfsck hangs. Random samples
-> show it using between 40 and 70% of processor time, giving me the
-> impression it's not really hung (I expect a program that's actually hung to
-> use either 0% of 100% cpu time). So I left it for about 6 hours, stopped it
-> and tried again. This time I tried it with the -S switch and it hung, but
-> in a different spot. At that point I upgraded to linux 2.6.10. I tried it
-> again and left it for 12 hours before I had to reboot (to take the bad
-> drive out). I ran it a fourth time, added the -z option, and waited a full
-> 24 hours, after which I've come to the conclusion that it really is hung.
->
->  	I've attached the logfile from the last run. If you need any more
-> information or need me to run tests, please let me know. I can send you any
-> portion of the disk that you need (the data on it is not particularly
-> sensitive) but of course it's hard to send the full 600GB worth of raw data
-> :)
->
->  	Thank you very much for any help you can provide.
+On Sun, Feb 06, 2005 at 11:33:56PM -0600, David Masover wrote:
+>There was a debian package which caused a hash collision.  Every time.
+>Not even something obscure; I think it was some piece of X.
 
-let's try to pack the fs metadata with:
-	debugreiserfs -p <device> | bzip2 -c > <device>-meta.bz2
-they probably will be not so large for downloading.
+Which, btw, has been around for a looong time and a LOT of people have
+it installed. Without a hash collision. Not once.
+
+Now I haven't been reading these messages as carefully as I should have,
+after some time of being away, but seems to me no-one could explain
+why that hash collision came to be for that one guy.
+
+>Think I remember some other filesystem being really lightweight CPU.
+>UFS or something.  But XFS shouldn't be too bad.  Where does your
+>"probably" come from?
+
+UFS as in Unix File System? Eww..
+
+Dunno about CPU usage, but I tested XFS once and it was painfully slow.
+Fortunately it got better, so maybe my test was somewhat flawed.
+
+Maybe the Namesys guys would want to release some new and up-to-date
+benchmarks now that the AMD64 panic bug is fixed?
 
 -- 
-Thanks,
-Vitaly Fertman
+mjt
 
