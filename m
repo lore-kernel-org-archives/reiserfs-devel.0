@@ -1,38 +1,49 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Encryption
-Date: Mon, 24 Mar 2003 23:37:03 +0300
-Message-ID: <3E7F6C6F.7030307@namesys.com>
-References: <200303221822.34401.phma@webjockey.net> <3E7CF1D3.90703@namesys.com>
+Subject: Re: Snapshots a la NetApp?
+Date: Mon, 24 Mar 2003 23:49:42 +0300
+Message-ID: <3E7F6F66.5050808@namesys.com>
+References: <200303221822.34401.phma@webjockey.net>	 <33433.10.20.2.148.1048390681.squirrel@alpha> <1048411014.1427.5.camel@wusel.schnulli.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13356-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13357-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E7CF1D3.90703@namesys.com>
+In-Reply-To: <1048411014.1427.5.camel@wusel.schnulli.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Yury Umanets <umka@namesys.com>
-Cc: Pierre Abbat <phma@webjockey.net>, reiserfs-list@namesys.com, Edward Shishkin <edward@namesys.com>
+To: Heinz-Josef Claes <hjclaes@web.de>
+Cc: kend@xanoptix.com, reiserfs-list@namesys.com
 
-Yury Umanets wrote:
+Heinz-Josef Claes wrote:
 
-> Pierre Abbat wrote:
+>Am Son, 2003-03-23 um 04.38 schrieb kend@xanoptix.com:
+>  
 >
->> How is filesystem encryption going to work? Or has anyone figured 
->> that out yet?
+>>I'm just wondering if there's any development being done on NetApp-like
+>>snapshots.  (This differs from LVM snapshots in that it's file-by-file,
+>>instead of volume based.)  If not, has anyone given it any consideration? 
+>>It would be a huge win for the RAID-in-a-box folks, and, speaking as a
+>>sysadmin, is something about which I dream frequently.
 >>
->> phma
->>  
+>>Just curious...
 >>
-> Don't worry, it is going up :)
+>>Ken D'Ambrosio
+>>Sr. SysAdmin,
+>>Xanoptix, Inc.
+>>    
+>>
 >
-Edward, please provide a serious answer including your design documents, 
-so that the list can review your design and comment.  Chances are that 
-they will make at least one serious improvement to the design..... and 
-it might be nice to get that improvement made before you have made the 
-time investment required to debug.....
+>Hi,
+>you can look at the URL below. It's a kind of snapshot inspired by
+>NetApp, but has nothing to do with LVM or the filesystem. It also has a
+>different behaviour.
+>
+>  
+>
+I didn't find the magic click that gave me the design doc for 
+storebackup, could you post it to the list?
 
 -- 
 Hans
