@@ -1,54 +1,50 @@
-From: Alexy Khrabrov <list+reiserfs@setup.org>
-Subject: Re: assembling a file out of debugreiserfs's map
-Date: Fri, 28 May 2004 15:23:20 -0400
-Message-ID: <20040528192320.GA14111%alexy.khrabrov@setup.org>
-References: <20040528165533.GA12618%alexy.khrabrov@setup.org>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: The situation at hand and in the future
+Date: Fri, 28 May 2004 15:53:43 -0400
+Message-ID: <200405281953.i4SJrhbG017334@turing-police.cc.vt.edu>
+References: <20040527200127.GS4990@nysv.org> <200405272105.i4RL5LDh026210@turing-police.cc.vt.edu> <40B6670D.9060408@slaphack.com>
+            <20040528063324.GT4990@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18894-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_-2014131533P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18895-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040528165533.GA12618%alexy.khrabrov@setup.org>
+In-Reply-To: Your message of "Fri, 28 May 2004 09:33:24 +0300."
+             <20040528063324.GT4990@nysv.org> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
+Cc: David Masover <ninja@slaphack.com>, reiserfs-list@namesys.com
 
+--==_Exmh_-2014131533P
+Content-Type: text/plain; charset=us-ascii
 
-I realized how IND chains lead to more blocks, so the question remaining
-is, whether it can be assembled automatically?  Why are they repeated
-several times with seemingly the same block number/counts, and what does
-the fractioned one mean,
+On Fri, 28 May 2004 09:33:24 +0300, Markus =?UNKNOWN?Q?T=F6rnqvist?= said:
 
-block 1271, item 0: 2572 2573 0x32e001 IND (1), len 228, location 3868 entry count 0, fsck need 0, format new
-57 pointers
-[ 2055746(9) 2055756(48)]
+> Persistent over boots? I'd like the passphrase and key to survive
+> a boot...
 
-as compared to
+No you don't.
 
-block 1270, item 0: 2572 2573 0x1 IND (1), len 3256, location 192 entry count 0, fsck need 0, format new
-814 pointers
-[ 2054932(814)]
+If the passphrase and key are persistent, then an attacker can get your data.
 
--- also note, that the last chain for p5270916.jpg,
+Think about it - the only reason an attacker doesn't have access to your
+data is because they don't have the passphrase/key.  If you leave them around,
+you've given away the keys to the kingdom.
 
-block 8002, item 0: 2572 2573 0x32e001 IND (1), len 228, location 3868 entry count 0, fsck need 0, format new
-57 pointers
-[ 2055746(9) 2055756(48)]
+--==_Exmh_-2014131533P
+Content-Type: application/pgp-signature
 
-mentioned the same block number 8002 which the safefly recovered p5270917.jpg
-mentions:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-block 8002, item 0: 2572 2574 0x1 IND (1), len 3348, location 476 entry count 0, fsck need 0, format new
-837 pointers
-[ 2055804(837)]
+iD8DBQFAt5jHcC3lWbTT17ARAp+5AJ4oMEGPmBcE2gsI0s7amuqA7qyfVQCfWAxL
+8dkKEPhrDePQCQ6uMYuugts=
+=IWhe
+-----END PGP SIGNATURE-----
 
-Isn't there a tool/script to assemble those chains into a file by, um,
-a computer?  :)  I mean I'd hack a python script to do dd ... >> file,
-but I bet 1000 rubles/30 euros/40 dollars it exists somewhere!
-
--- 
-Cheers,
-Alexy Khrabrov :: www.setup.org :: Age Quod Agis
+--==_Exmh_-2014131533P--
