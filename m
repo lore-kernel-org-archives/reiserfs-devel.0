@@ -1,53 +1,66 @@
-From: Christoph Hellwig <hch@lst.de>
+From: Christophe Saout <christophe@saout.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 18:03:06 +0200
-Message-ID: <20040826160306.GA4326@lst.de>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com> <20040826014542.4bfe7cc3.akpm@osdl.org> <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <20040826144422.GD5733@mail.shareable.org>
+Date: Thu, 26 Aug 2004 18:04:42 +0200
+Message-ID: <1093536282.5482.6.camel@leto.cs.pocnet.net>
+References: <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20708-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-KEDbg+OWlcQIW+DZ1Yjv"
+Return-path: <reiserfs-list-return-20709-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040826144422.GD5733@mail.shareable.org>
+In-Reply-To: <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Rik van Riel <riel@redhat.com>
+Cc: Jamie Lokier <jamie@shareable.org>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-> Firstly, the core library _is_ used by different projects.  That's the
-> commercial aim of reiser4: to be used by projects other than just as
-> Linux filesystem.  For example it might be used by a database, or a
-> portable application which needs to store structured data in a flat
-> file (with random access).  A good abstraction makes it more useful
-> than "just" a filesystem.
+--=-KEDbg+OWlcQIW+DZ1Yjv
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Which is okay as long as it still fits in the kernel.  Remember that
-lots of projects had to adjust so far despite the commerical aims of
-their creators.
+Am Donnerstag, den 26.08.2004, 11:54 -0400 schrieb Rik van Riel:
 
-> I think the disagreement between you two comes down to the idea that a
-> generally useful API abstraction to file-like objects really should be
-> somewhere in the VFS, and not specific to a single filesystem.
+> > > And if you read test.compound (the main stream) you get a special for=
+mat
+> > > that contains all the components. You can copy that single stream of
+> > > bytes to another (reiser4) fs and then access test.compound/test.txt
+> > > again.
+> >=20
+> > (To Rik especially), this is the design which more or less satisfies
+> > lots of different goals at once.
+>=20
+> And if an unaware application reads the compound file
+> and then writes it out again, does the filesystem
+> interpret the contents and create the other streams ?
+>=20
+> Unless I overlook something (please tell me what), the
+> scheme just proposed requires filesystems to look at
+> the content of files that is being written out, in
+> order to make the streams work.
 
-IT should, and in fact it actually is most of the part.  We can have
-differnt operation vectors per object, but reiser4 is the only
-filesystem in the tree not making use of that but provinding only a
-single one and then dispatching internally.  Even XFS that carries
-around and horrible internal dispatching layer as IRIX legacy gets
-this right.
+Yes, the main compound stream unaware applications would see would just
+be a writable view of its contents. Probably not trivial to implement
+but doable.
 
-> Unfortunately, the problem is that reiser4 is the only filesystem
-> which is _technically capable_ of implementing that abstraction in a
-> practical way, apparently.  (I'm not sure if this is really true.
-> reiser4's object model is not the same as paths and inodes, but the
-> impedance mismatch doesn't seem huge.)
+It should be a simple format. Something simliar to tar. The worst thing
+that can happen is people start writing plugins for every existing
+compound format out there. It should be the other way around, agree on a
+simple compound format and encourage applications to use this one if the
+want to use this advantage.
 
-Umm, no.  In fact every filesystem does this.  There's not too many
-objects with different namespace semantic: regular files and special
-files vs directories vs symlinks basically, but as soon as you go to the
-data patch you can have hundrets of different file_operations on a
-single filesystems (for special files).
+
+--=-KEDbg+OWlcQIW+DZ1Yjv
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQBBLgoaZCYBcts5dM0RAn9iAJ9pzNxBRNRfOhSCNNFEnaHNqWCxgwCgjSHr
+BZY66cGAMVHi5+ZRNCdVYo0=
+=YXoN
+-----END PGP SIGNATURE-----
+
+--=-KEDbg+OWlcQIW+DZ1Yjv--
 
