@@ -1,46 +1,37 @@
-From: Russell Coker <russell@coker.com.au>
-Subject: Re: 2.4.20 at kernel.org and data logging
-Date: Sat, 18 Jan 2003 11:25:16 +0100
-Message-ID: <200301181125.16752.russell@coker.com.au>
-References: <0E18D85A21D2874080456C3B8A12E83E01009FAD@cof110avexu4.global.avaya.com>
-Reply-To: Russell Coker <russell@coker.com.au>
+From: Francois-Rene Rideau <fare@tunes.org>
+Subject: Re: recovery of crashed reiserfs disk?
+Date: Sat, 18 Jan 2003 12:57:24 +0100
+Sender: Francois-Rene Rideau <fare@Samaris.tunes.org>
+Message-ID: <20030118115724.GA946@Kadath>
+References: <20030117221535.GA945@Kadath> <20030118080941.B5575@humilis> <20030118115142.B21932@namesys.com> <20030118100157.C5575@humilis> <20030117221535.GA945@Kadath> <20030118080941.B5575@humilis> <20030118115142.B21932@namesys.com> <20030117221535.GA945@Kadath> <20030118080941.B5575@humilis>
+Reply-To: Francois-Rene Rideau <fare@tunes.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12434-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12435-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <0E18D85A21D2874080456C3B8A12E83E01009FAD@cof110avexu4.global.avaya.com>
 Content-Disposition: inline
+In-Reply-To: <20030118100157.C5575@humilis> <20030118115142.B21932@namesys.com> <20030118080941.B5575@humilis>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "Sewell, Cassandra D (Cassandra)" <csewell@avaya.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Ookhoi <ookhoi@humilis.net>, Oleg Drokin <green@namesys.com>, Xuan Baldauf <baldauf--fare--tunes.org--reiserfs-list--namesys.com@medium.net>
+Cc: reiserfs-list@namesys.com
 
-On Fri, 17 Jan 2003 00:51, Sewell, Cassandra D (Cassandra) wrote:
-> Is the data logging patch for 2.4.20 kernel considered
-> complete?  I see a patch at
-> ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20.  Also will this
-> patch be considered working for the last stable 2.4.20 posted at the
-> kernel.org location?
->
-> I am in the process of upgrading some machines from 2.2.x (I know way
-> overdue), and need the data-logging capability.
+Thanks a lot to all those who responded.
 
-I am using those patches on some 2.4.20 machines running as Qmail mail 
-servers.  I have the /var file system mounted with data journalling.
+I'll try that dd_rescue utility as soon as I have fully backed up
+my current data to CDs, and tell you how well it went.
 
-I have 4 machines running each with >250,000 mail boxes with continual heavy 
-IO load (the load never goes below 100 disk writes per second).
+> http://www.garloff.de/kurt/linux/ddrescue/
 
-I found the benefit to be much smaller than I had hoped.  The patches in 
-question have a number of other performance improvements which made a huge 
-and noticable difference.  data=journal seemed to make a small difference, 
-but nothing exciting.
+As a wishlist item, to emulate the same effect without requiring another
+same-sized disk, maybe there could be an option to mount reiserfs read-only
+while considering read-errors as blank sectors?
 
--- 
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
-
+[ Fran=E7ois-Ren=E9 =D0VB Rideau | Reflection&Cybernethics | http://fare.tu=
+nes.org ]
+[  TUNES project for a Free Reflective Computing System  | http://tunes.org=
+  ]
+"Lisp is a programmable programming language." -- John Foderaro
