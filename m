@@ -1,24 +1,37 @@
-From: Bastian Kruse <reiserfs@postdienst.net>
-Subject: How many boot sectors does reiserfs use?
-Date: Thu, 2 Oct 2003 16:29:38 -0700 (PDT)
-Message-ID: <20031002232938.CEE81E4B9@sitemail.everyone.net>
-Reply-To: reiserfs@postdienst.net
+From: "Felix E. Klee" <felix.klee.reiserfs@gmx.net>
+Subject: ReiserFS on a USB memory stick?
+Date: Fri, 3 Oct 2003 12:24:55 +0200
+Message-ID: <20031003122455.1faa32fa.felix.klee.reiserfs@gmx.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15777-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15778-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hello,
-I mean, Ext2 uses 2 and ntfs needs 16 boots sectors. How many boot sectors does reiserfs use?
-Thanks in advance.
-Bastian
+Hi,
 
-_____________________________________________________________
-Registrieren auch Sie Ihre kostenlose Email-Adresse bei <a href="http://www.postdienst.net" target="_top">postdienst.net</a><br>Internet-Services by Herbert Krems<p><a href="http://www.schadenbearbeitung.de" target="_top">schadenbearbeitung.de</a><br><a href="http://www.praxisleitfaden.de" target="_top">Praxisleitfaden bei Versicherungsschaden</a><br><a href="http://www.hilfsprojekte.de" target="_top">Private Hilfsprojekte</a><br>
+I want to run LINUX on a 512MB USB memory stick that supports a minimum
+of 100,000 rewrites. I'll mostly be running an EMACS session with
+Preview-Latex where I'll be editing and compiling TeX files. Note that I
+don't care if the stick fails after 3 months, but it should last about
+that long.
+
+Is ReiserFS a suitable file system for that kind of application or are
+there better systems? Are there some ways to tune caching so that data
+isn't written to the stick as often as it could?
+
+BTW, I already found JFFS2 but it seems to be made for direct access to
+flash hardware, while a USB memory stick emulates a hard disk or floppy
+super drive.
+
+Felix
+
+-- 
+To contact me off list don't reply but send mail to
+    felix DOT klee AT inka DOT de
+Otherwise your email to me might get automatically deleted!
