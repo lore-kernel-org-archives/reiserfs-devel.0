@@ -1,11 +1,11 @@
 From: "Elias Ignacio Contreras" <enito@eudoramail.com>
 Subject: PLZ HELP, my 160gb 's DANGER :(
-Date: Sat, 01 Mar 2003 21:41:15 -0800
-Message-ID: <OGLPFJHNHFJJIBAA@whowhere.com>
+Date: Sat, 01 Mar 2003 21:41:20 -0800
+Message-ID: <OAHNNKPPIFJJIBAA@whowhere.com>
 Reply-To: enito@eudoramail.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13044-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13045-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
