@@ -1,41 +1,41 @@
-From: Linus Torvalds <torvalds@osdl.org>
+From: Diego Calleja <diegocg@teleline.es>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 10:32:46 -0700 (PDT)
-Message-ID: <Pine.LNX.4.58.0408261030350.2304@ppc970.osdl.org>
-References: <Pine.LNX.4.44.0408261315240.27909-100000@chimarrao.boston.redhat.com>
- <Pine.LNX.4.58.0408261019580.2304@ppc970.osdl.org> <20040826172703.GR5733@mail.shareable.org>
+Date: Thu, 26 Aug 2004 19:40:10 +0200
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040826194010.548e4a4c.diegocg@teleline.es>
+References: <20040826190548.3e67726f.diegocg@teleline.es>
+	<Pine.LNX.4.44.0408261315240.27909-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20740-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <20040826172703.GR5733@mail.shareable.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.44.0408261315240.27909-100000@chimarrao.boston.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Rik van Riel <riel@redhat.com>
+Cc: jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
+El Thu, 26 Aug 2004 13:16:22 -0400 (EDT) Rik van Riel <riel@redhat.com>=
+ escribi=F3:
 
+> So all I need to do is "cat /bin | gzip -9 > /path/to/backup.tar.gz" =
+?
 
-On Thu, 26 Aug 2004, Jamie Lokier wrote:
-> Linus Torvalds wrote:
-> > 
-> > No no. The stream you get from a directory is totally _independent_ of the 
-> > contents of the directory. Anything else would be pointless.
-> 
-> Surely it depends on the directory?
+/bin could be separated (like linus said) but cat /bin/.compound could =
+do
+it. This is the /etc/passwd Hans' example, I think:
 
-Well, you _could_ make it do a "tar", but what's the point? That really 
-doesn't add any value as far as user space is concerned.
-
-Think of it this way: if the directory and the "default stream" associated 
-with it aren't independent, then user space already has the information, 
-and the stream is pointless. In fact, the stream is _worse_ than 
-pointless, because it hides the fact that there is no independent 
-information.
-
-See my point? 
-
-		Linus
+"If /new_syntax_access_path/big_directory_of_small_files/.glued is a pl=
+ugin that
+aggregates every file in big_directory_of_small_files with a delimiter
+separating every file within the aggregation, then one can simply type =
+emacs
+/new_syntax_access_path/big_directory_of_small_files/.glued, and the fi=
+lesystem
+has done all the work emacs needs to be effective at this. Not a line o=
+f emacs
+needs to be changed."
+-
+To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
+" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
