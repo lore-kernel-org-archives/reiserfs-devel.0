@@ -1,36 +1,53 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: weird symlink problem persists...
-Date: Tue, 17 Sep 2002 10:18:25 +0400
-Message-ID: <20020917101825.B30035@namesys.com>
-References: <Pine.LNX.4.44L1.0209162228450.13963-100000@sequence.stanford.edu>
+Subject: Re: Copy time comparison 2.4.20-pre6 <-> 2.4.19+data-logging (was:Compatibility of  current 2.4.19.pending ...)
+Date: Tue, 17 Sep 2002 10:33:21 +0400
+Message-ID: <20020917103321.C25766@namesys.com>
+References: <3D7FDEA5.7040806@mb.tu-ilmenau.de> <3D81076E.6090408@mb.tu-ilmenau.de> <20020913113735.A6022@namesys.com> <3D826FB9.7030909@mb.tu-ilmenau.de> <20020914130239.D26664@namesys.com> <3D867C14.5060404@mb.tu-ilmenau.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11488-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11489-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L1.0209162228450.13963-100000@sequence.stanford.edu>
+In-Reply-To: <3D867C14.5060404@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Troy Wu <troy@sequence.stanford.edu>
-Cc: ReiserFS at NameSys <reiserfs-list@namesys.com>, NFS at SourceForge <NFS@lists.sourceforge.net>
+To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Cc: Andrea Arcangeli <andrea@suse.de>, reiserfs-list@namesys.com
 
 Hello!
 
-On Mon, Sep 16, 2002 at 11:07:51PM -0700, Troy Wu wrote:
-> I'm using the nfs-utils-1.0.1 tools on a 2.4.10 kernel (relatively stock
-> SuSE-7.3 kernel) with ReiserFS 3.6.25 (but using the 3.5.x disk format).
+On Tue, Sep 17, 2002 at 02:49:24AM +0200, Manuel Krause wrote:
 
-Linux kernel version 2.4.10 (even patched by SuSE) is way out of date and
-should not be used.
-There are updated kernels available from SuSE right now to which yo should
-upgrade. Pick at least 2.4.16 from SuSE updates or 2.4.18 if you choose to
-switch to vanilla kernels.
+> >What tool do you use for backup?
+> Hey, Oleg, you should know this; I stayed with my simple but useful 
+> scripts using "cp -ax A/. B/" for testing reiserfs performance on this 
+> command related to my reiserfs partitions' content. That content is not 
 
-Also right after kernel switch check your reiserfs filesystems with updated
-reiserfsprogs to make sure there is no corruptions left from old kernels.
+I am just making sure.
+
+> >Also very huge difference is seen when creating holes ;)
+> >e.g compare time of seeking to 128Gb and writing one byte between
+> >2.4.20-pre7 and 2.4.20-pre6 ;)
+> >Code for that was once posted on our mailing list.
+> >When you will feel that 2.4.20-pre7 hanged, don't trust that feeling
+> >and wait till the end of operation. ;)
+> You're kind of joking?! "time <command>" should show the total lack of 
+> time related performance, when [throughput] is divided by [time] or 
+
+I must be missing something, but why do you want to divide throughput by time?
+throughput is amount of data divided by time.
+
+> not?! I calculated these values manually based upon the timings & df 
+> values after copying. Yes, I want to show my personal engagement for the 
+> reiserfs community, too.
+
+Hm. Are you sure you are hitting write-speed limit?
+May be you are read-speed bounded? Can you please check that?
+
+Thank you.
 
 Bye,
     Oleg
