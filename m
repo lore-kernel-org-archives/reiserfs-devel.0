@@ -1,119 +1,52 @@
-From: Yury Umanets <umka@namesys.com>
-Subject: Re: "Unformat" a ReiserFS partition : a testimony :-)
-Date: Tue, 25 Mar 2003 04:26:59 +0300
-Message-ID: <3E7FB063.2010205@namesys.com>
-References: <3E7F5E33.4020709@info.ucl.ac.be> <3E7F9FD1.7060801@namesys.com> <3E7FA75F.3000808@mb.tu-ilmenau.de>
+From: Gustavo Zacarias <gustavo@zacarias.com.ar>
+Subject: journal-2018 trouble?
+Date: Mon, 24 Mar 2003 22:55:48 -0300
+Message-ID: <200303242255.48998.gustavo@zacarias.com.ar>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13362-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13363-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E7FA75F.3000808@mb.tu-ilmenau.de>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: Nicolas Vanderavero <nv@info.ucl.ac.be>, reiserfs-list <reiserfs-list@namesys.com>
-
-Manuel Krause wrote:
-
-> On 03/25/2003 01:16 AM, Yury Umanets wrote:
->
->> Nicolas Vanderavero wrote:
->>
->>> Hello,
->>
->>
->> Hello Nicolas,
->>
->>> while reinstalling a Debian on a new hard drive, I made the mistake 
->>> to format in reiserfs my good old /home which was on /dev/sda7 
->>> instead of formatting the new /dev/hda7. Gasp ! Eight gigabytes lost 
->>> ...
->>>
->>> Or ... maybe it was not totally lost :-) I immediately made a dump 
->>> of the partition with 'dd' and started grepping some known text on 
->>> it. It seemed that no data was really lost. I didn't know what to 
->>> do. So I read the man pages and found the reiserfsck command quite 
->>> interesting :-)
->>
->>
->> You have lost the super block and probably old root node. I said 
->> "probably" because it might be not used in teh time you did format.
->
->
-> Can you be more clear on this? In which cases does SB get used? Or, 
-> how would this change Nicholas scenario in practical use? E.g. would a 
-> blank mount (just mount+umount) change the story so that the partition 
-> would not be recoverable? 
-
-I'm sure that usual mount+umount cannot do bad things like this. But why 
-did you ask me about that? I mean that Nicolas has explicitly formatted 
-his partition by means of using mkreiserfs. And I know that mkreiserfs 
-creates new super block at 16 block and also leaf for root node, first 
-bitmap and journal.
-
-As old bitmap is corrupted, --rebuild-tree -S will be apparently needed.
-
->
->
->>>
->>> Ok, I am a total newbie to filesystems and to ReiserFS. So maybe it 
->>> will sound trivial to you, but just in case it happens to anyone 
->>> else, I just wanted to say that running a reiserfsck --rebuild-tree 
->>> -S on my partition was enough to unformat it. I ended up with some 
->>> file in lost+found, but a 'file *' is enough to discover what they are. 
->>
->>
->> The first thing you should do in cases like this is to make backup. I 
->> hope you'll find eight gigabytes for that. Now you may feel free to 
->> do anything with you old partition. Then you should to do 
->> --rebuild-sb and try to fsck the partition with --check key. Then 
->> follow to fsck sugestions.
->>
->> These should be enought for getting you partition back.
->>
->>> So, maybe it would be usefull to add an entry in the "Example of 
->>> using" section of the man page of reiserfsck, saying something like 
->>> : "If you reformatted by mistake a reiserFS partition, you can try 
->>> to unformat it by running reiserfsck --rebuild-tree -S on it". 
->>
->>
->> Sounds good. Probably Vitaly should consider about that for including 
->> it in the next fsck -pre.
->>
->>>
->>> Anyway, thank you for developing this filesystem.
->>> Nicolas Vanderavero.
->>>
->> P.S. Please read http://www.namesys.com/support.html. Can you as for 
->> support? 
->
-
-So the plan is the following:
-
-(1) Backup your data.
-(2) Rebuild super block if it had some special like relocated journal.
-(3) Rebuild tree with partition scanning --rebuild-tree -S.
-
-This should reanimate your old partition but expect, that you will found 
-some of your data in the /lost+found directory.
-
->
-> BTW, I think he found and published a new "feature" (that many would 
-> like to have in handy in those cases!) and did *not* ask for support. 
-> Shouldn't you pay him 25$, now?! ;-))
->
-> Thanks and best regards,
->
-> Manuel
->
->
->
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
 
--- 
-Yury Umanets
+Hi.
+I'm getting loads of journal-2018 kernel messages when mounting a reiser 
+filesystem from a lvm block device.
 
+---snip---
+Mar 24 22:22:30 anubis kernel: reiserfs: checking transaction log (device 
+3a:00) ...
+Mar 24 22:22:30 anubis kernel: journal-2018: Bad transaction length 7 
+encountered, ignoring transaction
+---
+
+Of course they vary in transaction length.
+
+---reiserfsck 3.6.5 snip---
+reiserfs_open_journal: journal parameters from super block does not match to
+journal parameters from journal.
+
+Either make journal partition available or use --no-journal-available
+If you have the standard journal or if your partition is available
+and you specified it correctly, you must run rebuild-sb.
+---
+
+This is a 2.4.20 kernel with 2.4.20-pending patches, namely
+01-iput-deadlock-fix
+02-directio-fix
+03-journal-overflow-fix
+04-trivial1
+05-more-mount-checks
+
+Information is just fine, everything works, i'm just a little worried about 
+the warnings. The machine has been (obviously) shut down uncleanly some 
+times.
+Would a rebuild-sb be safe?
+Thanks in advance.
 
