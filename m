@@ -1,55 +1,39 @@
-From: "Rudy L. Zijlstra" <rudy@edsons.demon.nl>
+From: Ookhoi <ookhoi@humilis.net>
 Subject: Re: Hard disk crash and solution
-Date: Thu, 23 Jan 2003 01:16:12 +0100
-Message-ID: <3E2F344C.1010006@edsons.demon.nl>
-References: <IKENJBHCILNPNAGHKCHFOEDMCCAA.Art@chello.nl>
+Date: Thu, 23 Jan 2003 07:43:57 +0100
+Message-ID: <20030123074357.A2442@humilis>
+References: <IKENJBHCILNPNAGHKCHFOEDMCCAA.Art@chello.nl> <3E2F13BE.8040407@namesys.com>
+Reply-To: ookhoi@humilis.net
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12457-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12459-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <IKENJBHCILNPNAGHKCHFOEDMCCAA.Art@chello.nl>
+Content-Disposition: inline
+In-Reply-To: <3E2F13BE.8040407@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Niek <Art@chello.nl>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Niek <Art@chello.nl>, reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>, mason <mason@namesys.com>
 
-Niek wrote:
-<snip>
+Hans Reiser wrote (ao):
+> I think we should have fsck ask the user to check and see if they are
+> using the latest fsck.
+> 
+> "You really want to be using the very latest stable version of fsck
+> when you run it.  Please go to www.namesys.com, click on the download
+> button, and see if you have the latest version before you continue."
 
->Data is there. I'm very happy!!
->What did we learn. A lot. One of them is that computers are more unreliable
->than humans and they are
->not very reliable. Look e.g. at Suse. Their auto update should have updated
->the reiserfs programs to the
->newest versions, but they forgot to put that in. I'll mail them.
->One thing that Namesys should do is to make the software more user-friendly
->and put this type of info in their webpages
->Crashed HD's are a pain in the ass to repair. This type of IBM drives have a
->flaw. Ibm confirmed this, but they did not remove them from the market.
->
->
->
->Have a lot of fun,
->
->Nick
->  
->
-I am missing yet another lesson:
+If XFree86 crashes, it says something like, 
 
-Make backups of important data!
+"This is release foo, date bar. If it is more than six months old, or if
+your video card is newer than this release, please see if a newer
+release fixes it before you report a bug"
 
-Cheers,
-
-Rudy
-
-P.S. I run a nightly incremental backup to a different machine... I 
-*hate* losing data.
-And yes, I have been saved by my backups at least twice already. I've 
-had disks fail on me (including SCSI disks, and including that idiot IBM 
-DTLA), and I've had the original user fault (overwriting of file with 
-different content, then a few weeks later: "Oops, that file does not 
-contain what it should")
-
+Maybe fsck should say the same. It could very well be that you don't
+have access to the internet when you have to perform a fsck :-)  And
+then you still would like to know how old your tools are. If you release
+new tools at least every two months, you can say two months. You can
+also point to the -pre releases (with the usual warning).
