@@ -1,34 +1,39 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Alex Zarochentsev <zam@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Wed, 25 Aug 2004 13:41:14 -0700
-Message-ID: <412CF96A.5040503@namesys.com>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>
+Date: Thu, 26 Aug 2004 00:35:17 +0400
+Message-ID: <20040825203516.GB4688@backtop.namesys.com>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20516-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20517-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>
+Content-Disposition: inline
+In-Reply-To: <20040825200859.GA16345@lst.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, Nikita Danilov <Nikita@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-I just want to add that I AM capable of working with the other 
-filesystem developers in a team-player way, and I am happy to cooperate 
-with making portions more reusable where there is serious interest from 
-other filesystems in that, but Christoph is a puppy who has never 
-written or designed a major filesystem from scratch, and Nikita is a big 
-dog who has written stuff very few projects are lucky enough to see the 
-likes of, and when Christoph insults Nikita's code, or my design 
-guidance for that code, it is not going to bring out my good side.  The 
-plugin and metafiles code needs many improvements, but Christoph does 
-not have the expertise to understand what those needed improvements are 
-because he hasn't invested the work into understanding the code.
+On Wed, Aug 25, 2004 at 10:08:59PM +0200, Christoph Hellwig wrote:
+> On Wed, Aug 25, 2004 at 12:53:28PM -0700, Hans Reiser wrote:
+> > You ignored everything I said during the discussion of xattrs about how 
+> > there is no need to have attributes when you can just have files and 
+> > directories, and that xattrs reflected a complete ignorance of name 
+> > space design principles.
+> 
+> Actually in most of the discussion you simply didn't participate.  While
+> xattrs might not be the nicest interface they have the advantag of not
+> breaking the SuS assumption of what directories vs files are, and they
+> do not break the Linux O_DIRECTORY semantics that are defined and need
+> to solve real-world races either.
 
-Christoph is a bright and clever young fellow, who just hasn't had the 
-years of study of the field yet.  I wish him well, and away.;-)
+Reiser4 may have a mount option for whoose who like or have to use traditional
+O_DIRECTORY semantics.  There would be no /metas under non-directories, if user
+wants that.
 
-Hans
+[ ... ]
+
+-- 
+Alex.
