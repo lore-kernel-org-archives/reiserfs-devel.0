@@ -1,34 +1,31 @@
 From: Alexander Lyamin <flx@msu.ru>
-Subject: Re:  Reiserfs, highquality meds source, low rates
-Date: Mon, 19 Apr 2004 17:34:44 +0400
-Message-ID: <20040419133444.GA57@alias.nmd.msu.ru>
-References: <000001c425b0$1750e0b8$4fa9aa0e@fluridden.com> <20040419115902.GD15007@alias.nmd.msu.ru> <4083C0B0.6090607@mweb.co.za>
+Subject: Re:  Please /dev/null html-only mail rather than sending it out on this list
+Date: Mon, 19 Apr 2004 17:35:36 +0400
+Message-ID: <20040419133536.GB57@alias.nmd.msu.ru>
+References: <20040418212659.GA5506@free.transpect.com> <200404181745.04988.phma@webjockey.net> <20040419114551.GA15007@alias.nmd.msu.ru> <20040419121005.GX1579@backtop.namesys.com>
 Reply-To: flx@msu.ru
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18053-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18054-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <4083C0B0.6090607@mweb.co.za>
+In-Reply-To: <20040419121005.GX1579@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Cami <camis@mweb.co.za>
-Cc: Reiserfs <reiserfs-list@namesys.com>
+To: Alex Zarochentsev <zam@namesys.com>
+Cc: Alexander Lyamin <flx@msu.ru>, Pierre Abbat <phma@webjockey.net>, reiserfs-list@namesys.com
 
-Mon, Apr 19, 2004 at 02:06:08PM +0200, Cami wrote:
-> >i am just not sure how to kill THIS messages which look so....
-> >they dont look like spam, even to me upon first look.
+Mon, Apr 19, 2004 at 04:10:06PM +0400, Alex Zarochentsev wrote:
 > 
-> If you were using SpamAssasin, you wouldn't get these..
-oh sure :)
+> More strong anti-spam rules for the mailing list may help.  As an example
+> rejecting HTML-only e-mails may be wrong for filtering private e-mail and good
+> for the reiserfs-list.
 
-would you mind and check the headers ? :)
-if we would not use spamassassin we would have 160+ more
-(what is actually more then daily traffic in this list)
-
+yes. likely. but it wasnt liked by Hans...
+oops.
 
 -- 
 "the liberation loophole will make it clear.."
