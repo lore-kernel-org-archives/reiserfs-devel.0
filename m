@@ -1,41 +1,88 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 15:35:05 +0200
-Message-ID: <200408261535.05452.christian.mayrhuber@gmx.net>
-References: <20040824202521.GA26705@lst.de> <20040826134415.A19244@infradead.org> <20040826124929.GW1284@nysv.org>
+From: Christophe Saout <christophe@saout.de>
+Subject: Re: reiser4 plugins (was: silent semantic changes with reiser4)
+Date: Thu, 26 Aug 2004 15:35:07 +0200
+Message-ID: <1093527307.11694.23.camel@leto.cs.pocnet.net>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
+	 <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com>
+	 <20040826014542.4bfe7cc3.akpm@osdl.org>
+	 <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de>
+	 <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de>
+	 <1093526273.11694.8.camel@leto.cs.pocnet.net>
+	 <20040826132439.GA1188@lst.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20667-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-3qh73zW5Pcc7NeueNqK0"
+Return-path: <reiserfs-list-return-20668-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826124929.GW1284@nysv.org>
-Content-Disposition: inline
+In-Reply-To: <20040826132439.GA1188@lst.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
-Cc: Markus =?iso-8859-1?q?T=F6rnqvist?= <mjt@nysv.org>, Christoph Hellwig <hch@infradead.org>, Olivier Galibert <galibert@pobox.com>, linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-On Thursday 26 August 2004 14:49, Markus T=F6rnqvist wrote:
-> On Thu, Aug 26, 2004 at 01:44:15PM +0100, Christoph Hellwig wrote:
-> >On Thu, Aug 26, 2004 at 02:43:34PM +0200, Olivier Galibert wrote:
-> >> He's not proposing to add it to 2.4, is he?
-> >
-> >We're talking about 2.6 here.  2.4 is the obsolete kernel series these
-> > days.
->
-> So run it in -mm or fork it to 2.7.
->
-> 2.7 might not be a bad idea for trying such bleeding edge revolution
-> stuff as this.
+--=-3qh73zW5Pcc7NeueNqK0
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-If I remember right, there are now some reasons for a 2.7:
+Am Donnerstag, den 26.08.2004, 15:24 +0200 schrieb Christoph Hellwig:
 
-1) udev / dynamic device numbers
-2) enhanced filesystem semantics
-maybe resulting in
-3) visible automounter mountpoints
+> > First you say that that file-as-a-directory is crap then you say that i=
+t
+> > does belong into the filesystem?
+>=20
+> I think you're talking about something different then me, I'm not
+> talking about the magic meta files but the VFS interface in general.
+>=20
+> This VFS interface is an integral part of very filesystem, and it
+> doesn't make a whole lot to put it into a plugin.
 
-=2D-=20
-lg, Chris
+Right. That's why these plugins are linked in uncoditionally. It doesn't
+work without them. Hence "plugins" is not a very good name.
+
+> If you want your
+> filesystem core portable it does to a certain extent make sense to
+> abstract them out, but as someone who's worked on a few such 'portable'
+> filesystems I can tell you that it doesn't work out as expected.
+
+That's your opinion. reiser4 seems to work very well.
+
+> Now kill the whole plugin mess and let them talk directly to another.
+
+This is how reiserfs v3 did it. And Hans says that it actually
+complicated things.
+
+> My first mail explained to you why it doesn't make sense to have
+> multiple such plugins to work on a common subset of data.
+
+What I understood is that you can select exactly one plugin that e.g.
+handles the file data. The default plugin is optimized for normal files,
+another one could implement transparent compression or encryption. Some
+of these plugins also give the storage layer hints how to group files
+together to optimized performance. Neither of these things mess with the
+VFS.
+
+> > The latter doesn't necessarily have anything to do with plugins.
+> > The plugins are plugins for the storage layer, not for some semantic
+> > enhancement.
+>=20
+> Again plugins below the pagecache (if that's what you call the "storage
+> layer") _do_ make sense.  plugins at the semantic layer don't.
+
+Yes, that's what I was trying to say.
+
+
+--=-3qh73zW5Pcc7NeueNqK0
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQBBLecLZCYBcts5dM0RAlaXAJ9m2ibhP+bOoKUCq87YCqS+I8jLOwCfVyx9
+v3D6AxGovKD53spD93b0FRw=
+=n2s/
+-----END PGP SIGNATURE-----
+
+--=-3qh73zW5Pcc7NeueNqK0--
+
