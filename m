@@ -1,70 +1,49 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: Status of reiserfs in Redhat 2.4.7-10 kernel ?
-Date: Wed, 16 Apr 2003 19:58:30 +0400
-Message-ID: <3E9D7DA6.8040507@namesys.com>
-References: <Pine.NEB.4.44.0304151610230.25702-100000@slick.sigje.org>	 <3E9D0744.9090907@namesys.com> <1050499043.10791.137.camel@tiny.suse.com>
+Date: Wed, 16 Apr 2003 12:11:22 -0400
+Message-ID: <200304161611.h3GGBNSt001395@turing-police.cc.vt.edu>
+References: <Pine.NEB.4.44.0304160113180.25702-100000@slick.sigje.org>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_-1565250810P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13675-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13676-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1050499043.10791.137.camel@tiny.suse.com>
+In-Reply-To: Your message of "Wed, 16 Apr 2003 01:14:09 PDT."
+             <Pine.NEB.4.44.0304160113180.25702-100000@slick.sigje.org> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: ahorn@deorth.org, reiserfs-list@namesys.com
+To: ahorn@deorth.org
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
 
-Chris Mason wrote:
+--==_Exmh_-1565250810P
+Content-Type: text/plain; charset=us-ascii
 
->On Wed, 2003-04-16 at 03:33, Hans Reiser wrote:
->
->  
->
->>I am afraid that I can only say that Redhat kernels are not standard 
->>kernels, and non-standard kernels should not be preferred for use in 
->>production systems.  They are not as well tested (or as debugged) as 
->>Linus/Marcelo kernels.  Linus/Marcelo kernels are the official kernels, 
->>and Linus and Marcelo, not RedHat or any other distro, are the Linux 
->>kernel maintainers.  I personally try to avoid any use of a non-standard 
->>kernel in systems I care about because I know that no distro has the 
->>testing ability of those who test the Marcelo kernels, and Marcelo's 
->>level of skill and caution exceeds that of any other maintainer I am 
->>familiar with in detail, but I am more conservative than most.
->>    
->>
->
->Grin, Hans and I have had this debate before, you might want to read
->through the reiserfs list archives for all the details.  Just look for
->the thread where Hubert Mantel most recently posted.
->
->The short version is that I would pick a current vendor kernel over a
->current vanilla kernel any day for heavy production use.    In terms of
->performance and stability the vendor kernel will usually do better.  The
->kinds of QA done on large hardware and heavy workloads is significantly
->better before a vendor release than a vanilla release.
->
->The problem is in defining 'current'.  I haven't followed the rhas
->releases enough to know if they still qualify.
->
->Anyway there's no need to start that debate again, neither Hans nor I
->have changed our minds ;-)  
->
->-chris
->
->
->
->
->  
->
-Test suites cannot compete with real users.  Marcelo gets lots of real 
-users before he releases a final version, and the distros don't.  
-However, I would also add that a conservative person would wait until a 
-few weeks after Marcelo releases, and confirm that it really was stable 
-according to those on the linux kernel mailing list.
+On Wed, 16 Apr 2003 01:14:09 PDT, ahorn@deorth.org said:
 
--- 
-Hans
+> Believe me, you are most definitely preaching to the choir in this case. I
+> appreciate you taking the time to compose this as I'll use it for further
+> ammunition to try and persuade the customer that patching and upgrading is
+> A Good Thing.
 
+Point out to the customer that unless they patch or upgrade, they're sitting
+there with a big bulls-eye called 'PTRACE' painted on their forehead.
 
+Oh, and any of all the OTHER security/reliability issues that have been already
+found and fixed in the last 2 years since that kernel came out... 
+
+--==_Exmh_-1565250810P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.1 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQE+nYCqcC3lWbTT17ARAvI9AKCvdppHDSuRaScni0FigeMdg9fmAgCeLXVc
+2olkgEcvQGdGHOSbhOV/dTg=
+=Ht7f
+-----END PGP SIGNATURE-----
+
+--==_Exmh_-1565250810P--
