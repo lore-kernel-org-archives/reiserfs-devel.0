@@ -1,36 +1,30 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+From: Pierre Abbat <phma@webjockey.net>
 Subject: Re: OT: BEYYa ZAMcMoT TuRzf mEF
-Date: Sat, 29 Mar 2003 01:58:13 +0100
-Message-ID: <3E84EFA5.9060409@mb.tu-ilmenau.de>
+Date: Fri, 28 Mar 2003 20:14:41 -0500
+Message-ID: <200303282014.42001.phma@webjockey.net>
 References: <200303281913.23239.phma@webjockey.net> <200303290032.h2T0WwFD019119@turing-police.cc.vt.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13417-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13418-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200303290032.h2T0WwFD019119@turing-police.cc.vt.edu>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-On 03/29/2003 01:32 AM, Valdis.Kletnieks@vt.edu wrote:
-> On Fri, 28 Mar 2003 19:13:23 EST, Pierre Abbat <phma@webjockey.net>  said:
-> 
->>I looked over the spam sent to this list and found an ad for a 
->>foreign-language school. The message is written in AFAICT perfectly readable 
->>Russian with some English thrown in, but the subject is the above jumble of 
->>mixed-case letters. What does the subject mean?
-> 
-> 
+On Friday 28 March 2003 19:32, Valdis.Kletnieks@vt.edu wrote:
 > Probably 8859-1 or -whatever-is-cyrillic chars with the high order bit set
 > and then smashed off to 7bit..
 
-And -- who is capable to convert AND translate it for us?!
+Neither ISO-8859 nor KOI would produce a mishmash of case. One would produce 
+inverted case, and one would produce readable text.
 
-;-)
-
-(Ever liked to understand THAT spam by subject that I trash ...)
-
-Manuel
-
+phma
+-- 
+.i toljundi do .ibabo mi'afra tu'a do
+.ibabo damba do .ibabo do jinga
+.icu'u la ma'atman.
