@@ -1,118 +1,85 @@
-From: Nikolaos Korkakakis <korkakak@gmail.com>
-Subject: Re: reiser4 and the overnet command line client
-Date: Thu, 23 Sep 2004 16:48:17 +0300
-Message-ID: <493526a2040923064812427552@mail.gmail.com>
-References: <20040923104611.GA31987@banana>
-	 <1095944890.6117.19.camel@tribesman.namesys.com>
-Reply-To: Nikolaos Korkakakis <korkakak@gmail.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: Linux-2.6.9-rc2-bk7 Oops - ReiserFS: warning: vs-500: unknown
+	uniqueness 126844928
+Date: Thu, 23 Sep 2004 17:56:43 +0400
+Message-ID: <1095947803.6378.31.camel@tribesman.namesys.com>
+References: <20040922225859.GA12833@m.safari.iki.fi>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21887-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21888-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1095944890.6117.19.camel@tribesman.namesys.com>
+In-Reply-To: <20040922225859.GA12833@m.safari.iki.fi>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: neenee <neeneelaatmaar@gmx.net>, reiserfs-list@namesys.com
+To: Sami Farin <7atbggg02@sneakemail.com>
+Cc: ReiserFS Mailing List <reiserfs-list@namesys.com>
 
-On Thu, 23 Sep 2004 17:08:11 +0400, Vladimir Saveliev <vs@namesys.com> wrote:
-> Hello
+Hello
+
+On Thu, 2004-09-23 at 02:58, Sami Farin wrote:
+> I got no replies for messages <20040713110437.GA4571@m.safari.iki.fi>
+> and <20040714214146.GA23531@m.safari.iki.fi> to LKML,
+> so I try again with latest releases.  Now using 2.6.9-rc2-bk7, and I
+> guess reiserfs might be related somehow so you folks got Cc'ed. 
+> reiserfsck 3.6.18 found no problems for the partition
+> (/var, 1G) after reboot, I can access every file in there and I don't
+> have hardware problems, memtest+ runs happily for 24 hours without
+> errors and 2.4 series have also worked without too much
+> unexplained Oopsings with the same hardware.  Besides, there's
+> always the same 14000030 addresss...
+> 
+> Linux safari.finland.fbi 2.6.9-rc2-bk7 #4 SMP Wed Sep 22 15:25:34 EEST 2004 i686 i686 i386 GNU/Linux
+>  
+> Gnu C                  3.4.2
+
+May I ask you to compile kernel with 2.95.3 and try to reproduce the
+problem?
+
+> Gnu make               3.80
+> binutils               2.15.91.0.2
+> util-linux             2.12
+> mount                  2.12
+> module-init-tools      3.1-pre5
+> e2fsprogs              1.35
+> jfsutils               1.0.24
+> reiserfsprogs          3.6.18
+> reiser4progs           line
+> xfsprogs               2.3.9
+> pcmcia-cs              3.2.7
+> quota-tools            3.11.
+> PPP                    2.4.2
+> nfs-utils              1.0.6
+> Linux C Library        2.3.3
+> Dynamic linker (ldd)   2.3.3
+> Procps                 3.2.3
+> Net-tools              1.60
+> Kbd                    1.12
+> Sh-utils               5.2.1
+> Modules Loaded         sch_hfsc cls_fw cls_route sch_ingress sch_red sch_tbf
+> 	sch_teql sch_prio sch_gred cls_rsvp cls_rsvp6 cls_tcindex sch_cbq sch_dsmark
+> 	ipt_ttl ipt_tos ipt_tcpmss ipt_sctp ipt_recent ipt_pkttype ipt_physdev ipt_mark
+> 	ipt_mac ipt_iprange ipt_helper ipt_esp ipt_ecn ipt_dscp ipt_conntrack ipt_ah
+> 	ipt_addrtype ipt_ULOG ipt_TOS ipt_TCPMSS ipt_SAME ipt_REDIRECT ipt_NOTRACK
+> 	ipt_NETMAP ipt_MASQUERADE ipt_MARK ipt_DSCP ipt_CLASSIFY snd_seq_midi
+> 	snd_seq_oss snd_seq_midi_event snd_seq lp parport_pc parport w83781d i2c_sensor
+> 	i2c_piix4 mga tuner tvaudio msp3400 bttv video_buf i2c_algo_bit v4l2_common
+> 	btcx_risc i2c_core videodev ohci_hcd loop ipt_connlimit ipt_length ipt_TARPIT
+> 	dm_mod ipt_ECN ipt_state ipt_multiport ipt_owner cls_u32 sch_sfq sch_htb
+> 	ipt_REJECT ip6t_LOG ipt_LOG ipt_limit ip6table_filter ip6_tables uhci_hcd md5
+> 	ipv6 snd_ens1371 snd_rawmidi snd_seq_device snd_pcm_oss snd_mixer_oss
+> 	iptable_raw iptable_mangle snd_pcm iptable_nat ip_conntrack iptable_filter
+> 	ip_tables snd_timer snd_page_alloc snd_ac97_codec snd soundcore gameport irlan
+> 	irda crc_ccitt 8139too mii floppy sg scsi_mod
 > 
 > 
-> 
-> On Thu, 2004-09-23 at 14:46, neenee wrote:
-> > hi there.
-> >
-> > from last night, till this morning, my system was copying files to and fro,
-> > since i chose to switch from reiser4 to xfs.
-> >
-> > my reason was not that i did not enjoy using the filesystem, or that i had
-> > major problems with it.
-> >
-> > it's just that i enjoy trying out different kernel patches, such as con
-> > koliva's ck-patchset, and since this patch is sometimes based on a vanilla
-> > kernel, i had to patch in reiser4 myself, which lately did not work well
-> > at all.
-> >
-> > so, i decided to switch to another filesystem. xfs was what i selected.
-> >
-> > switching went without a hitch.
-> >
-> > but i'll skip some of the pleasantries, and move on to my reason for posting
-> > on this mailing-list.
-> >
-> > i suspect there is a sync-problem with reiser4, or at least a feature with
-> > which not all programs are compatible yet.
-> >
-> > i am a frequent user of peer-to-peer clients, amongst which is the overnet
-> > command line client, which i control using a gui.
-> >
-> > when i was using reiser4, i had a problem with this client:
-> >
-> > when i started a download, it would create temporary files. downloading
-> > went fine as long as i kept the client running. but when i closed the client,
-> > either to reboot to update my kernel to the lateset ck-patchset version or
-> > to just play some online game with an acceptable ping, and restarted the
-> > client again when i was done with that, downloads would not resume;
-> >
-> > it was as if the downloads were never started. i checked the temp dir of
-> > the overnet client, and the temp files were there. but they were not used.
-> > restarting the same downloads would just create new temp files and closing
-> > the client would make those new downloads vanish from everywhere except the
-> > temp dir.
-> >
-> > i asked around and checked the overnet forums, but no one else had this
-> > problem. i gave up on overnet after a bit, and moved on to other things.
-> >
-> > this morning, after the switch to xfs, i tried overnet again, because i had
-> > a thought that there might be something with how reiser4 synced to disk less
-> > than other filesystems (at least, that's what i think it does).
-> >
-> > to my surprise, overnet worked fine now; the temp files were used after re-
-> > starting the client.
-> >
-> > now, i'm not blaming reiser4 for this problem, but i do find it a bit sus-
-> > picious that i do not have the problem with a different filesystem.
-> >
-> > when i talked about this situation with some people, one of the users sug-
-> > gested that i post on this mailing-list; to report this 'bug' if you will.
-> >
-> > the steps to reproduce this problem are:
-> >
-> > 1. start overnet command line client.
-> > 2. start a download.
-> > 3. close the client.
-> > 4. start the client and see that it does not resume/use the temp files.
-> >
-> > i hope this report is of any use. keep up the good work :)
-> >
-> 
-> Thanks for the report. We will take a look
-> 
-> 
-> 
-> > - Joost Hillen.
-> >
-> > ---
-> > have you hugged your penguin today?
-> >
-> >
-> 
+> I got this oops when I was doing rpmbuild --rebuild ... 
 > 
 
-before shutting down the client you could issue a sync command to
-flush the buffers into the hard drive. It seems to me that this is the
-problem there.
+Does it crash on each rpmbuild --rebuild?
+
+> 
 
 
--- 
--
-Undergraduate Student of CEID
-
-**Warning gmail may affect your mailing privacy**
-If you like to mail me private please use:
-korkakak *at* ceid *dot* upatras *dot* gr and my public key from
-http://students.ceid.upatras.gr/~korkakak/mykey
