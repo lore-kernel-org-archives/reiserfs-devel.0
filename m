@@ -1,72 +1,62 @@
-From: Nick Wellnhofer <wellnhofer@aevum.de>
-Subject: reiserfs corruption
-Date: Sat, 16 Nov 2002 23:35:19 +0100
-Message-ID: <3DD6C827.5090501@aevum.de>
+From: Bruce <bestb@sympatico.ca>
+Subject: Can resize_reiserfs do non-destructive resizing??
+Date: Sun, 17 Nov 2002 21:40:49 -0500
+Message-ID: <200211172140.49258.bestb@sympatico.ca>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12003-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12004-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
+I have a desktop machine that was running Debian 3.0, installed on a 40Gi=
+g=20
+harddrive (single partition hda2 + swap hda1) formatted with reiserfs; th=
+e=20
+drive had about 10gig data on it. I wanted to test out Mandrake 9.0, and=20
+understood that the diskdrake program would handle resizing of the existi=
+ng=20
+reiser partition (using resize_reiserfs, I assume). The diskdrake program=
+=20
+suggested I backup as a precaution, but did not indicate that the resizin=
+g=20
+would be destructive.
 
-Hi,
+I let it resize the existing partition to 20Gig. It seemed to work, and=20
+Mandrake installed without any problems. However, since then I have not b=
+een=20
+able to access the Debian partition - can't boot from it, can't mount it,=
+=20
+nothing. Trying to boot from that partition results in:
 
-we recently upgraded one of our servers from Linux kernel 2.2.16 to
-2.4.18. After the upgrade I got the following error messages in syslog
-repeatedly:
+ attempt to access beyond end of device
+ 03:02 rw=3D0 want 21364740 limit 21310191
+ reiserfs_read_super: unable to read bitmap
+ kernel panic....
 
-is_tree_node: node level 0 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 1365267. Fsck?
-vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat
-data of [4 40403 0x0 SD]
+I posted a query to alt.os.linux.mandrake, and got the answer that=20
+resize_reiserfs cannot do non-destructive repartitioning, and that my=20
+partition was toast (for the thread, search for the subject "Problem resi=
+zing=20
+reiserfs partition with DiskDrake" in alt.os.linux.mandrake from 10 Novem=
+ber=20
+2002). I had a look at the man page, and if resize_reiserfs cannot, in fa=
+ct,=20
+non-destructively resize a partition, I couldn't find anything saying so.=
+=20
 
-It's always the same block 1365267.
+Is this a problem with diskdrake's handling of resize_reiserfs??=20
+resize_reiserfs itself??
 
-After I did a reiserfsck --check I was told to run --rebuild-tree (I
-couldn't look at the exact output of the program since I have only
-remote access to the server. I put the reiserfsck in the boot scripts,
-rebooted and got a return value of 2). At first I only tried
---fix-fixable. Now I get one error message less, the only remaining ones =
-are
+It could also be due to physical problems with the hard drive, which had=20
+reported bad blocks some time ago. Is this more likely the cause of the=20
+problem??
 
-is_tree_node: node level 0 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 1365267. Fsck?
+Any thoughts,
 
-But the system still runs fine, so I'm a bit scared to try a
---rebuild-tree, especially because I have no direct access to the server
-right now. What are your experiences with --rebuild-tree? What are the
-chances of --rebuild-tree failing?
-
-I'm using the old reiserfs 3.5 layout and the newest reiserfsprogs 3.6.4.=
-
-
-Another thing: I expect that my reiserfs file system was already
-corrupted before the kernel upgrade, but only the new kernel version
-tells me about that. Does reiserfs report more error conditions in
-kernel 2.4?
-
-Thanks for your help,
-
-Nick Wellnhofer
-
-
---=20
-The hot Caribbean sun and a sweet sea breeze are all that can be felt.
-http://matadorworld.com/
---
-aevum gmbh
-leopoldstr. 87
-80802 m=FCnchen
-germany
-
-fon: +4989 38380653
-fax: +4989 38799384
-wellnhofer@aevum.de
-http://www.aevum.de
-
+Bruce
 
