@@ -1,54 +1,89 @@
-From: Russell Coker <russell@coker.com.au>
-Subject: Re: reiserfs for cluster
-Date: Wed, 7 May 2003 03:09:05 +1000
-Message-ID: <200305070309.05152.russell@coker.com.au>
-References: <5.2.0.9.0.20030506160902.03b1da60@pop.puretec.de> <20030506165716.G2196@humilis>
-Reply-To: Russell Coker <russell@coker.com.au>
+From: "Fred -- Speed Up --" <speedup@free.fr>
+Subject: Some more questions about Reiser4 ;)
+Date: Tue, 6 May 2003 20:30:22 +0200
+Message-ID: <001e01c313fd$975e7730$9900a8c0@xpstation>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13967-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13968-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030506165716.G2196@humilis>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ookhoi@humilis.net, Juergen Waiblinger <juwa@triplestor.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Wed, 7 May 2003 00:57, Ookhoi wrote:
-> Juergen Waiblinger wrote (ao):
-> > we are running different beowulf clusters and the storage amount
-> > increases all the time. Until now we have been using Veritas
-> > Clusterfilesystem, but for different reasons we want to go for an
-> > other solution. As we are using reiserfs quite happily on the desktops
-> > we thought about using this for the storagesubsystem attached to the
-> > masterserver of the cluster.
-> > there will only be sun and linux machines accessing the files but
-> > there will be concurrent file access.
-> > Has anybody tried this or could give some other solutions Any
-> > information will be appreciated
->
-> With the current 300GB sata disks, 3ware controllers and a full tower
-> which can handle 20 disks you can create a 5.3TB raid. mkreiserfs it,
-> stress-test it for a while and see if it works for you. Also try xfs and
-> compare it with reiserfs.
+What about me :-D
 
-=46rom Juergen's description I get the impression that he has a clustered f=
-ile=20
-system.  A clustered file system such as GFS is more what he's asking for:
-http://www.sistina.com/solutions_fileserve.html
+----- Original Message ----- 
+From: "Fred -- Speed Up --" <speedup@free.fr>
+To: <reiserfs-list@namesys.com>
+Sent: Saturday, May 03, 2003 11:33 PM
+Subject: Some more questions about Reiser4 ;)
 
-However ReiserFS in a configuration such as you describe may be a viable=20
-option and will certainly be a lot cheaper.  I believe that ReiserFS does N=
-=46S=20
-well now and it should be a good option.
 
-=2D-=20
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
+I posted one week ago some questions about Reiser4. I've just read your
+answers and I'll firstly want to thank all of the people developing Reiser4
+and answering on the mailing list ;)
+
+Thanks to Oleg I could understand what the object id stands for outside the
+FS. And parent id should be the part of the key related to what the
+file/item is related to : when we consider some file's attribute, it's
+stored in a separate object which has a single object id but whose parent id
+is the object id of the file it's related to, am I right ? And a file should
+behave the same way with its parent directory (this is likely to be a main
+concept of Reiser4 : objects are both files and folders).
+Now an inode number identifies a physical file or folder considered from VFS
+(not an attribute or any metadata Reiser4 is implementing), it's the object
+id for the main file, from which we can get the attribute and/or the
+subfolders wether it is a directory or not.
+
+Hans Reiser informed me about the release date :-D. Can you evaluate the
+developement stage, are you still implementing features or rather getting
+the software stable, or even doing tweaking stuff ... the website announces
+June 2003 : I'm pretty sure it won't be ready that soon :-D. I know
+developing such a project takes time, and the release date is not such an
+important thing as soon as it is released stable, powerfull and fast ;)
+
+
+Now I got some question still remaining unanswered :
+
+- Could you please describe the overall structure of Reiser4fs, with a
+diagram or a little text, where the superblock is, the wandering logs, the
+storage tree and semantic graph, just sort of a picture of the hard drive to
+know where and how data and structures are kept and ordered ... ;)
+
+- How does your semantic graph work : is it a cache contaning parts of the
+semantic tree (containing the user-side paths : /foo/bar/...), and updated
+when the filesystem is being used to reduce paths resolution time and
+eventually cache some data, resolving path the "old fashion" way when the
+path is not in the graph, by browsing the storage tree looking for the
+desired folders and fetching their information, or does the semantic graph
+allready contain the whole path structure, so that it is not necessary to
+store directory (I mean, the way VFS understands what a directory is)
+informations (list of files and subfolders) in the storage tree ?
+
+- Considering the semantic graph, as you choose to use a generic graph, you
+would be able to link paths together to shorten access to some files that
+are often used : does Reiser4 implement some algorithms that reduces access
+time to most acceded files (at least path resolution) other than caching
+paths ? For example, if "/foo/bar/1/2/3/file" file is being used very often,
+does the semantic graph make a link directly between the root and the file ?
+
+- How do you keep the storage tree balanced, as it is constantly evolving ?
+Even with balancing at flush time, some important tree changes would take
+too much time to rebalance the tree : if this occurs, does the storage tree
+remain unbalanced, scheduling tree balancing later ? Could you graphically
+(or with a short text ...) tell how the tree evolves, and what the balancing
+operation really consists in ?
+
+- When storing really big files, one extent pointer is not enough : does
+Reiser4 manage big files the same way ext2 does, with 2-level indirection
+pointers, storing only the first one in the tree ? If so, wouldn't this be
+considered as a Blob behaviour ?
+
+
+Thank you ;)
+
+Fred
 
