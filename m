@@ -1,35 +1,53 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: filesystem support for XML storage and querying
-Date: Tue, 11 May 2004 23:40:14 -0400
-Sender: news <news@sea.gmane.org>
-Message-ID: <87brkupb35.fsf@uhoreg.ca>
+From: Andreas Dilger <adilger@clusterfs.com>
+Subject: Re: 2 Terabyte install
+Date: Tue, 11 May 2004 21:41:50 -0600
+Message-ID: <20040512034150.GS9641@schnapps.adilger.int>
+References: <409AC2FF.7080800@lindows.com> <1083917932.14089.281.camel@tribesman.namesys.com> <409BB690.6030604@namesys.com> <409BBDC9.3030809@lindows.com> <409FB387.8080804@namesys.com> <40A19147.4010703@lindows.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18624-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18625-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <40A19147.4010703@lindows.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Clifford Beshers <clifford.beshers@lindows.com>
+Cc: Hans Reiser <reiser@namesys.com>, Vladimir Saveliev <vs@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>, Vitaly Fertman <vitaly@namesys.com>
 
-As I had mentioned earlier, for a course that I took last term, I had
-to write a research proposal, which I chose to do on filesystems and
-XML.  Here's a link to the proposal:
+On May 11, 2004  19:51 -0700, Clifford Beshers wrote:
+> Thanks for the help everyone.  In the end, it turned out that sfdisk is 
+> indeed the culprit.  We created a 2.1T partition with fdisk, then asked 
+> sfdisk for the size and it said: -92,xxx,xxx.  Unfortunately, this means 
+> we have to either fix it or find an alternate solution to creating 
+> partitions.  If the word ``parted'' is on the tip of your tongue  I'll 
+> bet you haven't actually used the thing...
+> 
+> There were a few bugs of ours that acted as red herrings, but Linspire 
+> is now up and running on this system with ReiserFS 3 and kernel 2.6.5.
+> 
+> While I'm here, I have some other questions:
+> 
+>    * What is the time complexity of mounting a ReiserFS partition?  It
+>      seems to be proportional to the size of the partition?  Is it
+>      different for Reiser4?
 
-http://www.cs.uwaterloo.ca/~hy3chan/cs741project.ps
+AFAIK, reiserfs will do the initial zeroing of the journal and filesystem
+bitmaps at the first mount time instead of at mkreiserfs time.  I don't
+know why it was done that way.
 
-As I mentioned, real research may or may not come out of this, but I
-thought that it might be of interest to some people anyways.
+>    * Is there a tool to determine the type of file system on a
+>      partition without mounting it?
 
-I got a good mark on the proposal, so I suppose I'm not completely out
-to lunch on the subject.  (It was a course on "Non-traditional
-databases", by the way.)
+Lots of them.  "file -s /dev/foo" or if you have a newer e2fsprogs (1.33
+and newer I think) you can use "blkid [dev ...]" to tell you a bunch of
+things about each device (LABEL, UUID, TYPE).
 
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+Cheers, Andreas
+--
+Andreas Dilger
+http://sourceforge.net/projects/ext2resize/
+http://www-mddsp.enel.ucalgary.ca/People/adilger/
 
