@@ -1,61 +1,58 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: www.namesys.com down
-Date: Thu, 24 Jun 2004 09:13:02 -0700
-Message-ID: <40DAFD8E.7010304@namesys.com>
-References: <20040624090231.GB22482@favonius> <20040624091210.GG5080@backtop.namesys.com> <20040624144725.GA26097@favonius>
+From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: we need a slogan for our reiser4 t-shirt
+Date: Thu, 24 Jun 2004 18:20:14 +0200
+Message-ID: <200406241820.14809.Dieter.Nuetzel@hamburg.de>
+References: <40D9DC3A.9090209@namesys.com> <200406232144.46346.marcel@hilzinger.hu> <40D9E2D3.9060904@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19344-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-19345-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040624144725.GA26097@favonius>
+In-Reply-To: <40D9E2D3.9060904@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: sander@humilis.net
-Cc: Alex Zarochentsev <zam@namesys.com>, reiserfs-list@namesys.com, "E. Gryaznova" <grev@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
+Cc: Hans Reiser <reiser@namesys.com>, Marcel Hilzinger <marcel@hilzinger.hu>
 
-Sander wrote:
+Am Mittwoch, 23. Juni 2004 22:06 schrieb Hans Reiser:
+> Marcel Hilzinger wrote:
+> >2004. j=FAnius 23. 21.38 d=E1tummal Hans Reiser ezt =EDrta:
+> >>we are going to use our fastman logo from our web page plus reiser4 in
+> >>letters, but we need some slogan underneath it.
+> >
+> >What about:
+> >
+> >The Living Filesystem
+> >
+> >(as there are dancing trees, wandering logs, and development is really
+> >alive :-)
+>
+> I suggested the Atomic Filesystem,
 
->Hi Alex,
->
->Alex Zarochentsev wrote (ao):
->  
->
->>On Thu, Jun 24, 2004 at 11:02:31AM +0200, Sander wrote:
->>    
->>
->>>I notice www.namesys.com is down for quite some time now. At first
->>>it was not pingable, but now just the webserver refuses to 'serve
->>>the web'. Is this due to the migration to reiserfs4?
->>>      
->>>
->>Yes. Yesterday we resolved apache2/reiser4 issue. Now the server is
->>reconfigured again.
->>    
->>
-More precisely, it seems that all of our regression tests don't test 
-sendfile.  We need to fix that.  grev, please look into it.
+No, please NO such sentences!
 
->
->Thank you for your answer.
->
->When do you think reiser4 is able to serve www.namesys.com again? I
->would like to try it for my own webserver, but if Namesys doesn't dare
->to, then I don't for sure ;-)
->
->Is there a list of know reiser4 issues online? A quick search on
->www.namesys.com didn't reveal it.
->  
->
-There are none remaining, except performance drop due to ent threads 
-needing to be optimized if we use them (and ent threads are needed for 
-good iozone performance).
+Even if Reiser4 can offer such nice features, these terms are burnt.
+These shirts should be worn.
 
->        Kind regards, Sander
->
->
->  
->
+> but Mom pointed out that it added an=20
+> additional metaphor to the fastman graphic.  I am still thinking about
+> whether she is right.
 
+Please use some intelligent slogans.
+
+"The Living Filesystem" --- like "Living daylight" ;-)
+or
+"Plug-in To Reiser4!" (kill the 4) ;-)
+
+are much better.
+
+Stay absent from slogans 'mine is "longer" then yours' (faster) etc.
+They are distressing.
+
+
+Much success for your company!
+
+=2DDieter
