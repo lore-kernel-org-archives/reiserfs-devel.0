@@ -1,44 +1,104 @@
-From: Gunnar Ritter <Gunnar.Ritter@pluto.uni-freiburg.de>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Tue, 07 Sep 2004 18:55:26 +0200
-Message-ID: <413DE7FE.nailD9I11PGNI@pluto.uni-freiburg.de>
-References: <200409070206.i8726vrG006493@localhost.localdomain>
- <413D4C18.6090501@slaphack.com> <m3d60yjnt7.fsf@zoo.weinigel.se>
- <1183150024.20040907143346@tnonline.net>
- <413DD5B4.nailC801GI4E2@pluto.uni-freiburg.de>
- <1401724342.20040907182551@tnonline.net>
+Date: Tue, 07 Sep 2004 11:05:39 -0700
+Message-ID: <413DF873.1090304@namesys.com>
+References: <200409071530.i87FUCP1003927@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21577-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21578-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1401724342.20040907182551@tnonline.net>
+In-Reply-To: <200409071530.i87FUCP1003927@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Spam <spam@tnonline.net>
-Cc: ReiserFS List <reiserfs-list@namesys.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Spam <spam@tnonline.net>, Christer Weinigel <christer@weinigel.se>, David Masover <ninja@slaphack.com>, Tonnerre <tonnerre@thundrix.ch>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Spam <spam@tnonline.net> wrote:
+Horst von Brand wrote:
 
-> > Spam <spam@tnonline.net> wrote:
-> >>   One suggestion is missed. It is to provide system calls for copy.
-> >>   That would also solve the problem.
-> > No, it would not. If you read the POSIX.1 specification for cp
-> > carefully <http://www.unix.org/version3/online.html>, you will
-> > notice that the process for copying a regular file is carefully
-> > standardized. A POSIX.1-conforming cp implementation would not
-> > be allowed to copy additional streams, unless either additional
-> > options are given or the type of the file being copied is other
-> > than S_IFREG. And cp is just one example of a standardized file
-> > handling program.
->   It would solve the problem in Linux. However, it may not be POSIX.1
->   compatible. On the other hand I read that NTFS 5.0 is POSIX.1
->   compliant - and Windows uses copy system call.
+>Spam <spam@tnonline.net> said:
+>  
+>
+>>Christer Weinigel <christer@weinigel.se> said:
+>>    
+>>
+>
+>[...]
+>
+>  
+>
+>>>Could you please try summarize a few of the arguments that you find
+>>>especially compelling?  This thread has gotten very confused since
+>>>there are a bunch of different subjects all being intermixed here.
+>>>      
+>>>
+>
+>  
+>
+>>  Indeed. We are discussion changes to the heart of Linux. It is bound
+>>  to get a little heated :/
+>>    
+>>
+>
+>True. But without any specific applications, just "this would be nice to
+>have", the discussion can't go forward.
+>
+>  
+>
+>>>What are we discussing?
+>>>      
+>>>
+>
+>  
+>
+>>>1. Do we want support for named streams?
+>>>      
+>>>
+>>>   I belive the answer is yes, since both NTFS and HFS (that's the
+>>>   MacOS filesystem, isn't it?) supports streams we want Linux to
+>>>   support this if possible.
+>>>      
+>>>
+>>>   Anyone disagreeing?
+>>>      
+>>>
+>>     No :)
+>>    
+>>
+>
+>There are many people around here who disagree (that is precisely the heart
+>of the discussion). I for one don't think Linux has to get $RANDOM_FEATURE
+>just because $SOME_OTHER_OS has got it. Either the feature stands on its
+>own _in the context of POSIX/Unix/Linux_ (possibly as an extension or
+>modification of said standards) or it isn't worth it.
+>
+>  
+>
+>>>2. How do we want to expose named streams?
+>>>      
+>>>
+>>>   One suggestion is file-as-directory in some form.
+>>>      
+>>>
+>
+>Which is broken, as it forbids hard links to files.
+>  
+>
+No, it forbids hard links to the directory aspect of the file-directory 
+duality.
 
-You should obviously take a thorough read of at least the Base
-Definitions, section 2, 'Conformance' of POSIX.1 before you further
-comment on this issue.
+>
+>
+>Now you have 3 principal types of objects: Directories, containers (files
+>with streams), and files (no streams).
+>
+No, the reiser4 design supports only files and directories, but makes 
+them able to do what people use streams for.
 
-	Gunnar
+The reiser4 design is based on a hatred of streams, and a desire to show 
+that adding more features to files and directories makes streams 
+unnecessary.
+
+Hans
