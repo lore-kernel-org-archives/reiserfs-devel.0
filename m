@@ -1,46 +1,36 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: [PATCH CFT] tons of logging patches
-Date: 03 Jun 2002 08:26:01 -0400
-Message-ID: <1023107161.6829.1802.camel@tiny>
-References: <1023076301.22608.1778.camel@tiny> 
-	<m37klglpfo.fsf@merlin.emma.line.org>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: EVMS Reiser FSIM
+Date: Mon, 3 Jun 2002 20:00:45 +0400
+Message-ID: <20020603200045.A6087@namesys.com>
+References: <OFAADA662B.00161B0E-ON85256BCA.005CD105@pok.ibm.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10487-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10488-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <m37klglpfo.fsf@merlin.emma.line.org>
+Content-Disposition: inline
+In-Reply-To: <OFAADA662B.00161B0E-ON85256BCA.005CD105@pok.ibm.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
+Content-Transfer-Encoding: 7bit
+To: Steve Pratt <slpratt@us.ibm.com>
 Cc: reiserfs-list@namesys.com
 
-On Mon, 2002-06-03 at 04:46, Matthias Andree wrote:
-> Chris Mason <mason@suse.com> writes:
-> 
-> > Hello everyone,
-> >
-> > ftp.suse.com/pub/people/mason/data-logging
-> 
-> You seem to mean:
-> 
-> ftp://ftp.suse.com/pub/people/mason/patches/data-logging/
+Hello!
 
-Correct, thanks.
+On Fri, May 31, 2002 at 12:03:18PM -0500, Steve Pratt wrote:
 
-> 
-> > optimizations to keep kupdate from triggering commits every 5 seconds
-> 
-> Does this mean the current released ReiserFS versions are causing the
-> persistent write activity at 5 s interval that I observe?
-> 
-> Or is it ext3fs also?
+I've spent some time today trying to get current EVMS version to run and see
+what is it (live) but failed miserably.
+2.4.18 kernel files for 2.4.18 cannot be compiled at all and are horribly
+broken in some ways.
+2.5.11 kernel files can be compiled with 2.5.11, but then evmsgui complained
+that while kernel's ioctl is version 11, evms gui is expecting ioctl version 10.
 
-No, there is a dirty flag on the super struct that should get cleaned
-after all commits are done.  The commit_super-8 patch might fix a bug
-where we are not properly cleaning the flag.
+Any advices on how can outside man look into current state of things on evms
+without waiting for new release for several weeks?
 
--chris
+Thank you.
 
-
+Bye,
+    Oleg
