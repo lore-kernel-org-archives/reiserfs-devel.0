@@ -1,66 +1,74 @@
-From: viro@parcelfarce.linux.theplanet.co.uk
-Subject: Re: silent semantic changes with reiser4
-Date: Wed, 8 Sep 2004 10:36:25 +0100
+From: Helge Hafting <helge.hafting@hist.no>
+Subject: Re: The argument for fs assistance in handling archives
+Date: Wed, 08 Sep 2004 11:56:37 +0200
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040908093624.GW23987@parcelfarce.linux.theplanet.co.uk>
-References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <41352279.7020307@slaphack.com> <41356321.4030307@namesys.com> <Pine.LNX.4.61.0409030037540.23011@fogarty.jakma.org> <413809EF.8060102@namesys.com> <20040903070034.GM23987@parcelfarce.linux.theplanet.co.uk> <xeq3656pnqpa.fsf@codc1-xdm1.cisco.com>
+Message-ID: <413ED755.6090204@hist.no>
+References: <20040902203854.GA4801@janus> <1094160994.31499.19.camel@shaggy.austin.ibm.com> <20040902214806.GA5272@janus> <20040902220027.GD23987@parcelfarce.linux.theplanet.co.uk> <20040902220242.GA5414@janus> <20040902220640.GE23987@parcelfarce.linux.theplanet.co.uk> <20040902221133.GB5414@janus> <20040902221722.GF23987@parcelfarce.linux.theplanet.co.uk> <20040902222650.GA5523@janus> <20040902223324.GG23987@parcelfarce.linux.theplanet.co.uk> <20040902225634.GA5756@janus> <41382EC0.8080309@hist.no> <4139045B.8080307@slaphack.com>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <xeq3656pnqpa.fsf@codc1-xdm1.cisco.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sriram Karra <karra@shakti.homelinux.net>
-Cc: Hans Reiser <reiser@namesys.com>, Paul Jakma <paul@clubi.ie>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <4139045B.8080307@slaphack.com>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Masover <ninja@slaphack.com>
+Cc: Frank van Maarseveen <frankvm@xs4all.nl>, viro@parcelfarce.linux.theplanet.co.uk, Dave Kleikamp <shaggy@austin.ibm.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Wed, Sep 08, 2004 at 01:21:45PM +0530, Sriram Karra wrote:
-> Perhaps this is one? Message-ID: <413578C9.8020305@namesys.com>
+David Masover wrote:
 
-OK...
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+>
+> Helge Hafting wrote:
+> [...]
+> | You don't need kernel support for cd'ing into fs images.
+> | You need a shell (or GUI app) that:
+> | 1. notices that user tries to CD into a file, not a directory
+> | 2. Attempts fs type detection and do a loop mount.
+> | 3. Give error message if it wasn't a supported fs image.
+>
+> You can argue this about FS plugins, too.  You don't need kernel support
+> for cryptocompress, for example.  Just have a fifo farm.  Every file
+> that has compression turned on is actually a named pipe, the original
+> file is hidden (starts with a dot), and you have a script running to
+> each fifo which runs zcat.
 
-One note before replying: current code deadlocks even if you make ->link()
-*ALWAYS* return an error.  It doesn't get to calling the method.  No amount
-of "disallow hard links to <something>" is going to help here, obviously.
+Eww.  A shell/filemanager supporting fs images is one running program.
+The fifo farm is one per file.  Ouch.
 
-<quote>
-Cycle detection:
+>
+> The kernel support (read: interface) is just cleaner in some ways.
+>
+> In the loop mount example, it isn't universal -- the user can't CD into
+> a file if they use the wrong shell, and two different shells might make
+> two different mounts.  How many mounts before we run out of loop devices?
 
-We should either 1) make hard links only link to the file aspect of the
-file-directory duality, and persons who want to link to the directory
-aspect must use symlinks (best short term answer), or 2) ask Alexander
-Smith to help us with applying his cycle detection algorithm and gain
-the benefit of being able to hard link to directories (if it works well,
-best long term answer).
-</quote>
+This limitation apply to the kernel interface too.  But you can 
+configure for an
+arbitrary number of loop mounts anyway. The user will have to mount
+using the correct tool - after that the door is opened for anything.
 
-... which doesn't address the problem at all.  The question is what to do
-with seeing directory "aspect..." in more than one place when we have many
-links to file in question.  So much for (1).  And (2) is not feasible with
-on-disk fs both due to memory, CPU and IO costs _and_ due to exclusion from
-hell you'll need to make it safe.
+>
+> In the cryptocompress example, there's no caching or compress-on-flush
+> optimization, and it isn't entirely transparent to anything.  It doesn't
+> look like a file, it looks like a fifo.  ls will make it look yellow. 
 
-Re: ambiguity - lots and lots of handwaving on both sides.  FWIW, I agree
-with Hans in one (and only one) respect here - openat() as a primary API
-(and not a convenient libc function) is an atrocity.  Simply because it
-doesn't address operations beyond open (unlinkat(2), anyone?).
 
-However, I still haven't seen any strong arguments for need of this "metas"
-stuff _or_ the need to export mode/ownership as files, both for regular
-files and for directories.  Aside of "we can do that" [if we solve the
-locking issues] and "xattrs are atrocious" [yes, they are; it doesn't make
-alternative mechanism any better] there was nothing that even pretended to
-be a technical reason.
+Even the kernel supported "cd into fs images" has problems.  How should
+the kernel know which files you want to support with mounting, and which
+ones are the wast majority of plain files?   A file manager doesn't
+have to do this fully automatic, it can have a button/hotkey for "loop 
+mount this".
+So the user will have to tell it what to do, but in a much easier way
+than typing "mount -o loop . . . "  The file manager can also ask for
+encryption keys - something the kernel cannot do because it doesn't
+know what user interface(s) is in use by the process that attempts the "cd".
+There may be one interface (stdin, X) there may be both, i.e. something
+started from an xterm can use both, there may be none, (the 
+web/ftp/file-server
+got a request for something inside a encrypted fs image.)
 
-Note that we also have fun issues with device nodes (Linus' "show partitions"
-vs. "show metadata from hosting filesystem"), which makes it even more dubious.
-We also have symlinks to deal with (do they have attributes?  where should
-that be exported?).
+And even if the kernel can figure out the correct user interface, do we
+want it to contain an X client for asking for keys? :-/
 
-Reserved names have one more problem: to be useful, they'd have to be
-hardcoded into applications.  And that will create hell with use of
-such applications on existing filesystems.  Again, no feasible scheme
-to deal with that in userland code had been proposed so far, AFAICS.
+Helge Hafting
 
-Locking: see above - links to regular files would create directories seen
-in many places.  With all related issues...
