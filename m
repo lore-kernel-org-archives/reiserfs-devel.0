@@ -1,54 +1,307 @@
-From: Hubert Chan <hubert@uhoreg.ca>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: duplicate files and recent changes
-Date: Thu, 06 Jun 2002 13:51:46 -0400
-Sender: news <news@main.gmane.org>
-Message-ID: <87ofeo70st.fsf@labatt.uhoreg.ca>
-References: <20020606094504.A851@namesys.com> <Pine.WNT.4.43.0206060328570.1296-100000@fanatic>
- <20020606132505.A2647@namesys.com>
- <200206061358.g56DwF0H001550@turing-police.cc.vt.edu>
+Date: Thu, 06 Jun 2002 13:58:15 +0000
+Message-ID: <85256BD0.0062EB59.00@patapsco.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha1; protocol="application/pgp-signature"
-Return-path: <reiserfs-list-return-10583-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ Boundary="0__=pyEyMfnoKSO9gD64v7ua9fPZtr0oHZrTAYRe7p13VA0Srpwifztv5GmW"
+Return-path: <reiserfs-list-return-10584-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: "S. Alexander Jacobson" <alex@shop.com>, reiserfs-list@namesys.com
+
+--0__=pyEyMfnoKSO9gD64v7ua9fPZtr0oHZrTAYRe7p13VA0Srpwifztv5GmW
+Content-type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+                                                                  
+ (Embedded                                                        
+ image moved   Valdis.Kletnieks@vt.edu                            
+ to file:      06/06/2002 09:58 AM                                
+ pic13257.pcx)                                                    
+                                                                  
 
 
->>>>> "Valdis" =3D=3D Valdis Kletnieks <Valdis.Kletnieks@vt.edu> writes:
 
-Valdis> On Thu, 06 Jun 2002 13:25:05 +0400, Oleg Drokin said:
->> But MD5 may be identical for different files.
 
-Valdis> Only a 2**128 chance of that.  If you know a way to force a hash
-Valdis> collision more frequently than that, the crypto world wants to
-Valdis> hear from you.. ;)
 
-You probably wanted to say "one in 2**128 chance".  2**128 is a pretty
-big probability that it would happen! :-)
 
-Technically, the probability is actually somewhere between one in 2**128
-and one in 2**127 (depending on how many files you have), due to the
-birthday attack.  But one in 2**127 is still pretty small.
 
-=2D-=20
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
---=-=-=
-Content-Type: application/pgp-signature
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic00081.pcx)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.7 (GNU/Linux)
 
-iD8DBQE8/6E3rynHGRJLYfoRAgvQAJ4vkiSf7PDSinXZ1hRR9CtskUzFNgCfcOtp
-PLDlN1JAgb9Bbyapl+oRjNM=
-=Irwx
------END PGP SIGNATURE-----
---=-=-=--
 
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic15154.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic07244.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic00072.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic31655.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic01253.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic19373.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic27832.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic30803.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic04969.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic08117.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic11628.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic06033.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic18619.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic14738.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic07549.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic26942.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic27268.pcx)
+
+
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Valdis.Kletnieks@vt.edu
+ to file:      06/06/2002 09:58 AM
+ pic24632.pcx)
+
+
+
+
+
+
+
+
+On Thu, 06 Jun 2002 13:25:05 +0400, Oleg Drokin said:
+
+> But MD5 may be identical for different files.
+
+Only a 2**128 chance of that.  If you know a way to force a hash collision
+more frequently than that, the crypto world wants to hear from you.. ;)
+
+> Also this buys you nothing.
+> You write file in chunks, once file is identical to other file,
+> one of the files deleted. Looks like just more extra work (but some saved
+space
+> of course).
+
+A much more productive way to save space is file-system compression.  AIX
+supports LZ-compressing each 4K block and then only saving as many 512 byte
+fragments as actually needed.  It's a big win - /usr (even with all the
+binaries)
+needs about 30% less space, and I've seen over 50% for file systems with
+source trees in them...
+--
+                    Valdis Kletnieks
+                    Computer Systems Senior Engineer
+                    Virginia Tech
+
+
+--0__=pyEyMfnoKSO9gD64v7ua9fPZtr0oHZrTAYRe7p13VA0Srpwifztv5GmW--
 
