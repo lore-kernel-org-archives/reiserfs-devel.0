@@ -1,42 +1,23 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiser4 Officially Shipped - Congratulations
-Date: Tue, 24 Aug 2004 00:47:46 -0700
-Message-ID: <412AF2A2.900@namesys.com>
-References: <06050683-F57C-11D8-9849-000A95C88606@aoc.nrao.edu>
-Mime-Version: 1.0
+From: Steve Dekorte <steve@dekorte.com>
+Subject: Reiser4 as a database
+Date: Tue, 24 Aug 2004 00:55:23 -0700
+Message-ID: <F3F2FA11-F5A2-11D8-9C58-000393ACB27C@dekorte.com>
+Mime-Version: 1.0 (Apple Message framework v619)
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20470-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20471-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <06050683-F57C-11D8-9849-000A95C88606@aoc.nrao.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Boyd Waters <bwaters+mac@aoc.nrao.edu>
-Cc: reiserfs-list@namesys.com, reiserfs-list@revere.aoc.nrao.edu
+To: reiserfs-list@namesys.com
 
-Boyd Waters wrote:
 
-> For the readers of this list, it is not such a big event that Reiser4 
-> is officially released: we have been testing it for some time now. 
-> (I've been following the development of Reiser4 for four years now, 
-> off and on...)
->
-> But a ship date is worth a hearty *** Congratulations *** to the 
-> ReiserFS team for all the hard work!!
->
-> (blink tags mercifully omitted)
->
-> ~ boyd
->
-> Boyd Waters
-> National Radio Astronomy Observatory
-> Socorro, New Mexico
-> http://www.aoc.nrao.edu/~bwaters
->
->
->
-Thanks kindly, Boyd.
+Is it possible (and easy) to use Reiser4 as a database library for a 
+user level application?
+That is, without using it as a full blown file system that needs to be 
+a part of the OS.
 
-Hans
+-- Steve
+
