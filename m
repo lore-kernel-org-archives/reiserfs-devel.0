@@ -1,77 +1,72 @@
-From: Kristian Koehntopp <kris@koehntopp.de>
+From: Anders Widman <andewid@tnonline.net>
 Subject: Re: Can ReiserFS solve this?
-Date: Mon, 28 Apr 2003 18:36:13 +0200
-Message-ID: <20030428163613.GA23143@p15104972.pureserver.info>
+Date: Mon, 28 Apr 2003 19:37:48 +0200
+Message-ID: <1423022324.20030428193748@tnonline.net>
 References: <3EAD34D5.8030108@solidcode.net>
+Reply-To: Anders Widman <andewid@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13876-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13877-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 In-Reply-To: <3EAD34D5.8030108@solidcode.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Erik Terpstra <erik@solidcode.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Mon, Apr 28, 2003 at 04:04:05PM +0200, Erik Terpstra wrote:
+> Hi,
+
 > I am looking for a solution for the following problem:
->
-> [ I need to touch only these arriving files that are already
->   complete ]
 
-You should have a look at the "maildir" format for mail
-directories as opposed to mbox. It is described in
-http://cr.yp.to/proto/maildir.html.
+> On a legacy system for newspaper workflow, files are delivered to a 
+> certain directory (for example ~/input).
+> These files (in TIFF format) can be quite large (10 to 400 MB), they 
+> could be copied over the local filesystem, a Samba share or via FTP.
+> When large files are copied over the network these files show up in 
+> ~/input while they are being copied (you can see the filesize grow).
 
-Arriving mail has a problem very similar to yours, and DJB
-proposes a solution to this by having multiple directories.
-Essentially, DJB observes that the rename(2) system call is
-atomic within the boundaries of a filesystem, while
-open(2)/write(2)/close(2) sequences are not, and proposes
-uploads of arriving new mails into a "tmp" directory, which is
-parallel to a "new" directory:
+> However TIFF files are only useful for further processing when they are 
+> complete.
 
-.../foldername/tmp
-              /new
+> Initially we solved this problem by monitoring the input directory and
+> make our applications look at the files until they stop growing, but 
+> this isn't a very elegant and reliable method.
 
-New mail arrive in tmp, until they are completely transferred.
-They are then moved into new with a single atomic rename(2)
-call, guaranteeing that all files in new are complete. Also,
-files that are being worked on can be moved into a third
-parallel directoy in your system ("work"), thus making sure that
-only one instance of a worker process can work on a certain
-file, enabling parallelism in your application:
+  No,  and  it  won't  give  confirmation  that  the  file actually is
+  complete.
 
-.../foldername/tmp/partial_file.tiff
-               new/somefile_1.tiff
-                  /somefile_2.tiff
-               work/worker_<pid>.tiff
-                    worker_<pid>.tiff
+  You  can  set Samba to issue a lock on the files while transferring.
+  This  should  be enough to see if the file has finished transferring
+  or not.
 
-Thus, each worker process will move his current
-new/somefile_<n>.tiff to work/worker_<pid>.tiff, and check if
-that suceeds. If so, it is the only worker currently working on
-that file, and can proceed. At the same time, any number of
-workers may be active, without a chance of two workers running
-into each other.
+> After a while we discovered the UNIX 'fuser' command so that we could 
+> see if the incoming file is still being transferred or not.
+> This works fine but it's still not very elegant, and it requires root 
+> privileges for the applications involved in the workflow.
+
+> Naturally, the best solution would be for the sender to notify the 
+> completion of the transfer. But this is not an option because several 
+> organizations are involved that do not wish to adapt their software.
+
+> Right now I am wondering if this is something that could be solved on 
+> the filesystem level, i.e. is it possible to 'only see files that are 
+> not in the process of being transferred'.
+
+> Is this possible with Reiser3? Reiser4? Should it be solved on the
+> filesystem level?
+
+  Sounds rather extreme measures.
+
+> Any thoughts on this matter are appreciated.
+
+> Kind regards,
+
+>    Erik Terpstra.
 
 
-I once had a similar problem to yours, where I had to push and
-pull batchfiles with Siemens HiCom data to a rather primitive
-SVR4 that controlled the installation. Here, I was not allowed
-to use directories, so I used trigger files named
-"<original_name>.x" which were uploaded after the
-"<original_name>" file. An uploaded "q" was complete when the
-matching empty trigger file "q.x" showed up (which was due to
-sorting always transmitted immediately after "q"). If there was
-a "q.w" work indicator (containing the PID of the worker), any
-"q" was being processed and thus untouchable.
 
-This works with any filesystem that has atomic rename(2)
-semantics.
+--------
+PGP public key: https://tnonline.net/secure/pgp_key.txt
 
-Kristian
