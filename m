@@ -1,40 +1,28 @@
-From: jw schultz <jw@pegasys.ws>
-Subject: Re: Anyone up to benchmarking WinFS vs. Reiser4?
-Date: Mon, 27 Oct 2003 18:42:09 -0800
-Message-ID: <20031028024209.GO8540@pegasys.ws>
+From: lrc1@st-andrews.ac.uk
+Subject: Re: Object Oriented FS
+Date: Tue, 28 Oct 2003 04:46:01 +0000
+Message-ID: <1067316361.3f9df4893af75@webmail.st-andrews.ac.uk>
+References: <200310271604.h9RG4D3h008698@eastgate.starhub.net.sg>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15912-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-15913-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <200310271604.h9RG4D3h008698@eastgate.starhub.net.sg>
+Content-Transfer-Encoding: 8bit
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: reiserfs-list@namesys.com
 
-Hans,
+Similarly, any comments on Frigate (see
 
-This is a semi-silly request under the category of polish.
+    http://fmg-www.cs.ucla.edu/project-members/tek/papers/coots97.html
 
-Could you make the filesystem type name for reiserfs version
-4 be shorter please?  Seven chars or less so reiser4 or rfs4
-would be good.
+) or the old Pick operating system?
 
-The reason i ask this is because as much as i like reiserfs
-(v3) for local filesystems the fact that the fstype overflows
-a tab makes documentation and /etc/fstab ugly or awkward do
-edit.  I know it is a minor nit to pick but it is still
-annoying.
+Leo.
 
-Not a member of the rieserfs mailing list but there is no
-need to reply to me.
-
--- 
-________________________________________________________________
-	J.W. Schultz            Pegasystems Technologies
-	email address:		jw@pegasys.ws
-
-		Remember Cernan and Schmitt
+-----------------------------------------------------------------
+University of St Andrews Webmail: http://webmail.st-andrews.ac.uk
