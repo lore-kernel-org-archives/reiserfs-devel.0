@@ -1,41 +1,53 @@
-From: Gergely Muranyi <gari@satimex.tvnet.hu>
-Subject: Re: data logging for 2.4.21-aa
-Date: Thu, 10 Jul 2003 23:08:17 +0100
-Message-ID: <5.2.0.9.2.20030710230703.032ffce0@pop.tvnet.hu>
-References: <5.2.0.9.2.20030708234923.01cb5b18@pop.tvnet.hu>
- <5.2.0.9.2.20030708234923.01cb5b18@pop.tvnet.hu>
+From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
+Subject: Re: 32bit UID/GID's Quota in 2.4!
+Date: Fri, 11 Jul 2003 00:08:07 +0200
+Message-ID: <20030711000807.58fa86a7.philippe.gramoulle@mmania.com>
+References: <200307102119.11860.christian.mayrhuber@gmx.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14869-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-14870-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1057701475.26768.133.camel@tiny.suse.com>
+In-Reply-To: <200307102119.11860.christian.mayrhuber@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Content-Transfer-Encoding: 7bit
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list@namesys.com
-
-thx it would be very cool to have that, since aa-s kernel has lots of 
-improvements compared to the vanilla one.
-cheers,
-greg
-At 22:57 2003. 07. 08., you wrote:
->On Tue, 2003-07-08 at 18:54, Gergely Muranyi wrote:
-> > hello everybody I would like to ask if anybody diffed the datalogging
-> > patches for 2.4.21-rc8aa1 or will it be diffed ever :) since I see some 
-> old
-> > 2.4.21aa folder on suse.com, and it would be cool to have a new one :)
-> > regards,
-> > greg
-> >
-> > ps: Dieter dont you use some aa patched kernel with data-logging? do you
-> > have some nice diffs? :)
->
->Ok, it should be a simple merge off the suse patches, I'll download
->andrea's latest tonight and give put something out.
->
->-chris
+Content-Type: text/plain; charset="iso-8859-1"
+To: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
 
+Hello Christian,
+
+Jeez, i can't remember since when we needed and used this feature
+(quotas with 32bit UID/GIDs) thanks to Jan Kara, Chris Mason,
+Oleg Drokin and all ReiserFS team.
+
+I'm pleased to see that it will finally make it into 2.4 series.
+
+I haven't had time to look how "new" this quota code is and if it differs
+from what is actually available through external patches though.
+
+Thanks,
+
+Philippe
+
+--
+
+Philippe Gramoull=E9
+philippe.gramoulle@mmania.com
+System & Network Engineer
+NOC France - Lycos Europe
+
+
+
+
+On Thu, 10 Jul 2003 21:19:11 +0200
+Christian Mayrhuber <christian.mayrhuber@gmx.net> wrote:
+
+  | Quote from Marcelo Tosatti:
+  | "We decided to include this new code quota code which allows usage of q=
+uotas with 32bit UID/GIDs."
+  |=20
+  | Finally this should mean there is a possibility to get reiserfs data lo=
+gging + quota into the 2.4 kernel, doesn't it?
