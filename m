@@ -1,41 +1,29 @@
-From: Diego Calleja <diegocg@teleline.es>
+From: viro@parcelfarce.linux.theplanet.co.uk
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 19:40:10 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040826194010.548e4a4c.diegocg@teleline.es>
-References: <20040826190548.3e67726f.diegocg@teleline.es>
-	<Pine.LNX.4.44.0408261315240.27909-100000@chimarrao.boston.redhat.com>
+Date: Thu, 26 Aug 2004 18:54:38 +0100
+Sender: <viro@www.linux.org.uk>
+Message-ID: <20040826175438.GW21964@parcelfarce.linux.theplanet.co.uk>
+References: <20040825205149.GA17654@lst.de> <412DA2CF.2030204@namesys.com> <20040826124119.GA431@lst.de> <20040826134812.GB5733@mail.shareable.org> <20040826155744.GA4250@lst.de> <20040826160638.GJ5733@mail.shareable.org> <20040826161303.GA4716@lst.de> <Pine.LNX.4.58.0408260919380.2304@ppc970.osdl.org> <20040826172029.GP5733@mail.shareable.org> <Pine.LNX.4.58.0408261021250.2304@ppc970.osdl.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.44.0408261315240.27909-100000@chimarrao.boston.redhat.com>
+Return-path: <reiserfs-list-return-20741-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.58.0408261021250.2304@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Rik van Riel <riel@redhat.com>
-Cc: jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Jamie Lokier <jamie@shareable.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, Alex Zarochentsev <zam@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-El Thu, 26 Aug 2004 13:16:22 -0400 (EDT) Rik van Riel <riel@redhat.com>=
- escribi=F3:
+On Thu, Aug 26, 2004 at 10:29:45AM -0700, Linus Torvalds wrote:
+> >         /dev/hda/part1/ <- the filesystem inside partition 1
+> 
+> I don't think you can do that. The kernel has no idea how to mount the
+> filesystem.
 
-> So all I need to do is "cat /bin | gzip -9 > /path/to/backup.tar.gz" =
-?
-
-/bin could be separated (like linus said) but cat /bin/.compound could =
-do
-it. This is the /etc/passwd Hans' example, I think:
-
-"If /new_syntax_access_path/big_directory_of_small_files/.glued is a pl=
-ugin that
-aggregates every file in big_directory_of_small_files with a delimiter
-separating every file within the aggregation, then one can simply type =
-emacs
-/new_syntax_access_path/big_directory_of_small_files/.glued, and the fi=
-lesystem
-has done all the work emacs needs to be effective at this. Not a line o=
-f emacs
-needs to be changed."
--
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+... and what's more, fundamental thing for mount is fs type, what to
+do with device(s) (if any) and any other arguments is the filesystem's
+business.
