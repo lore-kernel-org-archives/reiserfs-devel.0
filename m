@@ -1,66 +1,65 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: Error Code 255 and "Permission Denied"
-Date: Tue, 7 May 2002 09:12:17 +0400
-Message-ID: <20020507091217.E6541@namesys.com>
-References: <scd69d55.074@gwd.albion.edu> <3CD725AC.6000708@mb.tu-ilmenau.de>
+Subject: Re: BTW: 2.4.19-patches-to-come?
+Date: Tue, 7 May 2002 09:22:07 +0400
+Message-ID: <20020507092207.A6678@namesys.com>
+References: <3CD72AB1.6010607@netscape.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10274-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10275-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <3CD725AC.6000708@mb.tu-ilmenau.de>
+In-Reply-To: <3CD72AB1.6010607@netscape.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: Daniel Christiansen <christiansen@albion.edu>, reiserfs-list <reiserfs-list@namesys.com>, Chris Mason <mason@suse.com>
+To: Manuel Krause <manuelkrause@netscape.net>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
 Hello!
 
-On Tue, May 07, 2002 at 02:54:04AM +0200, Manuel Krause wrote:
+On Tue, May 07, 2002 at 03:15:29AM +0200, Manuel Krause wrote:
 
-> >Hm. Do you have write cache enabled on your harddrive? That may explain
-> >your problems (and yes, most of drive manufacturers do enable write
-> >caching
-> >by default).
-> Oleg, do you really think a dumb-crashing-Windows to be a reason?? What 
+> 1.) the deleted/truncated/completed-files-on-mount at least
+>     printed in the kernel logs, at best with the real filename
 
-Yes. Sometimes Windows gets partitioning in a wrong way and writes to
-incorrect places on HDD. (BTW, see this list archive for past month,
-there were told at least two stories on Windows corrupting innocent Linux
-filesystems, once on a read-only partition.)
-Filesystems usually do not write garbage in metadata blocks by themselves.
+Huh??
 
-> version do you run on your disks? I have a Win98 spread over the 
+>     -- as afterwards they are not retrievable --
 
-Version of what? I do run reiserfs of a lot of different kinds, including
-testing my own patches which are very dangerous things sometimes ;)
+Sure. Files are deleted already. How do you plan to retrieve deleted files?
+(not using backups, that's it).
 
-> partitions of my 2 disks but the only things I get from a 
-> crashed=powered-off Win98 are many-many unusable files in Win98 -- not 
-> affecting my Linux system.
+>     That's a security reason -- whoever can trigger a crash
+>     with various methods (I know the admin should take care
+>     against this case... but on my home sytem I'd like to know
+>     that info, too) but to get back the file from backups in
+>     case... who knows it before a
+>     crash... ? Am I missing something?
 
-Lucky you. There are people who are not that lucky.
+This is unclear to me. You mean to crash a system to get a copy of deleted file,
+or to crash a system to delete a file? Both things sound very unlikely.
 
-> Maybe it's the kernel <-reiserfs-sub-version-> version Daniel runs at 
-> the moment? Oleg?
+> 2.) a disk/drive/partition distinction in reiserfs related
+>     messages -- Oleg, you promised it to get real and best
+>     would be a real "patch" !
 
-The 2.4.18-6mdk? I think it should have standard reiserfs stuff as in
-vanilla 2.4.18.
+Yes, I remember.
 
-> Or is it somekind of connected to Chris Masons thread "2.4.19-pre7 / 
-> corruption on unwanted reboot"??? If Chris and Jens found bugs on IDE 
+> 3.) a hint on how to turn on/off data-journaling for "some"
+>     of our existing reiserfs partitions if it exists at all
+>     for now and why it could be needed in some cases?!.
 
-I doubt that Mandrake people are that stupid to include not tested very much
-experimental code in their recommended kernels.
+Data journaling is available only in form of a separate patch from Chris for
+now.
 
-> interaction with ReiserFS they should really put out a patch soon... ;-)
+> 4.) a hint why there is iicache code in the latest
+>     speedup-compound-patch (so that the latest iicache patch
+>     would not apply)
 
-Sure. But for now we only had one bug report, and 2.4.19-pre7 was around for
-quite a while already.
-If you know for a way to reproduce on certain common IDE hardware, we are
-interested.
+Hm? What do you mean by latest speedup-compound-patch? I know Chris does not
+believe iicache should be good to use, because similar functionality (with
+less overhead) can be achieved by pagecache.
 
 Bye,
     Oleg
