@@ -1,38 +1,35 @@
-From: Chris Mason <mason@suse.com>
+From: Jure =?UTF-8?B?UGXEjWFy?= <pegasus@nerv.eu.org>
 Subject: Re: online fsck
-Date: Thu, 22 Apr 2004 09:34:14 -0400
-Message-ID: <1082640853.12989.54.camel@watt.suse.com>
+Date: Thu, 22 Apr 2004 16:24:02 +0200
+Message-ID: <20040422162402.0b2f3dd6.pegasus@nerv.eu.org>
 References: <20040422150042.5b49c6c3.pegasus@nerv.eu.org>
+	<1082640853.12989.54.camel@watt.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18151-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-18152-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040422150042.5b49c6c3.pegasus@nerv.eu.org>
+In-Reply-To: <1082640853.12989.54.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Jure =?iso-8859-2?Q?Pe=E8ar?= <pegasus@nerv.eu.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="macroman"
+To: reiserfs-list@namesys.com
 
-On Thu, 2004-04-22 at 09:00, Jure Pe=E8ar wrote:
-> Hi all,
->=20
-> Is it theoretically posible?
->=20
-> Like, does it need a drastic redesing of reiserfs or just sufficient $$
-> directed to the team to be implemented?
->=20
->=20
-> Because i think that reiserfsck --check in 12h + --rebuild-tree in 18h is
-> still waaay too much downtime for a 500gb mail server...
-
-Online check is easy, just use lvm or evms to make a snapshot and then
-check the snapshot.  Online rebuild tree would be impossible by
-definition (since it throws out everything above the leaf level and
-rebuilds).
-
--chris
-
-
+T24gVGh1LCAyMiBBcHIgMjAwNCAwOTozNDoxNCAtMDQwMApDaHJpcyBNYXNvbiA8bWFzb25Ac3Vz
+ZS5jb20+IHdyb3RlOgoKPiBPbmxpbmUgY2hlY2sgaXMgZWFzeSwganVzdCB1c2UgbHZtIG9yIGV2
+bXMgdG8gbWFrZSBhIHNuYXBzaG90IGFuZCB0aGVuCj4gY2hlY2sgdGhlIHNuYXBzaG90LiAgT25s
+aW5lIHJlYnVpbGQgdHJlZSB3b3VsZCBiZSBpbXBvc3NpYmxlIGJ5Cj4gZGVmaW5pdGlvbiAoc2lu
+Y2UgaXQgdGhyb3dzIG91dCBldmVyeXRoaW5nIGFib3ZlIHRoZSBsZWFmIGxldmVsIGFuZAo+IHJl
+YnVpbGRzKS4KCldlbGwgeWVzLCBvbmUgY2FuIGRvIC0tY2hlY2sgb24gcm8gbW91bnRlZCBmcy4K
+Ckkgd2FzIHRoaW5raW5nIGFib3V0IGZpeGluZyB0aGluZ3MgdXAgb24gYW4gYWN0aXZlIHJ3IGZp
+bGVzeXN0ZW0gLi4uIHdoZXJlCmlmIHNvbWV0aGluZyBpcyBmb3VuZCB0aGF0IGRvZXMgbm90IGxv
+b2sgcmlnaHQsIGl0IGlzIHJlcG9ydGVkIGFuZCBmaXhlZCBvbgp0aGUgZmx5LgoKCldoYXQgaGFw
+cGVuZWQgaGVyZSBsYXN0IHdlZWsgLi4uIHBvd2VyIHdlbnQgb3V0IGp1c3QgZm9yIG91ciBkaXNr
+IGVuY2xvc3VyZXMKLi4uIHdoZW4gaXQgY2FtZSBiYWNrLCBldmVyeXRoaW5nIGxvb2tlZCBvayBh
+bmQgd2Ugd2VudCBiYWNrIGludG8gYWN0aW9uIC4uLgpob3dldmVyLCBhIGNvdXBsZSBob3VycyBs
+YXRlciB0aGUgYm94IHN0YXJ0ZWQgZmlsbGluZyB0aGUgbG9ncyB3aXRoIHJlaXNlcmZzCmVycm9y
+cyAoUEFQLTU2NjAsIFBBUC0xMjM1MCwgdnMtNTE1MCwgdnMtNTM1MCwgdnMtNTM1NSwgdnMtMTMw
+NTAsIHZzLTEzMDYwLAouLi4pIGFuZCBjcmFzaGVkIGFmdGVyIGFib3V0IDI1bWluLgoKU28gaXMg
+aXQgdGhlb3JldGljYWxseSBwb3NpYmxlIHRvIGZpeCBzdHVmZiBsaWtlIHRoZXNlIG9uIHRoZSBm
+bHk/CgotLSAKCkp1cmUgUGXEjWFyCg==
