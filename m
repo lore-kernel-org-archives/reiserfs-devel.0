@@ -1,67 +1,62 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Re: datalogging and quota patches port to 2.4.21-pre6
-Date: Sat, 22 Mar 2003 00:58:45 +0100
-Message-ID: <3E7BA735.5090604@mb.tu-ilmenau.de>
-References: <20030320181301.A7170@namesys.com>
+From: Alex Malinovich <demonbane@the-love-shack.net>
+Subject: Re: reiserfsck "block is in the tree already" error
+Date: 21 Mar 2003 20:44:50 -0600
+Message-ID: <1048301090.925.1.camel@Thief>
+References: <1048266314.8146.18.camel@Thief>
+	 <200303212014.29775.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13326-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-AQLtBikDfi5UFbNv0akq"
+Return-path: <reiserfs-list-return-13328-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200303212014.29775.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On 03/20/2003 04:13 PM, Oleg Drokin wrote:
-> Hello!
-> 
->    Ok, so I ported Chris' patches to 2.4.21-pre6 (should appear on your
->    kernel.org mirror soon, have appeared in bk already).
-> 
->    Patches are at
->    ftp://namesys.com/pub/reiserfs-for-2.4/testing/data-logging-and-quota-2.4.21-pre6
->    They are intend to replace similar named patches from Chris' ftp directory at
->    ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.21
-> 
->    Also if you want to try these patches with 2.4.21-pre5-ac3,
->    you only need to apply my 2.4.21-pre6 versions of 05-2.4.21-pre6-data-logging-36.diff.gz
->    and 08-2.4.21-pre6-reiserfs-quota-26.diff.gz (but I have not tried this configuration yet).
-> 
->    Enjoy.
-> 
-> Bye,
->     Oleg
-> 
+--=-AQLtBikDfi5UFbNv0akq
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Hi Oleg,
+On Fri, 2003-03-21 at 11:14, Vitaly Fertman wrote:
+> Hi,=20
+>=20
+> On Friday 21 March 2003 20:05, Alex Malinovich wrote:
+> > I've been trying to rebuild the tree on a reiserfs partition that seems
+> > to have gotten corrupted during a resize operation. Unfortunately, I've
+> > gone from having one or two directories not accessible to having the
+> > whole partition not accessible now. Everything seems to go ok until pas=
+s
+> > 2. At this point I start getting this error:
+> >
+> > "do_pass_2: The block (4901823) is in the tree already. Should not
+> > happen."
+>=20
+> It seems that reiserfsck was built on another computer, which has some=20
+> other libs version, not statically. Would you try to rebuild it and try=20
+> again.
 
-GRIN !!!  I really would like to enjoy these, but you seem to be far 
-away in future. Still no "official" patch seems to be out -- at least 
-for me on here. (Yes, I'll wait and would not use bk.)
+I just downloaded the source and built it and it worked! Thank you VERY
+much!
 
-Have your previously pending patches been included into 2.4.21-pre6
-(they are: 02-trivial1.diff
-            03-more-mount-checks.diff
-            01-journal-overflow-fix.diff
-  from    ftp://ftp.namesys.com/pub/reiserfs-for-2.4/testing :
-           iget5_locked_for_2.4.21-pre5-datalogging.diff.gz
-  and posted to our ML @ "Wed, 12 Mar 2003 10:46:42 +0300" :
-             direct-io-fix-II.diff
-) ?
+--=20
+Alex Malinovich
+Support Free Software, delete your Windows partition TODAY!
+Encrypted mail preferred. You can get my public key from any of the
+pgp.net keyservers. Key ID: A6D24837
 
-My question only results from beeing unable to get them all applied to 
-2.4.21-pre5 with data-logging without rejects and me feeling unsafe to 
-adjust them manually.
+--=-AQLtBikDfi5UFbNv0akq
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
-Thanks,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.1 (GNU/Linux)
 
-Manuel
+iD8DBQA+e84iBPYwh6bSSDcRAto6AJ9xS9uDMp+TGzSgoDlhzDKswouiYgCfUmWN
+jDG9XEpwCFTMgHGar8KAijo=
+=8TbG
+-----END PGP SIGNATURE-----
 
-
---
-If we'll never find peace, freedom and democracy with our souls -- how 
-can our world? We only need to begin. Yes, first step first, in peace...
+--=-AQLtBikDfi5UFbNv0akq--
 
