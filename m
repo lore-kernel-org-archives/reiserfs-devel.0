@@ -1,40 +1,36 @@
 From: Bill Davidsen <davidsen@tmr.com>
 Subject: Re: 2.6.9-mm1
-Date: Mon, 25 Oct 2004 15:52:49 -0400
-Message-ID: <417D5991.3050003@tmr.com>
-References: <20041022032039.730eb226.akpm@osdl.org><20041022032039.730eb226.akpm@osdl.org> <4179425A.3080903@namesys.com>
+Date: Mon, 25 Oct 2004 16:07:11 -0400
+Message-ID: <417D5CEF.8080005@tmr.com>
+References: <417B1574.4090406@slaphack.com><417B1574.4090406@slaphack.com> <417B3A34.2060306@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22176-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22177-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4179425A.3080903@namesys.com>
+In-Reply-To: <417B3A34.2060306@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Hans Reiser <reiser@namesys.com>
-Cc: Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: David Masover <ninja@slaphack.com>, =?ISO-8859-1?Q?Markus_T=F6rnqvi?= =?ISO-8859-1?Q?st?= <mjt@nysv.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
 Hans Reiser wrote:
+> David Masover wrote:
+> 
+>>
+>> Some people don't care about speed but need space.  I'd leave them in on
+>> general principle, even if no one wants them now.
+> 
+> 
+> Software design is usually improved by identifying features that aren't 
+> worth much, and removing them from the interface and burying them where 
+> average users don't see them (or dumping them completely).  Interface 
+> clutter has a cost.
 
-> I would like to encourage its inclusion as an experimental filesystem 
-> BEFORE vendors ship it. I think first putting experimental stuff in the 
-> kernels used by hackers makes sense. I think it creates more of a 
-> community.
-
-I think -mm *is* what is run by hackers. That said, do you really think 
-that it is stable with 4k stack? (that's a real question, it wasn't for 
-me in 2.6.8-mm? when I briefly tried it).
-
-I see the major benefits to people running heavy i/o load, like database 
-and servers. And those are the users with the most to lose if it still 
-has residual learning experiences.
-
-I do think that akpm is capable of deciding when it should go in without 
-all this politicing, and I doubt he or Linus care if it makes a vendor 
-kernel first, considering all the things in vendor kernels which NEVER 
-get to mainline.
+We already have a section of odd things a user might want to do on a 
+small, embedded, or special use. That might be a good place to put it.
 
 -- 
     -bill davidsen (davidsen@tmr.com)
