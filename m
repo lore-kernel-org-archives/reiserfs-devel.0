@@ -1,41 +1,60 @@
-From: Jamie Lokier <jamie@shareable.org>
+From: Linus Torvalds <torvalds@osdl.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 22:00:27 +0100
-Message-ID: <20040826210027.GD5733@mail.shareable.org>
-References: <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <20040826100530.GA20805@taniwha.stupidest.org> <20040826110258.GC30449@mail.shareable.org> <412E06B2.7060106@pobox.com> <1093552705.5678.96.camel@krustophenia.net>
+Date: Thu, 26 Aug 2004 14:13:33 -0700 (PDT)
+Message-ID: <Pine.LNX.4.58.0408261402400.2304@ppc970.osdl.org>
+References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com><Pine.LNX.4.58.0408261101110.2304@ppc970.osdl.org>
+ <45010000.1093553046@flay> <Pine.LNX.4.58.0408261348500.2304@ppc970.osdl.org>
+ <57730000.1093554054@flay>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20804-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20807-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1093552705.5678.96.camel@krustophenia.net>
+In-Reply-To: <57730000.1093554054@flay>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lee Revell <rlrevell@joe-job.com>
-Cc: Will Dyson <will_dyson@pobox.com>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: "Martin J. Bligh" <mbligh@aracnet.com>
+Cc: Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Lee Revell wrote:
-> Same here.  This always seemed like something the kernel should be able
-> to handle.  It seems to me that if reiser4 had been available at the
-> time the Gnome and KDE developers would not have needed to do this.
 
-reiser4 has prompted the discussion again, but it doesn't provide the
-virtual filesystem capabilities that we're talking about, which Gnome
-and KDE implement in userspace.  The FUSE project is much more
-relevant for that.
 
-We had file-as-directory discussions years ago, and 5 years ago I was
-experimenting with doing virtual filesystems with that capability over NFS.
+On Thu, 26 Aug 2004, Martin J. Bligh wrote:
+> 
+> I think what you're saying is that they'd both return positive, right?
 
-podfuk offered something close to Gnome and KDE but in kernel space:
-virtual filesytems accessible through the kernel, but it didn't get
-too popular.  It was based on Midnight Commander's VFS (which has
-evolved into Gnome's VFS), using the CODA filesystem interface to
-provide the kernel hooks.  It had some problems, and was a bit fiddly
-to use.  We still don't have something that's particularly nice to use
-for ordinary users.
+No. I'd say that a file would look like a file, even if it has attributes.
 
--- Jamie
+It wouldn't show as a directory at all - unless you start looking at 
+attributes. Because it really _is_ a file, and it's "directory aspect" is 
+really nothing but a way to make its named streams visible.
+
+So you really should consider it a perfectly regular file, and so only 
+S_ISREG() will return true, and S_ISDIR() will return false.
+
+Think of it this way: when you add a named attribute to current files 
+using the xattr interfaces, do you start thinking of the file as a 
+directory? No. Even though it actually now is a starting point for finding 
+more information.
+
+It's just that thanks to it's directory aspect, people and apps that 
+_care_ about the attributes suddenly can trivially access them. You can 
+access them in shell scripts, you can access them in programs, you can 
+access them in perl. With no special knowledge necessary.
+
+Remember: in the file-as-directory model, we're always talking about just 
+_one_ object. That one object just happens to have namd streams or 
+attributes or whatever you want to call them associated with it, and you 
+can _see_ them through the normal directory interfaces. But that doesn't 
+really make the object a "directory". It's still a file.
+
+In other words, the "directory" part is just a _view_ into the file. A
+view that potentially exposes a lot _more_ of the file, but we're still
+talking about the same file.
+
+In contrast, a S_IFDIR-like _directory_ is something else entirely. When 
+you view the things in that, you aren't looking at data "inside" the 
+directory. You're looking at somethign totally independent.
+
+		Linus
