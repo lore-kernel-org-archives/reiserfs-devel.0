@@ -1,73 +1,69 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: metas Permission Denied
-Date: Fri, 30 Apr 2004 08:17:43 -0400
-Message-ID: <1083327462.30344.327.camel@watt.suse.com>
-References: <E38393BE-9950-11D8-B39A-000A95C88606@aoc.nrao.edu>
-	 <16528.46352.173184.528623@laputa.namesys.com>
-	 <39CF0546-99EE-11D8-8CFE-000A95C88606@aoc.nrao.edu>
-	 <16529.9818.916980.360020@laputa.namesys.com>
-	 <200404291614.i3TGEoAI017900@turing-police.cc.vt.edu>
-	 <16529.11188.555986.964130@laputa.namesys.com>
-	 <1083256305.30344.284.camel@watt.suse.com>  <4091E1FC.5080502@namesys.com>
+From: Walter Landry <wlandry@ucsd.edu>
+Subject: Re: reiser4 non-free?
+Date: Fri, 30 Apr 2004 08:20:21 -0400 (EDT)
+Message-ID: <20040430.082021.71090903.wlandry@ucsd.edu>
+References: <20040424193246.GA2490@raptus.homelinux.org>
+	<4091DAFE.5030809@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18315-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18316-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4091E1FC.5080502@namesys.com>
+In-Reply-To: <4091DAFE.5030809@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Nikita Danilov <Nikita@Namesys.COM>, Valdis.Kletnieks@vt.edu, reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: Text/Plain; charset="us-ascii"
+To: reiser@namesys.com
+Cc: cavok@tiscali.it, sliedes@cc.hut.fi, ed@debian.org, debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-On Fri, 2004-04-30 at 01:19, Hans Reiser wrote:
-> Chris Mason wrote:
+Hans Reiser <reiser@namesys.com> wrote:
+> Someone posted the following on slashdot, presumably a debian someone:
 > 
-> >On Thu, 2004-04-29 at 12:22, Nikita Danilov wrote:
-> >  
-> >
-> >>Valdis.Kletnieks@vt.edu writes:
-> >> > On Thu, 29 Apr 2004 19:59:22 +0400, Nikita Danilov said:
-> >> > 
-> >> > > chmod u+rx backup/fsplit.c
-> >> > > 
-> >> > > "x" bit is necessary for lookups, and "r" bit---for readdir.
-> >> > 
-> >> > This is going to be *such* a non-starter - there's many decades of
-> >> > "C files are mode 644 and executables are 755" tradition that this
-> >> > will fly against.  What this basically implies is that the 'execute'
-> >>
-> >>Eh? What I described is precisely decades old meaning of rwx bits for
-> >>directories.
-> >>
-> >>Problem is that we have to fit objects that are both regular files and
-> >>directories into access control scheme that wasn't designed for such a
-> >>mix. I don't see better solution short of inventing new bit(s).
-> >>    
-> >>
-> >
-> >Please forgive me for jumping into the end of a thread without reading
-> >the whole thing, but it seems like the r bit should be sufficient here. 
-> >If you can read the file, you should be able to read the metas.
-> >
-> >x should be for execution of the file...
-> >
-> what if the file/directory contains "real" files which are not metas, 
-> and it also has a file body?  This is possible in reiser4.
+>     Nobody's saying that your proprietary hardware will cease to work in
+>     Debian. The packages will still exist; they'll just be in the
+>     "non-free" section, separated out so that people who don't want any
+>     non-free software can omit that section from their sources.list
+>     file. Non-free packages are technically not part of Debian, but if
+>     you have a non-free line in your sources.list, there's no difference
+>     whatsoever in how you use them.
+> 
+> So hopefully, Debian can print out some nice warning that Reiser4 is not 
+> plagiarizable, and if the user indicates that they still want to use it 
+> anyway, they can go forward.
 
-Well, that would explain needing the execute bit ;-)
+The largest problem is that with the "clarification", you seem to have
+changed the license, making it slightly more restrictive than the
+plain old GPL.  The combination of Reiser4 and the kernel triggers GPL
+Section 2.  That means that Debian will not be able to distribute
+Reiser4 at all.
 
-I guess this is a matter of taste, but to me, the metas are really part
-of the file.  If you can read the file you should be able to at least
-read the listing of metas, for the same reasons that you can read the
-file size and atime/mtime etc.  
+If you changed the clarification to a request, then Debian would have
+no problems distributing it, even with the blurb.
 
-This could hold true for /somedir/metas as well.
+> I find Debian's aggressive behavior toward myself, and especially 
+> Richard Stallman and his GFDL, to be inappropriate and ungrateful, but I 
+> also understand that Debian is striving to define its morality, and that 
+> much of the world shares its rather asian attitude towards whether it is 
+> acceptable to not credit others for their contributions to science. I do 
+> not. I think the western approach of rigor in attribution has been of 
+> great value in stimulating innovation over the centuries, and think it 
+> should be applied to free software as much as it was to free science 
+> research.
 
--chris
+There are many, many software authors who have given away extremely
+useful things for no cost.  That doesn't mean that Debian will
+distribute those things.
 
+> I don't expect to convince Debian of this, especially not after your 
+> vote that you recently had, but it would be pleasant if users who don't 
+> mind attribution are able to select reiser4 if they want it.
 
+Make the license GPL-compatible, and Debian probably will make it
+available.
+
+Regards,
+Walter Landry
+wlandry@ucsd.edu
 
 
