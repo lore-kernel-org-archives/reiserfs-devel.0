@@ -1,81 +1,58 @@
-From: "John Stoffel" <stoffel@lucent.com>
+From: Christophe Saout <christophe@saout.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 15:32:37 -0400
-Message-ID: <16686.15061.549250.611694@gargle.gargle.HOWL>
-References: <20040826154446.GG5733@mail.shareable.org>
-	<Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com>
-	<20040826165351.GM5733@mail.shareable.org>
+Date: Thu, 26 Aug 2004 21:33:35 +0200
+Message-ID: <1093548815.13881.10.camel@leto.cs.pocnet.net>
+References: <20040824202521.GA26705@lst.de>	<412CEE38.1080707@namesys.com>
+	 <20040825152805.45a1ce64.akpm@osdl.org>	<412D9FE6.9050307@namesys.com>
+	 <20040826014542.4bfe7cc3.akpm@osdl.org>  <412DAC59.4010508@namesys.com>
+	 <1093548414.5678.74.camel@krustophenia.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20769-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-yKABj20cj8+xmV23deNV"
+Return-path: <reiserfs-list-return-20771-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826165351.GM5733@mail.shareable.org>
+In-Reply-To: <1093548414.5678.74.camel@krustophenia.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Rik van Riel <riel@redhat.com>, Christophe Saout <christophe@saout.de>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Lee Revell <rlrevell@joe-job.com>
+Cc: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+
+--=-yKABj20cj8+xmV23deNV
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+Am Donnerstag, den 26.08.2004, 15:26 -0400 schrieb Lee Revell:
+
+> > Well, in V4, you can easily compose a plugin from plugin methods of=20
+> > other plugins, write a little piece of code with the one thing you want=
+=20
+> > different, and add it in.  Disk format changes, no big deal, add a new=20
+> > disk format plugin, or a new item plugin, or a new node plugin, etc.,=20
+> > and you got your new format.
+>=20
+> OK, real world example.  My roommate has an AKAI MPC-2000, a very
+> popular hardware sampler from the 90's.  The disk format is known,there
+> are a few utilities to edit the disks on a PC and extract the PCM
+> samples, but there are no tools to mount it on a modern PC.  Are you
+> saying that, since I know the MPC disk format, I could write a reiser4
+> plugin to mount an MPC drive?
+
+No, the underlying storage must be a reiser4-like tree. If you want to
+mount an MPC drive, write an MPC filesystem.
 
 
-Jamie> Rik van Riel wrote:
->> And if an unaware application reads the compound file
->> and then writes it out again, does the filesystem
->> interpret the contents and create the other streams ?
+--=-yKABj20cj8+xmV23deNV
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
 
-Jamie> Yes, exactly that.  The streams are created on demand of
-Jamie> course, and by userspace helpers when that's appropriate which
-Jamie> I suspect it almost always is.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
 
-So how would a program that converts between a JPEG file (with exif
-data) and a PNG work, such as ImageMagick?  Are we proposing to teach
-the VFS (or worse yet each filesystem) how to do this?  
+iD8DBQBBLjsPZCYBcts5dM0RAj+EAJ9EIpu53LIhCzS5GbDdW1E9DtJEwgCfY+8R
+pLJnt66pMHizzrwdE7WLzr8=
+=YpfM
+-----END PGP SIGNATURE-----
 
-I've been following this discussion a bit and I'm not sure that I've
-actually seen any concrete examples of where this is a *good* thing to
-have.  People talk about only having to modify 20 bytes at a time
-instead of reading and writing 1mb of data.  Isn't that what mmap()
-does?
+--=-yKABj20cj8+xmV23deNV--
 
-Now I can sorta understand the idea that having a directory look like
-a file is neat, and certainly simplifies some aspects, but I think
-that going all the way down to the logical conclusion here is a bit
-silly.
-
-To use the principle of blowing things up to make them very large or
-very small, what happens if I decide that the best idea is to make all
-files just be directories which contain single byte files?  Isn't that
-the logical extreme here?  So my 1mb JPEG file is not just some image
-data and header info in multiple files, but it's really just 1
-million (ok 1024 * 1024) individual files that the VFS knows how to
-put together.  Seems like the logical extreme.  Oh wait, maybe we
-should be exposing a single file per bit instead! 
-
-From my point of view, there lies madness.  As Rik pointed out, how do
-backup and restore tools work with this stuff?  Most people could care
-less about how their data is organized, but they certainly care when
-they can't restore it from backups.  
-
-I'd really like to see a concrete example from Hans or other
-proponents about why this makes things easier/faster/better to do.
-Mostly, I've just seen "proof by vigorous handwaving" that it's a good
-thing.
-
-In alot of ways, I think people are going in the wrong direction, you
-want to excapsulate and hide the details more, not expose them.
-That's what a good API does, it hides the details while giving you a
-rich set of semantics to manage your data.  
-
-God knows I'm not smart enough or driven enough to actually come up
-with my own ideas, but I certainly haven't seen anyone else (even
-Linus) come up with an earth shattering arguement to say why this is
-the right move to make.
-
-As Linus says, most of the OS's job is to mediate access to
-objects/data.  Why do we want to expose such low level data then?
-
-John
-
-   John Stoffel - Senior Unix Systems Administrator - Lucent Technologies
-	 stoffel@lucent.com - http://www.lucent.com - 978-952-7548
