@@ -1,51 +1,72 @@
-From: berthiaume_wayne@emc.com
-Subject: RE: Data Shredding on a Journal Filesystem
-Date: Thu, 26 Sep 2002 13:20:51 -0400
-Message-ID: <93F527C91A6ED411AFE10050040665D0049C0085@corpusmx1.us.dg.com>
+From: "=?iso-8859-1?Q?arthur.chereau?=" <arthur.chereau@voila.fr>
+Subject: =?iso-8859-1?Q?Reiserfs/emacs_incompatibility/bug_=3F?=
+Date: Sat, 28 Sep 2002 11:28:52 +0200
+Message-ID: <H356C4$4F46E50E852BF25DA1E850A48426FCDF@voila.fr>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11554-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11555-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: green@namesys.com
-Cc: reiserfs-list@namesys.com
+To: =?utf-8?Q?reiserfs-list?= <reiserfs-list@namesys.com>
 
-	Hi Oleg.
+Hi,
 
-	I'm using the standard journaling from 2.4.19 - metadata for
-recovery from power failures. We are also  using tails at this time. I have
-been investigating the use of -o notails as a performance improvement;
-however, I need to weigh that against disk space usage as well.
+I've noted a strange behavior of emacs when used with the Reiserfs filesystem.
+This doesn't seem to happen with the other filesystems, so it may be related to Reiserfs.
 
------Original Message-----
-From: Oleg Drokin [mailto:green@namesys.com]
-Sent: Wednesday, September 25, 2002 3:30 AM
-To: berthiaume_wayne@emc.com
-Cc: reiserfs-list@namesys.com
-Subject: Re: [reiserfs-list] Data Shredding on a Journal Filesystem
+If you use emacs, here are how to reproduce this:
 
+The "backup-by-copying" option tells emacs to make a backup file by copying the
+original file, thus preserving the original file's metadata. Let's have the following
+.emacs:
+$ cat .emacs
+(setq backup-by-copying t)
+$
 
-Hello!
+The correct bahavior is:
+$ emacs test
+$ ls -i test*
+2971971 test
+$ emacs test
+$ ls -i test*
+2971971 test 2971972 test~
+$ emacs test
+$ ls -i test*
+2971971 test 2971973 test~
 
-On Tue, Sep 24, 2002 at 05:12:03PM -0400, berthiaume_wayne@emc.com wrote:
+This is what is observed on an ext2 fs, for instance.
 
-> 	Hello fellow ReiserFS fans. I'm in search of a data shredder for use
-> on reiserfs and am wondering if anyone knows of one. It would need to
-> effectively remove any trace both in the journal and on the disk itself
-any
-> and all data pertaining to a file. I'm not sure, but I thought at one time
-> Hans was talking about something this himself. I have looked at shred()
-but
-> it does not work with journalling filesystems.
+Now let's do the same on a reiserfs filesystem:
+$ emacs test
+$ ls -i test*
+1505188 test
+$ emacs test
+$ ls -i test*
+1505190 test 1505189 test~
+$ emacs test
+$ ls -i test*
+1505191 test 1505189 test~
 
-shred should work just fine with reiserfs in case you did not
-enable data journaling mode and you have tails disabled.
-The only thing that may be left on disk is filename and 
-blocks in which file itself was stored.
+Here the backup file metadata are preserved, instead of the original file ones.
 
-Bye,
-    Oleg
+When not setting the backup-by-copying option, the file metadata are sometimes reset to
+644, which can be annoying for scripts.
+I couldn't find a way to reproduce that behavior at 100%.
+
+This happens with the latest emacs from cvs on a reiseirfs 3 filesystem.
+This never happens with an emacs-like tool like jed.
+
+RMS doesn't think it's a bug in emacs as it works on other filesystems.
+
+So maybe emacs handles moves/renames in way that:
+- reveals a bug in reiserfs
+- doesn't work well with reiserfs and emacs developpers are not aware of that
+
+------------------------------------------
+
+Faites un voeu et puis Voila ! www.voila.fr 
+
