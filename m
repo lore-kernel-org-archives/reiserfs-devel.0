@@ -1,37 +1,71 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: praise the reiser4 developers!
-Date: Fri, 09 Apr 2004 23:05:34 -0700
-Message-ID: <40778EAE.2090907@namesys.com>
-References: <1081542563.14002.1.camel@redeeman.linux.dk>
+Subject: Re: Resier Fragmentation Effects (was compression vs performance)
+Date: Fri, 09 Apr 2004 23:09:28 -0700
+Message-ID: <40778F98.8030401@namesys.com>
+References: <3DF9165145FACB4C96977FF650C1E9040C469DBF@its-mail1.its.corp.gwl.com>	 <40763A44.4040107@namesys.com> <1081534415.16461.10.camel@watt.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17826-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17827-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1081542563.14002.1.camel@redeeman.linux.dk>
+In-Reply-To: <1081534415.16461.10.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: redeeman@metanurb.dk
-Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: Chris Mason <mason@suse.com>
+Cc: "Burnes, James" <james.burnes@gwl.com>, Stewart Smith <stewart@flamingspork.com>, Tom Vier <tmv@comcast.net>, Scott Young <youngs1@sunyit.edu>, reiserfs-list@namesys.com
 
-Redeeman wrote:
+Chris Mason wrote:
 
->i must say! you own!
->i just tested reiser4, and it was shocking..
+>On Fri, 2004-04-09 at 01:53, Hans Reiser wrote:
+>  
 >
->normally when i sync my portage, the disk noises and it takes ages. with
->reiser4 it takes no time, and the disk doesent noise at all. also, now
->it is my connection (50kb/s) that limits the speed
+>>Burnes, James wrote:
+>>
+>>    
+>>
+>>>I thought nearly all filesystems designed since Berkeley FFS were nearly
+>>>immune to fragmentation problems.
+>>>
+>>>After reading the following analysis at Harvard, it seems that
+>>>fragmentation is still a problem.
+>>>
+>>>http://www.eecs.harvard.edu/~keith/research/tr94.html
+>>>
+>>> 
+>>>
+>>>      
+>>>
+>>Yeah, I wish I had read this in 94.  V3 suffers from the same problems 
+>>as FFS does as described in the abstract (all that I read, sorry about 
+>>that, I really am a bit busy, so unless someone suggests I should read 
+>>more.... ) .  V4 cures it though.
+>>    
+>>
 >
->THIS IS WONDERFUL!!!!!!!!!!!!!!!!1
+>I put out some patches last week that try to deal with this in v3. 
+>
+Describe the algorithmic changes please.
+
+> Take
+>a look through the archives for mail from me.
+>
+>The v3 patches are an attempt to do better under common workloads.  I
+>think they are a big improvement, and I doubt there's much more that can
+>(or should) be done beyond simple tweaking.
+>
+>v4 does a better job, and even if it doesn't, it should at least have
+>enough info in the metadata such that any problems can be fixed.
+>
+>-chris
+>
+>
 >
 >
 >  
 >
-thanks so kindly.  I think reiser4 is probably especially effective for 
-laptops.
+
 
 -- 
 Hans
