@@ -1,72 +1,93 @@
-From: "Burnes, James" <james.burnes@gwl.com>
-Subject: reiser4 semantics / BeFS Architect(s) Query Resolution
-Date: Mon, 30 Aug 2004 08:32:55 -0600
-Message-ID: <3DF9165145FACB4C96977FF650C1E9040C46A3D1@its-mail1.its.corp.gwl.com>
+From: "John Stoffel" <stoffel@lucent.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Mon, 30 Aug 2004 11:00:32 -0400
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <16691.16656.726300.438533@gargle.gargle.HOWL>
+References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com>
+	<Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org>
+	<20040828170515.GB24868@hh.idb.hist.no>
+	<Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org>
+	<4131074D.7050209@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-21110-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <4131074D.7050209@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>, Will Dyson <will_dyson@pobox.com>
-Cc: Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Linus Torvalds <torvalds@osdl.org>, Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com, Al Viro <viro@parcelfarce.linux.theplanet.co.uk>
 
-(comments below)
 
-> -----Original Message-----
-> From: Hans Reiser [mailto:reiser@namesys.com]
-> Sent: Saturday, August 28, 2004 3:55 AM
-> To: Will Dyson
-> Cc: Andrew Morton; hch@lst.de; linux-fsdevel@vger.kernel.org; linux-
-> kernel@vger.kernel.org; flx@namesys.com; torvalds@osdl.org; reiserfs-
-> list@namesys.com
-> Subject: Re: silent semantic changes with reiser4
->=20
-> I think there are two ways to analyze the code boundary issue.  One is
-> "does it belong in the kernel?"  Another is, "does it belong in the
-> filesystem. and if so should name resolution in a filesystem be split
-> into two parts, one in kernel, and one in user space."  In ten years I
-> might have the knowledge needed to make such a split, but I know for
-> sure that I don't know how to do it today without regretting it
-> tomorrow, and I don't really have confidence that I will ever be able
-to
-> do it without losing performance.
->=20
-> Glad that BeFS finds the new model better.:)
->
+Hans> My reason is that the things that distinguish between objects
+Hans> should be the names, not the choice of system call.  The reason
+Hans> for this is that it improves closure and namespace unification
+Hans> to do so, because it allows all the objects to be accessed
+Hans> within the same namespace.
 
-(glad that BeFS supposedly solved it)
+So who decides what the names mean in a specific context?  How do we
+get consistency across applications?  In the Apple and MicroSoft
+cases, it's a single company which sets the standards for the names of
+the streams and what they mean.  I have no knowledge of how Sun is
+doing this.  I don't see us setting up a single naming authority and
+enforcement mechanism.  
 
->=20
-> > Hans Reiser wrote:
-> >
-> >> Will Dyson wrote:
-> >>
-> >>>
-> >>> In the original BeOS, they solved the problem by having the
-> >>> filesystem driver itself take a text query string and parse it,
-> >>> returning a list of inodes that match. The whole business of
-parsing
-> >>> a query string in the kernel (let alone in the filesystem driver)
-> >>> has always seemed ugly to me.
-> >>
-> >>
-> >> Why?
-> >
+I went and read the Pike paper on namespaces which Hans quotes much
+earlier in this thread, and I think it isn't applicable to this
+thread.  In the paper Pike compares the MVS, VMS, DOS and Unix name
+spaces for disk layouts.  It's an interesting paper, though a bit
+dated since it's 20 years old.  The concepts are good, but the
+examples aren't any more.  How many Unix systems today have
+/n/faces/... to link email addresses to digitized images of people
+faces? 
 
-Here is an interesting interview of Dominic Giampaolo and Benoit
-Schillings regarding the structure of BeFS.  Some interesting issues
-regarding how queries were done.
+The big point of this paper though was to make the syntax simple, and
+the semantics clear and unambiguous.  For example, they point out how
+the "Cedar" file system added in VMS style version numbers to
+filenames with the syntax "<name>!<version>" and they pointedly ask
+what does "/usr/rob!3/bin/cat-v mean?  Which I think just points out
+that the syntax of streams (metas) needs be carefully thought out, and
+how that syntax implies various semantics.  
 
-http://www.theregister.co.uk/2002/03/29/windows_on_a_database_sliced/
+Lots of people keep asking for ACLs, but time and time again people
+point out that while the Unix permission model isn't as flexible, it
+is _simpler_ and easier to keep track of.  
 
-BTW: I get paid during the day to do security engineering work.
-Wouldn't parsing the query in the kernel make the kernel susceptible to
-buffer overflows?  Bad place to have an overflow.
+As an example of complexity, just keeping track of our /etc/sudoers
+file with all the users, hosts and commands that can be defined is a
+huge hassle.  You pretty much need to have a 'lint' style program to
+do the consistency checking.  
 
-j.burnes
+Hans> Yes, it can be useful to allow a namespace to exclude some
+Hans> objects, but that exclusion should not be mandated.  
 
+Conversely, should a namespace *require* that objects always be there?
+What happens when I mount an NFS filesystem onto a Resierfs4 tree?
+How does the user/apps determine when the semantics of the underlying
+namespace have changed?  
+
+Hans> If you want to exclude, you should cd or chroot to
+Hans> /proc/nopseudos and find a view of the filesystem that excludes
+Hans> metas, or mount with -nopseuodos.
+
+Hans> Do you see why I say this?  I can say a lot more about the
+Hans> damage of fragmenting namespaces into multiple apis.... Why look
+Hans> at xattrs....;-)
+
+I think one of the advantages of the xattrs is that the core namespace
+doesn't change, nor do the semantics.  They are layered on top and can
+be explicitly looked at.  
+
+A real life problem of namespaces is Network Appliance Filers.  If you
+have a filer with both NFS and CIFS exports, it will nicely manage the
+CIFS ACLs in harmony (for some level you determine) with the NFS and
+Unix permissions.  But to backup that data, and to store that
+information, you need to use either their 'dump' tool or NDMP.  If you
+NFS mount the filesystem to your backup host and then use a simple tar
+to back it up, you lose the information since that window you use to
+look into the namespace is restricted.  
+
+It's a gotcha.  Until we can (or maybe computing in general) come up
+with a new namespace paradym which we can all agree to, this is going
+to be a big issue.  
+
+John
