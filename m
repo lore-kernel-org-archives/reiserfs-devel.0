@@ -1,43 +1,44 @@
-From: Andrew Morton <akpm@osdl.org>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 01:45:42 -0700
-Message-ID: <20040826014542.4bfe7cc3.akpm@osdl.org>
-References: <20040824202521.GA26705@lst.de>
-	<412CEE38.1080707@namesys.com>
-	<20040825152805.45a1ce64.akpm@osdl.org>
-	<412D9FE6.9050307@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Using fs views to isolate untrusted processes: I need an assistant
+ architect in the USA for Phase I of a DARPA funded linux kernel project
+Date: Thu, 26 Aug 2004 01:48:51 -0700
+Message-ID: <412DA3F3.8070607@namesys.com>
+References: <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20597-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20598-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <412D9FE6.9050307@namesys.com>
+In-Reply-To: <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Rik van Riel <riel@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, George Beshers <gbeshers@comcast.net>
 
-Hans Reiser <reiser@namesys.com> wrote:
+Rik van Riel wrote:
+
+>On Sun, 1 Aug 2004, Hans Reiser wrote:
 >
->  >To get us started on this route it would really help me (and, probably,
->  >others) if you could describe what these API extensions are in a very
->  >simple way, without referring to incomprehehsible web pages,
->  >
->  what is not comprehensible....?
+>  
+>
+>>You can think of this as chroot on steroids.
+>>    
+>>
+>
+>Sounds like what you want is pretty much the namespace stuff
+>that has been in the kernel since the early 2.4 days.
+>
+>No need to replicate VFS functionality inside the filesystem.
+>
+>  
+>
+It differs in that it has masks (view specifications), they scale well, 
+their collection and specification is well automated, and they are 
+attached to the process executable rather than in some centralized place 
+(that is, they are process oriented not object oriented (traditional) 
+and not centralized.  Users without root can use them and be trusted 
+with the power to do so.
 
-Pretty much anything at www.namesys.com.  The amount of time which is
-needed to extract the technical info which one is looking for vastly
-exceeds a gnat-like attention span.
-
-As a starting point, please prepare a bullet-point list of
-userspace-visible changes which the filesystem introduces, or is planned to
-introduce.
-
-And describe the "plugin" system.  Why does the filesystem need such a
-thing (other filesystems get their features via `patch -p1')?
-
-And what are the licensing implications of plugins?  Are they derived
-works?  Must they be GPL'ed?
-
+Hans
