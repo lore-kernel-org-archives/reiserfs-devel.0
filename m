@@ -1,13 +1,12 @@
 From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: ReConfigurable Directory Structure & Agrregation of files
  according to semantic.
-Date: Wed, 17 Mar 2004 11:49:13 -0500
+Date: Wed, 17 Mar 2004 12:04:15 -0500
 Sender: news <news@sea.gmane.org>
-Message-ID: <873c87l8qe.fsf@uhoreg.ca>
-References: <20040316224523.39093.qmail@web60408.mail.yahoo.com> <20040317024931.GB5731@exavio.com.cn>
- <87k71kt8pv.fsf@uhoreg.ca> <20040317062809.GD5731@exavio.com.cn>
+Message-ID: <87y8pzjtgw.fsf@uhoreg.ca>
+References: <20040317075333.96561.qmail@web60404.mail.yahoo.com> <40580A55.7030809@cse.iitd.ernet.in>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17276-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17277-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -17,35 +16,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
->>>>> "Isaac" == Isaac Claymore <clay@exavio.com.cn> writes:
+>>>>> "Nishant" == Nishant Sharma <nishantt@cse.iitd.ernet.in> writes:
 
-[...]
+Nishant>     I wonder if it is possible to put this "plugin
+Nishant> infrastructure" in the user space rather than kernel space, by
+Nishant> putting it in the glibc implementation. ...
 
-Isaac> I also stumbled upon Gnome Storage, at:
-
-Isaac> http://www.gnome.org/~seth/storage/index.html
-
-Isaac> If I get it right, they seem to be doing it in user space, what's
-Isaac> your idea on this?
-
-Yeah.  I was going to mention that, but I forgot.  Thanks for bringing
-it up.  Yes, AFAICT, it's all in userspace.  Since it's done by GNOME
-people, I assume that they will make a gnome-vfs module so that all
-GNOME applications will be able to use it transparently.  But that
-won't help other apps.
-
-It seems to be based on a relational model, which Hans has been saying
-is a bad way of organizing user data (and I would agree, but I'm no
-database expert, so my opinion doesn't count as much).
-
-It also seems to completely ditch the hierarchy system -- I find that a
-hierarchy (or some sort of semi-hierarchy) can be a very useful filing
-system for some types of data, or at least in splitting your data into
-manageable chunks.
-
-But I haven't dealt with Storage -- I've only briefly looked over it --
-so this is all mostly speculation.  It looks like a neat system, but I
-think that Reiser6 will blow its socks off.
+I've thought about this too, but I think it would be harder to put this
+in glibc.  Something like gnome-vfs is able to use plugins easily,
+because it uses a URL-like syntax, and so it can tell what plugin to use
+based on the format of the filename.  But for the type of stuff we
+would want to do, glibc would have to make a bunch of kernel calls to
+determine up to when, in the filename, the kernel can handle, and when
+it has to start doing its processing.  So if you requested the file:
+/home/hubert/music/foo.mp3/..albumcover/cover.jpg, I imagine the
+sequence of events would have to be something like:
+- glibc asks the kernel for /home/.../cover.jpg
+- kernel returns "file not found"
+- glibc asks the kernel for /home/.../..albumcover
+- kernel returns "file not found"
+- glibc asks the kernel for /home/.../foo.mp3
+- kernel returns file handle
+- glibc does its processing to extract the album cover.
 
 -- 
 Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
