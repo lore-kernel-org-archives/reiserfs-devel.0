@@ -1,56 +1,63 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 23:06:39 +0200
-Message-ID: <20040827210638.GE709@openzaurus.ucw.cz>
-References: <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <20040826100530.GA20805@taniwha.stupidest.org> <20040826110258.GC30449@mail.shareable.org>
+From: Jan Harkes <jaharkes@cs.cmu.edu>
+Subject: Re: reiser4 plugins (was: silent semantic changes with reiser4)
+Date: Sat, 28 Aug 2004 12:11:14 -0400
+Message-ID: <20040828161113.GA27278@delft.aura.cs.cmu.edu>
+References: <412D9FE6.9050307@namesys.com> <20040826014542.4bfe7cc3.akpm@osdl.org> <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <1093527307.11694.23.camel@leto.cs.pocnet.net> <20040828111807.GC6746@alias>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20995-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20996-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040826110258.GC30449@mail.shareable.org>
+In-Reply-To: <20040828111807.GC6746@alias>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: flx@msu.ru, Christophe Saout <christophe@saout.de>, Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-Hi!
+On Sat, Aug 28, 2004 at 03:18:07PM +0400, Alexander Lyamin wrote:
+> And I honestly dont understand whats the other Christoph's worries are about.
 
-> > > One of the big potential uses for file-as-directory is to go inside
-> > > archive files, ELF files, .iso files and so on in a convenient way.
-> > 
-> > Arguably this belongs in userspace --- and people have put it there.
-> 
-> I agree that these belong in userspace, and that there's plenty* of
-> userspace code doing a similar thing already.  I don't think there's
-> any argument over it.
-> 
-> However, as far as I know it's not accessible in a file-as-directory
-> form as yet.  In my opinion that is the most natural form and it would
-> be very intuitive to use.  
+I honestly don't understand what all this 'grassroot' campaining is all
+about. Very valid technical points have been made and mostly ignored.
 
-It does not work. .deb file is ar archive. It is also debian
-package. How do you know if I want to see it as a package or as a archive?
-How do you identify file types, anyway?
+The whole 'it breaks backups' noise is just that, noise.
 
-Same happens for .tar.gz.
+- It breaks VFS locking rules.
+- It pretends to provide a uniform way to store streams or metadata.
+  However it only does so files and not for directories, symlinks,
+  fifos, unix domain sockets, or device nodes, which makes it less than
+  uniform.
+- From what I saw in one part of the discussion, it allows for infinite
+  depth recursion (file/metas/metas/metas/...). Some applications are
+  going to have a lot of fun with that.
 
-uservfs does
+And finally,
 
-cd foo.deb#uar
-vs.
-cd foo.deb#udeb
+- When reiserfs3 got merged, it introduced iget3 and read_inode2 in the
+  VFS layer. Later on when I started to use them for Coda I almost
+  immediately found serious consistency problems, resulting in the
+  iget4_locked implementation in the 2.5 kernels.
+  
+  I don't think anyone ever fixed that race in reiser3. It should hit
+  occasionally on concurrent lookups on SMP or preempt kernels. In 2.4,
+  Coda needed a semaphore to prevent concurrency during the iget3 lookup
+  until the new inode is actually initialized.
 
-and
+> Its got perfomance. Its there. It can emulate "conventional
+> filesystem" behaviour, for legacy apps.
 
-cd foo.tgz#utar
-vs.
-cat foo.tgz#ugz
+So does ramfs.
 
+> Yes, I think it would be nice to have this infrastructure in VFS.
+> Technically. But its not possible, cause of "committee clusterfuck".
+> Socially. Stupidly.
 
--- 
-64 bytes from 195.113.31.123: icmp_seq=28 ttl=51 time=448769.1 ms         
+It will get there, just consider it constructive criticism. If we can
+help resolve or refute the technical issues, all the better. We might
+even end up with improvements or extensions to the VFS or MM making life
+easier for everyone.
+
+Jan
 
