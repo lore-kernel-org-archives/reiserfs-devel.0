@@ -1,44 +1,90 @@
-From: Martin Dickopp <martin-deb@zero-based.org>
+From: Brian Thomas Sniffen <bts@alum.mit.edu>
 Subject: Re: Fwd: reiser4 non-free?
-Date: Tue, 04 May 2004 19:57:28 +0200
-Message-ID: <cunekq0yt13.fsf@zero-based.org>
-References: <20040430055619.GD7487@archimedes.ucr.edu>
-	<40923D1C.3090003@namesys.com>
-	<20040430174343.GE7487@archimedes.ucr.edu>
-	<409561EE.7030000@namesys.com>
-	<20040502215500.GB18235@xieana.donarmstrong.com>
-	<20040503065830.GS29226@nysv.org> <40967D41.705@namesys.com>
-	<20040503172146.GV29226@nysv.org> <409682D0.10705@namesys.com>
-	<20040503174910.GX29226@nysv.org>
-	<20040503180042.GD5429@parcelfarce.linux.theplanet.co.uk>
-	<4097BE56.7010008@namesys.com>
+Date: Tue, 04 May 2004 14:00:23 -0400
+Message-ID: <87fzag139k.fsf@aule.evenmere.org>
+References: <43ff070d5077e49f1e08a63368e4569c@bouncing.localnet>
+	<4097CCA4.4060707@namesys.com>
 Mime-Version: 1.0
-Return-path: <bounce-debian-legal=debian-legal=m.gmane.org@lists.debian.org>
-In-Reply-To: <4097BE56.7010008@namesys.com> (Hans Reiser's message of "Tue,
- 04 May 2004 09:01:26 -0700")
-Resent-Message-ID: <1fReaB.A.ThB.Pm9lAB@murphy>
+Return-path: <reiserfs-list-return-18443-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <4097CCA4.4060707@namesys.com> (Hans Reiser's message of "Tue,
+ 04 May 2004 10:02:28 -0700")
 List-Id: <reiserfs-devel.vger.kernel.org>
-List-Post: <mailto:debian-legal@lists.debian.org>
-List-Help: <mailto:debian-legal-request@lists.debian.org?subject=help>
-List-Subscribe: <mailto:debian-legal-request@lists.debian.org?subject=subscribe>
-List-Unsubscribe: <mailto:debian-legal-request@lists.debian.org?subject=unsubscribe>
-List-Archive: <http://lists.debian.org/debian-legal/>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Hans Reiser <reiser@namesys.com>
-Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
+Cc: MJ Ray <mjr@dsl.pipex.com>, debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
 Hans Reiser <reiser@namesys.com> writes:
 
-> You miss the point.  I get plenty of credit because of the filesystem
-> name.  It is everybody else who gets shortchanged unless we print a
-> randomly chosen 1 paragraph credit at mkreiser4 time.
+> There is a difference between free software and plagiarizable
+> software.  The two are orthogonal concepts.
+>
+> Debian wants software to be both free and plagiarizable.  XFree86 and
+> I want our software to be free but not plagiarizable.  In general, I
+> want software to not be plagiarizable, as I think it works against the
+> societal interest to not attribute accurately.  Saying that plagiarism
+> is an important freedom is like saying assault is something you must
+> be allowed to do if you are to be considered free.
 
-I'm not a Debian developer.  But I don't understand your earlier comment
-about attribution in science in the light of this comment.  A typical
-attribution in a peer reviewed scientific journal looks like, e.g.,
-"B. Aubert et al., Phys. Rev. Lett. 91, 121801 (2003)", where the
-"et al." represents 600+ people.
+No, it is exactly like saying plagiarism is something you must be
+allowed to do if you are to be considered free.  If the law prevented
+me from making false statements, I would not be free.  My nose is
+blue, for example, and frequently emits badgers.  To make that
+statement illegal is to restrict my freedom.  It is only a short step
+from there to restricting me from saying that two plus two equals four.
 
-Martin
+Now, *fraud* is illegal -- so there is no need for a copyright license
+to inhibit fraud, because it's already a crime.  But for me to have
+freedom with respect to an artifact, I must have freedom to change it
+in arbitrary ways.  "All ways that do not remove the maker's mark" is
+not enough.  Then it is a shared artifact, an open artifact even, but
+not a free artifact.
 
+Similarly, to have freedom with respect to a computer program, I must
+have freedom to change it.  Required display of certain text is fine
+for a shared source program, or an open source program, but it is not
+a free program.
+
+-Brian
+
+> Hans
+>
+> MJ Ray wrote:
+>
+>> On 2004-05-04 17:20:56 +0100 Hans Reiser <reiser@namesys.com> wrote:
+>>
+>>> I understand why they lost interest in talking to persons who
+>>> cannot grasp that distros removed mention of them from their man
+>>> pages and this was wrong.
+>>
+>>
+>> That's actually irrelevant in that case. Their advertising clause is
+>> actually not the reason for it being non-free, as I understand it,
+>> although it does make it GPL-incompatible, which is a bit irritating.
+>>
+>> Their licence requires extreme protection of their name as a
+>> condition, which seems unacceptable for free software. If I even
+>> mention in a factual review who holds the copyright to the software,
+>> I have probably failed the letter of the conditions.
+>>
+>> It seems a little cruel of you to punish all users by taking your
+>> code non-free because you are not happy with some distributor
+>> actions. You should work with the distributors instead of accusing
+>> them of immorality as an opening tactic. That should be the last
+>> resort, not the first.
+>>
+>>> I sent them a thanks for being brave enough to take on the task of
+>>> changing licensing mores and forcing distros to attribute, and I
+>>> got a response.;-)
+>>
+>>
+>> You seem to enjoy working against free software. I got some
+>> responses, too, as previously mentioned.
+>>
+
+-- 
+Brian Sniffen                                       bts@alum.mit.edu
