@@ -1,52 +1,61 @@
-From: Yury Umanets <umka@namesys.com>
-Subject: Re: Reiser4 status: benchmarked vs. V3 (and ext3)
-Date: Thu, 14 Aug 2003 09:04:29 +0400
-Message-ID: <1060837469.17622.6.camel@haron.namesys.com>
-References: <Pine.LNX.3.96.1030813160910.12417A-100000@gatekeeper.tmr.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Filesystem corruption
+Date: Thu, 14 Aug 2003 11:49:34 +0400
+Message-ID: <20030814074934.GA3893@namesys.com>
+References: <3F3A61C8.4060504@oceanfree.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15306-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15307-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.3.96.1030813160910.12417A-100000@gatekeeper.tmr.com>
+Content-Disposition: inline
+In-Reply-To: <3F3A61C8.4060504@oceanfree.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Bill Davidsen <davidsen@tmr.com>
-Cc: Daniel Egger <degger@fhm.edu>, Hans Reiser <reiser@namesys.com>, Nikita Danilov <Nikita@namesys.com>, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, reiserfs mailing list <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Locke <locke@oceanfree.net>
+Cc: reiserfs-list@namesys.com
 
-On Thu, 2003-08-14 at 00:12, Bill Davidsen wrote:
-> On Sun, 27 Jul 2003, Yury Umanets wrote:
-> 
-> > On Sun, 2003-07-27 at 18:10, Daniel Egger wrote:
-> > > Am Son, 2003-07-27 um 15.28 schrieb Hans Reiser:
-> 
-> > > > or for which a wear leveling block device driver is used (I don't know
-> > > > if one exists for Linux).
-> > > 
-> > > This is normally done by the filesystem (e.g. JFFS2).
-> > 
-> > Normally device driver should be concerned about making wear out
-> > smaller. It is up to it IMHO.
+Hello!
 
-> 
-> The driver should do the logical to physical mapping, but the portability
-> vanishes if the filesystem to physical mapping is not the same for all
-> machines and operating systems. For pluggable devices this is important.
-> 
-> The leveling seems to be done by JFFs2 in a portable way, and that's as it
-> should be. If the leveling were in the driver I don't believe even FAT
-> would work.
+On Thu, Aug 14, 2003 at 12:05:28AM +0800, Locke wrote:
+> the files. I'm guessing the reason why it recovered so little was 
+> because that because I was running a 7.8GB+40GB LVM and the 40GB 
+> pyhsical volume wasn't working and left it with only 7.8GB.
 
-Hello Bill,
+Yes of course.
 
-Yes, you are right. Device driver cannot take care about leveling.
+> is_tree_node: node level 0 does not match to the expected one 1
+> vs-5150: search_by_key: invalid format found in block 8838461. Fsck?
 
-It is able only to take care about simple caching (one erase block) in 
-order to make wear out smaller and do not read/write whole block if one 
-sector should be written.
+So LVM substitures zero filled blocks instead of data if physical volume
+is unavailable.
+Of course reiserfsck happily thrown all of those blocks out of the tree.
 
-Part of a filesystem called "block allocator" should take care about 
-leveling.
+> And also when rebooting after the corruption I saw several error 
+> messages for all drives, hda, hdb and hdg
+> **
+> hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+> hda: dma_intr: error=0x84 { DriveStatusError BadCRC }
+> hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+> hda: dma_intr: error=0x84 { DriveStatusError BadCRC }
 
+Also you should consider replacing your noisy IDE cable for primary IDE
+controller with not noisy one. Or just run in lower UDMA mode.
+
+> **The messages are copied from the FAQ in namesys.com because they 
+> looked similar so I'm not sure if they're the exactly same.
+
+Well, if they are not the same, you'd better write them down on paper.
+
+> Is there anything I can try to recover more data?
+
+You might try to get LVM up again and run reiserfsck --rebuild tree.
+Some more stuff wuill be restored.
+Though still you will have lots of files' content lost and there is no way
+to restore it anymore.
+Also use reiserfsck 3.6.11
+
+Bye,
+    Oleg
