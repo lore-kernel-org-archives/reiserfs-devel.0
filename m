@@ -1,62 +1,56 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: [reiserfs-dev] Re: [ANNOUNCE] reiser4 snaphots
-Date: Thu, 7 Nov 2002 13:47:13 +0300
-Message-ID: <15818.17585.789642.675479@laputa.namesys.com>
-References: <9918235451.20021106132043@kgpa.ru>
-	<20021107090256.GC11974@mrball.net>
+From: Naoki <naoki@valuecommerce.ne.jp>
+Subject: Poor sequential write performance.
+Date: Thu, 07 Nov 2002 19:59:55 +0900
+Message-ID: <3DCA47AB.8060008@valuecommerce.ne.jp>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11942-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11943-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021107090256.GC11974@mrball.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Todd Lyons <todd@mrball.net>
-Cc: ReiserFS-List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Todd Lyons writes:
- > Oleg O. Ossovitskii wanted us to know:
- > 
- > >BTW: is anywhere diff to apply Reiser4 to plain 2.5.x (not bk tree) or I have to made this
- > >manually (by hands)?
- > 
- > It applied for me to the 2.5.45 tree with only one reject, mm/swap.c.
- > It wants to add a #include, but what's there is not quite like what the
- > patch expects.  You'll actually have to add two lines, not just one.
- > 
- > Still compiling.  In the reiser4 code right now....well, it built and
- > linked.  That's a good sign.
- > 
- > Here are the .config settings that I used:
- > CONFIG_REISER4_FS=m
- > CONFIG_REISER4_CHECK=y
- > CONFIG_REISER4_DEBUG=y
- > CONFIG_REISER4_CHECK_STACK=y
- > CONFIG_REISER4_DEBUG_MODIFY=y
- > CONFIG_REISER4_DEBUG_MEMCPY=y
- > CONFIG_REISER4_DEBUG_NODE=y
- > CONFIG_REISER4_ZERO_NEW_NODE=y
- > CONFIG_REISER4_TRACE=y
- > CONFIG_REISER4_STATS=y
- > CONFIG_REISER4_DEBUG_OUTPUT=y
- > # CONFIG_REISER4_NOOPT is not set
- > 
- > Curious if anybody feels that I should have chosen different values for
- > any of the options.
+Why ohh why..
 
-Reasonable options for debugging. Will result in dead-slow reiser4 though.
+I have an old RedHat 6.2 box with 2.4.2 kernel and an IDE disk. When I 
+'wc' a file of about 100,000 text lines
+it take under a second.
 
-Once you stop being able to tolerate it slowness, disable
-CONFIG_REISER4_DEBUG_MODIFY and CONFIG_REISER4_CHECK_STACK.
+On my new RH 8.0 box with 2.4.18-14 kernel and SCSI disk it takes three 
+seconds.
 
- > -- 
- > Blue skies...		Todd
- > | Get a bigger hammer!   |  Normal?  Normal is a setting on       |
- > | http://www.mrball.net  |  my dryer.                             |
- > | http://faq.mrball.net  |     BayCon 2001 http://www.baycon.org  |
- >    Linux kernel 2.5.45   1 user,  load average: 1.19, 0.88, 0.40
+This is bizzare. Yes they are under the same load etc etc.  They are 
+both mounted with
+noatime / nodirtime.  What on earth is going on???
 
-Nikita.
+Any help most appreciated.
+
+
+Look at this -
+
+New machine :
+
+time wc files*
+6421   69607  894412 files
+38806  420590 5394914 files.1
+45227  490197 6289326 total
+
+real    0m3.059s
+user    0m2.543s
+sys     0m0.064s
+
+Old machine :
+
+time wc files*
+18628  201841 2597321 files
+46603  505811 6501130 files.1
+37122  402985 5201388 files.2
+102353 1110637 14299839 total
+0.25user 0.04system 0:00.38elapsed 76%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (115major+19minor)pagefaults 0swaps
+
+
+
