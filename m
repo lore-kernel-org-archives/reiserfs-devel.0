@@ -1,48 +1,73 @@
 From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: reiser4 on alpha
-Date: Tue, 29 Jun 2004 20:38:29 +0400
-Message-ID: <20040629163829.GT5080@backtop.namesys.com>
-References: <20040626015101.3c47427d.pegasus@nerv.eu.org> <20040626064131.GN5080@backtop.namesys.com> <20040626095732.24379346.pegasus@nerv.eu.org>
+Subject: Re: Some errors, tree-related?
+Date: Tue, 29 Jun 2004 21:00:39 +0400
+Message-ID: <20040629170039.GW5080@backtop.namesys.com>
+References: <20040628194741.GG4990@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19445-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-19446-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040626095732.24379346.pegasus@nerv.eu.org>
+In-Reply-To: <20040628194741.GG4990@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jure Pe??ar <pegasus@nerv.eu.org>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Markus =?koi8-r?Q?T=F6rnqvist?= <mjt@nysv.org>
 Cc: reiserfs-list@namesys.com
 
-On Sat, Jun 26, 2004 at 09:57:32AM +0200, Jure Pe??ar wrote:
-> On Sat, 26 Jun 2004 10:41:31 +0400
-> Alex Zarochentsev <zam@namesys.com> wrote:
-> 
-> > > {standard input}: Assembler messages:
-> > > {standard input}:5: Warning: setting incorrect section attributes for
-> > > .got
-> > 
-> > Does only reiser4 produce the above warning?
-> 
-> No. I get these from various parts of the kernel, but are a lot less
-> frequent now on 2.6.7 than on previous kernels.
-> 
-> > > Looking at fs/reiser4/debug.h suggest that this is something done on
-> > > purpose to guard against other problems.
-> > 
-> > yes, "duplicated case value" is a result of our compile-time assertion if
-> > it fails.
-> > 
-> > But the assertion is wrong because the assumtion that struct coord has no
-> > implicit padding is wrong on alpha.
-> 
-> Do i undestrand that right, the fix is just to comment out the c1->pad line
-> there?
+On Mon, Jun 28, 2004 at 10:47:41PM +0300, Markus T=F6rnqvist wrote:
+> Hi
+>=20
+> While I was toying around with unrelated stuff, I noticed I got the good
+> old jamming problems that I had with some older auto-snapshot, that is,
+> apt-get would lock on 93% and tab expansion would as well, then everything
+> would lock. Rebooting needs the SysRq trio.
+>=20
+> Now I got the behavior again, and noted some stuff in the log that I
+> could swear wasn't there when I last had these problems. On the other han=
+d,=20
+> I don't know if they're related. That's why I'm mailing here :)
+>=20
+> Jun 28 22:18:53 shrike kernel: reiser4[xmms(3797)]: traverse_tree (fs/rei=
+ser4/search.c:747)[nikita-1481]:
+> Jun 28 22:18:53 shrike kernel: WARNING: Too many iterations: 1048576
+> Jun 28 22:19:15 shrike kernel: reiser4[xmms(3797)]: traverse_tree (fs/rei=
+ser4/search.c:747)[nikita-1481]:
+> Jun 28 22:19:15 shrike kernel: WARNING: Too many iterations: 2097152
+> Jun 28 22:19:46 shrike kernel: reiser4[xmms(3797)]: traverse_tree (fs/rei=
+ser4/search.c:747)[nikita-1481]:
+> Jun 28 22:19:46 shrike kernel: WARNING: Too many iterations: 4194304
+>=20
+> Then I restarted the computer. Bugger me, I can't remember if I restarted
+> because of a lock-up there or not, but this I got later:
+>=20
+> Jun 28 22:36:21 shrike kernel: reiser4[xmms(3834)]: renew_sibling_link (f=
+s/reiser4/tree_walk.c:441)[nikita-3532]:
+> Jun 28 22:36:21 shrike kernel: WARNING: Sibling nodes on the different le=
+vels: 1 !=3D 2
+>=20
+> [...]
+>=20
+> Jun 28 22:38:51 shrike kernel: reiser4[xmms(4068)]: renew_sibling_link (f=
+s/reiser4/tree_walk.c:441)[nikita-3532]:
+> Jun 28 22:38:51 shrike kernel: WARNING: Sibling nodes on the different le=
+vels: 1 !=3D 2
+>=20
+> So, what's up here? Is it related to any known stability issue?
 
-you can remove the wrong caccert.  
+it shows serious tree corruption. which reiser4 snapshot is on shrike?
 
--- 
+> I re-mkfs'd my home partition, but did an fsck on the / partition, when it
+> was last needed. Could that affect here? Do I _really_ have to mkfs again?
+> Or am I barking up the wrong tree? (No pun intended :D)
+
+> Thanks!
+>=20
+> --=20
+> mjt
+>=20
+
+--=20
 Alex.
