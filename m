@@ -1,45 +1,55 @@
-From: Brian Marr <cabernet@internode.on.net>
-Subject: Kernel Error
-Date: Tue, 1 Oct 2002 07:04:15 +0930
-Message-ID: <200210010704.15161.cabernet@internode.on.net>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: File Corruption
+Date: Tue, 1 Oct 2002 10:10:50 +0400
+Message-ID: <20021001101050.A5833@namesys.com>
+References: <20020930195227.71240.qmail@web10501.mail.yahoo.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11582-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11583-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <20020930195227.71240.qmail@web10501.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: jeff leads <jleads@yahoo.com>
+Cc: reiserfs-list@namesys.com
 
+Hello!
 
-Suse 8.0 kernel 2.4.18 AMD 1530Mhz cpu
-Can anyone enlighten me on the possible cause of this problem ? The syste=
-m=20
-continues to run ok - but I would value your feedback.
-Brian Marr
+On Mon, Sep 30, 2002 at 12:52:27PM -0700, jeff leads wrote:
+> Ok, I'm running RedHat 7.1, gcc 2.96-85, kernel
+> 2.4.9-21 (redhat's version) and ReiserFSProgs 3.6.3 (
 
-Sep 29 11:27:18 linux kernel: invalid operand: 0000
-Sep 29 11:27:18 linux kernel: CPU:    0
-Sep 29 11:27:18 linux kernel: EIP:    0010:[__free_pages_ok+43/660]   =20
-Tainted: P
-Sep 29 11:27:18 linux kernel: EFLAGS: 00210286
-Sep 29 11:27:18 linux kernel: eax: c02a95e0   ebx: c11192c0   ecx: c02a94=
-40  =20
-edx: c02a93c0
-Sep 29 11:27:18 linux kernel: esi: c11192c0   edi: 00000000   ebp: 000001=
-d0  =20
-esp: cdfd9f28
-Sep 29 11:27:18 linux kernel: ds: 0018   es: 0018   ss: 0018
-Sep 29 11:27:18 linux kernel: Process kswapd (pid: 5, stackpage=3Dcdfd900=
-0)
-Sep 29 11:27:18 linux kernel: Stack: c52817e0 c11192c0 00000015 000001d0=20
-c11192c0 000001d0 c52817e0 c11192c0
-Sep 29 11:27:18 linux kernel:        c012c503 c012d6f9 c012c53c 0000001f=20
-c02a9510 000001d0 c02a9510 cdfd8000
-Sep 29 11:27:18 linux kernel:        00000c80 00016f33 c02a9510 c012c859=20
-cdfd9fa8 00000014 000001d0 00000020
-Sep 29 11:27:18 linux kernel: Call Trace: [shrink_cache+475/816]=20
-[__free_pages+29/32] [shrink_cache+532/816] [shrink_caches+93/104]=20
-[try_to_free_pages+92/240]
+I do not know what is included into 2.4.9-21, but can you upgrade to
+2.4.18-10 (I think this is latest RedHat errata kernel for 7.x series of
+their distro).
+
+> I'm starting to get file corruption here and there. 
+> My next question is, where do I go from here?  What
+
+You need to upgrade kernel to something that includes all of our fixes at least
+up to 2.4.18.
+
+> can I do to rectify this issue?  Do I run a rebuild at
+> this point?  What caused this?  
+
+This is hard to tell what have caused this.
+Can you please send us reiserfsck output from the same partition,
+but take reiserfsck from ReiserFSProgs 3.6.3?
+
+> Sep 30 14:03:11 goku kernel: is_tree_node: node level
+> 64680 does not match to the expected one 1
+
+This is on disk metadata corruption, but the reason is unknown
+
+> [root@goku /root]# reiserfsck /dev/ida/c0d0p5
+> <-------------reiserfsck, 2001------------->
+> reiserfsprogs 3.x.0j
+
+This is too old to be used today.
+
+Bye, 
+    Oleg 
