@@ -1,32 +1,37 @@
-From: =?iso-8859-1?Q?Ragnar_Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
-Subject: Re: performance improvements
-Date: Mon, 23 Dec 2002 16:59:09 +0100
-Message-ID: <20021223165909.R1813@vestdata.no>
-References: <200212231632.26686.russell@coker.com.au>
+From: Luis Gregorio Muniz Rodriguez <kreator@dei.inf.uc3m.es>
+Subject: How to use external journal?
+Date: Mon, 23 Dec 2002 16:57:04 +0100
+Message-ID: <20021223155704.GC18464@dei.inf.uc3m.es>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12220-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12221-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200212231632.26686.russell@coker.com.au>; from russell@coker.com.au on Mon, Dec 23, 2002 at 04:32:26PM +0100
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Russell Coker <russell@coker.com.au>
-Cc: ReiserFS <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-On Mon, Dec 23, 2002 at 04:32:26PM +0100, Russell Coker wrote:
-> One thing that could really improve system performance would be something=
- like=20
-> "nice" but for disk IO.
+Hi there!
 
-Yes, that would be very nice :)
+I have recently discovered that the journal can be placed on an external
+device (i.e, `mkreiserfs --journal-device <FILE>'), but I haven't found
+any doc about it.
 
-Preferably it should use scheduling priority directly, so one doesn't
-have to set a seperate value / use a seperate utility.=20
+I'm currently using ReiserFS on top of LVM partitions, and I am
+wondering if I can use the same shared journal device for a number of
+small partitions.  
+
+Note that I'm not trying to move all the journals to the same device
+(this should be easy using `--journal-device' and `--journal-offset',
+isn't it?).  Rather, I try to share the same 32Mb journal between small
+filesystems and/or filesystems with infrequent writes (such as </usr>,
+</usr/local>, </var/www>, and so on).
 
 
---=20
-Ragnar Kj=F8rstad
+Is that possible?  And convenient?
+Many thanks in advance,
+--
+	- Luis Mu~niz 	<kreator@lmunix.net>
