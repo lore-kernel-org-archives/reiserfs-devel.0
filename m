@@ -1,103 +1,68 @@
 From: David Masover <ninja@slaphack.com>
-Subject: when will it end?
-Date: Tue, 26 Oct 2004 19:57:36 -0500
-Message-ID: <417EF280.10003@slaphack.com>
+Subject: Re: viewprinting: what format should views be stored in?
+Date: Tue, 26 Oct 2004 20:04:05 -0500
+Message-ID: <417EF405.6020209@slaphack.com>
+References: <20040819074027.8429715D94@mail03.powweb.com>	 <41248D43.3040905@dgreaves.com> <4124D09A.1060208@comcast.net>	 <4124E408.3090405@dgreaves.com>  <41259FBF.5040308@namesys.com> <1098806086.2610.7.camel@localhost.localdomain>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22187-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22188-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1098806086.2610.7.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+To: "Lamont R. Peterson" <lamont@gurulabs.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-I have 512 megs of RAM and one 200 gig hard drive (effectively 177 gig
-filesystem) that is 86% full.  I started the reiser4 repacker two days
-ago, with very minimal system use since then (an hour or two a day of
-playing music and reading email).  See below for my df and top.
+Lamont R. Peterson wrote:
+| On Fri, 2004-08-20 at 00:52, Hans Reiser wrote:
+|
+|>David Greaves wrote:
+|>
+|>
+|>>David
+|>>PS can I offer 'mask specification' (shortened to maskspec above)
+|>>instead of 'presentation mask' for the glossary.
+|>>
+|>>
+|>
+|>Glossary? of?
+|>
+|>Instead of mask specification, just say mask.
+|>
+|>I think I like mask more than view....
+|
+|
+| I respectfully disagree.  I like view better than mask.  After all, the
+| term mask is used in lots of places already.  If you want to distinguish
+| viewprinting from those things, I think "view" is the way to go.
 
-Thankfully, the kernel seems intelligent enough about memory management
-that once things other than Doom 3 start, they run reasonably smoothly,
-even video (must be that anticipatory IO scheduler).
+Trust me to speak up on the least important issues...
 
-Three questions:   When will it end?  How can I kill it if I get sick of
-waiting?  Is it conceivable that the repacker could be optimized to run
-faster?
-
-
-$ df
-Filesystem           1K-blocks      Used Available Use% Mounted on
-/dev/hda5            184560092 158186648  26373444  86% /
-$
-$ top
-top - 19:46:02 up 1 day, 23:24,  3 users,  load average: 1.55, 1.25, 1.09
-Tasks:  65 total,   2 running,  63 sleeping,   0 stopped,   0 zombie
-Cpu(s):  0.3% us, 25.6% sy,  0.0% ni, 38.5% id, 35.2% wa,  0.3% hi,  0.0% si
-Mem:    516608k total,   487660k used,    28948k free,        0k buffers
-Swap:   995988k total,    41844k used,   954144k free,   383936k cached
-
-~  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
-
-~ 9010 root      20   0     0    0    0 D 25.0  0.0 570:37.54
-k_reiser4_repac
-~ 6914 aaron     20   0  2864 1172 2500 S  0.3  0.2   1:49.04 famd
-
-31318 sanity    20   0  3444 1684 3092 R  0.3  0.3   0:00.03 aterm
-
-~    1 root      20   0  1332  404 1180 S  0.0  0.1   0:00.86 init
-
-~    2 root      39  19     0    0    0 S  0.0  0.0   0:00.01 ksoftirqd/0
-
-~    3 root      10 -10     0    0    0 S  0.0  0.0   0:00.43 events/0
-
-~    4 root      10 -10     0    0    0 S  0.0  0.0   0:00.00 khelper
-
-~    5 root      10 -10     0    0    0 S  0.0  0.0   0:00.00 kblockd/0
-
-~   31 root      20   0     0    0    0 S  0.0  0.0   0:09.81 kapmd
-
-~   36 root      10 -10     0    0    0 S  0.0  0.0   0:00.00 aio/0
-
-~   35 root      20   0     0    0    0 S  0.0  0.0   0:10.46 kswapd0
-
-~  126 root      20   0     0    0    0 S  0.0  0.0   0:00.00 kseriod
-
-~  128 root      20   0     0    0    0 S  0.0  0.0   0:00.75
-ktxnmgrd:hda5:w
-~  129 root      20   0     0    0    0 S  0.0  0.0   0:02.69 ent:hda5.
-
-~  318 root      10 -10  1312  292 1164 S  0.0  0.1   0:00.05 udevd
-
-~ 4988 root      20   0     0    0    0 S  0.0  0.0   0:00.06 khubd
-
-~ 6049 root      20   0  1656  524 1228 S  0.0  0.1   0:00.07 metalog
-
-
-
-
-
-
-
+What about mask/view, or maskview?  People can abbreviate how they like,
+and it's actually not a bad metaphor -- think of the "view" you get
+through a "mask", such as a Halloween mask.  The eye holes aren't
+terribly big, so you see a much smaller part of the world.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.6 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQX7ygHgHNmZLgCUhAQINZg/+Otv/jDcUwhCpQ3obc+Mr//LN4NKbhX/0
-cnO5CtSZ/QMaM2rgBUPz4VSYYH4SyRwHqjQ8n8Q9iPUeijNdMpzSytiFBksgPBgS
-JBlKR34FLQaahkTm++kf9dJYj/kUNPQWQT1X0i4iet/P2wxd8VeOSrgulxcTPBVH
-nbI0l02fcexSCqDez+dJQ1J7ETfbKjKIVWgPVklHuEE/CQ973lX2PBPCcMkKzV3G
-w1AGL4Vxl5Sw+se6KjMFY2hFpoYnY5MMojrYfwULekoDj25e7gSh0fpBBheyRjd7
-7y284urNPe8elcFmvVq9IclNYcNqpFVwC3/QNZLymEijlHaEHLjiMH14HMzukRSM
-mSns/Dk9QM6A1C+r6DRj4rvRA7oFK+ajqI3xJ+qJMJJzysCsCCshBrh/M+x1jnaP
-tQOKZnAht+nm5SOM4qLOZJPg8ymp46GJOsBSB4aQ+8ZjF2xb5DHvuqGnC8f+Z7Wu
-DGKnCaqB/3qQB6wTgqgup9s4SKqMfTDGAmZINCccrSDAc9GFLePwcsBZVVkx4Oxw
-Bp+Kb+8mUS079iDFgJ1DlJ1AOLnUvwbSsWyReWyay8wNxlIqmCRjJU5ALUN4U5hu
-sBhSzhNwHczl79gWpz2NHd+wpXTWJkxlG9yTbW3kZ3BwH47JVjXmRzPqDEtDLN0K
-4LkwfyGAxVk=
-=MyNE
+iQIVAwUBQX70BXgHNmZLgCUhAQLOKg//bLDAoPOR3VrAhDsjMTvndgjmSa5GohAL
+Y+Sb6BaLbKIpxVv8WsB9x8t7xsqRPRqWOi7NLsfkDPWV3TH0YXVKEsjR44d4SOBv
+/MEU4BQwaiwSpJry/FpkfFn5mc8bkV4HubTV6s3sk6qLsWVb3WOIXiHD5n9ppTqu
+6qfU4z8WpttIAg1u49CSfc10GdQ4TKwNp9vvPl32EIdo58hp9XrEfLfb9J9byTXg
+R51cvZVNi3RJohjvvp/wqy7JxvRjUl9Cd6NliHvE/NCQrk0MhiSE7od+d5B17DCZ
+TonxOhk9OCyW2/d4SLQHtKMoNFXzaGQKO6haIE2ZGWr2W5DAmdZM32C7rz07f5+V
+CCu/TtLxfnsZ0JLWAUAf4m7e1Q/vx3YtOI/IEHFPMjThoPCiROoUIQwlvV44Y7+w
+3YJfmwHfQ4I8g8PvdbR2CdXcYD4ot2XrcEhbQu0aqVUgUWoGGndIyN0AyHV91NFr
+aRVb6JuE95HUNXy8njakEuFvs29UjG0mlpJSMw3KEFPtEeWMlCxsE2hWpgB1FJK1
+P+r/WTBGCdj4NIldl3unPtcXuq/ndxwiiZvOJ1Av2B6M1dBHAlX3Zsqyln/4FJyu
+JHlSQYaRB0d4RS6/hcKzuxYscgNF3Sf0rlyRgPl3DFMQkBweVDh4TLlfrIU/ERoW
+A6D6idBjrog=
+=s5yB
 -----END PGP SIGNATURE-----
