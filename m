@@ -1,83 +1,53 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: 2.6.10-rc2-mm1: oops when accessing reiser4 fs's (maybe fix
-	provided)
-Date: Wed, 17 Nov 2004 10:09:49 +0300
-Message-ID: <1100675389.1399.27.camel@tribesman.namesys.com>
+From: Mathieu Segaud <matt@minas-morgul.org>
+Subject: Re: 2.6.10-rc2-mm1: oops when accessing reiser4 fs's (maybe fix provided)
+Date: Wed, 17 Nov 2004 17:55:51 +0100
+Message-ID: <87d5ycza7c.fsf@barad-dur.crans.org>
 References: <874qjptyl1.fsf@barad-dur.crans.org>
+	<1100675389.1399.27.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-gLZgRza9uPOe2WI0L/IL"
-Return-path: <reiserfs-list-return-22394-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-22398-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <874qjptyl1.fsf@barad-dur.crans.org>
+In-Reply-To: <1100675389.1399.27.camel@tribesman.namesys.com> (Vladimir
+	Saveliev's message of "Wed, 17 Nov 2004 10:09:49 +0300")
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Mathieu Segaud <matt@minas-morgul.org>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Vladimir Saveliev <vs@namesys.com>
 Cc: reiserfs-list@namesys.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@osdl.org>
 
---=-gLZgRza9uPOe2WI0L/IL
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Vladimir Saveliev <vs@namesys.com> disait derni=E8rement que :
 
-Hello
+> Hello
+>
+> On Tue, 2004-11-16 at 21:53, Mathieu Segaud wrote:
+>> I tried 2.6.10-rc2-mm1 and the last reiser4 updates gave some (many many)
+>> oopses flooding my screen :).
+>> I tried reverting reiser4-fix-deadlock.patch and oopses are gone.
+>>=20
+> Would you please instead try the attached patch?=20
 
-On Tue, 2004-11-16 at 21:53, Mathieu Segaud wrote:
-> I tried 2.6.10-rc2-mm1 and the last reiser4 updates gave some (many many)
-> oopses flooding my screen :).
-> I tried reverting reiser4-fix-deadlock.patch and oopses are gone.
-> 
-Would you please instead try the attached patch? 
+yep.
+indeed it worked
+anyway, for the quick answer
 
-> I tried this one because thru the quick traces on my screen, I saw a reference
-> to get_current_context.
-> The speed of the traces and the unasibility of the box prevented me from
-> making differences between "real" oopses and BUG_ON(), sorry for that...
-> 
-> If you want some traces I can provide them ASAP (e.g. tomorrow)
+>
+>> I tried this one because thru the quick traces on my screen, I saw a ref=
+erence
+>> to get_current_context.
+>> The speed of the traces and the unasibility of the box prevented me from
+>> making differences between "real" oopses and BUG_ON(), sorry for that...
+>>=20
+>> If you want some traces I can provide them ASAP (e.g. tomorrow)
+>
+>
+>
+>
 
+--=20
+Carrots work on rabbits, they don't work on hungry weasels.
 
-
-
---=-gLZgRza9uPOe2WI0L/IL
-Content-Disposition: attachment; filename=1.1755
-Content-Type: text/plain; name=1.1755; charset=koi8-r
-Content-Transfer-Encoding: 7bit
-
-# This is a BitKeeper generated diff -Nru style patch.
-#
-# ChangeSet
-#   2004/11/15 16:23:47+03:00 vs@tribesman.namesys.com 
-#   unix_file_filemap_nopage: missing context creation is added
-# 
-# plugin/file/file.c
-#   2004/11/15 16:23:45+03:00 vs@tribesman.namesys.com +5 -1
-#   unix_file_filemap_nopage: missing context creation is added
-# 
-diff -Nru a/plugin/file/file.c b/plugin/file/file.c
---- a/plugin/file/file.c	2004-11-17 09:36:11 +03:00
-+++ b/plugin/file/file.c	2004-11-17 09:36:11 +03:00
-@@ -1961,8 +1961,10 @@
- {
- 	struct page *page;
- 	struct inode *inode;
--
-+	reiser4_context ctx;
-+	
- 	inode = area->vm_file->f_dentry->d_inode;
-+	init_context(&ctx, inode->i_sb);
- 
- 	/* block filemap_nopage if copy on capture is processing with a node of this file */
- 	down_read(&reiser4_inode_data(inode)->coc_sem);
-@@ -1972,6 +1974,8 @@
- 
- 	drop_nonexclusive_access(unix_file_inode_data(inode));
- 	up_read(&reiser4_inode_data(inode)->coc_sem);
-+
-+	reiser4_exit_context(&ctx);
- 	return page;
- }
- 
-
---=-gLZgRza9uPOe2WI0L/IL--
+	- Alan Cox on linux-kernel
 
