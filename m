@@ -1,104 +1,109 @@
-From: Molchanov Alexander <a.molchanov@transtelecom-nn.ru>
+From: Vitaly Fertman <vitaly@namesys.com>
 Subject: Re: reiserfsck --rebuild-tree Aborted
-Date: Thu, 30 Sep 2004 12:35:55 +0400
-Message-ID: <20040930123555.77ce375c@xor.ttknn.net>
+Date: Thu, 30 Sep 2004 12:36:02 +0400
+Message-ID: <200409301236.02219.vitaly@namesys.com>
 References: <20040930092442.40ee8189@xor.ttknn.net>
-	<20040930115219.31b75bab@xor.ttknn.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21965-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21966-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040930115219.31b75bab@xor.ttknn.net>
+In-Reply-To: <20040930092442.40ee8189@xor.ttknn.net>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Molchanov Alexander <a.molchanov@transtelecom-nn.ru>, reiserfs-list@namesys.com
+Cc: noc@ttknn.net
 
-On Thu, 30 Sep 2004 11:52:19 +0400
-Molchanov Alexander <a.molchanov@transtelecom-nn.ru> wrote:
+On Thursday 30 September 2004 09:24, Molchanov Alexander wrote:
+> Hello.
 
-> > Hello.
-> > 
-> > I have a big trouble.
-> > ...[skiped]...
-> > 
-> > Pass 2:
-> > 0%....20%....40%..                                       left 818621, 4280 /sec
-> > Not enough allocable blocks, checking bitmap...there are 0 allocable blocks, btw
-> >       
-> > out of disk space
-> > Aborted
-> > 
-> > 
-> > ...[skiped]...
-> 
-> 
-> Excuse me for troubling. I nevertheless have found on a disk badblocks/badsectors (right at the end of an partition - 3 blocks on 1024).
-> 
-> Sorry!
-> 
-> # badblocks -v -o sda2.badb.out /dev/sda2 
-> Checking blocks 0 to 10009251
-> Checking for bad blocks (read-only test): done                        
-> Pass completed, 3 bad blocks found.
-> 
-> # cat sda2.badb.out 
-> 10009248
-> 10009249
-> 10009250
+Hello,
 
-# reiserfsck --badblocks sda2.badb.out --yes --logfile rebuild.log  --rebuild-tree /dev/sda2
-reiserfsck 3.6.17 (2003 www.namesys.com)
-...
+> I have a big trouble.
+>
+>
+> Yesterday diskspace on a server of my company the place was terminated.
+> After reboot and reiserfsck --fix-fixable has corrected not all mistakes.
+> After that the server has worked a little more (I have removed some files
+> for clearing a place) and I have noticed, that it is impossible to get
+> access to some files and even to remove. After reloading with LiveCD and
+> attempts --rebuild-tree it has turned out log:
+>
+> @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+>
+> # reiserfsck --rebuild-tree /dev/sda2
+> reiserfsck 3.6.17 (2003 www.namesys.com)
 
-Will rebuild the filesystem (/dev/sda2) tree
-Bad block list will contain only blocks specified in 'sda2.badb.out' file
-Will put log info to 'rebuild.log'
+[skipped]
 
-Do you want to run this program?[N/Yes] (note need to type Yes if you do):Yes
-create_badblock_bitmap: block number (10009247) points out of fs size (2502304).
-create_badblock_bitmap: block number (10009248) points out of fs size (2502304).
-create_badblock_bitmap: block number (10009249) points out of fs size (2502304).
-create_badblock_bitmap: block number (10009250) points out of fs size (2502304).
-create_badblock_bitmap: block number (10009251) points out of fs size (2502304).
-Replaying journal..
-Reiserfs journal '/dev/sda2' in blocks [18..8211]: 0 transactions replayed
-###########
-reiserfsck --rebuild-tree started at Thu Sep 30 12:14:54 2004
-###########
+> Pass 1 (will try to insert 846943 leaves):
+> Looking for allocable blocks .. finished
+> 0%....20%....40%....60%....80%....100%                        left 0, 2785
+> /sec Flushing..finished
+>         846943 leaves read
+>                 33146 inserted
+>                 813797 not inserted
 
-Pass 0:
-Loading on-disk bitmap .. ok, 2199141 blocks marked used
-Skipping 8287 blocks (super block, journal, bitmaps) 2190854 blocks will be read
-0%....20%....40%....60%....80%....100%                        left 0, 5765 /sec
-        "r5" hash is selected
-Flushing..finished
-        Read blocks (but not data blocks) 2190854
-                Leaves among those 846944
-                Objectids found 475091
+are you sure that you have not copied a reiserfs to a file on this 
+reiserfs and not left it there in not encrypted/compressed form? 
+or probably you unpacked reiserfs metadata (debugreiserfs -u, 
+or the program unpack in older version) to a file again w/out 
+encryption/compression?
+the problem that reiserfs does not allow to distinguish the host fs 
+metadata from the metadata that are kept in a file on this fs. and 
+at least xor encryption is needed for such a file.
 
-Pass 1 (will try to insert 846944 leaves):
-Looking for allocable blocks .. finished
-0%....20%....40%....60%....80%....100%                        left 0, 2740 /sec
-Flushing..finished
-        846944 leaves read
-                34298 inserted
-                812646 not inserted
+> Pass 2:
+> 0%....20%....40%..                                       left 818621, 4280
+> /sec Not enough allocable blocks, checking bitmap...there are 0 allocable
+> blocks, btw
+>
+> @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+>
+> I have undertaken some attempts and received the same result. On a hard
+> disk of badblocks is not present (I has checked up the utility dd and
+> dd_rescue - on other partition the image of a disk was copied). Here has
+> laid out result of work "debugreiserfs -p /dev/sda2 > sda2.1.dump; bzip2 -9
+> sda2.1.dump": http://public.nnov.net/tmp/ibm2/sda2.1.dump.bz2
+>
+> Kernel is	2.4.25-gentoo-r2 on Hard drive
+> and		2.4.26-gentoo-r6 on LiveCD
+>
+> /dev/sda - is SCSI hardware Raid5 massive
+>
+> Can you help me rebuild partition ? :(
+> If it is required it is possible to remove (for clearing a diskspace):
+> /var/lib/oops/ - here there is a file in 512Mb
+> 	and directories:
+> /bin
+> /lib
+> /sbin
+> /opt
+> /usr, excluding "/usr/local" !
 
-Pass 2:
-0%....20%....40%..Not enough allocable blocks, checking bitmap...there are 0 allocable blocks, btw
+usually this problem is solved in one of the following ways:
+if you do not need the next partition then you can 
+- zero it first with 
+	dd if=/dev/zero of=/dev/sda3
+- repartition sda with fdisk, 
+- then run
+	reiserfsck --rebuild-sb /dev/sda2
+to enlarge the fs on the enlarged partition and 
+- finally re-run tree rebuilding.
 
-out of disk space
-Aborted
+Another way is to copy the problem partition to another larger one
+and repeat the reiserfsck steps above. Or probably to a file on another 
+partition, enlarge the file and reiserfsck the file (--rebuild-sb, and then 
+--rebuild-tree). this is more relable way as the original partition is
+not changed and you can easily repeat an attempt on a larger partition.
+
+I am looking on your metadata now to figure out what partition size 
+is enough and what was a reason of this problem.
 
 -- 
-Molchanov Alexander
-TransTeleCom-NN company
-Network Operation Center: noc@ttknn.net
-phone.: +7 8312 728827 (1424)
-        +7 8312 482733 (1424)
-a.molchanov@transtelecom-nn.ru
-PGP Fingerprint = 50C7 8479 59E4 8228 F27C 5E8C EDF5 FECC 6CA2 B1E2
+Thanks,
+Vitaly Fertman
 
