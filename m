@@ -1,73 +1,53 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Daniel Phillips <phillips@arcor.de>
 Subject: Re: precise characterization of ext3 atomicity
-Date: Fri, 05 Sep 2003 01:03:03 +0400
-Message-ID: <3F57A887.9040706@namesys.com>
-References: <3F574A49.7040900@namesys.com> <20030904085537.78c251b3.akpm@osdl.org> <3F576176.3010202@namesys.com> <20030904091256.1dca14a5.akpm@osdl.org> <3F57676E.7010804@namesys.com> <20030904181540.GC13676@matchmail.com> <3F578656.60005@namesys.com> <20030904191255.GE13676@matchmail.com>
+Date: Thu, 4 Sep 2003 23:08:54 +0200
+Message-ID: <200309042308.54002.phillips@arcor.de>
+References: <3F574A49.7040900@namesys.com> <200309042216.04121.phillips@arcor.de> <20030904131052.6ec6426d.akpm@osdl.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15565-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15566-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030904191255.GE13676@matchmail.com>
+In-Reply-To: <20030904131052.6ec6426d.akpm@osdl.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Mike Fedyk <mfedyk@matchmail.com>
-Cc: Andrew Morton <akpm@osdl.org>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Andrew Morton <akpm@osdl.org>
+Cc: reiser@namesys.com, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-Mike Fedyk wrote:
+On Thursday 04 September 2003 22:10, Andrew Morton wrote:
+> Daniel Phillips <phillips@arcor.de> wrote:
+> > On Thursday 04 September 2003 17:55, Andrew Morton wrote:
+> > > Hans Reiser <reiser@namesys.com> wrote:
+> > > > Is it correct to say of ext3 that it guarantees and only guarantees
+> > > > atomicity of writes that do not cross page boundaries?
+> > >
+> > > Yes.
+> >
+> > Is that just happenstance, or does Posix or similar mandate it?
+>
+> Happenstance.
+>
+> It's semi-trivial to do this in ext3.  You'd open the file with O_ATOMIC
+> and a write() would either be completely atomic or would return -EFOO
+> without having written anything.
+>
+> The thing which prevents this is the ranking order between journal_start()
+> and lock_page().
+>
+> It's not trivial but also not too hard to change things so that
+> journal_start() can rank outside lock_page() - this would also offer some
+> CPU savings.
+>
+> Can't say that I'm terribly motivated about the feature though.
 
->On Thu, Sep 04, 2003 at 10:37:10PM +0400, Hans Reiser wrote:
->  
->
->>Mike Fedyk wrote:
->>
->>    
->>
->>>On Thu, Sep 04, 2003 at 08:25:18PM +0400, Hans Reiser wrote:
->>>
->>>
->>>      
->>>
->>>>In data=journal and data=ordered modes ext3 also guarantees that the 
->>>>metadata will be committed atomically with the data they point to.  
->>>>However ext3 does not provide user data atomicity guarantees beyond the 
->>>>scope of a single filesystem disk block (usually 4 kilobytes).  If a 
->>>>single write() spans two disk blocks it is possible that a crash partway 
->>>>through the write will result in only one of those blocks appearing in 
->>>>the file after recovery.
->>>>  
->>>>
->>>>        
->>>>
->>>And how does reiser4 do this without changing the userspace apps?
->>>
->>>      
->>>
->>We don't.  We just make the hovercraft, we don't force you to go over 
->>the water.....
->>    
->>
->
->So by default with no user space modifications, reiser4 will be atomic for
->each write() call, and ext3 will if it aligns withing a single page.
->
->Is that correct?
->
-Yes.
+I'm relieved, I have always thought that some higher level synchronization is 
+required for simultaneous writes.  So Hans might as well tell his fans that 
+Ext3 makes no official guarantee, and neither does Linux.
 
->
->Then you can go on to specify that you can have larger transactions if you
->make some changes to the userspace apps.
->
->
->  
->
-or you are a programmer who writes code....;-)  It's not that hard to 
-write code....;-)
+Regards,
 
--- 
-Hans
-
+Daniel
 
