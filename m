@@ -1,89 +1,70 @@
-From: Yury Umanets <umka@namesys.com>
-Subject: Re: Some questions about Reiser4
-Date: Sat, 26 Apr 2003 19:10:29 +0400
-Message-ID: <3EAAA165.5000403@namesys.com>
-References: <000c01c30b6a$d7f12590$0200a8c0@xpstation> <3EAA8008.4020401@namesys.com> <000b01c30bf7$bf47b080$0200a8c0@xpstation> <3EAA98EB.3040702@namesys.com> <001e01c30c03$740efb80$0200a8c0@xpstation>
+From: none <turtle.power@wanadoo.es>
+Subject: Re: trouble with reiserfs on ppc vs-3050:
+ wait_buffer_until_released ...
+Date: Sat, 26 Apr 2003 17:27:57 +0200
+Message-ID: <20030426172757.37f44815.turtle.power@wanadoo.es>
+References: <1051258287.5564.1.camel@fortknox>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13828-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-13829-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <001e01c30c03$740efb80$0200a8c0@xpstation>
+In-Reply-To: <1051258287.5564.1.camel@fortknox>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Fred -- Speed Up -- <speedup@free.fr>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-Fred -- Speed Up -- wrote:
+Hi
+Digging in logs I've found that this happened to me about 10 days ago,
+badblocks didn't found any disk defect.
 
->So, what you call "inodes" within Reiser4 are stat data (last access time,
->right, ...)
->
-Inode is struct in VFS, but in the case of reiser4 it contains also the 
-pointer to the loaded reiser4 stat data item. Stat data item contains 
-times, mode, nlinks, size, etc.
+Apr 16 15:29:37 poma kernel: vs-3050: wait_buffer_until_released: nobody
+releases buffer (dev 03:04, size 4096, blocknr 1441792, count 3, list 0,
+state 0x10019, page c0674838, (UPTODATE, CLEAN, UNLOCKED)). Still
+waiting (60000000)  JDIRTY !JWAIT Apr 16 15:29:44 poma modprobe:
+modprobe: Can't locate module char-major-10-134 Apr 16 15:29:53 poma
+kernel: vs-3050: wait_buffer_until_released: nobody releases buffer (dev
+03:04, size 4096, blocknr 1441792, count 3, list 0, state 0x10019, page
+c0674838, (UPTODATE, CLEAN, UNLOCKED)). Still waiting (90000000)  JDIRTY
+!JWAIT Apr 16 15:30:10 poma kernel: vs-3050: wait_buffer_until_released:
+nobody releases buffer (dev 03:04, size 4096, blocknr 1441792, count 3,
+list 0, state 0x10019, page c0674838, (UPTODATE, CLEAN, UNLOCKED)).
+Still waiting (120000000)  JDIRTY !JWAIT
 
-Each stat data is tag for file. That each file has one stat data. And 
-this stat data can be found by its key. Its kay consists of  inode 
-number of parent directory,  inode number of file itself and offset 
-(zero for stat data).
+My machine is a ppc G3 (mac) with a 2.4.20 benh kernel running on a /
+reiserfs that holds the last 6gigs of the drive, and the corrupted one
+is a spare partition using the remaining first 6 gigs of the drive.
 
-> and a way to find the files's data (not directly the physical
->adress, but a piece of information determining exactly the file), mainly for
->VFS compatibility purposes. Are 'inodes' converted to keys when Reiser4 gets
->them from VFS, or do they represent a physical adress on the disk ?
->
-Inode numbers may be converted to key. And then key is used for 
-searching whatever in the tree (stat data, file body, directory entry, etc).
-But in the case of seraching file body key must contain also offset 
-component installed and namely the offset in file we are want to access.
+In my case the problem raised when downloading a big file from a local
+machine lets say about 5-10Mb/s with wget, which then get the 100% of my
+cpu and becomes "unkillable" but is in R state not D.
 
->
->Now I'm going to reformulate the question I asked you about big file storage
->:
->Big files need more than one extent.
->
-Right.
-
-> But according to the documentation,
->there seems to be only one pointer associated to each file. 
->
-Each big file can contains not limited number of extent items. Each 
-extent item contains extent units. They can be accessed/found by key. 
-Each extent unit consists of two fields: start (block number) and width 
-(number of blocks). In these range from start to start + width some 
-piece of file data is lie. But,  as there is not anough big contiguous 
-range on disk (some of blocks are used for diffrent things, like 
-bitmaps, leaves, etc), we should use more than one extent items with a 
-lot of extent units inside.
-
->So how can you
->point out multiple extents necessary to store big files, using extent
->pointers in the tree ?
->
-
->
->Be sure I'm awaiting the great Hans and his core dev team ;-)
->
-Actually I'm one of that team. But there are questions Hans can answer 
-better than me, because he written that documentation on our web pages. 
-It is not the same what is implemented, but it is rather roadmap. And 
-I'm trying to explain you the things which are implemebted yet and how 
-do thay implemented. But sometimes I can't comprehend your requests :)
-
->
->Fred
->
->
->
->  
->
+I can provide additional information on Monday if someone needs....
 
 
--- 
-Yury Umanets
+On 25 Apr 2003 10:11:53 +0200
+Soeren Sonnenburg <kernel@nn7.de> wrote:
+
+> Hi...
+>=20
+> I suddenly have a file which when I access it using gvim gives
+>=20
+> vs-3050: wait_buffer_until_released: nobody releases buffer (dev
+> 03:07, size 4096, blocknr 2031616, count 3, list 0, state 0x10019,
+> page c0add66540, (UPTODATE, CLEAN, UNLOCKED)). Still waiting
+> (570000000) JDIRTY !WAIT
+>=20
+> and makes the whole machine hang...
+>=20
+>=20
+> Ideas what I could do about it ?
+>=20
+> Soeren.
+>=20
+>=20
 
 
-
+--=20
+La resistencia es f=FAtil todos ser=E9is asimilados
