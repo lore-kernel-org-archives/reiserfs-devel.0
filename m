@@ -1,48 +1,46 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Re: Re: Fwd: Re: 2.4.19-rc1-jam2 (-rc1aa2)
-Date: Thu, 11 Jul 2002 04:23:01 +0200
-Message-ID: <3D2CEC05.5090300@mb.tu-ilmenau.de>
-References: <200207110235.22875.Dieter.Nuetzel@hamburg.de> <1026350802.4952.0.camel@tiny>
+From: Matthias Andree <matthias.andree@stud.uni-dortmund.de>
+Subject: Re: reiserfsprogs release
+Date: Thu, 11 Jul 2002 04:27:38 +0200
+Message-ID: <20020711022738.GD1384@merlin.emma.line.org>
+References: <200206251829.25799.vitaly@namesys.com> <20020625165254.GA30301@matrix.wg> <200206261317.10813.vitaly@namesys.com> <200207101206.48370.vitaly@namesys.com> <1026311034.7074.76.camel@spc9.esa.lanl.gov> <20020710153801.A8570@infradead.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10959-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10960-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <20020710153801.A8570@infradead.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+Cc: Christoph Hellwig <hch@infradead.org>, Steven Cole <elenstev@mesatop.com>, Vitaly Fertman <vitaly@namesys.com>, Marcelo Tosatti <marcelo@conectiva.com.br>, Alan Cox <alan@lxorguk.ukuu.org.uk>
 
-On 07/11/2002 03:26 AM, Chris Mason wrote:
-> On Wed, 2002-07-10 at 20:35, Dieter N=FCtzel wrote:
->=20
->>Hello Chris,
->>
->>symbol clash between latest -AA (-jam2, 00-aa-rc1aa2) kernel and your=20
->>data-logging stuff ;-(
->=20
->=20
-> You should be able to drop the EXPORT_SYMBOL(balance_dirty); from my
-> patch.
->=20
-> -chris
->=20
+On Wed, 10 Jul 2002, Christoph Hellwig wrote:
 
-;-)
+> On Wed, Jul 10, 2002 at 08:23:54AM -0600, Steven Cole wrote:
+> > On Wed, 2002-07-10 at 02:06, Vitaly Fertman wrote:
+> > > 
+> > > Hi all,
+> > > 
+> > > the latest reiserfsprogs-3.6.2 is available on our ftp site.
+> > > 
+> > 
+> > Is the following patch to Documentation/Changes appropriate?
+> 
+> Does reiserfs in 2.4.19-pre require that version?  if yes it would be
+> very bad (2.4 is not supposed to need newer userlevel during the series)
 
-Are your patches going to follow 2.4.19/2.4.20-preX+namesys - once=20
-2.4.19/2.4.20-pre is finally out
+Well, there's user-space and user-space. A part of the user space is
+kernel/system oriented, like fsck.* or util-linux (mount, chattr!)
+configuration tools or user-space parts of drivers, and there's a part
+of user-space that is unrelated.
 
-(...me, just praying for this circumstance, also for namesys' hidden=20
-patches on this next kernel!...)  ?
+If the kernel related stuff (which usually is in /sbin) needs to be
+updated, that's fine even for a "stable" kernel. If the new
+reiserfs-progs fix a problem of an older version, then by all means go
+fix and update Documentation/Changes. There could be a new "recommended"
+column though which lists non-critical version updates.
 
-:-))
-
-I have no problems with: 2.4.19-rc1 + reiserfs-patches[01,02,03,05] +=20
-all your patches (the data-logging one is now -11, checked regression=20
-from -13) + rml-preempt-kernel.
-
-
-Manuel
-
+-- 
+Matthias Andree
