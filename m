@@ -1,28 +1,26 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Fwd: reiser4 non-free?
-Date: Mon, 03 May 2004 10:45:03 -0700
-Message-ID: <4096851F.9040508@namesys.com>
-References: <3DF9165145FACB4C96977FF650C1E9040C469F16@its-mail1.its.corp.gwl.com>
+From: camis <camis@mweb.co.za>
+Subject: max files
+Date: Mon, 03 May 2004 19:47:47 +0200
+Message-ID: <409685C3.30502@mweb.co.za>
+References: <3DF9165145FACB4C96977FF650C1E9040C469F16@its-mail1.its.corp.gwl.com> <4096851F.9040508@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18397-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18398-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C469F16@its-mail1.its.corp.gwl.com>
+In-Reply-To: <4096851F.9040508@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Burnes, James" <james.burnes@gwl.com>
-Cc: Martin List-Petersen <martin+debian-devel@list-petersen.net>, Don Armstrong <don@donarmstrong.com>, debian-legal@lists.debian.org, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Burnes, James wrote:
+Hi All,
 
->Is there any way to do an MD5 of either (1) each module in a software
->subsystem or (2) each software version and then have a central registry
->where interested developers and users can go to see the credits?
->
->  
->
-Credits that users must take action to see are not effective credits. No 
-one will look at them.
+Anyone tested to see how fast/sluggish reiser3 (or 4?)
+performs when accessing a directory that has between
+5 and 25 million flat/text files?
+
+Any past experiences? (dont say use subdirectories ;)
+
+Cami
