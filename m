@@ -1,78 +1,102 @@
-From: berthiaume_wayne@emc.com
-Subject: RE: fsync() Performance Issue
-Date: Mon, 6 May 2002 08:54:47 -0400
-Message-ID: <93F527C91A6ED411AFE10050040665D0049BF9B9@corpusmx1.us.dg.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Performance question
+Date: Mon, 6 May 2002 17:01:03 +0400
+Message-ID: <20020506170103.A954@namesys.com>
+References: <200205051420.g45EKKo02315@linux1.futureware.at> <20020505190739.A13452@namesys.com> <200205051644.g45GijA03908@linux1.futureware.at>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10257-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10258-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <200205051644.g45GijA03908@linux1.futureware.at>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mason@suse.com
-Cc: reiserfs-list@namesys.com, green@namesys.com
+To: Philipp G?hring <p.guehring@futureware.at>
+Cc: reiserfs-list@namesys.com
 
-	I'll add the write caching into the test just for info. Until there
-is a way to guaranty the data is safe I'll have to go with no write caching
-though. I should have all this testing done by the end of the week.
+Hello!
 
------Original Message-----
-From: Chris Mason [mailto:mason@suse.com]
-Sent: Friday, May 03, 2002 6:00 PM
-To: berthiaume_wayne@emc.com
-Cc: reiserfs-list@namesys.com; green@namesys.com
-Subject: RE: [reiserfs-list] fsync() Performance Issue
+On Sun, May 05, 2002 at 06:43:45PM +0200, Philipp G?hring wrote:
 
+> > *glob functions are implemented by various library functions, that do full
+> > readdir scans at least once, I believe.
+> I thought I heard about a syscall, that makes it possible to pass the glob to 
+> the filesystem, so that the filesystem can optimize globbings as it likes, 
+> and pass the result back to the application, but ok.
 
-On Fri, 2002-05-03 at 16:35, berthiaume_wayne@emc.com wrote:
-> 	Chris, I have some quick preliminary results for you. I have
-> additional testing to perform and haven't run debugreiserfs() yet. If you
-> have a preference for which tests to run debugreiserfs() let me know.
-> 	Base testing was done against 2.4.13 built on RH 7.1 using the
-> test_writes.c code I forwarded to you. The system is a Tyan with single
-> PIII, IDE Promise 20269, Maxtor 160GB drive - write cache disabled. All
-> numbers are with fsync() and 1KB files. As I said, more testing, i.e.
-> filesizes, need to be performed.
+I do not think something like that exists in Linux. But if you
+come up with man page from section 2...
 
-> 2.4.19-pre7 speedup, data logging, write barrier / no options
-> 	=> 47.1ms/file
+> > > Or should I do 2 opendir-readdir loops, one to read over the first 39
+> > > results, that I do not need, and the second one to geht the results 40 to
+> > > 49?
+> > In fact I do not see why do you need to do 2 opendir-readdir loops.
+> > One loop should be enough.
+> Yeah. Sure. My mistake. One opendir, and 2 readdir loops. The first one skips 
+> over unneeded results and the second one serves the data.
 
-Hi Wayne, thanks for sending these along.
+No. Still I think you need only one loop anyway, like this:
+<pseudocode>
+DIR=opendir(name);
+while((result=readdir(DIR)) != NULL) {
+	if ( check_filename_criteria(result->filename) ) {
+		add_to_list_of_files_to_process(result->filename);
+	}
+}
+for i in list_of_files_to_process {
+	process_file(i);
+}
 
-I expected a slight improvement over the 2.4.13 code even with the data
-logging turned off.  I'm curious to see how it does with the IDE cache
-turned on.  With scsi, I see 10-15% better without any options than an
-unpatched kernel.
+So only one loop, and the second one does not count because it is serves
+actual data.
 
-> 2.4.19-pre7 speedup, data logging, write barrier / data=journal
-> 	=> 25.2ms/file
-> 2.4.19-pre7 speedup, data logging, write barrier /
-data=journal,barrier=none
-> 	=> 27.8ms/file
+> > > The problem here is that I have to readdir about 50000 files (40000 to
+> > > get through the unneeded results, and 10000 to get the 10 results i need)
+> > > But on the other hand, I do not have to remember 100 files, from which I
+> > > only need 10.
+> > I am completely missing the idea on where these numbers are from. Can you
+> > explain in more details.
+> I will try so.
+> I have a table with 100000 files. A complete search would result for example 
+> 100 files, which are spread across the whole directory.
+> About every thousand files, there is one file, that matches the query.
+> Since the client does not want to get 100 files at once, at first I return 
+> only 10 results for the first page, and the user can navigate page-wise.
+> So I built up the scenario where the user now wants the see results 40-49 
+> from the query "001_*_1212_1", 
+> which I assume as normal behaviour for my application.
 
-The barrier option doesn't make much difference because the write cache
-is off.  With write cache on, the barrier code should allow you to be
-faster than with the caching off, but without risking the data (Jens and
-I are working on final fsync safety issues though).
+Ah, I see what you mean. If you have a lot of resources, you can setup a session
+and store all the search results for that session at server side.
+So when second request comes in, you just read search result from the session.
+Also you kill the session for 5 minutes after 5 minutes of inactivity on it or
+so. Hm... This requires for cookies to be enabled, though. ;)
 
-Hans, data=journal turns on the data journaling.  The data journaling
-patches also include optimizations to write metadata back to disk in
-bigger chunks for tiny transactions (the current method is to write one
-transaction's worth back, when a transaction has 3 blocks, this is
-pretty slow).
+> > Readdir would require less iterations through 001/*, because number of
+> > entries will be only 100 as you described above.
+> > You get all these 100 entries and then loop 100 times trying to open
+> > 001/${next_name}/1212/1 and deciding whenever you need this file or not.
+> > (If it exists of course, or you might get -ENOENT and proceed to next
+> > directory).
+> > Also deleting directories would be an overkill.
+> So the question is, how big that overkill is.
 
-I've put these patches up on:
+I mean that you do not need to delete directories, when they are empty.
+You only need to create the directory structure once.
 
-ftp.suse.com/pub/people/mason/patches/data-logging
+> Is there perhaps a benchmark that tested it already?
 
-> 	One question is will these patches be going into the 2.4 tree and
-> when?
+No, I do not think so, but feel free to compose and run your own benchmark.
 
-The data logging patches are a huge change, but the good news is they
-are based on the nesting patches that have been stable for a long time
-in the quota code.  I'll probably want a month or more of heavy testing
-before I think about submitting them.
+> > I think this might be faster in many circumfstances.
+> > Also what you've descrived looks very like to what squid does. And squid
+> > people went to reiserfs-raw interface and are quite happy with it.
+> I think the difference to squid is that they only need one result, not a part 
+> of a search, with more than one result.
 
--chris
+Hm. This is true.
 
+Bye,
+    Oleg
