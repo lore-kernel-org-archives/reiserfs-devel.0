@@ -1,54 +1,83 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: [PATCH] updated data=ordered patch for 2.6.3
-Date: Tue, 2 Mar 2004 22:48:07 +0100
-Message-ID: <200403022248.07585.Dieter.Nuetzel@hamburg.de>
-References: <1077165373.22253.45.camel@watt.suse.com> <1078257997.3928.55.camel@watt.suse.com> <200403022206.08495.Dieter.Nuetzel@hamburg.de>
+From: Jonathan Briggs <jbriggs@esoft.com>
+Subject: Reiser4 bug?  Zeros in files.
+Date: Tue, 02 Mar 2004 15:20:37 -0700
+Message-ID: <1078266036.12548.6.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-17016-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-bW0r/E0gXJSbmX5bqokp"
+Return-path: <reiserfs-list-return-17017-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200403022206.08495.Dieter.Nuetzel@hamburg.de>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
-Cc: Chris Mason <mason@suse.com>, Christophe Saout <christophe@saout.de>
+To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Am Dienstag, 2. M=E4rz 2004 22:06 schrieb Dieter N=FCtzel:
-> Am Dienstag, 2. M=E4rz 2004 21:06 schrieb Chris Mason:
-> > On Tue, 2004-03-02 at 14:53, Dieter N=FCtzel wrote:
-> > > Ups, data-logging IS already in SuSE's 2.6.3-16 kernel ;-)
-> >
-> > Yes ;-)
->
-> Brave men.
->
-> Some numbers:
-> time dd if=3D/dev/zero of=3Dsparse bs=3D1 seek=3D200G count=3D1
-> 1+0 Records ein
-> 1+0 Records aus
-> 0.001u 2.592s 0:04.39 58.9%     0+0k 0+0io 0pf+0w
-> time rm sparse
-> 0.000u 4.516s 0:04.52 99.7%     0+0k 0+0io 0pf+0w
->
-> Mouse movement and X server (screen update) works but is very slow (chopp=
-y)
-> for the "know" four seconds.
-> But much better than before.
->
-> > > What's needed? --- The reiserfs_unpack() fix and your speed up patch?
-> >
-> > suse only needs the reiserfs_unpack() fix.
->
-> But it works like a charm without it. ;-)
+--=-bW0r/E0gXJSbmX5bqokp
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Argh, ... partially... 8-(
+I'm using Reiser4 on MD RAID 0.  I'm seeing blocks of zeros in files.=20
+So far, I've only noticed it happen in .xsession-errors and in my
+Evolution local mail file.
 
-lilo... do NOT work with the "new" (2.6.3-16) kernel as we know...
-But I could boot with my old one and could create the new initrd.
-Let me know if you have something to test.
+It's interesting that it seems to happen on even borders in the files.=20
+Here's a sample of what I mean:
 
-=2DDieter
+# xxd ~/.xsession-errors
+[snip stuff]
+0003fe0: 2d45 5252 4f52 202a 2a3a 2066 696c 6520  -ERROR **: file
+0003ff0: 6361 6d65 6c2d 7061 7274 6974 696f 6e2d  camel-partition-
+0004000: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0004010: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+[snip more zeros]
+0004e40: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0004e50: 0000 0000 0000 0000 0000 0000 0000 5769  ..............Wi
+0004e60: 6e64 6f77 206d 616e 6167 6572 2077 6172  ndow manager war
+0004e70: 6e69 6e67 3a20 576f 726b 696e 6720 6172  ning: Working ar
+[snip stuff]
+0004fe0: 7468 2069 6420 6033 3938 3638 270a 0a28  th id `39868'..(
+0004ff0: 6576 6f6c 7574 696f 6e3a 3130 3335 3029  evolution:10350)
+0005000: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0005010: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+[snip more zeros]
+0005e20: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0005e30: 0000 0000 0000 0000 0000 000a 2865 766f  ............(evo
+0005e40: 6c75 7469 6f6e 3a31 3235 3438 293a 2063  lution:12548): c
+0005e50: 616d 656c 2d6c 6f63 616c 2d70 726f 7669  amel-local-provi
+[end of file]
+
+# xxd ~/evolution/local/Inbox/mbox
+[snip stuff]
+01fdfe0: 2031 333a 3438 3a31 3720 2d30 3730 300a   13:48:17 -0700.
+01fdff0: 5265 6365 6976 6564 3a20 6672 6f6d 206c  Received: from l
+01fe000: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+01fe010: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+[snip zeros]
+01fe540: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+01fe550: 0000 0000 0000 0000 0000 0000 0046 726f  .............Fro
+01fe560: 6d20 4469 6574 6572 2e4e 7565 747a 656c  m Dieter.Nuetzel
+01fe570: 4068 616d 6275 7267 2e64 6520 5475 6520  @hamburg.de Tue
+[regular stuff to end of file]
+
+In the .xsession-errors file it happened at offset 0x4000 and 0x5000.=20
+In my mbox file it happened at 0x1fe000.
+
+So, any ideas?  Things you'd like to know?  Things you'd like me to try?
+--=20
+Jonathan Briggs
+jbriggs@esoft.com
+
+--=-bW0r/E0gXJSbmX5bqokp
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+
+iD8DBQBARQi0G8fHaOLTWwgRAvDpAJ4rDZKBWO6U872zvzNdturxkqIPUACgogww
+aEYJAzzJXItv118Qh5Jg2SM=
+=eLCV
+-----END PGP SIGNATURE-----
+
+--=-bW0r/E0gXJSbmX5bqokp--
+
