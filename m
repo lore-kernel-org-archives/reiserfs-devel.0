@@ -1,38 +1,35 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: Corruption: --fix-fixable results in all nlink values = 0
-Date: Mon, 19 Aug 2002 09:20:23 +0400
-Message-ID: <20020819092023.B1815@namesys.com>
-References: <200208152007.42370.degerrit@web.de> <200208152329.40707.degerrit@web.de> <200208161205.00550.vitaly@namesys.com> <200208170254.48383.degerrit@web.de> <m3k7mpreij.fsf@merlin.emma.line.org> <3D5E9D69.1030109@namesys.com>
+Subject: Re: Possible problem with Firewire device
+Date: Mon, 19 Aug 2002 09:26:56 +0400
+Message-ID: <20020819092656.A1874@namesys.com>
+References: <Pine.LNX.4.44.0208171042410.10279-100000@avon.timetraveller.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11224-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11225-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3D5E9D69.1030109@namesys.com>
+In-Reply-To: <Pine.LNX.4.44.0208171042410.10279-100000@avon.timetraveller.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>, reiserfs-list@namesys.com, god@namesys.com
+To: Robert Brockway <robert@timetraveller.org>
+Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Sat, Aug 17, 2002 at 11:00:57PM +0400, Hans Reiser wrote:
+On Sat, Aug 17, 2002 at 11:28:59AM +1000, Robert Brockway wrote:
 
-> Nikita wrote a badblocks patch.
-> The main reason for resisting doing it is that it is usually better to 
-> just write to the bad block, and let the hard drive remap the block.
-> 
-> Oleg, maybe send it into 2.5?
+> The tar should have come out at about 7.5Gb (no compression).  The tar
+> seemed to be fine until it got to about 382Mb.  At this point the tar
 
-I think I have somewhat better patch and reiserfsck is also prepared for that
-(disabled at compile time, though).
-The only thing is we had not agreed on unused key to put list of badblocks into
-and Chris does not agree that we have store such an info on FS.
+Have anything appeared in the logs at this moment?
+Can you lookup where this process blocks once you have some time?
+(you can obtain list of where process aer waiting by pressing alt-sysrq-T
+keys sequence assuming you have compiled-in sysrq support of course).
 
-I will prepare a patch for 2.5.
+Thank you for the report.
 
 Bye,
     Oleg
