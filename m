@@ -1,43 +1,43 @@
-From: Diego Calleja =?ISO-8859-15?Q?Garc=EDa?= <diegocg@teleline.es>
-Subject: Re: Filesystem Tests
-Date: Wed, 6 Aug 2003 20:45:14 +0200
-Message-ID: <20030806204514.00c783d8.diegocg@teleline.es>
-References: <3F306858.1040202@mrs.umn.edu>
-	<20030805224152.528f2244.akpm@osdl.org>
-	<3F310B6D.6010608@namesys.com>
-	<20030806183410.49edfa89.diegocg@teleline.es>
-	<20030806180427.GC21290@matchmail.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: ReiserFS problems
+Date: Wed, 6 Aug 2003 22:52:14 +0400
+Message-ID: <200308062252.14315.vitaly@namesys.com>
+References: <20030806182055.A28562@bitwizard.nl> <200308062201.15385.vitaly@namesys.com> <20030806201405.A1357@bitwizard.nl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-15194-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15195-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030806180427.GC21290@matchmail.com>
+In-Reply-To: <20030806201405.A1357@bitwizard.nl>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Mike Fedyk <mfedyk@matchmail.com>
-Cc: reiser@namesys.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>
+Cc: reiserfs-list@namesys.com, copy@harddisk-recovery.nl
 
-El Wed, 6 Aug 2003 11:04:27 -0700 Mike Fedyk <mfedyk@matchmail.com> escribi=
-=F3:
+> You can verify on
+>
+> 	http://www.bitwizard.nl/io_throughput.gif
+>
+> that (almost) no data was written throughout the first pass.
+>
+> You can do something like:
+>
+> #define write my_write
+> #define llseek my_llseek
+>
+....
+>
+> Add a flush_postponed_writes to the end of pass0.
 
->=20
-> Journaled filesystems have a much smaller chance of having problems after=
- a
-> crash.
+Ok, thank you for suggestion, actually there is a list of buffers in 
+progs and when the amount of buffers exceeds some limit some 
+of dirty ones are flushed on disk -- which were accessed earlier. 
+And all of them are flush at the end of each pass.
 
-
-I've had (several) filesystem corruption in a desktop system with (several)
-journaled filesystems on several disks. (They seem pretty stable these days,
-though)
-
-However I've not had any fs corrution in ext2; ext2 it's (from my experienc=
-e)
-rock stable.
-
-Personally I'd consider twice the really "serious" option for a serious ser=
-ver.
-
+-- 
+Thanks,
+Vitaly Fertman
 
