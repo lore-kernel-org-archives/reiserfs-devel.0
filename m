@@ -1,42 +1,49 @@
-From: Michael Buesch <mbuesch@freenet.de>
-Subject: Reiser4 DOS
-Date: Sun, 2 May 2004 15:38:47 +0200
-Message-ID: <200405021539.05907.mbuesch@freenet.de>
+From: Rene Rebe <rene@rocklinux-consulting.de>
+Subject: Re: Reiser4 DOS
+Date: Sun, 02 May 2004 15:54:19 +0200 (CEST)
+Message-ID: <20040502.155419.607957586.rene@rocklinux-consulting.de>
+References: <200405021539.05907.mbuesch@freenet.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18361-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18362-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <200405021539.05907.mbuesch@freenet.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: Text/Plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-
-=2D----BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Content-Type: Text/Plain; charset="iso-8859-1"
+To: mbuesch@freenet.de
+Cc: reiserfs-list@namesys.com
 
 Hi,
 
-I'm running linux-2.6.5 with latest reiser4 snapshot patch.
-The following script makes my system completely
-unresponsive in a short time.
+On: Sun, 2 May 2004 15:38:47 +0200,
+    Michael Buesch <mbuesch@freenet.de> wrote:
 
-#!/bin/sh
-mount -treiser4 /dev/hdX /mnt/reiser4
-cd /mnt/reiser4
-while `/bin/true`; do
-	cd metas
-done
+> #!/bin/sh
+> mount -treiser4 /dev/hdX /mnt/reiser4
+> cd /mnt/reiser4
+> while `/bin/true`; do
+> 	cd metas
+> done
 
-=2D --=20
-Regards Michael Buesch  [ http://www.tuxsoft.de.vu ]
+Are you sure this does not happen on other filesystem? This loop
+mainly creates process creation pressure and is more likely some
+scheduler thing than Reiser4.
 
-=2D----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
+Maybe you can cure this using:
 
-iD8DBQFAlPn4FGK1OIvVOP4RApOgAJ9JRZIll4hLLIL2Ml0ve7Xb3qagYQCeP9xp
-puYCi/4tQPJfrffz0VatWck=3D
-=3D6bBp
-=2D----END PGP SIGNATURE-----
+while : ; do
+...
+
+Sincerely yours,
+  Ren=E9 Rebe
+    - ROCK Linux stable release maintainer
+
+--  =
+
+Ren=E9 Rebe - Europe/Germany/Berlin
+  rene@rocklinux.org rene@rocklinux-consulting.de
+http://www.rocklinux.org http://www.rocklinux-consulting.de
+
