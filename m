@@ -1,58 +1,111 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Subject: Re:  Please /dev/null html-only mail rather than sending it out on
- this list
-Date: Mon, 19 Apr 2004 16:26:50 +0200
-Message-ID: <20040419162650.0145f0d1@philou.gramoulle.local>
-References: <20040418212659.GA5506@free.transpect.com>
-	<200404190658.i3J6w8oo027986@sirius.cs.pdx.edu>
-	<20040419071839.GP28927@hvs.envisage.co.za>
-	<20040419115330.GC15007@alias.nmd.msu.ru>
-	<4083C04D.9080506@mweb.co.za>
-	<20040419133732.GC57@alias.nmd.msu.ru>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] -oresize on ro filesystem causes panic
+Date: Mon, 19 Apr 2004 10:46:05 -0400
+Message-ID: <4083E62D.9060909@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18059-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ boundary="------------070706070109080007090206"
+Return-path: <reiserfs-list-return-18060-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040419133732.GC57@alias.nmd.msu.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: flx@msu.ru
-Cc: Cami <camis@mweb.co.za>, reiserfs-list@namesys.com
+To: ReiserFS Mailing List <reiserfs-list@namesys.com>
+
+--------------070706070109080007090206
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
 
-Hello,
+Hey all -
 
-Maybe you should give a try at crm114 ( http://crm114.sf.net ) by Bill Yera=
-zunis Ph.D
+While developing my io-error patches (posted previously), I skipped the
+resize stuff, opting to come back to it later, since it involved
+re-ordering operations so we don't blow ourselves out of the water.
+Today, I started digging into that code, and found that if -oresize is
+used when the filesystem is read-only, it will attempt to start a
+transaction on a read-only filesystem. When CONFIG_REISERFS_CHECK is
+enabled, this causes an assertion failure.
 
-It's using Markovian filters instead of Bayesian ones and the homepage clai=
-ms
-1 spam out of 8738 messages (4240 spam, 4498 nonspam) which translates into=
- an
-accurracy of 99.984%
+mount -r /dev/hda8 /mnt
+mount -oremount,resize=123456 /mnt
+*panic*
 
-One nice aspect is that it learns *fast*
+The attached patch fixes the problem. It also moves the reiserfs_resize
+call after the filesystem is made read-write on remount. This is so the
+following succeeds:
 
-Thanks,
+mount -oremount,resize=123456,rw /mnt
 
-Philippe
+- -Jeff
 
---
+- --
+Jeff Mahoney
+SuSE Labs
+jeffm@suse.com
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.2 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-Philippe Gramoull=E9
-philippe.gramoulle@mmania.com
-Senior System and Network Architect
-Lycos Europe
+iD8DBQFAg+YtLPWxlyuTD7IRAvBXAJ9ruUhuwvqYcYoLLQxv1+76kC4XTQCfYH3E
+rmTlSJjVWIJc5pVqPpv/F/s=
+=aDB6
+-----END PGP SIGNATURE-----
 
+--------------070706070109080007090206
+Content-Type: text/plain;
+ name="reiserfs-resize.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="reiserfs-resize.diff"
 
+diff -rup linux-2.6.5.kgdb/fs/reiserfs/resize.c linux-2.6.5.kgdb.afs/fs/reiserfs/resize.c
+--- linux-2.6.5.kgdb/fs/reiserfs/resize.c	2004-04-03 22:36:55.000000000 -0500
++++ linux-2.6.5.kgdb.afs/fs/reiserfs/resize.c	2004-04-19 10:28:53.692014416 -0400
+@@ -33,6 +33,11 @@ int reiserfs_resize (struct super_block 
+ 	int i;
+ 	int copy_size ;
+ 
++	if (s->s_flags & MS_RDONLY) {
++		reiserfs_warning (s, "Can't resize read-only filesystem.");
++		return -EINVAL;
++	}
++
+ 	sb = SB_DISK_SUPER_BLOCK(s);
+ 
+ 	if (SB_BLOCK_COUNT(s) >= block_count_new) {
+diff -rup linux-2.6.5.kgdb/fs/reiserfs/super.c linux-2.6.5.kgdb.afs/fs/reiserfs/super.c
+--- linux-2.6.5.kgdb/fs/reiserfs/super.c	2004-04-17 13:32:13.000000000 -0400
++++ linux-2.6.5.kgdb.afs/fs/reiserfs/super.c	2004-04-19 10:30:02.897493584 -0400
+@@ -890,12 +890,6 @@ static int reiserfs_remount (struct supe
+ 	  SB_JOURNAL_MAX_TRANS_AGE(s) = commit_max_age;
+   }
+ 
+-  if(blocks) {
+-    int rc = reiserfs_resize(s, blocks);
+-    if (rc != 0)
+-      return rc;
+-  }
+-
+   if (*mount_flags & MS_RDONLY) {
+     reiserfs_xattr_init (s, *mount_flags);
+     /* remount read-only */
+@@ -944,6 +938,12 @@ static int reiserfs_remount (struct supe
+     reiserfs_xattr_init (s, *mount_flags);
+   }
+ 
++  if(blocks) {
++    int rc = reiserfs_resize(s, blocks);
++    if (rc != 0)
++      return rc;
++  }
++
+   return 0;
+ }
+ 
 
-On Mon, 19 Apr 2004 17:37:32 +0400
-Alexander Lyamin <flx@msu.ru> wrote:
-
-  | its already eliminates 99.
-  | without bayes.
-  |=20
-  | 160:2 ratio for today.
+--------------070706070109080007090206--
