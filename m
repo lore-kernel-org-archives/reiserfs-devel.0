@@ -1,102 +1,101 @@
-From: Vitaly Fertman <vitaly@namesys.com>
+From: Laurynas Biveinis <Laurynas.Biveinis@mif.vu.lt>
 Subject: Re: Partial data loss with reiserfs3
-Date: Mon, 14 Feb 2005 15:44:34 +0300
-Message-ID: <200502141544.34513.vitaly@namesys.com>
-References: <1108315756.420f8e6ce67b0@webmail.vu.lt>
+Date: Mon, 14 Feb 2005 16:40:48 +0200
+Message-ID: <1108392048.4210b87003405@webmail.vu.lt>
+References: <1108315756.420f8e6ce67b0@webmail.vu.lt> <200502141544.34513.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1108315756.420f8e6ce67b0@webmail.vu.lt>
-Content-Disposition: inline
+In-Reply-To: <200502141544.34513.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Laurynas Biveinis <Laurynas.Biveinis@mif.vu.lt>, reiserfs-list@namesys.com
+Cc: vitaly@namesys.com, reiserfs-list@namesys.com
 
-On Sunday 13 February 2005 20:29, Laurynas Biveinis wrote:
-> Hello,
->
-> I was trying to move data from my NTFS partition to Linux (Fedora Core
-> 3).   I had 2GB ext3 partition for /home. After copying some files from
-> NTFS partition to /home and successfully shrinking NTFS partition by
-> 4GB I wanted to enlarge my /home. Ext3 does not support partition
-> resize and move there, so I have decided to switch /home to ReiserFS
-> v3 (That's the version available for FC3)
->
-> I've created 4GB Reiser partition (/dev/hda6) and moved data there from
-> old /home (/dev/hda7):
-> umount /home
-> mkdir /home.old
-> mount /dev/hda7 /home.old
-> mount /dev/hda6 /home
-> cd /home.old
-> find . -depth -print0 | cpio --null -pvd /home
->
-> It worked OK (as in "cpio did not fail and I could see my directories
-> and files")
->
-> Then I deleted my old /dev/hda7, and tried to enlarge /dev/hda6 to take
-> its space - by resizing partition, then by resizefs.reiserfs. Resizefs
-> complained about "Error: Can't resize filesystem outside the device."
-> no matter what I size I would try to expand it, and with '-f' option
-> too.  It occured to me that perhaps reboot might be required there, so
-> I rebooted. Bingo, after reboot resizefs enlarged partition to the size
-> I wanted. Reboot once again and try to login with ordinary user (whose
-> home is on that partition).
+Hello,
 
+Cituojant Vitaly Fertman <vitaly@namesys.com>:
 
-reboot is required between repartitioning a drive and starting to use 
-moved/created partitions. without that the kernel may continue to use
-old partition table. so it would be great to recall step-by-step history 
-of your copings, removes, repatitionings and reboots.
+> reboot is required between repartitioning a drive and starting to use
+> 
+> moved/created partitions. without that the kernel may continue to
+> use
+> old partition table. so it would be great to recall step-by-step
+> history 
+> of your copings, removes, repatitionings and reboots.
 
+Starting from the last successful cpio between old and new /home
+partitions - can I assume that data was intact at this point if cpio
+succeeded?
 
-> Login got to the point of KDE "Restoring session state" and then PC
-> hanged. Hmm. Reboot and retry login with non-root user. The same.
-> Reboot and log-in as root.
->
-> [root@laurynas-pc ~]# umount /home
-> [root@laurynas-pc ~]# reiserfsck /dev/hda6
->
-> [See Output 1 below]
->
-> OK, so it says --rebuild-tree...
->
-> [root@laurynas-pc ~]# reiserfsck --rebuild-tree /dev/hda6
->
-> [See Output 2 below]
->
-> At this point I remounted partition read-only and looked around. And
-> that's it, part of my data is at lost+found, and part is gone.
-> Here was a typical mount /dev/hda6 output to syslog:
-> -----------------
-> Feb 13 18:04:58 laurynas-pc kernel: ReiserFS: hda6: found reiserfs
-> format "3.6" with standard journal
-> Feb 13 18:04:58 laurynas-pc kernel: ReiserFS: hda6: using ordered data
-> mode
-> Feb 13 18:04:58 laurynas-pc kernel: ReiserFS: hda6: journal params:
-> device hda6, size 8192, journal first block 18, max trans len 1024, max
-> batch 900, max commit age 30, max trans age 30
-> Feb 13 18:04:58 laurynas-pc kernel: ReiserFS: hda6: checking transaction
-> log (hda6)
-> Feb 13 18:04:58 laurynas-pc kernel: ReiserFS: hda6: replayed 17
-> transactions in 0 seconds
-> Feb 13 18:04:58 laurynas-pc kernel: ReiserFS: hda6: Using r5 hash to
-> sort names
-> ---------------
->
-> And one more line looks particularly interesting:
-> ---------------
-> Feb 13 18:08:05 laurynas-pc kernel: ReiserFS: hda6: warning: vs-4080:
-> reiserfs_free_block: free_block (hda6:32998)[dev:blocknr]: bit already
-> cleared
-> ---------------
->
-> Is there anything I can do to look for my other missing data?
+At this point the disk has, in order of physical layout: /dev/hda5
+(NTFS), 4GB /dev/hda6 (no FS), 2GB /dev/hda7 (reiser).
 
--- 
+I tried my best to reconstruct this history, but there might be some
+mistakes, of course.
+
+[root@laurynas-pc ~]# mkfs -t reiserfs /dev/hda6
+
+# Copy data
+[root@laurynas-pc ~]# mount /dev/hda7 /home.old
+[root@laurynas-pc ~]# mount /dev/hda6 /home
+[root@laurynas-pc ~]# cd /home.old
+[root@laurynas-pc ~]# find . -depth -print0 | cpio --null -pvd /home
+[root@laurynas-pc ~]# umount /dev/hda7
+[root@laurynas-pc ~]# umount /dev/hda6
+
+# Delete /dev/hda7, delete /dev/hda6 and re-create it with the
+# same starting sector, but take all former /dev/hda7 space too.
+[root@laurynas-pc ~]# fdisk
+
+# Try to resize /dev/hda6
+[root@laurynas-pc ~]# resizefs.reiserfs /dev/hda6 6964146K
+Error: Can't resize filesystem outside the device.
+
+# Try to resize /dev/hda6 to a value really known to fit in the 
+# new partition
+# ... some 6 invocations of resizefs with values ~6GB here...
+[root@laurynas-pc ~]# resizefs.reiserfs /dev/hda6 +1G
+Error: Can't resize filesystem outside the device.
+
+# Remembered about reboot
+[root@laurynas-pc ~]# reboot
+
+# Size too big; missed the -f option
+[root@laurynas-pc ~]# resizefs.reiserfs /dev/hda6 +3G
+Error: Can't resize filesystem outside the device.
+
+# Do the resize!
+[root@laurynas-pc ~]# resizefs.reiserfs -f /dev/hda6 +3G
+
+[root@laurynas-pc ~]# mount /dev/hda6 /home
+...typical mount output, as in previous e-mail...
+
+[root@laurynas-pc ~]# df
+... partition size and free/used space reported OK...
+
+[root@laurynas-pc ~]# reboot
+
+There tried to login with non-root user, and the rest of the story is
+in
+the previous e-mail.
+
+Here is the current partition table:
+
+Disk /dev/hda: 120.0 GB, 120034123776 bytes
+255 heads, 63 sectors/track, 14593 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/hda1   *           1         927     7446096   83  Linux
+/dev/hda2             928         978      409657+  82  Linux swap
+/dev/hda3             979       14593   109362487+   f  W95 Ext'd (LBA)
+/dev/hda5             979       13726   102398278+   7  HPFS/NTFS
+/dev/hda6           13727       14593     6964146   83  Linux
+
+--
 Thanks,
-Vitaly Fertman
+Laurynas
 
