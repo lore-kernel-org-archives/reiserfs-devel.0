@@ -1,35 +1,49 @@
-From: Matt Stegman <matts@ksu.edu>
-Subject: Re: bug report: attributes ( chattr +a ) not respected by reiserfs
- 3.6, but this isn't listed in man mkreiserfs
-Date: Fri, 18 Jul 2003 13:03:36 -0500 (CDT)
-Message-ID: <200307181803.h6II3aR3002711@elijah.imse.ksu.edu>
-References: <20030718160654.GI2268@namesys.com>
+From: Michael Gaughen <mgaughen@polyserve.com>
+Subject: Re: BUG in reiserfs_write_full_page().
+Date: Fri, 18 Jul 2003 11:42:33 -0700
+Message-ID: <3F183F99.7080405@polyserve.com>
+References: <3F1712F6.7080204@polyserve.com>	 <1058477610.4012.333.camel@tiny.suse.com> <3F171ABF.6080601@polyserve.com>	 <1058534583.7878.351.camel@tiny.suse.com>	 <16151.63980.766223.769053@laputa.namesys.com> <1058536844.7878.371.camel@tiny.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14966-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14967-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030718160654.GI2268@namesys.com>
+In-Reply-To: <1058536844.7878.371.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com, marvin@synapse.net
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: Nikita Danilov <Nikita@Namesys.COM>, reiserfs-list@namesys.com
 
-On 18 Jul, Oleg Drokin wrote:
->>   t : do not merge tails on this file
->>       I don't know if this is supported or not.
-> 
-> Hm, my "chattr" documentation does not have this flag.
+Chris Mason wrote:
 
-My chattr(1) man page comes from e2fsprogs 1.33.  The relevant text is:
+>On Fri, 2003-07-18 at 09:45, Nikita Danilov wrote:
+>  
+>
+>> > 
+>> > But, we shouldn't have to.  Other parts of the OS should be protecting
+>> > us from a writepage being called at this time, which is why the bug is
+>> > there.  Someone did a non GFP_NOFS allocation with a transaction
+>>
+>>__bread()->__getblk()->__find_get_block()->find_get_page() allocates
+>>page with bdev->bd_inode->i_mapping->gfp_flags, which is GFP_USER, that
+>>includes GFP_FS.
+>>    
+>>
+>
+>You're in 2.5 land ;-)  There seem to be a few problems there, I've got
+>an oops in find_inode and a deadlock under load, but I still need to
+>read the (huge) sysrq-t to figure things out.
+>
 
-A file with the 't' attribute will not have a partial block fragment at
-the  of  the  file merged with other files (for those filesystems which
-support tail-merging).  This is necessary for applications such as LILO
-which  read  the  filesystem  directly,  and who don't understand tail-
-merged files.
+But, in 2.4, the page fault handling code also gets the gfp_mask from 
+the inode's
+address_space gfp_mask (in ->page_cache_read()->page_cache_alloc()).  It 
+looks
+like clean_inode() sets the gfp_mask to GFP_HIGHUSER, which also includes
+GFP_FS, and unless I am missing something, I don't see that GFP_FS is ever
+cleared in this case.
 
--- 
-    -Matt Stegman
+-Mike
+
