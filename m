@@ -1,47 +1,86 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: nfsd-fh: found a name that I didn't expect
-Date: Mon, 31 Mar 2003 12:37:05 +0400
-Message-ID: <20030331123705.F25533@namesys.com>
-References: <200303281828.55093.bernd-schubert@web.de> <200303291509.23681.bernd-schubert@web.de> <20030329171321.A15899@namesys.com> <200303291606.54910.bernd-schubert@web.de> <20030329203711.A16762@namesys.com> <1048963534.2888.24.camel@fortknox>
+From: "Robin H. Johnson" <robbat2@orbis-terrarum.net>
+Subject: Re: possible bug - fsck shows perfect results, linux refuses to mount
+Date: Mon, 31 Mar 2003 00:37:58 -0800
+Message-ID: <20030331083758.GA23518@cherenkov.orbis-terrarum.net>
+References: <20030331072250.GC22731@cherenkov.orbis-terrarum.net> <20030331113446.A31858@namesys.com> <20030331074957.GD22731@cherenkov.orbis-terrarum.net> <20030331120014.C25533@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13460-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
+Return-path: <reiserfs-list-return-13461-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1048963534.2888.24.camel@fortknox>
+In-Reply-To: <20030331120014.C25533@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Soeren Sonnenburg <reiserfs@nn7.de>
-Cc: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: "Robin H. Johnson" <robbat2@orbis-terrarum.net>, reiserfs-list@namesys.com
 
-Hello!
+--mYCpIKhGyMATD0i+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 29, 2003 at 07:45:34PM +0100, Soeren Sonnenburg wrote:
-> > > > I think may be race with iget4 might cause this, but I am not sure.
-> > > > We have a patch for this iget4 race, and if you are willing to test it, I
-> > > > can send it to you.
-> > > Yes of course I am. I hope the other admins won't kill me, but I guess they 
-> > > know that I willing to do experiments from time to time ;-)
-> > > Could something worse happen when I try the patch, that could not be fixed by 
-> > > simple rebooting ?
-> > See the patch below.
-> > It should not break anything.
-> Well, we keep getting this error in massess too... and in our case it is
-> very likely that clients access the same file from all the clients...
+On Mon, Mar 31, 2003 at 12:00:14PM +0400, Oleg Drokin wrote:
+> > http://www.orbis-terrarum.net/~robbat2/reiserfs/debugreiserfs.run
+> "bread: Cannot read the block (18)."
+> Well, now this is something.
+> Do you have I/O errors messages in kernel logs, or do you know another re=
+ason for
+> it to fail reading 18th block?
+Nope, no I/O messages in the logs at all.
 
-Are all of your NFS exports where these errors happens reiserfs?
+> Perhaps try to run "badblocks -b 4096" to find out if there are more bloc=
+ks
+> that cannot be read?
+I had previously scanned the partition only, but I've scanned the entire
+drive now, just to be entirely certain, and there are no bad blocks at
+all. I've tested with both the standard readonly test, and the
+non-destructive read/write.
 
-> However I cannot quickly test that atm but if it is really safe I might
-> test it next week.
+The drive is a FUJITSU MPC3102AT-E, one of the ones without the firmware
+issues (these drives pre-Feb 2001 had a firmware bug).
 
-Well, there is a problem reported with that 2.4.20 backport, that I am going to look into.
-If you can try 2.4.21-pre6 with iget5_locked.diff (I just sent to the list in this same
-thread) that would be great.
+> We accept money too ;)
+I'll keep that in mind then.
 
-Thank you.
+> > A question for you, so I can support things. Is there a list somewhere
+> > of features requested, and how much you money you want to be paid to add
+> > them in? Especially the smaller features (hint hint).
+> Well, there is http://namesys.com/support.html , as of features, usually
+> we expect customers to come up with features they need. If you lack somet=
+hing
+> in reiserfs and you are willing to pay, we can implement it.
+> If you are happy with the current features-set, why to pay for features t=
+hat
+> would be never used?
+I've been trying and using reiserfs since before it was officially in
+2.4, and this is actually the first real issue I've hit with it. I had
+just wondered if you had some feature list of minor things you would
+like, but never had time for. Eg nice to have, but not crucial.
+Random thing I saw while reading ReiserFS docs, like maybe the repacker?
+But I suspect that may be a much larger task (and I certianly don't want
+my drives and RAID arrays ever getting that full in the first place).
 
-Bye,
-    Oleg
+--=20
+Robin Hugh Johnson
+E-Mail     : robbat2@orbis-terrarum.net
+Home Page  : http://www.orbis-terrarum.net/?l=3Dpeople.robbat2
+ICQ#       : 30269588 or 41961639
+GnuPG FP   : 11AC BA4F 4778 E3F6 E4ED  F38E B27B 944E 3488 4E85
+
+--mYCpIKhGyMATD0i+
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.0 (GNU/Linux)
+Comment: Robbat2 @ Orbis-Terrarum Networks
+
+iD8DBQE+h/5msnuUTjSIToURAoSAAJwKLPVnPtARJztoMWde/DNkSMakKACfXSav
+7v7z/rdUUuAPZPTZJMtox44=
+=K78W
+-----END PGP SIGNATURE-----
+
+--mYCpIKhGyMATD0i+--
