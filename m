@@ -1,29 +1,22 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: reiser4 still not stable for apache and nfs
-Date: Sat, 26 Jun 2004 18:17:15 +0300
-Message-ID: <20040626151715.GE4990@nysv.org>
-References: <40DC66BE.8050908@namesys.com>
+From: Mikael Cluseau <nwrk@nwrk.dyndns.org>
+Subject: Re: we need a slogan for our reiser4 t-shirt
+Date: Sat, 26 Jun 2004 18:12:55 +0200
+Message-ID: <1088266375.23242.3.camel@localhost>
+References: <33933.192.168.1.9.1088247680.squirrel@192.168.1.9>
+	 <20040626112401.GD4990@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19417-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19418-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <40DC66BE.8050908@namesys.com>
+In-Reply-To: <20040626112401.GD4990@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Fri, Jun 25, 2004 at 10:54:06AM -0700, Hans Reiser wrote:
->Sigh, next week....
 
-What about Copy on Capture? Still b0rked?
+Reiser4 doesn't need a slogan. Try it, you'll love it :)
 
-Keep up the good fight :)
-
--- 
-mjt
-
+The filesystem problem is solved.
