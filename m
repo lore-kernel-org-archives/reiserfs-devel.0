@@ -1,81 +1,76 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Fibration questions
-Date: Sun, 25 Jul 2004 23:28:24 -0700
-Message-ID: <4104A488.2060103@namesys.com>
-References: <40FE0B47.3010600@slaphack.com> <200407221410.25043.vitaly@namesys.com> <41007B56.2030103@slaphack.com> <200407231309.55295.vitaly@namesys.com>
+Subject: Re: mongo benchmark results
+Date: Sun, 25 Jul 2004 23:48:19 -0700
+Message-ID: <4104A933.7020509@namesys.com>
+References: <20040726055047.E145F15C29@mail03.powweb.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19801-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19802-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200407231309.55295.vitaly@namesys.com>
+In-Reply-To: <20040726055047.E145F15C29@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: David Masover <ninja@slaphack.com>, =?UTF-8?B?TWFya3VzIFTDtnJucXZpc3Q=?= <mjt@nysv.org>, David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
+To: David Dabbs <david@dabbs.net>
+Cc: reiserfs-list@namesys.com
 
-Vitaly Fertman wrote:
+David Dabbs wrote:
 
->>wait -- what does this do:
->>echo -e "tea\0" > somedir/metas/plugin/hash
->>    
->>
+>At http://dabbs.net/reiser4/mongo.html I've posted some benchmarks from my
+>aging but available test box. All numbers were generated with the Namesys
+>mm7 snapshot. The "A.INFO_R4=new" are results from a reiser4 with modified
+>comparison functions as well as znode_contains_key_strict(). So, here are my
+>questions:
 >
->will set the hash tea in 'somedir' if it is empty.
->if it has 'subdir' already, nothing happens.
->
+>Do these results appear consistent with others' recent benchmarking? 
 >  
 >
->>echo -e "something_differenet\0" > somedir/subdir/metas/plugins/hash
->>    
->>
->
->will set the hash 'something_differenet' if any of [r5 | tea | fnv1 | 
->rupasov | degenerate hash | all future hash plugins] in 'somedir/subdir' 
->if 'subdir' is empty.
->  
->
-is something_different constrained to
+Increase file_size to 8k, and then we can compare.  This will reduce 
+reiser4's space savings from 19% to 9%, but it will probably increase 
+performance.
 
- [r5 | tea | fnv1 | rupasov | degenerate hash | some future hash plugin existing at time of command]
+Your work had a remarkable effect on the create phase.  Very good work.  
+I don't know why the impact was not larger for the stats phase.
 
-?
+Elena, please reproduce his results on our hardware.
 
-(I hope so.)
+>Should I be using particular mount options during benchmarking?
+>I would think running mongo would be necessary to ensuring that reiser4 mods
+>are 'safe,' but it is sufficient?
+>Viz the prior question, is there a recommended test regimen or regression
+>suite?
+>
+>
+>I started to dig into mongo a bit and noticed that it does not appear to
+>vary the file & dir _names_ it generates. Most appear to be ~7 characters
+>long with a pattern of 'f' followed by some number. Isn't this a) atypical
+>of file/dir name distribution and b) favorable to/biased towards the "short
+>name" code? IOW, if R4_LARGE_KEYS is the default and all generated test file
+>names' lengths < 15 characters,
+>
+You are encouraged to survey filesystems and supply a realistic filename 
+generator.
 
->  
+In practice, most filenames are less than 15 characters. 
+
+Another thing we need to do is add a file data generator that is based 
+on slicing and dicing a linux kernel tarball, because we won't be able 
+to do a good benchmark of the compression code until we do so.
+
+> then the large file name code is not being
+>covered or benchmarked. Perhaps I'm mixing apples and oranges (code coverage
+>and benchmarking). 
 >
->>echo -e "r5\0" > somedir/metas/plugins/hash
->>    
->>
 >
->nothing happens as 'subdir' exists.
+>Just curious,
 >
->  
+>David
 >
->>What is the hash of "subdir" now?
->>    
->>
 >
->'somthing_different'
 >
->  
 >
->>What about new subdirs?  What hash will they get?
->>    
->>
->
->new subobjects inherit all plugins from the object they are created 
->in at the creation time. future changes of plugins of the object will 
->not be applied to already created subobjects, only to new subobjects.
->
->Note: if a plugin is used for rendering the object content then its 
->changing needs a convertion method. Thus if you create a file in 
->the dir then the hash plugin gets used, and you need to convert the 
->dir to change the hash successfully. As there is no such convertion 
->methods yet, you cannot change the hash of not empty dir.
 >
 >  
 >
