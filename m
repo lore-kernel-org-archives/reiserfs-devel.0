@@ -1,101 +1,106 @@
-From: Manuel Krause <manuelkrause@netscape.net>
+From: Philipp =?utf-8?q?G=C3=BChring?= <p.guehring@futureware.at>
 Subject: Re: A couple of questions
-Date: Fri, 17 May 2002 02:17:13 +0200
-Message-ID: <3CE44C09.4040607@netscape.net>
-References: <OF4AF5C20B.BE2F7D18-ON85256BBB.006643F3@pok.ibm.com> <3CE41796.4030404@namesys.com> <200205161723.42672.kuba@mareimbrium.org> <20020516214419.GE15774@schmorp.de>
+Date: Fri, 17 May 2002 02:45:19 +0200
+Message-ID: <200205170048.g4H0mI402129@linux1.futureware.at>
+References: <OF4AF5C20B.BE2F7D18-ON85256BBB.006643F3@pok.ibm.com> <20020516214419.GE15774@schmorp.de> <3CE4476E.8070101@namesys.com>
+Reply-To: p.guehring@futureware.at
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10351-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10352-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <3CE4476E.8070101@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-Hi '""pcg\"@goof.com ( Marc) (A.) (Lehmann )' and all others!
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On 05/16/2002 11:44 PM, pcg@goof.com ( Marc) (A.) (Lehmann ) wrote:
+Dear Hans,
 
-> On Thu, May 16, 2002 at 05:23:42PM -0400, Kuba Ober <kuba@mareimbrium.org> wrote:
-> 
->>What I'm thinking of is this:
->>to the user, which most users w/o intimate filesystem knowledge won't be able 
->>to answer at all?
->>
-> 
-> Unix traditionally wasn't aimed at the point-and-click users without
-> knowledge.
+> I am a filesystems developer, and I don't know enough to do more than
+> press y with most fscks. =20
 
+There is one case, in which I know that I have to say no: If the partition =
 
-Don't loose contact with reality. Nowadays things change very often. And 
-  at least Linux has to be usable for a "traditional Win user" soon if 
-it should exist in future.
+that a fsck tries to correct has a different type than the fsck thinks.=20
+(Running e2fsck against a reiserfs partition for example)
 
-> 
->>Looking at this list, what people want is to get their data 
->>back, as much as possible. They never want to get less than that. Why bother 
->>asking?
->>
-> 
-> Users who know nothing can still be told to just press "y". Even better,
-> somebody with some knowledge about the filesystem (and the contents!)
-> layout can often do better with an interactive fsck (see ext2fs).
-> 
-> I don't think it makes sense to enhance the dumb-user-mode while at the same
-> time keeping informed users from working properly.
-> 
+And those things happens when someone changes harddisks, ...
 
+> I think that for the most part, if one is
+> going to ask the user to help, one needs to provide a real interface, a
+> filesystem structure editor..... =20
 
-It makes sense to improve all user modes (in docs and usability) AND all 
-automatic modes possible depending on the distro. Pardon, what is an 
-"informed" user? Someone who reads the Docs or someone who can decidedly 
-type "Yes"... and make a repeat loop??
+Well, debugfs (ext2) was an approach into that direction, isn't it?
+Now I stumbled across debugreiserfs, but it lacks interactive mode.
 
-> 
->>that is what many unsuspecting users actually do. It should simply disregard 
->>read errors and try using whatever data there is in ok-read blocks.
->>
-> 
-> It should actually ask the user wether she wants the block to be repaired
-> (if possible), or permanently marked defect.
+> which no FS has ever done....  but
+> right now we need to get what we have debugged thoroughly.  It is on the
+> list of things I would like to add someday.
 
+What I would like to see is a tool to do the following:
+(And I don't think that I will find a sponsor for that tool :-(
 
-Doesn't that really depend on the HW state <-> or can software reliably 
-decide whether the info it gets is o.k. so far on Linux?? See the 
-previous posts on the list.
+After a crash, I make a dd from the crashed partition, into a normal file i=
+n=20
+another partition, that's perhaps on a differnt harddisk.
 
-> 
->>I don't think that asking too many questions is worth it. He who runs fsck in 
->>"fix" mode wants his data back (whatever is left of it).
->>
-> 
-> Thats a big mistake. He who runs fsck wants to recover as much data as
-> possible. Sometimes maybe more than fsck alone can do.
-> 
+Then I want to run a dumping utility, that tries to restore every bit that =
 
+still can be found in the crashed partition, and tries to resemble all the =
 
-We all running "reiserfsck" want as much data back as possible and are 
-in fear the FS has lost some things or is loosing things while running 
-fsck (what is real with ext2 and vfat). What is a big mistake on 
-reiserfs at least as it retrieves "mostly all" things possible. O.k. 
-that point is inaccurate.
+files in it, and even creating a lost&found directory ...
 
-> 
->>recovery stuff should be w/o questions in my opinion. At least that's what 
->>I'd expect all fsck's to do.
->>
-> 
-> for some strange reason no fsck behaves like that.
-> 
+That dumping utility should take an output directory as argument, in which =
+it=20
+recreates the contents.
 
+Something like "The Coroners Kit", but more for recovery than for=20
+investigation.
 
-Yess. I agree on that opinion. The fixable things should pass without 
-any question. Who knows the special missing inode, when it should be fixed?
+What is important for that tool:
+* It must not crash under any circumstances. Even if every bit of the=20
+filesystem is currupted, it has to do its work, and try to recover as much =
+as=20
+possible.
+* It has to assume that every bit of the filesystem can be corrupt, so it h=
+as=20
+to try to semantically verify the bits, pointers, ...
+* It should try different ways to restore access to lost data, if it stumbl=
+es=20
+across problems in the filesystems.
+* There must not be any assertions that would not allow the tool to run ove=
+r=20
+the whole partiton, and search everywhere for lost data
+* It has to be designed to work on files which are dumps from partition bas=
+ed=20
+filesystems.
+* It should be able to detect and correct common hardware or crash related =
 
-Best wishes,
+problems in the filesystem:=20
+  * Files that are not statable or accessible, because there only exists an=
+=20
+entry in the directory, but nothing in the reiserfs tree
+  * Transactions that are open
+  * Corrupted directory entries like filenames with special charakters that=
+=20
+can not be used from the system, or rights with undefined bits, ...
+  * ...
+* It must not change any data on the partition, instead it writes everythin=
+g=20
+to an output directory
 
-Manuel
+Many greetings,
+- --=20
+~ Philipp G=C3=BChring              p.guehring@futureware.at
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
 
-
-
+iD8DBQE85FKjlqQ+F+0wB3oRAlT3AJ9/2t5pDirnnLs/4daKrSKWD2msxQCeIHZx
+BU+PvfxKKbojRtdnLPerfMY=3D
+=3DdohB
+-----END PGP SIGNATURE-----
