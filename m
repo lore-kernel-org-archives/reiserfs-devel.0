@@ -1,87 +1,53 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Subject: Re: file as a directory
-Date: Fri, 26 Nov 2004 22:13:57 +0100
-Message-ID: <200411262213.58242.christian.mayrhuber@gmx.net>
-References: <2c59f00304112205546349e88e@mail.gmail.com> <1101379820.2838.15.camel@grape.st-and.ac.uk> <41A773CD.6000802@namesys.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: (reiser4)install on root
+Date: Fri, 26 Nov 2004 18:02:24 -0500
+Message-ID: <200411262302.iAQN2OEM026024@turing-police.cc.vt.edu>
+References: <20041126085828.DE0DB37CF0@sitemail.everyone.net>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_-23921024P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22592-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22593-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41A773CD.6000802@namesys.com>
-Content-Disposition: inline
+In-Reply-To: Your message of "Fri, 26 Nov 2004 00:58:28 PST."
+             <20041126085828.DE0DB37CF0@sitemail.everyone.net> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Hans Reiser <reiser@namesys.com>, Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>, linux-kernel@vger.kernel.org
+To: bluegod@linuxwaves.com
+Cc: reiserfs-list@namesys.com
 
-On Friday 26 November 2004 19:19, Hans Reiser wrote:
-> For the case Peter cites, yes, it does add clutter to the pathname to 
-> say "..metas" (actually, it is "...." now in the current reiser4, not 
-> "..metas").  This is because you aren't looking for metafile 
-> information, you are looking for a subset and describing the subset, and 
-> that just requires a file-directory plugin that can handle the name of 
-> that subset and parse the file to find it.
-> 
+--==_Exmh_-23921024P
+Content-Type: text/plain; charset=us-ascii
 
-Regarding namespace unification + XPath:
-For files: cat /etc/passwd/[. = "joe"] should work like in XPath.
-But what to do with directories?
-Would 'cat /etc/[. = "passwd"]' output the contents of the passwd file
-or does it mean to output the file '[. = "passwd"]'?
-If the first is the case then you have to prohibit filenames looking 
-like '[foo bar]'.
+On Fri, 26 Nov 2004 00:58:28 PST, BLuEGoD said:
 
-If the shells wouldn't like * for themself, I'd suggest something like
-cat /etc/*[. = "passwd"]
-This means: list all contents and show the ones where filename = "passwd".
+>  Hi, i want to know how to install reiser4 on root with only 1 HD.. I use
+> mkfs.reiser4 from the reiser4 utils after compile and install kernel & patches
+> on a debian woody 2.2.. with a scsi HD, but it crashes (errors found doing
+> mkfs.reiser4 on root device and on next boot I saw a kernel panic).. Note: I
+> did it with the root mounted.. because i need to boot with that HD..
 
-For the contents of /etc/passwd the following could become possible:
-'cat /etc/passwd/*[. = "joe"]
-'cat /etc/passwd/*[@shell = "/bin/tcsh"]
-The XPath could behave similiar as if applied to the following XML:
-<entries>
-  <root passwd="x" shell="/bin/sh" .... />
-  ...
-  <joe passwd="x" shell="/bin/tcsh" uid="500" gid="500" .... />
-</entries>
-The output from the cat's above return the line of joe's entry:
-joe:x:500:500:joe:/home/joe:/bin/tcsh
+As several have noted, you can use a spare partition to build a new root
+filesystem.  Another option is to use a "rescue disk" or a Knoppix disk
+or other CD-based toolset to boot from, and use that to do your mkfs.reiser4.
 
-To change all tcsh entries to bash:
-echo -n "/bin/bash" > /etc/passwd/*[@shell = "/bin/tcsh"]/@shell
+It's a good idea to *always* have a rescue disk handy, because they enable you
+to recover from many problems that will prevent you from booting all the
+way to single-user off your production disk (trashed boot block, missing/misnamed
+files in /boot, a need to fsck the boot partition, or whatever...)
 
-I hope I'm not offending, but my impression is now that
-XPath stuff fits better into some shell providing
-a XPath view of the filesystem, than into the kernel.
+--==_Exmh_-23921024P
+Content-Type: application/pgp-signature
 
---------------------------------------------------------------------
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.6 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-What about mapping the contents of files into "pure" posix namespace?
-XML is basically a tree, too.
-Notes: 
-1) "...." below is the entry to reiser4 namespace.
-2) # denotes a shell command
-For example:
+iD8DBQFBp7X/cC3lWbTT17ARAswIAKD2etZLq06PYQ3tEoYko7KvNqjI9QCgzmoN
+bb3hjOUSBBFVk4hG34MQsg8=
+=/Xko
+-----END PGP SIGNATURE-----
 
-# cd /etc/passwd/
-# ls -a *
-. .. .... joe root
-# cd joe
-# ls
-gid home passwd shell uid
-# cat shell
-/bin/tcsh
-# cd ../....
-# ls 
-plugins 
-
-I guess an implementation in reiser4 would require some
-mime-type/file extension dispatcher plus a special
-directory plugin for each mime-type.
-
--- 
-lg, Chris
-
+--==_Exmh_-23921024P--
