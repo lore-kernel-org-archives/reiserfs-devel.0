@@ -1,67 +1,43 @@
-From: Vitaly Fertman <vitaly@namesys.com>
+From: "=?utf-8?B?SW5nbyBSw7bDn2xlcg==?=" <roessler@gmx.de>
 Subject: Re: cannot mount /dev/hdc1
-Date: Tue, 25 Feb 2003 21:54:40 +0300
-Message-ID: <200302252154.40034.vitaly@namesys.com>
-References: <001701c2dcdf$6cc60650$5e01a8c0@roessler.dnsalias.net> <200302251848.05924.vitaly@namesys.com> <008501c2dcfb$ffcc0d20$5e01a8c0@roessler.dnsalias.net>
+Date: Tue, 25 Feb 2003 20:14:14 +0100
+Message-ID: <00bb01c2dd02$165cf8a0$5e01a8c0@roessler.dnsalias.net>
+References: <001701c2dcdf$6cc60650$5e01a8c0@roessler.dnsalias.net> <200302251848.05924.vitaly@namesys.com> <008501c2dcfb$ffcc0d20$5e01a8c0@roessler.dnsalias.net> <200302252154.40034.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-12922-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12923-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <008501c2dcfb$ffcc0d20$5e01a8c0@roessler.dnsalias.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="utf-8"
-To: Ingo =?utf-8?q?R=C3=B6=C3=9Fler?= <roessler@gmx.de>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Tuesday 25 February 2003 21:30, Ingo Rößler wrote:
-> Hi Vitaly and Yury!
->
-> > Do I understand correctly that you did not use any partitioner just
-> > before
->
-> it happened?
-> Yes!
->
-> But after hard reset, I have this dialog with my server:
->
-> elsa:~ # chmod 0777 -R /home/.../letters
-> chmod: getting attributes of `/home/.../letters/203.gif': Permission denied
-> elsa:~ # rm /home/.../letters/203.gif
-> rm: cannot remove `/home/.../letters/203.gif': Permission denied
-> elsa:~ # chown root -R /home/.../letters
-> chown: getting attributes of `/home/.../letters/203.gif': Permission denied
+Hi Vitaly,
 
-Do you mean that you get the partition mounted somehow? Or it could be mounted
-for some time after the reset, and smth happened again and it cannot be mounted 
-anymore? Could you tell about it in more details please.
+> On Tuesday 25 February 2003 21:30, Ingo Rößler wrote:
 
-Could you also send what does fdisk -l /dev/hdc say?
+> Do you mean that you get the partition mounted somehow? Or it could be
+mounted
+> for some time after the reset, and smth happened again and it cannot be
+mounted
+> anymore? Could you tell about it in more details please.
 
-> Today I am planing a backup and after this a format.
-> But ...
->
-> Ok, tomorrow I do it:
->
-> Backup of /dev/hdc1
-> dd if=/dev/hdc1 of=/sicherung/home.img
-> (Today I have not a 80 GB backup medium)
-> Update the reiserfsprogs on version. 3.6.5-pre2
->
-> dd if=/dev/hdc1 of=/tmp/super bs=4096 count=1 skip=16
-> reiserfsck --rebuild-sb /dev/hdc1
-> reiserfsck --check
->
-> I hope, it is good. My hole life is on this disk!
+The hardreset was a few days ago.
+The partition could be mounted.
 
-so do not miss the backup step.
+But yesterday night I have the crash. Yet I cannot mount the partition.
 
-> The old Superblock I send to you Yury.
+> Could you also send what does fdisk -l /dev/hdc say?
 
-Yura is waiting for it. 
+Platte /dev/hdc: 80.0 GByte, 80026361856 Byte
+255 Köpfe, 63 Sektoren/Spuren, 9729 Zylinder
+Einheiten = Zylinder von 16065 * 512 = 8225280 Bytes
+Gerät    boot.    Anfang    Ende    Blöcke        ld    Dateisystemtyp
+/dev/hdc1            1            9729    78148161    83    Linux
 
--- 
+Is it a problem?
 
-Thanks,
-Vitaly Fertman
+Ciao Ingo
+
