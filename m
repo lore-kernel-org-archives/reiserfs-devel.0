@@ -1,110 +1,45 @@
-From: Patrick Smith <patsmith@pobox.com>
-Subject: reiserfsck on PPC: checkmem fails
-Date: Tue, 04 Feb 2003 00:44:43 -0500
-Message-ID: <3E3F534B.2050000@pobox.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: when distros do not support official Marcelo kernels they are
+ not being team players (was Re: reiserfs on redhat advanced server?)
+Date: Tue, 04 Feb 2003 12:53:07 +0300
+Message-ID: <3E3F8D83.5000405@namesys.com>
+References: <20030130173522.3aa4d0e1.pegasus@nerv.eu.org>	 <3E397A19.60409@namesys.com> <20030130234142.E8448@vestdata.no>	 <3E3A6071.6060102@namesys.com>	<20030131115333.GC15359@marowsky-bree.de>	 <3E3A67AE.4050601@namesys.com>	<20030131122147.GE15359@marowsky-bree.de>	 <3E3A6D76.7080300@namesys.com> <86lm0xpmho.fsf@trasno.mitica>	 <3E3E7A95.1050908@namesys.com> <1044284001.15685.358.camel@tiny.suse.com>	 <3E3EBA3F.7060806@namesys.com> <1044300746.15684.428.camel@tiny.suse.com>	 <3E3EC7EC.8090005@namesys.com> <1044304857.15684.475.camel@tiny.suse.com>	 <3E3F0D5D.5070409@namesys.com> <1044324173.15684.503.camel@tiny.suse.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------020807090200010209000205"
-Return-path: <reiserfs-list-return-12636-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12637-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1044324173.15684.503.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: Juan Quintela <quintela@mandrakesoft.com>, Lars Marowsky-Bree <lmb@suse.de>, =?ISO-8859-1?Q?Ragnar_Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>, Jure Pecar <pegasus@nerv.eu.org>, reiserfs-list@namesys.com
 
-This is a multi-part message in MIME format.
---------------020807090200010209000205
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+Chris Mason wrote:
 
-I'm using ReiserFS on a PowerPC.  The filesystem works fine in normal 
-use, but I'm having a bit of trouble with reiserfsck.
+>Feel free to start the ultimate distribution where people can purchase a
+>complete set of cds that results in a coherent, stable and fast install,
+>where any component could be swapped with it's
+>generic-recompiled-from-the-net counterpart and still provide support
+>when people report bugs, all for a reasonable price.
+>
+>  
+>
+If the maintainer of the software has issued it as a stable official 
+release, the distros should support it unless they know that particular 
+release is at fault.
 
-Versions:  reiserfsprogs 3.6.4, Linux kernel 2.4.20.
+It comes down to a struggle over social place.  I think it is 
+presumptuous of distros, and harmful to the community, for them to 
+discourage downloading the latest version by the official maintainer 
+because of their desire that the user come to them for everything.  The 
+maintainer, not the distro, should be telling the user what to use.  If 
+the maintainer makes mistakes, they should live with them.  For the 
+kernel, the maintainer is Marcelo.
 
-In order to get reiserfsprogs to compile, I applied the attached patch.
+-- 
+Hans
 
-When I run reiserfsprogs, it reports one or two problems, and then fails 
-in checkmem.  For now, I'm ignoring the problems, as I don't know 
-whether they're caused by the same thing as checkmem or are real problems.
-
-I've tracked down the cause of the checkmem failure to this bit of code 
-in reiserfs_fetch_ondisk_bitmap in bitmap.c:
-
-     last_byte_unused_bits = bm->bm_byte_size * 8 - bm->bm_bit_size;
-     for (i = 0; i < last_byte_unused_bits; i ++)
-         clear_bit (bm->bm_bit_size + i, bm->bm_map);
-
-Thing is, the set_bit/clear_bit functions on PowerPC handle bits in 
-groups of 32, with the low-order bits getting the lower numbers.  And, 
-when this code runs, bm->bm_byte_size is 506733, congruent to 1 modulo 
-4.  So the last byte of data bits is aligned on a word (4 byte) 
-boundary, followed by the "mem_end" sentinel inserted by getmem:
-
-	Bmem _end
-
-(where B is the last byte of data).
-
-When the code above calls clear_bit to clear the last few bits, this 
-clears low-order bits in the Bmem word.  But those are in the 'm' byte, 
-not the data byte.  Oops!
-
-Does anyone have any ideas as to whether there's an easy fix?  And 
-whether there could be similar problems elsewhere?  Any help would be 
-much appreciated.
-
-Also, would there be any serious drawbacks to using 3.6.3 or 3.6.2 
-instead?  And would they have the same problem?
-
---------------020807090200010209000205
-Content-Type: text/plain;
- name="patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="patch"
-
---- ./include/misc.h.orig	2002-09-13 06:09:28.000000000 -0400
-+++ ./include/misc.h	2002-12-24 22:31:08.000000000 -0500
-@@ -49,7 +49,10 @@
- int uuid_is_correct (unsigned char * uuid);
- int set_uuid (const unsigned char * text, unsigned char * UUID);
- 
-+#include <asm/byteorder.h>
-+#define __KERNEL__
- #include <asm/bitops.h>
-+#undef __KERNEL__
- #if __BYTE_ORDER == __LITTLE_ENDIAN
- int le_set_bit (int nr, void * addr);
- int le_clear_bit (int nr, void * addr);
---- ./include/io.h.orig	2002-09-01 11:32:07.000000000 -0400
-+++ ./include/io.h	2002-12-24 22:31:08.000000000 -0500
-@@ -2,6 +2,7 @@
-  * Copyright 1996-2002 Hans Reiser
-  */
- 
-+#include "misc.h"
- 
- struct buffer_head {
-     unsigned long b_blocknr;
---- ./include/swab.h.orig	2002-08-07 05:12:07.000000000 -0400
-+++ ./include/swab.h	2002-12-24 22:32:09.000000000 -0500
-@@ -4,5 +4,15 @@
- #ifndef _REISERFS_SWAB_H_
- #define _REISERFS_SWAB_H_
- 
-+#include <asm/byteorder.h>
-+#define __KERNEL__
-+#include <asm/bitops.h>
-+#undef __KERNEL__
-+
- #include <linux/byteorder/swab.h>
-+
-+#define swab16 __swab16
-+#define swab32 __swab32
-+#define swab64 __swab64
-+
- #endif /* _REISERFS_SWAB_H_ */
-
---------------020807090200010209000205--
 
