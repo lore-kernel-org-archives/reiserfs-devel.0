@@ -1,53 +1,35 @@
-From: Brett Russ <icycle@charter.net>
-Subject: Re: % of filesystem using tails/tail unpacking (shred
- related)
-Date: Mon, 28 Oct 2002 17:38:57 -0500
-Message-ID: <3DBDBC81.4040703@charter.net>
-References: <HDEFILEPHCPLCAGPLCEMKEMFDFAA.icycle@charter.net>            <15805.2440.413201.310382@laputa.namesys.com> <200210282120.g9SLKvgn005200@turing-police.cc.vt.edu>
+From: Tom Vier <tmv@comcast.net>
+Subject: Re: need attrs patch for 2.5.44-ac3
+Date: Mon, 28 Oct 2002 19:09:23 -0500
+Message-ID: <20021029000923.GA527@yzero>
+References: <20021026230215.GA3258@yzero> <20021028193322.C1171@namesys.com>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11817-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-list-return-11818-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-reply-to: <20021028193322.C1171@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Valdis.Kletnieks@vt.edu
-Cc: Nikita Danilov <Nikita@namesys.com>, Reiserfs-List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Valdis.Kletnieks@vt.edu wrote:
-> On Mon, 28 Oct 2002 12:55:20 +0300, Nikita Danilov said:
+On Mon, Oct 28, 2002 at 07:33:22PM +0300, Oleg Drokin wrote:
+> On Sat, Oct 26, 2002 at 07:02:15PM -0400, Tom Vier wrote:
+> > is there a 2.5 attrs patch? i can't even list them in 2.5 on a reiserfs. i
+> > get "inappropriate ioctl for device".
 > 
->>Brett Russ writes:
-> 
-> 
->> > 1) as mentioned first, an impact study should be done to determine if
->> > unpacking will overflow the available space on the device
->>
->>Why cannot you do unpacking just before shredding particular file?
-> 
-> 
-> Unpacking before shredding has a subtle hole in it - since you will unpack
-> into *different* disk blocks and then shred *those* blocks, you will be
-> leaving unshredded data in the blocks the file occupied before unpacking.
+> See attached, I do not claim it will apply cleanly, though.
+> My tree have bunch of other reiserfs pending stuff that was not yet accepted
+> by Linus.
 
-Exactly, that was item #3 on my list.  So given what has been said thus 
-far, the following seems to be true:
+i fixed it for 2.4.44-ac5 (minor change). lsattr and chattr now work
+properly, but +A has no effect. atime is still updated.
 
-a) shred will work reliably on all new files created on a filesystem 
-mounted with tail packing disabled
-
-b) to deal with filesystems already tail packed, shredding knowledge 
-would need to be added to the unpack ioctl BUT there is no way to 
-determine where else the tails have lived on disk prior to any rebalancing.
-
-Which leads to:
-
-c) there is no reliable way to shred anything that has been tail packed.
-
-Please affirm or correct my conclusions, and thank you all for your help 
-thus far.
-
--Brett
-
+-- 
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0xE6CB97DA
