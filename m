@@ -1,40 +1,55 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Utility versions
-Date: Sat, 25 May 2002 00:21:15 +0400
-Message-ID: <3CEEA0BB.3020304@namesys.com>
-References: <OF2E496E71.816C4090-ON85256BC3.0059727F@pok.ibm.com>
+From: Phil Howard <phil-reiserfs@ipal.net>
+Subject: remounting r/o with mapped and deleted files
+Date: Sat, 25 May 2002 14:37:34 -0500
+Message-ID: <20020525193734.GB16919@vega.ipal.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10412-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10416-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Steve Pratt <slpratt@us.ibm.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Steve Pratt wrote:
+When a file is memory mapped into a process space (e.g. executable,
+library, data, etc), and deleted, the data blocks for that file
+must still remain reserved so they can be swapped in as needed.
+If the filesystem is then remounted r/o, there is a conflict.  In
+ext2, this is resolved by disallowing the remount r/o in much the
+same way as disallowing an unmount when anything is mapped or open.
 
->Is there some reason for the alphanumeric numbering scheme of the utility
->versions?  It makes it hard to do simple version checks for when function
->was added.  Also, the Changelog seems to have stopped referencing the
->versions that went with the changes back in May of 2001.  Is there some
->file or place I can find information which correlates new parameters with
->certain versions of the utilities?
->
->Steve
->
->EVMS Development - http://www.sf.net/projects/evms
->Linux Technology Center - IBM Corporation
->(512) 838-9763  EMAIL: SLPratt@US.IBM.COM
->
->
->
->
->  
->
-You are right, it should be changed to conventional Linux style numbers 
-and optional pre string.
+I find this doesn't happen with reiserfs.  So I am concerned.  What
+I'd like to know is whether or not reiserfs is really doing this
+because it can handle the situation correctly, or if this is a bug.
 
+Consider the sequence of events:
+1.  A program maps in a dynamic library from a reiserfs filesystem
+2.  The filesystem is remounted read/only
+3.  The program exits leaving no more references to the deleted file
+4.  The filesystem remounted read/write
+Is the space for the deleted file now available?
 
+Consider a slightly different sequence of events:
+4.  The system is gracefully shutdown while that filesystem is read/only
+
+Or consider even this slightly different sequence of events:
+4.  The system is hard reset while that filesystem is read/only
+
+At some point, the data blocks for that deleted file must be recovered.
+In the third sequence, the most difficult, the only opportunity I see
+for this to happen is that during the original unlink when the on-disk
+reference count (not including in-kernel-only references, such as a
+process mapping), the fact of this delete was written into a special
+journal that would NOT be played out yet (because it's not yet time to
+actually clean out the blocks), but finally had to be played out later
+when the system comes back up and the filesystem is remounted.
+
+So how does reiserfs do this?
+
+-- 
+-----------------------------------------------------------------
+| Phil Howard - KA9WGN |   Dallas   | http://linuxhomepage.com/ |
+| phil-nospam@ipal.net | Texas, USA | http://phil.ipal.org/     |
+-----------------------------------------------------------------
