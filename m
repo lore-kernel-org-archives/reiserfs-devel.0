@@ -1,43 +1,40 @@
-From: Nicolas Vanderavero <nv@info.ucl.ac.be>
-Subject: "Unformat" a ReiserFS partition : a testimony :-)
-Date: Mon, 24 Mar 2003 20:36:19 +0100
-Message-ID: <3E7F5E33.4020709@info.ucl.ac.be>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Encryption
+Date: Mon, 24 Mar 2003 23:37:03 +0300
+Message-ID: <3E7F6C6F.7030307@namesys.com>
+References: <200303221822.34401.phma@webjockey.net> <3E7CF1D3.90703@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13355-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13356-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3E7CF1D3.90703@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+To: Yury Umanets <umka@namesys.com>
+Cc: Pierre Abbat <phma@webjockey.net>, reiserfs-list@namesys.com, Edward Shishkin <edward@namesys.com>
 
-Hello,
+Yury Umanets wrote:
 
-while reinstalling a Debian on a new hard drive, I made the mistake to 
-format in reiserfs my good old /home which was on /dev/sda7 instead of 
-formatting the new /dev/hda7. Gasp ! Eight gigabytes lost ...
+> Pierre Abbat wrote:
+>
+>> How is filesystem encryption going to work? Or has anyone figured 
+>> that out yet?
+>>
+>> phma
+>>  
+>>
+> Don't worry, it is going up :)
+>
+Edward, please provide a serious answer including your design documents, 
+so that the list can review your design and comment.  Chances are that 
+they will make at least one serious improvement to the design..... and 
+it might be nice to get that improvement made before you have made the 
+time investment required to debug.....
 
-Or ... maybe it was not totally lost :-) I immediately made a dump of 
-the partition with 'dd' and started grepping some known text on it. It 
-seemed that no data was really lost. I didn't know what to do. So I read 
-the man pages and found the reiserfsck command quite interesting :-)
-
-Ok, I am a total newbie to filesystems and to ReiserFS. So maybe it will 
-sound trivial to you, but just in case it happens to anyone else, I just 
-wanted to say that running a reiserfsck --rebuild-tree -S on my 
-partition was enough to unformat it. I ended up with some file in 
-lost+found, but a 'file *' is enough to discover what they are.
-
-So, maybe it would be usefull to add an entry in the "Example of using" 
-section of the man page of reiserfsck, saying something like : "If you 
-reformatted by mistake a reiserFS partition, you can try to unformat it 
-by running reiserfsck --rebuild-tree -S on it".
-
-Anyway, thank you for developing this filesystem.
-Nicolas Vanderavero.
-
-
+-- 
+Hans
 
 
