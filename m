@@ -1,62 +1,135 @@
-From: Ookhoi <ookhoi@humilis.net>
-Subject: Re: core dump on reiserfsck --rebuildtree
-Date: Wed, 24 Sep 2003 01:04:10 +0200
-Message-ID: <20030923230410.GB15072@favonius>
-References: <65047.80.5.156.133.1064000151.squirrel@blanark.dyndns.org> <200309221102.08476.alistair@inrevo.com> <200309221438.41949.vitaly@namesys.com> <200309232310.37438.alistair@inrevo.com>
-Reply-To: ookhoi@humilis.net
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Carrying Attributes too Far
+Date: Wed, 24 Sep 2003 13:35:23 +0400
+Message-ID: <3F71655B.4060704@namesys.com>
+References: <1971720372-BeMail@cr593174-a> <1064280061.3f6f9ffd2c514@webmail.st-andrews.ac.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15733-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15734-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200309232310.37438.alistair@inrevo.com>
+In-Reply-To: <1064280061.3f6f9ffd2c514@webmail.st-andrews.ac.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alistair McDonald <alistair@inrevo.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: lrc1@st-andrews.ac.uk
 Cc: reiserfs-list@namesys.com
 
-Alistair McDonald wrote (ao):
-> So, I suspect that if I'd had DMA turned on when my machine booted
-> after the power outage, I'd have never had any problems, and never had
-> to run reiserfsck, let alone with rebuild-tree. That's fustrating, and
-> I now set dma on in the startup scripts.
+lrc1@st-andrews.ac.uk wrote:
 
-But now you discovered the bad blocks, which you might have not if you
-didn't stumble over it.
+>Quoting "Alexander G. M. Smith" <agmsmith@rogers.com>:
+>
+><snip />
+>
+>  
+>
+>>lrc1@st-andrews.ac.uk wrote on Mon, 22 Sep 2003 14:28:30 +0100:
+>>    
+>>
+>>>* Will
+>>>
+>>>	chmod u-rwx somefile; chmod u+rwx somefile
+>>>
+>>>still work? What special-case behaviour will be needed to make it work?
+>>>      
+>>>
+>>Likely via the Janus (two faced) view of the file system as ordinary files
+>>and directories for old software.  Ideally new versions of ls, chmod (or a
+>>completely new permission system), etc, would be needed for native use.
+>>
+>>    
+>>
+>
+>The question wasn't "Will there still be a chmod?". Of course there can still 
+>be a chmod call in the legacy interface, or a chmodlike "convenience method" 
+>call in the new one. The question is whether the subfile metadata system will 
+>be compatible with permissions systems in which a user is able to revoke his 
+>own permissions to a file and then return them again - such as the current Unix 
+>permissions system - and what bodges you would accept to make it compatible. Be 
+>more specific - in all these questions, the devil shows itself in the detail.
+>
+We will continue to support the VFS interface.
 
-> Anyway, my hard drive is bad. I bet no-one will be suprised if I tell
-> you it's an IBM Deskstar. 
+>
+>  
+>
+>>>* Will it be possible to make a attribute file the child of
+>>>/pub/some_ordinary_directory via a hard link? Will it be possible to make
+>>>      
+>>>
+>>an
+>>    
+>>
+>>>attribute file into an attribute file for some other file? That has
+>>>      
+>>>
+>>completely
+>>    
+>>
+>>>different permissions? And is owned by a different user? What will have to
+>>>happen, in either case, at the time the file is hard-linked to its new
+>>>      
+>>>
+>>parent?
+>>
+>>Attributes are files (actually what I call fildirute Things - file directory
+>>and attribute all at once) like any other Thing.  So presumably the same hard
+>>linking and permission rights apply to them as you already have for
+>>conventional files 
+>>    
+>>
+>
+>I agree that attribute files should be files like any other. So attribute files 
+>should certainly have the same linking and permissions rights as any other 
+>file.
+>
+Why?  Not at all, I would say. 
 
-:-)
+> How would you implement that?
+>
+>  
+>
+>>(the permission is part of the fildirute Thing, perhaps
+>>via a plug-in).
+>>    
+>>
+>
+><snip />
+>
+>If attribute files have a different permissions system to all other files, how 
+>are they files like any other?
+>
+>If a file is both an attribute file and a child 
+>of /pub/some_ordinary_directory , should it have the permissions system of an 
+>ordinary file or an attribute file? What are the consequences of either choice?
+>
+>If an attribute file's permissions metadata is part of it, is the attribute 
+>file really a simple sequence of bytes like any other file? If it is, then what 
+>will prevent any user with write permissions to the attribute file from 
+>changing the part of the file that records its permissions metadata to whatever 
+>she wishes?
+>
+>As to my third question, how would a user go about changing the owner of a 
+>file? How might she be prevented from doing so?
+>
+>  
+>
+>>- Alex
+>>    
+>>
+>
+>Leo.
+>
+>-----------------------------------------------------------------
+>University of St Andrews Webmail: http://webmail.st-andrews.ac.uk
+>
+>
+>  
+>
 
-> It is under warrany, but to replace I have to send it away and THEN
-> receive a replacement. So I lose my data, which I'd really like to
-> preserve, well, as much as I can. 
 
-Besides, you'll get a replacement deskstar, and not sleep any better
-right?
+-- 
+Hans
 
-> Moving on to replacements, of all the 120Gb drives on the market, the
-> IBM is the biggest. So any replacement drives (I will not buy another
-> 2 deskstars) will be smaller, by about 3%. (120 gigs seems the best
-> bang for the buck; I could buy a 160 and allocate the first 241254720
-> sectors I suppose.) 
 
-FWIW, I'm very happy with two 200GB maxtor disks.
-
-> I would like to stick to using lvm, so if I create a new logical
-> volume, will copying the current /dev/lvm1/data to a new logical
-> volume with dd work? The copy will fail at the damaged area of the
-> disk, and hang, I suspect, but am I right in saying that the first 97%
-> would be copied (in theory; in practice it will stop at the bad
-> sector(s)) and I could then run rebuild-tree on this copy and get some
-> data back? 
-
-I have no experience with lvm, but do have with bad disks. You'll want
-to use dd_rescue instead of dd:
-http://www.garloff.de/kurt/linux/ddrescue
-
-Good luck.
