@@ -1,75 +1,48 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiser4 corruptions
-Date: Mon, 16 Aug 2004 19:57:32 +0400
-Message-ID: <200408161957.32633.vitaly@namesys.com>
-References: <1092670830.21541.6.camel@localhost>
+From: Chris Mason <mason@suse.com>
+Subject: Re: Bug in data journaling patch ?!
+Date: Mon, 16 Aug 2004 12:07:59 -0400
+Message-ID: <1092672478.12138.245.camel@watt.suse.com>
+References: <d68fdf7d04081608477fc84e06@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20338-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20339-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1092670830.21541.6.camel@localhost>
-Content-Disposition: inline
+In-Reply-To: <d68fdf7d04081608477fc84e06@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: redeeman@metanurb.dk, Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: Vijayan Prabhakaran <pvijayan@gmail.com>
+Cc: reiser@namesys.com, vijayan@cs.wisc.edu, reiserfs-list@namesys.com
 
-On Monday 16 August 2004 19:40, Redeeman wrote:
-> hi,
-> i just lost my power to my box, and when it booted agian, i figured i
-> might aswell now convert to the new layout, so i unmounted /mnt/reiser4,
-> installed libaal and reiser4progs 1.0.0
-> then i ran debugfs.reiser4 -C /dev/hdb1
-> and it gave me this output:
->
-> root@redeeman redeeman # debugfs.reiser4 -C /dev/hdb1
-> debugfs.reiser4 1.0.0
-> Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing governed
-> by reiser4progs/COPYING.
->
-> Relocating the extent region[130945..130984]: node 127718, item 0, unit
-> 82.
-> Relocating the extent region[294625..295020]: node 259056, item 26, unit
-> 1.
-> Relocating the extent region[458305..464682]: node 259058, item 28, unit
-> 1.
-> Relocating the extent region[687457..688159]: node 259061, item 64, unit
-> 1.
-> Relocating the extent region[1047553..1048691]: node 259063, item 15,
-> unit 1.
-> Relocating the extent region[1571329..1571356]: node 1574387, item 12,
-> unit 1.
-> Relocating the extent region[65473..66857]: node 60153, item 36, unit 2.
-> Relocating the extent region[196417..205836]: node 179416, item 74, unit
-> 1.
-> Relocating the extent region[2356993..2357354]: node 2369466, item 63,
-> unit 1.
-> Relocating the extent region[22..22]: node 975295, item 22, unit 0.
->
->
-> and i figured that was fine, then i went to do:
-> fsck.reiser4 /dev/hdb1, and this is where i get alot corruptions.
+On Mon, 2004-08-16 at 11:47, Vijayan Prabhakaran wrote:
 
-as I can see all corruptions are about wrong bytes in statdatas, nothing to 
-worry about. it was fixed 2004.08.05.
+> Bug description:
+> ------------------
+> In journal.c there is a function called do_journal_end(). There is
+> line in that function that initializes commit_trans_id. It looks like:
+> 
+> commit_trans_id = jl->j_trans_id;
+> 
+> The value of jl->j_trans_id was 0 (this could be due to some memset()).
+> 
 
-> my kernel is 2.6.8-rc4-mm1, and i use the 13 snapshot.
+This would indeed be a bug, but it's not clear how jl->j_trans_id
+becomes zero.
 
-probably these files were created before you moved to this snapshot.
+A little farther down in do_journal_end, we set
+SB_JOURNAL()->j_current_jl->j_trans_id to the transaction id of the next
+transaction.  It should be impossible for it to ever be zero.
 
-> i havent mounted the partition yet, i also havent run fsck with --fix
-> yet, i figured i would wait to see what you ppl said.
-> also, is it possible to find out which files this affects?
+The only exception looks like the very first transaction for each
+mount.  The journal_init function doesn't set j_current_jl->j_trans_id
+to a non-zero value.
 
-for statdatas if the key is [bd6c3a:172706d2d342e30:bd6c40], 
-bd6c40 is the inode number. bd6c3a is the parent inode number.
+Can you confirm that you're only seeing this problem on the first
+transaction?
 
-> http://kaspersandberg.com/~redeeman/reiser4_msg
-> there is the fsck.reiser4 output
+-chris
 
--- 
-Thanks,
-Vitaly Fertman
+
 
