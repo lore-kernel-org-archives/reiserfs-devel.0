@@ -1,59 +1,53 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: viewprinting processes and process oriented permissions got funded by DARPA
-Date: Fri, 16 Apr 2004 21:33:10 -0400
-Message-ID: <200404170133.i3H1XAwE005273@turing-police.cc.vt.edu>
-References: <407C304F.4080804@namesys.com>
-            <407C953E.2080505@slaphack.com>
+From: The Amazing Dragon (Elliott Mitchell) <ehem@cs.pdx.edu>
+Subject: Re: "Metas"
+Date: Fri, 16 Apr 2004 19:55:54 -0700 (PDT)
+Message-ID: <200404170255.i3H2ts1S011836@sirius.cs.pdx.edu>
+References: <no.id>
+Reply-To: reiserfs-list@namesys.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1671237748P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18017-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18018-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Tue, 13 Apr 2004 20:34:54 CDT."
-             <407C953E.2080505@slaphack.com> 
+In-Reply-To: <no.id> from "Grant Miner" at Apr 16, 2004 03:44:40 PM
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: David Masover <ninja@slaphack.com>
-Cc: Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
---==_Exmh_1671237748P
-Content-Type: text/plain; charset=us-ascii
+> From: Grant Miner <mine0057@mrs.umn.edu>
+> > I don't think I've heard a single person, except Hans,
+> > voice any support for "metas".
+> 
+> I like "metas".
 
-On Tue, 13 Apr 2004 20:34:54 CDT, David Masover <ninja@slaphack.com>  said:
+Chalk me up as neutral about the name itself. That is I'm neutral about
+".metas" or "..metas", I'm firmly against using "metas" (or any other
+name) without at least a leading period. I suspect Linus et al might very
+well reject such a FS because this would be a fatal flaw. I'm concerned
+about using such a short and therefore precious name for filesystem
+functions, but OTOH it might well be accessed often by a user and
+therefore appropriate.
 
-> I don't know how relevant this is to the discussion about
-> filesystem-based security, but one thing I've wanted to do is limit huge
-> portions of a program in security.  Imagine a browser that let
-> Javascript play with everything _inside_ the browser, but had to go
-> through a common interface before it could create files or connect out?
-> ~ At least with the files, it gives a chance to prompt the user.
+> > It seems that the most widely supported name thus far
+> > is "...".
 
-That was the original Java "sandbox" model.  Javascript is a broken
-abortion of a scripting language that has a similar name, but no coherent
-security model.
+> Maybe "props" would be a good name?  It is short for properties, which 
+> is synonymous with metadata and attributes (oops, I used a heretical 
+> word! :)
 
-> In general, I like that better than I like parsing out "bad code".  But
-> I have never seen a method to create something like that.
-
-You might want to look at http://www.nsa.gov/selinux and friends - that's
-designed to restrict what a specific program can do.  It's included in Fedora Core
-and a number of other distro's test branches.  There's even a policy for 'mozilla' :)
+Might ".properties", ".metadata" or ".attributes" work? Programs
+shouldn't have a problem with a 12 character string occuring once in
+their code. From a shell you'll be able to use filename completion, or
+11 characters isn't that many to type. (and the leading dot avoids
+breaking zillions of programs with security implications)
 
 
+-- 
+(\___(\___(\______          --=> 8-) EHM <=--          ______/)___/)___/)
+ \   (    |         EHeM@cs.pdx.edu      PGP 8881EF59         |    )   /
+  \_  \   |  _____  -O #include <stddisclaimer.h> O-   _____  |   /  _/
+    \___\_|_/82 04 A1 3C C7 B1 37 2A*E3 6E 84 DA 97 4C 40 E6\_|_/___/
 
---==_Exmh_1671237748P
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFAgIlVcC3lWbTT17ARAhjgAJ9ALIGZdn0+esQpGJ9+qhr7kwT/EQCgh3Pu
-POwl591FrMZX0ndVpxYc4hM=
-=QnDt
------END PGP SIGNATURE-----
-
---==_Exmh_1671237748P--
