@@ -1,61 +1,100 @@
 From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Failed ReiserFS
-Date: Mon, 14 Feb 2005 15:06:43 +0300
-Message-ID: <200502141506.43506.vitaly@namesys.com>
-References: <200502100535.01814.rikjoh@norweb.se> <200502110857.32077.rikjoh@norweb.se> <200502141224.33293.rikjoh@norweb.se>
+Subject: Re: Partial data loss with reiserfs3
+Date: Mon, 14 Feb 2005 15:44:34 +0300
+Message-ID: <200502141544.34513.vitaly@namesys.com>
+References: <1108315756.420f8e6ce67b0@webmail.vu.lt>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200502141224.33293.rikjoh@norweb.se>
+In-Reply-To: <1108315756.420f8e6ce67b0@webmail.vu.lt>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Rikard Johnels <rikjoh@norweb.se>, reiserfs-list@namesys.com
+To: Laurynas Biveinis <Laurynas.Biveinis@mif.vu.lt>, reiserfs-list@namesys.com
 
-On Monday 14 February 2005 14:24, Rikard Johnels wrote:
-> On Friday 11 February 2005 08.57, Rikard Johnels wrote:
-> > On Thursday 10 February 2005 22.03, Vitaly Fertman wrote:
-> > > > > > reiserfsck 3.6.13
-> > > > > > I used -S to scan the whole partition, as per man page
-> > > > > > A bug heh.. :(
-> > > > > > So is there any fix for it?
-> > > > >
-> > > > > Please try latest reiserfsck.
-> > > > > ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.19.tar.gz
-> > > >
-> > > > Same problem:
-> > > >
-> > > >  lost+found.c 348 pass_3a_look_for_lost
-> > > > look_for_lost: The entry 'lost+found' could not be found in the root
-> > > > directory Aborted
-> > > >
-> > > > This is getting more than frustrating...
-> > >
-> > > would you pack the metadata with
-> > > 	debugreiserfs -p <device> | bzip2 -c > <device>-meta.bz2
-> > > and provide them for downloading?
-> >
-> > the metadata and reiserfsck log are both available for download.
-> >
-> > ftp://ftp.rikjoh.com/reisercheck.logfile.bz2
-> > ftp://ftp.rikjoh.com/hdc1-meta.bz2
+On Sunday 13 February 2005 20:29, Laurynas Biveinis wrote:
+> Hello,
 >
-> Moved the disks to another computer with a clean install of Linux.
-> Reran the --rebuild-tree on that one. And i still get the same error
-> "look_for_lost: The entry 'lost+found' could not be found in the root"
-> And its the "reiserfs-3.6.13" package.
-> Still no luck :(
+> I was trying to move data from my NTFS partition to Linux (Fedora Core
+> 3).   I had 2GB ext3 partition for /home. After copying some files from
+> NTFS partition to /home and successfully shrinking NTFS partition by
+> 4GB I wanted to enlarge my /home. Ext3 does not support partition
+> resize and move there, so I have decided to switch /home to ReiserFS
+> v3 (That's the version available for FC3)
 >
-> Why cant it find the /lost+found ?
+> I've created 4GB Reiser partition (/dev/hda6) and moved data there from
+> old /home (/dev/hda7):
+> umount /home
+> mkdir /home.old
+> mount /dev/hda7 /home.old
+> mount /dev/hda6 /home
+> cd /home.old
+> find . -depth -print0 | cpio --null -pvd /home
+>
+> It worked OK (as in "cpio did not fail and I could see my directories
+> and files")
+>
+> Then I deleted my old /dev/hda7, and tried to enlarge /dev/hda6 to take
+> its space - by resizing partition, then by resizefs.reiserfs. Resizefs
+> complained about "Error: Can't resize filesystem outside the device."
+> no matter what I size I would try to expand it, and with '-f' option
+> too.  It occured to me that perhaps reboot might be required there, so
+> I rebooted. Bingo, after reboot resizefs enlarged partition to the size
+> I wanted. Reboot once again and try to login with ordinary user (whose
+> home is on that partition).
 
-no problem with your metadata. 
-Are you sure you run reiserfsck 3.6.19?
-Did you obtain reiserfsprogs-3.6.19 from our ftp site?
-Would you check the memory on the computer you run reiserfsck 
-on and would you check the harddrive for bad blocks?
+
+reboot is required between repartitioning a drive and starting to use 
+moved/created partitions. without that the kernel may continue to use
+old partition table. so it would be great to recall step-by-step history 
+of your copings, removes, repatitionings and reboots.
+
+
+> Login got to the point of KDE "Restoring session state" and then PC
+> hanged. Hmm. Reboot and retry login with non-root user. The same.
+> Reboot and log-in as root.
+>
+> [root@laurynas-pc ~]# umount /home
+> [root@laurynas-pc ~]# reiserfsck /dev/hda6
+>
+> [See Output 1 below]
+>
+> OK, so it says --rebuild-tree...
+>
+> [root@laurynas-pc ~]# reiserfsck --rebuild-tree /dev/hda6
+>
+> [See Output 2 below]
+>
+> At this point I remounted partition read-only and looked around. And
+> that's it, part of my data is at lost+found, and part is gone.
+> Here was a typical mount /dev/hda6 output to syslog:
+> -----------------
+> Feb 13 18:04:58 laurynas-pc kernel: ReiserFS: hda6: found reiserfs
+> format "3.6" with standard journal
+> Feb 13 18:04:58 laurynas-pc kernel: ReiserFS: hda6: using ordered data
+> mode
+> Feb 13 18:04:58 laurynas-pc kernel: ReiserFS: hda6: journal params:
+> device hda6, size 8192, journal first block 18, max trans len 1024, max
+> batch 900, max commit age 30, max trans age 30
+> Feb 13 18:04:58 laurynas-pc kernel: ReiserFS: hda6: checking transaction
+> log (hda6)
+> Feb 13 18:04:58 laurynas-pc kernel: ReiserFS: hda6: replayed 17
+> transactions in 0 seconds
+> Feb 13 18:04:58 laurynas-pc kernel: ReiserFS: hda6: Using r5 hash to
+> sort names
+> ---------------
+>
+> And one more line looks particularly interesting:
+> ---------------
+> Feb 13 18:08:05 laurynas-pc kernel: ReiserFS: hda6: warning: vs-4080:
+> reiserfs_free_block: free_block (hda6:32998)[dev:blocknr]: bit already
+> cleared
+> ---------------
+>
+> Is there anything I can do to look for my other missing data?
 
 -- 
 Thanks,
