@@ -1,39 +1,43 @@
-From: Frank van Maarseveen <frankvm@xs4all.nl>
-Subject: Re: silent semantic changes with reiser4
-Date: Fri, 3 Sep 2004 10:01:45 +0200
-Message-ID: <20040903080145.GA8355@janus>
-References: <200408261034.38509.vda@port.imtp.ilyichevsk.odessa.ua> <Pine.LNX.4.44.0408260736080.23532-100000@chimarrao.boston.redhat.com> <20040826121223.GG30449@mail.shareable.org> <4137F4D9.7040206@pointblue.com.pl>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: The argument for fs assistance in handling archives
+Date: Fri, 3 Sep 2004 09:13:52 +0100
+Message-ID: <20040903091352.A2288@infradead.org>
+References: <20040826150202.GE5733@mail.shareable.org> <4136E0B6.4000705@namesys.com> <1117111836.20040902115249@tnonline.net> <200409021309.04780.oliver@neukum.org> <4137BE36.5020504@slaphack.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21407-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21408-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <4137F4D9.7040206@pointblue.com.pl>
+In-Reply-To: <4137BE36.5020504@slaphack.com>; from ninja@slaphack.com on Thu, Sep 02, 2004 at 07:43:34PM -0500
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grzegorz Ja??kiewicz <gj@pointblue.com.pl>
-Cc: Jamie Lokier <jamie@shareable.org>, Rik van Riel <riel@redhat.com>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: Oliver Neukum <oliver@neukum.org>, Spam <spam@tnonline.net>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, Sep 03, 2004 at 06:36:41AM +0200, Grzegorz Ja??kiewicz wrote:
-> Jamie Lokier wrote:
+On Thu, Sep 02, 2004 at 07:43:34PM -0500, David Masover wrote:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
 > 
-> >Is it a problem to decree that "file data MUST NOT be stored in a
-> >metadata directory; only non-essential metadata and data computed from
-> >the file data may be stored"?
+> Oliver Neukum wrote:
+> | Am Donnerstag, 2. September 2004 11:52 schrieb Spam:
+> |
+> |>  Btw, version control for ordinary files would be a great feature. I
+> |>  think something like it is available through Windows 2000/3 server.
+> |>  Isn't it called "Shadow Copies". It works over network shares. :)
+> |>
+> |>  It allows you to restore previous versions of the file even if you
+> |>  delete or overwrite it.
+> |
+> |
+> | There's no need to do that in kernel, unless you want to be able
+> | to force it unto users.
 > 
-> That's exactly what folks seem to lost in this debate.
+> And on apps.  Should I teach OpenOffice.org to do version control?
+> Seems a lot easier to just do it in the kernel, and teach everything to
+> do version control in one fell swoop.
 
-And that's not even the most important part: How would you educate all
-the developers _not_ on this list: application developers? I think this
-is just a disaster waiting for us to occur.
+Just add a post-save trigger that can check it into any SCM you want.
 
-> * be able to extract/modify file part on fly.
-> * be able to store metadata, that doesn't matter on copy
-
-those may be orthogonal.
-
--- 
-Frank
