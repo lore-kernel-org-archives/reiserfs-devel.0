@@ -1,34 +1,46 @@
 From: <pcg( Marc)@goof(A.).(Lehmann )com>
-Subject: Re: where are reiser4 sources
-Date: Tue, 22 Feb 2005 19:56:57 +0100
-Message-ID: <20050222185657.GA9590@schmorp.de>
-References: <421A096F.5040603@gmx.de> <421A941B.5030708@slaphack.com> <421B4DC0.2000006@gmx.de> <421B7CD5.8080001@namesys.com>
+Subject: Re: Odd data corruption problem with LVM/ReiserFS
+Date: Tue, 22 Feb 2005 20:01:49 +0100
+Message-ID: <20050222190149.GB9590@schmorp.de>
+References: <93ca3067050220212518d94666@mail.gmail.com> <4219C811.5070906@domdv.de>
 Mime-Version: 1.0
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <421B7CD5.8080001@namesys.com>
+In-Reply-To: <4219C811.5070906@domdv.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Mark Junker <mjscod@gmx.de>, reiserfs-list@namesys.com
+To: Andreas Steinmetz <ast@domdv.de>
+Cc: Alex Adriaanse <alex.adriaanse@gmail.com>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-> >Yes, I want to port it to another OS (ReactOS / WinXP).
-> >
-> That violates the license.
+On Mon, Feb 21, 2005 at 12:37:53PM +0100, Andreas Steinmetz <ast@domdv.de> wrote:
+> >Anyway, what do you guys think could be the problem?  Could it be that
+> >the LVM / Device Mapper snapshot feature is solely responsible for
+> >this corruption?  (I'm sure there's a reason it's marked
+> >Experimental).
+> 
+> I don't think so - I changed from reiserfs to ext3 without changing the 
+> underlying dm/raid5 and this seems to work properly.
 
-The code in the kernel clearly states that reiserfs is GPLed, which of
-course allows porting it to reactos or winxp.
+I use both reiserfs and ext3 on lvm/dm on raid.
 
-If you disagree, then now is the time to disclose the real license you
-think the code is under, as it is not good if the code claims to be GPLed
-when in fact it is not.
+Both filesystems have issues when restoring from backup (i.e. very heavy
+write activity).
 
-(If you want to put extra restrictions on the GPL, the code is no longer
-GPL, and so *must* go out of the kernel *quickly*).
+I did report this to the linux kernel, and got as reply that there are
+indeed races *somewhere*, but as of yet there is no fix.
+
+The symptoms are _not_ I/O errors (but until I see logs I wouldn't believe
+you that there are real I/O errors), but usually too-high block numbers.
+
+A reboot fixes this for both ext3 and reiserfs (i.e. the error is gone).
+
+You might want to explore this problem and decide for yourself if it's caused
+by I/O errors (in which case you have a disk problem) or "just" filesystem
+corruption.
 
 -- 
                 The choice of a
