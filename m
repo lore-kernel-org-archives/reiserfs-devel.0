@@ -1,100 +1,85 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Sat, 28 Aug 2004 02:54:52 -0700
-Message-ID: <4130566C.8020604@namesys.com>
-References: <20040824202521.GA26705@lst.de>	<412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com> <412E10A2.1020801@pobox.com> <412EEC07.30707@namesys.com> <412F7B6D.6010305@pobox.com>
+Date: Sat, 28 Aug 2004 02:55:00 -0700
+Message-ID: <41305674.6030405@namesys.com>
+References: <412D9FE6.9050307@namesys.com> <200408261812.i7QICW8r002679@localhost.localdomain> <20040827203216.GC1284@nysv.org> <Pine.LNX.4.58.0408271335421.14196@ppc970.osdl.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20964-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20965-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <412F7B6D.6010305@pobox.com>
+In-Reply-To: <Pine.LNX.4.58.0408271335421.14196@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Will Dyson <will_dyson@pobox.com>
-Cc: Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-I think there are two ways to analyze the code boundary issue.  One is 
-"does it belong in the kernel?"  Another is, "does it belong in the 
-filesystem. and if so should name resolution in a filesystem be split 
-into two parts, one in kernel, and one in user space."  In ten years I 
-might have the knowledge needed to make such a split, but I know for 
-sure that I don't know how to do it today without regretting it 
-tomorrow, and I don't really have confidence that I will ever be able to 
-do it without losing performance.
+Linus Torvalds wrote:
 
-Glad that BeFS finds the new model better.:)
+>On Fri, 27 Aug 2004, Markus T=F6rnqvist wrote:
+> =20
+>
+>>People will say it when people stop using Linux on servers because
+>>they can integrate metadata easier in other operating systems ;)
+>>   =20
+>>
+>
+>Heh. Considering that WinFS seems to be delayed yet more, I don't think=20
+>that's a very strong argument.
+>
+>Hell will freeze over before Microsoft does a filesystem right. Besides,
+>WinFS is likely almost in user mode anyway, ie mostly a library, rather
+>like the gnome people are already doing with nome storage.
+>
+>So there's really no point in trying to push your agenda by trying to=20
+>scare people with MS activities. Linux kernel developers do what's right=20
+>because it is _right_, not because somebody else does it.
+>
+>		Linus
+>
+>
+> =20
+>
+Apple will get it right.  I promise it.  I have met Dominic, and he is=20
+very very sharp.  Look at the Tiger demos on their website.  Simple=20
+interface, looks nice to me....=20
+
+The one area he might screw up is performance, but I don't care to count=20
+on that.
+
+WinFS first tried to put it all in the FS, and then it became a user=20
+mode library almost certainly because they are making the standard=20
+mistakes the database guys make when they try to emulate file systems=20
+without changing the core balanced tree algorithms, and their=20
+performance sucked and they had to back off.  It took 11 years for me to=20
+get it right, and they aren't as crazy-err-persistent as I am.;-)
+
+We might get lucky and have them produce another NTFS, but then again,=20
+when Microsoft focuses on a task, they do much better at it than they do=20
+most of the time, and they are focused on WinFS.  They have hired very=20
+sharp people.  We can hope that they don't know how to use them, but=20
+when they hire people like Gerard Salton for $1 million a year, there is=20
+just possibly a chance that they might try to get their money's worth=20
+out of him.
+
+You should not be complacent about WinFS being delayed to 2007, because=20
+even if I get funding for enhanced ReiserFS semantics tomorrow we also=20
+can't get the job done before 2007.  This is big science, not writing a=20
+device driver.
+
+Finally, how much harm will it be if we do it right and it is important=20
+and they fail?  Suppose I am wrong about them, and we create a powerful=20
+unifying namespace for Linux before any other OS does?  Is that so bad?
+
+Creating a powerful namespace at the heart of Linux is the most=20
+important enhancement you can make to the OS.=20
+
+Finally the storage layer is good enough to support putting the=20
+relationship between keywords (actually keyobjects in my scheme....) and=20
+their documents directly into the FS without losing performance for=20
+traditional file system usage patterns, and I get to stop tweaking=20
+performance and go have fun with semantics in the next major release.
 
 Hans
-
-Will Dyson wrote:
-
-> Hans Reiser wrote:
->
->> Will Dyson wrote:
->>
->>>
->>> In the original BeOS, they solved the problem by having the 
->>> filesystem driver itself take a text query string and parse it, 
->>> returning a list of inodes that match. The whole business of parsing 
->>> a query string in the kernel (let alone in the filesystem driver) 
->>> has always seemed ugly to me. 
->>
->>
->> Why?
->
->
-> Hmm. Trying to explain aesthetic judgments is always fun, but I'll try.
->
-> String parsing bloats the kernel with code that will be called rarely, 
-> and doing it inside the filesystem module makes for duplicate code if 
-> more than one filesystem does it. But a good common parser routine (or 
-> a kernel api that takes a pre-compiled parse tree) would reduce the 
-> bad taste.
->
-> The real objection I have is that it puts the kernel in the position 
-> of doing more work than it has to for the system to operate correctly 
-> and efficiently. The user wants to know what files match a certain set 
-> of criteria. The filesystem provides special features which can 
-> greatly accelerate some searches. Does it make more sense to move the 
-> functionality of /usr/bin/find into the kernel, or to export the index 
-> information so that an enhanced version of find can make use of it?
->
-> I don't think having find in the kernel would be worth the cost or 
-> complexity.
->
-> However, now that I've had to think about it while writing the above, 
-> it occurs to me that if we wanted to offer something like the beos's 
-> live queries, doing it in the kernel might be the way to go.
->
-> For the 99.9% of people who were not beos users back in the day, the 
-> "live query" was a way to register a query string with the kernel, so 
-> that you got notifications when the list of files matching the query 
-> changed. It was pretty cool, but this is really just blue-skying since 
-> I am not stepping up to write such a beast any time soon.
->
->>> However, the best alternative I've come up with is to simply export 
->>> the index data as a special file (perhaps in sysfs?) and have 
->>> userspace responsible for searching the index.
->>
->>
->> That is the best implementation suggestion I've heard for splitting 
->> the filesystem into two parts, one in user space and one in kernel, 
->> but I still don't trust it to work well.
->
->
-> Why not? And if it really splits the filesystem into two parts depends 
-> on which of the two following statements you agree with more:
->
-> "Fast searching is a feature of the filesystem"
-> "Maintaining indexes is a feature of the filesystem"
->
->
-> PS.
-> The file-as-directory attribute/stream/whatever model is a much better 
-> fit for befs's internals than the xattr api. If the kernel supported 
-> it, I would enable support for it in befs.
->
-
