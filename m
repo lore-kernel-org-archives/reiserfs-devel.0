@@ -1,40 +1,59 @@
-From: Heinz-Josef Claes <hjclaes@web.de>
-Subject: Re: How to build a big file server
-Date: 05 Jun 2003 14:06:35 +0200
-Message-ID: <1054814795.1997.93.camel@wusel.schnulli.de>
-References: <1054800852.1997.15.camel@wusel.schnulli.de>
-	 <20030605083301.GB4849@vestdata.no> <20030605084643.GA5869@namesys.com>
-	 <1054803014.1995.31.camel@wusel.schnulli.de>
-	 <20030605090435.GE7950@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: disk or reiserfs problem?
+Date: Thu, 05 Jun 2003 17:20:09 +0400
+Message-ID: <3EDF4389.7090308@namesys.com>
+References: <E19L7Co-0002Sb-00@rode.parc.com> <20030529054511.GA30925@namesys.com> <3EDB9910.7040005@namesys.com> <1054584035.21053.65.camel@rode> <20030603053336.GC8667@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14434-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14435-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030605090435.GE7950@namesys.com>
+In-Reply-To: <20030603053336.GC8667@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Oleg Drokin <green@namesys.com>
+Cc: Jeff Breidenbach <jbreiden@parc.com>, reiserfs-list@namesys.com
 
-Am Don, 2003-06-05 um 11.04 schrieb Oleg Drokin:
-> Hello!
-> 
-> On Thu, Jun 05, 2003 at 10:50:15AM +0200, Heinz-Josef Claes wrote:
-> > > > My guess is that the writes to the journal _would_ be a problem, and
-> > > > that writing them to a seperate (RAID1)-device would help significantly.
-> > > And with journal on battery-backed RAM it would be even faster ;)
-> > The target is to have a cheep solution :/
-> 
-> The cheapest solution to get speed is to put journal and all data on ramdisk
-> (or even into ramfs).
-> This is not the safest one, though.
+Oleg Drokin wrote:
 
-If I put the journal on a ramdisk, how do I recreate the journal after
-rebooting? Does reiserfs need some special pattern or so?
+>Hello!
+>
+>On Mon, Jun 02, 2003 at 01:00:36PM -0700, Jeff Breidenbach wrote:
+>
+>  
+>
+>>Incidentally, during the restoration I find that cp is 
+>>giving a throughput of about 1 MB/s when copying from 
+>>harddrive to harddrive. Both source and destination disks 
+>>use reiserfs and hdparm -tT reports about 50MB/s read rate. 
+>>Is a 1MB/s throughput expected when copying many small files?
+>>(There is a lot of data involved, so I probably have a couple 
+>>of days to ponder the question.)
+>>    
+>>
+>
+>Copying lots of small files can take lots of time just because you
+>cannot read those in order they are stored on disk platter. And you do not know
+>the order most probably. So the end result is the disk does constant seeking and
+>the speed is reduced. If you know the order in which files were written (e.g. alphabetically),
+>then you can read them in the same order (plain "cp -R . somedir" will read files in readdir order)
+>I am not very sure what can be done in such a case if you do not know the order in
+>which files were written. Perhaps if you copy the mounted backup drive to /dev/zero
+>(e.g. dd if=/dev/hdb1 /dev/zero bs=1024k count=500 (replace 500 with the half of your RAM
+>in megabytes) and you have large enough RAM, there is a chance that this will cache
+>enough data to keep stuff moving more quickly. 
+>
+>Bye,
+>    Oleg
+>
+>
+>  
+>
+Your performance will improve after the restoration though....
 
-> Bye,
->     Oleg
-> 
+-- 
+Hans
+
 
