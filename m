@@ -1,60 +1,75 @@
-From: Valdis.Kletnieks@vt.edu
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Proposal for keying encrypted filesystem
-Date: Fri, 04 Apr 2003 11:45:38 -0500
-Message-ID: <200304041645.h34Gjcli006173@turing-police.cc.vt.edu>
-References: <200303282026.23543.phma@webjockey.net> <200304040930.29884.phma@webjockey.net> <200304041447.h34Eluli004869@turing-police.cc.vt.edu> <200304040957.55182.phma@webjockey.net>
-            <3E8DB4A1.7E539392@namesys.com>
+Date: Fri, 04 Apr 2003 20:50:45 +0400
+Message-ID: <3E8DB7E5.9080407@namesys.com>
+References: <200303282026.23543.phma@webjockey.net> <200304031822.12677.phma@webjockey.net> <200304041401.h34E1Hli003929@turing-police.cc.vt.edu>	            <200304040930.29884.phma@webjockey.net> <200304041447.h34Eluli004869@turing-police.cc.vt.edu> <3E8DA3CF.711EE4C0@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1976809368P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13576-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13577-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Fri, 04 Apr 2003 20:36:49 +0400."
-             <3E8DB4A1.7E539392@namesys.com> 
+In-Reply-To: <3E8DA3CF.711EE4C0@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Edward Shushkin <edward@namesys.com>
-Cc: reiserfs-list@namesys.com, reiserfs-dev@namesys.com
+Cc: Valdis.Kletnieks@vt.edu, reiserfs-list@namesys.com, reiserfs-dev@namesys.com
 
---==_Exmh_1976809368P
-Content-Type: text/plain; charset=us-ascii
+Edward Shushkin wrote:
 
-On Fri, 04 Apr 2003 20:36:49 +0400, Edward Shushkin said:
-> Pierre Abbat wrote:
-> > 
-> > On Friday 04 April 2003 09:47, Valdis.Kletnieks@vt.edu wrote:
- 
-> > If a process that has no key tokens attempts to read an encrypted file with
-> > the ordinary syscalls, does it get an error or the ciphertext?
-> 
-> Error. Wanna backup - give a valid key, and backups will be cpu-expensive.. 
+>Valdis.Kletnieks@vt.edu wrote:
+>  
+>
+>>On Fri, 04 Apr 2003 09:30:29 EST, Pierre Abbat <phma@webjockey.net>  said:
+>>
+>>    
+>>
+>>>But I'd also like to be able to have several encrypted directories on one
+>>>partition, with different keys, such that when I give the key any process
+>>>with the right UID can access them. I might have a cron job that needs access
+>>>      
+>>>
+>>>to encrypted data.
+>>>      
+>>>
+>>You need to apply "least privilege" - you don't give the key to any process
+>>that doesn't need it.  In your example, you would make sure that any process
+>>running under UID nnn gets given the key, so that other processes couldn't
+>>do anything even if they *did* access them.
+>>
+>>Properly applied, you can even leverage it further - for instance, if your
+>>backup process doesn't have the key tokens, you can safely let it have access
+>>to all the files - it can read the 127 meg of data to back it up in a bitwise
+>>manner,
+>>    
+>>
+>
+>I am sorry, bitwise manner seems to be impossible in reiser4: the only access
+>to crypto files is via page cache, it requires a valid key..
+>
+this is not desirable.  Encypted files need to be backed up too...
 
-In this case, you want it to return the ciphertext, so the backup process can
-run cheaply and securely.  Among other things, if somebody steals the backup
-tapes, they can't restore your system image.....
+>
+>Edward.
+>
+>
+>  
+>
+>>but it can't actually DO anything with the data - this is something
+>>that you can't do in the "give everything the token" model....
+>>
+>>  ----------------------------------------------------------------------------------------------------
+>>   Part 1.2Type: application/pgp-signature
+>>    
+>>
+>
+>
+>  
+>
 
-And yes, this is a major issue for some sites - you've got some near-minimum
-wage tape monkey taking your corporate data to the offsite vault, and you
-want to be sure that even if he leaves with the tapes, it doesn't hurt you.
 
-Having the backup read the ciphertext is more secure (and faster) than having
-it encrypt on the way to the tape - among other things, this prevents the
-underpaid tape monkey from bribing the encryption key for backups from the
-backup admin, because they dont HAVE a key...
+-- 
+Hans
 
---==_Exmh_1976809368P
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.1 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQE+jbaycC3lWbTT17ARAl8xAJ41YQV17KZRe6W+OgJs9f7HdH3KFQCfV2NM
-sE8EO7GlOsTI5temnsWAlkc=
-=xrTW
------END PGP SIGNATURE-----
-
---==_Exmh_1976809368P--
