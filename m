@@ -1,34 +1,44 @@
-From: Pavel Machek <pavel@suse.cz>
-Subject: Re: silent semantic changes with reiser4
-Date: Mon, 6 Sep 2004 12:54:16 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040906105416.GC28111@atrey.karlin.mff.cuni.cz>
-References: <rlrevell@joe-job.com> <1094079071.1343.25.camel@krustophenia.net> <200409021425.i82EPn9i005192@laptop11.inf.utfsm.cl> <1535878866.20040902214144@tnonline.net> <20040902194909.GA8653@atrey.karlin.mff.cuni.cz> <1094155277.11364.92.camel@krustophenia.net> <1094152590.5726.37.camel@localhost.localdomain> <20040905120758.GI26560@thundrix.ch>
+From: Michael Weissenbacher <webmaster@dermichi.com>
+Subject: "wrong bytes" with files >=4GiB
+Date: Mon, 06 Sep 2004 14:16:33 +0200
+Message-ID: <413C5521.6080700@dermichi.com>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20040905120758.GI26560@thundrix.ch>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tonnerre <tonnerre@thundrix.ch>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Lee Revell <rlrevell@joe-job.com>, Spam <spam@tnonline.net>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jamie Lokier <jamie@shareable.org>, David Masover <ninja@slaphack.com>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Return-path: <reiserfs-list-return-21512-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-Hi!
+I'm using kernel 2.6.9-rc1-mm1 (patched for the page-size bug) and 
+reiser4progs1.0.0. I am able to reproduce a "wrong bytes" problem by 
+doing the following:
+# dd if=/dev/urandom bs=4096 count=1048576 of=/mnt/tmp/testfile
+# umount /mnt/tmp
+# fsck.reiser4 /dev/sda1
+...
+FSCK: Node (45223670), item (3), [2a:7465737466696c:1000f] (stat40): 
+wrong bytes(4294967296), Should be (0).
+...
+1 fixable corruptions were detected in the FileSystem. Run with --fix 
+option to fix them.
 
-> > Thats how you get yourself a non useful OS. Fix it in a library and
-> > share it between the apps that care. Like say.. gnome-vfs2
-> 
-> Even KIOslave has  it. They even support sftp and  stuff just by using
-> shared files  in /tmp in reality.  That's a much  saner interface than
-> doing it all in the kernel.
-> 
-> I  mean,  the  kernel  is  supposed  to support  access  to  the  disk
-> drives. Who says that it's got  to be the uppermost VFS level? You can
-> be perfectly happy to build your own  VFS on top of it (or use other's
-> implementations, that is.)
+When doing a fsck.reiser4 with --fix parameter it says
+FSCK: Node (45223670), item (3), [2a:7465737466696c:1000f] (stat40): 
+wrong bytes
+(4294967296), Fixed to (0).
 
-You can not reasonably do caching when you are in shared library. And
-you can not do caching across users at all.
+and after that it says that the fs is consistent. I cannot find any 
+difference in the file on the filesystem though.
+Is this actually harmful or is it just "statistic" data?
+If i'm doing the same test with count=1048575 no corruption is reported 
+and if i'm doing it for files >4GiB i always get the problem (with 
+different numbers of course).
+I can sent the full fsck output if needed.
+BTW this problem also occurs with kernel 2.6.8.1-mm2.
 
-								Pavel
+regards
+Michael
