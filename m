@@ -1,52 +1,44 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: silent semantic changes in reiser4 (brief attempt to document
- the idea of what reiser4 wants to do with metafiles and why
-Date: Tue, 31 Aug 2004 17:58:49 -0400
-Sender: news <news@sea.gmane.org>
-Message-ID: <87vfezkm06.fsf@uhoreg.ca>
-References: <41323AD8.7040103@namesys.com> <200408312055.56335.v13@priest.com>
- <36793180.20040831201736@tnonline.net> <200408312235.35733.v13@priest.com>
- <874qmjm51g.fsf@uhoreg.ca> <1125457632.20040831223154@tnonline.net>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: silent semantic changes with reiser4
+Date: Wed, 1 Sep 2004 00:07:26 +0200
+Message-ID: <20040831220726.GB16428@elf.ucw.cz>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org> <20040831203226.GB16110@elf.ucw.cz> <Pine.LNX.4.58.0408311336580.2295@ppc970.osdl.org> <20040831205422.GD16110@elf.ucw.cz> <Pine.LNX.4.58.0408311357550.2295@ppc970.osdl.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21184-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21185-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.58.0408311357550.2295@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
-Cc: linux-kernel@vger.kernel.org
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
->>>>> "Spam" == Spam  <spam@tnonline.net> writes:
+Hi!
 
-V13> The only thing that changes (from the userland POV) is the way
-V13> someone can enter the 'metadata directory'. This way you don't have
-V13> to have a special name, just a special function and no existing
-V13> application (like tar) can possibly break because it will not know
-V13> how to enter this 'metadata directory'.
+> > > However, that said, user space can trivially cache things in the 
+> > > filesystem, so while this may be a convenient feature, I think you should 
+> > > look at perhaps doing it in the _shell_ instead..
+> > 
+> > That cache should disappear as soon as I need disk
+> > space. I.e. userspace should never see -ENOSPC because of this kind of
+> > caching. This need some kernel support. Ouch and cached file should
+> > atomically go away as soon as main file changes, otherwise I do not
+> > see how multiple processes could cooperate on caching...
+> 
+> Well, what other projects have done is to just reserve a certain amount of 
+> disk for caching. See "ccache", which solves both of the above problems 
+> (it doesn't shrink the cache on ENOSPC, but reserving diskspace is 
+> accepted practice for things like this..)
 
->> tar won't be able to backup the metadata.  That's the major breakage
->> of tar that we're worried about.
-
-Spam>   However, if we do a "cp fileA fileB" then the metadata and
-Spam> streams ought to be copied too, even if "cp" does not support
-Spam> them.
-
-Huh?  How do you plan on pulling that off?  Unless cp uses the
-not-yet-existing copy syscall, if cp can't see the metadata or streams,
-how is it going to copy it?
-
-Spam> This is the real challenge. Backup tools like tar can be patched
-Spam> just like it has so many times before.
-
-Yes.  And if we can get file-as-dir, then we only need to patch tar
-once, since everything can be exported through that interface.
-
+Okay, that does work, it just is not really nice. Just as reserving
+fixed ammount of space for disk cache is bad, reserving fixed ammount
+of space for ccache (and similar) is bad. When there are few of such
+caches, balancing between them starts to matter...
+								Pavel
 -- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
+People were complaining that M$ turns users into beta-testers...
+...jr ghea gurz vagb qrirybcref, naq gurl frrz gb yvxr vg gung jnl!
