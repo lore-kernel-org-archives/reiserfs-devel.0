@@ -1,43 +1,48 @@
-From: Chris Wright <chrisw@osdl.org>
-Subject: Re: Using fs views to isolate untrusted processes: I need an assistant architect in the USA for Phase I of a DARPA funded linux kernel project
-Date: Wed, 25 Aug 2004 17:56:08 -0700
-Message-ID: <20040825175608.Y1973@build.pdx.osdl.net>
-References: <410D96DC.1060405@namesys.com> <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com> <20040825205618.GA7992@hockin.org> <30958D95-F6ED-11D8-A7C9-000393ACC76E@mac.com> <412D2BD2.2090408@sun.com>
+From: Rik van Riel <riel@redhat.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Wed, 25 Aug 2004 20:57:09 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44.0408252052420.13240-100000@chimarrao.boston.redhat.com>
+References: <Pine.LNX.4.58.0408260204050.22259@artax.karlin.mff.cuni.cz>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20555-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20556-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <412D2BD2.2090408@sun.com>; from Michael.Waychison@Sun.COM on Wed, Aug 25, 2004 at 08:16:18PM -0400
+In-Reply-To: <Pine.LNX.4.58.0408260204050.22259@artax.karlin.mff.cuni.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Waychison <Michael.Waychison@Sun.COM>
-Cc: Kyle Moffett <mrmacman_g4@mac.com>, Tim Hockin <thockin@hockin.org>, LKML <linux-kernel@vger.kernel.org>, Rik van Riel <riel@redhat.com>, ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>
+To: Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>
+Cc: Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-* Mike Waychison (Michael.Waychison@Sun.COM) wrote:
-> This provides minimal protection if any: the user may remount any block
-> devices on any given tree in his 'namespace' (in the sense of "that is
-> what we call a mount-table in Linux").  *
+On Thu, 26 Aug 2004, Mikulas Patocka wrote:
+> On Wed, 25 Aug 2004, Linus Torvalds wrote:
 
-Namespaces aren't currently expressive enough, and have caveats like
-these, and can't express detailed access controls.
+> > One way to solve it is to just realize that a final slash at the end
+> > implies pretty strongly that you want to treat it as a directory. So what
+> > you do is:
+> 
+> Stupid question: who will use it? And why?
 
-> If I understand what Hans is looking to get done, he's asking for
-> someone to architect a system where any given process can be restricted
-> to seeing/accessing a subset of the namespace (in the sense of "a tree
-> of directories/files").  Eg: process Foo is allowed access to write to
-> /etc/group, but _not_ allowed access to /etc/shadow, under any
-> circumstances && Foo will be run as root.  Hell, maybe Foo is never able
-> to even _see_ /etc/shadow (making it a true shadow file :).
+I've got a stupid question too.  How do you back up these
+things ?
 
-This has already been done.  LSM provides the infrastructure, things
-like LIDS and SubDomain do this fairly directly.  SELinux does this as
-well using types as an intermediary.
+If your backup program reads them as a file and restores
+them as a file, you might lose your directory-inside-the-file
+magic.
 
-thanks,
--chris
+If your backup program dives into the file despite stat()
+saying it's a file and you restore your backup, how are the
+"file is a file" semantics preserved ?
+
+Obviously this is something that needs to be sorted out at
+the VFS layer.  A filesystem specific backup and restore
+program isn't desirable, if only because then there'd be
+no way for Hans's users to switch to reiser5 in 2010 ;)
+
 -- 
-Linux Security Modules     http://lsm.immunix.org     http://lsm.bkbits.net
+"Debugging is twice as hard as writing the code in the first place.
+Therefore, if you write the code as cleverly as possible, you are,
+by definition, not smart enough to debug it." - Brian W. Kernighan
+
