@@ -1,50 +1,87 @@
-From: Yury Umanets <umka@namesys.com>
-Subject: Re: ReiserFS on a flash device?
-Date: Mon, 28 Jul 2003 11:31:16 +0400
-Message-ID: <1059377476.21411.3.camel@haron.namesys.com>
-References: <200307261640.13629.swsnyder@insightbb.com>
-	 <1059303331.17569.119.camel@haron.namesys.com>
-	 <20030728023345.GD1686@matchmail.com>
-	 <1059368036.6406.0.camel@haron.namesys.com>
-	 <20030728070547.GF894@ecloud.org>
+From: "Vladimir 'jd wuz here' Sopot" <jd@artdesign.ru>
+Subject: reiserfsck question
+Date: Mon, 28 Jul 2003 11:53:22 +0400
+Message-ID: <005501c354dd$51a68900$8e0c43c2@sovintel.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15088-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0052_01C354FE.D8519F00"
+Return-path: <reiserfs-list-return-15089-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030728070547.GF894@ecloud.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Shawn Rutledge <e_cloud@yahoo.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Mon, 2003-07-28 at 11:05, Shawn Rutledge wrote:
-> On Mon, Jul 28, 2003 at 08:53:57AM +0400, Yury Umanets wrote:
-> > On Mon, 2003-07-28 at 06:33, Mike Fedyk wrote:
-> > > On Sun, Jul 27, 2003 at 02:55:31PM +0400, Yury Umanets wrote:
-> > > > Default journal size is too big (32MB) for usual embedded device. I
-> > > > mean, that flash is expensive and it is pity to loss 32MB for journal :)
-> > > 
-> > > What?  You mean it isn't reduced in size based on block device size like
-> > > with ext3?
-> > 
-> > Yes, is isn't. Use reiserfstune to make it smaller.
-> 
+------=_NextPart_000_0052_01C354FE.D8519F00
+Content-Type: text/plain;
+	charset="windows-1251"
+Content-Transfer-Encoding: quoted-printable
 
-> Well I'm glad to hear it's possible to use ReiserFS on small devices,
-> but I think that requiring a kernel patch, or a GRUB patch, to handle
-> different journal sizes is not good.  Are there plans to have the kernel
-> and GRUB detect it at runtime?
-Support for non-standard journal is merged to kernel recently. Use last
-pre or wait until next stable kernel is released.
+hi there!
 
-GRUB is able to with with it too. Use
-ftp://ftp.namesys.com/pub/misc-patches/grub-0.93-reiserfs-non-standard-journal.diff for that.
+i have a situation here. my system is linux 2.4.19 with reiserfs 3.6. =
+when i want to check the FS (single root partition) from usual =
+environment i get the following
 
-Regards.
+cloud9:~ # reiserfsck /dev/hda2
+reiserfsck 3.6.2 (2002)
+Will read-only check consistency of the filesystem on /dev/hda2
+Will put log info to 'stdout'
 
--- 
-We're flying high, we're watching the world passes by...
+Do you want to run this program?[N/Yes] (note need to type Yes):Yes
+###########
+reiserfsck --check started at Mon Jul 28 11:47:24 2003
+###########
+Device /dev/hda2 is mounted w/ write permissions, can not check it
+
+when i boot single mode i try the same command, but this time it says =
+that --fix-fixable is ignored (because of RO partition?)
+
+the question is the following: how should i correctly run the fsck to =
+get my FS with errors fixed? follwing is the part from the syslog
+
+Jul 28 11:48:55 cloud9 kernel: vs-7000: search_by_entry_key: =
+search_by_key returned item position =3D=3D 0<4>vs-7000: =
+search_by_entry_key: search_by_key returned item position =3D=3D =
+0<4>vs-7000: search_by_entry_key: search_by_key returned item position =
+=3D=3D 0<4>vs-7000: search_by_entry_key: search_by_key returned item =
+position =3D=3D 0<4>vs-7000: search_by_entry_key: search_by_key returned =
+item position =3D=3D 0<4>vs-7000: search_by_entry_key: search_by_key =
+returned item position =3D=3D 0<4>vs-7000: search_by_entry_key: =
+search_by_key returned item position =3D=3D 0<4>vs-7000: =
+search_by_entry_key: search_by_key returned item position =3D=3D =
+0<4>vs-7000: search_by_entry_key: search_by_key returned item position =
+=3D=3D 0<4>vs-7000: search_by_entry_key: search_by_key returned item =
+position =3D=3D 0<4>vs-7000: search_by_entry_key: search_by_key returned =
+item position =3D=3D 0<4>vs-7000: search_by_entry_key: search_by_key =
+returned item position =3D=3D 0<4>vs-7000: search_by_entry_key: =
+search_by_key returned item position =3D=3D 0<4>vs-7000: =
+search_by_entry_key: sea
+Jul 28 11:49:48 cloud9 kernel: ch_by_key returned item position =3D=3D =
+0<4>vs-7000: search_by_entry_key: search_by_key returned item position =
+=3D=3D 0<4>vs-7000: search_by_entry_key: search_by_key returned item =
+position =3D=3D 0<4>vs-7000: search_by_entry_key: search_by_key returned =
+item position =3D=3D 0<4>vs-7000: search_by_entry_key: search_by_key =
+returned item position =3D=3D 0<4>vs-7000: search_by_entry_key: =
+search_by_key returned item position =3D=3D 0<4>vs-7000: =
+search_by_entry_key: search_by_key returned item position =3D=3D =
+0<4>vs-7000: search_by_entry_key: search_by_key returned item position =
+=3D=3D 0<4>vs-7000: search_by_entry_key: search_by_key returned item =
+position =3D=3D 0<4>vs-7000: search_by_entry_key: search_by_key returned =
+item position =3D=3D 0<4>vs-7000: search_by_entry_key: search_by_key =
+returned item position =3D=3D 0<4>vs-7000: search_by_entry_key: =
+search_by_key returned item position =3D=3D 0<4>vs-7000: =
+search_by_entry_key: search_by_key returned item position =3D=3D =
+0<4>vs-7000: search_by_entry_key: search_by_key returned item position
+
+hoping to get your answer asap, as this is a production server.
+
+thank you in advance
+
+Vladimir Sopot
+http://photofile.ru
+project manager
+
+------=_NextPart_000_0052_01C354FE.D8519F00--
 
