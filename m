@@ -1,48 +1,36 @@
-From: Andrew Heberle <heberle@westnet.com.au>
-Subject: Re: Error message - vs-13070
-Date: Sun, 16 Feb 2003 20:39:56 +0800
-Message-ID: <5.2.0.9.0.20030216203350.018dd7d8@mail.bogus.home>
-References: <5.2.0.9.0.20030215000534.018ed008@mail.bogus.home>
- <5.2.0.9.0.20030215000534.018ed008@mail.bogus.home>
+From: Marc-Christian Petersen <m.c.p@gmx.net>
+Subject: CONFIG_REISERFS_RAW (http://www.namesys.com/config.html)
+Date: Sun, 16 Feb 2003 14:52:21 +0100
+Message-ID: <200302161452.21451.m.c.p@gmx.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12780-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12781-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030214193950.A27507@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+
+Hi all,
+
+can anyone tell me where I can find this code:
 
 
->What kernel is that?
->Were there any other messages around this one in logs? (not necessary reiserfs
->related)
+CONFIG_REISERFS_RAW
+    Setting this to yes will enable a set of ioctls that provide raw
+    interface to the ReiserFS tree, bypass the directories, and
+    automatically remove aged files. This is an experimental feature
+    designed for squid cache directories. See Documentation/filesystems/r=
+eiserfs_raw.txt
+    This was designed specifically to use ReiserFS as a back-end for
+    the Squid. The general idea is that it is possible to bypass all
+    filesystem overhead and to directly address the ReiserFS internal
+    tree. This is not in the stock kernels.=20
 
-It is the latest gentoo-sources kernel, which is based on 2.4.19 I think, 
-although Gentoo kernel's
-have a number of extras added in them, along with a number of fixes not 
-found in the mainline kernel.
+?
 
+Thanks.
 
->We cannot tell without those extra messages.
->You can execute 'dmesg' and find out what is there in addition to
->those vs-13070
-
-The following errors show up in the kernel logs at the time:
-
-hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
-hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=6599945, 
-sector=4286584
-end_request: I/O error, dev 03:03 (hda), sector 4286584
-
-These errors look to me like a hardware problem (bad sector on the drive).
-
-Definately not a reiserfs problem, thanks for the reply Oleg.
-
---
-Andrew Heberle
-
+ciao, Marc
