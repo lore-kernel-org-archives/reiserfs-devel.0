@@ -1,60 +1,49 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: new v3 2.6.4  logging/xattr patches
-Date: Fri, 19 Mar 2004 11:00:05 +0300
-Message-ID: <405AA885.3030000@namesys.com>
-References: <1079679539.11055.101.camel@watt.suse.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: reiserfsprogs 3.6.14 release
+Date: Fri, 19 Mar 2004 12:23:06 +0300
+Message-ID: <200403191223.06492.vitaly@namesys.com>
+References: <200403182350.44277.vitaly@namesys.com> <m3hdwloom3.fsf@multivac.cwru.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17307-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17309-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1079679539.11055.101.camel@watt.suse.com>
+In-Reply-To: <m3hdwloom3.fsf@multivac.cwru.edu>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Paul Jarc <prj@po.cwru.edu>, reiserfs-list@namesys.com
 
-Chris Mason wrote:
+Hello Paul,
 
->Hello everyone,
->
->I've just uploaded all the reiserfs patches from the suse 2.6 kernel to:
->
->ftp.suse.com/pub/people/mason/patches/data-logging/experimental/2.6.4
->
->(they should also apply to 2.6.5-rc1 and 2.6.5-rc1-mm2)
->
->These include:
->Latency fixes
->Logging performance fixes
->data=ordered support
->quota support
->xattrs and acls from Jeff Mahoney
->
->and a few random bug fixes.  There's a README file in the directory with
->a some more details.
->
->The names of the files no longer start with numbers to help you figure
->out the order the patches get applied.  The directory includes a file
->called series that has a list of all the patches in the proper order.
->
->There are various shell tricks to apply things in order.  Or a few
->different patch management tools that understand a series file.  I use
->quilt (http://savannah.nongnu.org/projects/quilt/) which is very nice.
->
->-chris
->
->
->
->
->
->
->  
->
-are these ready to go to Andrew or?
+this was changed in 3.6.15-pre1, would you try it?
 
 -- 
-Hans
+Thanks,
+Vitaly Fertman
+
+On Friday 19 March 2004 00:02, Paul Jarc wrote:
+> My /bin/sh is pdksh, which handles here-documents slightly differently
+> from bash: for some sequences like \", the backslash is preserved by
+> bash, but removed by pdksh.  To ensure that a backslash appears in the
+> here-document, you can escape the backslash with another backslash.
+> This patch (against 3.6.13, but the problem and fix are the same for
+> 3.6.14) makes the configure script work with pdksh as well as bash.
+>
+> --- reiserfsprogs-3.6.13/configure.in~	2004-03-10 17:21:56.000000000 -0500
+> +++ reiserfsprogs-3.6.13/configure.in	2004-03-10 17:22:42.000000000 -0500
+> @@ -110,7 +110,7 @@
+>  		fprintf(fout, ",\n\n");
+>
+>  	    line[strlen(line) - 1] = 0;
+> -	    fprintf(fout, "\t\"%s\\\n\"", line);
+> +	    fprintf(fout, "\\t\\"%s\\\\n\\"", line);
+>  	    start = 0;
+>  	}
+>      }
+>
+>
+> paul
 
