@@ -1,42 +1,35 @@
-From: prj@po.cwru.edu (Paul Jarc)
-Subject: reiserfsprogs 3.6.13 installation bug, with fix
-Date: Thu, 11 Mar 2004 12:28:53 -0500
-Message-ID: <m37jxri978.fsf@multivac.cwru.edu>
+From: jlewis@lewis.org
+Subject: Re: reiserfs rebuild-tree time?
+Date: Thu, 11 Mar 2004 20:57:49 -0500 (EST)
+Message-ID: <Pine.LNX.4.58.0403112055570.1969@web1.mmaero.com>
+References: <Pine.LNX.4.58.0403110111490.1969@web1.mmaero.com>
+ <20040311071850.GB13119@dbz.icequake.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-=-="
-Return-path: <reiserfs-list-return-17184-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17185-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20040311071850.GB13119@dbz.icequake.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ryan Underwood <nemesis-lists@icequake.net>
+Cc: reiserfs-list@namesys.com
 
+On Thu, 11 Mar 2004, Ryan Underwood wrote:
 
-My /bin/sh is pdksh, which handles here-documents slightly
-differently from bash: for some sequences like \", the backslash is
-removed, while bash preserves it.  To ensure that a backslash appears
-in the here-document, you can escape the backslash with another
-backslash.  This patch makes the configure script work with pdksh.
+> Maybe it's time to test the HDD?  A quick run through with the
+> manufacturer's util will at least rule out failing hardware before going
+> further.
 
+I kind of doubt that's it.  The Adaptec i2o cards are somewhat finicky,
+but if the drives even look back at the card funny, it'll declare them
+dead, sound the alarm that annoys people in the offices nearby, and
+degrade the array.  That isn't happening right now.
 
-paul
-
---=-=-=
-Content-Type: text/x-patch
-Content-Disposition: inline;
-  filename=reiserfsprogs-3.6.13-backslash.patch
-
---- reiserfsprogs-3.6.13/configure.in~	2004-03-10 17:21:56.000000000 -0500
-+++ reiserfsprogs-3.6.13/configure.in	2004-03-10 17:22:42.000000000 -0500
-@@ -110,7 +110,7 @@
- 		fprintf(fout, ",\n\n");
- 	    
- 	    line[strlen(line) - 1] = 0;
--	    fprintf(fout, "\t\"%s\\\n\"", line);
-+	    fprintf(fout, "\\t\\"%s\\\\n\\"", line);
- 	    start = 0;
- 	}
-     }
-
---=-=-=--
+----------------------------------------------------------------------
+ Jon Lewis *jlewis@lewis.org*|  I route
+ Senior Network Engineer     |  therefore you are
+ Atlantic Net                |
+_________ http://www.lewis.org/~jlewis/pgp for PGP public key_________
