@@ -1,112 +1,54 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH] xattr/acl fixes
-Date: Mon, 16 Aug 2004 11:08:37 -0400
-Message-ID: <4120CDF5.2050004@suse.com>
+From: Christophe Saout <christophe@saout.de>
+Subject: Re: Quicker alternative to "find /"?
+Date: Mon, 16 Aug 2004 17:33:50 +0200
+Message-ID: <1092670430.19943.6.camel@leto.cs.pocnet.net>
+References: <20040815231640.3c926886.felix.klee.reiserfs@gmx.net>
+	 <1092660765.28417.4.camel@leto.cs.pocnet.net>
+	 <1092661560.12138.24.camel@watt.suse.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------030409000401020104070200"
-Return-path: <reiserfs-list-return-20334-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-HSrlhXHdSZ6L+yMC6wif"
+Return-path: <reiserfs-list-return-20335-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1092661560.12138.24.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Andrew Morton <akpm@osdl.org>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: Chris Mason <mason@suse.com>
+Cc: "Felix E. Klee" <felix.klee.reiserfs@gmx.net>, reiserfs-list@namesys.com
 
---------------030409000401020104070200
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--=-HSrlhXHdSZ6L+yMC6wif
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Am Montag, den 16.08.2004, 09:06 -0400 schrieb Chris Mason:
 
-Hey all -
+> This gets tricky quickly.  Many threads reading many different
+> directories at once will introduce a lot of seeks, since the directories
+> are likely to be far apart on disk.  It is far better for the filesystem
+> to realize a sequential scan of the directory is in progress and do
+> smarter readahead based on that. =20
 
-Here are a few fixes for bugs noticed on reiserfs-list or our own bugzilla.
+You are right. I just tried and the result was catastrophic (on ReiserFS
+3). Probably because the other threads running concurrently make
+readahead unusable (VM decides to drop it before it is used) or
+something...?
 
-Attached is a patch that fixes several problems with xattrs/acls:
-[SECURITY] Fixes the inode not getting dirtied when mode is set
-~           via setxattr()
-[CORRECTNESS] Fixes the inode not getting ctime updated when an xattr is
-~              removed
-[DATA] Fixes an issue with dcache hash colliding names in the filesystem
-~       root caused by the d_compare to hide .reiserfs_priv. The bug
-~       can only occur in the filesystem root, which is why we haven't
-~       seen many (any, outside of the suse bugzilla, afaik) reports on
-~       this. The results are that dcache operations on colliding entries
-~       in the fs root will choose the first match rather than the
-~       correct entry.
+On the contrary it works very well for reading the contents of a lot of
+files.
 
-These should be obviously correct. Please apply.
 
-- -Jeff
+--=-HSrlhXHdSZ6L+yMC6wif
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
 
-- --
-Jeff Mahoney
-SuSE Labs
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Version: GnuPG v1.2.5 (GNU/Linux)
 
-iD8DBQFBIM31LPWxlyuTD7IRAtj1AJwNkkIF3uap8IzxO2R+5KPp3TfLYACdHDhI
-P1FORUaIT9SM+UKg72dWaJE=
-=qvrt
+iD8DBQBBINPdZCYBcts5dM0RAvYcAJ94jXBZJmbIQi0Ehco9Y9FmkKMC3QCfZZsc
+v9if5FGjKE8o2taej/V/UA0=
+=MvJp
 -----END PGP SIGNATURE-----
 
---------------030409000401020104070200
-Content-Type: text/plain;
- name="reiserfs-acl-fixes.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="reiserfs-acl-fixes.diff"
+--=-HSrlhXHdSZ6L+yMC6wif--
 
-diff -rup -X dontdiff linux-2.6.5/fs/reiserfs/xattr_acl.c linux-2.6.5-acl/fs/reiserfs/xattr_acl.c
---- linux-2.6.5/fs/reiserfs/xattr_acl.c	2004-08-03 14:18:19.000000000 -0400
-+++ linux-2.6.5-acl/fs/reiserfs/xattr_acl.c	2004-08-03 14:21:44.000000000 -0400
-@@ -289,8 +289,14 @@ reiserfs_set_acl(struct inode *inode, in
-             error = reiserfs_xattr_set(inode, name, value, size, 0);
- 	} else {
-             error = reiserfs_xattr_del (inode, name);
--            if (error == -ENODATA)
-+            if (error == -ENODATA) {
-+                /* This may seem odd here, but it means that the ACL was set
-+                 * with a value representable with mode bits. If there was
-+                 * an ACL before, reiserfs_xattr_del already dirtied the inode.
-+                 */
-+                mark_inode_dirty (inode);
-                 error = 0;
-+            }
-         }
- 
- 	if (value)
-diff -rup -X dontdiff linux-2.6.5/fs/reiserfs/xattr.c linux-2.6.5-acl/fs/reiserfs/xattr.c
---- linux-2.6.5/fs/reiserfs/xattr.c	2004-08-03 14:18:53.000000000 -0400
-+++ linux-2.6.5-acl/fs/reiserfs/xattr.c	2004-08-03 14:20:51.000000000 -0400
-@@ -761,6 +761,11 @@ reiserfs_xattr_del (struct inode *inode,
-     err = __reiserfs_xattr_del (dir, name, strlen (name));
-     dput (dir);
- 
-+    if (!err) {
-+        inode->i_ctime = CURRENT_TIME;
-+        mark_inode_dirty (inode);
-+    }
-+
- out:
-     return err;
- }
-@@ -1241,8 +1246,10 @@ xattr_lookup_poison (struct dentry *dent
-         name->hash == priv_root->d_name.hash &&
-         !memcmp (name->name, priv_root->d_name.name, name->len)) {
-             return -ENOENT;
--    }
--    return 0;
-+    } else if (q1->len == name->len &&
-+               !memcmp(q1->name, name->name, name->len))
-+        return 0;
-+    return 1;
- }
- 
- static struct dentry_operations xattr_lookup_poison_ops = {
-
---------------030409000401020104070200--
