@@ -1,83 +1,42 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiser4 for windows
-Date: Tue, 18 Jan 2005 09:03:39 -0800
-Message-ID: <41ED416B.8040202@namesys.com>
-References: <20041204211059.41930.qmail@web50908.mail.yahoo.com> <41B287C6.2060902@namesys.com> <41B29491.20405@slaphack.com> <41E9D3DF.1060508@namesys.com> <41EA04B7.3050606@slaphack.com> <41EBEBF1.1050408@namesys.com> <41EC99E4.2050708@slaphack.com>
+From: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
+Subject: Re: Congratulations! we have got hash function screwed up
+Date: Tue, 18 Jan 2005 22:17:52 +0100
+Message-ID: <2f4958ff050118131714f5411c@mail.gmail.com>
+References: <77912E9FD42896419D1CEF15E1C397A58AFCF1@london.jaguarfreightservices.local>
+	 <m38y7gx8kq.fsf@merlin.emma.line.org>
+	 <20041230235911.4911a20c.hihone@bigpond.net.au>
+	 <m3sm5nj2ef.fsf@merlin.emma.line.org> <41D42F93.9060107@namesys.com>
+Reply-To: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23165-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23167-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41EC99E4.2050708@slaphack.com>
+In-Reply-To: <41D42F93.9060107@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Masover <ninja@slaphack.com>
-Cc: Job Bob <yzhang2004@yahoo.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>, hihone@bigpond.net.au, reiserfs-list@namesys.com
 
-David Masover wrote:
+On Thu, 30 Dec 2004 08:40:51 -0800, Hans Reiser <reiser@namesys.com> wrote:
+> Fixing hash collisions in V3 to do them the way V4 does them would
+> create more bugs and user disruption than the current bug we have all
+> lived with for 5 years until now.  If someone thinks it is a small
+> change to fix it, send me a patch.  Better by far to fix bugs in V4,
+> which is pretty stable these days.
 
->
->
-> Hans Reiser wrote:
-> | David Masover wrote:
-> |
-> |> Hans Reiser wrote:
-> |> [...]
-> |> |
-> |> |>
-> |> |> To start with, ntfs read access is still case insensitive, last I
-> |> |> checked.  How deep does that go?
-> |> |
-> |> |
-> |> | In reiser4, it is just a directory plugin.
-> |>
-> |> Nono -- how do you give Windows, which is case insensitive, access to a
-> |> case-sensitive filesystem?  For instance, how do you get a 
-> Windows-based
-> |> backup program to back up a reiser4 partition from a Linux 
-> installation,
-> |> if it has filenames that are identical except for case?
-> |
-> |
-> | This problem is insoluble.  Either make reiser4 case insensitive and use
-> | it that way or educate the windows programs or live with bugs.  I see no
-> | alternative.  Do you?
->
-> Mangling.  Or case-sensitivity (forget who said that NTFS has that).  Or
-> force case-insensitive FSes only.  I think all three would work in
-> different situations, and I don't think it would be too difficult to add
-> all three.
+As I understeand, tea hash is based on tea (tiny encryption aglo),
+which was the cause of xbox-linux sucess, and few others.
+Pleas consider updating it to use xxtea algo. I know, it won't be
+backward compatbile, but well.
+Where is about all the others, I don't use them, and for me tea is the
+only resonable hash to use on systems where I have very much great
+number of files per directory (to name it, Maildirs).
+Never had such problem myself, every hash function has a weaknes.
+Nothing new. But providing another, much stronger hash, or correct tea
+hash to use xxtea, would be something good indeed.
 
-Ok, so it is soluble.
-
->
-> Just for clarification -- mangling is how VFAT is backwards-compatible
-> with DOS, for example.  myreallylongfile.doc becomes MYREAL~1.DOC when
-> viewed from DOS, so that while VFAT should really be read with Windows
-> 95 or better (Linux), it can still be accessed in Dos.
->
-> This loses information (if a DOS program backs up and restores
-> MYREAL~1.DOC, you lose the long (myreallylongfile.doc) name.)  But
-> sometimes there's no alternative, and if you mangle it (instead of just
-> chopping off the end of the filename) you avoid collisions -- that is,
-> if you have:
->
-> myreallylongfile.doc
-> myreallife.doc
->
-> then they become
->
-> MYREAL~1.DOC
-> MYREAL~2.DOC
->
->
->
-> Only question is, where to set which of these to choose (mangle or case
-> sensitivity)?  Maybe it could be per-directory, most likely per-mount.
-> But I have no idea how Windows passes mount options ... I don't think it
-> has any mount options at all.
->
-well, all this assumes we have resources to spare from debugging reiser4 
-for linux.....;-)
+-- 
+GJ
