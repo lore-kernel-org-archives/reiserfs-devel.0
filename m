@@ -1,88 +1,67 @@
-From: Spam <spam@tnonline.net>
+From: "Bostjan Skufca @ domenca.com" <bostjan.skufca@domenca.com>
 Subject: Re: The argument for fs assistance in handling archives
-Date: Thu, 2 Sep 2004 12:02:59 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <812032218.20040902120259@tnonline.net>
-References: <20040826150202.GE5733@mail.shareable.org>
- <200408282314.i7SNErYv003270@localhost.localdomain>
- <20040901200806.GC31934@mail.shareable.org>
- <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
- <20040902002431.GN31934@mail.shareable.org> <413694E6.7010606@slaphack.com>
- <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org>
- <4136A14E.9010303@slaphack.com>
- <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org>
- <4136C876.5010806@namesys.com>
- <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org>
- <4136E0B6.4000705@namesys.com> <4699bb7b04090202121119a57b@mail.gmail.com>
- <4136E756.8020105@hist.no> <4699bb7b0409020245250922f9@mail.gmail.com>
-Reply-To: Spam <spam@tnonline.net>
+Date: Thu, 2 Sep 2004 12:05:59 +0200
+Message-ID: <200409021205.59353.bostjan.skufca@domenca.com>
+References: <20040826150202.GE5733@mail.shareable.org> <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org> <4136E0B6.4000705@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <4699bb7b0409020245250922f9@mail.gmail.com>
+Return-path: <reiserfs-list-return-21266-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <4136E0B6.4000705@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oliver Hunt <oliverhunt@gmail.com>
-Cc: Helge Hafting <helge.hafting@hist.no>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
+
+I think Hans' idea about further evolution is right.
+
+(2.7 which will lead into 3.0 maybe?)
 
 
-  
+Regards,
+Bostjan
 
->> Depends on how the forks eventually get implemented.
->> With the file-as-directory concept, all you need is to
->> look at the file's directory part to see what is there.  (The forks,
->> implemented as files in a subdirectory.)  It is done the same way
->> as for an ordinary directory, so nothing "new".
->> 
-> This still doesn't solve the problem of how we distinguish between a
-> multi-fork file
-> and a directory, for those old programs(ie. almost all that currently
-> exist), to be able to access meaningful data we would need to either
-> return just the primary fork, a serialized version of all forks in the
-> file, or make the file look more or less identical to a directory.
 
-  Well. wasn't the idea that unless programs specifically tried to
-  open the file-as-dir as a directory it would look like a file?
-
-  ls -F would show it as file. Or have I understood wrong?
-
-> The first option could cause problems when transfering files between
-> different filesystems,
-
-  The meta-data should be deleted if it the file is copied or moved to
-  a medium that doesn't support it. However a _warning_ may be shown
-  to the user if there is risk to loose data.
-
-  I do not think we should not implement something like this because
-  most other filesystems in Linux doesn't support it. Think of other
-  limitations there is in various ones. Large file support. Limited
-  amount of files, length of file names, etc.
-
-> the second results in programs getting metadata they can't handle, and
-> the third option results in few of the advantages over, well,
-> directories...  And even those applications that could handle the fork
-> information nicely would need to fs type to find out whether they were
-> handling a directory or a multi-forked file...
-
-  No, if an application supported the file-as-dir then it could simply
-  try to open the file as a directory. It would fail on systems that
-  didn't support it.
-
-  The meta-data and file streams would be seen as ordinary files. If
-  applications support the contents or not isn't really relevant, is
-  it?.
-
-> As I say I like the idea, but I can't see anyway of implementing it in
-> a way that is useful without first putting considerable effort into at
-> least the VFS if not all the actual fs drivers.
-
-  Indeed. It is important that something like this gets implemented as
-  a transparent way as possible. If it could be done in a general way
-  so other filesystems like ext3/4 can eventually support it then that
-  would be wonderful. I do not, however, think that we should block it
-  in reiser4 because no other filesystems support it.
-
-  ~S
-
-> --Oliver Hunt
-
+On Thursday 02 of September 2004 10:58, Hans Reiser wrote:
+> Linus Torvalds wrote:
+> > But _my_ point is, no user program is going to take _advantage_ of
+> >
+> >anything that only one filesystem on one system offers.
+>
+> Apple does not have this problem....
+>
+> and yes, the apps will take advantage of it, which is different from
+> depending on it.  If you use the wrong fs you will lose some of the
+> features of the app.
+>
+> For 30 years nothing much has happened in Unix filesystem semantics
+> because of sheer cowardice (excepting Clearcase, which priced itself
+> into a niche market).   It is 25 years past time for someone to change
+> things.  That someone will have first mover advantage, and the more
+> little semantic features possessed the more lure there will be to use it
+> which will increase market share which will lure more apps into
+> depending on it and in a few years the other filesystems will
+> (deservedly) have only a small market share because the apps won't all
+> work on them.
+>
+> Besides, there are enhancements which are simply compelling.  You can
+> write a dramatically better performance version control system with a
+> much simpler design if the FS is atomic.    Our transaction manager
+> first draft was written by a version control guy, and he would probably
+> be happy to tell you how  lack of atomicity other than rename makes
+> version control software design hideous.
+>
+> We have the performance lead.  By next year we will be stable enough for
+> mission critical servers, and then we start the serious semantic
+> enhancements.
+>
+> If you don't embrace progress, then you doom Linux to following behind,
+> because the guys at Apple are pretty aggressive now that Jobs is back,
+> and they WILL change the semantics, and they will do so in compelling
+> ways, and Linux will be reduced to aping them when it should be leading
+> them.
+>
+> Hans
