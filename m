@@ -1,42 +1,47 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: (yet another) attempt to access beyond end of device
-Date: Wed, 21 Aug 2002 13:33:03 +0400
-Message-ID: <20020821133303.A12839@namesys.com>
-References: <20020821124007.A12576@namesys.com> <Pine.LNX.4.33L2.0208210204460.16503-100000@ns.they.org>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Corruption: --fix-fixable results in all nlink
+ values = 0
+Date: Wed, 21 Aug 2002 14:33:36 +0400
+Message-ID: <3D636C80.4030605@namesys.com>
+References: <m3k7mpreij.fsf@merlin.emma.line.org> <3D5E9D69.1030109@namesys.com> <20020819092023.B1815@namesys.com> <3D60AF63.6040809@namesys.com> <20020819124649.A2585@namesys.com> <3D60B6E2.7050006@namesys.com> <20020819132252.A4346@namesys.com> <3D60C35E.7000903@namesys.com> <20020819142035.A5741@namesys.com> <1029875053.12387.521.camel@tiny> <20020821100452.A10765@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11268-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11269-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.33L2.0208210204460.16503-100000@ns.they.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Max Power <ratty@they.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Oleg Drokin <green@namesys.com>
+Cc: Chris Mason <mason@suse.com>, Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>, reiserfs-list@namesys.com, god@namesys.com, mason <mason@namesys.com>
 
-Hello!
+Oleg Drokin wrote:
 
-On Wed, Aug 21, 2002 at 02:26:18AM -0700, Max Power wrote:
+>Hello!
+>
+>On Tue, Aug 20, 2002 at 04:24:13PM -0400, Chris Mason wrote:
+>
+>  
+>
+>>make sure it was valid, regardless of where you stored it.  The problem
+>>is that if you store it in the tree somehow, you've got a chicken and
+>>egg problem that you can't read the list until the tree is good and you
+>>can read the tree without knowing which blocks are bad.
+>>    
+>>
+>
+>With carefully choosen key, it will be in fixed tree position.
+>But well, if Hans decided it should not be stored in a tree - so be it.
+>
+>Bye,
+>    Oleg
+>
+>
+>  
+>
+It is not that I oppose putting it into the tree with a fixed key for 
+the file holding it, it is that I want us to work on other things instead.
 
-> # > Aug 21 00:33:46 stroke kernel: attempt to access beyond end of device
-> # > Aug 21 00:33:46 stroke kernel: 16:41: rw=0, want=1411977092, (=0x54290f84), limit=1411977092
-> # > I've tried all manor of reiserfscking repeatedly. Each time it seems to
-> # > fix something different. I've read about the issues with fdisk and not
-> # > rebooting and admit that this _could_ be my issue but that doesn't explain
-> # > why all the "want" and "limit" numbers are identical. I'm also curious why
-> # What do you mean by "identical"? I see they are different each time and this is
-> # very strance since limit should be always the same.
-> I was referring to the per-line sameness. In some of the mail list
-> archives I looked thru the "want" number was different than the "limit"
-> number each time. Mine are the same. And I don't get why if I "want" X and
-> the "limit" is X then why can't I have X?
+Hans
 
-Ah, I see now. Very strange indeed. Can you try some stock kernel (say 2.4.19)
-and see what happens there because I am not familiar with what is in
-Mandrake kernels.
-
-Bye,
-    Oleg
