@@ -1,51 +1,77 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: BTW: 2.4.19-patches-to-come?
-Date: Sat, 18 May 2002 20:29:02 +0400
-Message-ID: <20020518202902.A6913@namesys.com>
-References: <200205171736.50971.Dieter.Nuetzel@hamburg.de> <200205172144.21544.Dieter.Nuetzel@hamburg.de> <20020518094440.A4435@namesys.com> <200205181518.24245.Dieter.Nuetzel@hamburg.de>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: A couple of questions
+Date: Sun, 19 May 2002 00:40:27 +0400
+Message-ID: <3CE6BC3B.9040806@namesys.com>
+References: <OF4AF5C20B.BE2F7D18-ON85256BBB.006643F3@pok.ibm.com> <200205161723.42672.kuba@mareimbrium.org> <20020516214419.GE15774@schmorp.de> <200205171104.33045.kuba@mareimbrium.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10380-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10381-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <200205181518.24245.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
-Cc: Chris Mason <mason@suse.com>, Manuel Krause <manuelkrause@netscape.net>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Kuba Ober <kuba@mareimbrium.org>
+Cc: "Marc A. Lehmann" <\"\"pcg\"@goof.com>,
+	reiserfs-list@namesys.com">
 
-Hello!
+Kuba Ober wrote:
 
-On Sat, May 18, 2002 at 03:18:23PM +0200, Dieter N?tzel wrote:
-> > > I can reproduce it with some "new" page coloring stuff (only).
-> > > When I modprobe the page coloring module (it is under development) the
-> > > system lookup from time to time during heavy (parallel) compilation for
-> > > example. Then I get the broken files.
-> > Well, sounds like page colouring stuff mistakenly writes some pages in
-> > wrong location, no?
-> Yes, that could be the case.
-> > If you cannot reproduce without page colouring patch, that would be the
-> > most probably theory, I'd say.
-> That isn't what I've said. I only said I can "reproduce" the kernel crash with 
-> page coloring the easiest way.
+>>>What I'm thinking of is this:
+>>>to the user, which most users w/o intimate filesystem knowledge won't be
+>>>able to answer at all?
+>>>      
+>>>
+>>Unix traditionally wasn't aimed at the point-and-click users without
+>>knowledge.
+>>    
+>>
+>
+>Yep. But the thing is that either fsck can restore the data or not. There's no 
+>way in between.
+>
+>What more can unix-poweruser do about recovering a filesystem, other than 
+>running a disk editor (say a reiserfs-customized version of norton disk 
+>editor, which used to be a good thing for hand recovery of fat fs before it 
+>became crap) ?
+>
+>What kinds of questions can fsck really ask without having to present user 
+>with a lot of intricate data, which is better visualized graphically or, at 
+>least in a more interactive ui?
+>
+>Example: If e2fsck starts asking questions like "inode counts don't match for 
+>groups (a long list of groups). fix them <y>", what should I answer? no? that 
+>would be nonsense.
+>
+Yeah, I agree with this one.  Especially when there is usually 
+absolutely no place where it is documented what in the world these sorts 
+of messages mean.  Which is one of my pet peeves with our reiserfsck and 
+journaling code, I am simply unable to convey that a message that is not 
+explained such that the average user can understand it is programming 
+malpractice.
 
-Sorry, I misinterpreted it, then. Perhaps I was confused by "only" word in sentence above.
+>  
+>
+>>for some strange reason no fsck behaves like that.
+>>    
+>>
+>
+>Because most fscks are hacks. They are useful, they mostly do their job, but 
+>they are far from full-features tools, and that's the reality. I don't 
+>complain. I just say that their functionality isn't optimal, and shouldn't be 
+>cited as something that's the way to go, or as something that should be a 
+>design goal. They are effects of how much time did the fs-knowing people have 
+>to put in them.
+>
+Yes, very true.  Sigh.  Norton was the exception to this, and it was not 
+produced by the author of the FS.
 
-> > > > BTW, I have a feeling that datalogging patches would help to get rid of
-> > > > garbage in the files, but files still will remain (may be of zero
-> > > > length).
-> > > Yes, Chris said this, too.
-> >
-> > He said it will help your problem, I think. But zero length .o files will
-> > still confuse linker.
-> So what's your advice then? Mounting all FSs with "noatime"?
+>
+>Cheers, Kuba
+>
+>
+>  
+>
 
-noatime have nothing to do with wrong content of recently created files after
-crash.
-It was only my guess that atime updates might have caused corruptions on file
-read. But you are not using IDE. Anyway, you can try and tell us.
 
-Bye,
-    Oleg
+
