@@ -1,32 +1,35 @@
-From: Redeeman <redeeman@metanurb.dk>
+From: Vitaly Fertman <vitaly@namesys.com>
 Subject: Re: bug report
-Date: Sun, 23 Nov 2003 13:20:51 +0100
-Message-ID: <1069590051.4257.4.camel@redeeman.linux.dk>
+Date: Sun, 23 Nov 2003 15:19:11 +0300
+Message-ID: <200311231519.11431.vitaly@namesys.com>
 References: <NHBBLMBAALMFLLANBMBIKECOCAAA.Stephan.Reichel@1net4you.de>
-Reply-To: redeeman@metanurb.dk
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16147-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16148-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <NHBBLMBAALMFLLANBMBIKECOCAAA.Stephan.Reichel@1net4you.de>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: Stephan Reichel <Stephan.Reichel@1net4you.de>
+Cc: reiserfs-list@namesys.com
 
-i recommend always getting the newest reiserutils
 
-On Sun, 2003-11-23 at 03:09, Stephan Reichel wrote:
-> proxy:/home/reichel# reiserfsck --check -l /home/reichel/rfsck.log /dev/hdb6
-> 
+Hello, 
+
+On Sunday 23 November 2003 05:09, Stephan Reichel wrote:
+> proxy:/home/reichel# reiserfsck --check -l /home/reichel/rfsck.log
+> /dev/hdb6
+>
 > <-------------reiserfsck, 2002------------->
 > reiserfsprogs 3.x.1b
-> 
+>
 > Will read-only check consistency of the filesystem on /dev/hdb6
 > Will put log info to '/home/reichel/rfsck.log'
-> 
+>
 > Do you want to run this program?[N/Yes] (note need to type Yes):Yes
 > ###########
 > reiserfsck --check started at Sat Nov 22 21:38:48 2003
@@ -38,22 +41,17 @@ On Sun, 2003-11-23 at 03:09, Stephan Reichel wrote:
 > bm->bm_bit_size' failed.
 > Aborted
 > proxy:/home/reichel#
-> 
-> 
+>
+>
 > (I run reiserfsck because I got some errors "file '...' exists but can not
 > stat-ed")
-> 
-> 
-> Thanks in advance
-> 
-> Stephan Reichel
-> Barteldesplatz 1
-> D-01309 Dresden
-> +49 (0351) 3400111
-> Stephan.Reichel@1net4you.de
+
+You are using a quite old riserfsprogs version, please update it to the 
+latest one from our ftp site -- 
+ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.11.tar.gz
+
 -- 
-Regards, Redeeman
-()  ascii ribbon campaign - against html e-mail 
-/\                        - against microsoft attachments
+Thanks,
+Vitaly Fertman
 
 
