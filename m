@@ -1,41 +1,88 @@
-From: Eric Whiting <ewhiting@amis.com>
-Subject: Re: nfs
-Date: Mon, 17 Nov 2003 09:38:01 -0700
-Sender: ewhiting@amis.com
-Message-ID: <3FB8F969.E20ED162@amis.com>
-References: <1068931388.2186.6.camel@redeeman.linux.dk> <20031115214812.GD25876@hvs.envisage.co.za> <3FB8DD83.4030105@insightbb.com> <3FB849B5.1020404@namesys.com>
+From: Steven Poulakos <poulakos@uiuc.edu>
+Subject: Re: Fatal File System Corruption -Software RAID + NFS
+Date: Mon, 17 Nov 2003 11:00:06 -0600
+Message-ID: <3FB8FE96.2080203@uiuc.edu>
+References: <3FB7AE00.4070409@uiuc.edu> <3FB7CFEB.9080705@g-house.de> <3FB8DF75.4020802@insightbb.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16105-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16106-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3FB8DF75.4020802@insightbb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Dan Oglesby <d.oglesby@insightbb.com>, Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-2.4 kernels with reiserfs 3.5 will still have NFS troubles. Just make sure you
-do not have this combination.  
+Dan Oglesby wrote:
 
-eric
+> Christian Kujau wrote:
+>
+>> Steven Poulakos wrote:
+>> [...]
+>>
+>>> Here are snippets of the errors that just repeat over and over...
+>>>
+>>> Nov  9 06:47:34 ctdev kernel: hdc: status error: status=0x58 { 
+>>> DriveReady SeekComplete DataRequest }
+>>> Nov  9 06:47:34 ctdev kernel:
+>>> Nov  9 06:47:34 ctdev kernel: hdc: status error: status=0x58 { 
+>>> DriveReady SeekCo
+>>
+>>
+>>
+>> hardware errors, i'd say :-(
+>> try to dd / dd_rescue to a working disk, then go on with newest 
+>> reiserfsprogs or /bin/cat...
+>>
+>> Christian.
+>> -
+>
+>
+> I saw these types of errors on my software RAID-5 array when I first 
+> brought it online.  The array is made up of four 20GB hard drives from 
+> four different manufacturers, two drives to an IDE channel.  Some of 
+> the drives didn't want to play nice when sharing the IDE channel.
+>
+> Using hdparm, I found that not all drives were enabling DMA or 32-bit 
+> transfers, so I forced all of the hard drives to run 32-bit with DMA. 
+> This solved the problem.
+>
+> Another interesting thing I found (while I'm talking about my goofy 
+> array) was that the system performed MUCH better when I disabled write 
+> caching on all of the hard drives.
+>
+> The filesystem is ReiserFS 3.6, of course.
+>
+> --Dan
 
+Christian above suggested that I'm experiencing hardware problems.  I'm 
+now wondering if the problem is with my PCI bus speed, which is running 
+at 33MHz.   Since I'm using a Promise Ultra100Tx2 controller card, it 
+might not be able to operate fast enough to support UDMA 5.  Is this 
+correct? 
 
-Hans Reiser wrote:
-> >>
-> >> Several moons ago, there were problems with reiserfs and NFS, as
-> >> reiserfs didn't (still don't?) have the notion of inodes, which is
-> >> used in NFS for filehandle information. there were a quick work around
-> >> which didn't work that well, but the current 2.4.x kernels and
-> >> Reiserfs 3.6
-> >> works sofar without troubles.
-> >
-> >
-> The described problems were more like years ago than moons ago, however,
-> there were some kernels a few moons ago that had NFS problems not due to
-> reiserfs code just to keep things in a nice state of chaos for the
-> users.....
-> 
-> --
-> Hans
+Here are some additional specs:
+Asus P2B Motherboard (33MHz PCI bus)
+Pentium 350
+384 MB PC100 memory
+I also have one AGP video card in use and two NICs on the PCI bus
+
+Is a 33MHz bus sufficient for running the hard drives in UDMA 5 mode?  
+Would you recommend that I upgrade to a 66MHz PCI bus motherboard?  The 
+other system specs (from the previous email) are below.
+
+Steve
+
+More system specs:
+Debian (latest unstable)
+2.4.22 Kernel  (not patched in any way)
+running NFS (from the kernel), which serves home directories to 3 
+workstations
+Software RAID 1
+-2, mirrored 80gig (7200RPM) IBM hard drives
+-Each drive is connected to its own channel on a Promise Ultra ATA/100 
+Controller (Ultra100 Tx2) card (PCI)  (using ATA 100 cables)
+-the two drives are called hda and hdc (contain 3 mirrored RAID partitions)
+
