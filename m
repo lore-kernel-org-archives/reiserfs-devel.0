@@ -1,29 +1,58 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: 2.4.20 and data logging
-Date: 03 Dec 2002 11:21:11 -0500
-Message-ID: <1038932472.1508.4.camel@tiny>
-References: <200212031238.32403.russell@coker.com.au>
+From: Russell Coker <russell@coker.com.au>
+Subject: Re: other OS
+Date: Tue, 3 Dec 2002 18:49:30 +0100
+Message-ID: <200212031849.30808.russell@coker.com.au>
+References: <001501c29a82$0126a110$0101a8c0@bummer>
+Reply-To: Russell Coker <russell@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12092-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-12093-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200212031238.32403.russell@coker.com.au>
+In-Reply-To: <001501c29a82$0126a110$0101a8c0@bummer>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Russell Coker <russell@coker.com.au>
-Cc: reiserfs-list@namesys.com
+To: darren <teodarren@myrealbox.com>, reiserfs-list@namesys.com
 
-On Tue, 2002-12-03 at 06:38, Russell Coker wrote:
-> How is data logging work going?  Is there a patch for 2.4.20?
+On Tue, 3 Dec 2002 05:11, darren wrote:
+> Was just wondering about the possibilities of using reiserfs on my
+> Solaris 6 machine.
+>
+> Any chance of that?
 
-I'm trying to sort out a complete fix for the transaction overflow bug
-Philippe hit, but other than that the patches are considered stable.
+I doubt it.  I can't imagine Sun (or anyone else) paying Hans enough money to 
+do this.
 
-You can find 2.4.20 patches in
-ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20
+Veritas VXFS is good for this type of thing.  Any time you want half decent IO 
+performance on Solaris you want Veritas VXFS and Volume Manager.
 
--chris
+> I am having problems with FS performance (large number, 20K of small
+> files in folder with constant writes and deletes) on the Sun Machine and
+> was thinking if this can help me.
+>
+> The only way I know is to use a Linux machine running reiser and NFS it
+> over. But performance will surely be degraded this way....any other
+> suggestions?
+
+In 1999 I was doing some work on AIX machines.  I found that an AIX server was 
+so slow that NFS mounting a ReiserFS file system over a 10baseT network was 
+faster for some operations!!!  If you do a usenet search you can find 
+references to this, comp.sys.aix or something.
+
+Another option is to use Linux on the SPARC machine.  Linux on SPARC reputedly 
+performs a lot better than Solaris if you have 8 or less CPUs, even without 
+the ReiserFS issue.  I think that Linux on SPARC can even run Solaris 
+binaries (but I'm not certain).
+
+
+PS  There is no such thing as Solaris 6.  They jumped straight from Solaris 
+2.6 (which is presumably what you are using) to Solaris 7.0.
+
+-- 
+http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
+http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
+http://www.coker.com.au/~russell/  My home page
 
