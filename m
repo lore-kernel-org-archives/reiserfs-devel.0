@@ -1,58 +1,110 @@
-From: CaT <cat@zip.com.au>
-Subject: Re: silent semantic changes with reiser4
-Date: Sun, 29 Aug 2004 20:44:13 +1000
-Message-ID: <20040829104413.GE871@zip.com.au>
-References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org> <20040828170515.GB24868@hh.idb.hist.no> <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org> <4131074D.7050209@namesys.com> <Pine.LNX.4.58.0408282159510.2295@ppc970.osdl.org> <4131A3B2.30203@namesys.com>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: reiser4 plugins
+Date: Sun, 29 Aug 2004 15:17:12 +0400
+Message-ID: <20040829111711.GI5108@backtop.namesys.com>
+References: <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <1093527307.11694.23.camel@leto.cs.pocnet.net> <20040826134034.GA1470@lst.de> <1093528683.11694.36.camel@leto.cs.pocnet.net> <412E786E.5080608@namesys.com> <16687.9051.311225.697109@thebsh.namesys.com> <412F7A59.8060508@namesys.com> <16687.33718.571411.76990@thebsh.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21046-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21047-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <4131A3B2.30203@namesys.com>
+In-Reply-To: <16687.33718.571411.76990@thebsh.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Linus Torvalds <torvalds@osdl.org>, Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com, Al Viro <viro@parcelfarce.linux.theplanet.co.uk>
+To: Nikita Danilov <nikita@clusterfs.com>
+Cc: Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-On Sun, Aug 29, 2004 at 02:36:50AM -0700, Hans Reiser wrote:
-> Linus Torvalds wrote:
-> >On Sat, 28 Aug 2004, Hans Reiser wrote:
-> >>I object to openat().....
-> >
-> >Sound slike you object to O_XATTRS, not openat() itself.
-> >
-> >Realize that openat() works independently of any special streams, it's
-> >fundamentally a "look up name starting from this file" (rather than
-> >"starting from root" or "starting from cwd").
->
-> well, isn't that namespace fragmentation by definition?  If you can't go
+On Fri, Aug 27, 2004 at 10:55:50PM +0400, Nikita Danilov wrote:
+> Hans Reiser writes:
+>  > Nikita Danilov wrote:
+>  > 
+>  > >Hans Reiser writes:
+>  > > > Christophe Saout wrote:
+>  > > > 
+>  > > > >
+>  > > > >
+>  > > > >I don't know, ask Hans. How could the VFS know it a filesystem wants to
+>  > > > >do something specific with a file that is completely transparent to the
+>  > > > >VFS?
+>  > > > >
+>  > > > >  
+>  > > > >
+>  > > > To know what method to use, you must determine the pluginid, and then 
+>  > > > find the method within that plugin for that vfs operation.
+>  > > > 
+>  > > > As for overhead, well, who eats whose dust in the benchmarks....?
+>  > >
+>  > >Whoever sponsors the benchmark usually wins. Had you forgotten that
+>  > >mongo setup used by http://www.namesys.com/benchmarks.html was specially
+>  > >`tuned' to reach peak reiser4 performance? Remember why you decided to
+>  > >turn OVERWRITE and MODIFY phases off? People on #reiser4 report 90
+>  > >_second_ stalls with reiser4 under high io loads (large atom is
+>  > >obviously being flushed and everyone waits on it...). In my opinion, it
+>  > >is such things that are of utmost importance for real reiser4
+>  > >acceptance, not how to name `metas' sub-directory.
+>  > >
+>  > >Nikita.
+>  > >
+>  > >
+>  > >  
+>  > >
+>  > If you ask real users, they say that reiser4 is fast, and their 
+>  > experience matches our benchmark.  You can criticize the benchmark if 
 > 
-> cat filenameA/metas/permissions > filenameB/metas/permissions
+> They experience 90 second stalls. And please, do not tell me how fast
+> reiser4 is, I spent a lot of time working with it, and I know very well
+> when it's fast, and when it's deadly slow.
 > 
-> find / -exec cat {}/permissions \; | grep 4777 | wc -l
+>  > you want, but then you should run your own and publish it.
+> 
+> I did, after which you told me to turn OVERWRITE and MODIFY phases off,
+> beause performance was horrible.
 
-My apologies if this question has been raised (and answered) elsewhere.
-I tried to keep up with the flamefest/discussion but it wasn't always
-possible.
+Hmm, I think not the modify/overwrite phases performance were the problem.  The
+modify and overwrite mongo phases fragment the filesystem too much, it had a
+bad effect visible in the read phase and even in delete phase.  
 
-How would you do it for directories without making certain names
-illegal? ie taking the above you'd do:
+We measured/optimized read performance  in assumption that fs is not
+fragmented, why we should measure bad effect of overwrite instead?  
 
-cat dirA/metas/permissions > dirB/metas/permissions
+other fs do not relocate already allocated blocks, negative effect of 
+file set overwrite is zero for them.  We could do the same for reiser4
+by tuning flush algorithm and journal blocks allocation.
 
-But how does that distinguish an access to the metas for dirA and dirB
-from an access to a file called permissions within the metas directories
-of dirA and dirB?
+If users want to see read and delete performance as they are, overwrite phase
+should be excluded, at least until we teach flush algorithm to not break good
+block allocation.
 
-I think what Linus is trying to do, as far as naming, is create a
-consistant access scheme that works for all types of objects in the
-fs without making certain names illegal (and with plugins, those
-names are not even a fixed thing I believe).
+If one wants to measure overwite performance, it is easy to enable overwrite
+phase in mongo, but read and delete speed will be affected (it was so when I
+tried to optimize delete).
 
-Feel free to correct me if I'm wrong, ofcourse. :)
+> I not criticizing mongo benchmark per se. I think that it is
+> fundamentally wrong to use results that were deliberatly manipulated to
+> get best appearance to reiser4 (by omitting work-loads where it performs
+> poorly) as an argument. It's not clear who will, according to your
+> colorful expression, `eat dust' as a result of this. 
+> Or do you think
+> that users never overwrite of modify files in real life?
+
+not whole file set.  I mean it is unusual to overwrite all files in the fs.
+
+>  > The 90 second stalls, those should be fixed by debugging copy on capture 
+>  > and turning it on, yes?  You can hardly claim I failed to push for the 
+> 
+> No. I described so many times to you, why COC is ineffectual here.
+
+There are other ideas :) but, it seems to me, if we will focus on benchmarks,
+we never complete plugins, metafiles and other useful things.  What I want
+from reiser4 is a possiblity to encrypt and compress ~/Mail/ :).
+
+> 
+>  > Hans
+> 
+> Nikita.
 
 -- 
-    Red herrings strewn hither and yon.
+Alex.
