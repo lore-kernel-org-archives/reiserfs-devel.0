@@ -1,21 +1,33 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: viewprinting: what format should views be stored in?
-Date: Sat, 21 Aug 2004 01:59:42 -0700
-Message-ID: <41270EFE.2000808@namesys.com>
-References: <20040821073818.D5EB115CBA@mail03.powweb.com>
+From: =?ISO-8859-1?Q?Ren=E9_Rebe?= <rene@rocklinux-consulting.de>
+Subject: Re: [2.6.8] Strange FS corruption on sparc64
+Date: Sat, 21 Aug 2004 11:05:10 +0200
+Message-ID: <41271046.7020309@rocklinux-consulting.de>
+References: <20040821000112.GM8070@triplehelix.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20452-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20453-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040821073818.D5EB115CBA@mail03.powweb.com>
+In-Reply-To: <20040821000112.GM8070@triplehelix.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Dabbs <david@dabbs.net>
-Cc: George Beshers <gbeshers@comcast.net>, Valdis.Kletnieks@vt.edu, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: Joshua Kwan <joshk@triplehelix.org>
+Cc: reiserfs-list@namesys.com
 
-The LSM paper cited (that does not require paying money) says very 
-little about what they do with regards to the filesystem.  Do you have a 
-more informative URL?
+Hi,
+
+Joshua Kwan wrote:
+
+> I've been tasking my UP sparc64 for a few days now to build lots of
+> kernels for Debian. However, during the build, it must have stumbled
+> across some inconsistency in my reiser3 filesystem:
+
+Interesting - I tried to use ReiserFS on my (UltraSPARC) SPARC, too. But=20
+at that time the reiserfsprogs did not liked to be compiled on sparc(32)=20
+due to the usage of kernel headers for bit operations and those are=20
+implemented in software on sparc32. Are the tools fixed in the meantime?=20
+Or do you use a 64bit only userspace version of the reiserfstools?
+
+   Ren=E9
