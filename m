@@ -1,32 +1,41 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Subject: RE: ".meta." as a Name Prefix
-Date: Thu, 22 Apr 2004 20:18:36 -0400 EDT
-Message-ID: <2452111248-BeMail@cr593174-a>
-References: <3DF9165145FACB4C96977FF650C1E9040C469E75@its-mail1.its.corp.gwl.com>
+From: Domenico Andreoli <cavok@tiscali.it>
+Subject: Re: fsck.reiser4 can't fix 1 fixable corruption
+Date: Fri, 23 Apr 2004 03:22:24 +0200
+Sender: Domenico Andreoli <cavok@libero.it>
+Message-ID: <20040423012224.GA18666@raptus.homelinux.org>
+References: <200404201733.51809.rmeijer@internet.gr> <200404211259.01802.rmeijer@internet.gr> <200404211547.08993.vitaly@namesys.com> <200404211509.20290.rmeijer@internet.gr> <13790.212.0.249.130.1082549980.squirrel@webmail.xs4all.nl> <4086CBBF.8010406@xs4all.nl> <20040421194414.GB6215@raptus.homelinux.org> <40880F5C.6080207@namesys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18167-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18168-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C469E75@its-mail1.its.corp.gwl.com>
+Content-Disposition: inline
+In-Reply-To: <40880F5C.6080207@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "Burnes, James" <james.burnes@gwl.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Burnes, James wrote on Wed, 21 Apr 2004 17:10:00 -0600:
-> In the same way that 'ls <directory>' is ambigous.  Does it mean I want
-> to look at the attributes of the directory itself, or does it mean that
-> I'm referring to the contents of the directory?  That's why they
-> invented 'ls -d'
+On Thu, Apr 22, 2004 at 11:30:52AM -0700, Hans Reiser wrote:
+> Domenico Andreoli wrote:
+> 
+> >how hard is to have reiser4 support built in grub?
+>
+> Yury told me it was done....  Yury....
 
-Good analog.  There would have to be some OS and application level
-changes to support having both read/writeable data and child objects.
-For backwards compatiblity, calling ReadDir() would likely hint that
-you want a list of child objects, and read() means you want the data.
-The feature I want is that you can do both to any file system object.
-Plus of course indexing of attributes and other BeOS style goodies.
+FYI, i had to enable also libaal memomry manager (configure option
+--enable-memory-manager) to build the right stand alone library for grub
+reiser4 stage1.5, without it linker complains on missing malloc and free.
 
-- Alex
+updated libaal and reiser4progs packages together with a reiser4 enabled
+grub package are available at http://people.debian.org/~cavok/reiser4/.
+
+hmmm... btw, i've never been able to use a stage1.5, any hint?
+
+cheers
+domenico
+
+-----[ Domenico Andreoli, aka cavok
+ --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
+   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
