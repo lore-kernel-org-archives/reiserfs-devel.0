@@ -1,48 +1,37 @@
-From: "Wang Zheping" <wangzhp@cic.tsinghua.edu.cn>
-Subject: program error
-Date: Tue, 1 Apr 2003 09:25:32 +0800
-Message-ID: <001c01c2f7ed$97210a70$76036fa6@wangzheping>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: program error
+Date: Tue, 1 Apr 2003 11:15:20 +0400
+Message-ID: <20030401111520.A19160@namesys.com>
+References: <001c01c2f7ed$97210a70$76036fa6@wangzheping>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0019_01C2F830.A4F4CAE0"
-Return-path: <reiserfs-list-return-13505-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13507-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <001c01c2f7ed$97210a70$76036fa6@wangzheping>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Wang Zheping <wangzhp@cic.tsinghua.edu.cn>
+Cc: reiserfs-list@namesys.com
 
-------=_NextPart_000_0019_01C2F830.A4F4CAE0
-Content-Type: text/plain;
-	charset="gb2312"
-Content-Transfer-Encoding: base64
+Hello!
 
-DQo8LS0tLS0tLS0tLS0tLXJlaXNlcmZzY2ssIDIwMDItLS0tLS0tLS0tLS0tPg0KcmVpc2VyZnNw
-cm9ncyAzLjYuNQ0KDQpIaToNCiAgICBJIGhhdmUgMSBsdm0gZm9ybWVkIGJ5IDUgZGlzay4NCiAg
-ICBOb3cgMSBkaXNrIGZhaWxlZC4NCiAgICBSZW1haW5lZCBkaXNrIGNhbiBiZSByZWFkb25seSBu
-b3cuDQogICAgV2hlbiBJIHJ1biByZWlzZXJmc2NrLCBkaXNwbGF5IHRoZSBmb2xsb3dpbmc6DQog
-ICAgSXMgaXQgYSBidWc/IG9yIGhvdyBjYW4gSSB0cnlpbmcgcmVjb3ZlciBteSBkYXRhPw0KDQoN
-CiAgKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKg0KICAqKiBJZiB5b3UgYXJlIHVzaW5nIHRoZSBsYXRlc3QgcmVpc2VyZnNwcm9ncyBh
-bmQgIGl0IGZhaWxzICoqDQogICoqIHBsZWFzZSAgZW1haWwgYnVnIHJlcG9ydHMgdG8gcmVpc2Vy
-ZnMtbGlzdEBuYW1lc3lzLmNvbSwgKioNCiAgKiogcHJvdmlkaW5nICBhcyAgbXVjaCAgaW5mb3Jt
-YXRpb24gIGFzICBwb3NzaWJsZSAtLSAgeW91ciAqKg0KICAqKiBoYXJkd2FyZSwgIGtlcm5lbCwg
-IHBhdGNoZXMsICBzZXR0aW5ncywgIGFsbCAgcmVpc2VyZnNrICoqDQogICoqIG1lc3NhZ2VzICAo
-aW5jbHVkaW5nIHZlcnNpb24pLCAgdGhlIHJlaXNlcmZzY2sgbG9nZmlsZSwgKioNCiAgKiogY2hl
-Y2sgIHRoZSAgc3lzbG9nIGZpbGUgIGZvciAgYW55ICByZWxhdGVkIGluZm9ybWF0aW9uLiAqKg0K
-ICAqKiBJZiB5b3Ugd291bGQgbGlrZSBhZHZpY2Ugb24gdXNpbmcgdGhpcyBwcm9ncmFtLCBzdXBw
-b3J0ICoqDQogICoqIGlzIGF2YWlsYWJsZSAgZm9yICQyNSBhdCAgd3d3Lm5hbWVzeXMuY29tL3N1
-cHBvcnQuaHRtbC4gKioNCiAgKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKioqKioqKg0KDQpXaWxsIHJlYWQtb25seSBjaGVjayBjb25zaXN0ZW5j
-eSBvZiB0aGUgZmlsZXN5c3RlbSBvbiAvZGV2L3ZnMS9sdjENCldpbGwgcHV0IGxvZyBpbmZvIHRv
-ICdzdGRvdXQnDQoNCkRvIHlvdSB3YW50IHRvIHJ1biB0aGlzIHByb2dyYW0/W04vWWVzXSAobm90
-ZSBuZWVkIHRvIHR5cGUgWWVzIGlmIHlvdSBkbyk6WWVzDQojIyMjIyMjIyMjIw0KcmVpc2VyZnNj
-ayAtLWNoZWNrIHN0YXJ0ZWQgYXQgVHVlIEFwciAgMSAwOToyNTowOCAyMDAzDQojIyMjIyMjIyMj
-Iw0KUmVwbGF5aW5nIGpvdXJuYWwuLg0KVHJhbnMgcmVwbGF5ZWQ6IG1vdW50aWQgNDUsIHRyYW5z
-aWQgNTE5NzYsIGRlc2MgMTgwNCwgbGVuIDI1LCBjb21taXQgMTgzMCwgbmV4dCB0cmFucyBvZmZz
-ZXQgMTgxMw0KYndyaXRlOiB3cml0ZSA0MDk2IGJ5dGVzIHJldHVybmVkIC0xIChibG9jaz0yODkz
-MjQyLCBkZXY9Myk6IE9wZXJhdGlvbiBub3QgcGVybWl0dGVkDQo=
+On Tue, Apr 01, 2003 at 09:25:32AM +0800, Wang Zheping wrote:
+> Hi:
+>     I have 1 lvm formed by 5 disk.
+>     Now 1 disk failed.
+>     Remained disk can be readonly now.
+>     When I run reiserfsck, display the following:
+>     Is it a bug? or how can I trying recover my data?
+> Replaying journal..
+> Trans replayed: mountid 45, transid 51976, desc 1804, len 25, commit 1830, next trans offset 1813
+> bwrite: write 4096 bytes returned -1 (block=2893242, dev=3): Operation not permitted
 
-------=_NextPart_000_0019_01C2F830.A4F4CAE0--
+Well, if the disk can be only readonly, no wonder reiserfsck is unable to replay journal.
+If journal have some transactions to replay, underlying media must be writeable.
 
+Bye,
+    Oleg
