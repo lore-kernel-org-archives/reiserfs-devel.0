@@ -1,55 +1,51 @@
-From: Hendrik Visage <hvisage@envisage.co.za>
-Subject: Crashes with corruption of disk data
-Date: Sun, 21 Jul 2002 02:10:30 +0200
-Message-ID: <20020721001030.GM229@hvs.envisage.co.za>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: reiserfsprogs release
+Date: Sat, 20 Jul 2002 22:50:15 -0400
+Sender: news <news@main.gmane.org>
+Message-ID: <87bs91ssk8.fsf@labatt.uhoreg.ca>
+References: <200206251829.25799.vitaly@namesys.com> <20020625165254.GA30301@matrix.wg>
+ <200206261317.10813.vitaly@namesys.com>
+ <200207101206.48370.vitaly@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11061-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha1; protocol="application/pgp-signature"
+Return-path: <reiserfs-list-return-11062-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-Resent-To: reiserfs-list@namesys.com
-Resent-Message-Id: <E17W4Lt-000555-00@hvs.envisage.co.za>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
 
-Hi there,
+>>>>> "Vitaly" =3D=3D Vitaly Fertman <vitaly@namesys.com> writes:
 
- I've came upon a crash situation (quite repeatable) with reiserfs,
-but NOT with ext2/3.
+Vitaly> Hi all, the latest reiserfsprogs-3.6.2 is available on our ftp
+Vitaly> site. ...
 
-Using Vanilla 2.4.17 + XFS + EVMS-1.1.0-rc4
+The web site (http://namesys.com/download.html) still claims that 3.x.1b
+is the latest.
 
-(1) using evmsn I created a logical volume, mkfs'd it, and
-mounted it. FS used was ext3 & reiserfs
+BTW, the second box from the top on the left (re: don't compile with GCC
+2.96) has yellow text on a white background for me - Mozilla 1.0.  Aha!
+The bgcolor for that table cell is missing the # in front of the colour
+code, so Mozilla doesn't understand the colour.
 
-(2) went into evmsn again & destroyed[b] the volume with a
- unmkfs[a]
+=2D-=20
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
-(3) forced exited evmsn 
+--=-=-=
+Content-Type: application/pgp-signature
 
-(4) tried to access the "still" mounted fs & umount it
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
 
-At this point, ext2/3 would let go of the mounted FS,
-however, reiserfs consistently crashed into the SGI/XFS
-Kernel debugger :(
+iD8DBQE9OiFsrynHGRJLYfoRAsjwAKCQKSBh6tVN8ZdjqvZcsWzJQORPRQCffewK
+tzz/yx+G09ghs15pYIWcQvA=
+=Bylq
+-----END PGP SIGNATURE-----
+--=-=-=--
 
-I'm of believe that this would be seen as a non check of the
-validity of the underlying diskdata. I believe this test could
-be repeated with a dd if=/dev/zero of=/dev/mounted/reiser but haven't
-yet done so (sleep time), but would be able to report or help with
-finding the errors if it is seen as a bug, as I haven't seen documentation
-to the contrary.
 
-Greetz
-Hendrik
-
-Notes
-[a] because a miss assumption which are being fixed, this was
- wrongly executed, but the "issue" still hold :(
-[b] it weren't actually destroyed, though the unmks were run,
- as the kernel wouldn't let go of a mounted volume, thus the
-forced in (3)
