@@ -1,76 +1,226 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Re: [PATCH] new data logging and quota patches available
-Date: Thu, 13 Mar 2003 03:01:54 +0100
-Message-ID: <3E6FE692.4040907@mb.tu-ilmenau.de>
-References: <1045870331.16048.325.camel@tiny.suse.com>	 <200302221341.23799.Dieter.Nuetzel@hamburg.de>	 <1045926958.16042.366.camel@tiny.suse.com>	 <1045930351.16042.377.camel@tiny.suse.com>	 <3E581AD7.30000@mb.tu-ilmenau.de>  <3E581E07.3050407@mb.tu-ilmenau.de>	 <1046020695.16048.409.camel@tiny.suse.com>	 <3E59787F.2030009@mb.tu-ilmenau.de>	 <1046095718.16047.440.camel@tiny.suse.com>	 <3E5A5A31.5070008@mb.tu-ilmenau.de> <3E5A9A7A.5040806@mb.tu-ilmenau.de>	 <3E5F196C.1040001@mb.tu-ilmenau.de>	 <1046439149.2163.21.camel@tiny.suse.com>	 <3E66B73D.6030008@mb.tu-ilmenau.de>	 <1046922372.2161.275.camel@tiny.suse.com> <3E66C88E.40207@mb.tu-ilmenau.de>	 <3E69FA70.5030601@mb.tu-ilmenau.de>	 <1047227975.8215.150.camel@tiny.suse.com>	 <3E6B74C0.5050702@mb.tu-ilmenau.de>	 <1047230647.8219.161.camel@tiny.suse.com>	 <3E6B7C61.9050405@mb.tu-ilmenau.de> <1047415578.8215.383.camel@tiny.suse.com> <3E6F4777.1040802@mb.tu-ilmenau.de> <3E6F899C.8090108@namesys.com>
+From: infagent <tvlut@icom.ru>
+Subject: [SPAM] =?unknown-8bit?q?=EE=F2?= informagent          FXHhDdbDxpHlgBecN9Auoe6pCHpgoajVXQ2
+Date: Thu, 13 Mar 2003 04:54:49 +0100
+Message-ID: <E18tJnt-0000Jf-00@main.gmane.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13235-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="----------=_3E700125.BABCB0AA"
+Return-path: <reiserfs-list-return-13237-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: Reiserfs-list <reiserfs-list@namesys.com>
 
-On 03/12/2003 08:25 PM, Hans Reiser wrote:
-> Manuel Krause wrote:
-> 
->> On 03/11/2003 09:46 PM, Chris Mason wrote:
->>
->>> [ slow down between 2.419 data logging and 2.4.21-pre data logging ]
->>>
->>> Ok, could you please apply the search_reada-4 patch I sent and do your
->>> benchmark again on 2.4.21-preX with these mount options:
->>>
->>> mount -o alloc=old_way:concentrating_formatted_nodes,notail
->>>
->>> It's about 10% faster here, but my dataset is slightly different.
->>>
->>
-[ timing data ]
->>
->> * What means a performance increase of 2.4.21-pre5 with [D] vs. without
->>    search_reada-4 [A] by  ~16%  !!!
->> * The difference of the special mount option [C] against my default [D]
->>   is about 0.3%  ;-))
->> * With search_reada-4  2.4.21-pre5 [D] only looses ~3.6% throughput rate
->>    against 2.4.19 [B]
->>  ...in this test.
->>
->>
->> Do you think the group-alloc-4 patch would increase throughput with 
->> this test?
->>
->> Thank you for your great work,
->>
->> Manuel
->>
->>
-> Can you state what test is being performed, what the hardware is, etc.  
-> In general, we need benchmarks that can be collected onto webpages and 
-> reviewed a year or two later when we can barely remember why we did or 
-> did not do some design decision.
-> 
+------------=_3E700125.BABCB0AA
+Content-Type: text/plain
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Hans,
+---- Start SpamAssassin results
+10.10 points, 8 required;
+*  0.3 -- Message-Id has no @ sign
+*  0.9 -- Missing Date: header
+*  3.0 -- Subject contains lots of white space
+*  1.0 -- BODY: Body includes 8 consecutive 8-bit characters
+*  1.0 -- BODY: HTML has "tbody" tag
+*  1.0 -- BODY: Message is 60% to 70% HTML
+*  0.3 -- BODY: HTML mail with non-white background
+*  0.0 -- BODY: HTML included in message
+*  0.2 -- BODY: Includes a URL link to send an email
+*  0.6 -- URI: Uses %-escapes inside a URL's hostname
+*  0.8 -- Subject contains a unique ID
+*  1.0 -- Message only has text/html MIME parts
 
-I think the way I "test" (is: simple timed backup-copy / defrag cycle) 
-was effectively clarified in this thread.
+---- End of SpamAssassin results
 
-Last autumn I wanted to add the desired system info to the ReiserFS 
-regarding parts of my homepage but skipped it at some point simply 
-lacking time...
+The original message did not contain plain text, and may be unsafe to
+open with some email clients; in particular, it may contain a virus,
+or confirm that your address can receive spam.  If you wish to view
+it, it may be safer to save it to a file and open it with an editor.
 
-You'll receive a compiled file of that info you might want, with the 
-results I snipped above and the file size distribution data in the 
-followup mail in private so you could give it to the persons of your 
-team who collect it for the archives and/or prepare it for publishing. 
-If you need differnt or more information, please, let me know.
 
-Best regards,
+------------=_3E700125.BABCB0AA
+Content-Type: message/rfc822
+Content-Description: original message before SpamAssassin
+Content-Disposition: attachment
+Content-Transfer-Encoding: 8bit
 
-Manuel
+Received: from cae88-57-057.sc.rr.com (24.88.57.57)
+  by thebsh.namesys.com with SMTP; 13 Mar 2003 03:55:15 -0000
+From: infagent <tvlut@icom.ru>
+To: Reiserfs-list <reiserfs-list@namesys.com>
+Subject: =?unknown-8bit?q?=EE=F2?= informagent          FXHhDdbDxpHlgBecN9Auoe6pCHpgoajVXQ2
+MIME-Version: 1.0
+Content-Type: text/html; charset="windows-1251"
+Content-Transfer-Encoding: base64
+X-Qmail-Scanner-Message-ID: <1047527716502653@thebsh.namesys.com>
 
+PEhUTUw+PEhFQUQ+CjxNRVRBIGh0dHAtZXF1aXY9Q29udGVudC1UeXBlIGNvbnRlbnQ9InRleHQv
+aHRtbDsgY2hhcnNldD13aW5kb3dzLTEyNTEiPgo8TUVUQSBjb250ZW50PSJNU0hUTUwgNi4wMC4y
+ODAwLjExMDYiIG5hbWU9R0VORVJBVE9SPjwvSEVBRD4KPEJPRFkgdGV4dD0jMDAwMDAwIGJnQ29s
+b3I9I2ZmZmZjYyBsZWZ0TWFyZ2luPTMgdG9wTWFyZ2luPTMgbWFyZ2luaGVpZ2h0PSIzIiAKbWFy
+Z2lud2lkdGg9IjMiPgo8VEFCTEUgY2VsbFNwYWNpbmc9MiBjZWxsUGFkZGluZz0zIHdpZHRoPSIx
+MDAlIiBib3JkZXI9MD4KICA8VEJPRFk+CiAgPFRSPgogICAgPFRIIHdpZHRoPSIzMyUiIGJnQ29s
+b3I9I0NDRkZDQyBoZWlnaHQ9IjExNyI+PEZPTlQgZmFjZT1WZXJkYW5hPjxTUEFOIAogICAgICBz
+dHlsZT0iRk9OVC1TSVpFOiA4cHQ7IENPTE9SOiBibGFjazsgbXNvLWZhcmVhc3QtZm9udC1mYW1p
+bHk6IFRpbWVzIE5ldyBSb21hbjsgbXNvLWFuc2ktbGFuZ3VhZ2U6IFJVOyBtc28tZmFyZWFzdC1s
+YW5ndWFnZTogUlU7IG1zby1iaWRpLWxhbmd1YWdlOiBBUi1TQSI+PGZvbnQgc2l6ZT0iMSI+2Oru
+6/zt6Org7CAKICAgICAgLSDi5fHl7e3o5SDq4O3o6vPr+yE8L2ZvbnQ+PC9TUEFOPjwvRk9OVD48
+Qj48Rk9OVCBmYWNlPVZlcmRhbmE+PFU+PFNQQU4gCiAgICAgIHN0eWxlPSJGT05ULVNJWkU6IDEw
+cHQ7IENPTE9SOiByZWQ7IG1zby1mYXJlYXN0LWZvbnQtZmFtaWx5OiBUaW1lcyBOZXcgUm9tYW47
+IG1zby1hbnNpLWxhbmd1YWdlOiBSVTsgbXNvLWZhcmVhc3QtbGFuZ3VhZ2U6IFJVOyBtc28tYmlk
+aS1sYW5ndWFnZTogQVItU0E7IG1zby1iaWRpLWZvbnQtZmFtaWx5OiBUaW1lcyBOZXcgUm9tYW4i
+PjxCUj4KICAgICAgPC9TUEFOPjwvVT48U1BBTiAKICAgICAgc3R5bGU9IkZPTlQtU0laRTogOXB0
+OyBDT0xPUjogcmVkOyBtc28tZmFyZWFzdC1mb250LWZhbWlseTogVGltZXMgTmV3IFJvbWFuOyBt
+c28tYW5zaS1sYW5ndWFnZTogUlU7IG1zby1mYXJlYXN0LWxhbmd1YWdlOiBSVTsgbXNvLWJpZGkt
+bGFuZ3VhZ2U6IEFSLVNBOyBtc28tYmlkaS1mb250LWZhbWlseTogVGltZXMgTmV3IFJvbWFuIj48
+Zm9udCBzaXplPSIzIj7E5fLx6ujpIAogICAgICDr4OPl8PwgItXo6/Lu7SIsIDxicj4KICAgICAg
+4+TlIOLx5SDu4fnl7ejlIO3gIDxTUEFOIAogICAgICBzdHlsZT0ibXNvLXNwYWNlcnVuOiB5ZXMi
+PiZuYnNwOzwvU1BBTj48YnI+CiAgICAgIODt4+vo6fHq7uwg/+f76uUuPC9mb250PjwvU1BBTj48
+L0ZPTlQ+PC9CPiA8L1RIPgogICAgPFRIIHdpZHRoPSIzMyUiIGJnQ29sb3I9Izk5Q0NDQyBoZWln
+aHQ9IjExNyI+IAogICAgICA8UCBhbGlnbj1jZW50ZXI+PEZPTlQgZmFjZT1WZXJkYW5hPjxCPsLn
++/nl7CDr/uH75SDk7uvj6DwvQj48L0ZPTlQ+PC9QPgogICAgPC9USD4KICAgIDxUSCB3aWR0aD0i
+MzMlIiBiZ0NvbG9yPSNGRkNDOTkgaGVpZ2h0PSIxMTciPjxmb250IGZhY2U9IlZlcmRhbmEiIHNp
+emU9IjMiPtTo8OzgIAogICAgICDv8OXk6+Dj4OXyIPHuIPHq6+Dk4CDiIMzu8eri5SA8L2ZvbnQ+
+PEZPTlQgZmFjZT1WZXJkYW5hIHNpemU9Mj48Zm9udCBzaXplPSIzIj48YnI+CiAgICAgIO/o6+7s
+4PLl8Ojg6/s6PC9mb250PjwvRk9OVD4gPC9USD4KICA8L1RSPgogIDxUUj4KICAgIDxURCB2QWxp
+Z249dG9wIHdpZHRoPSIzMyUiIGJnQ29sb3I9I2NjZmZmZj4KICAgICAgPFAgCiAgICAgIHN0eWxl
+PSJNQVJHSU4tQk9UVE9NOiAwcHQ7IFRFWFQtSU5ERU5UOiA4LjVwdDsgTElORS1IRUlHSFQ6IG5v
+cm1hbDsgVEVYVC1BTElHTjoganVzdGlmeSI+PFNQQU4gCiAgICAgIHN0eWxlPSJDT0xPUjogYmxh
+Y2s7IG1zby1iaWRpLWZvbnQtd2VpZ2h0OiBib2xkIj48Rk9OVCBmYWNlPVZlcmRhbmEgCiAgICAg
+IHNpemU9MT7CIDIwMDIg4+7k8yDr4OPl8PwgPC9GT05UPjwvU1BBTj48Rk9OVCBmYWNlPVZlcmRh
+bmEgc2l6ZT0xPjxCIAogICAgICBzdHlsZT0ibXNvLWJpZGktZm9udC13ZWlnaHQ6IG5vcm1hbCI+
+PFNQQU4gCiAgICAgIHN0eWxlPSJURVhULVRSQU5TRk9STTogdXBwZXJjYXNlOyBDT0xPUjogYmxh
+Y2siPqvV6Ovy7u27PC9TUEFOPjwvQj48U1BBTiAKICAgICAgc3R5bGU9IkNPTE9SOiBibGFjazsg
+bXNvLWJpZGktZm9udC13ZWlnaHQ6IGJvbGQiPiDi7e7i/CDx8uDrIOvg8/Dl4PLu7CAKICAgICAg
+zO7x6u7i8eru6SDM5ebk8+3g8O7k7e7pIML78fLg4uroIKvY6u7r4CAyMDAyuyDoIO3g4/Dg5uTl
+7SDs5eTg6/z+IOggCiAgICAgIOTo7+vu7O7sIMzo7ejx8uXw8fLi4CDu4fDg5+7i4O3o/yDQ7vHx
+6Onx6u7pINTl5OXw4Pbo6CCrx+Ag4urr4OQg4iAKICAgICAg7+7v7uvt5e3o5SDt4PP37e7j7iDo
+IO/l5ODj7uPo9+Xx6u7j7iDv7vLl7fbo4OvgINDu8fHo6LsuIDwvU1BBTj48U1BBTiAKICAgICAg
+c3R5bGU9IkNPTE9SOiBibGFjayI+y+Dj5fD8IKvV6Ovy7u27IPPt6Org6+XtIPLl7Cwg9/LuIOXj
+7iDv8O7j8ODs7OAgCiAgICAgIO/w4Ory6Pfl8eroIO/u6+3u8fL8/iDv8O717uTo8iDt4CDg7ePr
+6Onx6u7sIP/n++rlICzq4Oog4e7r/Pjg/yDi5fHl6+D/IOggCiAgICAgIOjt8uXw5fHt4P8g5OXy
+8erg/yDo4/DgICwg6CDg5ODv8ujw7uLg7eAg5Ov/IPjq7uv87ejq7uIg7vIgNyDk7iAxNyDr5fIg
+8SAKICAgICAg8ODn6+j37fvs6CDz8O7i7f/s6CDn7eDt6P8g/+f76uAhIMrw7uzlIP3y7uPuLCDo
+8e/u6/zn8+Xs++Ug/evl7OXt8vsgCiAgICAgIMvo5OXw8eru6SDs5fLu5Ojq6CDv7ufi7uv//vIg
++Oru6/zt6OrzIO7y6vD78vwg4iDx5eHlIO3u4vvlIPHv7vHu4e3u8fLoIOggCiAgICAgIPLg6+Dt
+8vssIPHy4PL8IOft4Pfo8uXr/O3uPFNQQU4gc3R5bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4mbmJz
+cDsgCiAgICAgIDwvU1BBTj7h7uvl5SDu4fno8uXr/O377CDoIOjt6Pbo4PLo4u377C48L1NQQU4+
+PFNQQU4gCiAgICAgIHN0eWxlPSJDT0xPUjogYmxhY2s7IG1zby1iaWRpLWZvbnQtZmFtaWx5OiBU
+aW1lcyBOZXcgUm9tYW4iPiA8U1BBTiAKICAgICAgc3R5bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4m
+bmJzcDs8L1NQQU4+PEIgCiAgICAgIHN0eWxlPSJtc28tYmlkaS1mb250LXdlaWdodDogbm9ybWFs
+Ij7K4Obk++kg5OXt/CDu4f/n4PLl6/zt7iDv8O717uT/8iD47vMsIAogICAgICDq4PDt4OLg6/ss
+IO/w5efl7fLg9ujoLCDv4PDu5OjoIOgg6u7x8v7s6PDu4uDt7fvlIOHg6/suIMgg4vHlIP3y7iCW
+IPLu6/zq7iAKICAgICAg7eAg4O3j6+jp8eru7CD/5/vq5S4gPC9CPsDt4+vo6fHq4P8g8OX3/CDn
+4vP36PIg7+7x8u7/7e3uOiDoIO3gIOfg7f/y6P/1LCAKICAgICAg6CDi7eUg6PUtIOIg8uX35e3o
+5SDi8eXj7iD16Ovy7u3x6u7j7iDk7f8uPE86UD4gPC9POlA+PC9TUEFOPjwvRk9OVD48L1A+CiAg
+ICAgIDxQIHN0eWxlPSJURVhULUlOREVOVDogMGNtOyBURVhULUFMSUdOOiBqdXN0aWZ5Ij48U1BB
+TiAKICAgICAgc3R5bGU9IkNPTE9SOiBibGFjazsgbXNvLXNwYWNlcnVuOiB5ZXMiPjxGT05UIGZh
+Y2U9VmVyZGFuYSAKICAgICAgc2l6ZT0xPiZuYnNwOzwvRk9OVD48L1NQQU4+PEZPTlQgZmFjZT1W
+ZXJkYW5hIHNpemU9MT48U1BBTiAKICAgICAgc3R5bGU9IkNPTE9SOiBibGFjayI+z+7/4uji+Ojx
+/CAxMCDr5fIg7eDn4OQg7eAgz+Xw7PHq7ukg5+Xs6+UgCiAgICAgIDxCPqvVyMvSzs27PC9CPiDt
+5e7k7e7q8ODy7e4g7/Du4u7k6Ovx/yDiIMXq4PLl8Ojt4fPw4+UsIMzu8eri5SwgCiAgICAgINfl
+6//h6O3x6uUg4CDy4Orm5SDiIMHu6+Pg8OjoLCDS8/D26OggLMjy4Ovo6CDoINHYwC4gx+Ag/fLo
+IOPu5Psg7/Du+OvuIAogICAgICDh7uvl5SAxMDAg6+Dj5fDl6Swg4iDt6PUg7+7h++Lg6+4g4e7r
+5eUgNjAwMCDk5fLl6SDo5yA3MCDj7vDu5O7iIAogICAgICDQ7vHx6OguPC9TUEFOPjxCIHN0eWxl
+PSJtc28tYmlkaS1mb250LXdlaWdodDogbm9ybWFsIj48U1BBTiAKICAgICAgc3R5bGU9IkNPTE9S
+OiBibGFjazsgbXNvLWJpZGktZm9udC1zaXplOiA5LjBwdCI+IDwvU1BBTj48L0I+PEIgCiAgICAg
+IHN0eWxlPSJtc28tYmlkaS1mb250LXdlaWdodDogbm9ybWFsIj48U1BBTiBzdHlsZT0iQ09MT1I6
+IGJsYWNrIj7P8OXn6OTl7fIgCiAgICAgIKvx6PHy5ez7IOvg4+Xw5ekg1ejr8u7tuyDILiDALiDB
+5evu8/Hu4uAg/+Lr/+Xy8f8g7/Dl5PHl5ODy5evl7DxTUEFOIAogICAgICBzdHlsZT0ibXNvLXNw
+YWNlcnVuOiB5ZXMiPiZuYnNwOyA8L1NQQU4+6u7s6PHx6Ogg7+4g7vDj4O3o5+D26Ogg7uHz9+Xt
+6P8gCiAgICAgIOjt7vHy8ODt7fvsIP/n++rg7CDR7uLl8uAg7/Dl5O/w6O3o7ODy5evl6SDv8Ogg
+zP3w5SDoIM/w4OLo8uXr/PHy4uUgCiAgICAgIMzu8eri+y48L1NQQU4+PC9CPjxCIHN0eWxlPSJt
+c28tYmlkaS1mb250LXdlaWdodDogbm9ybWFsIj48TzpQPiAKICAgICAgPC9POlA+PC9CPjwvRk9O
+VD48L1A+CiAgICAgIDxQIHN0eWxlPSJURVhULUlOREVOVDogMGNtOyBURVhULUFMSUdOOiBqdXN0
+aWZ5Ij48QiAKICAgICAgc3R5bGU9Im1zby1iaWRpLWZvbnQtd2VpZ2h0OiBub3JtYWwiPjxGT05U
+IGZhY2U9VmVyZGFuYSBzaXplPTE+z/Du4/Dg7OzgIAogICAgICA8U1BBTiBzdHlsZT0ibXNvLXNw
+YWNlcnVuOiB5ZXMiPiZuYnNwOzwvU1BBTj7r4OPl8P8gPFNQQU4gCiAgICAgIHN0eWxlPSJtc28t
+c3BhY2VydW46IHllcyI+Jm5ic3A7PC9TUEFOPvPt6Org6/zt4CEhITxPOlA+IAogICAgICA8L086
+UD48L0ZPTlQ+PC9CPjwvUD4KICAgICAgPFAgc3R5bGU9IlRFWFQtSU5ERU5UOiAwY207IFRFWFQt
+QUxJR046IGp1c3RpZnkiPjxGT05UIGZhY2U9VmVyZGFuYSAKICAgICAgc2l6ZT0xPsIg4uXx5e3t
+6OUg6uDt6Orz6/sg1ejr8u7tIOHz5OXyIO/w7vXu5Ojy/CDiINfl6//h6O3x6uUgLM/l8OzoLCAK
+ICAgICAgxerg8uXw6O3h8/Dj5SAsIM7s8erlLjxTUEFOIHN0eWxlPSJDT0xPUjogYmxhY2siPjxP
+OlA+IAogICAgICA8L086UD48L1NQQU4+PC9GT05UPjwvUD4KICAgICAgPFAgc3R5bGU9IlRFWFQt
+QUxJR046IGp1c3RpZnkiPjxTUEFOIHN0eWxlPSJDT0xPUjogYmxhY2siPjxGT05UIAogICAgICBm
+YWNlPVZlcmRhbmEgc2l6ZT0xPszl5uTz7eDw7uTt++kg1uXt8vAgq87h8ODn7uLg7ejlIOggwejn
+7eXxuyDv8O7o5+Lu5OjyIAogICAgICDt4OHu8CDiINfl6//h6O3x6ujpICLV6Ovy7u0iLCDq7vLu
+8PvpIOHz5OXyIO/w7vXu5Ojy/CDiIOru7PTu8PLg4eXr/O3u7CAKICAgICAg7/Du9Ojr4Ory7vDo
+6CCr0e7+57sgPFNQQU4gc3R5bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4mbmJzcDs8L1NQQU4+8SAy
+MyDv7iAKICAgICAgMzAg7ODw8uAuIM/u5ODw6PLlIOTl8v/sICLV6Ovy7u0iISDC+yDs7ubl8uUg
+7/Du9+jy4PL8IO7v6PHg7ejlIO/w7uPw4Ozs+yAKICAgICAg6CDu8uf74vsg4fvi+Oj1INXo6/Lu
+7fbl4iAsIOHr4OPu5ODw7fv1IPDu5Ojy5ev/7CDn4CDy7iwg9/LuIPLlIO7k7eDm5PsgCiAgICAg
+IO3g7/Dg4ujr6CDo9SDiINXo6/Lu7SDt4CDx4Ony4PU6PC9GT05UPjwvU1BBTj48L1A+CiAgICAg
+IDxQIHN0eWxlPSJURVhULUFMSUdOOiBqdXN0aWZ5Ij48U1BBTiBsYW5nPUVOLVVTIAogICAgICBz
+dHlsZT0ibXNvLWFuc2ktbGFuZ3VhZ2U6IEVOLVVTIj48Rk9OVCBmYWNlPVZlcmRhbmEgCiAgICAg
+IHNpemU9MT48YSBocmVmPSJodHRwOi8vaGlsdDIuZGEucnUlMjAiPmh0dHA8L2E+PC9GT05UPjwv
+U1BBTj48YSBocmVmPSJodHRwOi8vaGlsdDIuZGEucnUlMjAiPjxGT05UIGZhY2U9VmVyZGFuYSBz
+aXplPTE+Oi8vPFNQQU4gbGFuZz1FTi1VUyAKICAgICAgc3R5bGU9Im1zby1hbnNpLWxhbmd1YWdl
+OiBFTi1VUyI+aGlsdDwvU1BBTj4yLjxTUEFOIGxhbmc9RU4tVVMgCiAgICAgIHN0eWxlPSJtc28t
+YW5zaS1sYW5ndWFnZTogRU4tVVMiPmRhPC9TUEFOPi48U1BBTiBsYW5nPUVOLVVTIAogICAgICBz
+dHlsZT0ibXNvLWFuc2ktbGFuZ3VhZ2U6IEVOLVVTIj5ydTwvU1BBTj48TzpQPiA8L086UD48L0ZP
+TlQ+PC9hPjxGT05UIGZhY2U9VmVyZGFuYSBzaXplPTE+PE86UD48L086UD48L0ZPTlQ+PC9QPgog
+ICAgICA8UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlmeSI+PFNQQU4gc3R5bGU9IkNPTE9SOiBi
+bGFjayI+PEZPTlQgCiAgICAgIGZhY2U9VmVyZGFuYSBzaXplPTE+PGEgaHJlZj0iaHR0cDovL3d3
+dy5rcHVyYWwucnUvcmVhZC5waHA/aWQ9NjIiPmh0dHA6Ly93d3cua3B1cmFsLnJ1L3JlYWQucGhw
+P2lkPTYyPE86UD48L086UD48L2E+PE86UD4gCiAgICAgICAgPC9POlA+PC9GT05UPjwvU1BBTj48
+L1A+CiAgICAgIDxQPjxCPjxVPjxTUEFOIHN0eWxlPSJDT0xPUjogYmxhY2siPjxGT05UIGZhY2U9
+VmVyZGFuYSBzaXplPTE+0fLu6Ozu8fL8IAogICAgICDv8/Ll4uroLSA2OTUwIPDz4evl6TxPOlA+
+IDwvTzpQPjwvRk9OVD48L1NQQU4+PC9VPjwvQj48L1A+PEI+PFU+PFNQQU4gCiAgICAgIHN0eWxl
+PSJDT0xPUjogYmxhY2s7IG1zby1mYXJlYXN0LWZvbnQtZmFtaWx5OiBUaW1lcyBOZXcgUm9tYW47
+IG1zby1hbnNpLWxhbmd1YWdlOiBSVTsgbXNvLWZhcmVhc3QtbGFuZ3VhZ2U6IFJVOyBtc28tYmlk
+aS1sYW5ndWFnZTogQVItU0EiPjxGT05UIAogICAgICBmYWNlPVZlcmRhbmEgc2l6ZT0xPijk4vP1
+LfLw5fXs5fHy7e7lIPDg5+zl+eXt6OUsIO/w7uPw4Ozs4CAsIDYt8ugg8ODn7uLu5SAKICAgICAg
+7+jy4O3o5Swg8vDg7fH05fDyKTwvRk9OVD48L1NQQU4+PC9VPjwvQj4gPC9URD4KICAgIDxURCB2
+QWxpZ249dG9wIHdpZHRoPSIzMyUiIGJnQ29sb3I9Izk5Y2NmZj48Rk9OVCBmYWNlPVZlcmRhbmEg
+CiAgICAgIHNpemU9Mj4mbmJzcDs8Qj7C5/v55ewg6/7h++Ug5O7r4+g8L0I+LCDx7+7w7fvlIOgg
+4eXx8e/u8O375Swg4vvk4O3t++Ug7+4gCiAgICAgIOv+4e7s8yDk7urz7OXt8vMg6OvoIOHl5yDt
+5ePuLCDi7uft6Or46OUg7+4g6/7h7uzzIO7x7e7i4O3o/iDo6+gg4eXnIO3l4+4sIAogICAgICDh
++/Hy8O4g6CDn4CDx9+XyIOTu6+bt6OrgLjxCUj48QlI+zuH65eTo7eXt7fvl3vDo8fL7PEJSPjxC
+Uj48Qj7S5esuOiAKICAgICAgOC0oMzQzMiktNzUtODItNDY8L0I+PEJSPjxCUj7xIDxCPjctMDAg
+5O4gMTgtMDAg7PHqPC9CPiwg4eXnIO/l8OXw++Lu4iDoIAogICAgICDi+/Xu5O379S4mbmJzcDs8
+L0ZPTlQ+IDwvVEQ+CiAgICA8VEQgdkFsaWduPXRvcCB3aWR0aD0iMzMlIiBiZ0NvbG9yPSNmZmNj
+ZmY+PEI+PEZPTlQgZmFjZT1WZXJkYW5hIAogICAgICBzaXplPTI+xO7x6uAg7uHw5eft4P88QlI+
+7+4g9uXt5SAyMzUwIPDz4S4gzDMsPC9GT05UPjwvQj4gCiAgICAgIDxQPjxCPjxGT05UIGZhY2U9
+VmVyZGFuYSBzaXplPTI+zeXu4fDl5+3g/yDk7vHq4DxCUj7u8iAxNTAwIPDz4S4gCiAgICAgIMwz
+LDxCUj7B8PPxIO7yIDI0MDAg8PPhLiDMMyw8QlI+wfDz8e7qIO7yIDI2MDAg8PPhLiDMMyw8QlI+
+z+7r7uLg/yAKICAgICAg5O7x6uA8QlI+7vIgMzgwMCDw8+EuIMwzLDxCUj7C4OPu7ergIO7yIDM4
+MDAg8PPhLiDMMyw8L0ZPTlQ+PC9CPjwvUD4KICAgICAgPFA+PEI+PEZPTlQgZmFjZT1WZXJkYW5h
+IHNpemU9Mj7AIPLg6iDm5SDk8PPj6OUg4ujk+yDv6Ovu7ODy5fDo4Ovu4iwg8fP16OUgCiAgICAg
+IO/o6+7s4PLl8Ojg6/ssIPHy8O7j4O3t++UsIOIg6/7h+/Ug6u7r6Pfl8fLi4PUuPC9GT05UPjwv
+Qj48L1A+CiAgICAgIDxQPjxCPjxGT05UIGZhY2U9VmVyZGFuYSBzaXplPTI+z+7k8O7h7fP+IOjt
+9O7w7OD26P4gwvsg7O7m5fLlIO/u6/P36PL8IO/uIAogICAgICDy5evl9O7t4Ow6PC9GT05UPjwv
+Qj48L1A+CiAgICAgIDxQPjxCPjxGT05UIGZhY2U9VmVyZGFuYSBzaXplPTI+KDA5NSkgMTE2LTAz
+LTI1PEJSPigwOTUpIAogICAgICA1MDgtNTUtMzE8L0ZPTlQ+PC9CPjwvUD4KICAgICAgPFA+PEI+
+PEZPTlQgZmFjZT1WZXJkYW5hIHNpemU9Mj7N4Pgg4OTw5fE6IPPrLtPj8OX48erg/ywg5C4gMTgv
+MSwg4eDn4CAKICAgICAgzM7Rw87Q0tDAzdHALCA0LfvpIPHq6+DkIO/o6+7s4PLl8Ojg6+7iPC9G
+T05UPjwvQj48L1A+Jm5ic3A7IDwvVEQ+PC9UUj4KICA8VFIgdkFsaWduPXRvcCBiZ0NvbG9yPSNj
+Y2NjY2M+CiAgICA8VEggd2lkdGg9IjMzJSIgaGVpZ2h0PTYyPjxCPjxGT05UIGZhY2U9VmVyZGFu
+YT48U1BBTiAKICAgICAgc3R5bGU9IkNPTE9SOiBibGFjayI+PEZPTlQgc2l6ZT0xPuMu1+Xr/+Ho
+7fHqLCDz6y4gyi4gy+jh6u3l9fLgLCA5LzU8U1BBTiAKICAgICAgc3R5bGU9Im1zby1zcGFjZXJ1
+bjogeWVzIj48QlI+Jm5ic3A7PC9TUEFOPjwvRk9OVD48L1NQQU4+PEZPTlQgCiAgICAgIHNpemU9
+Mj48U1BBTiBzdHlsZT0iQ09MT1I6IGJsYWNrIj7S5es8U1BBTiBsYW5nPUVOLVVTIAogICAgICBz
+dHlsZT0iQ09MT1I6IGJsYWNrOyBtc28tYW5zaS1sYW5ndWFnZTogRU4tVVMiPi46ICgzNTEyKSA2
+NS05MC04MDsgCiAgICAgIDY0LTY5LTk3LCgzNDMyKTYxLTY4LTQ4PC9TUEFOPjwvU1BBTj48L0ZP
+TlQ+PEZPTlQgc2l6ZT0xPjxTUEFOIGxhbmc9RU4tVVMgCiAgICAgIHN0eWxlPSJDT0xPUjogYmxh
+Y2s7IG1zby1mYXJlYXN0LWZvbnQtZmFtaWx5OiBUaW1lcyBOZXcgUm9tYW47IG1zby1hbnNpLWxh
+bmd1YWdlOiBFTi1VUzsgbXNvLWZhcmVhc3QtbGFuZ3VhZ2U6IFJVOyBtc28tYmlkaS1sYW5ndWFn
+ZTogQVItU0E7IG1zby1iaWRpLWZvbnQtZmFtaWx5OiBUaW1lcyBOZXcgUm9tYW4iPjxCUj5FLW1h
+aWw6IAogICAgICA8L1NQQU4+PEEgaHJlZj0ibWFpbHRvOmhpbHRvbmNhbXBAaG90bWFpbC5jb20i
+PjxTUEFOIGxhbmc9RU4tVVMgCiAgICAgIHN0eWxlPSJDT0xPUjogYmxhY2s7IG1zby1mYXJlYXN0
+LWZvbnQtZmFtaWx5OiBUaW1lcyBOZXcgUm9tYW47IG1zby1hbnNpLWxhbmd1YWdlOiBFTi1VUzsg
+bXNvLWZhcmVhc3QtbGFuZ3VhZ2U6IFJVOyBtc28tYmlkaS1sYW5ndWFnZTogQVItU0E7IG1zby1i
+aWRpLWZvbnQtZmFtaWx5OiBUaW1lcyBOZXcgUm9tYW47IG1zby1iaWRpLWZvbnQtc2l6ZTogMTIu
+MHB0Ij5oaWx0b25jYW1wQGhvdG1haWwuY29tPC9TUEFOPjwvQT48L0ZPTlQ+PC9GT05UPjwvQj48
+L1RIPgogICAgPFRIIHdpZHRoPSIzMyUiIGhlaWdodD02Mj48Rk9OVCBmYWNlPVZlcmRhbmEgc2l6
+ZT0yPjxCPtLl6y46IAogICAgICA4LSgzNDMyKS03NS04Mi00NjwvQj48QlI+8SA8Qj43LTAwIOTu
+IDE4LTAwIOzx6jwvQj4sIOHl5yDv5fDl8Pvi7uIg6CAKICAgICAg4vv17uTt+/UuIDwvRk9OVD48
+L1RIPgogICAgPFRIIHdpZHRoPSIzMyUiPgogICAgICA8UCBhbGlnbj1jZW50ZXI+PEI+PEZPTlQg
+ZmFjZT1WZXJkYW5hIHNpemU9Mj4oMDk1KSAxMTYtMDMtMjU8QlI+KDA5NSkgCiAgICAgIDUwOC01
+NS0zMTwvRk9OVD48L0I+IDxGT05UIGZhY2U9VmVyZGFuYSBzaXplPTI+PEI+zeD44OTw5fE68+su
+0+Pw5fjx6uD/LCAKICAgICAg5C4gMTgvMSwg4eDn4CDMztHDztDS0MDN0cAsIDQt++kg8err4OQg
+7+jr7uzg8uXw6ODr7uI8L0I+PC9GT05UPiAKICA8L1A+PC9USD48L1RSPjwvVEJPRFk+PC9UQUJM
+RT48L0JPRFk+PC9IVE1MPgoKCg==
+
+------------=_3E700125.BABCB0AA--
