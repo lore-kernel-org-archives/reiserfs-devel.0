@@ -1,53 +1,66 @@
-From: Sonny Rao <sonny@burdell.org>
-Subject: Re: Odd Block allocation behavior on Reiser3
-Date: Mon, 9 Aug 2004 18:04:59 -0400
-Message-ID: <20040809220459.GA57121@kevlar.burdell.org>
-References: <20040809201939.GA55683@kevlar.burdell.org> <1092083451.10651.218.camel@watt.suse.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output error"
+Date: Mon, 09 Aug 2004 23:21:17 -0400
+Message-ID: <200408100321.i7A3LHxu027087@turing-police.cc.vt.edu>
+References: <20040807065039.5BF4E15CBC@mail03.powweb.com>
+            <41148997.4070404@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20112-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_1028717064P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20113-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1092083451.10651.218.camel@watt.suse.com>
+In-Reply-To: Your message of "Sat, 07 Aug 2004 00:49:43 PDT."
+             <41148997.4070404@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+To: Hans Reiser <reiser@namesys.com>
+Cc: David Dabbs <david@dabbs.net>, 'ReiserFS List' <reiserfs-list@namesys.com>
+
+--==_Exmh_1028717064P
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list@namesys.com
+Content-Id: <12297.1092108075.1@turing-police.cc.vt.edu>
 
-On Mon, Aug 09, 2004 at 04:30:51PM -0400, Chris Mason wrote:
-> On Mon, 2004-08-09 at 16:19, Sonny Rao wrote:
-> > Hi, I'm investigating filesystem performance on sequential read
-> > patterns of large files, and I discovered an odd pattern of block
-> > allocation and subsequent re-allocation after overwrite under reiser3:
-> > 
-> Exactly which kernel is this?  The block allocator in v3 has changed
-> recently.
+On Sat, 07 Aug 2004 00:49:43 PDT, Hans Reiser said:
 
-2.6.7 stock
+> >I think I have discovered the problem - unless there was a reason mongo was
+> >issuing mount/unmount commands at the start/end of a mongo 'run' as well as
+> >before/after _each phase_.
 
-> > This was done on a newly created filesystem with plenty of available
-> > space and no other files.  I tried this test several times and saw the
-> > number of extents for the file vary from 5,6,7 and 134 extents, but it
-> > is always different after each over-write.
-> > 
-> You've hit a "feature" of the journal.  When you delete a file, the data
-> blocks aren't available for reuse until the transaction that allocated
-> them is committed to the log.  If you were to put a sync in between each
-> run of dd, you should get roughly the same blocks allocated each time. 
-> ext3 does the same things, although somewhat differently.  The
-> asynchronous commit is probably just finishing a little sooner on ext3.
-> 
-> > First, I expect that an extent-based filesystem like reiserfs
-> 
-> reiser4 is extent based, reiser3 is not.
+> Probably someone wanted to separate the measurement of the phases.  It 
+> has been a while since I read mongo.....
+
+Note that an unmount/mount pair will force a flush of all dirtied pages in the
+in-memory file cache, and *really* not return until it's really done and really
+out on disk.  In addition, sync() will force stuff to disk, but *not* invalidate
+in-cache pages - more drastic measures are needed if you want to benchmark
+with a cold cache (which is almost a must if you're doing actual filesystem
+benchmarking, as otherwise you're benching the in-core cache instead).
+
+As an aside, although the Linux fs/buffer:do_sync() won't return until it's
+all really done, there is no mandate that the sync() syscall wait (and in fact,
+is the source of the old "type 'sync' three times, then 'halt'" - the second
+and third times you typed sync and hit return hopefully gave the I/O scheduled
+by the *first* sync time to complete.  At least one 'Unix for Dummies' book
+proved their lack of depth of understanding when they recommended:
+
+# sync;sync;sync;halt
+
+;)
 
 
-Ah, I didn't know that.  I'm still confused as to why on the first
-allocation/create we get such bad fragmentation, you can see that even
-though the file is fragmented into 134 blocks, the blocks are very
-close together.  Most of the extents are only 2 blocks apart.
+--==_Exmh_1028717064P
+Content-Type: application/pgp-signature
 
-Sonny
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFBGD8scC3lWbTT17ARAiFzAJ9skWNu1U4Pfgl3e5Lwljc8I23Y4wCgzfDT
+RlDYg6cNnzvi4Ww3fOKWceM=
+=9e0o
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1028717064P--
