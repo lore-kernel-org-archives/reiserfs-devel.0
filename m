@@ -1,37 +1,35 @@
-From: Luis Gregorio Muniz Rodriguez <kreator@dei.inf.uc3m.es>
-Subject: How to use external journal?
-Date: Mon, 23 Dec 2002 16:57:04 +0100
-Message-ID: <20021223155704.GC18464@dei.inf.uc3m.es>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Subject: Re: what do you do that stresses your filesystem?
+Date: Mon, 23 Dec 2002 11:00:22 -0500 EST
+Message-ID: <1697679318-BeMail@cr593174-a>
+References: <200212231421.52052.bofh@coker.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12221-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12222-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <200212231421.52052.bofh@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: ReiserFS <reiserfs-list@namesys.com>
 
-Hi there!
+Russell Coker wrote on Mon, 23 Dec 2002 14:21:52 +0100:
+> Mail serving with Maildir storage.
 
-I have recently discovered that the journal can be placed on an external
-device (i.e, `mkreiserfs --journal-device <FILE>'), but I haven't found
-any doc about it.
+Same sort of thing here.  Thousands of e-mail and news files in
+a directory, so displaying them in a GUI directory display window
+can be slow.  Particularly if it is also getting attributes to
+display (from, to, subject, date, thread).  This is under BeOS/BFS
+and can get a bit slow if the attributes end up in disk sectors
+far away from the inode for the file (but speed is good when block
+size (=3D=3D inode size) is boosted up enough so that the attributes
+all fit in the inode).
 
-I'm currently using ReiserFS on top of LVM partitions, and I am
-wondering if I can use the same shared journal device for a number of
-small partitions.  
+So, directory reading speed plus attribute reading speed are
+important to me.
 
-Note that I'm not trying to move all the journals to the same device
-(this should be easy using `--journal-device' and `--journal-offset',
-isn't it?).  Rather, I try to share the same 32Mb journal between small
-filesystems and/or filesystems with infrequent writes (such as </usr>,
-</usr/local>, </var/www>, and so on).
+- Alex
 
 
-Is that possible?  And convenient?
-Many thanks in advance,
---
-	- Luis Mu~niz 	<kreator@lmunix.net>
