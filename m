@@ -1,11 +1,14 @@
 From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: silent semantic changes with reiser4
-Date: Tue, 31 Aug 2004 17:07:00 -0400
+Subject: Re: silent semantic changes in reiser4 (brief attempt to document
+ the idea of what reiser4 wants to do with metafiles and why
+Date: Tue, 31 Aug 2004 17:58:49 -0400
 Sender: news <news@sea.gmane.org>
-Message-ID: <87zn4bkoej.fsf@uhoreg.ca>
-References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
+Message-ID: <87vfezkm06.fsf@uhoreg.ca>
+References: <41323AD8.7040103@namesys.com> <200408312055.56335.v13@priest.com>
+ <36793180.20040831201736@tnonline.net> <200408312235.35733.v13@priest.com>
+ <874qmjm51g.fsf@uhoreg.ca> <1125457632.20040831223154@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21182-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21184-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,63 +17,32 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
->>>>> "Linus" == Linus Torvalds <torvalds@osdl.org> writes:
+>>>>> "Spam" == Spam  <spam@tnonline.net> writes:
 
-[...]
+V13> The only thing that changes (from the userland POV) is the way
+V13> someone can enter the 'metadata directory'. This way you don't have
+V13> to have a special name, just a special function and no existing
+V13> application (like tar) can possibly break because it will not know
+V13> how to enter this 'metadata directory'.
 
-Linus> I've seen all these examples of exposing MP3 ID information as a
-Linus> "side stream", and that's TOTALLY POINTLESS! The information is
-Linus> already there, it's in a standard format, and exporting it as a
-Linus> stream buys you absolutely nothing.
+>> tar won't be able to backup the metadata.  That's the major breakage
+>> of tar that we're worried about.
 
-Exporting it through the filesystem would mean that I could use my
-favourite editor to edit MP3/OGG tags, instead of having to use some
-other program that has a piece-of-crap interface.  It's a
-user-interface issue, and not a technical issue.
+Spam>   However, if we do a "cp fileA fileB" then the metadata and
+Spam> streams ought to be copied too, even if "cp" does not support
+Spam> them.
 
-Someone might then tell me to write my own MP3-tag editor that has an
-interface that I like.  How may MP3 tag editors do we need?  Besides, I
-have better things to do with my time.
+Huh?  How do you plan on pulling that off?  Unless cp uses the
+not-yet-existing copy syscall, if cp can't see the metadata or streams,
+how is it going to copy it?
 
-Actually, I would argue that things like ID3 tags for MP3 files, and
-EXIF for JPEG exist only because filesystems in general can't support
-associating metadata/attributes with files.  If filesystems were built
-the "right way" to begin with, all those tagging schemes would never
-have come into existence.  Of course, that's just a dream, but one can
-dream, can't they?
+Spam> This is the real challenge. Backup tools like tar can be patched
+Spam> just like it has so many times before.
 
-[...]
-
-Linus> And realize that the "separate shadow tree" actually works very
-Linus> well.  That's how version control systems like CVS have always
-Linus> worked.
-
-VMS (or some other OS -- too lazy to look it up) exposed version control
-through the filesystem.  Their naming sucked (or so says Pike), but
-that's what they did.
-
-Yes, CVS works, but I wouldn't say that it works very well.  If I want
-to get a specific version of a file, I need to drop to the command line
-and type in some cvs command that I don't remember and then open the
-file.  I can't just do "C-x C-f foo.c/version/2.1" in emacs.
-
-Yes, emacs has version-control support, so that I can open up a
-specific version.  But if v-c isn't exposed through the filesystem, we
-would have to add support to emacs for every v-c system out there.  And
-do the same for vi, gedit, nano, bluefish, conglomerate, Mozilla
-Composer, glade, etc.
-
-Linus> It's certainly how you can make icon information work too. If you
-Linus> use a tool for accessing the data, the tool can maintain
-Linus> coherency and you'll never care about the side stream.
-
-The point is that I shouldn't need to use a special tool.  I should be
-able to use my favourite text/image/sound/etc. editor.
-
-Using a special tool may work for you, but it isn't the optimal user
-interface in general.
+Yes.  And if we can get file-as-dir, then we only need to patch tar
+once, since everything can be exported through that interface.
 
 -- 
 Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
