@@ -1,140 +1,259 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: 2.4.22. crash
-Date: Thu, 25 Sep 2003 20:15:58 +0400
-Message-ID: <200309252015.58116.vitaly@namesys.com>
-References: <OF8ECF454E.812B658D-ONC1256DAC.00557BB3-C1256DAC.0055F677@de.ibm.com>
+From: Julia Wolf <julia@virtadpt.net>
+Subject: Data Corruption with very large files on Reiser3
+Date: Sat, 27 Sep 2003 10:03:56 -0400 (EDT)
+Message-ID: <Pine.LNX.4.51.0309270936120.16317@leandra.the-lab.virtadpt.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-15743-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15744-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <OF8ECF454E.812B658D-ONC1256DAC.00557BB3-C1256DAC.0055F677@de.ibm.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Jozef Ivanecky <IVANECKY@de.ibm.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
 
-Hi Jozef,
+  Under both the 2.4.19 and 2.6.0-test5 Linux Kernels, (On an AMD K6-II if
+it matters) I ran into a problem when I created a large .bz2 file and then
+later a large .gz of the same data. At first I thought it might have been
+a problem with bzip2 and gzip not being able to handle a
+larger-than-UInt32 file. But supprisingly when I created the file on an
+EXT2 filesystem, they were prefectly fine.
+Here's a short demonstration:
 
-On Thursday 25 September 2003 19:38, Jozef Ivanecky wrote:
-> Hi everybody,
->
-> since I moved to 2.4.22 I have problem with reiserFS partition. It happen=
-ed
-> on different machine with the same config several times. Probably when
-> bigger file is going to be created. Can anyone help me with the problem?
+# cp -avi /mnt/ext2/bigfile.gz /mnt/reiser/
+/mnt/ext2/bigfile.gz' -> /mnt/reiser/bigfile.gz'
 
-would you take the latest reiserfsprogs from out ftp site -- 3.6.11 -- and=
-=20
-run reiserfsck to check the fs. If reiserfsck doesn't detect any error or i=
-f=20
-after reiserfsck these problems will appear again, email us again please=20
-with the detail explanation what you are doing to get all these errors.
-Also the current System.map for your 2.4.22 looks wrong, could you use=20
-the right one and then send new errors from the syslog again.
+# ls -l /mnt/ext2/bigfile.gz /mnt/reiser/bigfile.gz
+-rw-r--r--    1 root     root     6955913035 Sep 10 20:51
+/mnt/ext2/bigfile.gz
+-rw-r--r--    1 root     root     6955913035 Sep 10 20:51
+/mnt/reiser/bigfile.gz
+# gunzip -tv /mnt/ext2/bigfile.gz
+/mnt/ext2/bigfile.gz:      OK
 
-=2D-=20
-Thanks,
-Vitaly Fertman
+# gunzip -tv /mnt/reiser/bigfile.gz
 
-> here is oops otuput:
->
-> Sep 23 14:38:39 clue10 kernel: sd(8,1):PAP-5710: reiserfs_paste_into_item:
-> entry or pasted byte ([547518 547629 0x4bc001 IND]) exists
-> Sep 23 14:38:39 clue10 last message repeated 2 times
-> Sep 25 10:15:34 clue10 kernel: sd(8,3):PAP-5710: reiserfs_paste_into_item:
-> entry or pasted byte ([259 161692 0x54a001 IND]) exists
-> Sep 25 10:26:08 clue10 kernel: sd(8,3):PAP-5710: reiserfs_paste_into_item:
-> entry or pasted byte ([259 161692 0x926001 IND]) exists
-> Sep 25 10:31:14 clue10 kernel: sd(8,3):PAP-5710: reiserfs_paste_into_item:
-> entry or pasted byte ([259 53458 0x1708001 IND]) exists
-> Sep 25 10:31:14 clue10 last message repeated 6 times
-> Sep 25 10:33:41 clue10 kernel: sd(8,3):PAP-5710: reiserfs_paste_into_item:
-> entry or pasted byte ([259 161692 0xb98001 IND]) exists
-> Sep 25 15:41:55 clue10 kernel: sd(8,3):PAP-5710: reiserfs_paste_into_item:
-> entry or pasted byte ([154030 161764 0x1ca001 IND]) exists
-> Sep 25 15:41:55 clue10 last message repeated 4 times
-> Sep 25 15:43:46 clue10 kernel: sd(8,3):PAP-5710: reiserfs_paste_into_item:
-> entry or pasted byte ([154030 161766 0x6d4001 IND]) exists
-> Sep 25 15:43:51 clue10 kernel: Unable to handle kernel NULL pointer
-> dereference at virtual address 00000004
-> Sep 25 15:43:51 clue10 kernel: c019cd8f
-> Sep 25 15:43:51 clue10 kernel: *pde =3D 00000000
-> Sep 25 15:43:51 clue10 kernel: Oops: 0002
-> Sep 25 15:43:51 clue10 kernel: CPU:    0
-> Sep 25 15:43:51 clue10 kernel: EIP:    0010:[<c019cd8f>]    Not tainted
-> Using defaults from ksymoops -t elf32-i386 -a i386
-> Sep 25 15:43:51 clue10 kernel: EFLAGS: 00010246
-> Sep 25 15:43:51 clue10 kernel: eax: 00000000   ebx: c4711b00   ecx:
-> 00000002   edx: 00000000
-> Sep 25 15:43:51 clue10 kernel: esi: 000dd9ec   edi: c339ff8c   ebp:
-> 3f72f117   esp: c339fef8
-> Sep 25 15:43:51 clue10 kernel: ds: 0018   es: 0018   ss: 0018
-> Sep 25 15:43:51 clue10 kernel: Process kupdated (pid: 7,
-> stackpage=3Dc339f000)
-> Sep 25 15:43:51 clue10 kernel: Stack: f8af03e4 c339ff8c 0000002b c019cdf3
-> c339ff8c c4711b00 00000006 c339ff8c
-> Sep 25 15:43:51 clue10 kernel:        c01bbb85 c339ff8c c339ff8c f6e78400
-> 0000002b 3f72f117 f6e78400 0000002b
-> Sep 25 15:43:51 clue10 kernel:        3f72f117 00000004 00000002 00000000
-> 3f72f117 ffffffff 00000000 c01bb3f1
-> Sep 25 15:43:51 clue10 kernel: Call Trace:    [<c019cdf3>] [<c01bbb85>]
-> [<c01bb3f1>] [<c01bb3ff>] [<c01ab3f4>]
-> Sep 25 15:43:51 clue10 kernel:   [<c0148b82>] [<c0147c28>] [<c0147ff5>]
-> [<c0105684>]
-> Sep 25 15:43:51 clue10 kernel: Code: 89 50 04 89 02 c7 83 58 01 00 00 00 =
-00
-> 00 00 c7 83 5c 01 00
->
-> >>EIP; c019cd8f <__discard_prealloc+57/74>   <=3D=3D=3D=3D=3D
-> >>
-> >>ebx; c4711b00 <END_OF_CODE+42f1144/????>
-> >>esi; 000dd9ec Before first symbol
-> >>edi; c339ff8c <END_OF_CODE+2f7f5d0/????>
-> >>ebp; 3f72f117 Before first symbol
-> >>esp; c339fef8 <END_OF_CODE+2f7f53c/????>
->
-> Trace; c019cdf3 <reiserfs_discard_all_prealloc+2b/38>
-> Trace; c01bbb85 <do_journal_end+115/ad4>
-> Trace; c01bb3f1 <flush_old_commits+119/140>
-> Trace; c01bb3ff <flush_old_commits+127/140>
-> Trace; c01ab3f4 <reiserfs_write_super+38/6c>
-> Trace; c0148b82 <sync_supers+fa/154>
-> Trace; c0147c28 <sync_old_buffers+34/a0>
-> Trace; c0147ff5 <kupdate+179/19c>
-> Trace; c0105684 <arch_kernel_thread+28/38>
->
-> Code;  c019cd8f <__discard_prealloc+57/74>
-> 00000000 <_EIP>:
-> Code;  c019cd8f <__discard_prealloc+57/74>   <=3D=3D=3D=3D=3D
->    0:   89 50 04                  mov    %edx,0x4(%eax)   <=3D=3D=3D=3D=3D
-> Code;  c019cd92 <__discard_prealloc+5a/74>
->    3:   89 02                     mov    %eax,(%edx)
-> Code;  c019cd94 <__discard_prealloc+5c/74>
->    5:   c7 83 58 01 00 00 00      movl   $0x0,0x158(%ebx)
-> Code;  c019cd9b <__discard_prealloc+63/74>
->    c:   00 00 00
-> Code;  c019cd9e <__discard_prealloc+66/74>
->    f:   c7 83 5c 01 00 00 00      movl   $0x0,0x15c(%ebx)
-> Code;  c019cda5 <__discard_prealloc+6d/74>
->   16:   00 00 00
->
->
-> Thanks in advance for the help
->
-> Jozef
->
->
-> ********************************************
-> Jozef Ivanecky
-> IBM Speech Systems
-> European Speech Research
-> Gottlieb-Daimler-Stra=DFe 12, D-68165 Mannheim
-> Email: ivanecky@de.ibm.com
-> Phone: +49 621 469686
-> ********************************************
+gunzip: /mnt/reiser/bigfile.gz: not in gzip format
 
+# md5sum /mnt/ext2/bigfile.gz /mnt/reiser/bigfile.gz
+526fd8267833a746de682aa1b1bbfe86  /mnt/ext2/bigfile.gz
+0187a81e62dd2f983fa412d8cc4c7ccb  /mnt/reiser/bigfile.gz
+
+This particular filesystem in question (/mnt/reiser) has the following
+characteristics:
+
+<-------------debugreiserfs, 2002------------->
+reiserfsprogs 3.6.4
+
+
+Filesystem state: consistent
+
+Reiserfs super block in block 16 on 0x1600 of format 3.6 with standard
+journal
+Count of blocks on the device: 14653926
+Number of bitmaps: 448
+Blocksize: 4096
+Free blocks (count of blocks - used [journal, bitmaps, data, reserved]
+blocks): 587704
+Root block: 441435
+Filesystem is cleanly umounted
+Tree height: 5
+Hash function used to sort names: "r5"
+Objectid map size 6, max 972
+Journal parameters:
+        Device [0x0]
+        Magic [0x239d4acf]
+        Size 8193 blocks (including 1 for journal header) (first block 18)
+        Max transaction length 1024 blocks
+        Max batch size 900 blocks
+        Max commit age 30
+Blocks reserved by journal: 0
+Fs state field: 0x0
+sb_version: 2
+inode generation number: 816269
+UUID: f5dfa76b-3a01-4653-8d16-91bccccc6be4
+LABEL:
+Set flags in SB:
+        ATTRIBUTES CLEAN
+
+
+... and reiserfsck has never reported an error on either of the two reiser
+filesystems I tested this on (containing the 6+Gig file).
+
+For example:
+
+<-------------reiserfsck, 2002------------->
+reiserfsprogs 3.6.4
+
+  *************************************************************
+  ** If you are using the latest reiserfsprogs and  it fails **
+  ** please  email bug reports to reiserfs-list@namesys.com, **
+  ** providing  as  much  information  as  possible --  your **
+  ** hardware,  kernel,  patches,  settings,  all  reiserfsk **
+  ** messages  (including version),  the reiserfsck logfile, **
+  ** check  the  syslog file  for  any  related information. **
+  ** If you would like advice on using this program, support **
+  ** is available  for $25 at  www.namesys.com/support.html. **
+  *************************************************************
+
+Will read-only check consistency of the filesystem on /dev/hdc
+Will put log info to '/mnt/mem/reisercheck'
+
+Do you want to run this program?[N/Yes] (note need to type Yes if you
+do):Yes
+###########
+reiserfsck --check started at Fri Sep 26 06:28:10 2003
+###########
+Replaying journal..
+0 transactions replayed
+Checking internal tree..finished
+Comparing bitmaps..finished
+Checking Semantic tree:
+finished
+No corruptions found
+There are on the filesystem:
+        Leaves 164675
+        Internal nodes 1034
+        Directories 34329
+        Other files 513340
+        Data block pointers 13905249 (13394 of them are zero)
+        Safe links 0
+###########
+reiserfsck finished at Fri Sep 26 06:36:15 2003
+###########
+
+# ls -l /mnt/mem/reisercheck
+-rw-r--r--    1 root     root            0 Sep 26 06:28
+/mnt/mem/reisercheck
+
+
+  This same problem occured on a brand new reiser filesystem with no files
+on it other than the single 6+Gig file.
+
+  Looking at the data in the .gz file, it seemed as if the begining of the
+file was truncated (There was no .gz header for one thing) Also, running
+bzip2recover on the .bz2 file that 'bzip2' and 'file' reported as not a
+bzip2 file and data... bzip2recover *was* able to recover almost (?) every
+single block.
+
+  I did a quick test to check my conjecture that blocks of the file are
+being scrambled up. This program spews out exactly 6,000,000,000 bytes to
+stdout, and every 16 bytes I've numbered so you can figure out what byte
+position a chunk of data originally came from.
+
+# echo $[6000000000/16]
+375000000
+
+# cat << EOF > numbers.c
+#include <stdio.h>
+
+int main() {
+
+   int i;
+
+   for (i=0; i<375000000; i++) {
+        printf("%15i\n",i);      /* 16 bytes */
+   }
+
+   return 0;
+}
+
+EOF
+
+# gcc -o numbers numbers.c
+
+# ./numbers |head --bytes=8192
+              0
+              1
+              2
+              3
+              4
+              5
+              6
+              7
+              8
+              9
+        [snip...]
+            253
+            254
+            255
+            256
+            257
+        [snip...]
+            509
+            510
+            511
+
+# ./numbers > 6-Gig-File
+# ls -l 6-Gig-File
+-rw-r--r--    1 root     root     6000000000 Sep 27 01:21 6gig
+
+# head --bytes=8192 6-Gig-File
+              0
+              1
+              2
+              3
+              4
+              5
+              6
+              7
+              8
+              9
+             10
+             11
+             12
+             13
+             14
+             15
+             16
+             17
+             18
+             19
+        [snip...]
+            246
+            247
+            248
+            249
+            250
+            251
+            252
+            253
+            254
+            255
+      268435712
+      268435713
+      268435714
+      268435715
+      268435716
+      268435717
+      268435718
+      268435719
+      268435720
+        [snip...]
+      268435962
+      268435963
+      268435964
+      268435965
+      268435966
+      268435967
+
+# echo $[268435712*16]
+4096
+
+# bc
+bc 1.06
+Copyright 1991-1994, 1997, 1998, 2000 Free Software Foundation, Inc.
+This is free software with ABSOLUTELY NO WARRANTY.
+For details type `warranty'.
+268435712*16
+4294971392
+obase=16
+268435712*16
+100001000
+
+
+  Reiserfs seems to be confusing '0x01 0000 1000' with '0x00 0000 1000' no
+doubt with an overflow to a 32-bit int somewhere. (I havn't bothered to
+look through the fs code yet...)
