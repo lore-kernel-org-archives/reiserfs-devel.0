@@ -1,35 +1,46 @@
-From: Rik van Riel <riel@redhat.com>
+From: Adrian Bunk <bunk@fs.tum.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 10:12:53 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44.0408261011410.27909-100000@chimarrao.boston.redhat.com>
-References: <200408261700.43253.vda@port.imtp.ilyichevsk.odessa.ua>
+Date: Thu, 26 Aug 2004 16:05:01 +0200
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040826140500.GA29965@fs.tum.de>
+References: <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <412DA40B.5040806@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20685-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <200408261700.43253.vda@port.imtp.ilyichevsk.odessa.ua>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <412DA40B.5040806@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>
-Cc: Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Jamie Lokier <jamie@shareable.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, 26 Aug 2004, Denis Vlasenko wrote:
+On Thu, Aug 26, 2004 at 01:49:15AM -0700, Hans Reiser wrote:
+> Jamie Lokier wrote:
+> 
+> >One of the big potential uses for file-as-directory is to go inside
+> >archive files, ELF files, .iso files and so on in a convenient way.
+> > 
+> >
+> Yes, this was part of the plan, tar file-directory plugins would be cute.
 
-> I think Hans is not planning turning old "file is a stream of bytes"
-> into eight-stream octopus. One stream will remain as a 'main' one,
-> which contains actual data. Others will keep metadata, etc...
+Silly question:
 
-This is exactly what the Samba people want, though. 
+GNU Midnight Commander allows for ages to go into e.g. tar files, so I 
+know the benefits of this. Additionally, in GNU Midnight Commander, this 
+works no matter which file system I use (e.g. it works on iso9660), and 
+it even works the same way on other OS's like e.g. Solaris and NetBSD.
 
-Office suites can store a document with embedded images
-and spread sheets "easily" by putting the text, the
-images and spread sheets all in different file streams.
+What is the technical reason why a tar plugin should be reiser4 
+specific, instead of a generic VFS or userspace solution that would 
+allow the same also on other fs like e.g. iso9660?
+
+cu
+Adrian
 
 -- 
-"Debugging is twice as hard as writing the code in the first place.
-Therefore, if you write the code as cleverly as possible, you are,
-by definition, not smart enough to debug it." - Brian W. Kernighan
+
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
 
