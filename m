@@ -1,83 +1,55 @@
 From: "John Stoffel" <stoffel@lucent.com>
-Subject: Re: silent semantic changes with reiser4
-Date: Fri, 3 Sep 2004 09:46:32 -0400
-Message-ID: <16696.30136.391680.920989@gargle.gargle.HOWL>
-References: <rlrevell@joe-job.com>
-	<1094155277.11364.92.camel@krustophenia.net>
-	<200409022200.i82M0ihC026321@laptop11.inf.utfsm.cl>
-	<20040902232350.GA32244@mail.shareable.org>
+Subject: Re: The argument for fs assistance in handling archives
+Date: Fri, 3 Sep 2004 09:55:39 -0400
+Message-ID: <16696.30683.207905.803165@gargle.gargle.HOWL>
+References: <20040826150202.GE5733@mail.shareable.org>
+	<200408282314.i7SNErYv003270@localhost.localdomain>
+	<20040901200806.GC31934@mail.shareable.org>
+	<Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
+	<1094118362.4847.23.camel@localhost.localdomain>
+	<20040902203854.GA4801@janus>
+	<1094160994.31499.19.camel@shaggy.austin.ibm.com>
+	<20040902214806.GA5272@janus>
+	<20040902220027.GD23987@parcelfarce.linux.theplanet.co.uk>
+	<4137B5F5.8000402@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21432-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21433-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040902232350.GA32244@mail.shareable.org>
+In-Reply-To: <4137B5F5.8000402@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Lee Revell <rlrevell@joe-job.com>, Pavel Machek <pavel@ucw.cz>, Spam <spam@tnonline.net>, David Masover <ninja@slaphack.com>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: David Masover <ninja@slaphack.com>
+Cc: viro@parcelfarce.linux.theplanet.co.uk, Frank van Maarseveen <frankvm@xs4all.nl>, Dave Kleikamp <shaggy@austin.ibm.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
->>>>> "Jamie" == Jamie Lokier <jamie@shareable.org> writes:
+>>>>> "David" == David Masover <ninja@slaphack.com> writes:
 
-Jamie> Horst von Brand wrote:
->> > > You really need archive support in find. At the very least you need
->> > > option "enter archives" vs. "do not enter archives". Entering archives
->> > > automagically is seriously wrong.
->> 
->> I have used find(1) for quite some time now, and have never (or very
->> rarely) missed this.
+David> File-as-a-dir has numerous advantages, but enough have been
+David> discussed.  Short list is image mounts, tarballs, streams,
+David> metas, and namespace unification.  Longer list and explanations
+David> can be found if you RTFA.
 
-Jamie> I've occasionally had the need to search all files on my system
-Jamie> for the one file which contains a particular phrase -- all I
-Jamie> remember is the phrase.
+And it has numerous dis-advantages as well, since it doesn't have a
+good set of semantics and syntax defined yet, nor does it explain
+except by vigorous handwaving the performance and security impacts it
+can have.
 
-So use glimpse and run an indexer once a night to pick up changes.  
+My personal feeling is that the mount(8) command should be the tool
+used to extract and expose the internal namespace of files like this
+and to then graft it onto the standard Unix namespace with gross Unix
+semantics, but it's own wacky internal semantics.  This way, standard
+tools don't care, but special tools which know how to handle it can do
+what they want.
 
-Jamie> Just doing "grep -R" was a tedious job: at least half an hour.
 
-Ugh, esp since you're not caching any results of all that work either,
-when you need to repeat 10 minutes down the line...
+> mount -t tarfs /some/place/on/disk/foo.tar.gz /mnt/tar
+> cp /var/tmp/img.gif .
+> umount /mnt/tar
 
-Jamie> Sometimes, I want to search all source files on my system for a
-Jamie> particular word, for example to search for uses of a particular
-Jamie> system call or library function.
-
-I think we want to pull this back a bit more and define this better.
-Instead of 'system' we should be thinking 'namespace' or 'hierarchy'.  
-
-Jamie> That would require something that could search through all the
-Jamie> .tar.gz files and .zip files (nested if necessary) as well as
-Jamie> plain files.  It would take so long -- hours at least, maybe
-Jamie> more than a day -- that I've never bothered doing such a thing.
-
-Jamie> In other words, I'd use that capability if it was magically
-Jamie> fast, but as we expect it to be insanely slow (just grepping
-Jamie> gigabytes is slow) that makes it not so useful.
-
-Jamie> However, if we ever see that search engine index thing happen,
-Jamie> it would be a most excellent capability if it searched inside
-Jamie> archive files too.  I would definitely use that.  Not often,
-Jamie> but occasionally I would.
-
-Is the overhead of pre-indexing all files and their contents worth it
-though?  And would the use of inotify allow us to efficiently update
-the index in a fairly quick time?
-
-All the various arguements have been that we need a filesystem which
-magically indexes files, does queries and does it all atomically and
-without any thought on the part of the developer/user.  It could
-happen, but then we'd have such a *slow* system in general, just to
-make 1% of the usage simpler (for some measure of simple) that it
-would be a waste.
-
-Providing a simple, consistent set of semantics and syntax allows you
-to build on top of it the layer(s) you need to provide the guarenttees
-you need for your application.
-
-I don't expect that Oracle has the same needs as does my mail spool,
-or as an image store.  Sure, Oracle could do both of them, but are
-the overheads of oracle worth the slowdown in the common case?
+Oops!  Someone did a rm /some/place/on/disk/foo.tar.gz between steps
+one and two.  Now what happens?  Please define those semantics...
 
 John
