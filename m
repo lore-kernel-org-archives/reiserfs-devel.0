@@ -1,36 +1,64 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: trolling
-Date: 12 Feb 2003 09:48:10 -0500
-Message-ID: <1045061290.6265.16.camel@tiny.suse.com>
-References: <3E494808.413781E@interface-ag.com>
-	 <20030212131120.A10438@t-raenon.nmd.msu.ru>
+From: Anders Widman <andewid@tnonline.net>
+Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
+Date: Wed, 12 Feb 2003 16:26:13 +0100
+Message-ID: <46110589437.20030212162613@tnonline.net>
+References: <NDBBJPAGKLCMDEIEKOPBKEKHKFAA.mailinglists@websitemanagers.com.au>
+ <11104354750.20030212144219@tnonline.net>
+ <200302121515.46953.russell@coker.com.au>
+Reply-To: Anders Widman <andewid@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12716-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12717-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030212131120.A10438@t-raenon.nmd.msu.ru>
+In-Reply-To: <200302121515.46953.russell@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: flx@msu.ru
-Cc: Reiserfs List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Wed, 2003-02-12 at 05:11, Alexander Lyamin wrote:
+> On Wed, 12 Feb 2003 14:42, Anders Widman wrote:
+>> > A) Immediately re-mount the drive read-only, and wait for the sysadmin to
+>> > either re-mount rw or to do some other data recovery/repair
+>>
+>> This  would be devastating for some form of servers and cause downtime
+>> and  loss  of  work  for  plenty. Consider an application server, or a
+>> document  server within a company. If writes were prohibited then lots
+>> of programs do stop function, or saving fails.
 
-> You see, for IGNORANT people its much easier to blame someone else
-> then their ignorance.
+> Servers should have RAID.  There is no excuse.  With RAID the regular disk
+> errors should not be an issue.
 
-Sometimes people make mistakes, or don't have the benefit of the long
-experience it really takes to understand things, and sometimes they just
-don't get it.
+Yes, most should use some form of hardware redundancy.
 
-All of which is fine.  We've chosen to read their questions, and those
-of us who get paid to do it should have the good sense to try and be
-nice about it.  Senseless flames only discourage valid questions from
-getting asked.
+>> Unplanned downtime do cause lot of harm to any business.
 
--chris
+> It's better to stop when there's a serious error than to blindly continue and
+> make things worse.
+
+I  (and  I  think  no  one  else)  never  said  continue blindly. Most
+users/workstations do not have RAID and probably never will.
+
+I can take any normal home-user as an example. They use single drives,
+but  still  they  need to be able to rely on the filesystem to protect
+their   data  and  not stop working if the drive has a few bad blocks.
+Not  all users has spare drives, nor can find a replacement right away
+so  they  have to be able to use their computers even though there are
+bad blocks.
+
+There  are  two  kinds of people I come across when it comes to Linux:
+
+Those  that  say it is perfect and blame everything on the user or the
+hardware.
+
+The  others  want to make Linux a viable option for "normal" users and
+want Linux to be able to replace Windows or Mac OS. The only way I see
+that happen is if Linux starts to get more userfriendly and safe.
+
+- Anders
+
+
+
 
 
