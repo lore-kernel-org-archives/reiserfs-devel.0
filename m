@@ -1,28 +1,58 @@
-From: Frank van Maarseveen <frankvm@xs4all.nl>
-Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: Mon, 6 Sep 2004 10:08:45 +0200
-Message-ID: <20040906080845.GA31483@janus>
-References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain> <20040902203854.GA4801@janus> <20040906075603.GB28697@thundrix.ch>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: optimal kernel version for testing reiser4
+Date: Mon, 06 Sep 2004 12:12:54 +0400
+Message-ID: <1094458373.1341.102.camel@tribesman.namesys.com>
+References: <413A4D7A.8090909@dermichi.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21498-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21499-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040906075603.GB28697@thundrix.ch>
+In-Reply-To: <413A4D7A.8090909@dermichi.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tonnerre <tonnerre@thundrix.ch>
-Cc: Frank van Maarseveen <frankvm@xs4all.nl>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Michael Weissenbacher <webmaster@dermichi.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-On Mon, Sep 06, 2004 at 09:56:03AM +0200, Tonnerre wrote:
+Hello
+
+On Sun, 2004-09-05 at 03:19, Michael Weissenbacher wrote:
+> Can anybody tell me which kernel version is optimal for testing reiser4. 
+> I've found it runs stable on 2.6.8.1-mm2 for me except that i 
+> occasionaly get "wrong bytes" errors when doing a fsck. 
+> I read in the 
+> mailing-list archive that this error should be fixed, but is it also 
+> fixed in 2.6.8.1-mm2? 
+
+The bug about which you read was that files got number of bytes twice
+more that they had to. This bug is fixed. 2.6.8.1-mm2 contains the fix.
+So, I assume you encounter somthing different. Would you show what does
+fsck report, please?
+
+> I've been burned using 2.6.9-rc1-mm1 for some 
+> time, which has a problem with files which are bytes%4096=0 bytes big. 
+
+What is that problem?
+
+> So i tried 2.6.9-rc1-mm3 today and found it was unstable on my pc (weird 
+> hangs) but i'm certain this had nothing to do with reiser4.
 > 
-> $ cat fs_header owner_root flags_with_suid evil_program > evil.iso
-> $ ls -l evil.iso/evil_program
+> So to make it short: Which kernel do you guys use for developing/testing 
+> reiser4 
 
-It should of course be equivalent to a user mount: nodev nosuid etc.
+I am working with 2.6.9-rc1-mm1
 
--- 
-Frank
+> because it's hard to test when you can't tell if it's a general 
+> kernel bug or a problem specific to reiser4. Is there a patch that can 
+> be applied to the vanilla 2.6 kernel? On the website there is only the 
+> notice to use some mm-kernel. Where are the latest patches?
+> 
+
+There is nothing yet which would have to be pushed up urgently. AFAIK.
+
+> regards,
+> Michael
+> 
+
