@@ -1,44 +1,47 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: attrib +A doesn't work
-Date: Thu, 24 Oct 2002 19:50:23 +0400
-Message-ID: <15800.5823.484584.373537@laputa.namesys.com>
-References: <20020905034320.GA11951@yzero>
-	<15735.10894.167461.158961@laputa.namesys.com>
-	<20020905140132.A19752@namesys.com>
-	<m3iszseukm.fsf@multivac.cwru.edu>
-	<15799.37953.280992.61682@laputa.namesys.com>
-	<m3k7k7vp3e.fsf@multivac.cwru.edu>
+From: Chris Mason <mason@suse.com>
+Subject: Re: [OT] memory issue with GNU find
+Date: 24 Oct 2002 11:54:45 -0400
+Message-ID: <1035474886.28715.182.camel@tiny>
+References: <20021024174330.34f2d72e.philippe.gramoulle@mmania.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11759-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11760-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <m3k7k7vp3e.fsf@multivac.cwru.edu>
+In-Reply-To: <20021024174330.34f2d72e.philippe.gramoulle@mmania.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Paul Jarc <prj@po.cwru.edu>
-Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Philippe =?ISO-8859-1?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
+Cc: reiserfs <reiserfs-list@namesys.com>
 
-Paul Jarc writes:
- > Nikita Danilov <Nikita@Namesys.COM> wrote:
- > > Paul Jarc writes:
- > >> Should -o attrs be used just once, or every time afterwards?
- > >
- > > On each mount. Does attribute support actually works for you?
- > 
- > I just did a quick test with chattr +A, and it seemed to work.  Out of
- > curiosity, what would happen if I forgot to use attrs once?  I'm
- > guessing attributes would not take effect and could not be changed
- > until I remounted, but once I did, the stored attributes wouldn't be
- > lost, right?  Also, is there any way to make attrs and notail show up
- > in /proc/mounts?
+On Thu, 2002-10-24 at 11:43, Philippe Gramoull=E9 wrote:
+> Hi,
+>=20
+> Sorry to be a little off topic here but here is the issue:
+>=20
+> For legal reasons we need to list all files on a filer (reiserfs FS so no=
+t
+> _that_ offtopic :o).
+>=20
+> Problem is that the filer is about 400Go and number of files according to=
+=20
+> /proc/fs/reiserfs/*/oidmap is about 20 Million files.
+>=20
+> >From what we've read and seen , find is eating up all memory to the poin=
+t that
+> the filer start to swap and then crashes.
+>=20
+> Would anyone know how to do that without bring the filer to its knees in =
+terms
+> of memory ?
 
-Only after Halloween, I am afraid.
+Interesting, find should not do that unless you're trying to get it to
+sort the results somehow.
 
- > 
- > 
- > paul
+Exactly how are you running the find?
 
-Nikita.
+-chris
+
+
