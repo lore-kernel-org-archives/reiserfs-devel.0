@@ -1,50 +1,41 @@
 From: Christian Iversen <chrivers@iversen-net.dk>
-Subject: Re: Tuning reiserfs
-Date: Mon, 29 Mar 2004 15:17:37 +0200
-Message-ID: <200403291517.37540.chrivers@iversen-net.dk>
-References: <200403280055.10474.chrivers@iversen-net.dk> <1080563749.16246.42.camel@tribesman.namesys.com>
+Subject: Re: [PATH] "metas" in reiserfs v4 snapsot 2004.03.26
+Date: Mon, 29 Mar 2004 15:27:40 +0200
+Message-ID: <200403291527.40994.chrivers@iversen-net.dk>
+References: <20040329104359.GP5229@nysv.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17560-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17561-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1080563749.16246.42.camel@tribesman.namesys.com>
+In-Reply-To: <20040329104359.GP5229@nysv.org>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Monday 29 March 2004 14:35, you wrote:
-> Hello
+
+> It may superficially seem equal, if there's a directory that's invisible,
+> but still exists. I mean, the name of the directory may seem unimportant.
 >
-> On Sun, 2004-03-28 at 03:55, Christian Iversen wrote:
-> > Hello all.
-> >
-> > I'm a happy user of reiserfs, which I find stable and fast.
-> >
-> > However, I'm curious as the wether reiserfs can be tuned to be even
-> > faster in my situation.
-> >
-> > Nearly all files on my volume can be divided into two categories. Files
-> > in the 5-10 MB range, and files in the 200-500 MB range.
-> >
-> > Especially "ls -l" on directories with many 200-500 MB files takes a
-> > relatively "long" time (severeal seconds).
+> It is not. Anyone who wants to use the metas will know how to do it,
+> no matter what the name. I think Piotr Neuman's patch is a prerequisite
+> for getting this baby into the mainline kernel.
 >
-> I am afraid there is nothing you can easily do to fix this. For the
-> fileset like yours reiserfs has to read one block to stat one file.
-> So, to ls -l 10000 files - 10000 blocks is to be read.
+> ..pseudo/ was a good solution, ..metas/ is more descriptive and just
+> as inoffensive.
 
-But that's exactly the point. There aren't nearly 10000 files, closer to 200. 
-It seems that 200 2-500 MB files take about the same time to stat as many 
-more (i.e. 10000) small files. 
+As a complete reiserfs outsider, who is just interested in using a good 
+filesystem, I agree :)
 
-Do large files take a longer time to stat, or is it something else?
+If I had anything to say, I would go for ".meta". 
 
-In any case, I'm very happy with reiserfs. Thanks for you help :)
+Using a name like "metas" WILL introduce breakage in many cases. As previously 
+mentioned: tar-balls, user scripts and other cases. 
+
+But who am I to tell you that?... I'm not a reiserfs developer ;)
 
 -- 
 Regards,
