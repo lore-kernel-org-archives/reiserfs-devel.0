@@ -1,54 +1,37 @@
 From: Tonnerre <tonnerre@thundrix.ch>
 Subject: Re: silent semantic changes with reiser4
-Date: Sun, 5 Sep 2004 13:10:31 +0200
+Date: Sun, 5 Sep 2004 13:17:43 +0200
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040905111031.GA26560@thundrix.ch>
-References: <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826044425.GL5414@waste.org> <1093496948.2748.69.camel@entropy> <20040826053200.GU31237@waste.org> <20040826075348.GT1284@nysv.org> <4137F669.2000505@pointblue.com.pl>
-Reply-To: tonnerre@thundrix.ch
+Message-ID: <20040905111743.GC26560@thundrix.ch>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org> <m3eklm9ain.fsf@zoo.weinigel.se>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
+	protocol="application/pgp-signature"; boundary="ALfTUftag+2gvp1h"
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4137F669.2000505@pointblue.com.pl>
+In-Reply-To: <m3eklm9ain.fsf@zoo.weinigel.se>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Grzegorz Ja??kiewicz <gj@pointblue.com.pl>
-Cc: Markus T??rnqvist <mjt@nysv.org>, Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Christer Weinigel <christer@weinigel.se>
+Cc: Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Pavel Machek <pavel@ucw.cz>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
 
---yrj/dFKFPuw6o+aM
+--ALfTUftag+2gvp1h
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Salut,
 
-On Fri, Sep 03, 2004 at 06:43:21AM +0200, Grzegorz Ja??kiewicz wrote:
-> >Then I guess OS X ships a broken implementation of cp, yes?
->=20
-> Nope, GUI handles it perfectly. it's maybe 0.1% of users of MacOS that=20
-> acctually care about cp being broken.
+On Wed, Sep 01, 2004 at 01:02:24AM +0200, Christer Weinigel wrote:
+> I can see the argument for having the equivalent of Content-type or
+> Content-transfer-encoding as a named stream though.
 
-Actually, there is a (non-GNU) free implementation of the fileutils on
-MacOS/X  that treats  and  copies  the .DS_Store  entries  (or say  is
-metadata aware).
-
-And  even  though  I might  agree  on  that  the principle  of  having
-per-directory  database files is  somewhat hacky,  it appears  to work
-like a charm (As long as userland programs do care about it).
-
-On Linux we have a solution that actually works just the same and is a
-lot cooler. It's called POSIX extended attributes...
+Why having them as  named streams if we can get them  as xattrs for no
+additional pain? (Since fileutils would  have to be changed anyway, we
+can even make cp copy and emacs update xattrs.)
 
 			    Tonnerre
 
-PS. If you want to talk further  on the subject of how MacOS/X does it
-and how I would do it using extended attributes, discuss it in private
-mail with me, since MacOS/X isn't really Linux. And no, I don't want a
-single daemon do  that, but I want it to  be a standard implementation
-that libc and fileutils support.
-
---yrj/dFKFPuw6o+aM
+--ALfTUftag+2gvp1h
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 Content-Disposition: inline
@@ -56,9 +39,9 @@ Content-Disposition: inline
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.9.2 (GNU/Linux)
 
-iD8DBQFBOvQm/4bL7ovhw40RAgPbAJ9b8fFoSmSWVW/Boihev+7RC4MbLwCfUCwf
-KU0vVdbLHZhxLk8PVAcoBbk=
-=1Amf
+iD8DBQFBOvXW/4bL7ovhw40RAgEoAJ0UOEVKG2hNAA2tIfGa7HPNH/lf4QCfT4Jg
+OkQzpbws19klhIWDmxBGLd0=
+=nJQC
 -----END PGP SIGNATURE-----
 
---yrj/dFKFPuw6o+aM--
+--ALfTUftag+2gvp1h--
