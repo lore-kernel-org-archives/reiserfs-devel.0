@@ -1,32 +1,34 @@
-From: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
+From: Sander <sander@humilis.net>
 Subject: Re: Congratulations! we have got hash function screwed up
-Date: Thu, 30 Dec 2004 15:11:09 +0100
-Message-ID: <m3wtuzj2pu.fsf@merlin.emma.line.org>
-References: <77912E9FD42896419D1CEF15E1C397A58AFCF2@london.jaguarfreightservices.local>
+Date: Thu, 30 Dec 2004 18:47:32 +0100
+Message-ID: <20041230174732.GB5206@favonius>
+References: <77912E9FD42896419D1CEF15E1C397A58AFCF1@london.jaguarfreightservices.local> <m38y7gx8kq.fsf@merlin.emma.line.org> <20041230235911.4911a20c.hihone@bigpond.net.au> <m3sm5nj2ef.fsf@merlin.emma.line.org> <87is6jpvdu.fsf@quasar.esben-stien.name>
+Reply-To: sander@humilis.net
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22950-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22959-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <77912E9FD42896419D1CEF15E1C397A58AFCF2@london.jaguarfreightservices.local>
-	(Yiannis Mavroukakis's message of "Thu, 30 Dec 2004 13:24:37 -0000")
+Content-Disposition: inline
+In-Reply-To: <87is6jpvdu.fsf@quasar.esben-stien.name>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yiannis Mavroukakis <yiannis@jaguarfreight.com>
-Cc: reiserfs-list@namesys.com
+To: Esben Stien <b0ef@esben-stien.name>
+Cc: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>, hihone@bigpond.net.au, reiserfs-list@namesys.com
 
-"Yiannis Mavroukakis" <yiannis@jaguarfreight.com> writes:
+Esben Stien wrote (ao):
+> I really don't like that there is no undelete feature in reiserfs -
+> it's not planned for reiserfs-4 either. I see desperate users all the
+> time trying to get back what they mistakenly removed.
 
-> I agree, but you're generalising, this is not xfs and reiser4 is not 3.5
-> ;)
-> If you don't try out the shiny new filesystem yourself, how can you
-> possibly dismiss it based on the past failures
-> of other filesystems? 
+If you 'see desperate users all the time' you might be amoung the wrong
+people ;-)
 
-I doubt new software is bug-free. I don't expect NFS problems with
-reiser4 though, these should be in the regression tests. :-)
+Maybe you can clue them in the wonderful world of making backups?
 
--- 
-Matthias Andree
+Next time it is not their mistake, but instead a broken harddisk.
+Undelete wont save them then.
+
+Or they just edited it instead of rm.
