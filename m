@@ -1,38 +1,36 @@
-From: Christian Iversen <chrivers@iversen-net.dk>
-Subject: Re: "Metas"
-Date: Mon, 5 Apr 2004 02:36:30 +0200
-Message-ID: <200404050236.30398.chrivers@iversen-net.dk>
-References: <35813986328-BeMail@cr593174-a>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: filenames that can be safely stolen
+Date: Sun, 04 Apr 2004 20:37:15 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <878yhbb6pw.fsf@uhoreg.ca>
+References: <200404010546.i315kEvY019805@sirius.cs.pdx.edu> <20040402035617.GC2158@zero>
+ <8765ciqr6v.fsf@uhoreg.ca> <20040402220250.GB4668@rahul.net>
+ <406EFCE2.8000108@namesys.com> <20040405000645.GB9905@zero>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17701-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17702-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <35813986328-BeMail@cr593174-a>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Monday 05 April 2004 02:32, Alexander G. M. Smith wrote:
-> Christian Iversen wrote on Mon, 5 Apr 2004 02:12:05 +0200:
-> > Just a thought. Who on this list does NOT support "..." instead of metas?
->
-> Windows has that as the parent of the parent directory.
+>>>>> "Tom" == Tom Vier <tmv@comcast.net> writes:
 
-Not consistently - i.e only in Win2K and newer. DOS/Win9x used "dir ..." for 
-"show me all directories". 
+[...]
 
-> I also use it as the second parent directory in a file system that allows
-> multiple parents, .... is the third parent directory, and so on.  But that
-> doesn't really matter since nobody's making much use of multiple parents
-> yet.
+Tom> and finally, i hate the 's'. 8) for one thing, it might only
+Tom> contain only one file.
 
-And it would be perfectly possible to access that same dir by ../.. still, 
-wouldn't it? :)
+It will always contain multiple files.  See
+http://namesys.com/v4/pseudo.html for the files that it contains by
+default.
 
 -- 
-Regards,
-Christian Iversen
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
