@@ -1,47 +1,45 @@
-From: Kuba Ober <kuba@mareimbrium.org>
-Subject: Re: Filesystem errors
-Date: Wed, 17 Jul 2002 08:40:42 -0400
-Message-ID: <200207170840.42655.kuba@mareimbrium.org>
-References: <200207160146.01440.cabernet@internode.on.net> <200207170811.44229.kuba@mareimbrium.org> <20020717161632.A2614@namesys.com>
+From: Philippe =?ISO-8859-1?B?R3JhbW91bGzp?= <philippe.gramoulle@mmania.com>
+Subject: Re: Quota support for UID >65534
+Date: Wed, 17 Jul 2002 14:52:02 +0200
+Message-ID: <20020717145202.29e6e070.philippe.gramoulle@mmania.com>
+References: <1026727900.18163.61.camel@max>
+	<1026731371.21656.301.camel@tiny>
+	<1026807249.1066.31.camel@max>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11036-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11037-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020717161632.A2614@namesys.com>
+In-Reply-To: <1026807249.1066.31.camel@max>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-On =B6roda 17 lipiec 2002 08:16 am, Oleg Drokin wrote:
-> Hello!
->
-> On Wed, Jul 17, 2002 at 08:11:44AM -0400, Kuba Ober wrote:
-> > Did I mention that spinrite was about 100kb in size and written in
-> > assembler?
->
-> This is not an advantage by any means in my view. It only means it is
-> x86 specific, most probably requires dos/windows, and hard to debug.
+On 16 Jul 2002 10:14:08 +0200
+Zeljko Brajdic <zorz@iskon.hr> wrote:
 
-You're right, but the guy simply kept it in assembler since mid-80's.
 
-And as far as I know him, and I know his coding style a little bit from=20
-disassembling the early spinrite II, his code is mostly more legible than=20
-poorly written C++.
+Following Honza recommandations , we simply stripped out the 
+"if (id & ~0xFFFF)" line by hand and we now use quota ith 32bits UIDs without
+any problem :o)
 
-And the program, believe it or not, does not require debugging as it is. I =
+It's not a bug , more likely a test that's been there for long at the time
+of 32bit UIDs were not ready , it think.
 
-think that the current version works fine w/o any changes nor patches since=
-=20
-about 3 years or so. He does one hell of a testing job, and he always bases=
-=20
-on previous code that worked (most probably one of the reasons why it's sti=
-ll=20
-in assembler).
+Thanks,
 
-He is kind of assembly-maniac, but he has some windows utilities which are =
-in=20
-assembler and do very cool things.
+Philippe.
 
-Cheers, Kuba Ober
+  |  We have found "error". :) In fs/dquot.c at line 2057 exists if
+  |  statement:
+  |  
+  |          if (id & ~0xFFFF)
+  |                  goto out;
+  |  
+  |  Is this feature or bug?! :) This have been found in vanilla kernel-2.4.18
+  |  -- 
+  |  v            ,   v  v
+  |  Zeljko Brajdic - Zorz
+  |  
+  |  
