@@ -1,30 +1,38 @@
-From: "bmoon" <bo@anthologysolutions.com>
-Subject: Any paper on Journaling algorithm?
-Date: Fri, 10 Jan 2003 09:07:24 -0800
-Message-ID: <01e801c2b8ca$bf2765d0$6a01a8c0@bmoon>
-References: <hhr8bv7cm6.fsf@blah.pl> <20030106101149.B1881@namesys.com> <3E194161.1070306@namesys.com>
+From: John Fettig <jfettig@students.uiuc.edu>
+Subject: Re: reiserfsck --rebuild-tree aborted
+Date: Fri, 10 Jan 2003 16:58:36 -0600
+Message-ID: <20030110165836.A13329@ux8.cso.uiuc.edu>
+References: <20030110005346.A24040@ux13.cso.uiuc.edu> <200301101640.13350.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12314-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12315-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <200301101640.13350.vitaly@namesys.com>; from vitaly@namesys.com on Fri, Jan 10, 2003 at 04:40:13PM +0300
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: John Fettig <jfettig@students.uiuc.edu>, reiserfs-list@namesys.com
 
-Hello!
+* Vitaly Fertman <vitaly@namesys.com>: 
+> > build_the_tree: Nothing but leaves are expected. Block 8532-??22683
+> > build_the_tree: Nothing but leaves are expected. Block 8580-??22660
+> > pass1.c 405 pass1_correct_leaf
+> > pass1_correct_leaf: block 8581, item 0, pointer 22: The wrong pointer
+> > (944715855) in the file [7471218 636]. Must be fixed on pass0.
+> > Aborted
+> 
+> All this looks like an fsck bug, but could be some kind of hardware 
+> problem also. I would like to have a look at the metadata of your 
+> partition. Could you run debugreiserfs -p /dev/xxx | bzip2 -c > xxx.bz2 
+> and make it available for downloading. 
 
-I am investigating on the Journaling from the Reisersfs source code.
-However, it is not easy to understand. I could not find any good reference
-on the Journaling.
+You can download the output from debugreiserfs from:
+http://salty.ncsa.uiuc.edu/debugout.bz2
 
-Please guide me to the good reference or paper on the journaling algorithm.
+Please let me know what you find.
 
-Thanks,
-
-Bo
-
-
+John
