@@ -1,44 +1,45 @@
 From: Marcelo Pacheco <marcelo@macp.eti.br>
-Subject: Re: "Metas"
-Date: Mon, 5 Apr 2004 12:17:40 -0300
-Message-ID: <200404051217.40473.marcelo@macp.eti.br>
-References: <35813986328-BeMail@cr593174-a>
+Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Date: Mon, 5 Apr 2004 12:22:07 -0300
+Message-ID: <200404051222.07071.marcelo@macp.eti.br>
+References: <no.id> <200404050401.i3541XVk004592@sirius.cs.pdx.edu> <87fzbj9fws.fsf@uhoreg.ca>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17726-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17727-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <35813986328-BeMail@cr593174-a>
+In-Reply-To: <87fzbj9fws.fsf@uhoreg.ca>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Novell allows to move 2 directories up ... to move 3 ...., and so on.
-I've been following this discussion almost in disbelief of how many e-mails 
-have been exchanged on this matter. Please, just vote, each and every one 
-that is on the list that has an opinion, then let Namesys decide.
-
-I vote for ..meta, .meta is fine with me to. I don't want meta to ever colide 
-with a normal file/directory name.
-
-I will not reply to any replies on this matters, and I ask people only to 
-vote. Everybody's point of view have been more than shown, it's not the 
-number of e-mails that will change Namesys position.
+Exactly. Metas is goals/objectives in portuguese. Although it's extremelly 
+uncommon to have files without extensions, I would still much rather prefer 
+having .metas instead of metas.
 
 Marcelo Pacheco
 
-On Sunday 04 April 2004 21:32, Alexander G. M. Smith wrote:
-> Christian Iversen wrote on Mon, 5 Apr 2004 02:12:05 +0200:
-> > Just a thought. Who on this list does NOT support "..." instead of metas?
+On Monday 05 April 2004 02:01, Hubert Chan wrote:
+> >>>>> "The" == The Amazing Dragon (Elliott Mitchell) <ehem@cs.pdx.edu>
+> >>>>> writes:
 >
-> Windows has that as the parent of the parent directory.
+> [...]
 >
-> I also use it as the second parent directory in a file system that allows
-> multiple parents, .... is the third parent directory, and so on.  But that
-> doesn't really matter since nobody's making much use of multiple parents
-> yet.
+> The> Good point, search engines as evidence. The problem is you're only
+> The> looking at distributions, which are going to be highly similar and
+> The> you're completely missing end users. So let us take this to a full
+> The> search engine and see what turns up...  Hmm, roughly a million
+> The> hits, let us look at a few samples:
 >
-> - Alex
+> I'm only getting a bit less than 600,000.  Maybe we caught Google in the
+> middle of some reindexing.  But anyways...
+>
+> Most of the pages seem to be Spanish and Portuguese.  Google translation
+> translates "metas" as "goals".  Are there any Spanish or Portuguese
+> speakers on this list to confirm that?
+>
+> Since "goals" is a fairly common word, it probably is a bad idea to use
+> "metas" without at least some sort of prefix.
