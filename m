@@ -1,49 +1,80 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: 2.6.11 patch
-Date: Tue, 29 Mar 2005 17:44:05 +0400
-Message-ID: <1112103844.4761.440.camel@tribesman.namesys.com>
-References: <200503221057.59889.pb101@o2.pl>
-	 <1111489735.1592.16.camel@tribesman.namesys.com>
+From: Erwin Riegler <riegler@hep.itp.tuwien.ac.at>
+Subject: Re: bug in reiser4
+Date: Tue, 29 Mar 2005 16:26:58 +0200 (CEST)
+Message-ID: <Pine.LNX.4.21.0503291621200.14639-100000@hep.itp.tuwien.ac.at>
+References: <1112102960.4650.422.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-23722-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <reiserfs-list-return-23723-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1111489735.1592.16.camel@tribesman.namesys.com>
+In-Reply-To: <1112102960.4650.422.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: pb101@o2.pl
+Content-Type: TEXT/PLAIN; charset="iso-8859-1"
+To: Vladimir Saveliev <vs@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Hello
 
-On Tue, 2005-03-22 at 14:48, Vladimir Saveliev wrote:
 > Hello
 >=20
-> On Tue, 2005-03-22 at 12:57, Pawe=B3 Bugalski wrote:
-> > Hi,
-> > I'm using 2.6.10 with reiser 4 patch from ftp.namesys.com. However, I w=
-ould=20
-> > like to upgrade to 2.6.11, because of problems I have with 2.6.10(not r=
-eiser4=20
-> > related). Will the patch for 2.6.11 be available or should I go for -mm=
-(I'd=20
-> > like to avoid it cause I need a stable machine).
->=20
-> We will make a patch for 2.6.11 when the bug fix I am working on is
-> done. This should happen today evening-tomorrow.
->=20
-
-late is better than never:
-
-ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.11/reiser4-for-2.6.11-broken-=
-out.2.gz
-
-> > Regards
-> > Bugi
+> On Tue, 2005-03-29 at 15:55, Erwin Riegler wrote:
+> > hi,
+> > i have been using reiser4 for five months without any problems.
+> > but suddenly i get strange error messages on the screen when=20
+> > i try to halt the machine:
+> >=20
+> > # halt
+> >=20
+> >=20
+> > ...
+> >=20
+> > reiser4[pdflush(131)]: jnode_lock_parent_coord
+> > (fs/reiser4/flush.c:3095)[nikita-3178]:
 > >=20
 >=20
+> I guess your filesystem got a corruption. Would you please fsck.reiser4
+> it end let us know whether it found anything?
+
+yes, you are right. the root partition had a corruption.=20
+
+after=20
+
+=09fsck.reiser4 --build-sb
+
+everything works now again.
+
+thank you very much,
+erwin
+
+>=20
+> > ...
+> >=20
+> > this message is repeating all the time and the system is hanging in a
+> > never ending loop.
+> >=20
+> > system:
+> >=20
+> > debian sid
+> > kernel: 2.6.10-cko3
+> >=20
+> > best,
+> > erwin=20
+> >=20
+> >=20
+> > ------------------------------------------------------------
+> > [work address]                             [private address]
+> > Erwin Riegler                                  Erwin Riegler
+> > Max Planck Institute for                A=DFmayergasse 23/5/41
+> > Mathematics in the Sciences                    A-1120 Vienna
+> > Inselstrasse 22
+> > D-04103 Leipzig
+> > office: +49-341-995950-850             home: +43-660-2146904
+> > email:  riegler@hep.itp.tuwien.ac.at                =20
+> > web:    http://www.mis.mpg.de
+> > ------------------------------------------------------------
+> >=20
+> >=20
 >=20
 
