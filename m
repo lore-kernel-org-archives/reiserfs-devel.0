@@ -1,32 +1,36 @@
-From: Michael Weissenbacher <webmaster@dermichi.com>
-Subject: Re: EACCESS vs ENOENT for nonexistent files-within-files
-Date: Mon, 13 Sep 2004 17:21:32 +0200
-Message-ID: <4145BAFC.6090408@dermichi.com>
-References: <20040913140637.GB29591@redhat.com>
+From: viro@parcelfarce.linux.theplanet.co.uk
+Subject: Re: [PATCH] use S_ISDIR() in link_path_walk() to decide whether the last path component is a directory
+Date: Mon, 13 Sep 2004 16:43:16 +0100
+Sender: <viro@www.linux.org.uk>
+Message-ID: <20040913154316.GC23987@parcelfarce.linux.theplanet.co.uk>
+References: <20040913074921.GA2252@backtop.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21717-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21718-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040913140637.GB29591@redhat.com>
+Content-Disposition: inline
+In-Reply-To: <20040913074921.GA2252@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS List <reiserfs-list@namesys.com>
-Cc: Joe Orton <jorton@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alex Zarochentsev <zam@namesys.com>
+Cc: Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-> Hi, we had a bug report that Apache httpd logs a spurious error for
-> every file served from a reiser4 filesystem, because httpd assumes that
-> /path/to/file/.htaccess (where /path/to/file is a normal file) returns
-> ENOENT or ENOTDIR, but reiser4 returns EACCES in this case.
+On Mon, Sep 13, 2004 at 11:49:22AM +0400, Alex Zarochentsev wrote:
+> Hi,
 > 
-> Can someone explain the justification behind reiser4's behaviour? 
-> httpd's assumption does not seem unreasonable, and EACCES seems to make
-> little sense for this error case.
+> This patch does not allow open(name, O_DIRECTORY) to be successful for
+> non-directories in reiser4.  It replaces ->i_op->lookup != NULL "is dir" check
+> for the last path component by explicit S_ISDIR(->i_mode) check. 
 > 
-i think the problem would be "solved" by mounting the partition with the 
-nopseudos option. of course, this is not the long-term solution.
+> Regardless to reiser4, S_ISDIR() looks more clear there.
 
-regards,
-michael
+The only objection here is that right now we are guaranteed that cwd and
+root of every task have non-NULL ->lookup().  With your patch all we have
+is S_ISDIR().
+
+So we either need to check for non-NULL ->lookup() before the beginning of
+loop in link_path_walk() or split the flag in two.  I would rather do the
+former...
