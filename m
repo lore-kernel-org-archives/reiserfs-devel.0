@@ -1,70 +1,41 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: lexicographic ordering is not always best
-Date: Tue, 18 Feb 2003 14:10:38 +0300
-Message-ID: <3E5214AE.9050102@namesys.com>
-References: <3E517263.3030504@namesys.com> <15954.4300.300740.395383@laputa.namesys.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: symlink has wrong sd_blocks count
+Date: Tue, 18 Feb 2003 14:42:43 +0300
+Message-ID: <20030218144243.A6891@namesys.com>
+References: <3E5210A5.1030108@dsvr.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12810-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12811-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <15954.4300.300740.395383@laputa.namesys.com>
+Content-Disposition: inline
+In-Reply-To: <3E5210A5.1030108@dsvr.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: ReiserFS <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Nick Burrett <nick@dsvr.net>
+Cc: reiserfs-list@namesys.com
 
-Nikita Danilov wrote:
+Hello!
 
->Hans Reiser writes:
-> > Suppose that you have small directories, such that the time to do linear 
-> > searching within the directory is not significant.
-> > 
-> > Suppose that you have a tendency to access files in readdir() order, and 
-> > having files laid out in an order that is the same as the directory 
-> > order is performance valuable.
-> > 
-> > Suppose that you create files too slowly for allocate on flush to fix 
-> > this problem, and access them too soon for the repacker to fix this problem.
-> > 
-> > In that case, ordering both directory entries and file bodies in a first 
-> > created first ordered order is optimal.
-> > 
-> > How much work would it be to create a reiser4 directory plugin to order 
-> > in creation time order?  Could you do this by simply setting the hash 
-> > field always to zero for that plugin, and letting the duplicate key code 
-> > handle things?  If it is trivial to do, it might be useful.  Especially 
-> > for the analysis of the performance of our algorithms on various benchmarks.
->
->I do not see how this is possible. Lookup has to find the directory
->entry given a name. If directory entries are ordered in the "creation"
->order, some component(s) of directory entry key (ones that order
->directory entry by creation) are unknown at the lookup time.
->
-No, they are 0 (identical, duplicates).
+On Tue, Feb 18, 2003 at 10:53:25AM +0000, Nick Burrett wrote:
 
->
->The only solutions that come to my mind are either double index
->directory entries (this will solve a bunch of other problems as well),
->or resort to a sequential scan (this is exactly what ext2 does, and, by
->the way ext2 also mostly sorts directory entries by the creation time).
->
-Yes, sequential scan is what I meant.  I do not intend this as the 
-default, but merely as an option.
+> I'm running a stock 2.4.20 kernel with the reiserfs quota patches applied.
+> Simply creating a symlink and then running reiserfsck shows errors like 
+> this:
+>    /foofile 2 4 has wrong sd_blocks 8, has to be 1
+> I've reproduced this 100% on 100 filesystems on two servers.
 
->
->Have I missed something in your proposal?
->
->Nikita.
->
->
->  
->
+Aha, I see.
+Ignore this message for now for directories and symlinks.
+This is because when reiserfs calculates number of blocks file would use,
+in case of no quota, reiserfs code does this and can do this precisely
+(up to 512 bytes), but with quota patches applied, quota code takes
+account of blocks used. And it round everything up to blocksize, hence
+the difference. And reiserfsck uses only 1st variant of the code.
+I am not yet sure on how to deal with the issue.
+Just ignore this message for now.
 
-
--- 
-Hans
-
-
+Bye,
+    Oleg
