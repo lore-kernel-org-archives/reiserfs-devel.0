@@ -1,53 +1,67 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: Quota and reiserfs status
-Date: Fri, 07 Jun 2002 09:54:25 -0400
-Message-ID: <200206071354.g57DsPSA003627@turing-police.cc.vt.edu>
-References: <3D00B880.E3A7B770@cri74.org>
+From: "bo" <bo@sosnetwork.net>
+Subject: Re: Mount and file system size issue
+Date: Fri, 7 Jun 2002 08:49:13 -0700
+Message-ID: <000801c20e3a$df840b20$5701a8c0@bomoon>
+References: <8287102CFE5C31418556A13A4E5BEE91E95A77@sphynx.git.compgen.com> <3CFFB2CA.6020300@namesys.com> <001201c20d9e$73e5d070$5701a8c0@bomoon> <20020607112121.C12869@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1913919491P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10670-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10671-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: Your message of "Fri, 07 Jun 2002 15:43:28 +0200."
-             <3D00B880.E3A7B770@cri74.org> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Fabien Salvi <fabien@cri74.org>
-Cc: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
---==_Exmh_1913919491P
-Content-Type: text/plain; charset=us-ascii
+It is our new product.
+When I use ext2fs it mounts 120G filesystem successfully in about 3-4
+seconds,
+but I waited for about an hour with the REISERFS, never came back.
 
-On Fri, 07 Jun 2002 15:43:28 +0200, Fabien Salvi <fabien@cri74.org>  said:
+I know Linux 2.4.5 is far behind from the release. I want to know the reason
+why
+I have this MOUNTproblem for the big FS.
 
-> Is it provided to the near future, or maybe not before the next stable
-> release of lk ?
-> 
-> I've made some benchs and I have no problems.
-> But, can we considere quota support stable enough for production use ?
+Thanks,
 
-It's quite stable - the problem is that if you install the quota patch
-(or have a kernel that includes it), it requires a matching upgrade in
-the user-space quota tools, and there's some resistance to doing that
-mid-kernel-cycle.
--- 
-				Valdis Kletnieks
-				Computer Systems Senior Engineer
-				Virginia Tech
+Bo
+----- Original Message -----
+From: "Oleg Drokin" <green@namesys.com>
+To: "bo" <bo@sosnetwork.net>
+Cc: <reiserfs-list@namesys.com>
+Sent: Friday, June 07, 2002 12:21 AM
+Subject: Re: [reiserfs-list] Mount and file system size issue
 
 
---==_Exmh_1913919491P
-Content-Type: application/pgp-signature
+> Hello!
+>
+> On Thu, Jun 06, 2002 at 02:09:31PM -0700, bo wrote:
+>
+> > I am running the ARM-Linux, which is based on Debian 2.4.5.
+>
+> 2.4.5 is way too outdated for purposes of using reiserfs.
+>
+> > I tried to make and mount the reiserfs on 20G size, it was OK.
+> > However, for 120G size, it is OK to make the file system but
+> > I can not mount it.
+>
+> What do you mean by "cannot mount"?
+> What is the error message if you get one?
+>
+> > Most of time it never come back from "mount -reiserfs ".
+>
+> Ah, so it just mounts, but does very slow.
+> BTW, how you get 120GB on your ARM system?
+> Do you have IDE controller and HDD attached to it or is this something
+> accessed over network?
+>
+> > Is it really a problem of Linux revision?
+> > Should I upgrade my linux to 2.4.13 or above to make the REISERFS work?
+>
+> Upgrading to 2.4.18 is highly advisable.
+>
+> Bye,
+>     Oleg
+>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.6 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQE9ALsRcC3lWbTT17ARAkfsAKDFTsIMPULomhRS39AMPgnZMMqkdgCbBMUo
-q+P/rHmfSKjhb7K+QmEp8lg=
-=4ApH
------END PGP SIGNATURE-----
-
---==_Exmh_1913919491P--
