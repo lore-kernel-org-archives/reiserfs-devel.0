@@ -1,108 +1,193 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiserfs vs NTFS vs WAFL
-Date: Thu, 22 May 2003 19:25:10 +0400
-Message-ID: <3ECCEBD6.7090006@namesys.com>
-References: <003b01c32070$052d59b0$0101a8c0@bummer>
+Subject: Re: Split Trees (my design, similar to binary treaps)
+Date: Thu, 22 May 2003 19:30:16 +0400
+Message-ID: <3ECCED08.2050709@namesys.com>
+References: <20030508042237.35435.qmail@web40007.mail.yahoo.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14203-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14204-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <003b01c32070$052d59b0$0101a8c0@bummer>
+In-Reply-To: <20030508042237.35435.qmail@web40007.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: darren <teodarren@myrealbox.com>
-Cc: 'Ragnar Kjorstad' <reiserfs@ragnark.vestdata.no>, 'reiserfs' <reiserfs-list@namesys.com>, 'Mike Jadon' <mikej@umem.com>
+To: Kevin Bealer <kevinbealer@yahoo.com>
+Cc: reiserfs-list@namesys.com, jmacd <jmacd@cs.berkeley.edu>
 
-darren wrote:
+Forgive me for asking some bonehead questions.....
 
->Hi all,
+Are skip lists height balanced?  (All paths to the leaves are equal?)
+
+Kevin Bealer wrote:
+
+>Here is how 'Split Trees' work.
 >
->Thanx for replying to my mail.
+>Each node has four components; Left, Right,
+>Value, and Level.  Every operation is the same
+>as a 'simple' binary tree except insert and
+>delete.
 >
->I am doing some tests on this three FS now (to see if we would want to
->spend $$$$$ on a netapp).
+>Need to preserve two invariants:
+>  1. Basic binary tree ordering invariant.
+>  2. No node's level is higher than its parent's.
 >
->My test is based on the simultaneous creation and deletion of small
->files 50Kb, as per my actual usage of the file server for my application
->servers.
+>Insert:
 >
->My main problem with using Linux/Reiserfs3 is with the performance of
->Samba when under heavy load. CIFS operation is required as some of our
->application servers are windows based. Netapp's CIFS performance is
->really incredible.
+>Basically, you select a 'level' for each node,
+>the same way you would in a skip list, i.e. half
+>the nodes are level 0, half the remaining are
+>level 1; 2^32 nodes implies 32 different levels.
 >
->With NFS, we can sometimes beat the netapp F87 with a
->Linux/ReiserFs/RAID0 config with the same number of harddisk.
+How do you determine which level a node is?
+
+>No 'maximum level' has to be chosen initially.
 >
-This really surprises me.  Be sure to turn tails off when doing a purely 
-performance benchmark with V3.
+>If the node level is zero, insertion is exactly
+>the same as a 'simple' binary tree - traverse to
+>the bottom of the tree and attach to one side of
+>a bottom level leaf node.
+>
+>Insertions of other nodes are more complex,
+>because that is where balancing is done.
+>
+>Given a new node with value V and level N,
+>traverse down the tree until you get to a node
+>whose level is LESS than N.
+>
+>To preserve the invariant, insert the new node
+>ABOVE the node which is of a lower level.
+>
+Interesting.  Also, this suggests that skip lists are not height 
+balanced.....?
+
+What is the average fan-out?  Is all data in leaves and are all pointers 
+in internal nodes?
 
 >
->Will post more details when I thru with it.
+>(If you look at only the subset of nodes of the
+>same or higher level as the new node, they form
+>a normal binary tree, rooted at the "top" node.
+>We are inserting a new leaf a the bottom of this
+>'subset' tree.)
 >
->In the mean time, will really appreciate any suggestions to improving
->Samba's performance in order to make a CIFS file server based on
->Linux/Reiser/Samba possible.
 >
-Sponsor a guy to work on it.;-)  Sorry, I know that you are probably 
-much smaller than mp3.com and can't really cost justify that.  For a 
-long time we have known that it would be nice to have someone tweak 
-samba for reiserfs, but there is no funding for it (which is odd 
-considering the practical/commercial import of such work).
+>Now we have the problem: what to do with the
+>node which we are inserting ABOVE.  We split it
+>into two halves - nodes which are less than (or
+>equal to) the new node in value, and nodes which
+>are higher in value.  This preserves the order
+>of the tree of course.
+>
+>Suprisingly, splitting a binary tree is very
+>easy and can be done in O(ln n) time.
+>
+Why does splitting of a tree not a node occur?
 
 >
->-----Original Message-----
->From: Hans Reiser [mailto:reiser@namesys.com] 
->Sent: Thursday, May 22, 2003 2:14 AM
->To: darren
->Cc: 'reiserfs'; Mike Jadon
->Subject: Re: reiserfs vs NTFS vs WAFL
+>The split algorithm is conceptually simple.
+>There are two sides of the subtree which is
+>being split, the left half, and the right half,
+>with a jagged line down the middle.  This jagged
+>line will follow the pointers (edges) which we
+>would follow if we were to insert the new node
+>at the actual bottom-level leaf.
 >
->darren wrote:
+>Now I introduce several terms: the left-receiver
+>and the right-receiver.  The left receiver is
+>where we attach nodes with values less than or
+>equal to V and the right is where we attach
+>nodes with values greater than V.  OLDTREE is
+>the tree we are splitting (it was attached where
+>newnode is now attached).  The 'disputed area'
+>is the subtree which contains nodes that may
+>belong in the left or right reciever.
 >
->  
 >
->>Hi all,
->>
->>I wonder if there are any papers or benchmarks that compare the
->>performance and architectural differences between reiserfs, NTFS and
->>WAFL (NetApp's Write Anywhere File Layout)?
->>
->>Any help will be great.
->>
->>Regards
->>darren
->>
->>
->>
->> 
->>
->>    
->>
->I regret to say that all I can do is point you to my LinuxTag paper at 
->www.namesys.com/v4/reiser4_the_atomic_filesystem.html, and give you my 
->informal opinion that NTFS sucks but has improved a lot, and WAFL is 
->great for NFS.
+>At first, the left receiver is the Left side of
+>the NEWNODE, the right receiver is the RIGHT
+>side.  We attach the OLDTREE to whichever side
+>it belongs to (based on its value).
 >
->I'd be curious to see mongo numbers on NTFS if anyone has the energy.
+>If OLDTREE->value is less than V, attach OLDTREE
+>to NEWNODE->left.  Then we need to split the new
+>'disputed area', which is OLDTREE->right, over
+>the new left and right receivers.  The right
+>receiver is still the same, but now the left
+>receiver is OLDTREE->right.
 >
->Most people comparing WAFL and ReiserFS look at the price per GB and we 
->win without the benchmark ever being run.  mp3.com for instance 
->sponsored us so that they could save $22 million on Netapps and Suns. 
+>If the OLDTREE->value is greater than V, we do
+>the symmetric operation (switch R & L in the
+>paragraph above).
 >
->I would expect WAFL to beat Linux/NFS/ReiserFS V3/RAID because that is 
->their niche and they are sharp and I bet their zero copy NFS code is 
->better than Linux's, but no one knows for real.  I would be curious to 
->see Reiser4 benchmarked against WAFL when we are done, especially if you
+>When you reach a NULL value for OLDTREE, you are
+>done - the division is complete.
 >
->toss in some cards from umem that Mike sells.  ReiserFS might save some 
->disk space compared to WAFL.
+>There is a tiny wrinkle -- At first the left
+>receiver is the "left" pointer of NEWNODE, but
+>once a left-attachment is made, it is always a
+>"right" pointer, and vice versa.  Therefore,
+>there are four almost-identical "Split"
+>functions.
+>SplitLR() - calls down to SplitRR if it makes a
+>    Left attachment, otherwise calls SplitLL.
 >
->I would expect NetApp to just blow away any NTFS server.... but I 
->haven't measured it.
+>SplitRR() - recurses to SplitRR if it makes a
+>    Left attachment, otherwise calls SplitRL.
+>
+>SplitLL() - calls SplitRL if it makes a Right
+>    attachment, otherwise recurses to SplitRL.
+>
+>SplitRL() - always recurses to itself, because
+>    an attachment had been made to both sides
+>    of NEWNODE.
+>
+>Actually, in the code the recursion has mostly
+>been removed because it was so easy to do.
+>
+>
+>Delete:
+>
+>I haven't written the code for this yet, but
+>it should be trivial.
+>
+>Deletion is basically the same as with a
+>'simple' binary tree.  Basically, replace the
+>node with the highest-valued node not higher
+>than V; or with the lowest-valued node not lower
+>than V.
+>
+>The only trick is that you need to promote the
+>moved node to whatever level the deleted node
+>was, by assigning the deleted node's level to
+>its 'level' variable.
+>
+>After a lot of deletion, the tree could become
+>biased with a lot of high level nodes.  This
+>is easy to prevent - when traversing the tree
+>during deletion, if you see a leaf node, lower
+>its level to zero (which is always a legal thing
+>to do).
+>
+>For non-leaf nodes, demote them by one level if
+>they are 2 or more levels above both children.
+>This will 'comb out' the inequality, in an
+>amortized way.
+>
+>I'll follow up with the code and an example
+>in two more emails.
+>
+>
+>Kevin
+>
+>
+>
+>__________________________________
+>Do you Yahoo!?
+>The New Yahoo! Search - Faster. Easier. Bingo.
+>http://search.yahoo.com
+>
 >
 >  
 >
