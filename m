@@ -1,46 +1,79 @@
-From: Pallavi Dalya <pallavidalya@yahoo.com>
-Subject: reading data blocks in reiser4
-Date: Thu, 23 Dec 2004 05:52:21 -0800 (PST)
-Message-ID: <20041223135221.98517.qmail@web60110.mail.yahoo.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: reiserfs bug fix: do not clear MS_ACTIVE mount flag
+Date: Thu, 23 Dec 2004 18:33:31 +0300
+Message-ID: <1103816009.3529.130.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; boundary="0-646277194-1103809941=:98444"
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-22892-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="=-fS9+cARK/p7wgIZYaHY1"
+Return-path: <reiserfs-list-return-22893-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+To: Andrew Morton <akpm@osdl.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
 
---0-646277194-1103809941=:98444
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+--=-fS9+cARK/p7wgIZYaHY1
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-hello,
- what are the internal operations to read a file in reiser4 ..
-i understand that the semantic layer converts the name into key of an object(this key is received from the directory entry) and the storage layer searches for the node in the tree. also all the data of the file is stored in the unformatted leaf and only the tails of the files is stored in the items (the tail policy plugins).  
-Also the key leads us to the stat data of a file for accessing the permission of the file and it gives us the offset of the actual data...is this offset a address of the node where the files direct and indirect data is stored ?
+Hello
 
-what role does a inode play in the complete process?
+Andrew, please apply this reiserfs bug fix.
+
+--=-fS9+cARK/p7wgIZYaHY1
+Content-Disposition: attachment; filename=reiserfs-do-not-clear-MS_ACTIVE.patch
+Content-Type: text/plain; name=reiserfs-do-not-clear-MS_ACTIVE.patch; charset=KOI8-R
+Content-Transfer-Encoding: 7bit
+
+
+When CONFIG_QUOTA is defined reiserfs's finish_unfinished sets and clears
+MS_ACTIVE bit in s_flags field of super block. If that bit was set already
+it should not be set.
+
+
+ fs/reiserfs/super.c |   13 ++++++++++---
+ 1 files changed, 10 insertions(+), 3 deletions(-)
+
+diff -puN fs/reiserfs/super.c~reiserfs-do-not-clear-MS_ACTIVE fs/reiserfs/super.c
+--- linux-2.6.10-rc3-mm1/fs/reiserfs/super.c~reiserfs-do-not-clear-MS_ACTIVE	2004-12-23 18:22:06.568755520 +0300
++++ linux-2.6.10-rc3-mm1-vs/fs/reiserfs/super.c	2004-12-23 18:22:06.576756006 +0300
+@@ -158,6 +158,7 @@ static int finish_unfinished (struct sup
+     int truncate;
+ #ifdef CONFIG_QUOTA
+     int i;
++    int ms_active_set;
+ #endif
+  
+  
+@@ -168,7 +169,12 @@ static int finish_unfinished (struct sup
  
-Pallavi
+ #ifdef CONFIG_QUOTA
+     /* Needed for iput() to work correctly and not trash data */
+-    s->s_flags |= MS_ACTIVE;
++    if (s->s_flags & MS_ACTIVE) {
++	    ms_active_set = 0;
++    } else {
++	    ms_active_set = 1;
++	    s->s_flags |= MS_ACTIVE;
++    }
+     /* Turn on quotas so that they are updated correctly */
+     for (i = 0; i < MAXQUOTAS; i++) {
+ 	if (REISERFS_SB(s)->s_qf_names[i]) {
+@@ -276,8 +282,9 @@ static int finish_unfinished (struct sup
+             if (sb_dqopt(s)->files[i])
+                     vfs_quota_off_mount(s, i);
+     }
+-    /* Restore the flag back */
+-    s->s_flags &= ~MS_ACTIVE;
++    if (ms_active_set)
++	    /* Restore the flag back */
++	    s->s_flags &= ~MS_ACTIVE;
+ #endif
+     pathrelse (&path);
+     if (done)
 
+_
 
-		
----------------------------------
-Do you Yahoo!?
- Read only the mail you want - Yahoo! Mail SpamGuard.
---0-646277194-1103809941=:98444
-Content-Type: text/html; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+--=-fS9+cARK/p7wgIZYaHY1--
 
-<DIV>
-<DIV>hello,<BR>&nbsp;what are the internal operations to read a file in reiser4 ..</DIV>
-<DIV>i understand that the semantic layer converts the name into key of an object(this key is received from the directory entry)&nbsp;and the storage layer searches for the node in the tree. also&nbsp;all the data of the&nbsp;file is stored in the&nbsp;unformatted leaf and only the tails of the files is stored in the items (the tail policy plugins).&nbsp;&nbsp;</DIV>
-<DIV>Also the key leads us&nbsp;to the stat data of a file for accessing the permission of the file and it gives us the offset of the actual data...is this offset a address of the node where the files direct and indirect data is stored ?<BR><BR>what role does a inode play in the complete process?</DIV>
-<DIV>&nbsp;</DIV>
-<DIV>Pallavi</DIV></DIV><p>
-		<hr size=1>Do you Yahoo!?<br> 
-Read only the mail you want - <a href="http://us.rd.yahoo.com/mail_us/taglines/spamguard/*http://promotions.yahoo.com/new_mail/static/protection.html">Yahoo! Mail SpamGuard</a>.
---0-646277194-1103809941=:98444--
