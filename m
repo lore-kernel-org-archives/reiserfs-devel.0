@@ -1,58 +1,55 @@
-From: kisanak@cbn.net.id
-Subject: reiserfs_panic error.
-Date: Wed, 7 Jul 2004 11:37:18 +0700
-Message-ID: <20040707043718.GA10504@cbn.net.id>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: a hosed reiserfs
+Date: Wed, 7 Jul 2004 08:54:20 +0300
+Message-ID: <20040707055420.GI4990@nysv.org>
+References: <3DF9165145FACB4C96977FF650C1E9040C46A168@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19537-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19538-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
+In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C46A168@its-mail1.its.corp.gwl.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: "Burnes, James" <james.burnes@gwl.com>
+Cc: redeeman@metanurb.dk, Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-I just found this error in one of my box, I'm not sure wether it's an hardware 
-problem ( http://www.uwsg.iu.edu/hypermail/linux/kernel/0404.2/0251.html ) or
-just a bug (I still haven't investigate the hardware yet).
+On Tue, Jul 06, 2004 at 04:40:31PM -0600, Burnes, James wrote:
+>
+>I would assume there is some money in there.  They do seem to fund
+>various opensource activities.
 
-I use RH7,1 kernel 2.4.18 with reiserfsprogs 3.x.0k-pre8
+As in events? Or really active software development?
 
-Many Thanks.
+Well, Reiser4 has some stuff that's yet todo and some stuff that'd
+be nice to have and maybe even a bug or two, so I guess all money
+would be welcome...
 
-journal-601, buffer write failed
-------------[ cut here ]------------
-kernel BUG at fs/reiserfs/prints.c:339!
-invalid operand: 0000 [#1]
-CPU:    1
-EIP:    0060:[<c01ebe88>]    Not tainted
-EFLAGS: 00010286
-EIP is at reiserfs_panic+0x38/0x70
-eax: 00000024   ebx: f72f9c00   ecx: c03f0054   edx: 00000286
-esi: f8bdd398   edi: 00000000   ebp: 00000000   esp: f7a69dc8
-ds: 007b   es: 007b   ss: 0068
-Process pdflush (pid: 12, threadinfo=f7a68000 task=f7a7ece0)
-Stack: c03a009c c04db8e0 f8bdd398 f7809a80 c01f7c8e f72f9c00 c03afee0 00000000
-       00001000 00000003 00000006 00000004 00000000 db1289d4 00000000 0000003f
-       00000004 00000002 c01fc5a1 f72f9c00 f8bdd398 00000001 00001000 c01fae87
-Call Trace:
- [<c01f7c8e>] flush_commit_list+0x30e/0x4b0
- [<c01fc5a1>] do_journal_end+0x641/0xcd0
- [<c01fae87>] do_journal_begin_r+0x267/0x2a0
- [<c01fb7fc>] flush_old_commits+0x13c/0x1e0
- [<c01e8a83>] reiserfs_write_super+0x93/0xb0
- [<c016a60b>] sync_supers+0xcb/0xf0
- [<c0148dde>] wb_kupdate+0x4e/0x140
- [<c0120c83>] schedule+0x383/0x6f0
- [<c0149509>] __pdflush+0x109/0x230
- [<c0149630>] pdflush+0x0/0x20
- [<c014963f>] pdflush+0xf/0x20
- [<c0148d90>] wb_kupdate+0x0/0x140
- [<c01092e4>] kernel_thread_helper+0x0/0xc
- [<c01092e9>] kernel_thread_helper+0x5/0xc
+If the tail-packing bug would be fixed, or whatever remains, it'd
+be great if Namesys wrote the online (profiling) repacker/resizer/fsck(?)
+program to generate money. 
 
-Code: 0f 0b 53 01 55 56 3a c0 b8 68 52 3a c0 8d 93 24 01 00 00 85
- <3>scsi0 (2:0): rejecting I/O to offline device
+This would be even better if cryptcompress work would be done at the same 
+time, since that's something people look forward to and something that's 
+not quite there yet. Cryptcompress might be one reason for people to move
+to Reiser4 and thus more buyers for the repacker.
+
+Since feature-wise I don't see Reiser4 that lacking. Maybe the biggest issue
+is of course viewports, but since that's coming by DARPA, there's stuff
+like copy-on-capture and chdir to a non-executable file and syscalls.
+But nothing mission critical or half-broken. Right?
+
+>Maybe filling out an app for grant would be good.  Is there an available
+>non-profit wrapper around Reiser4?  There must be some sort of shell for
+>the DARPA funding to have happened.
+
+Non-profit wrapper? You mean some non-profit "welfare" organization?
+Why can't DARPA fund a company?
+Or did/will they donate countless units of money through WorldPay? ;)
+
+-- 
+mjt
 
