@@ -1,51 +1,54 @@
-From: rwhron@earthlink.net
-Subject: oops from 2.5.42-mm3 running lilo on reiserfs
-Date: Tue, 15 Oct 2002 23:14:40 -0400
-Message-ID: <20021016031440.GA257@rushmore>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: back up to disk
+Date: Wed, 16 Oct 2002 00:05:09 -0400
+Message-ID: <200210160405.g9G459CH002638@turing-police.cc.vt.edu>
+References: <20021015224213.4BBAA1AEC13E@server5.fastmail.fm>
+            <3DACBDB5.9020303@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11707-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_-29476938P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11708-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: Your message of "Wed, 16 Oct 2002 05:15:33 +0400."
+             <3DACBDB5.9020303@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: akpm@digeo.com
-Cc: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-AMD Athlon 1333
-1GB (highmem enabled)
-IDE disk
-reiserfs filesystems
+--==_Exmh_-29476938P
+Content-Type: text/plain; charset=us-ascii
 
-While running lilo I got this oops:
+On Wed, 16 Oct 2002 05:15:33 +0400, Hans Reiser said:
 
- kernel BUG at mm/highmem.c:177!
- invalid operand: 0000
+> What I had heard was that they generally slowed peformance, but maybe my 
+> info is old.
 
- CPU:    0
- EIP:    0060:[<c01325cf>]    Not tainted
- EFLAGS: 00010246
- EIP is at kunmap_high+0xf/0x80
- eax: 00000000   ebx: c195fe70   ecx: c037bb1c   edx: c037bb14
- esi: 00000a00   edi: f6b31df4   ebp: 00001000   esp: f6b63f3c
- ds: 0068   es: 0068   ss: 0068
- Process lilo (pid: 810, threadinfo=f6b62000 task=f7435940)
- Stack: c195fe70 00000a00 c0111f5b c017c633 c195fe70 00000001 f6b31df4 f737d3c0
-        00000001 f6b31e50 00000000 c017c560 f6b31df4 f737d3c0 c01448e8 f6b31df4
-        f737d3c0 4004cd01 00000001 4004cd01 ffffffe7 f737d3c0 00000001 c0144aeb
- Call Trace:
-  [<c0111f5b>] kunmap+0x2b/0x30
-  [<c017c633>] reiserfs_unpack+0xc3/0x108
-  [<c017c560>] reiserfs_ioctl+0x20/0x30
-  [<c01448e8>] file_ioctl+0x148/0x160
-  [<c0144aeb>] sys_ioctl+0x1eb/0x220
-  [<c0106e0b>] syscall_call+0x7/0xb
-
-
+Even back in the days when an IBM RS6000-220 (66mz 601 chipset) was a "new"
+machine, I found it actually gave a 20-30% total throughput boost, because
+even if the CPU wasn't blazing fast, it was faster to read 3-5 512 byte
+blocks off the disk and decompress them to get a 4K filesystem block than
+it was to actually read all 8 512-byte blocks.  Among other things, you
+get back half your disk throughput, so you can sustain twice the I/Os....
 -- 
-Randy Hron
-http://home.earthlink.net/~rwhron/kernel/bigbox.html
+				Valdis Kletnieks
+				Computer Systems Senior Engineer
+				Virginia Tech
 
+
+--==_Exmh_-29476938P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQE9rOV1cC3lWbTT17ARAp1/AJkBVZL9+IYuGV8/O9WpTMGdqXiqvQCg1wEc
+FEBlMoWL8n2W6CwjJ6PbLOI=
+=LvVR
+-----END PGP SIGNATURE-----
+
+--==_Exmh_-29476938P--
