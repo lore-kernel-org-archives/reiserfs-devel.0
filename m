@@ -1,37 +1,57 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiser4 status: benchmarked vs. V3 (and ext3)
-Date: Mon, 28 Jul 2003 17:48:53 +0400
-Message-ID: <3F2529C5.9050401@namesys.com>
-References: <3F1EF7DB.2010805@namesys.com>	 <1059062380.29238.260.camel@sonja>	 <16160.4704.102110.352311@laputa.namesys.com>	 <1059093594.29239.314.camel@sonja>	 <16161.10863.793737.229170@laputa.namesys.com>	 <1059142851.6962.18.camel@sonja>  <3F23CCBC.9070600@namesys.com>	 <1059315409.10692.215.camel@sonja>  <3F251A97.9010409@namesys.com> <1059397619.31053.27.camel@sonja>
+From: Grant Miner <mine0057@mrs.umn.edu>
+Subject: Autoconf error
+Date: Mon, 28 Jul 2003 11:54:27 -0500
+Message-ID: <3F255543.8010409@mrs.umn.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15096-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15097-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1059397619.31053.27.camel@sonja>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Daniel Egger <degger@fhm.edu>
-Cc: Nikita Danilov <Nikita@Namesys.COM>, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, reiserfs mailing list <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-So, in summary, reiser4 will do a good job of flushing in large batches 
-using large bios, and that is most of what you can do to optimize for 
-large erase size.
+Hi!
+I am trying to compile reiser4progs from bk; I run 'prepare' and get 
+this output
 
-Things that could be added: improved compression for small files, 
-garbage collection based freeing of unused blocks, increasing node size 
-to equal erase size.
+$ ./prepare
+Running aclocal...
+Running autoheader...
+Running autoconf...
+configure.in:44: error: possibly undefined macro: dnl
+      If this token and others are legitimate, please use m4_pattern_allow.
+      See the Autoconf documentation.
+configure.in:48: error: possibly undefined macro: AC_CHECK_LIB
+configure.in:49: error: possibly undefined macro: AC_MSG_ERROR
+configure.in:54: error: possibly undefined macro: AC_CHECK_HEADER
+configure.in:58: error: possibly undefined macro: AC_MSG_CHECKING
+configure.in:60: error: possibly undefined macro: AC_TRY_LINK_FUNC
+configure.in:61: error: possibly undefined macro: AC_MSG_RESULT
+configure.in:73: error: possibly undefined macro: AC_TRY_RUN
 
-We can add such features for a fee, or you can code them yourself and 
-send us a patch.
+then run configure and get:
 
-If I am wrong about compact flashes all having hardware wear leveling so 
-that FAT can be used on them, then you can add wear leveling to the list 
-of features desirable.
+$ ./configure
+checking build system type... i686-pc-linux
+checking host system type... i686-pc-linux
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether build environment is sane... yes
+checking whether make sets $(MAKE)... yes
+checking for working aclocal-1.4... found
+checking for working autoconf... found
+checking for working automake-1.4... found
+checking for working autoheader... found
+checking for working makeinfo... found
+./configure: line 1827: syntax error near unexpected token `;;'
+./configure: line 1827: `        ;;'
 
--- 
-Hans
+
+$ autoconf --version
+autoconf (GNU Autoconf) 2.57
+
+any ideas?
 
 
