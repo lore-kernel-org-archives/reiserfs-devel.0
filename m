@@ -1,32 +1,58 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Reiserfs broken in 2.5.50 (possibly nanosecond stat timefields?)
-Date: Mon, 2 Dec 2002 09:16:18 +0300
-Message-ID: <20021202091618.B17070@namesys.com>
-References: <20021130.114825.78703224.hoho@tacomeat.net> <20021130200614.A7766@namesys.com> <200212012145.48864.tomlins@cam.org>
+From: Howard Shane <ozymandias@charter.net>
+Subject: bug report
+Date: Mon, 02 Dec 2002 13:40:21 -0600
+Message-ID: <3DEBB725.4070907@charter.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12084-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12085-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200212012145.48864.tomlins@cam.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ed Tomlinson <tomlins@cam.org>
-Cc: Colin Slater <hoho@tacomeat.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Hello!
+Hi,
 
-On Sun, Dec 01, 2002 at 09:45:48PM -0500, Ed Tomlinson wrote:
-> > Just to make sure, does this patch helps?
-> This also cleared up boot problems I was having with 2.5.50.
+Your warning displayed when starting reiserfsck recommended a bug report 
+when the program exits with an error or fails. I have a Maxtor 60 gb 
+drive that I have had problems with for the last couple of days. Upon 
+accessing a certain directory, whatever program I'm using (ls, file 
+manager, dump) freezes, at which point I can't access anything on the 
+mountpoint.  I get the following error on running reiserfsck (debian 
+reiserfsprogs 3.6.4):
 
-Welcome to the joys of unstable kernel ;)
-The bug was introduced into generic kernel during some recent cleanups
-and that was not reiserfs bug by itself, but it broke pretty much of stuff
-everywhere.
+    reiserfsck --check started at Mon Dec  2 13:22:46 2002
+    ###########
+    Replaying journal..
+    0 transactions replayed
+    Checking internal tree../ 86 (of  88)/ 23 (of 170)
+    The problem has occurred looks like a hardware problem.
+    Check your hard drive for badblocks.
 
-Bye,
-    Oleg
+    bread: Cannot read the block (22148).
+
+When trying --rebuild-tree:
+
+    reiserfsck --rebuild-tree started at Mon Dec  2 13:28:59 2002
+    ###########
+
+    Pass 0:
+    Loading on-disk bitmap .. ok, 4893046 blocks marked used
+    Skipping 8656 blocks (super block, journal, bitmaps) 4884390 blocks 
+will be read
+    0%                                                         left 
+4884389, 0 /se                                                      left 
+4873744, 5323 /sec
+
+...at which point reiserfsck freezes completely. I have already backed 
+up the data on this disk, so I don't need any support, and since it 
+looks like a hardware problem I will try reformatting the disk next. 
+Hope this info is of some help.
+
+PS, I have used ext2, ext3 and xfs and think that Reiserfs is by far the 
+best high performance filesystem out there. Keep up the great work.
+
+hs
+
