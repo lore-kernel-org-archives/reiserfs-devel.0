@@ -1,45 +1,59 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: big problem with loop-aes and reiserfs partitions
-Date: Mon, 23 Dec 2002 10:18:43 +0300
-Message-ID: <20021223101843.A21249@namesys.com>
-References: <5.2.0.9.2.20021222221057.01cfeb90@pop.tvnet.hu>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: reiserfsck --rebuild-tree on a big filesystem
+Date: Mon, 23 Dec 2002 10:54:58 +0300
+Message-ID: <3E06C152.8020909@namesys.com>
+References: <20021125143634.GC9006@mail.cekit.cz> <20021125143634.GC9006@mail.cekit.cz> <20021125174846.A31778@namesys.com> <atsteb$44s$1@genki.hungrycats.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12192-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12193-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <5.2.0.9.2.20021222221057.01cfeb90@pop.tvnet.hu>
+In-Reply-To: <atsteb$44s$1@genki.hungrycats.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Newsmail <newsmail@satimex.tvnet.hu>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Zygo Blaxell <eazgwmir@umail.furryterror.org>
+Cc: reiserfs-list@namesys.com, Oleg Drokin <green@namesys.com>
 
-Hello!
+Zygo Blaxell wrote:
 
-On Sun, Dec 22, 2002 at 10:21:37PM +0100, Newsmail wrote:
-> when I was using 2.4.19 I had no problem at all. when Oleg introduced the 
-> new block allocation algorithm in 2.4.20-preX I tried it out and I got the 
-> same problems that I'm having now with 2.4.20 final. In the 2.4.20-preX 
+>This thread is rather old, but I have basically the same problem...
+>
+>In article <20021125174846.A31778@namesys.com>,
+>Oleg Drokin  <green@namesys.com> wrote:
+>  
+>
+>>On Mon, Nov 25, 2002 at 03:36:34PM +0100, Mira Temp?r wrote:
+>>    
+>>
+>>>my setup:
+>>>linux 2.4.18 SMP, HW RAID5, nearly full 240GB reiserfs of mostly small files,
+>>>reiserprogs 3.6.4.
+>>>With advice to run --rebuild-tree.
+>>>      
+>>>
+>
+>Mine:
+>
+>Linux 2.4.18 UP (SMP kernel), SW RAID0 and linear, nearly full 160GB
+>reiserfs of mostly small files, reiserfsprogs 1:3.6.3-1 (Debian).  I had
+>two machines go through a power failure while doing lots of concurrent
+>hard links and deletes.  The linear system survived apparently intact,
+>while the RAID0 system had the usual "stat Permission denied"
+>problem.
+>
+>This has happened a number of times before on a variety of systems
+>(it seems to be reiserfs's most common failure mode).  The events are
+>very similar each time.  AFAICT you just have to set up a reiserfs on
+>some kind of RAID system and let it run through a few power failures to
+>reproduce the problem.
+>
+>  
+>
+Oleg, please reproduce this.  It is not acceptable....
 
-Too bad you have not reported it back then.
+Thanks for the report Zygo.
 
-> the same results. so the problem is: when I'm copying huge amount of data 
-> on the encrypted filesystem first ssh seems to hang, I reconnect and the 
+Hans
 
-How much is this "huge"? Can it be compared in size with total fs capacity?
-Is it one file of that size or is it lots of files of smaller size?
-
-> of this clear reboot is impossible, I have to make a cold reboot. I'm sure 
-> that drives doesnt have a problem at all, hardware is in good condition. In 
-> the past I was able to reproduce those problems on more than one machines, 
-> I'm sure I could do this this time, or that you will be able too :) or I 
-> hope so.
-
-I am going to try and reproduce it now. If I won;t be able to, I will
-ask more questions.
-
-Bye,
-    Oleg
