@@ -1,69 +1,64 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiserfs with Samba vs NetApp Filer
-Date: Sun, 13 Oct 2002 01:55:03 +0400
-Message-ID: <3DA89A37.2070801@namesys.com>
-References: <Pine.LNX.4.33L2.0210100853240.1670-100000@localhost.localdomain> <200210121052.22603.bofh@coker.com.au> <20021012150028.G14731@vestdata.no> <200210121600.39712.bofh@coker.com.au>
+Subject: Re: Linux v2.5.42
+Date: Sun, 13 Oct 2002 02:19:41 +0400
+Message-ID: <3DA89FFD.6010803@namesys.com>
+References: <200210122220.29381.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11665-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11666-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Russell Coker <bofh@coker.com.au>
-Cc: =?ISO-8859-1?Q?Ragnar_Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>, reiserfs-list@namesys.com
+To: =?ISO-8859-15?Q?Dieter_N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Cc: Linux Kernel List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Russell Coker wrote:
+Dieter N=FCtzel wrote:
 
->On Sat, 12 Oct 2002 15:00, Ragnar Kj=F8rstad wrote:
-> =20
->
->>>I think that's about to change (if it hasn't already).  3ware sells RAID
->>>controllers that do 8 or 12 drives.  200G ATA drives are now on sale, and
->>>320G drives will be available soon.
->>>
->>>12 * 320G should solve the disk space issue for most people...
+>>>>Should EVMS be included, the team will make it our top priority to
+>>>>resolve the disputed design issues. If the ruling should be that some of
+>>>>our design decisions must change, so be it, we will comply. Certainly
+>>>>some changes can not be done by the 20th or 31st, however I feel
+>>>>the team can handle most changes before 2.6 ships.
+>>>>       =20
+>>>>
+>>>Thats good to hear. Right now the debate appears to be - "users: please
+>>>add EVMS" "hackers: oh my god no" - so you got the feature set right it
+>>>seems
 >>>     =20
 >>>
->>The disk-space / cabeling-issue is mostly an IDE-problem anyway. If you
->>go SCSI/FC there is practically no limit on how much storage you can put
->>on a single server. (performance-issues aside)
+>>Obvious point:
 >>
->>Sure, IDE is less expensive, but when comparing to NetApp there is
->>plenty of room to go for SCSI/FC - so diskspace should defenitively not
->>be an argument for going for NetApp.
+>>* Linus can always thaw the tree after 31st just for one addition, if
+>>something _really_ needs to be added for 2.6
 >>   =20
 >>
 >
->Actually the problem then becomes case space.  On the linux IDE arrays lis=
-t=20
->there are a few people having 2 or more 3ware cards, they have 16 or more =
-IDE=20
->drives in a system.  With 24 inch cables they can get by with regular IDE =
-
->cabling (and S-ATA will solve this properly soon).  3ware cards allow supp=
-ort=20
->for enough disks.  The problem then becomes what to house the disks in and=
-=20
->how to supply enough power.
+>Beside EVMS there is another one: Reiser4
+>Getting such an FS "for free" is worth it.
+>http://www.namesys.com/v4/v4.html
 >
->Here's the URL for subscribing to the IDE arrays list, I think that many=20
->people here will be interested (Ragnar - you might want to make 3ware not =
-be=20
->the only IDE RAID hardware that's supported on the list).
->http://lists.math.uh.edu/cgi-bin/mj_wwwusr
+>Hans, can you please send a summary of the "new" FS limits?
+>PB/EB, etc.? ;-)
+>
+>Regards,
+>	Dieter
 >
 > =20
 >
-When I referred to disk space bound, I meant that users rarely have as=20
-many gigabytes as they need given the dollars that they are willing to=20
-spend.  One can always buy three servers if case space is limited.
+The new size limits are those of the Linux VFS layer (we use 64 bit=20
+numbers most places so that if we port to another architecture, or ia64=20
+becomes viable....).   I don't think anyone will find them motivating. =20
 
-Someday not too long from now, it will look like one filesystem even=20
-though it is in multiple cases.  Whether that is in reiser5 or reiser6=20
-depends on what sponsors fund first.
+Dramatic performance gains while offering transactional FS operations=20
+(wandering logs work, woohoo!), plugins, scalability due to per node=20
+locking, obsoleting a whole slew of traditional database tree algorithms=20
+for better performance, those are motivating.  Wait for Linux Journal to=20
+come out, it will have the benchmarks, and you'll see what I mean by=20
+dramatic.   It will be good enough that we can focus mostly on getting=20
+the semantics in place for the competition with OFS.
 
 Hans
 
