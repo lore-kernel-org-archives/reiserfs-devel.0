@@ -1,45 +1,81 @@
-From: Will Dyson <will_dyson@pobox.com>
+From: Jan Harkes <jaharkes@cs.cmu.edu>
 Subject: Re: silent semantic changes with reiser4
 Date: Thu, 26 Aug 2004 12:32:34 -0400
-Message-ID: <412E10A2.1020801@pobox.com>
-References: <20040824202521.GA26705@lst.de>	<412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com>
+Message-ID: <20040826163234.GA9047@delft.aura.cs.cmu.edu>
+References: <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826044425.GL5414@waste.org> <1093496948.2748.69.camel@entropy> <20040826053200.GU31237@waste.org> <20040826075348.GT1284@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20719-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20720-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <412D9FE6.9050307@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <20040826075348.GT1284@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Markus =?iso-8859-1?Q?T=F6rnqvist?= <mjt@nysv.org>
+Cc: Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Hans Reiser wrote:
+On Thu, Aug 26, 2004 at 10:53:48AM +0300, Markus   T=F6rnqvist wrote:
+> On Thu, Aug 26, 2004 at 12:32:00AM -0500, Matt Mackall wrote:
+> >What it breaks is the concept of a file. In ways that are ill-defined,
+> >not portable, hard to work with, and needlessly complex. Along the
+> >way, it breaks every single application that ever thought it knew what
+> >a file was.
+>=20
+> It breaks the concept of a file. In ways that offer more versatility,
+> challenge the imagination to make even better progress and keeps
+> Linux competing with competitors who are implementing this stuff
+> as we speak.
 
-> Andrew, we need to compete with WinFS and Dominic Giampaolo's filesystem 
-> for Apple, and that means we need to put search engine and database 
-> functionality into the filesystem.  It takes 11 years of serious 
+Sigh, it really isn't all that groundbreaking. The only special feature
+is the fact that it introduces directory hardlinks.
 
-Hans,
+Just turn the phrase 'file-as-dir' around and you might see the point.
+As far as userspace is concerned the implementation would behave 99%
+identical if we provided a 'dir-as-file' semantics. i.e. opening a
+directory without 'O_DIRECTORY' would return a filehandle to a default
+file within the directory. Something like open("/path/to/dir", O_RDONLY)
+would be translated to open('/path/to/dir/_contents', O_RDONLY).
 
-I'm very curious about your ideas on how to put search engine and 
-database functionality into the filesystem. Although I've let the Befs 
-filesystem driver largely stagnate over the past two years, from time to 
-time I think about the problem of exporting to userspace the attribute 
-indexes that BeFS keeps on disk.
+So I could simply replace all my files with directories and move the
+original file contents into a '_contents' file. Applications can still
+open them by the same name, although the attributes would look a bit
+different. Poof, we have the same file-as-dir concept, but now we play
+fair with the existing VFS and don't introduced races/deadlocks and
+other issues. Also existing backup tools will be able to back up and
+restore these 'streams'.
 
-In the original BeOS, they solved the problem by having the filesystem 
-driver itself take a text query string and parse it, returning a list of 
-inodes that match. The whole business of parsing a query string in the 
-kernel (let alone in the filesystem driver) has always seemed ugly to 
-me. However, the best alternative I've come up with is to simply export 
-the index data as a special file (perhaps in sysfs?) and have userspace 
-responsible for searching the index. That would probably work, but it 
-wouldn't help other filesystems that implement even a different index 
-format, much less a different form of extra searchability.
+(btw. the same could be implemented completely in userspace, for
+instance in glibc. Whenever an open call gets an EISDIR error, simply
+retry the open, but this time with /_contents appended).
 
--- 
-Will Dyson
-"Back off man, I'm a scientist!" -Dr. Peter Venkman
+> I for one would truly welcome the coming of thumbnails and descriptions
+> in picture files, because I have a real-life project going on where
+> that would be extremely handy to have in the actual file.
+
+Ehhh, that already exists and doesn't require meta-data streams,
+
+    http://www.exif.org/
+
+> >Find some silly person with an iBook and open a shell on OS X. Use cp
+> >to copy a file with a resource fork. Oh look, the Finder has no idea
+> >what the new file is, even though it looks exactly identical in the
+> >shell. Isn't that _wonderful_? Now try cat < a > b on a file with a
+> >fork. How is that ever going to work?
+>=20
+> Then I guess OS X ships a broken implementation of cp, yes?
+
+No cp is working just fine, there is no copy syscall in the VFS, so any
+file system specific features such meta data streams will have to be
+handled by the application.
+
+So at some point 'cp' will have to be taught about macos resource forks,
+posix acls, xattrs, afs acls, reiserfs file-as-dir, freebsd attributes,
+samba/ntfs streams. And possibly even learn the semantical differences
+between these so that it can copy metadata between the various file
+systems types.
+
+Jan
+
