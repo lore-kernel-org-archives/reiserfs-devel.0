@@ -1,33 +1,57 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: reiserfsck question - session results
-Date: Mon, 29 Jul 2002 10:00:33 +0400
-Message-ID: <20020729100033.A13890@namesys.com>
-References: <0GZZ00C5ZQAFLJ@mtaout05.icomcast.net> <0GZZ00FN7UFXM0@mtaout06.icomcast.net>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: Re: data-logging-20  BUG?!
+Date: Mon, 29 Jul 2002 11:41:23 +0200
+Message-ID: <3D450DC3.1010004@mb.tu-ilmenau.de>
+References: <3D427179.2070401@mb.tu-ilmenau.de> <20020729091710.GA15313@mfa.kfki.hu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11090-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11091-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <0GZZ00FN7UFXM0@mtaout06.icomcast.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "David R. Bergstein" <dbergstein@comcast.net>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Tamas Gergely <dice@mfa.kfki.hu>
 Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-Hello!
+Hi!
 
-On Mon, Jul 29, 2002 at 12:43:08AM -0400, David R. Bergstein wrote:
+On 07/29/2002 11:17 AM, Tamas Gergely wrote:
+> Hi!
+> 
+> On Sat, Jul 27, 2002 at 12:10:01PM +0200, Manuel Krause wrote:
+>  > Hi all!
+>  > 
+>  > I'm currently using:
+>  > 2.4.19-rc3
+>  > + reiserfs-pending: 01.change_help_wording.diff
+>  >                     02.change_menu_wording.diff
+>  >                     03.confusing_journal_replay_warning_removal.diff
+>  >                     05.hash_on_empty_fs-1.diff
+>  > + mason: 01-relocation-4.diff
+>  >          02-commit_super-8-relocation.diff
+>  >          03-beta-data-logging-20.diff
+>  >          04-write_times.diff
+>  >          05-search_reada-4.diff
+>  > + rml: preempt-kernel-rml-2.4.19-rc3-1.patch
+>           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> Where did you get this one from? All I was able to find was one for
+> -rc3-ac3-1?
+> 
+> Thanks in advance,
+> Gergely
+> 
 
-> It turned out there was no problem after I ran reiserfsck, it was an 
-> initscript issue, specifically in /etc/rc.d/rc.sysinit on Mandrake 8.1.  The 
-> script assumes that the root filesystem is first mounted read-only, however I 
-> had previously taken steps to ensure that this reiserfs partition is mounted 
-> read-write so journal replays work correctly.  This resulted in the boot time 
+Sorry, I was a bit inaccurate. Thanks, for pointing this out!
 
-In fact journal replays work ok even with readonly mounts. So mounting rootfs
-readonly is not required in reiserfs case.
+I took the patch preempt-kernel-rml-2.4.19-rc2-1.patch from 
+ftp://ftp.kernel.org/pub/linux/kernel/people/rml/preempt-kernel/v2.4/
+-- it applied and compiled cleanly.
 
-Bye,
-    Oleg
+I don't have the reported problems with 03-beta-data-logging-19.diff at all.
+
+
+Best wishes,
+
+Manuel
+
