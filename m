@@ -1,30 +1,40 @@
-From: Ralf <ralf@seznam.cz>
-Subject: =?us-ascii?Q?kernel=20BUG=20362?=
-Date: Fri, 01 Apr 2005 11:56:36 +0200 (CEST)
-Message-ID: <435.921-16966-1988335017-1112349396@seznam.cz>
-Reply-To: Ralf <ralf@seznam.cz>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: broken out archives
+Date: Fri, 01 Apr 2005 16:01:20 +0400
+Message-ID: <1112356879.3754.15.camel@tribesman.namesys.com>
+References: <1112308041.4916.6.camel@gentoo>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23749-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23750-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1112308041.4916.6.camel@gentoo>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Jake Maciejewski <maciejej@msoe.edu>
+Cc: reiserfs-list@namesys.com
 
-hi, i have problems:
+Hello
 
-file "bugs.txt" in attachment (or here http://147.229.196.80/tmp/bugs.txt) - some of error messages i got, i had to reboot my system due this errors
+On Fri, 2005-04-01 at 02:27, Jake Maciejewski wrote:
+> The broken out archives for reiser4 on vanilla (eg.
+> ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.11/reiser4-for-2.6.11-broken-out.2.gz ) should be renamed to indicate that they're gzipped tarballs, not gzipped diffs.
+> 
+renamed to reiser4-for-2.6.11-broken-out.2.tar.gz
 
-i use debian unstable, linux kernel 2.6.11.6, reiser 3.6 fs, reiser V3, reiserfsprogs 1.3.6.19, i does not use quotas
+> It would also be convenient if Namesys supplied complete patches as was
+> done with previous vanilla port releases.
 
-the patch in the attachment (or here http://147.229.196.80/tmp/reiser-lock-fix.diff) does not work for me
+ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.11/reiser4-for-2.6.11-3.patch.gz
+(this contains 3 bug fixes:
+support for mount -o sync
+bug in safe link handling
+fix for deadlock reported in
+http://marc.theaimsgroup.com/?l=reiserfs&m=111213523422408&w=2)
 
-help please
+Sorry, no broken-out version for this.
 
+Thanks
 
-____________________________________________________________
-http://www.bezpecnyinternet.cz
-http://ad.seznam.cz/clickthru?spotId=94734
