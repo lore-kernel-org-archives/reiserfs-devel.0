@@ -1,38 +1,71 @@
-From: Jure =?UTF-8?B?UGXEjWFy?= <pegasus@nerv.eu.org>
-Subject: 3.6: slow unlink on 2.6?
-Date: Mon, 15 Mar 2004 00:46:06 +0100
-Message-ID: <20040315004606.674cc88e.pegasus@nerv.eu.org>
+From: Isaac Claymore <clay@exavio.com.cn>
+Subject: Re: Network Raid (possibly OT sorry)
+Date: Mon, 15 Mar 2004 10:13:28 +0800
+Message-ID: <20040315021328.GA19159@exavio.com.cn>
+References: <4054D94A.8080400@bernztech.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-17206-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17207-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <4054D94A.8080400@bernztech.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="macroman"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Bernick <bernz@bernztech.org>
+Cc: reiserfs-list@namesys.com
 
-CkhpIGFsbCwKCkknbSBub3RpY2luZyBleHRyZW1seSBzbG93IHVubGluayBvbiBsYXJnZSBmaWxl
-cyBvbiAyLjYga2VybmVscyBmb3IgdGhlCnVwY29taW5nIGZlZG9yYSAyIChodHRwOi8vcGVvcGxl
-LnJlZGhhdC5jb20vfmFyamFudikuIEN1cmVudGx5IGknbSB1c2luZwoyLjYuNC0xLjI1Ny4gSSBk
-b24ndCBrbm93IGlmIGl0IGlzIHNwZWNpZmljIHRvIHRoZXNlIGtlcm5lbHMgb3IgcHJlc2VudCBh
-bHNvCmluIHN0b2NrIDIuNj8KCkNvbnNpZGVyIHRoZSBmb2xsb3dpbmcgc3RyYWNlIG91dHB1dHM6
-CgoxNTo1ODoyNS4xMzEwOTMKbHN0YXQ2NCgiL21udC9zdHJpcGUvYW5pbWUvYmFja3VwL0FSQ0hJ
-VklORy9Tb2xfQmlhbmNhL1NvbF9CaWFuY2FfflRoZV9MZWdhCmN5fl8tX0VwaXNvZGVfMDRfW19L
-YXl1Z2FfXVtEaXZYXVtIaVJlc10uYXZpIiwge3N0X21vZGU9U19JRlJFR3wwNjY0LApzdF9zaXpl
-PTEzODAwMjQzMiwgLi4ufSkgPSAwCjE1OjU4OjI1LjEzMTIzMgp1bmxpbmsoIi9tbnQvc3RyaXBl
-L2FuaW1lL2JhY2t1cC9BUkNISVZJTkcvU29sX0JpYW5jYS9Tb2xfQmlhbmNhX35UaGVfTGVnYWMK
-eX5fLV9FcGlzb2RlXzA0X1tfS2F5dWdhX11bRGl2WF1bSGlSZXNdLmF2aSIpID0gMAoxNTo1ODoy
-Ni4yODA3MDQgc2VsZWN0KDUsIFs0XSwgTlVMTCwgTlVMTCwgezAsIDB9KSA9IDAgKFRpbWVvdXQp
-CgoxNTo1ODozNS40Mjk3OTcKbHN0YXQ2NCgiL21udC9zdHJpcGUvYW5pbWUvYmFja3VwL0FSQ0hJ
-VklORy9Uc3VraWhpbWUvW0EtRV8mX0EtS2VlcF1fU2hpbmdlCnRzdXRhbl9Uc3VraWhpbWVfMTAu
-YXZpIiwgewpzdF9tb2RlPVNfSUZSRUd8MDY2NCwgc3Rfc2l6ZT0xMjE0ODQ4OTQsIC4uLn0pID0g
-MAoxNTo1ODozNS40Mjk5MzEKdW5saW5rKCIvbW50L3N0cmlwZS9hbmltZS9iYWNrdXAvQVJDSElW
-SU5HL1RzdWtpaGltZS9bQS1FXyZfQS1LZWVwXV9TaGluZ2V0CnN1dGFuX1RzdWtpaGltZV8xMC5h
-dmkiKSA9IAowCjE1OjU4OjM2LjQzODE4MCBzZWxlY3QoNSwgWzRdLCBOVUxMLCBOVUxMLCB7MCwg
-MH0pID0gMCAoVGltZW91dCkKClNvIGl0IHRha2VzIGFib3V0IGEgc2Vjb25kIHRvIHVubGluayBh
-IH4xMjBtYiBmaWxlIC4uLiBsYXJnZXIgZmlsZXMgKGlzbwppbWFnZXMgJiBjbykgdGFrZSBldmVu
-IGxvbmdlci4KCkFuZCB0aGlzIGlzIG9uIG15IHNjcmF0Y2ggNHdheSByYWlkMCwgdGhhdCB1c3Vh
-bHkgZG9lcyBhcm91bmQgODBtYi9zLgoKQ2FuIGFueW9uZSB0ZWxsIG1lIGlmIGl0J3MgYWxzbyBz
-bG93IGluIHRoZSBzdG9jayBrZXJuZWw/CgotLSAKCkp1cmUgUGXEjWFyCg==
+On Sun, Mar 14, 2004 at 05:14:34PM -0500, David Bernick wrote:
+> hello fellow Reiser-lovers.
+> 
+> So Reiser rocks. It's great for a single system. But recently i've wanted 
+> to build a network raid: A disk on host-a be mirrored in real-time (or near 
+> real-time) to a disk on host-b. I know DRBD does this, but I'd like to read 
+> from both disks and write to a master. DRBD makes the slave disk 
+> non-readable. I've been playing with Intermezzo, which sort of does the 
+> trick but it seems to be fairly unsupported as far as active mailing lists 
+> are concerned.
+> 
+> So the question, as off-topic as it may be, is what do you use for a 
+> mirrored (replicated?) filesystem, if you use one? Any suggestions would be 
+> great.
+
+Hi,
+
+I'm not using such a setup, but I guess it may work by using a software
+raid1 from a local disk and a remote disk exported by NBD (network block
+device). But the performance of such a setup is surely poor.
+
+I also stumbled across an asynchronous block level replication mechanism
+weeks ago, it's here:
+
+http://www.linuxjournal.com/article.php?sid=7265
+
+And I vaguely remembered NFSv4 of 2.6 kernels seemed to have a built-in
+support at filesystem level for data replication & migration.
+
+HTH
+
+
+> 
+> Thanks!
+> 
+> d
+> 
+> 
+> -- 
+> David Bernick
+> bernz@bernztech.org
+> 
+> "They that can give up essential liberty to obtain a little temporary
+> safety deserve neither liberty nor safety."
+> 		-- Benjamin Franklin, 1759
+
+-- 
+
+Regards, Isaac
+()  ascii ribbon campaign - against html e-mail
+/\                        - against microsoft attachments
+
