@@ -1,55 +1,45 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: Catastrophe with mailboxes on ReiserFS
-Date: Wed, 9 Oct 2002 16:23:31 +0200
-Message-ID: <200210091623.31301.Dieter.Nuetzel@hamburg.de>
-References: <20021009094215.B11954@namesys.com> <200210091602.34904.Dieter.Nuetzel@hamburg.de> <20021009180935.A4618@namesys.com>
+Date: Wed, 9 Oct 2002 18:31:41 +0400
+Message-ID: <20021009183141.A4778@namesys.com>
+References: <20021009094215.B11954@namesys.com> <200210091602.34904.Dieter.Nuetzel@hamburg.de> <20021009180935.A4618@namesys.com> <200210091620.15077.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11631-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11632-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021009180935.A4618@namesys.com>
 Content-Disposition: inline
+In-Reply-To: <200210091620.15077.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
 Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Am Mittwoch, 9. Oktober 2002 16:09 schrieb Oleg Drokin:
-> Hello!
->
-> On Wed, Oct 09, 2002 at 04:02:34PM +0200, Dieter N?tzel wrote:
-> > > prevented system from putting new content in there), but since you've
-> > > got other file's data in the middle of file, this is not the case.
-> >
-> > Oleg, I "see" it from time to time during kernel and DRI development (X
-> > server crashes), too. This times without Chris's stuff. 2.4.19-ck5
-> > (latest ReiserFS patches for 2.4.19) and now with 2.5.40-ac3.
->
-> What's "it"? Is it means what I describe, or "it" means wrong stuff in the
-> middle of files?
->
-> > Most times "messages", "localmessages", kernel .o.*, dep files, etc. are
-> > broken (wrong stuff or mixed stuff).
->
-> These are recently modified stuff.
->
-> > Latest my ".q3a/baseq3/q3key" file (DRI SMP tests) was broken (complete=
-ly
-> > other stuff in it) even though it only should opened for reading.
->
-> ls -la .q3a/baseq3/q3key?
+Hello!
 
-OK, read it wrong. You mean "ls" NOT "less" ;-)
+On Wed, Oct 09, 2002 at 04:20:15PM +0200, Dieter N?tzel wrote:
+> > What's "it"? Is it means what I describe, or "it" means wrong stuff in the
+> > middle of files?
+> Wrong stuff in the middle (appended) _AND_ sometimes whole broken files (if 
+> the files are smaller).
 
-It is VERY, VERY small...
+If the damaged part is still within appended datam, it is still possible that
+not all of data happened to flush.
 
-ls -la .q3a/baseq3/q3key
-=2Drw-r--r--    1 nuetzel  users         167 Okt  9 05:47 .q3a/baseq3/q3key
+> > It only confirms my version, note how whole block of zeroes
+> > was inserted after emergency sync (perhaps during crash).
+> "whole block of zeroes" would be fine but it isn't sometimes...
+> Sometimes it is stuff from other (deleted?) files.
 
-:-)))
+Well, it depend on what was in newly allocated blocks, it might be zeroes for
+empty blocks or some deleted data for previously used blocks.
 
-Regards,
-	Dieter
+> When I get the "next" crash during kernel compilation I "save" some files for 
+> you.
+
+Hm. This is not necessary, I know what's happening in your case it seems.
+
+Bye,
+    Oleg
