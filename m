@@ -1,38 +1,69 @@
-From: Kuba Ober <kuba@mareimbrium.org>
-Subject: Re: vs-4080 & more corruptions
-Date: Tue, 2 Jul 2002 15:05:53 -0400
-Message-ID: <200207021505.53472.kuba@mareimbrium.org>
-References: <Pine.LNX.4.44.0206261511001.1011-100000@sheep.fluffy.housecafe.de>
+From: Marc Dietrich <Marc.Dietrich@hrz.uni-giessen.de>
+Subject: Is this a critical error?
+Date: Tue, 2 Jul 2002 21:48:56 +0200
+Message-ID: <200207022148.56595.marc.dietrich@physik.uni-giessen.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10901-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10902-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <Pine.LNX.4.44.0206261511001.1011-100000@sheep.fluffy.housecafe.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Christian <evilninja@gmx.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-On =B6roda 26 czerwiec 2002 09:18 am, Christian wrote:
-> hi,
->
-> > you will know that you need to replace some of your hardware.
-> > (may be something as simple as replacing IDE cable).
->
-> well, you were right. and i was wrong to blame reiserfs for this problem.
-> i'm very sorry about my calumny.
->
-> i set the disk into another system and the --rebuild-tree finished and the
-> --check did not find any errors anymore and now i can mount and read/write
-> o my partition and all my data is in there --> i'm very happy.
-> i changed the cable in this machine and i hope it was the cable and not
-> the ide-chipset of this quite old machine the disk is now in again.
->
 
-That's one of the reasons to use newer machines with UDMA drives &=20
-controllers, because these CRC-check the data going over the wires, which=20
-helps a lot in some cases.
+Hi,
 
-Cheers, Kuba
+when doing reiserfsck I get lots of messages like this:
+
+<-------------reiserfsck, 2001------------->
+reiserfsprogs 3.x.0j
+
+Will read-only check consistency of the partition
+Will put log info to 'stderr'
+Do you want to run this program?[N/Yes] (note need to type Yes):Yes
+Analyzing journal..nothing to replay (no transactions older than last flu=
+shed=20
+one found)
+Fetching on-disk bitmap..done
+Checking S+tree../  1 (of   2)/ 18 (of 117)/ 21 (of 165)grow_id_map: obje=
+ctid=20
+map expanded: used 5120, 5 blocks
+/ 52 (of 165)grow_id_map: objectid map expanded: used 5120, 5 blocks
+/121 (of 165)grow_id_map: objectid map expanded: used 5120, 5 blocks
+/ 19 (of 117)/  3 (of  92)grow_id_map: objectid map expanded: used 5120, =
+5=20
+blocks
+/ 35 (of  92)grow_id_map: objectid map expanded: used 5120, 5 blocks
+/ 20 (of 117)/109 (of 128)grow_id_map: objectid map expanded: used 5120, =
+5=20
+blocks
+/ 21 (of 117)/ 31 (of 165)grow_id_map: objectid map expanded: used 5120, =
+5=20
+blocks
+/103 (of 165)grow_id_map: objectid map expanded: used 5120, 5 blocks
+/108 (of 165)grow_id_map: objectid map expanded: used 5120, 5 blocks
+/ 32 (of 117)/ 66 (of 154)grow_id_map: objectid map expanded: used 10240,=
+ 10=20
+blocks
+/ 68 (of 154)grow_id_map: objectid map expanded: used 10240, 10 blocks
+/ 65 (of 117)/115 (of 168)grow_id_map: objectid map expanded: used 15360,=
+ 15=20
+blocks
+ok
+
+-------------------------------------------------------------------------
+
+Are this critical errors, or can I ignore these?
+
+System: SuSE 8.0
+
+Greetings
+
+Marc
+
+--=20
+Marc Dietrich
+=09=09=09=09=09"Hilf dir selbst, sonst hilft dir Microsoft!"
+
