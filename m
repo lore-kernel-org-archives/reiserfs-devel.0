@@ -1,82 +1,51 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Carrying Attributes too Far
-Date: Thu, 25 Sep 2003 07:40:03 +0400
-Message-ID: <3F726393.2040907@namesys.com>
-References: <1971720372-BeMail@cr593174-a> <1064280061.3f6f9ffd2c514@webmail.st-andrews.ac.uk> <3F71655B.4060704@namesys.com> <1064425945.3f71d9d905106@webmail.st-andrews.ac.uk>
+From: Alistair McDonald <alistair@inrevo.com>
+Subject: Re: core dump on reiserfsck --rebuildtree
+Date: Thu, 25 Sep 2003 07:22:07 +0100
+Message-ID: <200309250722.07744.alistair@inrevo.com>
+References: <65047.80.5.156.133.1064000151.squirrel@blanark.dyndns.org> <200309232310.37438.alistair@inrevo.com> <200309241421.04813.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15739-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15740-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1064425945.3f71d9d905106@webmail.st-andrews.ac.uk>
+In-Reply-To: <200309241421.04813.vitaly@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: lrc1@st-andrews.ac.uk
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+Cc: Vitaly Fertman <vitaly@namesys.com>, ookhoi@humilis.net
 
-lrc1@st-andrews.ac.uk wrote:
-
->Quoting Hans Reiser <reiser@namesys.com>:
->  
+On Wednesday 24 September 2003 00:04 am, Ookhoi wrote:
 >
->>lrc1@st-andrews.ac.uk wrote:
->>    
->>
->>>Quoting "Alexander G. M. Smith" <agmsmith@rogers.com>:
->>>      
->>>
->>>>lrc1@st-andrews.ac.uk wrote on Mon, 22 Sep 2003 14:28:30 +0100:  
->>>>        
->>>>
->
->  
->
->>>I agree that attribute files should be files like any other. So attribute
->>>      
->>>
->>files 
->>    
->>
->>>should certainly have the same linking and permissions rights as any other 
->>>file.
->>>
->>>      
->>>
->>Why?  Not at all, I would say. 
->>    
->>
->
->Short answer: because otherwise you have ""attributes" that cannot interact with
->files in all the same ways that files can interact with files" (
->http://www.namesys.com/v4/v4.html ).
->
-no, you just have different permission processing on different files.
-
->
->  
->
->>>>- Alex
->>>>        
->>>>
->>-- 
->>Hans
->>    
->>
->
->Leo.
->
->
->-----------------------------------------------------------------
->University of St Andrews Webmail: http://webmail.st-andrews.ac.uk
->
->
->  
+> FWIW, I'm very happy with two 200GB maxtor disks.
 >
 
+I've bought a single 250GB drive for now. I'll get the deskstar 
+repaired/replaced and sell the pair on e-bay, then buy another maxtor when I 
+need the space. I've decided to ditch lvm, I can live without dynamically 
+growing partitions and I'd rather know what is where on a disk, especially 
+when I have to recover like this
 
+> I have no experience with lvm, but do have with bad disks. You'll want
+> to use dd_rescue instead of dd:
+> http://www.garloff.de/kurt/linux/ddrescue
+>
+
+Cheers, it's been emerged and is ready to use. Thanks for your input. 
+
+
+On Wednesday 24 September 2003 11:21 am, Vitaly wrote:
+>
+> you can use dd with conv=sync,noerror. But dd_rescue seems to me better
+> regarding to read errors handling. After that you will need to run
+>     reiserfsck --check
+> and follow its instructions.
+
+Thanks for all your help, Vitaly.
+
+Alistair
 -- 
-Hans
-
-
+Alistair McDonald     InRevo Ltd
+Tel: 07017 467 386    http://www.inrevo.com
