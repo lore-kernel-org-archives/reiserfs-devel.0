@@ -1,47 +1,29 @@
-From: Oleg Drokin <green@namesys.com>
+From: Kevin <coggy@redefine.org>
 Subject: Re: access beyond end of device again
-Date: Tue, 25 Jun 2002 09:54:09 +0400
-Message-ID: <20020625095409.A6209@namesys.com>
-References: <Pine.LNX.4.44.0206250044360.28871-100000@avon.timetraveller.org> <661330051733.20020624103045@redefine.org>
+Date: Tue, 25 Jun 2002 06:08:21 +0000 (UTC)
+Message-ID: <1141375583133.20020626230935@redefine.org>
+References: <Pine.LNX.4.44.0206250044360.28871-100000@avon.timetraveller.org>
+ <661330051733.20020624103045@redefine.org> <20020625095409.A6209@namesys.com>
+Reply-To: Kevin <coggy@redefine.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10827-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10828-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <661330051733.20020624103045@redefine.org>
+In-Reply-To: <20020625095409.A6209@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Kevin <coggy@redefine.org>
+To: Oleg Drokin <green@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Hello!
 
-On Mon, Jun 24, 2002 at 10:30:45AM -0700, Kevin wrote:
+> Reformatted as in mkreiserfs?
 
-> > Can we see an fdisk -l of the relevant disk to see how big the filesystem 
-> > *should be* :)
-> I reformatted the partition since the last time it rebooted, but I
+Correct.  That's the only change I've made to it though.  Would
+rebuilding the superblocks help?  Last time it happened, I rebuilt the
+tree, and it deleted the files that I had trouble with.  So it's hard
+to say if it really fixed it, or if it was just waiting for me to
+write to that spot again.  I'm about to run the Maxtor diags on the
+drive and do a factory recertification, just to make sure.
 
-Reformatted as in mkreiserfs?
-
-> haven't changed the actual partition.  The only time I see the error
-> is when trying to read certain files.  Everything else seems to work
-
-Yeah, ones that contains invalid blocknumbers in metadata.
-
-> fine.  The drive is a 60g maxtor attached to an hpt366.  It is the
-> master on its channel, and there is no slave.  I'm running 2.4.18 with
-> reiserfsprogs 3.x.1c-pre4.
-> fdisk -l /dev/hdi1
-> Disk /dev/hdi: 16 heads, 63 sectors, 116336 cylinders
-> Units = cylinders of 1008 * 512 bytes
->    Device Boot    Start       End    Blocks   Id  System
-> /dev/hdi1             1    116336  58633312+  83  Linux
-> /dev/hdi1             58631516  39128508  19503008  67% /opt
-
-Numbers looks correct.
-
-Bye,
-    Oleg
