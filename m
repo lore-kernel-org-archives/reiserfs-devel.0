@@ -1,33 +1,52 @@
-From: David Weinehall <david@southpole.se>
-Subject: Re: Desktop Filesystem Benchmarks in 2.6.3
-Date: Wed, 3 Mar 2004 02:41:15 +0100
-Message-ID: <20040303014115.GP19111@khan.acc.umu.se>
-References: <4044119D.6050502@andrew.cmu.edu> <4044366B.3000405@namesys.com> <4044B787.7080301@andrew.cmu.edu> <1078266793.8582.24.camel@mentor.gurulabs.com> <20040302224758.GK19111@khan.acc.umu.se> <40453538.8050103@animezone.org>
+From: Chris Mason <mason@suse.de>
+Subject: Re: [PATCH] updated data=ordered patch for 2.6.3
+Date: Tue, 02 Mar 2004 21:12:56 -0500
+Message-ID: <1078279975.3931.122.camel@watt.suse.com>
+References: <1077165373.22253.45.camel@watt.suse.com>
+	 <200403022053.56904.Dieter.Nuetzel@hamburg.de>
+	 <1078257997.3928.55.camel@watt.suse.com>
+	 <200403022206.08495.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17021-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-17022-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <40453538.8050103@animezone.org>
+In-Reply-To: <200403022206.08495.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andrew Ho <andrewho@animezone.org>
-Cc: Dax Kelson <dax@gurulabs.com>, Peter Nelson <pnelson@andrew.cmu.edu>, Hans Reiser <reiser@namesys.com>, linux-kernel <linux-kernel@vger.kernel.org>, ext2-devel@lists.sourceforge.net, ext3-users@redhat.com, jfs-discussion@www-124.southbury.usf.ibm.com, reiserfs-list@namesys.com, linux-xfs@oss.sgi.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Cc: reiserfs-list@namesys.com, Christophe Saout <christophe@saout.de>
 
-On Tue, Mar 02, 2004 at 08:30:32PM -0500, Andrew Ho wrote:
-> XFS is the best filesystem.
+On Tue, 2004-03-02 at 16:06, Dieter N=FCtzel wrote:
+> Am Dienstag, 2. M=E4rz 2004 21:06 schrieb Chris Mason:
+> > On Tue, 2004-03-02 at 14:53, Dieter N=FCtzel wrote:
+> > > Ups, data-logging IS already in SuSE's 2.6.3-16 kernel ;-)
+> >
+> > Yes ;-)
+>=20
+> Brave men.
+>=20
+> Some numbers:
+> time dd if=3D/dev/zero of=3Dsparse bs=3D1 seek=3D200G count=3D1
+> 1+0 Records ein
+> 1+0 Records aus
+> 0.001u 2.592s 0:04.39 58.9%     0+0k 0+0io 0pf+0w
+> time rm sparse
+> 0.000u 4.516s 0:04.52 99.7%     0+0k 0+0io 0pf+0w
+>=20
+> Mouse movement and X server (screen update) works but is very slow (chopp=
+y)=20
+> for the "know" four seconds.
+> But much better than before.
+>=20
+Oh, part of the delete code was missed in the latency fixes.  I'll add a
+few more schedules.
 
-Well it'd better be, it's 10 times the size of ext3, 5 times the size of
-ReiserFS and 3.5 times the size of JFS.
+Sorry for the delay, I'm chasing a strange bug, not sure if it is mine
+yet. =20
 
-And people say size doesn't matter.
+-chris
 
 
-Regards: David Weinehall
--- 
- /) David Weinehall <tao@acc.umu.se> /) Northern lights wander      (\
-//  Maintainer of the v2.0 kernel   //  Dance across the winter sky //
-\)  http://www.acc.umu.se/~tao/    (/   Full colour fire           (/
