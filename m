@@ -1,51 +1,23 @@
-From: Alasdair G Kergon <agk@redhat.com>
-Subject: Re: Odd data corruption problem with LVM/ReiserFS
-Date: Mon, 21 Feb 2005 15:18:52 +0000
-Message-ID: <20050221151852.GE14097@agk.surrey.redhat.com>
-References: <93ca3067050220212518d94666@mail.gmail.com>
+From: Mark Junker <mjscod@gmx.de>
+Subject: where are reiser4 sources
+Date: Mon, 21 Feb 2005 17:16:47 +0100
+Message-ID: <421A096F.5040603@gmx.de>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <93ca3067050220212518d94666@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alex Adriaanse <alex.adriaanse@gmail.com>
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On Sun, Feb 20, 2005 at 11:25:37PM -0600, Alex Adriaanse wrote:
-> This morning was the first time my backup script took
-> a snapshot since upgrading to 2.6.10-ac12 (yesterday I had taken a few
-> snapshots myself for testing purposes, this seemed to work fine).
- 
-a) Activating a snapshot requires a lot of memory;
+Hi,
 
-b) If a snapshot can't get the memory it needs you have to back it
-out manually (using dmsetup - some combination of resume, remove & 
-possibly reload) to avoid locking up the volume - what you have to do 
-depends how far it got before it failed;
+where are the Reiser4 sources? I just want to use Reiser4 in a separate 
+application and don't like the idea of extracting the sources from the 
+linux 2.6 patch.
 
-c) You should be OK once a snapshot is active and its origin has 
-successfully had a block written to it.
+Regards,
+Mark
 
-Work is underway to address the various problems with snapshot activation
-- we think we understand them all - but until the fixes have worked their 
-way through, unless you've enough memory in the machine it's best to avoid
-them.  
-
-Suggestions: 
-  Only do one snapshot+backup at once;
-  Make sure logging in as root and using dmsetup does not depend on access 
-  to anything in /var or /home (similar to the case of hard NFS mounts with 
-  the server down) so you can still log in;
-
-BTW Also never snapshot the root filesystem unless you've mounted it noatime
-or disabled hotplug etc. - e.g. the machine can lock up attempting to 
-update the atime on /sbin/hotplug while writes to the filesystem are blocked
-
-Alasdair
--- 
-agk@redhat.com
