@@ -1,37 +1,62 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Snapshots a la NetApp?
-Date: Sun, 23 Mar 2003 15:44:04 +0300
-Message-ID: <20030323154404.B15078@namesys.com>
-References: <200303221822.34401.phma@webjockey.net> <33433.10.20.2.148.1048390681.squirrel@alpha>
+From: Christian Fritze <The.Finn@sprawl.de>
+Subject: FAQ 29 says to put 0s into /etc/fstab -- What if I don't?
+Date: Mon, 24 Mar 2003 10:10:50 +0100 (CET)
+Message-ID: <200303240910.KAA02175@chatsubo.sprawl.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13348-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <reiserfs-list-return-13350-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <33433.10.20.2.148.1048390681.squirrel@alpha>
+Content-Disposition: INLINE
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kend@xanoptix.com
-Cc: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
+Cc: Christian Fritze <The.Finn@sprawl.de>
 
-Hello!
+Hello everybody!
 
-On Sat, Mar 22, 2003 at 10:38:01PM -0500, kend@xanoptix.com wrote:
-> I'm just wondering if there's any development being done on NetApp-like
-> snapshots.  (This differs from LVM snapshots in that it's file-by-file,
-> instead of volume based.)  If not, has anyone given it any consideration? 
-> It would be a huge win for the RAID-in-a-box folks, and, speaking as a
-> sysadmin, is something about which I dream frequently.
+Doing forensics...
 
-That sounds like file versioning on filesystem, perhaps
-filesystem (binary only and stuff) from ClearCase suite (or what was the name)
-from Rational have this.
-Though I have not tried it myself.
-And their http://www.rational.com does not answers. May be related to the fact
-that they were bought by IBM recently ;)
+A customer has leased a low budget server for a couple of small projects.=
+=20
+Recently the disk in that machine failed and was replaced. The provider's
+technician who did the replacement and the initial setup (up to a running
+sshd where I take over such a machine) installed reiserfs systems on the
+partitions that (on the old disk) had carried ext3. However he did *not*
+tell me about the change *and* he put '1 1' and '1 2' resp. into fstab as
+he usually does whith ext3 filesystems. And yes: I did not check in due
+time, trusting in work done by others... :-(
 
-Bye,
-    Oleg
+Last weekend that machine rebooted (for no apparent reason, I'm beginning
+to feel annoyed about that provider...) the first time after the hardware
+replacement. Hours later my customer tells me that something seems to be=20
+wrong. I look at the machine and the partition that carries project data
+seems to be completely empty, not a single file or directory, nothing!
+
+After a first moment of horror thinking came back, I checked a few things
+and came across those unexpected reiserfs lines in fstab. Then I read the=
+=20
+FAQ and finally daring a 'reiserfsck --rebuild-tree' brought me back to=20
+normal life.
+
+Is this behaviour to be expected when putting the wrong things into fstab?=
+=20
+(In this case the FAQ could probably talk a bit 'louder' about it... ;-)
+Or should I still search for other reasons as well? I had no time yet to
+build a nice kernel after the disk failure and maybe running the standard=
+=20
+SuSE 2.4.19 as installed from DVD isn't such a good idea in the first place=
+?
+
+
+greetings
+Christian
+
+
+--
+Gr=FC=DFe aus Europas gr=F6=DFtem       Greetings from Europe's largest
+Urban Sprawl (DUDOMA -- Duisburg Dortmund Metropolitan Axis ;-)
+Christian Fritze   <The.Finn@sprawl.de>   http://www.sprawl.de/
+
