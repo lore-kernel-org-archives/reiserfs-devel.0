@@ -1,78 +1,69 @@
-From: Stefan Janecek <stefan.janecek@jku.at>
-Subject: Re: Overwritten files
-Date: 21 Apr 2002 20:00:14 +0200
-Message-ID: <1019412014.1898.4.camel@ising>
-References: <20020416105325.2a854a19.ikkeswar@dds.nl>
-	<1018978845.1035.5.camel@lappix> 
-	<20020417171507.74184f14.stefan.janecek@jku.at> 
-	<1019194872.1074.3.camel@lappix>
+From: Phil Howard <phil-reiserfs@ipal.net>
+Subject: copying partition to partition, sector by sector, live
+Date: Sun, 21 Apr 2002 13:16:14 -0500
+Message-ID: <20020421181614.GA11239@vega.ipal.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10097-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10098-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <1019194872.1074.3.camel@lappix>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Fri, 2002-04-19 at 07:41, Heinz-Josef Claes wrote:
-> Am Mit, 2002-04-17 um 17.15 schrieb Stefan Janecek:
-> > On 17 Apr 2002 07:27:37 +0200
-> > Heinz-Josef Claes <hjclaes@web.de> wrote:
-> > 
-> > > Am Die, 2002-04-16 um 10.53 schrieb Rutger Swarts:
-> > > > 
-> > > > Hi all, 
-> > > > 
-> > > > I do not know if this is the right place to post this, but I can't think of any better place, so here goes:
-> > > > 
-> > > > I recently discovered that one of my files was overwritten somehow. It resides on a reiserfs partition which is mounted read-only. The contents of the file where overwritten with parts of other files on seemingly random places and bits of ASCII text.
-> > > > 
-> > > > Looking over it now I see it contains parts of win32 applications (strings like "This program can not be run in dos mode") and XML files. I do not know if there are any other files affected by this (quite a lot of files on that partition) but I will check each file before I backup. 
-> > > > 
-> > > > Now my question:
-> > > > 
-> > > > Is this a known issue? if yes: what can I do about it? if no: what information do you need to reproduce/solve this problem? (stop it from happening again, that is)
-> > > > 
-> > > > Rutger Swarts
-> > > 
-> > > Hi,
-> > > 
-> > > do you boot the box sometimes with windows? I had a similar problem on a
-> > > laptop with windows 98 and linux (with ext2). Sometimes, windows seem to
-> > > overwrite the first partition and write onto the next one. This happend
-> > > two times in half a year. In my case, the linux installation was no
-> > > bootable any more.
-> > > 
-> > > Hope this helps,
-> > > Heinz-Josef Claes
-> > 
-> > This problem really seems to exist even though rather rarely... 
-> > I encountered it twice in about four years on a box running windows 98 - 
-> > both times it crashed while writing a rather large file, after reboot
-> > it seemed to have written on the linux partition located behind the windows
-> > partition.
-> > 
-> > If you need to know the exact windows version, harddisk and disk driver
-> > versions etc, I can try to find that box somewhere around here ...
-> > 
-> > HTH,
-> > Stefan.
-> Oops,
-> 
-> I only wanted to give a hint, that perhaps the described problem has
-> nothing to do with reiserfs. I do not have the problem any more, because
-> I don't have to user windows :-).
-.... lucky guy ;-)
+Under ext2, I could copy a live mounted partition to another partition
+of the same size sector by sector, followed by an e2fsck of the target
+partition, and have complete all files that are otherwise complete on
+the source partition.  Sometimes I might even get files copied this way
+that would not have survived a power-reset event because such copying
+would usually be done from cache.
 
-Stefan.
-> 
-> regards,
-> Heinz-Josef
-> 
-> 
-> 
+Under reiserfs, the picture changes due to the changing roles of the
+tools for managing and repairing the filesystem.  What I would like to
+find out is what steps would be appropriate to bring a sector copied
+reiserfs filesystem back into consistency on the target partition.
+Surely I could run the maximal set of recovery tools, but this might
+be overkill.  Or maybe not.
 
+A power-reset event would leave a filesystem in the state as stored in
+its entirety at the instant of the event.  It would be like freezing
+the whole machine and taking a sector by sector snapshot.  One problem
+is that doing a sector-by-sector copy of a partition does not get a
+time-consistent snapshot.  Instead, you get a time skewed snapshot.
+An update to the partition by the filesystem might write a group of
+sectors crossing the sectors currently being read by the copying.
+This would result in a potential out-of-order snapshot where sectors
+written first are not present (written to locations already copied)
+and sectors written later are present (written to locations not yet
+copied).
 
+How well can the various tools for reiserfs deal with this?  In ext2,
+the time to do a raw sector copy is shorter than the time to mount the
+target partition as a filesystem and scan both file trees for updates
+(method 1) or to reformat the target filesystem and mount the target
+and copy every file from the source filesystem (method 2).  This makes
+sector copying attractive for backup purposes.  The e2fsck step would
+not be routinely performed; it would be done if needed during recovery.
+
+For reiserfs, the issue I'm concerned with is that the time skew may
+completely disrupt the balanced tree structure in a way that the journal
+cannot replay.  While tools may be able to recover this, it may involve
+lengthy processing (rebuilding a tree, for example).  If this is too
+lengthy, it may be counter productive.
+
+A consideration exists for going back to backup by copying individual
+files.  Before making such a decision, I would like to get an idea what
+impact and effect this will have with regard to reiserfs, which I have
+begun conversion to.  Since backups are done to guard against loss due
+to catastrophic storage device failure, the fact that reiserfs does
+journaling is unlikely to have much consequence for the choice; that
+feature instead will be expected to aid in faster resumption of normal
+operations in lesser failure modes, e.g. power-reset.
+
+-- 
+-----------------------------------------------------------------
+| Phil Howard - KA9WGN |   Dallas   | http://linuxhomepage.com/ |
+| phil-nospam@ipal.net | Texas, USA | http://phil.ipal.org/     |
+-----------------------------------------------------------------
