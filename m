@@ -1,37 +1,43 @@
 From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: performance improvements
-Date: Mon, 23 Dec 2002 22:20:44 +0100
-Message-ID: <200212232220.44981.Dieter.Nuetzel@hamburg.de>
-References: <200212231632.26686.russell@coker.com.au>
+Subject: Re: what do you do that stresses your filesystem?
+Date: Mon, 23 Dec 2002 23:02:13 +0100
+Message-ID: <200212232302.13468.Dieter.Nuetzel@hamburg.de>
+References: <3E06F360.7000708@namesys.com> <139251509046.20021223123719@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12233-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12234-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200212231632.26686.russell@coker.com.au>
+In-Reply-To: <139251509046.20021223123719@tnonline.net>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
-To: Russell Coker <russell@coker.com.au>, ReiserFS <reiserfs-list@namesys.com>
+To: ReiserFS <reiserfs-list@namesys.com>
 
-Am Montag, 23. Dezember 2002 16:32 schrieb Russell Coker:
-> One thing that could really improve system performance would be something
-> like "nice" but for disk IO.
+Am Montag, 23. Dezember 2002 12:37 schrieb Anders Widman:
+> > We were discussing how to optimize reiser4 best, and came to realize
+> > that us developers did not have a good enough intuition for what users
+> > do that stresses their filesystem enough that they care about its
+> > performance.
+> >
+> > If you just do edits of files it probably does not matter too much what
+> > fs you use.
 >
-> If you have a server that's using 90% of it's disk bandwidth with a large
-> number of clients (EG a big mail server) then a simple "find /" is usually
-> enough to give it a load average of 50+ and a delay of 1 second for every
-> disk request (which makes operations such as POP mail checks excessively
-> slow).
+> depends  on  how  large  edits  =3D)..  Like  video-editing requires big
+> r/w performance.
 
-What you are really looking for is the deadline IO scheduler coming with=20
-2.5/2.6.
+Like Andrew Morten suggest all the time (deadline IO tests):
 
-Merry Christmas!
+Running (heavy) constant (streaming) IO in the background during "normal" I=
+O=20
+(20-40 parallel gcc/g++ compilers (make -j20) in my case).
 
-=2DDieter
+WMs e.g. KDE 3.1 isn't a case any longer...;-)
+
+Give your "workers" a break.
+			Merry Christmas!
 
 =2D-=20
 Dieter N=FCtzel
@@ -40,4 +46,3 @@ Graduate Student, Computer Science
 University of Hamburg
 Department of Computer Science
 @home: Dieter.Nuetzel at hamburg.de (replace at with @)
-
