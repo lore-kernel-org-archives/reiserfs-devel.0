@@ -1,57 +1,51 @@
-From: viro@parcelfarce.linux.theplanet.co.uk
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 04:13:47 +0100
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040826031347.GQ21964@parcelfarce.linux.theplanet.co.uk>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org>
-Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20040826010049.GA24731@mail.shareable.org>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+From: Kyle Moffett <mrmacman_g4@mac.com>
+Subject: Re: Using fs views to isolate untrusted processes: I need an assistant architect in the USA for Phase I of a DARPA funded linux kernel project
+Date: Thu, 26 Aug 2004 00:16:43 -0400
+Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <BCE1F8F8-F716-11D8-A7C9-000393ACC76E@mac.com>
+References: <410D96DC.1060405@namesys.com> <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com> <20040825205618.GA7992@hockin.org> <30958D95-F6ED-11D8-A7C9-000393ACC76E@mac.com> <412D2BD2.2090408@sun.com> <EAB989A6-F6F9-11D8-A7C9-000393ACC76E@mac.com> <20040825180615.Z1973@build.pdx.osdl.net>
+Mime-Version: 1.0 (Apple Message framework v619)
 Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S267388AbUHZEQt@vger.kernel.org>
+In-Reply-To: <20040825180615.Z1973@build.pdx.osdl.net>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Wright <chrisw@osdl.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Rik van Riel <riel@redhat.com>, Tim Hockin <thockin@hockin.org>, Mike Waychison <Michael.Waychison@Sun.COM>, ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>
 
-On Thu, Aug 26, 2004 at 02:00:49AM +0100, Jamie Lokier wrote:
-> viro@parcelfarce.linux.theplanet.co.uk wrote:
-> > > Is this a problem if we treat entering a file-as-directory as crossing
-> > > a mount point (i.e. like auto-mounting)?
-> > 
-> > Yes - mountpoints can't be e.g. unlinked.  Moreover, having directory
-> > mounted on non-directory is also an interesting situation.
-> 
-> Ok, so can we make it so mountpoints can be unlinked? :)
+On Aug 25, 2004, at 21:06, Chris Wright wrote:
+> * Kyle Moffett (mrmacman_g4@mac.com) wrote:
+>> I would find this much more useful if there was a really lightweight
+>> bind
+>> mount called a "filebind" or somesuch that could only bindmount files
+> This already works.
+>
+> # cd /tmp
+> # echo foo > a
+> # touch b
+> # mount --bind a b
+> # cat b
+> foo
 
-User-visible change of behaviour and IIRC a SuS violation on top of that.
- 
-> I think the underlying file does not stay locked, and once you've
-> entered it as a directory, it can be unlinked.
+I'm well aware of the technique, but I was wondering if there was any
+extra VFS baggage associated with a normal bind mount that might
+be eliminated by restricting a different version of a bind mount to only
+files.  That's why I asked later if anybody had benchmarked the bind
+mount system to see how well it would scale to 1000 bound files and
+directories.  If it's not a performance issue then I really don't care 
+less,
+but I have a somewhat old box that must make do as a fileserver, so
+I'm very interested in maximizing the performance. I don't care much
+about extra RAM consumption, only about CPU and bus usage.
 
-So why lock it at all in that case?
+Cheers,
+Kyle Moffett
 
-> I didn't mean locking a chain of mountpoints, I meant the temporary
-> state where two dentries and/or inodes are locked, parent and child,
-> during a path walk.  However I'm not very familiar with that part of
-> the VFS and I see that the current RCU dcache might not lock that much
-> during a path walk.
+-----BEGIN GEEK CODE BLOCK-----
+Version: 3.12
+GCM/CS/IT/U d- s++: a17 C++++>$ UB/L/X/*++++(+)>$ P+++(++++)>$
+L++++(+++) E W++(+) N+++(++) o? K? w--- O? M++ V? PS+() PE+(-) Y+
+PGP+++ t+(+++) 5 X R? tv-(--) b++++(++) DI+ D+ G e->++++$ h!*()>++$ r  
+!y?(-)
+------END GEEK CODE BLOCK------
 
-Never had been needed on crossing mountpoints, actually.
-
-> I agree, users shouldn't be able to pin down a file.
-> 
-> I think unlink() should succeed on a file while something is visiting
-> inside its metadata directory.
-
-See above.  Again, the fundamental problem with that is allowing unlink
-and friends on a mountpoint.  I would love to do that, but it always
-generated -EBUSY on all Unices.  Linux got a bit more users and userland
-code than Plan 9 - they can afford such changes, but...
-
-And yes, from the kernel POV it's trivial to do - witness the MNT_DETACH
-codepath in umount - it's much simpler than "normal" umount exactly because
-it doesn't try to emulate old "it's busy, can't umount" behaviour.
-
-With umount we could introduce "don't bother with that shit" flag.  With
-unlink() we would have to make that default behaviour to be useful.
