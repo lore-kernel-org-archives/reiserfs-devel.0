@@ -1,78 +1,101 @@
-From: Russell Coker <russell@coker.com.au>
-Subject: Re: ReiserFS is not suitable for a root FS.
-Date: Sat, 17 May 2003 22:40:45 +1000
-Message-ID: <200305172240.45091.russell@coker.com.au>
-References: <200305172030.58775.russell@coker.com.au> <200305172125.59713.russell@coker.com.au> <3EC6247C.4030605@gmx.net>
-Reply-To: Russell Coker <russell@coker.com.au>
+From: D_i_F_i@gmx.de
+Subject: "no space left" but df -k shows plenty of free space
+Date: Sat, 17 May 2003 17:34:09 +0200
+Sender: difi
+Message-ID: <3EC65671.DA1CB780@gmx.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14144-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14145-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3EC6247C.4030605@gmx.net>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
-Cc: ReiserFS <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Sat, 17 May 2003 22:01, Carl-Daniel Hailfinger wrote:
-> Oleg? Given a statically linked reiserfsck binary completely loaded into
-> memory and an initrd below the reiserfs root filesystem, it should be
-> possible to completely unmount the root fs because the initrd is still
-> there and can serve as root fs.
+Hello,
 
-If you have the fsck program is already on the initrd then this problem is 
-already solved.
+while copying some data into a logical volume with reiserfs as
+filesystem, I've got an error message, that there isn't enough
+space left on the device. Even just creating a new empty file
+isn't possible anymore:
 
-If you don't have the fsck program on the initrd (as is the case for a typical 
-Debian install - and probably most other distributions too) then by the time 
-the root filesystem is mounted the initrd is moved away by pivot_root and 
-moving it back would be complex and not a supported feature of the boot 
-scripts.
+sammy:/opt/kgm/data/log # touch abc
+touch: creating `abc': No space left on device
 
-With kernel 2.6 I believe that the initrd will become a regular tmpfs, in 
-which case the proceedure could be:
-1) Kernel loads initrd.
-2) Initrd mounts root read-only and checks for errors or other indications 
-that fsck is needed.
-3)  If fsck is needed then the fsck program is copied from /root/sbin to 
-/sbin, /root is umounted fsck'd and remounted.
-4)  Continue as usual.
+But the df-command has still reported quite a lot of free capacity:
 
-With the 2.4 kernels we would need to mount a tmpfs before step 3, but the 
-Debian initrd scripts already do that for other reasons, so it wouldn't be 
-such a big change.
+sammy:/opt/kgm/data/log # df -k /opt/kgm/data
+Filesystem        1k-blocks     Used Available Use% Mounted on
+/dev/kgmvg/datalv  10485436  7987364   2498072  77% /opt/kgm/data
 
-This could be done.  To do it you want to first get SUSE to do it and then 
-some other RPM based distro.  Once it's considered a "standard" thing to do 
-for ReiserFS it will be easier to get into Debian.
+If I had used ext2 or ext3, the number of already used inodes could
+be the reason for this problem. But this isn't an issue when using
+reiserfs as the following command shows:
 
-Getting changes to Debian to make up for features that aren't in ReiserFS but 
-are in Ext2/3 will probably be rather difficult at the moment...
+sammy:/opt/kgm/data/log # df -i /opt/kgm/data
+Filesystem            Inodes   IUsed   IFree IUse% Mounted on
+/dev/kgmvg/datalv         -       -       -    -  /opt/kgm/data
 
-However this does not deal with the situation where an initrd is not being 
-used.  Some people just don't like using an initrd.  For that case you would 
-have to copy all relevant files to a tmpfs and use pivot_root to make it the 
-root file system.  After that the best thing to do would be to reboot as 
-testing all the possible options to ensure that the system will consistantly 
-boot in a regular fashion after such a fsck will be difficult (and a reboot 
-is not so arduous anyway).
+Even "du -hc /opt/kgm/data/" reports an amount of data, that should
+be easily stored into a filesystem with a capacity of 10G:
 
-> A compressed metadata dump uses about 0.1% of your disk space, i.e. ~2MB
-> for a 2GB partition. I'm sure you have at least 1% spare disk space.
-> Otherwise you are suffering from horrible performance anyway. There is
-> no filesystem I'm aware of which performs well with <5% free.
+411M    /opt/kgm/data/ABC/in/new
+1.1G    /opt/kgm/data/ABC/in
+512     /opt/kgm/data/ABC/log
+512     /opt/kgm/data/ABC/out
+1.1G    /opt/kgm/data/ABC
+129k    /opt/kgm/data/tool
+512     /opt/kgm/data/etc
+3.9G    /opt/kgm/data/log
+2.0M    /opt/kgm/data/tmp
+2.3G    /opt/kgm/data/data
+25M     /opt/kgm/data/files
+1.1M    /opt/kgm/data/names
+136M    /opt/kgm/data/kerna
+137M    /opt/kgm/data/kernb
+180M    /opt/kgm/data/logtool
+233k    /opt/kgm/data/buf
+57M     /opt/kgm/data/patch13/unpack
+75M     /opt/kgm/data/patch13
+50M     /opt/kgm/data/patch14/unpack
+66M     /opt/kgm/data/patch14
+7.9G    /opt/kgm/data
+7.9G    total
 
-Is this with the -p option of debugreiserfs?
+Only after moving some of the files into another filesystem, I was
+able to store further files into this filesystem. So I guessed,
+that it should work if I extend the reiserfs by 2G (lvextend and
+resize_reiserfs). And as a matter of fact this enlargement worked.
 
-I'll do it next time.
+Now, df -k /opt/kfm/data shows:
 
--- 
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
+Filesystem        1k-blocks     Used Available Use% Mounted on
+/dev/kgmvg/datalv  12582524  7987360   4595164  64% /opt/kgm/data
 
+Now we can use the filesystem without problems but I fear that we
+will run into problems when the filesystem reaches 77% usage again.
+
+The directory with the biggest number of files currently contains
+about 70.000 files. I don't think that this is a real challange for
+reiserfs. Also the other limits as stated in the FAQ on
+http://www.namesys.com/ aren't reached by now.
+
+I'm using reiserfs version 3.6.25 [built into kernel] of a
+SLES7-Distribution (SuSE) on IBM zSeries (z900, z/VM) in
+64-Bit-Mode (s390x). The filesystem has been resized
+3 times on the fly (in mounted state). Could it be, that this
+caused the filesystem to get damaged somehow? Or is there a bug
+in the df-command, that may cause it to report wrong values for
+free capacities? Can it be, that the last enlargement of
+the filesystem didn't do its full job so that the problem maybe
+disapeared with the next enlargement? Or is it necessary to delete
+and recreate the whole filesystem (which would cause us a lot of
+trouble)? Or what do you suggest?
+
+Lots of questions. I would appreciate if you could give me some
+anwers for at least some of them.
+
+Regards,
+Dirk
