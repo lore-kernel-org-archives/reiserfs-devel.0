@@ -1,60 +1,52 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: WARNING: Too many iterations: 256
-Date: Wed, 6 Nov 2002 17:17:00 +0300
-Message-ID: <15817.9308.653007.765672@laputa.namesys.com>
-References: <20021106145416.X2099@humilis>
+From: Marko Asplund <aspa@kronodoc.fi>
+Subject: Re: tuning a fs for large number of small files
+Date: Wed, 6 Nov 2002 17:25:29 +0200 (EET)
+Message-ID: <Pine.LNX.4.44.0211061711290.2873-100000@gamay.kronodoc.fi>
+References: <20021106160733.T23227@vestdata.no>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11931-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11932-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021106145416.X2099@humilis>
+In-Reply-To: <20021106160733.T23227@vestdata.no>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: sander@humilis.net
-Cc: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
+Cc: =?ISO-8859-1?Q?Ragnar_Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
 
-Sander writes:
- > Hi Both,
- > 
- > A fyi again. I hope this is helpful.
- > 
- > kernel 2.5.46, reiserfs snapshot 2002.11.05
- > 
- > When I try to untar 16 kernel sources at the same time, I get this in
- > the system log:
- > 
- > reiser4[ktxnmgrd:run(1340)]: traverse_tree (fs/reiser4/search.c:465)[nikita-1481]:
- > WARNING: Too many iterations: 128
- > reiser4[ktxnmgrd:run(1340)]: traverse_tree (fs/reiser4/search.c:465)[nikita-1481]:
- > WARNING: Too many iterations: 256
- > reiser4[tar(1519)]: traverse_tree (fs/reiser4/search.c:465)[nikita-1481]:
- > WARNING: Too many iterations: 128
- > reiser4[tar(1528)]: traverse_tree (fs/reiser4/search.c:465)[nikita-1481]:
- > WARNING: Too many iterations: 128
- > reiser4[ktxnmgrd:run(1340)]: traverse_tree (fs/reiser4/search.c:465)[nikita-1481]:
- > WARNING: Too many iterations: 512
- > reiser4[tar(1525)]: traverse_tree (fs/reiser4/search.c:465)[nikita-1481]:
- > WARNING: Too many iterations: 128
- > reiser4[ktxnmgrd:run(1340)]: jnode_flush (fs/reiser4/flush.c:1039)[jmacd-16739]:
+On Wed, 6 Nov 2002, Ragnar Kj=F8rstad wrote:
 
-They all can be safely ignored. Warnings indicate that there is high
-contention for reiser4 balanced tree.
+> ...
+> If you have the chance you can tar together all the files, and extract
+> them again. This will help in two ways:
+> - reduce fragmentation
+> - write files to the filesystem in reiserfs-optimal order.
+>   If you create the files in the increasing hash-order access will
+>   typlicly be much faster. If you create a tar of the files from a
+>   reiserfs-filesystem (with the same hash) you will accomplish just
+>   that.
 
- > WARNING: flush failed: -11
- > jnode_flush failed with err = -11
- > jnode_flush failed with err = -11
- > reiser4[tar(1525)]: traverse_tree (fs/reiser4/search.c:465)[nikita-1481]:
- > WARNING: Too many iterations: 256
- > reiser4[tar(1525)]: traverse_tree (fs/reiser4/search.c:465)[nikita-1481]:
- > WARNING: Too many iterations: 512
- > reiser4[tar(1525)]: traverse_tree (fs/reiser4/search.c:465)[nikita-1481]:
- > WARNING: Too many iterations: 1024
- > reiser4[tar(1525)]: traverse_tree (fs/reiser4/search.c:465)[nikita-1481]:
- > WARNING: Too many iterations: 2048
- > reiser4[ktxnmgrd:run(1340)]: jnode_lock_parent_coord (fs/reiser4/flush.c:2681)[nikita-2757]:
- > WARNING: get_parent failed: -11
+i was thinking about using something like the following method for=20
+migrating the files to the new filesystem:
+tar clf - /mnt/oldext3fs | tar xf -
 
-Nikita.
+this should reduce fragmentation but will it write the files in
+filesreiserfs-optimal order?
+
+> What hash-function to use doesn't really matter unless you have a lot of
+> files in a single directory. Do you have that? Is there any typlical
+> "pattern" for the filenames, and the order they are created in?
+
+there shouldn't be particularly many files in a single directory. the
+filesystem is actually a hierarchy "database" for our backup system
+(Arkeia) and it replicates the filesystem trees of the machines being
+backed up. i can't come up with a typical file naming or creation order
+patterns. most of the directory hierarchies are quite static except for
+the home directories perhaps.
+
+best regards,
+--=20
+	aspa
+
