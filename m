@@ -1,51 +1,54 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: 2 Terabyte install
-Date: Sat, 15 May 2004 14:28:41 -0700
-Message-ID: <40A68B89.9000500@namesys.com>
-References: <409AC2FF.7080800@lindows.com> <1083917932.14089.281.camel@tribesman.namesys.com> <409BB690.6030604@namesys.com> <409BBDC9.3030809@lindows.com> <409FB387.8080804@namesys.com> <40A19147.4010703@lindows.com> <40A257DA.2010903@namesys.com> <40A26D45.2010707@lindows.com> <40A30B00.8020103@namesys.com> <C10E654E-A518-11D8-BD91-000A95CD704C@wagland.net>
+Subject: Reiser4 status as of this weekend
+Date: Sat, 15 May 2004 14:45:25 -0700
+Message-ID: <40A68F75.2030306@namesys.com>
+References: <003a01c4377d$d653eac0$7d02a8c0@toronto.chantrynetworks.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18719-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18720-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <C10E654E-A518-11D8-BD91-000A95CD704C@wagland.net>
+In-Reply-To: <003a01c4377d$d653eac0$7d02a8c0@toronto.chantrynetworks.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Paul Wagland <paul@wagland.net>
-Cc: Clifford Beshers <clifford.beshers@lindows.com>, Vladimir Saveliev <vs@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>, Vitaly Fertman <vitaly@namesys.com>, beverly@idiom.com
+To: Russell Treleaven <rtreleaven@chantrynetworks.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Paul Wagland wrote:
+Russell Treleaven wrote:
 
+>Hi Hans,
 >
-> On May 13, 2004, at 7:43, Hans Reiser wrote:
+>Your website has been saying "Reiser4 is in final testing, and will ship
+>soon!" for a long time.
+>Terms like long and soon are kinda vague. How long has the website
+>stated that Reiser4 will ship soon?
+>I really like the idea and wan't to try out Reiser4.
 >
->> Well, if people care enough about it, we can optimize it at a pretty 
->> small cost in time, and we will do so if a sponsor like Lindows asks 
->> us for it.  Otherwise we'll focus on getting that compression plugin 
->> out the door, etc.....
+>Sincerely,
+>
+>Russell Treleaven
 >
 >
-> Just a thought... Have you considered a "pledge" page? I.e, put up a 
-> list of features, and then allow people to "pledge" donations for when 
-> those features are finished. I for one would pledge 10USD for the 
-> repacker/disk optimiser, and yes, I know it isn't much, but you 
-> already have my donation for nothing :-) And, people often prefer to 
-> give money "to a cause".
 >
-> Just a thought, feel free to ignore it if you wish :-)
+>  
 >
-> Cheers,
-> Paul
+Some users are saying that it is rock solid (please contradict dear 
+readers).  We the developers can use iozone to make it crash by mmapping 
+more than all of ram and dirtying all the mmapped pages.  Linux is not 
+well structured for managing memory under that circumstance.   The clean 
+fix for that for reiser4 given the way the Linux design is,  is 
+substantial work to do right, and is in progress.  We currently have a 
+fix that costs performance, and are fixing the performance issue (which 
+is fixable but requires code....).
 
-Maybe we need to ask for volunteers to create a pledge page.;-)
+We would probably have it ready to ship this week, but Nikita is leaving 
+Namesys after having done a great job here for way too little pay, and 
+that means we need to have him and Saveliev spend a full week doing a 
+code review before he goes, and Zam and I are busy earning the next 
+month payroll money by doing work for digeo, and such is the free 
+software "business".  Sigh.
 
-Seriously though, it is a good idea, though I note that it only got 
-$1000 for gentoo despite being slashdotted....
-
-My mother (Beverly, who did our art on our website) is working on a 
-Namesys tee shirt to sell on our website, maybe we should add the word 
-"supporter" to the tee shirt.
+So, stay tuned, and check again in two weeks.
 
 Hans
