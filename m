@@ -1,72 +1,174 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: reiser acceptance (was Re: Atomic filesystem or not)
-Date: Tue, 20 Jul 2004 11:03:57 +0300
-Message-ID: <20040720080357.GX4990@nysv.org>
-References: <200407151434.23082.marcel@hilzinger.hu> <200407151354.47063.ctpm@ist.utl.pt> <40F6DE4A.2070103@slaphack.com> <40F6E06B.1080505@namesys.com> <40F73370.2090600@slaphack.com> <40FB876E.1050200@namesys.com> <40FC3730.80908@slaphack.com> <20040720065253.GW4990@nysv.org> <40FCCC4F.6040709@slaphack.com>
+From: "David Dabbs" <david@dabbs.net>
+Subject: RE: Fibration questions
+Date: Tue, 20 Jul 2004 03:31:30 -0500
+Message-ID: <20040720083108.73C4C15DCA@mail03.powweb.com>
+References: <40FCC497.40308@slaphack.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19702-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19703-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <40FCCC4F.6040709@slaphack.com>
+In-Reply-To: <40FCC497.40308@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
-Cc: Hans Reiser <reiser@namesys.com>, Claudio Martins <ctpm@ist.utl.pt>, reiserfs-list@namesys.com, Marcel Hilzinger <marcel@hilzinger.hu>
+To: 'David Masover' <ninja@slaphack.com>
+Cc: reiserfs-list@namesys.com
 
-On Tue, Jul 20, 2004 at 02:39:59AM -0500, David Masover wrote:
->
->Unless, that is, you've already made it so modular that people who call
->sys_reiser on reiser4 won't find it broken on reiser5.  If you can do
->that without cruft, you are amazing, and the number should go.
+> 
+> Hans Reiser wrote:
+> | David Masover wrote:
+> |
+> |> Why beyond?  Ask each fs object (without knowing its name), "What is
+> |> your primary type?"  Put like-typed objects together.  Simple.
+> |
+> | Except that at look up time all you know is the name, and if the type is
+> | not in the name then you cannot fibrate by it.
+> 
+> I must not understand fibration.  Do you have to know the fibration of
+> an object to find it?
+> 
 
-But if the syscalls get extended, we have the same situation in
-sys_reiser4, right?
+Fibration is simply a means to physically group together filesystem objects
+you want grouped together, or perhaps more likely, separated from some other
+group. I muddied the waters by proposing that the fibration bits might be
+gainfully employed as a quick and dirty to test whether an object had a
+particular extension. 
 
-So it has to be somehow forward-compatible, I think. But if it's all
-in libaal or some equivalent, it's just enough to upgrade the library?
+Here is the schematic for directory item keys with which you are probably
+familiar. The file /etc/foo will have the dirid for /etc as key.el[0], the
+first 7 characters of the file name in key.el[1]. etc. Fibration, if
+enabled, assigns a 'fibre' as the 7 high bits of the second key element,
+thus acting like 'GROUP BY' for those file names that end up generating the
+same fibre bits using the configured fibration plugin. See below.
 
->Possibly.  My point is Tesla was a genius who died poor and Edison was a
->hard worker who won.  My guess is that Edison understood business and
->people a bit better than Tesla, who understood electricity a bit better
->than Edison.
+David
 
-Yeah, but I'm pretty sure I don't mis-remember Edison using a few
-very dirty tricks to prove his superiority...
 
->What about Gentoo?  (I just mentioned this in an email, probably sent
->exactly the same time as yours.)  Gentoo maintainers welcome new,
->unstable stuff, as long as it's well isolated -- use the ~x86 flag if
->it's a package, or a USE flag if it's a patch.  So we just add a reiser4
->USE flag.  As long as they can warn users away from it because of
->possible instability (as they did with the gtk2 flag), we're fine.
+/*
+*   KEY ASSIGNMENT: PLAN A, LONG KEYS.
+*
+* DIRECTORY ITEMS
+*
+|       60     | 4 | 7 |1|   56        |        64        |        64
++--------------+---+---+-+-------------+------------------+----------------+
+|    dirid     | 0 | F |H|  prefix-1   |    prefix-2      |  prefix-3/hash |
++--------------+---+---+-+-------------+------------------+----------------+
+|                  |                   |                  |                |
+|    8 bytes       |      8 bytes      |     8 bytes      |     8 bytes    |
 
-Sure. But it'll be a cold day in hell when I start using Gentoo.
 
-Debian is basically flexible enough for me, and I abhor the notion
-of compiling more than what I have to.
+ dirid         objectid of directory this item is for
 
-Anyway, getting the patches out there, I'd be more than happy to do
-things with them in Debian :)
+ F             fibration, see fs/reiser4/plugin/fibration.[ch] (BELOW)
 
->What one distro does, others are more likely to do.
+ H             1 if last 8 bytes of the key contain hash,
+               0 if last 8 bytes of the key contain prefix-3
 
-But still I think upstream penetration would be best.
+ prefix-1      first 7 characters of file name.
+               Padded by zeroes if name is not long enough.
 
->Not really.  Best thing?  A Gentoo SYNC mirror or a Debian source, or
->the Fedora equivalent (if there is one).  That is, the next best thing
->to a Gentoo USE flag.  A lot of work for us, but users who want the
->latest reiser4 can get it, using a package manager, not patch and make.
+ prefix-2      next 8 characters of the file name.
 
-Sure, I could gladly maintain a Debian mirror with reiser4-patched
-packages for woody, sarge and sid, but I probably wouldn't have time
-to thoroughly test all these setups, which means someone may poison
-their stable Debian with these. So maybe just testing in sid
-would be enough for starters.
+ prefix-3      next 8 characters of the file name.
 
--- 
-mjt
+ hash          hash of the rest of file name (i.e., portion of file
+               name not included into prefix-1 and prefix-2).
+
+ File names shorter than 23 (== 7 + 8 + 8) characters are completely encoded
+ in the key. Such file names are called "short". They are distinguished by H
+ bit set in the key.
+
+ Other file names are "long". For long name, H bit is 0, and first 15 (== 7
+ + 8) characters are encoded in prefix-1 and prefix-2 portions of the
+ key. Last 8 bytes of the key are occupied by hash of the remaining
+ characters of the name.
+
+ This key assignment reaches following important goals:
+
+     (1) directory entries are sorted in approximately lexicographical
+     order.
+
+     (2) collisions (when multiple directory items have the same key), while
+     principally unavoidable in a tree with fixed length keys, are rare.
+
+
+/***************************** fibration.c ****************************/
+/* Copyright 2004 by Hans Reiser, licensing governed by
+ * reiser4/README */
+
+/*
+ * Suppose we have a directory tree with sources of some project. During
+ * compilation .o files are created within this tree. This makes access
+ * to the original source files less efficient, because source files are
+ * now "diluted" by object files: default directory plugin uses prefix
+ * of a file name as a part of the key for directory entry (and this
+ * part is also inherited by the key of file body). This means that
+ * foo.o will be located close to foo.c and foo.h in the tree.
+ *
+ * To avoid this effect directory plugin fills highest 7 (unused
+ * originally) bits of the second component of the directory entry key
+ * by bit-pattern depending on the file name (see
+ * fs/reiser4/kassign.c:build_entry_key_common()). These bits are called
+ * "fibre". Fibre of the file name key is inherited by key of stat data
+ * and keys of file body (in the case of REISER4_LARGE_KEY).
+ *
+ * Fibre for a given file is chosen by per-directory fibration
+ * plugin. Names within given fibre are ordered lexicographically.
+ */
+
+static const int fibre_shift = 57;
+
+#define FIBRE_NO(n) (((__u64)(n)) << fibre_shift)
+
+/*
+ * Trivial fibration: all files of directory are just ordered
+ * lexicographically.
+ */
+static __u64 fibre_trivial(const struct inode *dir, const char *name, int
+len)
+{
+	return FIBRE_NO(0);
+}
+
+/*
+ * dot-o fibration: place .o files after all others.
+ */
+static __u64 fibre_dot_o(const struct inode *dir, const char *name, int len)
+{
+	/* special treatment for .*\.o */
+	if (len > 2 && name[len - 1] == 'o' && name[len - 2] == '.')
+		return FIBRE_NO(1);
+	else
+		return FIBRE_NO(0);
+}
+
+/*
+ * ext.1 fibration: subdivide directory into 128 fibrations one for each
+ * 7bit extension character (file "foo.h" goes into fibre "h"), plus
+ * default fibre for the rest.
+ */
+static __u64 fibre_ext_1(const struct inode *dir, const char *name, int len)
+{
+	if (len > 2 && name[len - 2] == '.')
+		return FIBRE_NO(name[len - 1]);
+	else
+		return FIBRE_NO(0);
+}
+
+/*
+ * ext.3 fibration: try to separate files with different 3-character
+ * extensions from each other.
+ */
+static __u64 fibre_ext_3(const struct inode *dir, const char *name, int len)
+{
+	if (len > 4 && name[len - 4] == '.')
+		return FIBRE_NO(name[len - 3] + name[len - 2] + name[len -
+1]);
+	else
+		return FIBRE_NO(0);
+}
+
+
 
