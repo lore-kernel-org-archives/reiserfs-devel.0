@@ -1,66 +1,165 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: silent semantic changes with reiser4
-Date: Mon, 30 Aug 2004 11:51:48 -0700
-Message-ID: <41337744.1070003@namesys.com>
-References: <20040826154446.GG5733@mail.shareable.org> <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com> <20040826165351.GM5733@mail.shareable.org> <20040830173757.GU5108@backtop.namesys.com>
+Subject: Re: silent semantic changes in reiser4 (brief attempt to document
+ the idea of what reiser4 wants to do with metafiles and why
+Date: Sun, 29 Aug 2004 13:21:44 -0700
+Message-ID: <41323AD8.7040103@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21124-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21125-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040830173757.GU5108@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: Jamie Lokier <jamie@shareable.org>, Rik van Riel <riel@redhat.com>, Christophe Saout <christophe@saout.de>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: reiser@namesys.com, Andrew Morton <akpm@digeo.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@osdl.org>, reiserfs-list@namesys.com
 
-Alex Zarochentsev wrote:
+The Idea
 
->On Thu, Aug 26, 2004 at 05:53:51PM +0100, Jamie Lokier wrote:
->  
->
->>Rik van Riel wrote:
->>    
->>
->>>And if an unaware application reads the compound file
->>>and then writes it out again, does the filesystem
->>>interpret the contents and create the other streams ?
->>>      
->>>
->>Yes, exactly that.  The streams are created on demand of course, and
->>by userspace helpers when that's appropriate which I suspect it almost
->>always is.
->>
->>    
->>
->>>Unless I overlook something (please tell me what), the
->>>scheme just proposed requires filesystems to look at
->>>the content of files that is being written out, in
->>>order to make the streams work.
->>>      
->>>
->>Yes.  Hence the idea of coherent views between two files: writing to
->>one affects the content of the other, although the calcalation is only
->>done on demand (or when the fs wants to migrate the representation --
->>for example, creating the flat container prior to deleting the
->>regeneratable pieces in order to save space).
->>
->>I haven't seen anything from Namesys that says they'll do that.
->>
-We do that, err, it is our design to do that. Hmm, the plugins to do 
-that seem to all be in the next to implement list and not on the 
-implemented already list.....
+You should be able to access metadata about a file the same way you
+access the file's data, but with a name based on the filename followed
+by a name to select the metadata of interest.
 
-However, with respect to streams, those are just files in a 
-file-directory object in our scheme. If you want them unified, well, 
-then you cat compound-document/pseudos/glued, or you link 
-compound-document/pseudos/glued to compound-document/pseudos/body, where 
-body is our term for the default stream, and then you just cat 
-compound-document
+Examples:
 
-If you have the impression I am being vaporwarish, well, you are 
-right.... glued is not yet on the already implemented list.
+cat song_of_silence/metas/owner
+cat song_of_silence/metas/permissions
+cat 10 > song_of_silence/metas/mixer_defaults/volume
+cat song_of_silence/metas/license
 
-Hans
+
+But wait!  This idea has flaws.  Let us list them and address them:
+
+Problem: Often we want to access more than one metafile at a time, and
+a separate system call for each of them is less efficient than stat or
+xattrs.
+
+Solution: Create a system call that can access more than one file at a
+time, whether it is a metafile or a data file should be irrelevant.
+
+Problem: Many kinds of metadata need to be updated atomically.
+
+Solution: Atomic filesystem, which allows all files, including data
+files, to be updated atomically.
+
+Problem: Many kinds of metadata need to be constrained in their
+allowed values.
+
+Solution: Allow general purpose constraints to constrain all files,
+including data files also.
+
+Problem: Many kinds of metadata should not be visible to the user
+unless he wants to see them.
+
+Solution: Allow all files to be hidden from the user unless he wants
+to see them.
+
+Example: metas subdirectory is invisible to readdir
+
+Problem: this approach can pollute the namespace
+
+Answer: choose obscure names
+
+Problem (all credit to Mr. Demidov for identifying this problem, I
+argued the other viewpoint, and I can only claim the wisdom to know
+that I lost the argument): names like "..metas" are ugly to new users,
+who don't really care for languages that use punctuation in their
+keywords.
+
+Answer
+
+don't make them too obscure, experienced namespace developers know
+that the problem of polluting the namespace is not really as big a
+deal as beginners think it is, and Clearcase and the WAFL filesystem
+manage to get by just fine, whereas the problem of putting punctuation
+marks into names and syntax is a big deal for newbies to the system.
+Name it "metas" not "..metas", and users will never experience it as a
+real problem, and newbies will never be annoyed by a-rhythmic
+punctuation.  Note: if Linus disagrees, it is not the most important
+thing in this design, "..metas" isn't the end of the world.
+
+Problem: Many kinds of metadata, such as acls, need to be inherited.
+Solution: Allow all files, metafiles and data files both, to be
+inherited from other files.
+
+The Idea 2:
+
+When implementing a file plugin, very often there are methods supplied
+by that plugin that are unique to that plugin.  These methods are
+often well interfaced with as files that can be written to or read
+from.  Allow file plugins to define pseudo files that perform these
+methods.
+
+Examples:
+
+cat complex_document/pseudos/glued gives an archive of the directory
+"complex_document" and everything below it, suitable for emailing.
+
+cat filename/pseudos/backup gives a set of commands that a backup
+command can use to create the file "filename" with all of its state
+preserved, without the backup program having to understand the
+plugin's internals.  (If there is going to be a proliferation of file
+plugins, then backup plugin methods are a necessity.
+
+cat password_directory/pseudos/cat gives a concatenation of all the
+files in the directory "password_directory".
+
+
+Why Is This Design Important?
+
+It is all about namespace fragmentation.  If you can access everything
+in the OS from the same namespace, the OS is much more powerful.
+
+The expressive power of an OS is not proportional to how many objects
+are in the OS, but rather to how many different ways you can combine
+them.  Separate namespaces for different types of objects is like
+having different railroad track gauges for the different peoples of the
+world.
+
+If there are different namespaces for 2 sets of objects, then the
+number of possible combinations of the objects is (N/2)^2, which is
+less than the number of combinations of the objects if they are in one
+namespace, which is N^2.
+
+
+Why Openat Sucks:
+
+because you can't go cat filenameA/metas/permissions > filenameB/permissions
+
+If cat doesn't work, then we are suffering exactly the problem with
+namespace fragmentation that this whole scheme was invented to avoid.
+
+The Origins Of This Idea
+
+I disliked stat() way back in 1984.  This is just one small piece of
+my efforts to build tools to allow OS architects to unify namespaces
+throughout the OS.  DARPA funded this under the CHATS program, and it
+was one of the main components of my proposal.
+
+Schedule:
+
+One piece at a time, I would like to let this mature as a reiser4 only
+prototype throughout the 2.7 kernel series, and then have it reviewed
+for use by other filesystems after that.  Let us not rush it, please.
+I have been studying namespace design since 1984, let someone who is
+deeply familiar with namespace design principles have a try at a
+coherent design with all the pieces in place first before committee
+redesign is attempted.  Please consider that there are advantages to
+letting the guy who had the idea and did the work to make it happen be
+the maintainer.
+
+My approach is to first produce a working prototype, and only then to
+try to make a standard.  It is not an unusual approach in our
+community.  Let me take that path, it works better for persons like
+me.  I have a half working prototype.  A little more time please.
+After 30 years of Unix file system semantics stagnation, there is not
+a great rush for this little piece of mild innovation I think.
+
+Conclusion:
+
+Namespace fragmentation is the most important single determinant of OS
+expressive power, just as trade fragmentation is the most important
+single determinant of national wealth (see Adam Smith's The Wealth of
+Nations).  Making objects combine easily is what it is all about.
+
+
