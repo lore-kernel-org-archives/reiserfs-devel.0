@@ -1,38 +1,53 @@
-From: Rik van Riel <riel@redhat.com>
+From: Chris Mason <mason@suse.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 09:39:35 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44.0408260938340.26316-100000@chimarrao.boston.redhat.com>
-References: <1453776111.20040826131547@tnonline.net>
+Date: Thu, 26 Aug 2004 09:38:08 -0400
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <1093527487.21878.270.camel@watt.suse.com>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
+	 <20040825200859.GA16345@lst.de> <20040825201929.GA16855@lst.de>
+	 <412DA25E.9090405@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20670-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <1453776111.20040826131547@tnonline.net>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Spam <spam@tnonline.net>
-Cc: Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <412DA25E.9090405@namesys.com>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, 26 Aug 2004, Spam wrote:
+On Thu, 2004-08-26 at 04:42, Hans Reiser wrote:
+> Christoph Hellwig wrote:
+> 
+> >
+> >Over the last at least five years we've taken as much as possible
+> >semantics out of the filesystems and into the VFS layer, thus having
+> >a separation between the semantical layer (VFS) and the low level
+> >filesystem.
+> >
+> VFS is the common filesystem layer.  The only reason you think semantics 
+> belong in the common filesystem layer is that you are not innovating in 
+> your semantics, and feel content with stasis.
 
->   Yes, JPEG, TIFF and PNG files for example. But, if you modify any of
->   these  with  an application that doesn't support the extensions then
->   you will loose them.
+This misunderstanding is the heart of the problem really.  In many ways,
+the VFS is the semantic layer, it defines the picture of the directory
+tree and the locking rules the applications see.
 
-OK, so we've got a choice.
+There's no rule that says you can't innovate in the VFS, in fact it is
+where the semantic innovations belong.  Putting them there is what
+allows other filesystems to implement your semantics, and this is
+exactly what linux needs if these new semantics are going to be
+standardized.
 
-Either we will lose the extensions when modifying the file
-with an unaware program, or you lose the extensions when
-copying (or restoring from backup) using an unaware program.
+In other words, writing a reiser4 plugin is one way to get to the new
+semantics, but it must not be the only way.  Keeping them entirely
+within reiser4 is good for the research stage, but for actual deployment
+they need to be finalized and pushed up.
 
-Personally I'd prefer to keep the file intact when not
-modifying it...
+If the early linux filesystems had taken the same attitude you have
+(don't write new filesystems, only write plugins), there would be no
+framework allowing the wealth of filesystems we do have, including
+reiser4.
 
--- 
-"Debugging is twice as hard as writing the code in the first place.
-Therefore, if you write the code as cleverly as possible, you are,
-by definition, not smart enough to debug it." - Brian W. Kernighan
+-chris
+
 
