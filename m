@@ -1,72 +1,44 @@
-From: Stewart Smith <stewart@flamingspork.com>
-Subject: Re: More on Hard Links (was A bold idea (Re: Carrying Attributes
-	too Far))
-Date: Sat, 06 Dec 2003 21:06:00 +1100
-Message-ID: <1070705160.6925.15.camel@willster>
-References: <2342084747-BeMail@cr593174-a>
-	 <3FD0912C.1090700@ninja.dynup.net>
-	 <16336.37772.88198.217245@laputa.namesys.com>
-	 <3FD0AB30.6060305@namesys.com>
-	 <16336.45022.572929.274859@laputa.namesys.com>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Subject: Re: More on Hard Links (was A bold idea (Re: Carrying Attributes too
+ Far))
+Date: Sat, 06 Dec 2003 10:31:00 -0500 EST
+Message-ID: <1569161060-BeMail@cr593174-a>
+References: <3FD136D2.4070808@ninja.dynup.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-FvbK1yHOgWXqGEgTm+OW"
-Return-path: <reiserfs-list-return-16261-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16262-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16336.45022.572929.274859@laputa.namesys.com>
+In-Reply-To: <3FD136D2.4070808@ninja.dynup.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: Hans Reiser <reiser@namesys.com>, David Masover <jedi@ninja.dynup.net>, reiserfs-list@namesys.com
+To: David Masover <jedi@ninja.dynup.net>
+Cc: reiserfs-list@namesys.com
 
---=-FvbK1yHOgWXqGEgTm+OW
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+David Masover wrote on Fri, 05 Dec 2003 19:54:26 -0600:
+> >Incidentally, renaming files is a superset of the delete operation.
+> >Implement that first, and you have delete for free.
+> >  
+> >
+> If only it was that easy.  When you rename a folder, you don't usually 
+> do a recursive rename of everything inside.  When you delete a folder -- 
+> you don't, unless it's "rmdir".  You recursively delete each file 
+> inside, and it's that kind of operation that creates problems for hard 
+> links to directories.
 
-On Sat, 2003-12-06 at 03:18, Nikita Danilov wrote:
-> http://citeseer.nj.nec.com/jones03garbage.html is a recent bibliography
-> in this subject, containing more than 20000 references. I am afraid this
-> is little too much for a brief description. But basically, instead of
-> reclaiming garbage when "last reference" goes out, collectors typically
-> run periodically trying to find unreachable objects. Common way to do so
-> is to find -reachable- ones, and then to declare the rest
-> unreachable. Also, do avoid scanning the whole heap^Wfile system,
+Actually, renaming also is recursive.  The obvious case is when you
+rename a file over an existing file (or directory), which implies the
+whole deletion mechanism is needed.
 
-What also may be interesting is the Charging in a Secure Environment
-paper,
+Also, at least for the AGMS link mechanism (or perhaps for any system
+that allows multiple parent directories), it has to do a graph traversal
+to find out which parent links are still valid, and which need to be
+adjusted if their parent has been changed.  If you see the example at
+the bottom of http://web.ncf.ca/au829/BeOS/AGMSLinkExplanation.txt you'll
+notice that deleting something can cause a sweeping re-evaluation of who
+is the parent to what.  The same thing would happen if you rename (move)
+a parent directory to be a subdirectory of one of its children.
 
-http://www.csse.monash.edu.au/courseware/cse4333/rdp-material/Bremen-paper.=
-pdf
-
-The way it works (as sort-of implemented on Walnut) is that objects are
-charged for resources, and when they can no longer pay, they are
-deleted.
-
-Periodically you run through all the objects deducting rent, and
-removing any objects that can no longer pay for themselves.
-
-To adapt it to a hierarchical filesystem, you could have the root
-directory being the thing that generates money, and then gives it to all
-the objects in it (which then give it to their sub objects) etc.
-
-just a thought.
---=20
-Stewart Smith (stewart@flamingspork.com)
-http://www.flamingspork.com/
-
-
---=-FvbK1yHOgWXqGEgTm+OW
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.3 (GNU/Linux)
-
-iD8DBQA/0aoHFtJC9tN9SokRAglRAJ484b9hVTSXffcW9J6vD8q4nVeSfACfQPhT
-oPOjTv99N8Jbg+hDk9kJHsg=
-=7EtV
------END PGP SIGNATURE-----
-
---=-FvbK1yHOgWXqGEgTm+OW--
-
+- Alex
