@@ -1,56 +1,45 @@
-From: "Bostjan Skufca (at) domenca.si" <bostjan.skufca@domenca.si>
-Subject: Re: quota support
-Date: Tue, 9 Dec 2003 12:14:13 +0100
-Message-ID: <200312091214.13325.bostjan.skufca@domenca.si>
-References: <1070553889.27611.147.camel@tiny.suse.com> <200312081524.45112.bernd-schubert@web.de>
+From: Larry Weldon <larry@welcoin.com>
+Subject: Re: rebuild-tree
+Date: 09 Dec 2003 06:16:19 -0500
+Message-ID: <1070968579.2988.29.camel@larry>
+References: <1070829963.2789.528.camel@larry> <3FD49E01.9090502@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16296-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16297-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200312081524.45112.bernd-schubert@web.de>
-Content-Disposition: inline
+In-Reply-To: <3FD49E01.9090502@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: reiserfs mailing list <reiserfs-list@namesys.com>
 
-Hello,
-
-Below you will find patches for kernels 2.4.20-23
-ftp://ftp.suse.com/pub/people/mason/patches/data-logging/
-
-I have already sent a post about kernel not compilig with quota patches 
-applied if you dont' have modules enabled...
-
-Regards,
-Bostjan
-
-On Monday 08 of December 2003 15:24, Bernd Schubert wrote:
-> On Thursday 04 December 2003 17:04, Chris Mason wrote:
-> > Hello everyone,
+On Mon, 2003-12-08 at 10:51, Hans Reiser wrote:
+> Larry Weldon wrote:
+> 
+> >A client's production file server is set up using RAID-1 with 2 IDE
+> >disks and reiserfs. The operating system is Mandrake 9.1.
 > >
-> > ftp.suse.com/pub/people/mason/patches/data-logging/2.4.23
-> >
-> > Will have a new version of the data logging and quota code as soon as
-> > the suse mirror system copies it over.
->
-> Hello,
->
-> 'official' Namesys quota-patches are only available up to 2.4.20 and
-> actually I thought that a new quota layer has been integrated in 2.4.21 and
-> that quota for reiserfs is naturally supported since that version.
-> However when I briefly looked through the quota-patch, it seems it adds
-> basic quota stuff to the reiserfs-code.
->
-> Please, can someone here enlight me about current quota+reiserfs status?
->
->
-> Thanks,
-> 	Bernd
->
-> PS: We are currently not using quota on reiserfs, but will need to use it
-> within the next 6 weeks.
+> which kernel does it use?
+> 
 
+linux-2.4.19-32mdk
+reiserfsck, 2002 - reiserfsprogs 3.6.3
+
+[snip]
+
+> With reiserfs, if you corrupt the internal nodes of the tree, you have 
+> to run fsck before you can use it, and in this we are more fragile, but 
+> once fsck has been run it is no more fragile than anything else 
+> (assuming you use the latest fsck, because fsck took a long time to 
+> stabilize).
+> 
+
+I would be wise, then to install the latest reiserfs on older servers as
+well?
+
+Thank you,
+-- 
+Larry Weldon <larry@welcoin.com>
 
