@@ -1,76 +1,67 @@
-From: Wouter Verhelst <wouter@grep.be>
+From: Marcel Weber <mmweber@ncpro.com>
 Subject: Re: plagiarism of reiserfs by Debian
-Date: 20 Apr 2003 01:24:09 +0200
-Message-ID: <1050794648.27117.11.camel@rock.grep.be>
-References: <200304181604.28955.vitaly@namesys.com>
-	 <3EA17427.7040300@namesys.com> <87ademfifz.fsf@deneb.enyo.de>
-	 <87y926jjmj.fsf@lgeyermac.math.lsa.umich.edu>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-mfKd4FKiHe9WfwUzBgOL"
-Return-path: <reiserfs-list-return-13730-reiserfs=m.gmane.org@namesys.com>
+Date: Sun, 20 Apr 2003 02:49:36 +0200
+Message-ID: <F592E162-72C9-11D7-ADF3-00050285B655@ncpro.com>
+References: <20030419230654.GF26352@cheney.cx>
+Mime-Version: 1.0 (Apple Message framework v552)
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13731-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <87y926jjmj.fsf@lgeyermac.math.lsa.umich.edu>
+In-Reply-To: <20030419230654.GF26352@cheney.cx>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: debian-devel@lists.debian.org, debian-legal@lists.debian.org, reiser@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Cheney <ccheney@cheney.cx>
+Cc: debian-devel@lists.debian.org, Ben Collins <bcollins@debian.org>, Travis Crump <pretzalz@techhouse.org>, Hans Reiser <reiser@namesys.com>, Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com, debian-testing@lists.debian.org, Ed Boraas <ed@debian.org>
 
---=-mfKd4FKiHe9WfwUzBgOL
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Op za 19-04-2003, om 22:51 schreef Lukas Geyer:
-> the issue seems to be the fix of #152547. If we are not allowed to
-> remove a screenful of advertising from the output of a program, then
-> this unduly restricts the freedom to distribute modified versions.
 
-Uhm.
+Am Sonntag, 20.04.03, um 01:06 Uhr (Europe/Zurich) schrieb Chris Cheney:
+>
+> First of all emacs is pure bloat so who cares what it does... Vim has
+> one line about Ugandan orphans at startup, until now I didn't even
+> notice it was there. If had been pages of crap like what is spewed from
+> mkfs.reiserfs it would have probably been removed as well, unless it
+> was against Vim's license, which happens not to be GPL. As far as I can
+> tell if it annoyed someone enough it is legal under Vim's license to
+> remove the Uganda message as well, they only require the license text
+> itself to remain with the application.  A GPLv3 allowing spamware would
+> be very annoying, I hope it doesn't happen. If anything this stupid
+> reiserfs spamware should be spewed before the program runs, not after,
+> so that the user can see what actually occured without having to scroll
+> back up, which depending on their console type might be difficult.
+>
+> Chris
+>
+>
 
-=46rom the GPL, section 2:
+All I can say to this is: use what you like, resp. if you don't like 
+bloated software or spamware do not use it. My point is, that it should 
+be a right of the original authors of the software to include credits. 
+If someone else does a complete rewrite of the software, okay than we 
+can discuss it, but if the rewrite means only the removal of the 
+credits it is questionable.
 
-    c) If the modified program normally reads commands interactively
-    when run, you must cause it, when started running for such
-    interactive use in the most ordinary way, to print or display an
-    announcement including an appropriate copyright notice and a
-    notice that there is no warranty (or else, saying that you provide
-    a warranty) and that users may redistribute the program under
-    these conditions, and telling the user how to view a copy of this
-    License.  (Exception: if the Program itself is interactive but
-    does not normally print such an announcement, your work based on
-    the Program is not required to print an announcement.)
+But first of all, before we continue this discussion: What exactly has 
+been removed? A readme file, the outputs during boot time, the outputs 
+of mkfs.reiserfs? Has this output any impact on the usability of the 
+software, so that there were good reasons the remove it? Has the 
+license been violated by removing the credits?
 
-Otherwise put: if the program shows the 'no warranty' clause from the
-GPL at startup, you may not remove it. Although a 'no warranty' message
-is certainly not the same as a list of sponsors, they both require some
-messages being printed for legalese reasons. I, personally, see nothing
-wrong with that; it certainly doesn't result in software being non-free.
+Marcel
 
-That said, the screenfull of messages indeed is a nuisance; could they
-be replaced by a reference to them? I'd think of something like
-'development of ReiserFS was sponsored by multiple third parties; please
-see <compile-time defined filename> for details', or maybe 'development
-of ReiserFS was sponsored by <list of names of third parties>; please
-see <compile-time defined filename> for details' if your contracts don't
-allow for removal of those names from the output...
+- -------------------
 
---=20
-wouter at grep dot be
-"An expert can usually spot the difference between a fake charge and a
-full one, but there are plenty of dead experts."=20
-  -- National Geographic Channel, in a documentary about large African beas=
-ts.
-
---=-mfKd4FKiHe9WfwUzBgOL
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dit berichtdeel is digitaal gesigneerd
-
+PGP / GPG Key:	http://www.ncpro.com/GPG/mmweber-at-ncpro-com.asc
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.1 (GNU/Linux)
+Version: GnuPG v1.2.1 (Darwin)
 
-iD8DBQA+odqYWgZ1HEtaPf0RAmmYAJ9GQRqI/Y5Lf5Az2ejp+krN8hXYeQCeLc4O
-N+I7vXWdRjYaD4LCm/q5yOY=
-=I6bb
+iD8DBQE+oe6k1EXMUTKVE5URAnmyAKCTpeRYv6c45/3NpK7/jFZvxa6hIACgw8OX
+VFGEUd3wnUNsuzu0JQTAXcY=
+=ZQWW
 -----END PGP SIGNATURE-----
 
---=-mfKd4FKiHe9WfwUzBgOL--
