@@ -1,44 +1,60 @@
-From: mjt@nysv.org (Markus  =?ISO-8859-1?Q?=20T=F6rnqvist?=)
-Subject: Re: reiser4 plugins (was: silent semantic changes with reiser4)
-Date: Sat, 28 Aug 2004 14:58:55 +0300
+From: Alexander Lyamin <flx@msu.ru>
+Subject: Re:  reiser4 plugins (was: silent semantic changes with reiser4)
+Date: Sat, 28 Aug 2004 16:05:02 +0400
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040828115855.GH1284@nysv.org>
-References: <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <1093527307.11694.23.camel@leto.cs.pocnet.net> <20040828111807.GC6746@alias> <20040828112255.GA11569@lst.de> <20040828114628.GD6746@alias>
+Message-ID: <20040828120502.GE6746@alias>
+References: <412D9FE6.9050307@namesys.com> <20040826014542.4bfe7cc3.akpm@osdl.org> <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <20040828105929.GB6746@alias> <20040828111233.GA11339@lst.de>
+Reply-To: flx@msu.ru
 Mime-Version: 1.0
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20040828114628.GD6746@alias>
+In-Reply-To: <20040828111233.GA11339@lst.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: flx@msu.ru, Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Christoph Hellwig <hch@lst.de>, flx@msu.ru, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-On Sat, Aug 28, 2004 at 03:46:28PM +0400, Alexander Lyamin wrote:
->Not true. If true - send bugreports.
+Sat, Aug 28, 2004 at 01:12:33PM +0200, Christoph Hellwig wrote:
+> On Sat, Aug 28, 2004 at 02:59:29PM +0400, Alexander Lyamin wrote:
+> > Thu, Aug 26, 2004 at 03:24:39PM +0200, Christoph Hellwig wrote:
+> > > This VFS interface is an integral part of ??very filesystem, and it
+> > 
+> > VFS never was "an integral part" of ANY filesystem. my dog knows it.
+> > its just unified INTERFACE TO any filesystem (including reiser4).
+> 
+> You's misquoting me.  IF you quoted the whole context it'd be pretty
+> sure that the part of the filesystem that intefaces with the VFS is
+> meant.
 
-Hate to say it, but apparently symlinking out of metas oopses, but that
-should be trivial to fix?
+No. Its not me "misquoting", its just someone sound plain ?incoherrent?.
+Even if I overquoted reply with whole message, its still sound ?incohherent?.
 
->> Al has started a thread to hash out working semantics, but there's not been
->> a single namesys person involved.  Similar all of you have absolutely ignore
->Al message had a reply.
->"namesys persons" is Hans Reiser.  Sufficient ?
+> 
+> But one could even say VFS is integral part of a linux filesystem as
+> it does most of the work a filesystem driver does in other operating
+> systems.
 
-Not to be disrespectful, but Hans has sometimes taken personal shots on the
-lists and that's not a productive approach. Not that he'd be the only one
-around to do so.
+theres no "linux filesystem". there are "linux filesystems".
+thanks god.
 
-Seems to me, as Christoph said, that some other Namesys guy than Hans should
-participate in the Al/Linus branch of the thread with ideas.
+But I it would be really grate if you'll elaborate your sentence with
+example of VFS functionality (lack of it) on said "other operating systems"
+and if you'll define "most of work".
 
-Certainly the VFS may have to be extended right about now, so someone who
-knows the exact details of Reiser4 should offer ideas and I'm not so sure
-it's Hans. Looks like he had the ideas but not the implementation.
 
-There's also the risk that Reiser4's implementation's don't really bend
-into even a modified/extended VFS because of the plugins?
-That's definitely something that has to be approached properly...
+> 
+> > P.S. I imagine, how much flamed it would be if reiser4 made any intensive
+> > changes in linux VFS code...
+> 
+> It really depends on how you sent them.  If you had a big patch without
+> explanations - sure.
+It would work with small tweaks, but you just can take a look at reiser4
+code and you'll understand that it just could not be chopped in
+"set of small patches" altough it could be documented better ofcourse,
+but its really well commented already.
+
+some times, some approaches to  some problems  just would not work.
 
 -- 
-mjt
-
+"the liberation loophole will make it clear.."
+lex lyamin
