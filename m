@@ -1,145 +1,174 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Directory updates in filesystems
-Date: Fri, 29 Oct 2004 00:26:18 -0500
-Message-ID: <4181D47A.9050609@slaphack.com>
-References: <1098955408.29128.TMDA@h34.zynet2.co.uk>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: Oops with large file in 2.6.8, reiser 3.6.13
+Date: Fri, 29 Oct 2004 14:46:24 +0400
+Message-ID: <20041029104624.GO25932@backtop.namesys.com>
+References: <41750864.3060600@liv.ac.uk> <20041024083732.GA25932@backtop.namesys.com> <41821398.3050900@liv.ac.uk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22209-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22212-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1098955408.29128.TMDA@h34.zynet2.co.uk>
+Content-Disposition: inline
+In-Reply-To: <41821398.3050900@liv.ac.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Simon Waters <simonw@zynet.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Richard Gregory <R.Gregory@liverpool.ac.uk>
 Cc: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hello,
 
-Simon Waters wrote:
-[...]
-| If you have multiple processes simultaneously accessing a directory with
-| rename of contents (additions and removals add more fun), a simple
-| opendir/readir loop will on occasion fail to find a file that exists
-(i.e.
-| the stem part of the file name is the same) because the file has been
-| renamed, on most filesystems on most *nix like systems tested.
+On Fri, Oct 29, 2004 at 10:55:36AM +0100, Richard Gregory wrote:
+> Hi Alex,
+> 
+> That fixed it. I created a 617gig file that filled the filesystem. It 
+> then deleted without a problem. The delete took a long time, but at 
+> least it got there.
 
-If this is about locking not working well with NFS, why not ensure that
-the directory itself is owned by root and read-only before attempting?
-Wait -- don't answer that...
+Thanks a lot.  Your reply is what we needed to make a correct fix.
 
-| Are there any file systems that fully address this issue, or POSIX
-calls that
-| guaranteed to make an atomic readdir, without specific locking, or must a
-| lock be obtained on the directory to ensure that the read is
-consistent. I
-| think that locking is needed in the application if complete
-consistency is
-| required because the underlying behaviour of the OSes/filesystems is so
-| variable in this regard, but I'd be interested in understanding what
-| characteristics a filesystem would have to have to avoid this.
+> Thanks,
+> 
+> Richard
+> 
+> Alex Zarochentsev wrote:
+> >Hello,
+> >
+> >please try the following patch (it is for 2.6.6, 
+> >but i expect it to work with 2.6.8):
+> >=========================================
+> >--- linux-2.6.6/fs/reiserfs/stree.c.orig	2004-10-23 
+> >16:43:11.412335592 +0400
+> >+++ linux-2.6.6/fs/reiserfs/stree.c	2004-10-23 17:09:36.983292168 +0400
+> >@@ -1721,8 +1721,14 @@ void reiserfs_do_truncate (struct reiser
+> >     set_cpu_key_k_offset (&s_item_key, n_file_size);
+> > 
+> >     do  {
+> >+	loff_t to_size;
+> >+
+> >+	to_size = n_file_size - (p_s_inode->i_sb->s_blocksize * 2);
+> >+	if (to_size < n_new_file_size)
+> >+		to_size = n_new_file_size;
+> >+
+> > 	/* Cut or delete file item. */
+> >-	n_deleted = reiserfs_cut_from_item(th, &s_search_path, &s_item_key, 
+> >p_s_inode,  page, n_new_file_size);
+> >+	n_deleted = reiserfs_cut_from_item(th, &s_search_path, &s_item_key, 
+> >p_s_inode,  page, to_size);
+> > 	if (n_deleted < 0) {
+> > 	    reiserfs_warning ("vs-5665: reiserfs_do_truncate: 
+> > 	    reiserfs_cut_from_item failed");
+> > 	    reiserfs_check_path(&s_search_path) ;
+> >@@ -1731,7 +1737,7 @@ void reiserfs_do_truncate (struct reiser
+> > 
+> > 	RFALSE( n_deleted > n_file_size,
+> > 		"PAP-5670: reiserfs_cut_from_item: too many bytes deleted: 
+> > 		deleted %d, file_size %lu, item_key %K",
+> >-		n_deleted, n_file_size, &s_item_key);
+> >+		n_deleted, to_size, &s_item_key);
+> > 
+> > 	/* Change key to search the last file item. */
+> > 	n_file_size -= n_deleted;
+> >@@ -1747,7 +1753,7 @@ void reiserfs_do_truncate (struct reiser
+> > 	** sure the file is consistent before ending the current trans
+> > 	** and starting a new one
+> > 	*/
+> >-        if (journal_transaction_should_end(th, th->t_blocks_allocated)) {
+> >+        if (1 || journal_transaction_should_end(th, 
+> >th->t_blocks_allocated)) {
+> > 	  int orig_len_alloc = th->t_blocks_allocated ;
+> > 	  decrement_counters_in_path(&s_search_path) ;
+> > 
+> >=========================================
+> >On Tue, Oct 19, 2004 at 01:28:20PM +0100, Richard Gregory wrote:
+> >
+> >>Have managed to create an Oops in the reiser code, dmesg output below.
+> >>This was on a software raid5 setup, with 8 160Gb disks, creating around 
+> >>1.1Tb of storage. There was around 400Gb of content on this filesystem, 
+> >>then as an over night test, /dev/zero was dd'ed to a file on the 
+> >>filesystem, creating an approx 720Gb file and filling the filesystem.
+> >>
+> >>The problem came when I tried to delete it, rm'ing it caused an Oops in 
+> >>the reiser code. The system was rebooted, but mounting the filesystem 
+> >>gave the oops below.
+> >>
+> >>Am currently running reiserfsck --check to see if this file can be 
+> >>removed some other way, otherwise, it will mean a very long reformat and 
+> >>copy operation.
+> >>
+> >>Something else, this filesystem had recently been resized from 960Gb to 
+> >>the 1.1Tb with the addition of the eighth drive. This is on a FC2 based 
+> >>install, Duron 833, 256 meg.
+> >>
+> >>
+> >>Richard
+> >>
+> >>
+> >>ReiserFS: md0: found reiserfs format "3.6" with standard journal
+> >>ReiserFS: md0: using ordered data mode
+> >>ReiserFS: md0: journal params: device md0, size 8192, journal first 
+> >>block 18, max trans len 1024, max batch 900, max commit age 30, max 
+> >>trans age 30
+> >>ReiserFS: md0: checking transaction log (md0)
+> >>ReiserFS: md0: replayed 3 transactions in 18 seconds
+> >>ReiserFS: md0: Using r5 hash to sort names
+> >>ReiserFS: md0: Removing [2 1282214 0x0 SD]..<0>REISERFS: panic (device 
+> >>md0): journal-1413: journal_mark_dirty: j_len (1024) is too big
+> >>
+> >>------------[ cut here ]------------
+> >>kernel BUG at fs/reiserfs/prints.c:362!
+> >>invalid operand: 0000 [#1]
+> >>Modules linked in: raid5 xor iteraid sd_mod autofs4 r8169 sg scsi_mod 
+> >>dm_mod uhci_hcd button battery asus_acpi ac ext3 jbd
+> >>CPU:    0
+> >>EIP:    0060:[<c019416a>]    Not tainted
+> >>EFLAGS: 00010292   (2.6.8-1.521custom)
+> >>EIP is at reiserfs_panic+0x4a/0x70
+> >>eax: 0000005c   ebx: c03422a8   ecx: c0380f78   edx: c0380f78
+> >>esi: c13b1e00   edi: c13b1f2c   ebp: c13b1e00   esp: cc852950
+> >>ds: 007b   es: 007b   ss: 0068
+> >>
+> >>Process mount (pid: 1204, threadinfo=cc852000 task=cccb2310)
+> >>Stack: c0347a48 c13b1f2c c0419c60 cc852d1c ffffffff ca5a59a0 c01a28f8 
+> >>c13b1e00
+> >>      c03498dc 00000400 c13b1e00 c019e589 000017bc d08f50e4 00007fff 
+> >>c13b1e00
+> >>      00000000 00007fff c13b1e00 000017bc 0bde7fff c017e384 cc852a20 
+> >>c95ee018
+> >>Call Trace:
+> >>[<c01a28f8>] journal_mark_dirty+0x288/0x2a0
+> >>[<c019e589>] get_bitmap_node+0x39/0xa0
+> >>[<c017e384>] _reiserfs_free_block+0xf4/0x180
+> >>[<c019ac35>] prepare_for_delete_or_cut+0x515/0x710
+> >>[<c0190d61>] unfix_nodes+0x61/0x140
+> >>[<c019bbbc>] reiserfs_cut_from_item+0xac/0x4f0
+> >>[<c019c2fc>] reiserfs_do_truncate+0x26c/0x520
+> >>[<c019b6bb>] reiserfs_delete_object+0x2b/0x60
+> >>[<c0185777>] reiserfs_delete_inode+0xb7/0x100
+> >>[<c011a587>] printk+0xf7/0x140
+> >>[<c01856c0>] reiserfs_delete_inode+0x0/0x100
+> >>[<c015eb04>] generic_delete_inode+0x74/0xf0
+> >>[<c015ecdc>] iput+0x4c/0x60
+> >>[<c01912f5>] finish_unfinished+0x1c5/0x310
+> >>[<c0154e09>] __lookup_hash+0x89/0xb0
+> >>[<c01a29a6>] journal_end+0x96/0xc0
+> >>[<c01931ba>] reiserfs_fill_super+0x4da/0x640
+> >>[<c0187ef0>] reiserfs_init_locked_inode+0x0/0x10
+> >>[<c020e40f>] snprintf+0x1f/0x30
+> >>[<c014e67f>] get_sb_bdev+0xef/0x120
+> >>[<c019339b>] get_super_block+0x1b/0x40
+> >>[<c0192ce0>] reiserfs_fill_super+0x0/0x640
+> >>[<c014e871>] do_kern_mount+0x51/0xe0
+> >>[<c016127a>] do_new_mount+0x8a/0xc0
+> >>[<c016182f>] do_mount+0x13f/0x180
+> >>[<c020f50a>] __copy_from_user_ll+0x3a/0x70
+> >>[<c016167c>] copy_mount_options+0x6c/0xe0
+> >>[<c0161b9e>] sys_mount+0x8e/0xf0
+> >>[<c032ce0f>] syscall_call+0x7/0xb
+> >>Code: 0f 0b 6a 01 ce 27 34 c0 85 f6 c7 44 24 08 60 9c 41 c0 c7 04
+> >
+> >
 
-Maybe an atomic readdir operation?  Does reiser4 do atomic reads?
-
-I know reiser4 (or at least should by 4.1) have a sys_reiser4 api which
-does atomic write operations.  That is:  application starts the
-transaction, does a bunch of writes, ends the transaction.  If at any
-point there is a failure, filesystem tells application to roll back.
-
-<rant>
-
-Actually, though I can see the design decision to roll back, I think
-that under certain circumstances, the new transaction should be required
-to be complete before being comitted on top of the old state, and that
-meanwhile, apps should be allowed to read the consistent, old state.
-Like how vim, maildir, and many other things work now -- write to temp
-file, rename temp file on top of original, only at the filesystem level
-and for entire directories.
-
-This alows read-only access, such as a web server, to operate on
-slightly stale "snapshots" as this would create.  When faced with a
-decision of:
-
-- - serving a slightly stale page immediately
-- - making users wait for a write of a newer version to complete
-- - serving a half-written newer version
-
-I am sure most web admins would choose the first option, which is what
-they would get if the pages were being updated with vim.  The difference
-is that the filesystem solution works on larger units than single files.
-
-This would eliminate the need for application-level rollback support,
-though that might be a nice feature.  Also, applications aren't always
-available -- maybe mysql or some such was in the middle of a transaction
-when my box crashed and my boot sector died, and maybe mysql will never
-be on any rescue disk, and maybe I want my rescue disk to be able to
-roll back the transactions for me and give me a consistent filesystem.
-
-Obviously this fails if the readdir is part of a larger,
-do-something-to-all-files-in-directory operation.  In this case, the
-filesystem needs to know the difference between read and read/write
-transactions -- read-only access need not lock, read/write must lock,
-even if the write may not be necessary (write to file a if and only if
-file b exists.)  It also implies that applications need to specify what
-to lock.
-
-I haven't really done my homework, but I think that the transactions I
-just described are what databases do, and that the ones already in the
-reiser4 whitepaper are easier.  Specifically because of that "specify
-what to lock" thing.
-
-The nice thing about this is that it gives fully scalable snapshots,
-assuming all programs support it.  For example, a traditional snapshot
-of a system with lots and lots of random activity in temporary files
-will use a lot more resources than necessary, especially if you only
-wanted one directory.  This solution gives you a solution as simple as a
-patched cp or rsync which can work on anything from a single file to a
-whole filesystem.  I'd like to see some benchmarks, but I think
-filesystems are getting to a point where they will be more efficient
-than humans at organizing data, meaning no real performance reason for a
-bunch of tiny little partitions.  It'd suck to have to have a separate /
-partition, just so you can atomically back up /etc.
-
-| I think a lock and full read will have significant performance
-implications,
-| since the problem only manifests itself on busy directories, but in a
-| journalled metadata environment all it wants is a consistent read, if we
-| later stat the file and it is missing we can look for renamed versions.
-
-~From what I can gather, it seems you'd be happy with the above system,
-using read-only transactions in place of locks.
-
-Before I completely run away with my ego, I have absolutely no idea how
-difficult this would be to implement on top of reiser4, or anything
-else, for that matter.  Also, even if the filesystem in question was
-done today, it still might be awhile before application support was
-developed enough for it to work -- how can I atomically back up /etc
-while a package manager is installing, if said package manager doesn't
-know about those locking/transactions?
-
-</rant>
-
-Don't let my ranting discourage you from Reiser or Linux in general.
-Most geeks know how to be concise...
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQYHUeHgHNmZLgCUhAQLuchAAkbo3Ac9ikvfayhlT6M1CDjxAHEU3rTfH
-7u50czApG8srLPH6tj6xOV9FT++g1KYhAeeNoGj9nKsFlgNJex3Wx4DqGbOZcUNW
-sM3tbGCLrKiPtD8UJLrMc4ZQ7jDTI9AavGCA/Y4U8xGzbQSwOrFOdBeMqV3EXctT
-ZycOkTXkfWGYKTQ8FEfxBPAEADsdpCQ4RiOgMuL9wy/V/LY5CdzhVlRJwNLf7UJy
-sR+z2eKt97Tlg3opylT2R9AgNGmveMIfpDuN3F4IuMMHRZNDgrzWEYSHT208O8+A
-2ZJkOU7yaPShdgt+tTD411hlXMMlSoKoCwhCzr9js9Fj1ice5a/DxXAryZJZPXoi
-SxI2vrtm10gEEJ8TfbKDNhh50xTSCC6Jwgd8AuoN6f7GPojM6dpby6kXSMRfp/+A
-nb4Oz6kdbAG9PhPaBFBjMC/GGakXelnBO98C8M5YvQ8Uc1X/Gi0zD+UQrN/m0xy+
-v/fCJ7ySzBjQVBsKAXZenfrn/RB98zzqNVaMOeoA8hITbCQu9LOgHCbfZaYplUTl
-bMJvUU2Pfuk9JCV6sZAwcoQAt1xKku+mzFcnvHXRmvRKlTA6ySMZRqVosXJbgXpa
-2fhzJHDRZNUtMsQEy8QGbsUUCcFXHM/4gSRqNzI0r2uljwVxg1WBm/t2vBPudCPF
-q0r+lpJTn/s=
-=k5Cr
------END PGP SIGNATURE-----
+-- 
+Alex.
