@@ -1,11 +1,10 @@
-From: Horst Simon <hsimon@optusnet.com.au>
-Subject: Zero Bit found
-Date: Mon, 26 Jul 2004 13:25:51 +1000 (EST)
-Message-ID: <6913951.1090812351701.SLOX.WebMail.wwwrun@neptune.hsc-consulting.com.au>
-Reply-To: hsimon@optusnet.com.au
+From: "David Dabbs" <david@dabbs.net>
+Subject: mongo benchmark results
+Date: Mon, 26 Jul 2004 00:49:49 -0500
+Message-ID: <20040726055047.E145F15C29@mail03.powweb.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19799-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19800-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,50 +13,34 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hi,
 
-I recently added a 200GB Seagate IDE drive to my system on a build-in
-promise controller on an ASUS A7V, updated BIOS which supports large
-disk drives.
-The O/S is United Linux 1.0 with the latest patches and the kernel
-version is
-2.4.21 with latest United Linux patches. The reiserfs is 3.6. During the
-initial
-setup and first reboot no reiserfsck errors are report. After writing
-data to the disk I get now following reiserfsck messages during each
-boot:
+At http://dabbs.net/reiser4/mongo.html I've posted some benchmarks from my
+aging but available test box. All numbers were generated with the Namesys
+mm7 snapshot. The "A.INFO_R4=new" are results from a reiser4 with modified
+comparison functions as well as znode_contains_key_strict(). So, here are my
+questions:
 
- ZERO BIT FOUND IN ON-DISK BITMAP AFTER THE LAST VALID BIT
-Switching to --fix-fixable mode
-Checking
+Do these results appear consistent with others' recent benchmarking? 
+Should I be using particular mount options during benchmarking?
+I would think running mongo would be necessary to ensuring that reiser4 mods
+are 'safe,' but it is sufficient?
+Viz the prior question, is there a recommended test regimen or regression
+suite?
 
-It displays directory paths which it is checking and after finishing
-following message is displayed:
 
-The on-disk and the correct bitmaps differ. Will be fixed later
+I started to dig into mongo a bit and noticed that it does not appear to
+vary the file & dir _names_ it generates. Most appear to be ~7 characters
+long with a pattern of 'f' followed by some number. Isn't this a) atypical
+of file/dir name distribution and b) favorable to/biased towards the "short
+name" code? IOW, if R4_LARGE_KEYS is the default and all generated test file
+names' lengths < 15 characters, then the large file name code is not being
+covered or benchmarked. Perhaps I'm mixing apples and oranges (code coverage
+and benchmarking). 
 
-No corruption found
 
-There are on the filesystem:
+Just curious,
 
-    Leaves 20264
+David
 
-      Internal nodes 125
-
-        Directories 2063
-
-  Other files 22869
-
- Data block pointers 15940960 (0 of them are zero)
-
- Safe links 0
-
-###########
-
-What is this ZERO BIT, is this a serious problem? What could be wrong
-bad BIOS, reiserfs, etc.?
-
-Regards,
-Horst
 
 
