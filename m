@@ -1,82 +1,45 @@
-From: Redeeman <redeeman@metanurb.dk>
+From: Marcelo Pacheco <marcelo@macp.eti.br>
 Subject: Re: Reiser4 / Reiserfs bonnie++ performance comparison
-Date: Sat, 10 Jul 2004 00:06:01 +0200
-Message-ID: <1089410761.10745.7.camel@localhost>
-References: <20040709165924.27fabe63@philou.gramoulle.local>
-	 <1089406483.10745.3.camel@localhost>
-	 <200407092352.15303.Dieter.Nuetzel@hamburg.de>
-Reply-To: redeeman@metanurb.dk
+Date: Fri, 9 Jul 2004 17:06:54 -0300
+Message-ID: <200407091706.54256.marcelo@macp.eti.br>
+References: <20040709165924.27fabe63@philou.gramoulle.local> <200407091724.43326.marcel@hilzinger.hu> <40EEBC97.5090703@burst.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19566-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19567-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200407092352.15303.Dieter.Nuetzel@hamburg.de>
+In-Reply-To: <40EEBC97.5090703@burst.net>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-this was done using the 2.6.5-rc2 stable snapshot, and the stock
-reiserfs in the kernel
+When you delete a file what you need to do is to remove the directory entry, 
+the inode and the file allocation structures. Reiser3 uses one key per file 
+block (4kb), while reiser4 uses extents, which could be huge (100's of MB) 
+per key, so there's far less things to remove when you remove a huge file on 
+Reiser4 than on Reiser3.
 
-On Fri, 2004-07-09 at 23:52 +0200, Dieter N=FCtzel wrote:
-> Am Freitag, 9. Juli 2004 22:54 schrieb Redeeman:
-> > My benchmarks.. (if you can call it that)
-> > reiser4
-> >
-> > root@redeeman: /mnt/fstest# time tar -xjf /miscbinds/work/linux-
-> > 2.6.5.tar.bz2
-> >
-> > real    0m18.834s
-> > user    0m14.785s
-> > sys     0m2.516s
-> >
-> > root@redeeman: /mnt/fstest# time cp -a linux-2.6.5 linux
-> >
-> > real    0m12.936s
-> > user    0m0.067s
-> > sys     0m2.137s
-> >
-> > root@redeeman: /mnt/fstest# time rm -fr linux
-> >
-> > real    0m3.596s
-> > user    0m0.012s
-> > sys     0m1.237s
-> >
-> > -------------------------------------
-> >
-> > reiserfs:
-> >
-> > root@redeeman: /mnt/fstest# time tar -xjf /miscbinds/work/linux-
-> > 2.6.5.tar.bz2
-> >
-> > real    0m31.078s
-> > user    0m15.232s
-> > sys     0m2.099s
-> >
-> > root@redeeman: /mnt/fstest# time cp -a linux-2.6.5 linux
-> >
-> > real    0m50.763s
-> > user    0m0.134s
-> > sys     0m2.935s
-> >
-> > root@redeeman: /mnt/fstest# time rm -fr linux
-> >
-> > real    0m1.493s
-> > user    0m0.013s
-> > sys     0m0.722s
->=20
-> All ReiserFS 3.6 without data-logging (parallel write optimization, etc.)=
-, NEW=20
-> block allocation, with tails?
->=20
-> 2.6.7-mmX (or Chris patches)?
->=20
-> Thanks,
-> 	Dieter
->=20
---=20
-Redeeman <redeeman@metanurb.dk>
+Marcelo Pacheco
 
+Em Sex 09 Jul 2004 12:41, Chris Humphries escreveu:
+> WHOA!
+>
+> Marcel Hilzinger wrote:
+> > You mustn't belive in Benchmarks :-). Try it empirically, and you will
+> > see, that for big files, Reiser4 is much faster, then ReiserFS was.  Some
+> > example
+> >
+> > Deleting a 6,8GB DVD iso image (average of 10 tests):
+> > ext3			14,15 sec
+> > reiser3.6	12,67 sec
+> > reiser4		1,23 sec
+> >
+> > Deleting 3 GB of MP3 files (4MB average file size, 10 tests):
+> > ext3			11,91 sec
+> > reiser3.6	4,56 sec
+> > reiser4		1,86 sec
+> >
+> > Marcel
