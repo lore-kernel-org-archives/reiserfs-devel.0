@@ -1,9 +1,9 @@
 From: Jan Kara <jack@suse.cz>
-Subject: [PATCH] Fix reiserfs oops on small fs
-Date: Thu, 18 Nov 2004 12:49:29 +0100
-Message-ID: <20041118114928.GD2767@atrey.karlin.mff.cuni.cz>
+Subject: [PATCH] Expose sync_fs()
+Date: Thu, 18 Nov 2004 13:00:31 +0100
+Message-ID: <20041118120031.GE2767@atrey.karlin.mff.cuni.cz>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="eheScQNz3K90DVRs"
+Content-Type: multipart/mixed; boundary="tMbDGjvJuJijemkf"
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -12,58 +12,66 @@ To: reiserfs-list@namesys.com
 Cc: linux-fsdevel@vger.kernel.org
 
 
---eheScQNz3K90DVRs
+--tMbDGjvJuJijemkf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
   Hello!
 
-  Attached patch fixes oops of reiserfs on a filesystem with just one
-bitmap block - current code always tries to return second bitmap even if
-there's not any. Could someone review it please so that it can be merged
-in mainline?
-	
+  Attached patch makes reiserfs provide sync_fs() function. It is
+necessary for a new quota code to work correctly and expose quota data
+to the user space after quotaoff. Currently the functionality is hidden
+behind the write_super() call which also seems a bit non-intuitive to me.
+Do you think the patch is acceptable?
+
+					Thanks for any comments
 								Honza
+-- 
+Jan Kara <jack@suse.cz>
+SuSE CR Labs
 
---eheScQNz3K90DVRs
+--tMbDGjvJuJijemkf
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="quota-new-2.6.10-rc2-mm1-4-reisersmall.diff"
+Content-Disposition: attachment; filename="quota-new-2.6.10-rc2-mm1-5-reisersync.diff"
 
-Fix block allocation code of reiserfs to give correct bitmap numbers
-for small filesystems (with just one bitmap block).
+Make reiserfs provide the sync_fs() function so that the quota code
+has a way to reliably force a transaction to disk.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 
-diff -rupNX /home/jack/.kerndiffexclude linux-2.6.10-rc2-mm1-3-reiserdebug/fs/reiserfs/bitmap.c linux-2.6.10-rc2-mm1-4-reisersmall/fs/reiserfs/bitmap.c
---- linux-2.6.10-rc2-mm1-3-reiserdebug/fs/reiserfs/bitmap.c	2004-11-16 16:57:33.000000000 +0100
-+++ linux-2.6.10-rc2-mm1-4-reisersmall/fs/reiserfs/bitmap.c	2004-11-16 17:01:47.000000000 +0100
-@@ -229,6 +229,9 @@ static int bmap_hash_id(struct super_blo
-     unsigned long hash;
-     unsigned bm;
+diff -rupNX /home/jack/.kerndiffexclude linux-2.6.10-rc2-mm1-4-reisersmall/fs/reiserfs/super.c linux-2.6.10-rc2-mm1-5-reisersync/fs/reiserfs/super.c
+--- linux-2.6.10-rc2-mm1-4-reisersmall/fs/reiserfs/super.c	2004-11-16 16:40:53.000000000 +0100
++++ linux-2.6.10-rc2-mm1-5-reisersync/fs/reiserfs/super.c	2004-11-16 17:07:32.000000000 +0100
+@@ -62,7 +62,7 @@ static int is_any_reiserfs_magic_string 
+ static int reiserfs_remount (struct super_block * s, int * flags, char * data);
+ static int reiserfs_statfs (struct super_block * s, struct kstatfs * buf);
  
-+    /* If there is only one bitmap, we have no choice... */
-+    if (SB_BMAP_NR(s) == 1)
-+	return 0;
-     if (id <= 2) {
- 	bm = 1;
+-static void reiserfs_sync_fs (struct super_block * s)
++static int reiserfs_sync_fs (struct super_block * s, int wait)
+ {
+     if (!(s->s_flags & MS_RDONLY)) {
+         struct reiserfs_transaction_handle th;
+@@ -76,11 +76,12 @@ static void reiserfs_sync_fs (struct sup
      } else {
-@@ -613,7 +616,7 @@ dirid_groups (reiserfs_blocknr_hint_t *h
- 	/* give a portion of the block group to metadata */
- 	if (hint->inode)
- 	    hash += sb->s_blocksize/2;
--	hint->search_start = hash;
-+	hint->search_start = hash >= SB_BLOCK_COUNT(sb) ? SB_BLOCK_COUNT(sb)-1 : hash;
+         s->s_dirt = 0;
      }
++    return 0;
  }
  
-@@ -642,7 +645,7 @@ oid_groups (reiserfs_blocknr_hint_t *hin
- 	    bm = bmap_hash_id(hint->inode->i_sb, oid);
- 	    hash = bm * (hint->inode->i_sb->s_blocksize << 3);
- 	}
--	hint->search_start = hash;
-+	hint->search_start = hash >= SB_BLOCK_COUNT(hint->inode->i_sb) ? SB_BLOCK_COUNT(hint->inode->i_sb)-1 : hash;
-     }
+ static void reiserfs_write_super(struct super_block *s)
+ {
+-    reiserfs_sync_fs(s);
++    reiserfs_sync_fs(s, 1);
  }
  
+ static void reiserfs_write_super_lockfs (struct super_block * s)
+@@ -526,6 +527,7 @@ struct super_operations reiserfs_sops = 
+   .clear_inode  = reiserfs_clear_inode,
+   .put_super = reiserfs_put_super,
+   .write_super = reiserfs_write_super,
++  .sync_fs = reiserfs_sync_fs,
+   .write_super_lockfs = reiserfs_write_super_lockfs,
+   .unlockfs = reiserfs_unlockfs,
+   .statfs = reiserfs_statfs,
 
---eheScQNz3K90DVRs--
+--tMbDGjvJuJijemkf--
