@@ -1,46 +1,39 @@
-From: "David Dabbs" <david@dabbs.net>
-Subject: Re: viewprinting: what format should views be stored in?
-Date: Fri, 20 Aug 2004 17:14:59 -0000
-Message-ID: <20040820171459.234EE15CE2@mail03.powweb.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: reiser4 went into -mm
+Date: Fri, 20 Aug 2004 11:07:19 -0700
+Message-ID: <41263DD7.6010904@namesys.com>
+References: <41259F3B.1020802@namesys.com> <20040820081903.GD29745@favonius>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20436-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20437-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <20040820081903.GD29745@favonius>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: David Greaves <david@dgreaves.com>, Hans Reiser <reiser@namesys.com>
-Cc: George Beshers <gbeshers@comcast.net>, reiserfs-list@namesys.com, david@dabbs.net
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: sander@humilis.net
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
->| David Greaves wrote:
+Sander wrote:
+
+>Hans Reiser wrote (ao):
+>  
 >
->Hans Reiser wrote:
+>>Andrew Morton was very helpful in the merge, and gave useful advise
+>>about our changes to the core kernel.
+>>    
+>>
 >
->| David Greaves wrote:
->|
->|>
->|> David
->|> PS can I offer 'mask specification' (shortened to maskspec above)
->> instead of 'presentation mask' for the glossary.
->|>
->|>
->|> Glossary? of?
+>Very nice :-)
 >
->terms.
->There have been occasional mails that try and clarify what we're
->talking about. I think they're helpful.
+>Can you give an eta on quota support for Reiser4?
+>
+>
+>  
+>
+Probably not soon, we are busy earning money and such for the next month 
+or two.
 
-Definitely. We'll be able to meaningfully discuss implementing if we share
-the same concepts for requirements/functionality. Naturally, consistent terminology for these concepts should be helpful for us as well as anyone else 
-joiing in sometime later.
- 
->Confusion is bad.
-
-Certainly a time waster.
-
-
-DavidD
-
+Hasn
