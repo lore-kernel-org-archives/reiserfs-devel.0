@@ -1,64 +1,64 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <d.nuetzel@wearabrain.de>
-Subject: Re: Will Reisefs have "undo"?
-Date: Sun, 15 Jun 2003 14:09:41 +0200
-Message-ID: <200306151409.41970.d.nuetzel@wearabrain.de>
-References: <1055615895.698.129.camel@localhost> <000d01c332ac$a94e23a0$0200a8c0@xpstation> <1055670615.671.106.camel@localhost>
+From: Till Gerken <till@tantalo.net>
+Subject: Problem mounting ReiserFS as root partition
+Date: Sun, 15 Jun 2003 15:08:39 +0200
+Message-ID: <200306151508.57384.till@tantalo.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14550-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14551-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1055670615.671.106.camel@localhost>
+Content-Description: clearsigned data
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Joachim Zobel <nc-zobeljo@netcologne.de>, ReiserFS ML <reiserfs-list@namesys.com>
+Content-Type: Text/Plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Am Sonntag, 15. Juni 2003 11:50 schrieb Joachim Zobel:
-> Am Sam, 2003-06-14 um 21.39 schrieb Fred -- Speed Up --:
-> > This is not the filesystem's work, KDE for instance has a trashcan, and
-> > you can bind the rm command to a special mv one that moves files from t=
-he
-> > initial place to a backup folder, the files of which you can empty
-> > regulary with a cron script depending on the file's "age". It's simple =
-to
-> > implement, and really not something Reiser4 should be capable of ...
-> > instead journalising works very well to protect data from being erased,
-> > that's the only purpose of a modern filesystem.
->
-> A filesystem undo is most needed on servers.
+=2D----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-No.
+Hello,
 
-> There usually is no KDE.
+I encountered a very strange problem that I was not able to solve so far. I=
+=20
+did not find anything similar on the web either.
 
-True.
+I am not able to mount my ReiserFS partition as root partition with any ker=
+nel=20
+later than 2.4.20-pre11. When trying, I get
 
-> However a trash can can be done with hard links and a cronjob.
+read_super_block: can't find a reiserfs filesystem on (dev 03:00, block 64,=
+=20
+size 1024)
 
-True.
+The same with block 8 and then a kernel panic.
 
-> What I would like to have is more - I think I was not clear enough about
-> that. I not only want to undo deletions. I would like to be able to undo =
-all
-> file system operations.
+I have tested this with 2.4.20 and 2.4.21 kernels, both compiled with exact=
+ly=20
+the same configuration as my current 2.4.20-pre11 kernel. Only the=20
+2.4.20-pre11 kernel is able to mount this partition as root partition.
 
-What you are looking for are FS snapshots.
-LVM or EVMS can do that with all (?) Linux FSs.
+I have booted from a Knoppix CD using a 2.4.20-xfs kernel and it was able t=
+o=20
+mount the partition. Unfortunately I could not test if it is able to mount =
+it=20
+as root partition during boot.
 
-> VMS has a versioning file system, which does about what I want.
+reiserfsck does not report any problems, reiserfsck --rebuild-sb tells me t=
+hat=20
+the super block is ok. I tested this with various versions of the tools up =
+to=20
+3.6.6.
 
-Windows 2003 Server (very new feature ;-), too.=20
-But it is a bloated thing.
+I would be grateful for any hints.
 
-> It feels pretty good if you can undo "everything I did since 11:30".
+Till
+=2D----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.2 (GNU/Linux)
 
-You should have some TRUE backups (snapshots) handy.
-
-=2D-=20
-Dieter N=FCtzel
-Leiter F&E, WEAR-A-BRAIN GmbH, Wiener Str. 5, 28359 Bremen, Germany
-Mobil: 0162 673 09 09
+iD8DBQE+7G/pFwwirB11AGMRAvUhAJ9elrxZHfF7MACxTEocbPN8NBZ6ugCeKSgM
+5lMNJkbNMgNF/cLM68iVVto=3D
+=3DuSiR
+=2D----END PGP SIGNATURE-----
 
