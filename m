@@ -1,65 +1,118 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: reiser4 non-free?
-Date: Tue, 11 May 2004 11:02:52 -0400
-Message-ID: <200405111502.i4BF2qOu012463@turing-police.cc.vt.edu>
-References: <1084188152.26226.196158678@webmail.messagingengine.com> <20040510.214915.74754947.wlandry@ucsd.edu> <200405110158.i4B1wONb022531@turing-police.cc.vt.edu>
-            <20040510.223329.108738295.wlandry@ucsd.edu>
+From: "Vladimir Karavelov" <adsyssw@netbg.com>
+Subject: Re: 2 Terabyte install
+Date: Tue, 11 May 2004 18:23:48 +0300
+Message-ID: <01e501c4376b$f5cb8280$0302a8c0@karavelov>
+References: <409AC2FF.7080800@lindows.com> <1083917932.14089.281.camel@tribesman.namesys.com> <409BB690.6030604@namesys.com> <409BBDC9.3030809@lindows.com> <409FB387.8080804@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-344009184P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18607-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18608-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Mon, 10 May 2004 22:33:29 EDT."
-             <20040510.223329.108738295.wlandry@ucsd.edu> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Walter Landry <wlandry@ucsd.edu>
-Cc: debian-legal@lists.debian.org, reiser@namesys.com, reiserfs-list@namesys.com, ed@debian.org, cavok@debian.org
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>, Clifford Beshers <clifford.beshers@lindows.com>
+Cc: Vladimir Saveliev <vs@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>, Vitaly Fertman <vitaly@namesys.com>
 
---==_Exmh_-344009184P
-Content-Type: text/plain; charset=us-ascii
+Hi to everybody there,
+If you are using 75xx or 85xx series controller there is a 2TB limitation
+per RAId volume. Are you shure that you are using newes 3ware 9500S series
+controller?
 
-On Mon, 10 May 2004 22:33:29 EDT, Walter Landry <wlandry@ucsd.edu>  said:
+rgds
+Vladimir
 
-> I think you're agreeing with me.  I can't make it a simple red circle
-> or green square.  I have to spit out the credits _and_ the
-> circle/square.
-
-No, what's happening is that the mkfs program is spitting out the credits,
-which are being read by a Perl/tktcl/python/whatever script which is then
-parsing it and deciding whether to show the user a circle or a square.
-
-The concept that the user would actually see the program output during system
-bootup died when the Bell Lab guys first put 'foo > /dev/null' into a /etc/rc
-script back in the late 60s.
-
-For that matter, it probably died in late 1963, when Fred Brooks was steering
-the IBM team that produced (among other things) JCL, and the team thought that
-coding:
-
-//GO.SYSPRINT DD DUMMY
-
-was something reasonable to support (that's the JCL equiv of "> /dev/null").
-
-I pondered the whole "credits" question for a bit last night, and I realized
-that (a) I could account for at least the last 75 'mkfs' commands I had caused
-to run, and (b) of those 75, exactly *one* did *not* have all of its output
-swallowed by 'anaconda' during a RedHat or Fedora install.....
+----- Original Message -----
+From: "Hans Reiser" <reiser@namesys.com>
+To: "Clifford Beshers" <clifford.beshers@lindows.com>
+Cc: "Vladimir Saveliev" <vs@namesys.com>; "Reiserfs mail-list"
+<Reiserfs-List@namesys.com>; "Vitaly Fertman" <vitaly@namesys.com>
+Sent: Monday, May 10, 2004 7:53 PM
+Subject: Re: 2 Terabyte install
 
 
---==_Exmh_-344009184P
-Content-Type: application/pgp-signature
+> Clifford Beshers wrote:
+>
+> > Thanks Hans, but no need.  I found the page in the FAQ about three
+> > minutes after I posted.  I get so used to google finding me the right
+> > things, I occasionally forget to just go to the place I know should
+> > have the answers.
+> >
+> > So far, I know that sfdisk choked on creating the partition, but that
+> > fdisk succeeded.  After that the install proceeded normally, but the
+> > system didn't reboot.  I have to go get details on why, but my guessis
+> > either lilo or a missing module in the initrd.
+>
+> If you want us to research the problem source for you further, let us
+> know.  Be  suspicious of the device driver....
+>
+> >
+> > Hans Reiser wrote:
+> >
+> >> Vladimir Saveliev wrote:
+> >>
+> >>> Hello
+> >>>
+> >>> On Fri, 2004-05-07 at 02:58, Clifford Beshers wrote:
+> >>>
+> >>>
+> >>>> What are the current size limitations for
+disks/partitions/filesystems
+> >>>> with the following combinations?  My googling has produced
+> >>>> inconsistent answers.
+> >>>>        { linux 2.4.24, linux 2.6.5 } X { reiserfs3, reiser4 }
+> >>>>
+> >>>
+> >>>
+> >>>
+> >>> http://namesys.com/faq.html#reiserfsspecs
+> >>>
+> >>>
+> >>>
+> >>>> We have a new machine with a 3-ware 8 port controller (looks like a
+> >>>> scsi controller to the system, but actually drives 8 ide drives).  We
+> >>>> have 8 x 300GB drives attached for a total > 2TB.
+> >>>>
+> >>>> Our IT guy has been unable to install Linspire on it (linux 2.6.5,
+> >>>> reiserfs3).  I'm about to go look in more detail, but I thought I'd
+> >>>> find out what the bounds were for sure.
+> >>>>
+> >>>>
+> >>>
+> >>>
+> >>>
+> >>> I assume mkreiserfs was not the reason why you guys failed to install
+> >>> linux on your hardware. It works for > 2tb devices.
+> >>>
+> >>>
+> >>>
+> >>>> Thanks,
+> >>>>
+> >>>> Cliff
+> >>>>
+> >>>> --
+> >>>>
+> >>>> This message contains information which may be confidential and
+> >>>> privileged. Unless you are the addressee (or authorized to receive
+> >>>> for the addressee), you may not use, copy or disclose to anyone the
+> >>>> message or any information contained in the message. If you have
+> >>>> received the message in error, please advise the sender and delete
+> >>>> the message.  Thank you.
+> >>>>
+> >>>
+> >>>
+> >>>
+> >>>
+> >>>
+> >>>
+> >>>
+> >> Please provide exact answer to this question about what are V3
+> >> limits.  Vitaly, please assist.
+> >
+> >
+> >
+> >
+> >
+>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFAoOsccC3lWbTT17ARAmysAKCSAz5SW+tuL60LD9KBxK2J+v7HZACg9Pvy
-6mkRUVXDeXO2QVrwZSZHu3s=
-=VFL3
------END PGP SIGNATURE-----
-
---==_Exmh_-344009184P--
