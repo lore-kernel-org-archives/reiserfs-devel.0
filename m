@@ -1,55 +1,36 @@
-From: Brian Tinsley <btlists@emageon.com>
-Subject: Re: getting UUID and label of a filesystem
-Date: Wed, 12 Nov 2003 09:32:28 -0600
-Message-ID: <1068651147.2027.10.camel@dragonball>
-References: <3FAAB330.5040503@nrao.edu>
-	 <1068152277.2556.13.camel@redeeman.linux.dk>
-	 <1068152634.2455.37.camel@dragonball> <3FAFEE88.3040002@ysu.edu>
-	 <20031110134246.N10197@schatzie.adilger.int>  <3FB2370E.4000102@ysu.edu>
-Mime-Version: 1.0
-Content-Type: multipart/alternative; boundary="=-UALLm+YEdyaVPACkgzn9"
-Return-path: <reiserfs-list-return-16059-reiserfs=m.gmane.org@namesys.com>
+From: Lars O. Grobe <grobe@gmx.net>
+Subject: restoring data from a hw-defective reiserfs 3.6 disk?
+Date: Wed, 12 Nov 2003 23:37:26 +0200
+Message-ID: <68CD89E8-1558-11D8-8187-000A959DDB22@gmx.net>
+Mime-Version: 1.0 (Apple Message framework v552)
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16060-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FB2370E.4000102@ysu.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: John Dalbec <jpdalbec@ysu.edu>
-Cc: Andreas Dilger <adilger@clusterfs.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Reiser FS Mailing List <reiserfs-list@namesys.com>
+Cc: netz@rechnerpool.com, Andreas Noback <mail@noback.info>, michael-c-bender@gmx.de
 
---=-UALLm+YEdyaVPACkgzn9
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Hi!
 
-On Wed, 2003-11-12 at 07:35, John Dalbec wrote:
+My first mail since a while, and no good news... We had some bad luck 
+(I know, not only bad luck, also some stupid moments...)
 
-> Andreas Dilger wrote:
-> > "mount" has not been updated to use libblkid.  I had always intended on
-> > doing that, but it was never in the top 10 on my todo list.  I had agreement
-> > in principle from Andries Brouwer to use a libblkid in mount instead of
-> > having a duplicate set of LABEL/UUID parsing code there, but just lacked
-> > the time/incentive to do that part.
-> > 
-> > It would probably benefit all reiserfs users to get this working, so that
-> > you can finally mount reiserfs filesystems by LABEL/UUID, so if someone
-> > has some time and wants to contribute back to reiserfs this is a fairly
-> > easy project (not kernel hacking ;-).
-> 
-> Brian Tinsley wrote:
-> > I use labels on SuSE with no problem. Could be an incompatibility with 
-> > your mount command, but I'm not sure.
-> 
-> Has SuSE already updated the mount command to use libblkid then?  Or did they 
-> insert duplicate LABEL/UUID parsing code for ReiserFS?
-> John
+We have lost a disk here with important data which had not reached the 
+back up. The department is willing to let the data be restored even if 
+that might get expensive, but the companies they asked so far only told 
+them that they can't do anything for reiser-fs disks. Do you know about 
+anyone in this field? Afaik the disk is really dead, it even doesn't 
+spin up any more (I am not there as I left the dept. for my studies in 
+Turkey now, but my friends tried all). So any company specialized in 
+resierfs?
 
+Thanks and CU, Lars.
 
-There is a libblkid on my SuSE 9 laptop, but I don't see it on
-Enterprise Server 8. The mount command on version 9 doesn't appear to be
-linked to libblkid, so it's probably a safe assumption to say that they
-modified the mount command on both.
-
-
---=-UALLm+YEdyaVPACkgzn9--
+--
+Lars O. Grobe
+grobe@gmx.net
 
