@@ -1,36 +1,40 @@
-From: "David Dabbs" <david@dabbs.net>
-Subject: RE: Was able to reproduce "cp: cannot stat file.x: Input/output error"
-Date: Sun, 8 Aug 2004 21:38:29 -0500
-Message-ID: <20040809024233.2557A15D98@mail03.powweb.com>
-References: <4116BEED.8050804@namesys.com>
+From: Ramachandra K <ariston@gmail.com>
+Subject: Re: implementing reiserfs in C++ for a new OS
+Date: Mon, 9 Aug 2004 20:06:43 +0530
+Message-ID: <71d3364904080907361d3d7064@mail.gmail.com>
+References: <71d3364904080706112e72fb6b@mail.gmail.com> <41151698.3020508@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20078-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20080-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4116BEED.8050804@namesys.com>
+In-Reply-To: <41151698.3020508@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: 'Hans Reiser' <reiser@namesys.com>
-Cc: 'ReiserFS List' <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
+Cc: reiser@namesys.com
 
+Hans Reiser <reiser@namesys.com> wrote:
 
+> Is it a free OS, or do you need to buy a license from us in
+> addition to  the GPL?
+> 
 
-One other somewhat related FYI. In the recent fibration discussion you
-thought it would probably be good to make FIBRATION_EXT_1 the default
-fibration plugin instead of FIBRATION_DOT_O, but dot-O is still the default:
+ReiserFS would be implemented FROM SCRATCH for Capital
+in C++ with the help of existing literature/documentation etc.
+By this I mean that no existing code would be used, that is
+ported or modified in any way. This should mean that GPL 
+would not be applicable to the code written for my OS, Capital.
 
-	[PSET_FIBRATION] = {
-		.type = REISER4_FIBRATION_PLUGIN_TYPE,
-		.id   = FIBRATION_DOT_O
-	},
+Is my understanding of the license correct ? Are there any
+other licenses that I should be aware of ?
 
+Regarding Capital OS, the source would be made available,
+but under a different license and not GPL.
 
+And thanks for all the information.
 
-David
-
-
-
-
+rgds,
+Ram
