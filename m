@@ -1,8 +1,7 @@
-From: "E.Gryaznova" <grev@namesys.com>
-Subject: Re: [CHECKER] Do ext2, jfs and reiserfs respect mount -o sync/dirsync
- option? (fwd)
-Date: Fri, 11 Mar 2005 14:18:57 +0300
-Message-ID: <42317EA1.1030905@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: I changed the subject line so that vitaly will read it....
+Date: Fri, 11 Mar 2005 11:48:43 -0800
+Message-ID: <4231F61B.9090400@namesys.com>
 References: <Pine.GSO.4.44.0503101327540.12813-100000@elaine24.Stanford.EDU>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -12,44 +11,9 @@ list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <Pine.GSO.4.44.0503101327540.12813-100000@elaine24.Stanford.EDU>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Junfeng Yang <yjf@stanford.edu>
+Content-Type: text/plain; charset="us-ascii"
+To: Junfeng Yang <yjf@stanford.edu>, vitaly@thebsh.namesys.com
 Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com, mc@cs.Stanford.EDU
-
-Hello, Junfeng.
-
-Thank you for the report and sorry for delay.
-
-Yes, the problem exists somewhere, but this is not reiserfsck 
---fix-fixable problem.
-I just modified the set of commands by the following way:
-
-mkreiserfs dev && mount dev /mnt -o sync && touch /mnt/file && mkdir 
-/mnt/d && echo Hello >/mnt/hello && reboot -fn
-After boot it is reasonable to pack the reiserfs metada and compare 
-"mount" and "reiserfsck --fix-fixable" results on _one_ crashed filesystem.
-# debugreiserfs -p dev | gzip -c  > metadata.gz
-1.
-mount the crashed disk and see data
-
-2.
-umount
-dd if=/dev/zero of=dev
-gunzip -c metadata.gz | debugreiserfs -u dev
-reiserfsck --fix-fixable dev
-mount the recovered  filesystem and see data
-
-I this case the results of "mount" and "fsck --fix-fixable && mount "are 
-equal.
-Nevetheless, the "sync" problem exists somewhere. Because (yes, you are 
-right), sometimes there are no correct data on filesystem after such 
-"crash". I run this test several times and see that sometimes data is 
-lost after reboot -fn.
-
-We are working on this problem now.
-
-Thanks,
-Lena
 
 Junfeng Yang wrote:
 
@@ -177,5 +141,4 @@ Junfeng Yang wrote:
 >
 >  
 >
-
 
