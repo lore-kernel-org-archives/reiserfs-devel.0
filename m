@@ -1,61 +1,49 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: SUSE 9.1 with ReiserFS
-Date: Thu, 15 Jul 2004 17:06:46 +0400
-Message-ID: <200407151706.46557.vitaly@namesys.com>
-References: <40F67547.E5373623@bmw.de>
+From: "Raymond A. Meijer" <rmeijer@internet.gr>
+Subject: Snapshot 2004.07.13 build problems (was: Re: fsck.reiser4 segfaults)
+Date: Thu, 15 Jul 2004 16:11:48 +0300
+Message-ID: <200407151611.48897.rmeijer@internet.gr>
+References: <200407151559.41256.kos@supportwizard.com> <200407151621.44263.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-19632-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19633-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40F67547.E5373623@bmw.de>
+In-Reply-To: <200407151621.44263.vitaly@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Rudolf Boerner <Rudolf.Boerner@partner.bmw.de>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Hello,
+On Thu 15 July 2004 15:21, Vitaly Fertman wrote:
 
-On Thursday 15 July 2004 16:15, Rudolf Börner wrote:
-> Hi,
->
-> ok , i've nothing done ;-)
->
-> I've never had any problems with ReiserFS. But now.
-> SUSE 9.1
-> 2 Disks with 3 x RAID 1 partitions
->
-> Boot --> please use fsck manualy on /
+Hi,
 
-what version of reiserfsck are you using? please update 
-reiserfsprogs to the latest one from our ftp site. 
+> would you try the latest reiser4progs from
+> www.namesys.com/snapshots/2004.07.13-internal.testing/
 
-> I use reiserfsck --check /dev/md0 --> no corrption
-> I use reiserfsck --fix-fixable /dev/md0 --> no corrption
->
-> init 6 --> please use fsck manualy on /
-> I use reiserfsck --rebuild-tree /dev/md0 --> no corrption
->
-> init 6 --> please use fsck manualy on /
->
-> I can bring up the system step by step but not automaticly
-> mount /dev/md0 -o remount;rw
-> mount -a
-> init 1 ..... 5
->
-> What i missing is the hostname ?
->
-> Have anybody an idea?
->
-> Regards
->
-> rb
-> --
-> Rudolf BЖrner
+I'm trying to compile it too, after applying the
+reiser4progs-0.5.6-libaux-gauge.c.diff patch, but it doesn't compile:
 
--- 
+ gcc -DHAVE_CONFIG_H -I. -I. -I.. -I../include -D_REENTRANT -D_FILE_OFFSET_BITS=64 -DENABLE_SYMLINKS -DENABLE_SPECIAL -DENABLE_R5_HASH -DENABLE_FNV1_HASH -DENABLE_RUPASOV_HASH -DENABLE_TEA_HASH -DENABLE_DEG_HASH -DENABLE_LARGE_KEYS -DENABLE_SHORT_KEYS -DENABLE_DOT_O_FIBRE -DENABLE_EXT_1_FIBRE -DENABLE_EXT_3_FIBRE -DENABLE_LEXIC_FIBRE -O3 -W -Wall -Wuninitialized -Wno-unused-parameter -Wredundant-decls -MT librepair_la-filter.lo -MD -MP -MF .deps/librepair_la-filter.Tpo -c filter.c  -fPIC -DPIC -o .libs/librepair_la-filter.o
+filter.c: In function `cb_gauge_tree_percent':
+filter.c:61: warning: implicit declaration of function `aal_gauge_set_value'
+filter.c: In function `repair_filter_node_check':
+filter.c:343: warning: implicit declaration of function `aal_gauge_set_data'
+filter.c: In function `repair_filter':
+filter.c:656: warning: passing arg 1 of `aal_gauge_create' makes integer from pointer without a cast
+filter.c:656: error: too many arguments to function `aal_gauge_create'
+make[2]: *** [librepair_la-filter.lo] Error 1
+make[2]: Leaving directory `/usr/src/Reiser4/reiser4progs-0.5.6/librepair'
+make[1]: *** [all-recursive] Error 1
+make[1]: Leaving directory `/usr/src/Reiser4/reiser4progs-0.5.6'
+make: *** [all] Error 2
+
+Do you need more info about my system? It's running 2.6.7-cko6, and libaal
+compiled and installed cleanly.
+
+
 Thanks,
-Vitaly Fertman
 
+Ray
