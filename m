@@ -1,70 +1,82 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Odd Block allocation behavior on Reiser3
-Date: Tue, 10 Aug 2004 16:29:51 -0400
-Message-ID: <1092169790.10651.443.camel@watt.suse.com>
-References: <20040809201939.GA55683@kevlar.burdell.org>
-	 <1092083451.10651.218.camel@watt.suse.com>
-	 <20040809220459.GA57121@kevlar.burdell.org> <41187657.7030709@namesys.com>
-	 <20040810154514.GA67591@kevlar.burdell.org> <41190B5A.7070503@namesys.com>
-		 <1092162318.10651.365.camel@watt.suse.com>
-	 <1092163813.10651.372.camel@watt.suse.com>  <4119253B.1030807@namesys.com>
+From: "Rodolfo Sikora" <sikora@inova.com.br>
+Subject: Is there a way to change root inode from -1 to what ever it will    work?
+Date: 10 Aug 2004 17:35:30 -0300
+Message-ID: <20040810203531.16942.qmail@qmail-local.inova.com.br>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20151-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="----------=_1092170130-11238-1"
+Content-Transfer-Encoding: binary
+Return-path: <reiserfs-list-return-20152-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4119253B.1030807@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Sonny Rao <sonny@burdell.org>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Tue, 2004-08-10 at 15:42, Hans Reiser wrote:
+------------=_1092170130-11238-1
+Content-Type: text/plain
+Content-Disposition: inline
+Content-Transfer-Encoding: binary
 
-> >Hmpf, that's what I get for expecting filefrag to work properly on
-> >amd64.  The actual number of extents is 199, which is still better then
-> >268.  Using fibmap, the fragmentation percentage is still the same as
-> >ext3 (99.99% unfragmented) meaning the length between the extents is
-> >quite small.
-> >
-> >If you mount with:
-> >
-> >mount -o alloc=skip_busy:oid_groups
-> >
-> >You get 8 extents on a 1GB file.
-> >
-> >This is because the oid grouping tries much harder to isolate the file
-> >data from data from other files and metadata.  It is far from optimal
-> >for normal usage, but for huge files it works nicely.
+Hi,
 
-> For an empty filesystem there should be no fragmentation at all for big 
-> dds one after another, except at bitmap block boundaries.  Any other 
-> result indicates flawed code.  Remember, a hint of flawed code often 
-> leads to more than a trivial flaw when fully understood.
+I had problems with my software raid:
 
-Grin, you're welcome to overhaul the v3 allocator once again ;)  I made
-a number of trade-offs under the restriction of the disk format and size
-of the changes that were reasonable to make to the v3 code base.  For
-every workload I tried, it scored as well or better then the old
-allocator in fragmentation and performance.
+cebola:~# mdadm --detail /dev/md0
+/dev/md0:
+        Version : 00.90.01
+  Creation Time : Wed May 19 01:07:53 2004
+     Raid Level : raid5
+     Array Size : 175790976 (167.65 GiB 180.01 GB)
+    Device Size : 58596992 (55.88 GiB 60.00 GB)
+   Raid Devices : 4
+  Total Devices : 3
+Preferred Minor : 0
+    Persistence : Superblock is persistent
 
-The only reason I passed on the 1 extent number was that I assumed
-filefrag had some fuzziness built in.  I believe that fibmap is a better
-measurement overall, since it calculates not only the number of extents
-but the total distance between the extents.  I feel the latter is a
-better indication of the performance you'll get when you try to read a
-given file.
+    Update Time : Tue Aug 10 16:21:23 2004
+          State : clean, no-errors
+ Active Devices : 3
+Working Devices : 3
+ Failed Devices : 0
+  Spare Devices : 0
 
-If you examine the actual layout achieved by the new allocator, most of
-the fragments are 1023 or so blocks long (jeff did some quick double
-checks of this), which is what you can fit in a single leaf.  
+         Layout : left-symmetric
+     Chunk Size : 4K
 
-In other words, the leaves are mixed in with the file data they point
-to, which makes it quite likely they will be in cache (drive or OS) and
-not need any seeks during the read.
+    Number   Major   Minor   RaidDevice State
+       0       8       65        0      active sync   /dev/sde1
+       1       0        0       -1      removed
+       2       8       97        2      active sync   /dev/sdg1
+       3       8      113        3      active sync   /dev/sdh1
+           UUID : 7cceaa8d:4014fc0d:c48efe80:ddb856d4
+         Events : 0.722114
 
--chris
+anyway the raid went ok and my /dev/md0 with reiser was ok until I decided to fix few corrupted data (files with weird permission denied).
+
+I run --fix-fixable and it asked me to run --rebuild-tree.
+I run rebuild-tree twice (is takes about 4 hours) and bot time on pass 3 it stops saying "aborted". What is this?
+
+I'm running the latest (I hope) reiserfsck version (3.6.17).
+
+All I found is that reiserfsck turns root inode to -1 and only change it back after a successful repair.
+
+I know I have intact data inside, unless reiserfsch messed it, so my question is: "Is there anything I could do to be able to mount it again?"
+
+I do have backup but it's not so updated.
+
+Thank you for any help.
 
 
+
+Rodolfo Sikora - Desenvolvimento e Opera������o
+Departamento de Opera������es e Tecnologia
+Inova Tecnologias - http://www.inova.com.br
+
+
+
+****************************************************
+*Velop* - administra������o, controle e monitoramento da 
+sua comunica������o na Internet.
+http://www.inova.com.br
+------------=_1092170130-11238-1--
