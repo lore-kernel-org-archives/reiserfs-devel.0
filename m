@@ -1,60 +1,82 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Corruption: --fix-fixable results in all nlink values = 0
-Date: Fri, 16 Aug 2002 12:05:00 +0400
-Message-ID: <200208161205.00550.vitaly@namesys.com>
-References: <200208152007.42370.degerrit@web.de> <200208152253.40413.vitaly@namesys.com> <200208152329.40707.degerrit@web.de>
+From: Gerrit Hannaert <degerrit@web.de>
+Subject: Re: Corruption: --fix-fixable results in all nlink
+ values = 0
+Date: Fri, 16 Aug 2002 10:59:52 +0200
+Message-ID: <3D5CBF08.4010308@web.de>
+References: <200208152007.42370.degerrit@web.de> <200208152253.40413.vitaly@namesys.com> <200208152329.40707.degerrit@web.de> <200208161205.00550.vitaly@namesys.com>
+Reply-To: degerrit@web.de
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11203-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11204-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200208152329.40707.degerrit@web.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Gerrit Hannaert <degerrit@web.de>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
+Cc: Vitaly Fertman <vitaly@namesys.com>
+
+Hi Vitaly,
+
+Your analysis is dead-on!
+
+I ran reiserfsck a second time, and this time it stopped later.
+The strange thing is this disk and installation are relatively new 
+(March 2002), and digging back through syslogs shows occurances 
+(kernel)(.*)(hda) only on:
+4 May 20 (2 sectors)
+370 Aug 15 (>100 different sectors involved)
+34 Aug 16 (17 sectors)
+
+...which means the problems only really started by all this fsck stuff. 
+At least sectors 81170944 - 81171056 seem to be involved during 
+yesterday and today. Why would these problems be so recent? The 
+filesystem has been up to 95% full at times, and a lot of it is indexed 
+with a web indexer daily, one would have expected this earlier, no?
+
+I'll keep you posted if things fare worse (or better, hopefully),
+
+- Gerrit
 
 
-Hi, 
+# first reiserfsck --rebuild-tree:
 
-On Friday 16 August 2002 01:29, Gerrit Hannaert wrote:
-> Hi again,
->
-> Well, I decided to give rebuild-tree a try now, since the trouble was not
-> with my binaries and I didn't know what else to do (maybe I should have
-> waited). Unfortunately, it went bad after 60% or so.
->
-> What is there left to do? Will rebuilding again help this time around?
->
-> - Gerrit
->
->
-> reiserfsck --rebuild-tree /dev/hda9
->
-> <-------------reiserfsck, 2002------------->
-> reiserfsprogs 3.6.3
-> ...
-> Replaying journal..
-> 0 transactions replayed
-> ###########
-> reiserfsck --rebuild-tree started at Thu Aug 15 23:00:03 2002
-> ###########
->
-> Pass 0:
-> Loading on-disk bitmap .. ok, 12812325 blocks marked used
-> Skipping 8749 blocks (super block, journal, bitmaps) 12803576 blocks will
-> be read
-> 0%....20%....40%....60%..                               left 3639489, 9322
-> /sec
-> bread: Cannot read a block # 10146373.
+# bread: Cannot read a block # 10146373.
 
-It seems your hadrddrive has badblocks. At least 10146373 block (4k size) 
-cannot be read. Have a look into your syslog for any related information.
-If you have a faulty hardware and you need our assistance in recovering 
-from it, please visit our support page first. 
+> Aug 15 23:16:31 luna kernel: hda: dma_intr: status=0x51 { DriveReady 
+> SeekComplete Error }
+> Aug 15 23:16:31 luna kernel: hda: dma_intr: error=0x40 { 
+> UncorrectableError }, LBAsect=9641711
+> 9, sector=81170984
+> Aug 15 23:16:31 luna kernel: end_request: I/O error, dev 03:09 (hda), 
+> sector 81170984
 
--- 
+# second time:
 
-Thanks,
-Vitaly Fertman
+# bread: Cannot read a block # 10146381.
+
+> Aug 16 03:01:40 luna kernel: hda: read_intr: status=0x59 { DriveReady 
+> SeekComplete DataRequest
+>  Error }
+> Aug 16 03:01:40 luna kernel: hda: read_intr: error=0x40 { 
+> UncorrectableError }, LBAsect=964171
+> 11, sector=81171048
+> Aug 16 03:01:40 luna kernel: end_request: I/O error, dev 03:09 (hda), 
+> sector 81171048
+
+
+
+
+
+Vitaly Fertman wrote:
+
+>It seems your hadrddrive has badblocks. At least 10146373 block (4k size) 
+>cannot be read. Have a look into your syslog for any related information.
+>If you have a faulty hardware and you need our assistance in recovering 
+>from it, please visit our support page first. 
+>
+
+
+
+
