@@ -1,52 +1,48 @@
-From: Esben Stien <b0ef@esben-stien.name>
+From: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
 Subject: Re: Congratulations! we have got hash function screwed up
-Date: Thu, 30 Dec 2004 18:59:43 +0100
-Message-ID: <87zmzvoeeo.fsf@quasar.esben-stien.name>
-References: <77912E9FD42896419D1CEF15E1C397A58AFCF1@london.jaguarfreightservices.local>
-	<m38y7gx8kq.fsf@merlin.emma.line.org>
-	<20041230235911.4911a20c.hihone@bigpond.net.au>
-	<m3sm5nj2ef.fsf@merlin.emma.line.org>
-	<87is6jpvdu.fsf@quasar.esben-stien.name>
-	<20041230174732.GB5206@favonius>
+Date: Thu, 30 Dec 2004 11:22:46 +0100
+Message-ID: <m3brccxeyx.fsf@merlin.emma.line.org>
+References: <20041228221218.GA6412@schmorp.de>
+	<20041229185529.GA7513@hello-penguin.com>
+	<41D31C22.9060400@namesys.com> <20041229214324.GA5206@schmorp.de>
+	<41D36287.4080900@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22960-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22944-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20041230174732.GB5206@favonius> (sander@humilis.net's message
- of "Thu, 30 Dec 2004 18:47:32 +0100")
+In-Reply-To: <41D36287.4080900@namesys.com> (Hans Reiser's message of "Wed, 29
+	Dec 2004 18:05:59 -0800")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sander@humilis.net
-Cc: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>, hihone@bigpond.net.au, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com, Stefan Traby <stefan@hello-penguin.com>
 
-Sander <sander@humilis.net> writes:
+Hans Reiser <reiser@namesys.com> writes:
 
-> If you 'see desperate users all the time' you might be amoung the
-> wrong people ;-)
+>>Again, this is a lame excuse for a bug. First you declare some features on
+>>your filesystem, later, when it turns out that it isn't being delivered,
+>>you act as if this were a known condition.
+>>
+> Well this is true, you are right.  Reiser4 is the fix though.
 
-;), on the lists and on user groups.
+No, it isn't. Reiser4 is an alternative beast. Or will it transparently
+"fix" the collision problem in a 3.5 or 3.6 file system, in a way that
+is backwards compatible with 3.6 drivers? If not, please fix reiser3.6.
 
-> Maybe you can clue them in the wonderful world of making backups?
+Given that Reiser4 isn't "proven" yet in the field (for that, it would
+have to be used as the default file system by at least one major
+distributor for at least a year), it is certainly not an option for
+servers _yet_.
 
-I always promote bacula, but you will always have those who don't do
-the dance.
-
-> Next time it is not their mistake, but instead a broken harddisk.
-> Undelete wont save them then.
-
-We got pretty good tools to restore from a hd with bad blocks. 
-
-dd it, loop it, fsck it. 
-
-> Or they just edited it instead of rm.
-
-This is handled in user space.
+A file system that intransparently (i. e. not inode count or block
+count) refuses to create a new file doesn't belong on _my_ production
+machines, which shall migrate away from reiserfs on the next suitable
+occasion (such as upgrades). There's ext3fs, jfs, xfs, and in 2006 or
+2007, we'll talk about reiser4 again. Yes, I am conservative WRT file
+systems and storage.
 
 -- 
-Esben Stien is b0ef@esben-stien.name
-http://www.esben-stien.name
-irc://irc.esben-stien.name/%23contact
-[sip|iax]:b0ef@esben-stien.name
+Matthias Andree
