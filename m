@@ -1,43 +1,54 @@
-From: "Martin J. Bligh" <mbligh@aracnet.com>
+From: Rik van Riel <riel@redhat.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 13:04:17 -0700
-Message-ID: <23320000.1093550657@flay>
-References: <20040824202521.GA26705@lst.de>	<412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com>
+Date: Thu, 26 Aug 2004 16:10:48 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com>
+References: <Pine.LNX.4.58.0408261217140.2304@ppc970.osdl.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20781-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20782-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <412D9FE6.9050307@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.58.0408261217140.2304@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>
-Cc: hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-> Don't move reiser4 into vfs, use reiser4 as the vfs. 
+On Thu, 26 Aug 2004, Linus Torvalds wrote:
 
-Ah ... that seems to be a good insight into what you're driving for.
-That would seem to be good for you ... and bad for other filesystems.
-So whilst I can see why you'd want it - but I don't think it's a good idea.
-Competition is good.
+> So "/tmp/bash" is _not_ two different things. It is _one_ entity, that
+> contains both a standard data stream (the "file" part) _and_ pointers to
+> other named streams (the "directory" part).
 
-Andrew wrote:
+Thinking about it some more, how would file managers and
+file chosers handle this situation ?
 
-> And what are the licensing implications of plugins?  Are they derived
-> works?  Must they be GPL'ed?
+Currently the user browses the directory tree and when
+the user clicks on something, one of the following 
+happens:
 
-You replied:
+1) if it is a directory, the file manager/choser changes
+   into that directory
 
->>And what are the licensing implications of plugins?  Are they derived
->>works?  
->
-> Yes.
+2) if it is a file, the file is opened
 
-I find it odd that you cut out the last part of his question. So must
-they be GPL'ed or not?
+Now how do we present things to users ?
 
-M.
+How will users know when an object can only be chdired
+into, or only be opened ?
+
+For objects that do both, how does the user choose ?
+
+Do we really want to have a file paradigm that's different
+from the other OSes out there ?
+
+What happens when users want to transfer data from Linux
+to another system ?
+
+-- 
+"Debugging is twice as hard as writing the code in the first place.
+Therefore, if you write the code as cleverly as possible, you are,
+by definition, not smart enough to debug it." - Brian W. Kernighan
 
