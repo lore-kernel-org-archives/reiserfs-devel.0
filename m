@@ -1,55 +1,101 @@
-From: Soeren Sonnenburg <reiserfs@nn7.de>
-Subject: Re: Recent spam
-Date: 06 Jun 2003 11:02:52 +0200
-Message-ID: <1054890172.1075.14.camel@localhost>
-References: <3EDAEEBE.3050202@netscape.net>
-	 <1054820341.23131.126.camel@tiny.suse.com> <3EDF5618.5090904@namesys.com>
-	 <200306060548.44154.russell@coker.com.au>  <3EE04C02.2090707@namesys.com>
+From: Heinz-Josef Claes <hjclaes@web.de>
+Subject: Re: How to build a big file server
+Date: 06 Jun 2003 11:41:10 +0200
+Message-ID: <1054892469.1975.39.camel@wusel.schnulli.de>
+References: <1054800852.1997.15.camel@wusel.schnulli.de>
+	 <20030605090435.GE7950@namesys.com>
+	 <1054804624.1997.39.camel@wusel.schnulli.de>
+	 <200306052029.41437.russell@coker.com.au>
+	 <1054809903.1995.83.camel@wusel.schnulli.de> <3EDF7424.7010003@gmx.net>
+	 <20030605170616.GD22550@vestdata.no>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14469-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-14470-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3EE04C02.2090707@namesys.com>
+In-Reply-To: <20030605170616.GD22550@vestdata.no>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Alexander Lyamin <flx@namesys.com>, Russell Coker <russell@coker.com.au>, reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Ragnar =?ISO-8859-1?Q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
+Cc: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>, Russell Coker <russell@coker.com.au>, reiserfs-list@namesys.com
 
-On Fri, 2003-06-06 at 10:08, Hans Reiser wrote:
-> Russell Coker wrote:
-> 
-> >On Fri, 6 Jun 2003 00:39, Hans Reiser wrote:
-> >  
-> >
-> >>Demidov's computer so that it can run with the case on it, etc.  Giving
-> >>him the additional task of dealing with spamcop is just asinine.
-> >>    
-> >>
-> >
-> >I hope you realise that you are proving the administrators of SpamCop to be 
-> >correct.  They believe that SPAM will only be accepted as a problem and dealt 
-> >with if reacted to forcefully.  Other services have nicer methods and don't 
-> >get the results.
-> >
-> >After this issue has been discussed many times the only positive response I 
-> >have received from you has been after using SpamCop.  I conclude that I am 
-> >correct to use it.
-> >
-> >No-one has asked the administrators of your mailing list to do anything 
-> >special, just to refrain from doing unusual things.
-> >
-> >If you want a quick temporary fix then change the list address.  The 
-> >subscribers will be able to deal with it well enough (it's happened before) 
-> >but the spammers will take some time to catch up.
-> >
-> >  
-> >
-> Remove Russell from the list.
+Am Don, 2003-06-05 um 19.06 schrieb Ragnar Kj=F8rstad:
+> On Thu, Jun 05, 2003 at 06:47:32PM +0200, Carl-Daniel Hailfinger wrote:
+> > Heinz-Josef Claes wrote:
+> > >From the debian web page:
+> > >
+> > > http://packages.debian.org/testing/utils/storebackup.html
+> > >
+> > > File comparisons are done with MD5 checksums, so no changes go
+> > > unnoticed.
+> >=20
+> > If you believe the last sentence, I have a bridge to sell.
+> >=20
+> > To be more exact: MD5 is a 128=3D2^7 bit hash. Assuming a file length o=
+f 4kB
+> > =3D 2^8*4096=3D2^20 bits, approximately 2^(2^(20-7))=3D 2^8192=3D 10^24=
+57
+> > different files have the same hash.
+>=20
+-> It's an additionally backup to a normal backup to a tape. <-
+(BTW: storebackup exists for 2 years now, 1 year on sourceforge and I
+never heard of problems like this, so I think it will not happen too
+often :-))
 
-In that case remove me too.
+> Or explained differently, every time you change a file there is a=20
+> 1/(2^128) chance that the backup-system will not notice.
+>=20
+> I would be willing to take the risk.
+>=20
+>=20
+> However, calculating a checksum of all your data is relatively slow -
+> I'm surprised it doesn't use timestamps. Or maybe it's optional?
+>=20
+> (Of course in some situations timestamps can not be relied on, but if
+> your application is not one of those it should be much much faster)
+>=20
 
-Soeren.
+The application works a follows:
+
+The first backup is slow because all md5 sums have to be calculated
+(thas fast) and the files have to be copied/compressed (that's slow).
+The md5 files are stored (beside other information) in a special file.
+
+The following backups will
+1. look if the same file at the same place is unchanged (ctime, mtime,
+size). If 'yes', it make a link to the old one and takes the md5 sum of
+the old file and stores that md5 sum in the special file of that backup.
+2. If it cannot find the same file at the same place, or the file has
+changed, it will calculate the md5 sum and look for it in the old
+backup. If it finds the md5 sum, it will make the link, otherwise it
+will copy/compress the file.
+
+Calculating md5 sums, compression and copying is done in parallel to
+reading directories and linking to improve performance. There are
+several queues. It can also get advantage from multiprocessor systems,
+because multiple compressions can happen in parallel.
+
+The real algorithm is a little bit more complicated, among other things
+because it can link between independent backups (eg. from different
+machines, or you make a big backup with all files every week and a
+faster, smaller one every day and share the inodes between them).
+
+-> So it uses timestamps (and size), but if they are not equal but the
+file hasn't changes, there is only a little overhead. Md5 sums are
+stored in berkeley dbm files during the backup.
+
+
+Regards,
+
+--=20
+Heinz-Josef Claes                     hjclaes@web.de
+project: http://sourceforge.net/projects/storebackup
+      -> snapshot-like backup to another disk
+
+Q: How does a Unix guru have sex?
+A: gunzip && strip && touch && finger && mount && fsck && \
+more && yes && fsck && fsck && fsck && umount && sleep
+
 
