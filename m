@@ -1,61 +1,46 @@
-From: Mark Knudson <mrk@rochester.rr.com>
-Subject: Re: Emergency: Is there a way to fix a partition table
-Date: Tue, 28 Sep 2004 17:22:32 -0400
-Message-ID: <4159D618.30206@rochester.rr.com>
-References: <231dafb504092622352b9c17d2@mail.gmail.com>
+From: evilninja <evilninja@gmx.net>
+Subject: Re: SUSE 9.1 with ReiserFS:  / won't fsck, but is otherwise fine
+Date: Wed, 29 Sep 2004 02:38:27 +0200
+Message-ID: <415A0403.3040806@gmx.net>
+References: <1095996040.10293.18.camel@xserver.local.net>	 <200409241116.09066.vitaly@namesys.com>	 <1096032016.17001.4.camel@xserver.local.net>	 <200409271844.11580.vitaly@namesys.com>	 <1096301165.9096.14.camel@xserver.local.net>  <41589155.1050405@gmx.net> <1096324801.9096.41.camel@xserver.local.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21952-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21953-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <231dafb504092622352b9c17d2@mail.gmail.com>
+In-Reply-To: <1096324801.9096.41.camel@xserver.local.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Dark Shadow wrote:
-> I don't have a backup of the partition table and was wondering if
-> there was a way to auto scan and have it come up with one. It had 2
-> partitions both reiserfs v3 and fully functioning Linux installs
-> 
-> I have made a dd image of the entire drive to work with
-> 
-> This is very important that I get it fixed since even though I have a
-> day old backup I got a couple files I really don't want to lose (9gb
-> of tv capturecard captures)and I need the system fully functioning in
-> a day
-> 
-> 
-> current output of table from fdisk
-> 
-> Command (m for help): p
-> 
-> Disk /dev/hda: 40.0 GB, 40020664320 bytes
-> 240 heads, 63 sectors/track, 5169 cylinders
-> Units = cylinders of 15120 * 512 = 7741440 bytes
-> 
->    Device Boot      Start         End      Blocks   Id  System
-> /dev/hda1   ?       21975      164058  1074152739    0  Empty
-> Partition 1 does not end on cylinder boundary.
-> /dev/hda2   ?      168574        9274   943175203   be  Solaris boot
-> Partition 2 does not end on cylinder boundary.
-> /dev/hda3   ?      201952       44474   956950144    0  Empty
-> Partition 3 does not end on cylinder boundary.
-> /dev/hda4   ?           1           1           0   4f  QNX4.x 3rd part
-> Partition 4 does not end on cylinder boundary.
-> 
-> Partition table entries are not in disk order
-> 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-About a year ago I trashed my partition table.
-I used a program called testdisk that searched the disk and 
-reconstructed a new one for me. Check out the following link.
+Chris Worley wrote:
+> I find the root partition an invaluable part of the system.  So, I'm not
+> going to destroy it on purpose.  I'm not quite sure how to boot without
+> a root partition ;)
 
-http://www.cgsecurity.org/index.html?testdisk.html
+you did backup at least /etc , didn't you? if so, then a quick reinstall
+of your distro (and thus overwriting "/" ) should be not that painful.
 
+> I'm really looking for a non-destructive way to test/repair whatever has
+> happened. 
 
+well, there's always http://www.namesys.com/support.html   ;)
 
+Christian.
+- --
+BOFH excuse #71:
 
+The file system is full of it
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
+iD8DBQFBWgQDC/PVm5+NVoYRApvLAKCXAWCz3PrDzLehnrTBEUeIGtwFWACgkIdh
+wr4EZlLE0y76Srjny9Bt8Qw=
+=i5O+
+-----END PGP SIGNATURE-----
