@@ -1,62 +1,122 @@
-From: Robert Lazzurs <lazzurs@lazzurs.net>
-Subject: Re: linux and nfs issues
-Date: Thu, 29 Jan 2004 14:33:54 +0000
-Message-ID: <1075386834.624.269.camel@manson.ednet.co.uk>
-References: <1075376569.633.166.camel@manson.ednet.co.uk>
-	 <20040129130517.61e26e31@philou.gramoulle.local>
-	 <1075380111.624.242.camel@manson.ednet.co.uk>
-	 <20040129141004.63f06c23@philou.gramoulle.local>
+From: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
+Subject: Fwd: Re: More on Hard Links
+Date: Thu, 29 Jan 2004 13:15:34 -0500 (EST)
+Message-ID: <20040129181534.9650.qmail@web25007.mail.ukl.yahoo.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16652-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16653-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040129141004.63f06c23@philou.gramoulle.local>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Thu, 2004-01-29 at 13:10, Philippe Gramoull=E9 wrote:
-> Hello,
->=20
-> Well, i'd advise you to upgrade to latest kernel if you can.
-> Then if you can't i'd advise you not to put the postfix mail queue over N=
-FS, but over
-> local and fast disks.
-
-Well the reason that we run the queues over NFS is because we have many
-mail application servers for redundancy, however if we host the mail q's
-locally then when we loose an app server we loose the mail.
-
-> Besides the problems you described, this is quite a performance hit even =
-for a moderate
-> busy server.
-
-To be honest that is not the bottleneck in the system, our current load
-is about 300000 messages a day and we have found that just one PIII
-server with 256Mb ram can take the messages in, spam scan, virus scan
-and deliver the messages to NFS hosted maildir in under 1 second.
-
-> And to quote Postfix author:
->=20
-> "Couple years ago I talked with someone at WebTV. They ran Postfix
-> queues on top of NFS. As a result of their experience I added one
-> NFS workaround to Postfix. However, NFS is not a perfect emulation
-> of a local disk, and strange things can happen occasionally.
-
-I have taken this up with the postfix list, if this is the case then the
-decision is clear, either postfix handles the situation better or we
-have to use another MTA in our situation.
-
-Take care - RL
-
---=20
-MSN:lazzurs@everybuddy.com	|"All that is etched in stone
-Yahoo:admroblaz AIM:admroblaz	|is truly only scribbled in
-ICQ:66324927			|sand" - RL
-Jabber:admroblaz@jabber.org	|Join Eff http://www.eff.org
-e-mail:lazzurs@lazzurs.myftp.org|Take care all - Rob Laz
+Forwarding to list...
 
 
+--- Hubert Chan <hubert@uhoreg.ca> wrote: 
+> To: Narcoleptic Electron
+> <narcoleptic_electron@yahoo.co.uk>
+> Subject: Re: More on Hard Links
+> From: Hubert Chan <hubert@uhoreg.ca>
+> Date: Thu, 29 Jan 2004 12:57:49 -0500
+> 
+> >>>>> "Narcoleptic" == Narcoleptic Electron
+> <narcoleptic_electron@yahoo.co.uk> writes:
+> 
+> [...]
+> 
+> Narcoleptic> I've given this a lot of thought, and
+> firstly have come to
+> Narcoleptic> believe that it is misguided to discuss
+> user features that
+> Narcoleptic> should be added to Hard Links.  Hard
+> Links are a low-level
+> Narcoleptic> feature of the underlying file system,
+> and should be
+> Narcoleptic> treated as such.
+> 
+> I agree enthusiastically.
+> 
+> Narcoleptic> Instead, in a discussion about user
+> features, we should
+> Narcoleptic> first identify the features that we
+> want, then design a
+> Narcoleptic> higher-level construct (which may make
+> use of hard links in
+> Narcoleptic> its implementation, possibly directly)
+> that delivers these
+> Narcoleptic> features.
+> 
+> Yes.  Agreed.
+> 
+> Narcoleptic> I can think of only 2 user-level
+> linking constructs that I
+> Narcoleptic> think would be useful:
+> 
+> Narcoleptic> (1) "Aliases" (Inspired only partially
+> by Mac OS aliases.)
+> 
+> [...]
+> 
+> Narcoleptic> - When an alias is created on another
+> volume, the user will
+> Narcoleptic> be asked if the alias should keep a
+> local cache of the
+> Narcoleptic> master.  If so, the file can still be
+> read (but not
+> Narcoleptic> modified) when disconnected.  If not,
+> then it is not
+> Narcoleptic> readable when disconnected.
+> 
+> Interesting idea.  Aside from this point, "aliases"
+> could be implemented
+> using symlinks, with things like the "disconnected"
+> badge handled in
+> userspace.
+> 
+> Instead of using a "clone list" as you suggested,
+> keeping the clones up
+> to date could be handled in userspace by something
+> like FAM (File
+> Alteration Monitor).  That way, the target
+> filesystem doesn't have to
+> know about aliases.
+> 
+> Narcoleptic> (2) "Shortcuts" (This is just a name; I
+> am *not* referring
+> Narcoleptic> to Windows-style shortcuts.)
+> 
+> [...]
+> 
+> Narcoleptic> Shortcuts would be implemented directly
+> using symbolic
+> Narcoleptic> links.
+> 
+> Yup.
+> 
+> There's another type of link that I think users may
+> want -- something
+> like symbolic links, but is resilient to file
+> movement -- at least
+> within the same filesystem.  That could be
+> implemented by storing a
+> pointer to some sort of filesystem ID, and an inode
+> number.  This is
+> what I call firm links, and what I think Leo would
+> call a soft link.
+> 
+> -- 
+> Hubert Chan <hubert@uhoreg.ca> -
+> http://www.uhoreg.ca/
+> PGP/GnuPG key: 1024D/124B61FA
+> Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29
+> C719 124B 61FA
+> Key available at wwwkeys.pgp.net.   Encrypted e-mail
+> preferred.
+>  
+
+______________________________________________________________________ 
+Post your free ad now! http://personals.yahoo.ca
