@@ -1,49 +1,41 @@
 From: Mike Fedyk <mfedyk@matchmail.com>
-Subject: Re: write barrier patches for 2.4.21
-Date: Thu, 28 Aug 2003 18:18:52 -0700
-Message-ID: <20030829011852.GI21352@matchmail.com>
-References: <20030825170849.GA14811@mfa.kfki.hu> <20030826214624.GA410@zero> <20030827064103.GA29131@namesys.com> <20030827220337.GB4886@zero> <1062031059.5324.111.camel@tiny.suse.com> <20030828170725.GB21352@matchmail.com> <20030829000730.GA9019@zero>
+Subject: Re: reiser4 data journalling?
+Date: Thu, 28 Aug 2003 18:23:22 -0700
+Message-ID: <20030829012322.GJ21352@matchmail.com>
+References: <3F4E3AF9.2060100@tupshin.com> <16206.16138.72832.920045@laputa.namesys.com> <3F4E6AA4.3030900@namesys.com> <20030829001814.GB9019@zero> <3F4E9C6D.2080009@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15483-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15484-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20030829000730.GA9019@zero>
+In-Reply-To: <3F4E9C6D.2080009@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tom Vier <tmv@comcast.net>
-Cc: Reiserfs List <reiserfs-list@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: Tom Vier <tmv@comcast.net>, Reiserfs List <reiserfs-list@namesys.com>
 
-On Thu, Aug 28, 2003 at 08:07:30PM -0400, Tom Vier wrote:
-> On Thu, Aug 28, 2003 at 10:07:25AM -0700, Mike Fedyk wrote:
-> > On Wed, Aug 27, 2003 at 08:37:40PM -0400, Chris Mason wrote:
-> > > scsi drives don't really need them because most scsi drives don't have
-> > > write back caching on by default, and most actually listen when you turn
-> > > the cache off.  The scsi tag queuing makes good performance possible
-> > > even without writeback caching.
+On Fri, Aug 29, 2003 at 04:21:01AM +0400, Hans Reiser wrote:
+> Tom Vier wrote:
+> >would it be much more difficult to allow non-page aligned bufs to be 
+> >written
+> >atomically? a fully atomic fs would be very nice. otherwise, a lot of utils
+> >and shell builtins would have to be modded to insure page alignment. it
+> >would be neat if all the regular builtins (cp, mv, ln) were atomic. of
+> >course, even neater would be the ability to group multiple ops into one
+> >atomic action. (this is probably already planned - it's been a while since 
+> >i
+> >read the reiserfs4 paper on the namesys site.)
+> >
 > > 
-> > So, in essence, TCQ is exposing what is happening in the cache, and allowing
-> > control/showing state compared to IDE's non-TCQ write cache.  Do I have that
-> > right?
+> >
+> reiser4 does all this that you ask for, although the user space API is 
+> not yet compiling;-)
 > 
-> i'm not sure what you mean. chris is just saying tcq makes performance w/o
-> write cache better. i WOULD like to see wb's used w/ scsi. it would be nice
-> to be able to safely enable write cache on my drives.
 
-I'm just trying to clairify that it looks like TCQ shows exactly what it
-happening in the drive's cache, and that's why with tcq the wb's aren't
-explicitly needed.
-
-With ide without tcq and with write caching, it accepts the write request
-and says it's complete when it's actually still in the disks cache, not on
-the platters yet.
-
-Contrast that to TCQ (IDE or SCSI), where the write request is sent to the
-drive, and once it hits the platter, the tcq command completes and notifies
-the host OS (Linux in this case) that it's done.  And SCSI with no TCQ is
-like IDE with no write cache.
-
-Do I have that right?
+So you can have one 5k memory area that spans two pages, and it will act on
+them atomically?  Or does that mean that the utils are already page aligned
+by other kernel mechanisims?  Or that they'll have to use the reiser API to
+do some of the above (other than the op grouping)?
