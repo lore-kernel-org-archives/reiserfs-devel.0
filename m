@@ -1,48 +1,52 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: 2.4.21 reiserfs oops
-Date: Tue, 24 Jun 2003 09:31:29 +0400
-Message-ID: <20030624053129.GA24025@namesys.com>
-References: <87he6iyzyj.fsf@amaterasu.srvr.nix> <20030623095356.GA12936@namesys.com> <87k7bcxww4.fsf@amaterasu.srvr.nix>
+Subject: Re: illegal seek - unable to umount device
+Date: Tue, 24 Jun 2003 09:48:09 +0400
+Message-ID: <20030624054809.GA24126@namesys.com>
+References: <200306231944.57478.gyim@freemail.hu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14682-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14683-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <87k7bcxww4.fsf@amaterasu.srvr.nix>
+In-Reply-To: <200306231944.57478.gyim@freemail.hu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nix <nix@esperi.demon.co.uk>
-Cc: Linux Kernel Development <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
+To: Gyimesi Akos <gyim@freemail.hu>
+Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Mon, Jun 23, 2003 at 11:16:27PM +0100, Nix wrote:
+On Mon, Jun 23, 2003 at 07:44:57PM +0200, Gyimesi Akos wrote:
 
-> >> Jun 22 13:52:42 loki kernel: Unable to handle kernel NULL pointer dereference at virtual address 00000001 
-> > This is very strange address to oops on.
-> I'll say! Looks almost like it JMPed to a null pointer or something.
+> I have just encountered a problem (?) with reiserfs on Linux 2.4.20. I wrote 
+> the following (shortened) python code which produced an unkillable process:
+> #!/usr/bin/python
+> file=open("terabyte_length_file", "w")
+> file.seek(1024*1024*1024*1024)
+> file.write("%c" % 0)
+> file.close()
+> On ext2, this code produced a file which had the (nominal) length of 1 
+> terabyte and the real size of 16k. I ran this script on a reiserfs partition 
+> as a normal user, and it
+> 1. produced an unkillable process with 100% CPU usage
+> 2. i was unable to kill it anyway, and i was unable to unmount the filesystem.
+>    (Illegal seek, Device or resource busy). So finally i rebooted the system.
+>    Of course, the rebooting process also got stuck as init couldn't umount
+>    the device either.
+> Naturally, i was not really surprised that this code didn't work on reiserfs, 
+> but i was quite astonished by the fact that this dirty program could 
+> practically "kill" the machine as a normal user - in a meaning that running 
+> it several times consumes its CPU resouces and makes it impossible to unmount 
+> the filesystem.
 
-No, if it'd jumped to a NULL pointer, we'd see 0 in EIP.
+This is known problem and we hope to push the fix to Marcelo soon.
+In short, the process is not stuck, it is busy creating file hole (4k at a time).
+If you'd wait long enough, it will eventually finish.
 
-> >> Jun 22 13:52:43 loki kernel: EIP:    0010:[<c0092df4>]    Not tainted 
-> > And the EIP is prior to kernel start which is also very strange.
-> > On the other hand the address c0192df4 is somewhere inside reiserfs code,
-> > so it looks like a single bit error, I'd say.
-> I think it unlikely to be RAM problems given that the problem happened
-> shortly after upgrading to 2.4.21; this was about half a day after I
-> rebooted it because it threw a pile of never-seen-again, un-syslogged
-> SCSI abort errors at me (sym53c875); and *that* was a few minutes after
-> I rebooted into 2.4.21 for the first time.
-
-Hm, so first there were some scsi problems and then reiserfs oops?
-
-Actually since the RAM is good, I see no good reason for this to happen.
-(actually I see no good reason for valid code before _text, either).
-
-I wonder if 2.4.21 constantly crashes like that for you, then?
+Thank you for the report.
 
 Bye,
     Oleg
