@@ -1,35 +1,47 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: reiserfsck goes to and endless loop
-Date: Mon, 28 Apr 2003 09:42:25 +0400
-Message-ID: <20030428054225.GC22902@namesys.com>
-References: <1051499797.12231.27.camel@linuxclient>
+Subject: Re: reiserfs keeps failing fsck suggested reiserfsck --rebuild-sb
+Date: Mon, 28 Apr 2003 09:48:01 +0400
+Message-ID: <20030428054801.GD22902@namesys.com>
+References: <1051501483.850.22.camel@sarantium>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13844-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13845-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1051499797.12231.27.camel@linuxclient>
+In-Reply-To: <1051501483.850.22.camel@sarantium>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dr Aldo Medina <aldomedina@hotpop.com>
+To: Tom Epperly <tomepperly@attbi.com>
 Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Sun, Apr 27, 2003 at 10:56:47PM -0500, Dr Aldo Medina wrote:
-> Trying to recover some deleted file, I used losetup /dev/loop0
-> backupcopy (being this a backup of the partition). I then use reiserfsck
-> --rebuild-tree -S /dev/loop0. I've tried ru 
+On Sun, Apr 27, 2003 at 08:44:43PM -0700, Tom Epperly wrote:
+
+> I recently upgraded to reiserfsprogs 3.6.6-1 via the normal "apt-get
+> update ; apt-get upgrade". Since then, fsck has been failing when I
+> reboot. I've tried running "reiserfsck --rebuild-sb" as directed, but I
+> get the same message again when I reboot.
+> My of my dialog with the Debian maintainer is here:
+> http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=190963
+
+Hm, there you say that you was able to solve the problem.
+
+> I've run reiserfsck --rebuild-sb on all the reiserfs partitions. It
+> never says anything to indicate that it did or didn't do anything. It
+> would be nice to see something like "super block updated" or "no change
+> needed", but that's kind of beside the point.
+> When I reboot after running reiserfsck --rebuild-sb on all the reiserfs
+> partitions, it fails in fsck in the same way with the same message. It
+> is as though reiserfsck isn't doing anything or is not doing the right
+> thing.
 
 Hm.
-Well, just guessing on your problem based on the subject.
-If you have reiserfsprogs 3.6.4-2 .. 3.6.4-4 from Debian distribution.
-you must either download and compile reiserfsprogs yourself or upgrade to
-3.6.6-1 from their unstable branch.
-There was known bad patch included into debian's build of reiserfsprogs.
+What questions were presented to you and what have you answered to those (when you run
+reiserfsck --rebuild-sb on your partitions)?
 
 Bye,
     Oleg
