@@ -1,87 +1,133 @@
-From: Marc Rotzow <marcer@friendfinderinc.com>
-Subject: reiserfsck will take 28 years
-Date: Fri, 28 Feb 2003 20:09:38 -0800
-Message-ID: <3E603282.4000001@friendfinderinc.com>
+From: "Vladimir Karavelov" <adsyssw@netbg.com>
+Subject: Re: ReiserFS causes CPU high usage?!
+Date: Sat, 1 Mar 2003 17:40:16 +0200
+Message-ID: <008501c2e008$de05afb0$0302a8c0@karavelov>
+References: <200302280011.14488.liviu.voicu@huji.ac.il> <200302281439.24760.liviu.voicu@huji.ac.il> <20030228133836.D24291@humilis> <200302281448.20572.liviu.voicu@huji.ac.il> <3E5F91BE.5050707@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13034-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13035-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Jeff Mahoney <jeffm@suse.com>, Voicu Liviu <liviu.voicu@huji.ac.il>
+Cc: ookhoi@humilis.net, reiserfs-list@namesys.com
 
-Our backup started to kernel panic when it hit certain files in certain 
-directories.
-We moved them aside, and proposed to fix them by trying a rebuild-tree 
-after the other stuff had failed.
-What we discovered is that based on the rate it was doing files, after a 
-couple of hours (it starts off at a decent rate and quickly trails to 
-slow), it would take an estimated 28 years, (1 every 5 seconds).
+Hi all,
+Does anybody remember that P4 CPUs has a weird thing inside them which slows
+down the CPU when it overheats? P4 at 1.5 GHz was for a very little time in
+the market and as far as I remember it was mainly as tray, not a boxed
+product  (i.e. without original Intel cooler).
+I think you must get a trip to the PC and check cooling.
+Moths ago I had a problem with P4 PC with stopped cooler. Symptoms was
+almost the same.
 
-What can we do to revive it and not force it to try to do a 
-rebuild-tree?  We don't have 28 years.
+Regards
+Vladimir Karavelov
 
-Thanks,
-
-Marc
-
-
-Pertinent info for my installation below:
-reiserfsprog 3.6.4-2
-kernel:  2.4.20-1
-Debian linux
-Raid 5, ICP Vortex.
-16 drives x 72GB 10k SCSI drives.
-945 GB Usable space
-1 partition.
-Approximately 125 million files.
-
-debug info and other possibly interesting bits below:
+----- Original Message -----
+From: "Jeff Mahoney" <jeffm@suse.com>
+To: "Voicu Liviu" <liviu.voicu@huji.ac.il>
+Cc: <ookhoi@humilis.net>; <reiserfs-list@namesys.com>
+Sent: Friday, February 28, 2003 6:43 PM
+Subject: Re: ReiserFS causes CPU high usage?!
 
 
-Skipping 15883 blocks (super block, journal, bitmaps) 125811385 blocks will be read
-0%                                                      left 125807299,
-
-debugreiserfs -d /dev/sda1
-<--------debugreiserfs 3.6.4, 2002-------->
-
-
-Filesystem state: consistency is not checked after last mounting
-
-Reiserfs super block in block 16 on 0x801 of format 3.6 with standard journal
-Count of blocks on the device: 251413225
-Number of bitmaps: 7673
-Blocksize: 4096
-Free blocks (count of blocks - used [journal, bitmaps, data, reserved] blocks): 251413225
-Root block: 4294967295
-Filesystem is cleanly umounted
-Tree height: 65535
-Hash function used to sort names: "r5"
-Objectid map size 570, max 972
-Journal parameters:
-        Device [0x0]
-        Magic [0x0]
-        Size 8193 blocks (including 1 for journal header) (first block 18)
-        Max transaction length 1024 blocks
-        Max batch size 900 blocks
-        Max commit age 30
-Blocks reserved by journal: 0
-Fs state field: 0x1
-sb_version: 2
-inode generation number: 41340655
-UUID: 57c6cdcf-364b-4d51-8e97-ae2ac60f0672
-LABEL:
-Set flags in SB:
-        ATTRIBUTES CLEAN
-
-The problem has occurred looks like a hardware problem.
-Check your hard drive for badblocks.
-
-bread: Cannot read the block (4294967295).
-
-Aborted
-
+> Voicu Liviu wrote:
+> > -----BEGIN PGP SIGNED MESSAGE-----
+> > Hash: SHA1
+> >
+> > OK, so in this mashine I compile kde3.1 and this is the output of the
+"top"
+> > command ( it took me 5 seconds to write top in the command line and
+another
+> > 10 antill I saw the output...really slow )
+> >
+> > 35 processes: 31 sleeping, 4 running, 0 zombie, 0 stopped
+> > CPU states: 99.4% user,  0.3% system,  0.0% nice,  0.0% iowait,  0.1%
+idle
+>
+> If ReiserFS were causing your CPU utilization problems, it would look
+> more like this:
+>
+> CPU0 states:  0.5% user, 28.1% system,  0.0% nice, 70.3% idle
+> CPU1 states:  0.3% user, 28.1% system,  0.0% nice, 71.0% idle
+>
+> This is the result when I start a stress.sh -n 50 run, which starts 50
+> processes all copying a directory to a ReiserFS filesystem. [dual p3
+> 733] The numbers vary, but the system number is usually higher than just
+> a few percent.
+>
+> Your system time is only 0.3%, but your user time is 99.4%. It's your
+> userland that's taking all your CPU time. There's a large number of  -10
+> nice'd processes in there: The result is that those processes get
+> scheduler priority, and things that you're looking for interactive
+> response from won't get it.
+>
+> I noticed that someone further down the list mentioned that your
+> slowdown may be sshd not getting enough CPU time. This seems much more
+> likely.
+>
+> To answer your other question about ReiserFS on a p2 300: I have a
+> closet server running with a few hundred GB of ReiserFS filesystems on
+> it, acting as an NFS/Samba server, handling internal web traffic, etc..
+> It's got cycles to spare, and it's only a Celeron 300A.
+>
+> -Jeff
+>
+> > Mem:   255948k av,  250540k used,    5408k free,       0k shrd,   28344k
+buff
+> >         59512k active,             119096k inactive
+> > Swap:  514072k av,     144k used,  513928k free                  122280k
+> > cached
+> >
+> >   PID USER     PRI  NI  SIZE  RSS SHARE STAT %CPU %MEM   TIME COMMAND
+> >   889 portage   15 -10 21508  21M  4172 R <  98.9  8.4   0:16 cc1plus
+> >   890 portage    5 -10  2368 2368   752 S <   0.9  0.9   0:00 as
+> >   845 liviu     15   0  1100 1100   792 R     0.1  0.4   0:00 top
+> >     1 root      15   0   484  484   428 S     0.0  0.1   0:05 init
+> >     2 root      15   0     0    0     0 SW    0.0  0.0   0:00 keventd
+> >     3 root      34  19     0    0     0 SWN   0.0  0.0   0:00
+ksoftirqd_CPU0
+> >     4 root      15   0     0    0     0 SW    0.0  0.0   0:00 kswapd
+> >     5 root      15   0     0    0     0 SW    0.0  0.0   0:00 bdflush
+> >     6 root      15   0     0    0     0 RW    0.0  0.0   0:00 kupdated
+> >     9 root      15   0     0    0     0 SW    0.0  0.0   0:00 kreiserfsd
+> >    33 root      15   0   888  888   592 S     0.0  0.3   0:00 devfsd
+> >  3612 root      15   0   564  564   488 S     0.0  0.2   0:00 metalog
+> >  3614 root      15   0   460  460   416 S     0.0  0.1   0:00 metalog
+> >  3729 root      15   0  1252 1252  1128 S     0.0  0.4   0:00 sshd
+> >  3740 root      15   0   412  412   356 S     0.0  0.1   0:00 agetty
+> >  3741 root      15   0   412  412   356 S     0.0  0.1   0:00 agetty
+> >  3742 root      15   0   412  412   356 S     0.0  0.1   0:00 agetty
+> >  3743 root      15   0   412  412   356 S     0.0  0.1   0:00 agetty
+> >  3744 root      15   0   412  412   356 S     0.0  0.1   0:00 agetty
+> >  3745 root      15   0   412  412   356 S     0.0  0.1   0:00 agetty
+> > 12092 root      15   0  1220 1220   836 S     0.0  0.4   0:00 screen
+> > 12093 root      15   0  1316 1316  1044 S     0.0  0.5   0:00 sh
+> > 12099 root      10  -5  5492 5492  1896 S <   0.0  2.1   0:07 python2.2
+> > 31549 portage   10 -10   376  376   312 S <   0.0  0.1   0:00 sandbox
+> > 31550 portage   10 -10  1172 1172   900 S <   0.0  0.4   0:00 ebuild.sh
+> > 31557 portage    5 -10   472  472   396 S <   0.0  0.1   0:00 tee
+> > 31577 liviu     15   0  1316 1316  1060 S     0.0  0.5   0:00 bash
+> >   300 portage   10 -10   796  796   556 S <   0.0  0.3   0:00 make
+> >   699 portage   10 -10   832  832   576 S <   0.0  0.3   0:00 make
+> >   700 portage   10 -10  1052 1052   836 S <   0.0  0.4   0:00 sh
+> >   701 portage    6 -10  1552 1552   576 S <   0.0  0.6   0:00 make
+> >   886 portage    6 -10   640  640   440 S <   0.0  0.2   0:00 g++
+> > -----BEGIN PGP SIGNATURE-----
+> > Version: GnuPG v1.2.1 (GNU/Linux)
+> >
+> > iD8DBQE+X1qUczD4Ii52ssMRAso7AJ0bAlC3YbXjax28nVe9NbI6/+cJ/ACfX9Lx
+> > O+fZu4gbCPjqSDraeWrYbbk=
+> > =uWh1
+> > -----END PGP SIGNATURE-----
+>
+>
+> --
+> jeffm@suse.com
+> jeffm@csh.rit.edu
+>
 
