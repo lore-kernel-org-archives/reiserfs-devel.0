@@ -1,41 +1,57 @@
-From: Andreas Dilger <adilger@clusterfs.com>
+From: Bennett Todd <bet@rahul.net>
 Subject: Re: getting UUID and label of a filesystem
-Date: Mon, 10 Nov 2003 13:42:46 -0700
-Message-ID: <20031110134246.N10197@schatzie.adilger.int>
-References: <3FAAB330.5040503@nrao.edu> <1068152277.2556.13.camel@redeeman.linux.dk> <1068152634.2455.37.camel@dragonball> <3FAFEE88.3040002@ysu.edu>
+Date: Mon, 10 Nov 2003 16:05:13 -0500
+Message-ID: <20031110210513.GA20463@rahul.net>
+References: <3FAAB330.5040503@nrao.edu> <1068152041.2327.34.camel@dragonball> <3FAFF00C.1000404@ysu.edu> <20031110201432.GB2014@mis-mike-wstn.matchmail.com> <3FAFF7B3.5030306@nrao.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16043-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
+Return-path: <reiserfs-list-return-16044-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3FAFEE88.3040002@ysu.edu>; from jpdalbec@ysu.edu on Mon, Nov 10, 2003 at 03:01:12PM -0500
+In-Reply-To: <3FAFF7B3.5030306@nrao.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: John Dalbec <jpdalbec@ysu.edu>
-Cc: Brian Tinsley <btlists@emageon.com>, reiserfs-list@namesys.com
+To: Boyd Waters <bwaters+moz@nrao.edu>
+Cc: reiserfs-list@namesys.com
 
-On Nov 10, 2003  15:01 -0500, John Dalbec wrote:
-> I set labels on my ReiserFS filesystems, but I can't use LABEL= in /etc/fstab. 
-> I thought that was the point of having filesystem labels.  Is there some 
-> configuration setting that I'm missing?
+--nFreZHaLTZJo0R7j
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-"mount" has not been updated to use libblkid.  I had always intended on
-doing that, but it was never in the top 10 on my todo list.  I had agreement
-in principle from Andries Brouwer to use a libblkid in mount instead of
-having a duplicate set of LABEL/UUID parsing code there, but just lacked
-the time/incentive to do that part.
+2003-11-10T15:40:19 Boyd Waters:
+> Mike Fedyk wrote:
+> > On Mon, Nov 10, 2003 at 03:07:40PM -0500, John Dalbec wrote:
+> > > I've added myself to the "disk" group and it works for me as
+> > > non-root.  You just need read access to the raw device, no?
+> >
+> > Yes.
+> > But how many need access to the UUID information?  That can be a
+> > big security hole...
+>
+> Um, can you point me to info regarding security holes in exposing
+> the UUID of a filesystem?
 
-It would probably benefit all reiserfs users to get this working, so that
-you can finally mount reiserfs filesystems by LABEL/UUID, so if someone
-has some time and wants to contribute back to reiserfs this is a fairly
-easy project (not kernel hacking ;-).
+Interesting. I read Mike's response to be talking about the security
+consequences of having lots of users able to read the raw disk
+device, and thereby bypass any access control mechanisms the
+filesystem might implement (including even normal Unix file
+permissions).
 
-Cheers, Andreas
---
-Andreas Dilger
-http://sourceforge.net/projects/ext2resize/
-http://www-mddsp.enel.ucalgary.ca/People/adilger/
+-Bennett
 
+--nFreZHaLTZJo0R7j
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
+
+iD8DBQE/r/2JHZWg9mCTffwRAvhFAJ9lueX4e9ylubWp20+opC49wTR0WgCgz8cO
+QBmTMKrYBpGqSP4hmP4VLtU=
+=DDur
+-----END PGP SIGNATURE-----
+
+--nFreZHaLTZJo0R7j--
