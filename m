@@ -1,30 +1,55 @@
-From: Christian Kujau <evil@g-house.de>
-Subject: Re: vpf-10680, minor corruptions
-Date: Thu, 26 Jun 2003 14:38:11 +0200
-Message-ID: <3EFAE933.6040206@g-house.de>
-References: <3EF6C83F.6060702@namesys.com> <3EF702CC.9050005@g-house.de> <20030624131904.GA460@namesys.com> <3EF86928.7080504@g-house.de> <20030624151940.GC21845@namesys.com> <3EF888B2.4000900@g-house.de> <3EF8EFF0.6020207@g-house.de> <20030625054031.GA11576@namesys.com> <3EF9A0F6.4030401@g-house.de> <3EF9E939.1050501@g-house.de> <20030626092608.GA12252@namesys.com>
-Reply-To: evil@g-house.de
+From: Chris Mason <mason@suse.com>
+Subject: Re: udpated data logging available
+Date: 26 Jun 2003 08:53:47 -0400
+Message-ID: <1056632026.20899.39.camel@tiny.suse.com>
+References: <1055764071.24111.650.camel@tiny.suse.com>
+	 <200306260216.41204.christian.mayrhuber@gmx.net>
+	 <1056592066.20899.10.camel@tiny.suse.com>
+	 <200306261342.08725.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14710-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-14711-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030626092608.GA12252@namesys.com>
+In-Reply-To: <200306261342.08725.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Cc: Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com
 
-Oleg Drokin schrieb:
-> BTW, can you send me the original file and its corrupted counterpart?
-> 
+On Thu, 2003-06-26 at 07:42, Dieter N=FCtzel wrote:
 
-i've copied several files to a loopmounted reiserfs and selected a text 
-file (some random text) and a binary file 
-(/lib/iptables/libip6t_icmpv6.so), for which i have the original and the 
-corrupted copy on https://ephigenie.kicks-ass.net/browse/reiserfs/diffs
+> > Great to hear, thanks for giving it a try.  io-stalls-6 helped most when
+> > you've got multiple devices and a streaming write to one was slowing
+> > down all the others.  -7 added in a tweaked form of Andrea's elevator
+> > latency fixes, and they make a big difference when there's a lot of
+> > writes to the drive you're trying to read from.
+>=20
+> So, does it apply to 2.4.21-aa1 (latest is 2.4.21rc8aa1) cleanly? ;-)
+>=20
 
-Thanks,
-Christian.
+No, io-stalls-7 is mostly in rc8aa1 already.  The major difference is
+that andrea changed blk_finished_io and I added a new func to keep
+compatibility for external drivers.  There are a few areas where he and
+I chose different ways of doing things, if you're interested in helping
+add some measurements to our debate, I can make you a patch against aa1.
+
+> > Hopefully we'll be able to hash out something suitable for 2.4.22-pre.
+>=20
+> 2.4.22-pre1 is out form some days...
+
+Yes.  Almost all my latency testing was done on data logging + the jh-2
+patch, so I'm much more confident now in that code.  Hopefully the
+merging will start shortly, Oleg has a queue of things he wants to get
+in, and we're trying to keep the rate of changes at something
+manageable.
+
+(quick clarification, io-stalls-7 is entirely unrelated to reiserfs, I
+posted it here because I thought there might be some willing testers ;-)
+
+-chris
+
+
 
