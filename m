@@ -1,59 +1,73 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Still wrong reported file size after --rebuild-tree
-Date: Sat, 2 Nov 2002 17:10:15 +0300
-Message-ID: <200211021710.15930.vitaly@namesys.com>
-References: <20021030193045.69179289.philippe.gramoulle@mmania.com> <200211011630.13195.vitaly@namesys.com> <3DC2ED15.9080403@namesys.com>
+From: reiser <reiser@namesys.com>
+Subject: Re: We need help benchmarking and debugging reiser4
+Date: Sat, 02 Nov 2002 17:09:09 -0800
+Message-ID: <3DC47735.9060206@namesys.com>
+References: <200211012236.gA1MaqT20507@mail.osdl.org>
+Reply-To: reiser@namesys.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11907-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11908-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3DC2ED15.9080403@namesys.com>
+In-Reply-To: <200211012236.gA1MaqT20507@mail.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Philippe =?utf-8?q?Gramoull=C3=A9?= <philippe.gramoulle@mmania.com>, reiserfs <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Cliff White <cliffw@osdl.org>
+Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Oleg Drokin <green@namesys.com>, Nikita Danilov <Nikita@namesys.com>
 
-On Saturday 02 November 2002 00:07, Hans Reiser wrote:
-> Vitaly Fertman wrote:
-> >Hi,
-> >
-> >On Wednesday 30 October 2002 21:30, Philippe Gramoull=C3=A9 wrote:
-> >>Hi,
-> >>
-> >>I just wanted to let you know that after rebuilding the tree for a 500Go
-> >>volume, i still have wrong file size reported :
-> >>
-> >>/dev/sdb1            572418604 174714996 397703608  31% /storage
-> >>
-> >># ls -l
-> >>total 4928006
-> >>-r-x-wx-wx 1 daemon   324231      32768 Jan  1  1970 25s.jpg
-> >>-r-x--x--- 1 19415372 19415373 83388383504122186 Aug 13 1970 25s_lb.jpg
-> >>-r--rw-rw- 1 19415354 19415355 83388306194710840 Aug 13 1970 25slight.j=
-pg
-> >>-r---wxrwx 1 19415331 19415332 83388207410463009 Aug 13 1970
-> >> 25slight_ln.jpg
-> >
-> >ReiserFS can handle 64 bit file sizes, so from the reiserfsck point of
-> > view these are correct sizes.
+Cliff White wrote:
+
+>>Can some of you help us by doing such things as replicating our 
+>>benchmarks, and helping us debug it as we enter the last stretch before 
+>>Halloween?
+>>
+>>    
+>>
 >
-> You mean to say that you haven't written code to check that file sizes
-> are correct, yes?
+>We are interested in helping, but i haven't seen the follow-up mail 
+>mentioned below - if you could send us some more specifics, we'd be
+>glad to join the fun.
+>cliffw
+>OSDL
+>
+>  
+>
+>>Nikita and Oleg will describe the details of what to do to replicate the 
+>>benchmarks, please be sure to use reiser4 readdir order for writes to 
+>>reiser4 (that means don't use tarballs made from ext2 (Remember that 
+>>writes determine subsequent read performance.)), and to use the latest 
+>>hard drives and fast processors with udma 5 turned on.  We are quite 
+>>sensitive to transfer speed since we do a good job of avoiding seeks.  
+>>We are sensitive to readdir order because we sort directory entries 
+>>(which is necessary for having efficient large directory lookups).   In 
+>>reiser4.1 we will ship a repacker, and then it won't matter what order 
+>>you do writes in so long as the repacker gets a chance to run at night.  
+>>
+>>-- 
+>>Hans
+>>
+>>
+>>-
+>>To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>>the body of a message to majordomo@vger.kernel.org
+>>More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>Please read the FAQ at  http://www.tux.org/lkml/
+>>
+>>    
+>>
+>
+>
+>
+>
+>  
+>
+Cliff, has there been a russian timezone working day since you requested 
+it?  (I don't have access to your original email at the moment.) If 
+there has been, then Nikita, please explain why the request was lost, 
+and assure me that next time it goes into someone's todo list, and gets 
+responded to on the same day.
 
-No, I meant that it is considered as a legal situation to have a size in=20
-a file statdata greater then its real body size. Thus you can truncate=20
-the file to the greater size.=20
+Hans
 
-However, if you are sure that you do not have files with such holes at=20
-the end you can use --ajust-file-sizes option in rebuild and fix-fixable
-modes - fixable here - to correct such statdata's file sizes to file body=20
-sizes. (Sorry that I have not mentioned about this option in my previous=20
-email).=20
-
---=20
-
-Thanks,
-Vitaly Fertman
