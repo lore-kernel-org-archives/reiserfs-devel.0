@@ -1,51 +1,28 @@
-From: Jose Alberto Guzman <jose@iteso.mx>
-Subject: Re: LVM(1|2) vs EVMS
-Date: Fri, 15 Aug 2003 13:38:16 -0500
-Message-ID: <3F3D2898.20803@iteso.mx>
-References: <3F3C0FDE.4000900@iteso.mx> <20030815121721.GB20698@namesys.com>
+From: Mike Fedyk <mfedyk@matchmail.com>
+Subject: Re: reiser4 debugging status info
+Date: Fri, 15 Aug 2003 11:49:30 -0700
+Message-ID: <20030815184930.GK1027@matchmail.com>
+References: <3F3CFE6B.1010700@namesys.com> <16189.659.769102.828401@laputa.namesys.com> <3F3D0575.1020504@namesys.com> <16189.1754.116380.909774@laputa.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15330-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15331-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030815121721.GB20698@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <16189.1754.116380.909774@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Nikita Danilov <Nikita@Namesys.COM>
+Cc: Hans Reiser <reiser@namesys.com>, Reiserfs List <reiserfs-list@namesys.com>, Oleg Drokin <green@namesys.com>
 
-Oleg Drokin wrote:
-> Hello!
+On Fri, Aug 15, 2003 at 08:14:18PM +0400, Nikita Danilov wrote:
+> Hans Reiser writes:
+>  > nobody ever read that, and I think the mailing list is much more 
+>  > appropriate than the website, because the website had problems with 
+>  > being obsolete when it had the News section.
 > 
-> On Thu, Aug 14, 2003 at 05:40:30PM -0500, Jose Alberto Guzman wrote:
-> 
->> What would be the recommended volume management system for an smp 
->>production server running oracle 8i (later 9i) on 2.4.20 or 2.4.21 
->>debian gnu/linux with reiserfs: lvm1, lvm2 or evms ??
->> Solid stability under heavy load and snapshots are the main needed 
->>features.
->> What would you suggest?
-> 
-> 
-> LVM1 is part of the kernel for a lot of time and is greatly tested,
-> so I guess it will be the best choice in your case.
-> 
-> Bye,
->     Oleg
+> I think best way to settle this is to ask list readers. :)
 
-Thanks for your suggestion Oleg, (and Thunder who replied personally).
-
-
-  I suppose that the patches at:
-
-ftp://ftp.namesys.com/pub/reiserfs-for-2.4/2.4.20-pending
-
-  would make a 2.4.20 box more stable with lvm 1 ??   are there any 
-other recommended patches around??
-
-
-
-  Thanks
-
+Please post to the list...
