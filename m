@@ -1,42 +1,42 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Subject: Re: Repeatable corruption using Reiserfs 3
-Date: Thu, 30 Oct 2003 14:02:12 +0100
-Message-ID: <3FA10BD4.6040800@gmx.net>
-References: <3FA0A9D9.70705@netbox.biz>
+From: Alex Malinovich <demonbane@the-love-shack.net>
+Subject: Need a boot disk with newest reiserfs tools
+Date: Thu, 30 Oct 2003 12:14:57 -0600
+Message-ID: <20031030181457.GA31387@the-love-shack.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15941-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15942-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FA0A9D9.70705@netbox.biz>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Menno Smits <menno@netbox.biz>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Menno Smits wrote:
+Last night I attempted to resize my root partition (yes, I know, BAD
+IDEA :), using a GNU parted boot disk. Early on, it encountered an
+error and died, after which the partition became unbootable. I was
+still able to mount it from that boot disk, but there were plenty of
+errors in the process. So I ran a reiserfsck --fix-fixable which fixed
+a few problems, but left 56 problems that require --rebuild-tree.
 
-> - The result is expected and correct. Now look at the tail of the files.
->   The results vary on every run of the test but the contents of the
->   output files are always wrong. Two examples are:
-This behaviour is completely correct. Reiserfs V3 does only meta data
-journaling by default, which means, that file metadata operations like 
-create, delete, etc. are journaled, but not the actual data written to 
-the disk.
+Unfortunately, every time I try a --rebuild-tree, after about 30
+seconds errors just start flying by on the screen. After about 30
+minutes of this, I get a timeout error and reiserfsck just dies. I've
+had success in the past with various reiserfs  problems by using an
+updated copy of the reiserfs progs, but as my root partition isn't
+bootable, and I have no space left to create another partition, I need
+a boot disk to do it. As such, I need a boot disk with a recent
+version of the reiserfs progs that can deal with a 3ware RAID array.
 
-If you want to prevent data corruption on power failure and not just 
-filesystem corruption you have to use Chris Mason's data logging 
-patches, see ftp://ftp.suse.com/pub/people/mason/patches/data-logging
-These patches provide an additional mount option:
-data=writeback: Metadata journaling only
-data=ordered: (new default) Data is written to disk before a metadata
-               transaction is commited to journal. (nearly as fast as
-               writeback, protects against data corruption)
-data=journal: Data and metadata are commited to journal and then written
-               to disk. (slower, except for mail servers)
-
+My laptop still works, so if I need to make my own bootdisk somehow I
+can, unfortunately I have no idea of what's involved in the
+process. It's running Debian unstable so if you're familiar with any
+tools that would allow me to make a boot disk relatively easily with
+reiserfs support, I'd greatly appreciate it. TIA.
 -- 
-lg, Chris
-
+Alex Malinovich
+Support Free Software, delete your Windows partition TODAY!
+Encrypted mail preferred. You can get my public key from any of the
+pgp.net keyservers. Key ID: A6D24837
