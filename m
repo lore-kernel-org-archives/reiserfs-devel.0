@@ -1,34 +1,33 @@
 From: Anders Widman <andewid@tnonline.net>
-Subject: Re: Slightly off topic.
-Date: Thu, 6 Mar 2003 17:39:07 +0100
-Message-ID: <1516272937.20030306173907@tnonline.net>
-References: <Pine.LNX.4.44.0303061133490.14773-100000@dragon.inside.ntisys.com>
+Subject: Re: Error messages.
+Date: Thu, 6 Mar 2003 18:33:45 +0100
+Message-ID: <14119550703.20030306183345@tnonline.net>
+References: <93F527C91A6ED411AFE10050040665D0049C0799@CORPUSMX1>
+ <17280449343.20030305222118@tnonline.net> <20030306065807.GQ7208@mrball.net>
+ <16120863312.20030306093452@tnonline.net>
 Reply-To: Anders Widman <andewid@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13133-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13134-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.44.0303061133490.14773-100000@dragon.inside.ntisys.com>
+In-Reply-To: <16120863312.20030306093452@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: bscott@ntisys.com
-Cc: ReiserFS Mailing List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-> On Wed, 5 Mar 2003, at 11:11am, cbarry@infiniconsys.com wrote:
->> Get yourself a 3Ware controller.
+>> Do you have apic enabled or disabled in both the kernel and the BIOS?
+>> Do you have acpi enabled or disabled in both the kernel and the BIOS?
 
->   I'll second the 3Ware recommendation.  We've used them and they are rock
-> solid.  Active, open source support from the OEM.  Web-based management
-> tool.  Email alerts on problems.  Very nice.
+> Yes,  right now both are. Will be trying without. If it works it means
+> there is a nasty bug in the kernel/or Promise drivers?
 
-   I am beginning to think they are to be preferred. Have to look them
-   up.
+Have now tried without ACPI,APIC and APM. Still crashes.... :(
 
-   Thanks,
-   Anders
+Will fiddle more with this in the weekend.
+
 
 
 --------
