@@ -1,48 +1,62 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: vs-5150: search_by_key: invalid format found in block 30690. Fsck?
-Date: Mon, 18 Aug 2003 10:08:52 +0400
-Message-ID: <20030818060852.GB16183@namesys.com>
-References: <200308151939.03324.vadim_t@teleline.es>
+Subject: Re: Procedure to recover a bad superblock
+Date: Mon, 18 Aug 2003 10:19:41 +0400
+Message-ID: <20030818061941.GC16183@namesys.com>
+References: <1061131936.3001.8.camel@headoffice.hazelden.ca>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15354-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15355-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200308151939.03324.vadim_t@teleline.es>
+In-Reply-To: <1061131936.3001.8.camel@headoffice.hazelden.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vadim <vadim_t@teleline.es>
-Cc: reiserfs mailing list <reiserfs-list@namesys.com>
+To: "John P. New" <jnew@hazelden.ca>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
 Hello!
 
-On Fri, Aug 15, 2003 at 07:39:02PM +0200, Vadim wrote:
-> I just noticed quite a lot of those:
-> vs-5150: search_by_key: invalid format found in block 9170. Fsck?
-> vs-13070: reiserfs_read_inode2: i/o failure occurred trying to 
-> find stat data of [3614 3618 0x0 SD]
-> is_tree_node: node level 65448 does not match to the expected one 
-> 1
-> vs-5150: search_by_key: invalid format found in block 14568. 
-> Fsck?
+On Sun, Aug 17, 2003 at 10:52:16AM -0400, John P. New wrote:
 
-Some of the blocks are got filled with garbage for some (unknown) reason.
+> Aug 16 21:09:23 headoffice kernel: Using r5 hash to sort names
+> Aug 16 21:09:23 headoffice kernel: ReiserFS version 3.6.25
+> Aug 16 21:09:23 headoffice kernel: reiserfs: checking transaction log
+> (device 09:01) ...
+> Aug 16 21:09:23 headoffice kernel: reiserfs: replayed 4 transactions in
+> 1 seconds
+> Aug 16 21:09:23 headoffice kernel: attempt to access beyond end of
+> device
+> Aug 16 21:09:23 headoffice kernel: 09:01: rw=0, want=1370749188,
+> (=0x51b3f904), limit=59447552
 
-> The disk seems to be good, no errors, kernel is 2.4.21 with LVM 
-> 1.0.7.
-> Why does this error happen? Is it a bug fixed in a later version?
+Hm, so you had valid superblock, but the copy in journal was not valid,
+do you have some kind of IDE drives with write cache turned on below
+your softraid?
 
-Well, I am not sure there is a bug.
-What was happenning before you started to get those messsages? Were there any
-unexpected shutdowns and you do not have write cache disabled in your harddrives
-or something like that?
+> reiserfs_open: the reiserfs superblock cannot be found on /dev/md1.
+> Failed to open the filesystem.
+> If the partition table has not been changed, and the partition is
+> valid  and  it really  contains  a reiserfs  partition,  then the
+> superblock  is corrupted and you need to run  --rebuild-sb.
+> Aborted (core dumped)
+> So, I guess I have a bad superblock on md0. I assume my next step would
+> be:
+> reiserfsck --rebuild-sb /dev/md1
 
-> BTW, it'd be nice if it told me what partition it happened on.
+Yes.
+It will ask you few questions and then will create new superblock.
 
-We merged a patch that does just this in 2.4.22-pre3
+> Is there anything I should do to protect my data before I run this
+
+Well, you may create copy of entire device with dd, if you want.
+
+> command, and is there a possibiltity of file corruption at this point,
+> or is this a fairly safe step?
+
+If only superblock is corrupted, that should be pretty safe.
 
 Bye,
     Oleg
