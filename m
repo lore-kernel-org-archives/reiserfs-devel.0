@@ -1,38 +1,33 @@
-From: =?UTF-8?B?SmFrdWIgQW1icm/FvGV3aWN6?= <ja@vigor.com.pl>
-Subject: Re: Fwd: Re: [reiserfs-list] superblock problem
-Date: Thu, 27 Jun 2002 09:50:55 +0200
-Message-ID: <3D1AC3DF.2040209@vigor.com.pl>
-References: <200206262208.02793.vitaly@namesys.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: Re: reiserfsprogs release
+Date: Thu, 27 Jun 2002 11:58:40 +0400
+Message-ID: <200206271158.40678.vitaly@namesys.com>
+References: <200206261937.26316.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10860-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10861-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <200206261937.26316.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Dieter =?utf-8?q?N=C3=BCtzel?= <Dieter.Nuetzel@hamburg.de>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-On 6/26/02 8:08 PM, Vitaly Fertman wrote:
-> Hi, it seems you did not get my first email.
-I sent a response, strange you didn't got it...
-But (quick check ) i didn't sent it to the list
-but but directly to you (hit wrong button, sorry)
-so maybe that's the problem
+On Wednesday 26 June 2002 21:37, Dieter N=C3=BCtzel wrote:
+> On Die, 25 Jun 2002, Vitaly Fertman wrote:
+> > that reiserfsprogs-3.x.1c-pre6 which you can find on our ftp
+> > site seems to be stable and they are going to become a new
+> > release within next few days. We encourge you to test it and
+> > to report about any possible problem.
+>
+> Can you than pump the version number to the OSS/Linux standard like Hans
+> agreed lately before you release it, please?
 
- > which version of reiserfsprogs do you use?
-My reiserfsprogs are 3.x.1b
- > You got wrong super block format in block 16,
-I know, that's what kernel writes :-(
+Sure, it will be reiserfsprogs-3.6.2.
 
- > what did you answer on the question about super block format?
-I picked all of the answers one at a time :-)
-there were four of them 1 was 3.6.x (afair)
-last three were 3.9.5 with , =, >=
-Two upper versions resulted with sb beeing at block 16
-two lower: at block 2, which also didn't satisfied my
-kernel :-(
+--=20
 
-Thanks in advance
-JA
-
+Thanks,
+Vitaly Fertman
