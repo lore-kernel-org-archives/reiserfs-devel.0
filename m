@@ -1,59 +1,121 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: The argument for fs assistance in handling archives
-Date: Fri, 03 Sep 2004 18:55:07 -0500
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <4139045B.8080307@slaphack.com>
-References: <20040902203854.GA4801@janus> <1094160994.31499.19.camel@shaggy.austin.ibm.com> <20040902214806.GA5272@janus> <20040902220027.GD23987@parcelfarce.linux.theplanet.co.uk> <20040902220242.GA5414@janus> <20040902220640.GE23987@parcelfarce.linux.theplanet.co.uk> <20040902221133.GB5414@janus> <20040902221722.GF23987@parcelfarce.linux.theplanet.co.uk> <20040902222650.GA5523@janus> <20040902223324.GG23987@parcelfarce.linux.theplanet.co.uk> <20040902225634.GA5756@janus> <41382EC0.8080309@hist.no>
+Date: Fri, 03 Sep 2004 19:13:31 -0500
+Message-ID: <413908AB.90103@slaphack.com>
+References: <20040826150202.GE5733@mail.shareable.org>	 <200408282314.i7SNErYv003270@localhost.localdomain>	 <20040901200806.GC31934@mail.shareable.org>	 <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>	 <1094118362.4847.23.camel@localhost.localdomain>	 <20040902161130.GA24932@mail.shareable.org>	 <Pine.LNX.4.61.0409030028510.23011@fogarty.jakma.org>	 <1835526621.20040903014915@tnonline.net>	 <1094165736.6170.19.camel@localhost.localdomain>	 <32810200.20040903020308@tnonline.net>	 <Pine.LNX.4.61.0409030112080.23011@fogarty.jakma.org>	 <142794710.20040903023906@tnonline.net> <1094216718.2679.30.camel@shaggy.austin.ibm.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <41382EC0.8080309@hist.no>
+Return-path: <reiserfs-list-return-21452-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <1094216718.2679.30.camel@shaggy.austin.ibm.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Helge Hafting <helge.hafting@hist.no>
-Cc: Frank van Maarseveen <frankvm@xs4all.nl>, viro@parcelfarce.linux.theplanet.co.uk, Dave Kleikamp <shaggy@austin.ibm.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Dave Kleikamp <shaggy@austin.ibm.com>
+Cc: Spam <spam@tnonline.net>, Paul Jakma <paul@clubi.ie>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jamie Lokier <jamie@shareable.org>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Helge Hafting wrote:
-[...]
-| You don't need kernel support for cd'ing into fs images.
-| You need a shell (or GUI app) that:
-| 1. notices that user tries to CD into a file, not a directory
-| 2. Attempts fs type detection and do a loop mount.
-| 3. Give error message if it wasn't a supported fs image.
+Dave Kleikamp wrote:
+| On Thu, 2004-09-02 at 19:39, Spam wrote:
+|
+|>
+|>
+|>
+|>>On Fri, 3 Sep 2004, Spam wrote:
+|>
+|>>> Yes, some archive types can't be partially unzipped either. But my
+|>>> point is that it wouldn't be transparent to the application/user in
+|>>> the same way.
+|>
+|>>It doesnt matter whether it is transparent to the application. It can
+|>>be the application which implements the required level of
+|>>transparency.
+|>
+|>>User doesnt care what provides the transparency or how it's
+|>>implemented.
+|>
+|>  Indeed. I hope I didn't say otherwise :). Just that I think it will
+|>  be very difficult to have this transparency in all apps.
+|
+|
+| You're missing the point.  We don't need transparency in all apps.  You
+| can write an application to be as transparent as you want, but you don't
+| need every app to to understand every file format.
 
-You can argue this about FS plugins, too.  You don't need kernel support
-for cryptocompress, for example.  Just have a fifo farm.  Every file
-that has compression turned on is actually a named pipe, the original
-file is hidden (starts with a dot), and you have a script running to
-each fifo which runs zcat.
+You don't need every app to understand every filesystem, either.  Come
+to think of it, why would I want anything other than CD burning software
+and file browsers to understand a CD drive?
 
-The kernel support (read: interface) is just cleaner in some ways.
+Let's all just wait -- quietly -- for the powers that be to work out
+whether it's feasable and sane to support it in all apps.  Because
+wouldn't that be better?
 
-In the loop mount example, it isn't universal -- the user can't CD into
-a file if they use the wrong shell, and two different shells might make
-two different mounts.  How many mounts before we run out of loop devices?
+|> Just
+|>  thinking of "nano file.jpg/description.txt" or "ls
+|>  file.tar/untar/*.doc".
+|
+|
+| I don't do much image editting, but I'm sure there are applications that
+| let you edit the description in a text file.  You can even create a
+| script that extracts it, runs nano, and puts it back into the jpeg.
 
-In the cryptocompress example, there's no caching or compress-on-flush
-optimization, and it isn't entirely transparent to anything.  It doesn't
-look like a file, it looks like a fifo.  ls will make it look yellow.
+That is a PITA.  Because you'll need to make more scripts.  And still more.
+
+Say you want to grep for a jpeg with a particular description.  Say you
+want to copy the description from one jpeg into another.
+
+Maybe you could make a general-purpose command, like "jpeg_run", which
+runs a command on the jpeg description, but it'd still be hackish, slow,
+and more to type and remember.  Consider that you might have no idea
+what "jpeg_run" is called, but you can always do "ls file.jpeg/metas" to
+find out how to edit it.
+|
+| This works for me:
+| tar -tf file.tar | grep '\.doc'
+
+And then you need to run "tar -tf" a minute later, this time looking for
+*.xls.  Maybe file.tar is actually a several gigabyte file.tar.bz2.
+
+|> Sure in some environments like Gnome it could
+|>  work, but it still doesn't for the rest of the flora of Linux
+|>  programs.
+|
+|
+| Just choose the right program.  tar groks tar files, not ls.
+
+tar groks tar.  bzip2 groks bz2.  gzip groks gz.  "mount -o loop" groks
+images.  zip groks zip.  rar groks rar.  openoffice groks .sxw, unless
+staroffice does.  xmms can read id3 info from mp3s.  gcc compiles C.
+
+If the file is an object, it's easier.  You can ask the file what it is,
+and what you can do with it.  And you can tell it to do certain standard
+things.  You can do all of this while reading almost no documentation on
+what the file is.  At the end of the day, it won't matter to you whether
+a file is zip, rar, or tar -- it's an archive, and you can extract it by
+copying files out of its /contents directory.
+
+Your way (the traditional way) means you have to learn to use which
+program is the right program and how to use that program, and you'll
+have to remember it constantly.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQTkEWngHNmZLgCUhAQKmMhAAkECgB9hUCxM2vNn0NgzQmkuz028QsAEN
-6B1ej6tCbVyT8whsVD2YA7rQH5UavUeUKjuFNJNwelXeEYqG8tbv4vcE1Z65U5tR
-GUJkDxWwgjfx4JtE137VmWXcMWW/6FeIBbHuKFohDeBz2nBYmc3w/b4NjgT//JOG
-0iUQGRDQcGxDuCYqMqCO8+m/LOSL9wbYDG+bXa4NxVAcghmxAhAJFiDpRDQHcYxX
-CeUI7ZkFnNX/4A52YTAFyHQmeoQRX1SLxJsn0GH9mcf2Gsxs8AtoTQgtedDsz9I2
-Ct6Dil6NfI94VfOx0EWa1y4I0p7UnFjAsye9zeElhumhocFvEcd5Lzn6SnCY/rQh
-o4VukNKUtDE92noL62BZGgCc9ek3/YZivMMFfmQOrjKjfQxEMwSvyjKWIj9XPATT
-FWkN7mZn7JSxluB1n1BtHTYvdieD65RGWF1aW1atJZ1r0z0xzy95LF/kqm9Rkigr
-zv6+1j9ND79pBikYuq4ol916R9bW93TkriSYbENBP5dtMx4nXUYI6kRU53Y1UxZH
-+mstouIpGr9MB7kHLLDYFFFV8upRJi2EQHA2sAtHOaMmjZUoJrbsIdA9n1r1LsKt
-6Wjq8MofdyvZWXbzh9aGD4QkovNf6tw4UHAGzVf9Uh3n6mwh7yw4qyDC5h8dqMEe
-P4wWkRawtHc=
-=GC9p
+iQIVAwUBQTkIq3gHNmZLgCUhAQJaNRAAnp/o0Wr+SJK5tkgYFCuc+CKIP+eALJo/
+9wHnqK0nLdnji+vG0Czd9TUj1vWtoMrUichAwFoguMHHg3VeZGu61YwZoZ4idLNM
+QbZ+CuQdUygNmyT0byGMFemP+cSbyvff1PRMy2BlSHKW3gUhvnQyggLGVKxpMRWf
+VNnEHvkvJeA9PpEm6QGi1VRNp5bc0+Ocl4kO4CJk5ZYZ9D+BV6NwN/MZwqwlsu+Y
+RZsYYEa6mLiCnU4rEo0tEAvvwMdC0e/9s9TQMcmJbT6JnybkWIRFMrTS4pmSabKg
+uYGG9p1WrX8/V8WRNnaodlvx35gRPQj5S5SWDBoSWr999nmq31Y5RZ9QwbVj0d+U
+yB4yNu0NpvFBJfwg8nVIKUa+bhPLCkdY5w+GnlEYGweSN20FYOaLiqiPtXBqJm8a
+PP+8OCL35zy+1X7t/tq+JG/K91fYbECPR/qrAyHDXzNSuxdqidvBjfsEPBHOGwu6
+RpsPoKyEvkzdXgauotWbVzWLt1ijGmYd/8Uk19OnmiloggViQhUWAJTIVGcvMNt8
+Tnk8ESQMzGHbbVOIu3gB6DZD6P0IEEN4L6+gOZWoYqe2nvaYKvIL1My/i4BMU5Ml
+cxDkzzeq58iVK07Has8lwgFp0U9iD1LrbIT5p0ZJn/52EXqlX4dJCYSSNaHzUqE8
+hcLG4aDELEI=
+=Wcyv
 -----END PGP SIGNATURE-----
