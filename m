@@ -1,52 +1,82 @@
-From: Linus Torvalds <torvalds@osdl.org>
+From: Andrew Morton <akpm@osdl.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Wed, 25 Aug 2004 15:21:44 -0700 (PDT)
-Message-ID: <Pine.LNX.4.58.0408251516390.17766@ppc970.osdl.org>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
- <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>
- <20040825215217.GK5414@waste.org>
+Date: Wed, 25 Aug 2004 15:28:05 -0700
+Message-ID: <20040825152805.45a1ce64.akpm@osdl.org>
+References: <20040824202521.GA26705@lst.de>
+	<412CEE38.1080707@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20531-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20532-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040825215217.GK5414@waste.org>
+In-Reply-To: <412CEE38.1080707@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Matt Mackall <mpm@selenic.com>
-Cc: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+
+Hans Reiser <reiser@namesys.com> wrote:
+>
+> I had not intended to respond to this because I have nothing positive to 
+> say, but Andrew said I needed to respond and suggested I should copy 
+> Linus.
+
+Yes, but I didn't say "flame Christoph and ignore the issues" ;)
+
+There are lots of little things to do with implementation, coding style,
+module exports, deadlocks, what code goes where, etc.  These are all normal
+daily kernel business and we should set them aside for now and concentrate
+on the bigger issues.
+
+And as I see it, there are two big issues:
+
+a) reiser4 extends the Linux API in ways which POSIX/Unix/etc do not
+   anticipate and 
+
+b) it does this within the context of just a single filesystem.
+
+I see three possible responses:
+
+a) accept the reiser4-only extensions as-is (possibly with post-review
+   modifications, of course) or
+
+b) accept the reiser4-only extensions with a view to turning them into
+   kernel-wide extensions at some time in the future, so all filesystems
+   will offer the extensions (as much as poss) or
+
+c) reject the extensions.
 
 
+My own order of preference is b) c) a).  The fact that one filesystem will
+offer features which other filesystems do not and cannot offer makes me
+queasy for some reason.
 
-On Wed, 25 Aug 2004, Matt Mackall wrote:
-> > 
-> > It's the UNIX way.
-> 
-> I thought the UNIX way is "everything's a file", not "everything's a
-> directory".
+b) means that at some time in the future we need to hoist the reiser4
+extensions (at a conceptual level) (and probably with restrictions) up into
+the VFS.  This will involve much thought, argument and work.
 
-It really was. Directories were historically largely just files too, 
-although with the special "lookup" operation. 
 
-Historic unix didn't have readdir/rmdir/mkdir/rename or really much _any_
-special directory handling. Directories were just files, and you read them 
-like files.
+To get us started on this route it would really help me (and, probably,
+others) if you could describe what these API extensions are in a very
+simple way, without referring to incomprehehsible web pages, and without
+using terms which non-reiser4 people don't understand.
 
-Of course, even in that early unix, "directories" were very much a 
-reality even apart from the fact that they happened to be implemented 
-pretty much like files. Nobody has ever claimed that the UNIX way is 
-"everything is _one_ file", after all ;)
+It would be best if each extension was addressed in a separate email
+thread.
 
-> > Will it potentially break something? Sure. Do we care? Me, I'll take that 
-> > kind of extension _any_ day over xattrs, that are fundamentally flawed in 
-> > my opinion and totally useless.
-> 
-> There's always the option that they're both broken.
+We also need to discuss what a reiser4 "module" is, what its capabilities
+are, and what licensing implications they have.
 
-Yes. Highly likely. However, something like that _does_ end up what a 
-Windows fileserver wants. IOW, even if it's broken, _something_ is likely 
-forced on us by that nasty thing we call "real users". Damn them.
+Then, we can look at each one and say "yup, that makes sense - we want
+Linux to do that" and we can also think about how we would implement it at
+the VFS level.
 
-		Linus
+If we follow the above route I believe we can make progress in a technical
+direction and not get deadlocked on personal/political stuff.
+
+
+Now, an alternative to all the above is to just merge reiser4 as-is, after
+addressing all the lower-level coding issues.  And see what happens.  That
+may be a thing which Linus wishes to do.  I'm easy.
