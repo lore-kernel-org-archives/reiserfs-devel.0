@@ -1,59 +1,39 @@
-From: "Burnes, James" <james.burnes@gwl.com>
-Subject: RE: we need a slogan for our reiser4 t-shirt
-Date: Wed, 23 Jun 2004 14:08:57 -0600
-Message-ID: <3DF9165145FACB4C96977FF650C1E9040C46A0A2@its-mail1.its.corp.gwl.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: iozone reality check: was zam, please discuss this
+Date: Thu, 24 Jun 2004 00:11:20 -0700
+Message-ID: <40DA7E98.1070707@namesys.com>
+References: <40D8EB0D.6050109@namesys.com> <20040623063049.GA5080@backtop.namesys.com> <40DA58BC.1060203@namesys.com> <40D9C5F5.7010605@comcast.net> <40DA62E0.2050803@namesys.com> <40D9CDC0.30503@comcast.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19317-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19318-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
+In-Reply-To: <40D9CDC0.30503@comcast.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>, Marcel Hilzinger <marcel@hilzinger.hu>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: George Beshers <gbeshers@comcast.net>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-How about,
+George Beshers wrote:
 
-"Plug-in To Reiser4!"
-
-
-jim burnes
-security engineer
-great-west, denver
-=20
-
-> -----Original Message-----
-> From: Hans Reiser [mailto:reiser@namesys.com]
-> Sent: Wednesday, June 23, 2004 2:07 PM
-> To: Marcel Hilzinger
-> Cc: reiserfs-list@namesys.com
-> Subject: Re: we need a slogan for our reiser4 t-shirt
->=20
-> Marcel Hilzinger wrote:
->=20
-> >2004. j=FAnius 23. 21.38 d=E1tummal Hans Reiser ezt =EDrta:
-> >
-> >
-> >>we are going to use our fastman logo from our web page plus reiser4 =
-in
-> >>letters, but we need some slogan underneath it.
-> >>
-> >>
-> >>
-> >What about:
-> >
-> >The Living Filesystem
-> >
-> >(as there are dancing trees, wandering logs, and development is =
-really
-> >alive :-)
-> >
-> >
-> >
-> I suggested the Atomic Filesystem, but Mom pointed out that it added =
-an
-> additional metaphor to the fastman graphic.  I am still thinking about
-> whether she is right.
+>
+>
+> Hans Reiser wrote:
+>
+>>
+>> When you say lots, do you mean close to or more than physical ram?
+>>
+> My recollection is that it was on the order of 70% of physical ram; there
+> was significant other activity on the system so it was getting flushed to
+> disk some of the time, but I was not actually measuring that.  I was 
+> looking
+> at cache-coherency across processor nodes and noticed that most of
+> the pages in the mmap'd area were touched (modified).
+>
+>
+>
+>
+>
+Ok, this qualifies as an app where it matters.
