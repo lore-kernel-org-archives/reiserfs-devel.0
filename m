@@ -1,57 +1,30 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
+From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
 Subject: Re: file as a directory
-Date: Tue, 30 Nov 2004 11:51:55 -0300
-Message-ID: <200411301451.iAUEptDH006868@laptop11.inf.utfsm.cl>
-References: <Peter.Foldiak@st-andrews.ac.uk>
-Return-path: <reiserfs-list-return-22632-reiserfs=m.gmane.org@namesys.com>
+Date: 30 Nov 2004 15:29:40 +0000
+Message-ID: <1101828580.17826.165.camel@pear.st-and.ac.uk>
+References: <200411301451.iAUEptDH006868@laptop11.inf.utfsm.cl>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22633-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk> 
-   of "Mon, 29 Nov 2004 22:59:31 -0000." <41ABA9D3.7020602@st-andrews.ac.uk> 
-List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <200411301451.iAUEptDH006868@laptop11.inf.utfsm.cl>
 Content-Transfer-Encoding: 7bit
-To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
 Cc: Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>, linux-kernel@vger.kernel.org
 
-Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk> said:
-> Horst von Brand wrote:
-> >Now think about files with other formats, for instance the (in)famous
-> >sendmail.cf, or less structured stuff like you find in /etc/init.d/, or
-> >just Postgres databases (with fun stuff like permissions on records and
-> >fields)... or just people groping in /etc/passwd wanting to find the whole
-> >entry (not just one field), or perhaps look at the 15th character of the
-> >entry for John Doe.
+On Tue, 2004-11-30 at 14:51, Horst von Brand wrote:
+> > I was suggesting this idea mainly form XML files, where the tags define 
+> > the parts clearly.
+> 
+> Use a XML parsing library then.
 
-> >This way lies utter madness (what format description should be applied to
-> >what file this time around?). Plus shove all this garbage into the kernel?!
+But namespace unification is important, and to unify the namespace, you
+have to use the same syntax. I guess you disagree with me on that. (If
+not, how would you do it?)  Peter
 
-> I was suggesting this idea mainly form XML files, where the tags define 
-> the parts clearly.
 
-Use a XML parsing library then.
-
-> In addition, I was suggesting that some of the XPath syntax (normally 
-> used for within-XML selection) could be extended above the file level 
-> into the file system.
-
-Urgh.
-
-> The problems you mention are all related to non-XML file format issues, 
-
-Most (say 99,95%) files aren't XML; and if they are, the requisite parsing
-is probably on hand already, so...
-
-> which was only a minor comment in parenthesis in my original mail. I am 
-> happy to do it only for XML to begin with (and if possible later see if 
-> it can be done for SOME non-XML formats).
-
-Please don't.
--- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
