@@ -1,34 +1,52 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: how screwed am I ? - lost 79160kB off of a May 2001 reiserfs partition to a swap :-(
-Date: Mon, 18 Aug 2003 10:24:18 +0400
-Message-ID: <20030818062418.GD16183@namesys.com>
-References: <no.Yo.N.nN.0308171326020.2986-100000@business.com>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: Bugs?
+Date: Mon, 18 Aug 2003 11:47:02 +0400
+Message-ID: <16192.33910.66770.917603@laputa.namesys.com>
+References: <01KZKIROVK1W90R3WK@EMAIL1.BYU.EDU>
+	<3F3FD89B.7000107@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15356-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15357-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <no.Yo.N.nN.0308171326020.2986-100000@business.com>
+In-Reply-To: <3F3FD89B.7000107@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs@ied.com
-Cc: reiserfs-list@namesys.com
+To: lkthomas@sml.dyndns.org
+Cc: William Jared Roberts <wjr6@email.byu.edu>, reiserfs-list@namesys.com
 
-Hello!
+Hans Reiser writes:
+ > William Jared Roberts wrote:
+ > 
+ > >>are you meaning that remount it manually ?
+ > >>also, I know the problem will happen during startup and shutdown, sigh...
+ > >>
+ > >>    
+ > >>
+ > >
+ > >No.  You can have the kernel initially mount the partition read-write.  IIRC,
+ > >you can use rdev and/or kernel command-line options to acheive this effect. 
+ > >It's just a band-aid for the real problem though, if you really need to get into
+ > >your box.
+ > >
+ > >
+ > >
+ > >  
+ > >
+ > He shouldn't be using reiser4 for anything other than bug finding and 
+ > stress testing.  Given how extensively we warn people that, I assume 
 
-On Sun, Aug 17, 2003 at 01:44:16PM -0400, reiserfs@ied.com wrote:
+Yes, this is right. Moreover, read-only mode is yet unsupported.
 
->    I screwed myself - I've overwritten the first 79160kB of 
-> a 38GB partition (fdisk says 38796975 blocks) with swap :-(
+ > this is just a toy installation without any real data on it for the 
+ > purpose of seeing how fast he can crash it.....
+ > 
+ > -- 
+ > Hans
+ > 
 
-So you overwrote 32M of journal and ~50M of metadata, some of the metadata should
-still be there, though.
-Since this is user error, we can only help you based on http://namesys.com/support.html terms.
-Or you can find the solution yourself. (I think several similar cases were described in
-this list some time ago).
+Nikita.
 
-Bye,
-    Oleg
+ > 
