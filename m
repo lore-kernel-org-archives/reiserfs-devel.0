@@ -1,69 +1,73 @@
-From: Fred Schaettgen <namesys.Sch@ttgen.net>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
 Subject: Re: Recursive modified-timestamp?
-Date: Sat, 1 Jan 2005 19:18:19 +0100
-Message-ID: <200501011918.19580.namesys.Sch@ttgen.net>
-References: <1909372133-BeMail@cr593174-a> <200501011420.44734.namesys.Sch@ttgen.net> <200501011808.21336.sikkh@wp.pl>
+Date: Sat, 01 Jan 2005 13:59:14 -0500 EST
+Message-ID: <4329085595-BeMail@cr593174-a>
 Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23020-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23021-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200501011808.21336.sikkh@wp.pl>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-On Saturday 01 January 2005 18:08, Piotr Neuman wrote:
-> > I don't see how dnotify or inotify would help here. You can't monitor
-> > whole directory trees with it. inotify (which I admittedly didn't know
-> > about) seems to allow monitoring just about ~8000 files per device. And
-> > you don't have any guarantee that none of the files changed before the
-> > program using inotify starts up.
->
-> You have the source code, move that limit up, and change data structures if
-> it's necesary for efficient working with large trees...
+Fred Schaettgen wrote on Sat, 1 Jan 2005 12:56:33 +0100:
+> Do you know if this service was actually provided by the file system or was it 
+> just a clever use of a more simple feature of the fs which allows to do that?
+> There are certainly a lot of things which could be done, if changed files can 
+> be found quickly, but those things don't need to go into fs itself.
 
-The model of inotify doesn't fit for this application. It's made to get 
-instant feedback when a small number of files or directories are changed. If 
-a daemon would have to consume change notifications for the whole filesystem, 
-it's hard to imagine that this might work under heavy load. What do you do if 
-the change buffer runs full because the daemon has problems catching up? 
-Increasing the buffer? What do you do after a system restart, when you can't 
-be sure that no files have been touched before a daemon starts to use inotify 
-to monitor changes? Scan the whole filesystem on each startup?
-At the moment I can't imagine how this could be solved *reliably* without the 
-the help of the file system. Do you?
+It was part of the file system.  The kernel / file system interface API has
+a function that your file system calls to post a change notification, taking
+a change code and up to three file inode numbers (useful for renaming
+operations that move a file to a new directory) and a string:
 
-> FAM uses the outdated dnotify (just browse lkml.org for info on inotify
-> advantages). One of the goals of GNOME now is to have some platform to
-> compete with the "fabled" Microsoft WinFS. Inotify could replace the "not
-> so small" FAM, for example read:
->
-> http://www.ussg.iu.edu/hypermail/linux/kernel/0407.2/0359.html
-> http://www.gnome.org/~veillard/gamin/overview.html
+int notify_listener (int op, nspace_id nsid, vnode_id vnida, vnode_id vnidb,
+vnode_id vnidc, const char *name);
 
-I can't talk about WinFS, because all I know about it is that it will be great 
-and late. But that Beagle thing, which uses inotify for indexing looks 
-interesting. My bet is that it depends heavily on heuristics to monitor the 
-right files. If this is true, then it's certainly not the best solution.
-But before bashing it I have to take a look at it first. Thanks for the links.
+The kernel would then take care of building and sending messages to
+interested programs, or do nothing if there were no listeners.  The API
+for query updates is similar.
 
-...
-> Inotyfy does not support such queries as BeOS did, but knowing the
-> reluctancy of kernel developers to do anything that may increase bloat and
-> could be done in userspace anyway, I don't think it will be supported.
 
-*g* You may be right. 
-But I thought it might still be worth trying. Especially since reiser4 with 
-it's heavily advertised plugin system seems to be somewhat more open to 
-extensions. And I'm sure that a much smaller extension than those of the BeOS 
-fs would be sufficient. 
+> With "change notification flag" I didn't mean to have the send messages, but 
+> put links to the file into a folder, so a daemon can poll for changes. I 
+> guess polling is better in this case, since it limits the overhead even in 
+> persence of many changes.
 
-Fred
+Kind of like stored notifcations, saved for later use?  That could be a
+concept to explore in general.  I can see making a special index that
+would collect files which match a standing query, with the unusual option
+of allowing the user to empty the index when they wish.  Cool.  Thanks for
+the inspiration!  Now offline programs can catch up on changes that
+happened while they weren't running.  I'll have to add it to my experimental
+file system along with magic directories showing query results, whenever I
+get time :-(.
 
--- 
-Fred Schaettgen
-Sch@ttgen.net
+An alternative would be to have attributes on files - some flag that gets
+set during a build and cleared when you edit the source.  Or if the text
+editor can't do attributes (or the kernel can't auto-wipe an attribute when
+the file is changed), you could store the build date in the attribute
+and compare it with the file modified date to find all files that are out
+of date.  Or for that matter, just store the last build date somewhere
+global and look for source files for your project which are more recent
+using an index.  A path match or another attribute would mark files as
+belonging to a particular project.
+
+(last_modified>=2004.12.31)&&(Project=="MyProject")
+
+
+> I claim that the approach I described...
+> - ...allows all these things to be done efficiently in userspace.
+> - ...is the smallest change to the fs neccessary for it.
+> - ...could be implemented in reiser4 without significant performance losses.
+
+Possibly.  But I'd like to generalize it a bit.  Percolated attributes are
+perhaps a better more general idea.  We already have inherited attributes
+(such as security of children being inherited from the parent) so going in
+the other direction isn't all that big step, it just needs an application,
+like your modification detection system.
+
+- Alex
