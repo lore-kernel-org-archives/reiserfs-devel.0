@@ -1,35 +1,35 @@
-From: Grant Miner <mine0057@mrs.umn.edu>
-Subject: Re: "Metas"
-Date: Fri, 16 Apr 2004 15:44:40 -0500
-Message-ID: <408045B8.7000102@mrs.umn.edu>
-References: <20040416192014.32348.qmail@web25007.mail.ukl.yahoo.com>
+From: Marc-Christian Petersen <m.c.p@kernel.linux-systeme.com>
+Subject: Re: [PATCH] reiserfs v3 fixes and features
+Date: Fri, 16 Apr 2004 22:44:44 +0200
+Message-ID: <200404162244.44722@WOLK>
+References: <1081274618.30828.30.camel@watt.suse.com> <1082147216.27614.1459.camel@watt.suse.com> <1082147992.27614.1462.camel@watt.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18013-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18014-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040416192014.32348.qmail@web25007.mail.ukl.yahoo.com>
+In-Reply-To: <1082147992.27614.1462.camel@watt.suse.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
+Cc: Chris Mason <mason@suse.com>, linux-kernel@vger.kernel.org
 
-> 
-> I don't think I've heard a single person, except Hans,
-> voice any support for "metas".
+On Friday 16 April 2004 22:39, Chris Mason wrote:
 
-I like "metas".
+Hey Chris,
 
-> 
-> It seems that the most widely supported name thus far
-> is "...".
-> 
-> 
-> ______________________________________________________________________ 
-> Post your free ad now! http://personals.yahoo.ca
-> 
+> Hmpf, I was supposed to remember to take that patch -l out of my
+> .quiltrc.  The patch had whitespace rejects and I didn't notice.
+> I've replaced it with reiserfs-group-alloc-10, if you don't want to wait
+> for the suse ftp site mirror, QUILT_PATCH_OPT="-l" quilt push
 
-Maybe "props" would be a good name?  It is short for properties, which 
-is synonymous with metadata and attributes (oops, I used a heretical 
-word! :)
+ah, ok :) thanks.
+
+> Sorry for the confusion.
+
+np. So your and my PCs are not overheated ;)
+
+ciao, Marc
