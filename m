@@ -1,162 +1,67 @@
-From: Timothy Webster <tdwebste2@yahoo.com>
+From: Edward Shushkin <edward@namesys.com>
 Subject: Re: Several questions about encrypted filesystem
-Date: Wed, 18 Jun 2003 08:12:07 -0700 (PDT)
-Message-ID: <20030618151207.57490.qmail@web80512.mail.yahoo.com>
-References: <3EF03860.7000608@namesys.com>
-Reply-To: tdwebste2@yahoo.com
+Date: Wed, 18 Jun 2003 19:20:29 +0400
+Sender: edward
+Message-ID: <3EF0833D.EF03FB90@namesys.com>
+References: <3AA03342E913FA4BA6D8BD0732BFC74B020F443A@pdsmsx402.pd.intel.com>
+		 <3EEEFE60.4C86EEE6@namesys.com>  <3EEF3B81.9060709@namesys.com> <1055921837.2026.25.camel@wusel.schnulli.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14607-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14608-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3EF03860.7000608@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Edward Shushkin <edward@namesys.com>, "Zhao, Forrest" <forrest.zhao@intel.com>, reiserfs-list@namesys.com
+To: Heinz-Josef Claes <heinz-josef.claes@bundestag.de>
+Cc: Hans Reiser <reiser@namesys.com>, "Zhao, Forrest" <forrest.zhao@intel.com>, reiserfs-list@namesys.com
 
+Heinz-Josef Claes wrote:
+> 
+> Am Die, 2003-06-17 um 18.02 schrieb Hans Reiser:
+> > V4 performs individual file encryption and compression, and it performs
+> > it at flush to disk time rather than at every write for performance reasons.
+> >
+> > We are going to move reiserfs gradually more and more towards encryption
+> > based security, it is especially important for distributed file systems.
+> >
+> > How we integrate into the PKI is still being designed, right now we are
+> > working on making encryption and compression work in the lower layers,
+> > and later we will look at how processes should inherit keys from each
+> > other, etc.
+> 
+> I'm really not a specialist in encryption. If it should be really useful
+> in a "normal" office evironment it should be possible to handle the
+> following on the lokal and on the remote filesystem:
+> - mounting different filesystems via NFS
+> - mounting different filesystems via SMB (Samba) from Windows
+> - sharing group filesystems between different users
+> - combination with unix permissions and ACLs (I don't know if this makes
+> sense)
+> 
+> Pershaps this is possible with kerberos or something like this!?
+> *But* all of the above does encrypt on the network.
 
---- Hans Reiser <reiser@namesys.com> wrote:
-> Timothy Webster wrote:
-> 
-> >--- Hans Reiser <reiser@namesys.com> wrote:
-> >  
-> >
-> >>Timothy Webster wrote:
-> >>
-> >>    
-> >>
-> >>>2) Key rotation and backups
-> >>>Over time the number of keys quickly become
-> >>>prohibitive. 
-> >>>
-> >>>      
-> >>>
-> >>Why? One key per user or group or file body. user
-> >>and group keys unlock 
-> >>the file body key which is stored in the file
-> >>metadata.
-> >>    
-> >>
-> >
-> >This additional level of abstraction is a good
-> >one and greatly reduces the total number of 
-> >keys required. The key space is for user, 
-> >group, master, acl "keys" which in turn unlock 
-> >individual file body keys encrypted in the file 
-> >metadata. The file body keys are session keys,
-> >which may would change foreach encrypting writing
-> >process. Or is this not what you had in mind?
-> >
-> 
-> By default, no.  There was someone who proposed
-> granting write only 
-> permissions using a scheme in which keys change such
-> that if you know 
-> the first key you can compute the later ones but the
-> later ones don't 
-> allow you to compute the first ones, but this would
-> not be the default 
-> encryption plugin.
-> 
-> >Anyway, the user, group, master, acl "keys" need
-> >to change quite often, perhaps once a day.
-> >
-> Why?
+Actually kerberos is to detect transfer errors of big packets (it uses
+a special chaining mode which smears a whole packet during decryption
+if error occurs). This feature is incompatible with file system purpose
+(to be precisely, with the purpose of its default plugins) which is
+required to not spend a lot of resources when you ask to read 2 bytes
+from any offset. However we'll support chaining, but it should going
+on in very restricted volumes (< 32-128K). For other special plugins 
+everything is possible (for instance large crypto-logs where chaining
+is going per whole file: each string is encrypted by its own key generated
+from previous one by special rules, etc..)
 
-A new key every time a user is issued a 
-new kerberos, ticket. The get a new key as
-needed. Since these tickets are used for
-encryption of file information, we can 
-not simple use create and forget.
+Edward.
+
 
 > 
-> > The
-> >idea is to keep handing out new keys as needed.
-> >Or is your idea to retrive semi-perminate 
-> >metadata keys from a PKI. Which ever approach
-> >you take being able to construct a combined
-> >key is very useful. See my other mail
-> >"kool stuff". The number of key components
-> >starts adding up very quickly even if you don't
-> >change the metadata keys frequently.
-> >10 yrs later with all these key combinations 
-> >on lets say a mail server, you have far too 
-> >many keys to individually remember. And thus 
-> >the key space approach. 
-> >
-
-Actually, I don't like my answer. So let me 
-try again. I think it is more of a question 
-how do you want to manage your keys.
-
-Are your users careless with keys. They
-like to use them and lose them. And they
-use their keys in lots of conversations
-with some not so close friends. It is
-better not to keep using this key.
-I like to think of the key space approach
-as my stuff stored in bus lockers all over
-the place and I trust the bus company.
-By the time I want to retrieve my stuff 
-from one of the bus lockers, I have 
-forgotten my key so I read off the 
-box number and depot number. After 
-proving my identity to the key clerk 
-(who is verified by the key office), 
-the clerk checks up my authorization. 
-The authorization rules are in sealed
-envelope attached to the locker. And
-key clerks are authorized to unlock
-these envelops. Finally if I am 
-approved to recover the stuff in
-that box, she cuts me a new key. I grab 
-my stuff and run, leaving my key on
-the street. No big deal there are very
-few boxes it can open.
-In Key space approach the key index
-number and key space number is printed 
-on the file metadata. And I use the
-described key clear method to unlock
-the metadata. Of course I would probably
-not just leave the key laying around,
-but I might try it on other file 
-metadata. This handles the problem
-of how to hand over some of your
-files to another party, without
-handing over all of your files.
-You had not planed to hand over
-these files when you created them.
-Perhaps you did not even know this 
-party. 
-
-
-Or are your users carefull with keys
-and dont' trust athorities. Then
-your users are probably best sharing 
-keys directly with their fiends. Who 
-knows the secret police might ask 
-the key clerk for their bus locker 
-key. 
-Then key spaces are definitely
-NOT for you. Your users are much 
-better off managing their own keys,
-as trusting groups or individually.
-But perhaps key spaces might how
-they manage their keys. Do you
-care, NOPE, because they are doing
-the key management task.
-I still think even in this case
-it is a good idea to have the 
-authorization rules separately
-sealed but attached to the
-metadata.
-
--tim.
-
-__________________________________
-Do you Yahoo!?
-SBC Yahoo! DSL - Now only $29.95 per month!
-http://sbc.yahoo.com
+> I've heard about (commercial) software which does all of this on the
+> client side (on windows).
+> Do you have any ideas how to solve or integrate these problems in the
+> (lokal?) solution or is this behind your focus?
+> 
+> Regards,
+> Heinz-Josef Claes
