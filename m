@@ -1,122 +1,74 @@
-From: serge rossel <serger@rocketmail.com>
-Subject: bug report (?) with  reiserfsck --rebuild-tree.......
-Date: Sat, 10 May 2003 07:51:46 -0700 (PDT)
-Message-ID: <20030510145146.58538.qmail@web13901.mail.yahoo.com>
+From: "Fred -- Speed Up --" <speedup@free.fr>
+Subject: Re: Some more questions about Reiser4 ;)
+Date: Sat, 10 May 2003 17:32:02 +0200
+Message-ID: <007201c31709$4f36c5c0$9900a8c0@xpstation>
+References: <001e01c313fd$975e7730$9900a8c0@xpstation> <3EBB9121.5060304@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14049-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14050-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Yury Umanets <umka@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Hi,
+Thank you for your answers ;)
 
-During the system boot (Suse8.1), I get this
-boot_log.msg:
+You're right, I'd have to read the source code, but I don't really know
+where I can find it : where do you keep the recent snapshots, the only thing
+I've been able to download is your 2.5.60 patch and the february Reiser4
+utilities.
 
+> Until fsck is done, filesystem cannot be used in production anyway :) We
+> working on fsck now and another tools. If you are intersting, I will
+> send you package or link, it may obtained at.
+It would be nice if you could sent me the url, thank you ;)
 
-dd: no flushcache support
-<6>scsi0 : SCSI host adapter emulation for IDE ATAPI
-devices
-<4>  Vendor: JLMS      Model: XJ-HD166S         Rev:
-DS0F
-<4>  Type:   CD-ROM                             ANSI
-SCSI revision: 02
-<4>  Vendor: SONY      Model: CD-RW  CRX175A    Rev:
-1.0h
-<4>  Type:   CD-ROM                             ANSI
-SCSI revision: 02
-<7>sd_attach()
-<7>sd_attach()
-<4>reiserfs: found format "3.6" with standard journal
-<4>reiserfs: checking transaction log (ide0(3,2)) for
-(ide0(3,2))
-<4>reiserfs: using ordered data mode
-<4>Using r5 hash to sort names
-<4>VFS: Mounted root (reiserfs filesystem) readonly.
-<5>Trying to move old root to /initrd ... failed
-<5>Unmounting old root
-<5>Trying to free ramdisk memory ... okay
-<6>Freeing unused kernel memory: 164k freed
-<6>md: Autodetecting RAID arrays.
-<6>md: autorun ...
-<6>md: ... autorun DONE.
-<6>LVM version 1.0.5(mp-v6)(15/07/2002) module loaded
-<6>Adding Swap: 136544k swap-space (priority 42)
-<4>reiserfs: found format "3.6" with standard journal
-<4>hda: read_intr: status=0x59 { DriveReady
-SeekComplete DataRequest Error }
-<4>hda: read_intr: error=0x40 { UncorrectableError },
-LBAsect=230962500, sector=188743680
-<4>end_request: I/O error, dev 03:04 (hda), sector
-188743680
-<4>sh-2029: reiserfs read_bitmaps: bitmap block
-(#23592960) reading failed
-<4>sh-2014: reiserfs_read_super: unable to read bitmap
-<4>hda: read_intr: status=0x59 { DriveReady
-SeekComplete DataRequest Error }
-<4>hda: read_intr: error=0x40 { UncorrectableError },
-LBAsect=231224644, sector=189005824
-<4>end_request: I/O error, dev 03:04 (hda), sector
-189005824
-<4>hda: read_intr: status=0x59 { DriveReady
-SeekComplete DataRequest Error }
-<4>hda: read_intr: error=0x40 { UncorrectableError },
-LBAsect=231486789, sector=189267968
-<4>end_request: I/O error, dev 03:04 (hda), sector
-189267968
-Kernel logging (ksyslog) stopped.
-Kernel log daemon terminating.
+> The parsing the file path is fully VFS' job.
+Probably ... but the Reiser4 doc specifies a "semantic layer" and a "storage
+layer" : does the semantic layer only consist in VFS resolving path from
+standard Reiser4 directory reading methods based on reading directory
+entries and everytime resolving the whole path reading the Reiser4 physical
+tree ?
+Does Reiser4 implement some new ways of resolving paths, as I thought I've
+read in the doc, to convert file paths to keys or does VFS alone achieve
+this ?
+When you're speaking of a graph used by the semantic layer, would it be part
+of the VFS caching process ?
+Another thing I could hardly understand : does Reiser4 keep directories
+apart from files so that path can be cached or are they kept with the same
+status normal files got ?
+
+> We should understand the difference between balancing and keeping tree
+> consistent.
+> Tree is consistent if the following rule is hold true: all nodes may be
+> accessed by means of using theirs left delimiting keys.
+> Tree is balanced if all used invariants are hold true (for instance, all
+> nodes are half filled, or all nodes fully filled, etc). Also tree should
+> not be singular.
+>
+> Reiser4 in balancing time (any tree modification) does only care about
+> tree consistency and keeps it in not singular state. Whereas flush does
+> care about invariants (packing, etc).
+I didn't noticed the difference, thank you for pointing this out. I
+understand the "balancing" process, which is documented on your website,
+meaning packing dirty memory items on flushing, but I don't understand what
+you mean by "tree should not be singular" : does this mean a twig should
+contain more than one item ?
+The really interesting thing (the mysterious one :-D) is the
+consistency-keeping process. I didn't really understood the left-delimiting
+key concept, I guess it's something like a path in the storage tree, am I
+right ? In a consistent tree, do all the inodes got the same left-delimiting
+key depth ?
 
 
-Then, in order to solve that, I have tried all the
-different commands proposed with reiserfsck.
+Real thank you for your answers Yuri ;)
+I'm going to read my "kernel internals" book to know more about the VFS and
+ext2 handlings, so you can expect some more questions (or answers ;))
+comming :-D
 
-Look what message I get by using this command.
+Fred
 
-Thank you for your support
-Serge
-
-
-serge@dhcppc2:~> su
-Password:
-dhcppc2:/home/serge # reiserfsck --rebuild-tree 
---logfile check.log /var/log
-reiserfsck 3.6.2 (2002)
- 
-**********************************************************
-  ** This  is  an  experimental  version  of 
-reiserfsck, 
-****!! MAKE A BACKUP FIRST !! **** Don't run this
-program unless something  is  broken. **
-  ** Some types of random FS damage can be recovered
-from ** ** by  this  program,   which  basically  
-throws away ** ** the internal nodes of the tree and
-then reconstructs ** ** them. This program is for use
-only by the desperate, ** ** and is of only beta
-quality.  If you are using  the **  ** latest 
-reiserfsprogs  and  it  fails  please  email ** ** bug
-reports to reiserfs-list@namesys.com.**
- 
-**********************************************************
-
-Will rebuild the filesystem (/var/log) tree
-Will put log info to 'check.log'
-
-Do you want to run this program?[N/Yes] (note need to
-type Yes):Yes
-
-bread: Cannot read a block # 2.
-
-Abandon
-
-dhcppc2:/home/serge #
-
-__________________________________
-Do you Yahoo!?
-The New Yahoo! Search - Faster. Easier. Bingo.
-http://search.yahoo.com
