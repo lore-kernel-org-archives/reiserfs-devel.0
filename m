@@ -1,56 +1,38 @@
 From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Can we have announcements on reiserfs-progs' progress?
-Date: Wed, 28 Aug 2002 16:58:25 +0400
-Message-ID: <200208281658.25707.vitaly@namesys.com>
-References: <3D6C3FCA.5000908@mb.tu-ilmenau.de>
+Subject: Re: noexec, nosuid
+Date: Wed, 28 Aug 2002 17:26:23 +0400
+Message-ID: <200208281726.23233.vitaly@namesys.com>
+References: <3D6BAB29.1070604@iteso.mx>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11333-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11334-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3D6C3FCA.5000908@mb.tu-ilmenau.de>
+In-Reply-To: <3D6BAB29.1070604@iteso.mx>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>, reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="utf-8"
+To: =?utf-8?q?Jos=C3=A9=20Alberto=20Guzm=C3=A1n=20Ram=C3=ADrez?= <jose@iteso.mx>, reiserfs-list@namesys.com
 
-On Wednesday 28 August 2002 07:13, Manuel Krause wrote:
-> Hi all!
+On Tuesday 27 August 2002 20:39, José Alberto Guzmán Ramírez wrote:
+>   Hi everyone,
 >
-> Thank you all for making me able to complain again. :-)) Sorry...
->
-> I found a new pre-release of the reiserfs-progs on the namesys server.
->
-> Can we have announcements on the list even about those prerelease facts
-> and a summarized Changelog with it?
+>    I was looking at the mount manpage and at the web link it references
+> http://namesys.com/mount-options.html to find out if reiserfs supports
+> noexec and nosuid mount options or if there are any known issues with this.
 
-Actually I intended to put it on our internal ftp server for testing, but 
-put it mistakenly to public ftp instead - that is why tehre was no annoncement. 
-As no problem was found so far, I have put it to pre folder and yes, we can 
-annonce
+There should not be any problem with these options, but if you have please
+let us know about it.
 
-> The actual Changelog diff seems to be quite important:
-> "2002-15-11
->    * reiserfsck
-> 	Correction of nlinks on fix-fixable was disabled, because
-> 	fix-fixable zeroes nlinks on the first pass and wants to
-> 	increment them on semantic pass. But semantic pass is skipped
-> 	if there are fatal corruptions.
-> 2002-08-11
->    * reiserfsck
-> 	exit codes were fixed"
+> Alas there's no info on this matter and was wondering if you could tell
+> me if there are issues with these options, or why aren't they documented?
 
-And another one small bug in fsck was fixed.
-Many warning/error messages were changed to more user friendly form.
+mount-option.html describes only reiserfs specific options. Common mount 
+options are described at mount man page.
 
-> And avoid "2002-15-11" in the packages' Changelog _before_ this date has
-> gone - That may confuse my mind completely before having my coffee in
-> the morning  ;-))
-
-;) ok it is fixed.
-
-Ok, there is a new 3.6.4-pre1 version in the pub/reiserfsprogs/pre folder. 
+>   I'm using Linux 2.4.18 with reiserfs 3.6.25 and quotas on a debian 2.2
+> potato box with a 342 G array.
 
 -- 
 
