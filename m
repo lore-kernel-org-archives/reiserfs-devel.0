@@ -1,47 +1,48 @@
-From: Gerald Roth <gerald.roth@aon.at>
-Subject: Re: fsck.reiser4 error
-Date: Thu, 14 Nov 2002 19:09:48 +0100
-Message-ID: <200211141909.48960.gerald.roth@aon.at>
-References: <200211141643.gAEGhgS09039@mail.osdl.org> <001201c28c06$e078c9e0$ed7b55c2@figwam>
+From: "JP Howard" <jh_lists@fastmail.fm>
+Subject: Re: Which journal relocation+datalogging patches?
+Date: Fri, 15 Nov 2002 07:43:03 +1100
+Message-ID: <20021114204303.CACBF5C3B9D@server5.fastmail.fm>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11998-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11999-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <001201c28c06$e078c9e0$ed7b55c2@figwam>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Chris Mason <mason@suse.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-hi
+On 14 Nov 2002 10:10:14 -0500, "Chris Mason" <mason@suse.com> said:
+> Sorry for the confusion.  The journal relocation parts are in
+> 01-relocation-5.diff.gz, the README was attempting to make it clear
+> namesys authored it.  Hopefully it is a little clearer now.
+> 
+Perfectly clear, thankyou.
 
-please try to ship a stable reiser4fsck as soon as reiser4 has stabilized=
-=2E
-it is really important to have the chance to repair the fs _if_ something=
- goes=20
-wrong, without the danger to damage it even more...=20
-
-thanks for your great work! =20
-
-although i didn't run any real benchmarks i can say that reiser4 feels a =
-lot=20
-faster than any fs i tried before....
-
-regards,
-gerald roth =20
-
-On Thursday 14 November 2002 18:54, Vitaly Fertman wrote:
-> Hi,
->
-> Thank you for your report. Actually fsck.reiser4 is supposed to be read=
-y
-> in a few months only. Yura, I thought we decided to have fsck excluded
-> from the distribution for now, right?
->
-> Thanks,
-> Vitaly Fertman
->
->
-
+> You can use reiserfstune to change the log device of an existing disk. 
+> The relocation and data logging patches are considered stable, both are
+> included in the suse kernels.
+> 
+> To try the external logging device mkreisefs -j /dev/xxx -s 8192
+> /dev/yyy
+> 
+> That will create a 32MB log on /dev/xxx, and the main filesystem on
+> /dev/yyy
+> 
+Thanks for this info. I'll try this on the weekend.
+> > 
+> > I'm really looking forward to trying this out--I plan to set aside an
+> > identical server for testing and benchmarking, so hopefully we'll be able
+> > to provide some interesting benchmarks of IMAP server performance with
+> > external journals.
+> 
+> Excellent, I'd love to see those numbers.
+> 
+OK, I'll be sure to report back when we have something. That may yet take
+some months--our IMAP stress test tool is not yet correctly simulating
+our production profile, and is resulting in CPU bound rather than IO
+bound tests. So we'll have to get that working properly first, and then
+we'll be able to benchmark.
