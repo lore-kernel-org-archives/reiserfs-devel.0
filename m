@@ -1,31 +1,41 @@
-From: Mike Fedyk <mfedyk@matchmail.com>
-Subject: Re: Snapshot against 2.6.1 released [someone has a patch against -mm4 ?]
-Date: Mon, 19 Jan 2004 08:16:54 -0800
-Sender: Mike Fedyk <mfedyk@srv-lnx2600.matchmail.com>
-Message-ID: <20040119161654.GO1748@srv-lnx2600.matchmail.com>
-References: <16395.60465.989777.981597@laputa.namesys.com> <400BF982.2050407@free.fr> <20040119155649.GK1748@srv-lnx2600.matchmail.com> <400C01A5.5060209@free.fr>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: Snapshot against 2.6.1 released.
+Date: Mon, 19 Jan 2004 19:22:49 +0300
+Message-ID: <16396.1113.203997.785571@laputa.namesys.com>
+References: <16395.60465.989777.981597@laputa.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16568-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16569-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <400C01A5.5060209@free.fr>
+In-Reply-To: <16395.60465.989777.981597@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Fuzzy <fuzzy77@free.fr>
-Cc: reiserfs-list@namesys.com
+To: Reiserfs developers mail-list <Reiserfs-Dev@Namesys.COM>
+Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-On Mon, Jan 19, 2004 at 05:11:17PM +0100, Fuzzy wrote:
->  2) from what I've read, reiser4 should be integrated in -mm before it 
-> can ever think about going in mainline... so why not play with it in -mm 
-> now ?
+Nikita Danilov writes:
+ > Hello,
+ > 
+ > new snapshot against 2.6.1 kernel is at
+ > 
+ > http://namesys.com/snapshots/2004.01.19/
+ > 
+ > look into READ.ME file for details.
 
-Because any bug reports you give then now you don't want them chasing bugs
-in the -mm tree when they don't need to (wait until it's actually there
-before that happens, and the work of getting a released version out will go
-faster IMHO).
+Please also apply last-minute-fix.diff from there: it fixes some bug
+that slipped into snapshot.
 
-Mike
+last-minute-fix.diff should be applied from fs/reiser4:
+
+$ cd /somewhere/fs/reiser4
+$ patch -p1 < /somewhereelse/last-minute-fix.diff
+
+
+Sorry for this.
+
+ > 
+
+Nikita.
