@@ -1,52 +1,33 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: badblocks blocksize setting
-Date: Sat, 15 Mar 2003 14:44:26 +0300
-Message-ID: <20030315144426.A30661@namesys.com>
-References: <006b01c2ea87$20046a40$55c7a8c0@mariusw2k> <20030315111600.A24872@namesys.com> <001801c2eae7$63932d90$55c7a8c0@mariusw2k>
+From: Pierre Abbat <phma@webjockey.net>
+Subject: Re: help recover filesystem corrupted by failing ide controller
+Date: Sat, 15 Mar 2003 19:17:12 -0500
+Message-ID: <200303151917.12807.phma@webjockey.net>
+References: <200303141942.00679.phma@webjockey.net> <3E728FFB.90905@mb.tu-ilmenau.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13277-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13280-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3E728FFB.90905@mb.tu-ilmenau.de>
 Content-Disposition: inline
-In-Reply-To: <001801c2eae7$63932d90$55c7a8c0@mariusw2k>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Marius Reiner <news.mr@gmx.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list <reiserfs-list@namesys.com>
 
-Hello!
+On Friday 14 March 2003 21:29, Manuel Krause wrote:
+> Try the latest -pre-release
+> ftp://ftp.namesys.com/pub/reiserfsprogs/pre/reiserfsprogs-3.6.5-pre2.tar.gz
+>
+> that is said to have some bug fixes against the latest reiserfsprogs
+> release
+> ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.4.tar.gz
+>
+> and a plus of performance and this release link is only given in case
+> you believe in release numbering itself.
 
-On Sat, Mar 15, 2003 at 12:38:23PM +0100, Marius Reiner wrote:
+I just compiled the prerelease and will try it first on /var, which is equally 
+corrupted (the computer was getting a lot of mail and I use Maildir). The 
+glibc versions differ, so I'd like to build it statically. How do I do this?
 
-> > Can you please show the command line and the resulting output with
-> badblocks?
-> > Also what is in dmesg output after such a run?
-> # badblocks /dev/hdc8 -b 4096
-> # dmesg -c
-> invalidate: busy buffer
-> # badblocks /dev/hdc8
-> 979932
-> # dmesg
-> invalidate: busy buffer
-> attempt to access beyond end of device
-> 16:08: rw=0, want=979936, limit=979933
-> attempt to access beyond end of device
-> 16:08: rw=0, want=979936, limit=979933
-
-Hm, is 979936 looks like size of your device in kilobytes (+-3)?
-If so, this is known kernel bug/problem, where it cannot access parts
-of device at the end sometimes. This is somehow related to setblocksize.
-This can be ignored, then.
-
-> However, what I'm missing in the FAQ, is a short note about _why_ one should
-> use the -b option, so no worries arise when getting bad blocks without it.
-
--b is needed so block output by bad blocks have the same bad blocks as
-in reiserfs. (4096 bytes in size, without -b, badblocks
-defaults to 1024 bytes blocks, so you need to divide its output by 4).
-
-Bye,
-    Oleg
