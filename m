@@ -1,46 +1,49 @@
-From: "Raymond A. Meijer" <rmeijer@internet.gr>
-Subject: Re: fsck.reiser4 can't fix 1 fixable corruption
-Date: Wed, 21 Apr 2004 11:09:41 +0300
-Message-ID: <200404211109.41412.rmeijer@internet.gr>
-References: <200404201733.51809.rmeijer@internet.gr> <408571DD.5030700@xs4all.nl>
+From: m.evers@norplex.net
+Subject: Question about Quota patches for Kernel 2.4.26
+Date: Wed, 21 Apr 2004 10:31:24 +0200
+Message-ID: <002501c4277b$0883e9e0$a201030a@Programmierung1>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18101-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0022_01C4278B.CBC1CE30"
+Return-path: <reiserfs-list-return-18102-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <408571DD.5030700@xs4all.nl>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-On Tue 20 April 2004 21:54, Sander Sweers wrote:
+------=_NextPart_000_0022_01C4278B.CBC1CE30
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-> >Error: Node (1444613), item (2): StatData of the file [2a:0:ffff] has the 
-> >wrong bytes (0), Should be (188). Plugin (stat40).
-> >        Time interval: Tue Apr 20 17:03:20 2004 - Tue Apr 20 17:07:02 2004
-> >***** fsck.reiser4 finished at Tue Apr 20 17:07:02 2004
-> >Closing fs...done
+Helo,
 
-> ------------------------------------------------------------------------
-> Error: Node (3978247), item (1): StatData of the file [2a:0:ffff] has
-> the wrong bytes (0), Should be (185). Plugin (stat40).
->         Time interval: Tue Apr 20 20:46:31 2004 - Tue Apr 20 20:46:31 2004
-> ***** fsck.reiser4 finished at Tue Apr 20 20:46:31 2004
-> Closing fs...done
-> ------------------------------------------------------------------------
+i would like to know where i can get those patches for Kernel 2.4.26.
 
-> Same problem here, same kernel and reiser4progs but this is not on lvm
-> but a 25G partition.
+Thank You
+------=_NextPart_000_0022_01C4278B.CBC1CE30
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-> The way the 2 errors look the same is scary.
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; =
+charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2800.1400" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2>Helo,</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>i would like to know where i can get =
+those patches=20
+for Kernel 2.4.26.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>Thank You</FONT></DIV></BODY></HTML>
 
-It is indeed...
-
-Is there any way we can come up with more debug information to pinpoint the 
-cause of this problem?
+------=_NextPart_000_0022_01C4278B.CBC1CE30--
 
 
-Ray
