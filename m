@@ -1,36 +1,60 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Thu, 01 Apr 2004 08:00:47 -0500 EST
-Message-ID: <86539716373-BeMail@cr593174-a>
-References: <200404010546.i315kEvY019805@sirius.cs.pdx.edu>
+From: "daniel.poelzleithner" <poelzi@poelzi.org>
+Subject: Slow stats on reiserfs 3
+Date: Thu, 01 Apr 2004 15:13:18 +0200
+Message-ID: <406C156E.406@poelzi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17641-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17642-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200404010546.i315kEvY019805@sirius.cs.pdx.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Reiser FS Mailing List <reiserfs-list@namesys.com>
 
-Elliott Mitchell wrote on Wed, 31 Mar 2004 21:46:14 -0800 (PST):
-> Also I feel it should be on the file itself. ie for the file /tmp/fooblah
-> you should be able to access the file's metadata by open()ing/using
-> readdir() on /tmp/fooblah/metas or (/tmp/fooblah/..metas or whatever).
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Sounds good to me.  I just hope that directory operations are
-cheap in the file system.  The alternative of just adding a
-..meta. prefix to all attribute names would cut out one level
-of directories (less disk space usage, less lookup time to
-resolve a path, and no worry about the weirdness of attributes
-accidentally getting attached to the ..metas directory itself).
+Hi,
 
-/tmp/fooblah/..metas/mime-type
-/tmp/fooblah/..metas.mime-type
+There is a discussion at the BackupPC Mailinglist why the nightly
+cleanup of the backup Pool takes so much more time against ext3.
 
-Hmmm.  Which is better?  The weirdness factor worries me
-more than the performance reduction.
+Here is the thead:
 
-- Alex
+http://sourceforge.net/mailarchive/forum.php?thread_id=4144370&forum_id=503
+
+The pool directory looks like:
+
+cpool/0/0/0/0001257ca4eff2a5c9b60797fa034275
+
+I tested:
+
+find /MY/CPOOL -type d -exec stat {} > /dev/null \;
+
+and it takes around 170 minutes on my 30 gb pool with 687847 files.
+I looked with debugreiserfs at the metadata and it seems that ca. every
+fivest file has an hash collision, but i never saw more than on
+collision per directory.
+
+Is there anyting to speed this up on large directories ?
+
+regards
+~ Daniel
+
+
+- --
+nihil me cirumdat
+
+.. . .. ... . . .. . ... . .. . ... . . .
+pgp key @ http://files.poelzi.org/pgp.txt
+ED80 E53D 5269 4BB1 1E73 3A53 CBF9 A421 0A7B 003D
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Debian - http://enigmail.mozdev.org
+
+iD8DBQFAbBVty/mkIQp7AD0RApTwAJ9E61qH2LzbJ7R5xm7YAaFARt1tcwCcDk8c
+e69X2MvlWGYRU1tyTdL5yds=
+=Lggx
+-----END PGP SIGNATURE-----
