@@ -1,82 +1,33 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: [Fwd: [PATCH] reiser4: fix a use after free bug in
-	reiser4_parse_options]
-Date: Tue, 23 Nov 2004 11:11:28 +0300
-Message-ID: <1101197483.2151.38.camel@tribesman.namesys.com>
-References: <41A2523F.2050201@free.fr>  <41A2C8E0.8020808@namesys.com>
+From: Dirk Steinberg <dws@steinbergnet.net>
+Subject: Re: file as a directory
+Date: Tue, 23 Nov 2004 10:11:21 +0100
+Message-ID: <200411231011.21652.dws@steinbergnet.net>
+References: <2c59f00304112205546349e88e@mail.gmail.com> <200411221759.iAMHx7QJ005491@turing-police.cc.vt.edu> <41A23566.6080903@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22522-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <41A2C8E0.8020808@namesys.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S262349AbUKWJLc@vger.kernel.org>
+In-Reply-To: <41A23566.6080903@namesys.com>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Laurent Riffard <laurent.riffard@free.fr>, reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>, vs <vs@thebsh.namesys.com>
+To: reiserfs-list@namesys.com
+Cc: Hans Reiser <reiser@namesys.com>, Valdis.Kletnieks@vt.edu, Amit Gud <amitgud1@gmail.com>, linux-kernel@vger.kernel.org
 
-Hello
+On Monday 22 November 2004 19:52, Hans Reiser wrote:
+> Valdis.Kletnieks@vt.edu wrote:
+> >(Hint - "file as directory" broke a number of programs that didn't
+> >expect that a file *could* be a directory, when run on a reiser4
+> >filesystem...)
+>
+> It broke extraordinarily few.
 
-On Tue, 2004-11-23 at 08:21, Hans Reiser wrote:
-> Apologies, things have been hectic at Namesys.
+I know from personal experience that it *does* break Acrobat Reader,
+which, unfortunately, is binary-only and also a programm that I 
+use quite often. For me this means I cannot use reiser4 (as root fs anyway)
+without metas disabled.
 
-Thanks, Laurent
-Your patch is merged in reiser4 bk repository.
+How about making metas a mount option? Right now disabling metas 
+requires patching the source.
 
-> 
-> Vs, please review tomorrow and comment.
-> 
-> Hans
-> 
-> Laurent Riffard wrote:
-> 
-> > Hello,
-> >
-> > I posted this patch last week and nobody replied.
-> >
-> > So, if there is no objections, Andrew please apply.
-> >
-> > Thank you.
-> >
-> > -------- Message original --------
-> > Sujet: [PATCH] reiser4: fix a use after free bug in
-> > reiser4_parse_options
-> > Date: Thu, 18 Nov 2004 00:09:36 +0100
-> > De: Laurent Riffard <laurent.riffard@free.fr>
-> > Pour: reiserfs-list@namesys.com
-> >
-> > This patch fix a "use after kfree" bug in reiser4_parse_options.
-> >
-> > Signed-off-by: Laurent Riffard <laurent.riffard@free.fr>
-> > ---
-> >
-> > diff -u linux-2.6-orig/fs/reiser4/vfs_ops.c
-> > linux-2.6/fs/reiser4/vfs_ops.c
-> > --- linux-2.6-orig/fs/reiser4/vfs_ops.c    2004-11-17
-> > 23:43:22.186242952 +0100
-> > +++ linux-2.6/fs/reiser4/vfs_ops.c    2004-11-17 23:39:15.935678728 +0100
-> > @@ -1060,8 +1060,6 @@
-> >      });
-> >  #endif
-> >
-> > -    kfree(opts);
-> > -
-> >      sbinfo->tmgr.atom_max_size = txnmgr_get_max_atom_size(s);
-> >      sbinfo->tmgr.atom_max_age = REISER4_ATOM_MAX_AGE / HZ;
-> >      sbinfo->tmgr.atom_max_flushers = ATOM_MAX_FLUSHERS;
-> > @@ -1089,6 +1087,9 @@
-> >      sbinfo->ra_params.flags = 0;
-> >
-> >      result = parse_options(opt_string, opts, p - opts);
-> > +
-> > +    kfree(opts);
-> > +
-> >      if (result != 0)
-> >          return result;
-> >
-> >
-> 
-> 
-
+/Dirk Steinberg
