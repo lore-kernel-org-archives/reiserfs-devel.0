@@ -1,36 +1,77 @@
-From: viro@parcelfarce.linux.theplanet.co.uk
-Subject: Re: [some sanity for a change] possible design issues for hybrids
-Date: Fri, 27 Aug 2004 00:40:48 +0100
-Sender: <viro@www.linux.org.uk>
-Message-ID: <20040826234048.GD21964@parcelfarce.linux.theplanet.co.uk>
-References: <Pine.LNX.4.58.0408261132150.2304@ppc970.osdl.org> <20040826191323.GY21964@parcelfarce.linux.theplanet.co.uk> <20040826203228.GZ21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408261344150.2304@ppc970.osdl.org> <20040826212853.GA21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408261436480.2304@ppc970.osdl.org> <20040826223625.GB21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408261538030.2304@ppc970.osdl.org> <20040826225308.GC21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408261619230.2304@ppc970.osdl.org>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 26 Aug 2004 16:48:10 -0700
+Message-ID: <412E76BA.9000305@namesys.com>
+References: <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1939276887.20040826114028@tnonline.net> <20040826024956.08b66b46.akpm@osdl.org> <839984491.20040826122025@tnonline.net> <20040826105404.GH2612@wiggy.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20844-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20845-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.58.0408261619230.2304@ppc970.osdl.org>
+In-Reply-To: <20040826105404.GH2612@wiggy.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Wichert Akkerman <wichert@wiggy.net>
+Cc: Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, jra@samba.org, torvalds@osdl.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Thu, Aug 26, 2004 at 04:24:51PM -0700, Linus Torvalds wrote:
-> So basically: the "d_mounted++" just makes sure we get into
-> "lookup_mnt()". That's where we will usually find the actual mount thing.
-> 
-> And that's also where the special case comes in: if we _don't_ find the 
-> mount thing there, that's where we need to create it. That will only 
-> happen if somebody looks it up using another namespace, though, so it 
-> should be rare.
+Wichert Akkerman wrote:
 
-No.  Trivial example:
+>Previously Spam wrote:
+>  
+>
+>>  Because  having user space tools and code will make it not work with
+>>  everything. Keeping stuff in the kernel should make the new features
+>>  transparent to the applications.
+>>    
+>>
+>
+>But having it in the kernel has the same problem. If you read the
+>Solaris documentation you will see that a bunch of utilties had to
+>get a new commandline option to be able to access the metadata and
+>a special utility was added for other applications.
+>
+They did it wrong.
 
-mount --bind /foo /bar
-mount /dev/sda1 /bar/baz
+> If you look
+>at windows you will see that you need to use a filename like
+><realfilename>:<streamname>:$DATA (which obviously does not work for
+>single-character filenames).
+>  
+>
+again, they did it wrong.  See Rob Pike's "The Hideous Name" for why 
+that is wrong.
 
-do lookup for /foo/baz.  No namespaces involved, no vfsmounts found, d_mounted
-positive and we certainly do *not* want anything to be created at that point.
+>Ignoring samba for a bit which just needs streams to stay compatible
+>with windows I see few reasons for using streams:
+>
+>* files are more complex these days and tend to include multiple
+>  different things: images with thumbnails and exif data, 'office'
+>  documents containing both text and images
+>
+>* standard way to add common metadata to a file which can be used for
+>  searching tools (author, copyright, keywords, etc.)
+>
+>But both can already be done in userland (modern image formats can store
+>thumbnails and exif data internally, applications use tar or zip-like
+>files for documents, etc.). The metadata part is a lot more complicated
+>as well since the behaviour of attributes might need to be complex:
+>if I change an image using an application that is not stream-aware, what
+>should happen to its thumbnail? 
+>
+>The only common benefits I can see are standardisation and optimization:
+>instead of every file format or application defining a way to specify 
+>metadata for a file you get a common API defined by the OS (but you'll
+>still need to standardize on attribute names and formats, so plenty of
+>room that will still not help), and instead of parsing different files
+>or XML streams you can directly access a bit of metadata.
+>
+>So far I'm not convinced that streams are worth the effort. Not that my
+>opinion is all that relevant here, but still :)
+>
+>Wichert.
+>
+>  
+>
+
