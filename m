@@ -1,155 +1,200 @@
-From: Kevin Bealer <kevinbealer@yahoo.com>
-Subject: Re: Split Trees (my design, similar to binary treaps)
-Date: Fri, 23 May 2003 12:24:40 -0700 (PDT)
-Message-ID: <20030523192440.7221.qmail@web40015.mail.yahoo.com>
-References: <3ECD05DF.8090107@namesys.com>
+From: Heinz-Josef Claes <hjclaes@web.de>
+Subject: Re: reiserfs vs NTFS vs WAFL
+Date: 24 May 2003 07:35:41 +0200
+Message-ID: <1053754540.2204.6.camel@wusel.schnulli.de>
+References: <003101c31fa3$3ac20530$0101a8c0@bummer>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14237-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="=-StkKVm4ys5C6JV51afW/"
+Return-path: <reiserfs-list-return-14239-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3ECD05DF.8090107@namesys.com>
+In-Reply-To: <003101c31fa3$3ac20530$0101a8c0@bummer>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+To: darren <teodarren@myrealbox.com>
+Cc: 'reiserfs' <reiserfs-list@namesys.com>
+
+--=-StkKVm4ys5C6JV51afW/
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>
-Cc: reiserfs-list@namesys.com
 
-Sorry, last message was accidentally sent prematurely.
-
-To continue:
-
-Skip lists (turned 90 degrees) look like:
-
-topnode--x------x
-C0
-A1-----A1-----A1
-C2
-C3
-B4-----B4
-C5
-A6-----A6-----A6
-C7
-C8
-B9-----B9
-C11
-A12----A12----A12
-
-With pointers vertically between all aligned letters
-(conceptually at least).
-
-Now here is the reason why SkipTrees do NOT need
-variable sized nodes:
-
-The Pointer from A1 to A6 is used, so is the pointer
-from A1 to B4 and from B4 to C5.
-
-However, the pointers from C2 and C3 to B4, B4 to A6,
-and B9 to A12 are NEVER USED for example.  You are
-sacrificing
-pointers to get to a binary tree, but the pointers you
-lose
-are the pointers you don't need anyway.
-
-In SkipList, you need those pointers only to copy
-their value to
-other pointers which will not be used.  The nodes
-can't shrink,
-because an insertion changes which pointers are used
-and which
-are not.
-
-If * is a wildcard, the rule is:
-
-No pointer from C* to B* or B* to A* is ever used.  If
-you were
-going to get to A6, you would have gotten there while
-traversing
-the "A" list, and if you are at the C list level, you
-have already left 
-the A and B lists behind.
-
-To convert a Skip List to a Skip Tree, note that every
-decision
-you need to make is based on a NODE->VALUE comparison.
-After each decision, processing can go in two
-directions, so there
-are two "edges" from that decision.
-
-Decisions become binary tree nodes.  EDGES become left
-and
-right pointers.
-
-The first decision in following the skip list is "Is
-the search
-value greater than "1" (i.e. node A1's value is 1). 
-Thus the
-top node of the Skip Tree is A1.  If the value is less
-than 1,
-we look at C0.  Thus C0 is on the left hand side of
-A1.
-
-Just traverse the skip list, and wherever you make a
-decision
-based on a value, there is a node.  Note that this
-skip list is
-not really balanced.  Due to the extra pointers, the
-policy is
-normally to have FEWER high-level nodes in a Skip List
-than
-would be predicted by the (1/2, 1/4, 1/8) progression
-from the
-bottom up.  Usually 3/4 on the bottom level, then 3/4
-of the
-remaining on the next level, etc.
-
-With a skip tree, we actually want the balanced
-version, i.e.
-ratios of 1/2 on each level, although other ratios can
-be used.
-
-Kevin
-
---- Hans Reiser <reiser@namesys.com> wrote:
-> Alexander G. M. Smith wrote:
+Am Mit, 2003-05-21 um 16.13 schrieb darren:
+> Hi all,
 > 
-> >Hans Reiser wrote on Thu, 22 May 2003 19:30:16
-> +0400:
-> >  
-> >
-> >>Forgive me for asking some bonehead questions.....
-> >>
-> >>Are skip lists height balanced?  (All paths to the
-> leaves are equal?)
-> >>    
-> >>
-> >
-> >Only on the average, at least in the original skip
-> list algorithm.  The
-> >height is determined randomly when the node is
-> created; there is no
-> >rebalancing.  The random distribution is defined as
-> you would expect,
-> >50% of the nodes have 1 level, 25% have 2 levels,
-> ... 0.5**n of the
-> >nodes have n levels.  Surprisingly, this works
-> fairly well.
-> >
-> >- Alex
-> >
-> >
-> >  
-> >
-> To have a level means to be on that level or lower?
+> I wonder if there are any papers or benchmarks that compare the
+> performance and architectural differences between reiserfs, NTFS and
+> WAFL (NetApp's Write Anywhere File Layout)?
 > 
-> -- 
-> Hans
+> Any help will be great.
 > 
-> 
+> Regards
+> darren
+
+I made some tests with nfs about three years ago with linux and a filer.
+All I remember is that it was a smaller machine from NetApp. 
+All documentation I still have from the test is a sheet, in which I
+directly typed the times :-(
+It's appended to this mail; sorry for making an attachement (OpenOffice
+format), but it's smaller than some ordinary mail in this list.
+
+Hope, this helps a little bit.
+
+-- 
+Heinz-Josef Claes                     hjclaes@web.de
+project: http://sourceforge.net/projects/storebackup
+      -> snapshot-like backup to another disk
+
+Q: How does a Unix guru have sex?
+A: gunzip && strip && touch && finger && mount && fsck && \
+more && yes && fsck && fsck && fsck && umount && sleep
 
 
-__________________________________
-Do you Yahoo!?
-The New Yahoo! Search - Faster. Easier. Bingo.
-http://search.yahoo.com
+--=-StkKVm4ys5C6JV51afW/
+Content-Disposition: attachment; filename=testFiler.sxc
+Content-Type: application/vnd.sun.xml.calc; name=testFiler.sxc
+Content-Transfer-Encoding: base64
+
+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
+sag3G9olriSHzxAaed2hsVCjUA5fTFDVbd+KPJgwTZ/Y01h90ixXi1MYfxrxzvK4hC8LP1A7VmeV
+e4n+6NNNolYLHcLjggI12PqKoe9FuGhKBhbAmOS1r0a6A+76zaNrpOo/tTH+4vSZNTLHIoWdjCRK
+3hUKi+5Kb7gE4pSS3qA3ZkPCufyX7IIxdMSorgFoEOLjUV+6305y8FAsq50bDu+PUCL/7CzKnZJn
+NHYe+fqXzbjY/JQHIMFZfQxHn9RUw+K6vz6KfPW78auFgMcrJQf2Dt49cJS/nZh2mP87rBxPMzTZ
+duyGAfaakRUqTXNjQOsmb9itTMjCtXoezgv7b7kjxHwhhhcXF2vUF1pJ0Qt8N+SNzmtCJXHsShlj
+ppkwqNW0ZAPNtS408PkYDe9JwcUsC/3qrVeCpOrZUIn3lcQ4TwxOj4YtiFk/HXjXuakj0gneux3m
+DDI5csAg04A8/READwukueefeMtTN1z+vPCfLUByYq1QwPAnpzYYrPdPz5fw56wxeizUXfseOv4O
+agP191C4WrWBRvZVeYLGqwiN/wA6/AdQSwcIeT5Y3JEFAAAlFwAAUEsDBBQAAAAAAG4ruC7gPm76
+GgQAABoEAAAIAAAAbWV0YS54bWw8P3htbCB2ZXJzaW9uPSIxLjAiIGVuY29kaW5nPSJVVEYtOCI/
+Pgo8IURPQ1RZUEUgb2ZmaWNlOmRvY3VtZW50LW1ldGEgUFVCTElDICItLy9PcGVuT2ZmaWNlLm9y
+Zy8vRFREIE9mZmljZURvY3VtZW50IDEuMC8vRU4iICJvZmZpY2UuZHRkIj48b2ZmaWNlOmRvY3Vt
+ZW50LW1ldGEgeG1sbnM6b2ZmaWNlPSJodHRwOi8vb3Blbm9mZmljZS5vcmcvMjAwMC9vZmZpY2Ui
+IHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4bWxuczpkYz0iaHR0
+cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOm1ldGE9Imh0dHA6Ly9vcGVub2Zm
+aWNlLm9yZy8yMDAwL21ldGEiIG9mZmljZTp2ZXJzaW9uPSIxLjAiPjxvZmZpY2U6bWV0YT48bWV0
+YTpnZW5lcmF0b3I+T3Blbk9mZmljZS5vcmcgMS4wLjIgKExpbnV4KTwvbWV0YTpnZW5lcmF0b3I+
+PCEtLVNSQzY0MV9bNzY2M11fTElOVVhfSU5URUxfX0UyMDVfYXRfMy8xOC8wM183OjI2OjMwLS0+
+PG1ldGE6aW5pdGlhbC1jcmVhdG9yPkhlaW56LUpvc2VmIENsYWVzPC9tZXRhOmluaXRpYWwtY3Jl
+YXRvcj48bWV0YTpjcmVhdGlvbi1kYXRlPjIwMDAtMDMtMjdUMjM6NDQ6MjA8L21ldGE6Y3JlYXRp
+b24tZGF0ZT48ZGM6ZGF0ZT4yMDAzLTA1LTI0VDA3OjI3OjI4PC9kYzpkYXRlPjxkYzpsYW5ndWFn
+ZT5kZS1ERTwvZGM6bGFuZ3VhZ2U+PG1ldGE6ZWRpdGluZy1jeWNsZXM+NTE8L21ldGE6ZWRpdGlu
+Zy1jeWNsZXM+PG1ldGE6ZWRpdGluZy1kdXJhdGlvbj5QVDEySDM4TTQ0UzwvbWV0YTplZGl0aW5n
+LWR1cmF0aW9uPjxtZXRhOnVzZXItZGVmaW5lZCBtZXRhOm5hbWU9IkluZm8gMCIvPjxtZXRhOnVz
+ZXItZGVmaW5lZCBtZXRhOm5hbWU9IkluZm8gMSIvPjxtZXRhOnVzZXItZGVmaW5lZCBtZXRhOm5h
+bWU9IkluZm8gMiIvPjxtZXRhOnVzZXItZGVmaW5lZCBtZXRhOm5hbWU9IkluZm8gMyIvPjxtZXRh
+OmRvY3VtZW50LXN0YXRpc3RpYyBtZXRhOnRhYmxlLWNvdW50PSIyIiBtZXRhOmNlbGwtY291bnQ9
+IjIzMCIvPjwvb2ZmaWNlOm1ldGE+PC9vZmZpY2U6ZG9jdW1lbnQtbWV0YT5QSwMEFAAIAAgAbiu4
+LgAAAAAAAAAAAAAAAAwAAABzZXR0aW5ncy54bWztmltX4joUx9/Pp+D0dRa24oyKS5lVilxGRaRc
+hJdZaRshY5r0JCmlfvqTFnDGDlUs5SzPLPqgLdn57d1c/tkJnH+du7gwg4wjSi6UwwNNKUBiUweR
+yYXS79WLp8rXyl/nf9dujd6oc1mgDw/IhmcOtX0XElHkUAhpywudfvW6ZRSUoqreepDcxnYHlE1U
+tdarFRbPtWW1gnSkqpdtpaAsgAeOcJTKeSpdRkn42aL4QpkK4Z2pKpV+6E8/JU3T1MWzsqwwx4g8
+PtsHQXAQHMW2h+VyWY1LV6Y2JQ9o8gr7UF2YKKs2eNFqz7GvQq6cL8yX4CIS0I3ep7D8mABXvskM
+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
+AAUAJAEAAMYdAAAAAA==
+
+--=-StkKVm4ys5C6JV51afW/--
+
