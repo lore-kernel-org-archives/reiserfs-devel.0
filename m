@@ -1,32 +1,39 @@
-From: Kevin Turner <kevin.m.turner@pobox.com>
-Subject: Re: bad_unaligned_access_length in compiling reiserfsck for mips
-Date: Tue, 01 Feb 2005 19:34:45 -0800
-Message-ID: <1107315285.4059.449.camel@troglodyte.asianpear>
-References: <1107053632.4059.241.camel@troglodyte.asianpear>
+From: michael@styer.net
+Subject: missing files?
+Date: Tue, 01 Feb 2005 23:34:13 -0500
+Message-ID: <1107318853.18354.214122527@webmail.messagingengine.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1107053632.4059.241.camel@troglodyte.asianpear>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS list <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Just did another build with gcc 3.4.3, and it links without complaint.
+Hello.
 
-> check_tree.o(.text+0x3a80): In function `__put_unaligned':
-> check_tree.c: undefined reference to `bad_unaligned_access_length'
-[...]
-> reiserfsprogs version: 3.6.19
-> linux-libc-headers version: 2.6.8.1
+I'm using reiser4 on a Gentoo home system with a 2.6.9 kernel. Until
+recently, I had everything except /boot on one partition. My small disk
+was getting full, so I purchased another slightly bigger disk last week
+and moved /usr onto a new partition. 
 
-> Target: linux-mipsel
-> Compiler: gcc 3.3.4
-> compilation flags: 
->  -fexpensive-optimizations -fomit-frame-pointer -frename-registers -O2
+All seemed fine, until I noticed that my nightly cron job that runs the
+Gentoo emerge program to check for software updates was failing. After
+investigating I discovered that a number of directories were missing.
+That is, they appeared when using 'ls' with no options, but using 'ls
+-l' produced multiple 'No such file or directory' results. 
 
--- 
-The moon is last quarter, 55.3% illuminated, 21.7 days old.
+Now it appears I'm unable to remove those directories. 'rm -f
+<filename>' doesn't work, and rmdir reports the directory isn't empty. I
+can rename the directory, but that doesn't fix the apparent corruption
+in the filesystem. Also, fsck.reiser4 doesn't report any problems.
 
+Can anyone explain why this might have happened and what I might be able
+to do to fix it?
+
+thanks!
+
+Mike
