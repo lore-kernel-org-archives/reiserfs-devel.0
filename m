@@ -1,50 +1,42 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Subject: Re: Using fs views to isolate untrusted processes: I need an assistant architect in the USA for Phase I of a DARPA funded linux kernel project
-Date: Mon, 2 Aug 2004 11:12:08 +0200
-Message-ID: <200408021112.08981.christian.mayrhuber@gmx.net>
-References: <410D96DC.1060405@namesys.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: Where to put the journal
+Date: Mon, 02 Aug 2004 13:27:19 +0400
+Message-ID: <410E08F7.9020303@namesys.com>
+References: <410CCFCA.1030309@baldauf.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19913-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-19914-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <410D96DC.1060405@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <410CCFCA.1030309@baldauf.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?Xu=E2n_Baldauf?= <xuan--2004.08.01--reiserfs-list--namesys.com@baldauf.org>
+Cc: Reiserfs List <reiserfs-list@namesys.com>
 
-On Monday 02 August 2004 03:20, Hans Reiser wrote:
-> You can think of this as chroot on steroids.  The idea is to use the
-> concept of views, in which one specifies a description of what in the fs
-> should be visible in the view, and extend them to become "tracing views"
-> which automate the creation of "viewprints", which contain what a
-> process attempted to access during some period when it was being
-> supervised, and then use these viewprints to conveniently specify a view
-> that defines what the process should be allowed to access.  It is not
-> that this is better than chroot, it is that it is to be made much less
-> human work to use than chroot, as chroot is used much too rarely in
-> practice.
->
-> Another concept of the proposal is that of process oriented security, as
-> opposed to the object oriented security usual to filesystems.  These
-> viewprints will be associated with the executables of the processes
-> being isolated, not with the files, and this is academically amusing as
-> a distinction I think.
+Hello
 
-Linux VServer might be a project that already tries to accomplish this task.
-http://linux-vserver.org/
-It's working well on 2.4.x, but it still has some security weaknesses.
-The development is focussing on the 2.6 kernel series.
-They are simulating a chroot on steroids by jailing the vservers in a
-directory marked by:
-  chmod 000 vservers
-  chattr +t vservers (no other attributes are allowed)
-It supports all linux filesystems, that support attributes. Reiserfs needs to
-be mounted with "attrs" to be safe.
-Herbert Poetzl <herbert@13thfloor.at> is the main developer.
+Xu=E2n Baldauf wrote:
+> Hello,
+>=20
+> I want to setup a Linux software RAID 5 over disks of different speed=20
+> with reiserfs on top. I know that the journal has to be accessed=20
+> frequently for comparably small accesses. That's why I'm considering to=
+=20
+> "offload" the journal onto an extra partition on a faster disk of the=20
+> RAID set.
+>=20
+> Thus, the journal would not be protected by the RAID, but this is not s=
+o=20
+> important for me.
+>=20
+> Is this kind of reasoning sane? Would there be any speedup by offloadin=
+g=20
+> the journal?
+>=20
 
--- 
-lg, Chris
+Person who did some tests on non standard journal is on vacation. He is e=
+xpected to come back today. Maybe he remembers benchmark results,
+
