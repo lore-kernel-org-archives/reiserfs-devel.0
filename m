@@ -1,41 +1,50 @@
-From: berthiaume_wayne@emc.com
-Subject: RE: beta reiserfs data logging patches
-Date: Wed, 29 May 2002 10:07:38 -0400
-Message-ID: <93F527C91A6ED411AFE10050040665D0049BFACC@corpusmx1.us.dg.com>
+From: Yury Umanets <umka@namesys.com>
+Subject: Re: EVMS Reiser FSIM
+Date: Wed, 29 May 2002 18:17:43 +0400
+Message-ID: <3CF4E307.1010805@namesys.com>
+References: <OFB49DCA39.27F715F1-ON85256BC8.004B436D@pok.ibm.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10433-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10434-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: mason@suse.com
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Steve Pratt <slpratt@us.ibm.com>
+Cc: reiserfs-list <reiserfs-list@namesys.com>, Andrew Clausen <clausen@gnu.org>
 
-	What I noticed is mount() would not allow me to disable write
-barrier on ext3 - option not supported.
+Steve Pratt wrote:
 
------Original Message-----
-From: Chris Mason [mailto:mason@suse.com]
-Sent: Wednesday, May 29, 2002 9:36 AM
-To: berthiaume_wayne@emc.com
-Cc: reiserfs-list@namesys.com
-Subject: RE: beta reiserfs data logging patches
+>Thanks for all the help answering questions about the reiser utilities.  I
+>have released the  ReiserFS FSIM into the EVMS CVS tree to be included in
+>our upcoming 1.1 release.   Check it out if you get a chance and feel free
+>to give me comments.  Also let me know if you think more options are
+>required on mkfs and fsck.  I only did the basics and avoided non-standard
+>journals since the kernel file system code is not readily available yet.
+>When it is, I can go back and add that support.
+>  
+>
+I thing you have released an incorrect reiserfs FSIM in theory. On my 
+own you should add extra parameters
+support into GNU Parted (quite simple task). And then you might be using 
+it as central component of FSIM
+for *ALL* filesystems. Not just for reiserfs.
 
+Or you might be using some library (from reiserfsprogs package or from 
+progsreiserfs package).
 
-On Wed, 2002-05-29 at 09:01, berthiaume_wayne@emc.com wrote:
-> 	I'll definitely run them through the benchmark. 
-> 
-> 	BTW: I have finished the tests and am assembling the data. The
-> patches caused rather interesting results. ReiserFS now performs on the
-same
-> level as Ext3FS in 2.4.19-pre7 when write cache is not used. When using
-> barrier writes, performance outshined Ext3FS. I'll forward the data.
+The way you have selected, might be used by an propriatary software, 
+that wanted to use GPL project, not other GPL project.
 
-I suspect this means the barrier patch is being slightly unfair to ext3,
-it should affect both filesystems equally.  I'll look closer when the
-results come in.
+BTW, I have almost done smart resizing (from partition start) in 
+libreiserfs. But you can't using the libraries of third pesons, so you 
+will haven't smart resizing and other features in your FSIM :))
 
--chris
+Yet another issue. One man almost done JFS support for GNU Parted. Are 
+you going to add it to EVMS too? I think yes. And probably you will do 
+it in maner like ReiserFS (forking and piping).
+
+Yury Umanets
+
 
