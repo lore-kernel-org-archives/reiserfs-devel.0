@@ -1,56 +1,44 @@
-From: Linus Torvalds <torvalds@osdl.org>
+From: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 11:27:01 -0700 (PDT)
-Message-ID: <Pine.LNX.4.58.0408261119480.2304@ppc970.osdl.org>
-References: <20040825205149.GA17654@lst.de> <412DA2CF.2030204@namesys.com>
- <20040826124119.GA431@lst.de> <20040826134812.GB5733@mail.shareable.org>
- <20040826155744.GA4250@lst.de> <20040826160638.GJ5733@mail.shareable.org>
- <20040826161303.GA4716@lst.de> <Pine.LNX.4.58.0408260919380.2304@ppc970.osdl.org>
- <20040826172029.GP5733@mail.shareable.org> <Pine.LNX.4.58.0408261021250.2304@ppc970.osdl.org>
- <20040826181620.GT5733@mail.shareable.org>
+Date: Thu, 26 Aug 2004 21:28:41 +0300
+Message-ID: <200408262128.41326.vda@port.imtp.ilyichevsk.odessa.ua>
+References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20752-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20753-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826181620.GT5733@mail.shareable.org>
+In-Reply-To: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, Alex Zarochentsev <zam@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Rik van Riel <riel@redhat.com>, Linus Torvalds <torvalds@osdl.org>
+Cc: Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-
-
-On Thu, 26 Aug 2004, Jamie Lokier wrote:
+On Thursday 26 August 2004 20:57, Rik van Riel wrote:
+> On Thu, 26 Aug 2004, Linus Torvalds wrote:
+> > > So all I need to do is "cat /bin | gzip -9 > /path/to/backup.tar.gz" ?
+> >
+> > No no. The stream you get from a directory is totally _independent_ of
+> > the contents of the directory. Anything else would be pointless.
 >
-> > .. but even if it did that, it should use O_DIRECTORY when it did so. If 
-> > it doesn't, it's broken.
-> 
-> Didn't someone just say that O_DIRECTORY will succeed on a device,
-> precisely because opendir() is supposed to succeed on the device?
+> It's a relief to know that nobody's taking my humorous
+> suggestion seriously, but now we still have the "standard
+> Unix tools can't manipulate files" problem...
 
-It will succeed on the _name_ of the device, but it won't open the device 
-node. It would open the _directory_ node associated with that name.
+Is it possible to sufficiently hide "dirs inside files"
+so that old tools will be unable to see them?
 
-Think of it this way: a pathname always points to one "container". That 
-container is either a directory or a single node - and O_DIRECTORY ends up 
-being the thing that chooses between them.
+I just checked:
 
-> > I don't think you can do that. The kernel has no idea how to mount the
-> > filesystem.
-> 
-> It is not the kernel which decides.  The filesystem containing
-> /dev/hda/part1 opens "the directory branch".
+ls -d /foo  does lstat64("/foo", ...)
+ls -d /foo/ does lstat64("/foo", ...)
+	but
+ls -d /foo/. does lstat64("/foo/.", ...)
 
-But that filesystem cannot know what the _other_ filesystem configurations 
-are. And that's what you'd have to have to mount.
+Will it work out if "dir inside file" will only be visible when referred as "file/."?
+--
+vda
 
-> The obvious implementation has the userspace helper just mounting it,
-> end of story.  If the mount command fails, it fails.  Much like autofs.
-
-Yes, that would work, but it's of questionable use. If you want autofs, 
-then just _use_ autofs.
-
-		Linus
