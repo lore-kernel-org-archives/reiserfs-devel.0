@@ -1,59 +1,115 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: reiser4 crash
-Date: Thu, 25 Nov 2004 19:55:16 +0300
-Message-ID: <1101401715.1628.34.camel@tribesman.namesys.com>
-References: <20041119084757.GA2310@sk2-4.tky.hut.fi>
-	 <1101369249.1628.13.camel@tribesman.namesys.com>
-	 <20041125221919.2180794b.hihone@bigpond.net.au>
-	 <20041125112343.GG26192@nysv.org>
-	 <20041125224212.4ac7e9f4.hihone@bigpond.net.au>
-	 <20041125120545.GH26192@nysv.org>
-	 <20041125233542.4388689b.hihone@bigpond.net.au>
+From: "Yiannis Mavroukakis" <yiannis@jaguarfreight.com>
+Subject: RE: reiser4 crash
+Date: Thu, 25 Nov 2004 17:15:58 -0000
+Message-ID: <77912E9FD42896419D1CEF15E1C397A58AFC41@london.jaguarfreightservices.local>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22566-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-22567-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20041125233542.4388689b.hihone@bigpond.net.au>
+content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: hihone@bigpond.net.au
-Cc: Markus =?ISO-8859-1?Q?T=F6rnqvist?= <mjt@nysv.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
+
+=20
+I've=20been=20seeing=20people=20having=20trouble=20with=20reiser4=20crashi=
+ng=20and=20I'm=20jealous=20:-)=20I=20want
+mine=20to=20crash=20too,=20it's=20not=20fair=20I=20haven't=20had=20a=20spo=
+t=20of=20trouble=20since=20I=20installed=20the=20
+patches=20my=20Unreal=20Tournament=20server=20hasn't=20gone=20down=20once!=
+=20:P=20:P=20:P
+
+Yiannis.
+
+-----Original=20Message-----
+From:=20Vladimir=20Saveliev=20[mailto:vs@namesys.com]=20
+Sent:=2025=20November=202004=2016:55
+To:=20hihone@bigpond.net.au
+Cc:=20Markus=20T=F6rnqvist;=20reiserfs-list@namesys.com
+Subject:=20Re:=20reiser4=20crash
 
 Hello
 
-On Thu, 2004-11-25 at 15:35, Cal wrote:
-> ----------
-> and then at Thu, 25 Nov 2004 14:05:45 +0200, it was written ...
->  >ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.9/
+On=20Thu,=202004-11-25=20at=2015:35,=20Cal=20wrote:
+>=20----------
+>=20and=20then=20at=20Thu,=2025=20Nov=202004=2014:05:45=20+0200,=20it=20wa=
+s=20written=20...
+>=20=20>ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.9/
 
-There was an update today. Please make sure you got patch number 2.
+There=20was=20an=20update=20today.=20Please=20make=20sure=20you=20got=20pa=
+tch=20number=202.
 
->  >http://marc.theaimsgroup.com/?l=reiserfs&m=110121057720746&w=2
->  >
->  >It is possible the posted patch is included in the second patch
->  >at namesys.
->  >
->  >I'd still like to know about the two -cko patches though, as I can't
->  >remember which ones they were (I'm at the office) and if they
->  >should be included and whatever....
->  >
-> Cool, thanks!  I found the mailing list one, and with that applied to
-> 2.6.10-rc2-mm3, the first run of apt-get update completed
-> successfully.  That's good!
-> 
-> I've been looking after grandkids for a couple of days, so I missed
-> the recent 2.6.9 updates on ftp.namesys.com.  I'm more interested in
-> 2.6.10-rcx+, but l'll maybe take a look at the 2.6.9 stuff.
-> 
-> I'm a little confused about the cko reference.  I'm happily running
-> 2.6.9-cko3 ona seconfd system, but I've not seen any breakdown of
-> the cko series (ie, the two particular cko patches you're
-> referencing). 
-> 
-> cheers, and thanks
-> Cal
-> 
+>=20=20>http://marc.theaimsgroup.com/?l=3Dreiserfs&m=3D110121057720746&w=3D=
+2
+>=20=20>
+>=20=20>It=20is=20possible=20the=20posted=20patch=20is=20included=20in=20t=
+he=20second=20patch=20=20>at=20
+>=20namesys.
+>=20=20>
+>=20=20>I'd=20still=20like=20to=20know=20about=20the=20two=20-cko=20patche=
+s=20though,=20as=20I=20can't=20=20
+>=20>remember=20which=20ones=20they=20were=20(I'm=20at=20the=20office)=20a=
+nd=20if=20they=20=20
+>=20>should=20be=20included=20and=20whatever....
+>=20=20>
+>=20Cool,=20thanks!=20=20I=20found=20the=20mailing=20list=20one,=20and=20w=
+ith=20that=20applied=20to=20
+>=202.6.10-rc2-mm3,=20the=20first=20run=20of=20apt-get=20update=20complete=
+d=20
+>=20successfully.=20=20That's=20good!
+>=20
+>=20I've=20been=20looking=20after=20grandkids=20for=20a=20couple=20of=20da=
+ys,=20so=20I=20missed=20
+>=20the=20recent=202.6.9=20updates=20on=20ftp.namesys.com.=20=20I'm=20more=
+=20interested=20in=20
+>=202.6.10-rcx+,=20but=20l'll=20maybe=20take=20a=20look=20at=20the=202.6.9=
+=20stuff.
+>=20
+>=20I'm=20a=20little=20confused=20about=20the=20cko=20reference.=20=20I'm=20=
+happily=20running
+>=202.6.9-cko3=20ona=20seconfd=20system,=20but=20I've=20not=20seen=20any=20=
+breakdown=20of=20the=20
+>=20cko=20series=20(ie,=20the=20two=20particular=20cko=20patches=20you're=20=
+referencing).
+>=20
+>=20cheers,=20and=20thanks
+>=20Cal
+>=20
 
+
+________________________________________________________________________
+This=20e-mail=20has=20been=20scanned=20for=20all=20viruses=20by=20Star=20I=
+nternet.=20The=20service=20is=20powered=20by=20MessageLabs.
+
+Note:__________________________________________________________________
+This=20message=20is=20for=20the=20named=20person's=20use=20only.=20It=20ma=
+y=20contain
+confidential,=20proprietary=20or=20legally=20privileged=20information.=20N=
+o
+confidentiality=20or=20privilege=20is=20waived=20or=20lost=20by=20any=20mi=
+stransmission.
+If=20you=20receive=20this=20message=20in=20error,=20please=20immediately=20=
+delete=20it=20and
+all=20copies=20of=20it=20from=20your=20system,=20destroy=20any=20hard=20co=
+pies=20of=20it=20and
+notify=20the=20sender.=20You=20must=20not,=20directly=20or=20indirectly,=20=
+use,=20disclose,
+distribute,=20print,=20or=20copy=20any=20part=20of=20this=20message=20if=20=
+you=20are=20not=20the
+intended=20recipient.=20Jaguar=20Freight=20Services=20and=20any=20of=20its=
+=20subsidiaries
+each=20reserve=20the=20right=20to=20monitor=20all=20e-mail=20communication=
+s=20through=20its
+networks.
+Any=20views=20expressed=20in=20this=20message=20are=20those=20of=20the=20i=
+ndividual=20sender,
+except=20where=20the=20message=20states=20otherwise=20and=20the=20sender=20=
+is=20authorized
+to=20state=20them=20to=20be=20the=20views=20of=20any=20such=20entity.
+________________________________________________________________________
+This=20e-mail=20has=20been=20scanned=20for=20all=20viruses=20by=20Star=20I=
+nternet.=20The
+service=20is=20powered=20by=20MessageLabs.
