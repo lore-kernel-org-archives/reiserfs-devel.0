@@ -1,93 +1,51 @@
-From: Ash <ashrat@gmail.com>
-Subject: Re: ReiserFS post-crash issues
-Date: Wed, 22 Sep 2004 16:46:55 +0530
-Message-ID: <e96ff12004092204165a7ee8b8@mail.gmail.com>
-References: <e96ff120040921013254b63c93@mail.gmail.com>
-	 <4150423F.3020804@namesys.com>
-Reply-To: Ash <ashrat@gmail.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: [PATCH] ReiserFS v3 I/O error handling
+Date: Wed, 22 Sep 2004 08:39:06 -0700
+Message-ID: <41519C9A.8030407@namesys.com>
+References: <41461B2F.7080100@suse.com>	 <20040915131133.GD5137@backtop.namesys.com> <41484801.2000204@suse.com>	 <20040915141202.GF5137@backtop.namesys.com> <41485220.7050602@suse.com>	 <41485230.1080002@namesys.com> <1095788792.28057.232.camel@watt.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21871-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21872-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4150423F.3020804@namesys.com>
+In-Reply-To: <1095788792.28057.232.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: Jeff Mahoney <jeffm@suse.com>, Alex Zarochentsev <zam@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Agreed.
-And I did see that introducing 'fsync's in my test does make the
-creates persistent.
-However my concern is that ReiserFS performance degrades substantially
-in this case
-as compared to other filesystems.
-For example, creating 50K 0 byte files took less than 2-3 seconds
-without the fsyncs after ever
-create,  while introducing the fsyncs increased the time to 87 secs.
-This time was way higher than other filesystems like XFS or JFS for
-the same test.
+Chris Mason wrote:
 
-Thanks,
-Ash
-
-
-On Tue, 21 Sep 2004 08:01:19 -0700, Hans Reiser <reiser@namesys.com> wrote:
-> FS operations are not persistent unless you fsync or wait long enough.
-> That is the expected norm for unix fs design.
-> 
-> Hans
-> 
-> 
-> 
-> Ash wrote:
-> 
-> >Hi
-> >
-> >I have been running a few tests on ReiserFS to check durability of
-> >common filesystem operations.
-> >For example, create a certain number of files and crash the machine
-> >(poweroff) immediately after this.
-> >On rebooting, check the number of files actually present on the
-> >filesystem after log replay.
-> >
-> >Similarly, I tried for some other operations like rename, link and delete.
-> >I am using a C program with open, rename and link system calls to
-> >perform these operations respectively
-> >and crashing the system using a network power switch immediately after
-> >my C program finishes doing its stuff.
-> >So the delay in-between completion of the operations and the machine crashing
-> >should be, according to me, less than 1-2 seconds (which is the time
-> >required to establish a telnet connection to the power switch)
-> >
-> >It seems that ReiserFS operations are not durable for most of the cases I tried.
-> >
-> >For file create, when tried with 50K, 100K and 1M files, I got
-> >34224, 99492, and 998594 files respectively after system rebooted from the
-> >crash. Similarly for operations like rename and link, the number of files
-> >renamed or linked after reboot is less than what the filesystem reports prior
-> >to the crash.
-> >
-> >Now introducing a fsync() after every open() call does solve the problem
-> >but the performance degradation seen is very high. In fact, I did notice
-> >the related discussion on the FAQ at namesys.com.
-> >
-> >Also, operations like rename, link and delete also seem to give problems.
-> >
-> >However, with other filesystems like XFS, I get much better results (almost
-> >100% durability) on similar tests.
-> >
-> >I am using ReiserFS with linux kernel 2.6.7
-> >
-> >Any comments/suggestions will be helpful.
-> >
-> >Thanks,
-> >Ash
-> >
-> >
-> >
-> >
-> 
+>On Wed, 2004-09-15 at 10:31, Hans Reiser wrote:
+>  
 >
+>>Jeff Mahoney wrote:
+>>
+>>    
+>>
+>>>Alex Zarochentsev wrote:
+>>>|> I assume that was tested with some simulated i/o errors, wasn't it?.
+>>>
+>>>Of course. The debugging code is since removed, but every place there
+>>>was a !buffer_uptodate(bh) check, I added a trigger such that I could
+>>>trigger each error path individually. I triggered various error paths
+>>>while running fsx, stress.sh, and/or ltp's fsstress.
+>>>      
+>>>
+>>Your patch is much needed stuff.  Would be nice to see it for reiser4 
+>>someday.....;-)
+>>    
+>>
+>
+>;-) Any objections if we start by sending this to Andrew for v3?
+>
+>-chris
+>
+>
+>
+>
+>  
+>
+I'll let zam answer for me.
