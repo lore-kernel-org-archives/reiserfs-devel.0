@@ -1,49 +1,43 @@
-From: "Maciejewski, Jake" <maciejej@msoe.edu>
-Subject: Re: Fwd: Error in fs/reiser4/page_cache.c : PG_active not declared
-Date: Sun, 25 Jul 2004 01:32:02 -0500
-Message-ID: <1090737122.12341.22.camel@localhost>
-References: <158e298904072418267b1c40d7@mail.gmail.com>
-	 <158e29890407242016c70b3f2@mail.gmail.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: reiser4 crash
+Date: Sun, 25 Jul 2004 10:41:08 +0300
+Message-ID: <20040725074108.GR4990@nysv.org>
+References: <200407241827.54674.frbiscani@jumpy.it>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19793-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19794-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <158e29890407242016c70b3f2@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <200407241827.54674.frbiscani@jumpy.it>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs-List@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Francesco Biscani <frbiscani@jumpy.it>
+Cc: reiserfs-list@namesys.com
 
-This sounds more like a love-sources problem than a reiser4 problem.
-Post something at http://forums.gentoo.org/viewtopic.php?t=201053 or if
-you still want help here, try to reproduce the problem with the latest
-auto-snapshot patched on the -mm version it was diffed against, ideally
-with no other patches.
+On Sat, Jul 24, 2004 at 06:27:54PM +0200, Francesco Biscani wrote:
+>
+>Hope this is useful. I'll be glad to give more details is asked to. 
+>Regards,
 
-I looked at fs/reiser4/page_cache.c and you should be able to avoid the
-problematic code by disabling resier4 debug output, although I'm not
-sure how or why it would be enabled.
+Try patching in
+http://mjt.nysv.org/reiser/log-write-readpage-releasepage-2.diff.gz
 
-On Sat, 2004-07-24 at 22:16, Ashay Humane wrote:
-> Hi,
-> I got the vanilla 2.6.7 kernel .. patched it to 2.6.8-rc2 then patched
-> it to 2.6.8-rc2-love2.
-> 
-> After the love patch, I get an error when compiling the kernel:
-> 
-> Undeclared variable PG_active in fs/reiser4/page_cache.c  Line 891
-> 
-> There are variables named PG_active_mapped and PG_active_unmapped in other .c
-> and .h files. But no PG_active .
-> 
-> Dosent look too bad .. but what should be done ?
-> 
-> Thanks
-> Ashay
-> 
-> --
-> <HAND>
+Then recompile the kernel with debugging and assertions (printing was iirc
+not required) turned on and try to reproduce it.
+
+Note, that this may cause your system to oops and go haywire big time, so
+if you have a netconsole or something to log, it's great.
+One other method is cat /proc/kmsg > foo and scping foo elsewhere before
+the computer goes down.
+
+The patch above is from Namesys, but I don't think it's in any of the
+auto-snapshots (should it be?) and it may or may not give more info
+on what's going on, but if it does, the output is some 512 extra lines
+of log.
+
 -- 
-Jake Maciejewski <maciejej@msoe.edu>
+mjt
+
