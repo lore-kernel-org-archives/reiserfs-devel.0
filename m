@@ -1,47 +1,37 @@
-From: lrc1@st-andrews.ac.uk
-Subject: Re: Carrying Attributes too Far at Great Length
-Date: Fri, 10 Oct 2003 12:27:30 +0100
-Message-ID: <1065785250.3f8697a2152ae@webmail.st-andrews.ac.uk>
+From: Dieter =?unknown-8bit?q?N=FCtzel?= <dieter.nuetzel@hamburg.de>
+Subject: Re: Re: File System shootout...
+Date: Fri, 10 Oct 2003 13:55:47 +0200 (CEST)
+Message-ID: <1239031.1065786947952.JavaMail.nobody@franzjosef>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-15832-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15833-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Transfer-Encoding: 8bit
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Nikita@Namesys.COM
+Cc: linux-kernel@vger.kernel.org, mikeb@netnation.com, Reiserfs-List@Namesys.COM
 
-
-Quoting Hans Reiser <reiser@namesys.com>:
-
-> Valid meaningful semantics can have cyclical structures.  I don't agree 
-> with you for that reason.
-
-Whoa there. I said that, if you understand a link from one directory to another 
-as having the meaning "all files that are [child predicate] are necessarily 
-[parent predicate]", then a cycle of directories has the meaning "any file that 
-has any one of these predicates necessarily has all of them". In other words, 
-directory cycles *do* have valid, meaningful semantics. It's just that there 
-happens to be another way to express the same meaning - multiple pathnames to a 
-single directory. So we can do without one approach if we want. For various 
-reasons we should do without cycles.
-
-So I'm definitely not denying that it's possible to express consistent, 
-meaningful things using cycles. I'm not even asserting that there are no 
-consistent, meaningful, useful extensions to the Unix file naming system which
-would involve cycles. I'm only saying that it is unnecessary and undesirable
-(but not unmeaningful) to allow cycles of the standard directory-to-directory
-relationship.
-
+> Mike Benoit writes:
+>  > To all those who are interested, here are the results of the benchmarks
+>  > I've been running over the last week between all the major file systems
+>  > (and there different mount options) using both Bonnie++ and IOzone. More
+>  > tests are currently underway, so the results will be updated as they
+>  > come in. 
+>  > 
+>  > Hopefully these results will give you a good comparative overview of each of the
+>  > different file systems strengths and weaknesses.
+>  > 
+>  > http://fsbench.netnation.com/
 > 
-> -- 
-> Hans
+> I should probably add that I am getting quite different bonnie++ results
+> for reiser4 vs. ext3:
+> 
+> on the box with 128M of ram:
 
-Leo.
+Why no numbers for ReiserFS 3.xx plus data-logging patch (odered/journal/writeback, e.g. current code) like ext3?
 
-
------------------------------------------------------------------
-University of St Andrews Webmail: http://webmail.st-andrews.ac.uk
+Greetings,
+   Dieter
