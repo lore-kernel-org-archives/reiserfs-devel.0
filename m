@@ -1,32 +1,64 @@
-From: Michael Weissenbacher <webmaster@dermichi.com>
-Subject: optimal kernel version for testing reiser4
-Date: Sun, 05 Sep 2004 01:19:22 +0200
-Message-ID: <413A4D7A.8090909@dermichi.com>
+From: Tonnerre <tonnerre@thundrix.ch>
+Subject: Re: silent semantic changes with reiser4
+Date: Sun, 5 Sep 2004 13:10:31 +0200
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040905111031.GA26560@thundrix.ch>
+References: <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826044425.GL5414@waste.org> <1093496948.2748.69.camel@entropy> <20040826053200.GU31237@waste.org> <20040826075348.GT1284@nysv.org> <4137F669.2000505@pointblue.com.pl>
+Reply-To: tonnerre@thundrix.ch
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21470-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4137F669.2000505@pointblue.com.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: Grzegorz Ja??kiewicz <gj@pointblue.com.pl>
+Cc: Markus T??rnqvist <mjt@nysv.org>, Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Can anybody tell me which kernel version is optimal for testing reiser4. 
-I've found it runs stable on 2.6.8.1-mm2 for me except that i 
-occasionaly get "wrong bytes" errors when doing a fsck. I read in the 
-mailing-list archive that this error should be fixed, but is it also 
-fixed in 2.6.8.1-mm2? I've been burned using 2.6.9-rc1-mm1 for some 
-time, which has a problem with files which are bytes%4096=0 bytes big. 
-So i tried 2.6.9-rc1-mm3 today and found it was unstable on my pc (weird 
-hangs) but i'm certain this had nothing to do with reiser4.
 
-So to make it short: Which kernel do you guys use for developing/testing 
-reiser4 because it's hard to test when you can't tell if it's a general 
-kernel bug or a problem specific to reiser4. Is there a patch that can 
-be applied to the vanilla 2.6 kernel? On the website there is only the 
-notice to use some mm-kernel. Where are the latest patches?
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-regards,
-Michael
+Salut,
+
+On Fri, Sep 03, 2004 at 06:43:21AM +0200, Grzegorz Ja??kiewicz wrote:
+> >Then I guess OS X ships a broken implementation of cp, yes?
+>=20
+> Nope, GUI handles it perfectly. it's maybe 0.1% of users of MacOS that=20
+> acctually care about cp being broken.
+
+Actually, there is a (non-GNU) free implementation of the fileutils on
+MacOS/X  that treats  and  copies  the .DS_Store  entries  (or say  is
+metadata aware).
+
+And  even  though  I might  agree  on  that  the principle  of  having
+per-directory  database files is  somewhat hacky,  it appears  to work
+like a charm (As long as userland programs do care about it).
+
+On Linux we have a solution that actually works just the same and is a
+lot cooler. It's called POSIX extended attributes...
+
+			    Tonnerre
+
+PS. If you want to talk further  on the subject of how MacOS/X does it
+and how I would do it using extended attributes, discuss it in private
+mail with me, since MacOS/X isn't really Linux. And no, I don't want a
+single daemon do  that, but I want it to  be a standard implementation
+that libc and fileutils support.
+
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.9.2 (GNU/Linux)
+
+iD8DBQFBOvQm/4bL7ovhw40RAgPbAJ9b8fFoSmSWVW/Boihev+7RC4MbLwCfUCwf
+KU0vVdbLHZhxLk8PVAcoBbk=
+=1Amf
+-----END PGP SIGNATURE-----
+
+--yrj/dFKFPuw6o+aM--
