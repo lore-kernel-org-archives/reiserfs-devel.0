@@ -1,47 +1,46 @@
-From: Valdis.Kletnieks@vt.edu
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: Processes dying?
-Date: Fri, 04 Jun 2004 17:33:18 -0400
-Message-ID: <200406042133.i54LXIXN031219@turing-police.cc.vt.edu>
-References: <20040604203925.GF4990@nysv.org> <200406042050.i54KoDYD029229@turing-police.cc.vt.edu> <20040604210130.GH4990@nysv.org> <40C0E503.6010904@gmx.net>
-            <20040604212312.GI4990@nysv.org>
+Date: Sat, 5 Jun 2004 01:41:11 +0300
+Message-ID: <20040604224111.GK4990@nysv.org>
+References: <200406042133.i54LXIXN031219@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1397250256P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19024-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19025-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Sat, 05 Jun 2004 00:23:12 +0300."
-             <20040604212312.GI4990@nysv.org> 
+Content-Disposition: inline
+In-Reply-To: <200406042133.i54LXIXN031219@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
-Cc: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2004@gmx.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
+Cc: Valdis.Kletnieks@vt.edu
 
---==_Exmh_1397250256P
-Content-Type: text/plain; charset=us-ascii
+(*sigh* maybe this time the mail will come through, without a file-k
+attachment ;)
 
-On Sat, 05 Jun 2004 00:23:12 +0300, Markus =?UNKNOWN?Q?T=F6rnqvist?= said:
+On Fri, Jun 04, 2004 at 05:33:18PM -0400, Valdis.Kletnieks@vt.edu wrote:
 
-> The syslog is corrupted as is always the case with reset-button boots,
-> but I took a copy of the syslog file which vanished into thin air.
+>Of course, if your syslogd is one of the processes wedged up, you won't 
+>get much....
 
-echo t > /proc/sysrq-trigger     (to produce a traceback)
-echo s > /prog/sysrq-trigger     (to sync the disks)
+I did not.
 
-Of course, if your syslogd is one of the processes wedged up, you won't get much....
+However, I got something.
 
---==_Exmh_1397250256P
-Content-Type: application/pgp-signature
+It is at the url
+http://mjt.nysv.org/reiser/2004-06-04_trace.bz2
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+The mystical data is at 01:10:58 and 01:15:31.
 
-iD8DBQFAwOqecC3lWbTT17ARAuiZAKDOhnr1Qj1QhZml4v4EuiaYT+ArJACg+/tg
-o9Ip+IPUwSf9sWRihjkTiEY=
-=LmbV
------END PGP SIGNATURE-----
+Anyway, I recognize just about tty_read, sys_read, vfs_read and
+make_space_tail from there. If there is some document which I could
+read to learn these things without having to learn the ancient art
+of kernel-coding, I would appreciate a url :)
 
---==_Exmh_1397250256P--
+Hope this helps, and thanks!
+
+-- 
+mjt
+
