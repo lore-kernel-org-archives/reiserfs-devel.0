@@ -1,66 +1,55 @@
-From: "mite pascoff" <ttl@linuxmail.org>
-Subject: Re: can't find a reiserfs file ssytem! 3.b
-Date: Wed, 17 Mar 2004 16:50:13 +0200
-Message-ID: <20040317145013.B6D3B3982E7@ws5-1.us4.outblaze.com>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: ReConfigurable Directory Structure & Agrregation of files
+ according to semantic.
+Date: Wed, 17 Mar 2004 11:49:13 -0500
+Sender: news <news@sea.gmane.org>
+Message-ID: <873c87l8qe.fsf@uhoreg.ca>
+References: <20040316224523.39093.qmail@web60408.mail.yahoo.com> <20040317024931.GB5731@exavio.com.cn>
+ <87k71kt8pv.fsf@uhoreg.ca> <20040317062809.GD5731@exavio.com.cn>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17274-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17276-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
+>>>>> "Isaac" == Isaac Claymore <clay@exavio.com.cn> writes:
 
------ Original Message -----
-From: Vitaly Fertman <vitaly@namesys.com>
-Date: Wed, 17 Mar 2004 20:15:11 +0300
-To: "mite pascoff" <ttl@linuxmail.org>,"Vladimir Saveliev" <vs@namesys.com>
-Subject: Re: can't find a reiserfs file ssytem! 2
+[...]
 
+Isaac> I also stumbled upon Gnome Storage, at:
 
-> > my problem partition is 15GB large and dd stoped after copying 2GB of data
-> > with a messige like: File size limit exceeded
-> 
-> what fs do you copy the partition to?
+Isaac> http://www.gnome.org/~seth/storage/index.html
 
-FAT32 is the WinXP parttiion I use through the network
+Isaac> If I get it right, they seem to be doing it in user space, what's
+Isaac> your idea on this?
 
-> 
-> > So I began testing this part/image of the problem partition
-> 
-> do you want to recover only first 2G of your data?
+Yeah.  I was going to mention that, but I forgot.  Thanks for bringing
+it up.  Yes, AFAICT, it's all in userspace.  Since it's done by GNOME
+people, I assume that they will make a gnome-vfs module so that all
+GNOME applications will be able to use it transparently.  But that
+won't help other apps.
 
-NO thats because dd could copy only 2GB af data and stops ... I want to recover the whole 15GB partition
+It seems to be based on a relational model, which Hans has been saying
+is a bad way of organizing user data (and I would agree, but I'm no
+database expert, so my opinion doesn't count as much).
 
+It also seems to completely ditch the hierarchy system -- I find that a
+hierarchy (or some sort of semi-hierarchy) can be a very useful filing
+system for some types of data, or at least in splitting your data into
+manageable chunks.
 
-> what do you see in the syslog related to this mount failure?
-
-This is what "says" syslog when I try to mount the 2GB image.file of the problem partition:
-Mar 17 16:27:37 ttl kernel: reiserfs: checking transaction log (device 07:00) ...
-Mar 17 16:27:37 ttl kernel: reiserfs: journal-837: IO error during journal replay
-Mar 17 16:27:37 ttl kernel: Replay Failure, unable to mount
-Mar 17 16:27:37 ttl kernel: reiserfs_read_super: unable to initialize journal space
-
-> could you prepare the metadata of _this_ spare device with:
->     debugreiserfs -p sparedevice | bzip2 -c > sparedevice_meta.bz2
-> and provide it for downloading ?
-
-What device do you mean? I use a spare free space on a harddrive on a pc through the network which runs WinXP ...
- 
-> what kernel do you use?
-
-2.4.18 / Slackware8.1
-
+But I haven't dealt with Storage -- I've only briefly looked over it --
+so this is all mostly speculation.  It looks like a neat system, but I
+think that Reiser6 will blow its socks off.
 
 -- 
-______________________________________________
-Check out the latest SMS services @ http://www.linuxmail.org 
-This allows you to send and receive SMS through your mailbox.
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
-
-Powered by Outblaze
