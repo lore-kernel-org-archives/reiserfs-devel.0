@@ -1,245 +1,113 @@
-From: "Rodolfo Sikora" <sikora@inova.com.br>
-Subject: Re[3]: Is there a way to change root inode from -1 to what ever    it    will    work?
-Date: 11 Aug 2004 18:00:19 -0300
-Message-ID: <20040811210019.27186.qmail@qmail-local.inova.com.br>
-References: <20040811183322.5806.qmail@qmail-local.inova.com.br>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: Odd Block allocation behavior on Reiser3
+Date: Tue, 10 Aug 2004 21:31:36 -0400
+Message-ID: <411976F8.2070004@suse.com>
+References: <20040809201939.GA55683@kevlar.burdell.org> <1092083451.10651.218.camel@watt.suse.com> <20040809220459.GA57121@kevlar.burdell.org> <41187657.7030709@namesys.com> <20040810154514.GA67591@kevlar.burdell.org> <41190B5A.7070503@namesys.com> <1092162318.10651.365.camel@watt.suse.com> <1092163813.10651.372.camel@watt.suse.com> <20040810231219.GA72358@kevlar.burdell.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20215-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20216-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <20040810231219.GA72358@kevlar.burdell.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Sonny Rao <sonny@burdell.org>
+Cc: Chris Mason <mason@suse.com>, reiserfs-list@namesys.com
 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Hi, could u please grab this new one:
+Sonny Rao wrote:
+| On Tue, Aug 10, 2004 at 02:50:13PM -0400, Chris Mason wrote:
+|
+|>On Tue, 2004-08-10 at 14:25, Chris Mason wrote:
+|>
+|>>On Tue, 2004-08-10 at 13:52, Hans Reiser wrote:
+|>>
+|>>>Sonny Rao wrote:
+|>>>
+|>>>
+|>>>>On Tue, Aug 10, 2004 at 12:16:39AM -0700, Hans Reiser wrote:
+|>>>>
+|>>>>
+|>>>>
+|>>>>>Interesting.What happens without overwrite, that is, if you write
+more
+|>>>>>files without deleting the old ones?
+|>>>>>
+|>>>>>
+|>>>>
+|>>>>Below I made 24 one gigabyte files in sequence
+|>>>>All of them are similarly fragmented:
+|>>>>data # filefrag *
+|>>>>datafile0: 268 extents found
+|>>>>
+|>>>
+|>>>this could explain some reiser3 performance problems.   This is what
+|>>>happens when I spend all my time chasing funding and don't spend it
+|>>>reviewing code and benchmarks, sigh.
+|>>>
+|>>>Thanks for spotting this.  I would be curious if this is occuring near
+|>>>the transition between unformatted nodes and their parents, or
+something
+|>>>else.
+|>>
+|>>There have been a few threads on this on reiserfs-list
+|>>
+|>>singer:/data # dd if=/dev/zero of=foo bs=1MB count=1000
+|>>1000+0 records in
+|>>1000+0 records out
+|>>singer:/data # filefrag foo
+|>>foo: 1 extent found
+|>>
+|>>The new allocator really should be doing a better job here.
+|>
+|>Hmpf, that's what I get for expecting filefrag to work properly on
+|>amd64.  The actual number of extents is 199, which is still better then
+|>268.  Using fibmap, the fragmentation percentage is still the same as
+|>ext3 (99.99% unfragmented) meaning the length between the extents is
+|>quite small.
+|>
+|>If you mount with:
+|>
+|>mount -o alloc=skip_busy:oid_groups
+|>
+|>You get 8 extents on a 1GB file.
+|>
+|>This is because the oid grouping tries much harder to isolate the file
+|>data from data from other files and metadata.  It is far from optimal
+|>for normal usage, but for huge files it works nicely.
+|>
+|
+|
+| Is that "oid_groups" option present in the stock 2.6.7 kernel?  It
+| didn't like that mount option, and a cursory grep for "oid_groups" in
+| linux-2.6.7/fs/reiserfs/* doesn't show me anything.  The "skip_busy"
+| option worked but didn't seem to change allocation behavior.
 
-lynx 200.245.240.81/md0-metadata.bz2
+The oid_groups option is present in 2.6.8-pre releases, but only before
+that from Chris Mason's FTP archive.
 
-Thanks
+As far as skip_busy, there's two reasons for that: 1) The skip_busy
+behavior was the default, and 2) skip_busy was never meant to be a full
+scale allocation algorithm, just a way of keeping a pool of available
+blocks close to already allocated files. When there's no hinting
+involved, it ends up being poor for allocation - it will select the
+first block available on disk when the file doesn't already exist. I
+warned about this when I first submitted the code.
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->De:"Rodolfo Sikora" <sikora@inova.com.br>
->Para:"Vitaly Fertman" <vitaly@namesys.com>, <reiserfs-list@namesys.com>
->Assunto:Re[2]: Is there a way to change root inode from -1 to what ever   =
- it    will    work?
->
->
->Vitaly,
->
->Answering your other question
->
->####### Pass 3 #########
->vpf-10650: The directory [633134 378466] has the
->wrong size in the StatData (219824) - corrected
->to (219768)
->vpf-10680: The file [3752512 3756937] has the
->wrong block count in the StatData (8) -
->corrected to (0)
->vpf-10650: The directory [108925 3470744] has
->the wrong size in the StatData (141408) -
->corrected to (141352)
->vpf-10680: The file [3552600 3552664] has the
->wrong block count in the StatData (3760) -
->corrected to (3752)
->semantic_rebuild.c 903 rebuild_semantic_pass
->rebuild_semantic_pass: Hash mismatch detected
->for ("789161P1086316520PunknownP1221z2,") in
->directory [17623 1715079]
->
->it does have problem in a different place.
->
->is that bad or good ?
->
->I'm going to do another reiserfsdebug now.
->
->=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>De:Vitaly Fertman <vitaly@namesys.com>
->>Para:"Rodolfo Sikora" <sikora@inova.com.br>,
-><reiserfs-list@namesys.com>
->>Assunto:Re: Is there a way to change root inode
->from -1 to what ever it    will    work?
->>
->>On Wednesday 11 August 2004 02:04, Rodolfo
->>Sikora wrote:
->>> Well if this helps in anything:
->>>
->>>
->>> vpf-10650: The directory [198278 198979] has
->>the wrong size in the StatData
->>> (79280) - corrected to (79224)
->>>
->>> semantic_rebuild.c 903 rebuild_semantic_pass
->>> rebuild_semantic_pass: Hash mismatch detected
->>for
->>> ("18s149P1084520547PunknownP6765:2,") in
->>directory [198278 330428]
->>>
->>> Aborted
->>>
->>
->>does it happen in this particular place all the
->>time? or the name is different
->>from run to run? Would you pack the metadata of
->>the fs with:
->>	  debugreiserfs -p /dev/md0 | bzip2 -c >
->>md0.bz2
->>and provide it for downloading, I will check
->how
->>fsck works on your metadata,
->>it evth will be ok, then the problem could be a
->>hardware one (memory, hdd)=20
->>or a software raid problem or a raid
->>configuration problem.
->>
->>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>
->>> >De:"Rodolfo Sikora" <sikora@inova.com.br>
->>> >Para:reiserfs-list@namesys.com
->>> >Assunto:Is there a way to change root inode
->>from -1 to what ever it will=09
->>> >  work?
->>> >
->>> >Hi,
->>> >
->>> >I had problems with my software raid:
->>> >
->>> >cebola:~# mdadm --detail /dev/md0
->>> >/dev/md0:
->>> >	   Version : 00.90.01
->>> >  Creation Time : Wed May 19 01:07:53 2004
->>> >	  Raid Level : raid5
->>> >	  Array Size : 175790976 (167.65 GiB
->>180.01
->>> >GB)
->>> >	 Device Size : 58596992 (55.88 GiB 60.00
->>GB)
->>> >	Raid Devices : 4
->>> >  Total Devices : 3
->>> >Preferred Minor : 0
->>> >	 Persistence : Superblock is persistent
->>> >
->>> >	 Update Time : Tue Aug 10 16:21:23 2004
->>> >	     State : clean, no-errors
->>> > Active Devices : 3
->>> >Working Devices : 3
->>> > Failed Devices : 0
->>> >  Spare Devices : 0
->>> >
->>> >	    Layout : left-symmetric
->>> >	  Chunk Size : 4K
->>> >
->>> >	 Number   Major   Minor   RaidDevice
->State
->>> >	  0	  8	  65	    0	   active
->>> >sync /dev/sde1
->>> >	  1	  0	   0	   -1	 =20
->removed
->>> >	  2	  8	  97	    2	   active
->>> >sync /dev/sdg1
->>> >	  3	  8	 113	    3	   active
->>> >sync /dev/sdh1
->>> >	      UUID :
->>> >7cceaa8d:4014fc0d:c48efe80:ddb856d4
->>> >	    Events : 0.722114
->>> >
->>> >anyway the raid went ok and my /dev/md0 with
->>> >reiser was ok until I decided to fix few
->>> >corrupted data (files with weird permission
->>> >denied).
->>> >
->>> >I run --fix-fixable and it asked me to run
->>> >--rebuild-tree.
->>> >I run rebuild-tree twice (is takes about 4
->>> >hours) and bot time on pass 3 it stops
->saying
->>> >"aborted". What is this?
->>> >
->>> >I'm running the latest (I hope) reiserfsck
->>> >version (3.6.17).
->>> >
->>> >All I found is that reiserfsck turns root
->>inode
->>> >to -1 and only change it back after a
->>successful
->>> >repair.
->>> >
->>> >I know I have intact data inside, unless
->>> >reiserfsch messed it, so my question is: "Is
->>> >there anything I could do to be able to
->mount
->>it
->>> >again?"
->>> >
->>> >I do have backup but it's not so updated.
->>> >
->>> >Thank you for any help.
->>> >
->>> >
->>> >
->>> >Rodolfo Sikora - Desenvolvimento e Opera=E7=E3o
->>> >Departamento de Opera=E7=F5es e Tecnologia
->>> >Inova Tecnologias - http://www.inova.com.br
->>> >
->>> >
->>> >
->>>
->>>**********************************************
->*
->>*
->>> >****
->>> >*Velop* - administra=E7=E3o, controle e
->>> >monitoramento da
->>> >sua comunica=E7=E3o na Internet.
->>> >http://www.inova.com.br
->>>
->>> Rodolfo Sikora - Desenvolvimento e Opera=E7=E3o
->>> Departamento de Opera=E7=F5es e Tecnologia
->>> Inova Tecnologias - http://www.inova.com.br
->>>
->>>
->>>
->>>
->>***********************************************
->*
->>****
->>> *Velop* - administra=E7=E3o, controle e
->>monitoramento da
->>> sua comunica=E7=E3o na Internet.
->>> http://www.inova.com.br
->>
->>--=20
->>Thanks,
->>Vitaly Fertman
->
->
->
->Rodolfo Sikora - Desenvolvimento e Opera=E7=E3o
->Departamento de Opera=E7=F5es e Tecnologia
->Inova Tecnologias - http://www.inova.com.br
->
->
->
->************************************************
->****
->*Velop* - administra=E7=E3o, controle e
->monitoramento da=20
->sua comunica=E7=E3o na Internet.
->http://www.inova.com.br
+- -Jeff
 
+- --
+Jeff Mahoney
+SuSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-
-Rodolfo Sikora - Desenvolvimento e Opera=E7=E3o
-Departamento de Opera=E7=F5es e Tecnologia
-Inova Tecnologias - http://www.inova.com.br
-
-
-
-****************************************************
-*Velop* - administra=E7=E3o, controle e monitoramento da=20
-sua comunica=E7=E3o na Internet.
-http://www.inova.com.br
+iD8DBQFBGXb4LPWxlyuTD7IRAlFrAJ4lvW20RLzhFhLq4V0OMTDVFGsWwACfahaG
+Jbb5Cq74+nI5Se90SdWrmsQ=
+=hfS5
+-----END PGP SIGNATURE-----
