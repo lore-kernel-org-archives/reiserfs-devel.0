@@ -1,46 +1,49 @@
 From: Oleg Drokin <green@namesys.com>
 Subject: Re: Horrible ftruncate performance
-Date: Fri, 11 Jul 2003 19:38:14 +0400
-Message-ID: <20030711153814.GH17180@namesys.com>
-References: <20030710052931.GA17957@namesys.com> <200307111716.56823.Dieter.Nuetzel@hamburg.de> <20030711152431.GF17180@namesys.com> <200307111732.49524.Dieter.Nuetzel@hamburg.de>
+Date: Fri, 11 Jul 2003 19:44:15 +0400
+Message-ID: <20030711154415.GI17180@namesys.com>
+References: <20030710052931.GA17957@namesys.com> <200307111716.56823.Dieter.Nuetzel@hamburg.de> <20030711152431.GF17180@namesys.com> <200307111730.50601.m.c.p@gmx.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14896-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14897-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200307111732.49524.Dieter.Nuetzel@hamburg.de>
+In-Reply-To: <200307111730.50601.m.c.p@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
-Cc: reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
+To: Marc-Christian Petersen <m.c.p@gmx.net>
+Cc: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>, Szakacsits Szabolcs <szaka@sienet.hu>, reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
 
-Gello!
+Hello!
 
-On Fri, Jul 11, 2003 at 05:32:49PM +0200, Dieter N?tzel wrote:
-> > > OK some "hand work"...
-> Where comes this from?
+On Fri, Jul 11, 2003 at 05:34:12PM +0200, Marc-Christian Petersen wrote:
 
-It was there for a lot of time. Like for not less than 2 years, I'd say.
+> > Actually I did it already, as data-logging patches can be applied to
+> > 2.4.22-pre3 (where this truncate patch was included).
+> > > Maybe it _IS_ time for this _AND_ all the other data-logging patches?
+> > > 2.4.22-pre5?
+> > It's Chris turn. I thought it is good idea to test in -ac first, though
+> > (even taking into account that these patches are part of SuSE's stock
+> > kernels).
+> Well, I don't think that testing in -ac is necessary at all in this case.
 
-> I don't find it my tree:
+May be not. But it is still useful ;)
 
-reiserfs quota patch got rid of it.
-Here's relevant part of my diff:
-            if (retval) {
--               reiserfs_free_block (th, allocated_block_nr);
-+               reiserfs_free_block (th, inode, allocated_block_nr, 1);
-                goto failure;
-            }
--           if (done) {
--               inode->i_blocks += inode->i_sb->s_blocksize / 512;
--           } else {
-+           if (!done) {
-                /* We need to mark new file size in case this function will be
-                   interrupted/aborted later on. And we may do this only for
-                   holes. */
+> I am using WOLK on many production machines with ReiserFS mostly as Fileserver 
+> (hundred of gigabytes) and proxy caches.
+
+I am using this code on my production server myself ;)
+
+> If someone would ask me: Go for 2.4 mainline inclusion w/o going via -ac! :)
+
+Chris should decide (and Marcelo should agree) (Actually Chris thought it is good
+idea to submit data-logging to Marcelo now, too). I have no objections.
+Also now, that quota v2 code is in place, even quota code can be included.
+
+Also it would be great to port this stuff to 2.5 (yes, I know Chris wants this to be in 2.4 first)
 
 Bye,
     Oleg
