@@ -1,87 +1,97 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiser4 status as of this weekend
-Date: Thu, 20 May 2004 10:37:00 -0700
-Message-ID: <200405201037.00029.reiser@namesys.com>
-References: <003a01c4377d$d653eac0$7d02a8c0@toronto.chantrynetworks.com> <20040519195056.GM24604@nysv.org> <1085045969.1431.141.camel@tribesman.namesys.com>
+From: Redeeman <redeeman@metanurb.dk>
+Subject: Re: Namesys now accepts Visa cards on our website (support
+	questions and donations both)
+Date: Thu, 20 May 2004 20:22:17 +0200
+Message-ID: <1085077337.15159.2.camel@redeeman.kaspersandberg.com>
+References: <409AC2FF.7080800@lindows.com>
+	 <1083917932.14089.281.camel@tribesman.namesys.com>
+	 <409BB690.6030604@namesys.com> <409BBDC9.3030809@lindows.com>
+	 <409FB387.8080804@namesys.com> <40A19147.4010703@lindows.com>
+	 <40A257DA.2010903@namesys.com> <40A26D45.2010707@lindows.com>
+	 <40A30B00.8020103@namesys.com>
+	 <C10E654E-A518-11D8-BD91-000A95CD704C@wagland.net>
+	 <20040513201142.GT29226@nysv.org>  <40A79FD0.3090904@namesys.com>
+Reply-To: redeeman@metanurb.dk
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18785-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18786-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1085045969.1431.141.camel@tribesman.namesys.com>
-Content-Disposition: inline
+In-Reply-To: <40A79FD0.3090904@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Vladimir Saveliev <vs@namesys.com>, Markus =?utf-8?q?T=D0=96rnqvist?= <mjt@nysv.org>
-Cc: Russell Treleaven <rtreleaven@chantrynetworks.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-On Thursday 20 May 2004 02:39, Vladimir Saveliev wrote:
-> Hello
->
-> On Wed, 2004-05-19 at 23:50, Markus T=D0=96rnqvist wrote:
-> > On Sun, May 16, 2004 at 10:30:59AM -0700, Hans Reiser wrote:
-> > >Markus T=C3=B6rnqvist wrote:
+On Sun, 2004-05-16 at 19:07, Hans Reiser wrote:
+>  From the email below I realized I had forgotten to announce this.  We=20
+> will answer any question we can answer in half an hour for $25
+>=20
+> More below.
+>=20
+> Markus T=F6rnqvist wrote:
+>=20
+> >On Thu, May 13, 2004 at 10:04:34PM +0200, Paul Wagland wrote:
+> > =20
 > >
-> > [mmap]
+> >>Just a thought... Have you considered a "pledge" page? I.e, put up a=20
+> >>list of features, and then allow people to "pledge" donations for when =
+
+> >>those features are finished. I for one would pledge 10USD for the=20
+> >>repacker/disk optimiser, and yes, I know it isn't much, but you already=
+=20
+> >>have my donation for nothing :-) And, people often prefer to give money=
+=20
+> >>"to a cause".
+> >>   =20
+> >>
 > >
-> > >>>substantial work to do right, and is in progress.  We currently have=
- a
-> > >>>fix that costs performance, and are fixing the performance issue
-> > >>> (which is fixable but requires code....).
-> > >>
-> > >>Would you say this is the biggest issue?
-> > >
-> > >It is the only issue that I know of.
+> >Pass the hat around :)
 > >
-> > How about Copy-on-capture? Is it usable? Does it provide better
-> > performance?
->
-> When we moved to mm kernel it broke. When it was working - it did not
-> show significant effect in quick tests like bonnie.
-=46ix it.  Find the right test to measure its effect.
->
-> > >>What about NFS?
-> > >
-> > >fixed by nikita recently but not released.  See next snapshot.
+> >Problem just is that the repacker is probably commercial for a reason.
+> >The reason being that it provides income at a steady pace. If it were
+> >"pledged" it would give some money, sure, but not at a steady pace.
 > >
-> > I'm trying BK pulls. Yesterday it didn't compile, xfs seemed broken.
-> > Retrying now, after bk -r get.
+> >I'm surprised if Hans hasn't given this some thought, being the logical
+> >extension of the $25 helpdesk.
 > >
-> > I wrote a lame script, haven't used it much myself, but it should do
-> > something. Like get a BK pull.
-> > http://mjt.nysv.org/reiser/getreiser.sh
-> > http://mjt.nysv.org/reiser/getreiser.sh.txt
+> >Maybe the biggest problem is safe money transactions. You don't just
+> >deal to a foreign country, you deal out of the European Union.
 > >
-> > >by doing the architectural work....  Also, it requires that 2/3 of the
-> > >work (by cost) be done in the US, and the moscow embassy has gone into
+i believe this is true. i had a question, which i was ready to pay for.
+also, a note that it will be answered quickly would make ppl pay, but if
+it doesent accept paypal or something, its hard for ppl to pay. i was
+lucky ppl on the list answered :D
+
+> >And then there's this one country with a fairly large population that=20
+> >STILL hasn't moved beyond money checks. The one with fifty states.
 > >
-> > Have you tried other governments?
+> > =20
 > >
-> > >total asshole mode and isn't giving work visas to most russians.  Stil=
-l,
-> > >we will try to get work visas in 6 months.  I hope that it being for D=
-oD
-> > >work will increase the chance of getting visas.
-> >
-> > That must not fail.
-> > The DoD can't say "please give these guys work visas" just to cover
-> > their own interests? Or this has no effect?
-> >
-> > >It is in the source code..... we have the best commented source code in
-> > >the kernel (Andrew Morton is the only other kernel person who comments
-> > >code well that I know of).
-> >
-> > There was also a tangent on the topic of creating daily snapshots.
-> >
-> > This might make it easier for people to come to terms with Reiser4.
-> > People have many reasons to dislike BK, so a daily snapshot patch
-> > against some vanilla system may be a good thing.
-> >
-> > However, having broken code in the BK for days without having time to
-> > fix it is not good.
-> >
-> > So this would require changelogs and some testing on snapshots so that
-> > every once in a while one can be labeled "stable as hell"
+> I haven't been able to get a large enough amount from distros to support =
+
+> us (but thanks to Lindows for being a major help), and darpa sponsors=20
+> research not resizers, so I am thinking I might try selling the=20
+> resizer.  Our fiscal situation remains quite awful, and the resizer=20
+> might be a way to fund the enhanced semantics.  I guess it is time to=20
+> try the mixed model in which we sell base code that is better than=20
+> winfs/ext3, and some non-essential addons (like a resizer, maybe some=20
+> non-essentail plugins, etc., ) are for sale and they fund the free=20
+> stuff.  I really want to see free software work as a business, so I keep =
+
+> trying things.  Governments are not really set up to fund free software=20
+> effectively yet, they fund research which is not quite the same as=20
+> products that are usable.
+i dont think you will gain anything from selling the resize'er, or any
+other plugins. people would just warez it. however, setup paypal! i'd be
+ready to donate!
+
+>=20
+> Support does not make much money, a few hundred a month.....  hopefully=20
+> us accepting visa cards will improve this.
+--=20
+Regards, Redeeman
+()  ascii ribbon campaign - against html e-mail=20
+/\                        - against microsoft attachments
 
