@@ -1,34 +1,36 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+From: Bernd Schubert <bernd-schubert@web.de>
 Subject: Re: reiserfs logging patches udpated
-Date: Thu, 25 Mar 2004 17:51:44 +0100
-Message-ID: <200403251751.44638.Dieter.Nuetzel@hamburg.de>
-References: <1080149399.14737.77.camel@watt.suse.com> <200403250147.54246.bernd-schubert@web.de> <40625867.4060800@matchmail.com>
+Date: Thu, 25 Mar 2004 19:11:21 +0100
+Sender: Bernd Schubert <Bernd.Schubert@tc.pci.uni-heidelberg.de>
+Message-ID: <200403251911.24983.bernd-schubert@web.de>
+References: <1080149399.14737.77.camel@watt.suse.com> <200403250147.54246.bernd-schubert@web.de> <1080176455.14737.140.camel@watt.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-17470-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17471-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40625867.4060800@matchmail.com>
+In-Reply-To: <1080176455.14737.140.camel@watt.suse.com>
+Content-Description: clearsigned data
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
-Cc: Mike Fedyk <mfedyk@matchmail.com>, Bernd Schubert <bernd-schubert@web.de>, Chris Mason <mason@suse.com>, Andrew Morton <akpm@osdl.org>
+Content-Type: Text/Plain; charset="us-ascii"
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list@namesys.com
 
-Am Donnerstag, 25. M=E4rz 2004 04:56 schrieb Mike Fedyk:
-> Bernd Schubert wrote:
-> > However, besides of the proper discussion about the ide problem, there
-> > was a 'sub' thread with about 50 messages about the instability of
-> > reiserfs!!!
->
-> I wouldn't be surprised, you get this in the debian lists also.
+Hello Chris,
 
-> Adding the fact that reiserfsck3 is just recently getting out of beta
-> level quality (crashes, livelocks & etc during fsck and etc were common
-> until the last few months)
+> But there are just as many threads about reiserfs not having
+> data=3Dordered support.  It's an important feature that has been out of
+> mainline for far too long.
 
-What? - Nothing, here (for years) even on LVM on-top of RAID.
+what do you think about giving a kernel message on mounting the filesystem,=
+=20
+that data logging is enabled by default now? That way people who don't know=
+=20
+about it, at least would become informed on reading the log files.
 
-=2DDieter
+Cheers,
+	Bernd
+
