@@ -1,46 +1,43 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: kernel loop with lseek + LFS on reiser partition.
-Date: Tue, 23 Apr 2002 08:58:00 +0400
-Message-ID: <20020423085800.B4770@namesys.com>
-References: <200204221910.16392.Dieter.Nuetzel@hamburg.de>
+Subject: Re: using reiserfs as a DB
+Date: Tue, 23 Apr 2002 10:44:28 +0400
+Message-ID: <20020423104428.A2930@namesys.com>
+References: <3CC45294.2060806@priocom.com> <Pine.LNX.4.30.0204221954040.26977-100000@vortex.ukshells.co.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10138-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10139-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <200204221910.16392.Dieter.Nuetzel@hamburg.de>
+In-Reply-To: <Pine.LNX.4.30.0204221954040.26977-100000@vortex.ukshells.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
-Cc: wolfgang.glas@ev-i.at, Chris Mason <mason@suse.com>, Robert Love <rml@tech9.net>, ReiserFS List <reiserfs-list@namesys.com>
+To: Richard Emslie <rxe@ukshells.co.uk>
+Cc: Yura Umanets <umanets@priocom.com>, Phil Howard <phil-reiserfs@ipal.net>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
 Hello!
 
-On Mon, Apr 22, 2002 at 07:10:16PM +0200, Dieter N?tzel wrote:
+On Mon, Apr 22, 2002 at 08:26:19PM +0100, Richard Emslie wrote:
 
-> > I think this is because of expanding-truncate patch.
-> > So, the real bug is this process cannot get interrupted until finished
-> > which opens a window for resource-eating.
+> > The instance of what is a raw access to files and directories you can
+> > see on http://reiserfs.linux.kiev.ua/progsreiserfs-0.3.0.tar.gz in
+> > files: object.c, file.c, dir.c
+> Sorry for sounding dumb but am I right in saying this code does not go
+> near reiserfs kernel code.  ie it is directly accessing at block level?
 
-> /database/db1> time ~/Entwicklung/ReiserFS/testprg
-> 0.000u 545.310s 9:12.69 98.6%   0+0k 0+0io 124pf+0w
+Yes.
 
-9 minutes as expected from your HW config.
+> Is this reiserfs-raw?  If so how does this benfit from the reiserfs's
+> internal tree?
 
-> -rw-r--r--    1 nuetzel  users    137438953485 Apr 22 17:22 seek.tmp
-> /dev/sdb5               859412    166264    693148  20% /database/db1
-> Isn't this only a "bad" glibc "speed test"?
+No. Reiserfs-raw is a different thing. In reiserfs-raw you actually mount your
+fs, and then access the data through ioctls.
 
-Huh? glibc have nothing to do with this result.
+> If this has nothing to do with reiserfs-raw, how can one access a
+> partition when mounted raw?  ie open(pathname) doesn't make much sense.
 
-> With my latest latencytest0.42-png tests I found that there are one or two 
-> locks remaining in the VFS or ReiserFS code (preemption and/or lock-break 
-> could be the culprit, too).
-
-We already have identified a problem place and testing the patch before
-releasing it to the public.
+You can do it through ioctl. Nikita should know the details.
 
 Bye,
     Oleg
