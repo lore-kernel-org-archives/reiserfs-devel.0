@@ -1,49 +1,77 @@
-From: Whit Blauvelt <whit@transpect.com>
-Subject: Marking bad blocks
-Date: Sat, 19 Jul 2003 23:30:04 -0400
-Message-ID: <20030720033004.GA6519@free.transpect.com>
+From: "Rudy L. Zijlstra" <rudy@edsons.demon.nl>
+Subject: Re: Marking bad blocks
+Date: Sun, 20 Jul 2003 11:17:02 +0200
+Message-ID: <3F1A5E0E.6070505@edsons.demon.nl>
+References: <20030720033004.GA6519@free.transpect.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14968-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14969-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <20030720033004.GA6519@free.transpect.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Whit Blauvelt <whit@transpect.com>
+Cc: reiserfs-list@namesys.com
 
-Hi,
+Whit Blauvelt wrote:
 
-I'm trying to use the add-bad-blocks.c script provided on the site, but with
-both gcc 2.95.3 and 3.2.2 I get:
+>Thanks for any advice on how to actually take care of this problem short of
+>throwing out a drive (or going to another file system) just because a couple
+>of blocks are bad.
+>  
+>
+In my experience, you are courting a great amount of data loss.
 
-"undefinded reference to `concat'" 
+Some HardDisk history (although imprecise on dates):
 
-when I try to do "gcc add-bad-blocks.c".
+early 80's: HD was small, producing them difficult, and most had some 
+badblocks on them from day 1. Manufacturers would actually tell you 
+which blocks were bad on delivery of the disk. The on-disk state was not 
+likely to change quickly, and the bad-block list tended to stay stable 
+for long preriods of time.
 
-Is there something else I need to do to compile it successfully? Or is it
-just bad code? Why isn't whatever the necessary step is spelled out on the
-site?
+Now we'll skip some time, and keep in mind that with HDs as with other 
+things, functionality has moved from the OS into the disk.
 
-And, the instruction page only mentions patches to old versions of the
-kernel. Is the patch to support this now standard in the Reiserfs of kernel
-2.4.21? 
+current state of HDs:
+- HD's are manifold bigger and faster
+- HD's incorporate on disk memory caching
+- HD's have an extra cylinder (sometimes more than 1) which they use to 
+re-map bad-blocks. In other words, the HD contains a sub-system that 
+checks whether a block has gone bad and if so, it no longer uses it, but 
+in stead uses one from the "hidden" cylinders.
 
-I like Reiserfs a lot, and use it extensively, but for the second time I'm
-having serious trouble because of its lack of bad block handling. The
-Website is full of posturing about "If you have a problem, it's probably
-your hardware, not a real bug." Fine, this is hardware. The first time
-around a drive problem totally trashed a system. Now it looks like the
-Reiser code is better (in 2.4.21 it doesn't crash the system as it does on
-the same drive with 2.4.19 - looks like something was improved either in
-Reiser or general file system support in the kernel). But an out of date
-page on handling bad blocks with a utility that doesn't compile doesn't
-evidence thorough care.
+its this last feature that is important in this discussion. From early 
+disks on to the current day, some bad blocks on a disk are no point at 
+all. It is when they start growing in number that it getting time to 
+exchange them. Usually, when the number of bad blocks start growing, it 
+goes exponentially. First a slow growth, and the growth increases. I've 
+recently had occasion to observe it again on a disk. Luckily not one of 
+mine ;-)
+This means that with a modern disk (from 5 years ago and later), once 
+you start seeing bac blocks you already have at least a complete 
+cylinder full of bad blocks, and it is no longer "some bad blocks". It 
+also usually means the disk is rather far advanced on the exponential 
+curve.... Of course, there are a number of "usually" in this.  Based on 
+personal sad disk history, (yes, i have had several disks develop bad 
+blocks, and the pattern is rather consistent) I will exchange a disk 
+with bad blocks for a new one as soon as i detect bad blocks. If it is 
+still within warranty it goes back to the manufacturer post speed.
 
-Thanks for any advice on how to actually take care of this problem short of
-throwing out a drive (or going to another file system) just because a couple
-of blocks are bad.
+Now of course you are free to change to an other file system, like for 
+example ext2 and maybe you are lucky, and the disk stays stable for 
+another year, after that it suddenly develops more bad block, prerhaps 
+block 1 on cylinder 1, and then you will likely complain on the ext2 
+list that you lost your data. Up to you, but don't expect  commiseration 
+from them.
 
-Whit
+No filesystem will stay consistent, and not lose data, in the face of 
+imperfect hardware.
+
+good luck,
+
+Rudy
+
