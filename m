@@ -1,43 +1,61 @@
-From: Jens Benecke <jens@spamfreemail.de>
-Subject: Re: $25 question - ReiserFS 3.6 data errors on 2.4.23
-Date: Mon, 01 Mar 2004 13:30:36 +0100
-Sender: news <news@sea.gmane.org>
-Message-ID: <c1va9o$ahg$1@sea.gmane.org>
-References: <20040218093510.GD21098@backtop.namesys.com> <1077098911.5090.38.camel@tribesman.namesys.com>
+From: Christophe Saout <christophe@saout.de>
+Subject: Re: [PATCH] updated data=ordered patch for 2.6.3
+Date: Mon, 01 Mar 2004 14:30:12 +0100
+Message-ID: <1078147812.7623.4.camel@leto.cs.pocnet.net>
+References: <1077165373.22253.45.camel@watt.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16986-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16987-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1077165373.22253.45.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list@namesys.com
 
-Vladimir Saveliev wrote:
+Hi,
 
->> Feb 17 14:40:18 linux1 kernel: is_leaf: item location seems wrong (second
->> one): *3.6* [68637 68643 0x1 IND], item_len 8, item_location 1444,
->> free_space(entry_count) 0
->> Feb 17 14:40:18 linux1 kernel: drbd(43,0):vs-5150: search_by_key: invalid
->> format found in block 4683374. Fsck?
+> Also, the code has some extra performance tweaks to smooth out
+> performance both with and without data=ordered.  There are new
+> mechanisms to trigger metadata/commit block writeback and to help
+> throttle writers.  The goal is to reduce the huge bursts of io during a
+> commit and during data=ordered writeback.
 
-> These days usually when one notices similar corruptions - he later
-> discovers hardware problem (memory problem more often). May I ask you to
-> try memtest for some time.
-=20
-We finally found time to halt one machine and did. memtest86 finds about 150
-seemingly random places in RAM where bit errors occur.
+It seems you introduced a bug here. I installed the patches yesterday
+and found a lockup on my notebook when running lilo (with /boot on the
+root reiserfs filesystem).
 
-It's a wonder that Linux had an uptime of over 90 days with almost flawless
-operation on a machine with THAT kind of hopelessly b0rken RAM.
+A SysRq-T showed that lilo is stuck in fsync:
 
-Thank you for being so stubborn about hardware errors. :-)
+lilo:
+schedule
+sleep_on
+default_wake_function
+sys_sched_yield
+let_transaction_grow
+__commit_trans_jl
+reiserfs_sync_file
+sys_fsync
+
+reiserfs/0:
+worker_thread
+flush_async_commits
+default_wake_function
+...
+
+The problem is 100% reproducable here. Perhaps it has something to do
+with tail unpacking? This is strange:
+
+After copying the bzImage file to /boot and running lilo he can add the
+copied bzImage file, add the old file and then hangs on the third one.
+But after rebooting and running lilo he already hangs on the first one.
+After copying the file again he again passes the first two and hangs on
+the third kernel to add.
+
+The whole filesystem locks up when this happens, not just the lilo
+process.
 
 
---=20
-Jens Benecke (jens at spamfreemail.de)
-http://www.hitchhikers.de - Europaweite kostenlose Mitfahrzentrale
-http://www.spamfreemail.de - 100% saubere Postf=E4cher - garantiert!
-http://www.rb-hosting.de - PHP ab 9? - SSH ab 19? - g=FCnstiger Traffic
