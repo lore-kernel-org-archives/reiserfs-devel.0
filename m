@@ -1,56 +1,35 @@
-From: Naoki <naoki@valuecommerce.ne.jp>
-Subject: Poor sequential write performance.
-Date: Thu, 07 Nov 2002 19:59:55 +0900
-Message-ID: <3DCA47AB.8060008@valuecommerce.ne.jp>
+From: Jan Kara <jack@ucw.cz>
+Subject: Re: quota problem
+Date: Thu, 7 Nov 2002 17:44:27 +0100
+Message-ID: <20021107164427.GI28780@atrey.karlin.mff.cuni.cz>
+References: <20021104121034.GA96760@ppk.itb.ac.id>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11943-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11944-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <20021104121034.GA96760@ppk.itb.ac.id>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dikshie <dikshie@ppk.itb.ac.id>
+Cc: reiserfs-list@namesys.com, ext3-users@redhat.com
 
-Why ohh why..
-
-I have an old RedHat 6.2 box with 2.4.2 kernel and an IDE disk. When I 
-'wc' a file of about 100,000 text lines
-it take under a second.
-
-On my new RH 8.0 box with 2.4.18-14 kernel and SCSI disk it takes three 
-seconds.
-
-This is bizzare. Yes they are under the same load etc etc.  They are 
-both mounted with
-noatime / nodirtime.  What on earth is going on???
-
-Any help most appreciated.
-
-
-Look at this -
-
-New machine :
-
-time wc files*
-6421   69607  894412 files
-38806  420590 5394914 files.1
-45227  490197 6289326 total
-
-real    0m3.059s
-user    0m2.543s
-sys     0m0.064s
-
-Old machine :
-
-time wc files*
-18628  201841 2597321 files
-46603  505811 6501130 files.1
-37122  402985 5201388 files.2
-102353 1110637 14299839 total
-0.25user 0.04system 0:00.38elapsed 76%CPU (0avgtext+0avgdata 0maxresident)k
-0inputs+0outputs (115major+19minor)pagefaults 0swaps
-
-
-
+  Hello,
+  
+> VFS: Quota for id 1114 referenced but not present.
+> VFS: Can't read quota structure for id 1114.
+> VFS: Quota for id 1116 referenced but not present.
+> VFS: Can't read quota structure for id 1116.
+> VFS: Quota for id 1115 referenced but not present.
+> VFS: Can't read quota structure for id 1115.
+> VFS: Inserting already present quota entry (block 12).
+> VFS: Error -5 occured while creating quota.
+  This looks like corrupted quota file. quotacheck(8) should be able
+to fix it (but probably you should check that limits are set properly -
+some of them might got lost). 2.4.18 kernel has a small race which can
+occur under heavy load and cause such corruption so I suggest you
+updating to newer kernel...
+								Honza
