@@ -1,60 +1,88 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Again, some bad Reiser4 (ReiserFS) 'reviews'
-Date: Sat, 17 Jul 2004 23:44:18 -0700
-Message-ID: <40FA1C42.9020909@namesys.com>
-References: <200407150025.30908.Dieter.Nuetzel@hamburg.de>	<40F6C548.7030805@namesys.com>	<20040715182209.GK21140@backtop.namesys.com>	<20040716092927.GQ4990@nysv.org>	<40F8AE62.5010908@namesys.com> <16633.20180.55726.808621@laputa.namesys.com>
+Subject: Re: Fibration questions
+Date: Sun, 18 Jul 2004 00:11:31 -0700
+Message-ID: <40FA22A3.5060503@namesys.com>
+References: <20040716103441.2BA8715C1D@mail03.powweb.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-19670-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19671-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16633.20180.55726.808621@laputa.namesys.com>
+In-Reply-To: <20040716103441.2BA8715C1D@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: Nikita Danilov <Nikita@Clusterfs.COM>
-Cc: =?UTF-8?B?TWFya3VzIFTDtnJucXZpc3Q=?= <mjt@nysv.org>, Alex Zarochentsev <zam@namesys.com>, Dieter N?tzel <Dieter.Nuetzel@hamburg.de>, reiserfs-list@namesys.com, vs <vs@thebsh.namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Dabbs <david@dabbs.net>
+Cc: reiserfs-list@namesys.com
 
-Nikita Danilov wrote:
+David Dabbs wrote:
 
->Hans Reiser writes:
-> > Markus Tц╤rnqvist wrote:
-> > 
-> > >On Thu, Jul 15, 2004 at 10:22:09PM +0400, Alex Zarochentsev wrote:
-> > >  
-> > >
-> > >>>zam, would you confirm that the fibration plugin is our current default 
-> > >>>plugin?
-> > >>>      
-> > >>>
-> > >>"dot-o fibrate" is default.
-> > >>    
-> > >>
-> > >
-> > >This always puzzles me. Would not ext-1-fibre give the same results for
-> > >
-> > >This always puzzles me. Would not ext-1-fibre give the same results for
-> > >.o files but also the same bonus with all source code and such with .c
-> > >and .h?
-> > >
-> > >I at least overrode the default because of that :)
-> > >
-> > >  
-> > >
-> > nikita, is there a reason, or did inertia rule and we should change it?
-> > 
 >
->This is my fault, ext-1 should be the default, I just forgot to change
->it.
 >
->Nikita.
+>Using the fibre for fast extension testing
+>A common filesystem client query is for '*.xxx'. If there were (is?) an
+>alternate readdir[64]() interface that allowed the caller to pass an
+>'extension mask/filter,' then the fibre could be leveraged to quickly test
+>whether a given file matches the mask without calling unpack_string(), etc.
+>Kind of like saying to the filesystem: 
+>
+>	SELECT filename WHERE dir = '/home' AND filename LIKE '%.xxx'
+>
+>A 'fibration map' would need to be specified in an array, say
+>
+>	const char * fibre_map[] = {"c", "h", "o"...};
+>
+>or using a structure like
+>
+>	struct fibre_map_ent {
+>		unsigned char fibrno;
+>		unsigned char *exten;
+>	};
+>
+>	#define FIBR_MAX 127
+>	#define FIBR_DEFAULT FIBR_MAX-1
+>	/* should be ordered by exten for searching */
+>	const struct fibre_map_ent map[] = 
+>	{
+>		{.fibrno=6, 	exten="bar"},
+>		{.fibrno=0, 	exten="c"},
+>		{.fibrno=1, 	exten="h"},
+>		{.fibrno=3, 	exten="htm"},
+>		{.fibrno=3, 	exten="html"},
+>		{.fibrno=2, 	exten="java"},
+>		{.fibrno=FIBR_MAX, exten="o"},
+>		{.fibrno=4, 	exten="pl"},
+>		{.fibrno=5, 	exten="py"}
+>		{.fibrno=7, 	exten="xml"}
+>	};
+>
+>	/* 
+>		failure to find a match returns 
+>
+>			FIBRE_NO(FIBR_DEFAULT);
+>		else
+>
+>			FIBRE_NO(map[i].fibro);
+>
+>
+>The enhanced readdir would lookup the mask. If found, it would use the
+>fibrno to select appropriate directory entries for the readdir stream.
+>Otherwise, it would execute the default readdir code. Of course, this map
+>would need to be the global default for the filesystem and per-directory
+>fibration override would be prohibited, otherwise readdir would return
+>incorrect results.
+>
 >
 >
 >  
 >
-vs, please change it if Nikita did not already.
+I think this is too implementation dependent of an optimization to be 
+allowed to influence API design. 
 
-Markus, thanks for catching it.
+There is a need for support for * in filename queries.  I would support 
+adding that to sys_reiser4.
 
-Hans
+If FS naming was better designed, filenames would not have extensions.  
+I prefer to first better design naming, and then not need to optimize 
+the API for extensions.
