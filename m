@@ -1,46 +1,45 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: "no space left" but df -k shows plenty of free space
-Date: 19 May 2003 13:38:38 -0400
-Message-ID: <1053365917.6207.105.camel@tiny.suse.com>
-References: <3EC65671.DA1CB780@gmx.de>  <20030519160208.GA14048@namesys.com>
+From: bscott@ntisys.com
+Subject: Re: ReiserFS is not suitable for a root FS.
+Date: Mon, 19 May 2003 15:55:53 -0400 (EDT)
+Sender: bscott@ntisys.com
+Message-ID: <Pine.LNX.4.44.0305191544380.7975-100000@dragon.inside.ntisys.com>
+References: <200305172030.58775.russell@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14165-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14166-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030519160208.GA14048@namesys.com>
+In-Reply-To: <200305172030.58775.russell@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: D_i_F_i@gmx.de, reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ReiserFS <reiserfs-list@namesys.com>
 
-On Mon, 2003-05-19 at 12:02, Oleg Drokin wrote:
-> Hello!
-> 
-> On Sat, May 17, 2003 at 05:34:09PM +0200, D_i_F_i@gmx.de wrote:
-> > while copying some data into a logical volume with reiserfs as
-> > filesystem, I've got an error message, that there isn't enough
-> > space left on the device. Even just creating a new empty file
-> > isn't possible anymore:
-> > sammy:/opt/kgm/data/log # touch abc
-> > touch: creating `abc': No space left on device
-> > But the df-command has still reported quite a lot of free capacity:
-> > sammy:/opt/kgm/data/log # df -k /opt/kgm/data
-> > Filesystem        1k-blocks     Used Available Use% Mounted on
-> > /dev/kgmvg/datalv  10485436  7987364   2498072  77% /opt/kgm/data
-> 
-> Hm, this is pretty strange.
 
-Could you please run debugreiserfs -p /dev/xxx | gzip -c >
-df-error-fs.gz, and make it available somewhere for us to download.  If
-you are using reiserfsprogs 3.x.0j or so the output can contain actual
-file data, so you probably want to put the image onto a password
-protected page.
+  Observation: Unix and its clones (such as Linux) have, traditionally, done
+poorly when the root filesystem is not safe and sane.  The stance appears to
+be (have been) that, if the root is damaged, the system doesn't have enough
+marbles left to reliably repair itself.  At that point, you must boot from
+some other filesystem.
 
-This will take a metadata dump of the filesystem, I'd like to check it.
+  That is, I think, a not entirely unreasonable stance to take.  The root
+filesystem is critical to any Unix system.  System binaries, device nodes,
+and essential configuration files all live there.  If any of those are
+damaged, you can no longer trust the system to function properly.  Sure, it
+*may* work, but you are gambling at that point.  You are hoping that nothing
+you need is damaged.  You cannot guarantee it.
 
--chris
+  Rather than trying to engineer a perfect filesystem (which, I think, may
+be impossible), it would be better (and far more practical) to develop
+recovery mechanisms.  For less critical systems, you can simply boot from a
+rescue CD.  For systems where uptime is essential, you can look at things
+like putting recovery mechanisms in the initrd, or keep a "standby root"  
+available in a separate partition (or even a separate disk).
 
+-- 
+Ben Scott <bscott@ntisys.com>
+| The opinions expressed in this message are those of the author and do  |
+| not represent the views or policy of any other person or organization. |
+| All information is provided without warranty of any kind.              |
 
