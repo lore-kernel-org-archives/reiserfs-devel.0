@@ -1,60 +1,219 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: NFS setup for a reiserfs-based /home
-Date: Thu, 26 Sep 2002 00:37:43 +0400
-Message-ID: <3D921E97.3050107@namesys.com>
-References: <20020924215756.GA24963@jerry.marcet.dyndns.org> <20020925114009.B23339@namesys.com> <200209251533.19567.Dieter.Nuetzel@hamburg.de> <20020925173718.A17138@namesys.com> <20020925154626.S32363@noris.de> <20020925175128.A3477@namesys.com> <20020925160957.U32363@noris.de> <3D91FFA5.9010909@namesys.com> <3D920F90.7060206@edsons.demon.nl>
+From: "James C. Owens" <owensjc@bellatlantic.net>
+Subject: [Fwd: Re: Testing of Reiserfs write speedup patch]
+Date: Wed, 25 Sep 2002 17:05:53 -0400
+Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <3D922531.50205@bellatlantic.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11542-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
-Cc: =?ISO-8859-1?Q?Philippe_Gramoull=E9?= <philippe.gramoulle@mmania.com>
+To: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-Somebody wrote:
+I am posting some bonnie++, dbench and AIM benchmark results on the 
+suggestion of Hans Reiser. The below tests were stability/speed tests 
+after applying the ReiserFS write speedup patch available on the namesys 
+site. Note that I received a message from Oleg informing me that the 
+write speedup patch I used is the one largely written by Chris, and 
+consists of work to prevent unnecessary disk flushes, etc. It is now 
+part of Chris' data logging patches. This is not the new patch which 
+removes the 4 kB allocation/balance loop.
 
->> Hans,
->>
->> which HW RAID controllers would you advice?
->>
->> Cheers,
->>
->  
->
-Unfortunately I just don't know.  We can't afford them at Namesys.....;-)
+Another point to be underlined is that the patch was applied after 
+applying Andrea Arcangeli's collected patches to the 2.4.19-rc5 (same as 
+2.4.19 release) kernel, these patches include an asynch I/O 
+implementation, as well as the O(1) scheduler.
 
-I am going to test some of Philippe's RAID equipment for Reiser4 (his 
-company sponsors Reiser4 with a very substantial service contract), I 
-should probably add the following test.
+As you can see below, the bonnie++ results are excellent. The dbench 
+results are in-line with what I have gotten with Andrea's kernels before.
 
-Try putting putting some data into the FS that is small enough to fit 
-into the RAID card NVRAM, letting it go idle for an hour, yanking the 
-power cord out, and then putting another RAID card which is the same 
-brand card in as a replacement for your card while the machine is off, 
-rebooting, and seeing what happens to your data.  If I understand 
-properly from a few users, there exist some cards/RAID units for which 
-the data will be non-existent on the disks.  I would not use such cards 
-myself.  
+It would be nice to have some comparison to others running the AIM suite 
+7 (s7110), since it has been released. The results seem pretty good to 
+me! When I get the time, I will rerun AIM with the ac series and the 
+stock 2.4.19 kernel and compare.
 
-I think it would be useful if the identity of such cards became known. 
- Notice how I avoid saying any names because I want to see it reproduced 
-independently first before I say any names.  These users I know about 
-found out by equipment failing, and one should always be careful about 
-reproducing the cause for such events before repeating the story to others.
+Please cc me on responses since I don't subscribe to the lkml.
 
-RAID controllers going kaput are not any rarer than any other PC cards 
-going kaput, so....  You probably all know people who didn't backup a 
-RAID device, and the controller scribbled garbage to disk, and the 
-source code repository or other mission critical datastore.....
+Thanks,
+
+Jim
+
+
+-------- Original Message --------
+Subject: Re: Testing of Reiserfs write speedup patch
+Date: Tue, 24 Sep 2002 13:53:03 +0400
+From: Hans Reiser <reiser@namesys.com>
+To: James C. Owens <owensjc@bellatlantic.net>
+CC: Oleg Drokin <green@namesys.com>, Chris Mason <mason@suse.com>
+References: <3D8FF28D.3040607@bellatlantic.net>
+
+Excellent.  You might want to post your results on lkml and/or
+reiserfs-list@namesys.com.:)
+Good work Oleg.
 
 Hans
 
+James C. Owens wrote:
 
+ > Don't know if this is useful or not... I thought I would send my
+ > testing results to you guys. I have tested the heck out of my system
+ > after applying the ReiserFS_speedup-2.4.19-pre6.diff patch to AA's
+ > 2.4.19-rc5-aa1. This is actually aa's version of the released 2.4.19,
+ > since 2.4.19-rc5 is the 2.4.19 release. Of note is that AA's kernel
+ > includes aio and the O(1) scheduler.
+ >
+ > I have not noted any fs corruption or other problems during the testing.
+ >
+ > System Specs relevant:
+ >
+ > Tyan S2460 Tiger MP motherboard
+ > 2xAthlon MP 1600+ processors
+ > 1.5 GB RAM
+ > Mylex AcceleRAID 170 RAID controller with 32 MB onboard cache, running
+ > 5 IBM DDYS-T18350N 10k rpm U160 SCSI drives in a RAID 5 configuration.
+ >
+ > Note /proc/sys/vm/max-readahead in all cases set to 511.
+ >
+ > First bonnie++ (2.4.19-aa1 w/o speedup patch)
+ > Version 1.01d       ------Sequential Output------ --Sequential Input-
+ > --Random-
+ >                    -Per Chr- --Block-- -Rewrite- -Per Chr- --Block--
+ > --Seeks--
+ > Machine        Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP
+ > /sec %CP
+ > jco-linux     3100M 21468  33 28510  20 17655  10 38814  65 82601  40
+ > 399.0   3
+ >                    ------Sequential Create------ --------Random
+ > Create--------
+ >                    -Create-- --Read--- -Delete-- -Create-- --Read---
+ > -Delete--
+ >              files  /sec %CP  /sec %CP  /sec %CP  /sec %CP  /sec %CP
+ > /sec %CP
+ >                 16 17419  56 +++++ +++ 16464  58 17617  59 +++++ +++
+ > 7220  40
+ > 
+jco-linux,3100M,21468,33,28510,20,17655,10,38814,65,82601,40,399.0,3,16,17419,56,+++++,+++,16464,58,17617,59,+++++,+++,7220,40 
 
+ >
+ >
+ > Second bonnie++ (2.4.19-aa1 w/ speedup patch)
+ > Version 1.01d       ------Sequential Output------ --Sequential Input-
+ > --Random-
+ >                    -Per Chr- --Block-- -Rewrite- -Per Chr- --Block--
+ > --Seeks--
+ > Machine        Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP
+ > /sec %CP
+ > jco-linux     3100M 37048  58 39513  30 18319  11 40981  68 93992  47
+ > 373.0   3
+ >                    ------Sequential Create------ --------Random
+ > Create--------
+ >                    -Create-- --Read--- -Delete-- -Create-- --Read---
+ > -Delete--
+ >              files  /sec %CP  /sec %CP  /sec %CP  /sec %CP  /sec %CP
+ > /sec %CP
+ >                 16 17602  90 +++++ +++ 15377  92 14751  83 +++++ +++
+ > 13464  94
+ > 
+jco-linux,3100M,37048,58,39513,30,18319,11,40981,68,93992,47,373.0,3,16,17602,90,+++++,+++,15377,92,14751,83,+++++,+++,13464,94 
+
+ >
+ >
+ > Notice the tremendous speedup on writes, and even a decent speedup on
+ > sequential reads! I'm a happy man here! (94 MB/sec reads are real
+ > rates from the combined output of the drives, since I am using a file
+ > size more than double the memory size. The peak transfer I see during
+ > actual physical media sequential reads from the controller is about
+ > 105 MB/sec, pretty close to saturation for the 32-bit PCI bus.) I
+ > think the combined real sequential output of four DDYS's (i.e. not
+ > including the parity equivalent) is a bit higher than 100 MB/sec, but
+ > the PCI bus is constraining here. (Too bad I don't have the AcceleRAID
+ > 352 or ExtremeRAID 64 bit controllers.)
+ >
+ >
+ > During bonnie++ runs without the speedup patch, the system is really
+ > prone to read starvation during the big writes. The behaviour with the
+ > speed-up patch is vastly improved (although not perfect).
+ >
+ >
+ > Dbench results with speedup patch applied (without any tweaking to the
+ > /proc/sys/vm settings):
+ >
+ > Throughput 68.9744 MB/sec (NB=86.2179 MB/sec  689.744 MBit/sec)  8 procs
+ > Throughput 65.0722 MB/sec (NB=81.3403 MB/sec  650.722 MBit/sec)  16 procs
+ > Throughput 43.4186 MB/sec (NB=54.2732 MB/sec  434.186 MBit/sec)  32 procs
+ > Throughput 35.9702 MB/sec (NB=44.9627 MB/sec  359.702 MBit/sec)  64 procs
+ >
+ > I ran dbenchs all the way up to 256. Throughput asymptoted out at ~30
+ > MB/sec. These results are consistent with runs I did a while back with
+ > the 2.4.18 kernel. No problems were observed.
+ >
+ >
+ > I have also run the AIM suite7 benchmark, since it has now been
+ > released as open source. The results are attached as a text and ps
+ > file. A result of peak 1059.7 jobs/minute, with a sustained rate of
+ > 958.2 jobs/minute seems excellent to me. The machine was still running
+ > at a total of 930.2 jobs/minute at the crossover point, where 963
+ > simultaneous multiuser processes were running. (Yep, the load was at
+ > ~1000.) Believe it or not, the system GUI was still very usable,
+ > thanks to the O(1) scheduler.
+ >
+ >
+ > I ran the same benchmark on a dual PIII 700 with the SuSE 2.4.18
+ > default kernel and a single Maxtor 30 GB hard drive, and the peak rate
+ > was at 135 jobs/minute, a factor of 7.85 difference from the dual
+ > Athlon RAID system with the patches.
+ >
+ >
+ > Anyway, I was more interested in testing stability than speed on the
+ > dual Athlon. The AIM benchmark completed with no problems whatsover.
+ > Not a single error or warning logged in /var/log/messages. File system
+ > is perfectly fine - no corruption or other problems.
+ >
+ >
+ > As a result of this testing, looks like the write speedup patch is a
+ > keeper, at least for me!
+ >
+ >
+ > Jim Owens
+ >
+ >------------------------------------------------------------------------
+ >
+ >Tasks	Jobs/Min	JTI	Real	CPU	Jobs/sec/task
+ >Benchmark	Version	Machine	Run Date
+ >AIM Multiuser Benchmark - Suite VII	"1.1"	JCO-LINUX	Sep 23 10:10:36 2002
+ >1	101.4		100	57.4	7.6	1.6893
+ >2	195.2		99	59.6	13.3	1.6267
+ >3	301.3		99	57.9	16.4	1.6741
+ >4	346.7		98	67.1	17.3	1.4447
+ >5	416.1		97	69.9	24.3	1.3871
+ >6	484.3		97	72.1	24.6	1.3454
+ >7	535.7		97	76.0	32.7	1.2755
+ >8	594.5		98	78.3	36.5	1.2385
+ >10	675.6		97	86.2	43.1	1.1259
+ >14	761.6		97	107.0	59.7	0.9067
+ >18	835.3		97	125.4	74.6	0.7735
+ >26	919.0		97	164.7	107.2	0.5891
+ >29	944.6		96	178.7	111.8	0.5429
+ >35	995.9		96	204.5	137.9	0.4742
+ >47	1031.3		96	265.2	182.1	0.3657
+ >59	1030.2		94	333.3	232.7	0.2910
+ >71	1055.6		94	391.5	274.1	0.2478
+ >97	1046.9		94	539.2	374.3	0.1799
+ >107	1014.1		95	614.1	413.4	0.1580
+ >128	973.3		96	765.4	487.4	0.1267
+ >149	1031.8		96	840.5	575.4	0.1154
+ >193	1017.3		95	1104.2	739.1	0.0878
+ >212	1059.7		95	1164.3	816.5	0.0833
+ >251	1023.3		92	1427.6	963.2	0.0679
+ >290	994.8		93	1696.6	1111.3	0.0572
+ >375	1003.2		93	2175.5	1431.0	0.0446
+ >460	981.1		94	2728.8	1739.8	0.0355
+ >545	995.1		92	3187.5	2082.8	0.0304
+ >729	956.0		92	4438.0	2792.4	0.0219
+ >805	968.8		92	4835.9	3099.0	0.0201
+ >963	930.2		92	6025.0	3718.4	0.0161
+ >
+ >
 
 
 
