@@ -1,34 +1,44 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: reiserfsck failure
-Date: Wed, 15 Jan 2003 09:59:25 +0300
-Message-ID: <20030115095925.A23036@namesys.com>
-References: <3E247A12.4E479B64@neolinear.com> <3E247AB6.89265382@neolinear.com>
+From: Philippe =?ISO-8859-1?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
+Subject: Re: Quotas aand 2.5.x
+Date: Wed, 15 Jan 2003 10:43:06 +0100
+Message-ID: <20030115104306.51404b4c.philippe.gramoulle@mmania.com>
+References: <20030114182217.4fa8f2f8.philippe.gramoulle@mmania.com>
+	<20030114203842.A18999@namesys.com>
+	<3E2451B0.1020905@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12352-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12353-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3E247AB6.89265382@neolinear.com>
+In-Reply-To: <3E2451B0.1020905@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Bill Schrier <wschrier@neolinear.com>
-Cc: it@neolinear.com, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: green@namesys.com, reiserfs-list@namesys.com, mason@namesys.com
 
-Hello!
 
-On Tue, Jan 14, 2003 at 04:01:42PM -0500, Bill Schrier wrote:
+Hi Hans,
 
-> > I am sending along both the --logfile and the core file from a recent
-> > reiserfsck we were running on our Redhat 7.2 raidzone machine.
+On Tue, 14 Jan 2003 21:06:40 +0300
+Hans Reiser <reiser@namesys.com> wrote:
 
-Can you say what exact version was that?
-Also just before dumping core it should have output some more info on stderr
-about assertion failure, we are interested in that message too.
+  |  Philippe, am I right in guessing that you don't need it urgently?  If 
+  |   so, I will let Chris do it, and it might take just a bit longer.
 
-Thank you.
+Actually, right now, we still have that nasty bug every time we run quotacheck that prenvent us from enabling them on several filerservers which is a big problem right now (that's on 2.4.x)
 
-Bye,
-    Oleg
+As i thought that now most of efforts are put into 2.5.x, i might be able to take advantage of all the new functionnalities but what i do need is Reiserfs + NFS + quota.
+
+On the NFS part , there have been so many enhancements in 2.5.x (and on other parts as well) that i'm really eager to give it a try.
+
+Could Chris tell me then how much time does he think it will take to have quota in 2.5.x.
+
+I think it would be best for everybody to wait for Chris to implement quotas in 2.5.x so that people at Namesys can focus on Reiserfs v4 :o)
+
+What do you think ?
+
+Thanks,
+
+Philippe
