@@ -1,88 +1,45 @@
 From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: Resierfs Resize -> Corrupt bitmap.
-Date: Thu, 5 Feb 2004 11:46:24 +0300
-Message-ID: <20040205084623.GD1733@backtop.namesys.com>
-References: <402151E4.1060100@cs.berkeley.edu>
+Subject: Re: resize reiserfs
+Date: Thu, 5 Feb 2004 11:49:30 +0300
+Message-ID: <20040205084929.GE1733@backtop.namesys.com>
+References: <1075919278.1901.14.camel@linux.local> <200402050025.54725.vitaly@namesys.com> <1075936282.18623.29.camel@linux.local>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16705-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16706-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <402151E4.1060100@cs.berkeley.edu>
+In-Reply-To: <1075936282.18623.29.camel@linux.local>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: umka@clusterfs.com
-Cc: Russell Sears <sears@eecs.berkeley.edu>, reiserfs-list@namesys.com
+To: Farkas Barnab?s <kinca@freemail.hu>
+Cc: reiserfs-list@namesys.com, umka@clusterfs.com
 
-On Wed, Feb 04, 2004 at 08:11:16PM +0000, Russell Sears wrote:
-> I used parted to resize my reiserfs partion from 20Gig to 29Gig, and ran 
-> reiserfsck afterwards, just in case.  I got the messages that I pasted 
-> into the bottom.  (Basicly, resize corrupted the bitmap, and reiserfsck 
-> --fix-fixable fixed it.)
+On Thu, Feb 05, 2004 at 12:11:22AM +0100, Farkas Barnab?s wrote:
+> On Wed, 2004-02-04 at 22:25, Vitaly Fertman wrote:
+> > On Wednesday 04 February 2004 21:27, Farkas Barnab?s wrote:
+> > > Hello World,
+> > 
+> > Hello Farkas,
+> > 
+> > > I would like to resize my reiserfs partition. When its finished, I
+> > > couldn't mount the partition. I've got error messages
+> > > I tried --rebuild-tree
+> > 
+> > Did resize_reiserfs finish properly or fail? Could you describe you 
+> > steps more precisely? How did you run resizer_reiserfs? What did 
+> > you do next? Did you run reiserfsck --rebuild-sb? Etc.
+> 
+> I made the resizing with QtParted-0.4.1
 
-The problem can be in libreiserfs used by gnu parted (if your fs was not
-corrupted before resizing), I re-sent to the libreiserfs maintainer. 
+with reiserfs support through libreiserfs, yes?
 
+> There was no error. but I can't mount again.
+> --rebuild-sb
 > 
-> I'm using the following versions of software, on Debian testing (Really 
-> on a verison of Morphix):
-> parted       1.6.6-3.1
-> reiserfsprog 3.6.11-1.1
-> libreiserfs0 0.3.0.4-1
-> 
-> I have a patched 2.4.24 kernel:
-> supermount-1.2.11
-> bootsplash-3.0.7
-> xattr-0.8.65
-> acl-0.8.65
-> nfsacl-0.8.65
-> Kernel-Win4Lin3-2.4.24 / mki-adapter
-> knoppix-kernel
-> linux-2.4.24-ntfs-2.1.6a
-> 
-> And the following third party modules:
-> cloop
-> loop-aes
-> translucency
-> madwifi
-> 
-> My hardware is:
-> IBM Thinkpad R40.  The drive is an 80Gig Maxtor in a firewire case. 
-> parted sees it as 80Gig, but fdisk / cfdisk sees it as 60 gig. 
-> Apparently, I'm only using the first 60 gig of the drive.  The drive 
-> must have been incorrectly detected as a 60Gig drive years ago, on a 
-> normal IDE controller.
-> 
-> Parted said this after the resize:
-> 
-> Using /dev/sdb
-> Information: The operating system thinks the geometry on /dev/sdb is 
-> 7473/255/63.  Therefore, cylinder 1024 ends at 8032.499M.
-> (parted) print
-> Disk geometry for /dev/sdb: 0.000-58623.468 megabytes
-> Disk label type: msdos
-> Minor    Start       End     Type      Filesystem  Flags
-> 1          0.031   8001.123  primary   reiserfs    boot
-> 2       8001.123   8024.655  primary   ext3
-> 3       8024.656  58619.992  extended
-> 5       8024.687  37166.000  logical   reiserfs
-> 6      37166.032  58619.992  logical   ext3
-> 
-> 
-> If there's any more information you would like, please CC to me, as I'm 
-> not on this list.
-> 
-> 
-> Thanks,
-> Rusty
-> 
-> 
-> 
-> 
-> sh-2.05b# reiserfsck /dev/sdb5
+> linux:~ # /usr/local/sbin/reiserfsck --rebuild-sb /dev/hda1
 > reiserfsck 3.6.11 (2003 www.namesys.com)
 > 
 > *************************************************************
@@ -96,108 +53,80 @@ corrupted before resizing), I re-sent to the libreiserfs maintainer.
 > ** is available  for $25 at  www.namesys.com/support.html. **
 > *************************************************************
 > 
-> Will read-only check consistency of the filesystem on /dev/sdb5
+> Will check superblock and rebuild it if needed
 > Will put log info to 'stdout'
 > 
-> Do you want to run this program?[N/Yes] (note need to type Yes if you 
+> Do you want to run this program?[N/Yes] (note need to type Yes if you
 > do):Yes
-> ###########
-> reiserfsck --check started at Wed Feb  4 19:31:46 2004
-> ###########
-> Replaying journal..
-> 0 transactions replayed
-> Zero bit found in on-disk bitmap after the last valid bit.
-> Checking internal tree..finished
-> Comparing bitmaps..vpf-10640: The on-disk and the correct bitmaps differs.
-> Checking Semantic tree:
-> finished
-> 2 found corruptions can be fixed when running with --fix-fixable
-> ###########
-> reiserfsck finished at Wed Feb  4 19:32:15 2004
-> ###########
-> sh-2.05b#
-> sh-2.05b$ sudo reiserfsck /dev/sdb5 --fix-fixable
-> reiserfsck 3.6.11 (2003 www.namesys.com)
+> Reiserfs super block in block 16 on 0x301 of format 3.6 with standard
+> journal
+> Count of blocks on the device: 7327648
+> Number of bitmaps: 224
+> Blocksize: 4096
+> Free blocks (count of blocks - used [journal, bitmaps, data, reserved]
+> blocks): 7327648
+> Root block: 0
+> Filesystem is cleanly umounted
+> Tree height: 0
+> Hash function used to sort names: "r5"
+> Objectid map size 2, max 972
+> Journal parameters:
+>         Device [0x0]
+>         Magic [0x0]
+>         Size 8193 blocks (including 1 for journal header) (first block
+> 18)
+>         Max transaction length 1024 blocks
+>         Max batch size 900 blocks
+>         Max commit age 30
+> Blocks reserved by journal: 0
+> Fs state field: 0x0:
+> sb_version: 2
+> inode generation number: 0
+> UUID: 4e4889c5-8054-4d5a-b050-754856b0d279
+> LABEL:
+> Set flags in SB:
 > 
-> *************************************************************
-> ** If you are using the latest reiserfsprogs and  it fails **
-> ** please  email bug reports to reiserfs-list@namesys.com, **
-> ** providing  as  much  information  as  possible --  your **
-> ** hardware,  kernel,  patches,  settings,  all reiserfsck **
-> ** messages  (including version),  the reiserfsck logfile, **
-> ** check  the  syslog file  for  any  related information. **
-> ** If you would like advice on using this program, support **
-> ** is available  for $25 at  www.namesys.com/support.html. **
-> *************************************************************
+> Super block seems to be correct
 > 
-> Will check consistency of the filesystem on /dev/sdb5
-> and will fix what can be fixed without --rebuild-tree
-> Will put log info to 'stdout'
 > 
-> Do you want to run this program?[N/Yes] (note need to type Yes if you 
-> do):Yes
-> ###########
-> reiserfsck --fix-fixable started at Wed Feb  4 19:52:41 2004
-> ###########
-> Replaying journal..
-> 0 transactions replayed
-> Zero bit found in on-disk bitmap after the last valid bit. Fixed.
-> Checking internal tree..finished
-> Comparing bitmaps..vpf-10630: The on-disk and the correct bitmaps 
-> differs. Will be fixed later.
-> Checking Semantic tree:
-> finished
-> No corruptions found
-> There are on the filesystem:
->         Leaves 4817
->         Internal nodes 34
->         Directories 13
->         Other files 180
->         Data block pointers 4822473 (27051 of them are zero)
->         Safe links 0
-> ###########
-> reiserfsck finished at Wed Feb  4 19:53:17 2004
-> ###########
-> sh-2.05b$ sudo reiserfsck /dev/sdb5
-> reiserfsck 3.6.11 (2003 www.namesys.com)
+> > > linux:~ # /usr/local/sbin/reiserfsck --rebuild-tree /dev/hda1
+> > > reiserfsck 3.6.11 (2003 www.namesys.com)
+> > >
+> > > reiserfsck --rebuild-tree started at Wed Feb  4 19:20:21 2004
+> > > ###########
+> > >
+> > > Pass 0:
+> > > ####### Pass 0 #######
+> > > Loading on-disk bitmap .. ok, 8434 blocks marked used
+> > > Skipping 8434 blocks (super block, journal, bitmaps) 0 blocks will be
+> > > read
+> > >
+> > > Could not find a hash in use. Using "r5"
+> > >         "r5" hash is selected
+> > > Flushing..finished
+> > >         Read blocks (but not data blocks) 0
+> > >                 Leaves among those 0
+> > >                 Objectids found 2
+> > >
+> > > Pass 1 (will try to insert 0 leaves):
+> > > ####### Pass 1 #######
+> > > Looking for allocable blocks .. finished
+> > >
+> > > Flushing..finished
+> > >         0 leaves read
+> > >                 0 inserted
+> > > ####### Pass 2 #######
+> > > Flushing..finished
+> > >
+> > >
+> > > No reiserfs metadata found.  
+> > 
+> > > debugreiserfs 3.6.11 (2003 www.namesys.com)
+> > >
+> > > Count of blocks on the device: 7327648
+> > > Free blocks: 7327648
 > 
-> *************************************************************
-> ** If you are using the latest reiserfsprogs and  it fails **
-> ** please  email bug reports to reiserfs-list@namesys.com, **
-> ** providing  as  much  information  as  possible --  your **
-> ** hardware,  kernel,  patches,  settings,  all reiserfsck **
-> ** messages  (including version),  the reiserfsck logfile, **
-> ** check  the  syslog file  for  any  related information. **
-> ** If you would like advice on using this program, support **
-> ** is available  for $25 at  www.namesys.com/support.html. **
-> *************************************************************
-> 
-> Will read-only check consistency of the filesystem on /dev/sdb5
-> Will put log info to 'stdout'
-> 
-> Do you want to run this program?[N/Yes] (note need to type Yes if you 
-> do):Yes
-> ###########
-> reiserfsck --check started at Wed Feb  4 19:53:57 2004
-> ###########
-> Replaying journal..
-> 0 transactions replayed
-> Checking internal tree..finished
-> Comparing bitmaps..finished
-> Checking Semantic tree:
-> finished
-> No corruptions found
-> There are on the filesystem:
->         Leaves 4817
->         Internal nodes 34
->         Directories 13
->         Other files 180
->         Data block pointers 4822473 (27051 of them are zero)
->         Safe links 0
-> ###########
-> reiserfsck finished at Wed Feb  4 19:54:23 2004
-> ###########
-> 
+> Thanks
 > 
 > 
 
