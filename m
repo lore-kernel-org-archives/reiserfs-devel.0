@@ -1,57 +1,31 @@
-From: "darren" <teodarren@myrealbox.com>
-Subject: RE: samba
-Date: Sat, 5 Oct 2002 17:26:30 +0800
-Message-ID: <000c01c26c51$4e1f7370$0101a8c0@bummer>
-References: <5.1.1.6.2.20021006021931.031d5998@192.168.2.131>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Re: [STUPID TESTCASE] ext3 htree vs. reiserfs on 2.5.40-mm1
+Date: Mon, 7 Oct 2002 12:51:44 +0400
+Message-ID: <20021007125144.A4967@namesys.com>
+References: <200210042254.23978.Dieter.Nuetzel@hamburg.de> <20021004220126.GB3000@clusterfs.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11616-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11617-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <5.1.1.6.2.20021006021931.031d5998@192.168.2.131>
+Content-Disposition: inline
+In-Reply-To: <20021004220126.GB3000@clusterfs.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: system_lists@nullzone.org, 'Gertjan Vinkesteijn' <gvink@xs4all.nl>, 'the filesystem' <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Dieter =?koi8-r?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>, ReiserFS List <reiserfs-list@namesys.com>, Chris Mason <mason@suse.com>, Paul P Komkoff Jr <i@stingr.net>, Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
 
-I am running Samba on Reiserfs 20GB hdd, Kernel 2.4.19.
+Hello!
+On Fri, Oct 04, 2002 at 04:01:26PM -0600, Andreas Dilger wrote:
 
-I noticed that the performance is quite bad when you copy large amount
-of files into or out of the "shared folder".
+> > Try with latest ReiserFS data-logging and see what we get?
+> > Chris do you have something for 2.5.40+ ready?
+> I don't think it will make much difference - the files being created
+> are zero-length files so the journaling mode is irrelevant.
 
-Top shows that Samba is taking up like 80% of the CPU time during the
-transfer process.
+The mode is unerlevend indeed, but there are other fixes in hose pathces that
+prevent too frequent updates to disk and similar stuff, and that might help.
 
------Original Message-----
-From: system_lists@nullzone.org [mailto:system_lists@nullzone.org] 
-Sent: Sunday, October 06, 2002 8:21 AM
-To: Gertjan Vinkesteijn; the filesystem
-Subject: Re: [reiserfs-list] samba
-
-
-Samba here in a 0+1 HW Raid of 4*80 GB IDE disks
-
-At 08:18 05/10/2002 +0200, Gertjan Vinkesteijn wrote:
->Dear audience,
->
->Last year samba was not yet possible on reiserfs, it is on xfs from sgi
-
->though. Does anybody know if work has been done in that area? It would
-be 
->very handy having (parts of) my 40GByte reiserfs filesystem letting
-share 
->on our subnet with windows computers.
->
->Appreciate your thoughts
->
->--
->Gertjan Vinkesteijn
->mailto:gvink@xs4all.nl
->homepage: http://gershwin.xs4all.nl
->
-
-
-
-
-
+Bye,
+    Oleg
