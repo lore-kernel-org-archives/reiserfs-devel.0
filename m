@@ -1,56 +1,85 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Some errors, tree-related?
-Date: Mon, 28 Jun 2004 22:47:41 +0300
-Message-ID: <20040628194741.GG4990@nysv.org>
+From: beverly reiser <beverly@idiom.com>
+Subject: Re: we need a slogan for our reiser4 t-shirt
+Date: Mon, 28 Jun 2004 18:45:33 -0700
+Message-ID: <5.2.1.1.0.20040628183521.00bbb690@idiom.com>
+References: <200406261304.03783.camel78@iprimus.com.au>
+ <40D9DC3A.9090209@namesys.com>
+ <200406261304.03783.camel78@iprimus.com.au> <40E05BD9.6030708@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19435-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19439-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <40E05BD9.6030708@namesys.com>
+References: <200406261304.03783.camel78@iprimus.com.au>
+ <40D9DC3A.9090209@namesys.com>
+ <200406261304.03783.camel78@iprimus.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>, camel78@iprimus.com.au
+Cc: reiserfs-list@namesys.com
 
-Hi
 
-While I was toying around with unrelated stuff, I noticed I got the good
-old jamming problems that I had with some older auto-snapshot, that is,
-apt-get would lock on 93% and tab expansion would as well, then everything
-would lock. Rebooting needs the SysRq trio.
+I think we could use the words just as they are with out a tree graphic 
+only with this slight modifacation.
+Put REISERFS4 in a different color from the rest of the words.
+>>                   R
+>>                 filEsystem
+>>                    Innovative
+>>         plug-inS
+>>                   Engineered
+>>            secuRe
+>>                   Fast
+>>                   Sleek
+>>engineered  4  performance
 
-Now I got the behavior again, and noted some stuff in the log that I
-could swear wasn't there when I last had these problems. On the other hand, 
-I don't know if they're related. That's why I'm mailing here :)
+or just use :
+>>                   Fast
+>>                   Sleek
+>>engineered  4  performance
 
-Jun 28 22:18:53 shrike kernel: reiser4[xmms(3797)]: traverse_tree (fs/reiser4/search.c:747)[nikita-1481]:
-Jun 28 22:18:53 shrike kernel: WARNING: Too many iterations: 1048576
-Jun 28 22:19:15 shrike kernel: reiser4[xmms(3797)]: traverse_tree (fs/reiser4/search.c:747)[nikita-1481]:
-Jun 28 22:19:15 shrike kernel: WARNING: Too many iterations: 2097152
-Jun 28 22:19:46 shrike kernel: reiser4[xmms(3797)]: traverse_tree (fs/reiser4/search.c:747)[nikita-1481]:
-Jun 28 22:19:46 shrike kernel: WARNING: Too many iterations: 4194304
+What do you think?
+Beverly
+with F
+       S
+        4
+in contrasting colors.
 
-Then I restarted the computer. Bugger me, I can't remember if I restarted
-because of a lock-up there or not, but this I got later:
 
-Jun 28 22:36:21 shrike kernel: reiser4[xmms(3834)]: renew_sibling_link (fs/reiser4/tree_walk.c:441)[nikita-3532]:
-Jun 28 22:36:21 shrike kernel: WARNING: Sibling nodes on the different levels: 1 != 2
 
-[...]
 
-Jun 28 22:38:51 shrike kernel: reiser4[xmms(4068)]: renew_sibling_link (fs/reiser4/tree_walk.c:441)[nikita-3532]:
-Jun 28 22:38:51 shrike kernel: WARNING: Sibling nodes on the different levels: 1 != 2
 
-So, what's up here? Is it related to any known stability issue?
 
-I re-mkfs'd my home partition, but did an fsck on the / partition, when it
-was last needed. Could that affect here? Do I _really_ have to mkfs again?
-Or am I barking up the wrong tree? (No pun intended :D)
+At 10:56 AM 6/28/2004 -0700, Hans Reiser wrote:
+>Michael Milverton wrote:
+>
+>>                    R
+>>                 filEsystem
+>>                    Innovative
+>>         plug-inS
+>>                   Engineered
+>>            secuRe
+>>                   Fast
+>>                   S
+>>                   4
+>>engineered for performance
+>>
+>>
+>>The Idea:
+>>Use REISERFS4 as the trunk of a tree with descriptive words as branches 
+>>and a witty or relavent logo as the grass of the tree. This idea would 
+>>look much better as a graphic with color eg brown centre letters for 
+>>REISERFS4 that were larger and stood out and green for the word branches 
+>>and grass etc.
+>>
+>>P.S I know this is probably of the mark but it is a little bit different 
+>>so I thought it may be useful
+>>
+>>Thankyou
+>>Michael Milverton
+>>
+>Interesting.
 
-Thanks!
-
--- 
-mjt
 
