@@ -1,90 +1,94 @@
 From: Sonny Rao <sonny@burdell.org>
 Subject: Re: Odd Block allocation behavior on Reiser3
-Date: Tue, 10 Aug 2004 19:00:37 -0400
-Message-ID: <20040810230037.GA72782@kevlar.burdell.org>
-References: <20040809201939.GA55683@kevlar.burdell.org> <1092083451.10651.218.camel@watt.suse.com> <20040809220459.GA57121@kevlar.burdell.org> <41187657.7030709@namesys.com> <20040810154514.GA67591@kevlar.burdell.org> <41190B5A.7070503@namesys.com> <1092162318.10651.365.camel@watt.suse.com> <411924A3.8010305@namesys.com>
+Date: Tue, 10 Aug 2004 19:12:19 -0400
+Message-ID: <20040810231219.GA72358@kevlar.burdell.org>
+References: <20040809201939.GA55683@kevlar.burdell.org> <1092083451.10651.218.camel@watt.suse.com> <20040809220459.GA57121@kevlar.burdell.org> <41187657.7030709@namesys.com> <20040810154514.GA67591@kevlar.burdell.org> <41190B5A.7070503@namesys.com> <1092162318.10651.365.camel@watt.suse.com> <1092163813.10651.372.camel@watt.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20164-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20165-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <411924A3.8010305@namesys.com>
+In-Reply-To: <1092163813.10651.372.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
+To: Chris Mason <mason@suse.com>
 Cc: reiserfs-list@namesys.com
 
-On Tue, Aug 10, 2004 at 12:40:19PM -0700, Hans Reiser wrote:
-> Chris Mason wrote:
-> 
-> >On Tue, 2004-08-10 at 13:52, Hans Reiser wrote:
+On Tue, Aug 10, 2004 at 02:50:13PM -0400, Chris Mason wrote:
+> On Tue, 2004-08-10 at 14:25, Chris Mason wrote:
+> > On Tue, 2004-08-10 at 13:52, Hans Reiser wrote:
+> > > Sonny Rao wrote:
+> > > 
+> > > >On Tue, Aug 10, 2004 at 12:16:39AM -0700, Hans Reiser wrote:
+> > > >  
+> > > >
+> > > >>Interesting.What happens without overwrite, that is, if you write more 
+> > > >>files without deleting the old ones?
+> > > >>    
+> > > >>
+> > > >
+> > > >Below I made 24 one gigabyte files in sequence
+> > > >All of them are similarly fragmented: 
+> > > >data # filefrag *
+> > > >datafile0: 268 extents found
+> > > >
+> > > this could explain some reiser3 performance problems.   This is what 
+> > > happens when I spend all my time chasing funding and don't spend it 
+> > > reviewing code and benchmarks, sigh.
+> > > 
+> > > Thanks for spotting this.  I would be curious if this is occuring near 
+> > > the transition between unformatted nodes and their parents, or something 
+> > > else.
 > > 
-> >
-> >>Sonny Rao wrote:
-> >>
-> >>   
-> >>
-> >>>On Tue, Aug 10, 2004 at 12:16:39AM -0700, Hans Reiser wrote:
-> >>>
-> >>>
-> >>>     
-> >>>
-> >>>>Interesting.What happens without overwrite, that is, if you write more 
-> >>>>files without deleting the old ones?
-> >>>>  
-> >>>>
-> >>>>       
-> >>>>
-> >>>Below I made 24 one gigabyte files in sequence
-> >>>All of them are similarly fragmented: 
-> >>>data # filefrag *
-> >>>datafile0: 268 extents found
-> >>>
-> >>>     
-> >>>
-> >>this could explain some reiser3 performance problems.   This is what 
-> >>happens when I spend all my time chasing funding and don't spend it 
-> >>reviewing code and benchmarks, sigh.
-> >>
-> >>Thanks for spotting this.  I would be curious if this is occuring near 
-> >>the transition between unformatted nodes and their parents, or something 
-> >>else.
-> >>   
-> >>
-> >
-> >There have been a few threads on this on reiserfs-list
-> >
-> >singer:/data # dd if=/dev/zero of=foo bs=1MB count=1000
-> >1000+0 records in
-> >1000+0 records out
-> >singer:/data # filefrag foo
-> >foo: 1 extent found
-> >
-> >The new allocator really should be doing a better job here.
-> >
-> >-chris
-> >
-> >
-> >
-> >
+> > There have been a few threads on this on reiserfs-list
 > > 
-> >
-> Well, this explains why we haven't cured the problem, we can't reproduce 
-> it, yes?
+> > singer:/data # dd if=/dev/zero of=foo bs=1MB count=1000
+> > 1000+0 records in
+> > 1000+0 records out
+> > singer:/data # filefrag foo
+> > foo: 1 extent found
+> > 
+> > The new allocator really should be doing a better job here.
 > 
-> We need to figure out what Sonny is doing, and maybe have elena try on 
-> yet another machine.
+> Hmpf, that's what I get for expecting filefrag to work properly on
+> amd64.  The actual number of extents is 199, which is still better then
+> 268.  Using fibmap, the fragmentation percentage is still the same as
+> ext3 (99.99% unfragmented) meaning the length between the extents is
+> quite small.
+> 
+> If you mount with:
+> 
+> mount -o alloc=skip_busy:oid_groups
+> 
+> You get 8 extents on a 1GB file.
+> 
+> This is because the oid grouping tries much harder to isolate the file
+> data from data from other files and metadata.  It is far from optimal
+> for normal usage, but for huge files it works nicely.
+>
 
-As far as reproducing these results, I have been able to reproduce
-those results on another machine running an older 2.6.4 kernel using a
-simple dd command line to produce the files :
+Is that "oid_groups" option present in the stock 2.6.7 kernel?  It
+didn't like that mount option, and a cursory grep for "oid_groups" in
+linux-2.6.7/fs/reiserfs/* doesn't show me anything.  The "skip_busy"
+option worked but didn't seem to change allocation behavior.
 
-for i in $(seq 0 10) ; do dd if=/dev/zero of=file${i} bs=1k count=$[
-1024 * 1024 ] ; done
+Another piece of information that pointed me at possible fragmentation
+came from iostat.  It shows during my tests that the average request
+size is about 745 sectors while on ext3 I see an average request size
+of about 900 sectors.   
+The io size limit on the kernel was 512k, so the max size should have
+been about 1024 sectors.  On JFS and XFS I did see the average request size
+very close to 1024 sectors, and the best performance.
 
-All 11 files had 268 extents.
+So, even though you are probably correct about the 2 block gaps being
+metadata, the iostat data could be interpreted to indicate this
+behavior is hurting performance relative to the other filesystems on
+this particular test.
 
-Sonny
+I'm planning on trying out 2.6.8-rc4 soon.
+
+Sonny 
+
