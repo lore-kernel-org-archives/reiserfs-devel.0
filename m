@@ -1,37 +1,24 @@
-From: Redeeman <redeeman@metanurb.dk>
+From: Mike Fedyk <mfedyk@matchmail.com>
 Subject: Re: Snapshot against 2.6.1 released.
-Date: Tue, 20 Jan 2004 00:47:20 +0100
-Message-ID: <1074556040.32288.0.camel@redeeman.linux.dk>
-References: <16395.60465.989777.981597@laputa.namesys.com>
-Reply-To: redeeman@metanurb.dk
+Date: Mon, 19 Jan 2004 16:08:48 -0800
+Sender: Mike Fedyk <mfedyk@srv-lnx2600.matchmail.com>
+Message-ID: <20040120000848.GZ1748@srv-lnx2600.matchmail.com>
+References: <16395.60465.989777.981597@laputa.namesys.com> <1074556040.32288.0.camel@redeeman.linux.dk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16578-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16579-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16395.60465.989777.981597@laputa.namesys.com>
+Content-Disposition: inline
+In-Reply-To: <1074556040.32288.0.camel@redeeman.linux.dk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Content-Transfer-Encoding: 7bit
+To: Redeeman <redeeman@metanurb.dk>
+Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-the love kernel patch provides reiser4
+On Tue, Jan 20, 2004 at 12:47:20AM +0100, Redeeman wrote:
+> the love kernel patch provides reiser4
 
-
-On Mon, 2004-01-19 at 15:39, Nikita Danilov wrote:
-> Hello,
-> 
-> new snapshot against 2.6.1 kernel is at
-> 
-> http://namesys.com/snapshots/2004.01.19/
-> 
-> look into READ.ME file for details.
-> 
-> Nikita.
--- 
-Regards, Redeeman
-()  ascii ribbon campaign - against html e-mail 
-/\                        - against microsoft attachments
-
-
+What else does this unknown patch do?
