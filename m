@@ -1,97 +1,48 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: On plugins, on-disk formatting and such
-Date: Mon, 12 Apr 2004 18:33:44 +0300
-Message-ID: <20040412153344.GG14134@nysv.org>
-References: <20040410100701.GE5229@nysv.org> <407AB278.8030209@namesys.com>
+From: "John D. Heintz" <jheintz@pobox.com>
+Subject: Do xml-like namespaces make sense for Reiser4? (re: metas thread)
+Date: Mon, 12 Apr 2004 10:45:50 -0500
+Message-ID: <407AB9AE.3060801@pobox.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17869-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17870-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <407AB278.8030209@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com, Nikita Danilov <god@namesys.com>, vitaly@thebsh.namesys.com, vs <vs@thebsh.namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On Mon, Apr 12, 2004 at 08:15:04AM -0700, Hans Reiser wrote:
+Hi all,
 
->oh excellent, I think we just have to fix a problem with crashing when 
->mmap consumes all of memory, and we are ready to ship
+I work with XML quite a lot in my job and deal with XML namespaces 
+often. While I think they have some problems in the XML world (poor 
+integration with XML InfoSet) they might be useful for Reiser4 and they 
+seem to play well with the Set Theoretic underlying models (as far as I 
+can tell :).
 
-This is not something that other kernel people should look into?
+Here's what I'm thinking:
+Instead of `cat foo.txt/metas/uid`
+it would be `cat foo.txt/reiser4:metas/uid` or perhaps `cat 
+foo.txt/reiser4:uid`.
 
->I don't understand your question.  We don't use xattrs and I think they 
->should never have been put into the kernel.  We will not burden our code 
->with support for them.
+Here the "reiser4" shorthand would map to "http://www.namesys.com/v4" or 
+whatever Hans and team decided.
 
-This I understood, and I may be a bit lost myself here.
-I meant that if a program does a xattr call on Reiser4 it gets
-transparently mapped to the Reiser4 api. I dunno, and really, I
-don't even care that much. As long as it works and gets into the mainline
-kernel.
+The reiser4 namespace could be hardcoded or compiled in  and exposed via 
+`cat /proc/fs/reiser4/namespace`.
 
-[on.disk.layout.]
->Because plugins make it easy and painless for users, you can expect it 
->to change all the time.  If you mean change without grace, we try to 
->avoid that.  Unfortunately curing a recent discovery that we cannot do 
->it gracefully (in regards to inheritance) required a non-graceful change 
->to cure it, sorry about that.  I still need to review that code to make 
->sure all issues regarding inheritance and defaults are fully graceful.
+Other namespaces could be added to files/directories and I'd assume 
+something like:
+`cat foo.txt/reiser4:namespaces` would list all the namespaces available 
+for a particular file.
+Something like:
+reiser4    http://www.namesys.com/v4
+streams   http://www.evil-empire.com/streams
+snapcm   http://www.snapcm.com/snapcm
 
-What I was basically after was the real bottom-line end-user perspective.
+John D. Heintz
 
-Every chance of having to do an mkfs is a turnoff. Naturally plugins
-may change the layout, but that's the point of grace :)
-
->>4) http://thebsh.namesys.com/snapshots/2004.03.26/READ.ME
->>  4.1) I have used Reiser4 as my rootfs for a long, long time.
->Thanks, Vitaly fix that.
-
-Is the problem supposed to be about remounting?
-I tried -o remount,ro and ,rw on my home partition, it worked, but
-after doing a SysRq remount mount still said it was rw.
-
-This freakishness may be separate from being able to use it as
-the root fs.
-
-[loadable.fs.plugins]
->It is because I want either code or money from those who  build on top 
->of reiser4.  Allowing people to escape the GPL for free is not to my 
->advantage.  Also, I don't want to find out whether it affects performance.
-
-This is certainly a valid point.
-Isn't it still possible that someone writes an fs plugin and never releases
-it, though?
-
-Maybe it's possible that it would affect performance... Although I have
-no data or experience from benchmarks with average kernel modules.
-
->>  One of the good things for me in Linux is that I can use honest
->>  modules to try something, rmmod, recompile, insmod and I don't
->>  think this is any different.
->Hmmm, when your NVIDIA drivers lag a few releases and you don't have the 
->source, fun, yes?
-
-I'm afraid I don't follow :)
-The fear here is that I download a third-party plugin, use it, update
-my kernel and get breakage because the third-party hasn't updated yet?
-
-This is always a risk when using third-party modules, be they GPL or not.
-But proprietary, closed-source, (thus infringing?), Reiser4 plugins are
-imo a lot less likely.
-
->This performance advantage is due to allocate on flush allowing us to 
->write in huge extents at flush time even though files get written to in 
->slow trickles.  This improves b
-
-NO CARRIER+++
-
-Thanks a million for the answers!
-
--- 
-mjt
-
+ps - SnapCM is the name of a versioned linking model that I developed 
+some time ago and hope one day to build a plugin for Reiser4. I'm being 
+optimistic listing it in the available namespaces. ;-)
