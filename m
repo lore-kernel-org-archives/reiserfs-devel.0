@@ -1,38 +1,46 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: a hosed reiserfs
-Date: Mon, 28 Jun 2004 10:46:05 -0700
-Message-ID: <40E0595D.8060106@namesys.com>
-References: <20040625115258.A27445@tux.org> <200406252006.55426.vitaly@namesys.com> <40DC58B7.109@namesys.com> <20040625144523.A5159@tux.org>
+Subject: Re: we need a slogan for our reiser4 t-shirt
+Date: Mon, 28 Jun 2004 10:56:41 -0700
+Message-ID: <40E05BD9.6030708@namesys.com>
+References: <40D9DC3A.9090209@namesys.com> <200406261304.03783.camel78@iprimus.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19432-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19433-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040625144523.A5159@tux.org>
+In-Reply-To: <200406261304.03783.camel78@iprimus.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Bruce Israel <israel@tux.org>
-Cc: reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>
+To: camel78@iprimus.com.au
+Cc: reiserfs-list@namesys.com, Beverly Reiser <beverly@idiom.com>
 
-Bruce Israel wrote:
+Michael Milverton wrote:
 
->On Fri, Jun 25, 2004 at 09:54:15AM -0700, Hans Reiser wrote:
+>                    R
+>                 filEsystem
+>                    Innovative
+>         plug-inS
+>                   Engineered
+>            secuRe
+>                   Fast
+>                   S
+>                   4
+>engineered for performance
+>
+>
+>The Idea:
+>Use REISERFS4 as the trunk of a tree with descriptive words as branches and a 
+>witty or relavent logo as the grass of the tree. This idea would look much 
+>better as a graphic with color eg brown centre letters for REISERFS4 that 
+>were larger and stood out and green for the word branches and grass etc.
+>
+>P.S I know this is probably of the mark but it is a little bit different so I 
+>thought it may be useful
+>
+>Thankyou
+>Michael Milverton
 >  
 >
->>Vitaly, hardware errors are only supported by us if they pay the $25...
->>    
->>
->
->OK, I have no problem paying $25 if you can help me.  What should I do?
->
->Bruce
->
->
->  
->
-www.namesys.com/support.html takes credit cards.  Thanks for being our 
-customer.
-
-Hans
+Interesting.
