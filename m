@@ -1,28 +1,61 @@
-From: Mike Fedyk <mfedyk@matchmail.com>
-Subject: Re: reiser4 debugging status info
-Date: Fri, 15 Aug 2003 11:49:30 -0700
-Message-ID: <20030815184930.GK1027@matchmail.com>
-References: <3F3CFE6B.1010700@namesys.com> <16189.659.769102.828401@laputa.namesys.com> <3F3D0575.1020504@namesys.com> <16189.1754.116380.909774@laputa.namesys.com>
+From: Cyrille Chepelov <cyrille@chepelov.org>
+Subject: Re: [2.6.0-test3 + reiser4] NULL dereference a virtual address 00000009
+Date: Fri, 15 Aug 2003 21:47:04 +0200
+Message-ID: <20030815194704.GA12726@chepelov.org>
+References: <20030815151205.GA9260@chepelov.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15331-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-15332-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <16189.1754.116380.909774@laputa.namesys.com>
+In-Reply-To: <20030815151205.GA9260@chepelov.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: Hans Reiser <reiser@namesys.com>, Reiserfs List <reiserfs-list@namesys.com>, Oleg Drokin <green@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-On Fri, Aug 15, 2003 at 08:14:18PM +0400, Nikita Danilov wrote:
-> Hans Reiser writes:
->  > nobody ever read that, and I think the mailing list is much more 
->  > appropriate than the website, because the website had problems with 
->  > being obsolete when it had the News section.
-> 
-> I think best way to settle this is to ask list readers. :)
+Le Fri, Aug 15, 2003, =E0 05:12:05PM +0200, Cyrille Chepelov a =E9crit:
+> Greetings,
+>=20
+> while shaking reiserfs4 a little, I stumbled upon a NULL dereference.
 
-Please post to the list...
+
+Extra details:
+
+	* I can reproduce the crash after a reboot (or N reboots), by
+mounting the fs and issuing an "apt-get check" (yes, this fs holds /usr
+and /var of a test machine).
+
+	* I could run strace on "apt-get check", but I could not get the
+file to be stored before the oops, so here's the end of it, in manually
+copied form:
+
+stat64("/var/lib/apt/lists/security.debian.org_dists_testing_updates_main_b=
+inary-i386_Packages",
+{st_mode=3DS_IFREG|0644, st_size=3D7082, ...}) =3D 0
+stat64("/var/lib/apt/lists/security.debian.org_dists_testing_updates_main_b=
+inary-i386_Packages",
+{st_mode=3DS_IFREG|0644, st_size=3D7082, ...}) =3D 0
+munmap(0x4087e000, 4480972)                =3D 0
+close(6)
+open("/var/cache/apt/srcpkgcache.bin", O_RDONLY) =3D 6
+fcntl64(6, F_SETFS, FD_CLOEXEC)            =3D 0
+fstat64(6, {st_mode=3DS_IFREG|0644, st_size =3D 4480972, ...}) =3D 0
+fstat64(6, {st_mode=3DS_IFREG|0644, st_size =3D 4480972, ...}) =3D 0
+read(6, Unable to handle kernel NULL pointer dereference at virtual address
+00000009
+and then follows the oops I already posted.
+
+After a reboot, I tried to cat /var/cache/apt/srcpkgcache.bin, and nothing
+ill happened. If after that, I try again to run apt-get check, again I
+crash.
+
+I'm sending Nikita Danilov and Hans Reiser privately an URL to an image of
+the file system. I'm leaving the computer "as is" for the next couple of
+days, so if you guys want me to run specific things, I can do that.
+
+	-- Cyrille
+
+--=20
