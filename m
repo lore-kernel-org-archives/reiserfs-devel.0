@@ -1,45 +1,50 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Performance improvements to key comparison functions
-Date: Wed, 14 Jul 2004 00:03:44 -0700
-Message-ID: <40F4DAD0.1060307@namesys.com>
-References: <20040713221928.70FA315D92@mail03.powweb.com>
+From: Sean Plaice <splaice@gmail.com>
+Subject: Re: reiserfs errors in dmesg output
+Date: Wed, 14 Jul 2004 03:45:40 -0700
+Message-ID: <ae9bd76a04071403452dbe056b@mail.gmail.com>
+References: <ae9bd76a040703052222e0065f@mail.gmail.com> <40E6AC37.1090609@namesys.com> <ae9bd76a0407031610bfd1c7d@mail.gmail.com> <40E7C2BA.8050003@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19608-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19609-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040713221928.70FA315D92@mail03.powweb.com>
+In-Reply-To: <40E7C2BA.8050003@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Dabbs <david@dabbs.net>
+Content-Type: text/plain; charset="us-ascii"
+To: "Vladimir V. Saveliev" <vs@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-David Dabbs wrote:
+On Sun, 04 Jul 2004 12:41:30 +0400, Vladimir V. Saveliev <vs@namesys.com> wrote:
+> Sean Plaice wrote:
+> >>>sd(8,6):journal-1777: buffer 109798 bad state !PREPARED !LOCKED !DIRTY
+> >>> JDIRTY_WAIT
+> >>>sd(8,6):journal-1777: buffer 185659 bad state !PREPARED !LOCKED !DIRTY
+> >>> JDIRTY_WAIT
+> >>>sd(8,6):journal-1777: buffer 208840 bad state !PREPARED !LOCKED !DIRTY
+> >>> JDIRTY_WAIT
+> >>>sd(8,6):journal-1777: buffer 300870 bad state !PREPARED !LOCKED !DIRTY
+> >>> JDIRTY_WAIT
+> >>>
+> >>
+> >>IIRC, sometime ago, there were some fixes for race conditions which
+> >>might cause this. Chris, would you please confirm that?
+> >
+> >
+> > If this is a race condition that is specific to the kernel I am
+> > running could this lead to corruption or system instability?
+> > 
+> Still waiting for Chris reply
+> 
+> 
+I notived this thread sort of died, but the possible race condition is
+still occuring. I have scheduled an outage window to upgrade the
+kernel to the lastest Fedora Core distributed kernel release.
 
->Scratch the per-level caching idea. What was I thinking? A cached node's
->level is not invariant.
->
-Yes it is, for balanced trees at least.
+If the problem persists I will just build my own kernel from the
+lastest 2.4.x vanilla tree. If the problem persists there I will
+update this thread once again.
 
-> But (pardon my ignorance of the tree operations)
->could nodes at different tree levels have ld_/rd_key ranges within which the
->key sought could fit, or is the level check present to avoid key comparisons
->against nodes that cannot possibly match (because the level is different)?
->  
->
-I don't quite understand you.  Any given key will have at least one node 
-(more than one only if there are multiple items with the same key, which 
-happens for directory items if hashing is not perfect)  into which it 
-falls at each level of the tree.
-
->
->david
->
->
->
->
->  
->
-
+-- 
+Sean
