@@ -1,65 +1,72 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+From: Jonathan Briggs <jbriggs@esoft.com>
 Subject: Re: implementing reiserfs in C++ for a new OS
-Date: Mon, 9 Aug 2004 18:12:52 +0300
-Message-ID: <20040809151252.GN1284@nysv.org>
-References: <71d3364904080706112e72fb6b@mail.gmail.com> <41151698.3020508@namesys.com> <71d3364904080907361d3d7064@mail.gmail.com> <41178FA8.80107@futuretg.com>
+Date: Mon, 09 Aug 2004 09:17:35 -0600
+Message-ID: <1092064655.768.4.camel@localhost.localdomain>
+References: <71d3364904080706112e72fb6b@mail.gmail.com>
+	 <41151698.3020508@namesys.com> <71d3364904080907361d3d7064@mail.gmail.com>
+	 <41178FA8.80107@futuretg.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20084-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-0JxObzfbIz0SbbF2kR+Y"
+Return-path: <reiserfs-list-return-20085-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 In-Reply-To: <41178FA8.80107@futuretg.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
-Cc: Ramachandra K <ariston@gmail.com>, reiserfs-list@namesys.com, reiser@namesys.com
+To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-On Mon, Aug 09, 2004 at 04:52:24PM +0200, Dr. Giovanni A. Orlando wrote:
+--=-0JxObzfbIz0SbbF2kR+Y
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
->Opps. There are something wrong here.
+On Mon, 2004-08-09 at 08:52, Dr. Giovanni A. Orlando wrote:
+> Ramachandra K wrote:
+>=20
+> >Hans Reiser <reiser@namesys.com> wrote:
+> >
+> > =20
+> >
+> >>Is it a free OS, or do you need to buy a license from us in
+> >>addition to  the GPL?
+> >>
+> >>   =20
+> >>
+> >
+> >ReiserFS would be implemented FROM SCRATCH for Capital
+> >in C++ with the help of existing literature/documentation etc.
+> >By this I mean that no existing code would be used, that is
+> >ported or modified in any way. This should mean that GPL=20
+> >would not be applicable to the code written for my OS, Capital.
+> > =20
+> >
+> Opps. There are something wrong here.
+>=20
+> Seems that Capital OS, will stole the ReiserFS idea and re-implement.
+>=20
+> Very honest, very capital like.
+>=20
+> Thanks,
+> Giovanni
 
-No, there is not.
+To be fair, it is the same as OSS has done to Microsoft with NTFS and
+FAT.  I would not expect much help from Hans Reiser for such a project,
+though.
+--=20
+Jonathan Briggs
+jbriggs@esoft.com
 
->Seems that Capital OS, will stole the ReiserFS idea and re-implement.
+--=-0JxObzfbIz0SbbF2kR+Y
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
-No, Capital OS is _re-implementing_ a free (in every sense of the word)
-file system. Is that so very different from implementing a free Start
-button in your window manager? Re-implementing a science-fiction story
-in a fantasy world? Re-implementing some other country's political party
-in your own?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
 
-There is no theft here.
+iD8DBQBBF5WPG8fHaOLTWwgRAn5gAJ4sqrg7l3Ur4l+GGeiBce/SsTPU5gCfVtbK
+PIejDp2M2GsGPAF3J3T7Tu4=
+=d2Pw
+-----END PGP SIGNATURE-----
 
->Very honest, very capital like.
-
-And exactly what is the loss to Namesys?
-
-Yes, Hans Reiser thought up good ideas for a file system and implemented
-them. This was work.
-
-Then someone else looks at his work and says that it could be implemented
-somewhere else with some work. Thus Hans Reiser just gave himself and
-his company a chance to get more fame from people who port it to other
-operating systems, not to mention possible support and helpdesk income
-from helping with this porting.
-
-The only reason you think it's dishonest is the fact that Namesys would
-not get money from this project?
-Maybe they will, maybe they won't, but they get fame and that always
-carries a bit.
-
-Maybe one of the reasons Reiserfs is being ported here instead of NTFS
-is the fact that it's free. It's just every bit as OK to re-implement NTFS.
-Hans gave people this chance to (easier) re-implement Reiserfs, contributing
-a lot to society, and no one should piss on the people who take advantage
-of this contribution. How else would you expect this show to go on?
-
-To the original poster:
-Implement Reiser4 instead, it's far superior.
-
--- 
-mjt
+--=-0JxObzfbIz0SbbF2kR+Y--
 
