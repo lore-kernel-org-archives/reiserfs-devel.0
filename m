@@ -1,53 +1,31 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: mount reiserfs3 REALLY read only?
-Date: Mon, 20 Dec 2004 18:28:21 +0300
-Message-ID: <1103556500.3615.33.camel@tribesman.namesys.com>
-References: <20041206123706.GA25176@melkor.dnp.fmph.uniba.sk>
-	 <1102340556.5598.81.camel@tribesman.namesys.com>
-	 <20041206165337.GA25094@melkor.dnp.fmph.uniba.sk>
-	 <1102592473.3666.53.camel@tribesman.namesys.com>
-	 <20041220124922.GA18135@melkor.dnp.fmph.uniba.sk>
+From: Tom Vier <tmv@comcast.net>
+Subject: Re: Need Warm Fuzzies, ReiserFS (3)
+Date: Mon, 20 Dec 2004 10:38:40 -0500
+Message-ID: <20041220153840.GA11409@zero>
+References: <41C66615.5010206@simutronics.com> <200412201331.25180.christian.mayrhuber@gmx.net>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22849-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22850-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20041220124922.GA18135@melkor.dnp.fmph.uniba.sk>
+Content-Disposition: inline
+In-Reply-To: <200412201331.25180.christian.mayrhuber@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Radovan Garabik <garabik@melkor.dnp.fmph.uniba.sk>
+Content-Transfer-Encoding: 7bit
+To: Christian Mayrhuber <christian.mayrhuber@gmx.net>
 Cc: reiserfs-list@namesys.com
 
-Hello
+On Mon, Dec 20, 2004 at 01:31:25PM +0100, Christian Mayrhuber wrote:
+> The barrier mount option should provide protection against a corrupted
+> journal during power failure for drives with write caching enabled.
+> (Mostly IDE)
 
-On Mon, 2004-12-20 at 15:49, Radovan Garabik wrote:
-> On Thu, Dec 09, 2004 at 02:41:14PM +0300, Vladimir Saveliev wrote:
-> > Hello
-> > 
-> > Sorry for delay. I had some problems here
-> 
-> Never mind, in the meantime I got some external USB harddisks,
-> created a 1.1TB software RAID (have you seen a RAID over 4 IDE and 3 USB 
-> disks? :-)), copied the partition over and successfully  recovered
-> the data.
-> 
-> This brings us back to the beginning: IMHO having the option to mount
-> reiserfs read-only comes sometimes very useful. Apart from emergency
-> situations, the size of USB mass storage devices is getting big enough
-> to consider putting better filesystem (instead of VFAT) on them. Many of these
-> devices have hardware switches to make them read-only, and therefore
-> unmountable at the current state of affairs. 
-> After clean unmount, you do not need a journal to replay, and since you
-> indend to mount the fs read only, you do not need a journal at all.
-> XFS can do it with -o norecovery,ro, why reiserfs can't?
-> 
+There's a mount option for write barriers? It should be enabled by default.
+Otherwise, that's asking for tons of users with corruption. 
 
-Reiserfs has to replay journal to get its structures which provide
-access to data into consistent state.
-
-Well, probably, reiserfs could replay journal in memory on -o
-norecovery,ro.
-
-
+-- 
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0x15741ECE
