@@ -1,78 +1,52 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Corruption: --fix-fixable results in all nlink values = 0
-Date: Thu, 22 Aug 2002 15:00:24 +0400
-Message-ID: <200208221500.24544.vitaly@namesys.com>
-References: <m3k7mpreij.fsf@merlin.emma.line.org> <3D63BD2D.1070602@web.de> <3D63CA89.3050002@namesys.com>
+From: Linux PCH EDV <linux@pch-edv.com>
+Subject: reiserfsck segmentation fault
+Date: Thu, 22 Aug 2002 13:10:21 +0200
+Message-ID: <1874477781.20020822131021@pch-edv.com>
+Reply-To: Linux PCH EDV <linux@pch-edv.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11284-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11285-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3D63CA89.3050002@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>, degerrit@web.de
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hans Reiser wrote:
-> Gerrit Hannaert wrote:
-> > Hans Reiser wrote:
-> >> It is not that I oppose putting it into the tree with a fixed key for
-> >> the file holding it, it is that I want us to work on other things
-> >> instead.
-> >>
-> >> Hans
-> >
-> > Why not just run 'badblocks' (or the failure mechanism which now
-> > aborts with "bread: Cannot read a block") as an (optional) part of
-> > fsck and use the output in a bad-block-marking phase?
->
-> This is good UI design.  Vitaly....
+Hello all,
 
-some block could be read at the fifth attempt, so badblocks may show 
-different results every time, but you want such blocks to be marked 
-as bad all the time.
+I just encountered a major problem with one of my
+reiserfs-filesystems. I had to reinstall my SuSE 8.0-Linux over an
+existing one (which had some problems that have nothing to do with the
+problem described here). I told the setup not to format anything
+rather leave all filesystems as they were and mount the root
+filesystem "/" to the same partition as before. The setup wouldn't let
+me enter a mountpoint for the important "data partition" (hdb3) formatted
+with reiserfs, so I simply left it alone.
+Everything seemed to be ok afterwards, after a reboot my old data
+partition had been mounted under "/data2". I changed that by editing
+"/etc/fstab". There I changed the mountpount from "/data2" to
+"/server2" which was the mountpoint the partition had before the installation.
+While applying the change to fstab with yast2 the system froze.
+Therefore I had to reboot.
+After that reboot, the system wouldn't recognize the partition
+anymore. reiserfsck told me that it couldn't find any
+reiserfs-partition on hdb3. So I rebuilt the superblock with
+reiserfsck. I hope that I chose the right "version" from the ones that
+reiserfsck offered me, at least I remembered that it used to be a
+3.5-partition.
+Now I try to use reiserfsck for rebuilding the tree.
+I enter "reiserfsck --rebuild-tree /dev/hdb3"
+It gives me a segmentation fault after saying
+"Loading on-disk bitmap ..ok, 16828156 blocks marked used".
+I am using reiserfsck 3.x.1b.
+The harddisk is a Maxtor 4G160J8 with 160 gigabyte storage space. It
+is supported by both the kernel (2.4.18) and the BIOS.
 
-> > Then you don't need to store the list of bad blocks anywhere, at least
-> > not for fsck anyway ;-). Personally though, as a user, I'd like to
-> > confirm the list of bad blocks in this case (in case it's too large I
-> > might decide not to do it...)
-> >
-> > It wasn't even clear to me until last week that the hard disk *also*
-> > did remapping of bad blocks, whether automatically or with some
-> > vendor-tool. Perhaps any fsck failure due to hardware error should
-> > recommend using low-level disk-checking tools provided by hard disk
-> > vendors prior to taking any action itself?
-> >
-> > - Gerrit
+Can anyone help?
 
-reiserprogs know how to do the following (disabled for now):
-1) reiserfsck --check -B badblocks_file 
-checks that blocks from the badblocks_file are not used by an internal 
-tree, except the object [-1 -1] and all of these blocks exist as 
-unformatted pointers in the object [-1 -1] and all of them are marked 
-as used in on-disk bitmap.
-2) reiserfsck --fix-fixable -B badblocks_file
-checks that blocks from the badblocks_file are not used by an internal 
-tree, remove the body of the object [-1 -1] and add all blocks from the 
-file badblocks_file into the object [-1 -1] as unformatted pointers.
-3) reiserfsck --rebuild-tree -B badblocks_file
-rebuilds an internal tree without pointers to blocks specified in the 
-file badblocks_file, removes the body of the object [-1 -1], add all 
-blocks from the file badblocks_file into the file [-1 -1] when the tree 
-is rebuilt.
-4) debugreiserfs -B badblocks_file
-searches the key [-1 -1 1 IND] in the internal tree and prints the bad 
-block list kept there.
+Thanks
 
-bad blocks are kept in the object [-1 -1] as unformatted pointers of 
-indirect items. 
-
--- 
-
-Thanks,
-Vitaly Fertman
-
+Peter
 
