@@ -1,37 +1,80 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: vpf-10680, minor corruptions (solved!)
-Date: Mon, 30 Jun 2003 09:31:57 +0400
-Message-ID: <20030630053157.GA17466@namesys.com>
-References: <3EFCC72F.9020100@g-house.de> <20030628095847.GA19610@namesys.com> <3EFD7FF5.7020305@g-house.de> <20030628115343.GA21256@namesys.com> <3EFD8317.9000009@g-house.de> <3EFD86FC.6060307@g-house.de> <20030628121843.GA21209@namesys.com> <3EFDB9AC.9030601@g-house.de> <20030629085411.GA11564@namesys.com> <3EFF84C7.6090903@g-house.de>
+From: Wes Janzen <superchkn@sbcglobal.net>
+Subject: FS Corruption with VIA MVP3 + UDMA/DMA
+Date: Mon, 30 Jun 2003 13:17:35 -0500
+Message-ID: <3F007EBF.9020506@sbcglobal.net>
+References: <16128.19218.139117.293393@charged.uio.no>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14786-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14788-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3EFF84C7.6090903@g-house.de>
+In-Reply-To: <16128.19218.139117.293393@charged.uio.no>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christian Kujau <evil@g-house.de>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Linux Kernel <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
 
-Hello!
+I was wondering if anyone knows about this issue or has had this problem?
 
-On Mon, Jun 30, 2003 at 02:31:03AM +0200, Christian Kujau wrote:
+I've been fighting FS corruption since switching to a UDMA hard drive 
+(Maxtor) on my FIC PA2013 with the VIA MVP3, but I didn't really know 
+that since the change was a result of a dying drive.  Finally, through 
+the chance of having installed an older Quantum drive that only allowed 
+DMA MultiMode 2 as the fastest mode, I found the problem. 
 
-> >Good. Can you stress it for some time just to be sure?
-> i've done so, a kernel compile on a fresh reierfs finished with no 
-> errors, and in such a compile *a lot* of files are created/read, i guess 
-> the compile would horrible fail if there were corruptions in any of them.
+At least on my board, the IDE UDMA/DMA implementation appears flawed 
+[lspci gives: "VT82C586/B/686A/B PI (rev 6)"].  I've had the same 
+problem with three UDMA DVD drives -- two Toshibas and a Pioneer.  They 
+would all lock-up installing software or corrupt the data being 
+installed causing the installation to fail.  I've also had four other 
+Maxtor hard drives (3 factory certified, one retail) randomly corrupt 
+content on the drives (fs type doesn't matter [NTFS, FAT, FAT32, EXT2, 
+REISERFS have been tried]).  That means that every UDMA drive I've 
+plugged in has had data corruption issues (trying no less than 10 IDE 
+cables, which I confirmed good on the Promise and I've tried both IDE 
+channels on the MVP3).  I started with Linux kernel version 2.2 and the 
+problem remains up to 2.5.73.  I've also confirmed the issue in Windows 
+98SE, Windows XP and Windows 2003 RC2.  At this point, one might as well 
+stick in a PCI adapter, since with "hdparm -t" I get between 5.5-8.5 
+MB/s.  With the same mode on my Promise 20269 I get 12 MB/s , so clearly 
+something is odd.  I know the hard drive can do better since I can get 
+20MB/s in UDMA 2 on the MVP3, but of course that's not safe.
 
-Well, it seems you will only see corruptions when your workload does not fit the RAM.
+Even at DMA multiword 2, I can force r/w errors by heavy io.  Moving to 
+DMA mode 1 clears up the errors, but performance degrades to a 
+consistent 5.49 MB/s (all the higher modes actually vary 2-6 MB/s 
+between runs of hdparm) while the Promise in the same mode still gets 12 
+MB/s consistently.  I've found that copying a 300 MB file to my drive on 
+the Promise, making 12 new files while making 12 duplicates to the drive 
+on the MVP3 can still force errors in dma multiword 2.  I check for 
+write errors by comparing the copied files to the source file.  It's 
+much easier to create errors in any of the UDMA modes.  Errors actually 
+seem more likely to occur during actual use of the system since they are 
+fairly common even in multiword 2, but the copying method makes it 
+extremely repeatable (though not all the files are corrupted, that 
+part's random).
 
-> and yes, if i ever stumble again over such an odd issue, i know your 
-> mail address :-[]
+My current configuration has the Promise as the boot device with a 
+single drive on the primary.  I have my DVD (UDMA) on the secondary of 
+the Promise.  My other Maxtor hard drive is on the primary channel 
+(alone) of the MVP3 with UDMA disabled in the bios (and thus not used by 
+WinXP/2003 or Linux).  Finally my cd writer and IDE Zip are on the 
+secondary channel of the MVP3.  I'd put my hard drive on the secondary 
+channel of the Promise, but for some reason the computer won't boot with 
+both hard drives on the Promise (even though they're on different 
+cables)...  I don't remember right now if it just locks up during OS 
+loading or if it won't post.  I can test it if that information is required.
 
-Sure, let us know if something goes wrong.
+Otherwise my machine is fairly stable (3+weeks, but I usually have to 
+boot to Windows for Illustrator and such before then) and I don't get 
+any corruption when copying files around on my Promise controller.  I 
+can get errors even copying from my MVP3 drive to itself (making 
+defragging dangerous on my shared FAT32 partition) even in DMA multiword 2.
 
-Bye,
-    Oleg
+Is there anything that can be done with the IDE drivers for this chipset 
+to make it "safe" without resorting to forcing DMA mode 1?
+
+Thanks,
+Wes Janzen
+
