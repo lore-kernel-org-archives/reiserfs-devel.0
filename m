@@ -1,46 +1,39 @@
-From: Mike Young <myoung@wildernessvoice.com>
+From: Jason Holt <jason@lunkwill.org>
 Subject: Re: Write-once file system
-Date: Fri, 27 Jun 2003 20:28:48 -0700
-Message-ID: <BB225980.8591%myoung@wildernessvoice.com>
+Date: Sat, 28 Jun 2003 07:45:09 +0000 (UTC)
+Message-ID: <Pine.LNX.4.44.0306280736170.20105-100000@potato.zayda.com>
 References: <20030627225410.GK31002@jensbenecke.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14768-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14771-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <20030627225410.GK31002@jensbenecke.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jens Benecke <written_030626@jensbenecke.de>, Jason Holt <jason@lunkwill.org>
-Cc: Fong Vang <FVang@zantaz.com>, "'reiserfs-list@namesys.com'" <reiserfs-list@namesys.com>
-
-Hi Jens,
-
-Interesting idea.  I like it.  I agree with the various comments about
-trust, especially as it pertains to administrators.  However, I think at the
-very heart of this whole topic is the need to protect against "dubious"
-acts.  The latest and greatest security measures and HIPAA acts have a need
-for archived, readily accessible, data that cannot be overwritten-- even if
-the CFO has a gun to the head of the administrator.
-
-It sounds like this drives towards that end.  It may be stronger than the
-requirement, it sure sounds like the direction things are going.  Thanks for
-the input on it.
-
--Mike
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jens Benecke <written_030626@jensbenecke.de>
+Cc: Fong Vang <FVang@Zantaz.com>, "'reiserfs-list@namesys.com'" <reiserfs-list@namesys.com>
 
 
-On 6/27/03 3:54 PM, "Jens Benecke" <written_030626@jensbenecke.de> wrote:
+One other thought wrt Mike Young's comments; trust in the enforcement system
+could be distributed cryptographically.  Say you go with my suggestion of
+user-mode linux running on top of "real" linux which enforces your disk access
+policies.  You have auditors observe the setting up of the machine, and
+install a script on the "real" side which rotates the "real" root password
+periodically to some random value.  It then splits up that password using a
+cryptographic secret-splitting algorithm (they're extremely simple) and sends
+the pieces to selected individuals.  They all have to get together and agree
+to put their pieces together any time you need access to the "real" root
+account.
 
-> On Fri, Jun 27, 2003 at 05:37:05PM +0000, Jason Holt wrote:
-> 
->> *Somebody* has to have root.  Just like *something* on the disk has
->> got to be physically capable of writing a sector that it shouldn't.
-> 
-> <delurk>
-> 
+This sort of setup could make a great network appliance for HIPPA shops.
+
+Also,
+
+On Sat, 28 Jun 2003, Jens Benecke wrote:
+[...]
 > I am using GrSecurity (www.getrewted.net), which is a kernel patch that
 > allows detailed ACLs and kernel security enhancements. Once these
 > enhancements are configured (at run-time) and "echo 1 >
@@ -48,12 +41,15 @@ On 6/27/03 3:54 PM, "Jens Benecke" <written_030626@jensbenecke.de> wrote:
 > for root) to change them again. One of these features is the ability to
 > insmod/rmmod, another is the ability to open sockets, another is the
 > ability to access raw devices.
-> 
-> Suppose we have a module that watches over file open calls to the file
-> system driver (like the LD_PRELOAD tricks do) and deny write access
-> whenever a file already exists.
-> 
-> 
-> Just an idea ... 
-> 
+[...]
+
+I looked a bit at grsecurity.net, but didn't find anything right off the bat
+to explain how they accomplish this securely.  It sounds... really suspicious,
+to me anyway.  Do they actually prevent root from, say, manually issuing the
+machine code to talk to the disk?  Or does it just keep him from doing it via
+the standard syscalls?
+
+						-J
+
+
 
