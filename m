@@ -1,47 +1,49 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: [2.4.18]: Reiserfs: vs-2120: add_save_link: insert_item returned -28
-Date: Fri, 16 Jan 2004 11:19:36 -0500
-Message-ID: <200401161620.i0GGK2MT022923@turing-police.cc.vt.edu>
-References: <200401091622.41352.lkml@kcore.org>
-            <1074241063.2251.41.camel@tribesman.namesys.com>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: REISER4 - A simple test with a filesystem and Oracle
+Date: Fri, 16 Jan 2004 19:20:55 +0300
+Message-ID: <20040116162055.GL1693@backtop.namesys.com>
+References: <20040116153914.46777.qmail@web21502.mail.yahoo.com> <20040116160154.75186.qmail@web21506.mail.yahoo.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-1102226752P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16551-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16552-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Fri, 16 Jan 2004 11:17:43 +0300."
-             <1074241063.2251.41.camel@tribesman.namesys.com> 
+Content-Disposition: inline
+In-Reply-To: <20040116160154.75186.qmail@web21506.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: Jan De Luyck <lkml@kcore.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Paolo Correnti <paolunix@yahoo.com>
+Cc: reiserfs-list@namesys.com
 
---==_Exmh_-1102226752P
-Content-Type: text/plain; charset=us-ascii
+On Fri, Jan 16, 2004 at 08:01:54AM -0800, Paolo Correnti wrote:
+> After about 5-6 minutes after sending last e-mail
+> I obtained a "real" df result.
 
-On Fri, 16 Jan 2004 11:17:43 +0300, Vladimir Saveliev said:
+"df" or "du" ?
 
-> This is just a warning. You should be able to free some disk space by
-> removing some files.
+> 
+> oracle@pamilo:/u01/oradata$ du
+> 
+> 1868581 ./archived
+> 10245   ./pamodb/archivelogs
+> 1230589 ./pamodb                 <- OK
+> 3099170 .                        <- OK
 
-Is this just the *obvious* "removing files frees space", or is there some sort
-of garbage collection that will be triggered, so removing a 1K file will make it
-redo tables/linked lists/whatever and return lots of blocks that used to contain
-metadata?
+what processes were accessing the fs those 5-7 min?  
+oracle was?
 
---==_Exmh_-1102226752P
-Content-Type: application/pgp-signature
+> 
+> It seems there is a kind of very large delay in
+> reiser4 filesystem info synchronization.
+> 
+> Hope to be not much boring ...
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.3 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+:) 
 
-iD8DBQFACA8XcC3lWbTT17ARAhaVAJ4onS9kKbySzuveEDM3l98KeI0kawCg5DpO
-S+A+4NQPzC+wcq2XXuTvrZk=
-=duJP
------END PGP SIGNATURE-----
+thanks for the report. 
 
---==_Exmh_-1102226752P--
+
+-- 
+Alex.
