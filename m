@@ -1,85 +1,61 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Lars Marowsky-Bree <lmb@suse.de>
 Subject: Re: reiserfs on redhat advanced server?
-Date: Fri, 31 Jan 2003 15:20:55 +0300
-Message-ID: <3E3A6A27.4060206@namesys.com>
-References: <20030130173522.3aa4d0e1.pegasus@nerv.eu.org> <3E397A19.60409@namesys.com> <20030130234142.E8448@vestdata.no> <3E3A6071.6060102@namesys.com> <20030131115333.GC15359@marowsky-bree.de> <20030131150852.A14386@t-raenon.nmd.msu.ru>
+Date: Fri, 31 Jan 2003 13:21:48 +0100
+Message-ID: <20030131122147.GE15359@marowsky-bree.de>
+References: <20030130173522.3aa4d0e1.pegasus@nerv.eu.org> <3E397A19.60409@namesys.com> <20030130234142.E8448@vestdata.no> <3E3A6071.6060102@namesys.com> <20030131115333.GC15359@marowsky-bree.de> <3E3A67AE.4050601@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12570-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12571-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030131150852.A14386@t-raenon.nmd.msu.ru>
+Content-Disposition: inline
+In-Reply-To: <3E3A67AE.4050601@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: flx@msu.ru
-Cc: Lars Marowsky-Bree <lmb@suse.de>, Ragnar Kj?rstad <reiserfs@ragnark.vestdata.no>, Jure Pecar <pegasus@nerv.eu.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Ragnar =?iso-8859-1?Q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>, Jure Pecar <pegasus@nerv.eu.org>, reiserfs-list@namesys.com
 
-You are not a typical sysadmin, you work for an organization with ~10 
-full-time kernel hackers, and the percentage of companies out there who 
-can say that their average computer users are as skilled as any of 
-SuSE's staff is not very high you know....
+On 2003-01-31T15:10:22,
+   Hans Reiser <reiser@namesys.com> said:
 
-Most companies do indeed have a real need for tech support.  If the 
-distros don't support official stable linux kernels, it is a serious 
-social problem for our community, as it will substantially reduce the 
-user base for those kernels in corporate environments.  It is especially 
-a problem if the largest vendor does it.
+> The distros are really doing their best to undermine the open source=20
+> community testing process that works so well....=20
+>=20
+> for them to not certify/support a stable Marcelo kernel is.... well it=20
+> makes me angry quite honestly....
 
+Tell that to the ISVs. And the plain kernel, when it comes out, is usually
+simply not really useable as a distro kernel until, oh, dot twenty something
+or so, for a variety of reasons.
 
-Hans
+From "buzzwords" like 'enterprise features missing' or missing support for
+hardware to different schedulers, accomodations for IHVs/ISVs which mainline
+doesn't want (yet) etc. The way it works seems to be that distros test driv=
+e a
+lot of code before it gets merged into mainline, at the expense of mainline
+being slightly behind quite often.
 
-Alexander Lyamin wrote:
+And at the time when distributions hit their respective deadlines, even a
+bunch of just plain fixes will have already piled up for the last stable
+vanilla kernel, so they get thrown in too, mostly from "pre" kernels.
 
->Fri, Jan 31, 2003 at 12:53:34PM +0100, Lars Marowsky-Bree wrote:
->  
->
->>On 2003-01-31T14:39:29,
->>   Hans Reiser <reiser@namesys.com> said:
->>
->>    
->>
->>>If you want a stable kernel for a mission critical server, the only 
->>>thing that works is to ask around and find out what Marcelo kernel has 
->>>been known stable for at least 6 weeks.
->>>      
->>>
->>And lose all support from RH or SuSE because you installed a non-supported
->>kernel image ;-) And thus violate the Oracle cert, the SAP cert (well, if RH
->>had one), etc pp.
->>
->>Just something you can't do in some environments.
->>    
->>
->
->O.k. Its purely my private oppinion. and my own expirince talking here:
->
->Cant say that i benefited from SuSE support even once :)
->that's something you dont actually need on some expertise level.
->
->Oracle support might be valuable(since they really do kernel-tweaking for this monster), but its not an issue there, right? Even if NO, i made Oracle running on standart issue kernel once. Probably with some perfomance loss, have'nt tested it yet.
->
->The issue is high load (200k users) on this two puny workhorses.
->
->My expirience and Corban Dallas telling me "If you have to something done - do it yourself".
->
->2.4.19 without doubts.
->reiserfsprogs version - lets ask Vitaly Fertman.
->
->
->P.S.
->most of tech.supports i bumped (even famous Cisco TAC) suck badly anyways, so who cares ? especially when you Open Source :)
->
->  
->
->>Sincerely,
->>    Lars Marowsky-Br?e <lmb@suse.de>
->>    
->>
+I'm not saying this is good or bad, but it is just they way it is. I can't
+really see a distribution shipping a plain, unpatched kernel. Trust me. Eve=
+ry
+distributor would love too, because it would lower cost for them. You know =
+how
+much highly qualified _work_ is needed to maintain a distribution kernel?
+Nobody does that out of their own free will.
 
 
--- 
-Hans
+Sincerely,
+    Lars Marowsky-Br=E9e <lmb@suse.de>
 
-
+--=20
+Principal Squirrel=20
+SuSE Labs - Research & Development, SuSE Linux AG
+ =20
+"If anything can go wrong, it will." "Chance favors the prepared (mind)."
+  -- Capt. Edward A. Murphy            -- Louis Pasteur
