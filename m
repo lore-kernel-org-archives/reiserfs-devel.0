@@ -1,37 +1,39 @@
-From: Cliff White <cliffw@osdl.org>
-Subject: build failure: reiser4progs-0.1.0
-Date: Tue, 05 Nov 2002 13:45:39 -0800
-Sender: linux-kernel-owner@vger.kernel.org
-Message-ID: <200211052145.gA5Ljdr32055@mail.osdl.org>
+From: "JP Howard" <jh_lists@fastmail.fm>
+Subject: Re: External journals and NVRAM devices
+Date: Tue, 5 Nov 2002 22:12:46 UT
+Message-ID: <20021105221246.97A295402F0@server5.fastmail.fm>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11920-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nikita@Namesys.COM, reiserfs-dev@Namesys.COM, Reiserfs-List@Namesys.COM, Linux-Kernel@vger.kernel.org
+To: Hans Reiser <reiser@namesys.com>, Chris Mason <mason@suse.com>
+Cc: Edward Shishkin <edward@namesys.com>, Andreas Dilger <adilger@clusterfs.com>, ReiserFS List <reiserfs-list@namesys.com>, Oleg Drokin <green@namesys.com>
 
+On Tue, 05 Nov 2002 13:23:30 -0800, "reiser" <reiser@namesys.com> said:
+> Chris Mason wrote:
+> >The data logging patches include a ton of reiserfs writeback changes
+> >that allow good performance with small transactions (like mail server
+> >workloads) and small log sizes.
+> >
+> >With ext3, a 128M or bigger log can really improve performance because
+> >so much of the writeback is done through bdflush/kupdate. 
+> >
+> Please explain the because clause of the sentence above in more detail.
+> 
+I've just ordered some 1GB Umem NVRAM cards (they're battery-backed RAM
+cards that look to Linux like a standard block device). I'd like to use
+them to improve performance as much as possible.
 
-Attempting to test reiser4, kernel 2.5.46, using the 2002.11.05 snapshot.
---------------------------------------------------
-gcc -DHAVE_CONFIG_H -I. -I. -I../.. -I../../include -g -O2 -D_REENTRANT 
--D_FILE_OFFSET_BITS=64 -g -W -Wall -Wno-unused -Werror 
--DPLUGIN_DIR=\"/usr/local/lib/reiser4\" -c alloc40.c -MT alloc40.lo -MD -MP 
--MF .deps/alloc40.TPlo  -fPIC -DPIC -o .libs/alloc40.lo
-cc1: warnings being treated as errors
-alloc40.c: In function `callback_fetch_bitmap':
-alloc40.c:50: warning: signed and unsigned type in conditional expression
-alloc40.c: In function `callback_flush_bitmap':
-alloc40.c:209: warning: signed and unsigned type in conditional expression
-alloc40.c: In function `callback_check_bitmap':
-alloc40.c:376: warning: signed and unsigned type in conditional expression
-make[3]: *** [alloc40.lo] Error 1
-make[3]: Leaving directory `/root/cgl/kern/reiser/reiser4progs-0.1.0/plugin/all
-oc40'
-make[2]: *** [all-recursive] Error 1
-make[2]: Leaving directory `/root/cgl/kern/reiser/reiser4progs-0.1.0/plugin'
-make[1]: *** [all-recursive] Error 1
-make[1]: Leaving directory `/root/cgl/kern/reiser/reiser4progs-0.1.0'
-make: *** [all] Error 2
--------------------------------------
-cliffw
+Our application is fsync intensive (Cyrus IMAPd server). We have heaps of
+RAM, NVRAM, and CPU to spare, but are IO bound. Is there any way to tune
+ReiserFS data=journal to improve IO performance by taking advantage of
+our spare RAM/NVRAM?
 
+TIA for any info,
+  Jeremy
