@@ -1,54 +1,33 @@
-From: "John D. Heintz" <jheintz@pobox.com>
-Subject: Re: Do xml-like namespaces make sense for Reiser4? (re: metas thread)
-Date: Thu, 15 Apr 2004 10:15:27 -0500
-Message-ID: <407EA70F.6010301@pobox.com>
-References: <407AB9AE.3060801@pobox.com> <407ADCBF.8000609@namesys.com> <407AEA05.50004@pobox.com> <407BFBEA.5010006@pobox.com> <407C15D9.1080705@namesys.com> <407C1BE9.8010509@pobox.com> <407C279A.3060303@namesys.com> <407C3004.3070401@pobox.com> <407C316B.80606@namesys.com> <407C35B0.3080109@pobox.com> <407CA700.9070403@slaphack.com> <407D54F9.3020704@pobox.com> <407DD71D.30902@slaphack.com>
+From: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
+Subject: Re: viewprinting processes and process oriented permissions got funded by DARPA
+Date: Thu, 15 Apr 2004 14:17:13 -0400 (EDT)
+Message-ID: <20040415181713.47968.qmail@web25001.mail.ukl.yahoo.com>
+References: <407C304F.4080804@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17966-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17967-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <407DD71D.30902@slaphack.com>
+In-Reply-To: <407C304F.4080804@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Masover <ninja@slaphack.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Reiserfs List <reiserfs-list@namesys.com>
 
-David Masover wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
-> 
-> John D. Heintz wrote:
-> | David,
-> |
-> | I think you might be onto something, but doing this manually for each
-> | file isn't viable (in my opinion).
-> 
-> It applies recursively.  Let's assume for a moment that /..foo is a
-> directory containing pseudo-files, metadata, or whatever the current
-> term is, for the file '/'.  By creating the file /..foo/something as a
-> symlink to /..foo/<some long path>/something, you automatically create
-> /bar/..foo/something, which is a link to /bar/..foo/<same long
-> path>/something.
-> 
-> | What I think might work is applying symlinks to all files hierarchically
-> | so that all "*/nsa/*" names resolve to "*/nsa.gov/security/*".
-> 
-> Just what I described above, only it is local to the tree I apply it to,
-> and files deeper in the hierarchy take precedence.  So, for example, if
-> I create a link manually for /bar/..foo/something that points somewhere
-> else, then /bar and all subdirs (and subfiles) of /bar contain that same
-> link, instead of the one created for /.
-> 
+Hans Reiser wrote: 
 
-Thanks for the explanation and I like the idea. Being able to define a 
-symlink and have it recursively apply might be exactly what is needed here.
+> Details are attached (we discussed it on this list a
+> bit in January, 
+> thanks for feedback you gave then....)
 
-Is this behavior currently part of Reiser4? I don't remember seeing it 
-anywhere, but I do remember reading something about inheritence being 
-needed for various features. Is this the same as inheritence?
+Interesting stuff.  I'll have to read it a couple of
+times.
 
-Thanks,
-John Heintz
+Seems to have a lot of similarities to a true
+capability-based system such as EROS
+(www.eros-os.org).
+
+
+______________________________________________________________________ 
+Post your free ad now! http://personals.yahoo.ca
