@@ -1,54 +1,34 @@
-From: Christophe Saout <christophe@saout.de>
-Subject: Re: reiser4 plugins (was: silent semantic changes with reiser4)
-Date: Thu, 26 Aug 2004 16:02:02 +0200
-Message-ID: <1093528922.11694.41.camel@leto.cs.pocnet.net>
-References: <Pine.LNX.4.44.0408260952230.26316-100000@chimarrao.boston.redhat.com>
+From: Rik van Riel <riel@redhat.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 26 Aug 2004 10:07:58 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44.0408261007010.27909-100000@chimarrao.boston.redhat.com>
+References: <20040826135936.GC5733@mail.shareable.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-f/zgBaXUVBVdKW8WeC3r"
-Return-path: <reiserfs-list-return-20681-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20684-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.44.0408260952230.26316-100000@chimarrao.boston.redhat.com>
+In-Reply-To: <20040826135936.GC5733@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Rik van Riel <riel@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jamie Lokier <jamie@shareable.org>
+Cc: Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
---=-f/zgBaXUVBVdKW8WeC3r
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Thu, 26 Aug 2004, Jamie Lokier wrote:
 
-Am Donnerstag, den 26.08.2004, 09:52 -0400 schrieb Rik van Riel:
+> Properly implemented metadata can:
+[snip world peace]
+> all at once.  That includes program copies.
 
-> > That's your opinion. reiser4 seems to work very well.
->=20
-> Have you tried /bin/cp, or a backup+restore ?
->=20
-> What happened to your file streams ?
+Show me the design for such a properly implemented thing.
 
-1. I wasn't talking about reiser4 plugins, not about the
-   file-as-a-directory thing or file streams
-2. reiser4 doesn't currently have those
-3. I don't really like file streams
+None of the designs I've seen proposed so far are able
+to do what you claim.
 
-:-)
-
-But I'm using ACLs on a server and had to forward-port an rsync patch to
-make full backups using rsync possible. That's not really better.
-
-
---=-f/zgBaXUVBVdKW8WeC3r
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQBBLe1aZCYBcts5dM0RAuFwAJ4nm0ZkE8Cd5yP8yMwoco1sH1jHLwCgkfRO
-7ByUg/+SA5E9S3tIdnNLk/o=
-=ytd6
------END PGP SIGNATURE-----
-
---=-f/zgBaXUVBVdKW8WeC3r--
+-- 
+"Debugging is twice as hard as writing the code in the first place.
+Therefore, if you write the code as cleverly as possible, you are,
+by definition, not smart enough to debug it." - Brian W. Kernighan
 
