@@ -1,76 +1,42 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: dead inode read from disk... ignore?
-Date: Mon, 17 Nov 2003 21:48:26 -0800
-Message-ID: <3FB9B2AA.1020603@namesys.com>
-References: <3FB20ACD.8080105@dotcom.pl>	<16313.57788.693126.214555@laputa.namesys.com>	<3FB9A2DE.1010108@namesys.com> <16314.19565.501517.142186@laputa.namesys.com>
+From: Eric Wong <eric@yhbt.net>
+Subject: Re: libaal compile fails
+Date: Wed, 19 Nov 2003 11:35:39 -0800
+Message-ID: <20031119193539.GE24852@BL4ST>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16123-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16124-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16314.19565.501517.142186@laputa.namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: myciel <myciel@dotcom.pl>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com, umka@namesys.com
 
-Nikita Danilov wrote:
+Hi, I'm still having problems with compiling libaal on Debian
+sid/unstable after trying the proposed-fix here:
 
->Hans Reiser writes:
-> > Nikita Danilov wrote:
-> > 
-> > >myciel writes:
-> > > > Hi
-> > > > 
-> > > > Few times a day I get in syslog:
-> > > > kernel: sd(8,20):vs-13075: reiserfs_read_inode2: dead inode read from 
-> > > > disk [11574064 47212 0x0 SD]. This is likely to be race with knfsd. Ignore
-> > > > 
-> > > > I just wanted to be sure: should I  really ignore this?
-> > >
-> > >Sorry, for delay.
-> > >
-> > >Yes, you should ignore it as it says.
-> > >
-> > > > 
-> > > > kernel: 2.4.22 SMP + data-logging patches + Trond's nfs patches
-> > > > 2 filesystems:  ~800G and  ~450G,
-> > > > filled in ~50% with small files avg size ~36kb
-> > > > 
-> > > > thanks
-> > > > 
-> > > > rafal
-> > > > 
-> > >
-> > >Nikita.
-> > >
-> > >
-> > >  
-> > >
-> > then move this code into REISERFS_DEBUG.....
->
->It does indicate an error, when NFS is not used.
->  
->
-which is why you can keep it in REISERFS_DEBUG..
+http://marc.theaimsgroup.com/?l=reiserfs&m=106841085428596&w=2
 
-> > 
-> > -- 
-> > Hans
-> > 
->
->Nikita.
->
-> > 
->
->
->  
->
+Here is the output I got after making the above changes to the BLKGETSIZE64
+macro:
 
+gcc -DHAVE_CONFIG_H -I. -I. -I.. -I../include -D_REENTRANT
+-D_FILE_OFFSET_BITS=64 -O0 -g -W -Wall -Wno-unused -Wredundant-decls
+-Werror -c file.c -Wp,-MD,.deps/libaal_la-file.TPlo  -fPIC -DPIC -o
+.libs/libaal_la-file.lo
+file.c: In function `file_len':
+file.c:213: warning: signed and unsigned type in conditional expression
+make[2]: *** [libaal_la-file.lo] Error 1
+
+I'm using gcc 3.3.2 and the somewhat troublesome (yet standard fare in
+Debian unstable nowadays) linux-kernel-headers package that provides
+kernel headers for glibc.  I'm running 2.6.0-test9
+
+This package compiles fine on my Debian stable/Woody system, however.
+
+If you need any more info, let me know.  Thanks.
 
 -- 
-Hans
-
-
+Eric Wong  (normalperson on OFTC and Freenode)
