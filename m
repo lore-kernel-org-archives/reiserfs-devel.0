@@ -1,83 +1,56 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Problem with ReiserFS + NFS + Convolo
-Date: Tue, 17 Jun 2003 14:59:55 +0400
-Message-ID: <20030617105955.GB1003@namesys.com>
-References: <9985D86E48B29B40BABD3B4A177F69261DD167@atlassrv.int.atlassolutions.net>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: xattr
+Date: Tue, 17 Jun 2003 15:04:48 +0400
+Message-ID: <3EEEF5D0.6050705@namesys.com>
+References: <200306162226.39701.russell@coker.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14577-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14578-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <9985D86E48B29B40BABD3B4A177F69261DD167@atlassrv.int.atlassolutions.net>
+In-Reply-To: <200306162226.39701.russell@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Enric Ramos <eramos@atlasit.com>
-Cc: Oscar Garc?a <ogarcia@atlasit.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Russell Coker <russell@coker.com.au>
+Cc: reiserfs-list@namesys.com, Alexander Lyamin <flx@namesys.com>
 
-Hello!
+Russell Coker wrote:
 
-On Mon, Jun 16, 2003 at 07:36:25PM +0200, Enric Ramos wrote:
+>What is the status of xattr support in 2.5.x?
+>
+Please read www.namesys.com/v4/v4.html.  I will be happy to add support 
+for desired security attributes using the V4 plugin infrastructure, and 
+especially pleased to accept patches that do so.  It is trivially easy 
+to compose plugins that commit atomically, and most of them do so by 
+default.
 
-> In this way... is it possible to make a patch for the 2.4.18 release in order to solve the "iget() race bug" ? Do you know if this patch exists for this release ?
+I note that we are not listed in spamcop, and thank you for that.  Our 
+itanium is now installed, and work has started on moving our mail+web 
+server to new hardware and OS version.  When that is complete, the 
+mailing list software will be given to a kind volunteer to de-spam.
 
-Ok, here is the backport.
+>
+>How is journalling of xattr's being handled?
+>
+>For correct operation of SE Linux we need to have the xattr that is used for 
+>the security context be changed atomically, and if a file is created and 
+>immediately has the xattr set then ideally we would have the file creation 
+>and the xattr creation in the same journal entry.
+>
+>Is this possible?  If doing this requires that the file system be mounted with 
+>data=journal then this will be fine.
+>
+>  
+>
 
-Bye,
-    Oleg
-diff -u fs/reiserfs/inode.c.orig fs/reiserfs/inode.c
---- fs/reiserfs/inode.c.orig	2003-06-17 14:47:57.000000000 +0400
-+++ fs/reiserfs/inode.c	2003-06-17 14:54:23.000000000 +0400
-@@ -19,6 +19,10 @@
- 
- static int reiserfs_get_block (struct inode * inode, long block,
- 			       struct buffer_head * bh_result, int create);
-+/* This spinlock guards inode pkey in private part of inode
-+   against race between find_actor() vs reiserfs_read_inode2 */
-+static spinlock_t keycopy_lock = SPIN_LOCK_UNLOCKED;
-+
- //
- // initially this function was derived from minix or ext2's analog and
- // evolved as the prototype did
-@@ -890,8 +894,9 @@
-     bh = PATH_PLAST_BUFFER (path);
-     ih = PATH_PITEM_HEAD (path);
- 
--
-+    spin_lock(&keycopy_lock);
-     copy_key (INODE_PKEY (inode), &(ih->ih_key));
-+    spin_unlock(&keycopy_lock);
-     inode->i_blksize = PAGE_SIZE;
- 
-     INIT_LIST_HEAD(&inode->u.reiserfs_i.i_prealloc_list) ;
-@@ -1204,10 +1209,27 @@
- 				unsigned long inode_no, void *opaque )
- {
-     struct reiserfs_iget4_args *args;
-+    int retval;
- 
-     args = opaque;
-+    /* We protect against possible parallel init_inode() on another CPU here. */
-+    spin_lock(&keycopy_lock);
-     /* args is already in CPU order */
--    return le32_to_cpu(INODE_PKEY(inode)->k_dir_id) == args -> objectid;
-+    if (le32_to_cpu(INODE_PKEY(inode)->k_dir_id) == args -> objectid)
-+	retval = 1;
-+    else
-+	/* If The key does not match, lets see if we are racing
-+	   with another iget4, that already progressed so far
-+	   to reiserfs_read_inode2() and was preempted in
-+	   call to search_by_key(). The signs of that are:
-+	     Inode is locked
-+	     dirid and object id are zero (not yet initialized)*/
-+	retval = (inode->i_state & I_LOCK) &&
-+		 !INODE_PKEY(inode)->k_dir_id &&
-+		 !INODE_PKEY(inode)->k_objectid;
-+
-+    spin_unlock(&keycopy_lock);
-+    return retval;
- }
- 
- struct inode * reiserfs_iget (struct super_block * s, const struct cpu_key * key)
+Namesys generally avoids disturbing the stability of V3 with new 
+features.  V4 is coming out this summer, and it is better to focus 
+developers on V4.  This is not a categorical rejection, just a gut first 
+reaction.
+
+-- 
+Hans
+
+
