@@ -1,54 +1,56 @@
-From: Nikita Danilov <nikita@clusterfs.com>
+From: Christophe Saout <christophe@saout.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 01:45:49 +0400
-Message-ID: <16686.23053.559951.815883@thebsh.namesys.com>
-References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com>
-	<200408262128.41326.vda@port.imtp.ilyichevsk.odessa.ua>
-	<20040826193617.GA21248@arlut.utexas.edu>
-	<20040826201639.GA5733@mail.shareable.org>
-	<1093551956.13881.34.camel@leto.cs.pocnet.net>
+Date: Thu, 26 Aug 2004 23:46:58 +0200
+Message-ID: <1093556818.13881.75.camel@leto.cs.pocnet.net>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
+	 <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com>
+	 <20040826014542.4bfe7cc3.akpm@osdl.org> <412DAC59.4010508@namesys.com>
+	 <1093548414.5678.74.camel@krustophenia.net>
+	 <20040826203017.GA14361@school.ioffe.ru>
+	 <1093552692.13881.43.camel@leto.cs.pocnet.net>
+	 <16686.22336.829096.678178@thebsh.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20818-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-HLhbjudeX/bNk4Qe3uVn"
+Return-path: <reiserfs-list-return-20819-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1093551956.13881.34.camel@leto.cs.pocnet.net>
+In-Reply-To: <16686.22336.829096.678178@thebsh.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Christophe Saout <christophe@saout.de>
-Cc: Jamie Lokier <jamie@shareable.org>, Jonathan Abbey <jonabbey@arlut.utexas.edu>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Nikita Danilov <nikita@clusterfs.com>
+Cc: Dmitry Baryshkov <mitya@school.ioffe.ru>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-Christophe Saout writes:
- > Am Donnerstag, den 26.08.2004, 21:16 +0100 schrieb Jamie Lokier:
- > 
- > > > | Will it work out if "dir inside file" will only be visible when
- > > > referred as "file/."?
- > > > 
- > > > I'm used to using ls symlink/. to get ls to show me the directory on
- > > > the far side of a symbolic link.  That's a pretty analagous case to
- > > > the one we're discussing here, I think?
- > > 
- > > By the way, do symlinks have metadata?  Where do you find it? :)
- > 
- > Oops. :)
- > 
- > At least in reiser4 they don't have, or at least you can't access them.
+--=-HLhbjudeX/bNk4Qe3uVn
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-They do.
+Am Freitag, den 27.08.2004, 01:33 +0400 schrieb Nikita Danilov:
 
- > ln -s foo bar; cd bar/metas shows me the content of foo/metas.
+> Wrong, plugin is called just below entry point from the VFS to the
+> file-system back-end. It can use reiser4 tree, or any storage layer it
+> wants. Or none at all: think about pseudo-files like
+> foo/metas/uid---they are also implemnted by plugins.
 
-That's because lookup for "bar" performs symlink resolution.
- 
- > 
- > symlinks are special anyway. Their rights are 777. The only thing they
+Yes. But which plugins are we talking about?
 
-Symlink is represented by normal inode in UNIX. It has full set of
-attributes. It can even be hard-linked.
+What about fs/reiser4/plugin/node/ and fs/reiser4/plugin/disk_format/?
 
- > can have is an owner. No chance to do a symlink/metas/uid then. Hmm.
- > 
+Of course you can implement another filesystem inside the plugins but
+they wouldn't use fs/reiser4/*.c, so this would be rather stupid. Right?
 
-Nikita.
+
+--=-HLhbjudeX/bNk4Qe3uVn
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQBBLlpSZCYBcts5dM0RAqpOAKCXcsz+Yqcbjo5d5hUB8fuQv7jQhgCcDN6e
+ZuiWXhscObhfq0xw5u7qFYI=
+=S5wt
+-----END PGP SIGNATURE-----
+
+--=-HLhbjudeX/bNk4Qe3uVn--
+
