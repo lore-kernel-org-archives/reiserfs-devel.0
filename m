@@ -1,58 +1,61 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Problem with the latest auto snapshot
-Date: Sun, 13 Jun 2004 16:43:44 +0300
-Message-ID: <20040613134344.GK4990@nysv.org>
-References: <200406122131.25974.henning-04@die.informatik.uni-siegen.de> <20040612194649.GF4990@nysv.org> <200406131537.54853.henning-04@die.informatik.uni-siegen.de>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: preexisting 'metas'?
+Date: Sun, 13 Jun 2004 20:33:44 -0400
+Message-ID: <200406140033.i5E0XiR2002772@turing-police.cc.vt.edu>
+References: <40CBB63E.4060001@slaphack.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19166-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_360419072P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19169-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200406131537.54853.henning-04@die.informatik.uni-siegen.de>
+In-Reply-To: Your message of "Sat, 12 Jun 2004 21:04:46 CDT."
+             <40CBB63E.4060001@slaphack.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Henning Westerholt <henning-04@die.informatik.uni-siegen.de>
+To: David Masover <ninja@slaphack.com>
 Cc: reiserfs-list@namesys.com
 
-On Sun, Jun 13, 2004 at 03:37:54PM +0200, Henning Westerholt wrote:
->i'm using the same reiser4 config like you.
+--==_Exmh_360419072P
+Content-Type: text/plain; charset=us-ascii
 
-Weirdness.
+On Sat, 12 Jun 2004 21:04:46 CDT, David Masover <ninja@slaphack.com>  said:
 
->I just rebuild the partition, and start a small compile job. After them i 
->started a fsck. It reported a new fatal error about a broken node. I attached 
->the output from fsck. I could reproduce this error two times. 
+> Well, the '...' in my brother's home dir had some stuff that he'd like
+> to keep secret -- as in, he doesn't want people to know he has them.
 
-The only question that I can think of is this.
-Did you umount the partition?
+Just as an aside, note that calling the directory '...' will only slow down a
+clueless person.  Consider that 'du' and 'ls -a' and 'ls -A' will all show them
+- as will 'find' and any number of other utilities...
 
-There is supposedly a bug in current reiser4progs concerning mountpoints,
-so it doesn't refuse to fsck a mounted partition.
+The "first character is a dot so don't list it" convention is there for
+usability, not security.  My home directory has 179 .whatever files in it at
+the moment - a lot more than non-dot files, in fact.  So the output of 'ls' is
+shorter.  It won't work as security unless the people you're trying to hide it
+from are so lacking in Unixoid clue that they don't know they have a .profile....
 
-That is bad.
+And if he wants to keep it secret, he should be using at *least* enough things
+to keep people *that* unclued out.  If they're unclued enough to not be able to
+find a . file, how did they get *in*??/
 
->Error: On-disk used blocks and really used blocks differ.
->Free block count 2354038 found in the format is wrong. Sould be 2441757.
+If you want actual *security*, you need to be using something that does actual
+crypto.  Jari Ruuso's 'loop-aes' package (on sourceforge) is one example of the
+class of software you *want* to be using.
 
-Could this be because the partition is in use?
-If it's trafficking data all the time and fsck can't catch up?
 
-I vaguely remember an ancient discussion with Nik Danilov about having
-online fsck and he said something about the kernel/fs never being
-able to trust userspace data about disk usage or something...
 
->I could reproduce this error too. If i remember it correctly, i have had this 
->problem with the 03.26 snapshot before.
->
->I start now a kde-3.2.3 compile run, lets see if the new code survive this..
+--==_Exmh_360419072P
+Content-Type: application/pgp-signature
 
-Does it still stall?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-Are the only real corruptions visible at fsck time?
+iD8DBQFAzPJocC3lWbTT17ARAro2AKCtHpTS0ryIavgwhn4S6DKaGNrteACfS2dt
+U8/JOmIJqN/uF3c+Ln5LcVc=
+=Gfh+
+-----END PGP SIGNATURE-----
 
--- 
-mjt
-
+--==_Exmh_360419072P--
