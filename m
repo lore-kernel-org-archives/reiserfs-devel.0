@@ -1,17 +1,14 @@
-From: Xuan Baldauf <xuan--reiserfs@baldauf.org>
+From: Xuan Baldauf <xuan--lkml@baldauf.org>
 Subject: Heuristic readahead for filesystems
-Date: Wed, 11 Sep 2002 17:47:16 +0200
-Message-ID: <3D7F6584.6B523B6C@baldauf.org>
+Date: Wed, 11 Sep 2002 17:42:51 +0200
+Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <3D7F647B.1E0707FB@baldauf.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11417-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
-To: Reiserfs List <reiserfs-list@namesys.com>
+To: linux-kernel@vger.kernel.org, Reiserfs List <reiserfs-list@namesys.com>
 
 Hello,
 
@@ -135,3 +132,4 @@ the trees were read (at least partly) in parallel, I assume
 that reading would be much faster. Hence the question.
 
 Xu=E2n.
+
