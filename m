@@ -1,64 +1,31 @@
-From: Alex Zarochentsev <zam@namesys.com>
+From: Alexy Khrabrov <list+reiserfs@setup.org>
 Subject: Re: dd/rebuild of a small used part of a huge reiserfs on lvm?
-Date: Fri, 28 May 2004 10:42:25 +0400
-Message-ID: <20040528064225.GB24446@backtop.namesys.com>
-References: <20040528062808.GA604%alexy.khrabrov@setup.org>
+Date: Fri, 28 May 2004 03:06:45 -0400
+Message-ID: <20040528070645.GA1309%alexy.khrabrov@setup.org>
+References: <20040528062808.GA604%alexy.khrabrov@setup.org> <20040528064225.GB24446@backtop.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18885-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18886-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040528062808.GA604%alexy.khrabrov@setup.org>
+In-Reply-To: <20040528064225.GB24446@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexy Khrabrov <list+reiserfs@setup.org>
+To: Alex Zarochentsev <zam@namesys.com>
 Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, May 28, 2004 at 02:28:08AM -0400, Alexy Khrabrov wrote:
-> 
-> I'd like to recover some files from a huge reiserfs file system.  It is
-> created above an LVM volume, which in its turn sits on a RAID.  The LVM
-> volume is the only one in a group which consists of the sole RAID device.
-> I just deleted two files in a directory I know by name, the directory is
-> still there.  No writing was done after the rm, except all files copied
-> elsewhere and diff -r'ed checked, hope that does not alter the originals.
-> 
-> Now I'd like to play with the dd copying of the whole reiserfs (I'm
-> avoiding the word partition since it covers the whole logical volume
-> which spans the whole RAID device).  I simply do not have space to copy
-> the whole RAID, but the size of the used space on this reiserfs volume was
-> under about 9 GB.  I wonder how can I copy just about that -- I assume it
-> fills the logical volume contiguously, so I can dd the first 9 GB and then
-> try the loopback mount/rebuild.  Now that I'm running it, it scrolls lines
-> 
-> pass0: reading block 20626210 failed
-> 
-> like crazy, perhaps up to the whole 150 GB original size declared
-> somewhere...
 
-yes, it is declared in the reiserfs superblock.
-
-> 
-> Can I use resize_reiserfs on the loopback before running rebuild?
-> Are there LVM methods to shrink it/copy just the used blocks in
-> conjunction with reiserfs?
-
-Before our reiserfsck master answers I can suggest reiserfsck --rebuild-sb, it
-re-creates superblock and can change the declared fs size.  I hope your file
-was on the first 9 GB.
-
-Then run "reiserfsck --rebuild-tree --scan-whole-partition" and look at
-lost+found dir for your file.
-
-> 
-> Just curious...
-> 
-> -- 
-> Cheers,
-> Alexy Khrabrov :: www.setup.org :: Age Quod Agis
+Alex -- wonderful, thanks!  Doing rebuild-sb first and rebuild-tree second
+on a truncated dd dump did get me one file in lost+found.  However,
+there were two!  They both were in a directory, and I said rm * there.
+The directory is still there, showing empty.  There were only these two
+files in the directory, and nothing else was done to the file system
+except cp and diff.  Where could the second file go if it's not in
+lost+found?  Is there anything else to try?  Just curious...
 
 -- 
-Alex.
+Cheers,
+Alexy Khrabrov :: www.setup.org :: Age Quod Agis
