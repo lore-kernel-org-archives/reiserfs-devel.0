@@ -1,46 +1,48 @@
-From: Pierre Abbat <phma@webjockey.net>
-Subject: Re: Proposal for keying encrypted filesystem
-Date: Mon, 31 Mar 2003 17:40:24 -0500
-Message-ID: <200303311740.24288.phma@webjockey.net>
-References: <200303282026.23543.phma@webjockey.net> <200303311511.40537.phma@webjockey.net> <20030331213104.GZ8452@hvs.envisage.co.za>
+From: "Wang Zheping" <wangzhp@cic.tsinghua.edu.cn>
+Subject: program error
+Date: Tue, 1 Apr 2003 09:25:32 +0800
+Message-ID: <001c01c2f7ed$97210a70$76036fa6@wangzheping>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13503-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0019_01C2F830.A4F4CAE0"
+Return-path: <reiserfs-list-return-13505-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030331213104.GZ8452@hvs.envisage.co.za>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-On Monday 31 March 2003 16:31, Hendrik Visage wrote:
-> On Mon, Mar 31, 2003 at 03:11:40PM -0500, Pierre Abbat wrote:
-> > You need to add the PID to the tuple used to ask for the key. That way a
-> > process and its children can access a file, but other processes running
-> > with the same UID cannot. This is necessary for trusted encrypted backup.
->
-> Agreed.
->
-> However if the key database/engine doesn't have access to an
-> already decrypted key, then it would return an error. That way the backups
-> would only be able to copy the file verbatim (ie. un-decryptable) to the
-> backup medium. Ie. the backups run while the user haven't logged in to
-> enable decryption. Or am I missing the definition of "trusted encrypted
-> backups"?
+------=_NextPart_000_0019_01C2F830.A4F4CAE0
+Content-Type: text/plain;
+	charset="gb2312"
+Content-Transfer-Encoding: base64
 
-I don't understand "if the key database/engine doesn't have access to an 
-already decrypted key".
+DQo8LS0tLS0tLS0tLS0tLXJlaXNlcmZzY2ssIDIwMDItLS0tLS0tLS0tLS0tPg0KcmVpc2VyZnNw
+cm9ncyAzLjYuNQ0KDQpIaToNCiAgICBJIGhhdmUgMSBsdm0gZm9ybWVkIGJ5IDUgZGlzay4NCiAg
+ICBOb3cgMSBkaXNrIGZhaWxlZC4NCiAgICBSZW1haW5lZCBkaXNrIGNhbiBiZSByZWFkb25seSBu
+b3cuDQogICAgV2hlbiBJIHJ1biByZWlzZXJmc2NrLCBkaXNwbGF5IHRoZSBmb2xsb3dpbmc6DQog
+ICAgSXMgaXQgYSBidWc/IG9yIGhvdyBjYW4gSSB0cnlpbmcgcmVjb3ZlciBteSBkYXRhPw0KDQoN
+CiAgKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKg0KICAqKiBJZiB5b3UgYXJlIHVzaW5nIHRoZSBsYXRlc3QgcmVpc2VyZnNwcm9ncyBh
+bmQgIGl0IGZhaWxzICoqDQogICoqIHBsZWFzZSAgZW1haWwgYnVnIHJlcG9ydHMgdG8gcmVpc2Vy
+ZnMtbGlzdEBuYW1lc3lzLmNvbSwgKioNCiAgKiogcHJvdmlkaW5nICBhcyAgbXVjaCAgaW5mb3Jt
+YXRpb24gIGFzICBwb3NzaWJsZSAtLSAgeW91ciAqKg0KICAqKiBoYXJkd2FyZSwgIGtlcm5lbCwg
+IHBhdGNoZXMsICBzZXR0aW5ncywgIGFsbCAgcmVpc2VyZnNrICoqDQogICoqIG1lc3NhZ2VzICAo
+aW5jbHVkaW5nIHZlcnNpb24pLCAgdGhlIHJlaXNlcmZzY2sgbG9nZmlsZSwgKioNCiAgKiogY2hl
+Y2sgIHRoZSAgc3lzbG9nIGZpbGUgIGZvciAgYW55ICByZWxhdGVkIGluZm9ybWF0aW9uLiAqKg0K
+ICAqKiBJZiB5b3Ugd291bGQgbGlrZSBhZHZpY2Ugb24gdXNpbmcgdGhpcyBwcm9ncmFtLCBzdXBw
+b3J0ICoqDQogICoqIGlzIGF2YWlsYWJsZSAgZm9yICQyNSBhdCAgd3d3Lm5hbWVzeXMuY29tL3N1
+cHBvcnQuaHRtbC4gKioNCiAgKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKg0KDQpXaWxsIHJlYWQtb25seSBjaGVjayBjb25zaXN0ZW5j
+eSBvZiB0aGUgZmlsZXN5c3RlbSBvbiAvZGV2L3ZnMS9sdjENCldpbGwgcHV0IGxvZyBpbmZvIHRv
+ICdzdGRvdXQnDQoNCkRvIHlvdSB3YW50IHRvIHJ1biB0aGlzIHByb2dyYW0/W04vWWVzXSAobm90
+ZSBuZWVkIHRvIHR5cGUgWWVzIGlmIHlvdSBkbyk6WWVzDQojIyMjIyMjIyMjIw0KcmVpc2VyZnNj
+ayAtLWNoZWNrIHN0YXJ0ZWQgYXQgVHVlIEFwciAgMSAwOToyNTowOCAyMDAzDQojIyMjIyMjIyMj
+Iw0KUmVwbGF5aW5nIGpvdXJuYWwuLg0KVHJhbnMgcmVwbGF5ZWQ6IG1vdW50aWQgNDUsIHRyYW5z
+aWQgNTE5NzYsIGRlc2MgMTgwNCwgbGVuIDI1LCBjb21taXQgMTgzMCwgbmV4dCB0cmFucyBvZmZz
+ZXQgMTgxMw0KYndyaXRlOiB3cml0ZSA0MDk2IGJ5dGVzIHJldHVybmVkIC0xIChibG9jaz0yODkz
+MjQyLCBkZXY9Myk6IE9wZXJhdGlvbiBub3QgcGVybWl0dGVkDQo=
 
-Here's the protocol I'm thinking of:
-Alice starts an SSH session to Bob, the backup server. Alice tells Bob to run 
-"reiserkey -a 1 pa55phrase", which puts the passphrase in the key database as 
-being accessible by the SSH session. Alice then starts rsync and tells it to 
-use the already existing SSH session (I don't know how to do this, but it 
-might be doable) to start rsync on Bob. Alice backs up her data to Bob, but 
-no process that is not a child of the SSH session can read the backup on Bob, 
-even if Bob becomes the UID that Alice is using. When she is finished, Alice 
-runs reiserkey again to remove the passphrase from the key database.
+------=_NextPart_000_0019_01C2F830.A4F4CAE0--
 
