@@ -1,35 +1,32 @@
-From: "christian" <christian.linzatti@gmx.at>
-Subject: Re: too many iterations - Reiser 4
-Date: Fri, 12 Nov 2004 20:50:55 +0100 (MET)
-Message-ID: <18296.1100289055@www69.gmx.net>
+From: Jake Maciejewski <maciejej@msoe.edu>
+Subject: Re: making reiser4/AMD64 hardlock
+Date: Fri, 12 Nov 2004 14:03:41 -0600
+Message-ID: <1100289821.8382.13.camel@localhost>
+References: <1099472359.8158.36.camel@localhost>
+	 <1100073674.31776.21.camel@localhost>
+	 <1100102927.1659.64.camel@tribesman.namesys.com>
+	 <200411122117.39613.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22366-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22367-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200411122117.39613.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
 
-Thanks, its better. 
+Good point. Unfortunately, I wiped out the corrupt filesystem to test
+2.6.10-rc1. I didn't notice any corruption in my most recent test, but
+if it ever happens again, I'll do a --check after --build-fs and post
+the results. 
 
-> would you please try to apply the attached patch?
-> You should also reiserfsck your reiser4 filesystem.
-> ["reiser4.h.diff" (reiser4.h.diff)]
+On Fri, 2004-11-12 at 21:17 +0300, Vitaly Fertman wrote:
+> Would you also run fsck.reiser4 --check on the device after fsck.reiser4 --build-fs
+> to find out if fs is fixed or not before continue using it ?
+-- 
+Jake Maciejewski <maciejej@msoe.edu>
 
-> ===== reiser4.h 1.220 vs edited =====
-> --- 1.220/reiser4.h2004-11-02 16:01:00 +03:00
-> +++ edited/reiser4.h2004-11-09 12:54:07 +03:00
-> @@ -396,7 +396,7 @@
->    I have witnessed more than 800 iterations (in 30 thread test) before >
-cbk
->    finished. --nikita
-> */
-> -#define REISER4_MAX_CBK_ITERATIONS    ((unsigned)~0)
-> +#define REISER4_MAX_CBK_ITERATIONS    500000
- 
- /* put a per-inode limit on maximal number of directory entries with
-identical
-    keys in hashed directory.
