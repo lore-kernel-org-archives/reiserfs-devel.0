@@ -1,63 +1,53 @@
-From: Richard Sharpe <rsharpe@richardsharpe.com>
+From: =?iso-8859-1?Q?Ragnar_Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
 Subject: Re: Reiserfs with Samba vs NetApp Filer (purely performance)
-Date: Sat, 14 Dec 2002 14:34:06 -0800 (PST)
-Message-ID: <Pine.LNX.4.33.0212141429010.2681-100000@ns.aus.com>
-References: <3DFBA067.5040601@namesys.com>
+Date: Sun, 15 Dec 2002 00:11:26 +0100
+Message-ID: <20021215001126.J2727@vestdata.no>
+References: <3DFBA067.5040601@namesys.com> <Pine.LNX.4.33.0212141429010.2681-100000@ns.aus.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12163-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12164-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3DFBA067.5040601@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.33.0212141429010.2681-100000@ns.aus.com>; from rsharpe@richardsharpe.com on Sat, Dec 14, 2002 at 02:34:06PM -0800
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: darren <teodarren@myrealbox.com>, 'Russell Coker' <bofh@coker.com.au>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Richard Sharpe <rsharpe@richardsharpe.com>
+Cc: Hans Reiser <reiser@namesys.com>, darren <teodarren@myrealbox.com>, 'Russell Coker' <bofh@coker.com.au>, reiserfs-list@namesys.com
 
-On Sun, 15 Dec 2002, Hans Reiser wrote:
+On Sat, Dec 14, 2002 at 02:34:06PM -0800, Richard Sharpe wrote:
+> If those are your choices, then I would rank them:
+>=20
+>   NetApp F870, Linux with ReiserFS and Samba, Win2K
+>=20
+> John Terpstra has done some testing with a modified cifs_bm which confirm=
+s=20
+> that Linux with EXT2/3 or ReiserFS outperforms Win2K on the same hardware.
+>=20
+> However, my testing of the NetApp suggests it will outperform the other=20
+> two choices.
 
-> darren wrote:
-> 
-> >Hi all,
-> >
-> >Thanks for all the very informative bits on this thread.
-> >
-> >In my usage, I intend to implement this fileserver to complement another
-> >server that runs a very intensive small files read/write operation.
-> >
-> >These files often run into 200,000 or more but are usually in the range
-> >of 100kb or less.
-> >
-> >Hence, space is not a big issue to me, but performance is. (there's no
-> >point splitting out the IO from the main server if it runs slower!!).
-> >
-> >I will be using an spare server to do this job: Dell Xeon 2GHz with 5 x
-> >72Gb SCSI hdd (I got on board RAID but have not decided on how to
-> >configure yet -help here are welcome too!).
-> >
-> >My options are: Win2k (NTFS with CIFS), Linux (Reiserfs with Samba) or
-> >Netapp 870.
+What kind of benchmarks, and what were the results?
 
-If those are your choices, then I would rank them:
+> If you choose to use Samba, you will want to make sure that the sendfile =
 
-  NetApp F870, Linux with ReiserFS and Samba, Win2K
+> stuff is implemented. Unfortunately, the directory indexing in Reiser doe=
+s=20
+> not help that much a lot of the time because Samba is forced to do=20
+> directory scans because it has to implement case-independent=20
+> lookups/searches.
 
-John Terpstra has done some testing with a modified cifs_bm which confirms 
-that Linux with EXT2/3 or ReiserFS outperforms Win2K on the same hardware.
+Isn't that an configuration-option?
 
-However, my testing of the NetApp suggests it will outperform the other 
-two choices.
+As a sidenote, I think it wouldn't be too hard to make reiserfs
+optionally case-insensitive, but still able to use indexes. Perhaps it
+would even be possible to have two virtual directories pr traditional
+directory? one that has a regular index and one that has a
+case-insensitive index. Of course this is not relevant for the
+right-here right-now choice of fileservers, but....
 
-If you choose to use Samba, you will want to make sure that the sendfile 
-stuff is implemented. Unfortunately, the directory indexing in Reiser does 
-not help that much a lot of the time because Samba is forced to do 
-directory scans because it has to implement case-independent 
-lookups/searches.
 
-Regards
------
-Richard Sharpe, rsharpe[at]ns.aus.com, rsharpe[at]samba.org, 
-sharpe[at]ethereal.com, http://www.richardsharpe.com
-
+--=20
+Ragnar Kj=F8rstad
