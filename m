@@ -1,54 +1,51 @@
-From: Christer Weinigel <christer@weinigel.se>
+From: Tonnerre <tonnerre@thundrix.ch>
 Subject: Re: silent semantic changes with reiser4
-Date: 08 Sep 2004 07:48:27 +0200
+Date: Wed, 8 Sep 2004 08:11:59 +0200
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <m3ekldia50.fsf@zoo.weinigel.se>
-References: <200409070206.i8726vrG006493@localhost.localdomain>
-	<413D4C18.6090501@slaphack.com> <m3d60yjnt7.fsf@zoo.weinigel.se>
-	<1183150024.20040907143346@tnonline.net>
-	<413DD5B4.nailC801GI4E2@pluto.uni-freiburg.de>
-	<m34qm9kbcl.fsf@zoo.weinigel.se>
-	<413E3280.nailEK92X8CU7@pluto.uni-freiburg.de>
-	<m3n001its8.fsf@zoo.weinigel.se>
-	<413E4836.nailFFM11WGWE@pluto.uni-freiburg.de>
+Message-ID: <20040908061159.GC1630@thundrix.ch>
+References: <20040905111743.GC26560@thundrix.ch> <1215700165.20040905135749@tnonline.net> <20040905115854.GH26560@thundrix.ch> <1819110960.20040905143012@tnonline.net> <20040906105018.GB28111@atrey.karlin.mff.cuni.cz> <6010544610.20040906143222@tnonline.net> <m3wtz7h2l6.fsf@zoo.weinigel.se> <826067315.20040906171320@tnonline.net> <m3sm9vh06b.fsf@zoo.weinigel.se> <20040906155456.GC13539@atrey.karlin.mff.cuni.cz>
 Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="MnLPg7ZWsaic7Fhd"
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <413E4836.nailFFM11WGWE@pluto.uni-freiburg.de>
+Content-Disposition: inline
+In-Reply-To: <20040906155456.GC13539@atrey.karlin.mff.cuni.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Gunnar Ritter <Gunnar.Ritter@pluto.uni-freiburg.de>
-Cc: Christer Weinigel <christer@weinigel.se>, Horst von Brand <vonbrand@inf.utfsm.cl>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Tonnerre <tonnerre@thundrix.ch>, Spam <spam@tnonline.net>, ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>, Pavel Machek <pavel@ucw.cz>, David Masover <ninja@slaphack.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jamie Lokier <jamie@shareable.org>, Christoph Hellwig <hch@lst.de>, Alexander Lyamin aka FLX <flx@namesys.com>, Chris Wedgwood <cw@f00f.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Gunnar Ritter <Gunnar.Ritter@pluto.uni-freiburg.de> writes:
 
-> Besides, copying xattrs is usually permitted (POSIX.1-2004, XCU cp):
-> 
-> # If the implementation provides additional or alternate access control
-> # mechanisms (see the Base Definitions volume of IEEE Std 1003.1-2001,
-> # Section 4.4, File Access Permissions), their effect on copies of files
-> # is implementation-defined.
+--MnLPg7ZWsaic7Fhd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In <413DD5B4.nailC801GI4E2@pluto.uni-freiburg.de> you wrote:
+Salut,
 
->A POSIX.1-conforming cp implementation would not be allowed to copy
->additional streams, unless either additional options are given or the
->type of the file being copied is other than S_IFREG.
+On Mon, Sep 06, 2004 at 05:54:56PM +0200, Pavel Machek wrote:
+> Who is going to umount it when application crashes, etc?
 
-I read this as that POSIX mandates that cp can absolutely not copy
-anything else but the file contents.  That is what I called broken.
+This  has   been  discussed  along   with  the  HAL  people   a  while
+ago. Actually, file systems can  introduce a refcount, where we need a
+decrement function  which automatically unmounts the  filesystem if we
+decrement the use count to zero. Kind of an automatic umount.
 
-If we implement named streams as xattrs and that can be accessed with
-openat(..., O_XATTR) this means that cp is allowed to copy the xattrs
-(well, named streans don't neccesarily have to be "alternate access
-control mechanisms", but they can use the same xattr namespace).  
+How  do  you tell  which  file  systems  shall be  autoumounted?   HAL
+suggestion: introduce a no-op mount  option. For some classes of fs'es
+we might as well make that obligatory, such as tar.
 
-That's quite ok in that case.
+			    Tonnerre
 
-  /Christer
+--MnLPg7ZWsaic7Fhd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
--- 
-"Just how much can I get away with and still go to heaven?"
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.9.2 (GNU/Linux)
 
-Freelance consultant specializing in device driver programming for Linux 
-Christer Weinigel <christer@weinigel.se>  http://www.weinigel.se
+iD8DBQFBPqKu/4bL7ovhw40RAlawAKCflGQw29Ffm35rXC1X9PkvK7Xt3QCfeeH3
+E+MhBPhAxXtYzrD7ODR0ixc=
+=i5aS
+-----END PGP SIGNATURE-----
+
+--MnLPg7ZWsaic7Fhd--
