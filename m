@@ -1,71 +1,42 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: [RFC] Pathname Semantics with //
-Date: Wed, 08 Sep 2004 23:10:45 -0700
+From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+Subject: Re: silent semantic changes with reiser4
+Date: Fri, 10 Sep 2004 07:32:54 +0100
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <413FF3E5.1010103@namesys.com>
-References: <20040909214641.6977B15C8B@mail03.powweb.com>
+Message-ID: <1094797973.4838.4.camel@almond.st-and.ac.uk>
+References: <20040825200859.GA16345@lst.de>
+	 <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>
+	 <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk>
+	 <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org>
+	 <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk>
+	 <20040826001152.GB23423@mail.shareable.org>
+	 <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk>
+	 <20040826010049.GA24731@mail.shareable.org> <412DA40B.5040806@namesys.com>
+	 <20040826140500.GA29965@fs.tum.de>
+	 <20040826150202.GE5733@mail.shareable.org>
+	 <41410DE7.3090100@techsource.com>  <41413A2B.9020405@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040909214641.6977B15C8B@mail03.powweb.com>
+In-Reply-To: <41413A2B.9020405@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Dabbs <david@dabbs.net>
-Cc: linux-fsdevel@vger.kernel.org, 'ReiserFS List' <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Timothy Miller <miller@techsource.com>, Jamie Lokier <jamie@shareable.org>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-David Dabbs wrote:
+On Fri, 2004-09-10 at 06:22, Hans Reiser wrote:
+> He asked me, why not just access a filename's size as filename/size?
 
->Before we get too far into the merits of implementation-specific pathname
->resolution for paths starting with //, it seems wise to address the POSIX
->implications of any duality implied by this (or any other) semantic change. 
->
->This is the first issue raised in my original post. Gunnar Ritter also
->addressed it this lkml post 
->[http://marc.theaimsgroup.com/?l=linux-kernel&m=109475512921055&w=2]
->
->
->POSIX demands that open() must fail with ENOTDIR if "a component of the path
->prefix is not a directory." If resolving a path using alternate pathname
->resolution 
->
-what is alternate pathname resolution?  I don't understand this 
-paragraph somehow, probably my error.
+I now understand that you need a way to distinguish between something
+like
 
->permits files to "act as" directories, is it legal to fail with
->ENOTDIR when the VFS/filesystem does not support the capability even though
->the final pathname component is of type S_IFREG? 
->
->Also open() must fail with EACCES if "search permission is denied on a
->component of the path prefix..." Under normal circumstances this means no
->execute permission on a /directory/ path component. What does it mean when
->path prefixes may be of type S_IFREG? Does this mean that normally
->non-executable files must have execute permissions set? This is an important
->security issue.
->  
->
-I think we need two executable bits, one for searching directories and 
-once for executing the default file of the directory.
+shoe/size
 
->BTW, a "Strictly Conforming POSIX Application"
->[http://www.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap02.html#tag_
->02_02_01]
->
->#Shall accept any implementation behavior that results from actions it takes
->#in areas described in IEEE Std 1003.1-2001 as implementation-defined or
->#unspecified, or where IEEE Std 1003.1-2001 indicates that implementations
->#may vary.
->
->How should we interpret this?
->
->
->David
->
->
->
->
->
->
->
->  
->
+and
+
+shoe/.../size   (or shoe/..size)
+
+The first one is the size of the shoe, the second is the automatically
+generated size of the file (object). You would get into trouble if you
+would not allow the user to use shoe/size for shoe size. Peter
+
 
