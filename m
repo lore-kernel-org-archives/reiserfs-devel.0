@@ -1,47 +1,34 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Re: BTW: 2.4.19-patches-to-come?
-Date: 20 May 2002 09:48:14 -0400
-Message-ID: <1021902494.22609.20.camel@tiny>
-References: <200205171736.50971.Dieter.Nuetzel@hamburg.de>
-	<1021650453.14986.914.camel@tiny> 
-	<200205172020.51959.Dieter.Nuetzel@hamburg.de>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: journal log file
+Date: Mon, 20 May 2002 16:02:21 +0200
+Message-ID: <200205201602.21334.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10387-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-10388-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <200205172020.51959.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Cc: Oleg Drokin <green@namesys.com>, Manuel Krause <manuelkrause@netscape.net>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Oleg Drokin <green@namesys.com>
+Cc: Chris Mason <mason@suse.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, 2002-05-17 at 14:20, Dieter N=FCtzel wrote:
-> On Friday 17 May 2002 17:47, Chris Mason wrote:
-> > On Fri, 2002-05-17 at 11:36, Dieter N=FCtzel wrote:
-> > > Sorry Oleg, that I jump in, here...
-> > >
-> > > I get from time to time corrupted files (after reboot and replay) whi=
-ch
-> > > are _NOT_ written during/before crash!!!
-> > > It happes during huge C++ compilation of one of my 3D VIS apps.
-> > >
-> > > After reboot I have waste in the original *.cxx files. This is very
-> > > strange and time consuming 'cause I have to remove every broken file =
-by
-> > > hand and recreate it with CVS when the compiler hit it during the nex=
-t
-> > > run.
-> >
-> > Is this on IDE?
->=20
-> What? Never ever had such "things" on my private system...;-)
+On Monday 20 May 2002 06:15, Oleg Drokin wrote:
+> > partitions (/, /var and /cache), and two of them were created with
+> > reiserfs (/var and /cache). The thing is my / partition hasn't a lot of
+> > room to keep the journal log file. What's the biggest size it can reach?
+> > Will I have one
+>
+> For a filesystem with 4k blocksize standard journal is always 32M (and
+> variable blocksize or relocated journal patches won't be produced for 2.2
+> kernels anyway).
 
-Ah.  What I was hoping for was that tail conversions + writeback caching
-were causing these corrupted files.  Clearly that isn't the case.  I'd
-be really interested to see if you could reproduce on a vanilla kernel.
+Oleg, you should have mentioned that Chris had a "variable" log size patch for 
+"ages" but he only haven't had enough time for polishing it.
 
--chris
+I for myself were very excited when we get this in some day 'cause than I have 
+some little more space on my "boot" partition left or I can shrink it 
+finally.
 
-
+Regards,
+	Dieter
