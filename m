@@ -1,30 +1,54 @@
-From: John Dalbec <jpdalbec@ysu.edu>
-Subject: resize_reiserfs 3.6.8 doesn't shrink bitmap correctly
-Date: Mon, 23 Jun 2003 16:10:38 -0400
-Message-ID: <3EF75EBE.9070304@ysu.edu>
+From: Harald Radke <harryrat@gmx.de>
+Subject: Re: resize_reiserfs probs
+Date: Tue, 24 Jun 2003 00:12:39 +0200
+Message-ID: <200306240012.39596.harryrat@gmx.de>
+References: <200306230132.08812.harryrat@gmx.de> <200306230902.05070.harryrat@gmx.de> <3EF6DD1A.5040802@gmx.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14679-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14680-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3EF6DD1A.5040802@gmx.net>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list <reiserfs-list@namesys.com>
 
-I ran resize_reiserfs -s -1024M on a ReiserFS partition for testing. 
-The partition resized OK, mounted OK, umounted OK.  Then I tried to 
-restore the original filesystem size, but resize_reiserfs reported that 
-it couldn't read the on-disk bitmap.  I ran reiserfsck and it reported:
+Am Montag, 23. Juni 2003 12:57 schrieben Sie:
 
-Zero bit found in on-disk bitmap after the last valid bit.
+> > -> resize_reiserfs -s -9200M /dev/hda3
+> > (for "testing" purposes"....same prob)
+>
+> Your command doesn't resize to 9200M, it makes the fs 9200M SMALLER. Of
+> course that is going to fail. Please try
+>
+> resize_reiserfs -s 9240720K /dev/hda3
+> or
+> resize_reiserfs -s 9200M /dev/hda3
+>
+> and you should be fine. The minus sign is the key to your problem.
+>
+yeah, now it worked ((: thx!
 
-and said I could fix it with --fix-fixable.  I ran reiserfsck 
---fix-fixable and it fixed the problem.  I then ran resize_reiserfs on 
-the same partition to restore the original size with no problems.  I 
-repeated this exercise to make sure it wasn't a fluke, with the same 
-results.
-Thanks,
-John Dalbec
+hm, no offense but maybe the manpage text should be a little clearer in this 
+respect...like not saying 
 
+"-s [+|-]size   Set the new size in bytes"
+
+but 
+
+e.g. 
+"-s [+]-] value     increases (+) / decreases (-) filesystem size by value"
+
+and/or maybe use better values in the shrinking example so that it is quite 
+clear that u have to specify the amount by which size is changed and not the 
+new size (:
+
+
+anyways, thx for ur really fast help, now my thinkpad can hibernate ((;
+
+
+Greez,
+		Harry
