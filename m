@@ -1,86 +1,38 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Error messages.
-Date: Thu, 06 Mar 2003 15:16:05 +0300
-Message-ID: <3E673C05.7000202@namesys.com>
-References: <7473069171.20030305201818@tnonline.net> <20030306095743.B5417@namesys.com> <170120728875.20030306093238@tnonline.net>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: free space seems wrong...
+Date: Thu, 6 Mar 2003 15:23:14 +0300
+Message-ID: <200303061523.14590.vitaly@namesys.com>
+References: <1046886804.23752.25.camel@calculon> <20030306094705.A5417@namesys.com> <1046952022.23752.55.camel@calculon>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13122-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-13123-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <170120728875.20030306093238@tnonline.net>
+In-Reply-To: <1046952022.23752.55.camel@calculon>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Anders Widman <andewid@tnonline.net>
+Content-Type: text/plain; charset="us-ascii"
+To: Soeren Sonnenburg <reiserfs@nn7.de>
 Cc: reiserfs-list@namesys.com
 
-Anders Widman wrote:
 
->>Well, I checked my logs:
->>kernel: hdg: status error: status=0x58 { DriveReady SeekComplete DataRequest }
->>kernel: hdg: drive not ready for command
->>    
->>
->
->   This is what I get all the time.
->
->  
->
->>And for this case I am sure this was a scratchy CD-ROM disk in my CD-ROM drive.
->>    
->>
->
->   Well, have no CD-ROM. :)
->
->  
->
->>Probably same stuff can be get when drive is busy remapping bad sectors?
->>Use smartctl to find out how these messages corellate with remapped bad sectors counts?
->>    
->>
->
->  Very strange. Would mean all of my harddrives would be broken, or on
->  their  way  to  get  broken.  I  do  not  believe that.  Most of the
->  hardware, including the cabling has been replaced and changed.
->
->  
->
->>Bye,
->>    Oleg
->>    
->>
->
->
->
->--------
->PGP public key: https://tnonline.net/secure/pgp_key.txt
->
->
->
->  
->
-Hardware is so much fun to debug sometimes, and when you are the 1% case 
-life can really suck.
+Hi, 
 
-Do you have:
+> do):Yes reiserfs_open_journal: journal parameters from super block does not
+> match to journal parameters from journal.
+>
+> Either make journal partition available or use --no-journal-available
+> If you have the standard journal or if your partition is available
+> and you specified it correctly, you must run rebuild-sb.
 
-bad cooling
-
-bad power supply
-
-bad voltage from power company
-
-electrical noise
-
-?
-
-I think though that Oleg is right that you should contact the IDE guys 
-and ask them for their list of things to check for that particular error 
-message (and tell us about it).
+There is a new check for journal parameters were added which helps to recover
+fs with relocated journal and in a few other cases. These parameters were not
+stored correctly in old kernels before relocated journal appeared. This is 
+nothing to worry about, and you can fix if you run fsck --rebuild-sb and
+say there to fix parameters in the jouranl by ones from the super block.
 
 -- 
-Hans
 
-
+Thanks,
+Vitaly Fertman
