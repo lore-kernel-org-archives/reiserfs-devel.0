@@ -1,50 +1,59 @@
-From: Vijayan Prabhakaran <pvijayan@gmail.com>
-Subject: YET another problem in committing old transactions
-Date: Wed, 15 Sep 2004 16:56:19 -0500
-Message-ID: <d68fdf7d0409151456576dfc03@mail.gmail.com>
-Reply-To: Vijayan Prabhakaran <pvijayan@gmail.com>
+From: Will Smith <will@willsmith.org>
+Subject: Benchmark : ext3 vs reiser4 and effects of fragmentation.
+Date: Thu, 16 Sep 2004 06:02:54 +0800
+Message-ID: <4148BC0E.5010509@willsmith.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21794-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21795-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: mason@suse.com, reiserfs-list@namesys.com
-Cc: reiser@namesys.com, vijayan@cs.wisc.edu
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Hi,
+I've spent the last 2 days coding and running benchmarks
+on the effects of fragmentation on both ext3 and
+reiser4 performance.
 
-There is one more problem in committing the old transactions.
+Explanation and source code is at
+http://www.willsmith.org/opensource/reiser4/fragperf/
 
-In function reiserfs_flush_old_commits(), there is a condition that checks
-if the current transaction is older than 30 seconds. Only if that
-condition satisfies, the data is flushed to the disk. The condition looks
-like:
+Results and graphs are at
+http://www.willsmith.org/opensource/reiser4/fragperf/test1/
 
-if (blah blah blah &&
-(now - SB_JOURNAL(p_s_sb)->j_trans_start_time) >
-        SB_JOURNAL_MAX_TRANS_AGE(p_s_sb))
-{
 
-  /*flush the transaction by calling do_journal_end*/
+Dataset is a kernel source (~200Mb) in a small 350Mb
+partition, with random deletes, copies and overwrites
+to cause fragmentation.
 
-}
+In conclusion:
 
-Note: SB_JOURNAL_MAX_TRANS_AGE(p_s_sb) returns 30 seconds.
+1) reiser4 is slightly faster than ext3 in some cases, but
+    much faster in others (no surprise).  However,
+    deletes are slightly slower.
 
-Now my question is this:
+2) ext3 degrades badly from fragmentation when running
+    ordered (non-random) access patterns.  reiser4
+    also degrades but not as much.
 
-When does reiserfs flush the old uncommitted data ? Is it every 5 seconds
-or every 30 seconds ?
+3) the repacker can bring performance of reiser4 back
+    to full speed, but only if run several times.
 
-If it is going to do it in every 5 seconds when the thread wakes up, why
-do we have the condition for 30 seconds ? If the flush happens only every
-30 seconds, why the thread calls reiserfs_flush_old_commits() every 5
-seconds ?
+4) the repacker is not yet stable - I had to run fsck
+    a few times after repacking, and once got a kernel
+    stack trace during repacking resulting in an
+    un-unmountable filesystem.
 
-Is there any reason for this discrepancy ?
 
-Vijayan
+I'll gladly rerun with different parameters and/or change
+the script if requested.
+
+
+Will Smith
+
+
+
+
+
