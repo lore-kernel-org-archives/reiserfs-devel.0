@@ -1,30 +1,40 @@
-From: Ross Vandegrift <ross@willow.seitz.com>
+From: Robert Brockway <robert@timetraveller.org>
 Subject: Re: PLEASE: take me out of this nightmare!!!
-Date: Wed, 10 Jul 2002 23:33:13 -0400
-Message-ID: <20020711033313.GA21061@willow.seitz.com>
-References: <013a81b36b7b$3233c1e4$8dc13dd4@dbmson> <1026354554.20356.5.camel@dentro> <3D2CF2EB.8050508@mb.tu-ilmenau.de>
+Date: Thu, 11 Jul 2002 14:53:47 +1000 (EST)
+Message-ID: <Pine.LNX.4.44.0207111448120.12693-100000@avon.timetraveller.org>
+References: <20020711033313.GA21061@willow.seitz.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10963-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10964-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <3D2CF2EB.8050508@mb.tu-ilmenau.de>
+In-Reply-To: <20020711033313.GA21061@willow.seitz.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: "Thomas T. Soares" <ttsoares@brturbo.com>, reiserfs-list <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Thu, Jul 11, 2002 at 04:52:27AM +0200, Manuel Krause wrote:
-> Hi, Thomas & list people!
+On Wed, 10 Jul 2002, Ross Vandegrift wrote:
+
+> http://spamassassin.sf.net and get over it.
 > 
-> Can't someone finally take the needed and previously described methods 
-> to make this list spam-free?
+> I haven't seen a single spam on this list since I started using it.
 
-http://spamassassin.sf.net and get over it.
+At the risk of saying "me too" I have to concur 100%.  I haven been using 
+SpamAssassni for months and it is great.  The first I see of spam on most 
+lists is when someone follows upand quotes tghe spam.  If they didn't do 
+this I'd never see it.
 
-I haven't seen a single spam on this list since I started using it.
+I recomend using SpamAssassin in client/server mode (with spamc & spamd) 
+as performance is orders of magnitude better and takes little more setup.  
+Before I changed over to the client/server setup I floored my mail server 
+by accidentally dumping 100 emails simultaneously to the box (it is a 
+K6-233 with 192Mb ram, and yes it is running Reiserfs :)  I tested the 
+client/server setup be sending 35000 emails to the box over a few hours 
+(hundreds or thousands at a time) and it didn't break a sweat.
 
-Ross Vandegrift
-ross@willow.seitz.com
+If anyone gets stuck I'm happy to mail the setup I use to people.
+
+Cheers,
+	-Rob
+
