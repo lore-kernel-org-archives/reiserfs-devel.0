@@ -1,43 +1,40 @@
-From: myciel <myciel@dotcom.pl>
-Subject: Re: How to build a big file server
-Date: Tue, 10 Jun 2003 16:13:18 +0200
-Message-ID: <3EE5E77E.70505@dotcom.pl>
-References: <1054800852.1997.15.camel@wusel.schnulli.de>	 <20030605083301.GB4849@vestdata.no>	 <1054802574.1995.26.camel@wusel.schnulli.de>	 <200306051045.53677.m.c.p@gmx.net>  <3EE5DD06.3010100@dotcom.pl> <1055252169.2010.5.camel@wusel.schnulli.de>
+From: "Fred -- Speed Up --" <speedup@free.fr>
+Subject: Getting Reiser4 without bk
+Date: Thu, 12 Jun 2003 06:36:06 +0200
+Message-ID: <000f01c3309c$24860460$0200a8c0@xpstation>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14507-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_000C_01C330AC.E752D760"
+Return-path: <reiserfs-list-return-14510-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1055252169.2010.5.camel@wusel.schnulli.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+To: ReiserFS ML <reiserfs-list@namesys.com>
 
-Heinz-Josef Claes wrote:
-> Am Die, 2003-06-10 um 15.28 schrieb myciel:
-> 
->> >
->>
->>>3ware Controller. Works perfect.
->>>
->>
->>
->>but not in raid 5...
->>
- > What do you mean? Do have any experiences? What type of controler do
- > use?
+------=_NextPart_000_000C_01C330AC.E752D760
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-2 x 3ware 7500-8 ATA RAID with 160GB Maxtors.
-What I need for my production is: read speed ~2MB/s, write speed ~1MB/s.
-With one partition per controller, on each of them  ~500k of mail 
-accounts using maildir exported via nfs to www frontends and 
-mailservers, it simply did not work.
-After migration to raid 10, it works perfect, during backup I'm able
-to get 5MB/s reading (during busy hours).
+Hello !
+I'd like to patch my 2.5 kernel in order to get Reiser4 working. I tried =
+the bk way, but I got compilation errors, it needs a very long time to =
+get all the kernel tree, and I don't got enough disk space to keep a =
+Reiser4 bk kernel tree in /usr/src. I'd want to know how important the =
+kernel patches are, and if Reiser4 should compile and run well without =
+these (I allways use -mm patches), or if you'd have a global patch =
+against official 2.5.70 source that could orevent me from using =
+Bitkeeper (I suppose the kernel code you're using is not changing =
+everyday, only the Reiser4 code should ...). Now can I just put the =
+reiser4 folder in my fs/ folder of the 2.5 kernel tree and config & =
+compile or do I need these patches ? Where do I find them without using =
+bk ?
+Another question : I also downloaded the reiserprogs sources, and made =
+an autoconf but I got error messages ... how do you build the =
+./configure script ?
 
-
-rafal
-
+Fred
+------=_NextPart_000_000C_01C330AC.E752D760--
 
