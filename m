@@ -1,34 +1,48 @@
-From: Clifford Beshers <clifford.beshers@linspireinc.com>
-Subject: Re: If you want reiser4 to go into the kernel, you probably needto ask for it
-Date: Sun, 24 Oct 2004 07:43:53 -0700
-Message-ID: <417BBFA9.60408@linspireinc.com>
-References: <417A821A.7000004@namesys.com>
+From: Con Kolivas <kernel@kolivas.org>
+Subject: Re: 2.6.9-mm1
+Date: Mon, 25 Oct 2004 00:45:25 +1000
+Message-ID: <417BC005.70104@kolivas.org>
+References: <20041022032039.730eb226.akpm@osdl.org> <4179425A.3080903@namesys.com> <417BBF32.7050808@linspireinc.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22157-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="------------enig83D5CE78B505374CBBBF9B25"
+Return-path: <reiserfs-list-return-22158-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <417A821A.7000004@namesys.com>
+In-Reply-To: <417BBF32.7050808@linspireinc.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: Clifford Beshers <clifford.beshers@linspireinc.com>
+Cc: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-I responded.  Meant to do it on Friday but my brother is in town and I 
-got distracted.
+--------------enig83D5CE78B505374CBBBF9B25
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hans Reiser wrote:
+Clifford Beshers wrote:
+> incompatibility or instability.  Our goal is to ship it as an advanced 
+> but integrated feature, i.e., we do not want to ship two kernels and/or 
+> lose other features such as bootsplash, software suspend, etc.
+                               ^^^^^^^^^^
 
-> Just because we are the fastest filesystem does not mean that it will 
-> be easy for us to get in.  Actually, it makes it harder to get in, for 
-> reasons I'd prefer not to state.  This week would be a good time to 
-> ask for reiser4 to be merged in as an experimental fs if you want it.
+is not in the mainline kernel anyway.
 
---
+Con
 
-This message contains information which may be confidential and privileged. Unless you are the 
-addressee (or authorized to receive for the addressee), you may not use, copy or disclose to anyone 
-the message or any information contained in the message. If you have received the message in error, 
-please advise the sender and delete the message.  Thank you.
+--------------enig83D5CE78B505374CBBBF9B25
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.6 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iD8DBQFBe8AFZUg7+tp6mRURAqJ5AJ0WDRI3CSma89+n0riD8qXEUIL7mwCfWxIT
+dtgQ2M8h56WXVhKAu4KlNqg=
+=U2iC
+-----END PGP SIGNATURE-----
+
+--------------enig83D5CE78B505374CBBBF9B25--
