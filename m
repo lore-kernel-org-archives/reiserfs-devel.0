@@ -1,102 +1,70 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: I would like to see ReiserFS V3 enter a feature freeze real	soon.
-Date: Tue, 01 Jun 2004 10:02:52 -0700
-Message-ID: <40BCB6BC.8020901@namesys.com>
-References: <20040528122854.GA23491@clipper.ens.fr>	 <1085748363.22636.3102.camel@watt.suse.com>	 <1085750828.1914.385.camel@tribesman.namesys.com>	 <1085751695.22636.3163.camel@watt.suse.com>  <40BB61C0.5020902@namesys.com> <1086089827.22636.3391.camel@watt.suse.com>
+From: Helge Hielscher <hhielscher@unternehmen.com>
+Subject: fsck.reiser4 segfault with one partition
+Date: Tue, 01 Jun 2004 07:57:10 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <pan.2004.06.01.11.57.09.230448@unternehmen.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18946-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-18947-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1086089827.22636.3391.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: Vladimir Saveliev <vs@namesys.com>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Andrew Morton <akpm@osdl.org>, Alexander Zarochentcev <zam@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Chris Mason wrote:
+Hallo,
 
->On Mon, 2004-05-31 at 12:48, Hans Reiser wrote:
->  
->
->>While I like and appreciate the data journaling stuff, and I think it 
->>should go in, real soon now I think we should avoid adding new features 
->>to V3.  Let the mission critical server folks have a reiserfs version 
->>that only gets bug fixes added to it, and let V4 be for those who want 
->>excitement.
->>
->>Are there any things which Chris and Jeff think should go in besides 
->>data journaling/ordering and bitmap algorithm changes?
->>
->>    
->>
->
->We've got io error fault tolerance that needs to go in after the barrier
->code has stabilized. 
->
-Ok, this qualifies as bug fixing or close enough.;-)
+fsck.reiser4 segfaulted when I tried to check /dev/hda6 (see below).
 
-> I can't promise that I'll never making another
->change in there, but my goal is to keep them to a minimum.
->
->  
->
->>Also, I would like to see some serious benchmarks of the bitmap 
->>algorithm changes before they go in.  They seem nice in theory, and some 
->>users liked them for their uses, but that does not make a serious 
->>scientific study.  Such a study has a high chance of making them even 
->>better.;-)
->>
->>    
->>
->
->Some benchmarks have been posted on reiserfs-list, but I'd love to
->coordinate with you on getting some mongo numbers. 
->
-Ok.
+HTH,
+Helge
 
-> I can spout off a
->long list of places where the code does better then the original v3
->allocator, but that's because those were the ones I was trying to fix
->;-)
->
->  
->
->>zam, I view you as the block allocator maintainer, please review that 
->>bitmap code from Chris.
->>
->>Chris and Jeff, can you propose a benchmarking plan for the bitmap code?
->>    
->>
->
->A good start would be to just rebenchmark against v4.
->  
->
-V4 performance is not at a stable point at the moment I think, I have 
-not been monitoring things closely due to trying to earn bucks 
-consulting, and performance did not get tested every week, but there 
-have been reports of performance decreasing and no reports of anyone 
-investigating it, so I need to....
+# fsck.reiser4 /dev/hda6
+*******************************************************************
+This is an EXPERIMENTAL version of fsck.reiser4. Read REAMDE first.
+*******************************************************************
 
-Elena, please compose a URL consisting of past benchmarks of various V4 
-snapshots and send it to me.  (I did not read the last one you sent, 
-sorry about that, so include the contents of that one also).
+Fscking the /dev/hda6 block device.
+Will check the consistency of the Reiser4 SuperBlock.
+Will check the consistency of the Reiser4 FileSystem.
+Continue?
+(Yes/No): yes
+***** Openning the fs.
+Reiser4 journal (journal40) on /dev/hda6: 0 transactions replaied of the total 0
+blocks.
+Reiser4 fs was detected on the /dev/hda6.
+Master super block (16):
+magic:          ReIsEr4
+blksize:        4096
+format:         0x0 (format40)
+label:          <none>
 
-If the objective is to determine if the algorithm is good, then we 
-should test it with only the algorithm in question changed.
+Format super block (17):
+plugin:         format40
+description:    Disk-format for reiser4, ver. 0.5.3
+magic:          ReIsEr40FoRmAt
+flushes:        0
+mkfs id:        0x6bb3bacf
+blocks:         1534672
+free blocks:    983639
+root block:     476311
+tail policy:    0x4 (smart)
+next oid:       0x2ca9c
+file count:     110117
+tree height:    4
+key policy:     LARGE
 
-I would be quite happy to add the algorithm to V4 (or Chris and Jeff can 
-do that) and test it on vs. off.
+***** Tree Traverse Pass: scanning the reiser4 internal tree.
+        Read nodes 84931
+        Nodes left in the tree 84931
+                Leaves of them 83682, Twigs of them 1225
+        Time interval: Tue Jun  1 07:48:12 2004 - Tue Jun  1 07:49:19 2004
+***** TwigScan Pass: checking extent pointers of all twigs.
+        Read twigs 1225
+        Time interval: Tue Jun  1 07:49:19 2004 - Tue Jun  1 07:49:20 2004
+***** Semantic Traverse Pass: reiser4 semantic tree checking.
+Segmentation fault
 
-Zam, place that on your todo list and send the todo list to me....
-
->-chris
->
->
->
->
->  
->
 
