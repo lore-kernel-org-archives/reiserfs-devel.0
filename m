@@ -1,33 +1,35 @@
-From: faraz ahmed <faraz_irulz@yahoo.com>
-Subject: WWW link for ORION Filesystem (Reconfigurable Directory Structure aggregation acc to semantics)
-Date: Sat, 20 Mar 2004 07:56:40 -0800 (PST)
-Message-ID: <20040320155640.55398.qmail@web60407.mail.yahoo.com>
+From: Domenico Andreoli <cavok@tiscali.it>
+Subject: reiserfsprogs: lib/misc.c: why die() aborts?
+Date: Sat, 20 Mar 2004 17:18:19 +0100
+Sender: Domenico Andreoli <cavok@libero.it>
+Message-ID: <20040320161819.GA6734@raptus.homelinux.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17340-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17341-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com, beprojects <beprojects@calsoftinc.com>, faraz faraz <faraz_irulz@yahoo.com>, Amey Inamdar <amey_myworld@yahoo.com>
+To: reiserfs-list@namesys.com
 
-Hi Everybody;
-         This is the link for the ORION filesystem.
-This filesystem supports reconfigurable directory
-structure with aggregation according to semantics of
-files.
-Check out the Link to Know More
+hi all,
 
-       http://www.geocites.com/faraz_irulz 
+in trying to figure out what is the unpack program in reiserfsprogs
+and if it supposed to be distributed in the debian package, i came to
+the function die() in lib/misc.c.
 
-Check out the screen shots section to have a feel.
-Suggestions and comments are welcomed
-Regards 
-The ORION team.
+i'm seeing it regularly aborts the execution instead of using the
+usual exit(EXIT_FAILURE). shouldn't it be more polite or it is not for
+public use?
 
-__________________________________
-Do you Yahoo!?
-Yahoo! Finance Tax Center - File online. File on time.
-http://taxes.yahoo.com/filing.html
+what is unpack supposed to do?
+
+cheers
+domenico
+
+-----[ Domenico Andreoli, aka cavok
+ --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
+   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
