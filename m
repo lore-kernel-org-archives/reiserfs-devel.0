@@ -1,63 +1,76 @@
-From: "Sean Rima" <fido@tcob1.net>
-Subject: Re: Strange Syslog messages
-Date: Tuesday, 17 Sep 2002 15:34:18 +0000
-Message-ID: <MSGID_2=3a263=2f950_6996345a@fidonet.org>
-References: <20020917101449.A30035@namesys.com>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: Re: reiserfsprogs-3.6.4-pre2
+Date: Wed, 18 Sep 2002 03:55:46 +0200
+Message-ID: <3D87DD22.9050706@mb.tu-ilmenau.de>
+References: <200209171723.09026.vitaly@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11501-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11502-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20020917101449.A30035@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-Originally to: Oleg Drokin
+On 09/17/2002 03:23 PM, Vitaly Fertman wrote:
+> Hi all,
+> 
+> A new reiserfsprogs pre release is available at
+> ftp.namesys.com/pub/reiserfsprogs/pre/reiserfsprogs-3.6.4-pre2.tar.gz
+> 
+> Changes went into 3.6.4-pre2:
+> 
+> fix-fixable sets correct item formats in item headers if needed.
+> rebuild got some extra checks for invalid tails on pass0.
+> fsck check does not complain on wrong file sizes if safelink exists.
+> check dma mode/spead of harddrive and warn the user if it descreased 
+>   -- it could happen due to some hardware problem.
+> 
+> Bugs:
+> 
+> during conversion tails to indirect items on pass2 and back conversion 
+>   on semantic pass.
+> not proper cleaning flags in item headers.
+> during relocation of shared objects.
+> new block allocating on pass2 (very rare case).
+> 
 
-Oleg,
 
->> I am using a stock 2.4.19 kernel, on a system with reiserfs only. I have
-> started
->> getting a lot of:
->>vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat data
-> of
->> [21003 21048 0x0 SD]
->> is_leaf: wrong item type for item *3.5*[21003 21047 0x1 IND], item_len 8,
->>item_location 2214, free_space(entry_count) 0 vs-5150: search_by_key: invalid
->> format found in block 16616. Fsck? vs-13070: reiserfs_read_inode2: i/o
-> failure
->> occurred trying to find stat data of [21003 21048 0x0 SD]
+Hi Vitaly!
 
-> Do you see any other messages from kernel at this same time?
+Does this mean these "Bugs" are
+  [a] only in 3.6.4-pre2, so: newly "created"
+  [b] in 3.6.4-pre2 and the previous -pres
+  [c] or even in the 3.6.3 release,too
+???
 
-Nothing related to kernel, usually cron etc.
+No, I'm not in doubt of reiserfscks development efforts in general, just 
+want to know for sure.
 
->>if I boot into a rescue disk and run reiserfsck, I get no errors at all to be
->> fixed running check only
+Thanks,
 
-> What reiserfsprogs version do you have?
+Manuel
 
-The lastest version, I made sure I was updated.
 
->> Is this serious, a problem with the HD or what??
 
-> Hard to tell right now.
-
-I am wondering if it is my motherboard, as I have just ran badblocks on both HDs 
-with nothing being reported.
-
-Sean
-... COFFEE.CUP empty - Operator shelled out to KITCHEN
---
- Message from TCOB1, Ireland's best BBS
- +353-95-43868 sometimes via tcob1.staticky.com
-
-<-> Gateway Information.
-This message originated from a Fidonet System (http://www.fidonet.org)
-and was gated at TCOB1 (http://www.tcob1.net)
-Please do not respond direct to this message but via the list
-
+> Changes went into 3.6.4-pre1:
+> 
+> Correction of nlinks on fix-fixable was disabled, because
+>   fix-fixable zeroes nlinks on the first pass and wants to
+>   increment them on semantic pass. But semantic pass is skipped
+>   if there are fatal corruptions.
+> Exit codes were fixed.
+> Warning/error messages were changed to more user friendly form.
+> 
+> Changes which got into 3.6.3-pre1, but were not included into the 
+> release:
+> 
+> Great speedups for pass2 of reiserfsck.
+> 
+> Thanks,
+> Vitaly Fertman
+> 
 
