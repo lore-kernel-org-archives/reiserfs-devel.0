@@ -1,62 +1,39 @@
-From: Chris Worley <chrisw@lnxi.com>
-Subject: Re: Permission denied on access to files; even as
-	root
-Date: Sun, 16 Jun 2002 18:47:41 +0000 (UTC)
-Message-ID: <1024358539.26879.10782.camel@xserver>
-References: <1024353028.26879.10577.camel@xserver>
-	<3D0CC8F8.9090206@namesys.com> <1024354235.21004.10629.camel@xserver> 
-	<20020616222011.A15910@namesys.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: [BUG] tons of logging patches
+Date: 16 Jun 2002 16:54:20 -0400
+Message-ID: <1024260860.11287.45.camel@tiny>
+References: <200206072332.29892.tomlins@cam.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10748-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10749-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020616222011.A15910@namesys.com>
+In-Reply-To: <200206072332.29892.tomlins@cam.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Ed Tomlinson <tomlins@cam.org>
+Cc: reiserfs-list@namesys.com
 
-So, If I:
+On Fri, 2002-06-07 at 23:32, Ed Tomlinson wrote:
+> Hi,
+> 
+> On pre10-ac2 with your:
+> 
+> 01-relocation-3.diff  
+> 02-commit_super-8-relocation.diff  
+> 03-beta-data-logging-7.diff
+> 
+> Adpated for the O(1) scheduler which required replacing code in two places
+> in journal.c with yield() and with by slab_in_lru patch, I found this in my log:
+>
 
-    1) compile and install (configured as my previous kernel) the kernel
-    kernel-source-2.4.16.SuSE-32.i386.rpm at ftp.suse.com in
-    /pub/suse/i386/update/7.3/2.4.16-20020416 and
-    
-    2) configure/make/install reiserfsprogs-3.x.1b, and 
-    
-    3) remake my lvm initrd, then 
-    
-    4) reboot single user and run reiserfsck (no args), 
-    
-I'll have a working, fixed file system that will have large file
-capabilities?
+Hi Ed, thanks for trying these out.
 
-Thanks,
+Andrea hit this bug too, and one other oops.  I've got this one fixed
+(one liner), and I'm working on the other.  Hopefully I'll have it all
+figured out tomorrow.
 
-Chris
-
-On Sun, 2002-06-16 at 12:20, Oleg Drokin wrote:
-> Hello!
-> 
-> 
-> On Mon, Jun 17, 2002 at 04:50:33PM -0600, Chris Worley wrote:
-> 
-> > I'm Running Linux 2.4.10-4GB on SuSE 7.3 with reiserfsprogs-3.x.0j-1
-> 
-> Consider upgrading your server otherwise problem will repeat itself.
-> SuSE update kernel 2.4.16 would be fine for you.
-> 
-> > The problem is progressive.  I.e. "/bin/hostname" can't be executed
-> > today, and it was fine after trying the "conv".
-> 
-> Yes, newly created files occupy OIDs of already existing ones.
-> 
-> Upgrade kernel and fsck, then run reiserfsck and it will fix the problems.
-> 3.x.1b version of reiserfsprogs would be fine for you.
-> 
-> Bye,
->     Oleg
-> 
+-chris
 
 
