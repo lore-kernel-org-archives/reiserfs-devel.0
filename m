@@ -1,32 +1,33 @@
-From: Alexander Lyamin <flx@msu.ru>
-Subject: Re:  reiser4 plugins (was: silent semantic changes with reiser4)
-Date: Sat, 28 Aug 2004 23:41:40 +0400
-Message-ID: <20040828194140.GL6746@alias>
-References: <20040826014542.4bfe7cc3.akpm@osdl.org> <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <1093527307.11694.23.camel@leto.cs.pocnet.net> <20040828111807.GC6746@alias> <20040828161113.GA27278@delft.aura.cs.cmu.edu>
-Reply-To: flx@msu.ru
+From: viro@parcelfarce.linux.theplanet.co.uk
+Subject: Re: silent semantic changes with reiser4
+Date: Sat, 28 Aug 2004 20:45:26 +0100
+Sender: <viro@www.linux.org.uk>
+Message-ID: <20040828194526.GL21964@parcelfarce.linux.theplanet.co.uk>
+References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org> <20040828170515.GB24868@hh.idb.hist.no> <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org> <20040828182954.GJ21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408281132480.2295@ppc970.osdl.org> <20040828185613.GK21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408281201290.2295@ppc970.osdl.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21017-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21019-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040828161113.GA27278@delft.aura.cs.cmu.edu>
+In-Reply-To: <Pine.LNX.4.58.0408281201290.2295@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: flx@msu.ru, Christophe Saout <christophe@saout.de>, Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
 
-Sat, Aug 28, 2004 at 12:11:14PM -0400, Jan Harkes wrote:
-> On Sat, Aug 28, 2004 at 03:18:07PM +0400, Alexander Lyamin wrote:
+On Sat, Aug 28, 2004 at 12:16:47PM -0700, Linus Torvalds wrote:
+> So if we do support it, I think we should just make the attribute point
+> look exactly like a normal directory, since that path would work as-is. If
+> we don't support it (and at directory points), we might want to just
+> consider it a special root.
 > 
-> It will get there, just consider it constructive criticism. If we can
-> help resolve or refute the technical issues, all the better. We might
-> even end up with improvements or extensions to the VFS or MM making life
-> easier for everyone.
+> NOTE! Anybody who tries to use the "getcwd()" string as a real path is 
+> already broken - you have pathname permissions that may not make it 
+> possible to look up the path you see.
 
-That would be nice. Some nice points too (metas/metas in just noice tough).
-
--- 
-"the liberation loophole will make it clear.."
-lex lyamin
+OK, forget getcwd().  What does lookup of .. do from that point?  *Especially*
+for stuff you've got from regular files.  That's the decision that needs to
+be made.
