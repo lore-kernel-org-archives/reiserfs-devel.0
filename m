@@ -1,48 +1,72 @@
-From: Alexander Lyamin <flx@msu.ru>
-Subject: Re:  reiser4 plugins (was: silent semantic changes with reiser4)
-Date: Sat, 28 Aug 2004 16:18:01 +0400
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040828121801.GG6746@alias>
-References: <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <1093527307.11694.23.camel@leto.cs.pocnet.net> <20040828111807.GC6746@alias> <20040828112255.GA11569@lst.de> <20040828114628.GD6746@alias> <20040828115104.GA11874@lst.de>
-Reply-To: flx@msu.ru
+From: leon breedt <bitserf@gmail.com>
+Subject: reiserfs3 filesystem corruption?
+Date: Sun, 29 Aug 2004 01:27:50 +1200
+Message-ID: <270bd0c404082806271f566342@mail.gmail.com>
+Reply-To: leon breedt <bitserf@gmail.com>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20040828115104.GA11874@lst.de>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20984-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@lst.de>, flx@msu.ru, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Sat, Aug 28, 2004 at 01:51:04PM +0200, Christoph Hellwig wrote:
-> On Sat, Aug 28, 2004 at 03:46:28PM +0400, Alexander Lyamin wrote:
-> > Its work for me couple of months. there were few hiccups, but they got fixed
-> > quickly by zam@namesys.com. only ext2 partition is /boot cause of BIOS
-> > limitations. Yes, i use it with LVM2 and stuff...
-> 
-> See the mails from Christophe in this thread.
+hi,
 
-seen. noted. 
+not sure if i'm going mad here:
 
-> > > breaks guaranteed fs semantics, it's not going in in either reiser4 or
-> > > the vfs.
-> > A
-> > > 
-> > > Al has started a thread to hash out working semantics, but there's not been
-> > > a single namesys person involved.  Similar all of you have absolutely ignore
-> > Al message had a reply.
-> > "namesys persons" is Hans Reiser.  Sufficient ?
-> 
-> http://marc.theaimsgroup.com/?t=109355582600002&r=1&w=2
-> 
-> I can't see Hans anywhere.  And honestly Hans has been so out of touch
-> with VFS internals that some person actually understanding the issue
-> might be helpfull.  That would probably whoever has taken over Nikita's
-> position.
+[ljb@imryrr]:/home/ljb $ ls -l /usr/bin/sdiff
+-rwxr-xr-x  1 root root 24576 Apr 25  2003 /usr/bin/sdiff*
 
-I assume Vladimir Saveliev could play this out...
+[ljb@imryrr]:/home/ljb $ cp /usr/bin/sdiff .
 
+[ljb@imryrr]:/home/ljb $ ls -l sdiff
+-rwxr-xr-x  1 ljb ljb 20480 Aug 29 01:12 sdiff*
 
--- 
-"the liberation loophole will make it clear.."
-lex lyamin
+[ljb@imryrr]:/home/ljb $ ./sdiff
+zsh: bus error  ./sdiff
+
+[ljb@imryrr]:/home/ljb $ /usr/bin/sdiff
+/usr/bin/sdiff: missing operand after `/usr/bin/sdiff'
+/usr/bin/sdiff: Try `/usr/bin/sdiff --help' for more information.
+
+why would the file shrink by 4096 bytes? 
+
+and notice, the original is still able to run. its just when i try to
+copy it, that it gets corrupted somehow.
+
+this occurs for a fair number of random files on this filesystem
+(affected files all shrink by 4096 bytes). reiserfsck has no
+complaints, and i've also run reiserfsck --rebuild-tree. it occurs to
+the same set of files every time.
+
+i ran across this while trying to copy my / filesystem to a new
+reiser4 filesystem. first thought it was a reiser4 issue, but it
+occurs when copying to an ext3 filesystem as well.
+
+i've run badblocks on the disk, with no errors. the filesystem isn't
+mounted with any special options, just "noatime".
+
+kernel: 2.6.9-rc1-mm1
+reiserfsck: 3.6.18
+reiserfs format: "3.6"
+
+its serial ATA device on ICH5-R, if that makes any difference.
+
+the relevant dmesg output:
+
+ReiserFS: sda7: found reiserfs format "3.6" with standard journal
+ReiserFS: sda7: using ordered data mode
+ReiserFS: sda7: journal params: device sda7, size 8192, journal first
+block 18, max trans len 1024, max batch 900, max commit age 30, max
+trans age 30
+ReiserFS: sda7: checking transaction log (sda7)
+ReiserFS: sda7: Using r5 hash to sort names
+
+any ideas what to try? i'm keeping this filesystem around so i have
+the test cases available.
+
+leon
