@@ -1,71 +1,49 @@
-From: Christer Weinigel <christer@weinigel.se>
-Subject: Re: silent semantic changes with reiser4
-Date: 02 Sep 2004 20:16:33 +0200
-Sender: wingel@zoo.weinigel.se
-Message-ID: <m3u0ugilj2.fsf@zoo.weinigel.se>
-References: <20040829191044.GA10090@thundrix.ch>
-	<3247172997-BeMail@cr593174-a> <20040831081528.GA14371@thundrix.ch>
-	<20040901201608.GD31934@mail.shareable.org>
+From: Lee Revell <rlrevell@joe-job.com>
+Subject: Re: The argument for fs assistance in handling archives
+Date: Thu, 02 Sep 2004 14:21:07 -0400
+Message-ID: <1094149266.11364.73.camel@krustophenia.net>
+References: <20040826150202.GE5733@mail.shareable.org>
+	 <200408282314.i7SNErYv003270@localhost.localdomain>
+	 <20040901200806.GC31934@mail.shareable.org>
+	 <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
+	 <20040902002431.GN31934@mail.shareable.org> <413694E6.7010606@slaphack.com>
+	 <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org>
+	 <4136A14E.9010303@slaphack.com>
+	 <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org>
+	 <4136C876.5010806@namesys.com>
+	 <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org>
+	 <4136E0B6.4000705@namesys.com>  <1117111836.20040902115249@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21301-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21302-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040901201608.GD31934@mail.shareable.org>
+In-Reply-To: <1117111836.20040902115249@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Tonnerre <tonnerre@thundrix.ch>, "Alexander G. M. Smith" <agmsmith@rogers.com>, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com, vonbrand@inf.utfsm.cl
+To: Spam <spam@tnonline.net>
+Cc: Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Jamie Lokier <jamie@shareable.org> writes:
+On Thu, 2004-09-02 at 05:52, Spam wrote:
 
-> (For example, if I edit an HTML file which is encoded in iso-8859-1,
-> change it to utf-8 and indicate that in a META element, and save it
-> under the same name, the full content-type should change from
-> "text/html; charset=iso-8859-1" to "text/html; charset=utf-8".)
->
-> I don't see how you can do that without kernel support.
+>   Btw, version control for ordinary files would be a great feature. I
+>   think something like it is available through Windows 2000/3 server.
+>   Isn't it called "Shadow Copies". It works over network shares. :)
+> 
+>   It allows you to restore previous versions of the file even if you
+>   delete or overwrite it.
+> 
+>   Features like this do make a good point and helps protecting data -
+>   something that is important IMHO.
+>   
+>   http://www.microsoft.com/resources/documentation/windowsserv/2003/standard/proddocs/en-us/overview_snapshot.asp
+> 
 
-charset_cache = dbm(os.getenv('HOME') + '/.charset_cache')
+Netapp's WAFL has had this for ages, they are called snapshots, and they
+are one of the most useful file system features ever.  But Microsoft
+certainly did not invent them.
 
-def get_charset(path):
-    file_mtime = get_mtime(path)
-    cache_tuple = dbm.get(path, (None, None))
-    if file_mtime != cache_tuple[0]:
-        cache_tuple = (file_mtime, figure_out_charset(path))
-        dbm.put(path, cache_tuple)
-    return cache_tuple[1]
+Lee
 
-This code is guaranteed to always give you an up to date charset for a
-file, provided that the mtime is guaranteed to change every time the
-file changes.
-
-If the file can change during the call to get_charset you'll have to
-lock the file while you are working with it or handle it some other
-way (comparing mtime before and after and retrying if they differ),
-but that is true even if you do it all in the kernel.  This has the
-added advantage that the cache is updated lazily, so the charset is
-never calculated unless someone really needs it.
-
-If the disk gets full, it is time to shrink the cache and preferably
-stale entries are evicted first.  If that's not good enough, a
-notifier such as dnotify or inotify can be used to invalidate the
-cache immediately after the file has changed.
-
-If this gets popular, the cache management can be moved to a daemon
-(naturally with all the security aspects in mind). 
-
-> Don't say dnotify or inotify, because neither would work.
-
-Why not?  The approach above works on any filesystem, even without
-dnotify or inotify but will be more efficient with them.
-
-  /Christer
-
--- 
-"Just how much can I get away with and still go to heaven?"
-
-Freelance consultant specializing in device driver programming for Linux 
-Christer Weinigel <christer@weinigel.se>  http://www.weinigel.se
