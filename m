@@ -1,54 +1,65 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Chris Mason <mason@suse.com>
 Subject: Re: Calling stat with millions of files
-Date: Tue, 08 Jun 2004 09:28:29 -0700
-Message-ID: <40C5E92D.2090101@namesys.com>
+Date: Tue, 08 Jun 2004 12:38:37 -0400
+Message-ID: <1086712717.10973.122.camel@watt.suse.com>
 References: <Pine.LNX.4.58.0406071735290.30177@localhost.localdomain>
+	 <40C5E92D.2090101@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19090-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19091-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.58.0406071735290.30177@localhost.localdomain>
+In-Reply-To: <40C5E92D.2090101@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ross Skaliotis <mross@rs-net.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Ross Skaliotis <mross@rs-net.org>, reiserfs-list@namesys.com
 
-Ross Skaliotis wrote:
+On Tue, 2004-06-08 at 12:28, Hans Reiser wrote:
+> Ross Skaliotis wrote:
+> 
+> >We have a backup system (backupPC) that is responsible for backing up
+> >millions of files and holding over 2 TB of data. The backup system saves
+> >space by creating hard links where it can. This actually reduces the total
+> >size down to 200 GB, however there are still millions of files/hard links.
+> >
+> >What does this have to do with reiserfs? Well, the partition runs reiserfs
+> >3.6. Over the course of a few months (and the addition of millions more
+> >files/hard links) the performance of the filesystem has become painfully
+> >slow.
+> >
+> >In a directory of ~1000 files, running 'ls -l' or 'stat *' takes 45
+> >seconds to complete (assuming nothing is previously cached). We are using
+> >the r5 hash, and mount the filesystem with noatime. No one directory has
+> >(or will ever have) more than about 2000 files and hard links inside.
+> >
+Mount with -o nodiratime as well.
 
->We have a backup system (backupPC) that is responsible for backing up
->millions of files and holding over 2 TB of data. The backup system saves
->space by creating hard links where it can. This actually reduces the total
->size down to 200 GB, however there are still millions of files/hard links.
->
->What does this have to do with reiserfs? Well, the partition runs reiserfs
->3.6. Over the course of a few months (and the addition of millions more
->files/hard links) the performance of the filesystem has become painfully
->slow.
->
->In a directory of ~1000 files, running 'ls -l' or 'stat *' takes 45
->seconds to complete (assuming nothing is previously cached). We are using
->the r5 hash, and mount the filesystem with noatime. No one directory has
->(or will ever have) more than about 2000 files and hard links inside.
->
->Is this performance decrease when calling stat to be expected with
->increasing millions of files/hard links? Would XFS or another filesystem
->get around this somehow? I'd rather not use reiserfs4, as this is a
->production backup server and needs to be as stable as possible.
->
->Thanks very much for your help,
->
->-Ross Skaliotis
->
->
->  
->
-hardlinks destroy locality of reference for stat data, this is probably 
-your problem.
+> >Is this performance decrease when calling stat to be expected with
+> >increasing millions of files/hard links? Would XFS or another filesystem
+> >get around this somehow? I'd rather not use reiserfs4, as this is a
+> >production backup server and needs to be as stable as possible.
+> >
+> >Thanks very much for your help,
+> >
+> hardlinks destroy locality of reference for stat data, this is probably 
+> your problem.
+> 
+> Probably the readahead for the directory is broken by hard links also.
+> 
+> Likely could be optimized but nobody else is complaining about it so I 
+> can't really afford to do it just for you, sorry.
+> 
+> 
 
-Probably the readahead for the directory is broken by hard links also.
+You'll get better results with the new block allocator in 2.6.7-rcX-mm,
+but in the end the stat information for the file isn't horribly close to
+the directory entries, and performance won't be perfect.
 
-Likely could be optimized but nobody else is complaining about it so I 
-can't really afford to do it just for you, sorry.
+Hans, I thought reiser4 was going to be good at this kind of thing?
+
+-chris
+
+
