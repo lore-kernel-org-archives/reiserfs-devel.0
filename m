@@ -1,37 +1,55 @@
-From: Martin Gasthuber <Martin.Gasthuber@desy.de>
-Subject: plugins - examples and (more) docs
-Date: Sat, 25 Sep 2004 14:30:58 +0200
-Message-ID: <41556502.6030505@desy.de>
-Reply-To: Martin.Gasthuber@desy.de
+From: Christophe Saout <christophe@saout.de>
+Subject: reproducable deadlock condition (reiser4)
+Date: Sat, 25 Sep 2004 14:43:13 +0200
+Message-ID: <1096116193.12503.7.camel@leto.cs.pocnet.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21917-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-hWmQh+ms/NWxY3PwWQye"
+Return-path: <reiserfs-list-return-21918-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Reiserfs-List@namesys.com
+To: reiserfs-list@namesys.com
+
+--=-hWmQh+ms/NWxY3PwWQye
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-   for our large storage system holding half a petabyte of experimental 
-physics data, we are looking for a new nameservice implementation. 
-Roughly this means - just store filenames in a hierarchical fashion (as 
-usual) but only store metadata (from the other storage system components 
-i.g. disk-cache and tape store) and no real data (this is in the cache - 
-one or more times, and the 'real' copy is on tape). Right now we have a 
-DB (simple key/value) system with a faked NFS server code on top.
-While looking at other ways and making proof of concept implementation i 
-'traped' into reiser4 with the important plugin feature. For our system 
-we need 'unique + persistent' IDs for files with the ability to map in 
-both directions (name -> id, id -> name), extended attributes and 
-virtual files. From what i understand, reading the reiser4 docs i've 
-found, all this should be feasible by creating new plugins for files and 
-IDs. Because i like 'real' stuff - im' looking for plugin example code 
-and more docs related to plugin creation and integration. Any idea where 
-i can find that ???
+it seems I've found a deadlock in reiser4.
 
-Regards,
-   Martin
+I don't know how it happens, but every time i want to run "emerge php"
+the command compiles php and wants to install it but just before the end
+it hangs (when running some PEAR commands). The whole system freezes a
+couple of seconds after that. /var/log/messages contains some lines
+saying "clong length 0" but these lines never actually get commited to
+disk when the build directory is on the /var volume.
+
+Interestingly the same deadlock occurs if I try to run the build on
+another volume.
+
+I've tried it four times so far, always with the same result. The
+filesystems are all clean.
+
+Should I turn on debugging? I can also provide ssh access to someone if
+he wants to look himself.
+
+The reiser4 version is from 2.6.9-rc1-mm1, I think.
+
+
+--=-hWmQh+ms/NWxY3PwWQye
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.6 (GNU/Linux)
+
+iD8DBQBBVWfhZCYBcts5dM0RAscGAJ4gVZisV5/VFH2x/jNKPnMnyqI3+gCfUYx/
+P79Bk//m8EFyepA5efrxr/Y=
+=50o0
+-----END PGP SIGNATURE-----
+
+--=-hWmQh+ms/NWxY3PwWQye--
+
