@@ -1,59 +1,50 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: Have this vs-500: unknown uniqueness error
-Date: Wed, 12 May 2004 12:43:18 +0400
-Message-ID: <1084351398.14090.4816.camel@tribesman.namesys.com>
-References: <RNFIOVS-0005711935799@deborah>
-	 <200405111820.08117.michael@corp.mercuryin.es>
+From: Jeremy Hankins <nowan@nowan.org>
+Subject: Re: reiser4 non-free?
+Date: Wed, 12 May 2004 09:31:11 -0400
+Message-ID: <87vfj1ai1s.fsf@wasp.nowan.org>
+References: <4097CCA4.4060707@namesys.com> <87fzag139k.fsf@aule.evenmere.org>
+	<4099A868.9030406@slaphack.com>
+	<20040506.083242.41632888.wlandry@ucsd.edu>
+	<87k6zpy8ke.fsf@aule.evenmere.org>
+	<20040506143643.GB25505@raptus.homelinux.org>
+	<877jvpy08v.fsf@aule.evenmere.org> <409A7F98.7040609@namesys.com>
+	<87d65hw4hb.fsf@aule.evenmere.org> <87brl1jalm.fsf@wasp.nowan.org>
+	<87vfj9ugrn.fsf@aule.evenmere.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18628-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <200405111820.08117.michael@corp.mercuryin.es>
+Return-path: <bounce-debian-legal=debian-legal=m.gmane.org@lists.debian.org>
+In-Reply-To: <87vfj9ugrn.fsf@aule.evenmere.org> (Brian Thomas Sniffen's
+ message of "Thu, 06 May 2004 22:12:44 -0400")
+Resent-Message-ID: <TCXgGC.A.cKG.4cioAB@murphy>
 List-Id: <reiserfs-devel.vger.kernel.org>
+List-Post: <mailto:debian-legal@lists.debian.org>
+List-Help: <mailto:debian-legal-request@lists.debian.org?subject=help>
+List-Subscribe: <mailto:debian-legal-request@lists.debian.org?subject=subscribe>
+List-Unsubscribe: <mailto:debian-legal-request@lists.debian.org?subject=unsubscribe>
+List-Archive: <http://lists.debian.org/debian-legal/>
 Content-Type: text/plain; charset="us-ascii"
-To: Michael Schwietering <michael@corp.mercuryin.es>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Brian Thomas Sniffen <bts@alum.mit.edu>
+Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-Hello
+Brian Thomas Sniffen <bts@alum.mit.edu> writes:
+> Jeremy Hankins <nowan@nowan.org> writes:
+>> Brian Thomas Sniffen <bts@alum.mit.edu> writes:
 
-On Tue, 2004-05-11 at 20:20, Michael Schwietering wrote:
-> "vs-500: unknown uniqueness 1048576
-> green-16003: Invalid item type observed, run fsck ASAP
-> vs-500: unknown uniqueness 1048576"
-> 
-> 
-> and the fs is reiser-3.6.2-31 on SuSE Linux 9
-> 
-> ...that comes back from time to die... I did a reiserfsck
-> and that does it then, it cleans it out, its ok but after a while that thingy 
-> comes again, and some files give permission denied when trying to do a backup 
-> on that crappy machine. So I have some questions (some for fun and some for 
-> knowledge):
-> - Is that a thing that comes with reiser or is it because of buggy hardware?
+>>> In other words, some works under this license are free (for example,
+>>> one containing no credits but the copyright notice) and others are
+>>> non-free.
+>>
+>> Wouldn't such a work still be non-free?  At the least, it definitely
+>> goes much farther than the analogous clause in the GPL.  You can't
+>> include code (even optionally executed code) to suppress it, for
+>> example.
+>
+> If there are no credits, the prohibition on removing credits is null.
 
-It looks so very much, especially because other machines are working
-properly. Would you mind to try memtest?
+Yes, but there's still the format & placement of the copyright notice.
+E.g., the fact that it's printed regardless of input and interactivity.
 
-> - Is it possible to upgrade to a different reiser release, without breaking 
-> things, and will that help?
-
-suse on-line update?
-
-> - Is there any script that starts reiserfsck automatically everty week or 
-> every month (that was the funny question then :)
-> 
-
-i am not aware of any
-
-> rgds, and remember, all other machines run reiserfs without any problems, thx 
-> guys...
-
-> Michael
-> 
->  
-> 
-> 
+-- 
+Jeremy Hankins <nowan@nowan.org>
+PGP fingerprint: 748F 4D16 538E 75D6 8333  9E10 D212 B5ED 37D0 0A03
 
