@@ -1,92 +1,87 @@
-From: Joseph Fannin <jhf@rivenstone.net>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 09:05:56 -0400
-Message-ID: <20040826130556.GA11496@samarkand.rivenstone.net>
-References: <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826044425.GL5414@waste.org> <1093496948.2748.69.camel@entropy> <20040826053200.GU31237@waste.org>
+From: Christophe Saout <christophe@saout.de>
+Subject: Re: reiser4 plugins (was: silent semantic changes with reiser4)
+Date: Thu, 26 Aug 2004 15:17:53 +0200
+Message-ID: <1093526273.11694.8.camel@leto.cs.pocnet.net>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
+	 <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com>
+	 <20040826014542.4bfe7cc3.akpm@osdl.org>
+	 <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de>
+	 <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
-Return-path: <reiserfs-list-return-20662-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-N5PVJ+R2JfuFy+q/oFHa"
+Return-path: <reiserfs-list-return-20663-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040826053200.GU31237@waste.org>
+In-Reply-To: <20040826130718.GB820@lst.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Matt Mackall <mpm@selenic.com>
-Cc: Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Christoph Hellwig <hch@lst.de>
+Cc: Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
---2oS5YaxWCcQjTEyO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-N5PVJ+R2JfuFy+q/oFHa
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 26, 2004 at 12:32:00AM -0500, Matt Mackall wrote:
+Am Donnerstag, den 26.08.2004, 15:07 +0200 schrieb Christoph Hellwig:
 
-> What it breaks is the concept of a file. In ways that are ill-defined,
-> not portable, hard to work with, and needlessly complex. Along the
-> way, it breaks every single application that ever thought it knew what
-> a file was.
+> > Why? The question was what these plugins are exactly. This is the
+> > answer.
 >=20
-> Progress? No, this has been done before. Various dead operating
-> systems have done it or similar and regretted it. Most recently MacOS,
-> which jumped through major hurdles to begin purging themselves of
-> resource forks when they went to OS X. They're still there, but
-> heavily deprecated.
+> I explained it below..
+
+It's hard to talk to you if you're not even trying to understand what
+I'm trying to say. Andrew wanted to know what these plugins are. I tried
+to give an answer and then you come along to tell me that it's not
+relevant. Sure, Linux doesn't care about what the filesystem does
+internally but Andrew wanted to know that.
+
+> > Are you actually listening? If you implement a filesystem there's a
+> > place where you have to implement the Linux VFS methods. I'm talking
+> > about inode_operations and these things. This has nothing to do with
+> > doing anything outside the Linux VFS. And I'm not talking about these
+> > metas either. These really don't belong inside the filesystem.
 >=20
-> > cp, grep, cat, and tar will continue to work just fine on files with
-> > multiple streams.
->=20
-> Find some silly person with an iBook and open a shell on OS X. Use cp
-> to copy a file with a resource fork. Oh look, the Finder has no idea
-> what the new file is, even though it looks exactly identical in the
-> shell. Isn't that _wonderful_? Now try cat < a > b on a file with a
-> fork. How is that ever going to work?
+> as I wrote in this mail this absolutely _does_ belong in the filesystem,
+> it's a major part of it and isn't easily separatable.
 
-   I've been known to be silly now and then, for sure.  Apple says
-this about the next version of OS X, due next year:
+Huh?
 
-"Tiger provides a standard, Darwin-level API for managing resource
-forks, filesystem metadata, security information, properties and other
-attributes in a consistent, cross-platform manner. For example, common
-UNIX utilities such as cp, tar and rsync can properly handle HFS+
-resource forks."
+Now you're completely confusing me.
 
-    That's marketing copy, but I think it's worth noting.  It seems to
-be that resource forks aren't deprecated across the board,
-just... changed.
+First you say that that file-as-a-directory is crap then you say that it
+does belong into the filesystem?
 
-    Apple has found a way to make this work, at least partially.  I
-don't know if it's a good way, but there it is.
+I'll try again:
 
-    I'd like to be able to keep my Macintosh stuff on my Linux
-fileserver, without losing the resource forks.  That would require
-that the network fs support it of course, and whether I could use tar
-to back up my linux box would depend on how streams might be
-implemented there.
+inode_operations, etc... are implemented as a "reiser4 plugin". This
+means that reiser4 is usable as filesystem, you can store files in a
+directory hierarchy. There's absolute nothing special here. Absolutely
+nothing. And yes, reiser4 plugins are invisible from the VFS. It looks
+like a normal filesystem because it behaves like one.
 
-> I like cat < a > b. You can keep your progress.
+The "metas" I was referring in the second part are this file-as-a-
+directory thing. These don't belong in the filesystem and should
+therefore be removed.
 
-    Can't we have both?
+The latter doesn't necessarily have anything to do with plugins.
+The plugins are plugins for the storage layer, not for some semantic
+enhancement.
 
---=20
-Joseph Fannin
-jhf@rivenstone.net
+Note that I changed the topic to avoid further confusion.
 
-"Bull in pure form is rare; there is usually some contamination by data."
-    -- William Graves Perry Jr.
 
---2oS5YaxWCcQjTEyO
-Content-Type: application/pgp-signature
-Content-Disposition: inline
+--=-N5PVJ+R2JfuFy+q/oFHa
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (Darwin)
+Version: GnuPG v1.2.5 (GNU/Linux)
 
-iD8DBQFBLeA0Wv4KsgKfSVgRAoaEAJ0UlPMzaZo9sbDewdYLHWcrlceigQCffcYU
-SsoR9eWCFAxk4hqRQiQwkLA=
-=QKhw
+iD8DBQBBLeMBZCYBcts5dM0RAmH8AJ4/Bc1fsd97cpl8zU1elKecgMBfywCeMkZi
+Hzq/IxHhZWLE0iSThBFMmZc=
+=hj5U
 -----END PGP SIGNATURE-----
 
---2oS5YaxWCcQjTEyO--
+--=-N5PVJ+R2JfuFy+q/oFHa--
+
