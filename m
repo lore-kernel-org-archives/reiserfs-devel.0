@@ -1,83 +1,106 @@
-From: Fredrik Tolf <fredrik@dolda2000.com>
-Subject: Re: XATTR bugs
-Date: Wed, 10 Dec 2003 03:27:21 +0100
-Message-ID: <16342.33929.573984.115066@pc7.dolda2000.com>
-References: <16323.62343.428966.858580@pc7.dolda2000.com>
-	<3FD65B57.8040603@suse.com>
-	<16342.30028.148943.409122@pc7.dolda2000.com>
-	<3FD680A6.9090403@suse.com>
+From: David Masover <jedi@ninja.dynup.net>
+Subject: Re: More on Hard Links
+Date: Tue, 09 Dec 2003 20:44:53 -0600
+Message-ID: <3FD688A5.9070508@ninja.dynup.net>
+References: <5450026541-BeMail@cr593174-a> <20031209052107.58404.qmail@web25009.mail.ukl.yahoo.com> <87vfopyghf.fsf@uhoreg.ca>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16313-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16314-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FD680A6.9090403@suse.com>
+In-Reply-To: <87vfopyghf.fsf@uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Fredrik Tolf <fredrik@dolda2000.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Jeff Mahoney writes:
- > Fredrik Tolf wrote:
- > | These are not the greatest problems with the XATTR patches,
- > | though; they were only what I discovered initially. The greatest
- > | problem (I don't know if this might not appear on 2.4 kernels, but it
- > | certainly did occur on all my 2.6 kernels) is that ACLs can suddenly
- > | "disappear".
- > |
- > | I don't know exactly what it was that happened, but sometimes (without
- > | any pattern that I could notice), the ACLs would simply become
- > | ineffective. The XATTR for the ACLs was still there, but it was as if
- > | it wasn't taken into account for any kind of operation. When checking
- > | with getfattr, the ACL attribute was still there and looked just as it
- > | did before whatever happened happened, but in every other aspect it
- > | was as if it wasn't there anymore. The only way to solve it was to run
- > | "setfacl -b" on the affected file and then recreate the ACL.
- > |
- > | In fact, this forced me to abandon ReiserFS in favor of XFS.
- > | Regrettable as it may be, I didn't want to live without ACLs, and I
- > | had too much on my hands to start debugging it... :-(
- > 
- > This is the first I've heard of this behavior. Do you have a reliable
- > way of reproducing it? I realize that you said you didn't find a
- > pattern, but what was the workload you were applying to the ACLs?
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Well, the machine I applied the patches to is the NFS server that I
-use at home, so the workload isn't too great. It serves my and my
-family's workstations, the web server (around 1000-2000 hits/day), and
-some misc services. So as you can see, the load isn't too great, but
-it's seldom completely idle.
+Hubert Chan wrote:
 
-The strange thing is that the behavior didn't seem very related to the
-current workload, but rather localized to certain files/dirs. For
-example, I use ACLs on all home directories to allow apache
-through. Some home directories would never once lose the ACLs, while
-others kept losing them all the time.
+[...]
 
-Unfortunately, I could never find a way to reproduce it manually. That
-was the primary reason why I never started to debug it. At least I
-know almost completely certain that it is specific to ReiserFS,
-because since I switched to XFS, it hasn't happened once.
+>Really, it's a compromise.  I look at this situation and say: this is
+>why we can't have cross-filesystem hardlinks.  Others may look at it
+>and say: I really want cross-filesystem hardlinks, and so this is what
+>I will do, which is reasonable, and doesn't completely suck.
+>
+>  
+>
 
-It would be really nice if you could find the bug. I still have some
-time before the data grows so large that I don't have enough spare
-hard drives to transfer the filesystem back to Reiser (and I really
-would prefer using ReiserFS).
+Now, the only question left is, why would someone really want 
+cross-filesystem hardlinks?  With the distributed FS stuff, you don't 
+need them.  (about that -- hopefully this distributed FS will function 
+like RAID?)  On a single machine, the reasons I've heard for having 
+separate filesystems are:
 
-I'll just clarify one detail. The attribute was still there, even
-though it seemed unused. Ie., a sample affected line of output from an
-xattr-patched ls could look like this:
+1)  speed.  We all know that it sucks to have /tmp on the same partition 
+as /usr.  /tmp gets fragmented, /usr should not.  In addition, one can 
+place stuff that needs faster access on a faster area of the disk, and 
+generally organize things to minimize seeking.
+    Solution:  All of this seems so purely mechanical that the FS should 
+(eventually) be able to do it by itself.  The advantages of a single 
+partition (aside from hardlinks) are that one can know nothing about the 
+space requirements of a given directory, and the system will adapt itself.
 
-drwx------+  17 barbara  users        4096 Dec  4 21:07 barbara
+2)  security.  If /bin (or any system-owned binaries) are on a partiton 
+where a user has write access somewhere, that user can hardlink files 
+from /bin to their own directory (say /home), so that any security patch 
+applied to the original binary will overwrite it, and the user still has 
+their broken copy.  If the executable has setuid, the user can now root 
+the system, no matter how fanatic the admin is about updates.
+    Solution:  Don't let users make hardlinks of files they wouldn't be 
+allowed to create in the first place.  For example, I can't create a 
+file as a normal user, make it setuid, and make it owned by root.  Short 
+of this, I feel confident that at least Gentoo's package management 
+software could be modified to automatically truncate every file to zero 
+before it's overwritten, thus making any hardlink copies worthless.
 
-As you can see, it acknowledges the existence of the attribute, but
-even the mode is wrong. 700 is the mode that actually is set on the
-file, but since the ACL is there (the ACL is to let apache through,
-ie. u:apache:x), the reported mode should be 710. getfattr also
-reports a correct ACL (ie. it hasn't been modified or corrupted or
-anything).
+3)  sanity.  If /tmp gets filled up, you can't create any more temporary 
+files.  If /var get's filled up, for the most part, you can't log.  But 
+if you manage to fill up _all_ your disk space, things get dangerous.  
+Also, sometimes admins do stupid things like 'rm -rf /', and mounting / 
+read-only can help.
+    Solution:  Disk quotas, and a plugin that prevents you from doing 
+stupid things.  For example, if I can recursively apply permissions to a 
+dir, and there's a special permission that makes it impossible to remove 
+a file, instead of 'mount / -o remount,ro', I'd just 'echo 1 > 
+/..recursive/immutable' (or something).  Of course, now I have to go in 
+and set other dirs to rewritable, but we do that in fstab anyway, and 
+the nice thing here is, those settings are persistant, even without a 
+config file.
 
-Fredrik Tolf
+4)  easier.  Maybe you have two disks.  Maybe you already have a 
+partition set up a certain way.  I can't argue against this, but...
+    Solution:  LVM or RAID should help here, if you really need 
+hardlinks from between two otherwise physically separated dirs.  If you 
+can't afford the slowdown (if any) of something like LVM, you should 
+seriously consider how important cross-fs hardlinks are to you -- if 
+they aren't important enough to sacrifice some speed, are they important 
+enough to pay someone to code (or code yourself)?  (I don't know the 
+answer to that.)
+
+
+Of course, this is just how I'd like it to be.  Right now it's still 
+better (at least for me) to have separate hard disks.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iQIVAwUBP9aIqAisZLIF6uqOAQIX/Q//ds2BQA9XxqHA9Ntf8kQyQ6tjEfRrstVc
+IZ+dBGgG/XCpizripp1+U4nW9JsLJ/TTrm2PDMC1TfLfen1P7pzgpXFP+Gxs7aTO
+Y44M6LkOfAVNA1CoCLVjOaSe4Sm+dGhzZtJym74mNffvyHu163lYDEO5Qrb61HMD
+um3DqH3KfXGQXZeboegbtuy1jWKYeRz+CpjLPhu/VH8iHPGNfu/9fCqP9vO3tnbr
+gP82dRXM94P/MEP8pr8LmZ7OhD9gahvbO/ZgFQq2RedmpPEZKOMXHEQokWhcMCkh
+bHQYK07Vc1lwuoZ4ffXnrNCrm19LGqD2qZE8NR1Yi7oLgprkOhjWZC9e2fzxywyY
+QYvq6zAtQ05gmoIOYpLJiBSJzuYGfkLARCahK2BAepowbB624ic51QxGb8dbPFkl
+SSDtXhf34u5wHPfGBYTdmIy8N5zmL4GAGUa/kyAqvtfZWTC7JJMGun/gPBup7FHG
+WNT9a5ayZh4+9CXoJZxDXkGusARr7obI3DTDEtjyYNBfasn6drjbLzDskjKk6ZiK
+yWW2VHfYpvFWMi0nuVlqwz4apmHLtvu3YyNhMV4nYsIMNQl2pf+wBlF7db7dkAu7
+jNLgp46ka7PIazmQXXUkds8eYLGgKktv1UrKnTschvZyAKOrkzgwzyDN07K1UT0u
+YY7VktA+0Qg=
+=Z4ZJ
+-----END PGP SIGNATURE-----
 
