@@ -1,35 +1,55 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: LVM array, one disk failed
-Date: Tue, 7 Jan 2003 14:40:24 +0300
-Message-ID: <200301071440.24198.vitaly@namesys.com>
-References: <1041044851.5964.32.camel@ganga> <20030106100157.A1881@namesys.com> <1041878024.6748.22.camel@ganga>
+From: Anton Erofeevskij <ae@ap-plastic.ru>
+Subject: !?!
+Date: Wed, 08 Jan 2003 11:53:26 +0500
+Message-ID: <3E1BCAE6.9000408@ap-plastic.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-12289-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12290-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1041878024.6748.22.camel@ganga>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Tuomas Jormola <tjormola@cc.hut.fi>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
+
+very small programm
 
 
-Hi,
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
 
-> Thanks for the tip and it indeed works better than 3.6.4. But now it
-> exists with return value 8 and message "Operation not permitted" while
-> executing write() inside bwrite() of lib/io.c. Isn't it odd that
-> lseek64() before that is OK but write fails? And yes, it's run as root.
-> I've attached strace and ltrace logs of the reiserfsck session, perhaps
-> they tell you something.
+main(int arg, char *argc[]){
+    int i;
 
-This is probably an evms problem - evms detected some changes and does not 
-allow to write there. Evms people know more about it, ask them please.
+    while(1){
+        if(read(0,&i,4)!=4)
+            exit(0);
+        write(1,&i,4);
+        }
+    }
 
--- 
 
-Thanks,
-Vitaly Fertman
+file sd1 - 1mb
+
+
+in reiserfs filesystem
+time cat sd1 | ./a.out > sd2
+0.00user 0.05system 0:01.79elapsed 2%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (131major+43minor)pagefaults 0swaps
+
+
+
+in ext2 filesystem
+time cat sd1 | ./a.out > sd2
+0.00user 0.05system 0:00.95elapsed 2%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (131major+43minor)pagefaults 0swaps
+
+
+In what the reason?!?
+sory
+
+
+
+
