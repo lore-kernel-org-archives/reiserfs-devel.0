@@ -1,18 +1,46 @@
 From: "Nicolas Smallwood" <smallwood@maya.com>
 Subject: RE: Errors reported with dmesg using reiser4
-Date: Wed, 9 Feb 2005 10:29:30 -0500
-Message-ID: <CMEFJOIJPCAMFCEKIEOEMEPJCGAA.smallwood@maya.com>
-References: <CMEFJOIJPCAMFCEKIEOEOEPBCFAA.smallwood@maya.com>
+Date: Wed, 9 Feb 2005 10:37:15 -0500
+Message-ID: <CMEFJOIJPCAMFCEKIEOEIEPKCGAA.smallwood@maya.com>
+References: <CMEFJOIJPCAMFCEKIEOEMEPJCGAA.smallwood@maya.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <CMEFJOIJPCAMFCEKIEOEOEPBCFAA.smallwood@maya.com>
+In-Reply-To: <CMEFJOIJPCAMFCEKIEOEMEPJCGAA.smallwood@maya.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiser <reiserfs-list@namesys.com>
+
+In an interesting twist:
+
+I just mounted the filesystem after running --build-fs.
+It seems to mount just fine, but dmesg reports the following error:
+
+"Warning, mounting filesystem with fatal errors, forcing read-only mount"
+
+I unmounted the drive and tried again, with the same error.  What is
+interesting
+is that the drive is in fact mounted writable, as I was able to add files,
+unmount,
+remount the disk to reopen them.  The original data is still on the drive as
+well,
+so am I safe to assume this is an ignorable case?
+
+Thanks,
+
+Nicolas Smallwood
+
+
+
+-----Original Message-----
+From: Nicolas Smallwood [mailto:smallwood@maya.com]
+Sent: Wednesday, February 09, 2005 10:30 AM
+To: reiser
+Subject: RE: Errors reported with dmesg using reiser4
+
 
 And the fsck.reiser4 --build-fs is done
 
@@ -279,6 +307,7 @@ can you run fsck.reiser4 --check on that drive?
 
 --
 Alex.
+
 
 
 
