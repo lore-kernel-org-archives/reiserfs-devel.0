@@ -1,40 +1,32 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Subject: Re: development
-Date: Tue, 06 Jan 2004 21:44:33 -0500 EST
-Message-ID: <8567103824-BeMail@cr593174-a>
-References: <20040107022330.GA2930@zero>
+From: Domenico Andreoli <cavok@libero.it>
+Subject: Bug #205676: resize_reiserfs doesn't play nice with lvm2
+Date: Wed, 07 Jan 2004 07:31:56 +0100
+Message-ID: <3FFBA7DC.8050905@libero.it>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16428-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16429-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040107022330.GA2930@zero>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Tom Vier <tmv@comcast.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
+Cc: 205676@bugs.debian.org
 
-Tom Vier wrote on Tue, 6 Jan 2004 21:23:30 -0500:
-> On Tue, Jan 06, 2004 at 11:25:18PM +0300, Hans Reiser wrote:
-> > We use UML for everything it can be used for.
-> 
-> what about putting the core code in a lib and using a file for storage? once
-> it stabilizes, remove the userland stuff and hook it up to the vfs. [...]
+[ please keep the CC in any reply you want write ]
 
-I just use lots of dprintf statements to write debugging messages out to
-a serial port and a log file, and avoid writing buggy code in the first
-place (lots of sanity checks, etc).  But that was for a fancy RAM file
-system, a one person project, not something as big as ReiserFS.  I also
-had a user level file system test program which was useful for comparing
-how different file systems handled, well, just about everything.  Old
-screen shot at http://web.ncf.ca/au829/BeOS/AGMSRAMFSMounter.screen.gif
+hi,
 
-Admittedly I did develop some components in user-land, like the pattern
-matching code or the AVL trees.  But most debugging (there wasn't much)
-just needed print statements.  I also know of other people that use a
-VFS simulator / test harness for their file system code.  But that's on
-BeOS so it won't be too useful for Unix style development.
+here i have a bug report from debian, it is available at 
+http://bugs.debian.org/205676 .
 
-- Alex
+please let me know if i can be of help.
+
+thanks
+domenico
+
+
+-----[ Domenico Andreoli, aka cavok
+  --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
+    ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
