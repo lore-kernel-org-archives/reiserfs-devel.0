@@ -1,46 +1,39 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: 2 Terabyte install
-Date: Thu, 13 May 2004 23:11:42 +0300
-Message-ID: <20040513201142.GT29226@nysv.org>
-References: <409AC2FF.7080800@lindows.com> <1083917932.14089.281.camel@tribesman.namesys.com> <409BB690.6030604@namesys.com> <409BBDC9.3030809@lindows.com> <409FB387.8080804@namesys.com> <40A19147.4010703@lindows.com> <40A257DA.2010903@namesys.com> <40A26D45.2010707@lindows.com> <40A30B00.8020103@namesys.com> <C10E654E-A518-11D8-BD91-000A95CD704C@wagland.net>
+From: Domenico Andreoli <cavok@tiscali.it>
+Subject: Re: reiserfsprogs 3.6.16 release
+Date: Thu, 13 May 2004 22:35:26 +0200
+Sender: Domenico Andreoli <cavok@libero.it>
+Message-ID: <20040513203526.GA2007@raptus.homelinux.org>
+References: <200405132235.15380.vitaly@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18661-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18662-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <C10E654E-A518-11D8-BD91-000A95CD704C@wagland.net>
+In-Reply-To: <200405132235.15380.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paul Wagland <paul@wagland.net>
-Cc: Hans Reiser <reiser@namesys.com>, Clifford Beshers <clifford.beshers@lindows.com>, Vladimir Saveliev <vs@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>, Vitaly Fertman <vitaly@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Thu, May 13, 2004 at 10:04:34PM +0200, Paul Wagland wrote:
->
->Just a thought... Have you considered a "pledge" page? I.e, put up a 
->list of features, and then allow people to "pledge" donations for when 
->those features are finished. I for one would pledge 10USD for the 
->repacker/disk optimiser, and yes, I know it isn't much, but you already 
->have my donation for nothing :-) And, people often prefer to give money 
->"to a cause".
+On Thu, May 13, 2004 at 10:35:15PM +0400, Vitaly Fertman wrote:
+> Hi all,
+ 
+hi Vitaly,
 
-Pass the hat around :)
+> - the bugfix for dynamically linking to be 'position independent' code.
 
-Problem just is that the repacker is probably commercial for a reason.
-The reason being that it provides income at a steady pace. If it were
-"pledged" it would give some money, sure, but not at a steady pace.
+is this the story of [0] and more recent debian bug #230482 [1]? this
+would mean debian does not need to distribute reiserfsck statically
+linked any more, does it?
 
-I'm surprised if Hans hasn't given this some thought, being the logical
-extension of the $25 helpdesk.
+thanks
+domenico
 
-Maybe the biggest problem is safe money transactions. You don't just
-deal to a foreign country, you deal out of the European Union.
+[0] http://www.geocrawler.com/lists/3/Linux/3455/0/10429413/
+[1] http://bugs.debian.org/230482
 
-And then there's this one country with a fairly large population that 
-STILL hasn't moved beyond money checks. The one with fifty states.
-
--- 
-mjt
-
+-----[ Domenico Andreoli, aka cavok
+ --[ http://people.debian.org/~cavok/gpgkey.asc
+   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
