@@ -1,59 +1,114 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Horrible ftruncate performance
-Date: Wed, 16 Jul 2003 14:57:05 +0400
-Message-ID: <20030716105705.GC4955@namesys.com>
-References: <Pine.LNX.4.30.0307151407100.6563-100000@divine.city.tvnet.hu> <200307152155.09716.Dieter.Nuetzel@hamburg.de> <20030716103539.GB4955@namesys.com> <200307161247.53880.Dieter.Nuetzel@hamburg.de>
+From: "D.A.M. Revok" <marvin@synapse.net>
+Subject: Re: bug report: attributes ( chattr +a ) not respected by reiserfs 3.6, but this isn't listed in man mkreiserfs
+Date: Wed, 16 Jul 2003 10:57:03 -0400
+Message-ID: <200307161057.03293.marvin@synapse.net>
+References: <200307121010.07215.marvin@synapse.net> <200307151510.55763.marvin@synapse.net> <20030716103016.GA4955@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14949-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14950-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20030716103016.GA4955@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <200307161247.53880.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
-Cc: Chris Mason <mason@suse.com>, Szakacsits Szabolcs <szaka@sienet.hu>, Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>, reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>, feedback@suse.com, reiserfs-list@namesys.com
 
-Hello!
+Hello yerself!
 
-On Wed, Jul 16, 2003 at 12:47:53PM +0200, Dieter N?tzel wrote:
-> > > Somewhat.
-> > > Mouse movement is OK, now. But...
-> > > 1+0 Records aus
-> > > 0.000u 3.090s 0:16.81 18.3%     0+0k 0+0io 153pf+0w
-> > > 0.000u 0.050s 0:00.27 18.5%     0+0k 0+0io 122pf+0w
-> > > INSTALL/SOURCE> time dd if=/dev/zero of=sparse1 bs=1 seek=200G count=1 ;
-> > > time sync
-> > > 1+0 Records ein
-> > > 1+0 Records aus
-> > > 0.000u 3.010s 0:15.27 19.7%     0+0k 0+0io 153pf+0w
-> > > 0.000u 0.020s 0:01.01 1.9%      0+0k 0+0io 122pf+0w
-> > So you create a file in 15 seconds
-> Right.
-> > and remove it in 15 seconds.
-> No. "Normaly" ~5 seconds.
+I tried it with 'mount' rather than 'mount -o remount' and ...
+... no difference.
 
-Ah, yes. Looking at wrong timeing info ;)
-I see that yesterday without the patch you had 1m, 9s, 5s, 2m times
-for 4 deletes...
+AND I've 'grepped -i ' for reiserfs in /var/log/*
+... no errors.
 
-> > Kind of nothing changed except mouse now moves,
+I'll have to try the reiserfsck --clean-attributes trick, next...
 
-> > > INSTALL/SOURCE> time rm sparse ; time sync
-> > > 0.000u 14.990s 1:31.15 16.4%    0+0k 0+0io 130pf+0w
-> > > 0.000u 0.030s 0:00.22 13.6%     0+0k 0+0io 122pf+0w
-> > So the stuff fell out of cache and we need to read it again.
-> Shouldn't this take only 15 seconds, then?
 
-Probably there was some seeking due to removal of lots of blocks.
+On 2003-Jul-16, Wed 6h30, you wrote:
+>Hello!
+>
+>   I suggest you to mount with -o attrs (not remount) also look in the
+> kernel logs for any problems, there is a requirement that before you
+> have attrs code working, you need to have special flag in superblock
+> set (which you can set with reiserfsck --clean-attributes)
+>
+>Bye,
+>    Oleg
+>
+>On Tue, Jul 15, 2003 at 03:10:55PM -0400, D.A.M. Revok wrote:
+>> I was absolutely stunned that reiserfs would throw-away attributes
+>> /by default/ but possibly it could know them?
+>> So, I tried
+>> su
+>> 	mount -o remount,attrs /mnt/md1
+>> exit
+>> echo "this and that" > test
+>> su
+>> 	chattr +a test
+>> 	lsattr test		# *same as before*, it lists the attribute
+>> exit
+>> cp /dev/null test
+>> ls -l test			# answer is size==0
+>>
+>> So now ( now that I found your e-mail in all these damn spams! )
+>> I know that it doesn't respect attributes normally, or with the
+>> mount -o attrs
+>> option.
+>>
+>> It /shows/ that it respects attributes, but they don't /change
+>> anything/ and that is a problem.
+>>
+>> Append-only logs work in ext3, but not with reiserfs.
+>>
+>> On 2003-Jul-13, Sun 9h10, you wrote:
+>> >Hello!
+>> >
+>> >On Sat, Jul 12, 2003 at 10:10:07AM -0400, D.A.M. Revok wrote:
+>> >> Please declare this in man .*reiser.*
+>> >> ( and also in the --help listings for 'em ), since it is kind of
+>> >> important to know *when* one is setting-up a filesystem
+>> >> ( rather than after the system's been built... )
+>> >> so that no others will try setting
+>> >> chattr +a logfile
+>> >> to make it append-only, as part of system-security, because the
+>> >> attribute set is non-meaningful.  ext3 respects this attribute.
+>> >> This on SuSE 8.1 Pro and 8.2 Pro's kernel, maybe the stock kernel
+>> >> has it working, but I figure it'd be better to tell you people and
+>> >> let youse sort-it-out.
+>> >
+>> >How do you tell it is not meaningful? Hve you tried to
+>> >mount with -o attrs mount option?
+>> >
+>> >Bye,
+>> >    Oleg
+>>
+>> --
+>> http://www.drawright.com/
+>>  - "The New Drawing on the Right Side of the Brain" ( Betty Edwards,
+>> check "Theory", "Gallery", and "Exercises" )
+>> http://www.ldonline.org/ld_indepth/iep/seven_habits.html
+>>  - "The 7 Habits of Highly Effective People" ( this site is same
+>> principles as Covey's book )
+>> http://www.eiconsortium.org/research/ei_theory_performance.htm
+>>  - "Working With Emotional Intelligence" ( Goleman: this link is
+>> /revised/ theory, "Working. . . " is practical )
+>> http://www.leadershipnow.com/leadershop/1978-5.html
+>>  - Corps Business: The 30 /Management Principles/ of the U.S. Marines
+>> ( David Freedman )
 
-> Worst case was ~5 minutes.
-
-Yeah, this is of course sad.
-BTW is this with search_reada patch? What if you try without it?
-
-Bye,
-    Oleg
+-- 
+http://www.drawright.com/
+ - "The New Drawing on the Right Side of the Brain" ( Betty Edwards, 
+check "Theory", "Gallery", and "Exercises" )
+http://www.ldonline.org/ld_indepth/iep/seven_habits.html
+ - "The 7 Habits of Highly Effective People" ( this site is same 
+principles as Covey's book )
+http://www.eiconsortium.org/research/ei_theory_performance.htm
+ - "Working With Emotional Intelligence" ( Goleman: this link is 
+/revised/ theory, "Working. . . " is practical )
+http://www.leadershipnow.com/leadershop/1978-5.html
+ - Corps Business: The 30 /Management Principles/ of the U.S. Marines ( 
+David Freedman )
