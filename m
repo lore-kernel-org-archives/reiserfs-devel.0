@@ -1,43 +1,40 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: reiserfs logging patches udpated
-Date: Thu, 25 Mar 2004 13:19:58 -0500
-Message-ID: <1080238798.26669.12.camel@watt.suse.com>
-References: <1080149399.14737.77.camel@watt.suse.com>
-	 <200403250147.54246.bernd-schubert@web.de>
-	 <1080176455.14737.140.camel@watt.suse.com>
-	 <200403251911.24983.bernd-schubert@web.de>
+From: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
+Subject: Re: BUG: Replaying ReiserFS log causes hard lockup
+Date: Thu, 25 Mar 2004 19:51:58 +0100
+Message-ID: <m3lllohi9d.fsf@merlin.emma.line.org>
+References: <20040325204836.07bcf910.a.nielsen@optushome.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17472-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17473-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200403251911.24983.bernd-schubert@web.de>
+In-Reply-To: <20040325204836.07bcf910.a.nielsen@optushome.com.au> (Adam
+ Nielsen's message of "Thu, 25 Mar 2004 20:48:36 +1000")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Bernd Schubert <bernd-schubert@web.de>
+Content-Transfer-Encoding: 7bit
+To: Adam Nielsen <a.nielsen@optushome.com.au>
 Cc: reiserfs-list@namesys.com
 
-On Thu, 2004-03-25 at 13:11, Bernd Schubert wrote:
-> Hello Chris,
-> 
-> > But there are just as many threads about reiserfs not having
-> > data=ordered support.  It's an important feature that has been out of
-> > mainline for far too long.
-> 
-> what do you think about giving a kernel message on mounting the filesystem, 
-> that data logging is enabled by default now? That way people who don't know 
-> about it, at least would become informed on reading the log files.
+Adam Nielsen <a.nielsen@optushome.com.au> writes:
 
-reiserfs: using ordered data mode
-Reiserfs journal params: device dm-0, size 8192, journal first block 18,
-max trans len 1024, max batch 900, max commit age 30, max trans age 30
-reiserfs: checking transaction log (dm-0) for (dm-0)
-Using r5 hash to sort names
+> The drive itself is a Western Digital SATA drive, connected via an
+> onboard Silicon Image 3512A (which uses the under-development sil3112
+> (I think) driver, so I guess there's a chance it could be the driver's
+> fault, however I have not had any problems at all before this.)  The
+> board itself is a Gigabyte GA-7N400 Pro 2 (rev 2.0) with an nForce 2
+> chipset.
 
-Something like that?
+CMD/Silicon Image hardware, at least the SATA stuff, is said to be utter
+crap, with hardware bugs that require workaround and all that. Get the
+latest 2.6 kernel you can fish (-bk variants included) and retry in the
+hope the more recent kernel already has the needed workaround.
 
--chris
+Better yet, ditch SATA, buy SCSI, that will actually work and perform
+well. Linux SATA support hasn't quite made it from the cradle.
 
+-- 
+Matthias Andree
 
+Encrypt your mail: my GnuPG key ID is 0x052E7D95
