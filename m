@@ -1,46 +1,50 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: More on Hard Links
-Date: Mon, 15 Dec 2003 20:27:47 -0500
-Sender: news <news@sea.gmane.org>
-Message-ID: <87u141tuuk.fsf@uhoreg.ca>
-References: <87k755y8xf.fsf@uhoreg.ca> <20031209234740.27534.qmail@web25010.mail.ukl.yahoo.com>
+From: David Masover <jedi@ninja.dynup.net>
+Subject: Re: fsck.reiser4 errors
+Date: Mon, 15 Dec 2003 21:10:07 -0600
+Message-ID: <3FDE778F.1020705@ninja.dynup.net>
+References: <20031213180246.3042.qmail@ninja.dynup.net> <200312151635.53344.vitaly@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16348-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16350-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200312151635.53344.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Sorry for the lateness of this reply that I had promised to do.  I've
-been a bit busy of late.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
->>>>> "Narcoleptic" == Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk> writes:
+Vitaly Fertman wrote:
 
-[...]
+> ...
+>
+>hm, this is strange. what reiser4progs do you use?
+>there are a lot of fixes have been made recently, I will send 
+>you the uptodate code in the next email, you should try it first.
+>  
+>
 
-Narcoleptic> If there is a way to quickly and reliably verify that two
-Narcoleptic> files are identical (or not), then when committing a
-Narcoleptic> transaction, each file in the sync list can be resolved as
-Narcoleptic> follows: - If a volume ID is not found, don't commit
-Narcoleptic> anything (as per the current proposal).  - Otherwise, if a
-Narcoleptic> file ID for a given volume ID refers to a file not
-Narcoleptic> identical to the current file (or is not found), remove the
-Narcoleptic> file from the sync list.
+I have the latest from the website, as of November 11, I think.
 
-This seems very inefficient, and I don't think it really solves the
-problem.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-If a file is unlinked, and then an identical file is written in its
-place, the system will still think it's part of the same hardlink
-collection, even though it shouldn't be.
-
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
+iQIVAwUBP953kwisZLIF6uqOAQKeDQ//ToJDCWFnfU8ZabPMZ3ayFYr0MkqQZc0O
+qAtfjkfZpY9wSJhaqOvgJCkZf+GEMB8JZW5FneDc/CYjRnGQGUXREsRTAwvRgXM3
+/qCaQebp0IUCToHpXcJDPed0V2FwIFT1uzk3s+05V24aZkuRg9wfByRHfTdy7gXE
+da+59j4zvg+hg5rVzbWxkDq1m6AjOk4o7LgMgsqmG3eedgrkGQFTFxUOiuREshQF
+wmGybLqppWE1TG83k0n+D8gOcGhvvQtBO4MsGm2bcE4pguC3HqNeTRAdx5KUr2D5
+wN9uojQHA0UL3ie2ybiKkkOZ9IVYUoa2lPk6gDvERZiuF2h+C/ba8f2kcYmgmRAg
+JVRtpCxib8MWTy9VNjkdQwUke3ReQiL3UchDUR3ECeA9cQW+H+HXa7LectrcEDpL
+nX7mOobLs/uj2dbJ6JIhow6G+Mg/cM/drPABb9udY6mZRIV678kVDrbMzu8fwu4d
+Etz/sFMSBD+8/acybrNWQuspsqNsBoXGgKb4iFugcR/1fDewbSxhrkETDPTe+WcH
+MpRflfR7MtSo7Q1QnxR+Skj7+2IPkz6GfMj2MzzitjmrXQ9peSwbDF+EIu1SOurw
+WCVx0lyP5/DMsxx0lm8A2X899CW5ooL8ld0D0iZWnJ4OmETxbnkRjcN/aAYiSWgP
+O/1J99wuNKE=
+=oRGf
+-----END PGP SIGNATURE-----
