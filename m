@@ -1,63 +1,47 @@
-From: "Robin H. Johnson" <robbat2@orbis-terrarum.net>
-Subject: Re: fsck in background?
-Date: Mon, 31 Mar 2003 02:47:40 -0800
-Message-ID: <20030331104740.GB23949@cherenkov.orbis-terrarum.net>
-References: <3E8818CD.1000500@dotcom.pl>
+From: Bernd Schubert <bernd-schubert@web.de>
+Subject: Re: nfsd-fh: found a name that I didn't expect
+Date: Mon, 31 Mar 2003 12:49:33 +0200
+Message-ID: <200303311249.33139.bernd-schubert@web.de>
+References: <200303281828.55093.bernd-schubert@web.de> <200303301708.11703.bernd-schubert@web.de> <20030331142406.Q25533@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+pHx0qQiF2pBVqBT"
-Return-path: <reiserfs-list-return-13478-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13479-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20030331142406.Q25533@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <3E8818CD.1000500@dotcom.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: myciel <myciel@dotcom.pl>
+Content-Type: text/plain; charset="us-ascii"
+To: Oleg Drokin <green@namesys.com>, reiserfs@nn7.de
 Cc: reiserfs-list@namesys.com
 
---+pHx0qQiF2pBVqBT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Monday 31 March 2003 12:24, Oleg Drokin wrote:
 
-On Mon, Mar 31, 2003 at 12:30:37PM +0200, myciel wrote:
-> Yes, I know this sounds strange, but if one have 1T filesystem full of
-> small files, reiserfsck estimates duration to be of order of months,
-While this would be nice, it is possible that duration is a little off
-;-).=20
-Our 1.2Tb RAID3 (single ReiserFS partition) takes ~3 hours to run fsck.
-Again, mostly small files, but only at 50% capacity so far.
+Hello Oleg!
 
-We've got another 1Tb RAID3 array arriving in about 5 weeks, and I'll
-test it out to see how long reiserfsck actually takes when it's full of
-small files. The joys of a research sysadmin :-).
+>
+> On Sun, Mar 30, 2003 at 04:08:11PM +0100, Bernd Schubert wrote:
+> > Anyway I also tested the kernel-patch, but it causes problems with mounts
+> > from another nfs-server. Well, mounting works fine, but e.g. running 'ls
+>
+> Ah, stupid me.
+> I have another patch that we created before iget5_locked backport.
+> It's a bit of hack to beat the race, but it works (fixes the race).
+> It does not touch any code outside of reiserfs.
+> So if you apply that to 2.4.20 and see if you still can see the NFS problem
+> over time...
+> Patch is below.
 
-> so I'm curious if maybe fscking in background is planned? - idea is not n=
-ew
-> and bsd guys say that they have it  for freebsd 5.0 in ffs.
-I dunno if this is planned for Reiser4 or not, but it certainly would be
-nice :-).
 
---=20
-Robin Hugh Johnson
-E-Mail     : robbat2@orbis-terrarum.net
-Home Page  : http://www.orbis-terrarum.net/?l=3Dpeople.robbat2
-ICQ#       : 30269588 or 41961639
-GnuPG FP   : 11AC BA4F 4778 E3F6 E4ED  F38E B27B 944E 3488 4E85
+Thanks a lot for both new patches, I will try them as soon as possible, though 
+it is usually more difficult to reboot during the week (so it may become the 
+next weekend, before I can try it). Anyway I will also try it on our data 
+server, where we also see those messages from time to time, even without 
+rebooting.
 
---+pHx0qQiF2pBVqBT
-Content-Type: application/pgp-signature
-Content-Disposition: inline
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.0 (GNU/Linux)
-Comment: Robbat2 @ Orbis-Terrarum Networks
+Best regards,
+	Bernd
 
-iD8DBQE+iBzMsnuUTjSIToURAs5rAJ9A4NFskMJAFvYCOM4ug8r4HsnsRQCgs6uq
-LTZO0ha4q0NPfieGDsUB5GI=
-=8egD
------END PGP SIGNATURE-----
-
---+pHx0qQiF2pBVqBT--
