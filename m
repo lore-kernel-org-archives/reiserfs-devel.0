@@ -1,54 +1,36 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: r4.1 ?
-Date: Wed, 26 Jan 2005 09:44:32 -0800
-Message-ID: <41F7D700.9070801@namesys.com>
-References: <27547285.20050125224458@wp.pl> <41F6DC39.6000705@slaphack.com>
+From: Marcus Furlong <furlongm@hotmail.com>
+Subject: Re: reiser4 for windows
+Date: Wed, 26 Jan 2005 21:27:45 +0200
+Message-ID: <ct8qvh$o6u$1@sea.gmane.org>
+References: <20041204211059.41930.qmail@web50908.mail.yahoo.com> <41B287C6.2060902@namesys.com> <41B29491.20405@slaphack.com> <41B6501C.4080209@millenix.mailshell.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23212-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7Bit
+Return-path: <reiserfs-list-return-23215-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41F6DC39.6000705@slaphack.com>
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Masover <ninja@slaphack.com>
-Cc: Pysiak Satriani <pysiak.satriani@wp.pl>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-David Masover wrote:
+Philip Miller wrote:
 
->
->
-> Pysiak Satriani wrote:
-> | Hi,
-> |
-> | I was wondering how close are we to reiser4.1 ?
-> | Like in % of work done or some other measure.
-> |
-> | http://www.namesys.com mentions r4.1
-> |
-> | 'this and that' will be included in r4.1
->
-> Which means it would either be included in some sort of experimental
-> form of r4, or (more likely, I think) in a new branch.
->
-> I haven't seen any work on any of the things delayed for 4.1, meaning
-> either we are 0% done, or Hans has moved to a cathedral style of
-> development.
->
-> That, or I just haven't noticed such work.  I don't often read source 
-> code.
->
-It is an interesting question whether with a plugin architectural model 
-we perhaps need a fundamentally different software release model, with 
-the technical design now controlling what is the optimal release model.
+> David Masover wrote:
+>> Also, is it a given that reiser4 for windows would work without help
+>> from MS?  I've just never seen a third-party filesystem driver for
+>> windows.  You'd think that at least one other filesystem, one of the
+>> Linux/BSD/etc ones, would have done this, if it was feasable.
+> 
+> Have a look at <http://ext2fsd.sourceforge.net/projects/projects.htm>.
+> 
+> Phil Miller
 
-There are three big things in progress right now that are alpha or worse 
-quality.
+And one for reiserfs...
+http://p-nand-q.com/download/rfstool.html
 
-Compression, Viewprinting (www.namesys.com/blackbox_security.html), and 
-sys_reiser4()'s semantic enhancements.  Compression will hopefully be 
-ready first.  Compression will have enough performance impact to justify 
-calling it a 4.1 release and doing a press release, but you understand 
-that in reality it is just a plugin.....
+and gui frontend for it...
+http://yareg.akucom.de/
+
+
