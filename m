@@ -1,48 +1,59 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: kswapd CPU usage and heavy disk IO
-Date: Thu, 9 Jan 2003 19:56:17 +0300
-Message-ID: <20030109195617.A17148@namesys.com>
-References: <200301091431.54451.russell@coker.com.au>
+From: Bernd Schubert <bernd-schubert@web.de>
+Subject: fs errors on thinkpad R31
+Date: Thu, 9 Jan 2003 23:20:48 +0100
+Message-ID: <200301092320.48501.bernd-schubert@web.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12300-reiserfs=m.gmane.org@namesys.com>
+Content-Type: Multipart/Mixed;
+  boundary="------------Boundary-00=_OQWGP2SY6ML4XFOXSPZK"
+Return-path: <reiserfs-list-return-12301-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200301091431.54451.russell@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Russell Coker <russell@coker.com.au>
-Cc: ReiserFS <reiserfs-list@namesys.com>, Rik van Riel <riel@nl.linux.org>
+To: ReiserFS <reiserfs-list@namesys.com>
 
-Hello!
 
-On Thu, Jan 09, 2003 at 02:31:54PM +0100, Russell Coker wrote:
+--------------Boundary-00=_OQWGP2SY6ML4XFOXSPZK
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-> I have a server with 4G of RAM running ReiserFS for everything that matters.
-> It has 2G of swap space free, but so far I have not seen swap usage go above 
-> 1.6M (so in normal use I could turn off swap entirely and expect not to see 
-> much difference).
-> When it's under really heavy load (when I have a maintenance task involving a 
-> "find /" and there are lots of POP/IMAP clients hitting the server as well as 
-> mail delivery) and the load average gets to about 40, the "kswapd" kernel 
-> thread starts using excessive CPU time.  It will stay on ~4% but have spikes 
-> of up to 45%!!!  This is a two-processor machine so 45% CPU reported by top 
-> means 90% of a single CPU I guess.  90% of a 1.8GHz P4 CPU is a lot of CPU 
-> and I think that something is wrong.
+Hi,
 
-Sounds exactly like yesterday/todays topic on lkml.
-You have highmem box, during heavy IO all of the lowmempages are
-occupied with bounce buffers and bh's.
-Kernel needs more low memory and tries to free some with no much success though.
-Known non-reiserfs related problem. Not easy to fix unfortunatelly.
+this is the second time within 14 days after which I had to run reiserfsc=
+k on=20
+my IBM Thinkpad R31.
+This time I lost a directory with 49 files (it seems it were only kernel=20
+modules, so probably not so important data).
 
-Relevant lkml topic was "2.4.20, .text.lock.swap cpu usage? (ibm x440)"
-Mail from Andrew Morton with msgid <3E1A16C5.87EDE35A@digeo.com>
-He recommended to try http://www.kernel.org/pub/linux/kernel/people/andrea/kernels/v2.4/2.4.20aa1.bz2
-"and send a report on the outcome"
+I have attached the error messages from the /var/log/messages file.
 
-Bye,
-    Oleg
+System: Thinkpad R31; vanilla linux-2.4.20 + cpufreq kernel
+
+
+Any ideas whats going wrong?=20
+
+
+Thanks in advance,
+=09Bernd
+
+
+--------------Boundary-00=_OQWGP2SY6ML4XFOXSPZK
+Content-Type: application/x-gzip;
+  name="errors.log.gz"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="errors.log.gz"
+
+H4sICMrzHT4AA2Vycm9ycy5sb2cA7dJBS+NAGIfxu5/i/QK6aUMiycXDqrAed/cmEtLk7TY0zsjM
+pNhvvxNEUBC9WHXk6aGFNGT++fFctUakkkVZZ2VdlLJSY2WrzuhYy+Cb4FQbY3utZf6WUXc6Sia9
+VR+vBLltQ7eRYCVsVPT+TrugvVijsji6eu3hO39cLIqsFq+t6zbNat9sdR8PNbt2HHpZWxefHX8m
+08eLshptt5VyWSzz5Ylc+m579uYBizybT3A6eHVr30x3fRu08X085oeVdTuMk1OxXTc5F2cHtx/M
+v/ltHu6U6yqPj4+fpWT3mfw5vxEf4qr4Z4sOOuiggw466KCDDjrooIMOOuiggw466KCDDjrooIMO
+Ouiggw466KCDDjrooIMOOuiggw466KCDDjrooIMOOuiggw466KCDDjrvrXNaZ3myOi+OP6wO6z9v
+/XxAWZw+CbO38X0m08Xm3kzz8caHOKu8nNtcP//I+a/fFz//3nxnxbTXf1oD1SEVq0Mrsv7LrKdg
+GqABGkh7PQXTAA3QQNrrKZgGaIAG0l5PwTRAAzSQ9noKpgEaoIG011MwDdAADaS9noJpgAZoIO31
+FEwDNEADaa+nYBqgARpIez0F0wAN0EDa6ymYBmiABtJeT8E0QAM0kPZ6CqaBD2zg6D8aeSUOKX8A
+AA==
+
+--------------Boundary-00=_OQWGP2SY6ML4XFOXSPZK--
