@@ -1,34 +1,31 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Sleeping harddrives?
-Date: Sun, 2 Jun 2002 21:49:27 +0400
-Message-ID: <20020602214927.A17000@namesys.com>
-References: <19839880843.20020602023406@tnonline.net>
+From: Cookie-Monster <cookie.monster@starfall.de>
+Subject: Re[2]: Problem with my HDD
+Date: Sun, 2 Jun 2002 20:02:10 +0200
+Message-ID: <51324907.20020602200210@starfall.de>
+References: <10512850437.20020529194929@starfall.de>
+ <20020530092155.D3922@namesys.com> <781752530.20020530134323@starfall.de>
+ <20020530155353.B1060@namesys.com>
+Reply-To: Cookie-Monster <cookie.monster@starfall.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10479-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10480-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <19839880843.20020602023406@tnonline.net>
+In-Reply-To: <20020530155353.B1060@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Hello!
+I saved 1.7 Gig from the HDD, the proiblem is solved.
 
-On Sun, Jun 02, 2002 at 02:34:06AM +0200, Anders Widman wrote:
+I made an image with "dd" and put it on another partition, ran
+reiserfsck and I got the data back.
 
->    How  would  ReiserFS  react  when  a user/program/anything tries to
->    access a file on a harddrive that is spin down?
+Thx for your help
 
-Linux IDE/SCSI layer issupposed to spind the drive up.
+--
+Cookie-Monster
+cookie.monster@starfall.de
+http://www.starfall.de/
 
->    I  remember that I tested this about a year ago, and it didn't work
->    very well. The filesystem timeout was shorter than the time to spin
->    up the drive.
-
-Huh? What filesystem timeout?
-
-Bye,
-    Oleg
