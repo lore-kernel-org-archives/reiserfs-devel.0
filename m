@@ -1,39 +1,37 @@
-From: Kelledin <kelledin+RFS@skarpsey.dyndns.org>
-Subject: Re: Bug in reiserfsck 3.6.5
-Date: Wed, 9 Apr 2003 23:12:25 -0500
-Message-ID: <200304092312.25859.kelledin+RFS@skarpsey.dyndns.org>
-References: <200304090557.29034.kelledin+RFS@skarpsey.dyndns.org> <20030409141506.A2757@namesys.com> <3E945593.2090508@namesys.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: umount --force fails
+Date: Thu, 10 Apr 2003 12:12:04 +0400
+Message-ID: <20030410121204.A21845@namesys.com>
+References: <715903125.20030409223847@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13629-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13630-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E945593.2090508@namesys.com>
 Content-Disposition: inline
+In-Reply-To: <715903125.20030409223847@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Anders Widman <andewid@tnonline.net>
+Cc: reiserfs-list@namesys.com
 
-On Wednesday 09 April 2003 12:17 pm, Hans Reiser wrote:
-> >Thanks for the analysis. Actually we already performed it
-> > some time ago. Grab the patch for reiserfsprogs-3.6.5 from
-> >ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.5-f
-> >lush_buffers-bug.patch
+Hello!
 
-Ahhh, thnx, that took care of it. :)  I'd probably have noticed 
-that patch if I checked the FTP directory out of habit...
+On Wed, Apr 09, 2003 at 10:38:47PM +0200, Anders Widman wrote:
 
-> please feel encouraged to do more debugging for us though.....
+>    Why can't I use "umount /mnt/disk --force"?
 
-Heh, I can't promise much; I am shamelessly self-centered when it 
-comes to debugging. ;)  I only go out of my way like this for 
-stuff that affects me, else I'd lose all my hair by the time I 
-was thirty!
+It is only implemented for NFS. At least that's what my man page says.
 
--- 
-Kelledin
-"If a server crashes in a server farm and no one pings it, does 
-it still cost four figures to fix?"
+>    Is there a way that I can get around this? I thought that "--force"
+>    would  force  an umount of the filesystem even if some program were
+>    using it?
 
+I think it is possible to do that for any fs, but some decisions should be made like
+what to do with processes having open filehandles/cwd to the mounted filesystem and so on.
+Please consult lkml archives for more info on that topic.
+
+Bye,
+    Oleg
