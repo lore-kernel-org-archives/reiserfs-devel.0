@@ -1,40 +1,64 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: vpf-10680, minor corruptions
-Date: Mon, 23 Jun 2003 13:02:58 +0400
-Message-ID: <20030623090258.GA12259@namesys.com>
-References: <3EF07AFB.8060303@g-house.de> <20030618152626.GA17240@namesys.com> <3EF0A8E8.2000209@g-house.de> <20030619054535.GA23852@namesys.com> <3EF6AE67.5090502@namesys.com>
+From: Alexander Lyamin <flx@msu.ru>
+Subject: Re: Mount fails after reiserfsck --rebuild-tree failure
+Date: Mon, 23 Jun 2003 13:11:11 +0400
+Message-ID: <20030623131111.A19286@t-raenon.nmd.msu.ru>
+References: <FCEDLNJPOJKGBCPDLKPGGEFMCBAA.g_luppi@brokerstudio.it>
+Reply-To: flx@msu.ru
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14664-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14665-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3EF6AE67.5090502@namesys.com>
+In-Reply-To: <FCEDLNJPOJKGBCPDLKPGGEFMCBAA.g_luppi@brokerstudio.it>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Christian Kujau <evil@g-house.de>, ReiserFS List <reiserfs-list@namesys.com>
+To: "Ing. Davide Imbeni" <davide.imbeni@tei.ericsson.se>, davide.imbeni@tiscali.it
+Cc: reiserfs-list@namesys.com
 
-Hello!
+rule number 1,
+as soon as you found that your harddisk is about to break - do 
+dd_rescue to other disk, ASAP.
 
-On Mon, Jun 23, 2003 at 11:38:15AM +0400, Hans Reiser wrote:
-> >Well, normally reiserfs is caring about consistency.
-> >There are two noticeable omissions, though:
-> >1. if the unexpected shutdown was because of power loss and you have write 
-> >cache enabled
-> >  and your write reorders write requests, then it is possible invalid data 
-> >  gets
-> >  written to disk, before "transaction is finished" mark is written to the 
-> >  drive.
-> >  (there is a way to avoid this with some drives, by explicitly flushing
-> >   drive cache in some cases, but this method seems to create some problems
-> >   on itself. So this is not yet merged in any mainstream kernel).
-> Can you provide details on this not being merged?
+then proceed as ussual (--rebuild-tree) on copied image on proven
+to be not faulty hardware.
 
-It was never submitted to inclusion into mainstream kernel. Hence it was never merged.
-I saw that Jens Axboe (I think) posted the code for public review/verification, but that's it.
+what you did, running rebuild-tree on known-to-be-faulty hdd, is
+sure way to get your data WASTED.
 
-Bye,
-    Oleg
+Thu, Jun 19, 2003 at 09:11:29PM +0200, Giuliano Luppi wrote:
+> Estimated sirs,
+> after experiencing some problems accessing files on a reiserfs file system
+> (SuSE linux 8.1, kernel 2.4), I tried reiserfsck ?rebuild-tree.
+> Since the problem resulted to be in the hardware, it failed, leaving me with
+> an unmountable partition (root inode set to 0)
+> 
+> As suggested in you site?s FAQ (section 2), I tried with the latest
+> reiserfsprogs (3.6.7-pre1), installed on another HD (with RedHat). The
+> latter also failed.
+> 
+> Now I know the problems are (a lot of) bad blocks.
+> 
+> I would like to
+> 1.	re-enable mounting the partition, in order to recover some of the data I
+> still have there (I know, I should backup more often? :-( )
+> 2.	possibly fix the badblocks (as you describe in section 38 of the FAQ), in
+> order to bring up the system until new hard disks are ready.
+> 
+> The main question is: how can I undo the setting of root inode to 0?
+> Is there a good way for dealing with faulty hardware with reiserfs?
+> 
+> Thank you very much for your answers
+> 
+> Davide Imbeni
+> 
+> ---
+> Outgoing mail is certified Virus Free.
+> Checked by AVG anti-virus system (http://www.grisoft.com).
+> Version: 6.0.489 / Virus Database: 288 - Release Date: 10/06/2003
+
+-- 
+everything zen
+lex lyamin
