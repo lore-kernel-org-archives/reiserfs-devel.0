@@ -1,38 +1,86 @@
-From: Alexander Lyamin <flx@msu.ru>
-Subject: Re:  reiser4 plugins (was: silent semantic changes with reiser4)
-Date: Sat, 28 Aug 2004 14:59:29 +0400
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040828105929.GB6746@alias>
-References: <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com> <20040826014542.4bfe7cc3.akpm@osdl.org> <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de>
-Reply-To: flx@msu.ru
+From: Yury Umanets <umka@namesys.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Sat, 28 Aug 2004 14:11:50 +0300
+Message-ID: <41306876.70901@namesys.com>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <1093467601.9749.14.camel@leto.cs.pocnet.net> <20040825225933.GD5618@nocona.random> <412DA0B5.3030301@namesys.com> <20040826112818.GL5618@nocona.random>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20040826132439.GA1188@lst.de>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20971-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <20040826112818.GL5618@nocona.random>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Andrea Arcangeli <andrea@suse.de>
+Cc: Hans Reiser <reiser@namesys.com>, Christophe Saout <christophe@saout.de>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Thu, Aug 26, 2004 at 03:24:39PM +0200, Christoph Hellwig wrote:
-> This VFS interface is an integral part of =D0=A4very filesystem, and =
-it
+Andrea Arcangeli wrote:
 
-VFS never was "an integral part" of ANY filesystem. my dog knows it.
-its just unified INTERFACE TO any filesystem (including reiser4).
+>On Thu, Aug 26, 2004 at 01:35:01AM -0700, Hans Reiser wrote:
+>  
+>
+>>Reiser4 plugins are not for end users to download from amazon.com, they 
+>>are for weekend hackers to send me a cool plugin for me to review, 
+>>assign a plugin id to, and send to Linus in the next release.  Sometimes 
+>>    
+>>
+>
+>then what's the difference in having the plugin fixed in stone into
+>reiserfs? That's my whole point. Get the patch from the weekend hacker,
+>check it, send the patch to Linus to add the new feature to reiser4,
+>just call it "feature" not plugin. That's how it works normally for
+>everything. Many fs have many features, many of them optional.  you
+>wouldn't need to build any hook infrastructure either that way. Hooks
+>would be needed if this wasn't open source me thinks. Or if you want
+>people to fetch the module from amazon without your review.
+>
+>Another reason I could see the modularization/hooking useful is if those
+>feature would take lots of kernel space, but this sure isn't the case
+>for reiserfs, infact having modules would waste _more_ ram due the half
+>wasted page allocation for the module text. The only single reason we
+>use modules is to avoid wasting tons of ram by loading every possible
+>device driver on earth, it's not that we use modules because they're
+>more flexible, if something they're more fragile. I never use modules in
+>my test kernel just to go fast (because I self compile them). The last
+>good thing of the modules is during development you don't need to reboot
+>the machine to test a kernel change in a driver, but you don't need that
+>with reiserfs since you can make the fs itself a module (just change the
+>name of the fs, AFIK you do that all the time already).
+>  
+>
+There lots of good things about plugins as they are in reiser4. And
+probably the best one (as for me) is that, reiser4 core code (quite
+complex thing) does not need to be changed after adding new plugins
+(read new features).
+
+It is written once and provides some basic functionality (balancing,
+atoms, etc.), which works well with all kinds of plugins if they
+implement required functions from plugin interface.
+
+As for me, this looks like Linux's VFS. Sure, if I want to add some very
+new filesystem with features which were not foreseen,  and VFS does not
+provide needed interface, it will need some changes. But in simple case,
+when I just want to develop once more disk filesystem, which say will be
+different from another disk filesystem in only that respect it manages
+its metadata in different manner and aims to achieve better performance
+this way. In this case I will not need to chnage VFS at all. The same
+about reiser4 core and new plugins.
+
+>-
+>To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>the body of a message to majordomo@vger.kernel.org
+>More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>Please read the FAQ at  http://www.tux.org/lkml/
+>
+>
+>  
+>
 
 
-P.S. I imagine, how much flamed it would be if reiser4 made any intensi=
-ve
-changes in linux VFS code...
+-- 
+umka
 
 
 
---=20
-"the liberation loophole will make it clear.."
-lex lyamin
--
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
