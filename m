@@ -1,40 +1,54 @@
 From: Dan Oglesby <d.oglesby@insightbb.com>
-Subject: Re: nfs
-Date: Mon, 17 Nov 2003 08:38:59 -0600
-Message-ID: <3FB8DD83.4030105@insightbb.com>
-References: <1068931388.2186.6.camel@redeeman.linux.dk> <20031115214812.GD25876@hvs.envisage.co.za>
+Subject: Re: Fatal File System Corruption -Software RAID + NFS
+Date: Mon, 17 Nov 2003 08:47:17 -0600
+Message-ID: <3FB8DF75.4020802@insightbb.com>
+References: <3FB7AE00.4070409@uiuc.edu> <3FB7CFEB.9080705@g-house.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16102-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16103-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20031115214812.GD25876@hvs.envisage.co.za>
+In-Reply-To: <3FB7CFEB.9080705@g-house.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-Hendrik Visage wrote:
-> On Sat, Nov 15, 2003 at 10:23:08PM +0100, Redeeman wrote:
+Christian Kujau wrote:
+> Steven Poulakos wrote:
+> [...]
 > 
->>i have read that nfs dont work with reiserfs, but even though that, i
->>made an export, and it works just perfect, is it dangoures somehow?
+>> Here are snippets of the errors that just repeat over and over...
+>>
+>> Nov  9 06:47:34 ctdev kernel: hdc: status error: status=0x58 { 
+>> DriveReady SeekComplete DataRequest }
+>> Nov  9 06:47:34 ctdev kernel:
+>> Nov  9 06:47:34 ctdev kernel: hdc: status error: status=0x58 { 
+>> DriveReady SeekCo
 > 
 > 
-> Several moons ago, there were problems with reiserfs and NFS, as
-> reiserfs didn't (still don't?) have the notion of inodes, which is
-> used in NFS for filehandle information. there were a quick work around
-> which didn't work that well, but the current 2.4.x kernels and Reiserfs 3.6
-> works sofar without troubles.
+> hardware errors, i'd say :-(
+> try to dd / dd_rescue to a working disk, then go on with newest 
+> reiserfsprogs or /bin/cat...
 > 
-> 
-> Hendrik
-> 
+> Christian.
+> -
 
-I export several ReiserFS filesystems via NFS, and have had no issues 
-accessing or manipulating data via NFS.  This is with kernel 2.4.21 and 
-ReiserFS 3.6.
+I saw these types of errors on my software RAID-5 array when I first 
+brought it online.  The array is made up of four 20GB hard drives from 
+four different manufacturers, two drives to an IDE channel.  Some of the 
+drives didn't want to play nice when sharing the IDE channel.
+
+Using hdparm, I found that not all drives were enabling DMA or 32-bit 
+transfers, so I forced all of the hard drives to run 32-bit with DMA. 
+This solved the problem.
+
+Another interesting thing I found (while I'm talking about my goofy 
+array) was that the system performed MUCH better when I disabled write 
+caching on all of the hard drives.
+
+The filesystem is ReiserFS 3.6, of course.
 
 --Dan
 
