@@ -1,10 +1,10 @@
 From: Tupshin Harper <tupshin@tupshin.com>
 Subject: Kernel BUG in JFS 2.6.0-test4
-Date: Thu, 28 Aug 2003 18:25:51 -0700
-Message-ID: <3F4EAB9F.9080205@tupshin.com>
+Date: Thu, 28 Aug 2003 18:26:05 -0700
+Message-ID: <3F4EABAD.1020408@tupshin.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15485-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15486-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
