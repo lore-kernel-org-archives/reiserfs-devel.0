@@ -1,42 +1,38 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: badblocks blocksize setting
-Date: Sat, 15 Mar 2003 11:16:00 +0300
-Message-ID: <20030315111600.A24872@namesys.com>
-References: <006b01c2ea87$20046a40$55c7a8c0@mariusw2k>
+Subject: Re: help recover filesystem corrupted by failing ide controller
+Date: Sat, 15 Mar 2003 11:21:38 +0300
+Message-ID: <20030315112138.B24872@namesys.com>
+References: <200303141942.00679.phma@webjockey.net> <3E728FFB.90905@mb.tu-ilmenau.de> <200303142143.58096.phma@webjockey.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13272-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13273-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <006b01c2ea87$20046a40$55c7a8c0@mariusw2k>
+In-Reply-To: <200303142143.58096.phma@webjockey.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marius Reiner <news.mr@gmx.net>
-Cc: reiserfs-list@namesys.com
+To: Pierre Abbat <phma@webjockey.net>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
 Hello!
 
-On Sat, Mar 15, 2003 at 01:09:19AM +0100, Marius Reiner wrote:
+On Fri, Mar 14, 2003 at 09:43:58PM -0500, Pierre Abbat wrote:
+> > If you already did a --rebuild-tree with that _old_ (~2years!!!)
+> > reiserfsck I pray you have a backup somewhere.
+> If I couldn't cat a single file without the cat hanging, how could I make a 
+> backup?
 
-> not really a reiserfs issue:
-> When following the FAQ everything is fine, I set blocksize zu 4096 as
-> debugreiserfs told me, and don't get any bad blocks.
+You could have made a copy of whole partition with dd.
 
-Good.
+> I have 3.6.4 on this laptop. I can modify the spell and recast it. Is it OK to 
+> copy the binary to the other box (they're both AMD processors) and run it? 
 
-> Nevertheless I'm a bit concerned about the ones, badblocks reports, when
-> being invoked without the -b option. How does this happen?
-
-Can you please show the command line and the resulting output with badblocks?
-Also what is in dmesg output after such a run?
-
-> Or should I just ignore them?
-
-There is not enough info yet.
-Can you please tell us whole story?
+We saw some reports about problems arising if glibc is notably different.
+So you should either gave statically linked reiserfsck or run in on the system close
+to one where reiserfsck was built.
 
 Bye,
     Oleg
