@@ -1,52 +1,59 @@
-From: "Lamont R. Peterson" <lamont@gurulabs.com>
+From: Jonathan Briggs <jbriggs@esoft.com>
 Subject: Re: Speaking of credits...
-Date: Fri, 07 May 2004 16:33:46 -0600
-Message-ID: <1083969226.2985.48.camel@wraith.lrp.advansoft.us>
+Date: Fri, 07 May 2004 16:39:36 -0600
+Message-ID: <1083969576.9092.7.camel@localhost.localdomain>
 References: <1083959971.9092.0.camel@localhost.localdomain>
 	 <409BFAAC.3050404@lindows.com>
-	 <1083966665.2985.43.camel@wraith.lrp.advansoft.us>
-	 <409C089E.2040807@lindows.com>
-Reply-To: lamont@gurulabs.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-hHRz0m9m7Q7AHHMziVOI"
-Return-path: <reiserfs-list-return-18549-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-7EruB7+DTuMB3kzuxhUQ"
+Return-path: <reiserfs-list-return-18550-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <409C089E.2040807@lindows.com>
+In-Reply-To: <409BFAAC.3050404@lindows.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: Clifford Beshers <clifford.beshers@lindows.com>
+Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
---=-hHRz0m9m7Q7AHHMziVOI
+--=-7EruB7+DTuMB3kzuxhUQ
 Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2004-05-07 at 16:07, Clifford Beshers wrote:
-> Sloppy of me.  Sorry.
+Oh, okay.  Sorry about that, then.  I clicked on the Lindows logo and it
+redirected me to Linspire with a spiffy new Linspire logo on the page.=20
+I just assumed it had been a global search and replace.
 
-NP :-).
-
-Given that this thread was concerning the renaming of projects/products,
-I did not want someone to come along and wonder if the acronym for GRUB
-was being renamed by the Lindows people, which I was sure from your
-message it was not (at least, not at this point).
+On Fri, 2004-05-07 at 15:07, Clifford Beshers wrote:
+> No, the name of the company is still Lindows (although it has changed=20
+> from Lindows.com, Inc. to just Lindows, Inc.)  It is just the product=20
+> and website names that have changed.
+[snip]
+>=20
+> Jonathan Briggs wrote:
+>=20
+> >I was poking around on www.namesys.com and looked at your Reiser4 page,
+> >where Lindows is listed as a supporter.
+> >
+> >Y'all need to update that to Linspire, these days.
+> > =20
+> >
+>=20
 --=20
-Lamont R. Peterson <lamont@gurulabs.com>
-Senior Instructor
-Guru Labs, L.C. http://www.GuruLabs.com/
+Jonathan Briggs
+jbriggs@esoft.com
 
---=-hHRz0m9m7Q7AHHMziVOI
+--=-7EruB7+DTuMB3kzuxhUQ
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.3 (GNU/Linux)
 
-iD8DBQBAnA7KRK8Q4zt1QRURAgBqAKClHrmLrd+v9ECoAr38Dz8HUKucVACgmmCD
-LzRQI/K2D5PO/+Di7FFy2zE=
-=LIy2
+iD8DBQBAnBAnG8fHaOLTWwgRAgBdAJ0eP5fr5uups1M4QUUKPi6hXGclFwCaAl3I
+Xvckj1zUSyJ37E4VS6Qjexk=
+=H/yE
 -----END PGP SIGNATURE-----
 
---=-hHRz0m9m7Q7AHHMziVOI--
+--=-7EruB7+DTuMB3kzuxhUQ--
 
