@@ -1,69 +1,84 @@
-From: Brian Beattie <beattie@beattie-home.net>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Fri, 03 Sep 2004 09:16:40 -0400
-Message-ID: <1094217399.2954.9.camel@kokopelli>
+From: Dave Kleikamp <shaggy@austin.ibm.com>
+Subject: Re: The argument for fs assistance in handling archives (was:
+	silent semantic changes with reiser4)
+Date: Fri, 03 Sep 2004 08:33:00 -0500
+Message-ID: <1094218380.2678.43.camel@shaggy.austin.ibm.com>
 References: <20040826150202.GE5733@mail.shareable.org>
 	 <200408282314.i7SNErYv003270@localhost.localdomain>
 	 <20040901200806.GC31934@mail.shareable.org>
 	 <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
-	 <20040902002431.GN31934@mail.shareable.org> <413694E6.7010606@slaphack.com>
-	 <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org>
-	 <4136A14E.9010303@slaphack.com>
-	 <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org>
-	 <4136C876.5010806@namesys.com>
-	 <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org>
-	 <4136E0B6.4000705@namesys.com> <14260000.1094149320@flay>
-	 <m3llfsikis.fsf@zoo.weinigel.se>
+	 <1094118362.4847.23.camel@localhost.localdomain>
+	 <20040902161130.GA24932@mail.shareable.org>
+	 <Pine.LNX.4.61.0409030028510.23011@fogarty.jakma.org>
+	 <1835526621.20040903014915@tnonline.net>
+	 <1094165736.6170.19.camel@localhost.localdomain>
+	 <32810200.20040903020308@tnonline.net>
+	 <Pine.LNX.4.61.0409030112080.23011@fogarty.jakma.org>
+	 <142794710.20040903023906@tnonline.net>
+	 <1094216718.2679.30.camel@shaggy.austin.ibm.com>
+	 <642078516.20040903151619@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21430-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21431-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <m3llfsikis.fsf@zoo.weinigel.se>
+In-Reply-To: <642078516.20040903151619@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christer Weinigel <christer@weinigel.se>
-Cc: "Martin J. Bligh" <mbligh@aracnet.com>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Spam <spam@tnonline.net>
+Cc: Paul Jakma <paul@clubi.ie>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jamie Lokier <jamie@shareable.org>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, 2004-09-02 at 14:38, Christer Weinigel wrote:
-> "Martin J. Bligh" <mbligh@aracnet.com> writes:
+On Fri, 2004-09-03 at 08:16, Spam wrote:
+> > You're missing the point.  We don't need transparency in all apps.  You
+> > can write an application to be as transparent as you want, but you don't
+> > need every app to to understand every file format.
 > 
-> > > For 30 years nothing much has happened in Unix filesystem semantics 
-> > > because of sheer cowardice 
-> > 
-> > Or because it works fine, and isn't broken.
-> 
-> I've heard the same argument a lot of times.  People complaining that
-> Unix is so seventies because it sticks to the old boring philosophy of
-> everything is a file and that a file is a stream of bytes, nothing
-> more.  Modern operating systems such as VMS with basic database
-> handling in the OS itself, or MacOS or NT with named streams is so
-> much more modern.  Why don't we get with the times?
+>   No, but not every user "can write an application" either, or even
+>   have the skills to apply patches. What I was talking about wasn't
+>   just tar, which itself isn't the best example anyway,
 
-Actually the handleing of special filesystem features in the OS is an
-OLD idea.  VMS is actually not more modern than Unix, it is older than
-Unix owing much to earlier OS's such as RSX-11.  It was a great insight
-on the part of Ritche and Thompson that the kernel should present a file
-as a byte stream and that the interpretation of the contents of a file
-is the province of the application, not the operating system.
+That was one of the examples you gave, that and .jpg.  I believe they
+are both ridiculous.
 
-Now it maybe, that there are features that can only be provided by
-adding support in the kernel, but we should be very careful not to be
-distracted by what we see as new wizbang features.  The filesystem as a
-database has been tried before, ISAM is a very old concept.
+>  but the idea
+>   that users can load plugins that will extend the functionality of
+>   their filesystems. That idea seem to be to be _much_ better than
+>   trying to teach every user how to write applications or patch
+>   existing ones.
+
+If I understand Hans' plugins, they are not user-loadable, but rather a
+statically built part of the kernel.
 
 > 
-> It may be because just because of the simplicity it's fairly easy to
-> use, harder to break och does one thing well.  If you want structured
-> storage, use a database, on top of the low level primitives, or use
-> multiple files in a directory.  Why complicate things?
-> 
->   /Christer
+>   No, but if I wanted to have an encryption plugin active for some of
+>   my files or directories then why should I not be able to? I still
+>   want to edit, view and save my encrypted files.
+
+I would not argue against an encryption plugin.
+
+>   Again, this was just an example of what could be done with plugins.
+>   It is not said that every conceivable plugin will be written, nor
+>   loaded per default.
+
+This I agree with.
+
+>  Even though plugins cannot today be dynamically
+>   used, they will be eventually. Reiser4 is still very young.
+
+As kernel modules, this would make sense.  I don't see just any
+unprivileged user being able to add code into the file system, though.
+
+>   Please separate your thoughts for specific plugins from those of the
+>   idea to have plugins at all.
+
+I'm not against reiser4 plugins.  I don't think file system code should
+care about the type of data in a file, and do any interpretation based
+on it.
+
+Shaggy
 -- 
-Brian Beattie   LFS12947 | "Honor isn't about making the right choices.
-beattie@beattie-home.net | It's about dealing with the consequences."
-www.beattie-home.net     | -- Midori Koto
-
+David Kleikamp
+IBM Linux Technology Center
 
