@@ -1,55 +1,62 @@
-From: Yury Umanets <umka@namesys.com>
-Subject: My gpg public key
-Date: Fri, 31 May 2002 21:04:10 +0400
-Message-ID: <3CF7AD0A.4010706@namesys.com>
+From: "Steve Pratt" <slpratt@us.ibm.com>
+Subject: Re: EVMS Reiser FSIM
+Date: Fri, 31 May 2002 12:03:18 -0500
+Message-ID: <OFAADA662B.00161B0E-ON85256BCA.005CD105@pok.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------090802070206000709040300"
-Return-path: <reiserfs-list-return-10470-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10471-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-dev <reiserfs-list@namesys.com>
-
---------------090802070206000709040300
-Content-Type: text/plain; charset=KOI8-R; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
 
+Oleg Drokin wrote:
 
---------------090802070206000709040300
-Content-Type: text/plain;
- name="umka.asc"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="umka.asc"
+>On Thu, May 30, 2002 at 12:14:03PM -0500, Steve Pratt wrote:
 
------BEGIN PGP PUBLIC KEY BLOCK-----
-Version: GnuPG v1.0.6 (GNU/Linux)
-Comment: For info see http://www.gnupg.org
+>Ok, I had a look into the CVS and I have few comments.
 
-mQGiBDz0x1YRBADxB+UQ0YaqSlDXShVwmQ7xvEBHfhQymj3sD5qnmrt2DcYQpwWo
-BPjDc7NUTm2gfZc9tMzD5WzZGChY6ubSUl/WzhxAgP24R27B2pvJJvQAFGqFCbey
-ED9HLk0i95y50htSGhMISe4MYfbR29FVFNWiBTxV+JPPW5+rQnJnxUHHpwCgwJSU
-CWEiY+NCAdVkIv1Le3ifukkEALM4XreCNSnjoUT0TiqkbO3CE2ShvsegNmRNiYKp
-GcSoTApdQAq00GRrVtoXJUaHLKfkU348QrLTalgiwKm6VYWKMdzzJ6GUpxlYVOhK
-nGNjTkNPxrVNbdPW2s0Isc7Z0ASp/RMdGzGnsy8N6cG2b9HHR1/jP6MkZAY3zohg
-z+4aA/9Z0d6V25p5jqjuwwiOWiJSUCf5wJckIGtiNzg28HE+qpupU+C38AwmQr2B
-YY8YwvL6Jmi9WkvSwu5sGDxaapijQppFO4VxILfk0TFCiIs7xVQ6CsBNmmVnddWq
-HLyikQAjaZ4OfopeSkNgtLgZakxE79FqlHZph4x1nCIsNYBtDLQfWXVyeSBVbWFu
-ZXRzIDx1bWthQGFsdGxpbnV4LnJ1PohXBBMRAgAXBQI89MdWBQsHCgMEAxUDAgMW
-AgECF4AACgkQ96QCXp+d6dKWawCgmkdEufLYlAv0gy0x/NGSTXa7v6EAn0ZSVHEc
-JiqhPAxs30X/kNXU7JsTuQENBDz0x1gQBAD+qDFqt3P5DejhcE1omAvHZaW7h4Zl
-NWL8o9/X5rwIkQKu2OC20561QAyynCFyUJhdCrQdTCqeY+XrLV2kbLxx5CW/S20X
-xB86joN9YWFaSCFyBc+eIAByvnL5o0uym2J6XCVRymTqGA1tnYu9fmhioqNfXLYF
-IEF/+rByZnGzzwAEDQQAr7nPNhvNQQRvNA4Qfyrhc1S7y9BKFNTE0OlIoqhInqlv
-56AfvoGcL1NuiET3yKjkeBDSmxzOqEg7QvdIiNXjkazW4jsPB4vdeRUmGCOnKazO
-pKloIdN10PnUMOiRttXLWzxsfTLt8ugTm+/+TtOrHDmm1Id5wlF5MJSuWNDgfB6I
-RgQYEQIABgUCPPTHWAAKCRD3pAJen53p0qLeAJ9B1FL2Eb+bUYnQuL4ar6E8yp3g
-DwCdG85Bir1K8luDSVpcwDLwZUCO4yo=
-=dx6Q
------END PGP PUBLIC KEY BLOCK-----
+>First is that mkfs output might exceed 10k buffer you have assigned to it,
+>and if messages that mkfs print would exceed 10k+pipe buffer size,
+>then mkfs process would block and you'd never get it to return
 
---------------090802070206000709040300--
+Actually, I wasn't doing any read until after the completion of mkfs, so
+all it had to do is exceed the pipe buffer.  Good catch.
+
+>(and I do not see you have any way to exit on timeout or send a signal
+>to hung process on timeout).
+
+Correct, I have no way to calculate a timeout.  This would be true even if
+we move to library calls.  I just have to hope reiserfs utilities never
+hang. :-)
+
+>Then I believe Hans asked you to display credits not only for reiserfsck,
+but
+>also for mkreiserfs. (and other reiserfs utilities if you run them).
+
+Yes.  I'll look at adding something, but I don't want another pop-up on
+mkfs. We have had some complaints about too many as it is. I'll see if I
+can add something to the options panel.  Is there some specific information
+you want displayed besides the version?
+
+>Also just a note, you can return your own errors as negative exit codes
+>and pass utilities exit codes as it is.
+>So if the exit code of child process is bigger than 128, you can substract
+>this value from 255 and decide what error was caused that tool was not
+run.
+>Also you'd avoid a clash between EPERM vs FSCK_CORRECTED this way.
+
+Will look into this.
+
+>Ah, and please change recommended version of reiserfsprogs to 3.x.1b,
+>because 3.x.1a is not recommended in fact and have some known problems.
+
+Done.
+
+Thanks, Steve
+
 
