@@ -1,142 +1,98 @@
-From: Rikard Johnels <rikjoh@norweb.se>
-Subject: Re: Failed ReiserFS
-Date: Mon, 14 Feb 2005 21:46:51 +0100
-Message-ID: <200502142146.52049.rikjoh@norweb.se>
-References: <200502100535.01814.rikjoh@norweb.se> <200502141506.43506.vitaly@namesys.com> <200502142133.35062.rikjoh@norweb.se>
+From: "Simon \"Sturmflut\" Raffeiner" <sturmflut@lieberbiber.de>
+Subject: Re: Reiser 4 Apple
+Date: Mon, 14 Feb 2005 23:07:20 +0100
+Message-ID: <200502142307.25356.sturmflut@lieberbiber.de>
+References: <DC09DB522D858648AC430F0DBC51F6320800B7@its-exmail1.its.corp.gwl.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed;
+  boundary="nextPart2901079.3TEISPZiWF";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200502142133.35062.rikjoh@norweb.se>
-Content-Disposition: inline
+In-Reply-To: <DC09DB522D858648AC430F0DBC51F6320800B7@its-exmail1.its.corp.gwl.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-On Monday 14 February 2005 21.33, Rikard Johnels wrote:
-> On Monday 14 February 2005 13.06, Vitaly Fertman wrote:
-> > On Monday 14 February 2005 14:24, Rikard Johnels wrote:
-> > > On Friday 11 February 2005 08.57, Rikard Johnels wrote:
-> > > > On Thursday 10 February 2005 22.03, Vitaly Fertman wrote:
-> > > > > > > > reiserfsck 3.6.13
-> > > > > > > > I used -S to scan the whole partition, as per man page
-> > > > > > > > A bug heh.. :(
-> > > > > > > > So is there any fix for it?
-> > > > > > >
-> > > > > > > Please try latest reiserfsck.
-> > > > > > > ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.19.ta
-> > > > > > >r. gz
-> > > > > >
-> > > > > > Same problem:
-> > > > > >
-> > > > > >  lost+found.c 348 pass_3a_look_for_lost
-> > > > > > look_for_lost: The entry 'lost+found' could not be found in the
-> > > > > > root directory Aborted
-> > > > > >
-> > > > > > This is getting more than frustrating...
-> > > > >
-> > > > > would you pack the metadata with
-> > > > > 	debugreiserfs -p <device> | bzip2 -c > <device>-meta.bz2
-> > > > > and provide them for downloading?
-> > > >
-> > > > the metadata and reiserfsck log are both available for download.
-> > > >
-> > > > ftp://ftp.rikjoh.com/reisercheck.logfile.bz2
-> > > > ftp://ftp.rikjoh.com/hdc1-meta.bz2
-> > >
-> > > Moved the disks to another computer with a clean install of Linux.
-> > > Reran the --rebuild-tree on that one. And i still get the same error
-> > > "look_for_lost: The entry 'lost+found' could not be found in the root"
-> > > And its the "reiserfs-3.6.13" package.
-> > > Still no luck :(
-> > >
-> > > Why cant it find the /lost+found ?
+--nextPart2901079.3TEISPZiWF
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+AFAIK WinFS will not enhance NTFS with some real Database-centric stuff but=
+=20
+simply save an index into a standard Microsoft SQL database somewhere in a=
+=20
+hidden place. At least the Windows Longhorn Preview Releases had a MS-SQL=20
+Server running in the background. Nobody knows what Apple exactly wants to =
+do=20
+with Spotlight, it merely sounds like a background indexing engine like=20
+WinFS. The BeOS approach was completely different in my eyes, and it was da=
+mn=20
+fast at the same time.
+
+Regards,
+Simon
+
+
+Am Montag 14 Februar 2005 17:32 schrieb Burnes, James:
+> Sounds like a great idea, but didn't they hire the filesystem architect
+> from BeOS a few years ago to re-design the native MacOS X filesystem?
+>
+> I believe the idea was to clone the database-centric BeFS functions.  I
+> believe this functionality is on the plate sometime in the future with
+> Reiser4 and also (some decade) with the next version of WinFS.
+>
+> Jim Burnes
+>
+> > -----Original Message-----
+> > From: Michael James [mailto:Michael.James@csiro.au]
+> > Sent: Sunday, February 13, 2005 7:01 PM
+> > To: reiserfs-list@namesys.com
+> > Subject: Reiser 4 Apple
 > >
-> > no problem with your metadata.
-> > Are you sure you run reiserfsck 3.6.19?
-> > Did you obtain reiserfsprogs-3.6.19 from our ftp site?
-> > Would you check the memory on the computer you run reiserfsck
-> > on and would you check the harddrive for bad blocks?
->
-> Just ran 3.6.19 on the fresh installed computer
-> Same error.
->
-> ---<screen dump>---
->
-> Will rebuild the filesystem (/dev/hdc1) tree
-> Will put log info to '/root/reisercheck.logfile'
->
-> Do you want to run this program?[N/Yes] (note need to type Yes if you
-> do):Yes Replaying journal..
-> Reiserfs journal '/dev/hdc1' in blocks [18..8211]: 0 transactions replayed
-> ###########
-> reiserfsck --rebuild-tree started at Mon Feb 14 21:05:44 2005
-> ###########
->
-> Pass 0:
-> The whole partition (7504544 blocks) is to be scanned
-> Skipping 8440 blocks (super block, journal, bitmaps) 7496104 blocks will be
-> read
-> 0%....20%....40%....60%....80%....100%                        left 0,
-> 4848 /sec
->         "r5" hash is selected
-> Flushing..finished
->         Read blocks (but not data blocks) 7496104
->                 Leaves among those 15551
->                         - leaves all contents of which could not be saved
-> and deleted 7
->                 Objectids found 8831
->
-> Pass 1 (will try to insert 15544 leaves):
-> Looking for allocable blocks .. finished
-> 0%....20%....40%....60%....80%....100%                         left 0,
-> 420 /sec
-> Flushing..finished
->         15544 leaves read
->                 13485 inserted
->                 2059 not inserted
->         non-unique pointers in indirect items (zeroed) 25597
->
-> Pass 2:
-> 0%....20%....40%....60%....80%....100%                        left 0,
-> 2059 /sec
-> Flushing..finished
->         Leaves inserted item by item 2059
-> Pass 3 (semantic):
-> Flushing..finished
->         Files found: 4302
->         Directories found: 356
->         Broken (of files/symlinks/others): 3
->         Files with fixed size: 1
->         Names pointing to nowhere (removed): 111
-> Pass 3a (looking for lost dir/files):
-> Looking for lost directories:
-> Looking for lost files:
-> lost+found.c 348 pass_3a_look_for_lost
-> look_for_lost: The entry 'lost+found' could not be found in the root
-> directory.
-> Aborted
->
-> ---<end screendump>---
+> > Dear Hans,
+> >
+> > Have you ever thought of porting reiser4 to BSD?
+> >
+> > Apple have:
+> > 	Bags of money
+> > 	A current filesystem that totally sucks
+> > 	An OS that cries out for plugins to satisfy its quirks
+> >
+> > Could be a good marriage,
+> > michaelj
+> >
+> > --
+> > Michael James                         michael.james@csiro.au
+> > System Administrator                    voice:  02 6246 5040
+> > CSIRO Bioinformatics Facility             fax:  02 6246 5166
 
-Question: The /lost+found;  Is that directory created by the check or is it 
-supposed to be present
-As far as i have seen all my installs with reiserfs; None contains that 
-folder.
-I am making another run with a "selfmade" /lost+found, to see if it makes any 
-difference this time.
+=2D-=20
+mit freundlichen Gr=FC=DFen
 
+Simon "Sturmflut" Raffeiner
 
+=2D----------------------------------
+Die Weltgeschichte ist die Summe dessen, was vermeidbar gewesen w=E4re.
+                                                   -- Oscar Wilde
 
--- 
+GPG Public Key: 0xB2204FA0 @ hkp://subkeys.pgp.net
+http://www.lieberbiber.de/pubkey.gpg
 
-         /Rikard
+--nextPart2901079.3TEISPZiWF
+Content-Type: application/pgp-signature
 
----------------------------------------------------------------
-Rikard Johnels          email   : rikjoh@norweb.se
-                        Web     : http://www.rikjoh.com/users/rikjoh
-                        Mob     : +46 735 05 51 01
-                        PGP     : 0x461CEE56
----------------------------------------------------------------
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.6 (GNU/Linux)
+
+iD8DBQBCESEdd2q78rIgT6ARAptyAJ994Lj0UgvRH/0lNM909/JgqaFLyQCfbehm
+rILPiomjagvgGT941imrwP4=
+=U7PL
+-----END PGP SIGNATURE-----
+
+--nextPart2901079.3TEISPZiWF--
