@@ -1,41 +1,35 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: If you want reiser4 to go into the kernel, you probably need
- to ask for it
-Date: Sat, 23 Oct 2004 09:27:43 -0700
-Message-ID: <417A867F.10405@namesys.com>
-References: <417A821A.7000004@namesys.com> <1098547972.417a8304a2bdc@webmail.highstream.net>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: 2.6.9-mm1
+Date: Sat, 23 Oct 2004 19:57:12 +0300
+Message-ID: <20041023165712.GR26192@nysv.org>
+References: <417A7EF9.70007@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22139-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22140-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1098547972.417a8304a2bdc@webmail.highstream.net>
+Content-Disposition: inline
+In-Reply-To: <417A7EF9.70007@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: brianmas@highstream.net
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: reiserfs-list@namesys.com
 
-brianmas@highstream.net wrote:
+Hans Reiser wrote:
 
->
->
->Hello,
->Sorry if this is common knowledge but how do you go about making a request for a
->feature in the kernel?
->
->brian
->
->
->
->  
->
-Look for a thread on the linux-kernel mailing list titled:
+>Please make large keys the default, and hide the ability to 
+>choose small keys by taking it out of the configuration menu and burying 
+>it in a .h file.
 
-Re: 2.6.9-mm1
+Stupid question, why have small keys at all?
 
-and join that thread which discusses reiser4 with comments suggesting 
-reiser4 would be nice to have.
+Someone said once that he didn't want to use large keys because they added
+no value to him and small keys wasted less space. If there are people like
+this around, burying it is not cool, but if there aren't, maybe small keys
+should be ripped out?
 
-Hans
+-- 
+mjt
+
