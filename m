@@ -1,29 +1,45 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: reiser4 plugins (was: silent semantic changes with reiser4)
-Date: Thu, 26 Aug 2004 17:37:48 +0200
+From: Nikita Danilov <nikita@clusterfs.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 26 Aug 2004 19:41:52 +0400
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040826153748.GA3700@lst.de>
-References: <20040826014542.4bfe7cc3.akpm@osdl.org> <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <1093527307.11694.23.camel@leto.cs.pocnet.net> <20040826134034.GA1470@lst.de> <1093528683.11694.36.camel@leto.cs.pocnet.net>
+Message-ID: <16686.1216.77602.380618@thebsh.namesys.com>
+References: <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>
+	<20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk>
+	<Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org>
+	<20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk>
+	<20040826001152.GB23423@mail.shareable.org>
+	<20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk>
+	<20040826010049.GA24731@mail.shareable.org>
+	<412DA40B.5040806@namesys.com>
+	<20040826140500.GA29965@fs.tum.de>
+	<1093530313.11694.56.camel@leto.cs.pocnet.net>
+	<20040826150434.GF5733@mail.shareable.org>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1093528683.11694.36.camel@leto.cs.pocnet.net>
+In-Reply-To: <20040826150434.GF5733@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe Saout <christophe@saout.de>
-Cc: Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Jamie Lokier <jamie@shareable.org>
+Cc: Christophe Saout <christophe@saout.de>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-> > compression or encryption must sit below the pagecache to work nicely,
-> > and this hint things that usually sit at the pagecache level.  But let's
-> > assume you have a valid use for different file_operations, why don't you
-> > simply add in different file_operations instead of adding another
-> > internal dispatch layer?  
-> 
-> I don't know, ask Hans. How could the VFS know it a filesystem wants to
-> do something specific with a file that is completely transparent to the
-> VFS?
+Jamie Lokier writes:
+ > Christophe Saout wrote:
+ > > What reiser4 can do, but the VFS can't is to insert or remove data in
+ > > the middle of a file. Adding this above the page cache would probably be
+ > > almost impossible (truncate seems already complicated enough).
+ > 
+ > That would be one of those "special features" that a
+ > VFS-plus-userspace implementation of archive views could take
+ > advantage of on reiser4, while using a slower method (sometimes much
+ > slower) on all other filesystems.
+ > 
+ > By the way, can reiser4 share parts of files between different files?
 
-The VFS shouldn't, that the whole point.  That's why it allows the
-filesystem to register different method tables for each object.
+It can, but fsck is supposed to cope with this. :)
+
+ > 
+ > -- Jamie
+
+Nikita.
 
