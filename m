@@ -1,224 +1,197 @@
-From: George Beshers <gbeshers@comcast.net>
-Subject: Re: viewprinting: what format should views be stored in?
-Date: Tue, 17 Aug 2004 19:46:41 -0400
-Message-ID: <412298E1.4080100@comcast.net>
-References: <411FFCB4.2060400@namesys.com> <41201252.1080803@comcast.net> <412015D0.8030806@namesys.com> <41210FF5.7080605@comcast.net> <4121AEAA.8050008@namesys.com> <41225C9C.7050400@comcast.net> <41226A50.3010609@namesys.com>
+From: Marc Eshel <eshel@almaden.ibm.com>
+Subject: Fw: Bad: scheduling while atomic, 2.6.7
+Date: Tue, 17 Aug 2004 17:20:06 -0700
+Message-ID: <OFFE85377C.147C3C78-ON88256EF4.0001C804-88256EF4.0001D741@us.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
- boundary="------------020209080901020405020301"
-Return-path: <reiserfs-list-return-20365-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20366-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41226A50.3010609@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
-
---------------020209080901020405020301
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
 
-First, rereading my e-mails I realize that there was some thinking 
-behind my questions
-which was only partially articulated.  Going back to my earlier position 
-which I will restate
-here as:
-
-    /Use of a mask should never corrupt the semantics defined by the
-    Single Unix
-    Specification /*or*/ its practical derivations and extensions, e.g.,
-    BSD and Linux./
-
-That is,/ ideally/ if I created a standalone system that "looked" like 
-the system the mask
-provides then the process would behave equivalently.  I emphasize 
-ideally because to
-actually make that the case would require something closer to a virtual 
-machine---which
-is clearly beyond the scope of this project.
-
-So I am looking for potential semantic anomalies which could be 
-introduced by a
-mask over a reiser4 file system, i.e., border cases where some upfront 
-awareness
-and attention may save re-design and re-writing later on.
 
 
-Hans Reiser wrote:
 
+
+I believe that the problem reported by David is caused by find_inode()
+calling test(inode, data)
+when the inode is in a transition state(I_LOCK|I_NEW|I_FREEING|I_CLEAR).
+The test() call that used to
+be called find actor is calling the underling filesystem with an Inode that
+is not initialized yet or is
+being deleted.
+A simple change in find_inode() to move the code that already checks for
+this transition state after
+the call to test(), to be done before the call to test() will solve the
+problem for inode deletion, and
+adding a check for I_LOCK and waiting on new inode creation will fix it for
+adding inodes.
+
+David Ford wrote on 07/02/2004:
+
+> AMD64, nothing special about the kernel.
 >
->> The issue is how the mask might change the semantics of 
->> sys_execve().  I have spent some time
->> starting to trace code around, but more work is required.
->>
->> For the moment I think we are safe if the setuid and setgroup can not 
->> be altered by the mask.
+> Unable to handle kernel paging request at 000001083d74a4c8 RIP:
+> <ffffffff801ba763>{find_inode+35}
+> PML4 8063 PGD 0
+> Oops: 0000 [1] PREEMPT
+> CPU 0
+> Modules linked in: ipt_REJECT iptable_filter iptable_mangle
+> ipt_MASQUERADE iptable_nat ip_conntrack ip_tables
+> Pid: 8598, comm: rsync Not tainted 2.6.7
+> RIP: 0010:[<ffffffff801ba763>] <ffffffff801ba763>{find_inode+35}
+> RSP: 0018:0000010017ca5b78  EFLAGS: 00010202
+> RAX: 000001083d74a4c8 RBX: 000001083d74a4c8 RCX: 0000010017ca5c00
+> RDX: ffffffff801f5f20 RSI: 000001003fe669a8 RDI: 000001003f82b578
+> RBP: 000001003f82b578 R08: 0000010017ca5c00 R09: 0000010012cb97b8
+> R10: 0000000000000001 R11: 0000000000000246 R12: 000001003f82b578
+> R13: 000001003fe669a8 R14: 0000010017ca5c00 R15: ffffffff801f5f20
+> FS:  0000002a95aa2090(0000) GS:ffffffff807fc000(0000)
+knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+> CR2: 000001083d74a4c8 CR3: 0000000000101000 CR4: 00000000000006e0
+> Process rsync (pid: 8598, threadinfo 0000010017ca4000, task
+> 000001001fd6ab10)
+> Stack: 0000010012cb84c8 0000010017ca5c38 000001003f82b578
+000001003fe669a8
+>        0000010017ca5c00 ffffffff801f5f20 ffffffff801f5df0
+ffffffff801bbb12
+>        0000000000000006 0000010017ca5c38
+> Call Trace:<ffffffff801f5f20>{reiserfs_find_actor+0}
+> <ffffffff801f5df0>{reiserfs_init_locked_inode+0}
+>        <ffffffff801bbb12>{iget5_locked+290}
+> <ffffffff801f5fa2>{reiserfs_iget+82}
+>        <ffffffff801efb1a>{reiserfs_lookup+442}
+> <ffffffff801a75a3>{real_lookup+131}
+>        <ffffffff801a7a99>{do_lookup+105}
+> <ffffffff801a8a19>{link_path_walk+3881}
+>        <ffffffff8016e320>{poison_obj+48}
+<ffffffff801a90be>{path_lookup+494}
+>        <ffffffff801a928e>{__user_walk+62}
+<ffffffff801a1720>{vfs_lstat+32}
+>        <ffffffff801a1b5f>{sys_newlstat+31}
+> <ffffffff8011221a>{system_call+126}
 >
 >
-> Ok.
-
-
-For the moment I will focus on how the uid (and assume the group id will 
-be similar)
-of a process and how the mask might lead to a different uid than would 
-be expected
-under standard semantics.
-
-So we agree that the process has an associated user: actually there is 
-the concept
-of real and effective uid also.
-
-I believe the statement above to be true if the process never makes a 
-setuid() system's call of
-one flavor or another because the uid is inherited from the process 
-calling execev() or is determined
-by the owner of the executable if the executable's file set-uid 
-permission bit is turned on via chmod.
-
->>
->> We only change the semantics if the real/effective uid or gid is 
->> different at some point in the
->> processes execution because of the mask---begging situations where a 
->> call to setuid happens
->> only if a certain file is not available.
+> Code: 48 8b 03 0f 18 08 4c 39 a3 80 01 00 00 75 23 4c 89 f6 48 89
+> RIP <ffffffff801ba763>{find_inode+35} RSP <0000010017ca5b78>
+> CR2: 000001083d74a4c8
+>  <6>note: rsync[8598] exited with preempt_count 2
+> bad: scheduling while atomic!
+>
+> Call Trace:<ffffffff8053795e>{schedule+94}
+> <ffffffff80179d5a>{zap_pmd_range+186}
+>        <ffffffff8017a03c>{unmap_vmas+572}
+<ffffffff80180b05>{exit_mmap+293}
+>        <ffffffff80139600>{mmput+272} <ffffffff80140fdf>{do_exit+815}
+>        <ffffffff8011391d>{oops_end+205}
+> <ffffffff80127ab5>{do_page_fault+1109}
+>        <ffffffff80194610>{bh_wake_function+0}
+> <ffffffff80194610>{bh_wake_function+0}
+>        <ffffffff801f5f20>{reiserfs_find_actor+0}
+> <ffffffff80112b3d>{error_exit+0}
+>        <ffffffff801f5f20>{reiserfs_find_actor+0}
+> <ffffffff801f5f20>{reiserfs_find_actor+0}
+>        <ffffffff801ba763>{find_inode+35}
+> <ffffffff801ef692>{linear_search_in_dir_item+402}
+>        <ffffffff801f5f20>{reiserfs_find_actor+0}
+> <ffffffff801f5df0>{reiserfs_init_locked_inode+0}
+>        <ffffffff801bbb12>{iget5_locked+290}
+> <ffffffff801f5fa2>{reiserfs_iget+82}
+>        <ffffffff801efb1a>{reiserfs_lookup+442}
+> <ffffffff801a75a3>{real_lookup+131}
+>        <ffffffff801a7a99>{do_lookup+105}
+> <ffffffff801a8a19>{link_path_walk+3881}
+>        <ffffffff8016e320>{poison_obj+48}
+<ffffffff801a90be>{path_lookup+494}
+>        <ffffffff801a928e>{__user_walk+62}
+<ffffffff801a1720>{vfs_lstat+32}
+>        <ffffffff801a1b5f>{sys_newlstat+31}
+> <ffffffff8011221a>{system_call+126}
+>
+> lib/dec_and_lock.c:32: spin_lock(fs/inode.c:ffffffff8069c820) already
+> locked by fs/inode.c/775
+> Unable to handle kernel paging request at 0000000a00000000 RIP:
+> <ffffffff801ba763>{find_inode+35}
+> PML4 4f20067 PGD 0
+> Oops: 0000 [2] PREEMPT
+> CPU 0
+> Modules linked in: ipt_REJECT iptable_filter iptable_mangle
+> ipt_MASQUERADE iptable_nat ip_conntrack ip_tables
+> Pid: 29539, comm: gmake Not tainted 2.6.7
+> RIP: 0010:[<ffffffff801ba763>] <ffffffff801ba763>{find_inode+35}
+> RSP: 0018:0000010028399b78  EFLAGS: 00010206
+> RAX: 0000000a00000000 RBX: 0000000a00000000 RCX: 0000010028399c00
+> RDX: ffffffff801f5f20 RSI: 000001003fe7ea40 RDI: 000001003f82b578
+> RBP: 000001003f82b578 R08: 0000010028399c00 R09: 0000010009798150
+> R10: 0000000000000001 R11: 0000000000000246 R12: 000001003f82b578
+> R13: 000001003fe7ea40 R14: 0000010028399c00 R15: ffffffff801f5f20
+> FS:  0000002a95aa4090(0000) GS:ffffffff807fc000(0000)
+knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+> CR2: 0000000a00000000 CR3: 0000000000101000 CR4: 00000000000006e0
+> Process gmake (pid: 29539, threadinfo 0000010028398000, task
+> 00000100219560b0)
+> Stack: 000001002113b0e0 0000010028399c38 000001003f82b578
+000001003fe7ea40
+>        0000010028399c00 ffffffff801f5f20 ffffffff801f5df0
+ffffffff801bbb12
+>        0000000000000004 0000010028399c38
+> Call Trace:<ffffffff801f5f20>{reiserfs_find_actor+0}
+> <ffffffff801f5df0>{reiserfs_init_locked_inode+0}
+>        <ffffffff801bbb12>{iget5_locked+290}
+> <ffffffff801f5fa2>{reiserfs_iget+82}
+>        <ffffffff801efb1a>{reiserfs_lookup+442}
+> <ffffffff801a75a3>{real_lookup+131}
+>        <ffffffff801a7a99>{do_lookup+105}
+> <ffffffff801a8a19>{link_path_walk+3881}
+>        <ffffffff8016e320>{poison_obj+48}
+<ffffffff801a90be>{path_lookup+494}
+>        <ffffffff801a928e>{__user_walk+62} <ffffffff801a16c3>{vfs_stat+35}
+>        <ffffffff801a1b0f>{sys_newstat+31}
+> <ffffffff8011221a>{system_call+126}
 >
 >
-> Say more.
-
-If the process has the code like
-
-    if (stat("/etc/foobar.conf", statbuf)  < 0) {
-         if (setuid(3) < 0) {   /* Try to become sys */
-        }
-        /* Do something here */
-    }
-
-And the mask hides "/etc/foobar.conf" then in fact the uid
-will change but *not unexpectedly*, IMO.  The mask is
-creating a changed environment but the behavior is
-understandable from the source code.
-
-Put this another way, the semantics still seem correct to me
-because you are getting the behavior of "/etc/foobar.conf" actually
-not being there.
-
-Now that I think about it masking a named pipe or a lock file
-is perhaps more likely to cause problems then the setuid bit.
-More cogitation required...  :-)
-
-
-
---------------020209080901020405020301
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
-  <title></title>
-</head>
-<body text="#000000" bgcolor="#ffffff">
-<br>
-First, rereading my e-mails I realize that there was some thinking
-behind my questions<br>
-which was only partially articulated.&nbsp; Going back to my earlier
-position which I will restate<br>
-here as:<br>
-<blockquote><i>Use of a mask should never corrupt the semantics defined
-by the Single Unix<br>
-Specification </i><b>or</b><i> its practical derivations and
-extensions, e.g., BSD and Linux.</i><br>
-</blockquote>
-That is,<i> ideally</i> if I created a standalone system that "looked"
-like the system the mask<br>
-provides then the process would behave equivalently.&nbsp; I emphasize
-ideally because to<br>
-actually make that the case would require something closer to a virtual
-machine---which<br>
-is clearly beyond the scope of this project.<br>
-<br>
-So I am looking for potential semantic anomalies which could be
-introduced by a<br>
-mask over a reiser4 file system, i.e., border cases where some upfront
-awareness<br>
-and attention may save re-design and re-writing later on.<br>
-<br>
-<br>
-Hans Reiser wrote:<br>
-<blockquote type="cite" cite="mid41226A50.3010609@namesys.com"><br>
-  <blockquote type="cite">The issue is how the mask might change the
-semantics of sys_execve().&nbsp; I have spent some time
-    <br>
-starting to trace code around, but more work is required.
-    <br>
-    <br>
-For the moment I think we are safe if the setuid and setgroup can not
-be altered by the mask.
-    <br>
-  </blockquote>
-  <br>
-Ok.
-  <br>
-</blockquote>
-<br>
-For the moment I will focus on how the uid (and assume the group id
-will be similar)<br>
-of a process and how the mask might lead to a different uid than would
-be expected<br>
-under standard semantics.<br>
-<br>
-So we agree that the process has an associated user: actually there is
-the concept<br>
-of real and effective uid also.<br>
-<br>
-I believe the statement above to be true if the process never makes a
-setuid() system's call of<br>
-one flavor or another because the uid is inherited from the process
-calling execev() or is determined<br>
-by the owner of the executable if the executable's file set-uid
-permission bit is turned on via chmod.<br>
-<blockquote type="cite" cite="mid41226A50.3010609@namesys.com">
-  <blockquote type="cite"><br>
-We only change the semantics if the real/effective uid or gid is
-different at some point in the
-    <br>
-processes execution because of the mask---begging situations where a
-call to setuid happens
-    <br>
-only if a certain file is not available.
-    <br>
-  </blockquote>
-  <br>
-Say more.
-  <br>
-</blockquote>
-If the process has the code like<br>
-<blockquote>if (stat("/etc/foobar.conf", statbuf)&nbsp; &lt; 0) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp; if (setuid(3) &lt; 0) {&nbsp;&nbsp; /* Try to become sys */<br>
-&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;&nbsp;&nbsp; /* Do something here */<br>
-}<br>
-</blockquote>
-And the mask hides "/etc/foobar.conf" then in fact the uid<br>
-will change but <b>not unexpectedly</b>, IMO.&nbsp; The mask is<br>
-creating a changed environment but the behavior is<br>
-understandable from the source code.<br>
-<br>
-Put this another way, the semantics still seem correct to me<br>
-because you are getting the behavior of "/etc/foobar.conf" actually<br>
-not being there.<br>
-<br>
-Now that I think about it masking a named pipe or a lock file<br>
-is perhaps more likely to cause problems then the setuid bit.<br>
-More cogitation required...&nbsp; <span class="moz-smiley-s1"><span> :-) </span></span><br>
-<br>
-<br>
-</body>
-</html>
-
---------------020209080901020405020301--
+> Code: 48 8b 03 0f 18 08 4c 39 a3 80 01 00 00 75 23 4c 89 f6 48 89
+> RIP <ffffffff801ba763>{find_inode+35} RSP <0000010028399b78>
+> CR2: 0000000a00000000
+>  <6>note: gmake[29539] exited with preempt_count 2
+> bad: scheduling while atomic!
+>
+> Call Trace:<ffffffff8053795e>{schedule+94}
+> <ffffffff80179d5a>{zap_pmd_range+186}
+>        <ffffffff8017a03c>{unmap_vmas+572}
+<ffffffff80180b05>{exit_mmap+293}
+>        <ffffffff80139600>{mmput+272} <ffffffff80140fdf>{do_exit+815}
+>        <ffffffff8011391d>{oops_end+205}
+> <ffffffff80127ab5>{do_page_fault+1109}
+>        <ffffffff80173bc7>{mark_page_accessed+39}
+> <ffffffff8019748c>{__find_get_block+252}
+>        <ffffffff801f5f20>{reiserfs_find_actor+0}
+> <ffffffff80112b3d>{error_exit+0}
+>        <ffffffff801f5f20>{reiserfs_find_actor+0}
+> <ffffffff801f5f20>{reiserfs_find_actor+0}
+>        <ffffffff801ba763>{find_inode+35}
+> <ffffffff801ef692>{linear_search_in_dir_item+402}
+>        <ffffffff801f5f20>{reiserfs_find_actor+0}
+> <ffffffff801f5df0>{reiserfs_init_locked_inode+0}
+>        <ffffffff801bbb12>{iget5_locked+290}
+> <ffffffff801f5fa2>{reiserfs_iget+82}
+>        <ffffffff801efb1a>{reiserfs_lookup+442}
+> <ffffffff801a75a3>{real_lookup+131}
+>        <ffffffff801a7a99>{do_lookup+105}
+> <ffffffff801a8a19>{link_path_walk+3881}
+>        <ffffffff8016e320>{poison_obj+48}
+<ffffffff801a90be>{path_lookup+494}
+>        <ffffffff801a928e>{__user_walk+62} <ffffffff801a16c3>{vfs_stat+35}
+>        <ffffffff801a1b0f>{sys_newstat+31}
+> <ffffffff8011221a>{system_call+126}
+>
+> fs/fs-writeback.c:96: spin_lock(fs/inode.c:ffffffff8069c820) already
+> locked by fs/inode.c/775
 
