@@ -1,47 +1,50 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 16:47:39 -0700
-Message-ID: <412E769B.1090508@namesys.com>
-References: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408261315110.2304@ppc970.osdl.org> <412E69D2.50503@namesys.com> <Pine.LNX.4.58.0408261625180.2304@ppc970.osdl.org>
+Date: Thu, 26 Aug 2004 16:53:23 -0700
+Message-ID: <412E77F3.1090206@namesys.com>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <1093467601.9749.14.camel@leto.cs.pocnet.net> <20040825225933.GD5618@nocona.random> <412DA0B5.3030301@namesys.com> <20040826112818.GL5618@nocona.random>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20847-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20848-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.58.0408261625180.2304@ppc970.osdl.org>
+In-Reply-To: <20040826112818.GL5618@nocona.random>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Andrea Arcangeli <andrea@suse.de>
+Cc: Christophe Saout <christophe@saout.de>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Linus Torvalds wrote:
+Andrea Arcangeli wrote:
 
->
+>On Thu, Aug 26, 2004 at 01:35:01AM -0700, Hans Reiser wrote:
 >  
 >
->>>And you might not be able to change the 
->>>permissions or date on the named stream either, since it may or may not 
->>>have a separate date/permission thing from the container.
->>>      
->>>
->>You should be able to change the permission and data,
->>
-^data^date
-
->> but when you 
->>change it, you change it for the whole container.
+>>Reiser4 plugins are not for end users to download from amazon.com, they 
+>>are for weekend hackers to send me a cool plugin for me to review, 
+>>assign a plugin id to, and send to Linus in the next release.  Sometimes 
 >>    
 >>
 >
->Why? I'd much rather disallow it, than allow it and then have "nonlocal" 
->effects.
->  
+>then what's the difference in having the plugin fixed in stone into
+>reiserfs? That's my whole point. Get the patch from the weekend hacker,
+>check it, send the patch to Linus to add the new feature to reiser4,
+>just call it "feature" not plugin. 
 >
-Sometimes you want the nonlocal effects and sometimes you don't, and by 
-decomposing streams into smaller primitives we can let users choose as 
-they want.
+Think of it as being like VFS, where you can plugin new filesystems.  
+Only in this case, you can plugin new kinds of files, and everything you 
+need to implement those new kinds of files (items, nodes, keys, 
+processing before flushing to disk, etc.) also gets implemented as a 
+plugin.  It is an Uber-VFS.
 
+> The only single reason we
+>use modules is to avoid wasting tons of ram by loading every possible
+>device driver on earth,
+>
+I am not concerned about ram in this design, I want nifty new kinds of 
+files easy crafted over a weekend by sysadmins working in Canada and 
+Guatemala.  Software engineering cost is what matters to me ( I turned 
+40, so I think different now....;-) )
 
 
