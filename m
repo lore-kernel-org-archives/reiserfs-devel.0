@@ -1,43 +1,38 @@
-From: Christian Iversen <chrivers@iversen-net.dk>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Thu, 2 Sep 2004 21:02:02 +0200
-Message-ID: <200409022102.03314.chrivers@iversen-net.dk>
-References: <20040826150202.GE5733@mail.shareable.org> <14260000.1094149320@flay> <m3llfsikis.fsf@zoo.weinigel.se>
+From: Spam <spam@tnonline.net>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 2 Sep 2004 21:41:44 +0200
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <1535878866.20040902214144@tnonline.net>
+References: Message from Lee Revell <rlrevell@joe-job.com>    of "Wed, 01 Sep
+ 2004 18:51:12 -0400." <1094079071.1343.25.camel@krustophenia.net>
+ <200409021425.i82EPn9i005192@laptop11.inf.utfsm.cl>
+Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21307-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <m3llfsikis.fsf@zoo.weinigel.se>
-Content-Disposition: inline
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <200409021425.i82EPn9i005192@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Lee Revell <rlrevell@joe-job.com>, Jamie Lokier <jamie@shareable.org>, Pavel Machek <pavel@suse.cz>, David Masover <ninja@slaphack.com>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thursday 02 September 2004 20:38, Christer Weinigel wrote:
-> "Martin J. Bligh" <mbligh@aracnet.com> writes:
-> > > For 30 years nothing much has happened in Unix filesystem semantics
-> > > because of sheer cowardice
-> >
-> > Or because it works fine, and isn't broken.
->
-> I've heard the same argument a lot of times.  People complaining that
-> Unix is so seventies because it sticks to the old boring philosophy of
-> everything is a file and that a file is a stream of bytes, nothing
-> more.  Modern operating systems such as VMS with basic database
-> handling in the OS itself, or MacOS or NT with named streams is so
-> much more modern.  Why don't we get with the times?
->
-> It may be because just because of the simplicity it's fairly easy to
-> use, harder to break och does one thing well.  If you want structured
-> storage, use a database, on top of the low level primitives, or use
-> multiple files in a directory.  Why complicate things?
 
-Sounds very much like the reason for using only triangle primitives on modern 
-3D-graphics hardware. And that works :)
+  
 
--- 
-Regards,
-Christian Iversen
+> Lee Revell <rlrevell@joe-job.com> said:
+
+> [...]
+
+>> FWIW, this is how Windows does it now.  As of XP, 'Find files' has an
+>> option, enabled by default, to look inside archives.  If you tell it to
+>> look for a driver in a given directory it will also look inside .cab
+>> and .zip files.  It's extremely useful, I would imagine someone who uses
+>> XP a lot will come to expect this feature.
+
+> It is trivial to implement this by looking inside the files. I.e., the way
+> mc has done this for ages.
+
+  Difference is that you can't do "locate" or "find" or "Search".. You
+  would have to open the files in an archive-supporting application
+  such as mc.
+
