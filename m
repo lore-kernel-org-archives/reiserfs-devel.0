@@ -1,160 +1,71 @@
-From: Ookhoi <ookhoi@humilis.net>
-Subject: Re: [ANNOUNCE]: reiser4 snapshot
-Date: Thu, 13 Feb 2003 20:32:36 +0100
-Message-ID: <20030213203235.E17656@humilis>
-References: <15947.44879.855354.614016@laputa.namesys.com>
-Reply-To: ookhoi@humilis.net
-Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12744-reiserfs=m.gmane.org@namesys.com>
+From: eazgwmir@umail.furryterror.org (Zygo Blaxell)
+Subject: Re: trolling
+Date: 13 Feb 2003 14:54:50 -0500
+Message-ID: <b2gt6a$8dq$1@satsuki.furryterror.org>
+References: <3E494808.413781E@interface-ag.com> <3E494808.413781E@interface-ag.com> <20030212131120.A10438@t-raenon.nmd.msu.ru>
+Return-path: <reiserfs-list-return-12745-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <15947.44879.855354.614016@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nikita Danilov <Nikita@namesys.com>
-Cc: Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>
+To: reiserfs-list@namesys.com
 
-Nikita Danilov wrote (ao):
-> new reiser4 snapshot is available at:
-> 
-> http://www.namesys.com/snapshots/2003.02.13/
+In article <20030212131120.A10438@t-raenon.nmd.msu.ru>,
+Alexander Lyamin  <flx@msu.ru> wrote:
+>P.S. "In addition, check your facts before making a statement
+>that insults someone and claims something that is completely untrue."
+>
+>Powersupply units physically damaging hard-drive disks (plates!).
 
-Thanks a lot for this snapshot, and for reiserfs in general.
+I wouldn't characterize that as "untrue," more like "technically
+incomplete."  There are lots of ways to permanently disable hard disks
+without physically damaging them.
 
-> Your feedback and testing efforts are most valuable to us.
-> 
-> >From README:
-> ----------------------------------------------------------------------
-> Reiser4 snapshot for 2003.02.13
-> 
-> WARNING!!! This code is experimental! WE ARE NOT KIDDING! DO NOT PUT
-> ANY VALUABLE DATA ON REISER4 YET!
-> 
-> This is mostly bug fixing shapshot.
-> 
-> Snapshot is released as a patch against linux-2.5.60. It should also
-> work with current (February 13th) bk snapshot.
-> REISER4_NOOPT config option (Disable compiler optimizations for
-> reiser4 code.) is known to not compile on x86.
+Disk head servo controllers operate using some of the data on the disk
+platter as a position encoder, which is used in a feedback scheme
+to control the motor.  The motor's electrical power is literally a
+function of the previous position, the theoretical position, and the
+current position as reported by reading data through the disk head.
+Assuming that the normal operating rules for the DC servo controller and
+write head power are violated (e.g. because the CPU on the disk controller
+board is going insane due to invalid power supply feed corrupting its
+memory, or due to an external physical shock during a write), it is
+possible to corrupt the position data on the platter and permanently lose
+the ability to seek to some areas of the platter.  The position data was
+initially written using frighteningly expensive precision hardware at
+the disk drive factory and cannot be regenerated without said equipment.
 
-I can't find that option in .config  The only REISER options that I have
-are:
+Speaking of DC server controller operating rule violations...those motors
+are fairly powerful, and they normally operate at only a few percent of
+their full power most of the time.  Very short pulses of significant power
+are used during acceleration and deceleration.  Full power sustained for
+any significant interval of time on the head motor may damage the heads
+as they collide with the side of the drive case, or bend the arm the
+heads are mounted on.  On the other hand, when the motors are moving,
+the drive must feed their kinetic energy back into the power supply to
+make them stop.  A bad power supply can result in position overshoots,
+although most disks will correct for these automatically (they'll probably
+be a lot slower though).
 
-$ grep REISER .config
-CONFIG_REISER4_FS=y
-# CONFIG_REISER4_CHECK is not set
-CONFIG_REISERFS_FS=y
-# CONFIG_REISERFS_CHECK is not set
-# CONFIG_REISERFS_PROC_INFO is not set
-$
+Consider what happens if the circuit which accelerates the disk from a
+standing stop (a fairly high-power circuit, actually the highest power
+circuit in the disk drive) does not turn off automatically when the disk
+reached its cruising velocity, and instead simply keeps accelerating the
+disk as fast as air resistance and maximum power output would allow.
+Either the platters will fly apart, or the electronics will cook in
+their own heat.
 
-This is with 2.5.60, patched with feb 13 reiser4.diff.gz, and after make
-oldconfig on my 2.5.59 .config  (didn't ask reiserfs related things).
+It's also possible to rewrite the disk controller firmware on the disk.
+Usually only a minimal loader program is provided in ROM, and the rest
+of the drive's firmware is stored on the disk itself--two copies on
+two different tracks, near the track 0 index mark where they can be
+located with a very simple motor controller program.  This trades cheap
+disk space and fast RAM for expensive and slow flash ROM.
 
-I do get some warnings and a compile error. This is on an up to date
-debian sid (unstable) and with gcc (GCC) 3.2.3 20030210
-
-Do you need more info on this?
-
-
-...
-In file included from fs/reiser4/super.h:10,
-                 from fs/reiser4/debug.c:7:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/jnode.c:20:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/znode.c:153:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/super.h:10,
-                 from fs/reiser4/key.c:7:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/super.h:10,
-                 from fs/reiser4/pool.c:48:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/tree_mod.c:16:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/estimate.c:5:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/carry.c:146:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/carry_ops.c:19:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/lock.c:349:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/tree.c:97:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/super.h:10,
-                 from fs/reiser4/context.c:6:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/tap.c:18:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/coord.c:6:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/block_alloc.c:9:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/txnmgr.c:187:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/super.h:10,
-                 from fs/reiser4/kassign.c:10:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/flush.c:22:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/super.h:10,
-                 from fs/reiser4/wander.c:157:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/eottl.c:14:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/search.c:16:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/page_cache.c:176:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/super.h:10,
-                 from fs/reiser4/lnode.c:85:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/super.h:10,
-                 from fs/reiser4/seal.c:35:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/super.h:10,
-                 from fs/reiser4/trace.c:9:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/super.h:10,
-                 from fs/reiser4/flush_queue.c:5:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-In file included from fs/reiser4/ktxnmgrd.c:7:
-fs/reiser4/tree.h: In function `write_trylock_tree':
-fs/reiser4/tree.h:460: warning: implicit declaration of function `_raw_write_trylock'
-fs/reiser4/ktxnmgrd.c: In function `ktxnmgrd':
-fs/reiser4/ktxnmgrd.c:39: too many arguments to function `daemonize'
-make[2]: *** [fs/reiser4/ktxnmgrd.o] Error 1
-make[1]: *** [fs/reiser4] Error 2
-make: *** [fs] Error 2
+-- 
+Zygo Blaxell (Laptop) <zblaxell@feedme.hungrycats.org>
+GPG = D13D 6651 F446 9787 600B AD1E CCF3 6F93 2823 44AD
