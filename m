@@ -1,40 +1,35 @@
-From: Russell Coker <bofh@coker.com.au>
+From: bscott@ntisys.com
 Subject: Re: Raid5, LVM and Reiserfs
-Date: Mon, 21 Oct 2002 11:44:17 +0200
-Message-ID: <200210211144.17907.bofh@coker.com.au>
-References: <000701c277c9$ef8d6c70$0101a8c0@bummer> <200210210751.39155.bofh@coker.com.au> <3DB398FD.6000205@namesys.com>
-Reply-To: Russell Coker <bofh@coker.com.au>
+Date: Mon, 21 Oct 2002 11:44:53 -0400 (EDT)
+Sender: bscott@ntisys.com
+Message-ID: <Pine.LNX.4.44.0210211132420.14076-100000@dragon.inside.ntisys.com>
+References: <3DB392F6.3000603@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11731-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11732-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3DB398FD.6000205@namesys.com>
+In-Reply-To: <3DB392F6.3000603@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Valdis.Kletnieks@vt.edu, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-On Mon, 21 Oct 2002 08:04, Hans Reiser wrote:
-> >It's fairly common for low-end RAID hardware to have limitations of memory
-> > or CPU bandwidth that limit the bulk IO rate.  Hardware RAID that can
-> > only sustain 10M/s was quite common until very recently.
->
-> Wow.   I guess marketing folks figured out that most customers would not
-> measure it.  10M/s would be amazingly useless as a controller.
+On Mon, 21 Oct 2002, at 9:39am, reiser@namesys.com wrote:
+> It would be surprising if any hardware RAID controller was as bad as 
+> software RAID.
 
-Depends what you are doing.  When running dpkg to install new dpkg such a 
-controller performed very well.  Running Bonnie++ gave results that sucked 
-badly.
-
-I didn't get a chance to do any real-world performance tests because the 
-client went bankrupt too soon.
+  Funny you should mention that.  I was just discussing this last week on
+the <poweredge-linux@dell.com> mailing list.  Apparently, not all RAID
+controllers are created equal.  In particular, the design of the integrated
+Adaptec RAID controller used in many Dell servers apparently sucks mud when
+it comes to performance.  The AMI/LSI MegaRAID controllers that Dell uses as
+add-in cards do much better.
 
 -- 
-http://www.coker.com.au/bonnie++/     Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/       Postal SMTP/POP benchmark
-http://www.coker.com.au/projects.html Projects I am working on
-http://www.coker.com.au/~russell/     My home page
+Ben Scott <bscott@ntisys.com>
+| The opinions expressed in this message are those of the author and do not |
+| necessarily represent the views or policy of any other person, entity or  |
+| organization.  All information is provided without warranty of any kind.  |
 
