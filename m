@@ -1,57 +1,122 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+From: Helge Hafting <helge.hafting@hist.no>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 10:53:48 +0300
-Message-ID: <20040826075348.GT1284@nysv.org>
-References: <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826044425.GL5414@waste.org> <1093496948.2748.69.camel@entropy> <20040826053200.GU31237@waste.org>
+Date: Thu, 26 Aug 2004 10:16:28 +0200
+Message-ID: <412D9C5C.3070302@hist.no>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826044425.GL5414@waste.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20579-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20580-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040826053200.GU31237@waste.org>
+In-Reply-To: <20040826044425.GL5414@waste.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Matt Mackall <mpm@selenic.com>
 Cc: Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Thu, Aug 26, 2004 at 12:32:00AM -0500, Matt Mackall wrote:
+Matt Mackall wrote:
+
+>On Wed, Aug 25, 2004 at 05:42:21PM -0700, Nicholas Miell wrote:
+>  
 >
->What it breaks is the concept of a file. In ways that are ill-defined,
->not portable, hard to work with, and needlessly complex. Along the
->way, it breaks every single application that ever thought it knew what
->a file was.
+>>On Wed, 2004-08-25 at 16:46, Wichert Akkerman wrote:
+>>    
+>>
+>>>Previously Jeremy Allison wrote:
+>>>      
+>>>
+>>>>Multiple-data-stream files are something we should offer, definately (IMHO).
+>>>>I don't care how we do it, but I know it's something we need as application
+>>>>developers.
+>>>>        
+>>>>
+>>>Aside from samba, is there any other application that has a use for
+>>>them? 
+>>>
+>>>      
+>>>
+>>Anything that currently stores a file's metadata in another file really
+>>wants this right now. Things like image thumbnails, document summaries,
+>>digital signatures, etc.
+>>    
+>>
+>
+>That is _highly_ debatable. I would much rather have my cp and grep
+>and cat and tar and such continue to work than have to rewrite every
+>tool because we've thrown the file-is-a-stream-of-bytes concept out
+>the window. Never mind that I've got thumbnails, document summaries,
+>and digital signatures already.
+>  
+>
+Utilities that works on files only, such as cat, should keep
+working.  No problem there.  If you cat a file that also is
+a directory, then the file contents is all you get - by design.
 
-It breaks the concept of a file. In ways that offer more versatility,
-challenge the imagination to make even better progress and keeps
-Linux competing with competitors who are implementing this stuff
-as we speak.
+Utilities that _only_ traverse the directory tree, such as find,
+should keep working too.  Perhaps with a very minor update
+so they don't mistake a file-directory for a file only.  I.e.
+find must recurse into anything that support directory semantics.
 
-I for one would truly welcome the coming of thumbnails and descriptions
-in picture files, because I have a real-life project going on where
-that would be extremely handy to have in the actual file.
-Were I any richer, I'd pay Namesys to have this work for me :)
+Something that both recurse and operate on files (cp -a, tar, grep, ...
+will need minor updating.  They already knows how to handle
+files and directories, now they will need an update so
+they're open for objects that are both.  I.e. let grep scan the file
+as usual, then recurse into its directory part in the usual way too.
+Performance problems should be avoided by not supporting
+directory operations on files with no directory content, which I
+believe will be many of them.
 
->Find some silly person with an iBook and open a shell on OS X. Use cp
->to copy a file with a resource fork. Oh look, the Finder has no idea
->what the new file is, even though it looks exactly identical in the
->shell. Isn't that _wonderful_? Now try cat < a > b on a file with a
->fork. How is that ever going to work?
+The "file-as-directory" thing will not be that useful before the tools
+gets these relatively simple updates.  Till then it'll be a toy, which 
+shouldn't
+stop it from getting into the VFS.  Updating the tools will be a task
+for the file-as-dir fans.
 
-Then I guess OS X ships a broken implementation of cp, yes?
+(I don't know wether reiser4 does things this way - it is certainly
+they way I would want file-as-directory though.)
 
-On the cat example, what if cat < a > b simply copies the "main stream"
-and not the metadata, as a feature. The key being, "as a feature"
+>While the number of annoying properties of files with forks is
+>practically endless, the biggest has got to be utter lack of
+>portability. How do you stick the thing in an attachment or on an ftp
+>site? Well you can't because it's NOT A FILE. 
+>  
+>
+Stick the file in an attachment and you get the file only. 
+No problem, it is designed that way.  An app that really
+wants everything in a single file should use a file structured
+for that, not file-as-dir.  File-as-dir attach stuff to a file in a
+more loose way.
 
-The metadata streams could get file descriptors of their own OR
-another program, streamcat or something, could be written to compensate.
+If you want to attach the directory contents too, do what you usually do
+when you want to mail someone a directory tree.  You can't stick a 
+directory
+in an attachment because it is not a file.  So you either attach every 
+file in
+the tree, or use tar.  In this case, an updated tar.
 
->I like cat < a > b. You can keep your progress.
+The ftp server shouldn't be a problem.  It supports both files and
+directories already.  It may need a minor update in order to
+not mistake directory for file or vice-versa when someone
+request an operation.
 
-With all due respect, I hope not too many people agree with you :)
+ftp> get filename  #Will get you the contents of the file part only - by 
+design.
+ftp> cd filename    #Will change into the directory (if the file indeed 
+provides one.)
 
--- 
-mjt
+>A file is a stream of bytes.
+>  
+>
+Sure.  And a file with a directory support both directory and file 
+operations.
+You can get the stream of bytes as usual - that's the file part.  Or you
+can cd into the directory as usual. There isn't much overlap between
+file operations and directory operations, so there is little conflict 
+the way
+I see it.  Merely letting the tools know that being a file no longer rule
+out the possibilities of directory operations.  Getting the VFS right
+is another matter of course, but I don't worry about userland tools.
 
+Helge Hafting
