@@ -1,47 +1,19 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: power loss -> corruption
-Date: Thu, 15 May 2003 13:23:35 +0200
-Message-ID: <200305151323.36129.Dieter.Nuetzel@hamburg.de>
-References: <m1k7d11yaz.fsf@orchid.mirar.org> <200305081531.13964.Dieter.Nuetzel@hamburg.de> <m1r87061sv.fsf@orchid.mirar.org>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Your "HOME" eg ftp.SuSE.com/pub/people seems to be dead?
+Date: Thu, 15 May 2003 13:25:56 +0200
+Message-ID: <200305151325.56847.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14114-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14115-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <m1r87061sv.fsf@orchid.mirar.org>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Mirar <mirar-yg@mirar.org>
-Cc: reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
+To: Chris Mason <mason@suse.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Am Donnerstag, 15. Mai 2003 10:40 schrieb Mirar:
-> > This _is_ very well known for me.
-> > Some KDE config files and my tcsh history file where broken without
-> > data-logging (data=journal/ordered).
->
-> My .zsh-history just got nuked with data=ordered.
->
-> The kernel couldn't agree with my HPT controller and stopped all (!)
-> IDE activities when I did a 'hdparm -y /dev/hd?' (all sleep). (Note,
-> the .zsh-history was not on that controller.)
-
-In short, DON'T DO THAT without "suspend kernel patches".
-*nix is NOT designed for "disk power management" in the first place.
-But it evolves...;-)
-
-HPT ("small" IDE/ATA "RAID") controllers are not that good (supported) as they 
-seems. Apart that they are "cheap".
-
-> Not in the same way as previously (just a block), though. It was
-> completely filled with binary data.
-
-Sounds like another problem (hardware, see above).
-
-> No other active files seems to have been affected, though.
-
-Good.
-
--Dieter
+Regards,
+	Dieter
