@@ -1,17 +1,17 @@
 From: David Masover <jedi@ninja.dynup.net>
-Subject: Re: More on Hard Links (was A bold idea (Re: Carrying Attributes
+Subject: carrying links too far? (was Re: A bold idea (Re: Carrying Attributes
  too Far))
-Date: Sat, 06 Dec 2003 19:08:51 -0600
-Message-ID: <3FD27DA3.7030309@ninja.dynup.net>
-References: <1569161060-BeMail@cr593174-a>
+Date: Sat, 06 Dec 2003 19:18:42 -0600
+Message-ID: <3FD27FF2.3000907@ninja.dynup.net>
+References: <1065247084.3f7e616c94ec9@webmail.st-andrews.ac.uk> <3FCE3716.8000509@namesys.com> <1070584227.3fcfd1a3d67f4@webmail.st-andrews.ac.uk> <3FD00272.7040607@ninja.dynup.net> <1070617453.5605.13.camel@schlappix.schnulli.de> <3FD08F73.4070404@ninja.dynup.net> <87zne7xltp.fsf@uhoreg.ca> <1070750513.3fd25b311ae75@webmail.st-andrews.ac.uk>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16266-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16267-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1569161060-BeMail@cr593174-a>
+In-Reply-To: <1070750513.3fd25b311ae75@webmail.st-andrews.ac.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
@@ -19,76 +19,62 @@ To: reiserfs-list@namesys.com
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Alexander G. M. Smith wrote:
+lrc1@st-andrews.ac.uk wrote:
 
->David Masover wrote on Fri, 05 Dec 2003 19:54:26 -0600:
+> ...
+>
+>The solution I suggest is to throw out the "one volume, one tree" requirement.
+>The volume's tree then becomes a forest, with every file with no parent in the
+>volume being the root of a tree. (Of course, if you also have multiple
+>hard links to directories, then the trees are instead directed, acyclic
+>graphs.) You could think of them all as being mount points, but in fact the
+>volume would have no fixed mount points at all.
 >  
 >
->>>Incidentally, renaming files is a superset of the delete operation.
->>>Implement that first, and you have delete for free.
->>> 
->>>
->>>      
->>>
->>If only it was that easy.  When you rename a folder, you don't usually 
->>do a recursive rename of everything inside.  When you delete a folder -- 
->>you don't, unless it's "rmdir".  You recursively delete each file 
->>inside, and it's that kind of operation that creates problems for hard 
->>links to directories.
->>    
->>
->
->Actually, renaming also is recursive.  The obvious case is when you
->rename a file over an existing file (or directory), which implies the
->whole deletion mechanism is needed.
->  
->
-Most of the time, rename over an existing file needs only a single 
-deletion, and renaming over a directory is (last I checked) impossible 
-with standard tools without removing or renaming the directory first.  
-If I do
-touch a
-mkdir b
-mv a b
-It will move 'a' to a file inside of 'b', rather than removing 'b'.  
-This isn't necessarily the best way, but it's how it's done now -- to 
-get the effect you're implying, I'd have to do
-rm -rf b
-mv a b
+Cool, but the problem there is that it is now possible to have broken 
+hardlinks.  Broken symlinks we're all used to, but broken hardlinks 
+usually represent a more critical problem.
 
->Also, at least for the AGMS link mechanism (or perhaps for any system
->that allows multiple parent directories), it has to do a graph traversal
->to find out which parent links are still valid, and which need to be
->adjusted if their parent has been changed.  If you see the example at
->the bottom of http://web.ncf.ca/au829/BeOS/AGMSLinkExplanation.txt you'll
->notice that deleting something can cause a sweeping re-evaluation of who
->is the parent to what.  The same thing would happen if you rename (move)
->a parent directory to be a subdirectory of one of its children.
->
+>Taking a step back, if all the filesystems on a system were so, then any file in
+>any location in the computer's global filesystem tree (or graph) could in
+>principle be on any of the computer's (sub)filesystems regardless of what
+>(sub)filesystem its parents were on. Thus the answer to your question above
 >  
 >
-Can we do that?  Last I checked, the file utilities (or maybe the fs 
-itself) won't let you move a directory to a child of itself, or a child 
-of a child of itself.  If this "graph traversal" is what I think it is, 
-it belongs in fsck, not normal fs operation.  Of course, I don't have a 
-better solution, aside from either stretching the limits of reference 
-counts or dropping directory hardlinks altogether.
+The problem here is that if the link itself is on a different filesystem 
+than the actual data, and the original filesystem gets nuked, what do I 
+do about the link?  Traditionally, in order to delete a link, you drop 
+the refcount of whatever it points to.  Here, you'd be left with the 
+choice of either having a way to forceably remove a link, even if it 
+can't adjust the refcount, and have "lost chains" or orphaned files, or 
+you'd be left with certain links that you cannot remove without 
+reformatting that filesystem -- possibly in the process creating more 
+such links on other filesystems.  Or you could just not have the 
+refcounts (or, indirectly, the deletion of the file) have anything to do 
+with any hardlinks (maybe "firmlinks"?) on other partitions/filesystems, 
+but then the file goes away when all hardlinks are gone, leaving these 
+"firmlinks" broken.
+
+I guess the main problem I have with this is that it only works when 
+we're talking about all the filesystems on the local machine, and then 
+only so far.  It kind of falls apart with removable filesystems like 
+floppies and cds.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.3 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBP9J9pwisZLIF6uqOAQKZhxAAnMQNtl9MMwVNNhbDKIBpT9PDKqwb1b0C
-NfrgOBMyxlosTWT0OVrbS5deFoTefkpk6inzlcck9nCLDCB5CnOfKBlnA1MbWaPN
-jHsmC5Cz0mVOk61hWUvWDWZ1DLrl4yb313KF/5XwTGyQ/0NZWTHEAgHf4FjX3wRq
-ZkLubWGt7fdsRv+FWo1s5ah2sQPzPj/3nynECFVt1gQaGoNkaxETWj3a5bAjLWwX
-9SZLDrhqPxPzKCFvs9OL9PH2MC7nlYa0rOEOKdKBdTsTMdEhEluZyTXVYAMmwlpM
-d3UQj6tcg5ehRs7jHhsjKSD4nIzdmK8nKrBXi0j+anw/g8n+bHFbgsVCOwumv8WO
-k1AxnGncgcdtkNSafUmNGYgtL5Ra0Fv0b2sIjggyHmZFes5OBr3Kgj93Mznk1z10
-siiVA43NhBimHuZsdyZ1U64Sl5uV287iAgKqDPbvQ4Z24uV6X0b5/4vpRcDsm++U
-05M1c/CwG9YLqVluzm0ewvq8px0zGrcPbkm6v86PL9UxIbN8aDKKqyaUv8lXHi7y
-YiWwFingzlUIkyXV2yfdzRbXthdhXo17gX0NJBaiyS9jYl40DecuFH5w3bFxLhnj
-ys9IOrM0Q2hSTzyD2GFyR8FoJQIypc95YwkeOBZbUjskyJy7xE2bX+269US9ursz
-BA6EToDsPwg=
-=aMts
+iQIVAwUBP9J/8gisZLIF6uqOAQLqyg/+PwacI8rg+seKyxunxWA5MJ7KuOYjkshx
+PmmoMCFBCg/P/Ygm12q3vK+GJdIKDzAPWY6xoGtTAQclyihbvm9qV3DxMdeoteGG
+rS+P2sEaQrfvzEnGMW7JpdWl+Y9EAUhJV/7bUblZRsAUKenASW5K/CM4LnYIohKN
+ZJAet6nKdhCR9i3nTQ7k16FU5AV6jg4n/CEpdSFsgkqbWbM/fJ9O3tGFEsk3AnZM
+NCKfYjsQybNX1gQYyG66sUNL5wtsYfTUAS6G+87p8CvfvmS4BPkMuhcEA5r9olO+
+YefrO7vxX/hP7eVmBbTwktnpsUDV+Z53/+U5rMELFGlfIsUJ+NYcdZDkX4lsrFqO
+4fBFpqysUmJc/z7LUsbf5uB6cB/5TVcgcQLoqbWPcFEb8snr5acDe0RLlbqY7BJb
+NK/VSLlVG+DE2bnoIz2CfaLPIAEhf0V0Pf8v27wrmZ6JKrzZ6tEdBAzshv7qXxlx
+z6ns8iCuiPGlwlxglTE9nKL9Cvjw8t+O2yOd4weu41MEMnwkpr3Fbza6nPFyKBJI
+UaTgf+7O+2wAXfsy4g6ZaUdtJaeKoix+dSKsb/F8Q1gJfacxkC0MiRhG3mcUKFPa
+YrHBQtts1dNsWw2o8IscA1o2u23J2lQkw45d8TkX7xxS4AJfkuevHzNI5abIFbzD
+DAHEzyys3w4=
+=1dYB
 -----END PGP SIGNATURE-----
 
