@@ -1,32 +1,30 @@
-From: Mike Fedyk <mfedyk@matchmail.com>
-Subject: Re: new reiser4 snapshot
-Date: Mon, 27 Oct 2003 12:25:56 -0800
-Message-ID: <20031027202556.GI4511@matchmail.com>
-References: <Pine.LNX.4.44.0310191956060.15715-100000@poorvi.cse.iitd.ernet.in> <3F92D35D.3090806@namesys.com> <3F93132D.70206@gmx.net> <16275.44662.847152.412738@laputa.namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Anyone up to benchmarking WinFS vs. Reiser4?
+Date: Mon, 27 Oct 2003 23:56:13 +0300
+Message-ID: <3F9D866D.7080402@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15906-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15907-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <16275.44662.847152.412738@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>, Hans Reiser <reiser@namesys.com>, Nishant Sharma <nishantt@cse.iitd.ernet.in>, Reiserfs mail-list <Reiserfs-List@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: linux-kernel@vger.kernel.org
+Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-On Mon, Oct 20, 2003 at 01:44:22PM +0400, Nikita Danilov wrote:
-> Carl-Daniel Hailfinger writes:
->  > I thought CONFIG_REISER4_LARGE_KEY was force-enabled by now?
-> 
-> No. But:
-> 
-> 1. one has to use -o key=key_short option for mkfs.reiser4 to create
-> file system with small keys.
-> 
-> 2. lately we mostly test/care about large keys performance and
-> stability.
+I don't have access to the beta, but maybe someone else does and would 
+enjoy doing it.
 
-So why would one want short keys in the first place then?
+The reviews seem to imply that they are building versioning into the FS, 
+or at least that you can browse version history as though files were 
+directories.  Sounds like they are doing something right.  I would love 
+to see the patches written to do that for Reiser4.
+
+SQL still sucks though.;-)
+
+-- 
+Hans
+
+
