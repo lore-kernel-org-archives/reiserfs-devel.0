@@ -1,62 +1,53 @@
 From: Tracy R Reed <treed@ultraviolet.org>
 Subject: Re: Silly question, defrag
-Date: Wed, 3 Apr 2002 15:49:06 -0800
-Message-ID: <20020403154906.A21821@ultraviolet.org>
-References: <200204030017.12595@X-Message-Flag:> <3CAABBA6.3030101@swelltech.com> <200204030740.05950@X-Message-Flag:>
+Date: Wed, 3 Apr 2002 16:45:45 -0800
+Message-ID: <20020403164545.B21821@ultraviolet.org>
+References: <200204030017.12595@X-Message-Flag:> <3CAABBA6.3030101@swelltech.com> <200204030740.05950@X-Message-Flag:> <3CAB48E5.9050001@namesys.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-md5;
-	protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
+	protocol="application/pgp-signature"; boundary="8P1HSweYDcXXzwPJ"
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <200204030740.05950@X-Message-Flag:>; from matthew@psychohorse.com on Wed, Apr 03, 2002 at 08:08:21AM -0800
+In-Reply-To: <3CAB48E5.9050001@namesys.com>; from reiser@namesys.com on Wed, Apr 03, 2002 at 10:24:37PM +0400
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Matthew Johnson <matthew@psychohorse.com>
-Cc: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: matthew@psychohorse.com, reiserfs-list@namesys.com
 
---GvXjxJ+pjyke8COw
+--8P1HSweYDcXXzwPJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 03, 2002 at 08:08:21AM -0800, Matthew Johnson wrote:
-> On Wednesday 03 April 2002 00:21, Joe Cooper wrote:
-> > "Don't"
-> >
->=20
-> Well I don't, but when newbies who are used to computing on win32 systems=
+On Wed, Apr 03, 2002 at 10:24:37PM +0400, Hans Reiser wrote:
+> There are ways in which Windows is better than Linux.  This is one.  To=
 =20
-> hear that they may not just accept the word don't. Actually its hard to f=
-ind=20
-> the reasons exactly why one does not defrag.
+> think that Linux is better for not having defrag is wishful innacurate=20
+> thinking.  Such is life.  Send us $30k and defrag will go into v4.0=20
+> instead of 4.1.:)
 
-It is more useful to look at why one DID defrag back in the bad ol' days
-of DOS and Windows. IIRC, the FAT filesystem would scan through it's
-equivalient of the free block list and start writing at the first free
-block. If it wrote for a while and then there was other data in the way it
-stop and go to the next free space. This way fragmentation was practically
-guarenteed and it happened rapidly. Modern filesystems use much smarter
-ways of laying out data on the disk so that fragmentation happens much
-less often. Now you will almost certainly waste more time by defragmenting
-than you would suffering whatever performance hit the little fragmentation
-there is causes. I've been using Linux/Unix for 10 years and I have never
-(not once!) defragged a filesystem.
+I have to wonder about your motives here, Hans. You are the one who stands
+to gain by capitalizing on newbie Unix/Linux users misunderstanding of
+filesystems based on their experience with DOS and Windows and here you
+are promoting defrag as a feature which puts your FS above others. They
+have learned to compulsively defrag their disks once a week and you are
+looking to feed their addiction. I think reiserfs is really great and a
+defrag/repacker will be nice but the above strikes me as a bit strange.
+How long has ext2 been around as the stock Linux filesystem?  More than
+long enough for people to have realized whether a defragger would be
+useful. Yet I can't think of a single distribution (of Linux or Unix in
+general) that comes with a defragger. Stephen Tweedie wrote one for it but
+nobody bothers to use it or even to include it with their distro.
 
-> Perhaps I should aim this message to the kernel mailing list, so that I c=
-an=20
-> get response from a wider array of people who like other filesystems. But=
- its=20
-> not kernel related.=20
-
-I wouldn't recommend doing that. The answer is pretty much the same
-regardless of the filesystem. If it's a non-FAT fs you probably don't have
-to worry about fragmentation.
+Please don't perpetuate the idea that good filesystems have/need a
+defragger.
 
 --=20
 Tracy Reed      http://www.ultraviolet.org
+"She moves in mysterious ways"
 
---GvXjxJ+pjyke8COw
+--8P1HSweYDcXXzwPJ
 Content-Type: application/pgp-signature
 Content-Disposition: inline
 
@@ -64,9 +55,9 @@ Content-Disposition: inline
 Version: GnuPG v1.0.1 (GNU/Linux)
 Comment: For info see http://www.gnupg.org
 
-iEYEARECAAYFAjyrlPEACgkQ9PIYKZYVAq1jPgCghgq0jBwTJtigm7VD6dSceyP1
-Z0gAni7tSeXYflkfJ5P6/za30JUVzndD
-=SksY
+iEYEARECAAYFAjyrojkACgkQ9PIYKZYVAq044ACeI5uCnTk21QY14lyiWjZv05/R
+rCUAoJ9GJokvcUl29euSZahYSNjTJngL
+=GSp0
 -----END PGP SIGNATURE-----
 
---GvXjxJ+pjyke8COw--
+--8P1HSweYDcXXzwPJ--
