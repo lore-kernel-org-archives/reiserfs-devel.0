@@ -1,55 +1,57 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: janitors
-Date: Thu, 22 Jul 2004 21:36:20 -0500
-Message-ID: <410079A4.3060509@slaphack.com>
-References: <41001BF7.3020402@namesys.com>
+Subject: Re: Fibration questions
+Date: Thu, 22 Jul 2004 21:40:53 -0500
+Message-ID: <41007AB5.7000104@slaphack.com>
+References: <20040721054418.1150715C23@mail03.powweb.com>	<40FE0B47.3010600@slaphack.com>	<40FF74BA.1050206@namesys.com> <16639.45062.695014.910604@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19763-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19764-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41001BF7.3020402@namesys.com>
+In-Reply-To: <16639.45062.695014.910604@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: Nikita Danilov <Nikita@Clusterfs.COM>
+Cc: Hans Reiser <reiser@namesys.com>, David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
 
 
-Hans Reiser wrote:
+Nikita Danilov wrote:
 
-| flx, if David and Markus want to be on it, please add them.
+| Ask Peter Braam (braam@clusterfs.com), whether he has any plans to use
+| reiser4 as a back-end.
 
-I have a _lot_ to learn about reiser4.  I know almost nothing beyond the
-whitepaper.  I wouldn't mind being on the dev list, I'm just not sure if
-it would be a good idea.
+I've never used Lustre, but I've heard it implements at least some ideas
+from InterMezzo, which used other filesystems (supposedly ANY other
+filesystem) as a cache.
 
-You guys need a HACKING doc, or a plugin-writing howto.  At this rate, I
-could have written about three or four proof-of-concept implementations
-of this Lustre thing on LUFS in the time I've spent trying to understand
-the reiser code.  But I want reiser's speed.
+| This shouldn't be hard to implement, technically.
+
+That's why I want to do it.  I need useful things with my name on them
+- -- my grades suck, and next year is Senior year.  Of High school.
+
 
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQQB5o3gHNmZLgCUhAQKM/A//emMxLZ3KIjz9DY0sW0fw5/Crpp2nis78
-tkg1bb7LcoitEcdqk9tuAg3uICG5Bm6xZikYYDeU4Ot6mMKNTmZLkEYLiDYCT+PZ
-3PnmocrQtrg5RHpMRxogeXUUW2SR4eArXTJXTTsWdzTvbTsx7H4wxE/FRjpChkN4
-ap3cJmksEYgVA5qa31wi17MM3YXCdy/HvZsskF0MxWiCBnfOmcIF7Hew+BvulW5I
-iKSWv45Rtgu4ej7YfNAoQNSke7tlkoCVzO9annEZWcrFixFKGJkChNV0GV442Q0a
-f5peLaIafO0Os4oE0zA+mI7arNNIlyIB/RWdMkPAW44e+BqvzNzaSgIUoaKlB/17
-DMKHatZ3Ix5WY6ab4FKiWdzr/L412XdnzSdeCNFiciUSvW7l4NAE+Jr8orHyxO/A
-KKDzo1z741pioyU4aNyQ1pJxnBcTN1Aylj+kk5aCRJue2MPIWlVk9LyxT2EBw7ue
-qiXFLE6Sj/OtJtexfT2rWfooxellKHZ5dwZtGTX1l52TUZyu3u8AqW1h5oXrzDxf
-MaNUZAHEgBz6A5PFQwcz3JDTN6LgDzGnU4Wq8FqJnzG4bllmG1toY3H9TW6s37zw
-96PhF1ZkM+KU1lO7tvin6eQVkSLRE7spY5KyF9iDufCHYijjKxYo+cMMGMYbuL4T
-hmC/tb1oYqQ=
-=Nc+G
+iQIVAwUBQQB6tHgHNmZLgCUhAQIpHA/+NPFWOUxnkm9AviTYePr2P0CylV8T7Cnn
+bhxh41fObPOFEcCKhigjmvO9+osE7JfMQZ2CcUMdzQGl0FEQ72pqZZ+c2UPhEx34
+NyJh/eKGUv3440GtbXJeAmqSz8Zx0CHVnq/pnQehX48rXUAx9y4eN3V/KfK1IzYm
+Sow/Y1HOJGQprvzcoe3yiMEFRb3aHl5bd/N2kuyd10cxAItj2/BknRTR8iIQdHJR
+Wy7dVZ5fb4+FcTQPAF0dupS6IrfjwDQeqBIvTNfOPt3F3yBJ5XYGLvBZeZ/drLmf
+OBtdtC79R6dCJDSCT5YnSD5UWAB7MZ1xEz0Ce0f84aeHRibtn6l0v0Ke5tqFngEt
+uqcNJcB7mk8vPwVUBlp1kZUW7Q2vvsfcezscGDfndsLeqAv+MaGI7TzLllYiE2lf
+UVyKCCHoLGTwoIXqrQSxs1JYUH1E71G/GMjb/h+3VKGUB1h6DQH4gVHjS2RSOIRm
+NF4txmJCijzgVIv3teTGzsldHZZ/1WI+4ADvaxE3dXq2xneCjJ9x4/DB1KdrjCB7
+9jRGABON37wDmycZalpJJtA667jpv5TSgX6WOiZ6448Sm5UGr192T04UuLUmIJlZ
+Hy5iI9iQKYI+7Hr95Pyo9U7BUNzh0c9vyg3cyQfMZat0dv8WapN9vsjROUSdXwln
+RAvCCpfP/rg=
+=ur6j
 -----END PGP SIGNATURE-----
