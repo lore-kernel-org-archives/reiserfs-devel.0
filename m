@@ -1,65 +1,94 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Why is Reiser4 slower then ReiserFS v3
-Date: Tue, 28 Dec 2004 13:34:47 -0800
-Message-ID: <41D1D177.4080800@namesys.com>
-References: <231dafb5041227123867a2c873@mail.gmail.com> <200412272353.iBRNrUcv002561@turing-police.cc.vt.edu>
+Date: Tue, 28 Dec 2004 13:42:04 -0800
+Message-ID: <41D1D32C.1020407@namesys.com>
+References: <231dafb5041227123867a2c873@mail.gmail.com> <20041228195239.3a1531d5.reiser4@blinkenlights.ch>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22928-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22929-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200412272353.iBRNrUcv002561@turing-police.cc.vt.edu>
+In-Reply-To: <20041228195239.3a1531d5.reiser4@blinkenlights.ch>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Valdis.Kletnieks@vt.edu
-Cc: Dark Shadow <shadowofdarkness@gmail.com>, reiserfs-list@namesys.com
+To: Adrian Ulrich <reiser4@blinkenlights.ch>
+Cc: reiserfs-list@namesys.com
 
-Valdis.Kletnieks@vt.edu wrote:
+Adrian Ulrich wrote:
 
->On Mon, 27 Dec 2004 13:38:12 MST, Dark Shadow said:
+>I also noticed some odd slowness of reiser4
 >
+>(Running 2.6.10 using the latest 2.6.10-rcsomething reiser4 patch)
 >  
 >
->>I have three hard drives so I took a file from one and copied it to
->>the others and timed it
->>source drive /dev/hda Reiser3 Western Digital 40gb 7200rpm
->>target1 drive /dev/hdb Reiser4 Western Digital 80gb 7200rpm
->>target2 drive /dev/sda Reiser3 Seagate 160gb 7200rpm (SATA but still
->>same rpm as rest so it should be the same)
->>    
->>
->
->You may wish to run 'hdparm -T -t' on each drive and see what the *raw* speed
->is.  All drives are not created equal... ;)
->  
->
-This is correct.  You should see negligible difference between the two 
-for large files on the same drive.  Deletions however, see next email....
+There was a read slowdown, in latest release of reiser4, see patch I 
+cc'd this list on a few emails ago.
 
->>time cp ~/800mb.file /target1
->>real    0m41.409s
->>user    0m0.010s
->>sys     0m4.364s
->>    
->>
+That said, try extents only option of reiser4 for faster deletes.
+
+Because reiser4 has larger files stored in tails, it packs things more 
+tightly than reiser3, but pays a price in delete speed to do it.  With 
+extents only, no tight packing, fast deletes.
+
+reiser3 also puts directory entries for multiple directories close to 
+each other, and farther from the filebodies for them, compared to 
+reiser4.  This may explain some of the find speed advantage.
+
+Still, I am curious to see more measurements in this area if you have 
+time for it.
+
+Did you time the sync command or?  How large was the fileset created 
+compared to RAM?
+
 >
->  
+>What i did:
 >
->>time cp ~/800mb.file /target2
->>real    0m38.318s
->>user    0m0.017s
->>sys     0m5.627s
->>    
->>
+> I created a small script wich creates MANY (= 195075) directories
+> like this: 1/[1-3]/[1-255]/[1-255]
 >
->Similarly, you should try each one 3-5 times and get an average (for
->starters, if you have more than 800M of memory, the second time around it
->may all still be in cache, so the second time gets a hot-cache boost). It
->may be useful to run the command once and *ignore* its times, and then
->re-run the command 3 times and average those results (so all 3 times you
->actually *use* start from the same "previous command just finished" cache state).
+> After this, i ran 'sync && find . > /dev/null && rm -rf *'
+>
+> Well, it's not a good test, but compare the speed of 
+> the 'find' and 'rm -rf' part beteween ReiserFS and Reiser4 :-/
+>
+>reiser3
+>
+>#./mkdirs.pl
+>real    5m21.194s
+>user    1m12.323s
+>sys     4m6.740s
+>
+>#find . > /dev/null
+>real    0m6.419s
+>user    0m0.940s
+>sys     0m5.159s
+>
+>#rm -rf *
+>real    0m24.357s
+>user    0m1.558s
+>sys     0m22.797s
+>
+>reiser4
+>
+>#./mkdirs.pl
+>real    6m21.996s
+>user    1m13.395s
+>sys     5m8.233s
+>
+>#find . > /dev/null
+>real    0m16.006s
+>user    0m3.323s
+>sys     0m12.676s
+>
+>#rm -rf *
+>real    5m58.963s  <-- OUCH!
+>user    0m7.962s
+>sys     5m50.870s
+>
+>
+>
 >  
 >
 
