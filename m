@@ -1,29 +1,27 @@
 From: Horst Simon <hsimon@optusnet.com.au>
 Subject: Re: Zero Bit found
-Date: Tue, 27 Jul 2004 08:59:35 +1000 (EST)
-Message-ID: <7295144.1090882775326.SLOX.WebMail.wwwrun@neptune.hsc-consulting.com.au>
-References: <6913951.1090812351701.SLOX.WebMail.wwwrun@neptune.hsc-consulting.com.au> <4104D80E.20209@namesys.com>
+Date: Tue, 27 Jul 2004 09:02:54 +1000 (EST)
+Message-ID: <6166426.1090882974723.SLOX.WebMail.wwwrun@neptune.hsc-consulting.com.au>
+References: <6913951.1090812351701.SLOX.WebMail.wwwrun@neptune.hsc-consulting.com.au> <200407261415.24890.vitaly@namesys.com>
 Reply-To: hsimon@optusnet.com.au
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19828-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19829-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4104D80E.20209@namesys.com>
+In-Reply-To: <200407261415.24890.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
+To: Vitaly Fertman <vitaly@namesys.com>
 Cc: hsimon@optusnet.com.au, reiserfs-list@namesys.com
 
-On Jul 26, 2004 08:08 PM, Vladimir V. Saveliev <vs@namesys.com> wrote:
+On Jul 26, 2004 08:15 PM, Vitaly Fertman <vitaly@namesys.com> wrote:
 
-> Hello
-> 
-> Horst Simon wrote:
+> On Monday 26 July 2004 07:25, Horst Simon wrote:
 > > Hi,
-> > 
+> >
 > > I recently added a 200GB Seagate IDE drive to my system on a
 > > build-in
 > > promise controller on an ASUS A7V, updated BIOS which supports large
@@ -37,58 +35,49 @@ On Jul 26, 2004 08:08 PM, Vladimir V. Saveliev <vs@namesys.com> wrote:
 > > writing
 > > data to the disk I get now following reiserfsck messages during each
 > > boot:
-> > 
+> >
 > >  ZERO BIT FOUND IN ON-DISK BITMAP AFTER THE LAST VALID BIT
 > > Switching to --fix-fixable mode
 > > Checking
-> > 
+> >
 > > It displays directory paths which it is checking and after finishing
 > > following message is displayed:
-> > 
+> >
 > > The on-disk and the correct bitmaps differ. Will be fixed later
-> > 
+> >
 > > No corruption found
-> > 
-> > There are on the filesystem:
-> > 
-> >     Leaves 20264
-> > 
-> >       Internal nodes 125
-> > 
-> >         Directories 2063
-> > 
-> >   Other files 22869
-> > 
-> >  Data block pointers 15940960 (0 of them are zero)
-> > 
-> >  Safe links 0
-> > 
-> > ###########
-> > 
-> > What is this ZERO BIT, is this a serious problem? 
+> >
+> > What is this ZERO BIT, is this a serious problem? What could be
+> > wrong
 > 
-> No, it is not. Reiserfs manages disk space by bitmaps. Those bitmaps
-> are stored in disk blocks.
-> Reiserfsck expects last bitmap to be filled by 1s in the area which
-> address blocks out of device.
-> Somehow you got that padding area in last bitmap incorrectly
-> initialized.
-> It is completely harmless.
+> zero bit is not serious, but the message 'The on-disk and the correct
+> bitmaps
+> differ. ' points to another more serious problem. --fix-fixable is
+> supposed to
+> fix them both (and as I have just tested, it does) -- this is not good
+> that these
+> problems arrear again and again.
 > 
-> What could be wrong
 > > bad BIOS, reiserfs, etc.?
-> > 
 > 
-> What version of reiserfsprogs you are using?
+> could you umount the fs, run reiserfsck --check on it, then if it
+> finds these
+> corruptions fix them with fix-fixable and reiserfsck --check again to
+> be
+> sure all of them are fixed?
 > 
+> the problem could in your hardware also. we deal with such problems 
+> under the terms of our support page (www.namesys.com/support.html) 
+> -- visit it please.
 > 
-> > Regards,
-> > Horst
-> > 
-Thanks for the information, the reiserfsprogs are 3.6.17. On the weekend
-I will
-try the suggestions from Vitaly Fertman. I noticed that this problem
-only occured after writing to the disk.
+> -- 
+> Thanks,
+> Vitaly Fertman
+> 
+
+Thanks for the information, I will try your suggestions coming weekend.
+I also
+noticed that this problems occur only after writing to the disk. 
 
 Regards,
 Horst
