@@ -1,55 +1,40 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: link/unlink problem gone?
-Date: Fri, 7 Feb 2003 09:19:33 +0300
-Message-ID: <20030207091933.A6256@namesys.com>
-References: <20030129164906.A8320@namesys.com> <20030129164906.A8320@namesys.com> <20030131105745.A7426@namesys.com> <b1unpa$bmb$1@satsuki.furryterror.org>
+From: Russell Coker <russell@coker.com.au>
+Subject: Re: OT: Swapfile to RAM relation with 2.4.2X+
+Date: Fri, 7 Feb 2003 12:09:51 +0100
+Message-ID: <200302071209.51547.russell@coker.com.au>
+References: <3E43103A.5010106@mb.tu-ilmenau.de>
+Reply-To: Russell Coker <russell@coker.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12669-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12670-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3E43103A.5010106@mb.tu-ilmenau.de>
 Content-Disposition: inline
-In-Reply-To: <b1unpa$bmb$1@satsuki.furryterror.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Zygo Blaxell <eazgwmir@umail.furryterror.org>
-Cc: reiserfs-list@namesys.com
+To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>, reiserfs-list <reiserfs-list@namesys.com>
 
-Hello!
+On Fri, 7 Feb 2003 02:47, Manuel Krause wrote:
+> In the beginning of 2.4.0+ a relation of swapfile-to-RAM of 2-to-1 was
+> recommended. Due to my several system changes to come in those times I
 
-On Thu, Feb 06, 2003 at 05:32:10PM -0500, Zygo Blaxell wrote:
+Such recommendations are only generalisations.  Ignore them and look at what 
+your system is doing.  If your swap space never runs out and you don't expect 
+your usage patterns to require more (including cron jobs and periods of 
+unexpected load) then you have enough.  If you run out of swap space then you 
+need more, also you should have some swap even if you have a lot of memory.  
+There's always data that isn't used much and can be paged out to make room 
+for more disk cache.
 
-> >   Sigh, these were false hopes indeed.
-> >   I can reproduce it with 2.4.21-pre4, only it is now harder for some reason.
-> I've seen times-to-failure ranging from 20 minutes to 20+ hours (!).
 
-Same here.
+BTW  Anything that is worth saying in a .sig can be said in 4 lines.
 
-> >   Chris: My current idea is it happens during low memory conditions, so I am
-> >   actively running around prune_icache and id's dcache equivalent. Probably
-> >   you can easily reproduce that if you'd have no swap and not very much RAM.
-> >
-> >   (Ok, I just checked, limited the RAM to 90M and turned off SWAP entirely.
-> >    and reproduced the problem fairly quickly)
-> I have observed the problem on machines ranging in size from 96 to
-> 512MB RAM.  I haven't observed a correlation between swapping activity
-> and failures but I haven't been looking for this either.  The machines
+-- 
+http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
+http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
+http://www.coker.com.au/~russell/  My home page
 
-I noticed that with newer 2.4.21-pre kernels first I see processes die because
-of OOM and only after that I see direntries pointing to nowhere.
-I reproduced this much more than once, so I believe there is some correlation
-between these.
-
-> that have problems machines are swapping at some time or another (they
-> have several hundred MB of swap used).
-
-And they are just swapping all the time, so it may take a while before
-useful code runs and problem happens, it seems.
-
-So far I decided that with SWAP turned off one can reproduce problem more
-easily that with SWAP on (especially if swap is large).
-
-Bye,
-    Oleg
