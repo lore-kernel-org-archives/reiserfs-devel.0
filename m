@@ -1,61 +1,35 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: some troubles with mounting reiserfs
-Date: Mon, 28 Apr 2003 09:38:07 +0400
-Message-ID: <20030428053807.GB22902@namesys.com>
-References: <000001c30ca7$50708910$0432a8c0@dell8100>
+Subject: Re: reiserfsck goes to and endless loop
+Date: Mon, 28 Apr 2003 09:42:25 +0400
+Message-ID: <20030428054225.GC22902@namesys.com>
+References: <1051499797.12231.27.camel@linuxclient>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13843-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13844-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <000001c30ca7$50708910$0432a8c0@dell8100>
+In-Reply-To: <1051499797.12231.27.camel@linuxclient>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Serge Rodrigues <serge@onpoi.net>
+To: Dr Aldo Medina <aldomedina@hotpop.com>
 Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Sun, Apr 27, 2003 at 12:25:18PM +0200, Serge Rodrigues wrote:
->             I have some troubles when I want to mount a reiserfs
-> partition I use the command :
->             Mount -t reiserfs /dev/hdb1 /mnt/xxx
->             The result is
->             Mount : wrong fs type, bad options, bad superblock on
-> /dev/hdb1 or too many mounted file systems
+On Sun, Apr 27, 2003 at 10:56:47PM -0500, Dr Aldo Medina wrote:
+> Trying to recover some deleted file, I used losetup /dev/loop0
+> backupcopy (being this a backup of the partition). I then use reiserfsck
+> --rebuild-tree -S /dev/loop0. I've tried ru 
 
-Well, what kernel version do you use?
-What are the messages in kernel log? (e.g. run dmesg to see)
-
->             I've tried 
-> fsck.reiserfs -check
->             The result :
->                         The problem has occurred looks like a hardware
-> problem
->                         Check your hard drive badblocks
->                         Bread : Cannot read the block (17760256)
-
-Hm, sounds like your partition is bigger than underlying block device and you recently have upgraded your kernel
-to 2.4.21rc1 or something like that, no?
-
->             When I use : 
-> debug.reiserfs /dev/hdb1
-> The Result :
-> <-------------debugreiserfs, 2002------------->
-> reiserfsprogs 3.6.4
-> Reiserfs super block in block 16 on 0x341 of format 3.6 with standard
-> journal
-> Count of blocks on the device: 20010808
-
-Hm, but then debugfs should have complained too?
-
-> How to solve this problem ??
-
-We need to see what are the kernel messages.
-also output of "fdisk -l /dev/hdb"
+Hm.
+Well, just guessing on your problem based on the subject.
+If you have reiserfsprogs 3.6.4-2 .. 3.6.4-4 from Debian distribution.
+you must either download and compile reiserfsprogs yourself or upgrade to
+3.6.6-1 from their unstable branch.
+There was known bad patch included into debian's build of reiserfsprogs.
 
 Bye,
     Oleg
