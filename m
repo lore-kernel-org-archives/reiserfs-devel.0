@@ -1,36 +1,75 @@
-From: Chris Mason <mason@suse.com>
-Subject: [PATCH] 1/1 reiserfs: ignore prepared and locked buffers
-Date: Fri, 23 Apr 2004 15:57:43 -0400
-Message-ID: <1082750262.12989.204.camel@watt.suse.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: fsck.reiser4 can't fix 1 fixable corruption
+Date: Fri, 23 Apr 2004 13:19:54 -0700
+Message-ID: <40897A6A.4000205@namesys.com>
+References: <200404201733.51809.rmeijer@internet.gr> <200404221446.21162.vitaly@namesys.com> <20040422114459.GA19430@raptus.homelinux.org> <200404231311.38933.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18182-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18183-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200404231311.38933.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, akpm@osdl.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: Domenico Andreoli <cavok@tiscali.it>, reiserfs-list@namesys.com
 
-mason@suse.com
+Vitaly Fertman wrote:
 
-block_write_full_page might see and lock clean metadata buffers, which leads
-to bogus vs-12339 messages.  Change the message to ignore bh locked.
+>On Thursday 22 April 2004 15:44, Domenico Andreoli wrote:
+>  
+>
+>>On Thu, Apr 22, 2004 at 02:46:21PM +0400, Vitaly Fertman wrote:
+>>    
+>>
+>>>with --enable-stand-alone you get another 'stand alone' library that
+>>>includes the minimum of the code needed for programs like grub --
+>>>no librepair, no tree balancing code, no modification code, etc. The
+>>>code is minimised to be used with grub stage1_5. Libaal in stand-alone
+>>>includes simple memory menagement methods (malloc, free) to avoid
+>>>linking to libc -- as it links to no other libraries it is called
+>>>stand-alone.
+>>>      
+>>>
+>>thanks, now it's much more clear :)
+>>    
+>>
+how about calling it --minimal-footprint and fixing the documentation to 
+include some of the words above?
 
-Index: linux.mm/fs/reiserfs/do_balan.c
-===================================================================
---- linux.mm.orig/fs/reiserfs/do_balan.c	2004-04-23 14:08:22.436537699 -0400
-+++ linux.mm/fs/reiserfs/do_balan.c	2004-04-23 14:09:05.089418397 -0400
-@@ -1343,7 +1343,8 @@ static void check_internal_node (struct 
- 
- static int locked_or_not_in_tree (struct buffer_head * bh, char * which)
- {
--  if ( buffer_locked (bh) || !B_IS_IN_TREE (bh) ) {
-+  if ( (!reiserfs_buffer_prepared(bh) && buffer_locked (bh)) || 
-+        !B_IS_IN_TREE (bh) ) {
-     reiserfs_warning ("vs-12339: locked_or_not_in_tree: %s (%b)\n", which, bh);
-     return 1;
-   } 
+Please work on reviewing your documentation and options naming for 
+greater clarity for a day.
 
+>>    
+>>
+>>>>what does really change in the libraries? is something related to
+>>>>reiser4 or to libtool & co?
+>>>>
+>>>>is it legal for debian to distribute libaal and libreiser4 packages
+>>>>compiled with this option?
+>>>>        
+>>>>
+>>>yes. Although new changes are tested not in the stand-alone mode
+>>>first, and the stand-alone support may be delayed sometimes.
+>>>      
+>>>
+>>this is not a problem, more people is able to use it, more will test
+>>it for bugs :) this is the main reason i'm doing this packaging stuff ;)
+>>
+>>ok, i'm trying to build packages (always targeted to debian experimental)
+>>with these stand alone libraries. i'm also reading in configure help
+>>message about "--enable-memory-manager". is anything a distribution
+>>could need [to test]?
+>>    
+>>
+>
+>yes, I forgot to tell the memory manager I mentioned above is enabled
+>with --enable-stand-alone and with --enable-memory-manager. Without
+>--enable-stand-alone you use libc methods, with --enable-stand-alone
+>only you can use you own memory methods implementation.
+>
+>  
+>
 
