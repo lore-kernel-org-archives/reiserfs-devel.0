@@ -1,63 +1,137 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: fsck.reiser4 can't fix 1 fixable corruption
-Date: Thu, 29 Apr 2004 20:16:27 -0700
-Message-ID: <4091C50B.1070001@namesys.com>
-References: <200404201733.51809.rmeijer@internet.gr> <200404211259.01802.rmeijer@internet.gr> <200404211547.08993.vitaly@namesys.com> <200404211509.20290.rmeijer@internet.gr> <13790.212.0.249.130.1082549980.squirrel@webmail.xs4all.nl> <4086CBBF.8010406@xs4all.nl> <20040421194414.GB6215@raptus.homelinux.org> <40880F5C.6080207@namesys.com> <20040423012224.GA18666@raptus.homelinux.org> <408BE7FE.3040602@namesys.com> <20040425203151.GA2515@raptus.homelinux.org>
+Subject: Re: Fwd: reiser4 non-free?
+Date: Thu, 29 Apr 2004 21:50:06 -0700
+Message-ID: <4091DAFE.5030809@namesys.com>
+References: <20040424193246.GA2490@raptus.homelinux.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18301-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18304-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040425203151.GA2515@raptus.homelinux.org>
+In-Reply-To: <20040424193246.GA2490@raptus.homelinux.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Domenico Andreoli <cavok@tiscali.it>, Vitaly Fertman <vitaly@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: Domenico Andreoli <cavok@tiscali.it>
+Cc: Sami Liedes <sliedes@cc.hut.fi>, ed@debian.org, debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-Vitaly, please report on the status of your solution in this matter.
+Someone posted the following on slashdot, presumably a debian someone:
+
+    Nobody's saying that your proprietary hardware will cease to work in
+    Debian. The packages will still exist; they'll just be in the
+    "non-free" section, separated out so that people who don't want any
+    non-free software can omit that section from their sources.list
+    file. Non-free packages are technically not part of Debian, but if
+    you have a non-free line in your sources.list, there's no difference
+    whatsoever in how you use them.
+
+So hopefully, Debian can print out some nice warning that Reiser4 is not 
+plagiarizable, and if the user indicates that they still want to use it 
+anyway, they can go forward.
+
+I find Debian's aggressive behavior toward myself, and especially 
+Richard Stallman and his GFDL, to be inappropriate and ungrateful, but I 
+also understand that Debian is striving to define its morality, and that 
+much of the world shares its rather asian attitude towards whether it is 
+acceptable to not credit others for their contributions to science. I do 
+not. I think the western approach of rigor in attribution has been of 
+great value in stimulating innovation over the centuries, and think it 
+should be applied to free software as much as it was to free science 
+research.
+
+I don't expect to convince Debian of this, especially not after your 
+vote that you recently had, but it would be pleasant if users who don't 
+mind attribution are able to select reiser4 if they want it.
 
 Hans
 
+
+
 Domenico Andreoli wrote:
 
->On Sun, Apr 25, 2004 at 09:31:58AM -0700, Hans Reiser wrote:
+>hi Hans,
+>
+>  we have bad news for your filesystems :(( it happens that some sections
+>of the license are not compatible with Debian Free Software Guidelines [0].
+>
+>Even more grave is that something makes them also not suited for debian's
+>non-free archive.
+>
+>I'm sorry but if thing do not get fixed, this stuff won't ship with
+>next distribution release.
+>
+>Here follows the message posted to debian-legal mailing list which
+>starts the thread.
+>
+>cheers
+>domenico
+>
+>[0] http://www.debian.org/social_contract
+>
+>----- Forwarded message from Sami Liedes <sliedes@cc.hut.fi> -----
+>
+>Date: Sat, 24 Apr 2004 14:40:13 +0300
+>From: Sami Liedes <sliedes@cc.hut.fi>
+>To: debian-legal@lists.debian.org
+>Cc: ed@debian.org, cavok@debian.org
+>Subject: reiser4 non-free?
+>
+>[Cc:'d to the reiser4progs maintainers. Please Cc: me when replying,
+>I'm not subscribed to -legal.]
+>
+>There has previously been discussion at least in April 2003 on this
+>list about the freeness of reiserfs.
+>
+>It seems a further "clarification" has been added to the license (GPL
+>+ clarifications) in both reiser4progs and kernel-patch-2.6-reiser4
+>since then. This is the section that has been modified:
+>
 >  
 >
->>Vitaly, please install your system using grub, write down every step as 
->>you do it, and create a web page.  Hint: try to eliminate the need for 
->>reading your instructions.  I would like to see your instructions 
->>consist of:
->>
->>1: install grub by doing XXX
->>
->>2: install reiser4 by doing YYY
->>
->>Use grub normally and it works.
->>
->>I haven't followed the details of your conversation with Domenico, but 
->>it looks way more complicated for him than it should be.  Please fix.
+>>Finally, nothing in this license shall be interpreted to allow you to
+>>fail to fairly credit me, or to remove my credits such as by creating
+>>a front end that hides my credits from the user or renaming mkreiser4
+>>to mkyourcompanyfs or even just make_filesystem, without my
+>>permission, unless you are an end user not redistributing to others.
+>>If you have doubts about how to properly do that, or about what is
+>>fair, ask.  (Last I spoke with him Richard was contemplating how best
+>>to address the fair crediting issue in the next GPL version.)
 >>    
 >>
 >
->i'd be happy also with these steps:
+>New here is the "such as by creating a front end that hides [...] or
+>even just make_filesystem". The controversy last year was created by
+>mkreiserfs printing an overly verbose (tens of lines of sponsor
+>credits and other non-licensing information) advertisement when
+>running from the command line and Mr. Reiser's assertion that removing
+>it violates the GPL.
 >
->  1. install reiser4 (with stand alone libraries)
+>To me, these new "clarifications" seem non-free. (IANADD, and I
+>believe the other IANA* goes without saying. :-)
 >
->  2. build a patched grub
+>Another section has been added after the above one:
 >
->  3. install grub
+>  
 >
->  4. use grub
+>>Also, a clustering file system built to work on top of this file
+>>system shall be considered a derivative work for the purposes of
+>>interpreting the GPL license granted herein.  Plugins are also to be
+>>considered derivative works.  Share code or pay money, we give you the
+>>choice.
+>>    
+>>
 >
->my problem is that if something doesn't work i'm not able to say where
->is it :/
+>Surely a license cannot add anything to the set of derived works (if
+>the other work is not derived, the license obviously doesn't apply to
+>it and hence never gets to say it is derived; if it is, it is even
+>without the license saying so). However I believe -legal has not
+>considered text like this a problem before (I might be wrong though).
 >
->thanks
->domenico
+>	Sami
 >
->ps: surely Vitaly is hating me... :(
+>----- End forwarded message -----
+>
 >
 >-----[ Domenico Andreoli, aka cavok
 > --[ http://people.debian.org/~cavok/gpgkey.asc
