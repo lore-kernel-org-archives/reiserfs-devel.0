@@ -1,82 +1,29 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 02:24:41 -0700
-Message-ID: <412DAC59.4010508@namesys.com>
-References: <20040824202521.GA26705@lst.de>	<412CEE38.1080707@namesys.com>	<20040825152805.45a1ce64.akpm@osdl.org>	<412D9FE6.9050307@namesys.com> <20040826014542.4bfe7cc3.akpm@osdl.org>
+From: Maciej Soltysiak <pysiak.satriani@wp.pl>
+Subject: Re: repacker
+Date: Thu, 26 Aug 2004 11:31:11 +0200
+Message-ID: <1052307503.20040826113111@wp.pl>
+References: <1093474401.12559.0.camel@localhost>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20604-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20605-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826014542.4bfe7cc3.akpm@osdl.org>
+In-Reply-To: <1093474401.12559.0.camel@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Andrew Morton <akpm@osdl.org>
-Cc: hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-Andrew Morton wrote:
+Hi,
 
->Hans Reiser <reiser@namesys.com> wrote:
->  
->
->> >To get us started on this route it would really help me (and, probably,
->> >others) if you could describe what these API extensions are in a very
->> >simple way, without referring to incomprehehsible web pages,
->> >
->> what is not comprehensible....?
->>    
->>
->
->Pretty much anything at www.namesys.com.  The amount of time which is
->needed to extract the technical info which one is looking for vastly
->exceeds a gnat-like attention span.
->
->As a starting point, please prepare a bullet-point list of
->userspace-visible changes which the filesystem introduces, or is planned to
->introduce.
->
->And describe the "plugin" system.  Why does the filesystem need such a
->thing (other filesystems get their features via `patch -p1')?
->  
->
-It takes 6 months or more to become competent to change a usual 
-filesystem.  Creating a new reiser4 plugin is a weekend programmer fun 
-hack to do.  Weekend programmers matter, because they tend to have 
-clever ideas based on understanding a need they have.   How many people 
-can easily add new features to ext3 or reiserfs V3?  Very few. 
+R> hey, i notice its possible to activate the repacker in reiser4, and i
+R> tried it, on a not-important partition, and it didnt seem to cause any
+R> harm, is this generalyl safe? :)
+Is there a glossary list somewhere about the terms?
+What does the repacker do?
 
-What happens if you need a disk format change?
+Regards,
+Maciej
 
-Well, in V4, you can easily compose a plugin from plugin methods of 
-other plugins, write a little piece of code with the one thing you want 
-different, and add it in.  Disk format changes, no big deal, add a new 
-disk format plugin, or a new item plugin, or a new node plugin, etc., 
-and you got your new format.
 
-There is a huge difference between code that is designed for reuse, and 
-code that is not.  That is the difference between V3 and V4.  We were 
-looking at our V3 balancing code, and it special cased each different 
-kind of item (an item is a piece of something, which the balancing code 
-chops objects into as it squeezes them into nodes).  It looked like the 
-complexity of the balancing code was going to be N squared, where N was 
-the number of different kinds of items.
-
-So, we created item handlers, and wrote balancing code that could slice 
-and dice and merge any item that implemented all of the operations 
-required of an item handler.  From there it grew, and we made everything 
-pluggable.
-
-Adding features to the new code is far less than the time cost of adding 
-features to the old code.  I've seen Nikita complain that something 
-would take 6 weeks to do (changing key assignment algorithms), and then 
-it takes him 3 afternoons, and it was because of the plugins, because 
-when we did something similar in V3 it took 3 man months.
-
->And what are the licensing implications of plugins?  Are they derived
->works?  
->
-Yes.
-
-Hans
