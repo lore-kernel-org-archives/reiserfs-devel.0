@@ -1,73 +1,54 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiserfsck 3.6.8 + corrupted filesystem
-Date: Wed, 2 Jul 2003 22:31:36 +0400
-Message-ID: <200307022231.36007.vitaly@namesys.com>
-References: <pan.2003.07.02.13.31.41.846811.20132@umail.hungrycats.org>
+From: Andreas Dilger <adilger@clusterfs.com>
+Subject: Re: reiserfs on removable media
+Date: Wed, 2 Jul 2003 12:45:44 -0600
+Message-ID: <20030702124544.Z7414@schatzie.adilger.int>
+References: <pan.2003.07.02.14.23.09.812119.20132@umail.hungrycats.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14805-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14806-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <pan.2003.07.02.13.31.41.846811.20132@umail.hungrycats.org>
 Content-Disposition: inline
+In-Reply-To: <pan.2003.07.02.14.23.09.812119.20132@umail.hungrycats.org>; from eazgwmir@umail.furryterror.org on Wed, Jul 02, 2003 at 02:23:13PM -0400
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Zygo Blaxell <eazgwmir@umail.furryterror.org>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Zygo Blaxell <eazgwmir@umail.furryterror.org>
+Cc: reiserfs-list@namesys.com
 
-Hi, 
+On Jul 02, 2003  14:23 -0400, Zygo Blaxell wrote:
+> Two reiserfs improvements come to mind:
+> 
+> - There is a tendency for files that were being grown at crash time to
+> contain invalid data.  It seems that the inodes are being updated before
+> the data blocks they refer to are written.  It would be nice if the inode
+> writes were deferred (or at least made invisible) until after the data
+> blocks were written.  I'd rather lose my data than possibly have random
+> garbage masquerading as my data.
 
-On Wednesday 02 July 2003 21:31, Zygo Blaxell wrote:
-> I've been running reiserfsck over a corrupted filesystem (IDE disks, dead
-> fans, overheating embedded controller RAM, smoke...you get the picture).
-> The messages are...interesting.
->
-> What is the meaning of the message "The problem has occurred looks like
-> a hardware problem (perhaps memory)."?  Is that referring to the memory
-> of reiserfsck, or is it suggesting there is some kind of data consistency
-> issue on the disk, or is it suggesting that the corruption it is seeing
-> on the disk might have been the result of bad memory some time in the
-> past?
+This is called ordered data mode, and exists on ext3 and also reiserfs with
+Chris Mason's patches.  Under normal usage it shouldn't change performance
+compared to writeback data mode (which is what reiserfs does by default).
 
-Hardware problem means a problem with your hardware, not software.
-Perhaps you want to run memtest and check your memory, perhaps smth
-else but fsck data built in memory on pass0 turned out to be wrong on 
-pass1. 
+> - If the device is detached while a filesystem is mounted, reiserfs gets a
+> whole lot of I/O errors (or worse) and immediately oopses.  It would be
+> nice if reiserfs would handle this a bit more gracefully--it should at
+> least let me kill processes with open files and umount the filesystem.
+> OTOH many other things also oops with with current USB/firewire/scsi device
+> driver stack too.  :-P
 
-> I've been running reiserfsck --rebuild-tree in a while loop until it fixes
-> the FS.  It seems that each time through it gets a little further along,
-> then near the end of pass 1, reiserfsck complains that something wasn't
-> done in pass 0 and aborts.  Pass 0 runs again, and some additional changes
-> are made which fix whatever pass 1 was complaining about.  Pass 1 runs
-> again, gets a little further than it did the previous run, then aborts
-> a few thousand blocks later.  The most recent run suggests that this
-> might continue in pass 2 (complaining about things not done by both pass
-> 1 and 0), but I've never gotten to pass 2 yet to find out.
->
-> Here are parts of the three reiserfsck runs so far (actually I did some
-> more earlier, but those were 3.6.6 not 3.6.8).  Note I've left out
-> several thousand lines of pass0 output, most of which involves deleting
-> invalidly formatted nodes, directories with bad types, wrong order
-> entries in directories...basically what you'd expect if one disk out of
-> a RAID array was randomly corrupted.
->
-> I realize that there is huge data loss here, but IMHO reiserfsck should at
-> least salvage the FS without calling abort() on itself.
+Well, if something oopses you are pretty much stuck w.r.t. killing the
+process and unmounting the fs.  So fix the oopses and the rest should
+come around as a result.  Of course, the reiserfs folks can do a lot
+more with a specific oops report than just "it immediately oopses".  ;-)
 
-fsck should not abort if in memory data on pass1 (which were built on pass0 
-of fsck) match what they should be. Otherwise it looks like hardware problem 
-with memory or smth like that. 
+Not much you can do about the IO errors (i.e. working as designed).
+That's going to happen if you remove your device while writing to it.
 
-> I also realize that these log sections are useless as a bug report.
+Cheers, Andreas
+--
+Andreas Dilger
+http://sourceforge.net/projects/ext2resize/
+http://www-mddsp.enel.ucalgary.ca/People/adilger/
 
-Actually, these log sections were intended to explain that smth unexpected 
-happened what does not look like an fsck problem. So you should check all 
-your hardware (the hint about what should be checked first is given) and do 
-not continue unless you are sure it is working properly. And only if the 
-problem occured again in the same place -- this already looks like an fsck
-problem -- report about it. 
-
--- 
-Thanks,
-Vitaly Fertman
