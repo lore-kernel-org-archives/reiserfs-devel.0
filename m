@@ -1,38 +1,32 @@
-From: Hendrik Visage <hvisage@envisage.co.za>
+From: Pierre Abbat <phma@webjockey.net>
 Subject: Re: Reiser4 crypto-compression design
-Date: Tue, 25 Mar 2003 22:23:19 +0200
-Message-ID: <20030325202319.GT9317@hvs.envisage.co.za>
+Date: Wed, 26 Mar 2003 07:30:34 -0500
+Message-ID: <200303260730.34330.phma@webjockey.net>
 References: <3E80B384.2190B074@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13386-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13389-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 In-Reply-To: <3E80B384.2190B074@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Edward Shushkin <edward@namesys.com>
-Cc: reiserfs-list@namesys.com, reiserfs-dev@namesys.com, Pierre Abbat <phma@webjockey.net>
+To: reiserfs-list@namesys.com, reiserfs-dev@namesys.com
 
-On Tue, Mar 25, 2003 at 10:52:36PM +0300, Edward Shushkin wrote:
-> All
-> the compression issues for the traditional approach described in the
-> following paper:
- http://www.namesys.com/compression.txt
-
+On Tuesday 25 March 2003 14:52, Edward Shushkin wrote:
 >   When user creates a crypto-file, the file system asks for a secret
 > key and calculates its id (128-bit word) which supposed to be stored
 > in file's stat-data on disk.
+>   When user opens crypto-file, the file system asks for a secret key,
+> checks (by the id) if it is valid, and places a pointer to the
+> crypto-file info to the reiser4 specific part of inode. This info
+> includes cpu key words created by special method of the crypto plugin
+> by the valid secret key.
 
-What about Public-Private key setups?
-Ie. using a Public key to encrypt the data (Or at least encrypt the
-shared key with the public key). Also, there might/would be the need for
-escrow(Right term?) keys. Ie. keys that the Security Officer could use
-to decrypt data (In case of bus accident or dismissal etc.)
+Can a directory be marked as encrypted, so that all new files in the directory 
+will be encrypted with the same key? Can a process hold an encryption key, so 
+that all its children automatically can read files encrypted with that key?
 
-Or rather, how will the FS "ask"/request a key for decryption in a secure way?
-
-Hendrik
