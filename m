@@ -1,44 +1,58 @@
-From: Adrian Ulrich <reiser4@blinkenlights.ch>
-Subject: Re: reiser4 metas and hard links...
-Date: Sun, 29 Aug 2004 12:19:26 +0200
-Message-ID: <20040829121926.69d34b59.reiser4@blinkenlights.ch>
-References: <1093388441.10277.6.camel@leto.cs.pocnet.net>
+From: CaT <cat@zip.com.au>
+Subject: Re: silent semantic changes with reiser4
+Date: Sun, 29 Aug 2004 20:44:13 +1000
+Message-ID: <20040829104413.GE871@zip.com.au>
+References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org> <20040828170515.GB24868@hh.idb.hist.no> <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org> <4131074D.7050209@namesys.com> <Pine.LNX.4.58.0408282159510.2295@ppc970.osdl.org> <4131A3B2.30203@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21045-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21046-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1093388441.10277.6.camel@leto.cs.pocnet.net>
+Content-Disposition: inline
+In-Reply-To: <4131A3B2.30203@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Linus Torvalds <torvalds@osdl.org>, Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com, Al Viro <viro@parcelfarce.linux.theplanet.co.uk>
 
-Hi,
+On Sun, Aug 29, 2004 at 02:36:50AM -0700, Hans Reiser wrote:
+> Linus Torvalds wrote:
+> >On Sat, 28 Aug 2004, Hans Reiser wrote:
+> >>I object to openat().....
+> >
+> >Sound slike you object to O_XATTRS, not openat() itself.
+> >
+> >Realize that openat() works independently of any special streams, it's
+> >fundamentally a "look up name starting from this file" (rather than
+> >"starting from root" or "starting from cwd").
+>
+> well, isn't that namespace fragmentation by definition?  If you can't go
+> 
+> cat filenameA/metas/permissions > filenameB/metas/permissions
+> 
+> find / -exec cat {}/permissions \; | grep 4777 | wc -l
 
-Nikita provided a small patch for this problem on #reiser4:
+My apologies if this question has been raised (and answered) elsewhere.
+I tried to keep up with the flamefest/discussion but it wasn't always
+possible.
 
---- dir.c.org   2004-08-29 11:32:40.000000000 +0200
-+++ dir.c       2004-08-29 12:03:40.000000000 +0200
-@@ -126,6 +126,9 @@
-        data.mode = object->i_mode;
-        data.id = inode_file_plugin(object)->h.id;
- 
-+       if (!inode_file_plugin(object)->can_add_link(object))
-+               return -EPERM;
-+
-        reserve = common_estimate_link(parent, existing->d_inode);
-        if ((__s64)reserve < 0)
-            return reserve;
+How would you do it for directories without making certain names
+illegal? ie taking the above you'd do:
 
+cat dirA/metas/permissions > dirB/metas/permissions
 
-ulrich@fuzzy:~$ uname -r
-2.6.8.1-mm4
-ulrich@fuzzy:~$ ln  foo/metas/bmap bla
-ln: creating hard link `bla' to `foo/metas/bmap': Operation not
- permitted
+But how does that distinguish an access to the metas for dirA and dirB
+from an access to a file called permissions within the metas directories
+of dirA and dirB?
 
-(Symlinks are still working...)
+I think what Linus is trying to do, as far as naming, is create a
+consistant access scheme that works for all types of objects in the
+fs without making certain names illegal (and with plugins, those
+names are not even a fixed thing I believe).
 
-bye
+Feel free to correct me if I'm wrong, ofcourse. :)
+
+-- 
+    Red herrings strewn hither and yon.
