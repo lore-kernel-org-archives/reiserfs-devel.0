@@ -1,32 +1,33 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: big reiserfs regression in 2.4.20-pre2
-Date: Wed, 21 Aug 2002 08:50:38 +0400
-Message-ID: <20020821085038.A4525@namesys.com>
-References: <20020821032632.GA3774@rushmore>
+Subject: Re: Corruption: --fix-fixable results in all nlink values = 0
+Date: Wed, 21 Aug 2002 10:04:52 +0400
+Message-ID: <20020821100452.A10765@namesys.com>
+References: <m3k7mpreij.fsf@merlin.emma.line.org> <3D5E9D69.1030109@namesys.com> <20020819092023.B1815@namesys.com> <3D60AF63.6040809@namesys.com> <20020819124649.A2585@namesys.com> <3D60B6E2.7050006@namesys.com> <20020819132252.A4346@namesys.com> <3D60C35E.7000903@namesys.com> <20020819142035.A5741@namesys.com> <1029875053.12387.521.camel@tiny>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11260-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11261-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20020821032632.GA3774@rushmore>
+In-Reply-To: <1029875053.12387.521.camel@tiny>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rwhron@earthlink.net
-Cc: reiserfs-list@namesys.com
+To: Chris Mason <mason@suse.com>
+Cc: Hans Reiser <reiser@namesys.com>, Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>, reiserfs-list@namesys.com, god@namesys.com, mason <mason@namesys.com>
 
 Hello!
 
-On Tue, Aug 20, 2002 at 11:26:32PM -0400, rwhron@earthlink.net wrote:
-> > Great, I just found that we forgot to enable preallocation with new block
-> > allocator by default. This is easily fixable of course.
-> Is that in the 2.5.patch:
-> http://marc.theaimsgroup.com/?l=linux-kernel&m=102984193227185&w=2
+On Tue, Aug 20, 2002 at 04:24:13PM -0400, Chris Mason wrote:
 
-Yes, I included it into 2.5 patch, since I see no reason to supply buggy
-patch and then several bugfixes.
+> make sure it was valid, regardless of where you stored it.  The problem
+> is that if you store it in the tree somehow, you've got a chicken and
+> egg problem that you can't read the list until the tree is good and you
+> can read the tree without knowing which blocks are bad.
+
+With carefully choosen key, it will be in fixed tree position.
+But well, if Hans decided it should not be stored in a tree - so be it.
 
 Bye,
     Oleg
