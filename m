@@ -1,42 +1,54 @@
-From: Antonie Nygma <darkenigma80@yahoo.com>
-Subject: mounting reiserfs from win98
-Date: Fri, 16 Aug 2002 20:46:45 -0700 (PDT)
-Message-ID: <20020817034645.7861.qmail@web21402.mail.yahoo.com>
+From: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
+Subject: Re: Corruption: --fix-fixable results in all nlink
+ values = 0
+Date: Sat, 17 Aug 2002 12:00:36 +0200
+Message-ID: <m3k7mpreij.fsf@merlin.emma.line.org>
+References: <200208152007.42370.degerrit@web.de>
+	<200208152329.40707.degerrit@web.de>
+	<200208161205.00550.vitaly@namesys.com>
+	<200208170254.48383.degerrit@web.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11217-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11218-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200208170254.48383.degerrit@web.de> (Gerrit Hannaert's message
+ of "Sat, 17 Aug 2002 02:54:48 +0200")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-hi!
+Gerrit Hannaert <degerrit@web.de> writes:
 
-i recently reformatted all my linux
-(reiserfs)partitions on a dual-boot hdd, leaving only
-the /home partition intact. during fresh installation
-it stalled and i'd like to backup some files in /home
-to win98 partition so i can remove the old partitions
-& re-created them again.
+> Anyway, my first instinct told me to try Maxtor's 'Powermax' tool, and
+> lo and behold the 'Advanced Test' here found errors, and 'fixed' them,
+> whatever that means. (Can you believe these guys make you download a
+> 3MB Windows executable in order to write a 1.44Mb floppy image which
+> is less than half full?? I had to bloody install Windows for
+> this... grr....)
 
-consulting filesystems HOWTO, i found some tools
-(LTOOLS) that could mount linux FS (ext2fs)
-transparently from win9x, but it doesn't work properly
-(gives error like: bad magic number). i suspect this
-is because i use reiserfs instead.
+So complain and ask them to make a gzipped floppy image for Linux and
+*BSD users, and offer to send them one :-)
 
-i'm not sure whether further works are being done for
-LTOOLS; and i'm interested to make it work for
-reiserfs. is there any other tools that have already
-been written to do this?
+> I think I will spend the next week working out a better backup
+> solution...
 
-thanks,
-antonie
+...and finding out if files have been damaged.
 
-__________________________________________________
-Do You Yahoo!?
-HotJobs - Search Thousands of New Jobs
-http://www.hotjobs.com
+> Will Reiserfs4 have better bad block handling than this? When I see all the 
+> trouble involved in rescuing this filesystem, as much as I'm impressed with 
+> it I would think twice about using Reiserfs on any non-redundant (and 
+> certainly IDE) disks from now on. I hope I don't make any enemies by saying 
+> so.
+
+Any file system can screw up if the hardware fails in the wrong
+place. If what I'd call "file header" blocks are struck, the file name
+(at least) is gone, on some file systems the whole file. So there.
+
+Are there file systems that checksum the files' and directory data, to
+be able to flag files as broken if a bad block strikes?
+
+-- 
+Matthias Andree
