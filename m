@@ -1,52 +1,68 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: 2.4.22pre7aa1 ;-) Mit O(1) aber leider kein pre-emption
-Date: Tue, 22 Jul 2003 13:54:23 +0200
-Message-ID: <200307221354.23397.Dieter.Nuetzel@hamburg.de>
-References: <200307211639.32418.Dieter.Nuetzel@hamburg.de> <001c01c35012$abcc9250$2b8bddcb@lifebook>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Horrible ftruncate performance
+Date: Tue, 22 Jul 2003 20:43:24 +0400
+Message-ID: <3F1D69AC.5040302@namesys.com>
+References: <Pine.LNX.4.30.0307151407100.6563-100000@divine.city.tvnet.hu> <200307151848.59027.Dieter.Nuetzel@hamburg.de> <20030715170540.GA1213@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14987-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14988-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <001c01c35012$abcc9250$2b8bddcb@lifebook>
-Content-Disposition: inline
+In-Reply-To: <20030715170540.GA1213@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Rob Mueller <robm@fastmail.fm>, Chris Mason <mason@suse.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Oleg Drokin <green@namesys.com>
+Cc: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>, Chris Mason <mason@suse.com>, Szakacsits Szabolcs <szaka@sienet.hu>, Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>, reiserfs-list@namesys.com
 
-Am Dienstag, 22. Juli 2003 07:32 schrieb Rob Mueller:
-> > Data-logging in the works?
+The answer to the below is to use reiser4.  It uses extents, and two 64 
+bit numbers are all that is needed to store the hole.  V4 will be ready 
+for testing in a few days, and will ship for real users at the end of 
+summer we hope.
+
+Fixing V3 is  the wrong answer: this is one of its design flaws.
+
+Hans
+
+Oleg Drokin wrote:
+
+>Hello!
 >
-> I've managed to get this working. Patched to 2.4.22-pre7-aa and then
-> applied the data logging patches for 2.4.22-pre5 (see
-> ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.22) which
-> seems to work fine. I saw two problems though, a function (can't remember
-> which one) was duplicate defined in mm/filemap.c (exactly the same code
-> appeared twice), and an EXPORT_SYMBOL() from mm/filemap.c had to be removed
-> as well.
-
-As always...;-)
-
-> However removing them seemed to work fine.
-
-I hoped that, but there is sadly no simple pre-emption patch for -aa.
-With pre-emption I have much _more_ (IO-) throughput.
-
-> The patches I applied:
+>On Tue, Jul 15, 2003 at 06:48:58PM +0200, Dieter N?tzel wrote:
 >
-> 04-reiserfs-sync_fs-4.diff
-> 05-data-logging-39.diff
-> 06-logging-export.diff
-> 06-reiserfs-jh-3.diff
-> 06-write_times.diff
+>  
+>
+>>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+>>The 'right' questions are:
+>>* Are the 204,804 MB really needed?
+>>    
+>>
+>
+>In reiserfs - yes.
+>
+>  
+>
+>>* How many space do XFS, JFS and ext3 'use'?
+>>    
+>>
+>
+>ext2 uses 16 kb for me (4k blocksize)
+>
+>  
+>
+>>* When the above three can do it a 1000 times faster why can't we?
+>>    
+>>
+>
+>We can, only in case of reiserfs we have nasty races if we do that.
+>Or may be not. I have something to discuss around, I guess ;)
+>
+>  
+>
 
-Isn't needed 'cause it is in -aa.
 
-> search_reada-5.diff
+-- 
+Hans
 
-Thanks,
-	Dieter
 
