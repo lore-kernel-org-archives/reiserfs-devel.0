@@ -1,64 +1,60 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: xattr
-Date: Mon, 23 Jun 2003 11:56:57 +0400
-Message-ID: <3EF6B2C9.1090003@namesys.com>
-References: <200306162226.39701.russell@coker.com.au> <1056030719.6758.97.camel@tiny.suse.com>
+Subject: Re: Debugreiserfs Security Question (3.6.7-pre1)
+Date: Mon, 23 Jun 2003 12:20:26 +0400
+Message-ID: <3EF6B84A.5070302@namesys.com>
+References: <3EF27041.6060401@netscape.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14662-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14663-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1056030719.6758.97.camel@tiny.suse.com>
+In-Reply-To: <3EF27041.6060401@netscape.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: Russell Coker <russell@coker.com.au>, reiserfs-list@namesys.com
+To: Manuel Krause <manuelkrause@netscape.net>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-Chris Mason wrote:
+Manuel Krause wrote:
 
->On Mon, 2003-06-16 at 08:26, Russell Coker wrote:
->  
+> Hi!
 >
->>What is the status of xattr support in 2.5.x?
->>
->>How is journalling of xattr's being handled?
->>
->>For correct operation of SE Linux we need to have the xattr that is used for 
->>the security context be changed atomically, and if a file is created and 
->>immediately has the xattr set then ideally we would have the file creation 
->>and the xattr creation in the same journal entry.
->>
->>Is this possible?  If doing this requires that the file system be mounted with 
->>data=journal then this will be fine.
->>    
->>
+> If I currently use debugreiserfs -p  /dev/xxx | gzip -c > xxx.gz and
+> later for testing gunzip -c xxx.gz | unpack /dev/yyy  I get the same
+> filenames on the last target partition. (with reiserfsprogs 3.6.7-pre1)
 >
->How big are the xattrs you have in mind?  We can get atomic writes of 4k
->in length but beyond that things get more difficult.
 >
-it is complete trivial to do it in reiser4.
-
+> If I don't want to spread info about
+>  /home/manuel/my_car/tech_overview/lies_for_BMW_&_DC/engine.259.fake.jpg
+> anywhere else than only on my HDD, shouldn't this file be converted to
+>  /d98/d4/d2/d65/d1/23.file
+> e.g., or something like that (random directory & filenames) within
+> debugreiserfs, in general?!
 >
->As for the xattr and the create in the same transaction, that's a little
->harder.  
+> I don't know if that is a serious security issue. But it is one.
 >
-equally easy in reiser4.
-
->We'd probably need a new syscall, or to change the semantics of
->the xattr call such that creating an xattr on a file that doesn't exist
->also creates the file.
+> No no, I don't doubt your developers' debugging cyle and purpose at all.
+> But I don't need you (and others if we couldn't establish a secure
+> connection) to read our filenames. In case of real failure we may not
+> be able to rename anything any more, you know..
 >
->-chris
+>
+> Best regards,
+>
+> Manuel Krause
+>
+>
+> (The filenames mentioned above have NO real meaning in ANY sense.)
 >
 >
 >
->
->  
->
-V3 should not have new features added to it.  It needs to be zero 
-defect, and avoiding new features is the only way.
+If you are considering the use of reiserfs for secure government 
+purposes then your government should sponsor the on staff addition of a 
+reiserfs developer with the security clearances your government 
+needs.;-)   Forgive me for thinking that only governments have a lot of 
+data that cannot be risked with strangers working in Russia, I know it 
+is not entirely true.
 
 -- 
 Hans
