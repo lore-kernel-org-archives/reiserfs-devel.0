@@ -1,132 +1,49 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: /proc/fs/reiserfs question
-Date: Tue, 15 Oct 2002 17:44:23 +0400
-Message-ID: <3DAC1BB7.5060306@namesys.com>
-References: <20021014160435.344ca55b.philippe.gramoulle@mmania.com>	<15786.54223.785138.49029@laputa.namesys.com>	<3DAB018D.2070904@namesys.com> <15787.47495.344267.487496@laputa.namesys.com>
+From: Russell Coker <bofh@coker.com.au>
+Subject: Re: Reiserfs with Samba vs NetApp Filer
+Date: Tue, 15 Oct 2002 16:46:19 +0200
+Message-ID: <200210151646.19633.bofh@coker.com.au>
+References: <200210121052.22603.bofh@coker.com.au> <200210151457.58520.bofh@coker.com.au> <3DAC1B38.40101@namesys.com>
+Reply-To: Russell Coker <bofh@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11696-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11697-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3DAC1B38.40101@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: Philippe Gramoulle' <philippe.gramoulle@mmania.com>, reiserfs <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Chris Wedgwood <cw@f00f.org>, reiserfs-list@namesys.com
 
-Nikita Danilov wrote:
+On Tue, 15 Oct 2002 15:42, Hans Reiser wrote:
+> Russell Coker wrote:
+> >See the following graph:
+> >http://www.coker.com.au/~russell/hardware/46g.png
+> >
+> >This shows testing a single 46G drive, two drives on different buses at
+> > the same time, and two drives on the same bus at the same time.  zcav
+> > (part of Bonnie++) was used to perform the tests.
+>
+> I am surprised that separating them onto different buses has so little
+> effect.  It looks like most of the bottleneck for large reads off two
+> drives is not the IDE bus, but something else (maybe CPU or memory
+> bandwidth).
 
->Hans Reiser writes:
-> > Nikita Danilov wrote:
-> >=20
-> > >Philippe Gramoull=E9 writes:
-> > > > Hi,
-> > > >=20
-> > > > Is there any documentation that gives the description for each line=
-=20
-> > > > of each file in /proc/fs/reiserfs/sd(x,x)/*
-> > > >=20
-> > > > like what is the meaning of s_fix_nodes ? etc..
-> > >
-> > >I am afraid one has to dig it out of the sources. Here is description =
-of
-> > >some fields displayed in "super", they pertain to the in-core
-> > >super-block:
-> > >
-> > >			"state": REISERFS_VALID_FS/REISERFS_ERROR_FS
-> > >
-> > >			"mount options": options given to mount
-> > >
-> > >			"gen. counter": file system "generation acounter"---this is
-> > >			incremented with each balancing.
-> > >
-> > >			"s_kmallocs": how many kmallocs (calls to general purpose
-> > >			kernel memory allocator) were performed by reiserfs code
-> > >
-> > >			"s_disk_reads": not maintained
-> > >
-> > >			"s_disk_writes": not maintained
-> > >
-> > >			"s_fix_nodes": how many time "fix-nodes" (1st phase of
-> > >			balancing) was performed.
-> > >
-> > >			"s_do_balance": how many times "do-balance" (2nd phase of
-> > >			balancing) was performed
-> > >
-> > >			"s_unneeded_left_neighbor": not maintained
-> > >
-> > >			"s_good_search_by_key_reada": not maintained
-> > >
-> > >			"s_bmaps": not maintained
-> > >
-> > >			"s_bmaps_without_search": not maintained
-> > >
-> > >			"s_direct2indirect": how many direct->indirect converions
-> > >			were performed
-> > >
-> > >			"s_indirect2direct": how many indirect->direct converions
-> > >			were performed
-> > >
-> > >			"max_hash_collisions": maximal hash collision met so far.
-> > >
-> > >			"breads": not maintained
-> > >
-> > >			"bread_misses": not maintained
-> > >
-> > >			"search_by_key": how many times search_by_key (main tree
-> > >			traversal routine) was called.
-> > >
-> > >			"search_by_key_fs_changed": how many times search_by_key was
-> > >			performed concurrently to balancing.
-> > >
-> > >			"search_by_key_restarted": how many times search_by_key had
-> > >			to restart due to concurrent balancing.
-> > >
-> > >			"insert_item_restarted"-------+
-> > >			"paste_into_item_restarted"   +
-> > >			"cut_from_item_restarted"     +-> how many times particular
-> > >			"delete_solid_item_restarted" +   balancing operation had to
-> > >			"delete_item_restarted"-------+   restart
-> > >
-> > >			"leaked_oid": how many object-ids (unique identifiers
-> > >			assigned to files) were missed
-> > >
-> > >			"leaves_removable": how many times three leaf nodes of the
-> > >			balanced tree were mergeable into one
-> > >
-> > >I guess we should keep this information somewhere on the web-site. If
-> > >you need more detailed info, let me know.
-> > >
-> > > >=20
-> > > > Thanks much,
-> > > >=20
-> > > > Philippe.
-> > >
-> > >Nikita.
-> > >
-> > >
-> > > =20
-> > >
-> > The unmaintained fields should be removed.  Put into post-Halloween tod=
-o=20
-> > list.
->
->What about making them "maintained", in stead? Should be trivial.
->
-Review which ones look like they would be genuinely informative, and=20
-then maintain just those, ok?  After Halloween.
+I was surprised too.  Especially as it's an ATA-66 bus (the bus was expected 
+to be a bottleneck).
 
->
-> >=20
-> > Hans
-> >=20
->
->Nikita.
->
->
-> =20
->
+Only a single CPU.
 
+I would like to do more research on this matter and write a magazine article 
+(I already have a magazine wanting to publish it).  All I need is suitable 
+access to the latest hardware to perform my tests (tests on old hardware 
+while still being interesting research doesn't sell magazines).
 
+-- 
+http://www.coker.com.au/bonnie++/     Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/       Postal SMTP/POP benchmark
+http://www.coker.com.au/projects.html Projects I am working on
+http://www.coker.com.au/~russell/     My home page
 
