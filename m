@@ -1,29 +1,50 @@
-From: Burcu Ozserim <burcu_ozserim@yahoo.com>
-Subject: would like to contribute code
-Date: Thu, 9 May 2002 14:44:56 -0700 (PDT)
-Message-ID: <20020509214456.41436.qmail@web13002.mail.yahoo.com>
-Reply-To: burcu_ozserim@yahoo.com
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Improved performance by reformatting?
+Date: Fri, 10 May 2002 05:33:01 +0400
+Message-ID: <3CDB234D.4030700@namesys.com>
+References: <20020509234806.GA4635@jensbenecke.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10290-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10292-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jens Benecke <mail-020509@jensbenecke.de>
+Cc: ReiserFS Mailingliste <reiserfs-list@namesys.com>, zam@thebsh.namesys.com
 
-Hi There,
+Jens Benecke wrote:
 
-I am interested in file systems and journaling. I
-would like to contribute code to ReiserFS. I prefer
-starting with bug fixes or simplest possible features
-to implement. I ask for your advice on where to start.
+>Hi,
+>
+>recently I have begun to notice that my server (Duron 650, Via chipset,
+>UDMA harddisks, hdparm says 30-35MB/sec on the raw device) have been
+>slowing down during long copy actions. If I copy a 300MB file, e.g.
+>midnight commander pauses frequently, sometimes over ten seconds, while
+>the CPU Load (according to xosview) is stuck at 100%.
+>
+>DMA and so on is enabled on all harddisks.
+>
+>The file systems in question were created with early 2.4 kernels (2.4.4
+>IIRC) and one of them is a LVM volume which was resized and moved
+>several times until now. Would a backup & reformat & restore noticeably
+>improve performance to make it worth the effort?
+>
+>I'm asking this because I will have the chance to do this shortly (new
+>harddisks) and if it will make a difference, I will not just copy the
+>stuff over, but recreate the FS.
+>
+>
+>  
+>
+You need the latest bitmap.c (ask zam), and to turn off border, and turn 
+on skip_busy.
 
-Regards,
-Burcu Ozserim
+If I can just get some decent benchmarks, we'll determine what options 
+should be standard, and put this bitmap.c in the mainline kernel, but 
+there are delays in benchmarking....
 
-__________________________________________________
-Do You Yahoo!?
-Yahoo! Shopping - Mother's Day is May 12th!
-http://shopping.yahoo.com
+Hans
+
+
