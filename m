@@ -1,33 +1,51 @@
-From: Sebastian Werner <discussion@sebastian-werner.net>
-Subject: Reiser4 vs. Gstreamer
-Date: Sat, 22 May 2004 13:21:06 +0200
-Message-ID: <40AF37A2.2020906@sebastian-werner.net>
+From: "Irene Villa" <qduall@xdndec.com>
+Subject: Sick of dating cold girls? Find the hot ones NOW. logic
+Date: Sat, 22 May 2004 06:00:14 -0800
+Message-ID: <MUPLXQQDCETPVXBGMOEEK@sdr5f5.com>
+Reply-To: "Irene Villa" <qduall@xdndec.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18819-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="--5131424047877013444"
+Return-path: <reiserfs-list-return-18820-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hi,
+----5131424047877013444
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-there seems to be a bug with the combination of reiser4 and gstreamer. 
-Just want to inform the great developers of this real fast filesystem. 
-Hope there will be a fix in the near future.
+Are you interested in finding a woman that is interested in sex? Sick of g=
+oing out with these women who think that sex is only for marriage? I'm wit=
+h you!
+    =20
+Over the past three years, we have matched hundreds of thousands of people=
+ around the WORLD together! Who can we match you with?
+    =20
+Other dating sites only promise the chance to meet other people; we promis=
+e the chance to take this much further in a heart-beat!
+       =20
+Are you interested in checking out our site? Place a profile NOW and get s=
+tarted!
+=A0 =20
+Visit this site: http://www.huai.info/sure/
+                                              =20
+You'll thank me later!
+=A0 =20
+Regards, and much success,
+                                      =20
+Irene Villa (qduall@xdndec.com)
+       =20
+P.S. To remove yourself from our highly qualified e-mail list, please go h=
+ere: http://www.leph.info/egg/o/.                                         =
+      =20
+                                                                          =
+                                       =20                                =
+              =20
+                                              =20
 
-Gentoo-Bug:
-http://bugs.gentoo.org/show_bug.cgi?id=49081
+----5131424047877013444--
 
-Gstreamer-Bug:
-http://bugzilla.gnome.org/show_bug.cgi?id=142850
-
-Forum-Thread:
-http://forums.gentoo.org/viewtopic.php?t=175794&highlight=gstreamer
-
-Best Regards
-
-Sebastian
