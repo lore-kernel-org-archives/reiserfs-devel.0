@@ -1,66 +1,30 @@
-From: "Villalovos, John L" <john.l.villalovos@intel.com>
-Subject: RE: Test suite?
-Date: Thu, 22 Jan 2004 09:25:59 -0800
-Message-ID: <50D19C3AC815734C9E19FE4C4F6128A602A567FD@orsmsx403.jf.intel.com>
+From: Mike Fedyk <mfedyk@matchmail.com>
+Subject: Re: Snapshot against 2.6.1 released.
+Date: Thu, 22 Jan 2004 10:09:49 -0800
+Sender: Mike Fedyk <mfedyk@srv-lnx2600.matchmail.com>
+Message-ID: <20040122180949.GS23765@srv-lnx2600.matchmail.com>
+References: <16396.11375.115895.934750@laputa.namesys.com> <20040120080223.2921.qmail@web21505.mail.yahoo.com> <16396.64924.478222.923131@laputa.namesys.com> <400DAC72.1060502@free.fr> <401004DF.7080100@free.fr> <16400.1617.53047.679998@laputa.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16609-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16610-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
+Content-Disposition: inline
+In-Reply-To: <16400.1617.53047.679998@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: reiserfs-list@Namesys.COM
+Cc: Vince <fuzzy77@free.fr>, reiserfs-list@Namesys.COM
 
-Thanks for the info.  I will try to play around with it and see if it
-helps :)
+On Thu, Jan 22, 2004 at 08:20:17PM +0300, Nikita Danilov wrote:
+> Yes, mount was unable to handle an error. This is hopefully fixed and
+> will be included into new snapshot.
 
-John
+Vince,
 
+Keep a compressed image of that filesystem so that you can restore it and
+remount to see if the oops is fixed in future snapshots.
 
-> -----Original Message-----
-> From: Nikita Danilov [mailto:Nikita@Namesys.COM]=20
-> Sent: Thursday, January 22, 2004 5:24 AM
-> To: markw@osdl.org
-> Cc: Villalovos, John L; reiserfs-list@Namesys.COM
-> Subject: Re: Test suite?
->=20
->=20
-> markw@osdl.org writes:
->  > On 21 Jan, Villalovos, John L wrote:
->  > > Is there a test suite for ReiserFS?
->  > >=20
->  > > For regression testing and the like?
->=20
-> We use various stress tests and benchmarks for this:
->=20
-> bonnie   (http://www.textuality.com/bonnie/)
-> bonnie++ (http://www.coker.com.au/bonnie++/)
-> fsx      (http://www.zip.com.au/~akpm/linux/patches/stuff/fsx-linux.c)
-> iozone   (http://www.iozone.org/)
-> dbench   (http://freshmeat.net/projects/dbench/)
-> mongo    (http://www.namesys.com/benchmarks/mongo_readme.html)
-> cerberus (http://sourceforge.net/projects/va-ctcs/)
-> fsstress=20
-> (http://cvs.sourceforge.net/viewcvs.py/ltp/ltp/testcases/kerne
-l/fs/fsstress/)
-
-And some scripts/programs that were created specifically on purpose. I
-put few of them (without any support or documentation) into
-ftp://ftp.namesys.com/pub/testtools
-
-Plus scripts to start a bunch of concurrent kernel compilations,
-bitkeeper pulls, tars, gzips, etc.
-
- > >=20
- > > I am just wondering if there is something that I can run after
-making
- > > modifications that would help give me a warm-fuzzy feeling :)
- > >=20
- > > John
- > >=20
-
-Nikita.
+Mike
