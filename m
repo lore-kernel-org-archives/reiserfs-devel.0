@@ -1,53 +1,50 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: Lost ACL
-Date: Thu, 19 Feb 2004 12:33:37 -0500
-Message-ID: <4034F371.8000001@suse.com>
-References: <402CE469.4010809@gbf.de>	<402D1B26.3040009@suse.com> <16429.7163.319615.173151@laputa.namesys.com> <402D37F5.9040008@suse.com> <4034EAAE.2050908@gbf.de> <4034EEB2.6090208@suse.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: fsck.reiser4 - can't find item plugin error
+Date: Thu, 19 Feb 2004 23:10:13 +0300
+Message-ID: <200402192310.13299.vitaly@namesys.com>
+References: <47352.127.0.0.1.1077145384.squirrel@www.die.informatik.uni-siegen.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16860-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16861-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4034EEB2.6090208@suse.com>
+In-Reply-To: <47352.127.0.0.1.1077145384.squirrel@www.die.informatik.uni-siegen.de>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Joachim Reichelt <Reichelt@gbf.de>, Nikita Danilov <Nikita@Namesys.COM>, reiserfs-list@Namesys.COM
+Content-Type: text/plain; charset="us-ascii"
+To: henning-04@die.informatik.uni-siegen.de, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Thursday 19 February 2004 02:03, Henning Westerholt wrote:
+> Hello,
 
-Jeff Mahoney wrote:
-| Joachim Reichelt wrote:
-| |> i just got 2.4.25 up.
-| |> But there is no ACL anywhere in the kernel.
-| |> Do I have to patch something
-| |> I found ACL in ext3, xfs....
-| |> So there are NO ACLs in the code?????????
-|
-| ACLs and Extended Attributes are an external patch. The SuSE kernels
-| have them by default, which is why you were able to use them with your
-| SuSE install. Periodically, I sync up the ACL code with the mainline
-| kernels.
-|
-| Expect an updated version for 2.4.25 later today on my ftp site:
-| ftp://ftp.suse.com/pub/people/jeffm/reiserfs/aclea/
+Hi Henning,
 
-To follow up; The 2.4.23 patches apply cleanly to 2.4.24 and 2.4.25.
+> ***** Tree Traverse Pass: scanning the reiser4 internal tree.
+> Error: Can't find item plugin by its id 0x8.
+> Error: Node(501): Failed to open the item(1).
+> Error: Can't find item plugin by its id 0x8.
+> Read Nodes...
+>
+>
+> ****** Twig Scan:
+>
+> ****** Semantic Traverse Pass:
+> Error: Can't find item plugin by its id 0x8.
+> Time...
+> Closing fs...done
+>
+> Operational error occured while fscking.
 
-- -Jeff
+I failed to reproduce this on my computer. Do you use reiser4progs from 
+the lastest snapshot? Would you pack the metadata of the fs and provide 
+them for downloading? I will debug the problem locally then.
 
-- --
-Jeff Mahoney
-SuSE Labs
-jeffm@suse.com
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.2 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+	debugfs.reiser4 -P /dev/hdd6 | bzip2 -c > hdd6.bz2
 
-iD8DBQFANPNxLPWxlyuTD7IRAt5XAKCVksCWf0+xWwJazaIlqLT5UiXfRQCeJrbx
-5HZlQuQiM/AwfeJQ0Xqjl1k=
-=ww5l
------END PGP SIGNATURE-----
+-- 
+Thanks,
+Vitaly Fertman
+
+
