@@ -1,76 +1,78 @@
-From: rod@tpgi.com.au
+From: Manuel Krause <manuelkrause@netscape.net>
 Subject: Re: Silly question, defrag
-Date: Thu, 4 Apr 2002 11:42:26 +1000
-Message-ID: <3CAC3C22.30357.D03D9F@localhost>
-References: <3CAB48E5.9050001@namesys.com>; from reiser@namesys.com on Wed, Apr 03, 2002 at 10:24:37PM +0400
+Date: Thu, 04 Apr 2002 03:58:29 +0200
+Message-ID: <3CABB345.8010204@netscape.net>
+References: <200204030017.12595@X-Message-Flag:> <3CAABBA6.3030101@swelltech.com> <200204030740.05950@X-Message-Flag:> <20020403154906.A21821@ultraviolet.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020403164545.B21821@ultraviolet.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Tracy R Reed <treed@ultraviolet.org>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-<snip>
+On 04/04/2002 01:49 AM, Tracy R Reed wrote:
 
-> I have to wonder about your motives here, Hans. You are the one who stands
-> to gain by capitalizing on newbie Unix/Linux users misunderstanding of
-> filesystems based on their experience with DOS and Windows and here you
-> are promoting defrag as a feature which puts your FS above others. They
-> have learned to compulsively defrag their disks once a week and you are
-> looking to feed their addiction. I think reiserfs is really great and a
-> defrag/repacker will be nice but the above strikes me as a bit strange.
-> How long has ext2 been around as the stock Linux filesystem?  More than
-> long enough for people to have realized whether a defragger would be
-> useful. Yet I can't think of a single distribution (of Linux or Unix in
-> general) that comes with a defragger. Stephen Tweedie wrote one for it but
-> nobody bothers to use it or even to include it with their distro.
+> On Wed, Apr 03, 2002 at 08:08:21AM -0800, Matthew Johnson wrote:
 > 
-> Please don't perpetuate the idea that good filesystems have/need a
-> defragger.
+>>On Wednesday 03 April 2002 00:21, Joe Cooper wrote:
+>>
+>>>"Don't"
+>>>
+>>>
+>>Well I don't, but when newbies who are used to computing on win32 systems 
+>>hear that they may not just accept the word don't. Actually its hard to find 
+>>the reasons exactly why one does not defrag.
+>>
 > 
-> -- 
-> Tracy Reed      http://www.ultraviolet.org
-> "She moves in mysterious ways"
+> It is more useful to look at why one DID defrag back in the bad ol' days
+> of DOS and Windows. IIRC, the FAT filesystem would scan through it's
+> equivalient of the free block list and start writing at the first free
+> block. If it wrote for a while and then there was other data in the way it
+> stop and go to the next free space. This way fragmentation was practically
+> guarenteed and it happened rapidly. Modern filesystems use much smarter
+> ways of laying out data on the disk so that fragmentation happens much
+> less often. Now you will almost certainly waste more time by defragmenting
+> than you would suffering whatever performance hit the little fragmentation
+> there is causes. I've been using Linux/Unix for 10 years and I have never
+> (not once!) defragged a filesystem.
 > 
-I'd actually suggest you are one of the poeple perpetuating a 
-fragmentation myth.
+> 
+>>Perhaps I should aim this message to the kernel mailing list, so that I can 
+>>get response from a wider array of people who like other filesystems. But its 
+>>not kernel related. 
+>>
+> 
+> I wouldn't recommend doing that. The answer is pretty much the same
+> regardless of the filesystem. If it's a non-FAT fs you probably don't have
+> to worry about fragmentation.
+> 
+> 
 
-Fragmentation is an artifact of random access to disk media.  It is 
-caused when the final size of a file is not known by the filesystem 
-layer at write time and hence it is not possible to allocate the total 
-space in one contiguous block. Log files and variable database files 
-that grow over time are a classic example of this scenario. 
+Yesss. I like defragmenters on my Win98 disks, as I really see a speedup 
+after using them (e.g after new software installations OR a longer 
+status quo, but the effect depends on the defragmenters configuration).
 
-This leaves the the only option to defrag once the file has been 
-completed OR at some user defined interval. Some fs may try to 
-reduce the incidence of this but cant prevent it happening. 
+You describe how/why this makes sense on FAT FS.
 
-The response that "some fs's that are better than DOS/WinXX and 
-dont have this problem" is simply a cop out and serve to confuse the 
-issue.  Its these "linux is better than winxx" statements without a 
-matching technical explanation that discredit us in the eyes of others.
+When I backupped my ReiserFS partitions monthly I used to recreate the 
+original FS if everything was o.k. and copy back the whole content. 
+That's no server here, it's a standalone notebook. After that procedure 
+I found some applications that worked faster and some that were slower 
+than before. O.k. I may have only subjectively compared the load times 
+of NS6 +32MB disk cache and SO5.2. They were different than before 
+copying, but the sum didn't show any advantage.
 
-Certainly the behavior of DOS/WIN systems in operation (endless 
-upgrades, driver installs etc) promote fragmentation however some 
-linux deployments fall foul to the same problem albeit for a different 
-reason. (We have been bitten by this).
+So?: I don't really need a Defragmenter on v3.6 ReiserFS in FAT scales 
+for my usage and I really don't need to recreate and copy-back.
 
-Currently the only way to defrag an ext2 fs (or reiserfs) is a copy 
-off, mke2fs and copy back cycle - hardly ideal.  BTW if you are 
-interested in scripts that capable of totally framenting an ext2 
-partition (as reported by chke2fs and demonstrated by timing a  
-grep) and also a discussion of the problem - check the archives.
+Mmh, just wanted to add my experience,
 
-Hans has recognised a genuine (though not popular or talked about) 
-need in some applications of the fs and is fixing it. Good on him.
+best wishes,
 
-
-Cheers
--Rod
-
+Manuel
 
 
 
