@@ -1,493 +1,115 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Reiser4fs and SPARC64?
-Date: Wed, 16 Feb 2005 17:24:16 +0300
-Message-ID: <200502161724.16258.vitaly@namesys.com>
-References: <421347FD.6000204@d-g-c.de> <20050216140944.GZ7482@backtop.namesys.com>
+From: Laurynas Biveinis <Laurynas.Biveinis@mif.vu.lt>
+Subject: Re: Partial data loss with reiserfs3
+Date: Wed, 16 Feb 2005 18:10:05 +0200
+Message-ID: <1108570205.4213705d41816@webmail.vu.lt>
+References: <200502161622.06930.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Type: Multipart/Mixed;
-  boundary="Boundary-00=_Qe1EC69vnVO14GB"
+Content-Transfer-Encoding: 8bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050216140944.GZ7482@backtop.namesys.com>
+In-Reply-To: <200502161622.06930.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "mailinglists@d-g-c.de" <mailinglists@d-g-c.de>
+Content-Type: text/plain; charset="us-ascii"
+To: Vitaly Fertman <vitaly@namesys.com>
 Cc: reiserfs-list@namesys.com
 
---Boundary-00=_Qe1EC69vnVO14GB
-Content-Type: text/plain;
-  charset="koi8-r"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Hello,
 
-On Wednesday 16 February 2005 17:09, Alex Zarochentsev wrote:
-> On Wed, Feb 16, 2005 at 02:17:49PM +0100, mailinglists@d-g-c.de wrote:
-> > Hi,
-> >
-> > i just wondered about reiser4fs working on SPARC64? I use Gentoo Sparc64
-> > and it is working fine with kernel 2.4.28. But is the Reiser4 code
-> > SPARC64 ready?
->
-> It would be nice if you try it :) we have no reiser4/sparc64 reports yet.
->
-> Reiser4 code is included into AKPM's -mm kernels.  mkfs and other utils are
-> in the ftp://ftp.namesys.com/pub/reiser4progs/
->
-> At least 3 additional patches are needed for running reiser4 on sparc64.
-> They not yet included into -mm kernels.  I am attaching them to this
-> e-mail.
+Cituojant Vitaly Fertman <vitaly@namesys.com>:
 
-and at least these 2 patches needs to applied also.
+> (1) copy NTFS -> ext3
+> (2) shrink NTFS
+> (3) reboot
 
--- 
+> > At this point the disk has, in order of physical layout: /dev/hda5
+> > (NTFS), 4GB /dev/hda6 (no FS), 2GB /dev/hda7 (reiser).
+> 
+> was hda7 reiserfs or ext3 ??
+
+Following history as you have written it, it was ext3. There were
+following extra steps, that I have skipped, because at the end of them
+I didn't have any problems with my data.
+(3.1) create /dev/hda6 as ext3
+(3.2) copy data from /dev/hda7 to /dev/hda6
+(3.3) delete /dev/hda7
+(3.4) find out that ext3 move/resize is unsupported
+(3.5) create /dev/hda7 reiser
+(3.6) copy data from /dev/hda6 to /dev/hda7
+
+At this point I had hda7 reiser.
+
+> (4) create reiserfs on former NTFS, between NTFS and ext3
+> (5) copy ext3 -> reiserfs
+
+> > It is possible that I had created, copied, destroyed partitions
+> > since last boot - but no repartitioning.
+> 
+> this is not clear: created, destroyed partitions means
+> repartitioning,
+> changing parittion table means repartitioning. Do I understand
+> correctly
+> that you mean create, copy, destroy filesystems here?
+
+Right, I meant filesystems, not partitions. Sorry.
+
+> (6) fdisk: remove hda7, remove hda6, create large hda6;
+> (7) reboot
+
+> > [root@laurynas-pc ~]# resizefs.reiserfs -f /dev/hda6 +3G
+> 
+> 3G just looks too large, there was only 2G hda7 as you have
+> mentioned.
+> right?
+
+Right. I have specified a value knowingly too big together with '-f'
+option so that fs is resized to the maximum possible size (which is
+about, but not exactly, 2G). 
+
+> (8) rezise.reiserfs
+> (9) reboot
+> (10) login failed
+> (11) lots of fs corruptions.
+>  -- some lost file StatDatas 
+>  -- some wrong delimiting keys
+>  -- some unformatted blocks are used more then once
+>  -- 1 formatted block is used more then once 
+>  -- many broken bitmap blocks
+> 
+> when you run resizer, has it ever asked for confirmation?
+> like 'Do you want to continue? [y/N]:'
+
+I do not remember well, but I think there wasn't any serious warning.
+If
+there was a warning like "You specified +3G, I can resize only to +2G,
+continue?" or similar, then I had accepted it. I would have stopped on
+any more serious warning or warning that I do not understand well.
+
+> are you sure you have the relable memory? would you test it?
+
+The system generally is stable and GCC, being the notorious RAM
+checker,
+compilations do not SIGSEGV. I think I will arrange memcheck86 run to
+be sure.
+
+> the reason of the problem is not clear. resizer on expand writes only
+> 
+> to _new_ bitmap blocks and overwrites only super block, and it does 
+> not touch the fs storage tree.
+> 
+> so you can try to recover from the whole partition on the copy. Have
+> 
+> you made fs/partition backup before rebuild-tree (probably fdisk)? 
+> If no, make a copy of the hda6 partition and run
+> 	reiserfsck --rebuild-tree -S <hda6-copy> -l logfile
+> if yes, copy it back to hda6 and run on hda6.
+
+I don't partition backup before rebuild-tree. I'll make one now, but it
+will take some time, as free space is not readily available. I'll reply
+later with results.
+
+--
 Thanks,
-Vitaly Fertman
-
---Boundary-00=_Qe1EC69vnVO14GB
-Content-Type: text/x-diff;
-  charset="koi8-r";
-  name="libaal-1.0.3-unaligned.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="libaal-1.0.3-unaligned.patch"
-
-diff -rup libaal-1.0.3/include/aal/Makefile.am libaal-1.0.3-1/include/aal/Makefile.am
---- libaal-1.0.3/include/aal/Makefile.am	2004-01-08 15:49:40.000000000 +0100
-+++ libaal-1.0.3-1/include/aal/Makefile.am	2005-01-16 22:18:51.000000000 +0100
-@@ -2,4 +2,4 @@ aalincludedir		= $(includedir)/aal
- 
- aalinclude_HEADERS   	= libaal.h device.h file.h exception.h list.h malloc.h \
- 			  print.h string.h math.h endian.h debug.h bitops.h \
--                          gauge.h block.h ui.h stream.h hash.h types.h
-+                          gauge.h block.h ui.h stream.h hash.h types.h unaligned.h
-diff -rup libaal-1.0.3/include/aal/Makefile.in libaal-1.0.3-1/include/aal/Makefile.in
---- libaal-1.0.3/include/aal/Makefile.in	2004-12-06 19:04:14.000000000 +0100
-+++ libaal-1.0.3-1/include/aal/Makefile.in	2005-01-16 15:24:49.000000000 +0100
-@@ -146,7 +146,7 @@ aalincludedir = $(includedir)/aal
- 
- aalinclude_HEADERS = libaal.h device.h file.h exception.h list.h malloc.h \
- 			  print.h string.h math.h endian.h debug.h bitops.h \
--                          gauge.h block.h ui.h stream.h hash.h types.h
-+                          gauge.h block.h ui.h stream.h hash.h types.h unaligned.h
- 
- subdir = include/aal
- ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-diff -rup libaal-1.0.3/include/aal/endian.h libaal-1.0.3-1/include/aal/endian.h
---- libaal-1.0.3/include/aal/endian.h	2003-07-27 10:55:29.000000000 +0200
-+++ libaal-1.0.3-1/include/aal/endian.h	2005-01-16 22:29:19.000000000 +0100
-@@ -75,8 +75,8 @@
- 
- #endif
- 
--#define aal_get_leXX(xx, p, field)	(LE##xx##_TO_CPU ((p)->field))
--#define aal_set_leXX(xx, p, field, val)	((p)->field = CPU_TO_LE##xx(val))
-+#define aal_get_leXX(xx, p, field)	(LE##xx##_TO_CPU (get_unaligned(&(p)->field)))
-+#define aal_set_leXX(xx, p, field, val)	put_unaligned(&(p)->field, CPU_TO_LE##xx(val))
- 
- #define aal_get_le16(p, field) 		aal_get_leXX(16, p, field)
- #define aal_set_le16(p, field, val) 	aal_set_leXX(16, p, field, val)
-diff -rup libaal-1.0.3/include/aal/libaal.h libaal-1.0.3-1/include/aal/libaal.h
---- libaal-1.0.3/include/aal/libaal.h	2004-09-22 14:27:23.000000000 +0200
-+++ libaal-1.0.3-1/include/aal/libaal.h	2005-01-16 22:18:51.000000000 +0100
-@@ -26,6 +26,7 @@ extern "C" {
- #include "math.h"
- #include "bitops.h"
- #include "endian.h"
-+#include "unaligned.h"
- #include "debug.h"
- #include "gauge.h"
- #include "block.h"
-diff -rup libaal-1.0.3/include/aal/unaligned.h libaal-1.0.3-1/include/aal/unaligned.h
---- libaal-1.0.3/include/aal/unaligned.h	2005-01-16 23:09:05.000000000 +0100
-+++ libaal-1.0.3-1/include/aal/unaligned.h	2005-01-16 22:18:51.000000000 +0100
-@@ -0,0 +1,26 @@
-+/* Copyright (C) 2001-2005 by Hans Reiser, licensing governed by libaal/COPYING.
-+         
-+   unaligned.h -- libaal unalignment declaration. */
-+
-+#ifdef HAVE_CONFIG_H
-+#  include <config.h>
-+#endif
-+
-+#ifndef AAL_UNALIGNED_H
-+#define AAL_UNALIGNED_H
-+
-+#define get_unaligned(ptr)				\
-+({							\
-+	__typeof__(*(ptr)) __tmp;			\
-+	aal_memcpy(&__tmp, (ptr), sizeof(*(ptr)));	\
-+	__tmp;						\
-+})
-+
-+#define put_unaligned(ptr, val)				\
-+({							\
-+	__typeof__(*(ptr)) __tmp = (val);		\
-+	aal_memcpy((ptr), &__tmp, sizeof(*(ptr)));	\
-+	(void)0;					\
-+})
-+
-+#endif
-
---Boundary-00=_Qe1EC69vnVO14GB
-Content-Type: text/x-diff;
-  charset="koi8-r";
-  name="reiser4progs-1.0.3-unaligned.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="reiser4progs-1.0.3-unaligned.patch"
-
-diff -rup reiser4progs-1.0.3/plugin/item/cde40/cde40.h reiser4progs-1.0.3-1/plugin/item/cde40/cde40.h
---- reiser4progs-1.0.3/plugin/item/cde40/cde40.h	2004-06-30 01:42:33.000000000 +0200
-+++ reiser4progs-1.0.3-1/plugin/item/cde40/cde40.h	2005-01-16 22:57:58.000000000 +0100
-@@ -33,6 +33,7 @@ struct objid3 {
- 
- typedef struct objid3 objid3_t;
- 
-+
- struct hash3 {
- 	d8_t objectid[8];
- 	d8_t offset[8];
-@@ -130,71 +131,76 @@ extern uint32_t cde40_cut(reiser4_place_
- extern uint16_t cde40_overhead();
- 
- #if defined(ENABLE_SHORT_KEYS) && defined(ENABLE_LARGE_KEYS)
-+
-+/* objidN_t macroses. */
-+#define ob_loc(ob, pol)							\
-+	((pol == 3) ?							\
-+	 ((objid3_t *)(ob))->locality :					\
-+	 ((objid4_t *)(ob))->locality)
-+ 
- #define ob_get_locality(ob, pol)					\
--        ((pol == 3) ?							\
--	 LE64_TO_CPU(*((d64_t *)((objid3_t *)(ob))->locality)) :	\
--	 LE64_TO_CPU(*((d64_t *)((objid4_t *)(ob))->locality)))
-+	LE64_TO_CPU(get_unaligned((d64_t *)ob_loc(ob, pol)))
- 
- #define ob_set_locality(ob, val, pol)					\
--        ((pol == 3) ?							\
--	 (*(d64_t *)((objid3_t *)(ob))->locality) = CPU_TO_LE64(val) :	\
--	 (*(d64_t *)((objid4_t *)(ob))->locality) = CPU_TO_LE64(val))
-+	put_unaligned((d64_t *)ob_loc(ob, pol), CPU_TO_LE64(val))
-+
-+#define ob_oid(ob, pol)							\
-+	((pol == 3) ?							\
-+	 ((objid3_t *)(ob))->objectid :					\
-+	 ((objid4_t *)(ob))->objectid)
- 
- #define ob_get_objectid(ob, pol)					\
--        ((pol == 3) ?							\
--	 LE64_TO_CPU(*((d64_t *)((objid3_t *)(ob))->objectid)) :	\
--	 LE64_TO_CPU(*((d64_t *)((objid4_t *)(ob))->objectid)))
-+	LE64_TO_CPU(get_unaligned((d64_t *)ob_oid(ob, pol)))
- 
- #define ob_set_objectid(ob, val, pol)					\
--        ({if (pol == 3)							\
--	 (*(d64_t *)((objid3_t *)(ob))->objectid) = CPU_TO_LE64(val);	\
--         else								\
--	 (*(d64_t *)((objid4_t *)(ob))->objectid) = CPU_TO_LE64(val);})
-+	put_unaligned((d64_t *)ob_oid(ob, pol), CPU_TO_LE64(val))
-+
-+#define ob_ord(ob, pol) ((pol == 3) ? 0 : ((objid4_t *)(ob))->ordering)
- 
- #define ob_get_ordering(ob, pol)					\
--        ((pol == 3) ? 0 :						\
--	 LE64_TO_CPU(*((d64_t *)((objid4_t *)(ob))->ordering)))
-+	LE64_TO_CPU(get_unaligned((d64_t *)ob_ord(ob, pol)))
- 
- #define ob_set_ordering(ob, val, pol)					\
--        ({if (pol == 3) do {} while(0); else				\
--	 (*(d64_t *)((objid4_t *)(ob))->ordering) = CPU_TO_LE64(val);})
-+	({if (pol == 3) do {} while(0); else				\
-+	 put_unaligned((d64_t *)ob_ord(ob, pol), CPU_TO_LE64(val));})
- 
--#define ob_size(pol)							\
--        ((pol == 3) ? sizeof(objid3_t) : sizeof(objid4_t))
-+#define ob_size(pol) ((pol == 3) ? sizeof(objid3_t) : sizeof(objid4_t))
-+
-+/* hashN_t macroses.  */
-+#define ha_oid(ha, pol)							\
-+	((pol == 3) ?							\
-+	 ((hash3_t *)(ha))->objectid :					\
-+	 ((hash4_t *)(ha))->objectid)
- 
- #define ha_get_objectid(ha, pol)					\
--        ((pol == 3) ?							\
--	 LE64_TO_CPU(*((d64_t *)((hash3_t *)(ha))->objectid)) :		\
--	 LE64_TO_CPU(*((d64_t *)((hash4_t *)(ha))->objectid)))
-+	LE64_TO_CPU(get_unaligned((d64_t *)ha_oid(ha, pol)))
- 
- #define ha_set_objectid(ha, val, pol)					\
--        ({if (pol == 3)							\
--         (*(d64_t *)((hash3_t *)(ha))->objectid) = CPU_TO_LE64(val);	\
--	 else								\
--	 (*(d64_t *)((hash4_t *)(ha))->objectid) = CPU_TO_LE64(val);})
-+	put_unaligned((d64_t *)ha_oid(ha, pol),  CPU_TO_LE64(val))
-+
-+#define ha_off(ha, pol)							\
-+	((pol == 3) ?							\
-+	 ((hash3_t *)(ha))->offset :					\
-+	 ((hash4_t *)(ha))->offset)
- 
- #define ha_get_offset(ha, pol)						\
--        ((pol == 3) ?							\
--         LE64_TO_CPU(*((d64_t *)((hash3_t *)(ha))->offset)) :		\
--	 LE64_TO_CPU(*((d64_t *)((hash4_t *)(ha))->offset)))
--	 
-+	LE64_TO_CPU(get_unaligned((d64_t *)ha_off(ha, pol)))
-+
- #define ha_set_offset(ha, val, pol)					\
--        ({if (pol == 3)							\
--        (*(d64_t *)((hash3_t *)(ha))->offset) = CPU_TO_LE64(val);	\
--        else								\
--        (*(d64_t *)((hash4_t *)(ha))->offset) = CPU_TO_LE64(val);})
-+	put_unaligned((d64_t *)ha_off(ha, pol), CPU_TO_LE64(val))
-+
-+#define ha_ord(ha, pol) ((pol == 3) ? 0 : ((hash4_t *)(ha))->ordering)
- 
- #define ha_get_ordering(ha, pol)					\
--        ((pol == 3) ? 0 :						\
--	 LE64_TO_CPU(*((d64_t *)((hash4_t *)(ha))->ordering)))
--	 
-+	LE64_TO_CPU(get_unaligned((d64_t *)ha_ord(ha, pol)))
-+
- #define ha_set_ordering(ha, val, pol)					\
--        ({if (pol == 3) do {} while(0); else				\
--        (*(d64_t *)((hash4_t *)(ha))->ordering) = CPU_TO_LE64(val);})
-+	({if (pol == 3) do {} while(0); else				\
-+	 put_unaligned((d64_t *)ha_ord(ha, pol), CPU_TO_LE64(val));})
- 
--#define ha_size(pol)							\
--        ((pol == 3) ? sizeof(hash3_t) : sizeof(hash4_t))
-+#define ha_size(pol) ((pol == 3) ? sizeof(hash3_t) : sizeof(hash4_t))
- 
-+/* entryN_t macroses */
- #define en_get_offset(en, pol)						\
-         ((pol == 3) ?							\
- 	 aal_get_le16(((entry3_t *)(en)), offset) :			\
-@@ -214,97 +220,108 @@ extern uint16_t cde40_overhead();
- 	 (void *)(&((cde403_t *)(pl)->body)->entry[pos]) :		\
- 	 (void *)(&((cde404_t *)(pl)->body)->entry[pos]))
- 
--#else
--#if defined(ENABLE_SHORT_KEYS)
-+#elif defined(ENABLE_SHORT_KEYS)
-+
-+/* objidN_t macroses.  */
- #define ob_get_locality(ob, pol)					\
--	 LE64_TO_CPU(*((d64_t *)((objid3_t *)(ob))->locality))
-+	LE64_TO_CPU(get_unaligned((d64_t *)((objid3_t *)(ob))->locality))
- 
- #define ob_set_locality(ob, val, pol)					\
--	 (*(d64_t *)((objid3_t *)(ob))->locality) = CPU_TO_LE64(val)
-+	put_unaligned((d64_t *)((objid3_t *)(ob))->locality,		\
-+		      CPU_TO_LE64(val))
- 
- #define ob_get_objectid(ob, pol)					\
--	 LE64_TO_CPU(*((d64_t *)((objid3_t *)(ob))->objectid))
-+	LE64_TO_CPU(get_unaligned((d64_t *)((objid3_t *)(ob))->objectid))
- 
- #define ob_set_objectid(ob, val, pol)					\
--	 (*(d64_t *)((objid3_t *)(ob))->objectid) = CPU_TO_LE64(val)
-+	put_unaligned((d64_t *)((objid3_t *)(ob))->objectid,		\
-+		      CPU_TO_LE64(val))
- 
- #define ob_get_ordering(ob, pol) (0)
- #define ob_set_ordering(ob, val, pol) do {} while(0)
- 
--#define ob_size(pol)							\
--        (sizeof(objid3_t))
-+#define ob_size(pol) (sizeof(objid3_t))
- 
-+/* hashN_t macroses.  */
- #define ha_get_objectid(ha, pol)					\
--	 LE64_TO_CPU(*((d64_t *)((hash3_t *)(ha))->objectid))
-+	LE64_TO_CPU(get_unaligned((d64_t *)((hash3_t *)(ha))->objectid))
- 
- #define ha_set_objectid(ha, val, pol)					\
--         (*(d64_t *)((hash3_t *)(ha))->objectid) = CPU_TO_LE64(val)
-+	put_unaligned((d64_t *)((hash3_t *)(ha))->objectid,		\
-+		      CPU_TO_LE64(val))
- 
- #define ha_get_offset(ha, pol)						\
--         LE64_TO_CPU(*((d64_t *)((hash3_t *)(ha))->offset))
--	 
-+	LE64_TO_CPU(get_unaligned((d64_t *)((hash3_t *)(ha))->offset))
-+
- #define ha_set_offset(ha, val, pol)					\
--        (*(d64_t *)((hash3_t *)(ha))->offset) = CPU_TO_LE64(val)
-+	put_unaligned((d64_t *)((hash3_t *)(ha))->offset,		\
-+		      CPU_TO_LE64(val))
- 
- #define ha_get_ordering(ha, pol) (0)
- #define ha_set_ordering(ha, val, pol) do {} while (0)
- 
--#define ha_size(pol)							\
--        (sizeof(hash3_t))
-+#define ha_size(pol) (sizeof(hash3_t))
- 
-+/* entryN_t macroses */
- #define en_get_offset(en, pol)						\
- 	 aal_get_le16(((entry3_t *)(en)), offset)
- 
- #define en_set_offset(en, val, pol)					\
-          aal_set_le16(((entry3_t *)(en)), offset, val)
- 
--#define en_size(pol)							\
--        (sizeof(entry3_t))
-+#define en_size(pol) (sizeof(entry3_t))
- 
- #define cde_get_entry(pl, pos, pol)					\
- 	 ((void *)(&((cde403_t *)pl->body)->entry[pos]))
--#else
-+
-+#elif defined(ENABLE_LARGE_KEYS)
-+/* objidN_t macroses. */
- #define ob_get_locality(ob, pol)					\
--	 LE64_TO_CPU(*((d64_t *)((objid4_t *)(ob))->locality))
-+	LE64_TO_CPU(get_unaligned((d64_t *)((objid4_t *)(ob))->locality))
- 
- #define ob_set_locality(ob, val, pol)					\
--	 (*(d64_t *)((objid4_t *)(ob))->locality) = CPU_TO_LE64(val)
-+	put_unaligned((d64_t *)((objid4_t *)(ob))->locality,		\
-+		      CPU_TO_LE64(val))
- 
- #define ob_get_objectid(ob, pol)					\
--	 LE64_TO_CPU(*((d64_t *)((objid4_t *)(ob))->objectid))
-+	LE64_TO_CPU(get_unaligned((d64_t *)((objid4_t *)(ob))->objectid))
- 
- #define ob_set_objectid(ob, val, pol)					\
--	 (*(d64_t *)((objid4_t *)(ob))->objectid) = CPU_TO_LE64(val)
-+	put_unaligned((d64_t *)((objid4_t *)(ob))->objectid,		\
-+		      CPU_TO_LE64(val))
- 
- #define ob_get_ordering(ob, pol)					\
--	 LE64_TO_CPU(*((d64_t *)((objid4_t *)(ob))->ordering))
-+	LE64_TO_CPU(get_unaligned((d64_t *)((objid4_t *)(ob))->ordering))
- 
- #define ob_set_ordering(ob, val, pol)					\
--	 (*(d64_t *)((objid4_t *)(ob))->ordering) = CPU_TO_LE64(val)
-+	put_unaligned((d64_t *)((objid4_t *)(ob))->ordering,		\
-+		      CPU_TO_LE64(val))
- 
--#define ob_size(pol)							\
--        (sizeof(objid4_t))
-+#define ob_size(pol) (sizeof(objid4_t))
- 
-+/* hashN_t macroses.  */
- #define ha_get_objectid(ha, pol)					\
--	 LE64_TO_CPU(*((d64_t *)((hash4_t *)(ha))->objectid))
-+	LE64_TO_CPU(get_unaligned((d64_t *)((hash4_t *)(ha))->objectid))
- 
- #define ha_set_objectid(ha, val, pol)					\
--         (*(d64_t *)((hash4_t *)(ha))->objectid) = CPU_TO_LE64(val)
-+	put_unaligned((d64_t *)((hash4_t *)(ha))->objectid,		\
-+		      CPU_TO_LE64(val))
- 
- #define ha_get_offset(ha, pol)						\
--         LE64_TO_CPU(*((d64_t *)((hash4_t *)(ha))->offset))
-+	LE64_TO_CPU(get_unaligned((d64_t *)((hash4_t *)(ha))->offset))
- 	 
- #define ha_set_offset(ha, val, pol)					\
--        (*(d64_t *)((hash4_t *)(ha))->offset) = CPU_TO_LE64(val)
-+	put_unaligned((d64_t *)((hash4_t *)(ha))->offset,		\
-+		      CPU_TO_LE64(val))
- 
- #define ha_get_ordering(ha, pol)					\
--         LE64_TO_CPU(*((d64_t *)((hash4_t *)(ha))->ordering))
-+	LE64_TO_CPU(get_unaligned((d64_t *)((hash4_t *)(ha))->ordering))
- 
- #define ha_set_ordering(ha, val, pol)					\
--        (*(d64_t *)((hash4_t *)(ha))->ordering) = CPU_TO_LE64(val)
-+	put_unaligned((d64_t *)((hash4_t *)(ha))->ordering,		\
-+		      CPU_TO_LE64(val))
- 
--#define ha_size(pol)							\
--        (sizeof(hash4_t))
-+#define ha_size(pol) (sizeof(hash4_t))
- 
- #define en_get_offset(en, pol)						\
- 	 aal_get_le16(((entry4_t *)(en)), offset)
-@@ -312,13 +329,11 @@ extern uint16_t cde40_overhead();
- #define en_set_offset(en, val, pol)					\
-          aal_set_le16(((entry4_t *)(en)), offset, val)
- 
--#define en_size(pol)							\
--        (sizeof(entry4_t))
-+#define en_size(pol) (sizeof(entry4_t))
- 
- #define cde_get_entry(pl, pos, pol)					\
- 	 ((void *)(&((cde404_t *)pl->body)->entry[pos]))
- #endif
--#endif
- 
- #define cde_get_units(pl)						\
-         aal_get_le16(((cde40_t *)pl->body), units)
-diff -rup reiser4progs-1.0.3/plugin/key/key_large/key_large.h reiser4progs-1.0.3-1/plugin/key/key_large/key_large.h
---- reiser4progs-1.0.3/plugin/key/key_large/key_large.h	2004-09-22 14:35:47.000000000 +0200
-+++ reiser4progs-1.0.3-1/plugin/key/key_large/key_large.h	2005-01-16 22:57:58.000000000 +0100
-@@ -120,14 +120,14 @@ extern uint64_t key_large_get_fobjectid(
- static inline uint64_t kl_get_el(const key_large_t *key,
- 				 key_large_field_t off)
- {
--	return LE64_TO_CPU(key->el[off]);
-+	return LE64_TO_CPU(get_unaligned(key->el + off));
- }
- 
- static inline void kl_set_el(key_large_t *key,
- 			     key_large_field_t off,
- 			     uint64_t value)
- {
--	key->el[off] = CPU_TO_LE64(value);
-+	put_unaligned(key->el + off, CPU_TO_LE64(value));
- }
- 
- static inline int kl_comp_el(void *k1, void *k2, int off) {
-diff -rup reiser4progs-1.0.3/plugin/key/key_short/key_short.h reiser4progs-1.0.3-1/plugin/key/key_short/key_short.h
---- reiser4progs-1.0.3/plugin/key/key_short/key_short.h	2004-09-22 14:35:54.000000000 +0200
-+++ reiser4progs-1.0.3-1/plugin/key/key_short/key_short.h	2005-01-16 22:57:58.000000000 +0100
-@@ -108,14 +108,14 @@ extern uint64_t key_short_get_fobjectid(
- static inline uint64_t ks_get_el(const key_short_t *key,
- 				 key_short_field_t off)
- {
--	return LE64_TO_CPU(key->el[off]);
-+	return LE64_TO_CPU(get_unaligned(key->el + off));
- }
- 
- static inline void ks_set_el(key_short_t *key,
- 			     key_short_field_t off,
- 			     uint64_t value)
- {
--	key->el[off] = CPU_TO_LE64(value);
-+	put_unaligned(key->el + off, CPU_TO_LE64(value));
- }
- 
- static inline int ks_comp_el(void *k1, void *k2, int off) {
-diff -rup reiser4progs-1.0.3/plugin/sdext/sdext_plug/sdext_plug.h reiser4progs-1.0.3-1/plugin/sdext/sdext_plug/sdext_plug.h
---- reiser4progs-1.0.3/plugin/sdext/sdext_plug/sdext_plug.h	2004-06-03 22:00:12.000000000 +0200
-+++ reiser4progs-1.0.3-1/plugin/sdext/sdext_plug/sdext_plug.h	2005-01-16 22:57:58.000000000 +0100
-@@ -27,14 +27,14 @@ typedef struct sdext_plug sdext_plug_t;
- 
- extern reiser4_core_t *sdext_plug_core;
- 
--#define sdext_plug_get_count(ext)		aal_get_le16(ext, count)
--#define sdext_plug_set_count(ext, val)		aal_set_le16(ext, count, val)
-+#define sdext_plug_get_count(ext)		aal_get_le16((ext), count)
-+#define sdext_plug_set_count(ext, val)		aal_set_le16((ext), count, (val))
- 
--#define sdext_plug_get_member(ext, n)		aal_get_le16(&(ext->slot[n]), member)
--#define sdext_plug_set_member(ext, n, val)	aal_set_le16(&(ext->slot[n]), member, val)
-+#define sdext_plug_get_member(ext, n)		aal_get_le16(&((ext)->slot[n]), member)
-+#define sdext_plug_set_member(ext, n, val)	aal_set_le16(&((ext)->slot[n]), member, (val))
- 
--#define sdext_plug_get_pid(ext, n)		aal_get_le16(&(ext->slot[n]), plug)
--#define sdext_plug_set_pid(ext, n, val)		aal_set_le16(&(ext->slot[n]), plug, val)
-+#define sdext_plug_get_pid(ext, n)		aal_get_le16(&((ext)->slot[n]), plug)
-+#define sdext_plug_set_pid(ext, n, val)		aal_set_le16(&((ext)->slot[n]), plug, (val))
- 
- extern uint32_t sdext_plug_length(stat_entity_t *stat, void *hint);
- 
-
---Boundary-00=_Qe1EC69vnVO14GB--
+Laurynas
 
