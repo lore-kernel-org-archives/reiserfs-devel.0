@@ -1,32 +1,67 @@
-From: Enrique Perez-Terron <enrique.perez-terron@norway.online.no>
-Subject: Re: V4 status
-Date: Fri, 05 Dec 2003 00:33:38 +0100
-Message-ID: <1070580817.8344.140.camel@arabia.home.lan>
-References: <16333.14692.61778.304155@pc7.dolda2000.com>
-	 <3FCD47C4.50500@ninja.dynup.net> <3FCE39B8.20307@namesys.com>
-	 <16334.15412.686909.927196@laputa.namesys.com>
+From: lrc1@st-andrews.ac.uk
+Subject: Re: Carrying Attributes too Far
+Date: Fri,  5 Dec 2003 00:30:27 +0000
+Message-ID: <1070584227.3fcfd1a3d67f4@webmail.st-andrews.ac.uk>
+References: <1065247084.3f7e616c94ec9@webmail.st-andrews.ac.uk> <3FCE3716.8000509@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16232-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-16233-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16334.15412.686909.927196@laputa.namesys.com>
+In-Reply-To: <3FCE3716.8000509@namesys.com>
+Content-Transfer-Encoding: 8bit
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-On Wed, 2003-12-03 at 20:40, Nikita Danilov wrote:
+Quoting Hans Reiser <reiser@namesys.com>:
+
 ...
->  > > (for example, I should be able to do 'touch file; ls file'), I have 
->  > > had two problems there.  First, ls seems to know it's a file, and so I 
->  > > can't see any files within it.  Second, it needs the executable bit, 
-... 
-> Another problem ("ls seems to know it's a file") is with user level
-> programs that are sometimes too smart.
 
-What happens on v4 if you do "ls -l file/." ?
+> lrc1@st-andrews.ac.uk wrote:
+> 
+> >Sorry for the delay in replying.
+> >
+> >Quoting Hubert Chan <hubert@uhoreg.ca>:
 
-Regards, Enrique
+...
 
+> >Yes, it is impossible to hard-link between two files on different volumes
+> >(except at mount points) in the Unix filesystem, but it shouldn't be. (More
+> >generally, with the necessary permissions it should be possible to make any
+> file
+> >the child of any directory via a hard link, except where doing so would
+> create a
+> >cycle.) 
+> >
+> This implies that two filesystems can share an identification number
+> between them.
+
+I would suggest that for every link to a file on a different filesystem, the
+linking directory should store both an identifier for the child file's
+filesystem and the child file's on-disk inumber on that filesystem.* The reverse
+links would be stored in the same way. That way, filesystems don't have to
+understand other filesystems' identifier schemes, or coordinate their own
+schemes with them. (The obvious alternative approach - maintaining a list of
+unique identifiers for all files on all mounted filesystems - is undesirable for
+a number of reasons. For one thing, it is limiting and unsafe to assume that all
+mounted filesystems are willing and able to provide an accurate list of all
+their files in a reasonable time.)
+
+This leaves one significant problem: what happens when a file is moved from one
+filesystem to another? What will prevent the cross-filesystem hard links to the
+file from breaking? Cleaning up cross-filesystem links after explicit file
+deletion is a related but simpler problem. I think a good but not ideal solution
+to this problem is possible. I'll go into detail if anyone is interested.
+
+* Actually filesystems should hand out file identifiers for external linking
+which may or may not be the same as their on-disk inumbers.
+
+...
+
+Leo.
+
+-----------------------------------------------------------------
+University of St Andrews Webmail: http://webmail.st-andrews.ac.uk
