@@ -1,46 +1,27 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Memory Corruption
-Date: 29 Aug 2002 09:40:26 -0400
-Message-ID: <1030628426.17778.337.camel@tiny>
+From: =?windows-1252?Q?Xabo=20Garc=EDa?= <xabigf@gmx.net>
+Subject: ReiserFS Root Filesystem mounts read-only.
+Date: Thu, 29 Aug 2002 18:54:53 +0200
+Message-ID: <QKWTUOYX2YWREA54E02X2U6343WRIGLJ.3d6e51dd@xoglar>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11344-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11345-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: David Boutcher <boutcher@us.ibm.com>
-Cc: reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: reiserfs-list@namesys.com
 
-On Wed, 2002-08-28 at 17:00, David Boutcher wrote:
-> 
-> >On Mon, 2002-08-19 at 12:50, Dave Boutcher wrote:
-> >> Hi,
-> >>
-> >> I'm chasing a wierd memory corruption problem on a ppc64 system.  The
-> >> first byte of a slab_t structure keeps getting stepped on (zeroed,
-> >> actually.)  This happens during a testcase that copies a large file
-> >> called "junk" between file systems (a mix of ext2 and reiser) on a
-> >> 2.4.13 kernel.  I know that's REALLY REALLY old, but it's whats in
-> >> SuSE's SLES-7 release that we have customers running...
-> >
-> >Any chance the test case involves renames?
-> >
-> >-chris
-> 
-> So I posted my problem with memory corruption a few weeks ago....and the
-> problem turned out to be a REALLY old/moldy set of userland reiser tools.
-> I don't know exactly why that caused memory corruption in the kernel, but
-> updating the tools fixed everything right up.
-
-Well, that shouldn't fix it ;-)  Which version of reiserfsprogs were you
-running before?
-
-Are the filesystems getting checked during boot at all (you would see
-reiserfsck messages during boot)?
-
--chris
+	After I exec the reiserfsck to correct some problems (--fix-fixable), I re=
+tarted my
+computer. The problem is that now the filesystem is mounted read-only at th=
+e both time
+(any init.d script is started). I look in /etc/fstab and /etc/lilo.conf, bu=
+t this files
+don't seem to be wrong. I don't know what is happening, because the reiserf=
+sck --check
+says that there isn't corruptions. =BFMay someone tell me what I need to do=
+?. Thanks.
 
 
