@@ -1,30 +1,26 @@
-From: Dirk Mueller <dmuell@gmx.net>
-Subject: Re: PLEASE HELP ME!!
-Date: Wed, 18 Dec 2002 08:21:12 +0100
-Message-ID: <20021218072111.GA3554@matrix.wg>
-References: <3DFFD0A7.2090803@ciudad.com.ar>
+From: "darren" <teodarren@myrealbox.com>
+Subject: reiserfs and TUX2 - 2.4.18 or 2.4.19?
+Date: Thu, 19 Dec 2002 23:53:49 +0800
+Message-ID: <001301c2a776$d2ac9360$0101a8c0@bummer>
+References: <3DFDD5B5.7050000@dsvr.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12171-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12172-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3DFFD0A7.2090803@ciudad.com.ar>
+In-Reply-To: <3DFDD5B5.7050000@dsvr.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Mit, 18 Dez 2002, lrodrigo wrote:
+Hi all,
 
-> How i can solve this problem??
-> 
-> PLEASE, HELP ME.......
+I want to run TUX2 to serve files off my ReiserFS partition.
 
-There is no problem, its debug output. Use a newer reiserfsck when you're 
-annoyed by it. 
+But I cannot seem to get TUX2 on kernel 2.4.19, which I would like to
+run my reiserfs partition on.
 
+Should I just stick to 2.4.18 and somehow patch the reiserfs there??
 
--- 
-Dirk (received 170 mails today)
