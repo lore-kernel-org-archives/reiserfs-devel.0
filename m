@@ -1,34 +1,85 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Highmem on or off ?
-Date: 12 Apr 2002 14:01:21 -0400
-Message-ID: <1018634481.14429.146.camel@tiny>
-References: <20020412112212.420491e1.philippe.gramoulle@mmania.com>
+From: Thomas Wiedemann <twist@twistrulz.de>
+Subject: journal size==0 [reiserfs 3.6, reiserutils 3.x.1b]
+Date: Mon, 15 Apr 2002 00:26:51 +0200
+Message-ID: <20020415002651.377f3c5c.twist@twistrulz.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10061-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10062-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020412112212.420491e1.philippe.gramoulle@mmania.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Philippe =?ISO-8859-1?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Cc: reiserfs <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-On Fri, 2002-04-12 at 05:22, Philippe Gramoull=E9 wrote:
->=20
-> Hi,
->=20
-> What you you recommend with a current 2.4.19-pre6 kernel ( i applied
-> speedup patch as well) for Highmem in terms of stability on a rather
-> heavily loaded NFS server.
->=20
-> Would you recommend to turn highmem off or i can safely turn it on ?
+hi reiserfs-developers,
 
-I would suggest using andrea's kernels for speed with highmem.  He has
-patches that eliminate bounce buffers for most scsi and ide cards, as
-well as many VM tweaks.
+i cannot mount my reiserfs partition any more, because of that:
 
--chris
+super-459: read_super_block: super found at block 16 is within its own log. It must not be of this format type.
 
+
+so, here's the story how i "created" this error and some details:
+
+due a hardware failure (the harddisk?), i got some weird error messages:
+
+Apr 13 17:32:13 hq kernel: hdb: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+Apr 13 17:32:13 hq kernel: hdb: dma_intr: error=0x84 { DriveStatusError BadCRC }
+(...)
+
+followed by some filesystem errors:
+
+Apr 13 17:33:46 hq kernel: is_tree_node: node level 432 does not match to the expected one 1
+Apr 13 17:33:46 hq kernel: vs-5150: search_by_key: invalid format found in block 19232. Fsck?
+Apr 13 17:33:46 hq kernel: vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat data of [1584 1590 0x0
+ SD]
+...and so on....
+
+i had to reboot my pc, the disk was ok, but the partition was dead.
+so i downloaded the newest reiserfs-utils (3.x.1b) and tried to repair it.
+the superblock seemed to be screwed up, so...
+
+# reiserfsck /dev/hdb1 --rebuild-sb --no-journal-available
+# reiserfsck --rebuild-tree
+
+...did some work on the filesystem, but i'm still not able to mount it, because while rebuilding the superblock, fsck did not make a journal on the device:
+
+# debugreiserfs /dev/hdb1
+
+<-------------debugreiserfs, 2002------------->
+reiserfsprogs 3.x.1b
+
+
+Filesystem state: consistent
+
+Reiserfs super block in block 16 on 0x341 of format 3.6 with standard journal
+Count of blocks on the device: 11273605
+Number of bitmaps: 345
+Blocksize: 4096
+Free blocks (count of blocks - used [journal, bitmaps, data, reserved] blocks): 1611835
+Root block: 431
+Filesystem is cleanly umounted
+Tree height: 5
+Hash function used to sort names: "r5"
+Objectid map size 972, max 972
+Journal parameters:
+        Device [0x0]
+        Magic [0x0]
+        Size 1 blocks (including 1 for journal header) (first block 0)
+        Max transaction length 0 blocks
+        Max batch size 0 blocks
+        Max commit age 0
+Blocks reserved by journal: 0
+Fs state field: 0x0
+sb_version: 2
+inode generation number: 0
+UUID: c0ce572a-1ed0-4827-b72a-8aef5cdb2015
+LABEL: 
+Set flags in SB:
+
+
+now, that the journal's size is only one block, mount fails, while fsck claims everything to be alright (mount -o nolog also fails).
+i don't know if this is a bug in reiserfsck....and maybe there is a way to insert a journal into between the rootblock and the superblock (where the journal was before the crash...)?
+
+thanks, thomas.
 
