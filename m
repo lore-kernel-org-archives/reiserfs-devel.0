@@ -1,59 +1,58 @@
-From: David Masover <jedi@ninja.dynup.net>
-Subject: Religion and Hard Links (was Re: More on Hard Links)
-Date: Tue, 09 Dec 2003 21:22:07 -0600
-Message-ID: <3FD6915F.60402@ninja.dynup.net>
-References: <20031209234740.27534.qmail@web25010.mail.ukl.yahoo.com>
+From: "Bostjan Skufca (at) domenca.si" <bostjan.skufca@domenca.si>
+Subject: Re: quota support
+Date: Wed, 10 Dec 2003 15:03:39 +0100
+Message-ID: <200312101503.39050.bostjan.skufca@domenca.si>
+References: <1070553889.27611.147.camel@tiny.suse.com> <200312091214.13325.bostjan.skufca@domenca.si> <200312091759.59923.bernd-schubert@web.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16317-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16318-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20031209234740.27534.qmail@web25010.mail.ukl.yahoo.com>
+In-Reply-To: <200312091759.59923.bernd-schubert@web.de>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hello Bernd,
 
-Narcoleptic Electron wrote:
+i've been asking the same questions and got myself an answer: RTFF (the last F 
+stands for FAQ on namesys' webpage)
 
+FAQ should answer your 1 and 2.2 questions. As for the 2.1 i think everyone at 
+Namesys is concerned about Reiser4 and Linux 2.6.0 - thus patches for 2.4.xx 
+are no longer amongst their top priorities. They do not bother hosting it on 
+their ftp because are hosted on suse's and FAQ clearly directs it's readers 
+to correct ftp site. 
+Besides all that we should thank Chris for his patience and good will which, I 
+believe, brings us THE patches.
+
+Regards,
+Bostjan
+
+
+On Tuesday 09 of December 2003 17:59, Bernd Schubert wrote:
+> On Tuesday 09 December 2003 12:14, Bostjan Skufca (at) domenca.si wrote:
+> > Hello,
+> >
+> > Below you will find patches for kernels 2.4.20-23
+> > ftp://ftp.suse.com/pub/people/mason/patches/data-logging/
 >
->- Otherwise, if a file ID for a given volume ID refers
->to a file not identical to the current file (or is not
->found), remove the file from the sync list.
->  
+> Hello Bostjan,
 >
-    Gah!  What about large files?  What about *gasp* traditional databases?
-    Sweet and merciful God, don't let them implement diff in the filesystem!
-    That aside, there's the problem of making sure that if a partition 
-is unmounted and I change the contents of a file that has a link on that 
-partition, the changes should be mirrored, rather than the link severed.
-
->Well, although the subject line has been changed many
->times, I believe we are still on that thread!  ;-)
->  
+> yeah I know about those patches, but actually I want to know about general
+> quota support status:
 >
-For good reason!  I feel it is my civic duity to change the subject line 
-every now and then!  ;-)
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.3 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBP9aRYgisZLIF6uqOAQJ0lQ/+MvX7/6Xe+7etPFRivj3/tnoBS4WohYKc
-ze9MYve+iJfJsFQEEwGayNMKumZortcmm59jqmqqyB1yRRDOy3eYhfylTqhzqaZK
-RwhvMujm/PID75fQbuY3ofVxDEXbP0/j3axr9h81RTVeWLXCnijeHz3XS5D6qJV5
-wZqJHI06/lTKAG+cpJMeGMgMPic2BsnRaavd2434mRjI6AtJNlb0R0tHY5siWlpA
-bfOD3unKlxmBXCNsiIWtvPB4gw1DShGja3KwlTeTP27cPwnJrtHPKRpC5SbMCgqT
-STWCJiD/C38cqd0RNZ/GEYN/SA/fFFPJZ+tVqS+cFNrn1BoEXUjD/ErsKI6mmY4j
-teOTToBBxiLRMSx9xnnqJyo8mcSOZ9m+NOJgHgZuhF6zgzxSK2wEWgOEAvMxSLQj
-H6DOdZ4LRfuQQgW2Hbr7WkjhPhfsdAmD/iUZ5CUGNJ3AevBBoCxZNy4MBNLIvjlb
-tQXIvUS3cX8tDXLOyowfW3qM7115ueuFBEEt/eX1011qpWLLLpU0WBvzEQJNo3LK
-GB7K0Z2uj20t6uOqhfnCbwhyq7YB5DKNH6dQauunR5Jm2L0l0DYUKJfyu1kVIIyt
-NCsaZE27E8Dmk3M3lbiuo+W0jO7Thxetj8tBOiYMNsDU+f5SdJxgv21Wol+7i/i5
-G2rVG4vrtCQ=
-=EsD9
------END PGP SIGNATURE-----
+> 1.)  So is there vanilla-kernel quota support for reiserfs since 2.4.21?
+>
+> 2.1.)If not, why are there no quota patches on ftp.namesys.com for
+> 2.4.{21-23}?
+>
+> 2.2) If there is quota support for these versions, what does the patch from
+> Chris improve?
+>
+> Thanks,
+> 	Bernd
 
