@@ -1,49 +1,34 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 16:53:42 -0700
-Message-ID: <412E7806.9010409@namesys.com>
-References: <Pine.LNX.4.44.0408260927100.26316-100000@chimarrao.boston.redhat.com>
+Date: Thu, 26 Aug 2004 16:53:51 -0700
+Message-ID: <412E780F.7000009@namesys.com>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>	 <20040825200859.GA16345@lst.de> <20040825201929.GA16855@lst.de>	 <412DA25E.9090405@namesys.com> <1093527487.21878.270.camel@watt.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20849-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20850-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.44.0408260927100.26316-100000@chimarrao.boston.redhat.com>
+In-Reply-To: <1093527487.21878.270.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Rik van Riel <riel@redhat.com>
-Cc: Jeremy Allison <jra@samba.org>, Christoph Hellwig <hch@lst.de>, akpm@osdl.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Chris Mason <mason@suse.com>
+Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Rik van Riel wrote:
+Chris Mason wrote:
 
->On Thu, 26 Aug 2004, Hans Reiser wrote:
+>
+>
+>If the early linux filesystems had taken the same attitude you have
+>(don't write new filesystems, only write plugins), there would be no
+>framework allowing the wealth of filesystems we do have, including
+>reiser4.
 >
 >  
 >
->>I agree that your work is important without agreeing that MS client 
->>domination will last.;-)  It is indeed my desire to give you every 
->>single feature you need to emulate MS streams within files, but doing it 
->>using directories that are files.  I would like to support you in 
->>emulating windows faster than windows.
->>    
->>
->
->1) how do you back up and restore files with streams inside ?
->
->2) how do standard unix utilities handle them ?
->
->  
->
-To repeat, I think it would be nice to implement a 
-filename/pseudos/backup method for all the plugins.
-
-Guys, we just have the beginnings in place.  One plugin method at a time 
-it will all fall into place.
-
-What we have now is useful now.  The more methods come into existence, 
-the more compelling it becomes --- standard network economic theory 
-applies here.
-
-Hans
+Au contraire, with my approach, there would be 10x as many filesystems, 
+because people would be easily able to mix-and-match different methods 
+and plugins from different filesystems together, and if you wanted the 
+MySQL semantics, you would mount mysql, and if you wanted the zope 
+semantics you would mount zope.
