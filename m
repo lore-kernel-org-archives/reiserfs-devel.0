@@ -1,26 +1,69 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: IRC channel for reiser4 (and reiserfs)
-Date: Mon, 1 Sep 2003 13:34:26 +0400
-Message-ID: <16211.4770.954849.977236@laputa.namesys.com>
+From: "Roger James" <rogerjames99@btinternet.com>
+Subject: Newbiw question on write barriers and ordered write barriers
+Date: Mon, 1 Sep 2003 21:06:37 +0100
+Message-ID: <000501c370c4$94165ba0$fe0aa8c0@lancaster.beardandsandals.co.uk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15505-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0006_01C370CC.F5DC4A40"
+Return-path: <reiserfs-list-return-15506-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
-Cc: Reiserfs developers mail-list <Reiserfs-Dev@Namesys.COM>
+To: reiserfs-list@namesys.com
 
-Hello,
+------=_NextPart_000_0006_01C370CC.F5DC4A40
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-we now have IRC channel for questions and discussion of reiser4 (and,
-occasionally, reiserfs):
+Hi,
 
-irc://irc.oftc.net:6667/#reiser4
+ 
 
-Remember: most developers are in UTC+3 time zone.
+Ever since I updated my SuSE Linux 8.1 set up with the latest patches
+from SuSE I have been seeing the following messages at boot up time
+(once only for each drive).
 
-Nikita.
+ 
+
+<4>hda: drive_cmd: status=0x51 { DriveReady SeekComplete Error }
+
+<4>hda: drive_cmd: error=0x04 { DriveStatusError }
+
+<4>hda:saw err in ide_end_drive_cmd, disabling write barriers
+
+<4>hda: drive_cmd: status=0x51 { DriveReady SeekComplete Error }
+
+<4>hda: drive_cmd: error=0x04 { DriveStatusError }
+
+<4>hda:saw err in ide_end_drive_cmd, disabling write barriers
+
+<4>reiserfs: using ordered data mode
+
+<4>Using r5 hash to sort names
+
+ 
+
+I have struggled to find out whether I should be worried about this. I
+guess this is something to do with journaling and ordered writes, but
+the messages are somewhat cryptic. Is this the kernel detecting a
+problem with the drive based controllers (they are both Maxtor 6Y120L0s)
+or the motherboard chipset (Nvidia NForce) and disabling the
+functionality? I don't see the message again, but one of the reasons I
+did upgrade the kernel was that I was having occasional disk
+corruptions. Are there any switches/parameters I should be setting?
+
+ 
+
+Can anyone give me a heads up on this.
+
+ 
+
+Roger
+
+
+------=_NextPart_000_0006_01C370CC.F5DC4A40--
+
+
