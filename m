@@ -1,60 +1,38 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: Proposal for keying encrypted filesystem
-Date: Mon, 07 Apr 2003 00:52:46 -0400
-Message-ID: <200304070452.h374qlYJ002875@turing-police.cc.vt.edu>
-References: <200303282026.23543.phma@webjockey.net> <200304041901.52770.phma@webjockey.net> <200304070044.h370i41S019868@turing-police.cc.vt.edu>
-            <200304062114.50082.phma@webjockey.net>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: possible bugreport: rebuild-sb not behaving as expected
+Date: Mon, 7 Apr 2003 10:26:36 +0400
+Message-ID: <20030407102636.A1295@namesys.com>
+References: <Pine.LNX.4.53.0304062012510.23286@phogen.xs4all.nl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1790336984P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13603-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13604-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Sun, 06 Apr 2003 21:14:36 EDT."
-             <200304062114.50082.phma@webjockey.net> 
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.53.0304062012510.23286@phogen.xs4all.nl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Pierre Abbat <phma@webjockey.net>
-Cc: reiserfs-list@namesys.com, reiserfs-dev@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Costyn van Dongen <costyn@xs4all.nl>
+Cc: reiserfs-list@namesys.com
 
---==_Exmh_1790336984P
-Content-Type: text/plain; charset=us-ascii
+Hello!
 
-On Sun, 06 Apr 2003 21:14:36 EDT, Pierre Abbat <phma@webjockey.net>  said:
+On Sun, Apr 06, 2003 at 08:42:30PM +0200, Costyn van Dongen wrote:
 
-> The tape monkey might could overwrite an encrypted file on disk with random 
-> gibberish.
+> 1. resize_reiserfs -s -5G /dev/hdb3
+> 2. using fdisk I deleted the partition /dev/hdb3 and recreated it only
+> smaller, leaving an extra margin of about 500MB. I started it at the same
+> cylinder as the partition I deleted.
 
-The problem we started discussing was that a backup system needs *read*
-access to something isomorphic(*) to your data in order to back it up, but
-you may not trust your tape monkey, backup software, or a myriad other things.
+Well, from what I see, it looks like your new partition starts on different
+border than old one and also the difference is not multiple of 4096,
+hence the "no reiserfs metadata found".
+We saw in the past this happens with some installers( probably their fdisk
+implementations) that they convert geometry for some reason.
+If you have backup of your old partition table, try using it, everything should appear
+back.
 
-(*) The trick here is that we don't *actually* have to back up the data,
-we need to back up something that will be a copy of the data once restored.
-Properly done, the ciphertext of the data fulfills this requirement.
-
-If your tape monkey has *write* access to the files, you're in trouble whether
-or not it's encrypted.  Even in this case, encryption helps - if the tape
-monkey manages to re-write a block with random gibberish, it will almost
-certainly be noticed fairly quickly (Oracle complaining about corrupted
-databases, a sudden 4K block of noise in the middle of a document, etc).
-The tape monkey will almost certainly be blocked from doing something
-subtle (like changing one block on an Oracle database so his salary goes
-up 30%).
-
-
---==_Exmh_1790336984P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.1 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQE+kQQecC3lWbTT17ARAh2xAJ9jEBE+p6++Lrf7vueSVP2m0TVPzACfWErG
-2Nfe7RIBfaabn48i0QksqLE=
-=LoSq
------END PGP SIGNATURE-----
-
---==_Exmh_1790336984P--
+Bye,
+    Oleg
