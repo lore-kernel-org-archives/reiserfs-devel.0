@@ -1,55 +1,30 @@
-From: Miguel <turtle.power@wanadoo.es>
-Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Mon, 5 Apr 2004 22:16:03 +0200
-Message-ID: <20040405221603.6a3bd65b.turtle.power@wanadoo.es>
-References: <no.id>
-	<200404050401.i3541XVk004592@sirius.cs.pdx.edu>
-	<87fzbj9fws.fsf@uhoreg.ca>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Subject: Re: using of XATTRs instead of pseudo files for accessing
+ reiser4	=?us-ascii?q?file?= attributes.
+Date: Mon, 05 Apr 2004 18:41:45 -0400 EDT
+Message-ID: <38261445506-BeMail@cr593174-a>
+References: <1081169185.3548.373.camel@watt.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-17732-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17733-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <87fzbj9fws.fsf@uhoreg.ca>
+In-Reply-To: <1081169185.3548.373.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: Chris Mason <mason@suse.com>
 
-On Mon, 05 Apr 2004 01:01:39 -0400
-Hubert Chan <hubert@uhoreg.ca> wrote:
+Chris Mason wrote on Mon, 05 Apr 2004 08:46:26 -0400:
+> xattrs are the current linux api, you'll make it much easier for people
+> to use reiser4 by supporting it (in addition to whatever new and cool
+> API you develop).
 
-> >>>>> "The" =3D=3D The Amazing Dragon (Elliott Mitchell) <ehem@cs.pdx.edu>
-> >writes:
->=20
-> [...]
->=20
-> The> Good point, search engines as evidence. The problem is you're
-> only The> looking at distributions, which are going to be highly
-> similar and The> you're completely missing end users. So let us take
-> this to a full The> search engine and see what turns up...  Hmm,
-> roughly a million The> hits, let us look at a few samples:
->=20
-> I'm only getting a bit less than 600,000.  Maybe we caught Google in
-> the middle of some reindexing.  But anyways...
->=20
-> Most of the pages seem to be Spanish and Portuguese.  Google
-> translation translates "metas" as "goals".  Are there any Spanish or
-> Portuguese speakers on this list to confirm that?
+One of the big points is to cut down on the number of APIs and gain
+in saved effort.  Listing attributes?  Just use good old ReadDir().
+With a common name space, you can use grep and other well developed
+tools to deal with attributes.  And so on.
 
-Yes, This is correct and one time I see a project that used a file
-called metas in similar mean of the TODO file to state its goals,  but
-nothing to care about IMHO.
-
-ermmmm a dot doens't hurt...=20
-
-
->=20
-> Since "goals" is a fairly common word, it probably is a bad idea to
-> use"metas" without at least some sort of prefix.
-
-
---=20
-La resistencia es f=FAtil todos ser=E9is asimilados
+- Alex
