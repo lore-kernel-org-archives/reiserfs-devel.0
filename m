@@ -1,54 +1,49 @@
-From: Andreas Dilger <adilger@clusterfs.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: reiserfs on removable media
-Date: Wed, 2 Jul 2003 12:45:44 -0600
-Message-ID: <20030702124544.Z7414@schatzie.adilger.int>
-References: <pan.2003.07.02.14.23.09.812119.20132@umail.hungrycats.org>
+Date: Wed, 02 Jul 2003 22:53:39 +0400
+Message-ID: <3F032A33.3050303@namesys.com>
+References: <pan.2003.07.02.14.23.09.812119.20132@umail.hungrycats.org> <20030702124544.Z7414@schatzie.adilger.int>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14806-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14807-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <pan.2003.07.02.14.23.09.812119.20132@umail.hungrycats.org>; from eazgwmir@umail.furryterror.org on Wed, Jul 02, 2003 at 02:23:13PM -0400
+In-Reply-To: <20030702124544.Z7414@schatzie.adilger.int>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Zygo Blaxell <eazgwmir@umail.furryterror.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Andreas Dilger <adilger@clusterfs.com>
+Cc: Zygo Blaxell <eazgwmir@umail.furryterror.org>, reiserfs-list@namesys.com
 
-On Jul 02, 2003  14:23 -0400, Zygo Blaxell wrote:
-> Two reiserfs improvements come to mind:
-> 
-> - There is a tendency for files that were being grown at crash time to
-> contain invalid data.  It seems that the inodes are being updated before
-> the data blocks they refer to are written.  It would be nice if the inode
-> writes were deferred (or at least made invisible) until after the data
-> blocks were written.  I'd rather lose my data than possibly have random
-> garbage masquerading as my data.
+Andreas Dilger wrote:
 
-This is called ordered data mode, and exists on ext3 and also reiserfs with
-Chris Mason's patches.  Under normal usage it shouldn't change performance
-compared to writeback data mode (which is what reiserfs does by default).
+>On Jul 02, 2003  14:23 -0400, Zygo Blaxell wrote:
+>  
+>
+>>Two reiserfs improvements come to mind:
+>>
+>>- There is a tendency for files that were being grown at crash time to
+>>contain invalid data.  It seems that the inodes are being updated before
+>>the data blocks they refer to are written.  It would be nice if the inode
+>>writes were deferred (or at least made invisible) until after the data
+>>blocks were written.  I'd rather lose my data than possibly have random
+>>garbage masquerading as my data.
+>>    
+>>
+>
+>This is called ordered data mode, and exists on ext3 and also reiserfs with
+>Chris Mason's patches.  Under normal usage it shouldn't change performance
+>compared to writeback data mode (which is what reiserfs does by default).
+>
+It had some impact, I forget exactly how much, maybe Chris can 
+resuscitate his benchmark of it?
 
-> - If the device is detached while a filesystem is mounted, reiserfs gets a
-> whole lot of I/O errors (or worse) and immediately oopses.  It would be
-> nice if reiserfs would handle this a bit more gracefully--it should at
-> least let me kill processes with open files and umount the filesystem.
-> OTOH many other things also oops with with current USB/firewire/scsi device
-> driver stack too.  :-P
+Remind me about removable media around January, and we'll write some 
+code for reiser4 to make it more graceful for it (somehow prompt the 
+user to insert disk, etc.)
 
-Well, if something oopses you are pretty much stuck w.r.t. killing the
-process and unmounting the fs.  So fix the oopses and the rest should
-come around as a result.  Of course, the reiserfs folks can do a lot
-more with a specific oops report than just "it immediately oopses".  ;-)
+-- 
+Hans
 
-Not much you can do about the IO errors (i.e. working as designed).
-That's going to happen if you remove your device while writing to it.
-
-Cheers, Andreas
---
-Andreas Dilger
-http://sourceforge.net/projects/ext2resize/
-http://www-mddsp.enel.ucalgary.ca/People/adilger/
 
