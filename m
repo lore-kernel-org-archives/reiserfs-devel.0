@@ -1,43 +1,54 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: vfs2 (was Re: silent semantic changes with reiser4)
-Date: Fri, 27 Aug 2004 23:23:40 +0200
-Message-ID: <20040827212339.GF709@openzaurus.ucw.cz>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Fri, 27 Aug 2004 23:06:39 +0200
+Message-ID: <20040827210638.GE709@openzaurus.ucw.cz>
+References: <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <20040826100530.GA20805@taniwha.stupidest.org> <20040826110258.GC30449@mail.shareable.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20994-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20995-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <412D9FE6.9050307@namesys.com>
+In-Reply-To: <20040826110258.GC30449@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Jamie Lokier <jamie@shareable.org>
+Cc: Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
 Hi!
 
-> >Yes, but I didn't say "flame Christoph and ignore the issues" ;)
+> > > One of the big potential uses for file-as-directory is to go inside
+> > > archive files, ELF files, .iso files and so on in a convenient way.
 > > 
-> >
-> Oh....;-)
-...
-> enhancements.  This metafiles and file-directories stuff is actually 
-> fairly trivial stuff.
+> > Arguably this belongs in userspace --- and people have put it there.
+> 
+> I agree that these belong in userspace, and that there's plenty* of
+> userspace code doing a similar thing already.  I don't think there's
+> any argument over it.
+> 
+> However, as far as I know it's not accessible in a file-as-directory
+> form as yet.  In my opinion that is the most natural form and it would
+> be very intuitive to use.  
 
-Now I'm scared.
+It does not work. .deb file is ar archive. It is also debian
+package. How do you know if I want to see it as a package or as a archive?
+How do you identify file types, anyway?
 
-not as powerful.  Don't 
-> move reiser4 into vfs, use reiser4 as the vfs.  Don't write 
-> filesystems, write file plugins and disk format plugins and all the 
-> other kinds of plugins, and you won't be missing any expressive power 
-> that you really want....
+Same happens for .tar.gz.
 
-So you want to replace vfs. Fine, but you should have told us before.
+uservfs does
 
-Also vfs replacement probably should not be hidden in fs/reiserfs4...
+cd foo.deb#uar
+vs.
+cd foo.deb#udeb
+
+and
+
+cd foo.tgz#utar
+vs.
+cat foo.tgz#ugz
 
 
 -- 
