@@ -1,76 +1,94 @@
-From: Ragnar =?iso-8859-15?Q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
-Subject: Re: reiserfs vs NTFS vs WAFL
-Date: Thu, 22 May 2003 12:55:01 +0200
-Message-ID: <20030522105501.GX7706@vestdata.no>
-References: <20030520213130.40f9f249.philippe.gramoulle@mmania.com> <003101c31fa3$3ac20530$0101a8c0@bummer>
+From: "darren" <teodarren@myrealbox.com>
+Subject: RE: reiserfs vs NTFS vs WAFL
+Date: Thu, 22 May 2003 22:39:56 +0800
+Message-ID: <003b01c32070$052d59b0$0101a8c0@bummer>
+References: <3ECBC1DF.3060607@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14200-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14202-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <003101c31fa3$3ac20530$0101a8c0@bummer>
+In-Reply-To: <3ECBC1DF.3060607@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: darren <teodarren@myrealbox.com>
-Cc: 'reiserfs' <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: 'Hans Reiser' <reiser@namesys.com>, =?us-ascii?Q?'Ragnar_Kjorstad'?= <reiserfs@ragnark.vestdata.no>
+Cc: 'reiserfs' <reiserfs-list@namesys.com>, 'Mike Jadon' <mikej@umem.com>
 
-On Wed, May 21, 2003 at 10:13:57PM +0800, darren wrote:
-> Hi all,
->=20
-> I wonder if there are any papers or benchmarks that compare the
-> performance and architectural differences between reiserfs, NTFS and
-> WAFL (NetApp's Write Anywhere File Layout)?
+Hi all,
 
-I did some benchmarking of linux vs NetApp benchmarking a long time
-ago.
+Thanx for replying to my mail.
 
-We used "postmark" to perform the benchmark, with default settings,
-except:
-number 20000
-transactions 50000
+I am doing some tests on this three FS now (to see if we would want to
+spend $$$$$ on a netapp).
 
-Information on postmark is available at
-http://www.netapp.com/tech_library/3022.html. Later I have learned that
-postmark is probably not the best general-purpose benchmarking tool, so
-the numbers may not be representative for the average workload.
+My test is based on the simultaneous creation and deletion of small
+files 50Kb, as per my actual usage of the file server for my application
+servers.
 
-All tests were done with a single NFS-client, a linux PC. (linux 2.2,
-NFS v2).
+My main problem with using Linux/Reiserfs3 is with the performance of
+Samba when under heavy load. CIFS operation is required as some of our
+application servers are windows based. Netapp's CIFS performance is
+really incredible.
 
-The servers were:
-1. NetApp 760, with FC disks
-2. x86 PC, single SCSI-disk, linux 2.2, ext2, NFSv2
-3. x86 PC, single SCSI-disk, linux 2.2, reiserfs v3.5.5, NFSv2
+With NFS, we can sometimes beat the netapp F87 with a
+Linux/ReiserFs/RAID0 config with the same number of harddisk.
+
+Will post more details when I thru with it.
+
+In the mean time, will really appreciate any suggestions to improving
+Samba's performance in order to make a CIFS file server based on
+Linux/Reiser/Samba possible.
+
+-----Original Message-----
+From: Hans Reiser [mailto:reiser@namesys.com] 
+Sent: Thursday, May 22, 2003 2:14 AM
+To: darren
+Cc: 'reiserfs'; Mike Jadon
+Subject: Re: reiserfs vs NTFS vs WAFL
+
+darren wrote:
+
+>Hi all,
+>
+>I wonder if there are any papers or benchmarks that compare the
+>performance and architectural differences between reiserfs, NTFS and
+>WAFL (NetApp's Write Anywhere File Layout)?
+>
+>Any help will be great.
+>
+>Regards
+>darren
+>
+>
+>
+>  
+>
+I regret to say that all I can do is point you to my LinuxTag paper at 
+www.namesys.com/v4/reiser4_the_atomic_filesystem.html, and give you my 
+informal opinion that NTFS sucks but has improved a lot, and WAFL is 
+great for NFS.
+
+I'd be curious to see mongo numbers on NTFS if anyone has the energy.
+
+Most people comparing WAFL and ReiserFS look at the price per GB and we 
+win without the benchmark ever being run.  mp3.com for instance 
+sponsored us so that they could save $22 million on Netapps and Suns. 
+
+I would expect WAFL to beat Linux/NFS/ReiserFS V3/RAID because that is 
+their niche and they are sharp and I bet their zero copy NFS code is 
+better than Linux's, but no one knows for real.  I would be curious to 
+see Reiser4 benchmarked against WAFL when we are done, especially if you
+
+toss in some cards from umem that Mike sells.  ReiserFS might save some 
+disk space compared to WAFL.
+
+I would expect NetApp to just blow away any NTFS server.... but I 
+haven't measured it.
+
+-- 
+Hans
 
 
-Results, transactions pr second:
-1: 82 transactions/s
-2: 43 transactions/s
-3: 66 transactions/s
 
-So, in this test the $100k NetApp was approxemately 24% faster than the
-$1k linux workstation.
-
-
-Now, there are many obvious flaws in this test, in no particular order:
-- The benchmark-tool may not be the best
-- A single client is not sufficient to represent a typical production-
-  enviroment
-- The linux-server should have had RAID
-- The tests should have been repeated and averaged
-- It's old. Terribly old.
-
-
-So, take the results with a grain of salt.
-It would be great run some new benchmarks (e.g. SPEC sfs) on a properly
-spec'ed linux/reiserfs system, but personally I don't have the hardware
-available just now.
-
-
-
---=20
-Ragnar Kj=F8rstad
-Zet.no
