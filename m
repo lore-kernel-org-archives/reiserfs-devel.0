@@ -1,39 +1,31 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: vs-5150: search_by_key: invalid format found in block 30690. Fsck?
-Date: Mon, 18 Aug 2003 17:35:31 +0400
-Message-ID: <20030818133530.GE10536@namesys.com>
-References: <200308151939.03324.vadim_t@teleline.es> <20030818060852.GB16183@namesys.com> <200308181000.23244.vadim_t@teleline.es>
+Subject: Re: 2.6.0test3mm2 reiserfs3.6.11 usb-storage
+Date: Mon, 18 Aug 2003 17:58:27 +0400
+Message-ID: <20030818135827.GA22255@namesys.com>
+References: <Pine.LNX.4.56.0308181527391.13602@hosting.rdsbv.ro>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15362-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15363-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200308181000.23244.vadim_t@teleline.es>
+In-Reply-To: <Pine.LNX.4.56.0308181527391.13602@hosting.rdsbv.ro>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vadim <vadim_t@teleline.es>
-Cc: reiserfs mailing list <reiserfs-list@namesys.com>
+To: Catalin BOIE <util@deuroconsult.ro>
+Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Mon, Aug 18, 2003 at 10:00:16AM +0200, Vadim wrote:
+On Mon, Aug 18, 2003 at 03:27:51PM +0300, Catalin BOIE wrote:
 
-> Excuse me if this is a stupid question, but hdparm doesn't seem 
-> to have any arguments to disable write cache. How do I do that?
+> Failed to open the journal device ((null)).
+> I expect reiserfsck to treat this device as any other device.
+> Mount /dev/sda1 works.
 
-hdparm -W0 will do that.
-
-> I did know ReiserFS is supposed to be used without write cache, 
-> but for some reason I thought that my old disk probably wouldn't 
-> have one. Perhaps ReiserFS should automatically disable write 
-> cache on the disks it's used on?
-
-This is not reiserfs' business.
-But the solution called IDE barriers is going to be implemented soon (at least
-in 2.6, there is standalone patch that does this in SuSE kernels, too)
+What is "debugreiserfs /dev/sda1" output?
 
 Bye,
     Oleg
