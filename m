@@ -1,37 +1,39 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: Reiser4 bug?  Zeros in files.
-Date: Wed, 3 Mar 2004 08:35:48 +0300
-Message-ID: <20040303053548.GA1570@backtop.namesys.com>
-References: <1078266036.12548.6.camel@localhost.localdomain>
+From: Robin Rosenberg <robin.rosenberg.lists@dewire.com>
+Subject: Re: Desktop Filesystem Benchmarks in 2.6.3
+Date: Wed, 3 Mar 2004 07:00:56 +0100
+Message-ID: <200403030700.57164.robin.rosenberg.lists@dewire.com>
+References: <4044119D.6050502@andrew.cmu.edu> <40453538.8050103@animezone.org> <20040303014115.GP19111@khan.acc.umu.se>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17024-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17025-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20040303014115.GP19111@khan.acc.umu.se>
 Content-Disposition: inline
-In-Reply-To: <1078266036.12548.6.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jonathan Briggs <jbriggs@esoft.com>
-Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: David Weinehall <david@southpole.se>
+Cc: Andrew Ho <andrewho@animezone.org>, Dax Kelson <dax@gurulabs.com>, Peter Nelson <pnelson@andrew.cmu.edu>, Hans Reiser <reiser@namesys.com>, linux-kernel <linux-kernel@vger.kernel.org>, ext2-devel@lists.sourceforge.net, ext3-users@redhat.com, jfs-discussion@www-124.southbury.usf.ibm.com, reiserfs-list@namesys.com, linux-xfs@oss.sgi.com
 
-Hello,
+On Wednesday 03 March 2004 02:41, David Weinehall wrote:
+> On Tue, Mar 02, 2004 at 08:30:32PM -0500, Andrew Ho wrote:
+> > XFS is the best filesystem.
+> 
+> Well it'd better be, it's 10 times the size of ext3, 5 times the size of
+> ReiserFS and 3.5 times the size of JFS.
+> 
+> And people say size doesn't matter.
 
-On Tue, Mar 02, 2004 at 03:20:37PM -0700, Jonathan Briggs wrote:
-> I'm using Reiser4 on MD RAID 0.  I'm seeing blocks of zeros in files. 
+Recoverability matters to me. The driver could be 10 megabyte and
+*I* would not care. XFS seems to stand no matter how rudely the OS
+is knocked down.
 
-[ ... ]
- 
-> So, any ideas?  Things you'd like to know?  Things you'd like me to try?
+After a few hundred crashes (laptop, kids, drained batteries) I'd expect 
+something bad to happen, but no. XFS returns my data quickly and happily
+everytime (as opposed to most of the time). Maybe the're a bit of luck.
 
-What reiser4 snapshot are you using?  There were bugs related to md-devices
-in the snapshots before 2004.02.25. 
+Salute to XFS!
 
-> -- 
-> Jonathan Briggs
-> jbriggs@esoft.com
-
--- 
-Alex.
+-- robin
