@@ -1,36 +1,37 @@
-From: Sean Johnson <sean@gutenpress.org>
-Subject: Re: Can compression at filesystem level improve overall
-	performance?
-Date: Sun, 21 Mar 2004 09:29:02 -0500
-Message-ID: <1079879342.7375.2.camel@poo.home.local>
-References: <405B02ED.4010602@solidcode.net>
-	 <1079713790.9729.1.camel@redeeman.linux.dk>
-	 <16475.9613.375262.677576@laputa.namesys.com>
-Reply-To: sean@gutenpress.org
+From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: new v3 2.6.4  logging/xattr patches
+Date: Sun, 21 Mar 2004 20:22:38 +0100
+Message-ID: <200403212022.38572.Dieter.Nuetzel@hamburg.de>
+References: <1079679539.11055.101.camel@watt.suse.com> <200403211744.11608.Dieter.Nuetzel@hamburg.de> <1079888140.11058.365.camel@watt.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17355-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-17360-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16475.9613.375262.677576@laputa.namesys.com>
+In-Reply-To: <1079888140.11058.365.camel@watt.suse.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list@namesys.com
 
-On Fri, 2004-03-19 at 11:53, Nikita Danilov wrote:
-> That's common misconception. :)
-> 
-> The goal of compression is to conserve disk bandwidth rather than space.
-> 
-> By compressing it is possible to transfer data (== uncompressed data
-> user works with), at a rate higher than raw device bandwidth.
+Am Sonntag, 21. M=E4rz 2004 17:55 schrieben Sie:
+> On Sun, 2004-03-21 at 11:44, Dieter N=FCtzel wrote:
+> > > The suse kernel of the day ;-)  My experimental directory is a dump of
+> > > all the suse reiserfs patches.
+> >
+> > kernel-source-2.6.4-9.19.i586		(18.03.2004)
+> >
+> > or
+> >
+> > kernel-source-2.6.4-13.2.i586		(20.03.2004)
 
-I am far from any kind of authority on filesystems, but doesn't compression
-make data corruption a significantly nastier bugaboo?
+Works out of the box.
+Only Bootsplash is missing.
 
-Thanks,
+Now reiserfsprogs-3.6.14 (15) needed ;-)
 
-Sean
-
+Greetings,
+	Dieter
