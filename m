@@ -1,48 +1,45 @@
 From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: silent semantic changes with reiser4
-Date: Tue, 31 Aug 2004 14:28:26 -0400
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <87n00bmab9.fsf@uhoreg.ca>
-References: <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org>
- <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk>
- <20040826001152.GB23423@mail.shareable.org>
- <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk>
- <20040826010049.GA24731@mail.shareable.org>
- <20040826100530.GA20805@taniwha.stupidest.org>
- <20040826110258.GC30449@mail.shareable.org>
- <20040827210638.GE709@openzaurus.ucw.cz> <4133CDA6.4060105@slaphack.com>
- <20040831082144.GA535@elf.ucw.cz>
+Subject: Re: silent semantic changes in reiser4 (brief attempt to document
+ the idea of what reiser4 wants to do with metafiles and why
+Date: Tue, 31 Aug 2004 14:35:09 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <87isazma02.fsf@uhoreg.ca>
+References: <41323AD8.7040103@namesys.com> <413486B0.4050101@sun.com>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Return-path: <reiserfs-list-return-21167-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: linux-kernel@vger.kernel.org
 
->>>>> "Pavel" == Pavel Machek <pavel@ucw.cz> writes:
+>>>>> "Mike" == Mike Waychison <Michael.Waychison@Sun.COM> writes:
 
-Pavel> Hi!
->> | uservfs does
->> |
->> | cd foo.deb#uar cd foo.deb/ar | vs.  | cd foo.deb#udeb cd
->> foo.deb/deb
+Mike> Hans Reiser wrote:
+>>
+> Why Openat Sucks:
 >> 
->> and why would you want that, instead of just: cd foo.deb # for the ar
->> dpkg -i foo.deb # for the deb
+>> because you can't go cat filenameA/metas/permissions >
+>> filenameB/permissions
+>> 
+>> If cat doesn't work, then we are suffering exactly the problem with
+>> namespace fragmentation that this whole scheme was invented to avoid.
 
-Pavel> Because I want to see contents of that .deb package, nicely
-Pavel> parsed?
+Mike> Sure you can.  All you need to do is fix your shell.
 
-What nicely-parsed information do you want to see?  A deb package is an
-ar archive of three files:
-- debian-binary, which contains the deb format version
-- control.tar.gz, which contains the control data and related things
-- data.tar.gz, which contains the actual files to be installed
+And you'll have to fix every other program that you want to use to edit
+metadata/attributes/streams.
 
-So to get at the format version, you can "cat foo.deb/debian-binary".
-To look at the control data, you can "ls foo.deb/control.tar.gz".  To
-browse the files, "cd foo.deb/data.tar.gz".
+The whole point of avoiding namespace fragmentation is to avoid having
+to fix programs.
+
+Like I said in another post, the world is bigger than just the command
+line.  The command line just gives really easy examples of why Hans (and
+others) thinks about things the way he does.
 
 -- 
 Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
