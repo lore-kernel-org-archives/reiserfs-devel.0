@@ -1,42 +1,36 @@
-From: Grant Miner <mine0057@mrs.umn.edu>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
 Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Thu, 01 Apr 2004 00:53:54 -0600
-Message-ID: <406BBC82.20103@mrs.umn.edu>
+Date: Thu, 01 Apr 2004 08:00:47 -0500 EST
+Message-ID: <86539716373-BeMail@cr593174-a>
 References: <200404010546.i315kEvY019805@sirius.cs.pdx.edu>
-Reply-To: reiserfs-list@namesys.com
 Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17640-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17641-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <200404010546.i315kEvY019805@sirius.cs.pdx.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
+Elliott Mitchell wrote on Wed, 31 Mar 2004 21:46:14 -0800 (PST):
 > Also I feel it should be on the file itself. ie for the file /tmp/fooblah
 > you should be able to access the file's metadata by open()ing/using
 > readdir() on /tmp/fooblah/metas or (/tmp/fooblah/..metas or whatever).
-> 
-That's how it works now I believe.
 
-> Bad choice. Note the "lost+found" directory found on *all* Unix
-> filesystems. If we need one more option | might be viable.
+Sounds good to me.  I just hope that directory operations are
+cheap in the file system.  The alternative of just adding a
+..meta. prefix to all attribute names would cut out one level
+of directories (less disk space usage, less lookup time to
+resolve a path, and no worry about the weirdness of attributes
+accidentally getting attached to the ..metas directory itself).
 
-Actually lost+found would not conflict if the directory were just + 
-i.e. file/+/uid. Unless someone is proposing changing syntax so that 
-accessing a file like foo@uid would get an attribute out of it (or 
-foo+uid I suppose).  VMS does something similar, having a different 
-syntax for each possible physical condition of a file (i.e., which 
-device somethings on, which version, etc.)...a nightmare much worse than 
-DOS with its drive letters.
+/tmp/fooblah/..metas/mime-type
+/tmp/fooblah/..metas.mime-type
 
-The basic format for all VMS filenames is:
-device:[directory.path]filename.extension;version
+Hmmm.  Which is better?  The weirdness factor worries me
+more than the performance reduction.
 
-Example:
-DISK$1:[JOE.PUBLIC_HTML]INDEX.HTML;1
-
-There is no reason why all this information needs to be part of the syntax.
+- Alex
