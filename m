@@ -1,31 +1,32 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: The situation at hand and in the future
-Date: Tue, 01 Jun 2004 19:45:51 -0700
-Message-ID: <40BD3F5F.1090809@namesys.com>
-References: <20040527200127.GS4990@nysv.org> <200405272105.i4RL5LDh026210@turing-police.cc.vt.edu> <40B6670D.9060408@slaphack.com> <20040528063324.GT4990@nysv.org> <40B89C9C.5050307@slaphack.com> <20040529154917.GW4990@nysv.org>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: regular reiser4 snapshots are in http://www.namesys.com/auto-snapshots/
+Date: Wed, 2 Jun 2004 11:20:39 +0400
+Message-ID: <20040602072039.GA8091@backtop.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18953-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18955-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040529154917.GW4990@nysv.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, Edward Shishkin <edward@namesys.com>
-Cc: David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Markus T=F6rnqvist wrote:
+Hi All,
 
->
->Unfortunately the error codes in the code are named Edward, who doesn't
->appear in the README...
-> =20
->
+now we have regular reiser4 snapshots (night snapshots) in
+http://www.namesys.com/auto-snapshots/ .
 
-Edward, add this credit for yourself to both the readme and the=20
-mkreiserfs credits when it starts to work:
+It is an addition to public repositories at bk://bk.namesys.com/, which do not
+fully work (bk pull does not work) .  We have troubles with setting both secure
+and valid public BK repository configuration since some bitkeeper code update.
 
-Edward Shushkin wrote the reiser4 compression and crypto plugins
+There is no automated control whether a snapshot is stable or not.  It might be
+even not compilable.  
 
+Time stamp in each patch name is in GMT.  No snapshots at weekends.
+
+Regards,
+Alex.
