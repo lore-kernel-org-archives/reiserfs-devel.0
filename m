@@ -1,36 +1,75 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Reiser4 can't compile glibc
-Date: Wed, 14 Apr 2004 11:50:31 +0300
-Message-ID: <20040414085031.GJ14134@nysv.org>
-References: <407C99CD.5060205@mrs.umn.edu>
+From: Domenico Andreoli <cavok@libero.it>
+Subject: Re: reiser4 and megaraid problems with debian 2.6.5
+Date: Wed, 14 Apr 2004 11:05:47 +0200
+Sender: linux-scsi-owner@vger.kernel.org
+Message-ID: <20040414090547.GB13578@raptus.homelinux.org>
+References: <36927C82-8DE0-11D8-A41D-000A95CD704C@wagland.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17919-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Return-path: <linux-scsi-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <407C99CD.5060205@mrs.umn.edu>
+In-Reply-To: <36927C82-8DE0-11D8-A41D-000A95CD704C@wagland.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Paul Wagland <paul@wagland.net>
+Cc: Linux mailing list SCSI <linux-scsi@vger.kernel.org>, Linux mailing list kernel <linux-kernel@vger.kernel.org>, Hans Reiser <reiser@namesys.com>, Atul Mukker <atulm@lsil.com>, reiserfs-list@namesys.com
 
-Grant Miner wrote:
+[ bringing this also on reiserfs ml, a great place for this kind
+  of posts.  this is also the reason of the full quoting. sorry ]
 
->Thanks. I put on that patch and it fixes my make problem.
+On Wed, Apr 14, 2004 at 08:51:53AM +0200, Paul Wagland wrote:
+> Hi all,
+ 
+hi Paul,
 
-I could compile glibc as well.
+> I would like to report on a problem that I am having. I am just testing 
+> out the new megaraid unified driver, and have been doing some baseline 
+> testing with bonnie++.
+> 
+> My problem is that, although reiserfs, ext2, jfs and xfs all work, 
+> reiser4 fails with the following error:
+> ---
+> Can't write block.
+> Bonnie: drastic I/O error (write(2)): No such file or directory
+> ---
+> 
+> I am using the debian prepared kernel with the debian reiser4 patch. I 
+> made a cursory examination of the patch, and it appears to correlate 
+> fairly closely with the patch from the namesys site.
+ 
+of course it is correlated to that of namesys! i have no skills at all
+to invent reiser4 :))
 
-However, GCC did not apparently compile. Debian Sid's GCC 3.3
-was the one I tried.
+you forgot to specify version of the patch you are talking about,
+currently debian provides two versions. anyway i suppose you are talking
+about version 20040326-2, aren't you?
 
-It appeared to have stalled during some if its test cases, I'll
-post further details, if required, when I get home and if I have
-time to sit at the computer then.
+> Given that this works with reiserfs, ext2, jfs and xfs it would appear 
+> to be a reiser4 problem, however ext3 also fails, though with a 
+> different error, it claims that the disk is full, but it is trying to 
+> write a 2 1GB files onto a 2.5GB filesystem, so it should have enough 
+> room, and indeed it did even work two or three times out of about 10 
+> runs (lots of timing :-). This implies that it might be a megaraid 
+> problem. As you can tell, I really have no idea ;-)
+> 
+> I will try playing around tonight with an official kernel and the 
+> official reiser4 patch to see if that makes any difference, but would 
+> just like to raise this potential problem sooner rather than later.
+ 
+latest reiser4 snapshot provided a patch which applied cleanly on
+2.6.5-rc2 but not to 2.6.5. i had to modify it as suggested on the
+reiserfs ml. if you look at the debian package's changelog you can find
+the reference to that thread.
 
-Thanks you Vladimir!
+> If I can help debug this situation (I am probably the only person 
+> trying this combination :-) please let me know how I should go about 
+> it.
 
--- 
-mjt
+i'm sorry but i can't help further.
 
+cheers
+domenico
+
+-----[ Domenico Andreoli, aka cavok
+ --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
+   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
