@@ -1,37 +1,34 @@
-From: berthiaume_wayne@emc.com
-Subject: RE: power loss -> corruption
-Date: Thu, 8 May 2003 08:23:38 -0400
-Message-ID: <93F527C91A6ED411AFE10050040665D007AA853B@corpusmx1.us.dg.com>
+From: Mirar <mirar-yg@mirar.org>
+Subject: Re: power loss -> corruption
+Date: 08 May 2003 14:32:53 +0200
+Sender: mirar@orchid.mirar.org
+Message-ID: <m1bryd1uve.fsf@orchid.mirar.org>
+References: <93F527C91A6ED411AFE10050040665D007AA853B@corpusmx1.us.dg.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14006-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14008-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <93F527C91A6ED411AFE10050040665D007AA853B@corpusmx1.us.dg.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: mirar-yg@mirar.org, Dieter.Nuetzel@hamburg.de
-Cc: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: berthiaume_wayne@emc.com
+Cc: Dieter.Nuetzel@hamburg.de, reiserfs-list@namesys.com
 
-	"data=3Djournal" will also work. You'll need to use the data logging
-patches that Chris Mason has put together.=20
+berthiaume_wayne@emc.com writes:
 
------Original Message-----
-From: Mirar [mailto:mirar-yg@mirar.org]
-Sent: Thursday, May 08, 2003 8:07 AM
-To: Dieter N=FCtzel
-Cc: reiserfs-list@namesys.com
-Subject: Re: power loss -> corruption
+> 	"data=journal" will also work. You'll need to use the data logging
+> patches that Chris Mason has put together. 
 
+Thanks.
 
-> Maybe, if you have some more details.
+I assume it's the ones I found here?
+ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20
 
-How do I get the necessary details?
+Do I need all of them or just 03-data-logging?
 
-> data-logging patches and mount option "data=3Dordered" solved similar
-> problems for me.
-
-Which patches? I'll add "data=3Dordered" to see if it'll help.
+Any reason why they haven't entered the official 2.4.21 (or have they)?
 
 /Mirar
