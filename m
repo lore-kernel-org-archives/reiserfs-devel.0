@@ -1,83 +1,36 @@
-From: Miguel <turtle.power@wanadoo.es>
-Subject: Re: "df -i" support
-Date: Fri, 14 May 2004 17:35:25 +0200
-Message-ID: <20040514173525.1289b529.turtle.power@wanadoo.es>
-References: <20040513093432.52d3d7a3.turtle.power@wanadoo.es>
-	<40A345D5.7000705@futuretg.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Date: Fri, 14 May 2004 20:01:19 -0700
+Message-ID: <40A587FF.30103@namesys.com>
+References: <20040329185901.62166.qmail@web25008.mail.ukl.yahoo.com> <406885F1.9040409@mrs.umn.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18688-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18690-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40A345D5.7000705@futuretg.com>
+In-Reply-To: <406885F1.9040409@mrs.umn.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Grant Miner <mine0057@mrs.umn.edu>
 Cc: reiserfs-list@namesys.com
 
-On Thu, 13 May 2004 09:54:29 +0000
-"Dr. Giovanni A. Orlando" <gorlando@futuretg.com> wrote:
+Grant Miner wrote:
 
-> Miguel wrote:
->=20
-> Dear Genius,
->=20
->     Please adopt:
->=20
->           df -hi
-from df(1):
+> Someone mentioned earlier, and I like just the at sign: @ Think of it 
+> short for "attributes".
+>
+> file/@/uid
+>
+> The nice thing about @ is it shows up early lexicographically, it's 
+> short and unlikely to be used.  This name is important to pick well 
+> because it will likely set a long precedent.
+>
+>
+It would be a problem for utilities like scp....
 
-....
--h, --human-readable
-              print sizes in human readable format (e.g., 1K 234M 2G)
-....
-
-how will this help to our monitorization system? it's written in perl
-and it's not a human.
-read my e-mail.
-
->=20
-> Thanks,
-> Giovanni
->=20
-> >Hi
-> >We have several machines running as MTA's using reiser for the mail
-> >queue, we usually check the number of files (well an approximation)
-> >using the output of "df -i" command on our monitorization plugins
-> >this may be not very acurate but is very fast and didn't affect the
-> >MTA's work.
-> >
-> >With reiser the output of df -i is no longer usable, we changed this
-> >to"find | wc -l" variations but it hurts the performance.
-> >
-> >There's a command to count the number of leafs (that's the name?) of
-> >a tree from a reiser partition? or other orientative value?.(we mount
-> >with notail)
-> >
-> >Tnx
-> >
-> > =20
-> >
->=20
->=20
-> --=20
->=20
-> --=20
->=20
-> --
-> Check FT Websites ...=20
-> http://www.futuretg.com  - ftp://ftp.futuretg.com
-> http://www.FTLinuxCourse.com
->                             /Certification
-> http://www.rpmparadaise.org
-> http://GNULinuxUtilities.com
-> http://www.YourPersonalOperatingSystem.com
->=20
-> --
->=20
+-- 
+Hans
 
 
---=20
-La resistencia es f=FAtil todos ser=E9is asimilados
