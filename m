@@ -1,82 +1,79 @@
-From: "Raymond A. Meijer" <rmeijer@internet.gr>
-Subject: SOLVED! (was Re: Problem with 2004.04.21-internal.testing)
-Date: Wed, 21 Apr 2004 16:53:03 +0300
-Message-ID: <200404211653.03400.rmeijer@internet.gr>
-References: <20040421121611.GA27992@brouette.noos.fr> <200404211732.41805.vitaly@namesys.com> <200404211642.48301.rmeijer@internet.gr>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Subject: Re: ".meta." as a Name Prefix
+Date: Wed, 21 Apr 2004 08:03:08 -0400 EDT
+Message-ID: <84800866490-BeMail@cr593174-a>
+References: <4085C7B2.4010104@slaphack.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18119-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18120-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200404211642.48301.rmeijer@internet.gr>
-Content-Disposition: inline
+In-Reply-To: <4085C7B2.4010104@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: reiserfs-list@namesys.com
 
-On Wed 21 April 2004 16:42, Raymond A. Meijer wrote:
+David Masover wrote on Tue, 20 Apr 2004 20:00:34 -0500:
+> That's what we were doing before.  I didn't like it -- consider the use
+> on files:
+> 
+> touch foo
+> chmod +x foo
+> cd foo/
+> ls
+> 
+> You either get 'foo/' or an error message.  You do not get a list of all
+> the pseudo files available.  I'm sorry, but 'cat ..pseudo' just isn't a
+> viable substitute for ls.
 
-> Okay, this compiled and installed cleanly.
->
-> Running 'fsck.reiser4 /dev/sys/backup' now...
-
-Wooohoooooo! No more (spelling ;) errors:
-
-==============================================================================
-*******************************************************************
-This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
-*******************************************************************
-
-Fscking the /dev/sys/backup block device.
-Will check the consistency of the Reiser4 SuperBlock.
-Will check the consistency of the Reiser4 FileSystem.
-Continue?
-(Yes/No): Yes
-***** Opening the fs.
-Reiser4 journal (journal40) on /dev/sys/backup: 0 transactions replayed of the 
-total 0 blocks.
-Reiser4 fs was detected on /dev/sys/backup.
-Master super block (16):
-magic:          ReIsEr4
-blksize:        4096
-format:         0x0 (format40)
-uuid:           f6a57152-e546-4a2a-b833-c0bce2a62caa
-label:          <none>
-
-Format super block (17):
-plugin:         format40
-description:    Disk-format for reiser4, ver. 0.5.4
-magic:          ReIsEr40FoRmAt
-flushes:        0
-mkfs id:        0x6909edad
-blocks:         2097152
-free blocks:    394814
-root block:     171208
-tail policy:    0x4 (smart)
-next oid:       0x78512
-file count:     291088
-tree height:    4
-key policy:     LARGE
-
-***** Tree Traverse Pass: scanning the reiser4 internal tree.
-        Read nodes 151585
-        Nodes left in the tree 151585
-                Leaves of them 148854, Twigs of them 2674
-        Time interval: Wed Apr 21 16:42:43 2004 - Wed Apr 21 16:45:12 2004
-***** TwigScan Pass: checking extent pointers of all twigs.
-        Read twigs 2674
-        Time interval: Wed Apr 21 16:45:12 2004 - Wed Apr 21 16:45:20 2004
-***** Semantic Traverse Pass: reiser4 semantic tree checking.
-        Time interval: Wed Apr 21 16:45:20 2004 - Wed Apr 21 16:51:24 2004
-***** fsck.reiser4 finished at Wed Apr 21 16:51:24 2004
-Closing fs...done
-
-No corruption found.
-==============================================================================
+Why wouldn't that work?  I must have missed something.  I can see that
+the fildirute (combined file / directory / attribute) nature of the new
+file system objects making the old rwx flags obsolete (does the "x" flag
+make it an executable file or does it mean permission to change directory
+to the child objects of the file).  But if you change directory to a thing,
+it gets appended to your path and the OS should be able to figure out that
+you want to look at its child objects (which I'd prefer to directly
+include things named .meta.blah, while others want a .metas subdirectory
+as a child object).
 
 
-Thanks a million!!
+> | I'm probably repeating myself, but the trouble is that the .meta
+> | directory isn't a full directory - you can't add attributes to it.
+> What kind of attributes would you want to add?
 
-Ray
+GUI directory display attributes, like window position and size,
+background picture, when displaying that directory.
+
+>  And btw, check out what is currently 'metas/metas'.
+
+I couldn't find that.  Instead I noticed "/filename/metadata/stat/owner"
+in http://www.namesys.com/v4/v4.html which seems a bit odd.  I'd expect
+something like "/filename/metadata/stat/metadata/owner" if you were using
+a metadata magic directory.  Or in my .meta. name prefix scheme, it
+would be "/filename/.meta.stat/.meta.owner"
+
+> I don't know if that's actually functional or just read-only, but it
+> works.  And I also see no reason why (in raw uneducated theory) a
+> plugin couldn't be implemented to make it into a full directory for
+> certain files (and thus losing no functionality for other files).
+
+Sounds like extra work and complexity, just to keep the idea of having
+a magic subdirectory child object rather than just putting the meta
+attributes directly as child objects.
+
+> It doesn't have to.  Look at how the "pure object-oriented" languages
+> work.  Many of them make everything some subclass of "object" -- even
+> classes themselves.  A class is an object of type class.  I'm not sure
+> how this is implemented in code, but in concept it works fine.
+
+In that kind of class system every object is an object, and you can
+do all object type operations to it (such as finding it's class name).
+The magic .meta directory breaks that very concept by not implementing
+full file system object functionality.  It's not a first class object,
+it's an awkward special case.
+
+- Alex
+
