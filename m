@@ -1,80 +1,36 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: Compile probs with yesterday's auto-snapshot
-Date: Tue, 10 Aug 2004 23:41:27 +0400
-Message-ID: <20040810194127.GS9811@backtop.namesys.com>
-References: <20040810192756.67EC115C33@mail03.powweb.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: implementing reiserfs in C++ for a new OS
+Date: Tue, 10 Aug 2004 12:51:26 -0700
+Message-ID: <4119273E.1040104@namesys.com>
+References: <71d3364904080706112e72fb6b@mail.gmail.com> <20040809172437.GP1284@nysv.org> <71d3364904080922267e8c14af@mail.gmail.com> <200408101312.48888.reiserfs-list@quinnh.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20146-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20147-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040810192756.67EC115C33@mail03.powweb.com>
+In-Reply-To: <200408101312.48888.reiserfs-list@quinnh.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Dabbs <david@dabbs.net>
-Cc: 'ReiserFS List' <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Quinn Harris <reiserfs-list@quinnh.org>
+Cc: reiserfs-list@namesys.com
 
-On Tue, Aug 10, 2004 at 02:19:54PM -0500, David Dabbs wrote:
-> 
-> 
-> Yesterday I kept having problems with an "incomplete type error" compiling
-> yesterday's auto-snapshot. I finally ended up changing the
-> CONFIG_REISER4_SYSFS define in fs/reiser4/kattr.h (I think that's the file)
-> from (1) to (0). 
+Quinn Harris wrote:
 
-yes. everything fine in the BK, but latest autosnapshots were made from wrong
-linux core patches.  I have re-done the autosnapshot script setup and will check
-the next snapshot.
+>ReiserFS is a copyrighted work distributed under a GPL license and possibly 
+>others as the copyright holder Hans Reiser sees fit.  Copyright law protects 
+>an expression of an idea, as in the actual code, not the idea itself. 
+>
+Yes, but it protects the expression not just in every literal word, but 
+in the sense of it.  Look at the lawsuits over ripping off movie script 
+writers.
 
-> 
-> In a separate but related question, does the reiser4 patchset add the
-> kernel-build configurable options to the kconfig e.g.
-> REISER4_STATS/DEBUG/SYSFS/NOOPT/COPY_ON_CAPTURE/SYSCALL/<others?>...? I'm
-> sure LARGE_KEY is there, but I can't remember which other one I saw. If it
-> doesn't already should LARGE_KEY prompt with a default value of "Y"?
-> 
-> Also the READ.ME for the prior SNAPSHOT (03/26, yes ages ago I know) had the
-> following notes. Since the recent 08/04 snapshot only notes that "This is
-> mostly bug fix snapshot" should we assume that the prior notes are resolved
-> or that there are still issues with the items? I've made some notes below
-> 
-> 
-> 
-> 1. Only i386 and UML on i386 are supported.
-> ddabbs: Big endian appears to be supported.
-> 
-> 2. CONFIG_REISER4_FS_SYSCALL doesn't work.
-> 
-> 3. CONFIG_REISER4_NOOPT doesn't work.
-> 
-> 4. reiser4 has been tested as a root file system and works in read-only
->    mode, but:
-> 
->        . remount is not yet supported, 
->        . support in boot-loaders may be missing
-> 
-> ddabbs: A grub patch is provided, so that comment is likely out-of-date.
-> 
-> 9. reiser4 can now be compiled as a module.
-> 
-> ddabbs: I don't think this is working yet.
+Taking the essence of our expression, and transforming it into C++ and 
+Indian, will not avoid infringement of our copyright.  Our documentation 
+is as protected as  the source code, probably more so, because we 
+haven't GPL'd everything on the website.
 
-hmm. I thought we made all needed symbols exportable. what is the problem?
-> 
-> c. CONFIG_REISER4_COPY_ON_CAPTURE is stabler than before.
-> 
-> d. readdir() over NFS has known problems.
-> 
-> e. mmap(2)-intensive workloads (iozone benchmark in particular) have
-> problems in low-memory setups.
-> 
-> 
-> David
-> 
-> 
+I don't really understand why he doesn't license it from us or adhere to 
+the GPL if it is going to be free as he describes. 
 
--- 
-Alex.
