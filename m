@@ -1,40 +1,39 @@
-From: Chris Mason <mason@suse.com>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: Large Partition Performance Test
-Date: 12 Apr 2002 09:21:22 -0400
-Message-ID: <1018617682.14429.119.camel@tiny>
-References: <20020411181459.69516.qmail@web10002.mail.yahoo.com>
-	<20020411234316.A3749@namesys.com> <20020411202856.GA26083@matrix.wg>
-	<1018563083.14483.100.camel@tiny>  <20020412134116.B21820@namesys.com>
+Date: Fri, 12 Apr 2002 17:29:02 +0400
+Message-ID: <20020412172902.A23772@namesys.com>
+References: <20020412133937.A21820@namesys.com> <20020412132133.2596.qmail@web10007.mail.yahoo.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10058-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10059-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020412134116.B21820@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <20020412132133.2596.qmail@web10007.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: Dirk Mueller <dmuell@gmx.net>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: bill@billrees.com
+Cc: reiserfs-list@namesys.com
 
-On Fri, 2002-04-12 at 05:41, Oleg Drokin wrote:
-> Hello!
-> 
-> On Thu, Apr 11, 2002 at 06:11:23PM -0400, Chris Mason wrote:
-> 
-> > Then I would expect the new allocator in busy_skip mode to fix it.  But,
-> > having profiling on would tell us for sure.
-> 
-> Even withoyt skip_busy mode it will work much better.
-> The problem is on each file creation we start to look for a free block almost
-> from the beginning of disk. using no_unhashed_relocation mount option,
-> we make initial block allocation to be more random and cause less overhead
-> (verified).
-> And in this test we create a lot of 15k files.
+Hello!
 
-Ok, I'll buy that.  The only way to know for sure is to give it a try or
-profile the run, but I think it is very likely to be allocator related.
+On Fri, Apr 12, 2002 at 06:21:33AM -0700, Bill Rees wrote:
 
--chris
+> That seems to have done the trick.  Which is the most
+> stable release that you would recommend that would
+> include this fix?
 
+Huh? Fix? This mount options is in kernel for ages! ( cannot say for
+how long exactly, but certainly more than for half of year).
+Too bad is not documented well.
+We now recommend 2.4.18 kernel that contains all critical fixes.
+When 2.4.19 will eb out, it will become out recommended version, if
+nothign bad won't happen with it.
 
+We also have this new block allocator alrogithm, I recently posted to the list,
+which should also have positive impact on workload like yours .
+But we cannot recommend it for productional use yet.
+
+Bye,
+    Oleg
