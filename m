@@ -1,32 +1,60 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Sun's ZFS Annoucement
-Date: Wed, 15 Sep 2004 16:10:49 -0700
-Message-ID: <4148CBF9.1050001@namesys.com>
-References: <4148C9AF.7040502@elegant-software.com>
+From: evilninja <evilninja@gmx.net>
+Subject: Re: EACCESS vs ENOENT for nonexistent files-within-files
+Date: Thu, 16 Sep 2004 02:00:43 +0200
+Message-ID: <4148D7AB.4000301@gmx.net>
+References: <20040913140637.GB29591@redhat.com>	<20040913161326.GB2252@backtop.namesys.com>	<20040913185255.GA1920@redhat.com>	<16709.63624.953839.299199@thebsh.namesys.com>	<41481FA5.2000504@gmx.net> <16712.10868.647572.90804@thebsh.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21799-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21800-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4148C9AF.7040502@elegant-software.com>
+In-Reply-To: <16712.10868.647572.90804@thebsh.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Russell Leighton <russ@elegant-software.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+Cc: Nikita Danilov <nikita@clusterfs.com>
 
-Russell Leighton wrote:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Nikita Danilov wrote:
+> evilninja writes:
+>  > -----BEGIN PGP SIGNED MESSAGE-----
+>  > Hash: SHA1
+>
+> Hello, Christian evilninja :)
+
+um, yes, it just sticks ;-)
 
 >
-> Hans was worried about MS and Apple...how about Sun?
->
-> I'd be curious to hear compare/contrast of  ZFS vs other filesystems. 
-> Anyone actually touched this in the real world?
->
-> See: http://www.sun.com/2004-0914/feature/
->
->
-Ecc is a good idea, and a plugin for it for reiser4 would be 
-interesting, but I am still far more worried about Apple and MS.  They 
-plan on making serious attempts at innovation.
+> But in reiser4 file.txt _is_ a directory. That's the whole point: it
+> contains other objects inside.
+[...]
+> This is very simple: do be able to do a lookup one needs +x bit. No +x
+> bit--no lookup. No lookup---impossible to determine exists .htaccess or
+> not.
+
+ok, so things will be different when i'll try reiser4 on my box.
+
+> Permission bits determine what operations are possible on
+> object. Letting user to know that .htaccess doesn't exist while
+> permission bits on parent explicitly disable lookups is a security
+> hole.
+
+yes, i think i got i now. thanks for the explanation.
+
+Christian.
+- --
+BOFH excuse #65:
+
+system needs to be rebooted
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iD8DBQFBSNerC/PVm5+NVoYRAuLsAJ99JCbKQ0ebl9xRPwwYK/un9OKRtgCg3nOu
+tlYw+GkQWwO2Kfk1pEVlivE=
+=5iJg
+-----END PGP SIGNATURE-----
