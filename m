@@ -1,53 +1,64 @@
 From: Chris Mason <mason@suse.com>
-Subject: Re: integrity question
-Date: 28 May 2002 07:05:41 -0400
-Message-ID: <1022583941.22609.1251.camel@tiny>
-References: <200205252043.29257.tdickenson@geminidataloggers.com>
-	<20020526052550.GA5056@atou.qc.ca>
-	<200205271035.24379.tdickenson@geminidataloggers.com> 
-	<20020528022659.GA6451@atou.qc.ca>
+Subject: beta reiserfs data logging patches
+Date: 28 May 2002 16:43:51 -0400
+Message-ID: <1022618631.22609.1390.camel@tiny>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10423-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10424-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020528022659.GA6451@atou.qc.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jean-Francois Landry <jflandry@atou.qc.ca>
-Cc: Toby Dickenson <tdickenson@geminidataloggers.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: berthiaume_wayne@emc.com
 
-On Mon, 2002-05-27 at 22:26, Jean-Francois Landry wrote:
-> On Mon, May 27, 2002 at 10:35:24AM +0100, Toby Dickenson wrote:
-> > On Sunday 26 May 2002 6:25 am, Jean-Francois Landry wrote:
-> > 
-> > thanks for your time,
-> > 
-> > >> 1. write to A/B/somefileX and fsync it
-> > >> 2. mkdir A/C
-> > >> 3. rename A/B/somefile to A/C/somefile
-> > >> 4. rmdir A/B
-> > >> 5. power loss
-> > >>
-> > >> I would like to guarantee that, after journal replay, 'somefile' is in
-> > >> either of those two directories (or both). Am I correct to think that I
-> > >> dont need any other syncs in there?
-> > >
-> > >You are correct, renames are atomic on journalling filesystems.
-> > >So, no problems with half-written directory entries, if you lose power
-> > >at the wrong time the journal replay procedure will throw the
-> > >transaction out and you end up as if you never issued a rename at all.
-> > 
-> > Atomic rename isnt quite enough in the scenario I described. The filesystem 
-> > also needs to take care that the step 3 is not committed before step 2, and 
-> > that step 4 is not committed before step 3.
-> 
-> AFAIK, all transactions are written to the journal in the order they
-> were issued, so this problem won't arise.
+Hello everyone,
 
-Correct.  Only data blocks can be written out of order, but the fsync
-protects you from that.
+The very daring among you can try:
+
+ftp.suse.com/pub/people/mason/patches/data-logging
+
+To help me benchmark and test the new data logging code.  This is all
+experimental, and should not be tried on production machines, or
+anything other than a pure test box right now.
+
+data logging helps for fsync and O_SYNC heavy applications, like mail
+servers, and databases.  Without the patches, using O_SYNC writes with
+iozone to make a 10MB file results in ~600K per second.  With the
+patches, it goes up to around 900K/s and in data=journal mode it goes to
+2300K/s.
+
+In addition to the data logging code, there are a number of speedups for
+tiny transactions.  Wayne, you are cc'd because I believe this code is
+faster than the first data-logging patch, you might want to run through
+the benchmarks again.
+
+The rest of the message details the changes:
+
+01_commit_super-8.diff -- my patch to make write_super not be used by
+sync().  This has been floating around for a while and is unchanged.
+
+02_beta-data-logging-3.diff
+
+Adds the data=journal option, logging data blocks whenever it is one. 
+This is an extension of the nesting patch used by the reiserfs quota
+code.
+
+Gets rid of the static array of struct reiserfs_journal_list.  The
+structs are now allocated on demand and stored in a time ordered
+per-super list.  The old code was O(N) on the size of the array in a
+bunch of places, and made it very difficult to quickly find lists in
+need of flushing.
+
+The new lists allow me to quickly find transactions that haven't been
+touched by kreiserfsd yet, which makes it easy to send more than one
+transaction worth of metadata to disk at once.  For tiny transactions,
+this makes a huge performance difference.
+
+Since the lists are time ordered, it is also easier to figure out which
+transactions the next transaction might overlap, and which ones are very
+old, which cuts down on CPU time spent in do_journal_end.
 
 -chris
 
