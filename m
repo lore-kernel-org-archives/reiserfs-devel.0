@@ -1,103 +1,92 @@
-From: "Danny Norging" <norging@gmx.de>
+From: Sander <sander@humilis.net>
 Subject: Re: 2.4.21 -> 2.4.25 cryptoloop mess
-Date: Sun, 9 Jan 2005 12:44:44 +0100 (MET)
-Message-ID: <19024.1105271084@www24.gmx.net>
-References: <8944.1105265334@www26.gmx.net>
+Date: Sun, 9 Jan 2005 13:42:36 +0100
+Message-ID: <20050109124236.GB862@favonius>
+References: <20050108144309.GA27949@favonius> <8944.1105265334@www26.gmx.net>
+Reply-To: sander@humilis.net
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-23096-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23097-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <8944.1105265334@www26.gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Danny Norging <norging@gmx.de>
+Cc: reiserfs-list@namesys.com
 
-Hi,
+Danny Norging wrote (ao):
+> > >From your mail it seems you only made a copy after you already
+> > >fsck'ed
+> > (pun intended) the original image. Now this is your second mistake.
+> > The first one: you didn't have (or seem to have had) backups.
+> 
+> Sad thing is when you even know all this, and it still happens to
+> you... just didnt get to make a big backup (no dvd-burner at the
+> time), it was planed, though :(
 
-reiserfsck-3.6.19 just finished, still nothing new in lost+found :(
-Thats what I did:
+My experience is that backup to disk is cheaper. Especially if it is
+meant as a recovery solution (because you through away old archives as
+soon as the disk get full and thus re-use space). Dvd might be cheaper
+for archiving, but they have a limited lifetime.
 
-# losetup /dev/loop0 hdc1decrypted.dump
-# reiserfsck --rebuild-tree -S /dev/loop0 -l reiserfsck-3.6.19.log
+Disk is also faster, and you can have fully automated backups. A dvd you
+have to change.
 
-with the following result:
-# cat reiserfsck-3.6.19.log
-####### Pass 0 #######
-28 directory entries were hashed with "r5" hash.
-####### Pass 1 #######
-####### Pass 2 #######
-####### Pass 3 #########
-vpf-10680: The directory [2 3] has the wrong block count in the StatData (2)
-- corrected to (1)
-vpf-10650: The directory [2 3] has the wrong size in the StatData (720) -
-corrected to (48)
-####### Pass 3a (lost+found pass) #########
-#
+I have 1.1TB disk storage at the office for automated backups and sell
+our disk-based remote backup/recovery solutions to other companies.
 
-still the content of lost+found looks like this:
-# ls -Ral
-.:
-total 2
-drwxr-xr-x  4 root root  80 Nov  4 02:59 .
-drwxr-xr-x  4 root root 192 Nov 18 11:15 ..
-drwx------  4 root root 720 Apr  3  2004 lost+found
+At the moment I consider dvd storage too small, but with the upcomming
+50GB dvds this might change.
 
-./lost+found:
-total 91
-drwx------  4 root root                 720 Apr  3  2004 .
-drwxr-xr-x  4 root root                  80 Nov  4 02:59 ..
--rwxr-x---  1 root users                215 Jul 21  2003 1078_1080
--rwxr-x---  1 root users                385 Jul 21  2003 1081_1082
--rwxr-x---  1 root users                341 Jul 21  2003 1081_1083
--rwxr-x---  1 root users                371 Jul 21  2003 1081_1084
--rwxr-x---  1 root users  12103423998558959 Jul 21  2003 1081_1085
-                          ^^^^^^^^^^^^^^^^^-> quite big, isnt it?
--rwxr-x---  1 root users                539 Jul 21  2003 1081_1086
--rwxr-x---  1 root users                407 Jul 21  2003 1081_1087
--rwxr-x---  1 root users               1844 Jul 21  2003 1081_1088
--rwxrwxrwx  1 dg   users               4000 Jul 24  2003 38910_45033
--rwxrwxrwx  1 dg   users               2425 Jul 24  2003 38910_45034
--rwxrwxrwx  1 dg   users               2865 Oct 23  2002 58627_65589
--rwxrwxrwx  1 dg   users              11313 Aug  5  2003 92166_92185
--rwxrwxrwx  1 dg   users                660 Aug  5  2003 92167_92168
--rwxrwxrwx  1 dg   users                 20 Aug  5  2003 92167_92169
--rwxrwxrwx  1 dg   users                 50 Aug  5  2003 92167_92170
-drwxrwxrwt  2 dg   users                104 Aug  5  2003 92186_92187
--rwxrwxrwx  1 dg   users                  2 Aug  5  2003 92187_92188
-drwxrwxrwt  2 dg   users                128 Aug  5  2003 92191_92192
--rwxrwxrwx  1 dg   users                536 Aug  5  2003 92196_92201
--rwxrwxrwx  1 dg   users              12587 Aug  5  2003 92196_92202
--rwxrwxrwx  1 dg   users 742249513586003637 Aug  5  2003 92196_92203
-                         ^^^^^^^^^^^^^^^^^^ ???
-./lost+found/92186_92187:
-total 10
-drwxrwxrwt  2 dg   users 104 Aug  5  2003 .
-drwx------  4 root root  720 Apr  3  2004 ..
--rwxrwxrwx  1 dg   users  24 Aug  5  2003 Repository
--rwxrwxrwx  1 dg   users  50 Aug  5  2003 Root
 
-./lost+found/92191_92192:
-total 14
-drwxrwxrwt  2 dg   users 128 Aug  5  2003 .
-drwx------  4 root root  720 Apr  3  2004 ..
--rwxrwxrwx  1 dg   users   2 Aug  5  2003 Entries
--rwxrwxrwx  1 dg   users  19 Aug  5  2003 Repository
--rwxrwxrwx  1 dg   users  50 Aug  5  2003 Root
-#
+> > Did you mount the fs afterwards? Did you find any new content? What
+> > reiserfscs version did you use?
+> 
+> No new content in the lost+found dir after the reiserfsck, which was
+> version 3.6.17. I am just running a reiserfsck version 3.6.19 and will
+> report on those results.
 
-and look at this:
-# du 1081_1085 92196_92203
-4       1081_1085
-4       92196_92203
-#
+Please do. I'm interested in this and hope you will succeed.
 
-Any help? TIA
 
-Greetings from Berlin
-Danny
+> > > > > To: support@namesys.com
+> > > > if you run reiserfsck --rebuild-tree on the device with the
+> > > > wrong decryption you probably erase all the data on it. 
+> > 
+> > Isn't it more likely that reiserfsck in that case doesn't recognize
+> > the filesystem at all and just exits with an error? (I'm just a user
+> > though).
+>
+> Well, it was running for about a day, so it did something.
 
---=20
-+++ GMX - die erste Adresse f=FCr Mail, Message, More +++
-1 GB Mailbox bereits in GMX FreeMail http://www.gmx.net/de/go/mail
+Yes, that is why I believe your hope is justified.
+
+For example, if I try to run reiserfsck (with or without --rebuild-tree)
+on my swapfile, it says:
+
+Will read-only check consistency of the filesystem on /swapfile
+Will put log info to 'stdout'
+
+Do you want to run this program?[N/Yes] (note need to type Yes if you do):Yes
+
+reiserfs_open: the reiserfs superblock cannot be found on /swapfile.
+Failed to open the filesystem.
+
+If the partition table has not been changed, and the partition is
+valid  and  it really  contains  a reiserfs  partition,  then the
+superblock  is corrupted and you need to run this utility with
+--rebuild-sb.
+
+
+If your device was decrypted not the right way, it would contain garbage
+like a swapfile contains garbage to reiserfsck, right? Reiserfsck would
+not have chewed on it for a day.
+
+
+-- 
+Humilis IT Services and Solutions
+http://www.humilis.net
