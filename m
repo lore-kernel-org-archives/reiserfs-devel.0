@@ -1,52 +1,56 @@
-From: Marcel Hilzinger <marcel@hilzinger.hu>
-Subject: Re: Reiser4 on SuSE 9.1
-Date: Fri, 4 Jun 2004 16:47:32 +0200
-Message-ID: <200406041647.32645.marcel@hilzinger.hu>
-References: <200406041414.HAA14660@amber.he.net>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: snapshot, checkpoints
+Date: Fri, 04 Jun 2004 15:25:35 -0400
+Message-ID: <200406041925.i54JPZgp025255@turing-police.cc.vt.edu>
+References: <20040527065259.99429.qmail@web51306.mail.yahoo.com> <1085641393.1915.199.camel@tribesman.namesys.com> <20040527092727.GO4990@nysv.org>
+            <20040604131005.hmvps8wcw4sccgcs@www.wagland.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19013-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_1219181512P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19016-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200406041414.HAA14660@amber.he.net>
-Content-Disposition: inline
+In-Reply-To: Your message of "Fri, 04 Jun 2004 13:10:05 +0200."
+             <20040604131005.hmvps8wcw4sccgcs@www.wagland.net> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
-Cc: Mike Young <myoung@wildernessvoice.com>
+To: Paul Wagland <paul@kungfoocoder.org>
+Cc: Markus TXrnqvist <mjt@nysv.org>, Vladimir Saveliev <vs@namesys.com>, tdwebste2@yahoo.com, reiserfs-list@namesys.com
 
-2004. j=FAnius 4. 16.14 d=E1tummal Mike Young ezt =EDrta:
-> Has anyone put Reiser4 on the latest SuSE 9.1 release?  I'd like to use it
-> there without having to patch a pristine kernel.  Preferably, I'd like to
-> be able to use their RPM build environment so I can continue to take
-> updates from SuSE.
+--==_Exmh_1219181512P
+Content-Type: text/plain; charset=us-ascii
 
-Probably this is not, what you need, but I test Reiser4 on SuSE 9.1 with=20
-kernel 2.6.5. This is NOT a SuSE kernel, but I use the config file form the=
-=20
-official SuSE 2.6.4 kernel and it compiled without problems. Even cryptoloo=
-p=20
-with the old SuSE twofish works. Of course kernel update will not work any=
-=20
-more...
+On Fri, 04 Jun 2004 13:10:05 +0200, Paul Wagland said:
 
-I tried to patch the SUSE kernel with reiser4 patches, but as I'm just a=20
-stupid user, I couldn't make it work. It would be great, if the SuSE kernel=
-=20
-developers could make a patch for the SuSE 9.1 kernels.=20
+> Can't the same functionality be created with device mapper though? At least
+> under linux anyway?
 
-This would also be good for namesys, as with this help much more tester cou=
-ld=20
-be won for testing Reiser4. As I'm a user, I know, that many users have tim=
-e=20
-to do such tests, and they don't bother about data anyway :-)
+You'd need 2 things:
 
-Marcel
+1) *very* recent patched device mapper (I think patches for snapshot support
+went by on LKML just day before yesterday or so).
+
+2) You also need a suitable write-barrier interlock to the filesystem, to
+basically force a flush-to-disk of all the incore data buffers, etc (basically,
+you need to ensure that at the instant the snapshot is taken, the on-disk copy
+is "clean" by fsck standards).
+
+At that point, you can just have a utility that goes "flush; snapshot;" and go on
+your way.....
 
 
-=2D-=20
-=DCdv=F6zlettel -- Mit freundlichen Gr=FCssen,
-Marcel Hilzinger
+--==_Exmh_1219181512P
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFAwMyvcC3lWbTT17ARAvWTAKD7/M6r5vCIDO1W8PID+2mYKkqkxwCguNlO
+gwV45LoTcli2xXZxrp1/vNg=
+=zRVr
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1219181512P--
