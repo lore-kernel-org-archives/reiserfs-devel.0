@@ -1,60 +1,77 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: Fibration questions
-Date: Fri, 23 Jul 2004 13:13:32 -0500
-Message-ID: <4101554C.6060203@slaphack.com>
-References: <40FE0B47.3010600@slaphack.com> <40FF3DAD.6020100@slaphack.com> <200407221410.25043.vitaly@namesys.com> <200407231159.23162.christian.mayrhuber@gmx.net> <20040723095950.GM4990@nysv.org>
+Date: Fri, 23 Jul 2004 13:21:02 -0500
+Message-ID: <4101570E.9080603@slaphack.com>
+References: <40FE0B47.3010600@slaphack.com> <20040721063607.1A09015C92@mail03.powweb.com> <20040721083232.GA4990@nysv.org> <40FF3DAD.6020100@slaphack.com> <20040722100657.GC4990@nysv.org> <41007BC6.3060209@slaphack.com> <20040723094242.GL4990@nysv.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19776-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19777-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040723095950.GM4990@nysv.org>
+In-Reply-To: <20040723094242.GL4990@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
 To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
-Cc: Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com
+Cc: David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
 
 
+
 Markus T=F6rnqvist wrote:
-| On Fri, Jul 23, 2004 at 11:59:23AM +0200, Christian Mayrhuber wrote:
+| On Thu, Jul 22, 2004 at 09:45:26PM -0500, David Masover wrote:
 |
-|>It would be a good idea if the meta filesystem interface always auto
-|>terminates strings (add + '\0') issued by echo. procfs does it that way.
+|>| UPDATE formatting SET policy=3D'never\0' WHERE policy=3D'smart\0' RECUR=
+SE;
+|>| instead of just
+|>| UPDATE formatting SET policy=3D'never\0' RECURSE;
+|>| which may break something else...
+|>
+|>Both should be allowed.  Can that be done now?  And with echo, not SQL.
 |
 |
-| Or add a small parser that allows \n so that cat output would look
-| better...
+| I can't check now but maybe:
+|
+| for dir in $(find . -type d); do
+|   format=3D$(cat $dir/..metas/plugin/formatting)
+|   if [ $format =3D=3D "smart\0" ]; then
+|     echo -e 'never\0' > $format
+|     for file in $(find $dir -type f); do
+|       cat file > /dev/null
+|     done
+|   fi
+| done
 
-And remove \n from input so we could really just do "echo foo >
-metas/bar" with no worries.
+I was thinking a plugin.  Also, "metas" is _still_ the default on the
+auto snapshots.  I change it to '...' whenever I feel like looking at
+the code.
 
-Amen, if it could be done for only access through the "open" system
-call.  That is, if someone wants speed, they'll use sys_reiser4, and if
-they use sys_reiser4, they want speed -- thus sys_reiser4 would not add
-\0 or add/remove \n.
+"find -type d" would most likely not work.  I'm thinking of an attribute
+which would apply to every type of object, including files, also files
+which are directories, and so on.  Mainly just a few flags -- right now
+I'm thinking "never purge me from cache" and "I'm a stub; if something
+actually tries accessing me, pull me from the network."
 
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQQFVS3gHNmZLgCUhAQJ86g/6AsEwzPGRmBIfHCOW/SBS/iErwxhRHYmj
-1SOwgUan+Aa/G7YVQZziI6/wS3hjcjW0lzelI8LAJM7fomWprwHKmFP7a7BngOEh
-Phwmk0TGVvOiFZ3J34vfyBnYTeM15ttOfWDbJQI5x15K3nkPNgytgajIYKYtGkeL
-eBuEo0YUoJ7IGyFnJScqnC7QsLgR/ak5F2oJrZCKRskycVN+ceXG9xdFX5K6U6TM
-p8mfmRXGpKMtw9Ob1CQ+jjOQ98T2cFgGQ/00i3U2wfzrkFEcjOqZdNwIDbEKXHND
-Fvxz1X//WPsaZkXOAO9TUneWkthVjcrDCJCJfSG5FxSeE04JscxOLyxZlyJqB2nG
-YHIhQetrSI7hJqwT9eCWzO8ihpkmdqmfTHjEkmmpWbZ4L51e7uom9KQw0+SCCp0C
-ag+zHE7W32ysULqKT+ozpi/P7FaEKq5kizZ/KYUkIYrco1IMrPV9ZCUxA0YDINy/
-MBTfxNrMy+HoTHDsy4EFrX3Dldi/hm7dDoBcDrmssfDiWcfKuJad+Zg/edSyRRcb
-NpjaaAiIX9LQP0JQsh/k4+zPSf5Gp+JU8T8IG8MxZQOTInvKAbXL7oqx2Zmieae7
-bWscaJzC6HvLSUcBfHXJdM1+ELLrLoExlJFMMzqrdjTypxRHvkKM9qVm50JM6lfu
-h2t8BlnnKtI=3D
-=3DvUTa
+iQIVAwUBQQFXDXgHNmZLgCUhAQIsSBAAiThNM1TkyvVQzkhK48RPzrAlM8T3rYTW
+QWYCdY5TjIQ5svt/m+hj27HPAFh1PCU/ZtRIE3lv01eGHmlz5/560r2v3VAIHlpn
+GQEJaw587hcvN+owUsj4PgajIWX1tJJ5fiyfV3Llq6QqJhb6jm8UxH9mX/03Gz0d
+p76AbtBF0z8xDxt87lEwTrhxWZmgas1H+qyPnCR1F4fFEn54H7DA4Sp9e+5rqtGJ
+8p9kXlYgjigfxjITkXCYlA3k/9K3+T7bWvlM16P8Buf9O4HaUKhAv/s1mAx6iJVy
+FUPxzaz9hF169O89RGWAbbyxZ9k2Z7+VK9sxLoiqkTRKNqBfZv8sdQyQ9r9ZwBxc
+HKfF2Ndzjd3pR/NES1ukvECHqjsSmXI3fRFBB80x+o1hM/+MvoZjtCcn3H/Aes96
+yKgwR3UFYnZfBi9PHOdQn2sOfGXJaEj1n37QeuyGEAmUZb/5Zf/ukMfYyhBfgqPY
+rZw7QSY71bhrbRu0k1/cZ6kkEvdyAA90+nAzwyHMqLktPZ/uZc324HfyudrAb6cy
+g7x3mM8Jj5Wm7XK1lD6OU1EsJQcNNt/dsRdZgT82tX4w+ZRbedYEhWqCM1ER83OS
+pwmWTiumpxbDgCWyrEDOyHtfihPJkPmz4xBHytKrX/pRKVCqNl28UPw32gJA0P4i
+uwkYWv8vnDI=3D
+=3D2D+S
 -----END PGP SIGNATURE-----
