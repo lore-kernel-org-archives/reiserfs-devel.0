@@ -1,9 +1,11 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: NFSv2 problem? initctl problem?
-Date: Wed, 18 Aug 2004 17:51:03 +0300
-Message-ID: <20040818145103.GE1284@nysv.org>
+From: Melis van den Brink <m.vd.brink@worldonline.nl>
+Subject: Corrupted reiserfs filesystem: please help to solve this ?
+Date: Wed, 18 Aug 2004 17:06:07 +0200
+Message-ID: <200408181706.07347.m.vd.brink@worldonline.nl>
+Reply-To: m.vd.brink@worldonline.nl
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20377-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20378-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -11,73 +13,54 @@ Errors-To: flx@namesys.com
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-fai@rrz.uni-koeln.de, reiserfs-list@namesys.com
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-Hi!
+Dear reiserfs-list readers,
 
-I've been trying, quite desperately, to get FAI working but there appears
-to be some bad karma.
+I'm following this list for a few years mostly in "lurker"-mode just to see 
+what happens with reiserfs. I've been using reiserfs (version 3) for many 
+years now without much problems. Up until now... :-(.
+Last week I ran into diskspace problems and I decided to make a new volume 
+where I could place all my multimedia stuff (movies, audio and pictures). I 
+fdisk-ed a new disk and made few partitions. After that I used LVM 1.0.7 
+(pvcreate, vgcreate and lvcreate) to get me some logical volumes and used 
+mkreiserfs (version 3.6.10) to get a filesystem on it. All looked well and I 
+started moving my data to those new filesystems. Even this looked ok up until 
+I experienced a locked-up system. No way to shut it down in a nice way I was 
+forced to power-down and power-up and that's where the shit hitted the fan 
+:-(.
+Recovery of my older filesystems worked like a charm but the newly made stuff 
+was nowhere in sight. In hindsight the only thing I could think of I did 
+wrong in making the new filesystems was I forgot to reboot after fdisk-ing 
+the disk.
+It turned out that LVM couldn't find the newly created volume-group and the 
+logical volumes it contained. Subsequently neither could reiserfs find it's 
+(or rather my)  precious filesystems. Using vgcfgrestore I eventually could 
+recover the LVM-data so that at least LVM was consistent again. The 
+reiserfs-filesystems however I just can't seem to get them back. Using 
+reiserfsck in --check, --rebuild-sb, --fix-fixable or --rebuild-tree-mode 
+eventually turned out in the following message:
+        No reiserfs metadata found.  If you are sure that you had the reiserfs
+        on this partition,  then the start  of the partition  might be changed
+        or all data were wiped out. The start of the partition may get changed
+        by a partitioner  if you have used one.  Then you probably rebuilt the
+        superblock as there was no one.  Zero the block at 64K offset from the
+        start of the partition (a new super block you have just built) and try
+        to move the start of the partition a few cylinders aside  and check if
+        debugreiserfs /dev/xxx detects a reiserfs super block. If it does this
+        is likely to be the right super block version.
+        If this makes you nervous, try  www.namesys.com/support.html,  and for
+        $25 the author of fsck,  or a colleague  if he is out,  will  step you
+        through it all.
 
-The server exports /usr/local/share/fai with async,rw and
-/usr/lib/fai/nfsroot with async,rw,no_root_squash
-Originally I had ro, but that did not seem to matter.
+I tried some other suggestions in previous messages in this list, but always 
+came back to the above sequence of reiserfsck-commands.
 
-I get to the point where the 2.4.24-fai kernel of Debian boots, but it
-stalls after the FAI_FLAGS: syslogd=1 line.
-
-According to Ethereal, the big problem is in getting a getattr response
-from the server. It looks like this:
-
-mount: RPC: Remote system error - Connection timed out
-/fai/class not found. Aborting.
-
-It did not abort, though; it still sends out the getattr query
-and gets a response.
-
-According to the tcpdump, the file id in question is 147491.
-
-mjt@hinkistan:~$ find /usr/lib/fai/nfsroot/ -inum 147491 | xargs file
-find: /usr/lib/fai/nfsroot/var/spool/cron/crontabs: Permission denied
-find: /usr/lib/fai/nfsroot/root/.ssh: Permission denied
-/usr/lib/fai/nfsroot/dev/initctl: fifo (named pipe)
-
-On the server side I'm running Debian Sarge with 2.4.18-bf2.4, all
-clear, and trying to use 2.4.24-fai for the installer, which should
-be clear as well.
-
-It doesn't matter whether I use the kernel- or user-space NFS implementation,
-it still dies on me, except that I'd rather use the kernel-space one.
-
-Now what I'm wondering about is where is the error?
-
-Is it possible there's some issue with NFSv2; should I use NFSv3 instead?
-
-How can I force the client to use only NFSv3? rpc.mountd -N2 -V3 should
-work, right? But it still speaks v2 according to the traffic AND affects
-only the server-side, in theory, if not in practice apparently.
-
-The underlying filesystem is ReiserFS, so I'm sending a copy of this
-mail to the ReiserFS list as well, to see if anyone over there knows
-anything about this. If need be, I can reinstall the FAI server to use
-some other FS, but I would not like to do that.
-
-With the user-space NFS implementation I got the file id of 1476542499
-which does not have a file in the file system at all. Might this be
-because of ReiserFS? An ancient curse? NFS just being broken?
-
-Any help is greatly appreciated here, I have a deadline coming up for
-this installation and just out of principle I would dislike doing it
-from a CD as I'm going to install a lot more of these Debians and need
-FAI working...
-
-PS.
-Semi-off topic, what's the status of NFSv4? rpc.mountd supports something
-like it but is it in Linux already?
-Should I seek answers elsewhere than in 0d NFS protocols?
-
-Thanks a million!
-
+Could anybody please help (suggestions, examples, other commands) with this 
+annoying problem ?
+I will happily supply other information (machine, kernel, versions, 
+filesystem-dumps) if needed.
 -- 
-mjt
+Regards,
 
+Melis van den Brink
