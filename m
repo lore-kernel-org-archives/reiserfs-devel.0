@@ -1,35 +1,47 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: Data-logging and md as / fs bug
-Date: Mon, 12 May 2003 11:37:30 +0400
-Message-ID: <20030512073730.GB21604@namesys.com>
-References: <3EB30852.6090402@netscape.net> <200305071641.37361.christian.mayrhuber@gmx.net> <1052318606.14616.394.camel@tiny.suse.com> <200305071652.00627.christian.mayrhuber@gmx.net> <1052321005.14616.407.camel@tiny.suse.com>
+Subject: Re: securely deleting files
+Date: Mon, 12 May 2003 11:50:22 +0400
+Message-ID: <20030512075022.GC21604@namesys.com>
+References: <Pine.LNX.4.44.0305060522270.20364-100000@potato.zayda.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14073-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14074-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1052321005.14616.407.camel@tiny.suse.com>
+In-Reply-To: <Pine.LNX.4.44.0305060522270.20364-100000@potato.zayda.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <mason@suse.com>
-Cc: Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list <reiserfs-list@namesys.com>
+To: Jason Holt <jason@lunkwill.org>
+Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Wed, May 07, 2003 at 11:23:25AM -0400, Chris Mason wrote:
+On Tue, May 06, 2003 at 05:37:13AM +0000, Jason Holt wrote:
 
-> The right fix is probably to skip the bdget when the journal device is
-> not external , and just set journal->j_dev_bd to super->s_bdev.
-> Oleg/namesys, do you see any reason this won't work?
+> Now, a good friend of mine pointed out that part of the space on a filesystem
+> is kept aside just for root, so you may want to fill the disk up as root.  
+> (Is this actually a concern?  Can blocks which used to hold user data end up
+> being reserved?)  
 
-Well, this is probably the most simple solution.
-The more full one would probably be to only grab journal in case of RW mount
-and to release journal when remounting read-only. This way we will be able to also free
-the RAM assotiated with journal that never used because the FS is readonly.
-What do you think?
+Yes they can.
+No, we don't have such (supported) feature in reiserfsv3 yet.
+Also if the file was deleted, but something still have open filehandle to it (or hardlink),
+its blocks are not freed at rm time and therefore filling all the free space won't help.
+There are other caveats.
+
+> Also, if your sensitive file was in memory recently it might have been swapped
+> out, in which case it may still be in the swap partition.  I have a program
+> which fills up all available *memory* as well, and I could post the source
+> here if everyone's interested.
+
+If the program that used the file and still have the copy of it is still running,
+no matter how much you eat all the ram, the file still can end up in swap.
+
+The program that fills up all available memory is called "tail". Just run
+"tail /dev/zero" and enjoy ;) (this does not work on FreeBSD, though).
 
 Bye,
     Oleg
