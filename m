@@ -1,66 +1,92 @@
-From: Christoph Hellwig <hch@lst.de>
+From: Joseph Fannin <jhf@rivenstone.net>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 15:07:18 +0200
-Message-ID: <20040826130718.GB820@lst.de>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com> <20040826014542.4bfe7cc3.akpm@osdl.org> <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net>
+Date: Thu, 26 Aug 2004 09:05:56 -0400
+Message-ID: <20040826130556.GA11496@samarkand.rivenstone.net>
+References: <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826044425.GL5414@waste.org> <1093496948.2748.69.camel@entropy> <20040826053200.GU31237@waste.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20661-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
+Return-path: <reiserfs-list-return-20662-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1093525234.9004.55.camel@leto.cs.pocnet.net>
+In-Reply-To: <20040826053200.GU31237@waste.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe Saout <christophe@saout.de>
-Cc: Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Matt Mackall <mpm@selenic.com>
+Cc: Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Thu, Aug 26, 2004 at 03:00:34PM +0200, Christophe Saout wrote:
-> Am Donnerstag, den 26.08.2004, 14:49 +0200 schrieb Christoph Hellwig:
-> 
-> > Now that part is interesting from the how to sell it to non-Linux users
-> > POV, but not for the linux kernel.
-> 
-> Why? The question was what these plugins are exactly. This is the
-> answer.
+--2oS5YaxWCcQjTEyO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I explained it below..
+On Thu, Aug 26, 2004 at 12:32:00AM -0500, Matt Mackall wrote:
 
-> > > *And* there are plugins which are users of the "reiser4 client API" and
-> > > implement the actual VFS methods.
-> > 
-> > Here comes the problem.  All the access checking/race avoidance/loop
-> > creation avoiced, in short the posix+extension semantics are implemented
-> > in the Linux VFS layer.  If you want to allow a second access method
-> > (e.g. Hans' pet syscall) you'd have to duplicate all VFS functioanlity
-> > inside reiser4.
-> 
-> Are you actually listening? If you implement a filesystem there's a
-> place where you have to implement the Linux VFS methods. I'm talking
-> about inode_operations and these things. This has nothing to do with
-> doing anything outside the Linux VFS. And I'm not talking about these
-> metas either. These really don't belong inside the filesystem.
+> What it breaks is the concept of a file. In ways that are ill-defined,
+> not portable, hard to work with, and needlessly complex. Along the
+> way, it breaks every single application that ever thought it knew what
+> a file was.
+>=20
+> Progress? No, this has been done before. Various dead operating
+> systems have done it or similar and regretted it. Most recently MacOS,
+> which jumped through major hurdles to begin purging themselves of
+> resource forks when they went to OS X. They're still there, but
+> heavily deprecated.
+>=20
+> > cp, grep, cat, and tar will continue to work just fine on files with
+> > multiple streams.
+>=20
+> Find some silly person with an iBook and open a shell on OS X. Use cp
+> to copy a file with a resource fork. Oh look, the Finder has no idea
+> what the new file is, even though it looks exactly identical in the
+> shell. Isn't that _wonderful_? Now try cat < a > b on a file with a
+> fork. How is that ever going to work?
 
-as I wrote in this mail this absolutely _does_ belong in the filesystem,
-it's a major part of it and isn't easily separatable.
+   I've been known to be silly now and then, for sure.  Apple says
+this about the next version of OS X, due next year:
 
-> > So if you want to provide an additional API you'll have to go through
-> > the VFS to get it right - ergo a plugin architecture for upper plugins
-> > is worthless.
-> 
-> See, you didn't listen. ;-)
-> 
-> The reiser4 core doesn't know about inodes, directories or files. It's
-> the glue code between the VFS and the storage layer that does. It's
-> implemented as a plugin. This has nothing to do with semantic
-> enhancements yet. These should be removed for now and made a 2.7 topic.
+"Tiger provides a standard, Darwin-level API for managing resource
+forks, filesystem metadata, security information, properties and other
+attributes in a consistent, cross-platform manner. For example, common
+UNIX utilities such as cp, tar and rsync can properly handle HFS+
+resource forks."
 
-Oh yes, it is.  As soon as you use different access methods on an
-overlapping set of objects you see exactly the problems I described.
+    That's marketing copy, but I think it's worth noting.  It seems to
+be that resource forks aren't deprecated across the board,
+just... changed.
 
-If they don't overlap there's no point for the plugins to start with,
-you'll better turn the core into a library that can be used by different
-projects then.
+    Apple has found a way to make this work, at least partially.  I
+don't know if it's a good way, but there it is.
 
+    I'd like to be able to keep my Macintosh stuff on my Linux
+fileserver, without losing the resource forks.  That would require
+that the network fs support it of course, and whether I could use tar
+to back up my linux box would depend on how streams might be
+implemented there.
+
+> I like cat < a > b. You can keep your progress.
+
+    Can't we have both?
+
+--=20
+Joseph Fannin
+jhf@rivenstone.net
+
+"Bull in pure form is rare; there is usually some contamination by data."
+    -- William Graves Perry Jr.
+
+--2oS5YaxWCcQjTEyO
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (Darwin)
+
+iD8DBQFBLeA0Wv4KsgKfSVgRAoaEAJ0UlPMzaZo9sbDewdYLHWcrlceigQCffcYU
+SsoR9eWCFAxk4hqRQiQwkLA=
+=QKhw
+-----END PGP SIGNATURE-----
+
+--2oS5YaxWCcQjTEyO--
