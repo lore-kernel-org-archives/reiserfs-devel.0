@@ -1,28 +1,31 @@
-From: =?iso-8859-1?q?Lars_Tobias_B=F8rsting?= <larstobi@stud.ntnu.no>
-Subject: Reiser4 patch for 2.6.11 kernel
-Date: Mon, 07 Mar 2005 09:40:03 +0100
-Message-ID: <8jfll8zyhlo.fsf@panter.stud.ntnu.no>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: Reiser4 patch for 2.6.11 kernel
+Date: Mon, 07 Mar 2005 12:58:05 +0300
+Message-ID: <1110189484.11487.136.camel@tribesman.namesys.com>
+References: <8jfll8zyhlo.fsf@panter.stud.ntnu.no>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <8jfll8zyhlo.fsf@panter.stud.ntnu.no>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
-To: Reiser Mailing List <reiserfs-list@namesys.com>
+To: Lars Tobias =?ISO-8859-1?Q?B=F8rsting?= <larstobi@stud.ntnu.no>
+Cc: Reiser Mailing List <reiserfs-list@namesys.com>
 
-Hi,
+Hello
 
-The 2.6.11 kernel has been out for some days now, but no Reiser4 patch
-has yet been released for it at
-http://ftp.namesys.com/pub/reiser4-for-2.6/. I need to update to 2.6.11
-but I need Reiser4 support.
+On Mon, 2005-03-07 at 11:40, Lars Tobias B=F8rsting wrote:
+> Hi,
+>=20
+> The 2.6.11 kernel has been out for some days now, but no Reiser4 patch
+> has yet been released for it at
+> http://ftp.namesys.com/pub/reiser4-for-2.6/. I need to update to 2.6.11
+> but I need Reiser4 support.
+>=20
+> Has anybody got any idea of if it will be long until a release? Thanks!
 
-Has anybody got any idea of if it will be long until a release? Thanks!
-
---=20
-Regards,
-
-Lars Tobias B=F8rsting
+reiser4 patch for 2.6.11 should get out this week
 
