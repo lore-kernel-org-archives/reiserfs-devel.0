@@ -1,33 +1,38 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: reiserfs partition unmountable
-Date: Mon, 4 Apr 2005 15:54:16 +0400
-Message-ID: <20050404115415.GC6211@backtop.namesys.com>
-References: <1112453207.7750.0.camel@localhost.localdomain>
+From: "Nicolas Smallwood" <smallwood@maya.com>
+Subject: strange dmesg output?
+Date: Mon, 4 Apr 2005 11:15:39 -0400
+Message-ID: <CMEFJOIJPCAMFCEKIEOEOEMBCIAA.smallwood@maya.com>
+References: <20050404115415.GC6211@backtop.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-23770-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23771-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1112453207.7750.0.camel@localhost.localdomain>
+In-Reply-To: <20050404115415.GC6211@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Lars Segelken <lars.segelken@web.de>
-Cc: reiserfs-list@namesys.com
+To: reiser <reiserfs-list@namesys.com>
 
-On Sat, Apr 02, 2005 at 04:46:47PM +0200, Lars Segelken wrote:
-> Hi,
-> i have a reiserfs partition which can't be mounted under Suse 9.2 and
-> Unbuntu 5.04 (Linux 2.6.8 and 2.6.10, i think) after there was a system
-> crash.
-> Same partition can still be mounted with Knoppix 3.2.
+reiser4[vianoderepos(1501)]: commit_current_atom
+(fs/reiser4/txnmgr.c:1206)[niki
+ta-3176]:
+WARNING: Flushing like mad: 16384
 
-what kernel used by Knoppix 3.2?
+Saw this in dmesg this morning...  is it anything to really worry about?
 
-can you send here output of debugreiserfs -J /dev/<the device>
-?
 
--- 
-Alex.
+Thank You,
+
+Nicolas Smallwood
+
+Maya Design, Inc
+Suite 702
+2100 Wharton Street
+Pittsburgh, PA 15203
+
+412-488-2900 (voice)
+412-488-2940 (fax)
+
+
