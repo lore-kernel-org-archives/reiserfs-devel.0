@@ -1,85 +1,65 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: reiserfs3, rsync and hardlinks
-Date: Mon, 07 Feb 2005 13:22:51 +0300
-Message-ID: <1107771769.9024.119.camel@tribesman.namesys.com>
-References: <20050206034102.3956432d@polo.concept-micro.com>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: AMD64 progress?
+Date: Mon, 7 Feb 2005 16:29:35 +0300
+Message-ID: <20050207132934.GA7482@backtop.namesys.com>
+References: <20050114201751.GB5883@backtop.namesys.com> <Pine.LNX.4.44.0501152102230.10167-100000@ccc7.wpi.edu>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-b9saAsZmXjhfn/2fBWzx"
+Content-Type: multipart/mixed; boundary="UlVJffcvxoiEqYs2"
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050206034102.3956432d@polo.concept-micro.com>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44.0501152102230.10167-100000@ccc7.wpi.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Pierre Etchemaite <petchema@concept-micro.com>
+To: Isaac Chanin <chanin@WPI.EDU>
 Cc: reiserfs-list@namesys.com
 
---=-b9saAsZmXjhfn/2fBWzx
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--UlVJffcvxoiEqYs2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello
+Hello,
 
-On Sun, 2005-02-06 at 05:41, Pierre Etchemaite wrote:
-> 	Hi all,
+On Sat, Jan 15, 2005 at 09:26:01PM -0500, Isaac Chanin wrote:
 > 
-> I'm using rsync to make a full backup of one box to another. Both are using
-> reiserfs 3.6.
-> The problem is that at the end of the backup, some pairs of unrelated files
-> (usually 3 or 4), are hardlinked together.
-> 
-> >From what I've read in rsync mailing list archives, it probably means that
-> inode numbers are being reused while the backup is in progress.
-> 
-> Does that look plausible to you ?
+> Also tested this patch, similar results as to what I've been getting - 
+> ie. working for awhile (more than a few hours even this time, but that 
+> could just be coincidence, i suppose) and then going down with the normal 
+> reiser4_find_next_zero_bit(bnode_working_data(bnode), end_offset, 
+> start_offset) >= end_offset error.  For the exact message see 
+> http://users.wpi.edu/~chanin/r4newpatch.txt.
 > 
 
-yes, reiserfs reuses inode number of removed files for newly created
-files. However, ext2 also does that. Have  you ever noticed this problem
-on other filesystems?
+please try attached patch (it is for fs/reiser4 subtree)
 
-You can try to make reiserfs to not free inode numbers of removed files
-with the attached patch and check whether it helps. It decreases number
-of files which can be created on a filesystem to ~2^^32.
-I am not sure if it is enough for low traffic IMPA server.
+-- 
+Alex.
+
+--UlVJffcvxoiEqYs2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="bitmap-amd64-fix-2.diff"
+
+===== plugin/space/bitmap.c 1.186 vs edited =====
+--- 1.186/plugin/space/bitmap.c	Wed Jan 19 18:52:52 2005
++++ edited/plugin/space/bitmap.c	Mon Feb  7 16:18:37 2005
+@@ -165,7 +165,7 @@
+ static int
+ find_next_zero_bit_in_word(ulong_t word, int start_bit)
+ {
+-	ulong_t mask = 1 << start_bit;
++	ulong_t mask = 1UL << start_bit;
+ 	int i = start_bit;
  
-
-> And if it is, what can be done to significantly lower the probability of
-> inode number reuse over a short time ? The backup shouldn't take over 1
-> hour, the server stores around 570k files, but it's only a quite low traffic
-> IMAP server, so even with 32 bits inode numbers there's probably some room
-> for improvement.
-> 
-> I know a definitive answer would be to backup filesystem snapshots, but the
-> source server isn't currently using LVM1, and as far as I know snapshots
-> haven't been reimplemented yet for LVM2 :(
-> 
-> Best regards,
-> Pierre.
-> 
-
---=-b9saAsZmXjhfn/2fBWzx
-Content-Disposition: attachment; filename=reiserfs-dont-free-objectid.patch
-Content-Type: text/plain; name=reiserfs-dont-free-objectid.patch; charset=koi8-r
-Content-Transfer-Encoding: 7bit
-
- fs/reiserfs/objectid.c |    2 +-
- 1 files changed, 1 insertion(+), 1 deletion(-)
-
-diff -puN fs/reiserfs/objectid.c~reiserfs-dont-free-objectid fs/reiserfs/objectid.c
---- linux-2.6.9/fs/reiserfs/objectid.c~reiserfs-dont-free-objectid	2005-02-07 13:15:25.967303557 +0300
-+++ linux-2.6.9-vs/fs/reiserfs/objectid.c	2005-02-07 13:15:42.576600790 +0300
-@@ -99,7 +99,7 @@ void reiserfs_release_objectid (struct r
-     __u32 * map = objectid_map (s, rs);
-     int i = 0;
+ 	while ((word & mask) != 0) {
+@@ -235,7 +235,7 @@
+ 	assert ("zam-965", start_bit < BITS_PER_LONG);
+ 	assert ("zam-966", start_bit >= 0);
  
--    //return;
-+    return;
-     check_objectid_map (s, map);
+-	bit_mask = (1 << nr);
++	bit_mask = (1UL << nr);
  
-     reiserfs_prepare_for_journal(s, SB_BUFFER_WITH_SB(s), 1) ;
+ 	while (bit_mask != 0) {
+ 		if (bit_mask & word)
 
-_
-
---=-b9saAsZmXjhfn/2fBWzx--
-
+--UlVJffcvxoiEqYs2--
