@@ -1,53 +1,52 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: silent semantic changes with reiser4
-Date: Tue, 31 Aug 2004 10:21:44 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040831082144.GA535@elf.ucw.cz>
-References: <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <20040826100530.GA20805@taniwha.stupidest.org> <20040826110258.GC30449@mail.shareable.org> <20040827210638.GE709@openzaurus.ucw.cz> <4133CDA6.4060105@slaphack.com>
+From: Francesco Biscani <biscani@pd.astro.it>
+Subject: Re: System freeze: __iounmap: bad address dfd00000
+Date: Tue, 31 Aug 2004 10:40:40 +0200
+Message-ID: <200408311040.40444.biscani@pd.astro.it>
+References: <1093735779.41311563b892b@webmail.pd.astro.it> <9e473391040830181941d62ed0@mail.gmail.com>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-21149-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <9e473391040830181941d62ed0@mail.gmail.com>
 Content-Disposition: inline
-In-Reply-To: <4133CDA6.4060105@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
-Cc: Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com, Jon Smirl <jonsmirl@gmail.com>
+Cc: linux-kernel@vger.kernel.org
 
-Hi!
+On Tuesday 31 August 2004 03:19, Jon Smirl wrote:
+> On Sun, 29 Aug 2004 01:29:39 +0200, biscani@pd.astro.it
+>
+> <biscani@pd.astro.it> wrote:
+> > Aug 28 18:43:00 kurtz __iounmap: bad address dfd00000
+>
+> That address looks like it might be a video card. cat /proc/iomem or
+> lspci -v will tell you the owner and give you a clue where to look for
+> problems.
 
-> | uservfs does
-> |
-> | cd foo.deb#uar
-> cd foo.deb/ar
-> | vs.
-> | cd foo.deb#udeb
-> cd foo.deb/deb
-> 
-> and why would you want that, instead of just:
-> cd foo.deb	# for the ar
-> dpkg -i foo.deb	# for the deb
+I had come to the same conclusion. I upgraded to the latest drm kernel driv=
+ers=20
+(DRI cvs) and the message disappeared. It was a mistake to associate it wit=
+h=20
+IO-activity. Shame on me.
 
-Because I want to see contents of that .deb package, nicely parsed?
+On the other side, I'm using kernel -ck5, which includes reiser4 and does n=
+ot=20
+suffer from the problem I described. I'm waiting for the next -mm release t=
+o=20
+see if it gets fixed there too.
 
-> Just want to extract the tar file?  Maybe something like
-> cat foo.tgz/gunzip
-> In which case (of course) foo.tgz/gunzip has exactly the same directory
-> contents as foo.tgz
+BTW, thanks to all you people at xorg, you are doing a wonderful job :-)
 
-Yes, that would work.
+Regards,
 
-> In fact, for just about any syntax anyone could suggest, I can't really
-> see why you can't just replace all weird symbols with a slash and a
-> symbol.  Instead of
-> 	foo.tgz#utar
-> you have
-> 	foo.tgz/#/utar
-> Only difference is, some things which used to require special tools can
-> now be serviced by less than what's in busybox.
+=2D-=20
+Dr. Francesco Biscani
 
-That would work, too. I do not get your comment about busybox.
-								Pavel
--- 
-People were complaining that M$ turns users into beta-testers...
-...jr ghea gurz vagb qrirybcref, naq gurl frrz gb yvxr vg gung jnl!
+Dipartimento di Astronomia
+Universit=E0 di Padova
+
+biscani@pd.astro.it
