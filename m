@@ -1,48 +1,60 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: silent semantic changes in reiser4 (brief attempt to document the idea of what reiser4 wants to do with metafiles and why
-Date: Tue, 7 Sep 2004 22:59:11 +0200
-Message-ID: <20040907205911.GA17555@atrey.karlin.mff.cuni.cz>
-References: <41323AD8.7040103@namesys.com> <20040831131201.GA1609@elf.ucw.cz> <413E170F.9000204@namesys.com>
-Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21589-reiserfs=m.gmane.org@namesys.com>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
+Subject: Re: silent semantic changes with reiser4
+Date: Tue, 07 Sep 2004 17:02:20 -0400
+Message-ID: <200409072102.i87L2K4u005503@laptop11.inf.utfsm.cl>
+References: <reiser@namesys.com>
+Return-path: <reiserfs-list-return-21590-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <413E170F.9000204@namesys.com>
+In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
+   of "Tue, 07 Sep 2004 12:14:44 MST." <413E08A4.9020005@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Hans Reiser <reiser@namesys.com>
-Cc: Andrew Morton <akpm@digeo.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@osdl.org>, reiserfs-list@namesys.com
+Cc: Spam <spam@tnonline.net>, Christer Weinigel <christer@weinigel.se>, David Masover <ninja@slaphack.com>, Tonnerre <tonnerre@thundrix.ch>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Hi!
+Hans Reiser <reiser@namesys.com> said:
+> Horst von Brand wrote:
+> >Hans Reiser <reiser@namesys.com> said:
+> >>Horst von Brand wrote:
+> >>>Spam <spam@tnonline.net> said:
+> >>>>Christer Weinigel <christer@weinigel.se> said:
 
-> >What about choosing just "..." instead of "metas"? "metas" is string
-> >that needs translation etc, while "..." is nicely neutral.
-> >
-> >cat /sound_of_silence.mp3/.../author
-> >
-> >does not look bad, either...
+[...]
 
-> "..." is pretty good, but I think it has been used by others, but I 
-> really forget who.  I could live with "...", but I think "metas" and 
-> "..metas" will collide less often.  Apparently Meta is a finnish name or 
-> something, so Linus does not like it.  The exact string is really not 
-> very important to me.  I agree that "..." is elegant.
+> >>>>>2. How do we want to expose named streams?
+> >>>>>  One suggestion is file-as-directory in some form.
 
-Well, "..." is mostly used by script kiddies -- they usually have
-their rootkit collection there :-).
+> >>>Which is broken, as it forbids hard links to files.
 
-It would be nice to decide on one escape into "meta" namespace,
-uservfs and similar projects probably should be converted to use same
-escape.
+> >>No, it forbids hard links to the directory aspect of the file-directory 
+> >>duality.
 
-[Uservfs currently uses things like cat /tmp/foo.tgz#utar/bar.gz#ugz
-... essentially using # as another separator. It should probably be
-converted to use same meta escape].
+> >How do you distinguish a "hard link to the directory personality" from
+> >"hard link to the file personality"?
 
-								Pavel
+> Put in (undoubtedly overly) simple terms, if you can do it to a file you 
+> can do it to the file personality, but if you currently can only do it 
+> to a directory and get an error from attempting it to a file then in the 
+> new scheme doing it to the hard link only gives the same error.
 
+Let me sort this out: If it can't be done POSIXly to a directory, it can't
+be done in Reiser4 to a file (which really is a directory too). So there
+can be exactly _one_ hard link to a file. Way borken.
+
+> Or, we can ask Alexander to help us use his deadlock detection algorithm 
+> and try to do things right....
+
+Good luck with that one. I'd suspect if it can be made to work, it will
+have _huge_ overhead, so much that it is useless. I'd love to be proven
+wrong, but I won't hold my breath.
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
 
