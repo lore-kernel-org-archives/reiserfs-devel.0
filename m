@@ -1,34 +1,85 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: A question about slum and relocate
-Date: Tue, 25 Nov 2003 20:29:59 -0800
-Message-ID: <3FC42C47.6010004@namesys.com>
-References: <Pine.GSO.4.58.0311241820230.6503@bingsun2.cc.binghamton.edu> <3FC201CA.9090700@namesys.com> <Pine.GSO.4.58.0311251200010.29299@bingsun2.cc.binghamton.edu> <20031125225609.GD2144@backtop.namesys.com>
+From: Jonathan Sambrook <jonathan.sambrook@dsvr.co.uk>
+Subject: Re: OT:RE: kernel memory limits
+Date: Wed, 26 Nov 2003 17:13:30 +0000
+Sender: Jonathan Sambrook <jonathan@jsambrook>
+Message-ID: <20031126171330.GE4874@jsambrook>
+References: <08628CA53C6CBA4ABAFB9E808A5214CB01B5646B@mercury.infiniconsys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16171-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=_mail.dsvr.co.uk-25683-1069866811-0001-2"
+Return-path: <reiserfs-list-return-16172-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20031125225609.GD2144@backtop.namesys.com>
+Content-Disposition: inline
+In-Reply-To: <08628CA53C6CBA4ABAFB9E808A5214CB01B5646B@mercury.infiniconsys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Zhihui Zhang <bf20761@binghamton.edu>
+To: "Barry, Christopher" <cbarry@infiniconsys.com>
 Cc: reiserfs-list@namesys.com
 
+--=_mail.dsvr.co.uk-25683-1069866811-0001-2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->>
->>Overall, Reiser4 is a very complicated file system.  So many details and
->>ideas.  
->>    
->>
->
->  
->
-Thanks for being the first outside our team to try to understand it so 
-deeply.
+At 08:16 on Wed 26/11/03, cbarry@infiniconsys.com masquerading as 'Barry, C=
+hristopher' wrote:
+> A bit off-topic, but I am very interested in the use of mounting so many =
+filesystems on a single machine? What does this get used for?
 
--- 
-Hans
+Hosting virtual private servers:  http://www.dsvr.co.uk
 
+Regards,
+Jonathan
 
+>=20
+> Thanks,
+> Christopher
+>=20
+> -----Original Message-----
+> From: Nikita Danilov [mailto:Nikita@Namesys.COM]
+> Sent: Wednesday, November 26, 2003 8:07 AM
+> To: Nick Burrett
+> Cc: reiserfs-list; Chris Mason
+> Subject: Re: kernel memory limits
+>=20
+>=20
+> Nick Burrett writes:
+>  >=20
+>  >=20
+>  > Hi,
+>  >=20
+>  > I'm running standard 2.4.22 kernel, 2xP4 Xeon with 2Gb RAM.
+>  >=20
+>  > After reaching 127 filesystems on the server, all formatted as reiserf=
+s,=20
+>  > I now find the following errors are occurring:
+>  >=20
+
+8<-----
+
+>  > --=20
+>  > Nick Burrett
+>  > Network Engineer, Designer Servers Ltd.   http://www.dsvr.co.uk
+>  >=20
+
+--=20
+                  =20
+ Jonathan Sambrook=20
+Software  Developer=20
+ Designer  Servers
+
+--=_mail.dsvr.co.uk-25683-1069866811-0001-2
+Content-Type: application/pgp-signature
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+
+iD8DBQE/xN86SUOTbbpGXDwRAp2AAJ9va3DmCIYXp8hWpt8Zxww/EPboGACdF+uq
+TH/kE55FI3F7FFHzq7Wt2wQ=
+=us2V
+-----END PGP SIGNATURE-----
+
+--=_mail.dsvr.co.uk-25683-1069866811-0001-2--
