@@ -1,74 +1,121 @@
-From: Isaac Chanin <chanin@WPI.EDU>
-Subject: Re: AMD64/Reiser4 testing and problems
-Date: Tue, 21 Dec 2004 00:46:49 -0500 (EST)
-Message-ID: <Pine.LNX.4.44.0412210016220.20178-100000@ccc9.wpi.edu>
+From: "Manfred Schwarb" <manfred99@gmx.ch>
+Subject: 2.4.29-pre2 Oops at find_inode/reiserfs_find_actor
+Date: Tue, 21 Dec 2004 14:11:52 +0100 (MET)
+Message-ID: <998.1103634712@www55.gmx.net>
+References: <5960.1103581732@www50.gmx.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22867-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22870-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
 
-Hello Alex et al,
-
-After my last e-mail was so useless I figured I would follow it up with 
-a more useful one, so what I've attempted to do is build and entire AMD64 
-system on top of reiser4 (aside from boot, still ext2 there), and, in the
-process I've run into two more bugs.
+hmm, I just saw that I forgot to add reiserfs-list to my report,
+I just sent it to lkml (fingers faster than brain, sorry).
+So here again, to the reiserfs folks.
 
 
-The first bug would give output (without resier4 debugging options 
-enabled) like:
+Hi,
+yesterday, I got at the start of a rsync backup over nfs
+an Oops in find_inode/reiserfs_find_actor.
+Some googling revealed that this seems to be an 
+inode list corruption, but how can this happen?
+There seem to be quite some reports about similar problems,
+so doing rsync over nfs-mounted partitions might be a bad idea?
+Is there anything I can do? Any help is appreciated.
 
-Dec 20 02:33:14 [kernel] reiser4[portageq(31681)]: traverse_tree 
-(fs/reiser4/search.c:789)[nikita-373]:
-Dec 20 02:33:14 [kernel] reiser4[portageq(31681)]: traverse_tree 
-(fs/reiser4/search.c:755)[nikita-1481]:
-
-over and over until the system was rebooted (whatever process - it has so 
-far happened with portageeq, wget, and i think nano - becomes completely 
-unresponsive to all kill signals and takes 100% cpu time.)
-
-So far I have absolutely no clue when this bug occurs, as it seems to pop 
-up completely randomly (copying a large file from one reiser4 logical 
-partition to another, wget'ing a tiny file to a reiser4 partition.)  About 
-the only connection I could find was with writing to the filesystem.
-
-I could only produce this bug on 2.6.10-rc2-mm4; linux-2.6.10-rc3-mm1 
-(both with Alex's patch) would boot (onto reiser3) but wouldn't do much
-else.
+This machine is an athlon i386 with vanilla 2.4.29-pre2.
+Below you may find the ksymoopsified Oops:
 
 
-This leads nicely into the other bug, which is that it does not seem 
-possible to boot into a resier4 system (ext2 for boot, resier4 for /, et 
-cetera) on an AMD64.  I don't have any log output as the system hangs 
-before it can load the logger, and no screen output because my laptop (no
-matter what framebuffer configuration I use) has a completely black boot-up
-screen until after the initial kernel loading is complete.  Neither 
-2.6.10-rc2-mm4 nor linux-2.6.10-rc3-mm1 can get any farther in the booting 
-process either.
+Dec 19 21:00:01  kernel: Unable to handle kernel NULL pointer dereference at
+virtual address 00000028
+Dec 19 21:00:01  kernel: c0153b09
+Dec 19 21:00:01  kernel: *pde = 1d678067
+Dec 19 21:00:01  kernel: Oops: 0000
+Dec 19 21:00:01  kernel: CPU:    0
+Dec 19 21:00:01  kernel: EIP:    0010:[find_inode+25/112]    Not tainted
+Dec 19 21:00:01  kernel: EIP:    0010:[<c0153b09>]    Not tainted
+Using defaults from ksymoops -t elf32-i386 -a i386
+Dec 19 21:00:01  kernel: EFLAGS: 00213213
+Dec 19 21:00:01  kernel: eax: e0b3c9e0   ebx: 00000000   ecx: 0000000f  
+edx: dff80000
+Dec 19 21:00:01  kernel: esi: 00000000   edi: dffa2a58   ebp: 000000fa  
+esp: d7f05d60
+Dec 19 21:00:01  kernel: ds: 0018   es: 0018   ss: 0018
+Dec 19 21:00:01  kernel: Process nfsd (pid: 2372, stackpage=d7f05000)
+Dec 19 21:00:01  kernel: Stack: 0efe42ff 00000000 00000002 d7f05de4 dffa2a58
+000000fa da2f6000 c0153f4e
+Dec 19 21:00:01  kernel:        da2f6000 000000fa dffa2a58 e0b3c9e0 d7f05db8
+d7f05de4 d7f05e48 d7f05db8
+Dec 19 21:00:01  kernel:        da2f6000 e0b3ca60 da2f6000 000000fa e0b3c9e0
+d7f05db8 00000011 d7f05de4
+Dec 19 21:00:01  kernel: Call Trace:   
+[iget4_locked+94/272]
+[keybdev:__insmod_keybdev_O/lib/modules/2.4.29-pre2/kernel/drivers/i+4288752096/96]
+[keybdev:__insmod_keybdev_O/lib/modules/2.4.29-pre2/kernel/drivers/i+4288752224/96]
+[keybdev:__insmod_keybdev_O/lib/modules/2.4.29-pre2/kernel/drivers/i+4288752096/96]
+[keybdev:__insmod_keybdev_O/lib/modules/2.4.29-pre2/kernel/drivers/i+4288731921/96]
+Dec 19 21:00:01  kernel: Call Trace:    [<c0153f4e>] [<e0b3c9e0>]
+[<e0b3ca60>] [<e0b3c9e0>] [<e0b37b11>]
+Dec 19 21:00:01  kernel:   [<c0151d1c>] [<c01491cf>] [<c0149279>]
+[<e118fd71>] [<e1196d39>] [<e119de8c>]
+Dec 19 21:00:01  kernel:   [<e118c68d>] [<c027ab3e>] [<e119de8c>]
+[<e119d758>] [<e119d778>] [<e118c3cb>]
+Dec 19 21:00:01  kernel:   [<c010729b>] [<e118c210>]
+Dec 19 21:00:01  kernel: Code: 39 6b 28 89 de 75 f1 8b 44 24 20 39 83 a0 00
+00 00 75 e5 8b
 
-It occured to me that this could simply be happeneing because of all of 
-the failures the partitions had while getting the system installed on them 
-(though fsck.resier4 seemed to handle them all nicely, at the time.)  So 
-perhaps this bug is not really a bug, and more of a misconfiguration on my 
-part - just a thought.
 
+>>EIP; c0153b09 <find_inode+19/70>   <=====
 
-I'll put some full (with reiser4 debug options enabled in the kernel - 
-still can't believe I forgot those) logs up at 
-http://users.wpi.edu/~chanin/newr4log.txt once I can get the first bug to 
-occur again (or if I can somehow get some output from the second.)  I 
-should be able to get them up later tonight and if not then, probably 
-sometime tomorrow.
+>>eax; e0b3c9e0 <[reiserfs]reiserfs_find_actor+0/40>
+>>edx; dff80000 <_end+1fbfd7f4/20792854>
+>>edi; dffa2a58 <_end+1fc2024c/20792854>
+>>esp; d7f05d60 <_end+17b83554/20792854>
 
+Trace; c0153f4e <iget4_locked+5e/110>
+Trace; e0b3c9e0 <[reiserfs]reiserfs_find_actor+0/40>
+Trace; e0b3ca60 <[reiserfs]reiserfs_iget+40/c0>
+Trace; e0b3c9e0 <[reiserfs]reiserfs_find_actor+0/40>
+Trace; e0b37b11 <[reiserfs]reiserfs_lookup+101/120>
+Trace; c0151d1c <d_alloc+1c/1d0>
+Trace; c01491cf <lookup_hash+9f/d0>
+Trace; c0149279 <lookup_one_len+79/90>
+Trace; e118fd71 <[nfsd]nfsd_lookup+d1/490>
+Trace; e1196d39 <[nfsd]nfsd3_proc_lookup+a9/140>
+Trace; e119de8c <[nfsd]nfsd_procedures3+6c/320>
+Trace; e118c68d <[nfsd]nfsd_dispatch+14d/220>
+Trace; c027ab3e <svc_process+3de/590>
+Trace; e119de8c <[nfsd]nfsd_procedures3+6c/320>
+Trace; e119d758 <[nfsd]nfsd_version3+0/10>
+Trace; e119d778 <[nfsd]nfsd_program+0/28>
+Trace; e118c3cb <[nfsd]nfsd+1bb/330>
+Trace; c010729b <arch_kernel_thread+2b/40>
+Trace; e118c210 <[nfsd]nfsd+0/330>
 
-Thanks,
+Code;  c0153b09 <find_inode+19/70>
+00000000 <_EIP>:
+Code;  c0153b09 <find_inode+19/70>   <=====
+   0:   39 6b 28                  cmp    %ebp,0x28(%ebx)   <=====
+Code;  c0153b0c <find_inode+1c/70>
+   3:   89 de                     mov    %ebx,%esi
+Code;  c0153b0e <find_inode+1e/70>
+   5:   75 f1                     jne    fffffff8 <_EIP+0xfffffff8>
+Code;  c0153b10 <find_inode+20/70>
+   7:   8b 44 24 20               mov    0x20(%esp,1),%eax
+Code;  c0153b14 <find_inode+24/70>
+   b:   39 83 a0 00 00 00         cmp    %eax,0xa0(%ebx)
+Code;  c0153b1a <find_inode+2a/70>
+  11:   75 e5                     jne    fffffff8 <_EIP+0xfffffff8>
+Code;  c0153b1c <find_inode+2c/70>
+  13:   8b 00                     mov    (%eax),%eax
 
-Isaac
-
+-- 
+Psssst! Mit GMX Handyrechnung senken: http://www.gmx.net/de/go/mail
+100 FreeSMS/Monat (GMX TopMail), 50 (GMX ProMail), 10 (GMX FreeMail)
