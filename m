@@ -1,39 +1,33 @@
-From: Linus Torvalds <torvalds@osdl.org>
-Subject: Re: silent semantic changes with reiser4
-Date: Wed, 25 Aug 2004 13:24:36 -0700 (PDT)
-Message-ID: <Pine.LNX.4.58.0408251323170.17766@ppc970.osdl.org>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
- <20040825200859.GA16345@lst.de> <20040825201929.GA16855@lst.de>
+From: Rik van Riel <riel@redhat.com>
+Subject: Re: Using fs views to isolate untrusted processes: I need an assistant
+ architect in the USA for Phase I of a DARPA funded linux kernel project
+Date: Wed, 25 Aug 2004 16:25:24 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com>
+References: <410D96DC.1060405@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20512-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20513-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040825201929.GA16855@lst.de>
+In-Reply-To: <410D96DC.1060405@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@lst.de>
-Cc: Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
+On Sun, 1 Aug 2004, Hans Reiser wrote:
 
+> You can think of this as chroot on steroids.
 
-On Wed, 25 Aug 2004, Christoph Hellwig wrote:
-> 
-> Over the last at least five years we've taken as much as possible
-> semantics out of the filesystems and into the VFS layer, thus having
-> a separation between the semantical layer (VFS) and the low level
-> filesystem.  Your attributes are absoultely a VFS thing and as such
-> should not happen at the filesystem layer, and no, that doesn't mean
-> they're bad per se, I just think they are a rather bad fit for Linux.
+Sounds like what you want is pretty much the namespace stuff
+that has been in the kernel since the early 2.4 days.
 
-Now this I agree with, in the sense that I think that if we want to 
-support this, it should be supported at a VFS layer. 
+No need to replicate VFS functionality inside the filesystem.
 
-On the other hand, I think doing it inside the filesystem with ugly hacks 
-is an acceptable way to prototype the idea before it's been proven to 
-really be workable. Maybe it has more problems with legacy apps than we'd 
-expect..
+-- 
+"Debugging is twice as hard as writing the code in the first place.
+Therefore, if you write the code as cleverly as possible, you are,
+by definition, not smart enough to debug it." - Brian W. Kernighan
 
-		Linus
