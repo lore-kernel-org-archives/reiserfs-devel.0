@@ -1,8 +1,8 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Silly question, defrag
-Date: Fri, 05 Apr 2002 19:07:36 +0400
-Message-ID: <3CADBDB8.3000809@namesys.com>
-References: <Pine.LNX.4.44.0204050840330.6398-100000@dragon.inside.ntisys.com>
+Date: Fri, 05 Apr 2002 19:13:39 +0400
+Message-ID: <3CADBF23.4060707@namesys.com>
+References: <Pine.LNX.4.44.0204050850170.6398-100000@dragon.inside.ntisys.com> <200204051404.g35E4L6H007366@foo-bar-baz.cc.vt.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
@@ -10,36 +10,34 @@ list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Benjamin Scott <bscott@ntisys.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: Valdis.Kletnieks@vt.edu
+Cc: Benjamin Scott <bscott@ntisys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Benjamin Scott wrote:
+Valdis.Kletnieks@vt.edu wrote:
 
->On Fri, 5 Apr 2002, at 12:31am, Ross Vandegrift wrote:
+>On Fri, 05 Apr 2002 08:50:35 EST, Benjamin Scott <bscott@ntisys.com>  said:
 >
->>>I think it would seem likely that, once a filesystem does become fragmented,
->>>performance is going to suck mud.
->>>
->>I'm curious though - shouldn't the elevator read algorithms take care of
->>this, for the most part?  If you wait to do a read until you have a few,
->>and read sequentially across the disk, you won't be hit with any seeks.
+>>  What about using "idle time" to defragment the filesystem on a continuous
+>>basis?  If the system is not doing anything else, a background daemon in the
+>>kernel could move blocks around to optimize things.  While I expect this
 >>
 >
->  I am no expert, but I suspect there is only so much the elevator can do.  
->For a moderately small read, I image your scenario would work.  But given a
->larger read and enough fragmentation, you are going to have to seek all over
->the place.  Sure, you could increase the wait time in the elevator, and use
->tons of buffers to re-order reads, but you will eventually start spending so
->many resources on the elevator that you are back to a performance problem
->again.
+>A good idea, worth researching, but probably a royal pain to implement.
+>The biggest problem is identifying "idle", and being careful to do things
+>in a way that doesn't cause problems if the system suddenly goes un-idle.
 >
-Actually, the larger the read, the better the elevator can compensate. 
- The problem is that if you do a whole bunch of separate reads of a 
-whole bunch of files, and you wait for each read to complete before 
-doing the next one, the elevator cannot do a good job.  Also, if you 
-have data you don't want to read interleaved with what you do want to 
-read, then your transfer rate will be decreased.
+>It's not as bad as doing an fsck on a live filesystem - but you do want to
+>be sure that if a program suddenly decides to read the file you're currently
+>moving around, that you do the right thing (writing gets a bit trickier -
+>you have to worry about stuff like somebody doing an fsync() of a block
+>that you're in the middle of moving around on the disk.  Race Condition City ;)
+>
+Actually, we will be able to do repacking online without a lot of extra 
+code, due to our designing the right functionality into our flushing and 
+journaling algorithms.
+
+Some things become a lot easier when they are architected in at the 
+beginning....
 
 Hans
-
 
