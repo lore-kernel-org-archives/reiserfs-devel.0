@@ -1,62 +1,63 @@
-From: Russell Coker <russell@coker.com.au>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: ReiserFS problems
-Date: Thu, 7 Aug 2003 23:24:55 +1000
-Message-ID: <200308072324.55305.russell@coker.com.au>
-References: <20030806182055.A28562@bitwizard.nl> <20030806164852.GA14719@namesys.com> <3F324CEF.4070608@namesys.com>
-Reply-To: russell@coker.com.au
+Date: Thu, 07 Aug 2003 17:27:27 +0400
+Message-ID: <3F3253BF.8090808@namesys.com>
+References: <20030806182055.A28562@bitwizard.nl> <20030806164852.GA14719@namesys.com> <20030806191806.A31496@bitwizard.nl> <20030806114331.H7752@schatzie.adilger.int> <20030806195215.B32577@bitwizard.nl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15227-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15228-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F324CEF.4070608@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <20030806195215.B32577@bitwizard.nl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>
+Cc: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com, copy@harddisk-recovery.nl
 
-On Thu, 7 Aug 2003 22:58, Hans Reiser wrote:
-> Oleg Drokin wrote:
-> >So basically speaking you do not want to run rebuild-tree operation on the
-> >FS that contains files with reiserfs metadata embedded in them in clear.
-> >This is also explained in our FAQ.
+Rogier Wolff wrote:
+
+>On Wed, Aug 06, 2003 at 11:43:31AM -0600, Andreas Dilger wrote:
+>  
 >
-> if you compress these files, then you will be okay.  You would almost
-> always want to compress them.....
-
-Moderately fast desktop machines can gzip compress data at 10MB/s, the fastest 
-available machines could probably manage almost 20MB/s.
-
-4 years ago IDE drives were routinely delivering 30MB/s, now they can now do 
-40MB/s or more, the fastest SCSI drives can do 70MB/s, and RAID arrays can do 
-more.
-
-Compressing data will significantly decrease linear write speed.
-
-gzip decompression can proceed at ~100MB/s on a moderately fast desktop 
-machine, so provided that you are not running out of CPU power and you are 
-not using a high-end RAID setup it won't be much of a bottleneck, and could 
-actually increase read speed for linear access.
-
-Compressing data with gzip prevents non-linear access (IE running fsck type 
-programs).
-
-If you want to maintain an image for ghost-installs of new machines then gzip 
-compressed file system images will probably be useful.  For every other case 
-where having a file system image is desired you would not want compression.
-
-The problem with fsck being too agressive has a long history.  The HPFS DLL 
-for CHKDSK.EXE in OS/2 when run in level 3 was known for recovering files 
-from a recently formatted file system.  It seems that the IBM file-system 
-people weren't smart enough to come up with the type of ideas that Rogier can 
-come up with in seconds.  ;)
+>>On Aug 06, 2003  19:18 +0200, Rogier Wolff wrote:
+>>    
+>>
+>>>>>later. So we hit control-C on the fsck.
+>>>>>          
+>>>>>
+>>>>That was big mistake.
+>>>>        
+>>>>
+>>>It was only a couple of percent done. All we have to do now is run it
+>>>again, and let it continue.
+>>>      
+>>>
+> 
+>  
+>
+>> From a user-safety point-of-view, you should use "tty()" to see if
+>> the program > is running interactively, and then trap CTRL-C and
+>> have it print a warning in > the signal handler that pressing
+>> CTRL-C again in the next second will kill it.  > All you need then
+>> is to call "time()" and save it in a static, and if the > signal
+>> handler is called more than once in the same second only then exit.
+>>    
+>>
+>
+>No. The warning should not be that pressing control-C again will kill
+>the program, but that interrupting a rebuild-tree will make your
+>filesystem unmountable, and that pressing control-C again will
+>interrupt the running rebuild-tree. 
+>
+>			Roger. 
+>
+>  
+>
+roger is right.
 
 -- 
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
+Hans
+
 
