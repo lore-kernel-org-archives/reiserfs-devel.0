@@ -1,55 +1,42 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Subject: Re: data corruption on reiserfs
-Date: Thu, 23 Dec 2004 13:18:50 +0100
-Message-ID: <200412231318.50712.christian.mayrhuber@gmx.net>
-References: <000001c4e8a3$39dc03d0$9e61a8c0@pcp40702>
+From: Pallavi Dalya <pallavidalya@yahoo.com>
+Subject: reading data blocks in reiser4
+Date: Thu, 23 Dec 2004 05:51:34 -0800 (PST)
+Message-ID: <20041223135134.64223.qmail@web60109.mail.yahoo.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22890-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; boundary="0-1992078898-1103809894=:61580"
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-22891-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <000001c4e8a3$39dc03d0$9e61a8c0@pcp40702>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: sujeet.kumar@patni.com, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Thursday 23 December 2004 04:55, Sujeet Kumar wrote:
-> patni Stationery
-> 
-> 
-> Hi ,
-> 
-> My log file reported data corruption on reiserfs filesystem.
-> 
-> The reiserfs version used by log file was 3.6.2-41 where the reported
-> 
-> defect took place . I ran it again on reiserfs version 3.6.9-33 , but this
-> time it ran all fine.
-> 
-> So can u tell me what all fixes have taken place between 3.6.2-41 and
-> 3.6.9-33 which could have
-> 
-> resolved data corruption issues if any.
+--0-1992078898-1103809894=:61580
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 
-The changelog of the reiserfs filesystem itself can be found at
-http://www.kernel.org/pub/linux/kernel in the various
-kernel changelogs.
-If you are using some distribution specific vendor kernel you will have 
-to look at their changelogs.
+hello,
+ what are the internal operations to read a file in reiser4 ..
+i understand that the semantic layer converts the name into key of an object(this key is received from the directory entry) and the storage layer searches for the node in the tree. also all the data of the file is stored in the unformatted leaf and only the tails of the files is stored in the items (the tail policy plugins).  
+Also the key leads us to the stat data of a file for accessing the permission of the file and it gives us the offset of the actual data...is this offset a address of the node where the files direct and indirect data is stored ?
 
-The version numbers above indicate to be the one of the reiserfsprogs
-utility programs. Usually their changelog can be found in
-/usr/share/doc/reiserfsprogs/.
+what role does a inode play in the complete process?
+ 
+Pallavi
 
-The versions for reiserfs usage are:
-- Official Kernel 2.4.24 and later
-- for vendor kernels ask the vendor
-- latest reiserfsprogs, currently 3.6.19
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+--0-1992078898-1103809894=:61580
+Content-Type: text/html; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 
-Hope this helps.
-
--- 
-lg, Chris
+<DIV>hello,<BR>&nbsp;what are the internal operations to read a file in reiser4 ..</DIV>
+<DIV>i understand that the semantic layer converts the name into key of an object(this key is received from the directory entry)&nbsp;and the storage layer searches for the node in the tree. also&nbsp;all the data of the&nbsp;file is stored in the&nbsp;unformatted leaf and only the tails of the files is stored in the items (the tail policy plugins).&nbsp;&nbsp;</DIV>
+<DIV>Also the key leads us&nbsp;to the stat data of a file for accessing the permission of the file and it gives us the offset of the actual data...is this offset a address of the node where the files direct and indirect data is stored ?<BR><BR>what role does a inode play in the complete process?</DIV>
+<DIV>&nbsp;</DIV>
+<DIV>Pallavi</DIV><p>__________________________________________________<br>Do You Yahoo!?<br>Tired of spam?  Yahoo! Mail has the best spam protection around <br>http://mail.yahoo.com 
+--0-1992078898-1103809894=:61580--
