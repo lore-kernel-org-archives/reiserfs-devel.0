@@ -1,44 +1,53 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Subject: Re: Data-logging for 2.4.21-rc1 (-aa/jam1)?
-Date: Tue, 22 Apr 2003 15:23:39 +0200
-Message-ID: <20030422152339.0b7a1dd2.philippe.gramoulle@mmania.com>
-References: <200304221515.42338.Dieter.Nuetzel@hamburg.de>
-	<1051017496.13313.119.camel@tiny.suse.com>
+From: Yury Umanets <umka@namesys.com>
+Subject: Re: ld.so error with mkfs.reiser4
+Date: Tue, 22 Apr 2003 17:32:31 +0400
+Message-ID: <3EA5446F.8070309@namesys.com>
+References: <200304221054.28028.vibir@012.net.il>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13760-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13761-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1051017496.13313.119.camel@tiny.suse.com>
+In-Reply-To: <200304221054.28028.vibir@012.net.il>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Alex Veber <vibir@012.net.il>
+Cc: reiserfs-list@namesys.com
+
+Alex Veber wrote:
+
+>Hi,
+>
+Hello Alex,
+
+>Trying to run a fresh BK pulled mkfs.reiser4 I get
+>
+>Inconsistency detected by ld.so: ../sysdeps/i386/dl-machine.h: 611:
+>elf_machine_rel_relative: Assertion `((reloc->r_info) & 0xff) == 8' failed!
+>
+>my system is a athlon tbird 1200, GLIBC 2.3.2 with NPTL support, GCC 3.2.2, 
+>binutils 2.13.90.0.20 and kernel 2.5.67. This is the first time this sort of 
+>thing happens to me.
+>
+>Thanks,
+>	Alex Veber
+>
+>btw: Please CC me.
+>
+>
+>
+>
+>
+>  
+>
+We have fixed this bug in the last commit of reiser4progs and now it 
+works fine on gcc -3.x too. Can you try it one more time?
+
+-- 
+Yury Umanets
+"We're flying high, we're watching the world passes by..."
 
 
-Hello,
 
-Will quota paches will be available as well ?
-
-Thanks,
-
-Truly yours,
-
-Philippe
-
-On 22 Apr 2003 09:18:17 -0400
-Chris Mason <mason@suse.com> wrote:
-
-  | On Tue, 2003-04-22 at 09:15, Dieter N=FCtzel wrote:
-  | > Thanks,
-  | > 	Dieter
-  | >=20
-  | > PS SuSE Enterprise Server for the AMD Opteron is out! ;-)
-  |=20
-  | I'm getting there, it should be ready today (and tested on the AMD64
-  | even ;-)
-  |=20
-  | -chris
-  |=20
-  |=20
