@@ -1,34 +1,45 @@
-From: Rik van Riel <riel@redhat.com>
+From: Shawn Rutledge <e_cloud@yahoo.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 13:57:33 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com>
-References: <Pine.LNX.4.58.0408261019580.2304@ppc970.osdl.org>
+Date: Thu, 26 Aug 2004 10:59:52 -0700 (PDT)
+Message-ID: <20040826175952.87529.qmail@web52806.mail.yahoo.com>
+References: <1093480940.2748.35.camel@entropy>
+Reply-To: e_cloud@yahoo.com
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20743-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20745-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.58.0408261019580.2304@ppc970.osdl.org>
+In-Reply-To: <1093480940.2748.35.camel@entropy>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Thu, 26 Aug 2004, Linus Torvalds wrote:
 
-> > So all I need to do is "cat /bin | gzip -9 > /path/to/backup.tar.gz" ?
-> 
-> No no. The stream you get from a directory is totally _independent_ of the 
-> contents of the directory. Anything else would be pointless.
+--- Nicholas Miell <nmiell@gmail.com> wrote:
+> Anything that currently stores a file's metadata in another file
+> really
+> wants this right now. Things like image thumbnails, document
+> summaries,
+> digital signatures, etc.
 
-It's a relief to know that nobody's taking my humorous
-suggestion seriously, but now we still have the "standard
-Unix tools can't manipulate files" problem...
+As well as cases where the metadata is currently _in_ the file, right? 
+Like MP3ID tags, EXIF tags, etc.  And so many MP3 jukebox-server
+programs currently use a database to store metadata, just because they
+don't trust the MP3ID tags or need to store supplemental info.  Being
+able to put this stuff in the filesystem along with the files would be
+so much cleaner.  So I think there are plenty of uses for it.
 
--- 
-"Debugging is twice as hard as writing the code in the first place.
-Therefore, if you write the code as cleverly as possible, you are,
-by definition, not smart enough to debug it." - Brian W. Kernighan
+IMO the Mac resource fork was always a good idea too, and I haven't a
+clue why it got left out of OSX (maybe Woz "got it" but Jobs doesn't).
 
+Somebody said "we don't have to teach tar about it"; does that mean
+that tar in its present form would already successfully find the
+alternate streams?
+
+
+=====
+. _______  Shawn T. Rutledge / KB7PWD ecloud@bigfoot.com
+ (_  | |_)    http://ecloud.org/  kb7pwd@kb7pwd.ampr.org
+ __) | | \______________________________________________
