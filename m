@@ -1,28 +1,28 @@
-From: "S. Alexander Jacobson" <alex@shop.com>
-Subject: Re: duplicate files and recent changes
-Date: Thu, 06 Jun 2002 18:14:11 +0000
-Message-ID: <85256BD0.00641603.00@patapsco.com>
+From: Kurt <kpalmer@advance.net>
+Subject: Filesystem Corruption
+Date: Thu, 06 Jun 2002 18:00:01 +0000
+Message-ID: <85256BD0.00643F01.00@patapsco.com>
+Reply-To: kpalmer@advance.net
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- Boundary="0__=cOJP3A8PXmXNRHpwnyuSLrQJuNCwpHocAHZPcoWWz6bpNkBnp2B85kvW"
-Return-path: <reiserfs-list-return-10594-reiserfs=m.gmane.org@namesys.com>
+ Boundary="0__=ZIs95RBGeMsK6BtkRFAT8V0PMm9tSP93Egy4oS5a1CQsmgpbwom14xoy"
+Return-path: <reiserfs-list-return-10596-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Valdis.Kletnieks@vt.edu
-Cc: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
---0__=cOJP3A8PXmXNRHpwnyuSLrQJuNCwpHocAHZPcoWWz6bpNkBnp2B85kvW
+--0__=ZIs95RBGeMsK6BtkRFAT8V0PMm9tSP93Egy4oS5a1CQsmgpbwom14xoy
 Content-type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
                                                                   
  (Embedded                                                        
- image moved   "S. Alexander Jacobson" <alex@shop.com>            
- to file:      06/06/2002 02:14 PM                                
- pic25352.pcx)                                                    
+ image moved   Kurt <kpalmer@advance.net>                         
+ to file:      06/06/2002 02:00 PM                                
+ pic11654.pcx)                                                    
                                                                   
 
 
@@ -31,305 +31,62 @@ Content-Disposition: inline
 
 
 
-Can someone turn this off?
-I am recieving large amounts of duplicate mail
-from Valdis Kletnieks through the namesys
-listserv.
 
--Alex-
-
-On Thu, 6 Jun 2002 Valdis.Kletnieks@vt.edu wrote:
-
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic13257.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic00081.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic15154.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic07244.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic00072.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic31655.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic01253.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic19373.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic27832.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic30803.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic04969.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic08117.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic11628.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic06033.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic18619.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic14738.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic07549.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic26942.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic27268.pcx)
->
->
->
->
->
->
->
->
->
->  (Embedded
->  image moved   Valdis.Kletnieks@vt.edu
->  to file:      06/06/2002 09:58 AM
->  pic24632.pcx)
->
->
->
->
->
->
->
->
-> On Thu, 06 Jun 2002 13:25:05 +0400, Oleg Drokin said:
->
-> > But MD5 may be identical for different files.
->
-> Only a 2**128 chance of that.  If you know a way to force a hash collision
-> more frequently than that, the crypto world wants to hear from you.. ;)
->
-> > Also this buys you nothing.
-> > You write file in chunks, once file is identical to other file,
-> > one of the files deleted. Looks like just more extra work (but some saved
-> space
-> > of course).
->
-> A much more productive way to save space is file-system compression.  AIX
-> supports LZ-compressing each 4K block and then only saving as many 512 byte
-> fragments as actually needed.  It's a big win - /usr (even with all the
-> binaries)
-> needs about 30% less space, and I've seen over 50% for file systems with
-> source trees in them...
-> --
->                     Valdis Kletnieks
->                     Computer Systems Senior Engineer
->                     Virginia Tech
->
->
-
-___________________________________________________________________
-S. Alexander Jacobson                   i2x Media
-1-212-787-1914 voice                    1-603-288-1280 fax
+ (Embedded
+ image moved   Kurt <kpalmer@advance.net>
+ to file:      06/06/2002 02:00 PM
+ pic24262.pcx)
 
 
---0__=cOJP3A8PXmXNRHpwnyuSLrQJuNCwpHocAHZPcoWWz6bpNkBnp2B85kvW--
+
+
+
+
+
+
+
+ (Embedded
+ image moved   Kurt <kpalmer@advance.net>
+ to file:      06/06/2002 02:00 PM
+ pic13835.pcx)
+
+
+
+
+
+
+
+
+Hello all,
+     I currently have a system configured as follows :-
+1) LVM version 1.0.1-rc4(ish)(03/10/2001)
+2) /dev/PROJ/proj on /proj type reiserfs (rw,noatime,notail)
+3) /dev/PROJ/proj        239G  142G   97G  60% /proj
+4) 2.4.17 with reiserfs tools 3.x.0k
+5) Reiserfs compiled in (CONFIG_REISERFS_CHECK set to NO)
+6) 256 MB RAM ("sar -r" shows memory usage is not abnormal for this box)
+7)Tuns of very small files based on log processing
+I am told by my co-worker that the system unresponsive and showed reiserfs
+related errors on the console.
+Upon restart they noticed that the file
+/proj/webtrends/receive/bama/www3/access.01Jun.r.gz was unreadable by root
+(permission denied).
+I did a reiserfsck on the drive and noticed that access.01Jun.r.gz returned an
+error stating the file pointed to nowhere.
+I was unable to complete a reiserfsck --fix-fixable because of the length of
+time that this (fsck) process took since this was an unscheduled downtime.
+During the weekend i will attempt to do the fsck again, however i really
+needed to know if this problem has been observed by anyone else, and what
+steps they took to fix the problem.
+-Kurt
+
+
+
+--
+================================================
+Kurt Palmer                                      SysAdmin
+kpalmer@advance.net                Advance Internet
+201-459-2846
+
+--0__=ZIs95RBGeMsK6BtkRFAT8V0PMm9tSP93Egy4oS5a1CQsmgpbwom14xoy--
 
