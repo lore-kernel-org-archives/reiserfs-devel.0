@@ -1,36 +1,32 @@
-From: Oleg Drokin <green@namesys.com>
+From: Kevin <coggy@redefine.org>
 Subject: Re: access beyond end of device again
-Date: Tue, 25 Jun 2002 10:15:03 +0400
-Message-ID: <20020625101503.A878@namesys.com>
-References: <Pine.LNX.4.44.0206250044360.28871-100000@avon.timetraveller.org> <661330051733.20020624103045@redefine.org> <20020625095409.A6209@namesys.com> <1141375583133.20020626230935@redefine.org>
+Date: Tue, 25 Jun 2002 07:46:32 +0000 (UTC)
+Message-ID: <0819468.20020627004746@redefine.org>
+References: <Pine.LNX.4.44.0206250044360.28871-100000@avon.timetraveller.org>
+ <661330051733.20020624103045@redefine.org> <20020625095409.A6209@namesys.com>
+ <1141375583133.20020626230935@redefine.org> <20020625101503.A878@namesys.com>
+Reply-To: Kevin <coggy@redefine.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10829-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10830-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <1141375583133.20020626230935@redefine.org>
+In-Reply-To: <20020625101503.A878@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Kevin <coggy@redefine.org>
+To: Oleg Drokin <green@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Hello!
+> --fix-fixable can fix such errors. (it just zeroes offending pointers),
+> It would be nice if you first run reiserfsck --check and show us the output,
+> though. Because you may have other kinds corruptions as well.
 
-On Wed, Jun 26, 2002 at 11:09:35PM -0700, Kevin wrote:
+> Bye,
+>     Oleg
 
-> > Reformatted as in mkreiserfs?
-> Correct.  That's the only change I've made to it though.  Would
-> rebuilding the superblocks help?  Last time it happened, I rebuilt the
+I put the log here as its somewhat long:
+http://redefine.org/~coggy/hdi.txt
 
-No. Superblock is fine in your case.
+Maxtor diags found nothing wrong with the driver itself.
 
-> tree, and it deleted the files that I had trouble with.  So it's hard
-
---fix-fixable can fix such errors. (it just zeroes offending pointers),
-It would be nice if you first run reiserfsck --check and show us the output,
-though. Because you may have other kinds corruptions as well.
-
-Bye,
-    Oleg
