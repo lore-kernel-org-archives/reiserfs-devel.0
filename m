@@ -1,59 +1,40 @@
-From: Michael James <Michael.James@csiro.au>
-Subject: plugin for cached network file system
-Date: Thu, 13 May 2004 10:59:22 +1000
-Message-ID: <200405131059.22693.Michael.James@csiro.au>
-Reply-To: Michael.James@csiro.au
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: 2 Terabyte install
+Date: Wed, 12 May 2004 22:43:28 -0700
+Message-ID: <40A30B00.8020103@namesys.com>
+References: <409AC2FF.7080800@lindows.com> <1083917932.14089.281.camel@tribesman.namesys.com> <409BB690.6030604@namesys.com> <409BBDC9.3030809@lindows.com> <409FB387.8080804@namesys.com> <40A19147.4010703@lindows.com> <40A257DA.2010903@namesys.com> <40A26D45.2010707@lindows.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18640-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18642-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <40A26D45.2010707@lindows.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Clifford Beshers <clifford.beshers@lindows.com>
+Cc: Vladimir Saveliev <vs@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>, Vitaly Fertman <vitaly@namesys.com>
 
-How hard would it be to write a Reiser4 plug-in
- to implement a network file system with a cache on the local disk?
+Clifford Beshers wrote:
 
-By caching I mean an incomplete local mirror
- of the master filesystem on the network server
- with on-demand loading and a simple flushing algorithm.
-So open calls to files in the cached area are intercepted
- and if the file isn't already in place a script is called to get it there.
-THEN the open call returns the file-handle normally.
-
-I only need the simplest case of a distributed file system:
-  - nodes are only reading the files,
-  - files only change slowly (~weekly) 
-	so cached files could be assumed fresh for a day at a time
-	or even flushed with:		rsh node 'rm -r /cache/*'
-  - any network code could be avoided by NFS mounting the master copy,
-	so fetching a new file is still just a local cp off the NFS mount.
-
-
-The situation is that CSIRO'S Bioinformatics Facility
- has two 400Gig filesystems on a server,
- that need to be available to 66 cluster nodes.
-Just NFS exporting one server to so many nodes leaves the cluster NFS bound.
-(Should I say they are Dell Perc 3 controllers and slow-as...)
-
-Jobs come in big batches each reading the same 2 - 6 Gig file.
-Each node has 27 Gig of free space so it's heaps for the working set
- I just don't want to have to groom what is in this working set for each job.
-Nor do I want to have to pre-pend an rsync to a batch.
-
-Has anyone written something that could be bent to this purpose?
-Is there template code for a Reiser4 plug-in?
-Or what would it cost to get it written?
-
-michaelj
-
-
--- 
-Michael James                         michael.james@csiro.au
-System Administrator                    voice:  02 6246 5040
-CSIRO Bioinformatics Facility             fax:  02 6246 5166
-
+>
+>
+> Our customers have complained about our boot times, so we've been 
+> tracking things down and fixing them.  We were doing two passes of 
+> mounting everything, one pass to figure out what was there, another to 
+> let the traditional 'mountall' init script do its work.  We were 
+> assuming that the mount times were constant and small.  But as the 
+> disks are getting bigger, the second mount is noticeable, so we're 
+> fixing that.  The first mount is definitely noticeable on the 2T 
+> machine, but we figure if we do our jobs right, people should rarely 
+> be rebooting anyway.
+>
+> Cliff
+>
+>
+>
+Well, if people care enough about it, we can optimize it at a pretty 
+small cost in time, and we will do so if a sponsor like Lindows asks us 
+for it.  Otherwise we'll focus on getting that compression plugin out 
+the door, etc.....
