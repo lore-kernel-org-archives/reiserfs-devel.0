@@ -1,99 +1,40 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: A few questions of ReiserFS
-Date: Fri, 7 Nov 2003 10:04:11 +0300
-Message-ID: <20031107070411.GO11516@backtop.namesys.com>
-References: <Pine.GSO.4.58.0311061302240.23244@bingsun2.cc.binghamton.edu> <20031106200657.GN11516@backtop.namesys.com> <Pine.GSO.4.58.0311061712140.29193@bingsun2.cc.binghamton.edu>
+From: Sebastian Kaps <seb-keyword-reiserfs.0462a0@toyland.sauerland.de>
+Subject: Linux 2.4 -> 2.6 migration
+Date: Fri, 07 Nov 2003 14:39:06 +0100
+Message-ID: <m3ptg42t8l.fsf@toyland.sauerland.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16004-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16005-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <Pine.GSO.4.58.0311061712140.29193@bingsun2.cc.binghamton.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhihui Zhang <bf20761@binghamton.edu>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Thu, Nov 06, 2003 at 06:00:42PM -0500, Zhihui Zhang wrote:
-> Thanks for your reply, but I am still confused.
-> 
-> (1) On bitmap handling.  I just noticed that Reiser4 does not start an
-> atom write until the previous one is fully committed.  
+Hi!
 
-It does. Atom relocate set is written before atom enters commit stage.  There
-is no limit (currently) how many atoms are written in parallel (their relocate
-sets).  Commits (and post-commits writes) are serialized by the commit
-semaphore.  Usually most of dirty blocks are sorted to relocate set. This has a
-benefit of not writing most blocks twice and makes commit faster.
+Is there something concerning ReiserFS I should know when migrating from
+Linux 2.4 to Linux 2.6?
 
-The limit of parallel flushers (or only writers) can be implemented for
-performance reasons, it is better to write in one stream to avoid disk head
-seeks.
+I'm asking because a few days ago I downloaded and compiled 2.6.0-test9
+just for curiosity. It booted fine and I went back to my "standard"
+kernel, which was 2.4.23-pre5 at that time. Right after booting the
+2.4.x kernel, I got lots of the following messages in my logs:
+,----
+| kernel: ide2(33,3):vs-4080: reiserfs_free_block: free_block (2103:463529)[dev:blocknr]: bit already cleared
+`----
+The block number always differed. Gladly, "reiserfsck --rebuild-tree"
+helped to cure that, but there were lots of unusable files after that
+(e.g. parts of files overwritten with parts of other files).
 
-> In other words,
-> there will never be more than one atom being written at the same time.
+Is this suppose to happen? What caused this error?
 
-Atoms are procecced by the reiser4 flush in parallel.  There could be more than
-one thread which do node squeezing/allocation/writing-of-relocate-set (all it
-is the reiser4 flush) even for one atom.
-
-> This should help avoiding premature re-use of space freed by an earlier
-> atom. So the commit bitmap is simply the bitmap copy to be written.
-
-Yes, commit bitmap is what we write to disk.  It differs from working bitmap
-because it does not contain temporary allocations (wander blocks, log records)
-and blocks allocations from open atoms.  That information is hard to calculate
-from working bitmap on the fly, it is why commit bitmap is maintained
-separately from working one.
-
-> right? If so, is your scheme somehow different/similar to the those used
-> in ext3 and IBM JFS.  They also use two bitmaps: one working, one
-> permanent.
-
-I repeat that our goal was to not fuse atoms if they alter one bitmap block.
-Is it so in JFS? 
- 
-> (2) On dancing tree.  If the number of nodes is less than 64 (the
-> threshold), you make them wander.  Otherwise, you make them relocate. 
-
-It is not so simple. Already allocated dirty node can be relocated if its new
-location found in some neighborhood of current optimal position
-(flush_pos->preceder.blk). Also, if best position is unknown, the flush code
-decides to relocate node.
-
-But, I accept that simple overwrite/relocate policy could be better than
-current complex one.  It is tunable part of reiser4.  You can experiment how
-changing the policy affects fs performance.
-
-> In the case of relocate, how do you determine if you want to relocate their
-> parents as well? I do not understand why the relocation decision of a node
-> has anything to do with its being the first child of a parent.
-
-That way we extend slum by one node in the backward direction (in tree order)
-and attempt to make relocate set larger or, better to say, overwite set
-smaller.  If next parent is dirty (upper levels are modified more frequently)
-we may have minimal overwite set and may write all blocks beginning with the
-first parent in one write operation. 
-
-> It seems to me that the code tries to write out node in parent-first
-> order, not one level at a time.  
-
-yes
-
-> Of course, the write happens after all the squeeze at all levels have been
-> done.
-
-No. The flush processes slums and writes nodes even before finishing slum
-processing.  There was a variant which wrote all nodes after finishing slum,
-but it had problems with overloading of i/o requests queue.
-
-> 
-> Thanks,
-> 
-> -Zhihui
+Another thing: I had to "hard reboot" my system a few times in the last
+few months. I also experienced that sometimes parts of files were
+overwritten with 0x00s or parts of other files. Can someone explain to
+me how this can happen?
 
 -- 
-Alex.
+Ciao, Sebastian
