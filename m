@@ -1,67 +1,148 @@
-From: Christophe Saout <christophe@saout.de>
-Subject: Re: Broken reiser4 FS
-Date: Wed, 25 Aug 2004 14:22:31 +0200
-Message-ID: <1093436551.10608.7.camel@leto.cs.pocnet.net>
-References: <412C7634.3040908@flipperit.net>
+From: Milan =?ISO-8859-1?Q?Holz=E4pfel?= <lists@mjh.name>
+Subject: Problem with unmounting readonly-mounted Reiser4 - only when
+ debugging options enabled
+Date: Wed, 25 Aug 2004 15:06:45 +0200
+Sender: news <news@sea.gmane.org>
+Message-ID: <20040825150645.06383d00.lists@mjh.name>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-5hrRWiQkltvF0d1r7Ke/"
-Return-path: <reiserfs-list-return-20498-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20500-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <412C7634.3040908@flipperit.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Ari =?ISO-8859-1?Q?Sovij=E4rvi?= <apz@flipperit.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
---=-5hrRWiQkltvF0d1r7Ke/
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Am Mittwoch, den 25.08.2004, 14:21 +0300 schrieb Ari Sovij=C3=A4rvi:
+Hi
 
-> I tested the reiser4 shipped with mm-patch, and I managed to corrupt the=20
-> filesystem after the first unmount. See the URL for details:
-> http://apz.fi/apz/reiser4.txt
->
-> CHECKING SEMANTiC TREE
-> FSCK: Directory [2a:6d703300000000:10001] (dir40), node [2281606], item [=
-0],=20
-> unit [4]: entry has wrong offset=20
-> [10001:0(NAME):1446f6e2048756f:6e6f74202d204879:d5b58f25a1408e04]. Should=
- be=20
-> [10001:0(NAME):1446f6e2048756f:6e6f74202d204879:6e433d19ec834164].=20
+| bombax mnt # mount /dev/sd/c0b0t0u0p8 gentoo/  # sd/c0b0t0u0p8 is Reiser4
+| bombax mnt # ls gentoo/
+| .   bin   dev  home  mnt  proc  sbin  tmp  var
+| ..  boot  etc  lib   opt  root  sys   usr
+| bombax mnt # find gentoo -type f -exec cat "{}" ";" >/dev/null=20
+| bombax mnt # umount gentoo
 
-Just FYI:
+This works all right.
 
-I've also seen a bunch of these on my notebook. I'm ruling out memory
-problems, my hardware is reliable.
+| bombax mnt # mount /dev/sd/c0b0t0u0p8 gentoo/ -o ro
+| bombax mnt # ls gentoo/
+| .   bin   dev  home  mnt  proc  sbin  tmp  var
+| ..  boot  etc  lib   opt  root  sys   usr
+| bombax mnt # umount gentoo
 
-fsck then removed the directories. I'm not exactly sure which directory
-was damaged, but it seems the directoriy were a temporary one (?), I
-found some library files in lost+found but the ones in /usr/lib were
-still there.
+This is ok too.
 
-My notebook is sometimes low on memory and swaps a lot while I'm doing
-some disk I/O. This is perhaps increasing the chance of getting this
-corruption, I'm not sure.
+| bombax mnt # mount /dev/sd/c0b0t0u0p8 /mnt/gentoo/ -o ro=20
+| bombax mnt # ls gentoo=20
+| .   bin   dev  home  mnt  proc  sbin  tmp  var
+| ..  boot  etc  lib   opt  root  sys   usr
+| bombax mnt # find gentoo -type f -exec cat "{}" ";" >/dev/null=20
+| bombax mnt # umount gentoo
 
-I panicked and didn't create a metadata dump or something, I justed
-wanted it fixed before the damage starts to spread. Sorry for that.
+But this produces trouble: The mount doesn't return and I get the
+following in the syslog:
+
+| Aug 25 14:46:46 bombax ef_hash_table: 8192 buckets
+| Aug 25 14:46:46 bombax z_hash_table: 8192 buckets
+| Aug 25 14:46:46 bombax z_hash_table: 8192 buckets
+| Aug 25 14:46:46 bombax j_hash_table: 16384 buckets
+| Aug 25 14:46:46 bombax loading reiser4 bitmap......done (16 jiffies)
+| Aug 25 14:46:46 bombax d_cursor_hash_table: 256 buckets
+
+(this is from mounting the partition; output from umount command starts her=
+e: )
+
+| Aug 25 14:47:06 bombax reiser4[umount(8150)]: atom_begin_andlock (fs/reis=
+er4/txnmgr.c:759)[nikita-3366]:
+| Aug 25 14:47:06 bombax WARNING: Creating atom on rofs
+| Aug 25 14:47:06 bombax [<c01e374e>] atom_begin_andlock+0x3ce/0x4b0
+| Aug 25 14:47:06 bombax [<c01e6306>] try_capture_block+0x236/0x5a0
+| Aug 25 14:47:06 bombax [<c01e6771>] try_capture+0x71/0x150
+| Aug 25 14:47:06 bombax [<c01e6a68>] try_capture_page_to_invalidate+0x58/0=
+x2b0
+| Aug 25 14:47:06 bombax [<c01b3418>] schedulable+0x8/0x80
+| Aug 25 14:47:06 bombax [<c022007d>] reiser4_invalidatepage+0xbd/0x540
+| Aug 25 14:47:06 bombax [<c01e2bd8>] txn_end+0x68/0x1a0
+| Aug 25 14:47:06 bombax [<c01b338c>] preempt_point+0xc/0x90
+| Aug 25 14:47:06 bombax [<c01e2bd8>] txn_end+0x68/0x1a0
+| Aug 25 14:47:06 bombax [<c0139f27>] do_invalidatepage+0x27/0x30
+| Aug 25 14:47:06 bombax [<c0139f8b>] truncate_complete_page+0x5b/0x60
+| Aug 25 14:47:06 bombax [<c013a14b>] truncate_inode_pages_range+0x13b/0x320
+| Aug 25 14:47:06 bombax [<c02199cc>] reiser4_destroy_inode+0xbc/0x350
+| Aug 25 14:47:06 bombax [<c013a35f>] truncate_inode_pages+0x2f/0x40
+| Aug 25 14:47:06 bombax [<c0163cd0>] dispose_list+0x80/0xa0
+| Aug 25 14:47:06 bombax [<c0163e3b>] invalidate_inodes+0x4b/0x70
+| Aug 25 14:47:06 bombax [<c01522b2>] generic_shutdown_super+0x62/0x160
+| Aug 25 14:47:06 bombax [<c0152cad>] kill_block_super+0x1d/0x40
+| Aug 25 14:47:06 bombax [<c01521d0>] deactivate_super+0x50/0x70
+| Aug 25 14:47:06 bombax [<c0166b3f>] sys_umount+0x3f/0x90
+| Aug 25 14:47:06 bombax [<c014105b>] do_munmap+0x12b/0x180
+| Aug 25 14:47:06 bombax [<c01410f4>] sys_munmap+0x44/0x70
+| Aug 25 14:47:06 bombax [<c0166ba7>] sys_oldumount+0x17/0x20
+| Aug 25 14:47:06 bombax [<c0103f3b>] syscall_call+0x7/0xb
+| Aug 25 14:47:06 bombax reiser4[umount(8150)]: atom_begin_andlock (fs/reis=
+er4/txnmgr.c:759)[nikita-3366]:
+| Aug 25 14:47:06 bombax WARNING: Creating atom on rofs
+| Aug 25 14:47:06 bombax [<c01e374e>] atom_begin_andlock+0x3ce/0x4b0
+| Aug 25 14:47:06 bombax [<c01e6306>] try_capture_block+0x236/0x5a0
+| Aug 25 14:47:06 bombax [<c01e6771>] try_capture+0x71/0x150
+| Aug 25 14:47:06 bombax [<c01e6a68>] try_capture_page_to_invalidate+0x58/0=
+x2b0
+| Aug 25 14:47:06 bombax [<c022007d>] reiser4_invalidatepage+0xbd/0x540
+| Aug 25 14:47:06 bombax [<c01e2bd8>] txn_end+0x68/0x1a0
+| Aug 25 14:47:06 bombax [<c01b338c>] preempt_point+0xc/0x90
+| Aug 25 14:47:06 bombax [<c01e2bd8>] txn_end+0x68/0x1a0
+| Aug 25 14:47:06 bombax [<c0139f27>] do_invalidatepage+0x27/0x30
+| Aug 25 14:47:06 bombax [<c0139f8b>] truncate_complete_page+0x5b/0x60
+| Aug 25 14:47:06 bombax [<c013a14b>] truncate_inode_pages_range+0x13b/0x320
+| Aug 25 14:47:06 bombax [<c02199cc>] reiser4_destroy_inode+0xbc/0x350
+| Aug 25 14:47:06 bombax [<c013a35f>] truncate_inode_pages+0x2f/0x40
+| Aug 25 14:47:06 bombax [<c0163cd0>] dispose_list+0x80/0xa0
+| Aug 25 14:47:06 bombax [<c0163e3b>] invalidate_inodes+0x4b/0x70
+| Aug 25 14:47:06 bombax [<c01522b2>] generic_shutdown_super+0x62/0x160
+| Aug 25 14:47:06 bombax [<c0152cad>] kill_block_super+0x1d/0x40
+| Aug 25 14:47:06 bombax [<c01521d0>] deactivate_super+0x50/0x70
+| Aug 25 14:47:06 bombax [<c0166b3f>] sys_umount+0x3f/0x90
+| Aug 25 14:47:06 bombax [<c014105b>] do_munmap+0x12b/0x180
+| Aug 25 14:47:06 bombax [<c01410f4>] sys_munmap+0x44/0x70
+| Aug 25 14:47:06 bombax [<c0166ba7>] sys_oldumount+0x17/0x20
+| Aug 25 14:47:06 bombax [<c0103f3b>] syscall_call+0x7/0xb
+
+I guess these two backtraces are exactly the same, and they are repeated
+until I press the reset button.  fsck before the whole thing says FS is
+consistent.  I experience this on a 2.6.8.1-mm4 with all debugging
+except CONFIG_REISER4_DEBUG_MEMCPY enabled, but without them the above
+commands work perfectly fine. =20
+
+So probably not a big problem but quite a bit annoying... =20
+
+Regards,
+Milan
 
 
---=-5hrRWiQkltvF0d1r7Ke/
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
+- --=20
+
+                   Milan Holz=E4pfel alias jagdfalke alias jag
+
+Meine eMail-Adresse ist hier zu              You can find my eMail-address
+                      finden:                here:
+Kontaktinfos sowie                                   Contact infos as well =
+as
+=D6ff GnuPG-Schl=FCssel    <URL:http://con.mjh.name/>    GnuPG Public Key
+GnuPG Fingerabdruck     4C8A 5FAF 5D32 6125 89D1     GnuPG Fingerprint
+                        0CE5 DB0C AF4F 6583 7966
+
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
+Version: GnuPG v1.2.4 (GNU/Linux)
 
-iD8DBQBBLISHZCYBcts5dM0RAoDhAKCjXzv0OLMSTCwfQksi5FXqWlSoIQCghY/N
-AakPa+OVsh/Xok9Lg9xfhvE=
-=zSZ3
+iD8DBQFBLI7l2wyvT2WDeWYRAqKhAKDVV/PtczsEvoK40PDtKVap89DEqwCdGXvH
+hrjTmD9OcKZy8WwhNb5u33Y=3D
+=3DzNGW
 -----END PGP SIGNATURE-----
-
---=-5hrRWiQkltvF0d1r7Ke/--
 
