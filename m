@@ -1,51 +1,45 @@
-From: Ray Barnes <rrb@shellx.tical.net>
-Subject: File Undeletion on ReiserFS 3.6
-Date: Tue, 24 Jun 2003 20:04:53 -0400 (EDT)
-Message-ID: <Pine.LNX.4.33.0306241958320.9813-100000@shellx.tical.net>
+From: Christian Kujau <evil@g-house.de>
+Subject: Re: vpf-10680, minor corruptions
+Date: Wed, 25 Jun 2003 02:42:24 +0200
+Message-ID: <3EF8EFF0.6020207@g-house.de>
+References: <3EF07AFB.8060303@g-house.de> <20030618152626.GA17240@namesys.com> <3EF0A8E8.2000209@g-house.de> <20030619054535.GA23852@namesys.com> <3EF6AE67.5090502@namesys.com> <20030623090258.GA12259@namesys.com> <3EF6C83F.6060702@namesys.com> <3EF702CC.9050005@g-house.de> <20030624131904.GA460@namesys.com> <3EF86928.7080504@g-house.de> <20030624151940.GC21845@namesys.com> <3EF888B2.4000900@g-house.de>
+Reply-To: evil@g-house.de
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14690-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14691-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3EF888B2.4000900@g-house.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-Hello All,
+Christian Kujau schrieb:
+> of course, the best thing i can do is the el-cheapo-hacking approach: 
+> compiling 2.5.60...up to 2.5.72 and see *when* it breaks. hm, compiling 
+> a 2.5 kernel takes 180min on this machine. but anyway, i'll start with 
+> 2.5.60 now, see what it gives.
 
-I recently did a rm -rf * in the wrong directory, and accidentally erased
-a whole heap of information.  Being unsure of what to do about it, I
-checked the FAQ on www.namesys.com and did several Google searches, but
-did not find any useful information.  Finally, I searched the mailing list
-archive and found a post along with a suggestion for recovery.  Here's
-what I did:
+no, i started with 2.5.66 but the kernel did not compile. 2.5.65 did 
+compile (don't ask how long....) and has already booted. but trying to 
+mount the newly created reiserfs gives:
 
-dd if=/dev/hdsomething of=backupfie
-losetup /dev/loop5 backupfile
+module reiserfs: Relocation overflow vs section 9
 
-with that in hand, I tried:
+in the log. the reiserfs module was not loaded. "modprobe reiserfs" gives:
 
-reiserfsck --rebuild-tree --scan-whole-partition /dev/loop5
-mount /dev/loop5 <mountpoint>
+lila:~# modprobe reiserfs
+FATAL: Error inserting reiserfs 
+(/lib/modules/2.5.65/kernel/fs/reiserfs/reiserfs.ko): Invalid module format
+lila:~# uname -a
+Linux lila 2.5.65 #4 Wed Jun 25 00:48:46 CEST 2003 alpha GNU/Linux
 
-According to the poster, it worked for him.  However, it did not work for
-me.  I believe one of the subdirectories got recovered (which happened to
-be the last thing that the rm -rf deleted, i'm assuming).. but it did not
-recover anything else.  The total amount of information that I lost was 30
-gigs or so, out of a 40 gig drive.  I'm thinking that it *might* have had
-something to do with the amount of free space on the drive, which would
-have been about 95% utilization.  Also, as a hint, when I look at 'df'
-with the repaired partition mounted, the utilization now says 95% where as
-before it said 5%.  Additionally, as another hint, I did not immediately
-dismount that partition as I should have.  I left the box up for about 14
-hours after the 'rm' incident, and it would have been making entries into
-the syslog, as well as running MRTG processes every couple of minutes,
-etc.
+i compiled the module with CONFIG_REISERFS_CHECK=y.
 
-Any ideas?
+shall i go on with 2.5.64 or better 2.5.67 ?
 
--Ray Barnes
-
+good night,
+Christian.
 
