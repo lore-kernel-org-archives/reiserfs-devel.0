@@ -1,28 +1,28 @@
-From: Richard Stallman <rms@gnu.org>
-Subject: Re: reiser4 non-free?
-Date: Sun, 09 May 2004 14:47:28 -0400
-Message-ID: <E1BMtKi-0001vk-8d@fencepost.gnu.org>
-References: <1084025633.28080.196082736@webmail.messagingengine.com>
-Reply-To: rms@gnu.org
-Return-path: <reiserfs-list-return-18564-reiserfs=m.gmane.org@namesys.com>
+From: Redeeman <redeeman@metanurb.dk>
+Subject: all that yap about credits
+Date: Mon, 10 May 2004 08:50:06 +0200
+Message-ID: <1084171806.11175.1.camel@redeeman.kaspersandberg.com>
+Reply-To: redeeman@metanurb.dk
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18572-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-reply-to: <1084025633.28080.196082736@webmail.messagingengine.com>
-	(humberto.massa@almg.gov.br)
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Cc: debian-legal@lists.debian.org, Valdis.Kletnieks@vt.edu, humberto.massa@almg.gov.br, reiser@namesys.com, reiserfs-list@namesys.com
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-I think we are having two misunderstandings at the same time.
+blah, this is insane, more effort is getting placed in discussing
+license than the development.
 
-You seem to be talking about the specific case of modules for Linux,
-based on the specifics of the extra permission that Linus gave.
-That case is different and what I say does not apply to it.
+i suggest ppl just decide for themselves if they want to use reiser4 or
+not. if you can accept the license. fine. if not, then dont use it.
+plain simple.
 
-You are focusing on the definition of "derived work", but that is not
-really the issue.  Copyright also covers use of a work as part of a
-larger combined work.
+-- 
+Regards, Redeeman
+()  ascii ribbon campaign - against html e-mail 
+/\                        - against microsoft attachments
+
