@@ -1,38 +1,73 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+From: Trond Myklebust <trond.myklebust@fys.uio.no>
 Subject: Re: silent semantic changes with reiser4
-Date: Sun, 29 Aug 2004 20:39:25 -0400 EDT
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <3247172997-BeMail@cr593174-a>
-References: <20040829191044.GA10090@thundrix.ch>
+Date: Sun, 29 Aug 2004 21:42:15 -0400
+Sender: Trond Myklebust <trondmy@trondhjem.org>
+Message-ID: <1093830135.8099.181.camel@lade.trondhjem.org>
+References: <Pine.LNX.4.44.0408271043090.10272-100000@chimarrao.boston.redhat.com>
+	 <412F7D63.4000109@namesys.com> <20040827230857.69340aec.pj@sgi.com>
+	 <20040829150231.GE9471@alias> <4132205A.9080505@namesys.com>
+	 <20040829183629.GP21964@parcelfarce.linux.theplanet.co.uk>
+	 <20040829185744.GQ21964@parcelfarce.linux.theplanet.co.uk>
+	 <41323751.5000607@namesys.com>
+	 <20040829212700.GA16297@parcelfarce.linux.theplanet.co.uk>
+	 <Pine.LNX.4.58.0408291431070.2295@ppc970.osdl.org>
+	 <1093821430.8099.49.camel@lade.trondhjem.org>
+	 <Pine.LNX.4.58.0408291641070.2295@ppc970.osdl.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040829191044.GA10090@thundrix.ch>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-21095-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <Pine.LNX.4.58.0408291641070.2295@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Tonnerre <tonnerre@thundrix.ch>
-Cc: spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com, vonbrand@inf.utfsm.cl
+Content-Type: text/plain; charset="iso-8859-1"
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Alexander Viro <viro@parcelfarce.linux.theplanet.co.uk>, Hans Reiser <reiser@namesys.com>, flx@msu.ru, Paul Jackson <pj@sgi.com>, riel@redhat.com, ninja@slaphack.com, diegocg@teleline.es, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, Linux Filesystem Development <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Tonnerre wrote on Sun, 29 Aug 2004 21:10:44 +0200:
-> On Fri, Aug 27, 2004 at 07:58:40PM -0400, Horst von Brand wrote:
-> > So the _kernel_ has to know about thousands of formats, just in case it
-> > some blue day it comes across a strange file? Better leave that to the
-> > applications.
-> 
-> I'd  do  that  quite  differently:  Collect metadata  about  files  in
-> extended attributes (which are  rather universally useable), and do it
-> from  an userspace daemon/application/file  manager plugin  which uses
-> dynamically   loadable   plugins   for   the  different   file   types
-> differentiated by libmagic.
-> 
-> This has nothing to do in the kernel.
+P=E5 su , 29/08/2004 klokka 19:54, skreiv Linus Torvalds:
 
-I mostly agree, like I was saying earlier, file types are needed!  The kernel doesn't have to know about all of them, just some of them.  It should be possible to attach a file type to everything so you know what kind of thing it is, not just block or character device or file, but something like a MIME type.  If space is a concern, add to the inode a unique 8 byte character code for each popular type and a global translation table to get back the MIME string.
+> The problem really ends up being directories with attributes (where we
+> can't just overmount the existing directory). That's where "openat()"=20
+> helps us.=20
 
-The kernel (includes file systems and plug-ins) would have to know some standard file types and how to compare them for indexing purposes.  For example, an integer attribute like the year a music album was released would be stored as a 4 byte attribute "file" with a type like "primitive/int32", which tells the kernel to use 32 bit integer number comparison for indexing order.  Another type the kernel could be aware of are the file types used for security attributes.  A third kind it might need to know about are the computed attributes, which get set whenever related attributes they are computed from change.  For any unknown types, the kernel just stores the data and doesn't do any extra processing.
+Well, yes there has to be a distinction between a true bind mount which
+actually covers the file or directory, and something like the stream
+"bind mount" which doesn't.
 
-Optionally the kernel could also maintain the global list of all file types and their properties (such as which ones are indexed, which are computed), though that could also be done in userland if you aren't doing indexing or computed attributes or other fancy operations.
+The stream "bind mount" is just there to allow you to root the
+attributes in a single tree. It can be made functionally entirely
+equivalent to the openat(), but uses pathname semantics (e.g., "//") to
+denote the attribute fork instead of an extra function call.
 
-The determination of the types would be in userland (smart programs would write the type when they created the file).  Like you said, a daemon could classify unknown files in the background (BeOS does this).  Most of the uses of the file type would also be in userland, such as deciding which program can handle a given file, or what icon to display, or to hint that a file/directory/attribute thing should be interpreted as an old style directory to the user, or to mark a file thing as being worth backing up (don't need to back up the computed ones).
+> > Is it just the fantasy of supporting hard-links across "stream
+> > boundaries" (as in "touch a b; ln b a/b; ln a b/a")? I'm pretty sure
+> > nobody wants to have to add cyclic graph detection to their filesystems
+> > anyway. 8-)
+>=20
+> It's easy enough to do the graph detection at the VFS layer, exactly=20
+> because of the density of the dentry graph.=20
 
-- Alex
+Don't you end up having to lock the entire paths b/c/d and a/e/f in
+order to prevent "ln a b/c/d/a; ln b a/e/f/b"?
+
+> > What other issues would need to be addressed?
+
+>  - how to actually test this out in practice (ie getting reiser4 to do th=
+e
+>    proper thing wrt the VFS layer, but preferably _also_ having another
+>    filesystem like NFSv4 or cifs that actually uses this and shows what
+>    the problems are).
+
+As I said, NFSv4 can be made ready pretty quickly: Bruce is already
+finishing up the xattr implementation.
+
+>  - whether it makes any sense at all unless we also make at least a few=20
+>    other filesystems support it, so that people start using it as an=20
+>    "expected feature" rather than a "works only on a couple of machines".
+
+NTFS? ;-)
+
+Cheers,
+  Trond
