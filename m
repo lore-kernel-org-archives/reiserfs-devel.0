@@ -1,37 +1,45 @@
-From: Anders Widman <andewid@tnonline.net>
-Subject: Lost+Found
-Date: Sun, 5 May 2002 20:57:05 +0200
-Message-ID: <176050375.20020505205705@tnonline.net>
-Reply-To: reiserfs-list@namesys.com
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: 2.4.19-pre7 / corruption on unwanted reboot
+Date: Mon, 06 May 2002 14:59:10 +0400
+Message-ID: <3CD661FE.5080500@namesys.com>
+References: <20020504211147.GA20092@matrix.wg>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10248-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10249-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Dirk Mueller <dmuell@gmx.net>
+Cc: reiserfs-list@namesys.com
 
+Dirk Mueller wrote:
 
-   Hello again =)
+>Hi, 
+>
+>I've seen HEAVY file corruption on unwanted reboots (like pressing the reset 
+>button accidently) on reiserfs with this kernel on 3 machines now. 
+>
+>The symptom is that it finds a LOT of files to "unlink" on journal replay, 
+>which I find suspicious as those machines are lightly loaded. 
+>
+>I didn't follow the development too closely the last few weeks, but I 
+>believe that something turned worse in this respect lately. 
+>
+>Note that reiserfsck doesn't find any error in the file system structure 
+>before and after the journal replay on reboot, 
+>still many files (especially those that were not touched for several hours 
+>before the reboot) contain complete garbage after the journal replay. 
+>
+>
+>Dirk
+>
+>
+>  
+>
+Were these files being written to near the time of the reboot?
 
-   With the release of Kernel 2.4.19-8 I hoped that my damaged
-   filesystem, that was repaired with the reiserfs tools a while ago
-   could be used.
+hans
 
-   The problem was that it wasn't possible to change anything in the
-   lost+found folder. If I tried to move or rename a file/folder the
-   kernel would crash and a dump was printed.
-
-   Now, with kernel 2.4.19-8 It seems as at least some folders are
-   movable. However, some aren't and some strange errors occur. I do
-   not get any crashes, or not even a error in /var/log/messages. The
-   errors are that all files suddenly vanish from lost+found and I
-   have to reboot to be able to even fsck. If I do not reboot I can
-   still access and read all other folders, except lost+found.
-
-   What can be wrong?
-
-   //Anders
 
