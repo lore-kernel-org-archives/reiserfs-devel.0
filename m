@@ -1,56 +1,75 @@
-From: myciel <myciel@dotcom.pl>
-Subject: 2.4.18 & journal_mark_dirty?
-Date: Thu, 13 Mar 2003 09:42:30 +0100
-Message-ID: <3E704476.9090601@dotcom.pl>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: 2.4.18 & journal_mark_dirty?
+Date: Thu, 13 Mar 2003 11:45:38 +0300
+Message-ID: <20030313114538.A8610@namesys.com>
+References: <3E704476.9090601@dotcom.pl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13239-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13240-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <3E704476.9090601@dotcom.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: myciel <myciel@dotcom.pl>
+Cc: reiserfs-list@namesys.com
 
-Hi All
+Hello!
 
-I run nfs server using reiserfs on 2.4.18 + NFSALL patches, and
-I've just got "nice" oops.  System did not crash, but anyway I had to 
-reboot to restart nfs.
-Could You please tell me if  "journal_mark_dirty:...." in following log 
-is harmless or not?
+On Thu, Mar 13, 2003 at 09:42:30AM +0100, myciel wrote:
 
+> I run nfs server using reiserfs on 2.4.18 + NFSALL patches, and
+> I've just got "nice" oops.  System did not crash, but anyway I had to 
+> reboot to restart nfs.
+> Could You please tell me if  "journal_mark_dirty:...." in following log 
+> is harmless or not?
 
-Mar 12 22:07:28 hostname journal-1413: journal_mark_dirty: j_len (1024) 
-is too big
-Mar 12 22:07:28 hostname invalid operand: 0000
-Mar 12 22:07:28 hostname CPU:    0
-Mar 12 22:07:28 hostname EIP:    0010:[<c01c3fd8>]    Not tainted
-Mar 12 22:07:28 hostname EFLAGS: 00010286
-Mar 12 22:07:28 hostname eax: 0000003d   ebx: f65d3400   ecx: f6912000   
-edx: e051e08c
-Mar 12 22:07:28 hostname esi: f45a19e0   edi: f65d3400   ebp: 00000000   
-esp: f6913ad0
-Mar 12 22:07:28 hostname ds: 0018   es: 0018   ss: 0018
-Mar 12 22:07:28 hostname Process nfsd (pid: 12583, stackpage=f6913000)
-Mar 12 22:07:28 hostname Stack: c02a6d77 c0369280 f6913e78 f6913e78 
-c01d1d02 f65d3400 c02b9840 00000400 12 22:07:28 hostname 00000000 
-f6913e78 0200a4d0 00000000 00000000 f65d3400 000024d0 00000401
-Mar 12 22:07:28 hostname 0200a4d0 c01b19f1 f6913e78 f65d3400 f45a19e0 
-f49ac000 f49cf4a0 f49b2000
-Mar 12 22:07:28 hostname Call Trace: [<c01d1d02>] [<c01b19f1>] 
-[<c01cacd1>] [<c01c0f84>] [<c01cb10b>] r 12 22:07:28 hostname 
-[<c01cba78>] [<c01cc17e>] [<c01cb5bd>] [<c01b8467>] [<c01b83a0>] 
-[<c0156bd3>]  12 22:07:28 hostname [<c014c880>] [<c01a0555>] 
-[<c019b8a4>] [<c019a40e>] [<c028fbdf>] [<c019a1fe>]  12 22:07:28 
-hostname [<c01057ae>] [<c0199ff0>]
-Mar 12 22:07:28 hostname Code: 0f 0b 85 db 74 12 0f b7 43 08 89 04 24 e8 
-f6 b2 f7 ff eb 09
+No, it is not.
+Here's the patch. You need the patch, otherwise you would see this message
+quite often when trying to delete/truncate certain file.
 
+Bye,
+    Oleg
 
-sincerely
-
-rafal mycielski
-
-
+# This is a BitKeeper generated patch for the following project:
+# Project Name: Linux kernel tree
+# This patch format is intended for GNU patch command version 2.5 or higher.
+# This patch includes the following deltas:
+#	           ChangeSet	1.1009  -> 1.1010 
+#	 fs/reiserfs/stree.c	1.20    -> 1.21   
+#
+# The following is the BitKeeper ChangeSet Log
+# --------------------------------------------
+# 03/03/04	green@angband.namesys.com	1.1010
+# reiserfs: Fix possible transaction overflow when deleting highly fragmented large files.
+# 
+# --------------------------------------------
+#
+diff -Nru a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
+--- a/fs/reiserfs/stree.c	Thu Mar 13 11:44:43 2003
++++ b/fs/reiserfs/stree.c	Thu Mar 13 11:44:43 2003
+@@ -1125,6 +1125,21 @@
+ 		journal_mark_dirty (th, p_s_sb, p_s_bh);
+ 		inode->i_blocks -= p_s_sb->s_blocksize / 512;
+ 		reiserfs_free_block(th, tmp);
++		/* In case of big fragmentation it is possible that each block
++		   freed will cause dirtying of one more bitmap and then we will
++		   quickly overflow our transaction space. This is a
++		   counter-measure against that scenario */
++		if (journal_transaction_should_end(th, th->t_blocks_allocated)) {
++		    int orig_len_alloc = th->t_blocks_allocated ;
++		    pathrelse(p_s_path) ;
++
++		    journal_end(th, p_s_sb, orig_len_alloc) ;
++		    journal_begin(th, p_s_sb, orig_len_alloc) ;
++		    reiserfs_update_inode_transaction(inode) ;
++		    need_research = 1;
++		    break;
++		}
++
+ 		if ( item_moved (&s_ih, p_s_path) )  {
+ 			need_research = 1;
+ 			break ;
