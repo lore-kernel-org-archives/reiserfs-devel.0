@@ -1,32 +1,43 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+From: Mikael Cluseau <nwrk@nwrk.dyndns.org>
 Subject: Re: I've done a very bad mistake
-Date: Thu, 1 Jul 2004 18:25:05 +0300
-Message-ID: <20040701152505.GI4990@nysv.org>
+Date: Thu, 01 Jul 2004 17:36:40 +0200
+Message-ID: <1088696200.11333.58.camel@localhost>
 References: <200407011523.48481.aotto1968@onlinehome.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19479-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-19480-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 In-Reply-To: <200407011523.48481.aotto1968@onlinehome.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
 To: aotto1968@t-online.de
 Cc: reiserfs-list@namesys.com
 
-On Thu, Jul 01, 2004 at 03:23:48PM +0200, Andreas Otto wrote:
->  I need a tool with partition as input (dev/hdb7) and all not damaged files
->  as output
+Le jeu 01/07/2004 =C3=A0 15:23, Andreas Otto a =C3=A9crit :
+> Hi,
+>=20
+>   I've done as root:=20
+>    >> cp some_file /dev/hdb7
 
-I haven't tried dd_rescue but maybe you should read /dev/hdb7 with it
-and skip the beginning, as much from the beginning as the accidentally
-copied file is.
+I remember that cp ask to *replace* a file, not to "put the source file
+at the beginning of the target file". Did you really verified that your
+partition was really modified ? I would be very surprised of this
+attitude from cp...
 
-Then try fsck with some appropriate rebuild switches on the image.
+In that case,
 
--- 
-mjt
+# rm /dev/hdb7 &&
+# mknod /dev/hdb7 b 3 71
 
+should work on a non-devfs system, and
+
+# rm /dev/hdb7 &&
+# ln -s ide/host0/bus0/target1/lun0/part7 /dev/hdb7
+
+should work on a devfs system.
+
+--
+Mikael.
