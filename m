@@ -1,40 +1,79 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Problem with the latest auto snapshot
-Date: Mon, 14 Jun 2004 12:21:16 +0300
-Message-ID: <20040614092116.GN4990@nysv.org>
-References: <200406122131.25974.henning-04@die.informatik.uni-siegen.de> <200406131537.54853.henning-04@die.informatik.uni-siegen.de> <20040613134344.GK4990@nysv.org> <200406141113.16009.henning-04@die.informatik.uni-siegen.de>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: very messed up reiserfs with bad blocks
+Date: Mon, 14 Jun 2004 14:33:47 +0400
+Message-ID: <200406141433.47772.vitaly@namesys.com>
+References: <Pine.GHP.4.44.0406122215500.13459-100000@elektron.its.tudelft.nl>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19174-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19175-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <Pine.GHP.4.44.0406122215500.13459-100000@elektron.its.tudelft.nl>
 Content-Disposition: inline
-In-Reply-To: <200406141113.16009.henning-04@die.informatik.uni-siegen.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Henning Westerholt <henning-04@die.informatik.uni-siegen.de>
-Cc: reiserfs-list@namesys.com
+To: Sebastiaan <S.Breedveld@ewi.tudelft.nl>, reiserfs-list@namesys.com
 
-On Mon, Jun 14, 2004 at 11:13:16AM +0200, Henning Westerholt wrote:
->> Could this be because the partition is in use?
->> If it's trafficking data all the time and fsck can't catch up?
->The partition is only temporarily in use, so this should not the case.
+On Sunday 13 June 2004 00:16, Sebastiaan wrote:
+> Hi,
 
-I tested this on a 1152-megabyte loopback image, I ran bonnie++ on it
-while doing fsck's and I got pretty identical error messages...
+Hello, 
 
->These were the only visible corruption so far. After the mentioned errors, the 
->partition now performs stable. I compile several large oss projects without 
->problems. Fsck shows also no problems.
->Strange. Perhaps the disk format after the mkfs is "unstable", and it needs 
->further use to stabilize it?
+> I have a problem with a reiserfs partition. Some days ago the drive
+> reported bad blocks, so I ran the badblocks program tried to fix the
+> filesystem with the badblocksoutput.
+>
+> Assuming I fixed the badblock list with 'reiserfsck --badblocks' I tried
+> to access some (reported broken) files on that partition. This gave some
+> I/O errors, so I thought I had to rebuild the tree (reiserfsck --badblocks
+> --rebuild-tree). This failed, and the filesystem became unmountable (mount
+> fails with 'mount: Not a directory').
+>
+> I ran another badblock scan, and the number of badblocks grew
+> substantially (from 11 in the first run to 177 in the second).
+> --rebuild-tree failed again and again.
+>
+> Now the weird thing occured: running a third badblock scan didn't increase
+> the amount of badblocks (as I should expect, since the badblock program
+> runs on a lower level than the filesystem). It gave me 56 badblocks.
 
-I think someone at Namesys, maybe VS or Zam, is better qualified to answer
-to this. I'm at a total loss. It doesn't sound reasonable that the file
-system must be "driven in" before actual use...
+it seems rebuild-tree fails because new not expected badblocks appears.
+
+> Now the following questions raised:
+> - what causes the amount of bad blocks to fluctuate?
+> - how can I access the filesystem again?
+
+reiserfs badblock support is useful when you have permanent list of bad 
+blocks. now your hardware is unrelable, probably the harddrive is dying, 
+probably smth else. you should fix it before dealing with filesystem. if 
+needed, make a copy of the partition (with dd_rescue) to another harddrive 
+and fsck the copy.
+
+> I know the drive is bad, so I am only into copying the contents off it as
+> soon as possible. I have the idea the file allocation table is corrupted.
+> Now --rebuild-tree won't help me, so I was hoping there is a backup of
+> this FAT on the drive somewhere. I couldn't find it, so how does one deal
+> with this thing under reiser?
+
+> Thanks a lot in advance!
+> Sebastiaan
+>
+>
+> --
+>
+> English written by Dutch people is easily recognized by the improper use of
+> 'In principle ...'
+>
+> The software box said 'Requires Windows 95 or better', so I installed
+> Linux.
+>
+> Als Pacman in de jaren '80 de kinderen zo had be?nvloed zouden nu veel
+> jongeren rondrennen in donkere zalen terwijl ze pillen eten en luisteren
+> naar monotone electronische muziek. (Kristian Wilson, Nintendo, 1989)
 
 -- 
-mjt
+Thanks,
+Vitaly Fertman
 
