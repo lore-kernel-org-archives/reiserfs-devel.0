@@ -1,36 +1,44 @@
-From: Cyrille Chepelov <cyrille@chepelov.org>
+From: Pierre Abbat <phma@webjockey.net>
 Subject: Re: FIFO files
-Date: Tue, 17 Jun 2003 21:43:25 +0200
-Message-ID: <20030617194325.GA15713@chepelov.org>
-References: <20030617162127.GA14124@chepelov.org> <3EEF40B3.6000300@gmx.net> <20030617170720.GC14124@chepelov.org> <3EEF6C71.7060303@namesys.com>
+Date: Tue, 17 Jun 2003 18:42:26 -0400
+Message-ID: <200306171842.26751.phma@webjockey.net>
+References: <20030617162127.GA14124@chepelov.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14592-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14593-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20030617162127.GA14124@chepelov.org>
 Content-Disposition: inline
-In-Reply-To: <3EEF6C71.7060303@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Le Tue, Jun 17, 2003, =E0 11:30:57PM +0400, Hans Reiser a =E9crit:
+On Tuesday 17 June 2003 12:21, Cyrille Chepelov wrote:
+> Hi all,
+>
+> I recently encountered a need for such a contraption as file-backed FIFOs.
+> These are files where one process can append records at one end, and one
+> other process can read records from the beginning of the file, chopping off
+> the head of the file once it's not needed anymore. As I had to implement
+> something right now on existing systems, I worked around the general
+> absence for such a facility, but still, I'm wondering how difficult it
+> would to write a reiserfs4 plug-in which would allow one to do the
+> equivalent of a truncate() but truncating what's between the position 0 and
+> the current cursor (effectively shifting all subsequent file positions),
+> rather than truncating what's between the cursor and the end of file.
+> (network considerations are explicitly out of the scope of this musing)
 
-> So in answer, yes, this is quite feasible and reasonable to do.  I will=20
-> be likely to accept such a patch, though you should send a detailed=20
-> design first to reiserfs-list before writing code.
+There's a program called "cupyvei" which allows one process to append records 
+to a file, and any number of other processes to read independently from the 
+beginning. It isn't unlimited though; it's a circular buffer, and the size is 
+specified when you create it. Is that of any interest?
 
-I don't know whether I'll have the time to tackle such a project (at least
-not in the immediate future), but I'm happy to know that you judge that
-feasible. It seems to me wise to wait for a released version of the fs
-before proceeding anyway.
+phma
 
-Once I'm ready to give that a spin, I will start by discussing the technical
-aspects here.
-
-	-- Cyrille
-
---=20
+-- 
+.i toljundi do .ibabo mi'afra tu'a do
+.ibabo damba do .ibabo do jinga
+.icu'u la ma'atman.
