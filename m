@@ -1,36 +1,33 @@
-From: "Matthew Allen" <fret@memecode.com>
-Subject: Re: Virtual volumes...
-Date: Tue, 26 Aug 2003 15:44:38 +1000
-Message-ID: <PGO2VG.1559521459YWZ4UD@memecode.com>
-References: <1061459015.30048.17.camel@haron.namesys.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: write barrier patches for 2.4.21
+Date: Tue, 26 Aug 2003 12:17:15 +0400
+Message-ID: <20030826081715.GA5816@namesys.com>
+References: <20030825170849.GA14811@mfa.kfki.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15411-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15412-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <20030825170849.GA14811@mfa.kfki.hu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Gergely Tamas <dice@mfa.kfki.hu>
+Cc: Reiserfs List <reiserfs-list@namesys.com>
 
----------- Original Message ----------
-To: Matthew Allen (fret@memecode.com)
-From: Yury Umanets (umka@namesys.com)
-Subject: Re: Virtual volumes...
-Date: 21/8/2003 7:43:35p
+Hello!
 
->> 1) Is it possible to redirect ReiserFS to use a file instead of a 
->> physical disk? (As far as I'm aware LVM doesn't do that...)
->
->Probably you mean loop back device?
+On Mon, Aug 25, 2003 at 07:08:49PM +0200, Gergely Tamas wrote:
 
-Yes, this is what I mean. Btw, are loop back devices read only?
+> Where can I get Jens Axboe's + Chris Mason's (reiserfs) ide write
+> barrier patches for kernel 2.4.21 ?
+> I'd like to test a 3ware based raid setup (8xide) with write cache
+> enabled.
 
-However that sort of arrangment is limited to unix right?
+I think that the patch does not have 3ware support. Only conventional IDE
+controllers are supported by the patch.
 
-I'm also looking for a cross platform solution (ie Windows).
---
-Matthew Allen
-(fret@memecode.com) (http://www.memecode.com)
-
+Bye,
+    Oleg
