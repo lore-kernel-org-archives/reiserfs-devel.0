@@ -1,32 +1,52 @@
-From: Alexander Lyamin <flx@msu.ru>
-Subject: Re: Installing Quota Patch
-Date: Wed, 10 Sep 2003 01:39:54 +0400
-Message-ID: <20030910013954.B24454@t-raenon.nmd.msu.ru>
-References: <200309071820.38790.hchs@ns.sympatico.ca>
-Reply-To: flx@msu.ru
+From: Bernd Schubert <bernd-schubert@web.de>
+Subject: Re: inode generation numbers
+Date: Wed, 10 Sep 2003 00:53:22 +0200
+Sender: bernd-schubert@web.de
+Message-ID: <200309100053.23352.bernd-schubert@web.de>
+References: <200309092108.37805.bernd-schubert@web.de> <20030909140751.E18851@schatzie.adilger.int>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15613-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15614-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20030909140751.E18851@schatzie.adilger.int>
 Content-Disposition: inline
-In-Reply-To: <200309071820.38790.hchs@ns.sympatico.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Cody Harris <hchs@ns.sympatico.ca>
-Cc: reiserfs-list@namesys.com
+To: Andreas Dilger <adilger@clusterfs.com>
+Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Sun, Sep 07, 2003 at 06:20:38PM -0300, Cody Harris wrote:
-> I recently downloaded the files to install quotas on my 2.4.20 kernal. But i 
-> don't know HOW to install it. Anyone want to point me to a HOWTO?
-no how-to.
-apply patches.
-configure kernel with quota.
-compile. reboot. enjoy.
+On Tuesday 09 September 2003 22:07, Andreas Dilger wrote:
+> On Sep 09, 2003  21:08 +0200, Bernd Schubert wrote:
+> > for a user space nfs-daemon it would be helpful to get the inode
+> > generation numbers. However it seems the fstat() from the glibc doesn't
+> > support this, but refering to some google search fstat() from some (not
+> > all) other unixes does.
+> > Does anyone know how to read those numbers from userspace with linux?
+>
+> For ext2/ext3 filesystems you can use EXT2_GET_VERSION ioctl for this.
+
+regarding to fs/ext2/ioctl.c it should be EXT2_IOC_GETVERSION, shouldn't it?
+
+> Maybe reiserfs as well.
+>
+
+Hello,
+
+thanks a lot, it seems to work pretty well.
+Since I have never used the ioctl() call before I only want to be sure I don't 
+do something wrong,  I think this is correct, isn't it?
+
+int ret, igen;
+ret = ioctl(fd, EXT2_IOC_GETVERSION, &igen);
 
 
--- 
-"the liberation loophole will make it clear.."
-lex lyamin
+It also works for reiserfs-partitions with the very same call, @reiserfs-team, 
+this won't change in the future, will it?
+
+
+Cheers,
+	Bernd
+
