@@ -1,62 +1,53 @@
-From: Bruce <bestb@sympatico.ca>
-Subject: Can resize_reiserfs do non-destructive resizing??
-Date: Sun, 17 Nov 2002 21:40:49 -0500
-Message-ID: <200211172140.49258.bestb@sympatico.ca>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Mount and file system size issue
+Date: Mon, 18 Nov 2002 09:30:54 +0300
+Message-ID: <20021118093054.A964@namesys.com>
+References: <8287102CFE5C31418556A13A4E5BEE91E95A77@sphynx.git.compgen.com> <3CFFB2CA.6020300@namesys.com> <001201c20d9e$73e5d070$5701a8c0@bomoon> <20020607112121.C12869@namesys.com> <000801c20e3a$df840b20$5701a8c0@bomoon> <20020607200220.A1657@namesys.com> <031301c286be$0384ac90$6a01a8c0@bmoon>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12004-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12005-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <031301c286be$0384ac90$6a01a8c0@bmoon>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: bmoon <bo@anthologysolutions.com>
+Cc: reiserfs-list@namesys.com
 
-I have a desktop machine that was running Debian 3.0, installed on a 40Gi=
-g=20
-harddrive (single partition hda2 + swap hda1) formatted with reiserfs; th=
-e=20
-drive had about 10gig data on it. I wanted to test out Mandrake 9.0, and=20
-understood that the diskdrake program would handle resizing of the existi=
-ng=20
-reiser partition (using resize_reiserfs, I assume). The diskdrake program=
-=20
-suggested I backup as a precaution, but did not indicate that the resizin=
-g=20
-would be destructive.
+Hello!
 
-I let it resize the existing partition to 20Gig. It seemed to work, and=20
-Mandrake installed without any problems. However, since then I have not b=
-een=20
-able to access the Debian partition - can't boot from it, can't mount it,=
-=20
-nothing. Trying to boot from that partition results in:
+On Thu, Nov 07, 2002 at 04:30:17PM -0800, bmoon wrote:
 
- attempt to access beyond end of device
- 03:02 rw=3D0 want 21364740 limit 21310191
- reiserfs_read_super: unable to read bitmap
- kernel panic....
+> I have three questions related with this 4 months old issue.
+> - Still reiser2 or reiser4 do not support "on demand" bitmap read?
 
-I posted a query to alt.os.linux.mandrake, and got the answer that=20
-resize_reiserfs cannot do non-destructive repartitioning, and that my=20
-partition was toast (for the thread, search for the subject "Problem resi=
-zing=20
-reiserfs partition with DiskDrake" in alt.os.linux.mandrake from 10 Novem=
-ber=20
-2002). I had a look at the man page, and if resize_reiserfs cannot, in fa=
-ct,=20
-non-destructively resize a partition, I couldn't find anything saying so.=
-=20
+That's true for reiser3. reiser4 have on-demand bitmap reading,
+but not unloading until umount as I remember.
 
-Is this a problem with diskdrake's handling of resize_reiserfs??=20
-resize_reiserfs itself??
+> - What is the supporting block size on reiser2, and reiser4?
 
-It could also be due to physical problems with the hard drive, which had=20
-reported bad blocks some time ago. Is this more likely the cause of the=20
-problem??
+Right now due for simplicity reiser4 blocksize should be equal to
+PAGE_CACHE_SIZE on underlying architecture.
+reiser3 have 4096 bytes blocksize by default (this is the only supportted
+blocksize for 2.4 kernel series). Other possible values are 1024, 2048, ...
+and so on until you hit PAGE_CACHE_SIZE limit (Linux limit 4096 for x86,
+8128 for Alpha, variable for ia64)
 
-Any thoughts,
+> - I am going to build one big volume(LVM) out of 8 IDE disks and make
+> reiserfs on it.
+>   Where does the system write the meta data(super block, bitmap,..) into?
 
-Bruce
+Superblock will be at the beginning of volume and will probably be mapped to
+first disk. Bitmaps are spread over the disk (the ferquency of bitmaps
+on disk depends on blocksize).
 
+> Will it copy the same meta data on each disk?
+
+No, unless you use RAID1 stuff, and even then this copying will be done
+not by reiserfs itself.
+
+Bye,
+    Oleg
