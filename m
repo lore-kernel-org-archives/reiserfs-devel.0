@@ -1,92 +1,64 @@
-From: Kevin Bealer <kevinbealer@yahoo.com>
-Subject: Re: Split Trees (my design, similar to binary treaps)
-Date: Wed, 28 May 2003 09:44:35 -0700 (PDT)
-Message-ID: <20030528164435.90359.qmail@web40012.mail.yahoo.com>
-References: <1053999535.7962.172.camel@arabia.home.lan>
-Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14283-reiserfs=m.gmane.org@namesys.com>
+From: Jeff Breidenbach <jbreiden@parc.com>
+Subject: disk or reiserfs problem?
+Date: Wed, 28 May 2003 13:07:27 PDT
+Message-ID: <E19L7Co-0002Sb-00@rode.parc.com>
+Return-path: <reiserfs-list-return-14284-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1053999535.7962.172.camel@arabia.home.lan>
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Enrique Perez-Terron <enrique.perez-terron@norway.online.no>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
 
-Sounds great.  I thought that merging as you describe
-might be possible but never figured out the details. 
-(I haven't looked at
-your code, I'll assume for now all works as
-described).
+This is after a hard (power switch) reboot (due to I/O errors). The
+disk in question has about 125 GB of data on a single 200GB reiserfs
+partition. Do people think the disk is toast, or is this possibly some
+correctable filesystem problem? The machine is remote, so I can't
+tell if the disk is making funny grinding noises. Uptime was about
+45 days with high disk load before the problem occurred.
 
-Have you tested performance of merge-delete versus
-simple
-deletion?
+Any suggestions appreciated.
 
-Note that in my (simple delete with adjustments)
-version you don't need to modify levels of the whole
-tree, only the nodes on the path to the one you are
-moving.  Asymptotically, this should keep the tree on
-the correct average level.
-
-If you don't adjust levels at all, I think the
-performance cost would be small in practice.  But I
-never actually implemented the delete in my version.
-
-Kevin Bealer
+-Jeff
 
 
---- Enrique Perez-Terron
-<enrique.perez-terron@norway.online.no> wrote:
-> 
-> Hello,
-> 
-> Prompted by this discussion I wrote some code to
-> make sense of the
-> structures described, and they work wonderfully.
-> 
-> However, I found that in the split trees it is not
-> necessary to
-> manipulate the levels of the remaining nodes after a
-> deletion. It is
-> possible to reverse the effects of the split that
-> occurs during
-> insertion; it is quite easy.
-> 
-> The reversal procedure merges two non-overlapping
-> trees, the left and
-> right subtrees of the node that was removed. By
-> non-overlapping I mean
-> that the largest key in the tree with small keys is
-> smaller than the
-> smallest key in the other tree.
-> 
-> The procedure retains the desirable property of
-> working downwards and
-> not looking back, so two processes could lock and
-> update different parts
-> of the tree and propagate effects downwards,
-> automatically avoiding
-> deadlocks. The procedure also avoids having to
-> traverse entire subtrees
-> to update levels. It only touches nodes along the
-> left edge of the right
-> subtree, and along the right edge of the left
-> subtree. This should be
-> O(ln n).
-> 
-> The code can be found at
-> http://home.online.no/~enrio/b3.c
-> 
-> Regards, Enrique
-> 
 
 
-__________________________________
-Do you Yahoo!?
-Yahoo! Calendar - Free online calendar with sync to Outlook(TM).
-http://calendar.yahoo.com
+root@toko:~# mount -t reiserfs /dev/hdb1 /data1
+mount: wrong fs type, bad option, bad superblock on /dev/hdb1,
+       or too many mounted file systems
+       (could this be the IDE device where you in fact use
+       ide-scsi so that sr0 or sda or so is needed?)
+
+
+root@toko:~# reiserfsck /dev/hdb1
+ 
+<-------------reiserfsck, 2002------------->
+reiserfsprogs 3.6.3
+ 
+Will read-only check consistency of the filesystem on /dev/hdb1
+Will put log info to 'stdout'
+ 
+Do you want to run this program?[N/Yes] (note need to type Yes):Yes
+ 
+bread: Cannot read a block # 2.
+
+
+root@toko:~# dmesg | tail
+hdb1: bad access: block=35, count=5
+end_request: I/O error, dev 03:41 (hdb), sector 35
+hdb1: bad access: block=36, count=4
+end_request: I/O error, dev 03:41 (hdb), sector 36
+hdb1: bad access: block=37, count=3
+end_request: I/O error, dev 03:41 (hdb), sector 37
+hdb1: bad access: block=38, count=2
+end_request: I/O error, dev 03:41 (hdb), sector 38
+hdb1: bad access: block=39, count=1
+end_request: I/O error, dev 03:41 (hdb), sector 39
+
+root@toko:~# cat /proc/version
+Linux version 2.4.20-xfs (knoppix@Knoppix) (gcc version 2.95.4 20011002 (Debian prerelease)) #1 SMP Die Dez 10 20:07:25 CET 2002
