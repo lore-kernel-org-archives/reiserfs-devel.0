@@ -1,39 +1,45 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: secure delete?
-Date: Fri, 19 Mar 2004 11:04:01 -0500
-Sender: news <news@sea.gmane.org>
-Message-ID: <87u10k4ydq.fsf@uhoreg.ca>
-References: <1079691239.5767.7.camel@pear.st-and.ac.uk> <405AD31A.7070304@mweb.co.za>
- <20040319110748.GA30491@chihiro.cern.ch> <405AD9B5.80102@namesys.com>
- <1079697068.5812.13.camel@pear.st-and.ac.uk>
+From: Redeeman <redeeman@redeeman.linux.dk>
+Subject: Re: Can compression at filesystem level improve overall
+	performance?
+Date: Fri, 19 Mar 2004 17:29:51 +0100
+Message-ID: <1079713790.9729.1.camel@redeeman.linux.dk>
+References: <405B02ED.4010602@solidcode.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17325-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17326-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <405B02ED.4010602@solidcode.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
->>>>> "Peter" == Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk> writes:
+On Fri, 2004-03-19 at 15:25, Erik Terpstra wrote:
+> Hello everyone,
+> 
+> For the last couple of years I noticed that the performance of most of 
+> my systems has it's bottleneck in data throughput rather than CPU 
+> performance.
+> 
+> Is it fair to say that today compression at the filesystem level would 
+> improve overall performance?
+> 
+> If this is the case, it probably wouldn't be too hard to implement as a 
+> module in Reiser4?
+> 
+> Any thoughts?
+the more agressive you compress it the more cpu it takes, and that will
+make it slower, but i think a small compression algorithm for filesystem
+purpose could be written... however, i doubt it will be worth it,
+harddrives are really cheap nowadays.. but maybe some algortihm to
+compress cleartext only, or something..
 
-Peter> On Fri, 2004-03-19 at 11:29, Hans Reiser wrote:
->> Encrypt everything is what will work best.
 
-Peter> I guess you would have to use an encrypted swap area as well,
-Peter> right?  Would the performance be ok for that? Peter
-
-If you have any sensitive information, then encrypted swap is a good
-idea.  I'm using encrypted swap, and I'm not experiencing any noticeable
-performance hits.  But I have sufficient RAM (374MB) so it doesn't swap
-often.  If your machine swaps a lot, I would assume that performance
-would be bad (but it's probably already bad if you swap a lot).
-
+> 
+> --Erik.
 -- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+Regards, Redeeman
+redeeman@metanurb.dk
 
