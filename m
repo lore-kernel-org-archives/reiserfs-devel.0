@@ -1,108 +1,77 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Desktop Filesystem Benchmarks in 2.6.3
-Date: Tue, 02 Mar 2004 10:23:23 +0300
-Message-ID: <4044366B.3000405@namesys.com>
-References: <4044119D.6050502@andrew.cmu.edu>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: Consistent corruptions with 2.6.3/Reiser4/LATEST
+Date: Tue, 02 Mar 2004 11:32:20 +0300
+Message-ID: <1078216339.1634.73.camel@tribesman.namesys.com>
+References: <32862.68.10.246.123.1077992082.squirrel@webmail4.pair.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17000-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17001-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4044119D.6050502@andrew.cmu.edu>
+In-Reply-To: <32862.68.10.246.123.1077992082.squirrel@webmail4.pair.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Peter Nelson <pnelson@andrew.cmu.edu>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, ext2-devel@lists.sourceforge.net, ext3-users@redhat.com, jfs-discussion@oss.software.ibm.com, reiserfs-list@namesys.com, linux-xfs@oss.sgi.com
+Content-Type: text/plain; charset="us-ascii"
+To: bobvin@pillars.net
+Cc: reiserfs-list@namesys.com
 
-Are you sure your benchmark is large enough to not fit into memory, 
-particularly the first stages of it?  It looks like not.  reiser4 is 
-much faster on tasks like untarring enough files to not fit into ram, 
-but (despite your words) your results seem to show us as slower unless I 
-misread them....
+Hello
 
-Reiser4 performs best on benchmarks that use the disk drive, and we 
-usually only run benchmarks that use the disk drive.
+On Sat, 2004-02-28 at 21:14, Bob Vincent wrote:
+> I'm seeing consistent data corruption with Reiser4 on linux 2.6.3 with
+> all patches from http://thebsh.namesys.com/snapshots/LATEST/ applied.
+> 
+> Finally got a debugging trace uploaded to my website; you can find it
+> at:
+> 
+>         http://pillars.net/debugfs.reiser4.-P.dev.hda1.bz2
+> 
+> Other files which you may find relevant:
+> 
+>         http://pillars.net/lspci.-v.bz2
+>         http://pillars.net/proc.config.gz
+> 
+> The problem seems to appear when I boot into a reiser4 filesystem.
+> 
+> As long as my boot/root partition is reiserfs or ext2, I can create,
+> mount, read, write, and unmount reiser4 filesystems with no problem.
+> 
+> But when I set that same reiser4 filesystem as my root partition,
+> either the system hangs on bootup, or critical files become unreadable
+> with the warning from /fs/reiser4/plugin/file/file.c tagged "vs-1297",
+> "File (ino xxxxxx) has unknown state: 3".
+> 
 
-Hans
+Yes, thanks, we are working on a fix for this
 
-Peter Nelson wrote:
+> Running "debugfs.reiser4 --build-fs /dev/hda1" produces multiple
+> warnings as discussed before:
+> 
+>         Warning: Can't find stat data extension plugin by its id 0x4.
+> 
+> I am curious about other errors it sometimes reports, such as:
+> 
+>         Error: failed to open the object [object-id]
+> 
+> or:
+> 
+>         Error: the object [object-id] (reg40), node (node-id), item
+>         (76): the found item [item-id] of the plugin
+>         (extent40) does not match the detected tail policy (smart).
+>         Converted.
+> 
+> By the way, in order to get the patches in /snapshots/LATEST/extra/ to
+> compile, I had to resolve two patch rejects and also add a
+> 
+>         #include <asm/current.h>
+> 
+> to the file /usr/src/linux/include/sched.h.
 
-> I recently decided to reinstall my system and at the same time try a 
-> new file system. Trying to decide what filesystem to use I found a few 
-> benchmarks but either they don't compare all available fs's, are too 
-> synthetic (copy a source tree multiple times or raw i/o), or are meant 
-> for servers/databases (like Bonnie++). The two most file system 
-> intensive tasks I do regularly are `apt-get upgrade` waiting for the 
-> packages to extract and set themselves up and messing around with the 
-> kernel so I benchmarked these. To make it more realistic I installed 
-> ccache and did two compiles, one to fill the cache and a second using 
-> the full cache.
->
-> The tests I timed (in order):
->  * Debootstrap to install base Debian system
->  * Extract the kernel source
->  * Run `make all` using the defconfig and an empty ccache
->  * Copy the entire new directory tree
->  * Run `make clean`
->  * Run `make all` again, this time using the filled ccache
->  * Deleting the entire directory tree
->
-> Here is summary of the results based upon what I am calling "dead" 
-> time calculated as `total time - user time`.
-
-You should be able to script out the user time.
-
-> As you can see in the full results on my website the user time is 
-> almost identical between filesystems, so I believe this is an accurate 
-> comparison. The dead time is then normalized using ext2 as a baseline 
-> (> 1 means it took that many times longer than ext2).
->
-> FS      deb     tar     make    cp      clean   make2   rm      total
-> ext2    1.00    1.00    1.00    1.00    1.00    1.00    1.00    1.00
-> ext3    1.12    2.47    0.88    1.16    0.91    0.93    3.01    1.13
-> jfs     1.64    2.18    1.22    1.90    1.60    1.19    12.84   1.79
-> reiser  1.12    1.99    1.05    1.41    0.92    1.56    1.42    1.28
-> reiser4 2.69    1.87    1.80    0.63    1.33    2.71    4.14    1.83
-> xfs     1.06    1.99    0.97    1.67    0.78    1.03    10.27   1.43
->
-> Some observations of mine
->  * Ext2 is still overall the fastest but I think the margin is small
->    enough that a journal is well worth it
->  * Ext3, ReiserFS, and XFS all perform similarly and almost up to
->    Ext2 except:
->        o XFS takes an abnormally long time to do a large rm even
->          though it is very fast at a kernel `make clean`
->        o ReiserFS is significantly slower at the second make (from
->          ccache)
->  * JFS is fairly slow overall
->  * Reiser4 is exceptionally fast at synthetic benchmarks like copying
->    the system and untaring, but is very slow at the real-world
->    debootstrap and kernel compiles.
->  * Though I didn't benchmark it, ReiserFS sometimes takes a second or
->    two to mount and Reiser4 sometimes takes a second or two to unmount
->    while all other filesystem's are instantaneous.
->
-> Originally I had planned on using Reiser4 because of the glowing 
-> reviews they give themselves but I'm simply not seeing it. It might be 
-> that my Reiser4 is somehow broken but I don't think so. Based on these 
-> results I personally am now going with XFS as it's faster than 
-> ReiserFS in the real-world benchmarks and my current Ext3 partition's 
-> performance is getting worse and worse.
->
-> Full benchmark results, system information, and the script I used to 
-> run these tests are available from my website here:
-> <http://avatar.res.cmu.edu/news/pages/Projects/2.6FileSystemBenchmarks>
->
-> Feel free to comment, suggest improvements to my script, or run the 
-> test yourself.
-> -Peter Nelson
->
->
+You might want to follow instructions from
+http://thebsh.namesys.com/snapshots/2004.02.25/READ.ME
 
 
--- 
-Hans
+
 
 
