@@ -1,95 +1,133 @@
-From: <Hell.Surfers@cwctv.net>
-Subject: RE:Re: ext3 throughput woes on certain (possibly heavily fragmented)
- files
-Date: Sat, 7 Sep 2002 00:19:00 +0100
-Sender: linux-kernel-owner@vger.kernel.org
-Message-ID: <0dafd0118230692DTVMAIL9@smtp.cwctv.net>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: How to get all disk geometry (logical/physical) equal for RAID5
+Date: Sat, 7 Sep 2002 15:15:18 +0200
+Sender: linux-raid-owner@vger.kernel.org
+Message-ID: <200209071515.18103.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="1031354340758"
-Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-raid-owner@vger.kernel.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiser@namesys.com, aaronl@vitelus.com, Nikita@namesys.com, sct@redhat.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Neil Brown <neilb@cse.unsw.edu.au>
+Cc: Chris Mason <mason@suse.com>, Linux RAID List <linux-raid@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
+Hello Neil, Chris,
 
---1031354340758
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Sorry that I bother you but I'm under some hurry 'cause a school server=
+=20
+crashed and I have to set it up over the weekend, again.
+It had double disk fault in RAID5. The second disk show the damage duri=
+ng=20
+RAID5 reconstruction ;-(
+So I changed all 4 disks with another brand and put a fifth one as spar=
+e in.
 
-Perhaps you could use a fat partition, you can defragment those, or ntfs [mwaaaahahaha].
+hda (the spare) is on the on board VIA 686b controller and show some "b=
+ad"=20
+logical numbers so that I get a different partition layout.
 
+hde and hdg are on the on board HPT 370
+hdi and hdk are on an additional HPT 370A IDE card
 
+hdb is for installation only
 
-On 	Sat, 07 Sep 2002 02:05:12 +0400 	Hans Reiser <reiser@namesys.com> wrote:
+Any chance to change the logical disk layout of hda?
 
---1031354340758
-Content-Type: message/rfc822
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Second to you and Chris:
+Is it possible to boot from the mirrored RAID1 partitions (hdX10) with =
+the=20
+current lilo-22.x (SuSE 8.0)? With ReiserFS?
 
-Received: from vger.kernel.org ([209.116.70.75]) by smtp.cwctv.net  with Microsoft SMTPSVC(5.5.1877.447.44);
-	 Fri, 6 Sep 2002 23:05:42 +0100
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-	id <S319405AbSIFWAj>; Fri, 6 Sep 2002 18:00:39 -0400
-Received: (majordomo@vger.kernel.org) by vger.kernel.org
-	id <S319406AbSIFWAj>; Fri, 6 Sep 2002 18:00:39 -0400
-Received: from thebsh.namesys.com ([212.16.7.65]:30725 "HELO
-	thebsh.namesys.com") by vger.kernel.org with SMTP
-	id <S319405AbSIFWAi>; Fri, 6 Sep 2002 18:00:38 -0400
-Received: (qmail 19618 invoked from network); 6 Sep 2002 22:05:12 -0000
-Received: from reload.namesys.com (HELO namesys.com) (212.16.7.75)
-  by thebsh.namesys.com with SMTP; 6 Sep 2002 22:05:12 -0000
-Message-ID: <3D792698.4010401@namesys.com>
-Date: Sat, 07 Sep 2002 02:05:12 +0400
-From: Hans Reiser <reiser@namesys.com>
-User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.1) Gecko/20020826
-X-Accept-Language: en-us, en
-MIME-Version: 1.0
-To: Aaron Lehmann <aaronl@vitelus.com>
-CC: Nikita Danilov <Nikita@Namesys.COM>,
-	"Stephen C. Tweedie" <sct@redhat.com>,
-	linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
-Subject: Re: ext3 throughput woes on certain (possibly heavily fragmented)
- files
-References: <20020903092419.GA5643@vitelus.com> <20020906170614.A7946@redhat.com> <15736.57972.202889.872554@laputa.namesys.com> <3D78E44E.5020107@namesys.com> <20020906210214.GA25666@vitelus.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: linux-kernel-owner@vger.kernel.org
-Precedence: bulk
-X-Mailing-List: linux-kernel@vger.kernel.org
-Return-Path: linux-kernel-owner+Hell.Surfers=40cwctv.net@vger.kernel.org
+Thank you much!
 
-Aaron Lehmann wrote:
+-Dieter
 
->On Fri, Sep 06, 2002 at 09:22:22PM +0400, Hans Reiser wrote:
->  
->
->>I think I prefer that we implement a repacker for reiser4 though, as 
->>that, combined with delayed allocation, will be a balanced and thorough 
->>solution.
->>    
->>
->
->How does current ReiserFS fare against extreme fragmentation? What
->about XFS? Without trying to risk a flamewar, what Linux filesystems
->are the most preventive of fragmentation?
->
->The filesystem could make a huge difference on a machine like a mail
->server...
->
->
->  
->
-Sometimes it is best to confess that one does not have the expertise 
-appropriate for answering a question. Someone on our mailing list 
-studied it carefully though. Perhaps they can comment.
+=46estplatte /dev/hdk: 16 K=F6pfe, 63 Sektoren, 77545 Zylinder
+Einheiten: Zylinder mit 1008 * 512 Bytes
 
-Hans
+    Ger=E4t boot.  Anfang      Ende    Bl=F6cke   Id  Dateisystemtyp
+/dev/hdk1             1     14564   7340224+  fd  Linux raid autodetect
+/dev/hdk2         14565     20806   3145968   fd  Linux raid autodetect
+/dev/hdk3         20807     20949     72072   fd  Linux raid autodetect
+/dev/hdk4         20950     77545  28524384    5  Erweiterte
+/dev/hdk5         20950     27191   3145936+  fd  Linux raid autodetect
+/dev/hdk6         27192     41755   7340224+  fd  Linux raid autodetect
+/dev/hdk7         41756     56319   7340224+  fd  Linux raid autodetect
+/dev/hdk8         56320     64642   4194760+  fd  Linux raid autodetect
+/dev/hdk9         64643     72965   4194760+  fd  Linux raid autodetect
+/dev/hdk10        72966     73006     20632+  83  Linux
+/dev/hdk11        73007     77545   2287624+  83  Linux
+
+=46estplatte /dev/hdi: 16 K=F6pfe, 63 Sektoren, 77545 Zylinder
+Einheiten: Zylinder mit 1008 * 512 Bytes
+
+    Ger=E4t boot.  Anfang      Ende    Bl=F6cke   Id  Dateisystemtyp
+/dev/hdi1             1     14564   7340224+  fd  Linux raid autodetect
+/dev/hdi2         14565     20806   3145968   fd  Linux raid autodetect
+/dev/hdi3         20807     20949     72072   fd  Linux raid autodetect
+/dev/hdi4         20950     77545  28524384    5  Erweiterte
+/dev/hdi5         20950     27191   3145936+  fd  Linux raid autodetect
+/dev/hdi6         27192     41755   7340224+  fd  Linux raid autodetect
+/dev/hdi7         41756     56319   7340224+  fd  Linux raid autodetect
+/dev/hdi8         56320     64642   4194760+  fd  Linux raid autodetect
+/dev/hdi9         64643     72965   4194760+  fd  Linux raid autodetect
+/dev/hdi10        72966     73006     20632+  83  Linux
+/dev/hdi11        73007     77545   2287624+  83  Linux
+
+=46estplatte /dev/hdg: 16 K=F6pfe, 63 Sektoren, 77545 Zylinder
+Einheiten: Zylinder mit 1008 * 512 Bytes
+
+    Ger=E4t boot.  Anfang      Ende    Bl=F6cke   Id  Dateisystemtyp
+/dev/hdg1             1     14564   7340224+  fd  Linux raid autodetect
+/dev/hdg2         14565     20806   3145968   fd  Linux raid autodetect
+/dev/hdg3         20807     20949     72072   fd  Linux raid autodetect
+/dev/hdg4         20950     77545  28524384    5  Erweiterte
+/dev/hdg5         20950     27191   3145936+  fd  Linux raid autodetect
+/dev/hdg6         27192     41755   7340224+  fd  Linux raid autodetect
+/dev/hdg7         41756     56319   7340224+  fd  Linux raid autodetect
+/dev/hdg8         56320     64642   4194760+  fd  Linux raid autodetect
+/dev/hdg9         64643     72965   4194760+  fd  Linux raid autodetect
+/dev/hdg10        72966     73006     20632+  83  Linux
+/dev/hdg11        73007     77545   2287624+  83  Linux
+
+=46estplatte /dev/hde: 16 K=F6pfe, 63 Sektoren, 77545 Zylinder
+Einheiten: Zylinder mit 1008 * 512 Bytes
+
+    Ger=E4t boot.  Anfang      Ende    Bl=F6cke   Id  Dateisystemtyp
+/dev/hde1             1     14564   7340224+  fd  Linux raid autodetect
+/dev/hde2         14565     20806   3145968   fd  Linux raid autodetect
+/dev/hde3         20807     20949     72072   fd  Linux raid autodetect
+/dev/hde4         20950     77545  28524384    5  Erweiterte
+/dev/hde5         20950     27191   3145936+  fd  Linux raid autodetect
+/dev/hde6         27192     41755   7340224+  fd  Linux raid autodetect
+/dev/hde7         41756     56319   7340224+  fd  Linux raid autodetect
+/dev/hde8         56320     64642   4194760+  fd  Linux raid autodetect
+/dev/hde9         64643     72965   4194760+  fd  Linux raid autodetect
+/dev/hde10        72966     73006     20632+  83  Linux
+/dev/hde11        73007     77545   2287624+  83  Linux
+
+=46estplatte /dev/hda: 255 K=F6pfe, 63 Sektoren, 4865 Zylinder
+Einheiten: Zylinder mit 16065 * 512 Bytes
+
+    Ger=E4t boot.  Anfang      Ende    Bl=F6cke   Id  Dateisystemtyp
+/dev/hda2   *         1      4865  39078081   83  Linux
+
+=46estplatte /dev/hdb: 128 K=F6pfe, 63 Sektoren, 620 Zylinder
+Einheiten: Zylinder mit 8064 * 512 Bytes
+
+    Ger=E4t boot.  Anfang      Ende    Bl=F6cke   Id  Dateisystemtyp
+/dev/hdb1             1       620   2499808+  83  Linux
+
+--=20
+Dieter N=FCtzel
+Graduate Student, Computer Science
+
+University of Hamburg
+Department of Computer Science
+@home: Dieter.Nuetzel at hamburg.de (replace at with @)
 
 -
-To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+To unsubscribe from this list: send the line "unsubscribe linux-raid" i=
+n
 the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
-Please read the FAQ at  http://www.tux.org/lkml/
---1031354340758--
-
