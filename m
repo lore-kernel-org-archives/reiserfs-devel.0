@@ -1,42 +1,51 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Performance improvements to key comparison functions
-Date: Tue, 13 Jul 2004 11:19:23 -0700
-Message-ID: <40F427AB.10301@namesys.com>
-References: <16626.61112.905268.684688@laputa.namesys.com> <20040712204952.C0C3A1617F@mail03.powweb.com> <20040712210705.GZ4990@nysv.org>
+Date: Tue, 13 Jul 2004 11:33:55 -0700
+Message-ID: <40F42B13.3040009@namesys.com>
+References: <20040712084615.29D4915F82@mail03.powweb.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19601-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19602-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040712210705.GZ4990@nysv.org>
+In-Reply-To: <20040712084615.29D4915F82@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
-Cc: David Dabbs <david@dabbs.net>, 'Nikita Danilov' <Nikita@Clusterfs.COM>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Dabbs <david@dabbs.net>
+Cc: reiserfs-list@namesys.com
 
-Markus T=F6rnqvist wrote:
+David Dabbs wrote:
 
->On Mon, Jul 12, 2004 at 03:49:25PM -0500, David Dabbs wrote:
-> =20
+>It appears that by removing some conditionals in the reiser4 key comparison
+>functions key comparison performance improves by at least 2x.
+>Using a purpose-built znode_contains_key_strict and the new comparison code,
+>cache scanning could be almost three times as fast -- even faster with a
+>single unsigned char 'hint' member added to the znode structure. 
 >
->>Is bonnie++ the recommended stress tool, or is there a reiser4 stress
->>utility?
->>   =20
->>
+>A writeup, including the timings and the code, is available at
 >
->bonnie++ and slow.c are what one usually sees flying around.
+>	http://dabbs.net/reiser4
 >
->fs stress or somesuch is also sometimes used, but it supposedly fragments
->Reiser4 quite a bit and afaik there's no way to defrag yet?
->Or does fsck do it, as I've gathered that some other variants do?
 >
->Anyway, if someone has something more cpu-intensive than bonnie++ to offer,
->I'd also like to know about it, as bonnie++ uses a fair share of cpu
->on my machine.
+>I'd be interested in your feedback.
 >
-> =20
 >
-If bonnie++ is sync bound, then it it completely inappropriate for=20
-reiser4 testing.
+>David Dabbs
+>
+>
+>
+>
+>  
+>
+Please let me know the results of your further testing and refinements.  
+Thanks for your contribution to our work.
+
+mongo is my preferred benchmark, it has a lot of settings that allow you 
+to define the file set, and I encourage you to play with them.   If you 
+call me, I'd enjoy talking with you about your work.
+
++1 510 482-2483, or cell phone of +1 510 435-9758
+
+Hans
