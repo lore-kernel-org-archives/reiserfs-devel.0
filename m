@@ -1,47 +1,40 @@
-From: Anders Widman <andewid@tnonline.net>
-Subject: Re: Sleeping harddrives?
-Date: Sun, 2 Jun 2002 22:56:51 +0200
-Message-ID: <5231869796.20020602225651@tnonline.net>
-References: <19839880843.20020602023406@tnonline.net>
- <20020602214927.A17000@namesys.com>
-Reply-To: reiserfs-list@namesys.com
+From: Chris Mason <mason@suse.com>
+Subject: [PATCH CFT] tons of logging patches
+Date: 02 Jun 2002 23:51:41 -0400
+Message-ID: <1023076301.22608.1778.camel@tiny>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10482-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10483-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020602214927.A17000@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-> Hello!
+Hello everyone,
 
-> On Sun, Jun 02, 2002 at 02:34:06AM +0200, Anders Widman wrote:
+ftp.suse.com/pub/people/mason/data-logging
 
->>    How  would  ReiserFS  react  when  a user/program/anything tries to
->>    access a file on a harddrive that is spin down?
+has beta code that gives you the following:
 
-> Linux IDE/SCSI layer issupposed to spind the drive up.
+external logging devices
+data logging mount option (makes fsync and O_SYNC faster)
+ordered data mount option (no more garbage in your files after a crash)
 
-It  is  supposed  to,  yes.  When I tried this before, it did spin the
-drives up, but didn't wait enough before trying to access it, so I got
-strange errors.
+optimizations to keep kupdate from triggering commits every 5 seconds
+optimizations for tiny transactions to reduce CPU usage and IO.
+optimizations for better locking and fewer calls to wakeup()
 
-My question is simple. Is this something that still occur today?
+In short, it adds a bunch of features and makes everything faster.  The
+changes are very large, but they also build on older patches that have
+been circulating around for months.  It has been through a weekend of
+load testing here, but I still won't be surprised if people find
+corruption causing bugs.
 
->>    I  remember that I tested this about a year ago, and it didn't work
->>    very well. The filesystem timeout was shorter than the time to spin
->>    up the drive.
+It needs broad testing and benchmarking, in all the data modes, with a
+standard and external journal.
 
-> Huh? What filesystem timeout?
+-chris
 
-Well, it might not even be the filesystem.
-
-
-//Anders
-
-> Bye,
->     Oleg
 
