@@ -1,11 +1,11 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: ReiserFS v3 + millions of files?
-Date: Mon, 27 Oct 2003 09:55:41 +0300
-Message-ID: <3F9CC16D.10109@namesys.com>
+Date: Mon, 27 Oct 2003 12:38:38 +0300
+Message-ID: <3F9CE79E.60205@namesys.com>
 References: <200310262146.28850.d.oglesby@insightbb.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15892-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15893-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,7 +14,19 @@ In-Reply-To: <200310262146.28850.d.oglesby@insightbb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Dan Oglesby <d.oglesby@insightbb.com>
-Cc: reiserfs-list@namesys.com
+Cc: reiserfs-list@namesys.com, demidov <demidov@thebsh.namesys.com>
+
+I have unsubstantiated suspicions about VFS/dcache scalability.  It 
+would be interesting to try to determine such things as how much of ram 
+is consumed by dcache, etc.
+
+Mr. Demidov, how long until sys_reiser4() can be used to create a 
+million files sized 60k using lnodes?  It would be an interesting 
+benchmarking experiment.....
+
+sys_reiser4() sidesteps dcache....
+
+Hans
 
 Dan Oglesby wrote:
 
@@ -61,7 +73,7 @@ Dan Oglesby wrote:
 >
 >  
 >
-what size directories?
+
 
 -- 
 Hans
