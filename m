@@ -1,80 +1,68 @@
-From: Jamie Lokier <jamie@shareable.org>
+From: Bill Huey (hui) <bhuey@lnxw.com>
 Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: Thu, 2 Sep 2004 22:47:31 +0100
-Message-ID: <20040902214731.GF24932@mail.shareable.org>
-References: <20040901200806.GC31934@mail.shareable.org> <200409021407.i82E70hx004899@laptop11.inf.utfsm.cl> <20040902173214.GB24932@mail.shareable.org> <m3pt54il82.fsf@zoo.weinigel.se>
+Date: Thu, 2 Sep 2004 14:56:27 -0700
+Message-ID: <20040902215627.GA15688@nietzsche.lynx.com>
+References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain> <Pine.LNX.4.58.0409021045210.2295@ppc970.osdl.org> <1094150760.5809.30.camel@localhost.localdomain>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21336-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21337-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <m3pt54il82.fsf@zoo.weinigel.se>
+In-Reply-To: <1094150760.5809.30.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christer Weinigel <christer@weinigel.se>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Christer Weinigel wrote:
-> Can be done with dnotify/inotify and a cache daemon keeping track of
-> mtime.  Yes, this will need a kernel change to make sure mtime always
-> changed when the file changes, but it does not require anything else.
-
-    - Can the daemon keep track of _every_ file on my disk like this?
-      That's more than a million files, and about 10^5 directories.
-      dnotify would require the daemon to open all the directories.
-      I'm not sure what inotify offers.
-
-    - What happens at reboot - I guess the daemon has to call stat()
-      on every file to verify its indexes? Have you any idea how long
-      it takes to call stat() on every file in my home directory?
-
-    - The ordering problem: I write to a file, then the program
-      returns.  System is very busy compiling.  2 minutes later, I
-      execute a search query.  The file I wrote two minute ago doesn't
-      appear in the search results.  What's wrong?
-
-      Due to scheduling, the daemon hasn't caught up yet.  Ok, we can
-      accept that's just hard life.  Sometimes it takes a while for
-      something I write to appear in search results.
-
-      But!  That means I can't use these optimised queries as drop-in
-      replacements for calling grep and find, or for making Make-like
-      programs run faster (by eliminating parsing and stat() calls).
-      That's a shame, it would have been nice to have a mechanism that
-      could transparently optimise prorgrams that do calculations....
-
-Do you see what I'm getting at?  There's building some nice GUI
-and search engine like functionality, where changes made by one
-program _eventually_ show up in another (i.e. not synchronously).
-
-That's easy.
-
-And then there's optimising things like grep, find, perl, gcc,
-make, httpd, rsync, in a way that's semantically transparent, but
-executes faster _as if_ they had recalculated everything they
-need to every time.  That's harder.
-
-> >     3. Email program scanning for subject lines fast:
+On Thu, Sep 02, 2004 at 07:46:05PM +0100, Alan Cox wrote:
+> On Iau, 2004-09-02 at 18:46, Linus Torvalds wrote:
+> > > Gnome already supports this in the gnome-vfs2 layer. "MC" has supported
+> > > it since the late 1990's.
+> > 
+> > And nobody has asked for kernel support that I know of.
 > 
-> Same here.
-> 
-> >     4. Blog server caching built pages:
-> >     5. Programming environment scanning for tags:
-> >     6. File transfer program scanning for shared deltas.
-> 
-> And so on.
+> I asked our desktop people. They want something like inotify because
+> dontify doesn't cut it. They have zero interest in the multiple streams
+> and hiding icons in streams type stuff.
 
-No, not 3, 4 or 6.  For correct behaviour those require synchronous
-query results.  Think about 6, where one important cached query is
-"what is the MD5 sum of this file", and another critical one, which
-can only work through indexing, is "give me the name of any file whose
-MD5 sum matches $A_SPECIFIC_MD5".  Trusting the async results for
-those kind of queries from your daemon would occasionally result in
-data loss due to race conditions.  So you wouldn't trust the async
-results, and you fail to get those CPU-saving and bandwidth-saving
-optimisations.
+It also depends on who you ask. I can't take a lot of the mainstream
+X folks serious since they are still using integer math as parameters
+to half broken drawing primitives and barely discovered things like OpenGL.
+Their attitude doesn't treat these things as first class citizens in
+what ever software system they create. They also haven't create a modern
+and highly dynamic structured document system that's in wide use yet,
+so this problem space hasn't really been pushed as hard as other much
+more dynamic systems. And the advent of XML (basically a primitive and
+flat model of what Hans is doing) for .NET style systems are going to
+push these systems into those areas in new and unique ways. (Actually
+retro Smalltalk-ish)
 
--- Jamie
+It seems that many of the original ideas about "why" GUI systems exist
+have been lost to older commericial interests (Microsoft Win32) and that
+has wiped out the fundamental classic computer science backing this from
+history. This simple "MP3 metadata" stuff is a very superficial example
+of how something like this is used.
+
+The problems are fundamentally about data representation in a manner so
+simple that its "expressive power" (Hans here) can extend itself to even
+the dorkiest of shell scripts. To have that power immediately available
+as network/local objects and to have their relationships clearly defined
+is a very powerful manner to build software systems. 
+
+Unix folks tend to forget that since they either have never done this
+kind of programming or never understood why this existed in the first
+place. It's about a top-down methodology effecting the entire design of
+the software system, not just purity Unix. If it can be integrate
+smoothly into the system, then it should IMO.
+
+The folks against this system forget about how important the context of
+all this is work is set in... The mindset is fundamentally different and
+I'm quite sick of hearing "It's not Unix" over and over again. And
+notion of Linux being marginalize to a minority OS over this stuff is
+just plain crazy.
+ 
+bill
+
