@@ -1,72 +1,43 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Andrew Morton <akpm@osdl.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 01:44:45 -0700
-Message-ID: <412DA2FD.9080903@namesys.com>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <20040825203516.GB4688@backtop.namesys.com> <20040825205149.GA17654@lst.de> <20040825235409.GA23423@mail.shareable.org>
+Date: Thu, 26 Aug 2004 01:45:42 -0700
+Message-ID: <20040826014542.4bfe7cc3.akpm@osdl.org>
+References: <20040824202521.GA26705@lst.de>
+	<412CEE38.1080707@namesys.com>
+	<20040825152805.45a1ce64.akpm@osdl.org>
+	<412D9FE6.9050307@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20596-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20597-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040825235409.GA23423@mail.shareable.org>
+In-Reply-To: <412D9FE6.9050307@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Christoph Hellwig <hch@lst.de>, Alex Zarochentsev <zam@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-Jamie Lokier wrote:
+Hans Reiser <reiser@namesys.com> wrote:
+>
+>  >To get us started on this route it would really help me (and, probably,
+>  >others) if you could describe what these API extensions are in a very
+>  >simple way, without referring to incomprehehsible web pages,
+>  >
+>  what is not comprehensible....?
 
->Christoph Hellwig wrote:
->  
->
->>>Reiser4 may have a mount option for whoose who like or have to use
->>>traditional O_DIRECTORY semantics.  There would be no /metas under
->>>non-directories, if user wants that.
->>>      
->>>
->>Again, O_DIRECTORY was added to solve a real-world race, not just for
->>the sake of it.  If you really want to add that option I'll research the
->>CAN number for you so you can named it after that - or just call it -o
->>insecure directly.
->>    
->>
->
->man open(2) explains that O_DIRECTORY is used by opendir() to prevent
->blocking when opening pipes and certain devices*, and should only by
->used by opendir (of course it isn't only used by opendir, as it's a
->handy optimisation).
->
->In fact O_DIRECTORY is also used by Glibc to optimise away stat()
->before and fstat() after calls.
->
->An O_NODEVICE flag would be equally secure, and more generally useful.
->
->It's important that device nodes cannot be opened when O_DIRECTORY is
->set.  This is compatible with reiser4 file-as-directory semantics, but
->I don't know if reiser4 actually implements this.  If it does (and it
->should) then there is no device blocking problem.
->
->That leaves only the optimisation of fstat() in opendir().
->
->But that begs the question: do we want opendir() to succeed on a reiser4 file?
->  
->
-Yes, we do.  Why not?  Not is more complex.....
+Pretty much anything at www.namesys.com.  The amount of time which is
+needed to extract the technical info which one is looking for vastly
+exceeds a gnat-like attention span.
 
->It's up to us to decide if we like that semantic, or prefer a
->different one such as the one I described before (path search enters
->file-as-directory, but opendir() directly on it fails), or the Sun
->syscalls someone mentioned.
->
->-- Jamie
->
->
->* Aside: O_NONBLOCK|O_NOCTTY is an effective way to prevent blocking on
->many systems.  It's best if you can avoid opening devices at all though.
->
->
->  
->
+As a starting point, please prepare a bullet-point list of
+userspace-visible changes which the filesystem introduces, or is planned to
+introduce.
+
+And describe the "plugin" system.  Why does the filesystem need such a
+thing (other filesystems get their features via `patch -p1')?
+
+And what are the licensing implications of plugins?  Are they derived
+works?  Must they be GPL'ed?
 
