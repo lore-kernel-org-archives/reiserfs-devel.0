@@ -1,30 +1,67 @@
-From: Yury Umanets <umka@namesys.com>
-Subject: Re: Patch for 2.6.0-test1 kernel
-Date: 18 Jul 2003 09:48:40 +0400
-Message-ID: <1058507319.2030.7.camel@haron.namesys.com>
-References: <sf16c55a.075@gwia201.syr.edu>
+From: Chris Mason <mason@suse.com>
+Subject: Re: BUG in reiserfs_write_full_page().
+Date: 18 Jul 2003 09:23:04 -0400
+Message-ID: <1058534583.7878.351.camel@tiny.suse.com>
+References: <3F1712F6.7080204@polyserve.com>
+	 <1058477610.4012.333.camel@tiny.suse.com>  <3F171ABF.6080601@polyserve.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14961-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14962-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <sf16c55a.075@gwia201.syr.edu>
+In-Reply-To: <3F171ABF.6080601@polyserve.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Michael Konrad <mkonrad@syr.edu>
+To: Michael Gaughen <mgaughen@polyserve.com>
 Cc: reiserfs-list@namesys.com
 
-On Thu, 2003-07-17 at 23:48, Michael Konrad wrote:
-Hello, 
-
-Not yet, but we're considering about.
-
-> Is there a reiser4 patch for the 2.6.0-test1 kernel?
+On Thu, 2003-07-17 at 17:53, Michael Gaughen wrote:
+> Chris Mason wrote:
 > 
-> Thank you.
-> -Michael
--- 
-We're flying high, we're watching the world passes by...
+> >
+> >Hmmm, the allocation masks are supposed to be set such that writepage
+> >won't get called.  I'll take a look.  How easy is it to reproduce?  If
+> >you have any tests cases that can trigger it, please send them along.
+> >
+> 
+> Actually, the problem may have to do with the common journal_info kept
+> within the task structure.  Looking at ext3_writepage, they have this to 
+> say:
+> 
+>         /*
+>          * We give up here if we're reentered, because it might be
+>          * for a different filesystem.  One *could* look for a
+>          * nested transaction opportunity.
+>          */
+>         lock_kernel();
+>         if (ext3_journal_current_handle())
+>                 goto out_fail;
+> 
+> and in the case of out_fail, they do:
+> 
+>         unlock_kernel();
+>         SetPageDirty(page);
+>         UnlockPage(page);
+>         return ret;
+> 
+> So, in the case of reiserfs_write_full_page(), the BUG() is falsely 
+> triggered
+> due to a transaction that was started on another filesystem (ext3).  And the
+> fix would simply be to do something along the lines of ext3...
+
+The reiserfs data logging actually does more than ext3 to make sure
+things get along, recording the super of the filesystem holding the
+transaction.  So, it is actually possible to start a new non-nested
+transaction.
+
+But, we shouldn't have to.  Other parts of the OS should be protecting
+us from a writepage being called at this time, which is why the bug is
+there.  Someone did a non GFP_NOFS allocation with a transaction
+running, which can trigger a variety of deadlocks, especially from
+shrink_icache and friends.
+
+-chris
+
 
