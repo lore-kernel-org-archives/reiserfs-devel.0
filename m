@@ -1,57 +1,78 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Thu, 02 Sep 2004 20:39:19 -0500
-Message-ID: <4137CB47.1070805@slaphack.com>
-References: <20040826150202.GE5733@mail.shareable.org> <4136E0B6.4000705@namesys.com> <1117111836.20040902115249@tnonline.net> <200409021309.04780.oliver@neukum.org>            <4137BE36.5020504@slaphack.com> <200409030118.i831IUc6006797@turing-police.cc.vt.edu>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 02 Sep 2004 20:41:32 -0500
+Message-ID: <4137CBCC.8050101@slaphack.com>
+References: <20040829191044.GA10090@thundrix.ch> <3247172997-BeMail@cr593174-a> <20040831081528.GA14371@thundrix.ch> <20040901201608.GD31934@mail.shareable.org> <1094070506.28509.24.camel@shaggy.austin.ibm.com> <41369911.1030503@slaphack.com> <20040902060521.GB14177@mail.shareable.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21387-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21388-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200409030118.i831IUc6006797@turing-police.cc.vt.edu>
+In-Reply-To: <20040902060521.GB14177@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Valdis.Kletnieks@vt.edu
-Cc: Oliver Neukum <oliver@neukum.org>, Spam <spam@tnonline.net>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Valdis.Kletnieks@vt.edu wrote:
-| On Thu, 02 Sep 2004 19:43:34 CDT, David Masover said:
-|
-|
-|>And on apps.  Should I teach OpenOffice.org to do version control?
-|>Seems a lot easier to just do it in the kernel, and teach everything to
-|>do version control in one fell swoop.
-|
-|
-| Including files you didn't really want to keep version control of?
 
-No one said you have to apply it to everything.  Only that you can.
-Right now vim cannot do version control, AFAIK.  But you could do
-something like:
-	echo 1 > foo/version_control
-	vim foo
+Jamie Lokier wrote:
+| David Masover wrote:
+|
+|>Isn't the kernel faced with the same issues here as userland programs
+|>without meta attribute support?  How do you read the META element before
+|>you know the encoding?
+|
+|
+| Ideally you guess whether it's ASCII-compatible, EBCDIC-compatible, or
+| UTF16 or UCS4 :) Then you scan for a META element.  I suspect everyone
+| only tries for ASCII compatibilty.  There's a bit of guessing
+| involved.  Every parser has its own way - it's not well defined
 
-Default would be off, of course.
+And though it's nice for that guessing to be in one place, I'd rather
+not guess at all.  Especially when we don't have to -- see below.
+
+| No.  File descriptors are pure binary.
+|>Otherwise I agree -- the html editor should do that.  Although I'd hate
+|>to see Vim patched to do that.  Maybe save it as file/utf8?
+|
+|
+| file/utf8 would be wrong.
+
+Why?  No, I don't mean as a MIME type ... literally do
+	vim foo.txt/utf8
+to open a file named "foo.txt" and save it as "utf8".
+
+That means that if vim doesn't automatically know how to tell a file
+what its encoding is -- since vim already knows its encoding.  But it
+provides a generic way for a user to tell the text editor to tell the
+FS, all in one easy step, how to save the file.
+
+It has its drawback -- it can really only support encoding -- or only
+one save option -- unless we're truly using files to send queries to the
+fs -- that is, something like foo.txt/writer/encoding=utf8&eol=crlf
+
+I think that's feasable, and I think similar things (stranger things,
+like SQL queries) have been planned for reiser5 and such.
+
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQTfLR3gHNmZLgCUhAQKybRAAkF4sqLUCJEfpDNvKEyv8MJGcy0w+qV12
-3Rf50OQeeurZMZrnli0vNIuSIWwIsGI+j7qbj1mlfi+Ps3dAjOlKXav3tGoGshLl
-HH/Wl9XvGPOAWlIQOqqBGAyno8sDIvHAjh5lH3C7m+9/2Ao7s1G/bQ+hm/deYPJK
-WPZxExd/1BdchrbjNjbfWHKrD6LdF/GBa/Vbj1F8m95WEvxsfbDnSTwb5HhvcUxD
-TtqwkINmx7Tle2p9q7PcgR7y76dmcyoWw82ST3BfF/AbGauMQAr0h6jNjvzclfgJ
-yrIOwGXdR3pn8ZK8dHVct79N0f+PYFdeAzLYxMZR2vefB2enQolbbs6Lf7X60g2g
-5hrH/ezenFJIZMPhQtlJqBaFuA5GHw9B2An6VbOmDm7sSOFyHSlKoCUFlJ/I5nZd
-Bcn46lhNxvTJhu3tvnvDqTB8f0/yVYt5QfoBFA1mzHKig2iNN6vr2xLGdWSLU6XD
-vRjy+KyVC+PvjL13E0JrjXy9UuqY7CH2xAunSgLJ2cvfRmNRoVoV1hkp3McQcUqF
-GiD3s0REcztlvsrP+DxKLRtPpnOJi5By5NmZpJkiPdVB9zpIsL/Ia7KL/A7IGGh3
-IF3t/xSUmjgrek01SeadHqsIngeWQ+F8fiars7NtzNhrvRgPVfDVheey3vhQjFxM
-3kDKH+I9rGk=
-=3+nq
+iQIVAwUBQTfLzHgHNmZLgCUhAQKP0w/+IWnJM6qI04xsKXQJCCOd1tArnr+NB4us
+aGKj1JECibZCQhZiMc9aDLSr5FDosmTuMzdkVzMERoatzeuXjEyZrFFQNmsFQmzl
+c6KIvRrIgNOP4L5vOYxMUhGII1WEVI2Ub91t5TOYlcERn0raO4FL3WIUJ9gq6Lhc
+PcXrPvPp6yzIegJhe+mpHJi8/NrLnDdmmO8kg50C6ckYTrBeEzHwtTaJycEsaJub
+JDKjNZlhceRreTx6wccW26lPKXVus6rp5GOZgX9WliA2ktW8K9D8/cyZvOqRzC0y
+aDQUfhy5ZYkmxcHxKENEFrA85Gz3LTOwd4ci1DKCWW1HFp33EkmWIvXL7iiwMI7X
+xpkFfwap78O1ohUk0VdvkuQuKtKp2FmxMVwJpJe/982EcyECeMXqYbD3D5WJeXN4
+1fZVPiZnt5FKOMBXgQ8qPAGit5eZkfI4SDc6uMfoQ0st+gd/E02j1Bf4ArheWRse
+7f7Mk1C8IaQ4j565IGTABDjkpJwWWsmkItJRdZctCv+u6A2g70DREykU9G0iG4ua
+HGm53G8gba/A25Nt2Rw+7jt18zdeO/rEY9PaGmRKJVDkQSufHzWUuQ79LZrWr7as
+z5wLW6u+3FEn5xXCDAWyv4tbJOxPcxXTAuVe12KB4nYAHDjBgin77q9BcP6gqOQJ
+3z/s3Tu95Yw=
+=m/jf
 -----END PGP SIGNATURE-----
