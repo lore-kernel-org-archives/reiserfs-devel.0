@@ -1,94 +1,52 @@
-From: Adrian Phillips <a.phillips@dnmi.no>
-Subject: Re: Symbol collisions in patch?
-Date: 03 Apr 2002 07:54:58 +0200
-Sender: "Adrian Phillips,,," <a.phillips@dnmi.no>
-Message-ID: <wvadsls4wd.fsf@freeze.oslo.dnmi.no>
+From: "Adam Goryachev" <mailinglists@websitemanagers.com.au>
+Subject: RE: Symbol collisions in patch?
+Date: Wed, 3 Apr 2002 17:33:31 +1000
+Message-ID: <NDBBJPAGKLCMDEIEKOPBMEPGGNAA.mailinglists@websitemanagers.com.au>
 References: <Pine.LNX.4.44.0204022130330.32751-100000@conn6m.toms.net>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 In-Reply-To: <Pine.LNX.4.44.0204022130330.32751-100000@conn6m.toms.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tom Oehser <tom@toms.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
->>>>> "Tom" == Tom Oehser <tom@toms.net> writes:
+> The bleeding-edge crowd may not be aware of it, but a new kernel is about
+> to be released- it is now up to 2.0.40-rc4.  That's right, 2.0.40-rc4.
+> And I can tell you that scsi drivers and network card drivers are still
+> being updated for that.  And the ext2 sparse-super and filesystem-type
+> fixes were backported to 2.0.x.
 
-    Tom> 1) There is a missing patch from the latest 2.2.19 patch that
-    Tom> causes the kernel to oops when it is unmounted.  I have the
-    Tom> patch now at least.
+If anyone was paranoid enough to *not* move up past 2.0.x then surely they
+would be paranoid enough to *not* use something so modern as a journalled
+filesystem which has only just been written and simply 'back-ported'... I
+mean, if the 2.2.x kernels are not tested well enough, then surely the
+reiserfs code has not been tested well enough???
 
-I suppose the point here is that people who are interested in using a
-journaled filesystem and 2.2 will probably be using reiserfs already -
-it was the only journaled fs for 2.2 for quite a while.
+> So, the rest of the world is still willing to devote *some* effort to
+> supporting 2.0.x, (and libc5, for that matter), and *plenty* of effort to
+> supporting 2.2.x, but it seems that reiser doesn't isn't or won't...
 
-    Tom> 2) There are symbol collisions that prevent supporting reiser
-    Tom> AND ext3fs, *even as a module*.  Come on, guys, symbol
-    Tom> collisions between the two most popular journalling
-    Tom> filesystems?  Pa-thetic...
+Why spend the next 6 months/12 months (I have no idea how long) developing
+support for 2.0 and 2.2 kernels with reiserfs when by that stage, even the
+super paranoid will have moved to 2.2 .... OK, there might still be 2 users
+left, but really, is it worth a few hundred people working on code that will
+be used by only one or two people ??
 
-Uh, because ext3 has been more recently been ported to 2.2 and nobody
-else has the two together before ?
+> So, at the moment, I'm just going to put ext3 support in there, and put
+> fixing the patch and all the symbols and backporting 3.6 support on my
+> personal low-priority back burner...
 
-    Tom> 3) There is no support for version 3.6 filesystems in 2.2.x,
-    Tom> so, what good is reiser support on my rescue diskette, if
-    Tom> 2.4.x users can't use it?
+Fine, but since what is supported by 2.2 that is not supported in 2.4?? ie,
+why would you build a rescue disk (ie assume this is supposed to be a one size
+fits all rescue disk) based on a 2.2 kernel and not use a 2.4 kernel???
 
-Well documented on the web page.
+Surely at the point where one is looking for a rescue disk, you are not hugely
+concerned about stability, all you want is enough to mount your disks, and
+fixup whatever issue is stopping you from booting your standard kernel?
 
-    Tom> 4) There seems to be no-one concerned about any of these
-    Tom> issues, or working on them, or talking about them.
+Regards,
+Adam
 
-Probably because most everyone in the Linux world is focussed on newer
-issues, 2.4 and later. As with most OSS projects it takes individuals
-who are willing to spend the time to scratch their itch.
-
-    Tom> All of this is a problem for me.
-
-    Tom> The bleeding-edge crowd may not be aware of it, but a new
-
-2.2 is bleeding edge - very funny.
-
-    Tom> kernel is about to be released- it is now up to 2.0.40-rc4.
-    Tom> That's right, 2.0.40-rc4.  And I can tell you that scsi
-    Tom> drivers and network card drivers are still being updated for
-    Tom> that.  And the ext2 sparse-super and filesystem-type fixes
-    Tom> were backported to 2.0.x.
-
-I think that this is rather riduculous, 2.0 is *extremely* old
-now. 2.2 has been damn stable for many months and people have little
-excuse for sticking with 2.0, except in very exceptional circumstances
-IMO. Now if people who NEED this stuff are willing to backport it then
-all power to them but you can't just appear on a mailing list and
-start complaining at why this project hasn't done the same; if you
-don't like it then start coding, if you don't have time then by all
-means ask but don't whine.
-
-    Tom> So, the rest of the world is still willing to devote *some*
-            ^^^^
-a small part of
-
-    Tom> effort to supporting 2.0.x, (and libc5, for that matter), and
-    Tom> *plenty* of effort to supporting 2.2.x, but it seems that
-    Tom> reiser doesn't isn't or won't...
-
-Because nobody has had the itch to scratch.
-
-Please, this kind of tone of email is rather unconstructive. There is
-only so much time for doing projects whether personal or company
-supported, the accusing tone that some people have when that which
-they require has not been implemented and for something in they
-haven't contributed, either in time or money, is a bit sickening to
-me.
-
-Sincerely,
-
-Adrian Phillips
-
--- 
-Your mouse has moved.
-Windows NT must be restarted for the change to take effect.
-Reboot now?  [OK]
