@@ -1,63 +1,63 @@
-From: "darren" <teodarren@myrealbox.com>
-Subject: RE: OT: simple file operations in C
-Date: Mon, 10 Mar 2003 21:57:39 +0800
-Message-ID: <002301c2e70d$0387d5a0$0101a8c0@bummer>
-References: <3E6C1673.709@netscape.net>
+From: Ookhoi <ookhoi@humilis.net>
+Subject: Re: merge 2.4.21-pre4 with Direct IO bug fix
+Date: Mon, 10 Mar 2003 15:23:53 +0100
+Message-ID: <20030310152352.F9033@humilis>
+References: <20030304013450.249cc096.philippe.gramoulle@mmania.com> <20030304111807.A18814@namesys.com> <20030310131528.B9033@humilis> <20030310152801.F19773@namesys.com> <20030310141605.D9033@humilis> <20030310164035.I19773@namesys.com>
+Reply-To: ookhoi@humilis.net
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13172-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13173-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E6C1673.709@netscape.net>
+Content-Disposition: inline
+In-Reply-To: <20030310164035.I19773@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: 'Manuel Krause' <manuelkrause@netscape.net>
-Cc: 'reiserfs-list' <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <green@namesys.com>
+Cc: Ookhoi <ookhoi@humilis.net>, Chris Mason <mason@suse.com>, reiserfs <reiserfs-list@namesys.com>
 
-Hi all and Manuel,
-
-Sorry my mail was sent multiple times (that's what happens when you use
-the http version of myrealbox sometimes).
-
-Anyway, for the newbies who may have the same problem as me:
-
-File operations:
-
-Move: rename
-Delete: Unlink
-Copy: no choice...must open read write close.
-
-I am just curious, but will the link command work for a file copy?
-
-Regards
-Darren
-
------Original Message-----
-From: Manuel Krause [mailto:manuelkrause@netscape.net] 
-Sent: Monday, March 10, 2003 12:37 PM
-To: darren
-Cc: reiserfs-list
-Subject: Re: OT: simple file operations in C
-
-On 03/10/2003 04:33 AM, darren wrote:
-> Hi all,
+Oleg Drokin wrote (ao):
+> On Mon, Mar 10, 2003 at 02:16:05PM +0100, Ookhoi wrote:
+> > > > And they all just apply cleanly. They must like each other very much :-)
+> > > > For some reason, I do not have quota support though.
+> > > How do you know you do not have quota support?
+> > o  The options are not listed in /proc/mounts
+> >    IIRC they should before quota is switched on (can't check that right
 > 
-> Sorry for being slightly off-topic.
+> >From the quotaon man page, it seems that these usrquota stuff are checked by
+> quota tools in /etc/fstab.
 > 
-> I want my program to be able copy, move and delete files, but i cannot
-seem to find any available functions or system calls to do this.
+> > o  quotacheck gives this: 
+> >    # quotacheck /dev/hda3
+> >    quotacheck: Can't stat() mounted device /dev/root: No such file or directory
+> > o  quotaon gives this:
+> >    # quotaon -ugv /www
+> >    quotaon: Can't stat() mounted device /dev/root: No such file or directory
 > 
-> I don't really want to use shell by invoking "exec("mv XX YYY");, and
-i also do not want to fopen 2 files and then do multiple freads and
-fwrites.
+> Hm, I always thought that quota tools work with /etc/mtab,
+> don't you have /etc/mtab to be a symlink to /proc/mounts?
+> This might confuse it.
+
+Damned. You are right ..
+After rm /etc/mtab and reboot:
+/dev/hda2 on / type reiserfs (rw,noatime,usrquota,grpquota)
+/dev/hda3 on /www type reiserfs (rw,noatime,usrquota,grpquota)
+/dev/hda5 on /tmp type reiserfs (rw,noatime,usrquota,grpquota)
+/dev/hda6 on /var type reiserfs (rw,noatime,usrquota,grpquota)
+
+I owe you a beer Oleg!
+
+> > For some reason, the mount options are not listed.
 > 
-> Any suggestions?
+> This is because reiserfs is lacking necessary callback to print it's
+> current mount options in /proc/mounts, I think.
 
-If you will never send your original mail once again someone may answer 
--- otherways you are definitely SPAMMING!!! and you should be excluded.
+That would fix setups which have a link to /proc/mounts most likely?
 
-Manuel
+Anyway, let me know when you come to amsterdam, ok? ;-)
 
+Btw, quota works (just tested it).
 
+Thanks!!
