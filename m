@@ -1,54 +1,48 @@
 From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: Tree issues, fsck output
-Date: Wed, 30 Jun 2004 09:45:47 +0300
-Message-ID: <20040630064547.GL4990@nysv.org>
-References: <20040629201956.GK4990@nysv.org>
+Date: Wed, 30 Jun 2004 12:03:22 +0300
+Message-ID: <20040630090322.GM4990@nysv.org>
+References: <20040629201956.GK4990@nysv.org> <20040630064547.GL4990@nysv.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19452-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19453-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040629201956.GK4990@nysv.org>
+In-Reply-To: <20040630064547.GL4990@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 Cc: sikkh@wp.pl
 
-On Tue, Jun 29, 2004 at 11:19:56PM +0300, Markus T=F6rnqvist wrote:
->
->I'll just send this post now, I'll send a follow-up when I'm re-doing
->fsck with some switches. This was just a basic fsck /dev/hda1, so maybe
->no need to panic yet...
+On Wed, Jun 30, 2004 at 09:45:47AM +0300, Markus T=F6rnqvist wrote:
+>So now I'll just compile the new auto-snapshot and see what happens...
 
-So I proceeded to --build-fs
+It did not work.
 
-FSCK: Node (481195), item (5), [2fa6e:6c69626d70342e:1e88ae] (stat40): wrong
-bytes (939), Fixed to (0).
-FSCK: Directory [2fa68:496e7075742e64:2fa6e]: can't find the object
-[2fa6e:6c69626d70342e:1e88ad] pointed by the entry [libmp4.so]. Entry is
-removed.
+http://mjt.nysv.org/reiser/Reiser4-2004.06.29/
+Pictures once again courtesy of my trusty phone, so the quality truly
+does suck.
 
-Anyway, that finished with a consistent fs..
+So, err, I'm doing a plain fsck now again, to see if that is the result
+of some corruption, but it went to the extremely non-verbose semantic
+tree pass...
 
-Now that I'm back in my real environment:
-mjt@shrike:~$ xmms &
-[1] 3752
-mjt@shrike:~$ /usr/lib/xmms/Input/libtonegen.so: invalid ELF header
-/usr/lib/xmms/Input/libwav.so: invalid ELF header
-/usr/lib/xmms/Effect/libecho.so: invalid ELF header
-/usr/lib/xmms/Effect/libstereo.so: invalid ELF header
-/usr/lib/xmms/Effect/libvoice.so: invalid ELF header
+I'm at a loss here, if the new kernel doesn't bother to boot and the
+old one doesn't really work.
 
-So I try to reinstall xmms:
-mjt@shrike:~$ sudo apt-get install xmms
-Reading Package Lists... 93%
+Vitaly, do you have some ideas for me? Do you want my metadata somewhere?
 
-And it sticks there AGAIN!
+I doubt anyone checked yet if the mainline 2.6.7 port of the snapshot
+I used was to blame, but at least now I'm trying with a standard one..
 
-So now I'll just compile the new auto-snapshot and see what happens...
+If the semantic tree pass goes cleanly and the fs is consistent, I will
+try older auto-snapshots, despite the fact that the earlier mm's are
+not highly recommended.
+
+Thanks!
 
 --=20
 mjt
