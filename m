@@ -1,65 +1,48 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Subject: Re: Need Warm Fuzzies, ReiserFS (3)
-Date: Mon, 20 Dec 2004 13:31:25 +0100
-Message-ID: <200412201331.25180.christian.mayrhuber@gmx.net>
-References: <41C66615.5010206@simutronics.com>
+From: Radovan Garabik <garabik@melkor.dnp.fmph.uniba.sk>
+Subject: Re: mount reiserfs3 REALLY read only?
+Date: Mon, 20 Dec 2004 13:49:22 +0100
+Message-ID: <20041220124922.GA18135@melkor.dnp.fmph.uniba.sk>
+References: <20041206123706.GA25176@melkor.dnp.fmph.uniba.sk> <1102340556.5598.81.camel@tribesman.namesys.com> <20041206165337.GA25094@melkor.dnp.fmph.uniba.sk> <1102592473.3666.53.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22846-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-22848-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41C66615.5010206@simutronics.com>
 Content-Disposition: inline
+In-Reply-To: <1102592473.3666.53.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
-On Monday 20 December 2004 06:41, Jim Miller wrote:
-> Hi everyone,
-> 
-> I have recently been burned by the XFS file system -- After a recent 
-> system crash/hang we experienced a lot of file corruption and needed to 
-> restore from a backup that was ~12hrs old.  It seems that XFS keeps a 
-> lot of journal info in memory and a sudden system crash (hang) prevents 
-> it from writing out the journal. 
-> 
-> We run a few game servers that have a large number of large and small 
-> files that are actively accessed (and restoring from a backup 12hrs old 
-> made a lot of our gamers very unhappy).  We were running EXT3 (which in 
-> the past recovered nicely from hangs/crashes) but performance was so bad 
-> we needed a new FS so 6mos ago a decision was made to go with XFS. 
-> I would like to switch to ReiserFS (v3) (I understand Reiser4 isn't 
-> quite ready for production use) and was hoping to get the warm fuzzies 
-> about making this decision.  I know it's much faster than ext3 but at 
-> this point I need to feel good about it's ability to recover from a 
-> sudden system hang/crash/reset.
-> 
-> 
-> Thanks,
-> Jim
+On Thu, Dec 09, 2004 at 02:41:14PM +0300, Vladimir Saveliev wrote:
+> Hello
+>=20
+> Sorry for delay. I had some problems here
 
-My experience of Reiserfs recovery is good. I had once a HW RAID5 array
-with a defective controller unable to detect harddisk errors. Though two
-of the five disks failed I was able to recover around 80% of the mail
-folders.
+Never mind, in the meantime I got some external USB harddisks,
+created a 1.1TB software RAID (have you seen a RAID over 4 IDE and 3 USB=20
+disks? :-)), copied the partition over and successfully  recovered
+the data.
 
-However, there were cases on this list where reiserfsck had problems and
-namesys needed a metadata dump to fix reiserfsck. I guess most problems
-it had are fixed now. Note: always use the newest reiserfsck version from 
-namesys :-)
+This brings us back to the beginning: IMHO having the option to mount
+reiserfs read-only comes sometimes very useful. Apart from emergency
+situations, the size of USB mass storage devices is getting big enough
+to consider putting better filesystem (instead of VFAT) on them. Many of th=
+ese
+devices have hardware switches to make them read-only, and therefore
+unmountable at the current state of affairs.=20
+After clean unmount, you do not need a journal to replay, and since you
+indend to mount the fs read only, you do not need a journal at all.
+XFS can do it with -o norecovery,ro, why reiserfs can't?
 
-If you need good performance and data integrity I'd go with the following
-mount options for drives at controllers
-1) with battery backup: rw,noatime,nodiratime,notail
-2) without battery backup: rw,noatime,nodiratime,notail,barrier=flush
-and a 2.6.9 kernel.
 
-The barrier mount option should provide protection against a corrupted
-journal during power failure for drives with write caching enabled.
-(Mostly IDE)
-
--- 
-lg, Chris
-
+--=20
+ -----------------------------------------------------------
+| Radovan Garab=EDk http://melkor.dnp.fmph.uniba.sk/~garabik/ |
+| __..--^^^--..__    garabik @ melkor.dnp.fmph.uniba.sk     |
+ -----------------------------------------------------------
+Antivirus alert: file .signature infected by signature virus.
+Hi! I'm a signature virus! Copy me into your signature file to help me spre=
+ad!
