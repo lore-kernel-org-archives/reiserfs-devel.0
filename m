@@ -1,53 +1,52 @@
 From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Wed, 7 Apr 2004 10:38:43 +0300
-Message-ID: <20040407073843.GX5229@nysv.org>
-References: <200404061914.i36JEBlt022398@turing-police.cc.vt.edu>
+Subject: Re: using of XATTRs instead of pseudo files for accessing
+Date: Wed, 7 Apr 2004 10:55:24 +0300
+Message-ID: <20040407075524.GY5229@nysv.org>
+References: <1081253603.4977.77.camel@watt.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17776-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17777-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200404061914.i36JEBlt022398@turing-police.cc.vt.edu>
+In-Reply-To: <1081253603.4977.77.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Valdis Kletnieks wrote:
+Chris Mason wrote:
 
->Does anybody outside the Renaissance Fair circuit still even drink mead? ;)
+>But, there are existing apps using the xattrs, it makes sense to get
+>them for a relatively small programming effort in reiser4 instead of
+>having to modify each one and get patches up stream.
 
-Yes, as a matter of fact they do ;)
+As Alex Zarochentsev pointed out, he just wanted to present an alternative
+in xattrs and that someone would implement them if they were considered
+good.
 
-I don't know how typical it is even for a Finn, but I prefer mead over
-most other beverages, and even have some recipes for it.
+Hans Reiser (a bit rudely, if you don't mind me saying, but I'll
+say it anyway) shot this down.
 
-But to get back to the point. "meths" is NOT a good word, like crystal
-meth or whatever, it's almost more a word than "metas" (maybe most people
-would just use "meta" as a directory name)
+I haven't had time to investigate this matter, but is it possible to
+map the Reiser4 API onto the xattrs API? I may be way out of my league
+here, but isn't the Reiser4 API mostly a better ("better") xattrs
+implementation?
 
-I mean, most of this discussion has been, pardon my French, bullshit.
-..metas/ is still a good solution, it's prefixed in a manner that most
-stuff is not, the prefix makes sense as being "really hidden" and metas
-is not as probable a word as meta and it's still easily accessible.
-Hell, it used to be prefixed like that before it was a unified
-directory.
+A transparent layer in between would probably please most parties,
+and if Namesys isn't interested, someone else would do it, no?
 
-Whatever. I'm tired. I'm sure everyone has their opinion on this matter
-and I'm also sure the guys at Namesys are farting blood because of
-this discussion. Whatever people want as their meta directory name they
-will patch or macro or edit in. If there's enough dispersion it will
-be shown in /proc/ or /sys/ or wherever, even if not an environmental
-variable.
+Reiser4, as superb as it is, is pretty borderline to some standards.
+I think it paramount to acknowledge this and minimize upstream patches.
 
-Let's be reasonable and concentrate on something more important, like
-brewing good mead or how to protect the metadata integrity or
-something.
+Upstream patches may piss off a lot of people, especially in cases
+where they have written something minor for themselves and compensating
+for this is more work than what seems ok.
 
-I, for one, will not participate in this thread again.
+IMO, Reiser4 should be able to work just as any other fs in those cases
+when it's needed, without having to worry about the sexy details
+which people will use in other cases.
 
 -- 
 mjt
