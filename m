@@ -1,43 +1,37 @@
-From: Ross Vandegrift <ross@willow.seitz.com>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
-Date: Wed, 12 Feb 2003 00:12:13 -0500
-Message-ID: <20030212051213.GA21039@willow.seitz.com>
-References: <NDBBJPAGKLCMDEIEKOPBAEIMKFAA.mailinglists@websitemanagers.com.au> <3452483515.20030212001747@tnonline.net>
+Date: Wed, 12 Feb 2003 09:35:50 +0300
+Message-ID: <20030212093550.C9690@namesys.com>
+References: <3E494808.413781E@interface-ag.com> <3E495CC6.8020202@namesys.com> <20030211144144.A5A9.MIKE@mystica.cx> <3E49721D.9060205@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12695-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12696-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3452483515.20030212001747@tnonline.net>
+In-Reply-To: <3E49721D.9060205@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anders Widman <andewid@tnonline.net>
-Cc: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Mike Hodson <mike@mystica.cx>, reiserfs-list@namesys.com, vs@namesys.com
 
-On Wed, Feb 12, 2003 at 12:17:47AM +0100, Anders Widman wrote:
-> Sure,  a  disk  with physical errors should be replaced, but until you
-> find out about the error on the drive the FS HAS TO HANDLE these kinds
-> of problems.
+Hello!
 
-No, this is *ridiculous*.  A filesystem should tolerate a failed disk when
-the VM system can handle bad memory, or the scheduler can handle an
-overheated CPU.  In all three cases, hard failure of a machine is
-certain, unless hardware is replaced before the failure occurs.
+On Wed, Feb 12, 2003 at 12:58:53AM +0300, Hans Reiser wrote:
 
-You have to start your software on some kind of foundation.  Working
-hardware sounds like a great place to me.
+> Oleg and Vladimir, what is the status of the unlink bug?  I'd prefer to 
 
--- 
-Ross Vandegrift
-ross@willow.seitz.com
+Vladimir is investigating it. He does not know the reason of it yet.
+BTW, while the bug is the bug and should of course be fixed, that particular one
+is not causing any data corruption or similar stuff. It manifests itself in
+directory entries pointing to nowhere (annoying once happens) under
+certain workloads (I believe it starts to happen in low memory situations).
 
-A Pope has a Water Cannon.                               It is a Water Cannon.
-He fires Holy-Water from it.                        It is a Holy-Water Cannon.
-He Blesses it.                                 It is a Holy Holy-Water Cannon.
-He Blesses the Hell out of it.          It is a Wholly Holy Holy-Water Cannon.
-He has it pierced.                It is a Holey Wholly Holy Holy-Water Cannon.
-He makes it official.       It is a Canon Holey Wholly Holy Holy-Water Cannon.
-Batman and Robin arrive.                                       He shoots them.
+> say that we have no bugs at all....
+
+Sure, we all would love to be able to say this.
+
+Bye,
+    Oleg
