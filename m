@@ -1,49 +1,46 @@
-From: Hubert Chan <hubert@uhoreg.ca>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 17:18:17 -0400
-Sender: news <news@sea.gmane.org>
-Message-ID: <878yc1ppie.fsf@uhoreg.ca>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
- <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com>
- <23320000.1093550657@flay>
+Date: Thu, 26 Aug 2004 22:19:18 +0100
+Message-ID: <20040826211918.GF5733@mail.shareable.org>
+References: <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com> <1093536282.5482.6.camel@leto.cs.pocnet.net> <Pine.LNX.4.60.0408261348370.27825@dlang.diginsite.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20809-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20810-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.60.0408261348370.27825@dlang.diginsite.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Lang <david.lang@digitalinsight.com>
+Cc: Christophe Saout <christophe@saout.de>, Rik van Riel <riel@redhat.com>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
->>>>> "Martin" == Martin J Bligh <mbligh@aracnet.com> writes:
+David Lang wrote:
+> I also don't see why the VFS/Filesystem can't decide that (for example) 
+> this tar.gz is so active that instead of storing it as a tar.gz and 
+> providing a virtual directory of the contents that it instead stores the 
+> directory of the contents and makes the tar.gz virtual (regenerating it as 
+> needed or as extra system resources are available)
 
-Martin> Andrew wrote:
+Absolutely.  It could keep both views, if they're both actively being
+used.  Or more than both, if there are more.  (You could think of
+compression being an alternate view, and both compressed and
+uncompressed may as well remain on disk if there's space and it's
+being actively accessed.
 
-> And what are the licensing implications of plugins?  Are they derived
->> works?  Must they be GPL'ed?
+> implementation wise I see headaches in doing this, but conceptually this 
+> is just an optimization that could take place in the future if we fine 
+> that it's needed.
 
-Martin> [Hans] replied:
+untarring a big source tree takes ages.  I wouldn't like to do it
+after every reboot, if there was a .tar.bz2 tree I looked at often.
+That's why I have things like glibc untarred in my home directory.
 
->>> And what are the licensing implications of plugins?  Are they
->>> derived works?
->> 
->> Yes.
+With good cacheing, I could cd into the .tar.bz2 files and
+_effectively_ have the performance of untarred source trees for the
+ones I look at often on my disk -- automatically cleaned if the space
+if needed for something else, too.  It would be quite nice.
 
-Martin> I find it odd that you cut out the last part of his question. So
-Martin> must they be GPL'ed or not?
-
-If they are derived works of GPL'ed software, then they obviously must
-be GPL'ed (or else they are illegal).  But if the authors obtain an
-alternate license from Hans/Namesys, then they are bound by the terms
-of that license.  (Of course, this case would most likely apply only to
-Reiser4 running under a different operating system.)
-
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
+-- Jamie
