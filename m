@@ -1,53 +1,63 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: possible bug - fsck shows perfect results, linux refuses to mount
-Date: Mon, 31 Mar 2003 12:41:09 +0400
-Message-ID: <20030331124109.G25533@namesys.com>
-References: <20030331120014.C25533@namesys.com> <Pine.GSO.4.21.0303311028450.4102-100000@pille>
+From: Soeren Sonnenburg <sonne@first.gmd.de>
+Subject: Re: nfsd-fh: found a name that I didn't expect
+Date: Mon, 31 Mar 2003 10:43:56 +0200 (MET DST)
+Message-ID: <Pine.GSO.4.21.0303311039470.4102-100000@pille>
+References: <20030331123705.F25533@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13462-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13463-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <Pine.GSO.4.21.0303311028450.4102-100000@pille>
+In-Reply-To: <20030331123705.F25533@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Soeren Sonnenburg <sonne@first.gmd.de>
-Cc: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: Soeren Sonnenburg <reiserfs@nn7.de>, reiserfs-list@namesys.com
 
-Hello!
 
-On Mon, Mar 31, 2003 at 10:34:30AM +0200, Soeren Sonnenburg wrote:
 
-> Today a raid0 (stripe set) crashed here (there is a bug in western
-> digital disks - they sometimes need a power cycle to accept commands
-> again) and I ran the latest reiserfsck on /dev/md0 with --rebuild-sb
-> --rebuild-tree.
-> It successfully finished rebuilding the tree but now I observe the same
-> thing robin observes: I cannot mount the device... so I ran reiserfsck
-> /dev/md0 again and it complained that there is no superblock on the
-> drive. So I tried to create one with reiserfstune --make-standard-journal
+On Mon, 31 Mar 2003, Oleg Drokin wrote:
 
-Well, if there is no superblock, it will certainly refuse to mount.
+> Hello!
+> 
+> On Sat, Mar 29, 2003 at 07:45:34PM +0100, Soeren Sonnenburg wrote:
+> > > > > I think may be race with iget4 might cause this, but I am not sure.
+> > > > > We have a patch for this iget4 race, and if you are willing to test it, I
+> > > > > can send it to you.
+> > > > Yes of course I am. I hope the other admins won't kill me, but I guess they 
+> > > > know that I willing to do experiments from time to time ;-)
+> > > > Could something worse happen when I try the patch, that could not be fixed by 
+> > > > simple rebooting ?
+> > > See the patch below.
+> > > It should not break anything.
+> > Well, we keep getting this error in massess too... and in our case it is
+> > very likely that clients access the same file from all the clients...
+> 
+> Are all of your NFS exports where these errors happens reiserfs?
 
-> /dev/md0 but that one just segfaults (unfortunately I have gcc on that
-> machine as /usr /var are on the stripeset :-( ).
+This is the same machine I was telling you about on lkml ...
+The errors I got now are all on the most actively used nfs share which
+uses reiserfs as the underlying filesystem.
 
-Is it just segfaults without any messages?
-Anything interesting in the logs?
-What reiserfsprogs version do you use?
+> > However I cannot quickly test that atm but if it is really safe I might
+> > test it next week.
+> 
+> Well, there is a problem reported with that 2.4.20 backport, that I am going to look into.
+> If you can try 2.4.21-pre6 with iget5_locked.diff (I just sent to the list in this same
+> thread) that would be great.
+> 
+> Thank you.
 
-> This is really strange since reiserfsck was really enumerating over all
-> the files and everything seemed to be fine after the first rebuild-tree.
+well, I can't do experimental testing as there are like 40
+diskless machines using
+that disk ... I could somewhen in the evening/night do some stress test
+but thats it...
 
-Hm, might it be that your harddrive eaten the superblock that it was supposed to write
-to disk? ;)
+Soeren
+ 
+> Bye,
+>     Oleg
+> 
 
-> Hmm, I am running kernel 2.4.21pre6
-
-Hm, new IDE changes? What if you try same stuff on 2.4.20?
-
-Bye,
-    Oleg
