@@ -1,170 +1,354 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Possible bug: clog length 0
-Date: Sun, 24 Oct 2004 21:48:34 -0700
-Message-ID: <417C85A2.9030701@namesys.com>
-References: <662c77ee04102420101ae1a40@mail.gmail.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: Reiser4 on PowerPC, oops and more
+Date: Mon, 25 Oct 2004 16:10:34 +0400
+Message-ID: <200410251532.48369.vitaly@namesys.com>
+References: <87acuufed6.wl@pitr.ping.uio.no> <1097509160.4803.149.camel@tribesman.namesys.com> <87hdoj96mn.fsf@ping.uio.no>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22167-reiserfs=m.gmane.org@namesys.com>
+Content-Type: Multipart/Mixed;
+  boundary="Boundary-00=_60OfBfL1owuO2CR"
+Return-path: <reiserfs-list-return-22170-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <662c77ee04102420101ae1a40@mail.gmail.com>
+In-Reply-To: <87hdoj96mn.fsf@ping.uio.no>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Michael Barry <jabbera@gmail.com>
-Cc: reiserfs-list@namesys.com, Vitaly Fertman <support@namesys.com>
+To: Carl Henrik Lunde <chlunde+reiser@ping.uio.no>, Vladimir Saveliev <vs@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Vitaly, can you fix this? If not, give it to vs to fix.
+--Boundary-00=_60OfBfL1owuO2CR
+Content-Type: text/plain;
+  charset="koi8-r"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Hans
+Hi Carl, 
 
-Michael Barry wrote:
+would you try this patch for the reiser4progs, it swaps Stat Data 
+extention mask and SD extentions should be reachable now.
 
->I would like to being by thanking anyone for thier time who can help
->me with this.
+-- 
+Thanks,
+Vitaly Fertman
+
+On Monday 25 October 2004 00:57, Carl Henrik Lunde wrote:
+> Vladimir Saveliev <vs@namesys.com> writes:
+> > Would you please send us what do
+> >
+> > debugfs.reiser4
+> > and
+> > debugfs.reiser4 -t
+> >
+> > output?
 >
->I am installing php currently. When the installation gets to a certain
->step the php process freezes in state D(Disk Sleep). This process
->cannot be killed with kill -9. When I checked my log files I saw "clog
->length 0" repeated many times. I traced this text to the reiserfs4
->code. I then compiled my kernel 2.6.9-mm1 (note: this also occurs with
->2.6.8.1-mm4) with reiserfs4 with all debug options.
+> (This is from 1.0.2, made with mkfs.reiser4 -f -o key=key_short (I
+> forgot to enable long keys in the kernel)):
 >
->Note: This possible bug is repoduceable and always freezes at the same point. 
+> pitr ~ > /usr/local/sbin/debugfs.reiser4 img-from-ia32
+> /usr/local/sbin/debugfs.reiser4 1.0.2
+> Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing governed by
+> reiser4progs/COPYING.
 >
->When I recompile php, now I get an oops earlier in the installation
->process. The following is my log file output:
+> Master super block (16):
+> magic:          ReIsEr4
+> blksize:        4096
+> format:         0x0 (format40)
+> uuid:           149457d7-c308-48e3-8dda-a6c9b3000000
+> label:          <none>
 >
+> Format super block (17):
+> plugin:         format40
+> description:    Disk-format for reiser4.
+> magic:          ReIsEr40FoRmAt
+> flushes:        0
+> mkfs id:        0x484b7b0a
+> blocks:         32
+> free blocks:    7
+> root block:     23
+> tail policy:    0x2 (smart)
+> next oid:       0x10000
+> file count:     0
+> tree height:    2
+> key policy:     SHORT
 >
->
->clog length 0
->reiser4[php(17428)]: object_lookup (fs/reiser4/search.c:397)[nikita-2104]:
->code: -503 at fs/reiser4/plugin/file/file.c:803
->reiser4 panicked cowardly: assertion failed:
->lock_stack_isclean(get_current_lock_stack())
->context: trace_flags: 0
->pid: 17428, comm: php
->        lock stack:
->.... nr_signaled 0
->.... curpri high
->.... current locks:
->...... write: c000000000007bb2
->...... write: c000000000007bb2
->...... write: c000000000007bb3
->        atom: refcount: 2 id: 1 flags: 0 txnh_count: 1 capture_count:
->10050 stage: 1 start: 4294698070, flushed: 0
->------------[ cut here ]------------
->kernel BUG at fs/reiser4/debug.c:131!
->invalid operand: 0000 [#1]
->SMP 
->Modules linked in: sg sr_mod
->CPU:    0
->EIP:    0060:[<c018edfc>]    Not tainted VLI
->EFLAGS: 00010246   (2.6.9-mm1) 
->EIP is at reiser4_do_panic+0x230/0x2d8
->eax: c050cb08   ebx: c050cb00   ecx: c050cb00   edx: c050cb00
->esi: c996c000   edi: c996d4b4   ebp: c996d42c   esp: c996d26c
->ds: 007b   es: 007b   ss: 0068
->Process php (pid: 17428, threadinfo=c996c000 task=c9bf2020)
->Stack: cec03200 00000001 c03f193b c996d298 c0401527 00000323 c996d2c0 c7cb4188 
->       c01dfb79 c03f1926 c0403858 c03f8573 c03baf67 c03f8483 0000018d 00000002 
->       c5bc6500 c01b799f c018f142 c01f058e c996d398 00000000 00000000 00000000 
->Call Trace:
-> [<c01dfb79>] object_lookup+0x1a9/0x451
-> [<c01b799f>] coord_is_existing_item+0xd9/0x1e8
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c01f058e>] reiser4_blocknr_is_sane_for+0x27/0xf8
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c0222cc7>] num_of_items_node40+0x24/0x1b5
-> [<c023a2f3>] estimate_cde+0x8c/0x192
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c01b799f>] coord_is_existing_item+0xd9/0x1e8
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c01e549e>] xmemcpy+0x21/0x25
-> [<c018f805>] return_err+0x1c/0xa0
-> [<c0223a18>] key_at_node40+0x5d/0x141
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c01e54ea>] xmemset+0x22/0x26
-> [<c028293e>] hint_validate+0x53/0x181
-> [<c01e54ea>] xmemset+0x22/0x26
-> [<c0281278>] find_file_item+0x312/0x440
-> [<c028485b>] readpage_unix_file+0x19e/0xc02
-> [<c0222cc7>] num_of_items_node40+0x24/0x1b5
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c01ffb74>] reiser4_readpage+0xdf/0x2cd
-> [<c0222cc7>] num_of_items_node40+0x24/0x1b5
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c013d191>] page_cache_read+0xa1/0xd5
-> [<c013d4f4>] filemap_nopage+0x32f/0x3a6
-> [<c0286ac3>] unix_file_filemap_nopage+0x56/0xd8
-> [<c0286a6d>] unix_file_filemap_nopage+0x0/0xd8
-> [<c014b5d7>] do_no_page+0xba/0x30f
-> [<c02a00e8>] vsprintf+0x27/0x2b
-> [<c014ba28>] handle_mm_fault+0xf4/0x16c
-> [<c01174c1>] do_page_fault+0x1c4/0x60a
-> [<c01c31ee>] try_capture_block+0x253/0x719
-> [<c013bf48>] add_to_page_cache+0xbe/0xc3
-> [<c01aa29e>] check_lock_object+0x17/0x186
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c01aa1f3>] znode_is_any_locked+0x7c/0x87
-> [<c0222cc7>] num_of_items_node40+0x24/0x1b5
-> [<c018efe1>] schedulable+0x8/0x79
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c018efe1>] schedulable+0x8/0x79
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c01b799f>] coord_is_existing_item+0xd9/0x1e8
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c0222cc7>] num_of_items_node40+0x24/0x1b5
-> [<c0222cc7>] num_of_items_node40+0x24/0x1b5
-> [<c0223351>] length_by_coord_node40+0x52/0x2c7
-> [<c01b799f>] coord_is_existing_item+0xd9/0x1e8
-> [<c01172fd>] do_page_fault+0x0/0x60a
-> [<c0105a09>] error_code+0x2d/0x38
-> [<c018007b>] load_aout_binary+0x456/0x711
-> [<c02a0dda>] __copy_user_zeroing_intel+0x16/0xac
-> [<c02a0f44>] __copy_from_user_ll+0x68/0x6c
-> [<c0241b7a>] paste_tail+0x159/0x40f
-> [<c0241a21>] paste_tail+0x0/0x40f
-> [<c0228769>] create_item_node40+0x867/0xa1b
-> [<c01a66c0>] carry_insert_flow+0x225/0x363
-> [<c019f9ac>] carry_on_level+0x98/0x487
-> [<c01a0c5e>] lock_carry_level+0x66/0x153
-> [<c0140372>] perthread_pages_reserve+0x64/0x133
-> [<c019f660>] carry+0x1dc/0x490
-> [<c01af6cf>] insert_flow+0x115/0x1e4
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c0222cc7>] num_of_items_node40+0x24/0x1b5
-> [<c0162ed0>] inode_add_bytes+0x28/0x74
-> [<c0243caa>] write_tail+0x1a8/0x232
-> [<c02852ff>] should_have_notail+0x40/0x4a
-> [<c0243b02>] write_tail+0x0/0x232
-> [<c0243b02>] write_tail+0x0/0x232
-> [<c0286517>] append_and_or_overwrite+0x516/0x94c
-> [<c01baa49>] check_block_counters+0x6d/0x19a
-> [<c0287b61>] flow_by_inode_unix_file+0x62/0x165
-> [<c0286a05>] write_flow+0xb8/0x107
-> [<c01bd3e6>] grabbed2free+0x67/0xdc
-> [<c0286d2e>] write_file+0x7a/0xe5
-> [<c028700a>] write_unix_file+0x271/0x3c0
-> [<c018f142>] get_current_trace_flags+0xc/0xe4
-> [<c01ff17c>] reiser4_write+0x191/0x44b
-> [<c01fefeb>] reiser4_write+0x0/0x44b
-> [<c015959b>] vfs_write+0xb0/0x119
-> [<c01596d5>] sys_write+0x51/0x80
-> [<c0104f7f>] syscall_call+0x7/0xb
->Code: 44 ff ff ff 8b 11 85 d2 0f 84 3a ff ff ff 8b 00 39 c8 0f 85 30
->ff ff ff 39 42 04 0f 85 27 ff ff ff b8 08 cb 50 c0 e8 cc 93 21
->00 <0f> 0b 83 00 3c 19 3f c0 c7 04 24 5c af 41 c0 c7 44 24 04 a0 c6 
+> FS status block (21):
+> FS marked consistent
 >
 >
->Michael
+> pitr ~ > /usr/local/sbin/debugfs.reiser4 -t img-from-ia32
+> /usr/local/sbin/debugfs.reiser4 1.0.2
+> Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing governed by
+> reiser4progs/COPYING.
+>
+> NODE (23) LEVEL=2 ITEMS=1 SPACE=4030 MKFS ID=0x484b7b0a FLUSH=0x0
+> #0  NPTR (nodeptr40): [29:1(SD):2a:0] OFF=28, LEN=8, flags=0x0
+> [24]
+> ===========================================================================
+>=== NODE (24) LEVEL=1 ITEMS=2 SPACE=3856 MKFS ID=0x484b7b0a FLUSH=0x0
+> #0  SD (stat40): [29:1(SD):2a:0] OFF=28, LEN=82, flags=0x0
+> exts:           0
+> mask:           0x0
+> ---------------------------------------------------------------------------
+>--- #1  DIRITEM (cde40): [2a:0(NAME):0:0] OFF=110, LEN=70, flags=0x0
+> NR  NAME                                  OFFSET HASH                      
+>        SDKEY 0 .                                         38
+> 0000000000000000:0000000000000000 0000291:000002a 1 ..                     
+>                   54 002e2e0000000000:0000000000000000 0000291:000002a
+> ===========================================================================
+>===
 >
 >
->  
+> pitr ~ > /usr/local/sbin/debugfs.reiser4 img-made-locally
+> /usr/local/sbin/debugfs.reiser4 1.0.2
+> Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing governed by
+> reiser4progs/COPYING.
 >
+> Master super block (16):
+> magic:          ReIsEr4
+> blksize:        4096
+> format:         0x0 (format40)
+> uuid:           7bca4399-bef6-460e-a580-2b4ebbfdf3dd
+> label:          <none>
+>
+> Format super block (17):
+> plugin:         format40
+> description:    Disk-format for reiser4.
+> magic:          ReIsEr40FoRmAt
+> flushes:        0
+> mkfs id:        0x78cd07fa
+> blocks:         32
+> free blocks:    7
+> root block:     23
+> tail policy:    0x2 (smart)
+> next oid:       0x10000
+> file count:     0
+> tree height:    2
+> key policy:     SHORT
+>
+> FS status block (21):
+> FS marked consistent
+>
+>
+> pitr ~ > /usr/local/sbin/debugfs.reiser4 -t img-made-locally
+> /usr/local/sbin/debugfs.reiser4 1.0.2
+> Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing governed by
+> reiser4progs/COPYING.
+>
+> NODE (23) LEVEL=2 ITEMS=1 SPACE=4030 MKFS ID=0x78cd07fa FLUSH=0x0
+> #0  NPTR (nodeptr40): [29:1(SD):2a:0] OFF=28, LEN=8, flags=0x0
+> [24]
+> ===========================================================================
+>=== NODE (24) LEVEL=1 ITEMS=2 SPACE=3856 MKFS ID=0x78cd07fa FLUSH=0x0
+> #0  SD (stat40): [29:1(SD):2a:0] OFF=28, LEN=82, flags=0x0
+> exts:           3
+> mask:           0x0
+> plugin:         sdext_lw
+> offset:         2
+> len:            14
+> mode:           drwxr-xr-x
+> nlink:          3
+> size:           2
+> plugin:         sdext_unix
+> offset:         16
+> len:            28
+> uid:            1000
+> gid:            1000
+> atime:          Sun Oct 24 22:30:16 2004
+> mtime:          Sun Oct 24 22:30:16 2004
+> ctime:          Sun Oct 24 22:30:16 2004
+> rdev:           68
+> bytes:          68
+> plugin:         sdext_plug
+> offset:         44
+> len:            38
+> Pset count:     9
+>     permission : id = 0
+>     formatting : id = 2 (smart)
+>           hash : id = 1 (r5_hash)
+>      fibration : id = 2 (ext_1_fibre)
+>       statdata : id = 0 (stat40)
+>        diritem : id = 2 (cde40)
+>         crypto : id = 0
+>         digest : id = 0
+>       compress : id = 0
+> ---------------------------------------------------------------------------
+>--- #1  DIRITEM (cde40): [2a:0(NAME):0:0] OFF=110, LEN=70, flags=0x0
+> NR  NAME                                  OFFSET HASH
+>    SDKEY
+>   0 .                                         38
+> 0000000000000000:00000000000000 00 0000291:000002a
+>   1 ..                                        54
+> 002e2e0000000000:00000000000000 00 0000291:000002a
+> ===========================================================================
+>===
+>
+> > Would you please try to patch reiser4progs's
+> > plugin/alloc/alloc40/alloc40.c with the attached patch and try again?
+>
+> This patch only fixes the alloc block, which (I believe) is not *yet* a
+> problem, there are more bugs which has to be solved first.
+>
+> Anyway, today I compiled 2.6.9-mm1 and got a new backtrace (I get the
+> same trace with both the image made on PPC and IA32 now (except for some
+> registers)):
+>
+> pitr ~ > sudo mount -t reiser4 -o loop ~/img-from-ia32 /mnt
+> reiser4[mount(1943)]: key_warning
+> (fs/reiser4/plugin/object.c:97)[nikita-717]: WARNING: Error for inode
+> 720575940379279360 (-2)
+> reiser4[mount(1943)]: commit_current_atom
+> (fs/reiser4/txnmgr.c:1249)[zam-597]: kernel BUG in reiser4_do_panic at
+> fs/reiser4/debug.c:131!
+> Oops: Exception in kernel mode, sig: 5 [#2]
+> NIP: C009E25C LR: C00AEDD4 SP: CAB9BB30 REGS: cab9ba80 TRAP: 0700    Not
+> tainted MSR: 00029032 EE: 1 PR: 0 FP: 0 ME: 1 IR/DR: 11
+> TASK = d1fb40b0[1943] 'mount' THREAD: cab9a000Last syscall: 120
+> GPR00: C00AEDD4 CAB9BB30 D1FB40B0 C027152C FFFFFFE4 00000000 00017FC6
+> C035FF68 GPR08: C036031C C03123C8 D7637E7C CAB9BB3C 00000001 1002AE6C
+> 100C0000 100A0000 GPR16: 00000000 101F0448 00000000 00000000 7FFFF9D6
+> 00000000 10020000 00000000 GPR24: 7FFFF9E8 C02AE52C CAB9BD30 CF1EE000
+> CAB9BC28 CAB9BC20 C0370000 C0350000 NIP [c009e25c]
+> reiser4_do_panic+0x2c/0xc4
+> LR [c00aedd4] force_commit_atom_nolock+0x0/0x40
+> Call trace:
+>  [c00aedd4] force_commit_atom_nolock+0x0/0x40
+>  [c00af5c0] try_commit_txnh+0x190/0x208
+>  [c00af67c] commit_txnh+0x44/0xbc
+>  [c00ae4cc] txn_end+0x68/0x70
+>  [c00ae4ec] txn_restart+0x18/0x34
+>  [c00aee00] force_commit_atom_nolock+0x2c/0x40
+>  [c00aef38] txnmgr_force_commit_all+0xc8/0xdc
+>  [c010736c] release_format40+0xd4/0x138
+>  [c00cca30] _done_disk_format+0x20/0x30
+>  [c00ccd98] done_super+0x48/0x64
+>  [c00cce3c] reiser4_fill_super+0x88/0x90
+>  [c0069a8c] get_sb_bdev+0x150/0x1cc
+>  [c00c53fc] reiser4_get_sb+0x18/0x28
+>  [c0069d90] do_kern_mount+0x64/0x128
+>  [c00814cc] do_new_mount+0x94/0xc4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--Boundary-00=_60OfBfL1owuO2CR
+Content-Type: text/x-diff;
+  charset="koi8-r";
+  name="reiser4progs_sdextmask.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="reiser4progs_sdextmask.patch"
+
+===== plugin/item/stat40/stat40.c 1.272 vs edited =====
+--- 1.272/plugin/item/stat40/stat40.c	Wed Sep 22 23:10:50 2004
++++ edited/plugin/item/stat40/stat40.c	Mon Oct 25 15:23:13 2004
+@@ -42,7 +42,7 @@
+ 				}
+ 			}
+ 			
+-			extmask = *((uint16_t *)stat_body(&stat));
++			extmask = st40_get_extmask(stat_body(&stat));
+ 			
+ 			stat.ext_plug = NULL;
+ 			
+@@ -314,7 +314,7 @@
+ 
+ 	/* If this is a new item being inserted, zero the on-disk mask. */
+ 	if (place->pos.unit == MAX_UINT32 && insert)
+-		((stat40_t *)stat_body(&stat))->extmask = 0;
++		st40_set_extmask(stat_body(&stat), 0);
+ 
+ 	if (!stath->extmask)
+ 		return 0;
+@@ -339,7 +339,7 @@
+ 				}
+ 			}
+ 			
+-			extmask = *((uint16_t *)stat_body(&stat));
++			extmask = st40_get_extmask(stat_body(&stat));
+ 
+ 			if (insert) {
+ 				/* Calculating new extmask in order to 
+@@ -348,7 +348,7 @@
+ 					     0x000000000000ffff));
+ 
+ 				/* Update mask.*/
+-				*((uint16_t *)stat_body(&stat)) = extmask;
++				st40_set_extmask(stat_body(&stat), extmask);
+ 			}
+ 			
+ 			stat.offset += sizeof(d16_t);
+@@ -449,7 +449,7 @@
+ 				}
+ 			}
+ 			
+-			old_extmask = *((uint16_t *)stat_body(&stat));
++			old_extmask = st40_get_extmask(stat_body(&stat));
+ 
+ 			
+ 			/* Calculating new extmask in order to update old
+@@ -458,7 +458,7 @@
+ 						       0x000000000000ffff));
+ 
+ 			/* Update mask.*/
+-			*((uint16_t *)stat_body(&stat)) = new_extmask;
++			st40_set_extmask(stat_body(&stat), new_extmask);
+ 				
+ 			chunks++;
+ 			stat.offset += sizeof(d16_t);
+===== plugin/item/stat40/stat40.h 1.49 vs edited =====
+--- 1.49/plugin/item/stat40/stat40.h	Mon Apr 26 22:56:52 2004
++++ edited/plugin/item/stat40/stat40.h	Mon Oct 25 15:13:38 2004
+@@ -29,7 +29,7 @@
+ 
+ #define STAT40_EXTNR (64)
+ 
+-#define st40_get_extmask(stat)		aal_get_le16(stat, extmask)
+-#define st40_set_extmask(stat, val)	aal_set_le16(stat, extmask, val)
++#define st40_get_extmask(stat)		aal_get_le16(((stat40_t *)stat), extmask)
++#define st40_set_extmask(stat, val)	aal_set_le16(((stat40_t *)stat), extmask, val)
+ 
+ #endif
+===== plugin/item/stat40/stat40_repair.c 1.64 vs edited =====
+--- 1.64/plugin/item/stat40/stat40_repair.c	Sat Oct 16 01:10:22 2004
++++ edited/plugin/item/stat40/stat40_repair.c	Mon Oct 25 15:20:05 2004
+@@ -65,7 +65,7 @@
+ 		return 0;
+ 
+ 	/* This time the callback is called for the extmask. Fix it. */
+-	*((uint16_t *)stat_body(stat)) = *(uint16_t *)mask;
++	st40_set_extmask(stat_body(stat), *(uint16_t *)mask);
+ 
+ 	(*mask) >>= 16;
+ 	return 0;
+
+--Boundary-00=_60OfBfL1owuO2CR--
+
+
 
