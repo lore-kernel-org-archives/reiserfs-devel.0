@@ -1,57 +1,79 @@
-From: Mihai RUSU <dizzy@roedu.net>
-Subject: Re: Desktop Filesystem Benchmarks in 2.6.3
-Date: Wed, 3 Mar 2004 12:56:58 +0200 (EET)
-Message-ID: <Pine.LNX.4.58L0.0403031254260.24946@ahriman.bucharest.roedu.net>
-References: <4044119D.6050502@andrew.cmu.edu> <200403031059.26483.robin.rosenberg.lists@dewire.com>
- <1078309141.863.3.camel@teapot.felipe-alfaro.com> <200403031149.48474.christian.mayrhuber@gmx.net>
+From: Pavel Bartusek <pba@sysgo.com>
+Subject: Bugs on big endian systems
+Date: Wed, 03 Mar 2004 14:01:57 +0100
+Message-ID: <4045D745.8070204@sysgo.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17042-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ boundary="------------020508010406070707020901"
+Return-path: <reiserfs-list-return-17043-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200403031149.48474.christian.mayrhuber@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+To: Reiserfs-List@namesys.com
+
+--------------020508010406070707020901
+Content-Type: text/plain; charset=ISO-8859-2; format=flowed
 Content-Transfer-Encoding: 7bit
-To: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Cc: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hi list,
 
-On Wed, 3 Mar 2004, Christian Mayrhuber wrote:
+The attached patch will fix the bugs which appears only on big endian 
+systems in the kernel 2.4.25.
 
-> On Wednesday 03 March 2004 11:19, Felipe Alfaro Solana wrote:
-> 
-> > It's not a matter of working: it's a matter of recovering. A bad disk
-> > block could potentially destroy a file or a directory, but shouldn't
-> > make a filesystem not mountable nor recoverable.
-> >
-> 
-> Something similar happened to a server of mine 2 years ago.
-
-Yep, I was just about to say that too. The data wasnt very important so I 
-didnt messed much with it but aparently (when copying with dd noerror) I 
-had one or few badblocks and xfs_repair couldnt find the superblock or 
-something like that (it was searching printing dots ......).
-
-> I never ever touched xfs since.
-
-Besides that I am pleased in general with XFS :)
-
-The bad thing is someone else also told me about this recovery issues he 
-faced with XFS (before it happened to me too).
+regards
 
 
-- -- 
-Mihai RUSU                                    Email: dizzy@roedu.net
-GPG : http://dizzy.roedu.net/dizzy-gpg.txt    WWW: http://dizzy.roedu.net
-                       "Linux is obsolete" -- AST
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
+Pavel Bartusek
+Software Engineering
 
-iD8DBQFARbn9PZzOzrZY/1QRAq5bAJ97sgHQzPCxkD0AbhRCbsVckX2QmQCgyXb6
-gnWhYQWXYCtJIU5jLRMj90E=
-=clRL
------END PGP SIGNATURE-----
+SYSGO Real-Time Solutions AG | Embedded and Real-Time Software
+Lise-Meitner-Str.15
+89081 Ulm, Germany
+
+Voice: +49-731-9533-1295
+FAX:   +49-731-94683-10
+www.sysgo.com | www.elinos.com | www.osek.de
+
+--------------020508010406070707020901
+Content-Type: text/plain;
+ name="big_endian_fixup.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="big_endian_fixup.patch"
+
+--- linux.ori/fs/reiserfs/journal.c	Mon Aug 25 13:44:43 2003
++++ linux/fs/reiserfs/journal.c	Wed Mar  3 13:26:23 2004
+@@ -2094,7 +2094,7 @@
+      
+     /* make sure that journal matches to the super block */
+     if (is_reiserfs_jr(rs) && 
+-        jh->jh_journal.jp_journal_magic != sb_jp_journal_magic(rs)) {
++        le32_to_cpu (jh->jh_journal.jp_journal_magic) != sb_jp_journal_magic(rs)) {
+ 	char jname[ 32 ];
+ 	char fname[ 32 ];
+ 	 
+@@ -2102,7 +2102,7 @@
+ 	strcpy( fname, kdevname( p_s_sb->s_dev ) );
+ 	printk("journal-460: journal header magic %x (device %s) does not "
+ 	       "match magic found in super block %x (device %s)\n",
+-		jh->jh_journal.jp_journal_magic, jname,
++		le32_to_cpu (jh->jh_journal.jp_journal_magic), jname,
+ 		sb_jp_journal_magic(rs), fname);
+ 	brelse (bhjh);
+ 	goto free_and_return;
+--- linux.ori/include/linux/reiserfs_fs.h	Mon Aug 25 13:44:44 2003
++++ linux/include/linux/reiserfs_fs.h	Wed Mar  3 13:25:45 2004
+@@ -219,7 +219,7 @@
+ #define SB_ONDISK_JOURNAL_DEVICE(s) \
+          le32_to_cpu ((SB_ONDISK_JP(s)->jp_journal_dev))
+ #define SB_ONDISK_RESERVED_FOR_JOURNAL(s) \
+-         le32_to_cpu ((SB_V1_DISK_SUPER_BLOCK(s)->s_reserved_for_journal))
++         le16_to_cpu ((SB_V1_DISK_SUPER_BLOCK(s)->s_reserved_for_journal))
+ 
+ #define is_block_in_log_or_reserved_area(s, block) \
+          block >= SB_JOURNAL_1st_RESERVED_BLOCK(s) \
+
+--------------020508010406070707020901--
+
