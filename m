@@ -1,60 +1,83 @@
-From: "Lex  Jonkers" <jonkersl@Fourtop.nl>
-Subject: RE: 2.6.9-3 patch won't compile
-Date: Mon, 13 Dec 2004 14:52:57 +0100
-Message-ID: <18A36962E684664DB223E403DB64FB220C6807@W23FT01.Fourtop.local>
+From: "Tanya Kay" <wrmajckkwuig@yahoo.com>
+Subject: doctor contact, medical directory, and physiciansguid.
+Date: Tue, 14 Dec 2004 10:31:59 +0100
+Message-ID: <MSQPJCSWNWEIBFWLSELX@yahoo.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-22754-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="--996946204158290492"
+Return-path: <reiserfs-list-return-22760-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: hihone@bigpond.net.au
-Cc: reiserfs-list@namesys.com
+To: reiser@namesys.com, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, vitaly@namesys.com
 
-That machine in question was a Debian stable machine with gcc 2.95.4
+----996946204158290492
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-It compiles flawless on a Debian testing machine with gcc 3.3.4
+The New 2005 United States Healthcare Database.
 
-Thnx for the help Cal and Francesco.
+This complete database includes all hospitals, nursing homes, 
+and physicians in the country.
 
-With Regards,
-Lex Jonkers
+In a rapidly-changing industry, current healthcare information is an 
+invaluable resource to businesses and organizations.  The United States 
+Healthcare Database includes comprehensive information on more than 
+7,000 hospitals, 25,000 nursing homes and 400,000 doctors.  It is the 
+most extensive and reliable mailing list and database of key decision 
+makers in the health care market.
+ 
+Each record is indexed by such features as name, address, phone and 
+fax. The database is available in Excel format on CD Rom.  It is 
+designed for mailing lists and merges.  The data can be selected by 
+state or other criteria such as type of practice. It can be used on 
+an unlimited basis.
 
-> -----Original Message-----
-> From: Cal [mailto:hihone@bigpond.net.au]=20
-> Sent: Monday, December 13, 2004 2:04 PM
-> To: Lex Jonkers
-> Cc: reiserfs-list@namesys.com
-> Subject: Re: 2.6.9-3 patch won't compile
->=20
-> ----------
-> and then at Mon, 13 Dec 2004 13:44:35 +0100, it was written ...
->  >>  >fs/reiser4/plugin/cryptcompress.c: In function=20
-> `set_cluster_params':
->  >>  >fs/reiser4/plugin/cryptcompress.c:2203: parse error=20
-> before  >> `hole_size'
->  >...
->  >
->  >Any idea why -3 won't compile on a vanilla 2.6.9 ?
->  >-1 and -2 compile without problems.
->  >
->  >With Regards,
->  >Lex Jonkers
->=20
-> Looks like maybe a compilation problem.  Where yours dies=20
-> with a parse error (cryptcompress.c:2203), mine coughs a=20
-> polite warning -
-> fs/reiser4/plugin/cryptcompress.c: In function `set_cluster_params':
-> fs/reiser4/plugin/cryptcompress.c:2203: warning: ISO C90=20
-> forbids mixed declarations and code
->=20
-> I'm using gcc (GCC) 3.4.4 20041128 (prerelease) (Debian=20
-> 3.4.3-3). I can't help but wonder if my compiler is bigger=20
-> than your compiler?
->=20
-> cheers, Cal
->=20
+For the past 14 years, MedCom has maintained the most comprehensive 
+healthcare lists.  Our directories are 100% telephone verified and 
+updated every quarter. MedCom continues to hold the nation's most 
+extensive and reliable databases of key decision-makers in the health 
+care market.
+ 
+Available exclusively on CD-Rom (Excel), the data can be used on an 
+unlimited basis. It is easily exportable to other programs for 
+mailing or faxing purposes.
+
+For a limited time, this extensive database is offered at an introductory =
+
+
+Price of $195 (reg. $745).
+
+To order, please print this e-mail, complete the information below and 
+fax it to 416-765-0029 (tel: 416-765-0028).
+
+NAME:
+    
+TITLE:
+
+ORGANIZATION:
+
+ADDRESS:
+
+CITY:
+
+STATE:
+
+POSTAL:
+
+TEL:
+
+FAX:
+
+EMAIL:
+ 
+
+MedCom
+4410 Massachusettes Ave. NW, #201
+Washington, DC 20016
+
+
+----996946204158290492--
+
