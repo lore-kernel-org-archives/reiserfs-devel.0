@@ -1,51 +1,86 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: kernel go-slow
-Date: Thu, 6 Feb 2003 19:48:03 +0300
-Message-ID: <20030206194803.A2637@namesys.com>
-References: <200302030027.40936.russell@coker.com.au> <20030206142649.A27228@t-raenon.nmd.msu.ru> <20030206193247.A29026@t-raenon.nmd.msu.ru> <200302061741.46153.russell@coker.com.au>
+From: Bernd Schubert <bernd-schubert@web.de>
+Subject: Re: when distros do not support official Marcelo kernels they are not being team players (was Re: reiserfs on redhat advanced server?)
+Date: Thu, 6 Feb 2003 19:06:53 +0100
+Message-ID: <200302061906.53534.bernd-schubert@web.de>
+References: <20030131122147.GE15359@marowsky-bree.de> <3E403488.9050408@namesys.com> <1044397378.15684.714.camel@tiny.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12664-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12665-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200302061741.46153.russell@coker.com.au>
+In-Reply-To: <1044397378.15684.714.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Russell Coker <russell@coker.com.au>
-Cc: flx@msu.ru, ReiserFS <reiserfs-list@namesys.com>
+To: Chris Mason <mason@suse.com>, Hans Reiser <reiser@namesys.com>
+Cc: Hubert Mantel <mantel@suse.de>, reiserfs-list@namesys.com
 
-Hello!
+On Tuesday 04 February 2003 23:22, Chris Mason wrote:
+> On Tue, 2003-02-04 at 16:45, Hans Reiser wrote:
+> > The official kernel is our kernel community's only chance to overcome
+> > its fragmentation.  We need to support it.
+>
+> We do support the official kernel, by actively developing and improving
+> it, and by answering questions on public mailing lists.  When things
+> work in our kernel (like reiserfs, or andrea's vm etc) we work to get i=
+t
+> into the vanilla kernel.  We're also constantly updating our work to
+> keep it in line with the current vanilla sources.  It takes a while due
+> to the volume of patches and testing required, but we're always working
+> on it.
+>
 
-On Thu, Feb 06, 2003 at 05:41:46PM +0100, Russell Coker wrote:
+Hmm, I know its out of topic, but I want to take my chance and complain a=
+bout=20
+the Suse kernel.
 
-> > but there is possible situations that will not generate disk activity,
-> > but may cause your system to "go-slow", if there you have some
-> > unussual IO numbers while disk activity is moderate to low -
-> > most likely same sweet pair.
-> The problem is that sar etc product jumbled results.  Profiling the kernel may 
-> help, but may also hide the error, and it's not something I can easily do.
+We are currently testing one of our servers with non-free software and on=
+ly=20
+get a pre-compiled kernel module from this company. Unfortunality they on=
+ly=20
+have kernel modules for well knows Distros, such as Suse, RedHat, etc and=
+ it=20
+seems to be very difficult to convince them to compile it for a vanilla=20
+kernel.
+So we are using a Suse kernel on Debian. For some reason we couldn't use =
+the=20
+binary and had to recompile the kernel from the source Suse provides. Wel=
+l,=20
+until it came to the module part everything was fine, but then errors=20
+orrcured and we had to find the config options to disable those modules.=20
+Since we first tried to use the config-options Suse had set as default, t=
+he=20
+Suse-people *MUST* have seen themselves that it doesn't work this way.=20
+The other thing I'm strongly wondering about, is what for nomal home user=
+s=20
+need a kernel that has kdb and other very seldom used patches included. W=
+hich=20
+usual home-user (and that is what I thought to be Suse for) needs kernel=20
+debugging? IMHO kernel debuggers won't have a problem with patching a ker=
+nel=20
+themselves.
 
-Well, you can do it very easily.
-reboot with "profile=2" kernel option.
-when 100% sys cpu situation started - execute readprofile -r
-when it is finished, execute readprofile -m /path/to/System.map >somefile
-then sort somefile and you are done, you are now seeing where is most of the time
-is spent.
+Finally we got it working and could even load the module, but later on we=
+=20
+figured out that nfs file locking for imports from another server isn't=20
+working properly (/proc/mounts shows that it is enabled, but e.g. 'man'=20
+complains that it is not). Well, actually I'm wondering that anything wor=
+ks=20
+in such a stronlgy patched kernel.=20
+Of course, the nfs file locking works when we use a vanilla kernel.
 
-> The servers are locked in a managed server room on the other side of the city 
-> so seeing the blinken lights is not an option.
+So whom shall I blame it is not? Suse, and tell them we are only using th=
+eir=20
+kernel (and this not even without some force)? And I believe people from =
+the=20
+kernel mailinglist won't feel responsible, too.
 
-;)
-<humour>webcam</humour>
+Just a few reasons why I don't like using distros' kernels !
 
-> I've put the aa1 kernel on half the machines and now I'll wait to see what 
-> happens.  If the aa1 machines don't have the problem but the others do then 
-> I'll go all aa1.
+Best regards,
+=09Bernd
 
-Ah, if your problem was with highmem I/O not present, then that might actually help.
-
-Bye,
-    Oleg
+PS: The kernel is 2.4.19-4GB, I've forgotten which one of Suses subversio=
+ns it=20
+was, but it was rather high (174?).
