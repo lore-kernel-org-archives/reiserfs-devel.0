@@ -1,50 +1,53 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: rebuild-tree working for more then 3 days- what to do?
-Date: Fri, 07 Jan 2005 16:13:27 +0300
-Message-ID: <1105103606.3616.98.camel@tribesman.namesys.com>
-References: <2AEAD962-6089-11D9-A3E5-003065C0167C@xslf.com>
-	 <1105093253.3616.34.camel@tribesman.namesys.com>
-	 <53BAB6CE-60A5-11D9-8B41-003065C0167C@xslf.com>
-	 <1105101220.4192.68.camel@tribesman.namesys.com>
-	 <1332240552.20050107134330@tnonline.net>
-	 <87390888-60AC-11D9-8B41-003065C0167C@xslf.com>
+From: <pcg( Marc)@goof(A.).(Lehmann )com>
+Subject: Re: Congratulations! we have got hash function screwed up
+Date: Fri, 7 Jan 2005 18:26:48 +0100
+Message-ID: <20050107172648.GB18191@schmorp.de>
+References: <20041228221218.GA6412@schmorp.de> <20050106124505.GE5352@backtop.namesys.com> <20050106142706.GE519@schmorp.de> <41DD8998.3070604@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23069-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23072-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <87390888-60AC-11D9-8B41-003065C0167C@xslf.com>
+Content-Disposition: inline
+In-Reply-To: <41DD8998.3070604@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Shoshannah Forbes <xslf@xslf.com>
-Cc: Spam <spam@tnonline.net>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Edward Shishkin <edward@namesys.com>
+Cc: Alex Zarochentsev <zam@namesys.com>, reiserfs-list@namesys.com, stefan@hello-penguin.com
 
-Hello
-
-On Fri, 2005-01-07 at 16:03, Shoshannah Forbes wrote:
-> On 07/01/2005, at 14:43, Spam wrote:
+On Thu, Jan 06, 2005 at 09:55:20PM +0300, Edward Shishkin <edward@namesys.com> wrote:
+> >On Thu, Jan 06, 2005 at 03:45:06PM +0300, Alex Zarochentsev 
+> ><zam@namesys.com> wrote:
+> >>>
+> >>Tea hash is designed to be more resistant.  
+> >>   
+> >>
 > 
-> >   There are liveCD's with reiser4 and reiser4progs. For example: 
-> > http://lxnay.dnsalias.org/livecd-iso/index.php
-> 
-Spam is about reiser4!! progs. Whereas you need reiserfsprogs.
+> Actually this can not be more resistant as it use the same 32-bit output 
+> size.
 
-> As the system there is Gentoo, and this LiveCD is gentoo, this looks 
-> like my best bet.
-> Well, heading for the download now. See you in a few days (hopefully 
-> after rebuild-tree is finished)...
-> ---
+Sure it can, filenames are not randomly distributed, so your argument doesn't
+suffice to show that tea cannot be more resistent, as it could be more
+resistent for other reasons.
 
-reiserfsck --rebuild-tree 's speed depends of file set substantially.
-The worst case - a lots (millons) of small files.
-But even in that case on average today hardware it should not take more
-than 4-5 hours for 60gb filesystem.
-Please inform us how does it progress. Pass 0 is the longest usually.
+That's why I originally wrote "nicely-looking", which (if it wasn't clear)
+was meant to say that filenames with somewhat similar names do collide
+even with tea, which suppossedly was chosen to avoid this case.
 
-> Shoshannah Forbes
-> http://www.xslf.com
-> 
-> 
+> So to find a collision you just need to find hashes of 2^16 = 65536
+> random documents.
 
+True. It's even worse if these collisions happen to filenames occuring in
+practise.
+
+(I also agree to the rest of your mail)
+
+-- 
+                The choice of a
+      -----==-     _GNU_
+      ----==-- _       generation     Marc Lehmann
+      ---==---(_)__  __ ____  __      pcg@goof.com
+      --==---/ / _ \/ // /\ \/ /      http://schmorp.de/
+      -=====/_/_//_/\_,_/ /_/\_\      XX11-RIPE
