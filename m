@@ -1,9 +1,10 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Repacker Gauge?
-Date: Sat, 16 Oct 2004 22:10:20 +0300
-Message-ID: <20041016191020.GH26192@nysv.org>
+From: Piotr Neuman <sikkh@wp.pl>
+Subject: Reiser4 journal replay stats
+Date: Sat, 16 Oct 2004 22:09:12 +0200
+Message-ID: <200410162209.12163.sikkh@wp.pl>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22077-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22078-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -11,20 +12,13 @@ Errors-To: flx@namesys.com
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Hi!
+Hi
 
-I'm using 2.6.8.1-cko8 happily, but noticed that the repacker is slow.
-A bit suspiciously slow.
+This small patch is will print out nuber of transartions replied from logs 
+after a crash, quite like reiserfs 3.6 does:
 
-Is it possible to get something like /proc/mdstat to describe what
-the repacker is doing?
-IMO that would be great..
+http://kem.p.lodz.pl/~peter/reiser4_replay_stats.patch
 
-Thanks!
-
--- 
-mjt
-
+Thanks to Nikita Danilov for guidance.
