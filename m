@@ -1,17 +1,30 @@
-From: Dirk Schenkewitz <Dirk.Schenkewitz@interface-ag.com>
-Subject: Corrupted/unreadable journal: reiser vs. ext3
-Date: Tue, 11 Feb 2003 19:59:20 +0100
-Message-ID: <3E494808.413781E@interface-ag.com>
+From: berthiaume_wayne@emc.com
+Subject: RE: Corrupted/unreadable journal: reiser vs. ext3
+Date: Tue, 11 Feb 2003 14:43:48 -0500
+Message-ID: <93F527C91A6ED411AFE10050040665D0049C06D5@corpusmx1.us.dg.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12685-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12686-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Dirk.Schenkewitz@interface-ag.com
+Cc: reiserfs-list@namesys.com
+
+	Dirk, I'd be interested in hearing from you your performance
+experience with ext3 when it reaches 96% full.
+Regards,
+Wayne.
+
+-----Original Message-----
+From: Dirk Schenkewitz [mailto:Dirk.Schenkewitz@interface-ag.com]
+Sent: Tuesday, February 11, 2003 1:59 PM
+To: Reiserfs List
+Subject: Corrupted/unreadable journal: reiser vs. ext3
+
 
 Hi Guys,
 
