@@ -1,47 +1,40 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: 2.6.0-test4 reiserfs oops
-Date: Wed, 27 Aug 2003 10:46:13 +0400
-Message-ID: <20030827064613.GB29131@namesys.com>
-References: <200308252047.36054.l.allegrucci@tiscali.it> <200308261146.47241.l.allegrucci@tiscali.it> <20030826103851.GA14676@namesys.com> <200308261559.20668.l.allegrucci@tiscali.it>
+Subject: Re: reiser4 snapshot for August 26th.
+Date: Wed, 27 Aug 2003 11:38:49 +0400
+Message-ID: <20030827073849.GA29071@namesys.com>
+References: <20030826102233.GA14647@namesys.com> <20030826232844.25e0e9b3.aradorlinux@yahoo.es>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15455-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15456-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200308261559.20668.l.allegrucci@tiscali.it>
+In-Reply-To: <20030826232844.25e0e9b3.aradorlinux@yahoo.es>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lorenzo Allegrucci <l.allegrucci@tiscali.it>
-Cc: reiserfs-list@namesys.com
+To: Diego Calleja Garc?a <aradorlinux@yahoo.es>
+Cc: reiserfs-dev@namesys.com, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
 Hello!
 
-On Tue, Aug 26, 2003 at 03:59:20PM +0000, Lorenzo Allegrucci wrote:
-> > > > > I have got this oops running fsstress and fsx-linux
-> > > > > on a 20Gb reiserfs partition.  Fully reproducible.
-> > > > What are the options to fsx and fsstress?
-> > > fsx-linux linux-2.5.0.tar.bz2 :)
-> > > mkdir d
-> > > fsstress -d d -n 1000000 -p 10
-> > > The oops follows immediately.
-> > works for me without any patches.
-> 
-> This is easier to reproduce:
-> touch file
-> mkdir d
-> fsstress -d d -n 1000000 -p 10
-> As soon as I run "fsx-linux file" on another console I get the oops.
-> (However fsx-linux without fsstress is not sufficient)
+On Tue, Aug 26, 2003 at 11:28:44PM +0200, Diego Calleja Garc?a wrote:
 
-Well, actually I was able to reproduce it yesterday later after replying to you.
-And we got some other similar reports under different workloads.
-My initial suspiction about the cause was right. and that fix I sent to you
-on the second try is the correct thing to do.
-The actual problem came from AIO people merging incorrect patch
-into reiserfs code.
+> btw, I suppose this feature will be removed if/when reiser4 is merged?:
+> config REISER4_FS_SYSCALL
+>         bool "Enable reiser4 system call"
+
+No. It will be fixed.
+
+> dmesg errors:
+> (fs/ext3/inode.c, 2728): ext3_write_inode: called recursively, non-PF_MEMALLOC!
+> Call Trace:
+>  [<c018c715>] write_inode+0x45/0x50
+>  [<c018c9af>] __sync_single_inode+0x28f/0x310
+>  [<c018cd00>] generic_sync_sb_inodes+0x1c0/0x2e0
+
+Hm. Interesting Thank you for the report. We will fix it.
 
 Bye,
     Oleg
