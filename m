@@ -1,44 +1,33 @@
-From: ahorn@deorth.org
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: Status of reiserfs in Redhat 2.4.7-10 kernel ?
-Date: Tue, 15 Apr 2003 18:07:56 -0700 (PDT)
-Message-ID: <Pine.NEB.4.44.0304151806220.25702-100000@slick.sigje.org>
-References: <20030416013525.3500100a.philippe.gramoulle@mmania.com>
+Date: Wed, 16 Apr 2003 11:31:44 +0400
+Message-ID: <20030416113144.A3404@namesys.com>
+References: <Pine.NEB.4.44.0304151610230.25702-100000@slick.sigje.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <reiserfs-list-return-13667-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13668-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030416013525.3500100a.philippe.gramoulle@mmania.com>
+Content-Disposition: inline
+In-Reply-To: <Pine.NEB.4.44.0304151610230.25702-100000@slick.sigje.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="iso-8859-1"
-To: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ahorn@deorth.org
 Cc: reiserfs-list@namesys.com
 
-On Wed, 16 Apr 2003, Philippe [ISO-8859-15] Gramoull=E9 wrote:
+Hello!
 
->Date: Wed, 16 Apr 2003 01:35:25 +0200
->From: "Philippe [ISO-8859-15] Gramoull=E9" <philippe.gramoulle@mmania.com>
->To: reiserfs-list@namesys.com
->Subject: Re: Status of reiserfs in Redhat 2.4.7-10 kernel ?
->
->
->Hello,
->
->What was true for 2.4.3 should be almost the same for 2.4.7-10.
->
->See: http://www.geocrawler.com/archives/3/3455/2002/9/150/9512408/
+On Tue, Apr 15, 2003 at 04:10:51PM -0700, ahorn@deorth.org wrote:
 
-Ouch.. :/
+> Can anyone point me towards a list of bugs that existed in the
+> implementation of reiserfs in this redhat kernel (the last kernel released
+> with a redhat 7.2 distribution CD)
 
->
->IIRC, Reiserfs developers recommend at least 2.4.18/19
->
->Out of curiosity, what are the "other reasons" that you can't upgrade the =
-kernel for ?
+The list is way too long (and contains some pretty critical bugs). I afraid it will take
+quite some time to compose the full list, so unless you are willing to pay for that,
+I'd better work on something other.
 
-Compatibility with other essential parts of the whole system design.
-It's unfortunatem, but that's what I have to work with.
-
-
+Bye,
+    Oleg
