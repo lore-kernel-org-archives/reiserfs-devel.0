@@ -1,46 +1,56 @@
-From: Chris Mason <mason@suse.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Multiple data streams...
-Date: 03 Apr 2003 15:09:21 -0500
-Message-ID: <1049400560.15217.1134.camel@tiny.suse.com>
-References: <6167696812.20030402112847@tnonline.net>
-	 <3E8B0BED.2070004@suse.com>	<3E8B1572.1010001@namesys.com>
-	 <1049303242.15216.1023.camel@tiny.suse.com>
-	 <16011.6694.600468.304009@laputa.namesys.com>
-	 <3E8C7F64.8020008@namesys.com> <1049396559.15217.1127.camel@tiny.suse.com>
-	 <3E8C90A1.1010305@namesys.com>
+Date: Fri, 04 Apr 2003 01:53:27 +0400
+Message-ID: <3E8CAD57.50800@namesys.com>
+References: <6167696812.20030402112847@tnonline.net> <200304030732.31133.russell@coker.com.au> <3E8C84D9.3000401@namesys.com> <200304040557.56832.russell@coker.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13561-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13562-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E8C90A1.1010305@namesys.com>
+In-Reply-To: <200304040557.56832.russell@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Nikita Danilov <Nikita@Namesys.COM>, Jeff Mahoney <jeffm@suse.com>, Anders Widman <andewid@tnonline.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Russell Coker <russell@coker.com.au>
+Cc: reiserfs-list@namesys.com
 
-On Thu, 2003-04-03 at 14:50, Hans Reiser wrote:
-> Chris Mason wrote:
-> 
-> >
-> >I know that you were concerned about the v3 acl support being a
-> >compatibility problem in v4, but given the acls/xattrs can easily be
-> >exported to a neutral format and then reimported into whatever v4
-> >supports, I don't think it will be a problem.  If it is, we'll work with
-> >you to help fix it.
-> >
-> >
-> >  
-> >
-> We will both work to ensure problems are kept small in this area, and I 
-> think it is best to spend our time coding rather than worrying about 
-> this when we are not at any decision point in the process.   Hopefully 
-> it will not be substantive as a problem.
+Russell Coker wrote:
 
-Agreed ;-)  
+>On Fri, 4 Apr 2003 05:00, Hans Reiser wrote:
+>  
+>
+>>>OS/2 used EA's for icons and description text in 1992.  There's no reason
+>>>why EAs can't be used for this purpose today as well.
+>>>      
+>>>
+>>Implement inherited stat data, hidden directory entries, and files and
+>>directories and you don't need EAs.... yes?
+>>    
+>>
+>
+>That sounds like EAs the hard way...
+>
+>  
+>
+It is the difference between architecting and incrementally evolving in 
+response to each separate feature request.
 
--chris
+Sharing stat data and hiding directory entries are useful for a lot more 
+than streams.
+
+Atomic transactions are also useful for a lot more than EAs.....
+
+I work by carefully defining easily recombinable primitives.  Others 
+work by asking what does Unix have and copying it.
+
+This is why it took far longer for us in the beginning, and why over the 
+next 30 years we will develop faster than other filesystems.  That is 
+why ext2 currently has more market share --- a lot of people benefited 
+from them getting something out quick that was usable...
+
+-- 
+Hans
 
 
