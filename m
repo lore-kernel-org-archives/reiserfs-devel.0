@@ -1,61 +1,56 @@
-From: sankarshana rao <san_wipro@yahoo.com>
-Subject: Re: reiserfs_create: no enough blocks on device
-Date: Mon, 2 Aug 2004 15:07:00 -0700 (PDT)
-Message-ID: <20040802220700.68291.qmail@web50906.mail.yahoo.com>
-References: <20040802215322.GB1912@schnapps.adilger.int>
+From: David Greaves <david@dgreaves.com>
+Subject: Re: Using fs views to isolate untrusted processes: I need an assistant
+ architect in the USA for Phase I of a DARPA funded linux kernel project
+Date: Mon, 02 Aug 2004 23:10:29 +0100
+Message-ID: <410EBBD5.4080308@dgreaves.com>
+References: <410D96DC.1060405@namesys.com> <200408021112.08981.christian.mayrhuber@gmx.net> <87r7qpo3dj.fsf@uhoreg.ca>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19925-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19926-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040802215322.GB1912@schnapps.adilger.int>
+In-Reply-To: <87r7qpo3dj.fsf@uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andreas Dilger <adilger@clusterfs.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hubert Chan <hubert@uhoreg.ca>
 Cc: reiserfs-list@namesys.com
 
-I tried now with block count of 50000 (50 MB)..Still I
-get the same error.
-The machine is a mips running timesys linux..
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Any clues??
+Hubert Chan wrote:
+|>>>>>"Christian" == Christian Mayrhuber <christian.mayrhuber@gmx.net>
+writes:
+|
+|
+| Christian> Linux VServer might be a project that already tries to
+| Christian> accomplish this task.
+|
+| After poking around the linux-veserver.org page, it sounds like Linux
+| VServer is completely different from what Hans/Namesys is trying to do.
+| Linux VServer still uses chroot.  From what I understand about views,
+| you don't need to set up a chroot; applications run under the same
+| filesystem as everything else.  You just need to, for example, say that
+| apache is allowed to read from /etc/apache/*, /var/www, /usr/lib, etc.,
+| and is allowed to write to /var/log/apache/*.  Then, even though apache
+| is running under the same filesystem, it won't even be able to see, say
+| /etc/passwd.
+|
 
-Thx
+It sounds like running exe's setgid (or addgid?) and then having acls.
+But then the acls are not tied to the file objects, more appended to the
+file acl list by 'pattern' according to the exe.
 
---- Andreas Dilger <adilger@clusterfs.com> wrote:
+Acls at a distance :)
 
-> On Aug 02, 2004  14:23 -0700, sankarshana rao wrote:
-> > I am trying to create a reiserfs filesystem using
-> the
-> > command 
-> > 'mkreiserfs  /dev/loop/0 100'.
-> > It always gives me the error 
-> > "reiserfs_create: no enough blocks on device".
-> > 
-> > I tried altering the block size, but it would not
-> > help..
-> 
-> You can't make a reiserfs filesystem smaller than
-> about 40MB.
-> 
-> Cheers, Andreas
-> --
-> Andreas Dilger
-> http://sourceforge.net/projects/ext2resize/
-> http://members.shaw.ca/adilger/            
-> http://members.shaw.ca/golinux/
-> 
-> 
+David
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-> ATTACHMENT part 2 application/pgp-signature 
-
-
-
-
-		
-_______________________________
-Do you Yahoo!?
-Express yourself with Y! Messenger! Free. Download now. 
-http://messenger.yahoo.com
+iD8DBQFBDrvU8LvjTle4P1gRAkt1AJsFhmZI6OP4KRxY+JnPnq6lhhozLACePwl7
+s4Zl5NO9YcTLYcKBxg1g9Qc=
+=ZU/S
+-----END PGP SIGNATURE-----
