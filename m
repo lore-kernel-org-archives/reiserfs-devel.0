@@ -1,128 +1,39 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Anders Widman <andewid@tnonline.net>
 Subject: Re: Proposal for keying encrypted filesystem
-Date: Tue, 01 Apr 2003 20:06:32 +0400
-Message-ID: <3E89B908.1070106@namesys.com>
-References: <200303282026.23543.phma@webjockey.net> <200303291155.40419.phma@webjockey.net> <3E85E338.CEAA7DC7@namesys.com> <200303301130.24136.phma@webjockey.net> <3E8824B4.55C63A55@namesys.com> <3E88300C.22B54FD7@namesys.com> <20030331133618.GO8452@hvs.envisage.co.za> <3E88496C.E83B780F@namesys.com> <20030331164502.GU8452@hvs.envisage.co.za> <3E8985D5.7CA598FF@namesys.com>
+Date: Tue, 1 Apr 2003 18:16:32 +0200
+Message-ID: <76105761281.20030401181632@tnonline.net>
+References: <200303282026.23543.phma@webjockey.net>
+ <200303291155.40419.phma@webjockey.net> <3E85E338.CEAA7DC7@namesys.com>
+ <200303301130.24136.phma@webjockey.net> <3E8824B4.55C63A55@namesys.com>
+ <3E88300C.22B54FD7@namesys.com> <20030331133618.GO8452@hvs.envisage.co.za>
+ <3E88496C.E83B780F@namesys.com> <20030331164502.GU8452@hvs.envisage.co.za>
+ <3E8985D5.7CA598FF@namesys.com> <3E89B908.1070106@namesys.com>
+Reply-To: Anders Widman <andewid@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13511-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13512-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E8985D5.7CA598FF@namesys.com>
+In-Reply-To: <3E89B908.1070106@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Edward Shushkin <edward@namesys.com>
-Cc: Hendrik Visage <hvisage@envisage.co.za>, reiserfs-list@namesys.com, reiserfs-dev@namesys.com
-
-Edward Shushkin wrote:
-
->Hendrik Visage wrote:
->  
->
->>On Mon, Mar 31, 2003 at 05:58:04PM +0400, Edward Shushkin wrote:
->>    
->>
->>>I didn't invent something new..
->>>I don't understand what should withstand scrutiny from crypto gurus.. md5? SHA?
->>>      
->>>
->>The keying implementation as proposed.
->>    
->>
->
->I agree, but keying implementation is not ready, just in discussion process, so there is 
->nothing that should withstand scrutiny for a while.. I want to clear up some order in 
->addition to the design document I have posted.
->  First we would like to specify the minimal crypto interface that kernel should know about.
->Our
->
-? ;-)
-
-> policy is that it should be exactly *minimal*, so kernel shouldn't worry about key
->management.
->
-My policy is that user hassle should be minimal, and we should try to 
-select at least one default key management set of utilities to integrate 
-well with and test with.
-
-Are you sure we should not get keys from the environment? Is there too 
-much performance cost?
-
-It would be best if people could use applications that are unaware of 
-the crypto mechanism when accessing files.
-
-> When user tries to open a crypto file by special reiser4_open() system call,
->kernel calls appropriate method which checks if the key passed by user is valid. I have 
->described the identification mechanism earlier, it uses disk key ID calculated by share or
->private key during creation (when kernel creates, or opens a crypto file, it doesn't need to
->distinguish, if the key is share or private). With a big probability (which is provided by
->using of crypto-stable hash function) kernel makes a right conclusion if the key is valid or
->invalid. If passed key is valid, kernel load this key into its own memory, and installs the
->pointer to the inode. It means that user has got an access to this file i.e. he can read and
->write file's data using this key. At the end of session reiser4_close() method zeroes and frees
->the memory allocated for the key. All read(), write() internals I have described earlier. 
-> There is an opinion that is *all* what kernel should know about crypto-files. Although one
->more thing that kernel also should do (in order to support public-private interface) is
->distinguish what key should be used for reading, and what one should be used for writing.
->The current list of parameters which should be passed to the kernel via reiser4_open syscall
->(including compression info) is:
->
->crypto_id crypto;            / id of the reiser4 crypto-plugin /
->crypto_hash_id hash;         / id of the reiser4 crypto-hash plugin /
->compression_id compression;  / id of the reiser4 compression plugin /
->__u8 *pr_key;                / pointer to the private(share) key /
->__u16 pr_key_size;           / private(share) key size /
->__u8 *pub_key;               / pointer to the public key /
->__u16 pub_key_size;          / public key size /
->__u8 *keyid_string;          / pointer to the identification string (secret string randomly
->                               generated by appropriate key generation routine) /
->__u8  keyid_length ;         / the length of identification string /
->__u8  cluster_shift;         / cluster parameter /
->
->Key ID size is defined by crypto-hash plugin (it is just an output size of appropriate hash
->function). All other needed information is contained in specified crypto-plugin (if used
->crypto-algorithm is symmetric or asymmetric, how to install keys to the inode, etc..)
->So we would like to see the following:
->   
->1) Any opinions whether this crypto-file interface is full enough to implement public-private
->keing (or maybe I have missed something that will be needed for some useful features), etc..
->
->2) Any remarks about possible security holes in the reiser4 internals of main system calls I
->have described. I don't think this is the only crypto guru who can do this.
->
->3) Any proposals about crypto-directory plugin implementation. Obviously, encryption of directory
->entries (which is so desirable by everyone) should be implemented as a new directory plugin. 
->
-Not this year though, unless someone pays for it.
-
->This is the main directory plugin methods (->create_child() and ->lookup() responsible for 
->new entry creation and name resolution) who will call crypto-plugin (I hope we don't need
->to compress file names). Perhaps, it is possible to implement the scheme when all directory entries
->and appropriate files are encrypted by the same key which is loaded once for all these files, and
->the appropriate key ID is verified once and saved once in directory disk stat-data instead of 
->its saving in disk stat-data of each file.
->
->4) Proposals about integrating with a PKI infrastructure.
->
-How about creating a list of the existing PKIs?
-
->
->5) Proposals about user level support.
->
->As I understand, currently we need 1), 2) and 5). Other will be need in future.	
->Anyway thanks for all your posts, although some of them I can not comment since the topic is beyond
->the scope of DARPA contract.
->
->Edward.
->
->
->  
->
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
 
--- 
-Hans
+> My policy is that user hassle should be minimal, and we should try to
+> select at least one default key management set of utilities to integrate
+> well with and test with.
 
+> Are you sure we should not get keys from the environment? Is there too
+> much performance cost?
+
+> It would be best if people could use applications that are unaware of
+> the crypto mechanism when accessing files.
+
+I think this is very important. Making all software aware would be a
+much bigger task to accomplish?
+
+//Anders
 
