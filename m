@@ -1,7 +1,7 @@
 From: "mailinglists@d-g-c.de" <mailinglists@d-g-c.de>
 Subject: Re: Reiser4fs and SPARC64?
-Date: Mon, 21 Feb 2005 13:23:25 +0100
-Message-ID: <4219D2BD.1030004@d-g-c.de>
+Date: Mon, 21 Feb 2005 13:34:40 +0100
+Message-ID: <4219D560.9090904@d-g-c.de>
 References: <421347FD.6000204@d-g-c.de> <20050216140944.GZ7482@backtop.namesys.com> <200502161724.16258.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -480,11 +480,158 @@ Vitaly Fertman wrote:
 > 
 >  
 >
+libaal-1.0.4.tar.gz compiled fine without any patches.
+but reiser4progs-1.0.4 did not (also no patches!):
 
-These 2 patches are no more needed for me and my sparc64 since you 
-released 1.0.4?
-Today i compiled my 2.6.10-mm3-reiser4 kernel and it works fine. Only 
-problem left is LVM cause the kernel gets too big (>3.5MB) with LVM 
-compiled in it. So my root filesystem will be no LVM...
+creating libaux-minimal.la
+(cd .libs && rm -f libaux-minimal.la && ln -s ../libaux-minimal.la 
+libaux-minimal.la)
+make[2]: Leaving directory `/usr/src/reiser4progs-1.0.4/libaux'
+Making all in plugin
+make[2]: Entering directory `/usr/src/reiser4progs-1.0.4/plugin'
+Making all in format
+make[3]: Entering directory `/usr/src/reiser4progs-1.0.4/plugin/format'
+Making all in format40
+make[4]: Entering directory 
+`/usr/src/reiser4progs-1.0.4/plugin/format/format40'
+if /bin/sh ../../../libtool --mode=compile gcc -DHAVE_CONFIG_H -I. -I. 
+-I../../.. -I../../../include   -D_REENTRANT -D_FILE_OFFSET_BITS=64 
+-DENABLE_SYMLINKS -DENABLE_SPECIAL -DENABLE_R5_HASH -DENABLE_FNV1_HASH 
+-DENABLE_RUPASOV_HASH -DENABLE_TEA_HASH -DENABLE_DEG_HASH 
+-DENABLE_LARGE_KEYS -DENABLE_SHORT_KEYS -DENABLE_DOT_O_FIBRE 
+-DENABLE_EXT_1_FIBRE -DENABLE_EXT_3_FIBRE -DENABLE_LEXIC_FIBRE -O3 -W 
+-Wall -Wuninitialized -Wno-unused-parameter -Wredundant-decls -MT 
+libformat40_static_la-format40.lo -MD -MP -MF 
+".deps/libformat40_static_la-format40.Tpo" \
+  -c -o libformat40_static_la-format40.lo `test -f 'format40.c' || echo 
+'./'`format40.c; \
+then mv -f ".deps/libformat40_static_la-format40.Tpo" 
+".deps/libformat40_static_la-format40.Plo"; \
+else rm -f ".deps/libformat40_static_la-format40.Tpo"; exit 1; \
+fi
+mkdir .libs
+ gcc -DHAVE_CONFIG_H -I. -I. -I../../.. -I../../../include -D_REENTRANT 
+-D_FILE_OFFSET_BITS=64 -DENABLE_SYMLINKS -DENABLE_SPECIAL 
+-DENABLE_R5_HASH -DENABLE_FNV1_HASH -DENABLE_RUPASOV_HASH 
+-DENABLE_TEA_HASH -DENABLE_DEG_HASH -DENABLE_LARGE_KEYS 
+-DENABLE_SHORT_KEYS -DENABLE_DOT_O_FIBRE -DENABLE_EXT_1_FIBRE 
+-DENABLE_EXT_3_FIBRE -DENABLE_LEXIC_FIBRE -O3 -W -Wall -Wuninitialized 
+-Wno-unused-parameter -Wredundant-decls -MT 
+libformat40_static_la-format40.lo -MD -MP -MF 
+.deps/libformat40_static_la-format40.Tpo -c format40.c  -fPIC -DPIC -o 
+.libs/libformat40_static_la-format40.o
+format40.c: In function `format40_create':
+format40.c:255: error: invalid type argument of `unary *'
+format40.c:255: warning: type defaults to `int' in declaration of `__tmp'
+format40.c:255: warning: initialization makes integer from pointer 
+without a cast
+format40.c:255: error: invalid type argument of `unary *'
+format40.c:260: error: invalid type argument of `unary *'
+format40.c:260: warning: type defaults to `int' in declaration of `__tmp'
+format40.c:260: warning: initialization makes integer from pointer 
+without a cast
+format40.c:260: error: invalid type argument of `unary *'
+format40.c:260: warning: passing arg 1 of `aal_memcpy' makes pointer 
+from integer without a cast
+format40.c:263: error: invalid type argument of `unary *'
+format40.c:263: warning: type defaults to `int' in declaration of `__tmp'
+format40.c:263: warning: initialization makes integer from pointer 
+without a cast
+format40.c:263: error: invalid type argument of `unary *'
+format40.c:263: warning: passing arg 1 of `aal_memcpy' makes pointer 
+from integer without a cast
+format40.c:268: error: invalid type argument of `unary *'
+format40.c:268: warning: type defaults to `int' in declaration of `__tmp'
+format40.c:268: warning: initialization makes integer from pointer 
+without a cast
+format40.c:268: error: invalid type argument of `unary *'
+format40.c:268: warning: passing arg 1 of `aal_memcpy' makes pointer 
+from integer without a cast
+format40.c:271: error: invalid type argument of `unary *'
+format40.c:271: warning: type defaults to `int' in declaration of `__tmp'
+format40.c:271: warning: initialization makes integer from pointer 
+without a cast
+format40.c:271: error: invalid type argument of `unary *'
+format40.c:271: warning: passing arg 1 of `aal_memcpy' makes pointer 
+from integer without a cast
+format40.c:276: error: invalid type argument of `unary *'
+format40.c:276: warning: type defaults to `int' in declaration of `__tmp'
+format40.c:276: warning: initialization makes integer from pointer 
+without a cast
+format40.c:276: error: invalid type argument of `unary *'
+format40.c:276: warning: passing arg 1 of `aal_memcpy' makes pointer 
+from integer without a cast
+format40.c:280: error: invalid type argument of `unary *'
+format40.c:280: warning: type defaults to `int' in declaration of `__tmp'
+format40.c:280: warning: initialization makes integer from pointer 
+without a cast
+format40.c:280: error: invalid type argument of `unary *'
+format40.c:280: warning: passing arg 1 of `aal_memcpy' makes pointer 
+from integer without a cast
+format40.c: In function `format40_set_root':
+format40.c:380: error: invalid type argument of `unary *'
+format40.c:380: warning: type defaults to `int' in declaration of `__tmp'
+format40.c:380: warning: initialization makes integer from pointer 
+without a cast
+format40.c:380: error: invalid type argument of `unary *'
+format40.c:380: warning: passing arg 1 of `aal_memcpy' makes pointer 
+from integer without a cast
+format40.c: In function `format40_set_len':
+format40.c:387: error: invalid type argument of `unary *'
+format40.c:387: warning: type defaults to `int' in declaration of `__tmp'
+format40.c:387: warning: initialization makes integer from pointer 
+without a cast
+format40.c:387: error: invalid type argument of `unary *'
+format40.c:387: warning: passing arg 1 of `aal_memcpy' makes pointer 
+from integer without a cast
+format40.c: In function `format40_set_free':
+format40.c:397: error: invalid type argument of `unary *'
+format40.c:397: warning: type defaults to `int' in declaration of `__tmp'
+format40.c:397: warning: initialization makes integer from pointer 
+without a cast
+format40.c:397: error: invalid type argument of `unary *'
+format40.c:397: warning: passing arg 1 of `aal_memcpy' makes pointer 
+from integer without a cast
+format40.c: In function `format40_set_height':
+format40.c:404: error: invalid type argument of `unary *'
+format40.c:404: warning: type defaults to `int' in declaration of `__tmp'
+format40.c:404: warning: initialization makes integer from pointer 
+without a cast
+format40.c:404: error: invalid type argument of `unary *'
+format40.c:404: warning: passing arg 1 of `aal_memcpy' makes pointer 
+from integer without a cast
+format40.c: In function `format40_set_stamp':
+format40.c:411: error: invalid type argument of `unary *'
+format40.c:411: warning: type defaults to `int' in declaration of `__tmp'
+format40.c:411: warning: initialization makes integer from pointer 
+without a cast
+format40.c:411: error: invalid type argument of `unary *'
+format40.c:411: warning: passing arg 1 of `aal_memcpy' makes pointer 
+from integer without a cast
+format40.c: In function `format40_set_policy':
+format40.c:418: error: invalid type argument of `unary *'
+format40.c:418: warning: type defaults to `int' in declaration of `__tmp'
+format40.c:418: warning: initialization makes integer from pointer 
+without a cast
+format40.c:418: error: invalid type argument of `unary *'
+format40.c:418: warning: passing arg 1 of `aal_memcpy' makes pointer 
+from integer without a cast
+format40.c: In function `format40_set_key':
+format40.c:430: error: invalid type argument of `unary *'
+format40.c:430: warning: type defaults to `int' in declaration of `__tmp'
+format40.c:430: warning: initialization makes integer from pointer 
+without a cast
+format40.c:430: error: invalid type argument of `unary *'
+format40.c:430: warning: passing arg 1 of `aal_memcpy' makes pointer 
+from integer without a cast
+make[4]: *** [libformat40_static_la-format40.lo] Error 1
+make[4]: Leaving directory 
+`/usr/src/reiser4progs-1.0.4/plugin/format/format40'
+make[3]: *** [all-recursive] Error 1
+make[3]: Leaving directory `/usr/src/reiser4progs-1.0.4/plugin/format'
+make[2]: *** [all-recursive] Error 1
+make[2]: Leaving directory `/usr/src/reiser4progs-1.0.4/plugin'
+make[1]: *** [all-recursive] Error 1
+make[1]: Leaving directory `/usr/src/reiser4progs-1.0.4'
+make: *** [all] Error 2
 
-greetz Florian
