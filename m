@@ -1,46 +1,41 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Processes dying?
-Date: Sat, 5 Jun 2004 01:41:11 +0300
-Message-ID: <20040604224111.GK4990@nysv.org>
-References: <200406042133.i54LXIXN031219@turing-police.cc.vt.edu>
+From: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2004@gmx.net>
+Subject: ReiserFS 3.5/3.6/ Reiser4 limits
+Date: Sat, 05 Jun 2004 00:42:54 +0200
+Message-ID: <40C0FAEE.8010901@gmx.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19025-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19026-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200406042133.i54LXIXN031219@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
-Cc: Valdis.Kletnieks@vt.edu
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-(*sigh* maybe this time the mail will come through, without a file-k
-attachment ;)
+Hi,
 
-On Fri, Jun 04, 2004 at 05:33:18PM -0400, Valdis.Kletnieks@vt.edu wrote:
+first, let me point out an error in
+http://www.namesys.com/faq.html#reiserfsspecs
 
->Of course, if your syslogd is one of the processes wedged up, you won't 
->get much....
+The ReiserFS 3.5 on-disk format may support 4GiB-1 file size, but I have
+not seen any 2.4 or 2.6 kernel supporting more than 2GiB-1 file size on
+ReiserFS 3.5 disks. Please correct the table or the code, your choice.
 
-I did not.
+Let me quote from http://www.suse.de/~aj/linux_lfs.html
+>     *  On 32-bit systems with Kernel 2.4.x: The size of a file and a block device is limited to 2 TiB. By using LVM several block devices can be combined enabling the handling of larger file systems.
+>     * 64-bit systems: The sizes of a filesytem and of a file are limited by 2^63 (8 EiB). But there might be hardware driver limits that do not allow to access such large devices.
+>     * Kernel 2.6: For both 32-bit systems with option CONFIG_LBD set and for 64-bit systems: The size of a file system is limited to 2^73 (far too much for today). On 32-bit systems the size of a file is limited to 2 TiB. Note that not all filesystems and hardware drivers might handle such large filesystems.
 
-However, I got something.
+Since you mention a 16 TiB file size limit on 32 bit, I have to assume
+that either the 2 TiB file size limit on 32bit is no more or your page is
+incorrect regarding this limit.
 
-It is at the url
-http://mjt.nysv.org/reiser/2004-06-04_trace.bz2
+And what I'm especially interested in: What are the limits of Reiser4? I
+couldn't find any information about it (maybe I didn't search long enough).
 
-The mystical data is at 01:10:58 and 01:15:31.
 
-Anyway, I recognize just about tty_read, sys_read, vfs_read and
-make_space_tail from there. If there is some document which I could
-read to learn these things without having to learn the ancient art
-of kernel-coding, I would appreciate a url :)
-
-Hope this helps, and thanks!
-
+Regards,
+Carl-Daniel
 -- 
-mjt
-
+http://www.hailfinger.org/
