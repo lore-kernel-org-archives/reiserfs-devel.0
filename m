@@ -1,61 +1,94 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: fsync() Performance Issue
-Date: Tue, 07 May 2002 03:41:39 +0400
-Message-ID: <3CD714B3.6040407@namesys.com>
-References: <93F527C91A6ED411AFE10050040665D0049BF9B4@corpusmx1.us.dg.com>	<1020463205.3	 946.252.camel@tiny> 	<3CD341EC.9080906@namesys.com>	<1020517884.3947.266.camel@tiny> 	<3CD3F76D.4000708@namesys.com> <1020688827.3947.2087.camel@tiny> 	<3CD6F3D4.9050103@namesys.com> <1020725839.988.50.camel@tiny>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: Re: Error Code 255 and "Permission Denied"
+Date: Tue, 07 May 2002 02:54:04 +0200
+Message-ID: <3CD725AC.6000708@mb.tu-ilmenau.de>
+References: <scd69d55.074@gwd.albion.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10268-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10269-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list@namesys.com
+To: Daniel Christiansen <christiansen@albion.edu>, Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list <reiserfs-list@namesys.com>, Chris Mason <mason@suse.com>
 
-Chris Mason wrote:
+On 05/06/2002 09:12 PM, Daniel Christiansen wrote:
 
->On Mon, 2002-05-06 at 17:21, Hans Reiser wrote:
->  
->
->>>I'd rather not put it back in because it adds yet another corner case to
->>>maintain for all time.  Most of the fsync/O_SYNC bound applications are
->>>just given their own partition anyway, so most users that need data
->>>logging need it for every write.
+> Everything seems to work by using the 3.x.1b version of reisfsck with
+> --rebuild-tree.  Thank you very much, Oleg, for taking the time to solve
+> my problem.
+> 
+> I don't know anything about the "write cache enabled" issue below.  Is
+> this something I have to change with a jumper, a bios setting, or a
+> software configuration?
+> 
+
+
+Huh! Maybe you can jumper this on your MB, too?! Or maybe also set it in 
+your BIOS?
+
+Use "hdparm -i /dev/drive-whatever" to get this information from your 
+disk drive.
+If your drive supports it, you 'll find a number in kB after 
+"BuffSize=". If your jumpers/BIOS do support it with your current 
+settings or your disks defaults do it, search for a 
+"WriteCache=enabled". If your BIOS doesn't make it for you it, you can 
+enable it by a "hdparm -W1 /dev/drive-whatever" and disable it with 
+parameter "-W0" instead of "-W1". And, of course, have a look at the 
+manpage -- this feature is marked "(DANGEROUS)" (just in case your 
+hardware does not support it)! I have hdparm v4.6 on here since January 
+but I just saw a v4.9 on
+  ftp://sunsite.unc.edu/pub/Linux/system/hardware     and on
+  ftp://metalab.unc.edu/pub/Linux/system/hardware/    .
+
+> Thanks again.
+> 
+> 
+>>>Other indications of a problem:  I ran the dmesg program from /bin
 >>>
->>>      
+> and
+> 
+>>>got "Warning log replay starting on readonly filesystem" and lots of
+>>>"i/o failure trying to find stat data" messages.
 >>>
->>Does mozilla's mail user agent use fsync?  Should I give it its own 
->>partition?  I bet it is fsync bound....;-)
->>    
+>>Your filesystem was corrupted by something. Do you have Windows on
+>>that box, too?
+>>I have windows on the first drive, which I rarely use, and a vfat
+>>windows partition on the second drive so that I could transfer files.
+>>I'm not sure, but I think my problems started after a power outage.
 >>
->
->[ I took Wayne off the cc list, he's probably not horribly interested ]
->
->Perhaps, but I'll also bet the fsync performance hit doesn't affect the
->performance of the system as a whole.
->
- I suspect that on my laptop, downloading emails is disk bound due to 
-fsync()....  I haven't measured it, but it "feels" that way.
+> 
+> Hm. Do you have write cache enabled on your harddrive? That may explain
+> your problems (and yes, most of drive manufacturers do enable write
+> caching
+> by default).
+> 
 
->
->Mostly, I feel this kind of tuning is a mistake right now.  The patch is
->young and there are so many places left to tweak...I'm still at the
->stage where much larger improvements are possible, and a better use of
->coding time.  Plus, it's monday and it's always more fun to debate than
->give in on mondays.
->
->-chris
->
->
->
->
->  
->
 
-Needing more time to finish analyzing what is going on and what fixes it 
-best is always a good reason to defer things....
+Oleg, do you really think a dumb-crashing-Windows to be a reason?? What 
+version do you run on your disks? I have a Win98 spread over the 
+partitions of my 2 disks but the only things I get from a 
+crashed=powered-off Win98 are many-many unusable files in Win98 -- not 
+affecting my Linux system.
+When I have a complete-crash=power-off when there was a running VMware 
+with Win98 inside (but it's a dual boot system with real partitions' 
+access for VMware from Linux) I have 2-to-5 truncates-to-complete on 
+restart/mount of my reiserfs / and the "usual" vfat problems later... 
+like missing files, checks needed and so on)
 
-Hans
+Maybe it's the kernel <-reiserfs-sub-version-> version Daniel runs at 
+the moment? Oleg?
+
+Or is it somekind of connected to Chris Masons thread "2.4.19-pre7 / 
+corruption on unwanted reboot"??? If Chris and Jens found bugs on IDE 
+interaction with ReiserFS they should really put out a patch soon... ;-)
+
+Chris M.? Is that related eventually? Just a doubt!
+
+
+Best regards,
+
+Manuel
 
