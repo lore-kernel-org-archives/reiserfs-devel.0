@@ -1,43 +1,36 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: lvm+loop-aes+reiserfs / iput deadlock fix
-Date: Tue, 28 Jan 2003 09:40:39 +0300
-Message-ID: <20030128094039.B32093@namesys.com>
-References: <5.2.0.9.2.20030127000631.01d7a068@pop.tvnet.hu>
+Subject: Re: [PATCH] data logging patches available for 2.4.21-preX
+Date: Tue, 28 Jan 2003 09:56:45 +0300
+Message-ID: <20030128095645.A32331@namesys.com>
+References: <200301271914.26312.Dieter.Nuetzel@hamburg.de> <1043692402.15680.58.camel@tiny.suse.com> <200301271949.57132.Dieter.Nuetzel@hamburg.de> <3E3599A4.9080700@mb.tu-ilmenau.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12526-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12527-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <5.2.0.9.2.20030127000631.01d7a068@pop.tvnet.hu>
+In-Reply-To: <3E3599A4.9080700@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Newsmail <newsmail@satimex.tvnet.hu>
-Cc: reiserfs-list@namesys.com
+To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Cc: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>, Chris Mason <mason@namesys.com>, reiserfs-list <reiserfs-list@namesys.com>
 
 Hello!
 
-On Mon, Jan 27, 2003 at 12:11:37AM +0100, Newsmail wrote:
+On Mon, Jan 27, 2003 at 09:42:12PM +0100, Manuel Krause wrote:
 
-> ftp://ftp.namesys.com/pub/reiserfs-for-2.4/2.4.20-pending/01-iput-deadlock-fix.diff 
-> patch on 2.4.20aa1 and this patch DOES improve the situation.
+> BTW, does the on-disk FS structure matter with this comparison? (FS 
 
-That's good... and bad.
+It should. Data layout determines how often (and how far) you do your seeks.
 
-> Before I used the patch when I made heavy copying of 10-50 meg files, after 
-> some time the copying process hung, and WASN'T killable. And also it left 
-> files that werent deletable, and also left the deleting process hung. and 
-> many times I wasnt even able to acces the folder where the strange file was 
-> located.
-> Now with the iput deadlock fix, the copying process does hang as well, BUT 
-> it is killable after, and the 'fucked up' file is deletable also.
+> content created with data=journal/ordered <-> tested with 
+> data=journal/ordered) -- Or did this only have importance when Oleg 
+> introduced the new block allocator?
 
-That is clear sign of problems at new_inode() stage (something propagated from block level, I think).
-And given that you do not have space shortage and any unusual kernel messages...
-This is very strange.
-Where does process hang this time? (press SysRQ-T, decode the output and send it to me)
+Old allocator had different behaviour than new one. (in default config),
+also they have different tail policies.
 
 Bye,
     Oleg
