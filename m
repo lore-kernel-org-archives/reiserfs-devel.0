@@ -1,61 +1,41 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: reiserfsck --rebuild-tree on a big filesystem
-Date: Mon, 25 Nov 2002 18:44:33 +0300
-Message-ID: <20021125184433.A32129@namesys.com>
-References: <20021125143634.GC9006@mail.cekit.cz> <20021125174846.A31778@namesys.com> <20021125153154.GA19254@mail.cekit.cz>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: reiserfs and nfs.
+Date: Mon, 25 Nov 2002 18:48:18 +0300
+Message-ID: <15842.17986.416305.106123@laputa.namesys.com>
+References: <E18GKCG-0003cp-00@aqualene.uio.no>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12042-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12043-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20021125153154.GA19254@mail.cekit.cz>
-Resent-To: reiserfs-list@namesys.com
-Resent-Message-Id: <20021125154708.CBF6D2FD004@angband.namesys.com>
+In-Reply-To: <E18GKCG-0003cp-00@aqualene.uio.no>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mira Temp?r <mira-list@cekit.cz>
-Cc: reiserfs-list@namesys.com
+To: Terje Malmedal <terje.malmedal@usit.uio.no>
+Cc: linux-kernel@vger.kernel.org, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Hello!
+Terje Malmedal writes:
+ > 
+ > Hi, 
+ > 
+ > I'm nfs-exporting a reiserfs filesystem, the problem is that the
+ > inode-number as seen from the client seems to change from time to
+ > time. This confuses a number of programs, for instance Emacs believes
+ > that the file changed under it when this happens.
 
-On Mon, Nov 25, 2002 at 04:31:54PM +0100, Mira Temp?r wrote:
+This problem is not known. What version of reiserfs (3.5 or 3.6) and
+kernel are you using? Is there any way to reproduce this problem?
 
-> Oleg Drokin - 25/11/02 17:48 napsal:
-> | > But after 16 hours of running it, it is still on 0% and whole process 
-> | > would take about 1 month to complete (started at 2000 blocks/sec, 
-> | > but now running at 26b/s).
-> | This is very strange, We've seen reports of reiserfsck --rebuild-tree
-> | of 500Gb volume (filled to 170Gb) finished in 8 hours.
-> Can be the speed affected with high usage of FS (about 99%)? 
+ > 
+ > Is this a known problem? Any known fix? I found a number of old
+ > messages about problems with reiser and nfs, but not this
+ > specifically.
+ > 
+ > -- 
+ >  - Terje
+ > malmedal@usit.uio.no
 
-Not at this stage at least. How much RAM do you have?
-
-> One point that I've missed in previous e-mail: during rebuild-tree,
-> there is a lot of messages in log like this:
-> pass0: vpf-10700: block 1615323, item 6: The item with wrong offset or
-> length found [9532827 9534032 0x3001 DRCT (2)], len 1000 - deleted
-
-This is pretty strange thing indeed. File tail beyond border that is allowed.
-I do not know how it might have happen.
-
-> | Can you please verify that the read speed of your RAID5 is constant in all
-> | the areas of disk, that it is not opearting in some kind of degraded mode
-> | and is generally in good state?
-> raid is reporting to be ok, data read speed are almost the same at
-> various places:
-> 0:03.80elapsed 18%CPU
-> 0:02.97elapsed 19%CPU
-> 0:01.76elapsed 24%CPU
-> 0:01.51elapsed 36%CPU
-> ... (dd reading 40MBytes)
-
-BTW, what is the CPU usage when the speed is degraded?
-(have you already interrupted reiserfsck process? if not then attach to it with
-gd and obtain a pair of stacktraces for us please.)
-
-Bye,
-    Oleg
+Nikita.
 
