@@ -1,66 +1,52 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: file as a directory
-Date: Mon, 20 Dec 2004 09:21:35 -0800
-Message-ID: <41C70A1F.8000609@namesys.com>
-References: <200412180152.iBI1q98X007507@laptop11.inf.utfsm.cl>
+Subject: Re: Need Warm Fuzzies, ReiserFS (3)
+Date: Mon, 20 Dec 2004 09:27:37 -0800
+Message-ID: <41C70B89.7010000@namesys.com>
+References: <41C66615.5010206@simutronics.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22855-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22856-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200412180152.iBI1q98X007507@laptop11.inf.utfsm.cl>
+In-Reply-To: <41C66615.5010206@simutronics.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: David Masover <ninja@slaphack.com>, Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, Nate Diller <ndiller@namesys.com>
+To: Jim Miller <jimm@simutronics.com>
+Cc: reiserfs-list@namesys.com
 
-Horst von Brand wrote:
+Jim Miller wrote:
 
+> Hi everyone,
 >
->>>Can you point me to any such literature?  I'm just curious.
->>>      
->>>
+> I have recently been burned by the XFS file system -- After a recent 
+> system crash/hang we experienced a lot of file corruption and needed 
+> to restore from a backup that was ~12hrs old.  It seems that XFS keeps 
+> a lot of journal info in memory and a sudden system crash (hang) 
+> prevents it from writing out the journal.
+> We run a few game servers that have a large number of large and small 
+> files that are actively accessed (and restoring from a backup 12hrs 
+> old made a lot of our gamers very unhappy).  We were running EXT3 
+> (which in the past recovered nicely from hangs/crashes) but 
+> performance was so bad we needed a new FS so 6mos ago a decision was 
+> made to go with XFS. I would like to switch to ReiserFS (v3) (I 
+> understand Reiser4 isn't quite ready for production use) and was 
+> hoping to get the warm fuzzies about making this decision.  I know 
+> it's much faster than ext3 but at this point I need to feel good about 
+> it's ability to recover from a sudden system hang/crash/reset.
 >
->  
 >
->>Look in every field of cs except filesystems and kernels.;-)
->>    
->>
+> Thanks,
+> Jim
 >
->Right. Smart people are found elsewhere only.
->  
 >
-There is a huge pile of innovations by the database field that 
-filesystems people do not yet make use of.  The merits of 
-interdisciplinary study are understood by many.
-
->  
 >
->>                                                             Databases, 
->>garbage collectors, etc.
->>    
->>
 >
->Everthing stuff that works on the assumption that what they are working on
->fits in RAM (or can overflow into swap space in a pinch), and that RAM is
->fast (and even so they are infuriatingly slow). And disks are usually a few
->thousand times larger than RAM (more stuff to shuffle around) and a million
->times slower...
 >
->  
 >
->>                         Specific reference, no, I didn't collect them, 
->>sorry, but alexander the befs driver guy knows more than I about this.
->>    
->>
 >
->Furious handwaving doesn't make it true.
->  
 >
-Ok, go talk to the befs driver guy, and you'll find out he has already 
-done work on it.
-
-If his work does not satisfy you, sorry, I do detailed research just 
-before coding, not to satisfy some guy on lkml.
+>
+>
+It is probably tunable in XFS how long it keeps it in ram.
