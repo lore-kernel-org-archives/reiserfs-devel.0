@@ -1,52 +1,45 @@
-From: Lars Marowsky-Bree <lmb@suse.de>
-Subject: Re: reiser4 data journalling?
-Date: Fri, 29 Aug 2003 15:12:50 +0200
-Message-ID: <20030829131250.GU24767@marowsky-bree.de>
-References: <3F4E3AF9.2060100@tupshin.com> <16206.16138.72832.920045@laputa.namesys.com> <3F4E6AA4.3030900@namesys.com> <20030829001814.GB9019@zero>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: An alternative to UML for develop
+Date: Fri, 29 Aug 2003 17:25:09 +0400
+Message-ID: <16207.21557.718563.426844@laputa.namesys.com>
+References: <200308260109.54130.postnet@dragas.dyndns.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-15493-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15494-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030829001814.GB9019@zero>
+In-Reply-To: <200308260109.54130.postnet@dragas.dyndns.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Stefano Marinelli <postnet@dragas.dyndns.org>
+Cc: reiserfs-list@namesys.com
 
-On 2003-08-28T20:18:14,
-   Tom Vier <tmv@comcast.net> said:
+Stefano Marinelli writes:
+ > Hi there. Some months ago I've enjoyed a talk by Hans Reiser about 
+ > reiserfs at Bologna's University (Italy) and, after talking a bit with 
+ > him, I've discovered you use User Mode Linux a lot for testing. 
+ > So I wanted to inform you about a new project called qemu. At first it 
+ > was just a cpu emulator to launch x86 software on non-x86 archs, but 
+ > now is becoming a real Virtual Machine emulator. The main benefits are 
+ > that you don't have to patch the host kernel (just do a little 
+ > modification to guest's kernel, but it will be fixed soon) and can 
+ > launch a complete operating system as a total user process.
+ > So it may have many advantages against UML. The project is running fast, 
+ > the developer is a nice person so I think you could be interested in 
+ > having a look at http://fabrice.bellard.free.fr/qemu/
 
-> and shell builtins would have to be modded to insure page alignment. it
-> would be neat if all the regular builtins (cp, mv, ln) were atomic.
+Yes, should be useful. Does it allows to do things like:
 
-mv (ie, rename), ln and rm have always been atomic. That's a POSIX
-requirement.
+1. profiling
+2. measuring cache contention
+3. measuring overhead of interlocked operation?
 
-The new thing with reiserfs4 seems to be that if you do a write of, say,
-1M size in the atomic way, another reading process will either see all
-of the write or none of the write to have taken place.
+ > Last stable is Jul,14 but on last cvs there are a lot of add-ons!
+ > Hope it helps, and thanks for the wonderful reiserfs!
+ > 
+ > Stefano
+ > 
 
-(Right now, you could see a 'partial' read, where some pages from the
-write have been written already while others return the old data.)
-
-And apparently, you can say "begin transaction" and "commit / abort
-transaction" to achieve the same for multiple operations as a group.
-
-Hans, does that support nested transactions, too?
-
-And one thing has slipped from my mind: How do I enter a transaction? is
-it like chroot(), or a task-specific thing, how can child processes
-participate in the transaction etc?
-
-
-Sincerely,
-    Lars Marowsky-Br=E9e <lmb@suse.de>
-
---=20
-High Availability & Clustering		ever tried. ever failed. no matter.
-SuSE Labs				try again. fail again. fail better.
-Research & Development, SuSE Linux AG		-- Samuel Beckett
-
+Nikita.
