@@ -1,73 +1,60 @@
-From: "Alexander Waller" <a.waller@webpoint.at>
-Subject: HILFE! HELP! Problem with my root-partition
-Date: Tue, 26 Aug 2003 19:41:05 +0200
-Message-ID: <200308261742.h7QHgGD02541@fx.webpoint.at>
+From: Steven Cole <elenstev@mesatop.com>
+Subject: Re: reiser4 snapshot for August 26th.
+Date: 26 Aug 2003 12:20:38 -0600
+Message-ID: <1061922037.1670.3.camel@spc9.esa.lanl.gov>
+References: <20030826102233.GA14647@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-15422-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15423-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20030826102233.GA14647@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-dev@namesys.com, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-Hi!
-I restarted my server.
-Now my reiserfs-root-partition cannot be mounted.
-Reiserfsck doesn=B4t help.
+On Tue, 2003-08-26 at 04:22, Oleg Drokin wrote:
+> Hello!
+> 
+>    I have just released another reiser4 snapshot that I hope all interested
+>    parties will try. It is released against 2.6.0-test4.
+>    You can find it at http://namesys.com/snapshots/2003.08.26
+>    I include release notes below.
+> 
+> Reiser4 snapshot for 2003.08.26
+> 
 
-filehound:~ # reiserfsck --fix-fixable /dev/hdb3
-reiserfsck 3.6.4 (2002 www.namesys.com)
-Will check consistency of the filesystem on /dev/hdb3
-and will fix what can be fixed w/o --rebuild-tree
-Will put log info to 'stdout'
+I got this error while attempting to compile with reiser4.
+Snippet from .config follows.
 
-Do you want to run this program?[N/Yes] (note need to type Yes if you
-do):Yes
-reiserfs_open: neither new nor old reiserfs format found on /dev/hdb3
+Steven
 
-reiserfsck: Cannot not open filesystem on "/dev/hdb3"
-Aborted
-filehound:~
-
-There is a harddisk, realy.=20
-filehound:~ # fdisk -l /dev/hdb
-
-Disk /dev/hdb: 28.5 GB, 28520497152 bytes
-16 heads, 63 sectors/track, 55262 cylinders
-Units =3D cylinders of 1008 * 512 =3D 516096 bytes
-
-   Device Boot    Start       End    Blocks   Id  System
-/dev/hdb1   *         1        33     16600+  83  Linux
-/dev/hdb2            34       292    130536   82  Linux swap
-/dev/hdb3           293     55252  27699840   83  Linux
-filehound:~ #
-
-Please can anyone help me ?!
-Alex.
-
-
-
---=20
-
-WebPoint Internet Solutions
-Alexander Waller
-Vorarlberger Wirtschaftspark
-A-6840 G=F6tzis
-=20
-www.webpoint.at
-tel.  +43 5523 58244
-fax.  +43 5523 58255
-mobil +43 676 4121128
-=20
-webmaster-team  : webmaster@webpoint.at
-hostmaster-team : hostmaster@webpoint.at
-
-***                                     ***
-*       WebPoint Internet Solutions       *
-***                                     ***
-=20
+  CC      fs/reiser4/plugin/file/tail_conversion.o
+  CC      fs/reiser4/sys_reiser4.o
+fs/reiser4/sys_reiser4.c:54:32: parser/parser.code.c: No such file or directory
+fs/reiser4/sys_reiser4.c: In function `sys_reiser4':
+fs/reiser4/sys_reiser4.c:75: warning: implicit declaration of function `reiser4_pars_init'
+fs/reiser4/sys_reiser4.c:75: warning: assignment makes pointer from integer without a cast
+fs/reiser4/sys_reiser4.c:80: error: dereferencing pointer to incomplete type
+fs/reiser4/sys_reiser4.c:82: warning: implicit declaration of function `yyparse'
+fs/reiser4/sys_reiser4.c:83: warning: implicit declaration of function `reiser4_pars_free'
+fs/reiser4/sys_reiser4.c:66: warning: unused variable `Gencode'
+fs/reiser4/sys_reiser4.c: At top level:
+fs/reiser4/parser/parser.h:333: warning: `Fistmsg' defined but not used
+fs/reiser4/parser/parser.h:342: warning: `typesOfCommand' defined but not used
+fs/reiser4/parser/parser.h:354: warning: `Code' defined but not used
+make[2]: *** [fs/reiser4/sys_reiser4.o] Error 1
+make[1]: *** [fs/reiser4] Error 2
+make: *** [fs] Error 2
+[steven@spc1 linux-2.6.0-test4-r4]$ grep REISER4 .config
+CONFIG_REISER4_FS=y
+CONFIG_REISER4_FS_SYSCALL=y
+CONFIG_REISER4_LARGE_KEY=y
+# CONFIG_REISER4_CHECK is not set
+CONFIG_REISER4_USE_EFLUSH=y
+# CONFIG_REISER4_BADBLOCKS is not set
 
 
