@@ -1,36 +1,25 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Apparent race condition in do_journal_begin_r() with UL kernel
-Date: Fri, 19 Sep 2003 13:35:55 +0400
-Message-ID: <20030919093555.GB31208@namesys.com>
-References: <1063725179.12929.548.camel@biker.psw.pdb.fsc.net> <20030916153620.GA773@namesys.com> <1063963968.6484.3.camel@biker.psw.pdb.fsc.net>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Subject: Re: Carrying Attributes too Far
+Date: Fri, 19 Sep 2003 09:20:49 -0400 EDT
+Message-ID: <38834454565-BeMail@cr593174-a>
+References: <20030919044042.81352.qmail@web60004.mail.yahoo.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15701-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15702-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1063963968.6484.3.camel@biker.psw.pdb.fsc.net>
+In-Reply-To: <20030919044042.81352.qmail@web60004.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Martin Wilck <Martin.Wilck@Fujitsu-Siemens.com>
-Cc: Reiser FS Mailing List <reiserfs-list@namesys.com>, mason@suse.com
+To: reiserfs-list@namesys.com
 
-Hello!
+Narcoleptic Electron wrote on Fri, 19 Sep 2003 00:40:42 -0400 (EDT):
+> I agree... two commas are much easier to type.  I think it is still a little hard to read, though.  I'm also not convinced on aesthetic grounds... commas don't look like stand-alone entities to me, and they're not symmetrical.  I think that they look a little too code-like.
+>  
+> One more suggestion: "-" (hyphen).  It is very easy to type (one keystroke, no shift key) and when file names are sorted, it will likely rise to the top (comes before dot, comma, underscore, tilde).  It also just looks cleaner to me.
 
-On Fri, Sep 19, 2003 at 11:32:48AM +0200, Martin Wilck wrote:
+Unfortunately a hyphen by itself confuses many programs, like "cd".  "cd -" doesn't work.  I guess that leaves ,, as the only one easy to type (no shift key needed), that doesn't have too many other impacts, and it does come out in the front of the sort order, even before "..".
 
-> > Below you can find the patch that may help you if I am right about roots of your second problem.
-> > This is not proper fix but merely a quick plug. (I verified and it passes my testcase)
-> > Chris promised to send proper patch yesterday, but seems he is busy right now.
-> Yes, the results with this patch (and the other one you sent which has
-> to be slightly modified for my UL kernel) look promising. ~40h IO
-> activity now and no problems. If our machines are still doing fine after
-> the weekend we'll conclude these patches solve the problem (actually,
-> both problems) for us. I'll give you another feedback then.
-
-Ok. Thank you for verifying our patches.
-
-Bye,
-    Oleg
+- Alex
