@@ -1,41 +1,33 @@
-From: eazgwmir@umail.furryterror.org (Zygo Blaxell)
-Subject: Re: About direntries pointing to nowhere on reiserfs problem in 2.4
-Date: 24 Feb 2003 12:49:00 -0500
-Message-ID: <b3dluc$n39$1@satsuki.furryterror.org>
-References: <20030220175309.A23616@namesys.com>
-Return-path: <reiserfs-list-return-12891-reiserfs=m.gmane.org@namesys.com>
+From: Marc-Christian Petersen <m.c.p@gmx.net>
+Subject: Re: [PATCH] new data logging and quota patches available
+Date: Mon, 24 Feb 2003 18:59:16 +0100
+Message-ID: <200302241859.16343.m.c.p@gmx.net>
+References: <1045870331.16048.325.camel@tiny.suse.com> <1046020695.16048.409.camel@tiny.suse.com> <3E59787F.2030009@mb.tu-ilmenau.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12892-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3E59787F.2030009@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: reiserfs-list <reiserfs-list@namesys.com>
+Cc: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>, Chris Mason <mason@suse.com>
 
-In article <20030220175309.A23616@namesys.com>,
-Oleg Drokin  <green@namesys.com> wrote:
->   So we solved that with patch below (Zygo, others who think they have this problem,
->   please check).
+On Monday 24 February 2003 02:42, Manuel Krause wrote:
 
-I am building a kernel with the patch as I type this.  I'll know if it works 
-in a few hours.
+Hi Manuel,
 
-If it does work, I'll be running reiserfsck for the rest of the week to
-clean out all those dead direntries on all my systems once and for all.
-:-P
+> I see a performance decrease with my copies in data=3Dordered mode by
+> about 7.5% compared to the 2.4.20-pre10-data-logging (it's about 19%
+> decrease for 2.4.21-pre4 since 2.4.19-data-logging). What is causing
+> this? Partly I can blame it on the disk content distribution that
+> changed. If I removed the kinoded related patches would the throughput
+> rate increase?
+I can confirm that this is also true for me. I am using the -aa data-logg=
+ing=20
+36.
 
-Reiserfsck takes 53 hours to scan everything on some of my machines,
-which is a long time considering that I already know where all the
-missing direntries are since they are recorded in various error log files.
-
-I don't suppose it's a quick or easy task to modify reiserfsck to just fix
-_one_ missing directory entry, or to allow the kernel to unlink missing
-direntries instead of returning EPERM?  Would it suffice to simply hack
-up the unlink() code so that the direntry is removed but the missing 
-SD is ignored?
-
--- 
-Zygo Blaxell (Laptop) <zblaxell@feedme.hungrycats.org>
-GPG = D13D 6651 F446 9787 600B AD1E CCF3 6F93 2823 44AD
+ciao, Marc
