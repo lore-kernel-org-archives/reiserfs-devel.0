@@ -1,42 +1,48 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Bug report with its cancellation?
-Date: Sun, 4 Jul 2004 20:21:35 +0300
-Message-ID: <20040704172135.GR4990@nysv.org>
+From: Henning Westerholt <henning-04@die.informatik.uni-siegen.de>
+Subject: Re: Bug report with its cancellation?
+Date: Mon, 5 Jul 2004 00:10:22 +0200
+Message-ID: <200407050010.22574.henning-04@die.informatik.uni-siegen.de>
+References: <20040704172135.GR4990@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19504-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-19505-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20040704172135.GR4990@nysv.org>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
-Hi!
+Am Sonntag, 4. Juli 2004 19:21 schrieb Markus T=F6rnqvist:
+> Hi!
+>
+> How well do the auto-snapshots work for people in general?
 
-How well do the auto-snapshots work for people in general?
+I tried the 2004.06.30-19 snapshot, with 2.6.7-mm4 some days ago. The first=
+=20
+access to a reiser4 partition produce a kernel oops, something about an=20
+assertion error.
 
-I don't know what to think, because I got my kernel working now,
-like an act of god, or Nikita Danilov. I asked him to review a bug
-report I thought about sending, but it appears mm/vmscan.c has
-static int kswapd instead of int kswapd.
+My config:
+CONFIG_REISER4_FS=3Dy
+CONFIG_REISER4_LARGE_KEY=3Dy
+CONFIG_REISER4_CHECK=3Dy
+CONFIG_REISER4_DEBUG=3Dy
+CONFIG_REISER4_DEBUG_OUTPUT=3Dy
+CONFIG_REISER4_USE_EFLUSH=3Dy
 
-This came up when the kernel would not compile with frame pointers.
-Nik gave this simple enough solution.
+> I don't know what to think, because I got my kernel working now,
+> like an act of god, or Nikita Danilov. I asked him to review a bug
+> report I thought about sending, but it appears mm/vmscan.c has
+> static int kswapd instead of int kswapd.
 
-So I fixed that and it also solved my weird NULL pointer dereferences
-and Unabilities to handle kernel paging requests.
+My kernel source has also the mentioned static variable. I'll try tomorow t=
+o=20
+remove the static definition. Perhaps it makes a difference..
 
-Is this something only I suffered from or why hasn't this come up earlier?
-Where is this likely to cause oopses and assorted dark voodoo magic?
+Best regards,
 
-But I thank everyone who I talked with about these issues and hope to
-learn something new about the deepest meaning of int kswapd :)
-
-Thank you!
-
--- 
-mjt
-
+Henning
