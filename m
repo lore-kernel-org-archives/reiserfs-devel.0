@@ -1,20 +1,40 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: ACL Support
-Date: Thu, 01 Apr 2004 16:48:31 -0500
-Message-ID: <406C8E2F.2070304@suse.com>
-References: <200404012043.MAA12517@amber.he.net>
+From: "Mike Young" <myoung@wildernessvoice.com>
+Subject: RE: ACL Support
+Date: Thu, 1 Apr 2004 14:11:54 -0800
+Message-ID: <200404012212.OAA21330@amber.he.net>
+References: <406C8E2F.2070304@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17655-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17656-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200404012043.MAA12517@amber.he.net>
+In-Reply-To: <406C8E2F.2070304@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Mike Young <myoung@wildernessvoice.com>
+Content-Type: text/plain; charset="us-ascii"
+To: 'Jeff Mahoney' <jeffm@suse.com>
 Cc: reiserfs-list@namesys.com
+
+I should be able to get around the 2TB limit using LBD support on the 2.4
+kernel.
+
+Other than that, the 16TB limit shouldn't be a problem either since I can't
+get beyond that with the current VFS limit of 32-bit inodes on Xeon
+platforms.  With that, I can only go 2^32*4k block size, which is 16TB.
+
+Hmmm.  Reiserfs is looking pretty good for me.
+
+Thanks,
+
+Mike
+
+-----Original Message-----
+From: Jeff Mahoney [mailto:jeffm@suse.com] 
+Sent: Thursday, April 01, 2004 1:49 PM
+To: Mike Young
+Cc: reiserfs-list@namesys.com
+Subject: Re: ACL Support
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
@@ -58,3 +78,6 @@ iD8DBQFAbI4vLPWxlyuTD7IRAsaSAJwIN8Vv/W+LVO5xA2muNWhAsuusAACfV2sn
 eX23G/LcEyflt0svSywvIUM=
 =Bi+O
 -----END PGP SIGNATURE-----
+
+
+
