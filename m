@@ -1,59 +1,53 @@
-From: rod@tpgi.com.au
-Subject: Re: Silly question, defrag
-Date: Fri, 5 Apr 2002 10:04:18 +1000
-Message-ID: <3CAD76A2.19329.87D118@localhost>
-References: <3CAB48E5.9050001@namesys.com>
+From: Nick Urbanik <nicku@vtc.edu.hk>
+Subject: Re: on-disk bitmap does not match to the correct one
+Date: Fri, 05 Apr 2002 09:35:34 +0800
+Sender: nicku@nicksbox.tyict.vtc.edu.hk
+Message-ID: <3CACFF66.5361BD3@vtc.edu.hk>
+References: <3CAAD714.3223F1B6@vtc.edu.hk> <20020403152043.B4949@namesys.com> <3CAB6FA3.C6769B4F@vtc.edu.hk> <20020404085310.A5629@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020404161547.GD3990@jensbenecke.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Cc: reiserfs-list@namesys.com
 
-<snip>
+Oleg Drokin wrote:
 
-> When I started with Linux, I was told that Linux did not need a
-> defragger because when saving a file, the file system (ext2 in this
-> case) took the file size into account when looking for free blocks.
-> Fragmentation only happens when the disk is almost full, and no
-> contiguous free blocks can be found any more.
-> 
-This should true with files were the size is known before hand.  
+> Hello!
+>
+> On Thu, Apr 04, 2002 at 05:09:56AM +0800, Nick Urbanik wrote:
+> > > Bitmaps are maps with which FS is tracking blocks usage.
+> > > If you are running kernel 2.4.16 or older, this might be because
+> > > some aplication deleted some files, but still have the files open,
+> > > andthen crash occured.
+> > > 2.4.16 or earlier kernels are not recommended to use.
+> > I have been using 2.4.19-pre5, though I had a couple of crashes over the
+> > years with earlier 2.4.x kernels.
+> > So what should/can I do about this mismatch?
+>
+> Get latest reiserfsprogs package (3.x.1b) and run reiserfsck --rebuild-tree
+> on your partition.
 
-> Windows, OTOH, starts writing at the first free block and just skips
-> used blocks, which quickly leads to BIG fragmentation.
-> 
-> To defragment a disk, if I thought it was absolutely necessary, I was
-> told to just read and re-write all files once. Of course for this to be
-> successful, you need total free space in one block that exceeds the size
-> of the biggest fragmented file.
+Beautiful!  It worked!  While I was at it, I did a lot of LVM volume resizing,
+and at one stage lost the root directory of my /var/ftp partition, but
+thankfully (wipes panicky sweat from brow!!!!), reiserfsck --rebuild-tree
+rebuilt it successfully.
 
-Though tests I've done with copy & delete with partitions less than 
-60% full showed that both ext2 and reiserfs did not correct 
-fragmentation. My guess was that cp did the job in small chunks and 
-the fs wasnt told the total to allocate.  This also demonstrated that for 
-the case of multiple, continually growing files the amount of free 
-space was irrelevant.
+The spec file in the tarball made building an RPM package a snap; it's really
+well written.
 
-> 
-> Are you telling me this is different with ReiserFS? Does ReiserFS not
-> try to store files in one contiguous block if possible?
->  
-> 
-> -- 
-> mfg, Jens Benecke  /// www.hitchhikers.de, www.linuxfaq.de, www.linux.ms
-> This mail is an attachment? Read http://www.jensbenecke.de/misc/outlook.html
-> 
+Thank you very much, Oleg.  As we say in Australia, "Your blood's worth
+bottling!" :-)
+
+--
+Nick Urbanik   RHCE                                  nicku@vtc.edu.hk
+Dept. of Information & Communications Technology
+Hong Kong Institute of Vocational Education (Tsing Yi)
+Tel:   (852) 2436 8576, (852) 2436 8579          Fax: (852) 2436 8526
+PGP: 53 B6 6D 73 52 EE 1F EE EC F8 21 98 45 1C 23 7B     ID: 7529555D
+GPG: 7FFA CDC7 5A77 0558 DC7A 790A 16DF EC5B BB9D 2C24   ID: BB9D2C24
 
 
-----------------------------------------------
-Rod Tunks
-Hardware R&D Manager
-TPG Network, Canberra
-rod@tpgi.com.au  (02)62851711
 
-"bad or missing Coffee.sys - operator halted"
-ICQ: 4514607
