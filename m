@@ -1,38 +1,65 @@
-From: Andrew Clausen <clausen@gnu.org>
-Subject: Re: EVMS Reiser FSIM
-Date: Fri, 31 May 2002 09:50:19 +1000
-Message-ID: <20020531095019.A30095@gnu.org>
-References: <OF7550755B.8F3C611F-ON85256BC8.0056E5DC@pok.ibm.com> <20020530095323.GA1076@gnu.org> <3CF62181.1000802@namesys.com>
+From: Billy Transue <bill@black9.net>
+Subject: Re: Problem with my HDD
+Date: 31 May 2002 00:15:48 -0500
+Message-ID: <1022822148.334.18.camel@threshold>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10459-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10460-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <3CF62181.1000802@namesys.com>; from reiser@namesys.com on Thu, May 30, 2002 at 04:56:33PM +0400
+In-Reply-To: <20020530091729.C3922@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Steve Pratt <slpratt@us.ibm.com>, Yury Umanets <umka@namesys.com>, reiserfs-list <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Thu, May 30, 2002 at 04:56:33PM +0400, Hans Reiser wrote:
-> >On Wed, May 29, 2002 at 11:28:38AM -0500, Steve Pratt wrote:
-> >>I want to use the code approved by the owners of the file system.
-> >
-> >Me too.  Just the ext2 maintainer doesn't like this approach, so
-> >I'm going to need to push a bit harder (and I don't have time now)
->
-> I can imagine why he doesn't want to depend on the ext2 guys to find 
-> time for reading his code, and you should not assume he is without good 
-> reasons on this.
+On Thu, 2002-05-30 at 00:17, Oleg Drokin wrote:
+> Hello!
+> 
+> On Thu, May 30, 2002 at 02:09:09AM +0200, Anders Widman wrote:
+> 
+> > > If you can I'd consider getting an image of the drive.  It may help with 
+> > > data recovery later.  something like:
+> > > dd if=/dev/sda1 of=/bigfilesystem/diskimage
+> > I've  heard  of  something  called  dd_rescue,  but  "dd  if=/dev/sda1
+> > of=/path/image  conv=sync,noerror"  should  do the trick. The sync and
+> 
+> Our attempts show that dd (even with conv=sync,noerror,notrunc) does not
+> help and produces broken images, where no data inserted in image for sectors
+> that cannot be read.
+> 
+> dd_rescue is shipped with SuSE.
+> Also it can be obtained from here:
+> http://www.garloff.de/kurt/linux/ddrescue/
+> 
+> > noerror   causes  the disk-copy to continue when there are read errors
+> > and  fill in with blanks instead. If you don't do this you will end up
+> 
+> No, for some reason it does not fills the blanks.
+> At least for us.
+> 
+> > with  offset  errors  -  the  image  will be shorter than the original
+> > drive, and it would be impossible to fix.
+> 
+> This is also not true, it will be possible to fix, but that would be
+> more expensive ;)
+> 
+> Bye,
+>     Oleg
 
-Oh absolutely, and I agree 100%.  (That was what I was saying!)
+I've suffered a very similar problem and posted to the list earlier, I
+did, dd_resuce -l dd.log /dev/hdd5 ./hdd5 and winded up w/ this:
+dd_rescue: (info): ipos:         0.0k, opos:         0.0k,
+xferd:         0.0k
+                   errs:      0, errxfer:         0.0k,
+succxfer:         0.0k
+             +curr.rate:        0kB/s, avg.rate:        0kB/s,
+avg.load:  0.0%
 
-> I have watched people try to get code into ext2.....
+it never changed, the file created hdd5 was 65536 bytes large.  The log
+file was empty.  Am I doing something wrong?  Any info would be
+appreciated.  Thanks in advance.
 
-Yeah, Ted is rather conservative.  But, it's good, because it forces
-you to be minimalist :)
 
-Andrew
+
 
