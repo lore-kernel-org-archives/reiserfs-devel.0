@@ -1,36 +1,37 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Sat, 04 Sep 2004 09:20:47 -0400 EDT
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <89955622176-BeMail@cr593174-a>
-References: <200409040227.i842R7io003637@localhost.localdomain>
+From: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
+Subject: reiser4 corruption
+Date: Sat, 4 Sep 2004 20:07:36 +0200
+Message-ID: <2f4958ff04090411072d5c767d@mail.gmail.com>
+Reply-To: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <200409040227.i842R7io003637@localhost.localdomain>
+Return-path: <reiserfs-list-return-21465-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: helge.hafting@hist.no, oliverhunt@gmail.com, reiser@namesys.com, torvalds@osdl.org, ninja@slaphack.com, jamie@shareable.org, bunk@fs.tum.de, viro@parcelfarce.linux.theplanet.co.uk, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com, spam@tnonline.net
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Horst von Brand wrote on Fri, 03 Sep 2004 22:27:07 -0400:
-> Great. Then everything is a firectory (or dile?). And a firectory points at
-> other firectories and contains data. I just don't see how you are supposed
-> to distinguish the data from further firectories...
+Hi folks
 
-I like to call them fildirutes (file/directory/attribute).  A file
-typing system would tell you the intended purpose of a particular
-fildurute.  So if a fildurute called X has X/..metas/mimefiletype
-containing "application/x-directory" then you know that it should be
-treated as being primarily a container for other fildirutes and shown
-to the user as a folder in a GUI view.  If it said it was
-"application/x-text-document" then the GUI system would default to
-opening it in a word processor.  Either way, that's only a hint about
-how it should be presented to the user, not something the kernel
-enforces.
+I have some issues with KDE compilation on my computer.
+I decided to give it a try (and test), and switched over /home
+partition on one of my laptops to reiserfs v4. I am using debian
+testing (knoppix installation) + 2.6.9-mm1.
 
-For efficiency, the file type might just be stored in the fildirute's
-inode as a code number (since most things would have a file type) that
-the file system exposes as a file called ..metas/mimefiletype.
+Recently I had some issues compiling KDE (acctually in linking) that
+might have source in fs corruption. SO I decided to run fsck.reiser4.
+Logged output is attached. Tell me please if it's any help, or if
+something else should be done.
+I don't have anything in logs, FS wasn't compiled with debug options.
 
-- Alex
+I'll run --build-fs on it now. When it's finished, I'll remove KDE
+sources, suck them again from CVS, and try to rebuild. And fsck again.
+We'll see if it's reproducable.
+
+thanks.
+
+-- 
+GJ
