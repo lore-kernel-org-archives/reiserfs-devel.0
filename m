@@ -1,40 +1,38 @@
-From: Oleg Drokin <green@namesys.com>
+From: Felipe Alfaro Solana <felipe_alfaro@linuxmail.org>
 Subject: Re: reiser4 snapshot for August 26th.
-Date: Wed, 27 Aug 2003 11:38:49 +0400
-Message-ID: <20030827073849.GA29071@namesys.com>
-References: <20030826102233.GA14647@namesys.com> <20030826232844.25e0e9b3.aradorlinux@yahoo.es>
+Date: Wed, 27 Aug 2003 13:19:51 +0200
+Message-ID: <1061983191.678.1.camel@teapot.felipe-alfaro.com>
+References: <20030826102233.GA14647@namesys.com>
+	 <20030827055204.GA18114@cse.unsw.EDU.AU>
+	 <1061964211.15513.41.camel@haron.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15456-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15457-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030826232844.25e0e9b3.aradorlinux@yahoo.es>
+In-Reply-To: <1061964211.15513.41.camel@haron.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Diego Calleja Garc?a <aradorlinux@yahoo.es>
-Cc: reiserfs-dev@namesys.com, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+To: Yury Umanets <umka@namesys.com>
+Cc: reiserfs-dev@namesys.com, reiserfs-list@namesys.com, LKML <linux-kernel@vger.kernel.org>
 
-Hello!
+On Wed, 2003-08-27 at 08:03, Yury Umanets wrote:
+> >  
+> > Information: Reiser4 is going to be created on /dev/sda5.
+> > (Yes/No): Yes
+> > Creating reiser4 on /dev/sda5...
+> > mkfs.reiser4(5676): unaligned access to 0x60000000000242f2, ip=0x20000000000f7661
+> > mkfs.reiser4(5676): unaligned access to 0x60000000000242fa, ip=0x20000000000f77a1
+> > mkfs.reiser4(5676): unaligned access to 0x6000000000024302, ip=0x20000000000f78e1
+> > mkfs.reiser4(5676): unaligned access to 0x60000000000242f2, ip=0x20000000000f2671
+> > done
+> > Synchronizing /dev/sda5...done
+> 
+> I will fix it soon.
 
-On Tue, Aug 26, 2003 at 11:28:44PM +0200, Diego Calleja Garc?a wrote:
+Will Reiser4 be integrated into 2.6.0-test kernels anytime soon?
+This would reduce time between releases and would open up it to a wider
+audience for testing
 
-> btw, I suppose this feature will be removed if/when reiser4 is merged?:
-> config REISER4_FS_SYSCALL
->         bool "Enable reiser4 system call"
-
-No. It will be fixed.
-
-> dmesg errors:
-> (fs/ext3/inode.c, 2728): ext3_write_inode: called recursively, non-PF_MEMALLOC!
-> Call Trace:
->  [<c018c715>] write_inode+0x45/0x50
->  [<c018c9af>] __sync_single_inode+0x28f/0x310
->  [<c018cd00>] generic_sync_sb_inodes+0x1c0/0x2e0
-
-Hm. Interesting Thank you for the report. We will fix it.
-
-Bye,
-    Oleg
