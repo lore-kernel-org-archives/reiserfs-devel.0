@@ -1,73 +1,86 @@
-From: Soeren Sonnenburg <reiserfs@nn7.de>
-Subject: Re: free space seems wrong...
-Date: 06 Mar 2003 13:00:22 +0100
-Message-ID: <1046952022.23752.55.camel@calculon>
-References: <1046886804.23752.25.camel@calculon>
-	 <20030306094705.A5417@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Error messages.
+Date: Thu, 06 Mar 2003 15:16:05 +0300
+Message-ID: <3E673C05.7000202@namesys.com>
+References: <7473069171.20030305201818@tnonline.net> <20030306095743.B5417@namesys.com> <170120728875.20030306093238@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13121-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13122-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030306094705.A5417@namesys.com>
+In-Reply-To: <170120728875.20030306093238@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Anders Widman <andewid@tnonline.net>
 Cc: reiserfs-list@namesys.com
 
-On Thu, 2003-03-06 at 07:47, Oleg Drokin wrote:
-> Hello!
-> 
-> On Wed, Mar 05, 2003 at 06:53:24PM +0100, Soeren Sonnenburg wrote:
-> 
-> > is_leaf: free space seems wrong: level=1, nr_items=7, free_space=3468 rdkey 
-> > vs-5150: search_by_key: invalid format found in block 4792161. Fsck?
-> > is_leaf: free space seems wrong: level=1, nr_items=7, free_space=3468 rdkey 
-> > vs-5150: search_by_key: invalid format found in block 4792161. Fsck?
-> > when accessing a certain directory using du and on the prompt
-> > Input/output error.
-[...]
-> > The problem is, this filesystem is like 2-3 years old and was converted
-> > to reiserfs 3.6 maybe a year ago...but as it is a production environment
-> > I would not want to put it down at all...
-> 
-> You can run reiserfs --check even on readonly mounted fs just to get idea
-> on how broken it is and then to plan what to do next.
+Anders Widman wrote:
 
-Well... see below for the output of reiserfsck, which I just started on
-the rw mounted fs (just to check whether the tool itself is the latest
-version). The kernel now is 2.4.20 and it does correctly claim that the
-fs is mounted on a different reiserfs partition (Partition /dev/sda6 is
-mounted w/ write permissions, cannot check it)
+>>Well, I checked my logs:
+>>kernel: hdg: status error: status=0x58 { DriveReady SeekComplete DataRequest }
+>>kernel: hdg: drive not ready for command
+>>    
+>>
+>
+>   This is what I get all the time.
+>
+>  
+>
+>>And for this case I am sure this was a scratchy CD-ROM disk in my CD-ROM drive.
+>>    
+>>
+>
+>   Well, have no CD-ROM. :)
+>
+>  
+>
+>>Probably same stuff can be get when drive is busy remapping bad sectors?
+>>Use smartctl to find out how these messages corellate with remapped bad sectors counts?
+>>    
+>>
+>
+>  Very strange. Would mean all of my harddrives would be broken, or on
+>  their  way  to  get  broken.  I  do  not  believe that.  Most of the
+>  hardware, including the cabling has been replaced and changed.
+>
+>  
+>
+>>Bye,
+>>    Oleg
+>>    
+>>
+>
+>
+>
+>--------
+>PGP public key: https://tnonline.net/secure/pgp_key.txt
+>
+>
+>
+>  
+>
+Hardware is so much fun to debug sometimes, and when you are the 1% case 
+life can really suck.
 
-I have no idea whether I should indeed do --rebuild-sb --rebuildtree ...
+Do you have:
 
-Regards,
-Soeren.
-<-------------reiserfsck, 2002------------->
-reiserfsprogs 3.6.5-pre2
+bad cooling
 
-  *************************************************************
-  ** If you are using the latest reiserfsprogs and  it fails **
-  ** please  email bug reports to reiserfs-list@namesys.com, **
-  ** providing  as  much  information  as  possible --  your **
-  ** hardware,  kernel,  patches,  settings,  all  reiserfsk **
-  ** messages  (including version),  the reiserfsck logfile, **
-  ** check  the  syslog file  for  any  related information. **
-  ** If you would like advice on using this program, support **
-  ** is available  for $25 at  www.namesys.com/support.html. **
-  *************************************************************
+bad power supply
 
-Will read-only check consistency of the filesystem on /dev/sdd1
-Will put log info to 'stdout'
+bad voltage from power company
 
-Do you want to run this program?[N/Yes] (note need to type Yes if you do):Yes
-reiserfs_open_journal: journal parameters from super block does not match to
-journal parameters from journal.
+electrical noise
 
-Either make journal partition available or use --no-journal-available
-If you have the standard journal or if your partition is available
-and you specified it correctly, you must run rebuild-sb.
+?
+
+I think though that Oleg is right that you should contact the IDE guys 
+and ask them for their list of things to check for that particular error 
+message (and tell us about it).
+
+-- 
+Hans
+
 
