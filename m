@@ -1,40 +1,59 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: we need a slogan for our reiser4 t-shirt
-Date: Wed, 23 Jun 2004 13:06:43 -0700
-Message-ID: <40D9E2D3.9060904@namesys.com>
-References: <40D9DC3A.9090209@namesys.com> <200406232144.46346.marcel@hilzinger.hu>
+From: "Burnes, James" <james.burnes@gwl.com>
+Subject: RE: we need a slogan for our reiser4 t-shirt
+Date: Wed, 23 Jun 2004 14:08:57 -0600
+Message-ID: <3DF9165145FACB4C96977FF650C1E9040C46A0A2@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19316-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19317-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200406232144.46346.marcel@hilzinger.hu>
+content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Marcel Hilzinger <marcel@hilzinger.hu>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Hans Reiser <reiser@namesys.com>, Marcel Hilzinger <marcel@hilzinger.hu>
 Cc: reiserfs-list@namesys.com
 
-Marcel Hilzinger wrote:
+How about,
 
->2004. j=FAnius 23. 21.38 d=E1tummal Hans Reiser ezt =EDrta:
-> =20
->
->>we are going to use our fastman logo from our web page plus reiser4 in
->>letters, but we need some slogan underneath it.
->>
->>   =20
->>
->What about:
->
->The Living Filesystem
->
->(as there are dancing trees, wandering logs, and development is really=20
->alive :-)
->
-> =20
->
-I suggested the Atomic Filesystem, but Mom pointed out that it added an=20
-additional metaphor to the fastman graphic.  I am still thinking about=20
-whether she is right.
+"Plug-in To Reiser4!"
+
+
+jim burnes
+security engineer
+great-west, denver
+=20
+
+> -----Original Message-----
+> From: Hans Reiser [mailto:reiser@namesys.com]
+> Sent: Wednesday, June 23, 2004 2:07 PM
+> To: Marcel Hilzinger
+> Cc: reiserfs-list@namesys.com
+> Subject: Re: we need a slogan for our reiser4 t-shirt
+>=20
+> Marcel Hilzinger wrote:
+>=20
+> >2004. j=FAnius 23. 21.38 d=E1tummal Hans Reiser ezt =EDrta:
+> >
+> >
+> >>we are going to use our fastman logo from our web page plus reiser4 =
+in
+> >>letters, but we need some slogan underneath it.
+> >>
+> >>
+> >>
+> >What about:
+> >
+> >The Living Filesystem
+> >
+> >(as there are dancing trees, wandering logs, and development is =
+really
+> >alive :-)
+> >
+> >
+> >
+> I suggested the Atomic Filesystem, but Mom pointed out that it added =
+an
+> additional metaphor to the fastman graphic.  I am still thinking about
+> whether she is right.
