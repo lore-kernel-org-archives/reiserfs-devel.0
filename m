@@ -1,10 +1,10 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: speedup patch for 2.4.18 (actually attached)
-Date: Wed, 10 Apr 2002 11:15:58 +0400
-Message-ID: <20020410111558.A19314@namesys.com>
+Subject: speedup patch for 2.4.19-pre6
+Date: Wed, 10 Apr 2002 11:16:33 +0400
+Message-ID: <20020410111633.A19320@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="mP3DRpeJDSE+ciuQ"
-Return-path: <reiserfs-list-return-10004-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="vkogqOf2sHV7VnPd"
+Return-path: <reiserfs-list-return-10005-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -12,20 +12,25 @@ Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-list@namesys.com
 
---mP3DRpeJDSE+ciuQ
+--vkogqOf2sHV7VnPd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-patch attached ;)
+Hello!
 
---mP3DRpeJDSE+ciuQ
+   attached the combined speedup patch for 2.4.19-pre6
+
+Bye,
+    Oleg
+
+--vkogqOf2sHV7VnPd
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="speedup-2.4.18.diff"
+Content-Disposition: attachment; filename="speedup-2.4.19-pre6.diff"
 
-diff -uNr linux-2.4.18.original/fs/buffer.c linux-2.4.18.speedup/fs/buffer.c
---- linux-2.4.18.original/fs/buffer.c	Tue Feb 26 15:53:01 2002
-+++ linux-2.4.18.speedup/fs/buffer.c	Wed Apr 10 10:35:57 2002
-@@ -327,6 +327,8 @@
+diff -uNr linux-2.4.19-pre6.o/fs/buffer.c linux-2.4.19-pre6.speedup/fs/buffer.c
+--- linux-2.4.19-pre6.o/fs/buffer.c	Mon Apr  8 14:53:24 2002
++++ linux-2.4.19-pre6.speedup/fs/buffer.c	Wed Apr 10 10:43:46 2002
+@@ -325,6 +325,8 @@
  	lock_super(sb);
  	if (sb->s_dirt && sb->s_op && sb->s_op->write_super)
  		sb->s_op->write_super(sb);
@@ -34,7 +39,7 @@ diff -uNr linux-2.4.18.original/fs/buffer.c linux-2.4.18.speedup/fs/buffer.c
  	unlock_super(sb);
  	unlock_kernel();
  
-@@ -346,7 +348,7 @@
+@@ -344,7 +346,7 @@
  	lock_kernel();
  	sync_inodes(dev);
  	DQUOT_SYNC(dev);
@@ -43,9 +48,10 @@ diff -uNr linux-2.4.18.original/fs/buffer.c linux-2.4.18.speedup/fs/buffer.c
  	unlock_kernel();
  
  	return sync_buffers(dev, 1);
-diff -uNr linux-2.4.18.original/fs/reiserfs/bitmap.c linux-2.4.18.speedup/fs/reiserfs/bitmap.c
---- linux-2.4.18.original/fs/reiserfs/bitmap.c	Tue Feb 26 15:52:56 2002
-+++ linux-2.4.18.speedup/fs/reiserfs/bitmap.c	Wed Apr 10 10:35:57 2002
+Binary files linux-2.4.19-pre6.o/fs/reiserfs/.journal.c.rej.swp and linux-2.4.19-pre6.speedup/fs/reiserfs/.journal.c.rej.swp differ
+diff -uNr linux-2.4.19-pre6.o/fs/reiserfs/bitmap.c linux-2.4.19-pre6.speedup/fs/reiserfs/bitmap.c
+--- linux-2.4.19-pre6.o/fs/reiserfs/bitmap.c	Mon Apr  8 14:53:24 2002
++++ linux-2.4.19-pre6.speedup/fs/reiserfs/bitmap.c	Wed Apr 10 10:43:46 2002
 @@ -122,7 +122,6 @@
    set_sb_free_blocks( rs, sb_free_blocks(rs) + 1 );
  
@@ -54,7 +60,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/bitmap.c linux-2.4.18.speedup/fs/rei
  }
  
  void reiserfs_free_block (struct reiserfs_transaction_handle *th, 
-@@ -435,7 +434,6 @@
+@@ -433,7 +432,6 @@
    /* update free block count in super block */
    PUT_SB_FREE_BLOCKS( s, SB_FREE_BLOCKS(s) - init_amount_needed );
    journal_mark_dirty (th, s, SB_BUFFER_WITH_SB (s));
@@ -62,9 +68,9 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/bitmap.c linux-2.4.18.speedup/fs/rei
  
    return CARRY_ON;
  }
-diff -uNr linux-2.4.18.original/fs/reiserfs/ibalance.c linux-2.4.18.speedup/fs/reiserfs/ibalance.c
---- linux-2.4.18.original/fs/reiserfs/ibalance.c	Sat Nov 10 01:18:25 2001
-+++ linux-2.4.18.speedup/fs/reiserfs/ibalance.c	Wed Apr 10 10:35:57 2002
+diff -uNr linux-2.4.19-pre6.o/fs/reiserfs/ibalance.c linux-2.4.19-pre6.speedup/fs/reiserfs/ibalance.c
+--- linux-2.4.19-pre6.o/fs/reiserfs/ibalance.c	Sat Nov 10 01:18:25 2001
++++ linux-2.4.19-pre6.speedup/fs/reiserfs/ibalance.c	Wed Apr 10 10:43:46 2002
 @@ -632,7 +632,6 @@
  		/* use check_internal if new root is an internal node */
  		check_internal (new_root);
@@ -81,9 +87,9 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/ibalance.c linux-2.4.18.speedup/fs/r
      }
  	
      if ( tb->blknum[h] == 2 ) {
-diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/reiserfs/journal.c
---- linux-2.4.18.original/fs/reiserfs/journal.c	Tue Feb 26 15:53:01 2002
-+++ linux-2.4.18.speedup/fs/reiserfs/journal.c	Wed Apr 10 10:36:09 2002
+diff -uNr linux-2.4.19-pre6.o/fs/reiserfs/journal.c linux-2.4.19-pre6.speedup/fs/reiserfs/journal.c
+--- linux-2.4.19-pre6.o/fs/reiserfs/journal.c	Mon Apr  8 14:53:24 2002
++++ linux-2.4.19-pre6.speedup/fs/reiserfs/journal.c	Wed Apr 10 10:44:32 2002
 @@ -64,12 +64,15 @@
  */
  static int reiserfs_mounted_fs_count = 0 ;
@@ -98,9 +104,9 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
  DECLARE_TASK_QUEUE(reiserfs_commit_thread_tq) ;
 +DECLARE_MUTEX(kreiserfsd_sem) ;
  
- #define JOURNAL_TRANS_HALF 1018   /* must be correct to keep the desc and commit structs at 4k */
- 
-@@ -574,17 +577,12 @@
+ #define JOURNAL_TRANS_HALF 1018   /* must be correct to keep the desc and commit
+ 				     structs at 4k */
+@@ -576,17 +579,12 @@
  /* lock the current transaction */
  inline static void lock_journal(struct super_block *p_s_sb) {
    PROC_INFO_INC( p_s_sb, journal.lock_journal );
@@ -120,7 +126,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
  }
  
  /*
-@@ -754,7 +752,6 @@
+@@ -756,7 +754,6 @@
    atomic_set(&(jl->j_commit_flushing), 0) ;
    wake_up(&(jl->j_commit_wait)) ;
  
@@ -128,7 +134,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
    return 0 ;
  }
  
-@@ -1218,7 +1215,6 @@
+@@ -1220,7 +1217,6 @@
      if (run++ == 0) {
          goto loop_start ;
      }
@@ -136,7 +142,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
      atomic_set(&(jl->j_flushing), 0) ;
      wake_up(&(jl->j_flush_wait)) ;
      return ret ;
-@@ -1248,7 +1244,7 @@
+@@ -1250,7 +1246,7 @@
      while(i != start) {
          jl = SB_JOURNAL_LIST(s) + i  ;
          age = CURRENT_TIME - jl->j_timestamp ;
@@ -145,7 +151,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
              atomic_read(&(jl->j_nonzerolen)) > 0 &&
              atomic_read(&(jl->j_commit_left)) == 0) {
  
-@@ -1323,6 +1319,10 @@
+@@ -1325,6 +1321,10 @@
  static int do_journal_release(struct reiserfs_transaction_handle *th, struct super_block *p_s_sb, int error) {
    struct reiserfs_transaction_handle myth ;
  
@@ -156,7 +162,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
    /* we only want to flush out transactions if we were called with error == 0
    */
    if (!error && !(p_s_sb->s_flags & MS_RDONLY)) {
-@@ -1773,10 +1773,6 @@
+@@ -1811,10 +1811,6 @@
    jl = SB_JOURNAL_LIST(ct->p_s_sb) + ct->jindex ;
  
    flush_commit_list(ct->p_s_sb, SB_JOURNAL_LIST(ct->p_s_sb) + ct->jindex, 1) ; 
@@ -164,10 +170,10 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
 -      atomic_read(&(jl->j_commit_left)) == 0) {
 -    kupdate_one_transaction(ct->p_s_sb, jl) ;
 -  }
-   kfree(ct->self) ;
+   reiserfs_kfree(ct->self, sizeof(struct reiserfs_journal_commit_task), ct->p_s_sb) ;
  }
  
-@@ -1826,6 +1822,9 @@
+@@ -1864,6 +1860,9 @@
  ** then run the per filesystem commit task queue when we wakeup.
  */
  static int reiserfs_journal_commit_thread(void *nullp) {
@@ -177,7 +183,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
  
    daemonize() ;
  
-@@ -1841,6 +1840,18 @@
+@@ -1879,6 +1878,18 @@
      while(TQ_ACTIVE(reiserfs_commit_thread_tq)) {
        run_task_queue(&reiserfs_commit_thread_tq) ;
      }
@@ -196,7 +202,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
  
      /* if there aren't any more filesystems left, break */
      if (reiserfs_mounted_fs_count <= 0) {
-@@ -1915,13 +1926,12 @@
+@@ -1953,13 +1964,12 @@
    SB_JOURNAL(p_s_sb)->j_last = NULL ;	  
    SB_JOURNAL(p_s_sb)->j_first = NULL ;     
    init_waitqueue_head(&(SB_JOURNAL(p_s_sb)->j_join_wait)) ;
@@ -211,7 +217,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
    SB_JOURNAL(p_s_sb)->j_cnode_free_list = allocate_cnodes(num_cnodes) ;
    SB_JOURNAL(p_s_sb)->j_cnode_free_orig = SB_JOURNAL(p_s_sb)->j_cnode_free_list ;
    SB_JOURNAL(p_s_sb)->j_cnode_free = SB_JOURNAL(p_s_sb)->j_cnode_free_list ? num_cnodes : 0 ;
-@@ -1951,6 +1961,7 @@
+@@ -1989,6 +1999,7 @@
      kernel_thread((void *)(void *)reiserfs_journal_commit_thread, NULL,
                    CLONE_FS | CLONE_FILES | CLONE_VM) ;
    }
@@ -219,7 +225,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
    return 0 ;
  }
  
-@@ -2079,7 +2090,6 @@
+@@ -2117,7 +2128,6 @@
    th->t_trans_id = SB_JOURNAL(p_s_sb)->j_trans_id ;
    th->t_caller = "Unknown" ;
    unlock_journal(p_s_sb) ;
@@ -227,7 +233,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
    return 0 ;
  }
  
-@@ -2121,7 +2131,7 @@
+@@ -2159,7 +2169,7 @@
      reiserfs_panic(th->t_super, "journal-1577: handle trans id %ld != current trans id %ld\n", 
                     th->t_trans_id, SB_JOURNAL(p_s_sb)->j_trans_id);
    }
@@ -236,7 +242,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
  
    prepared = test_and_clear_bit(BH_JPrepared, &bh->b_state) ;
    /* already in this transaction, we are done */
-@@ -2369,12 +2379,8 @@
+@@ -2407,12 +2417,8 @@
  ** flushes any old transactions to disk
  ** ends the current transaction if it is too old
  **
@@ -250,7 +256,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
    int i ;
    int count = 0;
    int start ; 
-@@ -2391,8 +2397,7 @@
+@@ -2429,8 +2435,7 @@
    /* starting with oldest, loop until we get to the start */
    i = (SB_JOURNAL_LIST_INDEX(p_s_sb) + 1) % JOURNAL_LIST_COUNT ;
    while(i != start) {
@@ -260,7 +266,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
        /* we have to check again to be sure the current transaction did not change */
        if (i != SB_JOURNAL_LIST_INDEX(p_s_sb))  {
  	flush_commit_list(p_s_sb, SB_JOURNAL_LIST(p_s_sb) + i, 1) ;
-@@ -2401,26 +2406,26 @@
+@@ -2439,26 +2444,26 @@
      i = (i + 1) % JOURNAL_LIST_COUNT ;
      count++ ;
    }
@@ -297,7 +303,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
  }
  
  /*
-@@ -2459,7 +2464,7 @@
+@@ -2497,7 +2502,7 @@
    if (SB_JOURNAL(p_s_sb)->j_len == 0) {
      int wcount = atomic_read(&(SB_JOURNAL(p_s_sb)->j_wcount)) ;
      unlock_journal(p_s_sb) ;
@@ -306,7 +312,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
        atomic_dec(&(SB_JOURNAL(p_s_sb)->j_jlock)) ;
        wake_up(&(SB_JOURNAL(p_s_sb)->j_join_wait)) ;
      }
-@@ -2730,6 +2735,7 @@
+@@ -2768,6 +2773,7 @@
    ** it tells us if we should continue with the journal_end, or just return
    */
    if (!check_journal_end(th, p_s_sb, nblocks, flags)) {
@@ -314,7 +320,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
      return 0 ;
    }
  
-@@ -2899,17 +2905,12 @@
+@@ -2937,17 +2943,12 @@
    /* write any buffers that must hit disk before this commit is done */
    fsync_inode_buffers(&(SB_JOURNAL(p_s_sb)->j_dummy_inode)) ;
  
@@ -335,7 +341,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
    }
  
    /* reset journal values for the next transaction */
-@@ -2971,6 +2972,16 @@
+@@ -3009,6 +3010,16 @@
    atomic_set(&(SB_JOURNAL(p_s_sb)->j_jlock), 0) ;
    /* wake up any body waiting to join. */
    wake_up(&(SB_JOURNAL(p_s_sb)->j_join_wait)) ;
@@ -352,10 +358,10 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/journal.c linux-2.4.18.speedup/fs/re
    return 0 ;
  }
  
-diff -uNr linux-2.4.18.original/fs/reiserfs/objectid.c linux-2.4.18.speedup/fs/reiserfs/objectid.c
---- linux-2.4.18.original/fs/reiserfs/objectid.c	Tue Feb 26 15:52:56 2002
-+++ linux-2.4.18.speedup/fs/reiserfs/objectid.c	Wed Apr 10 10:35:57 2002
-@@ -86,7 +86,6 @@
+diff -uNr linux-2.4.19-pre6.o/fs/reiserfs/objectid.c linux-2.4.19-pre6.speedup/fs/reiserfs/objectid.c
+--- linux-2.4.19-pre6.o/fs/reiserfs/objectid.c	Mon Apr  8 14:53:24 2002
++++ linux-2.4.19-pre6.speedup/fs/reiserfs/objectid.c	Wed Apr 10 10:43:46 2002
+@@ -87,7 +87,6 @@
      }
  
      journal_mark_dirty(th, s, SB_BUFFER_WITH_SB (s));
@@ -363,7 +369,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/objectid.c linux-2.4.18.speedup/fs/r
      return unused_objectid;
  }
  
-@@ -105,8 +104,6 @@
+@@ -106,8 +105,6 @@
  
      reiserfs_prepare_for_journal(s, SB_BUFFER_WITH_SB(s), 1) ;
      journal_mark_dirty(th, s, SB_BUFFER_WITH_SB (s)); 
@@ -372,10 +378,10 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/objectid.c linux-2.4.18.speedup/fs/r
  
      /* start at the beginning of the objectid map (i = 0) and go to
         the end of it (i = disk_sb->s_oid_cursize).  Linear search is
-diff -uNr linux-2.4.18.original/fs/reiserfs/stree.c linux-2.4.18.speedup/fs/reiserfs/stree.c
---- linux-2.4.18.original/fs/reiserfs/stree.c	Tue Feb 26 15:53:01 2002
-+++ linux-2.4.18.speedup/fs/reiserfs/stree.c	Wed Apr 10 10:36:18 2002
-@@ -594,26 +594,32 @@
+diff -uNr linux-2.4.19-pre6.o/fs/reiserfs/stree.c linux-2.4.19-pre6.speedup/fs/reiserfs/stree.c
+--- linux-2.4.19-pre6.o/fs/reiserfs/stree.c	Mon Apr  8 14:53:24 2002
++++ linux-2.4.19-pre6.speedup/fs/reiserfs/stree.c	Wed Apr 10 10:44:40 2002
+@@ -598,26 +598,32 @@
  
  
  
@@ -421,7 +427,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/stree.c linux-2.4.18.speedup/fs/reis
  /**************************************************************************
   * Algorithm   SearchByKey                                                *
   *             look for item in the Disk S+Tree by its key                *
-@@ -656,6 +662,9 @@
+@@ -660,6 +666,9 @@
      int				n_node_level, n_retval;
      int 			right_neighbor_of_leaf_node;
      int				fs_gen;
@@ -431,7 +437,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/stree.c linux-2.4.18.speedup/fs/reis
  
  #ifdef CONFIG_REISERFS_CHECK
      int n_repeat_counter = 0;
-@@ -689,11 +698,11 @@
+@@ -693,11 +702,11 @@
  	fs_gen = get_generation (p_s_sb);
  	expected_level --;
  
@@ -448,7 +454,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/stree.c linux-2.4.18.speedup/fs/reis
  	/* Read the next tree node, and set the last element in the path to
             have a pointer to it. */
  	if ( ! (p_s_bh = p_s_last_element->pe_buffer =
-@@ -781,11 +790,20 @@
+@@ -785,11 +794,20 @@
  	   position in the node. */
  	n_block_number = B_N_CHILD_NUM(p_s_bh, p_s_last_element->pe_position);
  
@@ -474,9 +480,9 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/stree.c linux-2.4.18.speedup/fs/reis
      }
  }
  
-diff -uNr linux-2.4.18.original/fs/reiserfs/super.c linux-2.4.18.speedup/fs/reiserfs/super.c
---- linux-2.4.18.original/fs/reiserfs/super.c	Tue Feb 26 15:53:01 2002
-+++ linux-2.4.18.speedup/fs/reiserfs/super.c	Wed Apr 10 10:35:57 2002
+diff -uNr linux-2.4.19-pre6.o/fs/reiserfs/super.c linux-2.4.19-pre6.speedup/fs/reiserfs/super.c
+--- linux-2.4.19-pre6.o/fs/reiserfs/super.c	Mon Apr  8 14:53:24 2002
++++ linux-2.4.19-pre6.speedup/fs/reiserfs/super.c	Wed Apr 10 10:43:46 2002
 @@ -29,23 +29,22 @@
  static int reiserfs_remount (struct super_block * s, int * flags, char * data);
  static int reiserfs_statfs (struct super_block * s, struct statfs * buf);
@@ -514,7 +520,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/super.c linux-2.4.18.speedup/fs/reis
  }
  
  //
-@@ -411,6 +410,7 @@
+@@ -413,6 +412,7 @@
    put_super: reiserfs_put_super,
    write_super: reiserfs_write_super,
    write_super_lockfs: reiserfs_write_super_lockfs,
@@ -522,7 +528,7 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/super.c linux-2.4.18.speedup/fs/reis
    unlockfs: reiserfs_unlockfs,
    statfs: reiserfs_statfs,
    remount_fs: reiserfs_remount,
-@@ -907,6 +907,7 @@
+@@ -968,6 +968,7 @@
  
  
      memset (&s->u.reiserfs_sb, 0, sizeof (struct reiserfs_sb_info));
@@ -530,10 +536,10 @@ diff -uNr linux-2.4.18.original/fs/reiserfs/super.c linux-2.4.18.speedup/fs/reis
  
      if (parse_options ((char *) data, &(s->u.reiserfs_sb.s_mount_opt), &blocks) == 0) {
  	return NULL;
-diff -uNr linux-2.4.18.original/fs/super.c linux-2.4.18.speedup/fs/super.c
---- linux-2.4.18.original/fs/super.c	Tue Feb 26 15:53:01 2002
-+++ linux-2.4.18.speedup/fs/super.c	Wed Apr 10 10:35:57 2002
-@@ -453,15 +453,68 @@
+diff -uNr linux-2.4.19-pre6.o/fs/super.c linux-2.4.19-pre6.speedup/fs/super.c
+--- linux-2.4.19-pre6.o/fs/super.c	Mon Apr  8 14:53:24 2002
++++ linux-2.4.19-pre6.speedup/fs/super.c	Wed Apr 10 10:43:46 2002
+@@ -431,15 +431,68 @@
  	put_super(sb);
  }
  
@@ -603,7 +609,7 @@ diff -uNr linux-2.4.18.original/fs/super.c linux-2.4.18.speedup/fs/super.c
  /*
   * Note: check the dirty flag before waiting, so we don't
   * hold up the sync while mounting a device. (The newly
-@@ -484,7 +537,7 @@
+@@ -462,7 +515,7 @@
  	spin_lock(&sb_lock);
  	sb = sb_entry(super_blocks.next);
  	while (sb != sb_entry(&super_blocks))
@@ -612,10 +618,10 @@ diff -uNr linux-2.4.18.original/fs/super.c linux-2.4.18.speedup/fs/super.c
  			sb->s_count++;
  			spin_unlock(&sb_lock);
  			down_read(&sb->s_umount);
-diff -uNr linux-2.4.18.original/include/linux/fs.h linux-2.4.18.speedup/include/linux/fs.h
---- linux-2.4.18.original/include/linux/fs.h	Mon Mar 18 13:40:14 2002
-+++ linux-2.4.18.speedup/include/linux/fs.h	Wed Apr 10 10:35:57 2002
-@@ -697,6 +697,10 @@
+diff -uNr linux-2.4.19-pre6.o/include/linux/fs.h linux-2.4.19-pre6.speedup/include/linux/fs.h
+--- linux-2.4.19-pre6.o/include/linux/fs.h	Mon Apr  8 14:53:26 2002
++++ linux-2.4.19-pre6.speedup/include/linux/fs.h	Wed Apr 10 10:55:34 2002
+@@ -706,6 +706,10 @@
  
  #define sb_entry(list)	list_entry((list), struct super_block, s_list)
  #define S_BIAS (1<<30)
@@ -626,7 +632,7 @@ diff -uNr linux-2.4.18.original/include/linux/fs.h linux-2.4.18.speedup/include/
  struct super_block {
  	struct list_head	s_list;		/* Keep this first */
  	kdev_t			s_dev;
-@@ -909,6 +913,7 @@
+@@ -918,6 +922,7 @@
  	struct dentry * (*fh_to_dentry)(struct super_block *sb, __u32 *fh, int len, int fhtype, int parent);
  	int (*dentry_to_fh)(struct dentry *, __u32 *fh, int *lenp, int need_parent);
  	int (*show_options)(struct seq_file *, struct vfsmount *);
@@ -634,7 +640,7 @@ diff -uNr linux-2.4.18.original/include/linux/fs.h linux-2.4.18.speedup/include/
  };
  
  /* Inode state bits.. */
-@@ -1216,6 +1221,7 @@
+@@ -1226,6 +1231,7 @@
  extern int filemap_fdatasync(struct address_space *);
  extern int filemap_fdatawait(struct address_space *);
  extern void sync_supers(kdev_t);
@@ -642,10 +648,10 @@ diff -uNr linux-2.4.18.original/include/linux/fs.h linux-2.4.18.speedup/include/
  extern int bmap(struct inode *, int);
  extern int notify_change(struct dentry *, struct iattr *);
  extern int permission(struct inode *, int);
-diff -uNr linux-2.4.18.original/include/linux/reiserfs_fs.h linux-2.4.18.speedup/include/linux/reiserfs_fs.h
---- linux-2.4.18.original/include/linux/reiserfs_fs.h	Mon Mar 18 13:41:14 2002
-+++ linux-2.4.18.speedup/include/linux/reiserfs_fs.h	Wed Apr 10 10:35:57 2002
-@@ -1502,6 +1502,7 @@
+diff -uNr linux-2.4.19-pre6.o/include/linux/reiserfs_fs.h linux-2.4.19-pre6.speedup/include/linux/reiserfs_fs.h
+--- linux-2.4.19-pre6.o/include/linux/reiserfs_fs.h	Mon Apr  8 14:53:26 2002
++++ linux-2.4.19-pre6.speedup/include/linux/reiserfs_fs.h	Wed Apr 10 10:56:36 2002
+@@ -1533,6 +1533,7 @@
  */
  #define JOURNAL_BUFFER(j,n) ((j)->j_ap_blocks[((j)->j_start + (n)) % JOURNAL_BLOCK_COUNT])
  
@@ -653,10 +659,10 @@ diff -uNr linux-2.4.18.original/include/linux/reiserfs_fs.h linux-2.4.18.speedup
  void reiserfs_commit_for_inode(struct inode *) ;
  void reiserfs_update_inode_transaction(struct inode *) ;
  void reiserfs_wait_on_write_block(struct super_block *s) ;
-diff -uNr linux-2.4.18.original/include/linux/reiserfs_fs_sb.h linux-2.4.18.speedup/include/linux/reiserfs_fs_sb.h
---- linux-2.4.18.original/include/linux/reiserfs_fs_sb.h	Mon Mar 18 13:40:14 2002
-+++ linux-2.4.18.speedup/include/linux/reiserfs_fs_sb.h	Wed Apr 10 10:36:09 2002
-@@ -281,8 +281,7 @@
+diff -uNr linux-2.4.19-pre6.o/include/linux/reiserfs_fs_sb.h linux-2.4.19-pre6.speedup/include/linux/reiserfs_fs_sb.h
+--- linux-2.4.19-pre6.o/include/linux/reiserfs_fs_sb.h	Mon Apr  8 14:53:26 2002
++++ linux-2.4.19-pre6.speedup/include/linux/reiserfs_fs_sb.h	Wed Apr 10 10:55:34 2002
+@@ -291,8 +291,7 @@
    */
    struct reiserfs_page_list *j_flush_pages ;
    time_t j_trans_start_time ;         /* time this transaction started */
@@ -666,7 +672,7 @@ diff -uNr linux-2.4.18.original/include/linux/reiserfs_fs_sb.h linux-2.4.18.spee
    wait_queue_head_t j_join_wait ;    /* wait for current transaction to finish before starting new one */
    atomic_t j_jlock ;                       /* lock for j_join_wait */
    int j_journal_list_index ;	      /* journal list number of the current trans */
-@@ -428,6 +427,7 @@
+@@ -444,6 +443,7 @@
      int s_is_unlinked_ok;
      reiserfs_proc_info_data_t s_proc_info_data;
      struct proc_dir_entry *procdir;
@@ -674,7 +680,7 @@ diff -uNr linux-2.4.18.original/include/linux/reiserfs_fs_sb.h linux-2.4.18.spee
  };
  
  /* Definitions of reiserfs on-disk properties: */
-@@ -491,7 +491,6 @@
+@@ -510,7 +510,6 @@
  void reiserfs_file_buffer (struct buffer_head * bh, int list);
  int reiserfs_is_super(struct super_block *s)  ;
  int journal_mark_dirty(struct reiserfs_transaction_handle *, struct super_block *, struct buffer_head *bh) ;
@@ -682,10 +688,10 @@ diff -uNr linux-2.4.18.original/include/linux/reiserfs_fs_sb.h linux-2.4.18.spee
  int show_reiserfs_locks(void) ;
  int reiserfs_resize(struct super_block *, unsigned long) ;
  
-diff -uNr linux-2.4.18.original/mm/filemap.c linux-2.4.18.speedup/mm/filemap.c
---- linux-2.4.18.original/mm/filemap.c	Tue Feb 26 15:53:01 2002
-+++ linux-2.4.18.speedup/mm/filemap.c	Wed Apr 10 10:36:18 2002
-@@ -1241,6 +1241,7 @@
+diff -uNr linux-2.4.19-pre6.o/mm/filemap.c linux-2.4.19-pre6.speedup/mm/filemap.c
+--- linux-2.4.19-pre6.o/mm/filemap.c	Mon Apr  8 14:53:27 2002
++++ linux-2.4.19-pre6.speedup/mm/filemap.c	Wed Apr 10 10:44:40 2002
+@@ -1306,6 +1306,7 @@
  	/* Mark the page referenced, AFTER checking for previous usage.. */
  	SetPageReferenced(page);
  }
@@ -693,7 +699,7 @@ diff -uNr linux-2.4.18.original/mm/filemap.c linux-2.4.18.speedup/mm/filemap.c
  
  /*
   * This is a generic file read routine, and uses the
-@@ -2826,6 +2827,14 @@
+@@ -2897,6 +2898,14 @@
  	}
  }
  
@@ -708,7 +714,7 @@ diff -uNr linux-2.4.18.original/mm/filemap.c linux-2.4.18.speedup/mm/filemap.c
  /*
   * Write to a file through the page cache. 
   *
-@@ -2955,8 +2964,7 @@
+@@ -3026,8 +3035,7 @@
  		goto out;
  
  	remove_suid(inode);
@@ -719,4 +725,4 @@ diff -uNr linux-2.4.18.original/mm/filemap.c linux-2.4.18.speedup/mm/filemap.c
  	if (file->f_flags & O_DIRECT)
  		goto o_direct;
 
---mP3DRpeJDSE+ciuQ--
+--vkogqOf2sHV7VnPd--
