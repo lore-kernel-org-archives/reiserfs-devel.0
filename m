@@ -1,43 +1,28 @@
-From: Helge Hafting <helge.hafting@hist.no>
-Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 14:33:13 +0200
-Message-ID: <412F2A09.7050104@hist.no>
-References: <Pine.LNX.4.44.0408252052420.13240-100000@chimarrao.boston.redhat.com>	<412D968B.9030107@hist.no> <20040826022137.1504ffb7.pj@sgi.com>
+From: Maciej Soltysiak <pysiak.satriani@wp.pl>
+Subject: kern.log unrecognized option warning
+Date: Fri, 27 Aug 2004 15:40:59 +0200
+Message-ID: <1392551425.20040827154059@wp.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20913-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20915-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826022137.1504ffb7.pj@sgi.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Paul Jackson <pj@sgi.com>
-Cc: riel@redhat.com, mikulas@artax.karlin.mff.cuni.cz, torvalds@osdl.org, hch@lst.de, reiser@namesys.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-Paul Jackson wrote:
+Hi,
 
->Helge wrote:
->  
->
->>So an old "tar" won't get this right as it will assume that an object
->>is either file or directory.
->>    
->>
->
->There are many backup apps, not just one.  I've written a few myself,
->none of which will ever be worthy of notice.  The sourceforge
->Topic.System.Archiving.Backup lists 335 projects at present.
->
->I find the idea that most backup tools and scripts will silently
->stop working correctly to be pretty scary.  
->  
->
-They won't stop working, they will merely not support
-the new features.  That is only a problem if
-you actually use those features.  If all you have
-is plain files and plain directories - no problem.  Not
-if files-as-directories are implemented right.
+While adding an entry to fstab i tried it with reiserfs notail.
+Ok, there's no such option.
+Is it important to write this also to the kern.log?
 
-Helge Hafting
+Aug 26 20:27:25 dns kernel: reiser4[mount(4962)]: parse_options (fs/reiser4/vfs_ops.c:844)[nikita-2307]:
+Aug 26 20:27:25 dns kernel: WARNING: Unrecognized option: "notail"
+
+Regards,
+Maciej
+
+
