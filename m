@@ -1,26 +1,29 @@
-From: Edward Shushkin <edward@namesys.com>
-Subject: reiserfsprogs-3.6.8 release
-Date: Fri, 16 May 2003 19:53:19 +0400
-Sender: edward
-Message-ID: <3EC5096F.C26088C1@namesys.com>
+From: Mirar <mirar-yg@mirar.org>
+Subject: Re: Reiser4 the Atomic Filesystem (sloganeering)
+Date: 16 May 2003 20:03:42 +0200
+Sender: mirar@orchid.mirar.org
+Message-ID: <m1r86y4vlt.fsf@orchid.mirar.org>
+References: <3EC4DA79.1090209@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14129-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14130-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3EC4DA79.1090209@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: ReiserFS <reiserfs-list@namesys.com>, beverly <beverly@namesys.com>, nina reiser <ninasha@namesys.com>, sean sturgeon <seansturgeon@yahoo.com>
 
-Hi all. 
-The new 3.6.8 release includes cleanups in
-- mkreiserfs 
-- reiserfstune
-All the cleanups are related to creation of non-standard journal 
-by mkreiserfs and changing its parameters by reiserfstune
-(it prevents wrong confusing warning messages)
+Hans Reiser <reiser@namesys.com> writes:
 
-Thanks,
-Edward
+> what do you guys think of that as a title for a description of reiser4
+> on our website.  The idea being that every operation is performed as
+> an atomic operation, thus it is an atomic filesystem.  Atomic tends to
+> have connotations of being powerful as well....
+
+Why not add some "secure filesystem transactions" in there too? :)
+
+/Mirar
