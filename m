@@ -1,57 +1,47 @@
-From: Todd Lyons <todd@mrball.net>
-Subject: Re: Rapid system transfers
-Date: Sat, 20 Mar 2004 20:24:59 -0800
-Message-ID: <20040321042459.GI5620@mrball.net>
-References: <20040320015410.GB10665@mrball.net> <20040320024911.GA30755@parcelfarce.linux.theplanet.co.uk>
+From: Chris Mason <mason@suse.com>
+Subject: Re: new v3 2.6.4  logging/xattr patches
+Date: Sun, 21 Mar 2004 09:14:13 -0500
+Message-ID: <1079878453.11062.333.camel@watt.suse.com>
+References: <1079679539.11055.101.camel@watt.suse.com>
+	 <1079810281.11062.317.camel@watt.suse.com>
+	 <200403202115.37444.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17353-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-17354-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040320024911.GA30755@parcelfarce.linux.theplanet.co.uk>
+In-Reply-To: <200403202115.37444.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; x-action="pgp-signed"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Cc: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Sat, 2004-03-20 at 15:15, Dieter N=FCtzel wrote:
+> Am Samstag, 20. M=E4rz 2004 20:18 schrieb Chris Mason:
+> > On Fri, 2004-03-19 at 01:58, Chris Mason wrote:
+> > > Hello everyone,
+> > >
+> > > I've just uploaded all the reiserfs patches from the suse 2.6 kernel =
+to:
+> > >
+> > > ftp.suse.com/pub/people/mason/patches/data-logging/experimental/2.6.4
+> >
+> > There's a new patch there, reiserfs-ordered-lat.  It has two latency
+> > fixes from Takashi Iwai, that also improve data=3Dordered throughput in
+> > some cases.
+> >
+> > If you want to apply to -mm or to 2.6.5-rc2, use the series.mm for the
+> > list of patches.
+>=20
+> What do I need on-top of SuSE 2.6.4-0? ;-)
 
-Chris Dukes wanted us to know:
+The suse kernel of the day ;-)  My experimental directory is a dump of
+all the suse reiserfs patches.
 
->> Recently we've had the need to move a few machine instances from one
->> physical machine to a more powerful machine.  These machines use Reiser
->> (an old version, don't know exactly which one, but it's probably RH 8.0)
->If most of the files remain unchanged, I'd make an initial copy
->with cpio while things are running and use rsync to copy the changes
->while the database is shut down.
+-chris
 
-My wording was poor, my apologies.  The database part is just a few
-hundred files, some of which are very large.  No big deal.  The file
-part (a bunch of small text files) is a few million files totalling
-around 100 GB of information.  Just *COUNTING* those files takes 2+
-hours, then the remote system has to count them too.  The actual data
-transfer is very small.  But we have to have the system down for 5 hours
-to do this (and the first transfer we did was only 30 GB).
 
->(cpio is somewhat faster for initial copy.  rsync is much better
->for copying the changes).
 
-We used tar to do the copying.  I'll give cpio a try to see how
-performance works.
 
-Blue skies...			Todd
-- -- 
-A: No
-Q: Should I quote at the end of the message?
-Linux kernel 2.4.22-12.tmb.1mdk   1 user,  load average: 0.00, 0.00, 0.00
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.3 (GNU/Linux)
-Comment: http://www.mrball.net/todd.asc
-
-iD4DBQFAXRkbIBT1264ScBURAjYtAJiE2kt/wqwu++dD6IkQfi8SNj5zAKCDVTyl
-3ZjaDtMVfg1IMXsaCYlrBQ==
-=aVY6
------END PGP SIGNATURE-----
