@@ -1,44 +1,57 @@
-From: Helge Hielscher <hhielscher@unternehmen.com>
-Subject: Re: fsck.reiser4 segfault with one partition
-Date: Wed, 02 Jun 2004 22:20:13 +0200
-Sender: news <news@sea.gmane.org>
-Message-ID: <pan.2004.06.02.20.20.12.597649@unternehmen.com>
-References: <pan.2004.06.01.11.57.09.230448@unternehmen.com> <200406021658.17346.vitaly@namesys.com> <pan.2004.06.02.10.19.28.403959@unternehmen.com> <200406022143.08104.vitaly@namesys.com>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: reiser4 as module (reiser4-2004.06.01-17.16-linux-2.6.7-rc1-mm1 )
+Date: Thu, 3 Jun 2004 14:25:31 +0400
+Message-ID: <20040603102531.GL8091@backtop.namesys.com>
+References: <30825.1086176769@www56.gmx.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-18984-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18988-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <30825.1086176769@www56.gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Svetoslav Slavtchev <svetljo@gmx.de>
+Cc: reiserfs-list@namesys.com
 
-On Wed, 02 Jun 2004 21:43:08 +0400, Vitaly Fertman wrote:
-> the previous problem was on the semantic pass, but now:
->> Fatal corruptions were found. Semantic pass is skipped.
+On Wed, Jun 02, 2004 at 01:46:09PM +0200, Svetoslav Slavtchev wrote:
+> Hi all,
+> 
+> i'm having problem with unresolved symbols,
+> when compiling the above auto bk-snapshot
+> with reiser4 as module, and i really need 
+> to compile it as module
+> 
 
-Aha, but I was running
-1st: fsck.reiser4 -> error at semantic pass
-2nd: debugfs.reiser4
-3rd:  -> got me the second error I posted
+try this fix:
+========================================
+# This is a BitKeeper generated diff -Nru style patch.
+#
+# ChangeSet
+#   2004/06/03 14:07:30+04:00 zam@crimson.namesys.com 
+#   reiser4_clear_page_dirty: use page->mapping instead of the wrapper.
+# 
+# as_ops.c
+#   2004/06/03 14:07:26+04:00 zam@crimson.namesys.com +1 -1
+#   reiser4_clear_page_dirty: use page->mapping instead of the wrapper.
+# 
+diff -Nru a/as_ops.c b/as_ops.c
+--- a/as_ops.c	Thu Jun  3 14:20:25 2004
++++ b/as_ops.c	Thu Jun  3 14:20:25 2004
+@@ -72,7 +72,7 @@
+ 	struct address_space *mapping;
+ 	unsigned long flags;
+ 
+-	mapping = page_mapping(page);
++	mapping = page->mapping;
+ 	BUG_ON(mapping == NULL);
+ 
+ 	read_lock_irqsave(&mapping->tree_lock, flags);
+========================================
 
-> the only write that could happen is the journal replaying. did you umount
-> the fs while fscking?
 
-Sure. Just tried the last fsck.reiser4 again using the Gentoo LiveCD.
-
-> which reiser4 code are you using?
-
-latest stable.
-
-> probably you have upgraded to some newer snapshot?
-
-only installed the libaal-0.5.1.tar.gz and reiser4progs-0.5.4.tar.gz after
-you have been sugesting to try the latest version first, but I didnt
-uninstall the old version beforehand. maybe that was the mistake I made?
-
-Regards,
-Helge
-
+-- 
+Alex.
