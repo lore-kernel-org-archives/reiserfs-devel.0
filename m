@@ -1,65 +1,104 @@
-From: Paul Wagland <paul@kungfoocoder.org>
-Subject: Re: EACCESS vs ENOENT for nonexistent files-within-files
-Date: Wed, 15 Sep 2004 16:16:49 +0200
-Message-ID: <20040915161649.5cn00s0gw84gkwko@www.wagland.net>
-References: <20040915151803.vl9es48kkosg4k88@www.wagland.net>
-	<41484BDB.7060007@namesys.com>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: [PATCH] ReiserFS v3 I/O error handling
+Date: Wed, 15 Sep 2004 18:12:03 +0400
+Message-ID: <20040915141202.GF5137@backtop.namesys.com>
+References: <41461B2F.7080100@suse.com> <20040915131133.GD5137@backtop.namesys.com> <41484801.2000204@suse.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=_q0zrce3vmj4";
-	protocol="application/pgp-signature"; micalg="pgp-sha1"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21767-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21768-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41484BDB.7060007@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <41484801.2000204@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: Nikita Danilov <nikita@clusterfs.com>, evilninja <evilninja@gmx.net>, reiserfs-list@namesys.com
-
---=_q0zrce3vmj4
-Content-Type: text/plain; charset=UTF-8; format="flowed"
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-On Wed 15 Sep 2004 04:04:11 PM CEST, Hans Reiser wrote:
+On Wed, Sep 15, 2004 at 09:47:45AM -0400, Jeff Mahoney wrote:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+> 
+> Alex Zarochentsev wrote:
+> | * reiserfs-io-error-handling.diff
+> | 	- Allows ReiserFS to gracefully handle I/O errors in critical
+> | 	  code paths. The admin has the option to go read-only or panic.
+> | 	  Since ReiserFS has no option to ignore the use of the journal,
+> |         the "continue" method is not enabled.
+> |
+> |
+> |> What reiserfs will do with already dirty blocks on the R/O fs.  Those
+> blocks
+> |> remain dirty, yes?
+> |
+> |> The whole patch is enough complex, one look is not enough :) I think
+> Elena may
+> |> do additional testing to be sure that nothing is broken while
+> improving i/o
+> |> handling.
+> 
+> Yes, blocks that are already dirty will remain dirty. This is safe.
+> 
 
-> Paul Wagland wrote:
->
->> Does this mean (for example) that on a sgid file, only the group can see the
->> attributes? Even if the file is world readable? Does this really make sense?
->>
->> Here is the rub... you are breaking the rules of "one object - one purpose".
->> Surely this is not how it is meant to be? On a file, the execute bit 
->> is meant
->> for "can I run this file". On a dir, this bit is for "Can I see inside this
->> directory". They do not match!
->>
-> Separate bits are needed for the separate purposes.  Nikita, can you
-> remind what implementation details delay separating the bits?  I thought
-> it was already done, sigh....
+I just checked that what we discussed for reiser4 is a right thing :)
+But it is not fully implemented yet :-/
 
-Ah good. At least then it can be considered a bug :-) Then I won't get 
-too upset
-anymore... ;-)
+> Here are the cases:
+> * Transaction hasn't started yet, and the journal has aborted
+> ~  - Deny the transaction start in do_journal_begin_r, returning -EROFS
+> * Transaction has started, journal was aborted in the meantime
+> ~  - Finish cleaning up, don't write the commit block, return -EIO
+> ~    from do_journal_end
+> * Transaction has completed, and aborts during flush_commit_list()
+> ~  - Finish writing, but don't write commit block
+> * Transaction has completed, and aborts during flush_journal_list()
+> ~  - Finish writing, but don't update journal header
+> 
+> Since this is an error path for I/O errors, NOT internal
+> inconsistencies, it's safe to continue writing to the disk so long as we
+> do so with the expectation that whatever we write there will be handled
+> elsewhere.
+> 
+> One of the tenets of journaling filesystems is that if the transaction
+> isn't commited, it never existed. The I/O error handling code takes
+> advantage of this by completing whatever I/O is outstanding, which makes
+> the code *far* less intrusive. My initial implementation tried cleaning
+> stuff up, and it's extremely involved for very little gain. 
+> Once the
+> journal has aborted, updates to the journal's state just don't happen.
+> Yes, blocks get written into it -- but the commit block doesn't. The
+> transaction isn't commited: It never existed. Outstanding journal
+> flushes can still flush to the disk, but it won't update the journal
+> header. The transaction can be replayed the next time the filesystem is
+> mounted.
+> 
+> I view it like this: An aborted filesystem is no different than one on a
+> system which has lost power. The journal protects us here. Nothing after
+> reiserfs_abort() exists, since the journal operations aren't commited.
+> There will be incomplete transactions and incomplete flushes, but that's
+> what the journal is there to handle in the first place.
+> 
+> The admin will be able to perform the normal operations before umounting
+> a filesystem (closing open files, chdir'ing out of it), and the
+> filesystem will be umountable. The admin can check it, and remount if
+> they choose.
 
-Cheers,
-Paul
+I assume that was tested with some simulated i/o errors, wasn't it?.
 
+> - -Jeff
+> - --
+> Jeff Mahoney
+> SuSE Labs
+> -----BEGIN PGP SIGNATURE-----
+> Version: GnuPG v1.2.4 (GNU/Linux)
+> Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+> 
+> iD8DBQFBSEgBLPWxlyuTD7IRAvyBAJ0XJW7eP6eThwSK6YT9K3hdxlTT0ACfTLxY
+> LIJEucE1EisIn9VQPXon/dw=
+> =cQx8
+> -----END PGP SIGNATURE-----
 
---=_q0zrce3vmj4
-Content-Type: application/pgp-signature
-Content-Description: PGP Digital Signature
-Content-Disposition: inline
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQBBSE7Qtch0EvEFvxURAq9XAJ9RIdu89sj9vhHsYG3xyxLFkDYAyACgmY6t
-mHNW75ZCJ82rvNLzGRSaQfI=
-=3OH9
------END PGP SIGNATURE-----
-
---=_q0zrce3vmj4--
+-- 
+Alex.
