@@ -1,40 +1,58 @@
-From: Pavel Machek <pavel@suse.cz>
-Subject: Re: file as a directory
-Date: Sun, 28 Nov 2004 20:01:50 +0100
-Message-ID: <20041128190150.GF1214@elf.ucw.cz>
-References: <2c59f00304112205546349e88e@mail.gmail.com> <41A1FFFC.70507@hist.no> <20041125230937.GA2909@elf.ucw.cz> <20041128185334.GA5329@hh.idb.hist.no>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: hashes in reiser3.6
+Date: Sun, 28 Nov 2004 14:30:36 -0500
+Message-ID: <41AA275C.7030909@suse.com>
+References: <2f4958ff041118114530134bff@mail.gmail.com>	 <419D031D.9050807@novell.com> <2f4958ff04112015003b0bca9e@mail.gmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22606-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-22607-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20041128185334.GA5329@hh.idb.hist.no>
+In-Reply-To: <2f4958ff04112015003b0bca9e@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Helge Hafting <helgehaf@aitel.hist.no>
-Cc: Helge Hafting <helge.hafting@hist.no>, Amit Gud <amitgud1@gmail.com>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="macroman"; format="flowed"
+To: =?UTF-8?B?R3J6ZWdvcnogSmHFm2tpZXdpY3o=?= <gryzman@gmail.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Hi!
-
-> > > You won't get .tar or .tar.gz support in the VFS, for a few simple reasons:
-> > > 1. .tar and .tar.gz are complicated formats, and are therefore better
-> > >   left to userland.  You can get some of the same effect by using a shared
-> > >   library that redefines fopen() and fread() though.  It'll work fine for
-> > >   the vast majority of apps that happens to use the C library.
-> > 
-> > It is not same effect -- with shared library you get no caching. And
-> > that hurts a lot.
-> > 
-> The compressed file is still cached, and the library can cache
-> file contents in a shared mapping.  It does not have to
-> be a per-process thing.
-
-Okay, that way you can get it per-user but not system-global...
-
-								Pavel
--- 
-People were complaining that M$ turns users into beta-testers...
-...jr ghea gurz vagb qrirybcref, naq gurl frrz gb yvxr vg gung jnl!
+LS0tLS1CRUdJTiBQR1AgU0lHTkVEIE1FU1NBR0UtLS0tLQpIYXNoOiBTSEExCgpHcnplZ29yeiBK
+YcWba2lld2ljeiB3cm90ZToKfCBPbiBUaHUsIDE4IE5vdiAyMDA0IDE1OjE2OjI5IC0wNTAwLCBK
+ZWZmIE1haG9uZXkgPGplZmZtQG5vdmVsbC5jb20+IHdyb3RlOgp8CnwKfD5JZiB0aGUgZmlsZXN5
+c3RlbSBpcyBhbHJlYWR5IGVzdGFibGlzaGVkLCB5b3UgY2FuJ3Qgc3dpdGNoIGhhc2hlcy4gVGhl
+Cnw+aGFzaCBpcyBnbG9iYWwgdG8gdGhlIGZpbGVzeXN0ZW0sIHNvIGlmIHlvdSB3ZXJlIHRvIGNo
+YW5nZSBpdCwgbG9va3Vwcwp8PndvdWxkIGZhaWwgYW5kIHlvdSB3b3VsZG4ndCBiZSBhYmxlIHRv
+IGZpbmQgYW55IG9mIHlvdXIgZmlsZXMuCnw+Cnw+SWYgeW91J3JlIGNyZWF0aW5nIGEgbmV3IGZp
+bGVzeXN0ZW0sIHlvdSBjYW4gdXNlIHRoZSAtLWhhc2ggYXJndW1lbnQgdG8KfD5ta3JlaXNlcmZz
+LiBVbmRlciBtb3N0IGNpcmN1bXN0YW5jZXMsIHRoZSBmaWxlc3lzdGVtIGNvZGUgd2lsbAp8PmF1
+dG9tYXRpY2FsbHkgZGlzY292ZXIgd2hpY2ggaGFzaCB5b3UncmUgdXNpbmcgYXQgbW91bnQgdGlt
+ZS4KfAp8CnwgVGhhbmtzLCBidXQgdGhlIHRyaWNrIGlzIHRoYXQgSSB3b3VsZCBsaWtlIHRvIHN3
+aXRjaCBvdmVyIGV4aXN0aW5nCnwgcGFydGl0aW9uIHRvIG90aGVyIGhhc2guCnwgSSBrbm93LCBJ
+IGNhbiBjb3B5IG92ZXIgYWxsIGRhdGEgb24gc2lkZSwgYW5kIHJlY3JlYXRlIHBhcnRpdGlvbiBm
+cm9tCnwgc2NyYXRjaCwgYnV0IGl0J3MganVzdCB3YXkgdG9vIHBhaW5mdWxsLiBJdCBzaG91bGQg
+YmUgcG9zc2libGUgdG8gZG8KfCB0aGlzIGluIG11Y2ggZWFzaWVyIHdheS4KfCBTbyB5b3Ugc2F5
+LCB0aGF0IHJlaXNlcmZzIGRvZXNuJ3Qgc3RvcmUgZmlsZW5hbWVzIGluIHN0cnVjdXJlcywgYnV0
+CnwgdXNlcyBqdXN0IGhhc2hlcyB0byBsb29rdXAgPyBTaG91bGRuJ3QgaXQgYmUgcG9zc2libGUg
+dG8gZ28gdGhyb3VnaAp8IGFsbCBzdHJ1Y3R1cmVzIG9uIHRoZSBwYXJ0aXRpb24sIGFuZCByZWNy
+ZWF0ZSBoYXNoZXMsIGJ1dCB1c2luZwp8IGRpZmZlcmVudCBrZXkgZnVuY3Rpb24gPwp8IEkgYW0g
+cHJlcGFyZWQgdG8gc3BlbmQgc29tZSB0aW1lLGFuZCBkbyB0aGlzLgp8CgpBcyBWbGFkaW1pciBz
+YWlkLCB5b3UnZCBuZWVkIHRvIHdyaXRlIGEgc3BlY2lhbCB0b29sIHRvIGRvIHRoaXMuIEl0Cndv
+dWxkIGJlIGZhciBtb3JlIGNvc3QgZWZmZWN0aXZlIHRvIHVzZSBhIHNwYXJlIGRyaXZlIG9yIHRh
+cGUgYmFja3VwIHRvCmJhY2t1cCB5b3VyIGZpbGVzeXN0ZW0gYW5kIHJlc3RvcmUgaXQgYWdhaW4u
+CgpUbyBoaWdobGlnaHQgd2h5IHRoaXMgd291bGQgYmUgc3VjaCBhIGNvbXBsZXggb3BlcmF0aW9u
+LCBjb25zaWRlciB0aGF0CnRoZSBoYXNoZWQgZW50cmllcyBhcmUgc29ydGVkIGJ5IHRoZSBoYXNo
+LiBXaXRoIHNtYWxsIGRpcmVjdG9yaWVzLCB0aGlzCmlzIGZhaXJseSB0cml2aWFsIHNpbmNlIHlv
+dSBjYW4ganVzdCBzaHVmZmxlIHRoZSBlbnRyaWVzIGFyb3VuZCBpbnNpZGUKdGhlIHNhbWUgaXRl
+bS4gSG93ZXZlciwgd2l0aCBhIGxhcmdlIGRpcmVjdG9yeSAod2hlcmUgbGFyZ2UgaXMgZGVmaW5l
+ZAphcyB0aGUgbGVuZ3RoIG9mIGFsbCBmaWxlbmFtZXMgKyBhc3NvY2lhdGVkIGtleXMgaXMgbGFy
+Z2VyIHRoYW4gYSBkaXNrCmJsb2NrKSwgdGhlIGRpcmVjdG9yeSBjYW4gYmUgc3BsaXQgb3ZlciBz
+ZXZlcmFsIG5vZGVzLiBPbmNlIHlvdSBzdGFydApzaHVmZmxpbmcgbm9kZXMgYXJvdW5kLCB5b3Un
+cmUgZXNzZW50aWFsbHkgcmVidWlsZGluZyB0aGUgdHJlZSwgYW5kCnRoYXQncyBmYXIgbW9yZSBj
+b21wbGV4IGFuZCB0aW1lIGNvbnN1bWluZyB0aGFuIHNpbXBseSBjb3B5aW5nIHRoZSBkYXRhCm9m
+ZiBhbmQgcmVzdG9yaW5nIGl0IGJhY2suCgpTb3JyeSB3ZSBkb24ndCBoYXZlIGFuIGVhc2llciBh
+bnN3ZXIgZm9yIHlvdS4gOigKCi0gLUplZmYKCi0gLS0KSmVmZiBNYWhvbmV5ClN1U0UgTGFicwot
+LS0tLUJFR0lOIFBHUCBTSUdOQVRVUkUtLS0tLQpWZXJzaW9uOiBHbnVQRyB2MS4yLjUgKEdOVS9M
+aW51eCkKQ29tbWVudDogVXNpbmcgR251UEcgd2l0aCBUaHVuZGVyYmlyZCAtIGh0dHA6Ly9lbmln
+bWFpbC5tb3pkZXYub3JnCgppRDhEQlFGQnFpZGNMUFd4bHl1VEQ3SVJBbmI5QUo5M2xBeW1hRmQy
+TzZqb3RCVS81Nm5VNzdlNWJnQ2RGMTI0Ckt6cEg5SUtxUituRzBjK2pJR0RUTjk4PQo9VURuVQot
+LS0tLUVORCBQR1AgU0lHTkFUVVJFLS0tLS0K
