@@ -1,74 +1,83 @@
-From: Timothy Miller <miller@techsource.com>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 09 Sep 2004 22:13:59 -0400
-Message-ID: <41410DE7.3090100@techsource.com>
-References: <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <412DA40B.5040806@namesys.com> <20040826140500.GA29965@fs.tum.de> <20040826150202.GE5733@mail.shareable.org>
+From: "David Dabbs" <david@dabbs.net>
+Subject: RE: [RFC] Pathname Semantics with //
+Date: Thu, 9 Sep 2004 22:06:48 -0500
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040910030206.E29B015D9E@mail03.powweb.com>
+References: <4140FA21.50101@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21659-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <20040826150202.GE5733@mail.shareable.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <4140FA21.50101@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: 'Hans Reiser' <reiser@namesys.com>
+Cc: linux-fsdevel@vger.kernel.org, 'ReiserFS List' <reiserfs-list@namesys.com>
 
 
 
-Jamie Lokier wrote:
-[snip
-> When a simple "cd" into .tar.gz or .iso is implemented properly, it
-> will have _no_ performance penalty after you have first looked in the
-> file, so long as it remains in the on-disk cache.  And, the filesystem
-> will manage that cache intelligently.
+> Hans Reiser wrote:
 > 
-> Imagine: for looking at source files and such, you probably won't
-> bother untarring in future, and you won't bother keeping untarred
-> source trees in your home directory for easy access to things you look
-> at often.  Why waste the space?  You could install whole applications
-> as a .tar and run them from within it, with no performance penalty.
+> David Dabbs wrote:
 > 
-> Similarly, the filesystem will be able to archive directories
-> automatically that haven't been touched in a long time, with no
-> visible change except increased storage space.  "grep" will be a bit
-> slower, but you'll have a useful search tool by then (using coherent
-> indexes) which will be more useful than grep, and much faster.
-> 
+> >>Use of : in addition to / is a bad idea, see The Hideous Name by Rob
+> >>Pike for why.
+> >>
+> >>Hans
+> >>
+> >
+> >I've read The Hideous Name, and I think you're taking Pike out of
+> context.
+> >He wrote that document when device files were still only a part of a
+> >research version of UNIX. His main point is that programs should not be
+> >saddled with understanding physical devices when constructing filenames.
+> >
+> No, it was more than that.  It was that hierarchy requires only one
+> delimiter.
 
-[Again, pardon me for being 5000 messages behind.]
+Of course his essay was about more than that! Where you quote me above, I
+was referring to his main point /about use of the colon/. Perhaps my message
+was truncated and you didn't get to read a bit later where I acknowledge
 
-Anyhow, I recall reading an article about 'unified name spaces', and I'm 
-not referring to what's on namesys.com.  It mentioned how putting device 
-nodes into the file system is a very powerful innovation of UNIX. 
-Having files and devices in the same name space simplifies tools and 
-makes the environment much more powerful, because you can connect data 
-sources and targets together more arbitarily.
+>Regarding slashes, I can't find anywhere that Pike criticizes slashes.
+>Now, I can see where the proposal runs afoul of his advice that:
+>
+>The syntax should be clean and uniform; every new syntactic rule requires
+>at least one, and usually many, semantic rules to resolve peculiarities
+>introduced by the new syntax. If the name space is a tree or any other kind
+>of graph, a single character should be used to separate nodes in a name.
+>
+>Well, the only reason two trailing slashes are required is that we need
+>some way to distinguish a directory's named streams from its entries. What
+>is worse, one extra slash at the end of a directory (or two for a file) or
+>"/metas"?
 
-If I recall correctly, the article mentioned something about Plan9 
-taking things to a greater extreme than UNIX.
+I completely agree with Pike on the one delimiter thing -- it is certainly
+much more elegant. And we can have that simplicity/elegance as long as
+directories are prohibited from having metadata. Do you have a proposal to
+expose metadata on a directory such that it 
 
-Going along with what you said, Jamie, if "containers" like tar files 
-could be accessed like directories without being first extracted, it 
-would increase the power and flexibility of the whole system.  Windows 
-XP does something like this with the way it presents ZIP files as 
-directories, and although I'm sure the Windows way isn't nearly as 
-efficient and universal as how Linux would do it, I find the feature to 
-be INCREDIBLY useful.
+a) allows one to distinguish a directory entry from directory metadata,
+b) uses only already-reserved pathname character(s),
+c) doesn't require any reserved name,
+d) is the same delimiter used for file metadata and
+e) doesn't butt heads with Sus?
 
-Of course, we don't necessarily want codecs for every archive format 
-ever invented to be embedded in the kernel.  Instead, we need to do 
-something like how you can mount an ISO on a loopback device, only more 
-transparently and more flexibly, and with the less performance-critical 
-codecs being implemented as daemons in userspace.
 
-Also, there would be limitations.  For instance, many such 
-pseudo-directories would be read-only, and some would be writable only 
-when on some file systems (like writing to a compressed archive might be 
-much easier to implement on Reiser4 than something else, or perhaps the 
-ext3 version would have to do a lot more copying, while the Reiser 
-version could take advantage of Reiser-specific features like inserting 
-in the middle of a file).
+In a different post you said 
+>Oh, and yes, I understand that minimizing the cost of change by 
+>being artful is desirable.
+
+Isn't it artful to try for the most innovation with the least breakage;
+taking as little from the namespace and breaking only as many eggs as are
+needed to make that innovative new omelet? I'm certainly willing to break as
+many eggs as needed, but no more.
+
+I don't claim to know as much about closure (or free trade) as do you. My
+mental gifts are in other matters. ;-)
+
+
+David
+
+
+
 
