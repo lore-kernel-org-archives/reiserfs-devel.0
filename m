@@ -1,46 +1,34 @@
-From: Giuliano Pochini <pochini@shiny.it>
+From: Christoph Hellwig <hch@infradead.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 11:18:55 +0200 (CEST)
-Sender: pochini@agnus.shiny.it
-Message-ID: <XFMail.20040827111855.pochini@shiny.it>
-References: <Pine.LNX.4.58.0408260919380.2304@ppc970.osdl.org>
+Date: Fri, 27 Aug 2004 10:19:56 +0100
+Message-ID: <20040827101956.B29672@infradead.org>
+References: <Pine.LNX.4.58.0408261217140.2304@ppc970.osdl.org> <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com> <20040826204841.GC5733@mail.shareable.org> <20040826205218.GE1570@legion.cup.hp.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-20899-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20900-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.58.0408260919380.2304@ppc970.osdl.org>
+Content-Disposition: inline
+In-Reply-To: <20040826205218.GE1570@legion.cup.hp.com>; from jra@samba.org on Thu, Aug 26, 2004 at 01:52:18PM -0700
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: ReiserFS List <reiserfs-list@namesys.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Hans Reiser <reiser@namesys.com>, Jamie Lokier <jamie@shareable.org>, Christoph Hellwig <hch@lst.de>
+Content-Transfer-Encoding: 7bit
+To: Jeremy Allison <jra@samba.org>
+Cc: Jamie Lokier <jamie@shareable.org>, Rik van Riel <riel@redhat.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
+On Thu, Aug 26, 2004 at 01:52:18PM -0700, Jeremy Allison wrote:
+> On Thu, Aug 26, 2004 at 09:48:41PM +0100, Jamie Lokier wrote:
+> > 
+> > This is why I favour storing all essential metadata (about the file's
+> > content) inside the file's contents, the primary stream.
+> > 
+> > We have another problem: what happens when users want to transfer data
+> > from Windows (with secondary streams) and MacOS (with resource forks)?
+> 
+> I can tell you that - right now we (Samba) has to drop all but the primary stream,
+> because the Linux filesystems don't have data stream support. Oh look,
+> we're losing user data (that's a *bad* thing :-).
 
-On 26-Aug-2004 Linus Torvalds wrote:
+Maybe you should learn from netatalk.
 
-> I advocated (long ago) something like this for /dev handling, just because
-> I think it would make sense to have
->
->       /dev/hda        <- special file
->       /dev/hda/part1  <- partition 1 (aka /dev/hda1)
-
-This breaks the r4 semantics if I understood it correctly. Because
-/partN are not simply associated to the file, they are part of the
-file. ie. when I modify /dev/hda I also change /dev/hda/partN and
-vice-versa. I don't see any pratical problem, though.
-
-
-> Still, I really do like the idea of merging the notion of file and
-> directory into one notion of "container". I absolutely _detest_ files with
-> internal structure that tools have to know about (ie I hate seeing all
-> those embedded formats that I can't use "grep" on - MIME being one case).
-> I'd much rather see a "group of files"  and a "file with a grouping of
-> information".
-
-You're actually looking for a database with a legacy fs-like interface :)
-
-
---
-Giuliano.
