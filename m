@@ -1,36 +1,483 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: fs errors on thinkpad R31
-Date: Fri, 10 Jan 2003 17:32:46 +0300
-Message-ID: <20030110173246.A10156@namesys.com>
-References: <200301092320.48501.bernd-schubert@web.de>
+From: Yury Umanets <umka@namesys.com>
+Subject: gpart-0.1g-reiserfs-3.6.diff
+Date: Fri, 10 Jan 2003 17:34:26 +0300
+Message-ID: <3E1ED9F2.1000000@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12310-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ boundary="------------030403010306030007040700"
+Return-path: <reiserfs-list-return-12311-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200301092320.48501.bernd-schubert@web.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+To: stefan@helfert.info
+Cc: Reiserfs-List <reiserfs-list@namesys.com>
+
+This is a multi-part message in MIME format.
+--------------030403010306030007040700
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
-To: Bernd Schubert <bernd-schubert@web.de>
-Cc: ReiserFS <reiserfs-list@namesys.com>
 
-Hello!
+Hello Stefan,
 
-On Thu, Jan 09, 2003 at 11:20:48PM +0100, Bernd Schubert wrote:
+I've made a patch aginst gpart-0.1h for detecting reiserfs 3.6 partitions.
 
-> this is the second time within 14 days after which I had to run reiserfsck on 
-> my IBM Thinkpad R31.
-> This time I lost a directory with 49 files (it seems it were only kernel 
-> modules, so probably not so important data).
-> I have attached the error messages from the /var/log/messages file.
+See attachment for details.
 
-Hm. Looks like some blocks have unexpected contents.
-Do you often uncleanly turn-off/run out of battaries prior to
-corruption?
-Try to disable write caching in your harddrive then. (hdparm -W0 /dev/hda)
+-- 
+Yury Umanets
 
-Bye,
-    Oleg
+--------------030403010306030007040700
+Content-Type: text/plain;
+ name="gpart-0.1h-reiserfs-3.6.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="gpart-0.1h-reiserfs-3.6.diff"
+
+diff -rupN ./gpart-0.1h.orig/README ./gpart-0.1h/README
+--- ./gpart-0.1h.orig/README	Wed Feb  7 20:58:12 2001
++++ ./gpart-0.1h/README	Fri Jan 10 16:29:43 2003
+@@ -24,25 +24,25 @@
+ 
+  - Currently recognized partitions/filesystems types ---------------------
+ 
+-   Modname Typ   Description
+-   fat     0x01  "Primary DOS with 12 bit FAT"
+-           0x04  "Primary DOS with 16 bit FAT (<= 32MB)"
+-           0x06  "Primary 'big' DOS (> 32MB)"
+-           0x0B  "DOS or Windows 95 with 32 bit FAT"
+-           0x0C  "DOS or Windows 95 with 32 bit FAT, LBA"
+-   ntfs    0x07  "OS/2 HPFS, NTFS, QNX or Advanced UNIX"
+-   hpfs    0x07  "OS/2 HPFS, NTFS, QNX or Advanced UNIX"
+-   ext2    0x83  "Linux ext2 filesystem"
+-   lswap   0x82  "Linux swap"
+-   bsddl   0xA5  "FreeBSD/NetBSD/386BSD"
+-   s86dl   0x82  "Solaris/x86 disklabel"
+-   minix   0x80  "Minix V1"
+-           0x81  "Minix V2"
+-   rfs     0x83  "Reiser filesystem"
+-   hmlvm   0xFE  "Linux LVM physical volumes"
+-   qnx4    0x4F  "QNX 4.x"
+-   beos    0xEB  "BeOS fs"
+-   xfs     0x83  "SGI XFS filesystem"
++   Modname  Typ   Description
++   fat      0x01  "Primary DOS with 12 bit FAT"
++    	    0x04  "Primary DOS with 16 bit FAT (<= 32MB)"
++            0x06  "Primary 'big' DOS (> 32MB)"
++            0x0B  "DOS or Windows 95 with 32 bit FAT"
++            0x0C  "DOS or Windows 95 with 32 bit FAT, LBA"
++   ntfs     0x07  "OS/2 HPFS, NTFS, QNX or Advanced UNIX"
++   hpfs     0x07  "OS/2 HPFS, NTFS, QNX or Advanced UNIX"
++   ext2     0x83  "Linux ext2 filesystem"
++   lswap    0x82  "Linux swap"
++   bsddl    0xA5  "FreeBSD/NetBSD/386BSD"
++   s86dl    0x82  "Solaris/x86 disklabel"
++   minix    0x80  "Minix V1"
++            0x81  "Minix V2"
++   reiserfs 0x83  "ReiserFS filesystem"
++   hmlvm    0xFE  "Linux LVM physical volumes"
++   qnx4     0x4F  "QNX 4.x"
++   beos     0xEB  "BeOS fs"
++   xfs      0x83  "SGI XFS filesystem"
+ 
+ 
+ 
+diff -rupN ./gpart-0.1h.orig/man/gpart.man ./gpart-0.1h/man/gpart.man
+--- ./gpart-0.1h.orig/man/gpart.man	Wed Feb  7 20:54:18 2001
++++ ./gpart-0.1h/man/gpart.man	Fri Jan 10 16:31:52 2003
+@@ -63,8 +63,8 @@ MS Windows NT/2000 filesystem.
+ .I qnx4
+ QNX 4.x filesystem.
+ .TP
+-.I rfs
+-The Reiser filesystem (version 3.5.X, X > 11).
++.I reiserfs
++The Reiser filesystem (version 3.5.X, X > 11, 3.6.X).
+ .TP
+ .I s86dl
+ Sun Solaris on Intel platforms uses a sub-partitioning
+diff -rupN ./gpart-0.1h.orig/src/Makefile ./gpart-0.1h/src/Makefile
+--- ./gpart-0.1h.orig/src/Makefile	Tue Jan 30 20:01:08 2001
++++ ./gpart-0.1h/src/Makefile	Fri Jan 10 16:32:24 2003
+@@ -19,7 +19,7 @@ CFLAGS+=-DGPART_LANG=\'$(GPART_LANG)\'
+ endif
+ 
+ 
+-mod=ext2 lswap fat bsddl ntfs hpfs s86dl minix rfs hmlvm qnx4 beos xfs
++mod=ext2 lswap fat bsddl ntfs hpfs s86dl minix reiserfs hmlvm qnx4 beos xfs
+ modobj=$(foreach m,$(mod),gm_$(m).o)
+ obj=gpart.o gmodules.o disku.o l64seek.o $(modobj)
+ src=$(obj:.o=.c)
+diff -rupN ./gpart-0.1h.orig/src/gm_reiserfs.c ./gpart-0.1h/src/gm_reiserfs.c
+--- ./gpart-0.1h.orig/src/gm_reiserfs.c	Thu Jan  1 03:00:00 1970
++++ ./gpart-0.1h/src/gm_reiserfs.c	Fri Jan 10 17:25:30 2003
+@@ -0,0 +1,91 @@
++/*      
++ * gm_reiserfs.c -- gpart ReiserFS guessing module
++ *
++ * gpart (c) 1999-2001 Michail Brzitwa <mb@ichabod.han.de>
++ * Guess PC-type hard disk partitions.
++ *
++ * gpart is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published
++ * by the Free Software Foundation; either version 2, or (at your
++ * option) any later version.
++ *
++ * Created:   21.01.1999 <mb@ichabod.han.de>
++ * Modified:  26.12.2000 Francis Devereux <francis@devereux.tc>
++ *            Added reiserfs 3.5.28 support.
++ * Modified:  10.01.2003 yury Umanets <umka@namesys.com>
++ *            Added reiserfs 3.6.x support.
++ *
++ */
++
++#include <string.h>
++#include <errno.h>
++#include "gpart.h"
++#include "gm_reiserfs.h"
++
++static const char	rcsid[] = "$Id: gm_reiserfs.c,v 1.5 2003/01/10 16:38:08 mb Exp mb $";
++
++
++int reiserfs_init(disk_desc *d,g_module *m)
++{
++	if ((d == 0) || (m == 0))
++		return (0);
++
++	m->m_desc = "ReiserFS filesystem";
++	return (REISERFS_FIRST_BLOCK * 1024 + SB_V35_SIZE);
++}
++
++
++
++int reiserfs_term(disk_desc *d)
++{
++	return (1);
++}
++
++
++
++int reiserfs_gfun(disk_desc *d,g_module *m)
++{
++	struct reiserfs_super_block_v35	*sb;
++	dos_part_entry			*pt = &m->m_part;
++	s64_t				size;
++
++	m->m_guess = GM_NO;
++	sb = (struct reiserfs_super_blockv35 *)(d->d_sbuf + REISERFS_FIRST_BLOCK * 1024);
++	if (strncmp(sb->s_magic,REISERFS_SUPER_V35_MAGIC,12) == 0 || 
++	    strncmp(sb->s_magic,REISERFS_SUPER_V36_MAGIC,12) == 0)
++	{
++		/*
++		 * sanity checks.
++		 */
++
++		if (sb->s_block_count < sb->s_free_blocks)
++			return (1);
++
++		if (sb->s_block_count < REISERFS_MIN_BLOCK_AMOUNT)
++			return (1);
++
++		if ((sb->s_state != REISERFS_VALID_FS) &&
++		    (sb->s_state != REISERFS_ERROR_FS))
++			return (1);
++
++		if (sb->s_oid_maxsize % 2) /* must be even */
++			return (1);
++
++		if (sb->s_oid_maxsize < sb->s_oid_cursize)
++			return (1);
++
++		if ((sb->s_blocksize != 4096) && (sb->s_blocksize != 8192))
++			return (1);
++
++		/*
++		 * ok.
++		 */
++
++		m->m_guess = GM_YES;
++		pt->p_start = d->d_nsb;
++		size = sb->s_block_count; size *= sb->s_blocksize; size /= d->d_ssize;
++		pt->p_size = (unsigned long)size;
++		pt->p_typ = 0x83;
++	}
++	return (1);
++}
+diff -rupN ./gpart-0.1h.orig/src/gm_reiserfs.h ./gpart-0.1h/src/gm_reiserfs.h
+--- ./gpart-0.1h.orig/src/gm_reiserfs.h	Thu Jan  1 03:00:00 1970
++++ ./gpart-0.1h/src/gm_reiserfs.h	Fri Jan 10 17:25:55 2003
+@@ -0,0 +1,82 @@
++/*
++ * gm_reiserfs.h -- gpart ReiserFS guessing module header
++ * 
++ * gpart (c) 1999-2001 Michail Brzitwa <mb@ichabod.han.de>
++ * Guess PC-type hard disk partitions.
++ *
++ * gpart is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published
++ * by the Free Software Foundation; either version 2, or (at your
++ * option) any later version.
++ *
++ * Created:   21.01.1999 <mb@ichabod.han.de>
++ * Modified:  26.12.2000 Francis Devereux <francis@devereux.tc>
++ *            Update support reiserfs version 3.5.28
++ * Modified:  10.01.2003 yury Umanets <umka@namesys.com>
++ *            Added reiserfs 3.6.x support.
++ *
++ */
++
++#ifndef _GM_reiserfs_H
++#define _GM_reiserfs_H
++
++/* imported from asm/types.h */
++typedef __signed__ char __s8;
++typedef unsigned char __u8;
++
++typedef __signed__ short __s16;
++typedef unsigned short __u16;
++
++typedef __signed__ int __s32;
++typedef unsigned int __u32;
++
++/*
++ * taken from ReiserFS v3.5.28, v3.6.x. Reiserfs Copyright 1996-2000 Hans Reiser
++ */
++
++#define REISERFS_SUPER_V35_MAGIC	"ReIsErFs"
++#define REISERFS_SUPER_V36_MAGIC	"ReIsEr2Fs"
++
++#define REISERFS_FIRST_BLOCK		64
++#define REISERFS_VALID_FS		1
++#define REISERFS_ERROR_FS		2
++#define REISERFS_MIN_BLOCK_AMOUNT	100
++
++struct reiserfs_super_block_v35
++{
++	__u32 s_block_count;		/* blocks count         */
++	__u32 s_free_blocks;		/* free blocks count    */
++	__u32 s_root_block;		/* root block number    */
++	__u32 s_journal_block;		/* journal block number    */
++	__u32 s_journal_dev;		/* journal device number  */
++	__u32 s_orig_journal_size;	/* size of the journal on FS creation.  used to make sure they don't overflow it */
++	__u32 s_journal_trans_max;	/* max number of blocks in a transaction.  */
++	__u32 s_journal_block_count;	/* total size of the journal. can change over time  */
++	__u32 s_journal_max_batch;	/* max number of blocks to batch into a trans */
++	__u32 s_journal_max_commit_age;	/* in seconds, how old can an async commit be */
++	__u32 s_journal_max_trans_age;	/* in seconds, how old can a transaction be */
++	__u16 s_blocksize;		/* block size           */
++	__u16 s_oid_maxsize;		/* max size of object id array, see get_objectid() commentary  */
++	__u16 s_oid_cursize;		/* current size of object id array */
++	__u16 s_state;			/* valid or error       */
++	char s_magic[12];		/* reiserfs magic string indicates that file system is reiserfs */
++	__u32 s_hash_function_code;	/* indicate, what hash fuction is being use to sort names in a directory*/
++	__u16 s_tree_height;		/* height of disk tree */
++	__u16 s_bmap_nr;		/* amount of bitmap blocks needed to address each block of file system */
++	__u16 s_reserved;
++};
++
++#define SB_V35_SIZE (sizeof(struct reiserfs_super_block_v35))
++
++struct reiserfs_super_block_v36 {
++	struct reiserfs_super_block_v35 s_v35;
++	__u32 s_inode_generation; 
++	__u32 s_flags;
++	char s_uuid[16];
++	char s_label[16];
++	char s_unused[88];
++};
++
++#define SB_V36_SIZE (sizeof(struct reiserfs_super_block_v36))
++
++#endif /* _GM_REISERFS_H */
+diff -rupN ./gpart-0.1h.orig/src/gm_rfs.c ./gpart-0.1h/src/gm_rfs.c
+--- ./gpart-0.1h.orig/src/gm_rfs.c	Wed Feb  7 21:08:08 2001
++++ ./gpart-0.1h/src/gm_rfs.c	Thu Jan  1 03:00:00 1970
+@@ -1,88 +0,0 @@
+-/*      
+- * gm_rfs.c -- gpart ReiserFS guessing module
+- *
+- * gpart (c) 1999-2001 Michail Brzitwa <mb@ichabod.han.de>
+- * Guess PC-type hard disk partitions.
+- *
+- * gpart is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published
+- * by the Free Software Foundation; either version 2, or (at your
+- * option) any later version.
+- *
+- * Created:   21.01.1999 <mb@ichabod.han.de>
+- * Modified:  26.12.2000 Francis Devereux <francis@devereux.tc>
+- *            Added reiserfs 3.5.28 support.
+- *
+- */
+-
+-#include <string.h>
+-#include <errno.h>
+-#include "gpart.h"
+-#include "gm_rfs.h"
+-
+-static const char	rcsid[] = "$Id: gm_rfs.c,v 1.5 2001/02/07 18:08:08 mb Exp mb $";
+-
+-
+-int rfs_init(disk_desc *d,g_module *m)
+-{
+-	if ((d == 0) || (m == 0))
+-		return (0);
+-
+-	m->m_desc = "Reiser filesystem";
+-	return (REISERFS_FIRST_BLOCK * 1024 + SB_SIZE);
+-}
+-
+-
+-
+-int rfs_term(disk_desc *d)
+-{
+-	return (1);
+-}
+-
+-
+-
+-int rfs_gfun(disk_desc *d,g_module *m)
+-{
+-	struct reiserfs_super_block	*sb;
+-	dos_part_entry			*pt = &m->m_part;
+-	s64_t				size;
+-
+-	m->m_guess = GM_NO;
+-	sb = (struct reiserfs_super_block *)(d->d_sbuf + REISERFS_FIRST_BLOCK * 1024);
+-	if (strncmp(sb->s_magic,REISERFS_SUPER_MAGIC,12) == 0)
+-	{
+-		/*
+-		 * sanity checks.
+-		 */
+-
+-		if (sb->s_block_count < sb->s_free_blocks)
+-			return (1);
+-
+-		if (sb->s_block_count < REISERFS_MIN_BLOCK_AMOUNT)
+-			return (1);
+-
+-		if ((sb->s_state != REISERFS_VALID_FS) &&
+-		    (sb->s_state != REISERFS_ERROR_FS))
+-			return (1);
+-
+-		if (sb->s_oid_maxsize % 2) /* must be even */
+-			return (1);
+-
+-		if (sb->s_oid_maxsize < sb->s_oid_cursize)
+-			return (1);
+-
+-		if ((sb->s_blocksize != 4096) && (sb->s_blocksize != 8192))
+-			return (1);
+-
+-		/*
+-		 * ok.
+-		 */
+-
+-		m->m_guess = GM_YES;
+-		pt->p_start = d->d_nsb;
+-		size = sb->s_block_count; size *= sb->s_blocksize; size /= d->d_ssize;
+-		pt->p_size = (unsigned long)size;
+-		pt->p_typ = 0x83;
+-	}
+-	return (1);
+-}
+diff -rupN ./gpart-0.1h.orig/src/gm_rfs.h ./gpart-0.1h/src/gm_rfs.h
+--- ./gpart-0.1h.orig/src/gm_rfs.h	Mon Jan 29 16:34:35 2001
++++ ./gpart-0.1h/src/gm_rfs.h	Thu Jan  1 03:00:00 1970
+@@ -1,68 +0,0 @@
+-/*
+- * gm_rfs.h -- gpart ReiserFS guessing module header
+- * 
+- * gpart (c) 1999-2001 Michail Brzitwa <mb@ichabod.han.de>
+- * Guess PC-type hard disk partitions.
+- *
+- * gpart is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published
+- * by the Free Software Foundation; either version 2, or (at your
+- * option) any later version.
+- *
+- * Created:   21.01.1999 <mb@ichabod.han.de>
+- * Modified:  26.12.2000 Francis Devereux <francis@devereux.tc>
+- *            Update support reiserfs version 3.5.28
+- *
+- */
+-
+-#ifndef _GM_RFS_H
+-#define _GM_RFS_H
+-
+-/* imported from asm/types.h */
+-typedef __signed__ char __s8;
+-typedef unsigned char __u8;
+-
+-typedef __signed__ short __s16;
+-typedef unsigned short __u16;
+-
+-typedef __signed__ int __s32;
+-typedef unsigned int __u32;
+-
+-/*
+- * taken from ReiserFS v3.5.28. Reiserfs Copyright 1996-2000 Hans Reiser
+- */
+-
+-#define REISERFS_SUPER_MAGIC		"ReIsErFs"
+-#define REISERFS_FIRST_BLOCK		64
+-#define REISERFS_VALID_FS		1
+-#define REISERFS_ERROR_FS		2
+-#define REISERFS_MIN_BLOCK_AMOUNT	100
+-
+-struct reiserfs_super_block
+-{
+-	__u32 s_block_count;		/* blocks count         */
+-	__u32 s_free_blocks;		/* free blocks count    */
+-	__u32 s_root_block;		/* root block number    */
+-	__u32 s_journal_block;		/* journal block number    */
+-	__u32 s_journal_dev;		/* journal device number  */
+-	__u32 s_orig_journal_size;	/* size of the journal on FS creation.  used to make sure they don't overflow it */
+-	__u32 s_journal_trans_max;	/* max number of blocks in a transaction.  */
+-	__u32 s_journal_block_count;	/* total size of the journal. can change over time  */
+-	__u32 s_journal_max_batch;	/* max number of blocks to batch into a trans */
+-	__u32 s_journal_max_commit_age;	/* in seconds, how old can an async commit be */
+-	__u32 s_journal_max_trans_age;	/* in seconds, how old can a transaction be */
+-	__u16 s_blocksize;		/* block size           */
+-	__u16 s_oid_maxsize;		/* max size of object id array, see get_objectid() commentary  */
+-	__u16 s_oid_cursize;		/* current size of object id array */
+-	__u16 s_state;			/* valid or error       */
+-	char s_magic[12];		/* reiserfs magic string indicates that file system is reiserfs */
+-	__u32 s_hash_function_code;	/* indicate, what hash fuction is being use to sort names in a directory*/
+-	__u16 s_tree_height;		/* height of disk tree */
+-	__u16 s_bmap_nr;		/* amount of bitmap blocks needed to address each block of file system */
+-	__u16 s_reserved;
+-};
+-
+-#define SB_SIZE (sizeof(struct reiserfs_super_block))
+-
+-
+-#endif /* _GM_RFS_H */
+diff -rupN ./gpart-0.1h.orig/src/gmodules.c ./gpart-0.1h/src/gmodules.c
+--- ./gpart-0.1h.orig/src/gmodules.c	Tue Jan 30 20:01:00 2001
++++ ./gpart-0.1h/src/gmodules.c	Fri Jan 10 16:31:28 2003
+@@ -154,7 +154,7 @@ void g_mod_addinternals()
+ 	GMODINS(bsddl);
+ 	GMODINS(lswap);
+ 	GMODINS(qnx4);
+-	GMODINS(rfs);
++	GMODINS(reiserfs);
+ 	GMODINS(ntfs);
+ 	GMODINS(hpfs);
+ 	GMODINS(minix);
+diff -rupN ./gpart-0.1h.orig/src/gmodules.h ./gpart-0.1h/src/gmodules.h
+--- ./gpart-0.1h.orig/src/gmodules.h	Tue Jan 30 20:00:47 2001
++++ ./gpart-0.1h/src/gmodules.h	Fri Jan 10 16:31:23 2003
+@@ -63,7 +63,7 @@ g_module *g_mod_setweight(char *,float);
+ 
+ GMODDECL(bsddl); GMODDECL(ext2); GMODDECL(fat);
+ GMODDECL(hpfs); GMODDECL(lswap); GMODDECL(ntfs);
+-GMODDECL(s86dl); GMODDECL(minix); GMODDECL(rfs);
++GMODDECL(s86dl); GMODDECL(minix); GMODDECL(reiserfs);
+ GMODDECL(hmlvm); GMODDECL(qnx4); GMODDECL(beos);
+ GMODDECL(xfs);
+ 
+
+--------------030403010306030007040700--
+
