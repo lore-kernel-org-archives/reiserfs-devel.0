@@ -1,33 +1,34 @@
-From: Chris Mason <mason@suse.com>
+From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
 Subject: Re: reiserfs logging patches udpated
-Date: Thu, 25 Mar 2004 09:14:22 -0500
-Message-ID: <1080224062.26677.3.camel@watt.suse.com>
-References: <1080149399.14737.77.camel@watt.suse.com>
-	 <20040324143516.3162cbfe.akpm@osdl.org>
-	 <1080168379.14743.124.camel@watt.suse.com>
-	 <200403250147.54246.bernd-schubert@web.de> <40625867.4060800@matchmail.com>
+Date: Thu, 25 Mar 2004 17:51:44 +0100
+Message-ID: <200403251751.44638.Dieter.Nuetzel@hamburg.de>
+References: <1080149399.14737.77.camel@watt.suse.com> <200403250147.54246.bernd-schubert@web.de> <40625867.4060800@matchmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17469-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-17470-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <40625867.4060800@matchmail.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Mike Fedyk <mfedyk@matchmail.com>
-Cc: Bernd Schubert <bernd-schubert@web.de>, reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
+Cc: Mike Fedyk <mfedyk@matchmail.com>, Bernd Schubert <bernd-schubert@web.de>, Chris Mason <mason@suse.com>, Andrew Morton <akpm@osdl.org>
 
-On Wed, 2004-03-24 at 22:56, Mike Fedyk wrote:
+Am Donnerstag, 25. M=E4rz 2004 04:56 schrieb Mike Fedyk:
+> Bernd Schubert wrote:
+> > However, besides of the proper discussion about the ide problem, there
+> > was a 'sub' thread with about 50 messages about the instability of
+> > reiserfs!!!
+>
+> I wouldn't be surprised, you get this in the debian lists also.
 
-> And after having the difference of a block level journal (ext3), instead 
-> of a "virtual" journal(reiserfs, jfs, xfs) explained to me (check the 
-> ext3-users archives...) -- and how it can save your ass when there are 
-> hardware problems.  I was convinced and switched everything back to ext3.
+> Adding the fact that reiserfsck3 is just recently getting out of beta
+> level quality (crashes, livelocks & etc during fsck and etc were common
+> until the last few months)
 
-reiserfs does block based logging ;-)
+What? - Nothing, here (for years) even on LVM on-top of RAID.
 
--chris
-
-
+=2DDieter
