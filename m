@@ -1,55 +1,38 @@
-From: Harald Radke <harryrat@gmx.de>
-Subject: Re: resize_reiserfs probs
-Date: Mon, 23 Jun 2003 09:02:05 +0200
-Message-ID: <200306230902.05070.harryrat@gmx.de>
-References: <200306230132.08812.harryrat@gmx.de> <3EF69F09.90404@gmx.net>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: vpf-10680, minor corruptions
+Date: Mon, 23 Jun 2003 11:38:15 +0400
+Message-ID: <3EF6AE67.5090502@namesys.com>
+References: <3EF07AFB.8060303@g-house.de> <20030618152626.GA17240@namesys.com> <3EF0A8E8.2000209@g-house.de> <20030619054535.GA23852@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14659-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14660-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3EF69F09.90404@gmx.net>
-Content-Disposition: inline
+In-Reply-To: <20030619054535.GA23852@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Oleg Drokin <green@namesys.com>
+Cc: Christian Kujau <evil@g-house.de>, ReiserFS List <reiserfs-list@namesys.com>
 
-Good morning all!
+Oleg Drokin wrote:
 
->> "resize_reiserfs: can't shrink fs; too many blocks already allocated"
->>[...]
+>
+>Well, normally reiserfs is caring about consistency.
+>There are two noticeable omissions, though:
+>1. if the unexpected shutdown was because of power loss and you have write cache enabled
+>   and your write reorders write requests, then it is possible invalid data gets
+>   written to disk, before "transaction is finished" mark is written to the drive.
+>   (there is a way to avoid this with some drives, by explicitly flushing
+>    drive cache in some cases, but this method seems to create some problems
+>    on itself. So this is not yet merged in any mainstream kernel).
+>  
+>
 
-> I know this one very well. Please tell us the exact (including spaces)
-> command line you were using to resize it. I suspect user error here - at
-> least it was one when I got this error.
+Can you provide details on this not being merged?
 
-ok, first, here's the output of FDISK
-------------------------------------------
-[--- # of cylinders is > 1024 (is 1099) ---]
-
-Disk /dev/hda: 10.0 GB, 10056130560 bytes
-240 heads, 63 sectors/track, 1299 cylinders
-Units = cylinders of 15120 * 512 = 7741440 bytes
-
-   Device Boot    Start       End    Blocks   Id  System
-/dev/hda1             1        35    264568+  82  Linux swap
-/dev/hda2   *        36        37     15120   83  Linux
-/dev/hda3            38      1299   9540720   83  Linux
+-- 
+Hans
 
 
-the commad was 
-
--> resize_reiserfs -s -9240720K /dev/hda3
-
-I also tried
-
--> resize_reiserfs -s -9200M /dev/hda3
-(for "testing" purposes"....same prob)
-
-
-Thx
-
-
-Harry
