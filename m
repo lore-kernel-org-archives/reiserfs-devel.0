@@ -1,53 +1,40 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: ReiserFS white paper
-Date: Tue, 18 Nov 2003 13:38:49 +0300
-Message-ID: <16313.63161.570632.911736@laputa.namesys.com>
-References: <Pine.GSO.4.58.0311151016160.20395@bingsun2.cc.binghamton.edu>
+From: myciel <myciel@dotcom.pl>
+Subject: Re: dead inode read from disk... ignore?
+Date: Tue, 18 Nov 2003 13:04:35 +0100
+Message-ID: <3FBA0AD3.90103@dotcom.pl>
+References: <3FB20ACD.8080105@dotcom.pl> <16313.57788.693126.214555@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16112-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16113-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.GSO.4.58.0311151016160.20395@bingsun2.cc.binghamton.edu>
+In-Reply-To: <16313.57788.693126.214555@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Zhihui Zhang <bf20761@binghamton.edu>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Zhihui Zhang writes:
- > Hi,
- > 
- > I spent some time on ReiserFS white paper.  It is difficult to read. Can
- > you explain a little bit about closure and keyword systems or give me some
- > pointers?
- > 
- > Incidentally, the new plugin infrastructure is nice. But it does not seem
- > to be the same as OOP.  Same type of items share the same array of
+Nikita Danilov wrote:
 
-Well, it is not OOP, correct. But it is ADT (abstract data types) which
-is, actually, exactly what one needs.
+>myciel writes:
+> > Hi
+> > 
+> > Few times a day I get in syslog:
+> > kernel: sd(8,20):vs-13075: reiserfs_read_inode2: dead inode read from 
+> > disk [11574064 47212 0x0 SD]. This is likely to be race with knfsd. Ignore
+> > 
+> > I just wanted to be sure: should I  really ignore this?
+>
+>Sorry, for delay.
+>
+>Yes, you should ignore it as it says.
+>
+>  
+>
+thanks
 
- > methods.  But they does not have private data members.  In addition, will
- > Reiser4 plan to support full database semantics (e.g., rollback,
- > isolation) in the future?  My guess is that it will be prohibitively
+rafal
 
-It can be implemented in many possible ways. Isolation can be achieved
-by versioning or by keeping commit-duration locks, for example, so that
-it is possible to trade concurrency for efficiency.
 
- > expensive.  If so, you still have to build a storage layer on top of
- > ReiserFS.
 
-Reiser4 _is_ a storage foundation.
-
- > 
- > Thanks,
- > 
- > -Zhihui
-
-Nikita.
-
- > 
- > -- 
