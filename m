@@ -1,60 +1,29 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Question on IICACHE and mount info (2.4.19-pre5)
-Date: Fri, 5 Apr 2002 09:02:48 +0400
-Message-ID: <20020405090248.A6915@namesys.com>
-References: <3CACE903.30901@mb.tu-ilmenau.de>
+From: Ross Vandegrift <ross@willow.seitz.com>
+Subject: Re: Silly question, defrag
+Date: Fri, 5 Apr 2002 00:31:25 -0500
+Message-ID: <20020405053125.GA2724@willow.seitz.com>
+References: <20020404105440.F27377@ultraviolet.org> <Pine.LNX.4.44.0204041721530.1352-100000@dragon.inside.ntisys.com>
 Mime-Version: 1.0
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <3CACE903.30901@mb.tu-ilmenau.de>
+In-Reply-To: <Pine.LNX.4.44.0204041721530.1352-100000@dragon.inside.ntisys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: Benjamin Scott <bscott@ntisys.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Hello!
+> I think it would seem likely that, once a filesystem does become fragmented,
+> performance is going to suck mud.
 
-On Fri, Apr 05, 2002 at 02:00:03AM +0200, Manuel Krause wrote:
+I'm curious though - shouldn't the elevator read algorithms take care of
+this, for the most part?  If you wait to do a read until you have a few,
+and read sequentially across the disk, you won't be hit with any seeks.
 
-> Is there only the addidional mount option "iicache" with this patch:
-> ftp://ftp.namesys.com/pub/reiserfs-for-2.4/testing/linux-2.4.19p4-iicache-new-5.patch 
-> ?
-> There were some more in the early versions of iicache, IIRC.
+Of course interactive read performance will suffer, but for general
+streaming reads why doesn't the elevator offset this?
 
-most of other options were considered unsafe, so probably they were dropped.
-
-> But at the moment it works very well with 2.4.19-pre5 + 
-> rml.preempt+lock-break + aa.vm-33 + some other aa patches and some akpm 
-> ones.
-
-Do you see any difference with and without iicache?
-
-> When I put ",iicache" to the fstab lines of my reiserfs partitions I 
-> don't get a response from
-> # cat "/proc/fs/reiserfs/ide0(3,11)/super"
-> state:  REISERFS_VALID_FS
-> mount options:  BORDER NO_TAILS LOG
-> # cat /proc/mounts
-> /dev/root / reiserfs rw,noatime 0 0
-> /dev/hda11 /mnt/beta reiserfs rw,noatime,nosuid,nodev 0 0
-> only # mount says:
-> /dev/hda7 on / type reiserfs (rw,noatime,notail,iicache)
-> ...
-> /dev/hda11 on /mnt/beta type reiserfs 
-> (rw,nosuid,nodev,noatime,notail,iicache)
-> ...
-
-It seems this is lost piece of code, that prints this info.
-
-> Seems like some things have gone with the latest patches which worked 
-> before? It's o.k., of course, if "iicache" doesn't show up for now, I 
-> know it's for testing only (yes, it would be very nice!). But the 
-> "notail" thing worked before!
-
-Which "notail" thing?
-
-Bye,
-    Oleg
+Ross Vandegrift
+ross@willow.seitz.com
