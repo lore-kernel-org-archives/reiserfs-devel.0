@@ -1,57 +1,47 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiserfsck bug?!? The block (.....) is in the tree already. Should not happen.
-Date: Mon, 20 Jan 2003 20:26:09 +0300
-Message-ID: <200301202026.09965.vitaly@namesys.com>
-References: <1043081969.1491.36.camel@symirna.uplink.ethz.ch>
+From: Francois-Rene Rideau <fare@tunes.org>
+Subject: Crash again!
+Date: Tue, 21 Jan 2003 22:33:36 +0100
+Sender: Francois-Rene Rideau <fare@Samaris.tunes.org>
+Message-ID: <20030121213336.GA6756@hell.mine.nu>
+References: <20030117221535.GA945@Kadath> <20030118080941.B5575@humilis> <20030118115142.B21932@namesys.com> <20030118100157.C5575@humilis> <20030117221535.GA945@Kadath> <20030118080941.B5575@humilis> <20030118115142.B21932@namesys.com> <20030117221535.GA945@Kadath> <20030118080941.B5575@humilis> <20030118115724.GA946@Kadath>
+Reply-To: Francois-Rene Rideau <fare@tunes.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-12447-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12450-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1043081969.1491.36.camel@symirna.uplink.ethz.ch>
+Content-Disposition: inline
+In-Reply-To: <20030118115724.GA946@Kadath>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: m96 <m96@gmx.li>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-On Monday 20 January 2003 19:59, m96 wrote:
-> hi,
->
-> i'm new on the list and also not a reiserfs hacker. but i got the
-> following problem on my box:
->
-> after many frozen systems i thought it's on time to check the partition
-> integrity with `reiserfsck --check <partition>' and it gave me one error
-> that i can fix it only with rebuilding the tree. (i know i should make a
-> backup but i didn't - and it was my usr partition... DAMN@!)
->
-> so while running `reiserfsck --rebuild-tree <partition>' i got the
-> following error in an infinite loop:
->
->
-> do_pass_2: The block (1281151) is in the tree already, Should not
-> happen.
+After the hardware crash, the software crash!
 
-Check that you are using up-to-date version of reiserfsprogs - 3.6.4 - please.
-If it is so, could you run debugreiserfs -p /dev/xxx | bzip2 -c > xxx.bz2
-and make the archive (which contains metadata of your partition) available 
-for downloading, I will check reiserfsck work locally. 
+I added RAM to my workstation and rebooted.
+Big mistake: I had stopped the machine with swsusp instead of a plain halt.
+By the time I realized it, it was too late.
+swsusp recover failed because the RAM size didn't match.
+Now the reiserfs partition is half-unmounted,
+and trying to mount results in an endless loop
+as reiserfs tries to replay the journal.
 
-What does "debugreiserfs /dev/xxx" say?
+Is the partition recoverable? Can the data be retrieved?
+Should I try reiserfsck or not?
+Should I try to get swsusp to recover the same state and do its thing,
+or is it too late?
 
-> so i had to abort it with CTRL-C. and tried again - with the same luck -
-> i stuck in the same loop. and since then i can't mount my partition.
->
-> does any one a way to avoid a repartitioning?
->
-> if this is an unknown error, how can i provide you with more
-> informations? think that this was my /usr so i'm limited to / and /var
-> partitions.
->
-> regards.
+Should I run to the shop where I sent my previous hardware-crashed disk
+so that they don't actually send the disk back to manufacturer for exchange?
 
--- 
+What a loser!
 
-Thanks,
-Vitaly Fertman
+Thanks for your precious advice.
+
+[ Fran=E7ois-Ren=E9 =D0VB Rideau | Reflection&Cybernethics | http://fare.tu=
+nes.org ]
+[  TUNES project for a Free Reflective Computing System  | http://tunes.org=
+  ]
+Do not handicap your children by making their lives easy. -- Robert Heinlein
