@@ -1,51 +1,60 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: The situation at hand and in the future
-Date: Mon, 31 May 2004 22:09:15 -0400
-Sender: news <news@sea.gmane.org>
-Message-ID: <87ekp0ghbo.fsf@uhoreg.ca>
-References: <20040527200127.GS4990@nysv.org> <200405272105.i4RL5LDh026210@turing-police.cc.vt.edu>
- <40B6670D.9060408@slaphack.com> <20040528063324.GT4990@nysv.org>
- <40B89C9C.5050307@slaphack.com> <873c5j0zm3.fsf@uhoreg.ca>
- <40B91A65.2060302@slaphack.com>
- <200405311827.i4VIRdlS001316@turing-police.cc.vt.edu>
- <40BBA23D.7000109@slaphack.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: I would like to see ReiserFS V3 enter a feature freeze real
+	soon.
+Date: Tue, 01 Jun 2004 07:37:07 -0400
+Message-ID: <1086089827.22636.3391.camel@watt.suse.com>
+References: <20040528122854.GA23491@clipper.ens.fr>
+	 <1085748363.22636.3102.camel@watt.suse.com>
+	 <1085750828.1914.385.camel@tribesman.namesys.com>
+	 <1085751695.22636.3163.camel@watt.suse.com>  <40BB61C0.5020902@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18940-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18941-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <40BB61C0.5020902@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Vladimir Saveliev <vs@namesys.com>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Andrew Morton <akpm@osdl.org>, Alexander Zarochentcev <zam@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>
 
->>>>> "David" == David Masover <ninja@slaphack.com> writes:
+On Mon, 2004-05-31 at 12:48, Hans Reiser wrote:
+> While I like and appreciate the data journaling stuff, and I think it 
+> should go in, real soon now I think we should avoid adding new features 
+> to V3.  Let the mission critical server folks have a reiserfs version 
+> that only gets bug fixes added to it, and let V4 be for those who want 
+> excitement.
+> 
+> Are there any things which Chris and Jeff think should go in besides 
+> data journaling/ordering and bitmap algorithm changes?
+> 
 
-[...]
+We've got io error fault tolerance that needs to go in after the barrier
+code has stabilized.  I can't promise that I'll never making another
+change in there, but my goal is to keep them to a minimum.
 
-David> But back to the point.  No encryption by default.  My grandmother
-David> would wonder why her computer is so slow, and if you told her
-David> it's so that the FBI can't read anything when they sieze her
-David> computer, she wouldn't be happy.  Except for the fact that my
-David> grandmother is a very patient woman, so she might not care that
-David> it's slow.  But my brother would, and he plays games, so...
+> Also, I would like to see some serious benchmarks of the bitmap 
+> algorithm changes before they go in.  They seem nice in theory, and some 
+> users liked them for their uses, but that does not make a serious 
+> scientific study.  Such a study has a high chance of making them even 
+> better.;-)
+> 
 
-Well, filesystem performance probably won't affect games that much.
-Unless your game is very filesystem-bound, but then it'll be slow
-anyways (and the programmer should be given a swift smack to the head
-for doing something that stupid).
+Some benchmarks have been posted on reiserfs-list, but I'd love to
+coordinate with you on getting some mongo numbers.  I can spout off a
+long list of places where the code does better then the original v3
+allocator, but that's because those were the ones I was trying to fix
+;-)
 
-Filesystem performance is more likely to be an issue for things such as
-compiling programs, running a webserver, etc.
+> zam, I view you as the block allocator maintainer, please review that 
+> bitmap code from Chris.
+> 
+> Chris and Jeff, can you propose a benchmarking plan for the bitmap code?
 
-But I agree.  No encryption by default.  Especially since encryption is
-illegal in some countries.  And because encryption would require the
-user to provide a passphrase.
+A good start would be to just rebenchmark against v4.
 
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+-chris
+
 
