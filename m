@@ -1,67 +1,42 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: CONFIG_REISERFS_RAW (http://www.namesys.com/config.html)
-Date: Tue, 18 Feb 2003 21:33:54 +0300
-Message-ID: <3E527C92.6070409@namesys.com>
-References: <200302161452.21451.m.c.p@gmx.net> <3E5278C3.7030608@swelltech.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
+Date: Tue, 18 Feb 2003 22:22:39 +0300
+Message-ID: <20030218222239.A20899@namesys.com>
+References: <3E4C392A.2070909@namesys.com> <20030214111829.A21849@namesys.com> <20030214031316.L22930@schatzie.adilger.int> <20030214131746.H10351@namesys.com> <20030214035034.M22930@schatzie.adilger.int> <3E4CF04A.2030904@namesys.com> <20030214120630.O22930@schatzie.adilger.int> <3E4D4129.8040103@namesys.com> <20030215153710.A1723@schatzie.adilger.int> <3E5279C2.3090702@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12823-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12824-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E5278C3.7030608@swelltech.com>
+Content-Disposition: inline
+In-Reply-To: <3E5279C2.3090702@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Joe Cooper <joe@swelltech.com>
-Cc: Marc-Christian Petersen <m.c.p@gmx.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Andreas Dilger <adilger@clusterfs.com>, Zygo Blaxell <eazgwmir@umail.furryterror.org>, reiserfs-list@namesys.com
 
-Joe Cooper wrote:
+Hello!
 
-> You don't want to use it...
->
-> But if you do:
->
-> http://swelltech.com/pengies/joe/squidng.html
->
-> This page has the last versions of both the Squid and ReiserFS that 
-> have this feature.  It hasn't been supported in over two years, and it 
-> wasn't a trivial set of patches even then...I doubt you'd have much 
-> hope of getting either working in recent versions of Squid or kernel 
-> without significant help from both projects (probably paid help--this 
-> is deep code, and a lot of work to integrate).  It was a pretty darned 
-> fast Squid, though.
->
-> Marc-Christian Petersen wrote:
->
->> Hi all,
->>
->> can anyone tell me where I can find this code:
->>
->>
->> CONFIG_REISERFS_RAW
->>     Setting this to yes will enable a set of ioctls that provide raw
->>     interface to the ReiserFS tree, bypass the directories, and
->>     automatically remove aged files. This is an experimental feature
->>     designed for squid cache directories. See 
->> Documentation/filesystems/reiserfs_raw.txt
->>     This was designed specifically to use ReiserFS as a back-end for
->>     the Squid. The general idea is that it is possible to bypass all
->>     filesystem overhead and to directly address the ReiserFS internal
->>     tree. This is not in the stock kernels.
->> ?
->>
->> Thanks.
->>
->> ciao, Marc
->
->
->
-The sponsor for the work did the usual dotcom number....
+On Tue, Feb 18, 2003 at 09:21:54PM +0300, Hans Reiser wrote:
 
-We would be happy to do more work if there was a sponsor....
+> >By all means, don't do checks for an hour, or allow users to set the 
+> >maximum
+> >boot check duration in the superblock.  I'm sure users don't mind waiting
+> >5s at boot time if it means they don't lose data.
+> I doubt that there is a lot we can check in 5 seconds on a filesystem 
+> with lots of small files, but I could be wrong.
 
--- 
-Hans
+We discussed this with Vitaly today.
+We can do some simply things and if some of these show wrong signs,
+we can do a warning and sysadmin can schedule a downtime for
+fsck.
+Simple things are: read the bitmaps and compare used block counts with
+what stored in superblock.
+Check consistency of tree root (we have a pointer there in superblock,
+also it's supposed level).
+May be something else that is that simple.
 
-
+Bye,
+    Oleg
