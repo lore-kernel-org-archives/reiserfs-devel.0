@@ -1,45 +1,36 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: Bug report: Reiser4 freezes during file copy
-Date: Wed, 18 Feb 2004 22:30:44 +0300
-Message-ID: <20040218193044.GM21098@backtop.namesys.com>
-References: <1077127993.7063.6.camel@localhost.localdomain> <20040218184322.GK21098@backtop.namesys.com> <1077131946.7063.10.camel@localhost.localdomain>
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Subject: Re: nfs with reiserfs and ufs on freebsd
+Date: Wed, 18 Feb 2004 21:03:05 +0100
+Message-ID: <4033C4F9.2070509@gmx.net>
+References: <20040218193033.74513.qmail@web80012.mail.yahoo.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16838-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16839-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1077131946.7063.10.camel@localhost.localdomain>
+In-Reply-To: <20040218193033.74513.qmail@web80012.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jonathan Briggs <jbriggs@esoft.com>
-Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: cmc2slack-lvm@yahoo.com
+Cc: reiserfs-list@namesys.com
 
-On Wed, Feb 18, 2004 at 12:19:06PM -0700, Jonathan Briggs wrote:
-> On Wed, 2004-02-18 at 11:43, Alex Zarochentsev wrote:
-> > hi,
-> > 
-> > On Wed, Feb 18, 2004 at 11:13:14AM -0700, Jonathan Briggs wrote:
-> > > The software:
-> > > Linux kernel 2.6.3 with Reiser4 patch dated February 6th.
-> > > Compiled with gcc 3.4.0 20040129
-> > > (I know the GCC is still in testing, but Reiser3 works fine with it,
-> > > so...)
-> > > 
-> > > After I'd created a new Reiser4 filesystem, I was copying my backup
-> > > files onto it.  While I was doing that, it just stopped.
-> > 
-> > Did you create reiser4 on a loopback or RAID/LVM device?
+cmc2slack-lvm@yahoo.com wrote:
+> I'm using ReiserFS on Slackware 9.1 and would
+> like to be able to nfs mount filesystems on
+> my FreeBSD 4.8 system. From what I've read 
+> ReiserFS doesn't do this now, is there a patch
+> I can install to enable it or is it going to
+> be available in a later version? Thanks,
 > 
-> I knew I should have included more details!  Sorry...
-> Yes, it was on a MD device on top of two SCSI drives.  RAID 0.
 
-This is know problem. That snapshot does not work with RAID devices due to
-error in bio constructing code.  
-
-We are about releasing new snapshot which the fixes.
+Your information must be wrong.
+Reiserfs works very well with nfs since a long time ago.
+I don't know the exact kernel version but the nfs bugs
+were ironed out in the early 2.4.x kernel series.
+I haven't tried the combination Linux -> FreeBSD, though.
 
 -- 
-Alex.
+lg, Chris
+
