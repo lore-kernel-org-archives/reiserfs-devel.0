@@ -1,52 +1,52 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: [Fwd: filesystem support for XML storage and querying]
-Date: Wed, 19 May 2004 19:42:54 -0700
-Message-ID: <40AC1B2E.7050807@namesys.com>
-References: <1084953972.14831.3.camel@pear.st-and.ac.uk>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: [Fwd: filesystem support for XML storage and querying]
+Date: Wed, 19 May 2004 14:49:55 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <874qqcfe0c.fsf@uhoreg.ca>
+References: <1084953972.14831.3.camel@pear.st-and.ac.uk> <40AC1B2E.7050807@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18767-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18768-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1084953972.14831.3.camel@pear.st-and.ac.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: eunetwork@yahoogroups.com, Reiserfs List <reiserfs-list@namesys.com>, Hubert Chan <hackerhue@geek.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-This was a good paper.:)
+>>>>> "Hans" == Hans Reiser <reiser@namesys.com> writes:
 
-I don't understand the notion of ids, what motivates them, etc.
+Hans> This was a good paper.:)
 
-ReiserFS originally intended to use unique ids and then we realized that 
-keys were better.
+Thank you. :)
 
-Also, you'll want to understand carefully our inheritance architecture, 
-which will be easier to understand once it is fully implemented.;-)
+Hans> I don't understand the notion of ids, what motivates them, etc.
 
-I enjoyed the paper, best,
+They are used in XML query engines for such things as removing duplicate
+results.  (Although, I suppose inode number, or something similar, would
+work just as well for this.)
 
-Hans
+Also, since XML nodes don't have names, we need to assign some sort of
+ID so that they can be referenced in some way.  (e.g. if you have a
+DocBook document with several chapters, you have to be able to tell the
+filesystem which chapter you want to edit/remove/etc.)  Assigning each
+node a persistent ID seems to be the simplest way to do things.
 
->As I had mentioned earlier, for a course that I took last term, I had
->to write a research proposal, which I chose to do on filesystems and
->XML.  Here's a link to the proposal:
->
->http://www.cs.uwaterloo.ca/~hy3chan/cs741project.ps
->
->As I mentioned, real research may or may not come out of this, but I
->thought that it might be of interest to some people anyways.
->
->I got a good mark on the proposal, so I suppose I'm not completely out
->to lunch on the subject.  (It was a course on "Non-traditional
->databases", by the way.)
->
->  
->
+Hans> ReiserFS originally intended to use unique ids and then we
+Hans> realized that keys were better.
 
+I'm not familiar with what you mean by keys vs. ids, but it is possible
+that using keys would be better.
+
+
+As I said before, that paper is just a proposal, and I may or may not
+actually implement it.  So unless I specifically re-claim it, that
+topic is up for grabs for anyone who's interested.
 
 -- 
-Hans
-
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
