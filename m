@@ -1,82 +1,47 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: Please /dev/null html-only mail rather than sending it out on this list
-Date: Mon, 19 Apr 2004 16:10:06 +0400
-Message-ID: <20040419121005.GX1579@backtop.namesys.com>
-References: <20040418212659.GA5506@free.transpect.com> <200404181745.04988.phma@webjockey.net> <20040419114551.GA15007@alias.nmd.msu.ru>
+From: Jason Stubbs <jstubbs@gentoo.org>
+Subject: Re: Gnu Parted error, Kernel Panic, Reiserfs
+Date: Mon, 19 Apr 2004 21:23:03 +0900
+Message-ID: <200404192123.14960.jstubbs@gentoo.org>
+References: <Pine.LNX.4.21.0404161554420.16938-100000@mlf.linux.rulez.org> <1082374724.7491.7.camel@firefly>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18050-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18051-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1082374724.7491.7.camel@firefly>
 Content-Disposition: inline
-In-Reply-To: <20040419114551.GA15007@alias.nmd.msu.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alexander Lyamin <flx@msu.ru>
-Cc: Pierre Abbat <phma@webjockey.net>, reiserfs-list@namesys.com
+Content-Type: Text/Plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-On Mon, Apr 19, 2004 at 03:45:51PM +0400, Alexander Lyamin wrote:
-> Sun, Apr 18, 2004 at 05:45:04PM -0400, Pierre Abbat wrote:
-> > On Sunday 18 April 2004 17:26, Whit Blauvelt wrote:
-> > > Hi,
-> > >
-> > :0 B
-> > * H ?? Content-Type: multipart
-> > * Content-Type: text/html
-> > * ! Content-Type: text/plain
-> > * ! ^Received:
-> > /dev/null
-> > #The Received check is there because I am a postmaster.
-> 
-> procmail is BAAAAD :)
-> 
-> we use a really small bit of shell instead
-> # we check if message was spoiled by spamassassin in previous
-> # round of spamcheck (qmailq).
-> 
-> preflag=`printf "%s\n" "$input" | $M822FIELD X-Spam-Flag | sed 's/^ //'`
-> if [ "$preflag"  = "YES" ]; then
-> # .. and if its spammy enough already, we reinject.
-> printf "%s\n" "$input" | $FORWARDBIN $FORWARD
->   if [ $? -eq 0 ]; then
->    #so qmail will not do any further deliveries in .qmail file
->    exit 99
->   fi
->   # problem calling inject - temp failure
->  exit 111
-> fi
-> 
-> #
-> 
-> 
-> i cant send HTML only to /dev/null cause Hans Reiser thinks
-> ASCII (we are all using) is obsoleted by *ML's ;)
+=2D----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-More strong anti-spam rules for the mailing list may help.  As an example
-rejecting HTML-only e-mails may be wrong for filtering private e-mail and good
-for the reiserfs-list.
+On Monday 19 April 2004 20:38, Yury Umanets wrote:
+> PS. Unfortunately I was not able to find gentoo source package of
+> progsreiserfs (is it exists? I'm not familiar with Gentoo) to check if
+> it is modified or not. So, if one can say me where I can take it, please
+> do. Thanks in advance.
 
-> but we do a lil tweakig there and there, changing weights and
-> writing new spamassassin rules.
-> 
-> for example for today spamassassin blocked 162 spam messages
-> that were sent to this list ;)
-> 
-> well some got through. we are not perfect, but i'm working on it
-> (being perfect)..
-> 
-> 
-> > Also block mail from IP addresses known to be open relays, open proxies, 
-> > rooted boxes, etc.
-> 
-> its intresting discussion, but lets move it off the list.
-> 
-> 
-> -- 
-> "the liberation loophole will make it clear.."
-> lex lyamin
+There are currently two versions available. I say versions - what I mean is=
+=20
+scripts that compile and install. You can see these scripts at:=20
+http://www.gentoo.org/cgi-bin/viewcvs.cgi/sys-fs/progsreiserfs/
 
--- 
-Alex.
+The sparc-only patch that is applied to progsreiserfs-0.3.0.3 is available =
+in=20
+the files subdir.
+
+Regards,
+Jason Stubbs
+=2D----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iQCVAwUBQIPEsloikN4/5jfsAQILwAP+LqvRdf/SRTOJwS8GiEe+hE2jRJraZdU/
+9VyXpTVUgviDm2okKsWI/5oZn7eYSgnZfMiC0HhHRbVsGRE9BhhvJ45LVDgIzeS0
+pIv4LBtcsldxMw5z+sAwCjXvn+CrrZ9Ci6gmvYft0OAQ97a2UvnOe9mQ5e/N2wmp
+mrtqE2UiopY=3D
+=3D0+em
+=2D----END PGP SIGNATURE-----
