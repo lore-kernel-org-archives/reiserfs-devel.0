@@ -1,71 +1,65 @@
-From: Xuan Baldauf <xuan--reiserfs@baldauf.org>
-Subject: Re: Heuristic readahead for filesystems
-Date: Wed, 11 Sep 2002 19:56:12 +0200
-Message-ID: <3D7F83BC.5DF306A@baldauf.org>
-References: <Pine.LNX.4.44L.0209111340060.1857-100000@imladris.surriel.com>
+From: Joachim Bremer <joachim.bremer@ricardo.de>
+Subject: Re: File corruption with 2.4.20pre6
+Date: Wed, 11 Sep 2002 20:36:40 +0200 (MEST)
+Message-ID: <200209111836.g8BIae931952@chekov.ricardo.de>
+References: <20020911174641.A10234@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11422-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11423-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20020911174641.A10234@namesys.com> from Oleg Drokin at "Sep 11,
+ 2002 05:46:41 pm"
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Rik van Riel <riel@conectiva.com.br>
-Cc: Xuan Baldauf <xuan--lkml@baldauf.org>, linux-kernel@vger.kernel.org, Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Oleg Drokin <green@namesys.com>
+Cc: Joachim Bremer <joachim.bremer@ricardo.de>, reiserfs-list@namesys.com
 
+Hi all,
 
+> Hello!
+> 
+> On Wed, Sep 11, 2002 at 12:41:25PM +0200, Joachim Bremer wrote:
+> 
+> > I've got an easy to produce file corruption with
+> > linux-2.4.20pre6 and then tested with the file-write
+> > patch on pre4. I verified the problem on 2 different machines -
+> > 1. Uniprozessor with an Athlon XP1600+
+> > 2. Dualprozessor with 2 Athlon MP2000+
+> 
+> Thanks a lot for your report!
+> 
+> This is my stupid bug and I am starting to wonder how did it passed through
+> my tests...
+> 
+> This trivial patch below should take care of it. Can you try it? 
+> Thank you.
 
-Rik van Riel wrote:
+pretty short test on the single CPU system showed OK. If there is a problem
+on the Dual CPU (I dont't think so) I will file a report.
 
-> On Wed, 11 Sep 2002, Xuan Baldauf wrote:
->
-> > I wonder wether Linux implements a kind of heuristic
-> > readahead for filesystems:
->
-> > If an application did a stat()..open()..read() sequence on a
-> > file, it is likely that, after the next stat(), it will open
-> > and read the mentioned file. Thus, one could readahead the
-> > start of a file on stat() of that file.
->
-> > Example: See this diff strace:
->
-> Your observation is right, but I'm not sure how much it will
-> matter if we start reading the file at stat() time or at
-> read() time.
->
-> This is because one disk seek takes about 10 million CPU
-> cycles on modern systems and we'll have completed the stat(),
-> open() and started the read() before the disk arm has started
-> moving ;)
->
-> regards,
->
-> Rik
+Thanks for the quick fix
 
-The point here is not to optimize latency but to optimize throughput: If =
-the
-filesystem is able to recognize that a whole tree is being read, it may i=
-ssue
-read requests for all the blocks of that tree, which are (with a high
-probability) in such a close location to each other that all the read req=
-uests
-can result in a single, large, megabyte-big disk-read-burst, taking few
-seconds instead of minutes.
+Joachim
 
-In theory, this also could be implemented explicitly if the application c=
-ould
-tell the kernel "I'm going to read these 100 files in the very near futur=
-e,
-please make them ready for me". But wait, maybe the application can do th=
-is
-(for regular files, not for directory entries and stat() data): Could it =
-be
-efficient if the application used open(file,O_NONBLOCK) for the next 100 =
-files
-and subsequent read()s on each of the returned filedescriptors?
-
-Xu=E2n.
-
+> 
+> 
+> ===== fs/reiserfs/file.c 1.10 vs edited =====
+> --- 1.10/fs/reiserfs/file.c	Tue Sep 10 16:06:23 2002
+> +++ edited/fs/reiserfs/file.c	Wed Sep 11 17:43:48 2002
+> @@ -1189,7 +1189,7 @@
+>  
+>  	already_written += write_bytes;
+>  	buf += write_bytes;
+> -	pos = *ppos += write_bytes;
+> +	*ppos = pos += write_bytes;
+>  	count -= write_bytes;
+>      }
+>  
+> 
+> Bye,
+>     Oleg
+> 
 
