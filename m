@@ -1,60 +1,61 @@
-From: evilninja <evilninja@gmx.net>
-Subject: Re: EACCESS vs ENOENT for nonexistent files-within-files
-Date: Thu, 16 Sep 2004 02:00:43 +0200
-Message-ID: <4148D7AB.4000301@gmx.net>
-References: <20040913140637.GB29591@redhat.com>	<20040913161326.GB2252@backtop.namesys.com>	<20040913185255.GA1920@redhat.com>	<16709.63624.953839.299199@thebsh.namesys.com>	<41481FA5.2000504@gmx.net> <16712.10868.647572.90804@thebsh.namesys.com>
+From: Yury Umanets <yury@clusterfs.com>
+Subject: Re: Reiser4 support on parted program ...
+Date: Thu, 16 Sep 2004 08:40:29 +0300
+Message-ID: <4149274D.7020102@clusterfs.com>
+References: <41472F46.4000109@futuretg.com> <41477625.304@slaphack.com> <4147E95B.8090108@futuretg.com> <20040915094952.GA5137@backtop.namesys.com> <414840FC.4090505@clusterfs.com> <20040915132013.GG26192@nysv.org> <41484449.8060301@clusterfs.com> <4148610F.5020508@futuretg.com> <414862D1.6010304@namesys.com> <41488026.6080904@clusterfs.com> <414881C5.9030501@futuretg.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21800-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21802-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16712.10868.647572.90804@thebsh.namesys.com>
+In-Reply-To: <414881C5.9030501@futuretg.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Nikita Danilov <nikita@clusterfs.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
+Cc: Hans Reiser <reiser@namesys.com>, =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, Alex Zarochentsev <zam@namesys.com>, David Masover <ninja@slaphack.com>, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Dr. Giovanni A. Orlando wrote:
 
-Nikita Danilov wrote:
-> evilninja writes:
->  > -----BEGIN PGP SIGNED MESSAGE-----
->  > Hash: SHA1
+> Yury Umanets wrote:
 >
-> Hello, Christian evilninja :)
+>> Hans Reiser wrote:
+>>
+>>> Dr. Giovanni A. Orlando wrote:
+>>>
+>>>>
+>>>>
+>>>>    As soon the installer works fine supporting Reiser4, including 
+>>>> parted support
+>>>>    it, I will comment in this mailing list, and offer for free 
+>>>> donwload.
+>>>>
+>>> Reiser4 resizer is not ready for prime time, and like pseudos, 
+>>> should not have been enabled before it was tested.  We are going to 
+>>> send in a patch to turn it off until it is debugged.
+>>
+>>
+>>
+>> hello Hans,
+>>
+>> I suspect, that Dr. Giovanni A. Orlando meant offline resizer which 
+>> should be in utils. Not online resizer-repacker...
+>>
+> Actually, we want that reiser4 is supported inside parted program. 
+> Nothing else.
+>
+> I don't think this support will enable any other support like 
+> reiser4-resize.
 
-um, yes, it just sticks ;-)
+One of options provided by parted is offline resizing though...
 
 >
-> But in reiser4 file.txt _is_ a directory. That's the whole point: it
-> contains other objects inside.
-[...]
-> This is very simple: do be able to do a lookup one needs +x bit. No +x
-> bit--no lookup. No lookup---impossible to determine exists .htaccess or
-> not.
+> Thanks,
+> Giovanni
+>
 
-ok, so things will be different when i'll try reiser4 on my box.
 
-> Permission bits determine what operations are possible on
-> object. Letting user to know that .htaccess doesn't exist while
-> permission bits on parent explicitly disable lookups is a security
-> hole.
+-- 
+umka
 
-yes, i think i got i now. thanks for the explanation.
-
-Christian.
-- --
-BOFH excuse #65:
-
-system needs to be rebooted
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iD8DBQFBSNerC/PVm5+NVoYRAuLsAJ99JCbKQ0ebl9xRPwwYK/un9OKRtgCg3nOu
-tlYw+GkQWwO2Kfk1pEVlivE=
-=5iJg
------END PGP SIGNATURE-----
