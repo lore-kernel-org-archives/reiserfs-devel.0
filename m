@@ -1,35 +1,27 @@
-From: Kuba Ober <kuba@mareimbrium.org>
-Subject: Re: lvm array --> what if one HD fails
-Date: Mon, 22 Jul 2002 08:20:57 -0400
-Message-ID: <200207220820.57227.kuba@mareimbrium.org>
-References: <5.0.2.1.2.20020722111528.01cf4640@pop.tvnet.hu>
+From: Petr Sindelar <sindelap@phoenix.inf.upol.cz>
+Subject: Expectable "errors" after reiserfsck ?
+Date: Mon, 22 Jul 2002 16:33:45 +0200
+Message-ID: <20020722163344.A2669@phoenix.inf.upol.cz>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11069-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11070-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <5.0.2.1.2.20020722111528.01cf4640@pop.tvnet.hu>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Newsmail <newsmail@satimex.tvnet.hu>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-On poniedzia=B3ek 22 lipiec 2002 07:19 am, Newsmail wrote:
-> I have an lvm array with many HDs one after the other. it is a simple
-> linear array, no striping. what happens if one HD dies and I remove it fr=
-om
-> the array? could reiserfsck correct this? what happens to the metadata? as
-> I know it lies all over the space because of the tree structure. could th=
-is
-> be corrected? :)
+Hi,
+I'm using reiserfs for long time and noticed, that I didn't run reiserfsck for long time too. And since i got some "croslinks" in my mp3 files (the begging of file is from another file of disk, etc), i tried latest reiserfsck with --check. Logs are at http://phoenix.inf.upol.cz/~sindelap/rfs/, but what I want to know-> can i expect reiserfsck will damage both files (original and the crosslinked one?). Thi happened after power down, when I was renaming and tagging these files. What about the errors reiserfsc complains on all volumes? I haven't so much free disk space for backup whole hdd. 
+Can I use --fix-fixable or should I use other switches (--rebuild-sb/--rebuild-tree?) On all disks were run rebuild-tree and rebuild-sb about year ago maybe 5 times (strange things with early rfs version)...
 
-AFAIK it can be corrected - replace the HD and set LVM so that the missing =
+Kernel: vanilla 2.4.18 (maybe emu10k driver updated)
+partitions created about year or two ago i think (r5 hash)
+HDD : / reiserfs
+      home+usr LVM+reiserfs (from kernel, i think 0.9 version or so)
+     
 
-chunk gets back there, although now with invalid data. Make sure that the=20
-chunk you insert is zeroed, otherwise, IIRC, reiserfck can do weird things.=
-=20
-Then run reiserfsck --rebuild tree. In a similar situation, it helped me=20
-recover everything but the missing chunk + a little stuff adjacent to it.
-
-Cheers, Kuba Ober
+Thanks for any hints (and of course great fs)
+						Petr Sindelar
