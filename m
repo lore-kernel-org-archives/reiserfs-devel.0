@@ -1,63 +1,28 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: Hard disk crash and solution
-Date: Thu, 23 Jan 2003 14:14:55 +0100
-Message-ID: <200301231414.55662.Dieter.Nuetzel@hamburg.de>
-References: <IKENJBHCILNPNAGHKCHFOEDMCCAA.Art@chello.nl> <20030123074755.B2442@humilis> <3E2FA1A9.2040101@edsons.demon.nl>
+From: Newsmail <newsmail@satimex.tvnet.hu>
+Subject: old block allocator found in 2.4.19
+Date: Thu, 23 Jan 2003 23:30:07 +0100
+Message-ID: <5.2.0.9.2.20030123232554.02004bd8@pop.tvnet.hu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12467-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12469-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E2FA1A9.2040101@edsons.demon.nl>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: "Rudy L. Zijlstra" <rudy@edsons.demon.nl>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Transfer-Encoding: 7bit
+To: green@namesys.com
 Cc: reiserfs-list@namesys.com
 
-Am Donnerstag, 23. Januar 2003 09:02 schrieb Rudy L. Zijlstra:
+Hi Oleg, as you remember I mentioned you about my loop-aes+lvm+reiserfs 
+problem, that leaves hung processes after them, and only a cold reboot 
+could save a solution. well these problems came (in my opinion) after the 
+introduction of the new block allocator in 2.4.20-preX. in the first 
+version the new block allocation wasnt the default one, we had to use some 
+preallocmin= etcetc flag in the mount process. well I would like to try 
+with a new 2.4.20 kernel the settings for the old allocator. is there a way 
+to use the old allocator with the new kernel? some mount option or any?
+regards,
+greg
 
-_NO_ HTML mails to mailing lists, please!
 
-Thank you.
-
-=2DDieter=20
-
-> <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-> <html>
-> <head>
->   <title></title>
-> </head>
-> <body>
-> Ookhoi wrote:<br>
-> <blockquote type=3D"cite" cite=3D"mid20030123074755.B2442@humilis">
->   <pre wrap=3D"">Rudy L. Zijlstra wrote (ao):
->   </pre>
->   <blockquote type=3D"cite">
->     <pre wrap=3D"">I am missing yet another lesson:
->
-> Make backups of important data!
->     </pre>
->   </blockquote>
->   <pre wrap=3D""><!---->
-> Then you didn't pay attention to the mail from Francois-Rene
-> yesterday. ;-)  It contained highly religious phrases about The Almighty
-> Baah-Kuhp.
->   </pre>
-> </blockquote>
-> Doh. <span class=3D"moz-smiley-s3"><span> ;-) </span></span>&nbsp;I was
-> talking about the lessons Niek had learned.. Do not know whether Niek
-> has learned to pray yet! Judging from his lessons list he is still a
-> firm unbeliever.<br>
-> </body>
-> </html>
-
-=2D-=20
-Dieter N=FCtzel
-Graduate Student, Computer Science
-
-University of Hamburg
-Department of Computer Science
-@home: Dieter.Nuetzel at hamburg.de (replace at with @)
