@@ -1,53 +1,68 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: rsync and memory leak on linux 2.2?
-Date: Thu, 20 Feb 2003 01:18:24 +0300
-Message-ID: <3E5402B0.5030606@namesys.com>
-References: <1045156304.11405.149.camel@barnes>	<87r8abtlhq.fsf@freeze.oslo.dnmi.no>  <20030214130111.A27034@namesys.com> <1045689849.1168.24.camel@barnes>
+From: Ookhoi <ookhoi@humilis.net>
+Subject: Re: no reiserfs quota in 2.4 yet? 2.4.21-pre4-ac4 says different
+Date: Wed, 19 Feb 2003 23:40:25 +0100
+Message-ID: <20030219234024.N20771@humilis>
+References: <20030217183957.O1284@humilis> <1045504527.2182.415.camel@tiny.suse.com> <20030219134842.GB7138@atrey.karlin.mff.cuni.cz>
+Reply-To: ookhoi@humilis.net
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12839-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12840-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1045689849.1168.24.camel@barnes>
+Content-Disposition: inline
+In-Reply-To: <20030219134842.GB7138@atrey.karlin.mff.cuni.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Patrick O'Rourke <porourke@egenera.com>
-Cc: Oleg Drokin <green@namesys.com>, Adrian Phillips <a.phillips@met.no>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jan Kara <jack@suse.cz>
+Cc: Chris Mason <mason@suse.com>, ookhoi@humilis.net, reiserfs-list@namesys.com, alan@lxorguk.ukuu.org.uk
 
-Patrick O'Rourke wrote:
+Jan Kara wrote (ao):
+> > On Mon, 2003-02-17 at 12:39, Ookhoi wrote:
+> > > Today I put a new kernel on a server which has reiserfs and needs
+> > > quota. I searched for the quota patches (found them in the mail
+> > > archive) and saw that they are very old:
+> > > 
+> > > ftp://ftp.namesys.com/pub/reiserfs-for-2.4/testing/quota-2.4.20
+> > > 
+> > > 3 december 2002. They don't apply to a current kernel. 
+> > 
+> > Well, 2.4.20 is the current kernel ;-)  Which kernel do you want them
+> > against? I've got patches against 2.4.21-preX in testing here, but not
+> > against -ac. They should merge against -ac now more easily, but I
+> > haven't had time to really test it.
+> > 
+> > Do you want to try the merge on -ac or would you rather try against
+> > 2.4.21-preX
+>
+> Alan has needed changes to generic quota code already in his patchset
+> so probably just leaving out these changes should make everything work
+> (but I haven't tested it recently).
 
->On Fri, 2003-02-14 at 05:01, Oleg Drokin wrote:
->
->  
->
->>On Fri, Feb 14, 2003 at 07:38:41AM +0100, Adrian Phillips wrote:
->>    
->>
->>>    Patrick> We have two machines running Linux 2.2 with ReiserFS
->>>    Patrick> v3.5.32 and we're seeing a memory leak which we feel is
->>>    Patrick> related to reiser and some interaction with rsync.
->>>Well, there is a 3.5.34 which has, obviously, a number of bug
->>>      
->>>
->
->I just thought I would follow up with a note that the bug turned
->out NOT to be in the reiser code.  The rsync operation I described
->turned out to be a red herring.
->
->Thanks for the suggestions,
->
->Pat
->
->  
->
-Thanks Patrick.  This leaves us with one unsolved reiserfs V3 bug that I 
-know of (unlink related one, vs is working on it, and he is not 
-completely sure it is reiserfs not vfs....).  Oleg, am I right in 
-thinking that the samba+reiserfs bug looks like a samba bug?
+You mean, I should use only a few of these?
 
--- 
-Hans
+01-quota-v2-2.4.20.diff
+02-nesting-2.4.20.diff
+03-reiserfs-quota-23-2.4.20.diff
+04-kinoded-8-2.4.20.diff
 
+I'm afraid they don't apply cleanly, though I might just need to try a
+bit harder.
 
+OTOH, there must be a reason that Chris _works_ on it ;-)  (eg,
+non-trivial)
+
+Anyway, I have the following wishes (yeah, it is not even Christmas!):
+
+o  quota in -ac patches for reiser (like the Configure help already
+                                    says ;-)
+o  or for -ac patches.
+o  updating of the Namesys FAQ on quota patches.
+o  peace on earth.
+
+If the people involved can take care of this, I would love to buy them
+all a beer or two if they ever come to Amsterdam and if not with too
+many at a time. But remember, these are wishes only.
+
+Take care and thanks!!
