@@ -1,60 +1,99 @@
-From: Bruce Guenter <lists-reiserfs-list@bruce-guenter.dyndns.org>
-Subject: Re: Reiserfs concurrent write problems
-Date: Mon, 26 Apr 2004 12:12:49 -0600
-Message-ID: <20040426181249.GA24101@em.ca>
-References: <20040426172648.GA22918@em.ca> <1083000970.30344.50.camel@watt.suse.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary	additional
+ namespace to ReiserFS
+Date: Mon, 26 Apr 2004 11:15:32 -0700
+Message-ID: <408D51C4.7010803@namesys.com>
+References: <1082750045.12989.199.camel@watt.suse.com>	 <408D3FEE.1030603@namesys.com> <1083000711.30344.44.camel@watt.suse.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
-Return-path: <reiserfs-list-return-18228-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18229-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1083000970.30344.50.camel@watt.suse.com>
+In-Reply-To: <1083000711.30344.44.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: Linus Torvalds <torvalds@osdl.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, akpm@osdl.org
 
---Q68bSM7Ycu6FN28Q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Chris Mason wrote:
 
-On Mon, Apr 26, 2004 at 01:36:11PM -0400, Chris Mason wrote:
-> Please try 2.6.6-rc2-mm2, which has new block allocator patches and
-> other speedups.
+>On Mon, 2004-04-26 at 12:59, Hans Reiser wrote:
+>
+>  
+>
+>
+>v4 didn't factor into these decisions because it was still in extremely
+>early stages back then (2.4.16 or so).
+>  
+>
+It was clearly indicated then that accessing acls was scheduled for V4 
+not V3. 
 
-Thanks.  I'm compiling this now.
+>  
+>
+>>I also view 
+>>V3 as stable code that should not be disturbed more than minimally 
+>>necessary, and I desire for all new functionality to go into V4 (Chris 
+>>was also told that before his patch was written).
+>>
+>>    
+>>
+>
+>You can't release v4 and then expect all the v3 users to disappear
+>instantly.  Our users have an expectation that the filesystem they
+>choose for their production systems will be reasonably maintained over
+>time.
+>  
+>
+The ReiserFS maintainer (me, in case you forgot;-) ) decided what 
+release acls would go into, and you disregarded it and wrote an 
+implementation that was inconsistent with the one planned.
 
-> The default mount options should work best for you, but this might work
-> too:
->=20
-> mount -o alloc=3Dskip_busy:dirid_groups /dev/xxx /mnt
+>I consider supporting the linux standard interfaces for acls and xattrs
+>part of being reasonably maintained, and the pending release of v4
+>doesn't change that.
+>
+>  
+>
+>>Making it possible to unify operating system namespaces was why ReiserFS 
+>>was created.  I am not in this for the money.  Pasting in an additional 
+>>namespace beyond what Unix had for short term marketing reasons violates 
+>>its soul, and I have no desire to provide support for it as it 
+>>complicates one feature at a time over 30 years.
+>>
+>>    
+>>
+>Disliking the xattr interface is a different discussion.  We
+>specifically did not do new and interesting namespace research with the
+>v3 patches, we supported the existing apis in as plain and non-intrusive
+>a manner possible.
+>  
+>
+Reiser4 was specifically created as a rejection of the xattr api at the 
+time that xattrs were first discussed.  It took longer to write it than 
+xattrs.  One of your colleagues wrote the xattr api and you/Jeff did the 
+ReiserFS portion.  ReiserFS did not go down the xattr path, and declared 
+that it would not do so long at the very beginning.  You are continuing 
+to try to force us down that path, and now you are claiming that because 
+V4 took longer than hacking V3 that means that xattrs are a pre-existing 
+api that we are heretically not conforming to.  Love it.
 
-I'll try that.
+>These patches were not a quick hack,
+>
+Creating reiser4's unified namespaces was more work and took longer, and 
+fragmented namespaces are ugly, that makes xattrs a quick hack.
 
-> Depending on the file size,=20
->=20
-> mount -o notail can make a huge difference too.
+ReiserFS is release managed.  That means that we schedule when features 
+get implemented, and stick to those schedules.  Persons who disregard 
+the schedules they were informed of get their release schedule violating 
+patches disregarded.  Stable branches do not get new semantics added to 
+them just before new major releases with preferred semantics come out.
 
-They are mostly small files, averaging about 12.5kB.  I am already using
-	mount -o noatime,notail
+Please consider contributing to enriching the collection of files that 
+act as attributes of other files in V4 instead of pulling your oars in 
+the other direction.  If you do, you will be (as usually) a valued 
+contributor.
 
---=20
-Bruce Guenter <bruceg@em.ca> http://em.ca/~bruceg/ http://untroubled.org/
-OpenPGP key: 699980E8 / D0B7 C8DD 365D A395 29DA  2E2A E96F B2DC 6999 80E8
-
---Q68bSM7Ycu6FN28Q
-Content-Type: application/pgp-signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQFAjVEg6W+y3GmZgOgRAv7AAKCbL4hIyi4eU4ZycHYJ6xSod3rqYwCfQOjG
-arxKCoIEYHlysST2U7YYhIY=
-=mNRz
------END PGP SIGNATURE-----
-
---Q68bSM7Ycu6FN28Q--
+Hans
