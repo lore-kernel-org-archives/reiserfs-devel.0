@@ -1,53 +1,116 @@
-From: Ross Vandegrift <ross@willow.seitz.com>
-Subject: Re: [reiserfs-dev] [ctgaff@attbi.com: Debian Woody Performance with ReiserFS]
-Date: Mon, 11 Nov 2002 17:40:18 -0500
-Message-ID: <20021111224018.GA1072@willow.seitz.com>
-References: <20021109000211.GA46264@attbi.com> <15823.45478.638434.968665@laputa.namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: ReiserFS 3.6.x vs Reiser4
+Date: Mon, 11 Nov 2002 15:39:18 -0800
+Message-ID: <3DD03FA6.10005@namesys.com>
+References: <1951002912.20021111084143@kgpa.ru> <15823.50135.517241.494150@laputa.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11965-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11966-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <15823.45478.638434.968665@laputa.namesys.com>
+In-Reply-To: <1951002912.20021111084143@kgpa.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nikita Danilov <Nikita@namesys.com>
-Cc: "Corey G." <ctgaff@attbi.com>, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, ed@debian.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Nikita Danilov <Nikita@Namesys.COM>
+Cc: "Oleg O. Ossovitskii" <oleg@kgpa.ru>, ReiserFS-Team <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>
 
-On Mon, Nov 11, 2002 at 04:33:26PM +0300, Nikita Danilov wrote:
-> [Ed Boraas CC-ed, probably this is of interest for Debian people.]
-> 
-> Corey G. writes:
->  > These settins were NOT on by default with Debian.  The most important
->  > (I know this from testing) is "using_dma".  After turning this on, things
->  > really start to move.
+Nikita Danilov wrote:
 
-Having worked quite a bit with Debian on decently sized IDE machines, I
-can't say I've ever heard of Debian doing anything with hdparm in the
-init scripts.  'grep hdparm /etc/init.d/*' returns nothing.
+>Oleg O. Ossovitskii writes:
+> > Hello, All!
+> > 
+> > I made simple FS comparision. From a user point of view - unpacking
+> > files, copying, deleting etc. Reiser4 is more space effectively, and
+> > it remove files faster than reiserfs3, but speed of copying many small files
+> > (kernel 2.5.44 source code) is approximately equal to reiserfs3.6. But
+> > of reiser4 reliability is still low.
+> > 
+> > root@(vc/1)[/mnt/reiser4tst]# fdisk -l /dev/hda
+> > 
+> > Disk /dev/hda: 255 heads, 63 sectors, 4982 cylinders
+> > Units = cylinders of 16065 * 512 bytes
+> > 
+> >    Device Boot    Start       End    Blocks   Id  System
+> >    /dev/hda1   *         1        66    530113+   6  FAT16
+> >    /dev/hda2            67        83    136552+  82  Linux swap
+> >    /dev/hda3            84        86     24097+  83  Linux
+> >    /dev/hda4            87      4981  39319087+   f  Win95 Ext'd (LBA)
+> >    /dev/hda5            87       405   2562336    7  HPFS/NTFS
+> >    /dev/hda6           406      1425   8193118+   7  HPFS/NTFS
+> >    /dev/hda7          1426      2190   6144831   83  Linux
+> >    /dev/hda8          2191      2321   1052226   83  Linux
+> >    /dev/hda9          2322      2582   2096451    b  Win95 FAT32
+> >    /dev/hda10         2583      3220   5124703+   b  Win95 FAT32
+> >    /dev/hda11         3221      4495  10241406    7  HPFS/NTFS
+> >    /dev/hda12         4496      4619    995998+  83  Linux
+> >    /dev/hda13         4620      4743    995998+  83  Linux
+> > 
+> > 
+> > /dev/hda12 is Reiser4
+> > /dev/hda13 is ReiserFs 3.6.25
+> > 
+> > root@(vc/1)[/mnt/reiser4tst]# df -ah .
+> > Filesystem            Size  Used Avail Use% Mounted on
+> > /dev/hda12            973M   29M  944M   3% /mnt/reiser4tst
+> > 
+> > root@(vc/1)[/mnt/reiser3tst]# df -ah .
+> > Filesystem            Size  Used Avail Use% Mounted on
+> > /dev/hda13            973M   61M  912M   6% /mnt/reiser3tst
+> > 
+> > Tests description:
+> > 1. unpacking linux-2.5.44.tar.bz2
+> >    $ ls -l linux-2.5.44.tar.bz2
+> >    29260
+> > 2. cp -Rd linux-2.5.44 linux-2.5.44-test1
+>
+Please create the tarball from a reiser4 directory and repeat the 
+benchmark if you could.
 
-In addition the Debian woody system I had running DMA100 with 7200rpm
-drives with Reiserfs burnt from day one (well, there was a cap because
-of the pretty ancient other hardware, but it was old enough hardware I
-was testing that it made sense that there'd be a hit on disk
-performance)
+Your results are completely inconsistent with Zam's as far as I 
+understand them.  Zam, please reproduce and comment.
 
-Ed - are you sure the kernel hasn't detected a bad drive/controller
-combination and has *intentionally* disable UDMA to prevent data
-corruption?  Are you using the Good/Bad Drive Firmware protection?
+> > 3. du -sk linux-2.5.44
+> > 4. rm -rf linux-2.5.44-tst1
+> > 5. rm -rf linux-2.5.44
+> > 
+> > -------------+--------------------+---------------------
+> > Test number  |   ReiserFS 3.6.25  |   Reiser4
+> >     1        |       1m22.868s    |   1m24.153s
+> >     2        |       1m24.127s    |   1m23.050s
+> >     3        |  0m5.727s/183656k  | 0m3.706s/157401k
+> >     4        |       0m9.896s     |   0m3.185s(*)
+> >     5        |       0m6.921s     |   0m33.011s
+> > -------------+--------------------+---------------------
+> > (*) rm couldn't remove directories recursively, and gave warnings/errors:
+> >     rm: cannot remove directory `linux-2.5.44-tst1/arch/um': Directory not empty
+> >     rm: cannot remove directory `linux-2.5.44-tst1/arch/x86_64': Directory not empty
+> >     ... and so on 
+>
+>Are there any messages in the kernel log at this time? Can you reproduce
+>this with CONFIG_REISER4_CHECK/Assertions on?
+>
+> >     After that Reiser4 partition stay unmountable and have unremovable 
+> >     directories till reboot
+> >     After reboot directories was succesfully removed, but they still contained
+> >     files
+>
+>You mean, rm still complains about not empty directories? Can you please
+>check whether they actually *are*?
+>
+>It would be great if you could reproduce it and send to me
+>(personally---too large for list) strace of failing rm.
+>
+> >     Test #5 done after reboot - I got significant Reiser4 slowdown
+> > 
+> > --- Sys info ---
+> > # uname -a
+>
+>Nikita.
+>
+>
+>  
+>
 
-Something seems odd to me...
 
--- 
-Ross Vandegrift
-ross@willow.seitz.com
-
-A Pope has a Water Cannon.				 It is a Water Cannon.
-He fires Holy-Water from it.			    It is a Holy-Water Cannon.
-He Blesses it.				       It is a Holy Holy-Water Cannon.
-He Blesses the Hell out of it.		It is a Wholly Holy Holy-Water Cannon.
-He has it pierced.		  It is a Holey Wholly Holy Holy-Water Cannon.
-Batman and Robin arrive.				       He shoots them.
