@@ -1,44 +1,60 @@
-From: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2004@gmx.net>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: Fwd: reiser4 non-free?
-Date: Mon, 03 May 2004 23:53:05 +0200
-Message-ID: <4096BF41.5070103@gmx.net>
-References: <4da7d13f5c1085a6bc4242656377becf@bouncing.localnet>
+Date: Mon, 03 May 2004 18:15:03 -0400
+Message-ID: <200405032215.i43MF32G009729@turing-police.cc.vt.edu>
+References: <20040424193246.GA2490@raptus.homelinux.org> <200405010026.59064.camel78@iprimus.com.au> <200405010223.51457.jstubbs@gentoo.org>
+            <4092D59F.80604@slaphack.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1555940229P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18407-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18408-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4da7d13f5c1085a6bc4242656377becf@bouncing.localnet>
+In-Reply-To: Your message of "Fri, 30 Apr 2004 17:39:27 CDT."
+             <4092D59F.80604@slaphack.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: MJ Ray <mjr@dsl.pipex.com>
-Cc: Hans Reiser <reiser@namesys.com>, debian-legal@lists.debian.org, reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: Jason Stubbs <jstubbs@gentoo.org>, reiserfs-list@namesys.com
 
-MJ Ray wrote:
+--==_Exmh_1555940229P
+Content-Type: text/plain; charset=us-ascii
 
-[at least 3 insults snipped]
+On Fri, 30 Apr 2004 17:39:27 CDT, David Masover said:
 
->>> Surely there is! If we (or RedHat) were to do such a thing, our very
->>> users and developers would be quite vocal about it, and rightly so.
->
-> On 2004-05-02 22:02:38 +0100 Hans Reiser <reiser@namesys.com> wrote:
->>
->> They did it and nothing happened to them (except of course that
->> XFree86 4.0 changed its license, which is the only way developers can
->> effectively respond to such conduct).
-> 
-> OK, so say RedHat did bad. I don't use RedHat for years, which is the
-> only way users can effectively respond. I plan to stop using XFree86
-> because of its dumb developers who won't answer simple questions about
-                 ^^^^^^^^^^^^^^^
-Hey, can you do anything else but insult people?
+> Not that this needs to be said, but it'd be interesting to watch Debian
+> (free) try to remain a distro of anything if they reject some variant of
+> the GPL.  They'd certainly have to abandon (or fork) Linux, at least if
+> Linux adopted the new version -- and I'm guessing he would, considering
+> that he develops (last I checked) on BitKeeper, which is (again, last I
+> checked) proprietary.
 
+First off, Linus intentionally fixed the Linux kernel as being 'GPL V2 only' -
+to change it to some later version would basically require the assent of all
+the copyright holders.  This is generally held to be infeasible in practice...
 
-> the licence. I already don't use ReiserFS any more.
-
-That's your right. Nobody has disputed that.
+Secondly, I totally fail to see what the fact that Linus uses BitKeeper has to
+do with licensing of the kernel, except to prove that Linus is a pragmatist and
+willing to use a non-free-as-in-speech product when there really *is* no
+open-source competitor - and unlike the other source code management systems
+that *do* compete with BitKeeper, Larry McVoy at least has the 'BKL' for free
+use for open-source projects.
 
 
-Carl-Daniel
+
+
+--==_Exmh_1555940229P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFAlsRncC3lWbTT17ARAr4IAKCkHFSABNhgi4weBz6asRfuTq7wswCff85R
+iRXK5iWukqsq6O/71rW+p4Q=
+=VCC9
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1555940229P--
