@@ -1,60 +1,34 @@
-From: Baldur Norddahl <bbn@clansoft.dk>
-Subject: Re: reiserfsck --rebuild-tree bug (loops forever)
-Date: 21 Mar 2003 14:15:13 +0100
-Message-ID: <1048252512.9237.25.camel@dawn.clansoft.dk>
-References: <1048239084.9237.9.camel@dawn.clansoft.dk>
-	 <20030321103709.6c52f46d.philippe.gramoulle@mmania.com>
+From: Bernd Schubert <bernd-schubert@web.de>
+Subject: Re: filesystem corruption ?
+Date: Fri, 21 Mar 2003 14:20:47 +0100
+Sender: Bernd Schubert <Bernd.Schubert@tc.pci.uni-heidelberg.de>
+Message-ID: <200303211420.47839.bernd-schubert@web.de>
+References: <200303201725.14039.bernd-schubert@web.de> <200303211401.38329.bernd-schubert@web.de> <20030321160738.I17440@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13318-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13319-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030321103709.6c52f46d.philippe.gramoulle@mmania.com>
+In-Reply-To: <20030321160738.I17440@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Philippe =?ISO-8859-1?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Oleg Drokin <green@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Hi,
+> I've learn in the school that if you put some bit amount of plumbum in
+> between some area and source of radiation, chances are radiation that will
+> reach the protected area will be of much lesser strenght.
+> In fact you might go to those guys and ask them what matherial (and how
+> much of it) is best suited to shield against stuff they generate.
 
-3.6.5 asked me to run --rebuild-sb and then --rebuild-tree. That worked,
-and the filesystem is repaired.
+We already discussed during the lunch time to order somthing like this for our 
+systems ;-) (would be a rather strange order for a usual computer company, 
+wouldn't it ?)
+But in fact, I'm now really going to contact  the those guys and ask if they 
+have some stuff to detect their beams.
 
-Oleg Drokin suggested that I might be running a version that was not
-compiled on the same server. I was actually using the version that
-debian provided for me.
-
-The namesys.com web site is still advertizing 3.6.4 as the latest
-version, maybe that should be corrected.
-
-Thanks,
-
-Baldur
-
-On Fri, 2003-03-21 at 10:37, Philippe Gramoull=E9 wrote:
-> Hi,
->=20
-> 3.6.4 is not the latest reiserfsck version.
->=20
-> 3.6.5 [1] is the latest and several bugs have been fixed since.
->=20
-> Could you please retry with reiserfsck 3.6.5 ?
->=20
-> Thanks,
->=20
-> Philippe
->=20
-> [1] Reiserfprogs : ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-=
-3.6.5.tar.gz
->=20
->=20
-> On 21 Mar 2003 10:31:24 +0100
-> Baldur Norddahl <bbn@clansoft.dk> wrote:
->=20
->   | dawn:~# reiserfsck -V
->   |  <--------reiserfsck 3.6.4, 2002-------->
---=20
-Baldur Norddahl <bbn@clansoft.dk>
-
+Have a nice weekend,
+	Bernd
