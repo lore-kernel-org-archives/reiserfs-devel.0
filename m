@@ -1,132 +1,37 @@
 From: Spam <spam@tnonline.net>
-Subject: Re: silent semantic changes with reiser4
-Date: Tue, 31 Aug 2004 22:29:31 +0200
-Message-ID: <1508726027.20040831222931@tnonline.net>
-References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
- <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
+Subject: Re: silent semantic changes in reiser4 (brief attempt to document the idea of what reiser4 wants to do with metafiles and why
+Date: Tue, 31 Aug 2004 22:31:54 +0200
+Message-ID: <1125457632.20040831223154@tnonline.net>
+References: <41323AD8.7040103@namesys.com> <200408312055.56335.v13@priest.com>
+ <36793180.20040831201736@tnonline.net> <200408312235.35733.v13@priest.com>
+ <874qmjm51g.fsf@uhoreg.ca>
 Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21176-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21177-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
+In-Reply-To: <874qmjm51g.fsf@uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Pavel Machek <pavel@ucw.cz>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Hubert Chan <hubert@uhoreg.ca>
+Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-> On Tue, 31 Aug 2004, Horst von Brand wrote:
->> 
->> You do need extra tools anyway, placing them in the kernel is cheating (and
->> absolutely pointless, IMHO).
 
-> I agree.
+V13>> The only thing that changes (from the userland POV) is the way
+V13>> someone can enter the 'metadata directory'. This way you don't have
+V13>> to have a special name, just a special function and no existing
+V13>> application (like tar) can possibly break because it will not know
+V13>> how to enter this 'metadata directory'.
 
-> There's no point to having the kernel export information that is already
-> inherent in the main stream.
+> tar won't be able to backup the metadata.  That's the major breakage of
+> tar that we're worried about.
 
-  There are two things you are saying in the same sentence here. One I
-  do  not  agree  with.  There is point to export information from the
-  main  stream  to  secondary file streams. Just it doesn't have to be
-  done by the kernel.
+  However,  if  we do a "cp fileA fileB" then the metadata and streams
+  ought  to be copied too, even if "cp" does not support them. This is
+  the  real  challenge. Backup tools like tar can be patched just like
+  it has so many times before.
 
-  Just  do  not limit things to a few defined types of things that can
-  be  stored in a stream. IMHO a file stream should be able to contain
-  just  about  anything  the user wishes. That said, the kernel should
-  not have to know about the contents.
-
-> I've seen all these examples of exposing MP3 ID information as a "side
-> stream", and that's TOTALLY POINTLESS! The information is already there,
-> it's in a standard format, and exporting it as a stream buys you 
-> absolutely nothing.
-
-  True.  But this is the case for this specific example. I have stated
-  previously  about what I think would be legitimate uses as examples.
-  Of  course  these  apply  to  me  and  what  I work with. One of the
-  examples   were  to  add  streams  that  contained  descriptions  or
-  keywords.
-
-> Where named attributes make sense is when they are _independent_ data.
-> Data that is only tangentially related to the main stream itself, and
-> which the main stream _cannot_ encompass because of some real technical
-> issue.
-
-> In a graphical environment, the "icon" stream is a good example of this.
-> It literally has _nothing_ to do with the data in the main stream. The
-> only linkage is a totally non-technical one, where the user wanted to
-> associate a secondary stream with the main stream _without_ altering the
-> main one. THAT is where named streams make sense.
-
-> But if you want to look at one particular file inside a tar-file, do so in
-> user space. There are zero advantages to exposing it as a side-stream, and
-> there are absolutely _tons_ of disadvantages.
-
-  The  tar archive support seem (is) to be useless because tar is also
-  so supported and implemented in every type of application out there.
-  It is also easy to script and otherwise work with.
-
-  But  the  idea to be able to extend the filesystem to show/represent
-  data  as  file streams and meta directores is very good.
-
-  Someone might come up with an idea to allow browsing and changing of
-  data  inside  XML files. Of course this may already be done with sed
-  and other tools.
-
-> In short, named streams only make sense if:
->  - they are tied to the file some way that is _independent_ of the file
->    contents (since if it's dependent on the file contents, you're just a
->    ton better off regenerating it with a caching server)
->  - there are serious reasons to keep the lookup synchronized (since if
->    there isn't such a reason, you're just better off with a separate
->    shadow tree in user space)
-
-> And realize that the "separate shadow tree" actually works very well.
-> That's how version control systems like CVS have always worked. It's
-> certainly how you can make icon information work too. If you use a tool
-> for accessing the data, the tool can maintain coherency and you'll never
-> care about the side stream.
-
-  Just  that  with  shadow  trees  (I assume they are stored simply in
-  another  folder  beside  the  file)  you  won't be able to "cp filea
-  /mnt/backup" and keep the extra stuff.
-
-  Sure  icons  could  also easily be stores as file.icon, just like on
-  the Amiga :). It just isn't as nice.
-
-> Which means that normally we really don't _want_ named streams. In 99% of
-> all cases we can use equally good - and _much_ simpler - tool-based
-> solutions.
-
-> Which means that the only _real_ technical issue for supporting named
-> streams really ends up being things like samba, which want named streams
-> just because the work they do fundamentally is about them, for externally
-> dictated reasons. Doing named streams for any other reason is likely just
-> being stupid.
-
-  I  doubt  it would be stupid. Perhaps today just not needed for many
-  things.
-
-> Once you do decide that you have to do named streams, you might then
-> decide to use them for convenient things like icons. But it should very
-> much be a secondary issue at that point.
-
-  I think we focus to much on the actual contents of these streams. Do
-  we  really  have  to  know  what will in the future be stored inside
-  these streams?
-
-  For  example.  Applications may use file streams for locking instead
-  of having a .lock file. The future isn't known, and we shouldn't try
-  to  limit  what  we can put in the streams. You said 99% of the uses
-  won't  need  them.  True.  The  same is with xattr, ACLs and so many
-  other things.
-
-  Even  if 0.1% of the users today would use it I think we should have
-  the support for named streams.
-
-  ~S
-
->     Linus
 
