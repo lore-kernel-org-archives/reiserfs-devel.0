@@ -1,44 +1,62 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary additional namespace to ReiserFS
-Date: Mon, 26 Apr 2004 20:33:14 +0100
-Message-ID: <20040426203314.A6973@infradead.org>
-References: <1082750045.12989.199.camel@watt.suse.com> <408D3FEE.1030603@namesys.com>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: Debian and non-free
+Date: Mon, 26 Apr 2004 15:53:56 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <87n04ywm5n.fsf@uhoreg.ca>
+References: <20040425145238.GQ19049@nysv.org> <874qr7y60b.fsf@uhoreg.ca>
+ <20040426063351.GT19049@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18233-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18234-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <408D3FEE.1030603@namesys.com>; from reiser@namesys.com on Mon, Apr 26, 2004 at 09:59:26AM -0700
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Chris Mason <mason@suse.com>, Linus Torvalds <torvalds@osdl.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, akpm@osdl.org
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-On Mon, Apr 26, 2004 at 09:59:26AM -0700, Hans Reiser wrote:
-> The xattr namespace offers zero functional advantage over the file 
-> namespace.  The use of '.' instead of '/' is idiotic, see the very short 
-> paper "The Hideous Name" by Rob Pike  ( www.cs.bell-labs.com/cm/cs/doc/ 
-> ) for why mindlessly varying the separators in hierarchical names 
-> throughout an OS is a bad idea. 
+>>>>> "Markus" =3D=3D Markus T=F6rnqvist <mjt@nysv.org> writes:
 
-Hans, where have you been the last three years?  Hiding under a rock?
-If Linux wants to support additional attributes and ACLs they better
-have a common API for _all_ filesystems.  People have discussed the xattr
-issue to death, see the -fsdevel and acl-devel archives.  I haven't
-seen you input anywhere, so better shut up now.
+Markus> On Sun, Apr 25, 2004 at 07:47:32PM -0400, Hubert Chan wrote:
+>>>>>>> "Markus" =3D=3D Markus T=F6rnqvist <mjt@nysv.org> writes:
+>>=20
+>> Or companies can just keep the binary, and their sources, private
+>> i.e. for internal use only.  That kind of use is allowed by the GPL.
 
-If you don't want to suport xattrs and acls at all in your filesystem
-that's your business, but adding random new APIs is not.  If you want
-your magic files included send them to -fsdevel, including how to
-deal with them at the VFS level and using one set of entry points for
-them and xattrs.  If not keep on dreaming your pipe dreams and don't
-anoy us with your 'research' fantasies.
+Markus> Licensing issues give me a headache, that's why IANAL.  A bit
+Markus> off-topic: I thought the GPL allows the above scenario only
+Markus> until someone requests the changes you've made?  Or is that only
+Markus> in the case that you're distributing a derived work without
+Markus> source code?
 
-As for ACLs in v3 that's a decision of the maintainer, currently you're
-the formal maintainer, but I don't remember a single patch from you.
-Most of the linux 2.6 work has been done by Chris and quite a bit of
-work by your employees.  Chris is paid for doing a stable and working
-reiserfs variant for SuSE so he seems to be qualified for doing that, to..
+The GPL requires that you need to distribute (or provide, on request)
+the sources to those to whom you provide the binaries.  If you don't
+give anyone the binaries, you don't have to give anyone the modified
+sources.
+
+I think things get complicated for companies -- when does an employee
+become a part of the corporate entity, and when is he/she a private
+individual.  i.e. do you still have to provide sources to employees?
+IANAL, so I can't comment.
+
+[...]
+
+>> I actually wouldn't be surprised if the installer for sarge+1
+>> included Reiser4.  All that's really needed is for Reiser4 to get
+>> into the stable kernel, and someone to write (good) support for
+>> debian-installer.
+
+Markus> I started to do this about a week ago.
+
+Excellent.  I hope you succeed.  Unfortunately, I can't offer any
+assistance, at least not at this time.  My pile of side projects is
+already fairly large.  But if you make any significant progress, I'd be
+interested in hearing from you (as would most of the list, I suppose).
+
+--=20
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
