@@ -1,43 +1,68 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: power loss -> corruption
-Date: Thu, 08 May 2003 23:31:08 +0400
-Message-ID: <3EBAB07C.5020005@namesys.com>
-References: <m1k7d11yaz.fsf@orchid.mirar.org>	<200305081348.42359.Dieter.Nuetzel@hamburg.de>	<m1fznp1w3a.fsf@orchid.mirar.org>	<200305081502.47455.Dieter.Nuetzel@hamburg.de>	<m17k911sq4.fsf@orchid.mirar.org> <3EBAA8DB.3080202@namesys.com> <m14r45xn2i.fsf@orchid.mirar.org>
+From: Fong Vang <FVang@Zantaz.com>
+Subject: RE: power loss -> corruption
+Date: Thu, 8 May 2003 12:37:54 -0700
+Message-ID: <12C7D768CC8ED4118A9200508BEEC6FB03377557@zanexch.zantaz.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14029-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-14030-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <m14r45xn2i.fsf@orchid.mirar.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Mirar <mirar-yg@mirar.org>
-Cc: =?ISO-8859-1?Q?Dieter_N=FCtzel?= <Dieter.Nuetzel@hamburg.de>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: 'Hans Reiser' <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
+
+Version 4 does sound impressive.  We rely heavily on ReiserFS so we are
+keeping close watch of ReiserFS.  How long do you think it will remain =
+in
+Beta before the final release?
+
+-----Original Message-----
+From: Hans Reiser [mailto:reiser@namesys.com]
+Sent: Thursday, May 08, 2003 12:29 PM
+To: Mirar
+Cc: Dieter N=FCtzel; reiserfs-list@namesys.com
+Subject: Re: power loss -> corruption
+
 
 Mirar wrote:
 
->Hans Reiser <reiser@namesys.com> writes:
+>I think V4 sounds excellent, and I hope it will be incorporated in
+>Linux 2.6/3.0. I assume there isn't any kernal patch for 2.4.20 around
+>so I can play with it? I'm sorry if it has been mentioned on the list,
+>I'm not up to date.
 >
->  
+>/Mirar
 >
->>You have run into the disadvantage of meta-data journaling, which is
->>that files that you are writing to may be corrupted if you crash.
->>    
->>
 >
->Hmm, I guess the main problem here is the atomicity? 
->I haven't studied traditional journaling very much. I somehow find it
->odd that the wrong block can get in the wrong files... shouldn't at
->least that be in the metadata?
+> =20
 >
-Hmm, the right block got into the file, but the contents of that right 
-block never reached disk because of the crash, does that make it easier 
-to understand the problem?;-)
+Please wait until July,  when we hope to have a beta-release.
 
-
--- 
+--=20
 Hans
 
 
+
+This e-mail has been captured and archived by the ZANTAZ Digital =
+Safe(tm)
+service.  For more information, visit us at www.zantaz.com.=20
+IMPORTANT: This electronic mail message is intended only for the use of =
+the
+individual or entity to which it is addressed and may contain =
+information
+that is privileged, confidential or exempt from disclosure under =
+applicable
+law.  If the reader of this message is not the intended recipient, or =
+the
+employee or agent responsible for delivering this message to the =
+intended
+recipient, you are hereby notified that any dissemination, distribution =
+or
+copying of this communication is strictly prohibited.  If you have =
+received
+this communication in error, please notify the sender immediately by
+telephone or directly reply to the original message(s) sent.  Thank =
+you.
