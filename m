@@ -1,67 +1,58 @@
-From: Mike Benoit <mikeb@netnation.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: File system shootout v2.0...
-Date: Fri, 17 Oct 2003 08:49:29 -0700
-Message-ID: <1066405769.27235.128.camel@mikeb.staff.netnation.com>
-References: <1066328379.27235.80.camel@mikeb.staff.netnation.com>
-	 <3F8F8631.3010106@namesys.com>
-Reply-To: mikeb@netnation.com
+Date: Fri, 17 Oct 2003 22:31:47 +0400
+Message-ID: <3F903593.9080602@namesys.com>
+References: <1066328379.27235.80.camel@mikeb.staff.netnation.com>	 <3F8F8631.3010106@namesys.com> <1066405769.27235.128.camel@mikeb.staff.netnation.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15849-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15851-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F8F8631.3010106@namesys.com>
+In-Reply-To: <1066405769.27235.128.camel@mikeb.staff.netnation.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: mikeb@netnation.com
 Cc: reiserfs-list@namesys.com
 
-On Thu, 2003-10-16 at 23:03, Hans Reiser wrote:
-> Mike Benoit wrote:
-> 
-> >Since the last shootout was so popular, I was able to get my hands on
-> >some better hardware to run even more tests on. As well the generated
-> >results format was improved slightly. 
-> >
-> >Bonnie++ and IOZone results on a AMD Opteron 240 system are now posted
-> >for your viewing pleasure at: http://fsbench.netnation.com/
-> >
-> >  
-> >
-> We have a new snapshot on the way that does much better at this 
-> benchmark (we fixed a bug thanks to spotting a performance anomaly while 
-> replicating your settings, and the snapshot you are using is actually 
-> quite old thanks to our neglect of posting snapshots).
-> 
-> I will be interested in seeing whether once you and us are using the 
-> same snapshot we get the same results.;-) 
-> 
-> It is a bit odd that reiser4 has both the lowest run time and the worst 
-> rating.  We use middle of the road 32 bit CPUs (we'd like to use the 
-> latest ones but....;-) ).  For them our CPU consumption seems reasonable.
+Mike Benoit wrote:
 
-I assume your referring to the "overall rating" column? The only reason
-of course is because Reiser4 uses the most CPU of any other FS I've
-tested. The thing I find interesting is that Reiser4 doesn't seem to
-perform near as well with IOZone, as it does with Bonnie++, Infact
-Reiser3 does slightly better in every IOZone test. 
+>On Thu, 2003-10-16 at 23:03, Hans Reiser wrote:
+>  
+>
+>
+> The thing I find interesting is that Reiser4 doesn't seem to
+>perform near as well with IOZone, as it does with Bonnie++, Infact
+>Reiser3 does slightly better in every IOZone test. 
+>
+>
+>  
+>
+To do well at IOzone, we need to carefully code to optimize for doing 
+small amounts of work with every system call, and make the code very 
+lightweight when doing so.  We would probably need to make the code 
+uglier and less well abstracted to do this. 
 
-I look forward to taking the new snapshot out for a test drive. ;) 
+I think I would rather add lots of plugins instead.  We probably will 
+make a modest effort to improve at IOzone, but not a big one.
 
-PS. Even though I'm running an opteron, I'm have not compiled the kernel
-or any other app with a 64bit compiler.
+If I can produce a filesystem that has more plugins and more features, 
+and wins at performance for disk IO intensive workloads, that is 
+probably more valuable than winning at both disk IO intensive and cache 
+intensive work loads.  At least that is my thinking.  Right now I think 
+that our performance is good enough that we should concentrate mostly on 
+debugging (fixing a few performance anomalies as we find them though), 
+ship what we have so users can use, and then focus on creating the 
+semantics that will make LongHorn's SQL look quite cumbersome in 
+comparison when operating on semi-structured data.
+
+Performance is not my goal.  Performance is just a way point that I need 
+to reach so that I can resupply with cash for payroll purposes, get 
+enough market share that users will adopt semantic changes I introduce, 
+and then I can go LongHorn hunting.
 
 -- 
-Best Regards,
- 
-Mike Benoit
-NetNation Communications Inc.
-Systems Engineer
-Tel: 604-684-6892 or 888-983-6600
- ---------------------------------------
- 
- Disclaimer: Opinions expressed here are my own and not 
- necessarily those of my employer
+Hans
+
 
