@@ -1,57 +1,57 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: A couple of questions
-Date: Thu, 16 May 2002 15:54:25 +0400
-Message-ID: <3CE39DF1.5080101@namesys.com>
-References: <OFDC95E87B.B541379E-ON85256BBA.0074ED07@pok.ibm.com> <20020516092034.B6880@namesys.com> <3CE37F18.1050201@namesys.com> <20020516154057.A1954@namesys.com>
+Subject: Re: Problems with journal size option on mkfs
+Date: Thu, 16 May 2002 16:00:29 +0400
+Message-ID: <3CE39F5D.6010604@namesys.com>
+References: <OFE8E86981.F03B17DE-ON85256BBA.006A1833@pok.ibm.com>	<20020516091611.A6880@namesys.com>  <3CE38E43.1000408@namesys.com> <1021549979.14986.759.camel@tiny>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10330-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10331-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Oleg Drokin <green@namesys.com>
-Cc: Steve Pratt <slpratt@us.ibm.com>, reiserfs-list@namesys.com
+To: Chris Mason <mason@suse.com>
+Cc: Oleg Drokin <green@namesys.com>, Steve Pratt <slpratt@us.ibm.com>, reiserfs-list@namesys.com
 
-Oleg Drokin wrote:
+Chris Mason wrote:
 
->Hello!
->
->On Thu, May 16, 2002 at 01:42:48PM +0400, Hans Reiser wrote:
+>On Thu, 2002-05-16 at 06:47, Hans Reiser wrote:
 >
 >  
 >
->>>>Second, what is the option to keep fsck from prompting for 'Yes' when
->>>>running.  I need to exec this without additional input.  Seems like quiet
->>>>should do it, but it doesn't.
->>>>        
->>>>
->>>Hans has a decision that this should not be done for now because
->>>reiserfsprogs are in active bugfixing stage.
->>>
->>>      
->>>
->>?
->>I don't understand this.:-/
+>>journal resizing and relocating will go into the next pre1.
+>>
 >>    
 >>
 >
->You have said "We do not trust reiserfsck to be run automatically without
->user confirmation"
+>That makes for a huge set of changes we have planned for pre1.  We need
+>to limit ourselves to one significant change per prerelease, otherwise
+>debugging is very difficult.
 >
->Bye,
->    Oleg
+>The journal relocation stuff needs to be tossed onto an FTP site and
+>widely tested before we submit for a stable kernel series.  It clearly
+>has not been widely tested 2.5.x ;-)
+>
+>-chris
+>
+>
 >
 >
 >  
 >
-Ah, now I remember the conversation.  Yes, if we put the option in, 
-someone will get the bright idea to run it at every boot (and they might 
-be a distro or appliance vendor:-/), and fsck is not as reliable as 
-journaling so this should not be done.
+Yes, I admit I was thinking as I pressed send about just how much stuff 
+would be going into pre1 and wondering if it should be broken into pre1, 
+pre2, and pre3.
 
-So, why do you want to exec it without additional input?
+Probably the journal relocation stuff, being the most tested in 2.5 (do 
+any reiserfs users use it in 2.5 though?), should go into pre3.
+
+The bitmap code and the file write code should go into pre1, along with 
+the cleanups.
+
+Feel free to suggest different orderings, though maybe we should only 
+think about this when it is time for it....
 
 Hans
 
