@@ -1,36 +1,46 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: error compiling reiserfsprogs
-Date: Thu, 1 May 2003 10:25:27 +0400
-Message-ID: <20030501062527.GA22815@namesys.com>
-References: <00e001c30f5a$91f71bf0$0f02a8c0@observer> <200304302124.h3ULOi5J009954@turing-police.cc.vt.edu>
+From: Philipp =?iso-8859-1?q?G=FChring?= <p.guehring@futureware.at>
+Subject: Unicode policy
+Date: Thu, 1 May 2003 17:38:04 +0200
+Message-ID: <200305011538.h41FcFn01653@linux1.futureware.at>
+Reply-To: p.guehring@futureware.at
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13910-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-13911-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200304302124.h3ULOi5J009954@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Valdis.Kletnieks@vt.edu
-Cc: Network Operations <downtown@cwo.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-Hello!
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On Wed, Apr 30, 2003 at 05:24:44PM -0400, Valdis.Kletnieks@vt.edu wrote:
-> > gcc -DHAVE_CONFIG_H -I. -I. -I../include     -g -O2 -Wall -c `test -f 'io.c'
-> > || echo './'`io.c
-> > In file included from /usr/include/bits/errno.h:25,
-> >                  from /usr/include/errno.h:36,
-> >                  from io.c:9:
-> > /usr/include/linux/errno.h:4: asm/errno.h: No such file or directory
-> Did you install whatever kernel-headers package your release of *GCC* (*not*
-> the kernel itself) wants installed?  If not, do so.
+Hi,
 
-Well, in fact kernel headers are supplied with glibc, otherwise I agree that error looks like
-missing kernel headers installed.
+I have some question regarding the Unicode policy of filenames in filesyste=
+m,=20
+especially ReiserFS.=20
 
-Bye,
-    Oleg
+Are filenames stored in UTF-8?
+Should they be stored in UTF-8?
+Is it a question of the filesystem?
+Is it the applications job to interpret it?
+Or is the filesystem encoding independent?
+Are there migration plans to Unicode?
+
+Any feedback is very appreciated.
+
+Many greetings,
+- --=20
+~ Philipp G=FChring              p.guehring@futureware.at
+~ http://www.livingxml.net/       ICQ UIN: 6588261
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
+
+iD8DBQE+sT9elqQ+F+0wB3oRAkm+AJwJbu/dNttqDRA5zPfBmAASndS1TgCgjQJW
+Q1hj0U8sHOKgJ7Tu0ooWyOQ=3D
+=3DPvVE
+-----END PGP SIGNATURE-----
