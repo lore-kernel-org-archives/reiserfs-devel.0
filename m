@@ -1,79 +1,58 @@
-From: William Stearns <wstearns@pobox.com>
-Subject: Re: "file" command on a reiserfs filesystem
-Date: Wed, 3 Apr 2002 11:36:15 -0500 (EST)
-Message-ID: <Pine.LNX.4.44.0204031134050.2071-100000@sparrow.websense.net>
-References: <15531.11723.687664.547488@laputa.namesys.com>
-Reply-To: William Stearns <wstearns@pobox.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Silly question, defrag
+Date: Wed, 03 Apr 2002 22:24:37 +0400
+Message-ID: <3CAB48E5.9050001@namesys.com>
+References: <200204030017.12595@X-Message-Flag:> <3CAABBA6.3030101@swelltech.com> <200204030740.05950@X-Message-Flag:>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <15531.11723.687664.547488@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: ML-reiserfs <reiserfs-list@Namesys.COM>, Andreas Dilger <adilger@turbolabs.com>, William Stearns <wstearns@pobox.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: matthew@psychohorse.com
+Cc: reiserfs-list@namesys.com
 
-Good day, Nikita,
+Matthew Johnson wrote:
 
-On Wed, 3 Apr 2002, Nikita Danilov wrote:
+>On Wednesday 03 April 2002 00:21, Joe Cooper wrote:
+>
+>>"Don't"
+>>
+>
+>Well I don't, but when newbies who are used to computing on win32 systems 
+>hear that they may not just accept the word don't. Actually its hard to find 
+>the reasons exactly why one does not defrag.
+>
+>>;-)
+>>
+>>ReiserFS (and ext2|3) do fragment somewhat, but the impact is not worth
+>>fighting over on most systems (certain environments are impacted more
+>>than others--mail servers and web caches being two examples that are hit
+>>pretty hard by fragmentation performance degradation).
+>>
+>>Besides, there is no method to defrag ReiserFS that I know of.  Hans
+>>plans repacking in some future version.  It will be nice, but the whole
+>>'defrag once a month to keep your computer running smoothly' is kind of
+>>a Windows thing.  Us Unix users don't really need to think so much on
+>>those sorts of things.
+>>
+>
+>Perhaps I should aim this message to the kernel mailing list, so that I can 
+>get response from a wider array of people who like other filesystems. But its 
+>not kernel related. 
+>
+>All this because of a simple query someone posted to a user group mailing 
+>list lol.
+>
+>Matt
+>
+>
+There are ways in which Windows is better than Linux.  This is one.  To 
+think that Linux is better for not having defrag is wishful innacurate 
+thinking.  Such is life.  Send us $30k and defrag will go into v4.0 
+instead of 4.1.:)
 
-> William Stearns writes:
->  > 	When I use the file command on a file that contains an ext2/ext3 
->  > filesystem, the file command returns:
->  > 
->  > [wstearns@sparrow test-resize]$ ls -al emptyfs.ext3.100
->  > -rw-------    1 wstearns wstearns 104857600 Apr  2 13:57 emptyfs.ext3.100
->  > [wstearns@sparrow test-resize]$ file emptyfs.ext3.100
->  > emptyfs.ext3.100: Linux rev 1.0 ext3 filesystem data
->  > 
->  > 	The signature comes from Andreas Dilger's contribution to 
->  > /usr/share/magic:
->  > 
->  > # ext2/ext3 filesystems - Andreas Dilger <adilger@turbolabs.com>
->  > 0x438   leshort         0xEF53          Linux
->  > >0x44c  lelong          x               rev %d
->  > >0x43e  leshort         x               \b.%d
->  > >0x45c  lelong          ^0x0000004      ext2 filesystem data
->  > >>0x43a leshort         ^0x0000001      (mounted or unclean)
->  > >0x45c  lelong          &0x0000004      ext3 filesystem data
->  > >>0x460 lelong          &0x0000004      (needs journal recovery)
->  > >0x43a  leshort         &0x0000002      (errors)
->  > >0x460  lelong          &0x0000001      (compressed)
->  > #>0x460 lelong          &0x0000002      (filetype)
->  > #>0x464 lelong          &0x0000001      (sparse_super)
->  > >0x464  lelong          &0x0000002      (large files)
->  > 
->  > 	Running file on a reiserfs file returns:
->  > 
->  > [wstearns@sparrow test-resize]$ file emptyfs.reiser.100  
->  > emptyfs.reiser.100: ASCII text, with no line terminators
->  > 
->  > 	Is there a similar signature that could identify a reiserfs file?
->  > 	The files I ran this on can be found at 
-> 
-> It definitely is somewhere. You can try to search archives for this
-> mailing list. It required recompiling file(1) through, because reiserfs
-> signature is at 16k offset and by default file(1) didn't look that
-> far. But probably things changed since then.
+Hans
 
-	Many thanks, Nikita!  I'll look at the archives.
-	Cheers,
-	- Bill
-
----------------------------------------------------------------------------
-        "Suppose for a moment that the automobile industry had developed
-at the same rate as computers and over the same period: how much
-cheaper and more efficient would the current models be?  If you have not
-already heard the analogy, the answer is shattering.  Today you would be
-able to buy a Rolls-Royce for $2.75, it would do three million miles to
-the gallon, and it would deliver enough power to drive the Queen
-Elizabeth II.  And if you were interested in miniaturization, you could
-place half a dozen of them on a pinhead."
-        -- Christopher Evans
---------------------------------------------------------------------------
-William Stearns (wstearns@pobox.com).  Mason, Buildkernel, named2hosts, 
-and ipfwadm2ipchains are at:                        http://www.stearns.org
---------------------------------------------------------------------------
 
