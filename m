@@ -1,30 +1,28 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: [PATCH] Compile fix for reiserfs quota debug
-Date: Thu, 18 Nov 2004 09:12:43 -0500
-Message-ID: <1100787163.18452.39.camel@watt.suse.com>
-References: <20041118114437.GC2767@atrey.karlin.mff.cuni.cz>
+From: Helge Hielscher <hhielscher@unternehmen.com>
+Subject: fsck.reiserfs an image file ?
+Date: Wed, 17 Nov 2004 21:21:23 +0100
+Message-ID: <pan.2004.11.17.20.21.21.102770@unternehmen.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22417-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-22418-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20041118114437.GC2767@atrey.karlin.mff.cuni.cz>
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jan Kara <jack@suse.cz>
-Cc: reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org
+To: reiserfs-list@namesys.com
 
-On Thu, 2004-11-18 at 12:44 +0100, Jan Kara wrote:
->   Hello!
-> 
->   Attached patch fixes debugging messages of the quota code in the
-> reiserfs so that they compile. Could some of the reiserfs developers
-> have a look at it please so that it can be merged in the mainline?
+Hello,
 
-Looks fine, thanks Jan.
+after saving a partition with dd_rhelp to an image file I wonder if is
+possible to repair the image to a state where it can be mounted?
 
--chris
+So far everything I tried ended in fsck.reiserfs complaining that there
+is no device or fsck.reiserfs telling me that it could not access the
+superblock.
 
+TIA,
+Helge
 
