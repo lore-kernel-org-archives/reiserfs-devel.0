@@ -1,72 +1,53 @@
-From: Vitaly Fertman <vitaly@namesys.com>
+From: Whit Blauvelt <whit@transpect.com>
 Subject: Re: Marking bad blocks
-Date: Sun, 20 Jul 2003 14:39:05 +0400
-Message-ID: <200307201439.05189.vitaly@namesys.com>
+Date: Sun, 20 Jul 2003 10:23:13 -0400
+Message-ID: <20030720142313.GA11319@free.transpect.com>
 References: <20030720033004.GA6519@free.transpect.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14970-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14971-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030720033004.GA6519@free.transpect.com>
 Content-Disposition: inline
+In-Reply-To: <20030720033004.GA6519@free.transpect.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Whit Blauvelt <whit@transpect.com>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
+Thanks for the various responses. The drive in question is a few years old,
+so its own bad-block handling capabilities may not be the latest. 
 
-Hi, 
+The suggestion to "dd into the blocks" is intriguing. Does anyone have an
+example of how to do that based on the "badblock" output of block numbers?
+dd's man and info pages are terse, and I've only ever used dd for writing
+images to floppies.
 
-On Sunday 20 July 2003 07:30, Whit Blauvelt wrote:
-> Hi,
->
-> I'm trying to use the add-bad-blocks.c script provided on the site, but
-> with both gcc 2.95.3 and 3.2.2 I get:
+As for the suggestion that there's a problem with my gcc since I can't
+compile add-bad-blocks.c - well, this is trying it with gcc on two different
+systems: the first being an originally Red Hat 6.0 system where gcc has been
+upgraded and compiled from the GNU sources, the second on a very current
+Gentoo system where the gcc has is compiled from the Gentoo sources - so
+what are the odds that two different versions of gcc on two different
+systems and flavors of Linux both have the same problem, and it's gcc's
+fault?
 
-this is strange -- I have no problem with gcc 3.3 and 2.96.  
+As for whether it's wise to replace hard drives at the first sign of
+trouble. Yeah, it is. But there are instances like today where it's Sunday,
+I'm in a rural location far from anyplace selling hard drives, I don't have
+an equivalent drive on hand (wouldn't it be wonderful if we could all always
+have a total supply of backup parts for our systems?). The important thing
+for software is to keep the system going, with messages to the system
+operator about anything consequential. Allowing a failure of a bad block on
+a hard drive to be a cause of system failure - when programming a file
+system to gracefully handle bad blocks is old hat - isn't consistent with
+the belt-and-suspenders philosophy that's the heart of good systems
+administration. (Of course, not having a complete set of spare parts isn't
+consistent either - but software features are cheaper to distribute than is
+hardware).
 
-> "undefinded reference to `concat'"
+It's encouraging that some sort of bad block handling is planned for the
+next version of Reiser utilities.
 
-it seems to be a problem with your gcc.
-
-> when I try to do "gcc add-bad-blocks.c".
->
-> Is there something else I need to do to compile it successfully? Or is it
-> just bad code? Why isn't whatever the necessary step is spelled out on the
-> site?
->
-> And, the instruction page only mentions patches to old versions of the
-> kernel. Is the patch to support this now standard in the Reiserfs of kernel
-> 2.4.21?
-
-Only those patches are available, actually bad block handling support is 
-going to be included into reiserfsprogs soon (likely into the next release).
-
-> I like Reiserfs a lot, and use it extensively, but for the second time I'm
-> having serious trouble because of its lack of bad block handling. The
-> Website is full of posturing about "If you have a problem, it's probably
-> your hardware, not a real bug." Fine, this is hardware. The first time
-> around a drive problem totally trashed a system. Now it looks like the
-> Reiser code is better (in 2.4.21 it doesn't crash the system as it does on
-> the same drive with 2.4.19 - looks like something was improved either in
-> Reiser or general file system support in the kernel). But an out of date
-> page on handling bad blocks with a utility that doesn't compile doesn't
-> evidence thorough care.
->
-> Thanks for any advice on how to actually take care of this problem short of
-> throwing out a drive (or going to another file system) just because a
-> couple of blocks are bad.
->
-> Whit
-
-Have you tried to dd into these bad blocks? This command can make the 
-harddrive to move bad blocks into internal harddrive bad block list (remap 
-them). If it fails that means that bad block list is full and you have a lot of 
-bad blocks on your harddrive and it is strongly recommended to change the 
-harddrive ASAP - you will get more of them soon.
-
--- 
-Thanks,
-Vitaly Fertman
+Whit
