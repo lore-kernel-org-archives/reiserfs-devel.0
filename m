@@ -1,63 +1,74 @@
 From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: --rebuild-tree always finds errors --check is ok
-Date: Mon, 10 Jan 2005 15:50:34 +0300
-Message-ID: <200501101550.34403.vitaly@namesys.com>
-References: <41D71C4E.6000209@hanaden.com> <200501072343.08374.vitaly@namesys.com> <41DF2CD6.7040800@hanaden.com>
+Subject: Re: mkfs.reiser4 & fsck.reiser4 do not agree on minimal fs size?
+Date: Mon, 10 Jan 2005 16:15:27 +0300
+Message-ID: <200501101615.27347.vitaly@namesys.com>
+References: <200501092331.52576.rathamahata@ehouse.ru>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23105-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23106-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41DF2CD6.7040800@hanaden.com>
+In-Reply-To: <200501092331.52576.rathamahata@ehouse.ru>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: hanasaki <hanasaki@hanaden.com>, reiserfs-list@namesys.com
+To: "Sergey S. Kostyliov" <rathamahata@ehouse.ru>, reiserfs-list@namesys.com
 
-On Saturday 08 January 2005 03:44, hanasaki wrote:
-> Could you outline exactly what takes place on a rebuild-tree?
+On Sunday 09 January 2005 23:31, Sergey S. Kostyliov wrote:
+> Hello all,
+>
+> mkfs.reiser4 says that minimal fs size is 25 block.
+>
+>     rathamahata@arise rathamahata $ dd if=/dev/zero of=image bs=4096
+> count=1 1+0 records in
+>     1+0 records out
+>     rathamahata@arise rathamahata $ /sbin/mkfs.reiser4 -y -f image
+>     Error: Requested filesystem size (1) is too small. Reiser4 required
+> minimal size 25 blocks long.
+>     Error: Can't create filesystem on image.
+>     rathamahata@arise rathamahata $
+>
+> But that seems to be not true.
+>
+>     rathamahata@arise rathamahata $ uname -a
+>     Linux arise.vh.com.ru 2.6.10 #5 Sat Jan 8 21:06:34 MSK 2005 i686 AMD
+> Athlon(TM) XP 2500+ AuthenticAMD GNU/Linux rathamahata@arise rathamahata $
+> /sbin/mkfs.reiser4 -V
+>     /sbin/mkfs.reiser4 1.0.3
+>     Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing governed
+> by reiser4progs/COPYING.
+>
+>     rathamahata@arise rathamahata $ dd if=/dev/zero of=image bs=4096
+> count=25 25+0 records in
+>     25+0 records out
+>     rathamahata@arise rathamahata $ /sbin/mkfs.reiser4 -y -f image
+>     rathamahata@arise rathamahata $ echo $?
+>     0
+>     rathamahata@arise rathamahata $ /sbin/fsck.reiser4 -y image
+>     *******************************************************************
+>     This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+>     *******************************************************************
+>
+>     Fscking the image block device.
+>     Will check the consistency of the Reiser4 SuperBlock.
+>     Will check the consistency of the Reiser4 FileSystem.
+>     ***** fsck.reiser4 started at Sun Jan  9 23:19:41 2005
+>     Fatal: Failed to open the reiser4 backup.
+>     Fatal: Cannot open the FileSystem on (image).
+>
+>     1 fatal corruptions were detected in SuperBlock. Run with --build-sb
+> option to fix them.
+>
+>     rathamahata@arise rathamahata $
+>
+> It looks like either actual minimal size is large or there is bug in
+> reiser4progs...
 
-reiserfs has two types of blocks. There are unformatted nodes. They
-contain plain user file data. And there are formatted nodes. These may 
-contain both user file data and filesystem metadata. --rebuild-tree scans
-all blocks looking for filesystem metadata, e.g. for formatted nodes. 
-However you can put a reiserfs image into a file, then file data (e.g. 
-unformatted nodes of the host fs) will contain formatted nodes of the 
-fs image, and rebuilding of the host fs will be screwed up as there is 
-no way to distinguish image fs metadata kept in unformatted nodes 
-of the host fs from the host fs metadata.
+yes, it was a bug in reiser4progs, thank you for the report.
 
-> I was under the incorrect assumption that if a rebuild-tree is 100%
-> successful then the FS is ok and a subsequent rebuild-tree will have
-> nothing to fix/report.  .....
 
-In your case, some unformatted nodes look like formatted ones for the 
-first sight, however after fixing all the corruptions in these nodes fsck 
-realises that there is no valid metadata left and that they are either 
-completely broken nodes or file data ones. To not corrupt file data fsck 
-does not flush the made changes on disk. And as nothing gets changed 
-the same attempt of fixing these nodes repeats again on the next rebuild.
-
-> Vitaly Fertman wrote:
-> > On Tuesday 04 January 2005 20:25, hanasaki wrote:
-> >>Version of reiserfsk
-> >>======================
-> >>== From debian sarge
-> >>/sbin/reiserfsck -V
-> >>reiserfsck 3.6.19 (2003 www.namesys.com)
-> >>== also used the version in knoppix 3.7 with similar results
-> >>
-> >>the output of two consecutive runs of --rebuild-tree on the same
-> >>unmounted partition are attached.  Below is the diff
-> >
-> > rebuild-tree finds some blocks that looks like reiserfs formatted
-> > blocks for the first sight whereas they are not and just belongs to
-> > some file bodies. The consistency check reveals no valid metadata
-> > in them, so they are considered as not valid reiserfs formatted blocks
-> > and left not modified on disk. This is why the second run of rebuild-tree
-> > finds them again and tries to do all the stuff again.
 
 -- 
 Thanks,
