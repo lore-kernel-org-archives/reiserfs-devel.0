@@ -1,32 +1,41 @@
-From: Haggai Eran <he3@bezeqint.net>
-Subject: warning: vs-8115
-Date: Sat, 28 Aug 2004 17:24:12 +0300
-Message-ID: <200408281724.13054.he3@bezeqint.net>
+From: Pierre Etchemaite <petchema@concept-micro.com>
+Subject: 2.6.8.1-mm4 oops
+Date: Sat, 28 Aug 2004 17:07:21 +0200
+Message-ID: <20040828170721.23774956@rayanne>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20988-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20989-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hi
-I was hoping you could help me, I've been getting these warnings lately from 
-ReiserFS, and I couldn't find out why.
-They look like:
-ReiserFS: dm-1: warning: vs-8115: get_num_ver: not directory item
 
-This is my var partition which is ReiserFS on LVM logical volume. I'm running 
-debian sid on a pc.
+	Hi all,
 
-Please forgive me if I haven't Read The right FM, and also please cc me your 
-reply's because i'm not on the list.
+Just gave kernel 2.6.8.1-mm4's Reiserfs4 support a try on my home box :)
 
-Thanks a lot,
+As a test, I tried to import Linux kernel 2.6.0 source tree into a brand new
+Subversion repository (Just in case you don't
+know about Subversion yet, try http://subversion.tigris.org/, it's a
+very nice revision control system).
 
-Haggai Eran
-he3@bezeqint.net
+Importing was much slower than expected, so I straced svn. The problem was
+easy to understand: being based on BerkeleyDB4 transactions, it was doing
+fsync() all around, and I remember reading in this list that Reiserfs4's
+fsync()s [well, was it sync() ?] was currently exiting synchronously, which
+is not the traditional behavior of this call.
+
+Ok, nevermind if this was a bad speed test ;) I ^C'ed strace (during a
+fsync() I think, since most of svn's time was spent there), and all
+the sudden OOPses started scrolling in logs' window. After a few seconds, I
+had to reset the system.
+
+Too bad I couldn't find anything in the logs after reboot, but the problem
+occured on first try, so I suspect it will be easy to reproduce.
+
+Good luck!
+Pierre.
