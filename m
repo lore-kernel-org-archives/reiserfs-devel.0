@@ -1,64 +1,67 @@
-From: Brian Marr <cabernet@internode.on.net>
+From: Robert Brockway <robert@timetraveller.org>
 Subject: Re: Filesystem errors
-Date: Tue, 16 Jul 2002 02:22:50 +0930
-Message-ID: <200207160222.50147.cabernet@internode.on.net>
-References: <200207160146.01440.cabernet@internode.on.net> <3D326683.1000606@namesys.com>
+Date: Mon, 15 Jul 2002 16:04:57 +1000 (EST)
+Message-ID: <Pine.LNX.4.44.0207151603290.21646-100000@avon.timetraveller.org>
+References: <200207160146.01440.cabernet@internode.on.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10997-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10998-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <3D326683.1000606@namesys.com>
+In-Reply-To: <200207160146.01440.cabernet@internode.on.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs list <reiserfs-list@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Brian Marr <cabernet@internode.on.net>
+Cc: Reiserfs list <reiserfs-list@namesys.com>
 
+On Tue, 16 Jul 2002, Brian Marr wrote:
 
-What reiserfsck paramaters should I try ? Do I have to do --rebuild-tree =
-?
-Brian Marr
+> Can anyone help interpret these logs ? They have just started appearing on my 
+> Suse 8.0 system. I have made some tentative exploration with reiserfsck 
+> --check. The results were
+> reiserfsck......check started on Mon
+> Replaying journal
+> 0 transactions replayed
+> checking S+tree..../1(of 2 ) / 1(of 164)/ 51(of 166)
+> pass_through_tree: Unable to read block 52842 block on device 0x3
+> 
+> The system is working but something is obviously wrong. Also the xserver is 
+> taking ages to start.
 
-On Monday 15 July 2002 15:36, you wrote:
-> Brian Marr wrote:
-> >Can anyone help interpret these logs ? They have just started appearin=
-g on
-> > my Suse 8.0 system. I have made some tentative exploration with
-> > reiserfsck --check. The results were
-> >reiserfsck......check started on Mon
-> >Replaying journal
-> >0 transactions replayed
-> >checking S+tree..../1(of 2 ) / 1(of 164)/ 51(of 166)
-> >pass_through_tree: Unable to read block 52842 block on device 0x3
-> >
-> >The system is working but something is obviously wrong. Also the xserv=
-er
-> > is taking ages to start.
->
-> Probably you have bad blocks on your reiserfs partition. And because of
-> this your xserver starts so slowly. Kernel trying to reread a block and
-> can't do it, because it is bad.
->
-> >Brian Marr
-> >
-> >(snip)=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >VFS: Disk change detected on device sr(11,0)
-> >hda: dma_intr: status=3D0x51 { DriveReady SeekComplete Error }
-> >hda: dma_intr: error=3D0x40 { UncorrectableError }, LBAsect=3D487003,
-> >sector=3D422736
-> >end_request: I/O error, dev 03:02 (hda), sector 422736
-> >hda: dma_intr: status=3D0x51 { DriveReady SeekComplete Error }
-> >hda: dma_intr: error=3D0x40 { UncorrectableError }, LBAsect=3D487003,
-> >sector=3D422736
-> >end_request: I/O error, dev 03:02 (hda), sec
-> >
-> >
-> >(snip)=3D=3D=3D=3D=3D=3D
-> >hda: dma_intr: status=3D0x51 { DriveReady SeekComplete Error }
-> >hda: dma_intr: error=3D0x40 { UncorrectableError }, LBAsect=3D474244,
-> >sector=3D409984
-> >end_request: I/O error, dev 03:02 (hda), sector 409984
-> >vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find st=
-at
-> > data of [96126 168017 0x0 SD]
+Hi Brian.  I'd look at backing up the data on that drive _now_.  Not
+wanting to scare you but I'd be suspecting a hardware fault which will get
+worse.  How old is the drive?
+
+Cheers,
+	-Rob
+ 
+> Brian Marr
+> 
+> (snip)==========
+> VFS: Disk change detected on device sr(11,0)
+> hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+> hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=487003, 
+> sector=422736
+> end_request: I/O error, dev 03:02 (hda), sector 422736
+> hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+> hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=487003, 
+> sector=422736
+> end_request: I/O error, dev 03:02 (hda), sec
+> 
+> 
+> (snip)======
+> hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+> hda: dma_intr: error=0x40 { UncorrectableError }, LBAsect=474244, 
+> sector=409984
+> end_request: I/O error, dev 03:02 (hda), sector 409984
+> vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat data 
+> of [96126 168017 0x0 SD]
+> 
+
+-- 
+-- Robert Brockway B.Sc. email: robert@timetraveller.org  ICQ: 104781119
+   Linux counter project ID #16440 (http://counter.li.org)
+   avon: up 4 days, 13:52,  2 users,  load average: 0.00, 0.00, 0.00
+   "The earth is but one country and mankind its citizens" -Baha'u'llah
 
