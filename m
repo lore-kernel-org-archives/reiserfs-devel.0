@@ -1,99 +1,50 @@
-From: David Ford <david+challenge-response@blue-labs.org>
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 14:38:48 -0400
-Message-ID: <412F7FB8.4010609@blue-labs.org>
-References: <20040824202521.GA26705@lst.de>	<412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com> <412E10A2.1020801@pobox.com> <412EEC07.30707@namesys.com> <412F7B6D.6010305@pobox.com>
+Date: Fri, 27 Aug 2004 14:40:27 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <87llg0mnl0.fsf@uhoreg.ca>
+References: <412EEB75.1030401@namesys.com> <Pine.LNX.4.44.0408271043090.10272-100000@chimarrao.boston.redhat.com>
+ <1888171711.20040827171520@tnonline.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------000901000907070902030504"
-Return-path: <reiserfs-list-return-20929-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20930-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <412F7B6D.6010305@pobox.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Will Dyson <will_dyson@pobox.com>
-Cc: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
-
---------------000901000907070902030504
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Will Dyson wrote:
+>>>>> "Spam" == Spam  <spam@tnonline.net> writes:
 
-> Hans Reiser wrote:
->
->> Will Dyson wrote:
->>
->>>
->>> In the original BeOS, they solved the problem by having the 
->>> filesystem driver itself take a text query string and parse it, 
->>> returning a list of inodes that match. The whole business of parsing 
->>> a query string in the kernel (let alone in the filesystem driver) 
->>> has always seemed ugly to me. 
->>
->>
->> Why?
->
->
-> Hmm. Trying to explain aesthetic judgments is always fun, but I'll try.
->
-> String parsing bloats the kernel with code that will be called rarely, 
-> and doing it inside the filesystem module makes for duplicate code if 
-> more than one filesystem does it. But a good common parser routine (or 
-> a kernel api that takes a pre-compiled parse tree) would reduce the 
-> bad taste.
+> Rik van Riel wrote:
+>> On Fri, 27 Aug 2004, Hans Reiser wrote:
+>>> Why are you guys even considering going to any pain at all to
+>>> distort semantics for the sake of backup?  tar is easy, we'll fix it
+>>> and send in a patch.
 
+>> It's not as easy as you make it out, and not just because there are a
+>> few dozen backup programs that need fixing.
 
-Like say.. printk() ?  :)
+>> The problem is more fundamental than that.  Some of the file streams
+>> proposed need to be backed up, while others are alternative
+>> presentations of the file, which should not be backed up.
 
-> The real objection I have is that it puts the kernel in the position 
-> of doing more work than it has to for the system to operate correctly 
-> and efficiently. The user wants to know what files match a certain set 
-> of criteria. The filesystem provides special features which can 
-> greatly accelerate some searches. Does it make more sense to move the 
-> functionality of /usr/bin/find into the kernel, or to export the index 
-> information so that an enhanced version of find can make use of it?
+Spam>   No, not really. This is a user decision and should be options in
+Spam> the backup software.  I don't think it is up to the kernel,
+Spam> filesystem, or the OS in general to decide what information the
+Spam> user want to retain or not.
 
+Why not just define an attribute named something like "do-not-backup"?
+Then whatever program that generates the thumbnail can automatically add
+the do-not-backup bit, and the backup software knows to ignore it.
+(Obviously, that bit should apply recursively down the subtree.)
 
-I think it depends largely on where you see file systems going 5, 10, 20 
-years from now.  Are they going to be decadent designs or will they be 
-flush with meta data and other tidbits?  Where does the heuristic line 
-sit when it becomes better to put such a function into the kernel v.s. 
-user land?
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
-> I don't think having find in the kernel would be worth the cost or 
-> complexity.
-
-
-Probably not.  But as I view it, file systems are slowly evolving into 
-relational objects and the margin between what are files and directories 
-versus content within said objects is shrinking.  More and more, people 
-are using a relational database to store content that once resided in 
-singular files.
-
-Sure, it makes for a much fatter *FS system, but the user doesn't care 
-too much, he simply enjoys the ability to manage, search, and cross 
-reference his content much more easily.
-
-And then comes the "it's a user land thing" comment again.  And again 
-the response.  When does moving this from user land into kernel land 
-become a better choice.
-
-With the file systems we have today, it's really not much of a gain 
-compared to the cost of the move.
-
-Consider Reiser4 now.  More and more meta data is being used in regards 
-to files.  That margin is shrinking.
-
-BeOS broached it, Microsoft is building it.  Just because they did it 
-doesn't mean we have to do it nor that it is right.
-
-But it's food for thought.  Especially as more and more tidbits get 
-associated with files.
-
--david
-
-
---------------000901000907070902030504--
