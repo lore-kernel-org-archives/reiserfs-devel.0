@@ -1,55 +1,60 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: 2.6.8.1-mm4 oops
-Date: Sat, 28 Aug 2004 22:27:32 +0400
-Message-ID: <20040828182731.GH5108@backtop.namesys.com>
-References: <20040828170721.23774956@rayanne>
+From: Linus Torvalds <torvalds@osdl.org>
+Subject: Re: silent semantic changes with reiser4
+Date: Sat, 28 Aug 2004 11:44:52 -0700 (PDT)
+Message-ID: <Pine.LNX.4.58.0408281132480.2295@ppc970.osdl.org>
+References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com>
+ <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org> <20040828170515.GB24868@hh.idb.hist.no>
+ <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org>
+ <20040828182954.GJ21964@parcelfarce.linux.theplanet.co.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21007-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21008-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040828170721.23774956@rayanne>
+In-Reply-To: <20040828182954.GJ21964@parcelfarce.linux.theplanet.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pierre Etchemaite <petchema@concept-micro.com>
-Cc: reiserfs-list@namesys.com
-
-On Sat, Aug 28, 2004 at 05:07:21PM +0200, Pierre Etchemaite wrote:
-> 
-> 	Hi all,
-> 
-> Just gave kernel 2.6.8.1-mm4's Reiserfs4 support a try on my home box :)
-> 
-> As a test, I tried to import Linux kernel 2.6.0 source tree into a brand new
-> Subversion repository (Just in case you don't
-> know about Subversion yet, try http://subversion.tigris.org/, it's a
-> very nice revision control system).
-> 
-> Importing was much slower than expected, so I straced svn. The problem was
-> easy to understand: being based on BerkeleyDB4 transactions, it was doing
-> fsync() all around, and I remember reading in this list that Reiserfs4's
-> fsync()s [well, was it sync() ?] was currently exiting synchronously, which
-> is not the traditional behavior of this call.
-> 
-> Ok, nevermind if this was a bad speed test ;) I ^C'ed strace (during a
-> fsync() I think, since most of svn's time was spent there), and all
-> the sudden OOPses started scrolling in logs' window. After a few seconds, I
-> had to reset the system.
-
-did you enable reiser4 debugging options?
-
-> 
-> Too bad I couldn't find anything in the logs after reboot, but the problem
-> occured on first try, so I suspect it will be easy to reproduce.
-> 
-> Good luck!
-> Pierre.
-
-thanks for the report.
+To: viro@parcelfarce.linux.theplanet.co.uk
+Cc: Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
 
 
--- 
-Alex.
+
+On Sat, 28 Aug 2004 viro@parcelfarce.linux.theplanet.co.uk wrote:
+> 
+> What would your openat() produce?  Normal struct file?  Then what's going
+> to be its vfsmount/dentry and what will they be attached to?
+
+Normal file descriptor, exactly like "open()".
+
+And it's going to have all the same vfsmount/dentry thing it would have if 
+you looked it up the whole way. I don't understand your question..
+
+Ignore the O_XATTR thing for a while, and assume it's just a convenient
+combination of "fchdir + open" (plus "fchdir back" of course, but that's 
+beside the point - openat() doesn't ever really change cwd).
+
+Going back to O_XATTR: that would end up doing the "special vfsmount"  
+magic at the beginning of the lookup. If the dentry you started with
+wasn't marked D_HYBRID, it would just return -ENOTDIR.
+
+So we could do openat() _without_ any of the lookup_mnt() etc special 
+cases. This interface is independent of whether we want to expose the 
+attributes through a normal lookup - we can do either, both, or neither as 
+we choose.
+
+The nice thing about "openat()" is
+ - people can definitely find uses for it even without attributes. 
+ - it's "portable". Well, at least somebody else does the same thing, 
+   which is nice for user-space developers. You don't use a Linux-only 
+   interface, you use a Linux/Solaris one, which makes a lot of people a 
+   lot more happy.
+
+Remember, portability has always been very important to Linux, and
+Linux-only features while nice are certainly not as nice as features you
+can also find in other places.
+
+NIH is a disease.
+
+		Linus
