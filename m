@@ -1,34 +1,36 @@
-From: Peter Herklotz <linux@pch-edv.com>
-Subject: Re[2]: reiserfsck segmentation fault
-Date: Thu, 22 Aug 2002 13:56:32 +0200
-Message-ID: <347248875.20020822135632@pch-edv.com>
-References: <1874477781.20020822131021@pch-edv.com>
- <20020822151427.A5603@namesys.com>
-Reply-To: Linux PCH EDV <linux@pch-edv.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: corrupted 3.5 format fs
+Date: Thu, 22 Aug 2002 15:55:25 +0400
+Message-ID: <200208221555.25020.vitaly@namesys.com>
+References: <20020822063512.54daaeaf.philippe.gramoulle@mmania.com> <20020822094356.A1660@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11288-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11289-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20020822151427.A5603@namesys.com>
+In-Reply-To: <20020822094356.A1660@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Philippe Gramoull? <philippe.gramoulle@mmania.com>
+Cc: reiserfs <reiserfs-list@namesys.com>
 
-Hello Oleg,
+On Thursday 22 August 2002 09:43, Oleg Drokin wrote:
+> Hello!
+>
+> On Thu, Aug 22, 2002 at 06:35:12AM +0200, Philippe Gramoull? wrote:
+> > So , i did and re-ran --check and came with still 1 corruption left that
+> > was said to be able to be corrected with --fix-fixable.
+> > Re-ran --fix-fixable and --check , and i still had this '1 corruption
+> > found which can be fixed with --fix-fixable'
+> > bad_stat_data: block 38372, [3955 5371 0x0 SD (0)], SD has bad nlink
+> > number
 
-thanks for the advice, reiserfsck (3.6.3) is working heavily now - lets hope
-it can rebuild the content of the partition. But another question
-arises for me: As I pointed out in my first posting, I had to do a
-"reiserfsck --rebuild-sb" first before the partition was even recognized
-as an reiserfs one. As I said, I wasn't sure which version of the fs I
-had. How dangerous is it to choose a wrong "3.5.x"-version at that
-point? The only thing that I am sure of is that it wasn't a 3.6
-version.
+Yes, the idea to fix nlinks on fix-fixable has some problems and we decided
+to leave it for rebuild-tree as it was before.
 
-Thanks
+-- 
 
-Peter
-
+Thanks,
+Vitaly Fertman
