@@ -1,34 +1,28 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Clifford Beshers <clifford.beshers@lindows.com>
 Subject: Re: we need a slogan for our reiser4 t-shirt
-Date: Thu, 24 Jun 2004 00:14:22 -0700
-Message-ID: <40DA7F4E.1050700@namesys.com>
-References: <3DF9165145FACB4C96977FF650C1E9040C46A0A2@its-mail1.its.corp.gwl.com>
+Date: Wed, 23 Jun 2004 13:27:28 -0700
+Message-ID: <40D9E7B0.6070108@lindows.com>
+References: <3DF9165145FACB4C96977FF650C1E9040C46A0A2@its-mail1.its.corp.gwl.com> <40DA7F4E.1050700@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19319-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19320-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C46A0A2@its-mail1.its.corp.gwl.com>
+In-Reply-To: <40DA7F4E.1050700@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Burnes, James" <james.burnes@gwl.com>
-Cc: Marcel Hilzinger <marcel@hilzinger.hu>, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: "Burnes, James" <james.burnes@gwl.com>, Marcel Hilzinger <marcel@hilzinger.hu>, reiserfs-list@namesys.com
 
-Burnes, James wrote:
+Hans Reiser wrote:
 
->How about,
->
->"Plug-in To Reiser4!"
->
->
->jim burnes
->security engineer
->great-west, denver
-> 
->
->  
->
-Sounds like an ad, we want a t-shirt people want to wear.  Maybe, "My 
-filesystem is faster than yours...."?
+> Sounds like an ad, we want a t-shirt people want to wear.  Maybe, "My 
+> filesystem is faster than yours...."?
+
+
+Everything you always wanted in a filesystem, but were afraid to pay for.
+
+Cliff
+
