@@ -1,36 +1,36 @@
-From: Philippe =?ISO-8859-1?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Subject: Re: Quotas aand 2.5.x
-Date: Wed, 15 Jan 2003 12:33:23 +0100
-Message-ID: <20030115123323.3de2372b.philippe.gramoulle@mmania.com>
-References: <20030114182217.4fa8f2f8.philippe.gramoulle@mmania.com>
-	<20030114203842.A18999@namesys.com>
-	<3E2451B0.1020905@namesys.com>
-	<20030115104306.51404b4c.philippe.gramoulle@mmania.com>
-	<20030115124629.A30051@namesys.com>
-	<20030115115953.7e01be58.philippe.gramoulle@mmania.com>
-	<20030115140336.B31248@namesys.com>
+From: Bernhard Sadlowski <sadlowsk@mathematik.Uni-Bielefeld.DE>
+Subject: Re: Stress test failure for reiserfs, but ext3 ok on Linux 2.4.20
+Date: Wed, 15 Jan 2003 12:51:00 +0100
+Sender: Bernhard Sadlowski <sadlowsk@Mathematik.Uni-Bielefeld.DE>
+Message-ID: <20030115115100.GB16645@mathematik.uni-bielefeld.de>
+References: <20030115023559.GA14694@mathematik.uni-bielefeld.de> <20030115134315.A31068@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12359-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12360-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030115140336.B31248@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <20030115134315.A31068@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-On Wed, 15 Jan 2003 14:03:36 +0300
-Oleg Drokin <green@namesys.com> wrote:
+On 15 Jan 2003 13:43, Oleg Drokin <green@namesys.com> wrote:
+> Hm. This resembles me something.
+> Can you reproduce the same problem if you apply patches from
+> ftp://ftp.namesys.com/pub/reiserfs-for-2.4/testing/quota-2.4.20/
+> These patches add quota support to reiserfs, but also change some
+> new inode-related operation to prevent deadlocks like you are seeing.
 
-  |  The 2.4.19-presomething you had there before with just only fix I sent first
-  |   time?
+The unpatched kernel shows the hangs much earlier, so I assume that the
+above patches solve the problem. With the patches the load goes up very
+slowly but steady to "100" and I/O does not freeze anymore. vmstat and
+iostat still show activity. I assume you don't need any sysrq-t output
+now.
 
-hmm, not the 2.4.19-presomething IIRC, it was a later kernel.
+Will the patches be included in 2.4.21?
 
-I'll retry with the 2.4.19pre6 and come back to you.
-
-Thx,
-
-Philippe
+Bernhard
