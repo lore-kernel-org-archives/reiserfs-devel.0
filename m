@@ -1,42 +1,94 @@
-From: "darren" <teodarren@myrealbox.com>
-Subject: strange problems with simultaneous NFS and CIFS mount to reiserfs
-Date: Thu, 9 Dec 2004 23:56:50 +0800
-Message-ID: <200412091558.iB9FwuNQ018650@eastgate.starhub.net.sg>
-References: <pqjtltdza]@bigfoot.com>
+From: "Lex  Jonkers" <jonkersl@Fourtop.nl>
+Subject: 2.6.9-3 patch won't compile
+Date: Mon, 13 Dec 2004 13:17:14 +0100
+Message-ID: <18A36962E684664DB223E403DB64FB220C6805@W23FT01.Fourtop.local>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22731-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-22749-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <pqjtltdza]@bigfoot.com>
+Content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-I have this strange problem that occurs at one of my NFS client.
+Hi,
 
-Setup (3 PCs)
+I'm having problems compiling 2.6.9-3 patch:
 
-A) Win2000 (mounting to //C/test] vis CIFS)
-B) RedHat 7.3 (mounting to C:/test via NFS)
-C) Redhat 7.3 sharing /test (reiserfs partition shared via nfsd and smbd)
+  CC      fs/reiser4/debug.o
+  CC      fs/reiser4/stats.o
+  CC      fs/reiser4/jnode.o
+  CC      fs/reiser4/znode.o
+  CC      fs/reiser4/key.o
+  CC      fs/reiser4/pool.o
+  CC      fs/reiser4/tree_mod.o
+  CC      fs/reiser4/estimate.o
+  CC      fs/reiser4/carry.o
+  CC      fs/reiser4/carry_ops.o
+  CC      fs/reiser4/lock.o
+  CC      fs/reiser4/tree.o
+  CC      fs/reiser4/context.o
+  CC      fs/reiser4/tap.o
+  CC      fs/reiser4/coord.o
+  CC      fs/reiser4/block_alloc.o
+  CC      fs/reiser4/txnmgr.o
+  CC      fs/reiser4/kassign.o
+  CC      fs/reiser4/flush.o
+  CC      fs/reiser4/wander.o
+  CC      fs/reiser4/eottl.o
+  CC      fs/reiser4/search.o
+  CC      fs/reiser4/page_cache.o
+  CC      fs/reiser4/lnode.o
+  CC      fs/reiser4/kcond.o
+  CC      fs/reiser4/seal.o
+  CC      fs/reiser4/dscale.o
+  CC      fs/reiser4/log.o
+  CC      fs/reiser4/flush_queue.o
+  CC      fs/reiser4/ktxnmgrd.o
+  CC      fs/reiser4/kattr.o
+  CC      fs/reiser4/blocknrset.o
+  CC      fs/reiser4/super.o
+  CC      fs/reiser4/oid.o
+  CC      fs/reiser4/tree_walk.o
+  CC      fs/reiser4/inode.o
+  CC      fs/reiser4/vfs_ops.o
+  CC      fs/reiser4/inode_ops.o
+  CC      fs/reiser4/file_ops.o
+  CC      fs/reiser4/as_ops.o
+  CC      fs/reiser4/emergency_flush.o
+  CC      fs/reiser4/spinprof.o
+  CC      fs/reiser4/entd.o
+  CC      fs/reiser4/readahead.o
+  CC      fs/reiser4/crypt.o
+  CC      fs/reiser4/diskmap.o
+  CC      fs/reiser4/prof.o
+  CC      fs/reiser4/repacker.o
+  CC      fs/reiser4/status_flags.o
+  CC      fs/reiser4/init_super.o
+  CC      fs/reiser4/safe_link.o
+  CC      fs/reiser4/plugin/plugin.o
+  CC      fs/reiser4/plugin/plugin_set.o
+  CC      fs/reiser4/plugin/node/node.o
+  CC      fs/reiser4/plugin/object.o
+  CC      fs/reiser4/plugin/symlink.o
+  CC      fs/reiser4/plugin/cryptcompress.o
+fs/reiser4/plugin/cryptcompress.c: In function `set_cluster_params':
+fs/reiser4/plugin/cryptcompress.c:2203: parse error before `hole_size'
+fs/reiser4/plugin/cryptcompress.c:2204: `hole_size' undeclared (first =
+use in this function)
+fs/reiser4/plugin/cryptcompress.c:2204: (Each undeclared identifier is =
+reported only once
+fs/reiser4/plugin/cryptcompress.c:2204: for each function it appears =
+in.)
+make[2]: *** [fs/reiser4/plugin/cryptcompress.o] Error 1
+make[1]: *** [fs/reiser4] Error 2
+make: *** [fs] Error 2
 
-Computer A produces DB summaries (sum.xml) and a log file (ops.log) every
-half hour into //C/test. The movement of the files into C is done via the
-MFC command "MoveFileEx".
 
-Computer B will then read both files and delete them.
+Are these patches stand-alone or incremental?
 
-Problem:
-Computer B is sometimes not able to find sum.xml. Running ls on the mounted
-file (c:/test) gives me the following error
-
-"ls - sum.xml file not found		ops.log"
-
-This problem only occurs via the NFS mount but not CIFS from computer B.
-
-Is there a consistency/coherence problem when 2 different network
-filesystems mount to 1 reiserfs partition?
-
+With Regards,
+Lex Jonkers
