@@ -1,72 +1,42 @@
-From: Catalin BOIE <util@deuroconsult.ro>
-Subject: 2.6.0test3mm2 reiserfs3.6.11 usb-storage
-Date: Mon, 18 Aug 2003 15:27:51 +0300 (EEST)
-Message-ID: <Pine.LNX.4.56.0308181527391.13602@hosting.rdsbv.ro>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Procedure to recover a bad superblock
+Date: Mon, 18 Aug 2003 17:33:29 +0400
+Message-ID: <20030818133329.GD10536@namesys.com>
+References: <1061131936.3001.8.camel@headoffice.hazelden.ca> <20030818061941.GC16183@namesys.com> <1061207028.3736.17.camel@headoffice.hazelden.ca>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15360-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15361-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <1061207028.3736.17.camel@headoffice.hazelden.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: "John P. New" <jnew@hazelden.ca>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-Hi, List!
+Hello!
 
-In my journey to discover kernel 2.6 I get this error trying to reiserfsck
-/dev/sda1 (usb flash disk, 128 MB)
+On Mon, Aug 18, 2003 at 07:43:48AM -0400, John P. New wrote:
 
-bash-2.05b# reiserfsck --check /dev/sda1
-reiserfsck 3.6.11 (2003 www.namesys.com)
+> As for what ide devices I have below the softraid, I'm not sure what you
+> mean. I have a CD/RW on hda and a Colorado Travan tape drive on hdb, and
 
-*************************************************************
-** If you are using the latest reiserfsprogs and  it fails **
-** please  email bug reports to reiserfs-list@namesys.com, **
-** providing  as  much  information  as  possible --  your **
-** hardware,  kernel,  patches,  settings,  all reiserfsck **
-** messages  (including version),  the reiserfsck logfile, **
-** check  the  syslog file  for  any  related information. **
-** If you would like advice on using this program, support **
-** is available  for $25 at  www.namesys.com/support.html. **
-*************************************************************
+I mean on what devices do you build your softraid.
 
-Will read-only check consistency of the filesystem on /dev/sda1
-Will put log info to 'stdout'
+> I ran reiserfsck --rebuild-sb /dev/md1, and it asked me what block size
+> to use. I looked at /var/log/messages, and the first boot after the
+> power outage log reads:
 
-Do you want to run this program?[N/Yes] (note need to type Yes if you
-do):Yes
-Failed to open the journal device ((null)).
+blocksize is always 4k
 
-An strace tell me:
-brk(0)                                  = 0x809c000
-brk(0x809d000)                          = 0x809d000
-_llseek(4, 8192, [8192], SEEK_SET)      = 0
-read(4, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 4096)
-= 4096
-_llseek(4, 65536, [65536], SEEK_SET)    = 0
-read(4, "\370|\0\0\214\24\0\0\325\5\0\0\22\0\0\0\0\0\0\0\0\2\0\0"...,
-4096) = 4096
-_llseek(4, 131035136, [131035136], SEEK_SET) = 0
-read(4, "\377\377\377\377\377\377\377\377\377\377\377\377\377\377"...,
-4096) = 4096
-write(2, "Failed to open the journal devic"..., 44Failed to open the
-journal device ((null)).
-) = 44
-fsync(4)                                = 0
+> In other words, different block sizes. for the same device. Should I be
+> concerned, and what value should I use for reiserfsck?
 
+Sure.
+Always givre 4k for now.
 
-
-
-I expect reiserfsck to treat this device as any other device.
-Mount /dev/sda1 works.
-
-Any advice, please?
-Thank you!
-
-P.S. More informations on request.
-
----
-Catalin(ux) BOIE
-catab@deuroconsult.ro
+Bye,
+    Oleg
