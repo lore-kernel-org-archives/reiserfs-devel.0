@@ -1,59 +1,44 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Namesys now accepts Visa cards on our website (support questions
- and donations both)
-Date: Sun, 16 May 2004 10:43:55 -0700
-Message-ID: <40A7A85B.1020703@namesys.com>
-References: <409BB690.6030604@namesys.com> <409BBDC9.3030809@lindows.com> <409FB387.8080804@namesys.com> <40A19147.4010703@lindows.com> <40A257DA.2010903@namesys.com> <40A26D45.2010707@lindows.com> <40A30B00.8020103@namesys.com> <C10E654E-A518-11D8-BD91-000A95CD704C@wagland.net> <20040513201142.GT29226@nysv.org> <40A79FD0.3090904@namesys.com> <20040516172233.GB24604@nysv.org>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Date: Mon, 17 May 2004 02:59:58 -0400
+Message-ID: <200405170659.i4H6xwFp027194@turing-police.cc.vt.edu>
+References: <20040329185901.62166.qmail@web25008.mail.ukl.yahoo.com> <406885F1.9040409@mrs.umn.edu> <40A587FF.30103@namesys.com> <40A520DB.4080200@lindows.com>
+            <20040515111010.GI1232@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18734-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_-167462424P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18737-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040516172233.GB24604@nysv.org>
+In-Reply-To: Your message of "Sat, 15 May 2004 14:10:10 +0300."
+             <20040515111010.GI1232@nysv.org> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
-Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
+To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
+Cc: Clifford Beshers <clifford.beshers@lindows.com>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
 
-Markus T=F6rnqvist wrote:
+--==_Exmh_-167462424P
+Content-Type: text/plain; charset=us-ascii
 
->On Sun, May 16, 2004 at 10:07:28AM -0700, Hans Reiser wrote:
->
-> =20
->
->>I haven't been able to get a large enough amount from distros to support =
+On Sat, 15 May 2004 14:10:10 +0300, Markus =?UNKNOWN?Q?T=F6rnqvist?= said:
 
->>us (but thanks to Lindows for being a major help), and darpa sponsors=20
->>research not resizers, so I am thinking I might try selling the=20
->>   =20
->>
->
->I have always tried to keep a safe distance from economic messes like this.
->What you're saying is that they sponsor research, they give money, but
->you can't pay salaries with that money?
-> =20
->
-well, we spent all the money....
+> This has been discussed. There is the mailer that uses an @-named
+> symlink to the current message. Can't remember which one.
 
-and the new money has to be spent on security stuff, not on resizers.
+That would be MH, nhm, and exmh...
 
-> =20
->
->>Support does not make much money, a few hundred a month.....  hopefully=20
->>us accepting visa cards will improve this.
->>   =20
->>
->
->How would you say this situation has changed over the years?
->Better to worse since the dotcom boom, or?
->
-> =20
->
-Techbust nearly but not quite destroyed us (DARPA saved us), and now=20
-things are starting to boom again, so we should be happy.  In the short=20
-term, we are suffering, but things are clearly improving and in a year I=20
-think we will be prosperous.
+--==_Exmh_-167462424P
+Content-Type: application/pgp-signature
 
-Hans
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFAqGLucC3lWbTT17ARAmtRAKCdRrx+VnghWhaG/MtD+NsZAjEBzACfX0JG
+RMlqN//RifDQlsUl4+WsYG4=
+=TS+4
+-----END PGP SIGNATURE-----
+
+--==_Exmh_-167462424P--
