@@ -1,98 +1,109 @@
-From: Domenico Andreoli <cavok@tiscali.it>
-Subject: reiser4progs: FTBFS (amd64/gcc-4.0): static declaration of 'oid40_plug' follows non-static declaration
-Date: Mon, 3 Jan 2005 18:29:44 +0100
-Message-ID: <20050103172944.GA24729@raptus.dandreoli.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: --rebuild-tree always finds errors --check is ok
+Date: Thu, 06 Jan 2005 15:06:43 +0300
+Message-ID: <1105013202.3261.26.camel@tribesman.namesys.com>
+References: <41D71C4E.6000209@hanaden.com>
+	 <1104849038.32178.54.camel@tribesman.namesys.com>
+	 <41DAD195.1080306@hanaden.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-23040-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23043-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Resent-Message-ID: <20050105094123.GA12477@raptus.dandreoli.com>
-Resent-To: reiserfs-list@namesys.com
-Content-Disposition: inline
+In-Reply-To: <41DAD195.1080306@hanaden.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
-Cc: 288414@bugs.debian.org
+To: hanasaki <hanasaki@hanaden.com>
+Cc: reiserfs-list@namesys.com
 
-hi all,
+Hello
 
-  i've just received the following bug report for reiser4progs debian
-package version 1.03-1.
+On Tue, 2005-01-04 at 20:25, hanasaki wrote:
+> Version of reiserfsk
+> ======================
+> == From debian sarge
+> /sbin/reiserfsck -V
+> reiserfsck 3.6.19 (2003 www.namesys.com)
+> == also used the version in knoppix 3.7 with similar results
+> 
+> the output of two consecutive runs of --rebuild-tree on the same 
+> unmounted partition are attached.  Below is the diff
+> 
+> diff data00-run1 data00-run0
+> 14c14
+> < 172168 directory entries were hashed with "r5" hash.
+> ---
+>  > 172167 directory entries were hashed with "r5" hash.
+> 
+> 
+> Vladimir Saveliev wrote:
+> > Hello
+> > 
+> > On Sun, 2005-01-02 at 00:55, hanasaki wrote:
+> > 
+> >>Running reiser3 on kernel 2.6.10 and 2.6.9 with Debian sarge and unstable.
+> >>
+> >>the --rebuild-tree always finds errors and corrects them.  even when run
+> >>more than once consecutively without mounting the partition in between.
+> >>
+> > 
+> > Please provide reiserfsck --rebuild-tree output.
+> > What is version of your reiserfsck? (reiserfsck -V)
+> > 
+> > 
+> >>--check says all is good.
+> >>
+> >>
+> >>
+> >>
+> > 
+> > 
+> 
+> 
+> ______________________________________________________________________
+> ####### Pass 0 #######
+> block 254411: The number of items (21) is incorrect, should be (1) - corrected
+> block 254411: The free space (1) is incorrect, should be (2256) - corrected
+> pass0: vpf-10110: block 254411, item (0): Unknown item type found [0 251658496 0x1001800 ??? (15)] - deleted
+> block 1574493: The number of items (18) is incorrect, should be (0) - corrected
+> block 1574493: The free space (1184) is incorrect, should be (4072) - corrected
+> block 2206239: The number of items (1) is incorrect, should be (0) - corrected
+> block 2206239: The free space (0) is incorrect, should be (4072) - corrected
+> block 2844875: The number of items (2) is incorrect, should be (1) - corrected
+> block 2844875: The free space (0) is incorrect, should be (4048) - corrected
+> pass0: vpf-10110: block 2844875, item (0): Unknown item type found [16777472 16780544 0x200 ??? (15)] - deleted
+> block 3326501: The number of items (1) is incorrect, should be (0) - corrected
+> block 3326501: The free space (0) is incorrect, should be (4072) - corrected
+> 172167 directory entries were hashed with "r5" hash.
+> ####### Pass 1 #######
+> ####### Pass 2 #######
+> ####### Pass 3 #########
+> ####### Pass 3a (lost+found pass) #########
+> 
+> ______________________________________________________________________
+> ####### Pass 0 #######
+> block 254411: The number of items (21) is incorrect, should be (1) - corrected
+> block 254411: The free space (1) is incorrect, should be (2256) - corrected
+> pass0: vpf-10110: block 254411, item (0): Unknown item type found [0 251658496 0x1001800 ??? (15)] - deleted
+> block 1574493: The number of items (18) is incorrect, should be (0) - corrected
+> block 1574493: The free space (1184) is incorrect, should be (4072) - corrected
+> block 2206239: The number of items (1) is incorrect, should be (0) - corrected
+> block 2206239: The free space (0) is incorrect, should be (4072) - corrected
+> block 2844875: The number of items (2) is incorrect, should be (1) - corrected
+> block 2844875: The free space (0) is incorrect, should be (4048) - corrected
+> pass0: vpf-10110: block 2844875, item (0): Unknown item type found [16777472 16780544 0x200 ??? (15)] - deleted
+> block 3326501: The number of items (1) is incorrect, should be (0) - corrected
+> block 3326501: The free space (0) is incorrect, should be (4072) - corrected
+> 172168 directory entries were hashed with "r5" hash.
+> ####### Pass 1 #######
+> ####### Pass 2 #######
+> ####### Pass 3 #########
+> ####### Pass 3a (lost+found pass) #########
 
-is this a known problem? what about the proposed patch?
-
-thanks
-domenico
-
-ps: happy new year :)
+Can you do:
+debugreiserfs -p that-device | gzip -c > fs.gz and make fs.gz
+downloadable. That would allow us to fix reiserfsck bug faster.
 
 
------ Forwarded message from Andreas Jochens <aj@andaco.de> -----
-
-Date: Mon, 03 Jan 2005 17:55:02 +0100
-From: Andreas Jochens <aj@andaco.de>
-To: Debian Bug Tracking System <submit@bugs.debian.org>
-Subject: Bug#288414: reiser4progs: FTBFS (amd64/gcc-4.0): static declaration of 'oid40_plug' follows non-static declaration
-
-When building 'reiser4progs' on amd64 with gcc-4.0,
-I get the following error:
-
- x86_64-linux-gcc -DHAVE_CONFIG_H -I. -I. -I../../.. -I../../../include -D_REENTRANT -D_FILE_OFFSET_BITS=no -DENABLE_SYMLINKS -DENABLE_SPECIAL -DENABLE_R5_HASH -DENABLE_FNV1_HASH -DENABLE_RUPASOV_HASH -DENABLE_TEA_HASH -DENABLE_DEG_HASH -DENABLE_LARGE_KEYS -DENABLE_SHORT_KEYS -DENABLE_DOT_O_FIBRE -DENABLE_EXT_1_FIBRE -DENABLE_EXT_3_FIBRE -DENABLE_LEXIC_FIBRE -O3 -Wall -g -O2 -W -Wall -Wuninitialized -Wno-unused-parameter -Wredundant-decls -MT liboid40_static_la-oid40.lo -MD -MP -MF .deps/liboid40_static_la-oid40.Tpo -c oid40.c -o liboid40_static_la-oid40.o
-oid40.c:206: error: static declaration of 'oid40_plug' follows non-static declaration
-oid40.c:11: error: previous declaration of 'oid40_plug' was here
-make[5]: *** [liboid40_static_la-oid40.lo] Error 1
-make[5]: Leaving directory `/reiser4progs-1.0.3/plugin/oid/oid40'
-
-With the attached patch 'reiser4progs' can be compiled
-on amd64 using gcc-4.0.
-
-Regards
-Andreas Jochens
-
-diff -urN ../tmp-orig/reiser4progs-1.0.3/plugin/key/key_large/key_large.c ./plugin/key/key_large/key_large.c
---- ../tmp-orig/reiser4progs-1.0.3/plugin/key/key_large/key_large.c	2004-10-19 23:02:47.000000000 +0200
-+++ ./plugin/key/key_large/key_large.c	2005-01-03 17:13:29.425846752 +0100
-@@ -6,7 +6,7 @@
- #ifdef ENABLE_LARGE_KEYS
- #include "key_large.h"
- 
--extern reiser4_plug_t key_large_plug;
-+static reiser4_plug_t key_large_plug;
- 
- /* Returns minimal key */
- static reiser4_key_t *key_large_minimal(void) {
-diff -urN ../tmp-orig/reiser4progs-1.0.3/plugin/key/key_short/key_short.c ./plugin/key/key_short/key_short.c
---- ../tmp-orig/reiser4progs-1.0.3/plugin/key/key_short/key_short.c	2004-10-19 23:02:27.000000000 +0200
-+++ ./plugin/key/key_short/key_short.c	2005-01-03 17:13:12.000000000 +0100
-@@ -6,7 +6,7 @@
- #ifdef ENABLE_SHORT_KEYS
- #include "key_short.h"
- 
--extern reiser4_plug_t key_short_plug;
-+static reiser4_plug_t key_short_plug;
- 
- /* Returns minimal key */
- static reiser4_key_t *key_short_minimal(void) {
-diff -urN ../tmp-orig/reiser4progs-1.0.3/plugin/oid/oid40/oid40.c ./plugin/oid/oid40/oid40.c
---- ../tmp-orig/reiser4progs-1.0.3/plugin/oid/oid40/oid40.c	2004-12-02 17:13:27.000000000 +0100
-+++ ./plugin/oid/oid40/oid40.c	2005-01-03 17:09:38.000000000 +0100
-@@ -8,7 +8,7 @@
- #include "oid40.h"
- #include "oid40_repair.h"
- 
--extern reiser4_plug_t oid40_plug;
-+static reiser4_plug_t oid40_plug;
- 
- static uint32_t oid40_get_state(generic_entity_t *entity) {
- 	aal_assert("umka-2088", entity != NULL);
-
-
------ End forwarded message -----
-
-
------[ Domenico Andreoli, aka cavok
- --[ http://people.debian.org/~cavok/gpgkey.asc
-   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
