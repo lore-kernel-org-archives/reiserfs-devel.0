@@ -1,64 +1,42 @@
-From: Hubert Chan <hubert@uhoreg.ca>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 13:14:29 -0400
-Sender: news <news@sea.gmane.org>
-Message-ID: <87n00hq0sq.fsf@uhoreg.ca>
-References: <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net>
- <20040825163225.4441cfdd.akpm@osdl.org>
- <20040825233739.GP10907@legion.cup.hp.com>
- <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy>
- <20040826044425.GL5414@waste.org> <1093496948.2748.69.camel@entropy>
- <20040826053200.GU31237@waste.org> <20040826075348.GT1284@nysv.org>
- <20040826163234.GA9047@delft.aura.cs.cmu.edu>
+Date: Thu, 26 Aug 2004 17:58:18 +0100
+Message-ID: <20040826165818.GN5733@mail.shareable.org>
+References: <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1939276887.20040826114028@tnonline.net> <20040826024956.08b66b46.akpm@osdl.org> <839984491.20040826122025@tnonline.net> <20040826032457.21377e94.akpm@osdl.org> <742303812.20040826125114@tnonline.net> <20040826035500.00b5df56.akpm@osdl.org> <412E0AC9.2020203@andrew.cmu.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20731-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20728-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <412E0AC9.2020203@andrew.cmu.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: James Bruce <bruce@andrew.cmu.edu>
+Cc: Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
->>>>> "Jan" =3D=3D Jan Harkes <jaharkes@cs.cmu.edu> writes:
+James Bruce wrote:
+> moving 1MB of attributes/streams just to change a 20 character
+> author attribute seems a bit silly.
 
-Jan> On Thu, Aug 26, 2004 at 10:53:48AM +0300, Markus   T=F6rnqvist wrote:
+That's what we do now.  Try editing an MP3's id tags.
 
-[...]
+> If it should be in userspace, we could take the OS-X approach of using 
+> directories for everything, and the "data" that would be in a hybrid 
+> directory-file is a specially named file under that directory.  Programs 
+> for instance are actually directories, with the elf file underneath it.  
+> When you click on the "directory-program" in the gui it runs the 
+> associated elf file rather than opening the directory.  I think that 
+> approach is promising, but so few unix programs have any indirection for 
+> file access it'd be hell to teach them all how it works.
 
->> I for one would truly welcome the coming of thumbnails and
->> descriptions in picture files, because I have a real-life project
->> going on where that would be extremely handy to have in the actual
->> file.
+The interfaces we've been talking about are very close to that.  The
+indirection is automatic: instead of a document (or program) looking
+like a directory, it'll look like a file, and reading (or executing)
+the file will do the indirection, with kernel control (and so
+consistency and performance) via an appropriate flat<->structured
+relation helper.
 
-Jan> Ehhh, that already exists and doesn't require meta-data streams,
-
-Jan>     http://www.exif.org/
-
-but then you need an extra library to access the exif data.  You can't
-just do something like "display foo.jpg/exif/thumbnail".  Or even
-better, "echo 'this is a comment' > foo.jpg/comment" to change the jpeg
-comment without an external program.
-
-And I don't think exif tags work with all image formats.
-
->> On Thu, Aug 26, 2004 at 12:32:00AM -0500, Matt Mackall wrote:
->> >Find some silly person with an iBook and open a shell on OS X. Use
->> >cp to copy a file with a resource fork. Oh look, the Finder has no
->> >idea what the new file is, even though it looks exactly identical in
->> >the shell. Isn't that _wonderful_? Now try cat < a > b on a file
->> >with a fork. How is that ever going to work?
-
-Under file-as-dir, it would not look the same under the shell if cp
-didn't copy everything -- the directory contents would be different.
-To copy the metadata as well, you would do something like "cp -r".
-Similarly with "cat < a > b".
-
---=20
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
+-- Jamie
