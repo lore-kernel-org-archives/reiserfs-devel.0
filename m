@@ -1,31 +1,32 @@
-From: Ookhoi <ookhoi@xs4all.nl>
-Subject: Re: new reiser4progs?
-Date: Mon, 21 Feb 2005 14:15:19 +0100
-Message-ID: <20050221131519.GA44296@xs4all.nl>
-References: <20050218083158.GA28563@xs4all.nl> <200502181619.59336.vitaly@namesys.com> <20050218140824.GA50286@xs4all.nl> <200502201249.12347.vitaly@namesys.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: Reiser4fs and SPARC64?
+Date: Mon, 21 Feb 2005 16:17:26 +0300
+Message-ID: <200502211617.26270.vitaly@namesys.com>
+References: <421347FD.6000204@d-g-c.de> <200502161724.16258.vitaly@namesys.com> <4219D560.9090904@d-g-c.de>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <4219D560.9090904@d-g-c.de>
 Content-Disposition: inline
-In-Reply-To: <200502201249.12347.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vitaly Fertman <vitaly@namesys.com>
+To: "mailinglists@d-g-c.de" <mailinglists@d-g-c.de>
 Cc: reiserfs-list@namesys.com
 
-On Sun, Feb 20, 2005 at 12:49:12PM +0300, Vitaly Fertman wrote:
-> On Friday 18 February 2005 17:08, Ookhoi wrote:
-> > On Fri, Feb 18, 2005 at 04:19:59PM +0300, Vitaly Fertman wrote:
-> > > On Friday 18 February 2005 11:31, Ookhoi wrote:
-> > > > Are new reiser4progs available? I can only find 1.0.3 as newest,
-> > > > but that version is august 2004.
-> 
-> wait, 1.0.3 was released in december 2004.
+> libaal-1.0.4.tar.gz compiled fine without any patches.
+> but reiser4progs-1.0.4 did not (also no patches!):
 
-You are right, I'm sorry for the mistake.
+do you have a mix of several installed versions in the system?
+uninstall, check that nothing left and another try will probably help.
 
-The LATEST_REISER4PROGS_IS link on ftp://ftp.namesys.com/pub/reiser4progs/
-is from 13-8-2004, but indeed version 1.0.3 is from 9-12-2004
+> format40.c:255: warning: type defaults to `int' in declaration of `__tmp'
+> format40.c:255: warning: initialization makes integer from pointer
+> without a cast
+
+-- 
+Thanks,
+Vitaly Fertman
+
