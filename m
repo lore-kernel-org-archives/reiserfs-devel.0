@@ -1,58 +1,67 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: linux-2.6.0 + reiser4 oops
-Date: Mon, 19 Jan 2004 20:35:38 +0300
-Message-ID: <16396.5482.158701.28221@laputa.namesys.com>
-References: <16395.42887.514077.642497@laputa.namesys.com>
-	<200401191729.i0JHTJo24262@mail.osdl.org>
+From: Domenico Andreoli <cavok@libero.it>
+Subject: Re: Snapshot against 2.6.1 released.
+Date: Mon, 19 Jan 2004 20:06:37 +0100
+Message-ID: <400C2ABD.20106@libero.it>
+References: <16395.60465.989777.981597@laputa.namesys.com> <16396.1113.203997.785571@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16573-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16574-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200401191729.i0JHTJo24262@mail.osdl.org>
+In-Reply-To: <16396.1113.203997.785571@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: markw@osdl.org
-Cc: reiserfs-list@Namesys.COM, linux-lvm@sistina.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-markw@osdl.org writes:
- > On 19 Jan, Nikita Danilov wrote:
- > > markw@osdl.org writes:
- > >  > I was testing our DBT-2 workload on linux-2.6.0 with LVM2 and reiser4
- > >  > and got the following oops when I attempted to create a database with
- > >  > PostgreSQL.  Let me know if I can provide any additional information:
- > >  > 
- > >  > Unable to handle kernel NULL pointer dereference at virtual address 00000000
- > >  >  printing eip:                                                       
- > >  > c014c607      
- > >  > *pde = 00104001
- > >  > *pte = 00000000
- > >  > Oops: 0000 [#1]
- > > 
- > > This looks much like another bug report we had for
- > > reiser4-on-top-of-raid0. A fix (tentative) for that was to use
- > > bio_add_page() while constructing bios, and it will be included into
- > > next reiser4 snapshot (that, I hope, will be released
- > > to-day---2004.01.19).
- > 
- > Hi Nikita,
- > 
- > I ran the 2004.01.19 snapshot against 2.6.1 and now I get the following
- > error when I attempt to mount the reiser4 parition:
- > 
- > reiser4[mount(17176)]: _init_read_super (fs/reiser4/init_super.c:166)[nikita-2608]:
- > WARNING: Wrong master super block magic.
+Nikita Danilov wrote:
+> Nikita Danilov writes:
+>  > Hello,
+>  > 
+>  > new snapshot against 2.6.1 kernel is at
+>  > 
+>  > http://namesys.com/snapshots/2004.01.19/
+>  > 
+>  > look into READ.ME file for details.
+> 
+> Please also apply last-minute-fix.diff from there: it fixes some bug
+> that slipped into snapshot.
+> 
+> last-minute-fix.diff should be applied from fs/reiser4:
+> 
+> $ cd /somewhere/fs/reiser4
+> $ patch -p1 < /somewhereelse/last-minute-fix.diff
+> 
+> 
 
-I am afraid, you have to re-create reiser4 file systems with new
-progs. It was decided that we should change super block magic to be more
-"descriptive".
+ehm.. my existing reiser4 partition is not mountable now that i recompiled 
+2.6.1 using latest snapshot. it did not contain anything so i formatted 
+it, but nothing new happened.
 
-By the way, it turned out, that 2004.01.19 snapshot contained a bug, so
-new snapshot will be released to-night.
+# mkfs.reiser4 /dev/hdc6
+mkfs.reiser4 0.4.20
+Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by 
+reiser4progs/COPYING.
 
- > Thanks,
- > Mark
+Block size 4096 will be used. 
 
-Nikita.
+Linux 2.6.1-reiser4 is detected. 
+
+Uuid 81a2b014-f272-4f6e-adad-e323c0cb10eb will be used. 
+
+Reiser4 is going to be created on /dev/hdc6. 
+
+(Yes/No): yes
+Creating reiser4 on /dev/hdc6...done
+# mount /dev/hdc6 /mnt/extra2
+mount: you must specify the filesystem type
+# mount /dev/hdc6 /mnt/extra2 -t reiser4
+mount: wrong fs type, bad option, bad superblock on /dev/hdc6,
+        or too many mounted file systems
+#
+
+
+-----[ Domenico Andreoli, aka cavok
+  --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
+    ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
