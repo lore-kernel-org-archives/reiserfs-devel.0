@@ -1,28 +1,63 @@
-From: Matthew Johnson <matthew@psychohorse.com>
-Subject: Re: Silly question, defrag
-Date: Wed, 3 Apr 2002 08:14:29 -0800
-Message-ID: <a8f9qk$pfm$2@main.gmane.org>
-References: <200204030017.12595@X-Message-Flag:> <3CAABBA6.3030101@swelltech.com> <3CAABC73.3030004@namesys.com>
-Reply-To: matthew@psychohorse.com
+From: William Stearns <wstearns@pobox.com>
+Subject: "file" command on a reiserfs filesystem
+Date: Wed, 3 Apr 2002 11:11:33 -0500 (EST)
+Message-ID: <Pine.LNX.4.44.0204030956440.8574-100000@sparrow.websense.net>
+Reply-To: William Stearns <wstearns@pobox.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <3CAABC73.3030004@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ML-reiserfs <reiserfs-list@namesys.com>, Andreas Dilger <adilger@turbolabs.com>
+Cc: William Stearns <wstearns@pobox.com>
 
-> Defragging is a missing feature.  It will be the most important feature
-> of V4.1
+Good day, all,
+	When I use the file command on a file that contains an ext2/ext3 
+filesystem, the file command returns:
 
-4.1 seems pretty exciting, but why the need to defrag on these filesystems vs 
-others. Or do we not yet have the data? Guess I am intrigued on how these 
-work. Will defrag be included for peace of mind, or for real gain? How much 
-fragmentation can one expect? Will you need to unmount drives to defrag?
+[wstearns@sparrow test-resize]$ ls -al emptyfs.ext3.100
+-rw-------    1 wstearns wstearns 104857600 Apr  2 13:57 emptyfs.ext3.100
+[wstearns@sparrow test-resize]$ file emptyfs.ext3.100
+emptyfs.ext3.100: Linux rev 1.0 ext3 filesystem data
 
-Sorry for all the questions...
+	The signature comes from Andreas Dilger's contribution to 
+/usr/share/magic:
 
-Matt
+# ext2/ext3 filesystems - Andreas Dilger <adilger@turbolabs.com>
+0x438   leshort         0xEF53          Linux
+>0x44c  lelong          x               rev %d
+>0x43e  leshort         x               \b.%d
+>0x45c  lelong          ^0x0000004      ext2 filesystem data
+>>0x43a leshort         ^0x0000001      (mounted or unclean)
+>0x45c  lelong          &0x0000004      ext3 filesystem data
+>>0x460 lelong          &0x0000004      (needs journal recovery)
+>0x43a  leshort         &0x0000002      (errors)
+>0x460  lelong          &0x0000001      (compressed)
+#>0x460 lelong          &0x0000002      (filetype)
+#>0x464 lelong          &0x0000001      (sparse_super)
+>0x464  lelong          &0x0000002      (large files)
+
+	Running file on a reiserfs file returns:
+
+[wstearns@sparrow test-resize]$ file emptyfs.reiser.100  
+emptyfs.reiser.100: ASCII text, with no line terminators
+
+	Is there a similar signature that could identify a reiserfs file?
+	The files I ran this on can be found at 
+http://www.stearns.org/mkrootfs/
+	Cheers,
+	- Bill
+
+---------------------------------------------------------------------------
+        "A 'No' uttered from deepest conviction is better and greater
+than a 'Yes' merely uttered to please, or what is worse, to avoid
+trouble."
+        -- Mahatma Ghandi
+From: Adrian Bunk <bunk@fs.tum.de>
+--------------------------------------------------------------------------
+William Stearns (wstearns@pobox.com).  Mason, Buildkernel, named2hosts, 
+and ipfwadm2ipchains are at:                        http://www.stearns.org
+--------------------------------------------------------------------------
 
