@@ -1,58 +1,42 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: reiserfs 3.5.x partition and corruption - please help
-Date: Sat, 30 Mar 2002 18:45:46 +0100
-Message-ID: <200203301845.46677.Dieter.Nuetzel@hamburg.de>
-References: <200203292109.46370.Dieter.Nuetzel@hamburg.de> <20020330171823.GA365@debian>
+From: <jose@iteso.mx>
+Subject: reiserfsck version and peace of mind
+Date: Sat, 30 Mar 2002 12:29:26 -0600 (CST)
+Message-ID: <Pine.LNX.4.21.0203301219070.25684-100000@iteso.mx>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020330171823.GA365@debian>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Rajesh Fowkar <rfowkar@goatelecom.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: TEXT/PLAIN; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-On Samstag, 30. M=E4rz 2002 :18, you wrote:
-> On 29/03/02 at 21:09 - Dieter N?tzel said in public:
-> >On Friday, 29. March 2002 07:58:32, Rajesh Fowkar wrote:
-> >> Hi,
-> >>
-> >> I have got a primary partition of 1.5 GB on which I created reiserfs
-> >> file debian:~# dpkg -l |grep reiser
-> >> ii  reiserfsprogs  3.x.1a-2       User-level tools for ReiserFS
-> >> filesystems
-> >
-> >Hello,
-> >
-> >first of all I think that you should start with the latest reiserfprogs
-> > tools and let debian woody's e2fsprogs alone.
-> >
-> >ftp://ftp.namesys.com/pub/reiserfsprogs/pre
-> >reiserfsprogs-3.x.1c_pre1.tar.gz
-> >or
-> >reiserfsprogs-3.x.1b.tar.gz (final)
->
-> Hi,
->
-> After upgrading to reiserfsprogs-3.x.1b I could rebuild and recover some =
-of
-> the files. However some of the files got corrupted.
->
-> Thanks for the reply.
->
-> >When all is smooth again you could switch to 3.6 format (kernel 2.4) with
-> >mount -conv.
->
-> At present I am using kernel 2.4.18 compiled on my machine.
->
-> >Happy Easter!
->
-> Happy Easter to you too.
->
-> Peace
 
-I only forwarded this to the list, so that all know what's going on.
+  Hi.
 
--Dieter
+    I will be performing a reiserfsck on our main production server next we=
+ek
+    as a preventive maintenance, it has been running for a while and altoug=
+h
+    backed-up daily, the information in the reiserfs partition is quite=20
+    important to us.
+
+    Right now what's the best version of the reiserfsprogs to use in this c=
+ase?
+    Any other recomendations?
+
+    I've had no problems with the filesystem (at least not that I'm aware o=
+f),
+    but there's been several power outages recently and would like to be on=
+ the
+    safe side.
+
+    Is a periodical reiserfsck sensible? if so, how long a period would be =
+with
+    normal operating conditions (no power outages, no disk problems, etc.)?
+
+
+     Thanks for any input.
+
+              Jos=E9
+
