@@ -1,48 +1,62 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: 3.5.34: reiserfs_file_write: item has been moved
-Date: Wed, 14 Aug 2002 13:47:45 +0400
-Message-ID: <3D5A2741.3010904@namesys.com>
-References: <wvu1ly56sc.fsf@freeze.oslo.dnmi.no> <20020814125002.A28182@namesys.com>
+From: berthiaume_wayne@emc.com
+Subject: RE: RE: lk 2.4.19 ReiserFS Build
+Date: Wed, 14 Aug 2002 07:12:57 -0400
+Message-ID: <93F527C91A6ED411AFE10050040665D0049BFE69@corpusmx1.us.dg.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11185-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11186-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Oleg Drokin <green@namesys.com>
-Cc: Adrian Phillips <a.phillips@met.no>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: manuel.krause@mb.tu-ilmenau.de
+Cc: reiserfs-list@namesys.com
 
-Oleg Drokin wrote:
+	Hi Manuel. That was one of the problems I was hoping to find an
+answer for, but it appears, as Oleg has mentioned, the patches are being
+tested in 2.5 first before Marcelo will accept them in 2.4. 
+Regards,
+Wayne.
 
->Hello!
->
->On Wed, Aug 14, 2002 at 07:49:23AM +0200, Adrian Phillips wrote:
->
->  
->
->>I have got the following error 4 times in the space of about a week :-
->>reiserfs_file_write: item has been moved while we were in copy_from_user (appending to the direct item)
->>Should I be worried ? :-)
->>    
->>
->
->This is not an error, but just a informational message instead.
->You should not be worried at all.
->
->Bye,
->    Oleg
->
->
->  
->
-Of what possible value is this message?  Please remove the message in 
-the next patch set.
-
--- 
-Hans
+-----Original Message-----
+From: Manuel Krause [mailto:manuel.krause@mb.tu-ilmenau.de]
+Sent: Tuesday, August 13, 2002 12:06 AM
+To: berthiaume_wayne@emc.com
+Cc: reiserfs-list
+Subject: Re: [reiserfs-list] RE: lk 2.4.19 ReiserFS Build
 
 
+Hi Wayne!
 
+Please, let me immediately know when you've received this mail where 
+you've found:
+
+On 08/12/2002 08:21 PM, berthiaume_wayne@emc.com wrote:
+> 	Thanks Chris. Should I pull the 2.4.20-pre series from Namesys?
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+
+              -------->                  this special Namesys series
+
+
+> These were to be the speedup series, if memory serves me correctly. I'd
+like
+> to get the best performance possible for our next production run.
+> Wayne.
+> 
+
+[snip]
+
+
+Thank you in advance, ;-)
+
+
+Sorry, Wayne, I know what you mean. Your previously reviewed patchset 
+from one of my latest mails works fine on here for me until now 
+(but,including the not mentionned rml-preempt-patch for the latest -rc- 
+and for non-server-usage),
+
+best regards,
+
+Manuel
