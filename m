@@ -1,42 +1,40 @@
-From: "Burnes, James" <james.burnes@gwl.com>
-Subject: RE: Reiserfs, highquality meds source, low rates
-Date: Tue, 20 Apr 2004 15:39:36 -0600
-Message-ID: <3DF9165145FACB4C96977FF650C1E9040C469E4E@its-mail1.its.corp.gwl.com>
+From: Jason Stubbs <jstubbs@gentoo.org>
+Subject: Re: hans! i found a bug in reiser4 :((((
+Date: Wed, 21 Apr 2004 09:38:25 +0900
+Message-ID: <200404210938.25385.jstubbs@gentoo.org>
+References: <6.1.0.6.2.20040420151137.02ae2008@popfile>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18094-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18095-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
+In-Reply-To: <6.1.0.6.2.20040420151137.02ae2008@popfile>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: flx@msu.ru, Cami <camis@mweb.co.za>
-Cc: reiserfs-list@namesys.com
+Content-Type: Text/Plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-> -----Original Message-----
-> From: Alexander Lyamin [mailto:flx@msu.ru]
-> Sent: Tuesday, April 20, 2004 2:51 PM
-> To: Cami
-> Cc: reiserfs-list@namesys.com
-> Subject: Re: Reiserfs, highquality meds source, low rates
->=20
-> Tue, Apr 20, 2004 at 06:55:25AM +0200, Cami wrote:
-> > >>>i am just not sure how to kill THIS messages which look so....
-> > >>>they dont look like spam, even to me upon first look.
-> > >>
-> > >>If you were using SpamAssasin, you wouldn't get these..
-> > >
-> > >
-> > >I _am_ using SpamAssassin, and I got this.
-> >
-> >
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-SpamAssasin is really running out of steam right now, that is why they
-have spent quite a bit of effort in developing the 'dspam' package.
+On Wednesday 21 April 2004 04:14, Jeffrey Rice wrote:
+> I would also like to confirm the bug with glibc and reiser4.  If I try to
+> compile with my /usr as Reiser4, I get an "#include nested too deeply"
+> error in syscalls.h.  If /usr is any other fs type, no problems.  It's hard
+> to believe the fs should be the cause but it really appears to be the case.
 
-It might have a chance at killing most spam.  Some people have their
-doubts, but hope springs eternal....
++1
 
-JB
+Regards,
+Jason Stubbs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iQCVAwUBQIXCgVoikN4/5jfsAQKwWAQAtKAlc98fWOHCmlvoE9SW+PtcvddYifZj
+e0kMv0zXF8bytZpfMQi9A/eNgK1Th6+tkUg1YB6VvbnKjW1e1KzfCEX70SkOYwes
+SmJdaTclH9Nmmsvhq6elIJQCYBM4rVVs1FYLeOwr8vQw5ZeJYRUrO6ItOQYg8eso
+X2wi78eaqVc=
+=+ine
+-----END PGP SIGNATURE-----
