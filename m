@@ -1,24 +1,38 @@
-From: Mike Fedyk <mfedyk@matchmail.com>
-Subject: Re: results of my filesystem test, xfs, jfs, ext3 and reiserfs
-Date: Mon, 22 Dec 2003 10:25:41 -0800
-Message-ID: <20031222182541.GM6438@matchmail.com>
-References: <1072090011.4349.8.camel@redeeman.linux.dk> <200312221329.10711.Dieter.Nuetzel@hamburg.de> <1072096720.4336.0.camel@redeeman.linux.dk>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: fsck.reiser4
+Date: Mon, 22 Dec 2003 22:19:50 +0300
+Message-ID: <200312222219.50179.vitaly@namesys.com>
+References: <200312212203.52775.janfengler@web.de> <200312221702.07705.vitaly@namesys.com> <3FE73020.6060000@libero.it>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16383-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16384-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3FE73020.6060000@libero.it>
 Content-Disposition: inline
-In-Reply-To: <1072096720.4336.0.camel@redeeman.linux.dk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Redeeman <redeeman@metanurb.dk>
-Cc: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>, Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: Domenico Andreoli <cavok@libero.it>, flx@msu.ru
+Cc: reiserfs-list@namesys.com
 
-On Mon, Dec 22, 2003 at 01:38:40PM +0100, Redeeman wrote:
-> i dont know the version of reiserfs, i used reiserfsprogs 3.6.11 to
-> create it, and a 2.6.0 kernel, i didnt do any patching myself
+On Monday 22 December 2003 20:55, Domenico Andreoli wrote:
+> Vitaly Fertman wrote:
+> > you need the latest libaal to be installed first.
+> > bk clone bk://bk.namesys.com/bk/libaal
+> > prepare
+> > configure
+> > make
+> > make install
+> > ldconfig
+>
+> i've already done this, i have installed libaal 0.4.15
 
-It should say in your kernel log.
+oh, it is still reiser4progs 0.4.16 there, it should be 0.4.20.
+It seems that our public reiser4progs repository does not 
+get updated for a long time. Flx, would you fix it?
+
+-- 
+Thanks,
+Vitaly Fertman
