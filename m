@@ -1,69 +1,45 @@
-From: Piotr Neuman <sikkh@wp.pl>
-Subject: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Sat, 27 Mar 2004 15:37:52 +0100
-Message-ID: <200403271537.52955.sikkh@wp.pl>
+From: "Rudy L. Zijlstra" <rudy@edsons.demon.nl>
+Subject: OT: Advice on SATA sought
+Date: Sat, 27 Mar 2004 23:52:20 +0100
+Message-ID: <406605A4.7020903@edsons.demon.nl>
 Mime-Version: 1.0
-Content-Type: Multipart/Mixed;
-  boundary="Boundary-00=_AHZZAFg9rZ7UYdB"
-Return-path: <reiserfs-list-return-17526-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17528-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Reiserfs-List@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: the filesystem <reiserfs-list@namesys.com>
 
---Boundary-00=_AHZZAFg9rZ7UYdB
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Greetings,
 
-The new naming scheme for plugins ("metas" in snapshot 2004.03.26) may on 
-certain occasions cause name clashes. This patch changes "metas" into 
-"..metas" which should avoid this problem in most cases.
 
-This is a very simple patch so changing "..metas" that to any other desired 
-value is also easy.
+I am considering buying some 250G SATA drives (3 in a RAID5 config) for 
+multimedia backend storage.
+disks will likely be WD SATA WD2500JD unless somebody points out good 
+reasons not to. Can get those for about 200 Euro excluding VAT each.
+This is going to be used to store interactively accessed MPEG2 video 
+files. They will be stored from at least 2 (on short notice 3) sources, 
+and simultaously read from 2 or 3 locations. In other words: storage 
+backend for a MythTV setup with 2 or 3 backends, and multiple frontends 
+using a combination of PVR-250 and PVR-350s. 350 for frontend connected 
+to a TV, several frontends using X for output.
 
-Regards to reiser4 team.
+The controller i am considering is the Promise SATA TX4.
+kernel: 2.6.4 or later from kernel.org on a recent slackware-current 
+distro.
 
-diff -ruN /home/peter/linux/fs/reiser4/plugin/pseudo/pseudo.c 
-linux/fs/reiser4/plugin/pseudo/pseudo.c
---- /home/peter/linux/fs/reiser4/plugin/pseudo/pseudo.c	2004-03-27 
-14:50:58.000000000 +0100
-+++ linux/fs/reiser4/plugin/pseudo/pseudo.c	2004-03-27 14:51:19.788181928 
-+0100
-@@ -1224,7 +1224,7 @@
- 			.type_id = REISER4_PSEUDO_PLUGIN_TYPE,
- 			.id = PSEUDO_METAS_ID,
- 			.pops = NULL,
--			.label = "metas",
-+			.label = "..metas",
- 			.desc = "meta-files",
- 			.linkage = TYPE_SAFE_LIST_LINK_ZERO
- 		},
+Any experience, either with this controller, with SATA, with other 
+controllers, please share so I can make a better decision. I've 
+currently no real experience with SATA.
 
---Boundary-00=_AHZZAFg9rZ7UYdB
-Content-Type: text/x-diff;
-  charset="us-ascii";
-  name="reiser4.metas.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="reiser4.metas.patch"
+Filesystem choice has been made: Reiserfs3. This is going to be a 
+production machine, I will not yet test Reiserfs4 on that. Too risky 
+considering "comments" i would get on failure...
 
-diff -ruN /home/peter/linux/fs/reiser4/plugin/pseudo/pseudo.c linux/fs/reiser4/plugin/pseudo/pseudo.c
---- /home/peter/linux/fs/reiser4/plugin/pseudo/pseudo.c	2004-03-27 14:50:58.000000000 +0100
-+++ linux/fs/reiser4/plugin/pseudo/pseudo.c	2004-03-27 14:51:19.788181928 +0100
-@@ -1224,7 +1224,7 @@
- 			.type_id = REISER4_PSEUDO_PLUGIN_TYPE,
- 			.id = PSEUDO_METAS_ID,
- 			.pops = NULL,
--			.label = "metas",
-+			.label = "..metas",
- 			.desc = "meta-files",
- 			.linkage = TYPE_SAFE_LIST_LINK_ZERO
- 		},
+Regards,
 
---Boundary-00=_AHZZAFg9rZ7UYdB--
+Rudy
+
