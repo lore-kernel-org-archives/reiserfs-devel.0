@@ -1,29 +1,98 @@
-From: viro@parcelfarce.linux.theplanet.co.uk
+From: Helge Hafting <helge.hafting@hist.no>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 3 Sep 2004 08:00:34 +0100
-Sender: <viro@www.linux.org.uk>
-Message-ID: <20040903070034.GM23987@parcelfarce.linux.theplanet.co.uk>
-References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <41352279.7020307@slaphack.com> <41356321.4030307@namesys.com> <Pine.LNX.4.61.0409030037540.23011@fogarty.jakma.org> <413809EF.8060102@namesys.com>
+Date: Fri, 03 Sep 2004 09:53:32 +0200
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <413822FC.8090600@hist.no>
+References: <200408261819.59328.vda@port.imtp.ilyichevsk.odessa.ua> <20040901205140.GL4455@legion.cup.hp.com> <20040902125417.GA12118@thunk.org> <200409030045.20098.cef-lkml@optusnet.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21405-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <413809EF.8060102@namesys.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Paul Jakma <paul@clubi.ie>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <200409030045.20098.cef-lkml@optusnet.com.au>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Stuart Young <cef-lkml@optusnet.com.au>
+Cc: linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jeremy Allison <jra@samba.org>, Jamie Lokier <jamie@shareable.org>, Trond Myklebust <trond.myklebust@fys.uio.no>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, Linus Torvalds <torvalds@osdl.org>, reiser@namesys.com, hch@lst.de, Linux Filesystem Development <linux-fsdevel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
 
-On Thu, Sep 02, 2004 at 11:06:39PM -0700, Hans Reiser wrote:
-> Linus, did you get the email in which I (I think....) answered all the 
-> problems with files as directories that you and Viro had raised?
-> 
-> You and Viro did not respond to it....
+Stuart Young wrote:
 
-Message-ID, please.  There was a lot of mails from you in this thread and
-I probably have missed one that did address *any* problems.  If such mail had
-ever existed, that is.
+>On Thu, 2 Sep 2004 22:54, Theodore Ts'o wrote:
+>  
+>
+>>On Wed, Sep 01, 2004 at 01:51:40PM -0700, Jeremy Allison wrote:
+>>    
+>>
+>>>>So you're saying SCP, CVS, Subversion, Bitkeeper, Apache and rsyncd
+>>>>will _all_ lose part of a Word document when they handle it on a
+>>>>Window box?
+>>>>
+>>>>Ouch!
+>>>>        
+>>>>
+>>>Yep. It's the meta data that Word stores in streams that will get lost.
+>>>      
+>>>
+>>And this is why I believe that using streams in application is well,
+>>ill-advised.  Indeed, one of my concerns with providing streams
+>>support is that application authors may make the mistake of using it,
+>>and we will be back to the bad old days (when MacOS made this mistake)
+>>where you will need to binhex files before you ftp them (and unbinhex
+>>them on the otherside) --- and if you forget, the resulting file will
+>>be useless.
+>>    
+>>
+This is not a problem with multiple streams implemented right - as a 
+directory.
+You don't stay away from directories just because you have to tar
+them in order to put them on ftp sites? ;-)
+
+Still, you're right that apps using streams jsut for the hell of it is bad.
+That sort of thing happens all the time when something new shows up,
+some people will use it without thinking.
+
+>
+>At least currently (to my knowledge anyway) all stream support in Windows is 
+>data that is not important, and that can be either regenerated from 
+>filesystem metadata or (more usually) the main file stream itself.
+>
+>This sort of data is really where streams excel, by providing a way to access 
+>data that would otherwise take time/cpu to regenerate over and over, but that 
+>in itself is not indispensable. 
+>
+Streams as a cache.
+
+>Good examples of this are indexes of data 
+>within a document, details of who owns/created/modified the document, common 
+>views or reformatting of the data, etc. With audio/video/graphics, you could 
+>store lower quality transforms of data (eg: stereo to mono, resolution 
+>reduction, thumbnails, etc) in the streams for a file. With a word document, 
+>it could be things like an index (assuming it's auto-generated from section 
+>headings). With a database, it could be the indexes, and a few views that are 
+>expensive time-wise to generate. All of these are easily regenerated from the 
+>original data stream, but takes a while. And if you've got the disk, why not 
+>use it?
+>  
+>
+Actually, some if this is bad examples of using streams.
+Why can't that index be stored _in_ the document?
+After all, the word processor is the one who knows the document's
+internal format, how to generate the index, and how to use it.  Well,
+this example is bad anyway as an index can be created so fast from
+a well structured document that there is little need for storing one.
+(Example - see how lyx keeps a live index in the "navigate" menu. . .)
+
+A document format may also contain fields specifying who made it, or
+even a log of who modified it and when. 
+
+It seems to me that streams are more useful for stuff that the file's
+main application don't deal with itself.  Such as attaching icons that
+follow the file around.
+
+>If streams were always to be considered volatile, then you could do all sorts 
+>of interesting things with them. Any disk cleanup mechanism you have could 
+>also reap old streams specifically if the disk gets below a certain amount 
+>free. 
+>
+That would limit streams to caching use _only_, disks fill occationally
+and we can't have _useful_ stuff disappearing at random.
+
+Helge Hafting
