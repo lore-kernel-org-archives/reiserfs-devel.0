@@ -1,51 +1,118 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: kmail crash, reiser4 errors
-Date: Thu, 23 Sep 2004 17:43:38 +0400
-Message-ID: <1095947018.6117.27.camel@tribesman.namesys.com>
-References: <200409230943.14710.rmeijer@internet.gr>
+From: Nikolaos Korkakakis <korkakak@gmail.com>
+Subject: Re: reiser4 and the overnet command line client
+Date: Thu, 23 Sep 2004 16:48:17 +0300
+Message-ID: <493526a2040923064812427552@mail.gmail.com>
+References: <20040923104611.GA31987@banana>
+	 <1095944890.6117.19.camel@tribesman.namesys.com>
+Reply-To: Nikolaos Korkakakis <korkakak@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21886-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21887-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200409230943.14710.rmeijer@internet.gr>
+In-Reply-To: <1095944890.6117.19.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Raymond A. Meijer" <rmeijer@internet.gr>
-Cc: reiserfs-list@namesys.com
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: neenee <neeneelaatmaar@gmx.net>, reiserfs-list@namesys.com
 
-Hello
+On Thu, 23 Sep 2004 17:08:11 +0400, Vladimir Saveliev <vs@namesys.com> wrote:
+> Hello
+> 
+> 
+> 
+> On Thu, 2004-09-23 at 14:46, neenee wrote:
+> > hi there.
+> >
+> > from last night, till this morning, my system was copying files to and fro,
+> > since i chose to switch from reiser4 to xfs.
+> >
+> > my reason was not that i did not enjoy using the filesystem, or that i had
+> > major problems with it.
+> >
+> > it's just that i enjoy trying out different kernel patches, such as con
+> > koliva's ck-patchset, and since this patch is sometimes based on a vanilla
+> > kernel, i had to patch in reiser4 myself, which lately did not work well
+> > at all.
+> >
+> > so, i decided to switch to another filesystem. xfs was what i selected.
+> >
+> > switching went without a hitch.
+> >
+> > but i'll skip some of the pleasantries, and move on to my reason for posting
+> > on this mailing-list.
+> >
+> > i suspect there is a sync-problem with reiser4, or at least a feature with
+> > which not all programs are compatible yet.
+> >
+> > i am a frequent user of peer-to-peer clients, amongst which is the overnet
+> > command line client, which i control using a gui.
+> >
+> > when i was using reiser4, i had a problem with this client:
+> >
+> > when i started a download, it would create temporary files. downloading
+> > went fine as long as i kept the client running. but when i closed the client,
+> > either to reboot to update my kernel to the lateset ck-patchset version or
+> > to just play some online game with an acceptable ping, and restarted the
+> > client again when i was done with that, downloads would not resume;
+> >
+> > it was as if the downloads were never started. i checked the temp dir of
+> > the overnet client, and the temp files were there. but they were not used.
+> > restarting the same downloads would just create new temp files and closing
+> > the client would make those new downloads vanish from everywhere except the
+> > temp dir.
+> >
+> > i asked around and checked the overnet forums, but no one else had this
+> > problem. i gave up on overnet after a bit, and moved on to other things.
+> >
+> > this morning, after the switch to xfs, i tried overnet again, because i had
+> > a thought that there might be something with how reiser4 synced to disk less
+> > than other filesystems (at least, that's what i think it does).
+> >
+> > to my surprise, overnet worked fine now; the temp files were used after re-
+> > starting the client.
+> >
+> > now, i'm not blaming reiser4 for this problem, but i do find it a bit sus-
+> > picious that i do not have the problem with a different filesystem.
+> >
+> > when i talked about this situation with some people, one of the users sug-
+> > gested that i post on this mailing-list; to report this 'bug' if you will.
+> >
+> > the steps to reproduce this problem are:
+> >
+> > 1. start overnet command line client.
+> > 2. start a download.
+> > 3. close the client.
+> > 4. start the client and see that it does not resume/use the temp files.
+> >
+> > i hope this report is of any use. keep up the good work :)
+> >
+> 
+> Thanks for the report. We will take a look
+> 
+> 
+> 
+> > - Joost Hillen.
+> >
+> > ---
+> > have you hugged your penguin today?
+> >
+> >
+> 
+> 
 
-On Thu, 2004-09-23 at 10:43, Raymond A. Meijer wrote:
-> Hello,
-> 
-> Yesterday afternoon kmail crashed unexpectedly:
-> 
-> Sep 22 14:12:14 rmeijer-noc kernel: reiser4[kmail(4826)]: extent2tail (fs/reiser4/plugin/file/tail_conversion.c:654)[nikita-2282]:
-> Sep 22 14:12:14 rmeijer-noc kernel: WARNING: Partial conversion of 280274: 0 of 1: -28
-> Sep 22 14:12:14 rmeijer-noc kernel: reiser4[kmail(4826)]: release_unix_file (fs/reiser4/plugin/file/file.c:2109)[nikita-3233]:
-> Sep 22 14:12:14 rmeijer-noc kernel: WARNING: Failed to convert in release_unix_file (280274)
-> Sep 22 14:12:14 rmeijer-noc kernel: reiser4[kmail(4826)]: extent2tail (fs/reiser4/plugin/file/tail_conversion.c:654)[nikita-2282]:
-> Sep 22 14:12:14 rmeijer-noc kernel: WARNING: Partial conversion of 91692: 0 of 1: -28
-> Sep 22 14:12:14 rmeijer-noc kernel: reiser4[kmail(4826)]: release_unix_file (fs/reiser4/plugin/file/file.c:2109)[nikita-3233]:
-> Sep 22 14:12:14 rmeijer-noc kernel: WARNING: Failed to convert in release_unix_file (91692)
-> Sep 22 14:12:14 rmeijer-noc kernel: reiser4[kmail(4826)]: extent2tail (fs/reiser4/plugin/file/tail_conversion.c:654)[nikita-2282]:
-> Sep 22 14:12:14 rmeijer-noc kernel: WARNING: Partial conversion of 294037: 0 of 1: -28
-> Sep 22 14:12:14 rmeijer-noc kernel: reiser4[kmail(4826)]: release_unix_file (fs/reiser4/plugin/file/file.c:2109)[nikita-3233]:
-> Sep 22 14:12:14 rmeijer-noc kernel: WARNING: Failed to convert in release_unix_file (294037)
-> 
-> Do I need to run an fsck on that partition now?
-> 
+before shutting down the client you could issue a sync command to
+flush the buffers into the hard drive. It seems to me that this is the
+problem there.
 
-No. You may want to free some disk space, though.
 
-> I'm running kernel 2.6.8.1-cko7.
-> 
-> 
-> Thanks,
-> 
-> Ray
-> 
+-- 
+-
+Undergraduate Student of CEID
 
+**Warning gmail may affect your mailing privacy**
+If you like to mail me private please use:
+korkakak *at* ceid *dot* upatras *dot* gr and my public key from
+http://students.ceid.upatras.gr/~korkakak/mykey
