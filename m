@@ -1,37 +1,40 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: Reiser4 oopses...
-Date: Wed, 5 Nov 2003 20:34:27 +0300
-Message-ID: <20031105173427.GG11516@backtop.namesys.com>
-References: <1068052906.12783.443.camel@mikeb.staff.netnation.com> <1068053280.5195.2.camel@redeeman.linux.dk>
+From: Zhihui Zhang <bf20761@binghamton.edu>
+Subject: A few questions of ReiserFS
+Date: Thu, 6 Nov 2003 13:25:11 -0500 (EST)
+Message-ID: <Pine.GSO.4.58.0311061302240.23244@bingsun2.cc.binghamton.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15992-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15993-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1068053280.5195.2.camel@redeeman.linux.dk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Redeeman <redeeman@metanurb.dk>
-Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Wed, Nov 05, 2003 at 06:28:01PM +0100, Redeeman wrote:
-> :)
-> now i see a debug message, i get to think about, is there a estimated
-> date on how it will be ready? because there will be some time till i
-> will get a new hd and that, and i would like to use reiser4 there :D
+Hi,
 
-The oops is related to pseudo files, rest of reiser4 seems more stable. 
+First, I would like to say I am impressed by ReiserFS. ReiserFS definitely
+handles a file system from a different perspective from other file systems.
+I would appreciate if you can clarify some internals of ReiserFS for me:
 
-> On Wed, 2003-11-05 at 18:21, Mike Benoit wrote:
-> > While playing with pseudo files, doing things like creating "..uid" and
-> > "..gid" files on a ext3 partition, then trying to copy them to a reiser4
-> > partition, (using cp,mv, and tar) it seemed oopses were quite a common
-> > occurance. 
-> > 
-> > Kernel Version: 2.6.0-test9 ... and latest Reiser4 snapshot.
+(1) On disk space leakage.   The comment in wander.c says that the usage
+    information of wander blocks are not written to disk and a special
+    logging of the bitmaps is used to avoid space leakage.  How can you
+    achieve this?  Does it has anything to do with working and permanent
+    bitmap?
+
+(2) On dancing tree.   Is it true that the parent of a *dirty* node is
+    always relocated even if the child is not the most left child?  If
+    the child is the leftmost one, does it mean we always relocate its
+    parent, grand-parent, and so on?  In addition, I guess that the znode
+    must be ordered in order to write them sequentially.  When you
+    allocate an ancestor, you must put it in the correct place in the list
+    of znode to be flushed, is this right?
+
+Thanks for your enlightenment.
+
+-Zhihui
 
 -- 
-Alex.
