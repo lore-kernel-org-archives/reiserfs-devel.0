@@ -1,38 +1,58 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Quota support for UID >65534
-Date: 15 Jul 2002 07:09:31 -0400
-Message-ID: <1026731371.21656.301.camel@tiny>
-References: <1026727900.18163.61.camel@max>
+From: Andreas Abele <aba@IZS.FhG.de>
+Subject: mkreiserfs and big RAID-Systems
+Date: 15 Jul 2002 15:59:33 +0200
+Message-ID: <1026741573.30600.25.camel@pallas.IZS.FhG.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11003-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11004-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <1026727900.18163.61.camel@max>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Zeljko Brajdic <zorz@iskon.hr>
-Cc: ReiserFS-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-On Mon, 2002-07-15 at 06:11, Zeljko Brajdic wrote:
-> Hello,
-> 
-> I've applied quota patches for vanilla kernel-2.4.18 found at
-> ftp://ftp.suse.com/pub/people/mason/patches/reiserfs/quota-2.4/2.4.18/
-> Everything works perfectly except for checking quota with command `quota
-> -v username' if username have UID >65534. Interesting is that `repquota'
-> doesn't have that problem and showing.
-> 
-> This is output of `quota':
-> 
-> root@led 12:02 (/usr/src/linux) > quota -v bureq
-> quota: Error while getting quota from /dev/sda4 for 200000: Invalid argument
-> Disk quotas for user bureq (uid 200000): none
+Hello,
 
-Which disk format are you using?  You can check this with debugreiserfs
-/dev/xxxxx
+I have a RAID5-Set with 840 GB netto here.
 
--chris
+1.) fdisk shows:
+
+Festplatte /dev/sdf: 255 K=F6pfe, 63 Sektoren, 104623 Zylinder
+Einheiten: Zylinder mit 16065 * 512 Bytes
+    Device boot.  Start       End    Blocks   Id  Dateisystemtyp
+/dev/sdf1   *         1    104623 840384216   83  Linux
+                                  ^^^^^^^^^
+2.) mkreiserfs /dev/sdf1
+3.) mount /dev/sdf1 /users1/p1
+4.) df /dev/sdf1
+Dateisystem          1K-Bl=F6cke    Benutzt Verf=FCgbar Ben% montiert auf
+/dev/sdf1            720312060     32840 720279220   1% /users1/p1
+                     ^^^^^^^^^
+
+Where are the remaining 120 GBytes?
+
+Cross-Test with ext2
+
+2a.) mke2fs /dev/sdf1
+3a.) mount /dev/sdf1 /users1/p1
+4a.) df /dev/sdf1
+Dateisystem          1K-Bl=F6cke    Benutzt Verf=FCgbar Ben% montiert auf
+/dev/sdf1            827197400        20 785178172   1% /users1/p1
+                     ^^^^^^^^^
+
+What is happening here? When i run mkreiserfs, the programs last
+blocknumber seen is 180060160, which is exactly a1/4 of the mounted
+kilobytes (4k-Blocks okay). But where are the remaining 120 G-Blocks?
+
+Any ideas? According to the reiserfs-specs a filesystem can hold 17.6
+TBytes.
+
+kind regards
+Andreas Abele
+
+
+
+
 
 
