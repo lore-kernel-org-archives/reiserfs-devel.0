@@ -1,69 +1,101 @@
-From: "Jake Hawkes" <jake@infinitylimited.net>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: shrink reiserfs
-Date: Sun, 23 Jan 2005 14:53:19 -0700 (MST)
-Message-ID: <18958.62.135.89.53.1106517199.squirrel@mail.infinitylimited.net>
-References: <17956.62.135.89.53.1106495294.squirrel@mail.infinitylimited.net>
-    <20050123171105.GG10921@backtop.namesys.com>
-    <18298.62.135.89.53.1106502596.squirrel@mail.infinitylimited.net>
-    <20050123190735.GH10921@backtop.namesys.com>
-    <18682.62.135.89.53.1106507496.squirrel@mail.infinitylimited.net>
-    <20050123194918.GI10921@backtop.namesys.com>
-    <20050123212315.GK10921@backtop.namesys.com>
-Reply-To: jake@infinitylimited.net
+Date: Mon, 24 Jan 2005 00:46:34 -0600
+Message-ID: <41F499CA.4060006@slaphack.com>
+References: <17956.62.135.89.53.1106495294.squirrel@mail.infinitylimited.net>    <20050123171105.GG10921@backtop.namesys.com>    <18298.62.135.89.53.1106502596.squirrel@mail.infinitylimited.net>    <20050123190735.GH10921@backtop.namesys.com>    <18682.62.135.89.53.1106507496.squirrel@mail.infinitylimited.net>    <20050123194918.GI10921@backtop.namesys.com>    <20050123212315.GK10921@backtop.namesys.com> <18958.62.135.89.53.1106517199.squirrel@mail.infinitylimited.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-23198-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23199-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050123212315.GK10921@backtop.namesys.com>
+In-Reply-To: <18958.62.135.89.53.1106517199.squirrel@mail.infinitylimited.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: jake@infinitylimited.net
+Cc: Alex Zarochentsev <zam@namesys.com>, reiserfs-list@namesys.com
 
-Alex Zarochentsev said:
-
-> oops, i can't reproduce the bug anymore, seems i forgot '-' in
-> "-s -1G" option in my first resize attempt.  3.6.19, 3.6.18 work well
-> for me.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
 
-well - I upgraded and set an exact size to reize to, and it worked fine,
-so I can only assume that I messed up the command line args somehow.
 
-My next question, can I grow a reiserfs filesystem backwards in the
-partition?
+Jake Hawkes wrote:
+[...]
+| My next question, can I grow a reiserfs filesystem backwards in the
+| partition?
 
-I have resized my filesystem, and deleted and re-created my partition
-accordingly.
+Don't think so, but I wouldn't know.
 
-Disk /dev/hda: 60.0 GB, 60011642880 bytes
-255 heads, 63 sectors/track, 7296 cylinders
-Units = cylinders of 16065 * 512 = 8225280 bytes
+[...]
+| If not, then I'm kinda stuck with a spotty partition table and I'g going
+| to have pull the drive and start hauling around disk images and stuff,
+| which I'd like to avoid.
 
-   Device Boot      Start         End      Blocks   Id  System
-/dev/hda1               1           6       48163+   6  FAT16
-/dev/hda2   *           7        2074    16611210    7  HPFS/NTFS
-/dev/hda3            2437        2439       24097+  83  Linux [boot-ext3]
-/dev/hda4            2440        4398    15735667+  83  Linux [ reiser ]
+How full is the fs?  If less than half-full, you could try this (for
+example):
+
+| free space | reiserfs partition |
+
+shrink fs and partition to less than half:
+
+| free space | reiser | free spac |
+
+make new partition to the "right" of old partition:
+
+| free space | reiser | new parti |
+
+dd from reiserfs to new partition:
+
+| free space | reiser | reiserfs  |
+
+delete old reiserfs partition:
+
+| free space          | reiserfs  |
+
+make new partition
+
+| new partition       | reiserfs  |
+
+dd old reiserfs to new partition
+
+| reiserfs partition  | reiserfs  |
+
+delete old partition, expand new partition and fs
+
+| reiserfs partition              |
 
 
-I'd like to delete partition 3 & 4, and create a new partition from 2437
-to 4398, and then grow the reiserfs filesystem to fill it, only, its going
-to be lower/before the filesystem.
-
-I thought there might be a vagur chance the reiser being advanced enough
-might be able to handle this.
-
-If not, then I'm kinda stuck with a spotty partition table and I'g going
-to have pull the drive and start hauling around disk images and stuff,
-which I'd like to avoid.
-
-Here's hoping.
-
--Jake
 
 
-p.s. thanks heaps for your responses mate =)
+This could clearly be much easier to follow, but it illustrates two points:
+
+- - If your disk is not full, you can almost always get from your current
+partition scheme to any new one without completely backing up /
+reformatting (no pulling the drive, no installing a new backup drive, etc.)
+
+- - Sometimes, the workaround for a missing feature literally takes more
+time than writing the feature or buying new hardware.
+
+Disclaimer:  this may not be such a time, and my comments may just stem
+from my wish that reiser4 had a repacker and online
+resizer/shrinker/grow-forward/backward feature.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.6 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iQIVAwUBQfSZyHgHNmZLgCUhAQJRSA/+P2f5U/BNhaXjm3Q15gBYiuhOur2jbWw0
++LOYpFN2+zLYWFNmTIt7ypHshXF+Qejt55cwvPF/aLG4pWsTcwVYtVYWti8El7/y
+lhLiu6b/AeEnBBMyOHqZ4VyBdalR7JzftGU0n0gBcTKTFC3eaWYlMIcSEprnIpEw
+KIrpsteUn5vaF5Z9yLBG40GDi6l+c/LH3nzdOw+rlTtjwhhBdVvV9SSbQYwY+jaS
+QbW/7hlImrOuhDrgGUTo+ne7TYnJvn3ZtDztXpeTskpNGs7UHE+7yLQxwgBIg3ma
+R14ToHnnTbXftQwyq/H7Dcv3qQP7tuO+IqAbd9QCBVtA+pOv5yYqpodmjtU6FJd3
+uINrO1aMRfsX772lcbyiJHo70H2ksZAOODCYD/Id7I6s3qWYxr8kpHgiL8az8Mpn
+3sVbmKfZSPuM34vYlrLh1P2So3A3L8ZROYaciUvEyKeE0Gpbpq7bxrTSeRTfSrzI
+W2ZP2GpI9pxzXigeghK/B/UcLvkgNU7n61o3yGkinJJjoUdjb7Ymfo4g1r5wN7Px
+FKSrsvCz4J0x6NsV1bBE3pLdnb9Cf8gqnhxNVc/R2ftVtDKlmJTokMx8/UxAe//T
+uaX/5M1R0cNIWzVUDQ+oNiTeeZhKf9EMyQkyqdUW84ES+fw5Hoqge4jz/kZYAP7E
+6T2GGLHyiUc=
+=TudP
+-----END PGP SIGNATURE-----
