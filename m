@@ -1,58 +1,73 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Promise raid controller writes to disk, anybody know where?
-Date: Thu, 17 Apr 2003 05:40:51 +0400
-Message-ID: <3E9E0623.7090708@namesys.com>
-References: <Pine.LNX.4.44.0304161239010.24595-100000@dragon.inside.ntisys.com> <3E9D88FB.6090109@namesys.com> <1389382.20030416185111@tnonline.net> <3E9D8ABC.8050601@namesys.com> <1410590683.20030416185911@tnonline.net>
+Date: Thu, 17 Apr 2003 05:48:19 +0400
+Message-ID: <3E9E07E3.3050908@namesys.com>
+References: <Pine.LNX.4.44.0304161354460.25258-100000@dragon.inside.ntisys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13693-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13694-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1410590683.20030416185911@tnonline.net>
+In-Reply-To: <Pine.LNX.4.44.0304161354460.25258-100000@dragon.inside.ntisys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Anders Widman <andewid@tnonline.net>
-Cc: Reiserfs-List@namesys.com
+To: bscott@ntisys.com
+Cc: ReiserFS Mailing List <Reiserfs-List@namesys.com>
 
-Anders Widman wrote:
+bscott@ntisys.com wrote:
 
->>>>>>I just bought this motherboard with a promise raid controller builtin
->>>>>>whose manual mentions that it writes information to disk (volume and
->>>>>>config info I believe).
->>>>>>            
->>>>>>
->
-><snip>
->
+>On Wed, 16 Apr 2003, at 8:54pm, reiser@namesys.com wrote:
 >  
 >
->>It is for my Mom, I want both windows and Linux, and I was hoping the 
->>whole drive would get mirrored by the hardware.  It is okay though, I 
->>will have mom use dd once a week to do it, and this will protect from 
->>viruses better than a synchronous mirror.
+>>It is for my Mom, I want both windows and Linux, and I was hoping the
+>>whole drive would get mirrored by the hardware.
 >>    
 >>
 >
->The  BIOS  is  handling mirroring, which is supported good in Windows,
->and as "experimental" in Linux.
+>  Not by hardware, no.  But you could configure a mirror in the Promise 
+>BIOS, and it would give you an effective mirror of two drives, regardless of 
+>OS or partitioning.  You would need to have drivers for all your OSes, of 
+>course.  This isn't "hardware RAID", but it still might be useful.
 >
->//Anders
+This is total crap and deceitful marketing, in my book.  Nowhere do they 
+say it is software raid....
+
 >
->--------
->PGP public key: https://tnonline.net/secure/pgp_key.txt
+>  That being said, I've also had bad luck with many of these cheap "fake 
+>RAID controllers" doing things like corrupting the contents of the drive.  
+>While I'm not saying your particular model of Promise controller will have 
+>that problem, I've been burned often enough that I won't touch them.
 >
+>  If you really want a hardware RAID controller for ATA drives, go with a
+>3Ware Escalade, or an LSI Logic MegaRAID I4.  Both have fully supported, GPL
+>drivers in the kernel.  I've also heard that the high-end Promise
+>controllers (the ones that have an actual co-processor onboard) are decent,
+>although I have no experience with them myself.
 >
+I didn't intend to buy it, it is built into the motherboard, sigh....  
+the motherboard can support only 3 ide devices, so I would say it is IDE 
+lacking as a result of the promise device....
+
+I didn't really pay attention to the ide device capacity when buying it.....
+
+oh well, not the end of the world.
+
 >
 >  
 >
-So it sounds like I should just not use mirroring and life will be fine?
+>>It is okay though, I will have mom use dd once a week to do it, and this
+>>will protect from viruses better than a synchronous mirror.
+>>    
+>>
+>
+>  rsync might be better than a simple 'dd'.  Although I don't know if rsync
+>would get messed up by the semantics of an MS-DOS filesystem.
+>
+>  
+>
 
-Their product seems to be a bit cheesy, and more than a bit lacking in 
-good documentation.  It claims that one of my drives is part of a 1+0 
-array.  How can one drive be part of a mirrored array?  Or does that 
-mean that it is the mirror of one of the other drives?
 
 -- 
 Hans
