@@ -1,12 +1,12 @@
-From: Adam Nielsen <a.nielsen@optushome.com.au>
+From: Chris Mason <mason@suse.com>
 Subject: Re: BUG: Replaying ReiserFS log causes hard lockup
-Date: Thu, 25 Mar 2004 22:14:23 +1000
-Message-ID: <20040325221423.6296bc84.a.nielsen@optushome.com.au>
+Date: Thu, 25 Mar 2004 07:54:22 -0500
+Message-ID: <1080219262.14742.146.camel@watt.suse.com>
 References: <20040325204836.07bcf910.a.nielsen@optushome.com.au>
-	<1080213348.1976.277.camel@tribesman.namesys.com>
+	 <1080213348.1976.277.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17465-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17466-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,36 +14,36 @@ Errors-To: flx@namesys.com
 In-Reply-To: <1080213348.1976.277.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Vladimir Saveliev <vs@namesys.com>
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: Adam Nielsen <a.nielsen@optushome.com.au>, reiserfs-list@namesys.com
 
-Hi,
+On Thu, 2004-03-25 at 06:15, Vladimir Saveliev wrote:
+> Hello
+> 
+> On Thu, 2004-03-25 at 13:48, Adam Nielsen wrote:
+> > Hi,
+> > 
+> > My apologies if this is the wrong place to send a report like this, but
+> > I couldn't find anywhere more suitable!
+> > 
+> > I have just come across a rather annoying bug, which seems to be most
+> > likely located in ReiserFS as my computer now locks up while
+> > booting a stock 2.6.3 kernel almost immediately after displaying this:
+> > 
+> > found reiserfs format "3.6" with standard journal
+> > Reiserfs journal params: device sda1, size 8192, journal first block 18,
+> > max trans len 1024, max batch 900, max commit age 30, max trans age 30
+> > reiserfs: checking transaction log (sda1) for (sda1)
+> > 
+Please compile the kernel with sysrq support, and try to do a sysrq-p
+when things are locked.  If there kernel is completely frozen, you can
+turn on the nmi watchdog, which should trigger an oops to tell us where
+things are broken.  You can get more details about both of these from
+the Documentation directory in the kernel source
 
-Thanks for your reply!
+Documentation/nmi_watchdog.txt
+Documentation/sysrq.txt
 
-> Is sda1 your root filesystem?
-> For the beginning you should boot without mounting it and reiserfsck
-> it
+-chris
 
-Yes, it's the only partition (apart from sda2 which is swap.)  I've done
-some more fiddling around with it, and I'm starting to think that
-perhaps after all it's not ReiserFS.  I disconnected and reconnected the
-SATA cable, and suddenly it got past that point where it locked up
-before. Now I can mostly read data off the drive fine, but I still
-can't boot from it.  Lilo only gets as far as "LIL", and when booting
-the kernel over the network it seems to run fine until I try reading
-from /boot/bzImage where most of the time it will cause the hard lockup.
 
-So I'm not sure whether it's ReiserFS "crashing" when it can't read the
-data, the sil3112 module misbehaving, or a physical hardware problem
-(which seemed unlikely until wiggling the SATA cable helped...!)  I
-would've assumed though, that a loose SATA cable would cause the drive
-to either work or not work - but working fine except for booting and
-reading certain files seems a little weird (it also locked up when I
-loaded X11.)
-
-Any more ideas?  I don't really know what to do next...!
-
-Thanks,
-Adam.
-(please CC replies)
