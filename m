@@ -1,34 +1,48 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: We need help benchmarking and debugging reiser4
-Date: Wed, 30 Oct 2002 11:30:31 +0300
-Message-ID: <3DBF98A7.8060906@namesys.com>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: [ANNOUNCE]: reiser4
+Date: Wed, 30 Oct 2002 12:41:50 +0300
+Message-ID: <15807.43358.522511.933144@laputa.namesys.com>
+References: <15806.51536.985203.709475@laputa.namesys.com>
+	<20021030022944.GE31928@willow.seitz.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11836-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11837-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20021030022944.GE31928@willow.seitz.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Oleg Drokin <green@namesys.com>, Nikita Danilov <Nikita@Namesys.COM>
+Content-Type: text/plain; charset="us-ascii"
+To: Ross Vandegrift <ross@willow.seitz.com>
+Cc: Reiserfs-List@namesys.com
 
-Can some of you help us by doing such things as replicating our 
-benchmarks, and helping us debug it as we enter the last stretch before 
-Halloween?
+Ross Vandegrift writes:
+ > On Tue, Oct 29, 2002 at 08:45:52PM +0300, Nikita Danilov wrote:
+ > > It is still crasheable. Do not put critical data on it.
+ > 
+ > How crashable?  I'd like to play around with this on the /home partition
+ > on my personal workstation.
 
-Nikita and Oleg will describe the details of what to do to replicate the 
-benchmarks, please be sure to use reiser4 readdir order for writes to 
-reiser4 (that means don't use tarballs made from ext2 (Remember that 
-writes determine subsequent read performance.)), and to use the latest 
-hard drives and fast processors with udma 5 turned on.  We are quite 
-sensitive to transfer speed since we do a good job of avoiding seeks.  
-We are sensitive to readdir order because we sort directory entries 
-(which is necessary for having efficient large directory lookups).   In 
-reiser4.1 we will ship a repacker, and then it won't matter what order 
-you do writes in so long as the repacker gets a chance to run at night.  
+You can untar and compile kernel on it (this exercises file system quite
+a bit), run various stress tests (like fsx and fsstress), but not others
+(like mongo).
 
--- 
-Hans
+It still has rough corners under memory pressure. Deadlocks are still
+possible under highly concurrent access.
 
+ > 
+ > Is it resiliant enough to be used if I have a cron job make backups
+ > every 12 hours?  How about every 2 hours?
 
+As for using it for your home directory, you have to judge yourself. :-)
+
+Err, one more bit: fsck is non-existent yet, so, if it crashes---data
+are lost for ever.
+
+ > 
+ > Sounds like it'll be cool - thanks for the coolest filesystem on the
+ > planet.
+ > 
+
+Nikita.
