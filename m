@@ -1,41 +1,37 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: merge 2.4.21-pre4 with Direct IO bug fix
-Date: Mon, 10 Mar 2003 17:33:08 +0300
-Message-ID: <20030310173308.A22176@namesys.com>
-References: <20030304013450.249cc096.philippe.gramoulle@mmania.com> <20030304111807.A18814@namesys.com> <20030310131528.B9033@humilis> <20030310152801.F19773@namesys.com> <20030310141605.D9033@humilis> <20030310164035.I19773@namesys.com> <20030310152352.F9033@humilis>
+From: Heinz-Josef Claes <hjclaes@web.de>
+Subject: Re: OT: simple file operations in C
+Date: 10 Mar 2003 12:47:35 +0100
+Message-ID: <1047296851.1036.2.camel@kakapo.schnulli.de>
+References: <1047267222.c3ecdd60teodarren@myrealbox.com>
+	 <200303100802.h2A82JWS004942@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13174-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13175-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030310152352.F9033@humilis>
+In-Reply-To: <200303100802.h2A82JWS004942@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ookhoi <ookhoi@humilis.net>
-Cc: Chris Mason <mason@suse.com>, reiserfs <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
+Cc: darren <teodarren@myrealbox.com>
 
-Hello!
+Am Mon, 2003-03-10 um 09.02 schrieb Valdis.Kletnieks@vt.edu:
+> On Mon, 10 Mar 2003 03:33:42 GMT, darren <teodarren@myrealbox.com>  said:
+> 
+> > I want my program to be able copy, move and delete files, but i cannot seem t
+> o find any available functions or system calls to do this.
+> 
+> For move and delete, you want the rename() and unlink() system calls.
+> 
+> For copying, you might want to skip the stdio fopen() and friends, and
+> use open()/read()/write()/close().  You may need chmod() and utime() if you
+> want to be preserving filemode/timestamps.
+> 
+> Google for '+linux +programming +guide'.
 
-On Mon, Mar 10, 2003 at 03:23:53PM +0100, Ookhoi wrote:
-> > > For some reason, the mount options are not listed.
-> > This is because reiserfs is lacking necessary callback to print it's
-> > current mount options in /proc/mounts, I think.
-> That would fix setups which have a link to /proc/mounts most likely?
+That's ok. But if you want to copy big files it's a good idea to have a
+look at mmap(2).
 
-Not likely.
-quota tools seems to be confused by non-existent /dev/root reported as mounted.
-According to man page, quota tools look for "usr/grpquota" in /etc/fstab.
 
-> Anyway, let me know when you come to amsterdam, ok? ;-)
-
-This is not likely to happen any time soon unfortunatelly.
-
-> Btw, quota works (just tested it).
-
-That's good. I do not need to fix it then ;)
-
-Bye,
-    Oleg
