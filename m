@@ -1,43 +1,47 @@
-From: "David Fendrich" <david@fendrich.net>
-Subject: Re: reiserfsck 3.6.11 locks up
-Date: Mon, 22 Dec 2003 04:15:15 -0800
-Message-ID: <84c101c3c885$41f70860$74cb010a@mail2world.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: fsck.reiser4
+Date: Mon, 22 Dec 2003 15:23:26 +0300
+Message-ID: <200312221523.26888.vitaly@namesys.com>
+References: <200312212203.52775.janfengler@web.de>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_84C2_01C3C842.33D3C860"
-Return-path: <reiserfs-list-return-16373-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-16374-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Class: urn:content-classes:message
+In-Reply-To: <200312212203.52775.janfengler@web.de>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: vitaly@namesys.com, david@fendrich.net, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Jan Fengler <janfengler@web.de>, reiserfs-list@namesys.com
 
-------=_NextPart_000_84C2_01C3C842.33D3C860
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Hello,=20
 
-The problem is solved. I used the 3.6.12pre version and everything went
-smooth. 
+On Monday 22 December 2003 00:03, Jan Fengler wrote:
+> Hello,
+>
+> I have some trouble checking my reiser4 partition. I use fsck.reiser4
+> version 0.4.19 and libaal version 0.4.14 on linux-2.6.0-test11. I've
+> attached the logfile and the output from dmesg.
+> I dont know if it is a bug in fsck.reiser4, but if there is really an err=
+or
+> on my partition (everything works well 'til now), i think it should be
+> possible to correct it via fsck.
+> I've already tried to use the newest bitkeeper-sources of
+> libaal/reiserfs4progs, but the reiserfs4progs won't compile.
+>
+> Thanks in advance for your attention!
+> =A0=A0=A0=A0=A0=A0=A0=A0Jan Fengler
 
+It seems this bug was already fixed, we have not released=20
+another reiser4progs snapshot yet, so you can wait a bit for=20
+the coming release or you can get the code from our bk=20
+repositories:
 
-So reiserfsck continues to do smth but no progress anymore, right?
-Have you built the progs on the same computer where you run it?
-Would you check your memory with memtest or similar?
+bk clone bk://bk.namesys.com/bk/libaal
+bk clone bk://bk.namesys.com/bk/reiser4progs
 
-
-I don't think that reiserfsck continued to do anything. The whole
-computer froze, ssh went down, I couldn't even switch virtual terminals
-(I run Gentoo linux 2.4.22-ac, so yes the progs are built on the same
-computer with the only optimization being -03), but alt-sysrq worked.
-This happened twice at exactly the same place in pass 1, so anyone else
-having the same problem should try 3.6.12.
-
+=2D-=20
 Thanks,
-David 
-
-
-------=_NextPart_000_84C2_01C3C842.33D3C860--
-
+Vitaly Fertman
