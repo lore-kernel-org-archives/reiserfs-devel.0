@@ -1,16 +1,17 @@
 From: David Masover <jedi@ninja.dynup.net>
-Subject: Re: The x Bit Problem
-Date: Fri, 05 Dec 2003 08:03:15 -0600
-Message-ID: <3FD09023.5070902@ninja.dynup.net>
-References: <16333.14692.61778.304155@pc7.dolda2000.com>	 <3FCD47C4.50500@ninja.dynup.net> <3FCE39B8.20307@namesys.com>	 <16334.15412.686909.927196@laputa.namesys.com> <1070580817.8344.140.camel@arabia.home.lan> <3FD00086.90607@ninja.dynup.net> <3FD01679.3040007@mrs.umn.edu> <3FD07DB5.6090708@namesys.com>
+Subject: Re: More on Hard Links (was A bold idea (Re: Carrying Attributes
+ too Far))
+Date: Fri, 05 Dec 2003 08:07:40 -0600
+Message-ID: <3FD0912C.1090700@ninja.dynup.net>
+References: <2342084747-BeMail@cr593174-a>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16247-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16248-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FD07DB5.6090708@namesys.com>
+In-Reply-To: <2342084747-BeMail@cr593174-a>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
@@ -18,46 +19,54 @@ To: reiserfs-list@namesys.com
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Hans Reiser wrote:
+Alexander G. M. Smith wrote:
 
-> Grant Miner wrote:
+>David Masover wrote on Thu, 04 Dec 2003 21:58:42 -0600:
+>  
 >
->> An interesting thing I discovered is that Windows simply ignores the 
->> 'x' bit (I should say the Windows equivalent of the 'x' bit, called 
->> "traverse folder / execute file"), but there is a policy setting that 
->> overrides this attribute.
+>>I agree that hardlinking directories should be allowed, and I think it's
+>>worth it to check whether it creates a loop, unless rm can be modified
+>>to simply rm the directory, and the filesystem (and maybe VFS) would be
+>>modified to have directories have link counts that don't include . or
+>>.., so when a directory is to be deleted, the system does its own manual
+>>deletion of each of the files within it.  Then, if I type 'rm loop' and
+>>it removes the link of 'loop/loop' to 'loop', there are now no more
+>>links to 'loop' and it gets destroyed.
+>>    
 >>
->> I know users get tripped up on this a lot in Unix, like when they 
->> don't understand why the webserver can't read their public_html 
->> directory.  It might be a good option for Linux.
->>
->>
->>
-> The right solution is to have a separate readdir permission, so that a 
-> file-directory can be not executable but be listable, and vice-versa.  
-> The problem comes from overloading the bit and also changing whether 
-> objects can be simultaneously files and directories.
 >
-Why does that need to be separate from the read bit?  In fact, right 
-now, I can actually get a directory listing, but I can't even find out a 
-single attribute about the files inside if the execute bit is not set.  
-When is this desireable?
+>I think you need more than link counts.  Like I mentioned earlier, I used
+>a graph traversal in my BeOS file system to handle deletion of loops.
+>
+>Unfortunately that implies locking potentially large numbers of files while
+>doing the traversal, which can fail or deadlock if the file system is in
+>continuous use (like it might be on a server).  But then you already have
+>that sort of problem on regular file systems, though only for one file at
+>a time.
+>  
+>
+Yes, locking, as a transaction.  Which means either the whole deletion 
+fails (couldn't get the lock, user got annoyed and hit ^C) or it 
+succeeds (got lock on all the files by doing some sort of recursive lock 
+on the root dir).  From inside the transaction, it should look as though 
+everything is happening in realtime, but it only flushes when it can get 
+the lock.  (right?)
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.3 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBP9CQIwisZLIF6uqOAQLdPw/9HEHbi41hey1LoH8d2wuQRDTUwH5iEZVN
-ld/pnuPlHPp1sO8ag+WjoT4sv3umlSBPdRtzk3H1Y8WSBZ4xgnD6imo9eAQXzMmu
-UG4t9reWrCeKgl95KCJmapH6PPYFE6O8+YliBO4uCEFHLX6UM0Xb02nkZ2dQ25+G
-E1ryv5KUI+lMSliTuOEzfmMzuXapRul59Cc6WPplDmXN9ApMEnxJKYQtCBeYX1kf
-Wr4/6eGnJ91kIIfMGqe30IgOBbHRAENIq+K/ha+aUjmCQOwFjEaU1Imd3ytFZbPn
-xxwzXoD9+C2kNh6l3LFKiAm43rssTBwohSZbp8DNbhvboGOCgNuzzE6YzyJFNcCl
-hmW4PBoKP+SG6lrGb0C3USyjY/7U8KY1OHAviNyZW2InfFpbsfNhQg/FIH2eFOHS
-uhnVborliZwUA1XGxDZPG2pvrm3e0dTHyCLu2FENU7ErY/3o5IBoTS2RypWMkjiK
-PBLvedufBMO4Ssq8vZg+t74pLaESsMvw4J6ebr8YwakJQS2A/a6mDTOLIe11qZby
-suH35Cu3RW6ecxJ6WQnmDQcozcbKdybwbf3KWjn+MppMtzPpF+MwllykMKCHYf4t
-5bVM8Mc1y1zBB+zYmF0Kv0rP9CtOvOmri2O6tDXtUOI/qDNDqKB5u5ICn/q5WVmF
-Y7QciJdsWvA=
-=jZ2A
+iQIVAwUBP9CRLAisZLIF6uqOAQJoLg/7Bou4ztb1My4YJ7NTFtLz6lg9WeRqGTaN
+Kocw64tzSIR9+iyFh0z1zHRzwTwJr35W7TBbitf6zdNIDbkMi/qK6fehaG6ipRXh
++FX4ZEyjLpW5Q9ST39wEo4rpGNC9YVGvoOVz4YVITz/wASBsh8ZoY87lM43OD/n5
+5UQodUFnXtPBcJrEqWeFRGkl0viOPdq3XTu5XNLATClszN/k9BYKXeyWRgNLH9xl
+LbcWMCAW0DtsyB4V7Kwv/gCKicpVT8ss4V+91Jq0Ls1jvr53TTY9eMLejfjMtrcA
+hAkioRjJjsJrqEh2LLRl5QvXamWNPu5B3ghL+aSBLjSHz3BboQn14U/zVN/42svE
+B+2QYB7cY+JguzuYsBEbFN7qtjFzgMTQH5AMlg1SdXY+dYL+XIHmcROHvFkB/uaT
+vlICasDktv1dzubyw9TI9nbGuttSleuqi4gqM/51IaP09BHTzY+mdluup86zZD8+
+8ShE440Hq8swLlVN7JTYMDxwqJ78yJTvDrgKxlgUWulAjQqRTWPyZ1Hbru0iaA5F
+ayIXFXSwlgRU1zDM/6rNsNpCoMiMPdZjH+NOd/3QSBnIWoc7ybsp6hxyOZruz5ej
+1yA7jI0Qjs/FhAPMswZGVGI4/qY08nEYqA1ffrjApcdjLQFWx02Z0s1NTeVy2XGd
+8D3gUzOLmoc=
+=Mp6q
 -----END PGP SIGNATURE-----
 
