@@ -1,41 +1,43 @@
-From: Redeeman <redeeman@metanurb.dk>
-Subject: Re: results of my filesystem test, xfs, jfs, ext3 and reiserfs
-Date: Mon, 22 Dec 2003 13:38:40 +0100
-Message-ID: <1072096720.4336.0.camel@redeeman.linux.dk>
-References: <1072090011.4349.8.camel@redeeman.linux.dk>
-	 <200312221329.10711.Dieter.Nuetzel@hamburg.de>
-Reply-To: redeeman@metanurb.dk
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: reiserfsck non-4k-block-size issue on ia64
+Date: Mon, 22 Dec 2003 16:20:21 +0300
+Message-ID: <200312221617.26776.vitaly@namesys.com>
+References: <3FE5A7E6.4060201@libero.it>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16377-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16378-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200312221329.10711.Dieter.Nuetzel@hamburg.de>
+In-Reply-To: <3FE5A7E6.4060201@libero.it>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Domenico Andreoli <cavok@libero.it>, reiserfs-list@namesys.com
 
-i dont know the version of reiserfs, i used reiserfsprogs 3.6.11 to
-create it, and a 2.6.0 kernel, i didnt do any patching myself
+Hello, 
 
-On Mon, 2003-12-22 at 13:29, Dieter N=FCtzel wrote:
-> Am Montag, 22. Dezember 2003 11:46 schrieb Redeeman:
-> > i decided to make a little test between those filesystems, to test spee=
-d
-> > and stability. i will not include the accurate numbers here as i have t=
-o
-> > get it together, (my notes are messy :)) but i will tell how it was.
->=20
-> Reiser 3.xx _with_ data logging patches (ordered mode) or Reiser4?
->=20
-> Greetings,
-> 	Dieter
---=20
-Regards, Redeeman
-()  ascii ribbon campaign - against html e-mail=20
-/\                        - against microsoft attachments
+On Sunday 21 December 2003 17:02, Domenico Andreoli wrote:
+> hi,
+>
+> here at debian we have a bug report + patch for reiserfsck, full bug
+> report is available at http://bugs.debian.org/212517 .
+>
+> may i have your opinion on the given patch?
 
+there is one problem in the linux -- if you have a partition 
+of N * 4k + 2k size and make is of the 4k size, then after the 
+mounting you are unable to read the latest 2k. If you then try 
+to make the fs of 2k block size you are still unable to read 
+the latest block (2k) untill mounting.
 
+The patch you point to is a workaround, I wrote it some time 
+ago to have such a problem to be fixed in reiserfsprogs not 
+for 4k and smaller blocksizes only but up to 64k block sizes. 
+It is not ia64 related. And the code is included into 
+reiserfsprogs-3.6.12-pre1.
+
+-- 
+Thanks,
+Vitaly Fertman
