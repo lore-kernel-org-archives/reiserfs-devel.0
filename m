@@ -1,59 +1,76 @@
-From: Christophe Saout <christophe@saout.de>
-Subject: Re: repacker
-Date: Thu, 26 Aug 2004 01:01:33 +0200
-Message-ID: <1093474893.12518.4.camel@leto.cs.pocnet.net>
-References: <1093474401.12559.0.camel@localhost>
+From: Spam <spam@tnonline.net>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 26 Aug 2004 01:19:35 +0200
+Message-ID: <1453698131.20040826011935@tnonline.net>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
+ <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net>
+ <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org>
+Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-MTyvb7nBVWZomO0eRMGD"
-Return-path: <reiserfs-list-return-20538-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20539-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1093474401.12559.0.camel@localhost>
+In-Reply-To: <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: redeeman@metanurb.dk
-Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
-
---=-MTyvb7nBVWZomO0eRMGD
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-Am Donnerstag, den 26.08.2004, 00:53 +0200 schrieb Redeeman:
-
-> hey, i notice its possible to activate the repacker in reiser4, and i
-> tried it, on a not-important partition, and it didnt seem to cause any
-> harm, is this generalyl safe? :)
-
-Well, I just played around with it. The system locked up under memory
-pressure and when running it backwards it produced tons of extents that
-should have been merged (an fsck fixed that). And I managed to get an
-Oops in end_io_handler. I can provide a screenshot if someone is
-interested (if this really shouldn't have happene despite the repacker
-not being ready yet).
-
-But: It didn't damage a single bit of data. The storage tree itself
-seems really robust.
-
-Under normal conditions the left-to-right repacker seems to work just
-fine.
-
-echo -n 1 > /sys/fs/reiser4/<fill in device>/repacker/start
-
-I was playing with the version in the -mm tree.
+Content-Type: text/plain; charset="us-ascii"
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
 
---=-MTyvb7nBVWZomO0eRMGD
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
 
-iD8DBQBBLRpNZCYBcts5dM0RAickAJ4kFL7usZnMfA4DiX5Ol9xNzc2TBQCfYuES
-5GTAZyqZAxuIGzd4WNqeID4=
-=05yn
------END PGP SIGNATURE-----
 
---=-MTyvb7nBVWZomO0eRMGD--
+> On Thu, 26 Aug 2004, Spam wrote:
+>> 
+>> > My own order of preference is b) c) a).  The fact that one filesystem will
+>> > offer features which other filesystems do not and cannot offer makes me
+>> > queasy for some reason.
+>> 
+>>   This last sentence makes me wonder. Where is Linux heading? The idea
+>>   that   a  FS  cannot  contain  features that no other FS has is very
+>>   scary.
+
+> That's not what Andrew said or meant.
+
+> Note the "cannot offer". As in "there is no way to offer them even if the
+> filesystem could support it otherwise". 
+
+> We have tons of filesystems that do things other filesystems cannot do.
+> Most filesystems support writing to a file - despite the fact that some
+> filesystems (iso9600 being an obvious one) cannot. The infrastructure is
+> there in the VFS layer, and it becomes a _choice_ for the filesystem
+> whether it offers certain capabilities.
+
+> So look at what Andrew said, again: his top choice would be (b). Let's see
+> what that was again, shall we?
+
+>> b) accept the reiser4-only extensions with a view to turning them into
+>>    kernel-wide extensions at some time in the future, so all filesystems
+>>    will offer the extensions (as much as poss) or
+
+> In other words, if reiserfs does something special, we should make 
+> standard interfaces for doing that special thing, so that everybody can
+> do it without stepping on other peoples toes.
+
+  Agreed  that would be the best. But how much time and effort will it
+  be,  and  how much of the original ideas would be lost on the way to
+  implement  them  in  the  VFS? Especially with new and very advanced
+  FS's like Reiser4.
+
+  Isn't  the  line  between the actual file system and the virtual one
+  very hair thin? Where would the separation lay in Reiser4?
+  
+> That doesn't mean that we'd _force_ everybody to do it. The same way we
+> don't force iso9660 to write to a CD-ROM.
+
+>       Linus
+
+  I got caught in the moment of flame war. My appologies.
+
+  ~S
+
+
 
