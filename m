@@ -1,53 +1,69 @@
-From: Wolfgang Rohdewald <wolfgang@rohdewald.de>
-Subject: Re: file attributes destroyed.
-Date: Mon, 27 Oct 2003 05:54:44 +0100
-Message-ID: <200310270554.45011.wolfgang@rohdewald.de>
-References: <200310261227.18711.wolfgang@rohdewald.de> <200310261550.06162.vitaly@namesys.com>
-Reply-To: wolfgang@rohdewald.de
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: ReiserFS v3 + millions of files?
+Date: Mon, 27 Oct 2003 09:55:41 +0300
+Message-ID: <3F9CC16D.10109@namesys.com>
+References: <200310262146.28850.d.oglesby@insightbb.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15891-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15892-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200310261550.06162.vitaly@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <200310262146.28850.d.oglesby@insightbb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Dan Oglesby <d.oglesby@insightbb.com>
+Cc: reiserfs-list@namesys.com
 
-On 26.10.2003 13:50, Vitaly Fertman wrote:
-VF> would you take the latest reiserfsprogs from our ftp site (3.6.11) and run
-VF> reiserfsck to be sure that there are no fs corruptions.
-VF>
+Dan Oglesby wrote:
 
-I now did. Actually I downloaded the latest Knoppix which contains reiserfsck 3.6.11.
-Result: Nothing found.
-
-I guess I'll just wait and see if it happens again.
-Thank you very much for your help anyway.
-
-reiserfsck --check started at Mon Oct 27 05:27:28 2003
-###########
-Replaying journal..
-0 transactions replayed
-Checking internal tree..finished
-Comparing bitmaps..finished
-Checking Semantic tree:
-finished
-No corruptions found
-There are on the filesystem:
-        Leaves 132833
-        Internal nodes 893
-        Directories 30379
-        Other files 461546
-        Data block pointers 17680796 (932 of them are zero)
-        Safe links 0
-###########
-reiserfsck finished at Mon Oct 27 05:44:58 2003
-###########
-
+>Greetings...
+>
+>Long time ReiserFS user, first time I've had a problem.  Signed up for the 
+>mailing list last week, and was surprised to see so little traffic (might be 
+>a good thing?).
+>
+>I'm running Red Hat 7.3 using a Red Hat 2.4.20 kernel.  The system has a 
+>RAID-5 array via 3Ware 7500 controller, and three Western Digital 120GB 
+>"Special Edition" hard drives.  The array is one filesystem, ReiserFS.  The 
+>operating system, swap, and other files are stored on a hard drive that is on 
+>the primary IDE controller off of the motherboard.
+>
+>The system is a single board computer, with a P4 3.06 GHz hyperthreaded 
+>processor (kernel is SMP enabled), 512MB of RAM, and contains a mix of 
+>ReiserFS and EXT2 filesystems on the primary drive (ReiserFS only on the 
+>array).  No NFS.
+>
+>The array is used to store what will basically amount to more than one million 
+>files with an average size of sixty kilobytes.
+>
+>During simulations for file writes, I'm seeing write performance begin to drop 
+>dramatically after 800,000 files have been stored on the filesystem.
+>
+>The filesystem is being mounted with the following options:  
+>defaults,notail,noatime,nodiratime
+>
+>The filesystem was created with default options, basically a "mkreiserfs /dev/
+>sda1".
+>
+>Is this behavior I should expect from ReiserFS v3?
+>
+>This week I will be switching from a Red Hat kernel to a vanilla kernel (from 
+>kernel.org), first the latest 2.4 kernel, then the latest 2.6 kernel.  After 
+>that...  I dunno.
+>
+>Help?
+>
+>--Dan Oglesby
+>
+>
+>
+>  
+>
+what size directories?
 
 -- 
-Wolfgang
+Hans
+
+
