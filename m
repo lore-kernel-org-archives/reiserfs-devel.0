@@ -1,52 +1,31 @@
 From: Timothy Miller <miller@techsource.com>
-Subject: Re: silent semantic changes with reiser4
-Date: Wed, 15 Sep 2004 13:06:53 -0400
-Message-ID: <414876AD.6060404@techsource.com>
-References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <41352279.7020307@slaphack.com> <41356321.4030307@namesys.com> <Pine.LNX.4.58.0408312259180.2295@ppc970.osdl.org> <413578C9.8020305@namesys.com>
+Subject: Re: The argument for fs assistance in handling archives
+Date: Wed, 15 Sep 2004 13:23:06 -0400
+Message-ID: <41487A7A.80107@techsource.com>
+References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <20040902002431.GN31934@mail.shareable.org> <413694E6.7010606@slaphack.com> <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org> <4136A14E.9010303@slaphack.com> <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org> <4136C876.5010806@namesys.com> <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org> <4136E0B6.4000705@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21783-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21784-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <413578C9.8020305@namesys.com>
+In-Reply-To: <4136E0B6.4000705@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Hans Reiser <reiser@namesys.com>
-Cc: Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>
+Cc: Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-I'm probably not the first to suggest this idea, and it's probably not a 
-very good idea, but here's my idea anyhow:
 
-You have a file "/usr/bin/emacs"
-with a metadata property in the overlaid namespace 
-"/usr/bin/emacs/[[..]metas/]icon"
+Hey, you know how device nodes have a bit set, indicating that they're 
+device nodes and not regular files?  Can a set of such properties be 
+defined for reiser4 metadata properties?
 
-According to some, this could cause some confusion.  Howabout instead:
-
-You have a file "/usr/bin/emacs"
-with a metadata property in a slightly separated namespace 
-"/metas/usr/bin/emacs/icon"
-
-This has the advantage of still having the metadata in the filesystem 
-namespace but without the confusion of having files-as-directories, 
-ambiguity of filename, backup issues, etc.  This is the reverse of 
-having the namespaces overlaid with a "/nometas" view which is separate.
-
-Furthermore, you can split things further like this:
-
-You have a file "/usr/bin/emacs"
-with an automatically-generated metadata property that you don't want to 
-back up in "/autometas/usr/bin/emacs/modification_date"
-and a manually generated metadata property that you MAY want to backup 
-in "/staticmetas/usr/bin/emacs/icon".
-
-This is inelegant, I know.  But if we do this, we can add the extra 
-features of reiser4 without confusing existing apps or having to modify 
-them to support the new functionality.
-
-Furthermore, you can easily hide the extra features by not mounting the 
-meta top-level directories (assuming they're mounted like separate 
-filesystems, rather than just magically appearing there, which is okay too).
+Like a "metadata" bit so you can distinguish (if you wish) between 
+regular files and metadata objects, and in addition an "archivable 
+metadata" bit which indicates that the given piece of metadata is not 
+automatically generated and should be archived during backup (some 
+manually-generated metadata which does not need to be backed up will not 
+have this bit set -- perhaps add another flag indicating that it's not 
+automatic but unnecessary to archive).
 
