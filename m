@@ -1,66 +1,62 @@
-From: Linus Torvalds <torvalds@osdl.org>
+From: Christophe Saout <christophe@saout.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 09:35:38 -0700 (PDT)
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <Pine.LNX.4.58.0408260919380.2304@ppc970.osdl.org>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
- <20040825200859.GA16345@lst.de> <20040825203516.GB4688@backtop.namesys.com>
- <20040825205149.GA17654@lst.de> <412DA2CF.2030204@namesys.com>
- <20040826124119.GA431@lst.de> <20040826134812.GB5733@mail.shareable.org>
- <20040826155744.GA4250@lst.de> <20040826160638.GJ5733@mail.shareable.org>
- <20040826161303.GA4716@lst.de>
+Date: Thu, 26 Aug 2004 18:44:13 +0200
+Message-ID: <1093538653.5482.21.camel@leto.cs.pocnet.net>
+References: <20040824202521.GA26705@lst.de>	<412CEE38.1080707@namesys.com>
+	 <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com>
+	 <412E10A2.1020801@pobox.com>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040826161303.GA4716@lst.de>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-B1vbGDegrw7jAq82gPAY"
+Return-path: <reiserfs-list-return-20723-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <412E10A2.1020801@pobox.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jamie Lokier <jamie@shareable.org>, Hans Reiser <reiser@namesys.com>, Alex Zarochentsev <zam@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Will Dyson <will_dyson@pobox.com>
+Cc: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+
+--=-B1vbGDegrw7jAq82gPAY
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+Am Donnerstag, den 26.08.2004, 12:32 -0400 schrieb Will Dyson:
+
+> > Andrew, we need to compete with WinFS and Dominic Giampaolo's filesyste=
+m=20
+> > for Apple, and that means we need to put search engine and database=20
+> > functionality into the filesystem.  It takes 11 years of serious=20
+>=20
+> I'm very curious about your ideas on how to put search engine and=20
+> database functionality into the filesystem.
+
+I could imagine something like this.
+
+There are some special folders or files or whatever under every file
+where some userspace can put some metadata. A keyword perhaps.
+
+echo linux > file.bla/keywords/topic
+
+The filesystem might then automatically put these keywords into an index
+and then provide a search mechanism elsewhere where it could ask "find
+me all dentries with the keyword 'linux'." and it would return a list
+like locate does. Only that it's in realtime and also works when moving
+the file around (but not when copying with an unaware program for
+obvious reasons).
 
 
+--=-B1vbGDegrw7jAq82gPAY
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
 
-On Thu, 26 Aug 2004, Christoph Hellwig wrote:
->
-> > Are you saying that with reiser4, you can open a device or fifo with
-> > O_DIRECTORY?
-> 
-> That's what I thought, but as far as I can follow the code this is not
-> actually true.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
 
-It should be possible to do, though. There's nothing really different in 
-making the "default" (unnamed) fork be a special device or a fifo.
+iD8DBQBBLhNdZCYBcts5dM0RAq9CAJ9pgJXRmbhmrrTyK+SNWcDM3sGZ5gCgkdEK
+IhcgQtuxG1fRNF5OPZZau5w=
+=zyan
+-----END PGP SIGNATURE-----
 
-And it would be perfectly ok for O_DIRECTORY to open such a file, as long
-as it opens the directory branch, not the special device.
+--=-B1vbGDegrw7jAq82gPAY--
 
-I advocated (long ago) something like this for /dev handling, just because
-I think it would make sense to have
-
-	/dev/hda	<- special file
-	/dev/hda/part1	<- partition 1 (aka /dev/hda1)
-
-which just seems like a very obvious and intuitive interface to me. Of 
-course, we have so much legacy in /dev that there's no real point to doing 
-this, but it's still an appealing approach, I think.
-
-But I do take Al's concerns seriously. I like the notion of supporting
-"containers", but there are undoubtedly serious issues in the notion. I
-don't strictly know exactly _how_ to implement it sanely (I can talk about
-using the vfsmnt structure all I like, but the fact is, it's a different
-thing from a normal mount, and there may be serious problems indeed
-there).
-
-Still, I really do like the idea of merging the notion of file and
-directory into one notion of "container". I absolutely _detest_ files with
-internal structure that tools have to know about (ie I hate seeing all
-those embedded formats that I can't use "grep" on - MIME being one case).
-I'd much rather see a "group of files"  and a "file with a grouping of
-information".
-
-(Now, flattening that "group of files" is obviously needed for serial 
-protocols, so I think MIME/tar/xxxx are fine for _transporting_ data, but 
-I'm saying that outside of transport I really prefer a "collection of 
-files" approach).
-
-		Linus
