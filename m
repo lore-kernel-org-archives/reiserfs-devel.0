@@ -1,67 +1,45 @@
-From: Szabolcs Illes <illes@cpc.wmin.ac.uk>
-Subject: Re: reiser4 bug
-Date: Fri, 04 Mar 2005 14:38:32 +0000
-Message-ID: <422872E8.4020301@cpc.wmin.ac.uk>
-References: <422220B3.8000800@cpc.wmin.ac.uk> <20050304134843.GK6393@backtop.namesys.com>
+From: Pysiak Satriani <pysiak.satriani@wp.pl>
+Subject: Re[4]: reiser4.1
+Date: Fri, 4 Mar 2005 20:22:42 +0100
+Message-ID: <1144043083.20050304202242@wp.pl>
+References: <4461b4b458db80949fe1830f90501153@hotmail.com>
+ <1109776277.3504.469.camel@tribesman.namesys.com>
+ <42263473.7050900@namesys.com>            <37288019.20050303095520@wp.pl>
+ <200503040755.j247tsK0001173@turing-police.cc.vt.edu>
+Reply-To: Pysiak Satriani <pysiak.satriani@wp.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050304134843.GK6393@backtop.namesys.com>
+In-Reply-To: <200503040755.j247tsK0001173@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Alex Zarochentsev wrote:
+Hello Valdis,
 
->Hello,
->
->On Sun, Feb 27, 2005 at 07:34:11PM +0000, Szabolcs Illes wrote:
->  
->
->>Hi All,
->>
->>I have been using reiser4fs for 4 months without any problem since 
->>today. After tryinig to open a movie with mplayer a have this in my log:
->>    
->>
->
->how large was the movie file?
->
-It was about 300MB. But previously I have copied a lot of relative big 
-movies (600-700 MB).
+Friday, March 4, 2005, 8:55:52 AM, you wrote:
 
->  We have another similar bug report related to
->writing/reading of a large (20GB) tar file, so file size may be important.
->  
->
-I think the larges file I have ever stored using reiser4 was about 3 or 
-4 GB. ( for example: vmware disk images, dvd isos ...)
+> IBM's AIX 4.3 and later support LZ compression on their JFS file system.
+> I was able to measure a 10-15% speed-up by converting /usr to compressed
+> even on a 133MZ Power604e chip because even back then, it was faster to
+> read half as many blocks off a SCSI disk and decompress.
+Interesting.
 
->  
->
->>Feb 27 14:00:22 sunset kernel: reiser4[mc(9192)]: 
->>write_sd_by_inode_common (fs/reiser4/plugin/object.c:480)[nikita-2221]:
->>Feb 27 14:00:22 sunset kernel: WARNING: Failed to save sd for 1599330: -5
->>Feb 27 14:00:22 sunset kernel: reiser4[mc(9192)]: create_child_common 
->>(fs/reiser4/plugin/dir/dir.c:501)[nikita-2219]:
->>Feb 27 14:00:22 sunset kernel: WARNING: Failed to create sd for 1599330
->>Feb 27 14:00:23 sunset kernel: reiser4[cupsd(3296)]: parse_node40 
->>(fs/reiser4/plugin/node/node40.c:767)[nikita-494]:
->>Feb 27 14:00:23 sunset kernel: WARNING: Wrong level found in node: 1 != 95
->>Feb 27 14:00:23 sunset kernel: reiser4[cupsd(3296)]: parse_node40 
->>(fs/reiser4/plugin/node/node40.c:767)[nikita-494]:
->>Feb 27 14:00:23 sunset kernel: WARNING: Wrong level found in node: 1 != 95
->>Feb 27 14:00:24 sunset kernel: reiser4[cupsd(3296)]: parse_node40 
->>(fs/reiser4/plugin/node/node40.c:767)[nikita-494]:
->>Feb 27 14:00:24 sunset kernel: WARNING: Wrong level found in node: 1 != 95
->>    
->>
-> 
->Thanks,
->  
->
+> So it's been at least a potential win for a decade or so, assuming your
+> filesystem is able to deal well with fragments (you can't really win unless
+> you take a 4K or so logical block, compress it to some number of 512-byte
+> chunks, and then store the resulting chunks cheaply - JFS does the
+> blocks-and-frags efficiently, so it's easy to win.
+I wonder if NTFS compression does it well... I was always scared of
+compression on NTFS because of possible slowdowns and just the fact that
+compression adds another level of complexity to all reads/write and
+possible future recovery if something breaks down.
+
+-- 
+Best regards,
+Maciej
+
 
