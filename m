@@ -1,66 +1,92 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: reiser4 for windows
-Date: Sat, 04 Dec 2004 22:54:41 -0600
-Message-ID: <41B29491.20405@slaphack.com>
-References: <20041204211059.41930.qmail@web50908.mail.yahoo.com> <41B287C6.2060902@namesys.com>
+Subject: vim/fsync/performance
+Date: Sat, 04 Dec 2004 23:32:45 -0600
+Message-ID: <41B29D7D.5010908@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22674-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22675-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41B287C6.2060902@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Job Bob <yzhang2004@yahoo.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
+Some thoughts on various things I've noticed over the months I've been
+using reiser4:
 
-Hans Reiser wrote:
-| I should add that reiser4 for windows would be proprietary.   If they
-| can pay MS, they can pay me, and I see no reason to do free work for MS.
+vim was patched some time ago to call fsync on every write.  reiser4's
+fsync implies a full sync, meaning that
 
-Don't think too highly of the Cygwin project, do you?  Oh, and it's
-almost impossible to get a laptop without paying MS, directly or
-indirectly.  No reiser4 for laptops, then.
+- - when lots of fs activity is happening, a ':wq' can hang for some time
+waiting for full sync.
 
-Also, is it a given that reiser4 for windows would work without help
-from MS?  I've just never seen a third-party filesystem driver for
-windows.  You'd think that at least one other filesystem, one of the
-Linux/BSD/etc ones, would have done this, if it was feasable.
+- - someone editing lots of small text files, which reiser4 is the best
+choice for, will lose the benefit of lazy writes.
 
-To start with, ntfs read access is still case insensitive, last I
-checked.  How deep does that go?  How many programs would be broken if
-it was changed?  How much point would there be if one could not access a
-unix-created reiser4 partition, or if unix reiser4.2 had to be case
-insensitive?  And let's not go into the file-as-directory stuff -- it's
-hard enough on unix.
+Rather than trying to fix fsync or patch vim, I always replace sys_fsync
+with a stub, especially on laptops.  If I cared that much about the
+data, I'd run a (reasonably) stable kernel and call sys_sync on signals
+from dying apm/battery.
 
-All this leaves me with the distinct impression that it'd be cheaper to
-buy some gigabit ethernet (or fibre) and a Linux CIFS/Samba fileserver
-using reiser4.  Steam and others refuse to install on network drives,
-Windows probably will not boot off a network drive, but I imagine that
-fixing these would be easier than porting a filesystem.
+This solution isn't for everyone, however.  Best to patch vim (actually,
+remove the patch that did this in the first place), then fix fsync.
 
+In general, whenever the "lazy" allocation has to finally
+allocate/flush, the system can be quite unresponsive, especially if RAM
+is low.  Imagine uncompressing something big that compressed well.
+Performance is much lower here for reiser4 than for vfat, because less
+time is spent purely IO-Wait.
+
+Definitely want a bit more of a RAM "cushion" to prevent this, ideally
+want to anticipate when to start flushing so that ram fills up just as
+flush finishes.  Could anticipatory IO driver help here?
+
+Of course, this would be an optional feature, just as one can always
+choose to only enable the no-op IO driver.
+
+Repacker is always a good thing, and is needed more for low-end users
+than the high-end ones you want to pay for it.  If a normal user went
+through a Gentoo install on a single reiser4 partition without a lot of
+RAM, lots of fairly static but frequently used files (think glibc) could
+get quite fragmented.  The user then has the option to buy another hard
+drive and transfer everything to that and back, as a "repacker"
+operation, or to use debian instead, or to pay large sums of money for a
+"real" repacker, or to have an already-slow machine be even slower.
+
+The real danger for real users is that they might find that with a dell
+(which came with a "free" copy of Windows) and some free, downloaded
+antivirus/antispyware tools, they can get a Windows machine that runs
+faster than Linux/reiser4 ever will.  That's assuming people never want
+to resize their disks.
+
+This would make reiser4 a much less likely candidate for default
+filesystem in any distro which wants to be more popular than Windows,
+which would make it (reiser4) much less popular than it could be, which
+could (I'm guessing here) make it harder for Namesys to get
+contracts/paychecks.
+
+Whew!  With all that feedback, I don't really have time to think of some
+better ideas / real solutions.  Sorry about that!
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.6 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQbKUkHgHNmZLgCUhAQIjwg//bES/Y5TRhdkNyaMAveX4TutK+lKNJqsp
-P6j0OJTIW9DxrwtpuMjTICwMW1Lr50oercybKtvQz+UIz7lznmyegyPyjCQFF4dm
-/styevdcbUOal5kP1gqxquyxw0nmO4Nl45AUAuArUetYVHbDN/odgQ1jFNt1WXpT
-suno3iDwZqiF5+ZSYN1psruukI4KS59+S/Cl9D8TYT7XJUp1AzFa8i+I2ODRw1uj
-CQDV1tU7CfqngKheJ/yKV5VTLIb0RrTAhaf2tU5V5bm60+8UIGii8blHWs/0ltq0
-UEfAOSXPJiLHcYPiVCutKagss02Nyy0dlWzD160JSUkXq22+3pKSFQXUxJFKCrXa
-7lFAbosAYO7pt/JIjDBB9Y72F/p8dQJq9kizIBg/KLGD/ZdoRPksxsvf3Ale6uCb
-wtciIIsRPlxb+UkefubWeo9kmoD7bWig3IF9zSQUZEupM1WZYcNEdyYEXpLg6BqD
-x1Yn0DfCv61ISIahKdNoQEiOyc87Wqcsg6IvByH0pXmdYh0bBkWxxpax4+n+kd2y
-TI5yX2QmXxS6RWFAuXV1H2mUyYRcKLeVsNy75Kxorl7nbc4HC/MZsmV+e4z5Whkh
-+/5gH9l9bV2NxXL0vKmdQ9zEUHUYYCCqUxWoRtYHY4DFoDgtGE8GyD8QTmyevoT4
-bVDdji2mpS0=
-=2xlV
+iQIVAwUBQbKde3gHNmZLgCUhAQIojA//axuugqCXPaLo5rkpzdFqXgIrdBlc9vpX
+5LoOJsy8/N29d4XGgeI/m8DFrWhKFjgQpG21sY9UPwsMmwxJzGkfh8BbrYbXQ2d7
+udqxVU6+alp9J182KvaT1hcTKqCd9hKM0RN0mlJ9p108G4zSevflajM453nRLwnV
+XxOnGdE7jBGUbUy84xQckpCKTrQgd/d0FA6v2do/blH/p2Oa2Kju2XDlvw7/G75W
+meDWGSlxBdgsjvbdfMClM8j0jnQg7pCxRutsaFOe7U3J3bSzVATmfFwFUw76ZGk0
+xj+8FN4c6MMhAN9ZAQQ5JbAYWKjhIHx3kSjSYkIuRnucm1Ai9iP5ReyHTfJfeBcb
+DmLL6eTTASkiyMyfvfgK7/9nXGnCMAIjqV32IhpfmYr/Fw6AwFf+6SpS8rEIljZ4
+jiyU1WVJc9WqBJBZEnikQt0MPUNsTAsxKKexKhNMfPacDaz8ShFSeB+Fg3dZlXl7
+6g4TUHTcUlsqbKtyAuaUdA0xhTzC4jd5IZ86e/6TiPlOFXWHC90piWUKMjuiffTN
+ZNkdnBNKYNRjCwS+1svDRMI+gbJZaYbWCBNJKu/LfipXTqI0L04wKBlX8D5za8Ek
+DIbjgbMiBZbCOkSrDjBjcRkqN5P/mRHP4y6uolWP6pR6pj8BUSIUMhf/GLap+I6Y
+myr6W72DoF0=
+=o2LF
 -----END PGP SIGNATURE-----
