@@ -1,69 +1,56 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: The argument for fs assistance in handling archives
-Date: Thu, 02 Sep 2004 19:41:11 -0500
-Message-ID: <4137BDA7.4040304@slaphack.com>
-References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <20040902002431.GN31934@mail.shareable.org> <413694E6.7010606@slaphack.com> <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org> <4136A14E.9010303@slaphack.com> <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org> <4136C876.5010806@namesys.com> <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org> <4136E0B6.4000705@namesys.com> <14260000.1094149320@flay>
+Date: Thu, 02 Sep 2004 19:43:34 -0500
+Message-ID: <4137BE36.5020504@slaphack.com>
+References: <20040826150202.GE5733@mail.shareable.org> <4136E0B6.4000705@namesys.com> <1117111836.20040902115249@tnonline.net> <200409021309.04780.oliver@neukum.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21375-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21376-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <14260000.1094149320@flay>
+In-Reply-To: <200409021309.04780.oliver@neukum.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Martin J. Bligh" <mbligh@aracnet.com>
-Cc: Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Oliver Neukum <oliver@neukum.org>
+Cc: Spam <spam@tnonline.net>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Martin J. Bligh wrote:
-|>For 30 years nothing much has happened in Unix filesystem semantics
-|>because of sheer cowardice
+Oliver Neukum wrote:
+| Am Donnerstag, 2. September 2004 11:52 schrieb Spam:
+|
+|>  Btw, version control for ordinary files would be a great feature. I
+|>  think something like it is available through Windows 2000/3 server.
+|>  Isn't it called "Shadow Copies". It works over network shares. :)
+|>
+|>  It allows you to restore previous versions of the file even if you
+|>  delete or overwrite it.
 |
 |
-| Or because it works fine, and isn't broken.
+| There's no need to do that in kernel, unless you want to be able
+| to force it unto users.
 
-Ok, maybe it wasn't cowardice.  Maybe it was laziness.
-
-Because cowardice tells me that data corruption is bad.  Data corruption
-kills kittens.  End data corruption now!
-
-Unfortunately, the only way to allow files to survive a crash is to
-implement transactions.  The simplest way is to do it in the filesystem
-and to export an interface to userland.  This is what Hans is doing,
-though AFAIK it's not done yet.
-
-Laziness tells me that I should just use Windows anyway, because "it
-works".  Switching to Linux requires training, porting apps requires
-work, and using Linux instead of Windows is a hell of a lot more work
-than just patching programs to do something like
-
-+ start_transaction()
-~  write()
-~  blah()
-~  write()
-+ end_transaction()
-
-How'd you like to be able to tell users "If a file gets corrupted, it's
-either a bug in OpenOffice or your hardware eats data."
+And on apps.  Should I teach OpenOffice.org to do version control?
+Seems a lot easier to just do it in the kernel, and teach everything to
+do version control in one fell swoop.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQTe9pngHNmZLgCUhAQLTZQ/5AZq31sPKOWB/eI4WtVhM76V2+pmQdfNk
-aZkPtwhZlVrGDJscp45OVNthwMiSskD07om4obUMac79BCmA5805clZ7i0X1uzQB
-SecyX/7XITWz3iwF4VIaxJgDoo7YPFfbpWS0NTmhDJPt6h5Z+goEccLdTABj5kVk
-gbex4xNgXzPrnopvjnWx+K2K3ydvXiX+8bWV200F9S+j0uCObcfSZ357uQPqlReP
-gKQhEs0pCcoQQua81rXJfUhP8hCbegCpUmhJNI0MwoTUvHTnBU/+99+cCsTLR4gN
-1XlbS9SIaaBXG7/AV9L7iQO5GF1t8mTMSe163EOzZ7ypLDb2km5e7zZ7t2DrA6SE
-Jgd0xT3cHjDgp1b3qhdeWYvt0QVfz5CGaiHukkT4pEOpsrM09BOhDhY72B74swuV
-byDIJ+y4X3J08i/a0zt15hBlVz1FUq7ac7doZZDt3orj93t3B/y4Xpb7tgzVGoWP
-T5AkR+uS5dGRUoMSI/btnPIK4ERlhbwFzCB5lgkas5kjp4dnawIKAk1wxPdhvEle
-g3SsNqSfBsA9hs6tzVw341GaWj6AWV7oOfg3j0c9I+7nt8SX5UeuTCwBWtCuwd/H
-+nnBulusiMnAm3tzQxq8aMpSVAqsZDywjgXSler1mNik4Ow5I5JdXl+Bf2ZWHF+G
-VHk4JVxMt/c=
-=3z3Z
+iQIVAwUBQTe+NXgHNmZLgCUhAQLW+RAAnoQIQLXSd2vQudOKAaLgXXCxoa+gEWIq
+zcNd+bIWPuQxwcZYlqbs/pDFiDky3XqLRaZv8PZx++rs9mMnv36eAtMX7uUp3egz
+MxymeDDI796wtsDDBGcZtO+WwmqJ0fPgQMN/Q237s2yccPGJoDIVle9mzZAfNIdO
+RDdLq142D+0t1iqfiVqaA+NgkArrGhcr0Hs/3TdviJX30gPL/Jm9eOvc3H3NgIQu
+XToDQB1UnLoyiIwc16IY4ZxYoxf1YnFtrivZb+YgC61mIQLeqJMjixCAtBVzAfKN
+2GmlsnfWcMCgXSEX8imkoNSLcmkv886+esGXZVzBbY1/Qg/f5MCXZilbb8e6+4I9
+U4ReEUg5fGJW8JyKAXqKGyvbC/lim55Vgcjp/J8mrhUa3Q3cwPKoi2GKNRcbdpT/
+pPB2SADA1eNrmFyGB7kLcqt0F9i4fIyTrItpHq9+m72OdFEze2OnWn+eIY8dRut7
+SaGTq6ZEYtkH8oWT9xSXp1d2TUxeSVTdx8EffIIdwXAVOO0Z9xd71MJPLMp3VOMH
+Qld4gjYjKFzwj3QlcWcsiVhk6Zq2fmqoOCQNfxhBzH1Le3v0F0ugammkQUXtRAub
+dKEWxGfkDGOwviJXKeckDNn98x88vh7C/7gxpAOIcVSRDhEV+MDWIfMMvotE/lxe
+393hENsXOgQ=
+=g+3J
 -----END PGP SIGNATURE-----
