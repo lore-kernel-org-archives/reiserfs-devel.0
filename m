@@ -1,44 +1,32 @@
-From: Russell Coker <russell@coker.com.au>
-Subject: Re: Multiple data streams...
-Date: Wed, 2 Apr 2003 22:40:57 +1000
-Message-ID: <200304022240.57346.russell@coker.com.au>
-References: <6167696812.20030402112847@tnonline.net>
-Reply-To: Russell Coker <russell@coker.com.au>
+From: Pierre Abbat <phma@webjockey.net>
+Subject: Re: Proposal for keying encrypted filesystem
+Date: Wed, 2 Apr 2003 08:05:21 -0500
+Message-ID: <200304020805.21198.phma@webjockey.net>
+References: <200303282026.23543.phma@webjockey.net> <200304012156.56798.phma@webjockey.net> <3E8A7DF5.9070302@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13524-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13525-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <6167696812.20030402112847@tnonline.net>
+In-Reply-To: <3E8A7DF5.9070302@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Anders Widman <andewid@tnonline.net>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Wed, 2 Apr 2003 19:28, Anders Widman wrote:
->    Is this supported, or will it be supported by ReiserFS?
->    I  use  this  feature quite quite much.. Maybe this is something to
->    add to ReiserFS?
+On Wednesday 02 April 2003 01:06, Hans Reiser wrote:
+> Pierre Abbat wrote:
+> >On Tuesday 01 April 2003 11:21, Hans Reiser wrote:
+> >>I think it is essential to the task that apps not be aware of keys.
+> >
+> >Indeed. The reiser4-specific syscall should insert or delete a key into
+> > the database;
 >
->    There is very brief info at Microsoft's website:
+> why?
 
-Does MS support multiple data streams properly yet?
-
-The last information I read about data streams indicated that commonly used 
-operations (such as typing "copy" in a command-line session) would not work 
-properly with multiple data streams.  Also many important programs such as 
-anti-virus programs did not support it.
-
-The Linux API does not support multiple data streams.  Support for extended 
-attributes has recently been added, this will do most things that you might 
-want to do with multiple streams and does it in a standard way that is 
-supported.
-
--- 
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
+We are obviously talking at cross purposes. Please present your protocols so 
+that we can all know what you are trying to accomplish with an encrypted 
+filesystem.
 
