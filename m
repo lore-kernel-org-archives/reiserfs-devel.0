@@ -1,43 +1,39 @@
-From: Chris Mason <mason@suse.com>
-Subject: [PATCH] data logging patches available for 2.4.21-preX
-Date: 15 Jan 2003 16:20:58 -0500
-Message-ID: <1042665658.31095.1374.camel@tiny.suse.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12367-reiserfs=m.gmane.org@namesys.com>
+From: eazgwmir@umail.furryterror.org (Zygo Blaxell)
+Subject: Re: How to break a reiserfs on Linux 2.4.20
+Date: 15 Jan 2003 17:44:26 -0500
+Message-ID: <b04o8a$eah$1@satsuki.furryterror.org>
+References: <b01ff1$sp0$1@genki.hungrycats.org> <avprcs$bfi$1@satsuki.furryterror.org> <b01ff1$sp0$1@genki.hungrycats.org> <15908.17236.966170.982897@laputa.namesys.com>
+Return-path: <reiserfs-list-return-12368-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Hello all,
+In article <15908.17236.966170.982897@laputa.namesys.com>,
+Nikita Danilov  <Nikita@Namesys.COM> wrote:
+>Zygo Blaxell writes:
+> > In article <avprcs$bfi$1@satsuki.furryterror.org>,
+> > Zygo Blaxell <eazgwmir@umail.furryterror.org> wrote:
+> > >I think I'm seeing a pattern of failure.  ...
+> > 
+> > And now I can reliably reproduce it.  It has nothing to do with MD,
+> > linear, raid, SMP, or unclean shutdowns.
+> > 
+> > I can reproduce this bug on a plain IDE disk partition in about three
+> > hours on Linux 2.4.20 (compiled for SMP but running on UP, full .config
+> > and system details available on request).  My test system has about 4 gigs
+> > under /etc, /usr, and /var, /dev/hdc2 is 25GB, and there is 1G of swap.
+>
+>Thanks for the report. We shall try to reproduce it tonight.
 
-I've updated the data logging patches to 2.4.21-pre3, once the suse
-mirror is done updating, you can download them from:
+Were you successful?  If your experience is anything like mine, you
+should have hundreds if not thousands of broken files by now...
 
-ftp.suse.com/pub/people/mason/patches/data-logging/2.4.21
-
-Changes:
-
-mount -o remount can switch between data modes.
-
-transaction overflow bug fix (BUG in journal_mark_dirty)
-
-fix for -ENOSPC hang when the block size < page size (ia64, alpha)
-
-integration with akpm's b_journal_head code from -ac.  Should make it
-possible for these patches to work both on vanilla kernels and Alan's
-branch.  I haven't tried this yet though, so testers would be
-appreciated.
-
-commit_super is now sync_fs
-
-I had to rework some of the data=ordered buffer handling code to merge
-with the changes in 2.4.21-preX, so use some caution with this code.
-
--chris
-
-
+-- 
+Zygo Blaxell (Laptop) <zblaxell@feedme.hungrycats.org>
+GPG = D13D 6651 F446 9787 600B AD1E CCF3 6F93 2823 44AD
