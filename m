@@ -1,33 +1,38 @@
-From: Ookhoi <ookhoi@humilis.net>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: what do you do that stresses your filesystem?
-Date: Tue, 24 Dec 2002 11:26:35 +0100
-Message-ID: <20021224112635.B20643@humilis>
-References: <3E06F360.7000708@namesys.com> <200212231421.52052.bofh@coker.com.au> <3E08284C.4020906@namesys.com> <20021224111526.A20643@humilis> <20021224131936.A25145@namesys.com>
-Reply-To: ookhoi@humilis.net
+Date: Tue, 24 Dec 2002 14:57:20 +0300
+Message-ID: <3E084BA0.6060103@namesys.com>
+References: <3E06F360.7000708@namesys.com> <200212231421.52052.bofh@coker.com.au> <3E08284C.4020906@namesys.com> <20021224111526.A20643@humilis>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12240-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12241-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20021224131936.A25145@namesys.com>
+In-Reply-To: <20021224111526.A20643@humilis>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <green@namesys.com>
-Cc: Ookhoi <ookhoi@humilis.net>, Hans Reiser <reiser@namesys.com>, ReiserFS <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ookhoi@humilis.net
+Cc: ReiserFS <reiserfs-list@namesys.com>
 
-Oleg Drokin wrote (ao):
-> On Tue, Dec 24, 2002 at 11:15:27AM +0100, Ookhoi wrote:
-> > Can you please make a reiserfs4 snapshot available for testing
-> > before you all enjoy a nice Christmas?
-> 
-> Russian (hm, should I say Greek Orthodox here?) Christmas is after New
-> Year, anyway ;)
+Ookhoi wrote:
 
-Owh, I'm sorry :-]  Guess I need to read up on that one.
+>Hans Reiser wrote (ao):
+>  
+>
+>>I mostly meant waiting for the fs to read all the binaries that get
+>>executed at startup, not just the journal replay time.
+>>    
+>>
+>
+>So you run redhat eh ;-)
+>
+>Can you please make a reiserfs4 snapshot available for testing before
+>you all enjoy a nice Christmas?
+>
+>
+>  
+>
+I pushed a little more on this... you'll get something before western Xmas.
 
-> We will release new snapshot before New Year, I think.
-
-Great, thanks!
