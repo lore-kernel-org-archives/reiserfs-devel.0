@@ -1,47 +1,57 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: secure delete?
-Date: Mon, 29 Mar 2004 04:59:30 -0800
-Message-ID: <40681DB2.3090104@namesys.com>
-References: <Pine.LNX.4.44.0403241535580.30246-100000@potato.zayda.com>
+Subject: Re: Reiser4 panic at fs/reiser4/lock.c:434
+Date: Mon, 29 Mar 2004 05:08:16 -0800
+Message-ID: <40681FC0.6010008@namesys.com>
+References: <1080175834.13000.10.camel@localhost.localdomain>	 <16482.50006.976095.680498@laputa.namesys.com> <1080243714.31969.6.camel@localhost.localdomain>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17564-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17565-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.44.0403241535580.30246-100000@potato.zayda.com>
+In-Reply-To: <1080243714.31969.6.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jason Holt <jason@lunkwill.org>
-Cc: Tom Vier <tmv@comcast.net>, reiserfs-list@namesys.com
+To: Jonathan Briggs <jbriggs@esoft.com>
+Cc: Nikita Danilov <Nikita@Namesys.COM>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Jason Holt wrote:
+Jonathan Briggs wrote:
 
->On Wed, 24 Mar 2004, Hans Reiser wrote:
+>On Thu, 2004-03-25 at 04:32, Nikita Danilov wrote:
 >  
 >
->>I  liked Jason's script.  Maybe we should consider putting it in 
->>reiserfsprogs.  Haven't yet looked at Tom's tool.....
+>>Jonathan Briggs writes:
+>> > The system is running Linux kernel 2.6.5-rc2.  It's tainted by Nvidia
+>> > drivers.
+>> > 
+>> > The system was compiling the kernel, and Reiser4 panicked.
+>>
+>>Was compilation multi-threaded (make -j)?
 >>    
 >>
 >
->You might have misunderstood the script.  It doesn't do secure delete.  It
->just demonstrates how shred is ineffective on journalling filesystems.
+>No, it was just plain make.  There were other programs using the disk at
+>the same time, though.  Evolution, rhythmbox, other desktop stuff.
 >
->						-J
->
->
->
+>[snip]
 >  
 >
-Well, actually now that I think about it, even if your script did what I 
-had thought it did, it still wouldn't clear out the journal area if data 
-logging was on.
-
-If someone wants to fix this issue, they are welcome to do so and send 
-us a patch.  Tom, can you resend your link to me in private email (I 
-left it in russia....).
+>>Please try following patch:
+>>    
+>>
+>[patch snipped]
+>
+>I tried to apply the patch, but it must be against a newer version of
+>Reiser4.  I haven't been following the internal-testing snapshots. 
+>Should I have been?  I'm still using the 2004-02-25 snapshot.  What
+>should I be using to apply your patch to?
+>
+>Thanks.
+>  
+>
+Can you upgrade to the latest Reiser4 on our website?  We have been 
+fixing about 5 bugs a week, so the latest is much more solid.
 
 -- 
 Hans
