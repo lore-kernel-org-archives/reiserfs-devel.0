@@ -1,51 +1,25 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiser4 plugins
-Date: Sat, 28 Aug 2004 15:09:35 -0700
-Message-ID: <4131029F.9040002@namesys.com>
-References: <20040825152805.45a1ce64.akpm@osdl.org> <41305619.9030401@namesys.com> <16688.36091.861155.985990@gargle.gargle.HOWL> <200408281010.44785.forward@zagon.com>
+Subject: Re: Separating Indexing and Searching (was silent semantic changes
+ with reiser4)
+Date: Sat, 28 Aug 2004 15:11:38 -0700
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <4131031A.7090403@namesys.com>
+References: <584702172685-BeMail@cr593174-a>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21024-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <200408281010.44785.forward@zagon.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <584702172685-BeMail@cr593174-a>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Konstantin Besch <forward@zagon.com>
-Cc: reiserfs-list@namesys.com
+To: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Cc: Will Dyson <will_dyson@pobox.com>, akpm@osdl.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-Konstantin Besch wrote:
+Alexander G. M. Smith wrote:
 
->>I wish you well in your new job, and thank you for the hard work you did 
->>for me.
->>    
->>
 >
+>
+>However, one of my (unfinished) experiments was to have magic directories that show query results as their contents.  One attribute of the directory (or even its name) would be the query string.  That way even old software (like "ls") could use queries!  Implementing queries-as-directories might require moving some things back into the kernel, or at least into some plug-in level.
 >  
 >
->> Hans
->>    
->>
->
->Oh yeah , Nikita , had to say this : BUT thank you for that hard work you did
->for us all. 
->It seems it is 'bout time to move out of the company, producing public 
->software, where leader of the project thanks participants for the work done 
->with words "for me" at the end.
->
->Always had my doubts that I should thanks Hans Reiser for the FS :)
->And the facts are that my servers for now get ext3. 
->Good Day in New York !
->
->                --Sincerely.
->
->  
->
-I paid his salary with my credit cards.  Under usual english rules and 
-capitalist traditions, that means that saying that he was working for me 
-is socially acceptable english, even if I understood that he worked for 
-more than the money. 
-
-Hans
+Beautiful example of the sort of thing that I don't want to be locked 
+out from doing by having the parser in user space.
