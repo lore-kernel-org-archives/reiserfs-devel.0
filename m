@@ -1,42 +1,48 @@
-From: Andreas Dilger <adilger@clusterfs.com>
-Subject: Re: Re: [STUPID TESTCASE] ext3 htree vs. reiserfs on 2.5.40-mm1
-Date: Fri, 4 Oct 2002 16:01:26 -0600
-Message-ID: <20021004220126.GB3000@clusterfs.com>
-References: <200210042254.23978.Dieter.Nuetzel@hamburg.de>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: 2.5.40 (was Re: ext3 htree vs. reiserfs on 2.5.40-mm1
+Date: Fri, 04 Oct 2002 18:21:21 -0400
+Message-ID: <200210042221.g94MLLF3015558@turing-police.cc.vt.edu>
+References: <200210042254.23978.Dieter.Nuetzel@hamburg.de> <200210042128.g94LSnF3012807@turing-police.cc.vt.edu>
+            <200210041754.15087.tomlins@cam.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11607-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_251282115P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11608-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200210042254.23978.Dieter.Nuetzel@hamburg.de>
+In-Reply-To: Your message of "Fri, 04 Oct 2002 17:54:15 EDT."
+             <200210041754.15087.tomlins@cam.org> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dieter =?unknown-8bit?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Cc: ReiserFS List <reiserfs-list@namesys.com>, Chris Mason <mason@suse.com>, Paul P Komkoff Jr <i@stingr.net>, Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+To: Ed Tomlinson <tomlins@cam.org>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-On Oct 04, 2002  22:54 +0200, Dieter N?tzel wrote:
-> Am Mittwoch, 2. Oktober 2002 10:48 schrieb Paul P Komkoff Jr:
-> > Replying to Andreas Dilger:
-> > > Why do you think data=writeback is better than data=journal?  If the
-> > > files have no data then it should not make a difference.
-> >
-> > It is better than default data=ordered I think :)
-> > Reiserfs worked fine because it don't have such kind of limit ...
-> 
-> Orange and apples, again?
-> 
-> Try with latest ReiserFS data-logging and see what we get?
-> Chris do you have something for 2.5.40+ ready?
+--==_Exmh_251282115P
+Content-Type: text/plain; charset=us-ascii
 
-I don't think it will make much difference - the files being created
-are zero-length files so the journaling mode is irrelevant.
+On Fri, 04 Oct 2002 17:54:15 EDT, Ed Tomlinson said:
 
-Cheers, Andreas
---
-Andreas Dilger
-http://www-mddsp.enel.ucalgary.ca/People/adilger/
-http://sourceforge.net/projects/ext2resize/
+> Look up EVMS.  It can support your lvm1 volumes and more.  They are pushing for
+> inclusion in 2.5 and have code for 2.5.40.  Having used both lvm1 and evms I perfer 
+> evms.
 
+I owe you a beer if you're ever in this corner of Virginia - that was the only
+thing keeping me from testing 2.5.N ;)
+
+/Valdis (who now has enough pieces to go test 2.5.40 ;)
+
+--==_Exmh_251282115P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQE9nhRhcC3lWbTT17ARAptUAJ9hMEQXT8PKMoJlDfFqjsZteGjaOwCeNwZw
+6QR5tmGcb7aNlBKK8pnO/JU=
+=lDWq
+-----END PGP SIGNATURE-----
+
+--==_Exmh_251282115P--
