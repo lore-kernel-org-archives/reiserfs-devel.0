@@ -1,92 +1,94 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: keys and inodes
-Date: Sun, 04 Jul 2004 12:46:26 +0400
-Message-ID: <40E7C3E2.10509@namesys.com>
-References: <1088802102.6434.80.camel@murdock.llnl.gov> <40E67C3D.6070609@namesys.com> <200407031650.55869.marcelo@macp.eti.br>
+From: Bruce Israel <israel@tux.org>
+Subject: Re: a hosed reiserfs
+Date: Sun, 4 Jul 2004 12:20:21 -0400
+Message-ID: <20040704122021.A25785@tux.org>
+References: <20040625115258.A27445@tux.org> <200406252006.55426.vitaly@namesys.com> <40DC58B7.109@namesys.com> <20040625144523.A5159@tux.org> <40E0595D.8060106@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19502-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19503-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200407031650.55869.marcelo@macp.eti.br>
+Content-Disposition: inline
+In-Reply-To: <40E0595D.8060106@namesys.com>; from reiser@namesys.com on Mon, Jun 28, 2004 at 10:46:05AM -0700
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Marcelo Pacheco <marcelo@macp.eti.br>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>
 
-Hello
+On Mon, Jun 28, 2004 at 10:46:05AM -0700, Hans Reiser wrote:
+>
+> www.namesys.com/support.html takes credit cards.  Thanks for being our 
+> customer.
 
-Marcelo Pacheco wrote:
-> So, inode numbers on Reiser are alocated on the fly, as files are used, and 
-> those numbers will change, so for example, ls -i is useless with reiser, as 
-> that number given for each file will change once the vfs structure gets 
-> released and later the file gets used again ?
-> 
+OK, done.
 
-No, once file is created ls -i will always return the same inode number 
-for it.
+Here's the current situation:
 
-> Just checking,
-> 
-> Marcelo Pacheco
-> 
-> On Saturday 03 July 2004 06:28, Vladimir V. Saveliev wrote:
-> 
->>Hello
->>
->>jenn sirp wrote:
->>
->>>Hi,
->>>
->>>I was hoping someone might be able to answer a couple of questions about
->>>inodes is Reiser(v3).
->>>
->>>I would like to know how ReiserFS inodes and the VFS inodes in the
->>>d_cache correspond with each other.
->>
->>You might want to read about dentry-inode relationship in
->>linux/Documentation/filesystem/vfs.txt.
->>
->>  Specifically, how and where it is
->>
->>
->>>that 'keys' get mapped to inodes in the system?
->>
->>Reiserfs provides set of vfs operations. The one which is responsible
->>for mapping keys to inode is lookup method. reiserfs implementation is
->>reiserfs_lookup. It searches for the file name in filesystem tree. If
->>name is found - file key is extracted from it and VFS inode is created
->>(connected to d_cache dentry).
->>File key is stored in reiserfs specific portion of VFS inode.
->>
->>
->>>Do ReiserFS keys change or get reconstructed when tails are packed or
->>>when the tree gets re-balanced?
->>
->>No. Once file is created - its key never changes. However, each position
->>in a file has its own key. For instance, 0-th byte of a file has key X,
->>Y, 1. 100-th byte of a file should be looked for with key X, Y, 101.
->>[X, Y] is the same for any part of file. This is what is extracted from
->>file name on lookup. Key of any other position within a file can be
->>easily calculated as we saw.
->>
->>Or do keys remain consistent throughout
->>
->>
->>>a file's lifetime in the system?
->>
->>Yes.
->>
->>
->>>Even the quickest response would be greatly appreciated.
->>>
->>>Thanks,
->>>
->>>Jenn
-> 
-> 
-> 
+My partition doesn't mount.  reiserfsck says there are bad blocks.  The
+output of 'debugreiserfs' is as follows:
 
+    Filesystem state: consistency is not checked after last mounting
 
+    Reiserfs super block in block 16 on 0x2148 of format 3.6 with standard journal
+    Count of blocks on the device: 4885760
+    Number of bitmaps: 150
+    Blocksize: 4096
+    Free blocks (count of blocks - used [journal, bitmaps, data, reserved] blocks): 1095151
+    Root block: 9426
+    Filesystem is NOT cleanly umounted
+    Tree height: 4
+    Hash function used to sort names: "r5"
+    Objectid map size 602, max 972
+    Journal parameters:
+	    Device [0x0]
+	    Magic [0x4edee6b]
+	    Size 8193 blocks (including 1 for journal header) (first block 18)
+	    Max transaction length 1024 blocks
+	    Max batch size 900 blocks
+	    Max commit age 30
+    Blocks reserved by journal: 0
+    Fs state field: 0x0:
+    sb_version: 2
+    inode generation number: 2033166
+    UUID: af13ddfc-8726-4732-bbf5-db17b6c6671d
+    LABEL: 
+    Set flags in SB:
+	    ATTRIBUTES CLEAN
+
+The partition table looks fine (and hasn't changed in the last 6 months or
+so). 
+
+I've tried running dd_rescue to copy the partition over; I've run it both
+forward and reverse.  Whenever I run it, it copies for a while and then
+hangs my system (Linux 2.6.5-gentoo-r1; also hangs a 2.6.3 kernel).
+
+When I say it hangs, I mean that all other shells and virtual consoles are
+non-responsive, and the only thing that works is the reset button on the
+front panel.
+
+I also tried /sbin/badblocks which hung the sytem as well.
+
+When I run dd_rescue forward, it copies about 4.5GB (out of 20GB total),
+before hanging, resulting in the following file:
+
+4511808 -rw-r-----    1 root     4615569408 Jul  2 23:50 hdf8
+
+I've also run it forward and then reverse on the same file.  It seems to
+only copy about 20 Meg or so in the reverse direction.  The most recent
+effort resulted in:
+
+4520612 -rw-r-----    1 root     20012073984 Jul  4 12:04 hdf8-2
+
+I've tried giving it starting byte counts of the size (or 1K less), but it
+still hangs, just a lot quicker.  Turning on dd_rescue's logging doesn't
+help; it appears that the system is locked up before anything is either
+written or flushed.
+
+This is a very slow process since I have to reboot after each time I run
+it. 
+
+What should I do?
+
+Bruce
