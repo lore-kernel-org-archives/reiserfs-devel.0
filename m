@@ -1,67 +1,49 @@
-From: Mihai RUSU <dizzy@roedu.net>
-Subject: Re: reiserfs v3 vs v4 bonnie++ benchmarks
-Date: Tue, 9 Mar 2004 23:14:01 +0200 (EET)
-Message-ID: <Pine.LNX.4.58L0.0403092308420.17447@ahriman.bucharest.roedu.net>
-References: <Pine.LNX.4.58L0.0403091811140.5982@ahriman.bucharest.roedu.net>
- <404DFACE.4090008@namesys.com> <Pine.LNX.4.58L0.0403091914240.8537@ahriman.bucharest.roedu.net>
- <404DFDBA.8040006@namesys.com> <Pine.LNX.4.58L0.0403091929530.9967@ahriman.bucharest.roedu.net>
- <404E0112.7080904@namesys.com>
+From: Nick Vahalik <nick@nsanity.com>
+Subject: Re: Reiserfs Data Recovery
+Date: Tue, 09 Mar 2004 15:24:07 -0600
+Message-ID: <404E35F7.8010503@nsanity.com>
+References: <404C81B9.4050504@nsanity.com> <20040308184124.GE5817@dbz.icequake.net> <404CC8AA.9020405@nsanity.com> <20040308215919.GB11093@dbz.icequake.net> <404CF46B.10000@nsanity.com> <20040309011311.GA15226@dbz.icequake.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17149-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17150-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <404E0112.7080904@namesys.com>
+In-Reply-To: <20040309011311.GA15226@dbz.icequake.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ryan Underwood <nemesis-lists@icequake.net>
 Cc: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Ryan Underwood wrote:
 
-On Tue, 9 Mar 2004, Hans Reiser wrote:
+>Oh wow, you do definitely want to run IBM DFT as soon as possible.  That
+>might be the only thing that is wrong... usually you would see some
+>syslog errors though when you tried to mount the drives if the system
+>was having problems reading from the drive(s).  DFT should not destroy
+>any data or make anything worse, but it will try to relocate the sector
+>if it is having trouble reading it.
+>  
+>
+Well, I ran the DFT, Quick, Advanced, and Bad Sector Tests on all three 
+of my drives.  (One boot and the two in the stripe) and they all 
+completely successfully without any errors.  The drives appear to have 
+checked out.
 
-> Yes, it would be interesting.  I think maybe we need to tweak reiser4 
-> more for benchmarks near to ram size.
+>I think you might try the DFT approach before giving up, but definitely
+>don't do anymore damage with reiserfsck. :)  Also, since this is a
+>stripe set, is the md device able to start the raid successfully?  If
+>so, and if it only fails when you try to mount the filesystem on the
+>raid, you will have better chances than if md can't even figure out that
+>you have a stripe set spanning those disks.
+>  
+>
+I'm using highpoint's source code driver (hpt37x2.o) compiled for my SMP 
+kernel.
+...
+But... when I dmesg I only see one processor...? Could that be an 
+issue... I'm gonna recompile and try it again.
 
-Hi again
+Nick Vahalik
 
-I have repeated the "block" read/write tests asking bonnie++ to write 5 GB 
-of data (10x my RAM size).
-
-reiser v3:
-Version  1.03       ------Sequential Output------ --Sequential Input- --Random-
-                    -Per Chr- --Block-- -Rewrite- -Per Chr- --Block-- --Seeks--
-Machine        Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP  /sec %CP
-dizzywork        5G 17340  89 46074  15 22140   5 16473  85 46145   6 102.8   0
-dizzywork,5G,17340,89,46074,15,22140,5,16473,85,46145,6,102.8,0,,,,,,,,,,,,,
-
-reiser v4:
-Version  1.03       ------Sequential Output------ --Sequential Input- --Random-
-                    -Per Chr- --Block-- -Rewrite- -Per Chr- --Block-- --Seeks--
-Machine        Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP  /sec %CP
-dizzywork        5G 17491  90 48452  14 23563  11 17426  89 47952   8 110.9   0
-dizzywork,5G,17491,90,48452,14,23563,11,17426,89,47952,8,110.9,0,,,,,,,,,,,,,
-
-You were right. The values now seem almost the same (well, reiser4 seems a 
-little bit better).
-
-Should I repeat the "many small files" tests too with lots more files ?
-
-> -- 
-> Hans
-
-- -- 
-Mihai RUSU                                    Email: dizzy@roedu.net
-GPG : http://dizzy.roedu.net/dizzy-gpg.txt    WWW: http://dizzy.roedu.net
-                       "Linux is obsolete" -- AST
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQFATjObPZzOzrZY/1QRAnOMAJ4glX0TXNnuz3hbKQiR4SGijXvE1QCePYOd
-HPRGgqPvWMuUb/UYIzUGtLE=
-=Gyjj
------END PGP SIGNATURE-----
