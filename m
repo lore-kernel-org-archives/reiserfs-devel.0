@@ -1,56 +1,45 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: Problem with the latest auto snapshot
-Date: Tue, 15 Jun 2004 12:14:41 +0400
-Message-ID: <20040615081441.GZ8091@backtop.namesys.com>
-References: <200406122131.25974.henning-04@die.informatik.uni-siegen.de> <20040612194649.GF4990@nysv.org> <200406131537.54853.henning-04@die.informatik.uni-siegen.de> <20040615080653.GY8091@backtop.namesys.com>
+From: Redeeman <redeeman@metanurb.dk>
+Subject: Re: request for permission
+Date: Tue, 15 Jun 2004 16:21:44 +0200
+Message-ID: <1087308923.18714.1.camel@redeeman.kaspersandberg.com>
+References: <1087248335.22689.1.camel@redeeman.kaspersandberg.com>
+	 <40CE810F.3020501@namesys.com>
+Reply-To: redeeman@metanurb.dk
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19194-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19197-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040615080653.GY8091@backtop.namesys.com>
+In-Reply-To: <40CE810F.3020501@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Henning Westerholt <henning-04@die.informatik.uni-siegen.de>
-Cc: Markus T?rnqvist <mjt@nysv.org>, reiserfs-list@namesys.com
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-On Tue, Jun 15, 2004 at 12:06:53PM +0400, Alex Zarochentcev wrote:
-> On Sun, Jun 13, 2004 at 03:37:54PM +0200, Henning Westerholt wrote:
-> > Am Samstag, 12. Juni 2004 21:46 schrieb Markus T?rnqvist:
-> > > I had something similar, with an old auto-snapshot, but I didn't get
-> > > those log messages. It also repeated on, 2004.06.09 under some mild load,
-> > > compiling .11-19.36 and doing a dist-upgrade. I'll dig out some traces
-> > > if it still repeats with this kernel, as they seem to have systematically
-> > > receeded.
-> > >
-> > > I wonder if we have something different concerning debug?
-> > > mjt@shrike:~$ zgrep -i reiser4 /proc/config.gz
-> > > [snip]
-> > 
-> > Hello Markus,
-> > 
-> > i'm using the same reiser4 config like you.
-> > 
-> > I just rebuild the partition, and start a small compile job. After them i 
-
-and please try new mkfs.reiser4 as well.
-
-> > started a fsck. It reported a new fatal error about a broken node. I attached 
-> > the output from fsck. I could reproduce this error two times. 
+On Tue, 2004-06-15 at 06:54, Hans Reiser wrote:
+> Redeeman wrote:
 > 
-> new fsck 0.5.5 is available for testing
-> (http://www.namesys.com/snapshots/2004.06.14-internal.testing/), please try it.
+> >hey hans.
+> >i would like to request permission to remove the banner reiser4progs
+> >come with on startup.
+> >the reason i ask is because, 1: i want to know if its all right, and 2:
+> >i have several reiser4 partitions, and it takes up almost all the boot
+> >screen, where i sometimes got to see something when experimenting.
+> >
+> >have a nice day.
+> >  
+> >
+> we only complain when distros remove them, if an end user cares enough 
+> to bother to remove them, he should remove them.
+okay, i just wanted to ask.
+also, if i may suggest it, i think you should remove the newline it
+creates, and maybe just make the message abit larger, but 1 line, so 4
+partitions of reiser4 doesent take up 12 lines on boot :)
 > 
-> Can you also enable CONFIG_REISER4_CHECK and CONFIG_REISER4_DEBUG?  It may help to
-> catch a bug faster.
-> 
-> -- 
-> Alex.
-
-Thanks.
-
+> Hans
 -- 
-Alex.
+Regards, Redeeman
+()  ascii ribbon campaign - against html e-mail 
+/\                        - against microsoft attachments
+
