@@ -1,72 +1,38 @@
-From: "Thomas Graham" <lkthomas@sml.dyndns.org>
-Subject: Re: Furure of ReiserfsV3?
-Date: Thu, 30 Oct 2003 19:03:20 +0800 (HKT)
-Message-ID: <5538.38705313883$1067569752@news.gmane.org>
-References: <3F9FC877.9000903@gmx.net>      
-    <1067436839.1632.253.camel@tiny.suse.com> <3F9FCF40.8060807@gmx.net>   
-    <.192.168.0.99.1067382465.squirrel@sml.dyndns.org>   
-    <3F9FE068.5060303@osiris.at>
-    <.202.66.40.14.1067446837.squirrel@sml.dyndns.org>
-    <3FA10515.4080403@gmx.net>
+From: "Vincent Ndi" <v.ndi@aramiska.net>
+Subject: reiserfs error messages
+Date: Fri, 31 Oct 2003 10:02:43 +0100
+Message-ID: <CJEKIBFPNDHNABAALMDICECMCGAA.v.ndi@aramiska.net>
+References: <200310290906.h9T96nsO020624@mail02.webpoint.co.at>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-15945-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15947-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FA10515.4080403@gmx.net>
+In-reply-to: <200310290906.h9T96nsO020624@mail02.webpoint.co.at>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Very interesting for your suggestion, does anyone got a benchmark to
-compare XFS with reiserfs3 for large amount data process ? ( I am talking
-about 20-30GB data pulling at once ) Thanks
+Hi everyone,
 
-> Thomas Graham wrote:
->>
->> Thanks, does reiserfs4 are stable to use after apply patches ?
->> and would it be back port into 2.4.x kernel ? Thanks.
-> As far as I know reiser4 is currently in Alpha stage and
-> no one should use it in production systems.
-> The developers can still crash this filesystem.
->
-> Reiser4 has a plugin architecture which makes it possible to add
-> features, but it currently has less features than reiser3.
->
-> Reiser4 is currently not even in the official 2.6 kernel series and
-> to my knowledge Namesys does not plan to backport it to the 2.4 series,
-> either.
->
->
-> My own subjective experience with Linux filesystems on 2.4 is:
-> ==============================================================
-> ext2: rock solid, very good performance, best fsck tools, good chances
->        of data recovery
-> ext3: stable, good performance, best fsck tools, compatible with ext2
-> reiserfs: very stable, excellent performance for small files (proxy
->            cache, webserver, software developer), no quotas, good fsck
->            tools, very sensitive to dying hardware
-> reiserfs + data logging + quota patches: stable, excellent performance
->                                           for small files, good fsck
->                                           tools, sensitive to dying
->                                           hardware
-> xfs: stable, good performance, excellent performance for large
->       files, huge feature set, best for samba, good fsck tools,
->       sensitive to dying hardware
-> jfs: stable, till 2.4.22 lower performance than other fs, for ibm
->       converts
-> --
-> lg, Chris
->
->
->
+My system is keeps reporting some reiserfs errors messages I don't really
+understand.Can someone advice me about the following error messages (how to
+interpret/correct them)?
+
+1) kernel: vs-13048: reiserfs_iget: key in inode [2 570 0 0] and key in
+entry [39 570 0 0] do not match
+
+2)kernel: vs-6020: check_leaf_block_head: invalid free space level=1,
+nr_items=21, free_space=65112 rdkey [5654 5656 2511 -1]<0>Kernel panic:
+REISERFS: panic (device sb == 0): vs-6020: check_leaf_block_head: invalid
+free space level=1, nr_items=21, free_spa
+
+any clue will be helpful
 
 
--- 
-HK Celtic Orchestra leader and coordanator: Thomas Graham Lau
-Phone number: 852-93239670    (24hours a day, 7days a week non-stop phone)
-Web site: http://sml.dyndns.org
-Email: lkthomas@sml.dyndns.org
+regards
+
+Vincent
+
