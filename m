@@ -1,68 +1,82 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: copying partition to partition, sector by
-	sector, live
-Date: 22 Apr 2002 19:39:11 -0400
-Message-ID: <1019518751.16727.39.camel@tiny>
-References: <20020421181614.GA11239@vega.ipal.net>
-	<20020422010733.GA2379@amphibian.dyndns.org>
-	<20020422013955.GB8407@vega.ipal.net>
-	<20020422224755.GA1710@amphibian.dyndns.org> 
-	<20020422232448.GE8407@vega.ipal.net>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: copying partition to partition, sector by sector, live
+Date: Mon, 22 Apr 2002 20:34:39 -0400
+Message-ID: <200204230034.g3N0YdQn030194@foo-bar-baz.cc.vt.edu>
+References: <20020421181614.GA11239@vega.ipal.net> <20020422010733.GA2379@amphibian.dyndns.org> <20020422013955.GB8407@vega.ipal.net>
+            <20020422224755.GA1710@amphibian.dyndns.org>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_-1486127692P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10134-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10135-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020422232448.GE8407@vega.ipal.net>
+In-Reply-To: Your message of "Mon, 22 Apr 2002 23:47:55 BST."
+             <20020422224755.GA1710@amphibian.dyndns.org> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Phil Howard <phil-reiserfs@ipal.net>
-Cc: Matthew Toseland <mtoseland@blueyonder.co.uk>, reiserfs-list@namesys.com
+To: Matthew Toseland <mtoseland@blueyonder.co.uk>
+Cc: Phil Howard <phil-reiserfs@ipal.net>, reiserfs-list@namesys.com
 
-On Mon, 2002-04-22 at 19:24, Phil Howard wrote:
-> On Mon, Apr 22, 2002 at 11:47:55PM +0100, Matthew Toseland wrote:
-> 
-> | On Sun, Apr 21, 2002 at 08:39:55PM -0500, Phil Howard wrote:
-> | > On Mon, Apr 22, 2002 at 02:07:33AM +0100, Matthew Toseland wrote:
-> | > 
-> | > | Ummm, LVM snapshots? (man lvcreate).
-> | > 
-> | > No.  Nothing to do with LVM.
-> | I was suggesting a solution. Your problem is that reiserfs's metadata is
-> | so dynamic that if you copy the partition while it is active, you end up
-> | with metadata loss, which has to be fixed by reiserfsck. A possible
-> | solution is to get a consistent snapshot. To do this, do:
-> | 
-> | lvcreate -n <snapshotname> -L 500M -v /dev/<vgname>/<partition name>
-> | dd if=/dev/<vgname>/snapshotname of=/usr/local/temp/snapshot.img bs=1M
-> | lvremove -f /dev/<vgname>/snapshotname
-> | 
-> | (1) 500M could be anything; it is the amount of space needed to log all
-> | changes to the partition while the dd is going on; you can extend it later
-> | but once it fills up completely, you're scr00d; presumably the dd will
-> | return an error
-> 
-> Sounds like journaling at the sector level.
-> 
-> How does all that change get replayed after the snapshot is done?
+--==_Exmh_-1486127692P
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-The snapshots use a simple copy on write setup.  Before changing a block
-on the source, the original is copied to the snapshot.  This allows for
-very fast snapshot creation, and a moderate runtime cost doing the
-copies.
+On Mon, 22 Apr 2002 23:47:55 BST, Matthew Toseland said:
 
-When you're done with the backup, you can just delete the snapshot
-without affecting the (now modified) original.
+> lvcreate -n <snapshotname> -L 500M -v /dev/<vgname>/<partition name>
 
-> 
-> I'm starting to think it might be better to go back to using rsync on
-> mounted filesystems.
+You missed the -s flag.  From 'man lvcreate' (LVM 1.0.3):
 
-It might.  Snapshots are very useful, but are best in databases and
-other setups where you need to freeze the FS at a specific point in
-time, and when you need an absolute minimum of application down time.
+-s, --snapshot
+  Create  a  snapshot  logical  volume  (or snapshot) for an existing, so=
 
--chris
+  called original  logical  volume  (or  origin).   Snapshots  provide  a=
+
+  'frozen image' of the contents of the origin while the origin can still=
+
+  be updated. They enable  consistent  backups  and  online  recovery  of=
+
+  removed/overwritten  data/files.  The  snapshot  does not need the same=
+
+  amount of storage the origin has. In a typical scenario,  15-20%  might=
+
+  be enough. In case the snapshot runs out of storage, use lvextend(8) to=
+
+  grow it. Shrinking a snapshot is supported by lvreduce(8) as well.  Run=
+
+  lvdisplay(8)  on  the snapshot in order to check how much data is allo=AD=
+
+  cated to it.
+
+> dd if=3D/dev/<vgname>/snapshotname of=3D/usr/local/temp/snapshot.img bs=
+=3D1M
+> lvremove -f /dev/<vgname>/snapshotname
+
+The rest of this looks OK (although I've *NOT* tried it myself).  I'm not=
+
+sure what the granularity of the snapshot is - whether you need to alloca=
+te
+space for each block that's modified, or each 4M segment, or what...
 
 
+-- =
+
+				Valdis Kletnieks
+				Computer Systems Senior Engineer
+				Virginia Tech
+
+
+--==_Exmh_-1486127692P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQE8xKwfcC3lWbTT17ARAv5TAKDVZBhcD5E9iSwOkoWb0o1sA0QnrgCgqOkQ
+lTYF90wtt2GTKV6jaBKBjos=
+=mLMH
+-----END PGP SIGNATURE-----
+
+--==_Exmh_-1486127692P--
