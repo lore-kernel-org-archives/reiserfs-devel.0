@@ -1,46 +1,41 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: 2.4.19-pending is pending
-Date: 05 Aug 2002 21:06:11 -0400
-Message-ID: <1028595971.1759.369.camel@tiny>
-References: <3D4F0A0A.4050603@mb.tu-ilmenau.de>
-	<1028592182.1759.300.camel@tiny> <3D4F16F4.9060802@mb.tu-ilmenau.de> 
-	<3D4F1A49.706@mb.tu-ilmenau.de>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Problem: lost first 5% of the harddisk
+Date: Tue, 6 Aug 2002 09:08:35 +0400
+Message-ID: <20020806090835.A18078@namesys.com>
+References: <CEEMLMOIDLIGGEOFGCDOCEAOCAAA.michaelbh@gmx.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11129-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11130-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3D4F1A49.706@mb.tu-ilmenau.de>
+Content-Disposition: inline
+In-Reply-To: <CEEMLMOIDLIGGEOFGCDOCEAOCAAA.michaelbh@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Michael Huber <michaelbh@gmx.net>
+Cc: reiserfs-list@namesys.com
 
-On Mon, 2002-08-05 at 20:37, Manuel Krause wrote:
- 
-> Yes, I forgot,
-> 
-> I want your patches to be on the namesys server in _this_ pending 
-> directory, too, at least. Especially after Hans' latest remark.
-> 
-> There should be more service on ReiserFS overall integrity, maybe, 
-> including your quota related work(!).
+Hello!
 
-Many of my patches do end up in the namesys pending directory.  The ones
-I put on the suse ftp server are there because I expect to have to
-maintain them over the long term, and I want them applied as a specific
-controlled set.
+On Mon, Aug 05, 2002 at 08:15:35PM +0200, Michael Huber wrote:
 
-The namesys site could mirror them, but it is usually easier to keep
-things up to date by just linking to my ftp directory on a web page.
+> while i changed my harddisk to another IDE-controller i lost
+> the first 2 gb of them and all partition and file system information too. 
+> the first 5 % where "initialized" with zeroes and could not be recovered.
+> is there any possibility to get out the filestructure from the remaining 
+> harddisk (about 10gb). harddisksize = 40gb 
 
-It does make it a little more difficult to follow the bleeding edge, but
-that's supposed to hurt, it adds to the sense of reward.
+User errors and hardware problems are dealt with based on
+http://www.namesys.com/support.html terms.
 
-You're right though, I'll start signing the stuff on my ftp directory.
+> the format used was reiserfs format version 3.5 with hash function r5
 
--chris
+Actually since reiserfs usually stores metadata at the beginning of the disk,
+the chances of recovering all of the info are very low.
+Most probably all of the metadata is gone and without the metadata it is
+kind of hard to restore real data.
 
-
+Bye,
+    Oleg
