@@ -1,39 +1,36 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: reiser4.1
-Date: Wed, 02 Mar 2005 18:11:17 +0300
-Message-ID: <1109776277.3504.469.camel@tribesman.namesys.com>
+From: Pysiak Satriani <pysiak.satriani@wp.pl>
+Subject: Re[2]: reiser4.1
+Date: Thu, 3 Mar 2005 09:55:20 +0100
+Message-ID: <37288019.20050303095520@wp.pl>
 References: <4461b4b458db80949fe1830f90501153@hotmail.com>
+ <1109776277.3504.469.camel@tribesman.namesys.com> <42263473.7050900@namesys.com>
+Reply-To: Pysiak Satriani <pysiak.satriani@wp.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4461b4b458db80949fe1830f90501153@hotmail.com>
+In-Reply-To: <42263473.7050900@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Gagan Rajpal <gagandeep_rajpal@hotmail.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello
+Hi
 
-On Wed, 2005-03-02 at 07:34, Gagan Rajpal wrote:
-> Are there any plans or schedule for a reiser4.1? 
+> Compression is what will be in 4.1, not the repacker.  At least, I hope
+> edward gets it done soon.....
+I've read an interview with Hans in the polish edition of Chip Special some
+time ago.
+I remember Hans saying that nowadays CPUs are so fast, they compress
+faster than HDDs move the heads around and do the writes. So compression,
+if done properly, can be with no negative impact to speed.
 
-Currently, nobody actively works on repacker (which is the main thing
-which is destinated for 4.1). OTOH, some work was done earlier, so
-hopefully, when 4.0 is considered stable, 4.1 will not take amount of
-time comparable with amount of time 4.0 took.
+Can you say what level of compression with which processors would handle
+it without speedloss?
 
-> when will it be safe 
-> to label reiser4 as safe for using on mission critical servers?
-> 
+Regards,
+Maciej
 
-After it is one year in Linus kernel.
 
-> Thanks,
-> Gagan
-> 
-> 
-> 
 
