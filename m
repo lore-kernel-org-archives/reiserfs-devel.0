@@ -1,53 +1,59 @@
-From: Russell Coker <russell@coker.com.au>
-Subject: Re: FIFO files
-Date: Thu, 19 Jun 2003 01:23:00 +1000
-Message-ID: <200306190123.00756.russell@coker.com.au>
-References: <20030617162127.GA14124@chepelov.org> <1055944386.27851.7.camel@passion.cambridge.redhat.com> <20030618142843.GP24357@parcelfarce.linux.theplanet.co.uk>
-Reply-To: Russell Coker <russell@coker.com.au>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: vpf-10680, minor corruptions
+Date: Wed, 18 Jun 2003 19:26:26 +0400
+Message-ID: <20030618152626.GA17240@namesys.com>
+References: <3EF07AFB.8060303@g-house.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14610-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14611-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030618142843.GP24357@parcelfarce.linux.theplanet.co.uk>
 Content-Disposition: inline
+In-Reply-To: <3EF07AFB.8060303@g-house.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Matthew Wilcox <willy@debian.org>
-Cc: reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Christian Kujau <evil@g-house.de>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, 19 Jun 2003 00:28, Matthew Wilcox wrote:
-> has anyone analysed this for races?  are they the same as the ones for
-> truncate?  (i suspect they aren't).  what are the semantics of another
-> thread or process reading from a block that's been punched out?  what are
-> the semantics of another thread or process writing to a block that gets
-> punched out?  what are the semantics of another thread or process that
-> has this region of the file mmaped?  what are the semantics if this
-> thread has it mmaped?  what if two threads try to punch out overlapping
-> regions simultaneously?  what if a region is being truncated and punched
-> out at the same time?
+Hello!
 
-In what way are they different from that of truncate?
+On Wed, Jun 18, 2003 at 04:45:15PM +0200, Christian Kujau wrote:
+> i'm running linux 2.5.70/2.5.72 and have a 2GB fs with Reiserfs on it.
+> from time to time reiserfsck the fs and some corrutions came up, which 
+> were fixed as suggested by --fix-fixable.
+> how comes? the data on the fs is not that important, it's a cache for 
+> Debian packages. I'm just curious _why_ there are corruptions anyway, 
+> since there is not even heavy load on the fs.
 
-It seems to me that punching a hole in a file is actually easier than 
-truncating a file as we don't have to change the length.  The issues of 
-mmap'd files and writing to a block that's being punched should be the same 
-as if the file was truncated.
+Hm, interesting. Do you had crashes/unexpected shutdowns before corruptions appears
+or are they appear without any reason at all?
 
-The only thing that punching a hole has to handle that truncating doesn't is 
-the corner case of punching a hole that does not align on block boundaries, 
-in which case zeros have to be written to the parts that aren't block 
-aligned, and for consistency they probably have to be written atomically.
+> /debian/dists/woody/main/binary-powerpc/Packages.gzvpf-10680: The file 
+> [2256 3144] has the wrong block count in the StatData (3344), should be 
+> (1680)
+> /source/Sources.gzvpf-10680: The file [2275 2349] has the wrong block 
+> count in the StatData (1432), should be (720)
+> /contrib/binary-powerpc/Packages.gzvpf-10680: The file [2225 523] has 
+> the wrong block count in the StatData (80), should be (40)
+> /source/Sources.gzvpf-10680: The file [2246 2785] has the wrong block 
+> count in the StatData (48), should be (24)
+> /non-free/binary-powerpc/Packages.gzvpf-10680: The file [2289 2782] has 
+> the wrong block count in the StatData (104), should be (56)
+> /source/Sources.gzvpf-10680: The file [2310 2471] has the wrong block 
+> count in the StatData (56), should be (32)
+> /non-US/dists/woody/non-US/main/binary-powerpc/Packages.gzvpf-10680: The 
+> file [2627 2495] has the wrong block count in the StatData (88), should 
+> be (48)
+> finished 
 
-As for truncating and punching at the same time, surely that would just be 
-equivalent to a truncate to whichever gives the shortest file and both system 
-calls would return success.
+Are there more files on this fs at the time of check?
 
--- 
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
+> the machine was booted yesterday evening, and is booted once in a week 
+> or so. it's an Alpha/EV45, Debian testing on it, glibc 2.3.1.
 
+Well, I guess it's time to clear the dust off our alpha and do some testing.
+
+Bye,
+    Oleg
