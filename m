@@ -1,56 +1,43 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: Unicode policy
-Date: Thu, 1 May 2003 19:48:19 +0400
-Message-ID: <20030501154819.GA15670@namesys.com>
-References: <200305011538.h41FcFn01653@linux1.futureware.at>
+Subject: reiserfsprogs 3.6.7 release
+Date: Thu, 1 May 2003 20:15:11 +0400
+Message-ID: <20030501161511.GA15766@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13912-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13913-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200305011538.h41FcFn01653@linux1.futureware.at>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Philipp G?hring <p.guehring@futureware.at>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com, ed@debian.org
 
 Hello!
 
-On Thu, May 01, 2003 at 05:38:04PM +0200, Philipp G?hring wrote:
+   Sigh, this is the out-of-schedule bugfix release that we release
+   because reiserfsprogs-3.6.5 and reiserfsprogs-3.6.6 introduced one additional
+   check that is not necessary, but breaks on old filesystems (the journal
+   parameters check) and lots of users are affected.
+   The only change in this release compared to 3.6.6 is changing the check
+   to be only performed in case of relocated journal.
 
-> I have some question regarding the Unicode policy of filenames in filesystem, 
-> especially ReiserFS. 
-> Are filenames stored in UTF-8?
+   Grab it from ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.7.tar.gz
 
-No. filenames are stored "as is". If you write those as unicode, you get unicode.
+   If you are just a user, you might want not to grab this release because you have
+   rebuilt your superblock most probably. If you are representing a distro, and
+   you are shipping/planning to ship reiserfsprogs-3.6.[56], you need this
+   release instead.
 
-There are several restrictions on filenames in Unix/Linux:
-You cannot use 0-byte and '/'-byte as part of filename.
+   This change was sent to some people already (namely to Ed Boraas), but it turned out
+   the patch was against wrong tree and did not apply to reiserfsprogs-3.6.6 at all.
 
-> Should they be stored in UTF-8?
+   Sorry for all the confusion.
 
-You decide how do you want to store your filenames.
-
-> Is it a question of the filesystem?
-
-Some filesystems do it, but I doubt FS should do it.
-
-> Is it the applications job to interpret it?
-
-It is debatable. Kernel/VFS/some library might do this as well.
-
-> Or is the filesystem encoding independent?
-
-Some filesystems are encoding-dependent and some are not (because they do not know anything about encoding at all).
-
-> Are there migration plans to Unicode?
-
-Migration of what? Migration of reiserfs to unicode is not planned.
-Same for reiser4. You can write whatever plugin to store filenames in any way
-you might imagine in reiser4.
+   (And reiserfsprogs-3.6.7-pre1 is still the latest code in fact, Vitaly might release it
+    as reiserfsprogs-3.6.8-pre1 after May 11th, when all these long boring russian
+    holidays are over)
 
 Bye,
     Oleg
