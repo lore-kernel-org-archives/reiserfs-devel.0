@@ -1,82 +1,72 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: NFSv2 problem? initctl problem?
-Date: Thu, 19 Aug 2004 14:30:43 +0300
-Sender: owner-linux-fai@rrz.uni-koeln.de
-Message-ID: <20040819113043.GI1284@nysv.org>
-References: <20040818145103.GE1284@nysv.org> <200408191256.40317.bernd-schubert@web.de>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: Fwd: Bug#266648: core dump on ENXIO
+Date: Thu, 19 Aug 2004 15:53:25 +0400
+Message-ID: <200408191553.25304.vitaly@namesys.com>
+References: <20040818221645.GA2259@raptus.homelinux.net>
 Mime-Version: 1.0
-Return-path: <owner-linux-fai@rrz.uni-koeln.de>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20400-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <20040818221645.GA2259@raptus.homelinux.net>
 Content-Disposition: inline
-In-Reply-To: <200408191256.40317.bernd-schubert@web.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com, linux-fai@rrz.uni-koeln.de
+To: Domenico Andreoli <cavok@tiscali.it>, reiserfs-list@namesys.com
 
-On Thu, Aug 19, 2004 at 12:56:34PM +0200, Bernd Schubert wrote:
+Hi Domenico, 
+
+On Thursday 19 August 2004 02:16, Domenico Andreoli wrote:
+> hi,
 >
->Don't use te unfsd except for special reasons. If you want to test a userspace 
->daemon just use unfs3 (unfs3.sf.net).
+> Harald Dunkel reported this bug on the latest debian package.
+>
+> is this a bug?
+>
+> cheers
+> dom
+>
+> ----- Forwarded message from Harald Dunkel <harald.dunkel@t-online.de>
+> -----
+>
+> Date: Wed, 18 Aug 2004 17:27:06 +0200
+> From: Harald Dunkel <harald.dunkel@t-online.de>
+> Subject: Bug#266648: core dump on ENXIO
+>
+> If there is no hardware behind /dev/sdd, then
+> "mkreiserfs /dev/sdd" dies with SIGABRT and a
+> core dump file instead of setting a valid exit
+> value to indicate a problem.
 
-I may have given the wrong impression here, I am still trying to use
-knfsd here, I just tried the userspace one and noticed that it did not work.
+I will look at such places and will try to improve them.
 
->"man 5 nfs", mountoption is "nfsvers=3"
-
-Heh, sorry about that one :)
-OK, just have to google around on how to have it affect root=/dev/nfs
-
->> With the user-space NFS implementation I got the file id of 1476542499
->I wouldn't use the old userspace daemon with reiserfs at all, if you want to 
->do this, just use unfs3.
-
-So I assume there's something really broken here, but still, it is irrelevant
-because knfsd, which should work, doesn't work. And unless you or anyone
-else who knows better than me about the situation on Linux NFS implementations
-tells me unfs3 is better than knfsd, I'll stick to it :)
-
->2.) To test if exporting works, I would take a second non-rootnfs system and 
->try to mount the exported directories on this system. This will help you a 
->lot since you can experiment with mount options on this system and you can 
->check the syslogs.
-
-I can mount the root-fs-to-be, /usr/lib/fai/nfsroot, on netbsd and read
-from it. Unfortunately I don't yet have any other Linux at hand, and
-depending on if FAI works or not, I won't have one today. At least I don't
-think I can accomplish one, unless I conjure up an installation CD.
-
->3.) I mounting from you second server works, you can go on and see what 
->happens in your fai environment.
-
-Is there any way of seeing more of the FAI environment?
-Possibly I should edit in an interactive shell somehow.
-
-But is it usual for knfsd with v2 to get stuck on /dev/initctl?
-For the record, I also tried sync instead of async and with taking away
-devfs=nomount...
-
-From what I've gathered, getattr is just a side-effect of doing something
-else, but NFS doesn't say what it's doing to a file. Does FAI or something
-have a verbosity switch for this? More verbose than FAI_FLAGS: verbose=1 :P
-
->Your questions are completety off topic from the view of reiserfs, since there 
->are many people (including our group) who use nfs and reiserfs. However you 
-
-I'm almost desperate here, please forgive me :)
-
-I will remove the reiserfs-list in my next reply.
-
->PS: If you should decide to unfs3 for some tests, make sure it is able to 
-
-I might if I have more time, now I'd rather have just something, ANYTHING,
-that works..
-
->include the ext2_fs.h, unfortunality the one from the debian kernel-headers 
->package is broken :(, replace it with the file from Mariusz Mazur headers 
->(http://ep09.pld-linux.org/~mmazur/linux-libc-headers/)
-
-Thanks for the tip and the reply!
+> # mkreiserfs /dev/sdd
+> mkreiserfs 3.6.18 (2003 www.namesys.com)
+>
+> A pair of credits:
+> Yury Umanets  (aka Umka)  developed  libreiser4,  userspace  plugins,  and 
+> all userspace tools (reiser4progs) except of fsck.
+>
+> Chris Mason wrote the journaling code for V3,  which was enormously more
+> useful to users than just waiting until  we could create a wandering log
+> filesystem as Hans would have unwisely done without him.
+> Jeff Mahoney optimized the bitmap  scanning code for V3,  and performed the
+>  big endian cleanups.
+>
+>
+> count_blocks: open failed (No such device or address)
+> Aborted (core dumped)
+>
+> ----- End forwarded message -----
+>
+>
+> -----[ Domenico Andreoli, aka cavok
+>  --[ http://people.debian.org/~cavok/gpgkey.asc
+>    ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
 
 -- 
-mjt
+Thanks,
+Vitaly Fertman
 
