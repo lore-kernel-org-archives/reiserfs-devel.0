@@ -1,37 +1,50 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: [Fwd: Re: we need a slogan for our reiser4 t-shirt]
-Date: Sat, 26 Jun 2004 14:24:02 +0300
-Message-ID: <20040626112401.GD4990@nysv.org>
-References: <33933.192.168.1.9.1088247680.squirrel@192.168.1.9>
+From: Michael Milverton <camel78@iprimus.com.au>
+Subject: Re: we need a slogan for our reiser4 t-shirt
+Date: Sat, 26 Jun 2004 19:28:37 +0800
+Message-ID: <200406261928.46183.camel78@iprimus.com.au>
+References: <40D9DC3A.9090209@namesys.com> <200406261304.03783.camel78@iprimus.com.au> <20040626093854.GC4990@nysv.org>
+Reply-To: camel78@iprimus.com.au
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19414-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed;
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1;
+  boundary="Boundary-02=_t3V3AuT8skcpq7g";
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19415-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <33933.192.168.1.9.1088247680.squirrel@192.168.1.9>
+In-Reply-To: <20040626093854.GC4990@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Redeeman <redeeman@metanurb.dk>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Sat, Jun 26, 2004 at 01:01:20PM +0200, Redeeman wrote:
+--Boundary-02=_t3V3AuT8skcpq7g
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-These made me think of some variations...
+On Sat, 26 Jun 2004 05:38 pm, Markus T=F6rnqvist wrote:
+Thanks Markus :)
+> Personally, I love this suggestion.
+=2D-=20
+GNU/Linux: Secure, Stable, Free
+Michael <camel78@iprimus.com.au>
 
->"my filesystem has your features as plugins."
+--Boundary-02=_t3V3AuT8skcpq7g
+Content-Type: application/pgp-signature
+Content-Description: signature
 
-"My filesystem fulfills your needs."
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
 
->"wonder where you files went? they wanted reiser4!"
->or something like that. showing that the files themselves wants to be
->stored on reiser4!
+iQCUAwUAQN1d7TbWs3O08JjCAQIlVQP2IDPcerrZqlgwLrKeI5er1VJrjotQpaeF
+IBobgiqA2QhBxOM1E11TkpOgmxMRF9zzL4cw+AEG3GZRhA9zvqYcZ/haJ5Db+207
+7KrlzP6oLz6QZPTtTf9whi6/mpBI3F6VMJ02ViFOTM1ApEY/DGPR6Vini8hT5GXp
+LdfAm/nUSw==
+=npCR
+-----END PGP SIGNATURE-----
 
-"Reiser4 makes your files smarter."
-"Reiser4 sapientia habet. Satis dictum."
-
--- 
-mjt
-
+--Boundary-02=_t3V3AuT8skcpq7g--
