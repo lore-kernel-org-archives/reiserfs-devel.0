@@ -1,26 +1,20 @@
-From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
 Subject: Re: file as a directory
-Date: 24 Nov 2004 15:25:54 +0000
-Message-ID: <1101309954.2779.15.camel@pear.st-and.ac.uk>
-References: <2c59f00304112205546349e88e@mail.gmail.com>
-	 <41A1FFFC.70507@hist.no> <41A21EAA.2090603@dbservice.com>
-	 <41A23496.505@namesys.com> <1101287762.1267.41.camel@pear.st-and.ac.uk>
-	 <4d8e3fd304112407023ff0a33d@mail.gmail.com>
+Date: Wed, 24 Nov 2004 17:11:28 +0100
+Message-ID: <200411241711.28393.christian.mayrhuber@gmx.net>
+References: <2c59f00304112205546349e88e@mail.gmail.com> <1101287762.1267.41.camel@pear.st-and.ac.uk> <4d8e3fd304112407023ff0a33d@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22550-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S262691AbUKXQOX@vger.kernel.org>
 In-Reply-To: <4d8e3fd304112407023ff0a33d@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>
-Cc: Hans Reiser <reiser@namesys.com>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>, peter.foldiak@st-andrews.ac.uk
+Cc: linux-kernel@vger.kernel.org
 
-On Wed, 2004-11-24 at 15:02, Paolo Ciarrocchi wrote:
+On Wednesday 24 November 2004 16:02, Paolo Ciarrocchi wrote:
 > On 24 Nov 2004 09:16:03 +0000, Peter Foldiak
 > <peter.foldiak@st-andrews.ac.uk> wrote:
 > [...] 
@@ -30,19 +24,41 @@ On Wed, 2004-11-24 at 15:02, Paolo Ciarrocchi wrote:
 > I don't undersand how you want to use Xpath for not XML file.
 > I agree with you that the idea behind Xpath is cool but I fail to
 > unserstand how it can be applied to anything but XML
+> 
+> -- 
+> Paolo
+> Picasa users groups: www.picasa-users.tk
+> join the blog group: http://groups-beta.google.com/group/blog-users
+> 
 
-My message was mainly about XML, for which it is easy.
-For non-XML, you need some other way of knowing the file format. The
-example that originally came up in this thread was
+Apache Cocoon uses so called generators to parse non-XML formats and produce a 
+XML representation thereof. This XML can be addressed by XPath.
+To store modifications back this XML needs to be serialized to the original
+format. That's **very** fat and slow.
 
-/etc/passwd/[username]
+Maybe an automount with a special fuse filesystem could accomplish this.
 
-In this case, the passwd file has a known format.
-Other file types, like LaTex, html, jpeg also have (at least partially)
-known formats. Some selection should be possible even for unknown
-formats (e.g. byte range, line-range). There could also be some way of
-specifying a new format but I don't know how to do this well. You could
-give names (like filenames) to parts of files.
-But I think the first step would be to concentrate on XML, and worry
-about the rest later.   Peter
+For example:
+# cd /etc/passwd/..metas/contents/
 
+automounts /etc/passwd as "fuse-xpath-passwd" fs 
+to /etc/passwd/..metas/contents/
+
+Doing 'cat /etc/passwd/..metas/contents/shell[username = "joe"]' could work 
+then.
+
+Reiser4 would need a content-mount plugin that automounts
+the respective file by means of a per file configureable
+mount command. Something like
+# cat /etc/passwd/..metas/plugins/content-mount
+-t fuse-xpath-passwd -o ro
+
+fuse-xpath-* filesystems would have to be written. These could be designed 
+similiar to the apache cocoon approach of generators/serializers to
+work with an intermediate XML representation of the file interior.
+
+All the stuff besides mounting the fuse-xpath-fs's would happen in userspace.
+I don't think that anyone can guarantee posix fs semantics by this approach.
+
+-- 
+lg, Chris
