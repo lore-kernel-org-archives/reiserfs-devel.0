@@ -1,35 +1,54 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: where's the large journal patch?
-Date: Mon, 19 May 2003 12:26:03 +0400
-Message-ID: <20030519082603.GA6128@namesys.com>
-References: <20030519051620.GA846@zero>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: Reiser4 the Atomic Filesystem (sloganeering)
+Date: Mon, 19 May 2003 12:39:17 +0400
+Message-ID: <16072.38965.324829.786682@laputa.namesys.com>
+References: <m1r86y4vlt.fsf@orchid.mirar.org>
+	<20030516192346.68883.qmail@web13602.mail.yahoo.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14156-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14157-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030519051620.GA846@zero>
+In-Reply-To: <20030516192346.68883.qmail@web13602.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tom Vier <tmv@comcast.net>
-Cc: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: sean sturgeon <seansturgeon@yahoo.com>, Mirar <mirar-yg@mirar.org>, ReiserFS <reiserfs-list@namesys.com>, beverly <beverly@namesys.com>, nina reiser <ninasha@namesys.com>
 
-Hello!
+sean sturgeon writes:
+ > 
+ > --- Mirar <mirar-yg@mirar.org> wrote:
+ > > Hans Reiser <reiser@namesys.com> writes:
+ > > 
+ > > > what do you guys think of that as a title for a
+ > > description of reiser4
+ > > > on our website.  The idea being that every
+ > > operation is performed as
+ > > > an atomic operation, thus it is an atomic
+ > > filesystem.  Atomic tends to
+ > > > have connotations of being powerful as well....
+ > > 
+ > > Why not add some "secure filesystem transactions" in
+ > > there too? :)
+ > > 
 
-On Mon, May 19, 2003 at 01:16:20AM -0400, Tom Vier wrote:
+atomfs is cute name for a file system too.
 
-> i looked through ftp.namesys.com and the web site, but i couldn't find the
-> patch that allows for >32meg journals. the reisertunefs man page mentions
-> that you need a patch, but the mkreiserfs man page does not. i'm looking for
-> a patch for 2.4.20 or .21-rc2. thanks.
+ > Atomic sounds chic-retro, too!  Bev should re-do the
+ > site's 3-d illustrations giving h/her a retro-50s
+ > appearance ala "The Jetsons"...if you use "atomic"
+ > then consider other descriptives of a similar vein,
+ > e.g. spiffy, technicolor with surround sound, square,
+ > daddio, keen, flop a hop, nowheresville, etc.
 
-The patches you are looking for are at ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.21
-(this is against 2.4.21-rc2, you need 02-.. and 03-.. patches).
+I wish I understand a single word here. :)
 
-I will update our site with this info.
+ > 
+ > $Sean
+ > > /Mirar
+ > 
+ > 
 
-Bye,
-    Oleg
+Nikita.
