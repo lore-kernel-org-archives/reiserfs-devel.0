@@ -1,33 +1,43 @@
-From: Christoph Hellwig <hch@infradead.org>
+From: Andreas Dilger <adilger@clusterfs.com>
 Subject: Re: [PATCH]: reiser4 [5/8] export remove_from_page_cache()
-Date: Thu, 31 Oct 2002 16:58:19 +0000
-Sender: linux-kernel-owner@vger.kernel.org
-Message-ID: <20021031165819.A11604@infradead.org>
-References: <15809.21559.295852.205720@laputa.namesys.com> <20021031161826.A9747@infradead.org> <15809.22856.534975.384956@laputa.namesys.com> <20021031163104.A9845@infradead.org> <15809.24115.993132.576769@laputa.namesys.com>
+Date: Thu, 31 Oct 2002 10:33:11 -0700
+Message-ID: <20021031173311.GA23959@clusterfs.com>
+References: <15809.21559.295852.205720@laputa.namesys.com> <20021031161826.A9747@infradead.org> <15809.22856.534975.384956@laputa.namesys.com> <20021031163104.A9845@infradead.org>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
+Return-path: <reiserfs-list-return-11870-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <15809.24115.993132.576769@laputa.namesys.com>; from Nikita@Namesys.COM on Thu, Oct 31, 2002 at 07:45:39PM +0300
+In-Reply-To: <20021031163104.A9845@infradead.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: Christoph Hellwig <hch@infradead.org>, Linus Torvalds <Torvalds@Transmeta.COM>, Linux Kernel Mailing List <Linux-Kernel@Vger.Kernel.ORG>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: Christoph Hellwig <hch@infradead.org>, Nikita Danilov <Nikita@Namesys.COM>, Linus Torvalds <Torvalds@Transmeta.COM>, Linux Kernel Mailing List <Linux-Kernel@Vger.Kernel.ORG>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-On Thu, Oct 31, 2002 at 07:45:39PM +0300, Nikita Danilov wrote:
-> Interesting. Then, XFS and JFS meta data in the page cache probably
-> are linearly ordered, and there it is never necessary to remove meta
-> data page from the middle of the mapping, right?
+On Oct 31, 2002  16:31 +0000, Christoph Hellwig wrote:
+> On Thu, Oct 31, 2002 at 07:24:40PM +0300, Nikita Danilov wrote:
+> > Reiser4 stores meta-data in a huge balanced tree. This tree is kept
+> > (partially) in the page cache. All pages in this tree are attached to
+> > "fake" inode. Sometimes you need to remove node from the tree. At this
+> > moment page has to be removed from the fake inode mapping.
+> 
+> What about chaing truncate_inode_pages to take an additional len
+> argument so you don't have to remove all pages past an offset?
 
-The issue is rather different for XFS and JFS.  in JFS most metadata
-(actually all metadata but the small superblock) is stored in inodes,
-and it's accessed through the pagecache mapping for those inodes.
+That would be what we have been calling "punch", and is quite useful
+for putting holes in files (i.e. making them sparse again).  This
+can be used for InterMezzo (among other things) so that the KML log
+file can be growing at the end, but being punched out at the start
+so it doesn't use up a lot of disk space.
 
-All access to those pages doesn't go directly through the pagecache
-interface but a small metapage wrapper.  When the page is removed it's synced
-to disk and removed from the metapage hash, so that you can't acess it
-anymore.  It might still be on the VM lists for a while.
+Not that I'm holding my breath on getting this in the kernel, but
+it is definitely useful.
 
-XFS on the other hand only uses the blockdevice mapping to acess it's
-metadata so it doesn't have to remove the page explicitly from the
-cache ever.
+Cheers, Andreas
+--
+Andreas Dilger
+http://www-mddsp.enel.ucalgary.ca/People/adilger/
+http://sourceforge.net/projects/ext2resize/
+
