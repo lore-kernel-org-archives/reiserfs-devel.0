@@ -1,40 +1,52 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: [BK] ReiserFS file write bug fix for 2.4
-Date: Fri, 13 Sep 2002 09:05:40 +0400
-Message-ID: <20020913090540.A4723@namesys.com>
-References: <5.1.1.6.2.20020912183504.01d24f60@pop.tvnet.hu>
+Subject: Re: Copy time comparison 2.4.20-pre6 <-> 2.4.19+data-logging (was:Compatibility of  current 2.4.19.pending ...)
+Date: Fri, 13 Sep 2002 11:37:35 +0400
+Message-ID: <20020913113735.A6022@namesys.com>
+References: <3D7FDEA5.7040806@mb.tu-ilmenau.de> <3D81076E.6090408@mb.tu-ilmenau.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11437-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11438-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <5.1.1.6.2.20020912183504.01d24f60@pop.tvnet.hu>
+In-Reply-To: <3D81076E.6090408@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Newsmail <newsmail@satimex.tvnet.hu>
-Cc: reiserfs-list@namesys.com
+To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
 Hello!
 
-On Thu, Sep 12, 2002 at 06:40:10PM +0100, Newsmail wrote:
-> > The mount option (-o alloc=prealloc min=4:preallocsize=9) only or better
-> > a "reformat"?
-> > Those mount options are no longer needed starting from 2.4.20-pre6.
-> > They are default. Reformat is not needed, but all the blocks allocated by
-> > old allocator will remain at their old places of course.
-> I use 2.4.20-pre4 without these mount options. So apparently reiserfs is 
-> much slower than the optimal am I right? (if my memory is good this is 
-> about some speed optimization right?).
+On Thu, Sep 12, 2002 at 11:30:22PM +0200, Manuel Krause wrote:
 
-It depends on kind of workloads you have. But in general - yes, it is somewhat
-slower and if you have massive parallel writers, on-disk blocks layout is
-suboptimal.
-You should use above mount options (alloc=preallocmin=4:preallocsize=9)
-or upgrade to 2.4.19-pre7 (of that's not our yet, then to whatever is the
-current state of Marcelo's bk repository is ).
+> >When I see the discussion about the new block-allocator, the testing 
+> >directory etc. I assume a definite "No." (Please, please, correct me, if 
+> ;-) You really didn't correct me so far. Mmh. :-(
+
+Datalogging is incompatible with stuff in testing directory. It won't apply
+cleanly to new block allocatior, but that's can be easily fixed.
+
+> >So, for the overnight change to pre-kernel 7, where are the new 
+> >data-logging patches Hans even announced to lkml?
+> So I really got a 2.4.20-pre6 compiled with the 
+> preempt-kernel-rml-2.4.20-pre5-1.patch and Olegs fix he sent to the list 
+> yesterday. BTW, have the testing patches from -pre5 gone into -pre6? It 
+> isn't clear to me.
+
+Testing patches were merged into -pre6 by Marcelo's mistake and -pre7
+have these patches removed already.
+
+> Application startup timings of NS-7.0 and OOo-1.0.1 didn't increase. :-))
+
+Sure, read code path did not changed at all.
+
+> I hope I don't need to comment on the values...
+
+Sure. datalogging and new file_write code are not solutions to same problem.
+These are solutions for different problems and can be used together (after
+merging of course) for even better performance, I hope ;)
 
 Bye,
     Oleg
