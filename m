@@ -1,45 +1,44 @@
-From: Russell Coker <russell@coker.com.au>
-Subject: Re: How to build a big file server
-Date: Thu, 5 Jun 2003 21:11:34 +1000
-Message-ID: <200306052111.34179.russell@coker.com.au>
-References: <1054800852.1997.15.camel@wusel.schnulli.de> <200306052025.05910.russell@coker.com.au> <1054809506.1997.76.camel@wusel.schnulli.de>
-Reply-To: Russell Coker <russell@coker.com.au>
+From: "Bill Rees" <brees@benchmarkautomation.com>
+Subject: RE: How to build a big file server
+Date: Thu, 5 Jun 2003 07:27:04 -0400
+Message-ID: <NHBBIGLOALLFLCNJNOLHMEFDCBAA.brees@benchmarkautomation.com>
+References: <200306051045.53677.m.c.p@gmx.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14430-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-14433-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1054809506.1997.76.camel@wusel.schnulli.de>
-Content-Disposition: inline
+In-Reply-To: <200306051045.53677.m.c.p@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Heinz-Josef Claes <hjclaes@web.de>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
+
+I'll second the 3ware recommendation.
+
+-----Original Message-----
+From: Marc-Christian Petersen [mailto:m.c.p@gmx.net]
+Sent: Thursday, June 05, 2003 4:46 AM
+To: Heinz-Josef Claes; Ragnar Kj=F8rstad
 Cc: reiserfs-list@namesys.com
+Subject: Re: How to build a big file server
 
-On Thu, 5 Jun 2003 20:38, Heinz-Josef Claes wrote:
-> Am Don, 2003-06-05 um 12.25 schrieb Russell Coker:
-> > On Thu, 5 Jun 2003 20:13, Heinz-Josef Claes wrote:
-> > > My question also was about hardware or software raid. If I'm using
-> > > software raid, a hardware raid 1 for the OS is not a too bad idea.
-> >
-> > Booting from software RAID-1 is easy to setup.  I've done it with both
-> > SCSI and IDE software RAID.
->
-> Perhaps I'm not up to date, but as far as I know rebooting with a broken
-> boot disk needs a bios which can switch automatically to the other disk
-> of the raid 1. If you have lots of machines (and which are standing
-> outside) this is an advantage.
 
-That can be done, but it depends on the error.  If the hard drive is totally 
-dead then many BIOSes will handle this for even IDE disks (and I expect every 
-SCSI sytem to handle it).  If the hard drive has a bad sector as part of the 
-boot process then it probably won't work.
+On Thursday 05 June 2003 10:42, Heinz-Josef Claes wrote:
 
--- 
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
+Hi Heinz,
+
+> We used a cheap 3Com IDE RAID controler (sorry, don't know which one)
+> one and a half year ago (without writeback-cache, in another company).
+> It was terribly slow when writing with hardware RAID. With software
+> RAID, it was much faster - that's the reason for my question. Do you
+> know a useful IDE RAID controler which runs with linux? (For your
+> information: the machines are not mission critical, only for having an
+> (additional) online backup for about 5000 users).
+3ware Controller. Works perfect.
+
+--
+ciao, Marc
+
 
