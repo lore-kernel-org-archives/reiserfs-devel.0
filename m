@@ -1,38 +1,30 @@
-From: Chris Mason <mason@suse.com>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: Symbol collisions in patch?
-Date: 03 Apr 2002 09:02:30 -0500
-Message-ID: <1017842550.26533.112.camel@tiny>
-References: <Pine.LNX.4.44.0204022130330.32751-100000@conn6m.toms.net>
-	<20020403093210.B5947@namesys.com> <1017841106.26533.92.camel@tiny> 
-	<20020403174301.A1421@namesys.com>
+Date: Wed, 3 Apr 2002 18:05:59 +0400
+Message-ID: <20020403180559.A5569@namesys.com>
+References: <Pine.LNX.4.44.0204022130330.32751-100000@conn6m.toms.net> <20020403093210.B5947@namesys.com> <1017841106.26533.92.camel@tiny> <20020403174301.A1421@namesys.com> <1017842550.26533.112.camel@tiny>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020403174301.A1421@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <1017842550.26533.112.camel@tiny>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <mason@suse.com>
 Cc: reiserfs-list@namesys.com
 
-On Wed, 2002-04-03 at 08:43, Oleg Drokin wrote:
-> Hello!
-> 
-> On Wed, Apr 03, 2002 at 08:38:26AM -0500, Chris Mason wrote:
-> > > One of teh best ways to convice Hans to provice v3.6 support in 2.2 kernels
-> > > is to pay for the work (details are at http://www.namesys.com/support.html)
-> > Tom, putting the 3.6.x format into the 2.2.x code is a huge amount of
-> > work.  It took us months to get things stable in 2.4.x.  If anyone on
-> > the list wants to do the port, I'll supply beer for the party when
-> > you're done.
-> 
-> Offer the 2-way ticket to US, and I might think about your offer ;)
->
+Hello!
 
-Grin, always specify the type of ticket.  You might end up stuffed into
-a UPS express mail envelope.
+On Wed, Apr 03, 2002 at 09:02:30AM -0500, Chris Mason wrote:
 
--chris
+> > Offer the 2-way ticket to US, and I might think about your offer ;)
+> Grin, always specify the type of ticket.  You might end up stuffed into
+> a UPS express mail envelope.
 
+I was always thinking that sending people via mail/in baggage bay of
+aircrafts was illegal. ;)
 
+Bye,
+    Oleg
