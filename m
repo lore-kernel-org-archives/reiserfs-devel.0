@@ -1,63 +1,35 @@
-From: Greg Ward <gward@python.net>
-Subject: Safely spinning down SCSI ReiserFS disk
-Date: Sat, 26 Apr 2003 17:16:38 -0400
-Message-ID: <20030426211638.GA690@cthulhu.gerg.ca>
+From: Soeren Sonnenburg <reiserfs@nn7.de>
+Subject: Re: trouble with reiserfs on ppc vs-3050:
+	wait_buffer_until_released ...
+Date: 27 Apr 2003 00:46:53 +0200
+Message-ID: <1051397193.1232.4.camel@localhost>
+References: <1051258287.5564.1.camel@fortknox>
+	 <1051259723.3513.7.camel@localhost> <20030425084742.GA22827@namesys.com>
+	 <1051261556.3513.31.camel@localhost> <20030425091916.GG10802@namesys.com>
+	 <1051263219.1642.10.camel@localhost> <20030425094630.GH10802@namesys.com>
+	 <1051265575.1656.37.camel@localhost>  <20030425102812.GA24352@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Return-path: <reiserfs-list-return-13830-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13831-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <20030425102812.GA24352@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Hi all -- I'd like to make it so my primary disk, which is a very noisy
-10000 RPM SCSI disk, spins down at night.  (I also plan to "apm
---suspend" the system immediately after spinning the disk down, so I'm
-not worried about normal system activity failing because of a "dead"
-disk.  And of course the first thing the system will do when it wakes up
-in the morning will be to spin up the disk!)
+On Fri, 2003-04-25 at 12:28, Oleg Drokin wrote:
+> Ok, is this a new box? any chance to check if the memory is right?
 
-From searching the list archives, I know I'm not the only one who wants
-to do this, but I'm having problems that might be ReiserFS-related.
-Specifically, it looks like ReiserFS is trying to write journal data to
-the disk after it's spun down, even though I run /bin/sync before the
-spindown.
+ok, so I ran the memtest tool for a night without it finding any
+errors... I did a full compare (not only md5sums) over network with the
+files I have on disk... they were the same... I let bonnie run and
+checked for corruption... nothing ... 
 
-Here's my setup: / is /dev/sda2; the only other partitions on sda are
-swap and /scratch.  /home, /var, /tmp, /usr/local are all on that one
-partition.  I also have a big (and blissfully quiet) IDE disk at my
-disposal.
+Looks like all I can do is keeping an eye on it.
 
-Here's how I spin the disk down now:
+Soeren.
 
-  * create a ramdisk with a few minimal tools -- mainly the
-    scsi-spin binary from scsitools 0.3-2 (Debian package)
-
-  * write a script in the ramdisk that runs
-      sync
-      scsi-spin --force --down /dev/sda
-      sleep 5
-      scsi-spin --force --up /dev/sda
-
-  * sync and chroot to the ramdisk and run that script in it
-
-The disk spins down fine, and then comes back up -- but any process that
-tries to access the disk blocks forever, and there's a "kernel bug" dump
-on my console.  At that point I have to reboot -- good thing I built the
-"Magic SysRq key" feature into my kernel, since I can't even run the
-"reboot" binary!
-
-Is this sort of behaviour expected?  Is there anything more I should be
-doing to safely spin down the disk containing ReiserFS filesystems?
-Would it be useful if I provided that "kernel bug" dump?  (Maybe I can
-write it to my IDE disk before rebooting... hmmm...)
-
-Thanks --
-
-        Greg
--- 
-Greg Ward <gward@python.net>                         http://www.gerg.ca/
