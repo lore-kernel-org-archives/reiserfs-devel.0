@@ -1,100 +1,102 @@
-From: Anders Widman <andewid@tnonline.net>
-Subject: Slightly off topic.
-Date: Wed, 5 Mar 2003 11:59:19 +0100
-Message-ID: <15543129984.20030305115919@tnonline.net>
-Reply-To: Anders Widman <andewid@tnonline.net>
+From: Oliver Heering <Heering@edo.uni-dortmund.de>
+Subject: Problem with Kernel 2.4.19, reiser on sw-raid5 and rsync
+Date: Wed, 5 Mar 2003 13:23:56 +0100
+Message-ID: <833151992.20030305132356@edo.uni-dortmund.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha1; boundary="----------11013A22F3D81B0CB"
-Return-path: <reiserfs-list-return-13067-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-13068-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
-------------11013A22F3D81B0CB
-Content-type: text/plain; charset=us-ascii
-Content-transfer-encoding: 7bit
+Hi,
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: MD5
+we've got a big problem with one of our servers using Kernel 2.4.19
+(SuSE 8.1 standard kernel), rsync and reiserfs on a software-raid5
+array consisting of 6x75GB (=3D 375GB usable capacity) harddrives.
 
+The installation of SuSE works flawlessly, but when we try to copy
+several thousand files from another server to this one (via rsync), we
+get the following kernel-crash:
 
-   Does  anyone  know  where to find a driver for the new Promise SATA
-   150  controller  for  2.4  or  2.5 kernels? So far I have not found
-   anything  on  the promise website, nor does the built-in drivers in
-   current kernels support the new promise controllers? The chip model
-   is  PDC20376,  but  the  kernels  seem to only support PDC202xx not
-   PDC203xx.
+--------------- snip ---------------
+kernel: kernel BUG at journal.c:592!
+kernel: invalid operand: 0000 2.4.19-4GB #1 Fri Sep 13 13:19:15 UTC 2002
+kernel: CPU:    0
+kernel: EIP:    0010:[joydev:__insmod_joydev_O/lib/modules/2.4.19-4GB/kerne=
+l/drivers/inp+-32654158/96]    Not tainted
+kernel: EIP:    0010:[<c1ddfcb2>]    Not tainted
+kernel: EFLAGS: 00010282
+kernel: eax: e2931fc8   ebx: 00000900   ecx: e28cb000   edx: 00001964
+kernel: esi: 00000001   edi: 012c8000   ebp: 00000000   esp: d1459c20
+kernel: ds: 0018   es: 0018   ss: 0018
+kernel: Process rsync (pid: 1098, stackpage=3Dd1459000)
+kernel: Stack: 00000000 e28cb000 00001000 00008000 00000259 09008ccc 000010=
+00 00000000
+kernel:        00000000 00000000 c1dc03a5 c1b66800 00000900 012c8000 000010=
+00 00000001
+kernel:        d1459c78 00000000 00001000 00008000 c2de89c0 00000259 000000=
+00 c1b66800
+kernel: Call Trace:    [joydev:__insmod_joydev_O/lib/modules/2.4.19-4GB/ker=
+nel/drivers/inp+-32783451/96] [joydev:__insmod_joydev_O/lib/modules/2.4.19-=
+4GB/kernel/drivers/inp+-32783121/96] [joydev:__insmod_joydev_O/lib/modules/=
+2.4.19-4GB/kernel/drivers/inp+-32782641/96] [joydev:__insmod_joydev_O/lib/m=
+odules/2.4.19-4GB/kernel/drivers/inp+-32781493/96] [joydev:__insmod_joydev_=
+O/lib/modules/2.4.19-4GB/kernel/drivers/inp+-32750223/96]
+kernel: Call Trace:    [<c1dc03a5>] [<c1dc04ef>] [<c1dc06cf>] [<c1dc0b4b>] =
+[<c1dc8571>]
+kernel:   [joydev:__insmod_joydev_O/lib/modules/2.4.19-4GB/kernel/drivers/i=
+np+-32745617/96] [joydev:__insmod_joydev_O/lib/modules/2.4.19-4GB/kernel/dr=
+ivers/inp+-32678239/96] [joydev:__insmod_joydev_O/lib/modules/2.4.19-4GB/ke=
+rnel/drivers/inp+-32744544/96] [__block_prepare_write+399/800] [block_prepa=
+re_write+57/144] [joydev:__insmod_joydev_O/lib/modules/2.4.19-4GB/kernel/dr=
+ivers/inp+-32751312/96]
+kernel:   [<c1dc976f>] [<c1dd9ea1>] [<c1dc9ba0>] [<c01480df>] [<c01489b9>] =
+[<c1dc8130>]
+kernel:   [joydev:__insmod_joydev_O/lib/modules/2.4.19-4GB/kernel/drivers/i=
+np+-32736026/96] [joydev:__insmod_joydev_O/lib/modules/2.4.19-4GB/kernel/dr=
+ivers/inp+-32751312/96] [do_generic_file_write+963/1936] [generic_file_writ=
+e+154/208] [joydev:__insmod_joydev_O/lib/modules/2.4.19-4GB/kernel/drivers/=
+inp+-32731463/96] [sys_write+163/304]
+kernel:   [<c1dcbce6>] [<c1dc8130>] [<c01366b3>] [<c0136b1a>] [<c1dcceb9>] =
+[<c0145523>]
+kernel:   [system_call+51/56]
+kernel:   [<c010907f>]
+kernel: Modules: [(reiserfs:<c1dc0060>:<c1def390>)]
+kernel: Code: 0f 0b 50 02 64 d2 de c1 b8 01 00 00 00 eb 9f 31 c0 eb 9b 0f
+kernel: klogd 1.4.1, ---------- state change ----------
+kernel: Inspecting /boot/System.map-2.4.19-4GB
+kernel: Loaded 14220 symbols from /boot/System.map-2.4.19-4GB.
+kernel: Symbols match kernel version 2.4.19.
+kernel: Loaded 483 symbols from 14 modules.
+--------------- snip ---------------
 
-   Regars,
-   Anders
+What could have gone wrong? We tried several newinstalls and changing
+of kernel-version to 2.4.20 and nothing helped.
 
+We're virtually out of ideas right now but if you take a look at...
+http://groups.google.com/groups?hl=3Den&lr=3D&ie=3DUTF-8&oe=3Dutf-8&threadm=
+=3Davuid5%242kgl%241%40FreeBSD.csie.NCTU.edu.tw&rnum=3D1&prev=3D/groups%3Fq=
+%3Dsoftware%2Braid%2Breiserfs%2Bkernel%2Bpanic%26hl%3Den%26lr%3D%26ie%3DUTF=
+-8%26oe%3Dutf-8%26selm%3Davuid5%25242kgl%25241%2540FreeBSD.csie.NCTU.edu.tw=
+%26rnum%3D1
+...there must be some other people who have the same problem.
 
+The last suspect I have is, that 2 of the 6 harddrivers are different
+models but with around the same (a bit more) capacity. Could this be
+the cause, too?
 
+Or are there any known bugs when using rsync in combination with
+reiserfs and software-raid5 ?
 
-- --------
-PGP public key: https://tnonline.net/secure/pgp_key.txt
+Thanks for answers.. :)
 
------BEGIN PGP SIGNATURE-----
-Version: 2.6
+Oliver Heering
+Medienzentrum - Universit=E4t Dortmund
+http://www.medienzentrum.uni-dortmund.de
 
-iQEVAwUAPmXYin+Fu6F2M6JJAQHiBAgAp2XA/3j5pXauSsg3zZw4GjCkX91roTGc
-+7sMesGlRyD5ic4CVWKOUDM7TEbwCGpspz7yxoVVLsTXjXSyWFNFlpTcpdcBLVkx
-sLahj0asroKkJbghMkbhFNxUZJYpRC6zIKk4Dal3fKq3lmBv2Bb5sj+qxFKRKFKv
-FRLM/scK7MppkMQgtbVUAWtDaxX8txZ5EwmfOCxu56lXtbNiG5YVsr/VoPHBTCMj
-xqyiEASiBZIBZR78rVLuOdbHWshY50s0OVQPRt5dK9bDqPGczr6hq2R4kOPuLG7c
-6Q1FZgn7em6Q8z5Oh7812GZCFUqTraPFpnBfxgaBmMsW/WtQQLx9Mg==
-=nQxS
------END PGP SIGNATURE-----
-
-
-------------11013A22F3D81B0CB
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-GkqepTY=
-------------11013A22F3D81B0CB--
 
