@@ -1,83 +1,55 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: slow stat() ?
-Date: Sun, 30 Nov 2003 23:47:00 -0800
-Message-ID: <3FCAF1F4.6040106@namesys.com>
-References: <Pine.LNX.4.10.10312011155090.7555-100000@alpha.bernztech.org> <1070299845.12809.98.camel@tiny.suse.com>
+From: Jens Benecke <jens-unibw@spamfreemail.de>
+Subject: Re: Strange errors with 2.4.22 patches (from Chris) and bonnie++
+Date: Tue, 02 Dec 2003 09:35:33 +0100
+Sender: news <news@sea.gmane.org>
+Message-ID: <bqhisl$7il$1@sea.gmane.org>
+References: <bq8f7u$ufn$1@sea.gmane.org> <1070286549.12807.22.camel@tiny.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16199-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-16200-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1070299845.12809.98.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: bernz@bernztech.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
 Chris Mason wrote:
 
->On Mon, 2003-12-01 at 12:21, David Bernick wrote:
->  
->
->>Hi all,
->>
->>First, what I'm running Reiser on:
->>
->>Supermicro dual Xeon motherboard with 2x2.6Ghz xeons in hyperthreaded
->>mode. 3ware 7500-8 (or whatever the call the 8 port ATA card) with 8x250GB
->>disks attatched. 4GB RAM. 
->>
->>Software: 
->>RedHat 9 with latest up2date
->>Kernel 2.4.22 no patches
->>The journal is not on a separate set of spindles.
->>
->>/proc/sys/vm/max-readahead=512
->>/proc/sys/vm/min-readahead=128
->>/proc/sys/vm/bdflush
->>100     5000    640     2560    150     30000   60      20      0
->>
->>Okay. Now for the issue at hand. When the logical disk is being read from,
->>reiser is fast and effecient. We have millions (10M?) of files (about 1M
->>each) in thousands of directories. Reiser reads well (exporting the disk
->>over NFS) and we're very impressed by it. It's a bit slow on the writes
->>and the system load goes up marginally, but that's not a big deal. The
->>thing that puzzles me is that when we perform functions like "find" or in
->>perl "-e filename" or anything that uses fstat() or stat64() or any of
->>those functions brings the system usage to 100% and the load climbs
->>quickly. 
->>
->>Are there any patches, kernel updates, tuning, etc that can help with this
->>problem?
->>    
->>
->
->You could boot with profile=2 and send the results of a readprofile
->command taken after the system load goes very high.  This will slow down
->your box for general usage, so you would only want to run with profile=2
->for a short time.
->
->My guess is the stats are being done across a large directory tree and
->this is generating lots of atime updates.  You could mount -o
->noatime,nodiratime, which will reduce the amount of work reiserfs does
->on each stat.
->
->atimes are used by many mail programs to find out the last time you read
->your mailbox file.  nodiratime probably won't affect most applications.
->
->-chris
->
->
->
->
->  
->
-profiling will also tell you if the performance problem is in user 
-space.....;-)
+> On Fri, 2003-11-28 at 16:38, Jens Benecke wrote:
+>=20
+>> b) bonnie++ on a (previously created) reiserfs partition (with
+>>    mkreiserfs 3.6.6) exited with random "disk full" errors, although
+>>    the disk was never full. This didn't happen before.
+>> (...)
+>> I would appreciate any help. Thank you! :-)
+>=20
+> Ugh, the new block allocator isn't properly forcing a commit when an
+> allocation fails, so we don't reclaim blocks deleted in an uncommitted
+> transaction.  I thought this fix got pulled out of the suse kernel when
+> namesys and I pulled out the important bug fixes, but it got missed.
+>=20
+> porting.
 
--- 
-Hans
+Hi Chris,
 
+so... the worst-case impact on this bug is that reiserfs will report "disk
+full" when you still have some space available. Right? No data loss,
+corruption, or similar Bad Things(tm)?
+
+I have two servers here that are supposed to be deployed next week and use
+ReiserFS. I've had some bad issues with MySQL files becoming corrupted
+after a crash in the past so I'd really like to put these into production
+with data-logging patches.
+
+btw, what are the patches that SuSE uses? IIRC, SuSE ships with data-logging
+enabled, right?
+
+
+--=20
+Jens Benecke (jens-unibw@spamfreemail.de)
+http://www.hitchhikers.de - Europaweite kostenlose Mitfahrzentrale
+http://www.spamfreemail.de - 100% saubere Postf=E4cher - garantiert!
+http://www.rb-hosting.de - PHP ab 9? - SSH ab 19? - g=FCnstiger Traffic
 
