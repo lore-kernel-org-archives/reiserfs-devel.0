@@ -1,81 +1,76 @@
-From: Miguel <turtle.power@wanadoo.es>
-Subject: Re: "df -i" support
-Date: Wed, 19 May 2004 21:41:45 +0200
-Message-ID: <20040519214145.6082af87.turtle.power@wanadoo.es>
-References: <20040513093432.52d3d7a3.turtle.power@wanadoo.es>
-	<1084439945.14090.6209.camel@tribesman.namesys.com>
-	<20040514173227.5b0541b5.turtle.power@wanadoo.es>
-	<200405141655.i4EGtrAT007250@turing-police.cc.vt.edu>
-	<20040514194040.22389128.turtle.power@wanadoo.es>
-	<1084557009.3263.7.camel@localhost.localdomain>
-	<20040514202627.18ddc7b2.turtle.power@wanadoo.es>
-	<20040514184823.GG18086@schnapps.adilger.int>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: Reiser4 status as of this weekend
+Date: Wed, 19 May 2004 22:50:56 +0300
+Message-ID: <20040519195056.GM24604@nysv.org>
+References: <003a01c4377d$d653eac0$7d02a8c0@toronto.chantrynetworks.com> <40A68F75.2030306@namesys.com> <20040515221017.GL1232@nysv.org> <40A7A553.2020901@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18770-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18771-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040514184823.GG18086@schnapps.adilger.int>
+Content-Disposition: inline
+In-Reply-To: <40A7A553.2020901@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
-To: Andreas Dilger <adilger@clusterfs.com>
-Cc: Jonathan Briggs <jbriggs@esoft.com>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: Hans Reiser <reiser@namesys.com>
+Cc: Russell Treleaven <rtreleaven@chantrynetworks.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, 14 May 2004 12:48:23 -0600
-Andreas Dilger <adilger@clusterfs.com> wrote:
+On Sun, May 16, 2004 at 10:30:59AM -0700, Hans Reiser wrote:
+>Markus T=F6rnqvist wrote:
 
-> On May 14, 2004  20:26 +0200, Miguel wrote:
-> > Jonathan Briggs <jbriggs@esoft.com> wrote:
-> > > Would this help you?
-> > >=20
-> > > # cat /proc/fs/reiserfs/md1/oidmap
-> > >=20
-> > > At the end of oidmap is a line like this:
-> > > total:  46 [46/972] used: 176147 [exact]
-> > >=20
-> > > I think the used: 176147 is pretty close to what you want.  The
-> > > number goes up and down when I create or remove files.  When I ran
-> > > 'find /-xdev | wc -l' I got 174425.  I'm not sure where the extra
-> > > 1,000+ comes from. =20
-> > >=20
-> > > You would need to have CONFIG_REISERFS_PROC_INFO set in your
-> > > kernel, and of course you would need to replace md1 with whatever
-> > > device you were using.
-> >=20
-> > I can't set this kind of debuging in a production enviroment but
-> > those are the values that i'm seeking for. There's another way to
-> > get this?.
->=20
-> Hmm, why wouldn't reiserfs_statfs() just use that number for the "in
-> use" inodes in the first place?  Sadly, the statfs() interface is
-> broken in the sense that it contains "total" inodes and "free" inodes
-> instead of"in use" inodes, but it shouldn't be difficult to just
-> subtract the number of in-use inodes from 2^32-1 and stick that into
-> the "free" field so that when user-space does the reverse it gets the
-> right number.
+[mmap]
+>>>substantial work to do right, and is in progress.  We currently have a=20
+>>>fix that costs performance, and are fixing the performance issue (which =
 
-I see your point doing an strace df -i (with a 2.6.6 kernel)
-reiserfs_statfs reports those values zeroed:
+>>>is fixable but requires code....).
+>>Would you say this is the biggest issue?
+>It is the only issue that I know of.
 
-statfs64("/", 84, {f_type=3D"REISERFS_SUPER_MAGIC", f_bsize=3D4096,
-f_blocks=3D2560271, f_bfree=3D497245, f_bavail=3D497245, f_files=3D0, f_ffr=
-ee=3D0,
-f_fsid=3D{0, 0}, f_namelen=3D255, f_frsize=3D4096}) =3D 0
+How about Copy-on-capture? Is it usable? Does it provide better
+performance?
 
-f_files and f_ffree are 0???. I'm trying to do a patch that show those
-correctly using show_oidmap() function, but seems that other fs don't
-report those values correctly, it's going to be deprecated or something?
+>>What about NFS?
+>fixed by nikita recently but not released.  See next snapshot.
 
->=20
-> Cheers, Andreas
-> --
-> Andreas Dilger
-> http://sourceforge.net/projects/ext2resize/
-> http://www-mddsp.enel.ucalgary.ca/People/adilger/
->=20
+I'm trying BK pulls. Yesterday it didn't compile, xfs seemed broken.
+Retrying now, after bk -r get.
 
+I wrote a lame script, haven't used it much myself, but it should do
+something. Like get a BK pull.
+http://mjt.nysv.org/reiser/getreiser.sh
+http://mjt.nysv.org/reiser/getreiser.sh.txt
+
+>by doing the architectural work....  Also, it requires that 2/3 of the=20
+>work (by cost) be done in the US, and the moscow embassy has gone into=20
+
+Have you tried other governments?
+
+>total asshole mode and isn't giving work visas to most russians.  Still,=20
+>we will try to get work visas in 6 months.  I hope that it being for DoD=20
+>work will increase the chance of getting visas.
+
+That must not fail.
+The DoD can't say "please give these guys work visas" just to cover
+their own interests? Or this has no effect?
+
+>It is in the source code..... we have the best commented source code in=20
+>the kernel (Andrew Morton is the only other kernel person who comments=20
+>code well that I know of).
+
+There was also a tangent on the topic of creating daily snapshots.
+
+This might make it easier for people to come to terms with Reiser4.
+People have many reasons to dislike BK, so a daily snapshot patch
+against some vanilla system may be a good thing.
+
+However, having broken code in the BK for days without having time to
+fix it is not good.
+
+So this would require changelogs and some testing on snapshots so that
+every once in a while one can be labeled "stable as hell"
 
 --=20
-La resistencia es f=FAtil todos ser=E9is asimilados
+mjt
+
