@@ -1,49 +1,34 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: REISER4 - A simple test with a filesystem and Oracle
-Date: Fri, 16 Jan 2004 19:20:55 +0300
-Message-ID: <20040116162055.GL1693@backtop.namesys.com>
-References: <20040116153914.46777.qmail@web21502.mail.yahoo.com> <20040116160154.75186.qmail@web21506.mail.yahoo.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: [2.4.18]: Reiserfs: vs-2120: add_save_link: insert_item
+	returned -28
+Date: Fri, 16 Jan 2004 19:26:34 +0300
+Message-ID: <1074270394.2251.167.camel@tribesman.namesys.com>
+References: <200401091622.41352.lkml@kcore.org>
+	 <1074241063.2251.41.camel@tribesman.namesys.com>
+	 <200401161620.i0GGK2MT022923@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16552-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16553-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040116160154.75186.qmail@web21506.mail.yahoo.com>
+In-Reply-To: <200401161620.i0GGK2MT022923@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Paolo Correnti <paolunix@yahoo.com>
-Cc: reiserfs-list@namesys.com
+To: Valdis.Kletnieks@vt.edu
+Cc: Jan De Luyck <lkml@kcore.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-On Fri, Jan 16, 2004 at 08:01:54AM -0800, Paolo Correnti wrote:
-> After about 5-6 minutes after sending last e-mail
-> I obtained a "real" df result.
-
-"df" or "du" ?
-
+On Fri, 2004-01-16 at 19:19, Valdis.Kletnieks@vt.edu wrote:
+> On Fri, 16 Jan 2004 11:17:43 +0300, Vladimir Saveliev said:
 > 
-> oracle@pamilo:/u01/oradata$ du
+> > This is just a warning. You should be able to free some disk space by
+> > removing some files.
 > 
-> 1868581 ./archived
-> 10245   ./pamodb/archivelogs
-> 1230589 ./pamodb                 <- OK
-> 3099170 .                        <- OK
+> Is this just the *obvious* "removing files frees space", or is there some sort
+> of garbage collection that will be triggered, so removing a 1K file will make it
+> redo tables/linked lists/whatever and return lots of blocks that used to contain
+> metadata?
 
-what processes were accessing the fs those 5-7 min?  
-oracle was?
+This is the *obvious* "removing files frees space".
 
-> 
-> It seems there is a kind of very large delay in
-> reiser4 filesystem info synchronization.
-> 
-> Hope to be not much boring ...
-
-:) 
-
-thanks for the report. 
-
-
--- 
-Alex.
