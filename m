@@ -1,50 +1,30 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: new v3 2.6.4  logging/xattr patches
-Date: Fri, 19 Mar 2004 09:03:26 -0500
-Message-ID: <1079705006.11062.134.camel@watt.suse.com>
-References: <1079679539.11055.101.camel@watt.suse.com>
-	 <405AA885.3030000@namesys.com>
+From: Erik Terpstra <erik@solidcode.net>
+Subject: Can compression at filesystem level improve overall performance?
+Date: Fri, 19 Mar 2004 15:25:49 +0100
+Message-ID: <405B02ED.4010602@solidcode.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17320-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17321-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <405AA885.3030000@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On Fri, 2004-03-19 at 03:00, Hans Reiser wrote:
-> Chris Mason wrote:
-> 
-> >Hello everyone,
-> >
-> >I've just uploaded all the reiserfs patches from the suse 2.6 kernel to:
-> >
-> >ftp.suse.com/pub/people/mason/patches/data-logging/experimental/2.6.4
-> >
-> >(they should also apply to 2.6.5-rc1 and 2.6.5-rc1-mm2)
-> >
-> >These include:
-> >Latency fixes
-> >Logging performance fixes
-> >data=ordered support
-> >quota support
-> >xattrs and acls from Jeff Mahoney
-> >
-> >and a few random bug fixes.  There's a README file in the directory with
-> >a some more details.
-> >
-> are these ready to go to Andrew or?
+Hello everyone,
 
-They are ready for Andrew for additional testing, I'd like to submit the
-whole bunch to him actually.  Any objections?
+For the last couple of years I noticed that the performance of most of 
+my systems has it's bottleneck in data throughput rather than CPU 
+performance.
 
--chris
+Is it fair to say that today compression at the filesystem level would 
+improve overall performance?
 
+If this is the case, it probably wouldn't be too hard to implement as a 
+module in Reiser4?
 
+Any thoughts?
 
-
+--Erik.
