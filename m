@@ -1,47 +1,38 @@
-From: Chris Dukes <pakrat@www.uk.linux.org>
-Subject: Re: online fsck
-Date: Thu, 22 Apr 2004 19:15:38 +0100
-Sender: <pakrat@www.linux.org.uk>
-Message-ID: <20040422181538.GR25281@parcelfarce.linux.theplanet.co.uk>
-References: <20040422150042.5b49c6c3.pegasus@nerv.eu.org> <1082640853.12989.54.camel@watt.suse.com> <40880610.9050207@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: fsck.reiser4 can't fix 1 fixable corruption
+Date: Thu, 22 Apr 2004 11:30:52 -0700
+Message-ID: <40880F5C.6080207@namesys.com>
+References: <200404201733.51809.rmeijer@internet.gr> <200404211259.01802.rmeijer@internet.gr> <200404211547.08993.vitaly@namesys.com> <200404211509.20290.rmeijer@internet.gr> <13790.212.0.249.130.1082549980.squirrel@webmail.xs4all.nl> <4086CBBF.8010406@xs4all.nl> <20040421194414.GB6215@raptus.homelinux.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18164-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18165-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <40880610.9050207@namesys.com>
+In-Reply-To: <20040421194414.GB6215@raptus.homelinux.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Chris Mason <mason@suse.com>, Jure Pe?ar <pegasus@nerv.eu.org>, reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Domenico Andreoli <cavok@tiscali.it>
+Cc: reiserfs-list@namesys.com, "Yury V. Umanets" <umka@namesys.com>
 
-On Thu, Apr 22, 2004 at 10:51:12AM -0700, Hans Reiser wrote:
-> Chris Mason wrote:
-> >
-> >Online check is easy, just use lvm or evms to make a snapshot and then
-> >check the snapshot. 
-> >
-> Requires that users use lvm before discovering the need for fsck, but, 
-> yes.  What would be ideal would be some support for finding the 
-> inconsistency on the snapshot, and then fixing it on the real fs using 
-> the information learned from the snapshot fsck.
+Domenico Andreoli wrote:
 
-Taking a snapshot of the entire FS to fix metadata seems somewhat
-expensive.  Any thoughts on intercepting FS activity to locate
-metadata that needs to be checked now rather than during the next moment
-the fs or disk is idle?
-
-Snapshotting 40G has a pretty small additional cost.  Snapshotting 1TB
-is somewhat more expensive.
-> 
-> >Online rebuild tree would be impossible by
-> >definition (since it throws out everything above the leaf level and
-> >rebuilds).
-
-Build a new tree and keep the old tree until the new tree is finished?
--- 
-Chris Dukes
-Been there, done that, got the slightly-charred t-shirt. -- Crowder
+>On Wed, Apr 21, 2004 at 09:30:07PM +0200, Sander Sweers wrote:
+>  
+>
+>>NOTE: the ebuilds have /--enable-stand-alone/ to have grub build reiser4 
+>>support.
+>>    
+>>
+>
+>how hard is to have reiser4 support built in grub?
+>
+>-----[ Domenico Andreoli, aka cavok
+> --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
+>   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
+>
+>
+>  
+>
+Yury told me it was done....  Yury....
