@@ -1,76 +1,80 @@
-From: Heinz-Josef Claes <hjclaes@web.de>
+From: Russell Coker <russell@coker.com.au>
 Subject: Re: How to build a big file server
-Date: 05 Jun 2003 12:24:34 +0200
-Message-ID: <1054808673.1997.67.camel@wusel.schnulli.de>
-References: <1054800852.1997.15.camel@wusel.schnulli.de>
-	 <3EDF15F5.2020908@namesys.com>
+Date: Thu, 5 Jun 2003 20:25:05 +1000
+Message-ID: <200306052025.05910.russell@coker.com.au>
+References: <1054800852.1997.15.camel@wusel.schnulli.de> <200306051959.45126.russell@coker.com.au> <1054807982.1995.56.camel@wusel.schnulli.de>
+Reply-To: Russell Coker <russell@coker.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14425-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14426-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3EDF15F5.2020908@namesys.com>
+In-Reply-To: <1054807982.1995.56.camel@wusel.schnulli.de>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
+To: Heinz-Josef Claes <hjclaes@web.de>
+Cc: reiserfs-list@namesys.com
 
-Am Don, 2003-06-05 um 12.05 schrieb Hans Reiser:
-> Heinz-Josef Claes wrote:
-> 
-> >Hi,
-> >
-> >I did't found information about my problem on namesys, so I try to ask
-> >here.
-> >
-> >I plan to build a big fileserver for Deutscher Bundestag (German
-> >Parliament) who is converting to linux on the server side. In the
-> >beginning it will be used in a testing environment and later multiple of
-> >them in production use.
-> >
-> >Here are some questions:
-> >
-> >- I plan to build a system with IDE 250GB drives. 7 of them for raid 5
-> >and one hot spare. The OS will be on separate hardware raid 1 on smaller
-> >disks. Does anybody have experience with IDE controlers for the big
-> >disks? Is it better to use hardware raid oder software raid
-> >(performance)?
-> >
-> >- At this time, we plan to use reiserfs. What are the advantages /
-> >disadvantages of using the raid 1 for journaling for the (big) raid 5
-> >(performance, recovery)? The system will be heavily used with
-> >storebackup (www.sf.net/projects/storebackup) witch means that lots of
-> >hard links have to be created as fast as possible.
-> >
-> >- BTW: I'm using a ZIP drive on the parallel port with reiserfs. Does it
-> >make sense to put the journal for the ZIP drive on the hard disk of the
-> >laptop?
-> >
-> >Thanks for taking your time,
-> >Heinz-Josef Claes
-> >
-> >
-> >
-> >
-> >  
-> >
-> Do you plan to do synchronous work loads involving lots of little 
-> fsyncs?  The RAID 5 will not perform well for that purpose, otherwise it 
-> should work well even for the journal.  Chris will correct me if I err.
+On Thu, 5 Jun 2003 20:13, Heinz-Josef Claes wrote:
+> My question also was about hardware or software raid. If I'm using
+> software raid, a hardware raid 1 for the OS is not a too bad idea.
 
-The used software will copy or compress new files (it gets them via nfs)
-to the backup filesystem (reiserfs). For files with a content which
-allready exists in the backup, only a hard link is set. It's simply a 
-link <oldfile> <newfile>
-chown something <newfile>
-chmod something <newfile>
-in the source (perl). There is *no* explicit sync.
-On my PC at home (800MHz, 40 GB "normal cheap IDE disk" (I cannot look
-at it at the moment)) I get about 200 hard links per second if nothing
-has changed (no copying or compressing). The speed only depends on the
-speed of the harddisk. A friend of mine gets the same speed with a 2GHz
-processor.
+Booting from software RAID-1 is easy to setup.  I've done it with both SCSI 
+and IDE software RAID.
 
+But having a single hardware RAID-5 is even easier.
+
+> The other point is, that with the data (= raid 5 disks in my example),
+> separated from the OS, you are more flexible in case of a hardware
+> failure of the system. (I do not mean a disk failure.)
+
+How?  If the disks are all working and the data is consistant then you 
+transfer them all to another system and things are fine.  If the disks aren't 
+all working or the data is inconsistant then having the OS on separate disks 
+won't help much.  Recovering the OS from backup is usually trivial, so the 
+fact that RAID-1 makes it easier to recover things does not provide much 
+benefit for the OS (IMHO).
+
+I guess you could justify RAID-10 for the data store because of the ease of 
+recovery.
+
+> > separate hardware setup for the OS.  Also for 2.4.20 there are a few
+> > ReiserFS patches that you need for decent performance (which come along
+> > with the data-journalling patch).  These patches have more than doubled
+> > the performance of some of my machines.  I would expect that the SUSE
+> > kernel would include them already.
+>
+> I use SuSE 8.2. It's much faster than the SuSE kernel in 8.1, even on my
+> ZIP drive at the parallel port ;)
+
+Hopefully someone can advise on whether the SuSE 8.2 kernel has all the 
+patches you desire for best ReiserFS performance.
+
+> > I suggest that for good performance and a reasonable price you look at a
+> > 3ware RAID controller with a single RAID-5 device comprised of 7 disks as
+> > you suggested.  Then you have a umem device for the journal of the data
+> > filesystem and for a small filesystem for volatile data.  That and plenty
+> > of RAM should solve most of the performance problems.
+>
+> Do you have experiences with serial ATA from 3ware? Is it a good idea
+> not to use parallel ATA?
+
+Serial ATA is still very new.  Last time I checked the details of the 3ware 
+products they were using a bridge chip to convert the signals from the 
+parallel ATA controllers on their hardware to serial-ATA for the connectors, 
+also at that time the disk drives seemed to be all parallel-ATA internally 
+with a bridge chip.  This means that you would not get any performance 
+benefit from S-ATA (but cabling is much easier).
+
+At the moment I would not expect to see any benefit of S-ATA apart from ease 
+of cabling (which is a significant issue when you have 8 or more disks).
+
+-- 
+http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
+http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
+http://www.coker.com.au/~russell/  My home page
 
