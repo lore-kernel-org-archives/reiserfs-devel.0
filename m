@@ -1,57 +1,61 @@
-From: Newsmail <newsmail@satimex.tvnet.hu>
+From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
 Subject: Re: Data-logging and md as / fs bug
-Date: Tue, 13 May 2003 22:52:40 +0100
-Message-ID: <5.2.0.9.2.20030513224724.01cc3d10@pop.tvnet.hu>
-References: <3EB30852.6090402@netscape.net>
- <200305062134.42520.christian.mayrhuber@gmx.net>
- <1052250298.14612.235.camel@tiny.suse.com>
- <200305062156.27595.Dieter.Nuetzel@hamburg.de>
- <1052400685.14617.489.camel@tiny.suse.com>
- <20030512072943.GA21604@namesys.com>
+Date: Wed, 14 May 2003 00:18:26 +0200
+Message-ID: <200305140018.26691.christian.mayrhuber@gmx.net>
+References: <3EB30852.6090402@netscape.net> <20030512072943.GA21604@namesys.com> <5.2.0.9.2.20030513224724.01cc3d10@pop.tvnet.hu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14097-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14098-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3EC0FE02.9030007@netscape.net>
+In-Reply-To: <5.2.0.9.2.20030513224724.01cc3d10@pop.tvnet.hu>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Content-Transfer-Encoding: 7bit
-To: Manuel Krause <manuelkrause@netscape.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-wow could somebody make my mind a bit more clear: what patches to use 
-exactly to have the more error less functioning with datalogging without 
-quota? Manuel uses patches posted only on the mailing list but not present 
-on suse.de or namesys.com apparently. is it better to use what he uses, or 
-some of them are +- useless as not on namesys, or what happens exactly?
-cheers,
-greg
+Am Dienstag, 13. Mai 2003 23:52 schrieb Newsmail:
+> wow could somebody make my mind a bit more clear: what patches to use
+> exactly to have the more error less functioning with datalogging without
+> quota? Manuel uses patches posted only on the mailing list but not present
+> on suse.de or namesys.com apparently. is it better to use what he uses, or
+> some of them are +- useless as not on namesys, or what happens exactly?
+> cheers,
+> greg
 
-ps: what about iget5_locked? is it safe to use?
 
->Currently running 2.4.21-rc2 +
->
->patch-2.4.21-rc2.rfs01.m02-akpm-b_journal_head-1.diff
->patch-2.4.21-rc2.rfs02.m03-relocation-8.diff
->patch-2.4.21-rc2.rfs03.m04-reiserfs-sync_fs-4.diff
->patch-2.4.21-rc2.rfs04.m05-data-logging-37.diff
->patch-2.4.21-rc2.rfs05.m06-logging-export.diff
->patch-2.4.21-rc2.rfs06.m06-write_times.diff
->patch-2.4.21-rc2.rfs07.m09.kinoded-9.ML.diff
->patch-2.4.21-rc2.rfs08.m11.inode-dirty-for-kinoded.ML.diff
->patch-2.4.21-rc2.rfs09.m12.search_reada-4.diff
->patch-2.4.21-rc2.rfs10.iget5_locked_for_datalogging.namesys.noquota.diff
->preempt-kernel-rml-2.4.21-rc2-was-pre1-1.0.patch
->patch.mk.01.Makefile.diff
->patch.mk.02.r128_drv.diff
->patch.mk.03.2.4.21-rc2-Config.in.diff
->
->applied in this order.
->
->-
->rfs??=reiserfs, m??=Chris' patches, ML=posted to reiserfs-list only, mk=my 
->own needed changes
+At the moment the newest ones are at:
+ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.21/
 
+Needed for data logging:
+02-akpm-b_journal_head-1.diff.gz
+03-relocation-8.diff.gz
+04-reiserfs-sync_fs-4.diff.gz
+05-data-logging-37.diff.gz
+06-logging-export.diff.gz
+
+General speedup:
+06-write_times.diff.gz 
+
+Quota support:
+07-quota-v2-2.4.21.diff.gz
+08-reiserfs-quota-27.diff.gz
+09-kinoded-8.diff.gz
+10-reiserfs-quota-link-fix.diff.gz
+
+Those patches apply to 2.4.21-rc1 and 2.4.21-rc2.
+If you want data logging only you do not need
+"General Speedup" and "Quota support".
+
+I have all of them running and did some stress tests
+over the weekend. Those patches are behaving nice.
+They have good performance, seem stable and look like
+they do not corrupt any data.
+
+Hopefully, the data logging part is due for inclusion in
+2.4.22-pre.
+-- 
+lg, Chris
 
