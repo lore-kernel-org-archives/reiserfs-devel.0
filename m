@@ -1,120 +1,107 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: file as a directory
-Date: Wed, 15 Dec 2004 18:16:56 -0600
-Message-ID: <41C0D3F8.1020408@slaphack.com>
-References: <200411301631.iAUGVT8h007823@laptop11.inf.utfsm.cl>	 <41ACA7C9.1070001@namesys.com>	 <1103043518.21728.159.camel@pear.st-and.ac.uk>	 <41BF21BC.1020809@namesys.com> <1103059622.2999.17.camel@grape.st-and.ac.uk> <41BFC1C5.1070302@slaphack.com> <41BFCB66.3090809@namesys.com>
+From: Joachim Reichelt <Reichelt@gbf.de>
+Subject: Stacktrace
+Date: Thu, 16 Dec 2004 14:17:37 +0100
+Message-ID: <41C18AF1.20205@gbf.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22798-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22801-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41BFCB66.3090809@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Dear all,
+I just got in my dmesg:
 
-Hans Reiser wrote:
-[...]
-| Explain the value of caching executable output more please.
+reiserfs/1: page allocation failure. order:0, mode:0x21
+ [<c0147913>] __alloc_pages+0x3b3/0x3c0
+ [<c0147938>] __get_free_pages+0x18/0x30
+ [<c014af24>] kmem_getpages+0x24/0xe0
+ [<c014bd04>] cache_grow+0xb4/0x170
+ [<c014bf28>] cache_alloc_refill+0x168/0x240
+ [<c014c224>] kmem_cache_alloc+0x44/0x50
+ [<f8855103>] __scsi_get_command+0x23/0x80 [scsi_mod]
+ [<f885519d>] scsi_get_command+0x3d/0xd0 [scsi_mod]
+ [<f885aee1>] scsi_prep_fn+0x111/0x1f0 [scsi_mod]
+ [<c026dd57>] elv_next_request+0x57/0xf0
+ [<c026fa2b>] blk_remove_plug+0x3b/0x80
+ [<c026fa92>] __generic_unplug_device+0x22/0x40
+ [<c02710b8>] __make_request+0x478/0x4d0
+ [<c027122e>] generic_make_request+0x11e/0x1d0
+ [<c014bfa6>] cache_alloc_refill+0x1e6/0x240
+ [<c0121650>] autoremove_wake_function+0x0/0x50
+ [<c0145ee6>] mempool_alloc+0x76/0x150
+ [<c0121650>] autoremove_wake_function+0x0/0x50
+ [<c0271344>] submit_bio+0x64/0x110
+ [<c0121650>] autoremove_wake_function+0x0/0x50
+ [<c0166fe2>] bio_alloc+0xe2/0x1d0
+ [<c016689e>] submit_bh+0x12e/0x190
+ [<c0164f84>] __block_write_full_page+0x1f4/0x350
+ [<c01f4539>] radix_tree_gang_lookup_tag+0x49/0x70
+ [<c0169860>] blkdev_get_block+0x0/0x80
+ [<c01666d9>] block_write_full_page+0xe9/0x100
+ [<c0169860>] blkdev_get_block+0x0/0x80
+ [<c0185036>] mpage_writepages+0x246/0x3e0
+ [<c01699f0>] blkdev_writepage+0x0/0x10
+ [<c0148ea4>] do_writepages+0x24/0x30
+ [<c014279b>] __filemap_fdatawrite_range+0xdb/0x100
+ [<c01427e2>] filemap_fdatawrite+0x22/0x30
+ [<f95ed810>] flush_async_commits+0x90/0xe0 [reiserfs]
+ [<c0133468>] worker_thread+0x1a8/0x240
+ [<f95ed780>] flush_async_commits+0x0/0xe0 [reiserfs]
+ [<c011fe60>] default_wake_function+0x0/0x10
+ [<c011fe60>] default_wake_function+0x0/0x10
+ [<c01332c0>] worker_thread+0x0/0x240
+ [<c0137515>] kthread+0xa5/0xf0
+ [<c0137470>] kthread+0x0/0xf0
+ [<c01052b9>] kernel_thread_helper+0x5/0xc
 
-If executables become "plugins" (see below), there is a performance loss
-to be made up by caching.  For instance, if we have an executable which
-calls "tar", which we attach to a tarball, we want to cache the
-extracted files.  It's even more urgent when people start writing
-perl/python/ruby executables to deal with system configuration files,
-such as /etc/passwd.  It's allright for passwd to take half a second to
-generate, so long as we cache that output, and thus only spend the half
-second when passwd is modified, instead of every time a user logs in.
-|
-|>
-|> | The component objects themselves could be full objects, so they
-|> | themselves could have sub-components.
-|>
-|> Right.
-|>
-|> Also, there should be an inverse. For instance, a file-as-directory type
-|> object should have a "contents" object, usually a normal directory, but
-|> which could conceivably be any type of object, including a code-ish
-|> object which implements a filesystem. Accessing foo/ would be the same
-|> as accessing foo/.../contents, only because "..." (or whatever we use
-|> for meta-files) is outside the actual directory namespace,
-|> foo/.../contents/... refers to the metas of object "contents", which are
-|> different than the metas of object "foo".
-|
-|
-| Are you sure that having more than one "...." is needed?  Hmmm,
-| interesting, must think about it.
+System: SuSE 9.2,
+# cat /proc/cpuinfo
+processor       : 0
+vendor_id       : GenuineIntel
+cpu family      : 15
+model           : 3
+model name      : Intel(R) Pentium(R) 4 CPU 3.00GHz
+stepping        : 4
+1GB RAM
 
-Yes. foo is a file, foo/contents is another file (an executable).  But
-maybe the executable has contents too -- with an extra "...", you can do
-things like "foo/.../contents/.../contents", where the first "contents"
-controls what you get from "ls foo/", and the second "contents" controls
-what you get from "ls foo/.../contents/".
+Nothing in messages!
+# mount | grep reis| sort
+/dev/md1 on /var type reiserfs (rw,acl,user_xattr)
+/dev/md2 on /tmp type reiserfs (rw,acl,user_xattr)
+/dev/md3 on / type reiserfs (rw,acl,user_xattr)
+/dev/sdc1 on /software type reiserfs (rw,acl,user_xattr)
+/dev/sdc2 on /nero type reiserfs (rw,acl,user_xattr)
 
-|>
-|> These two steps essentially create userspace "plugins", and do away with
-|> having to mount other kernel layers such as lufs (or whatever its
-|> current implementation is).
-|
-|
-| I don't follow this point above.
+-- 
+Mit freundlichen Gruessen                         Best Regards
+ 
+         Joachim Reichelt
 
-lufs is (or was) a kernel filesystem which talks to a user daemon.  The
-daemon does all the work, so you don't have to do things like windows
-emulation in the kernel in order to get captive-ntfs to work.
+WWW: http://bragi.gbf.de/      _/_/_/   _/_/_/   _/_/_/_/
+WWW: http://www.gbf.de/sb    _/    _/  _/   _/  _/
+WWW: http://www.gbf.de/     _/        _/   _/  _/
+                           _/  _/    _/_/_/   _/_/_/
+                          _/    _/  _/   _/  _/
+Mascheroder Weg 1        _/    _/  _/   _/  _/
+D-38124 Braunschweig      _/_/_/  _/_/_/   _/
 
-The reason we don't do that for the whole filesystem is performance --
-after all, userland things are easier to write, debug, upgrade, and
-install/use than kernel things.
+Tel: +(49) 531 6181 352                  FAX: +(49) 531 2612 388
 
-If an executable can generate a directory listing or a whole directory
-structure, some files, and so on, then we only need a few reiser4 kernel
-plugins, and these userland executables can implement all the
-functionality of most kernel plugins people have thought of so far.
+			SB  - Strukturbiologie
+              GBF - Gesellschaft fuer Biotechnologische Forschung
+                    German Research Centre for Biotechnology
 
-The only problem is, it would be much slower than a kernel plugin.
-Caching solves that.
+See me at:
+EMAIL: REICHELT@gbf.de    WWW:  http://www.gbf.de/sb/Reichelt.htm
 
-Of course, someone still might find a situation where people really need
-to create a new kernel plugin, and that would be allowed.  But I doubt
-it would help that much, or we'd all be using TUX instead of Apache.
+-- Disclaimer --
+Standard > Keyword : Opinions, my own, nobody else's, whatsoever ...
 
-[...]
+Man muss sich notfalls jemand mieten,
+hat man an Geist selbst nichts zu bieten!     (Heinz Erhardt)
 
-|> I think the issues with directory-as-a-file were the same problems you
-|> get when you allow hardlinked directories -- that you'd eventually have
-|> to ditch reference counting for a garbage collector, which is hellishly
-|> impractical. I don't have a solution to that, other than dropping
-|> hardlinks entirely.
-|
-|
-| This issue is overblown.  Other fields have solved this problem.
-
-Nevertheless, it's an issue that I don't have the skills to solve, and
-one that must be solved if we are ever to implement these concepts.
-
-If you have a solution, I'd love to hear it.
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQcDT93gHNmZLgCUhAQLn6g/+KXD5StI9m9Tpij0i3uwqXAc+oAdz/dX5
-YHSwU7YYXSdVPPqNqUNnU4t7i8M1p8Mba0Jpc2rPZk6Is67txBnphLX2F7c9jLm8
-wfqfkjrfOM7/+5/EDQbdGVch0gZnuLJrxjGcpvukkwi8hkiMQnOtZuKuZwn1ieMW
-UlTy5e/IhDPl5zW/Dy3rpoAOw7hszvPv6fjpFDujUENHhhUQmWYoiIbIaV3rdbhY
-De+9AOkCRDEYNOmreCQQYmTkJD6w4C9cHzqmx7FrVx8vhxU3k9CPwoGRGGIrn42+
-UPKAtUCAZu6Mya1v9v6QnPFaqnPgQatIJl4edg91bBzktpRZg6oR2iS9QnnAxc+b
-LFJr95OKtdjBVVNuJGLRVCi06xoQsIjNWe5rOajAGHw/YHr7mHMZF315XKcp7FPa
-F1df8FwdpQgq2xM6OdIfSFlBxk2poj21w5NqVyOZoEMunTyyDnK0YQkigsz2AQeN
-lOeryopJ1sh9eHkQOsxOh/JdpYCVSkOfWiPgDKMst9mZbFF4yWwsot9JP1rNIUOC
-EtGHdQzUOtKPkKWNy2+VXKxd8F+5EUpAtmOrdG2B7FT0wjS5Ao1pz6c7boMo1x9D
-+9QxS2W1DdWjsCR9WhZhg0+eWc2wkf/dyVQIipf3JTm5vLOFJvJ/jfV3GRg0Ye7f
-gtjTMcGxzAc=
-=CIsH
------END PGP SIGNATURE-----
