@@ -1,46 +1,44 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: ReiserFS problems
-Date: Wed, 6 Aug 2003 23:04:44 +0400
-Message-ID: <200308062304.44808.vitaly@namesys.com>
-References: <20030806182055.A28562@bitwizard.nl> <20030806201405.A1357@bitwizard.nl> <20030806202252.A1940@bitwizard.nl>
+From: Mike Fedyk <mfedyk@matchmail.com>
+Subject: Re: Filesystem Tests
+Date: Wed, 6 Aug 2003 12:08:50 -0700
+Message-ID: <20030806190850.GF21290@matchmail.com>
+References: <3F306858.1040202@mrs.umn.edu> <20030805224152.528f2244.akpm@osdl.org> <3F310B6D.6010608@namesys.com> <20030806183410.49edfa89.diegocg@teleline.es> <20030806180427.GC21290@matchmail.com> <20030806204514.00c783d8.diegocg@teleline.es>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15197-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15198-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030806202252.A1940@bitwizard.nl>
 Content-Disposition: inline
+In-Reply-To: <20030806204514.00c783d8.diegocg@teleline.es>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>
-Cc: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com, copy@harddisk-recovery.nl
+Content-Transfer-Encoding: 7bit
+To: Diego Calleja Garc?a <diegocg@teleline.es>
+Cc: reiser@namesys.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-> Should I feel comfortable if it's finding formatting errors all over
-> the place?:
->
->   entry [x y] "ZZZ" in directory [a b] is not formatted properly -- fixed.
->
-> (usually x == 2, a,b == 1,2 .)
+On Wed, Aug 06, 2003 at 08:45:14PM +0200, Diego Calleja Garc?a wrote:
+> El Wed, 6 Aug 2003 11:04:27 -0700 Mike Fedyk <mfedyk@matchmail.com> escribi?:
+> 
+> > 
+> > Journaled filesystems have a much smaller chance of having problems after a
+> > crash.
+> 
+> I've had (several) filesystem corruption in a desktop system with (several)
+> journaled filesystems on several disks. (They seem pretty stable these days,
+> though)
+> 
+> However I've not had any fs corrution in ext2; ext2 it's (from my experience)
+> rock stable.
+> 
+> Personally I'd consider twice the really "serious" option for a serious server.
 
-Direntries have different format in reiserfs v3.5 and v3.6. These messages 
-are probably due to that reiserfs image of 3.5 format you have  on your fs 
-of 3.6 format.
+I've had corruption caused by hardware, and nothing else.  I haven't run
+into any serious bugs.
 
-> Tip:
->
-> Only list the file/directory that's being worked upon when explicitly
-> requested. When not explicitly requested, set an alarm handler to
-> print it every second (or so). Lots of time is now spent in writing to
-> the screen. (It's consumed over an hour of CPU time by now...)
->
-> 		Roger.
+But with servers, the larger your filesystem, the longer it will take to
+fsck.  And that is bad for uptime.  Period.
 
-I do not understand your "explicitly" term exactly, but during semantic 
-traversing the name of the last file in the path is not printed at all, only 
-the directory it was reached from. Thank you for the tip again.
-
--- 
-Thanks,
-Vitaly Fertman
+I would be running ext2 also if I wasn't running so many test kernels (and
+they do oops on you), and I've been glad that I didn't have to fsck every
+time I oopsed (though I do every once in a while, just to make sure).
