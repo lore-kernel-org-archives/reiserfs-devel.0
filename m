@@ -1,48 +1,86 @@
-From: Redeeman <redeeman@metanurb.dk>
-Subject: results of my filesystem test, xfs, jfs, ext3 and reiserfs
-Date: Mon, 22 Dec 2003 11:46:51 +0100
-Message-ID: <1072090011.4349.8.camel@redeeman.linux.dk>
-Reply-To: redeeman@metanurb.dk
+From: Domenico Andreoli <cavok@libero.it>
+Subject: Re: fscking a reiserfs 3.6 filesystem with reiser4progs 0.4.18 segfaults
+Date: Mon, 22 Dec 2003 11:52:11 +0100
+Message-ID: <3FE6CCDB.2030200@libero.it>
+References: <3FE5A1AA.8040200@libero.it>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16368-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16369-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3FE5A1AA.8040200@libero.it>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-i decided to make a little test between those filesystems, to test speed
-and stability. i will not include the accurate numbers here as i have to
-get it together, (my notes are messy :)) but i will tell how it was.
+Domenico Andreoli wrote:
+> i tried to check a reiserfs 3.6 filesystem with fsck.reiser4 and it 
+> segfaulted. is reiser4progs expected to work correctly with older 
+> reiserfs filesystems?
+> 
+> i'm using a 2.6.0 kernel patched with reiser4 from 2003.11.12. libaal 
+> 0.4.13 and reiser4progs 0.4.18.
+> 
+> let me know if more info are required.
+> 
+now that i look at it, fsck.reiser4 does not even check a reiser4 fs :(
 
-i made a gentoo install and 4 other partitions, with each filesystem,
-and made a tar archive of it, copied to the new partitions (jfs fastest
-on the copy, then reiserfs, xfs and ext3)
-then i unpacked, (reiserfs fastest, jfs, xfs, ext3) and edited fstab,
-and grub entries, i tried some different things, start time, stop time,
-time after a power failure while reading and writing.
+# mkfs.reiser4 /dev/hdc6
+mkfs.reiser4 0.4.18
+Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by 
+reiser4progs/COPYING.
 
-i also tried do emerge sync, where reiserfs was incredibly fast.
+Block size 4096 will be used. 
 
-on start and stop time reiserfs was second fastest, (matter of ms). and
-when i wrote and read the same time, and cut the power, reiserfs was
-much slower, i did this twice, and the second time all files on the
-reiserfs partition disappeared, where ext3 had to do fsck, but jfs and
-xfs just started up with no loss (except the file i was writing to)
+Linux 2.6.0-cavok is detected. 
 
-any idea why reiserfs does this? i would like to use reiserfs on my
-workstation because its ultra fast speed on small files, like on emerge
-sync, but i dont like that it isn't capable of power loss :((
+Uuid 9ad355b3-1520-450e-9471-dee1765a7466 will be used. 
 
-reiserfsck could almost fix it, but after a rebuild-tree i still had
-lost some libraries which i didn't write to.
+Reiser4 is going to be created on /dev/hdc6. 
 
--- 
-Regards, Redeeman
-()  ascii ribbon campaign - against html e-mail 
-/\                        - against microsoft attachments
+(Yes/No): yes
+Creating reiser4 on /dev/hdc6...done
+# fsck.reiser4 /dev/hdc6
+   *************************************************************
+   ** If you are using the latest reiser4progs and  it fails **
+   ** please  email bug reports to reiserfs-list@namesys.com, **
+   ** providing  as  much  information  as  possible --  your **
+   ** hardware,  kernel,  patches,  settings,  all  reiserfsk **
+   ** messages  (including version), the reiser4fsck logfile, **
+   ** check  the  syslog file  for  any  related information. **
+   ** If you would like advice on using this program, support **
+   ** is available  for $25 at  www.namesys.com/support.html. **
+   *************************************************************
 
+Fscking the /dev/hdc6 block device.
+Will check the consistency of the Reiser4 SuperBlock.
+Will check the consistency of the Reiser4 FileSystem.
+Will use (default) params.
+Continue? 
 
+(Yes/No): yes
+***** Openning the fs.
+Fatal: Device operation "read" isn't implemented. 
+
+Fatal: Can't read master super block. 
+
+Fatal: Failed to open the master super block. 
+
+Fatal: Cannot open the FileSystem on (/dev/hdc6). 
+
+zsh: segmentation fault (core dumped)  fsck.reiser4 /dev/hdc6
+#
+
+any hint?
+
+BTW: note the "***** Openning the fs.", it should be "Opening" instead 
+of "Openning".
+
+cheers
+domenico
+
+-----[ Domenico Andreoli, aka cavok
+  --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
+    ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
