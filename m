@@ -1,31 +1,50 @@
-From: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
-Subject: Re: Congratulations! we have got hash function screwed up
-Date: Fri, 21 Jan 2005 00:43:56 +0100
-Message-ID: <2f4958ff050120154330188420@mail.gmail.com>
-References: <77912E9FD42896419D1CEF15E1C397A58AFCF1@london.jaguarfreightservices.local>
-	 <m38y7gx8kq.fsf@merlin.emma.line.org>
-	 <20041230235911.4911a20c.hihone@bigpond.net.au>
-	 <m3sm5nj2ef.fsf@merlin.emma.line.org> <41D42F93.9060107@namesys.com>
-	 <2f4958ff050118131714f5411c@mail.gmail.com>
-	 <41EE859D.3020305@namesys.com> <41EFAFB0.2000606@namesys.com>
-Reply-To: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: in reiser4 can extent pointer exist at any level
+Date: Fri, 21 Jan 2005 12:19:39 +0300
+Message-ID: <1106299179.3200.21.camel@tribesman.namesys.com>
+References: <20050120171834.54511.qmail@web60108.mail.yahoo.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23183-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23184-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41EFAFB0.2000606@namesys.com>
+In-Reply-To: <20050120171834.54511.qmail@web60108.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward@namesys.com>
-Cc: Hans Reiser <reiser@namesys.com>, Matthias Andree <ma@dt.e-technik.uni-dortmund.de>, hihone@bigpond.net.au, reiserfs-list@namesys.com
+To: Pallavi Dalya <pallavidalya@yahoo.com>
+Cc: reiserfs-list@namesys.com
 
-All I know is that xxtea is fixed tea algo. If that fixes weakness in
-crypto algo, than so it should make hashing better.
-No doubt there is no ideal hash algo, but if base algo has weaknes,
-using fixed one only can be better, Right ?
+Hello
 
--- 
-GJ
+On Thu, 2005-01-20 at 20:18, Pallavi Dalya wrote:
+> Hello,
+> 
+>       In reiser4 only the node pointer items are
+> present throughout the tree except for the leaves of
+> the tree and the other items like the tail policy
+> item,directory entry items and stat data items are
+> present in the leaf nodes.
+>       But recently I came accross a extent pointer
+> present in the root of the tree in reiser4. Is this
+> possible.
+
+Extent items can be at level which is above the leaf one only.
+So, if your tree height is 2 - you can have extebt item in the tree
+root. If you see something else - you have encountered a bug.
+
+>       But according to the theory all the data should
+> be present at the lower level (i.e the leaf level) of
+> the tree. Then how can an extent pointer exist at any
+> level but the leaf of the tree.
+> 
+> Pallavi
+>  
+> 
+> ________________________________________________________________________
+> Yahoo! Messenger - Communicate instantly..."Ping" 
+> your friends today! Download Messenger Now 
+> http://uk.messenger.yahoo.com/download/index.html
+> 
+
