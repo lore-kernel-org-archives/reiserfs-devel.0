@@ -1,58 +1,52 @@
-From: Christophe Saout <christophe@saout.de>
+From: mitya@school.ioffe.ru (Dmitry Baryshkov)
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 22:25:56 +0200
-Message-ID: <1093551956.13881.34.camel@leto.cs.pocnet.net>
-References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com>
-	 <200408262128.41326.vda@port.imtp.ilyichevsk.odessa.ua>
-	 <20040826193617.GA21248@arlut.utexas.edu>
-	 <20040826201639.GA5733@mail.shareable.org>
+Date: Fri, 27 Aug 2004 00:30:17 +0400
+Message-ID: <20040826203017.GA14361@school.ioffe.ru>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com> <20040826014542.4bfe7cc3.akpm@osdl.org> <412DAC59.4010508@namesys.com> <1093548414.5678.74.camel@krustophenia.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-/lH6kvm1JVZkuxIJ+gc8"
-Return-path: <reiserfs-list-return-20787-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20788-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826201639.GA5733@mail.shareable.org>
+Content-Disposition: inline
+In-Reply-To: <1093548414.5678.74.camel@krustophenia.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Jonathan Abbey <jonabbey@arlut.utexas.edu>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
---=-/lH6kvm1JVZkuxIJ+gc8
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hello,
+On Thu, Aug 26, 2004 at 03:26:55PM -0400, Lee Revell wrote:
+> On Thu, 2004-08-26 at 05:24, Hans Reiser wrote:
+> > 
+> > Well, in V4, you can easily compose a plugin from plugin methods of 
+> > other plugins, write a little piece of code with the one thing you want 
+> > different, and add it in.  Disk format changes, no big deal, add a new 
+> > disk format plugin, or a new item plugin, or a new node plugin, etc., 
+> > and you got your new format.
+> > 
+> 
+> OK, real world example.  My roommate has an AKAI MPC-2000, a very
+> popular hardware sampler from the 90's.  The disk format is known,there
+> are a few utilities to edit the disks on a PC and extract the PCM
+> samples, but there are no tools to mount it on a modern PC.  Are you
+> saying that, since I know the MPC disk format, I could write a reiser4
+> plugin to mount an MPC drive?
+> 
 
-Am Donnerstag, den 26.08.2004, 21:16 +0100 schrieb Jamie Lokier:
+Another example: Can ext2/etx3/reiserfsv3/xfs be implemented as reiser4
+plugins? From Hans' words it seems so. If this is correct, then maybe
+reiser4 core should be updated to completely replace current VFS layer?
+Then it's a good point to create a branch (in old development model it
+would be 2.7, dunno for new :), replace VFS layer with reiser4 core, and
+rewrite all (or at least most used) FS as reiser4 plugins. Then
+everybody will be happy.
 
-> > | Will it work out if "dir inside file" will only be visible when
-> > referred as "file/."?
-> >=20
-> > I'm used to using ls symlink/. to get ls to show me the directory on
-> > the far side of a symbolic link.  That's a pretty analagous case to
-> > the one we're discussing here, I think?
->=20
-> By the way, do symlinks have metadata?  Where do you find it? :)
+But this looks too good to be true. Perhaps I misunderstood Hans' words
+aboud 'new disk format', did I?
 
-Oops. :)
-
-At least in reiser4 they don't have, or at least you can't access them.
-ln -s foo bar; cd bar/metas shows me the content of foo/metas.
-
-symlinks are special anyway. Their rights are 777. The only thing they
-can have is an owner. No chance to do a symlink/metas/uid then. Hmm.
-
-
---=-/lH6kvm1JVZkuxIJ+gc8
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQBBLkdUZCYBcts5dM0RApi+AKCJO51/3aeYsKTo1mqaGneW7AsmVgCeJfFY
-4tBtGpcs1InekspFwxpl42w=
-=RuGd
------END PGP SIGNATURE-----
-
---=-/lH6kvm1JVZkuxIJ+gc8--
+-- 
+With best wishes
+Dmitry Baryshkov
 
