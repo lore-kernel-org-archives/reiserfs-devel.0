@@ -1,70 +1,138 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Odd Block allocation behavior on Reiser3
-Date: Tue, 10 Aug 2004 08:53:31 -0400
-Message-ID: <1092142411.10651.226.camel@watt.suse.com>
-References: <20040809201939.GA55683@kevlar.burdell.org>
-	 <1092083451.10651.218.camel@watt.suse.com>
-	 <20040809220459.GA57121@kevlar.burdell.org>
+From: Horst Simon <hsimon@optusnet.com.au>
+Subject: Re: Zero Bit found
+Date: Tue, 10 Aug 2004 23:13:16 +1000
+Message-ID: <200408102313.16186.hsimon@optusnet.com.au>
+References: <6913951.1090812351701.SLOX.WebMail.wwwrun@neptune.hsc-consulting.com.au> <200407261415.24890.vitaly@namesys.com>
+Reply-To: hsimon@optusnet.com.au
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20122-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20124-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040809220459.GA57121@kevlar.burdell.org>
+In-Reply-To: <200407261415.24890.vitaly@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Sonny Rao <sonny@burdell.org>
+To: Vitaly Fertman <vitaly@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-On Mon, 2004-08-09 at 18:04, Sonny Rao wrote:
-> On Mon, Aug 09, 2004 at 04:30:51PM -0400, Chris Mason wrote:
-> > On Mon, 2004-08-09 at 16:19, Sonny Rao wrote:
-> > > Hi, I'm investigating filesystem performance on sequential read
-> > > patterns of large files, and I discovered an odd pattern of block
-> > > allocation and subsequent re-allocation after overwrite under reiser3:
-> > > 
-> > Exactly which kernel is this?  The block allocator in v3 has changed
-> > recently.
-> 
-> 2.6.7 stock
-> 
-Ok, the block allocator optimizations went in after 2.6.7.  I'd be
-curious to see how 2.6.8-rc3 does in your tests.
+On Mon, 26 Jul 2004 08:15 pm, Vitaly Fertman wrote:
+> On Monday 26 July 2004 07:25, Horst Simon wrote:
+> > Hi,
+> >
+> > I recently added a 200GB Seagate IDE drive to my system on a build-in
+> > promise controller on an ASUS A7V, updated BIOS which supports large
+> > disk drives.
+> > The O/S is United Linux 1.0 with the latest patches and the kernel
+> > version is
+> > 2.4.21 with latest United Linux patches. The reiserfs is 3.6. During the
+> > initial
+> > setup and first reboot no reiserfsck errors are report. After writing
+> > data to the disk I get now following reiserfsck messages during each
+> > boot:
+> >
+> >  ZERO BIT FOUND IN ON-DISK BITMAP AFTER THE LAST VALID BIT
+> > Switching to --fix-fixable mode
+> > Checking
+> >
+> > It displays directory paths which it is checking and after finishing
+> > following message is displayed:
+> >
+> > The on-disk and the correct bitmaps differ. Will be fixed later
+> >
+> > No corruption found
+> >
+> > What is this ZERO BIT, is this a serious problem? What could be wrong
+>
+> zero bit is not serious, but the message 'The on-disk and the correct
+> bitmaps differ. ' points to another more serious problem. --fix-fixable is
+> supposed to fix them both (and as I have just tested, it does) -- this is
+> not good that these problems arrear again and again.
+>
+> > bad BIOS, reiserfs, etc.?
+>
+> could you umount the fs, run reiserfsck --check on it, then if it finds
+> these corruptions fix them with fix-fixable and reiserfsck --check again to
+> be sure all of them are fixed?
+>
+> the problem could in your hardware also. we deal with such problems
+> under the terms of our support page (www.namesys.com/support.html)
+> -- visit it please.
+I finally got around to do your suggestions I moved the drive to an other 
+Motherboard and following are the output of reiserfsck
 
-> > > This was done on a newly created filesystem with plenty of available
-> > > space and no other files.  I tried this test several times and saw the
-> > > number of extents for the file vary from 5,6,7 and 134 extents, but it
-> > > is always different after each over-write.
-> > > 
-> > You've hit a "feature" of the journal.  When you delete a file, the data
-> > blocks aren't available for reuse until the transaction that allocated
-> > them is committed to the log.  If you were to put a sync in between each
-> > run of dd, you should get roughly the same blocks allocated each time. 
-> > ext3 does the same things, although somewhat differently.  The
-> > asynchronous commit is probably just finishing a little sooner on ext3.
-> > 
-> > > First, I expect that an extent-based filesystem like reiserfs
-> > 
-> > reiser4 is extent based, reiser3 is not.
-> 
-> 
-> Ah, I didn't know that.  I'm still confused as to why on the first
-> allocation/create we get such bad fragmentation, you can see that even
-> though the file is fragmented into 134 blocks, the blocks are very
-> close together.  Most of the extents are only 2 blocks apart.
+1. reiserfsck --check
+###########
+reiserfsck --check started at Tue Aug 10 23:02:06 2004
+###########
+Replaying journal..
+0 transactions replayed
+Checking internal tree..finished
+Comparing bitmaps..vpf-10640: The on-disk and the correct bitmaps differs.
+Checking Semantic tree:
+finished
+1 found corruptions can be fixed when running with --fix-fixable
+###########
+reiserfsck finished at Tue Aug 10 23:03:08 2004
+###########
 
-This could be the metadata mixed in with the file data.  In general this
-is a good
-Still there were a number of cases the old allocator didn't do as well
-with. thing, when you read the file sequentially, the metadata required
-to find the next block will already be in the drive's cache.
+2. reiserfsck --fix-fixable
+###########
+reiserfsck --fix-fixable started at Tue Aug 10 23:07:17 2004
+###########
+Replaying journal..
+0 transactions replayed
+Checking internal tree..finished
+Comparing bitmaps..vpf-10630: The on-disk and the correct bitmaps differs. 
+Will be fixed later.
+Checking Semantic tree:
+finished
+No corruptions found
+There are on the filesystem:
+        Leaves 20287
+        Internal nodes 123
+        Directories 2064
+        Other files 22888
+        Data block pointers 15971390 (0 of them are zero)
+        Safe links 0
+###########
+reiserfsck finished at Tue Aug 10 23:08:35 2004
+###########
 
-Whenever you're doing fragmentation tests, it helps to also identify the
-actual effect of the fragmentation on the time it takes to read a file
-or set of files.  It's easy to create a directory where all the files
-are 99.99% contiguous, but that takes 3x as much time to read in.
+3. reiserfsck --check
 
--chris
+
+-- Do you want to run this program?[N/Yes] (note need to type Yes if you 
+do):Yes
+###########
+reiserfsck --check started at Tue Aug 10 23:09:20 2004
+###########
+Replaying journal..
+0 transactions replayed
+Checking internal tree..finished
+Comparing bitmaps..vpf-10640: The on-disk and the correct bitmaps differs.
+Checking Semantic tree:
+finished
+1 found corruptions can be fixed when running with --fix-fixable
+###########
+reiserfsck finished at Tue Aug 10 23:10:22 2004
+###########
+
+The reiserfsck is version 3.6.9 O/S SLOX 4.1 (United Linux) Kernel 2.4.21-238
+It happens only on the new Seagate 200GB IDE disk drive on different 
+controllers (motherboards).
+
+Regards
+Horst Simon
+
+  Horst Simon
+  HSC-Consulting Pty. Ltd.
+  Tel: +61(0)3 9553-1624
+  Fax: +61(0)3 9553-1624
+  hsimon@optusnet.com.au
+  --------------------------------------------------------------
+  This message was sent by
+  KMail 1.6.2 Using KDE 3.2.2 & SuSE Linux 9.1
 
