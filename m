@@ -1,35 +1,49 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: 2.6.9-mm1
-Date: Sat, 23 Oct 2004 19:57:12 +0300
-Message-ID: <20041023165712.GR26192@nysv.org>
-References: <417A7EF9.70007@namesys.com>
+From: "Hilzinger Marcel" <marcel@hilzinger.hu>
+Subject: =?iso-8859-2?Q?Re:=A02.6.9-mm1?=
+Date: Sat, 23 Oct 2004 21:01:41 +0200 (CEST)
+Message-ID: <1078.217.232.234.250.1098558101.squirrel@florka.hu>
+References: <20041022032039.730eb226.akpm@osdl.org>
+    <4179425A.3080903@namesys.com>
+Reply-To: marcel@hilzinger.hu
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22140-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-22141-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <417A7EF9.70007@namesys.com>
+In-Reply-To: <4179425A.3080903@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, Reiserfs developers mail-list <reiserfs-dev@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Hans Reiser wrote:
+> Andrew Morton wrote:
+>
+>>
+>>  - reiser4: not sure, really.  The namespace extensions were disabled,
+>>    although all the code for that is still present.  Linus's filesystem
+>>    criterion used to be "once lots of people are using it, preferably
+>> when
+>>    vendors are shipping it".  That's a bit of a chicken and egg thing
+>> though.
+>>    Needs more discussion.
+>>
+[...]
 
->Please make large keys the default, and hide the ability to 
->choose small keys by taking it out of the configuration menu and burying 
->it in a .h file.
+> I would like to encourage its inclusion as an experimental filesystem
+> BEFORE vendors ship it. I think first putting experimental stuff in the
+> kernels used by hackers makes sense. I think it creates more of a
+> community.
+Too late, perhaps... SuSE Linux 9.2 will contain reiser4 (at least the
+beta testversions did). It cannot be set up via YaST during installation,
+but the tools are there. So anybody, who is curious about reiser4 can test
+it without further knowledge.
 
-Stupid question, why have small keys at all?
+If SuSE will be as successful with Reiser4, as with ReiserFS, then Reiser4
+will first be stable in SuSE Linux, than in the main kernel.
 
-Someone said once that he didn't want to use large keys because they added
-no value to him and small keys wasted less space. If there are people like
-this around, burying it is not cool, but if there aren't, maybe small keys
-should be ripped out?
+If you do not want this to happen once again, please include it now!
 
--- 
-mjt
+Marcel
 
