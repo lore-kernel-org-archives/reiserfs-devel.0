@@ -1,50 +1,66 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: carrying links too far? (was Re: A bold idea (Re: Carrying
- Attributes too Far))
-Date: Sun, 07 Dec 2003 13:25:56 -0500
-Sender: news <news@sea.gmane.org>
-Message-ID: <87iskstrgr.fsf@uhoreg.ca>
-References: <1065247084.3f7e616c94ec9@webmail.st-andrews.ac.uk> <3FCE3716.8000509@namesys.com>
- <1070584227.3fcfd1a3d67f4@webmail.st-andrews.ac.uk>
- <3FD00272.7040607@ninja.dynup.net>
- <1070617453.5605.13.camel@schlappix.schnulli.de>
- <3FD08F73.4070404@ninja.dynup.net> <87zne7xltp.fsf@uhoreg.ca>
- <1070750513.3fd25b311ae75@webmail.st-andrews.ac.uk>
- <3FD27FF2.3000907@ninja.dynup.net>
- <1070803113.3fd328a961d00@webmail.st-andrews.ac.uk>
+From: Larry Weldon <larry@welcoin.com>
+Subject: rebuild-tree
+Date: 07 Dec 2003 15:46:03 -0500
+Message-ID: <1070829963.2789.528.camel@larry>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16283-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16284-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: reiserfs mailing list <reiserfs-list@namesys.com>
 
->>>>> "Leo" == lrc1  <lrc1@st-andrews.ac.uk> writes:
+A client's production file server is set up using RAID-1 with 2 IDE
+disks and reiserfs. The operating system is Mandrake 9.1. The system has
+an APC 1050 SmartUPS on it - the place does have a history of power
+glitches so _everything_ has a UPS.
 
-[...]
+Monday last I noticed the tape backup (I use tar) crashed at less than 1
+minute with memory exhausted error. Examination showed a directory made
+using a client machine as a 'backup' of the main job directory had an
+error showing up as "cannot stat..." when running du. Since it was a
+backup directory they just renamed it and tried to delete it using a DOS
+shell. All the files and directories were successfully deleted except
+the two offending files and their parent directories.
 
-Leo> There are several different ways you can handle filesystems which
-Leo> are frequently mounted and remounted.
+It took me all week to see what was wrong although it was plain...
 
-I don't see any way that would work reasonably well.  Can you give an
-example of one way?
+After a successful backup, excluding the offending directory, I
+unmounted and used reiserfsck --check which told me 1 item was badly
+broken and to use reiserfsck --rebuild-tree which worked perfectly and
+restored all the meta-data and files.
 
-Leo> Old single-tree filesystems can probably be adapted or fooled into
-Leo> working reasonably well with external hard links too.
+I would call that a nice job of recovering from some corruption. I did
+not think to keep the output of the rebuild-tree function - I recall the
+two bad files had some record of size 120 bytes (wrong) and it was reset
+to 96 (correct).
 
-I'm not sure what you mean by this.  I think any filesystem that needs
-to work with external hardlinks, in either direction, needs to be
-patched -- either to be able to store the location of an external
-hardlink, or to be able to update a refcount without having a new local
-reference.
+I use reiserfs mostly because it was recommended by a friend. Now I find
+out he has abandoned reiserfs because of:
+http://www.wlug.org.nz/ReiserFS
+which seems to be down right now so excerpt follows:
+=======================================================================
+Unfortunately, the tree structure used is also the weak point of 
+ReiserFS: if any of it gets corrupted, chances are that much more data
+will be affected than under traditional FileSystems. Rather than losing
+a single file to corruption of an inode, you may lose almost the entire
+contents of your disk if metadata close to the root of the BTree is
+affected. Fortunately, the likelihood of this happening due to bugs has
+been dramatically reduced in more recent version of the driver. Hardware
+failure caused corruption is still a serious problem, though.
+========================================================================
 
+Now, I can't just stop using reiserfs and I don't want to. I think there
+is great merit in it. So, first, with the limited info I have given,
+what might have happened to create the problem and how likely might it
+be to happen again? Secondly, what is the *real* hazard of corruption
+_higher_up_ in the tree which the article says might blow away the whole
+partition?
+
+Thanks and regards.
 -- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+Larry Weldon <larry@welcoin.com>
 
