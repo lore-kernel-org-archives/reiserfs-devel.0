@@ -1,57 +1,37 @@
-From: Asheesh Laroia <asheesh@asheesh.org>
-Subject: Re: Conversion from v3.6 to v4 of Reiserfs...
-Date: Tue, 24 Feb 2004 21:25:20 -0500 (EST)
-Message-ID: <Pine.LNX.4.58.0402242120330.13298@renaissance.laroia.net>
-References: <20040224172153.M90659@pk25.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: File system corruption!
+Date: Wed, 25 Feb 2004 11:01:55 +0300
+Message-ID: <403C5673.3080503@namesys.com>
+References: <2A0946C0CB543B4EA5E41C21D97D256E1663AD@zorg.corp.zantaz.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16917-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16919-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-reply-to: <20040224172153.M90659@pk25.com>
+In-Reply-To: <2A0946C0CB543B4EA5E41C21D97D256E1663AD@zorg.corp.zantaz.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Diaz Rodriguez, Eduardo" <ediaz@pk25.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Fong Vang <fvang@corp.zantaz.com>
+Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
 
-There is the program convertfs:
-	http://tzukanov.narod.ru/convertfs/
+Fong Vang wrote:
 
-I don't think it suports reiser4, but you could probably write a patch or
-ask the author nicely.  It's supposed to do in-place filesystem conversion
-by using a sparse loopback file.
-
-I've only heard good things about it, but I've never used it.
-
--- Asheesh.
+>This is a new problem the file system isn't empty in this case but files are indeed missing (same setup.  RedHat Linux 7.1, Linux 2.4.20 kernel from RedHat, and ReiserFS 3.6.25.  SMP system with 4 GB of RAM, ~1 TB storage in RAID-10 configuration).  Although the file system isn't empty this time, we are loosing file (our application transaction log says file write completed fro last 7 files, but only four files show up in the ReiserFS file system).
+>
+>At the time of the problem, this was logged to the messages file:
+>
+>Feb 23 19:24:57 sc19-172-15 kernel: 3w-xxxx: scsi0: PCI Abort: clearing.
+>Feb 23 19:26:02 sc19-172-15 kernel: 3w-xxxx: scsi0: Unit #0: Command (f73bd800) timed out, resetting card.
+>Feb 23 19:26:04 sc19-172-15 kernel: 3w-xxxx: PCI Abort: clearing.
+>Feb 23 19:27:03 sc19-172-15 kernel: 3w-xxxx: scsi0: Unit #0: Command (f73bd800) timed out, resetting card.
+>  
+>
+These look like hardware errors, see www.namesys.com/support.html for 
+help.  Soon we will take credit cards....
 
 -- 
-"Good health" is merely the slowest rate at which one can die.
+Hans
 
-On Tue, 24 Feb 2004, Diaz Rodriguez, Eduardo wrote:
 
-> Sorry for the question from a newbie but I can'f find the answer and I find in
-> google maillist and may sites...
->
-> I recently upgrade from 2.4.20 kernel to 2.6.3 kernel my debian testing.
->
-> I see in logs that my lvm system are using version 3.6 of resiser fs.
->
-> Feb 23 21:57:12 servidor1 kernel: found reiserfs format "3.6" with standard
-> journal
-> Feb 23 21:57:12 servidor1 kernel: Reiserfs journal params: device dm-0, size
-> 8192, journal first block 18, max trans len 1024, max batch 900, max commit
-> age 30, max trans age 30
-> Feb 23 21:57:12 servidor1 kernel: reiserfs: checking transaction log (dm-0)
-> for (dm-0)
-> Feb 23 21:57:12 servidor1 kernel: reiserfs: replayed 23 transactions in 1 seconds
-> Feb 23 21:57:12 servidor1 kernel: Using r5 hash to sort names
->
->
-> I want use new version v4 but I don't want to lost my data. are there any form
-> to convert my fs to a new version v4??? This files are not critical for the
-> system, only data..
->
-> Thanks for the time and for reiserfs...
