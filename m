@@ -1,83 +1,46 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: Zero Bit found
-Date: Mon, 26 Jul 2004 14:08:14 +0400
-Message-ID: <4104D80E.20209@namesys.com>
-References: <6913951.1090812351701.SLOX.WebMail.wwwrun@neptune.hsc-consulting.com.au>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: Fibration questions
+Date: Mon, 26 Jul 2004 14:11:56 +0400
+Message-ID: <200407261411.56569.vitaly@namesys.com>
+References: <40FE0B47.3010600@slaphack.com> <200407231309.55295.vitaly@namesys.com> <4104A488.2060103@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19808-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19809-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <6913951.1090812351701.SLOX.WebMail.wwwrun@neptune.hsc-consulting.com.au>
+In-Reply-To: <4104A488.2060103@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: hsimon@optusnet.com.au
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: David Masover <ninja@slaphack.com>, Markus =?utf-8?q?T=C3=B6rnqvist?= <mjt@nysv.org>, David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
 
-Hello
+On Monday 26 July 2004 10:28, Hans Reiser wrote:
+> Vitaly Fertman wrote:
+> >>wait -- what does this do:
+> >>echo -e "tea\0" > somedir/metas/plugin/hash
+> >
+> >will set the hash tea in 'somedir' if it is empty.
+> >if it has 'subdir' already, nothing happens.
+> >
+> >>echo -e "something_differenet\0" > somedir/subdir/metas/plugins/hash
+> >
+> >will set the hash 'something_differenet' if any of [r5 | tea | fnv1 |
+> >rupasov | degenerate hash | all future hash plugins] in 'somedir/subdir'
+> >if 'subdir' is empty.
+>
+> is something_different constrained to
+>
+>  [r5 | tea | fnv1 | rupasov | degenerate hash | some future hash plugin
+> existing at time of command]
+>
+> ?
 
-Horst Simon wrote:
-> Hi,
-> 
-> I recently added a 200GB Seagate IDE drive to my system on a build-in
-> promise controller on an ASUS A7V, updated BIOS which supports large
-> disk drives.
-> The O/S is United Linux 1.0 with the latest patches and the kernel
-> version is
-> 2.4.21 with latest United Linux patches. The reiserfs is 3.6. During the
-> initial
-> setup and first reboot no reiserfsck errors are report. After writing
-> data to the disk I get now following reiserfsck messages during each
-> boot:
-> 
->  ZERO BIT FOUND IN ON-DISK BITMAP AFTER THE LAST VALID BIT
-> Switching to --fix-fixable mode
-> Checking
-> 
-> It displays directory paths which it is checking and after finishing
-> following message is displayed:
-> 
-> The on-disk and the correct bitmaps differ. Will be fixed later
-> 
-> No corruption found
-> 
-> There are on the filesystem:
-> 
->     Leaves 20264
-> 
->       Internal nodes 125
-> 
->         Directories 2063
-> 
->   Other files 22869
-> 
->  Data block pointers 15940960 (0 of them are zero)
-> 
->  Safe links 0
-> 
-> ###########
-> 
-> What is this ZERO BIT, is this a serious problem? 
+yes, right.
 
-No, it is not. Reiserfs manages disk space by bitmaps. Those bitmaps are stored in disk blocks.
-Reiserfsck expects last bitmap to be filled by 1s in the area which address blocks out of device.
-Somehow you got that padding area in last bitmap incorrectly initialized.
-It is completely harmless.
-
-What could be wrong
-> bad BIOS, reiserfs, etc.?
-> 
-
-What version of reiserfsprogs you are using?
-
-
-> Regards,
-> Horst
-> 
-> 
-> 
-> 
-
+-- 
+Thanks,
+Vitaly Fertman
 
