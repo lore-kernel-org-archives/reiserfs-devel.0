@@ -1,62 +1,63 @@
-From: "daniel.poelzleithner" <poelzi@poelzi.org>
-Subject: Re: Comments about indexing and query solving in user land
-Date: Tue, 07 Sep 2004 22:09:25 +0200
-Message-ID: <413E1575.4000704@poelzi.org>
-References: <-3757055227027460326@unknownmsgid> <2f4958ff040906055172c36214@mail.gmail.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: silent semantic changes in reiser4 (brief attempt to document
+ the idea of what reiser4 wants to do with metafiles and why
+Date: Tue, 07 Sep 2004 13:16:15 -0700
+Message-ID: <413E170F.9000204@namesys.com>
+References: <41323AD8.7040103@namesys.com> <20040831131201.GA1609@elf.ucw.cz>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-21585-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21586-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <2f4958ff040906055172c36214@mail.gmail.com>
+In-Reply-To: <20040831131201.GA1609@elf.ucw.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"; format="flowed"
-To: =?UTF-8?B?R3J6ZWdvcnogSmHFm2tpZXdpY3o=?= <gryzman@gmail.com>
-Cc: Faraz S <farazs@calsoftinc.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Andrew Morton <akpm@digeo.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@osdl.org>, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Pavel Machek wrote:
 
-Grzegorz Ja=C5=9Bkiewicz wrote:
+>Hi!
+>
+>  
+>
+>>Answer: choose obscure names
+>>
+>>Problem (all credit to Mr. Demidov for identifying this problem, I
+>>argued the other viewpoint, and I can only claim the wisdom to know
+>>that I lost the argument): names like "..metas" are ugly to new users,
+>>who don't really care for languages that use punctuation in their
+>>keywords.
+>>
+>>Answer
+>>
+>>don't make them too obscure, experienced namespace developers know
+>>that the problem of polluting the namespace is not really as big a
+>>deal as beginners think it is, and Clearcase and the WAFL filesystem
+>>manage to get by just fine, whereas the problem of putting punctuation
+>>marks into names and syntax is a big deal for newbies to the system.
+>>Name it "metas" not "..metas", and users will never experience it as a
+>>real problem, and newbies will never be annoyed by a-rhythmic
+>>punctuation.  Note: if Linus disagrees, it is not the most important
+>>thing in this design, "..metas" isn't the end of the world.
+>>    
+>>
+>
+>What about choosing just "..." instead of "metas"? "metas" is string
+>that needs translation etc, while "..." is nicely neutral.
+>
+>cat /sound_of_silence.mp3/.../author
+>
+>does not look bad, either...
+>								Pavel
+>  
+>
+"..." is pretty good, but I think it has been used by others, but I 
+really forget who.  I could live with "...", but I think "metas" and 
+"..metas" will collide less often.  Apparently Meta is a finnish name or 
+something, so Linus does not like it.  The exact string is really not 
+very important to me.  I agree that "..." is elegant.
 
-|>        In our project http://sourceforge.net/projects/linuxsfs-tm/ we
-did the
-|>attribute indexing and query parsing in the user-space and we had hooks
-|>in the VFS which communicated with the user-space deamons. As far as
-|>directory listing is concerned we had a in kernel-recordset cache
-|>(hashed on the query). The listing were pretty efficient.
-|>
-|>        But the real problem occured when a large number of files were
-copied
-|>in the onto our file system. All the files now need to be indexed in the
-|>user space , leading to mode switch. That was pathetically slooow. The
-|>entire 2.4 sources were copied in 5-6 hours. I think this problem could
-|>be solved by batching requests the user space deamon.  Then u have all
-|>the problems on missing out on indexing on a large set of files.
-|
-| I think that should give you pretty much explanation why whole VFS
-| layer and filesystems are in kernel not in user space. That's where
-| such sort of thing belongs to. I have no doubts.
-
-I think such operations should be a background task. When a new file is
-created, the file should be added to a index queue and the file
-operation should return. These queue list will be processed by an
-background daemon.
-Only when meta data are accessed which is unindexed the file will be
-removed from the queue and proccessed instandly, so the system call can
-return.
-I think such a technique would reduce the speed impact indexing brings.
-
-regards
-~ Daniel
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iD8DBQFBPhV1y/mkIQp7AD0RAqonAJ9ww2VAPKnX7u9q1euyKZbYBK9zGQCg2fI9
-mC6bQ5IiRuafCrX+O3I7oJw=3D
-=3DQ8mj
------END PGP SIGNATURE-----
+Hans
