@@ -1,72 +1,76 @@
-From: leon breedt <bitserf@gmail.com>
-Subject: reiserfs3 filesystem corruption?
-Date: Sun, 29 Aug 2004 01:27:50 +1200
-Message-ID: <270bd0c404082806271f566342@mail.gmail.com>
-Reply-To: leon breedt <bitserf@gmail.com>
+From: Nikita Danilov <nikita@clusterfs.com>
+Subject: Re: reiser4 plugins
+Date: Sat, 28 Aug 2004 17:47:39 +0400
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <16688.36091.861155.985990@gargle.gargle.HOWL>
+References: <20040825152805.45a1ce64.akpm@osdl.org>
+	<412D9FE6.9050307@namesys.com>
+	<20040826014542.4bfe7cc3.akpm@osdl.org>
+	<1093522729.9004.40.camel@leto.cs.pocnet.net>
+	<20040826124929.GA542@lst.de>
+	<1093525234.9004.55.camel@leto.cs.pocnet.net>
+	<20040826130718.GB820@lst.de>
+	<1093526273.11694.8.camel@leto.cs.pocnet.net>
+	<20040826132439.GA1188@lst.de>
+	<1093527307.11694.23.camel@leto.cs.pocnet.net>
+	<20040826134034.GA1470@lst.de>
+	<1093528683.11694.36.camel@leto.cs.pocnet.net>
+	<412E786E.5080608@namesys.com>
+	<16687.9051.311225.697109@thebsh.namesys.com>
+	<412F7A59.8060508@namesys.com>
+	<16687.33718.571411.76990@thebsh.namesys.com>
+	<41305619.9030401@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20984-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <41305619.9030401@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>
 
-hi,
+Hans Reiser writes:
+ > Nikita Danilov wrote:
+ > 
+ > > > >Whoever sponsors the benchmark usually wins. Had you forgotten that
+ > > > >mongo setup used by http://www.namesys.com/benchmarks.html was specially
+ > > > >`tuned' to reach peak reiser4 performance? Remember why you decided to
+ > > > >turn OVERWRITE and MODIFY phases off?
+ > >
+ > What I should have done was what I did with fsync performance.  With 
+ > fsync performance I told people that we had not yet tuned for it, please 
+ > wait a bit and we will tune for it, for now it sucks.
 
-not sure if i'm going mad here:
+Right, and instead of this you are now claiming that these `benchmarks'
+show superior reiser4 performance. Moreover, you are doing this
+aggressively and proposing other people to `eat the dust' over what
+happened to only exist due to your failing to remember something. As
+some other notable LKML poster put it `inform yourself before
+posting'. :-)
 
-[ljb@imryrr]:/home/ljb $ ls -l /usr/bin/sdiff
--rwxr-xr-x  1 root root 24576 Apr 25  2003 /usr/bin/sdiff*
+ > 
+ > Instead what I did was discuss with Zam at the time how it could be 
+ > fixed, leave it off the website until Zam was given a chance to fix it, 
 
-[ljb@imryrr]:/home/ljb $ cp /usr/bin/sdiff .
+It wasn't Zam. It was me to begin with. OVERWRITE and MODIFY phases were
+turned off after switching to large keys.
 
-[ljb@imryrr]:/home/ljb $ ls -l sdiff
--rwxr-xr-x  1 ljb ljb 20480 Aug 29 01:12 sdiff*
+ > and then I managed to forget about it.   After release one remembers 
+ > what all the things that should have been fixed before release were, sigh.
+ > 
 
-[ljb@imryrr]:/home/ljb $ ./sdiff
-zsh: bus error  ./sdiff
+[...]
 
-[ljb@imryrr]:/home/ljb $ /usr/bin/sdiff
-/usr/bin/sdiff: missing operand after `/usr/bin/sdiff'
-/usr/bin/sdiff: Try `/usr/bin/sdiff --help' for more information.
+ > 
+ > I think your characterization of my reasons was unkind and also unfair.  
 
-why would the file shrink by 4096 bytes? 
+What fairness and kindness one expects after styling others as `puppies'
+in public, and commenting on their hair style in purportedly technical
+argument?
 
-and notice, the original is still able to run. its just when i try to
-copy it, that it gets corrupted somehow.
+[...]
 
-this occurs for a fair number of random files on this filesystem
-(affected files all shrink by 4096 bytes). reiserfsck has no
-complaints, and i've also run reiserfsck --rebuild-tree. it occurs to
-the same set of files every time.
+ > 
+ > Hans
 
-i ran across this while trying to copy my / filesystem to a new
-reiser4 filesystem. first thought it was a reiser4 issue, but it
-occurs when copying to an ext3 filesystem as well.
-
-i've run badblocks on the disk, with no errors. the filesystem isn't
-mounted with any special options, just "noatime".
-
-kernel: 2.6.9-rc1-mm1
-reiserfsck: 3.6.18
-reiserfs format: "3.6"
-
-its serial ATA device on ICH5-R, if that makes any difference.
-
-the relevant dmesg output:
-
-ReiserFS: sda7: found reiserfs format "3.6" with standard journal
-ReiserFS: sda7: using ordered data mode
-ReiserFS: sda7: journal params: device sda7, size 8192, journal first
-block 18, max trans len 1024, max batch 900, max commit age 30, max
-trans age 30
-ReiserFS: sda7: checking transaction log (sda7)
-ReiserFS: sda7: Using r5 hash to sort names
-
-any ideas what to try? i'm keeping this filesystem around so i have
-the test cases available.
-
-leon
+Nikita.
