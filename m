@@ -1,69 +1,74 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiserfsck --rebuild-tree all-in-one problem.
-Date: Mon, 3 Feb 2003 13:41:42 +0300
-Message-ID: <200302031341.42752.vitaly@namesys.com>
-References: <063201c2cae9$8dfb69d0$0201010a@brian>
+From: Juan Quintela <quintela@mandrakesoft.com>
+Subject: Re: reiserfs on redhat advanced server?
+Date: Mon, 03 Feb 2003 13:38:59 +0100
+Message-ID: <86lm0xpmho.fsf@trasno.mitica>
+References: <20030130173522.3aa4d0e1.pegasus@nerv.eu.org>
+	<3E397A19.60409@namesys.com> <20030130234142.E8448@vestdata.no>
+	<3E3A6071.6060102@namesys.com>
+	<20030131115333.GC15359@marowsky-bree.de>
+	<3E3A67AE.4050601@namesys.com>
+	<20030131122147.GE15359@marowsky-bree.de>
+	<3E3A6D76.7080300@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-12611-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12612-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <063201c2cae9$8dfb69d0$0201010a@brian>
+In-Reply-To: <3E3A6D76.7080300@namesys.com> (Hans Reiser's message of "Fri,
+ 31 Jan 2003 15:35:02 +0300")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Brian Chu <chub@dataroot.hn.org>, Brian Chu <chub@stuy.yi.org>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Lars Marowsky-Bree <lmb@suse.de>, Ragnar =?iso-8859-1?q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>, Jure Pecar <pegasus@nerv.eu.org>, reiserfs-list@namesys.com
 
-On Sunday 02 February 2003 21:33, Brian Chu wrote:
-> Hello.
->
->     Last friday when I went to upgrade my server, I noticed that there had
-> been a lot of kernel messages on my server that were saying that one
-> partition was spewing this:
->
-> Jan  5 13:48:14 simmy kernel: hde: dma_intr: status=0x51 { DriveReady
-> SeekComplete Error }
-> Jan  5 13:48:14 simmy kernel: hde: dma_intr: error=0x40 {
-> UncorrectableError }, LBAsect=91887, high=0, low=91887, sector=91824
-> Jan  5 13:48:14 simmy kernel: end_request: I/O error, dev 21:01 (hde),
-> sector 91824
-> Jan  5 13:48:14 simmy kernel: vs-13070: reiserfs_read_inode2: i/o failure
-> occurred trying to find stat data of [7495 7710 0x0 SD]
->
->     I gave up that night, because running dd once took 7 hours and
-> reiserfsck twice took 2 hours each, so the whole day was wasted.  I had
-> read on the first time I ran --rebuild-tree that a "dd_rescue" was
-> suggested, so I downloaded it, installed it, and ran it again (since I had
-> used just plain dd the first time). I'm not sure if that made a difference
-> or not.
+>>>>> "hans" == Hans Reiser <reiser@namesys.com> writes:
 
-Right, dd seems to produce an output with just skipped bad blocks not writing 
-anything into the output.
+hans> I understand and support being pissed at Linus for calling it 2.4.0
+hans> when it wasn't stable enough before 2.4.18 because VM and VFS were
+hans> still being changed, but Marcelo is pretty stable in all of his
+hans> official releases, and it is easy to get him to take good code.
 
->     Today I started again, assuming that with dd_rescue, I would have a
-> greater chance of getting the filesystem recovered, but --check told me I
-> had to run --rebuild-tree, and this time I just did --logfile /dev/null,
-> because screen dumps during the run would make it impossible to see what's
-> going on. But again, it stopped again at the same place- Pass 2. Since the
-> logfiles spit so much STUFF out, I have none at the moment (I can remake
-> them if needed).
->
-> Screen dump:
->
-> Pass 2:
-> 0%....20%....40%..                                              left 36, 0
-> /sec
->
->     And it stops there. top indicates reiserfsck is using all of the cpu
-> cycles, even after it seemingly freezes.
+But it is not possible to get Marcelo to adapt his release schedule to
+the distro's release schedule :p That is one of the BIG problems.  If
+when your release is about to freeze, marcelo kernel is in pre5/pre6
+what do you do:
 
-Looks like you built the reiserfsck on another mashine. Could you rebuild it 
-on the same mashine you run it. It is possible to suppress the logfile with 
--n option, but I think the logfile was so big due to this endless loop.
+- bet that final kernel will be there by the end of the distro release
+  and switch.  And in the proccess, invalidate all the testing that
+  you have done so far.
+
+- get the old known stable kernel, and adapt all the bugfixes that you
+  found in the pre series?
+
+What strategy do you think that is better?  If you bet (as almost
+everybody) that second one is better, you are going to have a heavily
+patched kernel.
+
+And that is without taking into account that a lot of the bug fixes
+that go to marcelo kernel go the route:
+
+- user find bug
+- user blame distro kernel
+- distro kernel team found the problem (sometimes with cooperation
+  with the subsystem maintainer)
+- distro kernel team send the patch to subsystem maintainer
+- subsytem maintainer send the patch to marcelo (perhaps after some
+  local modification)
+
+hans> I am not really opposed to vendors shipping their own kernels and
+hans> supporting them, but I am opposed to them not supporting an official
+hans> stable Marcelo kernel unless they have a specific reason not to.  The
+hans> Marcelo kernels need to be considered the official supported ones by
+hans> the entire community, regardless of what other ones might also be
+hans> supported by parts of the community.
+
+Believe me, if it will be possible (not indeed easy) to get that done,
+my life will be much, much better :p
+
+Later, Juan.
 
 -- 
-
-Thanks,
-Vitaly Fertman
+In theory, practice and theory are the same, but in practice they 
+are different -- Larry McVoy
