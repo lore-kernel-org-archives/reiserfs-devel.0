@@ -1,40 +1,46 @@
-From: Cal <hihone@bigpond.net.au>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: reiser4 crash
-Date: Thu, 25 Nov 2004 22:19:19 +1100
-Message-ID: <20041125221919.2180794b.hihone@bigpond.net.au>
-References: <20041119084757.GA2310@sk2-4.tky.hut.fi>
-	<1101369249.1628.13.camel@tribesman.namesys.com>
-Reply-To: hihone@bigpond.net.au
+Date: Thu, 25 Nov 2004 13:23:43 +0200
+Message-ID: <20041125112343.GG26192@nysv.org>
+References: <20041119084757.GA2310@sk2-4.tky.hut.fi> <1101369249.1628.13.camel@tribesman.namesys.com> <20041125221919.2180794b.hihone@bigpond.net.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22557-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22558-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1101369249.1628.13.camel@tribesman.namesys.com>
+Content-Disposition: inline
+In-Reply-To: <20041125221919.2180794b.hihone@bigpond.net.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Cal <hihone@bigpond.net.au>
+Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
 
-----------
-and then at Thu, 25 Nov 2004 10:54:10 +0300, it was written ...
-  >
- >Which kernel do you use?
- >
- >> 	Sami
-...
- >> kernel BUG at fs/reiser4/plugin/file/tail_conversion.c:32!
- >> invalid operand: 0000 [#1]
- >> PREEMPT
-...
- >> EFLAGS: 00210286   (2.6.10-rc1)
- >> EIP is at get_exclusive_access+0x32/0x40
+On Thu, Nov 25, 2004 at 10:19:19PM +1100, Cal wrote:
+>This occurs with 2.6.10-rc2-mm2, 2.6.10-rc2-mm3.  It's nastier than
+>you might think.  After the BUG, the system slowly sinks into fatal
+>decline, losing  screen i/o, keyboard response, eventually just
+>locking up completely.
 
-This occurs with 2.6.10-rc2-mm2, 2.6.10-rc2-mm3.  It's nastier than
-you might think.  After the BUG, the system slowly sinks into fatal
-decline, losing  screen i/o, keyboard response, eventually just
-locking up completely.
+Did you try vs's patches?
 
-cheers, Cal
+I don't remember if I mentioned it, but there were two patches
+from Piotr Neuman's -cko that were required by Reiser4 (according
+to him) but seemed to patch well onto vs's patched system...
+
+Can anyone give any info on this?
+Mr. Neuman for example :)
+
+Anyway, my box has been running a-ok now with 2.6.9, vs's reiser4-for-2.6.9
+and the additional bugfix, but I have been too busy at work to test real
+much.
+
+Would it be possible for you other guys to give it a shot; I'm sure
+everyone would appreciate it :)
+
+Thanks!
+
+-- 
+mjt
+
