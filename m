@@ -1,41 +1,55 @@
-From: Domenico Andreoli <cavok@tiscali.it>
+From: Yury Umanets <umka@namesys.com>
 Subject: Re: fsck.reiser4 can't fix 1 fixable corruption
-Date: Fri, 23 Apr 2004 03:22:24 +0200
-Sender: Domenico Andreoli <cavok@libero.it>
-Message-ID: <20040423012224.GA18666@raptus.homelinux.org>
-References: <200404201733.51809.rmeijer@internet.gr> <200404211259.01802.rmeijer@internet.gr> <200404211547.08993.vitaly@namesys.com> <200404211509.20290.rmeijer@internet.gr> <13790.212.0.249.130.1082549980.squirrel@webmail.xs4all.nl> <4086CBBF.8010406@xs4all.nl> <20040421194414.GB6215@raptus.homelinux.org> <40880F5C.6080207@namesys.com>
+Date: Fri, 23 Apr 2004 10:04:57 +0300
+Message-ID: <1082703897.3616.9.camel@firefly>
+References: <200404201733.51809.rmeijer@internet.gr>
+	 <200404211259.01802.rmeijer@internet.gr>
+	 <200404211547.08993.vitaly@namesys.com>
+	 <200404211509.20290.rmeijer@internet.gr>
+	 <13790.212.0.249.130.1082549980.squirrel@webmail.xs4all.nl>
+	 <4086CBBF.8010406@xs4all.nl> <20040421194414.GB6215@raptus.homelinux.org>
+	 <40880F5C.6080207@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18168-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18174-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 In-Reply-To: <40880F5C.6080207@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Domenico Andreoli <cavok@tiscali.it>, reiserfs-list@namesys.com
 
-On Thu, Apr 22, 2004 at 11:30:52AM -0700, Hans Reiser wrote:
+On Thu, 2004-04-22 at 21:30, Hans Reiser wrote:
 > Domenico Andreoli wrote:
 > 
+> >On Wed, Apr 21, 2004 at 09:30:07PM +0200, Sander Sweers wrote:
+> >  
+> >
+> >>NOTE: the ebuilds have /--enable-stand-alone/ to have grub build reiser4 
+> >>support.
+> >>    
+> >>
+> >
 > >how hard is to have reiser4 support built in grub?
->
+> >
+> >-----[ Domenico Andreoli, aka cavok
+> > --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
+> >   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
+> >
+> >
+> >  
+> >
 > Yury told me it was done....  Yury....
+Hello!
 
-FYI, i had to enable also libaal memomry manager (configure option
---enable-memory-manager) to build the right stand alone library for grub
-reiser4 stage1.5, without it linker complains on missing malloc and free.
+Yes, it was done. But probably it is broken now due to lots of last
+changes like new plugins, plugin inheritance, interface changes etc.
 
-updated libaal and reiser4progs packages together with a reiser4 enabled
-grub package are available at http://people.debian.org/~cavok/reiser4/.
+We should ask Vitaly what is the status of it now...
 
-hmmm... btw, i've never been able to use a stage1.5, any hint?
+-- 
+umka
 
-cheers
-domenico
-
------[ Domenico Andreoli, aka cavok
- --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
-   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
