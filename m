@@ -1,69 +1,208 @@
-From: Vince <fuzzy77@free.fr>
+From: Vitaly Fertman <vitaly@namesys.com>
 Subject: Re: status of grub reiser4 support ?
-Date: Tue, 16 Mar 2004 12:24:11 +0100
-Message-ID: <4056E3DB.7070206@free.fr>
-References: <405597B6.1000906@free.fr> <40561487.5070503@free.fr> <40561583.8050705@free.fr> <200403161237.44869.vitaly@namesys.com> <4056DD84.2010107@free.fr>
+Date: Tue, 16 Mar 2004 16:55:38 +0300
+Message-ID: <200403161654.48374.vitaly@namesys.com>
+References: <405597B6.1000906@free.fr> <4056DD84.2010107@free.fr> <4056E32D.5010405@free.fr>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17243-reiserfs=m.gmane.org@namesys.com>
+Content-Type: Multipart/Mixed;
+  boundary="Boundary-00=_adwVAshepn/SpeV"
+Return-path: <reiserfs-list-return-17245-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4056DD84.2010107@free.fr>
+In-Reply-To: <4056E32D.5010405@free.fr>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Vitaly Fertman <vitaly@namesys.com>
+To: Vince <fuzzy77@free.fr>
 Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-Another backtrace for the second point (looks like the same bug):
+--Boundary-00=_adwVAshepn/SpeV
+Content-Type: text/plain;
+  charset="koi8-r"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-> 2) attempting to install grub on a reiser4 partition results in a 
-> segmentation fault 
+On Tuesday 16 March 2004 14:21, Vince wrote:
+> More information follows:
+> > Hi,
+> >
+> > with your latest patches, grub can now read reiser4 partitions (both
+> > from linux and from the bios) but:
+> > 1) any attempt to load a kernel image sitting on a reiser4 partition
+> > just hangs
+>
+> grub> kernel (hd1,0)/boot/vmlinuz-2.6.4-bk5
+> Program received signal SIGSEGV, Segmentation fault.
+> 0x0806408f in extent40_offset (place=0x4007aba0, pos=4294967295) at
+> extent40.c:41
+> 41                      blocks += et40_get_width(extent);
+> (gdb) bt
+> #0  0x0806408f in extent40_offset (place=0x4007aba0, pos=4294967295) at
+> extent40.c:41
+> #1  0x0806922d in body40_get_key (place=0x4007aba0, pos=4294967295,
+> key=0x4007aac0, trans_func=0x8064062 <extent40_offset>)
+>      at body40.c:20
+> #2  0x080640e9 in extent40_fetch_key (place=0x4007aba0, key=0x4007aac0)
 
-grub> root (hd1,0)
-  Filesystem type is reiser4, partition type 0x83
+thank you for hitting this, I have attached the updated patch for reiser4progs.
+it should cure for the problem, email me about your results please.
+
+
+
+--Boundary-00=_adwVAshepn/SpeV
+Content-Type: text/x-diff;
+  charset="koi8-r";
+  name="reiser4_alone1.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="reiser4_alone1.patch"
+
+diff -Nru a/libreiser4/tree.c b/libreiser4/tree.c
+--- a/libreiser4/tree.c	Tue Mar 16 16:50:54 2004
++++ b/libreiser4/tree.c	Tue Mar 16 16:50:54 2004
+@@ -271,6 +271,9 @@
+ 	return -EINVAL;
  
+ out_correct_place:
++#else
++	if (reiser4_place_fetch(place))
++		return -EINVAL;
+ #endif
+ 	if (reiser4_item_units(place) == 1)
+ 		place->pos.unit = MAX_UINT32;
+diff -Nru a/plugin/item/extent40/extent40.c b/plugin/item/extent40/extent40.c
+--- a/plugin/item/extent40/extent40.c	Tue Mar 16 16:50:54 2004
++++ b/plugin/item/extent40/extent40.c	Tue Mar 16 16:50:54 2004
+@@ -112,6 +112,10 @@
+ 
+ 	pos = place->pos.unit;
+ 	units = extent40_units(place);
++	
++	/* Check for unit pos. */
++	if (pos == MAX_UINT32)
++		pos = 0;
+ 
+ 	aal_assert("umka-3026",
+ 		   pos + hint->count <= units);
+@@ -181,7 +185,6 @@
+ 	aal_assert("umka-2458", place != NULL);
+ 	aal_assert("umka-2461", hint != NULL);
+ 
+-
+ 	hint->len = 0;
+ 	hint->bytes = 0;
+ 	hint->overhead = 0;
+@@ -507,13 +510,14 @@
+ 	buff = hint->specific;
+ 	count = (uint32_t)hint->count;
+ 	
++	if (place->pos.unit == MAX_UINT32)
++		place->pos.unit = 0;
++	
+ 	extent40_fetch_key(place, &key);
+ 	
+ 	blksize = extent40_blksize(place);
+ 	secsize = extent40_secsize(place);
+ 
+-	if (place->pos.unit == MAX_UINT32)
+-		place->pos.unit = 0;
+ 
+ 	read_offset = plug_call(hint->offset.plug->o.key_ops,
+ 				get_offset, &hint->offset);
+@@ -600,7 +604,8 @@
+ 	aal_assert("umka-2435", hint != NULL);
+ 	aal_assert("umka-2434", place != NULL);
+ 	
+-	pos = place->pos.unit;
++	pos = place->pos.unit == MAX_UINT32 ? 0 : place->pos.unit;
++
+ 	extent = extent40_body(place) + pos;
+ 	ptr_hint = (ptr_hint_t *)hint->specific;
+ 
+@@ -698,8 +703,7 @@
+ 	aal_assert("umka-2431", hint != NULL);
+ 	aal_assert("umka-2430", place != NULL);
+ 	
+-	if ((pos = place->pos.unit) == MAX_UINT32)
+-		pos = 0;
++	pos = place->pos.unit == MAX_UINT32 ? 0 : place->pos.unit;
+ 	
+ 	extent = extent40_body(place) + pos;
+ 	ptr_hint = (ptr_hint_t *)hint->specific;
+diff -Nru a/plugin/key/key_large/key_large.c b/plugin/key/key_large/key_large.c
+--- a/plugin/key/key_large/key_large.c	Tue Mar 16 16:50:54 2004
++++ b/plugin/key/key_large/key_large.c	Tue Mar 16 16:50:54 2004
+@@ -186,7 +186,6 @@
+ 	aal_memset(key->body, 0, sizeof(key->body));
+ }
+ 
+-#ifndef ENABLE_STAND_ALONE
+ /* Figures out if items are of one file or not. */
+ static int key_large_compshort(reiser4_key_t *key1, 
+ 			       reiser4_key_t *key2) 
+@@ -219,7 +218,6 @@
+ 	return kl_comp_el((key_large_t *)key1->body,
+ 			  (key_large_t *)key2->body, 2);
+ }
+-#endif
+ 
+ static int key_large_compraw(void *key1, void *key2) {
+ 	int res;
+@@ -386,11 +384,8 @@
+ 	.bodysize	= key_lage_bodysize,
+ 	.compraw	= key_large_compraw,
+ 	.compfull	= key_large_compfull,
+-
+-#ifndef ENABLE_STAND_ALONE
+ 	.compshort	= key_large_compshort,
+-#endif
+-		
++
+ 	.build_hashed   = key_large_build_hashed,
+ 	.build_generic  = key_large_build_generic,
+ 	
+diff -Nru a/plugin/key/key_short/key_short.c b/plugin/key/key_short/key_short.c
+--- a/plugin/key/key_short/key_short.c	Tue Mar 16 16:50:54 2004
++++ b/plugin/key/key_short/key_short.c	Tue Mar 16 16:50:54 2004
+@@ -179,7 +179,6 @@
+ 	aal_memset(key->body, 0, sizeof(key->body));
+ }
+ 
+-#ifndef ENABLE_STAND_ALONE
+ /* Compares two first components of the pased keys (locality and objectid) */
+ static int key_short_compshort(reiser4_key_t *key1, 
+ 			       reiser4_key_t *key2) 
+@@ -206,7 +205,6 @@
+ 	/* Checking object id */
+ 	return aal_memcmp(&oid1, &oid2, sizeof(oid1));
+ }
+-#endif
+ 
+ /* Compares two passed key bodies. */
+ static int key_short_compraw(void *key1, void *key2) {
+@@ -368,10 +366,7 @@
+ 	.bodysize	= key_short_bodysize,
+ 	.compfull	= key_short_compfull,
+ 	.compraw	= key_short_compraw,
+-
+-#ifndef ENABLE_STAND_ALONE
+ 	.compshort	= key_short_compshort,
+-#endif
+ 		
+ 	.build_hashed   = key_short_build_hashed,
+ 	.build_generic  = key_short_build_generic,
+diff -Nru a/plugin/object/obj40/obj40.c b/plugin/object/obj40/obj40.c
+--- a/plugin/object/obj40/obj40.c	Tue Mar 16 16:50:54 2004
++++ b/plugin/object/obj40/obj40.c	Tue Mar 16 16:50:54 2004
+@@ -598,6 +598,9 @@
+ #else
+ 		if (type == HASH_PLUG_TYPE)
+ 			pid = HASH_R5_ID;
++		
++		if (type == FIBRE_PLUG_TYPE)
++			pid = FIBRE_DOT_O_ID;
+ #endif
+ 	}
+ 	
 
-grub> setup (hd1)
-Program received signal SIGSEGV, Segmentation fault.
-0x0806408f in extent40_offset (place=0x4007c930, pos=4294967295) at 
-extent40.c:41
-41                      blocks += et40_get_width(extent);
-(gdb) bt
-#0  0x0806408f in extent40_offset (place=0x4007c930, pos=4294967295) at 
-extent40.c:41
-#1  0x0806922d in body40_get_key (place=0x4007c930, pos=4294967295, 
-key=0x4007c850, trans_func=0x8064062 <extent40_offset>)
-     at body40.c:20
-#2  0x080640e9 in extent40_fetch_key (place=0x4007c930, key=0x4007c850) 
-at extent40.c:52
-#3  0x080642a3 in extent40_read_units (place=0x4007c930, 
-hint=0x4007ca30) at extent40.c:510
-#4  0x0806114d in reiser4_tree_read (tree=0x4007d7e8, place=0x4007c930, 
-hint=0x4007ca30) at tree.c:1922
-#5  0x08062a3b in reiser4_flow_read (tree=0x4007d7e8, hint=0x4007ca30) 
-at flow.c:86
-#6  0x0805f227 in tree_read (tree=0x4007d7e8, hint=0x4007ca30) at 
-libreiser4.c:79
-#7  0x08066ef5 in obj40_read (obj=0x40081448, hint=0x4007ca30) at 
-obj40.c:657
-#8  0x080672c1 in reg40_read (entity=0x40081448, buff=0x4007cb90, n=10) 
-at reg40.c:120
-#9  0x08061ad9 in reiser4_object_read (object=0x4007e070, 
-buff=0x4007cb90, n=10) at object.c:660
-#10 0x0805218d in reiser4_read (buf=0x40415ffc "", len=1078026236) at 
-fsys_reiser4.c:130
-#11 0x0804df97 in grub_read (buf=0x4007cb90 " ", len=10) at disk_io.c:1693
-#12 0x080539fe in gunzip_test_header () at gunzip.c:333
-#13 0x0804dd0a in grub_open (filename=0x4007ce80 "/boot/grub/stage2") at 
-disk_io.c:1591
-#14 0x0805ad22 in check_file.8 () at builtins.c:3956
-#15 0x0805b12a in setup_func (arg=0x0, flags=1) at builtins.c:4124
-#16 0x0805c4ed in enter_cmdline (heap=0x4002bc60 "setup (hd1)", 
-forever=1) at cmdline.c:172
-#17 0x08056396 in cmain () at stage2.c:1018
-#18 0x0804c052 in init_bios_info () at common.c:323
-#19 0x08049808 in doit.0 () at asmstub.c:129
-#20 0x08049900 in grub_stage2 () at asmstub.c:186
-#21 0x080495e8 in main (argc=1, argv=0xbffff9d4) at main.c:264
+--Boundary-00=_adwVAshepn/SpeV--
+
