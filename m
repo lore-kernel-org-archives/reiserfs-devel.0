@@ -1,39 +1,32 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: silent semantic changes with reiser4
-Date: Fri, 3 Sep 2004 10:22:57 +0200
-Message-ID: <20040903082256.GA17629@kroah.com>
-References: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com> <200408290004.i7T04DEO003646@localhost.localdomain> <20040901224513.GM31934@mail.shareable.org>
+From: Helge Hafting <helge.hafting@hist.no>
+Subject: Re: The argument for fs assistance in handling archives
+Date: Fri, 03 Sep 2004 10:30:29 +0200
+Message-ID: <41382BA5.5080202@hist.no>
+References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <20040902002431.GN31934@mail.shareable.org> <413694E6.7010606@slaphack.com> <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org> <4136A14E.9010303@slaphack.com> <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org> <4136C876.5010806@namesys.com> <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org> <4136E0B6.4000705@namesys.com> <1117111836.20040902115249@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21411-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21412-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040901224513.GM31934@mail.shareable.org>
+In-Reply-To: <1117111836.20040902115249@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Spam <spam@tnonline.net>
+Cc: Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Wed, Sep 01, 2004 at 11:45:13PM +0100, Jamie Lokier wrote:
-> Horst von Brand wrote:
-> > What happened to "code talks, bullshit walks"?
-> 
-> devfs is a fine example of why code isn't enough.  With devfs the code
-> came first, the >1 year of strategic bullshit politics from the "it's
-> not traditional unix" crowd came later, then it went in, then lots of
-> people used it, then it was replaced by something which still doesn't
-> work as well as 2.4 does with or without devfs, and people are still
-> using it despite it's faults.
+Spam wrote:
 
-What is udev's faults that have an issue with?
+>
+>  Btw, version control for ordinary files would be a great feature. I
+>  think something like it is available through Windows 2000/3 server.
+>  Isn't it called "Shadow Copies". It works over network shares. :)
+>
+>  It allows you to restore previous versions of the file even if you
+>  delete or overwrite it.
+>  
+>
+Feel free to use cvs on your home directory. :-)
 
-Yes, we don't do module autoloading when opening a device node, but
-that's well known, documented, and the way the kernel has evolved to
-anyway.
-
-thanks,
-
-greg k-h
+Helge Hafting
