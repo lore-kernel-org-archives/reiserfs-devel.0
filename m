@@ -1,58 +1,42 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: extended attributes
-Date: Thu, 24 Oct 2002 07:05:56 +0400
-Message-ID: <3DB76394.8090804@namesys.com>
-References: <200210231916.18976.bofh@coker.com.au> <3DB74E8A.7030004@namesys.com> <3DB75FF6.3080508@mb.tu-ilmenau.de>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: attrib +A doesn't work
+Date: Thu, 24 Oct 2002 10:33:37 +0400
+Message-ID: <15799.37953.280992.61682@laputa.namesys.com>
+References: <20020905034320.GA11951@yzero>
+	<15735.10894.167461.158961@laputa.namesys.com>
+	<20020905140132.A19752@namesys.com>
+	<m3iszseukm.fsf@multivac.cwru.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11748-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11749-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <m3iszseukm.fsf@multivac.cwru.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: reiserfs-list <reiserfs-list@namesys.com>, beverly <beverly@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Paul Jarc <prj@po.cwru.edu>
+Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Manuel Krause wrote:
+Paul Jarc writes:
+ > [Old thread.]
+ > 
+ > Oleg Drokin <green@namesys.com> wrote:
+ > > On Thu, Sep 05, 2002 at 01:57:34PM +0400, Nikita Danilov wrote:
+ > >> Support for inode attributes was introduced between 2.4.18 and
+ > >> 2.4.19. Take latest reiserfsprogs from ftp.namesys.com, run
+ > >> /sbin/reiserfsck --clean-attributes /your-device, and after that
+ > >> finishes mount with -attrs option.
+ > >
+ > > mount -o attrs in fact.
+ > 
+ > Should -o attrs be used just once, or every time afterwards?
+ > 
 
-> On 10/24/2002 03:36 AM, Hans Reiser wrote:
->
->> Russell Coker wrote:
->>
->>> Extended attribute support is apparently in 2.5.x kernels now and 
->>> will be in 2.4.20.
->>>
->>> When will ReiserFS support extended attributes?
->>>
->>> Currently there is discussion about the possibility of using 
->>> extended attributes for SE Linux security context labels, if that 
->>> goes ahead then I will be forced to cease using any file system that 
->>> lacks such support.
->>>
->>> I would like to continue using ReiserFS...
->>>
->>>  
->>>
->> www.namesys.com/v4/v4.html, look for us to start focussing on that as 
->> soon as basic reiser4 stuff is stable.
->
->
->
-> BTW, I find the artistic grafic work on these pages great and 
-> especially find it beautifully "translating" the theories' content 
-> sometimes.
->
-> Best wishes to the person who created those images for you & ReiserFS  
-> :-)))
->
-> Manuel
->
->
->
-Beverly (my Mom) did the drawings, I am trying to get her to do more.
+On each mount. Does attribute support actually works for you?
 
-Hans
+ > 
+ > paul
 
-
+Nikita.
