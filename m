@@ -1,53 +1,56 @@
-From: Chris Dukes <pakrat@www.uk.linux.org>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: online fsck
-Date: Thu, 22 Apr 2004 18:11:00 +0100
-Sender: <pakrat@www.linux.org.uk>
-Message-ID: <20040422171100.GP25281@parcelfarce.linux.theplanet.co.uk>
-References: <20040422150042.5b49c6c3.pegasus@nerv.eu.org> <1082640853.12989.54.camel@watt.suse.com> <20040422162402.0b2f3dd6.pegasus@nerv.eu.org> <20040422152409.GO25281@parcelfarce.linux.theplanet.co.uk> <16519.59524.529494.545461@laputa.namesys.com>
+Date: Thu, 22 Apr 2004 10:51:12 -0700
+Message-ID: <40880610.9050207@namesys.com>
+References: <20040422150042.5b49c6c3.pegasus@nerv.eu.org> <1082640853.12989.54.camel@watt.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18157-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18159-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <16519.59524.529494.545461@laputa.namesys.com>
+In-Reply-To: <1082640853.12989.54.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: Jure Pe??ar <pegasus@nerv.eu.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: =?ISO-8859-2?Q?Jure_Pe=E8ar?= <pegasus@nerv.eu.org>, reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>
 
-On Thu, Apr 22, 2004 at 07:45:08PM +0400, Nikita Danilov wrote:
-> Chris Dukes writes:
->  > 
->  > It is worth mentioning that FreeBSD supposedly has an online in the 
->  > background fsck for UFS2.
-> 
-> Wait a second. Assuming that kernel code has no bugs, the only
-> corruption that may happen when soft-updates are used is leaked disk
-> space. As I understand it, FreeBSD's background fsck fixes this problem
-> and only it.
+Chris Mason wrote:
 
-Reading through
-http://www.shiningsilence.com/dbsdlog/archives/000212.html
-That would appear to be the case.
-And current experience indicates that UFS2 does not recover gracefully
-when used on a disk that has been in service beyond its life expectancy.
-> 
-> But, under the same assumption, journalled file system needs _no_ fsck
-> at all.
+>On Thu, 2004-04-22 at 09:00, Jure Pe=E8ar wrote:
+> =20
+>
+>>Hi all,
+>>
+>>Is it theoretically posible?
+>>
+>>Like, does it need a drastic redesing of reiserfs or just sufficient $$
+>>directed to the team to be implemented?
+>>
+>>
+>>Because i think that reiserfsck --check in 12h + --rebuild-tree in 18h is
+>>still waaay too much downtime for a 500gb mail server...
+>>   =20
+>>
+>
+>Online check is easy, just use lvm or evms to make a snapshot and then
+>check the snapshot.=20
+>
+Requires that users use lvm before discovering the need for fsck, but,=20
+yes.  What would be ideal would be some support for finding the=20
+inconsistency on the snapshot, and then fixing it on the real fs using=20
+the information learned from the snapshot fsck.
 
-In this age of hot plugging, rough environments, drives that have
-write caching turned on no matter how hard folks try to turn it off,
-petabytes of spinning storage, and the continuing misunderstanding of 
-MTBF, that is becoming an increasingly poor assumption.
-Measures to verify that the metadata are sane without making all
-of the data unavailable are needed.
+> Online rebuild tree would be impossible by
+>definition (since it throws out everything above the leaf level and
+>rebuilds).
+>
+>-chris
+>
+>
+>
+>
+> =20
+>
 
-Oh well back to fighting X for a project where things don't die
-when some important metadata is corrupted, they just cough and sputter
-a bit before continuing.
--- 
-Chris Dukes
-Been there, done that, got the slightly-charred t-shirt. -- Crowder
