@@ -1,88 +1,91 @@
-From: Alan Chu <alanchu@MIT.EDU>
-Subject: Gnu Parted error, Kernel Panic, Reiserfs
-Date: Sat, 10 Apr 2004 16:01:13 -0400 (EDT)
-Message-ID: <Pine.GSO.4.55L.0404101549560.18241@ohmmjbeq-ovatb.zvg.rqh>
+From: Chris Mason <mason@suse.com>
+Subject: Re: Resier Fragmentation Effects (was compression vs performance)
+Date: Sat, 10 Apr 2004 16:02:42 -0400
+Message-ID: <1081627362.21342.9.camel@watt.suse.com>
+References: <3DF9165145FACB4C96977FF650C1E9040C469DBF@its-mail1.its.corp.gwl.com>
+	 <40763A44.4040107@namesys.com> <1081534415.16461.10.camel@watt.suse.com>
+	 <40778F98.8030401@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17837-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17838-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <40778F98.8030401@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: "Burnes, James" <james.burnes@gwl.com>, Stewart Smith <stewart@flamingspork.com>, Tom Vier <tmv@comcast.net>, Scott Young <youngs1@sunyit.edu>, reiserfs-list@namesys.com
 
-Hi,
+On Sat, 2004-04-10 at 02:09, Hans Reiser wrote:
 
-I tried to resize down my root partition using Gnu Parted, off of a boot
-disk. It failed midway, saying that there was an "invalid node". After
-rebooting, I get kernel panic:
+> >I put out some patches last week that try to deal with this in v3. 
+> >
+> Describe the algorithmic changes please.
 
------
-sh-2021: reiserfs_read_super: can not find reiserfs on ide0(3,9)
-XFS: bad magic number
-XFS: SB validate failed
-Kernel panic: VFS: Unable to mount root fs on 03:09
------
+These are the patches that Jeff and I started working on back in 2.4.20
+or so.  The top of the patch documents the basic ideas.  Note that even
+though I use the term bitmap group, this is just a logical entity
+calculated from a hash of the packing locality or object id.  
 
-I checked my partitions, and their numbers haven't changed (hda1 is still
-hda1, hda2 is still hda2, etc.) so /etc/fstab should be fine.
+v3 has always had options for using hashes to find areas of the disk for
+allocation, the big difference is that I hashed into 64MB chunks of the
+disk instead of into an individual starting block.  This keeps data
+blocks together for the common case (files created one at a time in a
+directory), but doesn't bunch everything at the start of the disk.
 
-I searched around on the Gentoo forums, but most answers involve someone
-trying to install Gentoo. Before using parted, my gentoo worked fine. So,
-the kernel options should be correct.
+Rest of the info below:
 
-So I used the Linux "Recovery is Possible 6.9" boot disk, and ran
-"reiserfsck --check" on my /dev/hda9, which is my / partition. The output
-was the following:
+The current reiserfs allocator pretty much allocates things sequentially
+from the start of the disk, it works very nicely for desktop loads but
+once you've got more then one proc doing io data files can fragment badly.
 
------
-Replaying journal..
-No transactions found
-Checking internal tree..
-Bad root block 0.
-(--rebuild-tree did not complete)
-Aborted
------
+One obvious solution is something like ext2's bitmap groups, which put
+file data into different areas of the disk based on which subdirectory
+they are in.  The problem with bitmap groups is that if you've got a
+group of subdirectories their contents will be spread out all over the
+disk, leading to lots of seeks during a sequential read.
 
-Funny thing is, I didn't run "--rebuild-tree" yet. So, next, I tried the
-"--rebuild-tree" option, since nothing is working, and I still get kernel
-panic. Here is my rebuild.log file, the output of "reiserfsck
---rebuild-tree": http://us.share.geocities.com/entertext/rebuild.log
+This allocator patch uses the packing locality to determine which bitmap
+group to allocate from, but when you create a file it looks in the btree
+to see how 'full' that packing locality already is.  If it hasn't been
+heavily used yet, the packing locality is inherited from the parent
+directory putting files in new subdirs close to the parent subdir,
+otherwise it is the inode number of the parent directory putting new
+files far away from the parent subdir.
 
-Then, I tried booting gentoo linux, and I get the following error, which
-is different from my previous error, but kind of similar, I guess:
+The end result is fewer packing localities for the same working set.  For
+example, one test data set created by 20 procs running in parallel has
+6822 subdirs.  And with vanilla reiserfs that would mean 6822
+packing localities.  This patch turns that into 2970 packing localities.
 
------
-reiserfs: checking transaction log (device ide0(3,9))...
-for (ide0(3,9))
-Warning, log replay starting on readonly filesystem
-ide0(3,9): Using r5 hash to sort names
-VFS: Mounted root (reiserfs filesystem) readonly.
-mount_devfs_fs(): unable to mount devfs, err: -2
-Freeing unused kernel memory: 132k freed
-Warning: unable to open an initial console
-Kernel panic: No init found.  Try passing init= option to kernel.
------
+This makes sequential reads of big directory trees more efficient, but
+it also makes the btree more efficient in general.  Things end up sorted
+better because groups of subdirs end up with similar keys in the btree,
+instead of being spread out all over.
 
-Please help me!  I really appreciate it.
+The patch does not change any of the defaults, you need special mount
+options to enable things.  I suggest starting here:
 
-Alan
+mount -o alloc=skip_busy:dirid_groups,packing_groups
 
-Other specifications about my setup:
+mount -o alloc=dirid_groups will turn on the bitmap groups
+mount -o packing_groups turns on the packing locality reduction code
+mount -o alloc=skip_busy is the default
+mount -o alloc=skip_busy:dirid_groups turns on both dirid_groups and
+skip_busy
 
--I have a Dell C840 Latitude laptop, dual boot with Windows XP.
--I use the Gentoo Kernel 2.4.22-r7
--Here's the partition setup for my HD:
-/dev/hda1 Dell FAT partition (BIOS I think)
-/dev/hda2 NTFS (C:\ drive for Windows XP)
-/dev/hda4 Windows extended LBA partition
-/dev/hda5 NTFS partition (just for documents)
-/dev/hda6 FAT32 partition (for transfering files btw 2 OSes)
-/dev/hda7 ext2 partition (Gentoo linux boot partition)
-/dev/hda8 swap partition
-/dev/hda9 root partition (for Gentoo linux)
+Finally the patch adds a mount -o alloc=oid_groups, which puts files into
+bitmap groups based on a has of their objectid.  This would be used for
+databases or other situations where you have a limited number of very
+large files.
 
-*Note /dev/hda3 is "missing".  This isn't a typo.  It happened after I
-used Partition Magic a few months ago.
+This command will tell you how many packing localities are actually in
+use:
+
+debugreiserfs -d /dev/xxx | grep '^|.*SD' | sed 's/^.....//' | awk '{print $1}' | sort -u | wc -l
+
+-chris
+
+
