@@ -1,69 +1,64 @@
 From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: "Metas"
-Date: Wed, 28 Apr 2004 12:32:08 +0300
-Message-ID: <20040428093208.GD29226@nysv.org>
-References: <200404280506.i3S56jXb022934@sirius.cs.pdx.edu> <87d65sbnrr.fsf@uhoreg.ca>
+Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary additional namespace to ReiserFS
+Date: Wed, 28 Apr 2004 12:44:35 +0300
+Message-ID: <20040428094435.GE29226@nysv.org>
+References: <1082750045.12989.199.camel@watt.suse.com> <408E9F42.2080804@namesys.com> <20040427190439.A20646@infradead.org> <200404281022.36081.christian.mayrhuber@gmx.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18268-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18269-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <87d65sbnrr.fsf@uhoreg.ca>
+In-Reply-To: <200404281022.36081.christian.mayrhuber@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hubert Chan <hubert@uhoreg.ca>
+To: Christian Mayrhuber <christian.mayrhuber@gmx.net>
 Cc: reiserfs-list@namesys.com
 
-On Wed, Apr 28, 2004 at 02:49:12AM -0400, Hubert Chan wrote:
->/foo/bar into, say, /proc/metas/foo/bar.  What Markus is talking about
->is having a file called, say /proc/fs/reiser4/metas, and if you cat
->that file, it will spit out the name of the metas directory.
+On Wed, Apr 28, 2004 at 10:22:36AM +0200, Christian Mayrhuber wrote:
 
-Yes, were it for the current directory (/sys always changing its contents)
-or one global name.
+>I wonder if Novell/SuSE would take over full Reiserfs3 maintainership as
+>namesys is now concentrating on the next big step: Reiser4.
 
-The current directory mv-supporting thing is like death itself and should
-not be implemented. Nor should mv support be implemented without sys
-support because then people may forget their metadata directory name
-without any chance of looking it up, except for maybe something in debugfs
-or somewhere, which is not implemented afaik.
+This would be an EXCELLENT idea; something that a SuSEist should take
+seriously if reading this list.
 
-Consider how much work this would be due to bickering.
+Maybe Namesys could even make some money off of this.
+There should be negotiations to be made here :)
 
->I don't like it because I think that Reiser4 should be consistent.
+IMO it's not even like selling out, more like accepting the fact that
+life goes on and there is little use in sitting on an old project that
+isn't too actively developed.
 
-I agree.
+The money would of course go to a valued cause and SuSE could still
+help out with Reiser4. This is beautiful.
 
->Making users look up the name from /proc/fs/reiser4/metas I think is a
->lot worse than making them use a long name for the metas directory.  And
+If ReiserFS is still developed, I may be wrong in the above statement,
+but the question "Why, if ReiserFS is already stable and Reiser4 is not?"
+comes to mind.
 
-Mmmmyeah, but I don't think having the directory name exported in 
-something like that is a bad idea per-se, as long as it exports a
-global, static name. If we have a situation where different people
-use different names. Which will happen if we have a clashing ./metas/
-directory.
+>Imagine some filemanagers using xattr/acl interface because it is in the 2.6 
+>kernel release. Such stuff would work on every linux filesystem, but Reiser4.
 
->Yet another option is to standardize on a long, extremely unlikely to
->clash name as the standard way to access the metadata (maybe something
->like "sys.metadata"), and define a short name, which is probably defined
->at compile time, which can be looked up through something like
->/proc/fs/reiser4/metas_abbrev.  That way, users (and scripts) get a
->consistent interface, but if they want to save typing, they can look up
->the short name.
+The community will take care of their own, just like in the ReiserFS+xattrs
+case. If people want something that's not available, they'll do it themselves.
 
-And the abbreviation would never conflict, because when a process tries
-to write to the abbreviated name, the file system realizes this and
-goes "oh shit, I must make way to tar xf, *poof*"?
+But still I always hope the better interface wins, and if Reiser4 is
+better, it should win, for the greater good.
 
-Incredible amounts of work again in vain.
+This is not an easy point, because xattrs might win in this competition
+because people are used to it, they are lazy, they would use xattrs on
+Reiser4 because they don't want to learn anything new. The power that is,
+that writes xattrs support, would quite effectively pave the road to hell.
 
-Besides, length has little to do with it. Consider ..metas. It's not
-long but what are the odds of accidental clashing?
+>I like the filesystem namespace very much and I guess I'm not alone, because  
+>procfs, sysfs, etc. are there. It even follows the the tradition of unix in 
+>accessing devices as special files.
+>Hans should win such a discussion hands down ;-)
 
-Just my two cents, which I seem to contribute over and over again ;)
+Amen.
 
 -- 
 mjt
