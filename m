@@ -1,42 +1,24 @@
-From: Anders Widman <andewid@tnonline.net>
-Subject: ReiserFS and NFS?
-Date: Tue, 3 Sep 2002 17:56:52 +0200
-Message-ID: <18030661062.20020903175652@tnonline.net>
-Reply-To: Anders Widman <andewid@tnonline.net>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11363-reiserfs=m.gmane.org@namesys.com>
+From: jordan.breeding@attbi.com
+Subject: Status of 2.5.x reiserfs patches
+Date: Tue, 03 Sep 2002 19:51:56 +0000
+Message-ID: <20020903195156.ISUT19514.rwcrmhc52.attbi.com@rwcrwbc55>
+Return-path: <reiserfs-list-return-11364-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
+Hello,
 
-   Hello!
+  A couple of weeks ago there were three patches posted 
+to the linux-kernel list.  These patches still apply 
+either cleanly or with offsets to the current 2.5.x but 
+have not been applied yet, were they simply overlooked 
+by Linus?  Thanks for any info.
 
-   I am trying to use ReiserFS with NFS to work nicely, but I ran into
-   troubles  exporting root (/). I am getting the following error when
-   a   client   tries  to  connect  to  the  root  export  (I am using
-   ReiserFS on root filesystem):
-
-      rpc.mountd: getfh failed: Operation not permitted
-
-   After  browsing around different mailing lists and read suggestions
-   about Kernel and NFS utils I found that someone said that there was
-   needed patches to use ReiserFS with NFS?
-
-   Right now my exports file looks like this:
-
-         /usr/src/       192.168.0.100(rw,no_root_squash,insecure)
-         /               192.168.0.100(rw,no_root_squash,insecure)
-
-   The /usr/src/ share does work.
-
-   Is this something someone might know how to fix?
-
-   Regards,
-   Anders Widman
-
+Jordan Breeding
