@@ -1,33 +1,38 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: big problem with loop-aes and reiserfs partitions
-Date: Mon, 23 Dec 2002 17:20:14 +0300
-Message-ID: <20021223172014.B808@namesys.com>
-References: <5.2.0.9.2.20021222221057.01cfeb90@pop.tvnet.hu> <5.2.0.9.2.20021222221057.01cfeb90@pop.tvnet.hu> <5.2.0.9.2.20021223133707.00b8f9c0@pop.tvnet.hu>
+From: Eric Whiting <ewhiting@amis.com>
+Subject: Re: what do you do that stresses your filesystem?
+Date: Mon, 23 Dec 2002 07:37:40 -0700
+Sender: ewhiting@amis.com
+Message-ID: <3E071FB4.A8FA94D6@amis.com>
+References: <3E06F360.7000708@namesys.com> <20021223120357.GC13460@hvs.envisage.co.za> <20021223151045.A7697@namesys.com> <3E06FDC1.5040907@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12214-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12215-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <5.2.0.9.2.20021223133707.00b8f9c0@pop.tvnet.hu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Newsmail <newsmail@satimex.tvnet.hu>
-Cc: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Oleg Drokin <green@namesys.com>, Hendrik Visage <hvisage@envisage.co.za>, ReiserFS <reiserfs-list@namesys.com>
 
-Hello!
+Hans Reiser wrote:
 
-On Mon, Dec 23, 2002 at 01:47:36PM +0100, Newsmail wrote:
-> Yep, sorry I should have reported it back at that time :~
-> Well the huge amount isnt really 'huge' compared to the partition size. I 
-> copied 1 gig of data, composed of + - big files(10-60megs each) on/to a 
-> partition of size like 300gigs.
-> regards,
+> >>Another slowness (especially with reiserfs3 without the notails option)
+> >>is "dd if=/dev/zero of=/swapfile bs=1k count=1024k"
+>
+> I suppose I shouldn't ask Hendrik how often he does this in the course
+> of his usual usage patterns....;-)
 
-Ok, another question is where did you got your crypto api patches from?
-Ones I took from kerneli.org cannot be compiled.
+The above dd command (with different values of bs) is one of the first tests I
+do when I bring up a RAID array -- under solaris9 or linux. It is a good way to
+measure streaming throughput. 
 
-Bye,
-    Oleg
+As for other ways to artificially stress the filesystem I sometimes run multiple
+concurrent 'while(true);do bonnie -s N;done' loops with different values for N. 
+
+As far as real life stressing of the filesystem -- I think kernel compiles and
+just letting the users hit the filesystem are the main high stress fs loads. My
+filesystems get a lot of rsync activity as well. 
+
+eric
