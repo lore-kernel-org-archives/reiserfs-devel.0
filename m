@@ -1,31 +1,52 @@
-From: Felipe Alfaro Solana <felipe_alfaro@linuxmail.org>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: New reiser4 snapshot (2003.09.12) is out
-Date: Sat, 13 Sep 2003 14:03:05 +0200
-Message-ID: <1063454584.1661.9.camel@teapot.felipe-alfaro.com>
-References: <Pine.LNX.4.44.0309130753440.6794-100000@localhost.localdomain>
+Date: Sat, 13 Sep 2003 18:05:58 +0400
+Message-ID: <3F632446.30004@namesys.com>
+References: <20030913063124.GJ2123@backtop.namesys.com> <Pine.LNX.4.44.0309130437320.30756-100000@localhost.localdomain> <20030913085201.GA13272@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15649-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15650-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.44.0309130753440.6794-100000@localhost.localdomain>
+In-Reply-To: <20030913085201.GA13272@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "Robert P. J. Day" <rpjday@mindspring.com>
-Cc: Reiser FS mailing list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Oleg Drokin <green@namesys.com>
+Cc: "Robert P. J. Day" <rpjday@mindspring.com>, Alex Zarochentsev <zam@namesys.com>, Mike Benoit <mikeb@netnation.com>, reiserfs-list@namesys.com
 
-On Sat, 2003-09-13 at 13:59, Robert P. J. Day wrote:
-> > If my memory serves me well, that's the only patch needed to make it
-> > compile.
-> 
-> i'm confused.  the "patch" i refer to is the kernel patch to build
-> reiser 4 support into the kernel.  the fact that this works on 
-> patching the kernel doesn't seem to prevent the reiser4 progs build
-> problem.
+Oleg Drokin wrote:
 
-The patch I submitted was against reiser4progs, not against the kernel.
-With that patch applied, I've been able to compile reiser4progs with no
-problem at all.
+>Hello!
+>
+>On Sat, Sep 13, 2003 at 04:38:01AM -0400, Robert P. J. Day wrote:
+>
+>  
+>
+>>>It is because of paranoid -Werror flag.  
+>>>./configure --disable-werror will help you.
+>>>However, if your system will have readline (as on systems which are used by
+>>>reiser4progs developers :-) headers that warning disappear.
+>>>      
+>>>
+>>my system definitely has readline installed, and i get the same error.
+>>    
+>>
+>
+>On the other hand, you need not only readline itself, but also its header files.
+>Lots of distributions (e.g. redhat-alike) form another package called (usuaully) readline-devel,
+>that contains this necessary stuff.
+>
+>Bye,
+>    Oleg
+>
+>
+>  
+>
+did you adjust our headers to be redhat compatible?  If not, please do.
+
+-- 
+Hans
+
 
