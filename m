@@ -1,55 +1,100 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: 2.4.19-pre7 / corruption on unwanted reboot
-Date: Sun, 5 May 2002 12:09:03 +0400
-Message-ID: <20020505120903.A11812@namesys.com>
-References: <20020504211147.GA20092@matrix.wg>
+From: "Bodo Buerger" <bodo.buerger@gmx.de>
+Subject: unable to mount / rebuild-tree
+Date: Sun, 5 May 2002 12:56:10 +0200
+Message-ID: <003f01c1f423$7f037410$6400a8c0@jerez>
+Reply-To: "Bodo Buerger" <bodo.buerger@gmx.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10242-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0038_01C1F434.3AE9EB90"
+Return-path: <reiserfs-list-return-10243-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <20020504211147.GA20092@matrix.wg>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dirk Mueller <dmuell@gmx.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+------=_NextPart_000_0038_01C1F434.3AE9EB90
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 04, 2002 at 11:11:47PM +0200, Dirk Mueller wrote:
+Hi all,
 
-> I've seen HEAVY file corruption on unwanted reboots (like pressing the reset 
-> button accidently) on reiserfs with this kernel on 3 machines now. 
+since I booted my server today, I can't mount my reiserfs-partition any =
+more.
 
-This is bad. Does any earlier (but still relatively recent) kernel excibits
-this same behavior?
+<4>Checking ReiserFS transaction log (device 16:01) ...
+<4>hdc: read_intr: status=3D0x59 { DriveReady SeekComplete DataRequest =
+Error }
+<4>hdc: read_intr: error=3D0x40 { UncorrectableError }, LBAsect=3D65744, =
+sector=3D65681
+<4>end_request: I/O error, dev 16:01 (hdc), sector 65681
+<4>Replay Failure, unable to mount
+<4>reiserfs_read_super: unable to initialize journal space
 
-> The symptom is that it finds a LOT of files to "unlink" on journal replay, 
-> which I find suspicious as those machines are lightly loaded. 
+I checked with "reiserfsck" and replaced the super-block. After this I =
+tried to "--rebuild-tree"
+but this message occurs:
 
-How much is this "a LOT"? I think that even 10+ files that are unlinked
-after the unclean reboot/crash is pretty normal. Programs tend to use
-deleted files after the deletion, so this number highly depends
-on kind of programs you usually run.
+reiserfs_open_journal: bread failed reading journal header
 
-> I didn't follow the development too closely the last few weeks, but I 
-> believe that something turned worse in this respect lately. 
+but the "--no-journal-available"-option is always ignored by =
+"reiserfsck".
 
-In fact nothing unexpected went into 2.4.19-pre7, that was not available in
-our pending patches directory on our ftp site.
+Anyone out there, who can help?
+-----------------------------------------------------
+Bodo Buerger
 
-> Note that reiserfsck doesn't find any error in the file system structure 
-> before and after the journal replay on reboot, 
-> still many files (especially those that were not touched for several hours 
-> before the reboot) contain complete garbage after the journal replay. 
 
-I sthere any other pattern for damaged files besides these were not touched for
-several hours prior to reboot?
-Do their mtimes confirm they were modified long ago?
+------=_NextPart_000_0038_01C1F434.3AE9EB90
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the report.
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; =
+charset=3Diso-8859-1">
+<META content=3D"MSHTML 5.50.4134.600" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2>Hi all,</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>since I booted my server today, I can't =
+mount my=20
+reiserfs-partition any more.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>&lt;4&gt;Checking ReiserFS transaction =
+log (device=20
+16:01) ...<BR>&lt;4&gt;hdc: read_intr: status=3D0x59 { DriveReady =
+SeekComplete=20
+DataRequest Error }<BR>&lt;4&gt;hdc: read_intr: error=3D0x40 { =
+UncorrectableError=20
+}, LBAsect=3D65744, sector=3D65681<BR>&lt;4&gt;end_request: I/O error, =
+dev 16:01=20
+(hdc), sector 65681<BR>&lt;4&gt;Replay Failure, unable to=20
+mount<BR>&lt;4&gt;reiserfs_read_super: unable to initialize journal=20
+space<BR></FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>I&nbsp;checked with "reiserfsck" and =
+replaced the=20
+super-block. After this I tried to "--rebuild-tree"</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>but this message occurs:</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>reiserfs_open_journal: bread failed =
+reading journal=20
+header</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>but the "--no-journal-available"-option =
+is always=20
+ignored by "reiserfsck".</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>Anyone out there, who can =
+help?</DIV></FONT>
+<DIV><FONT face=3DArial=20
+size=3D2>-----------------------------------------------------<BR>Bodo=20
+Buerger</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV></BODY></HTML>
 
-Bye,
-    Oleg
+------=_NextPart_000_0038_01C1F434.3AE9EB90--
+
