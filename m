@@ -1,52 +1,35 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Fibration etc
-Date: Thu, 15 Apr 2004 23:02:43 +0300
-Message-ID: <20040415200243.GX14134@nysv.org>
-Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17970-reiserfs=m.gmane.org@namesys.com>
+From: Boyd Waters <bwaters+mac@aoc.nrao.edu>
+Subject: Re: New server Reiser4 or 3, also Reiser4 on software RAID
+Date: Thu, 15 Apr 2004 14:29:58 -0600
+Message-ID: <A9F4A120-8F1B-11D8-8778-000A95C88606@aoc.nrao.edu>
+References: <3DF9165145FACB4C96977FF650C1E9040C469E0D@its-mail1.its.corp.gwl.com>
+Mime-Version: 1.0 (Apple Message framework v613)
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17973-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C469E0D@its-mail1.its.corp.gwl.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list <reiserfs-list@namesys.com>
 
-Hi!
+>
+> In other words, if I bring the machine down to single user, is there a
+> straightforward way that I can upgrade a Reiser3 fs to version 4?
 
-I think this may be of some interest to other people too, so I won't just
-take it up on IRC.
+Nope. It's a different system.
 
-What's up with this:
-mjt@shrike:~/tmp$ echo -e 'lexicographic\0' > ..metas/plugin/fibration
-mjt@shrike:~/tmp$ cat ..metas/plugin/fibration 
-1 dot-o fibrate .o files separatelymjt@shrike:~/tmp$ 
+You could create a new filesystem, of course, and have it be reiser4, 
+mount it, move everything over, and switch.
 
-I actually noticed that it changes the behavior of empty directories.
-Maybe the READ.ME should mention this?
+For a production machine I'm sticking to reiser3 at the moment. But 
+testing reiser4 is fine.
 
-Is there any means of refibrating populated directories or do I have to
-bounce everything by some tmp directory?
+~ boyd
 
-This is then also correct, it just fails because directories are
-populated with dot-o?
-
-/dev/hda1       /               reiser4 defaults,plugin.fibration=ext-1
-0       0
-
-However, if I do an mkdir after having mounted like that, shouldn't
-all new directories be ext-1 by default, not dot-o?
-
-How does the fibration work with links? Does it fibrate names of files
-or contents of files together? How about hardlinks? Does it follow
-symlinks?
-
-Is there some way of check that with some debug tool?
-
-Thanks!
-
--- 
-mjt
+Boyd Waters
+National Radio Astronomy Observatory
+Socorro, New Mexico
 
