@@ -1,61 +1,47 @@
-From: Chris Mason <mason@suse.com>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: anyone port data-logging patches to -rc3?
-Date: 23 May 2003 08:28:19 -0400
-Message-ID: <1053692899.5455.44.camel@tiny.suse.com>
-References: <20030523003033.GC6586@zero> <20030523094633.GA1005@namesys.com>
+Date: Fri, 23 May 2003 16:36:01 +0400
+Message-ID: <20030523123601.GB7109@namesys.com>
+References: <20030523003033.GC6586@zero> <20030523094633.GA1005@namesys.com> <1053692899.5455.44.camel@tiny.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14221-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14222-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030523094633.GA1005@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <1053692899.5455.44.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <mason@suse.com>
 Cc: Tom Vier <tmv@comcast.net>, reiserfs-list@namesys.com
 
-On Fri, 2003-05-23 at 05:46, Oleg Drokin wrote:
-> Hello!
-> 
-> On Thu, May 22, 2003 at 08:30:33PM -0400, Tom Vier wrote:
-> 
-> > i started to, but the change in reiserfs/inode.c:reiserfs_truncate_file() is
-> > more than i want to play w/ (my first time looking at reiserfs code). i
-> > don't want to trash my fs. 8)
-> 
-> Ok, replacement patches are in
-> ftp://ftp.namesys.com/pub/reiserfs-for-2.4/testing/data-logging-and-quota-2.4.21-rc3/
-> 
-> I tested it in all journaling modes and found zero problems. (have not tried crashing it,
-> though).
-> 
+Hello!
 
-Thanks Oleg, I'm integrating all of this today.
+On Fri, May 23, 2003 at 08:28:19AM -0400, Chris Mason wrote:
 
-> Chris: I optimized reiserfs_truncate_file() a bit so that it won't do kmap() on the same page twice.
-> Also I think I did correct thing with reiserfs_commit_for_tail/reiserfs_commit_for_inode stuff,
-> but I want you to take a look anyway.
+> > And BTW, I think this "do O_DIRECT stuff on ordered/datalogging fs, receive error from write(2)" is counter-intuitive.
+> > what do you think about just only setting reiserfs_address_space_operations->direct_IO to non-NULL
+> > in case of writeback mount?
+> They'd get the same error, just sooner.  I'm more inclined to fix things
 
-Will do.
+Yes, they'd get it at open() time which is much better, I think.
 
-> And BTW, I think this "do O_DIRECT stuff on ordered/datalogging fs, receive error from write(2)" is counter-intuitive.
-> what do you think about just only setting reiserfs_address_space_operations->direct_IO to non-NULL
-> in case of writeback mount?
+> so that data=ordered works with O_DIRECT, lets see what I can come up
+> with.
 
-They'd get the same error, just sooner.  I'm more inclined to fix things
-so that data=ordered works with O_DIRECT, lets see what I can come up
-with.
+Still there is no chance for that to work in data=journal mode.
 
-> Also probably we do not want to allow remounting with different data-logging mode,
-> may be we should even add a check in reiserfs_remount() and spit out an error in such a case?
+> > Also probably we do not want to allow remounting with different data-logging mode,
+> > may be we should even add a check in reiserfs_remount() and spit out an error in such a case?
+> Jeff Mahoney managed to trigger a race by switching between data=journal
+> and the other modes.  All we really need to do is be able to switch data
+> mode when remounting from readonly to rw (as in for the root FS), so
+> I'll limit the remounting code to that.
 
-Jeff Mahoney managed to trigger a race by switching between data=journal
-and the other modes.  All we really need to do is be able to switch data
-mode when remounting from readonly to rw (as in for the root FS), so
-I'll limit the remounting code to that.
+Any chance you would also rework journaling code a bit, so that it does not occupy
+ram for various tables/lists when the fs is in R/O mode?
 
--chris
-
-
+Bye,
+    Oleg
