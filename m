@@ -1,41 +1,45 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: 5 Aug auto-snapshot w/rc2-mm1?
-Date: Fri, 6 Aug 2004 10:26:57 +0400
-Message-ID: <20040806062657.GA9811@backtop.namesys.com>
-References: <20040805231710.3280E15D5F@mail03.powweb.com>
+From: "David Dabbs" <david@dabbs.net>
+Subject: RE: Was able to reproduce "cp: cannot stat file.x: Input/output error"
+Date: Fri, 6 Aug 2004 01:53:39 -0500
+Message-ID: <20040806065705.E5A6515C76@mail03.powweb.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20034-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20035-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040805231710.3280E15D5F@mail03.powweb.com>
+In-Reply-To: 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-To: David Dabbs <david@dabbs.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: 'ReiserFS List' <reiserfs-list@namesys.com>
 
-On Thu, Aug 05, 2004 at 06:10:22PM -0500, David Dabbs wrote:
->=20
-> Yesterday?s snapshot READ.ME indicates that it works with 2.6.8-rc2-mm2
-> version of Linux kernel e.g. linux-2.6.8-rc2.tar.bz2 and
-> 2.6.8-rc2-mm2/2.6.8-rc2-mm2.bz2 but today's auto-snapshot is labeled as=20
->=20
-> 	linux-2.6.8-rc2-mm1.diff.gz
->=20
-> Is this a typo?
 
-The auto snapshot script needs small update each time we switch kernel vers=
-ion.
-Obviously it was not done.  The problem is with the auto-snapshot only, the
-lastest from "stable" snapshots is OK.
+This is definitely reproducible. I rebooted and reran the script. Same
+result at about the same point in the sequence (part way into first COPY
+iteration).
 
-Thanks.
+Right now I'm running identical mongo config against reiserfs and it appears
+to be running just fine into the second copy iteration.
 
-> =9A
-> David
+Should someone from Namesys downloads the bzip tar I mentioned before here's
+a summary of the changes in my version of mongo:
 
---=20
-Alex.
+reiser_fract_tree.c
+- added extensions to generated filenames bay adding rnd to a base
+  char of backtick. Extensions generated should be in the range of 
+  'a' to 'a' + MAX_NAME_LEN.
+
+mongo.pl
+- added PHASE_MKDIRS
+  Makes directories on the target device from a static list.
+- added PHASE_MKFILES
+  Makes files on the target device from a static list.
+- added MAX_FNAME_LEN option
+  Allows me to use something different than a hard coded value of 6.
+  I ran it with 23.
+- Some extra LOG calls so I can see commands being executed.
+
+David
+
+
