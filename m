@@ -1,40 +1,30 @@
-From: Dan Nilsson <zyrax@home.se>
-Subject: Re: Reoccuring corruption problem
-Date: Sat, 21 Aug 2004 07:43:41 +0200
-Message-ID: <200408210743.41317.zyrax@home.se>
-References: <200408192046.27223.zyrax@home.se> <20040819194222.GC29745@favonius>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: viewprinting: what format should views be stored in?
+Date: Fri, 20 Aug 2004 23:42:19 -0700
+Message-ID: <4126EECB.1000504@namesys.com>
+References: <20040820072324.CA4DA15D92@mail03.powweb.com> <200408201610.i7KGAwLm014275@turing-police.cc.vt.edu> <4126675F.9070202@comcast.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20447-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20448-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040819194222.GC29745@favonius>
-Content-Disposition: inline
+In-Reply-To: <4126675F.9070202@comcast.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: sander@humilis.net
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: George Beshers <gbeshers@comcast.net>
+Cc: Valdis.Kletnieks@vt.edu, David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
 
-> Sounds like bad memory nevertheless. Can you try memtest86 for at least
-> 24 hours?
+We only do filesystem isolation because that is our specialty, 
+filesystems, and it is better to do less well.
 
-Yes,
-I put the computer running memtest86 after getting your email and it did in 
-fact pass all tests (after ~24hrs i aborted the test). 
-
-I have fairly recently upgraded the computer by adding a memory module which i 
-suspected would show up the errors (if any).
-
-After running the test I fsck:ed to remove the corruptions, then proceeded by 
-removed my /usr/portage tree (where corruptions seem to easily occur) and 
-reinstalled all the files (with rsync). The same type of corruption occured 
-but now to a different directory than "usual". 
-
-I have absolutely no idea what causes it. Nothing shows up in syslog and there 
-doesn't seem to be any problems with the hard drive (which, by the way is a 
-2Gb drive with the corruptions occuring on a 1.6 Gb partition).
-
-Thanks,
-Dan Nilsson
+We fundamentally differ from other approaches because I don't think the 
+problem is in developing tools to allow people to fine grain security if 
+they take the time to do it, I think the problem is that nobody has the 
+time to specify fine grained security for the executables on their 
+computers, and our focus is on the filesystem aspects of automating the 
+specification of the fine grained security for an executable.  
+Researchers after us can generalize our approach to things outside the 
+filesystem namespace, or, better, put those things into the filesystem 
+namespace.;-)
