@@ -1,31 +1,66 @@
-From: Tierra <etierra@gmail.com>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 10:44:38 -0600
-Message-ID: <c7ef32a704082609444c705c43@mail.gmail.com>
-References: <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826012230.GA19957@jeremy1> <20040826110141.GI2612@wiggy.net> <c7ef32a70408260942c8efa54@mail.gmail.com>
-Reply-To: Tierra <etierra@gmail.com>
+Date: Thu, 26 Aug 2004 17:44:51 +0100
+Message-ID: <20040826164451.GL5733@mail.shareable.org>
+References: <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com> <1093536282.5482.6.camel@leto.cs.pocnet.net> <20040826160750.GC4326@lst.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20724-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20725-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <c7ef32a70408260942c8efa54@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20040826160750.GC4326@lst.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Rik van Riel <riel@redhat.com>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Thu, 26 Aug 2004 13:01:41 +0200, Wichert Akkerman <wichert@wiggy.net> wrote:
-> Previously Jeremy Allison wrote:
-> > Which is exactly how Windows apps have started to use streams.
->
-> Interesting I can not find a way using the .NET framework, which is
-> supposed to be The Future, to use streams.
+Christoph Hellwig wrote:
+> or placing this into a userspace helper that the kernel can invoke
+> transparently.
 
-That's because you don't even need .NET...
-http://support.microsoft.com/default.aspx?scid=http://support.microsoft.com:80/support/kb/articles/q105/7/63.asp&NoWebContent=1&NoWebContent=1
+Yes, exactly this for most file formats.
+Ideally, with _some_ user control over the handlers for their own
+files a bit like Hurd.
 
-http://tinyurl.com/45mfa
+Not just archive files: metadata pulled from audio files, images,
+distro packages, etc.  In other words much the same as Gnome and KDE's
+things, but with more emphasis on metadata extractors and efficient
+on-disk cache interaction, and a sane page-cache coherency interface
+(possibly FUSE).
 
-Bryan
+Metadata extraction is useful for search and indexing purposes.
+(That, and a way to hook change notifications up with indexers --
+again comes with any proper coherency interface).
+
+For new applications using a container, it's tempting to want one
+format which is optimised for this.  But really many applications want
+to write XML or compressed XML, or something else that isn't
+especially efficient but is easy to work with on many OSes.  We should
+support applications whatever format they need to work with, if
+providing an interior view as a directory is useful for them.  (This
+implies applications can introduce their own formats for files they
+need to operate on.)  By the way, lazy updating of containers is an
+even bigger advantage if you have to use XML as the flat format,
+because the savings from not serialising when you don't need to are
+more pronounced.
+
+For some applications the "content" isn't structured in a way which
+maps naturally to a plain archive file.  Hans' /etc/passwd is a simple
+example: at least one of the "flat" representations, when there are
+enough entries, probably ought to be a DB file for faster lookup.
+(Though, it would be great if /etc/passwd could automagically get fast
+lookup due to an automagic underlying representation, while still
+appearing to be a flat file when you cat it).
+
+Also, imagine "cd" into a MySQL table file.  It might just work.
+
+By the way, we don't need containers to waste huge amounts of space
+like the Microsoft Word "fast save" documents did.  Because our
+containers are created on demand, there is no performance advantage in
+them having unused holes, unlike the case were Word was saving changes
+periodically.
+
+-- Jamie
+
