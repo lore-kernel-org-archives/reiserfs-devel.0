@@ -1,50 +1,64 @@
-From: Anders Widman <andewid@tnonline.net>
-Subject: Re: filesystem corruption ?
-Date: Sat, 22 Mar 2003 19:37:13 +0100
-Message-ID: <134187412093.20030322193713@tnonline.net>
-References: <200303201725.14039.bernd-schubert@web.de>
- <20030321103230.C12315@namesys.com> <200303211401.38329.bernd-schubert@web.de>
- <200303221918.23552.bernd-schubert@web.de>
-Reply-To: Anders Widman <andewid@tnonline.net>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: Re: datalogging and quota patches port to 2.4.21-pre6
+Date: Sat, 22 Mar 2003 20:07:33 +0100
+Message-ID: <3E7CB475.5040502@mb.tu-ilmenau.de>
+References: <20030320181301.A7170@namesys.com> <3E7BA735.5090604@mb.tu-ilmenau.de> <20030322102931.A7246@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13333-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13335-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200303221918.23552.bernd-schubert@web.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-> Hello,
+On 03/22/2003 08:29 AM, Oleg Drokin wrote:
+> Hello!
+> 
+> On Sat, Mar 22, 2003 at 12:58:45AM +0100, Manuel Krause wrote:
+> 
+>>GRIN !!!  I really would like to enjoy these, but you seem to be far 
+>>away in future. Still no "official" patch seems to be out -- at least 
+>>for me on here. (Yes, I'll wait and would not use bk.)
+>>Have your previously pending patches been included into 2.4.21-pre6
+>>(they are: 02-trivial1.diff
+>>           03-more-mount-checks.diff
+>>           01-journal-overflow-fix.diff
+>> from    ftp://ftp.namesys.com/pub/reiserfs-for-2.4/testing :
+>>          iget5_locked_for_2.4.21-pre5-datalogging.diff.gz
+>> and posted to our ML @ "Wed, 12 Mar 2003 10:46:42 +0300" :
+>>            direct-io-fix-II.diff
+>>) ?
+> 
+> Only patches that are visible at 
+> ftp://ftp.namesys.com/pub/reiserfs-for-2.4/2.4.20-pending
+> were included into 2.4 tree.
+> iget5_locked patch is in testing right now.
+> direct-io-fix-II.diff have triggered some old long known minor metadata
+> updating problems in case of unexpected crash and I am looking how to resolve
+> that and trying various stuff.
+> 
+>>My question only results from beeing unable to get them all applied to 
+>>2.4.21-pre5 with data-logging without rejects and me feeling unsafe to 
+>>adjust them manually.
+> 
+> Well, if you apply all of those patches from
+> ftp://ftp.namesys.com/pub/reiserfs-for-2.4/2.4.20-pending on clean 2.4.20
+> (or whatever is needed for 2.4.21-pre5 only frpm
+> ftp://ftp.namesys.com/pub/reiserfs-for-2.4/2.4.21-pre5.pending)
+> and then apply data logging patches as if you have 2.4.21-pre6,
+> and then iget5_locked stuff, it should work.
 
->> Though this machine will be replaced by a real server in a few month, I'm
->> still rather worried what happend. Even if its 'only' a hardware memory
->> problem this means lots of trouble for us -- on the one hand it seems not
->> to be memtest86 detectable and on the other hand our programs really do
->> need working memory, but of course this is not of your concern.
 
-> Update: I yesterday started our fall-back-server and run another memtest86 on
-> the suspected machine. A colleague just told me that memtest86 reported 3
-> errors in test 8, well lets see what comes in test 11.
-> So this either means that the physicians have run some experiments today or
-> that the memory became damaged within 2 weeks.
+Thank you Oleg for the information and the hint.
 
-Just  a  reminder that a few % of all hardware is broken, no matter if
-it is the CPU, mainboard or ram or something else.
+When following your directions these patches apply fine and the kernel 
+works pretty well, too.
 
-> Thanks a lot for your help to identify this as a hardware problem.
+Thanks again,
 
-> Best regards,
->         Bernd
-
-
-   
-
-
-
---------
-PGP public key: https://tnonline.net/secure/pgp_key.txt
+Manuel
 
