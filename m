@@ -1,63 +1,45 @@
-From: Bernd Schubert <bernd-schubert@web.de>
-Subject: Re: nfsd-fh: found a name that I didn't expect
-Date: Sat, 29 Mar 2003 16:06:54 +0100
-Message-ID: <200303291606.54910.bernd-schubert@web.de>
-References: <200303281828.55093.bernd-schubert@web.de> <200303291509.23681.bernd-schubert@web.de> <20030329171321.A15899@namesys.com>
+From: Edward Shushkin <edward@namesys.com>
+Subject: Re: Proposal for keying encrypted filesystem
+Date: Sat, 29 Mar 2003 19:46:39 +0300
+Sender: edward
+Message-ID: <3E85CDEF.7B6BD323@namesys.com>
+References: <200303282026.23543.phma@webjockey.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13433-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13434-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030329171321.A15899@namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
+To: Pierre Abbat <phma@webjockey.net>
 Cc: reiserfs-list@namesys.com
 
-Hello,
+Pierre Abbat wrote:
+> 
+> Each file has a four-byte key ID in its inode and is encrypted with a longer
+> key. (One way to make these keys is to hash a passphrase with SHA1 and use
+> four bytes for the key ID and the rest for the key.) Each process may hold
+> any number of credentials consisting of the key ID and the key. When a
+> process attempts to open an encrypted file, the kernel checks whether it or
+> any of its ancestors has a credential that matches the file's key ID.
 
-> > As noted in my other e-email, /usr/sbin/logrotate was also affected. I
-> > don't like it to say, but after rebooting everything was fine, so those
-> > messages doesn't  appear any longer.
-> > Does this mean memory problems again ? We even have loaded the
->
-> Not likely.
+Never trust 4-byte ID. The first collision that provides any assigned 4 bytes 
+in SHA1 output can be found very easy..
 
-The first good message this day! :) I was really worried again.
+Edward.
 
->
-> The problems seems to have something to do with strange dentries appearing
-> in dentry cache, also you have verified that this is not because of fs
-> error.
-> What kernel are you running?
-
-2.4.20 with the ptrace patch.
-
-> I think may be race with iget4 might cause this, but I am not sure.
-> We have a patch for this iget4 race, and if you are willing to test it, I
-> can send it to you.
-
-Yes of course I am. I hope the other admins won't kill me, but I guess they 
-know that I willing to do experiments from time to time ;-)
-Could something worse happen when I try the patch, that could not be fixed by 
-simple rebooting ?
-
-The problems is to detect if this is really caused by this race. Since I still 
-don't know a way how to reliable trigger this and  even a reboot can fix it, 
-it is difficult to get to know if the patch would be really helpful. 
-Do you see a way  to enable your patch via proc interface ? So I could try to 
-reboot the server and run 'find /' on the client as loop until the problem 
-occurs. When I see the problem, I could enable it via proc and check if it 
-works.
-
-Update: While I was writing and thinking about how to trigger it, I just again 
-saw the problem for /usr/bin/uptime and another file and again a reboot could 
-fix it for those files.
-
-
-Thanks a lot for your help,
-	Bernd
-
+> 
+> A utility called reiserkey is used to set and unset these keys. It can set or
+> unset the key in itself or any of its ancestors running under the same uid,
+> or if it's running as root, in any of its ancestors. reiserkey -a n sets the
+> key in the nth ancestor; reiserkey -p n sets the key in process n. The
+> default is -a 1; if reiserkey is run from a shell script, this sets the key
+> in the shell script. To set it system-wide, use -p 1.
+> 
+> phma
+> --
+> .i toljundi do .ibabo mi'afra tu'a do
+> .ibabo damba do .ibabo do jinga
+> .icu'u la ma'atman.
