@@ -1,67 +1,49 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Zero Bit found
-Date: Mon, 26 Jul 2004 14:16:42 +0400
-Message-ID: <200407261416.42431.vitaly@namesys.com>
-References: <6913951.1090812351701.SLOX.WebMail.wwwrun@neptune.hsc-consulting.com.au> <200407261415.24890.vitaly@namesys.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: Using plugins for reiser4?
+Date: Mon, 26 Jul 2004 14:21:51 +0400
+Message-ID: <4104DB3F.4050805@namesys.com>
+References: <1604556800.20040725174028@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19811-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19812-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200407261415.24890.vitaly@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <1604556800.20040725174028@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: hsimon@optusnet.com.au, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Spam <spam@tnonline.net>
+Cc: reiserfs-list@namesys.com
 
-On Monday 26 July 2004 14:15, Vitaly Fertman wrote:
-> On Monday 26 July 2004 07:25, Horst Simon wrote:
-> > Hi,
-> >
-> > I recently added a 200GB Seagate IDE drive to my system on a build-in
-> > promise controller on an ASUS A7V, updated BIOS which supports large
-> > disk drives.
-> > The O/S is United Linux 1.0 with the latest patches and the kernel
-> > version is
-> > 2.4.21 with latest United Linux patches. The reiserfs is 3.6. During the
-> > initial
-> > setup and first reboot no reiserfsck errors are report. After writing
-> > data to the disk I get now following reiserfsck messages during each
-> > boot:
-> >
-> >  ZERO BIT FOUND IN ON-DISK BITMAP AFTER THE LAST VALID BIT
-> > Switching to --fix-fixable mode
-> > Checking
-> >
-> > It displays directory paths which it is checking and after finishing
-> > following message is displayed:
-> >
-> > The on-disk and the correct bitmaps differ. Will be fixed later
-> >
-> > No corruption found
-> >
-> > What is this ZERO BIT, is this a serious problem? What could be wrong
->
-> zero bit is not serious, but the message 'The on-disk and the correct
-> bitmaps differ. ' points to another more serious problem. --fix-fixable is
-> supposed to fix them both (and as I have just tested, it does) -- this is
-> not good that these problems arrear again and again.
+Hello
 
-... appear ...
+Spam wrote:
+>   Hello,
+> 
+>   I  just been trying to understand the usage of plugins for reiser4 -
+>   or   more   specifically   how   to   enable  plugins  for  certain
+>   files, directories and/or to entrie devices.
+> 
+Have you looked at a big comemnt on top of reiser4/plugin/plugin.c?
 
-> > bad BIOS, reiserfs, etc.?
->
-> could you umount the fs, run reiserfsck --check on it, then if it finds
-> these corruptions fix them with fix-fixable and reiserfsck --check again to
-> be sure all of them are fixed?
->
-> the problem could in your hardware also. we deal with such problems
-> under the terms of our support page (www.namesys.com/support.html)
-> -- visit it please.
+>   When  I  was patching my kernel to support reiser4 I saw there was a
+>   compression plugin that I'd like to know more about.
+> 
 
--- 
-Thanks,
-Vitaly Fertman
+It is under development.
+
+>   How  can  I  use  different  plugins  and  how  can  I get a list of
+>   supported  plugins. 
+
+Source code is probably the right place to look at.
+
+  The "mkfs.reiser4 -l" doesn't list everything I
+>   found in the reiser4 kernel code.
+> 
+>   ~S
+> 
+> 
+> 
+
 
