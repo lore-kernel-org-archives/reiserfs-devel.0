@@ -1,13 +1,11 @@
 From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: filenames that can be safely stolen
-Date: Sun, 04 Apr 2004 20:37:15 -0400
+Subject: Re: "Metas"
+Date: Sun, 04 Apr 2004 20:47:46 -0400
 Sender: news <news@sea.gmane.org>
-Message-ID: <878yhbb6pw.fsf@uhoreg.ca>
-References: <200404010546.i315kEvY019805@sirius.cs.pdx.edu> <20040402035617.GC2158@zero>
- <8765ciqr6v.fsf@uhoreg.ca> <20040402220250.GB4668@rahul.net>
- <406EFCE2.8000108@namesys.com> <20040405000645.GB9905@zero>
+Message-ID: <874qrzb68d.fsf@uhoreg.ca>
+References: <200404050212.05364.chrivers@iversen-net.dk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17702-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17703-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -17,16 +15,22 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
->>>>> "Tom" == Tom Vier <tmv@comcast.net> writes:
+>>>>> "Christian" == Christian Iversen <chrivers@iversen-net.dk> writes:
 
-[...]
+Christian> Just a thought. Who on this list does NOT support "..."
+Christian> instead of metas?
 
-Tom> and finally, i hate the 's'. 8) for one thing, it might only
-Tom> contain only one file.
+I personally don't like the way that "..." looks.  IMHO, it's just ugly.
+But that's my main complaint with it, and it's just an opinion.
 
-It will always contain multiple files.  See
-http://namesys.com/v4/pseudo.html for the files that it contains by
-default.
+Hmm.  Looking at http://namesys.com/v4/pseudo.html just reminded me that
+the string "..." is also used as a placeholder for multiple unspecified
+items (name1/name2/name3/ ... /nameN/name), and so writing "..." in a
+manual/instructions could be confusing.
+
+While I would much prefer ..metas or even .metas over plain metas, I
+would have to agree with Hans that it is extremely unlikely that anyone
+would actually use such a name.  I don't think it's a showstopper.
 
 -- 
 Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
