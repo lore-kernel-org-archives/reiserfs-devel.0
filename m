@@ -1,33 +1,49 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: My mistake....
-Date: Thu, 11 Jul 2002 20:47:56 +0400
-Message-ID: <20020711204756.A1216@namesys.com>
-References: <000b01c228db$3a1b1f00$0e01a8c0@englishbay.com> <20020711170537.A2611@namesys.com> <004901c228dd$f01fe220$0e01a8c0@englishbay.com> <20020711172612.A2740@namesys.com> <000501c228df$dd95df40$0e01a8c0@englishbay.com> <20020711173931.A2838@namesys.com> <01c101c228f0$cb229ae0$0e01a8c0@englishbay.com>
+From: "Brian" <brian@english-bay.com>
+Subject: Re: My mistake...
+Date: Thu, 11 Jul 2002 10:45:01 -0700
+Message-ID: <001c01c22902$aef10660$0e01a8c0@englishbay.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10980-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10981-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <01c101c228f0$cb229ae0$0e01a8c0@englishbay.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Brian <brian@english-bay.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+Hey Oleg:
 
-On Thu, Jul 11, 2002 at 08:36:55AM -0700, Brian wrote:
+> No, it was asking you about the superblock version.
+> And if you have answered incorrectly, this is bad.
 
-> > > First did --rebuild-sb then --rebuild-tree with -S
-> > --rebuild-sb asked you a question, what was your answer?
-> Ah, do you mean about the size of the partition?
+Oh, right you are.
 
-No, it was asking you about the superblock version.
-And if you have answered incorrectly, this is bad.
-Also what mount /dev/yourdevice /mnt -t reiserfs 
-produces in kernel logs?
+I selected the latest version because that was what the logfiles reported
+during boot for the other identical partition.
 
-Bye,
-    Oleg
+> Also what mount /dev/yourdevice /mnt -t reiserfs
+> produces in kernel logs?
+
+Here is the consol error report,
+
+mount: wrong fs type, bad option, bad superblock on /dev/hdc2,
+or too many mounted file systems
+
+Here is what the syslog has to say,
+
+Jul 11 10:39:20 bozo kernel: super-459: read_super_block: super found at
+block 1
+6 is within its own log. It must not be of this format type.
+Jul 11 10:39:20 bozo kernel: read_super_block: can't find a reiserfs
+filesystem
+on (dev 16:02, block 8, size 1024)
+
+It is all greek to me...
+
+Any ideas?
+
+Thanks,
+
+Brian
+BSFH
