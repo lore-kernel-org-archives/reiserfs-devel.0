@@ -1,67 +1,77 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Benchmark : ext3 vs reiser4 and effects of fragmentation.
-Date: Thu, 16 Sep 2004 10:26:11 -0700
-Message-ID: <4149CCB3.1030001@namesys.com>
-References: <4148BC0E.5010509@willsmith.org> <20040916085248.GI5137@backtop.namesys.com> <20040916130809.GI26192@nysv.org> <20040916153835.GK5137@backtop.namesys.com> <20040916155248.GM26192@nysv.org>
+From: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
+Subject: Re: Reiser4 support on parted program ...
+Date: Thu, 16 Sep 2004 19:57:24 +0200
+Message-ID: <4149D404.8040903@futuretg.com>
+References: <41472F46.4000109@futuretg.com> <41477625.304@slaphack.com> <4147E95B.8090108@futuretg.com> <20040915094952.GA5137@backtop.namesys.com> <41485D18.1040100@futuretg.com> <20040916123648.GC928@gnu.org> <414995AE.4090808@clusterfs.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-21823-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21824-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040916155248.GM26192@nysv.org>
+In-Reply-To: <414995AE.4090808@clusterfs.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
-Cc: Alex Zarochentsev <zam@namesys.com>, Will Smith <will@willsmith.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Yury Umanets <yury@clusterfs.com>
+Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-Markus T=F6rnqvist wrote:
+Yury Umanets wrote:
 
->On Thu, Sep 16, 2004 at 07:38:36PM +0400, Alex Zarochentsev wrote:
+> Andrew Clausen wrote:
 >
-> =20
->
->>We are not going to add more intelligence to the in-kernel repacker modul=
-e but
->>design an interface between repacker and user-space programs and implement
->>reisizing alg. in user-space.=20
->>   =20
+>> On Wed, Sep 15, 2004 at 05:17:44PM +0200, Dr. Giovanni A. Orlando wrote:
+>>  
 >>
->
->This sounds a bit fishy; is it about having two repackers then?
->One in kernelspace and one in userspace?
->Will the kernelspace one be obsoleted?
-> =20
->
-The kernel will perform transactions requested by user space.  These=20
-transactions will be composed by the user space program.
-
-We will start with the simple algorithm we currently use, and then Zam=20
-and I will go read Knuth and Woods and the web to seriously research=20
-sorting algorithms which we haven't done yet.=20
-
->>>>unmergable units shouldn't be problem for the reiser4 kernel code.
->>>>       =20
->>>>
->>>What are their significance; what do they mean?
->>>     =20
+>>>> libreiser4 / libaal are made to support parted easier.
+>>>> resizing program is not done.
+>>>>     
 >>>
->>two extent units (start1, len1), (start2, len2) can be merged into one (s=
-tart1,
->>len1 + len2) because start1 + len1 =3D=3D start2.  I think no reiser4 ker=
-nel code
->>depends on that mergable extents do not exist.
->>   =20
+>>> Yes. I check this matter yesterday.
+>>>
+>>> I suspect that I need to write the code :-( .
+>>>
+>>> I will survive.
+>>>   
 >>
+>>
+>> Yeah, I don't really have time at the moment to look at this.
+>> I'm accepting patches ;)  Feel free to ask for help...
+>>
+>> Cheers,
+>> Andrew
+>>  
+>>
+> Hello Andrew,
 >
->Unmergable units are then (start1 + len1) !=3D start2 because the repacker
->messed this up?=20
+> I remember, that you personaly and ppl from parted comunity helped me 
+> very much. So, I guess, it will be not a problem to add such a support 
+> to parted after resizing, copying code in libreiser4 is ready ;)
 >
->The kernel finds the extent units from their "old places" without optimizi=
-ng
->them to one unit?
+> BTW, mkfs, fsck, etc. support (probably all but resize and copy) can 
+> be added anytime...
 >
-> =20
->
+Hi,
+
+    If you can wait until Saturday morning ... will be better.
+
+    I expect to have time for this next saturday.
+
+Thanks,
+Giovanni
+
+-- 
+
+-- 
+
+--
+Check FT Websites ... 
+http://www.futuretg.com  - ftp://ftp.futuretg.com
+http://www.FTLinuxCourse.com
+	http://www.FTLinuxCourse.com/Certification
+http://www.rpmparadaise.org
+http://GNULinuxUtilities.com
+http://www.YourPersonalOperatingSystem.com
+
+--
 
