@@ -1,30 +1,33 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: Disable Journalling
-Date: Mon, 18 Nov 2002 10:57:38 +0300
-Message-ID: <20021118105738.A3827@namesys.com>
-References: <22A013D3B119FA47ABE88EF314C8E68E6733F6@SJEX01.trans.corp>
+Subject: Re: reiserfs+LVM+loopAES
+Date: Mon, 18 Nov 2002 11:01:04 +0300
+Message-ID: <20021118110104.B3827@namesys.com>
+References: <1036664491.13120.38.camel@ceros>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12006-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12007-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <22A013D3B119FA47ABE88EF314C8E68E6733F6@SJEX01.trans.corp>
+In-Reply-To: <1036664491.13120.38.camel@ceros>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Abhijit Dinkar <adinkar@pillardata.com>
-Cc: reiserfs-list@namesys.com
+To: liqui-D-read <liquid@nano.cz>
+Cc: reiserfs-mailing-list <reiserfs-list@namesys.com>
 
 Hello!
 
-On Mon, Nov 04, 2002 at 04:09:02PM -0800, Abhijit Dinkar wrote:
-> 	I am looking at reiserfs version 3.6.25 that came with redhat
-> linux 8. The mount option "nolog" does not seem to be supported. Is
-> there another way to disable journalling? 
+On Thu, Nov 07, 2002 at 11:21:31AM +0100, liqui-D-read wrote:
+> root@base:/tmp# reiserfsck --fix-fixable /dev/loop1 
+> 
+> <-------------reiserfsck, 2002------------->
+> reiserfsprogs 3.x.1b
 
-No. There is no such way yet.
+
+This means that you did not read FAQ.
+You need to get latest reiserfsprogs from our ftp site.
 
 Bye,
     Oleg
