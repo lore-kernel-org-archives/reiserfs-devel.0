@@ -1,128 +1,71 @@
 From: Manuel Krause <manuelkrause@netscape.net>
-Subject: Re: A couple of questions
-Date: Fri, 17 May 2002 03:06:41 +0200
-Message-ID: <3CE457A1.6040507@netscape.net>
-References: <OF4AF5C20B.BE2F7D18-ON85256BBB.006643F3@pok.ibm.com> <20020516214419.GE15774@schmorp.de> <3CE4476E.8070101@namesys.com> <200205170048.g4H0mI402129@linux1.futureware.at>
+Subject: Re: BTW: 2.4.19-patches-to-come?
+Date: Fri, 17 May 2002 03:49:06 +0200
+Message-ID: <3CE46192.7080101@netscape.net>
+References: <3CD72AB1.6010607@netscape.net>	<20020507092207.A6678@namesys.com>  <3CD82C76.2080706@netscape.net> <1020864892.32044.215.camel@tiny>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10353-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10354-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-9"; format="flowed"
-To: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>, Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-On 05/17/2002 02:45 AM, Philipp G=FChring wrote:
+On 05/08/2002 03:34 PM, Chris Mason wrote:
 
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
->=20
-> Dear Hans,
->=20
->=20
->>I am a filesystems developer, and I don't know enough to do more than
->>press y with most fscks. =20
+> On Tue, 2002-05-07 at 15:35, Manuel Krause wrote:
+> 
+> 
+>>Mmh. I meant to restore the affected files from existing backups. When
+>>they are  removed by reiserfs on mount I know they are really corrupted
+>>during crash. It often looks like:
+>>  Removing [5523 5570 0x0 SD]..done
+>>  Removing [5523 5569 0x0 SD]..done
+>>  Removing [5523 5566 0x0 SD]..done
+>>  There were 3 uncompleted unlinks/truncates. Completed
 >>
->=20
-> There is one case, in which I know that I have to say no: If the partition=
-=20
-> that a fsck tries to correct has a different type than the fsck thinks.=20
-> (Running e2fsck against a reiserfs partition for example)
->=20
-> And those things happens when someone changes harddisks, ...
->=20
->=20
->>I think that for the most part, if one is
->>going to ask the user to help, one needs to provide a real interface, a
->>filesystem structure editor..... =20
->>
->=20
-> Well, debugfs (ext2) was an approach into that direction, isn't it?
-> Now I stumbled across debugreiserfs, but it lacks interactive mode.
->=20
->=20
->>which no FS has ever done....  but
->>right now we need to get what we have debugged thoroughly.  It is on the
->>list of things I would like to add someday.
->>
->=20
-> What I would like to see is a tool to do the following:
-> (And I don't think that I will find a sponsor for that tool :-(
->=20
-> After a crash, I make a dd from the crashed partition, into a normal file=20=
-in=20
-> another partition, that's perhaps on a differnt harddisk.
->=20
-> Then I want to run a dumping utility, that tries to restore every bit that=
-=20
-> still can be found in the crashed partition, and tries to resemble all the=
-=20
-> files in it, and even creating a lost&found directory ...
->=20
-> That dumping utility should take an output directory as argument, in which=
- it=20
-> recreates the contents.
+> 
+> Just to reiterate what Oleg said, these files were not corrupted during
+> the crash.  
 
 
-It should take a FILE of the SAME size of the original partition as=20
-output. So the utility or user may dd it back safely.
+I was very satisfied with this special clarification as I thought I've 
+finally understood it.
 
->=20
-> Something like "The Coroners Kit", but more for rec2overy than for=20
-> investigation.
->=20
-> What is important for that tool:
-> * It must not crash under any circumstances. Even if every bit of the=20
-> filesystem is currupted, it has to do its work, and try to recover as much=
- as=20
-> possible.
-> * It has to assume that every bit of the filesystem can be corrupt, so it=20=
-has=20
-> to try to semantically verify the bits, pointers, ...
-> * It should try different ways to restore access to lost data, if it stumb=
-les=20
-> across problems in the filesystems.
-> * There must not be any assertions that would not allow the tool to run ov=
-er=20
-> the whole partiton, and search everywhere for lost data
-> * It has to be designed to work on files which are dumps from partition ba=
-sed=20
-> filesystems.
-> * It should be able to detect and correct common hardware or crash related=
-=20
-> problems in the filesystem:=20
->   * Files that are not statable or accessible, because there only exists a=
-n=20
-> entry in the directory, but nothing in the reiserfs tree
->   * Transactions that are open
->   * Corrupted directory entries like filenames with special charakters tha=
-t=20
-> can not be used from the system, or rights with undefined bits, ...
->   * ...
-> * It must not change any data on the partition, instead it writes everythi=
-ng=20
-> to an output directory
+O.k. and for the moment or so far I have not been able to prove this. 
+Your statement may be or may be not. I had many VMware sessions crashing 
+while / before e.g. "May 17 03:41:30 firehead kernel: /dev/vmmon: 
+Vmx86_ReleaseVM: unlocked pages: 44944, unlocked dirty pages: 26020"
+
+That may not matter for you as my kernel is too experimental as I've 
+explained before.
+
+> Right before you crashed, something on your box deleted each
+> of these files, but the delete did not have a chance to finish.  During
+> the next mount we finish the delete, which brings the FS back to a
+> consistent state.
+> 
+> -chris
+> 
 
 
-...FILE, that is able to be checked manually via loop-mount to see the=20
-difference... Philipp is very right on his needs. We all are interestedm=20
-I assume.
+As I had often only running KDE and VMware [?crashing] I did want to 
+know what files were removed - the VMware ones and/or the KDE session 
+temporary ones. That was all.
 
->=20
-> Many greetings,
-> - --=20
-> ~ Philipp G=C3=BChring              p.guehring@futureware.at
-> -----BEGIN PGP SIGNATURE-----
-> Version: GnuPG v1.0.6 (GNU/Linux)
-> Comment: For info see http://www.gnupg.org
->=20
-> iD8DBQE85FKjlqQ+F+0wB3oRAlT3AJ9/2t5pDirnnLs/4daKrSKWD2msxQCeIHZx
-> BU+PvfxKKbojRtdnLPerfMY=3D
-> =3DdohB
-> -----END PGP SIGNATURE-----
->=20
+I don't know what of them two deletes files "just directly before" a 
+crash. VMware is known (as of newest _official_ docs to unlink its used 
+memory&Co. file(s???) in /tmp during startup... but what happens during 
+a crash?) Dunno.
 
+I was curious and I stay curious, as I don't see any program deleting 3 
+files just before every crash...  (I don't have sizes, places and names...)
+
+For my side it does not depend on the "summary line" that says merely 
+nothing to me so far.
 
 Best wishes,
 
