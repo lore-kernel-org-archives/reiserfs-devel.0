@@ -1,41 +1,54 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: can't compile with reiser4
-Date: Sat, 1 May 2004 22:09:47 +0300
-Message-ID: <20040501190947.GQ29226@nysv.org>
-References: <4092DCD1.6000107@slaphack.com> <20040501184545.GP29226@nysv.org> <4093F380.7040502@slaphack.com>
+From: Stefan Traby <stefan@hello-penguin.com>
+Subject: Re: no space left, rebuild-tree not finished, partition not mountable
+Date: Sat, 1 May 2004 21:18:34 +0200
+Message-ID: <20040501191834.GA2743@hello-penguin.com>
+References: <200405011338.i41Dcc515982@p15097155.pureserver.info>
+Reply-To: Stefan Traby <stefan@hello-penguin.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18354-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18355-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <4093F380.7040502@slaphack.com>
+In-Reply-To: <200405011338.i41Dcc515982@p15097155.pureserver.info>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
+To: hkj@dmkuhlen.de
 Cc: reiserfs-list@namesys.com
 
-On Sat, May 01, 2004 at 01:59:12PM -0500, David Masover wrote:
->
->But the fix isn't in any snapshot.  When is the next snapshot, or where
->can I find the latest code?
+On Sat, May 01, 2004 at 03:38:38PM +0200, hkj@dmkuhlen.de wrote:
+> Hi List!
+> 
+> I want to mount a partition to delete some files, because there isn't
+> any space on the partition anymore. I cannot mount it, because
+> --rebuild-tree didn't finish. It didn't finish, because there isn't
+> enought space on the partition anymore. So what should I do?
+> 
+> It's a ~110G Partition. I did dd_rescue to another device and
+> --rebuild-tree but still having the same problems. 
+> 
+> Any hints?
 
-Of course I'm not the correct person to speak for Namesys, but it seems
-they have made progress, so the next snapshot may come some time soon.
+It would be against logic if dd_rescure would solve your problem.
 
-Obviously these smaller issues do not warrant an entirely new snapshot.
+You could try (but I really don't know if it works) the following:
 
-The stuff I use is here:
-http://mjt.nysv.org/reiser/
+"dd" your partition to a larger one and try to run "resize_reiserfs"
+on the copy to enlarge it. Run --rebuild-tree afterwards.
 
-The bonnie patch is not needed for anything and the other lesser patches
-(of which I can't remember if they are in the latest shot) are integrated
-in http://mjt.nysv.org/reiser/2004.03.26.all.fixed.diff
+If resize_reiserfs fails (I don't know if it checks filesystem
+consistency before extending) patch the correspondending check simply out
+of resize_reiserfs.
 
-Note that it changes metas/ into ..metas/ as well.
+This is very experimental but in worst case you loose some time because
+you working on a copy of your partition.
+
+Good luck, but I guess that other people may offer you better
+solutions...
 
 -- 
-mjt
 
+  ciao - 
+    Stefan
