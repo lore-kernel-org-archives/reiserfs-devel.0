@@ -1,80 +1,82 @@
-From: Basil Chupin <blchupin@tpg.com.au>
-Subject: Re: What does this mean?
-Date: Sat, 13 Jul 2002 19:59:55 +1000
-Message-ID: <3D2FFA1B.8050302@tpg.com.au>
-References: <3D2993E5.6030707@tpg.com.au> <20020708190923.A928@namesys.com> <3D29BA3F.7010201@tpg.com.au> <200207081228.56302.kuba@mareimbrium.org>            <3D2E6DAB.9050400@tpg.com.au> <200207121326.g6CDQu3u003587@turing-police.cc.vt.edu>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: Re: Re: [PATCH CFT] tons of logging patches
+Date: Sun, 14 Jul 2002 02:52:01 +0200
+Message-ID: <3D30CB31.8040703@mb.tu-ilmenau.de>
+References: <200206222202.56577.Dieter.Nuetzel@hamburg.de>	<1024945533.9008.10.camel@tiny> 	<200207091552.52815.Dieter.Nuetzel@hamburg.de> 	<1026223243.5603.124.camel@tiny> <1026502991.4952.136.camel@tiny>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10992-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10993-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-Valdis.Kletnieks@vt.edu wrote:
-
->On Fri, 12 Jul 2002 15:48:27 +1000, Basil Chupin said:
->
->  
->
->>Please let me give a brief resume of why I am trying to find out why my 
->>HD is being accessed every 5 seconds (actually it is also occurring on 
->>another computer at home and a friend's machine -- and all are running 
->>SuSE 8.0).
+On 07/12/2002 09:43 PM, Chris Mason wrote:
+> On Tue, 2002-07-09 at 10:00, Chris Mason wrote:
+>=20
+>>On Tue, 2002-07-09 at 09:52, Dieter N=FCtzel wrote:
 >>
->>  I first asked this Q isn another forum and received the general reply 
->>that it all had to do with the reiser fs -- which I didn't really 
->>believe. Why? because I didn't recall having this "problem" when I was 
->>running SuSE v7.2 with reiser fs. But just to be sure I started doing 
->>some testing.
->>
->>I have another HD which I use for testing purposes and on this one I 
->>installed SuSE v7.2 undere reiserfs. There was no 5 second accessing on 
->>the HD.
->>
->>I then installed SuSE 8 with ext3 (because someone said that the 5 
->>seconds-thingie only happened under reiser) - and I still got the 5 secs 
->>access. So, it wasn't confined to reiserfs.
->>    
->>
->
->Note that ext3 *also* has a 'kjournald' that ticks every 5 seconds.
->  
->
-Ah, so it has similarities with reiser.
+>>>On Monday, 8 July 2002 13:51, Chris Mason wrote:
+>>>
+>>>>On Wed, 2002-07-03 at 20:28, Manuel Krause wrote:
+>>>>
+>>>>
+>>>>>So far the 13 prerelease works fine under rootflags boot and=20
+>>>>>mount/remount option "data=3Dordered" on here.
+>>>>
+>>>>I think I've got the bug, it was newly introduced in -13.  New stuff
+>>>>will be uploaded today.
+>>>>
+>>>
+>>Sigh, further testing showed I'd only fixed half of the bug.  The other=
 
->I'm willing to bet that the system that wasn't seeing the ticking had all
->the filesystems mounted as ext2, which doesn't have a journal.
->  
->
-Had you bet you would have lost! :-). All systems are operating under 
-reiserfs.
+>>half is somewhere deep writepage/truncate interaction.  I'm still tryin=
+g
+>>to find it.
+>=20
+>=20
+> Well, after a week of fixing minor things and adding debugging code,
+> this bug still goes unsolved.  The only good news is that I can also
+> trigger it on pure 2.4.19-rc1 and ext2.  The bug seems to either be in
+> the VM or my ram, so I'm having a little memtest86 party overnight.
+>=20
+> I've uploaded 03-beta-data-logging-16, it should be more stable and
+> faster than -11 and -13 were, but includes more debugging checks to try=
 
-You mentioning kjournald brought to min a conversation I had with a 
-friend of mine who tends to have a similar approach to me when starting 
-to run a new system (Linux [SuSE] in this case) and who also uses a 
-second HD to test new installations before putting them onto the 'main' 
-system.
+> and make sure I'm not screwing things up.  You can grab the patches at:=
 
-We compared the outputs from the 'ps aux' command and what I found is 
-that I am not running the kjournald process on any of my (3) 'systems' 
- while he is (on his 2 'systems') even though our setups are almost 
-identical (with regards to running SuSE v8 ). I thought kjournald was 
-part and parcel of reiserfs but then why isn't it running on my 
-'systems'? Just another mystery.
+>=20
+> ftp://ftp.suse.com/pub/people/mason/patches/data-logging
+>=20
 
-Anyway, I think I have found the reason why I (and my friend and some 
-other(s)) am having the HD accessed every 5 seconds, and after I have 
-re-checked my finding I'll post the reason. It may not have anything 
-directly to do with reiserfs but it may be  that another application may 
-be causing reiserfs to misbehave (in this 5-second syndrome) or, of 
-course, it has a bug in it causing the kernel to do the 'wrong thing' 
-(the application does a patch to the kernel).
+Thank you, Chris!
 
-Cheers.
+It's working fine under rootflags set and mount/remount options=20
+"noatime,notail,data=3Dordered".
+Nothing got wrong on here due to data-logging-13.
+
+Netscape7 dropped its load time again by 3secs of (previously 14+1),=20
+OpenOffice1 increased by 1sec (of average 17secs previously). To explain =
+
+the previous state: I've only changed -pre9 to -rc1 and data-logging=20
+from -10(-pre9)..13(-rc1)..11(-rc1)..16(-rc1, now!) from the old patchset=
+=2E
+
+> If anyone wants to try and reproduce my memory corruption bug (can and
+> probably will lead to FS corruption), just let 10 fsx processes run in =
+a
+> loop for ~3 hours or so on an SMP machine.
+>=20
+> -chris
+>=20
+
+Is this possible to be reproduced on uniprocessor machines, too ?
 
 
+Best regards,
 
+Manuel
 
