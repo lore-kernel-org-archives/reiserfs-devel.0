@@ -1,54 +1,75 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: Behavior of tails with respect to shred, wipe, etc
-Date: Sat, 26 Oct 2002 03:09:23 -0400
-Message-ID: <200210260709.g9Q79N8Q012571@turing-police.cc.vt.edu>
-References: <HDEFILEPHCPLCAGPLCEMIELIDFAA.icycle@charter.net> <15801.26994.705639.374241@laputa.namesys.com>
-            <3DB9F2B6.6000701@namesys.com>
+From: Narasimha_Subban <Narasimha_Subban@Satyam.com>
+Subject: RE: Regarding the resize_reiserfs
+Date: Sat, 26 Oct 2002 14:03:41 +0530
+Message-ID: <A56BCCA3A5C2D411B18A00508BDE9C9B04D6F518@bla.satyam.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-1767132786P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11796-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11797-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Sat, 26 Oct 2002 05:41:10 +0400."
-             <3DB9F2B6.6000701@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: Reiserfs-List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Asheesh Laroia <asheesh@asheesh.org>, Narasimha_Subban <Narasimha_Subban@Satyam.com>
+Cc: reiserfs-list@namesys.com
 
---==_Exmh_-1767132786P
-Content-Type: text/plain; charset=us-ascii
+HI,
+  Thanks for ur suggestions. In our requirement i shouldn't reboot the
+system at any cost. I would appreciate any better way to do without
+rebooting the system. 
 
-On Sat, 26 Oct 2002 05:41:10 +0400, Hans Reiser said:
+Thanks and Rgds
+Narasimha Subban K.V
 
-> Use encryption.  Encryption still leaves you vulnerable to those who can 
-> extract the key out of the owner though.
-
-If you have multiple users on the same filesystem, key management becomes...
-umm... "interesting".  Projects like loop-AES usually finesse it by only
-having one key per filesystem.
-
-It's 3AM, I'm going to avoid thinking about what's involved if *one* user on
-a multi-user partition needs to change a compromised key.... ;)
--- 
-				Valdis Kletnieks
-				Computer Systems Senior Engineer
-				Virginia Tech
-
-
---==_Exmh_-1767132786P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.7 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQE9uj+jcC3lWbTT17ARAo3tAKDIX3KGV5D/APKHGCM/CJA2WSFbJwCbBUaU
-OG57oMAcu4dhrry8/wIEZlg=
-=82Tq
------END PGP SIGNATURE-----
-
---==_Exmh_-1767132786P--
+> -----Original Message-----
+> From:	Asheesh Laroia [SMTP:asheesh@asheesh.org]
+> Sent:	Saturday, October 26, 2002 12:18 PM
+> To:	Narasimha_Subban
+> Cc:	reiserfs-list@namesys.com
+> Subject:	Re: [reiserfs-list] Regarding the resize_reiserfs
+> 
+> Under Linux, you may need to restart your computer to have the new
+> partition size show up for /dev/hd*.  (At least, I know we had to do that
+> back in the 2.2.x days.)
+> 
+> So, try restarting (and I mean re-initializing the kernel, not just going
+> to single-user mode) and trying this; that may fix it.
+> 
+> -- Asheesh.
+> 
+> On Sat, 26 Oct 2002, Narasimha_Subban wrote:
+> 
+> > Hi,
+> >    I am using the reiserfs-3.6.3 version on Linux-2.4.7-10 kernel
+> version. I
+> > need some information on resize_reiserfs command.
+> > I have a partition (assume /dev/hda8 with 1000 blocks) having reiserfs
+> > filesystem.
+> > I increased the partition size (Now /dev/hda8 with 2000 blocks) in the
+> > partition table using the fdisk command. Now i tried to resize the
+> > filesystem using (resize_reiserfs -s+xxM  /dev/hda8) so that increased
+> > partition size in partition table is reflected in filesystem. The error
+> is
+> > as below
+> > /dev/hda8 is of XXXXXX blocks size only with reiserfs of XXXXXX blocks
+> size
+> > on it. You are trying to expant reiserfs up to YYYYYY size. You probably
+> > forgot to expand your partition size.
+> > But i shouldnot delete the partition bcoz the contents shouldn't be
+> lost.
+> >    It will be great if anyone gives some ideas to make resize_reiserfs
+> work.
+> >
+> >
+> > Thanks and Rgds
+> > Narasimha Subban K.V
+************************************************************************** 
+This email (including any attachments) is intended for the sole use of the
+intended recipient/s and may contain material that is CONFIDENTIAL AND
+PRIVATE COMPANY INFORMATION. Any review or reliance by others or copying or
+distribution or forwarding of any or all of the contents in this message is
+STRICTLY PROHIBITED. If you are not the intended recipient, please contact
+the sender by email and delete all copies; your cooperation in this regard
+is appreciated.
+**************************************************************************
