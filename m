@@ -1,79 +1,50 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: how do plugins work?
-Date: Fri, 25 Oct 2002 18:10:00 +0400
-Sender: edward
-Message-ID: <3DB950B8.611CC982@namesys.com>
-References: <Pine.LNX.4.33.0210241624300.2792-100000@mitte.informatik.hu-berlin.de> <3DB81095.25F0C662@namesys.com> <3DB8816C.10400@namesys.com>
+From: "Brett Russ" <icycle@charter.net>
+Subject: Behavior of tails with respect to shred, wipe, etc
+Date: Fri, 25 Oct 2002 11:40:16 -0400
+Message-ID: <HDEFILEPHCPLCAGPLCEMIELIDFAA.icycle@charter.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11774-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11775-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: gregor@zeitlinger.de, reiserfs mailing list <reiserfs-list@namesys.com>
+To: Reiserfs-List <reiserfs-list@namesys.com>
 
-Hans Reiser wrote:
-> 
-> Edward Shishkin wrote:
-> 
-> >Gregor Zeitlinger wrote:
-> >
-> >
-> >>Hi,
-> >>
-> >>I'm new to this list. I'm wondering how the file plugins work. Are they
-> >>just a means of accessing the file contents or are they also designed to
-> >>save the file differently.
-> >>
-> >>For example, could you create a plugin that automatically zips each
-> >>text/plain file, which is totally transparent to the user?
-> >>
-> >>
-> >
-> >Yeah, we could. Although transparentness means a bit worse compression..
-> >
-> ?
-> 
-> You mean because of choosing to use compression atoms
+Hi,
 
-Yes, but it is not the only reason.
+I have a few questions about the low level functionality of ReiserFS as it
+pertains to overwriting a file in place from userland.  I am implementing
+GNU shred on top of Reiser in metadata journaling only mode with tail
+packing enabled.
 
-> that are node sized?
+To start off, I have several questions:
 
-No, compression atoms are limited by common sense ;)
-Obviously, it doesn't make sense to choose it less then node size, if you
-want to compress a file presented by tails. On the other hand, I am not
-sure if you will be delighted from transparent compression supported by 256K
-clusters even for larger files.
+1) If I perform an exact file size shred (i.e. the file will not grow or
+shrink as a result of the shred) of a file with a tail, can I be assured
+that the write will occur over the existing data in all cases?
+Specifically, will Reiser allocate a new block to store the overwritten
+tail, thus abandoning the original data in the original block and defeating
+the shred attempt?
 
->  Maybe it might be more precise to say that efficient random
-> access motivates small compression atoms which are less efficient?
->  (Assuming that I understood you.)
+2) If someone confirms that there is not a way to guarantee obliteration of
+original data in all cases with tails, can I assume that disabling tails
+will rectify the problem?
 
-There is one more obscured reason that makes transparent compression worser.
-I have to remind that its primary assignment is the same: to provide more 
-efficient disk space usage. Let's take a look how transparent compression 
-and the package using the same compression algorithm will provide it:
-Suppose we want to compress a 8S-byte file, and both transparent compression
-and package is supported by 4-blocks clusters, S - block size.
+3) If I disable tail packing on mount (this is the only way, correct?) how
+are previously tail packed blocks handled?  I can't imagine that ReiserFS
+will go through all of them and unpack them--the performance hit of this
+would be terrible no?  Does this only affect future writes?
 
- File system:
-divides the file into 2 clusters, suppose each cluster was compressed up to
-(2S+1) bytes, so compressed file occupies 6 blocks.
- Package:
-makes compressed file which occupies 2*(2S+1) = 4S+2 bytes and passes it
-to the file system, which places it (aieee!) into 5 blocks..
+4) What is the best way to determine and read the physical sectors that a
+file is mapped to in order to verify obliteration?  I have used
+debugreiserfs a bit (with the -d option) and get keys and locations of files
+but the documentation is rather limited on what all of the output means and
+how to use it.
 
-  So we do have the actual compression ratio produced by the file system is
-6/8 = 25% against actual ones (5/8 = 37,5%) produced by the package. The user
-can observe this effect only by using "du" (when he does "df", he see that
-file system and package produce the same compression ratio 37,5%).
-This is another effect caused by the specific of packing policy (for the
-ext2 files, reiserfs files presented by indirect items, etc..) Obviously
-we can avoid this by using bigger cluster (8 blocks). 
 
-Edward.
+Thanks for your help,
+Brett
+
