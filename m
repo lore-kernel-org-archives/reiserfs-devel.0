@@ -1,95 +1,77 @@
-From: Hans Reiser <reiser@namesys.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: implementing reiserfs in C++ for a new OS
-Date: Tue, 10 Aug 2004 23:08:17 -0700
-Message-ID: <4119B7D1.7000705@namesys.com>
+Date: Wed, 11 Aug 2004 10:39:59 +0300
+Message-ID: <20040811073959.GV1284@nysv.org>
 References: <71d3364904080706112e72fb6b@mail.gmail.com> <20040809172437.GP1284@nysv.org> <71d3364904080922267e8c14af@mail.gmail.com> <200408101312.48888.reiserfs-list@quinnh.org> <4119273E.1040104@namesys.com> <20040810211951.GU1284@nysv.org> <41194690.5050908@namesys.com> <1365645117.20040811065416@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20170-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20171-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 In-Reply-To: <1365645117.20040811065416@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Spam <spam@tnonline.net>
 Cc: reiserfs-list@namesys.com
 
-Spam wrote:
-
-> =20
->
->>Markus T=F6rnqvist wrote:
->>   =20
->>
->>>On Tue, Aug 10, 2004 at 12:51:26PM -0700, Hans Reiser wrote:
->>>=20
->>>
->>>     =20
->>>
->>>>Yes, but it protects the expression not just in every literal word, but
->>>>in the sense of it.  Look at the lawsuits over ripping off movie script
->>>>writers.
->>>>  =20
->>>>
->>>>       =20
->>>>
-><snip>
-> =20
->
->>>=20
->>>
->>>     =20
->>>
->>>>Taking the essence of our expression, and transforming it into C++ and
->>>>Indian, will not avoid infringement of our copyright.  Our documentation
->>>>is as protected as  the source code, probably more so, because we=20
->>>>haven't GPL'd everything on the website.
->>>>  =20
->>>>
->>>>       =20
->>>>
->>>I have nothing but respect for you, your team and your work, but this
->>>is a bit wrong.
->>>
->>>Sure the documentation is copyrighted, but it's the actual documentation,
->>>not the idea behind it, that is copyrighted.
->>>=20
->>>
->>>     =20
->>>
->>There is an idea, and then there is an expression of an idea. =20
->>expression is not just the letters, or the words, it is somewhere=20
->>between the exact characters and the idea.
->>   =20
->>
->
->  I  do  not  believe  that copyright protects ideas, only the written
->  texts, graphics, and music.
+On Wed, Aug 11, 2004 at 06:54:16AM +0200, Spam wrote:
 >
 >  Take  as  an  example a inventor. If he has an idea that he wants to
 >  protect he would need to patent it to protect it. Otherwise only his
 >  work  can be protected with copyright. I am not sure that the actual
 >  invention can be copyrighted either.
->
+
+Who was the guy who invented the telephone separately of Bell
+at the same time?
+The reason Bell got his product pushed to the market was that he
+could patent it first.
+
+That's about it, the idea is not protected and the only way to protect
+it is by patents, but hey, where have we seen a patent that did more
+good than keep it at a neutral level?
+
+The way patents are dealt with is that everyone goes out and patents
+everything they can and then get money from the court because they
+"own the idea of a seesaw swing"...
+
 >  In  this  case  with  Hans,  Namesys and reiserfs/reiser4 the actual
 >  written  code  and  documentation  etc  is covered by copyright. The
 >  ideas  behind  the filesystems are not. They would only be protected
 >  by patents.
->
->
->
->
-> =20
->
-If you translate a poem into french, it is still rightfully copyright=20
-protected by the original author.
 
-But hey, these guys are just doing this work for academic purposes they=20
-say and not releasing it to the world, so I think they are not going to=20
-be violating the GPL, so it is all nothing to worry about.  Maybe this=20
-sort of thing makes for a good student assignment in their view, I don't=20
-know....
+Exactly.
 
-Hans
+The only patent that makes any sort of sense to me is, even theoretically,
+is the medical patent. Medicine can take decades to implement so those
+guys will want sovereignity over their work.
+
+But there is the hidden aspect here as well: They would benefit from other
+people having access to the sama data, the same research, the same idea,
+and get it done faster and cheaper. Cut down the need for bootleg medicine.
+
+This is not so far fetched from this case either imo.
+
+Hans mentioned the cute movie script. Studios stealing scripts is not
+really the same thing. The movie does not exist yet, only the script,
+and what the studio is really doing is depriving the writer of his
+deserved compensation for his work. That's not reimplementing an
+existing idea.
+
+As for the poem translated into French, of course the original author
+has the copyright to his work, but the translator has the copyright
+to his translation. The idea is untouched. What if the Greeks of old
+had patented, nay, copyrighted as some people think ideas should be
+copyrighted, the common structures of storytelling?
+
+Or maybe if we couldn't use the material from old mythology, because
+they are the intellectual property of someone else?
+What about those guys who lived 50 years after the Greeks and took
+ideas from them into their own mythos, before the copyrights would
+have expired?
+
+-- 
+mjt
+
