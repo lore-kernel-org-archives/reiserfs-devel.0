@@ -1,68 +1,68 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Which journal relocation+datalogging patches?
-Date: 14 Nov 2002 10:10:14 -0500
-Message-ID: <1037286615.21957.233.camel@tiny>
-References: <20021114033046.9A82D496DAB@server5.fastmail.fm>
+From: Philippe =?ISO-8859-1?B?R3JhbW91bGzp?= <philippe.gramoulle@mmania.com>
+Subject: Re: Oops with in nfsd - 2.4.19-pre6
+Date: Thu, 14 Nov 2002 17:04:09 +0100
+Message-ID: <20021114170409.5f9b9108.philippe.gramoulle@mmania.com>
+References: <20021031210828.45F4A216991@server5.fastmail.fm>
+	<1036099804.14984.165.camel@tiny>
+	<20021112182949.45436c95.philippe.gramoulle@mmania.com>
+	<1037211258.288.97.camel@tiny>
+	<20021113194008.6dadeed5.philippe.gramoulle@mmania.com>
+	<1037219001.21957.151.camel@tiny>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11991-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11992-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021114033046.9A82D496DAB@server5.fastmail.fm>
+In-Reply-To: <1037219001.21957.151.camel@tiny>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: JP Howard <jh_lists@fastmail.fm>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list@namesys.com
 
-On Wed, 2002-11-13 at 22:30, JP Howard wrote:
-> I'm trying to build a 2.4.20pre1 kernel with data logging patches,
-> journal relocation, and and important performance/reliability patches.
-> 
-> I see from
-> ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20/README
-> that these patches are against the journal relocation patches. But where
-> are they? I've found a patch against 2.5.3, but that doesn't apply
-> cleanly to 2.4.20pre1.
-> 
-> If this patch doesn't yet exist against 2.4.20, could you please upload
-> it someplace Chris, and let me know what order to apply the patches?
-> (Since you obviously have made it, to create the data logging patch
-> against it! :-)
+On 13 Nov 2002 15:23:21 -0500
+Chris Mason <mason@suse.com> wrote:
 
-Sorry for the confusion.  The journal relocation parts are in
-01-relocation-5.diff.gz, the README was attempting to make it clear
-namesys authored it.  Hopefully it is a little clearer now.
+  |  > 
+  |  > BTW, should i apply the patch posted on LKML ?
+  |  > Subject:2.[45] fixes for design locking bug in wait_on_page/wait_on_buffer/get_request_wait
+  |  
+  |  No, wait for that fix to get into a kernel before using it.  There might
+  |  still be small modifications, and andrea might find a few other places
+  |  in the kernel with similar races.
+  |  
+  |  The bug results in io stalls, and the machines that do see them stall
+  |  for between 10 minutes and an hour.  If you needed the patch you would
+  |  have already been complaining ;-) 
 
-> 
-> I looks to me like all other important patches are already in
-> 2.4.20pre1--is that right?
-> 
-> What are the steps then required to move the journal to an external
-> device (we're using Umem NVRAM, FWIW)? How stable are the journal
-> relocation patches? If they're not recommended for production as yet,
-> would we be able to move the journal to an external device later, without
-> rebooting (or at least without recreating the filesystem)?
+Well, now that you mention this, i may also have it on my bug squash list :o)
+When we feed some files to a MySQL server ( 4 way box, lots of threads), sometimes the
+box does nothing , pretty much like andrea described it , so it may be that.
 
-You can use reiserfstune to change the log device of an existing disk. 
-The relocation and data logging patches are considered stable, both are
-included in the suse kernels.
+  |  The races do not cause corruptions or crashes of any kind.
 
-To try the external logging device mkreisefs -j /dev/xxx -s 8192
-/dev/yyy
+Right no corruption, just mysql sitting there doing nothing.
+Ok then i'll wait for the next version.
+  |  
 
-That will create a 32MB log on /dev/xxx, and the main filesystem on
-/dev/yyy
+  |  > 
+  |  > Let me know what are you plans.
+  |  
+  |  Jan and I will get an updated quota patch asap,
 
-> 
-> I'm really looking forward to trying this out--I plan to set aside an
-> identical server for testing and benchmarking, so hopefully we'll be able
-> to provide some interesting benchmarks of IMAP server performance with
-> external journals.
-
-Excellent, I'd love to see those numbers.
-
--chris
+This is just great :o) Do you have a rough idea when it will be
+available ? couple days ? couple weeks ?
 
 
+  |  and I'll have my
+  |  attempted fix for the transaction overflow ready for you against that
+  |  set of patches in a few hours.
+
+I already got your fixed and but it on 4 or 5 production boxes that triggered the bug.
+
+So far,it's been running fine :o) but without quotas ;o))
+
+Thanks much
+
+Philippe
