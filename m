@@ -1,7 +1,7 @@
 From: Chris Mason <mason@suse.com>
 Subject: Re: reiserfs v3 patches updated
-Date: Tue, 06 Apr 2004 16:29:00 -0400
-Message-ID: <1081283340.30828.198.camel@watt.suse.com>
+Date: Tue, 06 Apr 2004 16:33:27 -0400
+Message-ID: <1081283607.30811.206.camel@watt.suse.com>
 References: <1081210239.4994.69.camel@watt.suse.com>
 	 <200404061838.05099.christian.mayrhuber@gmx.net>
 	 <4072F6F1.3090806@mweb.co.za> <1081277245.30813.81.camel@watt.suse.com>
@@ -9,7 +9,7 @@ References: <1081210239.4994.69.camel@watt.suse.com>
 	 <40730ABD.3070507@mweb.co.za>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17762-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17763-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -31,18 +31,8 @@ On Tue, 2004-04-06 at 15:53, camis wrote:
 > 
 > Ok.. after leaving it for a few minutes..
 
-[ higher io wait percentage with patches applied ]
-
-> What i then tried on machine1 was remounting it noatime,nodiratime and
-> what was wierd was that the iowait stayed exactly the same, no indication
-> of dropping at all.. Does the kernel patches change any of the default
-> mount options at all? If i put the stock 2.6.5 kernel back on without
-> the patch applied and mount it back as noatime,nodiratime, the iowait
-> drops back to its normal 1%..
-
-Do you have any numbers for the amount of mail delivered per second on
-each box?  I've got an idea that should help lower the io wait
-percentage as well, trying a few things here.
+I'm a little slow today.  data=ordered is the default with these
+patches.  You need to mount -o data=writeback.
 
 -chris
 
