@@ -1,62 +1,65 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: no space left, rebuild-tree not finished, partition not mountable
-Date: Tue, 4 May 2004 14:04:32 +0400
-Message-ID: <200405041404.32072.vitaly@namesys.com>
-References: <200405011338.i41Dcc515982@p15097155.pureserver.info> <20040501191834.GA2743@hello-penguin.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Fwd: reiser4 non-free?
+Date: Tue, 04 May 2004 08:50:26 -0700
+Message-ID: <4097BBC2.6020907@namesys.com>
+References: <4091DAFE.5030809@namesys.com> <20040430055619.GD7487@archimedes.ucr.edu> <40923D1C.3090003@namesys.com> <20040430174343.GE7487@archimedes.ucr.edu> <409561EE.7030000@namesys.com> <20040502215500.GB18235@xieana.donarmstrong.com> <20040503065830.GS29226@nysv.org> <40967D41.705@namesys.com> <20040503172146.GV29226@nysv.org> <409682D0.10705@namesys.com> <20040503174910.GX29226@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18427-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18430-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040501191834.GA2743@hello-penguin.com>
-Content-Disposition: inline
+In-Reply-To: <20040503174910.GX29226@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Stefan Traby <stefan@hello-penguin.com>, hkj@dmkuhlen.de
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
+Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-On Saturday 01 May 2004 23:18, Stefan Traby wrote:
-> On Sat, May 01, 2004 at 03:38:38PM +0200, hkj@dmkuhlen.de wrote:
-> > Hi List!
-> >
-> > I want to mount a partition to delete some files, because there isn't
-> > any space on the partition anymore. I cannot mount it, because
-> > --rebuild-tree didn't finish. It didn't finish, because there isn't
-> > enought space on the partition anymore. So what should I do?
-> >
-> > It's a ~110G Partition. I did dd_rescue to another device and
-> > --rebuild-tree but still having the same problems.
-> >
-> > Any hints?
->
-> It would be against logic if dd_rescure would solve your problem.
->
-> You could try (but I really don't know if it works) the following:
->
-> "dd" your partition to a larger one and try to run "resize_reiserfs"
-> on the copy to enlarge it. Run --rebuild-tree afterwards.
+Markus T=F6rnqvist wrote:
 
-resize_reiserfs will not work on this fs because rebuild-tree was not 
-finished. you should run 'reiserfsck --rebuild-sb' after copying to set 
-the fs size to the partition size and then as was mentioned 'reiserfsck 
---rebuild-tree'.
-It would be better also to zero the end of the targer partition to not 
-get the mix with metadata of a previous reiserfs, if you ever had a 
-reiserfs there.
-
-> If resize_reiserfs fails (I don't know if it checks filesystem
-> consistency before extending) patch the correspondending check simply out
-> of resize_reiserfs.
+>On Mon, May 03, 2004 at 10:35:12AM -0700, Hans Reiser wrote:
 >
-> This is very experimental but in worst case you loose some time because
-> you working on a copy of your partition.
+> =20
 >
-> Good luck, but I guess that other people may offer you better
-> solutions...
+>>No, that certainly is an option.  Relocating the credits to somewhere=20
+>>reasonable for a particular installer is just fine with me.
+>>   =20
+>>
+>
+>Let's see what the Debian people say about showing the complete credits
+>in the preinstall screen during interactive installation and scrolling
+>through them automatically in a non-interactive one, for example.
+>
+>I think the response will be "but it's still non-free" :P
+>
+> =20
+>
+>>>Also, if every software showed their credits, there would easily be a ton
+>>>of them.
+>>>     =20
+>>>
+>>This is bad why?  They could be interesting for users to read while the=20
+>>install proceeds.
+>>   =20
+>>
+>
+>I wouldn't mind it. However, it could get out of hand if we had
+>three-four-five screenfulls of credits during every boot. Then it's time
+>to /dev/null again...
+> =20
+>
+Well, a really clever way of doing it would have a page describing what=20
+the program does with a little bit of credits at the bottom.
 
--- 
-Thanks,
-Vitaly Fertman
+As a user, I am usually disappointed by how operating systems fail to=20
+take the opportunity to educate me while I wait for them to install.
+
+>Credits (as commercials and ads and stuff) should never defeat the purpose
+>of the entity of which they are a part.
+> =20
+>
+I would really like Debian to understand the difference between credits=20
+and ads.  Credits describe someone's contribution to the project.  Ads=20
+describe some product for you to buy.  Very different things.
 
