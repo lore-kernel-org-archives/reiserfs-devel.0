@@ -1,74 +1,56 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Subject: Re: Mongo error while building HTML results
-Date: Fri, 6 Aug 2004 15:34:12 +0200
-Message-ID: <20040806153412.572abe64@philou.gramoulle.local>
-References: <20040806152923.4a4eedc7@philou.gramoulle.local>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output error"
+Date: Fri, 06 Aug 2004 19:51:58 +0400
+Message-ID: <4113A91E.3000500@namesys.com>
+References: <20040806065705.E5A6515C76@mail03.powweb.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20042-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20044-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040806152923.4a4eedc7@philou.gramoulle.local>
+In-Reply-To: <20040806065705.E5A6515C76@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Dabbs <david@dabbs.net>
+Cc: 'ReiserFS List' <reiserfs-list@namesys.com>
+
+Hello
+
+David Dabbs wrote:
+> This is definitely reproducible. I rebooted and reran the script. Same
+> result at about the same point in the sequence (part way into first COPY
+> iteration).
+> 
+> Right now I'm running identical mongo config against reiserfs and it appears
+> to be running just fine into the second copy iteration.
+> 
+> Should someone from Namesys downloads the bzip tar I mentioned before here's
+> a summary of the changes in my version of mongo:
+> 
+
+Yes, i am running your version of mongo.
+
+> reiser_fract_tree.c
+> - added extensions to generated filenames bay adding rnd to a base
+>   char of backtick. Extensions generated should be in the range of 
+>   'a' to 'a' + MAX_NAME_LEN.
+> 
+> mongo.pl
+> - added PHASE_MKDIRS
+>   Makes directories on the target device from a static list.
+> - added PHASE_MKFILES
+>   Makes files on the target device from a static list.
+> - added MAX_FNAME_LEN option
+>   Allows me to use something different than a hard coded value of 6.
+>   I ran it with 23.
+> - Some extra LOG calls so I can see commands being executed.
+> 
+> David
+> 
+> 
+> 
+> 
 
 
-Hello,
-
-And BTW, i forgot to say that the results may not be significant at all sin=
-ce DEBUG and ASSERTIONS were turned on.
-(this is what made my kernel crash, and i ran mongo right after)
-
-I'll send meaningful figures soon.
-
-Does Namesys has publicly available ready made mongo RUN files so that i do=
-n't waste my time running meaningless
-benchmarks because of bad parameters (gamma, file_size, etc..)
-
-Thanks,
-
-Philippe
-
-On Fri, 6 Aug 2004 15:29:23 +0200
-Philippe Gramoull=E9 <philippe.gramoulle@mmania.com> wrote:
-
-  |=20
-  |  Hello,
-  |=20
-  | After the latest snapshot successfully fixed my mount/umount bug, i ran=
- some mongo benchmarks
-  | (first to mimic David Dabbs results here : http://dabbs.net/reiser4/mon=
-go.html), i couldn't
-  | build the HTML results of the dd phases by using mongo_parser.pl. Mongo=
- says that there are uninitialized data:
-  |=20
-  | (i'm using mongo found here : http://thebsh.namesys.com/benchmarks/mong=
-o-2004.07.26.tar.gz)
-  |=20
-  | I posted the 3 log files and the config file here:
-  |=20
-  | http://philou.org/linux/reiser4/mongo/reiser4.tbl
-  | http://philou.org/linux/reiser4/mongo/reiserfs.tbl
-  | http://philou.org/linux/reiser4/mongo/ext3.tbl
-  | http://philou.org/linux/reiser4/mongo/config-2.6.8-rc2-mm2
-  |=20
-  | The broken HTML output is here:
-  |=20
-  | http://philou.org/linux/reiser4/mongo/mongo.html
-  |=20
-  |=20
-  | While running the reiser4 mongo run i have the following error at the d=
-d write sequence:
-  |=20
-  | Argument "records" isn't numeric in addition (+) at ./mongo.pl line 445.
-  | Argument "bytes" isn't numeric in addition (+) at ./mongo.pl line 446.
-  |=20
-  |=20
-  | Thanks,
-  |=20
-  | Philippe
-  |=20
-  |=20
