@@ -1,41 +1,31 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Reiser4 hard locks. Volunteering for testing.
-Date: Mon, 16 Aug 2004 01:37:31 +0300
-Message-ID: <20040815223731.GV1284@nysv.org>
-References: <411FDEA9.9020404@mapdesign.net>
+From: "Felix E. Klee" <felix.klee.reiserfs@gmx.net>
+Subject: Re: Quicker alternative to "find /"?
+Date: Mon, 16 Aug 2004 00:39:44 +0200
+Message-ID: <20040816003944.21303aad.felix.klee.reiserfs@gmx.net>
+References: <20040815231640.3c926886.felix.klee.reiserfs@gmx.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20307-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20308-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <411FDEA9.9020404@mapdesign.net>
+In-Reply-To: <20040815231640.3c926886.felix.klee.reiserfs@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andrew Thompson <vagabond@mapdesign.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Sun, Aug 15, 2004 at 11:07:37PM +0100, Andrew Thompson wrote:
-From what I've seen of it when its not locking up its extremely fast 
->and since you say Reiser4 needs more testers I'm volunteering. I'll run 
->any kernel you want, turn on any debugging options whatever if it will 
->help somebody track down the problem.
+On Sun, 15 Aug 2004 23:16:40 +0200 Felix E. Klee wrote:
+> This process takes approximately 5 minutes (the result is 26MB of
+> data). Are there any alternative *quicker* ways to do this?
 
-Welcome aboard! :)
+BTW, by "this" I just mean "somehow dumping the directory/file structure
+into a file". The file does *not* need to have the same format as when
+created with find. In fact, a little extra information (e.g. on
+permissions) is desirable.
 
-DEBUG and DEBUG_MESSAGES are needed.
-Frame pointers are often good too.
+Felix
 
-Wasn't there some case where printing was also needed?
-
-Also any information on what the circumstances are when it breaks is
-welcome.
-
-PS.
-I'm not with Namesys, but another guy who's testing ;)
-
--- 
-mjt
-
+PS: To contact me off list don't reply but send mail to "felix.klee" at
+the domain "inka.de". Otherwise your email to me might get automatically
+deleted!
