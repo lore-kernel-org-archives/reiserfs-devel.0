@@ -1,82 +1,84 @@
-From: Henning Westerholt <henning@skalatan.de>
-Subject: reiserfs4 problems with compile load
-Date: Fri, 15 Aug 2003 12:16:01 +0200
-Message-ID: <200308151216.06053.henning@skalatan.de>
-Reply-To: henning@skalatan.de
+From: Yury Umanets <umka@namesys.com>
+Subject: Re: Reiser4 status: benchmarked vs. V3 (and ext3)
+Date: Fri, 15 Aug 2003 15:15:01 +0400
+Message-ID: <1060946100.14824.13.camel@haron.namesys.com>
+References: <Pine.LNX.3.96.1030813160910.12417A-100000@gatekeeper.tmr.com>
+	 <1060837469.17622.6.camel@haron.namesys.com>
+	 <1060870255.4803.49.camel@passion.cambridge.redhat.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15313-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15314-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <1060870255.4803.49.camel@passion.cambridge.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Bill Davidsen <davidsen@tmr.com>, Daniel Egger <degger@fhm.edu>, Hans Reiser <reiser@namesys.com>, Nikita Danilov <Nikita@namesys.com>, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, reiserfs mailing list <reiserfs-list@namesys.com>
 
-Hello,
+On Thu, 2003-08-14 at 18:10, David Woodhouse wrote:
+> On Thu, 2003-08-14 at 06:04, Yury Umanets wrote:
+> > Yes, you are right. Device driver cannot take care about leveling.
+> 
+> The hardware device driver doesn't. The 'translation layer' does, in the
+> case where you are using a traditional block-based file system. 
+> 
+> If you consider the translation layer and the underlying raw hardware
+> driver together to form the 'device driver' from the filesystem's
+> perspective and in the context of the above sentence, then you're
+> incorrect -- it can, and in general it _does_ take care of wear
+> levelling.
+> 
+> > It is able only to take care about simple caching (one erase block) in 
+> > order to make wear out smaller and do not read/write whole block if one 
+> > sector should be written.
+> 
+> Whatever meaning of 'device driver' you meant to use -- no.
+> 
+> The raw hardware driver provides only raw read/write/erase
+> functionality; no caching is appropriate. 
+> 
+> The optional translation layer which simulates a block device provides
+> far more than simple caching -- it provides wear levelling, bad block
+> management, etc. All using a standard layout on the flash hardware for
+> portability.
+> 
+> (Except in the special case of the 'mtdblock' translation layer, which
+> is not suitable for anything but read-only operation on devices without
+> any bad blocks to be worked around.)
+> 
+> > Part of a filesystem called "block allocator" should take care about 
+> > leveling.
+> 
+> That's insufficient. In a traditional file system, blocks get
+> overwritten without being freed and reallocated -- the allocator isn't
+> always involved. 
+> 
+> If you want to teach a file system about flash and wear levelling, you
+> end up ditching the pretence that it's a block device entirely and
+> working directly with the flash hardware driver. 
+> 
+> Either that or use a translation layer which does it _all_ for the file
+> system and then just use a standard file system on that simulated block
+> device.
+> 
+> Between those two extremes, very little actually makes sense.
+> 
+> If you introduce the gratuitous extra 'block device' abstraction layer
+> which doesn't really fit the reality of flash hardware very well at all,
+> you end up wanting to violate the layering in so many ways that you
+> realise you really shouldn't have been pretending to be a block device
+> in the first place.
 
-i used a reiserfs4 partition for my gentoo tmp/ emerge directory. I try to 
-build mozilla 1.4, after the build in the strip-phase the filesystem hang.
-A "ls" on the filesystem hangs also forever, a reset is required.
+Agreed fully with you David. Thanks for explanation. 
 
-The build of several small packages and the restarted mozilla build finished 
-though.
-The try to rebuild gcc failed also. The builded gcc doesn't work. (My system 
-is without reiserfs4 very stable). 
+Only there are probably cannot be so fair borders between levels. Thus,
+some functions of translation layer may be passed to filesystem level
+(higher one). For instance some things about block allocating. And some
+other functions may be passed to device driver layer (lower one). 
 
 
-Then i setup a test environment, with two concurrent compile job in a loop 
-(mozilla-1.4.0 and perl 5.8.0), and with stress (stress -i 2 -d 2 --hdd-bytes 
-60M). This leads after a few hours to a kernel oops:
-
-Aug 14 22:36:40 sonne kernel:  printing eip:
-Aug 14 22:36:40 sonne kernel: c0227887
-Aug 14 22:36:40 sonne kernel: Oops: 0000 [#1]
-Aug 14 22:36:40 sonne kernel: CPU:    0
-Aug 14 22:36:40 sonne kernel: EIP:    0060:[<c0227887>]    Not tainted
-Aug 14 22:36:40 sonne kernel: EFLAGS: 00010286
-Aug 14 22:36:40 sonne kernel: EIP is at jnode_extent_write+0xd7/0x390
-Aug 14 22:36:40 sonne kernel: eax: dea74000   ebx: 00000001   ecx: 00000000   
-edx: c6272f80
-Aug 14 22:36:40 sonne kernel: esi: dea74000   edi: 00000000   ebp: e5ebda40   
-esp: dea75b10
-Aug 14 22:36:40 sonne kernel: ds: 007b   es: 007b   ss: 0068
-Aug 14 22:36:40 sonne kernel: Process pdflush (pid: 8063, threadinfo=dea74000 
-task=e9fb9980)
-Aug 14 22:36:40 sonne kernel: Stack: 00000010 00000001 e3744f40 f7793ea0 
-0007d3d8 00000000 00000000 00000008
-Aug 14 22:36:40 sonne kernel:        00000000 dea74000 00000000 00000001 
-c6272f80 00000020 f7daa800 0000faaf
-Aug 14 22:36:40 sonne kernel:        00000000 00000000 0000001f c6272f80 
-00000001 c0227bce c6272f80 00000001
-Aug 14 22:36:40 sonne kernel: Call Trace:
-Aug 14 22:36:40 sonne kernel:  [<c0227bce>] write_jnode_list+0x8e/0xc0
-Aug 14 22:36:40 sonne kernel:  [<c022e5fa>] write_fq+0x5a/0x90
-Aug 14 22:36:40 sonne kernel:  [<c02227c7>] write_prepped_nodes+0xa7/0xc0
-Aug 14 22:36:40 sonne kernel:  [<c0222b0c>] jnode_flush+0x16c/0x450
-Aug 14 22:36:40 sonne kernel:  [<c0222fef>] flush_current_atom+0x1df/0x430
-Aug 14 22:36:40 sonne kernel:  [<c020e1fc>] get_current_trace_flags+0xc/0x60
-Aug 14 22:36:40 sonne kernel:  [<c021f7fe>] flush_some_atom+0xee/0x1b0
-Aug 14 22:36:40 sonne kernel:  [<c0232c88>] writeout+0x38/0x70
-Aug 14 22:36:40 sonne kernel:  [<c0232d2a>] reiser4_sync_inodes+0x6a/0xa0
-Aug 14 22:36:40 sonne kernel:  [<c017b2be>] sync_sb_inodes+0x1e/0x40
-Aug 14 22:36:40 sonne kernel:  [<c017b337>] writeback_inodes+0x57/0xb0
-Aug 14 22:36:40 sonne kernel:  [<c0141b5c>] background_writeout+0xbc/0x100
-Aug 14 22:36:40 sonne kernel:  [<c01422ad>] __pdflush+0xdd/0x1e0
-Aug 14 22:36:40 sonne kernel:  [<c01423b0>] pdflush+0x0/0x20
-Aug 14 22:36:40 sonne kernel:  [<c01423bf>] pdflush+0xf/0x20
-Aug 14 22:36:40 sonne kernel:  [<c0141aa0>] background_writeout+0x0/0x100
-Aug 14 22:36:40 sonne kernel:  [<c0107240>] kernel_thread_helper+0x0/0x10
-Aug 14 22:36:40 sonne kernel:  [<c0107245>] kernel_thread_helper+0x5/0x10
-Aug 14 22:36:40 sonne kernel:
-Aug 14 22:36:40 sonne kernel: Code: 8b 07 89 fa a9 00 00 08 00 74 03 8b 57 18 
-ff 42 04 89 3c 24
-
-I got the same error a with the restartet test-load a few hours later again.
-
-Regards,
-
-Henning
+Regards.
 
