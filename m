@@ -1,79 +1,51 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Subject: Re: Mongo error while building HTML results
-Date: Sun, 15 Aug 2004 02:24:06 +0200
-Message-ID: <20040815022406.01ca4cf7@philou.gramoulle.local>
-References: <20040806152923.4a4eedc7@philou.gramoulle.local>
-	<20040808063358.GE9811@backtop.namesys.com>
-	<20040808151456.7765b337@philou.gramoulle.local>
-	<20040814143718.GH13834@backtop.namesys.com>
+From: Brett Dikeman <brett@cloud9.net>
+Subject: count_blocks: block device too large
+Date: Sat, 14 Aug 2004 23:56:54 -0400
+Message-ID: <a05200f08bd44890d5e38@[192.168.1.2]>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20294-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20295-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040814143718.GH13834@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
+Hi all,
 
-Hello Alex,
+I'm having a problem with a 360GB filesystem (85-ish GB free) which 
+needs checking after a power failure took down the machine. It mounts 
+cleanly and might be OK, but given that this is where I store all my 
+important stuff(hardware RAID 5), I want to make absolutely sure it's 
+OK before I start writing to it again.  Unfortunately, this -is- "the 
+backup" solution- I don't have anything nearly big enough to store 
+280GB of data on.
 
-On Sat, 14 Aug 2004 18:37:18 +0400
-Alex Zarochentsev <zam@namesys.com> wrote:
+Attempts to run reiserfsck have resulted in:
 
-  | can you try new mongo version? 
-  | http://namesys.com/benchmarks/mongo-2004.08.14.tar.gz
+count_blocks: block device too large
+Aborted
 
-Sure but i now get the following error:
+Nothing is logged to syslog.
 
-~/mongo-2004.08.14# date; ./mongo.pl BYTES=225000000 DEV=/dev/sdd1 DIR=/mnt/sdd1 FILE_SIZE=4000 INFO_R4=new FSTY
-PE=reiser4 GAMMA=0.2 NPROC=3 REP_COUNTER=3 SYNC=off WRITE_BUFFER=4096 PHASE_APPEND=off PHASE_READ=find PHASE_COPY=cp PH
-ASE_OVERWRITE=off DD_MBCOUNT=1807 PHASE_DELETE=rm PHASE_MODIFY=off LOG=reiser4.log RUN ; date
-Sun Aug 15 02:03:37 CEST 2004
-INFO date      : Sun Aug 15 02:03:37 2004
-INFO kernel    : 2.6.8-rc2-mm2 #1 SMP Fri Aug 6 04:06:13 CEST 2004
-INFO machine   : bigass.localdomain.local
-INFO mem total : 904512
-INFO reiser4   : new
-INFO .config   : PLEASE take care to make .config file available when you publish benchmark results. At namesys, .confi
-g should be stored somewhere in the internal benchmark directory (intbenchmarks/mongo/), and link to it is added to the
- resulting html document.
-TEST INFO_R4=new
-TEST NPROC=3
-TEST DIR=/mnt/sdd1
-TEST SYNC=off
-TEST PHASE_COPY=cp
-TEST PHASE_OVERWRITE=off
-TEST GAMMA=0.2
-TEST REP_COUNTER=3
-TEST BYTES=225000000
-TEST FILE_SIZE=4000
-TEST PHASE_APPEND=off
-TEST PHASE_READ=find
-TEST DEV=/dev/sdd1
-TEST DD_MBCOUNT=1807
-TEST WRITE_BUFFER=4096
-TEST PHASE_DELETE=rm
-TEST FSTYPE=reiser4
-TEST PHASE_MODIFY=off
-SER
-PHASE CREATE
-STAT REAL_TIME 55.4
-STAT CPU_TIME 49.92
-STAT CPU_UTIL 58.84
-STAT DF 1001408
-PHASE COPY
-ERROR 
-EXITED WITH FAIL
+The system is running 2.4.23(vanilla), P3, with a Promise SATA raid 
+card (which I wouldn't recommend to anyone due to lack of support for 
+2.6, or any current distros, but has otherwise performed flawlessly). 
+reiserfsck was compiled with gcc 3.3.4, and the system is running 
+Gentoo.
 
-Kernel is the same than last time (not a single change on this machine).
+I am considering upgrading to 2.4.27 in case this was some obscure 
+driver bug, but I doubt that will lead to anything.
 
-No problem with mongo-2004.07.26.tar.gz though.
+Any suggestions?  I've had no help from anyone in the gentoo 
+community; it's way over their heads. The best suggestion was 
+"specify the device size in blocks", but the man page shows no way to 
+do so.
+
+Does anyone have any suggestions?
 
 Thanks,
-
-Philippe
+Brett
+-- 
