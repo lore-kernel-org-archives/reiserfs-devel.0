@@ -1,64 +1,40 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Re: Credit Card fraud involving namesys.com registration
-Date: Mon, 01 Jul 2002 03:29:42 +0200
-Message-ID: <3D1FB086.4010407@mb.tu-ilmenau.de>
-References: <3D1E8AAA.7080507@namesys.com> <13348021562.20020701015053@tnonline.net>
+From: Robert Brockway <robert@timetraveller.org>
+Subject: Re: [Fwd: [reiserfs-list] reiserfs-list-unsubscribe@namesys.com
+ : I cant use this...!]
+Date: Tue, 2 Jul 2002 12:30:15 +1000 (EST)
+Message-ID: <Pine.LNX.4.44.0207021228010.19693-100000@avon.timetraveller.org>
+References: <3D1E5BE6.5050601@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10891-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10894-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <3D1E5BE6.5050601@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Anders Widman <andewid@tnonline.net>, Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Hi!
+On Sun, 30 Jun 2002, Hans Reiser wrote:
 
-On 07/01/2002 01:50 AM, Anders Widman wrote:
-> I'm not sure about other countries rules, but a bank here in Sweden
-> are not allowed to give out funds to Creditcard companies, or anyone
-> else unless they have your signature on it.
+> Oleg, please track down flx and get this dealt with one way or another.
 > 
+> Flx, we need the anti-spam filters now.  We seem to be listed as an 
+> official target.
 
-Thank you for sending this info! It was for some good Hans started this 
-thread open to this list! I'm going to print your mail to be able to 
-hand it to my bank in case! Europe Is One Europe.
+I know there are a few tools out there now but I highly recomend 
+SpamAssassin.
 
-Some days ago I had a request from www.bol.de to pay my bill again 
-(though they had my money via VISA for some weeks, already!).
+This email is also doubling as a test as I haven't received anything from 
+the list since last night.  Maybe no one had anything to say :)
 
-  In my case I only had to type all my "open" info on this transaction 
-and say it would go directly to my lawyer if they didn't state my terms 
-as "correct". They (www.bol.de) did so and told me about a "technical 
-error" on their billing system.
-I really assume this kind of false business will increase, when everyone 
-continues to not check his/her folders & records (oh, of course it's 
-really boring) and doesn't post it to some official mailing-list...
+Finally I'd just like to say that Reiserfs rules, ok.
 
-Thanks to Hans Reiser,
-and I'd like to hear about his efforts here though Jens doesn't want it...
+Cheers,
+	-Rob
 
-
-> If someone else use your creditcard you just report it to the police
-> and notify your bank and call VISA to cancel the card. The bank will
-> automatically stop all transfers and refund you. Then it is the banks
-> reposibility to try to reverse the transfers made.
-> 
-> But maby that is not the real issue, but the fact that register.com
-> might stop the domain.
-> 
-> Still, I don't see how they can "suspend" your current domain names.
-> register.com is only responsible, as a middle hand, to arrange
-> payments for registrants to internic. Once you have payed, it is your
-> domain to do whatever you like with. InterNic, on the other hand,
-> would perhaps have the ability, or right to suspend a domain name.
-> 
-> //Anders Widman
-> 
-> 
-
-Manuel Krause
-
+-- Robert Brockway B.Sc. email: robert@timetraveller.org  ICQ: 104781119
+   Linux counter project ID #16440 (http://counter.li.org)
+   avon: up 24 days, 11:22,  2 users,  load average: 0.00, 0.00, 0.00
+   "The earth is but one country and mankind its citizens" -Baha'u'llah
 
