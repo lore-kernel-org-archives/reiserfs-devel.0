@@ -1,47 +1,58 @@
-From: Matthew Garrett <mgarrett@chiark.greenend.org.uk>
-Subject: Re: reiser4 non-free?
-Date: Thu, 06 May 2004 19:42:27 +0100
-Message-ID: <E1BLnpD-0004fR-00@chiark.greenend.org.uk>
-References: <4097CCA4.4060707@namesys.com> <87fzag139k.fsf@aule.evenmere.org> <4099A868.9030406@slaphack.com> <20040506.083242.41632888.wlandry@ucsd.edu> <87k6zpy8ke.fsf@aule.evenmere.org> <20040506143643.GB25505@raptus.homelinux.org> <877jvpy08v.fsf@aule.evenmere.org> <877jvpy08v.fsf@aule.evenmere.org> <409A7F98.7040609@namesys.com>
-Return-path: <reiserfs-list-return-18492-reiserfs=m.gmane.org@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Fwd: reiser4 non-free?
+Date: Thu, 06 May 2004 11:53:10 -0700
+Message-ID: <409A8996.20809@namesys.com>
+References: <3971c4f493d64f3bde792f195de87deb@bouncing.localnet>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18493-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <409A7F98.7040609@namesys.com>
+In-Reply-To: <3971c4f493d64f3bde792f195de87deb@bouncing.localnet>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiser@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: MJ Ray <mjr@dsl.pipex.com>
 Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-Hans Reiser wrote:
->The License: The Anti-plagiarism license is the Gnu Public License Version 2
->with the following modification: you may not modify, remove, or obscure any
->credits in the software unless your modification causes those credits to 
->remain
->equally prominent and to retain their wording. You are not required to 
->display
->the credits if the computer has no effective display mechanism, or if 
->you do not
->distribute the software to others.
+MJ Ray wrote:
 
-Ok, that's a restriction that's not present in the GPL version 2
-(otherwise it wouldn't be necessary). Section 6 of the GPL says:
+> On 2004-05-04 18:47:02 +0100 Hans Reiser <reiser@namesys.com> wrote:
+>
+>> Our licenses are free and not plagiarizable.  GPL V2 is plagiarizable 
+>> in the view of folks at debian who felt free to remove the credits.
+>
+>
+> Can someone give a conclusive statement of what actually happened? The 
+> bug report 152547 looks like someone moved an advert into the docs 
+> accompanying, rather than removed any attribution. Now, if you call 
+> that advert "the credits" then I think you have a different view to 
+> many people.
 
-  6. Each time you redistribute the Program (or any work based on the
-Program), the recipient automatically receives a license from the
-original licensor to copy, distribute or modify the Program subject to
-these terms and conditions.  You may not impose any further
-restrictions on the recipients' exercise of the rights granted herein.
-You are not responsible for enforcing compliance by third parties to
-this License.
+Show me the line in those credits where it said "buy Coca-Cola cheaper 
+here".  They were credits, not advertisements.
 
-Which means that code under the Anti-plagiarism license is not GPL
-compatible, since it imposes further restrictions. This would prevent
-anyone from distributing it with their kernel. In order for it to be
-distributable at all, you'd also need to demonstrate that it isn't a
-derivative work of the Linux kernel.
--- 
-Matthew Garrett | mjg59-chiark.mail.debian.legal@srcf.ucam.org
+>
+> Their new condition clause 4, which says you cannot use their name, 
+> even for accurate reporting. Normally, this would just be a false 
+> statement, but this licence makes it a condition of the grant. I've 
+> not seen that mistake committed by anyone else yet.
+
+Can you supply their full verbatim phrasing so that we can discuss it 
+accurately? I'd like to understand whether your characterization is correct.
+
+>
+>> And call it a credit clause, not an advertising clause.  
+>> Advertisements sell products, credits describe who made the project 
+>> happen.
+>
+>
+> No, it is advertising for the XFree86 Project, Inc. In addition to 
+> acknowledging their copyright (the credit), that advert may have to 
+> appear.
+>
+You seem to understand the difference between credit and advertisement 
+as advertisements are credits for those you dislike.  If they are 
+putting their name on their software or its documentation, then surely 
+it is a credit not an advertisement.
