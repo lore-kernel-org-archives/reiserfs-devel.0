@@ -1,40 +1,58 @@
-From: Rik van Riel <riel@redhat.com>
+From: Christophe Saout <christophe@saout.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 07:42:48 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44.0408260736080.23532-100000@chimarrao.boston.redhat.com>
-References: <200408261034.38509.vda@port.imtp.ilyichevsk.odessa.ua>
+Date: Thu, 26 Aug 2004 13:44:59 +0200
+Message-ID: <1093520699.9004.11.camel@leto.cs.pocnet.net>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
+	 <20040825200859.GA16345@lst.de>
+	 <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>
+	 <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk>
+	 <1093467601.9749.14.camel@leto.cs.pocnet.net>
+	 <20040825225933.GD5618@nocona.random> <412DA0B5.3030301@namesys.com>
+	 <20040826112818.GL5618@nocona.random>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20642-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-3o/X0P83FpY+EEiSgBeq"
+Return-path: <reiserfs-list-return-20643-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200408261034.38509.vda@port.imtp.ilyichevsk.odessa.ua>
+In-Reply-To: <20040826112818.GL5618@nocona.random>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>
-Cc: Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Andrea Arcangeli <andrea@suse.de>
+Cc: Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, 26 Aug 2004, Denis Vlasenko wrote:
+--=-3o/X0P83FpY+EEiSgBeq
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> > I like cat < a > b. You can keep your progress.
-> 
-> cat <a >b does not preserve following file properties even on standard
-> UNIX filesystems: name,owner,group,permissions.
+Am Donnerstag, den 26.08.2004, 13:28 +0200 schrieb Andrea Arcangeli:
 
-Losing permissions is one thing.  Annoying, mostly.
+> then what's the difference in having the plugin fixed in stone into
+> reiserfs? That's my whole point.
 
-However, actual losing file data during such a copy is
-nothing short of a disaster, IMHO.  
+I think you're not exactly understanding what a reiser4 "plugin" is.
 
-In my opinion we shouldn't merge file-as-a-directory
-semantics into the kernel until we figure out how to
-fix the backup/restore problem and keep standard unix
-utilities work.
+Currently plugins are not modules. It just means that there's a defined
+interface between the reiser4 core and the plugins. Just like you could
+see filesystems as "VFS plugins".
 
--- 
-"Debugging is twice as hard as writing the code in the first place.
-Therefore, if you write the code as cleverly as possible, you are,
-by definition, not smart enough to debug it." - Brian W. Kernighan
+In fact, reiser4 plugins are
+- users of the reiser4 core API
+- some of them are implementing Linux VFS methods (thus being some sort
+of glue code between the Reiser4 storage tree and the Linux VFS)
+
+
+--=-3o/X0P83FpY+EEiSgBeq
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQBBLc06ZCYBcts5dM0RAqmEAKCjJESdMq2LaHs42lDP4ePeYdtv/ACfaRLi
+OhTM+T+ZOXDAS6nlQTZhjKk=
+=AQlw
+-----END PGP SIGNATURE-----
+
+--=-3o/X0P83FpY+EEiSgBeq--
 
