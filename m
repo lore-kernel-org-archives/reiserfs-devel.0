@@ -1,66 +1,40 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: File Undeletion on ReiserFS 3.6
-Date: Wed, 25 Jun 2003 14:45:01 +0400
-Message-ID: <200306251445.01378.vitaly@namesys.com>
-References: <Pine.LNX.4.33.0306241958320.9813-100000@shellx.tical.net>
+From: Christian Kujau <evil@g-house.de>
+Subject: Re: vpf-10680, minor corruptions
+Date: Wed, 25 Jun 2003 15:17:42 +0200
+Message-ID: <3EF9A0F6.4030401@g-house.de>
+References: <20030619054535.GA23852@namesys.com> <3EF6AE67.5090502@namesys.com> <20030623090258.GA12259@namesys.com> <3EF6C83F.6060702@namesys.com> <3EF702CC.9050005@g-house.de> <20030624131904.GA460@namesys.com> <3EF86928.7080504@g-house.de> <20030624151940.GC21845@namesys.com> <3EF888B2.4000900@g-house.de> <3EF8EFF0.6020207@g-house.de> <20030625054031.GA11576@namesys.com>
+Reply-To: evil@g-house.de
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14695-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14696-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.33.0306241958320.9813-100000@shellx.tical.net>
-Content-Disposition: inline
+In-Reply-To: <20030625054031.GA11576@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Ray Barnes <rrb@shellx.tical.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
+Oleg Drokin schrieb:
+> Try to compile with CONFIG_REISERFS_CHECK=y the kernel that known-bad for you.
+> (e.g. 2.5.72/2.5.73)
+> 
+yes, 2.5.72 with CONFIG_REISERFS_CHECK=y is compiling now.
 
-Hi, 
+over night the alpha finished compiling 2.5.65 and 2.5.69. i had to 
+compile reiserfs statically, inserting modules gave these "Invalid 
+module format" errors.
 
-On Wednesday 25 June 2003 04:04, Ray Barnes wrote:
-> Hello All,
->
-> I recently did a rm -rf * in the wrong directory, and accidentally erased
-> a whole heap of information.  Being unsure of what to do about it, I
-> checked the FAQ on www.namesys.com and did several Google searches, but
-> did not find any useful information.  Finally, I searched the mailing list
-> archive and found a post along with a suggestion for recovery.  Here's
-> what I did:
->
-> dd if=/dev/hdsomething of=backupfie
-> losetup /dev/loop5 backupfile
->
-> with that in hand, I tried:
->
-> reiserfsck --rebuild-tree --scan-whole-partition /dev/loop5
-> mount /dev/loop5 <mountpoint>
->
-> According to the poster, it worked for him.  However, it did not work for
-> me.  I believe one of the subdirectories got recovered (which happened to
-> be the last thing that the rm -rf deleted, i'm assuming).. but it did not
-> recover anything else.  The total amount of information that I lost was 30
-> gigs or so, out of a 40 gig drive.  I'm thinking that it *might* have had
-> something to do with the amount of free space on the drive, which would
-> have been about 95% utilization.  Also, as a hint, when I look at 'df'
-> with the repaired partition mounted, the utilization now says 95% where as
-> before it said 5%.  Additionally, as another hint, I did not immediately
-> dismount that partition as I should have.  I left the box up for about 14
-> hours after the 'rm' incident, and it would have been making entries into
-> the syslog, as well as running MRTG processes every couple of minutes,
-> etc.
->
-> Any ideas?
+under both (2.5.65+2.5.69) i was able to mkreiserfs sde2. mounting the 
+fs went ok, but copying data (cp -a /lib /mnt/reiserfs) brought several 
+kernel-errors (see https://ephigenie.kicks-ass.net/browse/reiserfs/).
 
---scan-whole-partition is not an undelete option, it just tries to recover 
-data from unsed blocks of fs, not from used only. And as links between 
-'/' and your data could be lost - specially in the case of working with the 
-fs after removing - all recovered data go to lost+found directory. As you 
-have got +90% of partition used, it seems that there are a lot of data in 
-lost+found, just look it through and check for some recovered subtrees.
+but: diff -r showed _no_ differences betweeen the directories, a 
+following reiserfsck brought no vpf-10680 anymore!
 
--- 
-Thanks,
-Vitaly Fertman
+so i'd say the problem occurs somewhere between 2.5.69 and 2.5.70.
+
+thanks,
+Christian.
+
