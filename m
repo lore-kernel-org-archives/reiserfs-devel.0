@@ -1,47 +1,125 @@
-From: Francesco Biscani <frbiscani@jumpy.it>
-Subject: Re: fsck.reiser4 wrong size error (?)
-Date: Thu, 12 Aug 2004 23:08:06 +0200
-Message-ID: <200408122308.06962.frbiscani@jumpy.it>
-References: <cd32a06204080910256de4cc0e@mail.gmail.com> <200408122138.46787.frbiscani@jumpy.it> <200408130031.13061.vitaly@namesys.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: fsck.reiser4 1.0.0, segmentation fault
+Date: Fri, 13 Aug 2004 01:43:08 +0400
+Message-ID: <200408130143.09138.vitaly@namesys.com>
+References: <411BDC03.3090105@free.fr>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20245-reiserfs=m.gmane.org@namesys.com>
+Content-Type: Multipart/Mixed;
+  boundary="Boundary-00=_sR+GBi6dmJ9E/qa"
+Return-path: <reiserfs-list-return-20246-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200408130031.13061.vitaly@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <411BDC03.3090105@free.fr>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Vitaly Fertman <vitaly@namesys.com>, Alex Zarochentsev <zam@namesys.com>
+To: Vince <fuzzy77@free.fr>, reiserfs-list@namesys.com
 
-Hi,
+--Boundary-00=_sR+GBi6dmJ9E/qa
+Content-Type: text/plain;
+  charset="koi8-r"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-On Thursday 12 August 2004 22:08, Alex Zarochentsev wrote:
-> a. mkfs.reiser4 has options to set default fibration plugin.
-> b. you can change fibration plugin for empty dir through metas/ interface.
+On Friday 13 August 2004 01:07, Vince wrote:
+> Hi,
+>
+> I got a segmentation fault while converting my reiser4 partition to the
+> new format:
+>
+> 1) I first launched "debugfs.reiser4 -C /mydevice"
+>
+> (sidenote: il looks like the conversion requires really a lot -- too
+> much ? -- memory. It ate up to 450MB in my case and I had to shut down
+> almost all my running programs in order for it to finish...)
+>
+> 2) fsck.reiser4 asks to do a --build-fs 
 
-and
+you did not run fsck before convertion so it is difficult to say if these 
+corruptions existed then, did not you? have you run fsck with logfile? 
+may I have a look at it if so?
 
-On Thursday 12 August 2004 22:31, Vitaly Fertman wrote:
-> default plugins in progs play role for mkfs only, and they have nothing to
-> do with already created fs. You have created it with dot-o default, so the
-> current fibration fs default is dot-o, and you can change it for some
-> partitcular directory only, an empty one, with :
-> 	echo -e "ext-1\0" > dir/metas/plugin/fibration
-> Then all children will be created with with ext-1 also.
+> and then fails with a
+> segmentation fault:
+> ---------------------------------------------------------------------
+> [...]
+> INSERTING UNCONNECTED NODES
+> 1. Twigs: done
+> 2. Twigs by item: done
+> 3. Leaves: done
+> 4. Leaves by item: done
+>          Twigs: read 0, inserted 0, by item 0, empty 0
+>          Leaves: read 0, inserted 0, by item 0
+>          Time interval: Thu Aug 12 23:00:11 2004 - Thu Aug 12 23:00:11 2004
+> CHECKING SEMANTIC TREE
+> FSCK: Node (8803157), item (4), [d43d0:6d6174685f696e:d447b] (stat40):
+> wrong size (12478), Fixed to (16384).
+> [=================================================- ] 99%zsh:
+> segmentation fault  fsck.reiser4 --build-fs /dev/hdc3
+> ----------------------------------------------------------------------
+>
+> I'm attaching a gdb backtrace of this failure (and can send the packed
+> metadata on request).
 
-Thanks for the quick response Alex and Vitaly.
+oh, sorry, a stupid mistake in the recent changes. try this fix please.
 
-I know about the metas interface. What I would like to know, though, is:
+-- 
+Thanks,
+Vitaly Fertman
 
-1) is there a way to have all newly created dirs default to ext-1 fibrate, 
-without re-creating the fs with mkfs?
-2) is there a place where a detailed description of mount options for reiser4 
-is available? I've googled around without much luck.
+--Boundary-00=_sR+GBi6dmJ9E/qa
+Content-Type: text/x-diff;
+  charset="koi8-r";
+  name="reiser4progs-1.0.0-tree_scan.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="reiser4progs-1.0.0-tree_scan.patch"
 
-Thanks again,
+===== libreiser4/tree.c 1.739 vs edited =====
+--- 1.739/libreiser4/tree.c	Mon Aug  9 20:58:28 2004
++++ edited/libreiser4/tree.c	Fri Aug 13 01:15:48 2004
+@@ -3198,11 +3198,13 @@
+ 
+ 		pos = &place.pos;
+ 
+-		if ((res = pre_func(place.node, data)) < 0)
+-			return res;
++		if (pre_func) {
++			if ((res = pre_func(place.node, data)) < 0)
++				return res;
+ 		
+-		/* If res != 0, lookup is needed. */
+-		if (res) continue;
++			/* If res != 0, lookup is needed. */
++			if (res) continue;
++		}
+ 		
+                 for (; pos->item < reiser4_node_items(place.node); pos->item++)	{
+                         if ((res = reiser4_place_fetch(&place)))
+@@ -3216,12 +3218,17 @@
+ 					return -EIO;
+ 				}
+ 		
+-				if ((res = pre_func(place.node, data)) < 0)
+-					return res;
+-				
+-				/* If res != 0, lookup is needed. */
+-				if (res) break;
+-				
++				if (pre_func) {
++					if ((res = pre_func(place.node, 
++							    data)) < 0)
++					{
++						return res;
++					}
++
++					/* If res != 0, lookup is needed. */
++					if (res) break;
++				}
++
+ 				count = reiser4_node_items(place.node);
+ 				place.pos.item = -1;
+ 				
 
-  Francesco
+--Boundary-00=_sR+GBi6dmJ9E/qa--
+
