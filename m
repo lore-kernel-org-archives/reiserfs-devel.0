@@ -1,53 +1,32 @@
-From: "Thomas Graham" <lkthomas@sml.dyndns.org>
-Subject: Re: http://www.namesys.com/snapshots/2004.08.03-internal.testing/
-Date: Wed, 4 Aug 2004 11:33:33 +0800 (HKT)
-Message-ID: <55083.202.71.232.79.1091590413.squirrel@sml.dyndns.org>
-References: <200406150022.34578.vitaly@namesys.com>
-    <200407131427.58912.vitaly@namesys.com>
-    <200408031750.00291.vitaly@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: resizefs.reiser4
+Date: Tue, 03 Aug 2004 22:34:22 -0700
+Message-ID: <4110755E.6080503@namesys.com>
+References: <20040801230611.30945.qmail@web80801.mail.yahoo.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-19954-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19955-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200408031750.00291.vitaly@namesys.com>
+In-Reply-To: <20040801230611.30945.qmail@web80801.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Vitaly Fertman <vitaly@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: f00bar <f00bar@sbcglobal.net>
 Cc: reiserfs-list@namesys.com
 
-how long does it take to build-fs for 200GB data HD ? and how many data am
-I going to lost ?
+f00bar wrote:
 
-I am just freak out, you guys are promised that disk format wouldn't be
-change anymore, but it still changing actually, pretty upset for that
-statement.
-
-> Hello All,
->
-> This snapshot contains updated reiser4progs-0.5.7 and the grub patch.
->
-> It includes several bug fixes against the previous snapshot, and has a
-> disk
-> format change -- the layout of blocks that contain backuped fs metadata
-> are changed.
->
-> No kernel patch is needed for the disk format change, however fsck may
-> report about some corruptions on an existent fs if a block was allocated
-> for some data and has become a backup one. Fsck.reiser4 --build-fs is
-> able to fix it of course, although the data in these blocks are lost then.
->
-> --
-> Thanks,
-> Vitaly Fertman
+>I am considering writing a evms fsim (plugin) for the
+>Reiser4 fs. I was wondering how I might obtain
+>(licen$e) the code for resizefs and any other user
+>space tools which are *not implemented yet*.
 >
 >
-
-
--- 
-HK Celtic Orchestra leader and coordanator: Thomas Graham Lau
-Phone number: 852-93239670    (24hours a day, 7days a week non-stop phone)
-Web site: http://sml.dyndns.org
-Email: lkthomas@sml.dyndns.org
+>
+>  
+>
+It is 5% of the cost of the storage system you use it on, and includes 
+full reiser4 support as a freebie.  If you spend more than $1000 on it, 
+you get cell phones of developers and the right to wake us in an emergency.
