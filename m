@@ -1,34 +1,33 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: securely deleting files
-Date: Mon, 12 May 2003 14:44:25 +0400
-Message-ID: <20030512104425.GA4165@namesys.com>
-References: <Pine.LNX.4.44.0305060522270.20364-100000@potato.zayda.com> <20030512075022.GC21604@namesys.com> <3EBF79F7.8090501@namesys.com>
+Subject: Re: new data logging patches available
+Date: Mon, 12 May 2003 15:33:48 +0400
+Message-ID: <20030512113348.GA4423@namesys.com>
+References: <1052400138.14612.483.camel@tiny.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14078-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14079-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3EBF79F7.8090501@namesys.com>
+In-Reply-To: <1052400138.14612.483.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Jason Holt <jason@lunkwill.org>, reiserfs-list@namesys.com
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Mon, May 12, 2003 at 02:39:51PM +0400, Hans Reiser wrote:
+On Thu, May 08, 2003 at 09:22:19AM -0400, Chris Mason wrote:
 
-> >Yes they can.
-> >No, we don't have such (supported) feature in reiserfsv3 yet.
-> You meant the reserved space for root?
+> These include Oleg Drokin's merge with 2.4.21-rc1 (thanks Oleg!), and
+> they no longer change fs/super.c:sync_supers().  I believe things are
+> now clean enough for me to start submitting for 2.4.22-pre once it
+> starts.
 
-Yes.
-Also starting from 2.4.20 (with new block allocator), we do not
-reserve any space at all (we used to reserve 2M or so before 2.4.20,
-and those reserved 2M could not be used by anything in kernel).
+BTW, what have happened to your work on porting this stuff to 2.5 and the whole idea
+of feeding this stuff into 2.5 first?
 
 Bye,
     Oleg
