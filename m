@@ -1,37 +1,45 @@
-From: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
-Subject: hashes in reiser3.6
-Date: Thu, 18 Nov 2004 20:45:14 +0100
-Message-ID: <2f4958ff041118114530134bff@mail.gmail.com>
-Reply-To: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
+From: Jeff Mahoney <jeffm@novell.com>
+Subject: Re: hashes in reiser3.6
+Date: Thu, 18 Nov 2004 15:16:29 -0500
+Message-ID: <419D031D.9050807@novell.com>
+References: <2f4958ff041118114530134bff@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22414-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-22416-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <2f4958ff041118114530134bff@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="macroman"; format="flowed"
+To: =?UTF-8?B?R3J6ZWdvcnogSmHFm2tpZXdpY3o=?= <gryzman@gmail.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Hi folks
-
-I have a need to switch from default hashing to TEA on one of my
-servers recently.
-Want to write something like that, as it doesn't exists now. Only in
-manual I digged out that hash= option to mount is just for folks who
-want to upgrade their filesystem to 3.6, and choose hash, or
-something.
-If someone can tell me how deep I should dig to change it, and some
-hints are welcomed.
-I already did some hacking in reiserfs3.6 for myself (non profit
-thing), so I know sources a bit.
-
-Thanks in advance.
-
-I know that reiser4 is supperb, and I am testing it extensively
-(already found 2 or more bugs and reported them), but it is stilll way
-to much unstable for production.
-
--- 
-GJ
+LS0tLS1CRUdJTiBQR1AgU0lHTkVEIE1FU1NBR0UtLS0tLQpIYXNoOiBTSEExCgpHcnplZ29yeiBK
+YcWba2lld2ljeiB3cm90ZToKfCBIaSBmb2xrcwp8CnwgSSBoYXZlIGEgbmVlZCB0byBzd2l0Y2gg
+ZnJvbSBkZWZhdWx0IGhhc2hpbmcgdG8gVEVBIG9uIG9uZSBvZiBteQp8IHNlcnZlcnMgcmVjZW50
+bHkuCnwgV2FudCB0byB3cml0ZSBzb21ldGhpbmcgbGlrZSB0aGF0LCBhcyBpdCBkb2Vzbid0IGV4
+aXN0cyBub3cuIE9ubHkgaW4KfCBtYW51YWwgSSBkaWdnZWQgb3V0IHRoYXQgaGFzaD0gb3B0aW9u
+IHRvIG1vdW50IGlzIGp1c3QgZm9yIGZvbGtzIHdobwp8IHdhbnQgdG8gdXBncmFkZSB0aGVpciBm
+aWxlc3lzdGVtIHRvIDMuNiwgYW5kIGNob29zZSBoYXNoLCBvcgp8IHNvbWV0aGluZy4KfCBJZiBz
+b21lb25lIGNhbiB0ZWxsIG1lIGhvdyBkZWVwIEkgc2hvdWxkIGRpZyB0byBjaGFuZ2UgaXQsIGFu
+ZCBzb21lCnwgaGludHMgYXJlIHdlbGNvbWVkLgp8IEkgYWxyZWFkeSBkaWQgc29tZSBoYWNraW5n
+IGluIHJlaXNlcmZzMy42IGZvciBteXNlbGYgKG5vbiBwcm9maXQKfCB0aGluZyksIHNvIEkga25v
+dyBzb3VyY2VzIGEgYml0Lgp8CnwgVGhhbmtzIGluIGFkdmFuY2UuCnwKfCBJIGtub3cgdGhhdCBy
+ZWlzZXI0IGlzIHN1cHBlcmIsIGFuZCBJIGFtIHRlc3RpbmcgaXQgZXh0ZW5zaXZlbHkKfCAoYWxy
+ZWFkeSBmb3VuZCAyIG9yIG1vcmUgYnVncyBhbmQgcmVwb3J0ZWQgdGhlbSksIGJ1dCBpdCBpcyBz
+dGlsbGwgd2F5CnwgdG8gbXVjaCB1bnN0YWJsZSBmb3IgcHJvZHVjdGlvbi4KfAoKSWYgdGhlIGZp
+bGVzeXN0ZW0gaXMgYWxyZWFkeSBlc3RhYmxpc2hlZCwgeW91IGNhbid0IHN3aXRjaCBoYXNoZXMu
+IFRoZQpoYXNoIGlzIGdsb2JhbCB0byB0aGUgZmlsZXN5c3RlbSwgc28gaWYgeW91IHdlcmUgdG8g
+Y2hhbmdlIGl0LCBsb29rdXBzCndvdWxkIGZhaWwgYW5kIHlvdSB3b3VsZG4ndCBiZSBhYmxlIHRv
+IGZpbmQgYW55IG9mIHlvdXIgZmlsZXMuCgpJZiB5b3UncmUgY3JlYXRpbmcgYSBuZXcgZmlsZXN5
+c3RlbSwgeW91IGNhbiB1c2UgdGhlIC0taGFzaCBhcmd1bWVudCB0bwpta3JlaXNlcmZzLiBVbmRl
+ciBtb3N0IGNpcmN1bXN0YW5jZXMsIHRoZSBmaWxlc3lzdGVtIGNvZGUgd2lsbAphdXRvbWF0aWNh
+bGx5IGRpc2NvdmVyIHdoaWNoIGhhc2ggeW91J3JlIHVzaW5nIGF0IG1vdW50IHRpbWUuCgotIC1K
+ZWZmCgotIC0tCkplZmYgTWFob25leQpTdVNFIExhYnMKLS0tLS1CRUdJTiBQR1AgU0lHTkFUVVJF
+LS0tLS0KVmVyc2lvbjogR251UEcgdjEuMi41IChHTlUvTGludXgpCkNvbW1lbnQ6IFVzaW5nIEdu
+dVBHIHdpdGggVGh1bmRlcmJpcmQgLSBodHRwOi8vZW5pZ21haWwubW96ZGV2Lm9yZwoKaUQ4REJR
+RkJuUU1jTFBXeGx5dVREN0lSQW9JZEFKNHFZOHk0bVlIY21qcVR5OUl0QWc2VUxXbTJPUUNlTlBs
+YwpqMUVZNm16SmdhZHRuZ3JjRzFDM203az0KPTVraUUKLS0tLS1FTkQgUEdQIFNJR05BVFVSRS0t
+LS0tCg==
