@@ -1,11 +1,11 @@
-From: Clifford Beshers <clifford.beshers@lindows.com>
+From: David Greaves <david@dgreaves.com>
 Subject: Re: we need a slogan for our reiser4 t-shirt
-Date: Wed, 23 Jun 2004 13:27:28 -0700
-Message-ID: <40D9E7B0.6070108@lindows.com>
+Date: Wed, 23 Jun 2004 22:12:07 +0100
+Message-ID: <40D9F227.204@dgreaves.com>
 References: <3DF9165145FACB4C96977FF650C1E9040C46A0A2@its-mail1.its.corp.gwl.com> <40DA7F4E.1050700@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19320-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19322-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -18,11 +18,30 @@ Cc: "Burnes, James" <james.burnes@gwl.com>, Marcel Hilzinger <marcel@hilzinger.h
 
 Hans Reiser wrote:
 
+> Burnes, James wrote:
+>
+>> How about,
+>>
+>> "Plug-in To Reiser4!"
+>>
+>>
+>> jim burnes
+>> security engineer
+>> great-west, denver
+>>
+>>
+>>  
+>>
 > Sounds like an ad, we want a t-shirt people want to wear.  Maybe, "My 
 > filesystem is faster than yours...."?
+>
+Too linux infighty
 
+maybe something around:
 
-Everything you always wanted in a filesystem, but were afraid to pay for.
+     Reiser4 / WinFS - which one are YOU running, Today?
 
-Cliff
+Now even the ext3 team would wear that ;)
+
+David
 
