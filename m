@@ -1,70 +1,60 @@
-From: Tonnerre <tonnerre@thundrix.ch>
-Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: Mon, 6 Sep 2004 16:43:58 +0200
-Message-ID: <20040906144358.GC29886@thundrix.ch>
-References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain> <20040902203854.GA4801@janus> <200409022319.i82NJlTN025039@turing-police.cc.vt.edu> <1076230617.20040903014302@tnonline.net>
+From: Christer Weinigel <christer@weinigel.se>
+Subject: Re: silent semantic changes with reiser4
+Date: 06 Sep 2004 16:52:21 +0200
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <m3wtz7h2l6.fsf@zoo.weinigel.se>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
+	<Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
+	<m3eklm9ain.fsf@zoo.weinigel.se> <20040905111743.GC26560@thundrix.ch>
+	<1215700165.20040905135749@tnonline.net>
+	<20040905115854.GH26560@thundrix.ch>
+	<1819110960.20040905143012@tnonline.net>
+	<20040906105018.GB28111@atrey.karlin.mff.cuni.cz>
+	<6010544610.20040906143222@tnonline.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="i7F3eY7HS/tUJxUd"
-Return-path: <reiserfs-list-return-21528-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1076230617.20040903014302@tnonline.net>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <6010544610.20040906143222@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Spam <spam@tnonline.net>
-Cc: Valdis.Kletnieks@vt.edu, Frank van Maarseveen <frankvm@xs4all.nl>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Pavel Machek <pavel@suse.cz>, Tonnerre <tonnerre@thundrix.ch>, Christer Weinigel <christer@weinigel.se>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
---i7F3eY7HS/tUJxUd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Spam <spam@tnonline.net> writes:
 
-Salut,
+> >>   The problem with the userspace library is standardization. What
+> >>   would be needed is a userspace library that has a extensible plugin
+> >>   interface that is standardized. Otherwise we would need lots of
+> >>   different libraries, and I seriously doubt that 1) this will happen
+> >>   and 2) we get all Linux programs to be patched to use it.
+> 
+> > libvfs from midnight commander (and anything build on the top of it)
+> > already is very extensible.
+> 
+>   This wasn't my point. My point was about all applications using it.
+>   Most aren't.
 
-On Fri, Sep 03, 2004 at 01:43:02AM +0200, Spam wrote:
->   Yes why not? If there was any filesystem drivers for the AudioCD
->   format then it could.
->=20
->   I had such a driver for Windows 9x which would display several
->   folders and files for inserted AudioCD's:
->=20
->   D: (cdrom)
->     Stereo
->       22050
->         Track01.wav
->         Track02.wav
->         ...
->       44100
->         Track01.wav
->         ...
->     Mono
->       22050
->         Track01.wav
->         ...
->       44100
->         Track01.wav
->         ...
+So why do you think that just because you put an interface into the
+everyone will automatically start using it and use it without any
+conflicts (i.e. is foo/icon a windows icon, a gif, png, or jpeg file,
+what size is it, 16x16, 48x48...).  
 
-So you'd like the kernel to know  about raw CD PCM and RIFF PCM format
-and conversion? Great.. That's really Solarisish!
+When you add a new shared namespace, userspace must be taught about it
+anyways.  So start with a userspace library, convince people to use
+it, and when you know what people want, _then_ put it into the kernel
+to increase performance or security.  Don't start with "wouldn't it be
+nice if" without any thought behind it, it will just mean that we get
+another useless and misdesigned interface in the kernel that we have
+to live with for years.
 
-			    Tonnerre
+Do you know how long it took to get rid of /dev/cua0 and the locking
+mess associated with it?  (Deity!  I just checked on my FC2 system,
+it's still there.  I thought it would be dead by now.)
 
+  /Christer
 
---i7F3eY7HS/tUJxUd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+-- 
+"Just how much can I get away with and still go to heaven?"
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.9.2 (GNU/Linux)
-
-iD8DBQFBPHet/4bL7ovhw40RAs5/AKCOAE52YmYiqRg2ewFMMSojjGITLwCcCcp4
-t8L4rqwZlgRFVfhYgavXo7c=
-=1PNu
------END PGP SIGNATURE-----
-
---i7F3eY7HS/tUJxUd--
+Freelance consultant specializing in device driver programming for Linux 
+Christer Weinigel <christer@weinigel.se>  http://www.weinigel.se
