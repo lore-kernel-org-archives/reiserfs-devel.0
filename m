@@ -1,70 +1,77 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: Why larger extent counts aren't necessarily bad (was Re: Odd Block
- allocation behavior on Reiser3)
-Date: Tue, 10 Aug 2004 16:12:10 -0400
-Message-ID: <41192C1A.6080909@suse.com>
-References: <20040809201939.GA55683@kevlar.burdell.org> <1092083451.10651.218.camel@watt.suse.com> <20040809220459.GA57121@kevlar.burdell.org> <41187657.7030709@namesys.com> <20040810154514.GA67591@kevlar.burdell.org> <41190B5A.7070503@namesys.com>
+Subject: Re: Invalid use of asm/unaligned.h
+Date: Wed, 11 Aug 2004 16:55:01 -0400
+Message-ID: <411A87A5.7020608@suse.com>
+References: <200408112148.42125.mmazur@kernel.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20217-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20218-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41190B5A.7070503@namesys.com>
+In-Reply-To: <200408112148.42125.mmazur@kernel.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Sonny Rao <sonny@burdell.org>, reiserfs-list@namesys.com
+To: Mariusz Mazur <mmazur@kernel.pl>
+Cc: reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Hans Reiser wrote:
-| Sonny Rao wrote:
-
-|> Below I made 24 one gigabyte files in sequence
-|> All of them are similarly fragmented:
-| this could explain some reiser3 performance problems.   This is what
-| happens when I spend all my time chasing funding and don't spend it
-| reviewing code and benchmarks, sigh.
+Mariusz Mazur wrote:
+| I'm the linux-libc-headers* maintainer and after the release of version
+| reiserfsprogs 3.6.18 I was informed that they don't build correctly
+against
+| llh. A couple of months ago a patch was added to reiserfsprogs that fixed
+| access to unaligned memory on ia64. Fact of the matter is that
+| asm/unaligned.h is *not* a userland header (and as such was removed
+from llh)
+| and you can call good luck the fact that it's userland friendly on
+ia64. On
+| most archs that it's needed on (those that do not support unaligned
+memory
+| access) the header will either not work cause it requires some kernel
+| internal stuff, or will not work cause it's plain marked as kernel only
+| (ifdefed __KERNEL__ as on arch-ppc).
 |
-| Thanks for spotting this.  I would be curious if this is occuring near
-| the transition between unformatted nodes and their parents, or something
-| else.
+| Now the nice thing to do would be to switch to some more userland
+friendly way
+| of accessing unaligned memory, since using kernel headers for such
+things is
+| not a good idea. I don't have too much options for making those headers
+| userland friendly and adding them to llh, since I can't call any external
+| functions (like memcpy) from llh and I don't believe adding lots of
+asm code
+| by coding my own functions for that is a good idea (neither have I the
+| expertise nor the resources to do it correctly).
+| So - what will it be? :)
+|
+| Oh, and please do cc me with any replies since I'm not subscribed to this
+| list.
+|
+| * http://ep09.pld-linux.org/~mmazur/linux-libc-headers
 
-Having a high extent count isn't indicative of fragmentation negatively
-affecting performance. In fact, it may be just the opposite.
+As the author of the patch which included asm/unaligned.h, I have a few
+comments on this:
 
-I modified filefrag.c to display the displacement between the extents,
-and the average extent length. My disk was only 9 GB, so I had to limit
-my test to 8 1 GB files, but the results are the same - it's a
-sequential write. The number of files has no bearing on the result.
+Can you provide examples of what you consider depending on "kernel
+internal stuff" ? When I look through include/asm*/unaligned.h, I see no
+references to functions not provided in a standard C library. I also
+don't see any assembly code, so I'm not sure why you'd need to code
+assembly for each architecture.
 
-For this workload, the patterns are so simple, it's distributed almost
-perfectly. Even using the skip_busy algorithm by itself (a practice I
-warned about over a year ago) produces acceptible results. The results
-showed an median extent length of 1023 extents (1 less than contained in
-an indirect pointer block), followed by a median extent displacement of
-2 blocks. For all intents and purposes, the file is contiguous, with
-metadata interspersed.
+There are other instances of libc headers defining macros that expand to
+standard libc functions. Why should the presence of memcpy/memmove calls
+be an exception to this? If you truly feel the need to create
+"userspace" headers for unaligned access, you can lift the kernel
+headers wholesale. If that's not desirable, take a look in
+asm-generic/unaligned.h and include that instead.
 
-The pattern of a streaming read/write operation would be like so:
-Locate file, locate first indirect pointer block, read blocks, find next
-indirect pointer block, read blocks, ...
-
-In the perceived "ideal" fragementation pattern of 9 fragments
-(1024MB/128MB - 4k per bitmap + 8*4k remainder), the metadata is not
-interspersed with the file data. It makes the fragmentation extent
-number look nice and low, but it really means that every time we need to
-read another indirect pointer block, we're seeking outside the data
-stream, reading a few blocks (readahead), and seeking back.
-
-In the fragmentation pattern created using the new allocation algorithms
-that Chris and I developed, you'll get a higher fragmentation number,
-but the extents are close together, and the pointer blocks are already
-read in due to readahead. The "actual" fragmentation is lower than the
-"ideal" case above since less seeking is required.
+That said, I don't believe the problem is the inclusion of
+asm/unaligned.h at all, but rather the fact that the PPC developers
+decided to surround the code with ifdef KERNEL. They're the only arch to
+do so, which is odd considering it's a no-op anyway.
 
 - -Jeff
 
@@ -75,7 +82,7 @@ SuSE Labs
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iD8DBQFBGSwaLPWxlyuTD7IRAkwWAJ4uPTDcvSAgKpJm6KA4KMcSDb5iKwCcDjKN
-cdMveSkc/zsVdGzsZvx5SsM=
-=l45w
+iD8DBQFBGoekLPWxlyuTD7IRAvIeAKCN+iZNvlKFSFxzRq0mZMSGKxKTsQCfZnpz
+8dYsFB525Oajbugsu2n0CfI=
+=DRbn
 -----END PGP SIGNATURE-----
