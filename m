@@ -1,36 +1,38 @@
-From: Mirar <mirar-yg@mirar.org>
-Subject: Re: power loss -> corruption
-Date: 08 May 2003 15:19:15 +0200
-Sender: mirar@orchid.mirar.org
-Message-ID: <m17k911sq4.fsf@orchid.mirar.org>
-References: <m1k7d11yaz.fsf@orchid.mirar.org>
-	<200305081348.42359.Dieter.Nuetzel@hamburg.de>
-	<m1fznp1w3a.fsf@orchid.mirar.org>
-	<200305081502.47455.Dieter.Nuetzel@hamburg.de>
+From: Chris Mason <mason@suse.com>
+Subject: new data logging patches available
+Date: 08 May 2003 09:22:19 -0400
+Message-ID: <1052400138.14612.483.camel@tiny.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14014-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14015-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200305081502.47455.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: =?iso-8859-1?q?Dieter_N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-> Maybe you can preset some corrupted file snippets?
+Hello all,
 
-I'll see if I can dig up any good. 
+New data logging patches are available for download at:
 
-But I can give examples, for instance .zsh-history with 65536 bytes of
-illicit data inserted in the middle - 65536 bytes of which 63898 comes
-from a gtk-gnutella file (downloads, I think) and the remaining 1638
-is NUL characters. Both files were corrupted after restart, but
-gtk-gnutella ate it's file so I can't check how it looked.
+ftp.suse.com/pub/people/mason/patches/data-logging/2.4.21
 
-Lots of things like that. The numbers are so even so I would figure
-that the wrong blocks get in the wrong files somehow.
+It might take the suse internal ftp server an hour to see the new
+files.  Check for 03-relocation-8.diff to make sure you are grabbing the
+most recent stuff.
 
-/Mirar
+These include Oleg Drokin's merge with 2.4.21-rc1 (thanks Oleg!), and
+they no longer change fs/super.c:sync_supers().  I believe things are
+now clean enough for me to start submitting for 2.4.22-pre once it
+starts.
+
+03-relocation-8.diff is also updated, I believe it will fix the bug
+where md reports the device is busy during reboot.  It has not been
+tested on a box with a software raid root device, so please handle with
+care.
+
+-chris
+
+
