@@ -1,53 +1,48 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Subject: Re: 32bit UID/GID's Quota in 2.4!
-Date: Fri, 11 Jul 2003 00:08:07 +0200
-Message-ID: <20030711000807.58fa86a7.philippe.gramoulle@mmania.com>
-References: <200307102119.11860.christian.mayrhuber@gmx.net>
+From: "Doug Bazarnic" <doug@cavecreek.net>
+Subject: How to mount reiserfs with a relocated journal?
+Date: Thu, 10 Jul 2003 19:12:48 -0700
+Message-ID: <008b01c34751$ec654a10$7000000a@hardwarehq.local>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14870-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_008C_01C34717.40067210"
+Return-path: <reiserfs-list-return-14871-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200307102119.11860.christian.mayrhuber@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
+------=_NextPart_000_008C_01C34717.40067210
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-Hello Christian,
+Hello,  
+ 
+I'm running RH7.3 with a patched 2.4.21 kernel (03-relocation-8.diff.gz
+<ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.21/03-relo
+cation-8.diff.gz> ).    
+ 
+I can't get my relocated journal drive to mount.   Are there any special
+arguments I have to pass to mount?
+ 
+Mount complains that it can't find a superblock on /dev/sdb1
+ 
+I used  mkreiserfs /dev/sdb1 -j /dev/hda1 .   
+ 
+/dev/sdb1 is my 73 gig Scsi HD, and /dev/hda1 is a 512 meg compact flash
+card hooked up to the ide port.
+ 
+Mkreiserfs works fine, writes the journal to /dev/hda1, syncs and says
+"OK"
+ 
+Any help would be appreciated!
+ 
+ 
+Thanks so much,
+ 
+Doug
 
-Jeez, i can't remember since when we needed and used this feature
-(quotas with 32bit UID/GIDs) thanks to Jan Kara, Chris Mason,
-Oleg Drokin and all ReiserFS team.
+------=_NextPart_000_008C_01C34717.40067210--
 
-I'm pleased to see that it will finally make it into 2.4 series.
-
-I haven't had time to look how "new" this quota code is and if it differs
-from what is actually available through external patches though.
-
-Thanks,
-
-Philippe
-
---
-
-Philippe Gramoull=E9
-philippe.gramoulle@mmania.com
-System & Network Engineer
-NOC France - Lycos Europe
-
-
-
-
-On Thu, 10 Jul 2003 21:19:11 +0200
-Christian Mayrhuber <christian.mayrhuber@gmx.net> wrote:
-
-  | Quote from Marcelo Tosatti:
-  | "We decided to include this new code quota code which allows usage of q=
-uotas with 32bit UID/GIDs."
-  |=20
-  | Finally this should mean there is a possibility to get reiserfs data lo=
-gging + quota into the 2.4 kernel, doesn't it?
