@@ -1,47 +1,65 @@
 From: Alexander Lyamin <flx@msu.ru>
 Subject: Re:  Reiserfs, highquality meds source, low rates
-Date: Wed, 21 Apr 2004 00:46:45 +0400
-Message-ID: <20040420204644.GA27730@alias.nmd.msu.ru>
-References: <000001c425b0$1750e0b8$4fa9aa0e@fluridden.com> <200404191339.08313.tdickenson@geminidataloggers.com> <20040419134032.GD57@alias.nmd.msu.ru> <200404201054.22865.Michael.James@csiro.au> <40854585.8040003@namesys.com> <87y8oqpgdc.fsf@uhoreg.ca>
+Date: Wed, 21 Apr 2004 00:51:06 +0400
+Message-ID: <20040420205106.GB27730@alias.nmd.msu.ru>
+References: <000001c425b0$1750e0b8$4fa9aa0e@fluridden.com> <20040419115902.GD15007@alias.nmd.msu.ru> <20040419115902.GD15007@alias.nmd.msu.ru> <4083C0B0.6090607@mweb.co.za> <c61q1o$6bk$1@satsuki.furryterror.org> <4084AD3D.30808@mweb.co.za>
 Reply-To: flx@msu.ru
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18090-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18091-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <87y8oqpgdc.fsf@uhoreg.ca>
+In-Reply-To: <4084AD3D.30808@mweb.co.za>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hubert Chan <hubert@uhoreg.ca>
+To: Cami <camis@mweb.co.za>
 Cc: reiserfs-list@namesys.com
 
-Tue, Apr 20, 2004 at 04:02:39PM -0400, Hubert Chan wrote:
-> >>>>> "Hans" == Hans Reiser <reiser@namesys.com> writes:
+Tue, Apr 20, 2004 at 06:55:25AM +0200, Cami wrote:
+> >>>i am just not sure how to kill THIS messages which look so....
+> >>>they dont look like spam, even to me upon first look.
+> >>
+> >>If you were using SpamAssasin, you wouldn't get these..
+> >
+> >
+> >I _am_ using SpamAssassin, and I got this.  
 > 
-> [...]
 > 
-> Hans> I think that requiring a confirmation response by non-subscribers
-> Hans> is acceptable, given the serious nuisance spam has become in the
-> Hans> last 2 years.
+> #!/bin/sh
 > 
-> As long as it remembers who's already confirmed.  e.g. I read the list
-> through the gmane mail-news gateway, and don't want to have to confirm
-> every time I post a message.  If I only need to confirm once, that's
-> fine.
 
-good idea, i think it could be done fast enough.
-i'll try it..
+thanks, ill check those, and if they are sane, we will adopt them.
 
-
+> cd /etc/mail/spamassassin
+> wget -nd -N http://www.rulesemporium.com/rules/99_sare_adult.cf
+> wget -nd -N 
+> http://www.rulesemporium.com/rules/99_sare_biz_market_learn_post25x.cf
+> wget -nd -N http://www.rulesemporium.com/rules/99_sare_fraud_post25x.cf
+> wget -nd -N http://www.rulesemporium.com/rules/99_sare_random.cf
+> wget -nd -N http://www.rulesemporium.com/rules/99_FVGT_Tripwire.cf
+> wget -nd -N http://www.rulesemporium.com/rules/99_OBFU_drugs.cf
+> wget -nd -N http://www.rulesemporium.com/rules/99_sare_spoof.cf
+> wget -nd -N http://www.rulesemporium.com/rules/antidrug.cf
+> wget -nd -N http://www.rulesemporium.com/rules/backhair.cf
+> wget -nd -N http://www.rulesemporium.com/rules/bigevil.cf
+> wget -nd -N http://www.rulesemporium.com/rules/bogus-virus-warnings.cf
+> wget -nd -N http://www.rulesemporium.com/rules/chickenpox.cf
+> wget -nd -N http://www.rulesemporium.com/rules/evilnumbers.cf
+> wget -nd -N http://www.rulesemporium.com/rules/header_abuse.cf
+> wget -nd -N http://www.rulesemporium.com/rules/mr_wiggly.cf
+> wget -nd -N http://www.rulesemporium.com/rules/ratware.cf
+> wget -nd -N http://www.rulesemporium.com/rules/weeds.cf
 > 
-> -- 
-> Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-> PGP/GnuPG key: 1024D/124B61FA
-> Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-> Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+> I update all the rulesets once a day.. These  are running
+> without any false positives on a rather large  production
+> environment so they will do well for the reiserfs mailing
+> list..
+> 
+> Cheers,
+> Cami
 
 -- 
 "the liberation loophole will make it clear.."
