@@ -1,39 +1,36 @@
-From: Soeren Sonnenburg <reiserfs@nn7.de>
-Subject: Re: reiserfs b0rken on 2.4.22-pre4-ben0 on powerpc ?
-Date: 13 Jul 2003 14:43:22 +0200
-Message-ID: <1058100202.923.16.camel@localhost>
-References: <1058010165.17888.8.camel@localhost>
-	 <1058038447.13317.102.camel@tiny.suse.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Horrible ftruncate performance
+Date: Sun, 13 Jul 2003 16:58:04 +0400
+Message-ID: <20030713125804.GB6061@namesys.com>
+References: <200307112151.05829.Dieter.Nuetzel@hamburg.de> <Pine.LNX.4.30.0307120213080.30730-100000@divine.city.tvnet.hu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14918-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14919-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1058038447.13317.102.camel@tiny.suse.com>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.30.0307120213080.30730-100000@divine.city.tvnet.hu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Szakacsits Szabolcs <szaka@sienet.hu>
+Cc: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>, Chris Mason <mason@suse.com>, Marc-Christian Petersen <m.c.p@gmx.net>, reiserfs-list@namesys.com, Philippe Gramoull? <philippe.gramoulle@mmania.com>
 
-On Sat, 2003-07-12 at 21:34, Chris Mason wrote:
-> On Sat, 2003-07-12 at 07:42, Soeren Sonnenburg wrote:
-> > Hi.
-> > 
-> > I tried to mount a reiserfs partition (which is connected via firewire
-> > or usb mass storage) and while it mounts ok with 2.4.21-ben2 it hangs
-> > while mounting on 2.4.22-pre4-ben0.
-> > 
-> > I guess something is broken there... I can get into the kernel debugger
-> > xmon and supply you with a backtrace shot taken with some digital
-> > camera... if that helps.
-> 
-> Please try this (which is in -pre5 and not related to reiserfs)
+Hello!
 
-You are right that patch fixes it.
+On Sat, Jul 12, 2003 at 03:37:48AM +0200, Szakacsits Szabolcs wrote:
+> Footnotes:
+> (*) So disk shouldn't matter because the other filesystems use only 4kB to
+>     store this 200GB sparse file. ReiserFS wastes 201MB! One could
 
-Pretty strange that it worked on some ext3 partition ... hmmhh.
+Yes. The thing is reiserfs prepopulates the tree with empty pointers
+up to needed file length. Others just increase filesize.
+We found out that just increasing filesize leads to races later on
+when two parallel writers try to actually write somewhere
+past the real file end. Then we endup in a situation where
+same stuff in the tree is about to be inserted twice which
+is bad idea of course.
 
-Thanks a lot,
-Soeren.
-
+Bye,
+    Oleg
