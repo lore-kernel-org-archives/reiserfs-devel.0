@@ -1,86 +1,119 @@
-From: Roland =?iso-8859-1?q?H=E4der?= <webmaster@autoinstaller.de>
-Subject: Re: Fwd: Bad root block 0
-Date: Mon, 8 Sep 2003 18:55:53 +0200
-Message-ID: <200309081855.53308.webmaster@autoinstaller.de>
-References: <200309071446.32049.webmaster@autoinstaller.de> <200309081715.01529.webmaster@autoinstaller.de> <20030908153427.GA28885@namesys.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: dbench regression in 2.6
+Date: Mon, 8 Sep 2003 21:05:37 +0400
+Message-ID: <200309082105.37309.vs@namesys.com>
+References: <3F5636F5.4060000@austin.ibm.com> <200309041138.40795.vs@namesys.com> <3F574AEE.7080402@austin.ibm.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15596-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-15597-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030908153427.GA28885@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <3F574AEE.7080402@austin.ibm.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Steven Pratt <slpratt@austin.ibm.com>
+Cc: reiserfs-list@namesys.com, reiserfs-dev@namesys.com
 
-Hello,
+Hi
 
-> > Opps: Vanilla 2.4.21 with cryptoloop (not patched, it's compiled
-> > alone and installed into /lib/modules/2.4.21/xxxxx)
->
-> Ah, ok.
-:-)
+On Thursday 04 September 2003 18:23, Steven Pratt wrote:
+> Vladimir Saveliev wrote:
+>=20
+> >Hi
+> >
+> >On Wednesday 03 September 2003 23:04, Hans Reiser wrote:
+> > =20
+> >
+> >>Steven Pratt wrote:
+> >>
+> >>   =20
+> >>
+> >>>Is anyone looking into the dbench multitheaded regression in 2.6 tha=
+t I=20
+> >>>reported here a couple of weeks ago?=20
+> >>>     =20
+> >>>
+> >
+> >Sorry, I was unable to find your report in mail archives. Could you,=20
+please,=20
+> >remind what is the problem?
+> >
+> > I don't see any change in the=20
+> > =20
+> >
+> >>>latest trees.
+> >>>
+> >>>     =20
+> >>>
+> The problem showed up in 2.6.0-test1, and every kernel since.  The=20
+> problem is that from 2.5.65 (earliest data I have) to 2.5.69 dbench on=20
+> reiserfs with 16 clients got a throughput of ~200MB/sec.  In 2.5.70=20
+> through 2.5.75 the score went up to ~280MB/sec, a good thing.  But in=20
+> 2.6.0-test1 the throughput dropped to below 50 MB/sec.  Since then it=20
+> has risen slightly but still at only around 60MB/sec.  Single client=20
+> dbench showed similar, although much less dramatic changes.  No other=20
+> file system exhibited a change in the 2.6.0-test1 kernel so this seems=20
+> to be unique to reiserfs.
+>=20
+>=20
+> >>>     =20
+> >>>
+>=20
+>http://ausgsa.ibm.com/projects/l/ltcperformance/2003benchmarks/regressio=
+n/results/history-graphs/dbench.reiser.throughput.plot.16.png
+> > =20
+> >
+> >
+> >Is this address right?
+> >
+> No, my bad.  Right address is=20
+>=20
+http://ltcperf.ncsa.uiuc.edu/data/history-graphs/dbench.reiser.throughput=
+=2Eplot.16.png
+> see also
+>=20
+http://ltcperf.ncsa.uiuc.edu/data/history-graphs/dbench.reiser.throughput=
+=2Eplot.1.png
+>=20
+> Also if you go to
+>=20
+http://ltcperf.ncsa.uiuc.edu/data/2.6.0-test1/2.5.75-vs-2.6.0-test1/index=
+=2Ehtml
+> and select the results links related to dbench resierfs you can find=20
+> kernel profile, sar data and lots of other system information which may=
+=20
+> help in isolating the problem.
+>=20
+> Steve
+>=20
 
-> What debugfs command found the metadata? Was it just plain
-> "debugreiserfs -p"? How much leaves/internal nodes were found?
+Unfortunately, I was unable to reproduce your result. On our test machine=
+ (4=20
+Xeons 1gb ram) results shown by reiserfs on 2.5.75 and 2.6.0-test1 are=20
+comparable.
 
-debugreiserfs /dev/loop3:
+So, would be you so kind to help us to track this issue? If yes, could yo=
+u ,=20
+please, describe your test in more details.
+0. what is version of dbench you used: 1.2, 1.3 or 2.0?
+1. how many time did you run dbench 16?
+2. when did you mkfs, etc, did you reboot after mkfs?
+3. how much ram does machine which was running dbench have?
+4. could you please try to rerun benchmark with SMP=3Doff, and with 2 and=
+ 4=20
+cpus?
+5. could you also run dbench 64 and dbench 128 for reiserfs 2.5.75 and=20
+2.6.0-test1?
 
-debugreiserfs 3.6.11 (2003 www.namesys.com)
- 
- 
-Filesystem state: consistency is not checked after last mounting
- 
-Reiserfs super block in block 16 on 0x703 of format 3.6 with standard journal
-Count of blocks on the device: 24492
-Number of bitmaps: 1
-Blocksize: 4096
-Free blocks (count of blocks - used [journal, bitmaps, data, reserved] blocks): 24492
-Root block: 0
-Filesystem is cleanly umounted
-Tree height: 65535
-Hash function used to sort names: "r5"
-Objectid map size 2, max 972
-Journal parameters:
-        Device [0x0]
-        Magic [0x9cdd049]
-        Size 8193 blocks (including 1 for journal header) (first block 18)
-        Max transaction length 1024 blocks
-        Max batch size 900 blocks
-        Max commit age 30
-Blocks reserved by journal: 0
-Fs state field: 0xfa02:
-        FATAL corruptions exist.
-sb_version: 2
-inode generation number: 0
-UUID: 7691903f-ec2b-4c06-9cf2-eaa545c7db77
-LABEL: Haspa-Banking
-Set flags in SB:
-        ATTRIBUTES CLEAN
+Thanks,
+vs
 
-debugreiserfs -d /dev/loop3:
 
-debugreiserfs 3.6.11 (2003 www.namesys.com)
- 
-Loading on-disk bitmap .. 8216 bits set - done
-super block..ok
-bitmaps..(1).. ok
-journal (from 18 to 8210)..ok
-Super block, bitmaps, journal - 8195 blocks - done, 23 blocks left
-0%....20%....40%....60%....80%....100%                           left 0, 0 /sec
-Packed 8195 blocks:
-        compessed 0
-        full blocks 8195
-                leaves with broken block head 0
-                corrupted leaves 0
-                internals 0
-                descriptors 0
-data packed with ratio 1.00
 
-Hope this is enougth?
 
-Roland
+>=20
+>=20
+>=20
 
