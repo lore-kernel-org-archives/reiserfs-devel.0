@@ -1,38 +1,23 @@
-From: Konstantin Besch <forward@zagon.com>
+From: Chris Mason <mason@suse.com>
 Subject: Re: BUG in writeback mode - from data journaling patch
-Date: Mon, 30 Aug 2004 12:32:32 -0400
-Message-ID: <200408301232.32560.forward@zagon.com>
-References: <d68fdf7d040819113256eba856@mail.gmail.com> <200408301803.57727.Dieter.Nuetzel@hamburg.de>
+Date: Mon, 30 Aug 2004 12:42:17 -0400
+Message-ID: <1093884137.21878.442.camel@watt.suse.com>
+References: <d68fdf7d040819113256eba856@mail.gmail.com>
+	 <200408301803.57727.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-21114-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21115-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <200408301803.57727.Dieter.Nuetzel@hamburg.de>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-9"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Cc: vijayan@cs.wisc.edu, reiserfs-list@namesys.com, Vijayan Prabhakaran <pvijayan@gmail.com>
 
-The notification about this bug been there for a while - seems=20
-like Vijayan spent some time hunting it down ( I know he did  ) .=20
-Doesn't seem like a lot of time from the developers to verify validity of t=
-he=20
-bug/fix introduced , unless Chris missed on the information and didn't noti=
-ce=20
-it.=20
-On the other hand, since the software is GPL we might not even know the
-answer , not that we paid for ReiserFS with our credit cards or anything :)
-
-             --K
-
-just my two cents - since I would like to know if there is an answer at all=
- to=20
-this question , too .
-
-On Monday 30 August 2004 12:03 pm, Dieter N=FCtzel wrote:=20
+On Mon, 2004-08-30 at 12:03, Dieter N=FCtzel wrote:
 > Am Donnerstag, 19. August 2004 20:32 schrieb Vijayan Prabhakaran:
 > > Dear Chris Mason,
 > >
@@ -103,9 +88,20 @@ On Monday 30 August 2004 12:03 pm, Dieter N=FCtzel wrote:=20
 > > can you please add this to your patch.
 > >
 > > I appreciate your help.
->
-> Chris,
->
-> any thoughts on this?
->
-> -Dieter
+
+[ full quote since it has been a while ]
+
+Sorry, I thought I answered this, that was a busy time in terms of
+releases here.  Basically, the inode times are not promised to get
+updated as part of the fsync (look at ext3 here as well).  In cases of a
+database server doing lots of fsyncs, you want to avoid the transaction
+commits when the server is only overwriting existing data.
+
+The times do get logged in data=3Dordered because it's the only way to
+make sure the ordered data blocks are actually written to disk.  The
+2.6.x code doesn't have that bug, and as a result data=3Dordered is much
+more usable in database workloads.
+
+-chris
+
+
