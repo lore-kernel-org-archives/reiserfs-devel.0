@@ -1,136 +1,49 @@
-From: Mike Benoit <mikeb@netnation.com>
-Subject: Re: Reiser4 input/output errors...
-Date: Wed, 03 Sep 2003 08:45:20 -0700
-Message-ID: <1062603920.3148.125.camel@mikeb.staff.netnation.com>
-References: <1062453181.2791.17.camel@mikeb.staff.netnation.com>
-	 <1062479004.31361.3.camel@haron.namesys.com>
-	 <1062521517.1987.5.camel@mikeb.staff.netnation.com>
-	 <1062567211.2107.14.camel@haron.namesys.com>
-Reply-To: mikeb@netnation.com
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: data-logging finally for 2.4.23?
+Date: Wed, 3 Sep 2003 17:56:00 +0200
+Message-ID: <200309031756.00137.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15529-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15530-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1062567211.2107.14.camel@haron.namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Yury Umanets <umka@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: Chris Mason <mason@suse.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-[root@mikeb root]# debugfs.reiser4 /dev/hda8
-debugfs.reiser4 0.4.12
-Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by
-reiser4progs/COPYING.
+What's up Chris?
 
-Master super block:
-offset:         16
-blksize:        4096
-magic:          R4Sb
-format:         0
-label:          <none>
+Your latest stuff working fine on 2.4.22-rc1-rl (pre-emption; haven't time for 
+a "newer" version, yet).
 
-Format super block:
-plugin:         format40
-description:    Disk-format for reiser4, ver. 0.4.12
-offset:         17
-magic:          R4Sb-Default
-flushes:        0
-stamp:          0x103e447b
-blocks:         1394308
-free blocks:    1394243
-root block:     21
-tail policy:    4
-next oid:       0x10000
-file count:     0
-tree height:    2
-key policy:     LARGE
+patches/2.4.22-data-logging> l
+insgesamt 89
+drwxr-xr-x    2 root     root          536 Aug  6 04:50 .
+drwxr-xr-x    4 root     root          408 Sep  3 13:46 ..
+-rw-r--r--    1 root     root         1251 Jul 13 16:08 
+02-akpm-b_journal_head-1.diff.bz2
+-rw-r--r--    1 root     root         4929 Jul 13 16:08 
+04-reiserfs-sync_fs-4.diff.bz2
+-rw-r--r--    1 root     root        32068 Jul 13 16:08 
+05-data-logging-39.diff.bz2
+-rw-r--r--    1 root     root         5724 Jul 13 16:08 
+06-reiserfs-jh-3.diff.bz2
+-rw-r--r--    1 root     root          424 Jul 13 16:08 
+06-write_times.diff.bz2
+-rw-r--r--    1 root     root        10378 Jul 13 16:08 
+07-reiserfs-quota-28.diff.bz2
+-rw-r--r--    1 root     root         1541 Jul 13 16:08 08-kinoded-9.diff.bz2
+-rw-r--r--    1 root     root         1097 Jul 13 16:08 
+10-reiserfs-quota-link-fix.diff.bz2
+-rw-r--r--    1 root     root          564 Jul 13 16:08 README.bz2
+-rw-r--r--    1 root     root         1580 Jul 15 04:15 
+search_reada-5.diff.bz2
+-rw-r--r--    1 root     root          379 Jul 15 20:50 stree-fix.bz2
 
-
-On Tue, 2003-09-02 at 22:33, Yury Umanets wrote:
-> On Tue, 2003-09-02 at 20:51, Mike Benoit wrote:
-> > Since I enabled all the debugging options that would compile, I re-ran
-> > the mkfs.reiser4 /dev/hda8, then attempted to untar the linux kernel
-> > again, however it didn't like that very much:
-> > 
-> > Here is what I got from the log:
-> > 
-> > lookup inode: 65897 "de4x5.c"
-> > creating "de4x5.c" in 65897
-> > reiser4 panicked cowardly: assertion failed:
-> > carry_level_invariant(doing, CARRY_DOING)
-> > 
-> > Hopefully this is enough information to help you track down the problem.
-> > 
-> > On Mon, 2003-09-01 at 22:03, Yury Umanets wrote:
-> > > On Tue, 2003-09-02 at 01:53, Mike Benoit wrote:
-> > > > I assume this isn't supposed to happen?
-> > > > 
-> > > > [root@mikeb home]# mkfs.reiser4 /dev/hda8
-> > > > mkfs.reiser4 0.4.12
-> > > > Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by
-> > > > reiser4progs/COPYING.
-> > > > 
-> > > > Information: Reiser4 is going to be created on /dev/hda8.
-> > > > (Yes/No): Yes
-> > > > Creating reiser4 on /dev/hda8...done
-> > > > Synchronizing /dev/hda8...done
-> > > > 
-> > > > [root@mikeb home]# mount -t reiser4 /dev/hda8 /home/test2
-> > > > [root@mikeb test2]# cd /home/test2
-> > > > [root@mikeb test2]# cp /usr/src/linux-2.6.0-test4.tar.bz2 ./
-> > > > [root@mikeb test2]# tar jxf linux-2.6.0-test4.tar.bz2
-> > > > 
-> > > > [root@mikeb test2]# rm -rf linux-2.6.0-test4/
-> > > > rm: reading directory `linux-2.6.0-test4//drivers/net/e100':
-> > > > Input/output error
-> > > > rm: reading directory `linux-2.6.0-test4//drivers/net/sk98lin':
-> > > > Input/output error
-> > > > rm: cannot remove directory `linux-2.6.0-test4//drivers/net': Directory
-> > > > not empty
-> > > > 
-> > > > I tried this on two different partitions (/dev/hda7 and /dev/hda8) the
-> > > > exact same files had the error on both, so it seems to be reproducible.
-> > > > It does however work fine if I use ext3 on the said partitions. This is
-> > > > a brand new HD (about a week old) so I doubt it has any bad blocks
-> > > > (badblocks /dev/hda8 doesn't report anything).
-> > > > 
-> > > > [root@mikeb home]# mkfs.reiser4 --version
-> > > > mkfs.reiser4 0.4.12
-> > > > 
-> > > > Kernel: 2.6.0-test4 #5 Mon Sep 1 14:20:14 PDT 2003 i686 unknown unknown
-> > > > GNU/Linux
-> > > > 
-> > > > CONFIG_REISER4_FS=y
-> > > > CONFIG_REISER4_LARGE_KEY=y
-> > > > 
-> > > > CPU:
-> > > > cpu family      : 6
-> > > > model           : 8
-> > > > model name      : AMD Athlon(tm) Processor
-> > > > stepping        : 1
-> > > > cpu MHz         : 1662.612
-> > > > cache size      : 256 KB
-> > > > 
-> > > > Distro: Mandrake 9.2beta.
-> > > 
-> > > There is something interesting in kernel logs?
-> 
-> Hello,
-> 
-> Can you run debugfs.reiser4 on /dev/hda8? What does it say?
-> 
--- 
-Best Regards,
- 
-Mike Benoit
-NetNation Communications Inc.
-Systems Engineer
-Tel: 604-684-6892 or 888-983-6600
- ---------------------------------------
- 
- Disclaimer: Opinions expressed here are my own and not 
- necessarily those of my employer
+Regards,
+	Dieter
 
