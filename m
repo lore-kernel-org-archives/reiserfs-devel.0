@@ -1,29 +1,34 @@
-From: Fabien Combernous <fcombernous@eprocess.fr>
-Subject: Archives are they availables some where ?
-Date: Mon, 28 Oct 2002 17:45:02 +0100
-Message-ID: <3DBD698E.5080405@eprocess.fr>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: Archives are they availables some where ?
+Date: Mon, 28 Oct 2002 19:57:31 +0300
+Message-ID: <15805.27771.983513.254457@laputa.namesys.com>
+References: <3DBD698E.5080405@eprocess.fr>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11811-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11812-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3DBD698E.5080405@eprocess.fr>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: reiserfs <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Fabien Combernous <fcombernous@eprocess.fr>
+Cc: reiserfs <reiserfs-list@namesys.com>
 
-Lo,
+Fabien Combernous writes:
+ > Lo,
+ > 
+ > I'm my wellcom mail on this mailling list nothink said avout archives.
+ > Archives are they availables some where ?
 
-I'm my wellcom mail on this mailling list nothink said avout archives.
-Archives are they availables some where ?
+Archives of reiserfs mailing list are available at
+http://marc.theaimsgroup.com/?l=reiserfs&r=1&w=2
 
-Fabien.
+ > 
+ > Fabien.
+ > 
 
---=20
+Nikita.
 
-Fabien COMBERNOUS - IT Engineer
-eProcess - Parc Club du Mill=E9naire Batiment n=B0 6
-1025 rue Henri Becquerel - 34000 Montpellier FRANCE
-http://www.eprocess.fr - +33 (0)4 67 13 84 50
-
+ > -- 
