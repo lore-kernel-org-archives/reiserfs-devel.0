@@ -1,55 +1,79 @@
-From: Linus Torvalds <torvalds@osdl.org>
-Subject: Re: The argument for fs assistance in handling archives (was: silent
- semantic changes with reiser4)
-Date: Thu, 2 Sep 2004 13:22:41 -0700 (PDT)
-Message-ID: <Pine.LNX.4.58.0409021315111.2295@ppc970.osdl.org>
-References: <20040826150202.GE5733@mail.shareable.org> 
- <200408282314.i7SNErYv003270@localhost.localdomain> 
- <20040901200806.GC31934@mail.shareable.org>  <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
-  <1094118362.4847.23.camel@localhost.localdomain> 
- <Pine.LNX.4.58.0409021045210.2295@ppc970.osdl.org>
- <1094150760.5809.30.camel@localhost.localdomain>
+From: Jamie Lokier <jamie@shareable.org>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 2 Sep 2004 21:25:12 +0100
+Message-ID: <20040902202512.GD24932@mail.shareable.org>
+References: <20040829191044.GA10090@thundrix.ch> <3247172997-BeMail@cr593174-a> <20040831081528.GA14371@thundrix.ch> <20040901201608.GD31934@mail.shareable.org> <1094118649.4847.30.camel@localhost.localdomain>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21323-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21324-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1094150760.5809.30.camel@localhost.localdomain>
+Content-Disposition: inline
+In-Reply-To: <1094118649.4847.30.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Tonnerre <tonnerre@thundrix.ch>, "Alexander G. M. Smith" <agmsmith@rogers.com>, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com, vonbrand@inf.utfsm.cl
 
-
-
-On Thu, 2 Sep 2004, Alan Cox wrote:
+Alan Cox wrote:
+> On Mer, 2004-09-01 at 21:16, Jamie Lokier wrote:
+> > (For example, if I edit an HTML file which is encoded in iso-8859-1,
+> > change it to utf-8 and indicate that in a META element, and save it
+> > under the same name, the full content-type should change from
+> > "text/html; charset=iso-8859-1" to "text/html; charset=utf-8".)
+> > 
+> > I don't see how you can do that without kernel support.
+> > 
+> > Don't say dnotify or inotify, because neither would work.
 > 
-> I asked our desktop people. They want something like inotify because
-> dontify doesn't cut it.
+> inotify done right is useful here as well as in a lot of other desktop
+> cases where dnotify doesn't really scale. Its enough to let me
+> 
+> 	- Find the new file
+> 	- Virus scan it
+> 	- Classify its possible type heirarchies
+> 	- Index it
 
-Well, dnotify() really _is_ inotify(), since it does actually work on 
-inodes, not dentries.
+Indeed it does, but it fails for the example I was commenting on to
+which you replied..
 
-I think what they are really complaining about is that dnotify() only 
-notifies the _directory_ when a file is changed, and they'd like it to 
-notify the file itself too. Which is a one-liner, really.
+      1. The file /var/www/site/index.html's written in vi.
+      2. "The daemon" (that's what I objected to) receives inotify.
+         blocks waiting for scheduler, however...
+      3. Seeing that vi is now finished, I phone person on other side
+         of world and say the updated file is now available.
+      4. Person fetches http://site/index.html
+         ...oh!  They receive the wrong content-type (bollocks!)
+      5. Eventually after paging & scheduling deems it appropriate,
+         "The daemon" gets to run, looks at file, updates content-type.
 
-Does the following make sense? (Totally untested, use-at-your-own-risk, 
-I've-never-actually-used-dnotify-in-user-space, whatever).
+In other words I was criticising Tonnerre's idea of a daemon which
+updates the xattrs by looking at file contents...  by definition, a
+daemon runs in the background, and the whole point of it updating a
+content-type xattr was obviously so that programs like httpd could
+just _use_ that xattr.
 
-		Linus
+That doesn't work, even if that daemon uses inotify.
 
-===== fs/dnotify.c 1.17 vs edited =====
---- 1.17/fs/dnotify.c	2004-08-09 18:45:22 -07:00
-+++ edited/fs/dnotify.c	2004-09-02 13:21:26 -07:00
-@@ -160,6 +160,8 @@
- 	if (!dir_notify_enable)
- 		return;
- 
-+	__inode_dir_notify(dentry->d_inode, event);
-+
- 	spin_lock(&dentry->d_lock);
- 	parent = dentry->d_parent;
- 	if (parent->d_inode->i_dnotify_mask & event) {
+Basically, anytime where you want an ordering guarantee that something
+will be recalculated in the interval after a file is modified and
+before the calculated result is used, you have to be very careful
+about exactly which code is using dnotify or inotify to achieve that.
+Single threaded programs can use it easily, but a multi-threaded file
+server has to be very careful about ordering if it's to avoid glitches.
+
+It is exactly a real problem I have faced in a multi-threaded HTTP
+server which uses dnotify to detect changes to prerequisite files and
+also changes to the path walked and permissions on it, and thus
+invalidate cached generated pages, thus giving strong cache
+guarantees.  Performance is great, if you ignore the race conditions...
+
+(One of the more popular small web servers, lighttpd (PHP people seem
+to like it), also uses dnotify.  Apparently it provides a big
+performance boost, just by avoiding stat() calls.  So I'm not alone in
+using dnotify for such things.)
+
+-- Jamie
+
