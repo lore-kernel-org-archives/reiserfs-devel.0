@@ -1,71 +1,51 @@
-From: Milan =?ISO-8859-1?Q?Holz=E4pfel?= <lists@mjh.name>
-Subject: Re: Vanilla kernel patch
-Date: Fri, 8 Oct 2004 16:29:25 +0200
-Sender: news <news@sea.gmane.org>
-Message-ID: <20041008162925.3e0e03c4.lists@mjh.name>
-References: <200410071402.33421.biscani@pd.astro.it>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Disk placement options
+Date: Fri, 08 Oct 2004 07:48:30 -0700
+Message-ID: <4166A8BE.8020103@namesys.com>
+References: <e96ff1200410062230890dccc@mail.gmail.com> <1097144372.1367.13.camel@tribesman.namesys.com> <41662599.6040908@namesys.com> <20041008091707.GP26192@nysv.org> <e96ff12004100802197490dabf@mail.gmail.com> <20041008092042.GR26192@nysv.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-22026-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22027-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20041008092042.GR26192@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
+Cc: Ash <ashrat@gmail.com>, Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Markus T=F6rnqvist wrote:
 
-On Thu, 7 Oct 2004 14:02:27 +0200
-Francesco Biscani <biscani@pd.astro.it> wrote:
+On Thu, Oct 07, 2004 at 10:28:57PM -0700, Hans Reiser wrote:
 
-> Hi,
->=20
-> yesterday I threw together a patchset to enable reiser4 for the vanilla=20
-> 2.6.9-rc3 kernel.  [...]
+ =20
 
-I did the same some time ago with the last official snapshot, which has
-worked fine for me so far.  reiser4 is used for my gentoo portage tree,
-my /var filesystem, for a partition where portage compiles the packages
-on and for Squid's cache (Squid is a http and ftp proxy).
+>>I have always intended to implement it someday, and to make major=20
+>>packing locality selectable from userspace, but I have not done so yet.
+>   =20
+>
 
-> What are the pitfalls I'm falling in, doing this? Is this safe or is ther=
-e=20
-> stuff in -mm that is absolutely needed by reiser4?
+    *cough*cough* online repacker with disk speed and usage analysis *cough*
 
-Well I'd make the guess that if there is something in the mm kernel
-which is absolutely needed by reiser4 then the thing won't link or you
-will be unable to load the module if you chose to compile it as a
-module.
+    ;)
 
-> Thanks!
-
-Regards,
-Milan
+    --=20
+    mjt
 
 
-- --=20
+>On Fri, Oct 08, 2004 at 02:49:50PM +0530, Ash wrote:
+> =20
+>
+>>For ReiserFS V3 ?
+>>   =20
+>>
+>
+>I assumed Hans' point was Reiser4, most of his answers to 3.6
+>questions are along the lines "see Reiser4"..
+>
+> =20
+>
 
-                   Milan Holz=E4pfel alias jagdfalke alias jag
-
-Antworten direkt an mich                             Answers directly to me
-gehen bitte an eine Addresse,                        go to an address one
-die man hier finden kann:                            can find here, please:
-
-Kontaktinfos sowie                                   Contact infos as well =
-as
-=D6ff GnuPG-Schl=FCssel    <URL:http://con.mjh.name/>    GnuPG Public Key
-GnuPG Fingerabdruck     4C8A 5FAF 5D32 6125 89D1     GnuPG Fingerprint
-                        0CE5 DB0C AF4F 6583 7966
-
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQFBZqRF2wyvT2WDeWYRAvvvAKDjc0RjCJoA9UdcJvSk7+gtWJFJ/ACeO29S
-FPoE3gdyY49VyNt/y57KLj4=3D
-=3DMs9R
------END PGP SIGNATURE-----
-
+Right Markus is,  on both points he made.
