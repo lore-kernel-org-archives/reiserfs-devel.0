@@ -1,59 +1,115 @@
-From: Bernd Schubert <bernd-schubert@web.de>
-Subject: fs errors on thinkpad R31
-Date: Thu, 9 Jan 2003 23:20:48 +0100
-Message-ID: <200301092320.48501.bernd-schubert@web.de>
+From: William Lee Irwin III <wli@holomorphy.com>
+Subject: Re: kswapd CPU usage and heavy disk IO
+Date: Thu, 9 Jan 2003 16:46:34 -0800
+Message-ID: <20030110004634.GB1147@holomorphy.com>
+References: <200301091431.54451.russell@coker.com.au> <3E1D9D10.40700@emageon.com> <200301091742.51101.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Type: Multipart/Mixed;
-  boundary="------------Boundary-00=_OQWGP2SY6ML4XFOXSPZK"
-Return-path: <reiserfs-list-return-12301-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="vkogqOf2sHV7VnPd"
+Return-path: <reiserfs-list-return-12302-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <200301091742.51101.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: ReiserFS <reiserfs-list@namesys.com>
+To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
+Cc: Brian Tinsley <btinsley@emageon.com>, Russell Coker <russell@coker.com.au>, ReiserFS <reiserfs-list@namesys.com>, Rik van Riel <riel@nl.linux.org>, Andrea Arcangeli <andrea@suse.de>, Linux Kernel List <linux-kernel@vger.kernel.org>
 
 
---------------Boundary-00=_OQWGP2SY6ML4XFOXSPZK
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Description: brief message
+Content-Disposition: inline
 
-Hi,
+Am Donnerstag, 9. Januar 2003 17:02 schrieb Brian Tinsley:
+>> I've been seeing the exact same thing on the same type of system in the
+>> same situations. This has been causing all kinds of problems on our
+>> clusters: the system live-locks for a minute or two, causes cluster
+>> heartbeats to not be received, and falsely fails over when the system
+>> recovers from the live-lock. The only thing I can find after the
+>> live-lock is that the runtime for kswapd is abnormally high.
+>> We started running sar (60 second collection interval) and were able to
+>> capture some stats during this live-lock period. I've snipped some I
+>> believe may be of interest. Note the missing stats between 03:59:43 and
+>> 04:02:03
+>> Oh BTW, this is on a stock 2.4.20 kernel (dual P3, 4GB), but I have seen
+>> the same behavior on 2.4.19 and 2.4.17.
 
-this is the second time within 14 days after which I had to run reiserfsc=
-k on=20
-my IBM Thinkpad R31.
-This time I lost a directory with 49 files (it seems it were only kernel=20
-modules, so probably not so important data).
+On Thu, Jan 09, 2003 at 05:42:51PM +0100, Dieter N?tzel wrote:
+> I think you should have cc'ed Andrea Arcangeli <andrea@suse.de>,
+> LKM and try 2.4.20-aa1. Are you sure it is a ReiserFS and not a
+> kernel thing?
 
-I have attached the error messages from the /var/log/messages file.
+There simply aren't enough scenarios for this to be a mystery. Both
+-aa and 2.5.x should have something in there for it: memclass-related
+buffer_head stuff in -aa, and bh-stripping + "bh-less" operation (for
+ext2) in 2.5.x + fewer (if any) bh's outside of actual dirty data.
 
-System: Thinkpad R31; vanilla linux-2.4.20 + cpufreq kernel
-
-
-Any ideas whats going wrong?=20
-
-
-Thanks in advance,
-=09Bernd
+Bloat monitoring scripts attached, which might provide somewhat more
+useful output to capture, though they certainly don't eliminate the
+need for /proc/meminfo logging. I'll also see if some of the accounting
+patches can be backported and send those to Marcelo and Andrea.
 
 
---------------Boundary-00=_OQWGP2SY6ML4XFOXSPZK
-Content-Type: application/x-gzip;
-  name="errors.log.gz"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="errors.log.gz"
+Bill
 
-H4sICMrzHT4AA2Vycm9ycy5sb2cA7dJBS+NAGIfxu5/i/QK6aUMiycXDqrAed/cmEtLk7TY0zsjM
-pNhvvxNEUBC9WHXk6aGFNGT++fFctUakkkVZZ2VdlLJSY2WrzuhYy+Cb4FQbY3utZf6WUXc6Sia9
-VR+vBLltQ7eRYCVsVPT+TrugvVijsji6eu3hO39cLIqsFq+t6zbNat9sdR8PNbt2HHpZWxefHX8m
-08eLshptt5VyWSzz5Ylc+m579uYBizybT3A6eHVr30x3fRu08X085oeVdTuMk1OxXTc5F2cHtx/M
-v/ltHu6U6yqPj4+fpWT3mfw5vxEf4qr4Z4sOOuiggw466KCDDjrooIMOOuiggw466KCDDjrooIMO
-Ouiggw466KCDDjrooIMOOuiggw466KCDDjrooIMOOuiggw466KCDDjrvrXNaZ3myOi+OP6wO6z9v
-/XxAWZw+CbO38X0m08Xm3kzz8caHOKu8nNtcP//I+a/fFz//3nxnxbTXf1oD1SEVq0Mrsv7LrKdg
-GqABGkh7PQXTAA3QQNrrKZgGaIAG0l5PwTRAAzSQ9noKpgEaoIG011MwDdAADaS9noJpgAZoIO31
-FEwDNEADaa+nYBqgARpIez0F0wAN0EDa6ymYBmiABtJeT8E0QAM0kPZ6CqaBD2zg6D8aeSUOKX8A
-AA==
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Description: bloatmon
+Content-Disposition: attachment; filename=bloatmon
 
---------------Boundary-00=_OQWGP2SY6ML4XFOXSPZK--
+#!/usr/bin/awk -f
+BEGIN {
+	printf "%18s    %8s %8s %8s\n", "cache", "active", "alloc", "%util";
+}
+
+{
+	if ($3 != 0.0) {
+		pct  = 100.0 * $2 / $3;
+		frac = (10000.0 * $2 / $3) % 100;
+	} else {
+		pct  = 100.0;
+		frac = 0.0;
+	}
+	active = ($2 * $4)/1024;
+	alloc  = ($3 * $4)/1024;
+	if ((alloc - active) < 1.0) {
+		pct  = 100.0;
+		frac = 0.0;
+	}
+	printf "%18s: %8dKB %8dKB  %3d.%-2d\n", $1, active, alloc, pct, frac;
+}
+
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Description: bloatmeter
+Content-Disposition: attachment; filename=bloatmeter
+
+#!/bin/sh
+while : ; do
+	grep -v '^slabinfo' /proc/slabinfo	\
+		| bloatmon			\
+		| sort -n -k 4,4		\
+		| head -22
+	sleep 5
+	echo
+done
+
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Description: bloatmost
+Content-Disposition: attachment; filename=bloatmost
+
+#!/bin/sh
+
+while true
+do
+	bloatmon < /proc/slabinfo \
+		| sort -rn -k 3,3 \
+		| head -22
+	sleep 60
+	echo
+done
+
+--vkogqOf2sHV7VnPd--
