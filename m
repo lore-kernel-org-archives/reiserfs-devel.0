@@ -1,39 +1,57 @@
-From: Anders Widman <andewid@tnonline.net>
-Subject: Re: Promise raid controller writes to disk, anybody know where?
-Date: Wed, 16 Apr 2003 18:59:11 +0200
-Message-ID: <1410590683.20030416185911@tnonline.net>
-References: <Pine.LNX.4.44.0304161239010.24595-100000@dragon.inside.ntisys.com>
- <3E9D88FB.6090109@namesys.com> <1389382.20030416185111@tnonline.net>
- <3E9D8ABC.8050601@namesys.com>
-Reply-To: Anders Widman <andewid@tnonline.net>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: bad sb - mounting problem
+Date: Wed, 16 Apr 2003 21:17:30 +0400
+Message-ID: <200304162117.30155.vitaly@namesys.com>
+References: <200304161841.46413.noster@venture.org.pl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13685-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-13686-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E9D8ABC.8050601@namesys.com>
+In-Reply-To: <200304161841.46413.noster@venture.org.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs-List@namesys.com
+To: Bartlomiej Pater <noster@venture.org.pl>
+Cc: reiserfs-list@namesys.com
 
->>>>>I just bought this motherboard with a promise raid controller builtin
->>>>>whose manual mentions that it writes information to disk (volume and
->>>>>config info I believe).
 
-<snip>
+Hi,=20
 
-> It is for my Mom, I want both windows and Linux, and I was hoping the 
-> whole drive would get mirrored by the hardware.  It is okay though, I 
-> will have mom use dd once a week to do it, and this will protect from 
-> viruses better than a synchronous mirror.
+> -----------------------
+> Apr 16 18:24:03 monada kernel: Using r5 hash to sort names
+> Apr 16 18:24:03 monada kernel: ReiserFS version 3.6.25
+> Apr 16 18:24:03 monada kernel: reiserfs: checking transaction log
+> (device 03:07) ...
+> Apr 16 18:24:03 monada kernel: journal-1204: REPLAY FAILURE fsck
+> required! Trying to replay onto a log block
+> Apr 16 18:24:03 monada kernel: Replay Failure, unable to mount
+> Apr 16 18:24:03 monada kernel: reiserfs_read_super: unable to
+> initialize journal space
+> ------------------------
+>
+> now one of my partitions is unavailable. I've tried fsck with
+> --rebuild-sb and --rebuild-tree options but with no results [and no
+> errors either]. I've googled through internet and searched this
+> mailing list archives.
 
-The  BIOS  is  handling mirroring, which is supported good in Windows,
-and as "experimental" in Linux.
+What do you mean by saying "no results [and no errors either]"?
+Do you mean that reiserfsck --rebuild-tree finishes with no problem,
+but on fs mount the kernel sais "REPLAY FAILURE" again?
 
-//Anders
+> I've downloaded v3.6.5 [+patch] of reiserfsprogs=20
 
---------
-PGP public key: https://tnonline.net/secure/pgp_key.txt
+right.
 
+> and compiled kernel with debug on but with no changes. Is there somethi=
+ng=20
+> I can do to salvage the data?
+
+What does reiserfsck --check say?
+
+So, you still have the same "REPLAY FAILURE" on mount, right?
+
+--=20
+Thanks,
+Vitaly Fertman
