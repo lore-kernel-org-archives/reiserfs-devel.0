@@ -1,43 +1,60 @@
 From: Esben Stien <b0ef@esben-stien.name>
 Subject: Re: Congratulations! we have got hash function screwed up
-Date: Thu, 30 Dec 2004 19:36:49 +0100
-Message-ID: <87hdm3ocou.fsf@quasar.esben-stien.name>
-References: <3DF9165145FACB4C96977FF650C1E90411F73702@its-mail1.its.corp.gwl.com>
+Date: Thu, 30 Dec 2004 19:46:09 +0100
+Message-ID: <87d5wroc9a.fsf@quasar.esben-stien.name>
+References: <77912E9FD42896419D1CEF15E1C397A58AFCF1@london.jaguarfreightservices.local>
+	<m38y7gx8kq.fsf@merlin.emma.line.org>
+	<20041230235911.4911a20c.hihone@bigpond.net.au>
+	<m3sm5nj2ef.fsf@merlin.emma.line.org>
+	<87is6jpvdu.fsf@quasar.esben-stien.name>
+	<20041230174732.GB5206@favonius>
+	<87zmzvoeeo.fsf@quasar.esben-stien.name>
+	<20041230183046.GD5206@favonius>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22968-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22969-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3DF9165145FACB4C96977FF650C1E90411F73702@its-mail1.its.corp.gwl.com> (James
- Burnes's message of "Thu, 30 Dec 2004 11:16:39 -0700")
+In-Reply-To: <20041230183046.GD5206@favonius> (sander@humilis.net's message
+ of "Thu, 30 Dec 2004 19:30:46 +0100")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Burnes, James" <james.burnes@gwl.com>
-Cc: sander@humilis.net, Matthias Andree <ma@dt.e-technik.uni-dortmund.de>, hihone@bigpond.net.au, reiserfs-list@namesys.com
+To: sander@humilis.net
+Cc: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>, hihone@bigpond.net.au, reiserfs-list@namesys.com
 
-"Burnes, James" <james.burnes@gwl.com> writes:
+Sander <sander@humilis.net> writes:
 
->> dd it, loop it, fsck it.
-> That won't help you if a circuit board, spindle, read head or other
-> mechanism fails.
+>> dd it, loop it, fsck it. 
+>  
+> I'm sure a friend of mine disagrees with you after paying big bucks
+> to a Norway based disk recovery company after a disk crash and zero
+> backups.  A Dutch recovery company couldn't recover the disk.
 
-Sure, but that is not a simple case of bad blocks;)
+Probably IBAS;). What was the problem of the hd then?. Why couldn't
+the dutchies do the job?
 
-> Then you better hope the data wasn't *that* valuable or you know
-> good platter recovery shop.
+> And restore from backup is always quicker and less stressful on the
+> nerves.
 
-We got IBAS in Norway; the price for an evaluation is close to a
-handful of gold.
+Like I said to James, this might not only be the fault of the user. 
 
-> Backups are cheap.  Recovery is very expensive.
+> Maybe in your situation. But in general I advice everybody to make
+> backups. Might also be the reason nobody wrote a reiser4 undelete
+> plugin yet.
 
-Sure, but your not factoring in murphys law here. A tool to undelete
-would come many people in handy who even got proper backup solutions.
+It's no use to talk about backups when we talk about undelete
+features; backups are for recovery after nuclear explosions, faulty
+hardware which makes it inaccessible to even retrieve data out of it
+or something similar.
 
-Besides, a recovery is not the same as a feature to undelete. Such a
-feature would maybe save a days work, which is a lot in some circles.
+It would be too expensive to do all this backup'ing in userspace. When
+a file gets deleted, a proper procedure to retrieve it would be to
+umount the filesystem, scan it for the data which was removed and then
+put it back in the tree again. It's not like reiserfs overwrites this
+data, it's still there, so why should there be an artificial barrier
+to getting this data back?.
 
 -- 
 Esben Stien is b0ef@esben-stien.name
