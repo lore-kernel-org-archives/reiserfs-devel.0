@@ -1,51 +1,50 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Subject: Re: data logging and kernel 2.4.20
-Date: Tue, 6 Jul 2004 10:58:12 +0200
-Message-ID: <200407061058.12918.christian.mayrhuber@gmx.net>
-References: <200407051213.05033.fjcabello@visual-tools.com> <200407051346.32673.cmayr@iicm.edu> <200407060929.06695.fjcabello@visual-tools.com>
+From: Cami <camis@mweb.co.za>
+Subject: Re: --rebuild-tree
+Date: Tue, 06 Jul 2004 11:20:21 +0200
+Message-ID: <40EA6ED5.8070003@mweb.co.za>
+References: <200407060828.56801.aotto1968@onlinehome.de> <40EA5193.2040604@mweb.co.za> <40EA6932.7090606@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19525-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19526-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200407060929.06695.fjcabello@visual-tools.com>
-Content-Disposition: inline
+In-Reply-To: <40EA6932.7090606@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-On Tuesday 06 July 2004 09:29, Francisco Javier Cabello Torres wrote:
-> > I'd not suggest to use these, those patches are really old and are likely
-> > to have bugs.
-> > Use ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.25/
-> > and a kernel >= 2.4.25 with them.
-> > I have them running on several production systems with a 2.4.26 kernel.
->
-> do Suse patches include reiserfs bug fixes?
-As far I know the patches for 2.4.xx have not been updated with later bug 
-fixes.
-Namesys recommends a kernel >= 2.4.24 for reiserfs use.
-See http://www.namesys.com/download.html
+Hi Vladimir
 
-The data logging patches have been developed along the 2.4.xx
-kernel series and the ones for 2.4.25 are the latest and the most stable.
+>> Can anyone tell me roughly how dangerous this is
+> 
+> it is not dangerous. Just, please, make sure you have recent reiserfsck.
 
-I don't know if these patches work with 2.4.27-rc3, they may interfere with 
-a bug fix for mounting reiserfs on Out-Of-Memory conditions.
-I can confirm that these patches work reliable on 2.4.26.
-(At least on the two intel servers it's used on.)
+Yea.. I updated to the latest version last night..
 
-If I were you I would not use an old kernel like 2.4.20 that has MANY security
-holes, especially because you are not bound to some vendor kernel like
-red hat or suse.
+>> and roughly how long something like this will take?
+> 
+> hard to say. It depends on hardware. Given that 35 gb is not too much 
 
-You can try kernel 2.6.7, too. It comes with data=ordered + xattr/acl + quota 
-support per default.
-Later kernels than 2.6.7 may get a new block allocator that behaves better
-in multiprocess situations and disk-barrier support.
+Its a big ass Dell storage device (CX600) with fibre
+drives so its quite a monster / quite fast..
 
--- 
-lg, Chris
+> reiserfsck --rebuild-tree should not take too much. 2 hours? Vitaly may 
+> want to correct me, though
 
+mm.. thats not too bad at all..
+
+>> The filesystem stores all the users mailboxes in
+>> maildir format so there are millions of files..
+>>
+>> Any tips/comments would be appreciated..
+> 
+> PS: please do not forget that backuping is important when dealing with 
+> user mailboxes even if you are running super reliable hardward and 
+> bugless software.
+
+Busy making a snapshot of the filesystem now..
+
+Thanks!
+Cami
