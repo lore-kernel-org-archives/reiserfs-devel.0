@@ -1,66 +1,48 @@
-From: Christophe Saout <christophe@saout.de>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 18:04:42 +0200
-Message-ID: <1093536282.5482.6.camel@leto.cs.pocnet.net>
-References: <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: reiser4 plugins (was: silent semantic changes with reiser4)
+Date: Thu, 26 Aug 2004 18:06:01 +0200
+Message-ID: <20040826160601.GB4326@lst.de>
+References: <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <1093527307.11694.23.camel@leto.cs.pocnet.net> <20040826134034.GA1470@lst.de> <1093528683.11694.36.camel@leto.cs.pocnet.net> <20040826153748.GA3700@lst.de> <1093535334.5482.1.camel@leto.cs.pocnet.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-KEDbg+OWlcQIW+DZ1Yjv"
-Return-path: <reiserfs-list-return-20709-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20710-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com>
+Content-Disposition: inline
+In-Reply-To: <1093535334.5482.1.camel@leto.cs.pocnet.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Rik van Riel <riel@redhat.com>
-Cc: Jamie Lokier <jamie@shareable.org>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe Saout <christophe@saout.de>
+Cc: Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
---=-KEDbg+OWlcQIW+DZ1Yjv
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Thu, Aug 26, 2004 at 05:48:54PM +0200, Christophe Saout wrote:
+> > > I don't know, ask Hans. How could the VFS know it a filesystem wants to
+> > > do something specific with a file that is completely transparent to the
+> > > VFS?
+> > 
+> > The VFS shouldn't, that the whole point.  That's why it allows the
+> > filesystem to register different method tables for each object.
+> 
+> Only the objects it can distinguish.
 
-Am Donnerstag, den 26.08.2004, 11:54 -0400 schrieb Rik van Riel:
+Yes, every inode can have different operation vectors.  Which is the
+smallest possible object the VFS knows about.
 
-> > > And if you read test.compound (the main stream) you get a special for=
-mat
-> > > that contains all the components. You can copy that single stream of
-> > > bytes to another (reiser4) fs and then access test.compound/test.txt
-> > > again.
-> >=20
-> > (To Rik especially), this is the design which more or less satisfies
-> > lots of different goals at once.
->=20
-> And if an unaware application reads the compound file
-> and then writes it out again, does the filesystem
-> interpret the contents and create the other streams ?
->=20
-> Unless I overlook something (please tell me what), the
-> scheme just proposed requires filesystems to look at
-> the content of files that is being written out, in
-> order to make the streams work.
+> >         ops->file    = reiser4_file_operations;
+> >         ops->symlink = reiser4_symlink_inode_operations;
+> >         ops->special = reiser4_special_inode_operations;
+> >         ops->dentry  = reiser4_dentry_operations;
+> >         ops->as      = reiser4_as_operations;
+> 
+> How could reiser4 register other operations for files that should be
+> stored encrypted or compressed? It's all under reiser4_file_operations.
 
-Yes, the main compound stream unaware applications would see would just
-be a writable view of its contents. Probably not trivial to implement
-but doable.
+Again, your confusing upper and lower plugins.  For things happening
+below the pagecache you could register different address_space
+operations which sometimes makes sense.  But you want e.g. different
+inode_operations for directories vs symlinks vs files.
 
-It should be a simple format. Something simliar to tar. The worst thing
-that can happen is people start writing plugins for every existing
-compound format out there. It should be the other way around, agree on a
-simple compound format and encourage applications to use this one if the
-want to use this advantage.
-
-
---=-KEDbg+OWlcQIW+DZ1Yjv
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQBBLgoaZCYBcts5dM0RAn9iAJ9pzNxBRNRfOhSCNNFEnaHNqWCxgwCgjSHr
-BZY66cGAMVHi5+ZRNCdVYo0=
-=YXoN
------END PGP SIGNATURE-----
-
---=-KEDbg+OWlcQIW+DZ1Yjv--
+Please read through some linux filesystem code, okay :)
 
