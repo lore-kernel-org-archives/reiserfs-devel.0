@@ -1,40 +1,39 @@
-From: Simon Waters <simonw@zynet.net>
-Subject: Re: Directory updates in filesystems
-Date: Mon, 1 Nov 2004 10:32:17 +0000
-Message-ID: <1099305140.1205.TMDA@h34.zynet2.co.uk>
-References: <1098955408.29128.TMDA@h34.zynet2.co.uk>
-	<4182B2F4.2080607@namesys.com>
+From: =?iso-8859-1?q?Lars_Tobias_B=F8rsting?= <larstobi@itea.ntnu.no>
+Subject: Re: Reiser4 kernel modules
+Date: Mon, 01 Nov 2004 14:07:45 +0100
+Message-ID: <8jflldlhg4e.fsf@panter.stud.ntnu.no>
+References: <8jfy8hpgzk4.fsf@panter.stud.ntnu.no>
+	<1099299984.1712.82.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22239-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-22241-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4182B2F4.2080607@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <1099299984.1712.82.camel@tribesman.namesys.com> (Vladimir
+ Saveliev's message of "Mon, 01 Nov 2004 12:06:24 +0300")
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Reiser4 <reiserfs-list@namesys.com>
 
-On Friday 29 Oct 2004 10:15 pm, Hans Reiser wrote:
-> Simon Waters wrote:
-> 
-> >Are there any file systems that fully address this issue
+Vladimir Saveliev <vs@namesys.com> writes:
+
+> On Fri, 2004-10-29 at 22:16, Lars Tobias B=F8rsting wrote:
+>> Is there no such thing as a CVS-repository or a tarball release for
+>> the reiser4 source?
+>>=20
+>> If there is such a thing as a tarball release or CVS-repository, is it
+>> then possible to compile it as kernel modules [...] If it is not
+>> possible to compile it as kernel modules, why is this?
 >
-> I think no.  It is quite fixable in a variety of ways.  If someone wants
-> to fix it or have it fixed, let me know.
+> reiser4 needs some changes in kernel code.
 
-I mostly wanted to make sure I'd understood the problem correctly.
+And why does reiser4 need changes in the kernel code? Is it really a
+smart approach to require kernel changes for reiser4 to work?
 
-I can see it being a desirable option for a filesystem, indeed perhaps it 
-ought to be a default behaviour that can be switched off for performance, as 
-the "behaviour of least surprise". 
+Why isn't it possible to build reiser4 as kernel modules?
 
-However I think immediately it isn't obvious that it is needed, as in many 
-cases people are using disparate file systems or NFS, and we have lived so 
-far without it. But then if it did exist people might see it as a compelling 
-reason to use the filesystem supplying it for specific purposes, much as DJB 
-recommends BSD and FFS without soft updates for aspects of qmail (if I 
-understood it correctly).
+--=20
+Lars Tobias B=F8rsting
+
