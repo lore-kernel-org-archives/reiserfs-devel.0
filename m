@@ -1,76 +1,61 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Reiser4 status as of this weekend
-Date: Wed, 19 May 2004 22:50:56 +0300
-Message-ID: <20040519195056.GM24604@nysv.org>
-References: <003a01c4377d$d653eac0$7d02a8c0@toronto.chantrynetworks.com> <40A68F75.2030306@namesys.com> <20040515221017.GL1232@nysv.org> <40A7A553.2020901@namesys.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: ReiserFS Maximum file size (in practice)
+Date: Wed, 19 May 2004 16:04:49 -0400
+Message-ID: <40ABBDE1.9000804@suse.com>
+References: <40AA74CA.5040306@suse.com>	 <1084927507.27142.2.camel@watt.suse.com>  <40AB4F5B.7050109@suse.com> <1084971454.27142.12.camel@watt.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18771-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18772-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <40A7A553.2020901@namesys.com>
+In-Reply-To: <1084971454.27142.12.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Russell Treleaven <rtreleaven@chantrynetworks.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-On Sun, May 16, 2004 at 10:30:59AM -0700, Hans Reiser wrote:
->Markus T=F6rnqvist wrote:
+Chris Mason wrote:
+> We can probably talk Jan Kara into fixing dquot_transfer, and probably
+> talk Andrew Morton into allowing a resolution on the inode->i_bytes
+> mess.  ext2/3 suffer from the same problem (read ext[23]_max_size).
 
-[mmap]
->>>substantial work to do right, and is in progress.  We currently have a=20
->>>fix that costs performance, and are fixing the performance issue (which =
+The comment on ext[23]_max_size doesn't only refer to the in-memory 
+i_blocks, but also to the on-disk one as well. Unlike ReiserFS, Ext[23] 
+doesn't track blocks as a multiple of the filesystem block size. It 
+tracks it as a multiple of 512B blocks, just like the in memory one. 
+(see ext[23]_read_inode and ext[23]_do_update_inode; There's no 
+blocksize translation)
 
->>>is fixable but requires code....).
->>Would you say this is the biggest issue?
->It is the only issue that I know of.
+ReiserFS is artificially limited by the VFS layer (and in its own use of 
+i_blocks to update stat_data->sd_blocks); Ext[23] is limited by its own 
+disk format. Other than its i_blocks, ext[23]'s triple indirection 
+should be able to support files up to ~ 4TB.
 
-How about Copy-on-capture? Is it usable? Does it provide better
-performance?
 
->>What about NFS?
->fixed by nikita recently but not released.  See next snapshot.
+> I think I'd rather just fix the quota problem right now, it's a smaller
+> change.
 
-I'm trying BK pulls. Yesterday it didn't compile, xfs seemed broken.
-Retrying now, after bk -r get.
+I think there's going to be a decent amount of work in either case. 
+Definately moreso than the patch I posted earlier. There are two scenarios:
 
-I wrote a lame script, haven't used it much myself, but it should do
-something. Like get a BK pull.
-http://mjt.nysv.org/reiser/getreiser.sh
-http://mjt.nysv.org/reiser/getreiser.sh.txt
+1) Fix just reiserfs. This means adding a sd_blocks field to the 
+in-memory inode, increasing every reiserfs inode by 4 bytes. It also 
+means that every time a quota operation occurs, we need to follow it 
+with an update to our internal block count as well. It's easy enough to 
+do, just not pretty.
 
->by doing the architectural work....  Also, it requires that 2/3 of the=20
->work (by cost) be done in the US, and the moscow embassy has gone into=20
+2) Fix the VFS layer. Fixing the VFS layer is simple, but there are 
+filesystems that assume i_blocks is 32-bit already and they'd need to be 
+cleaned up also.
 
-Have you tried other governments?
+Unfortunately, all this may be a moot point anyway. If a file is created 
+on a kernel supporting file sizes > 2 TB, and is then updated on a 
+previous kernel, wrapping will occur and cause breakage.
 
->total asshole mode and isn't giving work visas to most russians.  Still,=20
->we will try to get work visas in 6 months.  I hope that it being for DoD=20
->work will increase the chance of getting visas.
+-Jeff
 
-That must not fail.
-The DoD can't say "please give these guys work visas" just to cover
-their own interests? Or this has no effect?
-
->It is in the source code..... we have the best commented source code in=20
->the kernel (Andrew Morton is the only other kernel person who comments=20
->code well that I know of).
-
-There was also a tangent on the topic of creating daily snapshots.
-
-This might make it easier for people to come to terms with Reiser4.
-People have many reasons to dislike BK, so a daily snapshot patch
-against some vanilla system may be a good thing.
-
-However, having broken code in the BK for days without having time to
-fix it is not good.
-
-So this would require changelogs and some testing on snapshots so that
-every once in a while one can be labeled "stable as hell"
-
---=20
-mjt
-
+-- 
+Jeff Mahoney
+SuSE Labs
