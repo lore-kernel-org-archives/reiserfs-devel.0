@@ -1,25 +1,23 @@
-From: Marcel Hilzinger <marcel@hilzinger.hu>
-Subject: WinFS
-Date: Fri, 14 May 2004 12:01:53 +0200
-Message-ID: <200405141201.53970.marcel@hilzinger.hu>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18678-reiserfs=m.gmane.org@namesys.com>
+From: "Patrick.Le-Dot@bull.net" <Patrick.Le-Dot@bull.net>
+Subject: SetPageReferenced usage
+Date: Fri, 14 May 2004 13:31:54 +0200
+Message-ID: <200405141131.NAA159118@alpha12.frec.bull.fr>
+Return-path: <reiserfs-list-return-18679-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-http://news.com.com/2100-1016_3-5212077.html?tag=3Dnefd.lede
 
-As there was a discussion on the list about WinFS some days ago, I thougt,
-I'll paste this link here.
+Hi list,
 
-=2D-=20
-=DCdv=F6zlettel -- Mit freundlichen Gr=FCssen,
-Marcel Hilzinger
+I'm interested to understand why fs/reiserfs/file.c use SetPageReferenced
+instead of the mark_page_accessed function (like in all others FS) ?
 
+Thanks to reply to me directly as I'm not on the list.
+Patrick
