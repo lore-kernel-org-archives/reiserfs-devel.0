@@ -1,32 +1,32 @@
-From: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
+From: Sebastian Kaps <seb-keyword-reiserfs.0462a0@toyland.sauerland.de>
 Subject: Re: Linux 2.4 -> 2.6 migration
-Date: Sat, 08 Nov 2003 13:21:37 +0100
-Message-ID: <m3u15fqcdq.fsf@merlin.emma.line.org>
-References: <m3ptg42t8l.fsf@toyland.sauerland.de>
+Date: Sat, 08 Nov 2003 13:32:03 +0100
+Message-ID: <m3znf7avng.fsf@toyland.sauerland.de>
+References: <m3ptg42t8l.fsf@toyland.sauerland.de> <200311072107.50957.>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16018-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16019-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <m3ptg42t8l.fsf@toyland.sauerland.de> (Sebastian Kaps's message
- of "Fri, 07 Nov 2003 14:39:06 +0100")
+In-Reply-To: <200311072107.50957.> (Quinn Harris's message of "Fri, 7 Nov
+	2003 21:08:48 -0700")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sebastian Kaps <seb-keyword-reiserfs.0462a0@toyland.sauerland.de>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Sebastian Kaps <seb-keyword-reiserfs.0462a0@toyland.sauerland.de> writes:
+Hi Quinn!
 
-> Is there something concerning ReiserFS I should know when migrating from
-> Linux 2.4 to Linux 2.6?
+> Did you enable IDE TCQ in your 2.6 kernel?  To quote http://www.namesys.com/
+> download.html
 
-No. Make sure the file system is fine before booting a new kernel, using
-a CURRENT reiserfsprogs is essential. Namesys have made lots of fixes
-recently.
+I guess I did enable TCQ.
+
+> "Don't enable TCQ (Tagged Command Queuing) in 2.5 (and modified 2.4) kernels. 
+> TCQ is known broken currently and it will corrupt your filesystems for sure."
+
+Okay, that would explain it...
 
 -- 
-Matthias Andree
-
-Encrypt your mail: my GnuPG key ID is 0x052E7D95
+Ciao, Sebastian
