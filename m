@@ -1,24 +1,42 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Reiser4 on SuSE 9.1
-Date: Fri, 04 Jun 2004 10:23:41 -0400
-Message-ID: <1086359021.22636.3685.camel@watt.suse.com>
-References: <200406041414.HAA14660@amber.he.net>
+From: "Mike Young" <myoung@wildernessvoice.com>
+Subject: RE: Reiser4 on SuSE 9.1
+Date: Fri, 4 Jun 2004 07:31:35 -0700
+Message-ID: <200406041431.HAA16535@amber.he.net>
+References: <1086359021.22636.3685.camel@watt.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19010-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19011-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200406041414.HAA14660@amber.he.net>
+In-Reply-To: <1086359021.22636.3685.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Mike Young <myoung@wildernessvoice.com>
+To: 'Chris Mason' <mason@suse.com>
 Cc: reiserfs-list@namesys.com
+
+Thanks for the quick response Chris.  I can certainly understand your
+hesitancy.  I use SuSE for a reason.  However, I also like to live life on
+the edge.  So, getting a head start is always desirable.  This time, I'm
+just willing to toss out all of the other fixes you all have made to the
+kernel.
+
+Thanks again,
+
+Mike
+
+-----Original Message-----
+From: Chris Mason [mailto:mason@suse.com] 
+Sent: Friday, June 04, 2004 7:24 AM
+To: Mike Young
+Cc: reiserfs-list@namesys.com
+Subject: Re: Reiser4 on SuSE 9.1
 
 On Fri, 2004-06-04 at 10:14, Mike Young wrote:
 > Has anyone put Reiser4 on the latest SuSE 9.1 release?  I'd like to use it
-> there without having to patch a pristine kernel.  Preferably, I'd like to be
+> there without having to patch a pristine kernel.  Preferably, I'd like to
+be
 > able to use their RPM build environment so I can continue to take updates
 > from SuSE.
 > 
@@ -35,5 +53,7 @@ figure out the suse build setup:
 http://www.suse.de/~agruen/kernel-doc/
 
 -chris
+
+
 
 
