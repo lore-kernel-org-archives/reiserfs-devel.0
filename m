@@ -1,43 +1,89 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: updated data logging and quota for 2.4.25
-Date: Mon, 23 Feb 2004 11:02:45 -0500
-Message-ID: <1077552165.23064.98.camel@watt.suse.com>
-References: <1077491080.26930.151.camel@watt.suse.com>
-	 <403A0192.8080201@dotcom.pl>  <403A21FD.4090409@ysu.edu>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: i/o error (lost+found) with reiser4
+Date: Mon, 23 Feb 2004 20:00:17 +0300
+Message-ID: <20040223170017.GC1712@backtop.namesys.com>
+References: <200402222338.23623.henning-04@die.informatik.uni-siegen.de> <20040223152003.GA1712@backtop.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16894-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16895-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <403A21FD.4090409@ysu.edu>
+Content-Disposition: inline
+In-Reply-To: <20040223152003.GA1712@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: John Dalbec <jpdalbec@ysu.edu>
-Cc: myciel <myciel@dotcom.pl>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Henning Westerholt <henning-04@die.informatik.uni-siegen.de>
+Cc: reiserfs-list@namesys.com
 
-On Mon, 2004-02-23 at 10:53, John Dalbec wrote:
-> myciel wrote:
-> 
-> > Chris Mason wrote:
+On Mon, Feb 23, 2004 at 06:20:03PM +0300, Alex Zarochentcev wrote:
+> On Sun, Feb 22, 2004 at 11:38:23PM +0100, Henning Westerholt wrote:
+> > Hello all,
 > > 
-> >> Hello everyone,
-> >>
-> >> I've rediffed data logging and quota against 2.4.25.  The only patch
-> >> that really changed was kinoded-9, but the others should give you fuzz
-> >> free patching now too.
-> >>
-> >> ftp.suse.com/pub/people/mason/patches/data-logging/2.4.25
-> >>  
+> > after the regular stat data error, i try to fix the fs as usual. Today the 
+> > fsck program complains the first time about a fatal corruption. I attached 
+> > the output from the first fsck run.
+
+Can you tell more about workload which caused the corruption?  Also, we like
+to know reiser4 verion, kernel and hardware configuration.
+
+> > 
+> > I run fsck with option "build-fs" as recommended, and it seems to fix the 
+> > error. But now a "ls" in the root of the reiser4 partiton complains about a 
+> > input/ output error on the directory "lost+found". 
+> > Output from the system log:
+> > 
+> > +++++++++
+> > reiser4[ls(14750)]: check_open_format40 
+> > (fs/reiser4/plugin/disk_format/disk_format40.c:551)[vpf-1360]:
+> > WARNING: The object with the oid 3441763 greater then the max used oid 3441762 
+> > found.
+
+If there was no fs activity (file creation/deletion) after "build-sb",
+you can erase blocks ##19, 20 on the fs:
+
+backup:
+dd if=/dev/hdd8 skip=19 bs=4096 count=2 of=hdd8.19-20x4k.dat
+
+erase:
+dd if=/dev/zero of=/dev/hdd8 seek=19 bs=4096 count=2 conv=notrunc
+
+> > reiser4[ls(14831)]: check_open_format40 
+> > [...the same with stat, bash...]
+> > +++++++++
+> > 
+> > Error messages from ls, stat..:
+> > 
+> > +++++++++
+> > # ls /var/tmp/
+> > ls: /var/tmp/lost+found: Input/output error  
+> > ccache  distfiles  emerge-webrsync  kdecache-party  portage  portage-pkg  sync 
+> > 
+> > # stat /var/tmp/lost+found
+> > stat: cannot stat `/var/tmp/lost+found': Input/output error
+> > 
+> > # cd /var/tmp/lost+found
+> > -bash: cd: /var/tmp/lost+found: Input/output error
+> > 
+> > #fsck.reiser4 /dev/hdd8 
+> > ...
+> > No corruption found.
+> > +++++++++
+> > 
+> > Should i rebuild the partition? Is this a know problem?
 > 
-> ftp.suse.com is an external mirror of the internal site that Chris updates. 
-> Sometimes it takes a while to synchronize.
+> This is not known but I have an idea why it happened.  I will discuss it with
+> our fsck maintainer and then we tell you how to fix the corruption. 
+> 
+> Thanks for the report. 
+> 
+> > Best regards,
+> > 
+> > Henning
+> 
+> -- 
+> Alex.
 
-In this case, a disk rebuild rebuilt everything except the patches I
-posted.  I had probably uploaded them in a tiny window between commands
-the admin was running.  They should be there now.
-
--chris
-
-
+-- 
+Alex.
