@@ -1,28 +1,35 @@
-From: "Fred -- Speed Up --" <speedup@free.fr>
-Subject: What about the first official Reiser4 pre-beta patch for 2.5.73 ;) ?
-Date: Mon, 23 Jun 2003 21:15:16 +0200
-Message-ID: <002901c339bb$c7b91910$0200a8c0@xpstation>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: ReiserFSchk "Should not happen."
+Date: Mon, 23 Jun 2003 23:30:49 +0400
+Message-ID: <200306232330.49898.vitaly@namesys.com>
+References: <20030623180547.GA25393@atlantis.dolphins.ch>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0026_01C339CC.8AE01A00"
-Return-path: <reiserfs-list-return-14676-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14677-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20030623180547.GA25393@atlantis.dolphins.ch>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: ReiserFS ML <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Philipp Morger <philipp.morger@dolphins.ch>
+Cc: reiserfs-list@namesys.com
 
-------=_NextPart_000_0026_01C339CC.8AE01A00
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 
-It would be great if you could release some patch file for the 2.5.73 =
-kernel, bundled with the latest reiserprogs, in order to test the =
-distribution process for the first official beta patch that you planned =
-for the end of this month ;)
+Hi,
 
-Fred
-------=_NextPart_000_0026_01C339CC.8AE01A00--
+> do_pass_2: The block (2184831) is in the tree already. Should not happen.
+> do_pass_2: The block (2184831) is in the tree already. Should not happen.
+> do_pass_2: The block (2184831) is in the tree already. Should not happen.
+> do_pass_2: The block (2184831) is in the tree already. Should not happen.
+> --- 2,6GB of log truncated --
 
+We experienced that with 3.6.4 reiserfsprogs package from Debian as they 
+applied some faulty patch to it. Would you try reiserfsprogs-3.6.8 from our 
+ftp site and email me about the result?
+
+-- 
+Thanks,
+Vitaly Fertman
