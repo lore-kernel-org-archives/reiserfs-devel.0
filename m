@@ -1,82 +1,40 @@
-From: Bill Rees <mtfbwy_1968@yahoo.com>
+From: Chris Mason <mason@suse.com>
 Subject: Re: Large Partition Performance Test
-Date: Fri, 12 Apr 2002 06:21:33 -0700 (PDT)
-Message-ID: <20020412132133.2596.qmail@web10007.mail.yahoo.com>
-References: <20020412133937.A21820@namesys.com>
-Reply-To: bill@billrees.com
+Date: 12 Apr 2002 09:21:22 -0400
+Message-ID: <1018617682.14429.119.camel@tiny>
+References: <20020411181459.69516.qmail@web10002.mail.yahoo.com>
+	<20020411234316.A3749@namesys.com> <20020411202856.GA26083@matrix.wg>
+	<1018563083.14483.100.camel@tiny>  <20020412134116.B21820@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10057-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10058-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020412133937.A21820@namesys.com>
+In-Reply-To: <20020412134116.B21820@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <green@namesys.com>, bill@billrees.com
-Cc: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: Dirk Mueller <dmuell@gmx.net>, reiserfs-list@namesys.com
 
-Oleg,
-
-That seems to have done the trick.  Which is the most
-stable release that you would recommend that would
-include this fix?
-
-thanks!
-Bill
-
---- Oleg Drokin <green@namesys.com> wrote:
+On Fri, 2002-04-12 at 05:41, Oleg Drokin wrote:
 > Hello!
 > 
-> On Thu, Apr 11, 2002 at 11:14:59AM -0700, Bill Rees
-> wrote:
-> > I upgraded my kernel to 2.4.19-pre6 with the
-> speedup
-> > patch installed and still see similiar results as
-> > before.  As the amount of data on the partition
-> > increases, my write performance slows.  This time,
-> I
-> > simply modified a previously posted script to
-> mimic my
-> > production application.  The test is still running
-> and
-> > will take quite awhile to fill the disk.  Each
-> line of
-> > the output represents 1.68gb of disk space.
+> On Thu, Apr 11, 2002 at 06:11:23PM -0400, Chris Mason wrote:
 > 
-> Ok, I see the problem now. You create a lot of small
-> files, and when a lot
-> of disk space is used, a lot of unnecesary
-> blockfinding is performed on
-> each file creation.
-> if you mount your partition with -o
-> no_unhashed_relocation option,
-> effect of that will be much lighter. With this
-> option that's what I see:
-> day/hour 00 00 seconds = 285
-> day/hour 00 01 seconds = 288
-> day/hour 00 02 seconds = 290
-> day/hour 00 03 seconds = 289
-> day/hour 00 04 seconds = 290
-> day/hour 00 05 seconds = 292
-> day/hour 00 06 seconds = 292
-> day/hour 00 07 seconds = 292
+> > Then I would expect the new allocator in busy_skip mode to fix it.  But,
+> > having profiling on would tell us for sure.
 > 
-> 
-> Also new block allocator that I posted to the list
-> recently should not excibit
-> this behavior at all in any of modes. (I am just
-> going to verify this theory ;)
-> )
-> 
-> Bye,
->     Oleg
+> Even withoyt skip_busy mode it will work much better.
+> The problem is on each file creation we start to look for a free block almost
+> from the beginning of disk. using no_unhashed_relocation mount option,
+> we make initial block allocation to be more random and cause less overhead
+> (verified).
+> And in this test we create a lot of 15k files.
+
+Ok, I'll buy that.  The only way to know for sure is to give it a try or
+profile the run, but I think it is very likely to be allocator related.
+
+-chris
 
 
-=====
-Bill Rees - bill@billrees.com - http://billrees.com
-
-__________________________________________________
-Do You Yahoo!?
-Yahoo! Tax Center - online filing with TurboTax
-http://taxes.yahoo.com/
