@@ -1,89 +1,52 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: silent semantic changes with reiser4
-Date: Mon, 30 Aug 2004 20:26:18 -0400
+From: David Masover <ninja@slaphack.com>
+Subject: Re: The Necessity of File Types (was silent semantic changes with
+ reiser4)
+Date: Mon, 30 Aug 2004 19:42:03 -0500
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <87fz64xidx.fsf@uhoreg.ca>
-References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org>
- <20040828170515.GB24868@hh.idb.hist.no>
- <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org>
- <4131074D.7050209@namesys.com>
- <16691.16656.726300.438533@gargle.gargle.HOWL>
+Message-ID: <4133C95B.8080307@slaphack.com>
+References: <3632837631-BeMail@cr593174-a>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <3632837631-BeMail@cr593174-a>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Cc: Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, torvalds@osdl.org
 
->>>>> "John" == John Stoffel <stoffel@lucent.com> writes:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
+Alexander G. M. Smith wrote:
 [...]
+| By the way, I disagree on Hans with using a directory for the meta
+data, I'd prefer to just have "..meta." as the name prefix of the
+metadata things.  Otherwise there's an extra directory level in there,
+making ..meta/ different from other directories (making browsing it a
+bit awkward since it doesn't have metadata of its own - like window
+coordinates for displaying the directory).
 
-John> I went and read the Pike paper on namespaces which Hans quotes
-John> much earlier in this thread, and I think it isn't applicable to
-John> this thread.  In the paper Pike compares the MVS, VMS, DOS and
-John> Unix name spaces for disk layouts.  It's an interesting paper,
-John> though a bit dated since it's 20 years old.  The concepts are
-John> good, but the examples aren't any more.  How many Unix systems
-John> today have /n/faces/... to link email addresses to digitized
-John> images of people faces?
+You'd rather do "cat ..meta.pseudo" than "ls ..metas/"?
+And we already have weird directories.  /proc doesn't do things that
+/tmp does.  I also doubt proc will ever store that kind of metadata.
 
-IIRC, gdm uses some directory in /usr/share to match usernames to
-pictures (along with ~<username>/<somefile>).  But I can't find the
-directory nor remember exactly what the name is.
+I don't like either "metas" or "..metas", but you'll have to look in the
+archives for why.  I am NOT starting that again.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-Then there's the gconf database, which uses the filesystem to store its
-hierarchical structure.  Or the .cddb/ database that uses filenames to
-match the discid to the data.  Or on Debian systems, there's
-/var/lib/dpkg/info database that attaches (post|pre)(inst|rm) scripts,
-file lists, etc. to packages.  (Although I would have organized that
-directory differently.)
-
-And then there's the fact that there would be more examples if
-filesystems were more expressive.  Like my LDAP database that sometimes
-gets corrupted when the power gets pulled.  It's stored in a number of
-opaque files, so I don't know how it gets corrupted, and I can't use
-the normal fsck to check it.  Wouldn't it be nice if the database could
-be stored as normal files, using the filesystem hierarchy to mimic the
-LDAP hierarchy?  Then if something gets corrupted, fsck will fix it, or
-I can easily see which record contains the garbage.  The problem is
-that the filesystem can't do queries, so I'll have to wait until
-Reiser6.
-
-John> The big point of this paper though was to make the syntax simple,
-John> and the semantics clear and unambiguous.  For example, they point
-John> out how the "Cedar" file system added in VMS style version numbers
-John> to filenames with the syntax "<name>!<version>" and they pointedly
-John> ask what does "/usr/rob!3/bin/cat-v mean?  Which I think just
-John> points out that the syntax of streams (metas) needs be carefully
-John> thought out, and how that syntax implies various semantics.
-
-The problem isn't just with things being confusing.  It's also about
-making things accessible through a unified interface.  If we take the
-attributes example, if we need to use a special xattr syscall, then I
-can't use GIMP to edit icon attribute of xterm, or use emacs/vim/nano/ed
-to edit the comment attribute of sound_of_silence.ogg (or the lyrics
-attribute of sound_of_silence.ogg).  I need to fire up some stupid
-program to do batch edits of the attributes of my ogg collection because
-the FreeDB database had the wrong CD title info for the CD that I just
-ripped and I didn't catch the error before I ripped it.  If attributes
-were exposed through the regular filesystem interface (possibly through
-some userspace helper to do the actual OGG parsing), I could just type
-a couple of lines on the command line, and be done with it.
-
-John> Lots of people keep asking for ACLs, but time and time again
-John> people point out that while the Unix permission model isn't as
-John> flexible, it is _simpler_ and easier to keep track of.
-
-Not if you need to add a whole bunch of groups just to do the things
-you want to do.  I personally haven't done that.  Why?  Because I would
-rather deal with suboptimal permissions than having to add all those
-groups.
-
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
+iQIVAwUBQTPJW3gHNmZLgCUhAQKuEw/+PjrDfSlZvuTUwiOSa/kU05qjTKkIp05F
+nBkrSIUKSUfoYN3gILucIGOjjJ5qBRW3wLIwWyO+raOAzHFTdylvR1rEWP9h/JUG
+Psz3X8RE8cubiuNwjyJawI87cPX8HW1xQxgkiiquZN2L5XbvHsFsbwAJV1tJLnrM
+2lL6IBUXcxDIh7pdB0/z+4t945ElT3Rl09CLP/MfP4GNvt/UWjhbeHNWdeLq93C+
+w0irn6VIsm+1+GKqEhpYLLMj9V4cbBY6m7XMuBzH+gEyu5exAMqGzPLGDiG/I6y/
+rXI6IF94i2p4sLMv0LmtEvQsV37LFIKRBrWVScV5oiQ93LPVLG6pYmAi6RLsHN03
+QazMmcRwjVvrTAf0KS21KXaE0qYbvgoQpteUEkPZLRkczSmiry2d3e6gBQlCV7xj
+9Hzkm9HxR0BjxmRaMVLEWZ86t08OHkl0Ab186DiHUC5RlL2FPIvdyYthXo9wwtI/
+XlA03Rvc3kl6DVRO8UM/+fa8v5MDn58ZMI2QgdPrU0V2Q9bGv/woByszXaDA+IVJ
+ZiHQ8IgShYlkA279DffOrZnDPnZMOWa7iRYetX5PYPoAyfkrmFKofT8va+dDL7pf
+HA5crUR5ws1EZZ8lUfrtXXnsBeEn9PS0lUHvJY7zZ4tJfZ65Fa+IiDpK5p+1tJZi
+ylCBNEidK/8=
+=CiZ9
+-----END PGP SIGNATURE-----
