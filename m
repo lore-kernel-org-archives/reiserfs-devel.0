@@ -1,33 +1,35 @@
-From: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Wed, 31 Mar 2004 11:35:24 -0500 (EST)
-Message-ID: <20040331163524.74880.qmail@web25004.mail.ukl.yahoo.com>
-References: <200403311816.16425.christian.mayrhuber@gmx.net>
+Date: Wed, 31 Mar 2004 13:30:42 -0500
+Sender: news <news@sea.gmane.org>
+Message-ID: <87fzborhrh.fsf@uhoreg.ca>
+References: <200403311816.16425.christian.mayrhuber@gmx.net> <20040331163524.74880.qmail@web25004.mail.ukl.yahoo.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17626-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17629-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200403311816.16425.christian.mayrhuber@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Christian Mayrhuber wrote: 
+>>>>> "Narcoleptic" == Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk> writes:
 
-> If a novice user encounters a directory called '+'
-> for the first time, not 
-> knowing there is meta information available in
-> reiser4, this will result in
-> a bug report, for sure.
->
-> If I had to choose between '+' and 'metas' I'd go
-> with 'metas'.
+[...]
 
-"Metas" is only meaningful in English.
+Narcoleptic> "Metas" is only meaningful in English.
 
+Well, "meta" (without the s) is a Greek prefix, so I assume it should
+make some sense at least in Greek, and related languages.
 
-______________________________________________________________________ 
-Post your free ad now! http://personals.yahoo.ca
+Strictly speaking, though, the word "metas" doesn't even make sense in
+English, unless you understand it as a shortening of metadata.
+
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
