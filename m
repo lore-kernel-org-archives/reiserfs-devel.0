@@ -1,82 +1,73 @@
-From: Jure =?UTF-8?Q?Pe=C3=A8ar?= <pegasus@nerv.eu.org>
-Subject: reiser4 on alpha
-Date: Sat, 26 Jun 2004 01:51:01 +0200
-Message-ID: <20040626015101.3c47427d.pegasus@nerv.eu.org>
+From: Michael Milverton <camel78@iprimus.com.au>
+Subject: Re: we need a slogan for our reiser4 t-shirt
+Date: Sat, 26 Jun 2004 13:04:03 +0800
+Message-ID: <200406261304.03783.camel78@iprimus.com.au>
+References: <40D9DC3A.9090209@namesys.com>
+Reply-To: camel78@iprimus.com.au
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-19404-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed;
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1;
+  boundary="Boundary-02=_DPQ3ABlZBkkK8VQ";
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19405-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <40D9DC3A.9090209@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="macroman"
 To: reiserfs-list@namesys.com
 
-CkhpIGFsbCwKCmkgdG91Z2h0IHNvbWVvbmUgbWlnaHQgYmUgaW50ZXJlc3RlZCBpbiB0aGUgZm9s
-bG93aW5nIGNvbXBpbGVyIHdhcm5pbmdzIGFuZAplcnJvcjoKCiAgTEQgICAgICBmcy9yZWlzZXI0
-L2J1aWx0LWluLm8KICBDQyBbTV0gIGZzL3JlaXNlcjQvZGVidWcubwp7c3RhbmRhcmQgaW5wdXR9
-OiBBc3NlbWJsZXIgbWVzc2FnZXM6CntzdGFuZGFyZCBpbnB1dH06NTogV2FybmluZzogc2V0dGlu
-ZyBpbmNvcnJlY3Qgc2VjdGlvbiBhdHRyaWJ1dGVzIGZvciAuZ290CiAgQ0MgW01dICBmcy9yZWlz
-ZXI0L3N0YXRzLm8Ke3N0YW5kYXJkIGlucHV0fTogQXNzZW1ibGVyIG1lc3NhZ2VzOgp7c3RhbmRh
-cmQgaW5wdXR9OjU6IFdhcm5pbmc6IHNldHRpbmcgaW5jb3JyZWN0IHNlY3Rpb24gYXR0cmlidXRl
-cyBmb3IgLmdvdAogIENDIFtNXSAgZnMvcmVpc2VyNC9qbm9kZS5vCntzdGFuZGFyZCBpbnB1dH06
-IEFzc2VtYmxlciBtZXNzYWdlczoKe3N0YW5kYXJkIGlucHV0fTo1OiBXYXJuaW5nOiBzZXR0aW5n
-IGluY29ycmVjdCBzZWN0aW9uIGF0dHJpYnV0ZXMgZm9yIC5nb3QKICBDQyBbTV0gIGZzL3JlaXNl
-cjQvem5vZGUubwpmcy9yZWlzZXI0L3pub2RlLmM6IEluIGZ1bmN0aW9uIGB6Z2V0JzoKZnMvcmVp
-c2VyNC96bm9kZS5jOjU2NTogd2FybmluZzogbG9uZyBsb25nIHVuc2lnbmVkIGludCBmb3JtYXQs
-IGxvbmcKdW5zaWduZWQgaW50IGFyZyAoYXJnIDIpCntzdGFuZGFyZCBpbnB1dH06IEFzc2VtYmxl
-ciBtZXNzYWdlczoKe3N0YW5kYXJkIGlucHV0fTo1OiBXYXJuaW5nOiBzZXR0aW5nIGluY29ycmVj
-dCBzZWN0aW9uIGF0dHJpYnV0ZXMgZm9yIC5nb3QKICBDQyBbTV0gIGZzL3JlaXNlcjQva2V5Lm8K
-ZnMvcmVpc2VyNC9rZXkuYzogSW4gZnVuY3Rpb24gYHNwcmludGZfa2V5JzoKZnMvcmVpc2VyNC9r
-ZXkuYzoxNTA6IHdhcm5pbmc6IGxvbmcgbG9uZyB1bnNpZ25lZCBpbnQgZm9ybWF0LCBvaWRfdCBh
-cmcgKGFyZwozKQpmcy9yZWlzZXI0L2tleS5jOjE1MDogd2FybmluZzogbG9uZyBsb25nIHVuc2ln
-bmVkIGludCBmb3JtYXQsIF9fdTY0IGFyZyAoYXJnCjUpCmZzL3JlaXNlcjQva2V5LmM6MTUwOiB3
-YXJuaW5nOiBsb25nIGxvbmcgdW5zaWduZWQgaW50IGZvcm1hdCwgX191NjQgYXJnIChhcmcKNikK
-ZnMvcmVpc2VyNC9rZXkuYzoxNTA6IHdhcm5pbmc6IGxvbmcgbG9uZyB1bnNpZ25lZCBpbnQgZm9y
-bWF0LCBvaWRfdCBhcmcgKGFyZwo3KQpmcy9yZWlzZXI0L2tleS5jOjE1MDogd2FybmluZzogbG9u
-ZyBsb25nIHVuc2lnbmVkIGludCBmb3JtYXQsIF9fdTY0IGFyZyAoYXJnCjgpCmZzL3JlaXNlcjQv
-a2V5LmM6MTU3OiB3YXJuaW5nOiBsb25nIGxvbmcgdW5zaWduZWQgaW50IGZvcm1hdCwgb2lkX3Qg
-YXJnIChhcmcKMykKZnMvcmVpc2VyNC9rZXkuYzoxNTc6IHdhcm5pbmc6IGxvbmcgbG9uZyB1bnNp
-Z25lZCBpbnQgZm9ybWF0LCBfX3U2NCBhcmcgKGFyZwo1KQpmcy9yZWlzZXI0L2tleS5jOjE1Nzog
-d2FybmluZzogbG9uZyBsb25nIHVuc2lnbmVkIGludCBmb3JtYXQsIG9pZF90IGFyZyAoYXJnCjYp
-CmZzL3JlaXNlcjQva2V5LmM6MTU3OiB3YXJuaW5nOiBsb25nIGxvbmcgdW5zaWduZWQgaW50IGZv
-cm1hdCwgX191NjQgYXJnIChhcmcKNykKe3N0YW5kYXJkIGlucHV0fTogQXNzZW1ibGVyIG1lc3Nh
-Z2VzOgp7c3RhbmRhcmQgaW5wdXR9OjU6IFdhcm5pbmc6IHNldHRpbmcgaW5jb3JyZWN0IHNlY3Rp
-b24gYXR0cmlidXRlcyBmb3IgLmdvdAogIENDIFtNXSAgZnMvcmVpc2VyNC9wb29sLm8Ke3N0YW5k
-YXJkIGlucHV0fTogQXNzZW1ibGVyIG1lc3NhZ2VzOgp7c3RhbmRhcmQgaW5wdXR9OjU6IFdhcm5p
-bmc6IHNldHRpbmcgaW5jb3JyZWN0IHNlY3Rpb24gYXR0cmlidXRlcyBmb3IgLmdvdAogIENDIFtN
-XSAgZnMvcmVpc2VyNC90cmVlX21vZC5vCmZzL3JlaXNlcjQvdHJlZV9tb2QuYzogSW4gZnVuY3Rp
-b24gYG5ld19ub2RlJzoKZnMvcmVpc2VyNC90cmVlX21vZC5jOjYyOiB3YXJuaW5nOiBsb25nIGxv
-bmcgdW5zaWduZWQgaW50IGZvcm1hdCwKcmVpc2VyNF9ibG9ja19uciBhcmcgKGFyZyAyKQp7c3Rh
-bmRhcmQgaW5wdXR9OiBBc3NlbWJsZXIgbWVzc2FnZXM6CntzdGFuZGFyZCBpbnB1dH06NTogV2Fy
-bmluZzogc2V0dGluZyBpbmNvcnJlY3Qgc2VjdGlvbiBhdHRyaWJ1dGVzIGZvciAuZ290CiAgQ0Mg
-W01dICBmcy9yZWlzZXI0L2VzdGltYXRlLm8Ke3N0YW5kYXJkIGlucHV0fTogQXNzZW1ibGVyIG1l
-c3NhZ2VzOgp7c3RhbmRhcmQgaW5wdXR9OjU6IFdhcm5pbmc6IHNldHRpbmcgaW5jb3JyZWN0IHNl
-Y3Rpb24gYXR0cmlidXRlcyBmb3IgLmdvdAogIENDIFtNXSAgZnMvcmVpc2VyNC9jYXJyeS5vCntz
-dGFuZGFyZCBpbnB1dH06IEFzc2VtYmxlciBtZXNzYWdlczoKe3N0YW5kYXJkIGlucHV0fTo1OiBX
-YXJuaW5nOiBzZXR0aW5nIGluY29ycmVjdCBzZWN0aW9uIGF0dHJpYnV0ZXMgZm9yIC5nb3QKICBD
-QyBbTV0gIGZzL3JlaXNlcjQvY2Fycnlfb3BzLm8Ke3N0YW5kYXJkIGlucHV0fTogQXNzZW1ibGVy
-IG1lc3NhZ2VzOgp7c3RhbmRhcmQgaW5wdXR9OjU6IFdhcm5pbmc6IHNldHRpbmcgaW5jb3JyZWN0
-IHNlY3Rpb24gYXR0cmlidXRlcyBmb3IgLmdvdAogIENDIFtNXSAgZnMvcmVpc2VyNC9sb2NrLm8K
-e3N0YW5kYXJkIGlucHV0fTogQXNzZW1ibGVyIG1lc3NhZ2VzOgp7c3RhbmRhcmQgaW5wdXR9OjU6
-IFdhcm5pbmc6IHNldHRpbmcgaW5jb3JyZWN0IHNlY3Rpb24gYXR0cmlidXRlcyBmb3IgLmdvdAog
-IENDIFtNXSAgZnMvcmVpc2VyNC90cmVlLm8Ke3N0YW5kYXJkIGlucHV0fTogQXNzZW1ibGVyIG1l
-c3NhZ2VzOgp7c3RhbmRhcmQgaW5wdXR9OjU6IFdhcm5pbmc6IHNldHRpbmcgaW5jb3JyZWN0IHNl
-Y3Rpb24gYXR0cmlidXRlcyBmb3IgLmdvdAogIENDIFtNXSAgZnMvcmVpc2VyNC9jb250ZXh0Lm8K
-e3N0YW5kYXJkIGlucHV0fTogQXNzZW1ibGVyIG1lc3NhZ2VzOgp7c3RhbmRhcmQgaW5wdXR9OjU6
-IFdhcm5pbmc6IHNldHRpbmcgaW5jb3JyZWN0IHNlY3Rpb24gYXR0cmlidXRlcyBmb3IgLmdvdAog
-IENDIFtNXSAgZnMvcmVpc2VyNC90YXAubwp7c3RhbmRhcmQgaW5wdXR9OiBBc3NlbWJsZXIgbWVz
-c2FnZXM6CntzdGFuZGFyZCBpbnB1dH06NTogV2FybmluZzogc2V0dGluZyBpbmNvcnJlY3Qgc2Vj
-dGlvbiBhdHRyaWJ1dGVzIGZvciAuZ290CiAgQ0MgW01dICBmcy9yZWlzZXI0L2Nvb3JkLm8KZnMv
-cmVpc2VyNC9jb29yZC5jOiBJbiBmdW5jdGlvbiBgY29vcmRzX2VxdWFsJzoKZnMvcmVpc2VyNC9j
-b29yZC5jOjU5ODogZXJyb3I6IGR1cGxpY2F0ZSBjYXNlIHZhbHVlCmZzL3JlaXNlcjQvY29vcmQu
-Yzo1OTg6IGVycm9yOiBwcmV2aW91c2x5IHVzZWQgaGVyZQp7c3RhbmRhcmQgaW5wdXR9OiBBc3Nl
-bWJsZXIgbWVzc2FnZXM6CntzdGFuZGFyZCBpbnB1dH06NTogV2FybmluZzogc2V0dGluZyBpbmNv
-cnJlY3Qgc2VjdGlvbiBhdHRyaWJ1dGVzIGZvciAuZ290Cm1ha2VbMl06ICoqKiBbZnMvcmVpc2Vy
-NC9jb29yZC5vXSBFcnJvciAxCm1ha2VbMV06ICoqKiBbZnMvcmVpc2VyNF0gRXJyb3IgMgptYWtl
-OiAqKiogW2ZzXSBFcnJvciAyCgpMb29raW5nIGF0IGZzL3JlaXNlcjQvZGVidWcuaCBzdWdnZXN0
-IHRoYXQgdGhpcyBpcyBzb21ldGhpbmcgZG9uZSBvbiBwdXJwb3NlCnRvIGd1YXJkIGFnYWluc3Qg
-b3RoZXIgcHJvYmxlbXMuCgpHY2MgMy4zLjQgb24gZGViaWFuL2FscGhhLCByZWlzZXI0LTIwMDQu
-MDYuMjQtMTkuMzYtbGludXgtMi42Ljcgc25hcHNob3QuCgoKLS0gCgpKdXJlIFBl6GFyCi0tIAoK
-SnVyZSBQZcSNYXIK
+--Boundary-02=_DPQ3ABlZBkkK8VQ
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+                    R
+                 filEsystem
+                    Innovative
+         plug-inS
+                   Engineered
+            secuRe
+                   Fast
+                   S
+                   4
+engineered for performance
+
+
+The Idea:
+Use REISERFS4 as the trunk of a tree with descriptive words as branches and=
+ a=20
+witty or relavent logo as the grass of the tree. This idea would look much=
+=20
+better as a graphic with color eg brown centre letters for REISERFS4 that=20
+were larger and stood out and green for the word branches and grass etc.
+
+P.S I know this is probably of the mark but it is a little bit different so=
+ I=20
+thought it may be useful
+
+Thankyou
+Michael Milverton
+=2D-=20
+GNU/Linux: Secure, Stable, Free
+Michael <camel78@iprimus.com.au>
+
+--Boundary-02=_DPQ3ABlZBkkK8VQ
+Content-Type: application/pgp-signature
+Content-Description: signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iQCVAwUAQN0DwzbWs3O08JjCAQJLKgQAn+Ix14IoMrVGcWBeQAjY9sm8PwWPqhus
+HyEqMkzQWnLLUggpMXErAU+x0dUX7lsGK9jgeZUcC+8Sv46JWkvMF3fiS0yT9MRZ
+ww0yJ5mZ7dKY8+3A6ksYGc/7zp+iv2BMFAbkIQSnHpnJbDTx13l6ze8tJo6TE/eI
+idB8jqjJcEs=
+=sCHQ
+-----END PGP SIGNATURE-----
+
+--Boundary-02=_DPQ3ABlZBkkK8VQ--
