@@ -1,40 +1,54 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiserfsprogs did not solve my suse9.1pro problems
-Date: Wed, 26 Jan 2005 16:46:29 +0300
-Message-ID: <200501261646.29438.vitaly@namesys.com>
-References: <41F71F23.8040503@rogparm.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: r4.1 ?
+Date: Wed, 26 Jan 2005 09:44:32 -0800
+Message-ID: <41F7D700.9070801@namesys.com>
+References: <27547285.20050125224458@wp.pl> <41F6DC39.6000705@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23211-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23212-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41F71F23.8040503@rogparm.com>
-Content-Disposition: inline
+In-Reply-To: <41F6DC39.6000705@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Roger Parmenter <rogparm@rogparm.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Masover <ninja@slaphack.com>
+Cc: Pysiak Satriani <pysiak.satriani@wp.pl>, reiserfs-list@namesys.com
 
-On Wednesday 26 January 2005 07:40, Roger Parmenter wrote:
-> Gentlemen;
+David Masover wrote:
+
 >
-> I have a problem with the root filesystem on my Suse 9.1pro partition. I
-> have downloaded your latest reiserfsprogs and ran the reiserfsck program
-> on the /dev/hdb5 (the root filesystem). This did not clear the partition
-> so that it could be mounted and the OS startup properly.
 >
-> I have kept good notes and some files to show you what went wrong.
+> Pysiak Satriani wrote:
+> | Hi,
+> |
+> | I was wondering how close are we to reiser4.1 ?
+> | Like in % of work done or some other measure.
+> |
+> | http://www.namesys.com mentions r4.1
+> |
+> | 'this and that' will be included in r4.1
 >
-> I'm happy to comment further if this will help the team. The hardware
-> involved is AMD 64 athlon chip.
+> Which means it would either be included in some sort of experimental
+> form of r4, or (more likely, I think) in a new branch.
 >
-> Looking forward to hearing from a member of the team.
+> I haven't seen any work on any of the things delayed for 4.1, meaning
+> either we are 0% done, or Hans has moved to a cathedral style of
+> development.
+>
+> That, or I just haven't noticed such work.  I don't often read source 
+> code.
+>
+It is an interesting question whether with a plugin architectural model 
+we perhaps need a fundamentally different software release model, with 
+the technical design now controlling what is the optimal release model.
 
-yes, it would be great to hear the whole story.
+There are three big things in progress right now that are alpha or worse 
+quality.
 
--- 
-Thanks,
-Vitaly Fertman
-
-
+Compression, Viewprinting (www.namesys.com/blackbox_security.html), and 
+sys_reiser4()'s semantic enhancements.  Compression will hopefully be 
+ready first.  Compression will have enough performance impact to justify 
+calling it a 4.1 release and doing a press release, but you understand 
+that in reality it is just a plugin.....
