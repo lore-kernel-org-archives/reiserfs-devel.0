@@ -1,79 +1,81 @@
-From: Steve Bergman <steve@rueb.com>
-Subject: Re: reiser4 plugins
-Date: Sat, 28 Aug 2004 05:09:28 -0500
-Message-ID: <1093687768.8097.25.camel@voyager.localdomain>
-References: <20040825152805.45a1ce64.akpm@osdl.org>
-	 <412D9FE6.9050307@namesys.com>	<20040826014542.4bfe7cc3.akpm@osdl.org>
-	 <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de>
-	 <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de>
-	 <1093526273.11694.8.camel@leto.cs.pocnet.net>
-	 <20040826132439.GA1188@lst.de>
-	 <1093527307.11694.23.camel@leto.cs.pocnet.net>
-	 <20040826134034.GA1470@lst.de>
-	 <1093528683.11694.36.camel@leto.cs.pocnet.net>
-	 <412E786E.5080608@namesys.com>
-	 <16687.9051.311225.697109@thebsh.namesys.com>
-	 <412F7A59.8060508@namesys.com>
-	 <1093645747.17445.19.camel@voyager.localdomain>
-	 <41302C39.2080100@namesys.com>
+From: Yury Umanets <torque@ukrpost.net>
+Subject: Re: silent semantic changes with reiser4
+Date: Sat, 28 Aug 2004 13:49:55 +0300
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <41306353.8090504@ukrpost.net>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <1093467601.9749.14.camel@leto.cs.pocnet.net> <20040825225933.GD5618@nocona.random> <412DA0B5.3030301@namesys.com> <20040826112818.GL5618@nocona.random>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20967-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <41302C39.2080100@namesys.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20040826112818.GL5618@nocona.random>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Alexander Zarochentcev <zam@namesys.com>, Nikita Danilov <nikita@clusterfs.com>, reiserfs <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Andrea Arcangeli <andrea@suse.de>
+Cc: Hans Reiser <reiser@namesys.com>, Christophe Saout <christophe@saout.de>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, 2004-08-27 at 23:54 -0700, Hans Reiser wrote:
-> >
-> I didn't write this (more precisely, it only vaguely resembles what I 
-> wrote in 1996).  Are you saying that it reports system time as real 
-> time?  If yes, then it is an error, we need to go remove a bunch of 
-> numbers from our benchmarks, and thanks for finding it.
-> 
-> Zam, please comment.
-> 
+Andrea Arcangeli wrote:
 
-No.  I'm saying that on my setup (kernel 2.6.8.1-mm4/perl 5.8.5/bash
-3.00) the first line returned from running the test is the:
+>On Thu, Aug 26, 2004 at 01:35:01AM -0700, Hans Reiser wrote:
+>  
+>
+>>Reiser4 plugins are not for end users to download from amazon.com, they 
+>>are for weekend hackers to send me a cool plugin for me to review, 
+>>assign a plugin id to, and send to Linus in the next release.  Sometimes 
+>>    
+>>
+>
+>then what's the difference in having the plugin fixed in stone into
+>reiserfs? That's my whole point. Get the patch from the weekend hacker,
+>check it, send the patch to Linus to add the new feature to reiser4,
+>just call it "feature" not plugin. That's how it works normally for
+>everything. Many fs have many features, many of them optional.  you
+>wouldn't need to build any hook infrastructure either that way. Hooks
+>would be needed if this wasn't open source me thinks. Or if you want
+>people to fetch the module from amazon without your review.
+>
+>Another reason I could see the modularization/hooking useful is if those
+>feature would take lots of kernel space, but this sure isn't the case
+>for reiserfs, infact having modules would waste _more_ ram due the half
+>wasted page allocation for the module text. The only single reason we
+>use modules is to avoid wasting tons of ram by loading every possible
+>device driver on earth, it's not that we use modules because they're
+>more flexible, if something they're more fragile. I never use modules in
+>my test kernel just to go fast (because I self compile them). The last
+>good thing of the modules is during development you don't need to reboot
+>the machine to test a kernel change in a driver, but you don't need that
+>with reiserfs since you can make the fs itself a module (just change the
+>name of the fs, AFIK you do that all the time already).
+>  
+>
+There lots of good things about plugins as they are in reiser4. And 
+probably the best one (as for me) is that, reiser4 core code (quite 
+complex thing) does not need to be changed after adding new plugins 
+(read new features).
 
-[1]+  Done ...
+It is written once and provides some basic functionality (balancing, 
+atoms, etc.), which works well with all kinds of plugins if they 
+implement required functions from plugin interface.
 
-line which throws the array indexes off by 1 and I always get 0 for the
-real time and, yes, the real time gets reported as the system time, I
-think.  Plus I get a warning about the fact that "Done" is not numeric.
-This is obviously a problem with my particular setup.
+As for me, this looks like Linux's VFS. Sure, if I want to add some very 
+new filesystem with features which were not foreseen,  and VFS does not 
+provide needed interface, it will need some changes. But in simple case, 
+when I just want to develop once more disk filesystem, which say will be 
+different from another disk filesystem in only that respect it manages 
+its metadata in different manner and aims to achieve better performance 
+this way. In this case I will not need to chnage VFS at all. The same 
+about reiser4 core and new plugins.
 
-After bumping the indexes up by 1, I get the correct real time reported
-as "STAT REAL_TIME".  And the system time is reported as "STAT
-CPU_TIME".
-
-"STAT CPU_UTIL", however is computed in a completely different way based
-on numbers collected from /proc/stat.  If I'm, reading
-linux/Documentation/filesystems/proc.txt correctly, it is trying to
-return the (system time) / (total time).  The total time agrees with
-"STAT REAL_TIME".  However, the (system time) that it comes up with here
-is always considerably higher than "STAT CPU_TIME".
-
-User error is quite possible, as I am:
-
-1. Just getting to know mongo.
-2. Not a perl guy.
-3. There is obviously something mongo.pl doesn't like about my setup.
-
--Steve Bergman
-
-P.S. In the 2 tests I've run, reiser4 is not doing all that badly
-against ext3 in OVERWRITE and MODIFY, though ext3 does come in faster.
-Reiser4 trails badly on APPEND however, ext3 (data=ordered, without
-htree) being some 2.5 - 4 times faster. 
+>-
+>To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>the body of a message to majordomo@vger.kernel.org
+>More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>Please read the FAQ at  http://www.tux.org/lkml/
+>
+>
+>  
+>
 
 
-
-
+-- 
+umka
 
