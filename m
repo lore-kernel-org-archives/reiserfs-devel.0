@@ -1,54 +1,79 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: janitors
-Date: Fri, 23 Jul 2004 00:22:34 +0300
-Message-ID: <20040722212234.GI4990@nysv.org>
-References: <20040722204254.D18AB15C1B@mail03.powweb.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Fibration questions
+Date: Thu, 22 Jul 2004 17:36:43 -0400
+Message-ID: <200407222136.i6MLahRF015248@turing-police.cc.vt.edu>
+References: <20040721054418.1150715C23@mail03.powweb.com> <40FE0B47.3010600@slaphack.com> <40FF74BA.1050206@namesys.com> <16639.45062.695014.910604@laputa.namesys.com> <20040722143909.GE4990@nysv.org> <200407221957.i6MJvWHB028798@turing-police.cc.vt.edu>
+            <20040722210515.GH4990@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19755-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_-1235010220P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19756-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040722204254.D18AB15C1B@mail03.powweb.com>
+In-Reply-To: Your message of "Fri, 23 Jul 2004 00:05:15 +0300."
+             <20040722210515.GH4990@nysv.org> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Dabbs <david@dabbs.net>
-Cc: reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>
+To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
+Cc: reiserfs-list@namesys.com
 
-On Thu, Jul 22, 2004 at 03:39:49PM -0500, David Dabbs wrote:
->Hans wrote:
->>there was some passing mention of a desire for a reiser4-janitors list.
->>What was the purpose of it?
+--==_Exmh_-1235010220P
+Content-Type: text/plain; charset=us-ascii
 
-I figured it to be an emailing list for people who want to contribute
-to Reiser4 by cleaning up code and FIXMEs and such.
+On Fri, 23 Jul 2004 00:05:15 +0300, Markus =?UNKNOWN?Q?T=F6rnqvist?= said:
 
->I'm not sure there was a request for a mailing list, but a list of known
->TODO items such as the kernel janitors' list:
->	http://janitor.kernelnewbies.org/TODO
+> Guys like Dell deploy big-ass servers, if they shipped it with a super-fast
+> and advanced secure file system like Reiser4, I very much doubt anyone
+> would go "Gee, let's buy this smaller model which costs less but that
+> ships with a slower file system, which also happens to be less secure"
 
-Oh.. I stand corrected, but still.
+This of course explains why IE is the premier web browser on 95% of the
+desktops, right? I mean, it's faster and more secure than all the alternatives,
+right? ;)
 
->Seems like maintaining high signal/noise for NAMESYS developers and
->encouraging discussion for non-core, but interested, folks would point to
->keeping things as they are. Of course, if you end up adding some folks to
->fs-dev, then I'd like to register my interest.
+And how many times has the global RAM market been put under severe strain
+because the latest Windows upgrade needed more RAM, so everybody went out and
+bought more RAM, and more RAM, and more RAM...
 
-I think I've mentioned it a couple of times, but I'm not really a programmer
-per se, I'm just totally interested and do my damndest to provide decent
-bug reports and try to discuss things.
+The *correct* model is "Gee, let's buy this new box, because the salesman told
+us we need at least a Model 9000 to run this app, and *never* *mentioned* that
+with proper tuning, we could actually get by with a Model 6000 that costs half
+as much, and makes him half as much in sales commission....".
 
-Then again, I'd also be interested in contributing to the code side, if
-real-life constraints such as skill and time allow.
+I mean.. *seriously* - think about it for a moment.  A co-worker recently
+spec'ed out a Dell 6600 for a project - paid US$20k or so for that one.  I
+needed another server for another project, ended up spec'ing a Dell 2650 for
+about US$7k.  Now *what* motivation does Dell have to sell both of us 2650's
+rather than trying to talk us both into 6600's?  (As it was, Dell got lucky I didn't
+go for a box even *smaller* than a 2650... at $7K, trying to save MORE money
+isn't worth it.  And I'm quite sure that Sun wasn't overjoyed when we
+replaced an E10K with 2 Sunfire 2900's and a number of Sunfire 240's - they
+wanted to sell us a third 2900... ;)
 
-So sure, count me in on the reiserfs-dev list, but an open list such as
-this, but for lesser-importance code discussion might be a good idea, for guys
-like me who are not really Reiser4 developers, at least yet.
+OK... not *all* vendors are like that - Apple likes us.  Probably has something to
+do with the fact we bought 1,100+ units in one shot to make a supercomputer.
+But then, there's *no* vendors that won't do whatever it takes to land a $5M
+deal with lots of good PR attached to it...
 
-Thanks!
+But seriously - once the purchase price falls under $1M or so, vendors fast start
+losing their desire to bend over backwards to help you out...
 
--- 
-mjt
+Also - in what way, exactly, is Reiser4 "more secure"? (Think carefully about
+the Linux security model here, and where the LSM hooks are - almost all of it
+happens at the VFS layer.  And there's the whole xattr debacle too...)
 
+--==_Exmh_-1235010220P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFBADNqcC3lWbTT17ARAsVIAKDoeg0sf8TsvkFSrYKe7jI/3mai2ACg0vmV
+3qWR/pSRB7Zr+OvDA/vETXs=
+=G/Z1
+-----END PGP SIGNATURE-----
+
+--==_Exmh_-1235010220P--
