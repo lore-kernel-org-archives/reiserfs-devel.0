@@ -1,63 +1,45 @@
-From: Oleg Drokin <green@namesys.com>
+From: Todd Lyons <todd@mrball.net>
 Subject: Re: Error messages.
-Date: Thu, 6 Mar 2003 09:57:43 +0300
-Message-ID: <20030306095743.B5417@namesys.com>
-References: <7473069171.20030305201818@tnonline.net>
+Date: Wed, 5 Mar 2003 22:58:08 -0800
+Message-ID: <20030306065807.GQ7208@mrball.net>
+References: <93F527C91A6ED411AFE10050040665D0049C0799@CORPUSMX1> <17280449343.20030305222118@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13109-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13110-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <7473069171.20030305201818@tnonline.net>
+In-Reply-To: <17280449343.20030305222118@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; x-action="pgp-signed"
 Content-Transfer-Encoding: 7bit
-To: Anders Widman <andewid@tnonline.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On Wed, Mar 05, 2003 at 08:18:18PM +0100, Anders Widman wrote:
+Anders Widman wanted us to know:
 
->    This  has  come up on this list a number of times, and no one still
->    seem to have found the true answer to the problem.
->    kernel: status error: status=0x58 { DriveReady SeekComplete DataRequest }
+>I  have  been  trying most kernels since 2.4.17 including stock redhat
+>and mandrake kernels.
 
-Is this the only messages?
-The most similar stuff I saw is coming in pairs with different message like this:
-  hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
-  hda: dma_intr: error=0x84 { DriveStatusError BadCRC }
+Do you have apic enabled or disabled in both the kernel and the BIOS?  
+Do you have acpi enabled or disabled in both the kernel and the BIOS?
 
-And this one means there is noisy IDE cable and/or too high UDMA mode for this cable.
+Have you tried the absolute latest Cooker (Mandrake) kernel?
+kernel-2.4.21*12mdk.i586.rpm? (I can't remember the _exact_ file name) 
+- -- 
+Blue skies...		Todd
+| Get a bigger hammer!   |  All vendors suck, but different ones  |
+| http://www.mrball.net  |  suck less in different applications.  |
+| http://faq.mrball.net  |                --Andy Walden on NANOG  |
+Linux kernel 2.4.19-16mdk   4 users,  load average: 0.00, 0.10, 0.22
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
+Comment: http://www.mrball.net/todd.asc
 
->    Sometimes  it  seem  to  help to disable DMA and or lower UDMA mode
-
-This is also confirms above theory of bad data cable.
-And if you do not use UDMA, CRC is not checked at all.
-
->    (all  drives are ATA-100 or ATA-133). But then after a few days, or
->    a  few  minutes  the  kernel  starts spitting out these status=0x58
->    errors.
-
-Hm. This is strange.
-Well, the best thing you can probably do is just post the whole history to
-IDE maintainers and ask for decoding. Worked for me.
-
->    What  exactly does this status=0x58 error mean, and what can one do
->    to solve the problem?
-
-Well, I checked my logs:
-Feb 27 21:14:47 car kernel: hdg: status error: status=0x58 { DriveReady SeekComplete DataRequest }
-Feb 27 21:14:47 car kernel: hdg: drive not ready for command
-Feb 27 21:14:51 car kernel: hdg: status error: status=0x58 { DriveReady SeekComplete DataRequest }
-Feb 27 21:14:51 car kernel: hdg: drive not ready for command
-;)))
-And for this case I am sure this was a scratchy CD-ROM disk in my CD-ROM drive.
-
-Probably same stuff can be get when drive is busy remapping bad sectors?
-Use smartctl to find out how these messages corellate with remapped bad sectors counts?
-
-Bye,
-    Oleg
+iD8DBQE+ZvF/IBT1264ScBURAgnmAJ0RdFCpIVohPHEpArcuGBbB24GQBACfUdIo
+4xzbyGrxNG3pr8QiZI2C0s8=
+=7irQ
+-----END PGP SIGNATURE-----
