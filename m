@@ -1,69 +1,53 @@
-From: V13 <v13@priest.com>
+From: Spam <spam@tnonline.net>
 Subject: Re: silent semantic changes in reiser4 (brief attempt to document the idea of what reiser4 wants to do with metafiles and why
-Date: Tue, 31 Aug 2004 22:35:34 +0300
-Message-ID: <200408312235.35733.v13@priest.com>
-References: <41323AD8.7040103@namesys.com> <200408312055.56335.v13@priest.com> <36793180.20040831201736@tnonline.net>
+Date: Tue, 31 Aug 2004 21:38:08 +0200
+Message-ID: <111617109.20040831213808@tnonline.net>
+References: <41323AD8.7040103@namesys.com> <200408312055.56335.v13@priest.com>
+ <36793180.20040831201736@tnonline.net> <20040831190814.GA15493@thundrix.ch>
+Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21171-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-21172-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <36793180.20040831201736@tnonline.net>
-Content-Disposition: inline
+In-Reply-To: <20040831190814.GA15493@thundrix.ch>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Spam <spam@tnonline.net>
-Cc: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@digeo.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@osdl.org>, reiserfs-list@namesys.com
+To: Tonnerre <tonnerre@thundrix.ch>
+Cc: V13 <v13@priest.com>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@digeo.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@osdl.org>, reiserfs-list@namesys.com
 
-On Tuesday 31 August 2004 21:17, Spam wrote:
-> > On Sunday 29 August 2004 23:21, Hans Reiser wrote:
-> >> The Idea
-> >>
-> >> You should be able to access metadata about a file the same way you
-> >> access the file's data, but with a name based on the filename followed
-> >> by a name to select the metadata of interest.
-> >>
-> >> Examples:
-> >>
-> >> cat song_of_silence/metas/owner
-> >> cat song_of_silence/metas/permissions
-> >> cat 10 > song_of_silence/metas/mixer_defaults/volume
-> >> cat song_of_silence/metas/license
-> >
-> > Maybe I'm crazy but:
-> >
-> >  You're talking about a major change in the way filesystems work if this
-> > is going to be used by other FSs too. If  I understand this correctly it
-> > is a completely new thing and trying to do it by patching existing
-> > well-known 'primitives' may be wrong.
-> >
-> >   AFAIK and AFAICS the metadata are not files or directories. You can
-> > look at them as files/dirs but they are not, just like a tar is not a
-> > directory. I believe that the correct thing to do (tm) is to add a new
-> > 'concept' named 'metadata' (which already exists). This way you'll have
-> > files, directories and metadata (or whatever you call them). So, each
-> > directory can have metadatas and files and each file can have metadatas.
-> > Then you have to provide some new methods of accessing them and not to
-> > use chdir() etc. (lets say chdir_meta() to enter the meta dir which will
-> > work for files too). After entering the 'metadir' you'll be able to use
-> > existing methods etc to access its 'files'.
-> >
-> >   This approach doesn't mess with existing things and can be extended for
-> > other filesystems too.
-> >
-> > (Just a thought)
->
->   It  is a good thought. However I think they are trying to figure out
->   a  way  to have the metadata and streams to be accesible with legacy
->   applications.
 
-They will be since after chdir_meta() the user will be able to look at the 
-metadata just like Hans described it. The only thing that changes (from the 
-userland POV) is the way someone can enter the 'metadata directory'. This way 
-you don't have to have a special name, just a special function and no 
-existing application (like tar) can possibly break because it will not know 
-how to enter this 'metadata directory'.
+  
 
-<<V13>>
+> Salut,
+
+> On Tue, Aug 31, 2004 at 08:17:36PM +0200, Spam wrote:
+>>   How  are  things  done on Windows platforms when there are files and
+>>   directories  with the same name? In Unix that is imposible. How does
+>>   it  work  for  environments  like  Cygwin  etc? What happen to tools
+>>   that run in them?
+
+> In  NTFS it's  illegal  IIRC.  At least  the  fs correction  utilities
+> complain about a block being assigned to two files.
+
+  I  meant  a  file  and a directory with the same name, not two files
+  with the same name :) subtle but important difference.
+
+  ie,  you can have a file named "foo" and a directory named "foo" and
+  they won't collide.
+  
+
+> Same with HFS+.
+
+> Sometimes  there seem to  be several  things with  the same  name. But
+> that's because of hidden extensions (.lnk for example).
+
+> I'm talking out of the book here, maybe the real-world implementations
+> of Windows  are different. I can't  tell, I only used  Windows once to
+> ssh into a screwed-up router.
+
+> 				Tonnerre
+
+
