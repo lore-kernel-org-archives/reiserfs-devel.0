@@ -1,21 +1,35 @@
 From: Nick Orlov <nick.orlov@mail.ru>
-Subject: Re: clm-6005
-Date: Mon, 15 Apr 2002 09:49:28 -0400
-Message-ID: <20020415134928.GA16140@nikolas.hn.org>
-References: <20020415013629.GA13011@nikolas.hn.org>
- <20020415092354.B1116@namesys.com>
+Subject: [nick.orlov@mail.ru: Re: [reiserfs-list] clm-6005]
+Date: Mon, 15 Apr 2002 11:52:45 -0400
+Message-ID: <20020415155245.GA16495@nikolas.hn.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7BIT
-Return-path: <reiserfs-list-return-10071-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10072-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020415092354.B1116@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Oleg Drokin <green@namesys.com>
 Cc: reiserfs-list@namesys.com
+
+Sorry,
+
+I forgot to mention,
+
+/usr is mounted readonly from /etc/fstab
+and /usr/local is a symlink to /opt, not a directory
+
+Thanks,
+	Nick.
+
+----- Forwarded message from Nick Orlov <nick.orlov@mail.ru> -----
+
+From: Nick Orlov <nick.orlov@mail.ru>
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
+Subject: Re: [reiserfs-list] clm-6005
 
 Hello,
 
@@ -43,6 +57,13 @@ find /usr -inum 82746
 	/usr/lib/gconv/KOI8-R.so
 
 As you can see - no pipes, no sockets, no device nodes.	
+
+-- 
+With best wishes,
+	Nick Orlov.
+
+
+----- End forwarded message -----
 
 -- 
 With best wishes,
