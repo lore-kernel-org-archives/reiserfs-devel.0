@@ -1,62 +1,37 @@
-From: Mariusz Mazur <mmazur@kernel.pl>
-Subject: Re: Invalid use of asm/unaligned.h
-Date: Thu, 12 Aug 2004 00:27:12 +0200
-Message-ID: <200408120027.12385.mmazur@kernel.pl>
-References: <200408112148.42125.mmazur@kernel.pl> <411A87A5.7020608@suse.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: implementing reiserfs in C++ for a new OS
+Date: Wed, 11 Aug 2004 16:12:17 -0700
+Message-ID: <411AA7D1.4000805@namesys.com>
+References: <71d3364904080706112e72fb6b@mail.gmail.com>	<20040809172437.GP1284@nysv.org>	<71d3364904080922267e8c14af@mail.gmail.com>	<200408101312.48888.reiserfs-list@quinnh.org>	<4119273E.1040104@namesys.com>	<20040810211951.GU1284@nysv.org>	<41194690.5050908@namesys.com>	<1365645117.20040811065416@tnonline.net>	<4119B7D1.7000705@namesys.com>	<16665.61639.659924.562747@laputa.namesys.com>	<411A4CA1.9090604@namesys.com>	<16666.20331.980571.419171@gargle.gargle.HOWL>	<411A5933.90408@namesys.com> <16666.23297.324669.957050@laputa.namesys.com> <411A8457.2030801@futuretg.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20221-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20222-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <411A87A5.7020608@suse.com>
-Content-Disposition: inline
+In-Reply-To: <411A8457.2030801@futuretg.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
+Cc: Nikita Danilov <Nikita@Clusterfs.COM>, Spam <spam@tnonline.net>, reiserfs-list@namesys.com
 
-On =B6roda 11 sierpie=F1 2004 22:55, Jeff Mahoney wrote:
-> Can you provide examples of what you consider depending on "kernel
-> internal stuff" ? When I look through include/asm*/unaligned.h, I see no
-> references to functions not provided in a standard C library. I also
-> don't see any assembly code, so I'm not sure why you'd need to code
-> assembly for each architecture.
+Dr. Giovanni A. Orlando wrote:
 
-Haven't checked good enough (just saw ifdef __KERNEL__ in {linux,asm}/strin=
-g.h=20
-and didn't bother to check what's exactly inside - but that was just memcpy=
-).
+>
+>
+> Hans, instead invent the ReiserFS, and he is not a newbie in FileSystem
+> architecture.
 
-> There are other instances of libc headers defining macros that expand to
-> standard libc functions. Why should the presence of memcpy/memmove calls
-> be an exception to this? If you truly feel the need to create
-> "userspace" headers for unaligned access, you can lift the kernel
-> headers wholesale. If that's not desirable, take a look in
-> asm-generic/unaligned.h and include that instead.
+I used to be one.;-)
 
-I don't like adding dependencies (even if it's libc), but what the heck. I'=
-ll=20
-add asm*/unaligned.h in llh 2.6.8.0 (whenever linus will release 2.6.8).
+>
+>
+>
+> So, I suppose that Hans choose a particular routine inside XFS that is
+> used to solve a particular problem that probably the employees he hire
+> was not capable to solve.
 
-> That said, I don't believe the problem is the inclusion of
-> asm/unaligned.h at all, but rather the fact that the PPC developers
-> decided to surround the code with ifdef KERNEL. They're the only arch to
-> do so, which is odd considering it's a no-op anyway.
+No, I never read the code, I just listened to them describe how they 
+only allocate blocks at flush time and realized they were right.
 
-I've got used to checking against ppc if I'm not sure whether a header is o=
-r=20
-isn't kernel only (contrary to other archs the ppc guys do separate kernel =
-
-and userland stuff). The asm/unaligned.h header was always included as kern=
-el=20
-stuff (+ ppc defined it as kernel only) which got me fooled.
-
-
---=20
-In the year eighty five ten
-God is gonna shake his mighty head
-He'll either say,
-"I'm pleased where man has been"
-Or tear it down, and start again
