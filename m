@@ -1,98 +1,52 @@
-From: Mike Benoit <mikeb@netnation.com>
-Subject: Re: Reiser4 input/output errors...
-Date: Tue, 02 Sep 2003 09:51:57 -0700
-Message-ID: <1062521517.1987.5.camel@mikeb.staff.netnation.com>
-References: <1062453181.2791.17.camel@mikeb.staff.netnation.com>
-	 <1062479004.31361.3.camel@haron.namesys.com>
-Reply-To: mikeb@netnation.com
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: write barrier patches for 2.4.21
+Date: Wed, 03 Sep 2003 02:10:03 +0400
+Message-ID: <3F55153B.1060808@namesys.com>
+References: <20030825170849.GA14811@mfa.kfki.hu> <20030826214624.GA410@zero> <20030827064103.GA29131@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15515-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15516-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1062479004.31361.3.camel@haron.namesys.com>
+In-Reply-To: <20030827064103.GA29131@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Yury Umanets <umka@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Oleg Drokin <green@namesys.com>
+Cc: Tom Vier <tmv@comcast.net>, Reiserfs List <reiserfs-list@namesys.com>
 
-Since I enabled all the debugging options that would compile, I re-ran
-the mkfs.reiser4 /dev/hda8, then attempted to untar the linux kernel
-again, however it didn't like that very much:
+Oleg Drokin wrote:
 
-Here is what I got from the log:
+>Hello!
+>
+>On Tue, Aug 26, 2003 at 05:46:24PM -0400, Tom Vier wrote:
+>
+>  
+>
+>>anyone working on scsi wb's? there was a long thread on l-k about wb's, but
+>>i wasn't aware what came of it.
+>>    
+>>
+>
+>There was a discussion about that on Kernel Summit 2003 and general opinion was that SCSI
+>does not need the WB stuff at all as it does the correct thing anyway.
+>
+define "correct thing".
 
-lookup inode: 65897 "de4x5.c"
-creating "de4x5.c" in 65897
-reiser4 panicked cowardly: assertion failed:
-carry_level_invariant(doing, CARRY_DOING)
+>But since the the barrier flags are visible in io requests, actual device drivers
+>are free to do something when met with barrier requests or to ignore it.
+>The only concern is probably raid cards that show bunch of IDE drives as a SCSI device.
+>
+>Bye,
+>    Oleg
+>
+>
+>  
+>
 
-Hopefully this is enough information to help you track down the problem.
 
-On Mon, 2003-09-01 at 22:03, Yury Umanets wrote:
-> On Tue, 2003-09-02 at 01:53, Mike Benoit wrote:
-> > I assume this isn't supposed to happen?
-> > 
-> > [root@mikeb home]# mkfs.reiser4 /dev/hda8
-> > mkfs.reiser4 0.4.12
-> > Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by
-> > reiser4progs/COPYING.
-> > 
-> > Information: Reiser4 is going to be created on /dev/hda8.
-> > (Yes/No): Yes
-> > Creating reiser4 on /dev/hda8...done
-> > Synchronizing /dev/hda8...done
-> > 
-> > [root@mikeb home]# mount -t reiser4 /dev/hda8 /home/test2
-> > [root@mikeb test2]# cd /home/test2
-> > [root@mikeb test2]# cp /usr/src/linux-2.6.0-test4.tar.bz2 ./
-> > [root@mikeb test2]# tar jxf linux-2.6.0-test4.tar.bz2
-> > 
-> > [root@mikeb test2]# rm -rf linux-2.6.0-test4/
-> > rm: reading directory `linux-2.6.0-test4//drivers/net/e100':
-> > Input/output error
-> > rm: reading directory `linux-2.6.0-test4//drivers/net/sk98lin':
-> > Input/output error
-> > rm: cannot remove directory `linux-2.6.0-test4//drivers/net': Directory
-> > not empty
-> > 
-> > I tried this on two different partitions (/dev/hda7 and /dev/hda8) the
-> > exact same files had the error on both, so it seems to be reproducible.
-> > It does however work fine if I use ext3 on the said partitions. This is
-> > a brand new HD (about a week old) so I doubt it has any bad blocks
-> > (badblocks /dev/hda8 doesn't report anything).
-> > 
-> > [root@mikeb home]# mkfs.reiser4 --version
-> > mkfs.reiser4 0.4.12
-> > 
-> > Kernel: 2.6.0-test4 #5 Mon Sep 1 14:20:14 PDT 2003 i686 unknown unknown
-> > GNU/Linux
-> > 
-> > CONFIG_REISER4_FS=y
-> > CONFIG_REISER4_LARGE_KEY=y
-> > 
-> > CPU:
-> > cpu family      : 6
-> > model           : 8
-> > model name      : AMD Athlon(tm) Processor
-> > stepping        : 1
-> > cpu MHz         : 1662.612
-> > cache size      : 256 KB
-> > 
-> > Distro: Mandrake 9.2beta.
-> 
-> There is something interesting in kernel logs?
 -- 
-Best Regards,
- 
-Mike Benoit
-NetNation Communications Inc.
-Systems Engineer
-Tel: 604-684-6892 or 888-983-6600
- ---------------------------------------
- 
- Disclaimer: Opinions expressed here are my own and not 
- necessarily those of my employer
+Hans
+
 
