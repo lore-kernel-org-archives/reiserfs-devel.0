@@ -1,53 +1,68 @@
-From: JPASTORM@esade.edu
-Subject: New to reiserfs
-Date: Mon, 13 May 2002 11:34:29 +0200
-Message-ID: <OF69292CB8.96B5D3F9-ONC1256BB8.0033D851@esade.edu>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: New to reiserfs
+Date: Mon, 13 May 2002 13:53:43 +0400
+Message-ID: <20020513135343.A1386@namesys.com>
+References: <OF69292CB8.96B5D3F9-ONC1256BB8.0033D851@esade.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10297-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10298-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <OF69292CB8.96B5D3F9-ONC1256BB8.0033D851@esade.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: JPASTORM@esade.edu
+Cc: reiserfs-list@namesys.com
 
-Hi,
+Hello!
 
-I'm new to this surprising file system. Currently I have a Linux Red Ha=
-t
-6.2 server for testing, with two partitions (/ and /boot). I'm running =
-the
-2.2.14-5.0 kernel and I have several questions about reiserfs:
+On Mon, May 13, 2002 at 11:34:29AM +0200, JPASTORM@esade.edu wrote:
 
-1.- Do I necessarily have to update to the 2.2.20 kernel so as to use
-2.2.20-reiserfs patch?
-2.- Can I migrate from ext2 to reiserfs without loosing data (I know I
-should always backup my data) or should I have to format my new reiserf=
-s
-partitions?
-3.- Is there any partition in other servers (in production) where it is=
+> I'm new to this surprising file system. Currently I have a Linux Red Hat
+> 6.2 server for testing, with two partitions (/ and /boot). I'm running the
+> 2.2.14-5.0 kernel and I have several questions about reiserfs:
 
-advisable to stay with the ext2 filesystem?
-4.- I have a PIII 1 GHz, 512 MB RAM, SCSI server where I run sendmail, =
-bind
-and squid. Will I have problems with performance if I migrate to reiser=
-fs?
-What's the counterpart of dealing with a journaling filesystem?
+> 1.- Do I necessarily have to update to the 2.2.20 kernel so as to use
+> 2.2.20-reiserfs patch?
 
-Thanks in advance.
+No, but it is not guaranteed that that patch would apply to older kernels.
+Also 2.2.14 kernel is a very old one, and it is willed with bugs and security
+holes (e.g. anyone with local account may obtain root access in seconds).
+So it is good idea to upgrade the kernel regardless of whenever you plan to
+use reiserfs or not.
 
-Juan Pastor
-E-mail: jpastorm@esade.edu
+> 2.- Can I migrate from ext2 to reiserfs without loosing data (I know I
+> should always backup my data) or should I have to format my new reiserfs
+> partitions?
 
-Centro de Proceso de Datos
-Fundaci=F3n ESADE
-Av. Pedralbes, 60-62
-08034 Barcelona
+No. Currently you need to do full backup/mkfs/restore cycle.
 
-Tel  +34 932806162 ext. 2562
-Fax  +34 932048105
+> 3.- Is there any partition in other servers (in production) where it is
+> advisable to stay with the ext2 filesystem?
 
-=
+I usually have very small "rescue" ext2 partition with all the necessary tools
+present to ercover from various system disasters, I also never mount that
+partition, except when I need to update some tools there.
+ext2 was choosen as an fstype because 99% of all kernels are built with
+ext2 support built-in, I guess.
+In such a scenario, if I loose almost everything including rootfs,
+I still can get any kernel and boot into my rescue partition to try and recover
+stuff.
 
+> 4.- I have a PIII 1 GHz, 512 MB RAM, SCSI server where I run sendmail, bind
+> and squid. Will I have problems with performance if I migrate to reiserfs?
 
+Not likely.
+
+> What's the counterpart of dealing with a journaling filesystem?
+
+Some of the diskspace is occupied for the journal (32M to be exact).
+Also reiserfs is a balanced tree filesystem, and it puts somewhat higher
+load on the CPU. (more likely to overheat if you do not have correct
+cooling and stuff).
+Also you usually do not see those fsck runs at startup after power failures.
+
+Bye,
+    Oleg
