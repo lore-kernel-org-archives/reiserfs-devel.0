@@ -1,49 +1,63 @@
-From: David Lang <david.lang@digitalinsight.com>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 15:52:24 -0700 (PDT)
-Message-ID: <Pine.LNX.4.60.0408261548410.27825@dlang.diginsite.com>
-References: <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com>
- <1093536282.5482.6.camel@leto.cs.pocnet.net> <Pine.LNX.4.60.0408261348370.27825@dlang.diginsite.com>
- <200408270030.20647.lkml@felipe-alfaro.com>
+From: Michael Weissenbacher <webmaster@dermichi.com>
+Subject: reiser4 corruption problem (maybe related to "Broken reiser4 FS")
+Date: Fri, 27 Aug 2004 01:15:08 +0200
+Message-ID: <412E6EFC.3070600@dermichi.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20837-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20838-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200408270030.20647.lkml@felipe-alfaro.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
-Content-Transfer-Encoding: 7bit
-To: Felipe Alfaro Solana <lkml@felipe-alfaro.com>
-Cc: Christophe Saout <christophe@saout.de>, Rik van Riel <riel@redhat.com>, Jamie Lokier <jamie@shareable.org>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On Fri, 27 Aug 2004, Felipe Alfaro Solana wrote:
+i've tested reiser4 on a spare partition to see how well it would work 
+for me. unfortunately i hit some corruption problem. it seems perfectly 
+reproducable, so hardware error is very unlikely.
 
-> On Thursday 26 August 2004 23:05, David Lang wrote:
->
->> I also don't see why the VFS/Filesystem can't decide that (for example)
->> this tar.gz is so active that instead of storing it as a tar.gz and
->> providing a virtual directory of the contents that it instead stores the
->> directory of the contents and makes the tar.gz virtual (regenerating it as
->> needed or as extra system resources are available)
->
-> Because that would mean the kernel should "talk" the tar format, which is,
-> IMHO, a Bad Idea (TM). Maybe the kernel could notify a user-space daemon to
-> perform this task, instead.
->
+first some details on my system:
+AMD Athlon(tm) XP 2400+
+512 MB DDR-RAM (tested with memtest)
+MSI K7N2G board (nforce2 chipset)
+hard disk for testing: MAXTOR 6L080J4 (80GB), partitioned like:
+    Device Boot      Start         End      Blocks   Id  System
+/dev/hdb1               1        4866    39086113+  83  Linux
+/dev/hdb2            4867        9732    39086145   83  Linux
+criminal mnt # uname -a
+Linux criminal 2.6.8.1-mm4 #4 Wed Aug 25 01:34:48 CEST 2004 i686 AMD 
+Athlon(tm) XP 2400+ AuthenticAMD GNU/Linux
+the distro is gentoo and i use reiser4progs1.0.1
 
-the kernel will definantly need the ability to use user-space code to do 
-the transformations from one version to the other (if nothing else think 
-of the thumbnail version of images, we don't want the image manipulation 
-code in the kernel and we definantly want this sort of option available)
+the test i did is rather simple: i have a 2.3GB .tar.bz2 file that 
+cotains 66588 files and about 3.1GB of data. in the first test i 
+formatted /dev/hdb1 as reiser4 and /dev/hdb2 as reiser3. i extracted the 
+.tar.bz2 on both of them. after that i umounted both and ran a fsck on 
+them. the reiser3 partition was ok, but the reiser4 partition was 
+corrupted.
 
-the interesting issue is going to be defining the kernel->user-space 
-interface for doing the extractions.
+ok, but what's really intersting now:
+i reformatted both partitions and switched hdb1 to reiser3 and hdb2 to 
+reiser4. i extracted the same file on both and what happens? exaclty the 
+same corrutions now on hdb2 (at least the count is the same and the 
+errors look very similar)! and again reiser3 is ok!
 
-David Lang
+i put the output of both tests into a file that is available at
+http://www.dermichi.com/ablage/reiser4/reiser4_troubles.txt
 
--- 
-"Debugging is twice as hard as writing the code in the first place.
-Therefore, if you write the code as cleverly as possible, you are,
-by definition, not smart enough to debug it." - Brian W. Kernighan
+i've already had the exact same problems before, i mean errors like:
+FSCK: Directory [109e8:416c7400000000:109ee] (dir40), node [216782], 
+item [1],
+unit [22]: entry has wrong offset
+[109ee:0(NAME):142657765726275:6e6746fc72416e77:135160352fe624]. Should be
+[109ee:0(NAME):142657765726275:6e6746fc72416e77:13514d8cfe19f4].
+while doing random other things on reiser4 partitions and fsck'ing 
+afterwards. using --build-fs created lots of files under lost+found and 
+i started over. i will leave the fs this time, maybe i can try some 
+things to find the cause of the problem.
+
+anyone got an idea?
+
+thanks,
+michael weissenbacher
