@@ -1,37 +1,34 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Re: Fwd: Re: 2.4.19-rc1-jam2 (-rc1aa2)
-Date: 11 Jul 2002 09:15:18 -0400
-Message-ID: <1026393318.4952.21.camel@tiny>
-References: <200207110235.22875.Dieter.Nuetzel@hamburg.de>
-	<1026350802.4952.0.camel@tiny> <3D2CEC05.5090300@mb.tu-ilmenau.de> 
-	<20020711112224.B2718@namesys.com>
+From: "Brian" <brian@english-bay.com>
+Subject: Re: My mistake....
+Date: Thu, 11 Jul 2002 06:21:59 -0700
+Message-ID: <004901c228dd$f01fe220$0e01a8c0@englishbay.com>
+References: <000b01c228db$3a1b1f00$0e01a8c0@englishbay.com> <20020711170537.A2611@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10974-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10975-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020711112224.B2718@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>, reiserfs-list <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Thu, 2002-07-11 at 03:22, Oleg Drokin wrote:
-> Hello!
-> 
-> On Thu, Jul 11, 2002 at 04:23:01AM +0200, Manuel Krause wrote:
-> 
-> > Are your patches going to follow 2.4.19/2.4.20-preX+namesys - once 
-> > 2.4.19/2.4.20-pre is finally out
-> 
-> We hope to get these in time for 2.4.20.
+Hi Oleg:
 
-The data logging code will follow the pure kernel, and will include
-whatever other bits I need (as separate patches) to make things work. 
-Once the big chunk of namesys stuff gets merged, I'll rework my patches
-on top of them.
+>    Have you tried specifying explicit -t reiserfs parameter?
 
--chris
+Yes.
 
+It reports the usual "mount" errors for wrong filesystem mount parameters.
+
+'mount -t auto /dev/hdc2 /arch" always mounts as an ext3 filesysstem.
+
+I guess I can remake /dev/hdc2 as a reiserfs but I fear I would loose the
+data completely and I do not have another partition large enough to save a
+10gig raw dump of that partition.
+
+Thanks,
+
+Brian
+BSFH
 
