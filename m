@@ -1,59 +1,34 @@
-From: Vitaly Porotikov <vitaly.porotikov@nssmb.com>
-Subject: Core dump in reiserfsck
-Date: Wed, 15 Jan 2003 13:08:26 +0900
-Sender: vitaly.porotikov@nssmb.com
-Message-ID: <3E24DEBA.39AC1901@nssmb.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Core dump in reiserfsck
+Date: Wed, 15 Jan 2003 09:54:38 +0300
+Message-ID: <20030115095438.A22918@namesys.com>
+References: <3E24DEBA.39AC1901@nssmb.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12350-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12351-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <3E24DEBA.39AC1901@nssmb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Vitaly Porotikov <vitaly.porotikov@nssmb.com>
+Cc: reiserfs-list@namesys.com
 
-Folks,
+Hello!
 
-  Perhaps 3.x1c have not this bug, but I can't do any changes in my
-system. I send it in hope to find some coding errors out (if this wasn't
-before).
+On Wed, Jan 15, 2003 at 01:08:26PM +0900, Vitaly Porotikov wrote:
 
-[root@tkprzbkup5 /root]# mount
-/dev/rza1 on / type ext2 (rw)
-none on /proc type proc (rw)
-none on /dev/pts type devpts (rw,gid=5,mode=620)
-/dev/rze1 on /export type reiserfs (ro)
-[root@tkprzbkup5 /root]# reiserfsck --check /dev/rze1
+>   Perhaps 3.x1c have not this bug, but I can't do any changes in my
+> system. I send it in hope to find some coding errors out (if this wasn't
+> before).
 
-<-------------reiserfsck, 2002------------->
-reiserfsprogs 3.x.1b
+You you guessed right, this bug is long fixed.
+Actually if you ever will decide to upgrade your reiserfsprogs (which is
+recommended), pick 3.6.4 (or whatever will be latest at the time),
+not 3.x.1c
 
-Will read-only check consistency of the filesystem on /dev/rze1
-Will put log info to 'stdout'
-
-Do you want to run this program?[N/Yes] (note need to type Yes):Yes
-###########
-reiserfsck --check started at Wed Jan 15 10:41:40 2003
-###########
-Filesystem seems mounted read-only. Skipping journal replay..
-Checking S+tree../ 72 (of  98)/101 (of 153)/124 (of
-156)bad_indirect_item: block 1907661: item 7659550 76756x1 IND (1), len
-8, location 3056 entry count 0, fsck need 0, format new has a pointer 0
-to the block 1 whichin tree already
-bad_indirect_item: block 1907661: item 7659550 7675670 0x1 IND (1), len
-8, location 3056 entry count 0, fsckd 0, format new has a pointer 1 to
-the block 500 which is in tree already
-bit 2535358884, bitsize 314620004
-reiserfsck: bitmap.c:160: reiserfs_bitmap_test_bit: Assertion
-`bit_number < bm->bm_bit_size' failed.
-Aborted (core dumped)
-
-
---
-Best regards,
-  Vitaly
-
-
-
+Bye,
+    Oleg
