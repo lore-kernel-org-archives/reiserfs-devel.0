@@ -1,41 +1,56 @@
-From: Kuba Ober <kuba@mareimbrium.org>
+From: Robert Brockway <robert@timetraveller.org>
 Subject: Re: Problem with my HDD
-Date: Wed, 29 May 2002 17:19:30 -0400
-Message-ID: <200205291719.30901.kuba@mareimbrium.org>
+Date: Thu, 30 May 2002 09:45:50 +1000 (EST)
+Message-ID: <Pine.LNX.4.44.0205300905050.22928-100000@avon.timetraveller.org>
 References: <10512850437.20020529194929@starfall.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10439-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10440-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 In-Reply-To: <10512850437.20020529194929@starfall.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Cookie-Monster <cookie.monster@starfall.de>
 Cc: reiserfs-list@namesys.com
 
-On =B6roda 29 maj 2002 01:49 pm, Cookie-Monster wrote:
-> Hi everybody
->
-> I hope you can help me. I formated on of my Server-HDDs with ReiserFS
-> version, which has been distributed in SuSE Linux 7.3. Sorry, but I
-> don't know the version, cause I'm know running SuSE Linux 8.0.
->
-> My Problem is, that the HDD cannot be mounted anymore:
->
-> 1.   fileserver:/ # mount /dev/sda1 /ftp/apps/
-> 2.   mount: Not a directory
+On Wed, 29 May 2002, Cookie-Monster wrote:
 
-try
-# ls -la /ftp/apps
-# mkdir /ftp/apps
-and say what happens
+> So I can't get the files on this HDD and my life depends on them, so
+> can someone HELP ME PLEASE?
 
-Also, try
-# dmesg
-and see if there are any read errors on your drive. if there are, you're ou=
-t=20
-of luck... get a new drive
+Ok, it's too late to point out the virtue of backups (this time).  From
+your description I'm personally suspecting a hardware issue with the drive 
+but it's orth ruling out all other alternastives before accepting this.
 
-Cheers, Kuba
+If you can I'd consider getting an image of the drive.  It may help with 
+data recovery later.  something like:
+
+dd if=/dev/sda1 of=/bigfilesystem/diskimage
+
+I don't believe it will be necessary to set a particular blocksize for 
+the dd here but perhaps others might comment.
+
+Keep this image aside (put it on another box infact).
+
+You may find it is actually impossible to get much of an image from the 
+drive.
+
+Now the main reason I posted was this:  If you find that all else has
+failed (and if I were you I'd wait for a few more suggestions from the
+learned people here to come in) then there are companies who will attempt
+data recovery even on physically broken drives.  These companies have
+decent success rates with respect to data recovery but be prepared to pay
+$$$.  The things they do to the drive are often time consuming and costly
+resource-wise.
+
+Ask local computer experts for a local establishment which would do this.
+Rob
+
+-- Robert Brockway B.Sc. email: robert@timetraveller.org  ICQ: 104781119
+   Linux counter project ID #16440 (http://counter.li.org)
+   blake: up 1 day,  3:50,  4 users,  load average: 0.49, 0.47, 0.61
+   "The earth is but one country and mankind its citizens" -Baha'u'llah
+
+
