@@ -1,28 +1,35 @@
-From: Sander <sander@humilis.net>
-Subject: reiser4 problems on amd64: things to try?
-Date: Mon, 3 Jan 2005 18:37:32 +0100
-Message-ID: <20050103173732.GB13054@favonius>
-Reply-To: sander@humilis.net
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: --rebuild-tree always finds errors --check is ok
+Date: Tue, 04 Jan 2005 17:30:39 +0300
+Message-ID: <1104849038.32178.54.camel@tribesman.namesys.com>
+References: <41D71C4E.6000209@hanaden.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-23033-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23034-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <41D71C4E.6000209@hanaden.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com, reiserfs-dev@namesys.com
+To: hanasaki <hanasaki@hanaden.com>
+Cc: reiserfs-list@namesys.com
 
-Hello all,
+Hello
 
-Tomorrow morning I'll reinstall (and reformat to reiser3) a dual Opteron
-which has a troublesome reiser4 fs.
+On Sun, 2005-01-02 at 00:55, hanasaki wrote:
+> Running reiser3 on kernel 2.6.10 and 2.6.9 with Debian sarge and unstable.
+> 
+> the --rebuild-tree always finds errors and corrects them.  even when run
+> more than once consecutively without mounting the partition in between.
+> 
+Please provide reiserfsck --rebuild-tree output.
+What is version of your reiserfsck? (reiserfsck -V)
 
-Should I run some tests, or retrieve some debug info from the reiser4 fs
-before I reformat?
+> --check says all is good.
+> 
+> 
+> 
+> 
 
--- 
-Humilis IT Services and Solutions
-http://www.humilis.net
