@@ -1,38 +1,42 @@
-From: Jarno Elonen <elonen@iki.fi>
+From: Travis Crump <pretzalz@techhouse.org>
 Subject: Re: plagiarism of reiserfs by Debian
-Date: Sat, 19 Apr 2003 21:40:07 +0300
-Message-ID: <200304192140.09144.elonen@iki.fi>
-References: <200304181604.28955.vitaly@namesys.com> <3EA17427.7040300@namesys.com> <20030419172906.GX2528@phunnypharm.org>
+Date: Sat, 19 Apr 2003 15:05:16 -0400
+Message-ID: <3EA19DEC.3090202@techhouse.org>
+References: <143CBAC4-7291-11D7-ADF3-00050285B655@ncpro.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13720-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13721-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030419172906.GX2528@phunnypharm.org>
-Content-Disposition: inline
+In-Reply-To: <143CBAC4-7291-11D7-ADF3-00050285B655@ncpro.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: debian-devel@lists.debian.org, Hans Reiser <reiser@namesys.com>
-Cc: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com, debian-testing@lists.debian.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Marcel Weber <mmweber@ncpro.com>
+Cc: Hans Reiser <reiser@namesys.com>, Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com, debian-testing@lists.debian.org, Ed Boraas <ed@debian.org>, debian-devel@lists.debian.org
 
-> I'd hardly call it plagiarism. Your copyright is, by will of our own
-> policy and to abide by authors wishes, distributed with the tools in
-> /usr/share/doc/<pkg>/copyright.
+Marcel Weber wrote:
+> Hans, I hope that the removal of these credits was a mistake and that 
+> they're going to be included in future releases of testing. ReiserFS is 
+> a really fine piece of software and anyone who helped with it's 
+> development should have the right to be credited if he or she wants so.
+> 
+> Perhaps someone should file a bug against this.
+> 
+> Regards
+> 
+> Marcel
 
-Ah.. I guess Hans is referring to the author list in README?
-The package maintainer probably looked at COPYING (contains GPL, as usual) and 
-AUTHORS (an empty file) and didn't realize that README was actually an 
-important addendum to the license and omitted the file from the package by 
-mistake.
 
-To prevent such problems in the future, perhaps the ReiserFS project could 
-move the deviations from GPL from README to the beginning of COPYING and move 
-the author list to AUTHORS?
+You mean a bug report like 
+<http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=152547>?  Oh, wait... 
+  What if someone wanted to write a gtk frontend to mkreiserfs?  The 
+credit would be similarly removed from the user's sight.  It would 
+probably me right to put the message in the about window of this 
+hypothetical program, but it wouldn't have the same visiblity as the 
+credit now has since users rarely look at the about window.  Ultimately, 
+all that was removed was *code* that gets compiled.  If the maintainer 
+cannot arbitrarily change any code he wants, then it is not clear that 
+the program is DFSG-free.
 
-Additionally, it might be a good idea to provide a shoreter list of authors in 
-addition to the detailed one for easier copying to 'standard copyright files' 
-like 'copying' in Debian.
-
-- Jarno
