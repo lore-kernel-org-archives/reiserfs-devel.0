@@ -1,58 +1,52 @@
-From: Vitaly Fertman <vitaly@namesys.com>
+From: "Matthias Urlichs" <smurf@noris.de>
 Subject: Re: fsck mode halfway between --fix-fixable and --rebuild-tree ?
-Date: Mon, 30 Sep 2002 15:43:44 +0400
-Message-ID: <200209301543.44974.vitaly@namesys.com>
-References: <H356C4$4F46E50E852BF25DA1E850A48426FCDF@voila.fr> <3D98318B.8000905@namesys.com> <20020930131744.X32363@noris.de>
+Date: Mon, 30 Sep 2002 15:08:54 +0200
+Message-ID: <20020930150854.Z32363@noris.de>
+References: <H356C4$4F46E50E852BF25DA1E850A48426FCDF@voila.fr> <20020929172335.L32363@noris.de> <20020930101824.A3895@namesys.com> <3D98318B.8000905@namesys.com> <20020930131744.X32363@noris.de> <20020930152204.A26742@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11572-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11573-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20020930131744.X32363@noris.de>
+Content-Disposition: inline
+In-Reply-To: <20020930152204.A26742@namesys.com>; from green@namesys.com on Mon, Sep 30, 2002 at 03:22:04PM +0400
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Matthias Urlichs <smurf@noris.de>, Hans Reiser <reiser@namesys.com>
-Cc: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-On Monday 30 September 2002 15:17, Matthias Urlichs wrote:
-> Hans Reiser:
-> > >>The only way to fix this, at the moment, seems to be --rebuild-tree,
-> > >> which is overkill since it scans _everything_, and thus reconnected
-> > >> the stuff I deleted last week back into /lost+found.  It also takes
-> > >> too long.  :-/
-> > >
-> > >No, it does not behave like this. It may take long time though, anyway.
-> >
-> > Let's be more clear.  You must use the -S option to get it to behave in
-> > the way you do not want.  Don't use -S, and it does what you want it to
-> > do.
->
-> When I tried this, reiserfsck with -S scanned the whole disk, as expected.
->
-> Reiserfsck without -S said it would scan roughly half of my disk. That led
-> me to conclude that whatever it does, it doesn't just use the blocks which
-> are actually used for the tree at the moment.
+Hi,
 
-It loading the bitmap from the disk and sais how many blocks will be scanned.
-Regarding -S option, the man page sais:
+Oleg Drokin:
+> > When I tried this, reiserfsck with -S scanned the whole disk, as expected.
+> > Reiserfsck without -S said it would scan roughly half of my disk. That led
+> 
+> Yes. It scans all the blocks that are marked as "used" in bitmap.
+> 
+That's not what I meant when I proposed this new option. The method 
+which I proposed would walk the existing tree, both "downwards" and
+"sideways", to find all reachable blocks with nodes, and then do the
+existing rebuild-tree algorithm on the result.
 
---scan-whole-partition, -S
-This option causes --rebuild-tree to scan the whole partition, not only
-used space on the partition.
+> > me to conclude that whatever it does, it doesn't just use the blocks which
+> > are actually used for the tree at the moment.
+> 
+> How can it know? It must find all the lost blocks too.
+> 
+... and how can it know that the bitmap represents reality?
 
-So, without -S option only used space is scanned, with -S option all blocks are.
+Blocks have three pointers which point to them (left neighbour, right
+neighbour, and parent).  (That's my understanding of the way people
+usually lay out their B-trees, anyway; apologies if yours is radically
+different.) I'd like to assume that blocks don't easily get lost when
+there are so many ways to find them. Three pointers look safer than a
+single bit, anyway.
 
-> How does reiserfsck determine which blocks contain leaf nodes, anyway?
-
-By analizing the content on pass0. If a block looks like a leaf (probably 
-slightly corrupted) it will be inserted into a new tree on pass1 (or only 
-not corrupted or recovered items from it on pass2 in the case of corruption). 
-If it does not look like a leaf or there is no way to recover data from it, 
-the block is skipped on pass0.
+This method would be a nice compromise between not fixing a problem,
+depending on suspect information, and/or reconnecting every file which
+I've deleted during the last year.
 
 -- 
-
-Thanks,
-Vitaly Fertman
+Matthias Urlichs     |     noris network AG     |     http://smurf.noris.de/
