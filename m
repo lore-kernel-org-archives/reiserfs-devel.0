@@ -1,45 +1,89 @@
-From: Simon Raffeiner <sturmflut@lieberbiber.de>
-Subject: Re: flush file system
-Date: Sat, 26 Mar 2005 20:36:50 +0100
-Message-ID: <200503262036.53671.sturmflut@lieberbiber.de>
-References: <20050326085141.GA29906@sue.caltech.edu> <d904a5e705032606173196f6e@mail.gmail.com>
-Reply-To: sturmflut@lieberbiber.de
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Contribution
+Date: Mon, 28 Mar 2005 09:24:32 -0800
+Message-ID: <42483DD0.3020904@namesys.com>
+References: <20050326085141.GA29906@sue.caltech.edu>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart1742793.QvlnojP62x";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23713-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <d904a5e705032606173196f6e@mail.gmail.com>
+In-Reply-To: <20050326085141.GA29906@sue.caltech.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: John Sconiers <jsconiers@gmail.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Chris Hiszpanski <hiszpans@its.caltech.edu>, vitaly@thebsh.namesys.com
+Cc: reiserfs-list@namesys.com
 
---nextPart1742793.QvlnojP62x
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Suggestion: If you want casual people to actually read code, you need to
+send it as uncompressed patches.  Vitaly, please look at this.
 
-Should be "sync" on Linux, regardless of the underlying file system.
+I think we would only want to use the algorithm you describe below after
+extensively warning the user that they should instead first copy it to a
+working hard drive, and warning them that if fsck does not have a good
+hard drive under it can make things far worse rather than better, and
+having them rerun with the option
+--continue-to-trust-my-data-to-failing-hardware
 
-Am Samstag, 26. M=E4rz 2005 15:17 schrieb John Sconiers:
-> Is there a reiserfs command to flush the pending wriets to the file syste=
-m?
-> JOHN
+Thanks for the contribution, it sounds useful.
 
---nextPart1742793.QvlnojP62x
-Content-Type: application/pgp-signature
+Hans
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
+Chris Hiszpanski wrote:
 
-iD8DBQBCRbnVd2q78rIgT6ARAtNlAJ90VqVx+DEYL/O5TA/BFzsxABVDDgCeNMM8
-eGVGbos13k/8FDHT6qJCNE0=
-=7bNZ
------END PGP SIGNATURE-----
+>Hi,
+>
+>Recently, I ran a --rebuild-tree on a reiserfs partition in an attempt to
+>restore several files that I had accidentally deleted. Due to my own stupidity
+>I did not back up my files on the partition before doing this (!).
+>
+>What can go wrong did, and --rebuild-tree stopped at the first bad block,
+>leaving an unmountable /home partition.
+>
+>I ran badblocks on the partition and passed this to reiserfsck. Some of the
+>bad blocks were journal superblocks, and reiserfsck gave up at this point. Web
+>documentation suggested running a dd_rescue. Since I was working on a remote
+>machine and had no extra drives available this wasn't an open option.
+>
+>I noticed that writing to the badblocks should cause the hard disk to remap the
+>blocks, making reiserfsck happy, though losing data (turned out that apparently
+>not much data was stored in these blocks, and this data was inaccessible
+>anyway, so not a big loss :).
+>
+>The non-destructive write (i.e. badblocks -n ...) didn't remap the blocks. Only
+>the destructive writes (i.e. badblocks -w) did. Therefore, I modified the
+>lib/io.c code with a pretty trivial update that others in this situation may
+>find useful.
+>
+>The contribution adds two options as #define in lib/io.c, NOSUPERDIE and NODIE.
+>When NOSUPERDIE is 1, the bread function calls badblocks -w to destructively
+>write the bad block, hopefully remapping it (since the remapped block is
+>meaningless data, I didn't worry about having bh point to meaningful data).
+>When NOSUPERDIE is 0, but NODIE is 1, the bread function returns a 0, acting
+>as if the block was in the bad blocks list, avoiding the need for running
+>bad blocks separately. When both NOSUPERDIE and NODIE are 0, the code compiles
+>unaltered.
+>
+>The point of this contribution is to prevent reiserfsck from dieing on bad
+>blocks, to get it to finish, so that the file system, what's left of it, can
+>be mounted.
+>
+>The results that I received were pretty good. I was able to recover most of
+>my files, and the file system appears to be in tact. Can anyone tell me how
+>in tact is actually is? I'm not exactly sure what was destroyed when I remapped
+>the journal superblocks.
+>
+>I'd appreciate some feedback on this hack, any problems with it especially.
+>
+>Hopefully the community finds this useful.
+>
+>Cheers,
+>Chris
+>
+>(attached reiserfsprogs-3.6.19-hiszpans.tar.gz)
+>(http://www.its.caltech.edu/~hiszpans/pub/reiserfsprogs-3.6.19-hiszpans.tar.gz)
+>
+>  
+>
 
---nextPart1742793.QvlnojP62x--
