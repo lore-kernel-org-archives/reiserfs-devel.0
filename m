@@ -1,46 +1,44 @@
-From: evilninja <evilninja@gmx.net>
-Subject: Re: SUSE 9.1 with ReiserFS:  / won't fsck, but is otherwise fine
-Date: Wed, 29 Sep 2004 02:38:27 +0200
-Message-ID: <415A0403.3040806@gmx.net>
-References: <1095996040.10293.18.camel@xserver.local.net>	 <200409241116.09066.vitaly@namesys.com>	 <1096032016.17001.4.camel@xserver.local.net>	 <200409271844.11580.vitaly@namesys.com>	 <1096301165.9096.14.camel@xserver.local.net>  <41589155.1050405@gmx.net> <1096324801.9096.41.camel@xserver.local.net>
+From: Kurt Guenther <kurtg@serent.com>
+Subject: reiserfs repairs
+Date: Wed, 29 Sep 2004 07:26:46 -0400
+Message-ID: <415A9BF6.1010506@serent.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21953-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21956-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1096324801.9096.41.camel@xserver.local.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
 
-Chris Worley wrote:
-> I find the root partition an invaluable part of the system.  So, I'm not
-> going to destroy it on purpose.  I'm not quite sure how to boot without
-> a root partition ;)
+I have some "wierd" files and I thought it may be from a long string of 
+system crashes (due to nvidia/xorg-x11 issues).
 
-you did backup at least /etc , didn't you? if so, then a quick reinstall
-of your distro (and thus overwriting "/" ) should be not that painful.
+> enigma root # ls -ld .
+> drwx------  13 root root 776 Sep 27 16:45 .
+> enigma root # ls -ld ./README
+> ls: ./README: Permission denied
+> enigma root # ls -l ./README
+> ls: ./README: Permission denied
+> enigma root # ls -l
+> ls: README: Permission denied
+> ls: xorg.conf.new: Permission denied
+> total 533
+> -rw-r--r--  1 root root 541206 Sep 27 16:42 openvpn-2.0_beta11.tar.gz
+> enigma root #
 
-> I'm really looking for a non-destructive way to test/repair whatever has
-> happened. 
 
-well, there's always http://www.namesys.com/support.html   ;)
+It seems whatever existed in thid directory at the time of the crash has 
+gone over to the dark side.  
 
-Christian.
-- --
-BOFH excuse #71:
+I looked at reiserfsck, but it needs this file system to be be 
+unmounted.  This is a remote RAID-1 server, so not much luck there.
 
-The file system is full of it
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+What's the recommended approach to recover/delete these?   I'm running 
+the 2.6.8-r3 Gentoo kernel.
 
-iD8DBQFBWgQDC/PVm5+NVoYRApvLAKCXAWCz3PrDzLehnrTBEUeIGtwFWACgkIdh
-wr4EZlLE0y76Srjny9Bt8Qw=
-=i5O+
------END PGP SIGNATURE-----
+--Kurt
+
