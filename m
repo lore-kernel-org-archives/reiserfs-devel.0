@@ -1,83 +1,46 @@
-From: "David Dabbs" <david@dabbs.net>
-Subject: RE: [RFC] Pathname Semantics with //
-Date: Thu, 9 Sep 2004 22:06:48 -0500
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 09 Sep 2004 22:22:51 -0700
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040910030206.E29B015D9E@mail03.powweb.com>
-References: <4140FA21.50101@namesys.com>
+Message-ID: <41413A2B.9020405@namesys.com>
+References: <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <412DA40B.5040806@namesys.com> <20040826140500.GA29965@fs.tum.de> <20040826150202.GE5733@mail.shareable.org> <41410DE7.3090100@techsource.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <4140FA21.50101@namesys.com>
+In-Reply-To: <41410DE7.3090100@techsource.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: 'Hans Reiser' <reiser@namesys.com>
-Cc: linux-fsdevel@vger.kernel.org, 'ReiserFS List' <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Timothy Miller <miller@techsource.com>
+Cc: Jamie Lokier <jamie@shareable.org>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
 
+A friend asked me a question, and because he is very bright it reminded 
+me that I have not done a good job of reviewing the history of the 
+design's evolution.
 
+He asked me, why not just access a filename's size as filename/size?
 
-> Hans Reiser wrote:
-> 
-> David Dabbs wrote:
-> 
-> >>Use of : in addition to / is a bad idea, see The Hideous Name by Rob
-> >>Pike for why.
-> >>
-> >>Hans
-> >>
-> >
-> >I've read The Hideous Name, and I think you're taking Pike out of
-> context.
-> >He wrote that document when device files were still only a part of a
-> >research version of UNIX. His main point is that programs should not be
-> >saddled with understanding physical devices when constructing filenames.
-> >
-> No, it was more than that.  It was that hierarchy requires only one
-> delimiter.
+So, the original idea was to access metafiles as just files within a 
+directory, and it actually remains that way. However, I first decided to 
+make the standard unix metafiles less intrusive on the namespace. So 
+that led to calling it filename/..size and filename/..owner, etc. In 
+this scheme, the use of '..' was just a style convention for metafiles, 
+and not a requirement in anyway.
 
-Of course his essay was about more than that! Where you quote me above, I
-was referring to his main point /about use of the colon/. Perhaps my message
-was truncated and you didn't get to read a bit later where I acknowledge
+This was actually pretty decent as a design, but then a user on the 
+mailing list suggested replacing the '..' prefix with a subdirectory 
+prefix. I forget who suggested this and what the prefix was exactly. So 
+we then created a '..metas' subdirectory, and this had the advantage 
+that one could ls it to see all the builtins supported by a given 
+plugin. This is not an important advantage, and I encourage others to 
+critique it.
 
->Regarding slashes, I can't find anywhere that Pike criticizes slashes.
->Now, I can see where the proposal runs afoul of his advice that:
->
->The syntax should be clean and uniform; every new syntactic rule requires
->at least one, and usually many, semantic rules to resolve peculiarities
->introduced by the new syntax. If the name space is a tree or any other kind
->of graph, a single character should be used to separate nodes in a name.
->
->Well, the only reason two trailing slashes are required is that we need
->some way to distinguish a directory's named streams from its entries. What
->is worse, one extra slash at the end of a directory (or two for a file) or
->"/metas"?
+So, instead of filename/size we have filename/..metas/size. The only 
+thing gained by this is that 'size' has a rarer name of '..metas/size'. 
+The use of the '..metas/' prefix is purely a non-mandated style 
+convention. File plugins that dislike it are free to violate the 
+convention. There is no deep semantic to it, just a cowardly aversion to 
+intruding on current namespace usage with something as common as 'size'. 
+It has the significant disadvantage of being a longer name than 'size' 
+or '..size'. I could be talked out of it.
 
-I completely agree with Pike on the one delimiter thing -- it is certainly
-much more elegant. And we can have that simplicity/elegance as long as
-directories are prohibited from having metadata. Do you have a proposal to
-expose metadata on a directory such that it 
-
-a) allows one to distinguish a directory entry from directory metadata,
-b) uses only already-reserved pathname character(s),
-c) doesn't require any reserved name,
-d) is the same delimiter used for file metadata and
-e) doesn't butt heads with Sus?
-
-
-In a different post you said 
->Oh, and yes, I understand that minimizing the cost of change by 
->being artful is desirable.
-
-Isn't it artful to try for the most innovation with the least breakage;
-taking as little from the namespace and breaking only as many eggs as are
-needed to make that innovative new omelet? I'm certainly willing to break as
-many eggs as needed, but no more.
-
-I don't claim to know as much about closure (or free trade) as do you. My
-mental gifts are in other matters. ;-)
-
-
-David
-
-
-
-
+Hans
