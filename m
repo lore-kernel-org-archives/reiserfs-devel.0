@@ -1,11 +1,11 @@
 From: Russell Coker <bofh@coker.com.au>
 Subject: Fwd: Re: [reiserfs-list] Reiserfs with Samba vs NetApp Filer
-Date: Fri, 11 Oct 2002 20:28:52 +0200
-Message-ID: <200210112028.52316.bofh@coker.com.au>
+Date: Fri, 11 Oct 2002 20:30:49 +0200
+Message-ID: <200210112030.49400.bofh@coker.com.au>
 Reply-To: Russell Coker <bofh@coker.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11655-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11656-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,49 +14,30 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-On Thu, 10 Oct 2002 19:31, Hans Reiser wrote:
-> I would say that WAFL is an absolutely superb filesystem for the purpose
-> of RAID NFS fileserving.  Reiser4 may give it some serious competition
-> after some time has passed and we have time for such things as carefully
-> benchmarking NFS, etc., but WAFL is a great filesystem for NFS RAID as
-> it is right now.  That said, mp3.com saved $22 million dollars by using
-> Linux+reiserfs instead of Netapps and Veritas.  They may be good, but
-> reiser3 is cheaper.  A lot cheaper.  Do the math, and you'll buy Linux
-> instead I think.;-)
+On Fri, 11 Oct 2002 12:40, Lars Marowsky-Bree wrote:
+> > BTW, Hans, what you would recommand : LVM or EVMS ?
 >
-> Nobody has done reiser3 vs. WAFL benchmarks.
+> With 2.4, go with LVM1. The jury is still out whether the successor will be
+> EVMS or LVM2 in 2.5/2.6, but I personally have decided to quite like EVMS.
 
-One thing that should be stated here is that you can use some of the money
- you save to buy more powerful hardware.  If ReiserFS is running on drives
- that have a higher rotational speed and there are more drives in the RAID
- then it should beat WAFL on most tests regardless of issues of file system
-efficiency.
+My opinion based on playing with LVM1 in a vain attempt at getting it to work
+and on reading the code in a vain attempt at fixing the bugs that stopped it
+working for me is that LVM1 is not something I would trust my data with.
 
-Also with a device such as a NetApp you have a limited choice of what
- hardware you can get.  You generally can't choose from all available sizes
- of drives, and I have been told that there is no supported option for
- upgrading a NetApp device to bigger drives (while doing so on Linux software
- RAID is easy and I've done it many times with both ReiserFS and Ext2/3).
+Something that operates like LVM is complex, runs at a low level, has
+potantial to be seriously destructive, and needs to be fixable with minimal
+tools.
 
-One of my machines started out with a RAID-1 of 6G drives and now has a
- RAID-1 of 80G drives.  If I was to do it the NetApp way it would now have at
- least 4 drives in the machine, maybe 6!
+My opinion of the quality of LVM1 is that it is not adequate to serve such
+needs for me.  Therefore I have just avoided using such functionality!
 
-Of course some of the things I do with Linux software RAID are not what might
-be considered "supported options".  But I've investigated things properly,
-read source where necessary, and talked to the author, so I'm confident in my
-ability to do this on live production servers without risk.  No way will I do
-anything remotely unsupported on a NetApp, I don't know what the result might
-be!
+One of the main programmers on LVM2 is someone who I have a lot of respect
+for, and he has assured me that he will fix the deficiencies in LVM1.  While
+I trust him a lot LVM1 left me with such a bad impression that I would feel
+happier using anything that's not LVM.
 
-Finally, for a Linux server, being cheaper it's easy to install a test
- server. Sometimes for a Linux server upgrade I setup a test machine to mimic
- the server and upgrade it to make sure that the upgrade proceedure works,
- afterwards the test server goes back to being a desktop workstation.  What
- would I do with a test NetApp for the other 51 weeks in the year?
-
-Finally, what do you do when you want to check that the permissions on
-100,000,000 files are correct?  You don't want to do that over NFS...
+EVMS seems to be done right all the way, and seems to be a product that I can
+trust.  However I have not read the code yet...
 
 --
 http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
