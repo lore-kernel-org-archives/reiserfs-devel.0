@@ -1,39 +1,58 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: Fibration questions
-Date: Thu, 22 Jul 2004 21:40:53 -0500
-Message-ID: <41007AB5.7000104@slaphack.com>
-References: <20040721054418.1150715C23@mail03.powweb.com>	<40FE0B47.3010600@slaphack.com>	<40FF74BA.1050206@namesys.com> <16639.45062.695014.910604@laputa.namesys.com>
+Date: Thu, 22 Jul 2004 21:43:34 -0500
+Message-ID: <41007B56.2030103@slaphack.com>
+References: <40FE0B47.3010600@slaphack.com> <20040721083232.GA4990@nysv.org> <40FF3DAD.6020100@slaphack.com> <200407221410.25043.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19764-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19765-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16639.45062.695014.910604@laputa.namesys.com>
+In-Reply-To: <200407221410.25043.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Nikita Danilov <Nikita@Clusterfs.COM>
-Cc: Hans Reiser <reiser@namesys.com>, David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: =?KOI8-R?Q?Markus_To=22rnqvist?= <mjt@nysv.org>, David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
 
 
-Nikita Danilov wrote:
 
-| Ask Peter Braam (braam@clusterfs.com), whether he has any plans to use
-| reiser4 as a back-end.
+Vitaly Fertman wrote:
+|>First question:  Can I manually enable/disable a particular plugin for a
+|>particular directory?  (like how cryptocompress is supposed to be...)
+|
+|
+| you can change a plugin for a file if it does not destroy its structure.
+| Thus for an empty directory you can :
+| 	# cat somedir/metas/plugin/hash ; echo
+| 	1 r5 r5 hash
+| 	# echo -e "tea\0" > somedir/metas/plugin/hash
+| 	# cat somedir/metas/plugin/hash ; echo
+| 	2 tea tea hash
+|
+|
+|>Second question:  Would such a setting be recursive?  Can I tell it
+|>whether to recurse or not?
+|
+|
+| plugins are inherited at the creation time from the parent of the object
+| being created. Thus in the above example all subdirs would have the
+| hash r5 before changing the 'somedir' hash to 'tea' and will have the
+| 'tea' hash after.
 
-I've never used Lustre, but I've heard it implements at least some ideas
-from InterMezzo, which used other filesystems (supposedly ANY other
-filesystem) as a cache.
+wait -- what does this do:
+echo -e "tea\0" > somedir/metas/plugin/hash
+echo -e "something_differenet\0" > somedir/subdir/metas/plugins/hash
+echo -e "r5\0" > somedir/metas/plugins/hash
 
-| This shouldn't be hard to implement, technically.
+What is the hash of "subdir" now?
 
-That's why I want to do it.  I need useful things with my name on them
-- -- my grades suck, and next year is Senior year.  Of High school.
+What about new subdirs?  What hash will they get?
 
 
 
@@ -41,17 +60,17 @@ That's why I want to do it.  I need useful things with my name on them
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQQB6tHgHNmZLgCUhAQIpHA/+NPFWOUxnkm9AviTYePr2P0CylV8T7Cnn
-bhxh41fObPOFEcCKhigjmvO9+osE7JfMQZ2CcUMdzQGl0FEQ72pqZZ+c2UPhEx34
-NyJh/eKGUv3440GtbXJeAmqSz8Zx0CHVnq/pnQehX48rXUAx9y4eN3V/KfK1IzYm
-Sow/Y1HOJGQprvzcoe3yiMEFRb3aHl5bd/N2kuyd10cxAItj2/BknRTR8iIQdHJR
-Wy7dVZ5fb4+FcTQPAF0dupS6IrfjwDQeqBIvTNfOPt3F3yBJ5XYGLvBZeZ/drLmf
-OBtdtC79R6dCJDSCT5YnSD5UWAB7MZ1xEz0Ce0f84aeHRibtn6l0v0Ke5tqFngEt
-uqcNJcB7mk8vPwVUBlp1kZUW7Q2vvsfcezscGDfndsLeqAv+MaGI7TzLllYiE2lf
-UVyKCCHoLGTwoIXqrQSxs1JYUH1E71G/GMjb/h+3VKGUB1h6DQH4gVHjS2RSOIRm
-NF4txmJCijzgVIv3teTGzsldHZZ/1WI+4ADvaxE3dXq2xneCjJ9x4/DB1KdrjCB7
-9jRGABON37wDmycZalpJJtA667jpv5TSgX6WOiZ6448Sm5UGr192T04UuLUmIJlZ
-Hy5iI9iQKYI+7Hr95Pyo9U7BUNzh0c9vyg3cyQfMZat0dv8WapN9vsjROUSdXwln
-RAvCCpfP/rg=
-=ur6j
+iQIVAwUBQQB7VngHNmZLgCUhAQLxLA/+PWfdMA1LVzwY3HjINl/ZsGD0TtrW6oxc
+eMJVbtGFXYeCSv5hV1bqE9IbSX/HgMEyqq/8TFvf4Cy66s1aUAcbflXiZQOzEMXa
+UwW69kGH7H74ENP9TYyrySLNpvx54rhm/uU+g0XTaQHQ85VjuGC/0fruspCITTGX
++nLhMNDO/FPtokAHunug3dqBV7WI9oNhtj43lCslhlYAKK926GrEblYqFDFbEwIj
+p+DK9QSALxGq4FvkDbb+70sgL8dK1WEQ7x/j2gGLMKgXbwrqfjSkIv6Zhk2BmOwM
+W9sQRtkx6ovcJWmH6QhdwH8PScxreN/w22+JO28g8hhKUrb/YxR8RMR4U3kBflf0
+xXonMAISVRBCT0hBuOPyOvFHuPXlKNruW9LExmNOyVE1NzmMCs97uY7FyEP87kJl
+cffhA1+z6EjDJC3yqYCQlG7lIAGtISxB0zJWHAhZVKPNxH1bYH5xxDc/VGvs6O2K
+33jnta8MXMP7r4PBaCe0frE85krsqtk9NxviTf7REabJprXD1zmPa7w/XvGSynVK
+N71Y01fsLqKJoalXgedSpIAsohtBBDWPix+RJglmqULJddNWJppcayVlHCGJ8EcD
+YILWo/gWloSmYHPpppDAmDG7YkbJBc2FXeuIyxiP9oWiBJm61b10VK8btfyKmmtQ
+2GyhYEmH69w=
+=wL4f
 -----END PGP SIGNATURE-----
