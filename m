@@ -1,67 +1,62 @@
-From: Gunnar Ritter <Gunnar.Ritter@pluto.uni-freiburg.de>
-Subject: Re: silent semantic changes with reiser4
-Date: Tue, 07 Sep 2004 21:22:33 +0200
-Message-ID: <413E0A79.nailEBK11DW72@pluto.uni-freiburg.de>
-References: <200409070206.i8726vrG006493@localhost.localdomain>
- <413D4C18.6090501@slaphack.com> <m3d60yjnt7.fsf@zoo.weinigel.se>
- <413DA8EE.nailA301JQ74H@pluto.uni-freiburg.de>
- <413DFC06.5070604@namesys.com>
+From: "daniel.poelzleithner" <poelzi@poelzi.org>
+Subject: Re: Comments about indexing and query solving in user land
+Date: Tue, 07 Sep 2004 22:09:25 +0200
+Message-ID: <413E1575.4000704@poelzi.org>
+References: <-3757055227027460326@unknownmsgid> <2f4958ff040906055172c36214@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21584-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-21585-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <413DFC06.5070604@namesys.com>
+In-Reply-To: <2f4958ff040906055172c36214@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Tonnerre <tonnerre@thundrix.ch>, Spam <spam@tnonline.net>, ReiserFS List <reiserfs-list@namesys.com>, Pavel Machek <pavel@ucw.cz>, David Masover <ninja@slaphack.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jamie Lokier <jamie@shareable.org>, Christoph Hellwig <hch@lst.de>, Alexander Lyamin aka FLX <flx@namesys.com>, Chris Wedgwood <cw@f00f.org>, Christer Weinigel <christer@weinigel.se>
+Content-Type: text/plain; charset="windows-1252"; format="flowed"
+To: =?UTF-8?B?R3J6ZWdvcnogSmHFm2tpZXdpY3o=?= <gryzman@gmail.com>
+Cc: Faraz S <farazs@calsoftinc.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Hans Reiser <reiser@namesys.com> wrote:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-> Gunnar Ritter wrote:
-> >You cannot just 'modify cp'. 
-> >
-> People who think that POSIX is the objective rather than the least 
-> common denominator of OS design
+Grzegorz Ja=C5=9Bkiewicz wrote:
 
-I am not principally adversed against extensions to POSIX. My mailx
-implementation 'nail' has e.g. perhaps more extensions than there are
-commands and options in the POSIX standard for it.
+|>        In our project http://sourceforge.net/projects/linuxsfs-tm/ we
+did the
+|>attribute indexing and query parsing in the user-space and we had hooks
+|>in the VFS which communicated with the user-space deamons. As far as
+|>directory listing is concerned we had a in kernel-recordset cache
+|>(hashed on the query). The listing were pretty efficient.
+|>
+|>        But the real problem occured when a large number of files were
+copied
+|>in the onto our file system. All the files now need to be indexed in the
+|>user space , leading to mode switch. That was pathetically slooow. The
+|>entire 2.4 sources were copied in 5-6 hours. I think this problem could
+|>be solved by batching requests the user space deamon.  Then u have all
+|>the problems on missing out on indexing on a large set of files.
+|
+| I think that should give you pretty much explanation why whole VFS
+| layer and filesystems are in kernel not in user space. That's where
+| such sort of thing belongs to. I have no doubts.
 
-POSIX is also not against extensions. In fact, POSIX development
-generally works as follows: One vendor creates something as an extension,
-other vendors follow to implement it, and later on it is discussed if it
-is desirable to integrate the feature into the standard itself. It is
-absolutely possible that Sun's openat() might be in POSIX.1-2010 one day,
-for example. Useful extensions are thus welcome to POSIX.
+I think such operations should be a background task. When a new file is
+created, the file should be added to a index queue and the file
+operation should return. These queue list will be processed by an
+background daemon.
+Only when meta data are accessed which is unindexed the file will be
+removed from the queue and proccessed instandly, so the system call can
+return.
+I think such a technique would reduce the speed impact indexing brings.
 
-This does not mean, however, that one should not clearly distinct between
-standard and extensions, and that extensions should be created at will
-without carefully weighting pros and cons.
+regards
+~ Daniel
 
-I did not say: POSIX forbids to handle streams or directory/file mixes.
-This would not even have been true. However, POSIX restricts the choice
-of possible interfaces for them. One of those restrictions is that 'cp'
-may not copy streams if used in strict accordance with POSIX. As you
-acknowledged in your reply, POSIX is the least common denominator. Thus
-'cp' implementations should not be modified in a way that violates it.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-This means, in effect, that a strictly conforming POSIX application (i.e.
-something like a shell script that uses no POSIX extensions or methods
-which are not clearly defined in the standard) will very likely be unable
-to copy streams, unless some other, conforming, method is found. Which is
-a problem one should know about when discussing this.
-
-> have had their head screwed on backwards 
-> to better look at where their competitors used to be.
-
-But there are not only forwards and backwards directions. Sideways might
-lead to nowhere.
-
-	Gunnar
-
--- 
-http://omnibus.ruf.uni-freiburg.de/~gritter
+iD8DBQFBPhV1y/mkIQp7AD0RAqonAJ9ww2VAPKnX7u9q1euyKZbYBK9zGQCg2fI9
+mC6bQ5IiRuafCrX+O3I7oJw=3D
+=3DQ8mj
+-----END PGP SIGNATURE-----
