@@ -1,51 +1,49 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: raid0 and rfs4
-Date: Tue, 13 Jan 2004 13:37:23 +0300
-Message-ID: <16387.51811.609993.908345@laputa.namesys.com>
-References: <1073970028.20855.18.camel@www.vox.net>
+From: "Bostjan Skufca (at) domenca.si" <bostjan.skufca@domenca.si>
+Subject: Re: another quota problem
+Date: Tue, 13 Jan 2004 12:18:10 +0100
+Message-ID: <200401131218.10626.bostjan.skufca@domenca.si>
+References: <Pine.LNX.4.44.0401122320180.9334-100000@august.V-LO.krakow.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16471-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16472-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1073970028.20855.18.camel@www.vox.net>
+In-Reply-To: <Pine.LNX.4.44.0401122320180.9334-100000@august.V-LO.krakow.pl>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Bret Towe <btowe@gbis.com>
+To: Jakub Neumann <yavi@V-LO.krakow.pl>
 Cc: reiserfs-list@namesys.com
 
-Bret Towe writes:
- > i recently tried reiser4 on a raid0 setup and well it didnt go so well
- > :\
- > 
- > what i got from dmesg was the following
- > dmesg was full up when i finally looked of the raid_make_request
- > all of those lines looked about the same cept the last 2 numbers
- > 
- > raid0_make_request bug: can't convert block across chunks or bigger than
- > 512k 356200 124
- > raid0_make_request bug: can't convert block across chunks or bigger than 512k 357352 124
- > raid0_make_request bug: can't convert block across chunks or bigger than 512k 358344 60
+Beside your problem your /etc/fstab entry should look like this (mark last 
+zero):
+/dev/sda7	/home	reiserfs	nosuid,nodev,usrquota  0  0
 
-Hmm, probably raid is not happy that reiser4 sends so large bios to it.
+Can you paste in here your kernel options under "File systems" from .config?
 
- > Unable to handle kernel NULL pointer dereference at virtual address 00000004
- >  printing eip:
- > c021706f
- > *pde = 00000000
- > Oops: 0000 [#1]
- > CPU:    0
- > EIP:    0060:[<c021706f>]    Not tainted
- > EFLAGS: 00010246
- > EIP is at reiser4_status_write+0xef/0x250
 
-Can you please send us the output of
+On Monday 12 of January 2004 23:29, Jakub Neumann wrote:
+> I compiled the 2.4.23 kernel with reiserFS, quota patches for
+> it form <somewhere on the suse mirror> and grsecurity.
+> But when I booted it, I got a "unknown option usrquota" error on
+> my /home (which is the only fs with quota enabled)...
+> Used 2.4.20 with ReiserFS quota before, and there was no such
+> problem.
+> my line from /etc/fstab:
+> /dev/sda7	/home	reiserfs	nosuid,nodev,usrquota  0  2
+>
+> I'd be happy if anybody could help me :)
 
-$ gdb vmlinux # kernel that produces oops
-(gdb) disass reiser4_status_write
+-- 
+Z lepimi pozdravi,
 
-?
+Bostjan Skufca
+sistemski administrator
 
-Nikita.
+Domenca d.o.o. 
+Tel: +386 4 5835444
+Fax: +386 4 5831999
+http://www.domenca.si
+
