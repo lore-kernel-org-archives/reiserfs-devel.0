@@ -1,38 +1,52 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: status of reiser4
-Date: Sat, 18 Dec 2004 13:26:54 +0300
-Message-ID: <1103365613.3641.12.camel@tribesman.namesys.com>
-References: <41C322ED.4000807@namesys.com>
-	 <1103309648.8570.28.camel@localhost>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22834-reiserfs=m.gmane.org@namesys.com>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
+Subject: Re: file as a directory
+Date: Fri, 17 Dec 2004 22:52:09 -0300
+Message-ID: <200412180152.iBI1q98X007507@laptop11.inf.utfsm.cl>
+References: <reiser@namesys.com>
+Return-path: <reiserfs-list-return-22836-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1103309648.8570.28.camel@localhost>
+In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
+   of "Fri, 17 Dec 2004 08:52:44 -0800." <41C30EDC.5030502@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Jake Maciejewski <maciejej@msoe.edu>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: David Masover <ninja@slaphack.com>, Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, Nate Diller <ndiller@namesys.com>
 
-Hello
+Hans Reiser <reiser@namesys.com> said:
+> David Masover wrote:
+> > Hans Reiser wrote:
+> > [...]
+> > | My solution is to tell Nate Diller that there is extensive literature on
+> > | it, that it isn't really the big problem it is made out to be, and leave
+> > | it to him to go read the literature and code it up after he finishes the
+> > | required tasks of our current darpa contract.;-)
 
-On Fri, 2004-12-17 at 21:54, Jake Maciejewski wrote:
-> Have there been any reports other than Isaac's of reiser4 working on
-> AMD64? It still doesn't work for me, and I'd like to know if I'm the
-> only one having problems.
-> 
+> > Can you point me to any such literature?  I'm just curious.
 
-What kernel are you using?
+> Look in every field of cs except filesystems and kernels.;-)
 
-> On Fri, 2004-12-17 at 10:18 -0800, Hans Reiser wrote:
-> > Vladimir is working on one last bug that occurs if copy from user page 
-> > faults on the user space process's buffer, and then we are going to 
-> > bundle a set of patches together, send them to andrew morton, and then 
-> > start a discussion on the changes to core kernel code that Hellweg and 
-> > company object to that currently prevent our inclusion.
-> > 
-> > hans
+Right. Smart people are found elsewhere only.
 
+>                                                              Databases, 
+> garbage collectors, etc.
+
+Everthing stuff that works on the assumption that what they are working on
+fits in RAM (or can overflow into swap space in a pinch), and that RAM is
+fast (and even so they are infuriatingly slow). And disks are usually a few
+thousand times larger than RAM (more stuff to shuffle around) and a million
+times slower...
+
+>                          Specific reference, no, I didn't collect them, 
+> sorry, but alexander the befs driver guy knows more than I about this.
+
+Furious handwaving doesn't make it true.
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
