@@ -1,67 +1,49 @@
-From: David Lang <david.lang@digitalinsight.com>
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 14:05:47 -0700 (PDT)
-Message-ID: <Pine.LNX.4.60.0408261348370.27825@dlang.diginsite.com>
-References: <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com>
- <1093536282.5482.6.camel@leto.cs.pocnet.net>
+Date: Thu, 26 Aug 2004 17:18:17 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <878yc1ppie.fsf@uhoreg.ca>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
+ <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com>
+ <23320000.1093550657@flay>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20808-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20809-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1093536282.5482.6.camel@leto.cs.pocnet.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Saout <christophe@saout.de>
-Cc: Rik van Riel <riel@redhat.com>, Jamie Lokier <jamie@shareable.org>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 26 Aug 2004, Christophe Saout wrote:
+>>>>> "Martin" == Martin J Bligh <mbligh@aracnet.com> writes:
 
-> Am Donnerstag, den 26.08.2004, 11:54 -0400 schrieb Rik van Riel:
->
->>>> And if you read test.compound (the main stream) you get a special format
->>>> that contains all the components. You can copy that single stream of
->>>> bytes to another (reiser4) fs and then access test.compound/test.txt
->>>> again.
->>>
->>> (To Rik especially), this is the design which more or less satisfies
->>> lots of different goals at once.
->>
->> And if an unaware application reads the compound file
->> and then writes it out again, does the filesystem
->> interpret the contents and create the other streams ?
->>
->> Unless I overlook something (please tell me what), the
->> scheme just proposed requires filesystems to look at
->> the content of files that is being written out, in
->> order to make the streams work.
->
-> Yes, the main compound stream unaware applications would see would just
-> be a writable view of its contents. Probably not trivial to implement
-> but doable.
->
-> It should be a simple format. Something simliar to tar. The worst thing
-> that can happen is people start writing plugins for every existing
-> compound format out there. It should be the other way around, agree on a
-> simple compound format and encourage applications to use this one if the
-> want to use this advantage.
->
+Martin> Andrew wrote:
 
-I also don't see why the VFS/Filesystem can't decide that (for example) 
-this tar.gz is so active that instead of storing it as a tar.gz and 
-providing a virtual directory of the contents that it instead stores the 
-directory of the contents and makes the tar.gz virtual (regenerating it as 
-needed or as extra system resources are available)
+> And what are the licensing implications of plugins?  Are they derived
+>> works?  Must they be GPL'ed?
 
-implementation wise I see headaches in doing this, but conceptually this 
-is just an optimization that could take place in the future if we fine 
-that it's needed.
+Martin> [Hans] replied:
 
-David Lang
+>>> And what are the licensing implications of plugins?  Are they
+>>> derived works?
+>> 
+>> Yes.
+
+Martin> I find it odd that you cut out the last part of his question. So
+Martin> must they be GPL'ed or not?
+
+If they are derived works of GPL'ed software, then they obviously must
+be GPL'ed (or else they are illegal).  But if the authors obtain an
+alternate license from Hans/Namesys, then they are bound by the terms
+of that license.  (Of course, this case would most likely apply only to
+Reiser4 running under a different operating system.)
 
 -- 
-"Debugging is twice as hard as writing the code in the first place.
-Therefore, if you write the code as cleverly as possible, you are,
-by definition, not smart enough to debug it." - Brian W. Kernighan
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
