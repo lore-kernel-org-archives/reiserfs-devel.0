@@ -1,47 +1,90 @@
-From: Jake Maciejewski <maciejej@msoe.edu>
-Subject: making reiser4/AMD64 hardlock
-Date: Wed, 03 Nov 2004 02:59:19 -0600
-Message-ID: <1099472359.8158.36.camel@localhost>
+From: Jeff Mahoney <jeffm@novell.com>
+Subject: Re: Participation in developement of Reiser4
+Date: Wed, 03 Nov 2004 12:10:30 -0500
+Message-ID: <41891106.3000600@novell.com>
+References: <200411022342.02126.sikkh@wp.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22259-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22262-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200411022342.02126.sikkh@wp.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Piotr Neuman <sikkh@wp.pl>
+Cc: reiserfs-list@namesys.com
 
-I've been testing reiser4 on 2.6.9 (patches from 2.6.9-mm1 and fixes
-from reiser4-for-2.6.9.diff). I have reiser4progs and libaal 1.0.1.
-Syslog doesn't catch any errors when I get hardlocks (haven't tried
-SysRq). I figured I could at least give you guys a hint about what kind
-of usage pattern kills reiser4.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-One command that seems to do it every time (in no more than a few
-minutes) is the following, run from a directory containing kernel
-source: for i in `seq 1 20` ; do make mrproper ; zcat /proc/config.gz
-> .config ; make ; echo $i ; done & for i in `seq 1 5` ; do dd
-if=/dev/zero of=large_file bs=1M count=20k ; rm large_file ; echo $i ;
-done
+Piotr Neuman wrote:
+| Hello
+|
+| I'm looking for some intresting projects to devote my spare time to.
+Reiser v4
+| is a very promising one, so I would like to ask wheter there are some
+tasks
+| that a relative newbie in kernel programming like me could do.
+Something like
+| kernel-janitor like tasks maybe (code cleanup) or maybe reiser4 tools.
+|
+| I'm a bit familiar with linux VFS if that can help (I did some work on
+User
+| Mode Linux filesystem called humfs).
+|
+| I hope I could help...
+|
+| Regards
+|
+| Piotr Neuman
+|
+| ps. I know I could just start making patches to reiser4 and send them
+right to
+| namesys.com but I don't know where to start/what to do ;-)
+|
 
-Now here's the interesting part. Other FSs on the same drive can run the
-command without locking, and better yet, either component of the command
-runs without trouble on reiser4! It's the combination of make and dd
-that kills my system. Even stranger is that I can run the dd part of the
-command on a reiserFS (v3) on the same drive and it still locks. Could
-the problem be in the patches rather than the reiser4 core?
+Well, this is the same advice that applies to everybody looking to
+participate in any project. Find something that bothers you, and try to
+fix it. The list will be happy to take a look at your patches and give
+you pointers on how to improve them. The best way to learn is through
+experience.
 
-If your answer is "try -mm," I have. It kills -mm too, the only
-difference being when I tried it on -mm I used make -j16. Also, -mm is a
-huge pain on anything other than x86 because it usually breaks more
-features than it fixes, assuming it even compiles.
+All I can really give you as far as more specific advice is things I'd
+like to see done with reiser4. The most obvious one, and one that should
+be a fairly easy place to start, is to add support for the existing
+xattr API to manipulate attributes that reiser4 currently provides under
+the ..metas "meta-directory." The ..metas directory is quite
+contraversial, and I'd hate to see reiser4 fall by the wayside because
+it doesn't support a standard API.
 
-Is there anything more I should try? Does anyone have reiser4 working on
-AMD64? It would be a shame to make it into vanilla without support for a
-significant server architecture.
+If this feature is already implemented, I apologize, I haven't been
+following reiser4 development too closely.
 
--- 
-Jake Maciejewski <maciejej@msoe.edu>
+As a note to Hans, who I expect will object strenuously to this email,
+the issue of the elegance of the files-as-directories approach that
+reiser4 users is a debate that will not likely be concluded any time
+soon. I think the best thing for reiser4 to do is to cater to its users.
+Many users will disable the files-as-directories support because it does
+cause conflicts with existing apps. Whether that makes those apps
+"buggy" or not is irrelevant: Users will just use another filesystem
+rather than bug their favorite software author to adjust to a situation
+that no other filesystem presents. Users that want to use the ..metas
+approach are free to do so. To quote something that borders on trite
+these days, "Since when does Linux eliminate choice?"
 
+- -Jeff
+
+
+- --
+Jeff Mahoney
+SuSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iD8DBQFBiRAZLPWxlyuTD7IRAiWiAJ9aQczwp0IafGefLwloral7Q8E2bACfSyjj
+ckxTYV0AFS1cQS/z1WsGVaI=
+=Se78
+-----END PGP SIGNATURE-----
