@@ -1,33 +1,30 @@
-From: Alejandro Sanchez Acosta <alejandro@hispafuentes.com>
-Subject: Re: Linux 2.4 -> 2.6 migration
-Date: 09 Nov 2003 06:45:53 +0100
-Message-ID: <1068356753.3718.1.camel@voyager>
-References: <m3ptg42t8l.fsf@toyland.sauerland.de>  <200311072107.50957.>
+From: Redeeman <redeeman@metanurb.dk>
+Subject: Re: V4 stable enought ?
+Date: Sat, 08 Nov 2003 16:57:05 +0100
+Message-ID: <1068307025.25267.5.camel@redeeman.linux.dk>
+References: <.192.168.0.99.1068227408.squirrel@sml.dyndns.org>
+Reply-To: redeeman@metanurb.dk
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16021-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16022-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200311072107.50957.>
+In-Reply-To: <.192.168.0.99.1068227408.squirrel@sml.dyndns.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Quinn Harris <reiserfs@quinnh.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-El s?, 08-11-2003 a las 05:08, Quinn Harris escribi=F3:
-> Did you enable IDE TCQ in your 2.6 kernel?  To quote http://www.namesys.c=
-om/
-> download.html
-> "Don't enable TCQ (Tagged Command Queuing) in 2.5 (and modified 2.4) kern=
-els.=20
-> TCQ is known broken currently and it will corrupt your filesystems for su=
-re."
+hi, i was told it wasnt, but maybe it is :)
+i have to wait till new year to get a new hd, i really hope its stable
+there, else i am stuck with the old ones :/
 
-What does it do Tagged Command Queuing?
+On Fri, 2003-11-07 at 18:50, Thomas Graham wrote:
+> does reiserfs4 stable enought now ?!
+-- 
+Regards, Redeeman
+()  ascii ribbon campaign - against html e-mail 
+/\                        - against microsoft attachments
 
-Thanks in advance.
---=20
-Alejandro Sanchez Acosta <alejandro@hispafuentes.com>
 
