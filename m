@@ -1,48 +1,46 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: what do you do that stresses your filesystem?
-Date: Tue, 24 Dec 2002 12:22:58 +0300
-Message-ID: <3E082772.2000009@namesys.com>
-References: <3E06F360.7000708@namesys.com> <139251509046.20021223123719@tnonline.net> <3E06F752.5000806@namesys.com> <200212230736.08717.tomlins@cam.org>
+Date: Tue, 24 Dec 2002 12:26:36 +0300
+Message-ID: <3E08284C.4020906@namesys.com>
+References: <3E06F360.7000708@namesys.com> <200212231421.52052.bofh@coker.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12235-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12236-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200212230736.08717.tomlins@cam.org>
+In-Reply-To: <200212231421.52052.bofh@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ed Tomlinson <tomlins@fcfcn.org>
+To: Russell Coker <bofh@coker.com.au>
 Cc: ReiserFS <reiserfs-list@namesys.com>
 
-Ed Tomlinson wrote:
+Russell Coker wrote:
 
->On December 23, 2002 06:45 am, Hans Reiser wrote:
+>On Mon, 23 Dec 2002 12:28, Hans Reiser wrote:
 >  
 >
->>Anders Widman wrote:
->>    
+>>We were discussing how to optimize reiser4 best, and came to realize
+>>that us developers did not have a good enough intuition for what users
+>>do that stresses their filesystem enough that they care about its
+>>performance.
 >>
->>>>Booting the machine seems like one activity that many users end up
->>>>waiting on the FS for.  Yes?
->>>>        
->>>>
->>>Hopefully we do not have to reboot to often... :)
->>>      
->>>
->>buying the seagate hard drives with fluid ballbearings (and fanless
->>heatsinks) reduces the need to halt at bedtime by a lot.....
+>>Booting the machine seems like one activity that many users end up
+>>waiting on the FS for.  Yes?
 >>    
 >>
 >
->Various (pulls, clones) bk operations using the 2.5 kernel tree.
+>Yes, although there are other factors than the file system which determine 
+>boot time.  Different types of init scripts can probably improve performance 
+>more than anything you could do to a file system.
 >
->Ed Tomlinson
+>Also if you have a rack-mount server then it'll probably take 2 minutes or 
+>more to go through the BIOS checks so FS delays will seem like nothing by 
+>comparison.
 >
->
->
->  
->
-Isn't that CPU and memory bound?
+I mostly meant waiting for the fs to read all the binaries that get 
+executed at startup, not just the journal replay time.
+
+
 
