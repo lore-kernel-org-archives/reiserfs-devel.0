@@ -1,46 +1,61 @@
-From: Andreas Dilger <adilger@turbolabs.com>
-Subject: Re: Reiserfs labels/uuid in 2.5.X
-Date: Thu, 16 May 2002 01:25:24 -0600
-Message-ID: <20020516072524.GJ12975@turbolinux.com>
-References: <3CE34780.603@attbi.com> <20020516095144.A7116@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: A couple of questions
+Date: Thu, 16 May 2002 13:42:48 +0400
+Message-ID: <3CE37F18.1050201@namesys.com>
+References: <OFDC95E87B.B541379E-ON85256BBA.0074ED07@pok.ibm.com> <20020516092034.B6880@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10323-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10324-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <20020516095144.A7116@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Oleg Drokin <green@namesys.com>
-Cc: Jordan Breeding <jordan.breeding@attbi.com>, reiserfs-list@namesys.com
+Cc: Steve Pratt <slpratt@us.ibm.com>, reiserfs-list@namesys.com
 
-On May 16, 2002  09:51 +0400, Oleg Drokin wrote:
-> On Thu, May 16, 2002 at 12:45:36AM -0500, Jordan Breeding wrote:
-> >   I noticed that reiserfstune can now generate uuids and place labels 
-> > in the superblock.  When will the reiserfs code in 2.5.X be able to use 
-> > those fields to do things like `mount -L "/usr" /usr`?  Right now that 
-> 
-> AFAIK, this have nothing to do with kernel at all.
-> Label decoding is done by mount itself.
-> Andreas Dilger can shed moer light on this topic,
+Oleg Drokin wrote:
 
-You are correct - the support needs to go into mount itself.  Sadly,
-while I have a working version of libblkid available (which understands
-labels and UUIDs in reiserfs), I have never finished the work to
-integrate this into the mount program.
+>Hello!
+>
+>On Wed, May 15, 2002 at 04:22:22PM -0500, Steve Pratt wrote:
+>
+>  
+>
+>>A couple of questions about the ReiserFS utilities.  First, does ReiserFS
+>>support labels or not?  FAQ says no and refers to lack of space in the 3.5
+>>superblock. Neither 3.5 nor 3.6 superblock appear to have a label field,
+>>but mkfs has an option for it.
+>>    
+>>
+>
+>Labels are supported in reiserfs v3.6 format. (2.4 supopr was merged into
+>2.4.19-pre3, if I remember correctly).
+>
+>  
+>
+>>Second, what is the option to keep fsck from prompting for 'Yes' when
+>>running.  I need to exec this without additional input.  Seems like quiet
+>>should do it, but it doesn't.
+>>    
+>>
+>
+>Hans has a decision that this should not be done for now because
+>reiserfsprogs are in active bugfixing stage.
+>
+?
 
-The blkid library is available at the below URL if anyone is
-interested in working on this.  I have agreement from Andries Brouwer
-(mount maintainer) that he would accept this change, but I have never
-gotten around to doing it.
+I don't understand this.:-/
 
-http://www-mddsp.enel.ucalgary.ca/People/adilger/blkid/
+>You can circumvient this by echo Yes | reiserfsck ...
+>if you need.
+>
+>Bye, 
+>    Oleg 
+>
+>
+>  
+>
 
-Cheers, Andreas
---
-Andreas Dilger
-http://www-mddsp.enel.ucalgary.ca/People/adilger/
-http://sourceforge.net/projects/ext2resize/
+
 
