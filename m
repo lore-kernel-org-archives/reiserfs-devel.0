@@ -1,52 +1,48 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: fsck mode halfway between --fix-fixable and --rebuild-tree ?
-Date: Tue, 1 Oct 2002 11:44:34 +0400
-Message-ID: <15769.21090.312924.423577@laputa.namesys.com>
-References: <H356C4$4F46E50E852BF25DA1E850A48426FCDF@voila.fr>
-	<20020929172335.L32363@noris.de>
-	<20020930101824.A3895@namesys.com>
-	<3D98318B.8000905@namesys.com>
-	<20020930131744.X32363@noris.de>
-	<20020930152204.A26742@namesys.com>
-	<20020930150854.Z32363@noris.de>
-	<3D984F92.4010509@namesys.com>
-	<15769.17050.863426.305725@laputa.namesys.com>
-	<20021001093234.H32363@noris.de>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: What about 2.4.20.pre8+data-logging ?
+Date: Tue, 01 Oct 2002 10:13:07 +0200
+Message-ID: <3D995913.5090204@mb.tu-ilmenau.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11587-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11588-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021001093234.H32363@noris.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Matthias Urlichs <smurf@noris.de>
-Cc: Nikita Danilov <Nikita@Namesys.COM>, Hans Reiser <reiser@namesys.com>, Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list <reiserfs-list@namesys.com>, Oleg Drokin <green@namesys.com>
 
-Matthias Urlichs writes:
- > Hi,
- > 
- > Nikita Danilov:
- > > Actually, B-link trees (B-trees with sibling pointers) don't require any
- > > additional io for sibling pointers maintenance. Just draw a picture of
- > > what is going on during insertion of new node or node deletion and you
- > > will see. B-link disadvantages are extra space required in a node to
- > > store the sibling pointer and unfriendliness to the "wandered logging".
- > > 
- > Would a wandering log really store the updated blocks themselves, or just
- > _log_ them?  In the latter case I don't see the difference between a
- > wandering log and the static log we have now; the former case looks like
- > it'd have to write at least three times as much log data (not only the
- > leaf block, but going all the way back to the root) even without taking
- > sibling blocks into account.
+Hi all!
 
-Wandered logs in particular and reiser4 transaction design in general
-are exposed at the http://www.namesys.com/txn-doc.html. Take a look.
+Just a simple question upon the subject line. I want to test it on here 
+NOW!!!
 
- > 
- > -- 
- > Matthias Urlichs     |     noris network AG     |     http://smurf.noris.de/
 
-Nikita.
+
+Previous simple testing data (simple, though I got many very very 
+helpful advices and hints from Oleg Drokin) for data-logging on a real 
+partition can be read on:
+   http://manuel.krause.bei.t-online.de/topics/sw-tests.2.htm
+  and the parameters are shown on the next page (sw-tests.3.htm) .
+Maybe I posted an unreliable variance of that to the list, so far. But 
+that is my actual competitive comparison on the same disk content.
+
+Disk content isn't altered still. Waiting for the next data-logging 
+patch, my / filling up. File size distribution data is available upon 
+request. (BTW, is it wanted, that I capture it according to my timings 
+that I take, anyways? One command line more on this... and gzipped on 
+the page it doesn't make a great difference. Instead of debugreiserfs' 
+output... wow!  ;-)  )
+
+
+
+Please, correct me if something went definitely wrong with this testing 
+or this page.
+
+
+Thank you,
+
+Manuel
+
