@@ -1,13 +1,13 @@
 From: Vijayan Prabhakaran <pvijayan@gmail.com>
 Subject: Re: BUG in writeback mode - from data journaling patch
-Date: Mon, 30 Aug 2004 11:50:46 -0500
-Message-ID: <d68fdf7d04083009504bb07433@mail.gmail.com>
+Date: Mon, 30 Aug 2004 12:09:31 -0500
+Message-ID: <d68fdf7d040830100927d06c@mail.gmail.com>
 References: <d68fdf7d040819113256eba856@mail.gmail.com>
 	 <200408301803.57727.Dieter.Nuetzel@hamburg.de> <1093884137.21878.442.camel@watt.suse.com>
 Reply-To: Vijayan Prabhakaran <pvijayan@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-21116-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21117-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -18,15 +18,8 @@ Content-Type: text/plain; charset="iso-8859-1"
 To: Chris Mason <mason@suse.com>
 Cc: Dieter =?unknown-8bit?q?N=FCtzel?= <dieter.nuetzel@hamburg.de>, vijayan@cs.wisc.edu, reiserfs-list@namesys.com
 
-The fsync man page reads as:
-
-"...fsync copies all in-core parts of a file to disk, and waits  until
- the device  reports  that all parts are on stable storage.  It also
-updates metadata stat information."
-
-So, according to POSIX standards, the stat data must be updated on fsyncs.
-
-Any thoughts ?
+BTW, I ran similar workload in ext3 writeback mode. Ext3 does update
+the stat information on writeback mode when overwriting a file !
 
 thanks,
 
