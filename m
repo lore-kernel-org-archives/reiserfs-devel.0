@@ -1,55 +1,50 @@
-From: Matthew Johnson <matthew@psychohorse.com>
-Subject: Re: when distros do not support official Marcelo kernels they are
-	not being team players
-Date: 03 Feb 2003 18:56:56 -0800
-Message-ID: <1044327416.13318.6.camel@mon-ami.psychohorse.com>
-References: <20030131115333.GC15359@marowsky-bree.de>
-	 <3E3A67AE.4050601@namesys.com> <20030131122147.GE15359@marowsky-bree.de>
-	 <3E3A6D76.7080300@namesys.com> <86lm0xpmho.fsf@trasno.mitica>
-	 <3E3E7A95.1050908@namesys.com> <1044284001.15685.358.camel@tiny.suse.com>
-	 <3E3EBA3F.7060806@namesys.com> <1044300746.15684.428.camel@tiny.suse.com>
-	 <3E3EC7EC.8090005@namesys.com> <20030203203439.GA4251@marowsky-bree.de>
-	 <m3znpchkr8.fsf@merlin.emma.line.org>
-	 <200302040224.h142OJa0030111@turing-police.cc.vt.edu>
-	 <3E3F26D6.4070009@emageon.com>  <1044326481.15685.507.camel@tiny.suse.com>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: Re: Hard disk crash and solution
+Date: Tue, 04 Feb 2003 04:05:19 +0100
+Message-ID: <3E3F2DEF.2040506@mb.tu-ilmenau.de>
+References: <IKENJBHCILNPNAGHKCHFOEDMCCAA.Art@chello.nl> <200302030711.13593.amosf@mrbean.net.au> <20030203054928.W2964@humilis> <200302041131.20008.amosf@mrbean.net.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12630-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12631-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1044326481.15685.507.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-On Mon, 2003-02-03 at 18:41, Chris Mason wrote:
-> On Mon, 2003-02-03 at 21:35, Brian Tinsley wrote:
+On 02/04/2003 02:31 AM, tim fairchild wrote:
+> On Monday 03 Feb 2003 2:49 pm, Ookhoi wrote:
 > 
-> > I'll even weigh in here and bet anything that the other 67% can be 
-> > disposed as garbage. As bad as 1st level support can often be in *any* 
-> > organization, they more often than not serve their purpose and weed out 
-> > the riff-raff.
-> > 
-> > I'm still interested to hear what Chris and Lars (and whoever else) have 
-> > to say to this :)
+>>A lot? Sometimes you can hear a disk recalibrate, which is not bad, but
+>>that should be only now and then.
 > 
-> I have the luxury of spending my time coding, reading mailing lists and
-> arguing with Hans, roughly 1 ocean away from the guys who get to read
-> feedback@suse.de ;-)  So, I'm honestly not sure.
+> It has always made an occasional whir which I assumed was a disk recalibrate - 
+> this happens a couple of times an hour I suppose. 
+
+A "whir(r/l)"? I'm not very used to english sound descriptions. My 
+notebooks spare disk IBM-DARA-218000 makes that noise when coming out of 
+any kind of standby state.
+
+> Just lately it has made a loud double clicking sound. So far only heard 
+> twice... 
+
+This my above mentioned disk does this, too, randomly. Sometimes under 
+high load, sometimes after only a simple sync. Dunno. Maybe _that's_ the 
+"recalibrating". No errors so far. But this disk may be quite old (18GB, 
+purchased approx. 4 years ago) - made of steel.
+
+>>Do you have disk related errors in your logs?
 > 
-> -chris
+> Nothing yet. So far appears in perfect condition. I have reiser, ext3 and fat 
+> partitions. 
+> 
+> Maybe just worried by all the comments on IBM drives :-)
+> 
+> tim
 
-Not sure where feedback e-mail goes to now, but SuSE did change it to:
+Best wishes!
 
-http://www.suse.de/cgi-bin/feedback.cgi
-
-Its much better this way (I don't work for SuSE but did use that form
-once and found it quite useful). Probably did it this way due to the
-amount of riff-raff getting through.
-
-Matt
-
-
+Manuel
 
