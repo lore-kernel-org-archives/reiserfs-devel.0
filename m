@@ -1,44 +1,54 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Benchmark : ext3 vs reiser4 and effects of fragmentation.
-Date: Thu, 16 Sep 2004 16:08:09 +0300
-Message-ID: <20040916130809.GI26192@nysv.org>
-References: <4148BC0E.5010509@willsmith.org> <20040916085248.GI5137@backtop.namesys.com>
+From: Yury Umanets <yury@clusterfs.com>
+Subject: Re: Reiser4 support on parted program ...
+Date: Thu, 16 Sep 2004 16:31:26 +0300
+Message-ID: <414995AE.4090808@clusterfs.com>
+References: <41472F46.4000109@futuretg.com> <41477625.304@slaphack.com> <4147E95B.8090108@futuretg.com> <20040915094952.GA5137@backtop.namesys.com> <41485D18.1040100@futuretg.com> <20040916123648.GC928@gnu.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21811-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21812-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040916085248.GI5137@backtop.namesys.com>
+In-Reply-To: <20040916123648.GC928@gnu.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: Will Smith <will@willsmith.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Andrew Clausen <clausen@gnu.org>
+Cc: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>, Alex Zarochentsev <zam@namesys.com>, David Masover <ninja@slaphack.com>, reiserfs-list@namesys.com, umka@clusterfs.com
 
-On Thu, Sep 16, 2004 at 12:52:49PM +0400, Alex Zarochentsev wrote:
+Andrew Clausen wrote:
 
->> 3) the repacker can bring performance of reiser4 back
->>    to full speed, but only if run several times.
->yes, we had similar results.  it is so cool that reiser4 repacker effect
->is visible outside namesys :)
+>On Wed, Sep 15, 2004 at 05:17:44PM +0200, Dr. Giovanni A. Orlando wrote:
+>  
+>
+>>>libreiser4 / libaal are made to support parted easier.
+>>>resizing program is not done.
+>>>      
+>>>
+>>Yes. I check this matter yesterday.
+>>
+>>I suspect that I need to write the code :-( .
+>>
+>>I will survive.
+>>    
+>>
+>
+>Yeah, I don't really have time at the moment to look at this.
+>I'm accepting patches ;)  Feel free to ask for help...
+>
+>Cheers,
+>Andrew
+>  
+>
+Hello Andrew,
 
-S'cuse me, but why does it have to be run several times?
-A bug to be fixed?
+I remember, that you personaly and ppl from parted comunity helped me 
+very much. So, I guess, it will be not a problem to add such a support 
+to parted after resizing, copying code in libreiser4 is ready ;)
 
->> 4) the repacker is not yet stable - I had to run fsck
->>    a few times after repacking, and once got a kernel
->>    stack trace during repacking resulting in an
->>    un-unmountable filesystem.
->unmergable units shouldn't be problem for the reiser4 kernel code.
-
-What are their significance; what do they mean?
-
-Basically warnings are scary, even if they were harmless :)
-
-Thanks!
+BTW, mkfs, fsck, etc. support (probably all but resize and copy) can be 
+added anytime...
 
 -- 
-mjt
+umka
 
