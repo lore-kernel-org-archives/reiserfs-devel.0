@@ -1,64 +1,68 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Bug #152548: docs about reiserfsprogs is confused
-Date: Wed, 7 Jan 2004 15:13:25 +0300
-Message-ID: <200401071507.38208.vitaly@namesys.com>
-References: <3FFBA8ED.8050100@libero.it>
+From: John Dalbec <jpdalbec@ysu.edu>
+Subject: Cannot resubscribe to list [Fwd: Mail delivery failed: returning
+ message to sender]
+Date: Wed, 07 Jan 2004 09:42:47 -0500
+Message-ID: <3FFC1AE7.6050607@ysu.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16432-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16433-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Domenico Andreoli <cavok@libero.it>, reiserfs-list@namesys.com
-Cc: 152548@bugs.debian.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-> > this is the last of the known ones, i'd like to make the package as clean
-> > as possible, next release of debian distribution doesn't look too far
-> > (BTW, any chance to have 3.6.12 soon?).
-
-yes, I think in a week or so.
-
-> > thanks for your contribute to the debian project.
-> >
-> > cheers
-> > domenico
->
-> Package: reiserfsprogs
-> Version: 3.x.1b-1
-> Severity: normal
-
-this is very old version, you should try the latest -- 3.6.11.
-
-> Man reiserfsck mentions
->
->        2. Run reiserfsck --check --logfile check.log /dev/hda1. If
-> reiserfsck --check exits with status 0 it  means
->        no errors were discovered.
->
-> and then says
->
-> TODO
->        Faster recovering, signal handling, i/o error handling, 
-> return reasonable exit codes, etc.
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~
->
-> With -fy, exit status 0 is reported if filesystem is not found on
-> specified disk. That seems like a bug.
-
-As was mentioned in the man page exit codes were not always 
-correct in that version, but it is already fixed in last versions.
-
-I have also checked the exit code of 
-	reiserfsck --check /dev/hda1
-from 3.x.1b where /dev/hda1 was not the reiserfs. SuperBlock was 
-not found and it was aboted -- 134 was returned.
-
-Would you try it all again with 3.6.11 and email me about the results?
-
--- 
+Somehow I was unsubscribed from the ReiserFS mailing list on December 7.  I have 
+tried to resubscribe several times since then with no success.  When I try to 
+reply to the confirmation e-mail, I get a bounce message like the one below.  I 
+tried writing to reiserfs-list-owner but got no response.  I tried writing to 
+flx@msu.ru but got no response.  Can anyone help me get resubscribed?
 Thanks,
-Vitaly Fertman
+John Dalbec
+
+-------- Original Message --------
+Subject: Mail delivery failed: returning message to sender
+Date: Wed, 07 Jan 2004 09:37:26 -0500
+From: Mail Delivery System <Mailer-Daemon@ysu.edu>
+To: jpdalbec@ysu.edu
+
+This message was created automatically by mail delivery software.
+
+A message that you sent could not be delivered to one or more of its
+recipients. This is a permanent error. The following address(es) failed:
+
+   reiserfs-list-sc.1073481809.ojjifckemhliaooahdfi-jpdalbec=ysu.edu@namesys.com
+     SMTP error from remote mailer after RCPT 
+TO:<reiserfs-list-sc.1073481809.ojjifckemhliaooahdfi-jpdalbec=ysu.edu@namesys.com>:
+     host thebsh.namesys.com [212.16.7.65]: 501 Syntax error - badly formatted 
+address
+
+------ This is a copy of the message, including all the headers. ------
+
+Return-path: <jpdalbec@ysu.edu>
+Received: from dalbec.meshel.ysu.edu ([150.134.8.36] helo=ysu.edu)
+	by mail03.cc.ysu.edu with esmtp (Exim 4.24)
+	id 1AeEo7-0008Ck-3J
+	for 
+reiserfs-list-sc.1073481809.ojjifckemhliaooahdfi-jpdalbec=ysu.edu@namesys.com; 
+Wed, 07 Jan 2004 09:37:15 -0500
+Message-ID: <3FFC19BA.6090600@ysu.edu>
+Date: Wed, 07 Jan 2004 09:37:46 -0500
+From: John Dalbec <jpdalbec@ysu.edu>
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.4) 
+Gecko/20030624 Netscape/7.1 (ax)
+X-Accept-Language: en-us, en
+MIME-Version: 1.0
+To:
+  reiserfs-list-sc.1073481809.ojjifckemhliaooahdfi-jpdalbec=ysu.edu@namesys.com
+Subject: (no subject)
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
+
+
+
+
+
+
