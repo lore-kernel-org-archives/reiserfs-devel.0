@@ -1,44 +1,71 @@
-From: Linus Torvalds <torvalds@osdl.org>
-Subject: Re: The argument for fs assistance in handling archives (was: silent
- semantic changes with reiser4)
-Date: Thu, 2 Sep 2004 11:03:52 -0700 (PDT)
-Message-ID: <Pine.LNX.4.58.0409021059230.2295@ppc970.osdl.org>
-References: <20040826150202.GE5733@mail.shareable.org>
- <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org>
- <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
- <1094118362.4847.23.camel@localhost.localdomain> <Pine.LNX.4.58.0409021045210.2295@ppc970.osdl.org>
- <20040902175034.GA18861@lst.de>
+From: Christer Weinigel <christer@weinigel.se>
+Subject: Re: silent semantic changes with reiser4
+Date: 02 Sep 2004 20:16:33 +0200
+Sender: wingel@zoo.weinigel.se
+Message-ID: <m3u0ugilj2.fsf@zoo.weinigel.se>
+References: <20040829191044.GA10090@thundrix.ch>
+	<3247172997-BeMail@cr593174-a> <20040831081528.GA14371@thundrix.ch>
+	<20040901201608.GD31934@mail.shareable.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21300-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21301-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040902175034.GA18861@lst.de>
+In-Reply-To: <20040901201608.GD31934@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@lst.de>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Jamie Lokier <jamie@shareable.org>
+Cc: Tonnerre <tonnerre@thundrix.ch>, "Alexander G. M. Smith" <agmsmith@rogers.com>, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com, vonbrand@inf.utfsm.cl
 
+Jamie Lokier <jamie@shareable.org> writes:
 
+> (For example, if I edit an HTML file which is encoded in iso-8859-1,
+> change it to utf-8 and indicate that in a META element, and save it
+> under the same name, the full content-type should change from
+> "text/html; charset=iso-8859-1" to "text/html; charset=utf-8".)
+>
+> I don't see how you can do that without kernel support.
 
-On Thu, 2 Sep 2004, Christoph Hellwig wrote:
-> 
-> http://oss.oracle.com/projects/userfs/ has code that clues gnomevfs onto
-> a kernel filesystem.  The code is horrible, but it shows that it can
-> be done.
+charset_cache = dbm(os.getenv('HOME') + '/.charset_cache')
 
-I do like the setup where the extended features are done as a "view" on 
-top of some other filesystem, so that you can choose to _either_ access 
-the raw (and supposedly stable, simply by virtue of simplicity) or the 
-"fancy" interface. Without having to reformat the disk to a filesystem you 
-don't trust, or you have other reasons you can't use (disk sharing with 
-other systems, whatever).
+def get_charset(path):
+    file_mtime = get_mtime(path)
+    cache_tuple = dbm.get(path, (None, None))
+    if file_mtime != cache_tuple[0]:
+        cache_tuple = (file_mtime, figure_out_charset(path))
+        dbm.put(path, cache_tuple)
+    return cache_tuple[1]
 
-It doesn't have to be "user", btw, in the sense that a lot of the normal 
-code could be in kernel mode. Same way as Tux handling all the regular 
-static requests entirely in kernel mode, but having the ability for 
-calling down to apache..
+This code is guaranteed to always give you an up to date charset for a
+file, provided that the mtime is guaranteed to change every time the
+file changes.
 
-		Linus
+If the file can change during the call to get_charset you'll have to
+lock the file while you are working with it or handle it some other
+way (comparing mtime before and after and retrying if they differ),
+but that is true even if you do it all in the kernel.  This has the
+added advantage that the cache is updated lazily, so the charset is
+never calculated unless someone really needs it.
+
+If the disk gets full, it is time to shrink the cache and preferably
+stale entries are evicted first.  If that's not good enough, a
+notifier such as dnotify or inotify can be used to invalidate the
+cache immediately after the file has changed.
+
+If this gets popular, the cache management can be moved to a daemon
+(naturally with all the security aspects in mind). 
+
+> Don't say dnotify or inotify, because neither would work.
+
+Why not?  The approach above works on any filesystem, even without
+dnotify or inotify but will be more efficient with them.
+
+  /Christer
+
+-- 
+"Just how much can I get away with and still go to heaven?"
+
+Freelance consultant specializing in device driver programming for Linux 
+Christer Weinigel <christer@weinigel.se>  http://www.weinigel.se
