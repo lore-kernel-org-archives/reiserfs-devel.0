@@ -1,49 +1,39 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: software packaging and ReiserFS v4
-Date: Mon, 08 Sep 2003 14:52:46 +0400
-Message-ID: <3F5C5F7E.9070801@namesys.com>
-References: <20030903165409.GD4714@rahul.net>	<3F565A8F.4010209@botz.org>	<20030903213742.GA13146@rahul.net>	<3F58D2CD.3050801@mrs.umn.edu> <16220.20662.840850.726458@laputa.namesys.com>
+From: Roland =?iso-8859-1?q?H=E4der?= <webmaster@autoinstaller.de>
+Subject: Re: Fwd: Bad root block 0
+Date: Mon, 8 Sep 2003 17:15:01 +0200
+Message-ID: <200309081715.01529.webmaster@autoinstaller.de>
+References: <200309071446.32049.webmaster@autoinstaller.de> <20030908095142.GB18422@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15592-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15593-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16220.20662.840850.726458@laputa.namesys.com>
+In-Reply-To: <20030908095142.GB18422@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: Grant Miner <mine0057@mrs.umn.edu>, Bennett Todd <bet@rahul.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Nikita Danilov wrote:
+On Monday 08 September 2003 11:51 am, Oleg Drokin wrote:
+> Hello!
+Hello,
+>
+> Hm. Can you tell us what kernel version you were using at the time of
+> writing your files to encrypted device?
+Opps: Vanilla 2.4.21 with cryptoloop (not patched, it's compiled alone 
+and installed into /lib/modules/2.4.21/xxxxx)
 
->Grant Miner writes:
-> > If you are making a packaging system, I recommend you do not allow 
-> > scipts, since they open up a whole can of worms.  (They're impossible to 
-> > invert, introduce security problems, make additional work for GUI 
-> > package managers, and cause too many problems.)
->
->You one has support for the user-level transactions in the underlying
->storage (_all_ storage),
->
-We don't yet support isolation, (but someday maybe we will have funding 
-for it....)
+> What do you mean by extracting "missing metadata"?
+debugreiserfs can extract the metadata of a rfs-partition. With 
+"missing" I mean that reiserfschk tells me that there's no metadata 
+available. So here's a strange thing: debugreiserfs found it, but 
+reiserfschk not...
 
-> then scripts will at least be
->"invertible". More or less so, of course, sending packages to the
->network is hard to reverse.
->
-> > 
->
->Nikita.
->
->
->  
->
+> "unlimited cash"? Wow!
+Nope, not *really* unlimited cash... :)
 
-
--- 
-Hans
-
+Bye,
+  Roland
 
