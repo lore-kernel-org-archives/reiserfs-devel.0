@@ -1,11 +1,11 @@
 From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
 Subject: Re: Catastrophe with mailboxes on ReiserFS
-Date: Wed, 9 Oct 2002 16:20:15 +0200
-Message-ID: <200210091620.15077.Dieter.Nuetzel@hamburg.de>
+Date: Wed, 9 Oct 2002 16:23:31 +0200
+Message-ID: <200210091623.31301.Dieter.Nuetzel@hamburg.de>
 References: <20021009094215.B11954@namesys.com> <200210091602.34904.Dieter.Nuetzel@hamburg.de> <20021009180935.A4618@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11630-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11631-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -30,36 +30,26 @@ Am Mittwoch, 9. Oktober 2002 16:09 schrieb Oleg Drokin:
 >
 > What's "it"? Is it means what I describe, or "it" means wrong stuff in the
 > middle of files?
-
-Wrong stuff in the middle (appended) _AND_ sometimes whole broken files (if=
-=20
-the files are smaller).
-
+>
 > > Most times "messages", "localmessages", kernel .o.*, dep files, etc. are
 > > broken (wrong stuff or mixed stuff).
 >
 > These are recently modified stuff.
-
-Yes.
-
+>
 > > Latest my ".q3a/baseq3/q3key" file (DRI SMP tests) was broken (complete=
 ly
 > > other stuff in it) even though it only should opened for reading.
 >
 > ls -la .q3a/baseq3/q3key?
 
-Sorry, I had a copy of it elsewhere and deleted it ;-(
+OK, read it wrong. You mean "ls" NOT "less" ;-)
 
-> > PS I send you a compressed copy of my "messages" file in private.
->
-> It only confirms my version, note how whole block of zeroes
-> was inserted after emergency sync (perhaps during crash).
+It is VERY, VERY small...
 
-"whole block of zeroes" would be fine but it isn't sometimes...
-Sometimes it is stuff from other (deleted?) files.
+ls -la .q3a/baseq3/q3key
+=2Drw-r--r--    1 nuetzel  users         167 Okt  9 05:47 .q3a/baseq3/q3key
 
-When I get the "next" crash during kernel compilation I "save" some files f=
-or=20
-you.
+:-)))
 
-=2DDieter
+Regards,
+	Dieter
