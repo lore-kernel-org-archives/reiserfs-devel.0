@@ -1,77 +1,43 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 01:43:46 -0700
-Message-ID: <412DA2C2.6010602@namesys.com>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk>
+Date: Thu, 26 Aug 2004 01:43:59 -0700
+Message-ID: <412DA2CF.2030204@namesys.com>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <20040825203516.GB4688@backtop.namesys.com> <20040825205149.GA17654@lst.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20593-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20594-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk>
+In-Reply-To: <20040825205149.GA17654@lst.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: viro@parcelfarce.linux.theplanet.co.uk
-Cc: Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, Jason Holt <jason@lunkwill.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Alex Zarochentsev <zam@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-viro@parcelfarce.linux.theplanet.co.uk wrote:
+Christoph Hellwig wrote:
 
->On Wed, Aug 25, 2004 at 01:22:55PM -0700, Linus Torvalds wrote:
+>On Thu, Aug 26, 2004 at 12:35:17AM +0400, Alex Zarochentsev wrote:
 >  
 >
->>On Wed, 25 Aug 2004, Christoph Hellwig wrote:
->>    
->>
->>>For one thing _I_ didn't decide about xattrs anyway.  And I still
->>>haven't seen a design from you on -fsdevel how you try to solve the
->>>problems with files as directories.
->>>      
->>>
->>Hey, files-as-directories are one of my pet things, so I have to side with 
->>Hans on this one. I think it just makes sense. A hell of a lot more sense 
->>than xattrs, anyway, since it allows scripts etc standard tools to touch 
->>the attributes.
->>
->>It's the UNIX way.
+>>Reiser4 may have a mount option for whoose who like or have to use traditional
+>>O_DIRECTORY semantics.  There would be no /metas under non-directories, if user
+>>wants that.
 >>    
 >>
 >
->Not if you allow link(2) on them.  And not if you design and market your
->stuff as a general-purpose backdoor into kernel. 
+>Again, O_DIRECTORY was added to solve a real-world race, not just for
+>the sake of it. 
 >
-What backdoor?  Please spell it out.  Plugins are not dynamically 
-loadable. 
+Can you supply more details and we will try to reply concretely?  Thanks.
 
-> Note how *EVERY* *DAMN*
->*OPERATION* is made possible to override by "plugins".  Which is the reason
->for deadlocks in question, BTW.
+> If you really want to add that option I'll research the
+>CAN number for you so you can named it after that - or just call it -o
+>insecure directly.
 >
->Don't fool yourself - that's what Hans is selling.  Target market: ISV.
->  
->
-Hunh?  No, target market is hackers who like to spend a weekend dreaming 
-up funky new kinds of files.  One guy (Jason Holt, clever guy) came up 
-with an idea for write only files for which even root cannot read the 
-parts of the file written prior to the time root was achieved, because 
-the encryption key is changed in a forward computable only direction 
-with every write, and the start key is kept on another computer.  Lots 
-of folks will have plugins I would never dream of.   Think of photoshop 
-plugins, and what plugins did for photoshop.  Same thing will happen to 
-reiser4 next year (or earlier).
-
->Marketed product: a set of hooks, the wider the better, no matter how
->little sense it makes.  The reason for doing that outside of core kernel:
->bypassing any review and being able to control the product being sold (see
->above).
->
->Shame that it got an actual filesystem mixed in with the marketing plans
->and general insanity...
 >
 >
 >  
 >
-I am one of those free software hippy-child anarchists who thinks that 
-random people should come up with ideas and contribute them.  You 
-understand me well.;-)
+
