@@ -1,33 +1,48 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: Reiser4fs and SPARC64?
-Date: Thu, 17 Feb 2005 12:44:54 +0300
-Message-ID: <20050217094454.GB7482@backtop.namesys.com>
-References: <421347FD.6000204@d-g-c.de> <20050216140944.GZ7482@backtop.namesys.com> <200502161724.16258.vitaly@namesys.com> <42146608.4070906@d-g-c.de>
+From: Christian Iversen <chrivers@iversen-net.dk>
+Subject: Re: Plugin for corruption resistance?
+Date: Thu, 17 Feb 2005 11:53:43 +0100
+Message-ID: <200502171153.43403.chrivers@iversen-net.dk>
+References: <e692861c05021110583585f84e@mail.gmail.com> <loom.20050215T213823-62@post.gmane.org> <42141928.7080608@slaphack.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <42141928.7080608@slaphack.com>
 Content-Disposition: inline
-In-Reply-To: <42146608.4070906@d-g-c.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "mailinglists@d-g-c.de" <mailinglists@d-g-c.de>
-Cc: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Thu, Feb 17, 2005 at 10:38:16AM +0100, mailinglists@d-g-c.de wrote:
-> Hi Alex and Vitaly,
-> so i will use:
-> http://www.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.10/2.6.10-mm3/2.6.10-mm3.bz2
-> against 2.6.10 and after that the 5 patches you two emailed me.
+On Thursday 17 February 2005 05:10, David Masover wrote:
+> Adam wrote:
+> | Hans Reiser <reiser <at> namesys.com> writes:
+> |>Its on the legitimate wish list, if someone wants to code it, let me
+> |> know.
+> |
+> | Hans, does this mean that you think that this type of functionality
+>
+> should be
+>
+> | implemented as a Reiser4 plugin and therefore in kernelspace?  Why
+>
+> wouldn't this
+>
+> | be better implemented in userspace via a daemon that is notified of file
+> | modification via dnotify/inotify?
+>
+> Because dnotify/inotify don't scale.  I don't think they lock on event,
+> either, whereas a plugin could guarentee that the hash was up-to-date
+> (no race conditions).
+>
+> We've been over this before.  There's a reason reiser4 and its plugins
+> are in kernel space, and not in something like Fuse.
 
-vitaly's patches are for user-land utilities.
-
-> 
-> should work?
-
-How can I know it?  I have no sparc64 around.
+And, surely, updating a hash value when 1 byte changes in a gigabyte file, 
+would be much faster from kernel space where you can actually see the 
+changeset?
 
 -- 
-Alex.
+Regards,
+Christian Iversen
