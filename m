@@ -1,55 +1,72 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: when will it end?
-Date: Wed, 27 Oct 2004 20:49:52 -0500
-Message-ID: <41805040.7020008@slaphack.com>
-References: <417EF280.10003@slaphack.com> <20041027185211.GJ25932@backtop.namesys.com>
+Date: Wed, 27 Oct 2004 21:09:12 -0500
+Message-ID: <418054C8.5020104@slaphack.com>
+References: <417EF280.10003@slaphack.com> <20041027033443.GE25932@backtop.namesys.com> <417F3C7C.2020408@slaphack.com> <1406818064.20041027103126@tnonline.net> <417FD40B.2050807@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22198-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22199-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20041027185211.GJ25932@backtop.namesys.com>
+In-Reply-To: <417FD40B.2050807@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Spam <spam@tnonline.net>, reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Alex Zarochentsev wrote:
-| On Tue, Oct 26, 2004 at 07:57:36PM -0500, David Masover wrote:
+Hans Reiser wrote:
+| Spam wrote:
 |
-|>-----BEGIN PGP SIGNED MESSAGE-----
-|>Hash: SHA1
 |>
-|>I have 512 megs of RAM and one 200 gig hard drive (effectively 177 gig
-|>filesystem) that is 86% full.  I started the reiser4 repacker two days
-|>ago, with very minimal system use since then (an hour or two a day of
-|>playing music and reading email).  See below for my df and top.
+|>  Windows 2000 and later comes with a lite version of Diskeeper from
+|>  Executive Software.
+|>
+| MS charges for the OS, so that business model works for them.  Nobody
+| will buy a heavy resizer from us if there is a lite one.  That would be
+| as likely to happen as their buying a support contract. The lite
+| software is reiser4 without a resizer.
 |
-|
-| 200GB / 48 / 3600 ~=  1MB/sec, right?
+| Such is my feel of the market.
 
-Assuming I'd let it finish.  I didn't, so I have absolutely no idea how
-far along it was.  I suspect that it wasn't going to finish.
+Perhaps.  I'd just feel a little cheated.  Currently, without a
+repacker/resizer, I would have to borrow/buy another hard drive to get
+my data off reiser4, and it seems that it would slowly become more
+fragmented.
+
+What about plugins?  Application patches?  The repacker seems sort of
+essential, and definitely a lot of work, but your expertise would also
+be very useful for things like, say, a reiser4 backend to a traditional
+SQL database.  I sincerely doubt people would be willing to pay much for
+something that they see as "free" with Windows, while there's some real
+potential here to create something entirely unique.  Not unique in its
+benchmarks, but in its usability.
+
+I know I'm somewhat biased, but I do prefer something entirely
+proprietary to something which is sort of "half-open", like
+WineX/Cedega, Lustre, etc.  It leaves a really bad taste in my mouth
+when I start to get hooked on a product, only to find later on that I
+have to buy some really critical feature.  Like all those "GI-Joe
+Grenade Launcher" with "GI-Joe sold separately" fine-print labels.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.6 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQYBQQHgHNmZLgCUhAQLfDw/+P4Xwc/aRc7dyniFgRmhODFBTp8NndgU6
-uHULJmqVGDVADlFNFTAl8E7QonbnL3gYTlbm6ijwnkvm5IZsn/WoBtAxa7kX766Q
-QKfFHEx63GKyKBoImtQ6Ai56m4UKEDuoquq1wt4y1eKV2NlwG/W1LWvSln3XhePC
-jk4ZUUeFeOCn0gtPCf3P78YiLVdxXFtRm8Q4Bw/B/aKPICvg3qiWn5LV8/YtN8sw
-l6ROe4sfg4Zd5LwJC76KqhXKtDbWtV8o/INYvyAkgnYHTYfxlGk+rP8dzpojZuah
-upYXaJr3ofZpn2H8MlvhTuSqR6FrQ0Bkse8oGM3aWQNmXyKdo/4K9RraEAnf8vvm
-kIOZvbd8G8v3XLEuAulH3RR5qw8Qhq0ZpXBBsAggD0Wi1j1eeTwplRr+iox5CGwg
-l8yCjrWa6mPhk0en3HTc0Yfjc0Qyqr1OwCC1nJ28/M3qwMQAe2JWg8Cs4/yubGSZ
-9ox/kAq5ypvYs3Y7lQQWVqtjqW5dceBw0RP/HvE6g9lhXQF27zAUv/7i14OPi280
-ZaZrJcpinovDz921XflzRxmgslCT5Ycg4kL+Qy96MYCpX2+icNwqP+FNX2W4I9OM
-LvaoqXwYpWwJ6+reNLW/bMVwZjACpp667RdYDEcg2CQ0qJ6bTb/lNBDeYyAmNXCx
-3oDgCrnU0uQ=
-=2WW9
+iQIVAwUBQYBUyHgHNmZLgCUhAQJDOg/+NIjPua8z9iAOszVpAhMxV672uSrEjTZq
+uGjPySFxjbc0UtDBHrGexIchiUnTF8L6tSzgJKoYF4lpoZ+/cMMosZ9Qxk0Agn8n
+smhvRKz+pWr5my0PVMUxcUrsYtfhqiHEO+zRSLX/LJ22b6Qiy3yOxKgV74AylpSi
+ZtINahQicT0sbok0n0UAt5Zk4yzJPj3+R7J3TUEAgatisZhWGwr5w9WIVIGHVsYa
+YwXsX8AparnfLhh700DSg5k0OWCBf1gZs+iXN1Oy1G6x1z7cVtqB+nHjZPPYEoFx
+B3zRYYm1M2LGuNe6tqpLwM0jufBZ2ZOMbsGA0Kbg2c/zSBviOjZfq+oTrtUdiFKU
+Log4sVRH/rk8H1B4DqG0iEwLwjZ4Q+q3DAs9c2GKPS7VQ+fb/UjATd1HlBFYCVtG
+hN12UHI2Tg6wTsn2fhp9Q48BKd/D4g5LEKbZ4fYhtrPOqDSVV3d3lMPTp1Lxtv0j
+AXyEyouClEOvAr0eLTLTX31M5Negg+MX+z82NwW3kTigw/DFVsTY3jo3qJqZ9iHT
+NKAbF3hHYarhC1w+Z607of2CO1dQqkC3Gs0XgN3qKQ0yN4kRJcWyXeVzAtkOOinY
+Ymou+1v70t3ZVNgraV+znIVQelT2xHWNuK58D6WLALZPHN3kXrzIZvQNpt72ZwqM
+RnPLTLuSX4o=
+=BGb5
 -----END PGP SIGNATURE-----
