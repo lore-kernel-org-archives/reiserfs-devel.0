@@ -1,33 +1,31 @@
 From: Clifford Beshers <clifford.beshers@linspireinc.com>
-Subject: Re: 2.6.9-mm1
-Date: Sun, 24 Oct 2004 07:41:54 -0700
-Message-ID: <417BBF32.7050808@linspireinc.com>
-References: <20041022032039.730eb226.akpm@osdl.org> <4179425A.3080903@namesys.com>
+Subject: Re: If you want reiser4 to go into the kernel, you probably needto ask for it
+Date: Sun, 24 Oct 2004 07:43:53 -0700
+Message-ID: <417BBFA9.60408@linspireinc.com>
+References: <417A821A.7000004@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22156-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22157-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4179425A.3080903@namesys.com>
+In-Reply-To: <417A821A.7000004@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Hans Reiser <reiser@namesys.com>
-Cc: Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
+I responded.  Meant to do it on Friday but my brother is in town and I 
+got distracted.
 
 Hans Reiser wrote:
 
-> Lindows is planning on shipping with reiser4 in its next release. I 
-> would very much like to see our inclusion before that.
+> Just because we are the fastest filesystem does not mean that it will 
+> be easy for us to get in.  Actually, it makes it harder to get in, for 
+> reasons I'd prefer not to state.  This week would be a good time to 
+> ask for reiser4 to be merged in as an experimental fs if you want it.
 
-Yes, and we would very much like to see it in the mainstream kernel, 
-rather than an mm branch.   It is perfectly acceptable to turn off the 
-namespace features and trim anything else that might introduce 
-incompatibility or instability.  Our goal is to ship it as an advanced 
-but integrated feature, i.e., we do not want to ship two kernels and/or 
-lose other features such as bootsplash, software suspend, etc.
 --
 
 This message contains information which may be confidential and privileged. Unless you are the 
