@@ -1,28 +1,48 @@
-From: prj@po.cwru.edu (Paul Jarc)
-Subject: Re: reiserfsprogs-3.6.4
-Date: Fri, 25 Oct 2002 12:33:16 -0400
-Message-ID: <m3wuo6cwbh.fsf@multivac.cwru.edu>
-References: <200209171723.09026.vitaly@namesys.com>
-	<200210011406.32568.vitaly@namesys.com>
-	<200210251705.05437.vitaly@namesys.com>
+From: Philippe =?ISO-8859-1?B?R3JhbW91bGzp?= <philippe.gramoulle@mmania.com>
+Subject: Re: [OT] memory issue with GNU find
+Date: Fri, 25 Oct 2002 20:23:02 +0200
+Message-ID: <20021025202302.633fcce4.philippe.gramoulle@mmania.com>
+References: <20021024174330.34f2d72e.philippe.gramoulle@mmania.com>
+	<200210251900.33613.russell@coker.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11780-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11782-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200210251705.05437.vitaly@namesys.com> (Vitaly Fertman's
- message of "Fri, 25 Oct 2002 17:05:05 +0400")
+In-Reply-To: <200210251900.33613.russell@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
-
-Vitaly Fertman <vitaly@namesys.com> wrote:
-> The new release 3.6.4 of reiserfsprogs can be downloaded from
-> out ftp site. It did not get any change against 3.6.4-pre3.
-
-Thanks.  Should the LATEST_IS file be updated, then?
+To: Russell Coker <russell@coker.com.au>
+Cc: reiserfs <reiserfs-list@namesys.com>
 
 
-paul
+Hi,
+
+On Fri, 25 Oct 2002 19:00:33 +0200
+Russell Coker <russell@coker.com.au> wrote:
+
+  |  One issue I noticed with find is that the amount of memory required is 
+  |   propertional to the length of the maximum path name.  If you have a very deep 
+  |   tree of subdirectories then the amount of memory taken becomes significant.  
+
+Are you aware of a find variant that would be memory limited ? :
+
+If memory usage goes up , then at a certain point, commit everything in RAM to a file
+, free up memory, and continue like this again and again.
+
+  |   It's easy to create a set of nested directories that crash find (it's a good 
+  |   local DOS attack).
+  |  
+  |   while /bin/true ; do
+  |     mkdir foo
+  |     cd foo
+  |   done
+
+Users don't have shell access but they could do it over FTP indeed. We already found cases of such very
+nested directory.
+
+thanks,
+
+Philippe
