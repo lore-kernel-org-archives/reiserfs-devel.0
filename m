@@ -1,88 +1,91 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: preexisting 'metas'?
-Date: Mon, 14 Jun 2004 07:35:25 -0500
-Message-ID: <40CD9B8D.6050002@slaphack.com>
-References: <40CBB63E.4060001@slaphack.com> <200406140033.i5E0XiR2002772@turing-police.cc.vt.edu>
+From: Scott A Crosby <scrosby@cs.rice.edu>
+Subject: Terrible performance (<100kb/sec) in a cp -Raf
+Date: 14 Jun 2004 08:25:24 -0500
+Sender: scrosby@cs.rice.edu
+Message-ID: <oyd4qpee0fv.fsf@bert.cs.rice.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19176-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19177-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200406140033.i5E0XiR2002772@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Valdis.Kletnieks@vt.edu
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hello, as part of a planned migration of my computer from ext3 to
+reiserfs I experienced terrible performance. I was running a stock
+linux 2.6.6 kernel on AMD XP-2500+ CPU with 1.5gb of RAM.
 
+I was copying about 26 gigabytes from an IDE hard drive to an external
+USB HD when the bulk copy (cp -Raf) appeared to freeze. The HD did
+nothing other than grind itself back and forth. Stracing the copy
+operation showed the write() syscall blocking.
 
+'vmstat 1' during the freeze reported:
 
-Valdis.Kletnieks@vt.edu wrote:
-| On Sat, 12 Jun 2004 21:04:46 CDT, David Masover <ninja@slaphack.com>
-said:
-|
-|
-|>Well, the '...' in my brother's home dir had some stuff that he'd like
-|>to keep secret -- as in, he doesn't want people to know he has them.
-|
-|
-| Just as an aside, note that calling the directory '...' will only slow
-down a
-| clueless person.  Consider that 'du' and 'ls -a' and 'ls -A' will all
-show them
-| - as will 'find' and any number of other utilities...
+ 0  2  97716   9504  81208 1353328    0    0     0  1824 1989  2147  0  0  0 100
+ 0  2  97716   9504  81208 1353328    0    0     0  2132 2018  2235  0  3  0 97
+ 0  2  97716   9504  81208 1353328    0    0     0  1844 2019  2222  0  0  0 100
+ 0  2  97716   9520  81208 1353328    0    0     0  2108 2012  2239  0  0  0 100
+ 0  2  97716   9520  81208 1353328    0    0     0  1916 2037  2263  0  1  0 99
 
-I think the main thing he wanted was to keep people from noticing such a
-directory existed.  And especially jaded sysads might pass over a file
-called '...' -- or, more easily, a file called '. ' or '.. '.
+The result of running 'df' on the partitian every 10 seconds was:
 
-Based on the content in that directory, I could just ask him what was in
-there and know by watching his reaction.  Either way, it's no big deal.
+/dev/sda1             26683112   4470492  22212620  17% /mnt/tmp
+/dev/sda1             26683112   4484316  22198796  17% /mnt/tmp
+/dev/sda1             26683112   4485976  22197136  17% /mnt/tmp
+/dev/sda1             26683112   4486616  22196496  17% /mnt/tmp
+/dev/sda1             26683112   4488252  22194860  17% /mnt/tmp
+/dev/sda1             26683112   4488884  22194228  17% /mnt/tmp
+/dev/sda1             26683112   4489524  22193588  17% /mnt/tmp
+/dev/sda1             26683112   4489524  22193588  17% /mnt/tmp
+/dev/sda1             26683112   4793412  21889700  18% /mnt/tmp
+/dev/sda1             26683112   4873236  21809876  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873620  21809492  19% /mnt/tmp
+/dev/sda1             26683112   4873748  21809364  19% /mnt/tmp
 
-| And if he wants to keep it secret, he should be using at *least*
-enough things
-| to keep people *that* unclued out.  If they're unclued enough to not
-be able to
-| find a . file, how did they get *in*??/
+Notice I was getting under 100kb of writes/second out of the partitian
+for about 30 seconds near the beginning of this log. before it seemed
+to freeze completely. Normal performance for the drive under ext3 is
+about 18mb/sec reading and 12mb/sec reading.
 
-Suppose he's browsing through his home dir with someone on his shoulder,
-because he wants to show them something.  If he wasn't hiding things at
-all, he'd call it 'xxx'.  Otherwise, he'd call it something boring --
-but the shoulder-surfer might ask him what's in there...
+I considered that the problem might be hash collisions, so I
+reformatted the partitian restarted the copy from scratch. I got about
+the same freezing behavior at about the same spot in the copy
+operation. A reformat for ext3 and a third copy had none of these
+problems. I also checked the dmesg log for any IO errors and saw none.
 
-| If you want actual *security*, you need to be using something that
-does actual
-| crypto.  Jari Ruuso's 'loop-aes' package (on sourceforge) is one
-example of the
-| class of software you *want* to be using.
+After control-C'ing the copy and waiting for 5 minutes for the
+grinding to stop I examined the destination to look for unique
+properties at the point it appeared to freeze. The destination
+filesystem tree showed an almost complete copy of the TIGER dataset
+(3gb of data in 3000 files and 30 directories)
 
-Yeah right.  I'm root, he's not.  His security is the fact that I'm his
-brother.  I demonstrated this to him vividly, when I told him I really
-don't care about his password, and so I won't look if he doesn't want me
-to (when I first had him enter it) -- then I logged in as root and su'd
-to his account.  He thinks it isn't fair.  I built the computer >:)
+System version is:
+    Linux version 2.6.6 (root@dragonlight) (gcc version 3.3.3 (Debian 20040401)) #12 Wed Jun 2 19:59:39 CDT 2004
 
+I'm available for testing potential patches if the developers consider
+this worth tracking down. If not, I'll wait for Reiser4.
 
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQM2bjXgHNmZLgCUhAQL+3xAAiTSfSEWeTBFvV0/RafdlV5TrFmcgPNUh
-I9GkCz4mUxRwEOrh8wCg7pC3jYsusWT9sXqJ4pbc9GkSopE4NnY96f3Hq/aYfBHD
-diGOi7aanSEmRS7hpNgJHzsDTPCrMBvxvqXZNPr3rZLB/ta+YL6W/VzEi3Ff0lL+
-BGFyBJKPB2OcSnRsZIpfj3WCDoLvjNkXdhV4Zm1/CFC3vms1CIZUA7R/JJ73CrXN
-6AbU533SUMO8RWwMfIoNj12h9FKsN1HB9N9iZ/IId2njF/VPuoAildT0tBk/zzbD
-BBjvoxYNQSwtJk0XbPp4szWzh45OXdl91G4fvdouNvBNff+qGMb9PUk9jqn7whV0
-xWNSezVH0SfscXpfHLEpuSTzDWfG1hu0aIamtmuWmE7ZiWioomHGVvXWcgZnUjVX
-nkIJxQm03HsvvvvZnUeWJUse2uywkxnZ24mFTxycKsApDGMy3yx9X/BEVOdWOHMb
-kpf7rmOKCU6nqqvA/QrbUD+e/deNML5uUndU2IDtp+OjBKg4QA+sp0IUJ7QaP9f8
-/HzDtVJ1lpMpDTaTnjlXeKCqCsu1vVstsQQuQycNUu5FTo+eXsq5DB5xQwHOPoR7
-7oafisQkQ0nmo+q0rSzDB6zrupSVs9DZwrUzcDZUkedqwlJzHvpKHBuMypCR6z/J
-1BJhFXeDsFE=
-=MgH3
------END PGP SIGNATURE-----
+Scott
