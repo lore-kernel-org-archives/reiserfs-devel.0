@@ -1,69 +1,38 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: [Fwd: we are listed as spammers now! :)]
-Date: Thu, 08 May 2003 15:16:27 +0400
-Message-ID: <3EBA3C8B.4040904@namesys.com>
+From: Mirar <mirar-yg@mirar.org>
+Subject: power loss -> corruption
+Date: 08 May 2003 13:18:44 +0200
+Sender: mirar@orchid.mirar.org
+Message-ID: <m1k7d11yaz.fsf@orchid.mirar.org>
+References: <200303102115.50039.dirk.leber@web.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------090701020905060908030404"
-Return-path: <reiserfs-list-return-14001-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14002-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200303102115.50039.dirk.leber@web.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Alexander Lyamin <flx@namesys.com>, ReiserFS <reiserfs-list@namesys.com>
-
---------------090701020905060908030404
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-fix this please
+I've had this problem for a while. Every time the system gets a power
+loss, all files that was recently written to gets garbage in them. 
+(It seems to me like the wrong content gets in the wrong files.)
 
-and would whatever clever person reported us as spammers please not do 
-it again?
+I assume it's not supposed to be that way.
 
--- 
-Hans
+Is this something known? 
 
+It happens with 2.4.19 and 2.4.20 kernel versions. 
+Is there anything I can do to track down this issue?
 
---------------090701020905060908030404
-Content-Type: message/rfc822;
- name="we are listed as spammers now! :)"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="we are listed as spammers now! :)"
+Since it's every time, or at least close to every time...
 
-Return-Path: <reiserfs-dev-return-16511-Reiser=namesys.com@namesys.com>
-Delivered-To: Reiser@namesys.com
-Received: (qmail 32337 invoked by uid 501); 8 May 2003 08:36:18 -0000
-Mailing-List: contact reiserfs-dev-help@namesys.com; run by ezmlm
-Precedence: bulk
-X-No-Archive: yes
-list-help: <mailto:reiserfs-dev-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-dev-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-dev@namesys.com>
-X-Mailing-List: reiserfs-dev@namesys.com
-Delivered-To: mailing list reiserfs-dev@namesys.com
-Received: (qmail 32330 invoked from network); 8 May 2003 08:36:18 -0000
-Message-ID: <3EBA1702.1030203@namesys.com>
-Date: Thu, 08 May 2003 12:36:18 +0400
-From: Vladimir Saveliev <vs@namesys.com>
-Organization: NAMESYS
-User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.4a) Gecko/20030401
-X-Accept-Language: en-us, en, ru
-MIME-Version: 1.0
-To: reiserfs-dev@namesys.com
-Subject: we are listed as spammers now! :)
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+I don't power down by breaking that power that often, so it hasn't
+disturbed me that much, but I lost an important file today so I guess
+I'm extra aggravated.
 
-<div class="moz-text-flowed" style="font-family: -moz-fixed">You can check it at
- http://spamcop.net/bl.shtml
+/Mirar
 
-
-
-
-
-</div>
---------------090701020905060908030404--
 
