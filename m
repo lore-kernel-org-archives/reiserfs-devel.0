@@ -1,47 +1,70 @@
-From: Bennett Todd <bet@rahul.net>
-Subject: OT: package scripts (was Re: software packaging and ReiserFS v4)
-Date: Fri, 5 Sep 2003 16:39:50 -0400
-Message-ID: <20030905203950.GA12183@rahul.net>
-References: <20030903165409.GD4714@rahul.net> <3F565A8F.4010209@botz.org> <20030903213742.GA13146@rahul.net> <3F58D2CD.3050801@mrs.umn.edu> <20030905194413.GA19041@matchmail.com> <20030905201806.GV31864@vestdata.no>
+From: Grant Miner <mine0057@mrs.umn.edu>
+Subject: Re: OT: package scripts (was Re: software packaging and ReiserFS
+ v4)
+Date: Fri, 05 Sep 2003 16:37:12 -0500
+Message-ID: <3F590208.5060900@mrs.umn.edu>
+References: <20030903165409.GD4714@rahul.net> <3F565A8F.4010209@botz.org> <20030903213742.GA13146@rahul.net> <3F58D2CD.3050801@mrs.umn.edu> <20030905194413.GA19041@matchmail.com> <20030905201806.GV31864@vestdata.no> <20030905203950.GA12183@rahul.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
-Return-path: <reiserfs-list-return-15584-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15585-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030905201806.GV31864@vestdata.no>
+In-Reply-To: <20030905203950.GA12183@rahul.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
---gBBFr7Ir9EOA20Yy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I'm excited about your packaging system.  I hope you make something very 
+useful.  Here are some ideas I have had about packaging and operating 
+system design; they might be interesting to you.  Comments, suggestion, 
+other ideas are wanted.
 
-2003-09-05T16:18:06 Ragnar Kj?rstad:
-> I think if scripts were to be removed from the packaging system
-> you would have to add a package-feature for every single thing
-> that scripts are currently used for.
+Ideally, each user's home dir would mirror the system directories (i.e. 
+users have their own bin, share, lib and var).  This way, users can 
+install a package (and it would be local to them) and root could install 
+the exact same package (and it would be global to the system).  Right 
+now, on every distribution, only root can install packages; this is a 
+place where a new packaging system could have huge advantages.
 
-Ok, you've convinced me to this extent: when I get to a point where
-I have to add such capabilities to my new packaging tool, they will
-be added by the ability to invoke canned reusable scripts that are
-part of the packaging system, not one-off per-package scripts.
+Ideally, users' directories would get unioned to system's directories 
+(in their namespace) upon login, so / would be their "home", /bin would 
+be system's bin plus user's bin, etc.  This way programs ALWAYS know the 
+"right path" to everything (which has always been an annoying problem in 
+Unix).
 
--Bennett
+Packages contain file sets only.  This avoids side-effects of scripts. 
+Well-designed programs do not need pre- and post-install scripts.  If 
+you want to install apache, say as www user, root would create that 
+user, switch users to www, and then install apache as www.
 
---gBBFr7Ir9EOA20Yy
-Content-Type: application/pgp-signature
-Content-Disposition: inline
+/sbin would go away; all sbin programs go to appropriate bin directories 
+(because non-root users often need programs like fdisk, etc).
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.7 (GNU/Linux)
+/etc, /bin, /lib and /boot all have the files only necessary for bootup.
+Users can have an rc.d script directory in /etc (who gets to have rc.d 
+scripts would be up to the sys admin) for launching services upon 
+runlevel changes.  Perhaps it would be better to put these dirs as 
+/boot/bin, /boot/lib, etc, and use /bin for system-wide bin (i.e., like 
+the present /usr/bin).
 
-iD8DBQE/WPSWHZWg9mCTffwRAuESAJ9MJchx/uxo0EcacOX87HFmlqLnvgCgqJ7v
-eqc82pRs5uTEGW9J0PV4eUk=
-=61yI
------END PGP SIGNATURE-----
+/share/etc-defaults would contain default configurations, instead of 
+cluttering up /etc (which is just stuff needed for booting and launching 
+services).  /share/etc-defaults could be mounted below user's /etc.
 
---gBBFr7Ir9EOA20Yy--
+(optional) /share/etc-mandatory could be mounted above user's /etc, for 
+settings users should not be able to change (sometimes called "lock-down").
+
+Environment variables are replaced by files, ala Plan 9.  Instead of 
+$EDITOR have /etc/default-applications/text-editor, web-browser, etc. 
+TIdeally no programs should use environment variables for configuration; 
+their existence is not obvious to the user, and neither is their 
+possible values. (Shell scripts of course would still use env vars.) 
+Programs should watch their configuration files for changes, to achive 
+that instant-apply effect.
+
+I'm most excited for that once we have a stable Reiser4 system with 
+files as dirs, it should be easy to write a universal configurator tool 
+using files as keys.
+
