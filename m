@@ -1,7 +1,7 @@
 From: "Yura Umanets" <umanets@priocom.com>
 Subject: Re: mkreiserfs -q
-Date: Tue, 02 Apr 2002 16:48:07 +0300
-Message-ID: <3CA9B697.4030902@priocom.com>
+Date: Tue, 02 Apr 2002 16:52:15 +0300
+Message-ID: <3CA9B78F.9080304@priocom.com>
 References: <E16sOPz-0005lr-00@gull.prod.itd.earthlink.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -29,9 +29,13 @@ Randy Hron wrote:
 >
 >
 >
-You should be using a command:
+I forget something :))
 
-echo "Yes" | mkreiserfs ...
+echo "Yes" | mkreiserfs ... > /dev/null 2>&1 || {
+    echo "Couldn't create filesystem. Error $?"
+}
+
+Or you should redirect to /dev/null only stdout or stderr.
 
 -- 
 Yury Umanets
