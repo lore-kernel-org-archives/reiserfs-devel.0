@@ -1,35 +1,45 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Subject: Re: ".meta." as a Name Prefix
-Date: Sun, 25 Apr 2004 10:02:16 -0400 EDT
-Message-ID: <40428365695-BeMail@cr593174-a>
-References: <408B503B.30700@slaphack.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Debian and non-free
+Date: Sun, 25 Apr 2004 17:52:38 +0300
+Message-ID: <20040425145238.GQ19049@nysv.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18207-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18208-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <408B503B.30700@slaphack.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-David Masover wrote on Sun, 25 Apr 2004 00:44:27 -0500:
-> Inside the metas dir, though, we have plugins.  And if plugins could be
-> dynamic, even mostly in userspace, then we have the problem of plugins
-> becoming so popular that we have namespace collisions there.  I like
-> this solution, though -- it's kind of like the XML namespace concept,
-> something which should be in every language.
+Hi
 
-Actually the problem in real life (from BeOS experience) is the lack of
-collisions.   Everybody keeps on prefixing their new attribute set with
-a unique identifier (usually looking like "UNIQUER:attribute" in BeOS)
-so you end up with redundancies like MAIL:subject and PINEAPPLE:subject
-which should really be the same thing (since e-mail messages and UseNet
-news are so similar and I want to search all subjects when looking
-for a lost message).  Of course, this could be worked around by having
-aliases of attribute names (sounds like another plugin), but it would
-be nice if we had a standard set of attribute names.  Dublin core, anyone?
+IANADD and all that, so where can I read about why Reiser4 is unsuitable
+for even non-free?
 
-- Alex
+The way I read the license of Reiser4 is that it's GPL but one can write
+plugins, derivative works of GPL, but keep the sources by paying money?
+
+This seems like an internal conflict in the license itself; without having
+paying money as a forced bribe of sorts to keep the source closed, it would
+seem like a BSD-style license. BSD should be ok by Debian Free even.
+
+So why is it disqualified?
+
+Debian is often seen as the distro for people who like stability and security.
+Reiser4 has stabilized by the bucket and at latest views will bring along
+the strictest of security.
+
+It would be a shame if Debian users, such as I, would have to continue
+bootstrapping Debian onto Reiser4 instead of just installing.
+And there are a lot of Debian users out there as a target audience.
+
+Does Debian have anything against third party installers which would use
+Reiser4? Probably not? Considering the centuries it would take for Debian
+to validate Reiser4 for installer-inclusion.
+
+-- 
+mjt
+
