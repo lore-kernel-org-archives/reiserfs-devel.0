@@ -1,39 +1,35 @@
-From: "Fred -- Speed Up --" <speedup@free.fr>
-Subject: About Reiser4 release date ...
-Date: Thu, 29 May 2003 00:09:31 +0200
-Message-ID: <006101c32565$d0e837b0$b300a8c0@xpstation>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: disk or reiserfs problem?
+Date: Thu, 29 May 2003 09:45:11 +0400
+Message-ID: <20030529054511.GA30925@namesys.com>
+References: <E19L7Co-0002Sb-00@rode.parc.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_005E_01C32576.93FB6280"
-Return-path: <reiserfs-list-return-14285-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14296-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <E19L7Co-0002Sb-00@rode.parc.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: ReiserFS ML <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jeff Breidenbach <jbreiden@parc.com>
+Cc: reiserfs-list@namesys.com
 
-------=_NextPart_000_005E_01C32576.93FB6280
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Hello!
 
-The Linux 2.4.70 kernel has been released a few days ago, it contains =
-lots of changes means, according to Linux, a milestone in its way to 2.6 =
-release. Andrew Morton and other kernel devs are working hard, and 2.5 =
-kernel series are starting a stablizing process, so we can expect a 2.6 =
-release in about 4 or 5 months if the developement goes on that fast. =
-But how about Reiser4 ?
-Hans said it would be available as 2.6 kernel comes out, but do you =
-really think you'll be able to achieve the last part of the developement =
-until 2.6 ?
-Would Linus integrate Reiser4 in the 2.6 kernel even if the testing =
-process is not complete (he personally said 2.6 kernel will still need =
-lots of testing even after its release) ?
-Do you plan to link Reiser4 release with the 2.6 kernel announcement ?
-How about the BitKeeper repositery : does it contain the latest 2.5 =
-kernel sources along with your Reiser4 developement patches ?
+On Wed, May 28, 2003 at 01:07:27PM -0700, Jeff Breidenbach wrote:
+> This is after a hard (power switch) reboot (due to I/O errors). The
+> disk in question has about 125 GB of data on a single 200GB reiserfs
+> partition. Do people think the disk is toast, or is this possibly some
+> correctable filesystem problem? The machine is remote, so I can't
+> hdb1: bad access: block=35, count=5
+> end_request: I/O error, dev 03:41 (hdb), sector 35
 
-Fred
-------=_NextPart_000_005E_01C32576.93FB6280--
+Looks like disk have gone bad. If you are lucky enough, some of the data
+still can be recovered. Try to copy entire disk into a file/to another
+disk to see how much bad sectors are there.
 
+Bye,
+    Oleg
