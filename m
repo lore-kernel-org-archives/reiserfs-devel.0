@@ -1,62 +1,30 @@
-From: Guillermo Torreiro <gtorreiro@yahoo.com>
-Subject: Re: newbie how to
-Date: Thu, 12 Sep 2002 08:12:28 -0700 (PDT)
-Message-ID: <20020912151228.31694.qmail@web9804.mail.yahoo.com>
-References: <3D80A692.6090107@namesys.com>
+From: Newsmail <newsmail@satimex.tvnet.hu>
+Subject: Re: [BK] ReiserFS file write bug fix for 2.4
+Date: Thu, 12 Sep 2002 18:40:10 +0100
+Message-ID: <5.1.1.6.2.20020912183504.01d24f60@pop.tvnet.hu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11434-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11435-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3D80A692.6090107@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 Content-Transfer-Encoding: 7bit
-To: darren <teodarren@myrealbox.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-> darren wrote:
-> 
-> >Hi all,
-> >
-> >I have a brand new RedHat computer just setup. It
-> currently have two
-> >partitions...both EXT3.
-> >
-> >How do I make one of my drives reiserfs?
-> >
-> >
-> >
-> >
-> >  
-> >
---- Hans Reiser <reiser@namesys.com> wrote:
-> use tar.  tar does a good job, and nfs to a file
-> server (or some 
-> borrowed hard drive) plus tar will work well.
-> 
-> Remember to run lilo after untarring.
-> 
-> 
-
-a bit more extensive approach:
-
-1) Like Hans said, use tar to backup your partition,
-and put it in some place over a NFS drive or another
-local drive.
-2) umount your partition to be converted to ReiserFS.
-3) format this partition using ReiserFS tools.
-4) edit /etc/fstab and change the line having your
-partition to the following:
-/dev/hdxy /xx/yy  reiserfs  defaults    1   2
-where /dev/hdxy is your partition (I guess it's ide)
-and /xx/yy is the mount point.
-5) mount it again.
-6) untar your backup into your new ReiserFS partition
+ > The mount option (-o alloc=prealloc min=4:preallocsize=9) only or better
+ > a "reformat"?
+ >
+ > Those mount options are no longer needed starting from 2.4.20-pre6.
+ > They are default. Reformat is not needed, but all the blocks allocated by
+ > old allocator will remain at their old places of course.
+ >
+ > Bye,
+ > Oleg
+I use 2.4.20-pre4 without these mount options. So apparently reiserfs is 
+much slower than the optimal am I right? (if my memory is good this is 
+about some speed optimization right?).
+greg
 
 
-__________________________________________________
-Do you Yahoo!?
-Yahoo! News - Today's headlines
-http://news.yahoo.com
