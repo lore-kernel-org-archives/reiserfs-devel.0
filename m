@@ -1,63 +1,81 @@
 From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: delayed file deallocation?
-Date: Mon, 15 Mar 2004 13:28:34 +0300
-Message-ID: <1079346514.2808.17.camel@tribesman.namesys.com>
-References: <20040315074452.GG19159@exavio.com.cn>
-	 <200403151257.47145.reiser@bitshadow.namesys.com>
+Subject: Re: reiserfs rebuild-tree time?
+Date: Mon, 15 Mar 2004 13:31:31 +0300
+Message-ID: <1079346691.2809.20.camel@tribesman.namesys.com>
+References: <Pine.LNX.4.58.0403110111490.1969@web1.mmaero.com>
+	 <Pine.LNX.4.58.0403110848380.1969@web1.mmaero.com>
+	 <1079014534.9475.265.camel@tribesman.namesys.com>
+	 <200403111839.49951.vitaly@namesys.com>
+	 <Pine.LNX.4.58.0403131921140.1969@web1.mmaero.com>
+	 <Pine.LNX.4.58.0403140108560.1969@web1.mmaero.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17215-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17216-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200403151257.47145.reiser@bitshadow.namesys.com>
+In-Reply-To: <Pine.LNX.4.58.0403140108560.1969@web1.mmaero.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Isaac Claymore <clay@exavio.com.cn>
-Cc: reiserfs-list@namesys.com
+To: jlewis@lewis.org
+Cc: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
 
-Hello
-
-On Mon, 2004-03-15 at 12:57, Hans Reiser wrote:
-> On Monday 15 March 2004 10:44, Isaac Claymore wrote:
-> > Hi list,
-> >
-> > We're using reiser 3.6 as workhorse fs beneath Samba in our NAS setup.
-> > Under our workload, it's common that tens of clients (often around 20)
-> > are doing real-time video editing simultaneously. We've been suffering a
-> > scenario that when one client comes and deletes some large file while
-> > many others are busy editing, the many others will experience noticeable
-> > period of IO stalling, usually of about 3 seconds. And, since they're
-> > doing some kind of realtime editing, this stall is unacceptable.
-> >
-> > I'm wondering that whether the file deallocation could be delayed
-> > somewhat, i.e. when a file is unlink()'ed by Samba, fs driver just mark
-> > the file to-be-deallocated when its reference count reaches zero. Then,
-> > the fs driver, at some later time, either triggered by user space or when
-> > lack of free space, actually commits the deallocation. Since we have
-> > plenty of free disk space, this deallocation scheme does make sense.
-> >
-> > It's possible to do this in user space, say, by modifying Samba so that
-> > it creates an extra secret link to each file it creates, and write
-> > another program that routinely checks the secret links, at proper times,
-> > for those inodes with inode ref count of 1, and unlinks them.
-> >
-> > But for some reason, we do not want to touch Samba code, then it looks that
-> > this can only be done at fs level.
-> >
-
-You do not need to touch samba. Instead you may write your our unlink
-function and have it called instead of libc's one.
-
-
-> > How can I achieve this with Reiser? Or, if you've some alternatives,
-> > please kindly enlighten me.
-> >
-> > Thanks for any hint or suggestion.
-> This is definitely fixable, but someone would need to sponsor the fix as we 
-> are low on funds.  Probably it would not be all that expensive to fix.  
-> Chris, forgive my memory, did any of your recent patches address this?
+On Sun, 2004-03-14 at 09:14, jlewis@lewis.org wrote:
+> This finally finished after a little more than 30 hours.  AFAICT, the
+> filesystem is intact...only 2 dirs and a handful of files got moved to
+> lost+found.  The maildir reiserfsck was spending so much time in (making
+> me think it was stuck) has 3742463 files (unread messages) in it.
 > 
+Vitaly, you should probably profile reiserfsck when it runs on similar
+file set. There should be posibility to speed it up.
+
+
+> 
+>  On Sat, 13 Mar 2004 jlewis@lewis.org wrote:
+> 
+> > Maybe there's no problem.  I've been running
+> > reiserfsck --rebuild-tree -l /var/tmp/fsck.log2 -q -n /dev/sdb2
+> > for about 27 hours now, and it's finally made it a bit further:
+> >
+> > Pass 1 (will try to insert 2473256 leaves):
+> > Looking for allocable blocks .. finished
+> > 0%....20%....40%....60%....80%....100%
+> > Flushing..finished
+> >         2473256 leaves read
+> >                 2462276 inserted
+> >                         - pointers in indirect items pointing to metadata
+> > 76 (zeroed)
+> >                 10980 not inserted
+> >         non-unique pointers in indirect items (zeroed) 142
+> >
+> > Pass 2:
+> > 0%....20%....40%....60%....80%....100%
+> > Flushing..finished
+> >         Leaves inserted item by item 10980
+> > Pass 3 (semantic):
+> > Flushing..finished
+> >         Files found: 5390892
+> >         Directories found: 244401
+> >         Symlinks found: 1494
+> >         Names pointing to nowhere (removed): 10
+> > Pass 3a (looking for lost dir/files):
+> > Looking for lost directories:
+> >
+> > "Pass 3 (semantic):" is as far as I'd seen it get previously.  Maybe it
+> > just needs time?...like a few days?
+> >
+> > ----------------------------------------------------------------------
+> >  Jon Lewis *jlewis@lewis.org*|  I route
+> >  Senior Network Engineer     |  therefore you are
+> >  Atlantic Net                |
+> > _________ http://www.lewis.org/~jlewis/pgp for PGP public key_________
+> >
+> 
+> ----------------------------------------------------------------------
+>  Jon Lewis *jlewis@lewis.org*|  I route
+>  Senior Network Engineer     |  therefore you are
+>  Atlantic Net                |
+> _________ http://www.lewis.org/~jlewis/pgp for PGP public key_________
 > 
 
