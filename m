@@ -1,79 +1,73 @@
-From: Lorenzo Allegrucci <l.allegrucci@tiscali.it>
-Subject: Re: 2.6.0-test4 reiserfs oops
-Date: Tue, 26 Aug 2003 15:59:20 +0000
-Message-ID: <200308261559.20668.l.allegrucci@tiscali.it>
-References: <200308252047.36054.l.allegrucci@tiscali.it> <200308261146.47241.l.allegrucci@tiscali.it> <20030826103851.GA14676@namesys.com>
+From: "Alexander Waller" <a.waller@webpoint.at>
+Subject: HILFE! HELP! Problem with my root-partition
+Date: Tue, 26 Aug 2003 19:41:05 +0200
+Message-ID: <200308261742.h7QHgGD02541@fx.webpoint.at>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15421-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-15422-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030826103851.GA14676@namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
-On Tuesday 26 +August 2003 10:38, Oleg Drokin wrote:
-> Hello!
->
-> On Tue, Aug 26, 2003 at 11:46:47AM +0000, Lorenzo Allegrucci wrote:
-> > > > I have got this oops running fsstress and fsx-linux
-> > > > on a 20Gb reiserfs partition.  Fully reproducible.
-> > >
-> > > What are the options to fsx and fsstress?
-> >
-> > fsx-linux linux-2.5.0.tar.bz2 :)
-> > mkdir d
-> > fsstress -d d -n 1000000 -p 10
-> > The oops follows immediately.
->
-> works for me without any patches.
+Hi!
+I restarted my server.
+Now my reiserfs-root-partition cannot be mounted.
+Reiserfsck doesn=B4t help.
 
-This is easier to reproduce:
-touch file
-mkdir d
-fsstress -d d -n 1000000 -p 10
+filehound:~ # reiserfsck --fix-fixable /dev/hdb3
+reiserfsck 3.6.4 (2002 www.namesys.com)
+Will check consistency of the filesystem on /dev/hdb3
+and will fix what can be fixed w/o --rebuild-tree
+Will put log info to 'stdout'
 
-As soon as I run "fsx-linux file" on another console I get the oops.
-(However fsx-linux without fsstress is not sufficient)
+Do you want to run this program?[N/Yes] (note need to type Yes if you
+do):Yes
+reiserfs_open: neither new nor old reiserfs format found on /dev/hdb3
 
-> Do you have SMP?
+reiserfsck: Cannot not open filesystem on "/dev/hdb3"
+Aborted
+filehound:~
 
-No.
+There is a harddisk, realy.=20
+filehound:~ # fdisk -l /dev/hdb
 
->Some other system details?
+Disk /dev/hdb: 28.5 GB, 28520497152 bytes
+16 heads, 63 sectors/track, 55262 cylinders
+Units =3D cylinders of 1008 * 512 =3D 516096 bytes
 
-HW is a Athlon XP 1500+, 512 Mb RAM, 60 Gb Maxtor hd.
-Stable, well cooled.  All other filesystems pass the test.
-System is Debian unstable.
+   Device Boot    Start       End    Blocks   Id  System
+/dev/hdb1   *         1        33     16600+  83  Linux
+/dev/hdb2            34       292    130536   82  Linux swap
+/dev/hdb3           293     55252  27699840   83  Linux
+filehound:~ #
 
-> > > Also I immediately see a place that can lead to an oops you quoted,
-> > > can you try to run with the patch attached and see if the oops go away?
-> >
-> > The oops goes away but fsx-linux hangs in "D" state.
->
-> Ah.
-> I see, we need to unlock the page. How about this patch instead?
->
-> Bye,
->     Oleg
-> ===== fs/reiserfs/inode.c 1.81 vs edited =====
-> --- 1.81/fs/reiserfs/inode.c	Tue Aug 19 09:42:17 2003
-> +++ edited/fs/reiserfs/inode.c	Tue Aug 26 14:27:32 2003
-> @@ -2048,8 +2048,8 @@
->          last_offset = inode->i_size & (PAGE_CACHE_SIZE - 1) ;
->  	/* no file contents in this page */
->  	if (page->index >= end_index + 1 || !last_offset) {
-> -	    error = 0 ;
-> -	    goto done ;
-> +    	    unlock_page(page);
-> +	    return 0;
->  	}
->  	kaddr = kmap_atomic(page, KM_USER0);
->  	memset(kaddr + last_offset, 0, PAGE_CACHE_SIZE-last_offset) ;
+Please can anyone help me ?!
+Alex.
 
-This patch seems to fix both issues for me.
+
+
+--=20
+
+WebPoint Internet Solutions
+Alexander Waller
+Vorarlberger Wirtschaftspark
+A-6840 G=F6tzis
+=20
+www.webpoint.at
+tel.  +43 5523 58244
+fax.  +43 5523 58255
+mobil +43 676 4121128
+=20
+webmaster-team  : webmaster@webpoint.at
+hostmaster-team : hostmaster@webpoint.at
+
+***                                     ***
+*       WebPoint Internet Solutions       *
+***                                     ***
+=20
+
 
