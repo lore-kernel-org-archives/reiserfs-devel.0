@@ -1,36 +1,38 @@
-From: Andreas Dilger <adilger@clusterfs.com>
-Subject: Re: [BUG][trivial] atime not set on directory reads
-Date: Fri, 14 Jun 2002 00:52:49 -0600
-Message-ID: <20020614065248.GU682@clusterfs.com>
-References: <20020613213530.GN682@clusterfs.com> <20020614090538.A22474@namesys.com>
+From: Kevin <coggy@redefine.org>
+Subject: access beyond end of device
+Date: Sat, 15 Jun 2002 11:03:07 -0700
+Message-ID: <93554601344.20020615110307@redefine.org>
+Reply-To: Kevin <coggy@redefine.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10736-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10738-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <20020614090538.A22474@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Jun 14, 2002  09:05 +0400, Oleg Drokin wrote:
->    Can you please state kernel version? Bugreports are very useful
->    when combined with version of kernel used.
-> 
->    Anyway problem looking like exactly what you describe was fixed in
->    2.4.19-pre3 or thereabout, so can you please also test with
->    some recent 2.4.19-pre kernel?
+I checked the mailing list archive, and I didn't see any solutions.
+It also seemed the the similar problems happened after a crash, which
+is not so in my case.  Recently I was trying to extract a file and I
+got read errors.  I checked dmesg and found the following repeated:
 
-Sorry about that.  I tested with 2.4.18, so it is probably fixed
-already.  I'm not planning on a kernel upgrade right now, but I'll
-let you know if it is still broken when I do upgrade.
+  attempt to access beyond end of device
+  38:01: rw=0, want=788705992, limit=58633312
+  attempt to access beyond end of device
+  38:01: rw=0, want=788705992, limit=58633312
 
-Cheers, Andreas
---
-Andreas Dilger
-http://www-mddsp.enel.ucalgary.ca/People/adilger/
-http://sourceforge.net/projects/ext2resize/
+Running reiserfsck --check gave me a bunch of things similar to this:
+bad_indirect_item: block 16371: item 2014 2043 0x1 IND (1), len 1276,
+location 96 entry count 0, fsck need 0, format new has a pointer 131
+to the block 9437328 which is in tree already
+9437328 which is in tree already
+
+It also found one broken file, and said that there was 1 corruption
+that required --rebuild-tree.  I haven't done this yet because I'm a
+little worried it might die in the middle of the rebuild.  Anyone have
+any idea what I should do?
+
+I am running 2.4.18, and reiserfsprogs 3.x.1c-pre4.
 
