@@ -1,47 +1,141 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: journal-2018 trouble?
-Date: Tue, 25 Mar 2003 17:24:48 +0300
-Message-ID: <20030325172448.A8645@namesys.com>
-References: <200303242255.48998.gustavo@zacarias.com.ar> <20030325093230.A32093@namesys.com>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: reiserfsprogs 3.6.5 release
+Date: Tue, 25 Mar 2003 19:03:34 +0100
+Message-ID: <200303251903.34660.Dieter.Nuetzel@hamburg.de>
+References: <200303251108.11938.Dieter.Nuetzel@hamburg.de> <200303251335.06542.Dieter.Nuetzel@hamburg.de> <200303251642.23944.vitaly@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13381-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-13382-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200303251642.23944.vitaly@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <20030325093230.A32093@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Gustavo Zacarias <gustavo@zacarias.com.ar>
-Cc: reiserfs-list@namesys.com, grev@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Hello!
+Am Dienstag, 25. M=E4rz 2003 14:42 schrieb Vitaly Fertman:
+> > SunWave1 /home/nuetzel# /database/db3/sbin/reiserfsck -V
+> >
+> > <-------------reiserfsck, 2002------------->
+> > reiserfsprogs 3.6.5
+> >
+> > SunWave1 /home/nuetzel# /database/db3/sbin/reiserfsck -a /dev/sda3
+> > Reiserfs super block in block 16 on 0x803 of format 3.6 with standard
+> > journal Blocks (total/free): 26105/6638 by 4096 bytes
+> > Filesystem is NOT cleanly umounted
+> > Partition /dev/sda3 is mounted w/ write permissions, cannot check it <=
+=3D=3D
+> > !!!!!
+> >
+> > >>> Haaa, is this the wrong thing? <<<
+> >
+> > SunWave1 /home/nuetzel# mount
+> > /dev/sda3 on / type reiserfs (rw,noatime,notail)
+>
+> as you can see it is right, it is mounted with rw permitions.
+>
+> Could you run reiserfsck -a/-p on some unmounted or mounted ro partition
+> which does not get mounted on boot due to this "flush_buffers: device
+> is not specified". It is interesting to get the same not on boot time.
 
-On Tue, Mar 25, 2003 at 09:32:30AM +0300, Oleg Drokin wrote:
+All partitions wouldn't mounted due to "flush_buffers: device is not=20
+specified". ;-(
 
-> Please either do not apply this patch or follow the rebuild-sb advance (it will ask you
-> if you want to update journal paremreters and you should agree).
-> I will come up with the fix shortly.
+unmounted:
 
-Ok, here's supposed fix.
-If you have not did rebuild-sb, you might want to try it.
+SunWave1 /home/nuetzel# /database/db3/sbin/reiserfsck -p /dev/sdb5
+Reiserfs super block in block 16 on 0x815 of format 3.6 with standard journ=
+al
+Blocks (total/free): 214861/206643 by 4096 bytes
+=46ilesystem is cleanly umounted
+Replaying journal..
+0 transactions replayed
+Checking internal tree..finished
 
-(for those using data-logging patches, you do not need this patch as it does correct thing already).
+SunWave1 /home/nuetzel# /database/db3/sbin/reiserfsck -p /dev/sdb6
+Reiserfs super block in block 16 on 0x816 of format 3.6 with standard journ=
+al
+Blocks (total/free): 214861/206643 by 4096 bytes
+=46ilesystem is cleanly umounted
+Replaying journal..
+0 transactions replayed
+Checking internal tree..finished
 
-Bye,
-    Oleg
+SunWave1 /home/nuetzel# /database/db3/sbin/reiserfsck -a /dev/sdb6
+Reiserfs super block in block 16 on 0x816 of format 3.6 with standard journ=
+al
+Blocks (total/free): 214861/206643 by 4096 bytes
+=46ilesystem is cleanly umounted
+Replaying journal..
+0 transactions replayed
+Checking internal tree..finished
 
-===== fs/reiserfs/journal.c 1.26 vs edited =====
---- 1.26/fs/reiserfs/journal.c	Thu Mar 13 14:52:15 2003
-+++ edited/fs/reiserfs/journal.c	Tue Mar 25 16:38:55 2003
-@@ -1401,7 +1401,7 @@
- 		     *newest_mount_id) ;
-       return -1 ;
-     }
--    if ( le32_to_cpu(desc->j_len) > sb_journal_trans_max(SB_DISK_SUPER_BLOCK(p_s_sb)) ) {
-+    if ( le32_to_cpu(desc->j_len) > JOURNAL_TRANS_MAX ) {
-       reiserfs_warning("journal-2018: Bad transaction length %d encountered, ignoring transaction\n", le32_to_cpu(desc->j_len));
-       return -1 ;
-     }
+mounted ro:
+
+/dev/sdb5               859412     32840    826572   4% /database/db1
+/dev/sdb6               859412     32840    826572   4% /database/db2
+
+/dev/sdb5 on /database/db1 type reiserfs (ro)
+/dev/sdb6 on /database/db2 type reiserfs (ro)
+
+SunWave1 /home/nuetzel# /database/db3/sbin/reiserfsck -p /dev/sdb5
+Reiserfs super block in block 16 on 0x815 of format 3.6 with standard journ=
+al
+Blocks (total/free): 214861/206643 by 4096 bytes
+=46ilesystem is cleanly umounted
+=46ilesystem seems mounted read-only. Skipping journal replay.
+Checking internal tree..finished
+
+SunWave1 /home/nuetzel# /database/db3/sbin/reiserfsck -a /dev/sdb5
+Reiserfs super block in block 16 on 0x815 of format 3.6 with standard journ=
+al
+Blocks (total/free): 214861/206643 by 4096 bytes
+=46ilesystem is cleanly umounted
+=46ilesystem seems mounted read-only. Skipping journal replay.
+Checking internal tree..finished
+
+SunWave1 /home/nuetzel# /database/db3/sbin/reiserfsck -p /dev/sdb6
+Reiserfs super block in block 16 on 0x816 of format 3.6 with standard journ=
+al
+Blocks (total/free): 214861/206643 by 4096 bytes
+=46ilesystem is cleanly umounted
+=46ilesystem seems mounted read-only. Skipping journal replay.
+Checking internal tree..finished
+
+
+Here comes what reiserfsck-3.6.5-pre1 gives:
+
+umounted:
+
+SunWave1 /home/nuetzel# reiserfsck -p /dev/sdb6
+Reiserfs super block in block 16 on 0x816 of format 3.6 with standard journ=
+al
+Blocks (total/free): 214861/206643 by 4096 bytes
+=46ilesystem is cleanly umounted
+
+SunWave1 /home/nuetzel# reiserfsck -a /dev/sdb5
+Reiserfs super block in block 16 on 0x815 of format 3.6 with standard journ=
+al
+Blocks (total/free): 214861/206643 by 4096 bytes
+=46ilesystem is cleanly umounted
+
+mounted ro:
+
+SunWave1 /home/nuetzel# reiserfsck -p /dev/sdb6
+Reiserfs super block in block 16 on 0x816 of format 3.6 with standard journ=
+al
+Blocks (total/free): 214861/206643 by 4096 bytes
+=46ilesystem is cleanly umounted
+
+SunWave1 /home/nuetzel# reiserfsck -a /dev/sdb5
+Reiserfs super block in block 16 on 0x815 of format 3.6 with standard journ=
+al
+Blocks (total/free): 214861/206643 by 4096 bytes
+=46ilesystem is cleanly umounted
+
+Thanks,
+	Dieter
