@@ -1,39 +1,35 @@
-From: Anders Widman <andewid@tnonline.net>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: Error messages.
-Date: Thu, 6 Mar 2003 09:34:52 +0100
-Message-ID: <16120863312.20030306093452@tnonline.net>
-References: <93F527C91A6ED411AFE10050040665D0049C0799@CORPUSMX1>
- <17280449343.20030305222118@tnonline.net> <20030306065807.GQ7208@mrball.net>
-Reply-To: Anders Widman <andewid@tnonline.net>
+Date: Thu, 6 Mar 2003 11:37:35 +0300
+Message-ID: <20030306113735.A12355@namesys.com>
+References: <7473069171.20030305201818@tnonline.net> <200303060907.49762.pacman@huji.ac.il> <20030306101957.A5751@namesys.com> <200303060919.45287.pacman@huji.ac.il>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13115-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13116-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030306065807.GQ7208@mrball.net>
+Content-Disposition: inline
+In-Reply-To: <200303060919.45287.pacman@huji.ac.il>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Voicu Liviu <pacman@huji.ac.il>
+Cc: reiserfs-list@namesys.com
 
-> Anders Widman wanted us to know:
+Hello!
 
->>I  have  been  trying most kernels since 2.4.17 including stock redhat
->>and mandrake kernels.
+On Thu, Mar 06, 2003 at 09:19:45AM +0200, Voicu Liviu wrote:
+> > > On Thursday 06 March 2003 08:57, Oleg Drokin wrote:
+> > > > hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+> > > >   hda: dma_intr: error=0x84 { DriveStatusError BadCRC }
+> > This is a complete sign of either your having noisy/broken (or too long?)
+> > IDE cable (consider changing).
+> > or your using too high UDMA mode for your IDE cable (e.g. UDMA3+ for 40
+> > wire cable) (consider changing cable or lowering UDMA mode).
+> but not bad HD right? this is a new Seagate 40 GB
 
-> Do you have apic enabled or disabled in both the kernel and the BIOS?
-> Do you have acpi enabled or disabled in both the kernel and the BIOS?
+Right, this is not bad HDD.
 
-Yes,  right now both are. Will be trying without. If it works it means
-there is a nasty bug in the kernel/or Promise drivers?
-
-
-> Have you tried the absolute latest Cooker (Mandrake) kernel?
-> kernel-2.4.21*12mdk.i586.rpm? (I can't remember the _exact_ file name)
-
-  Well, tried 2.4.21pre4-6mdk as the latest Mandrake kernel.
-
---------
-PGP public key: https://tnonline.net/secure/pgp_key.txt
-
+Bye,
+    Oleg
