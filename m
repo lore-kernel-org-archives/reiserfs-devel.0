@@ -1,45 +1,75 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Benchmark : ext3 vs reiser4 and effects of fragmentation.
-Date: Thu, 16 Sep 2004 19:29:27 -0700
-Message-ID: <414A4C07.8060802@namesys.com>
-References: <4148BC0E.5010509@willsmith.org> <20040916085248.GI5137@backtop.namesys.com> <20040916130809.GI26192@nysv.org> <20040916153835.GK5137@backtop.namesys.com> <20040916155248.GM26192@nysv.org> <20040916183831.GL5137@backtop.namesys.com> <20040916190019.GN26192@nysv.org>
+From: Yury Umanets <yury@clusterfs.com>
+Subject: Re: Reiser4 support on parted program ...
+Date: Fri, 17 Sep 2004 09:11:29 +0300
+Message-ID: <414A8011.3000701@clusterfs.com>
+References: <41472F46.4000109@futuretg.com> <41477625.304@slaphack.com> <4147E95B.8090108@futuretg.com> <20040915094952.GA5137@backtop.namesys.com> <41485D18.1040100@futuretg.com> <20040916123648.GC928@gnu.org> <414995AE.4090808@clusterfs.com> <4149D404.8040903@futuretg.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-21830-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21832-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040916190019.GN26192@nysv.org>
+In-Reply-To: <4149D404.8040903@futuretg.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
-Cc: Alex Zarochentsev <zam@namesys.com>, Will Smith <will@willsmith.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
+Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-Markus T=F6rnqvist wrote:
+Dr. Giovanni A. Orlando wrote:
 
->On Thu, Sep 16, 2004 at 10:38:31PM +0400, Alex Zarochentsev wrote:
-> =20
+> Yury Umanets wrote:
 >
->>on-line defragmenter requires its part to be in kernel space. at least no=
-de
->>locks cannot be exported _safely_ to the user space, I think.
->>   =20
+>> Andrew Clausen wrote:
 >>
+>>> On Wed, Sep 15, 2004 at 05:17:44PM +0200, Dr. Giovanni A. Orlando 
+>>> wrote:
+>>>  
+>>>
+>>>>> libreiser4 / libaal are made to support parted easier.
+>>>>> resizing program is not done.
+>>>>>     
+>>>>
+>>>>
+>>>> Yes. I check this matter yesterday.
+>>>>
+>>>> I suspect that I need to write the code :-( .
+>>>>
+>>>> I will survive.
+>>>>   
+>>>
+>>>
+>>>
+>>> Yeah, I don't really have time at the moment to look at this.
+>>> I'm accepting patches ;)  Feel free to ask for help...
+>>>
+>>> Cheers,
+>>> Andrew
+>>>  
+>>>
+>> Hello Andrew,
+>>
+>> I remember, that you personaly and ppl from parted comunity helped me 
+>> very much. So, I guess, it will be not a problem to add such a 
+>> support to parted after resizing, copying code in libreiser4 is ready ;)
+>>
+>> BTW, mkfs, fsck, etc. support (probably all but resize and copy) can 
+>> be added anytime...
+>>
+> Hi,
 >
->What if it was like=20
->echo -n "Killer Algo by Zam" > /sys/fs/reiser4/hda1/repacker/algorithm
->or something to get rid of the risk of having two really separate
->mechanisms, and if it can't be in userspace either way...
+>    If you can wait until Saturday morning ... will be better.
 >
->This is also probably related to what Nik said back in the days about
->an online-fsck being impossible :)
+>    I expect to have time for this next saturday.
 >
-> =20
+> Thanks,
+> Giovanni
 >
-Online fsck is possible.  Will do it for SuSE for 200k.;-)
+Hey, I'm always here :) I do not need to wait for something... If my 
+help will be needed, just let me know.
 
-It is a very serious task.  I would not do it just for fun.  It is,=20
-however, feasible.
+Thanks.
 
-Hans
+-- 
+umka
+
