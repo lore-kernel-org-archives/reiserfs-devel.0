@@ -1,47 +1,47 @@
-From: jenn sirp <sirp1@llnl.gov>
-Subject: repost for readdir
-Date: 23 Jun 2004 16:09:46 -0700
-Message-ID: <1088032186.12051.8.camel@murdock.llnl.gov>
+From: "John D. Heintz" <jheintz@pobox.com>
+Subject: Re: we need a slogan for our reiser4 t-shirt
+Date: Wed, 23 Jun 2004 20:48:15 -0500
+Message-ID: <40DA32DF.8030303@pobox.com>
+References: <3DF9165145FACB4C96977FF650C1E9040C46A0A2@its-mail1.its.corp.gwl.com> <40DA7F4E.1050700@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19326-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19327-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <40DA7F4E.1050700@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: "Burnes, James" <james.burnes@gwl.com>, Marcel Hilzinger <marcel@hilzinger.hu>, reiserfs-list@namesys.com
 
-Hi,
+We can rebuild it. We have the technology.
+Better...stronger...faster
 
-I'd like to thank you guys for your help earlier this year with the
-initial phase of my project. I was able to implement FIFO queueing
-functionality in Reiser v3. It is not very elegant, but I am still
-learning. I was able to steer my supervisor in the direction of Reiser4.
-It appears that the design principles of the new system will make it very
-valuable for many at the Lab.
+from http://www.scifi.com/bionics/sixmill.html
 
-That said, and back to Hans' suggestion of a readdir implementation for
-FIFO and LIFO file queuing... I have some questions. If anyone can answer
-them, has advice, or suggestions that would be so great.
+John
 
-Here's where I am at, and what I don't know:
+ps - can you guess what I watched alot of when I was young. ;)
 
-From what I can tell, files in the reiserfs 'Directory Item' aren't preserved in
-the order they are written due to deletes and other operations. So if I
-were to access the Directory Item to generate a list for readdir I couldn't be certain that they would be in first
-created -to- last created order.
-
-If readdir has to sort the files in the directory every time it is called
-it seems like it would be a bit of a performance hit. Should another
-structure be maintained that preserves the order as the files are
-written... and should readdir use that as it's basis for returning the
-directory contents?
-
-If this is a question that doesn't belong here... please let me know and I apologize.
-
-Thanks,
-
-Jenn
+Hans Reiser wrote:
+> Burnes, James wrote:
+> 
+>> How about,
+>>
+>> "Plug-in To Reiser4!"
+>>
+>>
+>> jim burnes
+>> security engineer
+>> great-west, denver
+>>
+>>
+>>  
+>>
+> Sounds like an ad, we want a t-shirt people want to wear.  Maybe, "My 
+> filesystem is faster than yours...."?
+> 
+> 
 
