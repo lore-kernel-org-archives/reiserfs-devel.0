@@ -1,10 +1,10 @@
 From: Domenico Andreoli <cavok@libero.it>
-Subject: Bug #205676: resize_reiserfs doesn't play nice with lvm2
-Date: Wed, 07 Jan 2004 07:31:56 +0100
-Message-ID: <3FFBA7DC.8050905@libero.it>
+Subject: Bug #152548: docs about reiserfsprogs is confused
+Date: Wed, 07 Jan 2004 07:36:29 +0100
+Message-ID: <3FFBA8ED.8050100@libero.it>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16429-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16430-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -12,20 +12,18 @@ Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
-Cc: 205676@bugs.debian.org
+Cc: 152548@bugs.debian.org
 
-[ please keep the CC in any reply you want write ]
+what? another bug from debian? ehm... yes... :)
 
-hi,
+this is the last of the known ones, i'd like to make the package as clean 
+as possible, next release of debian distribution doesn't look too far 
+(BTW, any chance to have 3.6.12 soon?).
 
-here i have a bug report from debian, it is available at 
-http://bugs.debian.org/205676 .
+thanks for your contribute to the debian project.
 
-please let me know if i can be of help.
-
-thanks
+cheers
 domenico
-
 
 -----[ Domenico Andreoli, aka cavok
   --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
