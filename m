@@ -1,45 +1,61 @@
-From: Jan Engelhardt <jengelh@linux01.gwdg.de>
-Subject: Re: file as a directory
-Date: Mon, 22 Nov 2004 20:05:25 +0100 (MET)
-Message-ID: <Pine.LNX.4.53.0411222002380.21595@yvahk01.tjqt.qr>
-References: <2c59f00304112205546349e88e@mail.gmail.com>
- <200411221759.iAMHx7QJ005491@turing-police.cc.vt.edu> <41A23566.6080903@namesys.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: [PATCH 2/5] selinux: adds a private inode operation
+Date: Mon, 22 Nov 2004 14:08:18 -0500
+Message-ID: <41A23922.80501@suse.com>
+References: <20041121001318.GC979@locomotive.unixthugs.org>	 <1101145050.18273.68.camel@moss-spartans.epoch.ncsc.mil>	 <41A22A2D.1000708@suse.com> <1101148090.18273.94.camel@moss-spartans.epoch.ncsc.mil>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-22511-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22512-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41A23566.6080903@namesys.com>
+In-Reply-To: <1101148090.18273.94.camel@moss-spartans.epoch.ncsc.mil>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="utf-8"
-To: Hans Reiser <reiser@namesys.com>
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Stephen Smalley <sds@epoch.ncsc.mil>
+Cc: Andrew Morton <akpm@osdl.org>, Linus Torvalds <torvalds@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, James Morris <jmorris@redhat.com>
 
->>(Hint - "file as directory" broke a number of programs that didn't
->>expect that a file *could* be a directory, when run on a reiser4
->>filesystem...)
->
->It broke extraordinarily few.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-(The fewer the better.)
+Stephen Smalley wrote:
+| On Mon, 2004-11-22 at 13:04, Jeff Mahoney wrote:
+|
+|>Yes, you're right. The isec->initialized check means that code never
+|>gets executed.
+|
+|
+| Ok.  How about the untested diff below relative to your patch?  It
+| removes the unnecessary code, replaces the unused inherits flag field
+| (legacy from earlier code) with a private flag field, does not set the
+| SID in selinux_inode_mark_private (leaving it with the unlabeled SID,
+| which will ensure that we notice it if it ever reaches a SELinux
+| permission check), and modifies SELinux permission checking functions
+| and post_create() to test for the private flag and skip SELinux
+| processing in that case.  Note that this means that reiserfs should be
+| able to use the VFS helpers if desired without interference by SELinux
+| when accessing these private inodes.
+|
 
-That's good news, and frankly, I did not expect anything else. That's because
-either programs definitely know that "it" is a file/directory because they just
-mkdir'ed or so, or they implement correct error checks, e.g. the user just
-created a directory and we check back (i.e. race protection).
+Excellent. Thanks. Preliminary testing works as expected (ie: deadlocks
+don't occur, xattrs/<dir> is removed when owning file is deleted)
 
-What I am worried about is the opendir() libc call, which AFAIK does this:
-  fd = open("directory", myflags | O_DIRECTORY)
+I've integrated the changes into my patch set. With those issues
+addressed, would you feel these would be appropriate for inclusion? I
+suspect you may have gotten questions as many interested parties in this
+feature working as I have.
 
-OTOH, I'm not worried, because it should be the user's duty to check whether
-directory really is one or not. Anything else is sloppy programming.
-(Exception: taking argv[xx] from the user)
+- -Jeff
 
+- --
+Jeff Mahoney
+SuSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-Cheers,
-Jan Engelhardt
--- 
-Gesellschaft für Wissenschaftliche Datenverarbeitung
-Am Fassberg, 37077 Göttingen, www.gwdg.de
+iD8DBQFBojkiLPWxlyuTD7IRAoM/AJ9XQ/twgcSTiRGQU1kOp01A2NlhywCfWrvF
+/LtguPq+tMjFe1uThpR4fws=
+=izmO
+-----END PGP SIGNATURE-----
