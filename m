@@ -1,46 +1,54 @@
-From: Mike Fedyk <mfedyk@matchmail.com>
-Subject: Re: [Fwd: Re: [OT] block allocation algorithm [Was] Re: heavily	fragmented
- file system.. How to defrag it on-line??]
-Date: Thu, 25 Mar 2004 16:06:33 -0800
-Message-ID: <40637409.5040007@matchmail.com>
-References: <40636893.3050605@matchmail.com> <1080258953.2828.3.camel@watt.suse.com>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: reiser4 and swsusp (take 2)
+Date: Fri, 26 Mar 2004 12:22:19 +0300
+Message-ID: <20040326092219.GX15733@backtop.namesys.com>
+References: <200403252244.39083.filipe@rnl.ist.utl.pt>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17486-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17488-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1080258953.2828.3.camel@watt.suse.com>
+Content-Disposition: inline
+In-Reply-To: <200403252244.39083.filipe@rnl.ist.utl.pt>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Filipe Almeida <filipe@rnl.ist.utl.pt>
 Cc: reiserfs-list@namesys.com
 
-Chris Mason wrote:
-> On Thu, 2004-03-25 at 18:17, Mike Fedyk wrote:
+On Thu, Mar 25, 2004 at 10:44:37PM +0000, Filipe Almeida wrote:
+> Hi,
 > 
->>Hi guys,
->>
->>Reiser3 has worse fragmentation than ext3 in this test case.  Reiser4 
->>was better, but it had a bad worst case and still wasn't as good as xfs.
->>
->>I'm especially interested in getting reiser3 to produce fewer fragments 
->>in this test.
->>
->>Comments?
-> 
-> 
-> There's a great deal of room for improvement in the reiser3 block
-> allocator.  I've got patches against 2.4.x that make it much smarter by
-> trying to spread large files apart from each other but keep small files
-> (and small directories) close together.
-> 
-> Those are on hold until the logging and acls are done and in, but if
-> people want to play around with porting them I can send you a copy.
+> I believe I have found the issue with software suspend and the repacker.
+> The refrigerator() call inside prepare_repacking_session() is called regularly 
+> and should work as expected. The problem is that the software suspend system, 
+> before signaling all kernel threads, calls sys_sync() to flush the buffers 
+> out to disk. If sys_sync() is called while the repacker is running, it will 
 
-If I knew more than Shell and Perl, I'd take you up on that offer. 
-Maybe in ~6 months.  Lurking on the kernel lists really teaches you a 
-lot. :-D
+PF_FREEZE is not set yet?
 
-Mike
+> only return at the end of the repacker run. 
+
+It is a wrong behavior, regardless to sw suspend.
+However, the repacker is not a goal for the next reiser4 snapshot.
+Its (repacker) development is dalayed until we get reiser4 stable.
+
+> So, if you start the repacker and 
+> call software suspend, the system will only suspend at the end of repacking, 
+> which could be a really long time.
+> 
+> Hope it helps...
+
+great thanks.
+
+> 
+> Regards,
+> Filipe Almeida
+> 
+> --
+> Filipe Almeida <filipe@rnl.ist.utl.pt>
+> http://mega.ist.utl.pt/~filipe/
+
+-- 
+Alex.
