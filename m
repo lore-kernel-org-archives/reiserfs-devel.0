@@ -1,44 +1,48 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiserfsprogs-3.x.1b severe installation bug
-Date: Thu, 11 Apr 2002 17:52:35 +0400
-Message-ID: <3CB59523.7090608@namesys.com>
-References: <3CB59250.943A3487@esc-electronics.de> <20020411175632.A1488@namesys.com>
+From: Ivan Ivanov <ivandi@vamo.orbitel.bg>
+Subject: Re: Simple preformance test
+Date: Thu, 11 Apr 2002 17:07:31 +0300
+Sender: ivandi@magic.vamo.orbitel.bg
+Message-ID: <3CB598A3.483349D2@vamo.orbitel.bg>
+References: <Pine.LNX.4.44.0204111506300.2077-100000@magic.vamo.orbitel.bg> <20020411165627.A992@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10032-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10033-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: Oleg Drokin <green@namesys.com>
-Cc: Frank Baumgart <frank.baumgart@esc-electronics.de>, reiserfs-list@namesys.com
+Cc: reiserfs-list@namesys.com
 
 Oleg Drokin wrote:
 
->Hello!
+> Hello!
 >
->On Thu, Apr 11, 2002 at 03:40:32PM +0200, Frank Baumgart wrote:
+> On Thu, Apr 11, 2002 at 03:14:03PM +0300, Ivan Ivanov wrote:
+> >                   dd if=/dev/zero of=testdir/$d1/$f1$f2$f3$f4 \
+> >                       bs=$block_size count=$blocks_count \
+> >                       >/dev/null 2>&1
+> >                   rm -f testdir/$d1/$f1$f2$f3$f4
 >
->>To test some own modifications to the reiserfs tools I
->>unpacked reiserfsprogs-3.x.1b.tar.gz and configured it
->>with "--prefix=/opt/reiserfs".
->>After "make install", indeed the man pages are installed
->>correctly into /opt/reiserfs/man but my SYSTEM BINARIES
->>in /sbin are overwritten!
->>The bug did not appear in around 3.0 where binaries were
->>installed into what --prefix told.
->>
+> This is the explanation of your speedup.
+> You try to write to a file, but there is not enough space and file is not
+> created, but you did not notice.
+> And then you delete nonexistent files, and no doubts this is very fast
+> operation ;)
 >
->This behavior was intentional, but we already understood this is wrong.
->Next stable version of reiserfsprogs will correct this.
+> BTW, if you turn off tails, your numbers might get faster, but space usage
+> will get worse.
 >
->Bye,
->    Oleg
->
->
-Thanks for your report.
+> Bye,
+>     Oleg
 
-Hans
+Filesystem           1k-blocks      Used Available Use% Mounted on
+/dev/hda7              1172672   1170676      1996 100% /mnt/test
+
+I know this but  df  shows 1996 blocks free
+
+------
+Ivan
 
 
