@@ -1,50 +1,54 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: mongo benchmark results
-Date: Mon, 26 Jul 2004 21:08:36 +0400
-Message-ID: <20040726170835.GE4881@backtop.namesys.com>
-References: <20040726055047.E145F15C29@mail03.powweb.com> <4104A933.7020509@namesys.com>
+From: "David Dabbs" <david@dabbs.net>
+Subject: RE: mongo benchmark results
+Date: Mon, 26 Jul 2004 12:31:42 -0500
+Message-ID: <20040726173552.20ECA15EBD@mail03.powweb.com>
+References: <20040726170835.GE4881@backtop.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19819-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19820-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <4104A933.7020509@namesys.com>
+In-Reply-To: <20040726170835.GE4881@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Elena Gryaznova <grev@namesys.com>
-Cc: David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
+To: 'Alex Zarochentsev' <zam@namesys.com>, 'Elena Gryaznova' <grev@namesys.com>, Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-On Sun, Jul 25, 2004 at 11:48:19PM -0700, Hans Reiser wrote:
-> David Dabbs wrote:
+> -----Original Message-----
+> From: Alex Zarochentsev [mailto:zam@namesys.com]
+> Sent: Monday, July 26, 2004 12:09 PM
+>
+> 2 Lena:
 > 
-> >At http://dabbs.net/reiser4/mongo.html I've posted some benchmarks from my
-> >aging but available test box. All numbers were generated with the Namesys
-> >mm7 snapshot. The "A.INFO_R4=new" are results from a reiser4 with modified
-> >comparison functions as well as znode_contains_key_strict(). So, here are 
-> >my
-> >questions:
-> >
-> >Do these results appear consistent with others' recent benchmarking? 
-> > 
-> >
-> Increase file_size to 8k, and then we can compare.  This will reduce 
-> reiser4's space savings from 19% to 9%, but it will probably increase 
-> performance.
+> I have added a cpu utilization stat (ratio of system time for all cpus to
+> total time, in percents) to mongo.pl.
 > 
-> Your work had a remarkable effect on the create phase.  Very good work.  
-> I don't know why the impact was not larger for the stats phase.
+> Please take new mongo before repeating the benchmark.
 > 
-> Elena, please reproduce his results on our hardware.
+> --
+> Alex.
 
-2 Lena:
+For what it's worth, I reproduced the mongo runs with 8k files as Hans
+suggested. Results are at 
 
-I have added a cpu utilization stat (ratio of system time for all cpus to total
-time, in percents) to mongo.pl.
+http://dabbs.net/reiser4/mongo8kfiles.html
 
-Please take new mongo before repeating the benchmark.
+The CREATE performance increase seems to have evaporated, though perhaps
+that was what Hans was looking to test with the updated config. I was in a
+hurry this morning and I may have varied the test slightly. I'll use Zam's
+new mongo when I get home this evening. I will as well test copying and
+compiling the kernel. Unless there's another recommended way to do this, I
+I'll substitute the output from "time -c" into a mongo log file so
+mongo_parser can compare the results.
 
--- 
-Alex.
+Zam/Elena where should I look for the new mongo tgz? I don't see it at
+http://thebsh.namesys.com/benchmarks/.
+
+Thanks for the updated mongo.
+
+david
+
+ 
+
