@@ -1,82 +1,40 @@
-From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Subject: Re: file as a directory
-Date: Thu, 25 Nov 2004 10:50:21 +0000
-Message-ID: <1101379820.2838.15.camel@grape.st-and.ac.uk>
-References: <2c59f00304112205546349e88e@mail.gmail.com>
-	 <1101287762.1267.41.camel@pear.st-and.ac.uk>
-	 <4d8e3fd304112407023ff0a33d@mail.gmail.com>
-	 <200411241711.28393.christian.mayrhuber@gmx.net>
+From: Cal <hihone@bigpond.net.au>
+Subject: Re: reiser4 crash
+Date: Thu, 25 Nov 2004 22:19:19 +1100
+Message-ID: <20041125221919.2180794b.hihone@bigpond.net.au>
+References: <20041119084757.GA2310@sk2-4.tky.hut.fi>
+	<1101369249.1628.13.camel@tribesman.namesys.com>
+Reply-To: hihone@bigpond.net.au
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22556-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22557-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200411241711.28393.christian.mayrhuber@gmx.net>
+In-Reply-To: <1101369249.1628.13.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Cc: reiserfs-list@namesys.com, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>, Hans Reiser <reiser@namesys.com>, linux-kernel@vger.kernel.org
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-On Wed, 2004-11-24 at 16:11, Christian Mayrhuber wrote:
-> On Wednesday 24 November 2004 16:02, Paolo Ciarrocchi wrote:
-> > On 24 Nov 2004 09:16:03 +0000, Peter Foldiak
-> > <peter.foldiak@st-andrews.ac.uk> wrote:
-> > [...] 
-> > > I would really like to implement this for the next version of Hans' file
-> > > system.
-> > 
-> > I don't undersand how you want to use Xpath for not XML file.
-> > I agree with you that the idea behind Xpath is cool but I fail to
-> > unserstand how it can be applied to anything but XML
-> > Paolo
-> 
-> Apache Cocoon uses so called generators to parse non-XML formats and produce a 
-> XML representation thereof. This XML can be addressed by XPath.
-> To store modifications back this XML needs to be serialized to the original
-> format. That's **very** fat and slow.
-> 
-> Maybe an automount with a special fuse filesystem could accomplish this.
-> 
-> For example:
-> # cd /etc/passwd/..metas/contents/
-> 
-> automounts /etc/passwd as "fuse-xpath-passwd" fs 
-> to /etc/passwd/..metas/contents/
-> 
-> Doing 'cat /etc/passwd/..metas/contents/shell[username = "joe"]' could work 
-> then.
-> 
-> Reiser4 would need a content-mount plugin that automounts
-> the respective file by means of a per file configureable
-> mount command. Something like
-> # cat /etc/passwd/..metas/plugins/content-mount
-> -t fuse-xpath-passwd -o ro
-> 
-> fuse-xpath-* filesystems would have to be written. These could be designed 
-> similiar to the apache cocoon approach of generators/serializers to
-> work with an intermediate XML representation of the file interior.
-> 
-> All the stuff besides mounting the fuse-xpath-fs's would happen in userspace.
-> I don't think that anyone can guarantee posix fs semantics by this approach.
+----------
+and then at Thu, 25 Nov 2004 10:54:10 +0300, it was written ...
+  >
+ >Which kernel do you use?
+ >
+ >> 	Sami
+...
+ >> kernel BUG at fs/reiser4/plugin/file/tail_conversion.c:32!
+ >> invalid operand: 0000 [#1]
+ >> PREEMPT
+...
+ >> EFLAGS: 00210286   (2.6.10-rc1)
+ >> EIP is at get_exclusive_access+0x32/0x40
 
-The problem with the
-cat /etc/passwd/..metas/contents/shell[username = "joe"]
-syntax is that it doesn't really achieve namespace unification.
-As far as I understand the benefits of a unified namespace are due to
-the user and the applications not having to know the details of what
-they are dealing with. So, for instance, the nice thing about the
-unification of files and devices in Unix is that an application (most
-often) can treat a device in the same way as a file (or a pipe, etc.).
-This is what gives it real flexibility.
-The above syntax assumes you know exactly where the file "ends", and
-where the parts of the file "begins" (indicated by the ..metas in your
-path). Couldn't we get rid of ..metas from the path?
+This occurs with 2.6.10-rc2-mm2, 2.6.10-rc2-mm3.  It's nastier than
+you might think.  After the BUG, the system slowly sinks into fatal
+decline, losing  screen i/o, keyboard response, eventually just
+locking up completely.
 
-Also, what I am suggesting is not just to be able to select inside XML
-files but also to extend XPath-like selection ABOVE the file level too,
-to be used as if the whole file system was like a single big virtual XML
-file.
- Peter
-
+cheers, Cal
