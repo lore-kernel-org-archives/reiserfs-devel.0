@@ -1,74 +1,74 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Mon, 30 Aug 2004 19:46:44 -0500
+Date: Mon, 30 Aug 2004 20:00:22 -0500
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <4133CA74.6070906@slaphack.com>
-References: <Pine.LNX.4.44.0408271043090.10272-100000@chimarrao.boston.redhat.com> <412F7D63.4000109@namesys.com> <20040829150041.GD9471@alias>
+Message-ID: <4133CDA6.4060105@slaphack.com>
+References: <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <20040826100530.GA20805@taniwha.stupidest.org> <20040826110258.GC30449@mail.shareable.org> <20040827210638.GE709@openzaurus.ucw.cz>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040829150041.GD9471@alias>
+In-Reply-To: <20040827210638.GE709@openzaurus.ucw.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: flx@msu.ru
-Cc: Hans Reiser <reiser@namesys.com>, Rik van Riel <riel@redhat.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Alexander Lyamin wrote:
-| Fri, Aug 27, 2004 at 11:28:51AM -0700, Hans Reiser wrote:
+Pavel Machek wrote:
+[...]
+| uservfs does
 |
-|>Rik van Riel wrote:
-|>
-|>
-|>>
-|>>Currently I see no way to distinguish between the stuff
-|>>that should be backed up and the stuff that shouldn't.
-|>>
-|>>
-|>>
-|>
-|>We create filename/pseudos/backup, and that tells the archiver what to
-|>do.....
+| cd foo.deb#uar
+cd foo.deb/ar
+| vs.
+| cd foo.deb#udeb
+cd foo.deb/deb
+
+and why would you want that, instead of just:
+cd foo.deb	# for the ar
+dpkg -i foo.deb	# for the deb
+
 |
+| and
 |
-| its ugly idea.
-|
-| representations should be distinguished from sources. and its reasonably
-| to put this distinguisher somewhere in namespace. but
-filename/pseudos/backup
-| is plain ugly.
+| cd foo.tgz#utar
+cd foo.tgz
+| vs.
+| cat foo.tgz#ugz
+cat foo.tgz
 
-How about filename/metas/serialized, or filename/metas/fschunk?
+Just want to extract the tar file?  Maybe something like
+cat foo.tgz/gunzip
+In which case (of course) foo.tgz/gunzip has exactly the same directory
+contents as foo.tgz
 
-And I did mention before about how it'd be nice for it to be an fs chunk...
+Looks different, that's all.
 
-Imagine 5000 tiny little files that, by the time reiser's done with
-them, fit inside 5 blocks or so.  It's insanely cheaper to copy the five
-blocks than to tar them up.  It also means that we don't have to worry
-about supporting tar on other platforms -- if they don't have reiser4,
-they need a separate converter.  If apps are going to use reiser4
-metadata for anything significant, they probably would link against some
-sort of userland implementation of reiser4 as a Windows library, say, to
-access the files elsewhere.
-
-That's extreme, but you get the idea.
+In fact, for just about any syntax anyone could suggest, I can't really
+see why you can't just replace all weird symbols with a slash and a
+symbol.  Instead of
+	foo.tgz#utar
+you have
+	foo.tgz/#/utar
+Only difference is, some things which used to require special tools can
+now be serviced by less than what's in busybox.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQTPKc3gHNmZLgCUhAQJ5xw//T+kLDCHlfQEaGM9XAeFDZU9f4m4PWjet
-n2xODVIxaT7WmnZ4nQ3rRTiJjsXvRBcPdWUTFRZl6NbLqa/K6ESpUJAZsZynRhXd
-NLJ9gEpeqcUrXBLrmTD5AbzENOLdqDIo2qQ+hde68H5vo+naa5xtTyrMiHNHQWbf
-9P45WKXYt36madg4KjAhZcYB+T843fc/ItjLQBTwxBNOykBcZ82UUNwGeGbiqczm
-uXftCD6BNtKsXnJxu2jVc8CK93lOw4SIf7BY09PFXgK2XTpAsKzOwwqpBtdxSzqD
-lkz+nGEeYZk6GRA3N1OTbPJnboee7WHZzMyvXDMBsExfR6puV1SYA2NWhj9uGDmS
-nYNZwdN+RimiouD1D9DD+oCQe/Gr66THicex5FM37cMBdaDf0jGblvpDdQRfkhcX
-2KGLCt1ax620ia2945/+/+6iQqM7+oTQsVNziYjVGQ4gCNRzZh8SBtM0yUZuecNO
-H84fWYLICGos+Qk7FyCuQOquTSVRWKadkiDaOSre2hFk+S9VmDWkghJSNGrnqoKi
-pFYFrUzL+NXPHs6G8b8EKAaQQt+Z8iHE6xgdc+yS56Pdrq8apRzeQv2zhgZaRq9J
-kCRgvYo40xFMX4B+EqexxIiwc6nPUD5dFbt0OnJMEk4pduFq64lMVdoQA8Qp4X8a
-0feuVuaWHr0=
-=ymeH
+iQIVAwUBQTPNpngHNmZLgCUhAQJ0PA//RmPgHL4MgiQn7Li5b52DI/0p+Zp9JUs7
+OaA+k4wHeXEIdBProtBQ+3541noEg086bVriYRnajsA9xgd/P9ncE7ci/d9Kagdl
+8KmH4eWnCjNkL4x8GnDeR+EM5EfcgoSxR7ezO1KO9uMMcPFnCvmeB1yB5U+Fr9Q1
+HVPHfGsh+ZWU2CFJHoJx27Q07UK+bFvzGr4JkhLbRMbPeEROrkHJHp3wj/N2yXXb
+5icLgFa0g/b6wM8SuBAaO5xVM8jkmECI/P5Jo3n/d/CTUumb/BoKMIgbMurR61CG
+hrZ40mizpCMFAnLrgm9FIvjKtZUsigG+oM/2xTtku2Z2nSM16/ChKtJOAj6MoMGT
+xvWzLdTY6kEL30VDaHtcVvIyUFtUe5oYxEasnrcKseV7hJtccgjTYKB21PnWyZFz
+/KIdh8sBg6i1nuYOtHncL6agD1M2bg1vBYwbMvIRfa1YbAFUbW1A6hDTftxJIhLn
+Beso6d68SyfNMdQ8yWloR7sIufmbDut2fx1SHS3wPt2Z5W1e0XBexcpSqdD8KPns
+lvmC0ggPDuQzXjPCIsS17Uk5vrCtVEdrsCCaj62a8UE2d1mCqu4CyLwMYCFv3Sve
+SwZ36iOv4fzdvgjPOUg27tMwbpa/WiDAcZJ/31BfZfTDl4E9LbkQjWYT/YgsJuaQ
+wp3Hi/Cgh/4=
+=8YVp
 -----END PGP SIGNATURE-----
