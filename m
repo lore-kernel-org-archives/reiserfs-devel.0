@@ -1,50 +1,50 @@
-From: Dieter =?utf-8?q?N=C3=BCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: Can resize_reiserfs do non-destructive resizing??
-Date: Tue, 19 Nov 2002 17:51:28 +0100
-Message-ID: <200211191751.28199.Dieter.Nuetzel@hamburg.de>
-References: <200211180851.54274.bestb@sympatico.ca> <200211191712.44146.Dieter.Nuetzel@hamburg.de> <20021119163358.GD28533@mrball.net>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Reiser4 - small test results
+Date: Tue, 19 Nov 2002 15:37:21 -0800
+Message-ID: <3DDACB31.1060203@namesys.com>
+References: <200211132050.gADKoQQ12656@mail.osdl.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12035-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12036-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021119163358.GD28533@mrball.net>
-Content-Disposition: inline
+In-Reply-To: <200211132050.gADKoQQ12656@mail.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Todd Lyons <todd@mrball.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Cliff White <cliffw@osdl.org>
+Cc: Nikita Danilov <Nikita@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, wookie@osdl.org
 
-Am Dienstag, 19. November 2002 17:33 schrieb Todd Lyons:
-> Dieter N=C3=BCtzel wanted us to know:
-> >Some harddisk manufactures like IBM for example tell you to try there DFT
-> > tool first to get a valid RMA number or "low level" reformat the disk,
-> > but we
+Cliff White wrote:
+
+>Mime-Version: 1.0
+>Content-Type: text/plain; charset=us-ascii
+>--------
+>Quick progress note, i've made some. 
+>Have succeeding in building the latest snapshot against 2.5.47.
+>Am doing some initial small tests (LTP disktest code) on IDE disk,
+> then will move
+>tests to SCSI RAID array. 
 >
-> Very familiar with those.  We got a stack of boxen with the IBM
-> DTLA-307030 drives in them.  Lose about 2 per month.
-
-Last here from Fujitsu the ATA "gel/liquid layer" ones.
-
-> >replace all such costumer disks. They are out of reserved sector =3D> ba=
-d.
+>First results are..interesting. Reads are fast, writes are slow.
+>However, these first tests are very small and somewhat contrived,
+>so i am not posting numbers yet.
 >
-> Netware used to call this "hotfix".  Is there a common name for when the
-> harddrives do this themselves?
+>Results detail is at: http://www.osdl.org/archive/cliffw/reiser/index.html
+>
+>cliffw
+>
+>
+>
+>  
+>
+I have a feeling that I am going to need to return to Moscow for this to 
+get sorted out.  We have an incredible slew of completely inconsistent 
+benchmark results, with tremendous variance from one snapshot to 
+another.  I am going to give the debuggers time to get things more 
+debugged, and then I will need to personally benchmark things, analyze 
+where the seeks are, etc.
 
-sector remapping?
+Hans
 
-Or do you mean the whole reformat? The last could only be initiated through=
-=20
-the admin and need good backup (dd_rescue) first.
-
-=2DDieter
-
-=2D-=20
-Dieter N=C3=BCtzel
-Graduate Student, Computer Science
-
-University of Hamburg
-Department of Computer Science
-@home: Dieter.Nuetzel at hamburg.de (replace at with @)
