@@ -1,11 +1,11 @@
-From: "Thomas Graham" <lkthomas@sml.dyndns.org>
+From: Yury Umanets <umka@namesys.com>
 Subject: Re: segmentation fault in fsck
-Date: Tue, 19 Aug 2003 00:18:34 +0800 (HKT)
-Message-ID: <33230.192.168.0.99.1061223514.squirrel@sml.dyndns.org>
+Date: Tue, 19 Aug 2003 09:22:56 +0400
+Message-ID: <1061270576.8879.1.camel@haron.namesys.com>
 References: <1061269852.19511.17.camel@ayanami>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-15371-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15372-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -13,21 +13,25 @@ Errors-To: flx@namesys.com
 In-Reply-To: <1061269852.19511.17.camel@ayanami>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: aphelion@snet.net
+To: Aphelion <aphelion@snet.net>
 Cc: reiserfs-list@namesys.com
 
-I got same problem
+On Tue, 2003-08-19 at 09:10, Aphelion wrote:
 > The reiser4 fsck from the aug 18th snapshot as well as 0.4.11 cause a
 > segfault on my machine, in repair_filter_node_check. This is a clean
 > filesystem being checked that has never before been mounted.
->
+Excuse me, but fsck is not ready yet. We're working on it.
+
+But anyway, thanks for report.
+
+> 
 > ayanami root # cat /proc/cpuinfo | grep -e 'model name' -e flags -e
 > vendor
 > vendor_id       : GenuineIntel
 > model name      : Intel(R) Celeron(R) CPU 1.80GHz
 > flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge
 > mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm
->
+> 
 > ayanami root # lspci
 > 00:00.0 Host bridge: Silicon Integrated Systems [SiS] SiS645DX Host &
 > Memory & AGP Controller
@@ -55,9 +59,9 @@ I got same problem
 > (rev 07)
 > 01:00.0 VGA compatible controller: Matrox Graphics, Inc. MGA G400 AGP
 > (rev 04)
->
+> 
 > ayanami root # hdparm /dev/hda
->
+> 
 > /dev/hda:
 >  multcount    =  0 (off)
 >  IO_support   =  0 (default 16-bit)
@@ -67,15 +71,15 @@ I got same problem
 >  readonly     =  0 (off)
 >  readahead    = 256 (on)
 >  geometry     = 19929/255/63, sectors = 320173056, start = 0
->
+> 
 > ayanami root # uname -a
 > Linux ayanami 2.6.0-test3 #1 Mon Aug 18 22:20:08 EDT 2003 i686 Intel(R)
 > Celeron(R) CPU 1.80GHz GenuineIntel GNU/Linux
->
+> 
 > ayanami root # gcc --version
 > gcc (GCC) 3.3.1  (Gentoo Linux 3.3.1, propolice)
->
->
+> 
+> 
 > ayanami root # gdb --args fsck.reiser4 -f -v --fixable /dev/hda1
 > GNU gdb 5.3
 > Copyright 2002 Free Software Foundation, Inc.
@@ -91,9 +95,9 @@ I got same problem
 > (gdb) run
 > Starting program: /sbin/fsck.reiser4 -f -v --fixable /dev/hda1
 > /sbin/fsck.reiser4 0.4.11
-> Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by
+> Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by 
 > reiser4progs/COPYING.
->
+> 
 >   *************************************************************
 >   ** If you are using the latest reiser4progs and  it fails **
 >   ** please  email bug reports to reiserfs-list@namesys.com, **
@@ -104,16 +108,16 @@ I got same problem
 >   ** If you would like advice on using this program, support **
 >   ** is available  for $25 at  www.namesys.com/support.html. **
 >   *************************************************************
->
+> 
 > Will check consistency of the filesystem on (/dev/hda1).
 > Will fix corruptions which can be fixed without rebuilding the tree.
 > Will use (default) profile.
 > Information:
-> Continue?
+> Continue?                                                        
 > (Yes/No): Yes
->
+> 
 > ***** fsck.reiser4 started at Tue Aug 19 00:56:54 2003
->
+> 
 > ***** Openning the fs.
 > Reiser4 fs was detected on the /dev/hda1.
 > Master super block:
@@ -122,7 +126,7 @@ I got same problem
 > magic:          R4Sb
 > format:         0
 > label:          <none>
->
+> 
 > Format super block:
 > plugin:         format40
 > description:    Disk-format for reiser4, ver. 0.4.11
@@ -138,24 +142,20 @@ I got same problem
 > file count:     0
 > tree height:    2
 > key policy:     LARGE
->
+> 
 > (no debugging symbols found)...(no debugging symbols found)...
 > Program received signal SIGSEGV, Segmentation fault.
 > 0x400ad5ab in repair_filter_node_check () from
 > /usr/lib/librepair-0.4.so.11
-> (gdb)
->
+> (gdb) 
+> 
 > when I tell it to write a log, it doesnt. it creates an empty file. I
 > also see nothing in my system logs.
->
+> 
 > ayanami root # cat /proc/filesystems | grep reiser
 >         reiser4
-
-
+> 
+> 
 -- 
-HK Celtic Orchestra leader and coordanator: Thomas Graham Lau
-Phone number: 852-93239670    (24hours a day, 7days a week non-stop phone)
-Web site: http://sml.dyndns.org
-Email: lkthomas@sml.dyndns.org
-
+We're flying high, we're watching the world passes by...
 
