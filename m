@@ -1,74 +1,47 @@
-From: Steve Langasek <vorlon@debian.org>
-Subject: Re: Fwd: reiser4 non-free?
-Date: Fri, 30 Apr 2004 13:15:28 -0500
-Message-ID: <20040430181527.GB4002@tennyson.netexpress.net>
-References: <20040424193246.GA2490@raptus.homelinux.org> <1083314051.23952.2.camel@faith>
+From: Bruce Guenter <lists-reiserfs-list@bruce-guenter.dyndns.org>
+Subject: Re: Reiserfs concurrent write problems
+Date: Fri, 30 Apr 2004 13:54:05 -0600
+Message-ID: <20040430195405.GB23648@em.ca>
+References: <20040426172648.GA22918@em.ca> <1083000970.30344.50.camel@watt.suse.com> <20040427161544.GA27873@em.ca> <1083088841.30344.131.camel@watt.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18335-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="uZ3hkaAS1mZxFaxD"
+Return-path: <reiserfs-list-return-18336-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1083314051.23952.2.camel@faith>
+In-Reply-To: <1083088841.30344.131.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Stewart Smith <stewart@flamingspork.com>
-Cc: Domenico Andreoli <cavok@tiscali.it>, Hans Reiser <reiser@namesys.com>, Sami Liedes <sliedes@cc.hut.fi>, ed@debian.org, debian-legal@lists.debian.org, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Fri, Apr 30, 2004 at 06:34:11PM +1000, Stewart Smith wrote:
-> On Sun, 2004-04-25 at 05:32, Domenico Andreoli wrote:
-> > > Also, a clustering file system built to work on top of this file
-> > > system shall be considered a derivative work for the purposes of
-> > > interpreting the GPL license granted herein.  Plugins are also to be
-> > > considered derivative works.  Share code or pay money, we give you the
-> > > choice.
+--uZ3hkaAS1mZxFaxD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > Surely a license cannot add anything to the set of derived works (if
-> > the other work is not derived, the license obviously doesn't apply to
-> > it and hence never gets to say it is derived; if it is, it is even
-> > without the license saying so). However I believe -legal has not
-> > considered text like this a problem before (I might be wrong though).
+On Tue, Apr 27, 2004 at 02:00:41PM -0400, Chris Mason wrote:
+> Good to hear, could I trouble you to ping me (or better yet
+> reiserfs-list) when you have the graphs updated?
 
-> It doesn't "add", it clarifies. i.e. if you build a clustered file
-> system that does stuff specific to reiserfs (e.g. use the reiser4
-> syscall), then that will be considered a derived work, and must be
-> distributable under the GPL.
+I've updated the benchmarking web page to include the new results from
+the 2.6.6-rc2-mm2 kernel:
+	http://untroubled.org/benchmarking/2004-04/
+--=20
+Bruce Guenter <bruceg@em.ca> http://em.ca/~bruceg/ http://untroubled.org/
+OpenPGP key: 699980E8 / D0B7 C8DD 365D A395 29DA  2E2A E96F B2DC 6999 80E8
 
-> Sure, you could go to court and argue that it isn't - but namesys have a
-> clear clarification of what they consider, so I hope your lawyer is good
-> :)
+--uZ3hkaAS1mZxFaxD
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
-The term "derivative work" in the GPL is defined by copyright law and
-case law.  Any author is free to use a different definition in his
-license, but such a license is no longer congruent with the GPL.  If
-the intent here is "these things are defined to be derivative works for
-the purpose of this license" rather than "you are warned that we will
-regard these things as derivative works when deciding whether to sue
-you", then Hans Reiser has no legal authority to make such a definition
-change on behalf of *other* copyright holders.  This is why, if a work
-made available under this "clarified" GPL license requires code
-copyrighted by others who released it under an unmodified GPL license,
-Debian must regard that work as undistributable (at least in binary
-form) without explicit consent from the other copyright holders.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
 
-I'm not sure what works are being distributed under this clarified
-license, though, or what their status is as derivative works, so this
-may not actually be an issue.
+iD8DBQFAkq7d6W+y3GmZgOgRAonrAJ9AeXgQ6HPkPIjShdCHfi8ikAeO2ACeIbpq
+De+QZ7tiiepUulKKTsJFrUk=
+=lsf8
+-----END PGP SIGNATURE-----
 
-In any case, no one is contesting Hans Reiser's right to make such a
-license clarification for his own code; the only question is what the
-implications are for Debian's continued distribution of it.
-
-> Think of it in the same light as the clarification in the kernel's copy
-> of the GPL saying that userspace programs aren't derived. except here
-> it's the other way around.
-
-This is an additional license *grant*, and is therefore not equivalent
-to what is discussed above.  The GPL is always compatible with *more*
-permissive licenses.
-
--- 
-Steve Langasek
-postmodern programmer
+--uZ3hkaAS1mZxFaxD--
