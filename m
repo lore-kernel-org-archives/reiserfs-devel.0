@@ -1,124 +1,99 @@
-From: Sander <sander@humilis.net>
-Subject: Re: 2.4.21 -> 2.4.25 cryptoloop mess
-Date: Sat, 8 Jan 2005 15:43:09 +0100
-Message-ID: <20050108144309.GA27949@favonius>
-References: <30550.1102921988@www5.gmx.net> <16382.1105193211@www43.gmx.net>
-Reply-To: sander@humilis.net
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: flush earlier?  (was Re: Congratulations! we have got hash function
+ screwed up)
+Date: Sat, 08 Jan 2005 12:48:07 -0800
+Message-ID: <41E04707.9060101@namesys.com>
+References: <20041228221218.GA6412@schmorp.de> <20050106124505.GE5352@backtop.namesys.com> <20050106142706.GE519@schmorp.de> <41DD5FA9.5020800@namesys.com> <1967462673.20050106171323@tnonline.net> <20050106162619.GG18173@ZenIV.linux.org.uk> <41DEC53A.40403@namesys.com> <41DF1AE1.8090306@slaphack.com> <41DF20A8.20506@namesys.com> <41DF699C.3030400@slaphack.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-23090-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23091-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <16382.1105193211@www43.gmx.net>
+In-Reply-To: <41DF699C.3030400@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Danny Norging <norging@gmx.de>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Masover <ninja@slaphack.com>
+Cc: Chris Dukes <pakrat@www.uk.linux.org>, Spam <spam@tnonline.net>, reiserfs-list@namesys.com
 
-Danny Norging wrote (ao):
-> since Vitaly seems not to take notice of my mail and I cant afford
-> another money-order (being just a student), I wonder if somebody else
-> out there has *any* hint on what to try next. Please have a look at
-> this
+David Masover wrote:
 
-First of all I would like to tell you and others (on the list or reading
-the archive/google) that you should always make a raw copy of the image
-you want to fsck. Do this with dd for example. Then perform all the
-actions on the copy so you can have a fresh try again later with
-different (or newer) tools and options.
+>
+>
+> Hans Reiser wrote:
+> | David Masover wrote:
+> |
+> |> Hans Reiser wrote:
+> |> | Chris Dukes wrote:
+> |> |
+> |> |>
+> |> |>
+> |> |> All filesystems will fail or suffer degraded performance under
+> |> |> certain conditions, you need to determine what conditions are
+> |> acceptable
+> |> |> for your data.
+> |> |>
+> |> |>
+> |> |>
+> |> | and each generation of software reduces the extent of such 
+> conditions.
+> |> | Reiser4 fixes this problem cleanly.
+> |>
+> |> I think Reiser4's degraded performance condition is when it gets 
+> lots of
+> |> RAM.  First, a disclaimer -- I don't have the latest reiser4 
+> patch.  But
+> |> in all versions of the FS, I've found that if I'm ever trying to do
+> |> anything when reiser finally decides to flush to disk, basically my
+> |> whole system is locked up.  I haven't tested, but I think this would
+> |> actually be worse with more RAM, because it would be longer until the
+> |> flush was forced, so each flush would take longer.
+> |>
+> |> What is needed is some sort of estimator or estimate.  An estimator
+> |> would be something that would flush when, based on recent fs load, it
+> |> was reasonable to expect that RAM would fill up just as the flush was
+> |> completing.  An estimate would be to flush if a certain percentage of
+> |> RAM was full, and to go to synchronous mode if memory usage didn't go
+> |> back below that percentage.
+> |
+> |
+> | We need to throttle rather than flush, so as to ensure that for every
+> | page added to an atom, at least X pages must reach disk, until close to
+> | the end of the atom when we just flush it out.
+>
+> I'm not sure I understand that.  Is the idea of that to build up a write
+> buffer which insists on flushing bytes off the front as they are added
+> onto the back, without flushing huge chunks at once?
 
-From your mail it seems you only made a copy after you already fsck'ed
-(pun intended) the original image. Now this is your second mistake. The
-first one: you didn't have (or seem to have had) backups.
+Yes.
 
+>
+> Would that be as efficient at packing (no fragmentation)?
 
-> Date: Mon, 13 Dec 2004 08:13:08 +0100 (MET)
-> From: "Danny Norging" <norging@gmx.de>
-> 
-> needed to buy a bigger hd so this took some time, but now i am done
-> with your instructions (*thanks a lot for them, i have hope*). Still a
-> lot of work to do, i guess... so this is what i have done:
-> 
-> # losetup -e aes /dev/loop0 /dev/hdc1
-> # dd if=/dev/loop0 of=hdc1decrypted.dump
-> # losetup /dev/loop1 hdc1decrypted.dump
-> # reiserfsck --rebuild-tree -S /dev/loop1 -l reiserfsck.log
-> 
-> where reiserfsck.log shows the following:
-> # cat reiserfsck.log 
-> ####### Pass 0 #######
-> 28 directory entries were hashed with "r5" hash.
-> ####### Pass 1 #######
-> ####### Pass 2 #######
-> ####### Pass 3 #########
-> vpf-10680: The directory [2 3] has the wrong block count in the StatData (2)
-> - corrected to (1)
-> vpf-10650: The directory [2 3] has the wrong size in the StatData (720) -
-> corrected to (48)
-> ####### Pass 3a (lost+found pass) #########
-> #
+No.
 
-Did you mount the fs afterwards? Did you find any new content? What
-reiserfscs version did you use?
+>
+> But the main problem was it would basically lock the fs entirely -- no
+> access at all.
 
+Which is why we need to allow fusing a little bit.
 
-> > > From: "Danny Norging" <norging@gmx.de>
-> > > To: support@namesys.com
+> This especially hurts with read access.
 
-> > > All worked without any problems until a power failure somehow
-> > > corrupted the fs :-( Unfortunately, I did a complete system update
-> > > to a 2.4.25 kernel trying to repair the reiserfs from this new
-> > > system, and as there seems to be a incompatibilty between the
-> > > cryptoloop versions, this is where all really got mixed up :-( I
-> > > cant remember all the steps i took using reiserfsck (at least once
-> > > with the --rebuild-tree option) with the 2.4.25 kernel and later
-> > > with a downgraded 2.4.21 kernel maybe on a wrongly decrypted fs...
-> > 
-> > if you run reiserfsck --rebuild-tree on the device with the wrong
-> > decryption 
-> > you probably erase all the data on it. 
+Read access?  Do you have one CPU?  Maybe the problem isn't what I 
+thought it was.
 
-Isn't it more likely that reiserfsck in that case doesn't recognize the
-filesystem at all and just exits with an error? (I'm just a user
-though).
+> When fs is
+> under heavy load, I can wait several minutes to start a browser,
+> especially when a lot of writing is happening.
+>
+> For now, how about a quick fix.  Can we force a flush when we get to
+> 80%?
 
+VM already has an asynchronous flush mechanism.  We just need to clean 
+up our interaction with it a bit to smooth things out.
 
-> > > End of the story is that i am now able to losetup/decrypt the
-> > > partition correctly (using 2.4.21 kernel again), as #hexdump -C
-> > > /dev/loop0 shows me lots of file-contents, 
-> > 
-> > do you mean that you see a lot of _correct_ file contents? 
-> > of files that are currently not reachable on the mounted fs?
-> 
-> Exactly (this is why i still have hope ;-)
-
-
-> > > A reiserfsck on the crypoloop-device gives no errors:
-> > 
-> > ok, the root directory was lost and everething what was found on the
-> > fs was connected to the lost+found.
-
-
-> > > As I am afraid of doing any more harm to the fs (not sure if this
-> > > is even possible ;-) I would like to know if its possible to
-> > > recover the files.  If you would like to have more debugging
-> > > output, I can send you that, or even give you a ssh-connection to
-> > > the machine.
-> > 
-> > if you do not have a raw backup of the original device before
-> > rebuilding the tree, let's do the following:
-> > * make it, the raw backup, with the dd. probably even the copy of
-> > already decrypted device to make it all simplier and faster;
-> > * reiserfsck --rebuild-tree -S the_copy -l logfile
-> > 
-> > if this will not recover files which content you see with hexdump,
-> > we will try to get them manually later.
-
-Maybe newest reiserfsck can help you out.
-
--- 
-Humilis IT Services and Solutions
-http://www.humilis.net
+> Is there a synchronous mode, and can we use that after 80%, or do
+> we have to fake it by trying to flush every few seconds?
+>
