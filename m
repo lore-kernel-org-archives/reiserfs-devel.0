@@ -1,32 +1,22 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: reiser4 data journalling?
-Date: Fri, 29 Aug 2003 09:08:57 +0400
-Message-ID: <20030829050857.GA5755@namesys.com>
-References: <3F4E3AF9.2060100@tupshin.com> <16206.16138.72832.920045@laputa.namesys.com> <3F4E6AA4.3030900@namesys.com> <20030829001814.GB9019@zero> <3F4E9C6D.2080009@namesys.com> <20030829012322.GJ21352@matchmail.com>
+From: "Elsie Colvin" <ecolvinqz@johansondesign.se>
+Subject: Did you=?ISO-8859-1?B?IGZpbmQgdGhlIGZpbA==?=e?
+Date: Fri, 29 Aug 2003 05:13:06 -0500
+Message-ID: <b30401c36e16$80f0da16$7a79d8f4@l21t45v>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15489-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0370_4B0F7422.FE1E7DA2"
+Return-path: <reiserfs-list-return-15490-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030829012322.GJ21352@matchmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mike Fedyk <mfedyk@matchmail.com>
-Cc: Hans Reiser <reiser@namesys.com>, Tom Vier <tmv@comcast.net>, Reiserfs List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Hello!
+------=_NextPart_000_0370_4B0F7422.FE1E7DA2
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 28, 2003 at 06:23:22PM -0700, Mike Fedyk wrote:
 
-> So you can have one 5k memory area that spans two pages, and it will act on
-> them atomically?  Or does that mean that the utils are already page aligned
-> by other kernel mechanisims?  Or that they'll have to use the reiser API to
-> do some of the above (other than the op grouping)?
+------=_NextPart_000_0370_4B0F7422.FE1E7DA2--
 
-Data does not need to be page aligned for atomic operations.
-
-Bye,
-    Oleg
