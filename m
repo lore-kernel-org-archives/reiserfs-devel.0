@@ -1,158 +1,152 @@
-From: Michael James <Michael.James@csiro.au>
-Subject: Re: Cannot open root device
-Date: Wed, 5 May 2004 10:16:41 +1000
-Message-ID: <200405051016.41233.Michael.James@csiro.au>
-References: <Pine.LNX.4.33.0405032124200.1663-100000@bi165.wilkes.com>
-Reply-To: Michael.James@csiro.au
+From: "Burnes, James" <james.burnes@gwl.com>
+Subject: FOSS Developer Attribution/Notoriety
+Date: Tue, 4 May 2004 19:36:03 -0600
+Message-ID: <3DF9165145FACB4C96977FF650C1E9040C469F3A@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18451-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18452-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.33.0405032124200.1663-100000@bi165.wilkes.com>
-Content-Disposition: inline
+Content-Class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
-Cc: John Wilkes <john@wilkes.com>
 
-On Tuesday 04 May 2004 15:22, John Wilkes wrote:
-> On Tue, 4 May 2004, Michael James wrote:
-> 
-> > There have been a lot of kernel patches out lately,
-> >  have you somehow got a mismatch between the kernel
-> >  and its reiser or disk driver modules?
-> 
-> I don't think so.  The system had booted successfully only two or
-> three days before.  I'm a mere user; I don't do any sort of software
-> development, so it's extremely unlikely that I would have managed to
-> create a mismatch between kernel and other stuff.
-> 
-> > Suse boots by starting the kernel and mounting an initrd,
-> >  a compressed vestigial root filesystem.
-> 
-> Can I do that too?  In other words, can I mount /boot/initrd and have
-> a look at what's there?  How do I mount it?
+I read one of Hans' older postings on this issue and I think I now know
+what he wants.
 
-Yes, as another poster said it's easy. It will be compressed.
+"It seems V3 of the GPL only protects credits in the source code, and
+does nothing to guarantee that users actually see the credits of the
+authors instead of the credits of the marketeers."
 
-cp /boot/initrd /tmp/initrd.gz
-gunzip /tmp/initrd.gz
-mount -oloop /tmp/initrd /mnt		# could put "-t ext2" but it should recognise it automatically
-cd /mnt
-cat linuxrc
+Well, promoters promote.  They usually promote themselves.  If you want
+to promote developers, you have to take a different path.  You can't
+force users to watch credits like the FBI forces people to watch the
+silly notice at the beginning of a DVD. That tactic is unlikely to
+promote freedom or good will.  Just ask the FBI.
 
-That's interesting, the practical import is that if you append a line "/bin/sh"
- you will be in an interactive shell DURING the boot.
-You could try to load the modules and mount root.
-Could give you a diagnostic test, could be frustrating,
- the stock initrd is pretty bare, you need to build a custom one
- with /bin/mount AND any necessary libraries.
-I have used this stuff to build a thing I call cloneboot.
-It clones a known-good system DURING boot.
-Installed 6 cluster nodes in 8.5 minutes.
+"Fewer than 100 people have read the source code to reiserfs, and while
+those 100 are important, they aren't as important as 99% of the public."
 
+Not necessarily true.  Those "fewer than 100" people that analyze
+reiserfs may be much more important to reiser's success than 99% of the
+public.  Very few end users will ever choose their own custom
+filesystem.  As for notoriety for that *very* important piece of
+software, read on...
 
-> > Installing an new kernel using Yast should run "mkinitrd"
-> >  to update the modules in your initrd to match.
-> 
-> It does.  Yast2 prints a little status line at the bottom of the
-> window, and at one point it says "creating initrd" or something
-> similar.  Also, when booting my /dev/hdb system, I can mount /dev/hda1
-> and see that the datestamps on both vmlinuz and initrd have been
-> updated.
-> 
-> > Note, the CD kernel (and initrd) are the "deflt" version.
-> 
-> Yast2 on the intallation CD warns me not to use deflt unless I really
-> know what I am doing.  Nevertheless, I installed it and get the same
-> result.  It's been a while, but I'm pretty sure I selected the athlon
-> kernel when I originally installed SuSE 8.2 about a year ago and it
-> just worked with reiserfs partitions.
+"Nobody responsible for deciding whether to sponsor us has ever read the
+source code that I know of."
 
-Installing and booting-using are 2 different things.
-Yes yast usually chooses the right kernel and you should trust it.
-If you boot off the CD you are in a deflt kernel,
- that's the one it uses to work on the most hardware.
+Maybe a lesson there.
 
-> >   don't boot to the CD's "rescue system" use the CD to "boot
-> > installed system" That will use the CD's kernel AND modules but give
-> > you the real root filesystem.
-> 
-> I tried that too, but it just hangs with no message on the screen.
-> Two LEDs on the keyboard are blinking on and off, which also happens
-> when the kernel panics booting off of hda.  I assume it silently has
-> the same problem.
+"Protecting credits only in the source is inadequate."
 
-Damn.
-I'm afraid your problem is a mystery.
-Kernel Panic, can't mount root.  Hmmm
-Usually happens because some hardware change has shifted the drive letters.
-You didn't mean hda anymore it's now hdg.
-Playing in the BIOS and turning off an unused IDE port can do this,
- it's recoverable, in fact within grub you can re-type the boot line
- on the fly and experiment.
+That which is to be proven.  Maybe developers only need egoboost in
+proportion to the importance of their "value add".  Perhaps there are
+many paths to this goal.
 
-Or it could be the kernel-module/driver issue I've been suspecting.
+"If you agree, perhaps you can help me influence V3's authors to provide
+relevant protection from plagiarism. If that doesn't happen, I will try
+to    convince the community that we need to move to an anti-plagiarism
+license instead."
 
-Doesn't sound to me like a corrupt file-system,
- you have run reiserfsck and can mount it on rescue systems.
+Careful there.  Plagiarism has a very specific legal definition.  Using
+a tool without broadcasting credits to the world definitely does not
+qualify.  Even in the CS academic world you don't credit Erosthenes when
+you use his algorithm for sifting primes.  Or Newton when using
+Newtonian approximation in Operations Research. =20
 
-I'd be studying the boot messages for a clue.
-And failing that, putting /bin/sh into linuxrc and experimenting.
+You might have a comment in your code if you are writing a prime sifter
+or working on a homework project -- something like "/* here comes sieve
+of erosthenes */".  Well maybe if you were bored. =20
 
-> 
-> > Hope this helps,
-> > michaelj
-> 
-> Thanks; it does help, even though the problem isn't solved.
-> 
-> Some questions I have:
-> 
-> I'm guessing that the boot process does "rdev /dev/hda3" at some
-> point.  How is "rdev" different from "mount"?  (Apart from the
-> obvious, that one sets the root file system while the other simply
-> makes the filesystem available.)  Does "rdev" read or write any
-> special block that fsck doesn't look at?
+If you presented their discoveries as some marvelous discovery of your
+own, then that would be blatant plagiarism.  We have to be careful with
+our analogies or they will be our undoing.=20
 
-Don't know about rdev.
+So anyway, releasing a linux distro is not synonymous with writing a
+peer reviewed research paper.
 
-> I'm wondering if reformating the partition would cure the problem.
-> 
-> Here's how I would go about it:
-> 
-> 1. boot alternate system on hdb
-> 2. mount /dev/hda3 /mnt
-> 3. cd /mnt
-> 4. tar czvf ~/rootfs.tar .
-> 5. umount /mnt
-> 6. mkfs -t reiserfs /dev/hda3
-> 7. mount /dev/hda3 /mnt
-> 8. cd /mnt
-> 9. tar xzvf ~/rootfs.tar
-> 
-> Does that look like it will work?
+I believe it can be done without using the GPL for something it was
+never meant to accomplish.
 
-Yes, in the sense of re-building the partition.
-No, I doubt it's a corrupt partition.
+You want publicity or notoriety for the developers.  I agree.
 
->  Any reiserfs specific options
-> needed for mkfs?
+Copyright licenses are a *poor* vehicle for that.  The distros are going
+to want to use branding to push their own agenda (selling support
+subscriptions for your software. Could that be what irks you?) Any bit
+of DNA that is included with the software which might identify the
+developers has a chance of being removed by the marketers as a
+disturbance of their "branding effort".  Probably the smaller and more
+inconspicous the DNA, the less likely that it will be removed.
 
-No, it will ask for some confirmation, but it's obvious enough.
+Except for my grandfather and I, the rest of my family are all in the
+communications, public relations, advertising or promotions business so
+I'd like to think I have some perspective here.
 
+Question 1: In what community do you wish the developers to be known?
 
-When I was first trying to get Suse up on some new Dell servers
- Kernel Panic made repeated appearances, my assistant and I would salute him.
-We didn't like Kernel Panic, but felt it best to be respectful.
-That was a bad batch of drivers on new complicated hardware but.
+Question 2: How do you reach that community?
 
+Question 3: How do you do it efficiently, inexpensively and use the
+right vehicle that doesn't alienate other developers, systems people and
+users? (ever read Guerilla Marketing?)
 
+Question 4: How do you create "DNA" for a piece of software that
+reliably ties it back to its creators?
 
--- 
-Michael James                         michael.james@csiro.au
-System Administrator                    voice:  02 6246 5040
-CSIRO Bioinformatics Facility             fax:  02 6246 5166
+Question 5: Can this DNA be flexible enough so that it allows:
+
+1. The current GPL to remain in force
+2. Meaningful patching etc to be applied
+3. Software to be forked etc.
+
+If everyone got the correct amount of egoboo from this technology, would
+it be possible to leave the licensing alone?
+
+Solution: Before release have the team members sign the modules they
+worked on.  Have the team lead sign the signatures on the full sources
+and possibly some mechanism to build a signed binary in the Makefile.
+When the sources are eventually compiled, the developer signatures are
+embedded into a data segment.  I don't think anyone would care about an
+extra couple K bytes in a multimegabyte binary.
+
+Take an MD5 or something appropriate of this whole batch and register it
+with a website that does stories on the developers and teams.  he
+website would be a more technical version of Wired.  Then you have to
+figure out how to get the John Q User to care who the developers are.
+They only have so much time to really *know* someone. =20
+
+When interest in a certain project reaches a threshhold (extra credit:
+can this be automated?), you publish human interest stories on the team
+and/or individual developers.  The KDE project already does this to some
+extent.
+
+This website could be constructed as an add-on to an already existing
+website (maybe sf.net?), or created from whole cloth.
+
+A truly motivated site might do video and/or radio interviews of the
+developers etc.  Maybe you could fund projects by selling developer
+information to recruiting companies, but respecting developer nyms,
+privacy etc.  Perhaps you could try experimental funding models like
+street performer, hostage ware etc.
+
+How to pay for it?  The incremental cost shouldn't be too bad, if this
+was done on a currently existing site.  You would still need volunteer
+developers and artists to hack it together.  Pretty insignificant when
+compared to the vast efforts expended on developing the software itself,
+besides their names would be in there too.
+
+So rather than fight the marketroids for ad space on their vehicles, why
+not innovate and make your own?  Better than tearing apart the GPL
+community for something the GPL (nor any license as far as I can tell),
+was ever any good at doing.
+
+For what it's worth.
+
+Cheers,=20
+
+j.burnes
 
