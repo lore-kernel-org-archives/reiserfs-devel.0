@@ -1,63 +1,75 @@
-From: Vince <fuzzy77@free.fr>
+From: David Nielsen <Lovechild@foolclan.com>
 Subject: Re: New reiser4 snapshot (as of August 22, 2003)
-Date: Sat, 23 Aug 2003 02:25:59 +0200
-Message-ID: <3F46B497.60106@free.fr>
-References: <20030822150853.GA960@namesys.com>	 <1061574745.5714.1.camel@pilot.stavtrup-st.dk>	 <16198.22925.274848.501590@laputa.namesys.com>	 <1061575717.21328.4.camel@pilot.stavtrup-st.dk>	 <16198.23850.137603.310946@laputa.namesys.com> <1061596035.21328.10.camel@pilot.stavtrup-st.dk>
+Date: Sat, 23 Aug 2003 02:29:56 +0200
+Message-ID: <1061598596.5714.14.camel@pilot.stavtrup-st.dk>
+References: <20030822150853.GA960@namesys.com>
+	 <1061574745.5714.1.camel@pilot.stavtrup-st.dk>
+	 <16198.22925.274848.501590@laputa.namesys.com>
+	 <1061575717.21328.4.camel@pilot.stavtrup-st.dk>
+	 <16198.23850.137603.310946@laputa.namesys.com>
+	 <1061596035.21328.10.camel@pilot.stavtrup-st.dk>  <3F46B497.60106@free.fr>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15394-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15395-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1061596035.21328.10.camel@pilot.stavtrup-st.dk>
+In-Reply-To: <3F46B497.60106@free.fr>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Nielsen <Lovechild@foolclan.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Vince <fuzzy77@free.fr>
 Cc: reiserfs-list@namesys.com
 
-I worked around this by adding an empty info_atom in reiser4/txnmgr.c :
+Could I ask you guys to stop CCing me, I'm on the list - filling my
+inbox with dupes is cruel :)
 
-void
-info_atom(const char *prefix, txn_atom * atom)
-{
-         return;
-}
+- David
 
-  After that, reiser4 compiles and is running without problem here so 
-far (just tried a few minutes of fsx-linux and a few small compilations. 
-I'll launch a mozilla-firebird build soon and see if it survives better 
-this time).
-
-BTW : compilation as a module is still broken for me, but it could be my 
-fault as I'm using an -mm kernel...
-(For information, missing symbols are: max_sane_readahead, 
-generic_sync_sb_inodes, truncate_mapping_pages_range, 
-balance_dirty_pages_ratelimited, inodes_stat, nr_free_pagecache_pages, 
-get_full_page_state, destroy_inode)
-
-Sidenote to reiserfs devels : if the merge in mainstream is still far 
-away, is any integration of reiser4 into the -mm serie considered ? It 
-would ease testing a lot...
-
-Vincent
-
-David Nielsen wrote:
-> The entire thing then fails with these messages - no notable compile
-> errors or warnings present. 
+On Sat, 2003-08-23 at 02:25, Vince wrote:
+> I worked around this by adding an empty info_atom in reiser4/txnmgr.c :
 > 
-> fs/built-in.o(.text+0x9a8cd): In function `print_context':
-> : undefined reference to `info_atom'
-> fs/built-in.o(.text+0x9e392): In function `commit_current_atom':
-> : undefined reference to `info_atom'
-> fs/built-in.o(.text+0xa0577): In function `print_atom':
-> : undefined reference to `info_atom'
-> make: *** [.tmp_vmlinux1] Error 1
+> void
+> info_atom(const char *prefix, txn_atom * atom)
+> {
+>          return;
+> }
 > 
-> Seems this patch might have benefited from a compile test at least? :)
+>   After that, reiser4 compiles and is running without problem here so 
+> far (just tried a few minutes of fsx-linux and a few small compilations. 
+> I'll launch a mozilla-firebird build soon and see if it survives better 
+> this time).
 > 
-> regards David
+> BTW : compilation as a module is still broken for me, but it could be my 
+> fault as I'm using an -mm kernel...
+> (For information, missing symbols are: max_sane_readahead, 
+> generic_sync_sb_inodes, truncate_mapping_pages_range, 
+> balance_dirty_pages_ratelimited, inodes_stat, nr_free_pagecache_pages, 
+> get_full_page_state, destroy_inode)
+> 
+> Sidenote to reiserfs devels : if the merge in mainstream is still far 
+> away, is any integration of reiser4 into the -mm serie considered ? It 
+> would ease testing a lot...
+> 
+> Vincent
+> 
+> David Nielsen wrote:
+> > The entire thing then fails with these messages - no notable compile
+> > errors or warnings present. 
+> > 
+> > fs/built-in.o(.text+0x9a8cd): In function `print_context':
+> > : undefined reference to `info_atom'
+> > fs/built-in.o(.text+0x9e392): In function `commit_current_atom':
+> > : undefined reference to `info_atom'
+> > fs/built-in.o(.text+0xa0577): In function `print_atom':
+> > : undefined reference to `info_atom'
+> > make: *** [.tmp_vmlinux1] Error 1
+> > 
+> > Seems this patch might have benefited from a compile test at least? :)
+> > 
+> > regards David
+> > 
+> > 
 > 
 > 
-
 
