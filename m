@@ -1,32 +1,68 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: zam, please discuss this
-Date: Wed, 23 Jun 2004 10:30:50 +0400
-Message-ID: <20040623063049.GA5080@backtop.namesys.com>
-References: <40D8EB0D.6050109@namesys.com>
+From: Stefan Fritsch <sfritsch@ph.tum.de>
+Subject: Performance problem with reiserfs3
+Date: Wed, 23 Jun 2004 10:43:09 +0200
+Message-ID: <200406231043.09667.sfritsch@ph.tum.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19303-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19304-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <40D8EB0D.6050109@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Tue, Jun 22, 2004 at 07:29:33PM -0700, Hans Reiser wrote:
-> 
-> http://www.namesys.com/intbenchmarks/mongo/04.05.04/256MB.RAM/comparison/smart-8k.noENTD.vs.ENTD/comp-ENTD.vs.noENTD.html
+Hi!
 
-Because direct page reclaiming (when a thread which needs memory does 
-try_to_relase_page() by itself) is better then indirect one (through
-ENTD or whatever page reclaiming daemon).  It is why Linux uses direct
-page reclaiming not indirect.
+The program mp3gain (found at http://mp3gain.sf.net or in Debian sid) 
+has some strange way of updating a file that causes ReiserFS to be a 
+factor of 10-20 slower than XFS or EXT3 (tested with 2.6.5, 2.6.7, 
+2.4.26):
 
+------------------- ReiserFS:
+$ time mp3gain -g -1 b.mp3
+Applying gain change of -1 to b.mp3...
+
+done
+
+real    0m2.777s
+user    0m0.053s
+sys     0m2.712s
+-------------------
+------------------- XFS:
+$ time mp3gain -g -1 b.mp3
+Applying gain change of -1 to b.mp3...
+
+done
+
+real    0m0.192s
+user    0m0.043s
+sys     0m0.143s
+-------------------
+
+strace reveals that it does LOTS of
+
+read(3, ""..., 131072) = 131072
+_llseek(3, -98038, [33034], SEEK_CUR)   = 0
+write(3, "\271\263", 2)                 = 2
+_llseek(3, 0, [0], SEEK_SET)            = 0
+read(3, ""..., 131072) = 131072
+_llseek(3, -98031, [33041], SEEK_CUR)   = 0
+write(3, "W6", 2)                       = 2
+_llseek(3, 0, [0], SEEK_SET)            = 0
+read(3, ""..., 131072) = 131072
+_llseek(3, -98023, [33049], SEEK_CUR)   = 0
+write(3, "&\314", 2)                    = 2
+_llseek(3, 0, [0], SEEK_SET)            = 0
+
+Can/should this be fixed in reiserfs? It is a _huge_ performance 
+difference between reiser and xfs. Or do you consider this way of 
+writing to a file just too stupid? (Mp3gain can write to a temp file 
+instead, which is much faster.)
+
+
+Cheers,
+Stefan
 -- 
-Alex.
-
-PS. Those results are old.
