@@ -1,32 +1,25 @@
-From: Boyd Waters <bwaters+mac@aoc.nrao.edu>
-Subject: Re: Support on further bug catching and bugfixing - plus reiser4 enabled livecd
-Date: Thu, 15 Apr 2004 14:32:45 -0600
-Message-ID: <0D80D315-8F1C-11D8-8778-000A95C88606@aoc.nrao.edu>
-References: <1081894775.5464.5.camel@redeeman.linux.dk> <407C6952.2080704@namesys.com> <20040414163936.GF19430@alias.nmd.msu.ru>
-Mime-Version: 1.0 (Apple Message framework v613)
+From: Redeeman <redeeman@metanurb.dk>
+Subject: bug in the reiser4 grub patch
+Date: Thu, 15 Apr 2004 23:10:01 +0200
+Message-ID: <1082063401.5428.12.camel@redeeman.linux.dk>
+Reply-To: redeeman@metanurb.dk
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17974-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17975-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040414163936.GF19430@alias.nmd.msu.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-> btw, gentoo is "geekest" of all linux distros i've seen ;)
+hi, during some of the many installations we have in in #love-sources,
+due to our new livecd, we have experienced that the grub patch is
+disfunctional.
 
-Besides IRC, a number of Gentoo "geeks" discuss Reiser4 on the active 
-forums at
-
-http://forums.gentoo.org
-
-Search for Resier4
-
-~ boyd
-
-Boyd Waters
-National Radio Astronomy Observatory
-Socorro, New Mexico
+-- 
+Regards, Redeeman
+()  ascii ribbon campaign - against html e-mail 
+/\                        - against microsoft attachments
 
