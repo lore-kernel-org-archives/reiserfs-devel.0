@@ -1,69 +1,37 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH] ReiserFS v3 I/O error handling
-Date: Mon, 13 Sep 2004 18:11:59 -0400
-Message-ID: <41461B2F.7080100@suse.com>
+From: viro@parcelfarce.linux.theplanet.co.uk
+Subject: Re: [PATCH] use S_ISDIR() in link_path_walk() to decide whether the last path component is a directory
+Date: Mon, 13 Sep 2004 23:26:19 +0100
+Sender: <viro@www.linux.org.uk>
+Message-ID: <20040913222618.GE23987@parcelfarce.linux.theplanet.co.uk>
+References: <20040913213429.6813115CA8@mail03.powweb.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21726-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21727-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <20040913213429.6813115CA8@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Dabbs <david@dabbs.net>
+Cc: 'ReiserFS List' <reiserfs-list@namesys.com>, linux-kernel@vger.kernel.org, 'Alex Zarochentsev' <zam@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Mon, Sep 13, 2004 at 04:34:15PM -0500, David Dabbs wrote:
+> I'm working on something similar, but with alternate pathname resolution
+> when the path begins with exactly two slashes. Only pseudocode here because
+> I do not have access to my box:
+> 
+>     if (*name == '/') {
+>        if (*(name+1)=='/' && *(name+2)==':') {
+>           name+=3;
 
-Hey all -
+	Pathname resolution is a hell of a fundamental thing and kludges
+like that are too ugly to be acceptable.  If you can't make that clean
+and have to resort to stuffing "special cases" (read: barfbag of ioctl
+magnitude) into the areas that might be unspecified by POSIX, don't do it
+at all.
 
-One of the most common complaints I've heard about ReiserFS is how
-graceless it is in handling critical I/O errors.
-
-ext[23] can handle I/O errors anywhere, with the results being up to the
-system admin to determine: continue, go read only, or panic.
-
-ReiserFS doesn't offer the admin any such choice, instead panicking on
-any I/O error in the journal.
-
-Attached are four patches, against 2.6.9-rc2:
-* reiserfs-cleanup-buffer-heads.diff
-	- Cleans up handling of buffer head bitfields - uses
-	  the kernel supplied FNS_BUFFER macros instead.
-* reiserfs-cleanup-sb-journal.diff
-	- Cleans up accessing of the journal structure, prefering
-~          to create a temporary variable in functions that access
-~          the journal structure non-trivially. Should make 0 difference
-~          at compile time.
-* reiserfs-write-lock.diff
-	- Fixes two missing reiserfs_write_unlock() calls on error paths
-~          that are unrelated to the last patch.
-* reiserfs-io-error-handling.diff
-	- Allows ReiserFS to gracefully handle I/O errors in critical
-	  code paths. The admin has the option to go read-only or panic.
-	  Since ReiserFS has no option to ignore the use of the journal,
-~          the "continue" method is not enabled.
-
-These patches have seen a lot of testing in the SuSE Linux Enterprise
-Server 9 kernel, and are considered ready for mainline.
-
-Hans - please take a look.
-
-Resent: Since the namesys.com mail server refuses messages over 40k,
-I've posted the patches at
-ftp://ftp.suse.com/pub/people/jeffm/reiserfs/kernel-v2.6/io-error/
-
-- -Jeff
-
-- --
-Jeff Mahoney
-SuSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iD8DBQFBRhsvLPWxlyuTD7IRAqa7AJ9ZJa+HnOGYU7OIouWMu34H2mU0MQCgn0H5
-QBdLo95dLiXsQdwojQSHAos=
-=kPTJ
------END PGP SIGNATURE-----
+	I don't like the amount of handwaving from Hans, but *that* is far
+worse.  Vetoed.
