@@ -1,38 +1,43 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: 2.4.20-pre2: All Namesys stuff went in? We only need new stuff from Chris?
-Date: Tue, 13 Aug 2002 22:30:28 +0400
-Message-ID: <20020813223028.A23498@namesys.com>
-References: <200208132012.21409.Dieter.Nuetzel@hamburg.de>
+From: Adrian Phillips <a.phillips@met.no>
+Subject: 3.5.34: reiserfs_file_write: item has been moved
+Date: 14 Aug 2002 07:49:23 +0200
+Sender: "Adrian Phillips,,," <a.phillips@dnmi.no>
+Message-ID: <wvu1ly56sc.fsf@freeze.oslo.dnmi.no>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11182-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11183-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200208132012.21409.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
-Cc: ReiserFS List <reiserfs-list@namesys.com>, Chris Mason <mason@suse.com>, Manuel Krause <manuel.krause@mb.tu-ilmenau.de>, Marcelo Tosatti <marcelo@conectiva.com.br>, Andrea Arcangeli <andrea@suse.de>
+To: reiserfs-list@namesys.com
 
-Hello!
 
-On Tue, Aug 13, 2002 at 08:12:21PM +0200, Dieter N?tzel wrote:
+Kernel 2.2.20 with the following patches :-
+ linux_patches/patch-2.2.21-rc4.bz2
+ reiserfs/linux-2.2.19-reiserfs-3.5.34-patch-buffer-300.bz2
+ linux-2.2.18-rawio.patch
+ lvm/lvm-1.0.4-2.2.21-rc4.patch
+ ide-2.2.21-rc4.patch.bz2
+ max_tasks.patch
 
-> After the 2.4.19.pending stuff arose, it seems to me that Marcello took it up 
-> immediately. Even some (all) -AA stuff went it. GREAT!
-> What's left is a new datalogging patch set from Chris.
+I have got the following error 4 times in the space of about a week :-
 
-Not only that, I have two more patches, but I am still going to port these to
-2.5 and push into 2.5 first. Also Chris is going to port his stuff to 2.5 first
-too, since Marcelo refuses to take some of it without it being tested in
-2.5 first.
+reiserfs_file_write: item has been moved while we were in copy_from_user (appending to the direct item)
 
-> BTW What's up with the mailing list policy?
+Should I be worried ? :-)
 
-What's wrog with that??
+[I'll can schedule a reiserfsck early tomorrow morning if this is
+necessary but I'd rather wait to hear if this indicates corruption
+before doing that]
 
-Bye,
-    Oleg 
+Sincerely,
+
+Adrian Phillips
+
+-- 
+Your mouse has moved.
+Windows NT must be restarted for the change to take effect.
+Reboot now?  [OK]
