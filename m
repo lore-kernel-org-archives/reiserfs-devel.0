@@ -1,36 +1,34 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: A couple of questions
-Date: Thu, 16 May 2002 15:40:57 +0400
-Message-ID: <20020516154057.A1954@namesys.com>
-References: <OFDC95E87B.B541379E-ON85256BBA.0074ED07@pok.ibm.com> <20020516092034.B6880@namesys.com> <3CE37F18.1050201@namesys.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: Problems with journal size option on mkfs
+Date: 16 May 2002 07:52:59 -0400
+Message-ID: <1021549979.14986.759.camel@tiny>
+References: <OFE8E86981.F03B17DE-ON85256BBA.006A1833@pok.ibm.com>
+	<20020516091611.A6880@namesys.com>  <3CE38E43.1000408@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10328-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10329-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <3CE37F18.1050201@namesys.com>
+In-Reply-To: <3CE38E43.1000408@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Hans Reiser <reiser@namesys.com>
-Cc: Steve Pratt <slpratt@us.ibm.com>, reiserfs-list@namesys.com
+Cc: Oleg Drokin <green@namesys.com>, Steve Pratt <slpratt@us.ibm.com>, reiserfs-list@namesys.com
 
-Hello!
+On Thu, 2002-05-16 at 06:47, Hans Reiser wrote:
 
-On Thu, May 16, 2002 at 01:42:48PM +0400, Hans Reiser wrote:
+> journal resizing and relocating will go into the next pre1.
+> 
 
-> >>Second, what is the option to keep fsck from prompting for 'Yes' when
-> >>running.  I need to exec this without additional input.  Seems like quiet
-> >>should do it, but it doesn't.
-> >Hans has a decision that this should not be done for now because
-> >reiserfsprogs are in active bugfixing stage.
-> >
-> ?
-> I don't understand this.:-/
+That makes for a huge set of changes we have planned for pre1.  We need
+to limit ourselves to one significant change per prerelease, otherwise
+debugging is very difficult.
 
-You have said "We do not trust reiserfsck to be run automatically without
-user confirmation"
+The journal relocation stuff needs to be tossed onto an FTP site and
+widely tested before we submit for a stable kernel series.  It clearly
+has not been widely tested 2.5.x ;-)
 
-Bye,
-    Oleg
+-chris
+
+
