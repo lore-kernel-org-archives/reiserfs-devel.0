@@ -1,23 +1,26 @@
-From: Mike Fedyk <mfedyk@matchmail.com>
+From: Steven Cole <elenstev@mesatop.com>
 Subject: Re: reiser4 snapshot for August 26th.
-Date: Tue, 26 Aug 2003 12:53:06 -0700
-Message-ID: <20030826195306.GB1258@matchmail.com>
-References: <20030826102233.GA14647@namesys.com> <1061922037.1670.3.camel@spc9.esa.lanl.gov> <20030826182609.GO5448@backtop.namesys.com> <1061926566.1076.2.camel@teapot.felipe-alfaro.com> <20030826194321.GA25730@namesys.com>
+Date: 26 Aug 2003 13:51:22 -0600
+Message-ID: <1061927482.1666.36.camel@spc9.esa.lanl.gov>
+References: <20030826102233.GA14647@namesys.com>
+	 <1061922037.1670.3.camel@spc9.esa.lanl.gov>
+	 <20030826182609.GO5448@backtop.namesys.com>
+	 <1061926566.1076.2.camel@teapot.felipe-alfaro.com>
+	 <20030826194321.GA25730@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15434-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15435-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 In-Reply-To: <20030826194321.GA25730@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Oleg Drokin <green@namesys.com>
-Cc: Felipe Alfaro Solana <felipe_alfaro@linuxmail.org>, Alex Zarochentsev <zam@namesys.com>, Steven Cole <elenstev@mesatop.com>, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, LKML <linux-kernel@vger.kernel.org>
+Cc: Felipe Alfaro Solana <felipe_alfaro@linuxmail.org>, Alex Zarochentsev <zam@namesys.com>, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Aug 26, 2003 at 11:43:21PM +0400, Oleg Drokin wrote:
+On Tue, 2003-08-26 at 13:43, Oleg Drokin wrote:
 > Hello!
 > 
 > On Tue, Aug 26, 2003 at 09:36:07PM +0200, Felipe Alfaro Solana wrote:
@@ -33,10 +36,36 @@ On Tue, Aug 26, 2003 at 11:43:21PM +0400, Oleg Drokin wrote:
 > 
 > Building as module is also not yet supported.
 > 
+Fine, then here's a patch:
 
-To do:
+--- linux-2.6.0-test4-r4/fs/Kconfig.orig	2003-08-26 13:44:38.165059616 -0600
++++ linux-2.6.0-test4-r4/fs/Kconfig	2003-08-26 13:46:43.672979512 -0600
+@@ -203,6 +203,9 @@
+ 	tristate "Reiser4 (EXPERIMENTAL very fast general purpose filesystem)"
+ 	depends on EXPERIMENTAL
+ 	---help---
++	  Building as a module is not yet supported, so don't say 'M'
++          unless you're a developer.
++
+ 	  Reiser4 is more than twice as fast for both reads and writes as
+ 	  ReiserFS.  That means it is four times as fast as NTFS by Microsoft.
+ 	  (Proper benchmarks will appear in a few months at
 
-remove all options in build system that don't compile.
- o module
- o syscall
- o etc...
+Meanwhile, reiser4 seems to be working fine and is nice and fast.
+
+I did a "time bk -r co" for the current 2.6 tree, and here
+are the results for reiser4 and ext3 on 2.6.0-test4:
+
+Reiser4:
+real    1m55.077s
+user    0m30.740s
+sys     0m36.558s
+
+Ext3:
+real    3m48.438s
+user    0m26.400s
+sys     0m13.205s
+
+Steven
+
+
