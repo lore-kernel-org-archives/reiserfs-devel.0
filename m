@@ -1,39 +1,35 @@
 From: Ookhoi <ookhoi@humilis.net>
-Subject: Re: Hard disk crash and solution
-Date: Mon, 3 Feb 2003 05:49:28 +0100
-Message-ID: <20030203054928.W2964@humilis>
-References: <IKENJBHCILNPNAGHKCHFOEDMCCAA.Art@chello.nl> <20030127055331.E976@humilis> <20030127100349.B22720@namesys.com> <200302030711.13593.amosf@mrbean.net.au>
+Subject: Re: kernel go-slow
+Date: Mon, 3 Feb 2003 05:53:01 +0100
+Message-ID: <20030203055301.X2964@humilis>
+References: <200302030027.40936.russell@coker.com.au>
 Reply-To: ookhoi@humilis.net
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12609-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12610-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200302030711.13593.amosf@mrbean.net.au>
+In-Reply-To: <200302030027.40936.russell@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tim fairchild <amosf@mrbean.net.au>
-Cc: reiserfs-list@namesys.com
+To: Russell Coker <russell@coker.com.au>
+Cc: ReiserFS <reiserfs-list@namesys.com>
 
-tim fairchild wrote (ao):
-> On Monday 27 Jan 2003 5:03 pm, Oleg Drokin wrote:
-> > I bought IBM DTLA-307030 made in Hungary 2 years ago.
-> > It is still working (though it already have ~1500 bad sectors
-> > remapped) aside of making unusual noises when remapping bad sectors
-> > ;) I may be just lucky.
-> > Also I try to run it in cool environment, so that may help it too.
+Russell Coker wrote (ao):
+> I'm running a number of machines with 2.4.20 and the ReiserFS journal
+> patches.
 >
-> Sorry to go back off topic, but does anyone have any eperience with
-> the more recent 40gb IBM 120GP (IC35L040AVVN07) drives. I have one a
-> few weeks old and it's already making some evil sounding noises...
+> One problem that has started occuring is that periodically some of the
+> machines will go really slow for a while. It's as if the CPU speed has
+> just dropped to 1% of it's regular speed. Then after 10 minutes or so
+> it will continue as normal.
+>
+> Has anyone heard of such things before?
 
-A lot? Sometimes you can hear a disk recalibrate, which is not bad, but
-that should be only now and then.
+It seems there is a 'bug' in 2.4.20 which causes the stall. (don't know
+the details, but you're not the only one).
 
-Do you have disk related errors in your logs?
-
-Try to run an ibm drive fitness program and see what it tells you about
-the disk.
+Maybe a -pre fixes it, though in your case I would wait for .21 I think.
