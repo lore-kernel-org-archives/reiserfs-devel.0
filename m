@@ -1,183 +1,57 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Encrypted logs with forward secrecy
-Date: Tue, 06 May 2003 14:31:50 +0400
-Message-ID: <3EB78F16.4000109@namesys.com>
-References: <Pine.LNX.4.44.0305060516330.20364-100000@potato.zayda.com>
+Subject: Re: securely deleting files
+Date: Tue, 06 May 2003 14:37:26 +0400
+Message-ID: <3EB79066.3000205@namesys.com>
+References: <Pine.LNX.4.44.0305060522270.20364-100000@potato.zayda.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13959-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13960-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.44.0305060516330.20364-100000@potato.zayda.com>
+In-Reply-To: <Pine.LNX.4.44.0305060522270.20364-100000@potato.zayda.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Jason Holt <jason@lunkwill.org>
 Cc: reiserfs-list@namesys.com, Edward Shishkin <edward@namesys.com>
 
-Edward, please discuss with him making a reiser4 plugin out of it.
-
-Hans
-
 Jason Holt wrote:
 
->I felt the need to code on Saturday, so I wrote up this toy we discovered at
->DISCEX and posted it to sci.crypt.  Hans suggested that it might work nicely
->as a reiserfs4 plugin.
+>shred is a tool which is supposed to overwrite files so that they're
+>unrecoverable, even with fairly involved recovery techniques.  
 >
->The idea isn't original - Bruce Schneier published these a few years ago, but
->mine is apparently the first public implementation:
+>But it isn't guaranteed to work - sensitive blocks may get moved around on the
+>physical disk, stored in journals, etc.
 >
->http://www.counterpane.com/secure-logs.html
->http://www.counterpane.com/auditlog2.html
+>So here's how I get around it:
 >
->He also has a patent on it, but said he's willing to let it be used with a
->GPLed implementation.
+>$ cat >sensitive
+>there's something sensitive in this file...
 >
->				-J
+>$ rm sensitive
+>$ cat /dev/zero    >foo ; sync ; rm foo  # Fill up the disk, then delete.
+>$ cat /dev/urandom >foo ; sync ; rm foo  # For the *truly* paranoid
 >
->=============
+>Now, a good friend of mine pointed out that part of the space on a filesystem
+>is kept aside just for root, so you may want to fill the disk up as root.  
+>(Is this actually a concern?  Can blocks which used to hold user data end up
+>being reserved?) 
 >
->Does anyone know of another package that does this?  The idea is to
->generate a random file key, encrypt it with an auditor's public key
->and ship it to the auditor.  Then you use it to encrypt lines of a log
->file.  After each line, you hash the file key, throw away the old one,
->and append a MAC.
+Yes.
+
+Edward, please put this in the faq, credit Jason, add a note that this 
+will not protect against media scans using special equipment because 
+writes and overwrites are not always equally aligned.
+
+> 
 >
->That way, even if somebody roots your box, they can't read any lines
->of the file already written or modify the log.  They can /delete/ the
->log, but can't change already-written lines undetected.
+>Also, if your sensitive file was in memory recently it might have been swapped
+>out, in which case it may still be in the swap partition.  I have a program
+>which fills up all available *memory* as well, and I could post the source
+>here if everyone's interested.
 >
->So here's a quick-and-dirty implementation.  It uses MDCs instead of a
->proper HMAC, and of course wastes lots of space.  Comments?
->
->                                        -J
->
->[jason@erg] ~/.gnupg$ gpg --gen-key
->gpg (GnuPG) 1.2.1; Copyright (C) 2002 Free Software Foundation, Inc.
->This program comes with ABSOLUTELY NO WARRANTY.
->
->[blah blah blah...]
->                        
->You need a User-ID to identify your key; the software constructs the
->user id
->from Real Name, Comment and Email Address in this form:
->    "Heinrich Heine (Der Dichter) <heinrichh@duesseldorf.de>"
->
->Real name: logcrypt
->Email address:     
->Comment:       
->You selected this USER-ID:
->    "logcrypt"
->
->Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? o
->
->[blah blah blah...]
->
->[At this point, you should take the secret key off site...]
->
->[jason@erg] ~/work/logcrypt$ cat >log
->foo
->bar
->baz
->
->[As soon as this starts running, put a copy of filekey somewhere
->safe...]
->[jason@erg] ~/work/logcrypt$ ./logcrypt.pl <log >safe_log 2>/dev/null
->Reading passphrase from file descriptor 0    
->Reading passphrase from file descriptor 0    
->Reading passphrase from file descriptor 0    
->
->[jason@erg] ~/work/logcrypt$ ./readlog.pl <safe_log
->
->You need a passphrase to unlock the secret key for
->user: "logcrypt"
->2048-bit ELG-E key, ID C17F42D7, created 2003-05-03 (main key ID
->EEC68977)
->
->Reading passphrase from file descriptor 0    
->gpg: AES encrypted data
->foo
->Reading passphrase from file descriptor 0    
->gpg: AES encrypted data
->bar
->Reading passphrase from file descriptor 0    
->gpg: AES encrypted data
->baz
->
->================================Code for logcrypt.pl:
->
->#!/usr/bin/perl
->
-># (c) 2003 Jason E. Holt
-># Released into the public domain
-># Encrypt log files with forward secrecy
-># Once a line of the file is written, even root can't read it or
-># change it without detection.  (Assuming that filekey gets recorded
-># somewhere safe.)
->
->my $recipient = "logcrypt"; # Name of GPG public key holder
->
->use MD5;
->
->open(RANDOM, "</dev/urandom") or die "Couldn't open /dev/urandom: $!";
->sysread(RANDOM, $filekey, 16, 0);
->
->$filekey = MD5->hexhash($filekey);
->
->open(SAVEFILEKEY, "| gpg -r $recipient -q -e -o filekey") 
->	or die "Couldn't open pipe to gpg: $!";
->
-># Just symmetrically encrypt the log key.
->#open(SAVEFILEKEY, "| gpg -c -o filekey") 
->#	or die "Couldn't open pipe to gpg: $!";
->
->print SAVEFILEKEY $filekey;
->close SAVEFILEKEY;
->
->while(<>) {
->	open(GPG, 
->     "|gpg -q --cipher-algo AES --passphrase-fd 0 -a -c --force-mdc -o
->-")
->		or die "Couldn't open gpg: $!";
->
->	print GPG $filekey, "\n";
->	print GPG $_;
->
->	$filekey = MD5->hexhash($filekey);
->}
->
->==================================== Code for readlog.pl
->
->#!/usr/bin/perl
->
-># (c) 2003 Jason E. Holt
-># Released into the public domain
-># Read log files written with logcrypt.pl
->
->use MD5;
->
->open(FILEKEY, "gpg -q -o - filekey |") or die "Couldn't open file key:
->$!";
->my $filekey = join('', <FILEKEY>);
->
->my @lines;
->while(<>) {
->	push @lines, $_;
->	if(/-----END PGP MESSAGE-----/) {
->
->		open(GPG, "| gpg -q --passphrase-fd 0 -o -") or die
->			"Couldn't open gpg: $!";
->
->		print GPG $filekey, "\n";
->		print GPG join('', @lines);
->		close GPG;
->		@lines = ();
->		$filekey = MD5->hexhash($filekey);
->	}
->}
->
+>						-J
 >
 >
 >
