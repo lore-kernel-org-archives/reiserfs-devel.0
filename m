@@ -1,40 +1,31 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: power loss -> corruption
-Date: 08 May 2003 09:40:42 -0400
-Message-ID: <1052401242.14616.499.camel@tiny.suse.com>
-References: <93F527C91A6ED411AFE10050040665D007AA853B@corpusmx1.us.dg.com>
-	 <200305081437.59362.m.c.p@gmx.net>
-	 <1052400256.14612.485.camel@tiny.suse.com>
-	 <200305081536.29471.Dieter.Nuetzel@hamburg.de>
+From: Fong Vang <FVang@Zantaz.com>
+Subject: digest form
+Date: Thu, 8 May 2003 08:35:07 -0700
+Message-ID: <12C7D768CC8ED4118A9200508BEEC6FB03377550@zanexch.zantaz.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14023-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14024-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200305081536.29471.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Cc: Marc-Christian Petersen <m.c.p@gmx.net>, Anders Widman <andewid@tnonline.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "'reiserfs-list@namesys.com'" <reiserfs-list@namesys.com>
 
-On Thu, 2003-05-08 at 09:36, Dieter N=FCtzel wrote:
-
-> > I expect to submit for 2.4.22-preX once it starts, the latest data
-> > logging update removes the VFS changes that held up inclusion in the
-> > past.
->=20
-> He, he, that's what I've expected...;-)
->=20
-> Good work, Chris!
->=20
-> I'll compiling,now.
-> Does it work on-top of -aa (-jam) or do I have to do some handwork as alw=
-ays?
-
-You'll have to do some hand merging ;-)
-
--chris
+Is there a digest format of his mailing list?  I don't want to get
+individual messages.  I would prefer to have all emails combined and sent to
+me at the end of the day.
 
 
+This e-mail has been captured and archived by the ZANTAZ Digital Safe(tm)
+service.  For more information, visit us at www.zantaz.com. 
+IMPORTANT: This electronic mail message is intended only for the use of the
+individual or entity to which it is addressed and may contain information
+that is privileged, confidential or exempt from disclosure under applicable
+law.  If the reader of this message is not the intended recipient, or the
+employee or agent responsible for delivering this message to the intended
+recipient, you are hereby notified that any dissemination, distribution or
+copying of this communication is strictly prohibited.  If you have received
+this communication in error, please notify the sender immediately by
+telephone or directly reply to the original message(s) sent.  Thank you.
