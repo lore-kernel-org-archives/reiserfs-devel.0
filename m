@@ -1,48 +1,44 @@
-From: Asheesh Laroia <asheesh@asheesh.org>
-Subject: Failed conversion -> undelete loopback file?
-Date: Wed, 14 Apr 2004 08:04:19 -0400 (EDT)
-Message-ID: <Pine.LNX.4.58.0404140752140.32161@renaissance.laroia.net>
+From: Szakacsits Szabolcs <szaka@sienet.hu>
+Subject: Re: reiser4 enabled livecd
+Date: Wed, 14 Apr 2004 14:12:40 +0200 (MEST)
+Message-ID: <Pine.LNX.4.21.0404141338510.31309-100000@mlf.linux.rulez.org>
+References: <20040414112416.GA15922@alias.nmd.msu.ru>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17925-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17926-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20040414112416.GA15922@alias.nmd.msu.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-I used the convertfs toolkit from http://tzukanov.narod.ru/convertfs/ to
-convert my reiserfs filesystem to ext3.  I wanted to do this because the
-kernel I had installed doesn't support reiserfs.
 
-So I booted of the MEPIS Live CD to do the conversion.
+Hello,
 
-So the first time I tried, it created an ext3 filesystem full of errors,
-but since the process died early, it didn't delete any source files.  I
-deleted the loopback file it created and ran reiserfsck 3.6.14, which told
-to me rebuld-tree, so I did.
+Talking about livecd's, I'd mention that Recovery Is Possible has also
+Reiser4. It's very often updated, kernel 2.6.5 and as I noticed it always
+has the latest from everything and only 26 MB download:
 
-I then tried again.  I got an error on unmount, but the process seemed to
-have finished.  So I rebooted back into MEPIS.
+      http://www.tux.org/pub/people/kent-robotti/looplinux/rip/
 
-Now on mount, my reiserfs partition said:
+I made some "real world" ntfsclone benchmarks what I use very often during
+NTFS development (e.g. test suite). It reads the NTFS allocation bitmap,
+seeks to the used data positions on the source device, seeks to the same
+position in the destination sparse file or block device and copy the data
+thus the clone is immediately mountable.
 
-Using r5 hash to sort names
-Removing [2 11 0x0 SD]...done
-There were 1 uncompleted unlinks/truncates. Completed.
+Resiser4 beat everybody: ext2, ext3, xfs, reiserfs, jfs and even including
+raw cloning between partitions! I've never seen such before for any
+filesystem, it _indeed_ optimizes the disk seeks significantly.
 
-That deletion took a long time, so it probably just deleted the loopback
-ext3 filesystem.  The reiserfs partition now contains no directories or
-files.  The partition shows 33MB used (out of 50GB).
+It was about 5% faster than raw cloning and at least 10% faster then the
+next fastest filesytems (ext2 and xfs). I can send full details if one is
+interested.
 
-But a quick look inside ("less -f /dev/hdb6") shows my data are still
-around somewhere.
+Congratulations!
 
-Is it possible to undo that deletion of [2 11 0x0 SD]?  What should I
-consider?
+	Szaka
 
-Thanks all.  This is extremly distressing.
-
--- Asheesh.
