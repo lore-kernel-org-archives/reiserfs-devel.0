@@ -1,41 +1,44 @@
-From: Anders Widman <andewid@tnonline.net>
+From: Russell Coker <russell@coker.com.au>
 Subject: Re: Multiple data streams...
-Date: Wed, 2 Apr 2003 11:47:12 +0200
-Message-ID: <10168801421.20030402114712@tnonline.net>
+Date: Wed, 2 Apr 2003 22:40:57 +1000
+Message-ID: <200304022240.57346.russell@coker.com.au>
 References: <6167696812.20030402112847@tnonline.net>
-Reply-To: Anders Widman <andewid@tnonline.net>
+Reply-To: Russell Coker <russell@coker.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13522-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13524-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <6167696812.20030402112847@tnonline.net>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Anders Widman <andewid@tnonline.net>, reiserfs-list@namesys.com
 
-
+On Wed, 2 Apr 2003 19:28, Anders Widman wrote:
 >    Is this supported, or will it be supported by ReiserFS?
 >    I  use  this  feature quite quite much.. Maybe this is something to
 >    add to ReiserFS?
-
+>
 >    There is very brief info at Microsoft's website:
 
->   
-> http://www.microsoft.com/windows2000/techinfo/reskit/en-us/core/fncc_fil_khzt.asp
+Does MS support multiple data streams properly yet?
 
+The last information I read about data streams indicated that commonly used 
+operations (such as typing "copy" in a command-line session) would not work 
+properly with multiple data streams.  Also many important programs such as 
+anti-virus programs did not support it.
 
-   Some uses could be to be able to store locking information (such as
-   user,  program  etc)  or extended security features within the same
-   file as a separate data stream.
+The Linux API does not support multiple data streams.  Support for extended 
+attributes has recently been added, this will do most things that you might 
+want to do with multiple streams and does it in a standard way that is 
+supported.
 
-   There  are  of  course  numerous other things data streams could be
-   used for.
-
-   //Anders
-
---------
-PGP public key: https://tnonline.net/secure/pgp_key.txt
+-- 
+http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
+http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
+http://www.coker.com.au/~russell/  My home page
 
