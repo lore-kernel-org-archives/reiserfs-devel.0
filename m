@@ -1,42 +1,38 @@
-From: Szakacsits Szabolcs <szaka@sienet.hu>
-Subject: Re: Filesystem Tests
-Date: Sat, 9 Aug 2003 11:18:03 +0200 (MEST)
-Message-ID: <Pine.LNX.4.30.0308091028150.19108-100000@divine.city.tvnet.hu>
-References: <20030809093337.GA28566@mail.jlokier.co.uk>
+From: Wes Janzen <superchkn@sbcglobal.net>
+Subject: Re: FS Corruption with VIA MVP3 + UDMA/DMA
+Date: Sat, 09 Aug 2003 07:19:29 -0500
+Message-ID: <3F34E6D1.7030900@sbcglobal.net>
+References: <16128.19218.139117.293393@charged.uio.no> <3F007EBF.9020506@sbcglobal.net> <3F10729F.7070701@sbcglobal.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15260-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15261-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030809093337.GA28566@mail.jlokier.co.uk>
+In-Reply-To: <3F10729F.7070701@sbcglobal.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Andrew Morton <akpm@osdl.org>, Grant Miner <mine0057@mrs.umn.edu>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Linux Kernel <linux-kernel@vger.kernel.org>
+Cc: reiserfs-list@namesys.com
+
+I seemed to get a skeptical reaction when I originally posted this to 
+the list, however, just google for "mvp3 corrupt dma mode" to confirm.  
+I don't know that it takes to hit this error, but it's very easy to 
+reproduce on my machine.  Some links only mention UDMA, but all DMA 
+modes are affected on my board.  I couldn't even burn a CD over 12X 
+without running into this issue.  There I thought it was bad media, but 
+after burning 11 CD's at 32X with the PDC20269 (rather than the native 
+IDE) and not encountering any errors using the same batch of media and 
+writer, the culprit is clear.
+
+I don't know why I didn't google for this in the first place, but it 
+looks like it is a known issue.  Just apparently not well-known.
+
+Probably not especially important though, I wonder just how many people 
+are still running this setup...  With Linux, I'd say even fewer.
 
 
-On Sat, 9 Aug 2003, Jamie Lokier wrote:
-> reiser4 is using approximately twice the CPU percentage, but completes
-> in approximately half the time, therefore it uses about the same
-> amount of CPU time at the others.
->
-> Therefore on a loaded system, with a load carefully chosen to make the
-> test CPU bound rather than I/O bound, one could expect reiser4 to
-> complete in approximately the same time as the others, _not_ slowest.
 
-Depends how you define approximation, margins. I dropped them and
-calculated reiser4 needs the most CPU time. Hans wrote it's worked on.
 
-However guessing performance on a whatever carefully chosen loaded system
-from results on an unloaded system is exactly that, guess, not fact.
-
-> That's why it's misleading to draw conclusions from the CPU percentage alone.
-
-I've never wrote I made my guesses from the CPU percentage alone, you
-explained correctly why. I encourage you too to calculate yourself how
-much more CPU time reiser4 needs.
-
-	Szaka
 
