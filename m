@@ -1,11 +1,11 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH] -oresize on ro filesystem causes panic
-Date: Mon, 19 Apr 2004 10:46:05 -0400
-Message-ID: <4083E62D.9060909@suse.com>
+Subject: [PATCH] Another reiserfs_resize fix (unlock_super called incorrectly)
+Date: Mon, 19 Apr 2004 14:48:38 -0400
+Message-ID: <40841F06.6020606@suse.com>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- boundary="------------070706070109080007090206"
-Return-path: <reiserfs-list-return-18060-reiserfs=m.gmane.org@namesys.com>
+ boundary="------------060508000206020300010409"
+Return-path: <reiserfs-list-return-18061-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -13,7 +13,7 @@ Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: ReiserFS Mailing List <reiserfs-list@namesys.com>
 
---------------070706070109080007090206
+--------------060508000206020300010409
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -21,25 +21,14 @@ Content-Transfer-Encoding: 7bit
 Hash: SHA1
 
 
-Hey all -
+Here's another fix for reiserfs_resize().
 
-While developing my io-error patches (posted previously), I skipped the
-resize stuff, opting to come back to it later, since it involved
-re-ordering operations so we don't blow ourselves out of the water.
-Today, I started digging into that code, and found that if -oresize is
-used when the filesystem is read-only, it will attempt to start a
-transaction on a read-only filesystem. When CONFIG_REISERFS_CHECK is
-enabled, this causes an assertion failure.
+If reiserfs_allocate_list_bitmaps() fails, it calls unlock_super on the
+sb. This is incorrect, as it didn't lock it initially. do_remount_sb
+calls lock_super and unlock_super surrounding the ->remount_fs call,
+regardless of error.
 
-mount -r /dev/hda8 /mnt
-mount -oremount,resize=123456 /mnt
-*panic*
-
-The attached patch fixes the problem. It also moves the reiserfs_resize
-call after the filesystem is made read-write on remount. This is so the
-following succeeds:
-
-mount -oremount,resize=123456,rw /mnt
+The attach patch removes the unlock_super call.
 
 - -Jeff
 
@@ -51,61 +40,28 @@ jeffm@suse.com
 Version: GnuPG v1.2.2 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iD8DBQFAg+YtLPWxlyuTD7IRAvBXAJ9ruUhuwvqYcYoLLQxv1+76kC4XTQCfYH3E
-rmTlSJjVWIJc5pVqPpv/F/s=
-=aDB6
+iD8DBQFAhB8GLPWxlyuTD7IRAq/hAJ9AKMIo26EnvGyjHmaEBh1TaPsnsACfVYvf
+PY4TWrNLusOt6WWPjCWjPrs=
+=Uc5g
 -----END PGP SIGNATURE-----
 
---------------070706070109080007090206
+--------------060508000206020300010409
 Content-Type: text/plain;
- name="reiserfs-resize.diff"
+ name="reiserfs-resize-2.diff"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
- filename="reiserfs-resize.diff"
+ filename="reiserfs-resize-2.diff"
 
 diff -rup linux-2.6.5.kgdb/fs/reiserfs/resize.c linux-2.6.5.kgdb.afs/fs/reiserfs/resize.c
---- linux-2.6.5.kgdb/fs/reiserfs/resize.c	2004-04-03 22:36:55.000000000 -0500
-+++ linux-2.6.5.kgdb.afs/fs/reiserfs/resize.c	2004-04-19 10:28:53.692014416 -0400
-@@ -33,6 +33,11 @@ int reiserfs_resize (struct super_block 
- 	int i;
- 	int copy_size ;
- 
-+	if (s->s_flags & MS_RDONLY) {
-+		reiserfs_warning (s, "Can't resize read-only filesystem.");
-+		return -EINVAL;
-+	}
-+
- 	sb = SB_DISK_SUPER_BLOCK(s);
- 
- 	if (SB_BLOCK_COUNT(s) >= block_count_new) {
-diff -rup linux-2.6.5.kgdb/fs/reiserfs/super.c linux-2.6.5.kgdb.afs/fs/reiserfs/super.c
---- linux-2.6.5.kgdb/fs/reiserfs/super.c	2004-04-17 13:32:13.000000000 -0400
-+++ linux-2.6.5.kgdb.afs/fs/reiserfs/super.c	2004-04-19 10:30:02.897493584 -0400
-@@ -890,12 +890,6 @@ static int reiserfs_remount (struct supe
- 	  SB_JOURNAL_MAX_TRANS_AGE(s) = commit_max_age;
-   }
- 
--  if(blocks) {
--    int rc = reiserfs_resize(s, blocks);
--    if (rc != 0)
--      return rc;
--  }
--
-   if (*mount_flags & MS_RDONLY) {
-     reiserfs_xattr_init (s, *mount_flags);
-     /* remount read-only */
-@@ -944,6 +938,12 @@ static int reiserfs_remount (struct supe
-     reiserfs_xattr_init (s, *mount_flags);
-   }
- 
-+  if(blocks) {
-+    int rc = reiserfs_resize(s, blocks);
-+    if (rc != 0)
-+      return rc;
-+  }
-+
-   return 0;
- }
- 
+--- linux-2.6.5.kgdb/fs/reiserfs/resize.c	2004-04-19 10:28:53.692014416 -0400
++++ linux-2.6.5.kgdb.afs/fs/reiserfs/resize.c	2004-04-19 14:43:05.148440616 -0400
+@@ -82,7 +82,6 @@
+ 	    /* reallocate journal bitmaps */
+ 	    if (reiserfs_allocate_list_bitmaps(s, jbitmap, bmap_nr_new) < 0) {
+ 		printk("reiserfs_resize: unable to allocate memory for journal bitmaps\n");
+-		unlock_super(s) ;
+ 		return -ENOMEM ;
+ 	    }
+ 	    /* the new journal bitmaps are zero filled, now we copy in the bitmap
 
---------------070706070109080007090206--
+--------------060508000206020300010409--
