@@ -1,26 +1,50 @@
-From: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
-Subject: Re: bug report
-Date: Tue, 25 Nov 2003 01:54:46 +0100
-Message-ID: <3FC2A856.9090506@gmx.net>
-References: <NHBBLMBAALMFLLANBMBIMECPCAAA.Stephan.Reichel@1net4you.de>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: A question about slum and relocate
+Date: Mon, 24 Nov 2003 05:04:10 -0800
+Message-ID: <3FC201CA.9090700@namesys.com>
+References: <Pine.GSO.4.58.0311241820230.6503@bingsun2.cc.binghamton.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16156-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16157-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <NHBBLMBAALMFLLANBMBIMECPCAAA.Stephan.Reichel@1net4you.de>
+In-Reply-To: <Pine.GSO.4.58.0311241820230.6503@bingsun2.cc.binghamton.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Stephan Reichel <Stephan.Reichel@1net4you.de>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Zhihui Zhang <bf20761@binghamton.edu>
+Cc: reiserfs-list@namesys.com, zam@thebsh.namesys.com
 
-Stephan Reichel wrote:
-> See also attached log file.
+Zhihui Zhang wrote:
 
-You forgot to attach it.
+>Hi,
+>
+>After reading some code, it seems to me that a slum does not have to be
+>relocated.  If a slum is small , it will use the overwrite strategy.  Is
+>this understanding correct?  Also, at the leaf level, if the number of
+>dirty nodes exceeds FLUSH_RELOCATE_THRESHOLD (64), they are always
+>relocated.  Is there any similar threshold for an internal level?  Does
+>Reiser4 relocate internal nodes separately (i.e. not as part of the slum
+>involving leaf nodes.  
+>
+zam will answer the above.
 
+>Note a slum can grow backwards if a dirty node is
+>the leftmost child of a parent at an internal level)? 
+>
+Can you say more on this point, I don't quite understand you?
 
-Carl-Daniel
+> Thanks for your
+>enlightenment.
+>
+>-Zhihui
+>
+>  
+>
+thanks for reading our code in such depth.
+
+-- 
+Hans
+
 
