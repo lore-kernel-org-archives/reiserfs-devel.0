@@ -1,39 +1,40 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: write barrier patches for 2.4.21
-Date: 27 Aug 2003 20:37:40 -0400
-Message-ID: <1062031059.5324.111.camel@tiny.suse.com>
-References: <20030825170849.GA14811@mfa.kfki.hu> <20030826214624.GA410@zero>
-	 <20030827064103.GA29131@namesys.com>  <20030827220337.GB4886@zero>
+From: David T Hollis <dhollis@davehollis.com>
+Subject: Bug in plugin/object/obj40/obj40_repair.c
+Date: Thu, 28 Aug 2003 07:27:38 -0400
+Message-ID: <3F4DE72A.60306@davehollis.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15464-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15465-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030827220337.GB4886@zero>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Tom Vier <tmv@comcast.net>
-Cc: Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Reiserfs List <reiserfs-list@namesys.com>
 
-On Wed, 2003-08-27 at 18:03, Tom Vier wrote:
-> On Wed, Aug 27, 2003 at 10:41:03AM +0400, Oleg Drokin wrote:
-> > There was a discussion about that on Kernel Summit 2003 and general opinion was that SCSI
-> > does not need the WB stuff at all as it does the correct thing anyway.
-> 
-> i found this, but no real details. do you have a better link? or could you
-> tell me why scsi drives don't need wb's? afaik, they don't have nvram cache.
-> so, the danger is still there, even if small (unless i'm wrong).
-> 
-> http://lwn.net/Articles/40850/
-> 
+I was having trouble compiling reiser4progs due to warnings being 
+treated as errors and came across this function that GCC reported 'info 
+possibly being used uninitialized'.  In looking at it, it does look 
+bad.  Info is never assigned to anything before it is being accessed. I 
+don't know what it is supposed to point to so I can't provide a patch at 
+this time, but I thought I'd bring it up.
 
-scsi drives don't really need them because most scsi drives don't have
-write back caching on by default, and most actually listen when you turn
-the cache off.  The scsi tag queuing makes good performance possible
-even without writeback caching.
 
--chris
+/* Checks that @obj->info.start is SD of the wanted file.  */
+errno_t obj40_stat(obj40_t *obj, stat_func_t stat_func) {
+        object_info_t *info;
+        errno_t res;
+                                                                               
+ 
+        aal_assert("vpf-1200", obj != NULL);
+                                                                               
+ 
+        if (!info->start.plug) {
+^^^^^^^^^^^^^^^^^^^^^
+                if (!obj->core->tree_ops.valid(info->tree, &info->start))
+                        return RE_FATAL;
+                                                                               
+ 
 
 
