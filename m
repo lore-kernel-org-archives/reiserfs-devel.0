@@ -1,36 +1,51 @@
-From: Jindrich Makovicka <makovick@kmlinux.fjfi.cvut.cz>
-Subject: Re: reiser4progs 1.0.4
-Date: Mon, 21 Feb 2005 15:35:11 +0100
-Message-ID: <4219F19F.1030106@kmlinux.fjfi.cvut.cz>
-References: <200502201344.41656.vitaly@namesys.com> <20050221131024.GA43266@xs4all.nl>
+From: Alasdair G Kergon <agk@redhat.com>
+Subject: Re: Odd data corruption problem with LVM/ReiserFS
+Date: Mon, 21 Feb 2005 15:18:52 +0000
+Message-ID: <20050221151852.GE14097@agk.surrey.redhat.com>
+References: <93ca3067050220212518d94666@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050221131024.GA43266@xs4all.nl>
+Content-Disposition: inline
+In-Reply-To: <93ca3067050220212518d94666@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Cc: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alex Adriaanse <alex.adriaanse@gmail.com>
+Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Ookhoi wrote:
+On Sun, Feb 20, 2005 at 11:25:37PM -0600, Alex Adriaanse wrote:
+> This morning was the first time my backup script took
+> a snapshot since upgrading to 2.6.10-ac12 (yesterday I had taken a few
+> snapshots myself for testing purposes, this seemed to work fine).
+ 
+a) Activating a snapshot requires a lot of memory;
 
- > Fatal: Failed to open the reiser4 backup.
- > Fatal: Cannot open the FileSystem on (/dev/hda1).
- >
- > 1 fatal corruptions were detected in SuperBlock. Run with --build-sb 
-option to fix them.
+b) If a snapshot can't get the memory it needs you have to back it
+out manually (using dmsetup - some combination of resume, remove & 
+possibly reload) to avoid locking up the volume - what you have to do 
+depends how far it got before it failed;
 
+c) You should be OK once a snapshot is active and its origin has 
+successfully had a block written to it.
 
-Anyway, what is the preferred way to convert reiser4 to this new backup 
-layout? I have all reiser4 partitions created with reiserfsprogs 1.0.0, 
-so 1.0.3 & 1.0.4 bail out. Using fsck.reiser4 --build-sb from 
-reiser4progs 1.0.3 rendered the filesystem created under 1.0.0 unusable, 
-I still didn't try fsck 1.0.4. I also found the -C option of 
-debugfs.reiser4, but it didn't help either, and subsequent fsck also 
-botched the filesystem. Were there any fixes in 1.0.4 regarding this?
+Work is underway to address the various problems with snapshot activation
+- we think we understand them all - but until the fixes have worked their 
+way through, unless you've enough memory in the machine it's best to avoid
+them.  
 
-Thanks,
+Suggestions: 
+  Only do one snapshot+backup at once;
+  Make sure logging in as root and using dmsetup does not depend on access 
+  to anything in /var or /home (similar to the case of hard NFS mounts with 
+  the server down) so you can still log in;
+
+BTW Also never snapshot the root filesystem unless you've mounted it noatime
+or disabled hotplug etc. - e.g. the machine can lock up attempting to 
+update the atime on /sbin/hotplug while writes to the filesystem are blocked
+
+Alasdair
 -- 
-Jindrich Makovicka
+agk@redhat.com
