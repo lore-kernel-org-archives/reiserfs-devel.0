@@ -1,38 +1,127 @@
-From: Dirk Schenkewitz <Dirk.Schenkewitz@interface-ag.com>
+From: Rudy Zijlstra <rudy@edsons.demon.nl>
 Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
-Date: Fri, 14 Feb 2003 15:30:28 +0100
-Message-ID: <3E4CFD84.F0B5B596@interface-ag.com>
+Date: Fri, 14 Feb 2003 17:04:09 +0100 (CET)
+Message-ID: <Pine.LNX.4.44.0302141517180.24745-100000@kheldar.edsons.demon.nl>
+References: <3E4CF04A.2030904@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12764-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12765-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3E4CF04A.2030904@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Andreas Dilger <adilger@clusterfs.com>, Oleg Drokin <green@namesys.com>, Zygo Blaxell <eazgwmir@umail.furryterror.org>, reiserfs-list@namesys.com
 
-Sam Vilain  <sam@vilain.net> wrote:
-> On Fri, 14 Feb 2003 09:08, Zygo Blaxell wrote:
-> > ...
-> > The M in MTBF is Mean, not Maximum or Minimum.  For every disk that
-> > lasts 10 years or more, there's an equal and opposite disk that dies
-> > within a few minutes.
-> 
-> It actually stands for Meaningless, I'm sure :-)  Vendors should be 
-> required to state this figure in terms of the number of unit failures 
-> they experienced running X units for T amount of time.
 
-It is not? I thoght it was just that: have 100 drives running for a year,
-one failes, gives you a MTBF of 100 years per drive. No?
 
-have fun
-	dirk
--- 
-Dirk Schenkewitz 
+On Fri, 14 Feb 2003, Hans Reiser wrote:
 
-InterFace AG                 fon: +49 (0)89 / 610 49 - 126
-Leipziger Str. 16            fax: +49 (0)89 / 610 49 - 83
-D-82008 Unterhaching         
-http://www.interface-ag.de   mailto:dirk.schenkewitz@interface-ag.de
+> Andreas Dilger wrote:
+>
+> >On Feb 14, 2003  13:17 +0300, Oleg Drokin wrote:
+> >
+> >
+> >>On Fri, Feb 14, 2003 at 03:13:16AM -0700, Andreas Dilger wrote:
+> >>
+> >>
+> >>>>Currently we panic if write to journal area fails. We report IO error to
+> >>>>userspace if non-journaled write fails it seems (I will check it again).
+> >>>>
+> >>>>
+> >>>I'm thinking "panic" isn't going to help the user's data any more than
+> >>>not commiting the change...  How about remount-ro, or have a mount option
+> >>>
+> >>>
+> >>SuSE people work on this.
+> >>
+> >>
+> >>
+> >>>like ext3 "errors={panic,remount-ro,warning}"?  If you marked the filesystem
+> >>>and/or journal in error and mount read-only, and force a full fsck at
+> >>>reboot time at least the user has a chance - otherwise the node might
+> >>>just panic in a loop.
+> >>>
+> >>>
+> >>It hangs on panic ;) (because it does BUG() ), so no cyclical reboot.
+> >>
+> >>
+> >
+> >Ah, you said panic, but panic != BUG...  There is a "reboot-on-panic" flag
+> >that is often set on servers so they don't sit stupidly when they could
+> >reboot and start working again.
+> >
+> >
+> >
+> >>There is even big chance that everything not touching problematic fs will
+> >>survive and continue to work.
+> >>Given that nobody runfs reiserfsck at boot, "full fsck" aproach won't work.
+> >>Ah, and reiserfsck ignores -a command line switch because
+> >>"we do not trust our fsck yet" (c) Hans.
+> >>
+> >>
+> >
+> >Yeah, I keep giving him good reasons to change his mind, even a little,
+> >like "have 'reiserfsck -a' just check the superblock and return with a
+> >code > 1 if there is an error" so that an admin can at least do something
+> >about it if the filesystem is broken, before it gets mounted/written to
+> >again and the brokenness multiplies unknown to the user...
+> >
+> I don't understand you.
+>
+> >
+> >Next, add journal replay to reiserfsck if it isn't already there,
+> >
+> Why, when it is in the kernel?
+Just to be certain, on read-only mount the journal replay is also done?
+This would then solve the above question.
+
+This would need support in the kernel to force read-only mount in case an
+error flag as proposed above is set. For redundancy this would need to be
+present in 2 places. (one place might be on the bad block..)
+
+
+
+>
+> > and
+> >_then_ do the same check as above, keeping a field in the journal header
+> >to synchronously write an error to in fatal cases, instead of into the
+> >superblock and where it is overwritten by journal replay.
+> >
+> >That is all e2fsck does for ext3 filesystems, and it only takes a fraction
+> >of a second to complete (no longer than it takes in-kernel journal replay
+> >to complete at mount time, really) but the user wins by being able to fix
+> >the filesystem before the whole system has booted and possibly corrupted
+> >more data.
+> >
+> >Regardless of whether reiserfsck is trusted or not to check/fix the
+> >whole filesystem automatically, the above is not a risky change.  If you
+> >wanted to go for more reliability, you could start adding quick "read
+> >only" checks at periodic intervals like ext2 even if you never fix the
+> >filesystem without user intervention.  The most common error we see on
+> >the ext3 these days is due to memory/disk corruption that is caught by
+> >the kernel or with a periodic check, which no amount of journaling can
+> >fix or prevent.
+> >
+> I hate it when booting causes me to get stuck waiting for an fsck.
+>
+
+So do I, its why i use Reiserfs...
+
+> Probably fsck is stable enough now that we should encourage people to
+> run it readonly regularly, but it should not be forced on them.
+>
+
+Is it then possible to give the -a switch a sensible meaning?
+
+> Maybe having some code to check whether fsck was run in the last 3
+> months, and if not then if the user types y in the next 30 seconds
+> during boot it will be run, would make sense.
+>
+Regards,
+
+Rudy
+
