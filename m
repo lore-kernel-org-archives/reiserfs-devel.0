@@ -1,52 +1,96 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: EVMS Reiser FSIM
-Date: Tue, 4 Jun 2002 19:10:45 +0400
-Message-ID: <20020604191045.A10459@namesys.com>
-References: <OFF33CCB39.8842A3DF-ON85256BCE.0050E23C@pok.ibm.com>
+From: berthiaume_wayne@emc.com
+Subject: RE: [PATCH CFT] tons of logging patches
+Date: Tue, 4 Jun 2002 11:48:45 -0400
+Message-ID: <93F527C91A6ED411AFE10050040665D0049BFAF9@corpusmx1.us.dg.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10503-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10504-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <OFF33CCB39.8842A3DF-ON85256BCE.0050E23C@pok.ibm.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve Pratt <slpratt@us.ibm.com>
-Cc: reiserfs-list@namesys.com
+To: mason@suse.com
+Cc: reiserfs-list@namesys.com, manuel.krause@mb.tu-ilmenau.de
 
-Hello!
+	Chris, isn't there a danger, remotely, that with data=ordered you
+could lose your data? For Ext3FS, if the machine should crash after the
+filesystem data is updated but before the metadata is updated, fsck(8) will
+reclaim the newly allocated blocks; therefore, the updated file is no longer
+correct.
+Wayne.
 
-On Tue, Jun 04, 2002 at 10:02:00AM -0500, Steve Pratt wrote:
- 
-> >What should I do to get something to appear in the disks/slices/whatever
-> >lists so I can play with it?
-> I need the kernel log and the Engine log (/var/log/evmsEngine.log) to be
-> sure what is going on, but my first guess would be that either you did not
-> select all of the right components in the kernel, or if you did that you
-> might have built them as modules and not loaded them. Specifically it looks
-> like the local device manager is missing.
+-----Original Message-----
+From: Chris Mason [mailto:mason@suse.com]
+Sent: Tuesday, June 04, 2002 9:12 AM
+To: Manuel Krause
+Cc: reiserfs-list
+Subject: Re: [reiserfs-list] [PATCH CFT] tons of logging patches
 
-Hm. Yes, I in fact had everything in modules.
-But I have expected evms to load all the stuff its needed once evms main module
-is loaded. 
-It would be helpful if help entry on EVMS suggest evms might be loaded as
-module, but then all of the other evms modules should be loaded by hand.
 
-> We recommend compiling all EVMS runtime plug-in that you plan to use
-> directly into your kernel.  It avoid the hassle of dealing with init
-> ramdisks and lodaing modules at the right time.  If you are really set on
+On Mon, 2002-06-03 at 23:28, Manuel Krause wrote:
 
-Since I am not planning to put my root on a EVMS volume yet, I think I can
-go with modules setup, I only need to load all the modules, it seems.
+> 
+> So, VMware is stable with it, too, on my well known "heavy-private-test" 
+> of it (running Norton SpeedDisk at least twice within a most recent 
+> VMware Win98). It doesn't show greatly different timings than to my 
+> setup before though having a different disk i/o pattern (due to the 
+> missing aa patches)... and me having a reduced RAM from 512to256MB at 
+> the moment. And I should be honest to say I can't give exact timings as 
+> the important disk contents changed during last weeks. But the 
+> disk-access-times/related-to-the-content are definitively _not_ higher 
+> than before!
 
-> Summary: please verify that at least 'local device manager' and 'DOS
-> partition manager' are built statically into the kernel, if not reconfigure
-> kernel and retry.  If they are, then send me the kernel and Engine logs and
-> I will see what is wrong.
+same speed on 1/2 the ram isn't bad ;-)
 
-Ok, thank you.  will try that.
+> 
+> > 
+> > Great to hear, thanks for trying things out.
+> > 
+> > data=logging will be the slowest mode for everything except mail servers
+> > and write heavy databases (or other apps that hammer on O_SYNC/fsync). 
+> > This is because all the data gets written twice, once to log and once to
+> > the main disk.  It helps synchronous writes by writing to the log in
+> > quick sequential bursts, and then writing back to the main disk in
+> > larger chunks.
+> 
+> Yes, I assumed/learnt that from your very previous explanations. But I 
+> don't see the point "slowest", so far, on here.
 
-Bye,
-    Oleg
+try dbench, or any streaming write.  It should be roughtly 1/2 as fast
+as the default mode.  If it isn't data=journal probably isn't really
+activated (it sends a printk on mount about using journaled data mode).
+
+> 
+> This is a home/single session ?non?-production system on here. 1 to 2 
+> IDE disks, one processor... notebook, you'd remember this setup from my 
+>   mails.
+> 
+> > 
+> > data=ordered will usually be fastest for streaming appends to a file. 
+> > The rest of the time it will be the same or slightly slower than the
+> > default (data=writeback).
+> 
+> What would be my recommended mount option later then (mentionned in the 
+> manpages or on the webpage?!) Mmmh: I see I test that at the moment...
+
+data=ordered will work best for most people.  The performance hit is
+very small, and you won't have any more garbage in files after a crash.
+
+> 
+> Why is no combo possible? Meant as: Could/would that bring advantages in 
+> future?!!
+
+Since there are no userspace transactions, data=journal is only useful
+in a very limited set of cases.  The fact that everything is logged
+allows me to cheat, and skip some of the steps to keep block allocations
+and deallocations safe in the writeback data mode.
+
+intermezzo is the only app that really needs data=journal with the rest
+of the FS mounted with some other write mode (for speed).  The patch has
+a way for them to enable data logging mode on a single file.
+
+I think I'll forward the patch announcement to the intermezzo list...
+
+-chris
+
