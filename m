@@ -1,36 +1,40 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: reiserfs and TUX2 - 2.4.18 or 2.4.19?
-Date: Fri, 20 Dec 2002 10:47:26 +0300
-Message-ID: <20021220104726.A23257@namesys.com>
-References: <1040346481.bb5f0760teodarren@myrealbox.com> <20021220091717.A10948@namesys.com> <20021220071131.GA8162@matrix.wg>
-Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12187-reiserfs=m.gmane.org@namesys.com>
+From: eazgwmir@umail.furryterror.org (Zygo Blaxell)
+Subject: Re: reiserfsck --rebuild-tree on a big filesystem
+Date: Fri, 20 Dec 2002 16:12:01 +0000 (UTC)
+Message-ID: <atvfgh$9tr$1@genki.hungrycats.org>
+References: <20021125143634.GC9006@mail.cekit.cz> <atsteb$44s$1@genki.hungrycats.org> <20021219200020.A7258@namesys.com> <att918$u36$1@genki.hungrycats.org>
+Return-path: <reiserfs-list-return-12188-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20021220071131.GA8162@matrix.wg>
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dirk Mueller <dmuell@gmx.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+In article <att918$u36$1@genki.hungrycats.org>,
+Zygo Blaxell <eazgwmir@umail.furryterror.org> wrote:
+>I guess I'll find out in 7 hours what the semantic pass will be like.
+>Fortunately I don't need to use this particular filesystem until 2003,
+>so there is time to run little experiments like this...
 
-On Fri, Dec 20, 2002 at 08:11:31AM +0100, Dirk Mueller wrote:
+reiserfsck has gotten to pass 3 and is now doing a search of the
+filesystem tree file-by-file.  It appears to be progressing without
+any major CPU or memory problems.  
 
-> >    If you'd have canilla 2.4.18, you'd need
-> >    2.4.18.pending and 2.4.19.pending
-> >    With RedHat some of these patches might be already included, so
-> >    you probably need to try and see it for yourself which ones are missing. 
-> Wouldn't it be better to push the changes into the vanilla kernel to save 
-> everyone from this patch nightmare?
+Traversing the filesystem tree on this machine (e.g. with 'find')
+normally takes 3 days, so I guess we'll know if it works just in time
+for Christmas.  ;-)
 
-Well, all of the changes are in latest kernel already (2.4.20 as of now).
-But the question was about using old kernel (well, may be not that old.
-And patched by RedHat. And this was 56 megabytes of patches last time I checked)
+Is it normal to see hundreds of 
 
-Bye,
-    Oleg
+	vpf-10680: The file [5029518 5034490] has the wrong block count in the StatData (16) - corrected to (8)
+
+messages?
+
+-- 
+Opinions expressed are my own, I don't speak for my employer, and all that.
+Encrypted email preferred.  Go ahead, you know you want to.  ;-)
+OpenPGP at work: 3528 A66A A62D 7ACE 7258 E561 E665 AA6F 263D 2C3D
