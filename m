@@ -1,11 +1,11 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Filesystem errors
-Date: Mon, 15 Jul 2002 10:20:26 +0400
-Message-ID: <3D3269AA.3000908@namesys.com>
+Date: Mon, 15 Jul 2002 10:20:44 +0400
+Message-ID: <3D3269BC.8040906@namesys.com>
 References: <200207160146.01440.cabernet@internode.on.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10999-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11000-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -53,7 +53,7 @@ Brian Marr wrote:
 >
 >  
 >
-did you fdisk without a reboot before mkreiserfsing?
+did you fdisk without a reboot before mkreiserfsing?   If yes, see FAQ.
 
 -- 
 Hans
