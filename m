@@ -1,37 +1,51 @@
-From: eazgwmir@umail.furryterror.org (Zygo Blaxell)
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: About direntries pointing to nowhere on reiserfs problem in 2.4
-Date: 24 Feb 2003 22:45:18 -0500
-Message-ID: <b3eose$crj$1@satsuki.furryterror.org>
-References: <20030220175309.A23616@namesys.com> <b3dluc$n39$1@satsuki.furryterror.org> <b3dluc$n39$1@satsuki.furryterror.org> <200302242159.15769.vitaly@namesys.com>
-Return-path: <reiserfs-list-return-12900-reiserfs=m.gmane.org@namesys.com>
+Date: Tue, 25 Feb 2003 10:04:59 +0300
+Message-ID: <20030225100459.A23204@namesys.com>
+References: <20030220175309.A23616@namesys.com> <b3dluc$n39$1@satsuki.furryterror.org>
+Mime-Version: 1.0
+Return-path: <reiserfs-list-return-12904-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <b3dluc$n39$1@satsuki.furryterror.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Zygo Blaxell <eazgwmir@umail.furryterror.org>
+Cc: reiserfs-list@namesys.com
 
-In article <200302242159.15769.vitaly@namesys.com>,
-Vitaly Fertman  <vitaly@namesys.com> wrote:
->> Reiserfsck takes 53 hours to scan everything on some of my machines,
->> which is a long time considering that I already know where all the
->> missing direntries are since they are recorded in various error log files.
->
->which version of reiserfsprogs do you use? and is this in the rebuild-tree mode?
->if it is, 3.6.5-pre1 had a speedup for pass0. 
+Hello!
 
-This is 3.6.5-pre1 in --fix-fixable mode.  600 GB of data, average file size
-12K.  It currently takes about 8-10 days to dump all of the data to tape.
+On Mon, Feb 24, 2003 at 12:49:00PM -0500, Zygo Blaxell wrote:
+> >   So we solved that with patch below (Zygo, others who think they have this problem,
+> >   please check).
+> I am building a kernel with the patch as I type this.  I'll know if it works 
+> in a few hours.
+> If it does work, I'll be running reiserfsck for the rest of the week to
+> clean out all those dead direntries on all my systems once and for all.
+> :-P
 
->P.S. btw, I am going to release a new version of fsck which has some on-boot 
->time checks. Is it possible to try it on your big partitions to fugure out 
->if it takes less then a few seconds?
+Actually I have different version that eventually will be pushed to Marcelo (iget5_locked
+backport). Unfortunatelly it is also touches NFS and Coda.
+(and I am not yet sure for NFS changes, though they are working for me).
 
-I could probably fit in a few short tests.
+> Reiserfsck takes 53 hours to scan everything on some of my machines,
 
--- 
-Zygo Blaxell (Laptop) <zblaxell@feedme.hungrycats.org>
-GPG = D13D 6651 F446 9787 600B AD1E CCF3 6F93 2823 44AD
+Wow.
+You probably do not have spare filesystem to run reiserfsck with profiling
+compiled in for us, though.
+
+> I don't suppose it's a quick or easy task to modify reiserfsck to just fix
+> _one_ missing directory entry, or to allow the kernel to unlink missing
+> direntries instead of returning EPERM?  Would it suffice to simply hack
+
+Well, that is in fact may be easy. (but that would not be a kernel you want to run
+every day ;) ).
+Also GNU rm checks file's mode prior to unlinking, I believe.
+And that won;t get rid on lost file you might have, too.
+
+Bye,
+    Oleg
