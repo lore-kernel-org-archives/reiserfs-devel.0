@@ -1,62 +1,55 @@
-From: Philippe =?ISO-8859-1?B?R3JhbW91bGzp?= <philippe.gramoulle@caramail.com>
-Subject: Re: reiserfsprogs-3.6.5-pre1
-Date: Thu, 5 Dec 2002 16:08:33 +0100
-Message-ID: <20021205160833.2ad4695e.philippe.gramoulle@caramail.com>
-References: <200212041852.14436.vitaly@namesys.com>
+From: Todd Lyons <todd@mrball.net>
+Subject: Re: non volatile ram devices
+Date: Thu, 5 Dec 2002 08:21:28 -0800
+Message-ID: <20021205162128.GC4334@mrball.net>
+References: <200212042059.35300.russell@coker.com.au> <20021205093215.B20015@namesys.com> <200212050936.26846.russell@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12119-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12120-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200212041852.14436.vitaly@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <200212050936.26846.russell@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; x-action="pgp-signed"
+Content-Transfer-Encoding: 7bit
+To: ReiserFS <reiserfs-list@namesys.com>
 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Hi Vitaly,
+Russell Coker wanted us to know:
 
-I rebuilt the 174Go partition which had wrong file sizes ( already corrected ) with the
-new reiserfsck 3.6.5-pre1 and as expected i can see much improvement in pass0:
+>It just generally isn't fast enough.  The servers in question have 4 * 72G 
+>U160 SCSI disks in RAID-5 arrays on MegaRAID controllers.  They are designed 
+>to handle 300,000 accounts for POP and IMAP.
+>At times of high load there's 20 reads per second and 160 writes per second.
 
- Pass 0:
-   	 ... left 0, 7385 /sec
- Pass 1:
-  	 ... left 0, 2126 /sec
- Pass 2:
- 	 ... left 0, 170 /sec
+Let me ask some really stupid questions.
+What kind of logging are your pop, imap, and mail services doing?  If
+logging to syslog, redirect the mail logging facility to tty12 instead
+of a file on the harddrive.  If syslog is logging to a network log
+server, then there's not much you can do.  If logging to /dev/null, this
+is a non-issue.  Is the Maildir spool on its own partition? (I can't see
+how it's not since it's you, Russell).  Is /var/log on its own
+partition.
 
-Overall, it took 6 hours instead of 8 which is a very nice improvement.
+What I'm getting at with all of this is that syslog can create
+significant load on a machine if the machine is really busy.
 
-I have another data set that i'll give 3.6.5-pre1 a try.
+Russell, if you've already tried all this, happily ignore this message
+and let us know what you find.
+- -- 
+Blue skies...		Todd
+| Get a bigger hammer!   |  Sometimes you get what you want.      |
+| http://www.mrball.net  |  Sometimes you get experience.         |
+| http://faq.mrball.net  |                     --unknown origin   |
+   Linux kernel 2.4.19-16mdk   1 user,  load average: 0.00, 0.00, 0.00
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
 
-Just a note: It would be nice to put a timestamp between the different passes
-so we can be sure about the time it takes, and not only look at the number of ops/sec.
-
-Besides, no problem noted with --rebuild-tree with 3.6.5-pre1.
-
-Thanks,
-
-Philippe
-
-
-On Wed, 4 Dec 2002 18:52:14 +0300
-Vitaly Fertman <vitaly@namesys.com> wrote:
-
-  |  
-  |  Hi all, 
-  |  
-  |  The new pre version is available at our ftp site:
-  |  ftp.namesys.com/pub/reiserfsprogs/pre
-  |  
-  |  It includes speedup for pass0, which becomes quite important for 
-  |  hignly fragmented object id maps, and a few fixed bugs:
-  |  - bug in balancing code led to abort when a leaf could be viewed 
-  |  as a block of another type;
-  |  - bug in checking statdata size for symlinks allowed to have 
-  |  symlinks with holes at the end.
-  |  - bug in direct-indirect item convertion let symlinks to be created 
-  |  of wrong format.
-  |  
+iD8DBQE9730IIBT1264ScBURAr7lAJ4+19Qrj/aeWSgrOGLHKRvw7jRVqgCg5gZb
++za9M955ADOxSXxlVcOOV6Y=
+=e0ai
+-----END PGP SIGNATURE-----
