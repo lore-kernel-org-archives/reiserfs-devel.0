@@ -1,43 +1,34 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: latest reiser4 release contains performance killing bug fix, don't
- use it
-Date: Tue, 02 Nov 2004 10:38:39 -0800
-Message-ID: <4187D42F.9040707@namesys.com>
-References: <4187671E.50601@namesys.com>
+From: Piotr Neuman <sikkh@wp.pl>
+Subject: Participation in developement of Reiser4
+Date: Tue, 2 Nov 2004 23:42:02 +0100
+Message-ID: <200411022342.02126.sikkh@wp.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22255-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22256-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4187671E.50601@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "E.Gryaznova" <grev@namesys.com>
-Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-dev <reiserfs-dev@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-We are pulling it from our website now, and will release a proper bug 
-fix in a few days.  It is a hard to hit bug.
+Hello
 
-Hans
+I'm looking for some intresting projects to devote my spare time to. Reiser v4 
+is a very promising one, so I would like to ask wheter there are some tasks 
+that a relative newbie in kernel programming like me could do. Something like 
+kernel-janitor like tasks maybe (code cleanup) or maybe reiser4 tools.
 
-E.Gryaznova wrote:
+I'm a bit familiar with linux VFS if that can help (I did some work on User 
+Mode Linux filesystem called humfs).
 
-> Hello,
->
-> reiser4 losses the READ performance up to x3 times (!) due to
->
-> ChangeSet@1.1703, 2004-10-27 18:10:49+04:00, vs@tribesman.namesys.com
->  get_user_pages to avoid pagefaults on copy_from/to_user
->
->
-> http://www.namesys.com/intbenchmarks/mongo/04.11.01/256MB.RAM/old_vs_current/r4_performance_degradation.html 
->
->
-> Thanks,
-> Lena
->
->
->
+I hope I could help...
 
+Regards
+
+Piotr Neuman
+
+ps. I know I could just start making patches to reiser4 and send them right to 
+namesys.com but I don't know where to start/what to do ;-)
