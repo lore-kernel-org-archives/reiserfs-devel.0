@@ -1,75 +1,77 @@
-From: "Sachin Durge" <sachindurge@hotmail.com>
-Subject: HELP !!!!!!!! Cant  compile the application  including reiserfs .h files
-Date: Thu, 16 Sep 2004 20:10:12 +0530
-Message-ID: <BAY16-DAV81DdQcp0Tk00000c52@hotmail.com>
-Reply-To: "Sachin Durge" <sachindurge@hotmail.com>
+From: Will Smith <will@willsmith.org>
+Subject: Re: Benchmark : ext3 vs reiser4 and effects of fragmentation.
+Date: Thu, 16 Sep 2004 22:50:43 +0800
+Message-ID: <4149A843.7010804@willsmith.org>
+References: <4148BC0E.5010509@willsmith.org> <20040916085248.GI5137@backtop.namesys.com> <20040916130809.GI26192@nysv.org>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_02E7_01C49C29.2C6E6100"
-Return-path: <reiserfs-list-return-21813-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-21814-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20040916130809.GI26192@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
+Cc: reiserfs-list@namesys.com
 
-------=_NextPart_000_02E7_01C49C29.2C6E6100
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 
-Hi ALL=20
-I want  write a  application  which  will  read  the reiserfs files even =
-when the file system  is not  mounted  directly  from the Hard disk=20
-I tried to  include the   headerfiles=20
-    reiserfs_fs_sb.h
-    reiserfs_fs_i.h
-    reiserfs_fs.h
-I get  lots of error and warning messages .
-Can any  one tell  me how should i  proceed  ......................
+Markus T=F6rnqvist wrote:
 
-Thanks & Regards=20
-    Sachin .
-------=_NextPart_000_02E7_01C49C29.2C6E6100
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+>>yes, we had similar results.  it is so cool that reiser4 repacker effect
+>>is visible outside namesys :)
+>=20
+> S'cuse me, but why does it have to be run several times?
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; =
-charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.2800.1400" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2>Hi ALL </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>I want&nbsp; write a&nbsp; =
-application&nbsp;=20
-which&nbsp; will&nbsp; read&nbsp; the reiserfs files&nbsp;even when the =
-file=20
-system&nbsp; is not&nbsp; mounted&nbsp;&nbsp;directly&nbsp; =
-from&nbsp;the Hard=20
-disk </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>I&nbsp;tried to&nbsp; include the =
-&nbsp;=20
-headerfiles </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>&nbsp;&nbsp;&nbsp; =
-reiserfs_fs_sb.h</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>&nbsp;&nbsp;&nbsp; =
-reiserfs_fs_i.h</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>&nbsp;&nbsp;&nbsp; =
-reiserfs_fs.h</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>I get&nbsp; lots of error and warning =
-messages=20
-</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Can any&nbsp; one tell&nbsp; me how =
-should i&nbsp;=20
-proceed&nbsp; ......................</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2>Thanks &amp; Regards </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>&nbsp;&nbsp;&nbsp; Sachin=20
-</FONT></DIV></BODY></HTML>
+I don't pretend to know the maths/logic of why, but from the reiser4=20
+description (http://www.namesys.com/v4/v4.html#repacker)
 
-------=_NextPart_000_02E7_01C49C29.2C6E6100--
+"This repacker goes through the entire tree ordering, from left to right=20
+and then from right to left, alternating each time it runs."
+
+"In the absence of FS activity the effect of this over time is to sort=20
+by tree order (defragment), and to pack with perfect efficiency."
+
+
+My testing showed that this is indeed the case -
+
+If I ran the repacker once (say left to right), the fragmentation was=20
+not fully reduced.
+
+If I ran the repacker several times (left->right, right->left, and
+repeat) then fragmentation fell down to almost 0.
+
+
+Userspace Tool for Repacker
+----------------------------
+
+I take it from an earlier comment by Hans that the repacker is not
+intended to be used yet?  If it is indeed ready for primetime,
+is anybody working on userspace tools
+(/etc/cron.daily/repacker.reiser4 or similar?)  I'd be happy to
+write these if nobody else is - but it will be in /bin/bash shell.
+
+My proposed design specs would include:
+
+1) runs in /etc/cron.daily near the end (since cron causes lots of
+    disk activity)
+2) the last-run-direction should be persistently stored per filesystem
+3) parallel operation on multiple filesystems where possible,
+    but filesystems on a single physical device should
+    run in serial (same as /sbin/fsck -A)
+4) some kind of config file in /etc/, parameters could include
+     o) maximum run time, global and per filesystem
+     o) run/dont run flag, global and per filesystem
+
+
+Any thoughts?  Shall I go ahead and write a first cut?
+
+
+
+Will Smith
+
+
+
+
+
