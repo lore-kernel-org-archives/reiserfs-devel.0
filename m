@@ -1,41 +1,39 @@
 From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: phantom corruptions
-Date: Sat, 31 Aug 2002 18:04:07 +0400
-Message-ID: <200208311804.07303.vitaly@namesys.com>
-References: <m3it1shx0d.fsf@multivac.cwru.edu>
+Subject: Re: --rebuild-sb
+Date: Sat, 31 Aug 2002 18:40:49 +0400
+Message-ID: <200208311840.49967.vitaly@namesys.com>
+References: <93F527C91A6ED411AFE10050040665D0049BFF3D@corpusmx1.us.dg.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11354-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11355-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <m3it1shx0d.fsf@multivac.cwru.edu>
+In-Reply-To: <93F527C91A6ED411AFE10050040665D0049BFF3D@corpusmx1.us.dg.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Paul Jarc <prj@po.cwru.edu>, reiserfs-list@namesys.com
+To: berthiaume_wayne@emc.com, reiserfs-list@namesys.com
 
 
 Hi, 
 
-On Saturday 31 August 2002 01:11, Paul Jarc wrote:
-> I'm using Linux kernel 2.4.18 and reiserfsprogs 3.6.3.  I have two
-> filesystems where reiserfsck --check reports that there are
-> corruptions which can be fixed with --fix-fixable, but --fix-fixable
-> reports that there are no corruptions.  The full output of is
-> available here:
-> http://multivac.cwru.edu./prj/reiser.tar.gz
-> Should I resort to --rebuild-sb or --rebuild-tree?  Out of curiosity,
-> can those operations do any harm to a noncorrupted filesystem?
->
->
-> paul
+On Saturday 31 August 2002 00:49, berthiaume_wayne@emc.com wrote:
+> 	Helllo Vitaly. Going through the reiserfsck manpage I see exit codes
+> that tell me to use --fix-fixable and --rebuild-tree; however, I can't seem
+> to find anything for --rebuild-sb. Outside of parsing stdout, is there
+> another way to determine from an undocumented exit code the need for
+> --rebuild-sb? 	While testing a double power failure scenario I was able to
+> corupt the superblock and I'd like to automate my recovery scripts. So far
+> we start with a reiserfsck -q --check /dev/<something> >> <some log file>
+> and based on the exit code run a --fix-fixable or --rebuild-tree next. Your
+> advice would be most appreciated.
 
-nlinks are not fixed because these files were unlinked but their bodies 
-left in the tree somehow. So you have some files in the tree which are 
-unreachable but the tree is consistent and you won't have any problem 
-if continue working with it. nlink check and its fixing on fix-fixable 
-was not mature in 3.6.3 and it was changed in 3.6.4-pre1.
+rebuild-sb was not involved as in a half of cases people run reiserfsck 
+on the partition that has never contained reiserfs. I do not think that 
+you would like to get "rebuild-sb is needed" instead of "no reiserfs found" 
+when running reiserfsck on your ext2 partition. rebuild-sb should be run on 
+the partition only after you checked twice that the partition is correct.
 
 -- 
 
