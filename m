@@ -1,19 +1,19 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: Fibration questions
-Date: Wed, 21 Jul 2004 00:13:37 -0500
-Message-ID: <40FDFB81.3080701@slaphack.com>
-References: <20040720083108.73C4C15DCA@mail03.powweb.com>
+Subject: Re: Reiserfs Newbie - ***** HELP REQUIRED *****
+Date: Wed, 21 Jul 2004 00:18:43 -0500
+Message-ID: <40FDFCB3.7020202@slaphack.com>
+References: <40FCD992.1060303@lucent.com> <1105.10.0.0.50.1090320567.squirrel@10.0.0.50> <40FCF9B5.7060908@lucent.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19714-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19715-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040720083108.73C4C15DCA@mail03.powweb.com>
+In-Reply-To: <40FCF9B5.7060908@lucent.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Dabbs <david@dabbs.net>
+To: SivaramaKrishnan Nageswaran <nsiva@lucent.com>
 Cc: reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
@@ -22,44 +22,63 @@ Hash: SHA1
 
 
 
-David Dabbs wrote:
-|>Hans Reiser wrote:
-|>| David Masover wrote:
-|>|
-|>|> Why beyond?  Ask each fs object (without knowing its name), "What is
-|>|> your primary type?"  Put like-typed objects together.  Simple.
-|>|
-|>| Except that at look up time all you know is the name, and if the type is
-|>| not in the name then you cannot fibrate by it.
-|>
-|>I must not understand fibration.  Do you have to know the fibration of
-|>an object to find it?
-|>
+SivaramaKrishnan Nageswaran wrote:
+| Kerin Millar wrote:
 |
+|>> It would be really great if any of you can provide some links / pointers
+|>> on other Journaling File Systems.
+|>>
+|>
+|>
+|> A reasonable place to start might be Daniel Robbins' Advanced Filesystem
+|> Implementor's Guide:
+|>
+|> http://www-106.ibm.com/developerworks/library/l-fs.html
+|>
+|> The entire series discusses the origins, characteristics and usage of the
+|> major journalled filesystems available for Linux and should also provide
+|> you with some interesting links in lieu of the topic.
+|>
+|> Regards,
+|>
+|> --Kerin Francis Millar
+|>
+|>
+| Hi Kerin,
 |
-| Fibration is simply a means to physically group together filesystem
-objects
-=>> MEGA SNIP <<=
+| Thanks for providing the link. I had actually gone through those and
+| those are published in the year 2001 and many things might have changed
+| by this time. So I thought I could get the current status to start with
+| my dissertation.
 
-So, what you're trying to say is, yes, because it's part of the key?
+Are you looking for usage statistics, installation instructions, or a
+whitepaper?
 
+That is, do you want to know how popular it is, how to use it, or what
+it is (design details)?
+
+The latter can be found somewhere on namesys.com.  Read the one for
+reiser4.  Should be on the homepage.  Will blow your mind.
+
+I should warn you:  after reading that, you may have trouble coming up
+with something original :P
 
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQP37gHgHNmZLgCUhAQJ0xxAAjsgWwIjjrM/mjZTkWgR0L5ih3bAIdWhB
-gXZtcXkzqOYkEi4slSdBpGaTgz1UytuS6eKWSU46sRTQAp9AOH9RAJrdPYBWCKHQ
-K1TGRqK+BhbM8Ygk7B389zr84KO8wI+ekY5a2ErAYNZ+s41xztBfC0SsMPdzTflQ
-T2ePnPzRQjImARjwhYELgXsUVDmXM9nO694oLoYhUvdRzMZfpEeL/S1duCbtr4zQ
-o7FCk487opiE4q0HfRS+dXdJh06daOKI0uCKUZWCVeZkKoASaCo9Zy8rVfdLORUp
-weRSfONRS2l/DHgpu0hfmnZ3GSfTijugDzvGt6L8Xgae++sj7FcoRWVUK3QNWlwg
-M74dRy85vPEYdflHAqqD8az1AGVsj6DWz/GcXpwQH7gutfpcmk6rdKgxt0YlLC3p
-NEAtqHwT/S7T1/7ya8L9UU5kqub861xiJ1NZacZ1V0YTN8jLAxeXqX3lGNJMYnPy
-Vo+esgMGFbksFV4adS27tbX1jxLbn/Y9s1A9UdMmqN7td6APEXzIafwcWo+jBZdS
-TXWEletyoT5CbtrUISlXzgb9CWFhyzofwtl6wHR3NBuSmesIsgtBZi7/nil1TDX9
-y7w3Hrhpgd1at2ch0JsnB+X5J7jdjgvQMmKBms0y/qk6r/KLP5hRMjrA73YmBrup
-rEhzNyWMzgo=
-=8NIG
+iQIVAwUBQP38sngHNmZLgCUhAQLJFA/+OFy/ho8rRkzpNQs7A3JaXC0Oe4jhAktg
+ZTgcBHXFetlXpQFxO/MKYaLLlwMUbm7dZhYCeDNqBjKBuS9eSzltTTNmzKSd7vbR
+7ojieZjCYsQnQ+0bqhK7ofOyks+5FXvDr40Q3IQOSmvltLjUFs90lmN0lP381txP
+XoQUNgHL58mepYgmVy2Je8XLVWO57E5KWHUPGAPtx6EqvuLC5JXVTAp/c5aVumma
+jDRqmfgyPPAwmgj9M4mvY4Nxnj6O9uplmrvIw4q9kO7P0YZrc2qwElttqCWL9DFE
+XJenoPB311GskwYHGmmLviSPrW3qfs8lWLQbjBUFY9eis8UjICuVJHhsW40XxJQl
+qT+FLBM2xrK0CiNpupL1QVVVJAGXeC/L+fjvdWxkg0uIbIuzHuto4HPnSMycbpE3
++6JWD8piug8TIxtsbOn9sIgApfYiiLQdBADnoGOZTmPa0lEBXl81EUFb8YKMq/ES
+pZWRU3KR78J/43wDnashXNp+k2O4Aqg05yL5Rfeo+OEkqsO+YFQsY4NNULgCIT4h
+BPgGXW+aFBTrnIvARbWYBCn4tgqBj1l/5096a5Rm65UPLRjZyoFuFoSnEBjRZ/Hb
+BAQ2Xa+TrsQEvA1MjSg1NX2Ptpvm+Oh3f+/R3Z/4gI4WV++0NAkEQ/1sQ0uEydjk
+k8GqLH+YBN8=
+=tBvy
 -----END PGP SIGNATURE-----
