@@ -1,69 +1,95 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: 2.6.0-test6 crash while reading files in /proc/fs/reiserfs/sda1
-Date: Thu, 2 Oct 2003 14:51:10 +0400
-Message-ID: <16252.798.375208.261677@laputa.namesys.com>
-References: <1064936688.4222.14.camel@localhost.localdomain>
-	<200309302006.32584.vitaly@namesys.com>
-	<1065019441.4226.1.camel@localhost.localdomain>
-	<16251.5348.570797.101912@laputa.namesys.com>
-	<20031001184338.GW7665@parcelfarce.linux.theplanet.co.uk>
-	<16251.63770.622805.143036@laputa.namesys.com>
-	<20031002103550.GB7665@parcelfarce.linux.theplanet.co.uk>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: file corruption, advice needed
+Date: Thu, 2 Oct 2003 15:40:28 +0400
+Message-ID: <200310021540.28479.vitaly@namesys.com>
+References: <3F7BF9EA.3090404@g-house.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15766-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15767-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20031002103550.GB7665@parcelfarce.linux.theplanet.co.uk>
+In-Reply-To: <3F7BF9EA.3090404@g-house.de>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: viro@parcelfarce.linux.theplanet.co.uk
-Cc: Zan Lynx <zlynx@acm.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Christian <evil@g-house.de>, reiserfs-list@namesys.com
 
-viro@parcelfarce.linux.theplanet.co.uk writes:
- > On Thu, Oct 02, 2003 at 02:08:26PM +0400, Nikita Danilov wrote:
- > > What about creating fake struct vfsmount for /proc/fs/reiserfs/<devname>
- > > and attaching it to the super block of /<mountpoint>? After all
- > > /proc/fs/reiserfs/<devname> is just a view into /<mountpoint>. This will
- > > automatically guarantee that /<mountpoint> cannot be unmounted while
- > > files in /proc/fs/reiserfs/<devname> are opened. Will this screw up
- > > dcache?
- > 
- > I don't see what it would buy you - you get to revalidate the pointer to
- > vfsmount instead of revalidating pointer to superblock, which is not easier.
+On Thursday 02 October 2003 14:11, Christian wrote:
+> Hi,
 
-I thought that opening procfs file would do mntget() that will pin super
-block of host file system. Wouldn't it?
+Hi
 
- > sget()-based revalidation actually works OK - see previous reply for details.
- > With optimistic sget() (which we should've done a long time ago) it's
- > actually cheaper than your original "search by dev_t" - you are looking
- > only through reiserfs superblocks instead of all superblocks in system.
+> recently i noticed some corrupt (only 1 really, about 9 MB big) or even
+> disappeared (say a dozen or perhaps more).
+> i run reiserfsck on the very partition while it was mounted RO, no
+> corruptions were found. should i trust it (and blame some application
+> for the messed up files) or should i try with --rebuild-sb (needs a
+> --rebuild-tree afterwards, right?) ?
 
-Yes, I agree.
+if reiserfsck does not find any corruption that means that reiserfs on-disk
+structures are consistent. no rebuild operation is needed.
 
- >  
- > > Yes, possible. I had similar problem in reiser4 also: for some seq_file,
- > > x_start() allocated some data structure (struct x_struct) that is used
- > > by x_next(), x_show(), and is deallocated in x_stop(). As x_struct is
- > > per read invocation rather than per file it cannot be stored in seq_file
- > > itself. I had to resort to returning x_struct from x_start() and passing
- > > it without change through x_next()'s. Thing actually changed by x_next()
- > > was embedded in x_struct. Last x_next() had to deallocate x_struct and
- > > to return NULL (much like your example above).
- > 
- > Umm...  And what's the problem with that?  If your context is created by
- > ->start() and is needed by ->next() and ->stop(), the above is obvious
- > solution - you are already passing opaque pointer through that sequence,
- > so that's about as straightforward as it gets...
 
-It looks unnatural to return constant from ->next(), hiding mutable part
-inside.
+> i have to admit, that i had "not so good" experience with --rebuild-*
+> operations, but this was 1 or 2 years ago.
+>
+> so, can you give me advice on this? should i still backup this parition?
+> (it's my root ( / ) partition, so it's not that important)
 
-Also code duplication in ->next() and ->stop(). No objective reasons,
-but new interface will provide more clean (and intuitive to me)
-separation of error reporting, iteration context, and iteration cookie.
+reiserfsck is considered as stable now, but backups are always useful, 
+thus you would have this dozen of files backuped now.
 
-Nikita.
+
+-- 
+Thanks,
+Vitaly Fertman
+
+
+> this is with Debian/stable i386 (AMD K7 SMP), reiserfsprogs 3.6.11.
+> debugreiserfs on this rw mounted parition shows:
+>
+> --------
+> root@atlant:~# debugreiserfs /dev/sda1
+> debugreiserfs 3.6.11 (2003 www.namesys.com)
+>
+>
+> Filesystem state: consistency is not checked after last mounting
+>
+> Reiserfs super block in block 16 on 0x801 of format 3.6 with standard
+> journal
+> Count of blocks on the device: 2239484
+> Number of bitmaps: 69
+> Blocksize: 4096
+> Free blocks (count of blocks - used [journal, bitmaps, data, reserved]
+> blocks): 680307
+> Root block: 36301
+> Filesystem is NOT cleanly umounted
+> Tree height: 5
+> Hash function used to sort names: "r5"
+> Objectid map size 26, max 972
+> Journal parameters:
+>          Device [0x0]
+>          Magic [0x6961a7e1]
+>          Size 8193 blocks (including 1 for journal header) (first block 18)
+>          Max transaction length 1024 blocks
+>          Max batch size 900 blocks
+>          Max commit age 30
+> Blocks reserved by journal: 0
+> Fs state field: 0x0:
+> sb_version: 2
+> inode generation number: 5996064
+> UUID: 00000000-0000-0000-0000-000000000000
+> LABEL:
+> Set flags in SB:
+> root@atlant:~#
+> -----------
+>
+> i can provide more information / fsdumps if there is interest. but i
+> think it's rather hard to do anything now, because i don't even know if
+> it is a filesystem thing anyway.
+>
+> Thank you for your time,
+> Christian.
+
