@@ -1,59 +1,59 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: rebuild-tree fails in pass 2
-Date: Thu, 15 Jan 2004 21:58:25 +0300
-Message-ID: <200401152158.25992.vitaly@namesys.com>
-References: <400692d3.46c9.0@cpinternet.com>
+From: Neil Robinson <neilr@superbase.co.uk>
+Subject: Re: 3.6.25 - Journal replayed back to 3 weeks ago
+Date: Thu, 15 Jan 2004 19:19:52 +0000
+Message-ID: <1074194392.5141.99.camel@neilvaiogt.superbase.co.uk>
+References: <1073933244.2405.44.camel@neilvaiogt.superbase.co.uk>
+	 <1073934293.32706.861.camel@tiny.suse.com>
+	 <1074144196.2397.38.camel@neilvaiogt.superbase.co.uk>
+	 <1074178426.29550.19.camel@tiny.suse.com>
+	 <1074184418.2397.84.camel@neilvaiogt.superbase.co.uk>
+	 <1074189367.29546.40.camel@tiny.suse.com>
 Mime-Version: 1.0
-Content-Type: Multipart/Mixed;
-  boundary="Boundary-00=_RLuBAk8BS4kVlBB"
-Return-path: <reiserfs-list-return-16530-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16531-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <400692d3.46c9.0@cpinternet.com>
-Content-Disposition: inline
+In-Reply-To: <1074189367.29546.40.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: mharnois@cpinternet.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list@namesys.com
 
---Boundary-00=_RLuBAk8BS4kVlBB
-Content-Type: text/plain;
-  charset="koi8-r"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+On Thu, 2004-01-15 at 17:56, Chris Mason wrote:
+> On Thu, 2004-01-15 at 11:33, Neil Robinson wrote:
+> 
+> > > Ok, please tell me more about the vmware setup.  Is are the vmware
+> > > drives configured to do copy on write?
+> > 
+> > According to the documentation, changes made to the virtual drives are
+> > committed to the physical drive immediately. Here is the salient info
+> > from the dmesg:
+> 
+> vmware has a mode where the changes are written to a log file instead of
+> to the main file.  The client doesn't see things are split between two
+> files, since vmware exports them as a single device.  This allows you to
+> do fancy things like roll back changes, or share a base file between two
+> hosts and have changes to into private files.
+> 
+> It's possible that you're in this mode and somehow lost a log file.
+> 
+> Are the virtual drives being exported to linux real block devices in
+> windows, or are the files on some windows filesystem?
 
-On Thursday 15 January 2004 16:17, Michael Harnois wrote:
-> None of the above. It first failed from a Debian installation,
-> then I rebuilt it from scratch and got the same error. It
-> doesn't fail checking any of my other partitions, just this
-> one, and it dies in the same spot each time.
+Uh oh, I think I now know what happened. Ouch. I was not clear what the
+REDO files were for, since I seemed to have lots of them taking up a
+considerable amount of drive space. I deleted them (probably taking all
+of my changes with them). On the whole, I am quite relieved. Although I
+did it to myself (this is my first experience using vmware), I realize
+now what happened and it won't happen again. Even more important, it
+seems my problems have nothing to do with the Reiser File System which
+is also a relief. I wish to apologize to you and everyone on the list
+for taking up your time with soething that, as it turns out, has nothing
+really to do with you.
 
-yes, it was a bug. The patch attached will solve the problem.
+Thanks for all of your help.
 
--- 
-Thanks,
-Vitaly Fertman
---Boundary-00=_RLuBAk8BS4kVlBB
-Content-Type: text/x-diff;
-  charset="koi8-r";
-  name="3.6.11_pass2_bitmap_abort.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename="3.6.11_pass2_bitmap_abort.patch"
-
-diff -Nru a/reiserfsprogs/fsck/pass2.c b/reiserfsprogs/fsck/pass2.c
---- a/reiserfsprogs/fsck/pass2.c	Thu Jan 15 20:59:43 2004
-+++ b/reiserfsprogs/fsck/pass2.c	Thu Jan 15 20:59:43 2004
-@@ -491,7 +491,9 @@
- 
-     for (i = 0; i < 2; i++) {
-         j = 0;
--        while (reiserfs_bitmap_find_zero_bit (fsck_uninsertables (fs), &j) == 0) {
-+        while ((j < fsck_uninsertables(fs)->bm_bit_size) && 
-+	       reiserfs_bitmap_find_zero_bit(fsck_uninsertables(fs), &j) == 0) 
-+	{
- 	    bh = bread (fs->fs_dev, j, fs->fs_blocksize);
- 	    if (bh == 0) {
- 	        fsck_log ("pass_2: Reading of the block (%lu) failed on the device 0x%x\n",
-
---Boundary-00=_RLuBAk8BS4kVlBB--
+Ciao, Neil
 
