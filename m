@@ -1,52 +1,43 @@
-From: Matthew Toseland <mtoseland@blueyonder.co.uk>
-Subject: Re: Howto mount without replay?
-Date: Tue, 14 May 2002 23:21:55 +0100
-Message-ID: <20020514222155.GD12918@amphibian.dyndns.org>
-References: <Pine.LNX.4.44.0205022236450.22979-100000@mooru.gurulabs.com> <Pine.LNX.4.44.0205022252320.22979-100000@mooru.gurulabs.com>
+From: grobe@gmx.net
+Subject: corrupted fs: bitmap does not match to the correct one....
+Date: Wed, 15 May 2002 14:59:37 +0200 (MEST)
+Message-ID: <3066.1021467577@www49.gmx.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Km1U/tdNT/EmXiR1"
-Return-path: <reiserfs-list-return-10307-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10308-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44.0205022252320.22979-100000@mooru.gurulabs.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Dax Kelson <dax@gurulabs.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
---Km1U/tdNT/EmXiR1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Thu, May 02, 2002 at 10:53:52PM -0600, Dax Kelson wrote:
->=20
-> I don't care about this filesystem or drive other than I need to get a fe=
-w=20
-> files off of it.
->=20
-> Is there anyway to mount it without it attempting the log replay?
-Can you dd the whole partition to a (writable) file somewhere, then mount -=
-o loop
-that?
->=20
-> Dax
->=20
->=20
+I have a bad problem with my reiserfs. I got a lot of SCSI-errors in the
+logs, and did a reiserfsck --rebuild-tree. Than, I checked the (hopefuly) fixed
+fs, and now I get errors:
 
---Km1U/tdNT/EmXiR1
-Content-Type: application/pgp-signature
-Content-Disposition: inline
+[...]
+node (9614688) with wrong level (1) found in the tree (should be 3)
+[...a lot of this]
+free block count 70151604 mismatches with a correct one 70141253
+on-disk bitmap des not match to the correct one. 8134442 bytes differ
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.6 (GNU/Linux)
-Comment: For info see http://www.gnupg.org
+If I try to mount the fs, mount tells me "no directory"...
 
-iD8DBQE84Y4DmlVGrEH/+qIRAosjAJ48yhPGZFXyElVBRQgtnYhLdRmY/ACfdwp3
-wYDlrLBU0MjVsngnAuKzeZU=
-=GFf+
------END PGP SIGNATURE-----
+I have resized the fs in the past, some months ago... is it possible that
+these errors result from a bad resize action? The fs was up for quite a long
+time, is it possible that an obviously working fs with errors gives errors
+after that long time?
 
---Km1U/tdNT/EmXiR1--
+Ok, I am getting a coffe... having a bunch of angry users behind me ;-) I
+just would like to know if there is a chance to restore the fs, or should I
+just take the backup and build a new fs?
+
+Thank You, CU, Lars.
+
+-- 
+GMX - Die Kommunikationsplattform im Internet.
+http://www.gmx.net
+
