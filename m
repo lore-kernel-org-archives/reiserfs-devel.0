@@ -1,33 +1,40 @@
-From: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
-Subject: Re: 2.4.21-rc3
-Date: Fri, 23 May 2003 19:43:26 +0200
-Message-ID: <m3adddftj5.fsf@merlin.emma.line.org>
-References: <200305232256.17604.russell@coker.com.au>
+From: Bernd Schubert <bernd-schubert@web.de>
+Subject: Re: no further nfsd-fh: found a name that I didn't expect
+Date: Fri, 23 May 2003 20:20:36 +0200
+Sender: Bernd Schubert <Bernd.Schubert@tc.pci.uni-heidelberg.de>
+Message-ID: <200305232020.36324.bernd-schubert@web.de>
+References: <200305231703.47899.bernd-schubert@web.de> <20030523151835.GB9289@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14234-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14235-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200305232256.17604.russell@coker.com.au> (Russell Coker's
- message of "Fri, 23 May 2003 22:56:17 +1000")
+In-Reply-To: <20030523151835.GB9289@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: 'reiserfs' <reiserfs-list@namesys.com>
 
-Russell Coker <russell@coker.com.au> writes:
+> Hm. I thought that iget5_locked patch had wrong port to 2.4.20 and
+> everybody had problems with it. There was another minimal 2.4.20 patch that
+> only touched reiserfs stuff and that was recommended to use.
 
-> I've noticed that the modules ide-taskfile.o and ide-io.o depend on each other 
-> if you compile the 2.4.21-rc3 with IDE as modules.
+Oh sorry, actually I was referring to the minimal patch.
+
 >
-> Is this a bug in the kernel or are we supposed to use a new module loader that 
-> can resolve such things?
+> > ever again. Well, we once rebooted and used by accident the wrong
+> > kernel-image and of course had problems again until the next reboot.
+> >
+> > Btw, is the iget4()-fix in 2.4.21-rc3 the same patch ?
+>
+> No, this is not iget5_locked (we plan to push it in 2.4.22pre time),
+> this is minimal fix instead.
 
-Kernel bug. IDE doesn't work as a module currently. IMHO, the
-corresponding configuration option should be made "yes/no" rather than
-"yes/module/no" for the time being. I posted such a suggestion to
-linux-kernel earlier today ("yesterday" for Australians at home :-)
+Great, so we won't see this problem even without patching.
 
--- 
-Matthias Andree
+
+Have a nice weekend,
+	Bernd
