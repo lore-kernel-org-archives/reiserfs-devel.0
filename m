@@ -1,31 +1,33 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Re: Re: [PATCH CFT] tons of logging patches
-Date: Thu, 06 Jun 2002 06:59:15 +0200
-Message-ID: <3CFEEC23.10707@mb.tu-ilmenau.de>
-References: <1023076301.22608.1778.camel@tiny>	<3CFC1CB5.8040102@mb.tu-ilmenau.de>	<1023157228.31475.38.camel@tiny> 	<3CFC33F2.7080009@mb.tu-ilmenau.de>	<1023196345.31682.81.camel@tiny> <3CFE7EFB.6080203@mb.tu-ilmenau.de> 	<3CFE8234.7010006@mb.tu-ilmenau.de> <1023322167.2920.772.camel@tiny>
+From: "S. Alexander Jacobson" <alex@shop.com>
+Subject: duplicate files and recent changes
+Date: Thu, 6 Jun 2002 01:30:46 -0400 (Eastern Daylight Time)
+Message-ID: <Pine.WNT.4.43.0206060127230.1296-100000@fanatic>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10529-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10530-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-On 06/06/2002 02:09 AM, Chris Mason wrote:
-> Ok, ftp.suse.com/pub/people/mason/patches/data-logging has my latest
-> updates, which have more optimizations for many threads all doing
-> synchronous transactions.
-> 
-> -chris
-> 
+I just joined this list.  Two question:
 
-Mhh. I was just starting to try the ftp, but  no-go-for-now.  O.k now 
-I've got an old Santana CD in... "Black magic ..." Thanks to Chris,
+1. Can reiserfs detect that I have two copies of
+the same file on disk and store tham as one file
+(doing a lazy copy) if someone writes to one of
+them?
 
-bye, very nice to listen to,
+2. Is there a fast way to get access to the file
+change list?  It would be nice to be able to do
+fast backup of changed files without having to
+traverse entire directory trees.
 
-Manuel
+-Alex-
+
+___________________________________________________________________
+S. Alexander Jacobson                   i2x Media
+1-212-787-1914 voice                    1-603-288-1280 fax
+
 
