@@ -1,70 +1,35 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: Benchmark : ext3 vs reiser4 and effects of fragmentation.
-Date: Thu, 16 Sep 2004 12:52:49 +0400
-Message-ID: <20040916085248.GI5137@backtop.namesys.com>
-References: <4148BC0E.5010509@willsmith.org>
+From: Andrew Clausen <clausen@gnu.org>
+Subject: Re: Reiser4 support on parted program ...
+Date: Thu, 16 Sep 2004 22:36:48 +1000
+Message-ID: <20040916123648.GC928@gnu.org>
+References: <41472F46.4000109@futuretg.com> <41477625.304@slaphack.com> <4147E95B.8090108@futuretg.com> <20040915094952.GA5137@backtop.namesys.com> <41485D18.1040100@futuretg.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21806-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21807-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <4148BC0E.5010509@willsmith.org>
+In-Reply-To: <41485D18.1040100@futuretg.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Will Smith <will@willsmith.org>
-Cc: reiserfs-list@namesys.com
+To: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
+Cc: Alex Zarochentsev <zam@namesys.com>, David Masover <ninja@slaphack.com>, reiserfs-list@namesys.com, umka@clusterfs.com
 
-On Thu, Sep 16, 2004 at 06:02:54AM +0800, Will Smith wrote:
-> I've spent the last 2 days coding and running benchmarks
-> on the effects of fragmentation on both ext3 and
-> reiser4 performance.
+On Wed, Sep 15, 2004 at 05:17:44PM +0200, Dr. Giovanni A. Orlando wrote:
+> >libreiser4 / libaal are made to support parted easier.
+> >resizing program is not done.
+>
+> Yes. I check this matter yesterday.
 > 
-> Explanation and source code is at
-> http://www.willsmith.org/opensource/reiser4/fragperf/
+> I suspect that I need to write the code :-( .
 > 
-> Results and graphs are at
-> http://www.willsmith.org/opensource/reiser4/fragperf/test1/
-> 
-> Dataset is a kernel source (~200Mb) in a small 350Mb
-> partition, with random deletes, copies and overwrites
-> to cause fragmentation.
-> 
-> In conclusion:
-> 
-> 1) reiser4 is slightly faster than ext3 in some cases, but
->    much faster in others (no surprise).  However,
->    deletes are slightly slower.
-> 
-> 2) ext3 degrades badly from fragmentation when running
->    ordered (non-random) access patterns.  reiser4
->    also degrades but not as much.
-> 
-> 3) the repacker can bring performance of reiser4 back
->    to full speed, but only if run several times.
+> I will survive.
 
-yes, we had similar results.  it is so cool that reiser4 repacker effect
-is visible outside namesys :)
+Yeah, I don't really have time at the moment to look at this.
+I'm accepting patches ;)  Feel free to ask for help...
 
-> 
-> 4) the repacker is not yet stable - I had to run fsck
->    a few times after repacking, and once got a kernel
->    stack trace during repacking resulting in an
->    un-unmountable filesystem.
+Cheers,
+Andrew
 
-unmergable units shouldn't be problem for the reiser4 kernel code.
-
-but what was the stack trace?  Was there "nikita-3532: Sibling nodes on the
-different levels" message?
-
-> I'll gladly rerun with different parameters and/or change
-> the script if requested.
-> 
-> Will Smith
-
-Thanks
-
--- 
-Alex.
