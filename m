@@ -1,66 +1,54 @@
-From: "Svetoslav Slavtchev" <svetljo@gmx.de>
-Subject: reiser4 as module (reiser4-2004.06.01-17.16-linux-2.6.7-rc1-mm1 )
-Date: Wed, 2 Jun 2004 13:46:09 +0200 (MEST)
-Message-ID: <30825.1086176769@www56.gmx.net>
+From: Edward Shushkin <edward@namesys.com>
+Subject: Re: The situation at hand and in the future
+Date: Wed, 02 Jun 2004 16:51:43 +0400
+Message-ID: <40BDCD5F.7000706@namesys.com>
+References: <20040527200127.GS4990@nysv.org> <200405272105.i4RL5LDh026210@turing-police.cc.vt.edu> <40B6670D.9060408@slaphack.com> <20040528063324.GT4990@nysv.org> <40B89C9C.5050307@slaphack.com> <20040529154917.GW4990@nysv.org> <40B919DF.3040408@slaphack.com> <20040530122713.GX4990@nysv.org> <40BA802C.5070907@slaphack.com> <40BC83AF.2030504@namesys.com> <20040602080556.GC4990@nysv.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="========GMXBoundary308251086176769"
-Return-path: <reiserfs-list-return-18961-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18962-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20040602080556.GC4990@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
+Cc: David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, reiserfs-list@namesys.com
 
---========GMXBoundary308251086176769
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Markus T=F6rnqvist wrote:
 
-Hi all,
+>On Tue, Jun 01, 2004 at 05:25:03PM +0400, Edward Shushkin wrote:
+> =20
+>
+>>is builtin and can not be changed by users. The user can only assign=20
+>>plugins. For each
+>>kind of transform there is special "none" plugin which means absence of=20
+>>this transform.
+>>   =20
+>>
+>
+>Is there any chance of this looking more like a crypto/ directory
+>than a crypto file?
+> =20
+>
+'Looking more' sounds incorrect here (does  directory  look more then=20
+file? )
+You might want special (directory) object plugin. All ideas should be=20
+implemented
+via its methods..
 
-i'm having problem with unresolved symbols,
-when compiling the above auto bk-snapshot
-with reiser4 as module, and i really need 
-to compile it as module
+>I really liked David Masover's ideas and I'd like to hear if they
+>are somehow infeasible.
+>
+I am a bit confused: usually I inspire everyone that something is=20
+feasible ;)
 
-[svetljo@svetljo mm1]$ make
-make[1]: `arch/i386/kernel/asm-offsets.s' is up to date.
-  CHK     include/linux/compile.h
-Kernel: arch/i386/boot/bzImage is ready
-  Building modules, stage 2.
-  MODPOST
-*** Warning: "errno" [drivers/media/dvb/frontends/tda1004x.ko] undefined!
-*** Warning: "swapper_space" [fs/reiser4/reiser4.ko] undefined!
-*** Warning: "__iget" [fs/reiser4/reiser4.ko] undefined!
-[svetljo@svetljo mm1]$
+Edward.
 
-i've fixed the first and the last messages,
-but i can not find a solution for "swapper_space"
-
-any ideas ?
-
-thanks in advance
-
-best,
-
-svetljo
-
-PS.
-attached is the export __iget fix
-
--- 
-"Sie haben neue Mails!" - Die GMX Toolbar informiert Sie beim Surfen!
-Jetzt aktivieren unter http://www.gmx.net/info
---========GMXBoundary308251086176769
-Content-Type: application/octect-stream; name="reiser4-export-__iget.diff"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="reiser4-export-__iget.diff"
-
-LS0tIGEvZnMvaW5vZGUuYwkyMDA0LTA2LTAyIDA4OjE3OjM4LjAwNDcwMDg0MyArMDIwMAorKysg
-Yi9mcy9pbm9kZS5jCTIwMDQtMDYtMDIgMDk6NTc6NTkuMTU0MjYxNjUwICswMjAwCkBAIC0yMzQs
-NiArMjM0LDcgQEAKIAkJbGlzdF9tb3ZlKCZpbm9kZS0+aV9saXN0LCAmaW5vZGVfaW5fdXNlKTsK
-IAlpbm9kZXNfc3RhdC5ucl91bnVzZWQtLTsKIH0KK0VYUE9SVF9TWU1CT0woX19pZ2V0KTsKIAog
-LyoqCiAgKiBjbGVhcl9pbm9kZSAtIGNsZWFyIGFuIGlub2RlCg==
-
---========GMXBoundary308251086176769--
-
+>To me they make sense as practical.
+>
+>Thanks!
+>
+> =20
+>
