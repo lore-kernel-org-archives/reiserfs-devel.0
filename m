@@ -1,92 +1,157 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Scrambled Files
-Date: Wed, 24 Apr 2002 03:02:54 +0400
-Message-ID: <3CC5E81E.7080903@namesys.com>
-References: <20020423210501.GA28270@willow.seitz.com> <20020423214642.GI7481@ariel.karmak.org>
+From: "Torrey Hoffman" <Torrey.Hoffman@myrio.com>
+Subject: Reliable system updates built on ReiserFS
+Date: Tue, 23 Apr 2002 17:41:18 -0700
+Message-ID: <A015F722AB845E4B8458CBABDFFE63420FE3DB@mail0.myrio.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10150-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10151-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Michael Carmack <karmak@karmak.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>, Michael Carmack <karmak@karmak.org>
 Cc: Ross Vandegrift <ross@willow.seitz.com>, reiserfs-list@namesys.com
 
-Michael Carmack wrote:
+Hans Reiser wrote on the subject "RE: [reiserfs-list] Scrambled Files":
+[...]=20
 
->On Tue, Apr 23, 2002 at 05:05:01PM -0400, Ross Vandegrift wrote:
->  
->
->>	Files all over the system have been scrabled - replaced with
->>garbage text, other executables, sections of data files.  There doesn't
->>seem to be a pattern to the file corruption.  There are no messages in
->>the logs.
->>    
->>
->
->I've read about this before, and it's something I've been meaning to
->ask about but never quite got around to. IIRC this is related to the
->tail-packing feature of reiserfs, and there's not a whole lot that can
->be done to salvage data once it's corrupted. Here are some questions
->that maybe the reiser developers can answer:
->
->1. Is it correct that this corruption is due to tail-packing?
->
-If you crash while writing, garbage possibly appears in the file being 
-written to.  Chris is looking at improving this with ordered writes, but 
-there is a performance cost for it.  There are those who say it can be 
-done without performance cost in V3 by ordering writes.  They have not 
-yet produced a patch for which this is true, but it won't amaze me if 
-they do so eventually.
+> If you want to be able to crash while doing an OS upgrade,=20
+> and not have=20
+> a hosed system, you must have transactions (or take a snapshot before=20
+> doing it).  No FS currently supports transactions, but reiser4 will.
 
-reiser4 will fix this without much performance cost.
+This is true.  However, if someone out there needs to implement reliable =
 
-I think tails have nothing to do with it.  Probably the files that are 
-all tails have no corruption at all, because they are journaled.  
+system updates right now, they might find this helpful...
 
-If you want to be able to crash while doing an OS upgrade, and not have 
-a hosed system, you must have transactions (or take a snapshot before 
-doing it).  No FS currently supports transactions, but reiser4 will.
+You can get pretty good reliability by doing "transactions" at an=20
+application level, not 100% perhaps, but good enough that for most=20
+systems, hardware failure is more likely than a failure of the update=20
+system...=20
 
->
->2. Is the corruption in any way deterministic? For example, does
->   it only affect files that have been modified since the last
->   sync, or perhaps files that are in the process of being modified 
->   at the time the system goes down?
->
->3. If a reiserfs partition is mounted with the notail option, will 
->   it protect against this kind of corruption? How about mounting
->   with sync instead of notail?
->
->4. Is it possible to specify notail in /etc/fstab for the root 
->   partition? I seem to recall reading something along the lines
->   of: "It is not enough to simply specify notail in /etc/fstab
->   for the root partition, because notail is only valid for the
->   initial mount (i.e. mount -o,remount / will not pick up notail)."
->   Is this true? If so, how can one turn on notail for the root 
->   partition?
->
->5. Are there any performance hits (other than wasted disk space) 
->   as a result of turning on notail? I don't mind trading drive
->   space for reliability, but speed is important to me. What exactly
->   are the consequences of specifying notail?
->
->These are important questions for me, as I am currently using reiserfs
->exclusively on all of my machines. I've been doing network backups pretty
->religiously, but there's always this bit of apprehension in the back of 
->my mind for some time about losing data if a machine just happens to die
->unexpectedly.
->
->Thanks,
->m.
->
->
->
->
->  
->
+If you are using a journaling filesystem with an atomic "rename"
+operation, (which reiserfs does) and your update software has a hook=20
+into the system boot process, then you can do reliable updates=20
+despite system crashes / power failures using something like the=20
+following (pseudocode):
 
+subroutine switch_to_phase(string s)
+{
+	touch ("/var/flag.%s", s);
+	sync filesystem
+	delete any other /var/flag.whatever files
+	sync filesystem
+}
 
+function do_reliable_update()
+{
+	switch_to_phase("preparation");
+
+	/* during this phase, only touch files in some working=20
+	** update directory=20
+	*/
+
+	collect_all_required_files();
+	authenticate_and_checksum_required_files();
+
+	/* and, build lists of all files to be updated,=20
+	** source and destination directories, checksums, etc.=20
+	*/
+=09
+	switch_to_phase("copying");
+=09
+	for each (file $f to be updated) {
+		copy new version of $f to "destdir/$f.NEW"
+	}
+	for each (file $f to be updated) {
+		verify checksum of "destdir/$f.NEW"
+	}
+
+	switch_to_phase("renaming");
+
+	for each (file $f to be updated) {
+		rename "destdir/$f.NEW" "destdir/$f"
+	}
+
+	switch_to_phase("completing");
+
+	do_other_update_stuff();
+	/* update symbolic links, delete old redundant files, etc. */
+
+	sync filesystem
+	delete all /var/flag files
+	sync filesystem
+
+	/* update is successful */
+}
+
+Very early in the system bootup process, do something like this:
+
+function recover_from_update_crash() {
+
+	if (exists any file /var/flag.$updatephase) then
+		$updatephase =3D the last or highest existing /var/flag.$updatephase
+	else
+		return; /* no recovery necessary. */
+
+	switch ($updatephase)
+	{
+		case "copying" :
+			/* Delete all the *.NEW files from the filesystem,
+			** and then...=20
+			*/
+		case "preparation":
+			/* Delete all the files from the working update=20
+			** directory.=20
+			**
+			** Now we have recovered to the pre-update state.=20
+			** Could retry, or log an error, or whatever.
+			*/
+			break;
+		=09
+		case "renaming" :
+			for each (file f to be updated) {
+				if exists "destdir/f.NEW" then
+					rename "destdir/f.NEW" "destdir/f"
+				}
+			}
+			switch_to_phase("completing");
+			/* no break */
+
+		case "completing"
+			do_other_update_stuff();
+
+			sync filesystem
+			delete all /var/flag files
+			sync filesystem
+	}
+}
+
+Real life is a little more complicated.  But unless you are updating
+something used very early in the boot process, like glibc, ld.linux.so,
+init, kernel / modules, this works very well.  For those low-level=20
+things, you can augment the outline above with tricks with symbolic=20
+links...  luckily, those sorts of things don't usually need to be=20
+updated.
+
+Oh yeah: this also has the disadvantage of possibly requiring a lot
+of free space for all the .NEW files.  And, like any other real
+programming problem, intelligent error recovery is the hardest part.
+
+But it does work.=20
+
+I built a system along these lines, and it can handle having the power
+plug yanked out at any point during the update process.  It always=20
+either completes the update or backs it out to the pre-update state.
+
+It is used on hundreds of systems - soon thousands - and has never=20
+failed. Yet :-)=20
+
+Of course, this would not work at all if the filesystems were not
+journaled.  I've never, ever, seen reiserfs blow up despite a lot=20
+of pulling-the-plug-on-running-systems in the last two years.
+
+Torrey Hoffman
 
