@@ -1,32 +1,36 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: Working Reiser4 patch for kernel 2.6.6(-mm2)?
-Date: Wed, 2 Jun 2004 16:56:03 +0400
-Message-ID: <20040602125602.GC8091@backtop.namesys.com>
-References: <200406021554.11690.rmeijer@internet.gr>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: fsck.reiser4 segfault with one partition
+Date: Wed, 2 Jun 2004 16:58:17 +0400
+Message-ID: <200406021658.17346.vitaly@namesys.com>
+References: <pan.2004.06.01.11.57.09.230448@unternehmen.com> <200406012240.33075.vitaly@namesys.com> <pan.2004.06.01.19.37.08.75221@unternehmen.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18964-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18965-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <pan.2004.06.01.19.37.08.75221@unternehmen.com>
 Content-Disposition: inline
-In-Reply-To: <200406021554.11690.rmeijer@internet.gr>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Raymond A. Meijer" <rmeijer@internet.gr>
-Cc: reiserfs-list@namesys.com
+To: Helge Hielscher <hhielscher@unternehmen.com>, reiserfs-list@namesys.com
 
-On Wed, Jun 02, 2004 at 03:54:11PM +0300, Raymond A. Meijer wrote:
-> Hi,
-> 
-> Can someone point me to a WORKING Reiser4 patch for kernel 2.6.6 or 2.6.6-mm2?
-> 
-> I have tried the reiser4-2004.05.31-19.36-linux-2.6.6-mm2.diff.gz patch  from 
-> http://www.namesys.com/auto-snapshots/ and it compiles and boots cleanly, but 
-> it won't mount my Reiser4 partitions :(
+On Tuesday 01 June 2004 23:37, Helge Hielscher wrote:
+> On Tue, 01 Jun 2004 22:40:33 +0400, Vitaly Fertman wrote:
+> > On Tuesday 01 June 2004 15:57, Helge Hielscher wrote:
+> >> fsck.reiser4 segfaulted when I tried to check /dev/hda6 (see below).
+> >
+> > which version do you have? the latest was 0.5.4 in
+> > www.namesys.com/snapshots/2004.04.21-internal.testing.fixed/
+> > would you try it first?
+>
+> Tried it and got the same result: fsck.reiser4 segfaults at semantic tree
+> checking.
 
-what reiser4 messages were in the log? 
-
+Can you provide the packed fs metadata for downloading?
+(debugfs.reiser4 -P /dev/xxx | bzip2 -c > xxx.bz2)
 -- 
-Alex.
+Thanks,
+Vitaly Fertman
+
