@@ -1,40 +1,46 @@
-From: markw@osdl.org
-Subject: Re: AS performance with reiser4 on 2.6.3
-Date: Tue, 2 Mar 2004 09:07:25 -0800 (PST)
-Message-ID: <200403021707.i22H7ZE21826@mail.osdl.org>
-References: <16447.35731.535168.298454@laputa.namesys.com>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: [PATCH] updated data=ordered patch for 2.6.3
+Date: Tue, 2 Mar 2004 19:14:06 +0100
+Message-ID: <200403021914.06928.Dieter.Nuetzel@hamburg.de>
+References: <1077165373.22253.45.camel@watt.suse.com> <1078151441.7036.2.camel@leto.cs.pocnet.net> <1078151895.2146.227.camel@watt.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17007-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-17008-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16447.35731.535168.298454@laputa.namesys.com>
+In-Reply-To: <1078151895.2146.227.camel@watt.suse.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nikita@Namesys.COM
-Cc: piggin@cyberone.com.au, reiserfs-list@Namesys.COM, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
+Cc: Chris Mason <mason@suse.com>, Christophe Saout <christophe@saout.de>
 
-On 27 Feb, Nikita Danilov wrote:
-> The rest is not that clear. Probably you workload results in highly
-> fragmented file(s). This is consistent with high CPU consumption by
-> lookup_extent (http://khack.osdl.org/stp/288741/profile/profile-tick.sort).
-> 
-> If test doesn't delete its working files before exiting, can you execute
-> 
-> measurefs.reiser4 -T /device-with-reiser4
-> measurefs.reiser4 -D /device-with-reiser4
-> 
-> and, if number of files on the file system is sane
-> 
-> measurefs.reiser4 -D -E /device-with-reiser4
+Am Montag, 1. M=E4rz 2004 15:38 schrieb Chris Mason:
+> On Mon, 2004-03-01 at 09:30, Christophe Saout wrote:
+> > Am Mo, den 01.03.2004 schrieb Chris Mason um 15:01:
+> > > > It seems you introduced a bug here. I installed the patches yesterd=
+ay
+> > > > and found a lockup on my notebook when running lilo (with /boot on
+> > > > the root reiserfs filesystem).
+> > > >
+> > > > A SysRq-T showed that lilo is stuck in fsync:
+> > >
+> > > Ugh, I use grub so I haven't tried lilo.  Could you please send me the
+> > > full sysrq-t, this is probably something stupid.
+> >
+> > Yes. I could reproduce it by simply creating a dummy /boot volume on
+> > reiserfs. I copied the content of /boot, ran lilo and it hung again. The
+> > other reiserfs filesystems were still usable (but a global sync hangs
+> > afterwards). I also attached a bzipped strace of the lilo process.
+>
+> Ok, thanks.  The problem is in reiserfs_unpack(), which needs updating
+> for the patch.  Fixing.
 
-Sorry this took a couple of days, but you can view the output of those
-commands towards the end of the log file here:
-	http://khack.osdl.org/stp/289045/logs/run-log.txt
+Progress?
 
-You should be able to find the output by searching for the 'measurefs'
-commands.
+I'll try on SuSE 2.6.3-16.
 
-Mark
+Thanks,
+	Dieter
