@@ -1,53 +1,76 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Recommended patches for mail server?
-Date: Tue, 15 Oct 2002 16:29:23 +0400
-Message-ID: <20021015162923.A992@namesys.com>
-References: <20021015105521.71AE11AEC14C@server5.fastmail.fm>
+From: Russell Coker <bofh@coker.com.au>
+Subject: Re: Reiserfs with Samba vs NetApp Filer
+Date: Tue, 15 Oct 2002 14:57:58 +0200
+Message-ID: <200210151457.58520.bofh@coker.com.au>
+References: <200210121052.22603.bofh@coker.com.au> <200210142252.09438.bofh@coker.com.au> <20021014225812.GA11337@tapu.f00f.org>
+Reply-To: Russell Coker <bofh@coker.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11692-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11693-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20021015105521.71AE11AEC14C@server5.fastmail.fm>
+In-Reply-To: <20021014225812.GA11337@tapu.f00f.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: JP Howard <jh_lists@fastmail.fm>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: Chris Wedgwood <cw@f00f.org>
+Cc: reiserfs-list@namesys.com
 
-Hello!
+On Tue, 15 Oct 2002 00:58, Chris Wedgwood wrote:
+> On Mon, Oct 14, 2002 at 10:52:09PM +0200, Russell Coker wrote:
+> > In my tests IDE drives topped out at 30MB/s for sustained reads from
+> > the start of the drive two years ago, one year ago they were
+> > approaching 40MB/s.
+>
+> It's a little higher than I expected.  How much does it vary from
+> end-to-end?
 
-On Tue, Oct 15, 2002 at 10:55:21AM +0000, JP Howard wrote:
+See the following graph:
+http://www.coker.com.au/~russell/hardware/46g.png
 
-> > They should apply cleanly, if you are worried about some offsets, this is
-> > ok and should not concern you. (just use -s switch to patch command
-> > to not see unneeded output ;) )
-> I got quite a few HUNK FAILED. Also, I found that with the data logging
-> patches these other patches didn't apply cleanly.
+This shows testing a single 46G drive, two drives on different buses at the 
+same time, and two drives on the same bus at the same time.  zcav (part of 
+Bonnie++) was used to perform the tests.
 
-Hm. You apply the patches in order, is that right?
+> THat said, It's still a far cry from 100MB/s.
 
-> Could you please tell me which, if any, of these patches are important?
-> Also, I noticed 07-mmaped_data_loss_fix.diff  here:
-> http://www.uwsg.iu.edu/hypermail/linux/kernel/0201.3/1161.html
+True.  S-ATA only needs it's speed for RAID attachments.
 
-07-mmaped_data_loss_fix.diff is in 2.4.19 already, may be you are just
-downloading patches from the wrong dir?
+> > The real question is "how many people need such linear performance
+> > with no seeks?".  Probably almost none.
+>
+> Across a decent fs, provided the layout isn't too bad, seeks really
+> don't hurt that much for large reads.  With lots of spindles, it gets
+> even better.
 
-> Since Cyrus mmap()s files which it also opens directly, is this an
-> important patch? Any others of these 2.5 patches? Are they backported to
+But how many people need such large reads?
 
-It is importnt, but is included already.
+The most disk intensive programs I use are Squid and GCC, Squid has an average 
+file size of ~12K, and I suspect that the source files used by GCC aren't 
+much bigger...
 
-> 2.4?
+> > Cheap == single CPU.
+>
+> So put a single CPU in it then; or use some other MB.  64/66PCI isn't
+> that hard to get or expensive.
 
-Other patches are some cosmetic cleanups, also new block allocator,
-but this block allocator is uncompatible with Chris' data logging patches yet,
-and you need Chris' patches more. There also this NFS fix I recommended and
-two not very important fixes that you would probably never ever need.
-(fixes are patches 13-remount-rw-fix.diff and 04-item_alignment_fix.diff)
+Sure I can afford it if I really want it.  However the original discussion was 
+about the lamentable fact that all the cheapest motherboards don't have it.  
+So far no-one has presented any evidence of the <E100 motherbords having it.
 
-Bye,
-    Oleg
+> > In a quick web search of some companies I buy from, one sells a
+> > single dual-CPU motherboard which costs three times as much as the
+> > single-CPU motherboards (which have become amazingly cheap).
+>
+> The MB cost is a small part of the overall cost, especially if you're
+> looking at 8x320GB drives.
+
+True, but that's not what we were discussing.
+
+-- 
+http://www.coker.com.au/bonnie++/     Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/       Postal SMTP/POP benchmark
+http://www.coker.com.au/projects.html Projects I am working on
+http://www.coker.com.au/~russell/     My home page
+
