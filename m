@@ -1,40 +1,35 @@
 From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: http://www.namesys.com/snapshots/2004.08.03-internal.testing/
-Date: Wed, 4 Aug 2004 12:55:13 +0300
-Message-ID: <20040804095513.GL1284@nysv.org>
-References: <200406150022.34578.vitaly@namesys.com> <200408031750.00291.vitaly@namesys.com> <20040803135805.GK1284@nysv.org> <200408031819.51600.vitaly@namesys.com> <4110A38A.7040807@namesys.com>
+Subject: Re: mongo_copy: cp: cannot stat `/mnt/testfs/testdir0-0-0/f92': Input/output error
+Date: Wed, 4 Aug 2004 13:02:04 +0300
+Message-ID: <20040804100204.GM1284@nysv.org>
+References: <20040804065840.17C7915C7C@mail03.powweb.com> <4110A0FA.3030007@namesys.com> <4110A38E.6070905@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19966-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19967-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <4110A38A.7040807@namesys.com>
+In-Reply-To: <4110A38E.6070905@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: Hans Reiser <reiser@namesys.com>, David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
 
-On Wed, Aug 04, 2004 at 01:51:22AM -0700, Hans Reiser wrote:
+On Wed, Aug 04, 2004 at 12:51:26PM +0400, Vladimir V. Saveliev wrote:
 
->These blocks refers to blocks that were used by files and are now backup 
->super blocks?  These blocks could be critical database files, etc.?
+>Hans, should we solve this before sending reiser4 to Andrew?
 
-Seems to me like yes, but Reiser4 hasn't launched yet officially, so
-I somehow doubt people will have anything too critical on Reiser4.
+I ain't Hans, but why not? :)
 
-I'm at least preparing myself to take backups of everything.
+I also got an idea on the latest reiser4progs; Why not just make the
+format change optional, or comment out the code that makes the format
+change, if there were other good fixes?
 
->If yes, then please pull this off our website until you come up with a 
->scheme that I am sure will not create more user problems than it solves, 
->on average.
-
-Yeah, there is the other hand that said that the online format is
-now set in stone...
-
-Still the important question is, what's the net gain of this new format?
+Tell us where we are going before something bad happens, I don't want
+to back up a hundred gigabytes of stuff in vain, even if I was always
+prepared for it. (I have backups of only the stuff that REALLY matters..)
 
 -- 
 mjt
