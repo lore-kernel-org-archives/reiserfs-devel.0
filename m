@@ -1,32 +1,50 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Stress test failure for reiserfs, but ext3 ok on Linux 2.4.20
-Date: Wed, 15 Jan 2003 18:51:04 +0300
-Message-ID: <20030115185104.C1716@namesys.com>
-References: <20030115023559.GA14694@mathematik.uni-bielefeld.de> <20030115134315.A31068@namesys.com> <20030115115100.GB16645@mathematik.uni-bielefeld.de> <20030115145804.B31603@namesys.com> <20030115180150.A1394@namesys.com> <20030115154851.GF16645@mathematik.uni-bielefeld.de>
+From: Bill Schrier <wschrier@neolinear.com>
+Subject: Re: reiserfsck failure
+Date: Wed, 15 Jan 2003 15:15:13 -0500
+Sender: wschrier@neolinear.com
+Message-ID: <3E25C151.CE31D219@neolinear.com>
+References: <3E247A12.4E479B64@neolinear.com> <3E247AB6.89265382@neolinear.com> <20030115095925.A23036@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12365-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12366-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030115154851.GF16645@mathematik.uni-bielefeld.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Bernhard Sadlowski <sadlowsk@mathematik.Uni-Bielefeld.DE>
-Cc: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: it@neolinear.com, reiserfs-list@namesys.com
 
-Hello!
+Unfortunatly, the console was completely hosed up and I couldn't even get any
+display on it to record any messages to stderr.  Sorry - don't think I can help
+there...
 
-On Wed, Jan 15, 2003 at 04:48:52PM +0100, Bernhard Sadlowski wrote:
-> > Ok, here is the patch, can you give it a try and see if it also helps?
-> > I tested it locally and it works for me.
-> > If you confirm everything is ok, I will try to get it into 2.4.21 in time.
-> At first glance it seems to work. I will run now that script overnight
-> and will tell you, if any problems arise.
+Bill
 
-Ok, Thank you very much.
+Oleg Drokin wrote:
 
-Bye,
-    Oleg
+> Hello!
+>
+> On Tue, Jan 14, 2003 at 04:01:42PM -0500, Bill Schrier wrote:
+>
+> > > I am sending along both the --logfile and the core file from a recent
+> > > reiserfsck we were running on our Redhat 7.2 raidzone machine.
+>
+> Can you say what exact version was that?
+> Also just before dumping core it should have output some more info on stderr
+> about assertion failure, we are interested in that message too.
+>
+> Thank you.
+>
+> Bye,
+>     Oleg
+
+--
+William J. Schrier              Phone: 412.968.5780 x151
+Neolinear, Inc.                 Fax:   412.968.5788
+583 Epsilon Drive               Email: wschrier@neolinear.com
+Pittsburgh, PA  15238
+
+
+
