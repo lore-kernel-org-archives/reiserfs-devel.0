@@ -1,30 +1,31 @@
-From: Toby Dickenson <tdickenson@devmail.geminidataloggers.co.uk>
-Subject: Re: [PATCH] finally... data logging for 2.4.20-pre10
-Date: Tue, 12 Nov 2002 15:39:50 +0000
-Message-ID: <200211121523.22809.tdickenson@geminidataloggers.com>
-References: <1034709883.5053.920.camel@tiny> <3DB7ECDB.5070905@ysu.edu> <1035465170.30133.95.camel@tiny>
-Reply-To: tdickenson@geminidataloggers.com
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: [ANNOUNCE]: reiser4 snapshot
+Date: Tue, 12 Nov 2002 18:42:06 +0300
+Message-ID: <15825.8526.652377.341227@laputa.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11971-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11972-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1035465170.30133.95.camel@tiny>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list <reiserfs-list@namesys.com>
+To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Cc: Reiserfs developers mail-list <Reiserfs-Dev@Namesys.COM>
 
-On Thursday 24 October 2002 2:12 pm, Chris Mason wrote:
+Hello,
 
-> I'll try and upload the latest stuff against 2.4.19 today, this is what
-> the current suse kernel is based on, so it is by far the best tested of
-> the data logging series.
+new reiser4 snapshot is available at:
 
-I would appreciate a pointer to the current 2.4.19 data logging patches. =
-I=20
-cant see anything recent at=20
-ftp://ftp.suse.com/pub/people/mason/patches/data-logging
+http://namesys.com/snapshots/2002.11.12/
 
-Thanks,
+Due to compilation problems with current Linus BK tree, snapshot is
+released as a patch against linux-2.5.47.
+
+README file contains changelog.
+
+In addition, our public BK repository with reiser4 code is available at
+bk://namesys.com/bk/reiser4.
+
+Nikita.
