@@ -1,67 +1,62 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: AS performance with reiser4 on 2.6.3
-Date: Fri, 27 Feb 2004 06:37:43 +0300
-Message-ID: <403EBB87.2070504@namesys.com>
-References: <200402261748.i1QHmJE12429@mail.osdl.org> <16446.13520.5837.193556@laputa.namesys.com>
+Subject: Re: bug+fix in reiserfsck - reiserfscore/journal.c
+Date: Fri, 27 Feb 2004 06:40:20 +0300
+Message-ID: <403EBC24.6000701@namesys.com>
+References: <002601c3fc49$815d1880$e91ba8c0@thk.local> <1077843286.8641.36.camel@watt.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16951-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16952-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16446.13520.5837.193556@laputa.namesys.com>
+In-Reply-To: <1077843286.8641.36.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: markw@osdl.org, piggin@cyberone.com.au, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+To: Chris Mason <mason@suse.com>
+Cc: Thorsten Kohfeldt <thorsten.kohfeldt@gmx.de>, reiserfs-list@namesys.com
 
-Nikita Danilov wrote:
+Chris Mason wrote:
 
->markw@osdl.org writes:
-> > Hi Nick,
-> > 
-> > I started getting some results with dbt-2 on 2.6.3 and saw that reiser4
-> > is doing a bit worse with the AS elevator.  Although reiser4 wasn't
-> > doing well to begin with, compared to the other filesystems.  I have
-> > links to the STP results on our 4-ways and 8-ways here:
-> > 	http://developer.osdl.org/markw/fs/dbt2_stp_results.html
+>On Thu, 2004-02-26 at 04:18, Thorsten Kohfeldt wrote:
+>  
 >
->There were no changes between 2.6.2 and 2.6.3 that could affect reiser4
->performance, so it is not clear why numbers are so different. Probably
->results should be averaged over several runs.
+>>To whom it may (should!) concern,                                   
+>>26-FEB-2004
+>> 
+>>after having been annoyed for quite some time by corrupt /var file
+>>systems after
+>>(simulated) powerloss in a SuSE 9.0 setup with reiserfs, I finally
+>>tracked the
+>>problem down to a nasty bug in reiserfsck - reiserfscore/journal.c
+>> 
+>>Turned out that the journal is not always correctly replayed by
+>>reiserfsck !
+>>    
+>>
 >
-The differences don't "feel" like testing error, and in any event 
-something is seriously wrong.  That something is either poor fsync 
-performance, or poor scalability.  In any event, please investigate, and 
-please try such things as using capture on copy.  Mark, does this 
-benchmark like to use fsync?
-
-Thanks much mark for bringing this to our attention.
-
-> Also can you run test with
+>Thank you very much for the patch, I'll review it and try to get a fix
+>out asap inside suse.
 >
->http://www.namesys.com/snapshots/2004.02.25/extra/e_05-proc-sleep.patch
+>[ transaction id wrapping ]
+>  
 >
->applied? To use it turn CONFIG_PROC_SLEEP on (depends on
->CONFIG_FRAME_POINTER), and do "cat /proc/sleep" before and after test
->run.
+>> 
+>>For a starter, I added a patch that fixes one wrap around issue inside
+>>journal.c. Take it or leave it.
+>>    
+>>
 >
-> > 
-> > -- 
-> > Mark Wong - - markw@osdl.org
+>Thanks, I'll play around with this and perhaps a few alternatives.
 >
->Nikita.
->-
->To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->the body of a message to majordomo@vger.kernel.org
->More majordomo info at  http://vger.kernel.org/majordomo-info.html
->Please read the FAQ at  http://www.tux.org/lkml/
+>-chris
+>
+>
 >
 >
 >  
 >
-
+Is this bug present in the mainstream kernel?  Why suse only?
 
 -- 
 Hans
