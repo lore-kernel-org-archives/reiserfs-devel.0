@@ -1,53 +1,56 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: [PATCH] new data logging and quota patches available
-Date: 24 Feb 2003 13:46:16 -0500
-Message-ID: <1046112375.16042.538.camel@tiny.suse.com>
-References: <1045870331.16048.325.camel@tiny.suse.com>
-	 <3E59787F.2030009@mb.tu-ilmenau.de> <200302241859.16343.m.c.p@gmx.net>
-	 <200302241905.56193.m.c.p@gmx.net>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: About direntries pointing to nowhere on reiserfs problem in 2.4
+Date: Mon, 24 Feb 2003 21:59:15 +0300
+Message-ID: <200302242159.15769.vitaly@namesys.com>
+References: <20030220175309.A23616@namesys.com> <b3dluc$n39$1@satsuki.furryterror.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12897-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-12898-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200302241905.56193.m.c.p@gmx.net>
+In-Reply-To: <b3dluc$n39$1@satsuki.furryterror.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Marc-Christian Petersen <m.c.p@gmx.net>
-Cc: reiserfs-list <reiserfs-list@namesys.com>, Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+To: Zygo Blaxell <eazgwmir@umail.furryterror.org>, reiserfs-list@namesys.com
 
-On Mon, 2003-02-24 at 13:05, Marc-Christian Petersen wrote:
+On Monday 24 February 2003 20:49, Zygo Blaxell wrote:
+> In article <20030220175309.A23616@namesys.com>,
+>
+> Oleg Drokin  <green@namesys.com> wrote:
+> >   So we solved that with patch below (Zygo, others who think they have
+> > this problem, please check).
+>
+> I am building a kernel with the patch as I type this.  I'll know if it
+> works in a few hours.
+>
+> If it does work, I'll be running reiserfsck for the rest of the week to
+> clean out all those dead direntries on all my systems once and for all.
+>
+> :-P
+>
+> Reiserfsck takes 53 hours to scan everything on some of my machines,
+> which is a long time considering that I already know where all the
+> missing direntries are since they are recorded in various error log files.
 
-> I just tried it with:
-> 
-> - time seq -f "%06.0f" 1 100000  | xargs touch
-> 
-> v35-aa took about 4 seconds to complete this.
-> v36-aa took about 6 seconds to compelte this.
-> 
-> Mounted with:
-> nosuid,nodev,noexec,noatime,nodiratime,notail,block-allocator=noborder
+which version of reiserfsprogs do you use? and is this in the rebuild-tree mode?
+if it is, 3.6.5-pre1 had a speedup for pass0. 
 
-For benchmarks that short, bdflush/kupdate can come in and screw the
-results.  Also, when I create 100,000 files on my test box with these
-mount parameters, it results in 3 large async transactions.
+> I don't suppose it's a quick or easy task to modify reiserfsck to just fix
+> _one_ missing directory entry, or to allow the kernel to unlink missing
+> direntries instead of returning EPERM?  Would it suffice to simply hack
+> up the unlink() code so that the direntry is removed but the missing
+> SD is ignored?
 
-In data-logging-36, kreiserfsd will get those async commits to disk
-sooner than in data-logging-35, which is the right thing to do because
-it helps make sure later writes won't stall while we have to flush that
-async transaction.
+After figuring out what is the exact problem here I can answer if it is easy 
+on not. I will respont probably tomorrow morning about it.
 
-But for a very short benchmark that doesn't do more work later on, it
-can seem slower.  If you want a more accurate picture, include the time
-it takes to sync after creating all the files.
+P.S. btw, I am going to release a new version of fsck which has some on-boot 
+time checks. Is it possible to try it on your big partitions to fugure out 
+if it takes less then a few seconds?
 
--chris
+-- 
 
-
-
-
-
-
-
+Thanks,
+Vitaly Fertman
