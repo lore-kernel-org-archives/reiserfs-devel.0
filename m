@@ -1,48 +1,51 @@
-From: myciel <myciel@dotcom.pl>
-Subject: Re: 2.4.18 & journal_mark_dirty?
-Date: Thu, 13 Mar 2003 10:55:06 +0100
-Message-ID: <3E70557A.6030400@dotcom.pl>
-References: <3E704476.9090601@dotcom.pl> <20030313114538.A8610@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: [PATCH] various allocator optimizations
+Date: Thu, 13 Mar 2003 15:06:33 +0300
+Message-ID: <3E707449.5070007@namesys.com>
+References: <1047421551.8219.448.camel@tiny.suse.com> <3E6E674E.4040305@namesys.com> <1047433739.8215.487.camel@tiny.suse.com> <20030312101222.A8452@namesys.com> <1047475876.8215.507.camel@tiny.suse.com> <3E6F3D80.80306@namesys.com> <20030312170522.A2128@namesys.com> <3E6F3F55.2030503@namesys.com> <20030312171718.C2128@namesys.com> <3E6F8909.7080805@namesys.com> <20030313091129.B3026@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13241-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13242-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030313114538.A8610@namesys.com>
+In-Reply-To: <20030313091129.B3026@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: Chris Mason <mason@suse.com>, reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>
 
 Oleg Drokin wrote:
 
 >Hello!
 >
->On Thu, Mar 13, 2003 at 09:42:30AM +0100, myciel wrote:
+>On Wed, Mar 12, 2003 at 10:22:49PM +0300, Hans Reiser wrote:
 >
 >  
 >
->>I run nfs server using reiserfs on 2.4.18 + NFSALL patches, and
->>I've just got "nice" oops.  System did not crash, but anyway I had to 
->>reboot to restart nfs.
->>Could You please tell me if  "journal_mark_dirty:...." in following log 
->>is harmless or not?
+>>>True for repacker. I do not see for allocate on flush will help.
+>>>I see how relocate on flush may help ;)
+>>>      
+>>>
+>>If you don't allocate it until flush, you don't need to reallocate at 
+>>flush time...;-)
 >>    
 >>
 >
->No, it is not.
->Here's the patch. You need the patch, otherwise you would see this message
->quite often when trying to delete/truncate certain file.
+>But what if we have some free space in already existing node, and new file information
+>perfectly fits in there?
 >
 >Bye,
 >    Oleg
+>
+>
 >  
 >
-thanks for the patch,
-it happened after months of running with 2 filesystems of ~0.7T
+We reallocate dirty nodes that are not in the most optimal location when 
+we flush them.
 
-rafal
-
+-- 
+Hans
 
 
