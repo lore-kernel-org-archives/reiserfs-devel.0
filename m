@@ -1,48 +1,48 @@
 From: Branden Robinson <branden@debian.org>
 Subject: Re: Fwd: reiser4 non-free?
-Date: Mon, 10 May 2004 12:59:34 -0500
-Message-ID: <20040510175934.GF8186@deadbeast.net>
-References: <13518599fb1119aa327235ecc3e01dc7@bouncing.localnet> <40974BB9.1000509@gmx.net> <4097C2E8.2030409@namesys.com>
+Date: Mon, 10 May 2004 13:15:32 -0500
+Message-ID: <20040510181532.GG8186@deadbeast.net>
+References: <98BeNnE3cDD@gmane.3247.org> <36ad2307e2e4f813c4fe8d268dabecd5@bouncing.localnet>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7mxbaLlpDEyR1+x6"
-Return-path: <reiserfs-list-return-18585-reiserfs=m.gmane.org@namesys.com>
+	protocol="application/pgp-signature"; boundary="bO4vSxwwZtUjUWHo"
+Return-path: <reiserfs-list-return-18586-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <4097C2E8.2030409@namesys.com>
+In-Reply-To: <36ad2307e2e4f813c4fe8d268dabecd5@bouncing.localnet>
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
---7mxbaLlpDEyR1+x6
-Content-Type: text/plain; charset=us-ascii
+--bO4vSxwwZtUjUWHo
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 04, 2004 at 09:20:56AM -0700, Hans Reiser wrote:
-> Carl-Daniel Hailfinger wrote:
-> >>It seems an apt description of how some XFree86 developers reacted to
-> >>questions. They went dumb. Other XFree86 developers were helpful, but
-> >>they are not the reason I plan to stop using it, so I do not blame them.
-> >>  =20
-> >>
-> I understand why they lost interest in talking to persons who cannot=20
-> grasp that distros removed mention of them from their man pages and this=
-=20
-> was wrong.
+On Tue, May 04, 2004 at 10:56:13AM +0100, MJ Ray wrote:
+> On 2004-05-03 15:24:00 +0100 Claus F=E4rber <claus@xn--frber-gra.muc.de> =
+wrote:
+>=20
+> > Rememer that an "ad-clause" usually does not render a work non-free,
+> > just incompatible with the GPL. [...]
+>=20
+> An "ad-clause" usually applies to documentation or advertising
+> supplied with the software, not the software package itself, and only
+> requires attribution not a large advert. It sails very close to the
+> wind, but doesn't quite fall over.
 
-Does someone have a cite for this?  This is the first I've heard of such
-a thing being done to the XFree86 software distribution.
+Any required-advertising clause that makes any imposition on wholly
+independent and original works is non-free.
 
 --=20
-G. Branden Robinson                |     Good judgement comes from
-Debian GNU/Linux                   |     experience; experience comes from
-branden@debian.org                 |     bad judgement.
-http://people.debian.org/~branden/ |     -- Fred Brooks
+G. Branden Robinson                |     I suspect Linus wrote that in a
+Debian GNU/Linux                   |     complicated way only to be able to
+branden@debian.org                 |     have that comment in there.
+http://people.debian.org/~branden/ |     -- Lars Wirzenius
 
---7mxbaLlpDEyR1+x6
+--bO4vSxwwZtUjUWHo
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 Content-Disposition: inline
@@ -50,9 +50,9 @@ Content-Disposition: inline
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 
-iEYEARECAAYFAkCfwwUACgkQ6kxmHytGonzsyACggAcA8PfLM5e1PFF1LsEpc/1t
-nxIAnRbEGUhyECj1fPFskVsWPT6aV+Ob
-=Bev9
+iEYEARECAAYFAkCfxsQACgkQ6kxmHytGonx99QCeNrexhfqlKHXOzHYz5thvshEb
+AzcAnRSi2FciO1wOE55+HE8sidwURswS
+=FuvL
 -----END PGP SIGNATURE-----
 
---7mxbaLlpDEyR1+x6--
+--bO4vSxwwZtUjUWHo--
