@@ -1,124 +1,84 @@
-From: Manuel Krause <manuelkrause@netscape.net>
-Subject: Re: BTW: 2.4.19-patches-to-come?
-Date: Tue, 07 May 2002 21:35:18 +0200
-Message-ID: <3CD82C76.2080706@netscape.net>
-References: <3CD72AB1.6010607@netscape.net> <20020507092207.A6678@namesys.com>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: Re: fsync() Performance Issue
+Date: Tue, 07 May 2002 22:26:39 +0200
+Message-ID: <3CD8387F.5030107@mb.tu-ilmenau.de>
+References: <93F527C91A6ED411AFE10050040665D0049BF9B4@corpusmx1.us.dg.com>	<1020463205.3	 946.252.camel@tiny>	<3CD341EC.9080906@namesys.com>	<1020517884.3947.266.camel@tiny>	<3CD3F76D.4000708@namesys.com> <1020688827.3947.2087.camel@tiny>	<3CD6F3D4.9050103@namesys.com> <1020725839.988.50.camel@tiny> 	<3CD72B37.2010408@mb.tu-ilmenau.de> <1020737096.988.86.camel@tiny>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10278-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10279-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: Chris Mason <mason@suse.com>
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list <reiserfs-list@namesys.com>
 
-Hi!
+On 05/07/2002 04:04 AM, Chris Mason wrote:
 
-On 05/07/2002 07:22 AM, Oleg Drokin wrote:
-
-> Hello!
+> On Mon, 2002-05-06 at 21:17, Manuel Krause wrote:
 > 
-> On Tue, May 07, 2002 at 03:15:29AM +0200, Manuel Krause wrote:
-> 
-> 
->>1.) the deleted/truncated/completed-files-on-mount at least
->>    printed in the kernel logs, at best with the real filename
+>>On 05/07/2002 12:57 AM, Chris Mason wrote:
+>>
+>>
+>>Hi, Chris & Hans!
+>>
+>>Don't think this somekind of destructive discussion would lead to 
+>>anything useful for now, can you post a diff for 
+>>2.4.19-pre7+latest-related-pending +compound-patch-from-ftp?
+>>
+>>I'll try it and report if that leads to more security and/or less 
+>>performance on my every day use with NS6 and so on if there is any.
 >>
 > 
-> Huh??
+> The current data logging patches are at:
 > 
->>    -- as afterwards they are not retrievable --
->>
+> ftp.suse.com/pub/people/mason/patches/data-logging
 > 
-> Sure. Files are deleted already. How do you plan to retrieve deleted files?
-> (not using backups, that's it).
+> They are against 2.4.19-pre7, and contain versions of the major (stable)
+> speedups.  The patch is pretty big, so I'm not likely to merge with the
+> namesys pending directories.  The namesys guys add things frequently,
+> and I think it would get confusing for people trying to figure out which
+> patches to apply.
 > 
-
-
-Mmh. I meant to restore the affected files from existing backups. When
-they are  removed by reiserfs on mount I know they are really corrupted
-during crash. It often looks like:
-  Removing [5523 5570 0x0 SD]..done
-  Removing [5523 5569 0x0 SD]..done
-  Removing [5523 5566 0x0 SD]..done
-  There were 3 uncompleted unlinks/truncates. Completed
-
-I have an overview what files may be meant but... See the context below.
-I don't find this information very explicative. And I really don't know
-enough about reiserfs code to interprete these lines. BTW, can we have a
-"ReiserFS: " in front of these messages?
-
+> The data logging stuff is beta code, if you have a good test bed where
+> it's ok if things go wrong I can make you a special patch with the
+> pending stuff merged.
 > 
->>    That's a security reason -- whoever can trigger a crash
->>    with various methods (I know the admin should take care
->>    against this case... but on my home sytem I'd like to know
->>    that info, too) but to get back the file from backups in
->>    case... who knows it before a
->>    crash... ? Am I missing something?
->>
-> 
-> This is unclear to me. You mean to crash a system to get a copy of deleted file,
-> or to crash a system to delete a file? Both things sound very unlikely.
+> -chris
 > 
 
 
-Yes, no doubt, I really don't know what is usual in these cases. I
-should explain what happened to make me write this comment. I had
-recompiled one DRI module for X recently when my system decided to
-crash. After rebooot I had some truncates-to-complete. So far "normal"
-or at least "o.k.".
+So, what should I do? I believed in ReiserFS stability so far more than 
+usual and it went o.k. since years. I would not consider my notebook a 
+safe test bed machine but I do know the value of uptodate backups. ;-)
 
-But due to anti-aliasing configured in KDE it loaded everything but
-didn't show anything else than my desktops background color and the
-mouse arrow. It took me some time to figure out how to get things back
-into previous order. It finally seems like I just needed to reinstall
-the DRI component. But until now I don't know what files had
-disappeared/corrupted to get exactly and only these ones from my backup.
-You see? Yes, not usual, but...
+When the reiserfs speedup patches will go into mainline, what they'll do 
+hopefully, you need to adjust your patches anyways:
+I don't think it's good if I adjust them myself, as I don't know what I 
+may corrupt in the code. Sometimes it's really annoying to edit some 
+patches' .diff files when some maintainers decide to add one 
+dumb/unneeded blank space or diff path or /usr/src/linux link. I tried 
+to rediff/manually-add  your recently posted speedup-patch (IIRC it was 
+with the fsync issue for Wayne) over the last weekend and I stopped 
+after facing too many identities with the 
+existing+pending+compound-speedup-2(-with-iicache-in) code. So do I do 
+with  the latest data-logging patches you pointed me to.
 
-> 
-[disk distinction]
->>3.) a hint on how to turn on/off data-journaling for "some"
->>    of our existing reiserfs partitions if it exists at all
->>    for now and why it could be needed in some cases?!.
->>
-> 
-> Data journaling is available only in form of a separate patch from Chris for
-> now.
-> 
+I think I'm not approved enough and in need to do your work, as I had 
+enough stupidity to merge aa., akpm. and rml. patches for 2.4.19-pre7. 
+Choose your poison, like Hans finally meant under the lines, an addon 
+mount option in fstab would never be a problem... :-))
 
-
-Yes, thanks, Chris gave that info, too. Thank you! I mostly (only)
-wondered about Hans' & Chris' discussion about not yet implemented and
-not released-on-Namesys-ftp-for-testing reiserfs options that seem to be
-useful in some cases...
-
-> 
->>4.) a hint why there is iicache code in the latest
->>    speedup-compound-patch (so that the latest iicache patch
->>    would not apply)
->>
-> 
-> Hm? What do you mean by latest speedup-compound-patch? I know Chris does not
-> believe iicache should be good to use, because similar functionality (with
-> less overhead) can be achieved by pagecache.
-> 
+BTW, why do you "not believe iicache should be good to use, because 
+similar functionality (with less overhead) can be achieved by 
+pagecache." as Oleg wrote today?! Is that true and why isn't that 
+realized yet?
 
 
-Pagecache? How can I adjust this? Where did I read this before...?
-
-Yura explained what patch I meant. Hey, that's on Namesys ftp for one
-week already!
-
- >
-
-> Bye,
->     Oleg
-> 
-
-Bye,
+Bye, thanks and best regards,
 
 Manuel
+
+
 
