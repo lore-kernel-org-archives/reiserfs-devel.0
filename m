@@ -1,71 +1,103 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Writeback cache, SCSI, and ReiserFS
-Date: 16 Oct 2002 08:52:02 -0400
-Message-ID: <1034772722.18459.31.camel@tiny>
-References: <20021016053312.CCE9A1AEC187@server5.fastmail.fm>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: back up to disk
+Date: Wed, 16 Oct 2002 21:29:09 +0400
+Sender: edward
+Message-ID: <3DADA1E5.4A5CB158@namesys.com>
+References: <20021016021558.79A2E1AEC1B9@server5.fastmail.fm>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11716-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11717-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021016053312.CCE9A1AEC187@server5.fastmail.fm>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: JP Howard <jh_lists@fastmail.fm>
-Cc: ReiserFS List <reiserfs-list@namesys.com>, Rob Mueller <robm@fastmail.fm>
+Cc: Hans Reiser <reiser@namesys.com>, Russell Coker <bofh@coker.com.au>, ReiserFS List <reiserfs-list@namesys.com>, webmaster@www.mikerubel.org
 
-On Wed, 2002-10-16 at 01:33, JP Howard wrote:
-> Here's a little program to test fsync() performance--if you run it with
-> the parameter '1' it does 10000 write/fsync combinations, with the
-> parameter '0' it does 10000 writes, followed by a single fsync:
+JP Howard wrote:
+> 
+> On Wed, 16 Oct 2002 05:15:33 +0400, "Hans Reiser" <reiser@namesys.com>
+> said:
+> > JP Howard wrote:
+> >
+> > >We've been thinking about something like that, using this extremely nifty
+> > >trick:
+> > >
+> > >http://www.mikerubel.org/computers/rsync_snapshots/
+> > >
+> > This is brilliantly simple.
+> >
+> I thought so too. I'm cc'ing the author so he can bask in the glory...
+> ;-)
+> > >
+> > >Back in the old days (i.e. last week) when we were planning around Ext3,
+> > >we were thinking of combining it with this product:
+> > >
+> > >http://www.shaolinmicro.com/product/cogofs/index.php
+> > >
+> > This looks reasonable as a product, and not unreasonably expensive for
+> > servers.   There are some advantages to tight integration though, in
+> > that you can compress at flush time.
+> >
+> Yes indeed. And I haven't seen this product used anywhere--I don't know
+> how reliable it is. It's binary-only, which I don't like, and you have to
+> get a version for your particular kernel (and really, who uses stock
+> kernels?...)
+> > >
+> > >The two combined, with ATA RAID, provide fast, redundent, incremental,
+> > >compressed backups.
+> > >
+> > >Does ReiserFS support transparent compression?
+> > >
+> > This is one of the features that won't make the Halloween deadline, but
+> > might be slipped in later.
+> >
+> > If not, are there any
+> > >plans in this direction? Benchmarks I've seen in the past suggest that
+> > >compressed file systems generally improve performance (especially when
+> > >using something fast like LZOP) since CPUs are so fast--and of course for
+> > >backups being able to store more on fewer disks is nice...
+> > >
+> > What I had heard was that they generally slowed peformance, but maybe my
+> > info is old.
+> >
+> > CPUs are faster now, and maybe compression algorithms are faster.
+> >
+> > Can you give more details?
+> >
+> I'm just passing on anecdotal information, I'm afraid. I can tell you
+> that LZOP is *seriously* fast.
+>   http://www.oberhumer.com/opensource/lzop/
+> 
+> Every benchmark I've seen shows it #1 for speed. We see around 50%
+> compression ratio on our Cyrus mail store using LZOP compression on our
+> backups.
+
+It looks fine, although I expect that file system will produce lower
+compression ratio since we can not use too large cluster size as this
+algorithm does (256K).
+
+Edward.   
+
+> 
+> It's easy enough to construct some simple benchmarks like this:
 > ----
-> int main(int argc, char **argv) {
->   int i, fd, mode;
->   mode = atoi(argv[1]);
->   fd = open("/some/path", O_CREAT | O_RDWR);
->   for (i=0; i<10000; i++) {
->     if (i%10 == 0)
->       lseek(fd, 0, SEEK_SET);
->     write(fd, buf, 8192);
->     if (mode == 1) {
->       fsync(fd);
->     }
->   }
->   fsync(fd);
-> }
+> # time zgrep foobar maillog.1.gz
+> real    0m6.924s
+> user    0m3.140s
+> sys     0m0.620s
+> 
+> # time grep foobar maillog.1
+> 
+> real    0m19.972s
+> user    0m0.290s
+> sys     0m0.620s
 > ----
 > 
-> Now, according to our RAID controller (MegaRAID Series 475), we have
-> writeback cache turned on. Therefore, I would have thought that the above
-> program would run at the same speed regardless of using parameter '1' vs
-> '0', since fsync should return immediately when using a writeback cache.
-
-This is one of the things the data logging patches were optimized for. 
-If you fsync after every write, the average transaction size is going to
-be about 4 or 5 blocks.  If you fsync at the every end, the average
-transaction size will be a few hundred blocks at least.
-
-The data logging patches make small transactions much faster (even
-without data=journal), and with data=journal the difference is huge.
-
-Not 30x faster though.  You see that difference because of the lseek
-back to zero, which means you are overwriting the same blocks over and
-over again.  With fsync on, you wait for each write to hit the
-controller's cache.  With fsync at the end, you wait for each write to
-hit the page cache, and then wait for 8192 * 10 bytes to hit the
-controller's cache at the end.
-
-Even if the controller is writeback caching, fsync=1 sends many more
-commands down the pipe, and each one has to be processed.
-
-So, if you really want to test your writeback cache on the controller,
-run your test with fsync = 1 with the writeback on, the run with fsync =
-1 with the writeback off.
-
-If you get the same numbers both ways, you don't have writeback on.
-
--chris
-
-
+> Of course, it depends a lot on the CPU and HDD configuration, and where
+> your system is loaded. We always find our IMAP and SMTP servers IO bound,
+> with plenty of CPU free. It's very expensive to change from a 5x73GB to a
+> 10x36GB config, so buying more IO performance is an expensive
+> proposition.
