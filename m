@@ -1,30 +1,41 @@
-From: "M.J.Baars" <M.J.Baars@ewi.tudelft.nl>
-Subject: openmosix question
-Date: Sun, 31 Oct 2004 13:18:40 +0100 (MET)
-Message-ID: <Pine.GHP.4.44.0410311315260.28606-100000@elektron.its.tudelft.nl>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: capture_anonymous_page
+Date: Mon, 01 Nov 2004 12:00:36 +0300
+Message-ID: <1099299635.1712.77.camel@tribesman.namesys.com>
+References: <41829679.2010808@sci.fi>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22231-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-22237-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <41829679.2010808@sci.fi>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Lasse =?ISO-8859-1?Q?K=E4rkk=E4inen?= / Tronic <tronic2@sci.fi>
+Cc: reiserfs-list@namesys.com
 
-Hi all,
+Hello
 
-Could anyone please tell me if it is possible use the following
-configuration?
+On Fri, 2004-10-29 at 23:14, Lasse K=E4rkk=E4inen / Tronic wrote:
+> Posting here, as requested by nikita:
+>=20
+> reiser4[pdflush(27198)]: capture_anonymous_page=20
+> (fs/reiser4/plugin/file/file.c:999)[nikita-3329]:
+> WARNING: Cannot capture anon page: -28
+> reiser4[pdflush(27198)]: capture_anonymous_pages=20
+> (fs/reiser4/plugin/file/file.c:1058)[vs-1454]:
+> WARNING: failed for moved page: result=3D-28 (captured=3D0)
+>=20
+> I'm getting lots of those in my kernel log. The filesystem (which is=20
+> root) was fsck'ed a few days ago and there have been no dirty reboots=20
+> since then. I've been using it in normal desktop/Gentoo setup, not=20
+> benchmarking nor doing anything special.
+>=20
+> Running 2.6.9-cko2.
+>=20
 
-raid1+lvm2+reiser4+openmosix
-
-I'm just going to try and see if it works, but it would be helpful you
-could tell me more on patching an openmosix kernel..
-
-Greetz,
-Mischa.
-
-
+It looks like your root filesystem is out of free disk space. If yes,
+freeing some space should make these warnings to go away.
 
