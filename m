@@ -1,59 +1,104 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiserfsck will take 28 years
-Date: Sun, 02 Mar 2003 05:01:39 +0300
-Message-ID: <3E616603.70709@namesys.com>
-References: <3E603282.4000001@friendfinderinc.com> <20030301230445.GA3088@mrball.net>
+From: "Elias Ignacio Contreras" <enito@eudoramail.com>
+Subject: PLZ HELP, my 160gb 's DANGER :(
+Date: Sat, 01 Mar 2003 21:41:15 -0800
+Message-ID: <OGLPFJHNHFJJIBAA@whowhere.com>
+Reply-To: enito@eudoramail.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13042-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13044-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030301230445.GA3088@mrball.net>
+Content-Language: en
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Todd Lyons <todd@mrball.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Todd Lyons wrote:
+Hi
 
->-----BEGIN PGP SIGNED MESSAGE-----
->Hash: SHA1
->
->Marc Rotzow wanted us to know:
->
->  
->
->>945 GB Usable space
->>    
->>
->
->Our 500 GB partition took 8 hours to do in a rebuild-tree.  We didn't
->have that many files though.  I don't know if that affects things.
->- -- 
->Blue skies...	Todd 	Public key: http://www.mrball.net/todd.asc
-><cbsmith> Damn, I have to figure out a way to keep my connection up. :-(
-><scandal> cbsmith: would that be like viagra for TCP?
->Linux kernel 2.4.19-16mdk   4 users,  load average: 0.00, 0.00, 0.00
->-----BEGIN PGP SIGNATURE-----
->Version: GnuPG v1.0.7 (GNU/Linux)
->Comment: http://www.mrball.net/todd.asc
->
->iD8DBQE+YTyNIBT1264ScBURAh7HAJ4jg9IiKHE9Xk7VLaFs8BJmDOVGPACcCcSt
->KbpNQLxJSupSueuVEzZRifo=
->=qN+C
->-----END PGP SIGNATURE-----
->
->
->  
->
-It affects things a lot.  Vitaly needs to rewrite the oid tracking code, 
-because each oid added means a memory shift of the entire oid map.  This 
-is a fundamentally flawed algorithm for filesystem with a lot of files, 
-and it is the reason for his slowdown.
+sorry for my bad english, but im a bit dissapear for this situation. I have a strange trouble i show you with pastes of the weird situation.
 
--- 
-Hans
+First:
+PDC20269: chipset revision 2
+PDC20269: not 100% native mode: will probe irqs later
+    ide2: BM-DMA at 0x9000-0x9007, BIOS settings: hde:pio, hdf:pio
+    ide3: BM-DMA at 0x9008-0x900f, BIOS settings: hdg:pio, hdh:pio
+hda: Maxtor 5T030H3, ATA DISK drive
+hdb: ASUS CD-S520/A, ATAPI CD/DVD-ROM drive
+hdc: HL-DT-ST GCE-8400B, ATAPI CD/DVD-ROM drive
+hde: Maxtor 4G160J8, ATA DISK drive
+ide0 at 0x1f0-0x1f7,0x3f6 on irq 14
+ide1 at 0x170-0x177,0x376 on irq 15
+ide2 at 0xa400-0xa407,0xa002 on irq 5
+hda: 60030432 sectors (30736 MB) w/2048KiB Cache, CHS=3736/255/63
+blk: queue c037494c, I/O limit 4095Mb (mask 0xffffffff)
+hde: 320173056 sectors (163929 MB) w/2048KiB Cache, CHS=317632/255/63, UDMA(133)ide-floppy driver 0.99.newide
+Partition check:
+ hda: hda1 hda2 hda3 hda4 < hda5 >
+ hde: unknown partition table
+
+you can see, hde, unknow partition!!
+
+and i do this one:
+[root@burrillo root]# reiserfsck --check /dev/hde
+
+<-------------reiserfsck, 2002------------->
+reiserfsprogs 3.6.4
+
+Do you want to run this program?[N/Yes] (note need to type Yes if you do):Yes
+###########
+reiserfsck --check started at Sun Mar  2 02:37:46 2003
+###########
+Replaying journal..
+0 transactions replayed
+Checking internal tree..finished                               
+Comparing bitmaps..finished
+
+Checking Semantic tree:
+finished                                                                       
+No corruptions found
+There are on the filesystem:
+	Leaves 42644
+	Internal nodes 296
+	Directories 2391
+	Other files 27519
+	Data block pointers 39755577 (0 of them are zero)
+	Safe links 0
+###########
+reiserfsck finished at Sun Mar  2 02:39:28 2003
+###########
+
+as i can see, all fine "weird" 
+
+and look
+[root@burrillo root]# fdisk -l /dev/hde
+
+Disk /dev/hde: 255 heads, 63 sectors, 19929 cylinders
+Units = cylinders of 16065 * 512 bytes
+
+Disk /dev/hde doesn't contain a valid partition table
 
 
+and ..the weirdo i can mount and see dirs and stuff 
+with mount -t reiserfs /dev/hde /mnt/disk
+
+what can be trouble system tell me now unknow partition?
+
+plz help me im a bit dissaspear for lost my 160gb .(
+
+thx a lot for take your time
+enito
+
+
+
+
+
+
+
+
+
+
+Need a new email address that people can remember
+Check out the new EudoraMail at
+http://www.eudoramail.com
