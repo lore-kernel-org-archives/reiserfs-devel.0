@@ -1,28 +1,32 @@
-From: Sander <sander@humilis.net>
-Subject: Re: lost data
-Date: Wed, 23 Feb 2005 00:03:29 +0100
-Message-ID: <20050222230329.GA16944@favonius>
-References: <200502222335.42897.master-list@arcor.de>
-Reply-To: sander@humilis.net
+From: Jan Kara <jack@ucw.cz>
+Subject: Re: ReiserFS quota and 2.6.10
+Date: Wed, 23 Feb 2005 11:28:11 +0100
+Message-ID: <20050223102811.GC31151@atrey.karlin.mff.cuni.cz>
+References: <20050222201726.31044.qmail@web86510.mail.ukl.yahoo.com>
 Mime-Version: 1.0
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200502222335.42897.master-list@arcor.de>
+In-Reply-To: <20050222201726.31044.qmail@web86510.mail.ukl.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Micha Mutschler <master-list@arcor.de>
+To: Yiannis Mavroukakis <i.mavroukakis@btinternet.com>
 Cc: reiserfs-list@namesys.com
 
-Micha Mutschler wrote (ao):
-> Is there any chance to see the data on a reiserfs partition (112GB)
-> that was formated with ext3?
+> Because I like to keep people happy, especially Valdis
+> Kletnieks, I'll repost my query from another email
+> account without a disclaimer..here we go.
+  :) The disclaimer was quite longer than the message...
 
-The answer might be 'yes'. Read this thread:
-http://marc.theaimsgroup.com/?t=110790146200001&r=1&w=2&n=20
+> ==========
+> >From the subject, you have probably already guessed
+> what I am about to ask.. 
+> Is quota working ok with vanilla 2.6.10 with ReiserFS?
+  Yes, the quota should be working fine - I suggest to wait a bit for
+2.6.11 as it has fixed some deadlocks in the quota code appearing under
+high load.
 
-And especially this message:
-http://marc.theaimsgroup.com/?l=reiserfs&m=110804929807110&w=2
+								Honza
