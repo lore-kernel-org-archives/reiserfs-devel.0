@@ -1,58 +1,33 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: [ANNOUNCE]: reiser4
-Date: Tue, 29 Oct 2002 21:39:12 +0300
-Message-ID: <15806.54736.737949.328809@laputa.namesys.com>
-References: <15806.51536.985203.709475@laputa.namesys.com>
-	<3DBED1C8.5080404@pobox.com>
+From: Philippe =?ISO-8859-1?B?R3JhbW91bGzp?= <philippe.gramoulle@mmania.com>
+Subject: Quota patches and  kinoded versions
+Date: Tue, 29 Oct 2002 20:18:53 +0100
+Message-ID: <20021029201853.73380d45.philippe.gramoulle@mmania.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11826-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11827-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3DBED1C8.5080404@pobox.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: Linux Kernel Mailing List <Linux-Kernel@vger.kernel.org>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs <reiserfs-list@namesys.com>
 
-Jeff Garzik writes:
- > Nikita Danilov wrote:
- > 
- > >Hello,
- > >
- > >Snapshot of reiser4 source code can be found at 
- > >http://www.namesys.com/snapshots/2002.10.29/.
- > >
- > >It is set of patches against current Linus BK tree (2.5.44).
- > >  
- > >
- > 
- > The current Linus BK tree is quite a bit different from 2.5.44 ;-)
- > 
- > Take a look at 2.5.44-bk1 at 
- > ftp://ftp.kernel.org/pub/linux/kernel/v2.5/snapshots/
- > 
- > A -bk2 snapshot should appear within the hour, too, with heaps of 
- > additional changes.
- > 
+Hi Chris,
 
-Sorry, my fault.
+I need to rebuild an up-to-date 2.4 quota aware kernel for Reiserfs 3.6 and
+i see this difference between what i run now ( 2.4.19-pre6) and the files on your FTP servers:
 
-Patches in reiser4 snapshot are against Linus BK repository at
-http://linux.bkbits.net/linux-2.5. Numbers 2, 5, and 44, are, of course,
-just VERSION, PATCHLEVEL, and SUBLEVEL in the Makefile of the said
-repository.
+Since march 2002 ( timestamps of my files) , it was kinoded-8-2.4.19-pre3 and i see that
+kinoded-8-2.4.19-pre7 is of Sept 2002. Other files didn't change.
 
-Probably we should prepare patches against ftp.kernel.org shapshots
-instead.
+We have some regular oopses on servers which act as fileservers ( ReiserFS+NFS) and i wonder
+whether i should upgrade regarding this.
 
- >     Jeff
- > 
+Also, do you plan to sync quota patches with 2.4.20pre or with 2.4.20 final once its out ?
 
-Nikita.
+Thanks,
 
- > 
- > 
- > 
+Philippe.
+
