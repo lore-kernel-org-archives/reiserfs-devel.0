@@ -1,107 +1,66 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: flush earlier?  (was Re: Congratulations! we have got hash function
- screwed up)
-Date: Sun, 09 Jan 2005 17:26:16 -0600
-Message-ID: <41E1BD98.2080809@slaphack.com>
-References: <20041228221218.GA6412@schmorp.de> <20050106124505.GE5352@backtop.namesys.com> <20050106142706.GE519@schmorp.de> <41DD5FA9.5020800@namesys.com> <1967462673.20050106171323@tnonline.net> <20050106162619.GG18173@ZenIV.linux.org.uk> <41DEC53A.40403@namesys.com> <41DF1AE1.8090306@slaphack.com> <41DF20A8.20506@namesys.com> <41DF699C.3030400@slaphack.com> <41E04707.9060101@namesys.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: --rebuild-tree always finds errors --check is ok
+Date: Mon, 10 Jan 2005 15:50:34 +0300
+Message-ID: <200501101550.34403.vitaly@namesys.com>
+References: <41D71C4E.6000209@hanaden.com> <200501072343.08374.vitaly@namesys.com> <41DF2CD6.7040800@hanaden.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23103-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23105-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41E04707.9060101@namesys.com>
+In-Reply-To: <41DF2CD6.7040800@hanaden.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Chris Dukes <pakrat@www.uk.linux.org>, Spam <spam@tnonline.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: hanasaki <hanasaki@hanaden.com>, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Saturday 08 January 2005 03:44, hanasaki wrote:
+> Could you outline exactly what takes place on a rebuild-tree?
 
-Hans Reiser wrote:
-[...]
-|> I'm not sure I understand that.  Is the idea of that to build up a write
-|> buffer which insists on flushing bytes off the front as they are added
-|> onto the back, without flushing huge chunks at once?
-|
-|
-| Yes.
-|
-|>
-|> Would that be as efficient at packing (no fragmentation)?
-|
-|
-| No.
+reiserfs has two types of blocks. There are unformatted nodes. They
+contain plain user file data. And there are formatted nodes. These may 
+contain both user file data and filesystem metadata. --rebuild-tree scans
+all blocks looking for filesystem metadata, e.g. for formatted nodes. 
+However you can put a reiserfs image into a file, then file data (e.g. 
+unformatted nodes of the host fs) will contain formatted nodes of the 
+fs image, and rebuilding of the host fs will be screwed up as there is 
+no way to distinguish image fs metadata kept in unformatted nodes 
+of the host fs from the host fs metadata.
 
-Really?  I'd think that it would waste more CPU, but you could actually
-end up packing better, if you allocate for the end of the buffer as it's
-flushed, because you can look at the whole buffer and what's already on
-disk.  What would be a good idea with one flush could be inefficient by
-the next, and this system can react faster to that change.
+> I was under the incorrect assumption that if a rebuild-tree is 100%
+> successful then the FS is ok and a subsequent rebuild-tree will have
+> nothing to fix/report.  .....
 
-But, there's still laptops, and there's CPU usage.
+In your case, some unformatted nodes look like formatted ones for the 
+first sight, however after fixing all the corruptions in these nodes fsck 
+realises that there is no valid metadata left and that they are either 
+completely broken nodes or file data ones. To not corrupt file data fsck 
+does not flush the made changes on disk. And as nothing gets changed 
+the same attempt of fixing these nodes repeats again on the next rebuild.
 
-Will it be hard to implement both approaches?  One example would be
-someone trying to create a clean fs "image", or someone who's installing
-software, so they don't care how long it takes, but they do want it to
-be tightly packed.  Someone who can't afford the repacker :(
+> Vitaly Fertman wrote:
+> > On Tuesday 04 January 2005 20:25, hanasaki wrote:
+> >>Version of reiserfsk
+> >>======================
+> >>== From debian sarge
+> >>/sbin/reiserfsck -V
+> >>reiserfsck 3.6.19 (2003 www.namesys.com)
+> >>== also used the version in knoppix 3.7 with similar results
+> >>
+> >>the output of two consecutive runs of --rebuild-tree on the same
+> >>unmounted partition are attached.  Below is the diff
+> >
+> > rebuild-tree finds some blocks that looks like reiserfs formatted
+> > blocks for the first sight whereas they are not and just belongs to
+> > some file bodies. The consistency check reveals no valid metadata
+> > in them, so they are considered as not valid reiserfs formatted blocks
+> > and left not modified on disk. This is why the second run of rebuild-tree
+> > finds them again and tries to do all the stuff again.
 
-|> But the main problem was it would basically lock the fs entirely -- no
-|> access at all.
-|
-|
-| Which is why we need to allow fusing a little bit.
+-- 
+Thanks,
+Vitaly Fertman
 
-What do you mean by "fusing" here?
 
-|> This especially hurts with read access.
-|
-|
-| Read access?  Do you have one CPU?  Maybe the problem isn't what I
-| thought it was.
-
-Yes, I have one CPU.  But I only have one reiser4 drive per machine.  I
-think that reiser4 locks all fs access until the flush is done, or at
-least it used to.  But even if it didn't, reads take _forever_ when the
-disk is in use, and reads are usually more urgent than writes (hence
-asynchronous writes).  And the disk will be in use trying to write a
-huge chunk of data for some time, and will take longer the more RAM you
-have.
-
-|> For now, how about a quick fix.  Can we force a flush when we get to
-|> 80%?
-|
-|
-| VM already has an asynchronous flush mechanism.  We just need to clean
-| up our interaction with it a bit to smooth things out.
-
-What I want to avoid is doing away with lazy writes entirely (laptops)
-and doing something like ext3's "flush every five seconds" concept.  But
-I also want to avoid truly _massive_ spikes in disk activity.
-
-That's what the 80% is about.  You still get lazy writes, but they can
-be at a lower priority than reads, hopefully minimizing seeks, too --
-thrashing between reading and writing.  But when the lazy write happens,
-you don't slow down the rest of the system, because it still has some
-room to write.
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQeG9l3gHNmZLgCUhAQJFqQ/9FH9OVdTEM3DLCfRef0Xc6N+ZA4Wv4kCp
-T1W4OHbxq3AL31TcLv5hRDA8xhv3ivp/ODQfcGNyM2mg2UcV61xwHWxvUwQmBTPG
-0Nl2o4uM51LuoqW4V1OoVPD4sSr/Ak08ahyeG1vZY5T5kpLk+V6Ms6jklRrQqTDZ
-r6PgBvDyw7C9JVuX911MMIzOJpDjx2vJavJZu0C4M/X2k9Tl2A99O2gpLB3Vuvcn
-kCKEctXb6K+bt+kiFrnsMl4tqBhrc6fYMSQq+ZP4uU1Ttzxz1T59lT+gtMf2yqZL
-hUZgMZ/DNpEdyzU7QOTMFOHFr5l73D4YainEJ7XP9zHzMf4tkHEwUiE3/H7/0ktD
-FIqAnJ7khiDwC9r/yqAliecqWg+fspvyLy85aVsmG/5RWbEMYHhyxM4e+vEM5EMs
-5dJ1XpSuoVrujiKFx2h/5drQ4KFui9bplbfoSahEsFpdcJ+MtNYHvNOqJ5l2ZLfe
-s75j4DtsbWTXK/tGFRmIcL8gPzlUszfXrRVtQw+bhIxAtxmoABuqbCMYDd9LyclO
-Kyzy0Ha0AYQy5pIFwm5cTCkC7GBThLBzPk7863J4jxHJ23izg5B/IyEEhOk9NOx2
-jC3zf6ZwD1nEIWbZ/yH4s2J8kXw/wno92GLwxI5hpPFPqZxxGMG7xeND1vhcHBvF
-1fozX/nMpN4=
-=puoc
------END PGP SIGNATURE-----
