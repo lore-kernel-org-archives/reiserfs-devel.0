@@ -1,38 +1,47 @@
-From: Domenico Andreoli <cavok@tiscali.it>
-Subject: Re: reiser4-2004.08.03 for 2.6.8-rc3 !
-Date: Wed, 4 Aug 2004 17:36:46 +0200
-Message-ID: <20040804153646.GA29268@raptus.homelinux.net>
-References: <30a4d01b040804033418957234@mail.gmail.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: reiserfs_create: no enough blocks on device
+Date: Wed, 04 Aug 2004 21:23:13 +0400
+Message-ID: <41111B81.9020806@namesys.com>
+References: <20040802212341.24550.qmail@web50907.mail.yahoo.com> <20040802215322.GB1912@schnapps.adilger.int>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19984-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19985-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <30a4d01b040804033418957234@mail.gmail.com>
+In-Reply-To: <20040802215322.GB1912@schnapps.adilger.int>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Andreas Dilger <adilger@clusterfs.com>
+Cc: sankarshana rao <san_wipro@yahoo.com>, reiserfs-list@namesys.com
 
-hi,
+Hello
 
-On Wed, Aug 04, 2004 at 01:34:29PM +0300, Genady Okrain wrote:
-> http://www.mafteah.co.il/mafteah-sources/2.6.8-rc3-Mafteah1/broken-out/reiser4-broken-out.bz2
+Andreas Dilger wrote:
+> On Aug 02, 2004  14:23 -0700, sankarshana rao wrote:
+> 
+>>I am trying to create a reiserfs filesystem using the
+>>command 
+>>'mkreiserfs  /dev/loop/0 100'.
+>>It always gives me the error 
+>>"reiserfs_create: no enough blocks on device".
+>>
+>>I tried altering the block size, but it would not
+>>help..
+> 
+> 
+> You can't make a reiserfs filesystem smaller than about 40MB.
+> 
+> Cheers, Andreas
+> --
+> Andreas Dilger
+> http://sourceforge.net/projects/ext2resize/
+> http://members.shaw.ca/adilger/             http://members.shaw.ca/golinux/
 > 
 
-i'm provinding a slightly different patch which fixes also some warnings on
-read/write_(un)lock* calls which in linus' tree are still spin_(un)lock*.
+Experimentally I found that the smallest size of reiserfs is 531 blocks. It will have 512 block of journal.
 
-http://people.debian.org/~cavok/reiser4/
+mkreiserfs-3.6.17 -s 512 /dev/hdb11 531
 
-> Have fun :)
 
-of course ;)
-
-dom
-
------[ Domenico Andreoli, aka cavok
- --[ http://people.debian.org/~cavok/gpgkey.asc
-   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
