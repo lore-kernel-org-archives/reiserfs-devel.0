@@ -1,48 +1,35 @@
-From: Oliver Korpilla <okorpil@fh-landshut.de>
-Subject: Re: Reiser4 and NFS
-Date: Wed, 08 Sep 2004 14:00:06 +0200
-Message-ID: <413EF446.1070001@fh-landshut.de>
-References: <413C5DBA.1070207@fh-landshut.de> <1094543842.1340.61.camel@tribesman.namesys.com>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: silent semantic changes with reiser4
+Date: Wed, 08 Sep 2004 13:57:48 +0100
+Message-ID: <1094648265.11680.9.camel@localhost.localdomain>
+References: <20040905111743.GC26560@thundrix.ch>
+	 <1215700165.20040905135749@tnonline.net>
+	 <20040905115854.GH26560@thundrix.ch>
+	 <1819110960.20040905143012@tnonline.net>
+	 <20040906105018.GB28111@atrey.karlin.mff.cuni.cz>
+	 <6010544610.20040906143222@tnonline.net> <m3wtz7h2l6.fsf@zoo.weinigel.se>
+	 <826067315.20040906171320@tnonline.net> <m3sm9vh06b.fsf@zoo.weinigel.se>
+	 <20040906155456.GC13539@atrey.karlin.mff.cuni.cz>
+	 <20040908061159.GC1630@thundrix.ch>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21630-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21631-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1094543842.1340.61.camel@tribesman.namesys.com>
+In-Reply-To: <20040908061159.GC1630@thundrix.ch>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Tonnerre <tonnerre@thundrix.ch>
+Cc: Pavel Machek <pavel@ucw.cz>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Famous last log entries: ;)
+On Mer, 2004-09-08 at 07:11, Tonnerre wrote:
+> This  has   been  discussed  along   with  the  HAL  people   a  while
+> ago. Actually, file systems can  introduce a refcount, where we need a
+> decrement function  which automatically unmounts the  filesystem if we
+> decrement the use count to zero. Kind of an automatic umount.
 
-On the target (NFSv3 client):
+We've supported file system garbage collection when they become unused
+since umm about 2.4.10 I think.
 
-NET4: Unix domain sockets 1.0/SMP for Linux NET4.0.
-Looking up port of RPC 100003/2 on 192.168.1.1
-Looking up port of RPC 100005/1 on 192.168.1.1
-VFS: Mounted root (nfs filesystem).
-nfs_stat_to_errno: bad nfs status return value: 45
-mount_devfs_fs(): unable to mount devfs, err: -5
-Freeing unused kernel memory: 236k init
-nfs_stat_to_errno: bad nfs status return value: 45
-Warning: unable to open an initial console.
-nfs_stat_to_errno: bad nfs status return value: 45
-nfs_stat_to_errno: bad nfs status return value: 45
-nfs_stat_to_errno: bad nfs status return value: 45
-nfs_stat_to_errno: bad nfs status return value: 45
-Rebooting in 180 seconds..
-
-On the host (NFSv3 server):
-
-Sep  8 13:50:31 ppcproject1 rpc.mountd: authenticated mount request from 
-192.168.1.4:800 for /opt/devel/powerpc/rootfs (/opt/devel/powerpc/rootfs)
-Sep  8 13:50:32 ppcproject1 kernel: reiser4_encode_fh-3: need=36, lenp=5
-Sep  8 13:50:32 ppcproject1 last message repeated 5 times
-
-Guess we've tripped a wire here! It triggered one of your printks...
-
-With kind regards,
-Oliver Korpilla
