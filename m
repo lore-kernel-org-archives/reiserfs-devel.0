@@ -1,30 +1,38 @@
 From: Andreas Dilger <adilger@clusterfs.com>
-Subject: Re: 2.5.40 (was Re:  ext3 htree vs. reiserfs on 2.5.40-mm1
-Date: Fri, 4 Oct 2002 16:00:21 -0600
-Message-ID: <20021004220021.GA3000@clusterfs.com>
-References: <200210042254.23978.Dieter.Nuetzel@hamburg.de> <200210042128.g94LSnF3012807@turing-police.cc.vt.edu>
+Subject: Re: Re: [STUPID TESTCASE] ext3 htree vs. reiserfs on 2.5.40-mm1
+Date: Fri, 4 Oct 2002 16:01:26 -0600
+Message-ID: <20021004220126.GB3000@clusterfs.com>
+References: <200210042254.23978.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11606-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11607-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200210042128.g94LSnF3012807@turing-police.cc.vt.edu>
+In-Reply-To: <200210042254.23978.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Valdis.Kletnieks@vt.edu
-Cc: Dieter N|tzel <Dieter.Nuetzel@hamburg.de>, ReiserFS List <reiserfs-list@namesys.com>
+To: Dieter =?unknown-8bit?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Cc: ReiserFS List <reiserfs-list@namesys.com>, Chris Mason <mason@suse.com>, Paul P Komkoff Jr <i@stingr.net>, Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
 
-On Oct 04, 2002  17:28 -0400, Valdis.Kletnieks@vt.edu wrote:
-> 2.5.40 would be even greater if somebody could point me at a suitable
-> replacement for the LVM code I'm currently using - the Sistina people
-> have LVM 1.0.5 out for the 2.4 series, but apparently stopped supporting
-> 2.5 a while ago.  Is anybody using the LVM2 stuff, or is there some other
-> similar things for 2.5?
+On Oct 04, 2002  22:54 +0200, Dieter N?tzel wrote:
+> Am Mittwoch, 2. Oktober 2002 10:48 schrieb Paul P Komkoff Jr:
+> > Replying to Andreas Dilger:
+> > > Why do you think data=writeback is better than data=journal?  If the
+> > > files have no data then it should not make a difference.
+> >
+> > It is better than default data=ordered I think :)
+> > Reiserfs worked fine because it don't have such kind of limit ...
+> 
+> Orange and apples, again?
+> 
+> Try with latest ReiserFS data-logging and see what we get?
+> Chris do you have something for 2.5.40+ ready?
 
-EVMS has a 2.5 release (and BK tree) to test.
+I don't think it will make much difference - the files being created
+are zero-length files so the journaling mode is irrelevant.
 
 Cheers, Andreas
 --
