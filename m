@@ -1,34 +1,34 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: Core dump in reiserfsck
-Date: Wed, 15 Jan 2003 09:54:38 +0300
-Message-ID: <20030115095438.A22918@namesys.com>
-References: <3E24DEBA.39AC1901@nssmb.com>
+Subject: Re: reiserfsck failure
+Date: Wed, 15 Jan 2003 09:59:25 +0300
+Message-ID: <20030115095925.A23036@namesys.com>
+References: <3E247A12.4E479B64@neolinear.com> <3E247AB6.89265382@neolinear.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12351-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12352-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3E24DEBA.39AC1901@nssmb.com>
+In-Reply-To: <3E247AB6.89265382@neolinear.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vitaly Porotikov <vitaly.porotikov@nssmb.com>
-Cc: reiserfs-list@namesys.com
+To: Bill Schrier <wschrier@neolinear.com>
+Cc: it@neolinear.com, reiserfs-list@namesys.com
 
 Hello!
 
-On Wed, Jan 15, 2003 at 01:08:26PM +0900, Vitaly Porotikov wrote:
+On Tue, Jan 14, 2003 at 04:01:42PM -0500, Bill Schrier wrote:
 
->   Perhaps 3.x1c have not this bug, but I can't do any changes in my
-> system. I send it in hope to find some coding errors out (if this wasn't
-> before).
+> > I am sending along both the --logfile and the core file from a recent
+> > reiserfsck we were running on our Redhat 7.2 raidzone machine.
 
-You you guessed right, this bug is long fixed.
-Actually if you ever will decide to upgrade your reiserfsprogs (which is
-recommended), pick 3.6.4 (or whatever will be latest at the time),
-not 3.x.1c
+Can you say what exact version was that?
+Also just before dumping core it should have output some more info on stderr
+about assertion failure, we are interested in that message too.
+
+Thank you.
 
 Bye,
     Oleg
