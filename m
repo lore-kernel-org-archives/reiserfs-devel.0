@@ -1,49 +1,47 @@
-From: The Amazing Dragon (Elliott Mitchell) <ehem@cs.pdx.edu>
-Subject: Re: Fwd: Re: [reiserfs-list] Reserved Blocks
-Date: Mon, 16 Sep 2002 15:26:40 -0700 (PDT)
-Message-ID: <200209162226.g8GMQeZU026796@sirius.cs.pdx.edu>
-References: <200209161729.19198.bofh@coker.com.au>
-Reply-To: reiserfs-list@namesys.com
+From: "Sean Rima" <fido@tcob1.net>
+Subject: Strange Syslog messages
+Date: Tuesday, 17 Sep 2002 00:09:48 +0000
+Message-ID: <MSGID_2=3a263=2f950_ed7e4e2d@fidonet.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11482-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11483-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200209161729.19198.bofh@coker.com.au> from "Russell Coker" at Sep 16, 2002 05:29:19 PM
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-> From: Russell Coker <russell@coker.com.au>
-> On Mon, 16 Sep 2002 16:50, Valdis.Kletnieks@vt.edu wrote:
-> > Among other things, if there's a world-writable directory on the same
-> > filesystem, you get exposed to a whole raft of hard-link attacks that
-> > simply Wont Work if (for example) /tmp is a separate filesystem.  You'd
-> 
-> Solar Designer's OpenWall kernel patch addresses this issue by prohibiting
-> hard links to files with a different UID being created in a directory that
-> has the sticky bit set.  http://www.openwall.com/linux/
-> 
-> OpenWall is ported to the recent 2.4.x kernels and some 2.5.x kernels in the
-> form of the Linux Security Modules (LSM) kernel patch.
-> http://lsm.immunix.org/
+Originally to: All
 
-There is also the fuller and more current GRSecurity patch
-http://www.grsecurity.net/ (originally I'd been using OW, but it wasn't
-available for 2.4 when I was switching).
+Hi, me again folks,
 
-GRSec includes making the return of fork() be somewhat random value
-rather than simply incrementing, and making source ports be allocated
-somewhat randomly too (both of these features were stolen from OpenBSD).
-They're kind of a jumbo combination of a couple Good Thing(tm) patches.
+I am using a stock 2.4.19 kernel, on a system with reiserfs only. I have started 
+getting a lot of:
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat data of 
+[21003 21048 0x0 SD]
+is_leaf: wrong item type for item *3.5*[21003 21047 0x1 IND], item_len 8, 
+item_location 2214, free_space(entry_count) 0 vs-5150: search_by_key: invalid 
+format found in block 16616. Fsck? vs-13070: reiserfs_read_inode2: i/o failure 
+occurred trying to find stat data of [21003 21048 0x0 SD]
 
+if I boot into a rescue disk and run reiserfsck, I get no errors at all to be 
+fixed running check only
 
--- 
-|\__/|\__/|\______          --=> 8-) EHM <=--          ______/|\__/|\__/|
-\    |    |       | EHeM@cs.pdx.edu      PGP 8881EF59 |       |    |    /
-  \   \   | ______| -O #include <stddisclaimer.h> O-  |______ |   /   /
-    \___\_|/82 04 A1 3C C7 B1 37 2A   E3 6E 84 DA 97 4C 40 E6\|_/___/
+Is this serious, a problem with the HD or what??
+
+Thanks in advance.
+
+Sean
+... How Do You Make Windows Faster ? Throw It Harder
+--
+ Message from TCOB1, Ireland's best BBS
+ +353-95-43868 sometimes via tcob1.staticky.com
+
+<-> Gateway Information.
+This message originated from a Fidonet System (http://www.fidonet.org)
+and was gated at TCOB1 (http://www.tcob1.net)
+Please do not respond direct to this message but via the list
 
 
