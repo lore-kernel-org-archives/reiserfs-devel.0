@@ -1,42 +1,68 @@
-From: "Matthias Urlichs" <smurf@noris.de>
-Subject: Re: fsck mode halfway between --fix-fixable and --rebuild-tree ?
-Date: Tue, 1 Oct 2002 14:15:09 +0200
-Message-ID: <20021001141508.L32363@noris.de>
-References: <H356C4$4F46E50E852BF25DA1E850A48426FCDF@voila.fr> <20020929172335.L32363@noris.de> <20020930101824.A3895@namesys.com> <3D98318B.8000905@namesys.com> <20020930131744.X32363@noris.de> <20020930152204.A26742@namesys.com> <20020930150854.Z32363@noris.de> <3D984F92.4010509@namesys.com> <15769.17050.863426.305725@laputa.namesys.com> <3D998037.8030508@namesys.com>
+From: Jordan Breeding <jordan.breeding@attbi.com>
+Subject: [QUESTION] Reiserfs 3.6.x features for 2.5.x?
+Date: Tue, 01 Oct 2002 08:30:32 -0500
+Message-ID: <3D99A378.70509@attbi.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11593-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11594-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3D998037.8030508@namesys.com>; from reiser@namesys.com on Tue, Oct 01, 2002 at 03:00:07PM +0400
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Nikita Danilov <Nikita@Namesys.COM>, Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Hi,
+Hello,
 
-Hans Reiser:
-> >Actually, B-link trees (B-trees with sibling pointers) don't require any
-> >additional io for sibling pointers maintenance. Just draw a picture of
-> >what is going on during insertion of new node or node deletion and you
-> >will see. 
-> >
-> They have constraints we do not desire.  Also, I think they link in only 
-> one direction.  Am I right?
-> 
-Whether you use just a forward-pointing link or also a back-pointing link
-(or nothing at all) is up to you. Personally I like sibling and parent
-links because it is very easy to walk the tree iteratively (just follow
-the "next" or "prev" pointer when you're done with a node). Trees which
-only use downward-pointing links need to be walked recursively.
+   I was wondering if any of these are features which need to make it 
+into 2.5.x before the feature freeze, and if so whether it is likely or 
+not that they actually will make it.
 
-On the other hand, you're a multitasking file system, therefore you need
-locking, therefore side pointers won't be of much use to you for anything
-(except additional redundancy for error recovery).
+1) Correct updating of features used to mount the filesystem in the 
+flags shown in /proc, the following code:
 
--- 
-Matthias Urlichs     |     noris network AG     |     http://smurf.noris.de/
+#define SET_OPT(opt, bits, super) \
+         if ((bits) & (1 << (opt))) \
+                 REISERFS_SB(super)->s_mount_opt |= (1 << (opt))
+
+         /* set options in the super-block bitmask */
+         SET_OPT(REISERFS_SMALLTAIL, mount_options, s);
+         SET_OPT(REISERFS_LARGETAIL, mount_options, s);
+         SET_OPT(REISERFS_NO_BORDER, mount_options, s);
+         SET_OPT(REISERFS_NO_UNHASHED_RELOCATION, mount_options, s);
+         SET_OPT(REISERFS_HASHED_RELOCATION, mount_options, s);
+         SET_OPT(REISERFS_TEST4, mount_options, s);
+         SET_OPT(REISERFS_ATTRS, mount_options, s);
+#undef SET_OPT
+
+taken from 2.4 and copied into my local 2.5.x tree is missing from 2.5.x 
+mainline.
+
+2) Attribute handling, look at this:
+
+   `grep -r -H "attr" linux-2.4.18-14/fs/reiserfs/* | wc -l`
+     52
+
+   `grep -r -H "attr" linux-2.5.39-bk/fs/reiserfs/* | wc -l`
+     17
+
+unless I am missing something very basic I cannot get lsattr/chattr to 
+work on a filesystem mount with -o attrs.  They always complain about: 
+Inappropriate ioctl for device While reading flags on <filename>.  Will 
+attrs work on reiserfs-2.5.x in 2.6/3.0?
+
+3) I know that Chris Mason has been doing a lot of work to bring data 
+and ordered journaling to reiserfs 3.6.x and is working on porting it to 
+2.5.x currently, does it look like this will be able to make it into 
+2.6/3.0?
+
+4) I believe there were some reiserfs 3.6.x changes which went into 
+2.4.20-pre after the new block allocator, are these changes going to be 
+applied to the 2.5.x tree as well?
+
+Thanks for any information about the above and sorry if this mail was 
+kind of long.
+
+Jordan Breeding
+
