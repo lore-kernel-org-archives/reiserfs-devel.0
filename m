@@ -1,56 +1,54 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Sun, 29 Aug 2004 12:53:26 -0700
+Date: Sun, 29 Aug 2004 13:06:41 -0700
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <41323436.80007@namesys.com>
-References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org> <20040828170515.GB24868@hh.idb.hist.no> <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org> <4131074D.7050209@namesys.com> <Pine.LNX.4.58.0408282159510.2295@ppc970.osdl.org> <4131A3B2.30203@namesys.com> <Pine.LNX.4.58.0408291055140.2295@ppc970.osdl.org>
+Message-ID: <41323751.5000607@namesys.com>
+References: <Pine.LNX.4.44.0408271043090.10272-100000@chimarrao.boston.redhat.com> <412F7D63.4000109@namesys.com> <20040827230857.69340aec.pj@sgi.com> <20040829150231.GE9471@alias> <4132205A.9080505@namesys.com> <20040829183629.GP21964@parcelfarce.linux.theplanet.co.uk> <20040829185744.GQ21964@parcelfarce.linux.theplanet.co.uk>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.58.0408291055140.2295@ppc970.osdl.org>
+In-Reply-To: <20040829185744.GQ21964@parcelfarce.linux.theplanet.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com, Al Viro <viro@parcelfarce.linux.theplanet.co.uk>
+To: viro@parcelfarce.linux.theplanet.co.uk
+Cc: flx@msu.ru, Paul Jackson <pj@sgi.com>, riel@redhat.com, ninja@slaphack.com, torvalds@osdl.org, diegocg@teleline.es, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Linus Torvalds wrote:
+viro@parcelfarce.linux.theplanet.co.uk wrote:
 
->On Sun, 29 Aug 2004, Hans Reiser wrote:
+>On Sun, Aug 29, 2004 at 07:36:29PM +0100, viro@parcelfarce.linux.theplanet.co.uk wrote:
 >  
 >
->>>Realize that openat() works independently of any special streams, it's
->>>fundamentally a "look up name starting from this file" (rather than
->>>"starting from root" or "starting from cwd").
+>>>he wants without recompiling to do it.  This kind of a view requires no 
+>>>coding because you can just mount the root filesystem two ways, one with 
+>>>the -nopseudos mount option, and one without it.
 >>>      
 >>>
->>well, isn't that namespace fragmentation by definition?
+>>*What*?
+>>
+>>OK, now I want detailed explanation of the reasons why that doesn't create
+>>cache coherency problems.
+>>
+>>Do you have an analysis of locking in the entire thing?
 >>    
 >>
 >
->No.
+>And I am very, very serious about that - we are talking about very nasty
+>minefield and design choices in that area have fundamental impact on the
+>entire layer, wherever it is located.
 >
->There's no difference between
+>It's *NOT* something that you can leave until later and hope it somehow
+>falls into place - it can be merged in steps, but you MUST know the goal
+>on that level.  To rearchitect later might be possible (even though you
+>will a hell of a time avoiding plugins breakage), but it will be *hard*.
 >
->	fd = open("/usr/bin/yes", O_RDWR);
 >
->and
->
->	dirfd = open("/usr/bin", O_RDONLY | O_DIRECTORY);
->	fd = openat(dirfd, "yes", O_RDWR);
 >  
 >
-The difference is that cat uses open() not openat().
+How about if you educate me on the problems you see for a bit before I 
+respond? I think it might help us move into a constructive discussion.
 
-With your model, can I do:
-
-cat filenameA/metas/permissions > filenameB/metas/permissions
-
-find / -exec cat {}/permissions \; | grep 4777 | wc -l
-
-If yes, then we are talking past each other somehow rather than 
-disagreeing. If metafiles can be opened with both open and openat() in 
-your model, then we are discussing some small detail.
-
-I think the answer is no though, in which case you are missing the point 
-of the new design. Is the answer no?
-
+You are more experienced with your code than I am.... but I firmly 
+believe that having different views of the same filesystem in which some 
+files are visible in one view but not in another is technically feasible 
+for some VFS, though I'd like to learn about the problems you see for 
+doing it in the current VFS.
