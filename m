@@ -1,37 +1,80 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: reiser4 snapshot for August 26th.
-Date: Tue, 26 Aug 2003 23:15:17 +0400
-Message-ID: <3F4BB1C5.7090605@namesys.com>
-References: <20030826102233.GA14647@namesys.com> <1061922037.1670.3.camel@spc9.esa.lanl.gov> <3F4BA9E9.4090108@namesys.com> <20030826184114.GP5448@backtop.namesys.com>
+Date: Tue, 26 Aug 2003 23:22:05 +0400
+Message-ID: <3F4BB35D.6030705@namesys.com>
+References: <20030826102233.GA14647@namesys.com>	 <1061922037.1670.3.camel@spc9.esa.lanl.gov> <1061923101.1670.9.camel@spc9.esa.lanl.gov>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15430-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15431-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030826184114.GP5448@backtop.namesys.com>
+In-Reply-To: <1061923101.1670.9.camel@spc9.esa.lanl.gov>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: Steven Cole <elenstev@mesatop.com>, Oleg Drokin <green@namesys.com>, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, demidov <demidov@namesys.com>, god@namesys.com
+To: Steven Cole <elenstev@mesatop.com>
+Cc: Oleg Drokin <green@namesys.com>, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-Alex Zarochentsev wrote:
+Steven Cole wrote:
 
->On Tue, Aug 26, 2003 at 10:41:45PM +0400, Hans Reiser wrote:
+>On Tue, 2003-08-26 at 12:20, Steven Cole wrote:
 >  
 >
->>Mr. Demidov, if you put code that does not compile into our tree you 
->>need to make the config option for it be invisible.
+>>On Tue, 2003-08-26 at 04:22, Oleg Drokin wrote:
+>>    
+>>
+>>>Hello!
+>>>
+>>>   I have just released another reiser4 snapshot that I hope all interested
+>>>   parties will try. It is released against 2.6.0-test4.
+>>>   You can find it at http://namesys.com/snapshots/2003.08.26
+>>>   I include release notes below.
+>>>
+>>>Reiser4 snapshot for 2003.08.26
+>>>
+>>>      
+>>>
+>>I got this error while attempting to compile with reiser4.
+>>Snippet from .config follows.
+>>
+>>Steven
+>>
+>>  CC      fs/reiser4/plugin/file/tail_conversion.o
+>>  CC      fs/reiser4/sys_reiser4.o
+>>fs/reiser4/sys_reiser4.c:54:32: parser/parser.code.c: No such file or directory
+>>    
+>>
+>[snipped]
+>  
+>
+>>[steven@spc1 linux-2.6.0-test4-r4]$ grep REISER4 .config
+>>CONFIG_REISER4_FS=y
+>>CONFIG_REISER4_FS_SYSCALL=y
 >>    
 >>
 >
->There is such an option already, CONFIG_REISER4_FS_SYSCALL, 
->seems it is off by default.
+>I should have read this more carefully :(
+>
+>config REISER4_FS_SYSCALL
+>        bool "Enable reiser4 system call"
+>        depends on REISER4_FS
+>        default n
+>        ---help---
+>      Adds sys_reiser4() syscall.
+>      This code is not in good shape yet and may not compile and stuff like that.
+>
+>Without REISER4_FS_SYSCALL, -test4 with reiser4 compiles fine.  Sorry about the noise.
+>
+>Steven
+>
+>
+>
 >
 >  
 >
-Off != invisible
+Users should not be expected to read help text in a case like this.If it 
+does not compile, it should not be visible.
 
 -- 
 Hans
