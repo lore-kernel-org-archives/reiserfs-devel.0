@@ -1,41 +1,38 @@
-From: Bernd Schubert <bernd-schubert@web.de>
-Subject: Re: raid & mkreiserfs
-Date: Wed, 9 Oct 2002 21:25:41 +0200
-Sender: bernd-schubert@web.de
-Message-ID: <200210092125.41389.bernd-schubert@web.de>
-References: <200210082000.40632.bernd-schubert@web.de> <20021009091557.A11954@namesys.com>
+From: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
+Subject: Re: Catastrophe with mailboxes on ReiserFS
+Date: Thu, 10 Oct 2002 01:07:53 +0200
+Message-ID: <m3u1jvw6ra.fsf@merlin.emma.line.org>
+References: <20021009094215.B11954@namesys.com>
+	<Pine.LNX.4.44.0210091041350.880-100000@fii.fi.tartu.ee>
+	<20021009121811.A22948@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11637-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11638-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021009091557.A11954@namesys.com>
+In-Reply-To: <20021009121811.A22948@namesys.com> (Oleg Drokin's message of
+ "Wed, 9 Oct 2002 12:18:11 +0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-On Wednesday 09 October 2002 07:15, Oleg Drokin wrote:
-> Hello!
->
-> On Tue, Oct 08, 2002 at 08:03:35PM +0200, Bernd Schubert wrote:
-> > for mke2fs there's an option for raid  and this option is suggested by
-> > the software-raid raid howto.
-> > Is there something similar for mkreiserfs ?
->
-> No, here is nothing similar in mkreiserfs (because we don't have that
-> "cylinder groups" stuff in reiserfs), though if you really have a system
-> that is very capable of lots of parallel operations (like RAID1 system with
-> lots of disks) you can play with new block allocator options (possible
-> since 2.4.20-pre2)
+Oleg Drokin <green@namesys.com> writes:
 
-Hello Oleg,
+> BTW, I just remembered that until you apply Chris' Mason "data logging" patches,
+> there is a certain window where system crash would lead to "deleted" 
+> data appearing at the end of files that were appended before the
+> crash.
 
-we want to install a RAID5 over 5 disks, but actually I don't want to play 
-with options and with pre-kernels (its for a production system).
+I'd like to see these patches merged. I hurt myself several times with
+reiserfs, when the computer locked up during heavy file system activity,
+with NUL blocks in files, files mixed up and the like. I've never seen
+this on any data=ordered or data=journal file system, regardless of ext3
+or reiserfs.
 
-Thanks for your help,
+Of course, write caches must be turned of or write barrier patches be
+applied to be safe in case of a power blackout.
 
-Bernd
+-- 
+Matthias Andree
