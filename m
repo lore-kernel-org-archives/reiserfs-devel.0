@@ -1,52 +1,65 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: [Fwd: filesystem support for XML storage and querying]
-Date: Wed, 19 May 2004 14:49:55 -0400
-Sender: news <news@sea.gmane.org>
-Message-ID: <874qqcfe0c.fsf@uhoreg.ca>
-References: <1084953972.14831.3.camel@pear.st-and.ac.uk> <40AC1B2E.7050807@namesys.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: On a free repacker
+Date: Wed, 19 May 2004 22:28:31 +0300
+Message-ID: <20040519192831.GL24604@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18768-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18769-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
->>>>> "Hans" == Hans Reiser <reiser@namesys.com> writes:
+Hi
 
-Hans> This was a good paper.:)
+There was an IRC discussion earlier today, a short one, about the repacker.
 
-Thank you. :)
+It appears that Reiser4 does not fragment much in normal use, but it can
+get badly fragmented with fsstress for example?
 
-Hans> I don't understand the notion of ids, what motivates them, etc.
+Now, the idea is to sell the repacker.
 
-They are used in XML query engines for such things as removing duplicate
-results.  (Although, I suppose inode number, or something similar, would
-work just as well for this.)
+Basically:
 
-Also, since XML nodes don't have names, we need to assign some sort of
-ID so that they can be referenced in some way.  (e.g. if you have a
-DocBook document with several chapters, you have to be able to tell the
-filesystem which chapter you want to edit/remove/etc.)  Assigning each
-node a persistent ID seems to be the simplest way to do things.
+1) It could be binary-only
+   Enough buyers will open the source like with Blender
+   There would be online statistics which describe how much to go
+   before this happens.
+  
+2) You could sell the sources and the rights to do whatever you want,
+   except redistribute it.
 
-Hans> ReiserFS originally intended to use unique ids and then we
-Hans> realized that keys were better.
+There was the point that Blender had gained some popularity before
+the source release, which Reiser4 does not yet have. That may make
+this difficult to push through. A free repacker would make the situation
+better, but I see it as one of those annoying chicken-and-egg problems.
 
-I'm not familiar with what you mean by keys vs. ids, but it is possible
-that using keys would be better.
+The pricing must be ok too. Not so high that regular people won't buy it
+but not so cheap that it doesn't generate revenue.
 
+If the source code is sold, people may want to develop it further, but
+I'm sure if they pay 1000000000e for it, they will expect perfection
+and not contribute.
 
-As I said before, that paper is just a proposal, and I may or may not
-actually implement it.  So unless I specifically re-claim it, that
-topic is up for grabs for anyone who's interested.
+Then there's some copy-protection issues. I hope it will not be too
+heavily laid with license keys and stuff like that, because it makes
+usage harder and doesn't stop anyone from being an asshole.
+
+I understood that a binary-only model would be in the form of a kernel
+module? It may be the easiest method.
+
+Hans, what's your take on this?
+Maybe a real donations page would be required to get the baby up and
+running, maybe some really basic repacker but one that's so rock-solid
+that people would buy it and know they'll get free updates and in
+the end it'll be all open...
+
+Just my two cents worth of rambling again :)
 
 -- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+mjt
 
