@@ -1,35 +1,36 @@
-From: Adrian Phillips <a.phillips@met.no>
-Subject: Re: rsync and memory leak on linux 2.2?
-Date: 14 Feb 2003 11:09:31 +0100
-Sender: "Adrian Phillips,,," <a.phillips@met.no>
-Message-ID: <87fzqrtbqc.fsf@freeze.oslo.dnmi.no>
-References: <1045156304.11405.149.camel@barnes>
-	<87r8abtlhq.fsf@freeze.oslo.dnmi.no> <20030214130111.A27034@namesys.com>
+From: Andreas Dilger <adilger@clusterfs.com>
+Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
+Date: Fri, 14 Feb 2003 03:13:16 -0700
+Message-ID: <20030214031316.L22930@schatzie.adilger.int>
+References: <3E4AA902.86F15815@interface-ag.com> <b2h7dc$ipp$1@satsuki.furryterror.org> <3E4C392A.2070909@namesys.com> <20030214111829.A21849@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12756-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12757-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030214130111.A27034@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <20030214111829.A21849@namesys.com>; from green@namesys.com on Fri, Feb 14, 2003 at 11:18:29AM +0300
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: Hans Reiser <reiser@namesys.com>, Zygo Blaxell <eazgwmir@umail.furryterror.org>, reiserfs-list@namesys.com
 
->>>>> "Oleg" == Oleg Drokin <green@namesys.com> writes:
+On Feb 14, 2003  11:18 +0300, Oleg Drokin wrote:
+> Currently we panic if write to journal area fails. We report IO error to
+> userspace if non-journaled write fails it seems (I will check it again).
 
-    Oleg> There are 3.5.35 and 3.5.36-beta that are even better ;)
+I'm thinking "panic" isn't going to help the user's data any more than
+not commiting the change...  How about remount-ro, or have a mount option
+like ext3 "errors={panic,remount-ro,warning}"?  If you marked the filesystem
+and/or journal in error and mount read-only, and force a full fsck at
+reboot time at least the user has a chance - otherwise the node might
+just panic in a loop.
 
-I'd forgotten 35, even though I had saved the announcement. To busy
-testing 2.4 last year when it came out. That and the fact that all the
-servers were running rock solid. Thanks to the reiserfs team :-)
+Cheers, Andreas
+--
+Andreas Dilger
+http://sourceforge.net/projects/ext2resize/
+http://www-mddsp.enel.ucalgary.ca/People/adilger/
 
-Sincerely,
-
-Adrian Phillips
-
--- 
-Your mouse has moved.
-Windows NT must be restarted for the change to take effect.
-Reboot now?  [OK]
