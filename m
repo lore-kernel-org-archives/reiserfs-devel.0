@@ -1,58 +1,63 @@
 From: Vladimir Saveliev <vs@namesys.com>
-Subject: reiserfs bug fix: add missing pair of lock_kernel()/unlock_kernel()
-Date: Thu, 23 Dec 2004 18:35:36 +0300
-Message-ID: <1103816136.8064.136.camel@tribesman.namesys.com>
+Subject: Re: reading data blocks in reiser4
+Date: Fri, 24 Dec 2004 18:23:29 +0300
+Message-ID: <1103901808.21434.48.camel@tribesman.namesys.com>
+References: <20041223135134.64223.qmail@web60109.mail.yahoo.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-/5hXGKpWNF1ZZrGIOTaJ"
-Return-path: <reiserfs-list-return-22894-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22898-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20041223135134.64223.qmail@web60109.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Andrew Morton <akpm@osdl.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
-
---=-/5hXGKpWNF1ZZrGIOTaJ
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+To: Pallavi Dalya <pallavidalya@yahoo.com>
+Cc: reiserfs-list@namesys.com
 
 Hello
 
-Andrew, please apply this reiserfs bug fix.
+On Thu, 2004-12-23 at 16:51, Pallavi Dalya wrote:
+> hello,
+>  what are the internal operations to read a file in reiser4 ..
+> i understand that the semantic layer converts the name into key of an
+> object(this key is received from the directory entry) and the storage
+> layer searches for the node in the tree. also all the data of the file
+> is stored in the unformatted leaf and only the tails of the files is
+> stored in the items (the tail policy plugins).  
 
---=-/5hXGKpWNF1ZZrGIOTaJ
-Content-Disposition: attachment; filename=reiserfs-add-missing-lock_kernel.patch
-Content-Type: text/plain; name=reiserfs-add-missing-lock_kernel.patch; charset=koi8-r
-Content-Transfer-Encoding: 7bit
+no. default file in reiser4 is either stored in unformatted
+nodes or in tail items. Tail policy plugin is used to choose how to
+store files.
+
+> Also the key leads us to the stat data of a file for accessing the
+> permission of the file and it gives us the offset of the actual
+> data...
+
+File is represented by items. All items have a key. All keys of items
+representing a file have common part. When you know that common part -
+you can compose a key of any position in a file as well as key of stat
+data. Then you search in the tree for whatever is needed.
+
+> is this offset a address of the node where the files direct and
+> indirect data is stored ?
+> 
+With key you find an item and position in it. This item may contain data
+you were looking for or contain a pointer to unformatted node containing
+those data. 
 
 
-This patch adds missing lock_kernel()/unlock_kernel() pair in reiserfs_get_dentry
+> what role does a inode play in the complete process?
 
+I guess you are about in-core inode? It is used to communicate with
+linux VFS.
 
- fs/reiserfs/inode.c |    2 ++
- 1 files changed, 2 insertions(+)
-
-diff -puN fs/reiserfs/inode.c~reiserfs-add-missing-lock_kernel fs/reiserfs/inode.c
---- linux-2.6.10-rc3-mm1/fs/reiserfs/inode.c~reiserfs-add-missing-lock_kernel	2004-12-23 18:23:53.557228800 +0300
-+++ linux-2.6.10-rc3-mm1-vs/fs/reiserfs/inode.c	2004-12-23 18:23:53.583230368 +0300
-@@ -1447,12 +1447,14 @@ struct dentry *reiserfs_get_dentry(struc
-     
-     key.on_disk_key.k_objectid = data[0] ;
-     key.on_disk_key.k_dir_id = data[1] ;
-+    reiserfs_write_lock(sb);
-     inode = reiserfs_iget(sb, &key) ;
-     if (inode && !IS_ERR(inode) && data[2] != 0 &&
- 	data[2] != inode->i_generation) {
- 	    iput(inode) ;
- 	    inode = NULL ;
-     }
-+    reiserfs_write_unlock(sb);
-     if (!inode)
- 	    inode = ERR_PTR(-ESTALE);
-     if (IS_ERR(inode))
-
-_
-
---=-/5hXGKpWNF1ZZrGIOTaJ--
+>  
+> Pallavi
+> 
+> __________________________________________________
+> Do You Yahoo!?
+> Tired of spam? Yahoo! Mail has the best spam protection around 
+> http://mail.yahoo.com 
 
