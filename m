@@ -1,67 +1,40 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: fsck in background?
-Date: Mon, 31 Mar 2003 22:54:06 +0400
-Message-ID: <3E888ECE.2090301@namesys.com>
-References: <3E8818CD.1000500@dotcom.pl> <20030331144609.B1430@namesys.com> <3E88775F.5070302@namesys.com> <200303312154.35760.vitaly@namesys.com>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: reiserfsprogs 3.6.5 release
+Date: Mon, 31 Mar 2003 21:52:23 +0200
+Message-ID: <200303312152.23736.Dieter.Nuetzel@hamburg.de>
+References: <200303251108.11938.Dieter.Nuetzel@hamburg.de> <004f01c2f7af$60cb9f50$6400a8c0@twister> <200303312208.31690.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13496-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-13497-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200303312154.35760.vitaly@namesys.com>
+In-Reply-To: <200303312208.31690.vitaly@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: Oleg Drokin <green@namesys.com>, myciel <myciel@dotcom.pl>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Vitaly Fertman <vitaly@namesys.com>, "Luna Kid (list-reader address)" <listreader@neuropolis.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Vitaly Fertman wrote:
-
->On Monday 31 March 2003 21:14, Hans Reiser wrote:
->  
+Am Montag, 31. M=E4rz 2003 20:08 schrieb Vitaly Fertman:
+> Hi,
 >
->>Oleg Drokin wrote:
->>    
->>
->>>Hello!
->>>
->>>On Mon, Mar 31, 2003 at 12:30:37PM +0200, myciel wrote:
->>>      
->>>
->>>>Yes, I know this sounds strange, but if one have 1T filesystem full of
->>>>small files,
->>>>reiserfsck estimates duration to be of order of months,
->>>>        
->>>>
->>>We have a patch that significantly speeds things up.
->>>In the similar case 28+ years estimated for pass 0 turned into 208 hours
->>>total
->>>      
->>>
->>As I said before, 208 hours is unacceptable and Vitaly needs to do more
->>work on it. If Vitaly doesn't know how to fix it, then I need to review
->>his algorithms in detail.
->>    
->>
+> On Monday 31 March 2003 22:00, Luna Kid \(list-reader address\) wrote:
+> > > All partitions wouldn't mounted due to
+> > > "flush_buffers: device is not specified". ;-(
+> >
+> > Any news on this topic? I've got that exact same problem
+> > since a Debian upgrade, on a (fortunately!) completely
 >
->As I wrote you the objectid handling is not the problem anymore, and I 
->described also that the performance problem for now is nlink calculation 
->on semantic rebuild pass which needs many writes on disk what is not easy
->to optimize in the case with shared objectids.
->
-by shared objectids you mean when more than one file is discovered by 
-fsck to have the same oid?  what is the problem?
+> I added some debug messages in reiserfsck, and asked Dieter to send me the
+> printed reiserfsck boot messages. Unfortunately I has not got a response
+> yet. Could you do it for me when I send you the same debug version?
 
-> Although it could be solved 
->with another pass which would solve all such shared objectid problems just 
->before semantic rebuild pass. 
->
->  
->
+Sorry for my delay!
+I was unexpected out for some days...
 
+Have to reboot and write down the lines.
+Will do, now.
 
--- 
-Hans
-
-
+Regards,
+	Dieter
