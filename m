@@ -1,62 +1,34 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: Procedure to recover a bad superblock
-Date: Mon, 18 Aug 2003 10:19:41 +0400
-Message-ID: <20030818061941.GC16183@namesys.com>
-References: <1061131936.3001.8.camel@headoffice.hazelden.ca>
+Subject: Re: how screwed am I ? - lost 79160kB off of a May 2001 reiserfs partition to a swap :-(
+Date: Mon, 18 Aug 2003 10:24:18 +0400
+Message-ID: <20030818062418.GD16183@namesys.com>
+References: <no.Yo.N.nN.0308171326020.2986-100000@business.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15355-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15356-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1061131936.3001.8.camel@headoffice.hazelden.ca>
+In-Reply-To: <no.Yo.N.nN.0308171326020.2986-100000@business.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John P. New" <jnew@hazelden.ca>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: reiserfs@ied.com
+Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Sun, Aug 17, 2003 at 10:52:16AM -0400, John P. New wrote:
+On Sun, Aug 17, 2003 at 01:44:16PM -0400, reiserfs@ied.com wrote:
 
-> Aug 16 21:09:23 headoffice kernel: Using r5 hash to sort names
-> Aug 16 21:09:23 headoffice kernel: ReiserFS version 3.6.25
-> Aug 16 21:09:23 headoffice kernel: reiserfs: checking transaction log
-> (device 09:01) ...
-> Aug 16 21:09:23 headoffice kernel: reiserfs: replayed 4 transactions in
-> 1 seconds
-> Aug 16 21:09:23 headoffice kernel: attempt to access beyond end of
-> device
-> Aug 16 21:09:23 headoffice kernel: 09:01: rw=0, want=1370749188,
-> (=0x51b3f904), limit=59447552
+>    I screwed myself - I've overwritten the first 79160kB of 
+> a 38GB partition (fdisk says 38796975 blocks) with swap :-(
 
-Hm, so you had valid superblock, but the copy in journal was not valid,
-do you have some kind of IDE drives with write cache turned on below
-your softraid?
-
-> reiserfs_open: the reiserfs superblock cannot be found on /dev/md1.
-> Failed to open the filesystem.
-> If the partition table has not been changed, and the partition is
-> valid  and  it really  contains  a reiserfs  partition,  then the
-> superblock  is corrupted and you need to run  --rebuild-sb.
-> Aborted (core dumped)
-> So, I guess I have a bad superblock on md0. I assume my next step would
-> be:
-> reiserfsck --rebuild-sb /dev/md1
-
-Yes.
-It will ask you few questions and then will create new superblock.
-
-> Is there anything I should do to protect my data before I run this
-
-Well, you may create copy of entire device with dd, if you want.
-
-> command, and is there a possibiltity of file corruption at this point,
-> or is this a fairly safe step?
-
-If only superblock is corrupted, that should be pretty safe.
+So you overwrote 32M of journal and ~50M of metadata, some of the metadata should
+still be there, though.
+Since this is user error, we can only help you based on http://namesys.com/support.html terms.
+Or you can find the solution yourself. (I think several similar cases were described in
+this list some time ago).
 
 Bye,
     Oleg
