@@ -1,31 +1,65 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Subject: Re: warning: vs-8115
-Date: Sat, 28 Aug 2004 17:15:39 +0200
-Message-ID: <200408281715.39775.christian.mayrhuber@gmx.net>
-References: <200408281724.13054.he3@bezeqint.net>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Subject: Separating Indexing and Searching (was silent semantic changes with
+ reiser4)
+Date: Sat, 28 Aug 2004 11:18:08 -0400 EDT
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <584702172685-BeMail@cr593174-a>
+References: <412F7B6D.6010305@pobox.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20990-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <200408281724.13054.he3@bezeqint.net>
-Content-Disposition: inline
-List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Haggai Eran <he3@bezeqint.net>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <412F7B6D.6010305@pobox.com>
+List-Id: <reiserfs-devel.vger.kernel.org>
+To: Will Dyson <will_dyson@pobox.com>
+Cc: akpm@osdl.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com, reiser@namesys.com
 
-On Saturday 28 August 2004 16:24, Haggai Eran wrote:
-> vs-8115
+Will Dyson wrote on Fri, 27 Aug 2004 14:20:29 -0400:
+> Hans Reiser wrote:
+> > Will Dyson wrote:
+> >> In the original BeOS, they solved the problem by having the filesystem 
+> >> driver itself take a text query string and parse it, returning a list 
+> >> of inodes that match. The whole business of parsing a query string in 
+> >> the kernel (let alone in the filesystem driver) has always seemed ugly 
+> >> to me. 
+> > 
+> > Why?
+> 
+> Hmm. Trying to explain aesthetic judgments is always fun, but I'll try.
+> 
+> String parsing bloats the kernel with code that will be called rarely, 
+> and doing it inside the filesystem module makes for duplicate code if 
+> more than one filesystem does it. But a good common parser routine (or a 
+> kernel api that takes a pre-compiled parse tree) would reduce the bad taste.
 
-See:
-http://marc.theaimsgroup.com/?l=reiserfs&m=108383682117097&w=2
+Not only bloat, but time wasted reinventing the wheel.  For my experimental file system (http://members.rogers.com/agmsbeos/AGMSRAMFileSystem.readme - see the Nifty Features chapter), I had to figure out the BFS query language (it was documented but didn't have every little detail explained - some experimentation was needed), then write a tokenizer and parser for it, to convert it down to a parse tree that could be used during the query's life.  Good exercise for the programmer, but duplication of effort.
 
-It basically says that this message is harmless on kernel 2.6.4.
-I guess the same holds true for later kernels, too.
+I also added a few new things to the query language, but because the parsing is done by each file system separately, my "improvements" won't show up in other file systems.
 
--- 
-lg, Chris
+> For the 99.9% of people who were not beos users back in the day, the 
+> "live query" was a way to register a query string with the kernel, so 
+> that you got notifications when the list of files matching the query 
+> changed. It was pretty cool, but this is really just blue-skying since I 
+> am not stepping up to write such a beast any time soon.
 
+Kind of like that.  For performance, the query string is converted into a parse tree and then all file operations that touch any attribute mentioned in the query get evaluated against the parse tree to see if the result (in or out of the query result set) has changed.  If it changes, then a kernel facility is used to broadcast a message describing the change and file involved to all parties monitoring that query.  Of course, before becoming live, the existing files that match the query are found by iterating over an index (choosing the appropriate index is an optimization trick).
+
+> >> However, the best alternative I've come up with is to simply export 
+> >> the index data as a special file (perhaps in sysfs?) and have 
+> >> userspace responsible for searching the index.
+> > 
+> > That is the best implementation suggestion I've heard for splitting the 
+> > filesystem into two parts, one in user space and one in kernel, but I 
+> > still don't trust it to work well.
+> 
+> Why not? And if it really splits the filesystem into two parts depends 
+> on which of the two following statements you agree with more:
+> 
+> "Fast searching is a feature of the filesystem"
+> "Maintaining indexes is a feature of the filesystem"
+
+I like that.  Put the indexing and a related attribute change update notification mechanism into the kernel.  User land libraries can build on that to implement whatever query language you want, thus saving work and having a common language for all file system varieties that support indices.
+
+However, one of my (unfinished) experiments was to have magic directories that show query results as their contents.  One attribute of the directory (or even its name) would be the query string.  That way even old software (like "ls") could use queries!  Implementing queries-as-directories might require moving some things back into the kernel, or at least into some plug-in level.
+
+- Alex
