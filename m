@@ -1,92 +1,108 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: dbench regression in 2.6
-Date: Fri, 05 Sep 2003 19:49:46 +0400
-Message-ID: <3F58B09A.10008@namesys.com>
-References: <3F5636F5.4060000@austin.ibm.com> <3F563B3B.6060406@namesys.com> <200309041138.40795.vs@namesys.com> <3F574AEE.7080402@austin.ibm.com> <20030904175853.GB13676@matchmail.com> <3F58AABE.5050800@austin.ibm.com>
+From: Mike Benoit <mikeb@netnation.com>
+Subject: Re: Reiser4 input/output errors...
+Date: Fri, 05 Sep 2003 09:23:06 -0700
+Message-ID: <1062778986.2118.23.camel@mikeb.staff.netnation.com>
+References: <1062453181.2791.17.camel@mikeb.staff.netnation.com>
+	 <1062479004.31361.3.camel@haron.namesys.com>
+	 <1062521517.1987.5.camel@mikeb.staff.netnation.com>
+	 <1062567211.2107.14.camel@haron.namesys.com>
+	 <1062603920.3148.125.camel@mikeb.staff.netnation.com>
+	 <1062651147.16134.1.camel@haron.namesys.com>
+	 <1062705159.4903.6.camel@mikeb.staff.netnation.com>
+	 <1062750029.8314.13.camel@haron.namesys.com>
+Reply-To: mikeb@netnation.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15578-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15579-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F58AABE.5050800@austin.ibm.com>
+In-Reply-To: <1062750029.8314.13.camel@haron.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Steven Pratt <slpratt@austin.ibm.com>
-Cc: Mike Fedyk <mfedyk@matchmail.com>, Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Yury Umanets <umka@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Steven Pratt wrote:
+Its a fresh filesystem, on a brand new drive (week old?), and if I put
+ext3 on the exact same partition, it works fine. The only time I see any
+errors is when I stick reiser4 on the partition and go through the steps
+explained in my first email. I even ran badblock on the partition and it
+didn't turn up anything.
 
-> Mike Fedyk wrote:
->
->> On Thu, Sep 04, 2003 at 09:23:42AM -0500, Steven Pratt wrote:
->>  
->>
->>> Vladimir Saveliev wrote:
->>>
->>>   
->>>
->>>> Hi
->>>>
->>>> On Wednesday 03 September 2003 23:04, Hans Reiser wrote:
->>>>
->>>>     
->>>>
->>>>> Steven Pratt wrote:
->>>>>
->>>>>       
->>>>>
->>>>>> Is anyone looking into the dbench multitheaded regression in 2.6 
->>>>>> that I reported here a couple of weeks ago?   
->>>>>>         
->>>>>
->>>> Sorry, I was unable to find your report in mail archives. Could 
->>>> you, please, remind what is the problem?
->>>>
->>>> I don't see any change in the
->>>>     
->>>>
->>>>>> latest trees.
->>>>>>
->>>>>>   
->>>>>>         
->>>>>
->>> The problem showed up in 2.6.0-test1, and every kernel since.  The 
->>> problem is that from 2.5.65 (earliest data I have) to 2.5.69 dbench 
->>> on reiserfs with 16 clients got a throughput of ~200MB/sec.  In 
->>> 2.5.70 through 2.5.75 the score went up to ~280MB/sec, a good 
->>> thing.  But in 2.6.0-test1 the throughput dropped to below 50 
->>> MB/sec.  Since then it has risen slightly but still at only around 
->>> 60MB/sec.  Single client dbench showed similar, although much less 
->>> dramatic changes.  No other file system exhibited a change in the 
->>> 2.6.0-test1 kernel so this seems to be unique to reiserfs.
->>>   
->>
->>
->> Did anything change in the testing at all?  Can you try again with your
->> current software versions on 2.5.75, and reproduce the higher speeds?
->>  
->>
-> No, nothing changed in the test setup.  Same dbench, same disk, same 
-> distro, just different kernel.
->
->> Check the diffstat for the test1 release and see if there are any 
->> reiserfs
->> changes...
->>
-> I believe that Oleg already said there were no changes that look like 
-> they would have caused this.  More likely the behavior of something 
-> reiser is using changed which is having a bad effect on resierfs.
->
-> Steve
->
->
->
-Vs discovered we are sleeping more in test0, and he is debugging the 
-sleepometer so he can find out where (2.6.0 broke the sleepometer it seems).
+Just let me know what steps you want me to take to help you debug this. 
 
+On Fri, 2003-09-05 at 01:20, Yury Umanets wrote:
+> On Thu, 2003-09-04 at 23:52, Mike Benoit wrote:
+> > [root@mikeb root]# debugfs.reiser4 -t /dev/hda8
+> > debugfs.reiser4 0.4.12
+> > Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by
+> > reiser4progs/COPYING.
+> > 
+> > NODE (21) LEVEL=2 ITEMS=1 SPACE=4020 MKFS=0x103e447b
+> > FLUSH=0x4001b90100000000
+> > (0) NODEPTR PLUGIN=nodeptr40 LEN=8, KEY=[29:1:0:2a:0:SD] UNITS=1
+> > [22]
+> > 
+> > NODE (22) LEVEL=1 ITEMS=2 SPACE=3838 MKFS=0x103e447b
+> > FLUSH=0xbfffe57800000000
+> > (0) STATDATA PLUGIN=stat40 LEN=48, KEY=[29:1:0:2a:0:SD] UNITS=1
+> > exts:           2
+> > mask:           0x3
+> > plugin:         sdext_lw
+> > offset:         2
+> > len:            14
+> > mode:           drwxr-xr-x
+> > nlink:          3
+> > size:           2
+> > plugin:         sdext_unix
+> > offset:         16
+> > len:            32
+> > uid:            0
+> > gid:            0
+> > atime:          Tue Sep  2 09:39:26 2003
+> > mtime:          Tue Sep  2 09:39:26 2003
+> > ctime:          Tue Sep  2 09:39:26 2003
+> > rdev:           0
+> > bytes:          100
+> > (1) CDE PLUGIN=cde_large LEN=102, KEY=[2a:0:0:0:0:NAME] UNITS=2
+> > NR  NAME              OFFSET HASH                              SDKEY
+> > ------------------------------------------------------------------------------
+> >   0 .                     54 0000000000000000:0000000000000000
+> > 0000291:000002a
+> >   1 ..                    78 002e2e0000000000:0000000000000000
+> > 0000291:000002a
+> > 
+> > 
+> > Let me know if you need any more information. I'm also on IRC during PST
+> > business hours, if that would be better for you to debug this issue.
+> > 
+> > On Wed, 2003-09-03 at 21:52, Yury Umanets wrote:
+> > > On Wed, 2003-09-03 at 19:45, Mike Benoit wrote:
+> > > 
+> > > > > Can you run debugfs.reiser4 on /dev/hda8? What does it say?
+> > > > > 
+> > > 
+> > > Can you print the tree?
+> > > 
+> > > debugfs.reiser4 -t /dev/hda8?
+> 
+> Hm... That is strange. I supposed, that there should be lots of data.
+> And I guessed, that there something like tree corruption, which may be
+> discovered by tree printing.
+> 
+> But this is fresh filesystem. Is it had IO errors on it?
+> 
+> > > 
 -- 
-Hans
-
+Best Regards,
+ 
+Mike Benoit
+NetNation Communications Inc.
+Systems Engineer
+Tel: 604-684-6892 or 888-983-6600
+ ---------------------------------------
+ 
+ Disclaimer: Opinions expressed here are my own and not 
+ necessarily those of my employer
 
