@@ -1,80 +1,48 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: The argument for fs assistance in handling archives (was:
-	silent semantic changes with reiser4)
-Date: Thu, 02 Sep 2004 23:48:10 +0100
-Message-ID: <1094165289.6163.15.camel@localhost.localdomain>
-References: <20040826150202.GE5733@mail.shareable.org>
-	 <200408282314.i7SNErYv003270@localhost.localdomain>
-	 <20040901200806.GC31934@mail.shareable.org>
-	 <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
-	 <1094118362.4847.23.camel@localhost.localdomain>
-	 <Pine.LNX.4.58.0409021045210.2295@ppc970.osdl.org>
-	 <1094150760.5809.30.camel@localhost.localdomain>
-	 <20040902215627.GA15688@nietzsche.lynx.com>
+From: Frank van Maarseveen <frankvm@xs4all.nl>
+Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
+Date: Fri, 3 Sep 2004 01:52:53 +0200
+Message-ID: <20040902235253.GA6131@janus>
+References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain> <20040902203854.GA4801@janus> <200409022319.i82NJlTN025039@turing-police.cc.vt.edu> <1076230617.20040903014302@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21361-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21362-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040902215627.GA15688@nietzsche.lynx.com>
+Content-Disposition: inline
+In-Reply-To: <1076230617.20040903014302@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Bill Huey <bhuey@lnxw.com>
-Cc: Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Spam <spam@tnonline.net>
+Cc: Valdis.Kletnieks@vt.edu, Frank van Maarseveen <frankvm@xs4all.nl>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Iau, 2004-09-02 at 22:56, Bill Huey wrote:
-> It also depends on who you ask. I can't take a lot of the mainstream
-> X folks serious since they are still using integer math as parameters
+On Fri, Sep 03, 2004 at 01:43:02AM +0200, Spam wrote:
+> 
+>   Yes why not? If there was any filesystem drivers for the AudioCD
+>   format then it could.
+> 
+>   I had such a driver for Windows 9x which would display several
+>   folders and files for inserted AudioCD's:
+> 
+>   D: (cdrom)
+>     Stereo
+>       22050
+>         Track01.wav
+>         Track02.wav
+>         ...
+>       44100
+>         Track01.wav
+>         ...
+...
+> 
+>   If you just want to do a cd file.iso then it may be a totally
+>   different thing. Either you would have a automount feature or a
+>   filesystem/vfs plugin that could load secondary modules to support
+>   this kind of thing.
 
-The X folks know what they are doing. Modern X has a complete
-compositing model. Modern X has a superb font handling system. Nobody
-broke anything along the way. The new API's can be mixed with the old,
-there are good fallbacks for old servers.
+Why is this so different, compared to your example? They are both
+filesystem drivers.
 
-In fact they are so good at it that most people don't notice beyond the
-fact their UI looks better than before.
-
-That is how you do change *right*
-
-> more dynamic systems. And the advent of XML (basically a primitive and
-> flat model of what Hans is doing) for .NET style systems are going to
-
-I see you don't really get XML either. XML is just an encoding. Its
-larger and prettier than ASN.1 and easier to hack about with perl. You
-can do the same thing with lisp lists for that matter.
-
-> have been lost to older commericial interests (Microsoft Win32) and that
-> has wiped out the fundamental classic computer science backing this from
-> history. This simple "MP3 metadata" stuff is a very superficial example
-> of how something like this is used.
-
-The trouble with computer science is that most of it sucks in the real
-world. We don't write our OS's in Standard ML, we don't implement some
-of the provably secure capability computing models. At the end of the
-day they are neat, elegant and useless to real people.
-
-> Unix folks tend to forget that since they either have never done this
-> kind of programming or never understood why this existed in the first
-> place. It's about a top-down methodology effecting the entire design of
-> the software system, not just purity Unix. If it can be integrate
-> smoothly into the system, then it should IMO.
-
-The Unix world succeeded because Unix (at least in v7 days) was the
-other way around to every other grungy OS on the planet. It had only
-thing things it needed. I've used some of the grungy crawly horrors that
-were its rivals and there is a reason they don't exist any more.
-
-I would sum up the essence of the unix kernel side as
-	- Does only what it must do
-	- "Makes the usual easy makes the unusual possible"
-	- Has an API that is small enough for developers to learn
-	  easily (an API so good every other OS promptly ripped it off)
-	  People forget the worlds of SYS$QIO, RMS, FCB's and the like
-
-Its worked remarkably well for a very very long time, and most of the
-nasties have come from people trying to break that model or not
-understanding it.
-
-Alan
+-- 
+Frank
