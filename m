@@ -1,35 +1,32 @@
-From: Guillermo Torreiro <gtorreiro@yahoo.com>
-Subject: LVM and snapshots with ReiserFS
-Date: Mon, 28 Apr 2003 19:37:06 -0700 (PDT)
-Message-ID: <20030429023706.87627.qmail@web9802.mail.yahoo.com>
+From: Greg Ward <gward@python.net>
+Subject: Re: Safely spinning down SCSI ReiserFS disk
+Date: Mon, 28 Apr 2003 22:40:00 -0400
+Message-ID: <20030429024000.GB4729@cthulhu.gerg.ca>
+References: <20030426211638.GA690@cthulhu.gerg.ca>
+ <20030428053150.GA22902@namesys.com> <20030429003341.GA2203@cthulhu.gerg.ca>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13887-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-list-return-13888-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-reply-to: <20030429003341.GA2203@cthulhu.gerg.ca>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Hi again,
+On 28 April 2003, I said:
+> I realized that I forgot to remount all filesystems readonly, so I'll be
+> sure to add that next time I give this a try.
 
-I used to use reiserFS in my GNU/Linux BOX and now I
-want to give LVM a try and because I want to get the
-most of it I want to know if there is any issue using
-snapshots with reiserFS along with LVM, that is, do I
-need any patch for that matter? and if so, what
-that patch will be and where could it be found?
-I'm using kernel 2.4.20 and reiserfs user land 3.6.4
+This seems to have done the trick.  I had to bring the system to single-user
+mode in order to remount / ro; I suspect syslog or some other daemon was
+trying to write to / after I spun it down.  I'll post a more detailed recipe
+when I'm not so tired.
 
-It will be nice if someone can answer me. Thanks.
-
-Best regard,
-
-Guillermo Torreiro
-
-__________________________________
-Do you Yahoo!?
-The New Yahoo! Search - Faster. Easier. Bingo.
-http://search.yahoo.com
+        Greg
+-- 
+Greg Ward <gward@python.net>                         http://www.gerg.ca/
+"Very funny, Scotty.  Now beam my *clothes* down."
