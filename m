@@ -1,68 +1,46 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: repost for readdir
-Date: Thu, 24 Jun 2004 21:20:51 +0400
-Message-ID: <40DB0D73.3070605@namesys.com>
-References: <1088032186.12051.8.camel@murdock.llnl.gov>
+From: "Alistair McDonald" <alistair@inrevo.com>
+Subject: Re: we need a slogan for our reiser4 t-shirt
+Date: Thu, 24 Jun 2004 19:15:18 +0100 (BST)
+Message-ID: <37441.193.35.129.169.1088100918.squirrel@193.35.129.169>
+References: <3DF9165145FACB4C96977FF650C1E9040C46A0B3@its-mail1.its.corp.gwl.com>
+    <20040624165350.GF19037@parcelfarce.linux.theplanet.co.uk>
+Reply-To: alistair@inrevo.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19354-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-19355-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1088032186.12051.8.camel@murdock.llnl.gov>
+In-Reply-To: <20040624165350.GF19037@parcelfarce.linux.theplanet.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: jenn sirp <sirp1@llnl.gov>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Chris Dukes <pakrat@www.uk.linux.org>
+Cc: "Burnes, James" <james.burnes@gwl.com>, Peter Foldiak <peter.foldiak@st-andrews.ac.uk>, reiserfs-list@namesys.com
 
-Hello
 
-jenn sirp wrote:
-> Hi,
-> 
-> I'd like to thank you guys for your help earlier this year with the
-> initial phase of my project. I was able to implement FIFO queueing
-> functionality in Reiser v3. It is not very elegant, but I am still
-> learning. I was able to steer my supervisor in the direction of Reiser4.
-> It appears that the design principles of the new system will make it very
-> valuable for many at the Lab.
-> 
-> That said, and back to Hans' suggestion of a readdir implementation for
-> FIFO and LIFO file queuing... I have some questions. If anyone can answer
-> them, has advice, or suggestions that would be so great.
-> 
-> Here's where I am at, and what I don't know:
-> 
->>From what I can tell, files in the reiserfs 'Directory Item' aren't preserved in
-> the order they are written due to deletes and other operations. So if I
-> were to access the Directory Item to generate a list for readdir I couldn't be certain that they would be in first
-> created -to- last created order.
-> 
-> If readdir has to sort the files in the directory every time it is called
-> it seems like it would be a bit of a performance hit.
+>>
+> May I make the following suggestions in the interest of this thread.
+>
+> If the goal is to create a slogan that will attract PHBs, hire a
+> professional
+> marketing team and be done with it.
+>
+> If the goal is to create a t-shirt that thinkgeek would like to sell,
+> get it on slashdot.
+>
 
-Do you mean readdir library function? It reads directory and fills 
-dirent structures. It does not sort anything. It even does not stat 
-files names of which it reads.
+Great ideas, both of them.
 
-  Should another
-> structure be maintained that preserves the order as the files are
-> written... and should readdir use that as it's basis for returning the
-> directory contents?
-> 
+I recall a "design a t-shirt" thread/competition on /. a couple of years
+ago. The editors will _probably_ be up for it, but are also _probably_
+wary of becoming a free-competition service, so you might not get your
+story posted. There are lots of other /. like sites, however, if the main
+site rejects your story. If you go for /., I think it would be better if
+the request came from Hans himself.
 
-Are you trying to optimize ls -l?
-
-Please describe in more details what are you trying to do.
-
-> If this is a question that doesn't belong here... please let me know and I apologize.
-> 
-> Thanks,
-> 
-> Jenn
-> 
-> 
-> 
-
+Alistair (I have fast, safe bits)
+-- 
+Alistair McDonald       (+44)(0)7017-467386
+http://www.inrevo.com
 
