@@ -1,72 +1,83 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Will Reisefs have "undo"?
-Date: Tue, 17 Jun 2003 14:35:12 +0400
-Message-ID: <3EEEEEE0.2070408@namesys.com>
-References: <1055615895.698.129.camel@localhost> <000d01c332ac$a94e23a0$0200a8c0@xpstation>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Problem with ReiserFS + NFS + Convolo
+Date: Tue, 17 Jun 2003 14:59:55 +0400
+Message-ID: <20030617105955.GB1003@namesys.com>
+References: <9985D86E48B29B40BABD3B4A177F69261DD167@atlassrv.int.atlassolutions.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14576-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14577-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <000d01c332ac$a94e23a0$0200a8c0@xpstation>
+Content-Disposition: inline
+In-Reply-To: <9985D86E48B29B40BABD3B4A177F69261DD167@atlassrv.int.atlassolutions.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Fred -- Speed Up -- <speedup@free.fr>
-Cc: ReiserFS ML <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Enric Ramos <eramos@atlasit.com>
+Cc: Oscar Garc?a <ogarcia@atlasit.com>, reiserfs-list@namesys.com
 
-Fred -- Speed Up -- wrote:
+Hello!
 
->This is not the filesystem's work, KDE for instance has a trashcan, and you
->can bind the rm command to a special mv one that moves files from the
->initial place to a backup folder, the files of which you can empty regulary
->with a cron script depending on the file's "age". It's simple to implement,
->and really not something Reiser4 should be capable of ... instead
->journalising works very well to protect data from being erased, that's the
->only purpose of a modern filesystem.
->
->Fred
->
->----- Original Message ----- 
->From: "Joachim Zobel" <nc-zobeljo@netcologne.de>
->To: "ReiserFS List" <reiserfs-list@namesys.com>
->Sent: Saturday, June 14, 2003 8:38 PM
->Subject: Will Reisefs have "undo"?
->
->
->  
->
->>Hi.
->>
->>Are there any plans to add undo capabilities to reiserfs? Most modern
->>desktops have a trash can. Am I the only one who has idea that this is a
->>crappy workaround for something that should be in the filesystem.
->>
->>I am aware that this is not easy, but nearly everybody has had moments
->>where he would have loved it. And disk space is cheap, there is rarely
->>the need to overwrite anything.
->>
->>Sincerely,
->>Joachim
->>
->>-- 
->>"... ein Geschlecht erfinderischer Zwerge, die fuer alles gemietet werden
->>koennen."                            - Bertolt Brecht - Leben des Galilei
->>
->>
->>    
->>
->
->
->
->  
->
-I have never used the trashcan on Linux, and probably will always remove 
-most objects using rm not click and drag.  Only the FS can monitor disk 
-space usage and empty the trash in response to running low on space.
+On Mon, Jun 16, 2003 at 07:36:25PM +0200, Enric Ramos wrote:
 
--- 
-Hans
+> In this way... is it possible to make a patch for the 2.4.18 release in order to solve the "iget() race bug" ? Do you know if this patch exists for this release ?
 
+Ok, here is the backport.
 
+Bye,
+    Oleg
+diff -u fs/reiserfs/inode.c.orig fs/reiserfs/inode.c
+--- fs/reiserfs/inode.c.orig	2003-06-17 14:47:57.000000000 +0400
++++ fs/reiserfs/inode.c	2003-06-17 14:54:23.000000000 +0400
+@@ -19,6 +19,10 @@
+ 
+ static int reiserfs_get_block (struct inode * inode, long block,
+ 			       struct buffer_head * bh_result, int create);
++/* This spinlock guards inode pkey in private part of inode
++   against race between find_actor() vs reiserfs_read_inode2 */
++static spinlock_t keycopy_lock = SPIN_LOCK_UNLOCKED;
++
+ //
+ // initially this function was derived from minix or ext2's analog and
+ // evolved as the prototype did
+@@ -890,8 +894,9 @@
+     bh = PATH_PLAST_BUFFER (path);
+     ih = PATH_PITEM_HEAD (path);
+ 
+-
++    spin_lock(&keycopy_lock);
+     copy_key (INODE_PKEY (inode), &(ih->ih_key));
++    spin_unlock(&keycopy_lock);
+     inode->i_blksize = PAGE_SIZE;
+ 
+     INIT_LIST_HEAD(&inode->u.reiserfs_i.i_prealloc_list) ;
+@@ -1204,10 +1209,27 @@
+ 				unsigned long inode_no, void *opaque )
+ {
+     struct reiserfs_iget4_args *args;
++    int retval;
+ 
+     args = opaque;
++    /* We protect against possible parallel init_inode() on another CPU here. */
++    spin_lock(&keycopy_lock);
+     /* args is already in CPU order */
+-    return le32_to_cpu(INODE_PKEY(inode)->k_dir_id) == args -> objectid;
++    if (le32_to_cpu(INODE_PKEY(inode)->k_dir_id) == args -> objectid)
++	retval = 1;
++    else
++	/* If The key does not match, lets see if we are racing
++	   with another iget4, that already progressed so far
++	   to reiserfs_read_inode2() and was preempted in
++	   call to search_by_key(). The signs of that are:
++	     Inode is locked
++	     dirid and object id are zero (not yet initialized)*/
++	retval = (inode->i_state & I_LOCK) &&
++		 !INODE_PKEY(inode)->k_dir_id &&
++		 !INODE_PKEY(inode)->k_objectid;
++
++    spin_unlock(&keycopy_lock);
++    return retval;
+ }
+ 
+ struct inode * reiserfs_iget (struct super_block * s, const struct cpu_key * key)
