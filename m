@@ -1,46 +1,53 @@
-From: "Yura Umanets" <umanets@priocom.com>
-Subject: Re: About Widman's crash
-Date: Fri, 26 Apr 2002 14:15:30 +0300
-Message-ID: <3CC936D2.8040701@priocom.com>
-References: <3CC851EE.1030209@priocom.com> <3CC85108.4010504@namesys.com> <20020426090430.A11240@namesys.com>
+From: "Yury Yu. Rupasov" <yura@yura.polnet.botik.ru>
+Subject: Re: Comparison of notail and notail,iicache(14) 
+ 2.4.19-pre7
+Date: Fri, 26 Apr 2002 15:41:40 +0400
+Sender: root
+Message-ID: <3CC93CF4.AEC9C69@yura.polnet.botik.ru>
+References: <200204260657.32516.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10182-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10183-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
-Cc: Green <green@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Dieter =?koi8-r?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Cc: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>, ReiserFS List <reiserfs-list@namesys.com>
 
-Hello!
+Dieter N=FCtzel wrote:
 
-I have tried to reproduce the problem. And this is what I got.
+> Manuel Krause wrote:
+>
+> [-]
+> > What's really unclear is the problem with my
+> > failing Netscape files on the living iicache-mounted FS...
+>
+> I had one outlier with iicache-new-13 here, too.
+>
+> /etc/cups/ppds.dat
+>
+> couldn't be accessed. I reported back but got no response.
+>
+> > ...and in this line, of course, you're right: The number of applied
+> > patches on-here exceeds my limit, too. It's ridiculous. I don't know how
+> > much time I'd save if I didn't like to test and configure this own setup
+> > to be stable. Mainline? Please, don't comment.
+> > My most liked/useful patches are RML.preempt+lock-break,
+> > AKPM.read-latency, the recent AA.vm-patches, AA.low-latency and
+> > ReiserFS.speedup+pending!
+>
+> No offenses, please. I truly running much the same, here ;-)))
+> Except of ReiserFS.speedup. But the new block allocation is of course
+> interesting.
+>
+> Next thing could be linux-2.4.19p6-compound-speedup.patch.
+> Any version for -pre7 ready?
+>
 
-Command:
-reiserfsck -S --rebuild-tree /dev/hdb1
+This patch should work with linux-2.4.19-pre7 as well.
 
-As result lost+found created, but I couldn't create any subdirs or files.
-
-Example, command touch /lost+found/some_dir didn't return any error, but 
-some_entry entry was not created at all.
-
-debugreiserfs has showed me, that lost+found's direntry containts just 
-"." and ".." But leaf contains strange direntries for non-created some_dir.
-
-Then I ran reiserfsck --check /dev/hdb1. It said sd_size of lost+found 
-isn't valid. (found 240 but expected 48)
-
-I ran reiserfsck --fix-fixable /dev/hdb1 and it said it fixed problem 
-with sd_size, but problem with ghost direntries remains.
-
-metadata:
-http://reiserfs.linux.kiev.ua/debug/metadata.tar.bz2
-
-kernel:
-2.4.19-pre7
-
-reiserfsprogs:
-3.x.1c-pre2
+Thanks,
+Yura.
 
