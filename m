@@ -1,50 +1,33 @@
-From: Andreas Dilger <adilger@clusterfs.com>
-Subject: Re: Overwritten files
-Date: Wed, 17 Apr 2002 10:29:27 -0600
-Message-ID: <20020417162927.GL20464@turbolinux.com>
-References: <20020416105325.2a854a19.ikkeswar@dds.nl> <1018978845.1035.5.camel@lappix> <20020417171507.74184f14.stefan.janecek@jku.at>
+From: "bo" <bo@sosnetwork.net>
+Subject: Any patch on swapper for MD ioctl
+Date: Wed, 17 Apr 2002 10:42:30 -0700
+Message-ID: <000e01c1e637$3f6e5670$6501a8c0@bomoon>
+References: <20020416105325.2a854a19.ikkeswar@dds.nl> <1018978845.1035.5.camel@lappix> <20020417171507.74184f14.stefan.janecek@jku.at> <20020417162927.GL20464@turbolinux.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10082-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10083-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <20020417171507.74184f14.stefan.janecek@jku.at>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Stefan Janecek <stefan.janecek@jku.at>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Apr 17, 2002  17:15 +0200, Stefan Janecek wrote:
-> Heinz-Josef Claes <hjclaes@web.de> wrote:
-> > do you boot the box sometimes with windows? I had a similar problem on a
-> > laptop with windows 98 and linux (with ext2). Sometimes, windows seem to
-> > overwrite the first partition and write onto the next one. This happend
-> > two times in half a year. In my case, the linux installation was no
-> > bootable any more.
-> 
-> This problem really seems to exist even though rather rarely... 
-> I encountered it twice in about four years on a box running windows 98 - 
-> both times it crashed while writing a rather large file, after reboot
-> it seemed to have written on the linux partition located behind the windows
-> partition.
+Hello!
 
-This may be a result of the partition table not being updated properly.
-Windows does some strange things with the partition tables, so updating
-them under Linux may not mean that Windows thinks the partitions are the
-same size.
+I am not sure this is the right place for this question.
 
-It is also possible that you have hibernation support enabled for
-Windows.  This is often a file mapped by blocknumber on the disk, so
-even if you partition your disk, the hibernation code (in the BIOS)
-will write wherever it thinks it should.  You need to disable the
-hibernation and then re-enable it under Windows in order to have a
-new hibernation file created.
+I am using Linux-2.4.18 on the top of Redhat7.1, and using the swap file
+on the RAID 1 MD device. I am having the following message at system boot;
 
-Cheers, Andreas
---
-Andreas Dilger
-http://www-mddsp.enel.ucalgary.ca/People/adilger/
-http://sourceforge.net/projects/ext2resize/
+" md: swapper(pid 1) used obsolete md ioctl, 
+  upgrade your software to use new ictls".
+
+This message is from /drivers/md/md.c, which must be called by swapper.
+
+Are there any kernel patches for this? Where can I get it?
+
+Thanks in advance,
+
+Bo
 
