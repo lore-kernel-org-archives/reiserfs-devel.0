@@ -1,53 +1,33 @@
-From: zephod <zephod@chello.be> (by way of zephod <zephod@chello.be>)
-Subject: Undeleting a whole reiserfs partition
-Date: Sat, 10 Aug 2002 11:27:54 +0200
-Message-ID: <200208101127.54321.zephod@chello.be>
-Reply-To: zephod@chello.be
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: problems with /var/lib/dpkg/info
+Date: Sat, 10 Aug 2002 13:32:56 +0400
+Message-ID: <20020810133256.A1897@namesys.com>
+References: <20020810090529.GA411@home>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11153-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11154-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <20020810090529.GA411@home>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
->Yesterday, by error, a 'rm -fr' slipped through to my /music partition,
->a 20GB reiserfs which was at arounf 85% full. SInce then no other
->activity took place on it. Is there any easy way to recover my files?
->
->In the docs, it says you cannot undelete files in reiserfs partitions,
->since what you delete is most probable overwritten by the next comitted
->data. In my case, there has been no additional modification of the
->partition, though.
+Hello!
 
-Today I did exactly the same thing (on a 3.9 GB partition though). I could
-have killed myself for doing it!
+On Sat, Aug 10, 2002 at 11:05:29AM +0200, Radim Kolar wrote:
 
-I first backed up the partition just to be safe:
+> I have 3 debian gnu linux machines here with reiserfs. I am using
+> reiserfs about 2 years and when i have some kind of problem with
+> reiserfs  -  it is allways  with /var/lib/dpkg/info  directory.
+> It looks like  there is  too many hash collisions or reiserfs  do not
+> likes long directories.
 
-   dd if=/dev/hdsomething of=backupfie
-   losetup /dev/loop5 backupfile
+reiserfs have no problems with large directories generally speaking.
+What are the problems you are experience?
 
-then I tried:
-
-   reiserfsck --rebuild-tree --scan-whole-partition /dev/loop5
-   mount /dev/loop5 <mountpoint>
-
-and what do you know! All my deleted stuff reappeared. As we speak I am
-restoring now the original partition.
-
-I guess this only worked because immediatly unmounted the partition after my
-unfortunate error to prevent writing new nodes and data.
-
-Also: Making backups of your data is never wasted time nor a waste of CD's
- and it is better for your nervous system too (I think this cost me another
- year of my life ;) )
-
-Hope this works out for you,
-
-Z.
-
-
+Bye,
+    Oleg
