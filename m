@@ -1,53 +1,71 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+From: Fred Schaettgen <namesys.Sch@ttgen.net>
 Subject: Re: Recursive modified-timestamp?
-Date: Fri, 31 Dec 2004 22:12:48 -0500 EST
-Message-ID: <1909372133-BeMail@cr593174-a>
-References: <200501010143.48592.namesys.Sch@ttgen.net>
+Date: Sat, 1 Jan 2005 12:56:33 +0100
+Message-ID: <200501011256.33535.namesys.Sch@ttgen.net>
+References: <1909372133-BeMail@cr593174-a>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23015-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23016-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200501010143.48592.namesys.Sch@ttgen.net>
+In-Reply-To: <1909372133-BeMail@cr593174-a>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Fred Schaettgen <namesys.Sch@ttgen.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Fred Schaettgen wrote on Sat, 1 Jan 2005 01:43:48 +0100:
-> The file system itself could help for instance by providing a new 
-> "change-monitor"-flag for a file. This flag would be set only from userspace 
-> and reset when the file is modified. If the flag is still set when the file 
-> is being modified, the filesystem would then create a symlink or something 
-> like for the file in a special directory.
+On Saturday 01 January 2005 04:12, you wrote:
+...
+> That reminds me that the other thing BeOS had was a change notification
+> system using messaging.  If you requested monitoring of a directory or
+> file (with flags to say which kind of changes are of interest) then
+> it would send your program a BMessage with the details (such as a file
+> being added to a directory).
 
-That reminds me that the other thing BeOS had was a change notification
-system using messaging.  If you requested monitoring of a directory or
-file (with flags to say which kind of changes are of interest) then
-it would send your program a BMessage with the details (such as a file
-being added to a directory).
+Do you know if this service was actually provided by the file system or was it 
+just a clever use of a more simple feature of the fs which allows to do that?
+There are certainly a lot of things which could be done, if changed files can 
+be found quickly, but those things don't need to go into fs itself.
 
-This was also extended to monitor changes to the indices: you gave it a
-query expression and the kernel/file system then would send notification
-messages if a change to a file (or its attributes) added or removed that
-file from the set of files matching the query.  Seems like a lot of
-overhead, but it wasn't that noticable and did make the OS a lot more
-useful (cooler too, directory windows or even complex Find results were
-always up to date even as files changed).
+> But I don't think that's quite what you wanted (and isn't as economical
+> as your tree of percolated up modification times).  Though it would be
+> nifty (but useless?) to have a build system (make-like) operating in real
+> time - change a source file and the system automatically recompiles it
+> immediately.
 
-But I don't think that's quite what you wanted (and isn't as economical
-as your tree of percolated up modification times).  Though it would be nifty
-(but useless?) to have a build system (make-like) operating in real time -
-change a source file and the system automatically recompiles it immediately.
+With "change notification flag" I didn't mean to have the send messages, but 
+put links to the file into a folder, so a daemon can poll for changes. I 
+guess polling is better in this case, since it limits the overhead even in 
+persence of many changes.
+It's certainly not most important for build systems, at least as long as the 
+source tree is reasonable small. Just an example among others.
 
-> Moving too much logic into the file system has lots of drawbacks. It
-> makes the file system complicated, so it will be less likely to be
-> implemented at all.
+> > Moving too much logic into the file system has lots of drawbacks. It
+> > makes the file system complicated, so it will be less likely to be
+> > implemented at all.
+>
+> True.  That's why I think query evaluation should be outside the file
+> system, with just the indices in the kernel / file system API.  But
+> that's another story.
 
-True.  That's why I think query evaluation should be outside the file
-system, with just the indices in the kernel / file system API.  But
-that's another story.
+No, that's exacly the story. If you want to index various attributes of files, 
+so that the index can be quickly updated when it's needed. We don't have to 
+go into details about what you do with that indices in userspace. What we 
+need to discuss is what changes to the file system would be neccessary, so 
+that everything you have in mind could be done efficiently.
+I claim that the approach I described...
+- ...allows all these things to be done efficiently in userspace.
+- ...is the smallest change to the fs neccessary for it.
+- ...could be implemented in reiser4 without significant performance losses.
 
-- Alex
+Of course I'm not at all sure about these claims, so that's why I'm asking ;)
+
+bye and a Happy new year (to everyone this time)
+
+Fred
+
+-- 
+Fred Schaettgen
+Sch@ttgen.net
