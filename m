@@ -1,32 +1,34 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiserfs Data Recovery
-Date: Tue, 09 Mar 2004 14:36:35 +0300
-Message-ID: <404DAC43.6070501@namesys.com>
-References: <404C81B9.4050504@nsanity.com> <20040308184124.GE5817@dbz.icequake.net> <404CC8AA.9020405@nsanity.com> <20040308215919.GB11093@dbz.icequake.net>
+From: myciel <myciel@dotcom.pl>
+Subject: reiserfs_read_inode2: i/o failure occurred trying to find stat data...
+Date: Tue, 09 Mar 2004 12:39:58 +0100
+Message-ID: <404DAD0E.5030105@dotcom.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17135-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17136-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040308215919.GB11093@dbz.icequake.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ryan Underwood <nemesis-lists@icequake.net>
-Cc: Nick Vahalik <nick@nsanity.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Ryan Underwood wrote:
+for few days allready I get some new messagess from kernel,
+I suppose following is not good :-(
 
->
->Running Hardware Raid1 on top of a highpoint 37x2 raid controller
->2x80 GB Drives
->----------------
->  
->
-I had really bad experiences with highpoint.
+kernel 2.4.22 + data-logging
+uptime 139 days
+mount options: notail,noatime,nodiratime,data=ordered
 
--- 
-Hans
+Mar  4 18:23:20 host kernel: is_tree_node: node level 2570 does not 
+match to the expected one 1
+Mar  4 18:23:20 host kernel: sd(8,20):vs-5150: search_by_key: invalid 
+format found in block 161743381. Fsck?
+Mar  4 18:23:20 host kernel: sd(8,20):vs-13070: reiserfs_read_inode2: 
+i/o failure occurred trying to find stat data of [8840375 34384847 0x0 SD]
+Mar  4 18:23:20 host kernel: is_tree_node: node level 2570 does not 
+match to the expected one 1
 
+regards
 
+rafal
