@@ -1,53 +1,55 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: r5 hash detected, unable to force r5 hash
-Date: Mon, 22 Apr 2002 08:44:50 +0400
-Message-ID: <20020422084450.A7155@namesys.com>
-References: <20020419185715.GA3936@thebetteros.oche.de> <20020420150339.A28989@namesys.com> <20020420190025.GA6982@thebetteros.oche.de> <20020421134801.A2257@namesys.com> <20020421201341.GA9840@thebetteros.oche.de>
+From: wolfgang.glas@ev-i.at
+Subject: kernel loop with lseek + LFS on reiser partition.
+Date: Mon, 22 Apr 2002 10:28:05 +0200
+Message-ID: <OF3FAEC010.18270BFB-ONC1256BA3.002DB214@ev-i.at>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10103-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="=_mixed 002E8431C1256BA3_="
+Return-path: <reiserfs-list-return-10104-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <20020421201341.GA9840@thebetteros.oche.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Hello!
+--=_mixed 002E8431C1256BA3_=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Apr 21, 2002 at 10:13:41PM +0200, Frederick Page wrote:
+Hi all,
 
-> >You hit the kernel error that was fixed already.
-> Thank you for the info. Although super.c says:
->         } else if (reiserfs_r5_hash(s) && code != R5_HASH) {
->             printk("REISERFS: Error, r5 hash detected, "
->                    "unable to force r5 hash\n") ;
->             code = UNSET_HASH ;
->         }
+I was just about to report a seek bug in samba-2.2.3a, when I wrote the=20
+attached sample program seeking in a file to position 128GB from the=20
+beginning and the ne writing "HEllo, world!" to that position. The prgram=20
+closes fd's 0,1,2 before doing all that, because I tried to simulate the=20
+fd numbers of the samba server. Hence, error reporting goes to syslog(2)=20
+instead of stderr. (I recently read about sparse files and decided to give =
 
-There is separate patch, that was not included into 2.4.18 for whatever reason,
-but was included into 2.4.19-pre3.
-So you may try 2.4.19-pre3+ kernel, or patch you kernel with patches from
-2.4.18.pending subdir on our ftp site. (this is mentioned on a web site, even)
+them a try...; Program compiled LFS support; see comment in C-file)
 
-> >Seriously, you run old kernel, went into problems, and instead of
-> >upgrading to recommended kernel with recommended patches you just
-> >wrote your original letter.
-> Please take a look at the original mail. As soon as I ran into
-> problems, I followed the advice on the home-page and upgraded to
-> 2.4.18, it's near the bottom of my original mail. I also stated, that
+Running the program under SuSE7.3 with the folowing two kernels lets the=20
+process starve in an infineite loop inside the kernel (99% kernel CPU):
 
-Hm. So you went only half-through the instructions, then?
-If latest kernel does not work for you, try applying all the pending patches.
+linux-2.4.16 from SuSE
+linux-2.4.18 with the speedup patches from this mailing list plus=20
+lvm-1.0.3
 
-> nothing changed, I did not run any buggy "official" kernel, but an
-> Alan Cox one. I'm still very reluctant on running the official 2.4.18,
-> since 2.4 linux has gone Windows :-/
+glibc-2.2.4 (SuSE 7.3)
 
-That's your sole decision. 2.4.18 works great for me.
-I even had 2.4.2 with 405 days of uptime until recently ;)
+ No go with kill, kill -9...... Only reboot helps.
 
-Bye,
-    Oleg
+6GB Reiserfs partition on top of lvm, mount with -o conv.=20
+
+  Best regards,
+
+    Wolfgang
+
+
+
+--
+Dr. Wolfgang Glas                        EV-i Informationstechnologie=20
+GmbH.
+Gesch=E4ftsf=FChrer                          Sebastian-Kneipp-Weg 17
+Wolfgang.Glas@ev-i.at                    A-6020 Innsbruck/Austria
+phone: ++43-512-284883-2                 fax: ++43-512-281624-31
+
+--=_mixed 002E8431C1256BA3_=--
