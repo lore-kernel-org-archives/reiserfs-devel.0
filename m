@@ -1,41 +1,53 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Re: [PATCH CFT] tons of logging patches
-Date: 28 Jun 2002 09:51:20 -0400
-Message-ID: <1025272280.1685.6.camel@tiny>
+From: Olivier <olivier@lx.student.wau.nl>
+Subject: Re: Re: Is it good for a PDA fs?
+Date: Fri, 28 Jun 2002 22:50:36 +0200
+Message-ID: <20020628225036.781d747e.olivier@lx.student.wau.nl>
+References: <20020622115207.E23457@gerf.org>
+	<20020622175746.I13075@parcelfarce.linux.theplanet.co.uk>
+	<3D14B8E9.4020808@namesys.com>
+	<20020622230748.A1981@namesys.com>
+	<3D14E47E.5080300@namesys.com>
+	<20020623105057.A5090@namesys.com>
+	<20020625123513.B9941@gerf.org>
+	<20020626085602.A5198@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10874-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ boundary="=.AOiUrRw.V+w7I="
+Return-path: <reiserfs-list-return-10875-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <1024340679.18666.36.camel@tiny>
+In-Reply-To: <20020626085602.A5198@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hi everyone,
+--=.AOiUrRw.V+w7I=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-I've updated data logging patch, to fix a problem where
-reiserfs_writepage didn't properly unlock pages in data logging mode.
+On Wed, 26 Jun 2002 08:56:02 +0400
+"Oleg Drokin" <green@namesys.com> wrote:
 
-The new code will be on
-ftp.suse.com/pub/people/mason/patches/data-logging once the mirror
-updates.
+> I do not know about MMC, and SD is so badly proprietary, you cannot
+> learn anything about these without spending rest of your days in jail
+> because of DMCA violations.
 
-If you've already got 03-beta-data-logging-10, you only need the
-incremental fix below.
+DMCA only holds in the USA, so don't worry about it if you're abroad
 
--chris
+regards,
+	Olivier
 
---- 1.33/fs/reiserfs/inode.c	Fri Jun 28 09:34:33 2002
-+++ edited/fs/reiserfs/inode.c	Fri Jun 28 09:37:42 2002
-@@ -2034,6 +2034,7 @@
-     }
-     if (reiserfs_active_handle(&th)) {
-         journal_end(&th, sb, nr) ;
-+        UnlockPage(page);
-     }
- }
- 
 
+--=.AOiUrRw.V+w7I=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+
+iD8DBQE9HMwgutovhRbfD68RAiQDAJ94DiUC9OdayUwgcWMrOCajOWbHiwCeKIPG
+u1oDLhLgoPSBeGbURnXU+8g=
+=h5Dr
+-----END PGP SIGNATURE-----
+
+--=.AOiUrRw.V+w7I=--
 
