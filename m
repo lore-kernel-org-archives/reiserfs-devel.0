@@ -1,78 +1,66 @@
-From: Anders Widman <andewid@tnonline.net>
-Subject: Re: Bad Blocks?
-Date: Wed, 30 Oct 2002 23:22:11 +0100
-Message-ID: <17384992609.20021030232211@tnonline.net>
-References: <1035999303.1204.31.camel@preston>
- <200201020842.58067.degerrit@web.de>
-Reply-To: Anders Widman <andewid@tnonline.net>
+From: Todd Lyons <todd@mrball.net>
+Subject: Re: Still wrong reported file size after --rebuild-tree
+Date: Wed, 30 Oct 2002 19:57:36 -0800
+Message-ID: <20021031035736.GG14386@mrball.net>
+References: <20021030193045.69179289.philippe.gramoulle@mmania.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11847-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="vSsTm1kUtxIHoa7M"
+Return-path: <reiserfs-list-return-11848-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200201020842.58067.degerrit@web.de>
+Content-Disposition: inline
+In-Reply-To: <20021030193045.69179289.philippe.gramoulle@mmania.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: reiserfs <reiserfs-list@namesys.com>
 
-> -----BEGIN PGP SIGNED MESSAGE-----
+--vSsTm1kUtxIHoa7M
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Often hard drive manufacturers provide utilities to check their disks and 
-> remap bad blocks, I was able to get rid of mine using Maxtor's Powermax or 
-> something. After that you can reiserfsck --rebuild-tree and you should end up 
-> with a mountable fs.
+Philippe Gramoull=E9 wanted us to know:
 
-Bad blocks are alsu subject to warranty. Maxtor has on-site service.
-They will send you a new drive with UPS so you can make backup. Then
-you send the broken drive back.
+>I just wanted to let you know that after rebuilding the tree for a 500Go
+>volume, i still have wrong file size reported :
+>/dev/sdb1            572418604 174714996 397703608  31% /storage
 
-Use their "Advanced RMA" on www.maxtor.com.
+Hmmm, ours showed 96% or something like that.  I'll check to see if it's
+accurate.
 
-> However, you should see this as a temporary measure (to mount your fs, and 
-> make a good backup) - in my experience with this one disk, more bad blocks 
-> keep appearing after a while. (Against my own advice, I'm still using my 
-> disk, though)
+>-r-x--x---    1 19415372 19415373 83388383504122186 Aug 13  1970 25s_lb.jpg
+>-r--rw-rw-    1 19415354 19415355 83388306194710840 Aug 13  1970 25slight.=
+jpg
+>-r---wxrwx    1 19415331 19415332 83388207410463009 Aug 13  1970 25slight_=
+ln.jpg
 
-> Also see http://namesys.com/bad-block-handling.html
+We had these too.  Humongous uid and gid numbers.
 
-> Cheers,
-> - - Gerrit
+>I'll make metadata available as soon as debugreiserfs is finised.
+>(reiserfsck used was 3.6.4 ( 3.6.4 pre3)
 
+I really don't think it's a requirement to see our metadata as our
+problems were caused by faulty hardware and not any bugs in the fs
+itself.
+--=20
+Blue skies...		Todd
+| Get a bigger hammer!   | Security is like an onion.  It's made   |
+| http://www.mrball.net  | up of several layers and makes you cry. |
+| http://faq.mrball.net  |                         --Howard Chu    |
+   Linux kernel 2.5.44   3 users,  load average: 0.00, 0.00, 0.00
 
-> On Wednesday 30 October 2002 18:35, Preston Lord wrote:
->> I am running the latest reiserfsprogs 3.6.4
->>
->> I came home last week to find my Linux pc was locked up. After rebooting
->> the root partition would not mount. All other partitions are fine. I
->> have the failed hard drive in another linux pc now and am trying to
->> recover the data from the failed partition. When I run
->>
->> reiserfsck --check /dev/hda5
->>
->> I get this:
->>
->> The problem has occurred looks like a hardware problem.
->> Check your hard drive for badblocks.
->>
->> bread: Cannot read the block (16).
->>
->>
->> how can I fix this bad block?
->>
->> Linux Kernel 2.4.18
->>
->> Thanks
->>
->> Preston
-> -----BEGIN PGP SIGNATURE-----
-> Version: GnuPG v1.2.0 (GNU/Linux)
+--vSsTm1kUtxIHoa7M
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
-> iQCVAwUBPDK59wtVJ+MDouLxAQGS1QP/WuEvM/TwRkHbtueD6P6usviVhMQu7RnE
-> mfT1fSzpb0cyVOmStIRp1c8KNLhaaZRJs747ZtJjPXJV5lqO7N4cJ8sVa2hm/PwY
-> uBrFdEA/6cQaWBu2Kt9H3CPOhrrJYWwYXHow3qaYJUhhmAVWphNQEALEQU15A5iG
-> LPwM7Z3HQpk=
-> =VqVJ
-> -----END PGP SIGNATURE-----
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
 
+iD8DBQE9wKowIBT1264ScBURAmhtAJsFIlE8l0qJ+SFIan+tCFWTELYejQCgsb7H
+So5QTvB7SKlsc3F5IJLaAS4=
+=zwfe
+-----END PGP SIGNATURE-----
+
+--vSsTm1kUtxIHoa7M--
