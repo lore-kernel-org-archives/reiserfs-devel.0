@@ -1,74 +1,47 @@
-From: Bernhard Sadlowski <sadlowsk@mathematik.uni-bielefeld.de>
-Subject: NFS issues with reiserfs 3.6? ext3 works...
-Date: Fri, 26 Mar 2004 12:53:02 +0100
-Sender: Bernhard Sadlowski <sadlowsk@Mathematik.Uni-Bielefeld.DE>
-Message-ID: <20040326115302.GD1315@mathematik.uni-bielefeld.de>
+From: Adam Nielsen <a.nielsen@optushome.com.au>
+Subject: Re: BUG: Replaying ReiserFS log causes hard lockup
+Date: Fri, 26 Mar 2004 22:01:07 +1000
+Message-ID: <20040326220107.333b23e8.a.nielsen@optushome.com.au>
+References: <20040325204836.07bcf910.a.nielsen@optushome.com.au>
+	<1080213348.1976.277.camel@tribesman.namesys.com>
+	<1080219262.14742.146.camel@watt.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17489-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17490-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <1080219262.14742.146.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list@namesys.com
 
-Hi!
+> Please compile the kernel with sysrq support, and try to do a sysrq-p
+> when things are locked.  If there kernel is completely frozen, you can
+> turn on the nmi watchdog, which should trigger an oops to tell us
+> where things are broken.
 
-A short question:
+Well, try as I might, I can't get the oops to appear.  SysRq doesn't
+work since it's a hard lockup, and the NMI watchdog doesn't seem to work
+either.  I got the kernel booting once with nmi_watchdog=1 which gave an
+interrupt count of zero, and then again with nmi_watchdog=2 which
+incremented the NMI count about once every 30 seconds (but I also had
+profiling turned on, which appears to use the NMI interrupt.)  I have
+since turned profiling off, disabled the preemptive kernel, enabled
+debugging info, made sure the APIC etc. was on but it has stopped
+booting completely and now locks up during boot.  Now it goes as far as:
 
-What are the remaining differences between reiserfs and ext3 regarding
-NFS? 
+reiserfs: checking transaction log (sda1) for (sda1)
+Using r5 hash to sort names
+VFS: Mounted root (reiserfs filesystem) readonly.
+Freeing unused kernel memory: 164k freed
 
-Details:
+Then it locks.  Once it printed the message about INIT starting after
+this, so I guess it's something around this point that's causing the
+problem.  However since it seems to be a *really* bad lock, I don't know
+how to proceed :-(
 
-I have two Linux machines with current kernel 2.4.25 and two
-Directories on the NFS Server dematl04:
-
-dematl04:/vol01 (ext3 fs)
-dematl04:/raid  (reiserfs 3.6)
-
-On both machines we use Helios Ethershare (a commercial software for
-print and fileservices for Macintosh). Helios Ethershare uses and
-updates a file .Desktop every time some mac is creating, writing or
-changing files in a Macintosh volume.  The "dt" utility has to be used
-in a shell for mkdir, rm, mv, touch, ... I guess it has to lock this
-file whilche applying changes.
-
-# dt
-Usage: dt { rm | rmdir | mv | cp | set | ls | mkdir | touch |
-            upd | chmod | chown | chgrp | idinfo | iddump }
-
-Reiserfs:
-
-root@dematl04:/raid/arc_04# dt mkdir test1
--> works
-
-Same volume mounted per NFS on a second machine:
-
-root@dematl08:/assets/ts04/arc_04# dt mkdir test2
-dt mkdir: (dematl04) Error -5031 occured!: /raid/assets/ts04/arc_04: error accessing desktop lock '.DeskServer'
--> does not work 
-
-Ext3:
-
-root@dematl04:/vol01# dt mkdir test1
--> works
-
-Same volume mounted per NFS on a second machine:
-
-root@dematl08:/vol01# dt mkdir test2
--> works
-
-Helios Ethershare is also running on Solaris 8 and the tests above
-succeed between two Solaris machines. I can provide on request the
-strace output of "dt mkdir test3" on the NFS client. They were to big
-for the list.
-
-Is this some known locking difference/bug in reiserfs?
-Will reiser4 be more "compatible" with NFS?
-
-Thanks,
-Bernhard
+Cheers,
+Adam. (please CC replies)
