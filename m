@@ -1,43 +1,68 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Can compression at filesystem level improve overall performance?
-Date: Fri, 19 Mar 2004 21:59:57 +0300
-Message-ID: <405B432D.5020305@namesys.com>
-References: <405B02ED.4010602@solidcode.net>
+Subject: Re: new v3 2.6.4  logging/xattr patches
+Date: Fri, 19 Mar 2004 22:03:33 +0300
+Message-ID: <405B4405.4010804@namesys.com>
+References: <1079679539.11055.101.camel@watt.suse.com>	 <405AA885.3030000@namesys.com> <1079705006.11062.134.camel@watt.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17331-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17332-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <405B02ED.4010602@solidcode.net>
+In-Reply-To: <1079705006.11062.134.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Erik Terpstra <erik@solidcode.net>
+To: Chris Mason <mason@suse.com>
 Cc: reiserfs-list@namesys.com
 
-Erik Terpstra wrote:
+Chris Mason wrote:
 
-> Hello everyone,
+>On Fri, 2004-03-19 at 03:00, Hans Reiser wrote:
+>  
 >
-> For the last couple of years I noticed that the performance of most of 
-> my systems has it's bottleneck in data throughput rather than CPU 
-> performance.
+>>Chris Mason wrote:
+>>
+>>    
+>>
+>>>Hello everyone,
+>>>
+>>>I've just uploaded all the reiserfs patches from the suse 2.6 kernel to:
+>>>
+>>>ftp.suse.com/pub/people/mason/patches/data-logging/experimental/2.6.4
+>>>
+>>>(they should also apply to 2.6.5-rc1 and 2.6.5-rc1-mm2)
+>>>
+>>>These include:
+>>>Latency fixes
+>>>Logging performance fixes
+>>>data=ordered support
+>>>quota support
+>>>xattrs and acls from Jeff Mahoney
+>>>
+>>>and a few random bug fixes.  There's a README file in the directory with
+>>>a some more details.
+>>>
+>>>      
+>>>
+>>are these ready to go to Andrew or?
+>>    
+>>
 >
-> Is it fair to say that today compression at the filesystem level would 
-> improve overall performance?
+>They are ready for Andrew for additional testing, I'd like to submit the
+>whole bunch to him actually.  Any objections?
 >
-> If this is the case, it probably wouldn't be too hard to implement as 
-> a module in Reiser4?
->
-> Any thoughts?
->
-> --Erik.
+>-chris
 >
 >
-We are working on it.  Actually, it is hard to code because we need to 
-compress at flush to disk time rather than at each write.  Flush related 
-plugins are the hardest plugins.
+>
+>
+>
+>
+>  
+>
+I object to the xattr patch.  Is the write cache related work in this 
+anywhere?
 
 -- 
 Hans
