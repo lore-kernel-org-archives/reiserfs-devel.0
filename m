@@ -1,35 +1,53 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Quota problem
-Date: Mon, 13 May 2002 08:54:14 +0400
-Message-ID: <20020513085414.A32129@namesys.com>
-References: <Pine.LNX.4.44.0205101500340.1699-100000@grignard.amagerkollegiet.dk>
+From: JPASTORM@esade.edu
+Subject: New to reiserfs
+Date: Mon, 13 May 2002 11:34:29 +0200
+Message-ID: <OF69292CB8.96B5D3F9-ONC1256BB8.0033D851@esade.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10296-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10297-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44.0205101500340.1699-100000@grignard.amagerkollegiet.dk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Rasmus B?g Hansen <moffe@amagerkollegiet.dk>
-Cc: ReiserFS Mailing List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-Hello!
+Hi,
 
-On Fri, May 10, 2002 at 03:13:18PM +0200, Rasmus B?g Hansen wrote:
+I'm new to this surprising file system. Currently I have a Linux Red Ha=
+t
+6.2 server for testing, with two partitions (/ and /boot). I'm running =
+the
+2.2.14-5.0 kernel and I have several questions about reiserfs:
 
-> May  6 12:39:03 carlsberg kernel: VFS: find_free_dqentry(): Data block full but it shouldn't.
-> May  6 12:39:03 carlsberg kernel: VFS: Error -5 occured while creating quota.
+1.- Do I necessarily have to update to the 2.2.20 kernel so as to use
+2.2.20-reiserfs patch?
+2.- Can I migrate from ext2 to reiserfs without loosing data (I know I
+should always backup my data) or should I have to format my new reiserf=
+s
+partitions?
+3.- Is there any partition in other servers (in production) where it is=
 
-error -5 means I/O error.
-Any reiserfs related messages in logs?
+advisable to stay with the ext2 filesystem?
+4.- I have a PIII 1 GHz, 512 MB RAM, SCSI server where I run sendmail, =
+bind
+and squid. Will I have problems with performance if I migrate to reiser=
+fs?
+What's the counterpart of dealing with a journaling filesystem?
 
-Also please try to run latest reiserfsck on that partition and see if it finds
-any problems.
+Thanks in advance.
 
-Thank you for the report.
+Juan Pastor
+E-mail: jpastorm@esade.edu
 
-Bye,
-    Oleg
+Centro de Proceso de Datos
+Fundaci=F3n ESADE
+Av. Pedralbes, 60-62
+08034 Barcelona
+
+Tel  +34 932806162 ext. 2562
+Fax  +34 932048105
+
+=
+
+
