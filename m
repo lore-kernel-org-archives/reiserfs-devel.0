@@ -1,57 +1,40 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: Where Reiser4 may break?
-Date: Thu, 27 May 2004 13:00:05 +0400
-Message-ID: <1085648404.1915.219.camel@tribesman.namesys.com>
-References: <20040526204457.GJ4990@nysv.org>
+From: Emanuel.Quass@temic.com
+Subject: reiserfs4 synchronization on 2 hosts
+Date: Thu, 27 May 2004 12:06:53 +0300
+Message-ID: <OF863EE15D.A4EBE232-ONC1256EA1.0030D7A8-C2256EA1.003216BE@contiteves.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18868-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; boundary="=_alternative 003216B2C2256EA1_="
+Return-path: <reiserfs-list-return-18869-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040526204457.GJ4990@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Markus =?koi8-r?Q?T=F6rnqvist?= <mjt@nysv.org>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello
+--=_alternative 003216B2C2256EA1_=
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, 2004-05-27 at 00:44, Markus T=C6rnqvist wrote:
-> Hi
->=20
-> I was thinking about some potential problems.
->=20
-> Actually, Nikita and I had a discussion about the issues with
-> cross-architecture compatibility. It would apparently not be easy to
-> do, because block size equals page size in Reiser4.
->=20
-yes, now moving a hard drive with reiser4 between systems with different
-page size is impossible.=20
+Hello,
 
-> Is this common with other file systems?
+can anyone tell me wheather it's possible with to have to two servers in 
+differens locations and have a synchronisation between the files and the 
+file-locks in both places?
 
-no
+Thanks in advance
 
->  I didn't get to ask that
-> question so to get an answer :)
->=20
-> Just when stuff like FireWire and USB hard drives are getting popular
-> and no-one should buy a PC laptop, this may become an issue for
-> PPC Linux users...
->=20
-> Then, the issues with small and large keys. Is there any need for two
-> sizes? Isn't it hazardous that some peoples' systems may cease to
-> function because of that? It seems larger keys are far superior...
->=20
+        Emanuel
 
-Both large and small keys should be supported such that user does not
-have to care of compile option
-It was made compile option because there was a desire to try it as fast
-as possible.
+--=_alternative 003216B2C2256EA1_=
+Content-Type: text/html; charset="us-ascii"
 
-> Any performance issues, anything?
->=20
-> Thanks!
 
+<br><font size=2 face="sans-serif">Hello,</font>
+<br>
+<br><font size=2 face="sans-serif">can anyone tell me wheather it's possible with to have to two servers in differens locations and have a synchronisation between the files and the file-locks in both places?</font>
+<br>
+<br><font size=2 face="sans-serif">Thanks in advance</font>
+<br>
+<br><font size=2 face="sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; Emanuel</font>
+<br>
+--=_alternative 003216B2C2256EA1_=--
