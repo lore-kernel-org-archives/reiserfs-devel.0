@@ -1,44 +1,29 @@
-From: Ryan Underwood <nemesis-lists@icequake.net>
-Subject: Re: Some ReiserFS failure situations and questions
-Date: Fri, 5 Mar 2004 01:08:42 -0600
-Message-ID: <20040305070842.GC3291@dbz.icequake.net>
-References: <20040303224848.GF31472@dbz.icequake.net> <20040305065837.GE15906@favonius>
+From: Per Andreas Buer <perbu@linpro.no>
+Subject: Re: [Jfs-discussion] Re: Desktop Filesystem Benchmarks in 2.6.3
+Date: Thu, 04 Mar 2004 21:43:44 +0100
+Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <PERBUMSGID-ul6y8qgibr3.fsf@nfsd.linpro.no>
+References: <4044119D.6050502@andrew.cmu.edu> <40453538.8050103@animezone.org>
+ <20040303014115.GP19111@khan.acc.umu.se>
+ <200403030700.57164.robin.rosenberg.lists@dewire.com>
+ <1078307033.904.1.camel@teapot.felipe-alfaro.com>
+ <1078411067.40473f3b6b835@webmail.uni-konstanz.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
-Return-path: <reiserfs-list-return-17094-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040305065837.GE15906@favonius>
+Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: ext2-devel@sourceforge.net, Ext3-users@redhat.com, jfs-discussion@www-124.ibm.com, reiserfs-list@namesys.com, linux-xfs@oss.sgi.com
 
---MGYHOYXEY6WxJCY8
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Pascal Gienger <pascal.gienger@uni-konstanz.de> writes:
 
+> 2. Speaking for servers, we live in a RAID and/or SAN-world. The media
+> error issue is a non-issue.
 
-Thank you Sander, you have been very helpful.  Sounds like I will be
-looking into that 'ordered' mount option.
+If your cooling system stops you will experience media errors. A
+filesystem which detects this halts the kernel really helps.
 
---=20
-Ryan Underwood, <nemesis@icequake.net>
-
---MGYHOYXEY6WxJCY8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQFASCd6IonHnh+67jkRAvaAAKCEii0FNhZRhraCfOi2zgAlvuRonACgnVAg
-N9dVbbLX9fP4B8JoycHiXGc=
-=Prym
------END PGP SIGNATURE-----
-
---MGYHOYXEY6WxJCY8--
+-- 
+There are only 10 different kinds of people in the world, 
+those who understand binary, and those who don't.
