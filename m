@@ -1,61 +1,35 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Sat, 15 May 2004 10:13:19 -0700
-Message-ID: <200405151013.19473.reiser@namesys.com>
-References: <20040329185901.62166.qmail@web25008.mail.ukl.yahoo.com> <40A587FF.30103@namesys.com> <40A520DB.4080200@lindows.com>
+Subject: Re: plugin for cached network file system
+Date: Sat, 15 May 2004 10:16:51 -0700
+Message-ID: <200405151016.51811.reiser@namesys.com>
+References: <200405131059.22693.Michael.James@csiro.au> <40A30C53.3020607@namesys.com> <87iseynvzl.fsf@uhoreg.ca>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18716-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18717-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40A520DB.4080200@lindows.com>
+In-Reply-To: <87iseynvzl.fsf@uhoreg.ca>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Clifford Beshers <clifford.beshers@lindows.com>
-Cc: reiserfs-list@namesys.com
+To: Hubert Chan <hubert@uhoreg.ca>, reiserfs-list@namesys.com
 
-You are probably right about scp specifically, but in general @ is used by 
-some things that expect it to mean user@host.  @ could be used, I think 
-clearcase used it, I just don't see it as better than "metas".
+Same amount.
 
 Hans
 
-On Friday 14 May 2004 12:41, Clifford Beshers wrote:
-> Hans Reiser wrote:
-> > Grant Miner wrote:
-> >> Someone mentioned earlier, and I like just the at sign: @ Think of it
-> >> short for "attributes".
-> >>
-> >> file/@/uid
-> >>
-> >> The nice thing about @ is it shows up early lexicographically, it's
-> >> short and unlikely to be used.  This name is important to pick well
-> >> because it will likely set a long precedent.
-> >
-> > It would be a problem for utilities like scp....
+On Friday 14 May 2004 21:40, Hubert Chan wrote:
+> >>>>> "Hans" == Hans Reiser <reiser@namesys.com> writes:
 >
-> Hans, are you sure?  I tried some examples and had no troubles.  From my
-> history:
+> Hans> It is easy to do a hack, and hard to do it right so that the world
+> Hans> would want to drop nfs and move to it.  We are trying to find a
+> Hans> sponsor to do it right, and have a proposal called Reiser5 that
+> Hans> costs $1.8 million, and provides global scalability (which
+> Hans> nfs/afs/clusterfs/intermezzo do not, in my view).
 >
->       588  cd ~/tmp
->       589  mkdir -p foo/@
->       590  touch foo/@/uid
->       591  scp -rp foo/@/uid stan:/tmp
->       592  ssh stan 'mkdir -p /tmp/foo/@ ; touch /tmp/foo/@/uid'
->       593  scp -rp stan:/tmp/foo/@ .
->
-> I'm not sure if @ is a good choice or not, but I don't think it would
-> actually cause trouble syntactically, because everything expecting
-> hostnames looks for a colon.
->
-> --
->
-> This message contains information which may be confidential and privileged.
-> Unless you are the addressee (or authorized to receive for the addressee),
-> you may not use, copy or disclose to anyone the message or any information
-> contained in the message. If you have received the message in error, please
-> advise the sender and delete the message.  Thank you.
+> Purely out of curiosity (I have no access to funding of that scale, and
+> I don't influence anyone who does), do you have an estimate for how much
+> it would cost to get Reiser6 functionality?
 
