@@ -1,60 +1,62 @@
-From: "daniel.poelzleithner" <poelzi@poelzi.org>
-Subject: Slow stats on reiserfs 3
-Date: Thu, 01 Apr 2004 15:13:18 +0200
-Message-ID: <406C156E.406@poelzi.org>
+From: Ivar Bergman <ivarbergman@yahoo.com>
+Subject: Beginner questions about meta data and plugins
+Date: Thu, 1 Apr 2004 07:08:00 -0800 (PST)
+Message-ID: <20040401150800.68309.qmail@web10005.mail.yahoo.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17642-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17643-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Reiser FS Mailing List <reiserfs-list@namesys.com>
-
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-Hi,
-
-There is a discussion at the BackupPC Mailinglist why the nightly
-cleanup of the backup Pool takes so much more time against ext3.
-
-Here is the thead:
-
-http://sourceforge.net/mailarchive/forum.php?thread_id=4144370&forum_id=503
-
-The pool directory looks like:
-
-cpool/0/0/0/0001257ca4eff2a5c9b60797fa034275
-
-I tested:
-
-find /MY/CPOOL -type d -exec stat {} > /dev/null \;
-
-and it takes around 170 minutes on my 30 gb pool with 687847 files.
-I looked with debugreiserfs at the metadata and it seems that ca. every
-fivest file has an hash collision, but i never saw more than on
-collision per directory.
-
-Is there anyting to speed this up on large directories ?
-
-regards
-~ Daniel
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
 
-- --
-nihil me cirumdat
+Hi all!
 
-.. . .. ... . . .. . ... . .. . ... . . .
-pgp key @ http://files.poelzi.org/pgp.txt
-ED80 E53D 5269 4BB1 1E73 3A53 CBF9 A421 0A7B 003D
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Debian - http://enigmail.mozdev.org
+Over the last weeks I have been experementing with 
+Reiser4, so far I have managed to build the kernel,
+created a mountable Reiser4 partition, and played
+around with the file system via the shell. 
 
-iD8DBQFAbBVty/mkIQp7AD0RApTwAJ9E61qH2LzbJ7R5xm7YAaFARt1tcwCcDk8c
-e69X2MvlWGYRU1tyTdL5yds=
-=Lggx
------END PGP SIGNATURE-----
+To learn how Reiser4 work, I planed to implement the
+following two programs:
+
+1, Write a simple C program that list the value of a 
+   specific file meta data. Like the way you can list 
+
+   the value of a attibute by using cat.
+
+   cat myfile/..pseudo
+
+2, Write a simple plugin that adds a new file 
+   attribute.
+
+I tried to read the kernel source code for help, but I
+guess it was a bit to much for me. So, does anybody
+have some source code that could help me on the way,
+or perhaps point out some part of the resier4 kernel 
+source code that could be helpfull.
+
+Some general quiestion about plugins: 
+
+ o Does a file belong to one plugin only, or does it 
+   have a list of plugins?
+ 
+ o Can I, as a plugin writer, introduce new operations
+
+   on a file? In other words extend the file
+interface.
+   And if that is possible, how do I invoke that   
+   operation from a C program?
+
+Best regards
+Ivar Bergman
+
+
+__________________________________
+Do you Yahoo!?
+Yahoo! Small Business $15K Web Design Giveaway 
+http://promotions.yahoo.com/design_giveaway/
