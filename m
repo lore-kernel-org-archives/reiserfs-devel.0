@@ -1,64 +1,83 @@
-From: Nikita Danilov <nikita@clusterfs.com>
-Subject: Re: mongo benchmark results
-Date: Sun, 25 Jul 2004 12:21:37 +0400
-Message-ID: <16643.28049.628875.578115@gargle.gargle.HOWL>
-References: <20040726055047.E145F15C29@mail03.powweb.com>
-	<4104A933.7020509@namesys.com>
-	<16644.49106.254644.433410@laputa.namesys.com>
-	<20040726084315.GA4881@backtop.namesys.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: Zero Bit found
+Date: Mon, 26 Jul 2004 14:08:14 +0400
+Message-ID: <4104D80E.20209@namesys.com>
+References: <6913951.1090812351701.SLOX.WebMail.wwwrun@neptune.hsc-consulting.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19807-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19808-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040726084315.GA4881@backtop.namesys.com>
+In-Reply-To: <6913951.1090812351701.SLOX.WebMail.wwwrun@neptune.hsc-consulting.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: Hans Reiser <reiser@namesys.com>, David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: hsimon@optusnet.com.au
+Cc: reiserfs-list@namesys.com
 
-Alex Zarochentsev writes:
- > On Mon, Jul 26, 2004 at 12:24:50PM +0400, Nikita Danilov wrote:
- > > Hans Reiser writes:
- > >  > David Dabbs wrote:
- > >  > 
- > >  > >At http://dabbs.net/reiser4/mongo.html I've posted some benchmarks from my
- > >  > >aging but available test box. All numbers were generated with the Namesys
- > >  > >mm7 snapshot. The "A.INFO_R4=new" are results from a reiser4 with modified
- > >  > >comparison functions as well as znode_contains_key_strict(). So, here are my
- > >  > >questions:
- > >  > >
- > >  > >Do these results appear consistent with others' recent benchmarking? 
- > >  > >  
- > >  > >
- > >  > Increase file_size to 8k, and then we can compare.  This will reduce 
- > >  > reiser4's space savings from 19% to 9%, but it will probably increase 
- > >  > performance.
- > >  > 
- > >  > Your work had a remarkable effect on the create phase.  Very good work.  
- > >  > I don't know why the impact was not larger for the stats phase.
- > > 
- > > Isn't this strange that changes to the key comparison function
- > > improved _real_ time more than _cpu_ time?
- > 
- > cpu time is hidden :) A foreground process may just wait, when pdflush
- > does all work.  We can't measure it by time(1).
+Hello
 
-In this case real time is less than twice larger than cpu time, but
-speedup is 9 times larger. Even if all (real - cpu) time were spent by
-mongo process waiting for pdflush that was only doing CPU work, such
-difference couldn't be explained.
+Horst Simon wrote:
+> Hi,
+> 
+> I recently added a 200GB Seagate IDE drive to my system on a build-in
+> promise controller on an ASUS A7V, updated BIOS which supports large
+> disk drives.
+> The O/S is United Linux 1.0 with the latest patches and the kernel
+> version is
+> 2.4.21 with latest United Linux patches. The reiserfs is 3.6. During the
+> initial
+> setup and first reboot no reiserfsck errors are report. After writing
+> data to the disk I get now following reiserfsck messages during each
+> boot:
+> 
+>  ZERO BIT FOUND IN ON-DISK BITMAP AFTER THE LAST VALID BIT
+> Switching to --fix-fixable mode
+> Checking
+> 
+> It displays directory paths which it is checking and after finishing
+> following message is displayed:
+> 
+> The on-disk and the correct bitmaps differ. Will be fixed later
+> 
+> No corruption found
+> 
+> There are on the filesystem:
+> 
+>     Leaves 20264
+> 
+>       Internal nodes 125
+> 
+>         Directories 2063
+> 
+>   Other files 22869
+> 
+>  Data block pointers 15940960 (0 of them are zero)
+> 
+>  Safe links 0
+> 
+> ###########
+> 
+> What is this ZERO BIT, is this a serious problem? 
 
- > 
- > > 
- > > I don't understand this.
- > > 
+No, it is not. Reiserfs manages disk space by bitmaps. Those bitmaps are stored in disk blocks.
+Reiserfsck expects last bitmap to be filled by 1s in the area which address blocks out of device.
+Somehow you got that padding area in last bitmap incorrectly initialized.
+It is completely harmless.
 
-Nikita.
+What could be wrong
+> bad BIOS, reiserfs, etc.?
+> 
 
- > > 
- > 
- > -- 
- > Alex.
+What version of reiserfsprogs you are using?
+
+
+> Regards,
+> Horst
+> 
+> 
+> 
+> 
+
+
