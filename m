@@ -1,99 +1,52 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Philipp =?iso-8859-1?q?G=FChring?= <p.guehring@futureware.at>
 Subject: Re: Unicode policy
-Date: Fri, 02 May 2003 04:55:37 +0400
-Message-ID: <3EB1C209.1050808@namesys.com>
-References: <200305011538.h41FcFn01653@linux1.futureware.at> <20030501154819.GA15670@namesys.com>
+Date: Fri, 2 May 2003 03:18:33 +0200
+Message-ID: <200305020118.h421Ip205033@linux1.futureware.at>
+References: <200305011538.h41FcFn01653@linux1.futureware.at> <20030501154819.GA15670@namesys.com> <3EB1C209.1050808@namesys.com>
+Reply-To: p.guehring@futureware.at
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13919-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-13920-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030501154819.GA15670@namesys.com>
+In-Reply-To: <3EB1C209.1050808@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Oleg Drokin <green@namesys.com>
-Cc: Philipp G?hring <p.guehring@futureware.at>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-It is a VFS issue.  We just conform.  VFS can't handle / and null being 
-in a filename, so Unicode can't work in Linux.  If you get VFS to handle 
-Unicode, I'll make ReiserFS work.  Linus is the one to convince, not us.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Best,
+Am Freitag, 2. Mai 2003 02:55 schrieben Sie:
+> It is a VFS issue.  We just conform.  VFS can't handle / and null being
+> in a filename, so Unicode can't work in Linux.  If you get VFS to handle
+> Unicode, I'll make ReiserFS work.  Linus is the one to convince, not us.
 
-Hans
+Hi Hans,
 
-Oleg Drokin wrote:
+UTF-8 (is also Unicode) has no nulls in it, and does not=20
+generate '/' or other problematic charakters, and is actually working on=20
+Reiserfs.
 
->Hello!
->
->On Thu, May 01, 2003 at 05:38:04PM +0200, Philipp G?hring wrote:
->
->  
->
->>I have some question regarding the Unicode policy of filenames in filesystem, 
->>especially ReiserFS. 
->>Are filenames stored in UTF-8?
->>    
->>
->
->No. filenames are stored "as is". If you write those as unicode, you get unicode.
->
->There are several restrictions on filenames in Unix/Linux:
->You cannot use 0-byte and '/'-byte as part of filename.
->
->  
->
->>Should they be stored in UTF-8?
->>    
->>
->
->You decide how do you want to store your filenames.
->
->  
->
->>Is it a question of the filesystem?
->>    
->>
->
->Some filesystems do it, but I doubt FS should do it.
->
->  
->
->>Is it the applications job to interpret it?
->>    
->>
->
->It is debatable. Kernel/VFS/some library might do this as well.
->
->  
->
->>Or is the filesystem encoding independent?
->>    
->>
->
->Some filesystems are encoding-dependent and some are not (because they do not know anything about encoding at all).
->
->  
->
->>Are there migration plans to Unicode?
->>    
->>
->
->Migration of what? Migration of reiserfs to unicode is not planned.
->Same for reiser4. You can write whatever plugin to store filenames in any way
->you might imagine in reiser4.
->
->Bye,
->    Oleg
->
->
->  
->
+The problem with a migration to Unicode is that we either have to switch al=
+l=20
+applications at once, or have the information in the filesystem, in which=20
+encoding the filenames are ...
 
+But you are right, it's a VFS issue ...
 
--- 
-Hans
+Many greetings,
+- --=20
+~ Philipp G=FChring              p.guehring@futureware.at
+~ http://www.livingxml.net/       ICQ UIN: 6588261
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
 
-
+iD8DBQE+scdqlqQ+F+0wB3oRAn8gAKCBNzPvsRsaxJT96fCEGvO6MXeFKgCdEXY1
+xmMW0hHJZTkHM7GhQj0FcdI=3D
+=3DU423
+-----END PGP SIGNATURE-----
