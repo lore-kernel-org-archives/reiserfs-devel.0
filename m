@@ -1,44 +1,160 @@
-From: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
+From: Jeremy West <jkwest@gmail.com>
 Subject: Re: reiser4 and reiserfs co-existence?
-Date: Tue, 09 Nov 2004 19:06:44 +0000
-Message-ID: <41911544.5020208@futuretg.com>
-References: <b28a886104110808555d3f59dc@mail.gmail.com>	 <1099933755.13138.4.camel@localhost>	 <b28a886104110823161fe3a30d@mail.gmail.com>	 <1099997754.1373.72.camel@tribesman.namesys.com>	 <b28a886104110907416476fb50@mail.gmail.com> <662c77ee04110909473d0f6dd3@mail.gmail.com>
+Date: Tue, 9 Nov 2004 13:06:21 -0500
+Message-ID: <b28a8861041109100612d142bb@mail.gmail.com>
+References: <b28a886104110808555d3f59dc@mail.gmail.com>
+	 <1099933755.13138.4.camel@localhost>
+	 <b28a886104110823161fe3a30d@mail.gmail.com>
+	 <1099997754.1373.72.camel@tribesman.namesys.com>
+	 <b28a886104110907416476fb50@mail.gmail.com>
+	 <662c77ee04110909473d0f6dd3@mail.gmail.com>
+	 <b28a886104110909531ee7d29a@mail.gmail.com>
+	 <852912156.20041109185702@tnonline.net>
+Reply-To: Jeremy West <jkwest@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22328-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-22329-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <662c77ee04110909473d0f6dd3@mail.gmail.com>
+In-Reply-To: <852912156.20041109185702@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="utf-8"
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-Michael Barry wrote:
-
-Of course ReiserFS and Reiser4 will work on different partitions at the 
-same time.
-
-This is the object of these emails ?
-
-Thanks,
-Giovanni
-
--- 
+Ok.  I wouldn't call myself a linux newbie by any means.  However,
+I've never had to do console logging or network logging.  Are there
+some good docs somewhere on how to set this up?
 
 
--- 
--- 
+On Tue, 9 Nov 2004 18:57:02 +0100, Spam <spam@tnonline.net> wrote:
+>=20
+>=20
+> > Funny thing is I did what you suggested, enabling all the debugging,
+> > but it still freezes.  Not immediately, but it still hangs.  First I
+> > get a segfault on any command I type into the console.  After 10 secs
+> > or so of this, It will freeze up.  How in the world did you save that
+> > stack trace.  I've seen the same thing on my machine, but can't figure
+> > out how to save it, because my filesystem doesn't respond.
+>=20
+>   Remote shell? Conosle logging? Network logging? All three possible
+>   with recent kernels.
+>=20
+>   =C5=A1S
+>=20
+>=20
+>=20
+> > On Tue, 9 Nov 2004 12:47:07 -0500, Michael Barry <jabbera@gmail.com> wr=
+ote:
+> >> This is the exact same problem I am having. I just bumped the thread
+> >> actually. If you enable debig mode instead of your system freezing you
+> >> will get a stack trace. That trace is available in my thread labeled
+> >> possible bug: clog 0.
+> >>
+> >> Mike
+> >>
+> >>
+> >>
+> >>
+> >> On Tue, 9 Nov 2004 10:41:25 -0500, Jeremy West <jkwest@gmail.com> wrot=
+e:
+> >> > Yes, I have a source code tarball that can't be built correctly.  Yo=
+u
+> >> > can get this file from other places, but it might be best to test
+> >> > exactly what I'm using.  I'm building php, and applying this patch.
+> >> >
+> >> > www.jeremysplace.org/php-4.3.9.tar.bz2
+> >> > http://www.jeremysplace.org/php-4.3.6-includepath.diff
+> >> >
+> >> > To answer Markus's question.  I'm not having any bus errors .... yet=
+.
+> >> > At least I hope I don't get any.  I like to deal with one problem at=
+ a
+> >> > time.  I will reboot my machine into a LiveCD, and debug some reiser=
+4
+> >> > for you.  How's best to do this anyway.  The debug script that you
+> >> > referenced won't find anything unless something odd happens, right?
+> >> > What does the script do?  I guess this is a stupid question, huh?
+> >> >
+> >> >
+> >> >
+> >> > On Tue, 09 Nov 2004 13:55:54 +0300, Vladimir Saveliev <vs@namesys.co=
+m> wrote:
+> >> > > Hello
+> >> > >
+> >> > > On Tue, 2004-11-09 at 10:16, Jeremy West wrote:
+> >> > > > Ok.  I think I may have found a glitch in reiser4.  It seems tha=
+t my
+> >> > > > freezing coincidentally happened every time I tried installing p=
+hp.
+> >> > > > Each time my system froze, the php build would crap out at the s=
+ame
+> >> > > > point.  Basically the bulid would say that it was running the
+> >> > > > pear-installer program, then give me a segmentation fault.
+> >> > >
+> >> > > Do i understand correctly that you have a source code tar ball whi=
+ch can
+> >> > > not be built in reiser4 filesystem? Where can i find it?
+> >> > >
+> >> > >
+> >> > >
+> >> > > >
+> >> > > > So ... it seems to me that reiser4 is having some issues handlin=
+g
+> >> > > > segfault events.  I'm not sure how to tell what caused the segfa=
+ult.
+> >> > > > I don't think it's memory, because it happens in the same spot o=
+f the
+> >> > > > build every time.  I've done this 4 times now.  That is not rand=
+om.
+> >> > > >
+> >> > > >
+> >> > > > On Mon, 08 Nov 2004 18:09:15 +0100, Redeeman <redeeman@metanurb.=
+dk> wrote:
+> >> > > > > On Mon, 2004-11-08 at 11:55 -0500, Jeremy West wrote:
+> >> > > > >
+> >> > > > >
+> >> > > > > > HI,
+> >> > > > > >
+> >> > > > > > I'm new to the list.  I've taken the plunge and tasted the s=
+peed of
+> >> > > > > > reiser4.  Excellent work.  I think I've stumbled upon a bug =
+though.  I
+> >> > > > > > have another partition formatted as reiserfs 3.6.  When I mo=
+unt this
+> >> > > > > > partition and listen to music from it, my reiser4 / partitio=
+n stops
+> >> > > > > > responding.  I mean every command I issue to the kernel resu=
+lts in a
+> >> > > > > > segmentation fault.  Has anyone else had this problem?
+> >> > > > > >
+> >> > > > > > I'm using redeeman-sources, based on mm-sources patch set.
+> >> > > > > how old would this happen to be? i mean.. give a uname -a
+> >> > > > > --
+> >> > > > > Redeeman <redeeman@metanurb.dk>
+> >> > > > >
+> >> > > > >
+> >> > > >
+> >> > >
+> >> > >
+> >> >
+> >> > --
+> >> > Jeremy West
+> >> > //---------------------------
+> >> > "I had a life once... now I have a computer and DSL"
+> >> >
+> >>
+>=20
+>=20
+> =C5=BD
+>=20
+> --
+>=20
+>=20
 
-Check FT Websites ... http://www.futuretg.com  - ftp://ftp.futuretg.com
-http://www.FTLinuxCourse.com
-    http://www.FTLinuxCourse.com/Certification
-http://www.rpmparadaise.org
-http://GNULinuxUtilities.com
-http://www.YourPersonalOperatingSystem.com
 
-WorldWide Global Mobile: +39 393 665 4239
-
--- 
-
+--=20
+Jeremy West
+//---------------------------
+"I had a life once... now I have a computer and DSL"
