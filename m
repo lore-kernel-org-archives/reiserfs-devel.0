@@ -1,32 +1,63 @@
-From: Tomas Carnecky <tom@dbservice.com>
+From: Martin Waitz <tali@admingilde.org>
 Subject: Re: file as a directory
-Date: Mon, 22 Nov 2004 18:15:22 +0100
-Message-ID: <41A21EAA.2090603@dbservice.com>
-References: <2c59f00304112205546349e88e@mail.gmail.com> <41A1FFFC.70507@hist.no>
+Date: Mon, 22 Nov 2004 18:18:55 +0100
+Message-ID: <20041122171855.GO19738@admingilde.org>
+References: <2c59f00304112205546349e88e@mail.gmail.com> <20041122143720.GL19738@admingilde.org> <1101137642.15949.4.camel@titania.zlynx.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22499-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7vAdt9JsdkkzRPKN"
+Return-path: <reiserfs-list-return-22500-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41A1FFFC.70507@hist.no>
+Content-Disposition: inline
+In-Reply-To: <1101137642.15949.4.camel@titania.zlynx.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Helge Hafting <helge.hafting@hist.no>
+To: Zan Lynx <zlynx@acm.org>
 Cc: Amit Gud <amitgud1@gmail.com>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Helge Hafting wrote:
-> I recommend looking at archived threads about file as directory,
-> you'll find many more arguments.  Currently there is one kind
-> of support for archive files - loop mounts over files containing
-> filesystem images.  These are not compressed though.
+--7vAdt9JsdkkzRPKN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Isn't reiserfs trying to implement such things? I've read that in some 
-next version of reiserfs one will be able to open /etc/passwd/[username] 
-  and get the informations about [username], like UID, GID, home 
-directory etc.
+hoi :)
 
-Still true? And when can we except such a version of reiserfs?
+On Mon, Nov 22, 2004 at 08:34:02AM -0700, Zan Lynx wrote:
+> > The kernel already provides all methods that are neccessary to do that.
+> > So there is no need to implement it in the kernel.
+>=20
+> There are already several things in filesystems that don't strictly
+> belong inside the kernel.  A filesystem could be implemented quite well
+> as a user-space daemon that sat on top of the block device and
+> communicated via sockets or shared memory just like an X server.
 
-tom
+this is quite different.
+As you need to enforce security policies when accessing the block
+device, you have to move the filesystem into its own daemon.
+You cannot do it in a library.
+It is irrelevant for the application weather the fs resides in a
+separate daemon or in the kernel itself.
+
+But support of different views on files is something different.
+You can do that in a library, you only need an interface that is
+capable of storing your data. The kernel already provides that
+interface.
+
+--=20
+Martin Waitz
+
+--7vAdt9JsdkkzRPKN
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.1 (GNU/Linux)
+
+iD4DBQFBoh9+j/Eaxd/oD7IRAkcrAJiTXhA9EboV6YlpkwDy/hmTqBLJAJ0flYlw
+sSl9Fe0+1Gq4WZCYGkb5cg==
+=J40Q
+-----END PGP SIGNATURE-----
+
+--7vAdt9JsdkkzRPKN--
