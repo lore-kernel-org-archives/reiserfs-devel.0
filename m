@@ -1,56 +1,34 @@
-From: Rikard Johnels <rikjoh@norweb.se>
-Subject: Re: Failed ReiserFS
-Date: Fri, 11 Feb 2005 08:57:30 +0100
-Message-ID: <200502110857.32077.rikjoh@norweb.se>
-References: <200502100535.01814.rikjoh@norweb.se> <200502101927.25189.rikjoh@norweb.se> <200502110003.57166.vitaly@namesys.com>
+From: Adrian Ulrich <reiser4@blinkenlights.ch>
+Subject: Re: reiserfs3 rebuild-tree successful but no files
+Date: Thu, 10 Feb 2005 22:59:57 +0100
+Message-ID: <20050210225957.7f0810e1.reiser4@blinkenlights.ch>
+References: <200502082321.07706.kris@cp-data.de>
+	<1107950476.9024.205.camel@tribesman.namesys.com>
+	<200502100754.56823.kris@cp-data.de>
+	<200502102354.38738.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23375-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23376-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200502110003.57166.vitaly@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <200502102354.38738.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: kris@cp-data.de, reiserfs-list@namesys.com
 
-On Thursday 10 February 2005 22.03, Vitaly Fertman wrote:
-> > > > reiserfsck 3.6.13
-> > > > I used -S to scan the whole partition, as per man page
-> > > > A bug heh.. :(
-> > > > So is there any fix for it?
-> > >
-> > > Please try latest reiserfsck.
-> > > ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.19.tar.gz
-> >
-> > Same problem:
-> >
-> >  lost+found.c 348 pass_3a_look_for_lost
-> > look_for_lost: The entry 'lost+found' could not be found in the root
-> > directory Aborted
-> >
-> > This is getting more than frustrating...
->
-> would you pack the metadata with
-> 	debugreiserfs -p <device> | bzip2 -c > <device>-meta.bz2
-> and provide them for downloading?
+> > Use ftp://80.133.138.104:12121 
+> 
+> sorry, but I get 'no route to host' every time.
+
+80.133.138.104 is owned by the 'Deutsche Telekom AG'
+(An ISP in Germany).
+
+Looks like a dynamic IP, currently not in use -> No route
+
+ -- Adrian
 
 
-the metadata and reiserfsck log are both available for download.
 
-ftp://ftp.rikjoh.com/reisercheck.logfile.bz2
-ftp://ftp.rikjoh.com/hdc1-meta.bz2
-
-
--- 
-
-         /Rikard
-
----------------------------------------------------------------
-Rikard Johnels          email   : rikjoh@norweb.se
-                        Web     : http://www.rikjoh.com/users/rikjoh
-                        Mob     : +46 735 05 51 01
-                        PGP     : 0x461CEE56
----------------------------------------------------------------
