@@ -1,62 +1,67 @@
-From: Siegfried.Loeschmann@t-online.de (Siegfried =?iso-8859-1?q?L=F6schmann?=)
-Subject: Re: On disk and correct bitmaps differ
-Date: Sat, 11 Oct 2003 02:01:11 +0200
-Message-ID: <200310110201.11510.Siegfried.Loeschmann@loe-online.de>
-References: <200310022128.51416.Siegfried.Loeschmann@loe-online.de> <200310090449.05105.Siegfried.Loeschmann@loe-online.de> <200310101839.00683.vitaly@namesys.com>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Subject: Re: Carrying Attributes too Far at Great Length
+Date: Sat, 11 Oct 2003 19:55:30 -0400 EDT
+Message-ID: <30216072281-BeMail@cr593174-a>
+References: <1065747725.3f86050de1b25@webmail.st-andrews.ac.uk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-15834-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15835-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200310101839.00683.vitaly@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <1065747725.3f86050de1b25@webmail.st-andrews.ac.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Am Freitag, 10. Oktober 2003 16:39 schrieben Sie:
-> On Thursday 09 October 2003 06:49, you wrote:
-> > Vitaly,
-> >
-> > thank you for your quick answer.
-> >
-> > in the meantime I did some more research on the problem, had some
-> > hardware problems so it took so long.
-> >
-> > I splitet up the logical volume and testet on plain partitions and I
-> > found that the problem only ocurrs on the big 250G disk. After that I
-> > deleted the files again until simply one single empty directory was lef=
-t.
-> > Still the same effect.
->
-> ok, so you mean that all hardware problems are fixed and you use
-> reiserfsprogs 3.6.11 and reiserfsck --check says "on disk and correct
-> bitmaps differ" and reiserfsck --fix-fixable says "no corruptions found",
-> right?
+lrc1@st-andrews.ac.uk wrote on Fri, 10 Oct 2003 02:02:05 +0100:
+> Should Cedric create photos/people/happy/good/ which links back to
+> photos/people/happy/ , or should he create photos/people/good/happy/ ,
+> which links back to photos/people/good/ ?)
 
-Perfectly right. But I have some new Info in the meantime. I took the big d=
-isk=20
-and created a smaller partition on it. First 154G, error reproducable, then=
-=20
-77G error disapeared.
+Sure, you could have non-cyclic directory structures and just hard link
+each individual file into all the relevant categories (directories).  But
+sometimes I want to do a bunch of files, say a directory full of photos
+from my vacation, and I want that to appear in directories identifying
+the place and others identifying the people (.../cottage and
+.../grandparents).  It isn't a full cycle, just multiple parents, but
+supporting full cycles makes it easier to avoid implementation
+problems with that (in case someone moves a parent directory inside
+one of its children).  Or you could just disallow dangerous cycle
+creating operations and avoid the full cycle implementation.
 
-I will send the soon in a separated mail.
+> However, there are certainly things in the current Unix implementation
+> of hard linking that make multiple pathnames through hard links
+> confusing and, yes, largely useless.
 
->
-> > On this filesystem I did the debugreiserfs ... The resulting file is on=
-ly
-> > 83K big. Since I don't have way to to provide it for download now is it
-> > possible I mail it?
->
-> ok.
+I want as much metadata about the file to be stored with the file (inode),
+which means one unique file name.  One icon.  One set of attributes.  But
+I also want some other things to be directory specific, such as the
+desktop's icon position attributes.  I get around that by having an
+Alias Generated Morphing Symbolic link (sort of a hybrid of a hard link,
+a MacOS alias and a symbolic link).  The legacy OS sees it as a symbolic
+link, which you can attach attributes to (such as icon position), yet it
+also lets you deal with the file directly - the same difference as between
+stat() and lstat(): http://www.FreeBSD.org/cgi/man.cgi?query=lstat
 
---=20
-Siegfried L=F6schmann
-Schillerstr. 22
-21423 Winsen
-fon: +49 4171 72415
-mobile: +49 162 10 455 43
-email: Siegfried.Loeschmann@loe-online.de
+But it is not a real symbolic link since the target path string is
+dynamically generated to identify the file's current true path.  If you
+delete the other links to the file, the AGMS link "morphs" and becomes
+the actual file (using a cunning sleight-of-hand inode swap under the hood).
+
+> Given a full pathname, a file handle, or even an i-number, there must
+> be a system call (or calls) to return all the hard-linked full pathnames
+> of the given file, permissions allowing.  This removes the last advantage
+> of using a symlink where you really want a hardlink [...]
+
+With a list of parent links included in all inodes, you can do that.
+It's just the doubly linked list vs single linked list concept - more
+overhead, but we can afford it with modern hardware.
+
+That's enough writing for now - I've recently finished my sabbatical and
+started a full time game programming job.  Spare time for these interesting
+discussions and code experiments has unfortunately vapourised, so I won't
+be able to comment on everything said here.
+
+- Alex
