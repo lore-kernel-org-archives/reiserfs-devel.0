@@ -1,41 +1,28 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Reiser4 needs more testers
-Date: Fri, 26 Mar 2004 09:05:05 -0800
-Message-ID: <406462C1.5020507@namesys.com>
-References: <16484.24086.167505.94478@laputa.namesys.com>
+Subject: Re: [ANNOUNCE] new reiser4 snapshot released.
+Date: Fri, 26 Mar 2004 09:11:00 -0800
+Message-ID: <40646424.7000407@namesys.com>
+References: <16484.24086.167505.94478@laputa.namesys.com>	<1080321833.19218.7.camel@localhost.localdomain> <16484.29281.375363.39808@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17511-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17512-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16484.24086.167505.94478@laputa.namesys.com>
+In-Reply-To: <16484.29281.375363.39808@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: Reiserfs developers mail-list <Reiserfs-Dev@Namesys.COM>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>, Linux Kernel Mailing List <Linux-Kernel@Vger.Kernel.ORG>, cliff@lindows.com, Tom Welch <tom.welch@lindows.com>, Kurt Garloff <garloff@suse.de>, Daniel Robbins <drobbins@gentoo.org>, Ramon Reiser <reiserrf@hotmail.com>
+Cc: Jonathan Briggs <jbriggs@esoft.com>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-We have one NFS related bug remaining, and one mmap all of memory 
-related bug (and performance issue) that you can hit using iozone.  We 
-will fix both of these in next week's snapshot, they were both multi-day 
-bug fixes.  When they are fixed, unless users/distros find bugs next 
-week we will submit it for inclusion in the -mm and then the official 
-kernel.
+Nikita, would you confirm that the default fibration is to sort all 
+files with '.' as the penultimate character by their last character 
+first and then by the rest of the name in the usual lexicographic order? 
+(If that is not the default, then please make it the default.)
 
-We hope it is now fairly stable for average users if you avoid those two 
-issues (we need to get rid of those dire warnings about its 
-stability...., we will remember that next snapshot....;-) )
-
-We need a lot more real user testers, because we have run out of scripts 
-that can crash it, and there are distros that would like to ship it 
-soon.  Please also complain to vitaly@namesys.com and ramon@namesys.com 
-about poor documentation, etc., ....
-
-The new reiser4 snapshot (against 2.6.5-rc2) is available at
-
-http://www.namesys.com/snapshots/2004.03.26/
-
+Also, please note that the URL you supplied does not yet describe the 
+fibration plugin and its available settings.  Please correct that on Monday.
 
 -- 
 Hans
