@@ -1,40 +1,31 @@
-From: Vitaly Fertman <vitaly@namesys.com>
+From: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
 Subject: Re: Cross compiling reiserfsprogs-3.6.11
-Date: Fri, 21 Nov 2003 14:41:59 +0300
-Message-ID: <200311211441.59259.vitaly@namesys.com>
+Date: Fri, 21 Nov 2003 14:34:43 +0100
+Message-ID: <3FBE1473.4060102@gmx.net>
 References: <3FBDF571.5070100@sysgo.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16142-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16143-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <3FBDF571.5070100@sysgo.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Pavel Bartusek <pba@sysgo.com>, Reiserfs-List@namesys.com
+To: Pavel Bartusek <pba@sysgo.com>
+Cc: Reiserfs-List@namesys.com
 
-Hi Pavel, 
-
-On Friday 21 November 2003 14:22, Pavel Bartusek wrote:
+Pavel Bartusek wrote:
 > Hi list,
->
+> 
 > I have downloaded and tried to crosscompile the reiserfsprogs-3.6.11.
-> Unfortunatelly, in the config.in is used the macro AC_TRY_RUN which
-> prevents it from cross compiling. The attached patch replaces the macro
-> and the simple C program for transforming CREDITS file, with a simple
-> AWK script.
->
-> NOTE: To recreate configure script run autoconf in the reiserfsprogs
-> directory.
->
-> regards
->
-> Pavel Bartusek
->
-> pba@sysgo.com
+[...]
+> -#define _GNU_SOURSE
 
-I will try the patch, thank you.
-Vitaly Fertman
+Vitaly, are you aware that the above is a typo and will not work.
+
+
+Regards,
+Carl-Daniel
+
