@@ -1,210 +1,139 @@
-From: "Yury V. Umanets" <umka@clusterfs.org>
-Subject: Re: Resierfs Resize -> Corrupt bitmap.
-Date: Thu, 05 Feb 2004 10:55:50 +0200
-Message-ID: <1075971349.20150.0.camel@firefly>
-References: <402151E4.1060100@cs.berkeley.edu>
-	 <20040205084623.GD1733@backtop.namesys.com>
+From: "Candy Oconnell" <JTRGRCIRAJN@bk.ru>
+Subject: US-STOCK-MARKET--Groundbreaking HealthCare Technology: MYOELECTRIC PROSTHESES--Reiserfs-list
+Date: Thu, 05 Feb 2004 20:11:32 +0500
+Message-ID: <UJUJLTVVMVDVFJZQESKBEPMU@bk.ru>
+Reply-To: "Candy Oconnell" <JTRGRCIRAJN@bk.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16707-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="--898641854700762"
+Return-path: <reiserfs-list-return-16709-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040205084623.GD1733@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: umka@clusterfs.com, Russell Sears <sears@eecs.berkeley.edu>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+
+----898641854700762
+Content-Type: text/plain;
+Content-Transfer-Encoding: 7Bit
+
+Reiserfs-list - Here is your requested report - #78873369
+
+Stock-Market Spotlight - PDPR
+
+HealhCare Tech Sector: PDPR - Pediatric Prosthetics Inc. Reveals Projected Earnings
+
+Very exciting news from the HealthCare Tech Sector and its Groundbreaking Technology: MYOELECTRIC PROSTHESES
+
+HOUSTON--(BUSINESS WIRE)--Pediatric Prosthetics Inc. (PDPR) announces that the Company is exceeding its projections for the first quarter of 2004.  Accounts Receivables are being accumulated at a faster rate than anticipated and major insurance companies are steadily authorizing treatments for clients.  The short-term and long-term projections illustrate the result of compounded earnings caused by the "annuity effect" of the required annual re-fits for growing children.
+
+In fact, according to the Company's projections, revenues and sales will grow dramatically in the next few years.  As stated in the Company's news release, revenues in the next five years are expected to grow over 400%, and sales are projected to grow even more dramatically at or around 1000%.  Yes, that's right, one thousand percent.
+
+See the whole news release for yourself: http://biz.yahoo.com/bw/040129/295979_1.html
 
 
-Hi all,
+THE COMPANY
 
-Thanks for reports, I will check this out.
+Pediatric Prosthetics Inc., based in Houston, Texas, is the primary provider of prosthetic patient care specializing in the infant-pediatric market on a national scale. The Company will focus on both the physical needs of the children and the emotional support of their parents.
 
-> On Wed, Feb 04, 2004 at 08:11:16PM +0000, Russell Sears wrote:
-> > I used parted to resize my reiserfs partion from 20Gig to 29Gig, and ran 
-> > reiserfsck afterwards, just in case.  I got the messages that I pasted 
-> > into the bottom.  (Basicly, resize corrupted the bitmap, and reiserfsck 
-> > --fix-fixable fixed it.)
-> 
-> The problem can be in libreiserfs used by gnu parted (if your fs was not
-> corrupted before resizing), I re-sent to the libreiserfs maintainer. 
-> 
-> > 
-> > I'm using the following versions of software, on Debian testing (Really 
-> > on a verison of Morphix):
-> > parted       1.6.6-3.1
-> > reiserfsprog 3.6.11-1.1
-> > libreiserfs0 0.3.0.4-1
-> > 
-> > I have a patched 2.4.24 kernel:
-> > supermount-1.2.11
-> > bootsplash-3.0.7
-> > xattr-0.8.65
-> > acl-0.8.65
-> > nfsacl-0.8.65
-> > Kernel-Win4Lin3-2.4.24 / mki-adapter
-> > knoppix-kernel
-> > linux-2.4.24-ntfs-2.1.6a
-> > 
-> > And the following third party modules:
-> > cloop
-> > loop-aes
-> > translucency
-> > madwifi
-> > 
-> > My hardware is:
-> > IBM Thinkpad R40.  The drive is an 80Gig Maxtor in a firewire case. 
-> > parted sees it as 80Gig, but fdisk / cfdisk sees it as 60 gig. 
-> > Apparently, I'm only using the first 60 gig of the drive.  The drive 
-> > must have been incorrectly detected as a 60Gig drive years ago, on a 
-> > normal IDE controller.
-> > 
-> > Parted said this after the resize:
-> > 
-> > Using /dev/sdb
-> > Information: The operating system thinks the geometry on /dev/sdb is 
-> > 7473/255/63.  Therefore, cylinder 1024 ends at 8032.499M.
-> > (parted) print
-> > Disk geometry for /dev/sdb: 0.000-58623.468 megabytes
-> > Disk label type: msdos
-> > Minor    Start       End     Type      Filesystem  Flags
-> > 1          0.031   8001.123  primary   reiserfs    boot
-> > 2       8001.123   8024.655  primary   ext3
-> > 3       8024.656  58619.992  extended
-> > 5       8024.687  37166.000  logical   reiserfs
-> > 6      37166.032  58619.992  logical   ext3
-> > 
-> > 
-> > If there's any more information you would like, please CC to me, as I'm 
-> > not on this list.
-> > 
-> > 
-> > Thanks,
-> > Rusty
-> > 
-> > 
-> > 
-> > 
-> > sh-2.05b# reiserfsck /dev/sdb5
-> > reiserfsck 3.6.11 (2003 www.namesys.com)
-> > 
-> > *************************************************************
-> > ** If you are using the latest reiserfsprogs and  it fails **
-> > ** please  email bug reports to reiserfs-list@namesys.com, **
-> > ** providing  as  much  information  as  possible --  your **
-> > ** hardware,  kernel,  patches,  settings,  all reiserfsck **
-> > ** messages  (including version),  the reiserfsck logfile, **
-> > ** check  the  syslog file  for  any  related information. **
-> > ** If you would like advice on using this program, support **
-> > ** is available  for $25 at  www.namesys.com/support.html. **
-> > *************************************************************
-> > 
-> > Will read-only check consistency of the filesystem on /dev/sdb5
-> > Will put log info to 'stdout'
-> > 
-> > Do you want to run this program?[N/Yes] (note need to type Yes if you 
-> > do):Yes
-> > ###########
-> > reiserfsck --check started at Wed Feb  4 19:31:46 2004
-> > ###########
-> > Replaying journal..
-> > 0 transactions replayed
-> > Zero bit found in on-disk bitmap after the last valid bit.
-> > Checking internal tree..finished
-> > Comparing bitmaps..vpf-10640: The on-disk and the correct bitmaps differs.
-> > Checking Semantic tree:
-> > finished
-> > 2 found corruptions can be fixed when running with --fix-fixable
-> > ###########
-> > reiserfsck finished at Wed Feb  4 19:32:15 2004
-> > ###########
-> > sh-2.05b#
-> > sh-2.05b$ sudo reiserfsck /dev/sdb5 --fix-fixable
-> > reiserfsck 3.6.11 (2003 www.namesys.com)
-> > 
-> > *************************************************************
-> > ** If you are using the latest reiserfsprogs and  it fails **
-> > ** please  email bug reports to reiserfs-list@namesys.com, **
-> > ** providing  as  much  information  as  possible --  your **
-> > ** hardware,  kernel,  patches,  settings,  all reiserfsck **
-> > ** messages  (including version),  the reiserfsck logfile, **
-> > ** check  the  syslog file  for  any  related information. **
-> > ** If you would like advice on using this program, support **
-> > ** is available  for $25 at  www.namesys.com/support.html. **
-> > *************************************************************
-> > 
-> > Will check consistency of the filesystem on /dev/sdb5
-> > and will fix what can be fixed without --rebuild-tree
-> > Will put log info to 'stdout'
-> > 
-> > Do you want to run this program?[N/Yes] (note need to type Yes if you 
-> > do):Yes
-> > ###########
-> > reiserfsck --fix-fixable started at Wed Feb  4 19:52:41 2004
-> > ###########
-> > Replaying journal..
-> > 0 transactions replayed
-> > Zero bit found in on-disk bitmap after the last valid bit. Fixed.
-> > Checking internal tree..finished
-> > Comparing bitmaps..vpf-10630: The on-disk and the correct bitmaps 
-> > differs. Will be fixed later.
-> > Checking Semantic tree:
-> > finished
-> > No corruptions found
-> > There are on the filesystem:
-> >         Leaves 4817
-> >         Internal nodes 34
-> >         Directories 13
-> >         Other files 180
-> >         Data block pointers 4822473 (27051 of them are zero)
-> >         Safe links 0
-> > ###########
-> > reiserfsck finished at Wed Feb  4 19:53:17 2004
-> > ###########
-> > sh-2.05b$ sudo reiserfsck /dev/sdb5
-> > reiserfsck 3.6.11 (2003 www.namesys.com)
-> > 
-> > *************************************************************
-> > ** If you are using the latest reiserfsprogs and  it fails **
-> > ** please  email bug reports to reiserfs-list@namesys.com, **
-> > ** providing  as  much  information  as  possible --  your **
-> > ** hardware,  kernel,  patches,  settings,  all reiserfsck **
-> > ** messages  (including version),  the reiserfsck logfile, **
-> > ** check  the  syslog file  for  any  related information. **
-> > ** If you would like advice on using this program, support **
-> > ** is available  for $25 at  www.namesys.com/support.html. **
-> > *************************************************************
-> > 
-> > Will read-only check consistency of the filesystem on /dev/sdb5
-> > Will put log info to 'stdout'
-> > 
-> > Do you want to run this program?[N/Yes] (note need to type Yes if you 
-> > do):Yes
-> > ###########
-> > reiserfsck --check started at Wed Feb  4 19:53:57 2004
-> > ###########
-> > Replaying journal..
-> > 0 transactions replayed
-> > Checking internal tree..finished
-> > Comparing bitmaps..finished
-> > Checking Semantic tree:
-> > finished
-> > No corruptions found
-> > There are on the filesystem:
-> >         Leaves 4817
-> >         Internal nodes 34
-> >         Directories 13
-> >         Other files 180
-> >         Data block pointers 4822473 (27051 of them are zero)
-> >         Safe links 0
-> > ###########
-> > reiserfsck finished at Wed Feb  4 19:54:23 2004
-> > ###########
-> > 
-> > 
-> > 
--- 
-umka
+
+PDPR AND GROUNDBREAKING MYOELECTRIC TECHNOLOGY
+
+Myoelectric upper extremity prostheses are the state of the art. In the absence of a hand or arm, the child's brain still continues sending signals to "grasp" or "open" the hand in the residual limb. Myoelectric sensors can read those signals through the skin (requiring no surgery) and with the computer chip magnify those signals many fold to actuate the tiny powerful motor to accomplish the task. 
+
+Infants and children learn to open and close their "myo" on command in an astonishingly short period of time. Within a matter of a few days, the myo becomes almost an unconscious part of them, opening and closing with an almost unconscious thought.
+
+The prostheses utilizing this technology are designed to be extremely life-like and non-threatening. The response to them by playmates and parents is usually "isn't that neat!"
+
+PDPR has begun instituting some of these ground-breaking myoelectric technology research and development to see if it is equally as effective with lower extremity prosthetics as well. 
+
+
+THE INDUSTRY
+
+The national prosthetics industry is estimated at nearly $2 billion annually and is extremely fragmented. In this fragmentation, PDPR has developed a strong niche by focusing on the infant-pediatric prosthetics segment. This segment requires specialized expertise to meet the needs of these babies and their families.
+
+PDPR is the only infant-pediatric prosthetics company focusing on the unique needs of these babies born with a limb loss.
+
+
+SPECIFICS
+
+Children ages 0 to 14 comprise 5% of the total $2 billion prosthetic market, $100 million. The vast majority of this 5% pediatric prosthetic market derives from babies born with a limb loss.
+
+There are approximately 145,000 first time amputations each year, meaning first time fittings. Of these 145,000 first time amputations, less than 1% or approximately 1,000 babies born with a limb loss.
+
+PDPR is the only infant-pediatric prosthetics company focusing on these unique needs.
+
+
+REVENUE GROWTH
+
+The economic cost from infancy to adulthood is anticipated to be over $200,000 for a below elbow amputee. Adults will spend an additional $200,000 on their artificial arms. Revenue growth is directly correlated with the physical growth of the children. PDPR's management model for growth combines the strength and expertise of upper and lower extremity specialists with over 50 years of combined experience.
+
+
+NATIONAL EXPOSURE
+
+The management team of PDPR is nationally recognized as the leading prosthetists in the infant-pediatric prosthetics field. PDPR's management has recently been featured in, "Orthotics & Prosthetics Business News", written up in "Life Magazine", and some of the fitted children have appeared on national TV shows, including "Good Morning America", "Maury Povich","Phil Donahue", and "20-20."
+
+
+IN CONCLUSION
+
+By targeting the infant-pediatric need, PDPR will generate a consistent revenue stream by servicing their clients from childhood to adulthood. This "annuity effect" should compound earnings year after year and enable PDPR to enjoy stable growth.
+
+
+
+
+
+
+
+
+This report is based on Stock-Market Spotlight's independent analysis but also relies on information supplied by sources believed to be reliable. This report may not be the opinion of PDPR management. This report should be considered biased and contains usually only positive statements regarding the featured company. Stock-Market Spotlight does not own or will not purchase PDPR common shares in the open market. The information contained in this report shall not constitute, an offer to sell or solicitation of any offer to purchase any security. Penny stocks are considered to be highly speculative and may be unsuitable for all but very aggressive investors. It is intended for information and entertainment only. Some statements may contain so-called "forward-looking statements". Many factors could cause actual results to differ. Investors should consult with their Investment Advisor concern
+ ing PDPR. This newsletter was written and distributed for a 3000 dollar fee paid by a thi!
+ rd party PDPR shareholder who is purported to have a large stock position in the featured company.  It is unknown to Stock-Market Spotlight whether this shareholder intends to sell any or all of his stock position in the featured company. Copyright 2004 Stock-Market Spotlight. All Rights Reserved.
+
+
+2
+
+4
+
+8
+
+9
+
+0
+
+1
+
+3
+
+6
+
+3
+
+4
+
+2
+
+6
+
+3
+
+4
+
+3
+
+6
+
+6
+
+1
+
+8
+
+3
+
+saucy withy vane auntie phosphor cheesecloth wan aiken chester hallway handclasp elliptic helmet nnw belate orangutan bohemia acetate who'd penance stout breathtaking limousine homesick greece assent guignol araby than fontainebleau lysenko sentential absolution abeyance dialect archetypical pie concede stickpin midwestern southpaw anarch barge mutton pawn nimble redemption stalactite natalie samba factious stacy irrespective integrity gypsum cholesterol chalice iniquity persuasive bahrein remit newell savoy absence backstitch almighty moreover clubhouse chuff comet clomp prolong credent dearborn postmaster emcee becalm onyx demitting pittston posey pirouette byron epidemiology truss concur earth shorten beyond limbo ovary minimum lobar en crash grudge stance vasquez wynn cult auric mimetic dominican flit elfin gibbous orthicon minstrel nucleus kern beebe nosebag employer crystallography
+  incandescent malagasy conspiracy bismarck rhapsody combinate labial silverman neoprene c!
+ anaan basswood flourish peugeot dharma anyone augment meredith maverick polytope sweep dervish consistent nairobi maid dealt escapade archibald interruption import alcohol operon decollimate parson approach smithy bettor proclamation baku emancipate technocratic spumoni 
+
+----898641854700762--
 
