@@ -1,24 +1,31 @@
-From: Hendrik Visage <hvisage@envisage.co.za>
-Subject: Re: Please /dev/null html-only mail rather than sending it out on this list
-Date: Mon, 19 Apr 2004 09:18:39 +0200
-Message-ID: <20040419071839.GP28927@hvs.envisage.co.za>
-References: <20040418212659.GA5506@free.transpect.com> <200404190658.i3J6w8oo027986@sirius.cs.pdx.edu>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: Patch for 2.6.5
+Date: Mon, 19 Apr 2004 15:01:22 +0400
+Message-ID: <1082372482.1193.47.camel@tribesman.namesys.com>
+References: <20040417133438.GA12585@pillars.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18041-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18042-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200404190658.i3J6w8oo027986@sirius.cs.pdx.edu>
+In-Reply-To: <20040417133438.GA12585@pillars.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Bob Vincent <bob@html.com>
+Cc: reiserfs-list@namesys.com
 
-On Sun, Apr 18, 2004 at 11:58:08PM -0700, The Amazing Dragon wrote:
+Hello
+
+On Sat, 2004-04-17 at 17:34, Bob Vincent wrote:
+> After downloading
+> http://ftp.kernel.org/pub/linux/kernel/v2.6/linux-2.6.5.tar.bz2 and
+> applying the patches in
+> http://thebsh.namesys.com/snapshots/LATEST/all.diff.gz, the attached
+> additional patch allowed a clean compile.
 > 
-> Most servers get patches to fix security holes. SpamAssassin gets patches
-> to spam holes. Both are annoying.
+> Not sure if it's *right*, but it does compile and run.
 
-Or get DSPAM that the users train and the SysAdmin can got fix security holes ;^)
+yes, it is right
+
