@@ -1,67 +1,141 @@
-From: Alex Zarochentsev <zam@namesys.com>
+From: Helge Hafting <helge.hafting@hist.no>
 Subject: Re: silent semantic changes with reiser4
-Date: Mon, 30 Aug 2004 17:25:04 +0400
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040830132504.GR5108@backtop.namesys.com>
-References: <20040825205149.GA17654@lst.de> <412DA2CF.2030204@namesys.com> <20040826124119.GA431@lst.de> <20040826134812.GB5733@mail.shareable.org> <20040826155744.GA4250@lst.de> <20040826160638.GJ5733@mail.shareable.org> <20040826161303.GA4716@lst.de> <Pine.LNX.4.58.0408260919380.2304@ppc970.osdl.org> <20040826172029.GP5733@mail.shareable.org> <Pine.LNX.4.58.0408261021250.2304@ppc970.osdl.org>
+Date: Mon, 30 Aug 2004 15:56:53 +0200
+Message-ID: <41333225.7070801@hist.no>
+References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org> <20040828170515.GB24868@hh.idb.hist.no> <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.58.0408261021250.2304@ppc970.osdl.org>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21108-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <Pine.LNX.4.58.0408281038510.2295@ppc970.osdl.org>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Linus Torvalds <torvalds@osdl.org>
-Cc: Jamie Lokier <jamie@shareable.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Helge Hafting <helgehaf@aitel.hist.no>, Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com, Al Viro <viro@parcelfarce.linux.theplanet.co.uk>
 
-On Thu, Aug 26, 2004 at 10:29:45AM -0700, Linus Torvalds wrote:
-> 
-> 
-> On Thu, 26 Aug 2004, Jamie Lokier wrote:
-> >
-> >     run_setuid_program
-> > 
-> >         -> calls pwd
-> >            pwd opens("."), (".."), ("../..") etc.
-> 
-> Ehh.. Not only does pwd not do that..
-> 
-> (hint: there's a getcwd() system call)
-> 
-> >         -> the setuid program thus ends up opening a device or fifo,
-> >            when it does pwd's path walk.  Yes it could use the getcwd
-> >            syscall, but some programs do their own path walk.
-> 
-> .. but even if it did that, it should use O_DIRECTORY when it did so. If 
-> it doesn't, it's broken.
-> 
-> So no, it would _not_ open the device or fifo when it did so.
-> 
-> The fact is, anything that expects to open a directory should already be 
-> opening it with O_DIRECTORY.
+Linus Torvalds wrote:
 
-reiser4 files-as-dirs do not depend on that.
+>On Sat, 28 Aug 2004, Helge Hafting wrote:
+>  
+>
+>>>I think that lack of distinguishing power is more serious for 
+>>>directories. The more I think I think about it, the more I wonder whether 
+>>>Solaris did things right - having a special operation to "cross the 
+>>>boundary".
+>>>
+>>>I suspect Solaris did it that way because it's a hell of a lot easier to 
+>>>do it like that, but regardless, it would solve the issue of real 
+>>>directories having both real children _and_ the "extra streams".
+>>>      
+>>>
+>>There are many ways of doing this. Several extra streams to a directory
+>>that aren't ordinary files in the directory?
+>>    
+>>
+>
+>Well.. Yes. We already have "." and "..", which are "special extra
+>streams" in a sense. However, people expect them, and know to ignore them. 
+>The same wouldn't be true of new naming.
+>
+>  
+>
+>>It seems to me that we can get a lot of nice functionality in a simpler way:
+>>Instead of thinking about a number of streams attached to something
+>>that is either an ordinary file or directory, just say that the only
+>>change will be that a directory may have a _single_ file stream in
+>>addition to being a plain directory.
+>>    
+>>
+>
+>That doesn't really help us. What would the name be, and how could you 
+>avoid clashes? 
+>  
+>
+The name for the file stream and the directory would be the same,
+distinguished by how they're used.  I.e. fopen("filedirname", "rw")
+gets the stream, while chdir("filedirname") changes into the directory.
+fopen("filedirname/substream", "rw"); opens some stream inside
+the directory - as usual.
 
-A file behaves as directory if one calls i_op->lookup() or f_op->readdir().  I
-am not sure that O_DIRECTORY should be a switch. 
+My idea is that the "extra streams" aren't special at all, they
+are simply files in a directory and will therefore work with
+any normal tool.  cd'ing into such a directory won't be special
+either - because it is a plain directory. A collection of named streams
+is usually a bunch of files in a directory - nothing new there.
 
-> That said, ".." and "." are special already inside the kernel, and it 
-> migth be worth making them automatically imply O_DIRECTORY, since nothing 
-> else makes sense anyway. That would fix the case where somebody uses ".." 
-> _without_ using O_DIRECTORY. 
-> 
-> > It also fits the container idea very well:
-> > 
-> >         /dev/hda/part1/ <- the filesystem inside partition 1
-> 
-> I don't think you can do that. The kernel has no idea how to mount the
-> filesystem.
-> 
-> If it's already mounted somewhere else, that's a different issue.  
-> Although it might be mounted in several places (as a bind mount) with
-> different writability, I guess, so even then it might be "interesting".
-> 
-> 		Linus
+Someone serving files for clients using
+other os'es may attach special meaning to them, but I don't see the need
+for a special meaning under linux.
 
--- 
-Alex.
+So the only new thing is that the directory have a stream of
+its own.  Then there must be a way to turn a ordinary
+file into such a directory - people may then implement
+thumbnails, summaries and so on as substreams.  Where
+the substreams really are plain files in this slightly
+special directory.
+
+Perhaps mkdir with an existing filename could succeed,
+creating a mixed file/directory, if the underlying fs support it.
+
+>  
+>
+>>If the VFS is to be extended in order to support file-as-directory (or
+>>vice versa) then hopefully it can be done in a simple way.
+>>    
+>>
+>
+>I'm pretty confident that we can extend the VFS layer to support named
+>streams (see the technical discussion with Al, rather than the flames in
+>this thread). I also clearly believe that it is worth it, but I'm starting
+>to wonder if we should have a special open flag to make people select the
+>stream.
+>
+>If you look at the Solaris interface, the _nice_ part about "openat()" is 
+>that you can do something like
+>
+>	file = open(filename, O_RDONLY);
+>	if (file < 0)
+>		return -ENOENT;
+>	icon = openat(file, "icon", O_RDONLY | O_XATTR);
+>	if (icon < 0)
+>		icon = default_icon_file;
+>	..
+>
+>and it will work regardless of whether "filename" is a directory or a 
+>regular file, if I've understood correctly.
+>  
+>
+An alternative: support open("filename/icon", O_CREAT);
+and have this turn "filename" into file-as-directory if it wasn't so
+already.  Then it works both with files and directories.
+A new flag might be needed if old programs somehow depend on the stuff
+above failing for plain files.
+
+>Now, I think that makes sense for several reasons:
+> - single case
+> - race-free (think "stat()" vs "fstat()" races).
+> - I think we want to do "openat()" regardless of whether we ever 
+>   support extended attributes or not ("openat()" is nice for doing 
+>   "namei()" in user space even in the absense of any attributes or 
+>   named streams).
+>
+>So what we can do is
+> - implement openat() regardless, and expect to do the Solaris thing for 
+>   it if we ever do streams.
+> - _also_ support the "implied named attributes" for regular files, so 
+>   that you don't have to use "openat()" to access them.
+>
+>Comments? Does anybody hate "openat()" for any reason (regardless of 
+>attributes)? We can easily support it, we'd just need to pass in the file 
+>to use as part of the "nameidata" thing or add an argument (it would also 
+>possibly be cleaner if we made "fs->pwd" be a "struct file").
+>
+>  
+>
+No problem with openat()
+
+Helge Hafting
+
