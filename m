@@ -1,57 +1,64 @@
-From: "John D. Heintz" <jheintz@pobox.com>
-Subject: Re: Do xml-like namespaces make sense for Reiser4? (re: metas	thread)
-Date: Wed, 14 Apr 2004 10:06:17 -0500
-Message-ID: <407D5369.5090509@pobox.com>
-References: <407AB9AE.3060801@pobox.com> <407ADCBF.8000609@namesys.com>	 <407AEA05.50004@pobox.com> <407BFBEA.5010006@pobox.com>	 <407C15D9.1080705@namesys.com> <407C1BE9.8010509@pobox.com>	 <407C279A.3060303@namesys.com> <407C3004.3070401@pobox.com>	 <407C316B.80606@namesys.com> <407C35B0.3080109@pobox.com>	 <200404132031.i3DKVqRg009355@turing-police.cc.vt.edu> <1081909092.6753.64.camel@arabia.home.lan>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: viewprinting processes and process oriented permissions got funded
+Date: Wed, 14 Apr 2004 08:10:28 -0700
+Message-ID: <407D5464.4070501@namesys.com>
+References: <20040414094426.GK14134@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17937-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-17938-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1081909092.6753.64.camel@arabia.home.lan>
+In-Reply-To: <20040414094426.GK14134@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Enrique Perez-Terron <enrique.perez-terron@norway.online.no>
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
 Cc: reiserfs-list@namesys.com
 
-Enrique,
+Markus T=F6rnqvist wrote:
 
-Enrique Perez-Terron wrote:
-> On Tue, 2004-04-13 at 22:31, Valdis.Kletnieks@vt.edu wrote:
-> 
->>On Tue, 13 Apr 2004 13:47:12 CDT, "John D. Heintz" said:
+>Hans Reiser wrote:
+>
+> =20
+>
+>>I am still thinking through how we will implement views in Reiser4.
+>>   =20
 >>
->>>foo/nsa:permissions -> foo/nsa.gov/secure-linux/permissions
->>>
->>>This assumes a mapping from "nsa" -> "nsa.gov/security/".
-> 
-> 
-> Implementing a mapping "nsa" -> "nsa.gov/security/" does not remove the
-> headache of what to do with a tarball containing a directory named
-> "nsa".
+>
+>A question of grace, again, if you please.
+>
+>Does the current plugin architecture allow views to be implemented
+>directly or will it affect the on-disk layout in a manner which
+>requires mkfs?
+>
+>I'm fairly certain that it should not require mkfs, but as something
+>of the local Reiser4 advocate I just want to make sure :)
+>
+>BTW, the READ.ME for 2004.04.26:
+>d. readdir() over NFS has known problems.
+>
+>I think I may be something of a successful advocate; a friend is consideri=
+ng
+>Reiser4 for his RAIDed NFS file server, because it needs an overhaul.
+>
+>Although it's not a production system, I think his input on possible
+>failures would be welcome and of course some stability (no need to mkfs
+>a big-assed system) on the filesystem's part would be good to guarantee.
+>
+>So, basically, have you decided on when the next snapshot is due
+>with NFS issues fixed? ;)
+>
+>Thanks!
+>
+> =20
+>
+nikita is the one to ask about NFS.
 
+any infrastructure required by views will be handled by creating new=20
+plugins, and won't require mkfs.  that is why we made the effort to=20
+create new plugins.
 
-A directory or file named "nsa" doesn't conflict with this scheme, look 
-more closely at the left hand side: foo/nsa:permissions
-
-foo/nsa/permissions wouldn't receive the same treatment and would 
-instead just be a regular file or directory lookup.
-
-Two conditions are necessary to trigger the syntactic manipulation I'm 
-suggesting:
-1) a ':' must be present in the name being resolved (i.e. nsa:permissions)
-2) The prefix before the ':' must be in the mappings (i.e. nsa)
-
-Only if both of those are present does anything special happen.
-
-A tarball containing "secure-linux/nsa/src/*.c" wouldn't break anything, 
-and is so likely that no suggestion should risk breaking this case.
-
-However, a tarball containing "secure-linux/nsa:src/*.c" would indeed 
-break my scheme. I'm suggesting this is an ignorably small likelyhood. 
-Others are free to disagree with this of course.
-
-John Heintz
+--=20
+Hans
 
