@@ -1,37 +1,78 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: 2.4.19-pre7 / corruption on unwanted reboot
-Date: 06 May 2002 08:54:02 -0400
-Message-ID: <1020689642.1511.2100.camel@tiny>
-References: <20020504211147.GA20092@matrix.wg>
-	<1020564448.3946.609.camel@tiny>  <20020506123638.GA15023@matrix.wg>
+From: berthiaume_wayne@emc.com
+Subject: RE: fsync() Performance Issue
+Date: Mon, 6 May 2002 08:54:47 -0400
+Message-ID: <93F527C91A6ED411AFE10050040665D0049BF9B9@corpusmx1.us.dg.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10256-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10257-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020506123638.GA15023@matrix.wg>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Dirk Mueller <dmuell@gmx.net>
-Cc: reiserfs-list@namesys.com, axboe@suse.de
+Content-Transfer-Encoding: 7bit
+To: mason@suse.com
+Cc: reiserfs-list@namesys.com, green@namesys.com
 
-On Mon, 2002-05-06 at 08:36, Dirk Mueller wrote:
-> On Sam, 04 Mai 2002, Chris Mason wrote:
+	I'll add the write caching into the test just for info. Until there
+is a way to guaranty the data is safe I'll have to go with no write caching
+though. I should have all this testing done by the end of the week.
 
-[ reiserfs corruption after a crash, 2.4.19pre7 ]
+-----Original Message-----
+From: Chris Mason [mailto:mason@suse.com]
+Sent: Friday, May 03, 2002 6:00 PM
+To: berthiaume_wayne@emc.com
+Cc: reiserfs-list@namesys.com; green@namesys.com
+Subject: RE: [reiserfs-list] fsync() Performance Issue
 
-> 
-> > Hmmm, not good at all.  Are these 3 systems IDE or scsi?  Do they run
-> > additional patches on top of pre7?  What kernels < pre7 have you tried
-> > that didn't show this problem?
-> 
-> All IDE. The kernel that didn't show this problem was 2.4.16 (plain). No 
-> additional patches on 2.4.19-pre7. 
 
-Please tell us everything about your IDE config.  Jens and I are already
-trying to track down some odd reiserfs + ide problems on 2.4.19pre7, but
-so far that was only with our barrier write patches applied.
+On Fri, 2002-05-03 at 16:35, berthiaume_wayne@emc.com wrote:
+> 	Chris, I have some quick preliminary results for you. I have
+> additional testing to perform and haven't run debugreiserfs() yet. If you
+> have a preference for which tests to run debugreiserfs() let me know.
+> 	Base testing was done against 2.4.13 built on RH 7.1 using the
+> test_writes.c code I forwarded to you. The system is a Tyan with single
+> PIII, IDE Promise 20269, Maxtor 160GB drive - write cache disabled. All
+> numbers are with fsync() and 1KB files. As I said, more testing, i.e.
+> filesizes, need to be performed.
+
+> 2.4.19-pre7 speedup, data logging, write barrier / no options
+> 	=> 47.1ms/file
+
+Hi Wayne, thanks for sending these along.
+
+I expected a slight improvement over the 2.4.13 code even with the data
+logging turned off.  I'm curious to see how it does with the IDE cache
+turned on.  With scsi, I see 10-15% better without any options than an
+unpatched kernel.
+
+> 2.4.19-pre7 speedup, data logging, write barrier / data=journal
+> 	=> 25.2ms/file
+> 2.4.19-pre7 speedup, data logging, write barrier /
+data=journal,barrier=none
+> 	=> 27.8ms/file
+
+The barrier option doesn't make much difference because the write cache
+is off.  With write cache on, the barrier code should allow you to be
+faster than with the caching off, but without risking the data (Jens and
+I are working on final fsync safety issues though).
+
+Hans, data=journal turns on the data journaling.  The data journaling
+patches also include optimizations to write metadata back to disk in
+bigger chunks for tiny transactions (the current method is to write one
+transaction's worth back, when a transaction has 3 blocks, this is
+pretty slow).
+
+I've put these patches up on:
+
+ftp.suse.com/pub/people/mason/patches/data-logging
+
+> 	One question is will these patches be going into the 2.4 tree and
+> when?
+
+The data logging patches are a huge change, but the good news is they
+are based on the nesting patches that have been stable for a long time
+in the quota code.  I'll probably want a month or more of heavy testing
+before I think about submitting them.
 
 -chris
 
