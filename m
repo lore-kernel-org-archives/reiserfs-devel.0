@@ -1,52 +1,55 @@
-From: Oleg Drokin <green@namesys.com>
+From: Russell Coker <russell@coker.com.au>
 Subject: Re: ReiserFS is not suitable for a root FS.
-Date: Sat, 17 May 2003 15:24:46 +0400
-Message-ID: <20030517112446.GA20672@namesys.com>
-References: <200305172030.58775.russell@coker.com.au> <20030517105633.GA20463@namesys.com> <200305172109.53538.russell@coker.com.au>
+Date: Sat, 17 May 2003 21:25:59 +1000
+Message-ID: <200305172125.59713.russell@coker.com.au>
+References: <200305172030.58775.russell@coker.com.au> <3EC61987.5000402@gmx.net>
+Reply-To: Russell Coker <russell@coker.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14138-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14139-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3EC61987.5000402@gmx.net>
 Content-Disposition: inline
-In-Reply-To: <200305172109.53538.russell@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Russell Coker <russell@coker.com.au>
+To: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
 Cc: ReiserFS <reiserfs-list@namesys.com>
 
-Hello!
+On Sat, 17 May 2003 21:14, Carl-Daniel Hailfinger wrote:
+> Russell Coker wrote:
+> > With a ReiserFS file system you can't FSCK a file system that is mounted
+> > read-only.  This means that when a root file system needs to be FSCK'd
+> > you need to boot from installation media (or convert the swap space into
+> > a temporary root file system).
+>
+> I take this as a feature request. Right? It would certainly be nice to
+> have.
 
-On Sat, May 17, 2003 at 09:09:53PM +1000, Russell Coker wrote:
-> > Well, if you cannot mount root fs and kernel crashes during that process,
-> > you must boot off some other media because your fsck is still located on
-> > this root filesytem.
-> > This is true for any filesystem.
-> The difference is that with other file systems the kernel code seems to be 
-> considerably less likely to crash.
+Yes.
 
-Well, we try to handle all the cases in a good way.
+> > It seems that the kernel drivers in 2.4.20 have some bugs whereby a
+> > corrupted file system can cause an immediate reboot, a system lock
+> > (caps-lock doesn't change the keyboard led), or a kernel Oops.  Ext2/3
+> > does not appear to have such problems.
+>
+> Could you please provide a metadata dump of the affected filesystem? The
+> behaviour you describe is not supposed to happen. Do you have a decoded
+> Oops for us to see what happened?
 
-> If the kernel can mount a file system but some directory entries, inodes, or 
-> other meta-data are corrupt then there is no excuse for crashing.  The files 
+Unfortunately not.  It seems to happen to machines that have important 
+production uses and which have little spare disk space.
 
-We are accepting metadata snapshots in such cases and trying to make necessary fixes.
-Where can we grab snapshots from your cases?
+> You surely mean ext3? Ext2 would not be a fair comparison because it has
+> no journaling. And if you're hunting for size, try jffs or jffs2.
 
-> or directories should simply be inaccessable.  Ideally the kernel will log a 
-> message and either re-mount the file-system read-only or panic (in an orderly 
-> fashion) at the administrator's choice.
+True, I meant ext3.
 
-Yes, that would be nice, of course. We started some work in this direction some time ago,
-but we are not yet finished.
+-- 
+http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
+http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
+http://www.coker.com.au/~russell/  My home page
 
-> Having the kernel just trash system memory because of bad data on disk is a 
-> bug.
-
-You cannot check all the on disk values, this is too bik performance impact.
-Nobody does that in Linux, I think.
-
-Bye,
-    Oleg
