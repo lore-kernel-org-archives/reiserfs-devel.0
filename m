@@ -1,103 +1,67 @@
-From: Brandon Low <lostlogic@gentoo.org>
-Subject: Re: reiserfsprogs-3.6.12 release
-Date: Wed, 11 Feb 2004 17:04:35 -0600
-Message-ID: <20040211230435.GB8237@lostlogicx.com>
-References: <200402102010.04479.vitaly@namesys.com> <20040211170250.GA8237@lostlogicx.com> <200402120134.20591.vitaly@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Results of "bk clone" tests with 2.6.2,  reiser4, reiserfs,	ext3,
+ xfs and jfs
+Date: Wed, 11 Feb 2004 15:09:38 -0800
+Message-ID: <402AB632.9080006@namesys.com>
+References: <1076456354.1585.36.camel@spc.esa.lanl.gov>	 <402A5468.3000609@namesys.com>  <200402110232.54727.elenstev@mesatop.com> <1076525319.1683.44.camel@spc.esa.lanl.gov>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16768-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16769-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200402120134.20591.vitaly@namesys.com>
+In-Reply-To: <1076525319.1683.44.camel@spc.esa.lanl.gov>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Steven Cole <elenstev@mesatop.com>
+Cc: reiserfs-list@namesys.com, nikita@namesys.com
 
-Thanks for the response, running that program gave me:
+Steven Cole wrote:
 
-bash-2.05b# ./updatetime /
-RO
+>On Wed, 2004-02-11 at 02:32, Steven Cole wrote:
+>  
+>
+>>On Wednesday 11 February 2004 09:12 am, Hans Reiser wrote:
+>>    
+>>
+>>>Steven Cole wrote:
+>>>      
+>>>
+>>>>I used the "-o key=key_short" option when creating the
+>>>>reiser4 file system due to getting this message:
+>>>>"kernel: WARNING: Key format mismatch. Only small keys are supported."
+>>>>        
+>>>>
+>>>This might have hurt our performance substantially.  Did you
+>>>intentionally choose small keys?  If not, Nikita, why did this happen?
+>>>      
+>>>
+>>Well, intentionally _only_ because it seemed the reasonable thing to do
+>>in the face of the above warning message.  Tomorrow, I can recompile
+>>the reiser4-enabled kernel with the large keys option and mkfs.reiser4
+>>again without that key_short option.  I'll let you know if there are any interesting
+>>results.
+>>
+>>Steven
+>>    
+>>
+>
+>OK, tomorrow came a day early this week.
+>
+>I recompiled the 2.6.2 reiser4 kernel with CONFIG_REISER4_LARGE_KEY=y,
+>rebooted, and created a reiser4 fs without the key_small option as before.
+>
+>I repeated the tests using the same bk tree and got very similar results
+>to using short keys.
+>  
+>
+Hmmm, we need to look into that.  Thanks Steven.  Zam, please analyze 
+just what fs operations this benchmark performs, report it, and then 
+analyze why we are slow.
 
-Below are some various results I've gotten while trying to diagnose
-this.  I do not have a serial terminal on the box so it is all hand
-copied and therefor may contain errors.
-
-Hope it is helpful (in that it may help you help me)
-
-Sincerely,
-
-Brandon Low
-
-bash-2.05b# cat /proc/mounts
-rootfs / rootfs rw 0 0
-/dev/root / reiserfs ro 0 0
-none /dev/devfs ro 0 0
-proc /proc proc rw 0 0
-
-bash-2.05b# touch /blah
-touch: cannot touch `/blah': Read-only file system
-
-bash-2.05b# /sbin/reiserfsck -a /dev/hda3
-
-Failed to open the filesystem.
-
-If the partition talbe has not been changed, and the partition is
-valid  and  it really  contains  a reiserfs  partition,  then the 
-superblock  is corrupted and you need to run this utility with
---rebuild-sb.
-
-Aborted
-
-bash-2.05b# /sbin/reiserfsck -a /dev/root
-Reiserfs superblock in block 16 on 0x303 of format 3.6 with standard journal
-Blocks (total/free): 4390223/6461997 by 4096 bytes
-Filesystem is cleanly mounted
-Paritition /dev/root is mounted with write permissions, cannot check it
-
-On Thu, 02/12/04 at 01:34:20 +0300, Vitaly Fertman wrote:
-> On Wednesday 11 February 2004 20:02, Brandon Low wrote:
-> > This release gives me:
-> >
-> > Partition /dev/hda3 is mounted with write permissions, cannot check it
-> >
-> > When I try to run fsck.reiserfs /dev/hda3 during bootup when the fs is
-> > mounted readonly.  I have used init=/bin/bash and confirmed this result
-> > interactively...
-> 
-> this is strange, would you also try to confirm the result by running this 
-> test program on bootup with init=/bin/bash and tell me what it says?
-> 
-> -
-> Thanks,
-> Vitaly Fertman
-
-> #include <stdio.h>
-> #include <errno.h>
-> #include <utime.h>
-> #include <sys/types.h>
-> 
-> static int misc_file_ro(char *file) {
-> 	if (utime(file, 0) == -1) {
-> 		if (errno == EROFS)
-> 			return 1;
-> 	}
-> 	
-> 	return 0;
-> }
-> 
-> int main(int argc, char * argv []) {
-> 	if (argc !=2) {
-> 		fprintf(stderr, "Usage: %s mount_point\n", argv[0]);
-> 		return -1;
-> 	}
-> 	
-> 	 if (misc_file_ro(argv[1]) == 1)
-> 		 printf("RO\n");
-> 
-> 	 return 0;
-> }
-
+>After that, I umounted and did a fsck.reiser4 and got many errors,
+>"12463 fixable corrections". 
+>
+Well it seems you found a reason for us to delay our release.  Nikita 
+will go fix it and then get back to you.
