@@ -1,42 +1,35 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: slow mount
-Date: Thu, 12 Jun 2003 18:46:09 +0400
-Message-ID: <20030612144609.GA27645@namesys.com>
-References: <1055427629.1875.8.camel@terminus.zapto.org>
+Subject: Re: About  reiserfs file corruption in 2.5.70 for PPC64
+Date: Fri, 13 Jun 2003 13:24:37 +0400
+Message-ID: <20030613092437.GA10314@namesys.com>
+References: <CDENIKBOGMAOLOMEGJGKIEHACAAA.liuwt@s-ec.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14530-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14533-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1055427629.1875.8.camel@terminus.zapto.org>
+In-Reply-To: <CDENIKBOGMAOLOMEGJGKIEHACAAA.liuwt@s-ec.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbie Hopkins <Herbie@Hopkins.net>
+To: Weitai Liu <liuwt@s-ec.com>
 Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Thu, Jun 12, 2003 at 03:20:29PM +0100, Herbie Hopkins wrote:
-> It seems to take a very long time to mount a large reiserfs filesystem:
->   $ time mount /home
->   real    0m17.259s
->   /dev/hda7              44G   12G   33G  26% /home
-> is this normal behaviour? as this drastically increases my system statup
+On Fri, Jun 13, 2003 at 02:17:46PM +0800, Weitai Liu wrote:
+>        I have tested 2.5.70 for PPC64 on my IBM p630 machine,  
+>  This system runs  SuSE Linux 8.1 for PPC64 . Some system files that I  have moved  to other directories  on my  system will be corrupted randomly,  these files can be accessed, 
+>  but their content  will be  zero partially, e.g., some bytes will  be zero  ("00" ). 
+>      there is no   panic  on my system .
+>      there are  bugs probably in reiserfs of 2.5.70 kernel for PPC64.
 
-Well. Some kind of a delay is certainly expected, as reiserfs is reading
-all the bitmaps at mount time.
+Hm.
+What if you mount with "-o nolargeio=1" and repeat the test, are the symptoms still the same?
 
-> time. The same partition formatted to ext3 mounts in less than a second
-> and this also seems to have no reflection on the amount of data on the
-> partition as it still takes this long when the filesystem in empty.
-
-The bitmaps are there no matter if filesystem is empty or not.
-
-Only my 20G fs can be mounted in 1.4s, so may be you have some kind of very slow
-drive, or no DMA or something like that?
+Thank you.
 
 Bye,
     Oleg
