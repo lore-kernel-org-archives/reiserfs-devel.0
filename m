@@ -1,56 +1,40 @@
-From: Valdis.Kletnieks@vt.edu
+From: Pierre Abbat <phma@webjockey.net>
 Subject: Re: Proposal for keying encrypted filesystem
-Date: Fri, 04 Apr 2003 09:47:56 -0500
-Message-ID: <200304041447.h34Eluli004869@turing-police.cc.vt.edu>
-References: <200303282026.23543.phma@webjockey.net> <200304031822.12677.phma@webjockey.net> <200304041401.h34E1Hli003929@turing-police.cc.vt.edu>
-            <200304040930.29884.phma@webjockey.net>
+Date: Fri, 4 Apr 2003 09:57:55 -0500
+Message-ID: <200304040957.55182.phma@webjockey.net>
+References: <200303282026.23543.phma@webjockey.net> <200304040930.29884.phma@webjockey.net> <200304041447.h34Eluli004869@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1905356784P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13571-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13572-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Fri, 04 Apr 2003 09:30:29 EST."
-             <200304040930.29884.phma@webjockey.net> 
+In-Reply-To: <200304041447.h34Eluli004869@turing-police.cc.vt.edu>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Pierre Abbat <phma@webjockey.net>
-Cc: reiserfs-list@namesys.com, reiserfs-dev@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com, reiserfs-dev@namesys.com
 
---==_Exmh_1905356784P
-Content-Type: text/plain; charset=us-ascii
+On Friday 04 April 2003 09:47, Valdis.Kletnieks@vt.edu wrote:
+> Properly applied, you can even leverage it further - for instance, if your
+> backup process doesn't have the key tokens, you can safely let it have
+> access to all the files - it can read the 127 meg of data to back it up in
+> a bitwise manner, but it can't actually DO anything with the data - this is
+> something that you can't do in the "give everything the token" model....
 
-On Fri, 04 Apr 2003 09:30:29 EST, Pierre Abbat <phma@webjockey.net>  said:
+Are you talking about the rsync process on Alice, the rsync process on Bob, or 
+the process that Bob uses to make backups of all the encrypted backups that 
+Alice and others entrust him with?
 
-> But I'd also like to be able to have several encrypted directories on one 
-> partition, with different keys, such that when I give the key any process 
-> with the right UID can access them. I might have a cron job that needs access
- 
-> to encrypted data.
+If a process that has no key tokens attempts to read an encrypted file with 
+the ordinary syscalls, does it get an error or the ciphertext? Should there 
+be a token that allows a process to read and write the ciphertext of an 
+encrypted file? Will rsync need to be modified to be able to r/w the key ID 
+of an encrypted file?
 
-You need to apply "least privilege" - you don't give the key to any process
-that doesn't need it.  In your example, you would make sure that any process
-running under UID nnn gets given the key, so that other processes couldn't
-do anything even if they *did* access them.
-
-Properly applied, you can even leverage it further - for instance, if your
-backup process doesn't have the key tokens, you can safely let it have access
-to all the files - it can read the 127 meg of data to back it up in a bitwise
-manner, but it can't actually DO anything with the data - this is something
-that you can't do in the "give everything the token" model....
-
---==_Exmh_1905356784P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.1 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQE+jZsccC3lWbTT17ARAirQAKDlHXmm7DMKfdhT70lmh4/2GevWVgCdG9u3
-PcOECocUD9qMuFjMEXB9klg=
-=Mqgp
------END PGP SIGNATURE-----
-
---==_Exmh_1905356784P--
+phma
+-- 
+.i toljundi do .ibabo mi'afra tu'a do
+.ibabo damba do .ibabo do jinga
+.icu'u la ma'atman.
