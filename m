@@ -1,49 +1,93 @@
-From: Valdis.Kletnieks@vt.edu
+From: The Amazing Dragon (Elliott Mitchell) <ehem@cs.pdx.edu>
 Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Wed, 31 Mar 2004 17:37:24 -0500
-Message-ID: <200403312237.i2VMbOCa013227@turing-police.cc.vt.edu>
-References: <20040331084335.GE5229@nysv.org>
+Date: Wed, 31 Mar 2004 21:46:14 -0800 (PST)
+Message-ID: <200404010546.i315kEvY019805@sirius.cs.pdx.edu>
+References: <no.id>
+Reply-To: reiserfs-list@namesys.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1176583924P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17635-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17639-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Wed, 31 Mar 2004 11:43:35 +0300."
-             <20040331084335.GE5229@nysv.org> 
+In-Reply-To: <no.id> from "Narcoleptic Electron" at Mar 31, 2004 10:58:59 AM
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
---==_Exmh_1176583924P
-Content-Type: text/plain; charset=us-ascii
+> From: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
+> Hubert Chan wrote:
+> > That effectively kills all filenames that contain @,
+> 
+> > much worse than
+> > just a "metas" conflict IMHO.
+> 
+> I strongly agree:
+> 
+> - A restricted character in all names is far more
+> likely to impact users than a single restricted name. 
 
-On Wed, 31 Mar 2004 11:43:35 +0300, mjt@nysv.org (Markus =?UNKNOWN?Q?T=F6rnqvist?=)  said:
+This is why a couple candidates need to be brought up. Some seem good at
+first glance, but are really bad choice after a bit of thought. So you're
+right a badly chosen single character will be really bad. A good choice
+needs to have minimal impact by being pretty much unused in filenames. A
+corollary is that a badly chosen directory name will have a horrific
+impact on users just as much as a badly chosen special character.
 
-> I'm not sure either what Hans Reiser meant by a macro, does that mean
-> a settable variable? It's a decent compromise, I think. As someone
-> else stated, let's just hope for an inoffensive default.
+> I think that the meta directory needs to be thought of
+> not as a special directory, but as a normal directory
+> that has a name that is interpreted in a special way
+> by the system.
 
-VMS has SYS$FOO variables all over the place, but they don't have the same
-semantics as a Unix environment variables.  It's unclear what scope a settable
-variable for this should have - systemwide, filesystem, process group, process,
-thread, or file descriptor.  Equally good cases can be made for/against each of
-them.
+In other words it is special, but it isn't special?
+
+You can't have it both ways. "metas" is a perfectly valid filename on
+all other filesystems. It is a valid word or partial word in several
+languages, bad choice. Files/directories begining with . are at least
+already handled specially by all tools. Names that are valid words are
+precious, like gold you shouldn't steal them.
+
+There is also the problem that things like Apache deliberately filter out
+access to some files (like "..") because they're magic. By adding another
+magic filename you've made those harder, at least begining it with . will
+keep those tools' job easier (and you don't introduce a huge security
+hole by adding a filesystem).
+
+Also I feel it should be on the file itself. ie for the file /tmp/fooblah
+you should be able to access the file's metadata by open()ing/using
+readdir() on /tmp/fooblah/metas or (/tmp/fooblah/..metas or whatever).
 
 
---==_Exmh_1176583924P
-Content-Type: application/pgp-signature
+> No one in this thread has commented on "+" as the
+> default meta directory name (one of the final
+> contenders in our previous thread on the subject). 
+> Again, the reasons:
+> - Short (one character)
+> - Makes sense in all languages (meaning "additional
+> information")
+> - Available on all int'l keyboards
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+Bad choice. Note the "lost+found" directory found on *all* Unix
+filesystems. If we need one more option | might be viable.
 
-iD4DBQFAa0gjcC3lWbTT17ARAjXAAJjcTSJumHcPJN4wCegRlQt1dKJmAJ9p11oA
-8z6vsbNANGk0aBLPBGEPVQ==
-=bTou
------END PGP SIGNATURE-----
+> Also, a question: are all meta files necessarily
+> pseudo files?  Should users be able to put regular
+> files in there to be interpreted as pseudo files? 
+> This will help to clarify some things for me.
 
---==_Exmh_1176583924P--
+My impression is, that the metadata appears as normal files and is
+accessible as normal files. Just gets interpreted in an interesting way.
+I doubt metadata would have an owner or permissions separate from the
+file/directory though. I imagine this is similar to Apple MacOS 10,
+where all files have a mime-type that is accessible as
+<filename>/mime-type.
+
+
+-- 
+(\___(\___(\______          --=> 8-) EHM <=--          ______/)___/)___/)
+ \   (    |         EHeM@cs.pdx.edu      PGP 8881EF59         |    )   /
+  \_  \   |  _____  -O #include <stddisclaimer.h> O-   _____  |   /  _/
+    \___\_|_/82 04 A1 3C C7 B1 37 2A*E3 6E 84 DA 97 4C 40 E6\_|_/___/
+
+
