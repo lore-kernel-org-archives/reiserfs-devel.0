@@ -1,68 +1,30 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: fsync() Performance Issue
-Date: Mon, 06 May 2002 17:02:40 +0400
-Message-ID: <3CD67EF0.9090100@namesys.com>
-References: <93F527C91A6ED411AFE10050040665D0049BF9B4@corpusmx1.us.dg.com>	<1020463205.3	 946.252.camel@tiny>  <3CD341EC.9080906@namesys.com>	<1020517884.3947.266.camel@tiny>  <3CD3F76D.4000708@namesys.com> <1020688827.3947.2087.camel@tiny>
+From: Dirk Mueller <dmuell@gmx.net>
+Subject: Re: 2.4.19-pre7 / corruption on unwanted reboot
+Date: Mon, 6 May 2002 15:59:42 +0200
+Message-ID: <20020506135941.GA16598@matrix.wg>
+References: <20020504211147.GA20092@matrix.wg> <1020564448.3946.609.camel@tiny> <20020506123638.GA15023@matrix.wg> <1020689642.1511.2100.camel@tiny>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10259-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10260-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <1020689642.1511.2100.camel@tiny>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: berthiaume_wayne@emc.com, reiserfs-list@namesys.com, green@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Chris Mason wrote:
+On Mon, 06 Mai 2002, Chris Mason wrote:
 
->On Sat, 2002-05-04 at 10:59, Hans Reiser wrote:
->  
->
->>So how about if you revise fsync so that it always sends data blocks to 
->>the journal not to the main disk?
->>    
->>
->
->This gets a little sticky.
->
->Once you log a block, it might be replayed after a crash.  So, you have
->to protect against corner cases like this:
->
->write(file)
->fsync(file) ; /* logs modified data blocks */
->write(file) ; /* write the same blocks without fsync */
->sync ;        /* use expects new version of the blocks on disk */
-><crash>
->
->During replay, the logged data blocks overwrite the blocks sent to disk
->via sync().
->
->This isn't hard to correct for, every time a buffer is marked dirty, you
->check the journal hash tables to see if it is replayable, and if so you
->log it instead (the 2.2.x code did this due to tails).  This translates
->to increased CPU usage for every write.
->
-Significant increased CPU usage?
+> Please tell us everything about your IDE config.  Jens and I are already
+> trying to track down some odd reiserfs + ide problems on 2.4.19pre7, but
+> so far that was only with our barrier write patches applied.
 
->
->I'd rather not put it back in because it adds yet another corner case to
->maintain for all time.  Most of the fsync/O_SYNC bound applications are
->just given their own partition anyway, so most users that need data
->logging need it for every write.
->
-most users don't know enough to turn it on....;-)
+There is not much common. two of them are VIA 686 southbridge (KT133A, 
+KT333), one is something older, a Pentium chipset. 
 
->
->-chris
->
->
->
->
->
->
->  
->
+DMA 100 and DMA 66. We all use those Maxtor 80GB EIDE disks. 
 
 
-
+Dirk
