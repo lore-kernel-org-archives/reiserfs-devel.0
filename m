@@ -1,29 +1,46 @@
-From: Kuba Ober <kuba@mareimbrium.org>
-Subject: Re: kernel panic with PAP-8252
-Date: Tue, 30 Jul 2002 09:13:59 -0400
-Message-ID: <200207300913.59888.kuba@mareimbrium.org>
-References: <20020730151018.2D2C.K-MORIKAWA@stage.gr.jp>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: Re: data-logging-20  BUG?!
+Date: Wed, 31 Jul 2002 00:41:42 +0200
+Message-ID: <3D471626.9060500@mb.tu-ilmenau.de>
+References: <3D427179.2070401@mb.tu-ilmenau.de> <1027970955.12087.6.camel@tiny>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11102-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11103-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020730151018.2D2C.K-MORIKAWA@stage.gr.jp>
+Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "K.Morikawa" <k-morikawa@stage.gr.jp>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-> I tried reiserfsck with --check option. however completed with no error.
-> so I did not run reiserfsck with --rebuild-tree option.
-> machine is operating after reboot.
+On 07/29/2002 09:29 PM, Chris Mason wrote:
+> On Sat, 2002-07-27 at 06:10, Manuel Krause wrote:
+> 
+> 
+>>After having upgraded from data-logging -19 to -20 and using it for some 
+>>hours I keep getting this bug (kernel BUG at journal.c:724!):
+> 
+> 
+> Ok, I've uploaded -21, and it should fix the BUG().  It was a debugging
+> check to make sure the journal code had properly sent all the ordered
+> buffers to disk before sending the commit down.  There was a race in -20
+> that broke this rule.
+> 
+> The oops should not have caused any corruptions, the incremental from
+> -20 to -21 is below.
+> 
+> -chris
+> 
 
-Another note: please make sure that you use latest reiserfs-tools (version 
-3.6.2). You really should not be using anything older than this version, 
-especially the 3.x. versions.
+Hi!
 
-Make sure you verify that, since it seems your system hasn't been updated in a 
-long time, so I'm nearly sure that you *are* using outdated reiserfstools.
+The new -21 patch works fine on here. After going back to -19 I found 
+out -20 really didn't cause any corruptions.  :-))
 
-Cheers, Kuba Ober
+
+Thank you, Chris!
+
+Manuel
+
