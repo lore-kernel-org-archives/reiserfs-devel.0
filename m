@@ -1,31 +1,33 @@
-From: Oleg Drokin <green@namesys.com>
+From: Tom Vier <tmv@comcast.net>
 Subject: Re: Data Shredding on a Journal Filesystem
-Date: Thu, 26 Sep 2002 10:20:43 +0400
-Message-ID: <20020926102043.B5436@namesys.com>
-References: <93F527C91A6ED411AFE10050040665D0049C0072@corpusmx1.us.dg.com> <20020925113001.A23339@namesys.com> <20020926061332.GA3588@yzero>
+Date: Thu, 26 Sep 2002 02:36:18 -0400
+Message-ID: <20020926063618.GB3588@yzero>
+References: <93F527C91A6ED411AFE10050040665D0049C0072@corpusmx1.us.dg.com>
+ <20020925113001.A23339@namesys.com> <20020926061332.GA3588@yzero>
+ <20020926102043.B5436@namesys.com>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11545-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-list-return-11546-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-reply-to: <20020926102043.B5436@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <20020926061332.GA3588@yzero>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tom Vier <tmv@comcast.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+On Thu, Sep 26, 2002 at 10:20:43AM +0400, Oleg Drokin wrote:
+> > of course, putting sensitive files on a loopback encrypted fs is better.
+> > then you don't have to worry about plaintext laying around, and you don't
+> > need shred or wipe.
+> 
+> You also need to be careful so that this sensitive data won't get into swap.
 
-On Thu, Sep 26, 2002 at 02:13:32AM -0400, Tom Vier wrote:
+also, .bash_history can reviel filenames.
 
-> of course, putting sensitive files on a loopback encrypted fs is better.
-> then you don't have to worry about plaintext laying around, and you don't
-> need shred or wipe.
-
-You also need to be careful so that this sensitive data won't get into swap.
-
-Bye,
-    Oleg
+-- 
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0xE6CB97DA
