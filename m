@@ -1,52 +1,60 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: reiser4 and apache (was: Re: Reiser4 and ZFS)
-Date: Mon, 27 Dec 2004 10:33:51 -0500
-Message-ID: <200412271533.iBRFXpmT011625@turing-police.cc.vt.edu>
-References: <20041215064608.66493.qmail@web50901.mail.yahoo.com> <200412152000.iBFK0CHH016500@turing-police.cc.vt.edu>
-            <20041227122814.GA7388@favonius>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: minor and major locality of key in reiser4
+Date: Mon, 27 Dec 2004 18:58:04 +0300
+Message-ID: <1104163083.3574.67.camel@tribesman.namesys.com>
+References: <20041227101224.12746.qmail@web60107.mail.yahoo.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1656223295P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22912-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22913-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Mon, 27 Dec 2004 13:28:15 +0100."
-             <20041227122814.GA7388@favonius> 
+In-Reply-To: <20041227101224.12746.qmail@web60107.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: sander@humilis.net
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Pallavi Dalya <pallavidalya@yahoo.com>
+Cc: reiser-list mailing <reiserfs-list@namesys.com>
 
---==_Exmh_1656223295P
-Content-Type: text/plain; charset=us-ascii
+Hello
 
-On Mon, 27 Dec 2004 13:28:15 +0100, Sander said:
-> Valdis.Kletnieks@vt.edu wrote (ao):
-> > For many shops, it's quite likely that a ZFS with "more scalability
-> > and administration" is The Right Choice, especially if it does *NOT*
-> > include lots of odd new features and quirks that might break
-> > production code (remember the joys in getting Apache running on
-> > reiser4, until it was discovered that the 'file-as-directory' stuff
-> > broke programs that weren't expecting it?).
+On Mon, 2004-12-27 at 13:12, Pallavi Dalya wrote:
+> hello,
+>       The tree in reiser4 is fully ordered by a key. What information
+> do we  aggregate in the key so that later the information can be
+> segregated from it. What is minor and major locality packing of the
+> key.
+
+major locality is by default objectid of directory.
+it occupies highest 60 bits of first key component.
+
+minor locality occupies lowest 4 bits of first key component.
+it displaces valious data of file: file name, stat data (analog of
+on-disk inode), file data.
+
+ 
+
+>  
+> The key is defined as
+>  
+> union reiser4_key{
+>  
+> d64 el[KEY_LAST_INDEX];
+> int pad;
+> };
+>  
+> Its specified that KEY_LAST_INDEX has the value of three. Where is
+> this defined.
+
+sorry, I am not sure what do you mean.
+KEY_LAST_INDEX is defined in reiser4/key.h.
+it is last value of reiser4_key_field_index enum.
+>  
+>  
+> Pallavi
 > 
-> I just got bitten by this. Is it possible to get apache to run on
-> reiser4, and if so, how?
+> 
+> ______________________________________________________________________
+>  Yahoo! Messenger - Communicate instantly..."Ping" your friends today!
+> Download Messenger Now
 
-I think the archives have pointers to both a reiser4 patch that disables
-the "file as directory", and a patch to apache to deal with the situation...
-
---==_Exmh_1656223295P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFB0CtecC3lWbTT17ARAi4+AKCmfJfnfxKBEVeDsVUdoaqre1HAwgCfTfdd
-LRsPyYewKHnTxBWUEMeoE5A=
-=TaqB
------END PGP SIGNATURE-----
-
---==_Exmh_1656223295P--
