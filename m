@@ -1,42 +1,43 @@
-From: <jose@iteso.mx>
-Subject: reiserfsck version and peace of mind
-Date: Sat, 30 Mar 2002 12:29:26 -0600 (CST)
-Message-ID: <Pine.LNX.4.21.0203301219070.25684-100000@iteso.mx>
+From: Adrian Phillips <a.phillips@dnmi.no>
+Subject: reiserfs_file_write: item has been moved
+Date: 02 Apr 2002 08:29:22 +0200
+Sender: "Adrian Phillips,,," <a.phillips@dnmi.no>
+Message-ID: <wvhemubol9.fsf@freeze.oslo.dnmi.no>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
 
-  Hi.
+I got one of these in my logs :-
 
-    I will be performing a reiserfsck on our main production server next we=
-ek
-    as a preventive maintenance, it has been running for a while and altoug=
-h
-    backed-up daily, the information in the reiserfs partition is quite=20
-    important to us.
+kernel: reiserfs_file_write: item has been moved while we were in copy_from_user (appending to the direct item)
 
-    Right now what's the best version of the reiserfsprogs to use in this c=
-ase?
-    Any other recomendations?
+No other messages in the kern.log, using :-
 
-    I've had no problems with the filesystem (at least not that I'm aware o=
-f),
-    but there's been several power outages recently and would like to be on=
- the
-    safe side.
+Linux dusk 2.2.20pre2 #1 Tue Jun 26 11:50:29 CEST 2001 i686 unknown
 
-    Is a periodical reiserfsck sensible? if so, how long a period would be =
-with
-    normal operating conditions (no power outages, no disk problems, etc.)?
+linux-2.2.19-reiserfs-3.5.34-patch.bz2
+linux-2.2.19-reiserfs-3.5.32-buffer-300.patch
+linux-2.2.18-rawio.patch  # For LVM
+lvm-1.0.1-2.2.20.patch
+ide.2.2.19.05042001.patch.bz2 # New IDE for 2.2
+max_tasks.patch  # Increases max_tasks to 2048
 
+I couldn't find this mentioned in google, but is this a warning,
+serious ?
 
-     Thanks for any input.
+Thanks for any help,
 
-              Jos=E9
+Sincerely,
 
+Adrian Phillips
+
+-- 
+Your mouse has moved.
+Windows NT must be restarted for the change to take effect.
+Reboot now?  [OK]
