@@ -1,110 +1,26 @@
-From: Anton Altaparmakov <aia21@cam.ac.uk>
-Subject: Re: [some sanity for a change] possible design issues for hybrids
-Date: Fri, 27 Aug 2004 09:56:39 +0100
-Sender: aia21@hermes.cam.ac.uk
-Message-ID: <1093596998.5994.34.camel@imp.csi.cam.ac.uk>
-References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com>
-	 <200408262128.41326.vda@port.imtp.ilyichevsk.odessa.ua>
-	 <Pine.LNX.4.58.0408261132150.2304@ppc970.osdl.org>
-	 <20040826191323.GY21964@parcelfarce.linux.theplanet.co.uk>
-	 <20040826203228.GZ21964@parcelfarce.linux.theplanet.co.uk>
-	 <Pine.LNX.4.58.0408261344150.2304@ppc970.osdl.org>
-	 <20040826212853.GA21964@parcelfarce.linux.theplanet.co.uk>
-	 <Pine.LNX.4.58.0408261436480.2304@ppc970.osdl.org>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: silent semantic changes with reiser4
+Date: Fri, 27 Aug 2004 10:57:46 +0200
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040827085746.GA22093@lst.de>
+References: <20040826014542.4bfe7cc3.akpm@osdl.org> <412DAC59.4010508@namesys.com> <1093548414.5678.74.camel@krustophenia.net> <20040826203017.GA14361@school.ioffe.ru> <1093552692.13881.43.camel@leto.cs.pocnet.net> <16686.22336.829096.678178@thebsh.namesys.com> <1093556818.13881.75.camel@leto.cs.pocnet.net> <16686.24120.761440.969273@thebsh.namesys.com> <20040826220546.GA12401@lst.de> <412EECFC.5050804@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20894-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.58.0408261436480.2304@ppc970.osdl.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <412EECFC.5050804@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: viro@parcelfarce.linux.theplanet.co.uk, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, christer@weinigel.se, spam@tnonline.net, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Nikita Danilov <nikita@clusterfs.com>, Dmitry Baryshkov <mitya@school.ioffe.ru>, Andrew Morton <akpm@osdl.org>, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-On Thu, 2004-08-26 at 23:04, Linus Torvalds wrote:
-> [ This is quite possibly just impossible and buggy, but here's my
->   implementation notes. You asked for them. ]
-> On Thu, 26 Aug 2004 viro@parcelfarce.linux.theplanet.co.uk wrote:
-> > All right, let's see where that would take us.
-> > 3) what do we do on umount(2)?  We can get a bunch of vfsmounts hanging off
-> > it.  MNT_DETACH will have no problems, but normal umount() is a different
-> > story.  Note that it's not just hybrid-related problem - implementing the
-> > mount traps will cause the same kind of trouble,
+On Fri, Aug 27, 2004 at 01:12:44AM -0700, Hans Reiser wrote:
+> Your arrogance is misplaced for a man who has never done a significant 
+> piece of research.
 > 
-> Don't allow umount. It's not something the user can unmount - the mount is 
-> "implied" in the file. 
-> 
-> > 4) OK, we have those hybrids and want to create vfsmounts when crossing a
-> > mountpoint.  When do they go away, anyway?  When we don't reference them
-> > anymore?  Right now "attached to mount tree" == "+1 to refcount" and detaching
-> > happens explicitly - outside of the "dropping the final reference" path.
-> > Might become a locking issue.
-> 
-> Ahh. Umm.. Yes. I think this might be the real problem. Unless I seriously 
-> clossed something over when I blathered about the "create the vfsmount on 
-> the fly" thing above ;)
+> Christoph, we are doing work, you are in the way, get out of the way.
 
-If it is created on the fly, it should be "easy" to destroy on the fly
-using time-based expiry, i.e. a kernel daemon going over all of those
-beasts every X seconds (X = 5 perhaps?) and doing something like:
-
-for (each vfsmount) {
-	lock_vfsmount(vfsmount);
-	if (MOUNT_IS_BUSY(vfsmount)) {
-		unlock_vfsmount(vfsmount);
-		continue;
-	}
-	if (current_time() < (vfsmount->last_used_time +
-			vfsmount->expire_after)) {
-		unlock_vfsmount(vfsmount);
-		continue;
-	}
-	destroy_locked_vfsmount(vfsmount);
-}
-
-Wouldn't that work?
-
-> > 10) how do we deal with directories, anyway?  Mixing "attributes" with
-> > normal directory contents is going to be fun, what with lseek() insanity.
-> 
-> You couldn't get at the attributes that way anyway, so I think the point 
-> is moot. The "real" directory always takes over.
-> 
-> Crazy people could try to just use the regular "xattrs" interfaces if they 
-> really want attributes on directories. You wouldn't ever be able to use 
-> the "easy" one.
-
-But that defeats the whole point of the hybrid objects!  We might as
-well just keep the xattrs interface and throw away the new one if we
-will have to keep the old one anyway so that we can do named
-streams/attributes on directories.  Windows (and other OS?) certainly do
-allow them and do use them on directories as well as files...
-
-> > 11) if we go for your "here's stuff that belongs in device node viewed
-> > as directory", how would that play with fs metadata exporters?  Again,
-> > due to the insanity of lseek() on directories it's *very* hard to deal
-> > with unions, when parts of directory come from different chunks of code.
-> 
-> Don't go there. See above. Directories would be just plain directories, 
-> you could never see their metadata. Same goes for at least symlinks, and 
-> possibly other filetypes too (ie at least initially, a block or character 
-> special device will just take over the whole "file_operations", which 
-> includes "readdir", so it's actually hard to have the filesystem do 
-> anything about those).
-
-Ah, but at least in other OS (Windows is the one I know about)
-directories _also_ have the same semantics as files with respect to
-named streams/attributes.
-
-Best regards,
-
-	Anton
--- 
-Anton Altaparmakov <aia21 at cam.ac.uk> (replace at with @)
-Unix Support, Computing Service, University of Cambridge, CB2 3QH, UK
-Linux NTFS maintainer / IRC: #ntfs on irc.freenode.net
-WWW: http://linux-ntfs.sf.net/, http://www-stu.christs.cam.ac.uk/~aia21/
+Could you please stop the namecalling.  And if you want to check who has
+done significant work on Linux check the commit logs for yoour and for
+my shortname.
 
