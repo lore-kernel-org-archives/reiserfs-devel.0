@@ -1,57 +1,69 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Re: data-logging-20  BUG?!
-Date: Mon, 29 Jul 2002 11:41:23 +0200
-Message-ID: <3D450DC3.1010004@mb.tu-ilmenau.de>
-References: <3D427179.2070401@mb.tu-ilmenau.de> <20020729091710.GA15313@mfa.kfki.hu>
+From: "David R. Bergstein" <dbergstein@comcast.net>
+Subject: RE: reiserfsck question - session results
+Date: Mon, 29 Jul 2002 07:20:45 -0400
+Message-ID: <IMELKMOINBOOFMGACNMDOEFHCLAA.dbergstein@comcast.net>
+References: <20020729100033.A13890@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11091-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-list-return-11092-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <20020729100033.A13890@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Tamas Gergely <dice@mfa.kfki.hu>
+Content-Type: text/plain; charset="us-ascii"
+To: Oleg Drokin <green@namesys.com>
 Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-Hi!
+Oleg,
 
-On 07/29/2002 11:17 AM, Tamas Gergely wrote:
-> Hi!
-> 
-> On Sat, Jul 27, 2002 at 12:10:01PM +0200, Manuel Krause wrote:
->  > Hi all!
->  > 
->  > I'm currently using:
->  > 2.4.19-rc3
->  > + reiserfs-pending: 01.change_help_wording.diff
->  >                     02.change_menu_wording.diff
->  >                     03.confusing_journal_replay_warning_removal.diff
->  >                     05.hash_on_empty_fs-1.diff
->  > + mason: 01-relocation-4.diff
->  >          02-commit_super-8-relocation.diff
->  >          03-beta-data-logging-20.diff
->  >          04-write_times.diff
->  >          05-search_reada-4.diff
->  > + rml: preempt-kernel-rml-2.4.19-rc3-1.patch
->           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> Where did you get this one from? All I was able to find was one for
-> -rc3-ac3-1?
-> 
-> Thanks in advance,
-> Gergely
-> 
+Thanks very much for this information.  I sounds like what I did overall
+suppressed several harnless messages, i.e., by mounting the root reiserfs
+read-write, and skipping fsck in the initscripts.  From what you are saying,
+journal replay can also work safely when even a reiserfs fs is mounted
+read-only.  Is the warning message about journal replay on read-only
+filesystems outdated and if so, will it be removed sometime in the near
+future?
 
-Sorry, I was a bit inaccurate. Thanks, for pointing this out!
+Regards,
 
-I took the patch preempt-kernel-rml-2.4.19-rc2-1.patch from 
-ftp://ftp.kernel.org/pub/linux/kernel/people/rml/preempt-kernel/v2.4/
--- it applied and compiled cleanly.
+- David
 
-I don't have the reported problems with 03-beta-data-logging-19.diff at all.
+David R. Bergstein
+Systems Engineer and Blues Musician -
+http://mywebpages.comcast.net/dbergstein/
+Heart of Blue - bookings on-line at http://www.heartofblue.com
+OpenPGP Public Key 0xE1F138CA - For info see http://www.gnupg.org
+Key fingerprint = C86E CA2A 4171 AC73 91D7  3DCE 8832 D764 E1F1 38CA
 
+> -----Original Message-----
+> From: Oleg Drokin [mailto:green@namesys.com]
+> Sent: Monday, July 29, 2002 2:01 AM
+> To: David R. Bergstein
+> Cc: reiserfs-list
+> Subject: Re: [reiserfs-list] reiserfsck question - session results
+>
+>
+> Hello!
+>
+> On Mon, Jul 29, 2002 at 12:43:08AM -0400, David R. Bergstein wrote:
+>
+> > It turned out there was no problem after I ran reiserfsck, it was an
+> > initscript issue, specifically in /etc/rc.d/rc.sysinit on
+> Mandrake 8.1.  The
+> > script assumes that the root filesystem is first mounted
+> read-only, however I
+> > had previously taken steps to ensure that this reiserfs
+> partition is mounted
+> > read-write so journal replays work correctly.  This resulted in
+> the boot time
+>
+> In fact journal replays work ok even with readonly mounts. So
+> mounting rootfs
+> readonly is not required in reiserfs case.
+>
+> Bye,
+>     Oleg
+>
 
-Best wishes,
-
-Manuel
 
