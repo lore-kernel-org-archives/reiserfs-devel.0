@@ -1,64 +1,55 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: What Filesystem?
-Date: Wed, 29 Jan 2003 21:16:28 +0100
-Message-ID: <200301292116.28540.Dieter.Nuetzel@hamburg.de>
-References: <3E38378A.8030406@jtmstudio.fsbusiness.co.uk> <200301292043.38367.Dieter.Nuetzel@hamburg.de> <200301292009.h0TK9c4K008318@turing-police.cc.vt.edu>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: Oh no! Not again!
+Date: Wed, 29 Jan 2003 23:17:25 +0300
+Message-ID: <200301292317.25045.vitaly@namesys.com>
+References: <20030117221535.GA945@Kadath> <200301281400.09364.vitaly@namesys.com> <20030129193126.GA1367@ZhengHe.augustin.thierry>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12550-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12551-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200301292009.h0TK9c4K008318@turing-police.cc.vt.edu>
-Content-Disposition: inline
+In-Reply-To: <20030129193126.GA1367@ZhengHe.augustin.thierry>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
-To: Valdis.Kletnieks@vt.edu
-Cc: james@jtmstudio.fsbusiness.co.uk, reiserfs-list@namesys.com
+To: Francois-Rene Rideau <fare@tunes.org>
+Cc: reiserfs-list@namesys.com
 
-Am Mittwoch, 29. Januar 2003 21:09 schrieb Valdis.Kletnieks@vt.edu:
-> On Wed, 29 Jan 2003 20:43:38 +0100, Dieter =3D?iso-8859-1?q?N=3DFCtzel?=
-=3D said:
-> > All low latency and pre-emption tests have showed _improved_ throughput
-> > (Yes)
-> >
-> > and much better "multi media" (video/audio) "experience" ;-)
-> > No measurable overhead an single and SMP systems (both Athlon).
-> > That's why it is in 2.5/2.6.
+On Wednesday 29 January 2003 22:31, Francois-Rene Rideau wrote:
+> OK. So I built the latest reiserfsck as a static binary,
+> and ran it with --rebuild-tree, and I got an infinite loop
+> just like previously. In case anyone cares, I have kept the logfile for i=
+t.
+> Is there anything that interests you about that failure,
+> or should I promptly reformat the disk?
+
+Did you run the fsck (booted from /boot) when the drive was in that other
+mashine you had no problem with or in the problem one? It is a bad idea to =
+
+run reiserfsck on a broken hardware - the result is unpredictable.=20
+
+> Also, does any of you have any hint as to how to identify the failure
+> that led to this crash? I suspect either the disk or the motherboard,
+
+If you do not see any problem with the disk when you put it into another=20
+computer - it is not the disk. It can be IDE controller, cable...
+
+> but it's hard to tell: booting on my 80MB rescue disk works well,
+> whereas the disk looks like it works correctly on another machine,
+> and does not issue errors even on that machine, if I don't use DMA.
+> Really weird. What scares me is that if I don't identify the problem,
+> a similar crash may happen again...
 >
-> Yes, but my *point* was that if the box is busy doing a 5-hour rendering
-> job, the low-latency *wont make a difference*.  If you're doing audio work
-> or video captures, yes the low-latency/preempt stuff will help.  If you're
-> in a single thread that's CPU-bound, there's no need to go installing 2.5
-> to get it.
+> Cheers!
 >
-> > But you want to have the much better "task switching behavior" together
-> > with the "brand new" O(1) scheduler.
->
-> You want that *if* the actual load will benefit from it.  See my comment
-> above about rendering...
+> [ Fran=E7ois-Ren=E9 =D0VB Rideau | Reflection&Cybernethics |
+> http://fare.tunes.org ] [  TUNES project for a Free Reflective Computing
+> System  | http://tunes.org  ] Demand the establishment of the government =
+in
+> its rightful home at Disneyland.
 
-I am all with you.
+--=20
 
-> > You mean single vs 2-/4-/8-/etc. (NUMA) SMP systems or even clusters? ;=
-=2D)
->
-> Some things are doable with a single CPU, some things need the NUMA stuff,
-> other things can use a Beowulf.  Thus the need to quantify what the actual
-> requirements are.  Video editing will bottleneck on different things than
-> photorealistic rendering of graphics.
-
-Very true.
-
-Regards,
-	Dieter
-
-=2D-=20
-Dieter N=FCtzel
-Graduate Student, Computer Science
-
-University of Hamburg
-Department of Computer Science
-@home: Dieter.Nuetzel at hamburg.de (replace at with @)
-
+Thanks,
+Vitaly Fertman
