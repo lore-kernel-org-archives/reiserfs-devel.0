@@ -1,59 +1,36 @@
-From: Anders Widman <andewid@tnonline.net>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: what do you do that stresses your filesystem?
-Date: Mon, 23 Dec 2002 12:37:19 +0100
-Message-ID: <139251509046.20021223123719@tnonline.net>
-References: <3E06F360.7000708@namesys.com>
-Reply-To: Anders Widman <andewid@tnonline.net>
+Date: Mon, 23 Dec 2002 14:45:22 +0300
+Message-ID: <3E06F752.5000806@namesys.com>
+References: <3E06F360.7000708@namesys.com> <139251509046.20021223123719@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12198-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12199-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E06F360.7000708@namesys.com>
+In-Reply-To: <139251509046.20021223123719@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Anders Widman <andewid@tnonline.net>
+Cc: ReiserFS <reiserfs-list@namesys.com>
 
-> We were discussing how to optimize reiser4 best, and came to realize 
-> that us developers did not have a good enough intuition for what users 
-> do that stresses their filesystem enough that they care about its 
-> performance.
+Anders Widman wrote:
 
-> If you just do edits of files it probably does not matter too much what 
-> fs you use.
+>  
+>
+>>Booting the machine seems like one activity that many users end up
+>>waiting on the FS for.  Yes?
+>>    
+>>
+>
+>Hopefully we do not have to reboot to often... :)
+>
+>  
+>
+buying the seagate hard drives with fluid ballbearings (and fanless 
+heatsinks) reduces the need to halt at bedtime by a lot.....
 
-depends  on  how  large  edits  =)..  Like  video-editing requires big
-r/w performance.
-
-> Booting the machine seems like one activity that many users end up
-> waiting on the FS for.  Yes?
-
-Hopefully we do not have to reboot to often... :)
-
-> Starting up complex and big applications like xemacs and mozilla would 
-> be another.  Yes?
-
-True.. Many X-applications are reading much from disk...
-
-> Others?
-
-File-serving with big directories to multiple users... with both reads
-and writes over Samba or NFS.
-
-//Anders
-
-
-> Hans
-
-> PS
-
-> reiser4 performance is up a lot recently, and within two weeks I think 
-> cp -r will have been optimized as much as is worth doing.  cp -r 
-> accesses files in readdir order, and that does indeed seem worth 
-> optimizing, but soon we will need to optimize more sophisticated access 
-> patterns than that.....
-
-> Hans
+Hans
 
