@@ -1,53 +1,48 @@
-From: Spam <spam@tnonline.net>
+From: Tonnerre <tonnerre@thundrix.ch>
 Subject: Re: The argument for fs assistance in handling archives
-Date: Sun, 5 Sep 2004 16:13:33 +0200
+Date: Sun, 5 Sep 2004 16:42:59 +0200
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <264532836.20040905161333@tnonline.net>
-References: <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org>
- <4136A14E.9010303@slaphack.com>
- <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org>
- <4136C876.5010806@namesys.com>
- <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org>
- <4136E0B6.4000705@namesys.com> <4699bb7b04090202121119a57b@mail.gmail.com>
- <4136E756.8020105@hist.no> <4699bb7b0409020245250922f9@mail.gmail.com>
- <413829DF.8010305@hist.no> <20040905134428.GN26560@thundrix.ch>
-Reply-To: Spam <spam@tnonline.net>
+Message-ID: <20040905144259.GP26560@thundrix.ch>
+References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain> <20040902161130.GA24932@mail.shareable.org> <1094146912.31495.13.camel@shaggy.austin.ibm.com> <4137B9FC.7040708@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="iq/fWD14IMVFWBCD"
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040905134428.GN26560@thundrix.ch>
+Content-Disposition: inline
+In-Reply-To: <4137B9FC.7040708@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Tonnerre <tonnerre@thundrix.ch>
-Cc: Helge Hafting <helge.hafting@hist.no>, Oliver Hunt <oliverhunt@gmail.com>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: David Masover <ninja@slaphack.com>
+Cc: Dave Kleikamp <shaggy@austin.ibm.com>, Jamie Lokier <jamie@shareable.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
 
-  
+--iq/fWD14IMVFWBCD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Salut,
+Salut,
 
-> On Fri, Sep 03, 2004 at 10:22:55AM +0200, Helge Hafting wrote:
->> Requiring another syscall to open forks other than the primary
->> breaks _all_ existing software because it obviously don't use that
->> syscall yet.  And then it doesn't provide any advantages over the
->> file-as-plain-directory way. . .
+On Thu, Sep 02, 2004 at 07:25:32PM -0500, David Masover wrote:
+> This has further implications -- imagine a desktop, binary distro
+> shipped with all files except the very most basic stuff as package
+> archives.  They can all be extracted, on demand -- the first time I run
+> OpenOffice.org, it's installed.  If there needs to be post-installation,
+> that's handled by the .deb plugin (or whatever).
 
-> Actually...
+zsh using apt extensions does that.
 
-> We might tune the sys_open()  call to take an additional argument (the
-> stream ID),  and introduce a compatibility interface  into *libc which
-> chooses strid=0 by default if the plain old open call is being used.
+			Tonnerre
 
-> Maybe this can be handled transparently by cpp..
+--iq/fWD14IMVFWBCD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
-  How are things like copy handled today? Is it just some code linked
-  in during compilation (ie, the application handles the copy itself)
-  or is it a library function in libc? If it is in libc then it ought
-  to be enough if libc is patched to support the new semantics with
-  file-as-dir etc.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.9.2 (GNU/Linux)
 
-  ~S
+iD8DBQFBOyXz/4bL7ovhw40RAqu5AKCbcN6/aQuSABp3Jo95nfFpRAHtNgCfUjWH
+C1CQglecN2IvazLy146mndg=
+=4NOs
+-----END PGP SIGNATURE-----
 
-
-> 		Tonnerre
-
+--iq/fWD14IMVFWBCD--
