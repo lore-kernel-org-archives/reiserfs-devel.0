@@ -1,50 +1,93 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: The situation at hand and in the future
-Date: Fri, 28 May 2004 15:53:43 -0400
-Message-ID: <200405281953.i4SJrhbG017334@turing-police.cc.vt.edu>
-References: <20040527200127.GS4990@nysv.org> <200405272105.i4RL5LDh026210@turing-police.cc.vt.edu> <40B6670D.9060408@slaphack.com>
-            <20040528063324.GT4990@nysv.org>
+From: Alexy Khrabrov <list+reiserfs@setup.org>
+Subject: Re: assembling a file out of debugreiserfs's map
+Date: Fri, 28 May 2004 16:20:54 -0400
+Message-ID: <20040528202054.GA14543%alexy.khrabrov@setup.org>
+References: <20040528165533.GA12618%alexy.khrabrov@setup.org> <20040528192320.GA14111%alexy.khrabrov@setup.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-2014131533P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18895-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="wRRV7LY7NUeQGEoC"
+Return-path: <reiserfs-list-return-18896-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Fri, 28 May 2004 09:33:24 +0300."
-             <20040528063324.GT4990@nysv.org> 
+Content-Disposition: inline
+In-Reply-To: <20040528192320.GA14111%alexy.khrabrov@setup.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
-Cc: David Masover <ninja@slaphack.com>, reiserfs-list@namesys.com
+To: ReiserFS List <reiserfs-list@namesys.com>
 
---==_Exmh_-2014131533P
-Content-Type: text/plain; charset=us-ascii
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=windows-1251
+Content-Disposition: inline
 
-On Fri, 28 May 2004 09:33:24 +0300, Markus =?UNKNOWN?Q?T=F6rnqvist?= said:
 
-> Persistent over boots? I'd like the passphrase and key to survive
-> a boot...
+OK, I've restored the missing file, here's just to sum up what I've done
+so it may help others.
 
-No you don't.
+1.  debugreiserfs -n <filename> -a file.map /dev/device
+2.  debugreiserfs -f -a file.map /dev/device
+3.  [read around this thread for Vladimir's explanation of 
+     debugreiserfs output format...]
 
-If the passphrase and key are persistent, then an attacker can get your data.
+    saw these lines with data blocks:
 
-Think about it - the only reason an attacker doesn't have access to your
-data is because they don't have the passphrase/key.  If you leave them around,
-you've given away the keys to the kingdom.
+block 8142, item 0: 2572 2573 0x1 IND (1), len 3256, location 192 entry count 0, fsck need 0, format new
+814 pointers
+[ 2054932(814)]
+block 1271, item 0: 2572 2573 0x32e001 IND (1), len 228, location 3868 entry count 0, fsck need 0, format new
+57 pointers
+[ 2055746(9) 2055756(48)]
 
---==_Exmh_-2014131533P
-Content-Type: application/pgp-signature
+    and assembled like this:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+dd if=/dev/lev/raid bs=4096 count=814 skip=2054932 of=new.jpg
+dd if=/dev/lev/raid bs=4096 count=9   skip=2055746 >> new.jpg
+dd if=/dev/lev/raid bs=4096 count=48  skip=2055756 >> new.jpg
 
-iD8DBQFAt5jHcC3lWbTT17ARAp+5AJ4oMEGPmBcE2gsI0s7amuqA7qyfVQCfWAxL
-8dkKEPhrDePQCQ6uMYuugts=
-=IWhe
------END PGP SIGNATURE-----
+4.  Saw the size of the original in the metadata line:
 
---==_Exmh_-2014131533P--
+(NEW SD), mode -r-xr--r--, size 3563604, nlink 1, mtime 27/2004 11:25:38 blocks 6968, uid 500
+
+and truncated the file to that size with a wrapper script around the
+system truncate call (man 2 truncate), attached:
+
+truncate new.jpg 3563604
+
+et voila!
+
+Thanks to Vladimir, Vitaly, the author Hans Reiser of course, and all
+the great team at ReiserFS.  I use it since SuSE 7.1/2001 and am very
+happy with it!
+
+-- 
+Cheers,
+Alexy Khrabrov :: www.setup.org :: Age Quod Agis
+
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=windows-1251
+Content-Disposition: attachment; filename="truncate.c"
+
+#include <unistd.h>
+#include <stdio.h>
+
+int main(int argc, char **argv)
+{
+  int ex;
+  
+  if (argc !=3) {
+    printf("usage: %s <file> <new size>\n", argv[0]);
+    exit(1);
+  }
+
+  ex = truncate(argv[1], atol(argv[2]));
+
+  if (!ex)
+    printf("%s is now %s bytes long\n", argv[1], argv[2]);
+  else
+    printf("ERROR!");
+
+  return(ex);
+}  
+     
+				
+
+--wRRV7LY7NUeQGEoC--
