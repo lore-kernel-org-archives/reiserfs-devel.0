@@ -1,48 +1,57 @@
-From: Valdis.Kletnieks@vt.edu
+From: David Masover <ninja@slaphack.com>
 Subject: Re: The argument for fs assistance in handling archives
-Date: Thu, 02 Sep 2004 21:35:13 -0400
-Message-ID: <200409030135.i831ZDCE030095@turing-police.cc.vt.edu>
-References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <20040902002431.GN31934@mail.shareable.org> <413694E6.7010606@slaphack.com> <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org> <4136A14E.9010303@slaphack.com> <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org> <4136C876.5010806@namesys.com> <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org>
-            <4137C4B1.40308@slaphack.com>
+Date: Thu, 02 Sep 2004 20:39:19 -0500
+Message-ID: <4137CB47.1070805@slaphack.com>
+References: <20040826150202.GE5733@mail.shareable.org> <4136E0B6.4000705@namesys.com> <1117111836.20040902115249@tnonline.net> <200409021309.04780.oliver@neukum.org>            <4137BE36.5020504@slaphack.com> <200409030118.i831IUc6006797@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-13329608P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21386-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21387-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Thu, 02 Sep 2004 20:11:13 CDT."
-             <4137C4B1.40308@slaphack.com> 
+In-Reply-To: <200409030118.i831IUc6006797@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: David Masover <ninja@slaphack.com>
-Cc: Linus Torvalds <torvalds@osdl.org>, Hans Reiser <reiser@namesys.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Valdis.Kletnieks@vt.edu
+Cc: Oliver Neukum <oliver@neukum.org>, Spam <spam@tnonline.net>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
---==_Exmh_-13329608P
-Content-Type: text/plain; charset=us-ascii
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On Thu, 02 Sep 2004 20:11:13 CDT, David Masover said:
+Valdis.Kletnieks@vt.edu wrote:
+| On Thu, 02 Sep 2004 19:43:34 CDT, David Masover said:
+|
+|
+|>And on apps.  Should I teach OpenOffice.org to do version control?
+|>Seems a lot easier to just do it in the kernel, and teach everything to
+|>do version control in one fell swoop.
+|
+|
+| Including files you didn't really want to keep version control of?
 
-> It'd be like writing OpenGL entirely in software, before hardware
-> accelerators work, and at the last minute have to change the library to
-> use triangles instead of splines.
+No one said you have to apply it to everything.  Only that you can.
+Right now vim cannot do version control, AFAIK.  But you could do
+something like:
+	echo 1 > foo/version_control
+	vim foo
 
-I expect that SGI did a software-only version of IrisGL first, so they could
-figure out what the hardware accelerators needed to support.  And even then,
-the API for IrisGL got modified when it became OpenGL.....
-
-
---==_Exmh_-13329608P
-Content-Type: application/pgp-signature
-
+Default would be off, of course.
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iD8DBQFBN8pQcC3lWbTT17ARArtnAJ9pjublEw96yrSlIphHtU92I+1zhACfRYtj
-Y15nKf/qP89+UGC+xTbbAf4=
-=BhBB
+iQIVAwUBQTfLR3gHNmZLgCUhAQKybRAAkF4sqLUCJEfpDNvKEyv8MJGcy0w+qV12
+3Rf50OQeeurZMZrnli0vNIuSIWwIsGI+j7qbj1mlfi+Ps3dAjOlKXav3tGoGshLl
+HH/Wl9XvGPOAWlIQOqqBGAyno8sDIvHAjh5lH3C7m+9/2Ao7s1G/bQ+hm/deYPJK
+WPZxExd/1BdchrbjNjbfWHKrD6LdF/GBa/Vbj1F8m95WEvxsfbDnSTwb5HhvcUxD
+TtqwkINmx7Tle2p9q7PcgR7y76dmcyoWw82ST3BfF/AbGauMQAr0h6jNjvzclfgJ
+yrIOwGXdR3pn8ZK8dHVct79N0f+PYFdeAzLYxMZR2vefB2enQolbbs6Lf7X60g2g
+5hrH/ezenFJIZMPhQtlJqBaFuA5GHw9B2An6VbOmDm7sSOFyHSlKoCUFlJ/I5nZd
+Bcn46lhNxvTJhu3tvnvDqTB8f0/yVYt5QfoBFA1mzHKig2iNN6vr2xLGdWSLU6XD
+vRjy+KyVC+PvjL13E0JrjXy9UuqY7CH2xAunSgLJ2cvfRmNRoVoV1hkp3McQcUqF
+GiD3s0REcztlvsrP+DxKLRtPpnOJi5By5NmZpJkiPdVB9zpIsL/Ia7KL/A7IGGh3
+IF3t/xSUmjgrek01SeadHqsIngeWQ+F8fiars7NtzNhrvRgPVfDVheey3vhQjFxM
+3kDKH+I9rGk=
+=3+nq
 -----END PGP SIGNATURE-----
-
---==_Exmh_-13329608P--
