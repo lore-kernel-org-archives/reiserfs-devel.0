@@ -1,33 +1,345 @@
-From: Nick Vahalik <nick@nsanity.com>
-Subject: Re: Reiserfs Data Recovery (SOLVED)
-Date: Mon, 15 Mar 2004 09:48:52 -0600
-Message-ID: <4055D064.1000604@nsanity.com>
-References: <404E8665.7090305@nsanity.com> <200403111936.01548.vitaly@namesys.com> <40509A74.6080703@nsanity.com> <200403130001.57937.vitaly@namesys.com>
+From: julio menezes <jmenezes@netpar.com.br>
+Subject: Reiserfs make System Reboots
+Date: Mon, 15 Mar 2004 10:05:50 -0300
+Message-ID: <4055AA2E.8010505@netpar.com.br>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17223-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ boundary="------------070308010808010808060507"
+Return-path: <reiserfs-list-return-17224-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200403130001.57937.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Alright, so apparently it was the hardware... I'm not quite sure how, 
-exactly, but something appears to be up.  I borrowed a 200 G drive and 
-just dd'ed /dev/sda to /dev/sdb, and then reiserfscked /dev/sdb1... it 
-took a lot longer, but when It finished it got through pass 4 completely 
-and  had finished.  It had 6430 leaves it couldn't place, so they were 
-put in lost+found, and most (85%) of the files are completely intact, 
-but some of the bigger ones (divx/iso) were pretty tore up.  I also have 
-a couple of files that nautilus thinks are 1.5 exabytes, yes exabytes. 
+--------------070308010808010808060507
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
-It still amazes me that even after both the drives completely passed the 
-DFT, they are still acting strange.  Heh, silly Hitachi drives.
+Dear ReiserFs team.
 
-Thanks for your time, guys.
+Thanks for this nice file system.
 
-Nick Vahalik
+I would like to report a first crash after one year.
+I'm a linux new by so, it must be my fault.
+
+I was on the Internet using Netscape.
+After a power  failure, Netscape lost my mail-box.
+After that, any operation like tar or mkdir makes my system reboot.
+Some dir shows estrange files, they can not be removed, even as root.
+
+
+My system:
+Slackware 9.0 (as is, no patches)
+/dev/hda1 = dos
+/dev/hda2 = linux swap
+/dev/hda3 = linux /
+/dev/hda4 = /home (users accounts)
+
+I'm sending my dmesg and the same reports of reiserfsck.
+
+My steps:
+1- I made back-ups of my /etc and /home of my users.
+2- Reinstall the Slackware 9.0 - using Ext3 at /dev/hda3. I wanna try 
+Ext3 for a while.
+I have other hosts with reiserfs (Slackware 9.0 defaults)
+3- add every user on /dev/hda3 /home  (Certainly not in the same 
+sequence as I did before)
+4- run reiserfsck and rebuilt the tree on /dev/hda4.
+
+After that, the /dev/hda4 was OK but the owner and group was mixed, like 
+this.
+# mount -t reiserfs /dev/hda4 /mnt/hd -o ro
+ls -l /mnt/hd >> old-hda4-home.txt
+
+drwx--x--x   25 spam     users        1224 Mar 10 11:35 aeromapa
+drwx--x--x    4 opengl   users         160 Feb 12 17:47 aerosul
+drwx--x--x    2 wbib     users          80 Feb 13 08:07 cazeca
+drwx--x--x    5 programa users         304 Feb 20 18:30 clamav
+drwxr-xr-x   16 cmaismai users         728 Feb 12 16:58 cmaismais
+drwxr-xr-x    2 root     root           48 Feb 26  2001 ftp
+drwx--x--x   63 jmenezes users        2872 Mar 12 14:27 jmenezes
+drwxr-xr-x    2 root     root          160 Feb  8 20:58 lixo
+drwx------    2 root     root          112 Mar 14 18:31 lost+found
+drwxr-xr-x   39 cazeca   users        1528 Mar  5 14:46 opengl
+drwxrwxrwx    9 root     root         1256 Mar 10 11:18 pub
+drwx--x--x   15 aeromapa users         784 Feb 26 15:30 spam
+drwxr-x--x   28 aerosul  users        1104 Feb 20 12:42 wbib
+
+
+I know, it was my fault, I should keep the same ID for my users. I will 
+fix it.
+
+that is it.
+
+
+thanks again by the reiserfs.
+
+[]s
+julio menezes
+
+www.netpar.com.br/jmenezes
+
+
+
+
+--------------070308010808010808060507
+Content-Type: application/x-gzip;
+ name="reiserfs.chk.gz"
+Content-Transfer-Encoding: base64
+Content-Disposition: inline;
+ filename="reiserfs.chk.gz"
+
+H4sICA61VEAAA3JlaXNlcmZzLmNoawDt3U1zldeBruGpK79izw5Uubv1rO/X084kkx70ySyV
+SmEQMRUs+Qi54/z7I8DaAleqj9Y16MnZHiQ28GwRuGK27nfB+rfTKacXt29PpzJe/tv5H468
+/ObLv05f/vXV1zxsCmwqbBpsOmwGbCZsFmyO/U2uYAMOAg4CDgIOAg4CDgIOAg4CDgo4KOCg
+gIMCDgo4KOCggIMCDgo4KOCggoMKDio4qOCggoMKDio4qOCggoMKDho4aOCggYMGDho4aOCg
+gYMGDho4aOCgg4MODjo46OCgg4MODjo46OCgg4MODgY4GOBggIMBDgY4GOBggIMBDgY4GOBg
+goMJDiY4mOBggoMJDiY4mOBggoMJDhY4WOBggYMFDhY4WOBggYMFDhY4WODgAAfHtoNnv/Rj
+bvqyV6Xv96q9TYVNg02HzYDNhM2CzbG/+bVX7W3AQcBBwEHAQcBBwEHAQcBBwEEBBwUcFHBQ
+wEEBBwUcFHBQwEEBBwUcVHBQwUEFBxUcVHBQwUEFBxUcVHBQwUEDBw0cNHDQwEEDBw0cNHDQ
+wEEDBw0cdHDQwUEHBx0cdHDQwUEHBx0cdHDQwcEABwMcDHAwwMEABwMcDHAwwMEABwMcTHAw
+wcEEBxMcTHAwwcEEBxMcTHAwwcECBwscLHCwwMECBwscLHCwwMECBwscHODgAAcHODjAwQEO
+DnBwgIMDHBzg4Nh3kKt9B7nad5CrfQe52neQq30Hudp3kKt9B7nad5CrfQe5AgfQEwM9MdAT
+Az0x0BMDPTHQEwM9MdATAz0x0BMDPTHQEwM9MdATAz0x0BMDPTHQEwM9MdATAz0x0BMDPTHQ
+EwM9MdATAz0x0BMDPTHQEwM9MdATAz0x0BMDPTHQEwM9MdATAz0x0BOz3xOf+9Ln3xrx1fPt
+MZ7/Xvnx+fbWpsKmwabDZsBmwmbB5tjfPL4f3dqAg4CDgIOAg4CDgIOAg4CDgIMCDgo4KOCg
+gIMCDgo4KOCggIMCDgo4qOCggoMKDio4qOCggoMKDio4qOCggoMGDho4aOCggYMGDho4aOCg
+gYMGDho46OCgg4MODjo46OCgg4MODjo46OCgg4MBDgY4GOBggIMBDgY4GOBggIMBDgY4mOBg
+goMJDiY4mOBggoMJDiY4mOBggoMFDhY4WOBggYMFDhY4WOBggYMFDhY4OMDBAQ4OcHCAgwMc
+HODgAAcHODjAwbHv4Px8e2uz7+D8fHtrs+/g/Hx7a7Pv4Px8e2uz7+D8fHtrAw6gJwZ6YqAn
+BnpioCcGemKgJwZ6YqAnBnpioCcGemKgJwZ6YqAnBnpioCcGemKgJwZ6YqAnBnpioCcGemKg
+JwZ6YqAnBnpioCcGemKgJwZ6YqAnBnpioCcGemKgJwZ6YqAnBnpioCcGemKgJwZ6YqAnBnpi
+oCcGemKgJwZ6YqAnBnpioCcGemKgJwZ6YvZ74nNf+vxHWn511qOt53/e+HjWY2tTYdNg02Ez
+YDNhs2Bz7G8ePzfb2oCDgIOAg4CDgIOAg4CDgIOAgwIOCjgo4KA8Ofj+1Zu/vL9+9fa70/fv
+b1//7TTHmqN+e3p3f/3jh4d/B7y6eXPq353++MP16e93tzd/Pd3evbm+Oz2sP32L705/KldX
+Dz955eHX26tfcvrDf/z+9CIv//ztr1/RytV6+Iqr0/9++PKrl3/+3X//AeenD7j+3x+wlQfM
+//wD/voVv//Pf//j6UV5+JDP/3EB6wWsF7BewHoB6wWsV7BewXoF6xX+nVfBQQUHFRxUcFDB
+QQUHDRw0cNDAQQMHDRw0cNDAQQMHDRw0cNDBQQcHHRx0cNDBQQcHHRx0cNDBQQcHAxwMcDDA
+wQAHAxwMcDDAwQAHAxwMcDDBwQQHExxMcDDBwQQHExxMcDDBwQQHCxwscLDAwQIHCxwscLDA
+wQIHCxwscHCAgwMcHODgAAcHODjAwQEODnBwgINj38H5PMvWZt/B+TzL1mbfwfk8y9Zm38H5
+PMvWZt/B+TzL1gYcQDMNNNNAMw0000AzDTTTQDMNNNNAMw0000AzDTTTQDNNAQfQEwM9MdAT
+Az0x0BMDPTHQEwM9MdATAz0x0BMDPTHQEwM9MdATAz0x0BMDPTHQEwM9MdATAz0x0BMDPTH7
+PfG5L32+xvHr5+TH89+Pnp+T72wqbBpsOmwGbCZsFmyO/c35Pd/OBhwEHAQcBBwEHAQcBBwE
+HAQcFHBQwEEBBwUcFHBQwEEBBwUcFHBQwEEFBxUcVHBQwUEFBxUcVHBQwUEFBxUcNHDQwEED
+Bw0cNHDQwEEDBw0cNHDQwEEHBx0cdHDQwUEHBx0cdHDQwUEHBx0cDHAwwMEABwMcDHAwwMEA
+BwMcDHAwwMEEBxMcTHAwwcEEBxMcTHAwwcEEBxMcLHCwwMECBwscLHCwwMECBwscLHCwwMEB
+Dg5wcICDAxwc4OAABwc4OMDBAQ6OfQdPz5B3NvsOnp4h72z2HTw9Q97Z7Dt4eoa8s9l38PQM
+eWcDDqAnBnpioCcGemKgJwZ6YqAnBnpioCcGemKgJwZ6YqAnBnpioCcGemKgJwZ6YqAnBnpi
+oCcGemKgJwZ6YqAnBnpioCcGemKgJwZ6YqAnBnpioCcGemKgJwZ6YqAnBnpioCdmvyc+96Uf
+H7P+5q75+vz3sOe75nc2FTYNNh02AzYTNgs2x/7mfDfUzgYcBBwEHAQcBBwEHAQcBBwEHBRw
+UMBBAQcFHBRwUMBBAQcFHBRwUMBBBQcVHFRwUMFBBQcVHFRwUMFBBQcVHDRw0MBBAwcNHDRw
+0MBBAwcNHDRw0MBBBwcdHHRw0MFBBwcdHHRw0MFBBwcdHAxwMMDBAAcDHAxwMMDBAAcDHAxw
+MMDBBAcTHExwMMHBBAcTHExwMMHBBAcTHCxwsMDBAgcLHCxwsMDBAgcLHCxwsMDBAQ4OcHCA
+gwMcHODgAAcHODjAwQEOjn0HT3fN72z2HTzdNb+z2XfwdNf8zmbfwdNd8zubfQdPd83vbMAB
+9MRATwz0xEBPDPTEQE8M9MRATwz0xEBPDPTEQE8M9MRATwz0xEBPDPTEQE8M9MRATwz0xEBP
+DPTEQE8M9MRATwz0xEBPDPTEQE8M9MRATwz0xEBPDPTEQE8M9MRATwz0xEBPDPTEQE8M9MTs
+98TnvvTjI+DfPEfvz39Pfn6OvrOpsGmw6bAZsJmwWbA59jfn9707G3AQcBBwEHAQcBBwEHAQ
+cBBwUMBBAQcFHBRwUMBBAQcFHBRwUMBBAQcVHFRwUMFBBQcVHFRwUMFBBQcVHFRw0MBBAwcN
+HDRw0MBBAwcNHDRw0MBBAwcdHHRw0MFBBwcdHHRw0MFBBwcdHHRwMMDBAAcDHAxwMMDBAAcD
+HAxwMMDBAAcTHExwMMHBBAcTHExwMMHBBAcTHExwsMDBAgcLHCxwsMDBAgcLHCxwsMDBAgcH
+ODjAwQEODnBwgIMDHBzg4AAHBzg49h08PUff2ew7eHqOvrPZd/D0HH1ns+/g6Tn6zmbfwdNz
+9J0NOPiiJ368Iu6nV/c/fL4F7v312/vTm+v37358d//u5q+nv13/4/SnlId/V6c8/J/u6pf5
+/ReXvX28KO7+YXVz++b69CKjjjZfnn78+cP96fvr0/X/+fnV+9P97adv8vbd3cOXXr+//vH6
+5v5/ffj8wms+fNK71sOP1NUv6+HXt6cX/vu7+x/e3Zxf/F+ffa1cIHsGsmcgewayZyB7BrJn
+IHsGsmcgewayZyB7BrJnIHsGsmcgewayZyB7BrJnIHsGsmcgewayZyB7BrJnIHsGsmcgeway
+ZyB7BrJnIHsGsmcgewayZyB7BrJnIHsGsmcgewayZyB7BrJnIHsGsmf2s+dzX/rx6fbXxwrm
+1fM/RXk8VrC1qbBpsOmwGbCZsFmwOfY3j58GbG3AQcBBwEHAQcBBwEHAQcBBwEEBBwUcFHBQ
+wEEBBwUcFHBQwEEBBwUcVHBQwUEFBxUcVHBQwUEFBxUcVHBQwUEDBw0cNHDQwEEDBw0cNHDQ
+wEEDBw0cdHDQwUEHBx0cdHDQwUEHBx0cdHDQwcEABwMcDHAwwMEABwMcDHAwwMEABwMcTHAw
+wcEEBxMcTHAwwcEEBxMcTHAwwcECBwscLHCwwMECBwscLHCwwMECBwscHODgAAcHODjAwQEO
+DnBwgIMDHBzg4Nh3cD5WsLXZd3A+VrC12XdwPlawtdl3cD5WsLXZd3A+VrC1AQfQEwM9MdAT
+Az0x0BMDPTHQEwM9MdATAz0x0BMDPTHQEwM9MdATAz0x0BMDPTHQEwM9MdATAz0x0BMDPTHQ
+EwM9MdATAz0x0BMDPTHQEwM9MdATAz0x0BMDPTHQEwM9MdATAz0x0BMDPTHQEwM9MdATAz0x
+0BMDPTHQEwM9MdATAz0x0BMDPTHQEwM9MdATAz0x0BMDPTH7PfG5L/14HOJyduW8uZxduZxd
+uZxd+by5nF25nF25nF35vLmcXbmcXbmcXfm8uZxduZxduZxd+by5nF25nF25nF35vLmcXbmc
+XbmcXfm8uZxduZxduZxd+by5nF25nF25nF35vLmcXbmcXbmcXfm8uZxduZxduZxd+by5nF25
+nF25nF357V//zUs/Hm34+uxKOZ7/efDj2ZWtTYVNg02HzYDNhM2CzbG/efxcc2sDDgIOAg4C
+DgIOAg4CDgIOAg4KOCjgoICDAg4KOCjgoICDAg4KOCjgoIKDCg4qOKjgoIKDCg4qOKjgoIKD
+Cg4aOGjgoIGDBg4aOGjgoIGDBg4aOGjgoIODDg46OOjgoIODDg46OOjgoIODDg4GOBjgYICD
+AQ4GOBjgYICDAQ4GOBjgYIKDCQ4mOJjgYIKDCQ4mOJjgYIKDCQ4WOFjgYIGDBQ4WOFjgYIGD
+BQ4WOFjg4AAHBzg4wMEBDg5wcICDAxwc4OAAB8e+g/PZla3NvoPz2ZWtzb6D89mVrc2+g/PZ
+la3NvoPz2ZWtDTiAnhjoiYGeGOiJgZ4Y6ImBnhjoiYGeGOiJgZ4Y6ImBnhjoiYGeGOiJgZ4Y
+6ImBnpj9nvjcl358pPD1c6Y+N559FNhU2DTYdNgM2EzYLNgc+5vzNV87G3AQcBBwEHAQcBBw
+EHAQcBBwUMBBAQcFHBRwUMBBAQcFHBRwUMBBAQcVHFRwUMFBBQcVHFRwUMFBBQcVHFRw0MBB
+AwcNHDRw0MBBAwcNHDRw0MBBAwcdHHRw0MFBBwcdHHRw0MFBBwcdHHRwMMDBAAcDHAxwMMDB
+AAcDHAxwMMDBAAcTHExwMMHBBAcTHExwMMHBBAcTHExwsMDBAgcLHCxwsMDBAgcLHCxwsMDB
+AgcHODjAwQEODnBwgIMDHBzg4AAHBzg49h2cnzNtbfYdnJ8zbW32HZyfM21t9h2cnzNtbfYd
+nJ8zbW3AAfTEQE8M9MRATwz0xEBPDPTEQE8M9MRATwz0xEBPDPTEQE8M9MRATwz0xEBPDPTE
+QE8M9MRATwz0xEBPzBc98ftXb/7y5t3d9ev727t//OXd/fWP352+f3/7+m+njJI5vjv98Yfr
+0/lbnD5+i9Ofcjy8RS+9ztPVLzn9/g//eXpRX/759MOrD6dXp5vb+9NPd7c/Xd+9/8fHL/rh
++s3p+ub+Yfyivfzdxw/4/vrV268/zLefX7h8/nCvb+/ufv7p/mH36Uvf3v588+b04p9+0G9P
+769vTn2sh7+5ff3q/t3tzakcD58Yf/6Irx+m96dcfXt6++Hhg91cP7zmx3+4vfvx1f3p9v2b
+l797/o8a/D8BimqgqAaKaqCoBopqoKgGimqgqAaKaqCoBopqoKgGimqgqAaKaqCoBopqoKgG
+imqgqAaKavaL6nNf+vGB9m9ORmz8SVTnkxE7mwqbBpsOmwGbCZsFm2N/c/5MZmcDDgIOAg4C
+DgIOAg4CDgIOAg4KOCjgoICDAg4KOCjgoICDAg4KOCjgoIKDCg4qOKjgoIKDCg4qOKjgoIKD
+Cg4aOGjgoIGDBg4aOGjgoIGDBg4aOGjgoIODDg46OOjgoIODDg46OOjgoIODDg4GOBjgYICD
+AQ4GOBjgYICDAQ4GOBjgYIKDCQ4mOJjgYIKDCQ4mOJjgYIKDCQ4WOFjgYIGDBQ4WOFjgYIGD
+BQ4WOFjg4AAHBzg4wMEBDg5wcICDAxwc4OAAB8e+g6eTETubfQdPJyN2NvsOnk5G7Gz2HTyd
+jNjZ7Dt4OhmxswEH0BMDPTHQEwM9MdATAz0x0BMDPTHQEwM9MdATAz0x0BMDPTHQEwM9MdAT
+Az0x0BMDPTHQEwM9MdATAz0x0BMDPTHQEwM9MdATAz0x0BMDPTHQEwM9MdATAz0x0BMDPTHQ
+EwM9Mfs98bkv/fi48HLT+Xlzuen8ctP5F8+qtzaXm84vN51/8ax6a3O56fxy0/kXz6q3Npeb
+zi83nX/xrHpnc7np/HLT+TdfPKve2lxuOr/cdP7Fs+qtzeWm88tN5188q97aXG46v9x0/sWz
+6q3N5abzy03nXzyr3tpcbjq/3HT+xbPqrc3lpvPLTedfPKve2lxuOr/cdP7N5abzb7653HT+
+zTeXm86/+eZy0/k331xuOv+0udx0/v/tTeeff0q+PrtyVZ//efDj2ZWtTYVNg02HzYDNhM2C
+zbG/efxcc2sDDgIOAg4CDgIOAg4CDgIOAg4KOCjgoICDAg4KOCjgoICDAg4KOCjgoIKDCg4q
+OKjgoIKDCg4qOKjgoIKDCg4aOGjgoIGDBg4aOGjgoIGDBg4aOGjgoIODDg46OOjgoIODDg46
+OOjgoIODDg4GOBjgYICDAQ4GOBjgYICDAQ4GOBjgYIKDCQ4mOJjgYIKDCQ4mOJjgYIKDCQ4W
+OFjgYIGDBQ4WOFjgYIGDBQ4WOFjg4AAHBzg4wMEBDg5wcICDAxwc4OAAB8e+g/PZla3NvoPz
+2ZWtzbaD5770Yzr6TR8d0Ed3NhU2DTYdNgM2EzYLNsf+5txHdzbgIOAg4CDgIOAg4CDgIOAg
+4KCAgwIOCjgo4KCAgwIOCjgo4KCAgwIOKjio4KCCgwoOKjio4KCCgwoOKjio4KCBgwYOGjho
+4KCBgwYOGjho4KCBgwYOOjjo4KCDgw4OOjjo4KCDgw4OOjjo4GCAgwEOBjgY4GCAgwEOBjgY
+4GCAgwEOJjiY4GCCgwkOJjiY4GCCgwkOJjiY4GCBgwUOFjhY4GCBgwUOFjhY4GCBgwUODnBw
+gIMDHBzg4AAHBzg4wMEBDg5wcOw7eOqjO5t9B099dGez7+D8e/u2NvsOzr+37/mb5770Y6L6
+zR1ifb/dbm0qbBpsOmwGbCZsFmyO/c35z/zd2YCDgIOAg4CDgIOAg4CDgIOAgwIOCjgo4KCA
+gwIOCjgo4KCAgwIOCjio4KCCgwoOKjio4KCCgwoOKjio4KCCgwYOGjho4KCBgwYOGjho4KCB
+gwYOGjjo4KCDgw4OOjjo4KCDgw4OOjjo4KCDgwEOBjgY4GCAgwEOBjgY4GCAgwEOBjiY4GCC
+gwkOJjiY4GCCgwkOJjiY4GCCgwUOFjhY4GCBgwUOFjhY4GCBgwUOFjg4wMEBDg5wcICDAxwc
+4OAABwc4OMDBse/g6Q6xnc2+g6c7xHY2+w6e7hDb2ew7eLpDbGez7+DpDrGdDTiAnhjoiYGe
+GOiJgZ4Y6ImBnhjoiYGeGOiJgZ4Y6ImBnhjoiYGeGOiJgZ4Y6ImBnhjoiYGeGOiJgZ4Y6ImB
+nhjoiYGeGOiJgZ4Y6ImBnhjoiYGeGOiJgZ4Y6ImBnhjoiYGeGOiJgZ4Y6ImBnhjoiYGemP2e
++NyXfnzE+Jvn9Xn+e//z8/qdTYVNg02HzYDNhM2CzbG/Ob+/3tmAg4CDgIOAg4CDgIOAg4CD
+PDn4/tWbv7y7efPu7vr1/V/e3V//+N3p+/e3r//28P0v42p8d/rjD9enj19+ejGuHt4vj6uH
+X/CufsnpD//x+9OLvPz29P765uFLH/779vWr+3e3N6dSH34ur2/u7/5xen3788396eEr3354
+eMmb6+s3n/7h9u7HV/cP//j3l6cfXn043T98iIfvx+mn23c399d3pxfr5en+9vMXf/q+vJgP
+bzmvPn6wv//w7vUPp3cfTu9uTvd319enV+/vrl+9+cfvnv2/vYDnAp4LeC7guYDnAp4LeC7g
+uYDnAv9eq+CggoMKDio4qOCggoMKDio4qOCggoMGDho4aOCggYMGDho4aOCggYMGDho46OCg
+g4MODjo46OCgg4MODjo46OCgg4MBDgY4GOBggIMBDgY4GOBggIMBDgY4mOBggoMJDiY4mOBg
+goMJDiY4mOBggoMFDhY4WOBggYMFDhY4WOBggYMFDhY4OMDBAQ4OcHCAgwMcHODgAAcHODjA
+wbHv4Oncwc5m38HTuYOdzb6Dp3MHO5t9B0/nDnY2+w6ezh3sbMABdNFAFw100UAXDXTRQBcN
+dNFAFw100QQcQE8M9MRATwz0xEBPDPTEQE8M9MRATwz0xEBPDPTEQE8M9MRATwz0xEBPDPTE
+QE8M9MRATwz0xEBPDPTEQE8M9MRATwz0xEBPDPTEQE/Mfk987ks/Pib8+jn92Hiv/PicfmtT
+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
+--------------070308010808010808060507
+Content-Type: application/x-gzip;
+ name="reiserfs.debug.gz"
+Content-Transfer-Encoding: base64
+Content-Disposition: inline;
+ filename="reiserfs.debug.gz"
+
+H4sICJO1VEAAA3JlaXNlcmZzLmRlYnVnAG1STW/bMAw9V7+C6KkB0kGOE8fxLWkTrEPWAfk4
+FcUgy7St1pYCSc6S/vrRTlxsw3QwLIp8fHyPbKUqdGfnsQbnhccEpNFOUUDLMygH2niQJcp3
+zEDkHi1UwnmoTaO90gVjG1QObe7ANQd6TSsj30Hp608QgdHATyEfg8khN7YWHsIvEfxSvmx7
+6kzYDN5MY7Wo2EOL22Z25a4t9iVChkcliVwcRBMeRuy5qVNq1uYpX4uDS2A04WzRFakPyhzz
+WcRWFrFHupP/QN9D42iol2vrYQ81hEx4MQSLNNcRs9drwSCB6ZjzyYyzjSFVumgCQRgEMftD
+RxJNVih0dYamkwkztmuJlKiK0hM19lW4EvJGS69owI6GN+CM9aBFjTTNrZ3csh/pG1JKBkQL
+2rGoWTSk2wlm0xH7diEOB2GpiKxxCbt57JSCF37ir+zmuyiUbC/TKU+ljGcU27ZAcTALP5VR
+WlZNRm5C0DrUm0GERYZ2AHe5ss73jsaDFvcE3grtxGWECnVBdgZ8NL6iXnJS4WV5oT7j/K8n
+aepaeRAFQtg796k5pOeeRQKcrdxlOyFXWGUUOQXMpT+PNDJ1J++Z0iZDKFCjFR0j3W0IiR3z
+YMT2+6dHKrue+/98+sPW88VynQDbooe8EoVrl3m7IGnnu93mabHfLbfwsF7On9lvjCacrj4D
+AAA=
+--------------070308010808010808060507
+Content-Type: application/x-gzip;
+ name="dmesg.gz"
+Content-Transfer-Encoding: base64
+Content-Disposition: inline;
+ filename="dmesg.gz"
+
+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
+--------------070308010808010808060507--
+
