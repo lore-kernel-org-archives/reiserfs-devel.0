@@ -1,31 +1,55 @@
-From: Wolfgang Rohdewald <wolfgang@rohdewald.de>
-Subject: Re: file attributes destroyed.
-Date: Sun, 26 Oct 2003 18:05:21 +0100
-Message-ID: <200310261805.21481.wolfgang@rohdewald.de>
-References: <200310261227.18711.wolfgang@rohdewald.de> <200310261452.46275.wolfgang@rohdewald.de> <3F9BF652.1050303@namesys.com>
-Reply-To: wolfgang@rohdewald.de
+From: Dan Oglesby <d.oglesby@insightbb.com>
+Subject: ReiserFS v3 + millions of files?
+Date: Sun, 26 Oct 2003 21:46:28 -0600
+Message-ID: <200310262146.28850.d.oglesby@insightbb.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15888-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15889-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F9BF652.1050303@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-On 26.10.2003 17:29, Hans Reiser wrote:
-HR> Ah, wait, I forgot, did you ever use a kernel version older than 2.4.22 
-HR> on this fs?  Could the corruption be from that time?
+Greetings...
 
-I am not sure how old this file system is but it has certainly seen 2.4.20
-and 2.4.21.
+Long time ReiserFS user, first time I've had a problem.  Signed up for the 
+mailing list last week, and was surprised to see so little traffic (might be 
+a good thing?).
 
-However the files were still intact when I made my nightly backup last night.
-I'll try reiserfsck later.
+I'm running Red Hat 7.3 using a Red Hat 2.4.20 kernel.  The system has a 
+RAID-5 array via 3Ware 7500 controller, and three Western Digital 120GB 
+"Special Edition" hard drives.  The array is one filesystem, ReiserFS.  The 
+operating system, swap, and other files are stored on a hard drive that is on 
+the primary IDE controller off of the motherboard.
 
--- 
-Wolfgang
+The system is a single board computer, with a P4 3.06 GHz hyperthreaded 
+processor (kernel is SMP enabled), 512MB of RAM, and contains a mix of 
+ReiserFS and EXT2 filesystems on the primary drive (ReiserFS only on the 
+array).  No NFS.
+
+The array is used to store what will basically amount to more than one million 
+files with an average size of sixty kilobytes.
+
+During simulations for file writes, I'm seeing write performance begin to drop 
+dramatically after 800,000 files have been stored on the filesystem.
+
+The filesystem is being mounted with the following options:  
+defaults,notail,noatime,nodiratime
+
+The filesystem was created with default options, basically a "mkreiserfs /dev/
+sda1".
+
+Is this behavior I should expect from ReiserFS v3?
+
+This week I will be switching from a Red Hat kernel to a vanilla kernel (from 
+kernel.org), first the latest 2.4 kernel, then the latest 2.6 kernel.  After 
+that...  I dunno.
+
+Help?
+
+--Dan Oglesby
+
