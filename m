@@ -1,71 +1,72 @@
-From: John Dalbec <jpdalbec@ysu.edu>
-Subject: Re: Trying to port data-logging to RH 2.4.18-19.7.x kernel
-Date: Fri, 31 Jan 2003 16:28:19 -0500
-Message-ID: <3E3AEA73.1090607@ysu.edu>
-References: <3E3A8B15.80300@ysu.edu>	 <1044024906.15685.206.camel@tiny.suse.com>  <3E3A99A1.2010600@ysu.edu> <1044029165.15685.226.camel@tiny.suse.com>
+From: Alexander Lyamin <flx@msu.ru>
+Subject: Re:  reiserfs on redhat advanced server?
+Date: Sat, 1 Feb 2003 13:09:06 +0300
+Message-ID: <20030201130906.A18602@t-raenon.nmd.msu.ru>
+References: <20030130173522.3aa4d0e1.pegasus@nerv.eu.org> <3E397A19.60409@namesys.com> <20030130234142.E8448@vestdata.no> <3E3A6071.6060102@namesys.com> <20030131115333.GC15359@marowsky-bree.de> <20030131150852.A14386@t-raenon.nmd.msu.ru> <3E3A6A27.4060206@namesys.com>
+Reply-To: flx@msu.ru
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12601-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12602-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <3E3A6A27.4060206@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: flx@msu.ru, Lars Marowsky-Bree <lmb@suse.de>, Ragnar Kj?rstad <reiserfs@ragnark.vestdata.no>, Jure Pecar <pegasus@nerv.eu.org>, reiserfs-list@namesys.com
 
-Chris Mason wrote:
-> On Fri, 2003-01-31 at 10:43, John Dalbec wrote:
-> 
->>Chris Mason wrote:
->>
->>>On Fri, 2003-01-31 at 09:41, John Dalbec wrote:
->>>
->>>
->>>>I'm trying to port Chris's data-logging patches to the Red Hat 
->>>>2.4.18-19.7.x kernel.  My first effort works fine on my workstation with 
->>>>ReiserFS and NFS, but not on the production server:
->>>>
->>>>
->>>>
->>>>>Jan 31 05:47:28 mail03 kernel: search_by_key called without kernel lock held
->>>>
->>>This is a debugging check that shows our search_by_key function was
->>>called without first taking the big kernel lock, and the trace below
->>>shows it happened during a call to reiserfs_read_inode2.  So, what you
->>>need to do is put lock_kernel() calls into reiserfs_read_inode2, or more
->>>likely into reiserfs_lookup.
->>
->>I don't see reiserfs_lookup in the stack trace, and it already calls 
->>reiserfs_check_lock_depth.  Why would I need lock_kernel there?
->>Red Hat's low-latency patch puts a conditional_schedule at the top of 
->>search_by_key.  Would that cause the kernel lock to be dropped?  I see
->>/* The function is NOT SCHEDULE-SAFE! */
->>
-> 
-> 
-> Must be the iget4 path then, probably triggered by nfs.  The locking
-> rules say the BKL is supposed to be held when you call read_inode.  The
-> fix would either to be finding the caller or just adding lock_kernel
-> calls to reiserfs_read_inode2.  It is safe to nest them, so adding them
-> won't cause problems.
-> 
-> The BKL is dropped during a schedule, but taken again before returning
-> control to the calling function, so that low latency patch probably
-> isn't causing problems.  I'm assuming they are using Andrew Morton's low
-> latency patch, which doesn't cause problems.
-> 
-> -chris
-> 
-> 
-> 
+Fri, Jan 31, 2003 at 03:20:55PM +0300, Hans Reiser wrote:
+> You are not a typical sysadmin, you work for an organization with ~10 
+> full-time kernel hackers, and the percentage of companies out there who 
+> can say that their average computer users are as skilled as any of 
+> SuSE's staff is not very high you know....
 
-The immediate caller is the "ReiserFS specific hack" in 
-fs/inode.c:get_inode signed <mason@suse.com>.  Is the BKL supposed to be 
-held when get_inode is called?  I don't see it documented either way in 
-Documentation/filesystems/Locking.  It looks easier to add lock_kernel 
-calls there than in read_inode2 (assuming they're supposed to last 
-through the entire function call).
-John
+Some linux-kernel hackers still do some stupid things userland :) sometimes...
+Wont go in details.
 
+> 
+> Most companies do indeed have a real need for tech support.  If the 
+> distros don't support official stable linux kernels, it is a serious 
+> social problem for our community, as it will substantially reduce the 
+> user base for those kernels in corporate environments.  It is especially 
+> a problem if the largest vendor does it.
+But thats quite a GOOD point. Its excellent point actually, worth broughting
+it in LKML. Its a problem and its a solution. indeed.
+
+All the idea of open-source and linux is that you could take a turn from
+"railroad" anywhere you wont, and while its an effort theres ussually a benefits
+which are worthy of effort. 
+
+In propietary software if something gone wrong (and its ussually does when you
+leaving "railroad") you left to reverce engeneering (effort*10, and DMCA wont like that) or merciless tech.support (merciless people quite often stupid also).
+
+> Hans
+> 
+> Alexander Lyamin wrote:
+> 
+> >Fri, Jan 31, 2003 at 12:53:34PM +0100, Lars Marowsky-Bree wrote:
+> > 
+> >
+> >>On 2003-01-31T14:39:29,
+> >>  Hans Reiser <reiser@namesys.com> said:
+> >>
+> >>   
+> >>
+> >>>If you want a stable kernel for a mission critical server, the only 
+> >>>thing that works is to ask around and find out what Marcelo kernel has 
+> >>>been known stable for at least 6 weeks.
+> >>>     
+> >>>
+> >>And lose all support from RH or SuSE because you installed a non-supported
+> >>kernel image ;-) And thus violate the Oracle cert, the SAP cert (well, if 
+> >>RH
+> >>had one), etc pp.
+> >>
+> >>Just something you can't do in some environments.
+
+-- 
+"Cache remedies via multi-variable logic shorts will leave you crying."(cl)
+Lex Lyamin
