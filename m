@@ -1,159 +1,219 @@
-From: "Doug Wicks" <doug@ccbill.com>
-Subject: FW: Bitmap alignment issues....
-Date: Wed, 9 Feb 2005 11:41:12 -0700
-Message-ID: <889A47B16278164FB657E0FFB1CAB8C75ED299@hq-exchange.ccbill-hq.local>
+From: Peter Klotz <peter.klotz@aon.at>
+Subject: Patch to fix typos in reiser4progs 1.0.3
+Date: Wed, 09 Feb 2005 22:19:58 +0100
+Message-ID: <420A7E7E.3050709@aon.at>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
-	boundary="----_=_NextPart_001_01C50ED6.EE325C84"
+ boundary="------------060805060807030706030702"
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-list@namesys.com
 
-------_=_NextPart_001_01C50ED6.EE325C84
+--------------060805060807030706030702
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+
+I attached a patch that fixes a few typos in reiser4progs 1.0.3.
+
+Best regards, Peter.
+
+--------------060805060807030706030702
 Content-Type: text/plain;
-	charset="US-ASCII"
-Content-Transfer-Encoding: quoted-printable
+ name="reiser4progs-1.0.3-typos.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="reiser4progs-1.0.3-typos.patch"
 
-How can I be taken off of this list?
+diff -burN reiser4progs-1.0.3/INSTALL_README reiser4progs-1.0.3.patch/INSTALL_README
+--- reiser4progs-1.0.3/INSTALL_README	2003-12-29 23:16:42.000000000 +0100
++++ reiser4progs-1.0.3.patch/INSTALL_README	2005-02-09 21:55:26.000000000 +0100
+@@ -3,7 +3,7 @@
+ ./one_touch_install
+ 
+ This will check if configure script is in place and then runs it. 
+-After configuring if finished, package will built and installed.
++After configuring is finished, package will be built and installed.
+ 
+-Or if you want to have a full control on build process and/or specify
++Or if you want to have full control on build process and/or specify
+ some options, read CUSTOM_INSTALL_README please.
+diff -burN reiser4progs-1.0.3/libmisc/misc.c reiser4progs-1.0.3.patch/libmisc/misc.c
+--- reiser4progs-1.0.3/libmisc/misc.c	2004-10-21 15:04:36.000000000 +0200
++++ reiser4progs-1.0.3.patch/libmisc/misc.c	2005-02-09 21:40:15.000000000 +0100
+@@ -248,7 +248,7 @@
+ #endif /* defined(MOUNTED) || defined(_PATH_MOUNTED) */
+ 	
+ 	/* If has not been checked in neither /proc/mounts nor /etc/mtab (or 
+-	   errors have occured), return INVAL_PTR, NULL otherwise. */
++	   errors have occurred), return INVAL_PTR, NULL otherwise. */
+ 	return (!proc && !path) ? INVAL_PTR : NULL;
+ }
+ 
+diff -burN reiser4progs-1.0.3/libreiser4/tree.c reiser4progs-1.0.3.patch/libreiser4/tree.c
+--- reiser4progs-1.0.3/libreiser4/tree.c	2004-12-08 10:38:12.000000000 +0100
++++ reiser4progs-1.0.3.patch/libreiser4/tree.c	2005-02-09 21:40:41.000000000 +0100
+@@ -1799,7 +1799,7 @@
+ 					  cbias, &place->pos);
+ 
+ 		/* Check if we should finish lookup because we reach stop level
+-		   or some error occured during last node lookup. */
++		   or some error occurred during last node lookup. */
+ 		if (clevel <= hint->level || res < 0) {
+ 			if (res == PRESENT) {
+ #ifndef ENABLE_MINIMAL
+diff -burN reiser4progs-1.0.3/progs/fsck/fsck.c reiser4progs-1.0.3.patch/progs/fsck/fsck.c
+--- reiser4progs-1.0.3/progs/fsck/fsck.c	2004-12-06 22:46:41.000000000 +0100
++++ reiser4progs-1.0.3.patch/progs/fsck/fsck.c	2005-02-09 21:37:52.000000000 +0100
+@@ -58,7 +58,7 @@
+ 		break;
+ 	case RM_FIX:
+ 		aal_mess("Will fix minor corruptions of "
+-			 "the Reiser4 SuperBblock.");
++			 "the Reiser4 SuperBlock.");
+ 		break;
+ 	case RM_BUILD:
+ 		aal_mess("Will build the Reiser4 SuperBlock.");
+@@ -140,7 +140,7 @@
+ 		{"no-log", no_argument, NULL, 'n'},
+ 		{"auto", no_argument, NULL, 'a'},
+ 		{"force", no_argument, NULL, 'f'},
+-		{"cashe", required_argument, 0, 'c'},
++		{"cache", required_argument, 0, 'c'},
+ 		{"override", required_argument, NULL, 'o'},
+ 		/* Fsck hidden options. */
+ 		{"passes-dump", required_argument, 0, 'U'},
+@@ -570,7 +570,7 @@
+ 	/* Report about the results. */
+ 	if (res < 0 || ex == OPER_ERROR) {
+ 		ex = OPER_ERROR;
+-		fprintf(stderr, "Operational error occured while fscking.\n");
++		fprintf(stderr, "Operational error occurred while fscking.\n");
+ 		goto free_fsck;
+ 	} 
+ 	
+diff -burN reiser4progs-1.0.3/progs/measurefs/measurefs.c reiser4progs-1.0.3.patch/progs/measurefs/measurefs.c
+--- reiser4progs-1.0.3/progs/measurefs/measurefs.c	2004-12-06 19:24:59.000000000 +0100
++++ reiser4progs-1.0.3.patch/progs/measurefs/measurefs.c	2005-02-09 21:46:59.000000000 +0100
+@@ -102,7 +102,7 @@
+ }
+ 
+ /* Handler for region callback for an item. Its objective is to check if region
+-   start is not next to current value. If so -- counting bad occurence. */
++   start is not next to current value. If so -- counting bad occurrence. */
+ static errno_t tree_frag_process_item(uint64_t start, 
+ 				      uint64_t count, 
+ 				      void *data) 
+@@ -119,11 +119,11 @@
+ 	/* Calculating delta with current value region end. */
+ 	delta = hint->curr - start;
+ 
+-	/* Check if delat is more than one. If so -- bad occurence. */
++	/* Check if delta is more than one. If so -- bad occurrence. */
+ 	if (labs(delta) > 1)
+ 		hint->bad++;
+ 
+-	/* Counting total regions and updating current blk, whci hwill be used
++	/* Counting total regions and updating current blk, which will be used
+ 	   for calculating next delta. */
+ 	hint->total += count;
+ 	hint->curr = start + count - 1;
+@@ -133,7 +133,7 @@
+ 
+ /* Traverse passed @node and calculate tree fragmentation for it. The results
+    are stored in @frag_hint structure. This function is called from the tree
+-   traversal routine for each internal node. See bellow for details. */
++   traversal routine for each internal node. See below for details. */
+ static errno_t tree_frag_process_node(reiser4_node_t *node, void *data) {
+ 	pos_t pos;
+ 	static int bogus = 0;
+@@ -153,7 +153,7 @@
+ 			return -EINVAL;
+ 		}
+ 
+-		/* FIXME: touch eaery time. show once per second. */
++		/* FIXME: touch every time. show once per second. */
+ 		if (frag_hint->gauge && pos.item == 0 && bogus++ % 128 == 0)
+ 			aal_gauge_touch(frag_hint->gauge);
+ 		
+@@ -177,7 +177,7 @@
+ }
+ 
+ /* Entry point for calculating tree fragmentation. It zeroes out all counters in
+-   structure which wiil be passed to actual routines and calls tree_traverse
++   structure which will be passed to actual routines and calls tree_traverse
+    function with couple of callbacks for handling all traverse cases (open node,
+    traverse node, etc). Actual statistics collecting is performed in the passed
+    callbacks and subcallbacks (for item traversing). */
+@@ -341,7 +341,7 @@
+ 		stat_hint->branches_used /= (stat_hint->branches + 1);
+ 	}
+ 
+-	/* Loop though all node items and calling item->layout() method in odrer
++	/* Loop through all node items and calling item->layout() method in order
+ 	   to calculate all blocks item references.*/
+ 	for (pos.item = 0; pos.item < reiser4_node_items(node);
+ 	     pos.item++)
+@@ -357,7 +357,7 @@
+ 		}
+ 
+ 		/* Calculating item count. This probably should be done in more
+-		   item type independant manner. */
++		   item type independent manner. */
+ 		stat_hint->items++;
+ 
+ 		switch (place.plug->id.group) {
+@@ -471,7 +471,7 @@
+ 	printf("Item statistics:\n");
+ 	printf("  Total items:%*llu\n", 15, stat_hint.items);
+ 	printf("  Nodeptr items:%*llu\n", 13, stat_hint.nodeptrs);
+-	printf("  Statadata items:%*llu\n", 11, stat_hint.statdatas);
++	printf("  Statdata items:%*llu\n", 11, stat_hint.statdatas);
+ 	printf("  Direntry items:%*llu\n", 12, stat_hint.direntries);
+ 	printf("  Tail items:%*llu\n", 16, stat_hint.tails);
+ 	printf("  Extent items:%*llu\n", 14, stat_hint.extents);
+@@ -568,7 +568,7 @@
+ 	if (frag_hint->level > LEAF_LEVEL)
+ 		return 0;
+ 	
+-	/* The loop though the all items in current node */
++	/* The loop through all the items in current node */
+ 	for (pos.item = 0; pos.item < reiser4_node_items(node);
+ 	     pos.item++)
+ 	{
+@@ -586,7 +586,7 @@
+ 		if (!reiser4_item_statdata(&place))
+ 			continue;
+ 
+-		/* Opening object by its stat data item denoded by @place */
++		/* Opening object by its stat data item denoted by @place */
+ 		if (!(object = reiser4_object_open(tree, NULL, &place)))
+ 			continue;
+ 
+@@ -598,8 +598,8 @@
+ 		if (frag_hint->gauge && pos.item == 0)
+ 			aal_gauge_touch(frag_hint->gauge);
+ 
+-		/* Calling calculating the file fragmentation by emans of using
+-		   the function we have seen abowe. */
++		/* Calling calculating the file fragmentation by means of using
++		   the function we have seen above. */
+ 		if (reiser4_object_layout(object, file_frag_process_blk, data)) {
+ 			aal_error("Can't enumerate data blocks occupied by %s", 
+ 				  reiser4_print_inode(&object->ent->object));
+diff -burN reiser4progs-1.0.3/TODO reiser4progs-1.0.3.patch/TODO
+--- reiser4progs-1.0.3/TODO	2004-03-03 10:10:34.000000000 +0100
++++ reiser4progs-1.0.3.patch/TODO	2005-02-09 21:53:59.000000000 +0100
+@@ -13,7 +13,7 @@
+   directory in librepair. Move all repair code from libreiser4/plugin/*
+   to librepair/plugin/*.
+ 
+-* fix unalligned access on Itanium2.
++* fix unaligned access on Itanium2.
+ 
+ * dumpfs utility.
+ 
 
-doug@cavecreek.com
-doug@ccbill.com
-
-
-Thank you
-
-=20
-Douglas Wicks, Ph.D.
-CCBill, Cavecreek Director of Sales
-888-906-0666  x154 office
-480-449-8811 direct line
-icq # 68622974
-www.ccbill.com   www.cavecreek.com   www.drmnetworks.com=20
-=20
-
------Original Message-----
-From: Alex Zarochentsev [mailto:zam@namesys.com]=20
-Sent: Wednesday, February 09, 2005 11:19 AM
-To: Tom Evans
-Cc: reiserfs-list@namesys.com
-Subject: Re: Bitmap alignment issues....
-
-hello,
-
-On Wed, Feb 09, 2005 at 12:59:17PM -0500, Tom Evans wrote:
->=20
-> Hi All -
->=20
-> I am new to the list - I have been using Reiser4 on Linux/Alpha
-> for several months now and like very much what it offers.
->=20
-> (I use a -mm kernel from kernel.org with a Debian distro)
->=20
-> Recently I became aware or a large number or alignment fixups
-> occurring in the kernel, specifically in the reiser4 code.
->=20
-> (My machine(s) would occasionally slow to a crawl when doing
->  intense disk i/o - I thought it was because I had recently
->  started using IDE drives in my systems (the IDE controllers
->  on these boards are notoriously slow) ).
->=20
-> I determined that 50k+ alignment faults were happening
-> per second - I traced the majority down to these 3 functions:
->=20
-> 1) reiser4_find_next_set_bit  (in fs/reiser4/plugins/space/bitmap.c)
-> 2) find_next_zero_bit (in asm/bitops.h)
-> 3) replace_extent (in fs/reiser4/plugins/item/extent.c)
->=20
-> The first 2 accounted for ~4million faults during boot - essentially,
-> the base address of the bit array is not aligned properly
-> for ulong accesses on Alpha (which are 64bit).
->=20
-> I worked around this by using "get_unaligned()" for the array
-> accesses in #1 and implemented a version of "find_next_zero_bit"
-> local to reiser4 that handles unaligned base addresses (no need
-> for all other users of the function to suffer the same performance
-hit).
->=20
-> Those 2 changes brought the number of alignment fixups to 0 on a boot
--=20
-> the #3 issue accounts for a very small number of fixups - I have not
-> yet found the exact location.
->=20
-> While these changes eliminated the faults, they are not optimal,
-> get_unaligned() adds many cycles over a standard load.
->=20
-> I wanted to see if anyone here was already familiar with this issue
-and
-> what the process would be for getting it addressed.
-
-it is known. ca you try the attached patch?
-
->=20
-> Thanks for your patience!
->=20
-> ...tom
->=20
-
---=20
-Alex.
-
-------_=_NextPart_001_01C50ED6.EE325C84
-Content-Type: text/plain;
-	name="bitmap-word-align-2.diff"
-Content-Transfer-Encoding: base64
-Content-Description: bitmap-word-align-2.diff
-Content-Disposition: attachment;
-	filename="bitmap-word-align-2.diff"
-
-PT09PT0gcGx1Z2luL3NwYWNlL2JpdG1hcC5jIDEuMTg2IHZzIGVkaXRlZCA9PT09PQ0KLS0tIDEu
-MTg2L3BsdWdpbi9zcGFjZS9iaXRtYXAuYwlXZWQgSmFuIDE5IDE4OjUyOjUyIDIwMDUNCisrKyBl
-ZGl0ZWQvcGx1Z2luL3NwYWNlL2JpdG1hcC5jCVN1biBGZWIgIDYgMTk6MjM6MDEgMjAwNQ0KQEAg
-LTU0LDEzICs1NCwxNSBAQA0KIA0KICNkZWZpbmUgQ0hFQ0tTVU1fU0laRSAgICA0DQogDQorI2Rl
-ZmluZSBCWVRFU19QRVJfTE9ORyAgIChzaXplb2YobG9uZykpDQorDQogI2lmIEJJVFNfUEVSX0xP
-TkcgPT0gNjQNCiAjICBkZWZpbmUgTE9OR19JTlRfU0hJRlQgKDYpDQogI2Vsc2UNCiAjICBkZWZp
-bmUgTE9OR19JTlRfU0hJRlQgKDUpDQogI2VuZGlmDQogDQotI2RlZmluZSBMT05HX0lOVF9NQVNL
-IChCSVRTX1BFUl9MT05HIC0gMSkNCisjZGVmaW5lIExPTkdfSU5UX01BU0sgKEJJVFNfUEVSX0xP
-TkcgLSAxVUwpDQogDQogdHlwZWRlZiB1bnNpZ25lZCBsb25nIHVsb25nX3Q7DQogDQpAQCAtMTc5
-LDE3ICsxODEsNDYgQEANCiANCiAjaW5jbHVkZSA8YXNtL2JpdG9wcy5oPg0KIA0KKyNpZiBCSVRT
-X1BFUl9MT05HID09IDY0DQorDQorI2RlZmluZSBPRkYoYWRkcikgICgoKHVsb25nX3QpKGFkZHIp
-ICYgKEJZVEVTX1BFUl9MT05HIC0gMSkpIDw8IDMpDQorI2RlZmluZSBCQVNFKGFkZHIpICgodWxv
-bmdfdCopICgodWxvbmdfdCkoYWRkcikgJiB+KEJZVEVTX1BFUl9MT05HIC0gMSkpKQ0KKw0KK3N0
-YXRpYyBpbmxpbmUgdm9pZCByZWlzZXI0X3NldF9iaXQoaW50IG5yLCB2b2lkICogYWRkcikNCit7
-DQorCWV4dDJfc2V0X2JpdChuciArIE9GRihhZGRyKSwgQkFTRShhZGRyKSk7DQorfQ0KKw0KK3N0
-YXRpYyBpbmxpbmUgdm9pZCByZWlzZXI0X2NsZWFyX2JpdChpbnQgbnIsIHZvaWQgKiBhZGRyKQ0K
-K3sNCisJZXh0Ml9jbGVhcl9iaXQobnIgKyBPRkYoYWRkciksIEJBU0UoYWRkcikpOw0KK30NCisN
-CitzdGF0aWMgaW5saW5lIGludCByZWlzZXI0X3Rlc3RfYml0KGludCBuciwgdm9pZCAqIGFkZHIp
-DQorew0KKwlyZXR1cm4gZXh0Ml90ZXN0X2JpdChuciArIE9GRihhZGRyKSwgQkFTRShhZGRyKSk7
-DQorfQ0KK3N0YXRpYyBpbmxpbmUgaW50IHJlaXNlcjRfZmluZF9uZXh0X3plcm9fYml0KHZvaWQg
-KiBhZGRyLCBpbnQgbWF4b2Zmc2V0LCBpbnQgb2Zmc2V0KSANCit7DQorCWludCBvZmYgPSBPRkYo
-YWRkcik7DQorDQorCXJldHVybiBleHQyX2ZpbmRfbmV4dF96ZXJvX2JpdChCQVNFKGFkZHIpLCBt
-YXhvZmZzZXQgKyBvZmYsIG9mZnNldCArIG9mZikgLSBvZmY7DQorfQ0KKw0KKyNlbHNlDQorDQog
-I2RlZmluZSByZWlzZXI0X3NldF9iaXQobnIsIGFkZHIpICAgIGV4dDJfc2V0X2JpdChuciwgYWRk
-cikNCiAjZGVmaW5lIHJlaXNlcjRfY2xlYXJfYml0KG5yLCBhZGRyKSAgZXh0Ml9jbGVhcl9iaXQo
-bnIsIGFkZHIpDQogI2RlZmluZSByZWlzZXI0X3Rlc3RfYml0KG5yLCBhZGRyKSAgZXh0Ml90ZXN0
-X2JpdChuciwgYWRkcikNCiANCiAjZGVmaW5lIHJlaXNlcjRfZmluZF9uZXh0X3plcm9fYml0KGFk
-ZHIsIG1heG9mZnNldCwgb2Zmc2V0KSBcDQogZXh0Ml9maW5kX25leHRfemVyb19iaXQoYWRkciwg
-bWF4b2Zmc2V0LCBvZmZzZXQpDQorI2VuZGlmDQogDQogLyogU2VhcmNoIGZvciBhIHNldCBiaXQg
-aW4gdGhlIGJpdCBhcnJheSBbQHN0YXJ0X29mZnNldCwgQG1heF9vZmZzZXRbLCBvZmZzZXRzDQog
-ICogYXJlIGNvdW50ZWQgZnJvbSBAYWRkciwgcmV0dXJuIHRoZSBvZmZzZXQgb2YgdGhlIGZpcnN0
-IGJpdCBpZiBpdCBpcyBmb3VuZCwNCiAgKiBAbWF4b2Zmc2V0IG90aGVyd2lzZS4gKi8NCi1zdGF0
-aWMgYm1hcF9vZmZfdCByZWlzZXI0X2ZpbmRfbmV4dF9zZXRfYml0KA0KK3N0YXRpYyBibWFwX29m
-Zl90IF9fcmVpc2VyNF9maW5kX25leHRfc2V0X2JpdCgNCiAJdm9pZCAqYWRkciwgYm1hcF9vZmZf
-dCBtYXhfb2Zmc2V0LCBibWFwX29mZl90IHN0YXJ0X29mZnNldCkNCiB7DQogCXVsb25nX3QgKmJh
-c2UgPSBhZGRyOw0KQEAgLTIyNSw2ICsyNTYsMjEgQEANCiANCiAJcmV0dXJuIG1heF9vZmZzZXQ7
-DQogfQ0KKw0KKyNpZiBCSVRTX1BFUl9MT05HID09IDY0IA0KKw0KK3N0YXRpYyBibWFwX29mZl90
-IHJlaXNlcjRfZmluZF9uZXh0X3NldF9iaXQoDQorCXZvaWQgKmFkZHIsIGJtYXBfb2ZmX3QgbWF4
-X29mZnNldCwgYm1hcF9vZmZfdCBzdGFydF9vZmZzZXQpDQorew0KKwlibWFwX29mZl90IG9mZiA9
-IE9GRihhZGRyKTsNCisNCisJcmV0dXJuIF9fcmVpc2VyNF9maW5kX25leHRfc2V0X2JpdChCQVNF
-KGFkZHIpLCBtYXhfb2Zmc2V0ICsgb2ZmLCBzdGFydF9vZmZzZXQgKyBvZmYpIC0gb2ZmOw0KK30N
-CisNCisjZWxzZQ0KKyNkZWZpbmUgcmVpc2VyNF9maW5kX25leHRfc2V0X2JpdChhZGRyLCBtYXhf
-b2Zmc2V0LCBzdGFydF9vZmZzZXQpIFwNCisgIF9fcmVpc2VyNF9maW5kX25leHRfc2V0X2JpdChh
-ZGRyLCBtYXhfb2Zmc2V0LCBzdGFydF9vZmZzZXQpIA0KKyNlbmRpZg0KIA0KIC8qIHNlYXJjaCBm
-b3IgdGhlIGZpcnN0IHNldCBiaXQgaW4gc2luZ2xlIHdvcmQuICovDQogc3RhdGljIGludCBmaW5k
-X2xhc3Rfc2V0X2JpdF9pbl93b3JkICh1bG9uZ190IHdvcmQsIGludCBzdGFydF9iaXQpDQo=
-
-------_=_NextPart_001_01C50ED6.EE325C84--
+--------------060805060807030706030702--
