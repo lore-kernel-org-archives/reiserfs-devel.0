@@ -1,42 +1,35 @@
-From: Chris Mason <mason@suse.com>
+From: Marc-Christian Petersen <m.c.p@gmx.net>
 Subject: Re: [PATCH] new data logging and quota patches available
-Date: 24 Feb 2003 13:08:26 -0500
-Message-ID: <1046110105.16042.515.camel@tiny.suse.com>
-References: <1045870331.16048.325.camel@tiny.suse.com>
-	 <1046020695.16048.409.camel@tiny.suse.com>
-	 <3E59787F.2030009@mb.tu-ilmenau.de>  <200302241859.16343.m.c.p@gmx.net>
+Date: Mon, 24 Feb 2003 19:11:52 +0100
+Message-ID: <200302241911.45646.m.c.p@gmx.net>
+References: <1045870331.16048.325.camel@tiny.suse.com> <200302241859.16343.m.c.p@gmx.net> <1046110105.16042.515.camel@tiny.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12895-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12896-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200302241859.16343.m.c.p@gmx.net>
+In-Reply-To: <1046110105.16042.515.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Marc-Christian Petersen <m.c.p@gmx.net>
+To: Chris Mason <mason@suse.com>
 Cc: reiserfs-list <reiserfs-list@namesys.com>, Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
 
-On Mon, 2003-02-24 at 12:59, Marc-Christian Petersen wrote:
-> On Monday 24 February 2003 02:42, Manuel Krause wrote:
-> 
-> Hi Manuel,
-> 
-> > I see a performance decrease with my copies in data=ordered mode by
-> > about 7.5% compared to the 2.4.20-pre10-data-logging (it's about 19%
-> > decrease for 2.4.21-pre4 since 2.4.19-data-logging). What is causing
-> > this? Partly I can blame it on the disk content distribution that
-> > changed. If I removed the kinoded related patches would the throughput
-> > rate increase?
-> I can confirm that this is also true for me. I am using the -aa data-logging 
-> 36.
+On Monday 24 February 2003 19:08, Chris Mason wrote:
 
-Sorry, you confirm that with kinoded related patches removed (and the
-dirty_inode patch) things get faster?
+Hi Chris,
 
-Also, are you using kinoded-8 or kinoded-9?
+> > I can confirm that this is also true for me. I am using the -aa
+> > data-logging 36.
+> Sorry, you confirm that with kinoded related patches removed (and the
+> dirty_inode patch) things get faster?
+> Also, are you using kinoded-8 or kinoded-9?
+Gna, sorry. There is no difference between kinoded-8 or kinoded-9 or w/o =
+them.
 
--chris
+It drops. See my other mail I just wrote to the list.
+
+ciao, Marc
 
 
