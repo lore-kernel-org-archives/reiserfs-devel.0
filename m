@@ -1,38 +1,48 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: rebuild tree on 500 GB partition (resend)
-Date: Thu, 31 Oct 2002 11:05:35 +0300
-Message-ID: <20021031110535.A12752@namesys.com>
-References: <20021029182138.GB9168@mrball.net>
+From: Philippe =?ISO-8859-1?B?R3JhbW91bGzp?= <philippe.gramoulle@mmania.com>
+Subject: Re: Still wrong reported file size after --rebuild-tree
+Date: Thu, 31 Oct 2002 10:14:53 +0100
+Message-ID: <20021031101453.3de75a0e.philippe.gramoulle@mmania.com>
+References: <20021030193045.69179289.philippe.gramoulle@mmania.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11852-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11853-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20021029182138.GB9168@mrball.net>
+In-Reply-To: <20021030193045.69179289.philippe.gramoulle@mmania.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Hello!
 
-On Tue, Oct 29, 2002 at 10:21:38AM -0800, Todd Lyons wrote:
+Hi,
 
-> The rebuild tree completed.  Our results were nearly identical to the
-> other gentleman's results, about 8.5 hours.  It seems to have recovered
-> everything that our users can see.  In addition, there is 3.454 Gigs
+Please, find the metata here :
 
-Good to hear that.
+http://philippemm.multimania.com/metadata-2.4.19-pre6.bz2
 
-> The difference in quality between the old 3.0x series and the current
-> 3.6.4 is AMAZING.  The new stuff is very well written and performs
-> tremendously.
+ahem , it's a 100Mo file :o)
 
-Thank you.
+Thanks,
 
-And thank you for the report, too.
+Philippe
 
-Bye,
-    Oleg
+
+<-------------debugreiserfs, 2002------------->
+reiserfsprogs 3.6.4-pre3
+
+Loading on-disk bitmap .. 43683118 bits set - done
+super block..ok
+bitmaps..(4368).. ok
+journal (from 18 to 8210)..ok
+Super block, bitmaps, journal - 12562 blocks - done, 43670556 blocks left
+0%....20%....40%....60%....80%....                                                            left 0, 7989 /sec
+Packed 647143 blocks:
+        compessed 637664
+        full blocks 9479
+                leaves with broken block head 15
+                corrupted leaves 0
+                internals 4509
+                descriptors 0
+data packed with ratio 0.11
