@@ -1,43 +1,42 @@
-From: Alexander Lyamin <flx@msu.ru>
-Subject: Re:  UNSUBSCRIBE PLEASE THANKS - add a footer, please
-Date: Wed, 29 Jan 2003 22:17:06 +0300
-Message-ID: <20030129221706.D7998@t-raenon.nmd.msu.ru>
-References: <1043651468.25547.3.camel@automatisme5> <20030127080427.GA6431@suse.de> <1043655641.25602.19.camel@automatisme5> <20030127082200.GC6431@suse.de> <1043663360.29890.4.camel@automatisme5> <20030128025029.GF13587@mrball.net> <004801c2c6ad$9ee11c30$6400a8c0@twister>
-Reply-To: flx@msu.ru
+From: Francois-Rene Rideau <fare@tunes.org>
+Subject: Re: Oh no! Not again!
+Date: Wed, 29 Jan 2003 20:31:26 +0100
+Sender: Francois-Rene Rideau <fare@Samaris.tunes.org>
+Message-ID: <20030129193126.GA1367@ZhengHe.augustin.thierry>
+References: <20030117221535.GA945@Kadath> <20030124222823.GA15643@hell.mine.nu> <20030128024158.GA19336@hell.mine.nu> <200301281400.09364.vitaly@namesys.com>
+Reply-To: Francois-Rene Rideau <fare@tunes.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12545-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12546-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <004801c2c6ad$9ee11c30$6400a8c0@twister>
+In-Reply-To: <200301281400.09364.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Szabolcs Szasz <sz@szasz.hu>
-Cc: Todd Lyons <todd@mrball.net>, stephane ancelot <sancelot@free.fr>, Hubert Mantel <mantel@suse.de>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-Tue, Jan 28, 2003 at 10:14:11AM +0100, Szabolcs Szasz wrote:
-> > You're using Ximian Evolution:
-> >   View -> MessageDisplay -> ShowFullHeaders
-> 
-> Few people ever see those headers. Having 
-> full headers on is not a realistic assumption,
-> ESPECIALLY NOT for those (mostly beginners), 
-> who have unsubscribe problems.
-> 
-> A footer, maybe?
+OK. So I built the latest reiserfsck as a static binary,
+and ran it with --rebuild-tree, and I got an infinite loop
+just like previously. In case anyone cares, I have kept the logfile for it.
+Is there anything that interests you about that failure,
+or should I promptly reformat the disk?
 
-instructions on web-site.
-much more realistical.
-including auto-helpdesk and my address for especially
-tough cases.
+Also, does any of you have any hint as to how to identify the failure
+that led to this crash? I suspect either the disk or the motherboard,
+but it's hard to tell: booting on my 80MB rescue disk works well,
+whereas the disk looks like it works correctly on another machine,
+and does not issue errors even on that machine, if I don't use DMA.
+Really weird. What scares me is that if I don't identify the problem,
+a similar crash may happen again...
 
-:)
-> 
-> Sab
+Cheers!
 
--- 
-"Cache remedies via multi-variable logic shorts will leave you crying."(cl)
-Lex Lyamin
+[ Fran=E7ois-Ren=E9 =D0VB Rideau | Reflection&Cybernethics | http://fare.tu=
+nes.org ]
+[  TUNES project for a Free Reflective Computing System  | http://tunes.org=
+  ]
+Demand the establishment of the government in its rightful home at Disneyla=
+nd.
