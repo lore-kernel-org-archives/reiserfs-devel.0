@@ -1,47 +1,42 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Reiserfs concurrent write problems
-Date: Tue, 27 Apr 2004 19:48:27 -0400
-Message-ID: <1083109707.30344.142.camel@watt.suse.com>
-References: <20040426172648.GA22918@em.ca>
-	 <1083000970.30344.50.camel@watt.suse.com> <20040427161544.GA27873@em.ca>
-	 <1083088841.30344.131.camel@watt.suse.com>  <20040427201559.GA17186@em.ca>
+From: Stefan Traby <stefan@hello-penguin.com>
+Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary additional namespace to ReiserFS
+Date: Wed, 28 Apr 2004 02:10:38 +0200
+Message-ID: <20040428001038.GA6083@hello-penguin.com>
+References: <1082750045.12989.199.camel@watt.suse.com> <408D3FEE.1030603@namesys.com> <20040426203314.A6973@infradead.org> <408E986F.90506@namesys.com> <20040427183400.A20221@infradead.org> <408E9F42.2080804@namesys.com> <20040427190439.A20646@infradead.org>
+Reply-To: Stefan Traby <stefan@hello-penguin.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18259-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18260-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040427201559.GA17186@em.ca>
+Content-Disposition: inline
+In-Reply-To: <20040427190439.A20646@infradead.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Bruce Guenter <lists-reiserfs-list@bruce-guenter.dyndns.org>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Christoph Hellwig <hch@infradead.org>, Hans Reiser <reiser@namesys.com>, Chris Mason <mason@suse.com>, Linus Torvalds <torvalds@osdl.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, akpm@osdl.org
 
-On Tue, 2004-04-27 at 16:15, Bruce Guenter wrote:
-> On Tue, Apr 27, 2004 at 02:00:41PM -0400, Chris Mason wrote:
-> > Good to hear, could I trouble you to ping me (or better yet
-> > reiserfs-list) when you have the graphs updated?
-> 
-> For sure.
-> 
-> > Other notes about 2.6.6-rc2-mm2, it has some ext3 optimizations as well,
-> > you might want to rebenchmark there.
-> 
-> I am re-running all of the benchmarks, actually, as well as doing some
-> tweaking to the XFS options.
-> 
-> > reiserfs defaults to -o
-> > data=ordered in the 2.6.6-rc2 (and -mm), you should get slightly better
-> > numbers with -o data=writeback.
-> 
-> I will try that, as well as data=journal (which I understand is one of
-> the new features in the -mm patches).  The production system will not
-> run data=writeback, but it is still a useful number.
+On Tue, Apr 27, 2004 at 07:04:39PM +0100, Christoph Hellwig wrote:
 
--mm doesn't have data=journal for reiserfs, but I do have a patch
-available.  I'll send you an update tomorrow morning.
+> I also still think someone who does most work in the last years on a fs
+> (Chris on reiserfs v3) should be considered maintainer, but that's just my
+> 2cents and I'd rather leave that to you guys.
 
--chris
+I agree and add my 2cents to this statement.
+(Euro-cent, so it has a value :)
 
+Chris wrote on 5 Apr: "If there is some technical objection to the
+                       patches I'd really like to discuss it."
 
+Nothing happened since then and
+I simply do not consider the $600k payment of DARPA for V4 development
+as a technical objection against work on V3 - but hey - 
+you can always prove me wrong by rejecting Chris patches.
+
+-- 
+
+  ciao - 
+    Stefan
+
+"          GNU's Not Unix          --              IIS Isn't Secure          "
