@@ -1,35 +1,38 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: software packaging and ReiserFS v4
-Date: Mon, 8 Sep 2003 13:49:42 +0400
-Message-ID: <16220.20662.840850.726458@laputa.namesys.com>
-References: <20030903165409.GD4714@rahul.net>
-	<3F565A8F.4010209@botz.org>
-	<20030903213742.GA13146@rahul.net>
-	<3F58D2CD.3050801@mrs.umn.edu>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Fwd: Bad root block 0
+Date: Mon, 8 Sep 2003 13:51:42 +0400
+Message-ID: <20030908095142.GB18422@namesys.com>
+References: <200309071446.32049.webmaster@autoinstaller.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15590-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15591-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F58D2CD.3050801@mrs.umn.edu>
+Content-Disposition: inline
+In-Reply-To: <200309071446.32049.webmaster@autoinstaller.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Grant Miner <mine0057@mrs.umn.edu>
-Cc: Bennett Todd <bet@rahul.net>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Roland H?der <webmaster@autoinstaller.de>
+Cc: reiserfs-list@namesys.com
 
-Grant Miner writes:
- > If you are making a packaging system, I recommend you do not allow 
- > scipts, since they open up a whole can of worms.  (They're impossible to 
- > invert, introduce security problems, make additional work for GUI 
- > package managers, and cause too many problems.)
+Hello!
 
-You one has support for the user-level transactions in the underlying
-storage (_all_ storage), then scripts will at least be
-"invertible". More or less so, of course, sending packages to the
-network is hard to reverse.
+On Sun, Sep 07, 2003 at 02:46:32PM +0200, Roland H?der wrote:
 
- > 
+> another thing: I could extract the "missing" metadata as you described 
+> to a compressed file. But I do not mail it to you, because it contains 
+> "security-breaking-data": My Online-Banking stuff. :-( If I do so, 
 
-Nikita.
+Hm. Can you tell us what kernel version you were using at the time of writing
+your files to encrypted device?
+What do you mean by extracting "missing metadata"?
+
+> which will never happen - you just need to crack my password for 
+> "unlimited" cash.... :-(
+
+"unlimited cash"? Wow! 
+
+Bye,
+    Oleg
