@@ -1,53 +1,55 @@
-From: David Masover <ninja@slaphack.com>
+From: Vitaly Fertman <vitaly@namesys.com>
 Subject: Re: Fibration questions
-Date: Thu, 22 Jul 2004 21:45:26 -0500
-Message-ID: <41007BC6.3060209@slaphack.com>
-References: <40FE0B47.3010600@slaphack.com> <20040721063607.1A09015C92@mail03.powweb.com> <20040721083232.GA4990@nysv.org> <40FF3DAD.6020100@slaphack.com> <20040722100657.GC4990@nysv.org>
+Date: Fri, 23 Jul 2004 13:09:55 +0400
+Message-ID: <200407231309.55295.vitaly@namesys.com>
+References: <40FE0B47.3010600@slaphack.com> <200407221410.25043.vitaly@namesys.com> <41007B56.2030103@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19766-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19768-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040722100657.GC4990@nysv.org>
+In-Reply-To: <41007B56.2030103@slaphack.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
-Cc: David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: David Masover <ninja@slaphack.com>
+Cc: Markus =?utf-8?q?T=C3=B6rnqvist?= <mjt@nysv.org>, David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+> wait -- what does this do:
+> echo -e "tea\0" > somedir/metas/plugin/hash
 
+will set the hash tea in 'somedir' if it is empty.
+if it has 'subdir' already, nothing happens.
 
+> echo -e "something_differenet\0" > somedir/subdir/metas/plugins/hash
 
-Markus T=F6rnqvist wrote:
+will set the hash 'something_differenet' if any of [r5 | tea | fnv1 | 
+rupasov | degenerate hash | all future hash plugins] in 'somedir/subdir' 
+if 'subdir' is empty.
 
-| Anyway, setting propagation is important, but it's also important to
-| handle conditions like (cool, pseudo-sql! ;)
-| UPDATE formatting SET policy=3D'never\0' WHERE policy=3D'smart\0' RECURSE;
-| instead of just
-| UPDATE formatting SET policy=3D'never\0' RECURSE;
-| which may break something else...
+> echo -e "r5\0" > somedir/metas/plugins/hash
 
-Both should be allowed.  Can that be done now?  And with echo, not SQL.
+nothing happens as 'subdir' exists.
 
+> What is the hash of "subdir" now?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+'somthing_different'
 
-iQIVAwUBQQB7xngHNmZLgCUhAQIDVA/+JRN5/b2SEzHwqZYGyFVBRyXGQkvnUiUo
-2IAkguvwZ0CJvrpKo5u2WjDIn/V0v4P8miq7CoLavYSsYpd5dvNeeayRdMDz7cLv
-9AcQxXlfxJfu0wPvscP7iEBybs3ayHmkLalDbpMybeJfn+T3/+65YrBMVIEnrIGs
-wz+4/j9ffEtC6jbij+Xt+XnI6GUUdK6jUSNP0lTe+Z/XGztZrd85uI4KuGsYjdrb
-QkI9IEoUj1wLNUcNEdZD7kHS70kK9BA1CD7d/rj0Pc2urJYYHQ55LHlRt1s7VsQU
-9qhBC8xtUqtZQe48IfOQ4VHLoZPoVygba3lMhFfAsTHvkieavHykZauNI6uBmOeY
-uqc4gAZZtw8QvpnOYNsmDMyFo1Qlz9ZTNfi/BJQBpOvtFFqt6Q+NeMA2kSyyxd1u
-GlagtGQMxrtMY9pgBiRK5R7+RusiSbEe2Skda1vDMok8owoUpLSW57dzVVlWCuXC
-SPSdCSx23iQYBjNaKgeQtP1Zl4eVD1lsAAPq38tzK+Hx/66oWFlLLnlN5o2pbllI
-togm9bW8dG2wGAptYaixcq0XAz7vi2G+9aD1snIJsAtuTVi1FEciYvjry+5tXiLO
-LLogs6uIdMMJiQTr+S5781d/+KQ0YEo3dQXl/tilfIFUqWTKCJ7hqni/xE0kMDlS
-ejswFHGTEeI=3D
-=3DdUdg
------END PGP SIGNATURE-----
+> What about new subdirs?  What hash will they get?
+
+new subobjects inherit all plugins from the object they are created 
+in at the creation time. future changes of plugins of the object will 
+not be applied to already created subobjects, only to new subobjects.
+
+Note: if a plugin is used for rendering the object content then its 
+changing needs a convertion method. Thus if you create a file in 
+the dir then the hash plugin gets used, and you need to convert the 
+dir to change the hash successfully. As there is no such convertion 
+methods yet, you cannot change the hash of not empty dir.
+
+-- 
+Thanks,
+Vitaly Fertman
+
