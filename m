@@ -1,62 +1,39 @@
-From: Anders Widman <andewid@tnonline.net>
-Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
-Date: Mon, 24 Feb 2003 02:14:41 +0100
-Message-ID: <1041498171.20030224021441@tnonline.net>
-References: <200302141318.33057.sam@vilain.net>
- <b3bll5$er5$1@satsuki.furryterror.org>
-Reply-To: Anders Widman <andewid@tnonline.net>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: Re: [PATCH] new data logging and quota patches available
+Date: Mon, 24 Feb 2003 02:42:23 +0100
+Message-ID: <3E59787F.2030009@mb.tu-ilmenau.de>
+References: <1045870331.16048.325.camel@tiny.suse.com>	 <200302221341.23799.Dieter.Nuetzel@hamburg.de>	 <1045926958.16042.366.camel@tiny.suse.com>	 <1045930351.16042.377.camel@tiny.suse.com>	 <3E581AD7.30000@mb.tu-ilmenau.de>  <3E581E07.3050407@mb.tu-ilmenau.de> <1046020695.16048.409.camel@tiny.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12884-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12885-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b3bll5$er5$1@satsuki.furryterror.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-> In article <200302141318.33057.sam@vilain.net>,
-> Sam Vilain  <sam@vilain.net> wrote:
->>Perhaps it might, but it sure does a good job of cleaning them up with
->>ScanDisk.  And it almost certainly won't BSOD for a bad sector.
+On 02/23/2003 06:18 PM, Chris Mason wrote:
+> I've attached a new kinoded-9.diff.gz, it will apply to both -aa and
+> vanilla.  Please give it a try.
+> 
+> -chris
 
-> BSOD, no.  Hang, yes.  Crash, yes.  Kill applications more or less at
-> random, yes.
+Hi and thank you!
 
-On  the  other  hand.  In  Linux  you  most  likely  CAN'T  kill  any
-applications    that   tries to read from a failed disk, or even hit a
-bad sector.
+I've replaced the old patch. And the problem is gone -- the partitions 
+are umountable again after copying.
 
-> Corrupt the registry and never successfully boot again, yes.
-> Corrupt a database somewhere (even on another machine over a network)
-> and require careful hand-holding to make some application work again, yes.
-> Take two or more hours to boot, yes.
+I see a performance decrease with my copies in data=ordered mode by 
+about 7.5% compared to the 2.4.20-pre10-data-logging (it's about 19% 
+decrease for 2.4.21-pre4 since 2.4.19-data-logging). What is causing 
+this? Partly I can blame it on the disk content distribution that 
+changed. If I removed the kinoded related patches would the throughput 
+rate increase?
 
-With WinNT...yes.
+Bye,
 
-> But BSOD...no.
-
-> Often there is some data corruption associated with IDE bus resets.
-> Linux IDE drivers seem to corrupt any I/O requests in progress when it
-> switches from DMA to PIO mode, which it usually does when the IDE bus
-> times out on DMA requests.  :-P
-
-And DMA errors seem be happen quite often with newer type motherboards
-and  current  'stable'  kernels.  These  often result in multiple smbd
-processes  that can't be killed and therefore unmountable filesystems.
-
-All  OS  have  their flaws, and there is no point in comparing just to
-prove  one  is  better than the other. What we should do, is to try to
-improve  and  evolve things the best we can. ReiserFS is a good way in
-this  direction,  still there are things that can be better. We should
-focus on those (at least on this list).
-
-- Anders
-
-
-
-
-
+Manuel
 
