@@ -1,72 +1,45 @@
-From: "David Dabbs" <david@dabbs.net>
-Subject: mongo_copy: cp: cannot stat `/mnt/testfs/testdir0-0-0/f92': Input/output error
-Date: Wed, 4 Aug 2004 01:55:36 -0500
-Message-ID: <20040804065840.17C7915C7C@mail03.powweb.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: where and how to start?
+Date: Wed, 04 Aug 2004 12:28:05 +0400
+Message-ID: <41109E15.9040107@namesys.com>
+References: <4110306B.3030608@verizon.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19958-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19960-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <4110306B.3030608@verizon.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: MillTek <mill.tek@verizon.net>
+Cc: reiserfs-list@namesys.com
 
+Hello
 
-I was running mongo when the following occurred:
+MillTek wrote:
+> Hi,
+> I'm relatively new to the Linux world and would like to use Reiser4.  Is 
+> there somewhere I can download a fairly straightforward set of 
+> instructions on its implementation in a 2.6.6 Debian Kernel?  I've 
+> scoured teh web and looked all over namesys.com but didnt find anything 
+> that I could follow or use.
+> 
+http://thebsh.namesys.com/snapshots/LATEST/READ.ME
 
- cp: cannot stat `/mnt/testfs/testdir0-0-0/f92': Input/output error
- cp: cannot stat `/mnt/testfs/testdir0-0-0/f93': Input/output error
- cp: cannot stat `/mnt/testfs/testdir0-0-0/f94': Input/output error
- cp: cannot stat `/mnt/testfs/testdir0-0-0/f95': Input/output error
- cp: cannot stat `/mnt/testfs/testdir0-0-0/f97': Input/output error
+There is also http://thebsh.namesys.com/auto-snapshots
+It contains the most recent code. The above mentioned READ.ME applies to it as well
 
-
-I found the following in the log:
-
-Aug  3 21:59:58 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
-(fs/reiser4/search.c:1033)[vs-3533]:
-Aug  3 21:59:58 linux kernel: WARNING: Keys are inconsistent. Fsck?
-Aug  3 21:59:58 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
-(fs/reiser4/search.c:1033)[vs-3533]:
-Aug  3 21:59:58 linux kernel: WARNING: Keys are inconsistent. Fsck?
-Aug  3 21:59:58 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
-(fs/reiser4/search.c:1033)[vs-3533]:
-Aug  3 21:59:58 linux kernel: WARNING: Keys are inconsistent. Fsck?
-Aug  3 21:59:58 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
-(fs/reiser4/search.c:1033)[vs-3533]:
-Aug  3 21:59:58 linux kernel: WARNING: Keys are inconsistent. Fsck?
-Aug  3 21:59:58 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
-(fs/reiser4/search.c:1033)[vs-3533]:
-Aug  3 21:59:58 linux kernel: WARNING: Keys are inconsistent. Fsck?
-Aug  3 21:59:58 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
-(fs/reiser4/search.c:1033)[vs-3533]:
-Aug  3 21:59:58 linux kernel: WARNING: Keys are inconsistent. Fsck?
-Aug  3 21:59:58 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
-(fs/reiser4/search.c:1033)[vs-3533]:
-Aug  3 21:59:59 linux kernel: WARNING: Keys are inconsistent. Fsck?
-Aug  3 21:59:59 linux kernel: reiser4[cp(10066)]: key_warning
-(fs/reiser4/plugin/object.c:97)[nikita-717]:
-Aug  3 21:59:59 linux kernel: WARNING: Error for inode 661097 (-5)
-Aug  3 21:59:59 linux kernel: reiser4[cp(10066)]: write_sd_by_inode_common
-(fs/reiser4/plugin/object.c:480)[nikita-2221]:
-Aug  3 21:59:59 linux kernel: WARNING: Failed to save sd for 661097: -5
-Aug  3 21:59:59 linux kernel: reiser4[cp(10066)]: create_child_common
-(fs/reiser4/plugin/dir/dir.c:499)[nikita-2219]:
-Aug  3 21:59:59 linux kernel: WARNING: Failed to create sd for 661097
-Aug  3 21:59:59 linux kernel: reiser4[cp(10066)]: cbk_level_lookup
-(fs/reiser4/search.c:1033)[vs-3533]:
-Aug  3 21:59:59 linux kernel: WARNING: Keys are inconsistent. Fsck?
-Aug  3 21:59:59 linux kernel: reiser4[cp(10066)]: key_warning 
-
-
-I had been switching back and forth between computers via a kvm switch. I
-attempted to reproduce the error by rerunning the benchmark and figddling
-with the switch, but was not able to see the same behavior.
-
-Running with latest auto-snapshot and reiser4fsprogs.
-
-David
+> 
+> 
+> Any input appreciated,
+> 
+> 
+> 
+> 
+> Jim
+> 
+> 
 
 
