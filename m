@@ -1,46 +1,46 @@
-From: Francisco Javier Cabello Torres <fjcabello@visual-tools.com>
-Subject: data logging and kernel 2.4.20
-Date: Mon, 5 Jul 2004 12:13:05 +0200
-Message-ID: <200407051213.05033.fjcabello@visual-tools.com>
+From: Christian Mayrhuber <cmayr@iicm.tu-graz.ac.at>
+Subject: Re: data logging and kernel 2.4.20
+Date: Mon, 5 Jul 2004 13:46:32 +0200
+Message-ID: <200407051346.32673.cmayr@iicm.edu>
+References: <200407051213.05033.fjcabello@visual-tools.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19510-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19511-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200407051213.05033.fjcabello@visual-tools.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
-Cc: Francisco Javier Cabello <fjcabello@visual-tools.com>
 
-Hello,
-I would like to use data logging feature on a 2.4.20-vanilla kernel.=20
+On Monday 05 July 2004 12:13, Francisco Javier Cabello Torres wrote:
+> Hello,
+> I would like to use data logging feature on a 2.4.20-vanilla kernel.
+>
+> I have tried patches from SUSE and everything goes ok.
+>
+> ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20/
+>
+> The problem is that until now, I was using patches from this url:
+>
+> ftp://ftp.namesys.com/pub/reiserfs-for-2.4/2.4.20-pending
+>
+> in order to fix known bugs. I have tried to apply both set of patches, but
+> I get a lot of conflicts. Should I apply fix patches with suse data logging
+> patches or suse patch include all of them?
+>
+> Thanks in advance.
+>
+> Franciso J. Cabello
 
-I have tried patches from SUSE and everything goes ok.
+I'd not suggest to use these, those patches are really old and are likely to 
+have bugs.
+Use ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.25/
+and a kernel >= 2.4.25 with them.
+I have them running on several production systems with a 2.4.26 kernel.
 
-ftp://ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20/
-
-The problem is that until now, I was using patches from this url:
-
-ftp://ftp.namesys.com/pub/reiserfs-for-2.4/2.4.20-pending
-
-in order to fix known bugs. I have tried to apply both set of patches, but =
-I=20
-get a lot of conflicts. Should I apply fix patches with suse data logging=20
-patches or suse patch include all of them?
-
-Thanks in advance.
-
-=46ranciso J. Cabello
-
-
-=2D-=20
-Premature Optimization is the root of all evil (Donald Knuth)=20
-=2D Yo tambi=E9n quiero una Europa libre de Patentes de Software -
-=2D-------------------------------------------------------------
- EuropeSwPatentFree - http://EuropeSwPatentFree.hispalinux.es=20
-=2D-------------------------------------------------------------
-
-
+-- 
+lg, Chris
