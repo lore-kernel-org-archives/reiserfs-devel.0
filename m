@@ -1,116 +1,101 @@
 From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: [reiserfs-dev] [ctgaff@attbi.com: Debian Woody Performance with ReiserFS]
-Date: Mon, 11 Nov 2002 16:33:26 +0300
-Message-ID: <15823.45478.638434.968665@laputa.namesys.com>
-References: <20021109000211.GA46264@attbi.com>
+Subject: Re: ReiserFS 3.6.x vs Reiser4
+Date: Mon, 11 Nov 2002 17:51:03 +0300
+Message-ID: <15823.50135.517241.494150@laputa.namesys.com>
+References: <1951002912.20021111084143@kgpa.ru>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11960-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11961-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021109000211.GA46264@attbi.com>
+In-Reply-To: <1951002912.20021111084143@kgpa.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Corey G." <ctgaff@attbi.com>
-Cc: reiserfs-dev@namesys.com, reiserfs-list@namesys.com, ed@debian.org
+To: "Oleg O. Ossovitskii" <oleg@kgpa.ru>
+Cc: ReiserFS-Team <reiserfs-list@namesys.com>
 
-[Ed Boraas CC-ed, probably this is of interest for Debian people.]
+Oleg O. Ossovitskii writes:
+ > Hello, All!
+ > 
+ > I made simple FS comparision. From a user point of view - unpacking
+ > files, copying, deleting etc. Reiser4 is more space effectively, and
+ > it remove files faster than reiserfs3, but speed of copying many small files
+ > (kernel 2.5.44 source code) is approximately equal to reiserfs3.6. But
+ > of reiser4 reliability is still low.
+ > 
+ > root@(vc/1)[/mnt/reiser4tst]# fdisk -l /dev/hda
+ > 
+ > Disk /dev/hda: 255 heads, 63 sectors, 4982 cylinders
+ > Units = cylinders of 16065 * 512 bytes
+ > 
+ >    Device Boot    Start       End    Blocks   Id  System
+ >    /dev/hda1   *         1        66    530113+   6  FAT16
+ >    /dev/hda2            67        83    136552+  82  Linux swap
+ >    /dev/hda3            84        86     24097+  83  Linux
+ >    /dev/hda4            87      4981  39319087+   f  Win95 Ext'd (LBA)
+ >    /dev/hda5            87       405   2562336    7  HPFS/NTFS
+ >    /dev/hda6           406      1425   8193118+   7  HPFS/NTFS
+ >    /dev/hda7          1426      2190   6144831   83  Linux
+ >    /dev/hda8          2191      2321   1052226   83  Linux
+ >    /dev/hda9          2322      2582   2096451    b  Win95 FAT32
+ >    /dev/hda10         2583      3220   5124703+   b  Win95 FAT32
+ >    /dev/hda11         3221      4495  10241406    7  HPFS/NTFS
+ >    /dev/hda12         4496      4619    995998+  83  Linux
+ >    /dev/hda13         4620      4743    995998+  83  Linux
+ > 
+ > 
+ > /dev/hda12 is Reiser4
+ > /dev/hda13 is ReiserFs 3.6.25
+ > 
+ > root@(vc/1)[/mnt/reiser4tst]# df -ah .
+ > Filesystem            Size  Used Avail Use% Mounted on
+ > /dev/hda12            973M   29M  944M   3% /mnt/reiser4tst
+ > 
+ > root@(vc/1)[/mnt/reiser3tst]# df -ah .
+ > Filesystem            Size  Used Avail Use% Mounted on
+ > /dev/hda13            973M   61M  912M   6% /mnt/reiser3tst
+ > 
+ > Tests description:
+ > 1. unpacking linux-2.5.44.tar.bz2
+ >    $ ls -l linux-2.5.44.tar.bz2
+ >    29260
+ > 2. cp -Rd linux-2.5.44 linux-2.5.44-test1
+ > 3. du -sk linux-2.5.44
+ > 4. rm -rf linux-2.5.44-tst1
+ > 5. rm -rf linux-2.5.44
+ > 
+ > -------------+--------------------+---------------------
+ > Test number  |   ReiserFS 3.6.25  |   Reiser4
+ >     1        |       1m22.868s    |   1m24.153s
+ >     2        |       1m24.127s    |   1m23.050s
+ >     3        |  0m5.727s/183656k  | 0m3.706s/157401k
+ >     4        |       0m9.896s     |   0m3.185s(*)
+ >     5        |       0m6.921s     |   0m33.011s
+ > -------------+--------------------+---------------------
+ > (*) rm couldn't remove directories recursively, and gave warnings/errors:
+ >     rm: cannot remove directory `linux-2.5.44-tst1/arch/um': Directory not empty
+ >     rm: cannot remove directory `linux-2.5.44-tst1/arch/x86_64': Directory not empty
+ >     ... and so on 
 
-Corey G. writes:
- > My Problem and Solution to Bad Performance Using Debian Woody and ReiserFS
- > --------------------------------------------------------------------------
- > 
- > My first three attempts with ReiserFS and Woody were quite dismal.  Not
- > with the installation, but with performance.  I was quite literally pulling
- > hair out of my head because ReiserFS on Mandrake 9 performs remarkably
- > in my opinion.  Why would it work so awful with Debian 3.0?  Note: By
- > design, the default boot disks for Debian 3.0 do not contain ReiserFS
- > support.  In order to install ReiserFS during an initial installation,
- > you must download the BF2.4 disks which have "experimental drivers".  I
- > have seen many comments on the web wondering why Debian still thinks
- > Reiser is experimental.  It must be driven by the ultra conservatism of
- > Debian.  Regardless, ReiserFS is available for Debian Woody.
- > 
- > 
- > Addressing the Problem:
- > -----------------------
- > My first assumption was the kernel, so I upgraded to 2.4.19.  No such
- > luck.  Untarring Mozilla took 3m24s on an Athlon 800mzh with 1GB RAM.
- > The same test took 6 seconds on Mandrake on the same system.  After 
- > digging into the problem I finally came to the conclusion that Mandrake,
- > and probably other distributions, are tuning the hard drives
- > during installation or boot.  I dug around and found some rather safe 
- > settings to implement using "hdparm".  After applying the changes below,
- > my Debian system came to life.  Now I could untar at the speed of light 
- > and still use my mouse at the same time.
- > 
- > So, for whatever reason, Debian has chosen to be quite conservative
- > with assumptions on hard drive tuning.  I will admit that some of the
- > parameters I tried locked up my machine.  However, even the more
- > conservative settings work very nice.  My concern here is that
- > other individuals are certainly going to experience this problem with Debian
- > besides myself.  Another colleague here said he went back to ext2 because
- > the performance was horrible with ReiserFS on Debian.  Unfortunately,
- > this individual refuses to try other distributions so he never had
- > anything to compare.  Had I not seen the incredible performance on
- > Mandrake, I would have assumed that ReiserFS was a very slow filesystem.
- > 
- > To prove my theory about Mandrake pre-tuning the drives during boot, I had 
- > a colleague run hdparm on his Mandrake 9 installation.  Here is the output:
- > 
- > 
- > /dev/hda:
- >  multcount    = 16 (on)
- >  IO_support   =  0 (default 16-bit)
- >  unmaskirq    =  0 (off)
- >  using_dma    =  1 (on)
- >  keepsettings =  0 (off)
- >  readonly     =  0 (off)
- >  readahead    =  8 (on)
- >  geometry     = 1292/240/63, sectors = 19541088, start = 0
- > 
- > 
- > These settins were NOT on by default with Debian.  The most important
- > (I know this from testing) is "using_dma".  After turning this on, things
- > really start to move.
+Are there any messages in the kernel log at this time? Can you reproduce
+this with CONFIG_REISER4_CHECK/Assertions on?
 
-Probably this is because not using DMA increases CPU usage and reiserfs
-already loads CPU significantly.
+ >     After that Reiser4 partition stay unmountable and have unremovable 
+ >     directories till reboot
+ >     After reboot directories was succesfully removed, but they still contained
+ >     files
 
- > 
- > Here are my current settings with Debian:
- > 
- > /dev/hda:
- >  multcount    = 16 (on)
- >  I/O support  =  1 (32-bit)
- >  unmaskirq    =  1 (on)
- >  using_dma    =  1 (on)
- >  keepsettings =  0 (off)
- >  nowerr       =  0 (off)
- >  readonly     =  0 (off)
- >  readahead    =  8 (on)
- >  geometry     = 4866/255/63, sectors = 78177792, start = 0
- >  busstate     =  1 (on)
- > 
- > 
- > I simply added a start script to  /etc/init.d with the following:
- > 
- > #!/bin/sh
- > 
- > hdparm -m 16 -d 1 -u 1 -c 1 /dev/hda
- > 
+You mean, rm still complains about not empty directories? Can you please
+check whether they actually *are*?
 
-You can also use -X option of hdparm.
+It would be great if you could reproduce it and send to me
+(personally---too large for list) strace of failing rm.
 
-
-Thank you for your research.
-
+ >     Test #5 done after reboot - I got significant Reiser4 slowdown
  > 
- > -- 
- > Best Regards,
- > Corey G.
- > 
+ > --- Sys info ---
+ > # uname -a
 
 Nikita.
