@@ -1,45 +1,68 @@
-From: Hendrik Visage <hvisage@envisage.co.za>
-Subject: Re: secure delete?
-Date: Tue, 23 Mar 2004 08:40:33 +0200
-Message-ID: <20040323064033.GA10277@hvs.envisage.co.za>
-References: <1079691239.5767.7.camel@pear.st-and.ac.uk> <405AD31A.7070304@mweb.co.za> <20040319110748.GA30491@chihiro.cern.ch> <405AD9B5.80102@namesys.com> <405F94DD.80004@botz.org> <405FD7C2.5030605@namesys.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: reiserfsck does not work on LVM snapshots
+Date: Tue, 23 Mar 2004 12:26:08 +0300
+Message-ID: <200403231226.08522.vitaly@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17400-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17403-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <405FD7C2.5030605@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Christian Jaeger <christian.jaeger@ethlife.ethz.ch>
+Cc: reiserfs-list@namesys.com
 
-On Tue, Mar 23, 2004 at 09:22:58AM +0300, reiserfs mailing list wrote:
-> 
-> Secure delete doesn't work against people who have the necessary 
-> equipment to scan the media and find remnants due to track misalignment.
+On Tuesday 23 March 2004 05:50, Christian Jaeger wrote:
+> Hello,
+>
+> I noticed that one cannot reiserfsck lvm snapshot devices (and neither can
+> we --check mounted partitions, sadly). Details below.
+>
+> Thanks for any improvements,
+> Christian.
+>
+>
+> Debian testing,
+> reiserfsprogs                 3.6.13-1
+> linux 2.4.25(kernel.org) + grsecurity 1.9.14 + vserver 1.3.8
+> athlon processor
+>
+> # lvcreate --snapshot -L1G -n snap1  /dev/mirrorvg/mirrorroot
+> # reiserfsck --check --no-journal-available snap1
 
-Which means in general language that all bicycles weighs 50 pounds:
+why do you use --no-journal-available?
 
-a 20 pound bicycle needs a 30 pound lock
-a 30 pound bicycle needs a 20 pound lock
-a 40 pound bicycle needs a 10 pound lock
-and a 50 pound bicycle needs no lock!!!
+> reiserfsck 3.6.13 (2003 www.namesys.com)
+>
+> *************************************************************
+> ** If you are using the latest reiserfsprogs and  it fails **
+> ** please  email bug reports to reiserfs-list@namesys.com, **
+> ** providing  as  much  information  as  possible --  your **
+> ** hardware,  kernel,  patches,  settings,  all reiserfsck **
+> ** messages  (including version),  the reiserfsck logfile, **
+> ** check  the  syslog file  for  any  related information. **
+> ** If you would like advice on using this program, support **
+> ** is available  for $25 at  www.namesys.com/support.html. **
+> *************************************************************
+>
+> Will read-only check consistency of the filesystem on snap1
+> Will put log info to 'stdout'
+>
+> Do you want to run this program?[N/Yes] (note need to type Yes if you
+> do):Yes Filesystem with default journal found, --no-journal-available is
+> ignored ###########
+> reiserfsck --check started at Tue Mar 23 03:29:10 2004
+> ###########
+>
+> reiserfs_reopen: could not reopen device: Permission denied
 
-The specs for goverment etc. says somewhere (and Sun etc. somehow adheres to it)
-that a failed disk's platter stays behind, and you just send the electronics
-back to the manufacturer.
+you need write permissions to replay the journal.
 
-So: the question that must be answered is: How much do your bicycle weighs?
-How large would your lock need to be?
+-- 
+Thanks,
+Vitaly Fertman
 
-IN geek talk: What's the worth of the data? What equipment can the other side
-afford? Will your protection be uneconomical enough for them not to bother
-about your protections?
-
-Refer to Bruce Schneier's books on security and the business choices about it.
-
-Hendrik
 
