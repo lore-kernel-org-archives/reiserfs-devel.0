@@ -1,39 +1,57 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: viewprinting processes and process oriented permissions got funded
- by DARPA
-Date: Wed, 14 Apr 2004 10:59:10 -0700
-Message-ID: <407D7BEE.5020407@namesys.com>
-References: <407C304F.4080804@namesys.com> <m31xmrefug.fsf@averell.firstfloor.org> <407C930D.5010407@namesys.com> <20040414022248.GA92870@colin2.muc.de> <20040414113741.GB15922@alias.nmd.msu.ru> <20040414125340.GA7737@colin2.muc.de>
+Subject: Re: reiser4 enabled livecd
+Date: Wed, 14 Apr 2004 10:59:20 -0700
+Message-ID: <407D7BF8.9080308@namesys.com>
+References: <Pine.LNX.4.21.0404141338510.31309-100000@mlf.linux.rulez.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17950-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17951-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040414125340.GA7737@colin2.muc.de>
+In-Reply-To: <Pine.LNX.4.21.0404141338510.31309-100000@mlf.linux.rulez.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Andi Kleen <ak@muc.de>
-Cc: Alexander Lyamin <flx@msu.ru>, reiserfs-list@namesys.com
+To: Szakacsits Szabolcs <szaka@sienet.hu>
+Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-Andi Kleen wrote:
+Szakacsits Szabolcs wrote:
 
->>especially implementation that would not kill perfomance/usability.
->>    
->>
+>Hello,
 >
->Linux already has such an implementation, even when Hans choses
->to ignore the already existing namespace infrastructure (similar to the 
->metas vs xattr incident). I guess it would not have made as pretty slides. 
+>Talking about livecd's, I'd mention that Recovery Is Possible has also
+>Reiser4. It's very often updated, kernel 2.6.5 and as I noticed it always
+>has the latest from everything and only 26 MB download:
 >
->-Andi
+>      http://www.tux.org/pub/people/kent-robotti/looplinux/rip/
+>
+>I made some "real world" ntfsclone benchmarks what I use very often during
+>NTFS development (e.g. test suite). It reads the NTFS allocation bitmap,
+>seeks to the used data positions on the source device, seeks to the same
+>position in the destination sparse file or block device and copy the data
+>thus the clone is immediately mountable.
+>
+>Resiser4 beat everybody: ext2, ext3, xfs, reiserfs, jfs and even including
+>raw cloning between partitions! I've never seen such before for any
+>filesystem, it _indeed_ optimizes the disk seeks significantly.
+>
+>It was about 5% faster than raw cloning and at least 10% faster then the
+>next fastest filesytems (ext2 and xfs). I can send full details if one is
+>interested.
+>  
+>
+Sure, I would be curious.
+
+>Congratulations!
+>
+>	Szaka
 >
 >
 >
 >  
 >
-I think you got out on the wrong side of the bed this morning....;-)
+thanks.
 
 -- 
 Hans
