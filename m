@@ -1,45 +1,45 @@
 From: Rhyotte <rhyotte@myrealbox.com>
-Subject: Re: reiser4non-free
-Date: Wed, 05 May 2004 11:03:15 -0700
-Message-ID: <40992C63.80509@myrealbox.com>
-References: <4097E691.9070001@myrealbox.com> <16536.43480.594608.500710@laputa.namesys.com>
+Subject: My Apologies~
+Date: Wed, 05 May 2004 11:27:21 -0700
+Message-ID: <40993209.5010701@myrealbox.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18467-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18468-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16536.43480.594608.500710@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: reiserfs-list@Namesys.COM
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-Nikita Danilov wrote:
+>
+>
+>Act like adults, make an agreement then 
+>> shake hands and be friends again.
+>
 
->Rhyotte writes:
-> >    Hi all,
-> >   I am a normal end user, and of course new to the reiser lists. I was 
-> > curious enough about the new reiser to get fairly serious about "seeing" 
-> > who / what / where / when ect...
-> > @Hans - Sir on the one hand I honestly respect you and the crew making 
-> > Reiser4 possible. OTOH, can you all please get this leagal wrangle 
-> > sorted out? There are alot of end users who seriously want to get our 
-> > hands on the shipping Reiser4 FS!! But please, dont make me see a 
-> > "splash screen" upon every system bootup! The nvidia one is bad enough - 
+That was a case of the written word not quite conveying what I was 
+really thinking about / feeling. Certainly I am a little frustrated at 
+some of the flaming going on. So I apologize for for misstating that. In 
+my opinion it may behoove the relevant parties to take a "timeout" to 
+all get in an private IRC channel and hash out the semantics of an 
+'official' agreement draft ect. Having read Jeremy Hankins:  
+
+>- You want to make sure that people know who contributed to ReiserFS
+>  regardless of whether or not they are interested in finding out.
 >
->(off-topic.)
->
->If you are talking about nvidia splash screen during X Server startup,
->just add
->
->        Option "NoLogo" "1"          #Turn off logo display
->
->To the "Device" section of your /etc/X11/XF86Config-4
->
->Nikita.
->
->  
->
-  Thanks Nikita!
+   It would seem to me this is about the only point that is really 
+problematic. And this point IF I have read Hans postings correctly would 
+seem to be a missunderstanding that can be corrected without too much 
+hassle.  "a stitch in time saves nine" I believe the old saying goes. It 
+would seem that if you can get with D-L and hash this out, then it would 
+most likely end up in an agreement that would prove most beneficial to 
+all parties involved. So taking a Mid Morning off to do a real time IRC 
+with the appropriate parties would most likely save alot of headaches 
+later on.
+   Again my apologies for coming off as I did.
+
+Thank you Reiser-Lists for your patience.
+Gary Sheppard
+
