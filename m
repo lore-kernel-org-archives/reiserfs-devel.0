@@ -1,59 +1,79 @@
-From: Anders Widman <andewid@tnonline.net>
+From: Tracy R Reed <treed@ultraviolet.org>
 Subject: Re: Silly question, defrag
-Date: Thu, 4 Apr 2002 11:16:51 +0200
-Message-ID: <20972156.20020404111651@tnonline.net>
-References: <200204030017.12595@X-Message-Flag:>
- <3CAABBA6.3030101@swelltech.com> <200204030740.05950@X-Message-Flag:>
- <20020403154906.A21821@ultraviolet.org>
-Reply-To: ReiserFS List <reiserfs-list@namesys.com>
+Date: Thu, 4 Apr 2002 10:54:40 -0800
+Message-ID: <20020404105440.F27377@ultraviolet.org>
+References: <200204030017.12595@X-Message-Flag:> <3CAABBA6.3030101@swelltech.com> <200204030740.05950@X-Message-Flag:> <20020403154906.A21821@ultraviolet.org> <20972156.20020404111651@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-md5;
+	protocol="application/pgp-signature"; boundary="qftxBdZWiueWNAVY"
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020403154906.A21821@ultraviolet.org>
+Content-Disposition: inline
+In-Reply-To: <20972156.20020404111651@tnonline.net>; from andewid@tnonline.net on Thu, Apr 04, 2002 at 11:16:51AM +0200
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Tracy R Reed <treed@ultraviolet.org>
-Cc: reiserfs-list@namesys.com
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-> On Wed, Apr 03, 2002 at 08:08:21AM -0800, Matthew Johnson wrote:
->> On Wednesday 03 April 2002 00:21, Joe Cooper wrote:
->> > "Don't"
->> >
->> 
->> Well I don't, but when newbies who are used to computing on win32 systems 
->> hear that they may not just accept the word don't. Actually its hard to find 
->> the reasons exactly why one does not defrag.
+--qftxBdZWiueWNAVY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> It is more useful to look at why one DID defrag back in the bad ol' days
-> of DOS and Windows. IIRC, the FAT filesystem would scan through it's
-> equivalient of the free block list and start writing at the first free
-> block. If it wrote for a while and then there was other data in the way it
-> stop and go to the next free space. This way fragmentation was practically
-> guarenteed and it happened rapidly. Modern filesystems use much smarter
-> ways of laying out data on the disk so that fragmentation happens much
-> less often. Now you will almost certainly waste more time by defragmenting
-> than you would suffering whatever performance hit the little fragmentation
-> there is causes. I've been using Linux/Unix for 10 years and I have never
-> (not once!) defragged a filesystem.
+On Thu, Apr 04, 2002 at 11:16:51AM +0200, Anders Widman wrote:
+> I do not agree. I run a fileserver with a 814GB filesystem using
+> ReiserFS (I have run NTFS and ext2/3 also). Modern filesystems might
+> be smarter in storing new files by not packing them tightly.
+>=20
+> In my case that workes fine up to a certain percentage, after that ALL
+> new files are beeing fragmented due to the fact that there is only
+> small blocks of space between all files. I don't see any filesystem
+> that don't need defragmentation. Not in my case.
 
->> Perhaps I should aim this message to the kernel mailing list, so that I can 
->> get response from a wider array of people who like other filesystems. But its 
->> not kernel related. 
+Yes, after a certain percentage you will start getting fragmentation. Will
+you really notice the performance hit? Who knows. It depends on how much
+and which files get fragmented. One solution is to not fill disks up to
+more than 90%. That is what most people who have a need to worry about
+such things do. I'm just saying that it isn't worth it. If you are at 90%
+you need to buy more disk anyway because soon you will be at 100%.=20
 
-> I wouldn't recommend doing that. The answer is pretty much the same
-> regardless of the filesystem. If it's a non-FAT fs you probably don't have
-> to worry about fragmentation.
+If there were real value in regularly defragging then Veritas, Sun, IBM,
+HP, and all of those guys would have made defraggers for their respective
+filesystems and it would be considered best practice and standard
+operating procedure to use them. But I have never heard of any such tools
+nor procedures.
 
-I do not agree. I run a fileserver with a 814GB filesystem using
-ReiserFS (I have run NTFS and ext2/3 also). Modern filesystems might
-be smarter in storing new files by not packing them tightly.
+This whole discussion results from the fact that so many Linux people come
+from PC backgrounds where they were taught to habitually defrag. People
+who come from other systems never give it a thought.
 
-In my case that workes fine up to a certain percentage, after that ALL
-new files are beeing fragmented due to the fact that there is only
-small blocks of space between all files. I don't see any filesystem
-that don't need defragmentation. Not in my case.
+Nonetheless, I look forward to having this functionality is reiserfs
+because it certainly can't hurt. What interests me even more than
+defragging is performance optimized layouts. If the filesystem can somehow
+keep track of patterns of frequently accessed blocks and could recognize
+that one set of blocks on the inner cylinders is always read immediately
+after reading a set of blocks on the outer cylinder (or perhaps instead of
+keeping track of blocks which are read it would be more efficient to keep
+track of commonly performed long seeks and move data to remove those) and
+could rearrange things so that all of the needed data passes under the
+read head in most often used sequence we would see a MUCH bigger
+improvement in performance.
 
-//Anders
+--=20
+Tracy Reed      http://www.ultraviolet.org
+Would you buy a car with the hood welded shut?
+Linux: the maintainable OS.
 
+--qftxBdZWiueWNAVY
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.1 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
+
+iEYEARECAAYFAjysoW8ACgkQ9PIYKZYVAq1TPwCeODkCMGEJUnHf/xI0klXyCHn0
+FBAAn33mKLqLmwoK5gZxjQM7RYEnNV50
+=4eSi
+-----END PGP SIGNATURE-----
+
+--qftxBdZWiueWNAVY--
