@@ -1,45 +1,54 @@
-From: eazgwmir@umail.furryterror.org (Zygo Blaxell)
-Subject: Re: rijndael loopback encryption was [Re: Corrupted/unreadable journal: reiser vs. ext3]
-Date: 13 Feb 2003 13:17:18 -0500
-Message-ID: <b2gnfe$osp$1@satsuki.furryterror.org>
-References: <b2f3ja$jg7$1@satsuki.furryterror.org> <200302121515.46953.russell@coker.com.au> <b2f3ja$jg7$1@satsuki.furryterror.org> <20030213113003.7ee7af6e.philippe.gramoulle@mmania.com>
-Return-path: <reiserfs-list-return-12742-reiserfs=m.gmane.org@namesys.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: rsync and memory leak on linux 2.2?
+Date: Thu, 13 Feb 2003 22:15:21 +0300
+Message-ID: <20030213221521.A7329@namesys.com>
+References: <1045156304.11405.149.camel@barnes>
+Mime-Version: 1.0
+Return-path: <reiserfs-list-return-12743-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <1045156304.11405.149.camel@barnes>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Patrick O'Rourke <porourke@egenera.com>
+Cc: reiserfs-list@namesys.com
 
-In article <20030213113003.7ee7af6e.philippe.gramoulle@mmania.com>,
-Philippe =?ISO-8859-15?Q?Gramoull=E9?=  <philippe.gramoulle@mmania.com> wrote:
->Hi Zygo,
->
->This is a little bit OT from the thread on ReiserFS ML, but could you tell =
->me more
->about your laptop setup with rijndael loopback encryption and how you insta=
->lled it
->, what kernel version/patches ( link to a guide or FAQ or tutorial about ho=
->w to set this up)
->
->I had once a NOC latop full of critical infos stolen in the tube in Paris,F=
->rance
->and it had been a mess to change all the passwords, etc...
->
->Having every FS encrypted would make my paranoid ego feel much better ;o)
+Hello!
 
-Linux 2.4.20, loop-AES 1.7b (replaces the standard loop.o module).
-See http://loop-aes.sourceforge.net for loop-AES.  The package tarball
-contains a crypto-ramdisk-boot script and some information on how to
-set things up.
+On Thu, Feb 13, 2003 at 12:11:44PM -0500, Patrick O'Rourke wrote:
+> What happens is that we put both systems under a fixed work load and after
+> many hours system B will start consuming lots of swap and suffer degraded
+> performance.  Through some kernel debugging we discovered that the 4K kmalloc
+> slab is slowly growing to the point where there is enough memory pressure to
+> start swapping.  We observe that one of the heaviest users of the 4K slab is
+> reiserfs_kmalloc(), and in particular, the calls issued from
+> get_mem_for_virtual_node() and reiserfs_file_write().  As an experiment we
+> ran the same work load, but this time disabled the rsync'ing of the log files
+> and we no longer see the growth in the 4k slab.
+> This leads us to believe that we have a memory leak somewhere in the reiserfs
+> and was wondering if anyone else has seen this, and if so, if a patch exists.
+> One question I have is that get_mem_for_virtual_node() will first attempt to
+> allocate memory atomically, and if this fails, will re-try non atomically.
+> In this case we return SCHEDULE_OCCURRED which results in fix_nodes()
+> will also return to its caller.  Is it possible for buffer allocated by
+> get_mem_for_virtual_node() to be lost in this case?  I did not see any
+> path out of reiserfs_file_write() in which we could return w/o freeing
+> the buffer.  Perhaps this problem is triggered via memory pressure?
 
-Note that you should probably encrypt swap as well, and watch out for
-features like suspend-to-disk (aka "hibernate") that save the contents
-of RAM without encryption.
+Thanks for the report. I will investigate it tomorrow, when it is day again
+in Russia.
+Meanwile there is easy way to find if there is some memory leaked through
+reiserfs_kmalloc. If you enable CONFIG_REISERFS_CHECK kernel option,
+then there is code in reiserfs_kmalloc, that cheks if we alloc, but not free
+the memory.
+It will print a warning once in a while.
+But please note that CONFIG_REISERFS_CHECK will impose some (substantial?)
+slowdown to reiserfs operations, so you might just unconditionally
+enable the check for memleak in there if you cannot afford the slowdown.
 
--- 
-Zygo Blaxell (Laptop) <zblaxell@feedme.hungrycats.org>
-GPG = D13D 6651 F446 9787 600B AD1E CCF3 6F93 2823 44AD
+Bye,
+    Oleg
