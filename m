@@ -1,60 +1,79 @@
-From: "Sergey S. Kostyliov" <rathamahata@php4.ru>
-Subject: Re: bk pull problem (reiser4)
-Date: Fri, 30 Jan 2004 15:33:26 +0300
-Message-ID: <200401301533.26212.rathamahata@php4.ru>
-References: <200401121528.14023.rathamahata@php4.ru> <401A42A9.70402@free.fr>
-Reply-To: "Sergey S. Kostyliov" <rathamahata@php4.ru>
+From: Bennett Todd <bet@rahul.net>
+Subject: Re: How to set a reiserfs partition to get an occasional fsck?
+Date: Fri, 30 Jan 2004 11:19:30 -0500
+Message-ID: <20040130161930.GA531@rahul.net>
+References: <200401301515.10852.Michael.James@csiro.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16658-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="X1bOJ3K7DJ5YkBrT"
+Return-path: <reiserfs-list-return-16659-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <401A42A9.70402@free.fr>
 Content-Disposition: inline
+In-Reply-To: <200401301515.10852.Michael.James@csiro.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Vince <fuzzy77@free.fr>
+To: Michael James <Michael.James@csiro.au>
 Cc: reiserfs-list@namesys.com
 
-Hello Vince,
+--X1bOJ3K7DJ5YkBrT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Friday 30 January 2004 14:40, Vince wrote:
-> Hi, have you found a solution to this problem ?
-No, nothing has changed. I still can not pull from bk://bk.namesys.com/.
+2004-01-29T23:15:10 Michael James:
+> PS:	I've just realized I can do it by adding an fsck
+> 	  into the linuxrc script of a cooked initrd image.
 
-> I've got the exact same behaviour here...
->
-> (BitKeeper version is bk-3.0.4 20031218201658 for x86-glibc22-linux
-> Built by: lm@redhat71.bitmover.com in /build/3.0.x-lm/src
-> Built on: Thu Dec 18 17:32:47 PST 2003)
->
-> Sergey S. Kostyliov wrote:
-> > Hello all,
-> >
-> > I can not pull from reiser4 tree,
-> > bk pull is just waited indefinitely:
-> > rathamahata@arise reiser4 $ bk parent
-> > Parent repository is bk://bk.namesys.com/bk/reiser4
-> > rathamahata@arise reiser4 $ bk pull
-> > Pull bk://bk.namesys.com/bk/reiser4
-> >   -> file://usr/local/src/bk/reiser4
-> > (nothing more)
-> >
-> > but bk clone is still posiible.
-> >
-> > traceroute to thebsh.namesys.com (212.16.7.65), 30 hops max, 40 byte
-> > packets 1  breuss-10.ws.ehouse.ru (192.168.114.10)  1.251 ms  2.773 ms 
-> > 28.617 ms 2  hobbit-gw.ehouse.ru (193.111.92.33)  11.445 ms  9.780 ms 
-> > 9.920 ms 3  express-ehouse.express.ru (212.24.42.9)  9.884 ms  9.800 ms 
-> > 9.914 ms 4  LYNX-M9.ATM6-0.30.M9-R1.msu.net (193.232.127.230)  4.985 ms 
-> > 12.488 ms  4.978 ms 5  LYNX-M9.ATM6-0.30.M9-R1.msu.net (193.232.127.230) 
-> > 6.080 ms  5.403 ms * 6  thebsh.namesys.com (212.16.7.65)  5.847 ms  5.469
-> > ms  5.147 ms
+I'm sure there are many approaches that can be used, but it so
+happens that I can specifically comment on that one, having recently
+gotten started playing with initrds.
 
--- 
-                   Best regards,
-                   Sergey S. Kostyliov <rathamahata@php4.ru>
-                   Public PGP key: http://sysadminday.org.ru/rathamahata.asc
+They're so easy, so fun!
 
+If I wanted to make a "fsck boot", here's how _I_ would do it.
+
+	dd if=/dev/zero bs=1024k count=4 of=initrd.fs
+	mke2fs initrd.fs
+	mount -o loop initrd.fs /mnt
+	# copy a full busybox setup onto /mnt
+	# copy the statically-linked fsck binary I want to /mnt
+	sync
+	umount /mnt
+	gzip -9 <initrd.fs >initrd.img
+
+That's a rescue disk. If you want it to be completely automated, add
+this etc/init.d/rcS, mode 0755:
+
+	#!/bin/sh
+	fsck command I want
+	reboot
+
+I've got a statically linked busybox (along with a lot of other
+components, all statically linked against uClibc) available from
+<URL:http://bent.latency.net/bent/>. For rescue disk creation you'll
+want to unpack elsewhere and delete docs, and var/lib/bpm (where the
+complete package sources are installed).
+
+To boot such an initrd, besides specifying your kernel and initrd,
+you want to add "rw" and "root=/dev/ram0" to your boot options.
+
+But I don't think I'd actually respond this way to the problem
+you've got. RAM is so cheap, run memtest86 to find out for sure
+which bits are marginal, and replace 'em.
+
+-Bennett
+
+--X1bOJ3K7DJ5YkBrT
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
+
+iD8DBQFAGoQRHZWg9mCTffwRAtkFAKCF8BFc0gPts8EVqOurvs5dwlMwxACeP6JM
+ky0MeDVx0kuvPvbZLD5ye/U=
+=nP+0
+-----END PGP SIGNATURE-----
+
+--X1bOJ3K7DJ5YkBrT--
