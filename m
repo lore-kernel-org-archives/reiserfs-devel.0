@@ -1,12 +1,11 @@
-From: Konstantin Sobolev <kos@supportwizard.com>
+From: Vitaly Fertman <vitaly@namesys.com>
 Subject: Re: fsck.reiser4 segfaults
-Date: Thu, 15 Jul 2004 23:22:22 +0400
-Message-ID: <200407152322.22803.kos@supportwizard.com>
+Date: Thu, 15 Jul 2004 23:26:49 +0400
+Message-ID: <200407152326.49988.vitaly@namesys.com>
 References: <200407151559.41256.kos@supportwizard.com> <200407152245.57083.kos@supportwizard.com> <200407152309.10968.vitaly@namesys.com>
-Reply-To: kos@supportwizard.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19643-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19644-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -15,8 +14,7 @@ In-Reply-To: <200407152309.10968.vitaly@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Vitaly Fertman <vitaly@namesys.com>
+To: kos@supportwizard.com, reiserfs-list@namesys.com
 
 On Thursday 15 July 2004 23:09, Vitaly Fertman wrote:
 > On Thursday 15 July 2004 22:45, Konstantin Sobolev wrote:
@@ -34,13 +32,18 @@ On Thursday 15 July 2004 23:09, Vitaly Fertman wrote:
 > the root directory got such a pset and as a result the fs cannot be
 > mounted with an old reiser4 code anymore.
 
-Yeah. Luckily I've found LiveCD with 2.6.7 sources patched with one of 
-autosnapshots that successfully mounted my /usr, so now I'll be able to build 
-new kernel. Can you recommend some more or less stable autosnapshot that I 
-can use?
+you can either build the kernel with the latest reiser4 auto-snapshot
+or get reiser4progs-0.5.4. If later, fsck.reiser4-0.5.4 should be able 
+to fix the root directory to the old format -- it has worked for my 
+test now at least.
 
-Thanks for your help :)
+> > Unable to handle kernel NULL pointer dereference at virtual address
+> > 00000008 followed by registers dump and call trace
+> >
+> > I guess my laptop is dead until new LiveCD with fresh reiser4 snapshot
+> > that will be able to mount it..
+
 -- 
-/KoS
-* recursion n.: See Recursion
-		-- The Jargon File
+Thanks,
+Vitaly Fertman
+
