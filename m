@@ -1,76 +1,67 @@
-From: Jeff Mahoney <jeffm@novell.com>
-Subject: Re: warning: Invalid hash for xattr (system.posix_acl_access) associated
- with [1070 1541 0x0 SD] after extending device
-Date: Wed, 17 Nov 2004 17:12:27 -0500
-Message-ID: <419BCCCB.40103@novell.com>
-References: <200411171931.52943.js@jetsys.de>
+From: Laurent Riffard <laurent.riffard@free.fr>
+Subject: [PATCH] reiser4: fix a use after free bug in reiser4_parse_options
+Date: Thu, 18 Nov 2004 00:09:36 +0100
+Message-ID: <419BDA30.20707@free.fr>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-22401-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="------------enigD23E6B6BE63CFF23DB5BA72B"
+Return-path: <reiserfs-list-return-22402-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200411171931.52943.js@jetsys.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?J=F6rg_Spilker?= <js@jetsys.de>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+--------------enigD23E6B6BE63CFF23DB5BA72B
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-J=F6rg Spilker wrote:
-| Hello,
-|
-| i recently extended a LVM device and also resized the reiserfs. Now i
-find
-| lots of messages like this in my log:
-|
-| Nov 17 04:08:59 lotus kernel: ReiserFS: dm-5: warning: Invalid hash
-for xattr
-| (system.posix_acl_access) associated with [1070 1541 0x0 SD]
-| Nov 17 04:08:59 lotus kernel: ReiserFS: dm-5: warning: Invalid hash
-for xattr
-| (system.posix_acl_access) associated with [1070 1541 0x0 SD]
-|
-| they don't seem to cause any harm. reiserfsck doesn't report any
-errors. Can i
-| fix the problem without reformatting the whole device?
-|
-| Kernel is the original kernel from SuSE 9.2 (with all available patches
-| 2.6.8-24.3) and the reiserfs tools coming with the distribution.
-|
-| Greetings, J=F6rg
-|
+This patch fix a "use after kfree" bug in reiser4_parse_options.
 
-It's definately fixable without reformatting.
+Signed-off-by: Laurent Riffard <laurent.riffard@free.fr>
+---
 
-When I designed the on-disk ACL/xattr format, I built in a magic number
-and a checksum to catch things like corrupted entries wreaking havoc on
-the system. That's what you're hitting.
+diff -u linux-2.6-orig/fs/reiser4/vfs_ops.c linux-2.6/fs/reiser4/vfs_ops.c
+--- linux-2.6-orig/fs/reiser4/vfs_ops.c	2004-11-17 23:43:22.186242952 +0100
++++ linux-2.6/fs/reiser4/vfs_ops.c	2004-11-17 23:39:15.935678728 +0100
+@@ -1060,8 +1060,6 @@
+ 	});
+ #endif
+ 
+-	kfree(opts);
+-
+ 	sbinfo->tmgr.atom_max_size = txnmgr_get_max_atom_size(s);
+ 	sbinfo->tmgr.atom_max_age = REISER4_ATOM_MAX_AGE / HZ;
+ 	sbinfo->tmgr.atom_max_flushers = ATOM_MAX_FLUSHERS;
+@@ -1089,6 +1087,9 @@
+ 	sbinfo->ra_params.flags = 0;
+ 
+ 	result = parse_options(opt_string, opts, p - opts);
++
++	kfree(opts);
++
+ 	if (result != 0)
+ 		return result;
+ 
 
-Somehow, an entry wasn't fully written to disk or was corrupted somehow.
-~ Whether it was part of the extending process or not, I couldn't tell you.
-
-You can use debugreiserfs to track down the file with that key by using
-debugreiserfs -d <device> and looking for the objectid. Once you find
-the directory listing with that key, you should be able to find the file.
-
-When you've located the filename, a setfattr -x system.posix_acl_access
-<file> followed by the appropriate setfacl command will reset the ACL.
-
-- -Jeff
+-- 
+laurent
 
 
-- --
-Jeff Mahoney
-SuSE Labs
+--------------enigD23E6B6BE63CFF23DB5BA72B
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
 
-iD8DBQFBm8zLLPWxlyuTD7IRAss6AJ9ELG9BbPjgqF78dG5aXrgZ4MQpGQCeLZ7o
-pmbxrva+nXv6MU3w0UQ1Y78=3D
-=3Dwpwc
+iD8DBQFBm9o5UqUFrirTu6IRAsrNAJ47Aoeyh1PsKYhYlX1sv9m/rEnxRQCdHE9R
+0Jz0aCr2850MGYGJbrnUkM4=
+=YOL8
 -----END PGP SIGNATURE-----
+
+--------------enigD23E6B6BE63CFF23DB5BA72B--
