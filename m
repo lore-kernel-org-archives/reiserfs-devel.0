@@ -1,64 +1,68 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Soeren Sonnenburg <reiserfs@nn7.de>
 Subject: Re: How to build a big file server
-Date: Thu, 05 Jun 2003 14:05:41 +0400
-Message-ID: <3EDF15F5.2020908@namesys.com>
+Date: 05 Jun 2003 12:07:27 +0200
+Message-ID: <1054807646.14700.9.camel@localhost>
 References: <1054800852.1997.15.camel@wusel.schnulli.de>
+	 <1054806353.558.16.camel@chtephan.cs.pocnet.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14422-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14423-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1054800852.1997.15.camel@wusel.schnulli.de>
+In-Reply-To: <1054806353.558.16.camel@chtephan.cs.pocnet.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Heinz-Josef Claes <hjclaes@web.de>
-Cc: reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Heinz-Josef Claes wrote:
+On Thu, 2003-06-05 at 11:45, Christophe Saout wrote:
 
->Hi,
->
->I did't found information about my problem on namesys, so I try to ask
->here.
->
->I plan to build a big fileserver for Deutscher Bundestag (German
->Parliament) who is converting to linux on the server side. In the
->beginning it will be used in a testing environment and later multiple of
->them in production use.
->
->Here are some questions:
->
->- I plan to build a system with IDE 250GB drives. 7 of them for raid 5
->and one hot spare. The OS will be on separate hardware raid 1 on smaller
->disks. Does anybody have experience with IDE controlers for the big
->disks? Is it better to use hardware raid oder software raid
->(performance)?
->
->- At this time, we plan to use reiserfs. What are the advantages /
->disadvantages of using the raid 1 for journaling for the (big) raid 5
->(performance, recovery)? The system will be heavily used with
->storebackup (www.sf.net/projects/storebackup) witch means that lots of
->hard links have to be created as fast as possible.
->
->- BTW: I'm using a ZIP drive on the parallel port with reiserfs. Does it
->make sense to put the journal for the ZIP drive on the hard disk of the
->laptop?
->
->Thanks for taking your time,
->Heinz-Josef Claes
->
->
->
->
->  
->
-Do you plan to do synchronous work loads involving lots of little 
-fsyncs?  The RAID 5 will not perform well for that purpose, otherwise it 
-should work well even for the journal.  Chris will correct me if I err.
+> > - I plan to build a system with IDE 250GB drives. 7 of them for raid 5
+> > and one hot spare. The OS will be on separate hardware raid 1 on smaller
+> > disks. Does anybody have experience with IDE controlers for the big
+> > disks? Is it better to use hardware raid oder software raid
+> > (performance)?
+> 
+> I'm successfully running a bunch of servers with Promise
+> Ultra100/Ultra133 controllers and software raid on it (and LVM but
+> that's another story).
 
--- 
-Hans
+iiiieeeek! I don't know how you get them running stably but here two
+ultra tx2 only caused trouble and were quickly thrown away.
+so the message is KEEP AWAY FROM PROMISE CONTROLLERS.
 
+> The only problem you'll probably run into is that the PCI slots get full
+> because you should only have one hard disk per cable to get the best
+> performance.
+
+well 6 pci slots gives you 12 disks with el cheapo controllers (hpt37x
+based ones etc...) so that is not the problem, BUT pci bus speed. I have
+a software raid5 running here with only 5 disks and on heavy disk io
+nothing else works on the PCI bus... (e.g. watching tv via pci-tv card
+is impossible then).
+
+> The only problem with that solution is that when one disk fails you'll
+> have to turn of the machine and exchange the disk, and after turning it
+> on fdisk it (I love the raid autodetection) and raidhotadd that disk
+> manually.
+
+or use a spare and do it at night :-)
+
+> I don't have enough hard disks here to play with them now, but on a raid
+> 10 configuration here (striping over two raid1 pairs of 200 GB 7200 rpm
+> disks that can do about 50MB/sec each) a cp -al takes about one minute
+> over 80.000 files/directories.
+
+the raid5 has about the same speed... reading/writing is 40-50M/s.
+rebuilding a 5*80G raid takes about an hour.
+
+Another solution would be to take these transtec external raids which
+are ide intern scsi extern. I have one (1.2TB) here and it is althoug a
+bit slower pretty reliable so far...
+
+I've had no bad experience with reiserfs on x86 hardware so far and it
+gets pretty intensively used...
+
+Soeren.
 
