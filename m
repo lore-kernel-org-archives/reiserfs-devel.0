@@ -1,63 +1,66 @@
-From: "Lamont R. Peterson" <lamont@gurulabs.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: viewprinting: what format should views be stored in?
-Date: Tue, 26 Oct 2004 09:54:46 -0600
-Message-ID: <1098806086.2610.7.camel@localhost.localdomain>
-References: <20040819074027.8429715D94@mail03.powweb.com>
-	 <41248D43.3040905@dgreaves.com> <4124D09A.1060208@comcast.net>
-	 <4124E408.3090405@dgreaves.com>  <41259FBF.5040308@namesys.com>
+Date: Tue, 26 Oct 2004 09:39:38 -0700
+Message-ID: <417E7DCA.5010609@namesys.com>
+References: <20040819074027.8429715D94@mail03.powweb.com>	 <41248D43.3040905@dgreaves.com> <4124D255.2060401@comcast.net>	 <412597F9.1010707@namesys.com> <1098801919.2610.2.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-C365ZyO8SSdN4KGtPUqV"
-Return-path: <reiserfs-list-return-22182-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22183-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41259FBF.5040308@namesys.com>
+In-Reply-To: <1098801919.2610.2.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Lamont R. Peterson" <lamont@gurulabs.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
---=-C365ZyO8SSdN4KGtPUqV
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Lamont R. Peterson wrote:
 
-On Fri, 2004-08-20 at 00:52, Hans Reiser wrote:
-> David Greaves wrote:
->=20
-> >
-> > David
-> > PS can I offer 'mask specification' (shortened to maskspec above)=20
-> > instead of 'presentation mask' for the glossary.
-> >
-> >
-> Glossary? of?
->=20
-> Instead of mask specification, just say mask.
->=20
-> I think I like mask more than view....
-
-I respectfully disagree.  I like view better than mask.  After all, the
-term mask is used in lots of places already.  If you want to distinguish
-viewprinting from those things, I think "view" is the way to go.
-
-Also, I think view is more accurately descriptive of what it is that you
-are trying to accomplish here.  It is also a more accurate term for us
-database people :-).
---=20
-Lamont R. Peterson <lamont@gurulabs.com>
-Senior Instructor
-Guru Labs, L.C. http://www.GuruLabs.com/
-
---=-C365ZyO8SSdN4KGtPUqV
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQBBfnNG+YBsl9wN1AkRAjbeAJ9SZFLrSx92Vj3H7pWcgXEbX/CAoQCeOfqx
-48RGyrnoJsX4wDdqJo3S3mY=
-=XoEG
------END PGP SIGNATURE-----
-
---=-C365ZyO8SSdN4KGtPUqV--
-
+>On Fri, 2004-08-20 at 00:19, Hans Reiser wrote:
+>  
+>
+>>George Beshers wrote:
+>>    
+>>
+>>>>>Masked Processes
+>>>>>- May not create hard links.
+>>>>>- Child processes [of a masked process] must inherit the parent's 
+>>>>> "mask bit" and mask definition.
+>>>>> 
+>>>>>          
+>>>>>
+>>>>remind me - what is the mask tied to? UID/GID, EUID, PID, PGID? 
+>>>>filesystem?
+>>>>Hans actually says it's derived from the executable.
+>>>>What if it changes between two processes starting?
+>>>>Does the running processes mask change? (cf chmod a file - seems 
+>>>>reasonable but...)
+>>>>I'd think it needs to be pretty atomic...
+>>>>In fact, maybe changing masks on a running (mounted?) system is a 
+>>>>potential security hole and forbidden?
+>>>>I think I could think of race examples.
+>>>>        
+>>>>
+>>>I am disinclined to tackle changing masks on the fly until I have a 
+>>>compelling story
+>>>to justify the work.
+>>>      
+>>>
+>>It is less work to allow changing them on the fly than to not do so, 
+>>since they are stored in the fs, not something loaded into the process 
+>>state.
+>>    
+>>
+>
+>Yes.
+>
+>Additionally, if they could not be changed "on-the-fly", then in
+>practical terms this would force an admin to restart a daemon when a
+>change is made.  That would not be very friendly.
+>  
+>
+Yes, and actually, part of our objective is to allow for incremental 
+improvements/refinements to the masks as we discover more files that the 
+blackbox binary needs.
