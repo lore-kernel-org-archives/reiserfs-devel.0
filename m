@@ -1,65 +1,90 @@
-From: system_lists@nullzone.org
-Subject: Re: Urgent: problems after crush
-Date: Sun, 01 Dec 2002 15:28:27 +0100
-Message-ID: <5.1.1.6.2.20021201152709.02f3abb0@192.168.2.131>
-References: <5.1.1.6.2.20021201134854.00ce13b8@192.168.2.131>
- <5.1.1.6.2.20021201134854.00ce13b8@192.168.2.131>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: [Fwd: Re: [ogfs-dev]Re: [Linux-ha-dev] Re: GFS with MD/LVM (Was:
+ Using RAID1 SCSI disks with heartbeat)]
+Date: Sun, 01 Dec 2002 22:38:37 +0300
+Message-ID: <3DEA653D.7070204@namesys.com>
+References: <3DE833C6.3000009@emageon.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12080-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12081-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200212010901.02648.tomlins@cam.org>
+In-Reply-To: <3DE833C6.3000009@emageon.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Content-Transfer-Encoding: 7bit
-To: Ed Tomlinson <tomlins@cam.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: Brian Tinsley <btinsley@emageon.com>
+Cc: reiserfs-list@namesys.com, Alan Robertson <alanr@unix.sh>
 
+Brian Tinsley wrote:
 
-Dear Ed,
-
-    really thanks!
-
-    I got fixed all 'system' problems with some 'apt-get install 
---reinstall' but the reiser filesystem was fixed just with the last 
-reiserfsck version.
-
-Thanks again Ed.
-
-At 09:01 01/12/2002 -0500, Ed Tomlinson wrote:
->On December 1, 2002 07:58 am, system_lists@nullzone.org wrote:
-> > Hi there,
-> >
-> >     i have a problem on my web server. Trying to star the apache-web-daemon
-> > i get always this message (in a reiserfs x.xx.xx partition).
-> >
-> > Dec  1 14:37:01 server01 kernel: attempt to access beyond end of device
-> > Dec  1 14:37:01 server01 kernel: 03:04: rw=0, want=0, limit=2185344
-> > Dec  1 14:37:01 server01 kernel: attempt to access beyond end of device
-> > Dec  1 14:37:01 server01 kernel: 03:04: rw=0, want=0, limit=2185344
-> > Dec  1 14:37:10 server01 kernel: init_special_inode: bogus imode (2000)
-> >
-> >
-> > It'is so after a hardware problem which halted the system.
-> > After fixing the problem i cannot start the daemon.
-> >
-> > I have recompiled the daemon, created new log files (re-done all which
-> > apache access in a boot (pid files, directories..)).
-> > I have done a reiserfsck and all is ok ..
-> >
-> > im a bit lost...
+> Hey guys,
 >
->I would start by downloading reiserfsck 3.6.4 and checking my drive.  If
->its ok you still have a hardware problem.  If not do what reiserfsck
->suggests (make sure you have a why to recreate your data - just in case).
->I have used reiserfsck many times with good results here.
+> Can someone clarify this please?
 >
->If you need a standalone boot cd try downloading knnopix.  You will want
->to put reiserfsck 3.6.4 on a floppy as knnopix has 3.6.3 on it.
 >
->Ed Tomlinson
-
-
-
+> -------- Original Message --------
+> Subject: Re: [ogfs-dev]Re: [Linux-ha-dev] Re: GFS with MD/LVM (Was:=20
+> Using RAID1 SCSI disks with heartbeat)
+> Date: Fri, 29 Nov 2002 19:01:14 -0700
+> From: Alan Robertson <alanr@unix.sh>
+> Reply-To: linux-ha-dev@lists.community.tummy.com
+> Organization: IBM Linux Technology Center
+> To: linux-ha-dev@lists.community.tummy.com
+> CC: Greg Freemyer <Greg.Freemyer@TruStorage.com>, OpenGFS=20
+> <opengfs-devel@lists.sourceforge.net>
+> References:=20
+> <20021129211032.BZIW24110.mtiwmhc13.worldnet.att.net@TAZ2><3DE7EF45.20903=
+@unix.sh>=20
+> <20021130013240.Y25901@vestdata.no>
+>
+>
+>
+>Ragnar Kj=F8rstad wrote:
+>> On Fri, Nov 29, 2002 at 03:50:45PM -0700, Alan Robertson wrote:
+>>=20
+>>>I think EVMS has (or will have soon) r/w snapshots.
+>>>
+>>>
+>>>>WIth r/w snapshots, the process can be: snapshot, clean, mount.  I thin=
+k that=20
+>>>>could be done=20
+>>>>with no FS support. =20
+>>>
+>>>The FS support is still preferred because the integrity of the volume is=
+=20
+>>>still better (nothing held in cache).  Some filesystems can still proces=
+s=20
+>>>journals on readonly filesystems.  IIRC, ReiserFS does that.
+>>=20
+>>=20
+>> I don't think so. Reiserfs had to be patched to work with lvm snapshots
+>> as well.
+>
+>Originally it needed patches, but I was under the impression that those=20
+>patches were now in the base code.
+>
+>
+>--=20
+>     Alan Robertson=20
+>
+>"Openness is the foundation and preservative of friendship....  Let me cla=
+im=20
+>from you at all times your undisguised opinions." - William Wilberforce
+>
+>
+>_______________________________________________________
+>Linux-HA-Dev: Linux-HA-Dev@lists.community.tummy.com
+>http://lists.community.tummy.com/mailman/listinfo/linux-ha-dev
+>Home Page: http://linux-ha.org/
+> =20
+>
+>
+>--=20
+>Brian Tinsley
+>Chief Systems Engineer
+>Emageon
+>
+Yes, chris did the snapshot patching long ago in our main code.
 
