@@ -1,84 +1,41 @@
-From: Redeeman <redeeman@metanurb.dk>
-Subject: Re: when will it end?
-Date: Sat, 30 Oct 2004 18:23:32 +0200
-Message-ID: <1099153412.14113.1.camel@localhost>
-References: <417EF280.10003@slaphack.com>
-	 <20041027033443.GE25932@backtop.namesys.com>
-	 <417F3C7C.2020408@slaphack.com> <1406818064.20041027103126@tnonline.net>
-	 <417FD40B.2050807@namesys.com>  <418054C8.5020104@slaphack.com>
-Reply-To: redeeman@metanurb.dk
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22224-reiserfs=m.gmane.org@namesys.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 518] Reiserfs: Add missing #include <linux/sched.h>
+Date: Sun, 31 Oct 2004 11:03:41 +0100
+Message-ID: <200410311003.i9VA3fGx009709@anakin.of.borg>
+Return-path: <reiserfs-list-return-22229-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <418054C8.5020104@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Linus Torvalds <torvalds@osdl.org>, Andrew Morton <akpm@osdl.org>
+Cc: Linux Kernel Development <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com, Geert Uytterhoeven <geert@linux-m68k.org>
 
-On Wed, 2004-10-27 at 21:09 -0500, David Masover wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
-> 
-> Hans Reiser wrote:
-> | Spam wrote:
-> |
-> |>
-> |>  Windows 2000 and later comes with a lite version of Diskeeper from
-> |>  Executive Software.
-> |>
-> | MS charges for the OS, so that business model works for them.  Nobody
-> | will buy a heavy resizer from us if there is a lite one.  That would be
-> | as likely to happen as their buying a support contract. The lite
-> | software is reiser4 without a resizer.
-> |
-> | Such is my feel of the market.
-> 
-> Perhaps.  I'd just feel a little cheated.  Currently, without a
-> repacker/resizer, I would have to borrow/buy another hard drive to get
-> my data off reiser4, and it seems that it would slowly become more
-> fragmented.
-hmm.. well you would certainly need that with another filesystem too
+Reiserfs: Add missing #include <linux/sched.h>
 
-> 
-> What about plugins?  Application patches?  The repacker seems sort of
-> essential, and definitely a lot of work, but your expertise would also
-> be very useful for things like, say, a reiser4 backend to a traditional
-> SQL database.  I sincerely doubt people would be willing to pay much for
-> something that they see as "free" with Windows, while there's some real
-you do pay in windows, but also, its more needed with ntfs and fat32 i
-believe
-> potential here to create something entirely unique.  Not unique in its
-> benchmarks, but in its usability.
-> 
-> I know I'm somewhat biased, but I do prefer something entirely
-> proprietary to something which is sort of "half-open", like
-> WineX/Cedega, Lustre, etc.  It leaves a really bad taste in my mouth
-> when I start to get hooked on a product, only to find later on that I
-> have to buy some really critical feature.  Like all those "GI-Joe
-> Grenade Launcher" with "GI-Joe sold separately" fine-print labels.
-> -----BEGIN PGP SIGNATURE-----
-> Version: GnuPG v1.2.6 (GNU/Linux)
-> Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-> 
-> iQIVAwUBQYBUyHgHNmZLgCUhAQJDOg/+NIjPua8z9iAOszVpAhMxV672uSrEjTZq
-> uGjPySFxjbc0UtDBHrGexIchiUnTF8L6tSzgJKoYF4lpoZ+/cMMosZ9Qxk0Agn8n
-> smhvRKz+pWr5my0PVMUxcUrsYtfhqiHEO+zRSLX/LJ22b6Qiy3yOxKgV74AylpSi
-> ZtINahQicT0sbok0n0UAt5Zk4yzJPj3+R7J3TUEAgatisZhWGwr5w9WIVIGHVsYa
-> YwXsX8AparnfLhh700DSg5k0OWCBf1gZs+iXN1Oy1G6x1z7cVtqB+nHjZPPYEoFx
-> B3zRYYm1M2LGuNe6tqpLwM0jufBZ2ZOMbsGA0Kbg2c/zSBviOjZfq+oTrtUdiFKU
-> Log4sVRH/rk8H1B4DqG0iEwLwjZ4Q+q3DAs9c2GKPS7VQ+fb/UjATd1HlBFYCVtG
-> hN12UHI2Tg6wTsn2fhp9Q48BKd/D4g5LEKbZ4fYhtrPOqDSVV3d3lMPTp1Lxtv0j
-> AXyEyouClEOvAr0eLTLTX31M5Negg+MX+z82NwW3kTigw/DFVsTY3jo3qJqZ9iHT
-> NKAbF3hHYarhC1w+Z607of2CO1dQqkC3Gs0XgN3qKQ0yN4kRJcWyXeVzAtkOOinY
-> Ymou+1v70t3ZVNgraV+znIVQelT2xHWNuK58D6WLALZPHN3kXrzIZvQNpt72ZwqM
-> RnPLTLuSX4o=
-> =BGb5
-> -----END PGP SIGNATURE-----
-> 
--- 
-Redeeman <redeeman@metanurb.dk>
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
+--- linux-2.6.10-rc1/include/linux/reiserfs_fs.h	2004-10-23 10:33:38.000000000 +0200
++++ linux-m68k-2.6.10-rc1/include/linux/reiserfs_fs.h	2004-10-24 16:42:45.000000000 +0200
+@@ -16,6 +16,7 @@
+ #ifdef __KERNEL__
+ #include <linux/slab.h>
+ #include <linux/interrupt.h>
++#include <linux/sched.h>
+ #include <linux/workqueue.h>
+ #include <asm/unaligned.h>
+ #include <linux/bitops.h>
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
