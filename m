@@ -1,100 +1,99 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Tue, 31 Aug 2004 20:43:24 -0500
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <4135293C.3060702@slaphack.com>
-References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>	<Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>	<20040831203226.GB16110@elf.ucw.cz>	<Pine.LNX.4.58.0408311336580.2295@ppc970.osdl.org>	<20040831205422.GD16110@elf.ucw.cz>	<Pine.LNX.4.58.0408311357550.2295@ppc970.osdl.org>	<20040831220726.GB16428@elf.ucw.cz> <m3acwa99qz.fsf@zoo.weinigel.se>
+Date: Tue, 31 Aug 2004 21:04:59 -0500
+Message-ID: <41352E4B.1080709@slaphack.com>
+References: <Pine.LNX.4.44.0408271043090.10272-100000@chimarrao.boston.redhat.com> <412F7D63.4000109@namesys.com> <20040829150041.GD9471@alias> <4133CA74.6070906@slaphack.com> <41341F08.7050401@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <m3acwa99qz.fsf@zoo.weinigel.se>
+Return-path: <reiserfs-list-return-21194-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <41341F08.7050401@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Christer Weinigel <christer@weinigel.se>
-Cc: Pavel Machek <pavel@ucw.cz>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: flx@msu.ru, Rik van Riel <riel@redhat.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Christer Weinigel wrote:
-| Pavel Machek <pavel@ucw.cz> writes:
+Hans Reiser wrote:
+| David Masover wrote:
+|
+|>
+|>
+|> And I did mention before about how it'd be nice for it to be an fs
+|> chunk...
 |
 |
-|>Okay, that does work, it just is not really nice. Just as reserving
-|>fixed ammount of space for disk cache is bad, reserving fixed ammount
-|>of space for ccache (and similar) is bad. When there are few of such
-|>caches, balancing between them starts to matter...
+| Please define fs chunk. My mind has an open door.;-)
+
+I think this is sort of like dump/restore, but for a subset of the tree.
+~ So it's faster for all the reasons dump/restore are faster than tar for
+a whole filesystem.  But I don't know all that much about either
+dump/restore or reiser4 format plugins.
+
+I'm defining an "fs chunk" as a complete, read-only reiser4 filesystem
+of the data in question.  As a snapshot.  I'm imagining it being faster
+to create and ultimately smaller and more intelligently packed than a
+tarball.
+
+What if you could get a blocklist for a directory?  Of course some
+things would have to be changed to completely divorce it from the parent
+filesystem and have it still be usable.
+
+I'm imagining that literally grabbing a chunk of the filesystem -- using
+its own storage layer -- would be faster than tarring.  Think like if
+directories had blocklists as well as files.  It would also be smaller
+- -- see below.  And it completely eliminates the question of "what may I
+never back up" -- the fs already knows that.  Without having to be told
+by plugins.  If the fs stores it to disk, the backup stores it, unless
+it's part of the "cache" proposal.
+
+This is a rough idea, and has issues.  For instance, how do we know
+what's cache and what's not?  If you have foo.gz/ugz cached and someone
+writes to foo.gz/ugz, I think that should be written to the cache and
+the original foo.gz should be removed -- regenerated if necessary from
+foo.gz/ugz.  But the reverse is true -- write to foo.gz and foo.gz/ugz
+should go away, to be regenerated if necessary.  Only one should go into
+the backup, though.  I think foo.gz goes into the backup and is
+regenerated from foo.gz/ugz if necessary.  More generally, when you have
+two redundant streams, backup the smaller one.
+
+|>
+|> Imagine 5000 tiny little files that, by the time reiser's done with
+|> them, fit inside 5 blocks or so. It's insanely cheaper to copy the five
+|> blocks than to tar them up. It also means that we don't have to worry
+|> about supporting tar on other platforms -- if they don't have reiser4,
+|> they need a separate converter. If apps are going to use reiser4
+|> metadata for anything significant, they probably would link against some
+|> sort of userland implementation of reiser4 as a Windows library, say, to
+|> access the files elsewhere.
+|>
+|> That's extreme, but you get the idea.
 |
 |
-| So try to convince them to use the same cache daemon or the same
-| shared cache manager library then.  It isn't all that different from
-| implementing a kernel interface that everyone is supposed to use.
 
-You're right, it's not.  Is there some huge performance loss by having a
-kernel interface that then turns around and calls a userland daemon?  If
-yes, I can understand the argument.  If no, then the kernel interface
-should ultimately be able to replace gnome-vfs -- and it should rely
-heavily on userland utilities.
+P.S.  Sorry for the dupe, Hans, accidently hit "reply" instead of
+"reply-to-all"...
 
-Caching is very generic.  It's so generic that there should be exactly
-one cache manager, the way there is exactly one VM manager for Linux.
-If there's a choice, choose it at boot or compile-time.
-
-Abiword uses gzipped files.  So does gnumeric, gnucash, cube (a cute
-little game engine), and many others.  There's no way every single one
-will suddenly use a new library/daemon.  But with plugins and
-intelligent caching, any kind of compression could be supported without
-the app needing to support it natively -- either it goes in a compressed
-folder or the user browses to it and changes an attribute.
-
-
-| A cache manager daemon could sit and watch the free space on the disk
-| every other second and start deleting the cached files (according to
-| some LCU heuristics or whatever) whenever free space is getting low.
-
-Agreed.  The daemon should go in userspace.  But the interface should be
-in the kernel.  Just as no one suggested putting tar in the kernel, I
-don't think anyone would really insist that the daemon needs to go in
-the kernel.
-
-That is, unless critical system files start actually being cached
-streams of the actual package from the distro...  But this way leads to
-madness.  Any serious issues here are better solved by an initrd.
-
-[...]
-| I belive the kernel could give some assistance to make it easier to
-| see if a file has been modified, I remember that a few suggestions
-| were thrown around the last time Samba and dcache aliases were
-| discussed on l-k.  I definitely belive that kind of infrastructure
-| belongs in the kernel.  But the cache manager itself, no.
-
-Isn't there already dnotify?
-
-Dnotify is wrong here, because I don't think it would be sane in a
-sufficiently large setup.  But wouldn't it be nice if the kernel not
-only told you whether a file has been modified, but told you immediately
-after it was modified?
-
-Yet another reason why there has to be a common cache and significant
-kernel management -- if I've got a drive of less than, say, 5 gigs, I am
-simply not willing to reserve any large amount of it for cache.  Take
-the example of a source tarball being automatically extracted and the
-contents cached.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQTUpPHgHNmZLgCUhAQLhIg/9G87W4OCt8hOvTK+XniPgWGn+YC7t4fKy
-mi4QowX1eLmnFEovprjSUzPgKRMeDSChZ8M1pvXXWJQ/iULE44WH8vNiH8H974zw
-h5O8dNI/AczuzaCalQ+BYXEGM8pasaCGCI/sLrr+WBy97NOpM2VUUKY+qKxSFWFt
-x7u7/XCGGWSHVG3t3KzpkqD2K8u3IGSrV/vHIR2PLatEXu3G8K8sUAhfXMgFsTFp
-gQAuQN/YzQKGUphnMzFWLDMYyEYjAA4VACZFqFz9QJIYeWzP+YmGdLfZ5mzN91JF
-g5ACGHUxbYdjZsjTh6RbalVr1HpAAy8mvGNydbwUvuOxaXBvH44vUfRLnvIUoZs9
-BB0Tq4xPqAwAtP0Z7b5Qem1ef3gqGXo1hfsEJWJZPv1lssYzn1+Jpn99p6N6VkXI
-fbAHnypbHeYbf30lC5lvID0yngb+s5EUaxzxOYqFA8QpEJD/bl3S9Qx6bpom/9AL
-U8kdK8QjNbhHSMrOpl8mg77VRLXdINoV7R5iSXXUMdIcA1j+4R1AIPh62JAMwQDF
-/Vzek8KNyxvJDgF/y78LiGETZcG/l2W4szEsJFFF4iIKLri5+OFGiLFz8jVNViKu
-Lr7Q7u7TgWSSykdTrHFcR/WRupAHeL5RB5DA9HBZErqgAgJWz/Rjv743G8PYFKs8
-oPhRyePnFkE=
-=cQLE
+iQIVAwUBQTUuS3gHNmZLgCUhAQKWCQ/+LTNqHvndRAMqzdAJ0rugZl30bqqPmrFs
+vNqSwEx09RUxN6caOd+C4F7oVj/as0AJrNqyN5YR6/t6BKGxh+xEDnKdKiIRR5qp
+/TJmsMSkh54MSqaZZPL5EB6/DjWscBN7zKCaaCN6f8xB6KU2BCOK5pNSHDvYhISA
+uyD8AXrsOLRGC82dNtmh68KdrG+7VcTZMohulXNnosLLRJSuKeYEphB0i5HrvXQn
+nZ010yb6LnmKtNKD+w7bFxt3ul+lQo8gti7zBJqb7mV4pa1MnQNhGZRgvey/Pq/l
+ahXrrABauUFNwM4PfFWUoY9zjOdCufQpWev/mNGuoo9BS2ZiRg8LXoUpf2bOvi6I
+yOTMRb37w6+w37Jv8B0vYPehW3bmuJpb+jDyZ5AYS0GygJmm3bEIFZYupYt2pU/v
+7EBIzLszCEnqPbm0glGdWT5jyYiZGucvDK+W4qQ3ymEqaBIdGIti4G56mQ7bTQer
+DPVT4dv38OE/PEtKb6xLQUaos7hBg+sWM5+mT9B+7kX/cYDhtdBkZpYqf10jAg34
+4ufl2NS48CxqCcml7RayPVAuKT1ZN9sDcfXVYnPw33R94/lziZnfJrIInbnf9MZK
++P9v6WlFi6+9GZjwqFK9ZCJBoTCKRq1lGiy5flTDf1APAgpmU6CS/0Da4s1QiLLI
+YRoeX8Nv8Us=
+=WFSh
 -----END PGP SIGNATURE-----
