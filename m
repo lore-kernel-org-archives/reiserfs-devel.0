@@ -1,61 +1,63 @@
-From: Stewart Smith <stewart@flamingspork.com>
-Subject: Re: Can compression at filesystem level improve
-	overall	performance?
-Date: Thu, 08 Apr 2004 21:47:58 +1000
-Message-ID: <1081424878.2946.13.camel@kennedy>
-References: <405B02ED.4010602@solidcode.net>
-	 <1079713790.9729.1.camel@redeeman.linux.dk>
-	 <16475.9613.375262.677576@laputa.namesys.com>
-	 <1079978427.4658.63.camel@localhost.localdomain>
-	 <405F46D8.1040607@namesys.com>
-	 <1080011016.4658.408.camel@localhost.localdomain>
-	 <20040329051614.GA19372@zero>
-	 <1080617661.31924.91.camel@localhost.localdomain>
-	 <20040330045359.GA22957@zero>
+From: "Pierre Fafet" <pierre.fafet@ladservices.fr>
+Subject: newbie question about mounting options
+Date: Thu, 8 Apr 2004 17:59:36 +0200
+Message-ID: <000a01c41d82$7e69bf70$3acac9d2@pierre2>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-WOSP1AMQw5mZ0jpHpG/e"
-Return-path: <reiserfs-list-return-17792-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17794-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040330045359.GA22957@zero>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Tom Vier <tmv@comcast.net>
-Cc: Scott Young <youngs1@sunyit.edu>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: 'Reiserfs List' <reiserfs-list@namesys.com>
 
---=-WOSP1AMQw5mZ0jpHpG/e
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Tue, 2004-03-30 at 14:53, Tom Vier wrote:
-> an online defragger is an interesting idea. i think i remember the topic
-> coming up for ext2 along time ago. iirc, reiserfs can lose performance ov=
-er
-> time (usage, actually), too.
+Sorry if this question was already seen, I'm newbie on this list.
 
-XFS has this, xfs_fsr (part of xfsdump package on debian, might be
-called that on other distros too...)
+I tried creating a reiserfs file system with external journal device
+mkreiserfs work fine but I can't mount the FS as you can see on the
+following screen copy :
 
-Although... it's pretty hard to get XFS to fragment in the first place,
-which is the best way to do things - but it's a hard way :)
+    [root@CORTON root]# mkreiserfs -s 8193 -j /dev/sdf1 /dev/sdg2
 
---=20
-Stewart Smith (stewart@flamingspork.com)
-http://www.flamingspork.com/
+    <-------------mkreiserfs, 2002------------->
+    reiserfsprogs 3.6.4
+
+    mkreiserfs: Guessing about desired format..
+    mkreiserfs: Kernel 2.4.20-30.9smp is running.
+    Format 3.6 with non-standard journal
+    Count of blocks on the device: 8865871
+    Number of blocks consumed by mkreiserfs formatting process: 289
+    Blocksize: 4096
+    Hash function used to sort names: "r5"
+    Journal Device [0x851]
+    Journal Size 8193 blocks (first block 0)
+    Journal Max transaction length 1024
+    Space on this device reserved by journal: 0
+    inode generation number: 0
+    UUID: 874b3d7c-48b8-48ca-90e1-80bc98c74193
+    ATTENTION: YOU SHOULD REBOOT AFTER FDISK!
+            ALL DATA WILL BE LOST ON '/dev/sdg2' AND ON JOURNAL DEVICE
+'/dev/sdf1'!
+    Continue (y/n):y
+    Initializing journal - 0%....20%....40%....60%....80%....100%
+    Syncing..ok
+
+    The [...]
+    Have fun.
+
+    [root@CORTON root]# mount -t reiserfs /dev/sdg2 /mnt
+    mount: wrong fs type, bad option, bad superblock on /dev/sdg2,
+           or too many mounted file systems
+    [root@CORTON root]#
+
+Why is it not working ?
+
+My distrib is Red Hat Linux 9
 
 
---=-WOSP1AMQw5mZ0jpHpG/e
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQBAdTvt3tgLgERgy8oRAsLbAKCVtEmxqoD1ZPzlxVjntpkSzPclegCg0UsT
-ijyPBfcr9Bc1aHiyqQkF5E0=
-=C97w
------END PGP SIGNATURE-----
-
---=-WOSP1AMQw5mZ0jpHpG/e--
+P.F.
 
