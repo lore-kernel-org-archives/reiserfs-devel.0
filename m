@@ -1,116 +1,116 @@
-From: hanasaki <hanasaki@hanaden.com>
-Subject: Re: --rebuild-tree always finds errors --check is ok
-Date: Tue, 04 Jan 2005 11:25:41 -0600
-Message-ID: <41DAD195.1080306@hanaden.com>
-References: <41D71C4E.6000209@hanaden.com> <1104849038.32178.54.camel@tribesman.namesys.com>
+From: Jan Kara <jack@ucw.cz>
+Subject: Re: Status of quota support for reiserfs on 2.6.x kernels
+Date: Tue, 4 Jan 2005 18:52:58 +0100
+Message-ID: <20050104175258.GJ28019@atrey.karlin.mff.cuni.cz>
+References: <20041123105332.02470503.philippe.gramoulle@mmania.com> <200411231406.43497.christian.mayrhuber@gmx.net> <loom.20041215T011250-550@post.gmane.org> <20041215133805.GE25999@atrey.karlin.mff.cuni.cz> <20041228205503.GA17689@trillke.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------070809080704020001080601"
-Return-path: <reiserfs-list-return-23037-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="ZfOjI3PrQbgiZnxM"
+Return-path: <reiserfs-list-return-23038-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1104849038.32178.54.camel@tribesman.namesys.com>
+Content-Disposition: inline
+In-Reply-To: <20041228205503.GA17689@trillke.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: klaus thorn <klaus@trillke.net>
+Cc: reiserfs-list@namesys.com, edv@trillke.net
 
---------------070809080704020001080601
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+--ZfOjI3PrQbgiZnxM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Version of reiserfsk
-======================
-== From debian sarge
-/sbin/reiserfsck -V
-reiserfsck 3.6.19 (2003 www.namesys.com)
-== also used the version in knoppix 3.7 with similar results
+  Sorry for a bit late reply but I was on a holidays.
 
-the output of two consecutive runs of --rebuild-tree on the same 
-unmounted partition are attached.  Below is the diff
-
-diff data00-run1 data00-run0
-14c14
-< 172168 directory entries were hashed with "r5" hash.
----
- > 172167 directory entries were hashed with "r5" hash.
-
-
-Vladimir Saveliev wrote:
-> Hello
+> On Wed, Dec 15, 2004 at 02:38:06PM +0100, Jan Kara wrote:
+> > > I tried to use quota with 2.6.7 and got two serious problems
+> >   I suggest trying some newer kernel - either 2.6.10-rc3-mm1 or
+> > just plain 2.6.10-rc3 with attached patch applied (the patch fixes the
+> > deadlock you seem to hit).
 > 
-> On Sun, 2005-01-02 at 00:55, hanasaki wrote:
+> It tried the latter on another server and the filesystem was accessible
+> at all time but other problems occured (maybe not quota-related) that made
+> my co-admins downgrade to 2.6.9:
 > 
->>Running reiser3 on kernel 2.6.10 and 2.6.9 with Debian sarge and unstable.
->>
->>the --rebuild-tree always finds errors and corrects them.  even when run
->>more than once consecutively without mounting the partition in between.
->>
-> 
-> Please provide reiserfsck --rebuild-tree output.
-> What is version of your reiserfsck? (reiserfsck -V)
-> 
-> 
->>--check says all is good.
->>
->>
->>
->>
-> 
-> 
+> 1. suddenly, after running the patched kernel for days,
+> su, sudo and authentication through courier webmailer was not possible,
+> ssh-root-login went fine. After reboot problem was gone but pam_rootok.so
+> was missing (file system curruption?)
+  Are there any error messages in the log? If that was filesystem
+corruption there should be some.... Otherwise it's hard to guess what
+was going on.
+
+> 2. after a few hours stress-testing the quota-partition:
+> kernel crash: code ff 21 e2 8b 0a ...
+> ... 76 60 e0 ff 6a 00
+> kernel BUG at lib/kernel_lock:120!
+> invalid operand: 0000
+  This does not look nice. Do you have all the error message? From this
+part it's hard to guess what has happened.
+
+> Do you think they are quota-related or related to you quota-fixall patch?
+  They might be - you can try to stress-test the filesystem without
+quotas enabled and see if some error occurs.
+
+> Is your fix appliable for vanilla 2.6.10 or is it already integrated
+> or is there a newer patch?
+  The patch I sent you should be applicable to 2.6.10 kernel. There's also one
+other bugfix to my quota-fixall patch which I attached (but you don't seem to
+actually hit that problem).
+
+								Honza
+
+--ZfOjI3PrQbgiZnxM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="reiserfs-do-not-clear-MS_ACTIVE.patch"
 
 
---------------070809080704020001080601
-Content-Type: text/plain;
- name="data00-run0"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="data00-run0"
+When CONFIG_QUOTA is defined reiserfs's finish_unfinished sets and clears
+MS_ACTIVE bit in s_flags field of super block. If that bit was set already
+it should not be set.
 
-####### Pass 0 #######
-block 254411: The number of items (21) is incorrect, should be (1) - corrected
-block 254411: The free space (1) is incorrect, should be (2256) - corrected
-pass0: vpf-10110: block 254411, item (0): Unknown item type found [0 251658496 0x1001800 ??? (15)] - deleted
-block 1574493: The number of items (18) is incorrect, should be (0) - corrected
-block 1574493: The free space (1184) is incorrect, should be (4072) - corrected
-block 2206239: The number of items (1) is incorrect, should be (0) - corrected
-block 2206239: The free space (0) is incorrect, should be (4072) - corrected
-block 2844875: The number of items (2) is incorrect, should be (1) - corrected
-block 2844875: The free space (0) is incorrect, should be (4048) - corrected
-pass0: vpf-10110: block 2844875, item (0): Unknown item type found [16777472 16780544 0x200 ??? (15)] - deleted
-block 3326501: The number of items (1) is incorrect, should be (0) - corrected
-block 3326501: The free space (0) is incorrect, should be (4072) - corrected
-172167 directory entries were hashed with "r5" hash.
-####### Pass 1 #######
-####### Pass 2 #######
-####### Pass 3 #########
-####### Pass 3a (lost+found pass) #########
 
---------------070809080704020001080601
-Content-Type: text/plain;
- name="data00-run1"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="data00-run1"
+ fs/reiserfs/super.c |   13 ++++++++++---
+ 1 files changed, 10 insertions(+), 3 deletions(-)
 
-####### Pass 0 #######
-block 254411: The number of items (21) is incorrect, should be (1) - corrected
-block 254411: The free space (1) is incorrect, should be (2256) - corrected
-pass0: vpf-10110: block 254411, item (0): Unknown item type found [0 251658496 0x1001800 ??? (15)] - deleted
-block 1574493: The number of items (18) is incorrect, should be (0) - corrected
-block 1574493: The free space (1184) is incorrect, should be (4072) - corrected
-block 2206239: The number of items (1) is incorrect, should be (0) - corrected
-block 2206239: The free space (0) is incorrect, should be (4072) - corrected
-block 2844875: The number of items (2) is incorrect, should be (1) - corrected
-block 2844875: The free space (0) is incorrect, should be (4048) - corrected
-pass0: vpf-10110: block 2844875, item (0): Unknown item type found [16777472 16780544 0x200 ??? (15)] - deleted
-block 3326501: The number of items (1) is incorrect, should be (0) - corrected
-block 3326501: The free space (0) is incorrect, should be (4072) - corrected
-172168 directory entries were hashed with "r5" hash.
-####### Pass 1 #######
-####### Pass 2 #######
-####### Pass 3 #########
-####### Pass 3a (lost+found pass) #########
+diff -puN fs/reiserfs/super.c~reiserfs-do-not-clear-MS_ACTIVE fs/reiserfs/super.c
+--- linux-2.6.10-rc3-mm1/fs/reiserfs/super.c~reiserfs-do-not-clear-MS_ACTIVE	2004-12-23 18:22:06.568755520 +0300
++++ linux-2.6.10-rc3-mm1-vs/fs/reiserfs/super.c	2004-12-23 18:22:06.576756006 +0300
+@@ -158,6 +158,7 @@ static int finish_unfinished (struct sup
+     int truncate;
+ #ifdef CONFIG_QUOTA
+     int i;
++    int ms_active_set;
+ #endif
+  
+  
+@@ -168,7 +169,12 @@ static int finish_unfinished (struct sup
+ 
+ #ifdef CONFIG_QUOTA
+     /* Needed for iput() to work correctly and not trash data */
+-    s->s_flags |= MS_ACTIVE;
++    if (s->s_flags & MS_ACTIVE) {
++	    ms_active_set = 0;
++    } else {
++	    ms_active_set = 1;
++	    s->s_flags |= MS_ACTIVE;
++    }
+     /* Turn on quotas so that they are updated correctly */
+     for (i = 0; i < MAXQUOTAS; i++) {
+ 	if (REISERFS_SB(s)->s_qf_names[i]) {
+@@ -276,8 +282,9 @@ static int finish_unfinished (struct sup
+             if (sb_dqopt(s)->files[i])
+                     vfs_quota_off_mount(s, i);
+     }
+-    /* Restore the flag back */
+-    s->s_flags &= ~MS_ACTIVE;
++    if (ms_active_set)
++	    /* Restore the flag back */
++	    s->s_flags &= ~MS_ACTIVE;
+ #endif
+     pathrelse (&path);
+     if (done)
 
---------------070809080704020001080601--
+_
+
+--ZfOjI3PrQbgiZnxM--
