@@ -1,10 +1,10 @@
 From: Rik van Riel <riel@redhat.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 10:12:43 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44.0408271010300.10272-100000@chimarrao.boston.redhat.com>
+Date: Fri, 27 Aug 2004 10:45:13 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44.0408271043090.10272-100000@chimarrao.boston.redhat.com>
 References: <412EEB75.1030401@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20918-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20919-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -22,12 +22,19 @@ On Fri, 27 Aug 2004, Hans Reiser wrote:
 > semantics for the sake of backup?  tar is easy, we'll fix it and send in 
 > a patch. 
 
-Because not everybody uses tar.  Quite a few people use a
-network backup system, while others use duplicity, RPM uses
-cpio internally and big companies tend to use proprietary
-network backup suites.
+It's not as easy as you make it out, and not just because
+there are a few dozen backup programs that need fixing.
 
-Breaking people's setup is something to worry about.
+The problem is more fundamental than that.  Some of the
+file streams proposed need to be backed up, while others
+are alternative presentations of the file, which should
+not be backed up.
+
+Currently I see no way to distinguish between the stuff
+that should be backed up and the stuff that shouldn't.
+
+That problem needs to be resolved before we can even start
+thinking about fixing archivers...
 
 -- 
 "Debugging is twice as hard as writing the code in the first place.
