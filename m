@@ -1,50 +1,49 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: [2.6.0-test11] reiserfs io failures
-Date: Wed, 10 Dec 2003 17:30:33 +0300
-Message-ID: <16343.11785.149809.773666@laputa.namesys.com>
-References: <freemail.20031110152024.4445@fm3.freemail.hu>
+From: Bernd Schubert <bernd-schubert@web.de>
+Subject: Re: quota support
+Date: Wed, 10 Dec 2003 15:34:29 +0100
+Sender: bernd-schubert@web.de
+Message-ID: <200312101534.30037.bernd-schubert@web.de>
+References: <1070553889.27611.147.camel@tiny.suse.com> <200312091759.59923.bernd-schubert@web.de> <200312101503.39050.bostjan.skufca@domenca.si>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16319-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16320-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <freemail.20031110152024.4445@fm3.freemail.hu>
+In-Reply-To: <200312101503.39050.bostjan.skufca@domenca.si>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Max Payne <"max..payne"@freemail.hu>
-Cc: vitaly@namesys.com, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: reiserfs-list@namesys.com
 
-Max Payne writes:
- > Hi!
+Hello Bostjan,
 
-Please, send (or at least CC) reiserfs-related bug reports to the
-Reiserfs-List@Namesys.COM.
+>
+> i've been asking the same questions and got myself an answer: RTFF (the
+> last F stands for FAQ on namesys' webpage)
 
- > 
- > I've got exactly same message on my machines with vanilla
- > 2.6.0-test11 kernel. On my IBM notebook and my desktop. Is
- > this reiserfs bug?  reiserfsck --rebuild-tree /dev/hdaX
- > resolved the problem. But very distressing. Any idea?
- > 
- > Thanks:
- > 
- > Max
- > 
- > | is_leaf: free space seems wrong: level=1, nr_items=41, 
- > free_space=65224 rdkey 
- > | vs-5150: search_by_key: invalid format found in block
- > 283191. Fsck?
- > | vs-13070: reiserfs_read_locked_inode: i/o failure occurred
- > trying to find stat data of [11 12795 0x0 SD]
- > | is_leaf: free space seems wrong: level=1, nr_items=41,
- > free_space=65224 rdkey 
- > | vs-5150: search_by_key: invalid format found in block
- > 283191. Fsck?
- > | vs-13070: reiserfs_read_locked_inode: i/o failure occurred
- > trying to find stat data of [11 12798 0x0 SD]
- > 
+D'oh, stupid me, last time I checked the FAQ was several month ago. So I only 
+searched in the download-section and only found references for 2.4.20.
 
-Nikita.
+>
+> FAQ should answer your 1 and 2.2 questions. As for the 2.1 i think everyone
+> at Namesys is concerned about Reiser4 and Linux 2.6.0 - thus patches for
+> 2.4.xx are no longer amongst their top priorities. They do not bother
+> hosting it on their ftp because are hosted on suse's and FAQ clearly
+> directs it's readers to correct ftp site.
 
+Yeah probably you are right, I only thought since a new quota format was 
+introduced in 2.4.21 and since I didn't find any quota-patches in the 
+download section, quota support for reiserfs is already available since that 
+kernel version.
+
+> Besides all that we should thank Chris for his patience and good will
+> which, I believe, brings us THE patches.
+>
+
+Yes of course, Chris, many thanks for providing the patches.
+
+
+Thanks a lot,
+	Bernd
