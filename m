@@ -1,79 +1,45 @@
 From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: The argument for fs assistance in handling archives
-Date: Fri, 03 Sep 2004 13:26:58 -0400
-Message-ID: <200409031726.i83HQxJc008835@laptop11.inf.utfsm.cl>
-References: <reiser@namesys.com>
-Return-path: <reiserfs-list-return-21441-reiserfs=m.gmane.org@namesys.com>
+Date: Fri, 03 Sep 2004 13:41:10 -0400
+Message-ID: <200409031741.i83HfASY017164@laptop11.inf.utfsm.cl>
+References: <helge.hafting@hist.no>
+Return-path: <reiserfs-list-return-21442-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
-   of "Thu, 02 Sep 2004 23:35:34 MST." <413810B6.7020805@namesys.com> 
+In-Reply-To: Message from Helge Hafting <helge.hafting@hist.no> 
+   of "Fri, 03 Sep 2004 10:22:55 +0200." <413829DF.8010305@hist.no> 
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: David Masover <ninja@slaphack.com>, Steve Bergman <steve@rueb.com>, "Martin J. Bligh" <mbligh@aracnet.com>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, reiserfs <reiserfs-list@namesys.com>
+To: Helge Hafting <helge.hafting@hist.no>
+Cc: Oliver Hunt <oliverhunt@gmail.com>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Hans Reiser <reiser@namesys.com> said:
-> David Masover wrote:
-> > The use of ext3 as a filesystem isn't cross-platform.  Every disk-write
-> > is platform-specific!  We should all be using captive-ntfs instead!
+Helge Hafting <helge.hafting@hist.no> said:
 
-> ;-)
-> 
-> All this stuff about how no filesystem should be allowed to have 
-> semantic features others don't, it seems very Bolshevist to me.
+[...]
 
-Haven seen that. Just requests that _experimental_ features be prototyped
-in ReiserFS, and _if_ they show they are worth the hassle, _then_ design a
-nice VFS interface on them.
+> The only new thing needed is the ability for something to be both
+> file and directory at the same time.
 
-> Let Linux have an ecosystem with a diverse ecology of filesystems, and 
-> the features that work will reproduce to other filesystems.  I thought 
-> that was the Linus way?
+Then why have files and directories in the first place?
 
-It is.
+>                                       Some tools will need
+> a update - usually only because they blindly assume that a directory
+> isn't a file too, or that a file can't be a directory too.  Remove the
+> mistaken assumption and things will work because the underlying system
+> calls (chdir or open) _will_ work.
 
-> If not, why did I spend 10 years laying the storage layer groundwork for 
-> semantic enhancements when I could have taken that job at Sun as 
-> filesystems architect and made a lot more money?
-
-Dunno. That _you_ choose to do this is no reason _others_ will have to take
-the results over lock, stock and barrel. 
-
-Linux' development works because there is a lot of "wasted" effort on
-alternatives that don't pan out. Many don't ever leave the drawing board,
-others (like the (now defunct) Xiafs, devfs, and volume management code)
-went far, even got fully implemented, only to be scrapped later. It might
-just be ReiserFS' fate too..
-
-> I want to tinker.  Let me play in my sandbox, and if you don't like what 
-> I do, don't imitate it.....  I think there are plenty of users who like 
-> reiser4 though....
-
-Go tinker and play. But don't aggravate non-ReiserFS-users, please. Come up
-with solutions to the issues Al Viro and Linus raised.
-
-> Linus, trying to outguess someone who has spent 2 decades studying 
-> namespace design as to what will be useful to users is risky.
-
-I'd guess LKML adds up to a few thousand years mulling over this, so this
-isn't a great point.
-
->                                                                Look at 
-> reiser4's performance, see if it obsoletes V3, and if it does then let 
-> me play a bit.
-
-I'd say it is a free world.
-
-> Objecting on the grounds that it causes VFS bugs is reasonable, but I 
-> answered those questions and you did not respond (I can resend if 
-> asked).  If you really really don't like what we do to VFS, well, we can 
-> confine ourselves to sys_reiser4(), but that is only a last resort from 
-> my view.
+But with some weird restrictions: No moving stuff around between files, no
+linking, some "files" can't be deleted (how would you handle removing the
+principal stream of a file?). Some stuff you'd love to do (is, in fact, the
+reason for this all) just can't be allowed (i.e., J. Random Luser setting
+his own icon for system-wide emacs). So the tools/scripts/users/sysadmins
+will have to be painfully aware that some of the files aren't, and some of
+the directories aren't either. Major pain in the neck to use, if you look
+closer.  Add extra kernel complexity. For little (if any) gain.
 -- 
 Dr. Horst H. von Brand                   User #22616 counter.li.org
 Departamento de Informatica                     Fono: +56 32 654431
