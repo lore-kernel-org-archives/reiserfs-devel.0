@@ -1,38 +1,44 @@
-From: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
-Subject: Re: nfs with reiserfs and ufs on freebsd
-Date: Thu, 19 Feb 2004 03:22:33 +0100
-Message-ID: <m3fzd7oljq.fsf@merlin.emma.line.org>
-References: <20040218193033.74513.qmail@web80012.mail.yahoo.com>
-	<4033C4F9.2070509@gmx.net>
-	<20040219015625.2b7ea991@philou.gramoulle.local>
+From: Chris Mason <mason@suse.com>
+Subject: [PATCH] updated data=ordered patch for 2.6.3
+Date: Wed, 18 Feb 2004 23:36:13 -0500
+Message-ID: <1077165373.22253.45.camel@watt.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16848-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16849-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040219015625.2b7ea991@philou.gramoulle.local> (Philippe
- =?iso-8859-15?q?Gramoull=E9's?= message of "Thu, 19 Feb 2004 01:56:25 +0100")
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: =?iso-8859-15?q?Philippe_Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Cc: cmc2slack-lvm@yahoo.com, Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Philippe Gramoull=E9 <philippe.gramoulle@mmania.com> writes:
+Hello everyone,
 
-> Hello,
->
-> If you don't use BSD flock() nor O_EXCL in a dotlocking scheme, there sho=
-uldn't be any
-> problem with NFS linux server and BSD client.
+I've updated the reiserfs logging speedups and data=ordered support to
+2.6.3, and fixed a few bugs:
 
-FreeBSD 4.8 as NFS client doesn't do any locking at all.
+i_block count not properly updated on files with holes
+oops when the disk is full
+small files were not being packed into tails
 
-O_EXCL doesn't work across NFS anyways, workaround: use mkstemp(2) and
-link(2).
+Also, the code has some extra performance tweaks to smooth out
+performance both with and without data=ordered.  There are new
+mechanisms to trigger metadata/commit block writeback and to help
+throttle writers.  The goal is to reduce the huge bursts of io during a
+commit and during data=ordered writeback.
 
---=20
-Matthias Andree
+I'm very interested in benchmarks here and info about how the patches
+feel for interactive performance.
 
-Encrypt your mail: my GnuPG key ID is 0x052E7D95
+Please note that data=ordered is not the default yet, you have to mount
+with -o data=ordered to get it.
+
+You can get the patches from:
+
+ftp.suse.com/pub/people/mason/patches/data-logging/experimental/2.6.3
+
+(once the suse mirror copies it over there)
+
+-chris
+
