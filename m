@@ -1,64 +1,61 @@
-From: Pierre Abbat <phma@webjockey.net>
-Subject: Re: Please /dev/null html-only mail rather than sending it out on this list
-Date: Sun, 18 Apr 2004 17:45:04 -0400
-Message-ID: <200404181745.04988.phma@webjockey.net>
-References: <20040418212659.GA5506@free.transpect.com>
+From: Paul Wagland <paul@wagland.net>
+Subject: Re: reiser4 and megaraid problems with debian 2.6.5 (*solved*)
+Date: Mon, 19 Apr 2004 00:36:16 +0200
+Message-ID: <1082327775.2003.5.camel@morsel.kungfoocoder.org>
+References: <36927C82-8DE0-11D8-A41D-000A95CD704C@wagland.net>
+	 <20040414090547.GB13578@raptus.homelinux.org>
+	 <6699459A-8E10-11D8-A41D-000A95CD704C@wagland.net>
+	 <16509.14375.539110.986025@laputa.namesys.com>
+	 <295743F0-8E17-11D8-A41D-000A95CD704C@wagland.net>
+	 <1081987184.11193.87.camel@morsel.kungfoocoder.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18035-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-YGH7GBhT02j08IrkG0cH"
+Return-path: <reiserfs-list-return-18036-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040418212659.GA5506@free.transpect.com>
-Content-Disposition: inline
+In-Reply-To: <1081987184.11193.87.camel@morsel.kungfoocoder.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Nikita Danilov <Nikita@Namesys.COM>
+Cc: reiserfs-list@Namesys.COM, Linux SCSI mailing list <linux-scsi@vger.kernel.org>, Atul Mukker <atulm@lsil.com>, Domenico Andreoli <cavok@libero.it>, Hans Reiser <reiser@Namesys.COM>, Linux kernel mailing list <linux-kernel@vger.kernel.org>
 
-On Sunday 18 April 2004 17:26, Whit Blauvelt wrote:
-> Hi,
->
-> That a lot of spam has been coming through this list is one thing. That the
-> list daemon threatens to cut people from the list whose systems refuse to
-> accept some of the spam is another.
->
-> Might I suggest a simple category of stuff to throw out before forwarding
-> to the list: HTML-only mail. 99%+ of it is spam, and the other <1% isn't
-> the sort of people who have any interest in advanced file systems.
->
-> Two easy ways to block a lot of it:
->
-> 1. With procmail:
->
-> # HTML only message are most probably spam.
->
-> :0
->
-> * ^Content-Type:.*text/html
-> {
->   LOG="(HTML) "
->
->   :0
->
->   /dev/null
-> }
+--=-YGH7GBhT02j08IrkG0cH
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Also, multipart mail that consists of an HTML part and no text part is *all* 
-spam. (I have one sender that sends a legitimate HTML-only mail.) To get rid 
-of this, use this procmail rule:
+Hi all,
 
-:0 B
-* H ?? Content-Type: multipart
-* Content-Type: text/html
-* ! Content-Type: text/plain
-* ! ^Received:
-/dev/null
-#The Received check is there because I am a postmaster.
+well partly solved anyway... I am just posting this so that if anyone
+finds this thread later they can also find this conclusion... There is
+still more work to be done before this problem can be properly closed,
+but at least now I am certain that it has nothing to do with the
+hardware :-)
 
-Also block mail from IP addresses known to be open relays, open proxies, 
-rooted boxes, etc.
+It appears (my own unsupported theory) that the problem is that reiser4
+is taking some time to free up the free blocks that are currently in use
+by the wandering log. Since I was running a test that causes a lot of
+wandering log to be created, and I was doing it on a filesystem with
+very little free space, then I was running into the problem.
 
-phma
--- 
-li fi'u vu'u fi'u fi'u du li pa
+Rerunning the test with either a) more space, or b) a smaller data set
+solved the problem. On the reiserfs-list we are now trying to find out
+exactly why this is happening, and how to solve the problem properly.
+
+Cheers,
+Paul
+
+--=-YGH7GBhT02j08IrkG0cH
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQBAgwLftch0EvEFvxURAp5AAJ47g0pYpmfoLzcxbUJ4eymWDYhcbACfSMII
+hSKeT05AHFB7jFC7SJuGIgE=
+=covQ
+-----END PGP SIGNATURE-----
+
+--=-YGH7GBhT02j08IrkG0cH--
+
