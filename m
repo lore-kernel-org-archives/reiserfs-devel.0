@@ -1,37 +1,54 @@
-From: bscott@ntisys.com
+From: Walter Landry <wlandry@ucsd.edu>
 Subject: Re: plagiarism of reiserfs by Debian
-Date: Mon, 21 Apr 2003 09:22:32 -0400 (EDT)
-Sender: bscott@ntisys.com
-Message-ID: <Pine.LNX.4.44.0304210921130.31335-100000@dragon.inside.ntisys.com>
+Date: Mon, 21 Apr 2003 11:49:21 -0700 (PDT)
+Message-ID: <20030421.114920.74754454.wlandry@ucsd.edu>
 References: <87ademfifz.fsf@deneb.enyo.de>
+	<87y926jjmj.fsf@lgeyermac.math.lsa.umich.edu>
+	<1050794648.27117.11.camel@rock.grep.be>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13744-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13745-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <87ademfifz.fsf@deneb.enyo.de>
+In-Reply-To: <1050794648.27117.11.camel@rock.grep.be>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: ReiserFS Mailing List <reiserfs-list@namesys.com>
-Cc: Florian Weimer <fw@deneb.enyo.de>
+Content-Type: Text/Plain; charset="us-ascii"
+To: debian-devel@lists.debian.org, debian-legal@lists.debian.org, reiser@namesys.com, reiserfs-list@namesys.com
 
-On Sat, 19 Apr 2003, at 8:30pm, fw@deneb.enyo.de wrote:
->> You'll note that ReiserFS anticipated the GNU GPL V3 by including
->> clauses that forbid removal of credits in its license, and for a long
->> time I have been telling Stallman that he needs to get V3 of the GPL
->> out the door.
+Wouter Verhelst <wouter@grep.be> wrote:
+> Op za 19-04-2003, om 22:51 schreef Lukas Geyer:
+> > the issue seems to be the fix of #152547. If we are not allowed to
+> > remove a screenful of advertising from the output of a program, then
+> > this unduly restricts the freedom to distribute modified versions.
 > 
-> Oh, I think it's natural to assume that these clauses are superfluous
-> because the GPL explicitly states ...
+> Uhm.
+> 
+> From the GPL, section 2:
+> 
+>     c) If the modified program normally reads commands interactively
+>     when run, you must cause it, when started running for such
+>     interactive use in the most ordinary way, to print or display an
+>     announcement including an appropriate copyright notice and a
+>     notice that there is no warranty (or else, saying that you provide
+>     a warranty) and that users may redistribute the program under
+>     these conditions, and telling the user how to view a copy of this
+>     License.  (Exception: if the Program itself is interactive but
+>     does not normally print such an announcement, your work based on
+>     the Program is not required to print an announcement.)
+> 
+> Otherwise put: if the program shows the 'no warranty' clause from the
+> GPL at startup, you may not remove it. Although a 'no warranty' message
+> is certainly not the same as a list of sponsors, they both require some
+> messages being printed for legalese reasons. I, personally, see nothing
+> wrong with that; it certainly doesn't result in software being non-free.
 
-  Properly, ReiserFS is using a "modified GPL", not the original GPL, given
-said clauses.
+Actually, what Hans Reiser should do is assign copyright for parts of
+the work to all of his sponsors.  Then, an "appropriate copyright
+notice" would list all of their names.  That would be fully within the
+letter of the GPL.
 
--- 
-Ben Scott <bscott@ntisys.com>
-| The opinions expressed in this message are those of the author and do  |
-| not represent the views or policy of any other person or organization. |
-| All information is provided without warranty of any kind.              |
-
+Regards,
+Walter Landry
+wlandry@ucsd.edu
