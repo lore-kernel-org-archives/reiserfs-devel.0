@@ -1,53 +1,63 @@
-From: Redeeman <redeeman@metanurb.dk>
-Subject: Re: reiser4 without problems?!
-Date: Mon, 22 Nov 2004 14:12:05 +0100
-Message-ID: <1101129125.18401.9.camel@localhost>
-References: <20041121201203.8A3C23956@sitemail.everyone.net>
-	 <41A0FA6F.5080905@namesys.com>
-Reply-To: redeeman@metanurb.dk
+From: Stephen Smalley <sds@epoch.ncsc.mil>
+Subject: Re: [PATCH 2/5] selinux: adds a private inode operation
+Date: Mon, 22 Nov 2004 08:35:21 -0500
+Message-ID: <1101130521.18273.9.camel@moss-spartans.epoch.ncsc.mil>
+References: <20041121001318.GC979@locomotive.unixthugs.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22490-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22491-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41A0FA6F.5080905@namesys.com>
+In-Reply-To: <20041121001318.GC979@locomotive.unixthugs.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: Jeffrey Mahoney <jeffm@novell.com>
+Cc: Andrew Morton <akpm@osdl.org>, Linus Torvalds <torvalds@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, James Morris <jmorris@redhat.com>
 
-i have quite some machines running with 2.6.9-rc4-mmSomething, with
-reiser4, running perfectly, (2 of them with reiser4 as root fs) they
-have like 4 days in uptime, average. (since quite often there are
-rebooted to test stuff in another install)
+On Sat, 2004-11-20 at 19:13, Jeffrey Mahoney wrote:
+<snip>
+> diff -ruNpX dontdiff linux-2.6.9/security/selinux/hooks.c linux-2.6.9.selinux/security/selinux/hooks.c
+> --- linux-2.6.9/security/selinux/hooks.c	2004-11-19 14:40:58.000000000 -0500
+> +++ linux-2.6.9.selinux/security/selinux/hooks.c	2004-11-20 17:11:22.000000000 -0500
+> @@ -740,6 +740,15 @@ static int inode_doinit_with_dentry(stru
+>  	if (isec->initialized)
+>  		goto out;
+>  
+> +	if (opt_dentry && opt_dentry->d_parent && opt_dentry->d_parent->d_inode) {
+> +		struct inode_security_struct *pisec = opt_dentry->d_parent->d_inode->i_security;
+> +		if (pisec->inherit) {
+> +			isec->sid = pisec->sid;
+> +			isec->initialized = 1;
+> +			goto out;
+> +		}
+> +	}
+> +
 
-my workstation, reiser4 as storage, it runs perfect, no issues, i have
-currently 2.6.10-rc2-mm2, since it came, no problems. (i plan on move to
-reiser4 for root when i can bother repartition and start use lvm2)
+Shouldn't this be using dget_parent() for safety?
 
-a friends workstation has reiser4 rootfs, it has like 12 hours average
-uptime :) he dont use his computer much, but no problems there..
+> @@ -2391,6 +2400,15 @@ static int selinux_inode_listsecurity(st
+>  	return len;
+>  }
+>  
+> +static void selinux_inode_mark_private(struct inode *inode)
+> +{
+> +	struct inode_security_struct *isec = inode->i_security;
+> +
+> +	isec->sid = SECINITSID_KERNEL;
+> +	isec->initialized = 1;
+> +	isec->inherit = 1;
+> +}
+> +
 
-On Sun, 2004-11-21 at 12:28 -0800, Hans Reiser wrote:
-> BLuEGoD wrote:
-> 
-> > Hi, I want to run a debian with reiser4, but since reiser4 went out, there is no one that run it without problems, anyone knows if any kernel with -mm patches runs well?.. I think nowadays all people are losing time with reiser4, because I read that reiser4 comes without anything positive than others (that is because comes with "core" only).. If someone can set up for three or more days a system stable with reiser4 and 2.6.X kernel please tell me who!
-> >
-> >P.D. Personally, I think kernel 2.6.8 has better stability than 2.6.9 :)
-> >
-> >
-> >
-> >_____________________________________________________________
-> >Get your FREE, LinuxWaves.com Email Now! --> http://www.LinuxWaves.com
-> >Join Linux Discussions! --> http://Community.LinuxWaves.com
-> >
-> >
-> >  
-> >
-> It seems like the most recent reiser4 is not as stable as past ones.  It 
-> is the weekend, let's give vs a few days to fix things starting on monday.
-> 
+Don't we also need to modify inode_has_perm() to skip checking if the
+inode has the kernel SID (as is already done by socket_has_perm) to
+avoid the search checks when the reiserfs code looks up xattrs? 
+Otherwise, we'll see access attempts by the process context on
+directories with the kernel SID upon such lookups.
+
 -- 
-Redeeman <redeeman@metanurb.dk>
+Stephen Smalley <sds@epoch.ncsc.mil>
+National Security Agency
 
