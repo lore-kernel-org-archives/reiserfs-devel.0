@@ -1,53 +1,36 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: reiser4 plugins
-Date: Tue, 11 Jan 2005 21:38:34 -0600
-Message-ID: <41E49BBA.9080104@slaphack.com>
-References: <BAY102-DAV1835C84F8260DB40E63677EE890@phx.gbl>
+From: Simon Raffeiner <sturmflut@lieberbiber.de>
+Subject: Severe problem with fsck.reiser4 1.0.3
+Date: Wed, 12 Jan 2005 20:30:09 +0100
+Message-ID: <1105558209.41e57ac12b109@www.hosting-agency.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23123-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-23126-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <BAY102-DAV1835C84F8260DB40E63677EE890@phx.gbl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Gagan Rajpal <gagandeep_rajpal@hotmail.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+I managed to boot my Box with Kanotix and this is the result of a mount
+Operation:
 
+reiser4[mount(2457)]: zget (fs/reiser4/znode.c:567)[jmacd-504]:
+WARNING: Wrong level for cached block 936512: 2 expecting 1
+reiser4[mount(2457)]: key_warning (fs/reiser4/plugin/object.c:97)[nikita-717]:
+WARNING: Error for inode 42 (-5)
 
+This is exactly the same error as Kernel 2.6.9-mm1 and 2.6.10-mm1 display when I
+try to boot Gentoo Linux, with 2.6.10-mm1 showing a slightly different
+behaviour: It tries to remount the root partition 10 times and than fails
+(displaying the error message from above 10 times), 2.6.9-mm1 fails after the 
+first mount attempt.
 
-Gagan Rajpal wrote:
-| Hi,
-|
-| What plugins are currently available for reiser4? Is an acl plugin
-| available. I am planning to use reiser4 for all my filesystems, is it
-| stable enough for production work.
+Could this be due to a faulty hard drive (it's about 3 years old and has been
+heavily used) or is it some kind of file system corruption? In the second case
+please fix reiser4progs to deal with such errors and make fsck.reiser4 fix it
+so I can get my machine back up working.
 
-Depends who you ask.  It's already been shown to be more "stable" in
-some respects than reiser3.  Don't think there's acls yet.  Haven't
-heard anything about any "plugins" working, or at least about how to use
-such plugins.
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQeSbungHNmZLgCUhAQLflw//e7UHJl/hLYEIsdqDioeAYjI0BsK8oM+j
-Rv8FXgspSeVPr7CLoI3dN4ci1Lc/61dA3d/rjPxkO6O9Ztu7+aNGYzqqkq2I9I3Z
-LNIsVPiZK8Sbqp+EujR3TRq7zwgCdn/9TpX5RKWWWkt71qgC19Ye5FRkZsM7qLFl
-S1x9trGTZh2ZfW75zc2fDisX0iGRt69mxPiK+YoP2Z1tEK7JjjSW2Y4pqFAXL7Dh
-cnScV931h9tn/4a7SKEtapWqu/fJvf4OmOYxbVTSWVOeWJc3Sk0vIKMKdyV+mcfR
-1ONubgGuF9KOxQv+LRq6jB+FCTfb2mOf3ziVJsPAjiMY/57+e7t79BrFqkBXNWsH
-N4w89qMlcgt3P4rJI52264Y29WdrNatzT5vhEOXknXsU4PmIeyC9X7USyFkx7/tr
-6589k0puhrY+qM8alffrdrVWWzwGbYgqdhpDZZnYMV64nBl11KO8sW0jsvjEkL+9
-kDgHAqtWMN5bXE6kpqYryFnGxVWfSGWNT2qbvRVC3sos2+ZC+9StMy2MdIcHALlj
-IOGJd3z8RUnCIfhAiK2GbMSzF+iXAUjERDqX3umHbwGCTzvpNK1qS6PlOKOaT1Vz
-IAGkZxaDpDk+OKCUiVyuroDWFJGv33eYk+erHLc4YGMBQfNJGCIwo4GPAE6HjOoF
-+pJqC5hvA/k=
-=33CZ
------END PGP SIGNATURE-----
+Regards,
+Simon Raffeiner
