@@ -1,48 +1,53 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: v4 transaction design
-Date: Wed, 11 Sep 2002 15:16:00 +0400
-Message-ID: <3D7F25F0.6080302@namesys.com>
-References: <EGECJPMPCPJFHJIBBCJMEEFCCKAA.Tobias.Oberstein@gmx.de>		<3D7C8140.3070703@namesys.com> <15740.34094.893342.451668@laputa.namesys.com> <3D7F21E8.B7149634@baldauf.org>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: File corruption with 2.4.20pre6
+Date: Wed, 11 Sep 2002 17:46:41 +0400
+Message-ID: <20020911174641.A10234@namesys.com>
+References: <200209111041.g8BAfP230329@chekov.ricardo.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11415-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11416-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <200209111041.g8BAfP230329@chekov.ricardo.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Xuan Baldauf <xuan--reiserfs@baldauf.org>
-Cc: Nikita Danilov <Nikita@namesys.com>, Tobias Oberstein <Tobias.Oberstein@gmx.de>, Reiserfs mail-list <Reiserfs-List@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Joachim Bremer <joachim.bremer@ricardo.de>
+Cc: reiserfs-list@namesys.com
 
-Xuan Baldauf wrote:
+Hello!
 
->Nikita Danilov wrote:
->
->  
->
->>
->>Because we don't currently support isolation, isolation levels are not
->>exactly meaningful. But yes, one thread T1 can read data modified by
->>another thread T2 that hasn't yet committed, but at that moment "atom"
->>associated with T1 will "fuse" with atom of T2, so that they will either
->>commit of fail -both-.
->>
-You should mention that we will support isolation, but we won't work on 
-that until after Halloween.
+On Wed, Sep 11, 2002 at 12:41:25PM +0200, Joachim Bremer wrote:
 
->>    
->>
->
->So this is an implicit join of transactions. How do you ensure that livelocks do
->not happen, i.e. that T1 fails due to T2, and T2 also fails because it joined T1,
->and that thus a retry would make T1 with T2 fail again...?
->
-We don't.  Think of what we are doing as taking the traditional 
-journaling filesystem approach of not allowing rollback except in 
-response to crashes, and only allowing trusted plugins to use 
-transactions.  Then understand that we will add isolation and a user API 
-later after the code we have is debugged.
+> I've got an easy to produce file corruption with
+> linux-2.4.20pre6 and then tested with the file-write
+> patch on pre4. I verified the problem on 2 different machines -
+> 1. Uniprozessor with an Athlon XP1600+
+> 2. Dualprozessor with 2 Athlon MP2000+
 
-Hans
+Thanks a lot for your report!
 
+This is my stupid bug and I am starting to wonder how did it passed through
+my tests...
+
+This trivial patch below should take care of it. Can you try it? 
+Thank you.
+
+
+===== fs/reiserfs/file.c 1.10 vs edited =====
+--- 1.10/fs/reiserfs/file.c	Tue Sep 10 16:06:23 2002
++++ edited/fs/reiserfs/file.c	Wed Sep 11 17:43:48 2002
+@@ -1189,7 +1189,7 @@
+ 
+ 	already_written += write_bytes;
+ 	buf += write_bytes;
+-	pos = *ppos += write_bytes;
++	*ppos = pos += write_bytes;
+ 	count -= write_bytes;
+     }
+ 
+
+Bye,
+    Oleg
