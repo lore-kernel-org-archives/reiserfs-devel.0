@@ -1,29 +1,31 @@
-From: Per Andreas Buer <perbu@linpro.no>
-Subject: Re: [Jfs-discussion] Re: Desktop Filesystem Benchmarks in 2.6.3
-Date: Thu, 04 Mar 2004 21:43:44 +0100
-Sender: linux-kernel-owner@vger.kernel.org
-Message-ID: <PERBUMSGID-ul6y8qgibr3.fsf@nfsd.linpro.no>
-References: <4044119D.6050502@andrew.cmu.edu> <40453538.8050103@animezone.org>
- <20040303014115.GP19111@khan.acc.umu.se>
- <200403030700.57164.robin.rosenberg.lists@dewire.com>
- <1078307033.904.1.camel@teapot.felipe-alfaro.com>
- <1078411067.40473f3b6b835@webmail.uni-konstanz.de>
+From: Mike Fedyk <mfedyk@matchmail.com>
+Subject: Re: Some ReiserFS failure situations and questions
+Date: Fri, 05 Mar 2004 12:37:53 -0800
+Message-ID: <4048E521.5010708@matchmail.com>
+References: <20040303224848.GF31472@dbz.icequake.net> <20040305065837.GE15906@favonius> <20040305070842.GC3291@dbz.icequake.net>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: ext2-devel@sourceforge.net, Ext3-users@redhat.com, jfs-discussion@www-124.ibm.com, reiserfs-list@namesys.com, linux-xfs@oss.sgi.com
+Return-path: <reiserfs-list-return-17099-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <20040305070842.GC3291@dbz.icequake.net>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ryan Underwood <nemesis-lists@icequake.net>
+Cc: reiserfs-list@namesys.com
 
-Pascal Gienger <pascal.gienger@uni-konstanz.de> writes:
+Ryan Underwood wrote:
+> Thank you Sander, you have been very helpful.  Sounds like I will be
+> looking into that 'ordered' mount option.
 
-> 2. Speaking for servers, we live in a RAID and/or SAN-world. The media
-> error issue is a non-issue.
+It's been in the suse kernel for ages, and Chris Mason is the guy 
+working on it.
 
-If your cooling system stops you will experience media errors. A
-filesystem which detects this halts the kernel really helps.
+It looks like it'll get into the 2.6 kernel eventually.
 
--- 
-There are only 10 different kinds of people in the world, 
-those who understand binary, and those who don't.
+Though I'd hope suse would submit it for the 2.4 kernel also, since 
+that's where it has been working in the suse production kernel.
+
+Mike
