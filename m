@@ -1,53 +1,131 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: (reiser4)install on root
-Date: Fri, 26 Nov 2004 18:02:24 -0500
-Message-ID: <200411262302.iAQN2OEM026024@turing-police.cc.vt.edu>
-References: <20041126085828.DE0DB37CF0@sitemail.everyone.net>
+From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+Subject: Re: file as a directory
+Date: Sat, 27 Nov 2004 11:09:41 +0000
+Message-ID: <1101553779.3680.28.camel@grape.st-and.ac.uk>
+References: <2c59f00304112205546349e88e@mail.gmail.com>
+	 <1101379820.2838.15.camel@grape.st-and.ac.uk>
+	 <41A773CD.6000802@namesys.com>
+	 <200411262213.58242.christian.mayrhuber@gmx.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-23921024P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22593-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22596-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Fri, 26 Nov 2004 00:58:28 PST."
-             <20041126085828.DE0DB37CF0@sitemail.everyone.net> 
+In-Reply-To: <200411262213.58242.christian.mayrhuber@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: bluegod@linuxwaves.com
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Cc: reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>, linux-kernel@vger.kernel.org
 
---==_Exmh_-23921024P
-Content-Type: text/plain; charset=us-ascii
+On Fri, 2004-11-26 at 21:13, Christian Mayrhuber wrote:
+> Regarding namespace unification + XPath:
+> For files: cat /etc/passwd/[. = "joe"] should work like in XPath.
 
-On Fri, 26 Nov 2004 00:58:28 PST, BLuEGoD said:
+I don't understand this. Why would you need the "."? And why the /
+between passwd and [ ?
+I would prefer (as was suggested earlier in the thread) that the syntax
+for the entry for joe in the passwd file should be
 
->  Hi, i want to know how to install reiser4 on root with only 1 HD.. I use
-> mkfs.reiser4 from the reiser4 utils after compile and install kernel & patches
-> on a debian woody 2.2.. with a scsi HD, but it crashes (errors found doing
-> mkfs.reiser4 on root device and on next boot I saw a kernel panic).. Note: I
-> did it with the root mounted.. because i need to boot with that HD..
+/etc/passwd/joe
 
-As several have noted, you can use a spare partition to build a new root
-filesystem.  Another option is to use a "rescue disk" or a Knoppix disk
-or other CD-based toolset to boot from, and use that to do your mkfs.reiser4.
+and the if you want to select joe's full name, then it should be
 
-It's a good idea to *always* have a rescue disk handy, because they enable you
-to recover from many problems that will prevent you from booting all the
-way to single-user off your production disk (trashed boot block, missing/misnamed
-files in /boot, a need to fsck the boot partition, or whatever...)
+/etc/passwd/joe/fullname
 
---==_Exmh_-23921024P
-Content-Type: application/pgp-signature
+and it would result in e.g. "Joe Smith" and
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+/etc/passwd/joe/shell
 
-iD8DBQFBp7X/cC3lWbTT17ARAswIAKD2etZLq06PYQ3tEoYko7KvNqjI9QCgzmoN
-bb3hjOUSBBFVk4hG34MQsg8=
-=/Xko
------END PGP SIGNATURE-----
+whould be the shell joe uses.
 
---==_Exmh_-23921024P--
+Of course something would have to tell the system that the passwd file
+has one line for each user, and that fields within a line are separated
+by ":"s and what the names of the fields are (e.g. the first field is
+called "user"). And when you select inside the /etc/passwd file (or this
+type of file) then the default interpretation of joe is that "user"
+should be used to select the line.
+
+So by default, /etc/passwd/joe should be equivalent to /etc/passwd[user
+= "joe"]
+
+But you should be able to select based on fullname too:
+
+/etc/passwd[fullname = "Joe Smith"]
+
+and
+
+/etc/passwd[shell = "/bin/bash"]/user
+
+should give you the user names of all users whose shell is /bin/bash,
+right?
+
+> But what to do with directories?
+> Would 'cat /etc/[. = "passwd"]' output the contents of the passwd file
+> or does it mean to output the file '[. = "passwd"]'?
+
+I don't really see the point of this . = "passwd" syntax.
+
+> If the first is the case then you have to prohibit filenames looking 
+> like '[foo bar]'.
+
+I think so.
+
+> If the shells wouldn't like * for themself, I'd suggest something like
+> cat /etc/*[. = "passwd"]
+> This means: list all contents and show the ones where filename = "passwd".
+
+but isn't that just /etc/passwd ? why complicate it?
+
+> For the contents of /etc/passwd the following could become possible:
+> 'cat /etc/passwd/*[. = "joe"]
+> 'cat /etc/passwd/*[@shell = "/bin/tcsh"]
+
+no, I think it should be 
+
+cat /etc/passwd[shell = "bin/tcsh"]
+
+why the *? and why the @? an attribute? why not simply a part of the
+line with / ?
+
+> To change all tcsh entries to bash:
+> echo -n "/bin/bash" > /etc/passwd/*[@shell = "/bin/tcsh"]/@shell
+
+I would say
+
+echo -n "/bin/bash" > /etc/passwd[shell = "/bin/tcsh"]/shell
+
+
+> What about mapping the contents of files into "pure" posix namespace?
+
+Yes, that is exactly what I am suggesting, except that I would like to
+extend the POSIX syntax by stealing some useful syntactic bits from
+XPath.
+
+> XML is basically a tree, too.
+> Notes: 
+> 1) "...." below is the entry to reiser4 namespace.
+> 2) # denotes a shell command
+> For example:
+> 
+> # cd /etc/passwd/
+> # ls -a *
+> . .. .... joe root
+> # cd joe
+> # ls
+> gid home passwd shell uid
+
+yes, but where is the username? that would be the first one listed here,
+right?
+
+> # cat shell
+> /bin/tcsh
+> # cd ../....
+> # ls 
+> plugins 
+> 
+> I guess an implementation in reiser4 would require some
+> mime-type/file extension dispatcher plus a special
+> directory plugin for each mime-type.
+
