@@ -1,49 +1,30 @@
-From: Philipp Morger <philipp.morger@dolphins.ch>
-Subject: Re: ReiserFSchk "Should not happen."
-Date: Mon, 23 Jun 2003 22:05:27 +0200
-Message-ID: <20030623200527.GA22164@atlantis.dolphins.ch>
-References: <20030623180547.GA25393@atlantis.dolphins.ch> <200306232330.49898.vitaly@namesys.com>
-Reply-To: Philipp Morger <philipp.morger@dolphins.ch>
+From: John Dalbec <jpdalbec@ysu.edu>
+Subject: resize_reiserfs 3.6.8 doesn't shrink bitmap correctly
+Date: Mon, 23 Jun 2003 16:10:38 -0400
+Message-ID: <3EF75EBE.9070304@ysu.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14678-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14679-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200306232330.49898.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list <reiserfs-list@namesys.com>
 
-Hi Vitaly
+I ran resize_reiserfs -s -1024M on a ReiserFS partition for testing. 
+The partition resized OK, mounted OK, umounted OK.  Then I tried to 
+restore the original filesystem size, but resize_reiserfs reported that 
+it couldn't read the on-disk bitmap.  I ran reiserfsck and it reported:
 
-That worked.... but it was a mess afterwards.... only one directory was
-left called lost+found... anything else was gone... inside the directory
-only numbers.... I could fidle out most of the directories... but the
-"/bin" was not restored as directory, the whole content of /bin was
-there as binaries... without names only numbers... so far so good.
+Zero bit found in on-disk bitmap after the last valid bit.
 
-Thanks
-Philipp
+and said I could fix it with --fix-fixable.  I ran reiserfsck 
+--fix-fixable and it fixed the problem.  I then ran resize_reiserfs on 
+the same partition to restore the original size with no problems.  I 
+repeated this exercise to make sure it wasn't a fluke, with the same 
+results.
+Thanks,
+John Dalbec
 
-On Mon, Jun 23, 2003 at 23:30:49 +0400, Vitaly Fertman wrote:
-> 
-> Hi,
-> 
-> > do_pass_2: The block (2184831) is in the tree already. Should not happen.
-> > do_pass_2: The block (2184831) is in the tree already. Should not happen.
-> > do_pass_2: The block (2184831) is in the tree already. Should not happen.
-> > do_pass_2: The block (2184831) is in the tree already. Should not happen.
-> > --- 2,6GB of log truncated --
-> 
-> We experienced that with 3.6.4 reiserfsprogs package from Debian as they 
-> applied some faulty patch to it. Would you try reiserfsprogs-3.6.8 from our 
-> ftp site and email me about the result?
-> 
-> -- 
-> Thanks,
-> Vitaly Fertman
-> 
