@@ -1,65 +1,77 @@
 From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Re: reiserfsck aborts when rebuilding filesystem
- tree
-Date: Sat, 14 Sep 2002 00:51:30 +0200
-Message-ID: <3D826BF2.3010307@mb.tu-ilmenau.de>
-References: <87admlk2ri.fsf@zealot.fluidsignal.net>
+Subject: Re: Copy time comparison 2.4.20-pre6 <-> 2.4.19+data-logging
+ (was:Compatibility of  current 2.4.19.pending ...)
+Date: Sat, 14 Sep 2002 01:07:37 +0200
+Message-ID: <3D826FB9.7030909@mb.tu-ilmenau.de>
+References: <3D7FDEA5.7040806@mb.tu-ilmenau.de> <3D81076E.6090408@mb.tu-ilmenau.de> <20020913113735.A6022@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11440-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11441-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Luis Bustamante <luferbu@fluidsignal.com>
+To: Oleg Drokin <green@namesys.com>
 Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-On 09/13/2002 11:17 PM, Luis Bustamante wrote:
-> Hi list,
+On 09/13/2002 09:37 AM, Oleg Drokin wrote:
+> Hello!
 > 
-> I got my partition table deleted, but I knew the exact size of each
-> partition, so I created again the table. But I was unable to mount one
+> On Thu, Sep 12, 2002 at 11:30:22PM +0200, Manuel Krause wrote:
+> 
+>>>When I see the discussion about the new block-allocator, the testing 
+>>>directory etc. I assume a definite "No." (Please, please, correct me, if 
+>>
+>>;-) You really didn't correct me so far. Mmh. :-(
+> 
+> Datalogging is incompatible with stuff in testing directory. It won't apply
+> cleanly to new block allocatior, but that's can be easily fixed.
+> 
+>>>So, for the overnight change to pre-kernel 7, where are the new 
+>>>data-logging patches Hans even announced to lkml?
 
-Hi Luis!
+??? Hello, Chris!
 
-Did you reboot after recreating your partition table?! If you knew the 
-exact values for the meant partitions and the table parameters there 
-should be no problem later after reboot (I only worked with Linux fdisk 
-for exactly the same purposes some months ago).
+>>So I really got a 2.4.20-pre6 compiled with the 
+>>preempt-kernel-rml-2.4.20-pre5-1.patch and Olegs fix he sent to the list 
+>>yesterday. BTW, have the testing patches from -pre5 gone into -pre6? It 
+>>isn't clear to me.
+> 
+> Testing patches were merged into -pre6 by Marcelo's mistake and -pre7
+> have these patches removed already.
 
-I had lost some filesystems in the beginning of my linux&reiserfs 
-experience until I found that "remarkable advantage of rebooting" ;-) 
-(before reiserfs-team or fdisk included that hint it into their docs 
-and/or program output).
+Yes. I pre-read this @ lkml.
+
+>>Application startup timings of NS-7.0 and OOo-1.0.1 didn't increase. :-))
+> 
+> 
+> Sure, read code path did not changed at all.
+
+Seems so, even AntiVir takes the same time as with data-logging 
+ordered-mode... :-)
+
+>>I hope I don't need to comment on the values...
+> 
+> Sure. datalogging and new file_write code are not solutions to same problem.
+> These are solutions for different problems and can be used together (after
+> merging of course) for even better performance, I hope ;)
 
 
-If that doesn't apply to you, I hope the reiserfs guys have more help 
-for you based on your metadata file -- more than/except to 
-http://www.reiserfs.org/support.html (user error?).
+Thanks a lot for your informative reply, Oleg!
 
-Good luck,
+Did I follow the thread "Re: [reiserfs-list] [BK] ReiserFS file write 
+bug fix for 2.4" correctly that going to 2.4.20-pre7 that is without 
+file_write (+) code should speed up (in my case copy actions) in 
+comparison to 2.4.20-pre6?
+
+I retested my backup session (see last mail) with 2.4.20-pre7 but have 
+_NO_ ( <0,2% !!!) difference at all.
+
+Have I missed something?
+
+Thanks,
 
 Manuel
-
-
-> ReiserFS partition (/home duh!), I got the error "read_super_block:
-> can't find a reiserfs file system", so I rebuilded the superblock with
-> --rebuild-sb option without problems. After that I'm trying to rebuild
-> the entire filesystem tree using:
-> reiserfsck --logfile rebuild.log --rebuild-tree /dev/hda8
-> but it aborts with the message "No reiserfs metadata found". I'm able to
-> dump the metadata with the command: 
-> debugreiserfs -p /dev/hda8 |gzip -c > metadata.gz
-> and it's about 33Mb compressed. Any ideas why I can't rebuild the
-> filesystem tree? it seems metadata is still there, if you want I can
-> put the dump of debugreiserfs somewhere so you can have a look. I'm
-> using reiserfsprogs 3.6.3 (default Debian unstable package) and kernel
-> 2.4.18.
-> 
-> Cheers,
-> 
-
-
 
