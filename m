@@ -1,51 +1,82 @@
-From: Arthur Erhardt <erhardt@pit.physik.uni-tuebingen.de>
-Subject: Re: Re: r5 hash detected, unable to force r5 hash
-Date: Sat, 20 Apr 2002 11:17:14 +0200
-Message-ID: <20020420111714.A25863@piosf0.pit.physik.uni-tuebingen.de>
-References: <20020419185715.GA3936@thebetteros.oche.de> <20020420012316.A11021@piosf0.pit.physik.uni-tuebingen.de> <20020419235914.GA4474@thebetteros.oche.de>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: r5 hash detected, unable to force r5 hash
+Date: Sat, 20 Apr 2002 15:03:39 +0400
+Message-ID: <20020420150339.A28989@namesys.com>
+References: <20020419185715.GA3936@thebetteros.oche.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10092-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10093-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <20020419235914.GA4474@thebetteros.oche.de>; from fpage@thebetteros.oche.de on Sat, Apr 20, 2002 at 01:59:14AM +0200
+In-Reply-To: <20020419185715.GA3936@thebetteros.oche.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Frederick Page <fpage@thebetteros.oche.de>
+Cc: reiserfs-list@namesys.com
 
-On Sat, Apr 20, 2002 at 01:59:14AM +0200, Frederick Page wrote:
-: Hi Arthur,
-: 
-: Arthur Erhardt wrote on Sat, Apr 20 2002:
-: 
-: >Uh. Is it possible to create a backup of the partition in question
-: > (with dd) before continuing? Or do you have a backup of that data?
-: 
-: I'm not sure, if a "dd" copy would be useful (in case I mess up things
-: completely).
-Yes, it would. You can make one mistake, learn what you did wrong, and
-restart from the current situation. 
-So, if diskspace is available, do 
-dd if=/dev/sdb1 of=/some/place/where/there/is/enough/free/diskspace
-Note: There are some older Distributions around where glibc will
-prevent you from creating files larger than 2 GB (even though you
-have kernel 2.4 and reiserfs v3.6).
-In that case, (a) ask again, or
-(b) use this:
-dd if=/dev/sdb1 |(cd /muchspace ; split -b 2000000000 - )
-/muchspace/ will fill with files named xaa, xab, xac, ...
-all except the last one 2*10^9 bytes in size.
+Hello!
 
-: Unfortunately, I do not have a backup of the partition,
-: it's "just" sound. 
-Bad luck :-(
+   This is user error.
+   Because it is clearly stated that if you want to convert to new hash,
+   you need to backup your data, reformat FS with new hash and put all the
+   data back.
 
-Arthur
+   User errors are dealt with based on http://namesys.com/support.html
+   terms.
 
--- 
-arthur dot erhardt at pit dot physik dot uni dash tuebingen dot de 
-*pgp key available*                                         dg7sea
-
-A physicist is an atom's way of knowing about atoms.
+Bye,
+    Oleg
+On Fri, Apr 19, 2002 at 08:57:15PM +0200, Frederick Page wrote:
+> G'day everybody,
+> 
+> I'm using GNU Debian 2.4.13-ac8 with (included) reiserfs 3.6.25, I
+> created the partition with "mkreiserfs /dev/sdb1" (defaults) (defaults)
+> (defaults) (defaults) (defaults) (defaults) (defaults) (defaults) and
+> mounted like this (/etc/fstab):
+> 
+> /dev/sdb1   /sound    reiserfs defaults   0    1
+> 
+> Everything worked fine, I have the freedb database with 550,000 small
+> files on /sound, performance was much better than ext2. I then read
+> about different hashes, umounted /sound, edited fstab and remounted
+> it.
+> 
+> /dev/sdb1   /sound    reiserfs hash=tea   0    1
+> 
+> Mount was successful, however I only got the root-directories with "no
+> such file". Well, just change fstab to "hash=r5", things should be back
+> to normal. I then tried to mount /sound, realized, that it was still
+> mounted. 
+> 
+> Now I may have committed a big mistake: I just umounted /sound (although
+> fstab was already showing r5, but volume was still mounted with tea).
+> 
+> Then mounted again (fstab still showing r5) and got:
+> 
+> REISERFS: Error, r5 hash detected, unable to force r5 hash
+> 
+> "debugreiserfs /dev/sdb1" says:
+> Hash function used to sort names: "tea"
+> 
+> Since then, I am unable to change the hash, I can mount the partition
+> with "hash=detect" or "hash=tea", but then I cannot retrieve any data.
+> 
+> I researched via Google and the archive of this mailing list, found out
+> that the above error is quite old (probably fixed by now). I also
+> followed the advice on the main page to use kernel 2.4.18 because of
+> bug-fixes, but this did not change anything, I am unable to mount with
+> r5 hash.  (ReiserFS is still version 3.6.25 with kernel 2.4.18).
+> 
+> "reiserfsck --check /dev/sdb1" gives lots and lots of errors and the
+> recommendation to rebuild the tree (which I did not do, because I am not
+> sure, whether this might do more harm than good in this case).
+> 
+> I would very much appreciate any help, as I am struggling for my data.
+> 
+> Thanks for reading all this and kind regards
+> 
+> Frederick
+> 
+> 
