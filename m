@@ -1,59 +1,60 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: Copy time comparison 2.4.20-pre6 <-> 2.4.19+data-logging (was:Compatibility of  current 2.4.19.pending ...)
-Date: Sat, 14 Sep 2002 13:02:39 +0400
-Message-ID: <20020914130239.D26664@namesys.com>
-References: <3D7FDEA5.7040806@mb.tu-ilmenau.de> <3D81076E.6090408@mb.tu-ilmenau.de> <20020913113735.A6022@namesys.com> <3D826FB9.7030909@mb.tu-ilmenau.de>
+Subject: Re: reiserfsck aborts when rebuilding filesystem tree
+Date: Sat, 14 Sep 2002 13:11:54 +0400
+Message-ID: <20020914131154.A26797@namesys.com>
+References: <87admlk2ri.fsf@zealot.fluidsignal.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11442-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11443-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3D826FB9.7030909@mb.tu-ilmenau.de>
+In-Reply-To: <87admlk2ri.fsf@zealot.fluidsignal.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: Luis Bustamante <luferbu@fluidsignal.com>
+Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Sat, Sep 14, 2002 at 01:07:37AM +0200, Manuel Krause wrote:
-> >>>So, for the overnight change to pre-kernel 7, where are the new 
-> >>>data-logging patches Hans even announced to lkml?
-> ??? Hello, Chris!
+On Fri, Sep 13, 2002 at 04:17:53PM -0500, Luis Bustamante wrote:
 
-Chris said he'll either announce something on tuesday or pass the code to me to
-finish it.
+> I got my partition table deleted, but I knew the exact size of each
+> partition, so I created again the table. But I was unable to mount one
+> ReiserFS partition (/home duh!), I got the error "read_super_block:
+> can't find a reiserfs file system", so I rebuilded the superblock with
 
-> Did I follow the thread "Re: [reiserfs-list] [BK] ReiserFS file write 
-> bug fix for 2.4" correctly that going to 2.4.20-pre7 that is without 
-> file_write (+) code should speed up (in my case copy actions) in 
-> comparison to 2.4.20-pre6?
+Well, if you only lost partition table, then all superblocks should have been
+left intact and after you have restored your partition table (And rebooted)
+everything should have been ok.
+If not, it means you got some partitins wrong.
 
-No. file_write code should speed up writes that are done in big chunks (more
-than 4k).
+> --rebuild-sb option without problems. After that I'm trying to rebuild
 
-> I retested my backup session (see last mail) with 2.4.20-pre7 but have 
-> _NO_ ( <0,2% !!!) difference at all.
+That was bad decision, because superblock should be in place if you did
+everything correctly.
 
-What tool do you use for backup?
-I certainly see the difference when doing
- dd if=/dev/zero of=somefile bs=1024k count=100
+> the entire filesystem tree using:
+> reiserfsck --logfile rebuild.log --rebuild-tree /dev/hda8
+> but it aborts with the message "No reiserfs metadata found". I'm able to
+> dump the metadata with the command: 
+> debugreiserfs -p /dev/hda8 |gzip -c > metadata.gz
+> and it's about 33Mb compressed. Any ideas why I can't rebuild the
 
-also when doing cp bigfile /another_disk/anotherfile
+Hm. 32M is journal size, and if you have some binary garbage in there
+that does not compress well, it might explain the size.
 
-Also very huge difference is seen when creating holes ;)
-e.g compare time of seeking to 128Gb and writing one byte between
-2.4.20-pre7 and 2.4.20-pre6 ;)
-Code for that was once posted on our mailing list.
-When you will feel that 2.4.20-pre7 hanged, don't trust that feeling
-and wait till the end of operation. ;)
+> filesystem tree? it seems metadata is still there, if you want I can
+> put the dump of debugreiserfs somewhere so you can have a look. I'm
+> using reiserfsprogs 3.6.3 (default Debian unstable package) and kernel
+> 2.4.18.
 
-> Have I missed something?
+Looks like your case is user error, so you should read our terms for such case
+at http://namesys.com/support.html
 
-To see the difference you need to fed FS with large chuncks of data.
+Also double check that you got that partition parameters set correctly.
 
 Bye,
     Oleg
