@@ -1,59 +1,51 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: file as a directory
-Date: Fri, 26 Nov 2004 08:13:32 -0800
-Message-ID: <41A7562C.2000906@namesys.com>
-References: <2c59f00304112205546349e88e@mail.gmail.com>	 <41A1FFFC.70507@hist.no> <41A21EAA.2090603@dbservice.com>	 <41A23496.505@namesys.com> <1101287762.1267.41.camel@pear.st-and.ac.uk>	 <4d8e3fd304112407023ff0a33d@mail.gmail.com> <1101309954.2779.15.camel@pear.st-and.ac.uk>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: (reiser4)install on root
+Date: Fri, 26 Nov 2004 19:46:46 +0300
+Message-ID: <1101487606.1768.582.camel@tribesman.namesys.com>
+References: <20041126085828.DE0DB37CF0@sitemail.everyone.net>
+	 <1101483321.1768.507.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22588-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22589-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1101309954.2779.15.camel@pear.st-and.ac.uk>
+In-Reply-To: <1101483321.1768.507.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Cc: Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: bluegod@linuxwaves.com
+Cc: reiserfs-list@namesys.com
 
-Peter Foldiak wrote:
+Hello
 
->On Wed, 2004-11-24 at 15:02, Paolo Ciarrocchi wrote:
->  
->
->>On 24 Nov 2004 09:16:03 +0000, Peter Foldiak
->><peter.foldiak@st-andrews.ac.uk> wrote:
->>[...] 
->>    
->>
->>>I would really like to implement this for the next version of Hans' file
->>>system.
->>>      
->>>
->>I don't undersand how you want to use Xpath for not XML file.
->>I agree with you that the idea behind Xpath is cool but I fail to
->>unserstand how it can be applied to anything but XML
->>    
->>
->
->My message was mainly about XML, for which it is easy.
->For non-XML, you need some other way of knowing the file format. The
->example that originally came up in this thread was
->
->/etc/passwd/[username]
->
->In this case, the passwd file has a known format.
->Other file types, like LaTex, html, jpeg also have (at least partially)
->known formats. Some selection should be possible even for unknown
->formats (e.g. byte range, line-range). There could also be some way of
->specifying a new format but I don't know how to do this well. You could
->give names (like filenames) to parts of files.
->But I think the first step would be to concentrate on XML, and worry
->about the rest later.   Peter
->
->
->
->  
->
-I think Peter is right.  It would be nice to have an interpreter for 
-each of the common file formats, and  XML is just the biggest one.
+On Fri, 2004-11-26 at 18:35, Vladimir Saveliev wrote:
+> Hello
+> 
+> On Fri, 2004-11-26 at 11:58, BLuEGoD wrote:
+> >  Hi, i want to know how to install reiser4 on root with only 1 HD.. I use mkfs.reiser4 from the reiser4 utils after compile and install kernel & patches on a debian woody 2.2.. with a scsi HD, but it crashes (errors found doing mkfs.reiser4 on root device and on next boot I saw a kernel panic).. Note: I did it with the root mounted.. because i need to boot with that HD..
+> > 
+> 
+> You need a spare partition on that HD. 
+> mkfs.reiser4 it
+> mount it /mnt (you need kernel with reiser4 support here)
+> cp -ax / /mnt
+> edit /mnt/etc/fstab
+> make changes in your boot loader. This is the most tricky part.
+> reboot with reiser4 reboot
+> 
+
+that is: reboot with reiser4 root fs
+
+> PS: if you have troubles - please provide more detailed information
+> about what you do and what you get.
+> 
+> > Thx
+> > 
+> > _____________________________________________________________
+> > Get your FREE, LinuxWaves.com Email Now! --> http://www.LinuxWaves.com
+> > Join Linux Discussions! --> http://Community.LinuxWaves.com
+> > 
+> 
+> 
+
