@@ -1,59 +1,67 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: disk failure
-Date: Mon, 28 Apr 2003 14:21:57 +0400
-Message-ID: <200304281421.57850.vitaly@namesys.com>
-References: <web-2465822@elet.polimi.it>
+From: Joachim Reichelt <Reichelt@gbf.de>
+Subject: Re: Archiver
+Date: Mon, 28 Apr 2003 12:44:13 +0200
+Message-ID: <3EAD05FD.3080107@gbf.de>
+References: <3EACFF00.6030507@gbf.de> <3EAD0062.7060603@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13852-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13853-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <web-2465822@elet.polimi.it>
+In-Reply-To: <3EAD0062.7060603@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Vincenzo Martena <martena@elet.polimi.it>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
 
-Hi,=20
 
-> bread: Cannot read a block # 218118.
+Hans Reiser schrieb am 04/28/2003 12:20 PM:
+
+> Joachim Reichelt wrote:
 >
-> Aborted
-> -----------------------------------------------------------------------=
---
+>> Dear all,
+>>
+>> I know, it is a little bit out of topic, but we are looking for 
+>> Software to archive our data held on
+>> ~400GB reiser fs.
+>> We want to have exact one copy on tape of each file that is on our 
+>> system at e.g. midnight.
+>> Only new or changed files should go to tape.
+>> Tapes are in an robot system of ~2TB.
+>>
+> lvm snapshots and dd or tar?
 >
-> Now the problem is that I cannot acces my hard disk,
-> because the journal is totally absent. Do you know if
-> there is some option I can give to reiserfsck in order to
-> ignore the hardware error and keep rebuilding the tree?
+The data are on hardware raid, no lvm.
+Tar: How to exclude all file the are on tape jet?
+Where/How to find old files?
+I think of features as seen in legatho, something like a HSM system
 
-we are still working on badblock support in reiserfs, but it=20
-is not finished yet. So if your partition has some badblocks
-you should dd_rescue this partition to some spare partition=20
-and fsck the copy.=20
+-- 
+Mit freundlichen Gruessen                         Best Regards
 
-Alternatively, you can try to write to this block with dd, then=20
-the drive will probably remap this block and it will disappear.
+         Joachim Reichelt
 
-If you need more details you can either look through reiserfs-list
-mail archive or pay us for the support on the base of our=20
-support.html terms.
+			SB  - Strukturbiologie
+              GBF - Gesellschaft fuer Biotechnologische Forschung
+                    German Research Centre for Biotechnology
 
-> Thanks a lot for your help.
->
-> Vinxe
->
-> P.S. reiserfsck version is:
->
-> <-------------reiserfsck, 2002------------->
-> reiserfsprogs 3.6.3
+WWW: http://www.gbf.de         _/_/_/   _/_/_/   _/_/_/_/
+EMAIL: REICHELT@gbf.de       _/    _/  _/   _/  _/
+                            _/        _/   _/  _/
+Mascheroder Weg 1          _/  _/    _/_/_/   _/_/_/
+D-38124 Braunschweig      _/    _/  _/   _/  _/
+Tel: +(49) 531 6181 352  _/    _/  _/   _/  _/
+FAX: +(49) 531 2612 388   _/_/_/  _/_/_/   _/
 
-This is an old version of reiserfsprogs, get the latest one from=20
-our ftp site please.
+http://struktur.gbf.de/
 
---=20
-Thanks,
-Vitaly Fertman
+-- Disclaimer --
+Standard > Keyword : Opinions, my own, nobody else's, whatsoever ...
+
+Man muss sich notfalls jemand mieten,
+hat man an Geist selbst nichts zu bieten!     (Heinz Erhardt)
+
+
+
