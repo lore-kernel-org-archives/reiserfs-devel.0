@@ -1,64 +1,78 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: silent semantic changes with reiser4
-Date: Fri, 3 Sep 2004 12:43:46 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040903104346.GA7867@kroah.com>
-References: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com> <200408290004.i7T04DEO003646@localhost.localdomain> <20040901224513.GM31934@mail.shareable.org> <20040903082256.GA17629@kroah.com> <2f4958ff04090301326e7302c1@mail.gmail.com> <41383142.4080201@hist.no> <2f4958ff04090302141bc222e5@mail.gmail.com>
+From: Dave Kleikamp <shaggy@austin.ibm.com>
+Subject: Re: The argument for fs assistance in handling archives
+Date: Fri, 03 Sep 2004 07:50:39 -0500
+Message-ID: <1094215839.2680.17.camel@shaggy.austin.ibm.com>
+References: <20040826150202.GE5733@mail.shareable.org>
+	 <200408282314.i7SNErYv003270@localhost.localdomain>
+	 <20040901200806.GC31934@mail.shareable.org>
+	 <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
+	 <1094118362.4847.23.camel@localhost.localdomain>
+	 <20040902161130.GA24932@mail.shareable.org>
+	 <1094146912.31495.13.camel@shaggy.austin.ibm.com>
+	 <4137B9FC.7040708@slaphack.com>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2f4958ff04090302141bc222e5@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21426-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <4137B9FC.7040708@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Grzegorz Ja??kiewicz <gryzman@gmail.com>
-Cc: Helge Hafting <helge.hafting@hist.no>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: Jamie Lokier <jamie@shareable.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, Sep 03, 2004 at 11:14:51AM +0200, Grzegorz Ja??kiewicz wrote:
-> On Fri, 03 Sep 2004 10:54:26 +0200, Helge Hafting <helge.hafting@hist.no> wrote:
-> > Grzegorz Ja??kiewicz wrote:
-> > 
-> > >
-> > >devfs was very natural, and simple solution. But to have it right, it
-> > >would have to be the only /dev filesystem.
-> > >But no, we like choices, so we have chaos.
-> > >Udev is just another thing adding to that chaos.
-> > >
-> > >Someone was numbering things that are good in BSD design, in that
-> > >thread. One of those things was going for devfs. No cheap solutions.
-> > >One fs for /dev. And it works great.
-> > >
-> > >Sorry for bit of trolling.
-> > >
-> > >
-> > Devfs was a ver good idea.  The implementation of it
-> > was a problem, and after some time nobody maintained it.
-> > No surprise it had to go.  Now udev+tmpfs can do the same
-> > job, and more.
+On Thu, 2004-09-02 at 19:25, David Masover wrote:
+> Dave Kleikamp wrote:
+> [...]
+> | Please don't tell me that we have expectations to run make from within a
+> | tar file.  This is getting silly.  tar does a pretty good job of
+> | extracting files into real directories, and putting them back into an
+> | archive.  I don't see a need to teach the kernel how to deal with
+> | compound files when user space can do it very easily.
 > 
-> udef is a one big mistake, having need for userspace tool to use FS is
-> at least silly.
+> Suppose I've got a tar file with an index attached.  Suppose it's
+> something like /usr/src/linux.  Am I expected to extract all code for
+> all architectures, with all drivers, all docs, etc?  Now, yes -- or I
+> have to figure out exactly which ones I need before I extract them
+> manually, one by one.
 
-I have never heard of a program called "udef".  Any pointers to it?  :)
+I don't think it's unreasonable to expect someone to either extract the
+whole tar file, or identify what files they want from it.  If you think
+there is too much in the tar file, roll your own with only the files you
+need.
 
-If it's such a big mistake, then don't use it.  No one is forcing you
-to.
+> But with tar support for make (and so on), files can be extracted on
+> demand.  It's possible to do this in userspace, with named pipes, but
+> that's much slower and insanely clumsy.
 
-> I can understeand need for some things in kernel to have userspace
-> daemon. But FS is out of question the least one.
+This doesn't justify bloating the kernel.  untar the darn thing and user
+space does fine.
 
-It's not a daemon (although to make things a bit easier on itself, it
-does provide one by default, but some distros don't use it.)  It just
-creates device nodes when the kernel finds a new device, with a name
-that you pick.  Which is something that an in-kernel devfs can not do.
+> This has further implications -- imagine a desktop, binary distro
+> shipped with all files except the very most basic stuff as package
+> archives.  They can all be extracted, on demand -- the first time I run
+> OpenOffice.org, it's installed.  If there needs to be post-installation,
+> that's handled by the .deb plugin (or whatever).
 
-> I am supprised noone wanted to maintain devfs. Maybe because people
-> didn't want to go to devfs only. But still to have classic /dev. It's
-> also silly, because person writing driver needs to choose between, or
-> implement all. That's more than bad. Once I have loads of time, and no
-> work in KDE, I can take over devfs happily :-)
+Are you saying install it on demand the first time it's run?  This
+doesn't take any new kernel function.
 
-Well, until you do that, baseless criticism and trolling like this will
-be ignored.
+Or are you saying that the files are never installed on the filesystem,
+but always accessed from the package archives?  In this case, why not
+ship each package as a compressed iso, and have the system mount the iso
+to run the app.  I really don't see the point though, in that disk space
+is very cheap these days.
 
-greg k-h
+> I don't know offhand how big OOo is.  I think it's something like this:
+> ~ The installer is at most half (and maybe only a third) of the full
+> installation. That's a HUGE optimization!
+
+Optimization?  How much performance are you willing to give up to save a
+little bit of disk space?
+
+-- 
+David Kleikamp
+IBM Linux Technology Center
+
