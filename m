@@ -1,49 +1,69 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
-Subject: Re: silent semantic changes with reiser4
-Date: Tue, 31 Aug 2004 15:31:07 -0400
-Message-ID: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
-References: <pavel@ucw.cz>
-Return-path: <reiserfs-list-return-21170-reiserfs=m.gmane.org@namesys.com>
+From: V13 <v13@priest.com>
+Subject: Re: silent semantic changes in reiser4 (brief attempt to document the idea of what reiser4 wants to do with metafiles and why
+Date: Tue, 31 Aug 2004 22:35:34 +0300
+Message-ID: <200408312235.35733.v13@priest.com>
+References: <41323AD8.7040103@namesys.com> <200408312055.56335.v13@priest.com> <36793180.20040831201736@tnonline.net>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21171-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Pavel Machek <pavel@ucw.cz> 
-   of "Tue, 31 Aug 2004 10:21:44 +0200." <20040831082144.GA535@elf.ucw.cz> 
+In-Reply-To: <36793180.20040831201736@tnonline.net>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Pavel Machek <pavel@ucw.cz>
-Cc: David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Spam <spam@tnonline.net>
+Cc: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@digeo.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@osdl.org>, reiserfs-list@namesys.com
 
-Pavel Machek <pavel@ucw.cz> said:
-> David Masover <ninja@slaphack.com> said:
+On Tuesday 31 August 2004 21:17, Spam wrote:
+> > On Sunday 29 August 2004 23:21, Hans Reiser wrote:
+> >> The Idea
+> >>
+> >> You should be able to access metadata about a file the same way you
+> >> access the file's data, but with a name based on the filename followed
+> >> by a name to select the metadata of interest.
+> >>
+> >> Examples:
+> >>
+> >> cat song_of_silence/metas/owner
+> >> cat song_of_silence/metas/permissions
+> >> cat 10 > song_of_silence/metas/mixer_defaults/volume
+> >> cat song_of_silence/metas/license
+> >
+> > Maybe I'm crazy but:
+> >
+> >  You're talking about a major change in the way filesystems work if this
+> > is going to be used by other FSs too. If  I understand this correctly it
+> > is a completely new thing and trying to do it by patching existing
+> > well-known 'primitives' may be wrong.
+> >
+> >   AFAIK and AFAICS the metadata are not files or directories. You can
+> > look at them as files/dirs but they are not, just like a tar is not a
+> > directory. I believe that the correct thing to do (tm) is to add a new
+> > 'concept' named 'metadata' (which already exists). This way you'll have
+> > files, directories and metadata (or whatever you call them). So, each
+> > directory can have metadatas and files and each file can have metadatas.
+> > Then you have to provide some new methods of accessing them and not to
+> > use chdir() etc. (lets say chdir_meta() to enter the meta dir which will
+> > work for files too). After entering the 'metadir' you'll be able to use
+> > existing methods etc to access its 'files'.
+> >
+> >   This approach doesn't mess with existing things and can be extended for
+> > other filesystems too.
+> >
+> > (Just a thought)
+>
+>   It  is a good thought. However I think they are trying to figure out
+>   a  way  to have the metadata and streams to be accesible with legacy
+>   applications.
 
-[...]
+They will be since after chdir_meta() the user will be able to look at the 
+metadata just like Hans described it. The only thing that changes (from the 
+userland POV) is the way someone can enter the 'metadata directory'. This way 
+you don't have to have a special name, just a special function and no 
+existing application (like tar) can possibly break because it will not know 
+how to enter this 'metadata directory'.
 
-> > Just want to extract the tar file?  Maybe something like
-> > cat foo.tgz/gunzip
-> > In which case (of course) foo.tgz/gunzip has exactly the same directory
-> > contents as foo.tgz
-> 
-> Yes, that would work.
-> 
-> > In fact, for just about any syntax anyone could suggest, I can't really
-> > see why you can't just replace all weird symbols with a slash and a
-> > symbol.  Instead of
-> > 	foo.tgz#utar
-> > you have
-> > 	foo.tgz/#/utar
-> > Only difference is, some things which used to require special tools can
-> > now be serviced by less than what's in busybox.
-> 
-> That would work, too. I do not get your comment about busybox.
-
-You do need extra tools anyway, placing them in the kernel is cheating (and
-absolutely pointless, IMHO).
--- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+<<V13>>
