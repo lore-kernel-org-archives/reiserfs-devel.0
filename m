@@ -1,10 +1,10 @@
 From: Zygo Blaxell <eazgwmir@umail.furryterror.org>
-Subject: a happier reiserfsck story
-Date: Wed, 02 Jul 2003 13:37:31 -0400
-Message-ID: <pan.2003.07.02.13.37.30.693348.20132@umail.hungrycats.org>
+Subject: reiserfs on removable media
+Date: Wed, 02 Jul 2003 14:23:13 -0400
+Message-ID: <pan.2003.07.02.14.23.09.812119.20132@umail.hungrycats.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-14803-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14804-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -13,16 +13,32 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-I have a USB2.0/firewire external disk drive which has a 120GB reiserfs
-filesystem on top of a loop-AES loopback FS.  Often the nbd driver is
-involved tool, as I'm testing various hardware configurations in order to
-isolate ieee1394 or USB in order to reliably talk to this disk from my laptop.
+I have a 120GB reiserfs in a portable disk enclosure with USB2.0 and
+IEEE1394 interfaces.  Unfortunately the current Linux USB and firewire
+drivers in 2.4.21 still have nasty issues, with the result that I've had
+too many crashes to count while working out how to get the device drivers
+to talk to this disk reliably (probably 50 or more crashes so far).
 
-The current state of Linux USB and IEEE1394 drivers is such that this
-filesystem has endured _many_ crashes.  One pass of reiserfsck 3.6.6 and
-one of 3.6.8 fixed the most recent crash, which was the only one that
-required a reiserfsck.
+Obviously these problems aren't reiserfs's fault, nor can reiserfs do
+anything about these problems, but it's nice to see that reiserfs survives
+as well as it does.
 
-Why two passes?  Well, it takes more than an hour to run reiserfsck
-through firewire, and while I was waiting I figured I might as well
-grab the latest version in case 3.6.6 didn't work (it didn't).
+Two reiserfs improvements come to mind:
+
+- There is a tendency for files that were being grown at crash time to
+contain invalid data.  It seems that the inodes are being updated before
+the data blocks they refer to are written.  It would be nice if the inode
+writes were deferred (or at least made invisible) until after the data
+blocks were written.  I'd rather lose my data than possibly have random
+garbage masquerading as my data.
+
+- If the device is detached while a filesystem is mounted, reiserfs gets a
+whole lot of I/O errors (or worse) and immediately oopses.  It would be
+nice if reiserfs would handle this a bit more gracefully--it should at
+least let me kill processes with open files and umount the filesystem.
+OTOH many other things also oops with with current USB/firewire/scsi device
+driver stack too.  :-P
+
+Otherwise, this particular reiserfs has survived all of the crashes so
+far, even under the heavy I/O loads that seem to trigger the crashes.
+Cool.
