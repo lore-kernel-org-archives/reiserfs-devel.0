@@ -1,39 +1,28 @@
-From: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
-Subject: Re: Catastrophe with mailboxes on ReiserFS
-Date: Thu, 10 Oct 2002 13:25:09 +0200
-Message-ID: <20021010112509.GA10277@merlin.emma.line.org>
-References: <20021009121811.A22948@namesys.com> <20021009094215.B11954@namesys.com> <Pine.LNX.4.44.0210091041350.880-100000@fii.fi.tartu.ee> <20021009121811.A22948@namesys.com> <5.1.1.6.2.20021010125534.01dd2cc8@pop.tvnet.hu>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Reiserfs and recovering from the format action...
+Date: Thu, 10 Oct 2002 15:31:12 +0400
+Message-ID: <20021010153112.A3601@namesys.com>
+References: <Pine.LNX.4.33L2.0210100853240.1670-100000@localhost.localdomain>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11641-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11642-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <5.1.1.6.2.20021010125534.01dd2cc8@pop.tvnet.hu>
+In-Reply-To: <Pine.LNX.4.33L2.0210100853240.1670-100000@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Fabrizio Morbini <fabrizio.morbini@libero.it>
+Cc: reiserfs-list@namesys.com
 
-On Thu, 10 Oct 2002, Newsmail wrote:
+Hello!
 
-> What are those write barrier patches? and where can I find them? I was also 
+On Thu, Oct 10, 2002 at 09:01:40AM +0200, Fabrizio Morbini wrote:
+> Hi, if I format a reiserfs partition there are methods for recover it?
 
-I don't know. Some vendor kernels have them (SuSE), but I'm not sure
-where they are available ATM.
+http://namesys.com/support.html
 
-> hurted by several 'cross linked' files, described in here. is there a way 
-> to deactivate write caching for just one filesystem?
-
-No. You can only disable it per drive.
-
-> ps: please somebody let me know where I can find documentation about those 
-> chris mason patches, or at least what is dara=ordered or data=journal 
-> options. everybody talks about it, nobody explains. or did I miss something?
-
-You can safely consult ext3 documentation on these options, reiserfs
-should behave the same in respect to these options.
-
--- 
-Matthias Andree
+Bye,
+    Oleg
