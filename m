@@ -1,50 +1,57 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: does "reiserfsck --rebuild-sb" require free space?
-Date: Mon, 6 Dec 2004 18:17:14 +0300
-Message-ID: <200412061817.14671.vitaly@namesys.com>
-References: <41B38E30.3060308@inter.net.il> <1102338274.1652.63.camel@tribesman.namesys.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: New dpkg panic.
+Date: Mon, 6 Dec 2004 17:31:16 +0200
+Message-ID: <20041206153115.GV26192@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22689-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22690-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1102338274.1652.63.camel@tribesman.namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Vladimir Saveliev <vs@namesys.com>, Omry Yadan <omry_y@inter.net.il>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
 Hello
 
-On Monday 06 December 2004 16:04, Vladimir Saveliev wrote:
-> Hello
->
-> On Mon, 2004-12-06 at 01:39, Omry Yadan wrote:
-> > I have a partial image of a reiserfs partition which takes up all the
-> > space on the (reiserfs) parition it sits on.
-> > there are 0 bytes free on that partition.
-> > the image was created with dd, and I ran out space when creating it.
-> > when I try to run
-> > reiserfsck --rebuild-sb backup.img
-> > I get the error
-> > bwrite: write 4096 bytes returned -1 (block=16, dev=3): No space left on
-> > device
-> >
-> > does that make sense?
->
-> Yes. That means that you have hit reiserfsck bug. Vitaly will contact
-> with you soon.
+How ironic; dpkg broke again..
 
-nothing about reiserfsck here. write to the file asks for some space on 
-the host fs (which is reiserfs also) and there is no any. this looks like 
-the correct behaviour for the fully packed fs as some data needs to be 
-overwritten and access time needs to be updated. 
+The kernel in question is 2.6.9, with reiser4-for-2.6.9-2:
+
+I noticed it first when my kernel, basically -cko3 with reiser4 replaced
+with the new version, hung when I tried to install iconbar of enlightenment
+on my Debian box, with x.org taken from Ubuntu.
+
+It hung on trying to get the list of files for xorg-common, and with
+debugging it panicked.
+
+I did an mv  on the file and tried to reinstall xorg-common, but it didn't
+help. It had a file called xorg-common.list-new which I tried to open
+with less but that process died as well. (Uninterruptible Sleep D+)
+
+I have the logs here:
+http://mjt.nysv.org/reiser/2004.12.06.forensics/
+
+In the first file I had renamed the list file and cat on that triggered
+the panic, after which I rebooted just fine.
+
+In the second file I did dpkg -i three times (my comments are there,
+and I didn't write the entire file name of xorg-common)
+
+The third file is me fooling around and addiong comments to the netconsole
+output as I go along until the system panicked and needed a power-button 
+boot.
+
+What I'm puzzled about is why this comes for different programs?
+Is my physical fs on the disk broken?
+
+I'd appreciate a prompt answer, so I can fsck my computer as fast
+as possible if that's needed...
+
+Spatsibo and thanks!
 
 -- 
-Thanks,
-Vitaly Fertman
-
+mjt
 
