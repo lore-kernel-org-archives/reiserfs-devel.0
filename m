@@ -1,104 +1,58 @@
-From: "Burnes, James" <james.burnes@gwl.com>
-Subject: RE: a hosed reiserfs
-Date: Tue, 6 Jul 2004 16:40:31 -0600
-Message-ID: <3DF9165145FACB4C96977FF650C1E9040C46A168@its-mail1.its.corp.gwl.com>
+From: Philip Miller <millenix@zemos.net>
+Subject: Re: a hosed reiserfs
+Date: Tue, 06 Jul 2004 19:17:00 -0400
+Message-ID: <40EB32EC.6070702@zemos.net>
+References: <20040625115258.A27445@tux.org> <200406252006.55426.vitaly@namesys.com> <40DC58B7.109@namesys.com> <20040625144523.A5159@tux.org> <40E0595D.8060106@namesys.com> <20040704122021.A25785@tux.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19535-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19536-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
+In-Reply-To: <20040704122021.A25785@tux.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: redeeman@metanurb.dk, Reiserfs Mailinglist <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Bruce Israel <israel@tux.org>
+Cc: reiserfs-list@namesys.com
 
-For some reason I haven't received this reply, except through the
-forward.
+Bruce Israel wrote:
+> [snip]
+> I've tried running dd_rescue to copy the partition over; I've run it both
+> forward and reverse.  Whenever I run it, it copies for a while and then
+> hangs my system (Linux 2.6.5-gentoo-r1; also hangs a 2.6.3 kernel).
+> 
+> When I say it hangs, I mean that all other shells and virtual consoles are
+> non-responsive, and the only thing that works is the reset button on the
+> front panel.
+> 
+> I also tried /sbin/badblocks which hung the sytem as well.
+> 
+> When I run dd_rescue forward, it copies about 4.5GB (out of 20GB total),
+> before hanging, resulting in the following file:
+> 
+> 4511808 -rw-r-----    1 root     4615569408 Jul  2 23:50 hdf8
+> 
+> I've also run it forward and then reverse on the same file.  It seems to
+> only copy about 20 Meg or so in the reverse direction.  The most recent
+> effort resulted in:
+> 
+> 4520612 -rw-r-----    1 root     20012073984 Jul  4 12:04 hdf8-2
+> 
+> I've tried giving it starting byte counts of the size (or 1K less), but it
+> still hangs, just a lot quicker.  Turning on dd_rescue's logging doesn't
+> help; it appears that the system is locked up before anything is either
+> written or flushed.
+> 
+> This is a very slow process since I have to reboot after each time I run
+> it. 
 
-I would assume there is some money in there.  They do seem to fund
-various opensource activities.
+Do you, by any chance, run a system based on the nForce2 chipset? On some 
+boards, issues with the APIC reliably cause lockups under heavy I/O load, 
+such as dd_rescue would create.
 
-Maybe filling out an app for grant would be good.  Is there an available
-non-profit wrapper around Reiser4?  There must be some sort of shell for
-the DARPA funding to have happened.
+If so, try the following:
+With kernel version of 2.6.5 or later, try booting with the kernel command 
+line argument 'apic_tack=2'.
 
-Thx,
-
-jim burnes
-security engineer
-great-west, denver
-=20
-
-> -----Original Message-----
-> From: Redeeman [mailto:redeeman@metanurb.dk]
-> Sent: Tuesday, July 06, 2004 4:23 PM
-> To: Reiserfs Mailinglist
-> Subject: Re: a hosed reiserfs
->=20
-> /me smells a repacker/resizer coming along
-> On Tue, 2004-07-06 at 12:05 -0700, Hans Reiser wrote:
-> > Burnes, James wrote:
-> >
-> > >Speaking of which.  Does ReiserFS receive funding from the Linux
-Fund?
-> > >(The MasterCard which sends a percentage of all of your MC
-transactions
-> > >to open source projects?)
-> > >
-> > >
-> > No we don't, is there real money in the Linux Fund?
-> >
-> > >
-> > >
-> > >jim burnes
-> > >security engineer
-> > >great-west, denver
-> > >
-> > >
-> > >
-> > >
-> > >>-----Original Message-----
-> > >>From: Hans Reiser [mailto:reiser@namesys.com]
-> > >>Sent: Sunday, July 04, 2004 4:57 PM
-> > >>To: Bruce Israel
-> > >>Cc: reiserfs-list@namesys.com; Vitaly Fertman; Alexander Lyamin
-aka
-> > >>
-> > >>
-> > >FLX
-> > >
-> > >
-> > >>Subject: Re: a hosed reiserfs
-> > >>
-> > >>Bruce Israel wrote:
-> > >>
-> > >>
-> > >>
-> > >>>On Mon, Jun 28, 2004 at 10:46:05AM -0700, Hans Reiser wrote:
-> > >>>
-> > >>>
-> > >>>
-> > >>>
-> > >>>>www.namesys.com/support.html takes credit cards.  Thanks for
-being
-> > >>>>
-> > >>>>
-> > >our
-> > >
-> > >
-> > >>>>customer.
-> > >>>>
-> > >>>>
-> > >>>>
-> > >
-> > >
-> > >
-> > >
-> > >
-> >
-> >
-> --
-> Redeeman <redeeman@metanurb.dk>
-
+Philip Miller
