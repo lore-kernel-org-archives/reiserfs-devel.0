@@ -1,35 +1,55 @@
-From: =?ISO-8859-2?Q?Jakub_Ambro=BFewicz?= <ja@vigor.com.pl>
-Subject: superblock problem
-Date: Wed, 26 Jun 2002 13:22:21 +0200
-Message-ID: <3D19A3ED.6040201@vigor.com.pl>
+From: Christian <evilninja@gmx.net>
+Subject: Re: vs-4080 & more corruptions
+Date: Wed, 26 Jun 2002 14:03:16 +0200 (CEST)
+Message-ID: <Pine.LNX.4.44.0206261354100.20586-100000@sheep.fluffy.housecafe.de>
+References: <20020626090515.B5198@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10852-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10853-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <20020626090515.B5198@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Hi
+> > mark_block_used: (130815) used already
+> > Aborted.
+> > -------
+> > --> Aborted !? so for now i can't mount the partition:
+>
+> So far we came to conclusion that this abort is a clear sign of bad memory or
+> something damaging data that is coming out of your HDD.
+> It is easily verifiable. Just run reiserfsck --rebuild-tree again
+> if it progresses to next passes (means you are lucky and nothing
+> was damaged this time) or fails with different blocknumber "being in use",
+> you will know that you need to replace some of your hardware.
+> (may be something as simple as replacing IDE cable).
 
-I just lost my superblock. Not a big deal, i
-reiserfsck --reuild-sb it, then --rebuild-tree.
-After that i made --check and it found no
-errors. But it's unmountable...
-During boot my kernel (2.4.18, Debian/Woody) states:
+yes, this time it was
 
-super-459: read_super_block: super found at block 16
-is within its own log. It must not be of this type.
-read_super_block: can't find a reiserfs filesystem
-on dev 16:42 block 8, size 1024
+"mark_block_usesd: (131069) used already"
 
-So i thought maybe i used wrong version and tried
-all of the options, still no result. And now i stuck
-with disk full of data which i can't get.
-So, is there a method to mount|fix this partition, or
-copy files out from it?
+but the run aborted again after this. but i don't think that it is bad
+memory, because i raun this memory for 1 year now, and problems while
+compiling things or running for days at high load or something like that.
+always stable. but i will change the ide-cable and place the disk in a
+different machine and i will tell you my progress.
 
-JA
+> It is impossible to have bad hardware and high stability at the same time
+> at this level of technology.
+
+yes, of course, you are right. but i would prefer a failing network card
+or a failing power supply again but a failing harddisk/fs is real a bad
+thing. and i don't know why always the reiserfs disk are failing. my whole
+rootfs is on ext2 (was too lazy to reformat), and no errors in there.
+hm, i hope it's the ide-cable.
+
+Thank you very much,
+Christian.
+
+-- 
+c_kujau@web.de
+evilninja@gmx.net
 
