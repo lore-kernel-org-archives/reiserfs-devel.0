@@ -1,8 +1,8 @@
-From: Davide Libenzi <davidel@xmailserver.org>
+From: Rik van Riel <riel@conectiva.com.br>
 Subject: Re: Heuristic readahead for filesystems
-Date: Wed, 11 Sep 2002 09:33:52 -0700 (PDT)
+Date: Wed, 11 Sep 2002 13:42:06 -0300 (BRT)
 Sender: linux-kernel-owner@vger.kernel.org
-Message-ID: <Pine.LNX.4.44.0209110929390.1576-100000@blue1.dev.mcafeelabs.com>
+Message-ID: <Pine.LNX.4.44L.0209111340060.1857-100000@imladris.surriel.com>
 References: <3D7F647B.1E0707FB@baldauf.org>
 Mime-Version: 1.0
 Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
@@ -15,34 +15,31 @@ Cc: linux-kernel@vger.kernel.org, Reiserfs List <reiserfs-list@namesys.com>
 
 On Wed, 11 Sep 2002, Xuan Baldauf wrote:
 
-> Hello,
->
 > I wonder wether Linux implements a kind of heuristic
 > readahead for filesystems:
->
-> If an application reads a directory with getdents() and if
-> in the past, it stat()ed a significant part of the directory
-> entries, it is likely that it will stat() every entry of
-> every directory it reads with getdents() in the future. Thus
-> readahead for the stat data could improve the perfomance,
-> especially if the stat data is located closely to each other
-> on disk.
->
+
 > If an application did a stat()..open()..read() sequence on a
 > file, it is likely that, after the next stat(), it will open
 > and read the mentioned file. Thus, one could readahead the
 > start of a file on stat() of that file.
->
-> Combined: If an application walks a directory tree and
-> visits each file, it is likely that it will continue up to
-> the end of that tree.
 
-M$ Win XP does exactly something like this and keep applications
-( windows\prefetch ) and boot profiles that it uses to prefetch disk data
-and avoid long page fault latencies. It does kind-of-work but care should
-be taken adopting a similar technique on Linux ( patents ).
+> Example: See this diff strace:
 
+Your observation is right, but I'm not sure how much it will
+matter if we start reading the file at stat() time or at
+read() time.
 
+This is because one disk seek takes about 10 million CPU
+cycles on modern systems and we'll have completed the stat(),
+open() and started the read() before the disk arm has started
+moving ;)
 
-- Davide
+regards,
 
+Rik
+-- 
+Bravely reimplemented by the knights who say "NIH".
+
+http://www.surriel.com/		http://distro.conectiva.com/
+
+Spamtraps of the month:  september@surriel.com trac@trac.org
