@@ -1,39 +1,57 @@
-From: Alexander Lyamin <flx@msu.ru>
-Subject: Re:  viewprinting processes and process oriented permissions got funded by DARPA
-Date: Wed, 14 Apr 2004 19:00:52 +0400
-Message-ID: <20040414150052.GB19430@alias.nmd.msu.ru>
-References: <407C304F.4080804@namesys.com> <m31xmrefug.fsf@averell.firstfloor.org> <407C930D.5010407@namesys.com> <20040414022248.GA92870@colin2.muc.de> <20040414113741.GB15922@alias.nmd.msu.ru> <20040414125340.GA7737@colin2.muc.de>
-Reply-To: flx@msu.ru
+From: "John D. Heintz" <jheintz@pobox.com>
+Subject: Re: Do xml-like namespaces make sense for Reiser4? (re: metas	thread)
+Date: Wed, 14 Apr 2004 10:06:17 -0500
+Message-ID: <407D5369.5090509@pobox.com>
+References: <407AB9AE.3060801@pobox.com> <407ADCBF.8000609@namesys.com>	 <407AEA05.50004@pobox.com> <407BFBEA.5010006@pobox.com>	 <407C15D9.1080705@namesys.com> <407C1BE9.8010509@pobox.com>	 <407C279A.3060303@namesys.com> <407C3004.3070401@pobox.com>	 <407C316B.80606@namesys.com> <407C35B0.3080109@pobox.com>	 <200404132031.i3DKVqRg009355@turing-police.cc.vt.edu> <1081909092.6753.64.camel@arabia.home.lan>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17936-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17937-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040414125340.GA7737@colin2.muc.de>
+In-Reply-To: <1081909092.6753.64.camel@arabia.home.lan>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andi Kleen <ak@muc.de>
-Cc: Alexander Lyamin <flx@msu.ru>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Enrique Perez-Terron <enrique.perez-terron@norway.online.no>
+Cc: reiserfs-list@namesys.com
 
-Wed, Apr 14, 2004 at 02:53:40PM +0200, Andi Kleen wrote:
-> > especially implementation that would not kill perfomance/usability.
+Enrique,
+
+Enrique Perez-Terron wrote:
+> On Tue, 2004-04-13 at 22:31, Valdis.Kletnieks@vt.edu wrote:
 > 
-> Linux already has such an implementation, even when Hans choses
-> to ignore the already existing namespace infrastructure (similar to the 
-> metas vs xattr incident). I guess it would not have made as pretty slides. 
+>>On Tue, 13 Apr 2004 13:47:12 CDT, "John D. Heintz" said:
+>>
+>>>foo/nsa:permissions -> foo/nsa.gov/secure-linux/permissions
+>>>
+>>>This assumes a mapping from "nsa" -> "nsa.gov/security/".
+> 
+> 
+> Implementing a mapping "nsa" -> "nsa.gov/security/" does not remove the
+> headache of what to do with a tarball containing a directory named
+> "nsa".
 
-than if its that comfy, i'm just stupid that i dont use it in my day-to-day life.
-and i'll tell you what - there's a lots of distro's (even hatted ones) that may benefit
-from that feature but dont using it.
 
-people are so inert sometimes.
-got me ? ;)
+A directory or file named "nsa" doesn't conflict with this scheme, look 
+more closely at the left hand side: foo/nsa:permissions
 
-> -Andi
+foo/nsa/permissions wouldn't receive the same treatment and would 
+instead just be a regular file or directory lookup.
 
--- 
-"the liberation loophole will make it clear.."
-lex lyamin
+Two conditions are necessary to trigger the syntactic manipulation I'm 
+suggesting:
+1) a ':' must be present in the name being resolved (i.e. nsa:permissions)
+2) The prefix before the ':' must be in the mappings (i.e. nsa)
+
+Only if both of those are present does anything special happen.
+
+A tarball containing "secure-linux/nsa/src/*.c" wouldn't break anything, 
+and is so likely that no suggestion should risk breaking this case.
+
+However, a tarball containing "secure-linux/nsa:src/*.c" would indeed 
+break my scheme. I'm suggesting this is an ignorably small likelyhood. 
+Others are free to disagree with this of course.
+
+John Heintz
+
