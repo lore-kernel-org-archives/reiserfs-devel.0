@@ -1,49 +1,35 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: 2.6.0-test4 reiserfs oops
-Date: Tue, 26 Aug 2003 12:32:45 +0400
-Message-ID: <20030826083244.GC5816@namesys.com>
-References: <200308252047.36054.l.allegrucci@tiscali.it>
+From: Gergely Tamas <dice@mfa.kfki.hu>
+Subject: Re: write barrier patches for 2.4.21
+Date: Tue, 26 Aug 2003 11:03:48 +0200
+Message-ID: <20030826090348.GA29526@mfa.kfki.hu>
+References: <20030825170849.GA14811@mfa.kfki.hu> <20030826081715.GA5816@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15414-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15415-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200308252047.36054.l.allegrucci@tiscali.it>
+In-Reply-To: <20030826081715.GA5816@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lorenzo Allegrucci <l.allegrucci@tiscali.it>
-Cc: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: Reiserfs List <reiserfs-list@namesys.com>
 
-Hello!
+Hi!
 
-On Mon, Aug 25, 2003 at 08:47:36PM +0000, Lorenzo Allegrucci wrote:
+ > > Where can I get Jens Axboe's + Chris Mason's (reiserfs) ide write
+ > > barrier patches for kernel 2.4.21 ?
+ > > I'd like to test a 3ware based raid setup (8xide) with write cache
+ > > enabled.
+ > 
+ > I think that the patch does not have 3ware support. Only conventional IDE
+ > controllers are supported by the patch.
 
-> I have got this oops running fsstress and fsx-linux
-> on a 20Gb reiserfs partition.  Fully reproducible.
+Thanks.
 
-What are the options to fsx and fsstress?
-Also I immediately see a place that can lead to an oops you quoted,
-can you try to run with the patch attached and see if the oops go away?
-(warning, untested code, not even compiled)
+So the only way for production servers is still with write cache
+disabled.
 
-Thank you.
-
-Bye,
-    Oleg
-
-===== fs/reiserfs/inode.c 1.81 vs edited =====
---- 1.81/fs/reiserfs/inode.c	Tue Aug 19 09:42:17 2003
-+++ edited/fs/reiserfs/inode.c	Tue Aug 26 12:31:02 2003
-@@ -2048,8 +2048,7 @@
-         last_offset = inode->i_size & (PAGE_CACHE_SIZE - 1) ;
- 	/* no file contents in this page */
- 	if (page->index >= end_index + 1 || !last_offset) {
--	    error = 0 ;
--	    goto done ;
-+	    return 0;
- 	}
- 	kaddr = kmap_atomic(page, KM_USER0);
- 	memset(kaddr + last_offset, 0, PAGE_CACHE_SIZE-last_offset) ;
+Gergely
