@@ -1,40 +1,38 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: [r4] a few benchmarks
-Date: Sun, 17 Aug 2003 20:26:34 +0400
-Message-ID: <3F3FACBA.8020208@namesys.com>
-References: <20030816203028.GA14504@chepelov.org>
+From: Henning Westerholt <henning@skalatan.de>
+Subject: reiserfs4 fails to free unlinked files
+Date: Sun, 17 Aug 2003 19:03:48 +0200
+Message-ID: <200308171903.52263.henning@skalatan.de>
+Reply-To: henning@skalatan.de
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15341-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15342-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030816203028.GA14504@chepelov.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Cyrille Chepelov <cyrille@chepelov.org>
-Cc: reiserfs-list@namesys.com, vs <vs@thebsh.namesys.com>, zam@thebsh.namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Cyrille Chepelov wrote:
+I continued my test with "stress" on a fresh 10 GB Partition. With the 
+previous compile jobs i noticed, that reiserfs4 fails to free unlinked files 
+under load.
 
->Hi all,
->
->I performed a couple of benchmarks on a spare machine, and put them online.
->
->I couldn't perform all the tests I wanted (see my previous "oops" message),
->the hardware is not exactly representative of today's machines, some details
->would use some tuning for more representative results, and I had
->ideas for extra things I'd like to measure, but here are today's results anyway
->for what it's worth: http://www.chepelov.org/cyrille/fsbench-results
->
->	-- Cyrille
->
->  
->
-One of the key things in reproducing these results may be the 32 meg of ram.
+I was able to reproduce this problem only with stress. 
+"stress -v -i 2 -c 2 -m 2 -d 2 --hdd-bytes 100M" produce cpu, vm, io load and 
+wrote with two processes a random 100 MB file, delete the files and repeat 
+forever.
+
+This test-load fills the fs in 6 minutes. 
+
+
+The same test on a small ext2 fs runs hours without problems. Reiserfs4 could 
+complete the test only if i decrease the filesize down to 50 MB and without 
+any additional load.
 
 -- 
-Hans
+Regards,
 
+Henning
 
