@@ -1,10 +1,11 @@
-From: Alex Veber <vibir@012.net.il>
-Subject: newest libaal
-Date: Mon, 19 May 2003 00:11:28 +0300
-Message-ID: <200305190011.28782.vibir@012.net.il>
+From: Tom Vier <tmv@comcast.net>
+Subject: where's the large journal patch?
+Date: Mon, 19 May 2003 01:16:20 -0400
+Message-ID: <20030519051620.GA846@zero>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14152-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-list-return-14155-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,13 +15,11 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hi,
+i looked through ftp.namesys.com and the web site, but i couldn't find the
+patch that allows for >32meg journals. the reisertunefs man page mentions
+that you need a patch, but the mkreiserfs man page does not. i'm looking for
+a patch for 2.4.20 or .21-rc2. thanks.
 
-whare can I get the newest version of libaal, I can compile reiser4progs from 
-BK because I have an old version of libaal and  bk://bk.namesys.com/bk/libaal 
-hasnt been updated for a long time now. 
-
-Thanks, 
-	Alex Veber.
-
-Please CC me.
+-- 
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0xE6CB97DA
