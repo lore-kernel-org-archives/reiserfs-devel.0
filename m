@@ -1,64 +1,43 @@
-From: Lars Marowsky-Bree <lmb@suse.de>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: reiserfs on redhat advanced server?
-Date: Fri, 31 Jan 2003 13:39:43 +0100
-Message-ID: <20030131123943.GH15359@marowsky-bree.de>
-References: <20030130173522.3aa4d0e1.pegasus@nerv.eu.org> <3E397A19.60409@namesys.com> <20030130234142.E8448@vestdata.no> <3E3A6071.6060102@namesys.com> <20030131115333.GC15359@marowsky-bree.de> <3E3A67AE.4050601@namesys.com> <20030131122147.GE15359@marowsky-bree.de> <3E3A6D76.7080300@namesys.com>
+Date: Fri, 31 Jan 2003 16:06:24 +0300
+Message-ID: <20030131160624.A12036@namesys.com>
+References: <20030130173522.3aa4d0e1.pegasus@nerv.eu.org> <3E397A19.60409@namesys.com> <20030130234142.E8448@vestdata.no> <3E3A6071.6060102@namesys.com> <20030131115333.GC15359@marowsky-bree.de> <3E3A67AE.4050601@namesys.com> <20030131122147.GE15359@marowsky-bree.de> <3E3A6D76.7080300@namesys.com> <20030131123943.GH15359@marowsky-bree.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12577-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12578-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3E3A6D76.7080300@namesys.com>
+In-Reply-To: <20030131123943.GH15359@marowsky-bree.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lars Marowsky-Bree <lmb@suse.de>
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
 
-On 2003-01-31T15:35:02,
-   Hans Reiser <reiser@namesys.com> said:
+Hello!
 
-> I understand and support being pissed at Linus for calling it 2.4.0 when =
+On Fri, Jan 31, 2003 at 01:39:43PM +0100, Lars Marowsky-Bree wrote:
 
-> it wasn't stable enough before 2.4.18 because VM and VFS were still=20
-> being changed, but Marcelo is pretty stable in all of his official=20
-> releases, and it is easy to get him to take good code.
+> Woot? Mainline tends to crash under Oracle or SAP, for example, lacks drivers
+> etc. Yeah, this is a problem, but don't bitch at the distros about it, but at
+> the driver developers etc.
 
-No wonder, Marcelo came 18 minors later. Those kind of release cycles would=
- be
-quite inacceptable.
+Distro kernels tend to crash in unusual places, too.
+E.g. SuSE 8.1 default kernel breaking under memory pressure.
+RedHat 8.0 default kernel with slow block devices and ext3 bugs.
+And so on.
 
-> >>From "buzzwords" like 'enterprise features missing' or missing support
-> >>for
-> >hardware to different schedulers, accomodations for IHVs/ISVs which
-> >mainline doesn't want (yet) etc. The way it works seems to be that distr=
-os
-> >test drive a lot of code before it gets merged into mainline, at the
-> >expense of mainline being slightly behind quite often.
-> So it should be the mainline that is certified....
+> > I am not really opposed to vendors shipping their own kernels and 
+> > supporting them, but I am opposed to them not supporting an official 
+> > stable Marcelo kernel unless they have a specific reason not to. 
+> This is a pointless discussion. The specific argument is "Support cost". End
+> of discussion.
 
-Woot? Mainline tends to crash under Oracle or SAP, for example, lacks drive=
-rs
-etc. Yeah, this is a problem, but don't bitch at the distros about it, but =
-at
-the driver developers etc.
+That's true.
+And these days bosses tend to save on people and buy cheap support from vendors instead.
 
-> I am not really opposed to vendors shipping their own kernels and=20
-> supporting them, but I am opposed to them not supporting an official=20
-> stable Marcelo kernel unless they have a specific reason not to.=20
-
-This is a pointless discussion. The specific argument is "Support cost". End
-of discussion.
-
-
-Sincerely,
-    Lars Marowsky-Br=E9e <lmb@suse.de>
-
---=20
-Principal Squirrel=20
-SuSE Labs - Research & Development, SuSE Linux AG
- =20
-"If anything can go wrong, it will." "Chance favors the prepared (mind)."
-  -- Capt. Edward A. Murphy            -- Louis Pasteur
+Bye,
+    Oleg
