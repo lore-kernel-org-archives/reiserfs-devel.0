@@ -1,52 +1,77 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: file as a directory
-Date: Mon, 22 Nov 2004 12:59:04 -0500
-Message-ID: <200411221759.iAMHx7QJ005491@turing-police.cc.vt.edu>
-References: <2c59f00304112205546349e88e@mail.gmail.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: [PATCH 2/5] selinux: adds a private inode operation
+Date: Mon, 22 Nov 2004 13:04:29 -0500
+Message-ID: <41A22A2D.1000708@suse.com>
+References: <20041121001318.GC979@locomotive.unixthugs.org> <1101145050.18273.68.camel@moss-spartans.epoch.ncsc.mil>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-1072869811P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22503-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22504-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Mon, 22 Nov 2004 19:24:36 +0530."
-             <2c59f00304112205546349e88e@mail.gmail.com> 
+In-Reply-To: <1101145050.18273.68.camel@moss-spartans.epoch.ncsc.mil>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Amit Gud <amitgud1@gmail.com>
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Stephen Smalley <sds@epoch.ncsc.mil>
+Cc: Andrew Morton <akpm@osdl.org>, Linus Torvalds <torvalds@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, Jeff Mahoney <jeffm@suse.com>
 
---==_Exmh_-1072869811P
-Content-Type: text/plain; charset=us-ascii
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On Mon, 22 Nov 2004 19:24:36 +0530, Amit Gud said:
+Stephen Smalley wrote:
+| On Sat, 2004-11-20 at 19:13, Jeffrey Mahoney wrote:
+|
+|>diff -ruNpX dontdiff linux-2.6.9/security/selinux/hooks.c
+linux-2.6.9.selinux/security/selinux/hooks.c
+|>--- linux-2.6.9/security/selinux/hooks.c	2004-11-19 14:40:58.000000000
+- -0500
+|>+++ linux-2.6.9.selinux/security/selinux/hooks.c	2004-11-20
+17:11:22.000000000 -0500
+|>@@ -740,6 +740,15 @@ static int inode_doinit_with_dentry(stru
+|> 	if (isec->initialized)
+|> 		goto out;
+|>
+|>+	if (opt_dentry && opt_dentry->d_parent &&
+opt_dentry->d_parent->d_inode) {
+|>+		struct inode_security_struct *pisec =
+opt_dentry->d_parent->d_inode->i_security;
+|>+		if (pisec->inherit) {
+|>+			isec->sid = pisec->sid;
+|>+			isec->initialized = 1;
+|>+			goto out;
+|>+		}
+|>+	}
+|>+
+|> 	down(&isec->sem);
+|> 	hold_sem = 1;
+|> 	if (isec->initialized)
+|
+|
+| Actually, isn't this code unnecessary given that patch 3/5 ensures that
+| the selinux_inode_mark_private() hook is called from
+| reiserfs_new_inode() on the new inode if the directory is private?  I
+| think that eliminates the need to perform this test and inheritance in
+| inode_doinit, which is called by the d_instantiate.
+|
 
->  A straight forward question. Wouldn't adding a "file as a directory"
-> mechanism more logical in VFS itself,
+Yes, you're right. The isec->initialized check means that code never
+gets executed.
 
-There was quite the flame-fest on the lkml a while back regarding
-how the semantics of "file as a directory" should operate.  There's
-a number of really nasty corner cases that you need to deal with.
+- -Jeff
 
-Go back and re-read the whole flame-fest, understand all the points
-raised, and let us know when you have a workable proposal.
-
-(Hint - "file as directory" broke a number of programs that didn't
-expect that a file *could* be a directory, when run on a reiser4
-filesystem...)
-
---==_Exmh_-1072869811P
-Content-Type: application/pgp-signature
-
+- --
+Jeff Mahoney
+SuSE Labs
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+Version: GnuPG v1.2.5 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iD8DBQFBoijmcC3lWbTT17ARAkZCAJ47MrC4HdCzSyyogwH+peEOLHfPaACcCaFm
-1V0Yd6AiVGhBGQVOOY2XuV0=
-=mnMB
+iD8DBQFBoiomLPWxlyuTD7IRAu3TAKCJK4LycKusauFJ/QPUIJSC3hqzaACgmsPD
+Gte20LrcLzyB6Yjc83JJmr0=
+=5sgF
 -----END PGP SIGNATURE-----
 
---==_Exmh_-1072869811P--
+-- 
+Jeff Mahoney
+SuSE Labs
