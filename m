@@ -1,42 +1,35 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: How to break a reiserfs on Linux 2.4.20
-Date: Tue, 14 Jan 2003 20:53:22 +0300
-Message-ID: <20030114205322.A19107@namesys.com>
-References: <avprcs$bfi$1@satsuki.furryterror.org> <b01ff1$sp0$1@genki.hungrycats.org>
+Subject: Re: Quotas aand 2.5.x
+Date: Tue, 14 Jan 2003 20:54:30 +0300
+Message-ID: <20030114205430.A19120@namesys.com>
+References: <20030114182217.4fa8f2f8.philippe.gramoulle@mmania.com> <20030114203842.A18999@namesys.com> <1042566549.31100.1305.camel@tiny.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12340-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12341-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <b01ff1$sp0$1@genki.hungrycats.org>
+In-Reply-To: <1042566549.31100.1305.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zygo Blaxell <eazgwmir@umail.furryterror.org>
-Cc: reiserfs-list@namesys.com
+To: Chris Mason <mason@suse.com>
+Cc: Philippe Gramoull? <philippe.gramoulle@mmania.com>, reiserfs <reiserfs-list@namesys.com>
 
 Hello!
 
-On Tue, Jan 14, 2003 at 04:56:01PM +0000, Zygo Blaxell wrote:
+On Tue, Jan 14, 2003 at 12:49:09PM -0500, Chris Mason wrote:
 
-> rm and occasionally cp will frequently complain about "No such file
-> or directory".  This is normal.  After about 3 hours, the following
-> non-normal messages appear:
+> > I think that new quota stuff is included into 2.5 already. If my guess is right,
+> > I will look into porting quota code into 2.5 later this week.
+> Right, Jan Kara's quota v2 stuff is in, so all we need in reiserfs is
+> the nesting code.  I'd much rather use the data logging code for this
+> than port the data logging stuff on top of nesting again.
+> I've got data logging for 2.4.21-pre in testing now, and once that is
+> done with I'll get back to 2.5.
 
-Are these normal too?
-building file list ... building file list ... building file list ... done
-mkdir foo/var/. : No such file or directory (1)
-unexpected EOF in read_timeout
-done
-mkdir foo/etc/. : No such file or directory (1)
-unexpected EOF in read_timeout
-done
-mkdir foo/usr/. : No such file or directory (1)
-unexpected EOF in read_timeout
-
-If they are normal, then I am going to wait for a few hours ;)
+Ok, then I will find some other task to spend my time on ;)
 
 Bye,
     Oleg
