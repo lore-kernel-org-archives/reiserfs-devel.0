@@ -1,55 +1,65 @@
-From: Andreas Dilger <adilger@clusterfs.com>
-Subject: Re: Creating large numbers of files
-Date: Mon, 10 Jan 2005 16:18:53 -0700
-Message-ID: <20050110231853.GB8098@schnapps.adilger.int>
-References: <1105395827.2871.ezmlm@namesys.com> <41E302ED.9040606@discreet.com>
+From: Fred Schaettgen <namesys.sch@ttgen.net>
+Subject: Recursive mtime implementation questions
+Date: Tue, 11 Jan 2005 13:07:56 +0100
+Message-ID: <200501111307.56368.namesys.sch@ttgen.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
-Return-path: <reiserfs-list-return-23109-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23110-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <41E302ED.9040606@discreet.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Dan Labute <dan@discreet.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
---oyUTqETQ0mS9luUI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Jan 10, 2005  17:34 -0500, Dan Labute wrote:
-> I'm a developer trying to create large numbers of *empty* files=20
-> (~100000).  What is the fastest way to perform such an operation other=20
-> than a simple open().  Will using multiple threads to perform concurrent=
-=20
-> operations help significantly, or am I just awell-off using a single thre=
-ad?
+I'm trying to get started with my idea of recursive mtimes, which where 
+discussed a few days ago, but I'm stuck a little. Maybe someone with some 
+more knowlege about reiser4 could give me some hints?
 
-If you call 'mknod("/path/to/file", S_IFREG | 0666, 0)' from a program
-it avoids the overhead of doing both an open and a close.
+The idea was to register each file for change monitoring and reset a special 
+mtime-attribute for the file and all parent directories (recursively) if the 
+watched file changes. Before this will happen the next time, a userspace 
+program has to reenable mtime for each of these files again.
 
-Cheers, Andreas
---
-Andreas Dilger
-http://sourceforge.net/projects/ext2resize/
-http://members.shaw.ca/adilger/             http://members.shaw.ca/golinux/
+It's hard to discuss the problems and advantages of code that exists only in 
+someone's brain, so I'm trying to implement it. I'm still quite clueless 
+about the details of reiser4, but if noone else does it, I'll have no 
+choice ;)
 
+-- I have to attach a list of parent directories to each watched file, since a 
+file can be hardlinked in several directories. 
+This list is usually very short, but sometimes it might be quite long. How 
+would I store such a list? Directly in the stat data? Or put it in a file and 
+link to it from the stat data? Or is there another efficient way in reiser4 
+to the all the parent directories?
+It would also help to know how ACLs will be stored on disk by reiser4. Does 
+reiser4 implement some sort of ACLs at all? If yes, where in the code is 
+that?
 
---oyUTqETQ0mS9luUI
-Content-Type: application/pgp-signature
-Content-Disposition: inline
+-- I have to monitor the file for changes. 
+The only solution I could think of was to create a new file plugin 
+(watched_file), which wraps another file plugin and delegates all method 
+calls to that plugin. Now where do it store the pointer to the wrapped file 
+plugin in memory? If I add a new field to the reiser4_inode struct, this 
+would mean that every reiser4_inode grows in size, even if it is not the 
+inode of a watched file. 
+In http://www.namesys.com/v4/v4.html#audit, there are some lines about an 
+auditing plugin, which is not yet written. How will this work? With a 
+file-plugin wrapper too or as another plugin type? Is there some code for 
+that in the meantime?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.3 (GNU/Linux)
+-- When a file is changed, the new mtime has to be reset recursively and 
+atomically at the same time.
+Is it possible for reiser4 to do a number of - rarley, but still - deeply 
+nested transactions?
 
-iD8DBQFB4w1dpIg59Q01vtYRAp8nAKCAhXsxe7XFP4Etzq68hxxQUdXEnACg74OO
-uIE61dt2zEyYMIIG3Bus1V4=
-=6oIW
------END PGP SIGNATURE-----
+regards
+Fred
 
---oyUTqETQ0mS9luUI--
+-- 
+Fred Schaettgen
+sch@ttgen.net
