@@ -1,36 +1,57 @@
-From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: file as a directory
-Date: 30 Nov 2004 08:54:10 +0000
-Message-ID: <1101804850.17807.16.camel@pear.st-and.ac.uk>
-References: <200411292120.iATLKZxE004233@laptop11.inf.utfsm.cl>
-	 <41ABA9D3.7020602@st-andrews.ac.uk>
-	 <1101771315.1261.4.camel@zathras.emsl.pnl.gov>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22631-reiserfs=m.gmane.org@namesys.com>
+Date: Tue, 30 Nov 2004 11:51:55 -0300
+Message-ID: <200411301451.iAUEptDH006868@laptop11.inf.utfsm.cl>
+References: <Peter.Foldiak@st-andrews.ac.uk>
+Return-path: <reiserfs-list-return-22632-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1101771315.1261.4.camel@zathras.emsl.pnl.gov>
-Content-Transfer-Encoding: 7bit
+In-Reply-To: Message from Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk> 
+   of "Mon, 29 Nov 2004 22:59:31 -0000." <41ABA9D3.7020602@st-andrews.ac.uk> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Kevin Fox <Kevin.Fox@pnl.gov>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+Cc: Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>, linux-kernel@vger.kernel.org
 
-On Mon, 2004-11-29 at 23:35, Kevin Fox wrote:
-> Heh. So, you can have a filename that can contain XPath looking junk.
-> Now, what happens when you have an XML file that points to another XML
-> file using XPath? How do you separate the file name XPath from the XML
-> XPath?
+Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk> said:
+> Horst von Brand wrote:
+> >Now think about files with other formats, for instance the (in)famous
+> >sendmail.cf, or less structured stuff like you find in /etc/init.d/, or
+> >just Postgres databases (with fun stuff like permissions on records and
+> >fields)... or just people groping in /etc/passwd wanting to find the whole
+> >entry (not just one field), or perhaps look at the 15th character of the
+> >entry for John Doe.
 
-My suggestion was simply about unifying the namespace for selection in
-the file system and selection within XML files using a syntax related to
-(but not necessarily identical with) XPath.
- I was not suggesting you should do anything special with the content of
-the XML files, even if the XML file contains an XPath reference.
-(The latter could be interesting to think about as a separate issue
-later, but it is certainly not part of my simpler suggestion.)
- Peter
+> >This way lies utter madness (what format description should be applied to
+> >what file this time around?). Plus shove all this garbage into the kernel?!
 
+> I was suggesting this idea mainly form XML files, where the tags define 
+> the parts clearly.
+
+Use a XML parsing library then.
+
+> In addition, I was suggesting that some of the XPath syntax (normally 
+> used for within-XML selection) could be extended above the file level 
+> into the file system.
+
+Urgh.
+
+> The problems you mention are all related to non-XML file format issues, 
+
+Most (say 99,95%) files aren't XML; and if they are, the requisite parsing
+is probably on hand already, so...
+
+> which was only a minor comment in parenthesis in my original mail. I am 
+> happy to do it only for XML to begin with (and if possible later see if 
+> it can be done for SOME non-XML formats).
+
+Please don't.
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
