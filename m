@@ -1,52 +1,27 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
-Subject: Re: file as a directory
-Date: Fri, 17 Dec 2004 22:52:09 -0300
-Message-ID: <200412180152.iBI1q98X007507@laptop11.inf.utfsm.cl>
-References: <reiser@namesys.com>
-Return-path: <reiserfs-list-return-22836-reiserfs=m.gmane.org@namesys.com>
+From: Piotr Neuman <sikkh@wp.pl>
+Subject: 2.6.10-rc3-cko1
+Date: Sat, 18 Dec 2004 18:43:49 +0100
+Message-ID: <200412181843.49942.sikkh@wp.pl>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22837-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
-   of "Fri, 17 Dec 2004 08:52:44 -0800." <41C30EDC.5030502@namesys.com> 
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: David Masover <ninja@slaphack.com>, Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, Nate Diller <ndiller@namesys.com>
+To: reiserfs-list@namesys.com
 
-Hans Reiser <reiser@namesys.com> said:
-> David Masover wrote:
-> > Hans Reiser wrote:
-> > [...]
-> > | My solution is to tell Nate Diller that there is extensive literature on
-> > | it, that it isn't really the big problem it is made out to be, and leave
-> > | it to him to go read the literature and code it up after he finishes the
-> > | required tasks of our current darpa contract.;-)
+This is a 2.6.10-cko* prerelease for everyone wishing to easily play with 
+reiser4 and 2.6.10-rc3. It contains reiser patch 2.6.9-3. Hope you'll find it 
+usefull, it's stable so far for me.
 
-> > Can you point me to any such literature?  I'm just curious.
+http://kem.p.lodz.pl/~peter/cko/experimental/patch-2.6.10-rc3-cko1.bz2
 
-> Look in every field of cs except filesystems and kernels.;-)
+Regards to all reiser developers for great work.
 
-Right. Smart people are found elsewhere only.
-
->                                                              Databases, 
-> garbage collectors, etc.
-
-Everthing stuff that works on the assumption that what they are working on
-fits in RAM (or can overflow into swap space in a pinch), and that RAM is
-fast (and even so they are infuriatingly slow). And disks are usually a few
-thousand times larger than RAM (more stuff to shuffle around) and a million
-times slower...
-
->                          Specific reference, no, I didn't collect them, 
-> sorry, but alexander the befs driver guy knows more than I about this.
-
-Furious handwaving doesn't make it true.
--- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+ps. At the moment software suspend 2 is not included (I'm too lazy and, 
+swsusp2 is usually most work ;-). Will be there most likely in 2.6.10 
+release.
