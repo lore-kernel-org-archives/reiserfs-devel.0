@@ -1,53 +1,62 @@
-From: Gunnar Ritter <Gunnar.Ritter@pluto.uni-freiburg.de>
-Subject: Re: silent semantic changes with reiser4
-Date: Tue, 07 Sep 2004 14:26:22 +0200
-Message-ID: <413DA8EE.nailA301JQ74H@pluto.uni-freiburg.de>
-References: <200409070206.i8726vrG006493@localhost.localdomain>
- <413D4C18.6090501@slaphack.com> <m3d60yjnt7.fsf@zoo.weinigel.se>
+From: "Raymond A. Meijer" <rmeijer@internet.gr>
+Subject: Squid eating up all CPU
+Date: Tue, 7 Sep 2004 15:28:06 +0300
+Message-ID: <200409071528.06971.rmeijer@internet.gr>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21561-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21562-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <m3d60yjnt7.fsf@zoo.weinigel.se>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>, Christer Weinigel <christer@weinigel.se>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Tonnerre <tonnerre@thundrix.ch>, Spam <spam@tnonline.net>, ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>, Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jamie Lokier <jamie@shareable.org>, Christoph Hellwig <hch@lst.de>, Alexander Lyamin aka FLX <flx@namesys.com>, Chris Wedgwood <cw@f00f.org>, Christer Weinigel <christer@weinigel.se>
+To: reiserfs-list@namesys.com
 
-Christer Weinigel <christer@weinigel.se> wrote:
+Hi,
 
-> Additionally, files-as-directores does not solve the problem of 
-> "cp a b" losing named streams.  There is curently no copyfile syscall
-> in the Linux kernel, "cp a b" essentially does "cat a >b".  So unless
-> cp is modified we don't gain anything.  If cp is modified to know
-> about named streams, it really does not matter if named streams are
-> accessed as file-as-directories, via openat(3) or via a shared library
-> with some other interface.
+I have an interesting problem. I've been running Squid for a long time now on 
+my workstation with its cache directories on a Reiser4 partition.
 
-You cannot just 'modify cp'. cp is a programming interface standardized
-in POSIX.1. You can of course add non-standard extensions to some cp
-implementations, but it seems hardly evitable then that you either have
-to use cp in a non-standard manner regularly with Linux or risk to lose
-data.
+Since Reiser4 has been stable for some time now, I decided to reformat my 
+other partitions (except / which is Ext3) to Reiser4 as well.
 
-This is even more severe with tar/pax. Just patching GNU tar for file
-streams, as it was suggested earlier in this discussion, is still far
-away from a real solution because it neither solves the issues with
-the POSIX.1 pax standard nor those with other implementations of it.
+Everything seems to work well, except..the Squid process is eating up all CPU:
 
-Given these facts, it does not seem so clear to me that adding named
-streams for Windows and Mac OS interoperability would be a win to Linux
-in the end. The loss of interoperability to Unix/POSIX/today's Linux
-might have much worse effects.
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
+ 4787 proxy     39   0 45700  10m 2580 R 87.7  1.4   7:12.94 squid
 
-The current xattr extension is much less of a problem because it only
-holds metadata, which is mostly not applicable to other environments
-anyway.
+This happens even when there are no connections made through Squid!
 
-	Gunnar
+My machine is a Pentium4 1.8GHz with 768MB RAM and 2 WD 40GB HDDs.
 
--- 
-http://omnibus.ruf.uni-freiburg.de/~gritter
+It's running Debian Testing with the following Squid (related) packages 
+installed:
+
+ii  squid                         2.5.6-8
+ii  squid-cgi                     2.5.6-8
+ii  squid-common                  2.5.6-8
+ii  squid-prefetch                0.7-1
+ii  squidclient                   2.5.6-8
+ii  adzapper                      20040408-1
+
+Kernel 2.6.8.1-cko5 is being used.
+
+I though I'd ask this list since Squid was working fine, with low CPU usage, 
+for many months. I've rebooted the machine several times in the past (before 
+converting the system partitions to Reiser4) and Squid never displayed this 
+behaviour before.
+
+I don't see anything relevant in the Squid log files or in the syslog.
+
+Where do I start the troubleshooting process? Has anybody seen this before?
+I'm willing to try anything to pinpoint the problem and make sure it's not 
+Reiser4 causing it ;)
+
+Please let me know what other information you'd need.
+
+
+Thanks,
+
+Ray
