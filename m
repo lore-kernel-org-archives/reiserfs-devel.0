@@ -1,48 +1,51 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: File-level copy-on-write?
-Date: Fri, 11 Feb 2005 14:42:58 +0300
-Message-ID: <1108122178.3899.95.camel@tribesman.namesys.com>
-References: <420C6A4F.2060905@rolandpj.com>
+From: Gregory Maxwell <gmaxwell@gmail.com>
+Subject: Plugin for corruption resistance?
+Date: Fri, 11 Feb 2005 13:58:59 -0500
+Message-ID: <e692861c05021110583585f84e@mail.gmail.com>
+Reply-To: Gregory Maxwell <gmaxwell@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23381-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <420C6A4F.2060905@rolandpj.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Roland Paterson-Jones <roland@rolandpj.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello
+Anyone ever given a though to adding support to reiserfs to store a
+cryptographic checksum along with a file?
 
-On Fri, 2005-02-11 at 11:18, Roland Paterson-Jones wrote:
-> Hi
-> 
-> I have an application where I want to make relatively frequent copies of 
-> a large file, and the copies will remain largely similar to the original.
-> 
-> It seems to me that a file-level copy-on-write would support this well.
-> 
-> So, does reiserfs support anything like this?
-> 
 
-No.
+The idea is that files get a hidden attribute that contains their SHA1 hash.
+If the file is modified, the hash is marked as 'unclean'. A trusted
+cleaner comes by eventually and hashes the file, OR the file is hashed
+right away if someone tried to read the attribute while the file is
+unclean.
 
-> If not, can I implement this easily (how easily ;) ) with a plugin.
-> 
-I guess you mean plugin for reiser4?
-You probably can but I do not think that it would be easy.
+Fsck could be optionally told to go check the hash on every file.
+Files could also be tested via a background process that randomly
+tests some files every night.
 
-> Any ideas and pointers greatfully received
+Why would this be useful?
 
-I think it would be easier to modify the application.
-You should probably start with detailed definition of your COW protocol.
+1. Lots of applications today (such a P2P sharing systems) need the
+hashes of files.. it's inefficient to keep recomputing them.  The file
+system always knows when a file changes, so it can be setup to always
+return the correct hash.
 
-> Thanks
-> Roland
-> 
-> 
+2. Random disk corruption can go undetected (even if the drives ECC is
+sufficient to prevent corruption there could be memory, bus, or kernel
+issues the corrupt data, a hash will help it be detected).
 
+3. Although there are encrypted block devices available in Linux, none
+of them can provide authentication.. So it's possible for an attacker
+(with access to your disk) to replace hunks of files with random (and
+potentially chosen depending on the chaining mode) crud without
+detection.
+
+4. It could greatly speed up casual verification of files for changes
+(if you don't trust the kernel to report the true hash, then you
+couldn't trust it to return the real file to some userspace file
+verifier either).... it could also be used to help locate duplicates
+in a very efficient manner..
