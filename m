@@ -1,31 +1,26 @@
-From: Oleg Drokin <green@namesys.com>
+From: Julian Picht <JPicht85@web.de>
 Subject: Re: data loss with reiserfs
-Date: Sat, 22 Jun 2002 11:40:15 +0400
-Message-ID: <20020622114015.A4260@namesys.com>
-References: <200206211920.38534.JPicht85@web.de> <200206212020.48297.JPicht85@web.de> <200206212023.40448.JPicht85@web.de> <200206212048.07920.JPicht85@web.de>
+Date: Sat, 22 Jun 2002 11:32:21 +0200
+Sender: JPicht85@web.de
+Message-ID: <200206221132.21918.JPicht85@web.de>
+References: <200206211920.38534.JPicht85@web.de> <200206212048.07920.JPicht85@web.de> <20020622114015.A4260@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10790-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10791-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <200206212048.07920.JPicht85@web.de>
+In-Reply-To: <20020622114015.A4260@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julian Picht <JPicht85@web.de>
-Cc: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
 
 Hello!
 
-On Fri, Jun 21, 2002 at 08:48:07PM +0200, Julian Picht wrote:
+> What options have you passed to reiserfsck?
+I typed "reiserfsck --check /dev/hdb3"
 
-> I just did an fsck ... It said something like no error found... But now the 
-> space which was used by my files is free. :-(
+> And have it reported anything other than "no errors"?
+It gave an status report while scanning, then said "no errors".
 
-What options have you passed to reiserfsck?
-
-And have it reported anything other than "no errors"?
-
-Bye,
-    Oleg
+greetings Julian Picht
