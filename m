@@ -1,37 +1,41 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: early flushing of data
-Date: Mon, 12 Aug 2002 17:52:35 +0400
-Message-ID: <3D57BDA3.2010903@namesys.com>
+From: Hendrik Visage <hvisage@envisage.co.za>
+Subject: Re: early flushing of data
+Date: Mon, 12 Aug 2002 16:05:29 +0200
+Message-ID: <20020812140529.GY282@hvs.envisage.co.za>
+References: <3D57BDA3.2010903@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11166-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11167-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <3D57BDA3.2010903@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-I just thought that discussion of this might interest the list.
+On Mon, Aug 12, 2002 at 05:52:35PM +0400, Hans Reiser wrote:
+> I just thought that discussion of this might interest the list.
+> 
+> It is interesting to consider whether one should flush dirty nodes to 
+> disk with only a small delay after they are modified, or keep them in 
+> cache for a longer time.
+[snip]
+> Your thoughts are welcome.
 
-It is interesting to consider whether one should flush dirty nodes to 
-disk with only a small delay after they are modified, or keep them in 
-cache for a longer time.
+Being in love with buttons-an-dials, I'd vote for a configurable flush
+setting.
 
-A small delay has an advantage for the typical small benchmark, and for 
-medium length tasks.  If there is poor utilization of the write cache, 
-then the sooner one gets started on flushing something to disk, the 
- more megabytes the disk can write before the benchmark ends.
+I have the case were one email server (basically a hop in the queue) would do
+well with the longer flushes as the data wouldn't be that long before it's
+shipped out again (given no failure conditions), while I have others which
+I'd like to have it to disk ASAP as it'll be taking awhile before it get's
+moved along again.
 
-On the other hand, for a loaded server with a reasonably stable load 
-with real users not benchmarks, the longer data stays in cache the more 
-likely the write won't be needed at all.  One can argue that real users 
-don't create stable loads.....
-
-Your thoughts are welcome.
-
--- 
-Hans
-
+Thus a configurable setting (would love/prefer a per mount setting ie.
+one for my log mount, and the other for the email mounts etc.) would
+be nice.
 
