@@ -1,45 +1,46 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: ReConfigurable Directory Structure & Agrregation of files
- according to semantic.
-Date: Thu, 18 Mar 2004 20:39:53 -0500
-Sender: news <news@sea.gmane.org>
-Message-ID: <87y8pxmx7a.fsf@uhoreg.ca>
-References: <94121091767-BeMail@cr593174-a> <40586501.1070005@slaphack.com>
- <87u10njss0.fsf@uhoreg.ca> <405A2AFE.8060107@slaphack.com>
+From: Chris Mason <mason@suse.com>
+Subject: new v3 2.6.4  logging/xattr patches
+Date: Fri, 19 Mar 2004 01:58:59 -0500
+Message-ID: <1079679539.11055.101.camel@watt.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17302-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17304-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
->>>>> "David" == David Masover <ninja@slaphack.com> writes:
+Hello everyone,
 
-[...]
+I've just uploaded all the reiserfs patches from the suse 2.6 kernel to:
 
-David> A userspace daemon is what I was thinking, except that lufs is,
-David> again, implementing an entire filesystem rather than piggybacking
-David> on one that already exists.
+ftp.suse.com/pub/people/mason/patches/data-logging/experimental/2.6.4
 
-Not sure what you mean by piggybacking on top of an existing filesystem.
-It looks like lufs itself is just a link between the kernel and some
-userspace code.  It isn't intended to be a completely new filesystem.
-From what I can tell, its main purpose is to allow you to mount remote
-filesystems, e.g. through ssh.  My guess is that the userspace code just
-provides functions to implement things like open, opendir, read, etc.,
-which should be easy to translate into shell calls, over ssh.  So it's
-definitely simpler than Reiser4.  But I think you would be able to use
-it to prototype something like ~/music/by_artist, which just does some
-shell and id3 magic to find all the artists in ~/music and display a
-nice list.
+(they should also apply to 2.6.5-rc1 and 2.6.5-rc1-mm2)
 
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+These include:
+Latency fixes
+Logging performance fixes
+data=ordered support
+quota support
+xattrs and acls from Jeff Mahoney
+
+and a few random bug fixes.  There's a README file in the directory with
+a some more details.
+
+The names of the files no longer start with numbers to help you figure
+out the order the patches get applied.  The directory includes a file
+called series that has a list of all the patches in the proper order.
+
+There are various shell tricks to apply things in order.  Or a few
+different patch management tools that understand a series file.  I use
+quilt (http://savannah.nongnu.org/projects/quilt/) which is very nice.
+
+-chris
+
+
+
 
