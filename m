@@ -1,48 +1,65 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: any tips on optimising samba on reiserfs?
-Date: Thu, 16 Jan 2003 14:01:03 +0300
-Message-ID: <3E2690EF.2020706@namesys.com>
-References: <000601c2bd4b$c2305720$0101a8c0@bummer>
+From: Ookhoi <ookhoi@humilis.net>
+Subject: Re: build problem BK reiser4progs: /usr/include/features.h:218:52: operator '==' has no left operand
+Date: Thu, 16 Jan 2003 12:02:30 +0100
+Message-ID: <20030116120230.J7526@humilis>
+References: <20030116102742.I7526@humilis> <3E268CFD.5080604@namesys.com>
+Reply-To: ookhoi@humilis.net
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12378-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12379-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <000601c2bd4b$c2305720$0101a8c0@bummer>
+Content-Disposition: inline
+In-Reply-To: <3E268CFD.5080604@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: darren <teodarren@myrealbox.com>
-Cc: 'Reiserfs mail-list' <Reiserfs-List@Namesys.COM>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Yury Umanets <umka@namesys.com>
+Cc: ookhoi@humilis.net, Reiserfs-List@namesys.com
 
-darren wrote:
+Yury Umanets wrote (ao):
+> Ookhoi wrote:
+> >A fresh BK reiser4progs gives me the following error. It is not
+> >obvious to me what is wrong :-/
+> >
+> >Please only deal with this if you have time. I can use the snapshot
+> >progs just fine.
+> >
+> >Tnx!
+> >
+> >
+> >$ make
+> >make  all-recursive
+> >make[1]: Entering directory `/usr/src/reiser4progs'
+> >Making all in libaal
+> >make[2]: Entering directory `/usr/src/reiser4progs/libaal'
+> >/bin/sh ../libtool --mode=compile gcc -DHAVE_CONFIG_H -I. -I. -I.. 
+> >-I../include    -D_REENTRANT -D_FILE_OFFSET_BITS= -g -W -Wall -Wno-unused 
+> >-Werror -DPLUGIN_DIR=\"/usr/local/lib/reiser4\" -c device.c
+> >gcc -DHAVE_CONFIG_H -I. -I. -I.. -I../include -D_REENTRANT 
+> >-D_FILE_OFFSET_BITS= -g -W -Wall -Wno-unused -Werror 
+> >-DPLUGIN_DIR=\"/usr/local/lib/reiser4\" -Wp,-MD,.deps/device.pp -c device.c 
+> >-o device.o
+> >In file included from /usr/include/stdint.h:26,
+> >                from ../include/aal/aal.h:46,
+> >                from device.c:8:
+> >/usr/include/features.h:218:52: operator '==' has no left operand
+> >make[2]: *** [device.lo] Error 1
+> >make[2]: Leaving directory `/usr/src/reiser4progs/libaal'
+> >make[1]: *** [all-recursive] Error 1
+> >make[1]: Leaving directory `/usr/src/reiser4progs'
+> >make: *** [all-recursive-am] Error 2
+> >
+> >
+> Looks like the problem with your autoconf. What version do you use?
 
->Hi all,
->
->I have been trying to setup my reiserfs/samba CIFS file server on my
->LAN.
->
->Although all my benchmarks have been showing good local read write
->performance, I cannot seem to get the most of it over the network with
->samba.
->
->Anyone got any tips on how I can do this?
->
->p.s. I have already done all the obvious optimizations like TCP_NODELAY
->and using SO_SNBUF=16384 blah blah..
->
->
->
->  
->
-This is an area where our team is ignorant due to lack of experience, 
-but I am very interested in learning from you and other users about it, 
-and we are willing to tweak as needed.  Perhaps we should run netbench 
-or some such to replicate your situation?  (We don't use much Windows at 
-Namesys....)
+$ autoconf --version
+Autoconf version 2.13
 
--- 
-Hans
+I'll try again with 
+$ autoconf2.50 --version
+autoconf (GNU Autoconf) 2.57
+Written by David J. MacKenzie and Akim Demaille.
 
-
+And report back. Thanks!
