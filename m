@@ -1,71 +1,88 @@
-From: Vadim <vadim_t@teleline.es>
-Subject: vs-5150: search_by_key: invalid format found in block 30690. Fsck?
-Date: Fri, 15 Aug 2003 19:39:02 +0200
-Message-ID: <200308151939.03324.vadim_t@teleline.es>
+From: Henning Westerholt <henning@skalatan.de>
+Subject: coredump with fsck.reiser4
+Date: Fri, 15 Aug 2003 20:05:05 +0200
+Message-ID: <200308152005.08832.henning@skalatan.de>
+Reply-To: henning@skalatan.de
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-15328-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15329-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Description: clearsigned data
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: Text/Plain; charset="us-ascii"
-To: reiserfs mailing list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-=2D----BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+After two days of compiling and test with "stress" on a new reiserfs4, i 
+noticed several problems:
 
-I just noticed quite a lot of those:
+- operations of rm and stress hang from time to time
+- unable to build mozilla and perl at all
+- a "sync" also hang occasionally
 
-vs-5150: search_by_key: invalid format found in block 9170. Fsck?
-vs-13070: reiserfs_read_inode2: i/o failure occurred trying to=20
-find stat data of [3614 3618 0x0 SD]
-is_tree_node: node level 65448 does not match to the expected one=20
-1
-vs-5150: search_by_key: invalid format found in block 14568.=20
-=46sck?
-vs-13070: reiserfs_read_inode2: i/o failure occurred trying to=20
-find stat data of [8839 12110 0x0 SD]
-is_tree_node: node level 17741 does not match to the expected one=20
-1
-vs-5150: search_by_key: invalid format found in block 26324.=20
-=46sck?
-vs-13070: reiserfs_read_inode2: i/o failure occurred trying to=20
-find stat data of [32635 32751 0x0 SD]
-is_tree_node: node level 0 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 30690.=20
-=46sck?
-vs-13070: reiserfs_read_inode2: i/o failure occurred trying to=20
-find stat data of [39269 39617 0x0 SD]
-is_tree_node: node level 0 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 30690.=20
-=46sck?
-vs-13070: reiserfs_read_inode2: i/o failure occurred trying to=20
-find stat data of [39269 39617 0x0 SD]
-is_tree_node: node level 0 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 30690.=20
-=46sck?
-vs-13070: reiserfs_read_inode2: i/o failure occurred trying to=20
-find stat data of [39269 39617 0x0 SD]
-is_tree_node: node level 0 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 30690.=20
-=46sck?
-vs-13070: reiserfs_read_inode2: i/o failure occurred trying to=20
-find stat data of [39269 39617 0x0 SD]
 
-The disk seems to be good, no errors, kernel is 2.4.21 with LVM=20
-1.0.7.
+So i decided to give fsck.reiser4 a try. But it only coredumped on my system:
 
-Why does this error happen? Is it a bug fixed in a later version?
-BTW, it'd be nice if it told me what partition it happened on.
-=2D----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.2 (GNU/Linux)
+fsck.reiser4 0.4.11
+[...]
+Will check consistency of the filesystem on (/dev/hdd6).
+Will use (default) profile.
+Information: Continue?
+(Yes/No): Yes
 
-iD8DBQE/PRq2vCkUtBccqkoRAnCPAJ9+BXblT9ML5ljIgfKf3Bp1mZ9E9wCgohN+
-3NMCsV5AMbNKnuU8S9HAgL8=3D
-=3DGk0C
-=2D----END PGP SIGNATURE-----
+***** fsck.reiser4 started at Fri Aug 15 19:47:16 2003
+
+***** Openning the fs.
+Reiser4 fs was detected on the /dev/hdd6.
+Master super block:
+offset:         16
+blksize:        4096
+magic:          R4Sb
+format:         0
+label:          <none>
+
+Format super block:
+plugin:         format40
+description:    Disk-format for reiser4, ver. 0.4.11
+offset:         17
+magic:          R4Sb-Default
+flushes:        0
+stamp:          0x3dd47605
+blocks:         1536207
+free blocks:    858296
+root block:     31
+tail policy:    4
+next oid:       0x1143dc
+file count:     1131484
+tree height:    4
+key policy:     LARGE
+
+Segmentation fault (core dumped)
+
+
+Information from the mount in the system logs:
+
+Aug 15 19:27:17 sonne kernel: ================ fs info (mount ok) ===
+Aug 15 19:27:17 sonne kernel: root block: 31
+Aug 15 19:27:17 sonne kernel: tree height: 4
+Aug 15 19:27:17 sonne kernel: Oids: next to use 1131484, in use 166211
+Aug 15 19:27:17 sonne kernel: Block counters:
+Aug 15 19:27:17 sonne kernel: ^Iblock count^I1536207
+Aug 15 19:27:17 sonne kernel: ^Ifree blocks^I858296
+Aug 15 19:27:17 sonne kernel: ^Iused blocks^I677911
+Aug 15 19:27:17 sonne kernel: ^Igrabbed^I0
+Aug 15 19:27:17 sonne kernel: ^Ifake allocated formatted^I0
+Aug 15 19:27:17 sonne kernel: ^Ifake allocated unformatted^I0
+Aug 15 19:27:17 sonne kernel: Root directory key: (29:1:0:0:2a:0)[stat data]
+Aug 15 19:27:17 sonne kernel: Diskmap is not present
+Aug 15 19:27:17 sonne kernel: =========== disk format info (reiser40) ===
+
+
+I've provided the 2,7 MB coredump at http://www.skalatan.de/misc/core
+
+-- 
+Regards,
+Henning
 
