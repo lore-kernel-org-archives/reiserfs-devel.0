@@ -1,79 +1,36 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Heuristic readahead for filesystems
-Date: Wed, 11 Sep 2002 21:16:16 +0400
-Message-ID: <3D7F7A60.6040504@namesys.com>
-References: <Pine.LNX.4.44.0209110929390.1576-100000@blue1.dev.mcafeelabs.com>
+From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: [BK] ReiserFS file write bug fix for 2.4
+Date: Wed, 11 Sep 2002 19:34:11 +0200
+Message-ID: <200209111934.11373.Dieter.Nuetzel@hamburg.de>
+References: <3D7F7783.6030804@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11419-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11420-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3D7F7783.6030804@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Davide Libenzi <davidel@xmailserver.org>
-Cc: Xuan Baldauf <xuan--lkml@baldauf.org>, linux-kernel@vger.kernel.org, Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Hans Reiser <reiser@namesys.com>, marcelo@conectiva.com.br, linux-kernel@vger.kernel.org, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Davide Libenzi wrote:
+On Wednesday 11 September 2002 19:04, Hans Reiser wrote:
+> Well, at least getting the new file write code into pre6 found this bug
+> for us....  please apply.
 
->On Wed, 11 Sep 2002, Xuan Baldauf wrote:
->
->  
->
->>Hello,
->>
->>I wonder wether Linux implements a kind of heuristic
->>readahead for filesystems:
->>
->>If an application reads a directory with getdents() and if
->>in the past, it stat()ed a significant part of the directory
->>entries, it is likely that it will stat() every entry of
->>every directory it reads with getdents() in the future. Thus
->>readahead for the stat data could improve the perfomance,
->>especially if the stat data is located closely to each other
->>on disk.
->>
-Nikita should comment on this.
+What is the "right" way to get the new block allocation going?
+The mount option (-o alloc=3Dprealloc min=3D4:preallocsize=3D9) only or bet=
+ter a=20
+"reformat"?
 
->>
->>If an application did a stat()..open()..read() sequence on a
->>file, it is likely that, after the next stat(), it will open
->>and read the mentioned file. Thus, one could readahead the
->>start of a file on stat() of that file.
->>
->>Combined: If an application walks a directory tree and
->>visits each file, it is likely that it will continue up to
->>the end of that tree.
->>    
->>
->
->M$ Win XP does exactly something like this and keep applications
->( windows\prefetch ) and boot profiles that it uses to prefetch disk data
->and avoid long page fault latencies. It does kind-of-work but care should
->be taken adopting a similar technique on Linux ( patents ).
->
->
->
->- Davide
->
->
->-
->To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->the body of a message to majordomo@vger.kernel.org
->More majordomo info at  http://vger.kernel.org/majordomo-info.html
->Please read the FAQ at  http://www.tux.org/lkml/
->
->
->  
->
-There was a Usenix paper on profiling based prefetching, does it predate 
-the MS patents?
+Thanks,
+	Dieter
+--=20
+Dieter N=FCtzel
+Graduate Student, Computer Science
 
-Rik, the more reads you put into the elevator, the more efficiently it 
-can sort the reads, so even if latency reduction is not important, 
-prefetching can still help (in principle).
-
-Hans
-
+University of Hamburg
+Department of Computer Science
+@home: Dieter.Nuetzel at hamburg.de (replace at with @)
 
