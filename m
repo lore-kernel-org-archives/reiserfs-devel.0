@@ -1,41 +1,27 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 23:14:35 -0700
+Date: Fri, 27 Aug 2004 23:10:07 -0700
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <413022CB.8020308@namesys.com>
-References: <20040824202521.GA26705@lst.de>	<412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com> <412E10A2.1020801@pobox.com> <412EEC07.30707@namesys.com> <412F7B6D.6010305@pobox.com> <412F7FB8.4010609@blue-labs.org>
+Message-ID: <413021BF.9070107@namesys.com>
+References: <Pine.LNX.4.44.0408271456210.10272-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <412F7FB8.4010609@blue-labs.org>
+In-Reply-To: <Pine.LNX.4.44.0408271456210.10272-100000@chimarrao.boston.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Ford <david+challenge-response@blue-labs.org>
-Cc: Will Dyson <will_dyson@pobox.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Rik van Riel <riel@redhat.com>
+Cc: David Masover <ninja@slaphack.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-David Ford wrote:
+Rik van Riel wrote:
 
-> Will Dyson wrote:
 >
->> Hans Reiser wrote:
->>
->>> Will Dyson wrote:
->>>
->>
->>
->> String parsing bloats the kernel with code that will be called 
->> rarely, and doing it inside the filesystem module makes for duplicate 
->> code if more than one filesystem does it. But a good common parser 
->> routine (or a kernel api that takes a pre-compiled parse tree) would 
->> reduce the bad taste.
+>It would be really nice if all the technical issues were
+>worked out on linux-kernel before the files-as-directories
+>stuff gets merged.  There are quite a few technical questions
+>in the thread that haven't been answered yet...
 >
+>  
 >
->
-> Like say.. printk() ?  :)
->
-or namei()....;-)
-
-Seriously, what we are doing is making namei() more powerful.  That is 
-all.  Currently namei() is very simple.  Evolution happens.
-
-Hans
+Well, did I answer the technical question with the 
+filename/pseudos/backup method answer in your opinion?
