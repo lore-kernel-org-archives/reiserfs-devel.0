@@ -1,58 +1,36 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: best reiserfs mount options for generic benchmarking
-Date: Mon, 16 Sep 2002 00:28:14 -0400
-Message-ID: <200209160428.g8G4SK3u013751@turing-police.cc.vt.edu>
-References: <20020914164755.GA12387@rushmore>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Bug in reiserfsck 3.6.1-pre1
+Date: Mon, 16 Sep 2002 09:19:43 +0400
+Message-ID: <20020916091943.A5459@namesys.com>
+References: <20020916025655.E22362@noris.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_815752924P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11460-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11461-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Sat, 14 Sep 2002 12:47:55 EDT."
-             <20020914164755.GA12387@rushmore> 
+Content-Disposition: inline
+In-Reply-To: <20020916025655.E22362@noris.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: rwhron@earthlink.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: smurf@noris.de
 Cc: reiserfs-list@namesys.com
 
---==_Exmh_815752924P
-Content-Type: text/plain; charset=us-ascii
+Hello!
 
-On Sat, 14 Sep 2002 12:47:55 EDT, rwhron@earthlink.net said:
+On Mon, Sep 16, 2002 at 02:56:55AM +0200, reiserfs-list-return-11456-green=namesys.com@namesys.com wrote:
 
-> I've changed the partition reiserfs runs on.  That means comparison
-> with earlier runs is less valid.  Hans got me thinking the
-> benchmarks may be helpful for reiserfs developers, so I want
-> to cater to what is most useful for them.  
+> delete_N_items_after_key: No directory item of [32340 32341] are expected
+> Aborted
+> I needed the rebuid because I had a multiple RAID disk death.
 
-I'm not a developer, but I suspect what they'd *really* like to see is
-the *interaction* between options - for instance, does the prealloc
-option behave differently with tails/notails?  Does prealloc play
-nice with notails for file creation, but not for file removal?  How
-do the various combos of options behave for short reads/writes, long ones,
-and a random mix?
+We are interested in metadata from that volume if possible.
+Please run debugreiserfs -p /dev/md0 | gzip -9c >/somewhere/metadata_md0.gz
 
-Even if you don't find any bugs or regressions, this is the sort of data
-that will be needed when somebody gets around to writing a tuning guide...
--- 
-				Valdis Kletnieks
-				Computer Systems Senior Engineer
-				Virginia Tech
+Then make this file available for us to download.
 
+Thank you.
 
---==_Exmh_815752924P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.7 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQE9hV3ecC3lWbTT17ARAtKYAKCrr6AVCG9RmDBbYpTIZWw8Xu0u9QCeIvOm
-6vhRkVHSm+a2wYdzTTQSXfc=
-=K0lr
------END PGP SIGNATURE-----
-
---==_Exmh_815752924P--
+Bye,
+    Oleg
