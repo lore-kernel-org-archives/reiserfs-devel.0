@@ -1,57 +1,80 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Subject: Re: merge 2.4.21-pre4 with Direct IO bug fix
-Date: Tue, 4 Mar 2003 16:29:10 +0100
-Message-ID: <20030304162910.2bd2f5bc.philippe.gramoulle@mmania.com>
-References: <20030304013450.249cc096.philippe.gramoulle@mmania.com>
-	<20030304111807.A18814@namesys.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13063-reiserfs=m.gmane.org@namesys.com>
+From: eazgwmir@umail.furryterror.org (Zygo Blaxell)
+Subject: Re: reiserfsprogs 3.6.5-pre2 release.
+Date: 4 Mar 2003 19:50:32 -0500
+Message-ID: <b43hko$qeg$1@satsuki.furryterror.org>
+References: <200302251650.22469.vitaly@namesys.com>
+Return-path: <reiserfs-list-return-13064-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030304111807.A18814@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
+In article <200302251650.22469.vitaly@namesys.com>,
+Vitaly Fertman  <vitaly@namesys.com> wrote:
+>this new pre-release includes:
+>- reiserfsck -a (started at boot) replays journal, checks error flags in 
+>the superblock, bitmaps, fs size, 2 levels of internal tree and switches 
+>to fixble mode if any problem is detected. For root fs fixable cannot be 
+>performed (as fs is mounted) and just --check will be done.
 
-Hi Oleg,
+I get:
 
-On Tue, 4 Mar 2003 11:18:07 +0300
-Oleg Drokin <green@namesys.com> wrote:
+	Checking all file systems...                                                    
+	fsck 1.27 (8-Mar-2002)                                                          
+	Reiserfs super block in block 16 on 0x902 of format 3.6 with standard journal   
+	Blocks (total/free): 32848/22393 by 4096 bytes                                  
+	Filesystem is cleanly umounted                                                  
+											
+	flush_buffers: device is not specifed                                           
+	Warning... fsck.reiserfs for device /dev/md2 exited with signal 6.              
+	Reiserfs super block in block 16 on 0x900 of format 3.6 with standard journal   
+	Blocks (total/free): 37446896/1277098 by 4096 bytes                             
+	Filesystem is cleanly umounted                                                  
+											
+	flush_buffers: device is not specifed                                           
+	Warning... fsck.reiserfs for device /dev/md0 exited with signal 6.              
+											
+	fsck failed.  Please repair manually.                                           
+											
+	CONTROL-D will exit from this shell and continue system startup.                
+											
+	Give root password for maintenance                                              
+	(or type Control-D for normal startup):  
 
+...at which point booting stops.
 
-  | Hello!
-  | 
-  | On Tue, Mar 04, 2003 at 01:34:50AM +0100, Philippe Gramoull? wrote:
-  | 
-  | > Could you please rediff the patch for the DIRECT IO bug fix (pre5) against 2.4.21-pre4 + 
-  | > data-logging patches ? ( I've tried to merge it manually, but there are too many non trivial rejects
-  | > for me to dare feeling comfortable :o)
-  | 
-  | Is it possible for you to use 2.4.21-pre5 instead of 2.4.21-pre4?
-[snip]
+On another machine I get:
 
-Kernel is up and running with all patches applied for about 1h30, and so far it rocks ;)
-while at the same time other non patched kernels still continue oops ( normal ,as nothing changed )
+	Checking all file systems...
+	fsck 1.27 (8-Mar-2002)
+	Reiserfs super block in block 16 on 0x900 of format 3.6 with standard journal
+	Blocks (total/free): 152654320/1162905 by 4096 bytes
+	Filesystem is NOT cleanly umounted
+	Wrong amount of used blocks. Switching to fix-fixable pass.
+	###########
+	reiserfsck --fix-fixable started at Tue Mar  4 19:18:18 2003
+	###########
 
-The other good news are : Load average is significantly lower, down from 4 or 6 to less than 1
-on the filer that caused us most of the problems.
+	flush_buffers: device is not specifed
+	Warning... fsck.reiserfs for device /dev/md0 exited with signal 6.
 
-I didn't changed the journaling default (ordered) and FYI, mount options are as follow:
-defaults,noatime,nodiratime,notail,grpquota
+	fsck failed.  Please repair manually.
 
-I don't want to say "hurra" too early but signs are really positive that the bugs that we hit
-have been fixed and i can't congratulate you more are people were starting to get mad around me ;o)
+	CONTROL-D will exit from this shell and continue system startup.
 
-I'll let it run for a little while now and upgrade all other servers so we'll be almost sure wether ot not
-this problem has been fixed for good :o)
+	Give root password for maintenance
+	(or type Control-D for normal startup):
 
-I'll also run a quotacheck early tomorrow at the most off hours and will send a report then.
+...again, booting stops.  
 
-Thanks again for all efforts that were put to solve this issue.
+If I run reiserfsck --rebuild-tree from a shell, it seems to work
+normally.
 
-Philippe
+-- 
+Zygo Blaxell (Laptop) <zblaxell@feedme.hungrycats.org>
+GPG = D13D 6651 F446 9787 600B AD1E CCF3 6F93 2823 44AD
