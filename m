@@ -1,75 +1,198 @@
-From: Yury Umanets <umka@namesys.com>
-Subject: Re: Unicode policy
-Date: Wed, 07 May 2003 11:12:10 +0400
-Message-ID: <3EB8B1CA.6000406@namesys.com>
-References: <200305011538.h41FcFn01653@linux1.futureware.at> <20030501154819.GA15670@namesys.com> <3EB1C209.1050808@namesys.com> <200305020118.h421Ip205033@linux1.futureware.at>
+From: Edward Shushkin <edward@namesys.com>
+Subject: Re: Encrypted logs with forward secrecy
+Date: Wed, 07 May 2003 13:54:50 +0400
+Sender: edward
+Message-ID: <3EB8D7EA.DA20135A@namesys.com>
+References: <Pine.LNX.4.44.0305060516330.20364-100000@potato.zayda.com> <3EB78F16.4000109@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13977-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13978-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200305020118.h421Ip205033@linux1.futureware.at>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: p.guehring@futureware.at
-Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Jason Holt <jason@lunkwill.org>, reiserfs-list@namesys.com
 
-Philipp G=FChring wrote:
+Hans Reiser wrote:
+> 
+> Edward, please discuss with him making a reiser4 plugin out of it.
+> 
+> Hans
+> 
+> Jason Holt wrote:
+> 
+> >I felt the need to code on Saturday, so I wrote up this toy we discovered at
+> >DISCEX and posted it to sci.crypt.  Hans suggested that it might work nicely
+> >as a reiserfs4 plugin.
+> >
+> >The idea isn't original - Bruce Schneier published these a few years ago, but
+> >mine is apparently the first public implementation:
+> >
+> >http://www.counterpane.com/secure-logs.html
+> >http://www.counterpane.com/auditlog2.html
 
->-----BEGIN PGP SIGNED MESSAGE-----
->Hash: SHA1
->
->Am Freitag, 2. Mai 2003 02:55 schrieben Sie:
-> =20
->
->>It is a VFS issue.  We just conform.  VFS can't handle / and null being
->>in a filename, so Unicode can't work in Linux.  If you get VFS to handle
->>Unicode, I'll make ReiserFS work.  Linus is the one to convince, not us.
->>   =20
->>
->
->Hi Hans,
->
->UTF-8 (is also Unicode) has no nulls in it, and does not=20
->generate '/' or other problematic charakters, and is actually working on=20
->Reiserfs.
->
-UTF-8 only uses two bytes for non latin characters (they cannot be fit=20
-one byte) and one byte for latin ones. In the case of latin characters,=20
-codes to be used will be the same as in ISO-8859-1, that is latin1.
+Well, it is a good idea to not keep a key in memory which allows to reveal 
+everything.. I guess that write method should create appropriate signatures
+and update current key, and read method should contain authentication process
+and call permission plugin.
 
->
->The problem with a migration to Unicode is that we either have to switch a=
-ll=20
->applications at once, or have the information in the filesystem, in which =
+Edward.
 
->encoding the filenames are ...
->
->But you are right, it's a VFS issue ...
->
->Many greetings,
->- --=20
->~ Philipp G=FChring              p.guehring@futureware.at
->~ http://www.livingxml.net/       ICQ UIN: 6588261
->-----BEGIN PGP SIGNATURE-----
->Version: GnuPG v1.0.6 (GNU/Linux)
->Comment: For info see http://www.gnupg.org
->
->iD8DBQE+scdqlqQ+F+0wB3oRAn8gAKCBNzPvsRsaxJT96fCEGvO6MXeFKgCdEXY1
->xmMW0hHJZTkHM7GhQj0FcdI=3D
->=3DU423
->-----END PGP SIGNATURE-----
->
->
-> =20
->
-
-
---=20
-Yury Umanets
-"We're flying high, we're watching the world passes by..."
-
-
-
+> >
+> >He also has a patent on it, but said he's willing to let it be used with a
+> >GPLed implementation.
+> >
+> >                               -J
+> >
+> >=============
+> >
+> >Does anyone know of another package that does this?  The idea is to
+> >generate a random file key, encrypt it with an auditor's public key
+> >and ship it to the auditor.  Then you use it to encrypt lines of a log
+> >file.  After each line, you hash the file key, throw away the old one,
+> >and append a MAC.
+> >
+> >That way, even if somebody roots your box, they can't read any lines
+> >of the file already written or modify the log.  They can /delete/ the
+> >log, but can't change already-written lines undetected.
+> >
+> >So here's a quick-and-dirty implementation.  It uses MDCs instead of a
+> >proper HMAC, and of course wastes lots of space.  Comments?
+> >
+> >                                        -J
+> >
+> >[jason@erg] ~/.gnupg$ gpg --gen-key
+> >gpg (GnuPG) 1.2.1; Copyright (C) 2002 Free Software Foundation, Inc.
+> >This program comes with ABSOLUTELY NO WARRANTY.
+> >
+> >[blah blah blah...]
+> >
+> >You need a User-ID to identify your key; the software constructs the
+> >user id
+> >from Real Name, Comment and Email Address in this form:
+> >    "Heinrich Heine (Der Dichter) <heinrichh@duesseldorf.de>"
+> >
+> >Real name: logcrypt
+> >Email address:
+> >Comment:
+> >You selected this USER-ID:
+> >    "logcrypt"
+> >
+> >Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? o
+> >
+> >[blah blah blah...]
+> >
+> >[At this point, you should take the secret key off site...]
+> >
+> >[jason@erg] ~/work/logcrypt$ cat >log
+> >foo
+> >bar
+> >baz
+> >
+> >[As soon as this starts running, put a copy of filekey somewhere
+> >safe...]
+> >[jason@erg] ~/work/logcrypt$ ./logcrypt.pl <log >safe_log 2>/dev/null
+> >Reading passphrase from file descriptor 0
+> >Reading passphrase from file descriptor 0
+> >Reading passphrase from file descriptor 0
+> >
+> >[jason@erg] ~/work/logcrypt$ ./readlog.pl <safe_log
+> >
+> >You need a passphrase to unlock the secret key for
+> >user: "logcrypt"
+> >2048-bit ELG-E key, ID C17F42D7, created 2003-05-03 (main key ID
+> >EEC68977)
+> >
+> >Reading passphrase from file descriptor 0
+> >gpg: AES encrypted data
+> >foo
+> >Reading passphrase from file descriptor 0
+> >gpg: AES encrypted data
+> >bar
+> >Reading passphrase from file descriptor 0
+> >gpg: AES encrypted data
+> >baz
+> >
+> >================================Code for logcrypt.pl:
+> >
+> >#!/usr/bin/perl
+> >
+> ># (c) 2003 Jason E. Holt
+> ># Released into the public domain
+> ># Encrypt log files with forward secrecy
+> ># Once a line of the file is written, even root can't read it or
+> ># change it without detection.  (Assuming that filekey gets recorded
+> ># somewhere safe.)
+> >
+> >my $recipient = "logcrypt"; # Name of GPG public key holder
+> >
+> >use MD5;
+> >
+> >open(RANDOM, "</dev/urandom") or die "Couldn't open /dev/urandom: $!";
+> >sysread(RANDOM, $filekey, 16, 0);
+> >
+> >$filekey = MD5->hexhash($filekey);
+> >
+> >open(SAVEFILEKEY, "| gpg -r $recipient -q -e -o filekey")
+> >       or die "Couldn't open pipe to gpg: $!";
+> >
+> ># Just symmetrically encrypt the log key.
+> >#open(SAVEFILEKEY, "| gpg -c -o filekey")
+> >#      or die "Couldn't open pipe to gpg: $!";
+> >
+> >print SAVEFILEKEY $filekey;
+> >close SAVEFILEKEY;
+> >
+> >while(<>) {
+> >       open(GPG,
+> >     "|gpg -q --cipher-algo AES --passphrase-fd 0 -a -c --force-mdc -o
+> >-")
+> >               or die "Couldn't open gpg: $!";
+> >
+> >       print GPG $filekey, "\n";
+> >       print GPG $_;
+> >
+> >       $filekey = MD5->hexhash($filekey);
+> >}
+> >
+> >==================================== Code for readlog.pl
+> >
+> >#!/usr/bin/perl
+> >
+> ># (c) 2003 Jason E. Holt
+> ># Released into the public domain
+> ># Read log files written with logcrypt.pl
+> >
+> >use MD5;
+> >
+> >open(FILEKEY, "gpg -q -o - filekey |") or die "Couldn't open file key:
+> >$!";
+> >my $filekey = join('', <FILEKEY>);
+> >
+> >my @lines;
+> >while(<>) {
+> >       push @lines, $_;
+> >       if(/-----END PGP MESSAGE-----/) {
+> >
+> >               open(GPG, "| gpg -q --passphrase-fd 0 -o -") or die
+> >                       "Couldn't open gpg: $!";
+> >
+> >               print GPG $filekey, "\n";
+> >               print GPG join('', @lines);
+> >               close GPG;
+> >               @lines = ();
+> >               $filekey = MD5->hexhash($filekey);
+> >       }
+> >}
+> >
+> >
+> >
+> >
+> >
+> >
+> 
+> --
+> Hans
