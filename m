@@ -1,38 +1,30 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: WinFS
-Date: Sat, 15 May 2004 00:53:43 -0400
-Sender: news <news@sea.gmane.org>
-Message-ID: <87ekpmnve0.fsf@uhoreg.ca>
-References: <200405141201.53970.marcel@hilzinger.hu>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Date: Sat, 15 May 2004 14:10:10 +0300
+Message-ID: <20040515111010.GI1232@nysv.org>
+References: <20040329185901.62166.qmail@web25008.mail.ukl.yahoo.com> <406885F1.9040409@mrs.umn.edu> <40A587FF.30103@namesys.com> <40A520DB.4080200@lindows.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18709-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18712-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <40A520DB.4080200@lindows.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Clifford Beshers <clifford.beshers@lindows.com>
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
 
->>>>> "Marcel" == Marcel Hilzinger <marcel@hilzinger.hu> writes:
+On Fri, May 14, 2004 at 12:41:15PM -0700, Clifford Beshers wrote:
+>I'm not sure if @ is a good choice or not, but I don't think it would 
+>actually cause trouble syntactically, because everything expecting 
+>hostnames looks for a colon.
 
-Marcel> http://news.com.com/2100-1016_3-5212077.html?tag=nefd.lede
-Marcel> As there was a discussion on the list about WinFS some days ago,
-Marcel> I thougt, I'll paste this link here.
-
-Hmm.  So Microsoft has a lot of cash, and they need a distributed
-filesystem that scales well.  Namesys has the knowhow to implement a
-good (proper) distributed filesystem, but needs funding. ... scary.  ;-)
-
-Too bad Gates and co. would never allow MS to fund something that would
-directly benefit Linux, even if they got a lot out of it too.
-
-(And I don't know how Hans would feel about accepting money from MS.)
+This has been discussed. There is the mailer that uses an @-named
+symlink to the current message. Can't remember which one.
 
 -- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+mjt
 
