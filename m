@@ -1,41 +1,43 @@
-From: Mike Fedyk <mfedyk@matchmail.com>
-Subject: Re: ReiserFS problems
-Date: Wed, 6 Aug 2003 15:08:17 -0700
-Message-ID: <20030806220817.GG21290@matchmail.com>
-References: <20030806182055.A28562@bitwizard.nl> <3F31303A.6020408@namesys.com> <3F314BE8.50300@suse.com> <20030806212107.A3975@bitwizard.nl> <20030806213623.C3975@bitwizard.nl>
+From: Timothy Miller <miller@techsource.com>
+Subject: Re: Filesystem Tests
+Date: Wed, 06 Aug 2003 19:37:42 -0400
+Message-ID: <3F319146.6080607@techsource.com>
+References: <3F306858.1040202@mrs.umn.edu> <20030805224152.528f2244.akpm@osdl.org> <3F310B6D.6010608@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15208-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15209-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030806213623.C3975@bitwizard.nl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>
-Cc: Jeff Mahoney <jeffm@suse.com>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, copy@harddisk-recovery.nl
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Andrew Morton <akpm@osdl.org>, Grant Miner <mine0057@mrs.umn.edu>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-On Wed, Aug 06, 2003 at 09:36:23PM +0200, Rogier Wolff wrote:
-> P.S. We also sometimes do: 
-> 
-> 	while (1)
-> 	   seek to random position (in randomly chosen 1G file)
-> 	   write 1k
-> 
-> we might benefit from a call that tells the filesystem:
-> Pretend that this file WILL grow to 1Gb, but leave it sparse for
-> now.
-> 
-> So, the block to allocate if we seek to 500Mb past the beginning of the
-> file would be 500Mb further along the disk. That way the eventual image
-> will be linear. But leaving the intermediate blocks unallocated will 
-> allow us to  eventually use up that free space if we DO NOT end up
-> writing that area. 
 
-Ahh, but sparse files are not handled effeciently at all with reiserfs.  It
-is fixed properly in reiser4 though.  There was a thread recently on this
-issue on the reiserfs list within the last week about this.
 
-If you use reiserfs, avoid large sparse files like the plague.
+Hans Reiser wrote:
+
+> reiser4 cpu consumption is still dropping rapidly as others and I find 
+> kruft in the code and remove it.  Major kruft remains still.
+
+
+If a file system is getting greater throughput, that means the relevant 
+code is being run more, which means more CPU will be used for the 
+purpose of setting up DMA, etc.  That is, if a FS gets twice the 
+throughput, it would not be unreasonable to expect it to use 2x the CPU 
+time.
+
+Furthermore, in order to achieve greater throughput, one has to write 
+more intelligent code.  More intelligent code is probably going to 
+require more computation time.
+
+That is to say, if your FS is twice as fast, saying it has a problem 
+purely on the basis that it's using more CPU ignores certain facts and 
+basic logic.
+
+Now, if you can manage to make it twice as fast while NOT increasing the 
+CPU usage, well, then that's brilliant, but the fact that ReiserFS uses 
+more CPU doesn't bother me in the least.
+
