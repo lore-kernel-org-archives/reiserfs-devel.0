@@ -1,58 +1,73 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: warning: Invalid hash for xattr (system.posix_acl_access) associated
- with [1070 1541 0x0 SD] after extending device
-Date: Sun, 21 Nov 2004 12:31:05 -0500
-Message-ID: <41A0D0D9.70306@suse.com>
-References: <200411171931.52943.js@jetsys.de> <419BCCCB.40103@novell.com> <200411210905.36202.js@jetsys.de>
+From: Kacper Wysocki <kacperw@online.no>
+Subject: Re: reiser4 problems in 2.6.10-rc1-mm
+Date: Sun, 21 Nov 2004 19:40:36 +0000
+Message-ID: <1101066053l.5651l.0l@comotion>
+References: <1100667360l.1027l.0l@comotion> <1100850087l.4414l.0l@comotion>
+ <20041119192825.6d53af61.hihone@bigpond.net.au>
+ <877joioyiy.fsf@barad-dur.crans.org>
+ <20041120074401.4aec50ac.hihone@bigpond.net.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-22469-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="=-OD69rIU0fACdr/6lpRiw";
+ protocol="application/pgp-signature"; micalg=PGP-SHA1
+Return-path: <reiserfs-list-return-22471-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200411210905.36202.js@jetsys.de>
+In-reply-to: <20041120074401.4aec50ac.hihone@bigpond.net.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?J=F6rg_Spilker?= <js@jetsys.de>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+--=-OD69rIU0fACdr/6lpRiw
+Content-Type: text/plain; charset=ISO-8859-1; DelSp=Yes; Format=Flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-J=F6rg Spilker wrote:
-| Am Mittwoch, 17. November 2004 23:12 schrieben Sie:
-|
-| Hello Jeff,
-|
-|
-|>You can use debugreiserfs to track down the file with that key by using
-|>debugreiserfs -d <device> and looking for the objectid. Once you find
-|>the directory listing with that key, you should be able to find the file.
-|>
-|>When you've located the filename, a setfattr -x system.posix_acl_access
-|><file> followed by the appropriate setfacl command will reset the ACL.
-|
-|
-| thanks for your help. I could fix the problem using debugreiserfs
+On 11/19/04 15:44:01, Cal wrote:
+> and then at Fri, 19 Nov 2004 12:42:45 +0100, it was written ...
+>> Could you try 2.6.10-rc2-mm2, reiser4 is pretty stable in this  =20
+>> tree,  and >contains more fix bits.
 
-Great!
+Didn't have the time yet, but seems Cal has..
 
-| btw: your email is bouncing (unknown user).
+> Lost in the alchemy, I didn't notice the update, so thanks for the
+> update pointer. The problem still happens in 2.6.10-rc2-mm2:-
 
-Yeah, it seems that my @novell.com address has been a black hole for the
-past few days. Hopefully it will be fixed soon.
+[snip kernel oops]
 
-- -Jeff
+>  Last night, with a blend of about 60/40 alchemy/engineering, I =20
+> merged  base 2.6.10-rc2 with 2.6.10-rc2-bk3, reiser4-for-2.6.10-rc1, =20
+> selected  fixes from 2.6.10-mm1 and the reiserfs mailing list, plus =20
+> ck patches.   So far that build performs just fine.  Now I guess I =20
+> need to figure  out the difference between that and 2.6.10-mm2.  That =20
+> said, I  cheerfully acknowledge that the mm series is the best place =20
+> to be if  using reiser4.
 
-- --
-Jeff Mahoney
-SuSE Labs
+Wow... while you're figuring out which part fixes it, do you mind =20
+diffing your tree against 2.6.10-rc2-mm2 and posting the patch? I'll =20
+gladly try it out... might even take a look at the difference in the =20
+reiser code to see what's been changed (on the assumption that it's =20
+reiser4 that's causing the problem, and not some sideeffect).
+
+Cheers,
+Kacper
+--=20
+Please do not cc: me. I'm on the list. I read the list, really I do.
+I do not need HTML email, virus warnings or unsolicited forwards.
+Get my GnuPG public key from pgp.mit.edu.
+Signed mail preferred. Please encrypt where appropriate.
+
+
+--=-OD69rIU0fACdr/6lpRiw
+Content-Type: application/pgp-signature
+
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.5 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iD8DBQFBoNDZLPWxlyuTD7IRAhxEAJ44ZkvDQTlBkJ91DNPIYBlE1qARLgCcC3yy
-hafHa02Cn1GtoxCrvUndHGE=3D
-=3D5gv3
+iD8DBQBBoO9F+LsaKQiaxYYRAvFhAJ0esPSkMtqyr8LwUrVmbaR/qwxcMACeLT2M
+EJ4vEGD9N/MjpeFOMxHyJbk=
+=bX2K
 -----END PGP SIGNATURE-----
+
+--=-OD69rIU0fACdr/6lpRiw--
+
