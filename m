@@ -1,90 +1,49 @@
-From: Raphael Bosshard <whistler@fnord.ch>
-Subject: Re: windows ate my superblock (try 2)
-Date: Sat, 28 Dec 2002 16:20:29 +0100
-Message-ID: <3E0DC13D.7030103@fnord.ch>
-References: <3E08FEC5.2060608@fnord.ch> <200212271819.SAA09071@wg.pu.ru>
+From: erik@debian.franken.de (Erik Tews)
+Subject: Re: LVM array, one disk failed
+Date: Sun, 29 Dec 2002 02:04:35 +0100
+Message-ID: <20021229010434.GB2444@mobile>
+References: <1041044851.5964.32.camel@ganga>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12254-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12255-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200212271819.SAA09071@wg.pu.ru>
+Content-Disposition: inline
+In-Reply-To: <1041044851.5964.32.camel@ganga>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Tuomas Jormola <tjormola@cc.hut.fi>
+Cc: reiserfs-list@namesys.com
 
-Hi there!
+On Sat, Dec 28, 2002 at 05:07:31AM +0200, Tuomas Jormola wrote:
+> Hello,
+> 
+> I'd be happy to use ReiserFS support services if they can help me here,
+> but I'd like post this question to the mailing list before paying since
+> PayPal doesn't support my bank so it's a bit troublesome to transfer the
+> money forth and back in case there's nothing to do in this case...
+> 
+> I have a 110GiB LVM array constructed using EVMS. It consists of three
+> IDE hard disks from which the last one died the other day. The
+> filesystem is ReiserFS, of course. Array is a linear one and there was
+> about 15GiB free space when disk died so I'm hoping there was a somewhat
+> resonable way to recover the data on two disks that are full and in
+> front of the array. The failed disk is totally dead, not just a couple
+> of bad sectors. It spins but it's not detected on boot. When I try to
+> mount the volume with only two disks connected, it get this:
+> 
+> sh-2029: reiserfs read_bitmaps: bitmap block (#19234816) reading failed
+> reiserfs_read_super: unable to read bitmap
+> 
+> Someone already asked a question regarding this error:
+> http://marc.theaimsgroup.com/?l=reiserfs&m=101232163203836&w=2
+> and Andreas Dilger provided with a clear answer but in this case it
+> probably doesn't work since so large part of the filesystem is missing.
+> Is someone able to say for sure if there's a chance to recover parts of
+> the filesystem or whether it can't be done?
 
-that did it. It took ages to restore the whole filesystem but now almost 
-everthing is back in place. At least the important things. Many, many 
-"thank you"s to you all (from my brother too ;)  )
-
-And if I can help you by translating something (to german); please feel 
-free to mail me.
-
-Happy new year!
-
-Raphael
-
-
-Vitaly Fertman wrote:
-
->On Wednesday 25 December 2002 03:41, Raphael Bosshard wrote:
->  
->
->>Hi there!
->>    
->>
->
->Hi, I am on vacation now, sorry for my keeping silence. I guess, that if you take 
->reiserfsprogs-3.6.5-pre1 and run reiserfsck --rebuild-sb /dev/xxx 
->(without no-journal-available option), then you should have it all recovered. 
->If not, I am afraid I will be able to give a proper ansrew why only after 5th, when 
->get back to work and have a look at the 16th block of your fs. 
->
->  
->
->>My little brother tried to install windows on my computer this morning
->>("don't touch my linux-partitions" i told him) but he let windows eat
->>them anyway. my reiserfs-data partition also. (scandisk checking and
->>"repairing", only partly AFAIK, AFAIH)
->>
->>Mount failed with:
->>mount: wrong fs type, bad option, bad superblock on /dev/hdb,
->>      or too many mounted file systems
->>
->>so I tried a reiserfsck which resulted in a
->>
->>reiserfs_open: neither new nor old reiserfs format found on /dev/hdd2
->>reiserfsck: could not open filesystem on "/dev/hdd2"
->>
->>Some digging in the mailinglist pointed out that the superblock was
->>destroyed, so I tried to rebuild it with:
->>
->>reiserfsck --no-journal-available --rebuild-sb
->>
->>reiserfsck now recognises the reiserfs-partition, but fails because
->>there is no journal/wrong journal parameters.
->>
->>(Filesystem with standard journal found, --no-journal-available is ignored
->>reiserfs_open_journal: wrong journal parameters found in the super block.)
->>
->>
->>Finaly my question: Is there a way to find out the right parameters and
->>create a new journal?
->>
->>Any help is appreciated, really. ;)
->>Happy new year!
->>
->>Raphael
->>
->>(Please CC me, I'm not on the list.)
->>    
->>
->
->  
->
-
-
+Perhaps you should have a look at evms, it is able to eport a LV with
+some missing disks. But of course every read to a sector on the missing
+disk will result in an io-error.
