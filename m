@@ -1,73 +1,53 @@
-From: "jenn sirp" <sirpj@ecs.csus.edu>
-Subject: Re: Network Raid (possibly OT sorry)
-Date: Sun, 14 Mar 2004 23:05:30 -0800
-Message-ID: <000b01c40a5b$e7379de0$3128a5d1@energy>
-References: <4054D94A.8080400@bernztech.org> <1079330844.1289.1.camel@boadicea>
+From: Isaac Claymore <clay@exavio.com.cn>
+Subject: delayed file deallocation?
+Date: Mon, 15 Mar 2004 15:44:52 +0800
+Message-ID: <20040315074452.GG19159@exavio.com.cn>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17212-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17213-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Hi,
+Hi list,
 
-I am an Intern at Livermore and did a little research on Lustre (Now I am
-working on modifying Reiserfs). It is in use at LLNL and is a great FS. It
-is a very efficient parallel file system that uses object based disks for
-storage. The object schema makes it nice for fully utilizing disk capacity
-but there is a hit in performance for the access trade-off.
+We're using reiser 3.6 as workhorse fs beneath Samba in our NAS setup.
+Under our workload, it's common that tens of clients (often around 20)  
+are doing real-time video editing simultaneously. We've been suffering a
+scenario that when one client comes and deletes some large file while
+many others are busy editing, the many others will experience noticeable
+period of IO stalling, usually of about 3 seconds. And, since they're
+doing some kind of realtime editing, this stall is unacceptable.
 
-As near as I can tell it is very reliable. It was released this October and
-has promising benchmarks.
+I'm wondering that whether the file deallocation could be delayed
+somewhat, i.e. when a file is unlink()'ed by Samba, fs driver just mark
+the file to-be-deallocated when its reference count reaches zero. Then,
+the fs driver, at some later time, either triggered by user space or when 
+lack of free space, actually commits the deallocation. Since we have
+plenty of free disk space, this deallocation scheme does make sense.
 
-Jenn
+It's possible to do this in user space, say, by modifying Samba so that
+it creates an extra secret link to each file it creates, and write
+another program that routinely checks the secret links, at proper times,
+for those inodes with inode ref count of 1, and unlinks them.
 
------ Original Message ----- 
-From: "Richard Heycock" <rgh@roughage.com.au>
-To: <reiserfs-list@namesys.com>
-Sent: Sunday, March 14, 2004 10:07 PM
-Subject: Re: Network Raid (possibly OT sorry)
+But for some reason, we do not want to touch Samba code, then it looks that
+this can only be done at fs level.
+
+How can I achieve this with Reiser? Or, if you've some alternatives,
+please kindly enlighten me.
+
+Thanks for any hint or suggestion.
 
 
-> You might want to consider lustre http://www.lustre.org.
->
-> rgh
->
->
-> On Mon, 2004-03-15 at 09:14, David Bernick wrote:
-> > hello fellow Reiser-lovers.
-> >
-> > So Reiser rocks. It's great for a single system. But recently i've
-wanted to
-> > build a network raid: A disk on host-a be mirrored in real-time (or near
-> > real-time) to a disk on host-b. I know DRBD does this, but I'd like to
-read from
-> > both disks and write to a master. DRBD makes the slave disk
-non-readable. I've
-> > been playing with Intermezzo, which sort of does the trick but it seems
-to be
-> > fairly unsupported as far as active mailing lists are concerned.
-> >
-> > So the question, as off-topic as it may be, is what do you use for a
-mirrored
-> > (replicated?) filesystem, if you use one? Any suggestions would be
-great.
-> >
-> > Thanks!
-> >
-> > d
-> -- 
-> "It is possible to make things of great complexity out of things
->  that are very simple. There is no conservation of simplicity"
->  -- Stephen Wolfram
->
-> Richard Heycock <rgh@roughage.com.au>
-> tel : 0410 646 369
-> key fingerprint : 909D CBFA C669 AC2F A937 AFA4 661B 9D21 EAAB 4291
->
+-- 
+
+Regards, Isaac
+()  ascii ribbon campaign - against html e-mail
+/\                        - against microsoft attachments
 
