@@ -1,53 +1,54 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: Thu, 02 Sep 2004 19:19:47 -0400
-Message-ID: <200409022319.i82NJlTN025039@turing-police.cc.vt.edu>
-References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain>
-            <20040902203854.GA4801@janus>
+From: Jamie Lokier <jamie@shareable.org>
+Subject: Re: silent semantic changes with reiser4
+Date: Fri, 3 Sep 2004 00:23:50 +0100
+Message-ID: <20040902232350.GA32244@mail.shareable.org>
+References: <rlrevell@joe-job.com> <1094155277.11364.92.camel@krustophenia.net> <200409022200.i82M0ihC026321@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1353348402P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21352-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21353-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Thu, 02 Sep 2004 22:38:54 +0200."
-             <20040902203854.GA4801@janus> 
+Content-Disposition: inline
+In-Reply-To: <200409022200.i82M0ihC026321@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Frank van Maarseveen <frankvm@xs4all.nl>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Lee Revell <rlrevell@joe-job.com>, Pavel Machek <pavel@ucw.cz>, Spam <spam@tnonline.net>, David Masover <ninja@slaphack.com>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
---==_Exmh_1353348402P
-Content-Type: text/plain; charset=us-ascii
-
-On Thu, 02 Sep 2004 22:38:54 +0200, Frank van Maarseveen said:
-
-> Can it do this:
+Horst von Brand wrote:
+> > > You really need archive support in find. At the very least you need
+> > > option "enter archives" vs. "do not enter archives". Entering archives
+> > > automagically is seriously wrong.
 > 
-> 	cd FC2-i386-disc1.iso
-> 	ls
+> I have used find(1) for quite some time now, and have never (or very
+> rarely) missed this.
 
-That one's at least theoretically doable, assuming that it really *IS* the
-Fedora Core disk and an ISO9660 format...
+I've occasionally had the need to search all files on my system for
+the one file which contains a particular phrase -- all I remember is
+the phrase.
 
-> 	cd /dev/cdrom
-> 	ls
+Just doing "grep -R" was a tedious job: at least half an hour.
 
-And the CD in the drive at the moment is AC/DC "Back in Black".  What
-should this produce as output?
+Sometimes, I want to search all source files on my system for a
+particular word, for example to search for uses of a particular system
+call or library function.
 
---==_Exmh_1353348402P
-Content-Type: application/pgp-signature
+That would require something that could search through all the .tar.gz
+files and .zip files (nested if necessary) as well as plain files.  It
+would take so long -- hours at least, maybe more than a day -- that
+I've never bothered doing such a thing.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+"find "that entered archives really wouldn't help (although sometimes
+"locate" that entered archives would be nice).
 
-iD8DBQFBN6qScC3lWbTT17ARApkUAKCcJAifgzFxoZKZ6gRFUT29tgxsmgCfSjhn
-KGzfGdsdlgw4H7i8i2mE570=
-=uwwQ
------END PGP SIGNATURE-----
+In other words, I'd use that capability if it was magically fast, but
+as we expect it to be insanely slow (just grepping gigabytes is slow)
+that makes it not so useful.
 
---==_Exmh_1353348402P--
+However, if we ever see that search engine index thing happen, it
+would be a most excellent capability if it searched inside archive
+files too.  I would definitely use that.  Not often, but occasionally I would.
+
+-- Jamie
