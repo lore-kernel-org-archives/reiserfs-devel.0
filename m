@@ -1,37 +1,48 @@
-From: Sebastian Kaps <seb-reiserfs.0462a0@toyland.sauerland.de>
-Subject: Data corrupted after crash
-Date: Thu, 25 Jul 2002 19:54:24 +0200
-Message-ID: <m34renr8vj.fsf@toyland.sauerland.de>
+From: =?iso-8859-1?Q?Rasmus_B=F8g_Hansen?= <moffe@amagerkollegiet.dk>
+Subject: Which filesystem do errors come from?
+Date: Thu, 25 Jul 2002 23:57:34 +0200 (CEST)
+Message-ID: <Pine.LNX.4.44.0207252352120.1119-100000@grignard.amagerkollegiet.dk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11078-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <reiserfs-list-return-11079-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="iso-8859-1"
+To: ReiserFS Mailing List <reiserfs-list@namesys.com>
 
-Hi!
+Hi
 
-I'm running Linux 2.4.18 with ReiserFS and no additional patches
-applied.
-Some minutes ago my machine was shut off due to a power failure. After
-rebooting I've noticed that at least one file was corrupted.
-I had gnus, opera and some other apps running before the crash and now
-my opera bookmarks file "~/.opera/opera6.adr" looks like a mixture of
-~/.newsrc.eld (used by gnus), the original bookmarks file and some other
-stuff what seems to be Opera's history data.
+I am getting som errors on a box running reiserfs:
 
-Isn't journalling supposed to prevent such things?
+is_leaf: item location seems wrong (second one): *3.5*[87265 197987 0x1 IND=
+], item_len 1, item_location 1379, free_space(entry_count) 21729
+vs-5150: search_by_key: invalid format found in block 473792. Fsck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat da=
+ta of [87265 216135 0x0 SD]
+[...]
 
-"dmesg|grep -i reiser" after the reboot says:
-,----
-| reiserfs: checking transaction log (device 21:03) ...
-| reiserfs: replayed 38 transactions in 2 seconds
-| ReiserFS version 3.6.25
-`----
--- 
-Ciao, Sebastian
+Note that these errors most likely come from DMA trouble on the
+controller or disk, so I'm not asking for help on recovering data or
+anything.
 
-* HP:    http://www.sauerland.de/~toyland/          PGP-Key available
+However, I cannot seem to find out, what filesystem, these errors come
+from:
+
+moffe@tuborg:~# mount | grep reiserfs
+/dev/hda6 on / type reiserfs (rw)
+/dev/hdc1 on /home type reiserfs (rw)
+
+How can I see, whether the messages come from hda6 or hdc1?
+
+/Rasmus
+
+--=20
+-- [ Rasmus "M=F8ffe" B=F8g Hansen ] --------------------------------------=
+-
+[...] Note that 120 sec is defined in the protocol as the maximum
+possible RTT.  I guess we'll have to use something other than TCP
+to talk to the University of Mars.
+----------------------------------[ moffe at amagerkollegiet dot dk ] --
+
