@@ -1,28 +1,33 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: plugin for cached network file system
-Date: Thu, 13 May 2004 10:24:20 +0300
-Message-ID: <20040513072420.GR29226@nysv.org>
-References: <200405131059.22693.Michael.James@csiro.au> <40A30C53.3020607@namesys.com> <200405131653.52862.Michael.James@csiro.au> <20040513070355.GQ29226@nysv.org> <20040513092106.57690c70.turtle.power@wanadoo.es>
+From: Miguel <turtle.power@wanadoo.es>
+Subject: "df -i" support
+Date: Thu, 13 May 2004 09:34:32 +0200
+Message-ID: <20040513093432.52d3d7a3.turtle.power@wanadoo.es>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18647-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18648-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040513092106.57690c70.turtle.power@wanadoo.es>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Miguel <turtle.power@wanadoo.es>
-Cc: Michael James <Michael.James@csiro.au>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-On Thu, May 13, 2004 at 09:21:06AM +0200, Miguel wrote:
+Hi
+We have several machines running as MTA's using reiser for the mail
+queue, we usually check the number of files (well an approximation)
+using the output of "df -i" command on our monitorization plugins this
+may be not very acurate but is very fast and didn't affect the MTA's
+work.
 
->wow the problem here maybe to find a hat with 1.8million dollar capacity
+With reiser the output of df -i is no longer usable, we changed this to
+"find | wc -l" variations but it hurts the performance.
 
-Getting the bugger bootstrapped may require less money.
+There's a command to count the number of leafs (that's the name?) of a
+tree from a reiser partition? or other orientative value?.(we mount
+with notail)
 
--- 
-mjt
+Tnx
 
+--=20
+La resistencia es f=FAtil todos ser=E9is asimilados
