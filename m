@@ -1,112 +1,174 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Fwd: reiser4 non-free?
-Date: Fri, 07 May 2004 09:26:32 -0700
-Message-ID: <409BB8B8.2010509@namesys.com>
-References: <B4D3CECB886F164AA5EC912A1D082BCE429FE7@sac1exch3.aspect.com>
+Subject: Re: Sanity? (was reiser freedom)
+Date: Fri, 07 May 2004 09:37:17 -0700
+Message-ID: <409BBB3D.20505@namesys.com>
+References: <3DF9165145FACB4C96977FF650C1E9040C469F42@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18536-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18537-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <B4D3CECB886F164AA5EC912A1D082BCE429FE7@sac1exch3.aspect.com>
+In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C469F42@its-mail1.its.corp.gwl.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Dawson, Larry" <Larry.Dawson@Aspect.com>
-Cc: Brian Thomas Sniffen <bts@alum.mit.edu>, MJ Ray <mjr@dsl.pipex.com>, debian-legal@lists.debian.org, reiserfs-list@namesys.com
+To: "Burnes, James" <james.burnes@gwl.com>
+Cc: redeeman@metanurb.dk, Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-Dawson, Larry wrote:
+Burnes, James wrote:
 
->Hans Reiser wrote
-> 
+>As some of the people on this list have mentioned, it's really two
+>issues which should be addressed seperately.
+>
+>1. The credits thing.  Probably handled better out of band then
+>quibbling over the license.
+>
+>2. The "plagiarism" issue.  Apparently some distros (can someone name
+>names please.  This needs to be out in the open) are arbitrarily
+>renaming executable names for marketing reasons.
+>
+RedHat renaming KDE programs.
+
+>  It's one thing to fork
+>a code base and make program changes, give it a new name or something
+>like that in the interest of preserving diversity etc...  But if it's
+>true that various distros are renaming programs and subsystems as
+>"rebadged" proprietary software environments,
+>
+rebadged free software to be precise
+
+> it's a pretty slimey
+>practice and I think that the best solution for it is to bring it out
+>into the light.
+>
+>As Thomas Jefferson once said, the solution to the abuse of freedom is
+>more freedom.  Bring these issues out into the light and the cockroaches
+>will scatter.
+>
+>Has this been brought up on Slashdot or some other high profile forum?
 >  
 >
->>Brian Thomas Sniffen wrote:
+It was slashdotted.
+
+RedHat suffered not.
+
+If they can do this to KDE, then surely reiser4 can and eventually will 
+have that happen to it also.  Build something valuable, someone will try 
+to steal it or the credit for it, that is the way the world works.
+
+>Lets put together a list of names and shame them into submission.  
+>  
+>
+Won't work.  Only license changes can work.  Thus GFDL, XFree86, and the 
+Anti-Plagiarism License are coming into existence in the aftermath of that.
+
+>Let's not monkey with the GPL or Debian.  That's like throwing the baby
+>out with the bathwater.
+>  
+>
+GPL is not some holy writ.  Don't treat it like one.  GPL is just one of 
+many very valid choices of tradeoffs in licensing.
+
+>
+>jim burnes
+>security engineer
+>great-west, denver
+> 
+>
+>  
+>
+>>-----Original Message-----
+>>From: Redeeman [mailto:redeeman@metanurb.dk]
+>>Sent: Wednesday, May 05, 2004 9:42 AM
+>>To: Reiserfs Mailinglist
+>>Subject: Re: Sanity?
 >>
+>>On Wed, 2004-05-05 at 08:05, Rhyotte wrote:
 >>    
 >>
->>>MJ Ray <mjr@dsl.pipex.com> writes:
->>>
->>> 
->>>
+>>>   Hans, how do you retain any scrap of sanity? This whole thing is
+>>>getting so far outta sight it is crazy. What is wrong with them
 >>>      
 >>>
->>>>>You seem to understand the difference between credit and
->>>>>advertisement as advertisements are credits for those you dislike.
->>>>>     
->>>>>
->>>>>          
->>>>>
->>>>You seem to understand the difference between modification and
->>>>plagiarism as plagiarism is a modification that you dislike 
->>>>        
->>>>
->>because it
->>    
->>
->>>>doesn't praise you enough.
->>>>   
->>>>
->>>>        
->>>>
->>>To be fair, these credits really do seem to be for others.  Some of
->>>them are credits *and* ads, and at least one is an ad for work for
->>>Hans Reiser and Namesys, but they are credits as well, and most of
->>>them for other people.
->>>
->>>-Brian
->>>
->>> 
->>>
+>simply
+>  
+>
+>>>accrediting you and the Reiser Team??????? I believe I have seen you
 >>>      
 >>>
->>I could be talked into eliminating the one for me, though I 
->>have always 
->>found it a bit of a pain that people
->>are a bit eager to think that I am some sort of businessman who hired 
->>russians because he wasn't abstractly inclined himself.  They seem to 
->>think I am some sort of businessman fool enough to invest into free 
->>software, rather than a guy who wanted to build something and 
->>couldn't 
->>get anyone to fund it so he paid for reiserfs to come into 
->>existence by 
->>working a day job for 5.5 years.  They often don't realize that I am 
->>responsible for basic architectural features, like the idea of 
->>aggregating small files together rather than always page 
->>aligning them, 
->>or that the most controversial deep design changes of V4 
->>versus V3 were 
->>mine. 
+>say
+>  
+>
+>>>that Credits at install time would be fine right? @ the rest of you:
+>>>What is wrong with that?? seems pretty unreasonable of all of you to
+>>>      
+>>>
+>say
+>  
+>
+>>>no to this. Now I will go on record as saying I definately do not
+>>>      
+>>>
+>want
+>  
+>
+>>>to see a list of credits every time i boot my system. That would be
+>>>totaly unreasonable. In my opinion you all really need to drop the
+>>>      
+>>>
+>silly
+>  
+>
+>>>and counter productive argument. Act like adults, make an agreement
+>>>      
+>>>
+>then
+>  
+>
+>>>shake hands and be friends again. Sheesh, SOME of us would like to
+>>>      
+>>>
+>see
+>  
+>
+>>>Reiser4 out in the public as a full release!!
+>>>      
+>>>
+>>i have absolutely no problem the way reiser4 works now, hell, i havent
+>>noticed a change. but now where you announce a "monster" big problem,
+>>    
+>>
+>i
+>  
+>
+>>tried follow the boot of a machine running reiser4, and i see fsck
+>>    
+>>
+>tell
+>  
+>
+>>"see credits for more info", or something like that, whats wrong with
+>>that? hell! remove the message from reiser4progs then! i believe they
+>>are GPL.
+>>
+>>get real.
+>>
+>>    
+>>
+>>>Peace
+>>>Gary Sheppard
+>>>      
+>>>
+>>--
+>>Regards, Redeeman
+>>()  ascii ribbon campaign - against html e-mail
+>>/\                        - against microsoft attachments
 >>    
 >>
 >
->Personally, when I read the info on Namesys.com I assumed Hans
->had designed pretty much all of Reiser 4.
 >
-Most people don't read Namesys.com, they only know about the name of the 
-filesystem, and the credits are very much needed in mkreiser4 to inform 
-them.  In those credits, I am just one of the randomly chosen 
-developers/sponsors.
-
-Probably I should put the developer credits somewhere on the namesys 
-main page rather than just under the developers button.  Thanks for 
-pointing that out.
-
-> It was only later when I read (I can't remember precisely where) a page where Hans credited members of his team that I knew that others had contributed a lot. I will continue to credit Hans with a massive contribution to filesystem theory and practise. Credit for their work should be given freely :-)
->Looking at a couple of lines of information about contributers each time I use ReiserFS progs is just not a problem for me - but it also seems plain to me that restricting changes to the source means that they cannot be put in debian. The license restriction is not compatible with the GPL.
->Since the actual Reiser4 filesystem is fully free and GPL licensed, can debian include it without the Reiser programs? If some one wants to write GPL compatible reiserfs progs later then all is available "free" - so this does not seem to put the debian social contract in a complete bind. For now, obviously, a user is going to have to use the non-gpl-compatible (and hence non-debian) utilities to create a filesystem, and contributers to it will be credited.
->  
 >
-Do you really think that there exists some moron willing to spend 4-5 
-man-years just so that debian can freely eliminate mention of who built 
-reiser4?
-
-> 
->  
->
->>Pr
->>
 >  
 >
 
