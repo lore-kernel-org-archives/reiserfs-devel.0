@@ -1,44 +1,96 @@
-From: Tonnerre <tonnerre@thundrix.ch>
-Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: Mon, 6 Sep 2004 17:07:29 +0200
+From: Spam <spam@tnonline.net>
+Subject: Re: silent semantic changes with reiser4
+Date: Mon, 6 Sep 2004 17:13:20 +0200
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040906150729.GD29886@thundrix.ch>
-References: <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain> <20040902161130.GA24932@mail.shareable.org> <Pine.LNX.4.61.0409030028510.23011@fogarty.jakma.org> <1835526621.20040903014915@tnonline.net> <1094165736.6170.19.camel@localhost.localdomain> <32810200.20040903020308@tnonline.net> <Pine.LNX.4.61.0409030112080.23011@fogarty.jakma.org> <142794710.20040903023906@tnonline.net>
+Message-ID: <826067315.20040906171320@tnonline.net>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
+ <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
+ <m3eklm9ain.fsf@zoo.weinigel.se> <20040905111743.GC26560@thundrix.ch>
+ <1215700165.20040905135749@tnonline.net> <20040905115854.GH26560@thundrix.ch>
+ <1819110960.20040905143012@tnonline.net>
+ <20040906105018.GB28111@atrey.karlin.mff.cuni.cz>
+ <6010544610.20040906143222@tnonline.net> <m3wtz7h2l6.fsf@zoo.weinigel.se>
+Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="C+ts3FVlLX8+P6JN"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <142794710.20040903023906@tnonline.net>
+In-Reply-To: <m3wtz7h2l6.fsf@zoo.weinigel.se>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Spam <spam@tnonline.net>
-Cc: Paul Jakma <paul@clubi.ie>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jamie Lokier <jamie@shareable.org>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Christer Weinigel <christer@weinigel.se>
+Cc: Pavel Machek <pavel@suse.cz>, Tonnerre <tonnerre@thundrix.ch>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
 
---C+ts3FVlLX8+P6JN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+  
 
-Salut,
+> Spam <spam@tnonline.net> writes:
 
-On Fri, Sep 03, 2004 at 02:39:06AM +0200, Spam wrote:
-> "nano file.jpg/description.txt"
+>> >>   The problem with the userspace library is standardization. What
+>> >>   would be needed is a userspace library that has a extensible plugin
+>> >>   interface that is standardized. Otherwise we would need lots of
+>> >>   different libraries, and I seriously doubt that 1) this will happen
+>> >>   and 2) we get all Linux programs to be patched to use it.
+>> 
+>> > libvfs from midnight commander (and anything build on the top of it)
+>> > already is very extensible.
+>> 
+>>   This wasn't my point. My point was about all applications using it.
+>>   Most aren't.
 
-Is that supposed to do steganography?
+> So why do you think that just because you put an interface into the
+> everyone will automatically start using it and use it without any
+> conflicts (i.e. is foo/icon a windows icon, a gif, png, or jpeg file,
+> what size is it, 16x16, 48x48...).  
 
-			Tonnerre
+> When you add a new shared namespace, userspace must be taught about it
+> anyways.  So start with a userspace library, convince people to use
+> it, and when you know what people want, _then_ put it into the kernel
+> to increase performance or security.
 
---C+ts3FVlLX8+P6JN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+  Several aspects of this;
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.9.2 (GNU/Linux)
+  1) Programs will need to actually be coded against this shared
+  library which probably will be more advanced that just usning normal
+  file access code.
+  
+  2) Then we redo it all again to fit in the kernel, as a kernel
+  plugin or user-level plugin.
 
-iD8DBQFBPH0x/4bL7ovhw40RAjssAJ9ALC5//yxH916jv1Dt+sJQmIl+rACfatDw
-HVVqmP4rirTukR/hC4TR1JU=
-=OkRs
------END PGP SIGNATURE-----
+> Don't start with "wouldn't it be
+> nice if" without any thought behind it, it will just mean that we get
+> another useless and misdesigned interface in the kernel that we have
+> to live with for years.
 
---C+ts3FVlLX8+P6JN--
+  I am not saying that there should not be any thought behind
+  implementing something. But from many hear I just hear a big no,
+  without any thought about it either.
+
+  Named streams and meta files are just one example of a general
+  access to extra data that belongs to files. It seem to me as a much
+  simpler way for program to use those than to link in several various
+  libraries to do the same thing. 
+
+  Plugins were just another thing that could extend the functionality
+  of these streams and meta data. Reiser4 has a plugin architecture,
+  although not yet any run-time support for loading them. Is this so
+  bad that we have to prevent it?
+
+  No one has to use them. maybe at some point it would be possible to
+  specify which classes of plugins that could be loaded by a user and
+  his files.
+
+  What are the complaints about. The technical challenge to make
+  things like this secure, or the concept to have this functionality
+  at all. I do not think that because something is hard to do, it
+  should be dismissed.
+
+  ~S
+
+  
+> Do you know how long it took to get rid of /dev/cua0 and the locking
+> mess associated with it?  (Deity!  I just checked on my FC2 system,
+> it's still there.  I thought it would be dead by now.)
+
+>   /Christer
+
+
