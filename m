@@ -1,177 +1,53 @@
-From: Christer Weinigel <christer@weinigel.se>
+From: Gunnar Ritter <Gunnar.Ritter@pluto.uni-freiburg.de>
 Subject: Re: silent semantic changes with reiser4
-Date: 07 Sep 2004 13:55:32 +0200
-Sender: wingel@zoo.weinigel.se
-Message-ID: <m3d60yjnt7.fsf@zoo.weinigel.se>
+Date: Tue, 07 Sep 2004 14:26:22 +0200
+Message-ID: <413DA8EE.nailA301JQ74H@pluto.uni-freiburg.de>
 References: <200409070206.i8726vrG006493@localhost.localdomain>
-	<413D4C18.6090501@slaphack.com>
+ <413D4C18.6090501@slaphack.com> <m3d60yjnt7.fsf@zoo.weinigel.se>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21560-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21561-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <413D4C18.6090501@slaphack.com>
+In-Reply-To: <m3d60yjnt7.fsf@zoo.weinigel.se>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Spam <spam@tnonline.net>, Tonnerre <tonnerre@thundrix.ch>, Christer Weinigel <christer@weinigel.se>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: David Masover <ninja@slaphack.com>, Christer Weinigel <christer@weinigel.se>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Tonnerre <tonnerre@thundrix.ch>, Spam <spam@tnonline.net>, ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>, Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jamie Lokier <jamie@shareable.org>, Christoph Hellwig <hch@lst.de>, Alexander Lyamin aka FLX <flx@namesys.com>, Chris Wedgwood <cw@f00f.org>, Christer Weinigel <christer@weinigel.se>
 
-David Masover <ninja@slaphack.com> writes:
+Christer Weinigel <christer@weinigel.se> wrote:
 
-> |>Second, there are quite a few things which I might want to do, which can
-> |>be done with this interface and without patching programs,
-> | Such as?
-> They've been mentioned.
+> Additionally, files-as-directores does not solve the problem of 
+> "cp a b" losing named streams.  There is curently no copyfile syscall
+> in the Linux kernel, "cp a b" essentially does "cat a >b".  So unless
+> cp is modified we don't gain anything.  If cp is modified to know
+> about named streams, it really does not matter if named streams are
+> accessed as file-as-directories, via openat(3) or via a shared library
+> with some other interface.
 
-> | Haven't seen any that made sense to me, sorry.
-> Sorry if they don't make sense to you, but I don't feel like discussing
-> them now.  Either you get it or you don't, either you agree or you
-> don't.  Read the archives.
+You cannot just 'modify cp'. cp is a programming interface standardized
+in POSIX.1. You can of course add non-standard extensions to some cp
+implementations, but it seems hardly evitable then that you either have
+to use cp in a non-standard manner regularly with Linux or risk to lose
+data.
 
-Great argument.  Not.  There has been so much shit thrown around here
-so that it's impossible to keep track of all examples.
+This is even more severe with tar/pax. Just patching GNU tar for file
+streams, as it was suggested earlier in this discussion, is still far
+away from a real solution because it neither solves the issues with
+the POSIX.1 pax standard nor those with other implementations of it.
 
-Could you please try summarize a few of the arguments that you find
-especially compelling?  This thread has gotten very confused since
-there are a bunch of different subjects all being intermixed here.
+Given these facts, it does not seem so clear to me that adding named
+streams for Windows and Mac OS interoperability would be a win to Linux
+in the end. The loss of interoperability to Unix/POSIX/today's Linux
+might have much worse effects.
 
-What are we discussing?
+The current xattr extension is much less of a problem because it only
+holds metadata, which is mostly not applicable to other environments
+anyway.
 
-1. Do we want support for named streams?
-
-   I belive the answer is yes, since both NTFS and HFS (that's the
-   MacOS filesystem, isn't it?) supports streams we want Linux to
-   support this if possible.
-
-   Anyone disagreeing?
-
-2. How do we want to expose named streams?
-
-   One suggestion is file-as-directory in some form.
-
-   Another suggestion made is to expose named streams somewhere under
-   /proc/self/fd.
-
-   Yet another suggestion is to use the openat(3) API from solaris.
-
-   Some filesystems exposes extra data in a special directory in the
-   same directory as the file, such as netapps .snapshot directories
-   or the extra directories that netatalk expects.  This has the
-   advantage that it even works on non-named stream capable
-   filesystems, but it has a lot of problems too.
-
-   Linux already has limited support for names streams via the xattr
-   interface, but it's not a good interface for people wanting to
-   have large files as named streams.
-
-4. What belongs in the generic VFS, what belongs in Reiser4?
-
-   Some things reiser4 do, such as files-as-directories need changes
-   to the VFS because it breaks assumptions that the VFS makes
-   (i.e. a deadlock or an oops when doing a hard link out of one).
-
-   Some other things reiser4 can do would be better if they were in
-   the VFS since other filesystems might want to support the same
-   functionality. 
-
-   Or Linux may not support some of the things reiserfs at all.
-
-5. What belongs in the kernel, what belongs in userspace?
-
-   This is mostly what I have been trying to argue about.
-
-So, to try to summarize my opinion, regarding file-as-directory, I
-belive it's fatally flawed because it breaks a lot of assumptions that
-existing code make.  One example of an application that will break is
-a web server that tries to filter out accesses to "bad" files,
-files-as-directories suddenly means that part of those files will be
-accessible (and there are a _lot_ of CERT reports on just this kind of
-problems with Windows web servers due to access to named streams not
-being restricted or ways to access files with non-canonical names that
-also managed to bypass access restrictions).
-
-Files-as-directories also does not give us named streams on
-directories.  The suggestion to have dir/metas access the named
-streams means that if someone already has a file named metas in a
-directory that file will be lost.  (Does anyone remember the
-discussions about the linux kernel having a directory named "core" and
-the problems this caused for some people?)
-
-All this suggests to me that named streams must live in another
-namespace than the normal one.  To me, openat(3) seems like a good
-choice for an API and it has the advantage that someone else, Solaris,
-already has implemented it.
-
-Additionally, files-as-directores does not solve the problem of 
-"cp a b" losing named streams.  There is curently no copyfile syscall
-in the Linux kernel, "cp a b" essentially does "cat a >b".  So unless
-cp is modified we don't gain anything.  If cp is modified to know
-about named streams, it really does not matter if named streams are
-accessed as file-as-directories, via openat(3) or via a shared library
-with some other interface.
-
-Regarding the kernel or userspace discussion.  In my opinion anything
-that can be done in user space should be done in userspace.  If the
-performance sucks, or it has security problems, or needs caching that
-cant be solved in userspace it can be moved to the kernel, but in that
-case the smallest and cleanest API possible should be implemented.
-
-If, for historical reasons, an API must be in the kernel, there is not
-much we can do about it either.  It'll have to stay there, but we can
-avoid making the same mistakes again.
-
-So, for all the examples of the kernel having plugins that
-automatically lets an application see a tar-file as a directory, I
-really, really don't belive this belongs in the kernel.  First of all,
-this is the file-as-directory discussion again, I belive it is a
-mistake to expose the contents as a directory on top of the file
-because it breaks a lot of assumptions that unix programs make.
-
-It's much better to expose the contents at another place in the
-filesystem by doing a temporary mount of the file with the proper
-filesystem.  As Pavel Machek pointed out, this has the problem of who
-cleans up the mount if the application crashes.  One way to handle
-this could be something like this:
-
-    mount -t tarfs -o loop bar.tar /tmp/bar-fabb50509
-    chdir /tmp/bar-fabb50509
-    umount -f /tmp/bar-fabb50509
-
-This will require the ability to unmount busy filesystems (but I
-belive Alexander Viro already has implemented the infrastructure
-needed for this).
-
-Or for files that we don't have a real filesystem driver (or on other
-systems where userspace mounts are not allowed), we could just unpack
-the contents into /tmp.  For cleanup we could let whatever cleans up
-/tmp anyways handle it, or have a cache daemon that keeps track of
-untarred directories and removes them after a while.
-
-Another way is to completely forget about presenting the contents of a
-tar file as a real files, and just use a shared library to get at the
-contents (now we just have to convince everyone to use the shared
-library).  This would also be portable to other systems.
-
-If we do this right, it could all be hidden in a shared library, and
-if the system below it supports more advanced features, it can use it.
-
-Regarding the "I want a realtime index of all files".  I belive that a
-notifier that can tell me when a file has been changed and a userspace
-daemon ought to handle most of the cases that have been mentioned.
-The suggested problems of not getting an up to date query response can
-be handled by just asking the daemon "are you done with indexing yet".
-The design of such a daemon and the support it needs from the kernel
-can definitely be discussed.  But to put the indexer itself in the
-kernel sounds like a bad idea.  Even adding an API to query the
-indexer into the kernel sounds pointless, why do that instead of just
-opening a Unix socket to the indexer and asking it directly?
-
-  /Christer
+	Gunnar
 
 -- 
-"Just how much can I get away with and still go to heaven?"
-
-Freelance consultant specializing in device driver programming for Linux 
-Christer Weinigel <christer@weinigel.se>  http://www.weinigel.se
+http://omnibus.ruf.uni-freiburg.de/~gritter
