@@ -1,53 +1,47 @@
-From: Giuseppe Bilotta <bilotta78@hotpop.com>
+From: David Greaves <david@dgreaves.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 12:33:09 +0200
-Sender: news <news@sea.gmane.org>
-Message-ID: <MPG.1b992c526a4726c59896d9@news.gmane.org>
-References: <Pine.LNX.4.58.0408260919380.2304@ppc970.osdl.org> <XFMail.20040827111855.pochini@shiny.it>
+Date: Fri, 27 Aug 2004 10:36:42 +0100
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <412F00AA.9000402@dgreaves.com>
+References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com><Pine.LNX.4.58.0408261101110.2304@ppc970.osdl.org> <45010000.1093553046@flay> <Pine.LNX.4.58.0408261348500.2304@ppc970.osdl.org> <57730000.1093554054@flay> <Pine.LNX.4.58.0408261402400.2304@ppc970.osdl.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20906-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.58.0408261402400.2304@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: "Martin J. Bligh" <mbligh@aracnet.com>, Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Giuliano Pochini wrote:
-> On 26-Aug-2004 Linus Torvalds wrote:
-> 
-> > I advocated (long ago) something like this for /dev handling, just because
-> > I think it would make sense to have
-> >
-> >       /dev/hda        <- special file
-> >       /dev/hda/part1  <- partition 1 (aka /dev/hda1)
-> 
-> This breaks the r4 semantics if I understood it correctly. Because
-> /partN are not simply associated to the file, they are part of the
-> file. ie. when I modify /dev/hda I also change /dev/hda/partN and
-> vice-versa. I don't see any pratical problem, though.
-> 
-> 
-> > Still, I really do like the idea of merging the notion of file and
-> > directory into one notion of "container". I absolutely _detest_ files with
-> > internal structure that tools have to know about (ie I hate seeing all
-> > those embedded formats that I can't use "grep" on - MIME being one case).
-> > I'd much rather see a "group of files"  and a "file with a grouping of
-> > information".
-> 
-> You're actually looking for a database with a legacy fs-like interface :)
+Linus Torvalds wrote:
 
-Hm. Isn't this exactly what MS has in store for Longhorn?
+>On Thu, 26 Aug 2004, Martin J. Bligh wrote:
+>  
+>
+>>I think what you're saying is that they'd both return positive, right?
+>>    
+>>
+>
+>No. I'd say that a file would look like a file, even if it has attributes.
+>
+>It wouldn't show as a directory at all - unless you start looking at 
+>attributes. Because it really _is_ a file, and it's "directory aspect" is 
+>really nothing but a way to make its named streams visible.
+>
+>So you really should consider it a perfectly regular file, and so only 
+>S_ISREG() will return true, and S_ISDIR() will return false.
+>
+>  
+>
+ie, logically:
 
--- 
-Giuseppe "Oblomov" Bilotta
+S_ISREG() no longer precludes O_DIRECTORY from succeeding
+conversley
+O_DIRECTORY succeeding no longer implies S_ISDIR()
 
-Can't you see
-It all makes perfect sense
-Expressed in dollar and cents
-Pounds shillings and pence
-                  (Roger Waters)
+However, apps making those assumptions will not notice new behaviour.
+
+?
+
+David
 
