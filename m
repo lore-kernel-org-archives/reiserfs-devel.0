@@ -1,41 +1,34 @@
-From: "jenn sirp" <sirpj@ecs.csus.edu>
-Subject: reiser modification for file queuing
-Date: Mon, 15 Mar 2004 20:36:24 -0800
-Message-ID: <003101c40b10$3d8fc0f0$c435a5d1@energy>
+From: Timothy Webster <tdwebste2@yahoo.com>
+Subject: Reiserfs in 2.6.4-mm
+Date: Mon, 15 Mar 2004 22:58:53 -0800 (PST)
+Message-ID: <20040316065853.93681.qmail@web60304.mail.yahoo.com>
+Reply-To: tdwebste2@yahoo.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17233-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17234-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
->Can  you tell me a little bit about this? ;-)  Welcome.
+I noticed from Andrews change log:
 
+Reiserfs updates: mainly new features.
 
-Hi,
+Does that mean reiserfs4 is "almost" part of 2.6.4-mm?
+Is it something in the works for later this year?
 
-Thank You. How great. I am adding a built in queuing mechanism to your
-system. The idea is to have the built in functionality so that as files are
-created they are placed in a queue (implemented as a linked list); this
-queue always returns the next file to be processed. It is intended to speed
-up an existing application that resides in user space and dumps query files
-on to a database for further processing.
+I know you guys are tight for cash. Try giving your
+good name a plug on my tour of companies this up
+coming week.
 
-In a lot of ways it doesn't necessarily make sense. It should be probably be
-a part of the VFS, akin to all file systems. Or just left in user space. But
-it is an Intern project and it is so very cool. I asked to build a small FS
-from the ground-up -- so if I have success here I will be doing that this
-summer.
+-regards
+-tim
 
-I started poking into your namei.c file (reiserfs_add_entry) and I've been
-having some good results. Everything will probably get moved into ioctl
-later but I am still trying to figure things out.
-
-Your code is nice,
-
-Jenn
-
+__________________________________
+Do you Yahoo!?
+Yahoo! Mail - More reliable, more storage, less spam
+http://mail.yahoo.com
