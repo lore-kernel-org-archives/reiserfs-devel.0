@@ -1,47 +1,58 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiserfsprogs-3.6.12 release
-Date: Thu, 12 Feb 2004 17:10:19 +0300
-Message-ID: <200402121710.19639.vitaly@namesys.com>
-References: <200402102010.04479.vitaly@namesys.com> <200402121431.26019.vitaly@namesys.com> <200402121317.53245.henning-04@die.informatik.uni-siegen.de>
+From: Chris Mason <mason@suse.com>
+Subject: Re: v3 experimental data=ordered and logging speedups for 2.6.1
+Date: Thu, 12 Feb 2004 09:18:13 -0500
+Message-ID: <1076595493.4296.41.camel@watt.suse.com>
+References: <1074530725.29546.178.camel@tiny.suse.com>
+	 <20040211114912.GC3042@linuxhacker.ru>
+	 <1076508034.15498.5.camel@watt.suse.com>
+	 <20040211142651.GD3042@linuxhacker.ru>
+	 <1076511571.15499.32.camel@watt.suse.com>
+	 <20040211150943.GE3042@linuxhacker.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16776-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16777-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200402121317.53245.henning-04@die.informatik.uni-siegen.de>
-Content-Disposition: inline
+In-Reply-To: <20040211150943.GE3042@linuxhacker.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Henning Westerholt <henning-04@die.informatik.uni-siegen.de>
+Content-Type: text/plain; charset="us-ascii"
+To: Oleg Drokin <green@linuxhacker.ru>
 Cc: reiserfs-list@namesys.com
 
->   File: ,,/"
->   Size: 536             Blocks: 2          IO Block: 131072 Verzeichnis
-> Device: 1607h/5639d     Inode: 2           Links: 21
-> Access: (0755/drwxr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
->
->   File: ,,/dev/hdc7" -> ,,ide/host0/bus1/target0/lun0/part7"
->   Size: 33              Blocks: 0          IO Block: 1024   symbolische
-> Verkn=FCpfung
-> Device: ah/10d  Inode: 1322        Links: 1
-> Access: (0555/lr-xr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
->
->   File: ,,/dev/root" -> ,,ide/host0/bus1/target0/lun0/part7"
->   Size: 33              Blocks: 0          IO Block: 1024   symbolische
-> Verkn=FCpfung
-> Device: ah/10d  Inode: 676         Links: 1
-> Access: (0555/lr-xr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
+On Wed, 2004-02-11 at 10:09, Oleg Drokin wrote:
+> Hello!
+> 
+> On Wed, Feb 11, 2004 at 09:59:31AM -0500, Chris Mason wrote:
+> > > > thousands (hundreds of thousands) of times per day.  It wasn't an easy
+> > > > bug to hit.
+> > > What are the symptoms?
+> > The rpm database is corrupted, rpm --rebuild-db is required.
+> 
+> Hm, that's really strange. But on ia64 default io size is 64k, do they have
+> same problems there?
 
-so dev is devfs. ok, would you then
-	stat ide/host0/bus1/target0/lun0/part7
-?
+No, ia64 works fine.  It really is strange.
 
-looks like rdev of the device file on devfs does not match to dev of its
-mount point.
+> 
+> > > > other tricky parts when the data=journal code is added.  We've already
+> > > > made our own file_write call, it doesn't make sense to warp it just to
+> > > > avoid our own __block_commit_write ;-)
+> > > Well, code duplication is not very good thing.
+> > It depends on how much you have to twist things to use the generic
+> > code.  If we used __block_commit_write, buffers would be marked dirty
+> > when it completes.  This won't work for data=journal at all, we don't
+> > want them marked dirty.
+> 
+> Well, if you do not want them marked dirty, you just do not need to call
+> commit_write at all since the only thing it does is marking buffers dirty ;)
+> And you can have a list of buffers at the allocation time anyway,
+> so no need to do extra checks about partial page writes and so on since
+> all these checks were already done.
 
-=2D-
-Thanks,
-Vitaly Fertman
+Interesting.  I'll look harder at that.
+
+-chris
+
 
