@@ -1,38 +1,37 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: reiserfsck --rebuild-tree bug (loops forever)
-Date: Fri, 21 Mar 2003 10:37:09 +0100
-Message-ID: <20030321103709.6c52f46d.philippe.gramoulle@mmania.com>
+Date: Fri, 21 Mar 2003 12:40:34 +0300
+Message-ID: <20030321124034.A23203@namesys.com>
 References: <1048239084.9237.9.camel@dawn.clansoft.dk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13313-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13314-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 In-Reply-To: <1048239084.9237.9.camel@dawn.clansoft.dk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Baldur Norddahl <bbn@clansoft.dk>
+Cc: reiserfs-list@namesys.com
 
+Hello!
 
-Hi,
+On Fri, Mar 21, 2003 at 10:31:24AM +0100, Baldur Norddahl wrote:
+> ####### Pass 2 #######
+> do_pass_2: The block (18767039) is in the tree already. Should not
+> happen.
+> do_pass_2: The block (18767039) is in the tree already. Should not
+> happen.
+> do_pass_2: The block (18767039) is in the tree already. Should not
+> happen.
+> It loops forever at this point, using up 100% cpu time.
 
-3.6.4 is not the latest reiserfsck version.
+Hm, all previous reports of this problem boiled down to a situation where people
+build their reiserfsprogs on one box, but used it on another.
+Perhaps try to build reiserfsck statically? (and use 3.6.5 of course).
 
-3.6.5 [1] is the latest and several bugs have been fixed since.
-
-Could you please retry with reiserfsck 3.6.5 ?
-
-Thanks,
-
-Philippe
-
-[1] Reiserfprogs : ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.5.tar.gz
-
-
-On 21 Mar 2003 10:31:24 +0100
-Baldur Norddahl <bbn@clansoft.dk> wrote:
-
-  | dawn:~# reiserfsck -V
-  |  <--------reiserfsck 3.6.4, 2002-------->
+Bye,
+    Oleg
