@@ -1,53 +1,98 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: question about a possible deadlock
-Date: Fri, 26 Apr 2002 18:06:47 +0400
-Message-ID: <3CC95EF7.2000903@namesys.com>
-References: <20020426150726.A25444@castle.nmd.msu.ru> <1019822456.6770.59.camel@tiny>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: Comparison of notail and notail,iicache(14)  2.4.19-pre7
+Date: Fri, 26 Apr 2002 18:45:45 +0200
+Message-ID: <200204261845.45178.Dieter.Nuetzel@hamburg.de>
+References: <200204260657.32516.Dieter.Nuetzel@hamburg.de> <3CC93CF4.AEC9C69@yura.polnet.botik.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10187-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10188-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <3CC93CF4.AEC9C69@yura.polnet.botik.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: Andrey Savochkin <saw@saw.sw.com.sg>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: "Yury Yu. Rupasov" <yura@yura.polnet.botik.ru>
+Cc: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>, ReiserFS List <reiserfs-list@namesys.com>
 
-Chris Mason wrote:
+On Friday 26 April 2002 13:41, Yury Yu. Rupasov wrote:
+> Dieter N=FCtzel wrote:
+> > Manuel Krause wrote:
+> >
+> > [-]
+> >
+> > > What's really unclear is the problem with my
+> > > failing Netscape files on the living iicache-mounted FS...
+> >
+> > I had one outlier with iicache-new-13 here, too.
+> >
+> > /etc/cups/ppds.dat
+> >
+> > couldn't be accessed. I reported back but got no response.
 
->On Fri, 2002-04-26 at 07:07, Andrey Savochkin wrote:
->  
->
->>Hi,
->>
->>I've found a call sequence leading to what looks like a deadlock:
->>open
->>  reiserfs_create
->>    journal_begin
->>    reiserfs_new_inode
->>      failure by one of multiple reasons
->>      iput [note that inode->i_nlink == 0]
->>        reiserfs_delete_inode
->>          journal_begin
->>            deadlock, waiting for previous journal_begin to end
->>The code was checked by the mainstream 2.4.18 kernel.
->>Any reasons why this deadlock can't happen?
->>    
->>
->
->Nope, you are exactly right.  We've got a patch in testing that should
->fix this, let me know if you are interested in trying it out.
->
->-chris
->
->
->
->
->  
->
-Thanks a lot Andrey.
+[-]
 
-Hans
+> > Next thing could be linux-2.4.19p6-compound-speedup.patch.
+> > Any version for -pre7 ready?
+>
+> This patch should work with linux-2.4.19-pre7 as well.
 
+Yes, Yura.
+I tried it today and got one rejection with preempt+lock-break.
+fs/reiserfs/journal.c.rej
 
+***************
+*** 576,592 ****
+  /* lock the current transaction */
+  inline static void lock_journal(struct super_block *p_s_sb) {
+    PROC_INFO_INC( p_s_sb, journal.lock_journal );
+-   while(atomic_read(&(SB_JOURNAL(p_s_sb)->j_wlock)) > 0) {
+-     PROC_INFO_INC( p_s_sb, journal.lock_journal_wait );
+-     sleep_on(&(SB_JOURNAL(p_s_sb)->j_wait)) ;
+-   }
+-   atomic_set(&(SB_JOURNAL(p_s_sb)->j_wlock), 1) ;
+  }
+ =20
+  /* unlock the current transaction */
+  inline static void unlock_journal(struct super_block *p_s_sb) {
+-   atomic_dec(&(SB_JOURNAL(p_s_sb)->j_wlock)) ;
+-   wake_up(&(SB_JOURNAL(p_s_sb)->j_wait)) ;
+  }
+ =20
+  /*
+--- 579,590 ----
+  /* lock the current transaction */
+  inline static void lock_journal(struct super_block *p_s_sb) {
+    PROC_INFO_INC( p_s_sb, journal.lock_journal );
++   down(&SB_JOURNAL(p_s_sb)->j_lock);
+  }
+ =20
+  /* unlock the current transaction */
+  inline static void unlock_journal(struct super_block *p_s_sb) {
++   up(&SB_JOURNAL(p_s_sb)->j_lock);
+  }
+ =20
+  /*
+
+Had that before but Chris and Oleg gave me advice.
+I tried it this way:
+
+/* lock the current transaction */
+inline static void lock_journal(struct super_block *p_s_sb) {
+  PROC_INFO_INC( p_s_sb, journal.lock_journal );
+  debug_lock_break(1);
+  conditional_schedule();
+  down(&SB_JOURNAL(p_s_sb)->j_lock);
+}
+
+/* unlock the current transaction */
+inline static void unlock_journal(struct super_block *p_s_sb) {
+  up(&SB_JOURNAL(p_s_sb)->j_lock);
+}
+
+But then it seems to be _NOT_ preempt (+lock-break) save.
+System lock up (nothing in the logs, SysRq key didn't work) during=20
+latencytest0.42-png write test. Read test worked.
+
+Thanks,
+	Dieter
