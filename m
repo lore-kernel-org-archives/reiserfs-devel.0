@@ -1,54 +1,58 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: back up to disk
-Date: Wed, 16 Oct 2002 00:05:09 -0400
-Message-ID: <200210160405.g9G459CH002638@turing-police.cc.vt.edu>
-References: <20021015224213.4BBAA1AEC13E@server5.fastmail.fm>
-            <3DACBDB5.9020303@namesys.com>
+From: rwhron@earthlink.net
+Subject: Re: oops from 2.5.42-mm3 running lilo on reiserfs
+Date: Wed, 16 Oct 2002 00:30:42 -0400
+Message-ID: <20021016043041.GA10674@rushmore>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-29476938P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11708-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11709-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Wed, 16 Oct 2002 05:15:33 +0400."
-             <3DACBDB5.9020303@namesys.com> 
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: akpm@digeo.com
+Cc: reiserfs-list@namesys.com
 
---==_Exmh_-29476938P
-Content-Type: text/plain; charset=us-ascii
+>> While running lilo I got this oops:
+>>
+>>  kernel BUG at mm/highmem.c:177!
+>>  invalid operand: 0000
 
-On Wed, 16 Oct 2002 05:15:33 +0400, Hans Reiser said:
+> Just delete it I think:
 
-> What I had heard was that they generally slowed peformance, but maybe my 
-> info is old.
+Yep, that fixes it.  By the way, system responsiveness
+with all this stuff running is impressive:
 
-Even back in the days when an IBM RS6000-220 (66mz 601 chipset) was a "new"
-machine, I found it actually gave a 20-30% total throughput boost, because
-even if the CPU wasn't blazing fast, it was faster to read 3-5 512 byte
-blocks off the disk and decompress them to get a 4K filesystem block than
-it was to actually read all 8 512-byte blocks.  Among other things, you
-get back half your disk throughput, so you can sustain twice the I/Os....
+Linux Test Project's runalltests.sh (lots of I/O).
+configure/make/make test Python-2.2.2 (all tests okay)
+setiathome  (cpu bound)
+mp3blaster
+lilo in a loop every 30 seconds.
+
+mp3blaster was only quiet about 5 seconds during
+a point when runalltests.sh was executing 100
+CPU bound threads.  (float_bessel is the test)
+There was no skipping during the test that writes
+to all free memory + 600 megs swap. :)
+
+2 python audio tests block on /dev/audio, but
+that's expected.
+
+You once had a 2.4 patch so lilo wouldn't wait too
+long when there is a lot of I/O going on.  A couple
+of the LTP tests would make lilo pause ~ 60 seconds:
+growfiles -b -e 1 -i 0 -L 120 -u -g 4090 -T 100 -t 408990 -l -C 10 -c 1000 -S 10 -f Lgf02_
+growfiles -b -e 1 -i 0 -L 120 -u -g 5000 -T 100 -t 499990 -l -C 10 -c 1000 -S 10 -f Lgf03_
+
+Those run for 120 seconds each in sync mode.  
+
+I can enter and exit X with no problem.
+2.5.42-mm3 is comfortable on my main box.
+Thanks for making it so good.
+
 -- 
-				Valdis Kletnieks
-				Computer Systems Senior Engineer
-				Virginia Tech
+Randy Hron
+http://home.earthlink.net/~rwhron/kernel/bigbox.html
 
-
---==_Exmh_-29476938P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.7 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQE9rOV1cC3lWbTT17ARAp1/AJkBVZL9+IYuGV8/O9WpTMGdqXiqvQCg1wEc
-FEBlMoWL8n2W6CwjJ6PbLOI=
-=LvVR
------END PGP SIGNATURE-----
-
---==_Exmh_-29476938P--
