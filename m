@@ -1,28 +1,28 @@
-From: "Jason Mancini" <jayrusman@hotmail.com>
+From: Dirk Mueller <dmuell@gmx.net>
 Subject: Re: 640.0 GB symlink
-Date: Tue, 03 Dec 2002 22:28:35 -0800
-Message-ID: <F109exvFAlQ2tyDgIQS000154f2@hotmail.com>
+Date: Wed, 4 Dec 2002 08:55:18 +0100
+Message-ID: <20021204075518.GA7369@matrix.wg>
+References: <F109exvFAlQ2tyDgIQS000154f2@hotmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12102-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12103-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <F109exvFAlQ2tyDgIQS000154f2@hotmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
+On Die, 03 Dez 2002, Jason Mancini wrote:
 
-I also tried reiserfsprogs 3.6.4, no change.
-BTW, 687194767373 = 640GB + 13 bytes.  The
-size of the symlink should be 13 bytes, so
-somehow bits 00A0 0000 0000 are on...
+> size of the symlink should be 13 bytes, so
+> somehow bits 00A0 0000 0000 are on...
 
-Jason Mancini
+sounds like a bad harddrive. run badblocks. 
 
 
-_________________________________________________________________
-Protect your PC - get McAfee.com VirusScan Online 
-http://clinic.mcafee.com/clinic/ibuy/campaign.asp?cid=3963
-
+-- 
+Dirk (received 162 mails today)
