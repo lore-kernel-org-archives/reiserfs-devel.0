@@ -1,56 +1,40 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: Fibration questions
-Date: Thu, 22 Jul 2004 15:57:32 -0400
-Message-ID: <200407221957.i6MJvWHB028798@turing-police.cc.vt.edu>
-References: <20040721054418.1150715C23@mail03.powweb.com> <40FE0B47.3010600@slaphack.com> <40FF74BA.1050206@namesys.com> <16639.45062.695014.910604@laputa.namesys.com>
-            <20040722143909.GE4990@nysv.org>
+From: Tom Vier <tmv@comcast.net>
+Subject: v4 questions, plugins, crc
+Date: Thu, 22 Jul 2004 15:58:47 -0400
+Message-ID: <20040722195847.GA9907@zero>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_629345640P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19749-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19750-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Thu, 22 Jul 2004 17:39:09 +0300."
-             <20040722143909.GE4990@nysv.org> 
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
---==_Exmh_629345640P
-Content-Type: text/plain; charset=us-ascii
+are wandering logs like rcu? unless i'm reading it wrong, it sounds like you 
+create a copy of the node, but with the updated pointer. you go up the tree, 
+creating updated parents, and the whole new path is finally committed when 
+the highest node's pointer is updated, right? how big are nodes in v4? 512 
+bytes? when updating a tree path, it causes a lot of single sector writes to 
+different areas (far apart?) but the only dependence is that all the new 
+updated versions of the nodes must be written before the top node is, right? 
+does v4 use extents? if not, how are the data blocks finally pointed to?
 
-On Thu, 22 Jul 2004 17:39:09 +0300, Markus =?UNKNOWN?Q?T=F6rnqvist?= said:
+sun has (or is writing) a new fs i read about recently that has data crc's 
+with error correction (i guess that's what the new "self healing" buzzword 
+means - i've heard ibm using it in commercials). i've thought about writing a 
+v4 plugin. i'm not sure how fine grained to make it. one crc for the whole 
+file isn't feasable. are blocks variably sized in reiserfs? perhaps each 
+extent or whatever could be crc'ed, with the crc's stored as metadata (using 
+whatever method v4 provides for saving variable length metadata).
 
-> Maybe a chance to bleed some Dell, Cray, HP and DataDirect money
-> to Namesys ;)
+also, what should i do if a crc is bad? just write to syslog? refuse to 
+return the data since it might be bad (return an error from read())?
 
-Cray is still in business? ;)
-
-> Has Namesys contacted these guys, btw, and asked for sponsorship?
-> They are probably all companies with more money than they'd know how
-> to spend and they'd benefit from having the best filesystem ever.
-
-Umm.. *would* they benefit?  Think it through - if the "best available
-filesystem" suddenly gets 30% faster, they end up selling 30% smaller servers -
-and there's more profit margin at the high end than at the low end.  So you
-can't really get much support from the hardware people (look at how rich Intel
-has gotten from Windows bloating every release, and think about it...)
-
-
-
---==_Exmh_629345640P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFBABwrcC3lWbTT17ARAp6IAJ90TVAeefYnsn5eyyfrFmU/e2ei1gCffc/1
-beOsc3YabH24otewUpVhOAU=
-=bo9R
------END PGP SIGNATURE-----
-
---==_Exmh_629345640P--
+-- 
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0x15741ECE
