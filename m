@@ -1,55 +1,57 @@
-From: Redeeman <redeeman@metanurb.dk>
-Subject: Re: 2.6.7 reiser4 patch ?
-Date: Tue, 06 Jul 2004 01:34:12 +0200
-Message-ID: <1089070452.14870.2.camel@localhost>
-References: <1089029792.7071.52.camel@localhost>
-	 <20040705123032.GY4990@nysv.org>  <40E9AAE4.1020101@namesys.com>
-Reply-To: redeeman@metanurb.dk
+From: Andreas Otto <aotto1968@onlinehome.de>
+Subject: Re: I've done a very bad mistake
+Date: Tue, 6 Jul 2004 08:28:56 +0200
+Message-ID: <200407060828.56801.aotto1968@onlinehome.de>
+Reply-To: aotto1968@t-online.de
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19520-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19521-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40E9AAE4.1020101@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-On Mon, 2004-07-05 at 12:24 -0700, Hans Reiser wrote:
-> Markus T=F6rnqvist wrote:
->=20
-> >On Mon, Jul 05, 2004 at 02:17:20PM +0200, Mikael Cluseau wrote:
-> > =20
-> >
-> >>Is there a patch the *vanilla* Linux 2.6.7 kernel ?
-> >>   =20
-> >>
-> >
-> >Afaik no.
-> >
-> >Last time something like this was tried, it resulted in random
-> >freezings, and there I was not the only one affected.
-> >Although it was an old snapshot.
-> >
-> >The -mm tree is used because -mm stuff goes into mainline and
-> >that's what the Reiser4 people are trying to accomplish...
-> >
-> >There's nothing wrong with sticking to what Namesys gives :)
-> >
-> > =20
-> >
-> After we send to -mm we will work on a mainline patch.
-patch applies perfect on vanilla... maybe like 1 EASY EASY failed hunk,
-which easily can be fixed. and it works perfect.
->=20
-> Unfortunately I have to tell you that we are doing contract work for a=20
-> customer not related to reiser4 in order to pay the bills, and for that=20
-> reason reiser4 will most likely not get debugged this week.
->=20
-> Hans
->=20
---=20
-Redeeman <redeeman@metanurb.dk>
+Hi,
+
+  cp writes to the file and !!overwrite!! everythin at the beginning
+  including bootsector, logs, ....
+
+ just more information:
+
+basic step:
+ 1. /dev/hdb7 was 40G with 20G data and 1.5G overwritten at the beginning
+ 2. dd_rescue cp the device into the file
+ 3. I splitt the 40G file into 100M pieces
+ 4. do strings at the pieces to extract all strings
+ 5. start to search 'grep' for the data (ascii source code) I was missing
+ 6. 2 day ago I've done a backup with a tar file
+ 7. found tar file (was broken) but I was able to extract the ascii data
+    ==>> !!! never use gzip Archive !!! <<== if someting get very very wrong
+   you can always recover ascii data even if near everything was broken
+  => well done :-)
+ 
+advanced step:
+1. build superblock on dev/hdb7
+2. build transaction log on dev/hdb7
+3. fsck.resierfs --rebuild-tree seems to work
+4. after mounting dev/hdb7 the fs was empty  :-(
+5. but lost+found was filled :-)
+    -> got 1 important archive back :-)))
+6. but something I dont like ...
+   20G data, 1.5G overwritten at the beginning but got only 8.7G back in 
+   lost+found. the 8.7G was mainly a couple of big archive files.
+  together 122 files from ~10.000 files
+
+=> question to the reiserfs guys 
+
+   Why was the recover rate so bad?
+
+
+mfg
+
+  aotto
 
