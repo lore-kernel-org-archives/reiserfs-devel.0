@@ -1,51 +1,74 @@
-From: "SDI Australia" <sedi_australia@hotmail.com>
-Subject: Re: Re: My mistake...
-Date: Tue, 16 Jul 2002 18:36:18 +1000
-Message-ID: <F187GkQ6mBySsxVY60m000112d1@hotmail.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: Quota support for UID >65534
+Date: 16 Jul 2002 08:25:32 -0400
+Message-ID: <1026822332.4952.523.camel@tiny>
+References: <1026727900.18163.61.camel@max> 
+	<1026731371.21656.301.camel@tiny>  <1026807249.1066.31.camel@max>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11028-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11029-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <1026807249.1066.31.camel@max>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format=flowed; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiser@namesys.com, brian@english-bay.com
-Cc: vitaly@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Zeljko Brajdic <zorz@iskon.hr>
+Cc: ReiserFS-list <reiserfs-list@namesys.com>
 
-On Tue, 16 Jul 2002 05:13, Hans Reiser wrote:
-> >>So if you need our assistance in recovery you are welcome on our
-> >>support page: www.namesys.com/support.html
->>
-> >I gather you are offering to help me if I pay $25, is that correct?
-> >Further, I gather you have the answer but are holding out for the $25?
-> >
-> >I see.
-> >Is this what open source has come to?
+On Tue, 2002-07-16 at 04:14, Zeljko Brajdic wrote:
+> On Mon, 2002-07-15 at 13:09, Chris Mason wrote:
+> > On Mon, 2002-07-15 at 06:11, Zeljko Brajdic wrote:
+> > > Hello,
+> > > 
+> > > I've applied quota patches for vanilla kernel-2.4.18 found at
+> > > ftp://ftp.suse.com/pub/people/mason/patches/reiserfs/quota-2.4/2.4.18/
+> > > Everything works perfectly except for checking quota with command `quota
+> > > -v username' if username have UID >65534. Interesting is that `repquota'
+> > > doesn't have that problem and showing.
+> > > 
+> > > This is output of `quota':
+> > > 
+> > > root@led 12:02 (/usr/src/linux) > quota -v bureq
+> > > quota: Error while getting quota from /dev/sda4 for 200000: Invalid argument
+> > > Disk quotas for user bureq (uid 200000): none
+> > 
+> > Which disk format are you using?  You can check this with debugreiserfs
+> > /dev/xxxxx
+> > 
+> root@led 13:12 (/usr/src/linux) > debugreiserfs /dev/sda4
+> 
+> <-------------debugreiserfs, 2002------------->
+> reiserfsprogs 3.x.1b
+> 
+> 
+> Filesystem state: consistency is not checked after last mounting
+> 
+> Reiserfs super block in block 16 on 0x804 of format 3.6 with standard journal
 
->Try getting user support for user error caused problems from RedHat for
->less.
-Hello,
-Solution: don't use Red Hat, try Linux Mandrake!
-Plus, at Mandrake, you can "...purchase support incidents, for a very 
-reasonable price" - just $10 to members of MandrakeClub, a saving of 60%(!) 
-over namesys' standard fee!
+This means your reiserfs disk can support the high uids.
 
-http://new.mandrakestore.com/mdksa/index.php?PAGE=tab_1/menu_2.php&id_art=152&LANG_=en#GOTO_152
+> 
+> 
+> We have found "error". :) In fs/dquot.c at line 2057 exists if
+> statement:
+> 
+>         if (id & ~0xFFFF)
+>                 goto out;
+> 
+> Is this feature or bug?! :) This have been found in vanilla kernel-2.4.18
 
-And if the ReiserFS is really that buggy, you can purchase a
-"10 incidents web support pack" and save more! Just 116 euros, less for 
-members!
+This check is not in a quota patched kernel.  sys_quotactl isn't in
+fs/dquot.c with the quota patches applied.
 
-Yours sincerely,
-  "Salesman Tux"
-  Mandrake User
+Did you apply all of the patches in my quota directory?  I think so,
+since the kernel wouldn't compile otherwise ;-)
 
-PS: Try newbie@linux-mandrake.com. (No-charge support mailing list)
-Nobody gets sent to the paid support link at all.  People try to
-answer the question first, and if it becomes clear the problem is
-non-trivial, more people try to solve it.
+quota -v high_uid_user works fine for me, which version of the quota
+utils do you have installed?
 
-_________________________________________________________________
-Send and receive Hotmail on your mobile device: http://mobile.msn.com
+-chris
+
+
+
 
