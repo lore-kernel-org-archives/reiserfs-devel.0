@@ -1,52 +1,76 @@
-From: Bill Huey (hui) <bhuey@lnxw.com>
-Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 14:33:31 -0700
-Message-ID: <20040827213331.GA4468@nietzsche.lynx.com>
-References: <412D9FE6.9050307@namesys.com> <200408261812.i7QICW8r002679@localhost.localdomain> <20040827203216.GC1284@nysv.org> <Pine.LNX.4.58.0408271335421.14196@ppc970.osdl.org>
+From: Steve Bergman <steve@rueb.com>
+Subject: Re: reiser4 plugins
+Date: Fri, 27 Aug 2004 17:29:07 -0500
+Message-ID: <1093645747.17445.19.camel@voyager.localdomain>
+References: <20040825152805.45a1ce64.akpm@osdl.org>
+	 <412D9FE6.9050307@namesys.com>	<20040826014542.4bfe7cc3.akpm@osdl.org>
+	 <1093522729.9004.40.camel@leto.cs.pocnet.net>	<20040826124929.GA542@lst.de>
+	 <1093525234.9004.55.camel@leto.cs.pocnet.net>	<20040826130718.GB820@lst.de>
+	 <1093526273.11694.8.camel@leto.cs.pocnet.net>
+	 <20040826132439.GA1188@lst.de>
+	 <1093527307.11694.23.camel@leto.cs.pocnet.net>
+	 <20040826134034.GA1470@lst.de>
+	 <1093528683.11694.36.camel@leto.cs.pocnet.net>
+	 <412E786E.5080608@namesys.com>
+	 <16687.9051.311225.697109@thebsh.namesys.com>
+	 <412F7A59.8060508@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20947-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20948-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.58.0408271335421.14196@ppc970.osdl.org>
+In-Reply-To: <412F7A59.8060508@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Markus T?rnqvist <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com, bhuey@lnxw.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Nikita Danilov <nikita@clusterfs.com>, Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs <reiserfs-list@namesys.com>
 
-On Fri, Aug 27, 2004 at 01:38:28PM -0700, Linus Torvalds wrote:
-> Heh. Considering that WinFS seems to be delayed yet more, I don't think 
-> that's a very strong argument.
+On Fri, 2004-08-27 at 11:15 -0700, Hans Reiser wrote:
+> >
+> If you ask real users, they say that reiser4 is fast, and their 
+> experience matches our benchmark.  You can criticize the benchmark if 
+> you want, but then you should run your own and publish it.
+> 
 
-Which is another argument, and bragging rights, to integrate something
-like Reiser FS4. :)
 
-> Hell will freeze over before Microsoft does a filesystem right. Besides,
-> WinFS is likely almost in user mode anyway, ie mostly a library, rather
-> like the gnome people are already doing with nome storage.
+As a "real" desktop user who just converted all his partitions from ext3
+to reiser4, I have not, as yet, noticed any startling performance
+increase.  Being slightly slightly irked to hear that the benchmark
+numbers that have been paraded around on Slashdot and the internet in
+general, at ext3's expense, have had reiser4's "bad" results surgically
+extracted, I am running my own benchmarks to get the real story on
+reiser4/ext3 mongo performance on my, rather average, desktop hardware.
 
-They're trying to push their low level storage model into the kernel
-after they saw how slow their userspace version of that is. It makes
-sense to have this kind of stuff directly apart of a lower level FS
-later
- 
-> So there's really no point in trying to push your agenda by trying to 
-> scare people with MS activities. Linux kernel developers do what's right 
-> because it is _right_, not because somebody else does it.
+I am using the latest Mongo on FC/rawhide and the 2.6.8.1-mm4 kernel.
 
-I tried to stay out of this thread, but I couldn't resist after this
-post. :) MS has other problems, namely, they're a large company trying
-to basically replicated Apple's (NeXT) OS X stuff, but onl 10x larger
-and slower than it is. It's really silly what's going on with MS
-development as well as the greater open source X community. The sooner
-folks realize that all rendering models are moving in the direction of
-Apple's OS X, the sooner they can just flat out rip it off.
+Unfortunately, I get an error from mongo.pl that "Done" is not a numeric
+argument at line 439.
 
-It's going to require both kernel and userspace changes for this to
-happen.
+I have done this to fix it:
 
-bill
+
+--- mongo.pl    2004-08-27 17:07:01.681723313 -0500
++++ mongo_fixed.pl      2004-08-27 17:06:51.369306735 -0500
+@@ -429,8 +429,8 @@
+        if ( -e ${ERR_FILE}) {
+            &DIE ("\nEXITED WITH FAIL\n");
+        }
+-       my $real = (split ' ', $time_output[0])[1];
+-       my $cpu  = (split ' ', $time_output[2])[1];
++       my $real = (split ' ', $time_output[1])[1];
++       my $cpu  = (split ' ', $time_output[3])[1];
+  
+        unless ( $real =~ /\s*\d+/ && $cpu =~ /\s*\d+/) {
+          LOG "@time_output";
+
+
+What it gets me is the "real" line of the "time" output for "STAT
+REAL_TIME" and the "sys" line of the "time" output for "STAT CPU_TIME".
+i.e. only system time is counted. I believe this was the intent of the
+original code, but want to verify before continuing.
+
+Thanks,
+Steve Bergman
 
