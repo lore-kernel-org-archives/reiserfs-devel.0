@@ -1,85 +1,41 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: ".meta." as a Name Prefix
-Date: Sun, 25 Apr 2004 00:44:27 -0500
-Message-ID: <408B503B.30700@slaphack.com>
-References: <2407572152-BeMail@cr593174-a> <4085C7B2.4010104@slaphack.com> <4085E2E1.8080302@pobox.com>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: "Metas"
+Date: Sun, 25 Apr 2004 01:44:42 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <87smeshar9.fsf@uhoreg.ca>
+References: <408045B8.7000102@mrs.umn.edu> <20040418033328.24278.qmail@web25006.mail.ukl.yahoo.com>
+ <c5t3lg$g9g$1@satsuki.furryterror.org> <40869EAD.9020806@namesys.com>
+ <4086ABE8.4090806@mrs.umn.edu> <408B472C.5090000@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18200-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18201-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4085E2E1.8080302@pobox.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+>>>>> "David" == David Masover <ninja@slaphack.com> writes:
 
-|> cat urn:namesys.com:reiser4:meta/shortName
-|> echo "..meta" > urn:namesys.com:reiser4:meta/shortName
+[...]
 
-Revisiting this idea:  this is a good idea for what happens _inside_ the
-metas dir, for plugins.  But metas itself is a general enough,
-well-enough designed and probably lasting concept that I think we can
-use something like '...' or '..metas', or whatever is reasonably unique
-_now_, and assume that once reiser4 hits mainstream usage, people will
-be careful to develop around that name.
+David> Another idea which seems to work much better is to merely have
+David> two modes for each file -- one for the file-as-a-file and one for
+David> the file-as-a-directory.  ...
 
-Inside the metas dir, though, we have plugins.  And if plugins could be
-dynamic, even mostly in userspace, then we have the problem of plugins
-becoming so popular that we have namespace collisions there.  I like
-this solution, though -- it's kind of like the XML namespace concept,
-something which should be in every language.
+This makes a lot of sense to me.  I like it.  I think that it's
+reasonable to say that the desired permissions for a file as a file may
+not necessarily be the same as the desired permissions for a file as a
+directory.
 
-Using some mechanism, not sure what yet, you create a set of mappings:
+I wonder if this would require more or less changes to the VFS compared
+to creating a new permission for chdir.
 
-meta/r4 -> meta/namesys.com/reiser4
-meta/ -> meta/namesys.com/reiser4
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
-They aren't really symlinks because the second option is for making all
-children of meta/namesys.com/reiser4 available under meta/, so if you had:
-
-meta/namesys.com/reiser4/bmap
-meta/namesys.com/reiser4/plugin
-meta/slaphack.com/happyface/:)
-
-Now you have:
-
-meta/bmap
-meta/namesys.com/reiser4/bmap
-meta/namesys.com/reiser4/plugin
-meta/plugin
-meta/slaphack.com/happyface/:)
-
-More specific things would override less specific things, and in general
-these mappings aren't allowed to touch anything that isn't itself a mapping.
-
-I think you would use symlink() for setting these things up (cd meta; ln
-~ -s namesys.com/reiser4 r4 || ln -s namesys.com/reiser4 .), and even if
-they were completely dynamic, the files themselves would read like symlinks.
-
-I heard someone say something like "reiser4 is almost shipped", so it
-may be too late to send in ideas (especially ones which I've probably
-said before), but I thought I'd drop this in anyway.  (sorry for the
-noise if I _have_ said it before.)
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQItQOngHNmZLgCUhAQL9yhAAiaCH3ZxSS5T/VxgqW+Tk4jR3kjzA87Cq
-dMfMFlGeS2R1X3p1nuqdb0Q8SWSvMV2cV/YgFXGq4BR+nMjTy/krm7AlXJ1Wj8ji
-xORQMWWZAWsFTeIoQNgu1lDpTCfPISzsmEgLeYsq14UQn+cb8uZMIfy9/tmmY71N
-W6XIsaW2hHp2LwgSsrIjZHthKZQ6WnQh0nsI/8JlU5hjJ4sbEh4SWMokDri//kGq
-wiXk/489sx1u4k/ymU/CHZGSJA4c+/uBzW2QZ2qRnpa6uNwWtu/lqQhn28tkoHRw
-k9TS9j0Ca0w/4k9UZFD8N1Lkxp52/XFTg+U+ZABzkIQx9VHC+nVgaVLIZSr31C4/
-iTk+sHdY55kJtHOF8X7cSzx0D/V+Qo2owhOFS9B5/10NEv34UPmO4aQq9T/MeQVo
-vqWF5L8h0N+zLqlTnkkf4zVBzALfTbsfk18fLeu42j8WZfkVBkHC5T2SBYjmuPHO
-b3bNX1yl+xx0lFG4Wt6bz6sYhzmr2tOj1ayVEYdpZRsXZUsSwom5POeD5Yimuhd7
-/VCiNhcNm17bfqOTK+e+36dE8c91YIyv32e3BBivrB2GYg1AgGfPuzMOky78GX/m
-Ymh4ztKBAwoBytvsF4Aye+8h3bETBMjMoNhJT7EcvH/N4MFqtfZJLh6PafIXMIgA
-IeMzRfndw1w=
-=EGMz
------END PGP SIGNATURE-----
