@@ -1,57 +1,50 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Hard disk crash and solution
-Date: Wed, 29 Jan 2003 14:24:12 +0300
-Message-ID: <3E37B9DC.20103@namesys.com>
-References: <IKENJBHCILNPNAGHKCHFOEDMCCAA.Art@chello.nl> <b11do3$74q$1@satsuki.furryterror.org>
+Subject: Re: mkreiserfs -s 1024 makes unmountable partitions
+Date: Wed, 29 Jan 2003 14:37:16 +0300
+Message-ID: <3E37BCEC.9080203@namesys.com>
+References: <20030117221535.GA945@Kadath> <20030118080941.B5575@humilis> <20030118115724.GA946@Kadath> <20030121213336.GA6756@hell.mine.nu> <20030122065712.D5575@humilis> <20030122100342.GA14100@hell.mine.nu> <20030124222823.GA15643@hell.mine.nu> <20030126181816.GA1274@Kadath> <20030127095957.A22720@namesys.com> <2147483647.1043634047@[10.1.120.1]> <20030127102540.A22869@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12535-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12536-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b11do3$74q$1@satsuki.furryterror.org>
+In-Reply-To: <20030127102540.A22869@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Zygo Blaxell <eazgwmir@umail.furryterror.org>
-Cc: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: "Scott R. Every" <scott@blast.com>, Francois-Rene Rideau <fare@tunes.org>, reiserfs-list@namesys.com
 
-Zygo Blaxell wrote:
+Oleg Drokin wrote:
 
->In article <IKENJBHCILNPNAGHKCHFOEDMCCAA.Art@chello.nl>,
->Niek <Art@chello.nl> wrote:
+>Hello!
+>
+>On Mon, Jan 27, 2003 at 02:20:47AM -0500, Scott R. Every wrote:
 >  
 >
->>Title: IBM DTLA 307045 Hard disk crash
->>
->>I bought this disk (46 GB) about two years ago. One of the best they
->>claimed.
->>    
->>
->[...]
->  
->
->>What is the fucking MBTF of these drives?? Is it close to one year like I
->>experienced?
+>>this URL works better:
+>>ftp://ftp.suse.com/pub/people/mason/patches/data-logging
+>>Oleg, thanks so much for this info(and Chris, thanks for the patches). 
+>>This is much needed for embedded filesystems of 128MB and smaller.  Its 
+>>hard to fit a 32MB journal on a 32 or 16MB FLASH disk!
 >>    
 >>
 >
->My employer used a total of 13 of these drives (various sizes, but all the
->same family) for RAID arrays.  We originally purchased 10, and replaced
->the first 3 to die under IBM warranty.  After the first 3, we started
->replacing dead disks with some other brand of drive.  In the end 9 of the
->IBM drives died.  Some days two or three disks would fail at a time.
->We didn't bother waiting for the last 4, but presumably they would have
->died if we hadn't replaced all of them.  We took the rest of them apart
->to use as cubicle wall decorations, shaving mirrors, etc.
+>Actually if you have direct access to FLASH device (e.g. through MTD),
+>then you really want to look at jffs2. Besides being journalled, it also
+>provides data compression (which is invaluable for such small storage sizes)
+>and flash wearing control (or what is the name for facility that controls that
+>certain areas of flash are not written to more often then other ones).
 >
->Even worse, for about 6 hours before some of them died, they randomly
->flipped a few bits here and there in the data, which made RAID 
->redundancy useless.
+>Bye,
+>    Oleg
+>
 >
 >  
 >
-Maybe we should warn against them in our FAQ?
+Reiser4 will provide compression (compression plugin is being coded 
+now), and won't waste space for a mandatory fixed size journal area.
 
 -- 
 Hans
