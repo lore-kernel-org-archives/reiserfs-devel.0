@@ -1,53 +1,49 @@
-From: Basil Chupin <blchupin@tpg.com.au>
-Subject: Re: What does this mean?
-Date: Mon, 15 Jul 2002 23:27:35 +1000
-Message-ID: <3D32CDC7.7020903@tpg.com.au>
-References: <3D2993E5.6030707@tpg.com.au> <20020708190923.A928@namesys.com> <3D29BA3F.7010201@tpg.com.au> <200207081228.56302.kuba@mareimbrium.org> <3D2E6DAB.9050400@tpg.com.au> <200207121326.g6CDQu3u003587@turing-police.cc.vt.edu>            <3D2FFA1B.8050302@tpg.com.au> <200207141636.g6EGaTCr017595@turing-police.cc.vt.edu>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: mkreiserfs and big RAID-Systems
+Date: Mon, 15 Jul 2002 18:24:47 +0400
+Message-ID: <200207151824.47086.vitaly@namesys.com>
+References: <1026741573.30600.25.camel@pallas.IZS.FhG.de> <200207151738.02786.vitaly@namesys.com> <1026748894.30600.39.camel@pallas.IZS.FhG.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11009-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11010-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <1026748894.30600.39.camel@pallas.IZS.FhG.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Andreas Abele <aba@IZS.FhG.de>
+Cc: reiserfs-list@namesys.com
 
-Valdis.Kletnieks@vt.edu wrote:
-
->On Sat, 13 Jul 2002 19:59:55 +1000, Basil Chupin <blchupin@tpg.com.au>  said:
+> > First of all get the latest reiserfsprogs-3.6.2 from our ftp site please
+> > and try again.
 >
->  
+> Hi Vitaly,
 >
->>We compared the outputs from the 'ps aux' command and what I found is 
->>that I am not running the kjournald process on any of my (3) 'systems' 
->> while he is (on his 2 'systems') even though our setups are almost 
->>identical (with regards to running SuSE v8 ). I thought kjournald was 
->>part and parcel of reiserfs but then why isn't it running on my 
->>'systems'? Just another mystery.
->>    
->>
+> i have built the 3.6.2-Progs and get the following behaviour:
 >
->ext2 filesystems don't have a kernel thread.
->ext3 have one kjournald thread per file system.
->resierfs have one kreiserfsd thread per file system.
+> 1.) mkreiserfs -d /dev/sdf1 180000000 (less than 720 GB)
+
+Could you run just 
+    mkreiserfs /dev/sdf1
+
+> [root@saturn6 mkreiserfs]# ./mkreiserfs -d /dev/sdf1 180000000
+> Free blocks: 179986295
+> Syncing..ok
 >
->You don't have any because you're all reiserfs.
+> =>Everything seems to be okay until now.
+> 2.) => Now the following command (bigger than 720 GB):
 >
-I learn someting new every day. Thanks for this information. And, Yes I 
-do only have reiserfs installed.
+> [root@saturn6 mkreiserfs]# ./mkreiserfs -d /dev/sdf1 190000000
+> Free blocks: 189985990
+> Blocksize: 4096
+> bread: Cannot read a block # 189999999.
+> Abgebrochen (core dumped)
 
->  His two systems obviously
->have at least 1 ext3 file system (/boot or / perhaps?)
->  
->
-Ah, now this is something I believe he does not have. Like me he 
-installs everything under the one file system. Howeve, I will check with 
-him just in case he somehow misconfigured his system by accident (or 
-design).
+Do you have anything related in your syslog?
 
-Cheers.
+-- 
 
-
-
+Thanks,
+Vitaly Fertman
 
