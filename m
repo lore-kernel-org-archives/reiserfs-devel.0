@@ -1,32 +1,28 @@
-From: Benjamin Scott <bscott@ntisys.com>
+From: Stefan Fleiter <stefan.fleiter@gmx.de>
 Subject: Re: Silly question, defrag
-Date: Fri, 5 Apr 2002 09:20:59 -0500 (EST)
-Sender: bscott@ntisys.com
-Message-ID: <Pine.LNX.4.44.0204050915350.6398-100000@dragon.inside.ntisys.com>
-References: <200204051404.g35E4L6H007366@foo-bar-baz.cc.vt.edu>
+Date: Fri, 5 Apr 2002 15:53:09 +0200
+Message-ID: <20020405135309.GA3440@shuttle.mothership.home.dhs.org>
+References: <200204030017.12595@X-Message-Flag:> <3CAABBA6.3030101@swelltech.com> <200204030740.05950@X-Message-Flag:> <20020403154906.A21821@ultraviolet.org> <20972156.20020404111651@tnonline.net> <20020404105440.F27377@ultraviolet.org> <3CAD6508.2060308@namesys.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <200204051404.g35E4L6H007366@foo-bar-baz.cc.vt.edu>
+Content-Disposition: inline
+In-Reply-To: <3CAD6508.2060308@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
 To: ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, 5 Apr 2002, at 9:04am, Valdis.Kletnieks@vt.edu wrote:
-> The biggest problem is identifying "idle" ...
+Hi Hans!
 
-  This part of the algorithm could be farmed out to a userland system call.
-That is, a user process signals the kernel when to start and stop
-"background maintenance" tasks.  Said userland process could be as
-sophisticated as something that monitors load average and I/O load, or as
-simple as a cron job that runs during off-hours.
+> It is important to put airholes into the layout, so that insertions can=20
+> go somewhere, and it would not surprise me if ext2's defrag failed to do =
 
--- 
-Ben Scott <bscott@ntisys.com>
-| The opinions expressed in this message are those of the author and do not |
-| necessarily represent the views or policy of any other person, entity or  |
-| organization.  All information is provided without warranty of any kind.  |
+> that.
 
+Hum. Did I miss something?
+Can you give a pointer to find out what you mean by =BBext2's defrag=AB?
 
+Greetings,
+Stefan
