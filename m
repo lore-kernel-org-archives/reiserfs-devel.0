@@ -1,98 +1,42 @@
-From: Spam <spam@tnonline.net>
-Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: Sat, 4 Sep 2004 13:07:25 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <1166882144.20040904130725@tnonline.net>
-References: Message from Spam <spam@tnonline.net>    of "Fri, 03 Sep 2004
- 15:16:19 +0200." <642078516.20040903151619@tnonline.net>
- <200409032145.i83LjdXG002843@localhost.localdomain>
-Reply-To: Spam <spam@tnonline.net>
+From: claus@xn--frber-gra.muc.de (=?ISO-8859-1?Q?Claus_F=E4rber?=)
+Subject: Re: silent semantic changes with reiser4
+Date: 03 Sep 2004 15:23:00 +0200
+Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <9G9vIAK3cDD@gmane.3247.org>
+References: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com>
+	<412E4999.1050504@sover.net> <9FuGrTY3cDD@3247.org>
+	<1094051610.2777.20.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <200409032145.i83LjdXG002843@localhost.localdomain>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S269880AbUIDLJn@vger.kernel.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Dave Kleikamp <shaggy@austin.ibm.com>, Paul Jakma <paul@clubi.ie>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jamie Lokier <jamie@shareable.org>, Linus Torvalds <torvalds@osdl.org>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: linux-kernel@vger.kernel.org
+Cc: reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org
 
+Alan Cox <alan@lxorguk.ukuu.org.uk> schrieb/wrote:
+> On Maw, 2004-08-31 at 12:01, Claus F=E4rber wrote:
+>> A simple convention that meta data files start with, say ".$", would
+>> be enough.
 
-  
+> POSIX/SuS don't permit this. The only "free" namespace is that starti=
+ng
+> "//" (and not as some desktops seem to think foo://). Remember always
+> send GUI desktop users files called http://read.me  .. its fun 8)
 
-> Spam <spam@tnonline.net> said:
->> Dave Kleikamp <shaggy@austin.ibm.com> said:
->> >Spam <spam@tnonline.net> said:
+Well, the problem is that one does want the metadata to be in the
+ordinary namespace so that they are accessible with POSIX tools.
+(The current version of) POSIX does not have a "unified" namespace so a
+unified namespace can't be POSIX.
 
-> [...]
+I wonder if it makes sense to have an environment variable (maybe
+POSIXLY_CORRECT) to switch between POSIX and the unified namespace
+model. Of course, this would mean that all of this is handled in
+userspace (e.g. libc), whereas the kernel and filesystems export more
+"traditional" (e.g. with openat) interfaces. Accessing metadata as
+ordinary files would then work with other filesystems, too.
 
->> > You're missing the point.  We don't need transparency in all apps.  You
->> > can write an application to be as transparent as you want, but you don't
->> > need every app to to understand every file format.
-
->>   No, but not every user "can write an application" either, or even
->>   have the skills to apply patches. What I was talking about wasn't
->>   just tar, which itself isn't the best example anyway, but the idea
->>   that users can load plugins that will extend the functionality of
->>   their filesystems. That idea seem to be to be _much_ better than
->>   trying to teach every user how to write applications or patch
->>   existing ones.
-
-> Why compare "write application or apply patches" to "load plugin"? It
-> would be locical to compare running applications with loading plugins (and
-> even so, loading plugins is presumably root-only).
-
-  Doesn't matter if it is root-only. Ask the admin about the specific
-  plugin the user wants. For most other users they can su to root and
-  do this on their own computers. Not everyone is using Linux is a
-  corporate world.
-
-> [...]
-
->> > There are userland tools that deal with hundreds of file formats. Use
->> > the tool you need, rather than try to have the kernel do everything.
-
->>   No, but if I wanted to have an encryption plugin active for some of
->>   my files or directories then why should I not be able to? I still
->>   want to edit, view and save my encrypted files.
-
-> Use an editor that knows about encrypted files. Decrypt/edit/encrypt if no
-> other option (I'm sure emacs can be coerced to do that transparently ;-). I
-> for one would be _way_ more confortable with my users doing that than them
-> loading random modules into the kernel. Besides, if one of my users doesn't
-> trust the system encryption programs, and prefers hers, she can be happy.
-
-  That just doesn't do it. I doubt there will be an option to save
-  encrypted Word and Excel files and be able to open them in Abiword,
-  StarOffice or OpenOffice unless the decryption/encryption is done on
-  a lower level.
-
-  Also, eventually there may be a userland interface for loading
-  certain modules without root access.?
-
->>   Again, this was just an example of what could be done with plugins.
->>   It is not said that every conceivable plugin will be written, nor
->>   loaded per default. Even though plugins cannot today be dynamically
->>   used, they will be eventually. Reiser4 is still very young.
-
-> Modules of the kernel were supposed to have all those magic properties too,
-> until there were nasty races... and it was _seriously_ considered to take
-> them out. They stayed because they are root-only business, and (un)loading
-> is rare. FS plugins are kernel modules, AFAIU, and are subject to the same
-> problems.
-
->>   Please separate your thoughts for specific plugins from those of the
->>   idea to have plugins at all.
-
-> If you can't find concrete uses for specific plugins, they are the
-> proverbial solution searching for a problem.
-
-  To me there are fine and good uses for plugins. Everyone seem to
-  think different though.
-
-  Sure many things can perhaps be done by linking and piping lots of
-  programs, just to access some data. But that certainly is far from
-  user friendly.
-
-  ~S
-
+Claus
+--=20
+http://www.faerber.muc.de
 
