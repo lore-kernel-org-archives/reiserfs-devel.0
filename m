@@ -1,55 +1,33 @@
-From: Yury Umanets <umka@namesys.com>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: slow mount
-Date: Thu, 12 Jun 2003 18:18:36 +0400
-Message-ID: <3EE88BBC.1080508@namesys.com>
-References: <1055427629.1875.8.camel@terminus.zapto.org>
+Date: Thu, 12 Jun 2003 21:38:07 +0400
+Message-ID: <20030612173807.GA31615@namesys.com>
+References: <1055427629.1875.8.camel@terminus.zapto.org> <20030612144609.GA27645@namesys.com> <1055432836.8601.3.camel@terminus.zapto.org> <3EE8A2A0.2080500@namesys.com> <1055435090.2028.7.camel@terminus.zapto.org> <20030612172624.GG7319@namesys.com> <1055439217.2068.27.camel@terminus.zapto.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14527-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14528-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1055427629.1875.8.camel@terminus.zapto.org>
+Content-Disposition: inline
+In-Reply-To: <1055439217.2068.27.camel@terminus.zapto.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Herbie Hopkins <Herbie@Hopkins.net>
-Cc: reiserfs-list@namesys.com
+Cc: Hans Reiser <reiser@namesys.com>, Reiserfs <reiserfs-list@namesys.com>
 
-Herbie Hopkins wrote:
+Hello!
 
->It seems to take a very long time to mount a large reiserfs filesystem:
->
->  $ time mount /home
-> 
->  real    0m17.259s
->  user    0m0.000s
->  sys     0m0.000s
->
->  $ df -h
->
->  Filesystem            Size  Used Avail Use% Mounted on
->  [snip]
->  /dev/hda7              44G   12G   33G  26% /home
->
->is this normal behaviour? as this drastically increases my system statup
->time. The same partition formatted to ext3 mounts in less than a second
->and this also seems to have no reflection on the amount of data on the
->partition as it still takes this long when the filesystem in empty.
->
->Any help would be appretiated, thanks.
->Herbie
->
->
->
->  
->
-Bitmaps are read in mount time. And this realy does not depend on data 
-amount, only on filesystem size.
+On Thu, Jun 12, 2003 at 06:33:37PM +0100, Herbie Hopkins wrote:
 
--- 
-Yury Umanets
-"We're flying high, we're watching the world passes by..."
+> I don't have the dubuging stuff on at the moment, I just compiled
+> another kernel with it enabled to see what extra info it gave me.
 
+Ah, I see.
+Well, if the drive itself is inducing those delays, you cannot tell that from
+fs driver, but you probably can look around with smartctl and see how many
+relocated bad sectors it have and this kind of stuff.
 
-
+Bye,
+    Oleg
