@@ -1,47 +1,36 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: old block allocator found in 2.4.19
-Date: Fri, 24 Jan 2003 09:47:19 +0300
-Message-ID: <20030124094719.B5039@namesys.com>
-References: <5.2.0.9.2.20030123232554.02004bd8@pop.tvnet.hu>
+Subject: Re: slightly [OT] highmem (was Re: 2.4.20 at kernel.org and data logging)
+Date: Fri, 24 Jan 2003 10:50:19 +0300
+Message-ID: <20030124105019.A5426@namesys.com>
+References: <0E18D85A21D2874080456C3B8A12E83E01009FAD@cof110avexu4.global.avaya.com> <1042905430.31095.2343.camel@tiny.suse.com> <3E307657.2010200@mb.tu-ilmenau.de> <200301240040.14310.russell@coker.com.au> <3E308664.5010705@mb.tu-ilmenau.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12475-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12476-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <5.2.0.9.2.20030123232554.02004bd8@pop.tvnet.hu>
+In-Reply-To: <3E308664.5010705@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Newsmail <newsmail@satimex.tvnet.hu>
-Cc: reiserfs-list@namesys.com
+To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Cc: Russell Coker <russell@coker.com.au>, reiserfs-list <reiserfs-list@namesys.com>
 
 Hello!
 
-On Thu, Jan 23, 2003 at 11:30:07PM +0100, Newsmail wrote:
-> Hi Oleg, as you remember I mentioned you about my loop-aes+lvm+reiserfs 
-> problem, that leaves hung processes after them, and only a cold reboot 
+On Fri, Jan 24, 2003 at 01:18:44AM +0100, Manuel Krause wrote:
+> >You need highmem if you want more than 980M.  People usually refer to 1G, 
+> >and if you don't mind wasting 20M then that's near enough.
+> Mmh. So I wasn't really clear with my questions?
+> Does it give advantages for 512M systems like mine if I enabled 
+> higmem4GB / highmem64GB with "pae" or does it produce more overhead that 
+> you mention below?
 
-Yes. Unfortunatelly I only produced 2.4.20+crypto stuff kernel image and
-now other more important bugs and problems divert me from looking at your
-problem more, sorry.
-
-> could save a solution. well these problems came (in my opinion) after the 
-> introduction of the new block allocator in 2.4.20-preX. in the first 
-> version the new block allocation wasnt the default one, we had to use some 
-> preallocmin= etcetc flag in the mount process. well I would like to try 
-> with a new 2.4.20 kernel the settings for the old allocator. is there a way 
-> to use the old allocator with the new kernel? some mount option or any?
-
-Well, you can specify "tails=large,alloc=old_way:concentrating_formatted_nodes=10".
-This way it will resemble old block allocator pretty much.
-Also you can remove the new block allocator patch from 2.4.20 (just apply it
-(and later fixes) with -R patch option).
-Also it would be interesting if your hangs go away if you apply
-iput-deadlock fix: ftp://ftp.namesys.com/pub/reiserfs-for-2.4/2.4.20-pending/01-iput-deadlock-fix.diff
-
-Thank you.
+You get no advantage of course.
+But lots of overhead. Rumours have it that 256M systems with highmem enabled
+kernels (default for RedHat beta it seems) are swapping much more
+then when the same kernel is built with highmem off.
 
 Bye,
     Oleg
