@@ -1,47 +1,55 @@
-From: Lee Revell <rlrevell@joe-job.com>
+From: Alex Zarochentsev <zam@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 14:44:30 -0400
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <1093632269.837.59.camel@krustophenia.net>
-References: <Pine.LNX.4.44.0408271010300.10272-100000@chimarrao.boston.redhat.com>
-	 <412F7D22.5050101@namesys.com>
+Date: Fri, 27 Aug 2004 22:38:59 +0400
+Message-ID: <20040827183858.GF5108@backtop.namesys.com>
+References: <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <1093467601.9749.14.camel@leto.cs.pocnet.net> <20040825225933.GD5618@nocona.random> <412DA0B5.3030301@namesys.com> <20040826112818.GL5618@nocona.random> <1093520699.9004.11.camel@leto.cs.pocnet.net> <20040826121630.GN5618@nocona.random>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <412F7D22.5050101@namesys.com>
+Return-path: <reiserfs-list-return-20932-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <20040826121630.GN5618@nocona.random>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Rik van Riel <riel@redhat.com>, David Masover <ninja@slaphack.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Andrea Arcangeli <andrea@suse.de>
+Cc: Christophe Saout <christophe@saout.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, 2004-08-27 at 14:27, Hans Reiser wrote:
-> Rik van Riel wrote:
-> >On Fri, 27 Aug 2004, Hans Reiser wrote:
-> >
-> >>Why are you guys even considering going to any pain at all to distort 
-> >>semantics for the sake of backup?  tar is easy, we'll fix it and send in 
-> >>a patch. 
-> >
-> >Because not everybody uses tar.  Quite a few people use a
-> >network backup system, while others use duplicity, RPM uses
-> >cpio internally and big companies tend to use proprietary
-> >network backup suites.
-> >
-> >Breaking people's setup is something to worry about.
-> >
-> It is the tail that should not wag the dog.  New semantics are going to 
-> break backups other than dd.   We need a LOT of new semantics if we 
-> don't want to be inferior to Apple and MS.
+On Thu, Aug 26, 2004 at 02:16:30PM +0200, Andrea Arcangeli wrote:
+> On Thu, Aug 26, 2004 at 01:44:59PM +0200, Christophe Saout wrote:
+> > I think you're not exactly understanding what a reiser4 "plugin" is.
+> > 
+> > Currently plugins are not modules. It just means that there's a defined
+> > interface between the reiser4 core and the plugins. Just like you could
+> > see filesystems as "VFS plugins".
 > 
-> We should implement backup plugin methods though, so that we only have 
-> to break things once....
+> but filesystems are exactly always modules (in precompiled kernels at
+> least).
+> 
+> Anyways I don't see any visible EXPORT_SYMBOL in reiser4.
 
-Every Linux shop I know of uses amanda anyway, which will not be
-affected by these changes, as it uses dump/restore.  restore will need
-minor changes, I think dump might not have to be changed at all.
+they would be there, I think.
+> 
+> > 
+> > In fact, reiser4 plugins are
+> > - users of the reiser4 core API
+> > - some of them are implementing Linux VFS methods (thus being some sort
+> > of glue code between the Reiser4 storage tree and the Linux VFS)
+> 
+> then it seems a bit misleading to call those things plugins.
 
-If your backup system can't easily handle these changes, that's a pretty
-good indication that it's poorly designed.
+There should be infracture to change plugin on fly, and choosing object's
+plugins at object's creation time.  Currently only certain object's plugins
+can be changed through <object>/metas/plugin interface. 
 
-Lee
+> 
+> As you wrote those are "users of the reiser4 core API", with plugins I
+> always meant dynamically loadable things, like plugins for web browers
+> (hence kernel modules in kernel space). While here apparently you can't
+> plugin anything at runtime, it's just code that uses the reiser4 core
+> API that can be modified with a kernel patch as usual.
 
+-- 
+Alex.
