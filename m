@@ -1,66 +1,42 @@
-From: Jake Maciejewski <maciejej@msoe.edu>
+From: Tom Vier <tmv@comcast.net>
 Subject: Re: Plugin for corruption resistance?
-Date: Fri, 11 Feb 2005 14:39:01 -0600
-Message-ID: <1108154341.2378.14.camel@gentoo>
+Date: Fri, 11 Feb 2005 15:53:50 -0500
+Message-ID: <20050211205350.GA13345@zero>
 References: <e692861c05021110583585f84e@mail.gmail.com>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 In-Reply-To: <e692861c05021110583585f84e@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Gregory Maxwell <gmaxwell@gmail.com>
+Cc: reiserfs-list@namesys.com
 
-I think this is a great idea. Solaris ZFS is supposed to have a similar
-feature, but reiser4 metas would allow application-level access.
-
-The purpose of checksumming in ZFS is more like Gregory's 2nd point,
-except Solaris takes it one step further. If you have RAID, ZFS will fix
-the corruption automatically. Even if we didn't have automatic
-correction, which would probably impossible without an integrated volume
-manager like ZFS, it would still be nice to know if your hard drive is
-flipping bits behind your back.
-
-On Fri, 2005-02-11 at 13:58 -0500, Gregory Maxwell wrote:
-> Anyone ever given a though to adding support to reiserfs to store a
-> cryptographic checksum along with a file?
-> 
-> 
-> The idea is that files get a hidden attribute that contains their SHA1 hash.
-> If the file is modified, the hash is marked as 'unclean'. A trusted
-> cleaner comes by eventually and hashes the file, OR the file is hashed
-> right away if someone tried to read the attribute while the file is
-> unclean.
-> 
-> Fsck could be optionally told to go check the hash on every file.
-> Files could also be tested via a background process that randomly
-> tests some files every night.
-> 
-> Why would this be useful?
-> 
+On Fri, Feb 11, 2005 at 01:58:59PM -0500, Gregory Maxwell wrote:
 > 1. Lots of applications today (such a P2P sharing systems) need the
 > hashes of files.. it's inefficient to keep recomputing them.  The file
 > system always knows when a file changes, so it can be setup to always
 > return the correct hash.
-> 
-> 2. Random disk corruption can go undetected (even if the drives ECC is
-> sufficient to prevent corruption there could be memory, bus, or kernel
-> issues the corrupt data, a hash will help it be detected).
-> 
-> 3. Although there are encrypted block devices available in Linux, none
-> of them can provide authentication.. So it's possible for an attacker
-> (with access to your disk) to replace hunks of files with random (and
-> potentially chosen depending on the chaining mode) crud without
-> detection.
-> 
-> 4. It could greatly speed up casual verification of files for changes
-> (if you don't trust the kernel to report the true hash, then you
-> couldn't trust it to return the real file to some userspace file
-> verifier either).... it could also be used to help locate duplicates
-> in a very efficient manner..
--- 
-Jake Maciejewski <maciejej@msoe.edu>
 
+That should be done in userland, imho. Especially since different apps use
+lots of different hashes.
+
+I was thinking about this kind of stuff (ECC plugin for r4) not too long
+ago. Hashing the whole file is too slow; if you update a single block, the
+whole file has to be read in to recalculate. Adding, say, one sector of crc
+for each block would be a lot more feasible.
+
+I think the best way to do this though, would be to write a virtual blk
+driver that works like loop back (ie, uses a backing file/dev), and shortens
+the overall size by one sector * number of blocks. Actually, you could
+probably copy the raid5 md code and rewrite it to only use one device. I'd
+try that first.
+
+-- 
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0x15741ECE
