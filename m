@@ -1,49 +1,101 @@
-From: Lars Marowsky-Bree <lmb@suse.de>
-Subject: Re: reiser4 data journalling?
-Date: Wed, 3 Sep 2003 12:52:11 +0200
-Message-ID: <20030903105211.GC5762@marowsky-bree.de>
-References: <3F4E3AF9.2060100@tupshin.com> <16206.16138.72832.920045@laputa.namesys.com> <3F4E6AA4.3030900@namesys.com> <20030829001814.GB9019@zero> <20030829131250.GU24767@marowsky-bree.de> <3F55170E.1080603@namesys.com>
+From: "Michael Konrad" <MKonrad@syr.edu>
+Subject: Re: reiser4 mount issue
+Date: Wed, 03 Sep 2003 08:21:50 -0400
+Message-ID: <sf55a4b3.080@gwia201.syr.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-15527-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15528-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3F55170E.1080603@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Nikita@Namesys.COM
+Cc: reiserfs-list@Namesys.COM
 
-On 2003-09-03T02:17:50,
-   Hans Reiser <reiser@namesys.com> said:
+Done, recompiled kernel and mount works fine.
 
-> No, isolation is not yet implemented and won't be unless we come up with =
+Now onto using it.
 
-> some more funding from somewhere.  The txnmgr seems to be structured to=20
-> handle isolation, but....
+Thank you,
+Michael
 
-Ah, okay. Sorry, I think I had older plans in mind and hadn't checked
-how far the current roadmap matched up to them ;-)
+>>> Nikita Danilov <Nikita@Namesys.COM> 09/03/03 06:11AM >>>
+Michael Konrad writes:
+ > Hello Yury,
+ >=20
+ > This is what occurs in kernel log, when I try the reiser4 mount:=20
+ >=20
+ > Sep  3 05:48:14 [kernel]  reiser4[mount(16746)]: get_ready_format40
+ > (fs/reiser4/plugin/disk_format/disk_format40.c:229)[nikita-3228]:
+ >=20
+ > Here is the part of my .config file with reiserfs:
+ >=20
+ > CONFIG_REISER4_FS=3Dy
+ > # CONFIG_REISER4_FS_SYSCALL is not set
+ > # CONFIG_REISER4_LARGE_KEY is not set
 
-> The new thing with reiser4 is that if you do that write of 1MB to a=20
-> file, and perhaps updates to 63 other files as well, as part of an atom, =
+Flip CONFIG_REISER4_LARGE_KEY
 
-> it will either all survive a crash, or none of it will.  We have=20
-> considered using the term "transcrash" for this.
+ > # CONFIG_REISER4_CHECK is not set
+ > # CONFIG_REISER4_USE_EFLUSH is not set
+ > # CONFIG_REISER4_BADBLOCKS is not set
+ > CONFIG_REISERFS_FS=3Dy
+ > # CONFIG_REISERFS_CHECK is not set
+ > # CONFIG_REISERFS_PROC_INFO is not set
+ >=20
+ > Thank you,
+ > Michael
+ >=20
+ > Michael Konrad
+ > Systems Administrator
+ > College of Visual and Performing Arts
+ > Syracuse University
+ > >>> Yury Umanets <umka@namesys.com> 09/03/03 01:25 AM >>>
+ > On Wed, 2003-09-03 at 05:17, Michael Konrad wrote:
 
-So it's ACD and not ACID ;-) Sounds good. How is this weak transaction
-exported to userspace, ie how do I signal BEGIN and COMMIT/ABORT?
+Nikita.
 
-
-
-Sincerely,
-    Lars Marowsky-Br=E9e <lmb@suse.de>
-
---=20
-High Availability & Clustering		ever tried. ever failed. no matter.
-SuSE Labs				try again. fail again. fail better.
-Research & Development, SuSE Linux AG		-- Samuel Beckett
+ >=20
+ > Hello,
+ >=20
+ >=20
+ > > Compile of linux-2.6.0-test4 with reiser4 is good.=20
+ > > Compile of libaal-0.4.9 is good
+ > > Compile of reiser4fsprogs-0.4.12 is good.
+ > >=20
+ > > mkfs.reiser4 /dev/hda8 is good.=20
+ > >=20
+ > > When I issue the following command:
+ > >=20
+ > > mount -t reiser4 /dev/hda8 /mnt/lfs  or
+ >=20
+ > > mount -t reiserfs /dev/hda8 /mnt/lfs=20
+ > You should not be trying to mount it as reiserfs. Reiser4 is fully
+ > different filesystem.
+ > >=20
+ > > I get the following error:=20
+ > >=20
+ > > mount: wrong fs type, bad option, bad superblock on /dev/hda8, or too
+ > many mounted file systems
+ > >=20
+ > > cat /proc/filesystems=20
+ > >=20
+ > > list both reiserfs and reiser4
+ > >=20
+ > > Am I missing something simple here?
+ > >=20
+ > > Thank you,
+ > > Michael
+ >=20
+ > You should be aware, that mkfs.reiser4 creates filesystem with large
+ > keys by default. What key policy have you turned on when building
+ > kernel? And what does kernel log say?
+ >=20
+ > Regards.
+ >=20
+ >=20
+ >=20
 
