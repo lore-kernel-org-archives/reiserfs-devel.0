@@ -1,76 +1,31 @@
-From: Herbert Poetzl <herbert@13thfloor.at>
+From: Christoph Hellwig <hch@lst.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 10:46:47 +0200
-Message-ID: <20040827084647.GA7545@MAIL.13thfloor.at>
-References: <Pine.LNX.4.44.0408261440550.27909-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408261149510.2304@ppc970.osdl.org>
+Date: Fri, 27 Aug 2004 10:49:10 +0200
+Message-ID: <20040827084910.GA21968@lst.de>
+References: <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1939276887.20040826114028@tnonline.net> <20040826024956.08b66b46.akpm@osdl.org> <839984491.20040826122025@tnonline.net> <m3llg2m9o0.fsf@zoo.weinigel.se> <1906433242.20040826133511@tnonline.net> <20040826113332.GL2612@wiggy.net> <1211039639.20040826134354@tnonline.net> <1093592467.18603.6.camel@tara.firmix.at>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20891-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20892-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.58.0408261149510.2304@ppc970.osdl.org>
+In-Reply-To: <1093592467.18603.6.camel@tara.firmix.at>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Bernd Petrovitsch <bernd@firmix.at>
+Cc: Spam <spam@tnonline.net>, Wichert Akkerman <wichert@wiggy.net>, Christer Weinigel <christer@weinigel.se>, Andrew Morton <akpm@osdl.org>, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Thu, Aug 26, 2004 at 11:55:07AM -0700, Linus Torvalds wrote:
-> 
-> 
-> On Thu, 26 Aug 2004, Rik van Riel wrote:
+On Fri, Aug 27, 2004 at 09:41:07AM +0200, Bernd Petrovitsch wrote:
+> > > UNIX doesn't have a copy systemcall, applications copy the data
+> > > manually.
 > > 
-> > So you'd have both a file and a directory that just happen
-> > to have the same name ?  How would this work in the dcache?
+> >   Oh, this is very unfortunate and should be a bigger issue to fix.
 > 
-> There would be only one entry in the dcache. The lookup will select 
-> whether it opens the file or the directory based on O_DIRECTORY (and 
-> usage, of course - if it's in the middle of a path, it obviously needs to 
-> be opened as a directory regardless).
+> Then you have to rewrite POSIX und SuSv3.
 
-hmm, that might be interesting for applications
-like apache which allow to append arguments by
-'building' a 'virtual' path ...
+They don't say 'you must now have a copy syscall'.  Having one that's
+actually used by system tools would be a great optimization for many
+network or distributed filesystems.
 
-http://www.kernel.org/list.cgi/some/more/args
-
-where the web server actually decides where the
-script ends and the arguments start by checking
-the filesystem ...
-
-> That's not the problem. The problem from a dcache standpoint ends up being 
-> when the file has a link, and you have two paths to the same sub-file 
-> through two different ways:
-> 
-> 	.. create file 'x' with named stream 'y' ...
-> 	ln x z
-> 	ls -l x/y z/y	/* it's the same attribute!! */
-> 
-> but this is actually exactly the same thing that we already have with 
-> mounts, ie it is equivalent (from a dentry standpoint) to
-> 
-> 	.. create directory 'x' with file 'y' ..
-> 	mkdir z
-> 	mount --bind x z
-> 	ls -l x/y z/y	/* It's the same file!! */
-> 
-> so none of this is really anything "new" from a dcache standpoint.
-> 
-> Except for all the details, of course ;)
-
-if the file is removed, but some attributes are
-'locked' by access, will the 'other' attributes
-remain visible or disappear ... leaving a partial
-'view' of the contents? or did I get the idea
-completely wrong?
-
-TIA,
-Herbert
-
-> 		Linus
-> -
-> To unsubscribe from this list: send the line "unsubscribe linux-fsdevel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
