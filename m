@@ -1,26 +1,60 @@
-From: =?ISO-8859-2?Q?Jakub_Ambro=BFewicz?= <ja@vigor.com.pl>
-Subject: Re: superblock problem
-Date: Wed, 26 Jun 2002 15:30:02 +0200
-Message-ID: <3D19C1DA.3070508@vigor.com.pl>
-References: <3D19A3ED.6040201@vigor.com.pl>
+From: Jordan Breeding <jbb@cloves.inetint.com>
+Subject: [PATCH] support for remount options in linux-2.5.24
+Date: Wed, 26 Jun 2002 09:33:55 -0500
+Message-ID: <20020626093355.A2283@cloves.inetint.com>
+Reply-To: Jordan Breeding <jordan.breeding@inet.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10855-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="YZ5djTAD1cGYuMQK"
+Return-path: <reiserfs-list-return-10856-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: reiserfs-list@namesys.com
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-On 6/26/02 1:22 PM, Jakub Ambro=BFewicz wrote:
-> So i thought maybe i used wrong version and tried
-> all of the options, still no result. And now i stuck
-I forgot to mention that two upper version options
-of --rebuild-sb (ie 3.6.x and 3.5.9) resulted in
-superblock beeing written at block 16. Two lower versions
-wrote sb at block 2. But kernel still expected them to be
-at block 8.
+--YZ5djTAD1cGYuMQK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-JA
+Hello,
 
+  This is a patch which simply takes the patch to support more options on remount for linux-2.4.18 and updates it to work with linux-2.5.24.  Could this patch or something similar please be included in reiserfs in linux-2.5.24 so that the field for current mount options in /proc/fs/reiserfs/<filesystem>/super get updated properly when the filesystem is remounted.  Thanks.
+
+Jordan
+
+--YZ5djTAD1cGYuMQK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=patch-reiserfs-super-remount-1
+
+diff -urN linux-2.5.24-orig/fs/reiserfs/super.c linux/fs/reiserfs/super.c
+--- linux-2.5.24-orig/fs/reiserfs/super.c	Thu Jun 20 17:53:51 2002
++++ linux/fs/reiserfs/super.c	Tue Jun 25 23:54:49 2002
+@@ -677,12 +677,24 @@
+   struct reiserfs_super_block * rs;
+   struct reiserfs_transaction_handle th ;
+   unsigned long blocks;
+-  unsigned long mount_options;
++  unsigned long mount_options = 0;
+ 
+   rs = SB_DISK_SUPER_BLOCK (s);
+ 
+   if (!reiserfs_parse_options(arg, &mount_options, &blocks, NULL))
+     return -EINVAL;
++
++#define SET_OPT(opt, bits, super) \
++  if((bits) & (1 << (opt))) \
++    REISERFS_SB(super)->s_mount_opt |= (1 << (opt))
++
++  /* set options in the super-block bitmask */
++  SET_OPT(NOTAIL, mount_options, s);
++  SET_OPT(REISERFS_NO_BORDER, mount_options, s);
++  SET_OPT(REISERFS_NO_UNHASHED_RELOCATION, mount_options, s);
++  SET_OPT(REISERFS_HASHED_RELOCATION, mount_options, s);
++  SET_OPT(REISERFS_TEST4, mount_options, s);
++#undef SET_OPT
+   
+   if(blocks) {
+     int rc = reiserfs_resize(s, blocks);
+
+--YZ5djTAD1cGYuMQK--
