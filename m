@@ -1,49 +1,26 @@
-From: "Zhao, Forrest" <forrest.zhao@intel.com>
-Subject: Several questions about encrypted filesystem
-Date: Tue, 17 Jun 2003 10:14:33 +0800
-Message-ID: <3AA03342E913FA4BA6D8BD0732BFC74B020F443A@pdsmsx402.pd.intel.com>
+From: Brian Tinsley <btlists@emageon.com>
+Subject: Re: Timeframe for 2.4.21 quota patches?
+Date: Mon, 16 Jun 2003 21:31:28 -0500
+Message-ID: <3EEE7D80.7090406@emageon.com>
+References: <20030616112420.GA13558@jsambrook>	 <1055763879.23697.645.camel@tiny.suse.com>	 <200306161645.50047.christian.mayrhuber@gmx.net>	 <1055775378.24111.652.camel@tiny.suse.com>	 <20030617001233.631bb35f.philippe.gramoulle@mmania.com> <1055815743.23697.662.camel@tiny.suse.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="----_=_NextPart_001_01C33476.3141453A"
-Return-path: <reiserfs-list-return-14570-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14571-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
+In-Reply-To: <1055815743.23697.662.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-------_=_NextPart_001_01C33476.3141453A
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-=20
-
-I'm a new comer to Reiserfs list and have several questions about
-encrypted filesystem:
-
-=20
-
-1 From the mail list, I know that Reiserfs can encrypt and compress
-individual file and directory. I'd like to know Does Reiserfs support
-encrypting the entire partition and even the whole root fs?
-
-=20
-
-2 what's the difference between the encryption mechanism behind Reiserfs
-and other loopback device-based encryption implementation?
-
-=20
-
-Thanks in advance
-
-=20
-
-Forrest
+Everything running very well (as expected) here! Great job to all!
 
 
-------_=_NextPart_001_01C33476.3141453A--
+--
+Brian Tinsley
+Chief Systems Engineer
+Emageon
+
+
