@@ -1,44 +1,38 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: reiser4 snapshot
-Date: Tue, 23 Dec 2003 14:26:28 +0300
-Message-ID: <16360.9828.815746.598104@laputa.namesys.com>
-References: <16360.8933.883691.281877@laputa.namesys.com>
-	<3FE823F9.2070209@gmx.net>
+From: Domenico Andreoli <cavok@libero.it>
+Subject: libaal & libreiser4 sonames
+Date: Tue, 23 Dec 2003 13:08:07 +0100
+Message-ID: <3FE83027.4090008@libero.it>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16389-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16390-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FE823F9.2070209@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
-Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>, Reiserfs developers mail-list <Reiserfs-Dev@Namesys.COM>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Carl-Daniel Hailfinger writes:
- > Nikita Danilov wrote:
- > > Hello,
- > > 
- > > new reiser4 snapshot (for 2.6.0) is available at the
- > > 
- > > http://www.namesys.com/snapshots/2003.12.23/
- > > [...]
- > > broken-out                  core.diff split into separate patches
- > 
- > 403 Forbidden
- > You don't have permission to access /snapshots/2003.12.23/broken-out/ on
- > this server.
+hi,
 
-Thanks, fixed.
+i just built libaal and libreiser4 from 2003.12.23 snapshot.
 
- > 
- > 
- > Carl-Daniel
- > -- 
- > http://www.hailfinger.org/
- > 
+i see that now the sonames include the full version of the libraries, 
+making their upgrade somewhat more tricky in package and distribution 
+contexts.
 
+which is the plan to manage changes of the library interfaces? you use 
+both -version-info and -release libtool params, how do you update them?
 
-Nikita.
+actually this matter has little relevance but in future, when more 
+software will use these libraries, you won't surely want to break anything 
+only because you released a fix update and changed the version (and hence 
+the soname) of the shared library, will you?
+
+cheers
+domenico
+
+-----[ Domenico Andreoli, aka cavok
+--[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
+   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
+
