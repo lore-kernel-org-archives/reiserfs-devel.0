@@ -1,45 +1,47 @@
 From: Tonnerre <tonnerre@thundrix.ch>
-Subject: Re: silent semantic changes with reiser4
-Date: Wed, 8 Sep 2004 17:25:12 +0200
-Message-ID: <20040908152512.GA2726@thundrix.ch>
-References: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com> <200408290004.i7T04DEO003646@localhost.localdomain> <20040901224513.GM31934@mail.shareable.org> <20040903082256.GA17629@kroah.com> <2f4958ff04090301326e7302c1@mail.gmail.com> <41383142.4080201@hist.no> <2f4958ff04090302141bc222e5@mail.gmail.com> <413ECC32.8070509@hist.no>
+Subject: Re: The argument for fs assistance in handling archives
+Date: Wed, 8 Sep 2004 18:02:28 +0200
+Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <20040908160228.GC2726@thundrix.ch>
+References: <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org> <4136C876.5010806@namesys.com> <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org> <4136E0B6.4000705@namesys.com> <4699bb7b04090202121119a57b@mail.gmail.com> <4136E756.8020105@hist.no> <4699bb7b0409020245250922f9@mail.gmail.com> <413829DF.8010305@hist.no> <20040905134428.GN26560@thundrix.ch> <413ECFD8.1040808@hist.no>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
-Return-path: <reiserfs-list-return-21634-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+	protocol="application/pgp-signature"; boundary="E/DnYTRukya0zdZ1"
+Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S268699AbUIHQH7@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <413ECC32.8070509@hist.no>
+In-Reply-To: <413ECFD8.1040808@hist.no>
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Helge Hafting <helge.hafting@hist.no>
-Cc: Grzegorz Ja??kiewicz <gryzman@gmail.com>, Greg KH <greg@kroah.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Cc: Oliver Hunt <oliverhunt@gmail.com>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
---2fHTh5uZTiUOsy+g
+
+--E/DnYTRukya0zdZ1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Salut,
 
-On Wed, Sep 08, 2004 at 11:09:06AM +0200, Helge Hafting wrote:
-> >udef is a one big mistake, having need for userspace tool to use FS is
-> >at least silly.
->=20
-> Well, devfs had devfsd - a userspace tool . . .
+On Wed, Sep 08, 2004 at 11:24:40AM +0200, Helge Hafting wrote:
+> If you can open a fork/substream/whatever by issuing
+> open("filename/forkname", ...
+> then the old-fashioned open() works with multi-fork files too.
+> An tools based on "open() something, then work with
+> the resulting file descriptor" will work _unchanged_
+> with such a multi-fork fs.
 
-devfsd was not a requirement, it was only a tool for people who wanted
-their old device names for devfs devices. I was once doing a miniature
-environment for  a package installation  system which used  pure devfs
-(i.e.   no  old  dev names),  and  it  was  doing super  well  without
-devfs. sysinstall  was the only  process running, and I  could install
-Linux on any writeable device without using devfsd.
+In my version they'd run unchanged as well.
 
-			   Tonnerre
+And  BTW,  I wasn't  talking  about introducing  a  new  open at  libc
+level.  I was  talking about  modifying the  open system  call  in the
+kernel and having libc provide compatibility for the old call.
 
---2fHTh5uZTiUOsy+g
+Since  I'm not  sure  how much  breakage it  takes  to make  a file  a
+directory.
+
+			    Tonnerre
+
+
+--E/DnYTRukya0zdZ1
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 Content-Disposition: inline
@@ -47,9 +49,9 @@ Content-Disposition: inline
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.9.2 (GNU/Linux)
 
-iD8DBQFBPyRX/4bL7ovhw40RAvlnAJ9Fkrv0fPp+PIRH/e9ZDCBBhudX4wCgodJ0
-Y7sxldd8kDTHKVKKX9gZEPI=
-=iXdQ
+iD8DBQFBPy0U/4bL7ovhw40RAhPmAJwK/wFQaiypfxKf3HA+addCeMk8BACfaYuT
+bSqujKHq5azTs7Sqol+gMWc=
+=QBR7
 -----END PGP SIGNATURE-----
 
---2fHTh5uZTiUOsy+g--
+--E/DnYTRukya0zdZ1--
