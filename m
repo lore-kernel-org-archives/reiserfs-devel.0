@@ -1,46 +1,36 @@
-From: Jamie Lokier <jamie@shareable.org>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 14:59:36 +0100
-Message-ID: <20040826135936.GC5733@mail.shareable.org>
-References: <20040826024956.08b66b46.akpm@osdl.org> <Pine.LNX.4.44.0408260935130.26316-100000@chimarrao.boston.redhat.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: reiser4 plugins (was: silent semantic changes with reiser4)
+Date: Thu, 26 Aug 2004 09:58:00 -0400
+Message-ID: <1093528680.21878.284.camel@watt.suse.com>
+References: <Pine.LNX.4.44.0408260952230.26316-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20678-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20679-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44.0408260935130.26316-100000@chimarrao.boston.redhat.com>
+In-Reply-To: <Pine.LNX.4.44.0408260952230.26316-100000@chimarrao.boston.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Rik van Riel <riel@redhat.com>
-Cc: Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Cc: Christophe Saout <christophe@saout.de>, Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-Rik van Riel wrote:
-> > All of which can be handled in userspace library code.
-> > 
-> > What compelling reason is there for doing this in the kernel?
+On Thu, 2004-08-26 at 09:52, Rik van Riel wrote:
+> On Thu, 26 Aug 2004, Christophe Saout wrote:
 > 
-> There's a compelling reason to do it in userspace.  If an
-> unaware program copies or moves such a file with streams
-> inside, it doesn't break the streams and aware programs will
-> continue to see them.
+> > That's your opinion. reiser4 seems to work very well.
 > 
-> OTOH, if we had the streams in the kernel, unaware applications
-> would continuously break the metadata and streams that the
-> streams aware programs expect !
+> Have you tried /bin/cp, or a backup+restore ?
+> 
+> What happened to your file streams ?
 
-You appear not to have read any of my mails on this topic.
+Shrug, backup programs can be fixed.  The fact that we couldn't backup
+16GB files before O_LARGEFILE wasn't a reason not to do it.
 
-Properly implemented metadata can:
+IMHO it's more important to ask the question 'is this important for
+linux' and then we can figure out how to make it work.
 
-  (1) operate in both modes simultaneously;
-  (2) work with unaware applications;
-  (3) provide performance enhancements to aware applications;
-  (4) provide storage enhancements to both;
-  (5) provide useful features that work with standard unmodified unix tools,
+-chris
 
-all at once.  That includes program copies.
 
--- Jamie
