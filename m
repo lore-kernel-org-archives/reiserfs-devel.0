@@ -1,48 +1,61 @@
-From: Christian Iversen <chrivers@iversen-net.dk>
-Subject: Re: Plugin for corruption resistance?
-Date: Thu, 17 Feb 2005 11:53:43 +0100
-Message-ID: <200502171153.43403.chrivers@iversen-net.dk>
-References: <e692861c05021110583585f84e@mail.gmail.com> <loom.20050215T213823-62@post.gmane.org> <42141928.7080608@slaphack.com>
+From: Milan =?ISO-8859-1?Q?Holz=E4pfel?= <lists@mjh.name>
+Subject: Re: ReiserFS V3 and linux-kernel-2.6
+Date: Thu, 17 Feb 2005 15:03:37 +0100
+Message-ID: <20050217150337.767e320e.lists@mjh.name>
+References: <139119350.20050209110514@kgpa.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42141928.7080608@slaphack.com>
-Content-Disposition: inline
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
-On Thursday 17 February 2005 05:10, David Masover wrote:
-> Adam wrote:
-> | Hans Reiser <reiser <at> namesys.com> writes:
-> |>Its on the legitimate wish list, if someone wants to code it, let me
-> |> know.
-> |
-> | Hans, does this mean that you think that this type of functionality
->
-> should be
->
-> | implemented as a Reiser4 plugin and therefore in kernelspace?  Why
->
-> wouldn't this
->
-> | be better implemented in userspace via a daemon that is notified of file
-> | modification via dnotify/inotify?
->
-> Because dnotify/inotify don't scale.  I don't think they lock on event,
-> either, whereas a plugin could guarentee that the hash was up-to-date
-> (no race conditions).
->
-> We've been over this before.  There's a reason reiser4 and its plugins
-> are in kernel space, and not in something like Fuse.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-And, surely, updating a hash value when 1 byte changes in a gigabyte file, 
-would be much faster from kernel space where you can actually see the 
-changeset?
+On Wed, 9 Feb 2005 11:05:14 +0200
+"Oleg O. Ossovitskii" <oleg@kgpa.ru> wrote:
 
--- 
+> # CONFIG_DEVFS_MOUNT is not set
+
+Your kernel won't probably mount the devfs filesystem without this
+option.  I am however not sure whether this will have any influence on
+the kernel mounting its root fs or not (since DEVFS is mounted under
+/dev, and when there's no /, where to mount it?).  But you could try it
+anyway.
+
 Regards,
-Christian Iversen
+Milan
+
+- --=20
+
+                   Milan Holz=E4pfel alias jagdfalke alias jag
+
+Antworten direkt an mich                             Answers directly to me
+gehen bitte an eine Addresse,                        go to an address one
+die man hier finden kann:                            can find here, please:
+
+Kontaktinfos sowie                                   Contact infos as well =
+as
+=D6ff GnuPG-Schl=FCssel    <URL:http://con.mjh.name/>    GnuPG Public Key
+GnuPG Fingerabdruck     4C8A 5FAF 5D32 6125 89D1     GnuPG Fingerprint
+                        0CE5 DB0C AF4F 6583 7966
+
+
+
+                    http://www.deppenleerzeichen.de/                       =
+=20
+
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.6 (GNU/Linux)
+
+iD8DBQFCFKQ52wyvT2WDeWYRAt0HAKC7xSkMzDQhjYTntEOqGEig00CRUACgsH58
+u/eQeSCpmy8sQDeSBv22aXg=3D
+=3D0cZL
+-----END PGP SIGNATURE-----
+
