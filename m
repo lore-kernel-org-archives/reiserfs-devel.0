@@ -1,66 +1,52 @@
-From: John Dalbec <jpdalbec@ysu.edu>
-Subject: Re: Trying to port data-logging to RH 2.4.18-19.7.x kernel
-Date: Tue, 04 Feb 2003 13:01:52 -0500
-Message-ID: <3E400010.8010800@ysu.edu>
-References: <3E3A8B15.80300@ysu.edu>	 <1044024906.15685.206.camel@tiny.suse.com>  <3E3A99A1.2010600@ysu.edu>	 <1044029165.15685.226.camel@tiny.suse.com>  <3E3AEA73.1090607@ysu.edu> <1044290509.15685.391.camel@tiny.suse.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: when distros do not support official Marcelo kernels they are not being team players (was Re: reiserfs on redhat advanced server?)
+Date: Tue, 04 Feb 2003 15:55:41 -0500
+Message-ID: <200302042055.h14KtfHp006059@turing-police.cc.vt.edu>
+References: <20030131122147.GE15359@marowsky-bree.de> <3E3A6D76.7080300@namesys.com> <86lm0xpmho.fsf@trasno.mitica> <3E3E7A95.1050908@namesys.com> <1044284001.15685.358.camel@tiny.suse.com> <3E3EBA3F.7060806@namesys.com> <1044300746.15684.428.camel@tiny.suse.com> <3E3EC7EC.8090005@namesys.com> <1044304857.15684.475.camel@tiny.suse.com> <3E3F0D5D.5070409@namesys.com>
+            <20030204163609.GT19723@suse.de>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_-1101649710P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12643-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12644-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: Your message of "Tue, 04 Feb 2003 17:36:09 +0100."
+             <20030204163609.GT19723@suse.de> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
+To: Hubert Mantel <mantel@suse.de>
 Cc: reiserfs-list@namesys.com
 
-Chris Mason wrote:
-> On Fri, 2003-01-31 at 16:28, John Dalbec wrote:
-> 
-> 
->>The immediate caller is the "ReiserFS specific hack" in 
->>fs/inode.c:get_inode signed <mason@suse.com>.  Is the BKL supposed to be 
->>held when get_inode is called?  
-> 
-> 
-> Traditionally, the BKL is supposed to be held when iget or iget4 is
-> called.  RedHat might have patches that do away with that and simply
-> missed reiserfs, but it is more likely they have a patch to reduce BKL
-> use in NFS that missed the iget4 case.
+--==_Exmh_-1101649710P
+Content-Type: text/plain; charset=us-ascii
 
-After inspecting nfsfh.c I think the "correct" fix is to grab the BKL in 
-find_fh_dentry before calling nfsd_get_dentry.  There are other calls to 
-nfsd_get_dentry later in find_fh_dentry but the BKL is already held at 
-that point.
+On Tue, 04 Feb 2003 17:36:09 +0100, Hubert Mantel <mantel@suse.de>  said:
 
---- linux/fs/nfsd/nfsfh.c.orig  Tue Feb  4 10:55:36 2003
-+++ linux/fs/nfsd/nfsfh.c       Tue Feb  4 10:58:19 2003
-@@ -410,7 +410,9 @@
-          */
-   retry:
-         down(&sb->s_nfsd_free_path_sem);
-+       lock_kernel();
-         result = nfsd_get_dentry(sb, datap, len, fhtype, 0);
-+       unlock_kernel();
-         if (IS_ERR(result)
-             || !(result->d_flags & DCACHE_NFSD_DISCONNECTED)
-             || (!S_ISDIR(result->d_inode->i_mode) && ! needpath)) {
+> > Linebackers should defend the quarterback, or convince the rest of the 
+> > team to get a different quarterback.
+> 
+> Sorry, I don't understand a single word in this sentence.
 
-> 
-> So your two basic choices are adding the BKL to reiserfs_read_inode2, or
-> going into the nfsd source and putting them around the iget4 call.  You
-> might want to double check to see if their source had the BKL in
-> reiserfs_read_inode2 before you started the data logging port.   
-> 
-> If not, you should be able to reproduce the oops on an unmodified redhat
-> kernel (compiled with SMP on), and I'd appreciate it if you could send
-> them a bug report as well.
-> 
-> -chris
-> 
-> 
-> 
+I didn't either.  Usually in American football, Linebackers are trying to
+tackle whatever person on the opposing team happens to have the ball at
+the moment.
 
+Linebackers *do* sometimes cause a change of quarterback, but this usually
+involves an injury timeout to remove a recently-flattened quarterback from
+the field....
 
+--==_Exmh_-1101649710P
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.1 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQE+QCjNcC3lWbTT17ARArruAKD7eaW0KAonwCsxsFD1YaBglGGCGACeIIUY
+uYGt8fUadI/GviYwrPJiDgQ=
+=T2Bk
+-----END PGP SIGNATURE-----
+
+--==_Exmh_-1101649710P--
