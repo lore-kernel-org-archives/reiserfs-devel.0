@@ -1,68 +1,130 @@
-From: Shawn Rutledge <e_cloud@yahoo.com>
-Subject: Re: ReiserFS on a flash device?
-Date: Sat, 26 Jul 2003 17:03:01 -0700
-Sender: Shawn Rutledge <rutledge@ecloud.org>
-Message-ID: <20030727000301.GE894@ecloud.org>
-References: <200307261640.13629.swsnyder@insightbb.com>
+From: Yury Umanets <umka@namesys.com>
+Subject: Re: Reiser4 status: benchmarked vs. V3 (and ext3)
+Date: Sun, 27 Jul 2003 14:30:11 +0400
+Message-ID: <1059301810.17567.98.camel@haron.namesys.com>
+References: <3F1EF7DB.2010805@namesys.com>
+	 <1059062380.29238.260.camel@sonja>
+	 <16160.4704.102110.352311@laputa.namesys.com>
+	 <1059093594.29239.314.camel@sonja>
+	 <16161.10863.793737.229170@laputa.namesys.com>
+	 <1059142851.6962.18.camel@sonja>
+	 <1059143985.19594.3.camel@haron.namesys.com>
+	 <1059181687.10059.5.camel@sonja>
+	 <1059203990.21910.13.camel@haron.namesys.com>
+	 <1059228808.10692.7.camel@sonja>
+	 <1059231274.28094.40.camel@haron.namesys.com>
+	 <1059232897.10692.37.camel@sonja>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15057-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15058-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200307261640.13629.swsnyder@insightbb.com>
+In-Reply-To: <1059232897.10692.37.camel@sonja>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Daniel Egger <degger@fhm.edu>
+Cc: Nikita Danilov <Nikita@Namesys.COM>, Hans Reiser <reiser@namesys.com>, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, reiserfs mailing list <reiserfs-list@namesys.com>
 
-I wanted to use ReiserFS for an embedded system, but on a 32 or 64 meg CF
-card, v3 takes up too much of it for a journal, so it wasn't practical.
-Is there a way to make the journal much smaller, or have it grow
-on-demand rather than being fixed-size?  In practice the CF card won't 
-be written to very much (for longevity reasons), but I don't ever want 
-an embedded system to waste time fscking itself and prompting what to 
-do about any errors; and at the same time don't see why it should be 
-required to be a read-only filesystem, as is often done, because it makes
-the occasional upgrade harder.  And apparently JFFS2 is only for simple 
-memory-mapped FLASH chips without built-in write-balancing like CF cards 
-have.
+On Sat, 2003-07-26 at 19:21, Daniel Egger wrote:
+> Am Sam, 2003-07-26 um 16.54 schrieb Yury Umanets:
+> 
+> Now we're talking. :)
 
-I use the mainstream ReiserFS in Linus' kernels on all my home machines
-and love it.  It's so fast and stable as a rock, and the only problems 
-I've had were hardware-related.
 
-On Sat, Jul 26, 2003 at 04:40:13PM -0700, Steve Snyder wrote:
-> I was taken aback by Yury Umanets' recent suggestion 
-> (http://groups.google.com/groups?hl=en&lr=lang_en&ie=UTF-8&safe=off&th=d50aa0bf6c7f26d0&seekm=1059231274.28094.40.camel%40haron.namesys.com.lucky.linux.kernel#link11) 
-> that ReiserFS is not an appropriate for a flash device.
+
 > 
-> I am currently using it (via Linux kernel v2.4.21) on an E-Disk 
-> (http://www.bitmicro.com/products_edisk_35_scsiw.php) flash device as the 
-> front-end of a low-traffic Squid Web cache.  The Squid experts recommend 
-> the use of ReiserFS (with the notail option) for it's superior 
-> performance in handling lots of small files.  I understand that flash has 
-> a finite number of write cycles, but for this application performance is 
-> critical, and disk I/O (access times, not STR) is the bottleneck in Squid 
-> performance.
+> > Reiserfs cannot be used efficiently with flash, as it uses block size 4K
+> > (by default) and usual flash block size is in range 64K - 256K.
 > 
-> A quote from the post referred to above:
+> Don't confuse block size with erase size. The former is the layout of
+> the fs' data on the medium while the latter is the granulariy of the
+> erase command which is important insofar that flash has to be erased (in
+> most cases) before one can write new data on it.
+
+So what? I mean, that if an IO request size does not equal to flash
+erase size, then corresponding block device driver can't just submit
+data to flash, but need maintain some cache, and cache size the same as 
+erase size for particular flash device. And in the case when WRITE
+request is encountered, and write sector does not equal to start sector
+of cached data or cache is empty, block device driver should read data
+from flash first to fill cache up. This is redundant IO operation.
+
+
 > 
-> >But, if you are still want to use reiserfs for flash device, you should
-> >do at least the following: 
-> >
-> >(1) Make the journal substantial smaller of size.
-> >(2) Don't turn tails off. This is useful to prolong flash live.
+> However since you said that one can plug in a different block allocation
+> scheme, I think it might be possible to work around that limitation by
+> writing a block allocator which works around the limitations of the
+> erase size.
+
+This is some misunderstanding :) First we've spoken about reiser4, then
+you asked how does reiserfs behave on flash devices and is it convenient
+for flash at all.
+
+Just make sure, that we're speaking about the same thing:
+
+Plugin-based architecture is used in reiser4, not in reiserfs (reiser3).
+Reiser4 is fully different, written from the scratch filesystem. 
+
 > 
-> More detail, please?  How is journal size a factor?  How does notails 
-> reduce flash longevity?
+> > Also reiserfs does not use compression, that would be very nice of it
+> > :), because flash has limited number of erase cycles per block (in range
+> > 100.000)
 > 
-> Thanks.
+
+
+> I don't see what the compression has to do with the limited number of
+> erase/write cycles.
+
+Compressed data which should be written is smaller then uncompressed
+one, thus, its writing affects smaller number of blocks. Each block will
+be erased rarely, that will prolong flash live.
+
 > 
+> >  and it is about three times as expensive as SDRAM.
 > 
+> That's true but not important to us. The system right now fits nicely on
+> a 128MB CF card when using ext2 or on 64MB when using JFFS2. The latter
+> is far more stable and reliable but dogslow. Since the price difference
+> between 128MB and 64CF is rather small and the cost of the overall
+> system relatively high this is no argument for us.
+
+So, you prefer speed? What do you use for this x86 box with flash?
+
+> 
+> > So, it is better to use something more convenient. For instance jffs2.
+> 
+
+> Convenient only insofar that it's more reliable.
+
+I'd not say, that ext2 is too reliable though.
+
+>  It's a pain in the neck
+> to setup for non hardwired flash chips and to boot, it also takes
+> forever to mount and to write on it.
+> 
+> > (1) Make the journal substantial smaller of size.
+> > (2) Don't turn tails off. This is useful to prolong flash live.
+
+> 
+> Thanks. But first I'll have a look at your plugin architecture to see
+> how feasible a different implementation of block allocation especially
+> for flash devices would be.
+
+You should take a look to reiser4, not to reiserfs. Don't forget :) 
+
+But I don't understand, why do you want to make changes in current block
+allocator plugin? In other words, what is wrong with current
+implementation, which is willing to allocate blocks closer one to
+another one? 
+
+I thought, if blocks lie side by side, as current block allocator does,
+this increases probability of flash block device cache hitting (take a
+look to drivers/mtd/mtdblock.c), what is definitely good. Isn't it?
+
+Regards.
 
 -- 
-  _______                                                Shawn T. Rutledge
- (_  | |_)                      e_cloud@yahoo.com * http://ecloud.org:8080
- __) | | \________________________________________________________________
+We're flying high, we're watching the world passes by...
+
