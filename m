@@ -1,41 +1,33 @@
-From: Andi Kleen <ak@muc.de>
-Subject: Re: reiser4 data journalling?
-Date: Sat, 30 Aug 2003 20:22:18 +0200
-Message-ID: <m3oey7m2ed.fsf@averell.firstfloor.org>
-References: <3F4E3AF9.2060100@tupshin.com>
-	<16206.16138.72832.920045@laputa.namesys.com>
-	<3F4E6AA4.3030900@namesys.com> <20030829001814.GB9019@zero>
-	<3F4E9C6D.2080009@namesys.com> <20030829012322.GJ21352@matchmail.com>
-	<20030829050857.GA5755@namesys.com> <3F4F91DB.2080900@namesys.com>
-	<16207.38985.871686.419166@laputa.namesys.com>
-	<3F4FC8FD.1050303@namesys.com>
+From: Jeffrey Yasskin <jyasskin@mail.utexas.edu>
+Subject: Where are the plugins?
+Date: Sat, 30 Aug 2003 15:24:47 -0500
+Message-ID: <3F51080F.7060901@mail.utexas.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15501-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15502-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F4FC8FD.1050303@namesys.com> (Hans Reiser's message of "Sat,
- 30 Aug 2003 01:43:25 +0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Hans Reiser <reiser@namesys.com> writes:
->>
-> Because atomicity in ext3 basically consists of guaranteeing that the filesystem is consistent, and due to the disk drive implementation 4k blocks are written atomically.  So, if you span more than one block, it is not guaranteed to be atomic.
+I've been looking at the reiser4 source code for a few days, and I can't 
+find any non-essential plugins.
 
-I was told most modern disks run with 32-64K blocks internally.
+For example: You say on the website that you've written several security 
+plugins for DARPA, but the only files in fs/reiser4/plugin/security/ are 
+acl.c and perm.{c,h}, and acl.c is empty.
+On the website you also suggest writing a plugin so /etc/passwd can be 
+split in to individually-permissioned sub-files. Is that plugin written 
+yet, or is it just an idea?
 
-4K is very unlikely.
+I'd like to write a few plugins to move mp3s' and oggs' meta-data into 
+the filesystem, and it'd be a lot easier if there were an example to 
+copy from. (Would it be better just to move that kind of plugin into a 
+userspace callback?)
 
-Of course they don't always guarantee that a write of such a block
-is atomic, but then they also don't guarantee it for 4K.
+Thanks,
+Jeffrey
 
-The only sure way is to wait for the disk telling you it is finished 
-(= use write barriers)  and/or turn the write buffer off.
-Even then you have to hope that the disk firmware doesn't lie to you.
-
--Andi
