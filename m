@@ -1,36 +1,35 @@
-From: Kuba Ober <kuba@mareimbrium.org>
-Subject: Re: PAP-12365: check_after_balance_leaf: S is incorrectkernel BUG at  prints.c:334! (Part 4)
-Date: Mon, 12 Aug 2002 11:18:23 -0400
-Message-ID: <200208121118.23879.kuba@mareimbrium.org>
-References: <3D57B561.1481B525@baldauf.org>
+From: Chris Mason <mason@suse.com>
+Subject: Re: lk 2.4.19 ReiserFS Build
+Date: 12 Aug 2002 12:03:26 -0400
+Message-ID: <1029168206.1759.664.camel@tiny>
+References: <93F527C91A6ED411AFE10050040665D0049BFE51@corpusmx1.us.dg.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11172-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11173-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3D57B561.1481B525@baldauf.org>
+In-Reply-To: <93F527C91A6ED411AFE10050040665D0049BFE51@corpusmx1.us.dg.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Xuan Baldauf <xuan--reiserfs@baldauf.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: berthiaume_wayne@emc.com
+Cc: green@namesys.com, reiserfs-list@namesys.com, Mizar_Sunita@emc.com
 
-On poniedzia=B3ek 12 sierpie=F1 2002 09:17 am, Xuan Baldauf wrote:
-> I checked the filesystem multiple times with
-> reiserfsck-3.x.0b (first) and reiserfsck-3.x.0k-pre8 (then).
-> The first run showed a bitmap error which was fixed then
-> with "--fix-fixable". All subsequent runs could not find any
-> error. All logs above were captured aftere these reiserfsck
-> runs.
+On Fri, 2002-08-09 at 14:16, berthiaume_wayne@emc.com wrote:
+> 	Chris/Oleg, I'm planning to build 2.4.19-final and would like to get
+> ReiserFS up to the latest stable patch level. I'm looking at the following
+> but have noticed in a message from Manuel Krause that there are some Namesys
+> patches he has been testing successfully. 
 
-Use version 3.6.3 of reiserfs-utils. *Do not* use any previous version (3.x=
-.0b=20
-& 3.x.0.k are *really* obsolete), nor do not use any kernel below 2.4.18=20
-(2.4.19 is preferred).
+Hi Wayne,
 
-Umount the filesystems, check them using newest reiserfsck, then upgrade to=
-=20
-newest kernel.
+Sorry for the delay, things here have been a bit crazy.  I've got to
+head out to linux world until thursday, I should have a new barrier
+patch for you then.
 
-Cheers, Kuba Ober
+For the moment, I would just stick with the patches in my ftp directory.
+
+-chris
+
+
