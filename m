@@ -1,31 +1,36 @@
-From: Fong Vang <FVang@Zantaz.com>
-Subject: digest form
-Date: Thu, 8 May 2003 08:35:07 -0700
-Message-ID: <12C7D768CC8ED4118A9200508BEEC6FB03377550@zanexch.zantaz.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: power loss -> corruption
+Date: Thu, 08 May 2003 22:58:35 +0400
+Message-ID: <3EBAA8DB.3080202@namesys.com>
+References: <m1k7d11yaz.fsf@orchid.mirar.org>	<200305081348.42359.Dieter.Nuetzel@hamburg.de>	<m1fznp1w3a.fsf@orchid.mirar.org>	<200305081502.47455.Dieter.Nuetzel@hamburg.de> <m17k911sq4.fsf@orchid.mirar.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14024-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14026-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <m17k911sq4.fsf@orchid.mirar.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "'reiserfs-list@namesys.com'" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Mirar <mirar-yg@mirar.org>
+Cc: =?ISO-8859-1?Q?Dieter_N=FCtzel?= <Dieter.Nuetzel@hamburg.de>, reiserfs-list@namesys.com
 
-Is there a digest format of his mailing list?  I don't want to get
-individual messages.  I would prefer to have all emails combined and sent to
-me at the end of the day.
+You have run into the disadvantage of meta-data journaling, which is 
+that files that you are writing to may be corrupted if you crash.  This 
+disadvantage exists for performance reasons: using traditional 
+journaling approaches such as V3 uses, if you journal the data you must 
+write it twice.  V3 also offers you the option of performing ordered 
+writes, in which, if I remember right, metadata is only updated after 
+the data reaches disk.
+
+V4 uses a completely different technology we call wandering logs, in 
+which every filesystem operation is performed as a fully atomic 
+transaction, and because of its new design, there is very little 
+performance cost (in fact, reiser4 is higher performance than V3).  We 
+hope V4 will be ready for prime time sometime this summer.
+
+-- 
+Hans
 
 
-This e-mail has been captured and archived by the ZANTAZ Digital Safe(tm)
-service.  For more information, visit us at www.zantaz.com. 
-IMPORTANT: This electronic mail message is intended only for the use of the
-individual or entity to which it is addressed and may contain information
-that is privileged, confidential or exempt from disclosure under applicable
-law.  If the reader of this message is not the intended recipient, or the
-employee or agent responsible for delivering this message to the intended
-recipient, you are hereby notified that any dissemination, distribution or
-copying of this communication is strictly prohibited.  If you have received
-this communication in error, please notify the sender immediately by
-telephone or directly reply to the original message(s) sent.  Thank you.
