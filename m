@@ -1,45 +1,53 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiserfs_create: no enough blocks on device
-Date: Tue, 03 Aug 2004 01:32:17 -0700
-Message-ID: <410F4D91.2020206@namesys.com>
-References: <20040802212341.24550.qmail@web50907.mail.yahoo.com> <20040802215322.GB1912@schnapps.adilger.int>
+From: "Wallace Michel" <aDubois@juneisp.biz>
+Subject: RE: At last, smart filtering technology that works    bridgehead
+Date: Tue, 03 Aug 2004 06:04:22 -0500
+Message-ID: <882752083827.29829502950766201599@juneisp.biz>
+Reply-To: "Wallace Michel" <aDubois@juneisp.biz>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19932-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-19933-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040802215322.GB1912@schnapps.adilger.int>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Andreas Dilger <adilger@clusterfs.com>
-Cc: sankarshana rao <san_wipro@yahoo.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiser@namesys.com
+Cc: reiserfs-list@namesys.com
 
-Andreas Dilger wrote:
+FORGET SPAM BLOCKERS!
 
->On Aug 02, 2004  14:23 -0700, sankarshana rao wrote:
->  
->
->>I am trying to create a reiserfs filesystem using the
->>command 
->>'mkreiserfs  /dev/loop/0 100'.
->>It always gives me the error 
->>"reiserfs_create: no enough blocks on device".
->>
->>I tried altering the block size, but it would not
->>help..
->>    
->>
->
->You can't make a reiserfs filesystem smaller than about 40MB.
->
->Cheers, Andreas
->--
->Andreas Dilger
->http://sourceforge.net/projects/ext2resize/
->http://members.shaw.ca/adilger/             http://members.shaw.ca/golinux/
->
->  
->
-unless you shrink the 32MB journal....
+Get SMART Spam Control That Always Delivers The Email You Want!
+
+Finally, we discovered the ultimate solution that is guaranteed to stop all spam
+without losing any of your important email! This revolutionary advanced technology
+also protects you 100% against ALL email-borne viruses - both known and unknown.
+
+We didn't beleive it either until we actually tried it. So you be the judge and see for yourself.
+
+
+
+You owe it to yourself to try this program, and forward this email to all of your friends who
+hate Spam or as many people as possible.Learn more: http://mail-svcs.com/more
+
+ 
+
+We are strongly against sending unsolicited emails to those who do not wish to receive
+our special mailings. If you do not wish to receive further mailings go here: http://mail-svcs.com/r.htm
+
+Markket Research
+8721 Santa Monica Boulevard
+#1105
+Los Angeles, CA 90069-4507
+
+
+
+--- sytem info ---
+astronomic  brought  angles  daphne  agnomen
+coolheaded accusative  diacritic  antiperspirant  dogfish
+
+
+
+
+
