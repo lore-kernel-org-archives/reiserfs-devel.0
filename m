@@ -1,46 +1,67 @@
-From: Faraz S <farazs@calsoftinc.com>
-Subject: Comments about indexing and query solving in user land
-Date: Mon, 06 Sep 2004 14:32:34 +0530
-Message-ID: <19592.4152424142$1094461530@news.gmane.org>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: optimal kernel version for testing reiser4
+Date: Mon, 06 Sep 2004 13:11:44 +0400
+Message-ID: <1094461904.1341.108.camel@tribesman.namesys.com>
+References: <413A4D7A.8090909@dermichi.com>
+	 <1094458373.1341.102.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21504-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21505-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1094458373.1341.102.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: Michael Weissenbacher <webmaster@dermichi.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Hi;
-	With the hot debate on the linux kernel mailing list about what
-features must be in the kernel, i'd like to add my experience about
-keeping the query parser in the userspace. 
+Hello
 
-	In our project http://sourceforge.net/projects/linuxsfs-tm/ we did the
-attribute indexing and query parsing in the user-space and we had hooks
-in the VFS which communicated with the user-space deamons. As far as
-directory listing is concerned we had a in kernel-recordset cache
-(hashed on the query). The listing were pretty efficient.
+On Mon, 2004-09-06 at 12:12, Vladimir Saveliev wrote:
+> Hello
+> 
+> On Sun, 2004-09-05 at 03:19, Michael Weissenbacher wrote:
+> > Can anybody tell me which kernel version is optimal for testing reiser4. 
+> > I've found it runs stable on 2.6.8.1-mm2 for me except that i 
+> > occasionaly get "wrong bytes" errors when doing a fsck. 
+> > I read in the 
+> > mailing-list archive that this error should be fixed, but is it also 
+> > fixed in 2.6.8.1-mm2? 
+> 
+> The bug about which you read was that files got number of bytes twice
+> more that they had to. This bug is fixed. 2.6.8.1-mm2 contains the fix.
+> So, I assume you encounter somthing different. Would you show what does
+> fsck report, please?
+> 
+> > I've been burned using 2.6.9-rc1-mm1 for some 
+> > time, which has a problem with files which are bytes%4096=0 bytes big. 
+> 
+> What is that problem?
+> 
 
-	But the real problem occured when a large number of files were copied
-in the onto our file system. All the files now need to be indexed in the
-user space , leading to mode switch. That was pathetically slooow. The
-entire 2.4 sources were copied in 5-6 hours. I think this problem could
-be solved by batching requests the user space deamon.  Then u have all
-the problems on missing out on indexing on a large set of files.
-	
-	No doubt the feature which did content based listing was very well
-recieved by the audience of the project. I will soon be uplaoding the
-project documentation and PPT's. 
+Sorry, I see that now, never mind.
 
-WE NEED THIS FOR SURE - BUT DONE IN THE RIGHT WAY
-
-regards.
-
--- 
-Faraz Ahmed Shaikh
-Member Technical Staff
-Calsoft Pvt Limited
+> > So i tried 2.6.9-rc1-mm3 today and found it was unstable on my pc (weird 
+> > hangs) but i'm certain this had nothing to do with reiser4.
+> > 
+> > So to make it short: Which kernel do you guys use for developing/testing 
+> > reiser4 
+> 
+> I am working with 2.6.9-rc1-mm1
+> 
+> > because it's hard to test when you can't tell if it's a general 
+> > kernel bug or a problem specific to reiser4. Is there a patch that can 
+> > be applied to the vanilla 2.6 kernel? On the website there is only the 
+> > notice to use some mm-kernel. Where are the latest patches?
+> > 
+> 
+> There is nothing yet which would have to be pushed up urgently. AFAIK.
+> 
+> > regards,
+> > Michael
+> > 
+> 
+> 
 
