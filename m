@@ -1,39 +1,36 @@
-From: Ed Tomlinson <tomlins@cam.org>
+From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
 Subject: Re: Reiserfs fs corruption with 2.5.49
-Date: Wed, 27 Nov 2002 08:46:30 -0500
-Message-ID: <200211270846.30257.tomlins@cam.org>
-References: <200211270810.06553.tomlins@cam.org> <15844.50995.61298.126680@laputa.namesys.com>
+Date: Wed, 27 Nov 2002 16:51:16 +0100
+Message-ID: <200211271651.16513.Dieter.Nuetzel@hamburg.de>
+References: <200211270810.06553.tomlins@cam.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-12057-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12058-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <15844.50995.61298.126680@laputa.namesys.com>
+In-Reply-To: <200211270810.06553.tomlins@cam.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+To: Ed Tomlinson <tomlins@cam.org>, reiserfs-list@namesys.com
 
-On November 27, 2002 08:22 am, Nikita Danilov wrote:
-> Ed Tomlinson writes:
->  > Hi,
->  >
->  > I am seeing reiserfs (3.6 r5 hash) fs corruption in 2.5.49
->  >
->  > oscar% ls alsa*
->  > zsh: no matches found: alsa*
->  > oscar% ls mod*
->  > alsa-driver-0.9+0beta4-4
->  > oscar% rm "alsa-driver-0.9+0beta4-4"
->  > rm: cannot remove `alsa-driver-0.9+0beta4-4': No such file or directory
->
-> This can be explained if you have file alsa-driver-0.9+0beta4-4 within
-> directory named modSOMETHING, right? Can you try
->
-> $ ls -d ls mod*
+Am Mittwoch, 27. November 2002 14:10 schrieb Ed Tomlinson:
 
-YES.  Thanks - stupid me.  I this case I am glad to be wrong though.
+[-]
 
-Ed Tomlinson
+> The fs with the above error passed an reiserfsck (3.6.4) 2 and a half days
+> ago (just before the last reboot) - when I had to do a rebuild tree after
+> booting 2.5.49-mm1, which did oops.  Looks like the bug is not just in -m=
+m1
+> though.
+
+2.5.49-mm1 is somewhat unstable on my dual Athlon MP all SCSI main disk is=
+=20
+U160 10k and ReiserFS 3.6 all the time.
+
+Hang during dbench 32.
+
+Regards,
+	Dieter
