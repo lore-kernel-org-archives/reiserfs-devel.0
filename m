@@ -1,35 +1,40 @@
 From: Oleg Drokin <green@namesys.com>
 Subject: Re: Error messages.
-Date: Thu, 6 Mar 2003 11:37:35 +0300
-Message-ID: <20030306113735.A12355@namesys.com>
-References: <7473069171.20030305201818@tnonline.net> <200303060907.49762.pacman@huji.ac.il> <20030306101957.A5751@namesys.com> <200303060919.45287.pacman@huji.ac.il>
+Date: Thu, 6 Mar 2003 11:40:45 +0300
+Message-ID: <20030306114045.B12355@namesys.com>
+References: <7473069171.20030305201818@tnonline.net> <20030306095743.B5417@namesys.com> <170120728875.20030306093238@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13116-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13117-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200303060919.45287.pacman@huji.ac.il>
+In-Reply-To: <170120728875.20030306093238@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Voicu Liviu <pacman@huji.ac.il>
+To: Anders Widman <andewid@tnonline.net>
 Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Thu, Mar 06, 2003 at 09:19:45AM +0200, Voicu Liviu wrote:
-> > > On Thursday 06 March 2003 08:57, Oleg Drokin wrote:
-> > > > hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
-> > > >   hda: dma_intr: error=0x84 { DriveStatusError BadCRC }
-> > This is a complete sign of either your having noisy/broken (or too long?)
-> > IDE cable (consider changing).
-> > or your using too high UDMA mode for your IDE cable (e.g. UDMA3+ for 40
-> > wire cable) (consider changing cable or lowering UDMA mode).
-> but not bad HD right? this is a new Seagate 40 GB
+On Thu, Mar 06, 2003 at 09:32:38AM +0100, Anders Widman wrote:
 
-Right, this is not bad HDD.
+> > And for this case I am sure this was a scratchy CD-ROM disk in my CD-ROM drive.
+>    Well, have no CD-ROM. :)
+
+/dev/hdg is one of my CD-ROMs ;)
+
+> > Probably same stuff can be get when drive is busy remapping bad sectors?
+> > Use smartctl to find out how these messages corellate with remapped bad sectors counts?
+>   Very strange. Would mean all of my harddrives would be broken, or on
+>   their  way  to  get  broken.  I  do  not  believe that.  Most of the
+>   hardware, including the cabling has been replaced and changed.
+
+Well, seems as Wayne have noticed, you have one common part:
+Promise controllers. How about using different kind of controller
+on one of the boxes and see if it helps?
 
 Bye,
     Oleg
