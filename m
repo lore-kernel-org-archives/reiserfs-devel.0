@@ -1,36 +1,108 @@
-From: Shaya Potter <spotter@cs.columbia.edu>
+From: Spam <spam@tnonline.net>
 Subject: Re: silent semantic changes with reiser4
-Date: Sun, 29 Aug 2004 08:52:46 -0700
+Date: Sun, 29 Aug 2004 18:18:28 +0200
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <1093794766.9102.10.camel@localhost.localdomain>
-References: <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk>
-	 <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org>
-	 <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk>
-	 <20040826001152.GB23423@mail.shareable.org>
-	 <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk>
-	 <20040826010049.GA24731@mail.shareable.org> <412DA40B.5040806@namesys.com>
-	 <20040826140500.GA29965@fs.tum.de>
-	 <1093530313.11694.56.camel@leto.cs.pocnet.net>
-	 <20040826150434.GF5733@mail.shareable.org>
-	 <20040829123428.GP5108@backtop.namesys.com>
+Message-ID: <584579467.20040829181828@tnonline.net>
+References: Message from Spam <spam@tnonline.net>    of "Thu, 26 Aug 2004
+ 13:15:47 +0200." <1453776111.20040826131547@tnonline.net>
+ <200408272358.i7RNweGh002703@localhost.localdomain>
+Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040829123428.GP5108@backtop.namesys.com>
+In-Reply-To: <200408272358.i7RNweGh002703@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: Jamie Lokier <jamie@shareable.org>, Christophe Saout <christophe@saout.de>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Sun, 2004-08-29 at 16:34 +0400, Alex Zarochentsev wrote:
 
-> Do you mean COW files or some another thing?  For COW files, the reiser4
-> support is not enough, we need to teach cp(1) or another utility to inform the
-> fs layer that copying can be done by creation of COW files.
+  
 
-it's easy enough to add that via an fs ioctl(), I did the equivalent
-last semester for some research I'm doing while using ext3cow (which
-unfortunately was put on hold for the summer), it's just a take off of
-sys_link(), a sys_cowpy() of sorts.
+> Spam <spam@tnonline.net> said:
+>> Andrew Morton <akpm@osdl.org> said:
 
+> [...]
+
+>> > For example, some image file formats already support embedded metadata, do
+>> > they not?
+
+>>   Yes, JPEG, TIFF and PNG files for example. But, if you modify any of
+>>   these  with  an application that doesn't support the extensions then
+>>   you will loose them.
+
+> As you will each time you muck around with your files-are-directories.
+> Nothing new there.
+
+>>   Also,  you  are thinking _very_ narrowly now. There are thousands of
+>>   file  formats.  Implementing  the  support  for  meta-data/ streams/
+>>   attributes  in  the  kernel  will  make  it  possible  to  use  this
+>>   generically for all files.
+
+> So the _kernel_ has to know about thousands of formats, just in case it
+> some blue day it comes across a strange file? Better leave that to the
+> applications.
+
+  No,  not  at all. The only think the kernel would need to support is
+  the actual meta files and streams - not the contents of the streams.
+  That is up to the applications to know and use.
+
+  The  idea  with  plugins  to reiser4 would allow someone to create a
+  plugin that would export the thumbnails from TIFF and JPEG images as
+  separate streams.
+
+> You will _not_ be able to define a single format for extra data about the
+> file, there will be differing extra data for different users (do you
+> suggest a root-only file with special writable pouches for "graphical icon
+> for the file" for each user on the system?!), so the idea in itself is
+> doomed from the start.
+
+  We  do  not need to define a single format. You are locking yourself
+  to  the contents of streams and meta files.
+
+  If  someone  likes  the  idea of a plugin that would allow for icons
+  then  that  may  be  it. It would be up to application developers to
+  know  about  this and use it. Perhaps they could agree on a standard
+  even.
+>>   I  use  this  in  Windows  quite much.
+
+> Then use it and be happy. No need to screw up Linux for that.
+
+  This  wouldn't  screw anything up besides allowing for extending the
+  functionality.  There  is noone that forces you to enable and instll
+  plugins,  use  extra attributes or meta info. All of this always was
+  optional (as I see it).
+
+>>                                          I put information description
+>>   fields  for  lots  of  different  files. These descriptions are then
+>>   searchable etc. I could use the command prompt to copy the files and
+>>   the descriptions would still be there.
+
+> The descriptions might make sense to _you_, _now_. No guarantee they make
+> any sense (or are in the least useful) for other users on your system, and
+> I might want them in arabic or some such. The descriptions might make no
+> sense to you in a couple of years.
+
+  So? The same may be for your own word documents etc. It doesn't mean
+  I do not find it useful now, or that anyone else might not. Shall we
+  not  include  features  because "someone" on the same system may not
+  use it? Seems very backward to me.
+
+  If   I   include   a filestream, description.xml, then that wouldn't
+  affect  anyone. I would know how to read the file, and that would be
+  enough.
+
+>>   Secondly, do you expect file managers like Nautilus and Konqueror to
+>>   support  every piece of file format on the planet so they could read
+>>   information directly from the documents?
+
+> That's their (self-selected) job, yes.
+
+  Yes  and  no.  I  used  them  as example but there are lots of other
+  programs  that  can access files. Midnight commander, cp, tar, email
+  programs and lots of others.
+
+  besides, I think it would be easier for them to 1) write plugins and
+  2)  just  use normal file access method to provide the extra data to
+  the users.
 
