@@ -1,51 +1,34 @@
-From: Thorsten Mauch <mauch@imkenberg.de>
-Subject: AW: rebuildfs
-Date: Tue, 5 Aug 2003 19:42:51 +0200
-Message-ID: <E5A63F34D141D111A6F4080009D70ACA346D68@imkedv_pdc>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: rebuildfs
+Date: Tue, 5 Aug 2003 22:12:59 +0400
+Message-ID: <200308052212.59461.vitaly@namesys.com>
+References: <E5A63F34D141D111A6F4080009D70ACA346D64@imkedv_pdc> <200308051951.38602.vitaly@namesys.com> <20030805114701.W4479@schatzie.adilger.int>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-15158-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15159-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20030805114701.W4479@schatzie.adilger.int>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: "'reiserfs-list@namesys.com'" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Andreas Dilger <adilger@clusterfs.com>
+Cc: Thorsten Mauch <mauch@imkenberg.de>, "'reiserfs-list@namesys.com'" <reiserfs-list@namesys.com>
 
-This is exactly what i made the first time :(
-Anyway, now dd_rescue runs and I give it a try=20
+> > If dd without conv=noerror fails for you -- you have problems with
+> > reading some blocks -- you should use dd_rescue instead as dd
+> > forgets to create holes in the target image when cannot read some
+> > block. This explains garbage in files in your case.
+>
+> This same effect is available with normal dd via "conv=sync,noerror".
 
------Urspr=FCngliche Nachricht-----
-Von: Andreas Dilger [mailto:adilger@clusterfs.com]
-Gesendet: Dienstag, 5. August 2003 19:47
-An: Vitaly Fertman
-Cc: Thorsten Mauch; 'reiserfs-list@namesys.com'
-Betreff: Re: rebuildfs
+I suggested dd_rescue as some our tests with dd showed that it does 
+not create the hole in the target when fails to read some block. Although 
+I am not sure about "sync" option. Do you mean that we could just miss 
+"sync" option and got wrong result? I will test it again.
 
-
-On Aug 05, 2003  19:51 +0400, Vitaly Fertman wrote:
-> On Tuesday 05 August 2003 19:30, Thorsten Mauch wrote:
-> > Now i finised with the version 2.6.11.
-> > I find now files that have exectly the creation time of thoose =
-files i
-> > seek. And at least
-> > in one case the size is aslo resonalble. But the content is not =
-like
-> > expectet.
-> > Is there a way to controll how the files are rebuild ? or is there
-> > something that i
-> > could do better ?
->=20
-> If dd without conv=3Dnoerror fails for you -- you have problems with=20
-> reading some blocks -- you should use dd_rescue instead as dd=20
-> forgets to create holes in the target image when cannot read some=20
-> block. This explains garbage in files in your case.
-
-This same effect is available with normal dd via "conv=3Dsync,noerror".
-
-Cheers, Andreas
---
-Andreas Dilger
-http://sourceforge.net/projects/ext2resize/
-http://www-mddsp.enel.ucalgary.ca/People/adilger/
+-- 
+Thanks,
+Vitaly Fertman
