@@ -1,31 +1,24 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: www.namesys.com down
-Date: Thu, 24 Jun 2004 13:12:10 +0400
-Message-ID: <20040624091210.GG5080@backtop.namesys.com>
-References: <20040624090231.GB22482@favonius>
+From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+Subject: Re: we need a slogan for our reiser4 t-shirt
+Date: 24 Jun 2004 10:36:07 +0100
+Message-ID: <1088069767.5428.8.camel@pear.st-and.ac.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19333-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19334-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040624090231.GB22482@favonius>
+Content-Transfer-Encoding: 7bit
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Sander <sander@humilis.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Thu, Jun 24, 2004 at 11:02:31AM +0200, Sander wrote:
-> Hi,
-> 
-> I notice www.namesys.com is down for quite some time now. At first it
-> was not pingable, but now just the webserver refuses to 'serve the web'.
-> Is this due to the migration to reiserfs4?
+> Sounds like an ad, we want a t-shirt people want to wear.  Maybe, "My 
+> filesystem is faster than yours...."?
 
-Yes. Yesterday we resolved apache2/reiser4 issue.  Now the server is
-reconfigured again.
+not bad. but how about
 
--- 
-Alex.
+"Smarter, Faster, Reiser" ?
+
+
