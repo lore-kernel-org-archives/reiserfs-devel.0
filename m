@@ -1,36 +1,97 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Apache2 problems
-Date: Mon, 9 Aug 2004 20:29:23 +0300
-Message-ID: <20040809172923.GQ1284@nysv.org>
-References: <cd32a06204080910256de4cc0e@mail.gmail.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output error"
+Date: Mon, 09 Aug 2004 10:43:26 -0700
+Message-ID: <4117B7BE.4050305@namesys.com>
+References: <20040809015911.9D6B815D42@mail03.powweb.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20091-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20092-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <cd32a06204080910256de4cc0e@mail.gmail.com>
+In-Reply-To: <20040809015911.9D6B815D42@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tom Lanyon <tomlanyon@gmail.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Dabbs <david@dabbs.net>
+Cc: 'ReiserFS List' <reiserfs-list@namesys.com>, 'Nikita Danilov' <Nikita@namesys.com>, 'Alexander Zarochentcev' <zam@namesys.com>, "'E. Gryaznova'" <grev@namesys.com>
 
-On Tue, Aug 10, 2004 at 02:55:55AM +0930, Tom Lanyon wrote:
+David Dabbs wrote:
+
+>  
 >
->This is reiser4-2004.07.23-19.37-linux-2.6.8-rc2-bk4.diff  on a
->2.6.8-rc2 kernel.
+>>>>Hans:
+>>>>yes, it [hashing] is only a good idea for filenames larger than 15
+>>>>characters.
+>>>>
+>>>>
+>>>>
+>>>>        
+>>>>
+>>>Actually, larger than 7 + 8 + 8 characters, if LARGE_KEY is used.
+>>>
+>>>      
+>>>
+>>Oh.  Ok.  LARGE_KEY is the only thing that should be used.
+>>
+>>    
+>>
+>>>>it is extremely unrealistic to create the files in one phase and write
+>>>>to them in the next phase.  the filesystem will behave completely
+>>>>differently.
+>>>>
+>>>>        
+>>>>
+>>>Of course. The extra files I added are created once, and should never be
+>>>touched again since mongo only operates on the objects it creates. I am
+>>>simply loading the test filesystem with a reasonable facsimile of a
+>>>      
+>>>
+>>'normal' Linux file set (with the exception that the files are all zero
+>>length).
+>>    
+>>
+>>a huge exception.  I don't grok what you are trying to do here.
+>>
+>>    
+>>
+>
+>Mongo starts with a clean slate filesystem. I was attempting to run the
+>tests on top of something other than a clean filesystem, because that is an
+>exceptional situation. Based on your reaction, it is obviously not
+>detrimental to measuring relative performance measures. I didn't really care
+>about the performance of the MKFILES & MKDIRS phases themselves - that was
+>irrelevant. I simply wanted to run the tests on a filesystem that looked as
+>much as possible as what one might start with under 'normal' conditions. The
+>only reason the files were zero length - and not a copy of real files - was
+>that at the time I had limited disk space with which to test. 
+>
+>But enough of extensions and experiments. I am in no way trying to press a
+>case for my MKDIRS/FILES experiments. I do, however, believe mongo should be
+>run with file names longer than six characters 
+>
+ok.
 
-I would suggest using such an old snapshot.
+>and that have extensions.
+>  
+>
+this should be without effect, provided that the file creation order is 
+the same as the hash/fibration order.
 
-According to Namesys (Zam iirc) the bug has been fixed.
-
->I'm about to try the latest snapshot on a vanilla 2.6.8-rc3 and see if
->it helps..
-
-Please do.
-
--- 
-mjt
+>This is not representative of Linux file system usage, nor does it exercise
+>reiser features designed to improve performance, e.g. fibration. In
+>addition, as you point out, it should probably not benchmark mounting and
+>unmounting the filesystem -- unless there was good reason to have done so.
+>
+>The real issue, for me at least, is finding a method of determining whether
+>the errors I saw were due to hardware or software; if it is the latter,
+>whether it can be traced to mongo, the filesystem or Linux.
+>
+>David
+>
+>
+>
+>
+>  
+>
 
