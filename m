@@ -1,55 +1,34 @@
-From: Matthias Lange <ml@netuse.de>
-Subject: rename system call kernel lockup
-Date: Wed, 08 May 2002 15:03:11 +0200
-Message-ID: <3CD9220F.8030709@netuse.de>
+From: Chris Mason <mason@suse.com>
+Subject: Re: BTW: 2.4.19-patches-to-come?
+Date: 08 May 2002 09:04:50 -0400
+Message-ID: <1020863090.32044.202.camel@tiny>
+References: <3CD72AB1.6010607@netscape.net>
+	<20020507092207.A6678@namesys.com> <3CD82C76.2080706@netscape.net> 
+	<20020508093044.A32071@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10283-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10284-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <20020508093044.A32071@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Oleg Drokin <green@namesys.com>
+Cc: Manuel Krause <manuelkrause@netscape.net>, reiserfs-list <reiserfs-list@namesys.com>
 
-Hi,
+On Wed, 2002-05-08 at 01:30, Oleg Drokin wrote:
+ 
+> > I don't find this information very explicative. And I really don't know
+> > enough about reiserfs code to interprete these lines. BTW, can we have a
+> > "ReiserFS: " in front of these messages?
+> 
+> In fact I think these messages should not be printed at all, there is no
+> useful information given to the user.
 
-My system: Linux hobbes 2.4.4-64GB-SMP #1 SMP
-(SuSE Distribution 7.2)
+I like a summary line: completed X number of truncates and N number of
+deletes.
 
-The following c program locks up in kernel mode and a
-reboot is required to access the directory /tmp/b again:
+-chris
 
-$ mkdir -p /tmp/b/a
-
---------------------
-#include <stdio.h>
-int main (void) {
-   int ret;
-
-   ret =3D rename("/tmp/b/a","/tmp/b");   /* <--- locks up here */
-
-   printf("Return Code: %d\n",ret);
-   perror("main");
-   return 0
-}
---------------------
-
-The partition is reiserfs, created with 3.5 and running with the
--o conv option to enable 32Bit uids.
-
-I have not found any references to this problem on the mailing list,
-is this a known bug? Possibly fixed in current versions?
-
-Any help or advice is appreciated.
-
-Greetings
-
-Matthias Lange
-
-Please cc: me since I am not on the list
---=20
-Matthias Lange, Dipl.-Ing. (FH)                 e:   ml@netuse.de
-NetUSE AG               Dr.-Hell-Stra=DFe         Fon: +49 431 38643500
-http://www.netuse.de/   D-24107 Kiel, Germany   Fax: +49 431 38643599
 
