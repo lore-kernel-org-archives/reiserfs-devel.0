@@ -1,83 +1,146 @@
-From: "Tanya Kay" <wrmajckkwuig@yahoo.com>
-Subject: doctor contact, medical directory, and physiciansguid.
-Date: Tue, 14 Dec 2004 10:31:59 +0100
-Message-ID: <MSQPJCSWNWEIBFWLSELX@yahoo.com>
+From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+Subject: Re: file as a directory
+Date: 14 Dec 2004 16:58:38 +0000
+Message-ID: <1103043518.21728.159.camel@pear.st-and.ac.uk>
+References: <200411301631.iAUGVT8h007823@laptop11.inf.utfsm.cl>
+	 <41ACA7C9.1070001@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="--996946204158290492"
-Return-path: <reiserfs-list-return-22760-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22762-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <41ACA7C9.1070001@namesys.com>
+Content-Transfer-Encoding: 7bit
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiser@namesys.com, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, vitaly@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-----996946204158290492
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+Hans,
+Following the recent discussions on the lists on "file as directory", I
+re-read part of your http://www.namesys.com/v4/v4.html paper (in
+sections near "Aggregating Files Can Improve The User Interface To
+Them") and realised that you have discussed this issue in quite a lot of
+detail already there (see copied below). (Strange though that nobody
+referred to it in the discussion! People don't seem to be very good at
+reading (and that seems to include me)).
 
-The New 2005 United States Healthcare Database.
+It looks to me that the "file as directory" and "directory as file"
+issues are almost identical. What you are saying is that you could
+automatically aggregate files in a directory to look like a single file
+(you give the example of the /etc/passwd file). I was saying that you
+could make a file look like a directory.
+Perhaps a better way to think about this is that instead of talking
+about directories and files, we just talk about objects. Each object
+would have file-type access methods and directory-type access methods.
+This has some implications for the syntax. You (in v4.html) suggest
+using the /.glued syntax:
 
-This complete database includes all hospitals, nursing homes, 
-and physicians in the country.
+/new_syntax_access_path/big_directory_of_small_files/.glued
 
-In a rapidly-changing industry, current healthcare information is an 
-invaluable resource to businesses and organizations.  The United States 
-Healthcare Database includes comprehensive information on more than 
-7,000 hospitals, 25,000 nursing homes and 400,000 doctors.  It is the 
-most extensive and reliable mailing list and database of key decision 
-makers in the health care market.
- 
-Each record is indexed by such features as name, address, phone and 
-fax. The database is available in Excel format on CD Rom.  It is 
-designed for mailing lists and merges.  The data can be selected by 
-state or other criteria such as type of practice. It can be used on 
-an unlimited basis.
+I think the "object" philosophy would rather imply that the object (or
+directory) should have a default glueing method, so when you access the
+directory as a file (using read(), for instance)
 
-For the past 14 years, MedCom has maintained the most comprehensive 
-healthcare lists.  Our directories are 100% telephone verified and 
-updated every quarter. MedCom continues to hold the nation's most 
-extensive and reliable databases of key decision-makers in the health 
-care market.
- 
-Available exclusively on CD-Rom (Excel), the data can be used on an 
-unlimited basis. It is easily exportable to other programs for 
-mailing or faxing purposes.
+/new_syntax_access_path/big_directory_of_small_files
 
-For a limited time, this extensive database is offered at an introductory =
+would automatically give you the glued file (without having to add the
+.glued !) and when you access it as a directory (using readdir(), for
+instance), you would get the components listed as a directory.
+(I am not sure whether the access method, e.g. read() vs. readdir() is
+sufficient to distinguish the meaning. Another way may be putting a "/"
+after the objectname to indicate that you want it as a directory.)
 
+If we do this, the applications don't need to know whether they are
+dealing with an object consisting of small files, aggregated, or whether
+they are looking at a big file with some way of accessing their parts.
+If an old application (or user) looks for the /etc/passwd file, it will
+still get what it expects without having to know that the file is an
+aggregate.
 
-Price of $195 (reg. $745).
+In fact, from the point of view of the file system, it doesn't make much
+of a difference, in both cases they map names to keys. The only
+difference (as far as I can see) is whether metadata is stored
+separately for each component or only once for the objcts. 
 
-To order, please print this e-mail, complete the information below and 
-fax it to 416-765-0029 (tel: 416-765-0028).
+If you store metadata only once, then a component could inherit metadata
+(such as modification date) from the parent. There should be some way of
+telling the file system which bits need their own metadata. But the way
+of telling the file system this probably should not be mixed up with the
+file naming.
 
-NAME:
-    
-TITLE:
+There may be some complications with some parts of files being linked to
+a different number of times, so if you remove a hard link from the whole
+file, should a component linked from elsewhere be kept or deleted.
 
-ORGANIZATION:
+Do you think we could leave off the ./glued bit? Would it break too many
+things?
 
-ADDRESS:
+ Peter
 
-CITY:
-
-STATE:
-
-POSTAL:
-
-TEL:
-
-FAX:
-
-EMAIL:
- 
-
-MedCom
-4410 Massachusettes Ave. NW, #201
-Washington, DC 20016
-
-
-----996946204158290492--
+In http://www.namesys.com/v4/v4.html Hans Reiser wrote:
+> ...
+> Aggregating Files Can Improve The User Interface To Them
+> Consider the use of emacs on a collection of a thousand small 8-32
+byte
+> files like you might have if you deconstructed /etc/passwd into small
+> files with separable acls for every field. It is more convenient in
+> screen real estate, buffer management, and other user interface
+> considerations, to operate on them as an aggregation all placed into a
+> single buffer rather than as a thousand 8-32 byte buffers.
+> 
+> 
+> How Do We Write Modifications To An Aggregation
+> Suppose we create a plugin that aggregates all of the files in a
+> directory into a single stream. How does one handle writes to that
+> aggregation that change the length of the components of that
+> aggregation?
+> 
+> Richard Stallman pointed out to me that if we separate the aggregated
+> files with delimiters, then emacs need not be changed at all to
+acquire
+> an effective interface for large numbers of small files accessed via
+an
+> aggregation plugin. If
+> /new_syntax_access_path/big_directory_of_small_files/.glued is a
+plugin
+> that aggregates every file in big_directory_of_small_files with a
+> delimiter separating every file within the aggregation, then one can
+> simply type emacs
+> /new_syntax_access_path/big_directory_of_small_files/.glued, and the
+> filesystem has done all the work emacs needs to be effective at this.
+> Not a line of emacs needs to be changed.
+> 
+> One needs to be able to choose different delimiting syntax for
+different
+> aggregation plugins so that one can, for say the passwd file,
+aggregate
+> subdirectories into lines, and files within those subdirectories into
+> colon separate fields within the line. XML would benefit from yet
+other
+> delimiter construction rules. (We have been told by Philipp Guehring 
+of
+> LivingXML.NET  that ReiserFS is higher performance than any database
+for
+> storing XML, so this issue is not purely theoretical.)
+> 
+> 
+> Aggregation Is Best Implemented As Inheritance
+> In summary, to be able to achieve precision in security we need to
+have
+> inheritance with specifiable delimiters and we need whole file
+> inheritance to support ACLs.
+> 
+> 
+> One Plugin Using Delimiters That Resemble sys_reiser4() Syntax
+> We provide the infrastructure for your constructing plugins that
+> implement arbitrary processing of writes to inheriting files, but we
+> also supply one generic inheriting file plugin that intentionally uses
+> delimiters very close to the sys_reiser4() syntax. We will document
+the
+> syntax more fully when that code is working, for now syntax details
+are
+> in the comments in the file invert.c in the source code. ...
 
