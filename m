@@ -1,36 +1,34 @@
-From: prj@po.cwru.edu (Paul Jarc)
-Subject: Re: attrib +A doesn't work
-Date: Thu, 24 Oct 2002 11:22:07 -0400
-Message-ID: <m3k7k7vp3e.fsf@multivac.cwru.edu>
-References: <20020905034320.GA11951@yzero>
-	<15735.10894.167461.158961@laputa.namesys.com>
-	<20020905140132.A19752@namesys.com> <m3iszseukm.fsf@multivac.cwru.edu>
-	<15799.37953.280992.61682@laputa.namesys.com>
+From: Philippe =?ISO-8859-1?B?R3JhbW91bGzp?= <philippe.gramoulle@mmania.com>
+Subject: [OT] memory issue with GNU find
+Date: Thu, 24 Oct 2002 17:43:30 +0200
+Message-ID: <20021024174330.34f2d72e.philippe.gramoulle@mmania.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11756-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11757-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <15799.37953.280992.61682@laputa.namesys.com> (Nikita Danilov's
- message of "Thu, 24 Oct 2002 10:33:37 +0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: reiserfs <reiserfs-list@namesys.com>
 
-Nikita Danilov <Nikita@Namesys.COM> wrote:
-> Paul Jarc writes:
->> Should -o attrs be used just once, or every time afterwards?
->
-> On each mount. Does attribute support actually works for you?
+Hi,
 
-I just did a quick test with chattr +A, and it seemed to work.  Out of
-curiosity, what would happen if I forgot to use attrs once?  I'm
-guessing attributes would not take effect and could not be changed
-until I remounted, but once I did, the stored attributes wouldn't be
-lost, right?  Also, is there any way to make attrs and notail show up
-in /proc/mounts?
+Sorry to be a little off topic here but here is the issue:
 
+For legal reasons we need to list all files on a filer (reiserfs FS so not
+_that_ offtopic :o).
 
-paul
+Problem is that the filer is about 400Go and number of files according to 
+/proc/fs/reiserfs/*/oidmap is about 20 Million files.
+
+From what we've read and seen , find is eating up all memory to the point that
+the filer start to swap and then crashes.
+
+Would anyone know how to do that without bring the filer to its knees in terms
+of memory ?
+
+thanks,
+
+Philippe
