@@ -1,49 +1,74 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: reiser4progs 0.5.4 for Debian
-Date: Thu, 10 Jun 2004 00:56:53 +0300
-Message-ID: <20040609215653.GT4990@nysv.org>
-References: <20040603194120.GD4990@nysv.org> <20040607193305.GA4854@raptus.homelinux.org> <20040607200203.GL4990@nysv.org> <ca4168$342$1@sea.gmane.org> <20040608184559.GM4990@nysv.org> <871xkppire.fsf@uhoreg.ca> <40C6881E.9020806@namesys.com> <87pt88mpta.fsf@uhoreg.ca> <20040609215021.GA10925@raptus.homelinux.org>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: The situation at hand and in the future
+Date: Wed, 09 Jun 2004 17:01:17 -0500
+Message-ID: <40C788AD.4000800@slaphack.com>
+References: <20040527200127.GS4990@nysv.org> <200405272105.i4RL5LDh026210@turing-police.cc.vt.edu> <40B6670D.9060408@slaphack.com> <20040528063324.GT4990@nysv.org> <40B89C9C.5050307@slaphack.com> <873c5j0zm3.fsf@uhoreg.ca> <40B91A65.2060302@slaphack.com> <200405311827.i4VIRdlS001316@turing-police.cc.vt.edu> <40BBA23D.7000109@slaphack.com> <87ekp0ghbo.fsf@uhoreg.ca>            <40C1510F.5020608@slaphack.com> <200406050730.i557UouE026516@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19124-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19125-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040609215021.GA10925@raptus.homelinux.org>
+In-Reply-To: <200406050730.i557UouE026516@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Valdis.Kletnieks@vt.edu
+Cc: Hubert Chan <hubert@uhoreg.ca>, reiserfs-list@namesys.com
 
-On Wed, Jun 09, 2004 at 11:50:21PM +0200, Domenico Andreoli wrote:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
->when i asked to the installer team [0] if it was reasonaible to include
->reiser4 i was told it is probably too young. something can be still
->done anyway, i'll work on it.
 
-I tried to build a Reiser4-enabled Sarge installer many time units ago.
-It didn't work out. It built but I can't remember why it failed on me...
 
-Maybe I should try it again. If I can find all the stuff I wrote for it.
+Valdis.Kletnieks@vt.edu wrote:
+[...]
+| Proper programming would probably render encryption almost-zero overhead.
+| Except for really high-end disk subsystems, you're not going to get an
+*effective*
+| (i.e. after seeks and rotational delay and all that) throughput of
+much over
+| 40 megabytes/second - and encrypting/decrypting at 40 megabytes/second
 
-If I didn't rm -rf it, I hope it is of some use, or maybe so I could
-see why it failed. Of course it's possible it was just bad karma code :)
+Yes, I know this.  Consider:  On Windows 9x (and 3.1, of course), when
+you read from a floppy, it's unbelievably slow.  True, this doesn't
+matter much when you consider how slow the physical medium is.  But
+while it's actually reading it, you cannot do anything else.
 
->recent versions of all the reiserfs/reiser4 tools. if reiser4 does not
->enter in the sarge installer i'll provide also an alternative way to
->install a sarge system on a reiser4 partition. sarge will always have
->the best support for reiserfs/reiser4 i can provide.
+So, multitasking matters.  Suppose I've got this game (because games are
+fun) with two threads -- the player-kills-all thread, and the
+load-rest-of-level thread.  So the player isn't going to move for awhile
+- -- he's getting shot at too much -- but the game wants to load a little
+more detail from disk to make the sky and/or landscape look prettier.
+Without encryption, big deal -- the level-loading thread asks for the
+data from the disk, then goes to sleep until it arrives, thus freeing
+resources for the immediate gameplay.  With encryption, if we are trying
+to load things from disk, we are also going to have to spend some CPU
+decrypting them which we wouldn't otherwise.  Not much latency -- unless
+you need CPU to make sure the player doesn't lag.  Or you put the thread
+on a low priority, which works -- unless you need as close to 100% CPU
+as possible for higher-priority threads, which drives said latency up
+insanely.
 
-Maybe an alternative installer image?
-Standard Debian with Reiser4 on top. That's what I thought about
-providing.
+Of course, most of the time people can just buy a new CPU.
 
->the only thing i can't guarantee is a strict timetable, i make this
->works in my free time.
+Should we take this off-list?
 
-At least you have _some_ free time ;)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
--- 
-mjt
-
+iQIVAwUBQMeIrXgHNmZLgCUhAQJLkhAAj97ah2lvz97mmtVFvydmZ+nJPS1f/OBP
+gifHHcE8ZGe/PN2Iy+1PQVz2P1GkDmk2dW8/HIid+aHYv0UZsISw6Y6rQ2Kyxr9y
+OULkebG+qgV5zxwKFUMKqkTMaxFXJBQinxvf1mdEbOMmTfxW1HzKB7FYVH3muAWO
+i4knab6t720m+rWQ0q+VBKKSH52CVHCno1ncZnaRiTmZlicJQ3GSitglq/5NHsk6
+3PKPXM68TMWl7ms9k6Htseba3jYcW4l9kHNjHICjAbQ4hK/KYtkNhoBeTIoVcpbW
+BkGa9ThKF23/3CTYNycXZ+BUS6C7RdH9iXku5WjlbrT6dlEZDDenleiJz5HEBo94
+MB74xlGLpz2O/b/A/i0iie5QJyoyOzexqh+AMoJlN9n6VUS1o5sUquoDWPhL9ZvH
+1BUJnm/tk9qcOuzmkcxux0sWVGambqJah9gU8F+a0AQTiT71z4UnEb78YmWfQFg7
+hXsWgXG2l/aF8XKqQY4w+lZT2WsX7kcSZ417VzeoiMVx1yHpYQk2qPDC59n8EcNh
+q1EmNaYJD0DEtAbexH5jZhlofB9mnpJDpRHPvixKDxvD5h7WLrcwyfJ7+SHZnykw
+xUDXRumoWmF2La/Dh75SwQc6YJeyXVmOICB6uRuX7mC187wjfQfy/KC2Z6dRjNow
+ysMN5rbtSLY=
+=Ayvm
+-----END PGP SIGNATURE-----
