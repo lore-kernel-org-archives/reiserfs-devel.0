@@ -1,35 +1,51 @@
-From: =?iso-8859-1?Q?Ragnar_Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
-Subject: Re: Agressive selective pre-allocation
-Date: Sat, 14 Dec 2002 03:09:32 +0100
-Message-ID: <20021214030932.I2727@vestdata.no>
-References: <20021210074600.J26400@vestdata.no> <3DF61996.8050001@NightStorm.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Reiserfs with Samba vs NetApp Filer (purely performance)
+Date: Sun, 15 Dec 2002 00:19:35 +0300
+Message-ID: <3DFBA067.5040601@namesys.com>
+References: <000001c27328$771e5d80$0101a8c0@bummer>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12161-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12162-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3DF61996.8050001@NightStorm.com>; from bam@NightStorm.com on Tue, Dec 10, 2002 at 11:43:02AM -0500
+In-Reply-To: <000001c27328$771e5d80$0101a8c0@bummer>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: "Bruce A. Mallett" <bam@NightStorm.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: darren <teodarren@myrealbox.com>
+Cc: 'Russell Coker' <bofh@coker.com.au>, reiserfs-list@namesys.com
 
-On Tue, Dec 10, 2002 at 11:43:02AM -0500, Bruce A. Mallett wrote:
-> But the problem really is that apps don't actually "grow"these files but =
+darren wrote:
 
-> instead rebuilds them.  Thus the file system sees a request to open a=20
-> new file and not to extend an existing one.  This would make tracking=20
-> the above parameters way beyond difficult.
+>Hi all,
+>
+>Thanks for all the very informative bits on this thread.
+>
+>In my usage, I intend to implement this fileserver to complement another
+>server that runs a very intensive small files read/write operation.
+>
+>These files often run into 200,000 or more but are usually in the range
+>of 100kb or less.
+>
+>Hence, space is not a big issue to me, but performance is. (there's no
+>point splitting out the IO from the main server if it runs slower!!).
+>
+>I will be using an spare server to do this job: Dell Xeon 2GHz with 5 x
+>72Gb SCSI hdd (I got on board RAID but have not decided on how to
+>configure yet -help here are welcome too!).
+>
+>My options are: Win2k (NTFS with CIFS), Linux (Reiserfs with Samba) or
+>Netapp 870.
+>
+>What do you guys think?
+>
+>Thanx again
+>Darren
+>
+>
+>
+>  
+>
+Turn off tails if you want good performance for V3.
 
-That's definitively not true for logfiles. Neither do I think it's true
-for mail deliviery. It may very well be true for some mail-clients when
-the user deletes old emails, but if that is the case then the whole file
-will be written at once and the original problem does not exist.
-
-
-
---=20
-Ragnar Kj=F8rstad
