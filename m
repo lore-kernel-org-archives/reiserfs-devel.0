@@ -1,57 +1,66 @@
-From: Helge Hafting <helge.hafting@hist.no>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Wed, 08 Sep 2004 11:24:40 +0200
-Message-ID: <413ECFD8.1040808@hist.no>
-References: <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org> <4136A14E.9010303@slaphack.com> <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org> <4136C876.5010806@namesys.com> <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org> <4136E0B6.4000705@namesys.com> <4699bb7b04090202121119a57b@mail.gmail.com> <4136E756.8020105@hist.no> <4699bb7b0409020245250922f9@mail.gmail.com> <413829DF.8010305@hist.no> <20040905134428.GN26560@thundrix.ch>
+From: viro@parcelfarce.linux.theplanet.co.uk
+Subject: Re: silent semantic changes with reiser4
+Date: Wed, 8 Sep 2004 10:36:25 +0100
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040908093624.GW23987@parcelfarce.linux.theplanet.co.uk>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <41352279.7020307@slaphack.com> <41356321.4030307@namesys.com> <Pine.LNX.4.61.0409030037540.23011@fogarty.jakma.org> <413809EF.8060102@namesys.com> <20040903070034.GM23987@parcelfarce.linux.theplanet.co.uk> <xeq3656pnqpa.fsf@codc1-xdm1.cisco.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21624-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <20040905134428.GN26560@thundrix.ch>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <xeq3656pnqpa.fsf@codc1-xdm1.cisco.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Tonnerre <tonnerre@thundrix.ch>
-Cc: Oliver Hunt <oliverhunt@gmail.com>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sriram Karra <karra@shakti.homelinux.net>
+Cc: Hans Reiser <reiser@namesys.com>, Paul Jakma <paul@clubi.ie>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Tonnerre wrote:
+On Wed, Sep 08, 2004 at 01:21:45PM +0530, Sriram Karra wrote:
+> Perhaps this is one? Message-ID: <413578C9.8020305@namesys.com>
 
->Salut,
->
->On Fri, Sep 03, 2004 at 10:22:55AM +0200, Helge Hafting wrote:
->  
->
->>Requiring another syscall to open forks other than the primary
->>breaks _all_ existing software because it obviously don't use that
->>syscall yet.  And then it doesn't provide any advantages over the
->>file-as-plain-directory way. . .
->>    
->>
->
->Actually...
->
->We might tune the sys_open()  call to take an additional argument (the
->stream ID),  and introduce a compatibility interface  into *libc which
->chooses strid=0 by default if the plain old open call is being used.
->  
->
-But this isn't necessary, as I pointed out above.
-There is no _need_ for a new kind of open(), so
-why make one in libc?
+OK...
 
-If you can open a fork/substream/whatever by issuing
-open("filename/forkname", ...
-then the old-fashioned open() works with multi-fork files too.
-An tools based on "open() something, then work with
-the resulting file descriptor" will work _unchanged_
-with such a multi-fork fs.
+One note before replying: current code deadlocks even if you make ->link()
+*ALWAYS* return an error.  It doesn't get to calling the method.  No amount
+of "disallow hard links to <something>" is going to help here, obviously.
 
-Tools that rely on "stat" or directory traversals might need
-some updating to work perfectly with such a fs, but not something
-that just opens by name.
+<quote>
+Cycle detection:
 
-Helge Hafting
+We should either 1) make hard links only link to the file aspect of the
+file-directory duality, and persons who want to link to the directory
+aspect must use symlinks (best short term answer), or 2) ask Alexander
+Smith to help us with applying his cycle detection algorithm and gain
+the benefit of being able to hard link to directories (if it works well,
+best long term answer).
+</quote>
 
+... which doesn't address the problem at all.  The question is what to do
+with seeing directory "aspect..." in more than one place when we have many
+links to file in question.  So much for (1).  And (2) is not feasible with
+on-disk fs both due to memory, CPU and IO costs _and_ due to exclusion from
+hell you'll need to make it safe.
 
+Re: ambiguity - lots and lots of handwaving on both sides.  FWIW, I agree
+with Hans in one (and only one) respect here - openat() as a primary API
+(and not a convenient libc function) is an atrocity.  Simply because it
+doesn't address operations beyond open (unlinkat(2), anyone?).
+
+However, I still haven't seen any strong arguments for need of this "metas"
+stuff _or_ the need to export mode/ownership as files, both for regular
+files and for directories.  Aside of "we can do that" [if we solve the
+locking issues] and "xattrs are atrocious" [yes, they are; it doesn't make
+alternative mechanism any better] there was nothing that even pretended to
+be a technical reason.
+
+Note that we also have fun issues with device nodes (Linus' "show partitions"
+vs. "show metadata from hosting filesystem"), which makes it even more dubious.
+We also have symlinks to deal with (do they have attributes?  where should
+that be exported?).
+
+Reserved names have one more problem: to be useful, they'd have to be
+hardcoded into applications.  And that will create hell with use of
+such applications on existing filesystems.  Again, no feasible scheme
+to deal with that in userland code had been proposed so far, AFAICS.
+
+Locking: see above - links to regular files would create directories seen
+in many places.  With all related issues...
