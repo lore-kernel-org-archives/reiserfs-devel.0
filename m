@@ -1,11 +1,11 @@
-From: David Masover <ninja@slaphack.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: file as a directory
-Date: Tue, 14 Dec 2004 22:52:12 -0600
-Message-ID: <41BFC2FC.80905@slaphack.com>
+Date: Tue, 14 Dec 2004 21:10:05 -0800
+Message-ID: <41BFC72D.2070800@namesys.com>
 References: <200412141930.iBEJUGdB019336@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22771-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22772-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,47 +14,29 @@ In-Reply-To: <200412141930.iBEJUGdB019336@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
-
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Cc: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
 Horst von Brand wrote:
-| Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk> said:
-|
-| [...]
-|
-|
-|>Perhaps a better way to think about this is that instead of talking
-|>about directories and files, we just talk about objects.
-|
-|
-| Then you have a collection of interrelated objects, i.e., a database.
-| Operating systems that work on databases (no filesystem) have been done,
-| and are a nice idea... but are far, far away from Unix.
 
-Really? Because most Unix tools don't behave all that strangely when I
-enable metadata. If Linux incrementally changes into something that is
-not Unix, what is lost, besides the name?
+>Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk> said:
+>
+>[...]
+>
+>  
+>
+>>Perhaps a better way to think about this is that instead of talking
+>>about directories and files, we just talk about objects.
+>>    
+>>
+>
+>Then you have a collection of interrelated objects, i.e., a database.
+>Operating systems that work on databases (no filesystem) have been done,
+>and are a nice idea... but are far, far away from Unix.
+>  
+>
+A journey of a thousand leagues begins with a single step.
 
-Remember that a filesystem is a specialized database. It is specialized
-for performance. If Hans can generalize it without losing that
-performance, who can complain?
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQb/C+3gHNmZLgCUhAQIjGg/+M17+XviIqi+uFy3RR6x8csoPne3KYBlL
-cnjoDML4JZAXLn0YdDKAafCa1kt4xCbPYa/ZQjqw9RzUbnf6YEtdrvuVsLxsTC7t
-yAHQDSFCpQ1ssCsy5S2ku80Srx6LkTf2R33F8BMr0hTVNg5eoDEL2RuOtT8tJ0g5
-gMrdX04BIM4gxQEv2elvfNIm7cxyAv1aBvurcpb/VPckoaUChPQSgauuS6rJ0oYu
-AmLhkLBZ+8NloQ2U4tKHdY8YrQWtLAzeyG+rYwIFxjPWRMUG54WYAVD+G2R6a9bN
-nksqOtZ19lcCdjBOb5+5Wa3sOEOgwYRKySS4H/S/TTBI8cbm5+7tDwi30E4eiV9C
-PQUi+yi3+18j+cp3Of+AhZsA99PgjJ9q7GKaC10SX5/gk0d2jq0TwADBR1v2EdbM
-cABfKnaXWnS0RzqFARF/MZaZz++KWAbmsZwnTk7N9Tm2AfKSRjFb5wqsKbV01F+i
-XltsPGnYj0f4DYKrSxQRxkhQxC5J9b2P69N9JhplvzcvAVQWIMvhPsU10i4vm7oN
-GJi+ncuYzmdQQXB0Sxpar5uwdYj+xgcWcK35iX4mGG9E6CWythpKJQFq85u/KKsX
-J37o0CcxY1eseV+5qgYEeGm0eLuoxllaKNW9yJzsX9Xf2qxUoS1mr0si2eFulsLh
-z72g9LoNfyg=
-=hIBh
------END PGP SIGNATURE-----
+Actually, databases are the wrong solution because they are relational, 
+and what is needed is a semi-structured query language that is upwardly 
+compatible with Unix hierarchical semantics, ala 
+www.namesys.com/future_vision.html
