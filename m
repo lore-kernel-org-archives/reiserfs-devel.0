@@ -1,67 +1,53 @@
-From: "bo" <bo@sosnetwork.net>
-Subject: Re: Mount and file system size issue
-Date: Fri, 7 Jun 2002 08:49:13 -0700
-Message-ID: <000801c20e3a$df840b20$5701a8c0@bomoon>
-References: <8287102CFE5C31418556A13A4E5BEE91E95A77@sphynx.git.compgen.com> <3CFFB2CA.6020300@namesys.com> <001201c20d9e$73e5d070$5701a8c0@bomoon> <20020607112121.C12869@namesys.com>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: duplicate files and recent changes
+Date: Fri, 07 Jun 2002 11:55:56 -0400
+Sender: news <news@main.gmane.org>
+Message-ID: <87r8jjaxrn.fsf@labatt.uhoreg.ca>
+References: <87ofeo70st.fsf@labatt.uhoreg.ca> <200206070811.g578BUtA008730@sirius.cs.pdx.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10671-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha1; protocol="application/pgp-signature"
+Return-path: <reiserfs-list-return-10672-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com
-
-It is our new product.
-When I use ext2fs it mounts 120G filesystem successfully in about 3-4
-seconds,
-but I waited for about an hour with the REISERFS, never came back.
-
-I know Linux 2.4.5 is far behind from the release. I want to know the reason
-why
-I have this MOUNTproblem for the big FS.
-
-Thanks,
-
-Bo
------ Original Message -----
-From: "Oleg Drokin" <green@namesys.com>
-To: "bo" <bo@sosnetwork.net>
-Cc: <reiserfs-list@namesys.com>
-Sent: Friday, June 07, 2002 12:21 AM
-Subject: Re: [reiserfs-list] Mount and file system size issue
+To: reiserfs-list@namesys.com
 
 
-> Hello!
->
-> On Thu, Jun 06, 2002 at 02:09:31PM -0700, bo wrote:
->
-> > I am running the ARM-Linux, which is based on Debian 2.4.5.
->
-> 2.4.5 is way too outdated for purposes of using reiserfs.
->
-> > I tried to make and mount the reiserfs on 20G size, it was OK.
-> > However, for 120G size, it is OK to make the file system but
-> > I can not mount it.
->
-> What do you mean by "cannot mount"?
-> What is the error message if you get one?
->
-> > Most of time it never come back from "mount -reiserfs ".
->
-> Ah, so it just mounts, but does very slow.
-> BTW, how you get 120GB on your ARM system?
-> Do you have IDE controller and HDD attached to it or is this something
-> accessed over network?
->
-> > Is it really a problem of Linux revision?
-> > Should I upgrade my linux to 2.4.13 or above to make the REISERFS work?
->
-> Upgrading to 2.4.18 is highly advisable.
->
-> Bye,
->     Oleg
->
+>>>>> "Elliot" =3D=3D The Amazing Dragon (Elliott Mitchell) <ehem@cs.pdx.ed=
+u> writes:
+
+[...]
+
+Elliot> Wrong. I'm not going to claim I've got the right factor for how
+Elliot> badly the birthday attack mangles the probability, but I believe
+Elliot> 2**64 gives you around a 50% chance of finding a matching
+Elliot> pair.
+
+Sorry, you're right.  I misremembered it -- square root instead of
+half.  It's been a while since I've done any reasonable amount of crypto
+reading.  Of course, I could have just looked it up:
+http://mathworld.wolfram.com/BirthdayAttack.html
+where it says that the expected value for the number of files needed
+would be 1.2*sqrt(2**128) (about 2E19 if you want to think in base 10).
+
+=2D-=20
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
+--=-=-=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
+
+iD8DBQE9ANeRrynHGRJLYfoRAlkuAJ0a8jbG5mJZhIbzSpBO96aPQ2WoGgCcDaX9
+8YN0+/YinhHRhkhKKk3Qt9A=
+=O/XU
+-----END PGP SIGNATURE-----
+--=-=-=--
+
 
