@@ -1,54 +1,51 @@
-From: Jonathan Briggs <jbriggs@esoft.com>
+From: Robert Walsh <rjwalsh@durables.org>
 Subject: Re: Journal writes hanging in presence of I/O errors
-Date: 08 Aug 2002 13:57:16 -0600
-Message-ID: <1028836637.5940.16.camel@oberon.rnd.esoft.com>
-References: <1028828929.9189.25.camel@spoon.durables.org>
+Date: 08 Aug 2002 13:15:19 -0700
+Message-ID: <1028837720.11334.27.camel@spoon.durables.org>
+References: <1028828929.9189.25.camel@spoon.durables.org> 
+	<1028836637.5940.16.camel@oberon.rnd.esoft.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature";
-	boundary="=-nyG8CdPyQDl+CSGRZdg/"
-Return-path: <reiserfs-list-return-11144-reiserfs=m.gmane.org@namesys.com>
+	boundary="=-+As0fpvFIHtm724OSp/0"
+Return-path: <reiserfs-list-return-11145-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1028828929.9189.25.camel@spoon.durables.org>
+In-Reply-To: <1028836637.5940.16.camel@oberon.rnd.esoft.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: Jonathan Briggs <jbriggs@esoft.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
---=-nyG8CdPyQDl+CSGRZdg/
+--=-+As0fpvFIHtm724OSp/0
 Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2002-08-08 at 11:48, Robert Walsh wrote:
-I'm using a logical volume
-> manager that I can inject faults into in order to test filesystem and
-> driver behavior.
->=20
-> Any ideas?  The ideal behavior would be that the write system call just
-> fails with EIO.
+> Bad blocks and disk errors are a problem for every file system.  Modern
+> hard drives handle bad sectors by using the firmware to relocate to a
+> good sector.  The Linux kernel should have another layer (LVM, probably)
+> between the hard drive and the file system that can do the same thing.=20
+> The LVM layer should replace bad physical blocks with good ones.  This
+> way, the file system never needs to worry about it, except perhaps by
+> setting a fsck-required flag.  File system check would be required
+> because on a read error, the replacement block wouldn't contain the
+> correct data.
 
-This reminded me of something.  I was thinking about bad blocks and
-other I/O errors this week because one of my IBM 60GXP drives is
-failing.)=20
+This would work for small numbers of bad blocks, but for something more
+catastrophic, it might not be suitable.  If you only have one physical
+drive underneath and it seizes up or something, then you've got issues
+that deferring it to the LVM isn't going to help with.  You still need
+to check that your block I/O worked.
 
-I have this idea, and I wonder if anyone is already working on it?
+Regards,
+ Robert.
 
-Bad blocks and disk errors are a problem for every file system.  Modern
-hard drives handle bad sectors by using the firmware to relocate to a
-good sector.  The Linux kernel should have another layer (LVM, probably)
-between the hard drive and the file system that can do the same thing.=20
-The LVM layer should replace bad physical blocks with good ones.  This
-way, the file system never needs to worry about it, except perhaps by
-setting a fsck-required flag.  File system check would be required
-because on a read error, the replacement block wouldn't contain the
-correct data.
-
-Has anyone written this into LVM?
 --=20
-Jonathan Briggs
-jbriggs@esoft.com
+Robert Walsh
+Amalgamated Durables, Inc.  -  "We don't make the things you buy."
+Email: rjwalsh@durables.org
 
---=-nyG8CdPyQDl+CSGRZdg/
+--=-+As0fpvFIHtm724OSp/0
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Description: This is a digitally signed message part
 
@@ -56,11 +53,10 @@ Content-Description: This is a digitally signed message part
 Version: GnuPG v1.0.6 (GNU/Linux)
 Comment: For info see http://www.gnupg.org
 
-iD8DBQA9Us0cG8fHaOLTWwgRAm7OAKCcNCX/aaAYem5fI0BYx8hbLZhGTQCgnE3R
-hkwiUG401l7KCh2VmohRcpY=
-=r1+v
+iD8DBQA9UtFXbZtqSALM5CYRAlRIAJ9zkKUELztYEnA3ICUqA3tsAbWtJACfUK0E
+zoqeyA6MAdBQRGg/fIwlH+A=
+=rL9z
 -----END PGP SIGNATURE-----
 
---=-nyG8CdPyQDl+CSGRZdg/--
-
+--=-+As0fpvFIHtm724OSp/0--
 
