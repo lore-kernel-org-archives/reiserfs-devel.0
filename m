@@ -1,67 +1,45 @@
-From: Christophe Saout <christophe@saout.de>
+From: Felipe Alfaro Solana <lkml@felipe-alfaro.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 16:24:37 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <1093530277.11694.54.camel@leto.cs.pocnet.net>
-References: <Pine.LNX.4.44.0408261011410.27909-100000@chimarrao.boston.redhat.com>
+Date: Thu, 26 Aug 2004 16:39:45 +0200
+Message-ID: <200408261639.46951.lkml@felipe-alfaro.com>
+References: <1453776111.20040826131547@tnonline.net> <Pine.LNX.4.44.0408260938340.26316-100000@chimarrao.boston.redhat.com> <1714037053.20040826155924@tnonline.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-TsGvMzc4KIKWJlKTpFxp"
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.44.0408261011410.27909-100000@chimarrao.boston.redhat.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20689-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <1714037053.20040826155924@tnonline.net>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Rik van Riel <riel@redhat.com>
-Cc: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Spam <spam@tnonline.net>
+Cc: Rik van Riel <riel@redhat.com>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
+On Thursday 26 August 2004 15:59, Spam wrote:
 
---=-TsGvMzc4KIKWJlKTpFxp
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+>   Backup to me is a special case, not simply a copy of files, but also
+>   retaining all the extra data, info, attributes, etc, that comes with
+>   the file.
+>
+>   Enabling  support  to  have  all  of  this  extra  stuff  below  the
+>   application  level  it  will  be  possible to retain everything even
+>   though applications do not support them.
+>
+>   Backup tools, however, must know about these new features to be able
+>   to  backup  them.  And so will every tool that directly accesses the
+>   filesystem instead of using the OS API for it.
 
-Am Donnerstag, den 26.08.2004, 10:12 -0400 schrieb Rik van Riel:
+Thus, this kind of metadata API must be made accessible through the VFS layer, 
+if we want to make it FS-independent (not tied to Reiser4). If the real FS 
+does not support metadata operations, just ignore them (much like in ISO9660 
+ignoring write operations).
 
-> > I think Hans is not planning turning old "file is a stream of bytes"
-> > into eight-stream octopus. One stream will remain as a 'main' one,
-> > which contains actual data. Others will keep metadata, etc...
->=20
-> This is exactly what the Samba people want, though.=20
->=20
-> Office suites can store a document with embedded images
-> and spread sheets "easily" by putting the text, the
-> images and spread sheets all in different file streams.
+>   And  from  I  learned  in an earlier message, tools like cp actually
+>   work  on  the  fs level and themselves move the data to the new file
+>   instead   of  letting  the OS handle it. This seem to me as it could
+>   be  dangerous and could also prevent any kind of enhancements to the
+>   FS unless every tool like cp is patched.
 
-Ouch.
-
-I think Hans' idea is (I don't know if it is a good idea nor if it is
-doable, but at least it sounds interesting) to have special compound
-files where you can do something like this:
-
-cp text.txt test.compound/test.txt
-cp image.jpg test.compound/image.jpg
-
-And if you read test.compound (the main stream) you get a special format
-that contains all the components. You can copy that single stream of
-bytes to another (reiser4) fs and then access test.compound/test.txt
-again.
-
-The only thing I'm worrying about with this approach is what happens if
-someone tries to simultaneously open test.compound and
-test.compound/test.txt.
-
-Hans has an example somewhere where he does something like that
-with /etc/passwd.
-
-
---=-TsGvMzc4KIKWJlKTpFxp
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQBBLfKlZCYBcts5dM0RAjcVAJ91DBMsVN4vu4ifyEA8PRoDvoD2fQCfdxOV
-S+wBykV6HHVnExb4aGVwb8k=
-=UKaF
------END PGP SIGNATURE-----
-
---=-TsGvMzc4KIKWJlKTpFxp--
-
+I still don't understand why a copy_file() syscall is still missing.
