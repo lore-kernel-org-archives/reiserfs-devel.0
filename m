@@ -1,48 +1,40 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: Reiser4 status: benchmarked vs. V3 (and ext3)
-Date: Thu, 24 Jul 2003 15:10:33 +0400
-Message-ID: <16159.48809.812634.455756@laputa.namesys.com>
-References: <3F1EF7DB.2010805@namesys.com>
-	<3F1F6005.4060307@tupshin.com>
-	<1059021113.7911.13.camel@localhost>
-	<3F1F66F0.1050406@tupshin.com>
-	<1059024090.9728.22.camel@localhost>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: is this a known bug?
+Date: Thu, 24 Jul 2003 19:05:48 +0400
+Message-ID: <20030724150548.GA21786@namesys.com>
+References: <20030723235435.3C63E9C91@mail.animeslovenija.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15024-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15025-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1059024090.9728.22.camel@localhost>
+Content-Disposition: inline
+In-Reply-To: <20030723235435.3C63E9C91@mail.animeslovenija.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Shawn <core@enodev.com>
-Cc: Tupshin Harper <tupshin@tupshin.com>, Hans Reiser <reiser@namesys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, reiserfs mailing list <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: pegasus@nerv.eu.org
+Cc: reiserfs mailing list <reiserfs-list@namesys.com>
 
-Shawn writes:
- > Looks like the 2.5.74 is the last one of any respectable size. I'm
- > thinking someone forgot a diff switch (N?) over at namesys...
- > 
- > Hans? Time to long-distance spank someone?
+Hello!
 
-Can you try following the instructions on the
-http://www.namesys.com/code.html (requires bitkeeper)?
+On Thu, Jul 24, 2003 at 01:54:35AM +0200, pegasus@nerv.eu.org wrote:
+> [usb-ohci:sohci_device_operations+781321/95136603] .LC62 [reiserfs] 0xc3
+> Jul 14 13:25:41 mai-stor2 kernel: Call Trace: [<f8a456d5>] .LC62 [reiserfs] 0xc3
+> Jul 14 13:25:41 mai-stor2 kernel: [<f8a3ad1e>] journal_mark_dirty [reiserfs] 0x13e
+> Jul 14 13:25:41 mai-stor2 kernel: [<f8a43d60>] .LC93 [reiserfs] 0x27a0
+> Jul 14 13:25:41 mai-stor2 kernel: [<f8a1f100>] reiserfs_free_block [reiserfs] 0xa0
+> Jul 14 13:25:41 mai-stor2 kernel: [<f8a34bb0>] prepare_for_delete_or_cut
+> [reiserfs] 0x760
+> Jul 14 13:25:41 mai-stor2 kernel: [<f8a22417>] free_thrown [reiserfs] 0x57
+> Jul 14 13:25:41 mai-stor2 kernel: [<f8a22689>] do_balance [reiserfs] 0xe9
+> Jul 14 13:25:41 mai-stor2 kernel: [<f8a356ca>] reiserfs_cut_from_item [reiserfs]
 
-Nikita.
+Yes, I know this one. It is journal overflow we fixed in 2.4.21 or thereabout.
+If you use reiserfs, you really do not want to depend on RedHat's 2.4.9 kernel,
+you'd better get some recent stuff (or talk us into backporting fixes to 2.4.9?
+that might work if you have enough money ;) )
 
- > 
- > On Wed, 2003-07-23 at 23:56, Tupshin Harper wrote:
- > > Shawn wrote:
- > > 
- > > >This is pretty f'ed, but it's on ftp://ftp.namesys.com/pub/tmp
- > > >
- > > Thanks, but I tried applying the
- > > 2.6.0-test1-reiser4-2.6.0-test1.diff from that location with a lack of 
- > > success.
- > > 
- > > It applied cleanly, but it doesn't add a fs/reiser4 directory and 
- > > asociated contents. Is there an additional patch, or is this one broken?
- > > 
- > > -Tupshin
- > > 
+Bye,
+    Oleg
