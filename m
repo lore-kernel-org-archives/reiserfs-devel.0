@@ -1,51 +1,79 @@
-From: Chris Dawes <cmsd2@octomonkey.org.uk>
-Subject: Re: silent semantic changes in reiser4 (brief attempt to document
-	the idea of what reiser4 wants to do with metafiles and why
-Date: Tue, 31 Aug 2004 20:49:28 +0100
-Message-ID: <1093981768.18249.4.camel@dobbin.local.net>
-References: <41323AD8.7040103@namesys.com>
-	 <200408312055.56335.v13@priest.com>
+From: Linus Torvalds <torvalds@osdl.org>
+Subject: Re: silent semantic changes with reiser4
+Date: Tue, 31 Aug 2004 13:05:40 -0700 (PDT)
+Message-ID: <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21173-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21174-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200408312055.56335.v13@priest.com>
+In-Reply-To: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: V13 <v13@priest.com>
-Cc: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@digeo.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@osdl.org>, reiserfs-list@namesys.com
-
-On Tue, 2004-08-31 at 18:55, V13 wrote:
-...
->   AFAIK and AFAICS the metadata are not files or directories. You can look at 
-> them as files/dirs but they are not, just like a tar is not a directory. I 
-> believe that the correct thing to do (tm) is to add a new 'concept' named 
-> 'metadata' (which already exists). This way you'll have files, directories 
-> and metadata (or whatever you call them). So, each directory can have 
-> metadatas and files and each file can have metadatas. Then you have to 
-> provide some new methods of accessing them and not to use chdir() etc. (lets 
-> say chdir_meta() to enter the meta dir which will work for files too). After 
-> entering the 'metadir' you'll be able to use existing methods etc to access 
-> its 'files'.
-
-I think this is what Hans is trying to avoid -- it results in creating a
-separate namespace for the metadata.
-
-I would agree with the notion that metadata nodes are light-weight files
-in that they themselves have no metadata associated with them, but I
-don't see why they need separate system-calls (if we can help it).
-
-Chris Dawes.
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Pavel Machek <pavel@ucw.cz>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
 
+
+On Tue, 31 Aug 2004, Horst von Brand wrote:
 > 
->   This approach doesn't mess with existing things and can be extended for 
-> other filesystems too.
-> 
-> (Just a thought)
-> 
-> <<V13>>
+> You do need extra tools anyway, placing them in the kernel is cheating (and
+> absolutely pointless, IMHO).
 
+I agree.
+
+There's no point to having the kernel export information that is already 
+inherent in the main stream.
+
+I've seen all these examples of exposing MP3 ID information as a "side 
+stream", and that's TOTALLY POINTLESS! The information is already there, 
+it's in a standard format, and exporting it as a stream buys you 
+absolutely nothing.
+
+Where named attributes make sense is when they are _independent_ data.  
+Data that is only tangentially related to the main stream itself, and
+which the main stream _cannot_ encompass because of some real technical
+issue.
+
+In a graphical environment, the "icon" stream is a good example of this.  
+It literally has _nothing_ to do with the data in the main stream. The
+only linkage is a totally non-technical one, where the user wanted to
+associate a secondary stream with the main stream _without_ altering the
+main one. THAT is where named streams make sense.
+
+But if you want to look at one particular file inside a tar-file, do so in 
+user space. There are zero advantages to exposing it as a side-stream, and 
+there are absolutely _tons_ of disadvantages.
+
+In short, named streams only make sense if:
+ - they are tied to the file some way that is _independent_ of the file 
+   contents (since if it's dependent on the file contents, you're just a 
+   ton better off regenerating it with a caching server)
+ - there are serious reasons to keep the lookup synchronized (since if 
+   there isn't such a reason, you're just better off with a separate 
+   shadow tree in user space)
+
+And realize that the "separate shadow tree" actually works very well.  
+That's how version control systems like CVS have always worked. It's
+certainly how you can make icon information work too. If you use a tool
+for accessing the data, the tool can maintain coherency and you'll never
+care about the side stream.
+
+Which means that normally we really don't _want_ named streams. In 99% of
+all cases we can use equally good - and _much_ simpler - tool-based
+solutions.
+
+Which means that the only _real_ technical issue for supporting named
+streams really ends up being things like samba, which want named streams
+just because the work they do fundamentally is about them, for externally
+dictated reasons. Doing named streams for any other reason is likely just
+being stupid.
+
+Once you do decide that you have to do named streams, you might then 
+decide to use them for convenient things like icons. But it should very 
+much be a secondary issue at that point.
+
+		Linus
