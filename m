@@ -1,51 +1,70 @@
-From: Anders Widman <andewid@tnonline.net>
-Subject: Re: How to work around bad blocks?
-Date: Mon, 10 Mar 2003 21:50:35 +0100
-Message-ID: <14221307140.20030310215035@tnonline.net>
-References: <200303102115.50039.dirk.leber@web.de>
-Reply-To: Anders Widman <andewid@tnonline.net>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13181-reiserfs=m.gmane.org@namesys.com>
+From: eazgwmir@umail.furryterror.org (Zygo Blaxell)
+Subject: Re: OT: simple file operations in C
+Date: 10 Mar 2003 17:35:24 -0500
+Message-ID: <b4j3vc$adf$1@satsuki.furryterror.org>
+References: <200303100802.h2A82JWS004942@turing-police.cc.vt.edu> <1047267222.c3ecdd60teodarren@myrealbox.com> <200303100802.h2A82JWS004942@turing-police.cc.vt.edu> <1047296851.1036.2.camel@kakapo.schnulli.de>
+Return-path: <reiserfs-list-return-13183-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200303102115.50039.dirk.leber@web.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Dirk Leber <dirk.leber@web.de>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-> Hello List,
-> I am the unhappy owner of a "corrupt" ReiserFS. All the other partitions on
-> the same disk work fine, just this one seems to have some bad blocks. HEre
-> are some outputs:
+In article <1047296851.1036.2.camel@kakapo.schnulli.de>,
+Heinz-Josef Claes  <hjclaes@web.de> wrote:
+>Am Mon, 2003-03-10 um 09.02 schrieb Valdis.Kletnieks@vt.edu:
+>> On Mon, 10 Mar 2003 03:33:42 GMT, darren <teodarren@myrealbox.com>  said:
+>> 
+>> > I want my program to be able copy, move and delete files, but i cannot seem t
+>> o find any available functions or system calls to do this.
+>>
+>> For move and delete, you want the rename() and unlink() system calls.
 
-<snip>
+You might want to try sendfile(), which is Linux-specific, but basically
+transfers the contents of one FD to another FD entirely in kernel-space.
+It's designed for sending files over a socket, but I see no reason why
+the destination FD couldn't be a file.  On the other hand, I've never
+used it myself.
 
->> badblocks -b 4096
-> [detects bad blocks 7503858 - 7503871]
+>> For copying, you might want to skip the stdio fopen() and friends, and
+>> use open()/read()/write()/close().  You may need chmod() and utime() if you
+>> want to be preserving filemode/timestamps.
+>> 
+>> Google for '+linux +programming +guide'.
+>
+>That's ok. But if you want to copy big files it's a good idea to have a
+>look at mmap(2).
 
-> Obviously the build-tree option also fails. The "How Reiser handles Bad
-> blocks-FAQ" can only be considered a bad joke, since you need a degree in
-> computer science AND a mountable filesystem for fooling the FS in that way.
+mmap() can be slow, especially for reading files sequentially.  read()
+usually comes with support from the OS and filesystem for read-ahead
+and large I/O transfers.  These make a huge difference in performance,
+and more than compensate for the extra CPU and memory overhead of copying
+the data.  mmap() usually uses the same mechanism as swap, and is oriented
+toward reading single pages.  mmap() is good for exectuables and shared
+memory (e.g. lock tables), not for reading or writing big files
+sequentially.
 
-Agreed  that  handling  of  bad  blocks  in  most FS in Linux is quite
-annoying and far from optimal.
+mmap() can be annoying to use, especially if the file might be modified while
+you are copying it.  All errors are reported by your process receiving a
+SIGBUS.  If the file is bigger than a few hundred megabytes you will still
+need a loop to map the file in multiple small pieces.  Not all filesystems
+support mmap(), which means you'll usually need to be able to fall back
+to read() anyway.  read() and mmap() may also have different atomicity and
+consistency characteristics.
 
-> What I would like to do is, detecting the bad blocks, freeing them (accepting
-> there content) rebuilding the tree (or not) and than mounting it while
-> accepting that some files will be corrupt. 
+Modern CPU's can copy data in memory in multiples of a gigabyte per
+second (and five-year-old CPU's can do hundreds of megabytes easily).
+If your disks are slower than this, you will probably find that read()
+is so much faster than mmap() (I usually get read() about 10 times faster
+than mmap()) that you'll not bother with mmap().
 
-> What can I do? 
+If you really need speed, try a few different techniques and do a
+benchmark on the filesystem, OS, and hardware you will be using.
 
-Right  now  the easiest way it to get a new drive and use dd_rescue to
-move  the data. dd_rescue can copy the contents from your bad drive to
-a file and run fsck on the file and "mount -o loop".
-
-//Anders
-
---------
-PGP public key: https://tnonline.net/secure/pgp_key.txt
-
+-- 
+Zygo Blaxell (Laptop) <zblaxell@feedme.hungrycats.org>
+GPG = D13D 6651 F446 9787 600B AD1E CCF3 6F93 2823 44AD
