@@ -1,33 +1,38 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Data-logging and md as / fs bug
-Date: Wed, 14 May 2003 09:40:51 +0400
-Message-ID: <20030514054051.GA27656@namesys.com>
-References: <3EB30852.6090402@netscape.net> <200305062134.42520.christian.mayrhuber@gmx.net> <1052250298.14612.235.camel@tiny.suse.com> <200305062156.27595.Dieter.Nuetzel@hamburg.de> <1052400685.14617.489.camel@tiny.suse.com> <20030512072943.GA21604@namesys.com> <5.2.0.9.2.20030513224724.01cc3d10@pop.tvnet.hu>
+From: Mirar <mirar-yg@mirar.org>
+Subject: Re: power loss -> corruption
+Date: 15 May 2003 10:40:00 +0200
+Sender: mirar@orchid.mirar.org
+Message-ID: <m1r87061sv.fsf@orchid.mirar.org>
+References: <m1k7d11yaz.fsf@orchid.mirar.org>
+	<200305081502.47455.Dieter.Nuetzel@hamburg.de>
+	<m17k911sq4.fsf@orchid.mirar.org>
+	<200305081531.13964.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14103-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14112-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <5.2.0.9.2.20030513224724.01cc3d10@pop.tvnet.hu>
+In-Reply-To: <200305081531.13964.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Newsmail <newsmail@satimex.tvnet.hu>
-Cc: Manuel Krause <manuelkrause@netscape.net>, reiserfs-list@namesys.com
+To: =?iso-8859-1?q?Dieter_N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Cc: reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
 
-Hello!
+> This _is_ very well known for me.
+> Some KDE config files and my tcsh history file where broken without 
+> data-logging (data=journal/ordered).
 
-On Tue, May 13, 2003 at 10:52:40PM +0100, Newsmail wrote:
+My .zsh-history just got nuked with data=ordered. 
 
-> ps: what about iget5_locked? is it safe to use?
+The kernel couldn't agree with my HPT controller and stopped all (!)
+IDE activities when I did a 'hdparm -y /dev/hd?' (all sleep). (Note,
+the .zsh-history was not on that controller.)
 
-I've got not a single bugreport on it, it passed our tester's load too.
-And it works for me. So I assume it is reasonably safe to use.
+Not in the same way as previously (just a block), though. It was
+completely filled with binary data.
 
-(alll of this is only true for 2.4.21-pre5+ stuff, the iget5_locked backport to 2.4.20
-seems to be broken).
+No other active files seems to have been affected, though.
 
-Bye,
-    Oleg
+/Mirar
