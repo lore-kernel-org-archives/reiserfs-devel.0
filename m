@@ -1,64 +1,80 @@
-From: Grant Miner <mine0057@mrs.umn.edu>
-Subject: Advangates (A file-based interface for mount)
-Date: Wed, 09 Jul 2003 16:32:44 -0500
-Message-ID: <3F0C89FC.8060604@mrs.umn.edu>
-References: <3F078EF1.6090908@mrs.umn.edu> <3F0C161B.6030707@namesys.com> <16140.7137.369855.682433@laputa.namesys.com> <877k6r8q7x.fsf@labatt.uhoreg.ca>
-Reply-To: reiserfs-list@namesys.com
+From: Ragnar =?iso-8859-15?Q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
+Subject: Re: Advangates (A file-based interface for mount)
+Date: Thu, 10 Jul 2003 04:55:45 +0200
+Message-ID: <20030710025545.GB1160@vestdata.no>
+References: <3F078EF1.6090908@mrs.umn.edu> <3F0C161B.6030707@namesys.com> <16140.7137.369855.682433@laputa.namesys.com> <877k6r8q7x.fsf@labatt.uhoreg.ca> <3F0C89FC.8060604@mrs.umn.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14853-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-14854-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <877k6r8q7x.fsf@labatt.uhoreg.ca>
+Content-Disposition: inline
+In-Reply-To: <3F0C89FC.8060604@mrs.umn.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
-Hubert Chan wrote:
+On Wed, Jul 09, 2003 at 04:32:44PM -0500, Grant Miner wrote:
+> Two reasons why this is nice:
+> First, the permissions of ..mount could be inherited, so that users would=
+=20
+> be able to mount things in their home directories but not system=20
+> directories.
 
->>>>>>"Nikita" == Nikita Danilov <Nikita@Namesys.COM> writes:
->>>>>>            
->>>>>>
->
->[...]
->
->Nikita> But what exactly is an advantage of this interface?  If user is
->Nikita> allowed to mount arbitrary file system at /some-place, it can
->Nikita> mount something containing suid binary and here we go.
->
->I'm also wondering what advantages this interface would have.  As far
->as I can tell, you lose more than you gain -- can't specify mount
->options, file system type, etc.  It also seems very unintuitive to me.
->>From what I can see, the only advantages that you gain would be more
->easily done by writing a custom SUID binary, which reads some
->configuration file somewhere to determine if the user has proper
->permissions, etc.
->  
->
-Ideally, the file would use the same format as mtab (minus the mount point) so that it retains all mount options.  
+That would be nice, but having the correct permissions for the mount-
+point is not sufficient from a security perspective.
 
-Two reasons why this is nice:
-First, the permissions of ..mount could be inherited, so that users would be able to mount things in their home directories but not system directories.
+I suppose the user would need read (and write) permissions to the
+device/file he's mounting from?=20
 
-Second, the file format makes is intuitive for specifying layered mounts like plan 9.
+You would also need to avoid suid / sgid files and device-nodes - this
+could probably be done by enforcing nosuid and nodev mount-flags. (Is
+that enough? or are there filesystems that have suid-support but don't
+support the nosuid flag?)
 
-Imagine a system where cat /..mount gives:
-/dev/hda1 reiserfs rw 0 0
+The last problem, which I don't see an easy solution for, is that the
+filesystem-code in the kernel dosn't do sufficient data-checking that
+it's safe to run it on user-controlled data. I'm sure that for most if
+not all filesystems it will be possible to corrupt the metadata in a way
+that will make the kernel crash or lock up - in some cases it may even
+be possible to corrupt the data in such a way that it becomes a
+security-problem? How could this be solved?
 
-and cat /bin/..mount gives:
-/usr/bin bind ro 0 0
-/usr/local/bin bind ro 0 0
-/opt/bin bind ro 0 0
-/dev/hda1 reiserfs rw 0 0    <---- this one is inherited from /
+Personally I don't think it will ever be safe to let users mount from
+user-controlled devices (files or block-devices) as long as the
+filesystem-code is running in the kernel with full priveleges.
 
-Now, say you want to access file 'ls' out of /bin.  First, we look in /usr/bin because it's the top item.  If it is there, then we found it.  Otherwise, we keep going down the stack until we find it or reach the bottom and not find one.
-
-If there are two instances of ls, say one in /opt/bin and one in /usr/bin, we use the one from /usr/bin because it is higher up.
-
-If we write the file 'ls', it won't work if a copy of 'ls' exists in any of the read-only layers.  If the only instance of a file named 'ls' were in the filesystem on /dev/hda1, then it would get written there.  If there were no copy of ls in any layer, it would get created in the first read+write layer, in this case the filesystem on /dev/hda1.
-
-It's really appealing with a per-process namespace.  Lets say I'm a user.  The OS layers my home directory read+write on MY instance of / , and a read-only copy of /bin, /usr/bin, etc. on MY instance of /bin .  Now, I don't need any environment variables like $HOME or $PATH.  I know (and more importantly, my programs know) that my home is always at / and my binaries always are in /bin .  I can throw my files in / .  They may be really stored in /home/users/grant or /mnt/foo/bar/etc but I don't have to know that.  One cool thing is this way users can install RPMs without affecting the main system files and quotas still apply.
+The only solution is to run the filesystem-code in userspace, like hurd
+does.
 
 
+Now. If all those problems were solved it would be possible to allow
+users to mount any filesystem from any device on their writable
+directories. But - I don't see why the mount-interface would need to be
+changed? mount is already suid (on some systems, at least), and could
+easily allow ordinary users to mount filesystems as well. (actually it
+already does - but limited to filesystems listed in fstab with the
+"user" option)
+
+> Second, the file format makes is intuitive for specifying layered mounts =
+
+> like plan 9.
+
+A new mount interface is certainly no requirement for layered mounts -
+if it's more intuitive or not is debatable. A central list of mounts may
+become long and hard to read - but a decentralized list of mounts
+certainly has it's drawbacks as well - how are you supposed to get a
+complete list of what is mounted?
+
+
+
+Basicly I think both user-mountable filesystems and layered mounts both
+have their purposes, but theese features are ortogonal to a new mount-
+interface.=20
+
+
+
+--=20
+Ragnar Kj=F8rstad
