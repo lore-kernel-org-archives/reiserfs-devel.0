@@ -1,61 +1,82 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output error"
-Date: Tue, 10 Aug 2004 11:41:59 -0400
-Message-ID: <200408101541.i7AFfxtZ020270@turing-police.cc.vt.edu>
-References: <20040807065039.5BF4E15CBC@mail03.powweb.com> <41148997.4070404@namesys.com> <200408100321.i7A3LHxu027087@turing-police.cc.vt.edu>
-            <411887D5.1000202@namesys.com>
+From: Sonny Rao <sonny@burdell.org>
+Subject: Re: Odd Block allocation behavior on Reiser3
+Date: Tue, 10 Aug 2004 11:45:14 -0400
+Message-ID: <20040810154514.GA67591@kevlar.burdell.org>
+References: <20040809201939.GA55683@kevlar.burdell.org> <1092083451.10651.218.camel@watt.suse.com> <20040809220459.GA57121@kevlar.burdell.org> <41187657.7030709@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-1191329028P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20126-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20127-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Tue, 10 Aug 2004 01:31:17 PDT."
-             <411887D5.1000202@namesys.com> 
+Content-Disposition: inline
+In-Reply-To: <41187657.7030709@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: David Dabbs <david@dabbs.net>, 'ReiserFS List' <reiserfs-list@namesys.com>
-
---==_Exmh_-1191329028P
 Content-Type: text/plain; charset="us-ascii"
-Content-Id: <13810.1092152518.1@turing-police.cc.vt.edu>
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-On Tue, 10 Aug 2004 01:31:17 PDT, Hans Reiser said:
+On Tue, Aug 10, 2004 at 12:16:39AM -0700, Hans Reiser wrote:
+> >
+> Interesting.What happens without overwrite, that is, if you write more 
+> files without deleting the old ones?
 
-> Thanks for explaining
-> 
-> sync;sync;sync;halt
-> 
-> I always felt I was failing to grok something.
+Below I made 24 one gigabyte files in sequence
+All of them are similarly fragmented: 
 
-As was the author who recommended it.  It started out as:
+x44016way1:/mnt/tmp0/data # ls -lh
+total 25G
+drwx------  2 root root  816 Aug 10 10:05 .
+drwxr-xr-x  5 root root   96 Aug 10 10:00 ..
+-rwx------  1 root root 1.0G Aug 10 10:00 datafile0
+-rwx------  1 root root 1.0G Aug 10 10:00 datafile1
+-rwx------  1 root root 1.0G Aug 10 10:02 datafile10
+-rwx------  1 root root 1.0G Aug 10 10:02 datafile11
+-rwx------  1 root root 1.0G Aug 10 10:03 datafile12
+-rwx------  1 root root 1.0G Aug 10 10:03 datafile13
+-rwx------  1 root root 1.0G Aug 10 10:03 datafile14
+-rwx------  1 root root 1.0G Aug 10 10:03 datafile15
+-rwx------  1 root root 1.0G Aug 10 10:03 datafile16
+-rwx------  1 root root 1.0G Aug 10 10:04 datafile17
+-rwx------  1 root root 1.0G Aug 10 10:04 datafile18
+-rwx------  1 root root 1.0G Aug 10 10:04 datafile19
+-rwx------  1 root root 1.0G Aug 10 10:01 datafile2
+-rwx------  1 root root 1.0G Aug 10 10:04 datafile20
+-rwx------  1 root root 1.0G Aug 10 10:04 datafile21
+-rwx------  1 root root 1.0G Aug 10 10:05 datafile22
+-rwx------  1 root root 1.0G Aug 10 10:05 datafile23
+-rwx------  1 root root 1.0G Aug 10 10:01 datafile3
+-rwx------  1 root root 1.0G Aug 10 10:01 datafile4
+-rwx------  1 root root 1.0G Aug 10 10:01 datafile5
+-rwx------  1 root root 1.0G Aug 10 10:01 datafile6
+-rwx------  1 root root 1.0G Aug 10 10:02 datafile7
+-rwx------  1 root root 1.0G Aug 10 10:02 datafile8
+-rwx------  1 root root 1.0G Aug 10 10:02 datafile9
 
-# sync   ( this one schedules the I/O)
-# sync   ( just a time waster typing)
-# sync   ( just a time waster typing )
-# halt    ( and we finally actually shut down).
+x44016way1:/mnt/tmp0/data # filefrag *
+datafile0: 268 extents found
+datafile1: 268 extents found
+datafile10: 267 extents found
+datafile11: 268 extents found
+datafile12: 268 extents found
+datafile13: 268 extents found
+datafile14: 268 extents found
+datafile15: 268 extents found
+datafile16: 268 extents found
+datafile17: 268 extents found
+datafile18: 267 extents found
+datafile19: 268 extents found
+datafile2: 267 extents found
+datafile20: 268 extents found
+datafile21: 268 extents found
+datafile22: 268 extents found
+datafile23: 267 extents found
+datafile3: 268 extents found
+datafile4: 268 extents found
+datafile5: 268 extents found
+datafile6: 268 extents found
+datafile7: 267 extents found
+datafile8: 268 extents found
+datafile9: 268 extents found
 
-The disks on the old PDP and Vax 750 boxes were actually sluggish enough that
-if you had a whole 1M or 2M in the buffer cache to flush out, it was actually not
-difficult to enter "sync", hit return, enter "halt", hit return, and have the
-halt happen before sync finished, doing the predictable to the non-journaled file
-systems.  Empirical studies showed that even on the biggest-memory boxes,
-sync could almost always finish with 2 time-wasters before the halt.. ;)
-
-
---==_Exmh_-1191329028P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFBGOzGcC3lWbTT17ARAqrNAKDPsNrVzJgtYlWkNQLQWE+IgcMzlQCeM25o
-GvMvC9MJOTxZAJUf6W6jrTk=
-=Rvhb
------END PGP SIGNATURE-----
-
---==_Exmh_-1191329028P--
