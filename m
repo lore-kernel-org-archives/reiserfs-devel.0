@@ -1,88 +1,91 @@
-From: <mailinglists@d-g-c.de>
-Subject: Re: ReiserFS V4 kernel 2.6.9-rc1 mm4
-Date: Wed, 15 Sep 2004 14:29:30 +0200
-Message-ID: <003901c49b1f$a792e550$0a00a8c0@splatter>
-References: <1095149098.13920.ezmlm@namesys.com> <42492.80.156.40.148.1095149724.squirrel@webmail.d-g-c.de> <1095177597.5478.172.camel@tribesman.namesys.com>
+From: Will Smith <will@willsmith.org>
+Subject: Minor, 'mergable units' error caused by repacker.
+Date: Wed, 15 Sep 2004 20:40:45 +0800
+Message-ID: <4148384D.2010508@willsmith.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21754-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21755-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hi again,
+I've been running the repacker a number of times, and often it causes
+minor errors, fixable with fsck.reiser4 --fix.
 
-> Hello
->
-> On Tue, 2004-09-14 at 12:15, mailinglists@d-g-c.de wrote:
-> > Hi,
-> > i have got a big problem with my 220GB reiser4 partition. it is mounted
-to
-> > /home. i want to share it with nfs-server v3. it is mountable by a
-foreign
-> > client - but i get input/output errors when i try to swith into a
-> > subdirectory or a "ls -la". a simple "ls" does work without errors! are
-> > there any known nfs/reiser4 problems?
-> >
-> Please describe configurations of both server and client: hardware and
-> software.
-> Does ls -la work on local filesystem?
-> What does dmesg say when ls -la reports i/o error?
+It appears to only cause errors when run in 'direction=1' (backward) mode.
 
-my fstab:
-==================================================
-/dev/hde1               /boot           ext2            noauto,noatime
-1 2
-/dev/hde5               /               reiserfs        noatime
-0 0
-/dev/hde2               none            swap            sw
-0 0
-/dev/hde6               /usr            reiserfs        noatime
-0 0
-/dev/hde7               /var            reiserfs        noatime
-0 0
-/dev/hde8               /opt            reiserfs        noatime
-0 0
-/dev/hde9               /tmp            reiserfs        noatime
-0 0
-/dev/hde10              /home           reiser4         noatime
-0 0
-/dev/cdroms/cdrom0      /mnt/cdrom      iso9660         noauto,ro
-0 0
-#/dev/fd0               /mnt/floppy     auto            noauto
-0 0
-none                    /proc           proc            defaults
-0 0
-none                    /dev/shm        tmpfs           defaults
-0 0
-capifs                  /dev/capi       capifs          defaults
-0 0
-==================================================
-
-so my only reiser4 patition is hde10. exporting any other partition (eg.
-/tmp) with nfs i do not get any errors!
-a local ls -la is working fine! also the samba 3.0.5 server is sharing all
-files on /home/samba without any problems.
-i also got clamavd running for samba - all working fine. only the nfs
-exports make problems...
-
-the client is a 2.4.24 kernel with no nfs v3 support - but mounting /tmp
-works fines...
-
-greetz florian engelmann
+Config : Linux server 2.6.8.1-mm4
+        : reiser4progs-1.0.0
+        : all defaults
+Reiser4 filesystem : kernel source (fragmented) on 350Mb partition
 
 
->
->
-> > thx and greetz
-> >  florian engelmann
-> >
-> >
->
->
+
+Example fsck.reiser4 output:
+
+[root@server repacker]# /usr/local/sbin/fsck.reiser4  /dev/hdc2
+*******************************************************************
+This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+*******************************************************************
+
+Fscking the /dev/hdc2 block device. 
+
+Will check the consistency of the Reiser4 SuperBlock. 
+
+Will check the consistency of the Reiser4 FileSystem. 
+
+Continue? 
+
+(Yes/No): y
+***** fsck.reiser4 started at Wed Sep 15 19:25:06 2004
+Reiser4 journal (journal40) on /dev/hdc2: 0 transactions replayed of the 
+total 0
+blocks.
+Reiser4 fs was detected on /dev/hdc2. 
+
+Master super block (16):
+magic:          ReIsEr4
+blksize:        4096
+format:         0x0 (format40)
+uuid:           95531358-2088-4577-92c3-3ab69c186415
+label:          <none>
+
+Format super block (17):
+plugin:         format40
+description:    Disk-format for reiser4, ver. 1.0.0
+magic:          ReIsEr40FoRmAt
+flushes:        0
+mkfs id:        0x313b7a2d
+blocks:         85554
+free blocks:    39522
+root block:     17836
+tail policy:    0x2 (smart)
+next oid:       0x7f245
+file count:     15924
+tree height:    4
+key policy:     LARGE
+
+
+CHECKING STORAGE TREE 
+
+FSCK: Node (18023), item (2): 1 mergable units were found in the 
+extent40 unit.
+FSCK: Node (18333), item (78): 1 mergable units were found in the 
+extent40 unit.
+FSCK: Node (19880), item (65): 1 mergable units were found in the 
+extent40 unit.
+FSCK: Node (22794), item (28): 1 mergable units were found in the 
+extent40 unit.
+FSCK: Node (22794), item (33): 1 mergable units were found in the 
+extent40 unit.
+FSCK: Node (23976), item (79): 1 mergable units were found in the 
+extent40 unit.
+...
+
+
 
 
