@@ -1,47 +1,58 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: Re: Corruption: --fix-fixable results in all nlink
-Date: Thu, 22 Aug 2002 16:53:12 +0200
-Message-ID: <200208221653.12388.Dieter.Nuetzel@hamburg.de>
-References: <200208220002.17391.Dieter.Nuetzel@hamburg.de> <000d01c249c6$39d38170$2ad22fc2@acealex> <3D64D138.50408@namesys.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: reiserfsck
+Date: Thu, 22 Aug 2002 18:44:08 +0400
+Message-ID: <200208221844.08713.vitaly@namesys.com>
+References: <1651424343.20020822161642@pch-edv.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11295-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11296-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3D64D138.50408@namesys.com>
+In-Reply-To: <1651424343.20020822161642@pch-edv.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>, Alexander Saers <alex@saers.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Linux PCH EDV <linux@pch-edv.com>, reiserfs-list@namesys.com
 
-On Thursday 22 August 2002 13:55, Hans Reiser wrote:
-> Alexander Saers wrote:
-> >And sometimes you are using old disks (20 gb or so) that has around 500kb
-> > of bad blocks. They dont have warranty and i think it would be a waste =
-to
-> > just trow them away.
-
-[-]
-
-> >>Sometimes you can't replace the drive immediately (e.g. laptop while
-> >>traveling abroad), and then it is useful to have badblocks handling.
+On Thursday 22 August 2002 18:16, Peter Herklotz wrote:
+> Hello,
 >
-> The cost of losing data due to more blocks going bad is usually much
-> more than the cost of the drives....
+> how would I know which version of fs 3.5 I use(d)? The filesystem on
+> that partition was created using SuSE Linux 7.3.
+>
+> If I made a wrong choice of the superblock version using "reiserfsck
+> --rebuild-sb" can I correct it afterwards?
+> At the moment "reiserfsck --rebuild-tree" does not find ANY data on
+> the partition. It is telling me
+> 'Could not find hash in use. Using "r5"
+> "r5" hash is selected'
+>
+> and then doesn't find anything.
+>
+> I am quite clueless what to try now.
+>
+> Thanks
+> Peter
 
-That's my whole point.
-I know what I'm talking about. Did severall recovery jobs (under Linux) for=
- my=20
-local dealer's customers (mostly windows users --- NTFS is a pain...;-)=20
+Could you tell what you answered here
 
--Dieter
+what is version of ReiserFS you use[1-4]
+  (1)   3.6.x
+  (2) >=3.5.9
+  (3) < 3.5.9 converted to new format
+  (4) < 3.5.9
+  (X)   exit
 
---=20
-Dieter N=FCtzel
-Graduate Student, Computer Science
+If you mkreiserfs by default from SuSe 7.3 you should have >=3.5.9.
+It would be easy to say what is going on if you send the reiserfsck 
+output and its logfile (-l option). 
 
-University of Hamburg
-Department of Computer Science
-@home: Dieter.Nuetzel at hamburg.de (replace at with @)
+Let's check whether you have some data on the partition or not. Could you 
+run ./debugreiserfs/debugreiserfs -D /dev/hdb3 > hdb3.meta
+If it prints a lot of LEAF NODEs, you have.
+
+-- 
+
+Thanks,
+Vitaly Fertman
