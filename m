@@ -1,81 +1,48 @@
-From: "Alexander Saers" <alex@saers.com>
+From: Vitaly Fertman <vitaly@namesys.com>
 Subject: Re: mkreiserfs and big RAID-Systems
-Date: Mon, 15 Jul 2002 17:47:44 +0200
-Message-ID: <003a01c22c16$f6ab2870$e4d22fc2@acealex>
-References: <1026741573.30600.25.camel@pallas.IZS.FhG.de>
+Date: Mon, 15 Jul 2002 20:08:51 +0400
+Message-ID: <200207152008.51657.vitaly@namesys.com>
+References: <1026741573.30600.25.camel@pallas.IZS.FhG.de> <200207151824.47086.vitaly@namesys.com> <1026751348.32136.14.camel@pallas.IZS.FhG.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11012-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11013-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <1026751348.32136.14.camel@pallas.IZS.FhG.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Andreas Abele <aba@IZS.FhG.de>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Andreas Abele <aba@IZS.FhG.de>
+Cc: reiserfs-list@namesys.com
 
-Are you sure that you dont have looked at the wrong valus. I mean, when
-running raid-5 you loose some storage space and gain some redundance. You do
-that by adding checksum on one or several disks. Very often you also have
-stand in disks "spare - disks" that actually not are used at all. But when
-one disk fails they are connected in.
+> Here is the result
+> [root@saturn6 mkreiserfs]# ./mkreiserfs /dev/sdf1
+> Count of blocks on the device: 210096054
 
-So my advice are to check your raid config and se what the actual raid size
-is. Also check what harddrive that are in the raid array and start counting
-and se if it all matches your numbers
+As you can see block number is correct - 840384216 blocks.
 
-/Alexander
+> bread: Cannot read a block # 210096053.
+>
+> Abgebrochen (core dumped)
+>
+> This is the syslog-entry from fdisk
+> ===================================
+> Jul 16 01:23:14 saturn6 kernel: SCSI device sdf: 1680779520 512-byte hdwr
+> sectors (-238952 MB) Jul 16 01:23:14 saturn6 kernel: 
+> /dev/scsi/host4/bus0/target4/lun0: p1 Jul 16 01:23:16 saturn6 kernel: SCSI
+> device sdf: 1680779520 512-byte hdwr sectors (-238952 MB) Jul 16 01:23:16
+> saturn6 kernel:  /dev/scsi/host4/bus0/target4/lun0: p1
+>
+>
+> This is the syslogentry from mkreiserfs
+> =======================================
+> Jul 16 01:26:39 saturn6 kernel:  I/O error: dev 08:51, sector 1680768424
 
------ Original Message -----
-From: "Andreas Abele" <aba@IZS.FhG.de>
-To: <reiserfs-list@namesys.com>
-Sent: Monday, July 15, 2002 3:59 PM
-Subject: [reiserfs-list] mkreiserfs and big RAID-Systems
+This is likely to be a bad block. Run 
+    /sbin/badblock -b 4096 /dev/sdf1 210096053 210096053 
+or with some range.
 
+-- 
 
-Hello,
-
-I have a RAID5-Set with 840 GB netto here.
-
-1.) fdisk shows:
-
-Festplatte /dev/sdf: 255 K=F6pfe, 63 Sektoren, 104623 Zylinder
-Einheiten: Zylinder mit 16065 * 512 Bytes
-    Device boot.  Start       End    Blocks   Id  Dateisystemtyp
-/dev/sdf1   *         1    104623 840384216   83  Linux
-                                  ^^^^^^^^^
-2.) mkreiserfs /dev/sdf1
-3.) mount /dev/sdf1 /users1/p1
-4.) df /dev/sdf1
-Dateisystem          1K-Bl=F6cke    Benutzt Verf=FCgbar Ben% montiert auf
-/dev/sdf1            720312060     32840 720279220   1% /users1/p1
-                     ^^^^^^^^^
-
-Where are the remaining 120 GBytes?
-
-Cross-Test with ext2
-
-2a.) mke2fs /dev/sdf1
-3a.) mount /dev/sdf1 /users1/p1
-4a.) df /dev/sdf1
-Dateisystem          1K-Bl=F6cke    Benutzt Verf=FCgbar Ben% montiert auf
-/dev/sdf1            827197400        20 785178172   1% /users1/p1
-                     ^^^^^^^^^
-
-What is happening here? When i run mkreiserfs, the programs last
-blocknumber seen is 180060160, which is exactly a1/4 of the mounted
-kilobytes (4k-Blocks okay). But where are the remaining 120 G-Blocks?
-
-Any ideas? According to the reiserfs-specs a filesystem can hold 17.6
-TBytes.
-
-kind regards
-Andreas Abele
-
-
-
-
-
-
-
-
-
+Thanks,
+Vitaly Fertman
