@@ -1,118 +1,46 @@
-From: "Vladimir Karavelov" <adsyssw@netbg.com>
-Subject: Re: 2 Terabyte install
-Date: Tue, 11 May 2004 18:23:48 +0300
-Message-ID: <01e501c4376b$f5cb8280$0302a8c0@karavelov>
-References: <409AC2FF.7080800@lindows.com> <1083917932.14089.281.camel@tribesman.namesys.com> <409BB690.6030604@namesys.com> <409BBDC9.3030809@lindows.com> <409FB387.8080804@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: reiser4 non-free? (I throw in the towel)
+Date: Tue, 11 May 2004 08:52:42 -0700
+Message-ID: <40A0F6CA.10900@namesys.com>
+References: <1084025633.28080.196082736@webmail.messagingengine.com>	 <200405110004.05704.reiser@namesys.com> <1084269555.22047.138.camel@jeff>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18608-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18609-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1084269555.22047.138.camel@jeff>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>, Clifford Beshers <clifford.beshers@lindows.com>
-Cc: Vladimir Saveliev <vs@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>, Vitaly Fertman <vitaly@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jeff Davis <reiser-list@empires.org>
+Cc: reiserfs-list@namesys.com, debian-legal@lists.debian.org
 
-Hi to everybody there,
-If you are using 75xx or 85xx series controller there is a 2TB limitation
-per RAId volume. Are you shure that you are using newes 3ware 9500S series
-controller?
+Jeff Davis wrote:
 
-rgds
-Vladimir
-
------ Original Message -----
-From: "Hans Reiser" <reiser@namesys.com>
-To: "Clifford Beshers" <clifford.beshers@lindows.com>
-Cc: "Vladimir Saveliev" <vs@namesys.com>; "Reiserfs mail-list"
-<Reiserfs-List@namesys.com>; "Vitaly Fertman" <vitaly@namesys.com>
-Sent: Monday, May 10, 2004 7:53 PM
-Subject: Re: 2 Terabyte install
-
-
-> Clifford Beshers wrote:
 >
-> > Thanks Hans, but no need.  I found the page in the FAQ about three
-> > minutes after I posted.  I get so used to google finding me the right
-> > things, I occasionally forget to just go to the place I know should
-> > have the answers.
-> >
-> > So far, I know that sfdisk choked on creating the partition, but that
-> > fdisk succeeded.  After that the install proceeded normally, but the
-> > system didn't reboot.  I have to go get details on why, but my guessis
-> > either lilo or a missing module in the initrd.
 >
-> If you want us to research the problem source for you further, let us
-> know.  Be  suspicious of the device driver....
+>As far as Debian is concerned, I don't think you give them quite enough
+>credit. Those people just want a base of freedoms which a normal person
+>can understand that covers all the software. It's very helpful to have
+>an OS where you don't have to turn a development project into a legal
+>investigation, tracking down hundreds of licenses. 
 >
-> >
-> > Hans Reiser wrote:
-> >
-> >> Vladimir Saveliev wrote:
-> >>
-> >>> Hello
-> >>>
-> >>> On Fri, 2004-05-07 at 02:58, Clifford Beshers wrote:
-> >>>
-> >>>
-> >>>> What are the current size limitations for
-disks/partitions/filesystems
-> >>>> with the following combinations?  My googling has produced
-> >>>> inconsistent answers.
-> >>>>        { linux 2.4.24, linux 2.6.5 } X { reiserfs3, reiser4 }
-> >>>>
-> >>>
-> >>>
-> >>>
-> >>> http://namesys.com/faq.html#reiserfsspecs
-> >>>
-> >>>
-> >>>
-> >>>> We have a new machine with a 3-ware 8 port controller (looks like a
-> >>>> scsi controller to the system, but actually drives 8 ide drives).  We
-> >>>> have 8 x 300GB drives attached for a total > 2TB.
-> >>>>
-> >>>> Our IT guy has been unable to install Linspire on it (linux 2.6.5,
-> >>>> reiserfs3).  I'm about to go look in more detail, but I thought I'd
-> >>>> find out what the bounds were for sure.
-> >>>>
-> >>>>
-> >>>
-> >>>
-> >>>
-> >>> I assume mkreiserfs was not the reason why you guys failed to install
-> >>> linux on your hardware. It works for > 2tb devices.
-> >>>
-> >>>
-> >>>
-> >>>> Thanks,
-> >>>>
-> >>>> Cliff
-> >>>>
-> >>>> --
-> >>>>
-> >>>> This message contains information which may be confidential and
-> >>>> privileged. Unless you are the addressee (or authorized to receive
-> >>>> for the addressee), you may not use, copy or disclose to anyone the
-> >>>> message or any information contained in the message. If you have
-> >>>> received the message in error, please advise the sender and delete
-> >>>> the message.  Thank you.
-> >>>>
-> >>>
-> >>>
-> >>>
-> >>>
-> >>>
-> >>>
-> >>>
-> >> Please provide exact answer to this question about what are V3
-> >> limits.  Vitaly, please assist.
-> >
-> >
-> >
-> >
-> >
+There is truth to this, let me acknowledge it.
+
+>Now, that "base of
+>freedoms" may not be agreeable to everyone, but we can't ignore the
+>value of consistant licensing in an OS. And many of the problems with
+>DFSG are mitigated by having a well-integrated non-free section
+>(unfortunately that doesn't solve the problems for reiserfs, which needs
+>to be in the OS install).
+>
+>Regards,
+>	Jeff
+>
+>
+>
+>
+>  
 >
 
