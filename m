@@ -1,67 +1,62 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Problem with the latest auto snapshot
-Date: Sat, 12 Jun 2004 22:46:49 +0300
-Message-ID: <20040612194649.GF4990@nysv.org>
-References: <200406122131.25974.henning-04@die.informatik.uni-siegen.de>
+From: Sebastiaan <S.Breedveld@ewi.tudelft.nl>
+Subject: very messed up reiserfs with bad blocks
+Date: Sat, 12 Jun 2004 22:16:19 +0200 (METDST)
+Message-ID: <Pine.GHP.4.44.0406122215500.13459-100000@elektron.its.tudelft.nl>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19158-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19160-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200406122131.25974.henning-04@die.informatik.uni-siegen.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Henning Westerholt <henning-04@die.informatik.uni-siegen.de>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Sat, Jun 12, 2004 at 09:31:25PM +0200, Henning Westerholt wrote:
+Hi,
 
->After some few disk operation a process try to access some data on the 
->partition, and hung forever. I got the following log entries:
-[snip]
->I could not kill the process, a reboot was needed.
+I have a problem with a reiserfs partition. Some days ago the drive
+reported bad blocks, so I ran the badblocks program tried to fix the
+filesystem with the badblocksoutput.
 
-I had something similar, with an old auto-snapshot, but I didn't get
-those log messages. It also repeated on, 2004.06.09 under some mild load,
-compiling .11-19.36 and doing a dist-upgrade. I'll dig out some traces
-if it still repeats with this kernel, as they seem to have systematically
-receeded.
+Assuming I fixed the badblock list with 'reiserfsck --badblocks' I tried
+to access some (reported broken) files on that partition. This gave some
+I/O errors, so I thought I had to rebuild the tree (reiserfsck --badblocks
+--rebuild-tree). This failed, and the filesystem became unmountable (mount
+fails with 'mount: Not a directory').
 
-I wonder if we have something different concerning debug?
-mjt@shrike:~$ zgrep -i reiser4 /proc/config.gz 
-CONFIG_REISER4_FS=y
-# CONFIG_REISER4_FS_SYSCALL is not set
-CONFIG_REISER4_LARGE_KEY=y
-# CONFIG_REISER4_CHECK is not set
-CONFIG_REISER4_USE_EFLUSH=y
-# CONFIG_REISER4_COPY_ON_CAPTURE is not set
-# CONFIG_REISER4_BADBLOCKS is not set
-mjt@shrike:~$ 
+I ran another badblock scan, and the number of badblocks grew
+substantially (from 11 in the first run to 177 in the second).
+--rebuild-tree failed again and again.
 
->Any operation on the fs fail with a input/ output error. I try to fix this 
->with fsck, but it found no errors. I attached the output from the first fsck 
->runs.
->I'll rebuild the partition tomorow, and give it another try..
+Now the weird thing occured: running a third badblock scan didn't increase
+the amount of badblocks (as I should expect, since the badblock program
+runs on a lower level than the filesystem). It gave me 56 badblocks.
 
-I just ran a bonnie++ without any problems. The machine isn't under any
-real load, though.
-top - 22:42:30 up 58 min, 16 users,  load average: 3.29, 2.37, 1.42
-I'm just watching Threshold's Critical Energy live DVD, so all that is all
-bonnie's doing.
 
-Version  1.03       ------Sequential Output------ --Sequential Input- --Random-
-                    -Per Chr- --Block-- -Rewrite- -Per Chr- --Block-- --Seeks--
-Machine        Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP  /sec %CP
-shrike           1G 11969  50 38699  19 16239  16 13620  62 29511  16 166.2 1
-                    ------Sequential Create------ --------Random Create--------
-                    -Create-- --Read--- -Delete-- -Create-- --Read--- -Delete--
-              files  /sec %CP  /sec %CP  /sec %CP  /sec %CP  /sec %CP  /sec %CP
-                 16 16636  62 +++++ +++  5849  62  6758  64 +++++ +++  5921 64
-shrike,1G,11969,50,38699,19,16239,16,13620,62,29511,16,166.2,1,16,16636,62,+++++,+++,5849,62,6758,64,+++++,+++,5921,64
+Now the following questions raised:
+- what causes the amount of bad blocks to fluctuate?
+- how can I access the filesystem again?
 
--- 
-mjt
+I know the drive is bad, so I am only into copying the contents off it as
+soon as possible. I have the idea the file allocation table is corrupted.
+Now --rebuild-tree won't help me, so I was hoping there is a backup of
+this FAT on the drive somewhere. I couldn't find it, so how does one deal
+with this thing under reiser?
+
+Thanks a lot in advance!
+Sebastiaan
+
+
+--
+
+English written by Dutch people is easily recognized by the improper use of 'In principle ...'
+
+The software box said 'Requires Windows 95 or better', so I installed Linux.
+
+Als Pacman in de jaren '80 de kinderen zo had be?nvloed zouden nu veel jongeren rondrennen
+in donkere zalen terwijl ze pillen eten en luisteren naar monotone electronische muziek.
+(Kristian Wilson, Nintendo, 1989)
+
+
 
