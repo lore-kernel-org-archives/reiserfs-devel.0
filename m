@@ -1,29 +1,65 @@
-From: Mike Fedyk <mfedyk@matchmail.com>
-Subject: Re: Snapshot against 2.6.1 released.
-Date: Mon, 19 Jan 2004 08:28:27 -0800
-Sender: Mike Fedyk <mfedyk@srv-lnx2600.matchmail.com>
-Message-ID: <20040119162827.GQ1748@srv-lnx2600.matchmail.com>
-References: <16395.60465.989777.981597@laputa.namesys.com> <16396.1113.203997.785571@laputa.namesys.com>
+From: Chris Mason <mason@suse.com>
+Subject: v3 experimental data=ordered and logging speedups for 2.6.1
+Date: Mon, 19 Jan 2004 11:45:26 -0500
+Message-ID: <1074530725.29546.178.camel@tiny.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16570-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16571-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <16396.1113.203997.785571@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: Reiserfs developers mail-list <Reiserfs-Dev@Namesys.COM>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: reiserfs-list@namesys.com, green@linuxhacker.ru
 
-On Mon, Jan 19, 2004 at 07:22:49PM +0300, Nikita Danilov wrote:
-> last-minute-fix.diff should be applied from fs/reiser4:
+Hello everyone,
 
-Took a look at the patch, and noticed you guys are using assert().
+I've got most of data=ordered finished, there are a few paths like
+writepage and O_DIRECT that need tweaking.  Thanks to Oleg's file_write
+work in 2.6.x, the data=journal patch is much cleaner than 2.4, it is
+almost done but not included in the bunch of patches I just uploaded to
+ftp.suse.com.  Oleg is cc'd in case he wants to look over the changes to
+reiserfs_file_write in reiserfs-jh-2.
 
-I'm sure you're going to have to rename that before it will be integrated
-upstream, so you might as well start before then...
+The code has survived a weekend of moderate load, but you still want it
+very far away from production servers.  I'm headed off to linux world in
+NYC for the rest of the week, and I wanted to post this for review and
+the few brave souls out there who might want to give it a try.
 
-Mike
+ftp.suse.com/pub/people/mason/patches/data-logging/experimental/2.6.1
+
+The README:
+
+Experimental reiserfs data=ordered and logging speedups against 2.6.1
+
+Apply these in order:
+
+01-reiserfs-journal-writer
+removes old stale debugging code, very safe
+
+02-reiserfs-nesting
+Adds support for nested transactions in reiserfs, needed for the quota code,
+and ported from 2.4.x by Jeff Mahoney
+
+03-reiserfs-iosize
+Changes reiserfs to tell userspace the default io size is 4k.  Works around
+a bug in bdb hit by rpm users
+
+04-reiserfs-balance_dirty
+Changes reiserfs_file_write to throttle writers the way the rest of linux
+does.  This patch has already been sent for inclusion, it should get in soon
+
+05-reiserfs-logging
+Logging speedups for small transactions and fsync heavy applications.  Most
+experimental patch of the bunch, since it changes the way the log does
+metadata writeback
+
+06-reiserfs-jh-2
+Adds data=ordered support, along with a journal header attached to
+the buffer head.  This allows for more efficient data=ordered support
+than I had in 2.4.x.
+
+-chris
+
+
