@@ -1,76 +1,97 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: V4 status
-Date: Wed, 3 Dec 2003 22:40:36 +0300
-Message-ID: <16334.15412.686909.927196@laputa.namesys.com>
-References: <16333.14692.61778.304155@pc7.dolda2000.com>
-	<3FCD47C4.50500@ninja.dynup.net>
-	<3FCE39B8.20307@namesys.com>
+From: "Burnes, James" <james.burnes@gwl.com>
+Subject: FW: reiser4 plugin for maildir
+Date: Wed, 3 Dec 2003 12:59:22 -0700
+Message-ID: <3DF9165145FACB4C96977FF650C1E90409633541@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16217-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16218-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FCE39B8.20307@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: David Masover <jedi@ninja.dynup.net>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: "'reiserfs-list@namesys.com'" <reiserfs-list@namesys.com>
 
-Hans Reiser writes:
- > David Masover wrote:
- > 
- > >
- > >
- > > The only thing I might complain about is that, although it was listed 
- > > as a possibility to display file permissions as files within a file 
- > > (for example, I should be able to do 'touch file; ls file'), I have 
- > > had two problems there.  First, ls seems to know it's a file, and so I 
- > > can't see any files within it.  Second, it needs the executable bit, 
- > > or I get permission denied errors when trying to look at any files 
- > > inside it.  Third, even with ls not working, no guesses I've made on 
- > > potential filenames has worked.
 
-$ chmod u+x foo
-$ cat foo/..pseudo
 
-or, take a look at http://namesys.com/v4/pseudo.html
+-----Original Message-----
+From: Burnes, James 
+Sent: Wednesday, December 03, 2003 1:38 PM
+To: 'Hans Reiser'
+Subject: RE: reiser4 plugin for maildir
 
- > 
- > Nikita will comment on the state of this code, and your remarks below.
- > 
- > >
- > > I know almost nothing about the interface behind this.  That said, 
- > > here's what I'd suggest (without knowing any better):
- > > - - If I look at something without using a trailing slash, it should 
- > > be treated as a file, except maybe for compatibility reasons.
- > > - - If I do use a trailing slash, or as a parent directory to 
- > > anything, it should be treated as a directory.
- > > - - If it is a regular file (and not a directory pretending to be a 
- > > file through some odd plugin -- /etc/passwd could be a file 
- > > constructed from files in /etc/passwd/) then permission to view it as 
- > > a directory should be assumed for anyone with read access.  As an 
- > > alternative, the ability to change into a directory could be 
- > > implemented as another security attribute, which is automatically 
- > > linked to executable permission for "normal" directories.
- > >
 
-That's unfortunately very hard to do if you are using usual system calls
-(like readdir(2), or open(2)), because they are tunneled through VFS
-that enforces some semantics.
 
-Another problem ("ls seems to know it's a file") is with user level
-programs that are sometimes too smart.
+> >I was considering installing qmail recently and upon analyzing the
+> >architecture of their queue structure it looked like Dan Bernstein
+> expended > >a lot of effort to achieve efficiency when you have 'many
+files in the
+> same
+> >directory'.
+> >
+> >All the while I was thinking that Hans Reiser has already solved this
+> >problem in reiserfs.
+> >
+> >Has anyone written a reiser4 plugin for qmail that implements this
+> queueing
+> >structure directly in the file system?
+> >
+> >
+> No, and I'd love to see it happen.
 
- > >
- > >
- > >
- > 
- > 
- > -- 
- > Hans
- > 
- > 
+Ok.  At least I'm on the right track.
 
-Nikita.
+I was re-reading the reiser4 docs yesterday and specifically the methods
+that need to be implemented for each reiser4 plugin/object type.
+
+All very elegant, but what wasn't too clear was the interface between the
+new apps that can take advantage of these pluggable objects directly and the
+interface between old-style POSIX apps and reiser4 that just want to see
+these objects as files.
+
+Since I just joined the reiserfs list, I'll copy/move this discussion there.
+I'm sure there are a lot of people thinking about just these types of
+issues. That way we can efficiently offload your brain, Hans ;-)
+
+Some use-cases: (man haven't done some of this for a while...)
+
+1. Web application in PHP or something acting as an OGG or MP3 store,
+archives and reads audio files.  There is obvious structure in these files
+and it seems silly to keep opening and reparsing their contents to extract
+various bits of header information or separate forks in the data.
+
+The web app understands this and R/W's the MP3 file using reiser4 into its
+constituent components via the MP3 reiser4 plugin.  All interaction between
+the app and the MP3 object lives at this layer of OO abstraction.
+
+Meanwhile the host system's backup procedure uses POSIX fopens or whatever
+to backup and restore the MP3 files.
+
+Does the plugin have to know how to serially marshall and unmarshall the
+object for POSIX programs so that it appears as a 'normal' MP3 file?
+
+2. Someone develops a new mod_dav (mod_reiserDAV?) for Apache, that uses a
+special reiser4 plugin to implement all of the DAV structures in reiser4
+instead of the current hack that uses a DBM database.  Interesting/cool
+features of DAV such as ordered DAV containers and revision control are
+implemented directly with the reiser4 plugin.
+
+3. As mentioned before, Dan Berstein's qmail program goes through a *lot* of
+gyrations to efficiently implement many files in one directory (as well as
+other issues).  I haven't tried a qmail queue on reiser3, but I gather that
+they end up fighting each other to achieve the same goals.  Rather than
+qmail trying to simulate a better file system, why not hack it to implement
+message queuing functions in a reiser4 plugin.
+
+Anyway, I'm just a beginner at kernel level filesystems, but I do have about
+20 years systems software background so maybe I should give it a go.  It's
+not going to get done tomorrow, but it should be fun.  All I have to loose
+is my test partition ;-)
+
+jim burnes
+security engineer
+great-west, denver
+
+
+
