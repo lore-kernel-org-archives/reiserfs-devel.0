@@ -1,30 +1,69 @@
-From: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
-Subject: Re: /proc/mounts and data=journal
-Date: Fri, 20 Dec 2002 00:16:47 +0100
-Message-ID: <m3fzst8uqo.fsf@merlin.emma.line.org>
-References: <200212192316.51412.bofh@coker.com.au>
+From: "darren" <teodarren@myrealbox.com>
+Subject: Re: Re: reiserfs and TUX2 - 2.4.18 or 2.4.19?
+Date: Fri, 20 Dec 2002 01:08:01 +0000
+Message-ID: <1040346481.bb5f0760teodarren@myrealbox.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12180-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12181-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200212192316.51412.bofh@coker.com.au> (Russell Coker's message
- of "Thu, 19 Dec 2002 23:16:51 +0100")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+To: green@namesys.com
+Cc: reiserfs-list@namesys.com
 
-Russell Coker <bofh@coker.com.au> writes:
+Hi!
 
-> I've applied the patches for mounting with data=journal.  However one problem 
-> that I have discovered is that the data=journal status of a file system is 
-> not shown in /proc/mounts, other tunable options of a file system such as 
-> noatime are shown.
+Thanx for responding to my ques.
 
-This also affects ext3fs. Leaving full quote and posting to linux-kernel
-as well.
+So, to make my reiserfs on my RedHat7.3 kernel the same one as the one in K=
+ernel 2.4.20, all i have to do is to patch:
 
--- 
-Matthias Andree
+2.4.18-pre1.pending
+2.4.18-pre2.pending
+.
+.
+2.4.18-rc1.pending
+2.4.18.pending
+2.4.19
+2.4.20
+
+and so on??
+
+-----Original Message-----
+From: Oleg Drokin <green@namesys.com>
+To: darren <teodarren@myrealbox.com>
+Date: Thu, 19 Dec 2002 18:58:05 +0300
+Subject: Re: reiserfs and TUX2 - 2.4.18 or 2.4.19?
+
+Hello!
+
+On Thu, Dec 19, 2002 at 11:53:49PM +0800, darren wrote:
+
+> I want to run TUX2 to serve files off my ReiserFS partition.
+> But I cannot seem to get TUX2 on kernel 2.4.19, which I would like to
+> run my reiserfs partition on.
+
+We cannot tell you anything about Tux2 because we do not know anything
+about it ;)
+
+> Should I just stick to 2.4.18 and somehow patch the reiserfs there??
+
+If you plan to run not current 2.4 kernels, you might want to
+get patches from ftp://ftp.namesys.com/pub/reiserfs-for-2.4/<version>.pendi=
+ng
+
+Where <version> next kernel version. (repeat that until you reach latest
+kernel). 
+
+But actually 2.4.18 is pretty stable and you may not want to patch it if yo=
+u
+want.
+
+Bye,
+    Oleg
+
+
+
