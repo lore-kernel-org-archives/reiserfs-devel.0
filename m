@@ -1,36 +1,50 @@
-From: Christoph Hellwig <hch@lst.de>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 17:57:44 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040826155744.GA4250@lst.de>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <20040825203516.GB4688@backtop.namesys.com> <20040825205149.GA17654@lst.de> <412DA2CF.2030204@namesys.com> <20040826124119.GA431@lst.de> <20040826134812.GB5733@mail.shareable.org>
+Date: Thu, 26 Aug 2004 17:00:53 +0100
+Message-ID: <20040826160053.GI5733@mail.shareable.org>
+References: <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <412DA40B.5040806@namesys.com> <20040826140500.GA29965@fs.tum.de> <1093530313.11694.56.camel@leto.cs.pocnet.net> <20040826150434.GF5733@mail.shareable.org> <1093533175.11694.77.camel@leto.cs.pocnet.net>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Return-path: <reiserfs-list-return-20707-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040826134812.GB5733@mail.shareable.org>
+In-Reply-To: <1093533175.11694.77.camel@leto.cs.pocnet.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, Alex Zarochentsev <zam@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Christophe Saout <christophe@saout.de>
+Cc: Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, Aug 26, 2004 at 02:48:12PM +0100, Jamie Lokier wrote:
-> >  the current reiser4 semantics break that and as soon as you're having a
-> >  world-writeable (e.g. /tmp) dir on it and someone is doing an opendir
-> >  on it he's lost.
-> 
-> How does the current reiser4 semantics break that?
-> 
-> In a reiser4 filesystem, a file _is_ a directory.
-> opendir() is supposed to succeed on it.
-> 
-> There's bound to be some security issue, but I'm not sure what you're
-> getting at with /tmp.  What sort of sort of security problem arises
-> with a world-writeable directory such as /tmp, that cannot arise with
-> the standard fs semantics?
+Christophe Saout wrote:
+> I'm just thinking about something. While you can't cut bytes out of unix
+> iles a lot of filesystems can do this (holes). Most of them only on a
+> block boundary, reiser4 on a byte boundary. If the filesystems could
+> export this functionality using an enhanced API we could implement a
+> compression plugin and other things on the VFS level that works with
+> every filesystem supporting the required mechanisms, not only reiser4.
+> And those features would take advantage of reiser4's storage mechanisms.
+> I think Hans made the plugins reiser4-only because only reiser4 has a
+> similar API at that time (and obviously because he didn't even think
+> about doing it otherwise).
 
-Actually you are right on that issue because it would open the
-device/fifo as directory and not device/fifo (in fact I'd had to look at
-the code again to see whether they actually do this only for files or
-also for special files)
+Yes.  In some cases the compression or re-archiving algorithm would
+choose different parameters, depending on the alignment capabilities
+of the underlying filesystem.  In some cases, that alignment is
+"offset 0 is the only one you can have", which is a severe special
+case where truncate and rewrite is required for changes.
+
+> > By the way, can reiser4 share parts of files between different files?
+> 
+> At the moment a file is exactly one object. But someone could write
+> another file plugin that spans a file across multiple objects, then yes,
+> multiple files could share parts.
+
+Nice.  That's useful for files which appear as themselves and also as
+part of a container.
+
+And also for revision managed filesystems :)
+
+-- Jamie
 
