@@ -1,46 +1,36 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: New to reiserfs
-Date: Mon, 13 May 2002 21:53:59 +0200
-Message-ID: <200205132153.59075.Dieter.Nuetzel@hamburg.de>
+From: Joe Cooper <joe@swelltech.com>
+Subject: Re: Re: New to reiserfs
+Date: Mon, 13 May 2002 15:02:40 -0500
+Message-ID: <3CE01BE0.2000003@swelltech.com>
+References: <200205132153.59075.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10301-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10302-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Chris Mason <mason@suse.com>, Oleg Drokin <green@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, JPASTORM@esade.edu
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-15?Q?Dieter_N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Cc: Hans Reiser <reiser@namesys.com>, Chris Mason <mason@suse.com>, Oleg Drokin <green@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, JPASTORM@esade.edu
 
-On Monday 13 May 2002 10:07, Hans Reiser wrote:
-> >>4.- I have a PIII 1 GHz, 512 MB RAM, SCSI server where I run sendmail,
-> >>bind and squid. Will I have problems with performance if I migrate to
-> >>reiserfs?
-> >>
-> sendmail will be lower in performance when using reiserfs unless you use =
+Dieter N=FCtzel wrote:
+> On Monday 13 May 2002 10:07, Hans Reiser wrote:
 
-> the latest not yet released patches and turned data journaling on.
+>>squid will benefit from your putting all files in one directory.
 
-More speed numbers on this to come with related post.
-> Do you really push the performance limits of the machine as a mail server?
+Hi Hans and all,
 
-You mean if it is worth?
+Out of curiosity...When did this become true?  I haven't tested in some=20
+time, but way back in 2.4.0pre days it was very far from reality=20
+(all-in-one-dir was about 20-30% slower than the standard default of=20
+x/256/256).
 
-> squid will benefit from your putting all files in one directory.
-
-So I should clobber my squid partition/dir and reconfigure to put all files=
-=20
-into only one directory and let the squid hierarchy alone?
-
-Thanks,
-	Dieter
-
+I'll be happy to run some Polygraph runs of this...I wasn't aware=20
+anything had changed, however.  Perhaps someone has a pointer for the=20
+relevant changelog entries?
 --=20
-Dieter N=FCtzel
-Graduate Student, Computer Science
-
-University of Hamburg
-Department of Computer Science
-@home: Dieter.Nuetzel@hamburg.de
+Joe Cooper <joe@swelltech.com>
+http://www.swelltech.com
+Web Caching Appliances and Support
 
