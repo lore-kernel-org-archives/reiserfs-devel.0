@@ -1,45 +1,71 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: New dpkg panic.
-Date: Tue, 7 Dec 2004 01:23:23 +0200
-Message-ID: <20041206232323.GW26192@nysv.org>
-References: <20041206153115.GV26192@nysv.org>
+From: Jiri Klouda <jk@zg.cz>
+Subject: Re: reiser4 for windows
+Date: Mon, 6 Dec 2004 22:07:30 -0800
+Message-ID: <20041207060730.GA1344@zg.cz>
+Reply-To: Jiri Klouda <jk@zg.cz>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-22697-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Return-path: <reiserfs-list-return-22698-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20041206153115.GV26192@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+To: Reiserfs <reiserfs-list@namesys.com>
 
-On Mon, Dec 06, 2004 at 05:31:16PM +0200, Markus T=F6rnqvist wrote:
->
->I'd appreciate a prompt answer, so I can fsck my computer as fast
->as possible if that's needed...
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Figured the Namesys guys weren't available so I took a metadata
-pack and did an fsck and the fs was corrupted.
+> Also, is it a given that reiser4 for windows would work without help
+> from MS?  I've just never seen a third-party filesystem driver for
+> windows.  You'd think that at least one other filesystem, one of the
+> Linux/BSD/etc ones, would have done this, if it was feasable.
 
-I can't really see why; but in light of this new information, is it=20
-possible the panics were caused by a broken fs?
+You might be onto something here. I am pretty sure my company would
+pay quite a lot for a working, fast and elegant implementation of=20
+symbolic links on windows. Either as a new filesystem or as an addition=20
+onto ntfs. We currently use one such addition and not very usable and
+uses a catalog of symlinks that can easily get corrupted.
 
-I uploaded the metadata and the fsck log at the aforementioned URL.
+Having reiser4 on Windows or even ext2, would be a huge thing.
 
-Hope this is worth anything to anyone; I'm just glad it works..
+> All this leaves me with the distinct impression that it'd be cheaper to
+> buy some gigabit ethernet (or fibre) and a Linux CIFS/Samba fileserver
+> using reiser4.  Steam and others refuse to install on network drives,
+> Windows probably will not boot off a network drive, but I imagine that
+> fixing these would be easier than porting a filesystem.
 
-PS.
-Is there a known reason which might cause such corruptions?
-I am pretty sure I haven't had to do any unclean shutdowns, but I
-probably wouldn't remember if I had, if there were no immediate effects :)
-But those should be pretty well survived, yes?
+Unfortunatelly even with very fast ethernet connections and network
+appliance with CIFS access, we still don't get the performance of a
+local filesystem. Plus, you don't want to really give write access=20
+over network, that slows down anything when you get into hundreds of
+clients. And we really cannot pay for so many network applicances to
+make this scalable proposition.
 
-Well, thanks anyway :)
+I wish we could just drop Windows as a platform, but as long as there
+are customers, there will be need to support them as well... :(
+
+-Jiri
 
 --=20
-mjt
+Jiri Klouda <jk@zg.cz>
+http://www.zg.cz/~jk
 
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQFBtUiipxwzMweqZNwRApLmAJ9583MYDF5YEL+t/wF5Ldzb80Ju5QCg3BzB
+QdqnaxncEbvSAcmEivz5/fc=
+=vEb3
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
