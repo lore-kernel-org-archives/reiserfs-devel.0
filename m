@@ -1,55 +1,55 @@
-From: eazgwmir@umail.furryterror.org (Zygo Blaxell)
-Subject: Re: Reiserfs, highquality meds source, low rates
-Date: 19 Apr 2004 20:14:48 -0400
-Message-ID: <c61q1o$6bk$1@satsuki.furryterror.org>
-References: <000001c425b0$1750e0b8$4fa9aa0e@fluridden.com> <20040419115902.GD15007@alias.nmd.msu.ru> <20040419115902.GD15007@alias.nmd.msu.ru> <4083C0B0.6090607@mweb.co.za>
-Return-path: <reiserfs-list-return-18066-reiserfs=m.gmane.org@namesys.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Fastest way to walk through a file tree on reiser4
+Date: Mon, 19 Apr 2004 22:06:08 -0400
+Message-ID: <200404200206.i3K268rl002953@turing-police.cc.vt.edu>
+References: <408155A5.8080205@poelzi.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1407750144P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18068-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: Your message of "Sat, 17 Apr 2004 18:04:53 +0200."
+             <408155A5.8080205@poelzi.org> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: "daniel.poelzleithner" <poelzi@poelzi.org>
+Cc: reiserfs-list@namesys.com
 
-In article <4083C0B0.6090607@mweb.co.za>, Cami  <camis@mweb.co.za> wrote:
->> i am just not sure how to kill THIS messages which look so....
->> they dont look like spam, even to me upon first look.
->
->If you were using SpamAssasin, you wouldn't get these..
+--==_Exmh_1407750144P
+Content-Type: text/plain; charset=us-ascii
 
-I _am_ using SpamAssassin, and I got this.  
+On Sat, 17 Apr 2004 18:04:53 +0200, "daniel.poelzleithner" <poelzi@poelzi.org>  said:
 
-Actually, this has turned into a neat example of how to poison a Bayes filter.
+> The program should walk through a file tree and return a list of all 
+> files their link count is 1. What would be the fastest way to realize this ?
 
-The original spam got flagged on my system like this:
+Depends.  Which matters more, correctness or speed? ;)
 
-X-Spam-Status: No, hits=2.9 required=5.0 tests=BAYES_40,HTML_MESSAGE, 
-	RCVD_IN_DYNABLOCK,RCVD_IN_RFCI,RCVD_IN_SORBS autolearn=no version=2.63
+Many programs perform an *inverse* optimization - If you're looking for
+all subdirectories, and find a directory with link count == 2, there's no need
+to recurse down into it looking for subdirs (if you have a directory 'a',
+that has a subdir 'a/b', it will have a link count of at least 3 - if 'a' has
+exactly 2 links, it's a leaf directory).
 
-So this got through the usual SA rules, none of which give very high
-scores, and even the Bayes filter isn't sure.
+Also, looking for "exactly one link" doesn't work right for hardlinks:
 
-Then comes your message, with a quote of the original spam:
+cd your_sub_dir
+cp /datatree/some_file ./name1
+ln ./name1 ./name2
 
-X-Spam-Status: No, hits=-3.2 required=5.0 tests=AWL,BAYES_00 autolearn=ham  
-	version=2.63
+--==_Exmh_1407750144P
+Content-Type: application/pgp-signature
 
-So...my Bayes filter just auto-trained itself on the contents of the
-spam message...as ham.  If I now feed the original spam through SA
-again, it gets BAYES_01, and a score of -1.5.  Clearly I'm going to be
-receiving a _lot_ of these, at least until I batch them all up and feed
-them to sa-learn to retrain the Bayes filter.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-Folks, if you want to talk about spam on a (non-spam-related) mailing
-list, please please please don't quote it, no matter how interesting it
-may be.  Or at least, if you do quote it, be sure to include a sentence
-or two that contains gratuitous references to the names of chemicals
-often used to mitigate the effects of problems that may arise with men
-and the organs they use to procreate.
+iD8DBQFAhIWPcC3lWbTT17ARAi1TAKDUl7/v/7cj5Ov1MyyVeYPwzpCIOwCfZXB+
+/c14ieI14aroi+CwDtHASfw=
+=Xet6
+-----END PGP SIGNATURE-----
 
--- 
-Zygo Blaxell (Laptop) <zblaxell@feedme.hungrycats.org>
-GPG = D13D 6651 F446 9787 600B AD1E CCF3 6F93 2823 44AD
+--==_Exmh_1407750144P--
