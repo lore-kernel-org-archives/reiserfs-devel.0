@@ -1,85 +1,38 @@
-From: Spam <spam@tnonline.net>
+From: Christoph Hellwig <hch@infradead.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 12:51:14 +0200
-Message-ID: <742303812.20040826125114@tnonline.net>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
- <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net>
- <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org>
- <1453698131.20040826011935@tnonline.net>
- <20040825163225.4441cfdd.akpm@osdl.org>
- <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net>
- <1939276887.20040826114028@tnonline.net>
- <20040826024956.08b66b46.akpm@osdl.org> <839984491.20040826122025@tnonline.net>
- <20040826032457.21377e94.akpm@osdl.org>
-Reply-To: Spam <spam@tnonline.net>
+Date: Thu, 26 Aug 2004 11:52:29 +0100
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040826115229.A18013@infradead.org>
+References: <20040824202521.GA26705@lst.de> <20040825163225.4441cfdd.akpm@osdl.org> <1093510983.23289.6.camel@imp.csi.cam.ac.uk> <200408261245.47734.christian.mayrhuber@gmx.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20621-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <20040826032457.21377e94.akpm@osdl.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <200408261245.47734.christian.mayrhuber@gmx.net>; from christian.mayrhuber@gmx.net on Thu, Aug 26, 2004 at 12:45:47PM +0200
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Andrew Morton <akpm@osdl.org>
-Cc: wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+Cc: reiserfs-list@namesys.com, Anton Altaparmakov <aia21@cam.ac.uk>, linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
 
+On Thu, Aug 26, 2004 at 12:45:47PM +0200, Christian Mayrhuber wrote:
+> There is the reiser4() syscall which you surely don't want to implement for 
+> other filesystems.
 
+Actually a syscall that goes into filesystem code is the last thing we want.
+But it's not in the submission, so let's keep that flame^H^H^H^Hdiscussion
+for later.
 
-> Spam <spam@tnonline.net> wrote:
->>
->> 
->> 
->> > Spam <spam@tnonline.net> wrote:
->> >>
->> >>    Yes,  for  example  documents,  image  files  etc. The multiple data
->> >>    streams  can  contain thumbnails, info about who is editing the file
->> >>    (useful for networked files) etc. Could be used for version handling
->> >>    and much more.
->> 
->> > All of which can be handled in userspace library code.
->> 
->> > What compelling reason is there for doing this in the kernel?
->> 
->> 
->>   Because  having user space tools and code will make it not work with
->>   everything. Keeping stuff in the kernel should make the new features
->>   transparent to the applications.
->> 
->>   Applications  that support the new features will benefit, all others
->>   will continue to work without destroying data.
+> Once there is some experience with this new fancy stuff the dust what
+> is useful/insecure, etc. and what is not will settle and can be condensed
+> into a vfs api.
+> Apps like samba and user scripts will have to be adapted once this is
+> the case, but this should not be to big a problem if this stuff is marked 
+> experimental.
+> 
+> People which want something stable can continue to use xattrs and a
+> magnitude of filesystems for now.
 
-> Sorry, but that all sounds a bit fluffy.   Please provide some examples.
-
-  We  already had the examples with cp and mv. Both should continue to
-  work and the files will still be copied. The same with Konqueror and
-  Nautilus.  Files  and  their  meta-files/streams/attributes  will be
-  retained as long as applications are using the OS API.
-
-  However,  if  things  are  to  implemented  in  user-space, then old
-  applications  will not work correctly and there is risk that all the
-  extra information will be lost or corrupted.
-
-  You  said  it  would be socially hard. I think it would be very much
-  close to impossible to get it right. Imagine that Gnome and Nautilus
-  would  implement  support  for  these. I doubt that cp, mv, KDE, mc,
-  app-xyz  would  implement  this anytime soon and in the meantime the
-  data is at risk.
-
-  If  we  want  things  to  work  from  the  start, including with old
-  applications  then  these  features  should  be at below-application
-  level.  If  it  is  in VFS or FS doesn't matter to me, as long as it
-  doesn't hinder or delay progress to long.
-
-> (Generally, getting all of userspace to agree on a particular library is
-> socially hard [*], but I don't see that as a reason for putting the
-> functionality into the kernel)
-
-> [*] Example: where's the library to manipulate /etc/whatever.conf? [**]
-
-> [**] yes, I know about gconf.
-
-
-
+Sure, no one stops you from playing around with new semantics.  But please
+don't add them to the linux kernel stable series until we have semantics we
+a) want to stick to for a while and b) actually work.
 
