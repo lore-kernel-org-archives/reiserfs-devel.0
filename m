@@ -1,60 +1,50 @@
-From: Diego Calleja <diegocg@teleline.es>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 19:05:48 +0200
-Message-ID: <20040826190548.3e67726f.diegocg@teleline.es>
-References: <20040826154446.GG5733@mail.shareable.org>
-	<Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com>
+Date: Thu, 26 Aug 2004 17:53:51 +0100
+Message-ID: <20040826165351.GM5733@mail.shareable.org>
+References: <20040826154446.GG5733@mail.shareable.org> <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20730-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20727-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 In-Reply-To: <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Rik van Riel <riel@redhat.com>
-Cc: jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Cc: Christophe Saout <christophe@saout.de>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-El Thu, 26 Aug 2004 11:54:51 -0400 (EDT) Rik van Riel <riel@redhat.com> esc=
-ribi=F3:
-
+Rik van Riel wrote:
 > And if an unaware application reads the compound file
 > and then writes it out again, does the filesystem
 > interpret the contents and create the other streams ?
 
-If the old utils doesn't support streams there's no way to make them create
-streams. There's not a real solution for that except fixing the old tools.
+Yes, exactly that.  The streams are created on demand of course, and
+by userspace helpers when that's appropriate which I suspect it almost
+always is.
 
-Why instead of being "compound" you just make test.compound to
-behave as a real directory? ie:
+> Unless I overlook something (please tell me what), the
+> scheme just proposed requires filesystems to look at
+> the content of files that is being written out, in
+> order to make the streams work.
 
-# echo "foo" > streamfile
-# echo "fake metadata" > streamfile/somemetadata
-# cat streamfile
-foo
-# cat streamfile/somemetadata
-fake metadata
+Yes.  Hence the idea of coherent views between two files: writing to
+one affects the content of the other, although the calcalation is only
+done on demand (or when the fs wants to migrate the representation --
+for example, creating the flat container prior to deleting the
+regeneratable pieces in order to save space).
 
-Now the old backup utils could see "streamfile" as a directory, ie:
-old apps could see that "streamfile" is a directory and then make
-their backups with the following contents:
-streamfile/somemetadata
-streamfile/defaultstream
+I haven't seen anything from Namesys that says they'll do that.  I
+have the impression the streams are just generated in memory on the
+fly, not stored on disk with a cacheing policy, but that's just an
+impression.  (We've all seen the Namesys white papers, they're not
+_that_ revealing). :)
 
-The defaultstream would be what its name means. There could be more
-default streams like "streamfile/compoundstream"
+I'm just pointing out how to do it _right_.  I think it will turn out
+like this eventually, either next year or some time over the next
+decade after some iterations.  Inevitable.  Mark my words, etc. :)
 
-All this looks like reinventing the file/directory concept wheel. Instead of
-adding support for streams and "use files as directories", why not orientate
-it to "use directories as files? Streams could very well be provided
-by directories containing files, with the addon of being able to cat
-a directory (which would cat the output of a designed file inside
-every directory like "defaultstream", then there could be other
-"special files" like "compoundstream", although the idea of "fixed name-
-special files" doesn't sounds very cool) All this could be very well
-provided done userspace, but then couldn't userspace also supply the whole =
-VFS=20
-functionality and still it lives in the kernel...?
-
+-- Jamie
