@@ -1,100 +1,49 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: 2 Terabyte install
-Date: Mon, 10 May 2004 09:53:27 -0700
-Message-ID: <409FB387.8080804@namesys.com>
-References: <409AC2FF.7080800@lindows.com> <1083917932.14089.281.camel@tribesman.namesys.com> <409BB690.6030604@namesys.com> <409BBDC9.3030809@lindows.com>
+Subject: Re: reiser4 non-free?
+Date: Mon, 10 May 2004 10:15:40 -0700
+Message-ID: <409FB8BC.10202@namesys.com>
+References: <4097CCA4.4060707@namesys.com> <87fzag139k.fsf@aule.evenmere.org> <4099A868.9030406@slaphack.com> <20040506.083242.41632888.wlandry@ucsd.edu> <87k6zpy8ke.fsf@aule.evenmere.org> <20040506143643.GB25505@raptus.homelinux.org> <877jvpy08v.fsf@aule.evenmere.org> <409A7F98.7040609@namesys.com> <20040506232310.GA25081@hezmatt.org> <20040506194015.R13880@links.magenta.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18579-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18581-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <409BBDC9.3030809@lindows.com>
+In-Reply-To: <20040506194015.R13880@links.magenta.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Clifford Beshers <clifford.beshers@lindows.com>
-Cc: Vladimir Saveliev <vs@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>, Vitaly Fertman <vitaly@namesys.com>
+To: Raul Miller <moth@debian.org>
+Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-Clifford Beshers wrote:
+Raul Miller wrote:
 
-> Thanks Hans, but no need.  I found the page in the FAQ about three 
-> minutes after I posted.  I get so used to google finding me the right 
-> things, I occasionally forget to just go to the place I know should 
-> have the answers.
+>On Fri, May 07, 2004 at 09:23:10AM +1000, Matthew Palmer wrote:
+>  
 >
-> So far, I know that sfdisk choked on creating the partition, but that 
-> fdisk succeeded.  After that the install proceeded normally, but the 
-> system didn't reboot.  I have to go get details on why, but my guessis 
-> either lilo or a missing module in the initrd.
-
-If you want us to research the problem source for you further, let us 
-know.  Be  suspicious of the device driver....
-
->
-> Hans Reiser wrote:
->
->> Vladimir Saveliev wrote:
+>>Q: Where is the limit between displaying the credits where the user won't
+>>necessarily see them, and forcing the user to read them?
 >>
->>> Hello
->>>
->>> On Fri, 2004-05-07 at 02:58, Clifford Beshers wrote:
->>>  
->>>
->>>> What are the current size limitations for disks/partitions/filesystems
->>>> with the following combinations?  My googling has produced
->>>> inconsistent answers.
->>>>        { linux 2.4.24, linux 2.6.5 } X { reiserfs3, reiser4 }
->>>>   
->>>
->>>
->>>
->>> http://namesys.com/faq.html#reiserfsspecs
->>>
->>>  
->>>
->>>> We have a new machine with a 3-ware 8 port controller (looks like a
->>>> scsi controller to the system, but actually drives 8 ide drives).  We
->>>> have 8 x 300GB drives attached for a total > 2TB.
->>>>
->>>> Our IT guy has been unable to install Linspire on it (linux 2.6.5,
->>>> reiserfs3).  I'm about to go look in more detail, but I thought I'd
->>>> find out what the bounds were for sure.
->>>>
->>>>   
->>>
->>>
->>>
->>> I assume mkreiserfs was not the reason why you guys failed to install
->>> linux on your hardware. It works for > 2tb devices.
->>>
->>>  
->>>
->>>> Thanks,
->>>>
->>>> Cliff
->>>>
->>>> -- 
->>>>
->>>> This message contains information which may be confidential and 
->>>> privileged. Unless you are the addressee (or authorized to receive 
->>>> for the addressee), you may not use, copy or disclose to anyone the 
->>>> message or any information contained in the message. If you have 
->>>> received the message in error, please advise the sender and delete 
->>>> the message.  Thank you.
->>>>   
->>>
->>>
->>>
->>>
->>>
->>>  
->>>
->> Please provide exact answer to this question about what are V3 
->> limits.  Vitaly, please assist.
+>>Likely Answer: Umm...
+>>
+>>Actual Answer: ???
+>>    
+>>
 >
+>Other things to consider:  how long must they be displayed?  What fonts
+>can be used?  What colors?  What orientations are allowed for the text?
+>What sort of display devices or mechanisms are ok to use (imagine systems
+>with no monitor and no serial terminal, or systems with a 3d interface
+>and not text)?
 >
+>Or imagine systems for the blind -- what volume must these credits be
+>played at?  What speech rates are ok to use?  What quality of rendition
+>to phonemes is required?
 >
+>Just scratching the surface, ...
 >
+>  
 >
-
+You eagerly imagine problems where there are none. mkreiserfs does not 
+specify any font or color, it lets bash do that. Adhere to the spirit of 
+the license and you will be ok.
