@@ -1,52 +1,59 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Re: [PATCH] finally... data logging for 2.4.20-pre10
-Date: Fri, 18 Oct 2002 15:41:00 +0200
-Message-ID: <3DB00F6C.6060609@mb.tu-ilmenau.de>
-References: <1034709883.5053.920.camel@tiny>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Encouraged or discouraged? Object database directly
+ on reiserfs
+Date: Fri, 18 Oct 2002 19:07:08 +0400
+Message-ID: <3DB0239C.2050409@namesys.com>
+References: <00ac01c276a9$463934e0$6400a8c0@twister>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11722-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11723-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>, Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+To: Szabolcs Szasz <sz@szasz.hu>
+Cc: reiserfs-list@namesys.com
 
-On 10/15/2002 09:24 PM, Chris Mason wrote:
-> Hello all,
-> 
-> I've uploaded new data logging code against 2.4.20-pre10 to 
-> 
-> ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20
-> 
-> The mirror might take a little while to update.
-> 
-> This code is lightly tested, use with caution for a few days.  The
-> journal relocation patches are not complete yet, I haven't integrated
-> them with the new options parsing code in 2.4.20-pre, so you can't pass
-> -o jdev= when mounting the FS.
-> 
-> Aside from merging into the latest kernel, there are a few bug fixes for
-> corner case oopsen hit during suse testing.
-> 
-> -chris
-> 
+Szabolcs Szasz wrote:
 
-Hi !
+>Hi,
+>
+>I'm creating an OODB for use by ISPs. Now for the prototype 
+>I use plain filesystem storage, object properties (names, phone 
+>numbers, URLs etc.) are all stored in multitudes of very small 
+>files, collected into large directories and there are symlinks all 
+>over the place...
+>
+>For any "classical" filesystems this is clearly a horrible abuse...
+>
+>It may be for the current reiserfs level, too, but much less.
+>
+Take a look at reiser4 next week, it will get a bit easier.
 
-Yesterday I added the 2.4.20-pre10 data-logging test results to
+>
+>Considering the future (and remembering the Vision doc. at
+>Namesys), is it encouraged or discouraged to continue the
+>OODB implementation atop the native filesystem storage?
+>(Speed is important, but not the primary concern. Unconstrained,
+>solid and versatile data accessibilty beats it --  that's why the 
+>fs storage rather than adding a DBMS engine.)
+>
+>Thanks very much,
+>Sab
+>
+>
+>
+>  
+>
+Is it a GPL OODB?
 
-  http://manuel.krause.bei.t-online.de/topics/sw-tests.2.htm
+If it is a GPL OODB, we encourage you to do it, we'll answere your 
+questions and be helpful, but we will try to obsolete you someday.
 
-The data-logging tests were performed in data=ordered mode. For all 
-these tests disk content remained the same.
+If it is not a GPL OODB, you might consider forming a commercial 
+relationship with us.
 
-Somehow 2.4.19-final was faster than everything that followed...
-
-Best regards,
-
-Manuel
+Hans
 
