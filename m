@@ -1,32 +1,27 @@
-From: Dirk Mueller <dmuell@gmx.net>
+From: wolfgang.glas@ev-i.at
 Subject: Re: Howto reformat root partition
-Date: Tue, 9 Apr 2002 12:50:47 +0200
-Message-ID: <20020409105047.GA30683@matrix.wg>
-References: <OF64BE5856.EE2EDA07-ONC1256B96.0031B944@ev-i.at>
+Date: Tue, 9 Apr 2002 14:49:34 +0200
+Message-ID: <OFFC94C4AC.80D27FCC-ONC1256B96.00460977@ev-i.at>
 Mime-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <OF64BE5856.EE2EDA07-ONC1256B96.0031B944@ev-i.at>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Dirk Mueller <dmuell@gmx.net>
+Cc: reiserfs-list@namesys.com
 
-On Die, 09 Apr 2002, wolfgang.glas@ev-i.at wrote:
+Ok, I did not say, that I did it the right way. Everybody has made some=20
+fault in his life. I just wanted to warn a user to just enter conv to=20
+/etc/fstab, wihch did not work for me.
 
-> 
->    I tried to add the conv option to /etc/fstab for my reiserfs root 
-> partition and did lose. I had to boot from CD, mount my root partition, 
-> reformat it using v3.6 disk format, copy the old content back, reboot the 
-> new root partition from CD and re-run lilo.
+  Wolfgang
 
-reformat it ?
+--
+Dr. Wolfgang Glas                        EV-i Informationstechnologie=20
+GmbH.
+Gesch=E4ftsf=FChrer                          Sebastian-Kneipp-Weg 17
+Wolfgang.Glas@ev-i.at                    A-6020 Innsbruck/Austria
+phone: ++43-512-284883-2                 fax: ++43-512-281624-31
 
-Boy, just use mount -oconv _once_ from the rescue system you booted. 
-
-Don't tell such horror stories here ;-)
-
-
-Dirk
