@@ -1,28 +1,43 @@
-From: Szakacsits Szabolcs <szaka@sienet.hu>
-Subject: Re: Reiser4 can't compile glibc
-Date: Mon, 12 Apr 2004 18:53:16 +0200 (MEST)
-Message-ID: <Pine.LNX.4.21.0404121740250.13254-100000@mlf.linux.rulez.org>
-References: <1081783690.1343.2.camel@tribesman.namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: On plugins, on-disk formatting and such
+Date: Mon, 12 Apr 2004 11:09:24 -0700
+Message-ID: <407ADB54.1070005@namesys.com>
+References: <20040410100701.GE5229@nysv.org> <407AB278.8030209@namesys.com> <20040412153344.GG14134@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17874-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-17875-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1081783690.1343.2.camel@tribesman.namesys.com>
+In-Reply-To: <20040412153344.GG14134@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: Hans Reiser <reiser@namesys.com>, Alex Zarochentsev <zam@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-9"; format="flowed"
+To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
+Cc: reiserfs-list@namesys.com, Nikita Danilov <god@namesys.com>, vitaly@thebsh.namesys.com, vs <vs@thebsh.namesys.com>, grev@namesys.com
 
+Markus T=F6rnqvist wrote:
 
-What timestamp resolution Reiser4 has? Ext[23] can't compile gcc because
-[kernel bugs] and it doesn't have on-disk high resolution timestamps
-thus the dependency during compilation breaks.
+>
+> =20
+>
+>>This performance advantage is due to allocate on flush allowing us to=20
+>>write in huge extents at flush time even though files get written to in=20
+>>slow trickles.  This improves=20
+>>   =20
+>>
+read performance dramatically.
 
-But somehow I doubt this would be the case, all modernish filesystem
-designed in the last 10 years has at least nanosec resolution.
+>
+>NO CARRIER+++
+>
+>Thanks a million for the answers!
+>
+> =20
+>
 
-	Szaka
+grev, please update the benchmark to say the above paragraph.
+
+--=20
+Hans
 
