@@ -1,62 +1,41 @@
-From: Boyd Waters <bwaters+moz@nrao.edu>
+From: Andreas Dilger <adilger@clusterfs.com>
 Subject: Re: getting UUID and label of a filesystem
-Date: Mon, 10 Nov 2003 13:40:19 -0700
-Message-ID: <3FAFF7B3.5030306@nrao.edu>
-References: <3FAAB330.5040503@nrao.edu> <1068152041.2327.34.camel@dragonball> <3FAFF00C.1000404@ysu.edu> <20031110201432.GB2014@mis-mike-wstn.matchmail.com>
+Date: Mon, 10 Nov 2003 13:42:46 -0700
+Message-ID: <20031110134246.N10197@schatzie.adilger.int>
+References: <3FAAB330.5040503@nrao.edu> <1068152277.2556.13.camel@redeeman.linux.dk> <1068152634.2455.37.camel@dragonball> <3FAFEE88.3040002@ysu.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16042-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16043-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20031110201432.GB2014@mis-mike-wstn.matchmail.com>
+Content-Disposition: inline
+In-Reply-To: <3FAFEE88.3040002@ysu.edu>; from jpdalbec@ysu.edu on Mon, Nov 10, 2003 at 03:01:12PM -0500
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: John Dalbec <jpdalbec@ysu.edu>
+Cc: Brian Tinsley <btlists@emageon.com>, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Nov 10, 2003  15:01 -0500, John Dalbec wrote:
+> I set labels on my ReiserFS filesystems, but I can't use LABEL= in /etc/fstab. 
+> I thought that was the point of having filesystem labels.  Is there some 
+> configuration setting that I'm missing?
 
-Mike Fedyk wrote:
-| On Mon, Nov 10, 2003 at 03:07:40PM -0500, John Dalbec wrote:
-|
-|>I've added myself to the "disk" group and it works for me as non-root.
-  You
-|>just need read access to the raw device, no?
-|
-|
-| Yes.
-|
-| But how many need access to the UUID information?  That can be a big
-| security hole...
+"mount" has not been updated to use libblkid.  I had always intended on
+doing that, but it was never in the top 10 on my todo list.  I had agreement
+in principle from Andries Brouwer to use a libblkid in mount instead of
+having a duplicate set of LABEL/UUID parsing code there, but just lacked
+the time/incentive to do that part.
 
-Cool discussion.
+It would probably benefit all reiserfs users to get this working, so that
+you can finally mount reiserfs filesystems by LABEL/UUID, so if someone
+has some time and wants to contribute back to reiserfs this is a fairly
+easy project (not kernel hacking ;-).
 
-Um, can you point me to info regarding security holes in exposing the
-UUID of a filesystem? I can't come up with a use-case that would support
-this statement, but I'm willing to believe there is such.
-
-I am using UUID's to track the source filesystem of a large
-distributed-backup; I have lots of copies of stuff strewn across various
-filesystems and I am in the process of pouring it all into a centralized
-version-control system (Subversion). I can set arbitrary name=value tags
-on the versioned files, and I'm currently setting one of them to the
-source filesystem's UUID.
-
-(Later, I'll start another thread which explores how to use ReiserFS
-features to support Subversion, without an intervening database layer...)
-
-So: What's the security hole in exposing the filesystem UUID?
-
-~ - boyd
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.3 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
-
-iD8DBQE/r/ez0is8k1r0QeURAvvjAJsFAKITHuQUcPhdS14/VecHvDL31wCfVEIs
-4B+HXCitmX4m3QpVH5I/g7c=
-=J0yK
------END PGP SIGNATURE-----
+Cheers, Andreas
+--
+Andreas Dilger
+http://sourceforge.net/projects/ext2resize/
+http://www-mddsp.enel.ucalgary.ca/People/adilger/
 
