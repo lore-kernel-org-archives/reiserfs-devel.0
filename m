@@ -1,62 +1,37 @@
-From: "Lamont R. Peterson" <lamont@gurulabs.com>
-Subject: Re: 2 Terabyte install
-Date: Fri, 07 May 2004 11:44:20 -0600
-Message-ID: <1083951860.2985.35.camel@wraith.lrp.advansoft.us>
-References: <409AC2FF.7080800@lindows.com>
-Reply-To: lamont@gurulabs.com
+From: Raul Miller <moth@debian.org>
+Subject: Re: reiser4 non-free?
+Date: Fri, 7 May 2004 14:18:12 -0400
+Message-ID: <20040507141812.W13880@links.magenta.com>
+References: <87fzag139k.fsf@aule.evenmere.org> <4099A868.9030406@slaphack.com> <20040506.083242.41632888.wlandry@ucsd.edu> <87k6zpy8ke.fsf@aule.evenmere.org> <20040506143643.GB25505@raptus.homelinux.org> <877jvpy08v.fsf@aule.evenmere.org> <877jvpy08v.fsf@aule.evenmere.org> <409A7F98.7040609@namesys.com> <E1BLnpD-0004fR-00@chiark.greenend.org.uk> <409A8B0B.2000603@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-SAZq47qTH4hFxz7m7kkD"
-Return-path: <reiserfs-list-return-18542-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18543-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <409AC2FF.7080800@lindows.com>
+Content-Disposition: inline
+In-Reply-To: <409A8B0B.2000603@namesys.com>; from reiser@namesys.com on Thu, May 06, 2004 at 11:59:23AM -0700
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Reiserfs mail-list <Reiserfs-List@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
---=-SAZq47qTH4hFxz7m7kkD
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Thu, May 06, 2004 at 11:59:23AM -0700, Hans Reiser wrote:
+> The kernel portion is GPL V2, this is the progs license.....
 
-On Thu, 2004-05-06 at 16:58, Clifford Beshers wrote:
-> What are the current size limitations for disks/partitions/filesystems
-> with the following combinations?  My googling has produced
-> inconsistent answers.
->         { linux 2.4.24, linux 2.6.5 } X { reiserfs3, reiser4 }
-> We have a new machine with a 3-ware 8 port controller (looks like a
-> scsi controller to the system, but actually drives 8 ide drives).  We
-> have 8 x 300GB drives attached for a total > 2TB.
+Does this mean that the reiser progs are merely aggregated with the
+kernel, and that there is no functional relationship?
 
-Under the 2.4 kernels, the VFS limits a single device to 2TB; I think
-the exact value, IIRC, is (2^41)-1 bytes.  For the 2.6 kernel, I have
-read that this was raised to approximately 16TB, though I have not taken
-the time yet to verify this in the source.
+[Because the GPL does provide an explicit exception for that case.]
 
-> Our IT guy has been unable to install Linspire on it (linux 2.6.5,
-> reiserfs3).  I'm about to go look in more detail, but I thought I'd
-> find out what the bounds were for sure.
+Linus has stated that he's providing an additional exception for
+user-space programs which use the standard system call interfaces,
+and maybe the reiser progs just use standard system calls (as opposed
+to custom calls that do things specific to the reiser file system)?
 
-OK, the kernel should not be limiting it (unless there is something
-stupid in the 3ware driver).  I think Vitally would the one to answer
-whether reiserfs3 could be limiting it. Is mkreiserfs thinking that the
-VFS will stop it at 2TB, perhaps?
---=20
-Lamont R. Peterson <lamont@gurulabs.com>
-Senior Instructor
-Guru Labs, L.C. http://www.GuruLabs.com/
+Anyways, it's probably not really all that important [and there are plenty
+of alternate file systems if debian decides not to support this one].
 
---=-SAZq47qTH4hFxz7m7kkD
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.3 (GNU/Linux)
-
-iD8DBQBAm8r0RK8Q4zt1QRURAqr8AJ9n1jc4TnWbVKR3TRL5HEgyY9ZTdwCgm8O3
-UzM1HIWDYE0LwOn3bku9zEw=
-=xPoi
------END PGP SIGNATURE-----
-
---=-SAZq47qTH4hFxz7m7kkD--
-
+-- 
+Raul
