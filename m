@@ -1,33 +1,54 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Subject: Re: Strange errors with 2.4.22 patches (from Chris) and bonnie++
-Date: Mon, 01 Dec 2003 17:00:23 +0100
-Message-ID: <3FCB6597.8010604@gmx.net>
-References: <bq8f7u$ufn$1@sea.gmane.org>  <3FC8F31A.7000501@gmx.net> <1070285425.12810.2.camel@tiny.suse.com>
+From: David Bernick <bernz@alpha.bernztech.org>
+Subject: slow stat() ?
+Date: Mon, 1 Dec 2003 12:21:47 -0500 (EST)
+Message-ID: <Pine.LNX.4.10.10312011155090.7555-100000@alpha.bernztech.org>
+References: <3FCB6597.8010604@gmx.net>
+Reply-To: bernz@bernztech.org
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16191-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16192-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1070285425.12810.2.camel@tiny.suse.com>
+In-Reply-To: <3FCB6597.8010604@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
 
-> I've had to remove reiserfs-jh-3, it caused problems in the suse kernel
-> and a week or so of hunting wasn't able to track it down.  All my effort
-> right now is on fixing it in my 2.6 branch.
-Nice, to see data logging in 2.6.
+Hi all,
 
-So one is more safe without reiserfs-jh-3 than with it?
+First, what I'm running Reiser on:
 
-I sometimes get permission denied messages on some files if I read from 
-LVM snapshots. This happens rather seldom and goes away if I redo a
-snapshot. I could ask an admin to have a look for the console messsages, 
-if this is the same problem you are facing.
-I had no corruption.
--- 
-lg, Chris
+Supermicro dual Xeon motherboard with 2x2.6Ghz xeons in hyperthreaded
+mode. 3ware 7500-8 (or whatever the call the 8 port ATA card) with 8x250GB
+disks attatched. 4GB RAM. 
+
+Software: 
+RedHat 9 with latest up2date
+Kernel 2.4.22 no patches
+The journal is not on a separate set of spindles.
+
+/proc/sys/vm/max-readahead=512
+/proc/sys/vm/min-readahead=128
+/proc/sys/vm/bdflush
+100     5000    640     2560    150     30000   60      20      0
+
+Okay. Now for the issue at hand. When the logical disk is being read from,
+reiser is fast and effecient. We have millions (10M?) of files (about 1M
+each) in thousands of directories. Reiser reads well (exporting the disk
+over NFS) and we're very impressed by it. It's a bit slow on the writes
+and the system load goes up marginally, but that's not a big deal. The
+thing that puzzles me is that when we perform functions like "find" or in
+perl "-e filename" or anything that uses fstat() or stat64() or any of
+those functions brings the system usage to 100% and the load climbs
+quickly. 
+
+Are there any patches, kernel updates, tuning, etc that can help with this
+problem?
+
+thanks for any help you can give me.
+
+dave
 
