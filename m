@@ -1,48 +1,54 @@
 From: Vitaly Fertman <vitaly@namesys.com>
 Subject: Re: fsck.reiser4 can't fix 1 fixable corruption
-Date: Fri, 23 Apr 2004 13:03:50 +0400
-Message-ID: <200404231303.50547.vitaly@namesys.com>
-References: <200404201733.51809.rmeijer@internet.gr> <40880F5C.6080207@namesys.com> <1082703897.3616.9.camel@firefly>
+Date: Fri, 23 Apr 2004 13:15:08 +0400
+Message-ID: <200404231311.38933.vitaly@namesys.com>
+References: <200404201733.51809.rmeijer@internet.gr> <200404221446.21162.vitaly@namesys.com> <20040422114459.GA19430@raptus.homelinux.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18175-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18176-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1082703897.3616.9.camel@firefly>
+In-Reply-To: <20040422114459.GA19430@raptus.homelinux.org>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Yury Umanets <umka@namesys.com>, Hans Reiser <reiser@namesys.com>
-Cc: Domenico Andreoli <cavok@tiscali.it>, reiserfs-list@namesys.com
+To: Domenico Andreoli <cavok@tiscali.it>, reiserfs-list@namesys.com
 
-On Friday 23 April 2004 11:04, Yury Umanets wrote:
-> On Thu, 2004-04-22 at 21:30, Hans Reiser wrote:
-> > Domenico Andreoli wrote:
-> > >On Wed, Apr 21, 2004 at 09:30:07PM +0200, Sander Sweers wrote:
-> > >>NOTE: the ebuilds have /--enable-stand-alone/ to have grub build
-> > >> reiser4 support.
+On Thursday 22 April 2004 15:44, Domenico Andreoli wrote:
+> On Thu, Apr 22, 2004 at 02:46:21PM +0400, Vitaly Fertman wrote:
+> > with --enable-stand-alone you get another 'stand alone' library that
+> > includes the minimum of the code needed for programs like grub --
+> > no librepair, no tree balancing code, no modification code, etc. The
+> > code is minimised to be used with grub stage1_5. Libaal in stand-alone
+> > includes simple memory menagement methods (malloc, free) to avoid
+> > linking to libc -- as it links to no other libraries it is called
+> > stand-alone.
+>
+> thanks, now it's much more clear :)
+>
+> > > what does really change in the libraries? is something related to
+> > > reiser4 or to libtool & co?
 > > >
-> > >how hard is to have reiser4 support built in grub?
-> > >
-> > >-----[ Domenico Andreoli, aka cavok
-> > > --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
-> > >   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
+> > > is it legal for debian to distribute libaal and libreiser4 packages
+> > > compiled with this option?
 > >
-> > Yury told me it was done....  Yury....
+> > yes. Although new changes are tested not in the stand-alone mode
+> > first, and the stand-alone support may be delayed sometimes.
 >
-> Hello!
+> this is not a problem, more people is able to use it, more will test
+> it for bugs :) this is the main reason i'm doing this packaging stuff ;)
 >
-> Yes, it was done. But probably it is broken now due to lots of last
-> changes like new plugins, plugin inheritance, interface changes etc.
->
-> We should ask Vitaly what is the status of it now...
+> ok, i'm trying to build packages (always targeted to debian experimental)
+> with these stand alone libraries. i'm also reading in configure help
+> message about "--enable-memory-manager". is anything a distribution
+> could need [to test]?
 
-It seems Hans asks why reiser4 support is not included into the 
-grub yet. The patch for the grub is in the reiser4progs package, 
-but IIRC will not be included into the grub untill reiser4 ships. 
-Yura, did you get this answer?
+yes, I forgot to tell the memory manager I mentioned above is enabled
+with --enable-stand-alone and with --enable-memory-manager. Without
+--enable-stand-alone you use libc methods, with --enable-stand-alone
+only you can use you own memory methods implementation.
 
 -- 
 Thanks,
