@@ -1,59 +1,48 @@
-From: "Ljubomir Bozic, Jr." <ljubo108@vip.hr>
-Subject: Reiser4 and Wine
-Date: Wed, 15 Dec 2004 14:31:08 +0000
-Message-ID: <200412151431.11344.ljubo108@vip.hr>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart1920455.CXCcN84yi7";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22783-reiserfs=m.gmane.org@namesys.com>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
+Subject: Re: file as a directory
+Date: Wed, 15 Dec 2004 10:28:26 -0300
+Message-ID: <200412151328.iBFDSQoH011241@laptop11.inf.utfsm.cl>
+References: <reiser@namesys.com>
+Return-path: <reiserfs-list-return-22784-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
+   of "Tue, 14 Dec 2004 21:10:05 -0800." <41BFC72D.2070800@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
---nextPart1920455.CXCcN84yi7
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Hans Reiser <reiser@namesys.com> said:
+> Horst von Brand wrote:
+> >Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk> said:
 
-Hello!
+> >[...]
 
-There are some problems with Wine and Reiser4.=20
-According to,
+> >>Perhaps a better way to think about this is that instead of talking
+> >>about directories and files, we just talk about objects.
 
-http://bugs.winehq.org/show_bug.cgi?id=3D2525
+> >Then you have a collection of interrelated objects, i.e., a database.
+> >Operating systems that work on databases (no filesystem) have been done,
+> >and are a nice idea... but are far, far away from Unix.
 
-the problems are solved in Wine CVS. I can't confirm it because I didn't ha=
-ve=20
-the time to try it myself, maybe over weekend.
+> A journey of a thousand leagues begins with a single step.
 
-I would like to know what is the cause of problems with Wine+Reiser4 when=20
-working with file selector dialogs?
+Right.  But you need to know where you are going, and why.
 
-Thanks!=20
+> Actually, databases are the wrong solution because they are relational, 
 
-Best regards, Ljubo
-=2D-=20
-Linux User #277235
-Linux Machine #205191
-Gentoo Linux, 2.6.9-shadow, Reiser4
-GnuPG key #72169511 @ hkp://subkeys.pgp.net
+Says who?
 
---nextPart1920455.CXCcN84yi7
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-
-iD8DBQBBwEqvDyjy1nIWlRERAvh0AJwK3qlaw7KuARXSpYiTsF6NV5PjsQCfYDPD
-zyDhrzK1rNP/7LAAJEcV97M=
-=tFC7
------END PGP SIGNATURE-----
-
---nextPart1920455.CXCcN84yi7--
+> and what is needed is a semi-structured query language that is upwardly 
+> compatible with Unix hierarchical semantics, ala 
+> www.namesys.com/future_vision.html
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
