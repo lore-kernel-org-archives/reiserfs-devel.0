@@ -1,95 +1,114 @@
-From: "Steve Pratt" <slpratt@us.ibm.com>
-Subject: Re: EVMS Reiser FSIM
-Date: Wed, 29 May 2002 11:28:38 -0500
-Message-ID: <OF7550755B.8F3C611F-ON85256BC8.0056E5DC@pok.ibm.com>
+From: Cookie-Monster <cookie.monster@starfall.de>
+Subject: Problem with my HDD
+Date: Wed, 29 May 2002 19:49:29 +0200
+Message-ID: <10512850437.20020529194929@starfall.de>
+Reply-To: Cookie-Monster <cookie.monster@starfall.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10436-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10437-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Yury Umanets <umka@namesys.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>, Andrew Clausen <clausen@gnu.org>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
+
+Hi everybody
+
+I hope you can help me. I formated on of my Server-HDDs with ReiserFS
+version, which has been distributed in SuSE Linux 7.3. Sorry, but I
+don't know the version, cause I'm know running SuSE Linux 8.0.
+
+My Problem is, that the HDD cannot be mounted anymore:
+
+1.   fileserver:/ # mount /dev/sda1 /ftp/apps/
+2.   mount: Not a directory
+
+The first line is the command and the second one is what "mount" tells
+me about my HDD.
+After this problem I ran reiserfsck:
+
+      fileserver:/ # reiserfsck /dev/sda1
+      reiserfsck 3.x.1b (2002)
+      Will read-only check consistency of the filesystem on /dev/sda1
+      Will put log info to 'stdout'
+
+      Do you want to run this program?[N/Yes] (note need to type Yes):Yes
+      ###########
+      reiserfsck --check started at Wed May 29 19:22:53 2002
+      ###########
+      Replaying journal..
+      0 transactions replayed
+      Checking S+tree..
+
+      Bad root block 4294967295. (--rebuild-tree did not complete)
 
 
-Yury Umanets:
->Steve Pratt wrote:
 
->>Thanks for all the help answering questions about the reiser utilities.
-I
->>have released the  ReiserFS FSIM into the EVMS CVS tree to be included in
->>our upcoming 1.1 release.   Check it out if you get a chance and feel
-free
->>to give me comments.  Also let me know if you think more options are
->>required on mkfs and fsck.  I only did the basics and avoided
-non-standard
->>journals since the kernel file system code is not readily available yet.
->>When it is, I can go back and add that support.
->>
->>
->I thing you have released an incorrect reiserfs FSIM in theory. On my
->own you should add extra parameters
->support into GNU Parted (quite simple task). And then you might be using
->it as central component of FSIM
->for *ALL* filesystems. Not just for reiserfs.
+      Aborted
 
-Actually I started with Parted months ago.  I released an FSIM based on the
-parted ext2 and fat support (before the libreiser was added).  The problem
-is that Parted is simply both inadequate and in my mind unstable.
+So then I started reiserfsck with option --rebuil-tree as the manpage
+says:
 
-Inadequate because it offers NO parameter passing to the file system code.
-How would you ever specify and external journal location or a journal size,
-Parted does not have the API support for this and I don't know when it
-will.
+     fileserver:/ # reiserfsck /dev/sda1 --rebuild-tree
+     reiserfsck 3.x.1b (2002)
+       **********************************************************
+       ** This  is  an  experimental  version  of  reiserfsck, **
+       **              !! MAKE A BACKUP FIRST !!               **
+       ** Don't run this program unless something  is  broken. **
+       ** Some types of random FS damage can be recovered from **
+       ** by  this  program,   which  basically   throws  away **
+       ** the internal nodes of the tree and then reconstructs **
+       ** them. This program is for use only by the desperate, **
+       ** and is  of only beta quality.  If you are using  the **
+       ** latest  reiserfsprogs  and  it  fails  please  email **
+       ** bug reports to reiserfs-list@namesys.com.            **
+       **********************************************************
 
-Unstable because each of the file system utilities may or may not be a
-re-implementation of the utilities written by the file system developers.
-I know this to be true for the ext2 code in Parted, which has segfaulted on
-me more than once while performing an expand.  I want to use the code
-approved by the owners of the file system.
+     Will rebuild the filesystem (/dev/sda1) tree
+     Will put log info to 'stdout'
 
->Or you might be using some library (from reiserfsprogs package or from
->progsreiserfs package).
+     Do you want to run this program?[N/Yes] (note need to type Yes):Yes
+     Replaying journal..
+     0 transactions replayed
+     ###########
+     reiserfsck --rebuild-tree started at Wed May 29 19:27:02 2002
+     ###########
 
-As I have stated previously, if the ReiserFS utilities package start
-shipping this as part of their standard tool set, then I would consider
-using it.  In fact if the file system community would come up with a
-standard library interface I would be even happier.  Also, last I heard
-from Andrew, this library did not contain fsck code (but maybe that has
-changed).
-
->The way you have selected, might be used by an proprietary software,
->that wanted to use GPL project, not other GPL project.
-
-What is your point?  This is a true statement, but was not the reason for
-implementing the code this way.
-
->BTW, I have almost done smart resizing (from partition start) in
->libreiserfs. But you can't using the libraries of third pesons, so you
->will haven't smart resizing and other features in your FSIM :))
-
-Do you mean moving the start of the partition?  Not really interested.  But
-I am confused about your comment of not being able to use libraries of
-third persons.  EVMS is GPL and could link to any GPL code it wants.  If
-the libreiserfs is the *right* set of code to use, than I will use it.
-
->Yet another issue. One man almost done JFS support for GNU Parted. Are
->you going to add it to EVMS too? I think yes. And probably you will do
->it in maner like ReiserFS (forking and piping).
-
-Already done.  And I have the added benefit of picking up fixes in
-utilities whenever the file system developers make them.  Is this person
-monitoring the JFS CVS tree to ensure that he does not miss an important
-fix that might go into JFS?  Does he have the external journal support in
-the library yet?  Oh wait, there is no way to pass parameters to filesystem
-code in Parted, so he can't have support for it.
+     Pass 0:
+     ####### Pass 0 #######
+     Loading on-disk bitmap .. ok, 693365 blocks marked used
+     Skipping 8486 blocks (super block, journal, bitmaps) 684879 blocks wil=
+l be read
+     0%....20%....40%....60%...                               left 171398, =
+4754 /sec
 
 
-Thanks, for the input, but I had already considered all of these options
-and decided that they were not in the best interest of the EVMS project.
+The check goes on til there are 171398 (more than 60%) blocks left then it =
+hangs
+up for a while before continueing. From this point on it continues
+very slow only. From 150xxx it continues fast til 13039.
+At this point the program quits without saying anything and the HDD is
+hung up. The old version of reiserfsck, in the SuSe Linux 7.3 Edition
+gave out a lot of "Block could not be read" or something like this and
+the HDD hung up.
 
-Steve
+So I can't get the files on this HDD and my life depends on them, so
+can someone HELP ME PLEASE?
+I really need the data! Is there any possibilty of deleating the
+unreadable blocks and rebuuilding the tree then? When this works, I
+can get SOME of the information on the HDD back, because there are
+only 2-3GB data on it and only 900MB of the data is really important.
+But this 900MB are some of the last files I saved on the HDD.
 
+I would be very happy, if someone has any idea of what I can do.
+
+Jesse Schl=FCter
+
+p.s.: The HDD is a IBM DRHS36V (36GB U2W-SCSI) if that is important.
+
+--
+Cookie-Monster
+cookie.monster@starfall.de
+http://www.starfall.de/
 
