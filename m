@@ -1,96 +1,80 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Odd Block allocation behavior on Reiser3
-Date: Tue, 10 Aug 2004 12:42:51 -0700
-Message-ID: <4119253B.1030807@namesys.com>
-References: <20040809201939.GA55683@kevlar.burdell.org>	 <1092083451.10651.218.camel@watt.suse.com>	 <20040809220459.GA57121@kevlar.burdell.org> <41187657.7030709@namesys.com>	 <20040810154514.GA67591@kevlar.burdell.org>  <41190B5A.7070503@namesys.com>	 <1092162318.10651.365.camel@watt.suse.com> <1092163813.10651.372.camel@watt.suse.com>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: Compile probs with yesterday's auto-snapshot
+Date: Tue, 10 Aug 2004 23:41:27 +0400
+Message-ID: <20040810194127.GS9811@backtop.namesys.com>
+References: <20040810192756.67EC115C33@mail03.powweb.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20145-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20146-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1092163813.10651.372.camel@watt.suse.com>
+Content-Disposition: inline
+In-Reply-To: <20040810192756.67EC115C33@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: Sonny Rao <sonny@burdell.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Dabbs <david@dabbs.net>
+Cc: 'ReiserFS List' <reiserfs-list@namesys.com>
 
-Chris Mason wrote:
+On Tue, Aug 10, 2004 at 02:19:54PM -0500, David Dabbs wrote:
+> 
+> 
+> Yesterday I kept having problems with an "incomplete type error" compiling
+> yesterday's auto-snapshot. I finally ended up changing the
+> CONFIG_REISER4_SYSFS define in fs/reiser4/kattr.h (I think that's the file)
+> from (1) to (0). 
 
->On Tue, 2004-08-10 at 14:25, Chris Mason wrote:
->  
->
->>On Tue, 2004-08-10 at 13:52, Hans Reiser wrote:
->>    
->>
->>>Sonny Rao wrote:
->>>
->>>      
->>>
->>>>On Tue, Aug 10, 2004 at 12:16:39AM -0700, Hans Reiser wrote:
->>>> 
->>>>
->>>>        
->>>>
->>>>>Interesting.What happens without overwrite, that is, if you write more 
->>>>>files without deleting the old ones?
->>>>>   
->>>>>
->>>>>          
->>>>>
->>>>Below I made 24 one gigabyte files in sequence
->>>>All of them are similarly fragmented: 
->>>>data # filefrag *
->>>>datafile0: 268 extents found
->>>>
->>>>        
->>>>
->>>this could explain some reiser3 performance problems.   This is what 
->>>happens when I spend all my time chasing funding and don't spend it 
->>>reviewing code and benchmarks, sigh.
->>>
->>>Thanks for spotting this.  I would be curious if this is occuring near 
->>>the transition between unformatted nodes and their parents, or something 
->>>else.
->>>      
->>>
->>There have been a few threads on this on reiserfs-list
->>
->>singer:/data # dd if=/dev/zero of=foo bs=1MB count=1000
->>1000+0 records in
->>1000+0 records out
->>singer:/data # filefrag foo
->>foo: 1 extent found
->>
->>The new allocator really should be doing a better job here.
->>    
->>
->
->Hmpf, that's what I get for expecting filefrag to work properly on
->amd64.  The actual number of extents is 199, which is still better then
->268.  Using fibmap, the fragmentation percentage is still the same as
->ext3 (99.99% unfragmented) meaning the length between the extents is
->quite small.
->
->If you mount with:
->
->mount -o alloc=skip_busy:oid_groups
->
->You get 8 extents on a 1GB file.
->
->This is because the oid grouping tries much harder to isolate the file
->data from data from other files and metadata.  It is far from optimal
->for normal usage, but for huge files it works nicely.
->
->-chris
->
->
->
->
->  
->
-For an empty filesystem there should be no fragmentation at all for big 
-dds one after another, except at bitmap block boundaries.  Any other 
-result indicates flawed code.  Remember, a hint of flawed code often 
-leads to more than a trivial flaw when fully understood.
+yes. everything fine in the BK, but latest autosnapshots were made from wrong
+linux core patches.  I have re-done the autosnapshot script setup and will check
+the next snapshot.
+
+> 
+> In a separate but related question, does the reiser4 patchset add the
+> kernel-build configurable options to the kconfig e.g.
+> REISER4_STATS/DEBUG/SYSFS/NOOPT/COPY_ON_CAPTURE/SYSCALL/<others?>...? I'm
+> sure LARGE_KEY is there, but I can't remember which other one I saw. If it
+> doesn't already should LARGE_KEY prompt with a default value of "Y"?
+> 
+> Also the READ.ME for the prior SNAPSHOT (03/26, yes ages ago I know) had the
+> following notes. Since the recent 08/04 snapshot only notes that "This is
+> mostly bug fix snapshot" should we assume that the prior notes are resolved
+> or that there are still issues with the items? I've made some notes below
+> 
+> 
+> 
+> 1. Only i386 and UML on i386 are supported.
+> ddabbs: Big endian appears to be supported.
+> 
+> 2. CONFIG_REISER4_FS_SYSCALL doesn't work.
+> 
+> 3. CONFIG_REISER4_NOOPT doesn't work.
+> 
+> 4. reiser4 has been tested as a root file system and works in read-only
+>    mode, but:
+> 
+>        . remount is not yet supported, 
+>        . support in boot-loaders may be missing
+> 
+> ddabbs: A grub patch is provided, so that comment is likely out-of-date.
+> 
+> 9. reiser4 can now be compiled as a module.
+> 
+> ddabbs: I don't think this is working yet.
+
+hmm. I thought we made all needed symbols exportable. what is the problem?
+> 
+> c. CONFIG_REISER4_COPY_ON_CAPTURE is stabler than before.
+> 
+> d. readdir() over NFS has known problems.
+> 
+> e. mmap(2)-intensive workloads (iozone benchmark in particular) have
+> problems in low-memory setups.
+> 
+> 
+> David
+> 
+> 
+
+-- 
+Alex.
