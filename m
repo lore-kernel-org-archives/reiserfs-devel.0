@@ -1,82 +1,107 @@
-From: "Rodolfo Sikora" <sikora@inova.com.br>
-Subject: Is there a way to change root inode from -1 to what ever it will    work?
-Date: 10 Aug 2004 17:35:30 -0300
-Message-ID: <20040810203531.16942.qmail@qmail-local.inova.com.br>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output error"
+Date: Wed, 11 Aug 2004 00:41:10 +0400
+Message-ID: <20040810204109.GT9811@backtop.namesys.com>
+References: <20040807065039.5BF4E15CBC@mail03.powweb.com> <41148997.4070404@namesys.com> <200408100321.i7A3LHxu027087@turing-police.cc.vt.edu> <20040810092022.GN9811@backtop.namesys.com> <4119077E.6070306@namesys.com> <20040810180515.GR9811@backtop.namesys.com> <4119282F.2000603@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="----------=_1092170130-11238-1"
-Content-Transfer-Encoding: binary
-Return-path: <reiserfs-list-return-20152-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20153-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
-
-------------=_1092170130-11238-1
-Content-Type: text/plain
 Content-Disposition: inline
-Content-Transfer-Encoding: binary
+In-Reply-To: <4119282F.2000603@namesys.com>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Valdis.Kletnieks@vt.edu, David Dabbs <david@dabbs.net>, 'ReiserFS List' <reiserfs-list@namesys.com>
 
-Hi,
+On Tue, Aug 10, 2004 at 12:55:27PM -0700, Hans Reiser wrote:
+> Alex Zarochentsev wrote:
+> 
+> >On Tue, Aug 10, 2004 at 10:35:58AM -0700, Hans Reiser wrote:
+> > 
+> >
+> >>Alex Zarochentsev wrote:
+> >>
+> >>   
+> >>
+> >>>On Mon, Aug 09, 2004 at 11:21:17PM -0400, Valdis.Kletnieks@vt.edu wrote:
+> >>>
+> >>>
+> >>>     
+> >>>
+> >>>>On Sat, 07 Aug 2004 00:49:43 PDT, Hans Reiser said:
+> >>>>
+> >>>> 
+> >>>>
+> >>>>       
+> >>>>
+> >>>>>>I think I have discovered the problem - unless there was a reason 
+> >>>>>>mongo was
+> >>>>>>issuing mount/unmount commands at the start/end of a mongo 'run' as 
+> >>>>>>well as
+> >>>>>>before/after _each phase_.
+> >>>>>>     
+> >>>>>>
+> >>>>>>           
+> >>>>>>
+> >>>>>Probably someone wanted to separate the measurement of the phases.  It 
+> >>>>>has been a while since I read mongo.....
+> >>>>>   
+> >>>>>
+> >>>>>         
+> >>>>>
+> >>>>Note that an unmount/mount pair will force a flush of all dirtied pages 
+> >>>>in the
+> >>>>in-memory file cache, and *really* not return until it's really done 
+> >>>>and really
+> >>>>out on disk.  In addition, sync() will force stuff to disk, but *not* 
+> >>>>invalidate
+> >>>>in-cache pages - more drastic measures are needed if you want to 
+> >>>>benchmark
+> >>>>with a cold cache (which is almost a must if you're doing actual 
+> >>>>filesystem
+> >>>>benchmarking, as otherwise you're benching the in-core cache instead).
+> >>>> 
+> >>>>
+> >>>>       
+> >>>>
+> >>>That was designed to have result in each phase as independent as we can. 
+> >>>For
+> >>>example, if we have read slowdown in mongo, we will analyze only reads 
+> >>>and,
+> >>>probably, fs fragmentation, we won't deal with unmeasurable cache state 
+> >>>before
+> >>>the read phase. Known and persistent "cold cache effect" is better than 
+> >>>unknown
+> >>>hot cache one :)  And, mongo phases are designed to be long and keep the 
+> >>>cold
+> >>>cache effect at minimum.
+> >>>
+> >>>
+> >>>     
+> >>>
+> >>Let me be more precise here.  Is the time spent mounting and umounting 
+> >>included in the time for the phase?
+> >>   
+> >>
+> >
+> >oops. sync time included. mount/umount time is not.
+> >
+> >
+> > 
+> >
+> You see the problem, yes?  Your suggestion?
 
-I had problems with my software raid:
+The problem is that sync may not wait, yes?  it might be considered as fs bug.
+we can time the umount() and, if it takes sufficient time (like 0.5+% of the
+test phase duration) report benchmark error.  If number of "buggy" fs would be
+big enough, we will include umount() into the timed part.
 
-cebola:~# mdadm --detail /dev/md0
-/dev/md0:
-        Version : 00.90.01
-  Creation Time : Wed May 19 01:07:53 2004
-     Raid Level : raid5
-     Array Size : 175790976 (167.65 GiB 180.01 GB)
-    Device Size : 58596992 (55.88 GiB 60.00 GB)
-   Raid Devices : 4
-  Total Devices : 3
-Preferred Minor : 0
-    Persistence : Superblock is persistent
+However, we can add options to control sync()/umount() between phases and see
+that benchmark results do not depend on it too much :)
 
-    Update Time : Tue Aug 10 16:21:23 2004
-          State : clean, no-errors
- Active Devices : 3
-Working Devices : 3
- Failed Devices : 0
-  Spare Devices : 0
-
-         Layout : left-symmetric
-     Chunk Size : 4K
-
-    Number   Major   Minor   RaidDevice State
-       0       8       65        0      active sync   /dev/sde1
-       1       0        0       -1      removed
-       2       8       97        2      active sync   /dev/sdg1
-       3       8      113        3      active sync   /dev/sdh1
-           UUID : 7cceaa8d:4014fc0d:c48efe80:ddb856d4
-         Events : 0.722114
-
-anyway the raid went ok and my /dev/md0 with reiser was ok until I decided to fix few corrupted data (files with weird permission denied).
-
-I run --fix-fixable and it asked me to run --rebuild-tree.
-I run rebuild-tree twice (is takes about 4 hours) and bot time on pass 3 it stops saying "aborted". What is this?
-
-I'm running the latest (I hope) reiserfsck version (3.6.17).
-
-All I found is that reiserfsck turns root inode to -1 and only change it back after a successful repair.
-
-I know I have intact data inside, unless reiserfsch messed it, so my question is: "Is there anything I could do to be able to mount it again?"
-
-I do have backup but it's not so updated.
-
-Thank you for any help.
-
-
-
-Rodolfo Sikora - Desenvolvimento e Opera������o
-Departamento de Opera������es e Tecnologia
-Inova Tecnologias - http://www.inova.com.br
-
-
-
-****************************************************
-*Velop* - administra������o, controle e monitoramento da 
-sua comunica������o na Internet.
-http://www.inova.com.br
-------------=_1092170130-11238-1--
+-- 
+Alex.
