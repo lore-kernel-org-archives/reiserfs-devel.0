@@ -1,29 +1,36 @@
-From: Frank Baumgart <frank.baumgart@esc-electronics.de>
-Subject: reiserfsprogs-3.x.1b severe installation bug
-Date: Thu, 11 Apr 2002 15:40:32 +0200
-Sender: frank
-Message-ID: <3CB59250.943A3487@esc-electronics.de>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: reiserfsprogs-3.x.1b severe installation bug
+Date: Thu, 11 Apr 2002 17:56:32 +0400
+Message-ID: <20020411175632.A1488@namesys.com>
+References: <3CB59250.943A3487@esc-electronics.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10030-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10031-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <3CB59250.943A3487@esc-electronics.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Frank Baumgart <frank.baumgart@esc-electronics.de>
+Cc: reiserfs-list@namesys.com
 
-To test some own modifications to the reiserfs tools I
-unpacked reiserfsprogs-3.x.1b.tar.gz and configured it
-with "--prefix=/opt/reiserfs".
+Hello!
 
-After "make install", indeed the man pages are installed
-correctly into /opt/reiserfs/man but my SYSTEM BINARIES
-in /sbin are overwritten!
+On Thu, Apr 11, 2002 at 03:40:32PM +0200, Frank Baumgart wrote:
 
-The bug did not appear in around 3.0 where binaries were
-installed into what --prefix told.
+> To test some own modifications to the reiserfs tools I
+> unpacked reiserfsprogs-3.x.1b.tar.gz and configured it
+> with "--prefix=/opt/reiserfs".
+> After "make install", indeed the man pages are installed
+> correctly into /opt/reiserfs/man but my SYSTEM BINARIES
+> in /sbin are overwritten!
+> The bug did not appear in around 3.0 where binaries were
+> installed into what --prefix told.
 
-Regards,
+This behavior was intentional, but we already understood this is wrong.
+Next stable version of reiserfsprogs will correct this.
 
-Frank
+Bye,
+    Oleg
