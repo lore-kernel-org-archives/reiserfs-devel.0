@@ -1,68 +1,58 @@
 From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 19:58:40 -0400
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <200408272358.i7RNweGh002703@localhost.localdomain>
-References: <spam@tnonline.net>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: Message from Spam <spam@tnonline.net> 
-   of "Thu, 26 Aug 2004 13:15:47 +0200." <1453776111.20040826131547@tnonline.net> 
+Date: Fri, 27 Aug 2004 20:24:45 -0400
+Message-ID: <200408280024.i7S0OjmB024038@localhost.localdomain>
+References: <akpm@osdl.org>
+Return-path: <reiserfs-list-return-21057-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: Message from Andrew Morton <akpm@osdl.org> 
+   of "Thu, 26 Aug 2004 04:20:43 MST." <20040826042043.15978b0a.akpm@osdl.org> 
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Spam <spam@tnonline.net>
-Cc: Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Andrew Morton <akpm@osdl.org>
+Cc: Spam <spam@tnonline.net>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Spam <spam@tnonline.net> said:
-> Andrew Morton <akpm@osdl.org> said:
+Andrew Morton <akpm@osdl.org> said:
+> Spam <spam@tnonline.net> wrote:
+> >
+> >    Secondly, do you expect file managers like Nautilus and Konqueror to
+> >    support  every piece of file format on the planet so they could read
+> >    information directly from the documents?
+> 
+> Sure.  You're proposing that we implement a single, golden multi-stream file
+> format in the kernel.
 
-[...]
+Which won't be able to cater for all needs, I'm afraid. Just look at /etc,
+and contemplate why there are so many different configuration file formats.
+Sure, some are just random coder preferences set in stone, but others do
+make sense being different. The same will happen with file formats. Heck,
+it is already that way, with file formats for C source code, ELF shared
+libraries, various graphics and audio and video formats, ...
 
-> > For example, some image file formats already support embedded metadata, do
-> > they not?
+> We could just as well do that in libmultistreamfileformat.so.
 
->   Yes, JPEG, TIFF and PNG files for example. But, if you modify any of
->   these  with  an application that doesn't support the extensions then
->   you will loose them.
+Right.
 
-As you will each time you muck around with your files-are-directories.
-Nothing new there.
+> But I'll grant that one cannot go adding new metadata to, say, C files this
+> way.  I don't know how useful such a thing is though.
 
->   Also,  you  are thinking _very_ narrowly now. There are thousands of
->   file  formats.  Implementing  the  support  for  meta-data/ streams/
->   attributes  in  the  kernel  will  make  it  possible  to  use  this
->   generically for all files.
+You can never know. Perhaps annotations in swahili? Alternative versions
+for different architectures? In object format(s)? Copyright info? 
+Changelog?
 
-So the _kernel_ has to know about thousands of formats, just in case it
-some blue day it comes across a strange file? Better leave that to the
-applications.
+> Remember that my main point is that there's a lack of coordination in
+> userspace.  Hell, there's none.  Putting it in-kernel forces that
+> coordination, and may be the way to go, but it's pretty sad.
 
-You will _not_ be able to define a single format for extra data about the
-file, there will be differing extra data for different users (do you
-suggest a root-only file with special writable pouches for "graphical icon
-for the file" for each user on the system?!), so the idea in itself is
-doomed from the start.
-
->   I  use  this  in  Windows  quite much.
-
-Then use it and be happy. No need to screw up Linux for that.
-
->                                          I put information description
->   fields  for  lots  of  different  files. These descriptions are then
->   searchable etc. I could use the command prompt to copy the files and
->   the descriptions would still be there.
-
-The descriptions might make sense to _you_, _now_. No guarantee they make
-any sense (or are in the least useful) for other users on your system, and
-I might want them in arabic or some such. The descriptions might make no
-sense to you in a couple of years.
-
->   Secondly, do you expect file managers like Nautilus and Konqueror to
->   support  every piece of file format on the planet so they could read
->   information directly from the documents?
-
-That's their (self-selected) job, yes.
+I think that forcing coordination is wrong.  For example, I do value having
+ar/tar/cpio/zip doing essentially the same thing (and being able to define
+and use my own way of doing it if it pleases me), and I'd strongly oppose
+the kernel forcing one way of doing it down my throat.
 -- 
 Dr. Horst H. von Brand                   User #22616 counter.li.org
 Departamento de Informatica                     Fono: +56 32 654431
