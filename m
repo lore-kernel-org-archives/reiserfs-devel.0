@@ -1,78 +1,27 @@
-From: Bernd Petrovitsch <bernd@firmix.at>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Fri, 03 Sep 2004 10:49:43 +0200
-Message-ID: <1094201383.1077.19.camel@tara.firmix.at>
-References: <20040826150202.GE5733@mail.shareable.org>
-	 <200408282314.i7SNErYv003270@localhost.localdomain>
-	 <20040901200806.GC31934@mail.shareable.org>
-	 <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
-	 <20040902002431.GN31934@mail.shareable.org> <413694E6.7010606@slaphack.com>
-	 <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org>
-	 <4136A14E.9010303@slaphack.com>
-	 <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org>
-	 <4136C876.5010806@namesys.com>
-	 <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org>
-	 <4136E0B6.4000705@namesys.com>  <14260000.1094149320@flay>
-	 <1094154744.12730.64.camel@voyager.localdomain>
-	 <16310213029.20040902220603@tnonline.net>
+From: Frank van Maarseveen <frankvm@xs4all.nl>
+Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
+Date: Fri, 3 Sep 2004 10:55:54 +0200
+Message-ID: <20040903085554.GA8659@janus>
+References: <20040902220027.GD23987@parcelfarce.linux.theplanet.co.uk> <20040902220242.GA5414@janus> <20040902220640.GE23987@parcelfarce.linux.theplanet.co.uk> <20040902221133.GB5414@janus> <20040902221722.GF23987@parcelfarce.linux.theplanet.co.uk> <20040902222650.GA5523@janus> <20040902223324.GG23987@parcelfarce.linux.theplanet.co.uk> <20040902225634.GA5756@janus> <41382EC0.8080309@hist.no> <20040903085018.GA8586@janus>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21418-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21419-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16310213029.20040902220603@tnonline.net>
+Content-Disposition: inline
+In-Reply-To: <20040903085018.GA8586@janus>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Spam <spam@tnonline.net>
-Cc: Steve Bergman <steve@rueb.com>, "Martin J. Bligh" <mbligh@aracnet.com>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, reiserfs <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Frank van Maarseveen <frankvm@xs4all.nl>
+Cc: Helge Hafting <helge.hafting@hist.no>, viro@parcelfarce.linux.theplanet.co.uk, Dave Kleikamp <shaggy@austin.ibm.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, 2004-09-02 at 22:06 +0200, Spam wrote:
-[...]
->   The file streams would make my day a lot easier. The idea to
->   split up contents of OO.org files into streams is bad. But that
->   doesn't make the file streams bad. I see many uses that would make
->   my every day life easier.
+On Fri, Sep 03, 2004 at 10:50:18AM +0200, I wrote:
+> and lacks the possibility
+> to implement sane caching behavior because it is process bound.
 
-When can we expect patches?
+sorry, this part is crap.
 
->   It isn't about cross plat form compatibility, but to add features
->   that are useful and meta-data and file streams are.
-
-Putting everything (including web server and browser) in the kernel is
-not a good (or even desireable) target - perhaps that's the reason for
-Win* to be where there are.
-And it *is* done in user-space (ok, there more than one apprach and
-implementation but this may change. And you want to invent the next
-version.).
-
->   Also. No one forces you to use either meta-data or streams, just as
->   no one forces you to use ACLs or other things.
-
-Which is probably an argument against such features. How long do ACLs
-exist - as well as standard and in implementation?
-How many people and/or apps are using it?
-No more questions.
-
-> > 3. MS does require attributes and multiple streams, which makes these
-> > features important (even essential) to Samba, and Samba alone.  Samba is
-> > important to Linux, so this can't be ignored. (Here I am implicitly
-> > assuming that Samba will need kernel support for this to do it right.)
-> 
->   I do not think the Samba would really require the streams support
->   but it would certainly make life easier for Samba. Not to mention
->   that these files would also be natively viewed on the Linux host.
-
-It is not in the interest of MSFT that their aplication's files are
-viewable on other OSes. Expect incompatible changes to formats, streams
-and metadata contents (and surely patents on them - even if the idea is
-not new) if it starts to be really useful. It happended already in the
-past with the SMB protocol IIRC ....
-
-	Bernd
 -- 
-Firmix Software GmbH                   http://www.firmix.at/
-mobil: +43 664 4416156                 fax: +43 1 7890849-55
-          Embedded Linux Development and Services
-
+Frank
