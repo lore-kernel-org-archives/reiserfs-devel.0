@@ -1,51 +1,47 @@
-From: Jens Benecke <jens@spamfreemail.de>
-Subject: Re: $25 question - ReiserFS 3.6 data errors on 2.4.23
-Date: Wed, 18 Feb 2004 14:42:08 +0100
-Sender: news <news@sea.gmane.org>
-Message-ID: <c0vpvs$lir$1@sea.gmane.org>
-References: <20040218093510.GD21098@backtop.namesys.com> <1077098911.5090.38.camel@tribesman.namesys.com> <c0verm$ps6$1@sea.gmane.org> <40336855.1030400@dsvr.net>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: ReiserFS corruption with samba 3.0.2a
+Date: Wed, 18 Feb 2004 16:40:37 +0300
+Message-ID: <16435.27477.679757.404161@laputa.namesys.com>
+References: <Sea2-DAV22IBirXXeQM0000aeb5@hotmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16828-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16829-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <Sea2-DAV22IBirXXeQM0000aeb5@hotmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Marco Berizzi <pupilla@hotmail.com>
+Cc: linux-kernel@vger.kernel.org, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Nick Burrett wrote:
+Marco Berizzi writes:
+ > Hello.
+ > 
+ > I'm experimenting this problem with samba 3.0.2a and linux 2.4.24
+ > with ReiserFS. When I copy (put) a large file (5GB) from a Windows NT
+ > terminal server edition sp6a machine to the samba-linux box I get this
+ > error:
+ > 
+ > Feb 17 18:01:11 Mimas kernel: ide0(3,8):vs-4080: reiserfs_free_block: free_block (0308:4999052)[dev:blocknr]: bit already cleared
+ > Feb 17 18:01:11 Mimas kernel: ide0(3,8):vs-4080: reiserfs_free_block: free_block (0308:4997935)[dev:blocknr]: bit already cleared
+ > Feb 17 18:02:48 Mimas kernel: ide0(3,8):vs-4080: reiserfs_free_block: free_block (0308:902445)[dev:blocknr]: bit already cleared
+ > Feb 17 18:02:48 Mimas kernel: ide0(3,8):vs-4080: reiserfs_free_block: free_block (0308:902286)[dev:blocknr]: bit already cleared
+ > 
 
->=20
->=20
-> Jens Benecke wrote:
->> Vladimir Saveliev wrote:
->>>>Feb 17 14:40:18 linux1 kernel: is_leaf: item location seems wrong
->>>>(second one): *3.6* [68637 68643 0x1 IND], item_len 8, item_location
->>>>1444, free_space(entry_count) 0
->>>>Feb 17 14:40:18 linux1 kernel: drbd(43,0):vs-5150: search_by_key:
->>>>invalid format found in block 4683374. Fsck?
->>>
->>>These days usually when one notices similar corruptions - he later
->>>discovers hardware problem (memory problem more often). May I ask you to
->>>try memtest for some time.
->> We did, we even exchanged memory, it happened again.
-=20
-> This reminds me of a similar problem that we experienced across several
-> of our servers.  It turned out that an upgrade from reiserfsprogs 3.6.8
-> to 3.6.11 changed the status result codes of 'reiserfsck' meaning that
-> our scripts failed to detect that '--check' was reporting that we should
-> also run '--fix-fixable'.
+Are there any other error messages before these?
 
-Well, the last time we had these problems it required a --rebuild-tree. I
-hope it's not the same this time.
+ > Samba 2.2.8a doesn't show this behaviour.
+ > 
+ > The linux box is Slackware 9.1 (gcc 3.2.3 linux 2.4.24 glibc 2.3.2).
+ > It's easy for me to reproduce the problem.
+ > 
+ > Hints?
 
-And we don't run reiserfsck at boot time, only manually. ("0 0" in fstab)
-=20
+Did target file exist before copy?
 
---=20
-Jens Benecke (jens at spamfreemail.de)
-http://www.hitchhikers.de - Europaweite kostenlose Mitfahrzentrale
-http://www.spamfreemail.de - 100% saubere Postf=E4cher - garantiert!
-http://www.rb-hosting.de - PHP ab 9? - SSH ab 19? - g=FCnstiger Traffic
+Take latest version of reiserfsprogs from ftp.namesys.com and run fsck
+(in the check mode) ide0(3,8).
+
+Nikita.
