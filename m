@@ -1,61 +1,67 @@
-From: Ryan Underwood <nemesis-lists@icequake.net>
-Subject: Re: Reiserfs Data Recovery
-Date: Tue, 9 Mar 2004 12:08:00 -0600
-Message-ID: <20040309180800.GB32693@dbz.icequake.net>
-References: <404C81B9.4050504@nsanity.com> <20040308184124.GE5817@dbz.icequake.net> <404CC8AA.9020405@nsanity.com> <20040308215919.GB11093@dbz.icequake.net> <404DAC43.6070501@namesys.com> <404DD7CD.6030004@nsanity.com> <404DE68E.3080706@namesys.com>
+From: Mihai RUSU <dizzy@roedu.net>
+Subject: Re: reiserfs v3 vs v4 bonnie++ benchmarks
+Date: Tue, 9 Mar 2004 23:14:01 +0200 (EET)
+Message-ID: <Pine.LNX.4.58L0.0403092308420.17447@ahriman.bucharest.roedu.net>
+References: <Pine.LNX.4.58L0.0403091811140.5982@ahriman.bucharest.roedu.net>
+ <404DFACE.4090008@namesys.com> <Pine.LNX.4.58L0.0403091914240.8537@ahriman.bucharest.roedu.net>
+ <404DFDBA.8040006@namesys.com> <Pine.LNX.4.58L0.0403091929530.9967@ahriman.bucharest.roedu.net>
+ <404E0112.7080904@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3uo+9/B/ebqu+fSQ"
-Return-path: <reiserfs-list-return-17147-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17149-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <404DE68E.3080706@namesys.com>
+In-Reply-To: <404E0112.7080904@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
 
---3uo+9/B/ebqu+fSQ
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On Tue, Mar 09, 2004 at 06:45:18PM +0300, Hans Reiser wrote:
-> >
-> My bad experience was with getting their drivers to work with 2.6, and I=
-=20
-> tried to use raid 1..., and I figured out that it wasn't really hardware=
-=20
-> raid because it needed a software driver that wasn't in 2.6 and it was=20
-> work to figure out that it was missing and they don't provide telephone=
-=20
-> support and, oh, I just hated them by the end of the experience....  I=20
-> ended up just using each drive as a separate device and their hardware=20
-> as a dumb ide controller.
+On Tue, 9 Mar 2004, Hans Reiser wrote:
 
-Yeah, effectively all those cheap "RAID" cards (those w/o a CPU or
-local cache) do is provide you with a pretty BIOS menu to setup your
-arrays.  All the work is done by the md driver anyway.  The BIOS stores
-the array configuration at the end of the disks (I think) and the
-"driver" just picks up that configuration and starts running a md set
-over the assocated disks.  The hardware itself is a basic ATA controller
-as far as I can tell.
+> Yes, it would be interesting.  I think maybe we need to tweak reiser4 
+> more for benchmarks near to ram size.
 
---=20
-Ryan Underwood, <nemesis@icequake.net>
+Hi again
 
---3uo+9/B/ebqu+fSQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+I have repeated the "block" read/write tests asking bonnie++ to write 5 GB 
+of data (10x my RAM size).
 
+reiser v3:
+Version  1.03       ------Sequential Output------ --Sequential Input- --Random-
+                    -Per Chr- --Block-- -Rewrite- -Per Chr- --Block-- --Seeks--
+Machine        Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP  /sec %CP
+dizzywork        5G 17340  89 46074  15 22140   5 16473  85 46145   6 102.8   0
+dizzywork,5G,17340,89,46074,15,22140,5,16473,85,46145,6,102.8,0,,,,,,,,,,,,,
+
+reiser v4:
+Version  1.03       ------Sequential Output------ --Sequential Input- --Random-
+                    -Per Chr- --Block-- -Rewrite- -Per Chr- --Block-- --Seeks--
+Machine        Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP  /sec %CP
+dizzywork        5G 17491  90 48452  14 23563  11 17426  89 47952   8 110.9   0
+dizzywork,5G,17491,90,48452,14,23563,11,17426,89,47952,8,110.9,0,,,,,,,,,,,,,
+
+You were right. The values now seem almost the same (well, reiser4 seems a 
+little bit better).
+
+Should I repeat the "many small files" tests too with lots more files ?
+
+> -- 
+> Hans
+
+- -- 
+Mihai RUSU                                    Email: dizzy@roedu.net
+GPG : http://dizzy.roedu.net/dizzy-gpg.txt    WWW: http://dizzy.roedu.net
+                       "Linux is obsolete" -- AST
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 
-iD8DBQFATggAIonHnh+67jkRAns+AJoCCUQcCEkyTk4P5JruD84p6Jo8pACdFuBG
-t/TLy3oBs03FtBsi1/J5Y04=
-=E/Ss
+iD8DBQFATjObPZzOzrZY/1QRAnOMAJ4glX0TXNnuz3hbKQiR4SGijXvE1QCePYOd
+HPRGgqPvWMuUb/UYIzUGtLE=
+=Gyjj
 -----END PGP SIGNATURE-----
-
---3uo+9/B/ebqu+fSQ--
