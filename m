@@ -1,63 +1,37 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Re: Re: [PATCH CFT] tons of logging patches
-Date: Mon, 17 Jun 2002 02:31:42 +0200
-Message-ID: <3D0D2DEE.7080909@mb.tu-ilmenau.de>
-References: <1023076301.22608.1778.camel@tiny>	<3CFC1CB5.8040102@mb.tu-ilmenau.de>	<1023	 157228.31475.38.camel@tiny>	<3CFC33F2.7080009@mb.tu-ilmenau.de>	<1023196345.31682.81.camel@tiny>	<3CFE7EFB.6080203@mb.tu-ilmenau.de> 	<3CFE8234.7010006@mb.tu-ilmenau.de>	<1023322167.2920.772.camel@tiny>  <3D07CBE7.5080701@mb.tu-ilmenau.de> <1024274859.11086.68.camel@tiny>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Permission denied on access to files; even as root
+Date: Mon, 17 Jun 2002 09:12:10 +0400
+Message-ID: <20020617091210.A18719@namesys.com>
+References: <1024353028.26879.10577.camel@xserver> <3D0CC8F8.9090206@namesys.com> <1024354235.21004.10629.camel@xserver> <20020616222011.A15910@namesys.com> <1024358539.26879.10782.camel@xserver>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10752-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10753-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <1024358539.26879.10782.camel@xserver>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chris Worley <chrisw@lnxi.com>
+Cc: reiserfs-list@namesys.com
 
-On 06/17/2002 02:47 AM, Chris Mason wrote:
-> On Wed, 2002-06-12 at 18:32, Manuel Krause wrote:
-> 
->>On 06/06/2002 02:09 AM, Chris Mason wrote:
->>
->>>Ok, ftp.suse.com/pub/people/mason/patches/data-logging has my latest
->>>updates, which have more optimizations for many threads all doing
->>>synchronous transactions.
->>>
->>>-chris
->>>
->>
->>Mmh. I recompiled with the new one when it appeared on the server and 
->>kept the kernel append line with the obvious problem not to be able to 
->>easily reboot to my ext2 maintenance partition.
-> 
-> 
-> Hmmm, I might have found it, but this isn't a new bug to the 07 patch. 
-> Have you been able to reproduce, or have you fallen back to the older
-> patches?
-> 
+Hello!
 
-You mean 03-beta-data-logging-7.diff.gz when saying "07 patch"? Then I 
-didn't go back according to my disk content.
+On Mon, Jun 17, 2002 at 06:02:19PM -0600, Chris Worley wrote:
 
-When I boot up I read on screen and in boot.msg:
-  ...
-  EXT2-fs: Unrecognized mount option data
-  reiserfs: using ordered data mode
-  reiserfs: found format "3.6" with standard journal
-  reiserfs: checking transaction log (ide0(3,7)) for (ide0(3,7))
-  (...)
-  Using r5 hash to sort names
-  ...
+>     1) compile and install (configured as my previous kernel) the kernel
+>     kernel-source-2.4.16.SuSE-32.i386.rpm at ftp.suse.com in
+>     /pub/suse/i386/update/7.3/2.4.16-20020416 and
+>     2) configure/make/install reiserfsprogs-3.x.1b, and 
+>     3) remake my lvm initrd, then 
+>     4) reboot single user and run reiserfsck (no args), 
+> I'll have a working, fixed file system that will have large file
+> capabilities?
 
-Addon is: I use the ReiserFS pending patches that apply as I mentionned 
-previously(?).
+No.
+You must boot-off some rescue media.
+Because root fs is mounted even in single user mode.
 
-No, it looks o.k. here.
-
-
-> -chris
-> 
-
-Manuel
-
-
+Bye,
+    Oleg
