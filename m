@@ -1,49 +1,88 @@
-From: Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>
+From: Jeff Mahoney <jeffm@suse.com>
 Subject: Re: ReiserFS problems
-Date: Wed, 6 Aug 2003 20:22:52 +0200
-Message-ID: <20030806202252.A1940@bitwizard.nl>
-References: <20030806182055.A28562@bitwizard.nl> <20030806164852.GA14719@namesys.com> <20030806192227.B31496@bitwizard.nl> <200308062201.15385.vitaly@namesys.com> <20030806201405.A1357@bitwizard.nl>
+Date: Wed, 06 Aug 2003 14:41:44 -0400
+Message-ID: <3F314BE8.50300@suse.com>
+References: <20030806182055.A28562@bitwizard.nl> <3F31303A.6020408@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15192-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15193-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030806201405.A1357@bitwizard.nl>
+In-Reply-To: <3F31303A.6020408@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Cc: Vitaly Fertman <vitaly@namesys.com>, Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com, copy@harddisk-recovery.nl
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>, reiserfs-list@namesys.com, copy@harddisk-recovery.nl
 
-On Wed, Aug 06, 2003 at 08:14:05PM +0200, Rogier Wolff wrote:
-> You can verify on 
-> 
-> 	http://www.bitwizard.nl/io_throughput.gif
-> 
-> that (almost) no data was written throughout the first pass.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-It seems to have dropped into a different pass again: throughput has
-dropped to just over 300k per second.
+|> We've noticed horrible slowdowns when the filesystem is > 90% full. It
+|> turns out that when a block group is more than 90% full reiserfs will
+|> prefer a different block group. i.e. it is ALWAYS switching block
+|> groups when the whole disk is > 90% full. Something like that. When we
+|> report something like that it's always: Ah, yes, that's an old bug
+|> we've fixed it. Use patch.....
+|>
+| I don't think you reported that to me.....
+|
+| Jeff, give me an opinion on this....
 
-Should I feel comfortable if it's finding formatting errors all over
-the place?:
+The skip_busy algorithm works like so:
 
-  entry [x y] "ZZZ" in directory [a b] is not formatted properly -- fixed. 
+If the filesystem is less than 95% full, the allocator tries to be a bit
+smarter and leaves 10% of the bitmap free for future allocations to
+avoid fragmentation. If the bitmap being examined has 10% or less free
+space, it's skipped. *UNLESS* the file doing the allocation already has
+an interest in that bitmap, as determined by the allocator getting
+passed a non-zero offset into the bitmap.
 
-(usually x == 2, a,b == 1,2 .)
+If it finds no bitmaps that are more than 10% free or the filesystem is
+| 95% full, it restarts the search at the initial hint and ignores the
+10% rule.
 
-Tip: 
+In short;
+1) Find a block in the current bitmap if the file's last block was
+allocated there.
+2) If there aren't any, or there is no stake, search until a bitmap that
+is > 10% free is found, but only from the initial search point to the
+end of the disk - without wrapping around.
+3) If there aren't any, try to find any free block from the initial
+search point until the end of the disk
+4) If there aren't any, start at the beginning of the disk and search up
+to the initial search point.
 
-Only list the file/directory that's being worked upon when explicitly
-requested. When not explicitly requested, set an alarm handler to
-print it every second (or so). Lots of time is now spent in writing to
-the screen. (It's consumed over an hour of CPU time by now...)
+The idea is that allocations that can be kept contiguous should be. Once
+the allocation ends up being outside of the local bitmap, then the disk
+is already seeking, so it doesn't matter if it seeks a bit more if it
+can find another chunk where it can find contiguous allocation.
 
-		Roger. 
+All these searches are streamlined by making find_*_zero_bit do as
+little work as possible. For each bitmap, the offset of the first zero
+bit is kept as well as how many free bits there are. This makes it
+trivial to skip bitmaps that have < 10% free, as well as not force the
+allocator to scan entire bitmaps to find that the last bit is the zero bit.
 
+So, yes, when the filesystem approaches 95% full, and there are only new
+files being created, the *initial* allocations will scatter themselves.
+This is by design so that the subsequent allocations for each of those
+files will be able to be contiguous with the original allocation.
 
--- 
-+-- Rogier Wolff -- www.harddisk-recovery.nl -- 0800 220 20 20 --
-| Files foetsie, bestanden kwijt, alle data weg?!
-| Blijf kalm en neem contact op met Harddisk-recovery.nl!
+What is the workload that is producing the horrible slowdowns?
+
+- -Jeff
+
+- --
+jeffm@suse.com
+jeffm@csh.rit.edu
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.2-rc1-SuSE (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iD8DBQE/MUvoLPWxlyuTD7IRArpkAJ9MThFNeVzmEIONDDlypsALv70dTACgj7xo
+EJVh5oDQWqfsG9RH9lcFtO4=
+=ZcoM
+-----END PGP SIGNATURE-----
+
