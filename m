@@ -1,41 +1,60 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Repacker for reiser4?
-Date: Mon, 13 Sep 2004 21:36:32 +0300
-Message-ID: <20040913183632.GF26192@nysv.org>
-References: <4144674B.5070705@willsmith.org> <20040912151537.GE26192@nysv.org> <4145DC12.90103@willsmith.org>
+From: Joe Orton <jorton@redhat.com>
+Subject: Re: EACCESS vs ENOENT for nonexistent files-within-files
+Date: Mon, 13 Sep 2004 19:52:55 +0100
+Message-ID: <20040913185255.GA1920@redhat.com>
+References: <20040913140637.GB29591@redhat.com> <20040913161326.GB2252@backtop.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21721-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21722-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <4145DC12.90103@willsmith.org>
+In-Reply-To: <20040913161326.GB2252@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Will Smith <will@willsmith.org>
+To: Alex Zarochentsev <zam@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-On Tue, Sep 14, 2004 at 01:42:42AM +0800, Will Smith wrote:
->
->As far as I can tell (can anybody confirm/deny), it's up to userspace
->to manually toggle the 'direction' flag as required before starting
->the repacker - the direction seems to default to 0 ('backward') on each 
->mount.
+On Mon, Sep 13, 2004 at 08:13:26PM +0400, Alex Zarochentsev wrote:
+> On Mon, Sep 13, 2004 at 03:06:37PM +0100, Joe Orton wrote:
+> > Hi, we had a bug report that Apache httpd logs a spurious error for
+> > every file served from a reiser4 filesystem, because httpd assumes that
+> > /path/to/file/.htaccess (where /path/to/file is a normal file) returns
+> > ENOENT or ENOTDIR, but reiser4 returns EACCES in this case.
+> > 
+> > Can someone explain the justification behind reiser4's behaviour? 
+> > httpd's assumption does not seem unreasonable, and EACCES seems to make
+> > little sense for this error case.
+> 
+> It is because open(name, O_DIRECTORY) is successful for regular files in
+> reiser4.  Once it succedes, Apache2 thinks that is a directory and tries to
+> open .htaccess under it.
 
-Sure seems that way...
+I don't think that has anything to do with it.  It's a simple open()
+without O_DIRECTORY which is failing with EACCES.  The reporter
+confirmed this with the simplest of tests:
 
->sequence of operations on each filesystem.  And then, whether the
->repacker fixes things for reiser4.  Naturally, ext3 fragmentation
->cannot be fixed :)
+$ touch newfile.txt
+$ cat newfile.txt/.htaccess
+cat: newfile.txt/.htaccess: Permission denied
 
-I heard a rumor that ext3's fragmentation is fixed by fsck, can anyone
-deny or confirm this?
+this is the behaviour I'm trying to find the justification for.
 
-How do you measure ext3's fragmentation, btw?
-(An old reiserfs user asking ;)
+> There are two solutions:
+> 
+> 1) mount reiser4 partition with "nopseudo" mount option.  it makes /metas/* files
+> unaccessible.
 
--- 
-mjt
+If this is broken by default, our users will continue to complain, so 
+that doesn't really help.
 
+> 2) apply the patch:
+
+OK, does this mean you do consider this a bug in reiser4 which will be
+fixed in future releases, then?
+
+Regards,
+
+joe
