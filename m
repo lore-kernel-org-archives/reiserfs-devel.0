@@ -1,55 +1,27 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Oh no! Not again!
-Date: Wed, 29 Jan 2003 23:17:25 +0300
-Message-ID: <200301292317.25045.vitaly@namesys.com>
-References: <20030117221535.GA945@Kadath> <200301281400.09364.vitaly@namesys.com> <20030129193126.GA1367@ZhengHe.augustin.thierry>
+From: Newsmail <newsmail@satimex.tvnet.hu>
+Subject: lvm+loop-aes+reiserfs / iput deadlock fix
+Date: Wed, 29 Jan 2003 23:34:10 +0100
+Message-ID: <5.2.0.9.2.20030129233147.02056cf8@pop.tvnet.hu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12551-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12552-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030129193126.GA1367@ZhengHe.augustin.thierry>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Francois-Rene Rideau <fare@tunes.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <green@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-On Wednesday 29 January 2003 22:31, Francois-Rene Rideau wrote:
-> OK. So I built the latest reiserfsck as a static binary,
-> and ran it with --rebuild-tree, and I got an infinite loop
-> just like previously. In case anyone cares, I have kept the logfile for i=
-t.
-> Is there anything that interests you about that failure,
-> or should I promptly reformat the disk?
+Where does process hang this time? (press SysRQ-T, decode the output and 
+send it to me) ---->
+could you please tell me what is SysRQ-T? btw its a remote machine...
+cheers,
+greg
 
-Did you run the fsck (booted from /boot) when the drive was in that other
-mashine you had no problem with or in the problem one? It is a bad idea to =
+ps: well you say that its maybe a crypto-loop side problem, what I dont 
+understand why it only came after 2.4.20-preX introduced, and it works 
+absolutly without any problem on 2.4.19.
 
-run reiserfsck on a broken hardware - the result is unpredictable.=20
 
-> Also, does any of you have any hint as to how to identify the failure
-> that led to this crash? I suspect either the disk or the motherboard,
-
-If you do not see any problem with the disk when you put it into another=20
-computer - it is not the disk. It can be IDE controller, cable...
-
-> but it's hard to tell: booting on my 80MB rescue disk works well,
-> whereas the disk looks like it works correctly on another machine,
-> and does not issue errors even on that machine, if I don't use DMA.
-> Really weird. What scares me is that if I don't identify the problem,
-> a similar crash may happen again...
->
-> Cheers!
->
-> [ Fran=E7ois-Ren=E9 =D0VB Rideau | Reflection&Cybernethics |
-> http://fare.tunes.org ] [  TUNES project for a Free Reflective Computing
-> System  | http://tunes.org  ] Demand the establishment of the government =
-in
-> its rightful home at Disneyland.
-
---=20
-
-Thanks,
-Vitaly Fertman
