@@ -1,34 +1,35 @@
-From: Rik van Riel <riel@redhat.com>
+From: Thomas Cataldo <tomc@compaqnet.fr>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 14:41:34 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44.0408261440550.27909-100000@chimarrao.boston.redhat.com>
-References: <Pine.LNX.4.58.0408261101110.2304@ppc970.osdl.org>
+Date: Thu, 26 Aug 2004 20:40:27 +0200
+Message-ID: <1093545627.11770.2.camel@buffy>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
+	 <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com>
+	 <20040826093407.GB28854@lst.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20756-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20757-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.58.0408261101110.2304@ppc970.osdl.org>
+In-Reply-To: <20040826093407.GB28854@lst.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Christoph Hellwig <hch@lst.de>
+Cc: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-On Thu, 26 Aug 2004, Linus Torvalds wrote:
-
-> For example, you _could_ probably (but hey, maybe "tar" tries to strip
-> slashes off the end of filenames, so this might not work due to silly
-> reasons like that) back up a compound file with
+On Thu, 2004-08-26 at 11:34 +0200, Christoph Hellwig wrote:
+> On Thu, Aug 26, 2004 at 01:31:34AM -0700, Hans Reiser wrote:
+> > Andrew, we need to compete with WinFS and Dominic Giampaolo's filesystem 
+> > for Apple, and that means we need to put search engine and database 
 > 
-> 	tar cvf file.tar file file/
+> Dou you know a nice thing?  We (as in the Linux Community) don't have to
+> compete with anyone.  Sure, we're usually trying to be better than
+> anyone else, but unlike companies under maret pressure we can wait until
+> something is ready.
 
-So you'd have both a file and a directory that just happen
-to have the same name ?  How would this work in the dcache?
+By the way, this kind of features can be achieved easily in userspace
+with, for example, ext3, beagle (a userspace fulltext indexing daemon)
+and some (d|i)notify magic.
 
--- 
-"Debugging is twice as hard as writing the code in the first place.
-Therefore, if you write the code as cleverly as possible, you are,
-by definition, not smart enough to debug it." - Brian W. Kernighan
 
