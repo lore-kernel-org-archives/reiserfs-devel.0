@@ -1,101 +1,109 @@
-From: Unknown <unknown@unknown.invalid>
-Subject: RE: End market losses with our hottest feature profile
-Date: Sun, 06 Mar 2005 07:24:09 -0800
-Message-ID: <B1ipE-14384T-4O@flashmail.net>
-Reply-To: "wzwnhdoz@fx.ro"
+From: Junfeng Yang <yjf@stanford.edu>
+Subject: Re: [CHECKER] Do ext2, jfs and reiserfs respect mount -o sync/dirsync
+ option? (fwd)
+Date: Sun, 6 Mar 2005 20:48:49 -0800 (PST)
+Message-ID: <Pine.GSO.4.44.0503062048240.25520-100000@elaine24.Stanford.EDU>
+References: <Pine.GSO.4.44.0503051248210.4180-100000@elaine24.Stanford.EDU>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="9433136969"
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-From: Marilyn
+In-Reply-To: <Pine.GSO.4.44.0503051248210.4180-100000@elaine24.Stanford.EDU>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: qkx@namesys.com, shoener@namesys.com, gerich@namesys.com, reiserfs-list@namesys.com, pluid@namesys.com, rgattis@namesys.com
-
---9433136969
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 7Bit
-
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: reiserfs-list@namesys.com
 
 
-G.E.E.C.F   G.E.E.C.F   G.E.E.C.F   G.E.E.C.F   G.E.E.C.F
+Hi Vladimir, are you able to reproduce the problem?
 
-Global Environmental Energy Corp. (OTC-BB: G.E.E.C.F)
-Shares Outstanding : 35 million
-Approx. Float : 9 million
-30 Day Target : 6.25
-6 Month Price Projection : 15.00
+Thanks,
+-Junfeng
 
-Recent News and Major Share-Price Driving Milestones:
+On Sat, 5 Mar 2005, Junfeng Yang wrote:
 
-G.E.E.C.F just announced a 10 Billion, 5-year joint venture with several companies operated by the Chinese Government.
+> > I just made the follong test on reiserfs (2.6.11-rc4-mm1):
+> > mkreiserfs /dev/hda6
+> > mount /dev/hda6 /mnt -o sync
+> > touch /mnt/file
+> > mkdir /mnt/d
+> > echo Hello > /mnt/hello
+> > reboot -f -n
+>
+> Here is what I do to reproduce the same problem:
+>
+> 1. mkreiserfs on a partition
+> 2. issue several file system operations
+> 3. "crash" and resart the machine
+> 4. run reiserfsck --fix-fixable --yes to recover
+> 5. mount the recovered partition.
+>
+> It appears that step 4 is _important_ in reproducing the problem.  If I
+> just mount the crashed disk, everything appears to be fine.  However,
+> attempt to recover the crashed image using reiserfsck result in
+> metadata/data loss.
+>
+> Details are attached below.  Let me know if you need any more information.
+>
+> The script I use (run as root)
+> #!/bin/sh
+> umount /dev/hda9
+> /sbin/mkreiserfs -f /dev/hda9
+> mount -t reiserfs /dev/hda9 /mnt/sbd1 -o sync,dirsync
+> ln -s /mnt/sbd1 /mnt/sbd1/0001
+> touch /mnt/sbd1/0002
+> mkdir /mnt/sbd1/0003
+> reboot -f -n
+>
+> uname -a shows:
+> Linux notus 2.6.11 #1 Sat Mar 5 04:39:12 PST 2005 i686 GNU/Linux
+>
+> reiserfsck output is:
+> reiserfsck 3.6.19 (2003 www.namesys.com)
+>
+> *************************************************************
+> ** If you are using the latest reiserfsprogs and  it fails **
+> ** please  email bug reports to reiserfs-list@namesys.com, **
+> ** providing  as  much  information  as  possible --  your **
+> ** hardware,  kernel,  patches,  settings,  all reiserfsck **
+> ** messages  (including version),  the reiserfsck logfile, **
+> ** check  the  syslog file  for  any  related information. **
+> ** If you would like advice on using this program, support **
+> ** is available  for $25 at  www.namesys.com/support.html. **
+> *************************************************************
+>
+> Will check consistency of the filesystem on /dev/hda9
+> and will fix what can be fixed without --rebuild-tree
+> Will put log info to 'stdout'
+> ###########
+> reiserfsck --fix-fixable started at Sat Mar  5 12:16:12 2005
+> ###########
+> Replaying journal..
+> No transactions found
+> Checking internal tree..finished
+> Comparing bitmaps..finished
+> Checking Semantic tree:
+> finished
+> No corruptions found
+> There are on the filesystem:
+>         Leaves 1
+>         Internal nodes 0
+>         Directories 1
+>         Other files 0
+>         Data block pointers 0 (0 of them are zero)
+>         Safe links 0
+> ###########
+> reiserfsck finished at Sat Mar  5 12:16:15 2005
+> ###########
+>
+> second mount of the crashed disk shows:
+> ReiserFS: hda9: found reiserfs format "3.6" with standard journal
+> ReiserFS: hda9: using ordered data mode
+> ReiserFS: hda9: journal params: device hda9, size 8192, journal first block 18, max trans len 1024, max batch 900, max commit age 30, max trans age 30
+> ReiserFS: hda9: checking transaction log (hda9)
+> ReiserFS: hda9: Using r5 hash to sort names
+>
+>
 
-G.E.E.C.F uses their Biosphere Process System to convert various types of waste into clean, "green" electricity at 5 to 10 mega-watts per hour.
-
-G.E.E.C.F Chairman, former Prime Minister of Ireland Dr. Albert Reynolds, has secured a 2 Billion LineofCredit for G.E.E.C.F and opened doors in over a dozen countries through political contacts at the highest level.
-
-Sahara Petroleum Exploration Corp., a newly-formed, 100% wholly-owned Energy Division of G.E.E.C.F, just signed a "Letter of Confidentiality and Non-Circumvention" with Vetra Group AVV Corp. (Management incl. the former Pres. of OPEC and the President of Shell of Venezuela).
-
-Vetra Group is a major international Oil and Gas exploration and production super-powerhouse handling more than 900 industrial energy projects in 50 countries with over 50 of the largest oil super-majors in the world as their clients. There were no details given as to why a company of Vetra's power and status would initiate a business venture with the shell-like division of Sahara Petroleum. This is exactly how a potentially explosive partnership begins - completely unexpected with no hype or info about the oil-related business at hand. Reading between the lines, there is a deafening silence that something phenomenal is brewing.
-
-Conservative estimates value the G.E.E.C.F at
-One Billion 
-
-Solving a Dual Crisis - Waste and Energy
-
-G.E.E.C.F is utilizing the unique proprietary technology of their Biosphere Process System for the disposal of a wide variety of waste products at 5 to 7 tons per hour, making a major impact on the global waste problem. This profitable and environmentally safe process converts into clean, "green" electricity such waste materials as Municipal Solid Waste, agricultural wastes, forestry wastes, medical wastes, industrial wastes, sewage sludge, shale oil, sour natural gas, and the huge market of used tires.
-G.E.E.C.F generates 5 to 10 mega-watts per hour of electricity from the waste conversion on a continuous basis which is then sold to replenish the local or national grid.
-
-China's Aggressive Pursuit of G.E.E.C.F makes 2005 a "Blue-Chip" Year
-
-G.E.E.C.F just announced a 10 Billion, 5-year joint venture with Chinese Government-operated companies, including Yanzhou Coal Mining (N.Y.S.E - YZC, 77.00). The deal is structured to have 1,300 G.E.E.C.F Biosphere Systems deployed throughout China to fulfill an urgent need for waste disposal and energy generation, two critical areas for a country with a population exceeding 1.3 billion people. As China's rapid economic advance continues, a shortfall of 500 million kilowatts exists annually, prompting periodic blackouts in all Chinese Provinces. G.E.E.C.F is in line to profit substantially while providing relief from unmanageable Municpal Solid Waste disposal and simultaneously helping China meet its energy needs.
-
-Future Milestones:
-1.	G.E.E.C.F had a 100 Million backlog of sales orders for the Biosphere before the China joint-venture with 26 completed Biospheres in operation. The backlog is now into the Billions with complete financing to be provided by China and 1,300 Biospheres to be deployed throughout the country.
-2.	G.E.E.C.F's present assets of 35 Million will conservatively jump into the 300 Million range, a 10-times increase.
-3.	G.E.E.C.F is in advanced stages of agreement on at least 6 major international projects which could add 50 Million to the bottom-line or 1.42 per share.
-4.	P/E on average for this Industry Group is 20 to 1 putting G.E.E.C.F above the 13.00 range without any future business expansion.
-5.	G.E.E.C.F is expected to file for a higher exchange listing and continue to pay common stock and spin-off stock dividends.
-
-Worldwide Market Potential
-15 to 25 Billion over next 5 years with no other known company that can match their technology, leadership, or explosive sales growth.
-
-Up until now G.E.E.C.F has been one of Wall Street's best kept secrets, yet now it seems the cat is coming out of the bag and the release of this new Investor Awareness Campaign 
-should be excellent timing in regards to some new PR's forthcoming which will Rocket G.E.E.C.F. This power-play has nowhere to go but up, according to most insiders, and there's 
-still a bit of time to get in before the boom. Increased investor awareness and the anticipated release of huge news announcements will add to the buying frenzy from investors 
-loading up before G.E.E.C.F goes through the roof.
-
-Disclosure: Certain statements contained in this newsletter may be future-looking statements within the meaning of The Private sec-urities Litigation Reform Act of 1995. 
-These statements may be identified by such terms as expect, believe, may, will, and intend or similar terms. We are not a registered investment expert. This is not an 
-attempt to acquire or sell sec-urities. No suggestion that the sec-urities of the company profiled should be acquired, sold or held by individuals or entities that learn 
-of the profiled company. This is an independent electronic publication that was paid forty five hundred dollars by a third party for the preparation of this company information. 
-Be advised that investments in small-cap companies are considered to be high-risk and use of the information provided is for reading purposes only. If anyone decides to act as an 
-investor they are advised not to invest without the proper advisement from a financial expert. If any party decides to participate as an investor then it will be that investor's 
-sole risk. Be advised that the purchase of such high-risk sec-urities may result in the loss of some or all of the investment. The publisher of this newsletter makes no claims as 
-to the accuracy or the completeness of the company profile. Investors should not rely solely on the information presented. Rather, investors should use the information provided in 
-this newsletter as a starting point for doing additional independent research on the profiled company. Factual statements made about the profiled company are made as of the date 
-stated and are subject to change without notice. Investing in micro-cap sec-urities is highly speculative and carries an extremely high degree of risk. It is possible that an 
-investor's entire investment may be lost or impaired due to the speculative nature of the company profiled. All information provided about the profiled company has been obtained 
-from publicly available sources which may include the company's web site, public filings, company press releases and informational web sites provided by the actual exchanges where 
-small-cap stocks are traded.
-
-
-
------ Original Message ----- 
-From: qkx@namesys.com
-To: Kelly Wade 
-Sent: Friday, March 04, 2005 4:01 AM
-Subject: RE: End market losses with our hottest feature profile
-
-
-This idea is something I have been thinking about for a very long time.
-
-Do you have any thoughts?
-
-qkx@namesys.com
-
-
-
---9433136969--
