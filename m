@@ -1,110 +1,72 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Fwd: reiser4 non-free?
-Date: Mon, 03 May 2004 09:35:39 -0700
-Message-ID: <409674DB.1000205@namesys.com>
-References: <20040424193246.GA2490@raptus.homelinux.org> <4091DAFE.5030809@namesys.com> <20040430055619.GD7487@archimedes.ucr.edu> <40923D1C.3090003@namesys.com> <20040430174343.GE7487@archimedes.ucr.edu> <409561EE.7030000@namesys.com> <20040502215500.GB18235@xieana.donarmstrong.com>
+Date: Mon, 03 May 2004 10:04:33 -0700
+Message-ID: <40967BA1.9030401@namesys.com>
+References: <20040424193246.GA2490@raptus.homelinux.org>	 <4091DAFE.5030809@namesys.com> <20040430055619.GD7487@archimedes.ucr.edu>	 <40923D1C.3090003@namesys.com> <20040430174343.GE7487@archimedes.ucr.edu>	 <409561EE.7030000@namesys.com>	 <20040502215500.GB18235@xieana.donarmstrong.com> <1083537422.6293.22.camel@loke>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18389-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18390-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040502215500.GB18235@xieana.donarmstrong.com>
+In-Reply-To: <1083537422.6293.22.camel@loke>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Don Armstrong <don@donarmstrong.com>
-Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
+To: Martin List-Petersen <martin+debian-devel@list-petersen.net>
+Cc: Don Armstrong <don@donarmstrong.com>, debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-Don Armstrong wrote:
+Martin List-Petersen wrote:
 
->
->The end user can choose to read it, or they can choose not
->to. Regardless, they should not be assaulted by the credits or forced
->to read them. Going back to journal articles, is the funding grant
->number emblazoned in 24 point font above the article title?[1]
+>On Sun, 2004-05-02 at 22:55, Don Armstrong wrote:
 >  
 >
-funding agencies are always mentioned on the original article but not 
-the citations of them, not sure what your point is?
-
-I have never seen a journal reproduce another journal's article while 
-deleting the mention of the funding agency.  That kind of abuse seems 
-reserved for linux distros to practice.
-
-> 
->  
->
->>>Copyright requires that appropriate attribution occurs.
+>>>>Furthermore, the list of credits are still included (to my knowledge)
+>>>>in /usr/share/doc/resierfsprogs/README.gz.
+>>>>        
+>>>>
+>>>oh, well, that is almost as good as putting them on the dark side of
+>>>the moon....  a credit read by no one has no meaning.
 >>>      
 >>>
->>It requires not removing the copyright notice which usually mentions
->>the copyright holder is (me), and you know, I don't really fancy
->>changing the mount type to "mount -t
->>copyrighthansreiser2001200220032004 /dev/hda /home".  Everyone else
->>but me gets completely shafted.
->>    
->>
 >
->Uh, that wouldn't be a proper copyright notice.
->
-Legally it most certainly would be.
-
-> Copyright notices have
->a specific place in Debian, and are always placed there.
->
-Moving them would violate the law.
-
-> [They are
->also often included in the --version output for most programs.]
->
->Furthermore, we expect copyright notices to also indicate the terms
->under which they are (or are not) licensed.
+>I don't know what you are reading once you've installed a new program on
+>your system, but the README, README.Debian and the man-pages are for me
+>usually the FIRST place, since it might hold valuable information and
+>safe me the trouble, which i may have, if i didn't had read it.
 >  
 >
-The law does not require this, nor does the GPL.
+I never read these (except the man pages) unless the install fails in 
+some way (I read the NVIDIA ones many times....), and neither do 99% of 
+real users, including 99% of reiserfs users.  As a user, I can handle 
+the distro flashing information on my screen as it installs and I can 
+read that, or printing credits when I select a particular package for 
+the install, and I can handle a tool printing credits when it starts up 
+(ala mkreiser4) for me to read, but going through a list of 3000 
+packages after the install completes and reading their readmes and 
+credits files just ain't gonna happen.
 
+As a developer, I can probably be talked out of anything that makes the 
+install slower or more awkward or adds more clicks.  If there is another 
+paradigm in place for displaying info about the packages during the 
+install (I encourage you to have one), I would most likely be happy to 
+conform to that.
+
+>So, if you know somebody (including yourself) that doesn't do it I'm
+>really in doubt about the security of your system. There is actually
+>useful information in there.
+>
+>/Martin
+>--
+>The camel has a single hump;
+>The dromedary two;
+>Or else the other way around.
+>I'm never sure.  Are you?
+>                -- Ogden Nash
+>
+>
+>
+>
 >  
 >
->>>1: I personally have travelled to meet with individuals at FSF to
->>>work on bringing the GFDL issue to an amicable conclusion,
->>>      
->>>
->>It isn't your place to force a license on software you did not
->>write.
->>    
->>
->
->I *CANNOT* force a license on software that I do not own the copyright
->to.[2] To claim that I am (or have) is reprehensible. This is in
->effect claiming that I (in my capacity as an individual!) have
->extorted (or blackmailed) the FSF. I have done no such thing, nor have
->any other members of the GFDL committee.
->  
->
-You as a group are attempting to coerce using the market leverage that 
-Debian genuinely does possess and seems willing and aggressively eager 
-to use.  Are you going to claim that market leverage is not a very real 
-and potent form of coercion? 
-
-Stallman is experimenting with methods of requiring crediting, and you 
-are getting in the way of an effort to research and test new solutions 
-to real problems in current licensing techniques which you are not 
-concerned about because they put persons other than you and your 
-committee at risk.  My experiments (slightly different from Stallmans 
-and I think slightly more to the point than documentation licensing) are 
-also being frustrated by you.
-
-In regards to font size and all that, I have already said that it is 
-sufficient for me if the credits are equally prominent, and retain their 
-wording, and you are free to change their graphical presentation subject 
-to that.  Sending them to /dev/null does not make them equally prominent 
-compared to the original form.  I am quite willing to cooperate on all 
-matters of finessing things so that installs are smooth and elegant, 
-etc., and to develop any improved licensing wording that would enhance 
-freedom of installer writers while retaining the presentation of the 
-credits.  Actually, I think that requiring that the credits be equally 
-prominent and retain their wording is quite flexible for that purpose 
-already, but please inform me if you see an issue I missed.
-
 
