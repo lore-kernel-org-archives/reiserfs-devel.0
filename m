@@ -1,128 +1,166 @@
 From: Norbert =?ISO-8859-1?Q?Gr=FCn?= <gnor-gpl@gmx.de>
-Subject: Is a unified namespace desirable?
-Date: Sat, 29 Mar 2003 14:33:04 +0100 (MET)
-Message-ID: <5462.1048944784@www45.gmx.net>
+Subject: Yet Another Discussion on Defrag.
+Date: Sat, 29 Mar 2003 14:35:51 +0100 (MET)
+Message-ID: <11174.1048944951@www45.gmx.net>
 Mime-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13429-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13430-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"
 To: reiserfs-list@namesys.com
 
 Dear Developers!
 
-Having a unified namespace looks nice from a theoretical standpoint,
-but I have some reservations about this.
+Please read the *whole* article before flaming!
 
-The reason for these qualms is, who else, Bill Gates.
+It is probably the bazillionth discussion of the value of defragging
+and I am quite mixed about it.
 
-He "integrated" his MSIE in such a way into Windows, that Mr. Bad Guy
-from Upper Beluchistan just needs a few lines of JavaScript to access
-any function of any DLL found on the victim's PC. And he can edit the
-Zones turning this shiny concept into an outright fraud.
+The first time defragging was mentioned when old 7th ed UNIX file
+systems regularly got dumped, rebuilt and restored, PC-OS users may
+prefer the terms backup, format and restore.
 
-Albeit XP takes efforts to lure you to Microsoft's servers every few
-keystrokes, it still indicates these non-local resources as links.
-Other third-party programs are less polite. I don't talk about the
-ET-syndrome behind your back.
+"A Fast File System for UNIX" by McKusick et al. from UCB discusses a
+new strategy of, as I would say, "controlled fragmentation" or
+"interleave everything" to keep disk latency low, and boosting
+throughput by a factor of 10. I'll attach a bz2 archive of this paper
+saved as PostScript with Netscape 3 for Linux in 1997/98. It doesn't
+seem to be online any longer.
 
-Not everybody has a flat rate and might be surprised by a =80600+ phone
-bill because the machine was online for 1.45Ct/min 24/7 a whole month,
-let alone those 0190- and 0900-diallers that make you surf at =801.86/min
-or even more, giving a =8080,000+ bill and more.
+This paper mentioned curtly a defragger as an alternative to the dump,
+rebuild, restore cycle.
 
-So there is need for a media break when a resource presented is
-non-local. Especially with malware-prone Windows, this WAN connector
-should reside on a non-Windows machine, preferably with a non-x86 CPU.
-Configuration of this machine should be with a built-in console, so
-only a keyboard and LCD need be hooked up. Malware authors are still
-quite clever.
+Most people know defragging from their PC-OS.
 
-This diald box will send a login challenge to the machine that wants to
-go outdoors. All secrets will be kept on the diald box, the stub that
-will present the login box to the user will wipe out any trace of the
-credentials after use. Agreed, this login box is close to the
-denial-of-service approach Billy uses to force you to allow everything
-and blaming you for doing so by pretending your decision being totally
-uninfluenced by him.
+MS-DOS and Win16 slurped their EXEs into memory in one chunk, as did
+old 16-bit Unices with their a.out binaries. Win16 pulled lots of DLLs
+behind that and introduced some parallelism in the start process.
 
-At best, any Windows machine should be thrown away, malware already
-steals credentials there, it will void any effect of encryption via SSL
-etc. by reading on the cleartext level when writing to the screen via
-GDI or DirectX or stealing PGP keys when handed to the encryption
-module. This are the bad sides of transparent modularity and
-orthogonality via ActiveX or (D)COM(+) that are developed for mutual
-trade secret protection. You can show clean source, compile it cleanly,
-certify it, but malware doesn't need to be compiled in, it wedges
-itself anywhere into any DLL call chain. *NIX modularity and
-orthogonality is file-based, which is harder to crack. Also *NIX
-programs are multi-user aware which is not true of all Windows
-programs. So it is more likely to use *NIX as a humble user than
-Windows where those single-user programs quickly force you to do
-everything as administrator.
+Thus a contiguous file, with the appropriate disk interleave factor,
+tremendously sped up program start, albeit other delays could happen
+like with CP/M's WordStar, that took longer to initialise than to load
+from floppy, not hard disk.
 
-Albeit Konqueror happily lacks MSIE's barn doors, people are already
-scared by the integration of file manager, e.g. shell and browser which
-is also true for Nautilus and probably others.
+Defraggers got very popular then.
 
-So some care has to be taken not to get drunk with blurring any
-boundary between LAN and WAN.
+32-bit Unices, OS/2, and finally, Win32 changed this quite
+dramatically.
 
-Billy already gave us the worst possible solution: clumsy drive letters
-as CP/M legacy on one hand and shell access to Mr. Bad Guy on the other
-hand. And TCPA will wrench the last means of defence out of your hands
-and Billy still exempt from any liability. He won't pay your tax debt
-when Mr. Bad Guy made a mess of your General Ledger so you can't tell
-your assets from your liability.
+Dklite stopped to work with OS/2 and Win32.
 
-Linux and the BSDs shouldn't go the same way. *NIX legacy is
-professional networking (host and terminal are just stone age
-networking) with recent development in additional lines of defence
-against too powerful root, so hackers benefit less from getting the
-janitors' master key. Fortunately *NIX can fence in programs that
-potentially need a WAN connection.
+The reason was that all these systems start their programs with the
+page fault mechanism that governs their demand paging virtual memory.
 
-Look at bugs.kde.org for the keywords "jekyll" and "hyde". This change
-of personality is trivial with stand-alone WAN programs, just a shell
-script that wraps a "su" for Mr. Hyde around the real program, and
-slightly more complicated for Konqueror and Nautilus, where WAN
-protocols will fork a second Mr. Hyde instance. The little
-inconvenience of moving files to and from Mr. Hyde's lair as Dr. Jekyll
-should be greatly compensated by the satisfaction that Mr. Bad Guy
-can't get at your General Ledger.
+Only the headers of COFF-EXEs and ELF binaries will be read in one
+slurp, then the tables will be built and the first page of the real
+binary faulted in.
 
-Thus the unification of namespaces should not carried too far: They
-should play to the same tune, but, as with current protocols and
-URL/URN/URIs, it should be distinguishable whether these are WAN or LAN
-resources. Caution has to be taken whether ZoneAlarm patents may be
-infringed and if these can be voided. Lists of trustable IP addresses
-are known as allow/deny lists of hosts that translate finally into IP
-addresses via /etc/hosts, NIS/NIS+/NYS, DNS, LDAP and similar
-translation services, so any patent of ZoneLabs in this direction
-should be voided as trivial, straightforward and not new. They may have
-their application lists patented, under *NIX this can be solved by the
-methods mentioned in the paragraph before.
+It will have rotated away when the loader will request it, so you have
+to wait average half a round to get it. Then the binary will start to
+execute this usually 4096 bytes of code until either it runs out of
+instructions or a non-local reference is made.
 
-We can only hope Billys business concept and the US habit of
-re-patenting the wheel three times a day will blow up. This is aiding
-and abetting the installation of private taxes which is high treason at
-least since the "Boston Tea Party", but also since the Foundation
-Legend of the Brit Parliament where the Lords demanded comanagement of
-the King's finances because they knew the ressources of their serfs
-being limited.
+In both cases the next page will be rarely under the head, the average
+half round applies again, and so on.
 
-These forces going bust will allow re-professionalisation of computers
-and the return of the value of the licensees possessions which are
-regarded nil today.
+More, console OSs will start most processes during start-up
+sequentially whereas GUIs will fire up almost everything in parallel.
 
-This re-professionalisation will make media breaks again an accepted
-method of keeping awareness of risks instead of making anything appear
-local and give write access to anybody anywhere but the real owner
-where Billy wants us to go not only today but in eternity.
+The latter will create quite some contention for the disk arm since
+those binaries are rarely adjacent. Thus some defraggers try to cluster
+these binaries together.
+
+However, the page faulting program loader can't take advantage of
+contiguous binaries because paging usually bypasses the buffer cache,
+so no read-ahead can preallocate a disk track there.
+
+On-access malware scanners might benefit from contiguity, but the
+loader can't read from the buffer cache so this performance penalty
+hurts fully.
+
+MSIE creates quite decent disk rattling when starting and even Lotus
+WordPro strains the disk when loading the table-related modules.
+
+Some of this traffic may be due to the shrink-all-processes strategy of
+the VMS-based Win32 systems that lack swap partitions and have to
+squeeze this traffic through the file system bottleneck as well, albeit
+this will be noticeable with behemoths like Mozilla and monster HTML
+documents.
+
+Thus the original drive behind defragging is gone.
+
+Only large multimedia streams may benefit from contiguity any longer
+albeit today's hard disks outperform any DVD, how fast the latter may
+be. If you look at the CD/DVD drive lamp during a movie, it will
+indicate that the stream is read in small chunks every quarter minute
+or so, so there is no hard demand for contiguity, too. And CD/DVD
+roasters now survive buffer underruns, so another demand has gone.
+
+There some simple strategies for continuous defrag-on-write schemes,
+but these will have a performance penalty like the post-writing
+reordering of the ReiserFS tree already albeit this could be kept low
+by putting "dynamic" files at the end and "static" ones at the
+beginning which can be achieved by a dumb "bubble sort" algorithm.
+Deleting a "static" file will cause a big traffic peak, however.
+
+Thus a "controlled fragmentation" or "interleave everything" strategy
+like the Berkeley Fast File System which is used also by HPFS and NTFS
+may be the solution to increasing disk latency traditional layouts
+suffer from. There have been defraggers for HPFS and those for NTFS are
+quite numerous. These counteract the "controlled fragmentation"
+however. The FAT legacy has distorted minds there.
+
+So ReiserFS should perhaps interleave everything as well to overcome
+the post-writing tree-sorting performance penalty.
+
+Note that the BSD guys now try to get the benefits of journalising with
+a completely different strategy with "soft updates" which also speeds
+up their traditionally fully synchronous operation.
+
+So I would agree mostly with those that oppose defragging.
+
+Also, the high disk traffic of a defragger will interfere heavily with
+other I/O, the smoothness of your GUI will suffer heavily, disk
+interrupts are high.
+
+There are no longer wee hours in the Net, while you sleep, somebody
+else is up and connecting to your server.
+
+So you can't afford to have your server become sluggish just because
+disk contents get arranged with almost no noticeable benefit.
+
+Especially mail and news servers have such a rapidly changing disk
+content that any hope of defragging is void.
+
+These also need journalising and a faster writing ReiserFS, competition
+from a "soft updated" BSD FFS will be fierce.
+
+As you see, the cost of defragging now outweighs it's benefits and the
+strategy of BSD FFS will make it utterly obsolete.
+
+I mentioned already the mental FAT legacy above, but several years ago,
+prior to the OS wars, c't mag compared DOS defraggers and gave an acid
+comment about defragger addicts being messy people enjoying watching
+their disk getting tidied up instead of their rooms.
+
+As an aside, nobody ever heard about a defragger for NetWare. They now
+have B-trees to speed up their new NSSFS, the old FS mentioned FAT as
+an important structure.
+
+So defragging is a method of yesterday giving benefits only to
+yesterdays' PC-OSs, but not to modern professional OSs.
+
+I hope this helps in the discussion that may be retriggered by the
+bazillion of people that grew up with PC-OSs.
+
+Please be patient with these "newbies", there are native language
+effects in computers as are in real life, everybody of us who is
+multilingual knows of all the idiomatic expressions and puns that take
+an hour to explain in another language.
 
 Kind regards
 
