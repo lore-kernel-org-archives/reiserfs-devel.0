@@ -1,80 +1,50 @@
-From: eazgwmir@umail.furryterror.org (Zygo Blaxell)
-Subject: Re: reiserfsprogs 3.6.5-pre2 release.
-Date: 4 Mar 2003 19:50:32 -0500
-Message-ID: <b43hko$qeg$1@satsuki.furryterror.org>
-References: <200302251650.22469.vitaly@namesys.com>
-Return-path: <reiserfs-list-return-13064-reiserfs=m.gmane.org@namesys.com>
+From: "Elias Ignacio Contreras" <enito@eudoramail.com>
+Subject: Re: PLZ HELP, my 160gb 's DANGER :(
+Date: Tue, 04 Mar 2003 20:51:56 -0800
+Message-ID: <GPCLEKIALEKNHBAA@whowhere.com>
+Reply-To: enito@eudoramail.com
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13066-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Language: en
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-In article <200302251650.22469.vitaly@namesys.com>,
-Vitaly Fertman  <vitaly@namesys.com> wrote:
->this new pre-release includes:
->- reiserfsck -a (started at boot) replays journal, checks error flags in 
->the superblock, bitmaps, fs size, 2 levels of internal tree and switches 
->to fixble mode if any problem is detected. For root fs fixable cannot be 
->performed (as fs is mounted) and just --check will be done.
+ 
+--
 
-I get:
+On Mon, 3 Mar 2003 09:29:02   
+ Oleg Drokin wrote:
+>Hello!
+>
+>On Sat, Mar 01, 2003 at 11:26:20PM -0800, Elias Ignacio Contreras wrote:
+>
+>>  cause this one is the trouble apparently, my assign table is fucked, i can mount dev/hde like without a defined partition, oh my god :(
+>> plz tell me a tip :(
+>> i can mount the disk but...i wanna fix the trouble of fdisk tell kme about no partition defined
+>
+>Well, since you apparently created the FS on /dev/hde (entire device), if you need partition table now,
+>you should first backup all the data off the filesystem to some other place, then create valid
+>partition table, create reiserfs partition, mkfs it, mount it and
+>then copy the data back. Don't forget to change /etc/fstab to mount correct thing at boot after that.
+>
+oh yeah you have reason, i discovered this one like 2 days thinking...that's was my trouble,
 
-	Checking all file systems...                                                    
-	fsck 1.27 (8-Mar-2002)                                                          
-	Reiserfs super block in block 16 on 0x902 of format 3.6 with standard journal   
-	Blocks (total/free): 32848/22393 by 4096 bytes                                  
-	Filesystem is cleanly umounted                                                  
-											
-	flush_buffers: device is not specifed                                           
-	Warning... fsck.reiserfs for device /dev/md2 exited with signal 6.              
-	Reiserfs super block in block 16 on 0x900 of format 3.6 with standard journal   
-	Blocks (total/free): 37446896/1277098 by 4096 bytes                             
-	Filesystem is cleanly umounted                                                  
-											
-	flush_buffers: device is not specifed                                           
-	Warning... fsck.reiserfs for device /dev/md0 exited with signal 6.              
-											
-	fsck failed.  Please repair manually.                                           
-											
-	CONTROL-D will exit from this shell and continue system startup.                
-											
-	Give root password for maintenance                                              
-	(or type Control-D for normal startup):  
+thanks to all for your help
 
-...at which point booting stops.
+thx 
 
-On another machine I get:
 
-	Checking all file systems...
-	fsck 1.27 (8-Mar-2002)
-	Reiserfs super block in block 16 on 0x900 of format 3.6 with standard journal
-	Blocks (total/free): 152654320/1162905 by 4096 bytes
-	Filesystem is NOT cleanly umounted
-	Wrong amount of used blocks. Switching to fix-fixable pass.
-	###########
-	reiserfsck --fix-fixable started at Tue Mar  4 19:18:18 2003
-	###########
+>Bye,
+>    Oleg
+>
 
-	flush_buffers: device is not specifed
-	Warning... fsck.reiserfs for device /dev/md0 exited with signal 6.
 
-	fsck failed.  Please repair manually.
-
-	CONTROL-D will exit from this shell and continue system startup.
-
-	Give root password for maintenance
-	(or type Control-D for normal startup):
-
-...again, booting stops.  
-
-If I run reiserfsck --rebuild-tree from a shell, it seems to work
-normally.
-
--- 
-Zygo Blaxell (Laptop) <zblaxell@feedme.hungrycats.org>
-GPG = D13D 6651 F446 9787 600B AD1E CCF3 6F93 2823 44AD
+Need a new email address that people can remember
+Check out the new EudoraMail at
+http://www.eudoramail.com
