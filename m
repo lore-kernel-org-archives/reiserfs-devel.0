@@ -1,64 +1,49 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+From: Chris Mason <mason@suse.com>
 Subject: Re: New to reiserfs
-Date: Mon, 13 May 2002 23:24:24 +0200
-Message-ID: <200205132324.24309.Dieter.Nuetzel@hamburg.de>
-References: <200205132153.59075.Dieter.Nuetzel@hamburg.de> <3CE028A3.3080002@namesys.com>
+Date: 14 May 2002 09:10:46 -0400
+Message-ID: <1021381846.20175.572.camel@tiny>
+References: <200205132153.59075.Dieter.Nuetzel@hamburg.de>
+	<3CE028A3.3080002@namesys.com> 
+	<200205132324.24309.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10305-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10306-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <3CE028A3.3080002@namesys.com>
+In-Reply-To: <200205132324.24309.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Chris Mason <mason@suse.com>, Oleg Drokin <green@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, JPASTORM@esade.edu
+To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Cc: Hans Reiser <reiser@namesys.com>, Oleg Drokin <green@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, JPASTORM@esade.edu
 
-On Monday 13 May 2002 22:57, Hans Reiser wrote:
-> Dieter N=FCtzel wrote:
-> >On Monday 13 May 2002 10:07, Hans Reiser wrote:
-> >>>>4.- I have a PIII 1 GHz, 512 MB RAM, SCSI server where I run sendmail,
-> >>>>bind and squid. Will I have problems with performance if I migrate to
-> >>>>reiserfs?
-> >>
-> >>sendmail will be lower in performance when using reiserfs unless you use
-> >>the latest not yet released patches and turned data journaling on.
+On Mon, 2002-05-13 at 17:24, Dieter N=FCtzel wrote:
+
 > >
-> >More speed numbers on this to come with related post.
-> >
-> >>Do you really push the performance limits of the machine as a mail
-> >> server?
-> >
-> >You mean if it is worth?
+> > You should put squid into one big directory (not using their kludge tha=
+t
+> > avoids making directories too large by using a tree)
+>=20
+> So you understand me right...;-)
+>=20
+> > unless you have multiple processors (in which case the VFS directory gi=
+ant
+> > lock will hurt you).
+>=20
+> BKL?
+>=20
+> Where is the limit 2, 4, or even more CPUs?
+> I'll have two in some days.
 
-Here I don't understand you that's why I asking.
+You probably want one directory per squid process.  The VFS layer does
+semaphore locking to prevent races between people reading the directory
+and people changing the directory.  If you've just got one big
+directory, all the squid processes will end up waiting on each other.
 
-> >>squid will benefit from your putting all files in one directory.
-> >
-> >So I should clobber my squid partition/dir and reconfigure to put all
-> > files into only one directory and let the squid hierarchy alone?
-> >
-> >Thanks,
-> >	Dieter
->
-> I don't understand you.
->
-> You should put squid into one big directory (not using their kludge that
-> avoids making directories too large by using a tree)
+More directories mean more time wasted changing the directory stat data,
+and ram wasted on reading the stat data.  You see this more with
+hundreds or thousands of directories.
 
-So you understand me right...;-)
+-chris
 
-> unless you have multiple processors (in which case the VFS directory giant
-> lock will hurt you).
 
-BKL?
-
-Where is the limit 2, 4, or even more CPUs?
-I'll have two in some days.
-
-Thanks,
-	Dieter
-
-PS You know that I'm on the preemption+lock-break, O(1)-scheduler track...;=
--)
