@@ -1,47 +1,94 @@
-From: Guilherme Salgado <e.meiu@uol.com.br>
-Subject: Re: Strange Syslog messages
-Date: Mon, 16 Sep 2002 20:59:05 -0300
-Message-ID: <20020916205905.1d84268c.e.meiu@uol.com.br>
-References: <MSGID_2=3a263=2f950_ed7e4e2d@fidonet.org>
+From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Subject: Re: Copy time comparison 2.4.20-pre6 <-> 2.4.19+data-logging
+ (was:Compatibility of  current 2.4.19.pending ...)
+Date: Tue, 17 Sep 2002 02:53:03 +0200
+Message-ID: <3D867CEF.1050809@mb.tu-ilmenau.de>
+References: <3D7FDEA5.7040806@mb.tu-ilmenau.de> <3D81076E.6090408@mb.tu-ilmenau.de> <20020913113735.A6022@namesys.com> <3D826FB9.7030909@mb.tu-ilmenau.de> <20020914130239.D26664@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11484-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11485-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <MSGID_2=3a263=2f950_ed7e4e2d@fidonet.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-Hi, 
+On 09/14/2002 11:02 AM, Oleg Drokin wrote:
+ > Hello!
+ >
+ > On Sat, Sep 14, 2002 at 01:07:37AM +0200, Manuel Krause wrote:
+ >
+ >>>>>So, for the overnight change to pre-kernel 7, where are the new
+ >>>>>data-logging patches Hans even announced to lkml?
+ >>>>
+ >>??? Hello, Chris!
+ >
+ >
+ > Chris said he'll either announce something on tuesday or pass the 
+code to me to
+ > finish it.
+ >
 
-Try running badblocks -o badblocks.hdxx /dev/hdxx (if u have ide
-harddisks).
-i received some messages like yours and discovered that my ide hd has some
-bad blocks.
+I included this into my prayers.
 
-On Tuesday, 17 Sep 2002 00:09:48 +0000
-"Sean Rima" <fido@tcob1.net> wrote:
+ >
+ >>Did I follow the thread "Re: [reiserfs-list] [BK] ReiserFS file write
+ >>bug fix for 2.4" correctly that going to 2.4.20-pre7 that is without
+ >>file_write (+) code should speed up (in my case copy actions) in
+ >>comparison to 2.4.20-pre6?
+ >
+ >
+ > No. file_write code should speed up writes that are done in big 
+chunks (more
+ > than 4k).
+ >
+ >
+ >>I retested my backup session (see last mail) with 2.4.20-pre7 but have
+ >>_NO_ ( <0,2% !!!) difference at all.
+ >
+ >
+ > What tool do you use for backup?
 
-> Originally to: All
-> 
-> Hi, me again folks,
-> 
-> I am using a stock 2.4.19 kernel, on a system with reiserfs only. I have
-> started getting a lot of:
-> vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat
-> data of [21003 21048 0x0 SD]
-> is_leaf: wrong item type for item *3.5*[21003 21047 0x1 IND], item_len
-> 8, item_location 2214, free_space(entry_count) 0 vs-5150: search_by_key:
-> invalid format found in block 16616. Fsck? vs-13070:
-> reiserfs_read_inode2: i/o failure occurred trying to find stat data of
-> [21003 21048 0x0 SD]
-> 
-> if I boot into a rescue disk and run reiserfsck, I get no errors at all
-> to be fixed running check only
-> 
-> Is this serious, a problem with the HD or what??
-> 
+Hey, Oleg, you should know this; I stayed with my simple but useful
+scripts using "cp -ax A/. B/" for testing reiserfs performance on this
+command related to my reiserfs partitions' content. That content is not
+theoretical, it's living for about one month, then newly recreated --
+and these backups showed up some issues in the past. ;-))
+
+ > I certainly see the difference when doing
+ >  dd if=/dev/zero of=somefile bs=1024k count=100
+
+I didn't do dd related time comparisons though having the values for the
+last months. Many months ago I found "bs=1M" to be more useful ;-)
+
+ >
+ > also when doing cp bigfile /another_disk/anotherfile
+ >
+ > Also very huge difference is seen when creating holes ;)
+ > e.g compare time of seeking to 128Gb and writing one byte between
+ > 2.4.20-pre7 and 2.4.20-pre6 ;)
+ > Code for that was once posted on our mailing list.
+ > When you will feel that 2.4.20-pre7 hanged, don't trust that feeling
+ > and wait till the end of operation. ;)
+ >
+
+You're kind of joking?! "time <command>" should show the total lack of
+time related performance, when [throughput] is divided by [time] or
+not?! I calculated these values manually based upon the timings & df
+values after copying. Yes, I want to show my personal engagement for the
+reiserfs community, too.
+
+ >
+ >>Have I missed something?
+ >
+ >
+ > To see the difference you need to fed FS with large chuncks of data.
+ >
+
+Thanks to you, Oleg,
+
+Manuel
+
 
