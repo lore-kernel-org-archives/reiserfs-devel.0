@@ -1,70 +1,45 @@
-From: Yury Umanets <umka@namesys.com>
-Subject: Re: New Reiser4 snapshot?
-Date: Tue, 15 Jul 2003 09:28:27 +0400
-Message-ID: <3F1390FB.6050506@namesys.com>
-References: <08628CA53C6CBA4ABAFB9E808A5214CB0179043E@mercury.infiniconsys.com> <1058210604.3694.4.camel@pilot.stavtrup-st.dk>
+From: Szakacsits Szabolcs <szaka@sienet.hu>
+Subject: Re: Horrible ftruncate performance
+Date: Tue, 15 Jul 2003 13:51:58 +0200 (MEST)
+Message-ID: <Pine.LNX.4.30.0307151310560.6563-100000@divine.city.tvnet.hu>
+References: <20030713130324.GA6208@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14938-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14939-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1058210604.3694.4.camel@pilot.stavtrup-st.dk>
+In-Reply-To: <20030713130324.GA6208@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Nielsen <Lovechild@foolclan.com>
-Cc: reiserfs <reiserfs-list@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <green@namesys.com>
+Cc: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>, Chris Mason <mason@suse.com>, Marc-Christian Petersen <m.c.p@gmx.net>, reiserfs-list@namesys.com, Philippe Gramoull? <philippe.gramoulle@mmania.com>
 
-David Nielsen wrote:
 
->New to the list, so I'm sorry if this has been asked previously
+On Sun, 13 Jul 2003, Oleg Drokin wrote:
+> On Sat, Jul 12, 2003 at 03:37:48AM +0200, Szakacsits Szabolcs wrote:
 >
->With the arrivial of 2.6.0-test1 can we expect a snapshot of Reiser4
->anytime soon for those of us who likes to break our boxes ?
+> > Ok, last complain for today :) I couldn't find an API (I admit, because of
+> > the above reasons, I didn't search hard) to query the map of disk blocks or
+> > [offsets, length] couples used by a file, like XFS's XFS_IOC_GETBMAPX does.
 >
-We are considering about making some.
+> Something like FIBMAP ioctl?
 
->
->I know this is a long shot, but have ReiserFS3 on a EVMS2 based RAID0
->(RAID1 for /boot)  and I would really hate to have to reinstall my
->entire system - is there an easy way to convert my current FS to Reiser4
->or is using a tool like Mondo or tar the only way ? 
->
-You probably need in-place convertation. Yes, there is one way. You need 
-to do something like this:
+FIBMAP is limited, inefficient (especially for large sparse files with very
+high hole density) and it also needs root.
 
-(1) Build-in reiser4 into you kernel.
-(2) Create file, that consists of holes on you reiser3 partition by 
-means of using dd command. Say reiser4.img. It should have size that is 
-enough for you data on /boot
+Some data, querying a 200GB file,
 
-(3) Create reiser4 in reiser4.img. Use reiser4progs from our ftp.
-(4) Mount reiser4 to somewhere, say, /mnt/reiser4
-(5) Copy all files from /boot to /mnt/reiser4
-(6) When copy is finished, you have reiser3 partition with one big file 
-on it and all you need to do is to remap /boot/reiser4.img to device, 
-/boot lies on. I mean, say reiser4.img file starts from 345 block and 
-has 3456 contiguous blocks next to 345. You need to move blocks starting 
-from 345 to block 0 on your device.
+ext3 + FIBMAP             63.53 sec 100% CPU
+JFS  + FIBMAP      	  65.81 sec 100% CPU
+XFS  + FIBMAP            125.93 sec 100% CPU
+XFS  + XFS_IOC_GETBMAPX    0.00 sec   0% CPU
 
-Actually it may be done by some program, which uses FIBMAP ioctl for 
-getting block numbers and move them to new location. Bu we have not such 
-a program. May be convertfs will help you. google it :)
+Probably this inefficiency is the reason that no utilities (tar, cp, cat,
+gzip, bzip2, etc) use it, instead they just read/analyse the zeros over an
+hour when in cases their _entire_ operation could/can be done in seconds,
+minutes.
 
->
->Regards 
->David Nielsen
->
->
->
->  
->
-
-
--- 
-Yury Umanets
-"We're flying high, we're watching the world passes by..."
-
-
+	Szaka
 
