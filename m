@@ -1,57 +1,54 @@
-From: Robin Rosenberg <robin.rosenberg.lists@dewire.com>
-Subject: Re: silent semantic changes in reiser4 (brief attempt to document the idea of what reiser4 wants to do with metafiles and why
-Date: Wed, 1 Sep 2004 05:11:31 +0200
-Message-ID: <200409010511.31597.robin.rosenberg.lists@dewire.com>
-References: <41323AD8.7040103@namesys.com> <20040831190814.GA15493@thundrix.ch> <111617109.20040831213808@tnonline.net>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Subject: Re: silent semantic changes in reiser4 (brief attempt to document
+ the idea of what reiser4 wants to do with metafiles and why
+Date: Tue, 31 Aug 2004 23:13:55 -0400 EDT
+Message-ID: <185110393004-BeMail@cr593174-a>
+References: <41341E01.10007@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-21195-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21196-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <111617109.20040831213808@tnonline.net>
-Content-Disposition: inline
+In-Reply-To: <41341E01.10007@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Spam <spam@tnonline.net>
-Cc: Tonnerre <tonnerre@thundrix.ch>, V13 <v13@priest.com>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@digeo.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@osdl.org>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Tuesday 31 August 2004 21.38, Spam wrote:
-> > Salut,
-> >
-> > On Tue, Aug 31, 2004 at 08:17:36PM +0200, Spam wrote:
-> >> =A0 How =A0are =A0things =A0done on Windows platforms when there are f=
-iles and
-> >> =A0 directories =A0with the same name? In Unix that is imposible. How =
-does
-> >> =A0 it =A0work =A0for =A0environments =A0like =A0Cygwin =A0etc? What h=
-appen to tools
-> >> =A0 that run in them?
-> >
-> > In =A0NTFS it's =A0illegal =A0IIRC. =A0At least =A0the =A0fs correction=
- =A0utilities
-> > complain about a block being assigned to two files.
+Hans Reiser wrote on Mon, 30 Aug 2004 23:43:13 -0700:
+> Alexander G. M. Smith wrote:
+> >Are you sneaking in file types there?  Just how does a file know which
+> >plugins it supports?
 >
-> =A0 I =A0meant =A0a =A0file =A0and a directory with the same name, not tw=
-o files
-> =A0 with the same name :) subtle but important difference.
->
-> =A0 ie, =A0you can have a file named "foo" and a directory named "foo" and
-> =A0 they won't collide.
+> we have plugins with pluginids, is that what you mean by file type? I 
+> think they are a bit different from file types.
 
-You can't have a file and a directory with the same name in W*.
+From your white-paper: "Every file possesses a plugin id, and every
+directory possesses a plugin id.  This plugin id will identify a set
+of methods."
 
-Alternative data streams don't appear in a normal directory. You
-need special API:s and tools to see them. If you know the name of and ADS
-you can however access them with standard tools, including cygwin.
+Functionally this is very close to a file type.  It classifies the
+files into related groups, maybe not as finely as a MIME file type
+which can distinguish between multiple varieties of text files.
 
-echo foo >a.txt
-echo bar >a.txt:b.txt
+A file type would tell us that a file is a text file and can be opened
+by certain applications (text/e-mail can be opened by e-mail reader,
+text editor, etc) and have other properties (lists of standard
+attributes, default icon).  A plugin ID says that the file can use text
+related plugins (like a word count, or XML structure as a subdirectory).
 
-You can also have ADS's on directories. Not sure how Reiserfs4 does that.
+In both cases there is a global repository (I assume) that associates
+the file type or plugin ID with a list of things about it.
 
-mkdir foo
-echo bar >foo:a.txt
+You could combine the two concepts, just have a file type ID that in the
+global repository specifies what plugins it can use as well as the
+userland properties (MIME string, etc) of that kind of file.  Or at least
+make the type ID available to userland so it can be used there.
 
--- robin
+Or is this binding irrelevant?  How often does the file type the user
+sees not match the plugins desired for the file?  Or can a new subtype
+be defined for just that file?  Which may mean that we need something
+better than MIME strings for types (something which has inheritance).
+
+- Alex
