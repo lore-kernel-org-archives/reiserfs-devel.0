@@ -1,44 +1,35 @@
-From: Vitaly Fertman <vitaly@namesys.com>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: trouble with reiserfs on ppc vs-3050: wait_buffer_until_released ...
-Date: Fri, 25 Apr 2003 12:41:49 +0400
-Message-ID: <200304251241.49707.vitaly@namesys.com>
-References: <1051258287.5564.1.camel@fortknox>
+Date: Fri, 25 Apr 2003 12:47:42 +0400
+Message-ID: <20030425084742.GA22827@namesys.com>
+References: <1051258287.5564.1.camel@fortknox> <1051259723.3513.7.camel@localhost>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13805-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13806-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1051258287.5564.1.camel@fortknox>
+Content-Disposition: inline
+In-Reply-To: <1051259723.3513.7.camel@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Soeren Sonnenburg <kernel@nn7.de>
+Content-Transfer-Encoding: 7bit
+To: Soeren Sonnenburg <reiserfs@nn7.de>
 Cc: reiserfs-list@namesys.com
 
+Hello!
 
-Hi,=20
+On Fri, Apr 25, 2003 at 10:35:23AM +0200, Soeren Sonnenburg wrote:
 
-On Friday 25 April 2003 12:11, Soeren Sonnenburg wrote:
-> Hi...
->
-> I suddenly have a file which when I access it using gvim gives
->
-> vs-3050: wait_buffer_until_released: nobody releases buffer (dev 03:07,
-> size 4096, blocknr 2031616, count 3, list 0, state 0x10019, page
-> c0add66540, (UPTODATE, CLEAN, UNLOCKED)). Still waiting (570000000)
-> JDIRTY !WAIT
->
-> and makes the whole machine hang...
->
->
-> Ideas what I could do about it ?
+> The filesystem was freshly created (today) and 10G were tarred on the
+> disk...
+> the /home partition is reiserfs (where that file is on), / is ext3
+> As I was using reiserfs for a quite long time on any kind of i386
+> hardware I guess it is a little/big endian issue.
 
-Probably it is due to fs corruption, interesting if the block #2031616 is=
- free=20
-in the bitmap. Could you run=20
-    debugreiserfs -1 2031616 /dev/xxx
+There are no known endianness issues in reiserfs code now.
+You di not had reboot or something like that after you copied the data over?
+What is the latest reiserfsck reports for your fs?
 
---=20
-Thanks,
-Vitaly Fertman
+Bye,
+    Oleg
