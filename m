@@ -1,143 +1,141 @@
-From: Paul Wagland <paul@wagland.net>
-Subject: Re: reiser4 and bonnie problems
-Date: Tue, 20 Apr 2004 20:18:27 +0200
-Message-ID: <1EA54599-92F7-11D8-B5AA-000A95CD704C@wagland.net>
-References: <20040416203937.GY14134@nysv.org> <26F302F3-9042-11D8-8B4A-000A95CD704C@wagland.net> <2EB65FD6-924A-11D8-8B4A-000A95CD704C@wagland.net> <16516.54935.159587.423283@laputa.namesys.com> <61B07E02-92A8-11D8-8B4A-000A95CD704C@wagland.net> <16517.10147.704572.959551@laputa.namesys.com> <20040420145158.GC1579@backtop.namesys.com>
-Mime-Version: 1.0 (Apple Message framework v613)
-Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha1; boundary="Apple-Mail-1--1048791084"
+From: Sander Sweers <sandersweers@xs4all.nl>
+Subject: Re: fsck.reiser4 can't fix 1 fixable corruption
+Date: Tue, 20 Apr 2004 20:54:21 +0200
+Message-ID: <408571DD.5030700@xs4all.nl>
+References: <200404201733.51809.rmeijer@internet.gr>
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18086-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18087-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040420145158.GC1579@backtop.namesys.com>
+In-Reply-To: <200404201733.51809.rmeijer@internet.gr>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Alex Zarochentsev <zam@Namesys.COM>
-Cc: reiserfs-list@Namesys.COM, Nikita Danilov <Nikita@Namesys.COM>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Raymond A. Meijer" <rmeijer@internet.gr>
+Cc: reiserfs-list@namesys.com
 
---Apple-Mail-1--1048791084
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Raymond A. Meijer wrote:
 
+>Hello,
+>
+>I'm running Debian with these packages installed:
+>
+>ii  reiser4progs                  0.5.3-1
+>ii  libc6                         2.3.2.ds1-11
+>ii  libncurses5                   5.4-3
+>ii  libreadline4                  4.3-10
+>ii  libuuid1                      1.35-4
+>
+>*snip*
+>
+>==============================================================================
+>[root@rmeijer-noc ~] # fsck.reiser4 -v --build-sb --build-fs 
+>--fix /dev/sys/backup
+>*******************************************************************
+>This is an EXPERIMENTAL version of fsck.reiser4. Read REAMDE first.
+>*******************************************************************
+>
+>Fscking the /dev/sys/backup block device.
+>Will build the Reiser4 SuperBlock.
+>Will build the Reiser4 FileSystem.
+>Continue?
+>(Yes/No): Yes
+>***** Openning the fs.
+>Reiser4 journal (journal40) on /dev/sys/backup: 0 transactions replaied of the 
+>total 0 blocks.
+>Reiser4 fs was detected on the /dev/sys/backup.
+>Master super block (16):
+>magic:          ReIsEr4
+>blksize:        4096
+>format:         0x0 (format40)
+>uuid:           f6a57152-e546-4a2a-b833-c0bce2a62caa
+>label:          <none>
+>
+>Format super block (17):
+>plugin:         format40
+>description:    Disk-format for reiser4, ver. 0.5.3
+>magic:          ReIsEr40FoRmAt
+>flushes:        0
+>mkfs id:        0x6909edad
+>blocks:         2097152
+>free blocks:    420905
+>root block:     663
+>tail policy:    0x4 (smart)
+>next oid:       0x6f6ae
+>file count:     262871
+>tree height:    4
+>key policy:     LARGE
+>
+>***** Tree Traverse Pass: scanning the reiser4 internal tree.
+>        Read nodes 141159
+>        Nodes left in the tree 141159
+>                Leaves of them 138592, Twigs of them 2509
+>        Time interval: Tue Apr 20 16:46:16 2004 - Tue Apr 20 16:48:19 2004
+>***** TwigScan Pass: checking extent pointers of all twigs.
+>        Read twigs 2509
+>        Time interval: Tue Apr 20 16:48:19 2004 - Tue Apr 20 16:48:27 2004
+>***** DiskScan Pass: scanning the partition for unconnected nodes.
+>        Read nodes 0
+>        Good nodes 0
+>                Leaves of them 0, Twigs of them 0
+>        Time interval: Tue Apr 20 16:48:27 2004 - Tue Apr 20 16:48:27 2004
+>***** TwigScan Pass: checking extent pointers of all twigs.
+>        Read twigs 0
+>        Time interval: Tue Apr 20 16:48:27 2004 - Tue Apr 20 16:48:27 2004
+>***** AddMissing Pass: inserting unconnected nodes into the tree.
+>        Twigs: read 0, inserted 0, by items 0
+>        Leaves: read 0, inserted 0, by items 0
+>        Time interval: Tue Apr 20 16:48:27 2004 - Tue Apr 20 16:48:27 2004
+>***** Semantic Traverse Pass: reiser4 semantic tree checking.
+>Error: Node (1444613), item (2): StatData of the file [2a:0:ffff] has the 
+>wrong bytes (0), Fixed to (188). Plugin (stat40).
+>        Time interval: Tue Apr 20 16:48:27 2004 - Tue Apr 20 16:55:48 2004
+>***** Cleanup Pass: cleaning up the reiser4 storage tree.
+>        Removed items 0
+>        Time interval: Tue Apr 20 16:55:48 2004 - Tue Apr 20 16:59:09 2004
+>***** fsck.reiser4 finished at Tue Apr 20 16:59:09 2004
+>Closing fs...done
+>
+>No corruption found.
+>==============================================================================
+>
+>
+>Looks good, but when I run "fsck.reiser4 /dev/sys/backup" again, it tells me 
+>that it has found 1 fixable corruption and that I need to run it with the 
+>--fix parameter...
+>
+>What can I do to fix this? Or isn't my filesystem broken in the first place? 
+>Could it be a problem with fsck.reiser4?
+>
+>If you need more information, please let me know.
+>
+>
+>Thanks,
+>
+>Ray
+>
+>P.S. How about all these spelling errors in fsck's output? ;)
+>
+>
+>  
+>
 
-On Apr 20, 2004, at 16:51, Alex Zarochentsev wrote:
+------------------------------------------------------------------------
+Error: Node (3978247), item (1): StatData of the file [2a:0:ffff] has 
+the wrong
+bytes (0), Should be (185). Plugin (stat40).
+        Time interval: Tue Apr 20 20:46:31 2004 - Tue Apr 20 20:46:31 
+2004   
+***** fsck.reiser4 finished at Tue Apr 20 20:46:31 2004
+Closing fs...done
+------------------------------------------------------------------------
 
-> On Tue, Apr 20, 2004 at 05:37:39PM +0400, Nikita Danilov wrote:
->> Paul Wagland writes:
->>> Just to summarise everything that is written below, this is what 
->>> bonnie
->>> is doing:
->>> 1. write 3.5 GB onto a 4GB partition. This works
->>> 2. delete 3.5 GB from a 4GB partition. This works.
->>
->> Disk blocks freed during transaction are not actually freed until
->> transaction commits.
+Same problem here, same kernel and reiser4progs but this is not on lvm 
+but a 25G partition.
 
-Under what conditions do transactions get committed? Alex mentioned 
-below that every write is an implicit commit. Is that the only 
-situation? Other than sync obviously :-)
+The way the 2 errors look the same is scary.
 
->>> 3. I check using df that the disk space is free. That works.
->>
->> But that "delayed freeing" confused users (they did cp, rm, but df has
->> still showed that space is used), so that statfs(2) (system call used 
->> by
->> df) was modified to take these delayed blocks into account and pretend
->> that they are free.
-
-OK, that I can deal with, rm'ing a file should free the space ;-). 
-However, if the transaction is not committed at this point, what 
-happens if I lose power at this point? Is the filesystem rolled back to 
-before the deletions?
-
->>> 4. write 3.5GB onto a 4GB partition. This fails.
->>
->> Try to repeat this with sync before step 4.
-
-OK, here is the results of the test. I have decided to run it without 
-bonnie, just to make sure that it was not the determining factor.
-
------------------
-
-tidbit:~# mount | grep /mnt/sdr
-/dev/sdr1 on /mnt/sdr type reiser4 (rw)
-tidbit:~# df /mnt/sdr
-Filesystem           1K-blocks      Used Available Use% Mounted on
-/dev/sdr1              3984228       292   3983936   1% /mnt/sdr
-tidbit:~# dd if=/dev/zero of=/mnt/sdr/ddtest bs=512K count=7K ; rm 
-/mnt/sdr/ddtest; df /mnt/sdr; dd if=/dev/zero of=/mnt/sdr/ddtest 
-bs=512K count=7K ; rm /mnt/sdr/ddtest; df /mnt/sdr
-7168+0 records in
-7168+0 records out
-3758096384 bytes transferred in 70.899981 seconds (53005605 bytes/sec)
-Filesystem           1K-blocks      Used Available Use% Mounted on
-/dev/sdr1              3984228       292   3983936   1% /mnt/sdr
-dd: writing `/mnt/sdr/ddtest': No space left on device
-613+0 records in
-612+0 records out
-321384448 bytes transferred in 3.378787 seconds (95118291 bytes/sec)
-Filesystem           1K-blocks      Used Available Use% Mounted on
-/dev/sdr1              3984228       296   3983932   1% /mnt/sdr
-tidbit:~# dd if=/dev/zero of=/mnt/sdr/ddtest bs=512K count=7K ; rm 
-/mnt/sdr/ddtest; df /mnt/sdr; sync; dd if=/dev/zero of=/mnt/sdr/ddtest 
-bs=512K count=7K ; rm /mnt/sdr/ddtest; df /mnt/sdr
-7168+0 records in
-7168+0 records out
-3758096384 bytes transferred in 73.244216 seconds (51309122 bytes/sec)
-Filesystem           1K-blocks      Used Available Use% Mounted on
-/dev/sdr1              3984228       296   3983932   1% /mnt/sdr
-7168+0 records in
-7168+0 records out
-3758096384 bytes transferred in 70.666456 seconds (53180768 bytes/sec)
-Filesystem           1K-blocks      Used Available Use% Mounted on
-/dev/sdr1              3984228       292   3983936   1% /mnt/sdr
-
-----------------
-
-
->>> At the time of failure, according to df there is stiff 3.5 GB
->>> free. So, I say that reiser4 has a problem.
->>
->> df lies.
-
-No. df tells the user what reiser4 tells df. If df is lying it is 
-because reiser4 has lied to it. If df tells me that there is 3.9GB 
-available on the filesystem, then I expect that filesystem to allow me 
-to write 3.9GB to it.
-
-> reiser4_statfs() was changed to report deleted blocks as free space 
-> immediately
-> after rm(1).
-
-As mentioned above, this makes perfect sense, and leads to more 
-'intuitive' behaviour from the filesystem. I fully expect that the 
-filesystem should change "established semantics", and in this sense the 
-above change keeps these semantics, which is a good thing :-)
-
-> It was done because reiser4_write() should trigger fs commit and 
-> recover free
-> space.   If commit does not happen, it is a reiser4 bug.
-
-In that case I humbly submit that I have found a reiser4 bug :-)
-
-Cheers,
-Paul
-
---Apple-Mail-1--1048791084
-content-type: application/pgp-signature; x-mac-type=70674453;
-	name=PGP.sig
-content-description: This is a digitally signed message part
-content-disposition: inline; filename=PGP.sig
-content-transfer-encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (Darwin)
-
-iD8DBQFAhWl2tch0EvEFvxURAsC0AJ42vfD6efrWOVOZLqkmQJLqVDDNBQCglotq
-4DeJxTX+Y4pJ+SwNqt2WILA=
-=+v5C
------END PGP SIGNATURE-----
-
---Apple-Mail-1--1048791084--
+Sander
 
