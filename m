@@ -1,41 +1,62 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: silent semantic changes with reiser4
-Date: Tue, 07 Sep 2004 21:38:31 -0400 EDT
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <89861950490-BeMail@cr593174-a>
-References: <200409072102.i87L2K4u005503@laptop11.inf.utfsm.cl>
-Mime-Version: 1.0
+Date: Tue, 07 Sep 2004 20:15:36 -0400
+Message-ID: <200409080015.i880Fald003078@localhost.localdomain>
+References: <david.lang@digitalinsight.com>
+Return-path: <reiserfs-list-return-21612-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: Message from David Lang <david.lang@digitalinsight.com> 
+   of "Tue, 07 Sep 2004 15:56:08 MST." <Pine.LNX.4.60.0409071552070.10789@dlang.diginsite.com> 
+List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <200409072102.i87L2K4u005503@laptop11.inf.utfsm.cl>
-List-Id: <reiserfs-devel.vger.kernel.org>
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: spam@tnonline.net, christer@weinigel.se, ninja@slaphack.com, tonnerre@thundrix.ch, torvalds@osdl.org, pavel@ucw.cz, jamie@shareable.org, cw@f00f.org, viro@parcelfarce.linux.theplanet.co.uk, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com, reiser@namesys.com
+To: David Lang <david.lang@digitalinsight.com>
+Cc: Christer Weinigel <christer@weinigel.se>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Spam <spam@tnonline.net>, Tonnerre <tonnerre@thundrix.ch>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Horst von Brand wrote on Tue, 07 Sep 2004 17:02:20 -0400:
-> Hans Reiser <reiser@namesys.com> said:
-> > Or, we can ask Alexander to help us use his deadlock detection algorithm 
-> > and try to do things right....
-> 
-> Good luck with that one. I'd suspect if it can be made to work, it will
-> have _huge_ overhead, so much that it is useless. I'd love to be proven
-> wrong, but I won't hold my breath.
+David Lang <david.lang@digitalinsight.com> said:
+> On Tue, 8 Sep 2004, Christer Weinigel wrote:
+> > David Lang <david.lang@digitalinsight.com> writes:
 
-Depends if you consider it to be a huge overhead to lock all the objects
-that are ancestors (possibly through cyclical multiple parents) of the
-fildirute (file/directory/attribute/whatever) being deleted/renamed.
-It could definitely be a lot if you have some weird worst case directory
-layout with lots of parent directories.  But that's rare (most users
-don't have that many directories anyway).
+[...]
 
-By the way, the deadlock system I was using is just a hack - a timeout
-on the locking semaphores for each file.  If it fails to lock everything
-it needs, it backs off, waits a while, tries again, and eventually
-reports EDEADLK if it exhausts the retry count.
+> > So what happens if I have a text file foo.txt and add an author
+> > attribute to it?  When I read foo.txt the next time it's supposed to
+> > give me a serialized version with both the contents of foo.txt _and_
+> > the author attribute?
+> >
+> > That would definitely confuse me.
+> >
+> > Or did I misunderstand something?
 
-Well, actually it's a bit fancier - it read-locks the file nodes as it
-is traversing the graph to find all ancestors.  Then when it has finished,
-it write-locks the ones it needs to change.
+> good point. under my scheme you would need to access foo.txt/foo.txt or 
+> foo.txt/. instead of just foo.txt
 
-- Alex
+> I guess my way would work if there is a way to know that a file has been 
+> extended
+
+Out of the question if you want to use legacy tools.
+
+>          (or if you just make it a habit of opening the file/file instead 
+> of just file) but not for random additions of streams to otherwise normal 
+> files.
+
+And then a file called foo inside directory foo will have to be refered to
+as foo/foo/foo...
+
+> Oh well, it seemed like a easy fix (and turned out to be to easy to be 
+> practical)
+
+My gut feeling is that this whole concept is too messed up to be sorted
+out. That something can easily be done given whatever underlying structure
+there is doesn't make it worthwhile to do it. Just as it is absurdly easy
+to allow hard links to directories if you look at how they are implemented,
+but the consecuences aren't that easy to live with.
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
