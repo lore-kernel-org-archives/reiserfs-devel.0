@@ -1,39 +1,47 @@
-From: Paolo Correnti <paolunix@yahoo.com>
-Subject: Re: REISER4 - A simple test with a filesystem and Oracle
-Date: Fri, 16 Jan 2004 08:01:54 -0800 (PST)
-Message-ID: <20040116160154.75186.qmail@web21506.mail.yahoo.com>
-References: <20040116153914.46777.qmail@web21502.mail.yahoo.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: [2.4.18]: Reiserfs: vs-2120: add_save_link: insert_item returned -28
+Date: Fri, 16 Jan 2004 11:19:36 -0500
+Message-ID: <200401161620.i0GGK2MT022923@turing-police.cc.vt.edu>
+References: <200401091622.41352.lkml@kcore.org>
+            <1074241063.2251.41.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16550-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_-1102226752P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16551-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040116153914.46777.qmail@web21502.mail.yahoo.com>
+In-Reply-To: Your message of "Fri, 16 Jan 2004 11:17:43 +0300."
+             <1074241063.2251.41.camel@tribesman.namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Paolo Correnti <paolunix@yahoo.com>, Alex Zarochentsev <zam@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: Jan De Luyck <lkml@kcore.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-After about 5-6 minutes after sending last e-mail
-I obtained a "real" df result.
+--==_Exmh_-1102226752P
+Content-Type: text/plain; charset=us-ascii
 
-oracle@pamilo:/u01/oradata$ du
+On Fri, 16 Jan 2004 11:17:43 +0300, Vladimir Saveliev said:
 
-1868581 ./archived
-10245   ./pamodb/archivelogs
-1230589 ./pamodb                 <- OK
-3099170 .                        <- OK
+> This is just a warning. You should be able to free some disk space by
+> removing some files.
 
-It seems there is a kind of very large delay in
-reiser4 filesystem info synchronization.
+Is this just the *obvious* "removing files frees space", or is there some sort
+of garbage collection that will be triggered, so removing a 1K file will make it
+redo tables/linked lists/whatever and return lots of blocks that used to contain
+metadata?
 
-Hope to be not much boring ...
+--==_Exmh_-1102226752P
+Content-Type: application/pgp-signature
 
-Paolo Correnti
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-__________________________________
-Do you Yahoo!?
-Yahoo! Hotjobs: Enter the "Signing Bonus" Sweepstakes
-http://hotjobs.sweepstakes.yahoo.com/signingbonus
+iD8DBQFACA8XcC3lWbTT17ARAhaVAJ4onS9kKbySzuveEDM3l98KeI0kawCg5DpO
+S+A+4NQPzC+wcq2XXuTvrZk=
+=duJP
+-----END PGP SIGNATURE-----
+
+--==_Exmh_-1102226752P--
