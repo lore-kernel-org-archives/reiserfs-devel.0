@@ -1,167 +1,63 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: SUSE 9.1 with ReiserFS:  / won't fsck, but is otherwise fine
-Date: Fri, 24 Sep 2004 11:17:30 +0400
-Message-ID: <200409241116.09066.vitaly@namesys.com>
-References: <1095996040.10293.18.camel@xserver.local.net>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: Linux-2.6.9-rc2-bk7 Oops - ReiserFS: warning: vs-500: unknown
+	uniqueness 126844928
+Date: Fri, 24 Sep 2004 12:33:44 +0400
+Message-ID: <1096014823.1446.49.camel@tribesman.namesys.com>
+References: <20040922225859.GA12833@m.safari.iki.fi>
+	 <1095947803.6378.31.camel@tribesman.namesys.com>
+	 <20040923140633.GA23617@m.safari.iki.fi>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21898-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21899-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1095996040.10293.18.camel@xserver.local.net>
-Content-Disposition: inline
+In-Reply-To: <20040923140633.GA23617@m.safari.iki.fi>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Chris Worley <cworley@symbionsys.com>, reiserfs-list@namesys.com
+To: Sami Farin <7atbggg02@sneakemail.com>
+Cc: ReiserFS Mailing List <reiserfs-list@namesys.com>
 
-On Friday 24 September 2004 07:20, Chris Worley wrote:
-> I have a similar problem to:
->
-> On 2004-07-15 13:06:46 Vitaly Fertman Wrote:
-> > Hello,
-> >
-> > >...
-> > >
-> > > Boot --> please use fsck manualy on /
-> >
-> > what version of reiserfsck are you using? please update
-> > reiserfsprogs to the latest one from our ftp site.
->
-> I'm using 3.6.13... which version do you propose?
+Hello
 
-the latest is 3.6.18 (ftp.namesys.com/pub/reiserfsprogs/)
-try it please.
+On Thu, 2004-09-23 at 18:06, Sami Farin wrote:
+> On Thu, Sep 23, 2004 at 05:56:43PM +0400, Vladimir Saveliev wrote:
+> > Hello
+> > 
+> > On Thu, 2004-09-23 at 02:58, Sami Farin wrote:
+> > > I got no replies for messages <20040713110437.GA4571@m.safari.iki.fi>
+> > > and <20040714214146.GA23531@m.safari.iki.fi> to LKML,
+> > > so I try again with latest releases.  Now using 2.6.9-rc2-bk7, and I
+> > > guess reiserfs might be related somehow so you folks got Cc'ed. 
+> > > reiserfsck 3.6.18 found no problems for the partition
+> > > (/var, 1G) after reboot, I can access every file in there and I don't
+> > > have hardware problems, memtest+ runs happily for 24 hours without
+> > > errors and 2.4 series have also worked without too much
+> > > unexplained Oopsings with the same hardware.  Besides, there's
+> > > always the same 14000030 addresss...
+> > > 
+> > > Linux safari.finland.fbi 2.6.9-rc2-bk7 #4 SMP Wed Sep 22 15:25:34 EEST 2004 i686 i686 i386 GNU/Linux
+> > >  
+> > > Gnu C                  3.4.2
+> > 
+> > May I ask you to compile kernel with 2.95.3 and try to reproduce the
+> > problem?
+> 
+> Sure.
+> Do you know are there known bugs in gcc 3.x series which cause
+> incorrect code to be produced when compiling Linux kernel 2.6 series?
+> 
 
-> > ...
->
-> I'm getting the same error where the ReiserFS root partition won't fsck,
-> but seems otherwise fine:
->
-> I "fixed" it by replacing /sbin/mkfs.reiserfs with a script that always
-> returns true... now the system boots fine ;)
->
-> It's a Reiser fs atop an LVM block device of one partition.  The problem
-> started when I switched from lilo to grub... that could be irrelevant.
->
-> Once booted, Reiser still doesn't even recognize the root file system (I
-> saved the executable in fsck.reiserfs.bak):
->
->         # /sbin/fsck.reiserfs.bak /dev/system/lvol0
->         reiserfsck 3.6.13 (2003 www.namesys.com)
->
->         *************************************************************
->         ** If you are using the latest reiserfsprogs and  it fails **
->         ** please  email bug reports to reiserfs-list@namesys.com, **
->         ** providing  as  much  information  as  possible --  your **
->         ** hardware,  kernel,  patches,  settings,  all reiserfsck **
->         ** messages  (including version),  the reiserfsck logfile, **
->         ** check  the  syslog file  for  any  related information. **
->         ** If you would like advice on using this program, support **
->         ** is available  for $25 at  www.namesys.com/support.html. **
->         *************************************************************
->
->         Will read-only check consistency of the filesystem on
-> /dev/system/lvol0 Will put log info to 'stdout'
->
->         Do you want to run this program?[N/Yes] (note need to type Yes if
-> you do):Yes
->
->         Failed to open the device '/dev/system/lvol0': No such device or
-> address
->
->         Aborted
->
-> Note: I'm running a fully patched 9.1.  I've been able to use this
-> fsck.reiserfs to examine other LVM based file systems that were created
-> under previous LVM and ReiserFS versions.  The volume is currently only
-> made up of /dev/hda3.  Both the lvm block device and reiser format were
-> created under SuSE9.1 (before patching).  LVM has no problems:
->
->          # pvscan
->           PV /dev/hda3   VG system   lvm2 [226.25 GB / 0    free]
->           PV /dev/hdd1               lvm2 [233.76 GB]
->           Total: 2 [460.01 GB] / in use: 1 [226.25 GB] / in no VG: 1
-> [233.76 GB] # vgdisplay
->           --- Volume group ---
->           VG Name               system
->           System ID
->           Format                lvm2
->           Metadata Areas        1
->           Metadata Sequence No  2
->           VG Access             read/write
->           VG Status             resizable
->           MAX LV                255
->           Cur LV                1
->           Open LV               1
->           Max PV                255
->           Cur PV                1
->           Act PV                1
->           VG Size               226.25 GB
->           PE Size               4.00 MB
->           Total PE              57921
->           Alloc PE / Size       57921 / 226.25 GB
->           Free  PE / Size       0 / 0
->           VG UUID               glCBN4-xLPB-eGJO-4YVO-p4Hj-ZRMW-LFvJfJ
->         # lvdisplay
->           --- Logical volume ---
->           LV Name                /dev/system/lvol0
->           VG Name                system
->           LV UUID                j9z3cd-hY3R-4unM-UwZs-BXVZ-WMJN-iMIvXF
->           LV Write Access        read/write
->           LV Status              available
->           # open                 2
->           LV Size                226.25 GB
->           Current LE             57921
->           Segments               1
->           Allocation             next free (default)
->           Read ahead sectors     0
->           Block device           254:0
->         # pvdisplay
->           --- Physical volume ---
->           PV Name               /dev/hda3
->           VG Name               system
->           PV Size               226.25 GB / not usable 0
->           Allocatable           yes (but full)
->           PE Size (KByte)       4096
->           Total PE              57921
->           Free PE               0
->           Allocated PE          57921
->           PV UUID               wQnbCq-FQT9-76gh-HjFP-kBi3-7lE8-psDnAj
->
->           --- NEW Physical volume ---
->           PV Name               /dev/hdd1
->           VG Name
->           PV Size               233.76 GB
->           Allocatable           NO
->           PE Size (KByte)       0
->           Total PE              0
->           Free PE               0
->           Allocated PE          0
->           PV UUID               lZ0dSs-FR6O-i7fo-z5xZ-APMR-CcBq-Fmm425
->         # df
->         Filesystem           1K-blocks      Used Available Use% Mounted on
->         /dev/mapper/system-lvol0
->                              237237168 141678036  95559132  60% /
->         tmpfs                   517676         0    517676   0% /dev/shm
->         /dev/hda1                38856     18321     18529  50% /boot
->
-> Other than fsck, there's no other hint that something is wrong with this
-> partition.
->
-> If this partition were at the beginning of the disk (and not 8GB into
-> the disk) I'd think grub had destroyed something beyond the MBR... but
-> this is too far into the disk.
->
-> Any idea what's wrong with this root partition and what I could do to
-> recover it?
->
-> Thanks,
->
-> Chris
+No, but kernel documentation (Documentation/Changes) recommends to use
+this compiler for stability.
 
--- 
-Thanks,
-Vitaly Fertman
+> ...
+> > > I got this oops when I was doing rpmbuild --rebuild ... 
+> > > 
+> > 
+> > Does it crash on each rpmbuild --rebuild?
+> 
+> No.  It crashes every 1-12 hours and I don't need to do
+> anything special.  This time I happened to be doing rpmbuild...
 
