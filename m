@@ -1,63 +1,62 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: After reiserfsck --rebulid-treelogfike
-	=?ISO-8859-1?Q?doesn=B4t?= mount;  bad root block 4294.... -rebuild-tree
-	did not complete
-Date: Thu, 13 May 2004 15:54:28 +0400
-Message-ID: <1084449267.14090.6217.camel@tribesman.namesys.com>
-References: <658239FB1D8CA7499FA10CEB7CB2AF64562822@oeulw2ex01.hbi.ad.harman.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: plugin for cached network file system
+Date: Thu, 13 May 2004 08:58:54 -0700
+Message-ID: <40A39B3E.3080701@namesys.com>
+References: <200405131059.22693.Michael.James@csiro.au> <40A30C53.3020607@namesys.com> <200405131653.52862.Michael.James@csiro.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18654-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18655-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <658239FB1D8CA7499FA10CEB7CB2AF64562822@oeulw2ex01.hbi.ad.harman.com>
+In-Reply-To: <200405131653.52862.Michael.James@csiro.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: "Lange, Michael" <Michael.Lange@temic-sds.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Michael.James@csiro.au
 Cc: reiserfs-list@namesys.com
 
-Hello
+Michael James wrote:
 
-Please get reiserfsck from
-ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.14.tar.gz
-and run it:
-reiserfsck --rebuild-tree /dev/that-device
-and send its output
-
-On Thu, 2004-05-13 at 14:45, Lange, Michael wrote:
-> help
->=20
-> Mit freundlichen Gruessen / Best regards
->=20
-> Michael Lange
-> Manager IT Infrastructure
->=20
-> Harman/Becker Automotive Systems GmbH
-> S=F6flingerstrasse 100
-> 89077 Ulm, Germany
-> Tel:  +49 / (0)731 / 3994 - 204
-> Fax: +49 / (0)731 / 3994 - 61 204
-> Mobil: +49 / (0)173 / 3 89 479 3
-> WEB: http://www.becker.de
->      http://www.temic-sds.com
->=20
->=20
->=20
-> *******************************************
-> Diese E-Mail enthaelt vertrauliche und/oder rechtlich geschuetzte Informa=
-tionen. Wenn Sie nicht der richtige Adressat sind oder diese E-Mail irrtuem=
-lich erhalten haben, informieren Sie bitte sofort den Absender und loeschen=
- Sie diese Mail. Das unerlaubte Kopieren sowie die unbefugte Weitergabe die=
-ser Mail ist nicht gestattet.
-> =20
-> This e-mail may contain confidential and/or privileged information. If yo=
-u are not the intended recipient (or have received this e-mail in error) pl=
-ease notify the sender immediately and delete this e-mail. Any unauthorized=
- copying, disclosure or distribution of the contents in this e-mail is stri=
-ctly forbidden.
-> *******************************************
->=20
->=20
-
+>>>Michael James asked:
+>>>
+>>>How hard would it be to write a Reiser4 plug-in
+>>>to implement a network file system with a cache on the local disk?
+>>>      
+>>>
+>
+>Then, On Thursday 13 May 2004 15:49, Hans Reiser wrote:
+>
+>  
+>
+>>It is easy to do a hack, and hard to do it right so that the world would 
+>>want to drop nfs and move to it.  We are trying to find a sponsor to do 
+>>it right, and have a proposal called Reiser5 that costs $1.8 million, 
+>>and provides global scalability (which nfs/afs/clusterfs/intermezzo do 
+>>not, in my view).
+>>    
+>>
+>
+>At this stage, I'm looking for the, "Don't worry, be scrappy" solution.
+>
+>1) Just kludge the basic functionality.
+>	(read-only, file-fetching/flushing in sh or perl,
+>	 NFS mounted master, manual deletion of outdated copies)
+>
+>2) Let time, necessity and the GPL refine it and add features.
+>	(read-write-locking, automatic updating,
+>	  built-in file fetching/flushing and network code)
+>
+>3) Always keeping an eye on 2) during 1).
+>
+>There doesn't seem to be anything like this in Linux, and having it
+> would be a boon (and give reiser4 a leg-up) in the cluster community.
+>
+>michaelj
+>
+>
+>  
+>
+I am very skeptical of the value of it (that is how NFS came about, just 
+doing things quickly....), but to answer the question asked, it would be 
+easy.
