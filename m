@@ -1,56 +1,69 @@
-From: Redeeman <redeeman@metanurb.dk>
-Subject: Re: Namesys now accepts Visa cards on our website (support
-	questions and donations both)
-Date: Thu, 20 May 2004 20:55:57 +0200
-Message-ID: <1085079357.15159.8.camel@redeeman.kaspersandberg.com>
-References: <409BBDC9.3030809@lindows.com> <409FB387.8080804@namesys.com>
-	 <40A19147.4010703@lindows.com> <40A257DA.2010903@namesys.com>
-	 <40A26D45.2010707@lindows.com> <40A30B00.8020103@namesys.com>
-	 <C10E654E-A518-11D8-BD91-000A95CD704C@wagland.net>
-	 <20040513201142.GT29226@nysv.org> <40A79FD0.3090904@namesys.com>
-	 <1085077337.15159.2.camel@redeeman.kaspersandberg.com>
-	 <20040520183711.GQ24604@nysv.org>
-Reply-To: redeeman@metanurb.dk
+From: Miguel <turtle.power@wanadoo.es>
+Subject: Re: "df -i" support
+Date: Thu, 20 May 2004 21:44:28 +0200
+Message-ID: <20040520214428.08f8c558.turtle.power@wanadoo.es>
+References: <20040513093432.52d3d7a3.turtle.power@wanadoo.es>
+	<1084439945.14090.6209.camel@tribesman.namesys.com>
+	<20040514173227.5b0541b5.turtle.power@wanadoo.es>
+	<200405141655.i4EGtrAT007250@turing-police.cc.vt.edu>
+	<20040514194040.22389128.turtle.power@wanadoo.es>
+	<1084557009.3263.7.camel@localhost.localdomain>
+	<20040514202627.18ddc7b2.turtle.power@wanadoo.es>
+	<20040514184823.GG18086@schnapps.adilger.int>
+	<20040519214145.6082af87.turtle.power@wanadoo.es>
+	<16556.35295.955347.727516@laputa.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18790-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18791-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040520183711.GQ24604@nysv.org>
+In-Reply-To: <16556.35295.955347.727516@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Reiserfs mail-list <Reiserfs-List@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Nikita Danilov <Nikita@Namesys.COM>
+Cc: Andreas Dilger <adilger@clusterfs.com>, Jonathan Briggs <jbriggs@esoft.com>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-On Thu, 2004-05-20 at 20:37, Markus T=F6rnqvist wrote:
-> On Thu, May 20, 2004 at 08:22:17PM +0200, Redeeman wrote:
-> >i dont think you will gain anything from selling the resize'er, or any
-> >other plugins. people would just warez it. however, setup paypal! i'd be
-> >ready to donate!
->=20
-> Call me naive, but I don't think people are indecent enough to warez
-> this. Maybe some people would think twice if the price tag was ok and
-> the resizer and stuff would ship with a note "warezing this ransomware
-> will cause us severe damage, please don't do it"
-lets just face it, warez exists for REAL, and i know, that if i suddenly
-needed some application, i could warez it, to get it fast, even though i
-then decided to buy it, i might forget.
-hell (sorry language) winex exists warezed too, and they even have
-anonymous cvs access!!
+On Thu, 20 May 2004 14:35:11 +0400
+Nikita Danilov <Nikita@Namesys.COM> wrote:
 
-maybe some kind of policy that said companies should buy, private
-persons shouldnt. but all i can say is that if you create a product that
-the ppl want, and they have to buy, most of them will warez.
->=20
-> As far as paypal is concerned, it's a user-space kludge for a=20
-> kernel-space problem for real. Money should move from one account
-> to another, not from a credit card via a dealer to a virtual account.
->=20
-> Besides, see this:
-> http://www.paypalsucks.com/
---=20
-Regards, Redeeman
-()  ascii ribbon campaign - against html e-mail=20
-/\                        - against microsoft attachments
+> Miguel writes:
+> 
+> [...]
+> 
+>  > 
+>  > I see your point doing an strace df -i (with a 2.6.6 kernel)
+>  > reiserfs_statfs reports those values zeroed:
+>  > 
+>  > statfs64("/", 84, {f_type="REISERFS_SUPER_MAGIC", f_bsize=4096,
+>  > f_blocks=2560271, f_bfree=497245, f_bavail=497245, f_files=0,
+>  > f_ffree=0, f_fsid={0, 0}, f_namelen=255, f_frsize=4096}) = 0
+>  > 
+>  > f_files and f_ffree are 0???. I'm trying to do a patch that show
+>  > those correctly using show_oidmap() function, but seems that other
+>  > fs don't report those values correctly, it's going to be deprecated
+>  > or something?
+> 
+> From statfs(2) man page:
+> ----------------------------------------------------------------------
+> 
+>        Fields that are undefined for a particular file system are
+>        set to 0.
+> 
+> ----------------------------------------------------------------------
+> 
+> Fields like
+>                  long    f_files;    /* total file nodes in file
+>                  system */ long    f_ffree;    /* free file nodes in
+>                  fs */
+> 
+> are undefined for file systems that, like reiserfs, have no predefined
+> number of available inodes.
 
+Out of curiosity, which is the diference between a file and a file node
+in this context? why f_files != (2^32)-1 for 3.6 disk format? in other
+words a reiserfs partition can hold more than 4G of dynamically
+allocated inodes?
+
+tnx
