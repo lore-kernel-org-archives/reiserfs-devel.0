@@ -1,42 +1,38 @@
-From: Christian Iversen <chrivers@iversen-net.dk>
-Subject: Re: Fwd: we need a slogan for our reiser4 t-shirt
-Date: Fri, 25 Jun 2004 01:27:16 +0200
-Message-ID: <200406250127.17753.chrivers@iversen-net.dk>
-References: <40D9DC3A.9090209@namesys.com> <200406250045.32140.chrivers@iversen-net.dk> <40DB62E9.9000404@namesys.com>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: we need a slogan for our reiser4 t-shirt
+Date: Thu, 24 Jun 2004 23:58:45 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <87y8mc8f0q.fsf@uhoreg.ca>
+References: <3DF9165145FACB4C96977FF650C1E9040C46A0B3@its-mail1.its.corp.gwl.com> <20040624165350.GF19037@parcelfarce.linux.theplanet.co.uk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19363-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19365-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40DB62E9.9000404@namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Friday 25 June 2004 01:25, Hans Reiser wrote:
-> Christian Iversen wrote:
-> >On Thursday 24 June 2004 18:34, Tierra wrote:
-> >>Out of all the suggestions, I like this one the most. I don't know
-> >>where the trademarks are on that unfortunately though.
-> >>
-> >>Following close behind that suggestion though, I also liked:
-> >>'Sync this. ReiserFS already did.'
-> >>'When Security isn't Enough.'
-> >
-> >How about a reference to the tail-packer? I don't know if it has been
-> > improved in reiser4, but "Got tail?" is sure to get some attention ;)
->
-> This is the first witty one, but we got rid of tails conceptually in
-> reiser4, and now we either store in formatted items the whole file or
-> none of it.
+>>>>> "Chris" == Chris Dukes <pakrat@www.uk.linux.org> writes:
 
-dang.. that kind of ruins the point.
+[...]
 
-I'll try harder :)
+Chris> If the goal is to create a slogan that will attract PHBs, hire a
+Chris> professional marketing team and be done with it.
+
+Chris> If the goal is to create a t-shirt that thinkgeek would like to
+Chris> sell, get it on slashdot.
+
+Hiring professionals might work.  But I doubt slashdot would have much
+to offer.  I don't think the average slashdotter knows what's so great
+about Reiser4.  The majority of those who do are probably on this list
+already.
 
 -- 
-Regards,
-Christian Iversen
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
