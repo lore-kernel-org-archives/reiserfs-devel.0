@@ -1,51 +1,37 @@
-From: Kyle Moffett <mrmacman_g4@mac.com>
+From: viro@parcelfarce.linux.theplanet.co.uk
 Subject: Re: Using fs views to isolate untrusted processes: I need an assistant architect in the USA for Phase I of a DARPA funded linux kernel project
-Date: Thu, 26 Aug 2004 00:16:43 -0400
-Sender: linux-kernel-owner@vger.kernel.org
-Message-ID: <BCE1F8F8-F716-11D8-A7C9-000393ACC76E@mac.com>
-References: <410D96DC.1060405@namesys.com> <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com> <20040825205618.GA7992@hockin.org> <30958D95-F6ED-11D8-A7C9-000393ACC76E@mac.com> <412D2BD2.2090408@sun.com> <EAB989A6-F6F9-11D8-A7C9-000393ACC76E@mac.com> <20040825180615.Z1973@build.pdx.osdl.net>
-Mime-Version: 1.0 (Apple Message framework v619)
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S267388AbUHZEQt@vger.kernel.org>
-In-Reply-To: <20040825180615.Z1973@build.pdx.osdl.net>
+Date: Thu, 26 Aug 2004 05:29:36 +0100
+Sender: <viro@www.linux.org.uk>
+Message-ID: <20040826042936.GR21964@parcelfarce.linux.theplanet.co.uk>
+References: <410D96DC.1060405@namesys.com> <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com> <20040825205618.GA7992@hockin.org> <30958D95-F6ED-11D8-A7C9-000393ACC76E@mac.com> <412D2BD2.2090408@sun.com> <EAB989A6-F6F9-11D8-A7C9-000393ACC76E@mac.com> <20040825180615.Z1973@build.pdx.osdl.net> <BCE1F8F8-F716-11D8-A7C9-000393ACC76E@mac.com>
+Mime-Version: 1.0
+Return-path: <reiserfs-list-return-20567-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <BCE1F8F8-F716-11D8-A7C9-000393ACC76E@mac.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Wright <chrisw@osdl.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Rik van Riel <riel@redhat.com>, Tim Hockin <thockin@hockin.org>, Mike Waychison <Michael.Waychison@Sun.COM>, ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kyle Moffett <mrmacman_g4@mac.com>
+Cc: Chris Wright <chrisw@osdl.org>, LKML <linux-kernel@vger.kernel.org>, Rik van Riel <riel@redhat.com>, Tim Hockin <thockin@hockin.org>, Mike Waychison <Michael.Waychison@Sun.COM>, ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>
 
-On Aug 25, 2004, at 21:06, Chris Wright wrote:
-> * Kyle Moffett (mrmacman_g4@mac.com) wrote:
->> I would find this much more useful if there was a really lightweight
->> bind
->> mount called a "filebind" or somesuch that could only bindmount files
-> This already works.
->
-> # cd /tmp
-> # echo foo > a
-> # touch b
-> # mount --bind a b
-> # cat b
-> foo
+On Thu, Aug 26, 2004 at 12:16:43AM -0400, Kyle Moffett wrote:
+> I'm well aware of the technique, but I was wondering if there was any
+> extra VFS baggage associated with a normal bind mount that might
+> be eliminated by restricting a different version of a bind mount to only
+> files.  That's why I asked later if anybody had benchmarked the bind
+> mount system to see how well it would scale to 1000 bound files and
+> directories.  If it's not a performance issue then I really don't care 
+> less,
+> but I have a somewhat old box that must make do as a fileserver, so
+> I'm very interested in maximizing the performance. I don't care much
+> about extra RAM consumption, only about CPU and bus usage.
 
-I'm well aware of the technique, but I was wondering if there was any
-extra VFS baggage associated with a normal bind mount that might
-be eliminated by restricting a different version of a bind mount to only
-files.  That's why I asked later if anybody had benchmarked the bind
-mount system to see how well it would scale to 1000 bound files and
-directories.  If it's not a performance issue then I really don't care 
-less,
-but I have a somewhat old box that must make do as a fileserver, so
-I'm very interested in maximizing the performance. I don't care much
-about extra RAM consumption, only about CPU and bus usage.
-
-Cheers,
-Kyle Moffett
-
------BEGIN GEEK CODE BLOCK-----
-Version: 3.12
-GCM/CS/IT/U d- s++: a17 C++++>$ UB/L/X/*++++(+)>$ P+++(++++)>$
-L++++(+++) E W++(+) N+++(++) o? K? w--- O? M++ V? PS+() PE+(-) Y+
-PGP+++ t+(+++) 5 X R? tv-(--) b++++(++) DI+ D+ G e->++++$ h!*()>++$ r  
-!y?(-)
-------END GEEK CODE BLOCK------
-
+Files and directories are not different in that respect - the only overhead
+is price of hash lookup when crossing the binding in either case.  1000
+bindings shouldn't be a problem - it's 3--5 per hash chain.  Wrt memory,
+it's one struct vfsmount allocated per binding - IOW, about 80Kb total
+for 1000 of those.
