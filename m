@@ -1,58 +1,98 @@
-From: Bennett Todd <bet@rahul.net>
-Subject: filenames that can be safely stolen (was Re: starting with ".." could break stuff)
-Date: Fri, 2 Apr 2004 22:02:50 +0000
-Message-ID: <20040402220250.GB4668@rahul.net>
-References: <200404010546.i315kEvY019805@sirius.cs.pdx.edu> <20040402035617.GC2158@zero> <8765ciqr6v.fsf@uhoreg.ca>
+From: "=?iso-8859-1?B?SHViZXJ0IEj8cnRnZW4=?=" <hubert@huertgen-family.de>
+Subject: quota @ linux from scratch | 2.4.24 | reiserfs 3.6 | quota-3.11
+Date: Sat, 03 Apr 2004 01:08:22 +0200
+Message-ID: <59dee33f33a3d14487ba22f708549d38@huertgen-family.de>
+Reply-To: "hubert@huertgen-family.de" <hubert@huertgen-family.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rS8CxjVDS/+yyDmU"
-Return-path: <reiserfs-list-return-17672-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----_=_NextPart_153_00003902.00014604"
+Return-path: <reiserfs-list-return-17673-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <8765ciqr6v.fsf@uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
---rS8CxjVDS/+yyDmU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+------_=_NextPart_153_00003902.00014604
+Content-Type: text/plain;
+	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 
-2004-04-02T16:29:12 Hubert Chan:
-> Tom> i bet there's a few apps that, when trying to skip .., only check
-> Tom> the first two chars of the name. this may or may not be a problem.
->=20
-> Then those apps are broken.  ..foo has always been a valid filename
-> (though highly uncommon).  ..metas doesn't introduce anything new -- it
-> only makes ..files more common.
+hello world,
+ 
+quota makes problems with reiserfs.
+works with ext2.
+_________________________________________
+found
+ftp://ftp.namesys.com/pub/reiserfs-for-2.4/ 
+within your homepage
+____________________________________
+but
+I'm not so used in applying patches.
+ 
+could anyone please give me the exact (detailed) info,
+which file to use and how to apply?
+ 
+hubert
 
-Yup.
 
-For another example, AFS steals "@sys"; it's a special black-magic
-voodoo name that acts like a symlink to a machine-specific value,
-used to set up baroque symlink trees so one uniform network
-filesystem can support dispatching to appropriate versions of
-machine-specific files like executables.
 
-So another possibility worth considering might be @metas, with the
-prior art of AFS to cite to people who complain about theoretical
-problems:-).
+------_=_NextPart_153_00003902.00014604
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
--Bennett
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META HTTP-EQUIV=3D"Content-Type" CONTENT=3D"text/html; charset=3DWindows-1=
+252">
+<TITLE>Nachricht</TITLE>
 
---rS8CxjVDS/+yyDmU
-Content-Type: application/pgp-signature
-Content-Disposition: inline
+<META content=3D"MSHTML 6.00.2800.1400" name=3DGENERATOR></HEAD>
+<BODY>
+<DIV><FONT face=3DArial size=3D2><SPAN class=3D875430223-02042004>hello 
+world,</SPAN></FONT></DIV>
+<DIV><FONT face=3DArial size=3D2><SPAN 
+class=3D875430223-02042004></SPAN></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2><SPAN class=3D875430223-02042004>quota mak=
+es problems 
+with reiserfs.</SPAN></FONT></DIV>
+<DIV><FONT face=3DArial size=3D2><SPAN class=3D875430223-02042004>works wit=
+h 
+ext2.</SPAN></FONT></DIV>
+<DIV><FONT face=3DArial size=3D2><SPAN 
+class=3D875430223-02042004>_________________________________________</SPAN>=
+</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2><SPAN 
+class=3D875430223-02042004>found</SPAN></FONT></DIV>
+<DIV><FONT><SPAN class=3D875430223-02042004><A 
+href=3D"ftp://ftp.namesys.com/pub/reiserfs-for-2.4/"><U>ftp://ftp.namesys.c=
+om/pub/reiserfs-for-2.4/</U></A> 
+</SPAN></FONT></DIV>
+<DIV><FONT><SPAN class=3D875430223-02042004>within your 
+homepage</SPAN></FONT></DIV>
+<DIV><FONT><SPAN 
+class=3D875430223-02042004>____________________________________</SPAN></FON=
+T></DIV>
+<DIV><FONT><SPAN class=3D875430223-02042004>but</SPAN></FONT></DIV>
+<DIV><FONT face=3DArial size=3D2><SPAN class=3D875430223-02042004>I'm not s=
+o used in 
+applying patches.</SPAN></FONT></DIV>
+<DIV><FONT face=3DArial size=3D2><SPAN 
+class=3D875430223-02042004></SPAN></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2><SPAN class=3D875430223-02042004>could any=
+one please 
+give me the exact (detailed) info,</SPAN></FONT></DIV>
+<DIV><FONT face=3DArial size=3D2><SPAN class=3D875430223-02042004>which fil=
+e to use 
+and how to apply?</SPAN></FONT></DIV>
+<DIV><FONT face=3DArial size=3D2><SPAN 
+class=3D875430223-02042004></SPAN></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2><SPAN 
+class=3D875430223-02042004>hubert</SPAN></FONT></DIV></BODY></HTML>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.7 (GNU/Linux)
 
-iD8DBQFAbeMJHZWg9mCTffwRApicAJ47at8dQhi44MS6cSKp8nbjnP8HEgCeMxRL
-2A1DyCYU4KTDUcDW4VKZ8lo=
-=4J97
------END PGP SIGNATURE-----
+------_=_NextPart_153_00003902.00014604--
 
---rS8CxjVDS/+yyDmU--
+
