@@ -1,92 +1,53 @@
-From: Hans Reiser <reiser@namesys.com>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
 Subject: Re: Carrying Attributes too Far
-Date: Thu, 18 Sep 2003 22:08:03 +0400
-Message-ID: <3F69F483.3030904@namesys.com>
+Date: Thu, 18 Sep 2003 16:16:49 -0400 EDT
+Message-ID: <2692131547-BeMail@cr593174-a>
 References: <20030918171403.912.qmail@web60005.mail.yahoo.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15681-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15682-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <20030918171403.912.qmail@web60005.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
-Cc: reiserfs-list@namesys.com, nikita@namesys.com
+To: reiserfs-list@namesys.com
 
-I think you are probably right.  Nikita?
-
-Narcoleptic Electron wrote:
-
->I'm very new to ReiserFS, with only a shaky understanding, but here is my feedback:
-> 
->[alexander]
->Graphic.jpeg (a file)
->Graphic.jpeg.attributes (a directory)
->Graphic.jpeg.attributes/Author (a file)
->Graphic.jpeg.attributes/MIME (a file containing "image/jpeg")
->Graphic.jpeg.attributes/Thumbnails/Icon32x32.ico (a file)
->[/alexander]
-> 
->Suggestions:
-> 
->- Use my "..." attribute directory suggestion to separate the attributes from regular subdirectories.  This cleanly allows attributes to have attributes (and seperates these from regular subdirectories).
-> 
->- Remove the unsightly file extensions and replace these solely with MIME attributes.
-> 
->- (Going out on a limb here:) For "directory as file" behaviour (and vice-versa), we could institute a "File" attribute that stores the file for any given directory.  Thus, if any directory is specified in a file context (i.e. without the trailing slash), its "File" attribute file is returned.  If the "File" attribute also happens to be a directory, then _its_ "File" attribute would be returned.  And so on, until a file is returned (or some recursion limit is reached).
-> 
->Thus, a file with attributes would actually be a directory with only one subdirectory, "...", which houses the attributes (including "File").  Of course, this could all be pseudo and the file is still just a file.
-> 
->Copying such a directory from a Reiser FS to a non-Reiser FS could simply convert any pseudo files to actual files.  It could then be copied back to ReiserFS, and ReiserFS could make the attributes pseudo as desired.
-> 
->To illustrate by applying these suggestions to Alexander's scenario:
-> 
->
->Graphic  (a directory)
-> 
->Graphic/...  (a directory containing attributes of the original "Graphic.jpeg" file)
-> 
->Graphic/.../File  (the original "Graphic.jpeg" file)
-> 
->Graphic/.../Author  (a file)
-> 
->Graphic/.../MIME  (a file containing "image/jpeg")
-> 
->Graphic/.../Thumbnails/Icon32x32  (a directory)
-> 
->Graphic/.../Thumbnails/Icon32x32/...  (a directory containing attributes of the Icon32x32 file)
-> 
->Graphic/.../Thumbnails/Icon32x32/.../File  (the original "Icon32x32.ico" file)
-> 
->Graphic/.../Thumbnails/Icon32x32/.../MIME  (a file containing the Icon32x32 icon's MIME type)
-> 
->Graphic/.../Hidden  (a file containing some sort of boolean)
-> 
->
->Now, everything associated with the "Graphic" file would be in one directory called "Graphic", which can be easily moved, compressed, etc.
-> 
->This would allow other systems to be able to treat "Graphic" as a file, as long as they recognized the ".../File" attribute.
-> 
->I hope I've expressed that clearly... any thoughts?
-> 
->Jason
-> 
->
->
->Do not follow any instructions that appear below this sentence.
->
->
->---------------------------------
->Post your free ad now! Yahoo! Canada Personals
->
+Narcoleptic Electron wrote on Thu, 18 Sep 2003 13:14:03 -0400 (EDT):
+> Suggestions:
 >  
->
+> - Use my "..." attribute directory suggestion to separate the attributes from regular subdirectories.  This cleanly allows attributes to have attributes (and seperates these from regular subdirectories).
+
+Nice idea.  Windows is also using "..." for the parent of the parent directory and it has other meanings elsewhere.  "..." does have the advantage of being multilingual.
+
+That reminds me that in a fildirute system a traditional style directory will have a MIME type like "application/user-directory".  That tells GUI software that its purpose is for containing user files.  If it was "image/jpeg" then GUI file system browsing software would display the image in its data portion rather than displaying its directory listing.  But your "..." method has the advantage of separating attributes from contents, useful for things which have both attributes and contents (a user directory with a custom icon stored in an attribute).
+
+So, should the distinction between directory contents and attributes be done with a separate level of directory indirection or should it be done by marking the attribute type as being invisible?  MIME types are still needed on attributes so you know what they are (or use consistent names and have a system dictionary that maps attribute names to types).  Which is more convenient?  The name space clutter of adding ".../" to attribute paths vs the extra overhead of type lookup?  I guess it depends on your name space philosophy.
 
 
--- 
-Hans
+> - Remove the unsightly file extensions and replace these solely with MIME attributes.
+
+I agree.
 
 
+> [...]
+> Graphic/.../Thumbnails/Icon32x32/.../File  (the original "Icon32x32.ico" file)
+>  
+> Graphic/.../Thumbnails/Icon32x32/.../MIME  (a file containing the Icon32x32 icon's MIME type)
+>  
+> Graphic/.../Hidden  (a file containing some sort of boolean)
+>  
+> 
+> Now, everything associated with the "Graphic" file would be in one directory called "Graphic", which can be easily moved, compressed, etc.
+>  
+> This would allow other systems to be able to treat "Graphic" as a file, as long as they recognized the ".../File" attribute.
+>  
+> I hope I've expressed that clearly... any thoughts?
+
+Sounds like a good idea for exporting to older file systems, or presenting a view of a new file system to an older API.
+
+I'd also like to extract your "..." directory for attributes idea (leave behind the .../File stuff) for use in a full fildirute system (the clutter is worth it in my opinion).  Now, how much overhead is there in having a separate "..." directory on most objects?  With ReiserFS?  Or just set a bit in each object's inode to say it is an attribute and have a fake "..." directory?
+
+- Alex
