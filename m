@@ -1,41 +1,41 @@
-From: Henning Westerholt <henning@skalatan.de>
-Subject: Re: Reiser4 and linux 2.6.0
-Date: Sun, 10 Aug 2003 14:30:04 +0200
-Message-ID: <200308101430.08620.henning@skalatan.de>
-References: <3F1EF7DB.2010805@namesys.com> <3F351722.2000108@namesys.com> <3F35A7D0.8000607@tupshin.com>
-Reply-To: henning@skalatan.de
+From: Sean Johnson <sean@gutenpress.org>
+Subject: Kuro5hin Article
+Date: 10 Aug 2003 10:24:13 -0400
+Message-ID: <1060525453.5311.1.camel@poo.home.local>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15273-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-L1ufgzklgi5J/Y8xdqae"
+Return-path: <reiserfs-list-return-15274-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F35A7D0.8000607@tupshin.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Am Sonntag, 10. August 2003 04:02 schrieb Tupshin Harper:
-> It would still be wonderful to have a way of getting such patches
-> without going through bk. I requested that a working (complete) patch be
-> made against a recent kernel version(2.6.0-test2 or later at this point)
-> a few weeks ago, and while a got positive response, I still haven't seen
-> anything. I would think you would want to make this very easy for people
-> who are already going through the effort of testing 2.6 kernels.
->
-> -Tupshin
+--=-L1ufgzklgi5J/Y8xdqae
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Hello List,
+At the risk of repeating someone else ... there's a pretty good article
+on kuro5hin about Reiser4.
 
-i would love to see a patch against a 2.6.0-test kernel too. I don't want to 
-obtain a bitkeeper licence.
-A anoncvs-gateway as a alternative would be also ok ;)
+http://www.kuro5hin.org/story/2003/8/9/172159/7912
 
-As a happy reiserfs user, it is hard to read about the various changes in v4, 
-and can't test them for yourself. 
+Just thought I'd toss it out there as an FYI.
 
+Sean
 
-Henning
+--=-L1ufgzklgi5J/Y8xdqae
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.2 (GNU/Linux)
+
+iD8DBQA/NlWNWg0893Y7GZURAuMHAJ9TvA11D2BT7H/TMBATkOcOg2MEkgCfW+8b
+lFBYF7okqdYz8i8x3aUk3r8=
+=3USI
+-----END PGP SIGNATURE-----
+
+--=-L1ufgzklgi5J/Y8xdqae--
 
