@@ -1,99 +1,165 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: [PATCH] new data logging and quota patches available
-Date: Wed, 12 Mar 2003 22:25:16 +0300
-Message-ID: <3E6F899C.8090108@namesys.com>
-References: <1045870331.16048.325.camel@tiny.suse.com>	 <200302221341.23799.Dieter.Nuetzel@hamburg.de>	 <1045926958.16042.366.camel@tiny.suse.com>	 <1045930351.16042.377.camel@tiny.suse.com>	 <3E581AD7.30000@mb.tu-ilmenau.de>  <3E581E07.3050407@mb.tu-ilmenau.de>	 <1046020695.16048.409.camel@tiny.suse.com>	 <3E59787F.2030009@mb.tu-ilmenau.de>	 <1046095718.16047.440.camel@tiny.suse.com>	 <3E5A5A31.5070008@mb.tu-ilmenau.de> <3E5A9A7A.5040806@mb.tu-ilmenau.de>	 <3E5F196C.1040001@mb.tu-ilmenau.de>	 <1046439149.2163.21.camel@tiny.suse.com>	 <3E66B73D.6030008@mb.tu-ilmenau.de>	 <1046922372.2161.275.camel@tiny.suse.com> <3E66C88E.40207@mb.tu-ilmenau.de>	 <3E69FA70.5030601@mb.tu-ilmenau.de>	 <1047227975.8215.150.camel@tiny.suse.com>	 <3E6B74C0.5050702@mb.tu-ilmenau.de>	 <1047230647.8219.161.camel@tiny.suse.com>	 <3E6B7C61.9050405@mb.tu-ilmenau.de> <1047415578.8215.383.camel@tiny.suse.com> <3E6F4777.1040802@mb.tu-ilmenau.de>
+From: Chris Mason <mason@suse.com>
+Subject: Re: [PATCH] various allocator optimizations
+Date: 12 Mar 2003 14:57:01 -0500
+Message-ID: <1047499021.8219.604.camel@tiny.suse.com>
+References: <1047400482.8215.312.camel@tiny.suse.com>
+	 <20030311194205.A4493@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13232-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13233-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E6F4777.1040802@mb.tu-ilmenau.de>
+In-Reply-To: <20030311194205.A4493@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: Chris Mason <mason@suse.com>, reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Manuel Krause wrote:
+[ dirid based grouping spreads things out too much on the disk ]
 
-> On 03/11/2003 09:46 PM, Chris Mason wrote:
->
->> [ slow down between 2.419 data logging and 2.4.21-pre data logging ]
->>
->> Ok, could you please apply the search_reada-4 patch I sent and do your
->> benchmark again on 2.4.21-preX with these mount options:
->>
->> mount -o alloc=old_way:concentrating_formatted_nodes,notail
->>
->> It's about 10% faster here, but my dataset is slightly different.
->>
->
-> I did it and also tested without the alloc mount option from above.
->
-> Here is the overview including the "old" things to refer to. The 
-> dataset didn't change in the meantime.
->
-> (old)
-> 2.4.21-pre5 data=ordered                              [A]
->       first run  second run  diff  average    rate
-> real  9m05.375s   9m23.272s  3.2%  9m14.324s  6.63MB/s
-> user  0m01.440s   0m01.730s
-> sys   1m11.640s   1m08.870s
->
-> 2.4.19 data=ordered                                   [B]
->       first run  second run  diff  average    rate
-> real  7m46.287s   7m34.031s  2.7%  7m40.159s  7.99MB/s
-> user  0m01.520s   0m01.580s
-> sys   1m21.920s   1m21.300s
->
->
-> (new)
-> 2.4.21-pre5 [A] + search_reada-4 +
-> mount -o noatime,alloc=old_way:concentrating_formatted_nodes,notail [C]
->
->       first run second run  diff   average    rate
-> real  7m59.631s  7m57.167s  0.52%  7m58.399s  7.68MB/s
-> user  0m01.580s  0m01.250s
-> sys   1m11.200s  1m09.520s
->
->
-> 2.4.21-pre5 [A] + search_reada-4 without special mount options
-> (is: mount -o noatime,notail,data=ordered)                          [D]
->
->       first run second run  diff   average    rate
-> real  7m57.365s  7m55.638s  0.36%  7m56.502s  7.71MB/s
-> user  0m01.510s  0m01.570s
-> sys   1m07.730s  1m08.020s
->
->
-> * What means a performance increase of 2.4.21-pre5 with [D] vs. without
->    search_reada-4 [A] by  ~16%  !!!
-> * The difference of the special mount option [C] against my default [D]
->   is about 0.3%  ;-))
-> * With search_reada-4  2.4.21-pre5 [D] only looses ~3.6% throughput rate
->    against 2.4.19 [B]
->  ...in this test.
->
->
-> Do you think the group-alloc-4 patch would increase throughput with 
-> this test?
->
-> Thank you for your great work,
->
-> Manuel
->
->
->
->
->
-Can you state what test is being performed, what the hardware is, etc.  
-In general, we need benchmarks that can be collected onto webpages and 
-reviewed a year or two later when we can barely remember why we did or 
-did not do some design decision.
+So, trying to summarize so far, we know we want to group things on the
+disk somehow, but we don't really have a good metric to use.  Using the
+parent directory objectid as the grouping metric spreads things evenly
+out on the disk, resulting in lots of seeks when we read a given
+directory tree.  There are some cases where this breaks down badly,
+like  lots of directories with just a few files each.
 
--- 
-Hans
+defragmenting tools are nice and all, but before we can write one we
+actually have to pick a disk layout for the tool to create ;-)
+
+The btree already has a metric for grouping, it's the packing locality. 
+I realized this morning that we just aren't being very smart about how
+we use it.  If one directory has 1 thousand subdirs with 1 file each,
+should they all be in different packing localities?  probably not.
+
+So I played around with the patch below, it tries to define a span over
+which a given packing locality used.  When new files or directories are
+created, their packing locality is chosen based on how much of the tree
+the packing locality of their parent directory is using.
+
+If the span is small, the packing locality of the parent dir is used as
+the packing locality of the new file/dir.  If the span is large, the
+objectid of the parent dir is used as the packing locality of the new
+file/dir.
+
+The patch below is really rough, but when used with the dirid_group
+allocator, it performs the same as skip_busy alone for reading a
+recently created directory.  I need to make sure it doesn't have the
+same fragmentation problems as skip_busy alone though.
+
+(this was against a data logging tree, it is meant for review only and
+not to be applied)
+
+--- linux.beta3.2/fs/reiserfs/inode.c	2003-03-12 14:32:41.000000000
+-0500
++++ linux.beta3/fs/reiserfs/inode.c	2003-03-12 14:30:35.000000000 -0500
+@@ -1646,6 +1646,8 @@
+     struct cpu_key key;
+     struct item_head ih;
+     struct stat_data sd;
++    __u32 packing;
++    __u32 checked_packing = 0;
+     int retval;
+     int err ;
+   
+@@ -1663,9 +1665,12 @@
+     if( S_ISLNK( inode -> i_mode ) )
+ 	    inode -> i_flags &= ~ ( S_IMMUTABLE | S_APPEND );
+ 
+-    /* item head of new item */
+-    ih.ih_key.k_dir_id = INODE_PKEY (dir)->k_objectid;
++    packing = INODE_PKEY(dir)->k_dir_id;
+     ih.ih_key.k_objectid = cpu_to_le32 (reiserfs_get_unused_objectid
+(th));
++
++packing_restart:
++    /* item head of new item */
++    ih.ih_key.k_dir_id = packing;
+     if (!ih.ih_key.k_objectid) {
+ 	err = -ENOMEM ;
+ 	goto out_bad_inode ;
+@@ -1718,6 +1723,14 @@
+ 	err = -EEXIST;
+ 	goto out_bad_inode;
+     }
++    if (!checked_packing) {
++	checked_packing = choose_packing(dir, &path_to_key);
++	if (checked_packing != packing) {
++	    packing = checked_packing;
++	    pathrelse(&path_to_key);
++	    goto packing_restart;
++	}
++    }
+ 
+     if (old_format_only (sb)) {
+ 	if (inode->i_uid & ~0xffff || inode->i_gid & ~0xffff) {
+diff -ur linux.beta3.2/fs/reiserfs/stree.c
+linux.beta3/fs/reiserfs/stree.c
+--- linux.beta3.2/fs/reiserfs/stree.c	2003-03-12 14:32:41.000000000
+-0500
++++ linux.beta3/fs/reiserfs/stree.c	2003-03-12 14:31:43.000000000 -0500
+@@ -296,6 +296,56 @@
+ /* Maximal possible key. It is never in the tree. */
+ const struct key  MAX_KEY = {0xffffffff, 0xffffffff, {{0xffffffff,
+0xffffffff},}};
+ 
++static int packing_locality_span(struct super_block *sb, 
++                                 struct path *path, __u32 cpu_packing) 
++{
++    int path_offset;
++    int pos;
++    int levels = 1;
++    struct buffer_head *bh;
++    struct key *key;
++
++    path_offset = path->path_length;
++
++    while ( path_offset-- > FIRST_PATH_ELEMENT_OFFSET ) {
++        pos = PATH_OFFSET_POSITION(path, path_offset);
++	bh = PATH_OFFSET_PBUFFER(path, path_offset);
++
++	if (!B_IS_IN_TREE(bh))
++	    break;
++
++	if (pos) {
++	    /* check left */
++	    key = B_N_PDELIM_KEY(bh, pos - 1);
++	    if (le32_to_cpu(key->k_dir_id) != cpu_packing) {
++	        return levels;
++	    }
++	}
++	if (pos != B_NR_ITEMS(bh)) {
++	    key = B_N_PDELIM_KEY(bh, pos + 1);
++	    if (le32_to_cpu(key->k_dir_id) != cpu_packing) {
++	        return levels;
++	    }
++	}
++        levels++;
++    }
++    return levels;
++}
++
++/* returns an le32 packing locality */
++__u32 choose_packing(struct inode *parent, struct path *path)
++{
++    __u32 grandparent;
++    int levels;
++
++    grandparent = le32_to_cpu(INODE_PKEY(parent)->k_dir_id);
++
++    levels = packing_locality_span(parent->i_sb, path, grandparent);
++    if (levels <= 2) {
++        return INODE_PKEY(parent)->k_dir_id;
++    }
++    return INODE_PKEY(parent)->k_objectid;
++}
+ 
+ /* Get delimiting key of the buffer by looking for it in the buffers in
+the path, starting from the bottom
+    of the path, and going upwards.  We must check the path's validity
+at each step.  If the key is not in
+
 
 
