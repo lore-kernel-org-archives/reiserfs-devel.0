@@ -1,55 +1,53 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: snapshot, checkpoints
-Date: Fri, 11 Jun 2004 16:04:49 -0500
-Message-ID: <40CA1E71.9050309@slaphack.com>
-References: <20040527065259.99429.qmail@web51306.mail.yahoo.com>	<1085641393.1915.199.camel@tribesman.namesys.com>	<20040527092727.GO4990@nysv.org>	<20040604131005.hmvps8wcw4sccgcs@www.wagland.net>	<200406041925.i54JPZgp025255@turing-police.cc.vt.edu>	<40C14E9C.4000706@slaphack.com>	<116CD3CA-B709-11D8-A933-000A95CD704C@kungfoocoder.org>	<40C78D86.2060305@slaphack.com> <20040610065427.622450fb@rayanne> <40C7EFB9.1040609@namesys.com> <40C8DD73.7080100@slaphack.com> <40C91895.5090009@namesys.com>
+Subject: auto-patches
+Date: Sat, 12 Jun 2004 09:43:26 -0500
+Message-ID: <40CB168E.50507@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19148-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19154-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40C91895.5090009@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Pierre Etchemaite <petchema@concept-micro.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
 
-Hans Reiser wrote:
-[...]
-| Yes, views are an important step towards "Filesystem-based cvs", see
-| clearcase as an example.  Transaction infrastructure, substantially
 
-url please?  Or I'll google.
+I see an auto-snapshot for 2.6.7-rc3-mm1.  Good.
 
-| Currently we support atomic sets of fs operations, although this is
-| immature code (meaning reiser4 works reliably but the api is still in
-| progress, etc.).
+But I don't see anything other than a diff file.  How do I use it?
 
-I think this can actually be done in userland, outside (on top of) the
-fs.  That's not the better way, just something practical for people who
-don't want to wait for (or use) the new api.
+The latest official snapshot is 2004.03.26.  Do I use the reiser4progs
+and libaal from there?
+
+Do I apply the all.diff.gz from there, then apply the latest
+auto-snapshot?  Or do I apply the latest auto-snapshot .diff.gz on a
+fresh (no reiser4 at all) 2.6.7-rc3-mm1?
+
+Also, I'm running reise4 as a root fs on a machine which is patched for
+2004.03.26.  Is it safe to just install the new patches and utils?  Has
+the on-disk format changed?  What can I do if it has (other than tar it up)?
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQMoecHgHNmZLgCUhAQKIAA/9GWZBmn9rFL4QYfPNr5UpMQz0e6s1Aor/
-LDFu/CDKcb2KnRAkGdoxCKr2WdxvPPUxieUNXQAdpEejn1SQ+6mSTzE0HRzab1HJ
-+O95bseF3eSb+mLiFC7CepQoviXUb/w1lzRww5v0f4s8biXv60qdkq+ZSK4a8CWP
-PD/sB4S0prfK/y/k+mSRAqFBZzxohnmK03Iz3qbaN8MrRsP7Thns+DEIG6RuzKoz
-H+fYwvUDUszkHXSG3CbyWUPSIT613lHcDbtfL52wpK+3722BM1hbiIw+aob07GIg
-UwFgXD6Okhy6BURNQykbmu2uHQYKQSd+zRZujd/b6QoWGGFe75cUlTUTdxawUUsM
-vvVQ6M7FN8BQ5Lj+/Oqtt8A9hjjMVIulJsP4zzxWrLpc8+JPi2WnO/x+beGVSbob
-kfqvN8eHMpgwkqVl4wtyIQ+yuDxtLcfYIjyp7BLW82wuXRhMt5jwgzw/FUgmfiAI
-O3VD2Bjbb8ndNFl++R29AQKtt9+n8od2vlLXLPK+/7hpSH82ymDXlA22/a8nekgk
-ofhwYQYYWI+z7YAS6nyMtXvxK79Cr9ep1lGsc+aEZGeu1mJorJ6WMI3kNsw8a+nT
-Mx2ntBJeI8YV7XPjQVKZb7Bz5DipUklrMkfrmrgQwOvwAKpY/BQwa2970myx6hJd
-hQlzWDXy27g=
-=CA6N
+iQIVAwUBQMsWjXgHNmZLgCUhAQIYZA/9HMmXdZVN9nR9nkXM7271kTtGBAE+v2KB
+3I0BunRdL3NeDXyQtylzHv5oTLcvuu0kn8leM7ItmrfUto6aYWo9RlNPv3e25e1m
+nvMBLFZr4WoiINDgQltg/2St88WFb60zioUFXC98ijqjk7gJ0/2Jm+gBwgJhPspA
+cEHTW3DaA5UjNNPgf0Lj5CD6wplrlFwVQtZ6mq0kXHD9xbvD+T0mUpLOAuan3gim
+XWPTkFbpU9qscr5ls0Ma/b17kk4aMCivneUG94eDgSHqNWzqze+FfyskV+yTCaVZ
+bhMUzmmcNny/fj21tjVMwcTfbUvASlX4v0d0AtXJnHlU5dyguKXRIkNxmVtjGAOt
+mdeeSthwaVny+61SNp0l26dck8Ei+WZzSC84HMnXb+3LtyfUaqUKroG8Fsl3ozsV
+wM9hlKIe+M+4pKq1M5EZCSng1XoNtgWpVTW1DhRbOBSP/UPDcGzBZrYDznXLchLU
+e+Uye+IWK06c8haHfnJ09mEXjPaL7N7bm/iXNZB5h//oZJGzSS+3Zg9gaVAUyKee
+LqIFERTq6XFrAYZx6D8X1gz5ygi2b6VnkEQdqZEq8FlcUGznqFOOSPlvlQP5u02E
+5tvd3egB/c3BAjEDml9RWdylNrFNKFUrFgv9LHcIfn7vK8Zy0E4Qqi7b2cwIDTTC
+n49BZn3d2I8=
+=QHEz
 -----END PGP SIGNATURE-----
