@@ -1,71 +1,111 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: BUG: Replaying ReiserFS log causes hard lockup
-Date: Thu, 25 Mar 2004 14:15:48 +0300
-Message-ID: <1080213348.1976.277.camel@tribesman.namesys.com>
-References: <20040325204836.07bcf910.a.nielsen@optushome.com.au>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: Reiser4 panic at fs/reiser4/lock.c:434
+Date: Thu, 25 Mar 2004 14:32:38 +0300
+Message-ID: <16482.50006.976095.680498@laputa.namesys.com>
+References: <1080175834.13000.10.camel@localhost.localdomain>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17461-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17463-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040325204836.07bcf910.a.nielsen@optushome.com.au>
+In-Reply-To: <1080175834.13000.10.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Adam Nielsen <a.nielsen@optushome.com.au>
-Cc: reiserfs-list@namesys.com
+To: Jonathan Briggs <jbriggs@esoft.com>
+Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Hello
+Jonathan Briggs writes:
+ > The system is running Linux kernel 2.6.5-rc2.  It's tainted by Nvidia
+ > drivers.
+ > 
+ > The system was compiling the kernel, and Reiser4 panicked.
 
-On Thu, 2004-03-25 at 13:48, Adam Nielsen wrote:
-> Hi,
-> 
-> My apologies if this is the wrong place to send a report like this, but
-> I couldn't find anywhere more suitable!
-> 
-> I have just come across a rather annoying bug, which seems to be most
-> likely located in ReiserFS as my computer now locks up while
-> booting a stock 2.6.3 kernel almost immediately after displaying this:
-> 
-> found reiserfs format "3.6" with standard journal
-> Reiserfs journal params: device sda1, size 8192, journal first block 18,
-> max trans len 1024, max batch 900, max commit age 30, max trans age 30
-> reiserfs: checking transaction log (sda1) for (sda1)
-> 
-Is sda1 your root filesystem?
-For the beginning you should boot without mounting it and reiserfsck it
+Was compilation multi-threaded (make -j)?
 
-> And it's a hard lockup - my keyboard LEDs stop working as does the magic
-> SysRq key.  Are there any known problems that could exhibit
-> symptoms like this? (e.g. will upgrading to kernel 2.6.4 fix it?)
-> 
-> The drive itself is a Western Digital SATA drive, connected via an
-> onboard Silicon Image 3512A (which uses the under-development sil3112
-> (I think) driver, so I guess there's a chance it could be the driver's
-> fault, however I have not had any problems at all before this.)  The
-> board itself is a Gigabyte GA-7N400 Pro 2 (rev 2.0) with an nForce 2
-> chipset.
-> 
-> I've got no idea how to go about diagnosing the problem further, so any
-> suggestions would be greatly appreciated!  I'm not subscribed to this
-> list, so please CC any responses to me.
-> 
-> Oh, and one last thing, the problem seems to be caused by writing to the
-> drive (I assume), as my computer had locked up sometime this
-> afternoon, and when I reset it was when it started locking up while
-> booting, I guess trying to repeat the same write operation as what
-> caused the original lockup.
-> 
-> Anyway, any info would be greatly appreciated (as would the ability to
-> be able to boot my computer again ;-))
-> 
-> Thanks,
-> Adam.
-> 
-> P.S.  I've never tried debugging a kernel before, but I am able to
-> compile a kernel and test it on this machine (by booting it over the
-> network) and I do have a serial cable, should it come in handy for
-> anything ;-)
-> 
+ > The Reiser4 panic starts at line 443 of the attached dmesg log.
+ > 
+ > The Reiser4 filesystem is on a MD RAID 0 device made of two SCSI disks.
+ > 
+ > I had some Reiser4 debugging options turned on.  I was trying to catch
+ > it creating blocks of zeros, which is something I noticed it doing to
+ > frequently appended files like .xsession-errors and my Evolution mbox
+ > file.
+ > 
+ > After I rebooted the system, I copied the kernel source to another
+ > filesystem and finished the compile, which does not include debugging
+ > options (It was way too slow!), so I am not running with debugging now. 
+ > But if you want more information, let me know and I will try to provide
+ > it.
 
+Please try following patch:
+----------------------------------------------------------------------
+# This is a BitKeeper generated patch for the following project:
+# Project Name: ReiserFS-4
+# This patch format is intended for GNU patch command version 2.5 or higher.
+# This patch includes the following deltas:
+#	           ChangeSet	1.1542  -> 1.1543 
+#	plugin/item/extent_item_ops.c	1.48    -> 1.49   
+#
+# The following is the BitKeeper ChangeSet Log
+# --------------------------------------------
+# 04/03/25	god@laputa.namesys.com	1.1543
+# fix locking in kill_hook_extent(): relinking extent neighbors and update of their 
+# delimiting keys should be atomic
+# --------------------------------------------
+#
+diff -Nru a/plugin/item/extent_item_ops.c b/plugin/item/extent_item_ops.c
+--- a/plugin/item/extent_item_ops.c	Thu Mar 25 14:30:47 2004
++++ b/plugin/item/extent_item_ops.c	Thu Mar 25 14:30:47 2004
+@@ -420,25 +420,38 @@
+ 			left = kdata->left->node;
+ 			right = kdata->right->node;
+ 				
+-			/* if neighbors of item being removed are znodes - link them */
+ 			tree = current_tree;
+-			UNDER_RW_VOID(tree, tree, write, link_left_and_right(left, right));
++			/* we have to do two things:
++			 *
++			 *     1. link left and right formatted neighbors of
++			 *        extent being removed, and
++			 *
++			 *     2. update their delimiting keys.
++			 *
++			 * atomicity of these operations is protected by
++			 * taking dk-lock and tree-lock.
++			 */
++			WLOCK_DK(tree);
++			/* if neighbors of item being removed are znodes -
++			 * link them */
++			UNDER_RW_VOID(tree, tree,
++				      write, link_left_and_right(left, right));
+ 
+ 			if (left) {
+-				/* update right delimiting key of left neighbor of extent item */
++				/* update right delimiting key of left
++				 * neighbor of extent item */
+ 				coord_t next;
+ 				reiser4_key key;
+ 
+ 				coord_dup(&next, coord);
+-				
+-				WLOCK_DK(tree);
++
+ 				if (coord_next_item(&next))
+ 					key = *znode_get_rd_key(coord->node);
+ 				else
+ 					item_key_by_coord(&next, &key);
+ 				znode_set_rd_key(left, &key);
+-				WUNLOCK_DK(tree);
+ 			}
++			WUNLOCK_DK(tree);
+ 
+ 			from_off = get_key_offset(&min_item_key) >> PAGE_CACHE_SHIFT;
+ 			to_off = (get_key_offset(&max_item_key) + 1) >> PAGE_CACHE_SHIFT;
+----------------------------------------------------------------------
+ > -- 
+ > Jonathan Briggs
+ > jbriggs@esoft.com
+
+Nikita.
