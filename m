@@ -1,53 +1,47 @@
-From: Joachim Reichelt <Reichelt@gbf.de>
-Subject: timestamps
-Date: Mon, 26 May 2003 16:45:44 +0200
-Message-ID: <3ED22898.703@gbf.de>
+From: Enrique Perez-Terron <enrique.perez-terron@norway.online.no>
+Subject: Re: Split Trees (my design, similar to binary treaps)
+Date: 27 May 2003 03:38:56 +0200
+Message-ID: <1053999535.7962.172.camel@arabia.home.lan>
+References: <20030508042237.35435.qmail@web40007.mail.yahoo.com>
+	 <3ECCED08.2050709@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14262-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14263-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3ECCED08.2050709@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
+Cc: kevinbealer@yahoo.com
 
-Dear all,
 
-is there any way in Linux to get the time of the creation of a file or 
-better
-can i get:
+Hello,
 
-creation time (is NOT in stat)
-modification time ( is in stat m_time)
-access time ( is in stat a_time)
-c_time in stat changes, whenever a_time or m_time or ... changes, so 
-useless here.
+Prompted by this discussion I wrote some code to make sense of the
+structures described, and they work wonderfully.
 
--- 
-Mit freundlichen Gruessen                         Best Regards
- 
-         Joachim Reichelt
+However, I found that in the split trees it is not necessary to
+manipulate the levels of the remaining nodes after a deletion. It is
+possible to reverse the effects of the split that occurs during
+insertion; it is quite easy.
 
-			SB  - Strukturbiologie
-              GBF - Gesellschaft fuer Biotechnologische Forschung
-                    German Research Centre for Biotechnology
+The reversal procedure merges two non-overlapping trees, the left and
+right subtrees of the node that was removed. By non-overlapping I mean
+that the largest key in the tree with small keys is smaller than the
+smallest key in the other tree.
 
-WWW: http://www.gbf.de         _/_/_/   _/_/_/   _/_/_/_/
-EMAIL: REICHELT@gbf.de       _/    _/  _/   _/  _/
-                            _/        _/   _/  _/
-Mascheroder Weg 1          _/  _/    _/_/_/   _/_/_/
-D-38124 Braunschweig      _/    _/  _/   _/  _/
-Tel: +(49) 531 6181 352  _/    _/  _/   _/  _/
-FAX: +(49) 531 2612 388   _/_/_/  _/_/_/   _/
+The procedure retains the desirable property of working downwards and
+not looking back, so two processes could lock and update different parts
+of the tree and propagate effects downwards, automatically avoiding
+deadlocks. The procedure also avoids having to traverse entire subtrees
+to update levels. It only touches nodes along the left edge of the right
+subtree, and along the right edge of the left subtree. This should be
+O(ln n).
 
-http://struktur.gbf.de/
+The code can be found at http://home.online.no/~enrio/b3.c
 
--- Disclaimer --
-Standard > Keyword : Opinions, my own, nobody else's, whatsoever ...
-
-Man muss sich notfalls jemand mieten,
-hat man an Geist selbst nichts zu bieten!     (Heinz Erhardt)
-
+Regards, Enrique
 
