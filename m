@@ -1,51 +1,34 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Compatibility of  current 2.4.19.pending patchset
- with old data-logging??
-Date: Thu, 12 Sep 2002 02:24:05 +0200
-Message-ID: <3D7FDEA5.7040806@mb.tu-ilmenau.de>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: [BK] ReiserFS file write bug fix for 2.4
+Date: Thu, 12 Sep 2002 08:53:00 +0400
+Message-ID: <20020912085300.A4625@namesys.com>
+References: <3D7F7783.6030804@namesys.com> <200209111934.11373.Dieter.Nuetzel@hamburg.de> <20020911215310.A1504@namesys.com> <200209112137.22422.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11429-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11430-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <200209112137.22422.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
+Cc: Linux Kernel List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Hi!
+Hello!
 
-Originally I wanted to prepare a new kernel based on 2.4.20-pre6. That 
-didn't work due to a gcc compiler failure I have to investigate on here 
-right now. Very dubious, the script even told me to send a detailed bug 
-report - definitely too much for tonight. A 2.4.19 compiles well with my 
-old patchset.
+On Wed, Sep 11, 2002 at 09:37:22PM +0200, Dieter N?tzel wrote:
+> > On Wed, Sep 11, 2002 at 07:34:11PM +0200, Dieter N?tzel wrote:
+> > > On Wednesday 11 September 2002 19:04, Hans Reiser wrote:
+> > > > Well, at least getting the new file write code into pre6 found this bug
+> > > > for us....  please apply.
+> > > What is the "right" way to get the new block allocation going?
+> > use 2.4.19-pre2+ and it is in there ;)
+> You meant 2.4.20-pre2, didn't you?
 
-Previously I followed the 2.4.19.pending patch directory 
-@ftp.namesys.com (by downloading and particularily reading, but not 
-applying since Chris stopped his data-logging series -- That was when 
-patch "05" changed its name from "05-hash_on_empty_fs-1.diff" to 
-"05-reiserfs_make_bad_inode.diff", on 02-08-13, and maybe I even used 
-some older patches from the latest rc to keep the data-logging working). 
-BTW, it's an irritating thing to change the patches' names. That adds 
-just more confusion to namesys' release management that could be 
-considered "non-official" to our list or is lacking more public relation 
-output.
+Ah, yes. 2.4.20-pre2+ of course.
 
-Now I'm completely confused with my private file-naming-convention, the 
-newest reiserfs 2.4.19.pending directory and the following question:
-
-  Is the current 2.4.19.pending compatible with data-logging any more???
-
-When I see the discussion about the new block-allocator, the testing 
-directory etc. I assume a definite "No." (Please, please, correct me, if 
-I'm wrong...)
-
-So, for the overnight change to pre-kernel 7, where are the new 
-data-logging patches Hans even announced to lkml?
-
-Thanks for your hints ;-)
-
-Manuel
-
+Bye,
+    Oleg
