@@ -1,60 +1,42 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: r4.1 ?
-Date: Tue, 25 Jan 2005 17:54:33 -0600
-Message-ID: <41F6DC39.6000705@slaphack.com>
-References: <27547285.20050125224458@wp.pl>
+From: Roger Parmenter <rogparm@rogparm.com>
+Subject: reiserfsprogs did not solve my suse9.1pro problems
+Date: Tue, 25 Jan 2005 21:40:03 -0700
+Message-ID: <41F71F23.8040503@rogparm.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23209-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23210-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <27547285.20050125224458@wp.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Pysiak Satriani <pysiak.satriani@wp.pl>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Gentlemen;
+
+I have a problem with the root filesystem on my Suse 9.1pro partition. I 
+have downloaded your latest reiserfsprogs and ran the reiserfsck program 
+on the /dev/hdb5 (the root filesystem). This did not clear the partition 
+so that it could be mounted and the OS startup properly.
+
+I have kept good notes and some files to show you what went wrong.
+
+I'm happy to comment further if this will help the team. The hardware 
+involved is AMD 64 athlon chip.
+
+Looking forward to hearing from a member of the team.
+
+Regards,
 
 
+Rog Parmenter
 
-Pysiak Satriani wrote:
-| Hi,
-|
-| I was wondering how close are we to reiser4.1 ?
-| Like in % of work done or some other measure.
-|
-| http://www.namesys.com mentions r4.1
-|
-| 'this and that' will be included in r4.1
+-- 
+ 
+---------------------------------------------------------------
+  Roger Parmenter                      Phone:    (970)-419-1219
+  3616 Terry Point Drive               Fax:      (970)-419-1219
+  Ft. Collins, CO 80524-1327      Internet: rogparm@rogparm.com
+---------------------------------------------------------------
 
-Which means it would either be included in some sort of experimental
-form of r4, or (more likely, I think) in a new branch.
-
-I haven't seen any work on any of the things delayed for 4.1, meaning
-either we are 0% done, or Hans has moved to a cathedral style of
-development.
-
-That, or I just haven't noticed such work.  I don't often read source code.
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQfbcOHgHNmZLgCUhAQIt5A//V477ZEMTobpz4II7I3gIzEzlzqScWkhF
-O09kFgT1RLhFsQbZnlEr3H7pMBG5IopN7u67rY3bAtrmiP+OuQg6viBuywVRCHKV
-/olNDpnxmdKv1eCuqIvmWWdwg6HVxuZ/jy5owwUuU22n0PRu7X+EkfHex92hJ6zQ
-cZLjq4Xe2MuH6Y7lF7z8Low3vn74tZYmVp8iLgTNeSuRRt94knPiIGJvVEIawKbU
-i6oFdeB63pXHwQUPul5AEs5hn6+yOyIln/DdSmO4FeWIMXA8BX8+E8tz2VYJ2AoG
-IPk13BCKpiPdKU0FBiK3Bre3908Gdu4laI0LnLIdJ9uTQry06ctvl061EebCopJO
-130KIyao9BVMnc7rmO/h0Qu4bCGxkU5tq5kzeXkBSAvi8FUQ6Rs6FJ0aR7jPMMUi
-LiLrz2T8qmI1JsIQEIocOu9waWYGe+CK5nLLDbi6933u8dcKGsWNi4umxNURxV/m
-WLePoIRQN8ImJT6/K4mog+99cjOARbdq4lXQfNV/FRaTRZT/53EFgn7OKabcRcde
-ifW04kzCy5kX8SnJhovxggR8DHqBMZz0Uq5s1/c49n4sVeIqAkMaK9rBeWuvUn/C
-makUvW8Lq7/pKVa2rhZQNycVFThHmwbWFmuR4yIBJmxo8XjyoPtNlCE3OdGx1OYR
-nNAr7J676gk=
-=no6b
------END PGP SIGNATURE-----
