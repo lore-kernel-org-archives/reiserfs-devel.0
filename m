@@ -1,44 +1,70 @@
-From: "Brett Russ" <icycle@charter.net>
-Subject: % of filesystem using tails/tail unpacking (shred related)
-Date: Fri, 25 Oct 2002 17:46:14 -0400
-Message-ID: <HDEFILEPHCPLCAGPLCEMKEMFDFAA.icycle@charter.net>
+From: Russell Coker <bofh@coker.com.au>
+Subject: Re: [OT] memory issue with GNU find
+Date: Sat, 26 Oct 2002 00:28:24 +0200
+Message-ID: <200210260028.24951.bofh@coker.com.au>
+References: <20021024174330.34f2d72e.philippe.gramoulle@mmania.com> <200210251900.33613.russell@coker.com.au> <20021025202302.633fcce4.philippe.gramoulle@mmania.com>
+Reply-To: Russell Coker <bofh@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11787-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11788-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20021025202302.633fcce4.philippe.gramoulle@mmania.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs-List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Philippe =?iso-8859-1?q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
+Cc: reiserfs <reiserfs-list@namesys.com>
 
-Is there a way to analyze an existing ReiserFS and find out how many of the
-blocks are tail packed as opposed to full/partially full from the same file?
-This could lead to an impact study of converting it to an unpacked state.
+On Fri, 25 Oct 2002 20:23, Philippe Gramoull=E9 wrote:
+>   |  One issue I noticed with find is that the amount of memory required =
+is
+>   |   propertional to the length of the maximum path name.  If you have a
+>   | very deep tree of subdirectories then the amount of memory taken
+>   | becomes significant.
+>
+> Are you aware of a find variant that would be memory limited ? :
 
-From the information I have received so far, the only way shredding can
-reliably work on Reiser, tail packing and data journaling need to be
-disabled.  However, existing filesystems using tail packing can not be
-simply unpacked to separate blocks without considering the following:
+No.
 
-1) as mentioned first, an impact study should be done to determine if
-unpacking will overflow the available space on the device
+> If memory usage goes up , then at a certain point, commit everything in R=
+AM
+> to a file , free up memory, and continue like this again and again.
 
-2) an unpack routine would need to be written if it doesn't exist.  With my
-current knowledge of Reiser and my timeframe (3 weeks) this is not possible
-for me to do IMO.
+That could be done, then there's always the issue of disk space.  For your =
 
-3) the unpack operation would need to treat the previously packed blocks as
-sensitive by shredding them after all tails were relocated but before
-returning the block to a free list
+example of a NAS device it might not be such an issue.  For a situation of =
+a=20
+small machine and a DOS attack then putting a long chain of directories and=
+ a=20
+large file at the end could make things really difficult for recovery!
 
-4) this operation, depending on the outcome of step 1, would be very
-expensive in performance
+Also this still wouldn't make the following work:
+find /tmp/junk -exec rm {} \;
 
-That's all I can think of right now.  Does this sound accurate?
+>   |   It's easy to create a set of nested directories that crash find (it=
+'s
+>   | a good local DOS attack).
+>   |
+>   |   while /bin/true ; do
+>   |     mkdir foo
+>   |     cd foo
+>   |   done
+>
+> Users don't have shell access but they could do it over FTP indeed. We
+> already found cases of such very nested directory.
 
-thanks,
-brett
+When I was running my SE Linux play machine (public root password and a=20
+challenge to the world to hack it) someone did that to it.  Since then I've=
+=20
+been meaning to write a program to remove a directory tree of arbitary dept=
+h=20
+in O(N) time where N is the depth.
 
+--=20
+http://www.coker.com.au/bonnie++/     Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/       Postal SMTP/POP benchmark
+http://www.coker.com.au/projects.html Projects I am working on
+http://www.coker.com.au/~russell/     My home page
 
