@@ -1,39 +1,33 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Which filesystem do errors come from?
-Date: Fri, 26 Jul 2002 13:24:10 +0400
-Message-ID: <20020726132410.B18706@namesys.com>
-References: <Pine.LNX.4.44.0207252352120.1119-100000@grignard.amagerkollegiet.dk>
+From: Sebastian Kaps <seb-reiserfs.0462a0@toyland.sauerland.de>
+Subject: Re: Data corrupted after crash
+Date: Fri, 26 Jul 2002 11:34:13 +0200
+Message-ID: <m37kji4yui.fsf@toyland.sauerland.de>
+References: <m34renr8vj.fsf@toyland.sauerland.de>
+	<20020726131943.A18706@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11081-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11082-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44.0207252352120.1119-100000@grignard.amagerkollegiet.dk>
+In-Reply-To: <20020726131943.A18706@namesys.com> (Oleg Drokin's message of
+ "Fri, 26 Jul 2002 13:19:43 +0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rasmus B?g Hansen <moffe@amagerkollegiet.dk>
-Cc: ReiserFS Mailing List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Hello!
+Hi Oleg!
 
-On Thu, Jul 25, 2002 at 11:57:34PM +0200, Rasmus B?g Hansen wrote:
+Am Fri, 26 Jul 2002 13:19:43 +0400 schriebst Du:
 
-> I am getting som errors on a box running reiserfs:
-> is_leaf: item location seems wrong (second one): *3.5*[87265 197987 0x1 IND], item_len 1, item_location 1379, free_space(entry_count) 21729
-> vs-5150: search_by_key: invalid format found in block 473792. Fsck?
-> vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat data of [87265 216135 0x0 SD]
-> [...]
+> No. Reiserfs provides only metadata journaling. So the data itself still may
+> be damaged (data still may be damaged even in case of full data journaling
+> just because there is no API for applications to control transactions
+> currently)
 
-> However, I cannot seem to find out, what filesystem, these errors come
-> from:
-> How can I see, whether the messages come from hda6 or hdc1?
+Okay, thanks to you and Kuba for pointing this out.
 
-Unfortunatelly this is impiossible, except you know which files should be
-accessed to get this error.
-We have some patches thatare supposed to print device name for each
-warning/error, but we cannot push anything into 2.4 until 2.4.19 is out anyway.
+-- 
+Ciao, Sebastian
 
-Bye,
-    Oleg
+* HP:    http://www.sauerland.de/~toyland/          PGP-Key available
