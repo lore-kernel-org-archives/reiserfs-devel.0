@@ -1,58 +1,70 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Thu, 2 Sep 2004 16:38:30 +0200
-Message-ID: <200409021638.31161.christian.mayrhuber@gmx.net>
-References: <20040826150202.GE5733@mail.shareable.org> <4699bb7b0409020245250922f9@mail.gmail.com> <812032218.20040902120259@tnonline.net>
+From: Stuart Young <cef-lkml@optusnet.com.au>
+Subject: Re: silent semantic changes with reiser4
+Date: Fri, 3 Sep 2004 00:45:18 +1000
+Message-ID: <200409030045.20098.cef-lkml@optusnet.com.au>
+References: <200408261819.59328.vda@port.imtp.ilyichevsk.odessa.ua> <20040901205140.GL4455@legion.cup.hp.com> <20040902125417.GA12118@thunk.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21287-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21288-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <812032218.20040902120259@tnonline.net>
+In-Reply-To: <20040902125417.GA12118@thunk.org>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com, Spam <spam@tnonline.net>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Theodore Ts'o <tytso@mit.edu>, Jeremy Allison <jra@samba.org>, Jamie Lokier <jamie@shareable.org>, Trond Myklebust <trond.myklebust@fys.uio.no>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, Linus Torvalds <torvalds@osdl.org>, reiser@namesys.com, hch@lst.de, Linux Filesystem Development <linux-fsdevel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
 
-On Thursday 02 September 2004 12:02, Spam wrote:
-> > As I say I like the idea, but I can't see anyway of implementing it in
-> > a way that is useful without first putting considerable effort into at
-> > least the VFS if not all the actual fs drivers.
-> 
->   Indeed. It is important that something like this gets implemented as
->   a transparent way as possible. If it could be done in a general way
->   so other filesystems like ext3/4 can eventually support it then that
->   would be wonderful. I do not, however, think that we should block it
->   in reiser4 because no other filesystems support it.
+On Thu, 2 Sep 2004 22:54, Theodore Ts'o wrote:
+> On Wed, Sep 01, 2004 at 01:51:40PM -0700, Jeremy Allison wrote:
+> > > So you're saying SCP, CVS, Subversion, Bitkeeper, Apache and rsyncd
+> > > will _all_ lose part of a Word document when they handle it on a
+> > > Window box?
+> > >
+> > > Ouch!
+> >
+> > Yep. It's the meta data that Word stores in streams that will get lost.
+>
+> And this is why I believe that using streams in application is well,
+> ill-advised.  Indeed, one of my concerns with providing streams
+> support is that application authors may make the mistake of using it,
+> and we will be back to the bad old days (when MacOS made this mistake)
+> where you will need to binhex files before you ftp them (and unbinhex
+> them on the otherside) --- and if you forget, the resulting file will
+> be useless.
 
-What about extending the namespace with leading ".." and "...".
+At least currently (to my knowledge anyway) all stream support in Windows is 
+data that is not important, and that can be either regenerated from 
+filesystem metadata or (more usually) the main file stream itself.
 
-In Unix names starting with a  "." already have the meaning of being a 
-hidden/config entry.
+This sort of data is really where streams excel, by providing a way to access 
+data that would otherwise take time/cpu to regenerate over and over, but that 
+in itself is not indispensable. Good examples of this are indexes of data 
+within a document, details of who owns/created/modified the document, common 
+views or reformatting of the data, etc. With audio/video/graphics, you could 
+store lower quality transforms of data (eg: stereo to mono, resolution 
+reduction, thumbnails, etc) in the streams for a file. With a word document, 
+it could be things like an index (assuming it's auto-generated from section 
+headings). With a database, it could be the indexes, and a few views that are 
+expensive time-wise to generate. All of these are easily regenerated from the 
+original data stream, but takes a while. And if you've got the disk, why not 
+use it?
 
-A name starting ".." means streams/metainformation, etc. something belonging 
-to the file/directory that should get backed up, copied, etc.
-There could be a "..streams", "..metas" or a "..acl" entry.
+If streams were always to be considered volatile, then you could do all sorts 
+of interesting things with them. Any disk cleanup mechanism you have could 
+also reap old streams specifically if the disk gets below a certain amount 
+free. This means that old streams that are hanging about don't end up wasting 
+all your disk space. Of course, you'd want a way to disable this (for servers 
+mainly), and streams would have to be considered volatile on more than just 
+Linux as a platform for this to be useful.
 
-If it starts with "..." it means some system specific information, like the
-name of the hash algorithm used for the current directory. It's basically 
-information that is not portable and not required by applications, like
-"...fsplugins".
-
-There is still the big problem of how to copy files with their associated 
-streams or meta information onto a standard unix filesystem as the 
-file/directory duality cannot be expressed. (It's forbidden to have
-a directory + file with the same name in the same directory)
-Maybe copy could create something like a ".#filename" directory for this kind
-of information if the advanced features are not supported on the target 
-filesystem. This is neither nice nor clean, but at least you don't loose 
-information. I do not suggest that the kernel should simulate the advanced 
-features with  ".#filename" directories, it's more a backup/restore thing 
-that could work if it's written down properly.
+Note that I'm not particularly advocating streams here. I'm just pointing out 
+'how' it could be useful. It could be very easy to misuse streams and cause 
+huge problems (as per Ted's comments), but it's always good to know the other 
+side of the argument.
 
 -- 
-lg, Chris
-
+ Stuart Young (aka Cef)
+ cef-lkml@optusnet.com.au is for LKML and related email only
