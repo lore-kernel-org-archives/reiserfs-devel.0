@@ -1,51 +1,59 @@
-From: Linus Torvalds <torvalds@osdl.org>
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: silent semantic changes with reiser4
-Date: Tue, 31 Aug 2004 23:06:24 -0700 (PDT)
+Date: Wed, 01 Sep 2004 02:32:35 -0400
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <Pine.LNX.4.58.0408312259180.2295@ppc970.osdl.org>
-References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
- <41352279.7020307@slaphack.com> <41356321.4030307@namesys.com>
+Message-ID: <87wtzejy7w.fsf@uhoreg.ca>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <41352279.7020307@slaphack.com>
+ <41356321.4030307@namesys.com>
+ <Pine.LNX.4.58.0408312259180.2295@ppc970.osdl.org>
 Mime-Version: 1.0
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <41356321.4030307@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
+>>>>> "Linus" == Linus Torvalds <torvalds@osdl.org> writes:
 
+[...]
 
-On Tue, 31 Aug 2004, Hans Reiser wrote:
-> 
-> You are saying, 1-2% simpler and better, no biggie, why work so hard to 
-> get it?
-> 
-> And we are saying, 1-2% simpler and better, times thousands of 
-> applications, wow! That's a lot!
+Linus> I know, you've ignored the "runat" program (which is just a
+Linus> wrapper around the openat() system call), but it _has_ been
+Linus> mentioned several times in this thread. Yes, you'd type a bit
+Linus> more to do
 
-But would thousands care? Seriously?
+Linus> 	runat file ls -l
 
-For example, you could make just _one_ program support "openat()", and 
-you'd get most of the advantages, with no possibility of _breaking_ any of 
-thousands of applications..
+Linus> instead of
 
-I know, you've ignored the "runat" program (which is just a wrapper around
-the openat() system call), but it _has_ been mentioned several times in 
-this thread. Yes, you'd type a bit more to do
+Linus> 	ls -l file/
 
-	runat file ls -l
+And how do I get GIMP (or insert your favourite image editing program
+here) to edit xterm/icon.png without having to open a new instance of
+GIMP?  runat isn't going to help here.  You'll have to modify every
+editing program if you want that type of functionality.
 
-instead of
+Linus> but at least the openat/runat approach also works for
+Linus> directories, which does actually make it a lot more _generic_
+Linus> than the "show in the regular filespace" approach. No special
+Linus> cases.
 
-	ls -l file/
+Linus> So your comparison isn't valid, because you're ignoring the
+Linus> people who shout "runat" at you. You've also not ever actually
+Linus> answered about the problems about directories with attributes.
 
-but at least the openat/runat approach also works for directories, which 
-does actually make it a lot more _generic_ than the "show in the regular 
-filespace" approach. No special cases.
+All attributes should be stuffed in a specially-named subdirectory, like
+Reiser4 puts all metadata in a metas subdirectory.  That's one solution.
+The only trick here is picking a suitable name for the subdirectory that
+is both user-friendly and highly unlikely to generate clashes.
 
-So your comparison isn't valid, because you're ignoring the people who
-shout "runat" at you. You've also not ever actually answered about the
-problems about directories with attributes.
+Both of these I've mentioned before in this thread, and nobody has
+brought up any objections yet.
 
-		Linus
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
