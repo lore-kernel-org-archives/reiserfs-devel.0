@@ -1,87 +1,71 @@
-From: lrc1@st-andrews.ac.uk
-Subject: Re: Carrying Attributes too Far
-Date: Tue, 23 Sep 2003 02:21:01 +0100
-Message-ID: <1064280061.3f6f9ffd2c514@webmail.st-andrews.ac.uk>
-References: <1971720372-BeMail@cr593174-a>
+From: Silviu Marin-Caea <silviu@genesys.ro>
+Subject: bad blocks in the wrong place
+Date: Tue, 23 Sep 2003 09:24:13 +0300
+Message-ID: <3F6FE70D.9090700@genesys.ro>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-15724-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ boundary="------------070007040902060802020008"
+Return-path: <reiserfs-list-return-15725-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1971720372-BeMail@cr593174-a>
-Content-Transfer-Encoding: 8bit
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Quoting "Alexander G. M. Smith" <agmsmith@rogers.com>:
+--------------070007040902060802020008
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-<snip />
+I have a large hard-disk (120 GB) on which some blocks went bad.
 
-> lrc1@st-andrews.ac.uk wrote on Mon, 22 Sep 2003 14:28:30 +0100:
-> > * Will
-> > 
-> > 	chmod u-rwx somefile; chmod u+rwx somefile
-> > 
-> > still work? What special-case behaviour will be needed to make it work?
-> 
-> Likely via the Janus (two faced) view of the file system as ordinary files
-> and directories for old software.  Ideally new versions of ls, chmod (or a
-> completely new permission system), etc, would be needed for native use.
-> 
+Now, it cannot be mounted.  Attached is what debugreiserfs says.  What 
+can I do; I'm newbie to reiserfs architecture.  I thought that ReiserFS 
+keeps copies of the superblock or something, like ext2/3 does.
 
-The question wasn't "Will there still be a chmod?". Of course there can still 
-be a chmod call in the legacy interface, or a chmodlike "convenience method" 
-call in the new one. The question is whether the subfile metadata system will 
-be compatible with permissions systems in which a user is able to revoke his 
-own permissions to a file and then return them again - such as the current Unix 
-permissions system - and what bodges you would accept to make it compatible. Be 
-more specific - in all these questions, the devil shows itself in the detail.
+reiserfsck says "error occured looks like hardware problem.  bread 
+cannot read block 13271040".  That's the actual number it displays.
 
-> > * Will it be possible to make a attribute file the child of
-> > /pub/some_ordinary_directory via a hard link? Will it be possible to make
-> an
-> > attribute file into an attribute file for some other file? That has
-> completely
-> > different permissions? And is owned by a different user? What will have to
-> > happen, in either case, at the time the file is hard-linked to its new
-> parent?
-> 
-> Attributes are files (actually what I call fildirute Things - file directory
-> and attribute all at once) like any other Thing.  So presumably the same hard
-> linking and permission rights apply to them as you already have for
-> conventional files 
+Thank you
 
-I agree that attribute files should be files like any other. So attribute files 
-should certainly have the same linking and permissions rights as any other 
-file. How would you implement that?
+I hope this is the right list for the question.
 
->(the permission is part of the fildirute Thing, perhaps
-> via a plug-in).
+--------------070007040902060802020008
+Content-Type: text/plain;
+ name="debugreiser"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="debugreiser"
 
-<snip />
 
-If attribute files have a different permissions system to all other files, how 
-are they files like any other?
+Filesystem state: consistency is not checked after last mounting
 
-If a file is both an attribute file and a child 
-of /pub/some_ordinary_directory , should it have the permissions system of an 
-ordinary file or an attribute file? What are the consequences of either choice?
+Reiserfs super block in block 16 on 0x1642 of format 3.6 with standard journal
+Count of blocks on the device: 29945160
+Number of bitmaps: 914
+Blocksize: 4096
+Free blocks (count of blocks - used [journal, bitmaps, data, reserved] blocks): 29154954
+Root block: 14969
+Filesystem is NOT clean
+Tree height: 4
+Hash function used to sort names: "r5"
+Objectid map size 10, max 972
+Journal parameters:
+	Device [0x0]
+	Magic [0x34ae2c74]
+	Size 8193 blocks (including 1 for journal header) (first block 18)
+	Max transaction length 1024 blocks
+	Max batch size 900 blocks
+	Max commit age 30
+Blocks reserved by journal: 0
+Fs state field: 0x0
+sb_version: 2
+inode generation number: 35482
+UUID: 48d29ced-fe37-4c68-adf8-32ace9f2be45
+LABEL: 
+Set flags in SB:
+	ATTRIBUTES CLEAN
 
-If an attribute file's permissions metadata is part of it, is the attribute 
-file really a simple sequence of bytes like any other file? If it is, then what 
-will prevent any user with write permissions to the attribute file from 
-changing the part of the file that records its permissions metadata to whatever 
-she wishes?
+--------------070007040902060802020008--
 
-As to my third question, how would a user go about changing the owner of a 
-file? How might she be prevented from doing so?
 
-> - Alex
-
-Leo.
-
------------------------------------------------------------------
-University of St Andrews Webmail: http://webmail.st-andrews.ac.uk
