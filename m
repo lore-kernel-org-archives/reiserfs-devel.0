@@ -1,134 +1,74 @@
-From: Sean Plaice <splaice@gmail.com>
-Subject: Re: reiserfs errors in dmesg output
-Date: Sat, 3 Jul 2004 16:10:37 -0700
-Message-ID: <ae9bd76a0407031610bfd1c7d@mail.gmail.com>
-References: <ae9bd76a040703052222e0065f@mail.gmail.com> <40E6AC37.1090609@namesys.com>
+From: Marcelo Pacheco <marcelo@macp.eti.br>
+Subject: Re: keys and inodes
+Date: Sat, 3 Jul 2004 16:50:55 -0300
+Message-ID: <200407031650.55869.marcelo@macp.eti.br>
+References: <1088802102.6434.80.camel@murdock.llnl.gov> <40E67C3D.6070609@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19498-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19499-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40E6AC37.1090609@namesys.com>
+In-Reply-To: <40E67C3D.6070609@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Sat, 03 Jul 2004 16:53:11 +0400, Vladimir V. Saveliev <vs@namesys.com> wrote:
+So, inode numbers on Reiser are alocated on the fly, as files are used, and 
+those numbers will change, so for example, ls -i is useless with reiser, as 
+that number given for each file will change once the vfs structure gets 
+released and later the file gets used again ?
+
+Just checking,
+
+Marcelo Pacheco
+
+On Saturday 03 July 2004 06:28, Vladimir V. Saveliev wrote:
 > Hello
-> 
-> Sean Plaice wrote:
-> > Hello,
-> > My system is running linux 2.4.33
-> 
-> Please double check linux version.
-
-Please excuse my early morning typing, I meant to type 2.4.22.
-
-> 
-> with reiserfs for all of it's files
-> > systems, The system has a PERC-3DC Raid card (uses the aacraid
-> > driver).
+>
+> jenn sirp wrote:
+> > Hi,
 > >
-> > The server is a very io intensive mail server.
+> > I was hoping someone might be able to answer a couple of questions about
+> > inodes is Reiser(v3).
 > >
-> > I have recently noticed some "troubleing" output in the dmesg output.
-> > The server does not appear to be having any operational problems but
-> > the errors are leading me to be quite worried of potential future
-> > problems.
+> > I would like to know how ReiserFS inodes and the VFS inodes in the
+> > d_cache correspond with each other.
+>
+> You might want to read about dentry-inode relationship in
+> linux/Documentation/filesystem/vfs.txt.
+>
+>   Specifically, how and where it is
+>
+> > that 'keys' get mapped to inodes in the system?
+>
+> Reiserfs provides set of vfs operations. The one which is responsible
+> for mapping keys to inode is lookup method. reiserfs implementation is
+> reiserfs_lookup. It searches for the file name in filesystem tree. If
+> name is found - file key is extracted from it and VFS inode is created
+> (connected to d_cache dentry).
+> File key is stored in reiserfs specific portion of VFS inode.
+>
+> > Do ReiserFS keys change or get reconstructed when tails are packed or
+> > when the tree gets re-balanced?
+>
+> No. Once file is created - its key never changes. However, each position
+> in a file has its own key. For instance, 0-th byte of a file has key X,
+> Y, 1. 100-th byte of a file should be looked for with key X, Y, 101.
+> [X, Y] is the same for any part of file. This is what is extracted from
+> file name on lookup. Key of any other position within a file can be
+> easily calculated as we saw.
+>
+> Or do keys remain consistent throughout
+>
+> > a file's lifetime in the system?
+>
+> Yes.
+>
+> > Even the quickest response would be greatly appreciated.
 > >
-> > Could someone please help me diagnose what these error messages mean,
-> > and what I should do about them.
+> > Thanks,
 > >
-> > Thank you in advance for your answers, take care.
-> >
-> > <snip>
-> >
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 28)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 28)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 28)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 28)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 28)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 28)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 28)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 50)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 50)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 50)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 3)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 3)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 3)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 3)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 3)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 3)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 3)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 3)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 3)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 3)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 3)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 3)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 3)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 3)
-> > sd(8,6):vs-13060: reiserfs_update_sd: stat data of object [1131
-> > 1466199 0x0 SD] (nlink == 1) not found (pos 3)
-> >
-> 
-> These is not too bad in this. But,
-> would you run find -inum 1466199?
-> What do you get?
-
-I am running the find now, but excuse my ignorance I could not find
-any information with a ton of google'ing to determine the exact
-partition that is refered to by sd(8,6).
-
-I am assuming sd[scsi_device](8[controller?],6[partition?]. Using that
-logic I should be doing the find on /dev/sda5 (if partition referenced
-starts at 0). If anyone could clarify this I would appreciate it.
-
-> 
-> > and
-> >
-> > sd(8,6):journal-1777: buffer 109798 bad state !PREPARED !LOCKED !DIRTY
-> >  JDIRTY_WAIT
-> > sd(8,6):journal-1777: buffer 185659 bad state !PREPARED !LOCKED !DIRTY
-> >  JDIRTY_WAIT
-> > sd(8,6):journal-1777: buffer 208840 bad state !PREPARED !LOCKED !DIRTY
-> >  JDIRTY_WAIT
-> > sd(8,6):journal-1777: buffer 300870 bad state !PREPARED !LOCKED !DIRTY
-> >  JDIRTY_WAIT
-> >
-> 
-> IIRC, sometime ago, there were some fixes for race conditions which
-> might cause this. Chris, would you please confirm that?
-
-If this is a race condition that is specific to the kernel I am
-running could this lead to corruption or system instability?
-
-
--- 
-Sean
+> > Jenn
