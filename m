@@ -1,55 +1,50 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re:  Red Hat Enterprise Linux AS (v. 2.1) and  > 2 GB files
-Date: 27 Jun 2003 08:48:47 -0400
-Message-ID: <1056718127.20899.202.camel@tiny.suse.com>
-References: <1056635615.1967.377.camel@atlas.vinterbro.com>
-	 <20030626155842.2c7fd748.pegasus@nerv.eu.org>
-	 <3EFB1F97.3020205@namesys.com> <20030627065918.GA20771@namesys.com>
-	 <20030627125003.A32245@t-raenon.nmd.msu.ru>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: V4: pseudo files, RFC
+Date: Fri, 27 Jun 2003 19:29:00 +0400
+Message-ID: <16124.25276.200844.669916@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14731-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14732-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030627125003.A32245@t-raenon.nmd.msu.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: flx@msu.ru
-Cc: Oleg Drokin <green@namesys.com>, Hans Reiser <reiser@namesys.com>, Jure Pecar <pegasus@nerv.eu.org>, reiserfs-list@namesys.com
+To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-On Fri, 2003-06-27 at 04:50, Alexander Lyamin wrote:
-> Fri, Jun 27, 2003 at 10:59:18AM +0400, Oleg Drokin wrote:
-> > Hello!
-> > 
-> > On Thu, Jun 26, 2003 at 08:30:15PM +0400, Hans Reiser wrote:
-> > 
-> > > >Because RedHat never bothered to update reiserfs code in their e kernels.
-> > > >Your best bet is to get a newer kernel, perhaps 2.4.21, and if you cannot
-> > > >afford that, trim your app to not create files that big.
-> > > >There are rumors that 2.4.18 based e kernel is in the testing ... 
-> > > You mean RedHat is STILL shipping 2.4.9 based kernels?  Oh no wonder 
-> > > there are people with stability problems.....
-> > 
-> > No, I believe there was kernel update last month that upgraded RHAS kernel up to
-> > 2.4.18.
-> > Anyway RHAS 2.4.9 kernel does not have that much in common with vanilla 2.4.9.
-> 
-> If there's nothing much in common with vanilla linux, then they should not 
-> mislead their customers with "linux" label on it, but should fork and do 
-> something like Reddix or Hattix 2.4.9 .
-> 
-> Sometimes I really getting lost in marketting tricks of thouse guys.
+Hello,
 
-Most of the differences are backports of features in other linux
-kernels.  When you commit to maintaining a kernel for a long period of
-time, you've got two choices about how to deal with critical updates. 
-You can back port them from future kernels or you can offer an upgrade
-path to new kernels.
+now, that after so long time spent developing core reiser4 functionality
+we became bored, we would like for a diversion to get some feedback and
+comments on advanced semantical capabilities featured by it.
 
-Both have their own advantages.
+As readers of http://www.namesys.com/v4/v4.html know, one of the goals
+of reiser4 (and whole reiserfs project at the larger scale) is to extend
+file system name space to cover information not usually available
+through path names.
 
--chris
+Reiser4 already made some progress here and at
+http://www.namesys.com/v4/pseudo.html one can examine a list of "pseudo"
+files, implemented in the latest code, with descriptions and examples of
+their usage.
 
+Any comments, questions, and proposals are welcome.
 
+There is, however, one particular question, that we would like to
+discuss. UNIX traditionally treated read and execute permissions on the
+directories as permissions for readdir and lookup respectively. In
+reiser4 it is possible to have valid path name of the form A/B, where A
+is a regular file (not directory). As path name resolution is handled at
+the VFS layer (above reiser4), pseudo files are only accessible when
+user possesses execute permission for its host. Two obvious solutions
+are
+
+1. ignore problem, and,
+
+2. add another type of permission (lookup), teach VFS to use it for
+directory lookups, mapping it back to execute by default. This would
+probably complicate the process of the integration of reiser4 into the
+core kernel.
+
+Nikita.
