@@ -1,50 +1,41 @@
-From: Todd Lyons <todd@mrball.net>
-Subject: Re: Hard disk crash and solution
-Date: Mon, 3 Feb 2003 19:08:01 -0800
-Message-ID: <20030204030801.GC1144@mrball.net>
-References: <IKENJBHCILNPNAGHKCHFOEDMCCAA.Art@chello.nl> <20030127055331.E976@humilis> <20030127100349.B22720@namesys.com> <200302030711.13593.amosf@mrbean.net.au> <20030203054928.W2964@humilis>
+From: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
+Subject: Re: when distros do not support official Marcelo kernels they are not being team players
+Date: Tue, 4 Feb 2003 04:32:44 +0100
+Message-ID: <20030204033244.GA17331@merlin.emma.line.org>
+References: <3E3A6D76.7080300@namesys.com> <86lm0xpmho.fsf@trasno.mitica> <3E3E7A95.1050908@namesys.com> <1044284001.15685.358.camel@tiny.suse.com> <3E3EBA3F.7060806@namesys.com> <1044300746.15684.428.camel@tiny.suse.com> <3E3EC7EC.8090005@namesys.com> <20030203203439.GA4251@marowsky-bree.de> <m3znpchkr8.fsf@merlin.emma.line.org> <200302040224.h142OJa0030111@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12632-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12633-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20030203054928.W2964@humilis>
+In-Reply-To: <200302040224.h142OJa0030111@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; x-action="pgp-signed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Mon, 03 Feb 2003, Valdis.Kletnieks@vt.edu wrote:
 
-Ookhoi wanted us to know:
+> The important question is, of course, what the *proper* disposition of the
+> other 67% should be. Are the other 67% *also* real bugs, or are they
+> pilot error, RTFM/FAQ, "Oh that's already fixed in the patch we're about
+> to ship", etc etc?
 
->A lot? Sometimes you can hear a disk recalibrate, which is not bad, but
->that should be only now and then.
+This isn't really the place to discuss SuSE policy that is unrelated to
+kernel/reiserfs or something; on topic, they haven't updated reiserfs to
+3.6.4. Besides that, I usually only report real issues and I think that
+less than 1/6 of my reports are false in the sense of not being bug
+reports.
 
-If you're hearing what I have heard, it's the sound your ears hear when
-you're scratching your head.  At that point it's trying to read a bad
-sector and multiple reads/writes seemingly have stacked up in the queue
-and the machine has come nearly to a halt.  It's still running, but
-barely, more like crawling.
+SuSE seem to have a lot of time to help an individual
+who hosed his system by installing a vendor driver compiled with wrong
+options -- OTOH, there are problems: gfxboot (security), NTP (critical
+regression, bcastclient, reported against SuSE 7.3), leafnode-1.9.19
+(critical, locking doesn't work), lpr (critical) are unfixed still --
+and numerous issues I haven't bothered to report, because what good is
+adding new reports if the old aren't being worked on?
 
->Try to run an ibm drive fitness program and see what it tells you about
->the disk.
-
-They refer to it as DFT and they have a couple of different versions as
-I remember.  It's good software too.  Boots from PC-DOS :)
-- -- 
-Blue skies...	Todd 	Public key: http://www.mrball.net/todd.asc
-...and I will strike down upon thee with great vengeance and furious
- anger, those who attempt to poison and destroy my binaries, and you 
-    will know my name is root, when I lay my vengeance upon thee.
-   Linux kernel 2.4.19-16mdk   3 users,  load average: 0.00, 0.02, 0.18
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.7 (GNU/Linux)
-
-iD8DBQE+Py6RIBT1264ScBURAqd5AKCoW/QHfvqAiIQNmdcMxUJVT4VKiACgucMx
-PeceAr3qu73ZAU08mssAUDY=
-=VJP/
------END PGP SIGNATURE-----
+How dare they waste time helping with nonstandard setups when even the
+shipped software doesn't work right?
