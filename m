@@ -1,47 +1,31 @@
-From: "David Dabbs" <david@dabbs.net>
-Subject: RE: Re: [PATCH] use S_ISDIR() in link_path_walk() to decide whether the last path component is a directory
-Date: Mon, 13 Sep 2004 17:47:50 -0500
-Message-ID: <20040913224757.B2EAC15C76@mail03.powweb.com>
+From: Tom Vier <tmv@comcast.net>
+Subject: vs-8115: get_num_ver: not directory item
+Date: Mon, 13 Sep 2004 22:25:46 -0400
+Message-ID: <20040914022546.GA2425@zero>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21729-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21731-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: 
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: 'ReiserFS List' <reiserfs-list@namesys.com>, linux-kernel@vger.kernel.org
-Cc: viro@parcelfarce.linux.theplanet.co.uk
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
+i got this warning on my md0 (raid 0, two scsi drives) array. i've never
+seen it before. reiserfsck 3.6.14 (i know, not the latest) didn't detect any
+problems. i tried to reproduce it, but i couldn't trigger it. i've never
+seen this before.
 
-> viro wrote:
->>     if (*name == '/') {
->>        if (*(name+1)=='/' && *(name+2)==':') {
->>           name+=3;
->
->	Pathname resolution is a hell of a fundamental thing and kludges
->like that are too ugly to be acceptable.  If you can't make that clean
->and have to resort to stuffing "special cases" (read: barfbag of ioctl
->magnitude) into the areas that might be unspecified by POSIX, don't do it
->at all.
->
+i found this, which claims to fix it, but it already applied:
+http://www.mail-archive.com/reiserfs-list@namesys.com/msg03866.html
 
-Even though SuS allows for implementation-specific resolution for pathnames
-starting with "//"? It's kludgy, and I suspected that might be the response,
-but I thought I'd float it nonetheless.
+i'm running 2.6.8 UP x86 on an opteron, highmem enabled, no preempt.
+nothing fancy.
 
->I don't like the amount of handwaving from Hans, but *that* is far
->worse.  Vetoed.
-
-Kludgy, yes, but far worse?  At least I bothered to take the SuS into
-consideration and took the time to try an approach, however kludgy, that
-might work within them. 
-
-Bilious or not, thanks for the feedback.
-
-
-david
-
-
+-- 
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0x15741ECE
