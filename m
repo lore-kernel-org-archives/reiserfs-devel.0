@@ -1,61 +1,116 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: [PATCH] various allocator optimizations
-Date: Tue, 11 Mar 2003 21:04:00 +0300
-Message-ID: <20030311210400.A4859@namesys.com>
-References: <1047400482.8215.312.camel@tiny.suse.com> <20030311194205.A4493@namesys.com> <1047403968.8219.337.camel@tiny.suse.com>
+From: Noyan Ilmen <Noyan@Ilmen.de>
+Subject: dead inode read from disk [1 2 0x0 SD]. This is likely to be race with knfsd. Ignore
+Date: Tue, 11 Mar 2003 19:43:43 +0100
+Message-ID: <30370000.1047408223@bidolor>
+Reply-To: Noyan Ilmen <Noyan@Ilmen.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13190-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="==========877300887=========="
+Return-path: <reiserfs-list-return-13191-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1047403968.8219.337.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+--==========877300887==========
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-On Tue, Mar 11, 2003 at 12:32:48PM -0500, Chris Mason wrote:
-> > > changes blocknrs_and_prealloc_arrays_from_search_start into three
-> > > passes.  pass1 goes from the hint to the end of the disk, pass2 goes
-> > > from the border to the hint, and pass3 goes from the start of the disk
-> > > to the border.
-> > As you probably remember, we decided to drop border stiff all together
-> > because of all the extra seeking it incurrs.
-> The border does do extra seeks for some cases (search_reada helps), but
-> no border at all spreads tree blocks all over.  That too does a lot of
+Ignore - ha ha very funny
+Ignore means: can't mount ("no mount dir" or somethimg like that)
+I've got 80GB Data lost.
 
-I'd say that no border makes tree blocks to appear near file data locations
-(at least at file time creation, items might be shifted away later).
+nfs with reiserfs seems to be still buggy and corrupts data.
 
-> seeks, since leaves and the formatted nodes that point to them might be
-> on entirely different areas of the disk.
+What happens:
+  day 1:
+   (syslog)(see attachment 1)
+Mar  9 21:31:16 outa kernel: vs-5150: search_by_key: invalid format found in block 7843968. Fsck?
+Mar  9 21:31:16 outa kernel: vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat data of [220650 220800 0x0 SD]
+Mar  9 21:31:17 outa kernel: vs-5150: search_by_key: invalid format found in block 7843968. Fsck?
+Mar  9 21:31:17 outa kernel: vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat data of [220650 220805 0x0 SD]
+.
+.
+.
+   (reiserfsck --check)(see attachment 2)
+node (7843968) with wrong level (44655) found in the tree (should be 1)
+whole subtree skipped
+free block count 3902051 mismatches with a correct one 3953043.
+on-disk bitmap does not match to the correct one.
 
-Well, leaves _are_ formatted nodes after all ;)
+eh??? (h=E4???)
 
-> > > Overall, I believe this will significantly improve fragmentation over
-> > > time.  oid_groups should only be used if your FS has a small number of
-> > I hope we won't have read-access speed degradation with these.
-> It does, but so does skip_busy alone.  You don't see the problem with
+   (reiserfsck --fix-fixable)(see attachment 3)
+node (7843968) with wrong level (44655) found in the tree (should be 1)
+whole subtree skipped
+free block count 3902051 mismatches with a correct one 3953043.
+on-disk bitmap does not match to the correct one.
 
-But we save on cpu here, I think. No?
-I am surprised this is noticeable at all.
+eh??? (h=E4???)
 
-> skip_busy during a mongo run, but run stress.sh -n 1 <data set that uses
-> 50% of the disk> for a few hours and then run mongo again without
-> deleting the stress.sh data set.
+this above takes me hours: rtfms, null-info-reiser-docs, net,...
+what the hell is "...reiserfsck returns 1 to  indicate..." Do you
+think I write functions to eval your return values?
 
-Hm.
+shutdown
 
-> The 2.4.20 default is great on a clean FS but breaks down over time,
-> just like the 2.4.19 allocator did.  Various people have demonstrated it
-> with benchmarks.
+day 2:
+   can't mount local reiser disk
 
-Yes, and this is sad. But it appars that almost every FS suffers this problem ;)
+much more hours
 
-Bye,
-    Oleg
+   (reiserfsck --check)(see attachment 4)
+bad_stat_data: block 9160, [1 2 0x0 SD (0)], directory SD has bad nlink number
+bad_stat_data: block 9160, [2 4 0x0 SD (0)], SD has bad nlink number
+.
+205300 lines later
+.
+bad_stat_data: block 22978597, [310954 310965 0x0 SD (0)], SD has bad nlink number
+free block count 3902037 mismatches with a correct one 3953043.
+on-disk bitmap does not match to the correct one.
+
+   (reiserfsck --rebuild-tree)(see attachment 5/6)
+   reed your warnings about your buggy-beta-loose-all-data-software and say "Yes",
+   because there wasn't any more to backup. Btw it takes about 3 days to backup
+   the 80G with my DDS3 streamer.
+####### Pass 0 #######
+"r5" got 206443 hits
+####### Pass 1 #######
+####### Pass 2 #######
+are_file_items_correct: convert the indirect item back to direct 208191 208307
+####### Pass 3 #########
+are_file_items_correct: convert the indirect item back to direct 67929 7778
+.
+.
+.
+are_file_items_correct: convert the indirect item back to direct 258907 258912
+####### Pass 3a (lost+found pass) #########
+
+takes about 2 hours and I was able to mount the partition.
+If there is lost data? I don't know, but it would not be the first time I lost
+data with reiserfs.
+
+
+system-setup:
+server with:
+ debian sarge
+ kernel 2.4.20-686 / ReiserFS version 3.6.25
+ reiserfsprogs 3.6.3-1
+ nfs-kernel-server 1.0.2-1
+ samba 2.2.3a-12
+
+client with:
+ debian sarge
+ kernel 2.4.19-smp
+ nfs-kernel-server 1.0.2-1
+ samba 2.2.3a-6
+
+Please don't annoy me with mails.
+my only desire is to convert to ext2/3. Spricht hier jemand deutsch?
+
+Noyan
+ 
+--==========877300887==========--
+
