@@ -1,37 +1,34 @@
-From: Tom Vier <tmv@comcast.net>
-Subject: Re: implementing reiserfs in C++ for a new OS
-Date: Wed, 11 Aug 2004 19:22:07 -0400
-Message-ID: <20040811232207.GB18105@zero>
-References: <20040810211951.GU1284@nysv.org> <41194690.5050908@namesys.com> <1365645117.20040811065416@tnonline.net> <20040811073959.GV1284@nysv.org> <4119D468.8080104@futuretg.com> <20040811090033.GX1284@nysv.org> <4119EA9B.7090503@futuretg.com> <20040811105442.GY1284@nysv.org> <411A0D42.8020204@futuretg.com> <20040811123909.GZ1284@nysv.org>
-Reply-To: Tom Vier <tmv@comcast.net>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: Re[3]: Is there a way to change root inode from -1 to what ever    it    will    work?
+Date: Thu, 12 Aug 2004 14:17:16 +0400
+Message-ID: <200408121417.16087.vitaly@namesys.com>
+References: <20040811183322.5806.qmail@qmail-local.inova.com.br> <20040811210019.27186.qmail@qmail-local.inova.com.br>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20223-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20226-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20040811210019.27186.qmail@qmail-local.inova.com.br>
 Content-Disposition: inline
-In-Reply-To: <20040811123909.GZ1284@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Rodolfo Sikora <sikora@inova.com.br>, reiserfs-list@namesys.com
 
-On Wed, Aug 11, 2004 at 03:39:09PM +0300, Markus T?rnqvist wrote:
-> But look at the Digital Millennium Copyright Act and others.
-> USA was supposed to be the land of the free, now it's the land of the
-> rich and powerful, where some people are more free than others and some
-> people are more equal than others.
+Hi,
 
-i hate the dmca as much as anyone, but wealth (money or resources) means
-more "freedom" everywhere. it means the freedom to take more risks, make more
-investments (thereby allowing you to pay people to make things to patent,
-for example). but this is a little offtopic. 8)
+I think you have some problem with ram.
+1 - fsck aborts on different places all the time on your computer;
+2 - first bz2 failed to bunzip2 on my computer;
+3 - second bz2 had some problems on unpacking with 'debugreiserfs -u'
+also, I just jumped them over in gdb so was able to unpack most of the data;
+4 - fsck (3.6.18) worked fine for me on your metadata.
 
-on topic: hans, they have every right to reimpliment reiserfs3. but, it
-MUST be done in a clean fashion, like ibm's bios was reimplimented, unless
-they want get a license from you (either the gpl, or another).
+in the case of a hardware problem, I want to point to the fact that 
+we deal with them under www.namesys.com/support.html terms.
 
 -- 
-Tom Vier <tmv@comcast.net>
-DSA Key ID 0x15741ECE
+Thanks,
+Vitaly Fertman
+
