@@ -1,51 +1,38 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
+From: Viktors Rotanovs <Viktors@Rotanovs.com>
 Subject: Re: reiser4 snapshot
-Date: Tue, 23 Dec 2003 15:31:04 +0300
-Message-ID: <16360.13704.279272.690355@laputa.namesys.com>
-References: <16360.8933.883691.281877@laputa.namesys.com>
-	<3FE83374.8070803@Rotanovs.com>
+Date: Tue, 23 Dec 2003 15:02:05 +0200
+Message-ID: <3FE83CCD.6040708@Rotanovs.com>
+References: <16360.8933.883691.281877@laputa.namesys.com>	<3FE83374.8070803@Rotanovs.com> <16360.13704.279272.690355@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16392-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16393-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FE83374.8070803@Rotanovs.com>
+In-Reply-To: <16360.13704.279272.690355@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Viktors Rotanovs <Viktors@Rotanovs.com>
-Cc: Reiserfs-List@Namesys.COM
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Reiserfs-List@Namesys.COM
 
-Viktors Rotanovs writes:
- > Nikita Danilov wrote:
- > 
- > >new reiser4 snapshot (for 2.6.0) is available at the
- > >http://www.namesys.com/snapshots/2003.12.23/
- > >See READ.ME file there for more instructions.
- > >  
- > >
- > What areas are still not ready for production?
- > How risky it would be to put, say, 20000 e-mail users (cyrus imap and 
- > nothing else) on reiser4 partition?
+Nikita Danilov wrote:
 
-I wouldn't recommend it, frankly. Reiser4 should first pass through more
-extensive testing (first internally, and then in something like -mm, or
--wli) before it will be ready for "production".
+> > Also, does lack of sendfile in the current snapshot mean that Apache 
+> > will lose in performance when serving from Reiser4 partition?
+>
+> Hmm, what Apache uses sendfile for?
 
- > Reiser4 works very very well on my desktop pc, so I'm eager to try it on 
- > something bigger.
 
-Great.
+It uses it to send static content to client. Quote from Apache 2 docs:
 
- > 
- > Also, does lack of sendfile in the current snapshot mean that Apache 
- > will lose in performance when serving from Reiser4 partition?
+"In situations where Apache 2.0 can ignore the contents of the file to 
+be delivered -- for example, when serving static file content -- it 
+normally uses the kernel sendfile support the file if the OS supports 
+the |sendfile(2)| operation."
 
-Hmm, what Apache uses sendfile for?
+"On most platforms, using sendfile improves performance by eliminating 
+separate read and send mechanics."
 
- > 
- > Best Wishes,
- > Viktors
+Best Wishes,
+Viktors
 
-Nikita.
