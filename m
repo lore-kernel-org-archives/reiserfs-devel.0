@@ -1,62 +1,84 @@
-From: Anders Widman <andewid@tnonline.net>
-Subject: Re: Error messages.
-Date: Wed, 5 Mar 2003 21:51:22 +0100
-Message-ID: <7478652593.20030305215122@tnonline.net>
-References: <7473069171.20030305201818@tnonline.net>
- <20030305204105.GA14382@willow.seitz.com>
-Reply-To: Anders Widman <andewid@tnonline.net>
+From: berthiaume_wayne@emc.com
+Subject: RE: Error messages.
+Date: Wed, 5 Mar 2003 16:01:35 -0500
+Message-ID: <93F527C91A6ED411AFE10050040665D0049C0798@CORPUSMX1>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13086-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13087-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030305204105.GA14382@willow.seitz.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: andewid@tnonline.net
+Cc: reiserfs-list@namesys.com
+
+	Anders, you need the subsequent lines for the error to determine
+what the status error is. The 0x58 is a staatus error. It could be a status
+timeout, seek error, etc. The subsequent line generally tells you what it
+is. The faact you have noticed the errors diminished with DMA off or at the
+lower speeds seems to indicate possible timeouts. 
+	Typically, the IDE driver will drop out of DMA and retry in PIO when
+an error is encountered. If the kernel is <2.4.18(?) it will have a
+configuration switch that says DMA always for disks. What this means is IDE
+will drop back to PIO, complete the request, then go back to DMA for
+subsequent requests. Prior to this kernel, IDE would degrade that drive to
+PIO forever until the next boot.
+	To solve it - good hardware. Really! For instance, there is a Maxtor
+tool that allows you to examine the probational logs of the drive - areas of
+the disk that are suspected as bad. These are areas that aren't necessarily
+logged as a bad block but are on "probation" for the next write. They can
+cause these error messages to occur. Unfortunately, I don't believe the tool
+is available to the general populace. Sorry.
+	You may want to pose your question the IDE mailing list
+(linux-ide@vger.kernel.org) to see if anyone else has any ideas for you on
+how to deal with these errors.
+Regards,
+Wayne
+
+email:       Berthiaume_Wayne@emc.com
+
+"One man can make a difference, and every man should try."  - JFK
+
+
+-----Original Message-----
+From: Anders Widman [mailto:andewid@tnonline.net]
+Sent: Wednesday, March 05, 2003 2:18 PM
 To: reiserfs-list@namesys.com
-
-> On Wed, Mar 05, 2003 at 08:18:18PM +0100, Anders Widman wrote:
->>    What  exactly does this status=0x58 error mean, and what can one do
->>    to solve the problem?
-
-> You said you tried changing the disks - next step is cables and
-> controllers.  There's absolutely no question that's a hardware failure -
-> you just have to figure out what piece has gone bad.
-
-   This  is  what  I  also  have been thinking.. But it would mean the
-   hardware is broken on all three machines, and 20 harddrives. So far
-   I have tested with the following:
-
-   New 80w IDE cables
-   New 40w IDE cables (running DMA-33 only)
-   New harddrives
-       Maxtor
-       IBM
-       Seagate
-   New mainboards
-       MSI with VIA KT400 chipset
-       MSI with VIA KT266A chipset
-       MSI with Intel 440BX chipset
-       MSI with Intel 440BX chipset with dual CPU
-   Different RAM
-   Different Power-supply
-   New Promise controllers
-       PDC20268 (Ultra 100Tx2)
-
-   So..  What  more  can  I do? I seriously do not believe all of this
-   hardware  is  broken.  They  all  run  without  problems in Windows
-   2000/XP   and   all   drives  pass  check  through  badblocks  and
-   IBM/Maxtor/Seagate Drive Fitness tools.
-
-   I  made  a  quick  search on Google and found multiple forums where
-   users have this same problems - and without any error reported from
-   DFT tools...
+Subject: Error messages.
 
 
+
+   This  has  come up on this list a number of times, and no one still
+   seem to have found the true answer to the problem.
+
+   kernel: status error: status=0x58 { DriveReady SeekComplete DataRequest }
+
+   Most  seem  to  say  this is a bad block on the harddrive. I am not
+   convinced  though.  Using  Linux on three machines here, and I have
+   seen  this error on all of them, with lots of disks. The error seem
+   to   come  random,  but  does  cause  system  lockups  and  broken
+   filesystems.
+
+   Have  about  20  disks, and have replaced and upgraded them several
+   times  too.  This error has shown on most of them. But when testing
+   them  with tools like IBM DFT, Maxtor Powermax, badblocks or chkdsk
+   in Windows none show up to be with errors on.
+
+   Sometimes  it  seem  to  help to disable DMA and or lower UDMA mode
+   (all  drives are ATA-100 or ATA-133). But then after a few days, or
+   a  few  minutes  the  kernel  starts spitting out these status=0x58
+   errors.
+
+   After  looking  online  on  different forums it does seem that many
+   people are experiencing them.
+
+   What  exactly does this status=0x58 error mean, and what can one do
+   to solve the problem?
+
+   //Anders
 
 
 --------
 PGP public key: https://tnonline.net/secure/pgp_key.txt
-
