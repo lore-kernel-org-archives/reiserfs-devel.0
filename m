@@ -1,62 +1,39 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: "no space left" but df -k shows plenty of free space
-Date: Tue, 20 May 2003 13:44:52 +0400
-Message-ID: <20030520094452.GA14828@namesys.com>
-References: <23414.1053383082@www3.gmx.net>
+From: Chris Mason <mason@suse.com>
+Subject: Re: new data logging patches available
+Date: 20 May 2003 11:00:09 -0400
+Message-ID: <1053442808.9507.48.camel@tiny.suse.com>
+References: <1052400138.14612.483.camel@tiny.suse.com>
+	 <20030512113348.GA4423@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14176-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14177-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <23414.1053383082@www3.gmx.net>
+In-Reply-To: <20030512113348.GA4423@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: D_i_F_i@gmx.de
-Cc: mason@suse.com, reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Hello!
+On Mon, 2003-05-12 at 07:33, Oleg Drokin wrote:
+> Hello!
+> 
+> On Thu, May 08, 2003 at 09:22:19AM -0400, Chris Mason wrote:
+> 
+> > These include Oleg Drokin's merge with 2.4.21-rc1 (thanks Oleg!), and
+> > they no longer change fs/super.c:sync_supers().  I believe things are
+> > now clean enough for me to start submitting for 2.4.22-pre once it
+> > starts.
+> 
+> BTW, what have happened to your work on porting this stuff to 2.5 and the whole idea
+> of feeding this stuff into 2.5 first?
 
-On Tue, May 20, 2003 at 12:24:42AM +0200, D_i_F_i@gmx.de wrote:
-> >> Now we can use the filesystem without problems but I fear that we
-> >> will run into problems when the filesystem reaches 77% usage again.
-> >Hm, it will be interesting if you try.
-> >May be it will stop working when there is 2498072 blocks left again.
-> Sorry, but I can?t fill up the filesystem until it?s full because we
-> need the filesystem for our daily work. If I realy should try this, I 
-> have to wait until the next weekend. Also I have to ask several collegues,
-> if it?s ok if I?m going to do this test at the next weekend. But if you
-> think, this test will bring us a step further, I will try to get an "OK"
-> for this test.
+The part I wanted in 2.5 first was the sync supers change.  For now I'll
+be happy if I can get the whole thing (without sync supers) in 2.4, so I
+can concentrate more on 2.5 code.
 
-Please try.
-Alternatively if you can create another reiserfs filesystem that would not be in use
-by anyone and try to fill it and see how soon it will report "out of space",
-that should be sufficient too.
+-chris
 
-> > Could you please run debugreiserfs -p /dev/xxx | gzip -c >
-> > df-error-fs.gz, and make it available somewhere for us to download.  If
-> > you are using reiserfsprogs 3.x.0j or so the output can contain actual
-> > file data, so you probably want to put the image onto a password
-> > protected page.
-> > This will take a metadata dump of the filesystem, I'd like to check it.
-> I guess, I can execute this command while the filesystem is mounted and
-> in use. Is this correct? Also I?ve to check first, if there will be any
 
-Yes, you can.
-
-> "confidential" data in the output of the debug-command, which I?m not
-> allowed to distribute. And as the command causes some system load, I may 
-> have to wait until the next weekend, to generate this data.
-
-This is ok.
-
-> After I?ve got clearance for all these questions I would send you an
-> approriate message.
-
-Ok, thank you.
-
-Bye,
-    Oleg
