@@ -1,66 +1,35 @@
-From: Christophe Saout <christophe@saout.de>
+From: Rik van Riel <riel@redhat.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 15:27:01 +0200
-Message-ID: <1093526821.11694.15.camel@leto.cs.pocnet.net>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
-	 <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com>
-	 <20040826014542.4bfe7cc3.akpm@osdl.org>
-	 <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de>
-	 <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de>
+Date: Thu, 26 Aug 2004 09:27:52 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44.0408260927100.26316-100000@chimarrao.boston.redhat.com>
+References: <412DA26C.5060604@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-GF3yaRKueIaxVkCW+tfp"
-Return-path: <reiserfs-list-return-20665-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20666-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826130718.GB820@lst.de>
+In-Reply-To: <412DA26C.5060604@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Jeremy Allison <jra@samba.org>, Christoph Hellwig <hch@lst.de>, akpm@osdl.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
 
---=-GF3yaRKueIaxVkCW+tfp
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Thu, 26 Aug 2004, Hans Reiser wrote:
 
-Am Donnerstag, den 26.08.2004, 15:07 +0200 schrieb Christoph Hellwig:
+> I agree that your work is important without agreeing that MS client 
+> domination will last.;-)  It is indeed my desire to give you every 
+> single feature you need to emulate MS streams within files, but doing it 
+> using directories that are files.  I would like to support you in 
+> emulating windows faster than windows.
 
-> > The reiser4 core doesn't know about inodes, directories or files. It's
-> > the glue code between the VFS and the storage layer that does. It's
-> > implemented as a plugin. This has nothing to do with semantic
-> > enhancements yet. These should be removed for now and made a 2.7 topic.
->=20
-> Oh yes, it is.  As soon as you use different access methods on an
-> overlapping set of objects you see exactly the problems I described.
+1) how do you back up and restore files with streams inside ?
 
-Right. That shouldn't happen. Since an object is usally tied to exactly
-one plugin this can't happen I think. At least as long the programmer
-doesn't mess anything up.
+2) how do standard unix utilities handle them ?
 
-> If they don't overlap there's no point for the plugins to start with,
-> you'll better turn the core into a library that can be used by different
-> projects then.
-
-I think that's what Hans is trying to suggest. The core is theoretically
-usable for anything. He made a filesystem of it.
-
-You can see reiser4 as a library and the UNIX directory and file plugins
-as the filesystem. That's why they are linked in uncoditionally because
-it doesn't make sense otherwise. It's mainly the naming that seems to
-confuse people.
-
-
---=-GF3yaRKueIaxVkCW+tfp
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQBBLeUlZCYBcts5dM0RAgtMAJ9Ioh6ZzeKEDC54OzV2AbcEGthyqACfX9kV
-/LMOtx7w/Zks1bTQkLPP9pY=
-=hb0O
------END PGP SIGNATURE-----
-
---=-GF3yaRKueIaxVkCW+tfp--
+-- 
+"Debugging is twice as hard as writing the code in the first place.
+Therefore, if you write the code as cleverly as possible, you are,
+by definition, not smart enough to debug it." - Brian W. Kernighan
 
