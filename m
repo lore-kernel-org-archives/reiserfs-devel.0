@@ -1,81 +1,45 @@
-From: JON C WADE <jwade@siue.edu>
-Subject: Re: OT: NAS solution, Netapp vs EMC
-Date: Thu, 16 Oct 2003 21:59:21 -0500 (CDT)
-Message-ID: <Pine.SO4.4.05.10310162148430.25665-100000@cougar.isg.siue.edu>
-References: <200310161330.h9GDUgRs004592@northgate.starhub.net.sg>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: File system shootout v2.0...
+Date: Fri, 17 Oct 2003 10:03:29 +0400
+Message-ID: <3F8F8631.3010106@namesys.com>
+References: <1066328379.27235.80.camel@mikeb.staff.netnation.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15843-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15844-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200310161330.h9GDUgRs004592@northgate.starhub.net.sg>
+In-Reply-To: <1066328379.27235.80.camel@mikeb.staff.netnation.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: darren <teodarren@myrealbox.com>
-Cc: slugnet@lists.lugs.org.sg, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: mikeb@netnation.com
+Cc: reiserfs-list@namesys.com
 
-Hi
+Mike Benoit wrote:
 
-Where I work (ECE Dept at SIUE) We have a NetApp NAS setup with about .5
-TB of storage.  The speed is good, probably not great, but good.  
+>Since the last shootout was so popular, I was able to get my hands on
+>some better hardware to run even more tests on. As well the generated
+>results format was improved slightly. 
+>
+>Bonnie++ and IOZone results on a AMD Opteron 240 system are now posted
+>for your viewing pleasure at: http://fsbench.netnation.com/
+>
+>  
+>
+We have a new snapshot on the way that does much better at this 
+benchmark (we fixed a bug thanks to spotting a performance anomaly while 
+replicating your settings, and the snapshot you are using is actually 
+quite old thanks to our neglect of posting snapshots).
 
-However I can say quite a bit about it's reliability.  We've had it now
-for a little under three years and never lost any data, and we've had only
-one hour of forced downtime.  There customer service is great.  Once I
-showed up to work and we had a large shipment from NetApp.  I opened it
-up, and it contained a drive shelf.  We called netapp to see why they
-shipped us a shelf and there responce was "Your netapp shelf had a power
-supply falure, but the backup kicked in.  Your F720 phoned home (via
-network) and told us about it, so we shipped you a new one".  That night,
-we shut it down, moved the drives over to the new shelf, and turned it
-back on.  It only took 15 minutes or so...  We never even knew that the
-power supply failed, it just switched over and kept running without
-interruption.
+I will be interested in seeing whether once you and us are using the 
+same snapshot we get the same results.;-) 
 
-I don't have any expearance with EMC so I couldn't say anything about
-them.
+It is a bit odd that reiser4 has both the lowest run time and the worst 
+rating.  We use middle of the road 32 bit CPUs (we'd like to use the 
+latest ones but....;-) ).  For them our CPU consumption seems reasonable.
 
-Later
-
-Cris
-
-P.S. NetApp's snapshot capability is a god send....
-
-
-On Thu, 16 Oct 2003, darren wrote:
-
-> Hi all,
-> 
-> I am looking for a NAS server to work over NFS for 15-20 pieces of my linux
-> servers.
-> 
-> These servers will be involved in heavy reading and writing (about 30Mbps up
-> and down each server) of experimental data collected from a network of
-> probes.
-> 
-> I am thinking of using a NAS solution (I have got a GigE LAN already) from
-> either NetApp (F825) or EMC (Celerra) as centralized storaged for all the
-> servers.
-> 
-> I am concerned about the following:
-> 
-> 1)	Fast read and write performance for consistant stream of small files
-> 2)	Ability to store LARGE (> 10million per 200GB) amount of small files
-> 3)	Reliability...should not crash or go down when under consistent
-> heavy load.
-> 
-> Any comments about their performance?
-> 
-> 
-
------BEGIN GEEK CODE BLOCK-----
-Version: 3.12
-GCS/E d- s+: a-- C++>$ UL+++ P+ L+++(++++) E--- @W++ !N ?o ?K w--- ?K ?O
-@?M ?V @PS+ PE Y+ PGP @t+ 5 X !R tv+ b++ !DI D G e h! r-- !y+
-------END GEEK CODE BLOCK------
-
-<see http://www.geekcode.com/geek.html for translation>
+-- 
+Hans
 
 
