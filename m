@@ -1,74 +1,46 @@
 From: Ivan Ivanov <ivandi@vamo.orbitel.bg>
 Subject: Re: Simple preformance test
-Date: Thu, 11 Apr 2002 20:11:03 +0300
+Date: Thu, 11 Apr 2002 20:18:38 +0300
 Sender: ivandi@idi.vamo.orbitel.bg
-Message-ID: <3CB5C3A7.6832E4C8@vamo.orbitel.bg>
-References: <Pine.LNX.4.44.0204111506300.2077-100000@magic.vamo.orbitel.bg> <20020411165627.A992@namesys.com> <3CB598A3.483349D2@vamo.orbitel.bg> <3CB59D53.2060503@priocom.com>
+Message-ID: <3CB5C56E.A87B76C2@vamo.orbitel.bg>
+References: <Pine.LNX.4.44.0204111506300.2077-100000@magic.vamo.orbitel.bg> <20020411165627.A992@namesys.com> <3CB598A3.483349D2@vamo.orbitel.bg> <20020411181205.A1971@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10038-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10039-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Yura Umanets <umanets@priocom.com>
-Cc: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Yura Umanets wrote:
+Oleg Drokin wrote:
 
-> Ivan Ivanov wrote:
+> Hello!
 >
-> >Oleg Drokin wrote:
-> >
-> >>Hello!
-> >>
-> >>On Thu, Apr 11, 2002 at 03:14:03PM +0300, Ivan Ivanov wrote:
-> >>
-> >>>                  dd if=/dev/zero of=testdir/$d1/$f1$f2$f3$f4 \
-> >>>                      bs=$block_size count=$blocks_count \
-> >>>                      >/dev/null 2>&1
-> >>>                  rm -f testdir/$d1/$f1$f2$f3$f4
-> >>>
-> >>This is the explanation of your speedup.
-> >>You try to write to a file, but there is not enough space and file is not
-> >>created, but you did not notice.
-> >>And then you delete nonexistent files, and no doubts this is very fast
-> >>operation ;)
-> >>
-> >>BTW, if you turn off tails, your numbers might get faster, but space usage
-> >>will get worse.
-> >>
-> >>Bye,
-> >>    Oleg
-> >>
-> >
-> >Filesystem           1k-blocks      Used Available Use% Mounted on
-> >/dev/hda7              1172672   1170676      1996 100% /mnt/test
-> >
-> >I know this but  df  shows 1996 blocks free
-> >
-> >------
-> >Ivan
-> >
-> Besides, I think you didn't use "smart" block alocation technics in your
-> tests and the all ppl know, that performance degradates because of
-> bitmap when used space grows up.
+> On Thu, Apr 11, 2002 at 05:07:31PM +0300, Ivan Ivanov wrote:
 >
-> Oleg, is this correct?
+> > Filesystem           1k-blocks      Used Available Use% Mounted on
+> > /dev/hda7              1172672   1170676      1996 100% /mnt/test
+> > I know this but  df  shows 1996 blocks free
 >
-> --
-> Yury Umanets
-> IT Engineer of Priocom Corp.
-> ICQ: 55494590
+> These blocks cannot be used.
+> They are reserved for some purpose, and there is even a code to grab
+> these blocks, but the code is disabled, so each reiserfs FS have 2 Mb of data
+> that cannot be allocated.
+>
+> Bye,
+>     Oleg
 
-As it seen this was, a very simple test, so it does't test performance when the
-file system is fragmented.
-There was a big discussion about fragmentation/defragmentation a few days ago.
-There was a message about performance degradation, so I made this just for
-check.
+When the reiserfs partition is filled up to 100% there is a bunch of messages in
+logs.
+I have no such messages. That was my criteria for choosing partition size - to
+be allmost 100% full.
 
------
+May be the performance difference is my mistake - this was just a simple test.
+
+------
 Ivan
 
 
