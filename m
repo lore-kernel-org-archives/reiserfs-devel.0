@@ -1,63 +1,106 @@
-From: Paul Wagland <paul@wagland.net>
-Subject: Re: reiser4 and megaraid problems with debian 2.6.5
-Date: Wed, 14 Apr 2004 16:03:13 +0200
-Message-ID: <783DFD2F-8E1C-11D8-A41D-000A95CD704C@wagland.net>
-References: <36927C82-8DE0-11D8-A41D-000A95CD704C@wagland.net> <20040414090547.GB13578@raptus.homelinux.org> <6699459A-8E10-11D8-A41D-000A95CD704C@wagland.net> <16509.14375.539110.986025@laputa.namesys.com> <295743F0-8E17-11D8-A41D-000A95CD704C@wagland.net> <1081950306.8626.122.camel@tribesman.namesys.com>
-Mime-Version: 1.0 (Apple Message framework v613)
-Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha1; boundary="Apple-Mail-43-564978444"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17933-reiserfs=m.gmane.org@namesys.com>
+From: Kasper Sandberg <postmaster@metanurb.dk>
+Subject: Re: Support on further bug catching and bugfixing - plus reiser4
+	enabled livecd
+Date: Wed, 14 Apr 2004 16:29:23 +0200
+Message-ID: <1081952963.5882.2.camel@redeeman.linux.dk>
+References: <1081894775.5464.5.camel@redeeman.linux.dk>
+	 <407C6952.2080704@namesys.com>
+Reply-To: postmaster@metanurb.dk
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-w51m8ngATKmSA03OEnuO"
+Return-path: <reiserfs-list-return-17934-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1081950306.8626.122.camel@tribesman.namesys.com>
+In-Reply-To: <407C6952.2080704@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Vladimir Saveliev <vs@Namesys.COM>
-Cc: reiserfs-list@Namesys.COM
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
---Apple-Mail-43-564978444
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+--=-w51m8ngATKmSA03OEnuO
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Hi Vladimir,
+On Wed, 2004-04-14 at 00:27, Hans Reiser wrote:
+> Hmmm, flx, how about creating links, etc., to this stuff on our web page?
+>=20
+sure, at the point, this cd doesent have any site (but will get soon.)
+right now there are 3 mirrors for torrent file:
 
-On Apr 14, 2004, at 15:45, Vladimir Saveliev wrote:
+www.damnsite.net/mrnugget/LiveCD-Gentoo-Reiser4.iso.torrent
+www.eikke.com/uploads/LiveCD-Gentoo-Reiser4.iso.torrent
+http://oneofone.limitlessfx.com/love-sources/LiveCD-Gentoo-Reiser4.iso.torr=
+ent
 
-> On Wed, 2004-04-14 at 17:25, Paul Wagland wrote:
->> On Apr 14, 2004, at 15:09, Nikita Danilov wrote:
->>>
->>> Is there anything in the logs?
->>
->> Sadly I forgot to check... though I will check again tonight since the
->> problem is quite reproducible for me. Will report
->
-> Would you also mind to try on another device, please?
+feel free to add the links to the site, or wait to i create a webpage
+for the livecd.
 
-Sadly, I can't, since I only have two machines that I can play with, 
-one which is quite averse to 2.6 (not sure why, but it is going away 
-soon so I haven't looked into it) and the one with the megaraid device, 
-and this machine only has disks exported through that card. I can try 
-it with the stock 2.6.5 driver, and will do so if the "Jiffies|1" fix 
-doesn't help.
 
-Cheers,
-Paul
+> Thanks much Kasper.
+>=20
+no problem, its a pleasure to help!
+> Hans
+>=20
+> Kasper Sandberg wrote:
+>=20
+> >hi Hans, and other reiser4 folks.
+> >
+> >as you probably know, there is a patchset for the linux kernel thats
+> >called love-sources.
+> >this is a kernel tree that among other patches, focuses mainly on
+> >reiser4, and general functionality.
+> >
+> >we are quite many that uses reiser4, and more are to come, just waiting
+> >for a thing to install with.
+> >therefore i have created a gentoo livecd, it has the linux 2.6.5 kernel,
+> >patched with reiser4, and the
+> >tail fix.
+> >
+> >as this cd is not only meant as Gentoo installation cd, i have also
+> >included some common system tools.
+> >to make life easier to its users.
+> >
+> >we, in #love-sources, freenode believe that working closely together
+> >with namesys, in the final debugging
+> >of reiser4, will ensure a more determined bug catching process.
+> >
+> >i have no location on the livecd yet, i dont have hosting.
+> >my plan is something about bittorrent, and maybe i can find some
+> >hosting. but i will have to lookup both stuff. untill then. the livecd
+> >is only availiable if you contact me, either via irc, or via
+> >redeeman@<nospam>metanurb.dk and then we arrange something.
+> >
+> >i hope you will find it useful
+> >
+> > =20
+> >
+--=20
+Regards			  - Kasper Sandberg
+postmaster@metanurb.dk	  - PGP-Key is available on request
+()  ascii ribbon campaign - against html e-mail=20
+/\                        - against microsoft attachments
 
---Apple-Mail-43-564978444
-content-type: application/pgp-signature; x-mac-type=70674453;
-	name=PGP.sig
-content-description: This is a digitally signed message part
-content-disposition: inline; filename=PGP.sig
-content-transfer-encoding: 7bit
+--=-w51m8ngATKmSA03OEnuO
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (Darwin)
+Version: GnuPG v1.2.4 (GNU/Linux)
 
-iD8DBQFAfUSktch0EvEFvxURAjjLAJ9Qz302Who3KYCFyCT4XKYZHHAhMACgwMIm
-mg+/pmmT14+PupUujPJM/f8=
-=1SKv
+iQIVAwUAQH1Kw1H0G7tQQMe7AQL7Sw//RcJLlX4HRWqMh5YJoRbcb5hRzUHpdm7J
+WnuJYyYLl2BX+SC40yAB1ctiVjrtsY6BPBOj2b9Q+n1vGzQ+mSN5rYGvuuatsgA0
+TvAx0oDQEhh+ArTAFiDSpsq5vVRMd6o7+ulzB5Ui+1c9h3w7/KKmg/ozfSJTjqTm
+y1TzschKl8PMYK6Vmn5x4XtCRvU0vLgaDtNW6/ToJ05qURX3EQ9NxMYX75e3L7a5
+bh/DOOvx2wmNNPXqACEOkK6xmvsIKPlNZWOfEUI87SStMQJXC1wMZP3m7KWv/Msu
+lXFRCQnSJuSvorYsGjOrxtQ1uO0L43OGFWXS3hm4KZybyqOHmZ3IxR0wSek0hIC+
+kafoMKDKDcaspvB4uZnTNyKMMJmWfjHzrwkVn2aR5myJPIWKDTT9Gw95ZfVmfVYq
+4uk1PU07DWS59XWlb04cIhX5cdrCZkxfWGsO/L1ZvN6+1fOlC6zd+3mRpwkfwsRc
+Fonod5V18r8fG+AhwAjMuWcRlOBAhfgbOdgTTa/ylthzTDTDIxbm7oOTVXRfNdm7
+tWJFvHGtPo6IVub5EbKQDa6VmsmPljO6yi4/WHgdaq5AX4X5CJUEUXIkFh2m2lJR
+7TmP3gcmTCpjEkPJM5YcjurJV+Jv3L1ahPrqh5EDlhEczTdLeVwkHzrPR9OHRvaY
+ROu/V6L1Lzs=
+=tj/F
 -----END PGP SIGNATURE-----
 
---Apple-Mail-43-564978444--
+--=-w51m8ngATKmSA03OEnuO--
 
