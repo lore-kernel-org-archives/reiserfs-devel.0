@@ -1,72 +1,41 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: reiser4progs 0.5.6 broken?
-Date: Wed, 14 Jul 2004 23:57:07 +0300
-Message-ID: <20040714205707.GJ4990@nysv.org>
+From: Szakacsits Szabolcs <szaka@sienet.hu>
+Subject: RE: [benchmark] seek optimization
+Date: Wed, 14 Jul 2004 23:56:45 +0200 (MEST)
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <Pine.LNX.4.21.0407142307010.7492-100000@mlf.linux.rulez.org>
+References: <OF5CD40530.F971AA8A-ON85256ED1.006E4E3B-88256ED1.006EE609@us.ibm.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19619-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <OF5CD40530.F971AA8A-ON85256ED1.006E4E3B-88256ED1.006EE609@us.ibm.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Bryan Henderson <hbryan@us.ibm.com>
+Cc: Guy <bugzilla@watkins-home.com>, linux-fsdevel@vger.kernel.org, 'Marcel Hilzinger' <mhilzinger@linuxnewmedia.de>, 'Per Olofsson' <pelle@dsv.su.se>, reiserfs-list@namesys.com
 
-Hi!
 
-I downloaded the sources with the intention of compiling them.
-libaal went in ok.
+On Wed, 14 Jul 2004, Bryan Henderson wrote:
 
-# dpkg -l | grep baal
-ii  libaal-dev     0.5.3-1        The Reiser4's application abstraction librar
+> A simpler experiment where you copy a file from a filesystem into
+> oblivion would eliminate any seeks or other delays on the write side
+> and any interaction between the two and leave just the seeks on the
+> read side to measure.
 
-(That's what debian calls it, I use Dominico Andreoli's prepackaged, older
-versions as templates)
+The intention was to point out seek elimination on the writer side ;-)
+ 
+> And that information seems like it would be more useful.  Many
+> applications simply read and use data; they don't copy it into another
+> file
 
-I patched libaux/gauge.c
+Sure, and many other different kind of tests would be more useful, too.  
+But this experiment wasn't about those. Instead to point out, by a
+relatively common tool in a common environment, that
 
-Anyway, this is how it followed:
+   1) The seek elimination of Reiser4 is true and quite well measurable.
+      Also its seek optimization is much better than any other major
+      filesystem's optimization on Linux.
 
-checking for libaal version = 0.5.3...
-An old version of libaal (0.5.0) was found.
-You need a version of libaal newer than 0.5.3.
-You can get it at http://www.namesys.com/snapshots
-no
+   2) Apparently the 2.6 kernel's IO scheduler has a performance problem.
 
-I also noted that I can't compile reiser4progs 0.5.5 either with this.
-
-So I break out the chainsaw and break configure to always return 0, because
-I know I'm right here. It actually shut up and obeyed.
-
-checking for aal/libaal.h... yes
-checking for libaal version = 0.5.3... yes
-configure: creating ./config.status
-config.status: creating Makefile
-
-Earlier I had some weird problems after breaking it like that[1]
-but fortunately I somehow got rid of them :)
-
-So, uhh, where do we stand with these issues?
-What caused this?
-Is this isolated to me, some redundant remnant file?
-
-The thing is, I'm stuck on my rescue partition. I'm uploading metadata
-now for vs, zam or any other Namesys guy (url forthcoming tomorrow)
-and I'm gonna explain to them why it crashed.
-
-I just figured I'd use the latest tools to fsck it.
-
-Thanks!
-
-[1]
-/bin/sh ../libtool --mode=link i386-linux-gcc  -Wall -g -O2 -Iyes/include -W
--Wall -Wuninitialized -Wno-unused-parameter -Wredundant-decls  -Lyes/lib -o
-libaux-static.la   libaux_static_la-aux.lo libaux_static_la-bitmap.lo
-libaux_static_la-gauge.lo  -Lyes/lib
-../libtool: line 1: cd: yes/lib: No such file or directory
-
--- 
-mjt
+	Szaka
 
