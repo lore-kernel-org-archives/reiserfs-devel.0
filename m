@@ -1,32 +1,51 @@
-From: Alexander Lyamin <flx@msu.ru>
-Subject: Re: Use this patch immediately !
-Date: Mon, 9 Feb 2004 12:36:17 +0300
-Message-ID: <20040209123617.D2124@t-raenon.nmd.msu.ru>
-References: <200402071218.i17CIgC30375@mxer.uottawa.ca>
-Reply-To: flx@msu.ru
+From: Timothy Webster <tdwebste2@yahoo.com>
+Subject: Re: Microsoft's Robert Scoble Discusses Search Engine Technology
+Date: Mon, 9 Feb 2004 03:19:09 -0800 (PST)
+Message-ID: <20040209111909.55415.qmail@web60306.mail.yahoo.com>
+References: <402708DD.6030806@namesys.com>
+Reply-To: tdwebste2@yahoo.com
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16732-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16733-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200402071218.i17CIgC30375@mxer.uottawa.ca>
+In-Reply-To: <402708DD.6030806@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Microsoft <security@microsoft.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Sat, Feb 07, 2004 at 07:18:42AM -0500, Microsoft wrote:
-> Dear friend , use this Internet Explorer patch now!
-> There are dangerous virus in the Internet now!
-> More than 500.000 already infected!
+This not such a strange concept in fact already exist
+today. Most p2p networks use meta-data, to help
+identify files and assisting searching, such as hash
+and comments. I think p2p networks also help us to
+identify some of the problems, mainly trust worthiness
+ at the same time maintaining anonymity.
 
-set this mime-type as rejected.
-no more such things.
+When a user names or comments or adds other meta-data
+to a file. The user should sign that meta-data. This
+certificate created by the user to sign should not
+divulge the users identity.
 
 
--- 
-"the liberation loophole will make it clear.."
-lex lyamin
+Users or search engines can look up the certificates
+"via CA" of the signed meta-data to see if they have
+been revoked and to obtain the certificate holder's
+current rating.
+
+Search engines would of course be adding there own
+meta-data in the same way users add meta-data.
+
+
+Applications would be responsible for using the signed
+meta-data. An application might work as follows.
+Corrections made to the meta-data signed by certifiate
+holder decrease the rating of that certificate holder.
+References to meta-data and agreements would increase
+the rating of that certificate holder.
+
+__________________________________
+Do you Yahoo!?
+Yahoo! Finance: Get your refund fast by filing online.
+http://taxes.yahoo.com/filing.html
