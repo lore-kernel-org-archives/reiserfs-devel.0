@@ -1,100 +1,48 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: /proc/fs/reiserfs question
-Date: Mon, 14 Oct 2002 18:25:19 +0400
-Message-ID: <15786.54223.785138.49029@laputa.namesys.com>
-References: <20021014160435.344ca55b.philippe.gramoulle@mmania.com>
+From: Pat Shuff <shuff@tamu.edu>
+Subject: ? file system basics
+Date: Mon, 14 Oct 2002 09:38:35 -0500
+Message-ID: <5.1.0.14.0.20021014092309.00b90148@neo.tamu.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11681-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11682-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021014160435.344ca55b.philippe.gramoulle@mmania.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-9"
-To: Philippe =?ISO-8859-1?B?R3JhbW91bGzp?= <philippe.gramoulle@mmania.com>
-Cc: reiserfs <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Philippe Gramoull=E9 writes:
- > Hi,
- >=20
- > Is there any documentation that gives the description for each line=20
- > of each file in /proc/fs/reiserfs/sd(x,x)/*
- >=20
- > like what is the meaning of s_fix_nodes ? etc..
 
-I am afraid one has to dig it out of the sources. Here is description of
-some fields displayed in "super", they pertain to the in-core
-super-block:
+This is going to sound like a basic question but here goes....
 
-			"state": REISERFS_VALID_FS/REISERFS_ERROR_FS
+I want to take a single disk and allow it to shrink or grow. It appears 
+that I can do this with ext2 and parted or reiserfs and 
+cfdisk/resize_reiserfs by first managing the partition allocation then the 
+file system that fills that partition. It also appears that the growing 
+requires that the partition has empty space adjacent to the existing 
+partition. Is there a utility that allows you to skip sections of the disk 
+or map partitions and file systems across multiple partitions? For example, 
+I want to take scsi disk 0 and divide it into three partitions sd0a, sd0b, 
+and sd0e. I know how to put a file system on sd0a and grow it if there is 
+space between sd0a and sd0b. Is there a way to grow this file system across 
+to partition sd0e without using something like veritas volume management or 
+LVM?
 
-			"mount options": options given to mount
+If I change this strategy and want to take two disks on the same system and 
+lay a file system across these disks, can reiserfs handle this or do I 
+first need to use a volume manager and lay the file system across the 
+volume and not partitions on the two disks. Again, can I grow and shrink 
+the partition allocation and file system as needed? Does the 
+resize_reiserfs handle this or do I need to do this in conjunction with the 
+volume manager?
 
-			"gen. counter": file system "generation acounter"---this is
-			incremented with each balancing.
+If I take this a step farther and use iscsi or network block device (nbd) 
+to access disks across the network, can I use reiserfs by itself or in 
+combination with a volume manager to create a file system that can shrink 
+or grow as needed? Are there limitations on this strategy or drawbacks that 
+would keep me from using this technique?
 
-			"s_kmallocs": how many kmallocs (calls to general purpose
-			kernel memory allocator) were performed by reiserfs code
+pat
 
-			"s_disk_reads": not maintained
 
-			"s_disk_writes": not maintained
-
-			"s_fix_nodes": how many time "fix-nodes" (1st phase of
-			balancing) was performed.
-
-			"s_do_balance": how many times "do-balance" (2nd phase of
-			balancing) was performed
-
-			"s_unneeded_left_neighbor": not maintained
-
-			"s_good_search_by_key_reada": not maintained
-
-			"s_bmaps": not maintained
-
-			"s_bmaps_without_search": not maintained
-
-			"s_direct2indirect": how many direct->indirect converions
-			were performed
-
-			"s_indirect2direct": how many indirect->direct converions
-			were performed
-
-			"max_hash_collisions": maximal hash collision met so far.
-
-			"breads": not maintained
-
-			"bread_misses": not maintained
-
-			"search_by_key": how many times search_by_key (main tree
-			traversal routine) was called.
-
-			"search_by_key_fs_changed": how many times search_by_key was
-			performed concurrently to balancing.
-
-			"search_by_key_restarted": how many times search_by_key had
-			to restart due to concurrent balancing.
-
-			"insert_item_restarted"-------+
-			"paste_into_item_restarted"   +
-			"cut_from_item_restarted"     +-> how many times particular
-			"delete_solid_item_restarted" +   balancing operation had to
-			"delete_item_restarted"-------+   restart
-
-			"leaked_oid": how many object-ids (unique identifiers
-			assigned to files) were missed
-
-			"leaves_removable": how many times three leaf nodes of the
-			balanced tree were mergeable into one
-
-I guess we should keep this information somewhere on the web-site. If
-you need more detailed info, let me know.
-
- >=20
- > Thanks much,
- >=20
- > Philippe.
-
-Nikita.
