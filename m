@@ -1,53 +1,60 @@
-From: Christer Weinigel <christer@weinigel.se>
+From: Spam <spam@tnonline.net>
 Subject: Re: silent semantic changes with reiser4
-Date: 26 Aug 2004 13:16:31 +0200
-Sender: wingel@zoo.weinigel.se
-Message-ID: <m3llg2m9o0.fsf@zoo.weinigel.se>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
-	<20040825152805.45a1ce64.akpm@osdl.org>
-	<112698263.20040826005146@tnonline.net>
-	<Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org>
-	<1453698131.20040826011935@tnonline.net>
-	<20040825163225.4441cfdd.akpm@osdl.org>
-	<20040825233739.GP10907@legion.cup.hp.com>
-	<20040825234629.GF2612@wiggy.net>
-	<1939276887.20040826114028@tnonline.net>
-	<20040826024956.08b66b46.akpm@osdl.org>
-	<839984491.20040826122025@tnonline.net>
+Date: Thu, 26 Aug 2004 13:19:43 +0200
+Message-ID: <14210549944.20040826131943@tnonline.net>
+References: <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de>
+ <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>
+ <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk>
+ <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org>
+ <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk>
+ <20040826001152.GB23423@mail.shareable.org>
+ <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk>
+ <20040826010049.GA24731@mail.shareable.org>
+ <20040826100530.GA20805@taniwha.stupidest.org>
+ <20040826110258.GC30449@mail.shareable.org>
+Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20632-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20633-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <839984491.20040826122025@tnonline.net>
+In-Reply-To: <20040826110258.GC30449@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Spam <spam@tnonline.net>
-Cc: Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Jamie Lokier <jamie@shareable.org>
+Cc: Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Spam <spam@tnonline.net> writes:
 
->   Keeping stuff in the kernel should make the new features
->   transparent to the applications.
 
-No, it will make just one special case, rename within the same
-filesystem, work.  (Well, two special cases, rm will also delete
-the other forks). 
+> Chris Wedgwood wrote:
+>> On Thu, Aug 26, 2004 at 02:00:49AM +0100, Jamie Lokier wrote:
+>> 
+>> > One of the big potential uses for file-as-directory is to go inside
+>> > archive files, ELF files, .iso files and so on in a convenient way.
+>> 
+>> Arguably this belongs in userspace --- and people have put it there.
 
-Unless we add a new copy(2) syscall (which would be nice for other
-reasons) all applicatons that copy files will fail to copy the
-streams.  So no working cp command, no nautilus nor konqueror without
-changes to the application.  And if you have to change the
-applications anyway, isn't it much better to agree on a shared library
-in userspace that everyone uses?  Which has the added bonus that it
-can be made to work on top of Linux, Windows, Ultrix and VMS?
+> I agree that these belong in userspace, and that there's plenty* of
+> userspace code doing a similar thing already.  I don't think there's
+> any argument over it.
 
-  /Christer
+> However, as far as I know it's not accessible in a file-as-directory
+> form as yet.  In my opinion that is the most natural form and it would
+> be very intuitive to use.  I hope we can pick a useful semantics for
+> them, and also provide filesystem-independent plugins with GNU
+> Hurd-like per-user extensibility.
 
--- 
-"Just how much can I get away with and still go to heaven?"
+> -- Jamie
 
-Freelance consultant specializing in device driver programming for Linux 
-Christer Weinigel <christer@weinigel.se>  http://www.weinigel.se
+> * plenty == too much.
+>   Gnome, KDE, Emacs and Bash all see different virtual filesystems.
+>   (All but Bash implement their own virtual filesystem extensions).
+>   That makes them much less useful than they could be.
+
+  Exactly,  and  I  doubt  they  have the ability to join together and
+  create  a  common  uniform standard out of it either. They have just
+  far to different views on Linux and how they want things to be done.
+
+
