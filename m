@@ -1,62 +1,54 @@
-From: Valdis.Kletnieks@vt.edu
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Feature request: online fsync disable
-Date: Mon, 26 Aug 2002 02:02:25 -0400
-Message-ID: <200208260602.g7Q62PRK012562@turing-police.cc.vt.edu>
-References: <3D661C89.C8A805D7@baldauf.org> <15718.8710.244926.960377@laputa.namesys.com> <20020823155658.A962@namesys.com> <3D6623BE.4040500@namesys.com> <15718.9718.736822.978374@laputa.namesys.com> <1030108119.17778.8.camel@tiny> <3D667A7D.5BD60783@baldauf.org>
-            <m3hehiskgw.fsf@merlin.emma.line.org>
+Date: Mon, 26 Aug 2002 15:27:18 +0400
+Message-ID: <3D6A1096.7060502@namesys.com>
+References: <3D661C89.C8A805D7@baldauf.org>	<15718.8710.244926.960377@laputa.namesys.com>	<20020823155658.A962@namesys.com> <3D6623BE.4040500@namesys.com> <m3n0raskj3.fsf@merlin.emma.line.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-980942592P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11319-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11320-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Sun, 25 Aug 2002 23:21:35 +0200."
-             <m3hehiskgw.fsf@merlin.emma.line.org> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
 Cc: reiserfs-list@namesys.com
 
---==_Exmh_-980942592P
-Content-Type: text/plain; charset=us-ascii
+Matthias Andree wrote:
 
-On Sun, 25 Aug 2002 23:21:35 +0200, Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>  said:
+>Hans Reiser <reiser@namesys.com> writes:
+>
+>  
+>
+>>It is a reasonable feature request I think.
+>>    
+>>
+>
+>A file system that has a switch "oh, you can throw away my data if you
+>like" is no good at all.
+>
+Yes it is, consider tmpfs, consider web cache appliances.....  this is 
+just another variation on it.
 
-> So don't call fsync(), or call it less frequently.
+> If the application + FS interaction leads to
+>contention, then you have to choices to optimize: the application or the
+>file system.
+>
+If the app is closed source....
 
-This is, of course, assuming that you have any actual control over the
-matter.  Very few sites actually control their low-level database code,
-as it's something that's fiendishly difficult to do well.  As a result,
-you have two major trends:
-
-1) You run Oracle or Sleepycat or some SQL product, and don't have much
-control over when the fsync's get done (or even worse, you're using some
-fourth-party package that *itself* calls Oracle or Sleepycat or...).
-
-2) Said products (at least the good ones) have probably already had most
-of the truly egregious abuses of fsync() optimized out, so there isn't
-much win to trying to optimize further...
-
-(And yes, I *know* Oracle can be configured to use raw disk partitions.
-That doesn't change the underlying logic above) 
--- 
-				Valdis Kletnieks
-				Computer Systems Senior Engineer
-				Virginia Tech
+> We've had this kind of discussion before, with a different
+>focus: on mail transfer agents. There have been considerations of
+>merging fsync() operations and committing them at the same time, and
+>asynchronous operation or threading might in fact help the application.
+>
+>I'd not trust a file system that even has a switch to let it ignore
+>fsync(). Please let me know if your file systems exhibit this behaviour
+>so I can statfs() in my applications and if I see a file system that
+>does ignore fsync() just call raise(SIGKILL);
+>
+>  
+>
 
 
---==_Exmh_-980942592P
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.7 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQE9acRwcC3lWbTT17ARAotLAKD1HPoEbgM0alADDUNmSNbnONMHAwCfYmbt
-+jceiLICg08TcVii5+uceFQ=
-=v9/K
------END PGP SIGNATURE-----
-
---==_Exmh_-980942592P--
