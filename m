@@ -1,70 +1,43 @@
-From: Zhihui Zhang <bf20761@binghamton.edu>
-Subject: Re: A few questions of ReiserFS
-Date: Mon, 10 Nov 2003 17:31:09 -0500 (EST)
-Message-ID: <Pine.GSO.4.58.0311101651570.24569@bingsun2.cc.binghamton.edu>
-References: <Pine.GSO.4.58.0311061302240.23244@bingsun2.cc.binghamton.edu>
- <20031106200657.GN11516@backtop.namesys.com>
- <Pine.GSO.4.58.0311061712140.29193@bingsun2.cc.binghamton.edu>
- <20031107070411.GO11516@backtop.namesys.com>
- <Pine.GSO.4.58.0311071423410.10326@bingsun2.cc.binghamton.edu>
- <20031108091219.GR11516@backtop.namesys.com>
+From: Mike Fedyk <mfedyk@matchmail.com>
+Subject: Re: getting UUID and label of a filesystem
+Date: Mon, 10 Nov 2003 16:12:06 -0800
+Sender: Mike Fedyk <mfedyk@mis-mike-wstn.matchmail.com>
+Message-ID: <20031111001206.GC2014@mis-mike-wstn.matchmail.com>
+References: <3FAAB330.5040503@nrao.edu> <1068152041.2327.34.camel@dragonball> <3FAFF00C.1000404@ysu.edu> <20031110201432.GB2014@mis-mike-wstn.matchmail.com> <3FAFF7B3.5030306@nrao.edu> <20031110210513.GA20463@rahul.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16045-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16046-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20031108091219.GR11516@backtop.namesys.com>
+Content-Disposition: inline
+In-Reply-To: <20031110210513.GA20463@rahul.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: Bennett Todd <bet@rahul.net>
+Cc: Boyd Waters <bwaters+moz@nrao.edu>, reiserfs-list@namesys.com
 
-On Sat, 8 Nov 2003, Alex Zarochentsev wrote:
+On Mon, Nov 10, 2003 at 04:05:13PM -0500, Bennett Todd wrote:
+> 2003-11-10T15:40:19 Boyd Waters:
+> > Mike Fedyk wrote:
+> > > On Mon, Nov 10, 2003 at 03:07:40PM -0500, John Dalbec wrote:
+> > > > I've added myself to the "disk" group and it works for me as
+> > > > non-root.  You just need read access to the raw device, no?
+> > >
+> > > Yes.
+> > > But how many need access to the UUID information?  That can be a
+> > > big security hole...
+> >
+> > Um, can you point me to info regarding security holes in exposing
+> > the UUID of a filesystem?
+> 
+> Interesting. I read Mike's response to be talking about the security
+> consequences of having lots of users able to read the raw disk
+> device, and thereby bypass any access control mechanisms the
+> filesystem might implement (including even normal Unix file
+> permissions).
 
-> emergency flush is a reuser4 feature for solving out of memory problems.
-> all that slum processing is too heavy to satisfy emerency memory needs.
->
-> there call path for jnode_flush() is the following:
-> balance_dirty_pages()/reiser4_sync_inodes()/flush_some_atom/flush_current_atom/jnode_flush()
->
-> It is called number of dirty pages in the system grows over the limit,
-> and, hopefully, gives enough clean pages for memory allocations.
->
-> But there are emergency cases when try_to_free_pages() scans invactive page
-> list and finds dirty page on it.  It calls fs specific (or address space
-> specific) writepage method.  We have to responce to it by submiting the page to
-> disk to satisfy memory allocation request.  That memory allocation may happen
-> under some reiser4 and vfs locks held it is why calling jnode_flush() will lead
-> to deadlock.
->
-> The emergency_flush() (reiser4 implementation of writepage() method) routine
-> works with individual pages rather than with slums, it is fast, it does not
-> take long-term locks, it can write locked node to disk.
-                                     ===========
+Yes, that's exactly what I meant.  Sorry for the non-exact wording.
 
-Thanks.  After reading more source code, I find out that a node can be
-written to a temporary location whose address is saved in a hash table.
-This I/O is done solely to relieve memory pressure - its parent does not
-record the node's new location.  However, if a node selected for emergency
-flush is a relocate one (JNODE_RELOC, see needs_allocation()), then it
-will be written in-place individually.  This seems to me will violate
-atomic guarantee -- all dirty data are committed at the same time (all or
-nothing).  Did I misread some code here?
-
-I also find out that the overwrite nodes are written back to their real
-positions *immediately* after the corresponding atom commits.  I am
-wondering that maybe by keeping the nodes longer without writing
-immediately, we can save some I/O if the nodes are dirtied again.  But
-this will require extra mechanism to track if the overwrite nodes have
-been all written home yet.
-
-I also try to figure out when Reiser4 locks and unlocks a node in general
-but without much luck. In Reiser4, a short-term lock is a spin lock and a
-long-term lock is what called lock elsewhere.  Am I right? Can you explain
-a little bit about Reiser4 locking convention here? I know concurrent
-search and updates of a tree is complicated.  So one example will suffice.
-Thanks.
-
--Zhihui
+Mike
