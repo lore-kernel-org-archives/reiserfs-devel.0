@@ -1,81 +1,68 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: quota support
-Date: Wed, 10 Dec 2003 22:53:59 +0300
-Message-ID: <3FD779D7.90102@namesys.com>
-References: <1070553889.27611.147.camel@tiny.suse.com> <200312091214.13325.bostjan.skufca@domenca.si> <200312091759.59923.bernd-schubert@web.de> <200312101503.39050.bostjan.skufca@domenca.si>
+From: Matt Stegman <matts@ksu.edu>
+Subject: Re: More on Hard Links
+Date: Wed, 10 Dec 2003 14:49:35 -0600 (CST)
+Message-ID: <Pine.GSO.4.44L.0312101334000.3319-100000@unix2.cc.ksu.edu>
+References: <20031209234740.27534.qmail@web25010.mail.ukl.yahoo.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16321-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16322-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200312101503.39050.bostjan.skufca@domenca.si>
+In-Reply-To: <20031209234740.27534.qmail@web25010.mail.ukl.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Bostjan Skufca (at) domenca.si" <bostjan.skufca@domenca.si>
-Cc: reiserfs-list@namesys.com, vs@thebsh.namesys.com, mason <mason@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
+Cc: reiserfs-list@namesys.com
 
-Chris and Vladimir, what is the status of quotas in the official kernel?
+On Tue, 9 Dec 2003, Narcoleptic Electron wrote:
 
-Hans
+> > But my concern with that was that if one partition needs to be
+> > reformatted, then the other instances of the link become unwritable.
+> > So if you want to recover, you would have to copy the file and
+> > manually re-link everything.  There's no way to automatically recover.
+>
+> It would be pretty easy to write a script to do this.
+> This script would be pretty useful, in fact... good
+> thinking.
 
-Bostjan Skufca (at) domenca.si wrote:
+So would this be a daemon, or would the admin have to remember to run i.e.
+"weaklinkfsck" after an mkfs (or lvremove, or moving the disk (sdb changes
+to sdc), or whatever) on any volume which may have had these weak links?
 
->Hello Bernd,
+> > It's hard to differentiate that from the volume
+> > just being unmounted.
 >
->i've been asking the same questions and got myself an answer: RTFF (the last F 
->stands for FAQ on namesys' webpage)
->
->FAQ should answer your 1 and 2.2 questions. As for the 2.1 i think everyone at 
->Namesys is concerned about Reiser4 and Linux 2.6.0 - thus patches for 2.4.xx 
->are no longer amongst their top priorities. They do not bother hosting it on 
->their ftp because are hosted on suse's and FAQ clearly directs it's readers 
->to correct ftp site. 
->Besides all that we should thank Chris for his patience and good will which, I 
->believe, brings us THE patches.
->
->Regards,
->Bostjan
->
->
->On Tuesday 09 of December 2003 17:59, Bernd Schubert wrote:
->  
->
->>On Tuesday 09 December 2003 12:14, Bostjan Skufca (at) domenca.si wrote:
->>    
->>
->>>Hello,
->>>
->>>Below you will find patches for kernels 2.4.20-23
->>>ftp://ftp.suse.com/pub/people/mason/patches/data-logging/
->>>      
->>>
->>Hello Bostjan,
->>
->>yeah I know about those patches, but actually I want to know about general
->>quota support status:
->>
->>1.)  So is there vanilla-kernel quota support for reiserfs since 2.4.21?
->>
->>2.1.)If not, why are there no quota patches on ftp.namesys.com for
->>2.4.{21-23}?
->>
->>2.2) If there is quota support for these versions, what does the patch from
->>Chris improve?
->>
->>Thanks,
->>	Bernd
->>    
->>
->
->
->
->  
->
+> There is no need to differentiate from a volume going
+> down and just being unmounted.
 
+If it's just unmounted, it may come back.  If it's been mkfs'ed (or
+removed from the computer) it's not coming back.  Maybe this is where
+weaklinkfsck comes in?
 
--- 
-Hans
+> > Narcoleptic> Shouldn't all files on a read-only partition
+> > Narcoleptic> automatically have their permission bits set to
+> > Narcoleptic> read-only (or at least appear that way)?
+> >
+> > Hmm.  I don't think so.  I'm not sure.  I don't have any r-o
+> > partitions right now, so I can't check.
+>
+> If it doesn't work this way, I think it should.
+
+No, when you mount a filesystem read-only the permission bits show up as
+normal.  Permission bits are stored in the inode, and stat() just reports
+what the inode says.  However, the error returned from trying to write to
+a file notes "read-only file system."
+
+Some filesystems have a umask option, but that's for FAT and NTFS and the
+like, not filesystems with real UNIX permissions.
+
+As for actually modifying permissions when you mount, first of all it's
+way way too slow, and second, how would you know which write bits to set
+on an rw mount?
+
+--
+Matt
 
 
