@@ -1,127 +1,66 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Do xml-like namespaces make sense for Reiser4? (re: metas thread)
-Date: Tue, 13 Apr 2004 10:47:06 -0700
-Message-ID: <407C279A.3060303@namesys.com>
-References: <407AB9AE.3060801@pobox.com> <407ADCBF.8000609@namesys.com> <407AEA05.50004@pobox.com> <407BFBEA.5010006@pobox.com> <407C15D9.1080705@namesys.com> <407C1BE9.8010509@pobox.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: LVM1 snapshots and reiserfs
+Date: Tue, 13 Apr 2004 13:55:53 -0400
+Message-ID: <1081878952.27614.42.camel@watt.suse.com>
+References: <20040409193749.GA15077@earth.solarsys.private>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17894-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17895-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <407C1BE9.8010509@pobox.com>
+In-Reply-To: <20040409193749.GA15077@earth.solarsys.private>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "John D. Heintz" <jheintz@pobox.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: "Mark M. Hoffman" <mhoffman@lightlink.com>
+Cc: ReiserFS <reiserfs-list@namesys.com>
 
-John D. Heintz wrote:
+On Fri, 2004-04-09 at 15:37, Mark M. Hoffman wrote:
+> Hello:
+> 
+> (I've already sent this to the LVM list; it was suggested that
+> I ask here as well.)
+> 
+> Sometimes, but not always, I am unable to mount a snapshot.
+> When it fails, I see the following lines in my logs...
+> 
+> kernel: reiserfs: checking transaction log (device 3a:06) ...
+> kernel: clm-2076: device is readonly, unable to replay log
+> kernel: Replay Failure, unable to mount
+> kernel: reiserfs_read_super: unable to initialize journal space
+> 
+> I am using RedHat 9 with the following stock packages:
+> 
+> kernel-smp-2.4.20-30.9
+> lvm-1.0.3-12
+> reiserfs-utils-3.6.4-5
+> 
+> I have not tried the combination of snapshots & reiserfs with
+> earlier RedHat packages so I don't know if this is a regression.
+> 
+> After some STFW, I thought I might need a "VFS lock" patch.
+> However, it looks like this was already included by RedHat...
+> in kernel-smp-2.4.20-30.9.src.rpm there is already this patch:
+> linux-2.4.18-lvm-VFSlock.patch.
+> 
+> Is there anything else I can try or look at?
+> 
+Hard to say, but you might want to check their VFSlock patch for this
+hunk (or something like it)
+diff -ur linux.beta3.1/fs/reiserfs/super.c linux.beta3/fs/reiserfs/super.c
+--- linux.beta3.1/fs/reiserfs/super.c	2003-03-12 08:51:25.000000000 -0500
++++ linux.beta3/fs/reiserfs/super.c	2003-03-12 08:43:08.000000000 -0500
+@@ -83,7 +83,7 @@
+     reiserfs_prepare_for_journal(s, SB_BUFFER_WITH_SB(s), 1);
+     journal_mark_dirty(&th, s, SB_BUFFER_WITH_SB (s));
+     reiserfs_block_writes(&th) ;
+-    journal_end(&th, s, 1) ;
++    journal_end_sync(&th, s, 1) ;
+   }
+   s->s_dirt = 0;
+   unlock_kernel() ;
 
-> Hans Reiser wrote:
->
->> John D. Heintz wrote:
->>
->>>
->>> Hans,
->>>
->>> If I understand the naming system primitives correctly then the ":" 
->>> introduces a new sequence operator and does evil things to closure, 
->>> right?
->>>
->>> Let's use an example that is likely to conflict: Security plugins 
->>> introducing a name "permissions" to objects.
->>>
->>> Here is my list of how to expose this:
->>> 1) foo.txt/permissions
->>> * likely to conflict with end-user names and other security provider 
->>> names
->>
->>
->>
->> this would be foo/metas/permissions/owner, does that resolve the 
->> problem in your eyes?
->>
->
-> Let me verify something: You are suggesting that the "metas" namespace 
-> be the entry point for all of the plugin namespaces? I had assumed 
-> that each plugin would create it's own. That does certainly reduce the 
-> scope of my problem.
+-chris
 
-It can use metas, but what it does is up to it.  metas is a style 
-convention.
-
->
-> I'm not sure it removes the problem though, it just pushes the 
-> bottleneck one level away. That is still a good thing: it removes 
-> those conflicts from user created names, but not from plugin suppliers.
->
-> What if two suppliers of security plugins wanted to expose 
-> "permissions"? I'm thinking of the GNOME or KDE file managers growing 
-> a GUI permisions dialog to edit the structure of  data/information in 
-> the permissions namespace.
->
-> If
-> # cat foo/meta/permissions
-> # WhiteHat open source LDAP security plugin
-> owner   jheintz
-> grant   some stuff...
-> ....
->
-> then user applications (like GUI filemanagers) will start depending on 
-> that. (Or the sub-structure exposed as further names...) Do you not 
-> think this will cause problems when
-> # cat foo/meta/permissions
-> # NSA Cryptographic security plugin
-> authority   The Office of John Heintz
-> status    confidential
-> grant   some stuff...
-> ....
-
-this is the beauty of there being an official maintainer for reiserfs to 
-handle such issues;-)
-
-plugins are not created as easily as files;-), there will be few enough 
-that I can manage the issue as it happens
-
->
-> If I didn't mind typing really long names I'd say the following is 
-> absolutely correct and gives no worry about naming conflict:
-> cat foo/metas/nsa.gov/permissions
-> cat foo/metas/whitehat.com/permissions
->
-> (But then again I'd say the following does as well:
-> cat foo/nsa.gov/permissions
-> cat foo/whitehat.com/permissions)
->
-> I just don't want to type more than I have to. Thanks for the replies,
-> John Heintz
->
->
->>> 2) foo.txt/white-hat-permissions
->>> * verbose, but negligible risk of conflicts
->>> 3) foo.txt/white-hat-security/permissions
->>> * nested namespace to provide isolation
->>> 4) foo.txt/<wh-sec>permissions
->>> * syntax implying substitution before name resolution
->>> * could be some other syntax like foo.txt/wh-sec:permissions
->>>
->>> I don't like 1) or 2), and I also don't see much real difference 
->>> between 3) and 4).
->>>
->>> I'm guessing that the syntax of 4) is problem: like the ":" is 
->>> introduces new sequencial operations. I'm viewing it as just a 
->>> syntactic shorthand with a clear translation to the actual name.
->>>
->>> Thanks,
->>> John
->>>
->>>
->
->
->
-
-
--- 
-Hans
 
