@@ -1,122 +1,81 @@
 From: Helge Hafting <helge.hafting@hist.no>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 10:16:28 +0200
-Message-ID: <412D9C5C.3070302@hist.no>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826044425.GL5414@waste.org>
+Date: Thu, 26 Aug 2004 10:31:54 +0200
+Message-ID: <412D9FFA.6030307@hist.no>
+References: <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826044425.GL5414@waste.org> <1093496948.2748.69.camel@entropy> <20040826053200.GU31237@waste.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20580-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20581-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826044425.GL5414@waste.org>
+In-Reply-To: <20040826053200.GU31237@waste.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Matt Mackall <mpm@selenic.com>
 Cc: Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
 Matt Mackall wrote:
+[...]
 
->On Wed, Aug 25, 2004 at 05:42:21PM -0700, Nicholas Miell wrote:
+>What it breaks is the concept of a file. In ways that are ill-defined,
+>not portable, hard to work with, and needlessly complex. Along the
+>way, it breaks every single application that ever thought it knew what
+>a file was.
+>
+>Progress? No, this has been done before. Various dead operating
+>systems have done it or similar and regretted it. Most recently MacOS,
+>which jumped through major hurdles to begin purging themselves of
+>resource forks when they went to OS X. They're still there, but
+>heavily deprecated.
+>
 >  
 >
->>On Wed, 2004-08-25 at 16:46, Wichert Akkerman wrote:
->>    
->>
->>>Previously Jeremy Allison wrote:
->>>      
->>>
->>>>Multiple-data-stream files are something we should offer, definately (IMHO).
->>>>I don't care how we do it, but I know it's something we need as application
->>>>developers.
->>>>        
->>>>
->>>Aside from samba, is there any other application that has a use for
->>>them? 
->>>
->>>      
->>>
->>Anything that currently stores a file's metadata in another file really
->>wants this right now. Things like image thumbnails, document summaries,
->>digital signatures, etc.
+>>cp, grep, cat, and tar will continue to work just fine on files with
+>>multiple streams.
 >>    
 >>
 >
->That is _highly_ debatable. I would much rather have my cp and grep
->and cat and tar and such continue to work than have to rewrite every
->tool because we've thrown the file-is-a-stream-of-bytes concept out
->the window. Never mind that I've got thumbnails, document summaries,
->and digital signatures already.
+>Find some silly person with an iBook and open a shell on OS X. Use cp
+>to copy a file with a resource fork. Oh look, the Finder has no idea
+>what the new file is, even though it looks exactly identical in the
+>shell. Isn't that _wonderful_? 
+>
+It is what I'd expect.  Now, use cp -R to copy  the file
+_with its directory_, and see if that fares better.  If not - bad
+implementation of fs and/or cp.  The way I see file-as -directory
+is that _file_ operations (like the reads issued by cat) only
+work on the file part.  You want the directory part?  Use
+directory operations such as those "cp -R" use.
+
+>Now try cat < a > b on a file with a
+>fork. How is that ever going to work?
 >  
 >
-Utilities that works on files only, such as cat, should keep
-working.  No problem there.  If you cat a file that also is
-a directory, then the file contents is all you get - by design.
+It is going to copy the _file_ part, of course.  I wouldn't
+expect anything else - "cat" doesn't deal with directories.
 
-Utilities that _only_ traverse the directory tree, such as find,
-should keep working too.  Perhaps with a very minor update
-so they don't mistake a file-directory for a file only.  I.e.
-find must recurse into anything that support directory semantics.
+This also raise the question of when to use file-as-directory.
+A usage where you need everything to follow the file, even
+when using "cat" calls out for an application that puts everything
+into one file.  Directory-as-file is the wrong tool for that job, so don't
+worry about such problems.
 
-Something that both recurse and operate on files (cp -a, tar, grep, ...
-will need minor updating.  They already knows how to handle
-files and directories, now they will need an update so
-they're open for objects that are both.  I.e. let grep scan the file
-as usual, then recurse into its directory part in the usual way too.
-Performance problems should be avoided by not supporting
-directory operations on files with no directory content, which I
-believe will be many of them.
+Sticking thumbnails in a file-as-dir is another story though.  Move the
+file (with "mv a b", not  "cat a>b;rm a") moves the image file _and_ the
+thumbnail.  No time wasted on regenerating thumbnails, no disk space
+or cleanup time wasted on dangling thumbs.  Use the image file
+for its intended purposes (view it, mail it off, serve it on the web,
+edit it, print it) and the thumbnail doesn't get in the way
+because it isn't embedded in the file format.  Embedding it
+in the file might work for jpeg which support generic embedded data,
+it surely won't work for every image format out there.
 
-The "file-as-directory" thing will not be that useful before the tools
-gets these relatively simple updates.  Till then it'll be a toy, which 
-shouldn't
-stop it from getting into the VFS.  Updating the tools will be a task
-for the file-as-dir fans.
-
-(I don't know wether reiser4 does things this way - it is certainly
-they way I would want file-as-directory though.)
-
->While the number of annoying properties of files with forks is
->practically endless, the biggest has got to be utter lack of
->portability. How do you stick the thing in an attachment or on an ftp
->site? Well you can't because it's NOT A FILE. 
->  
->
-Stick the file in an attachment and you get the file only. 
-No problem, it is designed that way.  An app that really
-wants everything in a single file should use a file structured
-for that, not file-as-dir.  File-as-dir attach stuff to a file in a
-more loose way.
-
-If you want to attach the directory contents too, do what you usually do
-when you want to mail someone a directory tree.  You can't stick a 
-directory
-in an attachment because it is not a file.  So you either attach every 
-file in
-the tree, or use tar.  In this case, an updated tar.
-
-The ftp server shouldn't be a problem.  It supports both files and
-directories already.  It may need a minor update in order to
-not mistake directory for file or vice-versa when someone
-request an operation.
-
-ftp> get filename  #Will get you the contents of the file part only - by 
-design.
-ftp> cd filename    #Will change into the directory (if the file indeed 
-provides one.)
-
->A file is a stream of bytes.
->  
->
-Sure.  And a file with a directory support both directory and file 
-operations.
-You can get the stream of bytes as usual - that's the file part.  Or you
-can cd into the directory as usual. There isn't much overlap between
-file operations and directory operations, so there is little conflict 
-the way
-I see it.  Merely letting the tools know that being a file no longer rule
-out the possibilities of directory operations.  Getting the VFS right
-is another matter of course, but I don't worry about userland tools.
+This is my idea of how file-as-directory should work.
 
 Helge Hafting
+
+
+Helge Hafting
+
