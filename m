@@ -1,49 +1,83 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: reiserfsprogs release
-Date: Wed, 10 Jul 2002 12:06:48 +0400
-Message-ID: <200207101206.48370.vitaly@namesys.com>
-References: <200206251829.25799.vitaly@namesys.com> <20020625165254.GA30301@matrix.wg> <200206261317.10813.vitaly@namesys.com>
+From: Brandon Low <lostlogic@gentoo.org>
+Subject: Re: reiserfsprogs release
+Date: Wed, 10 Jul 2002 04:10:35 -0500
+Message-ID: <20020710041035.A7547@lostlogicx.com>
+References: <200206251829.25799.vitaly@namesys.com> <20020625165254.GA30301@matrix.wg> <200206261317.10813.vitaly@namesys.com> <200207101206.48370.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-10944-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-md5;
+	protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
+Return-path: <reiserfs-list-return-10945-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <200206261317.10813.vitaly@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <200207101206.48370.vitaly@namesys.com>; from vitaly@namesys.com on Wed, Jul 10, 2002 at 12:06:48PM +0400
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: linux-kernel@vger.kernel.org
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
+--k+w/mQv8wyuph6w0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+I may be stupid, but if the latest release is 3.6.2 why is the "LATEST IS"=
+=20
+link still pointing to 3.x.1b?  Is 3.6.2 the version which we (Gentoo=20
+Linux) should be packaging?  Is it more or less safe than 3.x.1b?  Thanks!
 
-the latest reiserfsprogs-3.6.2 is available on our ftp site.
+--Brandon
 
-The most of changes are just bug fixes and speedups.
-    StatData got wrong values sometimes.
-    Tails were not converted back if had been converted to internal.
-    Lost+found was not accessible sometimes due to wrong flag in
-    metadata.
-    Extra checks on --check and fixes on --fix-fixable were added
-    for wrong st_nlinks, some info in internal tree.
-    Some multiple checks during overwriting and relocation were
-    eliminated.
-    Etc.
+On Wed, 07/10/02 at 12:06:48 +0400, Vitaly Fertman wrote:
+>=20
+> Hi all,
+>=20
+> the latest reiserfsprogs-3.6.2 is available on our ftp site.
+>=20
+> The most of changes are just bug fixes and speedups.
+>     StatData got wrong values sometimes.
+>     Tails were not converted back if had been converted to internal.
+>     Lost+found was not accessible sometimes due to wrong flag in
+>     metadata.
+>     Extra checks on --check and fixes on --fix-fixable were added
+>     for wrong st_nlinks, some info in internal tree.
+>     Some multiple checks during overwriting and relocation were
+>     eliminated.
+>     Etc.
+>=20
+> Added different block size support - 1k, 2k and for Alpha 8k.
+> Kernel support we are going to include into 2.4.20.
+>=20
+> Support for bad block lists was added also but disabled for now
+> due to some conflicts with the current kernel, which have not been
+> solved yet.
+>=20
+> Verson numbering scheme was changed.
+>=20
+> Another pre release 3.6.3-pre1 is also available. It includes some=20
+> great speedups for reiserfsck.
+>=20
+> --=20
+>=20
+> Thanks,
+> Vitaly Fertman
+> -
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 
-Added different block size support - 1k, 2k and for Alpha 8k.
-Kernel support we are going to include into 2.4.20.
+--k+w/mQv8wyuph6w0
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
-Support for bad block lists was added also but disabled for now
-due to some conflicts with the current kernel, which have not been
-solved yet.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
 
-Verson numbering scheme was changed.
+iD8DBQE9K/oLHCCPbR8BLcYRAmyjAJ9mSv3VlIIrtyA0zne5O2wEr487fACgl1o1
+uUMRj1XiU5ivCDndxXJ/HO4=
+=gK12
+-----END PGP SIGNATURE-----
 
-Another pre release 3.6.3-pre1 is also available. It includes some 
-great speedups for reiserfsck.
-
--- 
-
-Thanks,
-Vitaly Fertman
+--k+w/mQv8wyuph6w0--
