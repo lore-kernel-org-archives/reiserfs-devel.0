@@ -1,86 +1,67 @@
-From: Domenico Andreoli <cavok@libero.it>
-Subject: Re: fscking a reiserfs 3.6 filesystem with reiser4progs 0.4.18 segfaults
-Date: Mon, 22 Dec 2003 11:52:11 +0100
-Message-ID: <3FE6CCDB.2030200@libero.it>
-References: <3FE5A1AA.8040200@libero.it>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: reiserfsck 3.6.11 locks up
+Date: Mon, 22 Dec 2003 14:41:07 +0300
+Message-ID: <200312221441.07493.vitaly@namesys.com>
+References: <196401c3c7c6$3ff2e1c0$74cb010a@mail2world.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16369-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16370-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FE5A1AA.8040200@libero.it>
+In-Reply-To: <196401c3c7c6$3ff2e1c0$74cb010a@mail2world.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: David Fendrich <david@fendrich.net>, reiserfs-list@namesys.com
 
-Domenico Andreoli wrote:
-> i tried to check a reiserfs 3.6 filesystem with fsck.reiser4 and it 
-> segfaulted. is reiser4progs expected to work correctly with older 
-> reiserfs filesystems?
-> 
-> i'm using a 2.6.0 kernel patched with reiser4 from 2003.11.12. libaal 
-> 0.4.13 and reiser4progs 0.4.18.
-> 
-> let me know if more info are required.
-> 
-now that i look at it, fsck.reiser4 does not even check a reiser4 fs :(
+Hello, 
 
-# mkfs.reiser4 /dev/hdc6
-mkfs.reiser4 0.4.18
-Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by 
-reiser4progs/COPYING.
+On Sunday 21 December 2003 16:27, David Fendrich wrote:
+> I have a disaster on my hands. I have important data on a HD which
+> crashed a few days ago. It turns out that the back up system has been
+> down for 1 month, so I really need to recover data from this HD. I used
+> dd_recover to rescue what I could to a clean drive (very few blocks were
+> damaged, fortunately).
+>
+> I then mounted this 200 gig file with losetup and ran reiserfsck --check
+> on it. Reiserfsck said that I needed to run with --rebuild-tree. So I
+> did. Pass 0 went fine. Pass 1 locked up everything after 40%. I
+> downloaded the latest reiserfsck (my first version was 3.6.6 or
+> something like that) and tried again. Same result at the exakt same
+> position.
 
-Block size 4096 will be used. 
+So reiserfsck continues to do smth but no progress anymore, right?
+Have you built the progs on the same computer where you run it?
+Would you check your memory with memtest or similar?
+If this is a problem in the reiserfsprogs code I will be able to find 
+it if you run 
+	debugreiserfs -p /dev/xxx | bzip2 -c > xxx.bz2
+and make it available for downloading.
 
-Linux 2.6.0-cavok is detected. 
+> I am almost certain that there is nothing wrong with the new HD, so what
+> am I to do?
+>
+> Is is wrong to run from a loopback device? Should I copy the large file
 
-Uuid 9ad355b3-1520-450e-9471-dee1765a7466 will be used. 
+this is ok to fsck the loopback device, you can even fsck the file.
 
-Reiser4 is going to be created on /dev/hdc6. 
+> right on to an empty partition with dd if=/dev/loop0 of=/dev/hda1 -bs=1M
+> ? Does it matter on hda1 is larger than the original partition?
 
-(Yes/No): yes
-Creating reiser4 on /dev/hdc6...done
-# fsck.reiser4 /dev/hdc6
-   *************************************************************
-   ** If you are using the latest reiser4progs and  it fails **
-   ** please  email bug reports to reiserfs-list@namesys.com, **
-   ** providing  as  much  information  as  possible --  your **
-   ** hardware,  kernel,  patches,  settings,  all  reiserfsk **
-   ** messages  (including version), the reiser4fsck logfile, **
-   ** check  the  syslog file  for  any  related information. **
-   ** If you would like advice on using this program, support **
-   ** is available  for $25 at  www.namesys.com/support.html. **
-   *************************************************************
+in this case it would be better to zero the partition first or to be sure that there
+were no reiserfs before on hda1 blocks that lie over the fs size.
 
-Fscking the /dev/hdc6 block device.
-Will check the consistency of the Reiser4 SuperBlock.
-Will check the consistency of the Reiser4 FileSystem.
-Will use (default) params.
-Continue? 
+> If the output from debugreiserfs helps, here it is:
+> debugreiserfs 3.6.11 (2003 www.namesys.com)
+>
+> Count of blocks on the device: 49520336
+> Free blocks (count of blocks - used [journal, bitmaps, data, reserved]
+> blocks): 49520336
 
-(Yes/No): yes
-***** Openning the fs.
-Fatal: Device operation "read" isn't implemented. 
+have you rebuilt the super block? 
 
-Fatal: Can't read master super block. 
-
-Fatal: Failed to open the master super block. 
-
-Fatal: Cannot open the FileSystem on (/dev/hdc6). 
-
-zsh: segmentation fault (core dumped)  fsck.reiser4 /dev/hdc6
-#
-
-any hint?
-
-BTW: note the "***** Openning the fs.", it should be "Opening" instead 
-of "Openning".
-
-cheers
-domenico
-
------[ Domenico Andreoli, aka cavok
-  --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
-    ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
+-- 
+Thanks,
+Vitaly Fertman
