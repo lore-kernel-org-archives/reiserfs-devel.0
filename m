@@ -1,52 +1,36 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: illegal seek - unable to umount device
-Date: Tue, 24 Jun 2003 09:48:09 +0400
-Message-ID: <20030624054809.GA24126@namesys.com>
-References: <200306231944.57478.gyim@freemail.hu>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: What about the first official Reiser4 pre-beta patch for 2.5.73
+ ;) ?
+Date: Tue, 24 Jun 2003 09:57:01 +0400
+Message-ID: <3EF7E82D.3020204@namesys.com>
+References: <002901c339bb$c7b91910$0200a8c0@xpstation>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14683-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14684-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200306231944.57478.gyim@freemail.hu>
+In-Reply-To: <002901c339bb$c7b91910$0200a8c0@xpstation>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Gyimesi Akos <gyim@freemail.hu>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Fred -- Speed Up -- <speedup@free.fr>
+Cc: ReiserFS ML <reiserfs-list@namesys.com>
 
-Hello!
+Fred -- Speed Up -- wrote:
 
-On Mon, Jun 23, 2003 at 07:44:57PM +0200, Gyimesi Akos wrote:
+>It would be great if you could release some patch file for the 2.5.73 kernel, bundled with the latest reiserprogs, in order to test the distribution process for the first official beta patch that you planned for the end of this month ;)
+>
+>Fred
+>  
+>
+Fred, we don't push on our users software that we would not ourselves 
+use.  Patience.  We will release sometime this summer, with luck on July 
+11th, but if it is not ready then not.
 
-> I have just encountered a problem (?) with reiserfs on Linux 2.4.20. I wrote 
-> the following (shortened) python code which produced an unkillable process:
-> #!/usr/bin/python
-> file=open("terabyte_length_file", "w")
-> file.seek(1024*1024*1024*1024)
-> file.write("%c" % 0)
-> file.close()
-> On ext2, this code produced a file which had the (nominal) length of 1 
-> terabyte and the real size of 16k. I ran this script on a reiserfs partition 
-> as a normal user, and it
-> 1. produced an unkillable process with 100% CPU usage
-> 2. i was unable to kill it anyway, and i was unable to unmount the filesystem.
->    (Illegal seek, Device or resource busy). So finally i rebooted the system.
->    Of course, the rebooting process also got stuck as init couldn't umount
->    the device either.
-> Naturally, i was not really surprised that this code didn't work on reiserfs, 
-> but i was quite astonished by the fact that this dirty program could 
-> practically "kill" the machine as a normal user - in a meaning that running 
-> it several times consumes its CPU resouces and makes it impossible to unmount 
-> the filesystem.
+Thanks for your interest though.
 
-This is known problem and we hope to push the fix to Marcelo soon.
-In short, the process is not stuck, it is busy creating file hole (4k at a time).
-If you'd wait long enough, it will eventually finish.
+-- 
+Hans
 
-Thank you for the report.
 
-Bye,
-    Oleg
