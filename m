@@ -1,79 +1,75 @@
 From: David Woodhouse <dwmw2@infradead.org>
 Subject: Re: Reiser4 status: benchmarked vs. V3 (and ext3)
-Date: Thu, 14 Aug 2003 14:58:28 +0100
-Message-ID: <1060869508.4803.35.camel@passion.cambridge.redhat.com>
+Date: Thu, 14 Aug 2003 15:10:55 +0100
+Message-ID: <1060870255.4803.49.camel@passion.cambridge.redhat.com>
 References: <Pine.LNX.3.96.1030813160910.12417A-100000@gatekeeper.tmr.com>
+	 <1060837469.17622.6.camel@haron.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-15308-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15309-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.3.96.1030813160910.12417A-100000@gatekeeper.tmr.com>
+In-Reply-To: <1060837469.17622.6.camel@haron.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Bill Davidsen <davidsen@tmr.com>
-Cc: Yury Umanets <umka@namesys.com>, Daniel Egger <degger@fhm.edu>, Hans Reiser <reiser@namesys.com>, Nikita Danilov <Nikita@namesys.com>, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, reiserfs mailing list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Yury Umanets <umka@namesys.com>
+Cc: Bill Davidsen <davidsen@tmr.com>, Daniel Egger <degger@fhm.edu>, Hans Reiser <reiser@namesys.com>, Nikita Danilov <Nikita@namesys.com>, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, reiserfs mailing list <reiserfs-list@namesys.com>
 
-On Wed, 2003-08-13 at 21:12, Bill Davidsen wrote:
-> The driver should do the logical to physical mapping, but the portability
-> vanishes if the filesystem to physical mapping is not the same for all
-> machines and operating systems. For pluggable devices this is important.
+On Thu, 2003-08-14 at 06:04, Yury Umanets wrote:
+> Yes, you are right. Device driver cannot take care about leveling.
 
-The portability also vanishes if the file system layout is not the same
-for all machines and operating systems... what's your point?
+The hardware device driver doesn't. The 'translation layer' does, in the
+case where you are using a traditional block-based file system. 
 
-Just like there are standard file systems, there are also standard
-'translation layers' -- pseudofilesystems which are used to emulate a
-hard drive on flash storage -- and some of these are implemented for
-Linux.
+If you consider the translation layer and the underlying raw hardware
+driver together to form the 'device driver' from the filesystem's
+perspective and in the context of the above sentence, then you're
+incorrect -- it can, and in general it _does_ take care of wear
+levelling.
 
-Take a PCMCIA flash card (real flash, not CF) with FTL and FAT on it,
-and it'll work just fine under both Windows and Linux, because they both
-use the standard FTL and FAT formats.
+> It is able only to take care about simple caching (one erase block) in 
+> order to make wear out smaller and do not read/write whole block if one 
+> sector should be written.
 
-FTL provides the logical<->physical mapping and the wear levelling, FAT
-is just normal FAT.=20
+Whatever meaning of 'device driver' you meant to use -- no.
 
-> The leveling seems to be done by JFFs2 in a portable way, and that's as i=
-t
-> should be.=20
+The raw hardware driver provides only raw read/write/erase
+functionality; no caching is appropriate. 
 
-You seem to be very confused here. JFFS2 works on flash directly;
-nothing's pretending to be a block device. It doesn't seem to be at all
-relevant to this discussion.
+The optional translation layer which simulates a block device provides
+far more than simple caching -- it provides wear levelling, bad block
+management, etc. All using a standard layout on the flash hardware for
+portability.
 
-JFFS2 does its own wear levelling and flash management, because it works
-directly on the flash.=20
+(Except in the special case of the 'mtdblock' translation layer, which
+is not suitable for anything but read-only operation on devices without
+any bad blocks to be worked around.)
 
-FAT can't do that -- it needs some other code (like the FTL code) to
-emulate a normal hard drive for it, providing wear levelling and
-logical<->physical translation for it.=20
+> Part of a filesystem called "block allocator" should take care about 
+> leveling.
 
-See http://www.infradead.org/~dwmw2/mtd-upper-layers.jpeg
+That's insufficient. In a traditional file system, blocks get
+overwritten without being freed and reallocated -- the allocator isn't
+always involved. 
 
-Wear levelling is not done in the driver -- the driver just drives the
-flash, and in fact is below the bottom of the diagram since it's largely
-irrelevant. It just gives you read/write/erase functions for the raw
-flash.
+If you want to teach a file system about flash and wear levelling, you
+end up ditching the pretence that it's a block device entirely and
+working directly with the flash hardware driver. 
 
-Wear levelling is done either in the file system which works directly on
-the flash (JFFS2, YAFFS), or in the 'translation layer' which uses the
-flash to pretend to be a block device (FTL, NFTL, INFTL, SMTL). (In the
-case of the extremely na=C3=AFve 'mtdblock' translation layer, no translati=
-on
-and no wear levelling is done at all.)
+Either that or use a translation layer which does it _all_ for the file
+system and then just use a standard file system on that simulated block
+device.
 
-> If the leveling were in the driver I don't believe even FAT
-> would work.
+Between those two extremes, very little actually makes sense.
 
-I think that by 'driver' you actually mean the 'translation layer' or
-the combination of translation layer and underlying hardware driver, in
-which case you would be incorrect to say that it wouldn't work. That
-_is_ how it works, portably.
+If you introduce the gratuitous extra 'block device' abstraction layer
+which doesn't really fit the reality of flash hardware very well at all,
+you end up wanting to violate the layering in so many ways that you
+realise you really shouldn't have been pretending to be a block device
+in the first place.
 
-
---=20
+-- 
 dwmw2
 
