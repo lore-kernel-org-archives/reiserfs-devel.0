@@ -1,38 +1,47 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: How do I recover lost data?
-Date: Mon, 24 Nov 2003 15:23:28 +0300
-Message-ID: <200311241523.28055.vitaly@namesys.com>
-References: <3FC13BB5.108@ffs.gu.se>
+From: Adrian Woodley <Adrian@Diskworld.com.au>
+Subject: libaal-0.4.13 compile error
+Date: Tue, 25 Nov 2003 01:08:54 +0800
+Message-ID: <1069693734.26311.23.camel@Hex.Diskworld>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16151-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16152-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FC13BB5.108@ffs.gu.se>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Mats Hulten <mahu@ffs.gu.se>, reiserfs-list@namesys.com
+To: Reiserfs List <reiserfs-list@namesys.com>
 
-On Monday 24 November 2003 01:59, Mats Hulten wrote:
-> My system froze up, and it turned out to be my reiserfs file system that
-> had gone bad.
-> I reebooted with the install disks and ran fsck and then reiserfsck
-> --rebuild-tree.
-> Everything seemed to have worked out just fine, and I could again mount
-> the partition, but all data seems to be gone.
->
-> All thats left is the /lost+found directory.
-> df prints that the hdd is 75% full wich is correct.
->
-> What can I do to recover the data?
+G'Day all,
+	recently tried compiling libaal-0.4.13 and came up with the following
+error:
 
-it seems that most of your data were recovered and liked to lost+found (75% 
-of the hdd is full), probably because the root directory was destroyed about 
-the freeze time.
+gcc -DHAVE_CONFIG_H -I. -I. -I.. -I../include -D_REENTRANT
+-D_FILE_OFFSET_BITS=64 -O0 -g -W -Wall -Wno-unused-parameter
+-Wredundant-decls -Werror -c file.c -MT libaal_la-file.lo -MD -MP -MF
+.deps/libaal_la-file.TPlo  -fPIC -DPIC -o .libs/libaal_la-file.lo
+file.c: In function `file_len':
+file.c:213: error: parse error before '[' token
+file.c:213: warning: signed and unsigned type in conditional expression
+make[2]: *** [libaal_la-file.lo] Error 1
+make[2]: Leaving directory `/usr/local/src/libaal-0.4.13/src'
+make[1]: *** [all-recursive] Error 1
+make[1]: Leaving directory `/usr/local/src/libaal-0.4.13'
+make: *** [all] Error 2
+
+gcc --version
+gcc (GCC) 3.3.2 (Debian)
+
+cat /proc/version 
+Linux version 2.6.0-test9-reiser4-mm3 (root@Hex) (gcc version 3.3.2
+(Debian)) #1 Mon Nov 17 23:20:30 WST 2003
+
+Cheers,
+Adrian
 
 -- 
-Thanks,
-Vitaly Fertman
+Linux Conf Australia
+Adelaide 2004
+conf.linux.org.au
+
