@@ -1,44 +1,36 @@
-From: Spam <spam@tnonline.net>
-Subject: Re: kern.log unrecognized option warning
-Date: Fri, 27 Aug 2004 15:52:31 +0200
-Message-ID: <699302587.20040827155231@tnonline.net>
-References: <1392551425.20040827154059@wp.pl>
-Reply-To: Spam <spam@tnonline.net>
+From: Rik van Riel <riel@redhat.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Fri, 27 Aug 2004 10:12:43 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44.0408271010300.10272-100000@chimarrao.boston.redhat.com>
+References: <412EEB75.1030401@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20917-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20918-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1392551425.20040827154059@wp.pl>
+In-Reply-To: <412EEB75.1030401@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Maciej Soltysiak <pysiak.satriani@wp.pl>
-Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: David Masover <ninja@slaphack.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
+On Fri, 27 Aug 2004, Hans Reiser wrote:
 
- Isn't notail only for reiserfs 3, not reiser4?
+> Why are you guys even considering going to any pain at all to distort 
+> semantics for the sake of backup?  tar is easy, we'll fix it and send in 
+> a patch. 
 
- ~S
+Because not everybody uses tar.  Quite a few people use a
+network backup system, while others use duplicity, RPM uses
+cpio internally and big companies tend to use proprietary
+network backup suites.
 
-> Hi,
-
-> While adding an entry to fstab i tried it with reiserfs notail.
-> Ok, there's no such option.
-> Is it important to write this also to the kern.log?
-
-> Aug 26 20:27:25 dns kernel: reiser4[mount(4962)]: parse_options
-> (fs/reiser4/vfs_ops.c:844)[nikita-2307]:
-> Aug 26 20:27:25 dns kernel: WARNING: Unrecognized option: "notail"
-
-> Regards,
-> Maciej
-
-
-
+Breaking people's setup is something to worry about.
 
 -- 
-Best regards,
- Spam                            mailto:spam@tnonline.net
+"Debugging is twice as hard as writing the code in the first place.
+Therefore, if you write the code as cleverly as possible, you are,
+by definition, not smart enough to debug it." - Brian W. Kernighan
 
