@@ -1,67 +1,60 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: silent semantic changes in reiser4 (brief attempt to document
- the idea of what reiser4 wants to do with metafiles and why
-Date: Tue, 31 Aug 2004 14:51:01 -0400
-Sender: news <news@sea.gmane.org>
-Message-ID: <87eklnm99m.fsf@uhoreg.ca>
-References: <41323AD8.7040103@namesys.com> <200408312055.56335.v13@priest.com>
+From: Tonnerre <tonnerre@thundrix.ch>
+Subject: Re: silent semantic changes in reiser4 (brief attempt to document the idea of what reiser4 wants to do with metafiles and why
+Date: Tue, 31 Aug 2004 21:08:14 +0200
+Message-ID: <20040831190814.GA15493@thundrix.ch>
+References: <41323AD8.7040103@namesys.com> <200408312055.56335.v13@priest.com> <36793180.20040831201736@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21168-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Return-path: <reiserfs-list-return-21169-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <36793180.20040831201736@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
-Cc: linux-kernel@vger.kernel.org
+To: Spam <spam@tnonline.net>
+Cc: V13 <v13@priest.com>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@digeo.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@osdl.org>, reiserfs-list@namesys.com
 
->>>>> "V13" == V13  <v13@priest.com> writes:
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-V13> Maybe I'm crazy but:
+Salut,
 
-V13>  You're talking about a major change in the way filesystems work if
-V13> this is going to be used by other FSs too. If I understand this
-V13> correctly it is a completely new thing and trying to do it by
-V13> patching existing well-known 'primitives' may be wrong.
+On Tue, Aug 31, 2004 at 08:17:36PM +0200, Spam wrote:
+>   How  are  things  done on Windows platforms when there are files and
+>   directories  with the same name? In Unix that is imposible. How does
+>   it  work  for  environments  like  Cygwin  etc? What happen to tools
+>   that run in them?
 
-V13>   AFAIK and AFAICS the metadata are not files or directories. You
-V13> can look at them as files/dirs but they are not, just like a tar is
-V13> not a directory. I believe that the correct thing to do (tm) is to
-V13> add a new 'concept' named 'metadata' (which already exists). ...
+In  NTFS it's  illegal  IIRC.  At least  the  fs correction  utilities
+complain about a block being assigned to two files.
 
-And you'll need a new 'concept' named 'streams'.  And a new concept for
-every extension you want/need to add to the filesystem.  By exposing
-everything through the normal filesystem interface, you don't need to
-make any modifications to your programs to use the new concepts.
-Everything just works as expected.  (With the possible exception of
-backup-like software, but it is easier to fix just the backup software
-than every other program that's out there.)
+Same with HFS+.
 
-The hypothetical object /usr/bin/xterm/icon.png looks like a file,
-smells like a file, and quacks like a file.  Why shouldn't it be a file?
+Sometimes  there seem to  be several  things with  the same  name. But
+that's because of hidden extensions (.lnk for example).
 
-V13> This way you'll have files, directories and metadata (or whatever
-V13> you call them). So, each directory can have metadatas and files and
-V13> each file can have metadatas. Then you have to provide some new
-V13> methods of accessing them and not to use chdir() etc. (lets say
-V13> chdir_meta() to enter the meta dir which will work for files
-V13> too). After entering the 'metadir' you'll be able to use existing
-V13> methods etc to access its 'files'.
+I'm talking out of the book here, maybe the real-world implementations
+of Windows  are different. I can't  tell, I only used  Windows once to
+ssh into a screwed-up router.
 
-V13>   This approach doesn't mess with existing things and can be
-V13> extended for other filesystems too.
+				Tonnerre
 
-Either way, filesystems that want to implement that interface will need
-to be changed.  The question is just what kind of interface we will
-expose to the users/programs.  And since that's what the question is,
-it seems to me that we want to expose it through an interface that the
-users are already used to.
 
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.9.2 (GNU/Linux)
+
+iD8DBQFBNMyd/4bL7ovhw40RAiIcAJ9p8jLgJeKhIFuWqVmJ/ShSiz6L+ACgwTVN
+N/3DwpJuNBNtx2Sjb9xdZ8A=
+=ER/w
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
