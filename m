@@ -1,49 +1,41 @@
 From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
 Subject: Re: Horrible ftruncate performance
-Date: Fri, 11 Jul 2003 17:35:49 +0200
-Message-ID: <200307111735.49136.Dieter.Nuetzel@hamburg.de>
-References: <20030710052931.GA17957@namesys.com> <200307111727.25642.Dieter.Nuetzel@hamburg.de> <20030711153231.GG17180@namesys.com>
+Date: Fri, 11 Jul 2003 17:36:52 +0200
+Message-ID: <200307111736.52211.Dieter.Nuetzel@hamburg.de>
+References: <20030710052931.GA17957@namesys.com> <200307111732.49524.Dieter.Nuetzel@hamburg.de> <200307111736.00500.m.c.p@gmx.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14894-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-14895-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030711153231.GG17180@namesys.com>
+In-Reply-To: <200307111736.00500.m.c.p@gmx.net>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: Szakacsits Szabolcs <szaka@sienet.hu>, reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Marc-Christian Petersen <m.c.p@gmx.net>, Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
 
-Am Freitag, 11. Juli 2003 17:32 schrieb Oleg Drokin:
-> Hello!
+Am Freitag, 11. Juli 2003 17:36 schrieb Marc-Christian Petersen:
+> On Friday 11 July 2003 17:32, Dieter N=FCtzel wrote:
 >
-> On Fri, Jul 11, 2003 at 05:27:25PM +0200, Dieter N?tzel wrote:
-> > > Actually I did it already, as data-logging patches can be applied to
-> > > 2.4.22-pre3 (where this truncate patch was included).
+> Hi Dieter,
+>
+> > Where comes this from?
+> > I don't find it my tree:
 > >
-> > No -aaX.
->
-> Right.
->
-> > > > Maybe it _IS_ time for this _AND_ all the other data-logging patches?
-> > > > 2.4.22-pre5?
-> > >
-> > > It's Chris turn. I thought it is good idea to test in -ac first, though
-> > > (even taking into account that these patches are part of SuSE's stock
-> > > kernels).
+> > fs/eiserfs/inode.c
 > >
-> > I don't think -ac would make it => No big Reiser involved...
+> > -            if (un.unfm_nodenum)
+> >                  inode->i_blocks +=3D inode->i_sb->s_blocksize / 512;
+> >              //mark_tail_converted (inode);
 >
-> Would make what?
-> I think Alan have agreed to put data-logging code in already.
+> reiserfs-quota patch removes this.
 
-OK, good to hear.
+Ah, thank you very much.
 
-But "all" ReiserFS data-logging users running -aa (SuSE) kernels (apart from 
-WOLK ;-).
+I can go ahead, then.
 
--Dieter
+=2DDieter
 
