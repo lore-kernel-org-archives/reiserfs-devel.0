@@ -1,33 +1,47 @@
-From: Jamie Lokier <jamie@shareable.org>
+From: James Bruce <bruce@andrew.cmu.edu>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 17:06:38 +0100
-Message-ID: <20040826160638.GJ5733@mail.shareable.org>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <20040825203516.GB4688@backtop.namesys.com> <20040825205149.GA17654@lst.de> <412DA2CF.2030204@namesys.com> <20040826124119.GA431@lst.de> <20040826134812.GB5733@mail.shareable.org> <20040826155744.GA4250@lst.de>
+Date: Thu, 26 Aug 2004 12:07:37 -0400
+Message-ID: <412E0AC9.2020203@andrew.cmu.edu>
+References: <20040824202521.GA26705@lst.de>	<412CEE38.1080707@namesys.com>	<20040825152805.45a1ce64.akpm@osdl.org>	<112698263.20040826005146@tnonline.net>	<Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org>	<1453698131.20040826011935@tnonline.net>	<20040825163225.4441cfdd.akpm@osdl.org>	<20040825233739.GP10907@legion.cup.hp.com>	<20040825234629.GF2612@wiggy.net>	<1939276887.20040826114028@tnonline.net>	<20040826024956.08b66b46.akpm@osdl.org>	<839984491.20040826122025@tnonline.net>	<20040826032457.21377e94.akpm@osdl.org>	<742303812.20040826125114@tnonline.net> <20040826035500.00b5df56.akpm@osdl.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20711-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20712-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040826155744.GA4250@lst.de>
+In-Reply-To: <20040826035500.00b5df56.akpm@osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, Alex Zarochentsev <zam@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Andrew Morton <akpm@osdl.org>
+Cc: Spam <spam@tnonline.net>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Christoph Hellwig wrote:
-> > There's bound to be some security issue, but I'm not sure what you're
-> > getting at with /tmp.  What sort of sort of security problem arises
-> > with a world-writeable directory such as /tmp, that cannot arise with
-> > the standard fs semantics?
-> 
-> Actually you are right on that issue because it would open the
-> device/fifo as directory and not device/fifo (in fact I'd had to look at
-> the code again to see whether they actually do this only for files or
-> also for special files)
+Andrew Morton wrote:
 
-Are you saying that with reiser4, you can open a device or fifo with
-O_DIRECTORY?
+>No.  All of the applications which you initially identified can be
+>implemented by putting the various bits of data into a single file and
+>getting applications to agree on the format of that file.
+>  
+>
 
--- Jamie
+So in order to avoid breaking backup and file utilities, we'd instead 
+break every application that reads files?  That way surely lies madness 
+:)  This /could/ possibly work with lots of cooperation from glibc, but 
+we'd also need a way to insert and delete bytes in a file... moving 1MB 
+of attributes/streams just to change a 20 character author attribute 
+seems a bit silly.  In addition, there are little things, such as how 
+adding a thumbnail image shouldn't change the modification time of the 
+original picture IMO, but it does if you embed it in the file.
+
+If it should be in userspace, we could take the OS-X approach of using 
+directories for everything, and the "data" that would be in a hybrid 
+directory-file is a specially named file under that directory.  Programs 
+for instance are actually directories, with the elf file underneath it.  
+When you click on the "directory-program" in the gui it runs the 
+associated elf file rather than opening the directory.  I think that 
+approach is promising, but so few unix programs have any indirection for 
+file access it'd be hell to teach them all how it works.  Of course with 
+emminent breakage of some sort, maybe now is the time...
+
+ - Jim Bruce
+
