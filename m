@@ -1,37 +1,62 @@
-From: Spam <spam@tnonline.net>
-Subject: Re: silent semantic changes in reiser4 (brief attempt to document the idea of what reiser4 wants to do with metafiles and why
-Date: Tue, 31 Aug 2004 22:31:54 +0200
-Message-ID: <1125457632.20040831223154@tnonline.net>
-References: <41323AD8.7040103@namesys.com> <200408312055.56335.v13@priest.com>
- <36793180.20040831201736@tnonline.net> <200408312235.35733.v13@priest.com>
- <874qmjm51g.fsf@uhoreg.ca>
-Reply-To: Spam <spam@tnonline.net>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: silent semantic changes with reiser4
+Date: Tue, 31 Aug 2004 22:32:26 +0200
+Message-ID: <20040831203226.GB16110@elf.ucw.cz>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21177-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21178-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <874qmjm51g.fsf@uhoreg.ca>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
+Hi!
 
-V13>> The only thing that changes (from the userland POV) is the way
-V13>> someone can enter the 'metadata directory'. This way you don't have
-V13>> to have a special name, just a special function and no existing
-V13>> application (like tar) can possibly break because it will not know
-V13>> how to enter this 'metadata directory'.
+> > You do need extra tools anyway, placing them in the kernel is cheating (and
+> > absolutely pointless, IMHO).
+> 
+> I agree.
+> 
+> There's no point to having the kernel export information that is already 
+> inherent in the main stream.
+> 
+> I've seen all these examples of exposing MP3 ID information as a "side 
+> stream", and that's TOTALLY POINTLESS! The information is already there, 
+> it's in a standard format, and exporting it as a stream buys you 
+> absolutely nothing.
 
-> tar won't be able to backup the metadata.  That's the major breakage of
-> tar that we're worried about.
+It buys me caching. I do quite often
 
-  However,  if  we do a "cp fileA fileB" then the metadata and streams
-  ought  to be copied too, even if "cp" does not support them. This is
-  the  real  challenge. Backup tools like tar can be patched just like
-  it has so many times before.
+bzcat patch.2.6.8.bz2 | less (read the patch)
+(sometimes repeat that few times because I hit ^c when I should not
+have etc).
+cd ...clean; bzcat patch.2.6.8.bz2 | patch -Esp1
+cd ...linux; bzcat patch.2.6.8.bz2 | patch -Esp1
 
+Now... that's total waste of cpu. bzip2 decompression takes quite some
+time. 
 
+I could do
+
+bzcat patch.2.6.8.bz2 > /tmp/delete.me.when.you.are.done
+
+...but I'd probably forget to delete that one and anyway, it requires
+me to think about it. Nicest way would be
+
+cat patch.2.6.8.bz2/ubz | less
+cd ...clean; cat patch.2.6.8.bz2/ubz | patch -Esp1
+cd ...linux; cat patch.2.6.8.bz2/ubz | patch -Esp1
+
+with kernel intelligently caching uncompressed data. I believe this
+can not be done completely in userspace.
+								Pavel
+-- 
+People were complaining that M$ turns users into beta-testers...
+...jr ghea gurz vagb qrirybcref, naq gurl frrz gb yvxr vg gung jnl!
