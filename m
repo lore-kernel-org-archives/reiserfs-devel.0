@@ -1,111 +1,82 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: A couple of questions
-Date: Thu, 16 May 2002 19:13:29 +0400
-Message-ID: <3CE3CC99.6020802@namesys.com>
-References: <OF54BB8C34.FF8C1E71-ON85256BBB.00511367@pok.ibm.com>
+Subject: Re: Problems with journal size option on mkfs
+Date: Thu, 16 May 2002 19:15:24 +0400
+Message-ID: <3CE3CD0C.2050504@namesys.com>
+References: <OF61DE11CE.F7B7B7AE-ON85256BBB.0051CE0D@pok.ibm.com> <20020516190911.A2877@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10339-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10340-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Steve Pratt <slpratt@us.ibm.com>
-Cc: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: Steve Pratt <slpratt@us.ibm.com>, reiserfs-list@namesys.com, Edward Shushkin <edward@namesys.com>
 
-Steve Pratt wrote:
+Oleg Drokin wrote:
 
->Hans Reiser wrote:
+>Hello!
+>
+>On Thu, May 16, 2002 at 09:59:46AM -0500, Steve Pratt wrote:
+> 
 >  
 >
->>Oleg Drokin wrote:
->>    
->>
->
->  
->
->>>Hello!
->>>
->>>On Thu, May 16, 2002 at 01:42:48PM +0400, Hans Reiser wrote:
->>>
->>>
->>>
+>>>This is because non-standard journal support is only included in 2.5
 >>>      
 >>>
->>>>>>Second, what is the option to keep fsck from prompting for 'Yes' when
->>>>>>running.  I need to exec this without additional input.  Seems like
->>>>>>            
->>>>>>
->quiet
->  
->
->>>>>>should do it, but it doesn't.
->>>>>>
->>>>>>
->>>>>>            
->>>>>>
->>>>>Hans has a decision that this should not be done for now because
->>>>>reiserfsprogs are in active bugfixing stage.
->>>>>
->>>>>
->>>>>          
->>>>>
->>>>?
->>>>I don't understand this.:-/
->>>>
->>>>
->>>>        
->>>>
->>>You have said "We do not trust reiserfsck to be run automatically without
->>>user confirmation"
->>>
->>>Bye,
->>>   Oleg
->>>
->>>
+>>kernel
+>>    
+>>
+>>>series.
+>>>2.4 support is available as separate patch for now.
 >>>      
 >>>
->>Ah, now I remember the conversation.  Yes, if we put the option in,
->>someone will get the bright idea to run it at every boot (and they might
->>be a distro or appliance vendor:-/), and fsck is not as reliable as
->>journaling so this should not be done.
+>>So just to be sure I understand this:the current 2.4 kernel code (2.4.18)
+>>does not include support for ANY non-standard journal options, including
+>>non default size of an inline log??
 >>    
 >>
 >
+>Yes, this is correct.
+>
 >  
 >
->>So, why do you want to exec it without additional input?
+>>If this is true, wouldn't it have made sense to put some checking in the
+>>utilities to detect the level of support in the kernel and either put out a
+>>meaningful error message or simply ignore the option?  As it stands now,
+>>from the command line mkfs doesn't even indicate that there was an error.
 >>    
 >>
 >
->Because I have already prompted for input from the EVMS interface.  The
->FSIMs in EVMS provide for EVMS to coordinate actions with the file systems
->such are shrinking the filesystem before shrinking the volume.  We also
->provide interfaces for mkfs, fsck and defrag (if supported by the file
->system).  So the FSIM prompts for all of the options to be passed to the
->file system utility and then invokes it.  In the case of fsck I have
->already prompted for all the options and the user is explicitly asking for
->fsck on this volume.  Since the prompt is output on stdout it may not be
->visible to a GUI user.
+>There were no error at mkfs time. May be user is doing mkfs from some bootable
+>floppy with old kernel and then plans to boot into more modern kernel, for
+>example.
 >
->Steve
+>  
 >
+>>Even if the ReiserFS utilities don't check, is there some way I can query
+>>the ReiserFS kernel code to detect the presence of these features?
+>>    
+>>
 >
+>Well, the simplest way is to have (or make) small file with reiserfs image
+>with non-standard journal and try to mount it ;)
+>Or you can try to mount valid reiserfs fs with jdev= mount option, which
+>is only present on code with nonstandard journaling support.
+>In short, there is no easy way. But if you can think of any,
+>we might implement it if it non-intrusive and easy enough.
+>Actually this is not very reliable in the sence that you cannot say
+>which kernel user plans to use later on.
 >
->
->Hans
->
->
->
->
->
->
+>Bye,
+>    Oleg
 >
 >
 >  
 >
-Do you print the reiserfs credits?
+I don't agree with Oleg's answer.  Lack of a meaningful error message is 
+a bug.
 
 Hans
 
