@@ -1,63 +1,57 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: External journals and NVRAM devices
-Date: Sat, 02 Nov 2002 00:58:40 +0300
-Sender: edward
-Message-ID: <3DC2F910.DF56232D@namesys.com>
-References: <20021101203805.C5E7245609B@server5.fastmail.fm> <3DC2F8E4.AD84886F@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Still wrong reported file size after --rebuild-tree
+Date: Sat, 02 Nov 2002 00:07:33 +0300
+Message-ID: <3DC2ED15.9080403@namesys.com>
+References: <20021030193045.69179289.philippe.gramoulle@mmania.com> <200211011630.13195.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11902-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11903-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20021030193045.69179289.philippe.gramoulle@mmania.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: JP Howard <jh_lists@fastmail.fm>, Andreas Dilger <adilger@clusterfs.com>, ReiserFS List <reiserfs-list@namesys.com>, green@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: =?UTF-8?B?UGhpbGlwcGUgR3JhbW91bGzDqQ==?= <philippe.gramoulle@mmania.com>, reiserfs <reiserfs-list@namesys.com>
 
-Edward Shishkin wrote:
-> 
-> JP Howard wrote:
-> >
-> > On Fri, 01 Nov 2002 17:30:18 +0300, "Edward Shishkin"
-> > <edward@namesys.com> said:
-> > > Yes. And the experience said that external logging brings a bit better
-> > > effect for this journal mode then for other ones.
-> > >
-> > > > >Is there a command to show the current journal size?
-> > >
-> > > #debugreiserfs main_device
-> > >
-> > Hmmm...
-> > ----
-> > Blocksize: 4096
-> > <...>
-> > Journal parameters:
-> > <...>
-> >         Size 8193 blocks (including 1 for journal header) (first block
-> >         18)
-> > ----
-> >
-> > So my journal is only 32k?
-> 
-> Yes. Standard journal can be only 32K.
+Vitaly Fertman wrote:
 
-Sorry, 32M!
+>Hi,=20
+>
+>On Wednesday 30 October 2002 21:30, Philippe Gramoull=C3=A9 wrote:
+> =20
+>
+>>Hi,
+>>
+>>I just wanted to let you know that after rebuilding the tree for a 500Go
+>>volume, i still have wrong file size reported :
+>>
+>>/dev/sdb1            572418604 174714996 397703608  31% /storage
+>>
+>># ls -l
+>>total 4928006
+>>-r-x-wx-wx 1 daemon   324231      32768 Jan  1  1970 25s.jpg
+>>-r-x--x--- 1 19415372 19415373 83388383504122186 Aug 13 1970 25s_lb.jpg
+>>-r--rw-rw- 1 19415354 19415355 83388306194710840 Aug 13 1970 25slight.jpg=
+=20
+>>-r---wxrwx 1 19415331 19415332 83388207410463009 Aug 13 1970 25slight_ln.=
+jpg=20
+>>
+>>   =20
+>>
+>
+>ReiserFS can handle 64 bit file sizes, so from the reiserfsck point of vie=
+w =20
+>these are correct sizes.=20
+>
+> =20
+>
+You mean to say that you haven't written code to check that file sizes=20
+are correct, yes?
 
-> 
->  With Ext3 I used 192MB journal in data=journal
-> > mode. Should I be using a size around that when using data=journal with
-> > ReiserFS too? Why is the default so low?--is it because the data logging
-> > patches don't automatically change it?
-> 
-> Reiserfs journal size doesn't depend on journal mode.
-> 
-> > >
-> > > The journal size remains the same unless you specify another one by
-> > > reiserfstune utility.
-> > >
-> > And non-standard journal sizes don't work under 2.4, right? Or are there
-> > patches for this that are reasonably stable?
-> 
-> Yes they are. Let me specify it on next week unless Oleg will do it earlier.
-> Edward.
+--=20
+Hans
+
+
