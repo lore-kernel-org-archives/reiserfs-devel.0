@@ -1,37 +1,41 @@
-From: Can Sar <csar@stanford.edu>
-Subject: Reiser4progrs Compilation
-Date: Thu, 3 Mar 2005 05:36:42 -0800
-Message-ID: <29c041fd345080bf7dd7c0daf8b3389a@stanford.edu>
-Mime-Version: 1.0 (Apple Message framework v619.2)
-Content-Transfer-Encoding: 7bit
+From: Marcel Hilzinger <marcel@hilzinger.hu>
+Subject: Re: df -i  reports '-' inodes available on reiser4
+Date: Thu, 3 Mar 2005 14:40:36 +0100
+Message-ID: <200503031440.37420.marcel@hilzinger.hu>
+References: <42270700.2010908@noviforum.si>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <42270700.2010908@noviforum.si>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
+Cc: "Branko F. =?iso-8859-2?q?Gra=E8nar?=" <bfg@noviforum.si>
 
-Hi,
+Am Donnerstag, 3. M=E4rz 2005 13:45 schrieb "Branko F. Gra=E8nar":
+> Hello,
+>
+> We're evaluating reiser4 filesystem for our storage server, which will
+> run on linux 2.6.x.
+>
+> However, according to our tests it performs very well. Becouse our
+> storage server will be responsible to server very *huge* amount of small
+> files, we need to investigate the following issue:
+>
+> Command df -i reports '-' as number of used and total inodes available
+> on filesystem.
+>
+> Is this a bug, or a feature? Or i missed out some documentation which i
+> should read before i formatted storage volume?
+There is a long thread on this, which starts with a mail from Miguel on=20
+13.05.2004 at 09:34 (acording to my mailer).=20
 
-The "Getting started with Reiser4" page mentions that any reports about 
-errors while installing Reiser4 should be sent to this list. I have 
-successfully installed the correct kernel and libaal but run into 
-problems with reiser4progs. I issue the following commands, which work 
-fine until make.
+If you are interested in, I can send it to you by mail.
 
-tar zxf reiser4progs-1.0.4.tar.gz
-cd  reiser4progs-1.0.4
-./configure
-make
-
-Make complains that there is no Makefile. This is indeed true, the only 
-Makefiles that were created by .configure are Makefile.in and 
-Makefile.am. I tried cp-ing both of these to Makefile, but neither of 
-them worked (as I had expected). I am running Ubuntu. I would be 
-extremely grateful for any help you can provide. I've been fighting 
-with this for hours but just can't get it to work.
-
-Thank you very much for your help,
-Can Sar
-
+=2D-=20
+=DCdv=F6zlettel -- Mit freundlichen Gr=FCssen,
+Marcel Hilzinger
