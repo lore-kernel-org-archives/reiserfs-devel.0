@@ -1,37 +1,47 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary additional
- namespace to ReiserFS
-Date: Tue, 27 Apr 2004 10:58:26 -0700
-Message-ID: <408E9F42.2080804@namesys.com>
-References: <1082750045.12989.199.camel@watt.suse.com> <408D3FEE.1030603@namesys.com> <20040426203314.A6973@infradead.org> <408E986F.90506@namesys.com> <20040427183400.A20221@infradead.org>
+From: Chris Mason <mason@suse.com>
+Subject: Re: Reiserfs concurrent write problems
+Date: Tue, 27 Apr 2004 14:00:41 -0400
+Message-ID: <1083088841.30344.131.camel@watt.suse.com>
+References: <20040426172648.GA22918@em.ca>
+	 <1083000970.30344.50.camel@watt.suse.com>  <20040427161544.GA27873@em.ca>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18252-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18253-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040427183400.A20221@infradead.org>
+In-Reply-To: <20040427161544.GA27873@em.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Chris Mason <mason@suse.com>, Linus Torvalds <torvalds@osdl.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, akpm@osdl.org
+Content-Type: text/plain; charset="us-ascii"
+To: Bruce Guenter <lists-reiserfs-list@bruce-guenter.dyndns.org>
+Cc: reiserfs-list@namesys.com
 
-Christoph Hellwig wrote:
+On Tue, 2004-04-27 at 12:15, Bruce Guenter wrote:
+> On Mon, Apr 26, 2004 at 01:36:11PM -0400, Chris Mason wrote:
+> > Please try 2.6.6-rc2-mm2, which has new block allocator patches and
+> > other speedups.
+> > 
+> > The default mount options should work best for you, but this might work
+> > too:
+> > 
+> > mount -o alloc=skip_busy:dirid_groups /dev/xxx /mnt
+> 
+> Using the new kernel and the above mount options boosted the write
+> performance of ReiserFS, almost to the level of XFS.  At the highest
+> concurrency level, the reading performance dropped, but it's still much
+> faster than the other FSs.
+> 
+> Thanks for your help.
 
->>Did you notice that V4 blows XFS and ReiserFS V3 away in benchmarks?    
->>That is what I have been doing for 3 years....
->>
->>See www.namesys.com for details.
->>    
->>
->
->see www.microsoft.com why Windows is much better than Linux.  Yeah, thanks.
->  
->
-Ask the users whether their laptops, etc.,  seem to go a lot faster with 
-V4.  They seem to be pretty happy with it.
+Good to hear, could I trouble you to ping me (or better yet
+reiserfs-list) when you have the graphs updated?
 
-V4 fixed all of V3's serious performance flaws, and totally obsoletes 
-it.    I am very happy with it.
+Other notes about 2.6.6-rc2-mm2, it has some ext3 optimizations as well,
+you might want to rebenchmark there.  reiserfs defaults to -o
+data=ordered in the 2.6.6-rc2 (and -mm), you should get slightly better
+numbers with -o data=writeback.
+
+-chris
+
 
