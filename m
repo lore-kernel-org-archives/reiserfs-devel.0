@@ -1,84 +1,56 @@
-From: Yury Umanets <umka@namesys.com>
-Subject: Re: Reiser4 status: benchmarked vs. V3 (and ext3)
-Date: Fri, 15 Aug 2003 15:15:01 +0400
-Message-ID: <1060946100.14824.13.camel@haron.namesys.com>
-References: <Pine.LNX.3.96.1030813160910.12417A-100000@gatekeeper.tmr.com>
-	 <1060837469.17622.6.camel@haron.namesys.com>
-	 <1060870255.4803.49.camel@passion.cambridge.redhat.com>
+From: Bernd Schubert <bernd-schubert@web.de>
+Subject: Re: Strange NFS/reiserfs errors
+Date: Fri, 15 Aug 2003 13:23:16 +0200
+Sender: bernd-schubert@web.de
+Message-ID: <200308151323.16172.bernd-schubert@web.de>
+References: <3F3C7341.4020503@emageon.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15314-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15315-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1060870255.4803.49.camel@passion.cambridge.redhat.com>
+In-Reply-To: <3F3C7341.4020503@emageon.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Bill Davidsen <davidsen@tmr.com>, Daniel Egger <degger@fhm.edu>, Hans Reiser <reiser@namesys.com>, Nikita Danilov <Nikita@namesys.com>, Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>, reiserfs mailing list <reiserfs-list@namesys.com>
+To: Brian Tinsley <btinsley@emageon.com>, reiserfs-list@namesys.com
+Cc: nfs@lists.sourceforge.net
 
-On Thu, 2003-08-14 at 18:10, David Woodhouse wrote:
-> On Thu, 2003-08-14 at 06:04, Yury Umanets wrote:
-> > Yes, you are right. Device driver cannot take care about leveling.
-> 
-> The hardware device driver doesn't. The 'translation layer' does, in the
-> case where you are using a traditional block-based file system. 
-> 
-> If you consider the translation layer and the underlying raw hardware
-> driver together to form the 'device driver' from the filesystem's
-> perspective and in the context of the above sentence, then you're
-> incorrect -- it can, and in general it _does_ take care of wear
-> levelling.
-> 
-> > It is able only to take care about simple caching (one erase block) in 
-> > order to make wear out smaller and do not read/write whole block if one 
-> > sector should be written.
-> 
-> Whatever meaning of 'device driver' you meant to use -- no.
-> 
-> The raw hardware driver provides only raw read/write/erase
-> functionality; no caching is appropriate. 
-> 
-> The optional translation layer which simulates a block device provides
-> far more than simple caching -- it provides wear levelling, bad block
-> management, etc. All using a standard layout on the flash hardware for
-> portability.
-> 
-> (Except in the special case of the 'mtdblock' translation layer, which
-> is not suitable for anything but read-only operation on devices without
-> any bad blocks to be worked around.)
-> 
-> > Part of a filesystem called "block allocator" should take care about 
-> > leveling.
-> 
-> That's insufficient. In a traditional file system, blocks get
-> overwritten without being freed and reallocated -- the allocator isn't
-> always involved. 
-> 
-> If you want to teach a file system about flash and wear levelling, you
-> end up ditching the pretence that it's a block device entirely and
-> working directly with the flash hardware driver. 
-> 
-> Either that or use a translation layer which does it _all_ for the file
-> system and then just use a standard file system on that simulated block
-> device.
-> 
-> Between those two extremes, very little actually makes sense.
-> 
-> If you introduce the gratuitous extra 'block device' abstraction layer
-> which doesn't really fit the reality of flash hardware very well at all,
-> you end up wanting to violate the layering in so many ways that you
-> realise you really shouldn't have been pretending to be a block device
-> in the first place.
+Hi,
 
-Agreed fully with you David. Thanks for explanation. 
+searching the archives of the reiserfs-ML and I guess also a general web 
+search would show that this is fixed in 2.4.21!
 
-Only there are probably cannot be so fair borders between levels. Thus,
-some functions of translation layer may be passed to filesystem level
-(higher one). For instance some things about block allocating. And some
-other functions may be passed to device driver layer (lower one). 
+Regards,
+	Bernd
 
 
-Regards.
+On Friday 15 August 2003 07:44, Brian Tinsley wrote:
+> Hi! I've posted this to the NFS mailing list, but wanted to drop it here
+> as well to see if anyone may provide further insight.
+>
+> ---------------------------
+> Can anyone elaborate on what may have caused the following error:
+>
+> Aug 14 22:09:09 clarc02 kernel: nfsd-fh: found a name that I didn't
+> expect: files/19
+> Aug 14 22:09:40 clarc02 last message repeated 2314 times
+> Aug 14 22:15:56 clarc02 last message repeated 1088 times
+> Aug 14 22:17:10 clarc02 last message repeated 138 times
+> Aug 14 22:19:03 clarc02 last message repeated 138 times
+> Aug 14 22:20:53 clarc02 last message repeated 2 times
+> Aug 14 22:21:30 clarc02 last message repeated 73 times
+>
+> The underlying filesystem is reiserfs and there was a high volume of
+> writing taking place (or trying to) during this time. None of the writes
+> succeeded as the client was returned EEXIST errors. However, the writes
+> were reissued in full shortly after the last occurence and everything
+> automagically started working properly again.
+>
+> I'm trying to decipher the source code, but it's a bit out of my area of
+> expertise ;-)
+>
+> Thanks!
 
