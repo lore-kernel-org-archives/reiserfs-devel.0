@@ -1,46 +1,81 @@
-From: Tuomas Jormola <tjormola@cc.hut.fi>
-Subject: LVM array, one disk failed
-Date: 28 Dec 2002 05:07:31 +0200
-Message-ID: <1041044851.5964.32.camel@ganga>
+From: Brian Tinsley <btinsley@emageon.com>
+Subject: Re: what do you do that stresses your filesystem?
+Date: Fri, 27 Dec 2002 23:27:43 -0600
+Message-ID: <3E0D364F.1010008@emageon.com>
+References: <3E06F360.7000708@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12249-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12250-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS <reiserfs-list@namesys.com>
+Cc: Hans Reiser <reiser@namesys.com>
 
-Hello,
+I'm late replying to this one, but I've been on vacation :)
 
-I'd be happy to use ReiserFS support services if they can help me here,
-but I'd like post this question to the mailing list before paying since
-PayPal doesn't support my bank so it's a bit troublesome to transfer the
-money forth and back in case there's nothing to do in this case...
+Any possible optimizations for the following would be beneficial:
+  * interaction with the Linux NFS server
+  * SMP machines
+  * apps like grep, awk, and sed
 
-I have a 110GiB LVM array constructed using EVMS. It consists of three
-IDE hard disks from which the last one died the other day. The
-filesystem is ReiserFS, of course. Array is a linear one and there was
-about 15GiB free space when disk died so I'm hoping there was a somewhat
-resonable way to recover the data on two disks that are full and in
-front of the array. The failed disk is totally dead, not just a couple
-of bad sectors. It spins but it's not detected on boot. When I try to
-mount the volume with only two disks connected, it get this:
+Any optimizations for the following application characteristics would be 
+beneficial:
 
-sh-2029: reiserfs read_bitmaps: bitmap block (#19234816) reading failed
-reiserfs_read_super: unable to read bitmap
+  * Our applications perform multi-threaded streaming I/O 
+(network-to-disk and vice versa) with read/write block sizes varying 
+from 16KB to 64KB; we have files ranging in size from 32KB to 500MB+ 
+(this top end will likely grow into several GB in the near future).
+  * Our directory structure is very broad, but not very deep and files 
+are stored in leaf nodes only.
+  * When a file is created and completely written to disk, it is often 
+re-read in its entirety at least two times within a couple of minutes.
+  * Our database app performs lots of block-based random I/O and fsyncs 
+within a dozen or so large files.
 
-Someone already asked a question regarding this error:
-http://marc.theaimsgroup.com/?l=reiserfs&m=101232163203836&w=2
-and Andreas Dilger provided with a clear answer but in this case it
-probably doesn't work since so large part of the filesystem is missing.
-Is someone able to say for sure if there's a chance to recover parts of
-the filesystem or whether it can't be done?
 
-Thanks and best regards,
+
+Hans Reiser wrote:
+
+> We were discussing how to optimize reiser4 best, and came to realize 
+> that us developers did not have a good enough intuition for what users 
+> do that stresses their filesystem enough that they care about its 
+> performance.
+>
+> If you just do edits of files it probably does not matter too much 
+> what fs you use.
+>
+> Booting the machine seems like one activity that many users end up 
+> waiting on the FS for.  Yes?
+>
+> Starting up complex and big applications like xemacs and mozilla would 
+> be another.  Yes?
+>
+> Others?
+>
+> Hans
+>
+> PS
+>
+> reiser4 performance is up a lot recently, and within two weeks I think 
+> cp -r will have been optimized as much as is worth doing.  cp -r 
+> accesses files in readdir order, and that does indeed seem worth 
+> optimizing, but soon we will need to optimize more sophisticated 
+> access patterns than that.....
+>
+> Hans
+
 
 -- 
-Tuomas Jormola <tjormola@cc.hut.fi>
+
+-[========================]-
+-[      Brian Tinsley     ]-
+-[ Chief Systems Engineer ]-
+-[        Emageon         ]-
+-[========================]-
+
+
 
