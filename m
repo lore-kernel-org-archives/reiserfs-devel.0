@@ -1,38 +1,46 @@
-From: Ben Collins <bcollins@debian.org>
+From: Anders Widman <andewid@tnonline.net>
 Subject: Re: plagiarism of reiserfs by Debian
-Date: Sat, 19 Apr 2003 16:56:40 -0400
-Message-ID: <20030419205640.GZ2528@phunnypharm.org>
-References: <200304181604.28955.vitaly@namesys.com> <3EA17427.7040300@namesys.com> <20030419172906.GX2528@phunnypharm.org> <00f001c306a9$47d22560$a2b89bd9@banana.org.uk>
+Date: Sat, 19 Apr 2003 23:13:59 +0200
+Message-ID: <1099922537.20030419231359@tnonline.net>
+References: <143CBAC4-7291-11D7-ADF3-00050285B655@ncpro.com>
+ <3EA19DEC.3090202@techhouse.org> <20030419205555.GY2528@phunnypharm.org>
+Reply-To: Anders Widman <andewid@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13725-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13726-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <00f001c306a9$47d22560$a2b89bd9@banana.org.uk>
+In-Reply-To: <20030419205555.GY2528@phunnypharm.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Matt Ryan <mryan@debian.org>
-Cc: Hans Reiser <reiser@namesys.com>, Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com, debian-testing@lists.debian.org, Ed Boraas <ed@debian.org>, debian-devel@lists.debian.org
+To: Ben Collins <bcollins@debian.org>
+Cc: Travis Crump <pretzalz@techhouse.org>, Marcel Weber <mmweber@ncpro.com>, Hans Reiser <reiser@namesys.com>, Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com, debian-testing@lists.debian.org, Ed Boraas <ed@debian.org>, debian-devel@lists.debian.org
 
-On Sat, Apr 19, 2003 at 08:24:21PM +0100, Matt Ryan wrote:
-> > Now I hope you stop with your trolling and consider speaking
-> > respectfully to us. I am pretty sure that if you emailed the maintainer
-> > of the package and pointed out the facts to him, he would revert the
-> > change.
-> 
-> Dude,
-> 
->     You really need to calm down. Twice now recently you have opened your
-> mouth and stuck your foot in when there really wasn't any need to. Take a
-> Valium and do something less stressful.
+>> all that was removed was *code* that gets compiled.  If the maintainer 
+>> cannot arbitrarily change any code he wants, then it is not clear that 
+>> the program is DFSG-free.
 
-Are you talking to me?
+> Amen. Making part of the code immutable is not what I call free
+> software. What if I want to use parts of the code and I respect the
+> copyright and license...does that mean I also have to take this part of
+> the code and output the credits? What if environment doesn't provide a
+> way to output the credits. What if I am implementing the reiser tools on
+> an embedded system that will never show any such output?
 
--- 
-Debian     - http://www.debian.org/
-Linux 1394 - http://www.linux1394.org/
-Subversion - http://subversion.tigris.org/
-Deqo       - http://www.deqo.com/
+> What about programs that execute the reiserfs tools (like bootup
+> scripts)...are they not allowed to redirect or filter this output?
+
+> If any of this is questionable, then I suspect reiserfs tools isn't DFSG
+> compliant and belongs in non-free with all it's flakiness.
+
+
+ Wow..  what  an  reaction  :).  Hans's  original message was that the
+ credits  were  not included with the distributed files, nothing else.
+ Or am I completely mistaken?
+
+
+--------
+PGP public key: https://tnonline.net/secure/pgp_key.txt
+
