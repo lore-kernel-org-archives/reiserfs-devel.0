@@ -1,62 +1,84 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Fwd: reiser4 non-free?
-Date: Mon, 03 May 2004 21:07:28 -0500
-Message-ID: <4096FAE0.8090902@slaphack.com>
-References: <20040424193246.GA2490@raptus.homelinux.org> <200405010026.59064.camel78@iprimus.com.au> <200405010223.51457.jstubbs@gentoo.org>            <4092D59F.80604@slaphack.com> <200405032215.i43MF32G009729@turing-police.cc.vt.edu>
+From: Michael James <Michael.James@csiro.au>
+Subject: Re: Cannot open root device
+Date: Tue, 4 May 2004 13:46:43 +1000
+Message-ID: <200405041346.43920.Michael.James@csiro.au>
+References: <Pine.LNX.4.33.0405022125330.1672-100000@bi165.wilkes.com>
+Reply-To: Michael.James@csiro.au
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18414-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18416-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200405032215.i43MF32G009729@turing-police.cc.vt.edu>
+In-Reply-To: <Pine.LNX.4.33.0405022125330.1672-100000@bi165.wilkes.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Valdis.Kletnieks@vt.edu
-Cc: Jason Stubbs <jstubbs@gentoo.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+Cc: John Wilkes <john@wilkes.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Monday 03 May 2004 22:42, John Wilkes wrote:
+> I have a weird problem, and I need some help.
+> 
+> SuSE 8.2 distribution
+> 2.4.20-4GB-athlon kernel from SuSE installation disk
+> /boot partition is ext2, others are reiserfs 3.6 format.
+> 
+> After a power failure last week my system now panics while booting.  It
+> complains that it cannot open root device "hda3" on 03:03.
+> 
+> This is a SuSE 8.2 system that was installed about a year ago.  It had
+> rebooted only two days previously.  I am confident that this kernel
+> has reiserfs support, but just to be sure, I re-installed the stock
+> kernel off of the SuSE 8.2 distribution disks and got the same result.
+> 
+> Here's where it gets weird: I booted the Rescue system on the
+> installation CD, and from there I ran reiserfsck, which reported no
+> inconsistecies.  I can mount /dev/hda3 and look around; everything
+> seems to be there.  But when I try to boot a system that wants hda3 as
+> its root, I get a kernel panic.
+> 
+> What would cause mount to choke on a reiserfs root partition which
+> gets a clean fsck and is mountable from the Rescue system?  What could
+> be wrong that fsck doesn't see and fix?
+> 
+> Any insights or suggestions would be most welcome.
 
-BitKeeper has to
-| do with licensing of the kernel, except to prove that Linus is a
-pragmatist and
-| willing to use a non-free-as-in-speech product when there really *is* no
-| open-source competitor - and unlike the other source code management
-systems
-| that *do* compete with BitKeeper, Larry McVoy at least has the 'BKL'
-for free
-| use for open-source projects.
+There have been a lot of kernel patches out lately,
+ have you somehow got a mismatch between the kernel
+ and its reiser or disk driver modules?
 
-Still, this is a limitation -- I probably wouldn't use bitkeeper if I
-ever started a project.  Note that I say "probably"...
+Suse boots by starting the kernel and mounting an initrd,
+ a compressed vestigial root filesystem.
 
-And I can't imagine many people sticking to "free" Debian without having
-a very good reason.  If it's being a purist, they would probably be
-annoyed at Linus' choice of BitKeeper.  If it's being an open source
-developer themself, I'd consider Linus to be an "open source developer"
-- -- and I'd marvel that these "open source developers" wouldn't be
-pragmatists themselves.
+With that in place it runs a short script called "linuxrc"
+ that loads the modules needed to read the root partition.
+This is where it gets reiserfs capability, and any scsi drivers needed.
+In Suse they aren't compiled into the kernel.
 
-But anyhow, this is getting offtopic enough, and I don't care enough --
-I don't use Debian, and I'd use non-free if I did.  I'll let the people
-in charge work this out.
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Installing an new kernel using Yast should run "mkinitrd"
+ to update the modules in your initrd to match.
 
-iQIVAwUBQJb63ngHNmZLgCUhAQJLohAAgI7LPs/pL45CdasV7zvK41NA0xCLEFIt
-+SvRra/gdP49JFpSJ7PvwNLQmP3mC2JXFWGolqSDEhviQ7dXyUTfcTxlWxCE3s4y
-l3e+pikta0idIPJeqEkz6+eMNxxZO7S8KYkJpt2CRzgfi0KCgUQWN4Vm75rbvoNG
-dhEnkiL5uFdF/qT/nHzSxKV2GofRvWSnkB8epawMGnZLA2YNwnvkBB60s/cwI96b
-2HKNhazd8jyLnLXjHxhPHdCymKYPEHA+9bVqLc9aWN9eeRBXpdpZ61lVY/ldu0LR
-kezy0rAuj/m/e3Sfjr1F1lJI4Wa630khFgKvYI1hZVtK8XDRxnUtzuufiJWqAfKr
-YhD2J8vaezhpS4HlH3kJp2l1rP7EyL/fCGHMx8PVQUQ/nqA2FZ1129D9yTo97Ev4
-UC5xruw1XLYkgSlk8nm+6DYh5JMB+DxaUjG7AR0XCTJ2EVIfw51vT8KzQyGaZQNi
-c/Heu6iOlqdyjKJyjqaQ3YPXHwQiH/lLN8+kiyI7zDETcBDvu+9rmKDa0n+Cd1wh
-EEKxnOlFxsXHcbUOOQb5aXW3664i5/lvnuzdzyjr+AAco6AcIndwOqZj4PddT4hc
-L171568W0pjOyKS0zY72WBMICNp138RVOwxTeepRALC9G1lWU6LllfclMWPqUc1S
-U7UBU+oDTZw=
-=ADOO
------END PGP SIGNATURE-----
+So if you have copied back the stock CD kernel,
+ you will need the stock initrd, try copying that in as well.
+Note, the CD kernel (and initrd) are the "deflt" version.
+You'll then need to switch to an athlon kernel and patch it up to date.
+But the CD should get you booting again.
+
+Watch the boot messages, there should be some sign if a module is failing to load.
+Reiser should ALWAYS load.
+
+Brainwave:
+  don't boot to the CD's "rescue system" use the CD to "boot installed system"
+That will use the CD's kernel AND modules but give you the real root filesystem.
+If that works, you can rpm in the right kernel, then use Yast Online Update to patch it.
+
+Hope this helps,
+michaelj
+
+-- 
+Michael James                         michael.james@csiro.au
+System Administrator                    voice:  02 6246 5040
+CSIRO Bioinformatics Facility             fax:  02 6246 5166
+
