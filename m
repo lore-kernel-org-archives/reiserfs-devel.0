@@ -1,36 +1,55 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Compile probs with yesterday's auto-snapshot
-Date: Tue, 10 Aug 2004 23:50:22 +0300
-Message-ID: <20040810205022.GT1284@nysv.org>
-References: <20040810192756.67EC115C33@mail03.powweb.com>
+From: "David Dabbs" <david@dabbs.net>
+Subject: RE: Was able to reproduce "cp: cannot stat file.x: Input/output error"
+Date: Tue, 10 Aug 2004 16:06:24 -0500
+Message-ID: <20040810211428.3902E15D8F@mail03.powweb.com>
+References: <20040810205450.GU9811@backtop.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20154-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20155-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040810192756.67EC115C33@mail03.powweb.com>
+In-Reply-To: <20040810205450.GU9811@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Dabbs <david@dabbs.net>
-Cc: 'ReiserFS List' <reiserfs-list@namesys.com>
+To: 'Alex Zarochentsev' <zam@namesys.com>
+Cc: 'Hans Reiser' <reiser@namesys.com>, 'ReiserFS List' <reiserfs-list@namesys.com>
 
-On Tue, Aug 10, 2004 at 02:19:54PM -0500, David Dabbs wrote:
->4. reiser4 has been tested as a root file system and works in read-only
->   mode, but:
->       . remount is not yet supported, 
->       . support in boot-loaders may be missing
->ddabbs: A grub patch is provided, so that comment is likely out-of-date.
 
-So what am I missing as I've used Reiser4 as root for a long time?
 
-Never had any problems, so uhh, is grub the only one left?
+> 
+> On Tue, Aug 10, 2004 at 03:40:14PM -0500, David Dabbs wrote:
+> >
+> > The solution I proposed is below, and I followed up that the wait should
+> be in the iteration command, but it should probably be moved _after_ all
+> reps as I have it below. This will sync/wait after all the phase
+> iterations have run instead of after each individual phase iteration
+> command. In either case it will not be timed. Sound right, Alex?
+> 
+> one "wait" should be at the old place still.
+> 
+[David Dabbs] 
+I thought so, then second guessed it.
 
-I'm still using lilo, bugger me, and some time ago I made a separate
-/boot with ReiserFS so I can't even help with grub testing :P
+> but, I don't think we should measure writes w/o final cleaning of the fs
+> cache.
+> 
+[David Dabbs] 
+If you mean at phase end, yes that does sound right for write ops.
 
--- 
-mjt
+
+> 
+> Reiser4 had no support for write throttling at some early stages of
+> development, w/o final sync() it might look faster than physical disk
+> drive.
+> 
+> > dd
+> >
+
+I have been running benchmarks with SYNC=off, as the mongo page recommends
+against doing so. In configs where SYNC=ON we would omit the syncs/wais,
+yes?
+
+David 
 
