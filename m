@@ -1,56 +1,36 @@
-From: Hans Reiser <reiser@namesys.com>
+From: =?iso-8859-1?Q?Ragnar_Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
 Subject: Re: reiserfs on redhat advanced server?
-Date: Thu, 30 Jan 2003 22:16:41 +0300
-Message-ID: <3E397A19.60409@namesys.com>
-References: <20030130173522.3aa4d0e1.pegasus@nerv.eu.org>
+Date: Thu, 30 Jan 2003 23:41:42 +0100
+Message-ID: <20030130234142.E8448@vestdata.no>
+References: <20030130173522.3aa4d0e1.pegasus@nerv.eu.org> <3E397A19.60409@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12563-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12564-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030130173522.3aa4d0e1.pegasus@nerv.eu.org>
+Content-Disposition: inline
+In-Reply-To: <3E397A19.60409@namesys.com>; from reiser@namesys.com on Thu, Jan 30, 2003 at 10:16:41PM +0300
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jure Pecar <pegasus@nerv.eu.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Jure Pecar <pegasus@nerv.eu.org>, reiserfs-list@namesys.com
 
-Jure Pecar wrote:
+On Thu, Jan 30, 2003 at 10:16:41PM +0300, Hans Reiser wrote:
+> >does anyone have some expirience with the reiserfs provided in redhat's
+> >2.4.9-e.3 kernel from its Advanced Server?
+>
+> Linux 2.4.x did not become stable until 2.4.18.  I strongly advise not=20
+> to use anything before 2.4.18 for a machine you care about.
+>=20
+> Well tested is not a substitute for stable.;-)
 
->Hi all,
->
->does anyone have some expirience with the reiserfs provided in redhat's
->2.4.9-e.3 kernel from its Advanced Server?
->
->Judging by the version number and the general lack of interest for
->reiserfs redhat shows, it is not that well supported.
->/proc/fs/reiserfs/version says it's a 3.6.25 and reiserfs-utils are
->3.x.0j-3.
->
->Now, what are the known issues with these versions? Anything critical? 
->I would like to stay with that well tested kernel, if this version of
->reiserfs wont eat my data (or cause other great pain).
->
->This box (a pair of them, actually) will be used as a HA cyrus mailstore.
->Both are connected to the same disks via fibrechannel. For a start they'll
->serve 200k users from a 500gb raid10.
->
->Thanks for suggestions,
->
->--
->
->Jure Pecar
->
->
->  
->
-Linux 2.4.x did not become stable until 2.4.18.  I strongly advise not 
-to use anything before 2.4.18 for a machine you care about.
-
-Well tested is not a substitute for stable.;-)
-
--- 
-Hans
+I don't know this kernel in particular, but in general RH's kernels are
+heavily patched, and 2.4.9-e.3 may actually be closer to 2.4.18 than
+2.4.9 from Linus.
 
 
+
+--=20
+Ragnar Kj=F8rstad
