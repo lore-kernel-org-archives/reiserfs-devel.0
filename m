@@ -1,122 +1,38 @@
-From: Jan Kara <jack@suse.cz>
+From: Andrew Morton <akpm@osdl.org>
 Subject: Re: [PATCH] Fix of quota deadlock on pagelock
-Date: Mon, 22 Nov 2004 11:43:38 +0100
-Message-ID: <20041122104338.GE26824@atrey.karlin.mff.cuni.cz>
-References: <20041119095515.GD15189@atrey.karlin.mff.cuni.cz> <20041119100951.GG15189@atrey.karlin.mff.cuni.cz> <20041119150227.072c676a.akpm@osdl.org>
+Date: Mon, 22 Nov 2004 02:50:23 -0800
+Message-ID: <20041122025023.61f3db62.akpm@osdl.org>
+References: <20041119095515.GD15189@atrey.karlin.mff.cuni.cz>
+	<20041119100434.GF15189@atrey.karlin.mff.cuni.cz>
+	<20041119144640.0887cdf0.akpm@osdl.org>
+	<20041122104021.GD26824@atrey.karlin.mff.cuni.cz>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22486-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22487-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20041119150227.072c676a.akpm@osdl.org>
+In-Reply-To: <20041122104021.GD26824@atrey.karlin.mff.cuni.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@osdl.org>
+To: Jan Kara <jack@suse.cz>
 Cc: linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
 
-> Jan Kara <jack@suse.cz> wrote:
-> >
-> > +static ssize_t ext2_quota_write(struct super_block *sb, int type,
-> > +				const char *data, size_t len, loff_t off)
-> > +{
-> > +	struct inode *inode = sb_dqopt(sb)->files[type];
-> > +	unsigned long blk = off >> EXT2_BLOCK_SIZE_BITS(sb);
-> > +	int err = 0, offset = off & (sb->s_blocksize - 1), tocopy;
-> > +	size_t towrite = len;
-> > +	struct buffer_head tmp_bh, *bh;
-> > +
-> > +	down(&inode->i_sem);
-> > +	while (towrite > 0) {
-> > +		tocopy = sb->s_blocksize - offset < towrite ?
-> > +				sb->s_blocksize - offset : towrite;
-> > +
-> > +		tmp_bh.b_state = 0;
-> > +		err = ext2_get_block(inode, blk, &tmp_bh, 1);
-> > +		if (err)
-> > +			goto out;
-> > +		if (offset || tocopy != EXT2_BLOCK_SIZE(sb))
-> > +			bh = sb_bread(sb, tmp_bh.b_blocknr);
-> > +		else
-> > +			bh = sb_getblk(sb, tmp_bh.b_blocknr);
-> > +		if (!bh) {
-> > +			err = -EIO;
-> > +			goto out;
-> > +		}
-> > +		memcpy(bh->b_data+offset, data, tocopy);
-> 
-> It is possible to mmap block devices, so we should do a flush_dcache_page()
-> after the memset here.
-  Thanks I didn't know about this.
+Jan Kara <jack@suse.cz> wrote:
+>
+> > 
+> > What prevents vfs_quota_off() from racing with unmount?
+> > 
+> > If you look at, say, sync_filesystems() you'll see that we take ->s_umount
+> > and then test ->s_root to check that we didn't race with an unmount
+> > attempt.
+>   I thought that the sync_fs and stuff is guarded by the fact that quota
+> code is holding references to inodes on the filesystem. And invalidate_bdev()
+> should not care about the filesystem. Or do I miss something? Anyway
+> adding a comment about this is really a good idea...
 
-> Also, we should lock the buffer.  Because a concurrent read of the blockdev
-> would cause the disk DMA transfer to stomp all over the data whihc you just
-> wrote.  Say, someone is doing `cp /dev/hda1 /dev/null' at the same time.
-  Yes, obviously the buffer should be locked. Thanks for spotting.
+Holding a ref on an inode will not cause umount to block.  It'll just cause
+nasty "Busy inodes after unmount" warnings.
 
-> So my accumulated patch against this one is:
-> 
-> diff -puN fs/ext2/super.c~fix-of-quota-deadlock-on-pagelock-ext2-tweaks fs/ext2/super.c
-> --- 25/fs/ext2/super.c~fix-of-quota-deadlock-on-pagelock-ext2-tweaks	Fri Nov 19 14:54:47 2004
-> +++ 25-akpm/fs/ext2/super.c	Fri Nov 19 15:00:59 2004
-> @@ -1020,10 +1020,13 @@ static ssize_t ext2_quota_read(struct su
->  			       size_t len, loff_t off)
->  {
->  	struct inode *inode = sb_dqopt(sb)->files[type];
-> -	unsigned long blk = off >> EXT2_BLOCK_SIZE_BITS(sb);
-> -	int err = 0, offset = off & (sb->s_blocksize - 1), tocopy;
-> +	sector_t blk = off >> EXT2_BLOCK_SIZE_BITS(sb);
-> +	int err = 0;
-> +	int offset = off & (sb->s_blocksize - 1);
-> +	int tocopy;
->  	size_t toread;
-> -	struct buffer_head tmp_bh, *bh;
-> +	struct buffer_head tmp_bh;
-> +	struct buffer_head *bh;
->  	loff_t i_size = i_size_read(inode);
->  
->  	if (off > i_size)
-> @@ -1061,10 +1064,13 @@ static ssize_t ext2_quota_write(struct s
->  				const char *data, size_t len, loff_t off)
->  {
->  	struct inode *inode = sb_dqopt(sb)->files[type];
-> -	unsigned long blk = off >> EXT2_BLOCK_SIZE_BITS(sb);
-> -	int err = 0, offset = off & (sb->s_blocksize - 1), tocopy;
-> +	sector_t blk = off >> EXT2_BLOCK_SIZE_BITS(sb);
-> +	int err = 0;
-> +	int offset = off & (sb->s_blocksize - 1);
-> +	int tocopy;
->  	size_t towrite = len;
-> -	struct buffer_head tmp_bh, *bh;
-> +	struct buffer_head tmp_bh;
-> +	struct buffer_head *bh;
->  
->  	down(&inode->i_sem);
->  	while (towrite > 0) {
-> @@ -1083,9 +1089,12 @@ static ssize_t ext2_quota_write(struct s
->  			err = -EIO;
->  			goto out;
->  		}
-> +		lock_buffer(bh);
->  		memcpy(bh->b_data+offset, data, tocopy);
-> +		flush_dcache_page(&bh->b_page);
->  		set_buffer_uptodate(bh);
->  		mark_buffer_dirty(bh);
-> +		unlock_buffer(bh);
->  		brelse(bh);
->  		offset = 0;
->  		towrite -= tocopy;
-> _
-> 
-  Thanks, the patch looks OK (only Jens spotted a minor bug there).
 
-> I suspect things in there are still a bit racy against a concurrent
-> `blockdev --flushbufs' though.
-  Thanks for notifying. I'll check that.
-
-									Honza
--- 
-Jan Kara <jack@suse.cz>
-SuSE CR Labs
