@@ -1,45 +1,40 @@
-From: Spam <spam@tnonline.net>
+From: Rik van Riel <riel@redhat.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 13:43:54 +0200
-Message-ID: <1211039639.20040826134354@tnonline.net>
-References: <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org>
- <1453698131.20040826011935@tnonline.net>
- <20040825163225.4441cfdd.akpm@osdl.org>
- <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net>
- <1939276887.20040826114028@tnonline.net>
- <20040826024956.08b66b46.akpm@osdl.org> <839984491.20040826122025@tnonline.net>
- <m3llg2m9o0.fsf@zoo.weinigel.se> <1906433242.20040826133511@tnonline.net>
- <20040826113332.GL2612@wiggy.net>
-Reply-To: Spam <spam@tnonline.net>
+Date: Thu, 26 Aug 2004 07:42:48 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44.0408260736080.23532-100000@chimarrao.boston.redhat.com>
+References: <200408261034.38509.vda@port.imtp.ilyichevsk.odessa.ua>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20641-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20642-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826113332.GL2612@wiggy.net>
+In-Reply-To: <200408261034.38509.vda@port.imtp.ilyichevsk.odessa.ua>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Wichert Akkerman <wichert@wiggy.net>
-Cc: Christer Weinigel <christer@weinigel.se>, Andrew Morton <akpm@osdl.org>, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>
+Cc: Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
+On Thu, 26 Aug 2004, Denis Vlasenko wrote:
 
+> > I like cat < a > b. You can keep your progress.
+> 
+> cat <a >b does not preserve following file properties even on standard
+> UNIX filesystems: name,owner,group,permissions.
 
-> Previously Spam wrote:
->>   How  so?  The whole idea is that the underlaying OS that handles the
->>   copying  should  also  know  to  copy  everything, otherwise you can
->>   implement  everything  into  applications  and  just  skip the whole
->>   filesystem part.
+Losing permissions is one thing.  Annoying, mostly.
 
-> UNIX doesn't have a copy systemcall, applications copy the data
-> manually.
+However, actual losing file data during such a copy is
+nothing short of a disaster, IMHO.  
 
-  Oh, this is very unfortunate and should be a bigger issue to fix.
+In my opinion we shouldn't merge file-as-a-directory
+semantics into the kernel until we figure out how to
+fix the backup/restore problem and keep standard unix
+utilities work.
 
-> Wichert.
-
-
-
-
+-- 
+"Debugging is twice as hard as writing the code in the first place.
+Therefore, if you write the code as cleverly as possible, you are,
+by definition, not smart enough to debug it." - Brian W. Kernighan
 
