@@ -1,39 +1,36 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: reiserfschk --rebuild-tree fails
-Date: Wed, 3 Jul 2002 19:41:44 +0400
-Message-ID: <20020703194144.A1040@namesys.com>
-References: <E17PiOg-0000gJ-00@k6linux2>
+From: Kuba Ober <kuba@mareimbrium.org>
+Subject: Re: different block sizes and badblocks
+Date: Wed, 3 Jul 2002 11:53:43 -0400
+Message-ID: <200207031153.43746.kuba@mareimbrium.org>
+References: <5.0.2.1.2.20020620135847.01c3bdb0@pop.tvnet.hu> <20020620202149.B1336@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10909-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-10910-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <E17PiOg-0000gJ-00@k6linux2>
+In-Reply-To: <20020620202149.B1336@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: niklaus@mus.ch
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+> > the other question is about badblocks. we have badblock support in
+> > reiserfsprogs 3.x.1c-pre5, but its disabled by default. Oleg, could you
+> > give me some infos about it, how can I reenable it, or how does it work
+> > actually? it would be really nice :)
+>
+> Right now badblocks support is disabled on purpose.
+> It conflicts with savelinks and we have not decided how to solve that yet.
+> But we will announce badblocks support once we think it is ready.
 
-From: Niklaus Giger <niklaus@namesys.com>
-Hm... That From address is weird, I'd say.
-I fetched some other address from logs and hope it would work.
+With many modern IDE drives, the bad blocks list can potentially vary between 
+disk power-ups, and usually it dynamically changes while you access the disk. 
+Most modern drives should be considered dead when you get bad sectors. For 
+your own good, throw them away ASAP, or get to know smartctl if your drive 
+supports S.M.A.R.T.
 
-On Wed, Jul 03, 2002 at 01:34:09PM +0200, Niklaus Giger wrote:
+Again, for your own good, either low-level reformat the drive using a decent 
+tool (smartctl uses drive's own SMART programs, or buy SpinRite 
+http://www.grc.com).
 
-> Then I tried --rebuild-tree. Output is like this.
-> Will rebuild the filesystem (/dev/hda6) tree
-> Will put log info to '/home/niklaus/rebuild-tree.log'
-> niklaus@k6linux2:/hdb5$ sudo reiserfsck --rebuild-tree -l ~/rebuild-tree.log 
-> -z -S /dev/hda6
-
-Are you sure you need to use -S switch, I'd suggest to avoid it.
-Also take latest -pre version off our ftp
-(ftp://ftp.namesys.com/pub/reiserfsprogs/pre)
-If it still fails, report to us what is the problem this time.
-
-Bye,
-    Oleg
+Cheers, Kuba
