@@ -1,49 +1,74 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiser4 snapshot for August 26th.
-Date: Wed, 27 Aug 2003 00:30:15 +0400
-Message-ID: <3F4BC357.7010106@namesys.com>
-References: <20030826102233.GA14647@namesys.com> <1061922037.1670.3.camel@spc9.esa.lanl.gov> <20030826182609.GO5448@backtop.namesys.com> <1061926566.1076.2.camel@teapot.felipe-alfaro.com> <20030826194321.GA25730@namesys.com> <1061927482.1666.36.camel@spc9.esa.lanl.gov> <20030826200530.GC1258@matchmail.com> <1061928831.1666.46.camel@spc9.esa.lanl.gov> <20030826202649.GD1258@matchmail.com>
+From: Bernd Schubert <bernd-schubert@web.de>
+Subject: Re: HILFE! HELP! Problem with my root-partition
+Date: Tue, 26 Aug 2003 22:48:26 +0200
+Sender: bernd-schubert@web.de
+Message-ID: <200308262248.26593.bernd-schubert@web.de>
+References: <200308261742.h7QHgGD02541@fx.webpoint.at>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15441-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-15442-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030826202649.GD1258@matchmail.com>
+In-Reply-To: <200308261742.h7QHgGD02541@fx.webpoint.at>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Mike Fedyk <mfedyk@matchmail.com>
-Cc: Steven Cole <elenstev@mesatop.com>, Oleg Drokin <green@namesys.com>, Felipe Alfaro Solana <felipe_alfaro@linuxmail.org>, Alex Zarochentsev <zam@namesys.com>, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Alexander Waller <a.waller@webpoint.at>
+Cc: reiserfs-list@namesys.com
 
-Mike Fedyk wrote:
+On Tuesday 26 August 2003 19:41, Alexander Waller wrote:
+> Hi!
+> I restarted my server.
+> Now my reiserfs-root-partition cannot be mounted.
+> Reiserfsck doesn=B4t help.
+>
+> filehound:~ # reiserfsck --fix-fixable /dev/hdb3
+> reiserfsck 3.6.4 (2002 www.namesys.com)
+> Will check consistency of the filesystem on /dev/hdb3
+> and will fix what can be fixed w/o --rebuild-tree
+> Will put log info to 'stdout'
+>
+> Do you want to run this program?[N/Yes] (note need to type Yes if you
+> do):Yes
+> reiserfs_open: neither new nor old reiserfs format found on /dev/hdb3
+>
+> reiserfsck: Cannot not open filesystem on "/dev/hdb3"
+> Aborted
+> filehound:~
+>
+> There is a harddisk, realy.
+> filehound:~ # fdisk -l /dev/hdb
+>
+> Disk /dev/hdb: 28.5 GB, 28520497152 bytes
+> 16 heads, 63 sectors/track, 55262 cylinders
+> Units =3D cylinders of 1008 * 512 =3D 516096 bytes
+>
+>    Device Boot    Start       End    Blocks   Id  System
+> /dev/hdb1   *         1        33     16600+  83  Linux
+> /dev/hdb2            34       292    130536   82  Linux swap
+> /dev/hdb3           293     55252  27699840   83  Linux
+> filehound:~ #
+>
+> Please can anyone help me ?!
+> Alex.
 
->On Tue, Aug 26, 2003 at 02:13:51PM -0600, Steven Cole wrote:
->  
->
->>On Tue, 2003-08-26 at 14:05, Mike Fedyk wrote:
->>    
->>
->>>Can you try ext3 with -o data=writeback, as well as xfs & reiser3?
->>>      
->>>
->>[root@spc1 /]# umount /dev/hda9
->>[root@spc1 /]# mount -t ext3 -o data=writeback /dev/hda9 /home
->>[root@spc1 /]# mount -t reiserfs /dev/hda10 /share_r
->>[root@spc1 /]# mount -t xfs /dev/hda12 /share_x
->>
->>    
->>
->
->Please use the same partition for all filesystem tests, otherwise you will
->be showing results that need to be adjusted for inner-spindle disk speed.
->
->
->  
->
-Oh yes, Mike is right.
 
--- 
-Hans
+Hello Alex,
 
+first of all you should install a new reiserfsck (get it from=20
+ftp.namesys.com). Perhaps even this helps, otherwise there are options like=
+ =20
+--rebuild-tree and --rebuild-sb. Especially if you need to to rebuild-sb, y=
+ou=20
+should do a backup of you partition to another harddisk using dd or=20
+dd_rescue.
+
+I guess you will get more professional help in the next hours by the=20
+reiserfs-programmers... :) However, I think they will first advise you to=20
+upgrade to newer reiser-tools.
+
+Regards,
+	Bernd
 
