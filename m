@@ -1,71 +1,121 @@
-From: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
-Subject: Re: [OT] Re: ReiserFS problems
-Date: Fri, 08 Aug 2003 15:06:38 +0200
-Message-ID: <3F33A05E.3030301@gmx.net>
-References: <20030806182055.A28562@bitwizard.nl>	<3F3252A4.4010104@namesys.com>	<20030807181227.GA23303@matchmail.com>	<200308081018.31525.russell@coker.com.au>	<3F338990.3040506@g-house.de> <16179.39482.567511.102156@laputa.namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: ReiserFS problems
+Date: Fri, 08 Aug 2003 17:07:03 +0400
+Message-ID: <3F33A077.4050103@namesys.com>
+References: <20030806182055.A28562@bitwizard.nl> <3F31303A.6020408@namesys.com> <3F314BE8.50300@suse.com> <3F326AD0.4070507@namesys.com> <3F327607.8030006@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15250-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15251-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16179.39482.567511.102156@laputa.namesys.com>
+In-Reply-To: <3F327607.8030006@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: Christian Kujau <evil@g-house.de>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>, reiserfs-list@namesys.com, copy@harddisk-recovery.nl
 
-Nikita Danilov wrote:
-> Christian Kujau writes:
->  > Russell Coker wrote:
->  > > system for storing a file-system image.  If you use an XOR encryption method 
->  > > it won't even hurt performance either.  :-#
->  > 
->  > sorry to hop in here, but i don't understand why an algorithm like "XOR" 
->  > is named "encryption" at all. isn't it that another XOR operation just 
->  > delivers the cleartext again?
-> 
-> "XOR encryption" xors consequent bytes of data being encrypted (in our
-> case blocks of loop device) with consequent bytes of user supplied key
-> (password). For all reasonable sizes of the key, this is surely only
-> marginally safer than no encryption at all, because, for instance, file
-> block devices usually contains a lot of zero-filled blocks, and xoring
-> key with zeroes will give you key.
+Jeff Mahoney wrote:
 
-Yeah, but we don't know if we will say something similar about AES in 50
-years. Besides that, if you look at different cryptoloop implementations,
-you will notice that some of them (AFAIK the affected versions are no
-longer used) use the same IV for every block they encrypt, thus giving
-identical ciphertext blocks for identical plaintext blocks. That doesn't
-necessarily give you the key when you look at ciphertext blocks where the
-plaintext is supposed to be zero-filled (it NEVER should if your algorithm
-is worth anything) but still gives you strong hints about the filesystem
-type which was encrypted. Knowing the filesystem type, you know more parts
-of the plaintext and thus can start cryptanalysis. However, all current
-algorithms are designed to withstand this type of attack.
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+>
+> Hans Reiser wrote:
+> | Jeff Mahoney wrote:
+> |
+> |> -----BEGIN PGP SIGNED MESSAGE-----
+> |> Hash: SHA1
+> |>
+> |> |> We've noticed horrible slowdowns when the filesystem is > 90% 
+> full. It
+> |> |> turns out that when a block group is more than 90% full reiserfs 
+> will
+> |> |> prefer a different block group. i.e. it is ALWAYS switching block
+> |> |> groups when the whole disk is > 90% full. Something like that. 
+> When we
+> |> |> report something like that it's always: Ah, yes, that's an old bug
+> |> |> we've fixed it. Use patch.....
+> |> |>
+> |> | I don't think you reported that to me.....
+> |> |
+> |> | Jeff, give me an opinion on this....
+> |>
+> |> The skip_busy algorithm works like so:
+> |>
+> |> If the filesystem is less than 95% full, the allocator tries to be 
+> a bit
+> |> smarter and leaves 10% of the bitmap free for future allocations to
+> |> avoid fragmentation.
+> |
+> |
+> |
+> |> If the bitmap being examined has 10% or less free
+> |> space, it's skipped. *UNLESS* the file doing the allocation already 
+> has
+> |> an interest in that bitmap, as determined by the allocator getting
+> |> passed a non-zero offset into the bitmap.
+> |
+> |
+> | Define this unless clause more fully please.
+> |
+> |>
+> |>
+> |> If it finds no bitmaps that are more than 10% free or the 
+> filesystem is
+> |> | 95% full, it restarts the search at the initial hint and ignores the
+> |> 10% rule.
+> |>
+> |> In short;
+> |> 1) Find a block in the current bitmap if the file's last block was
+> |> allocated there.
+> |> 2) If there aren't any, or there is no stake
+> |
+> |
+> | stake?
+>
+> The "unless" and "stake" mean the same thing. When the block allocator
+> is given a hint for a file, it's the last block allocated already for
+> that file
 
-> 
->  > 
->  > a     b             a
->  > 
->  > 0 XOR 1 = 1 XOR b = 0
->  > 1 XOR 0 = 1 XOR b = 1
->  > 1 XOR 1 = 0 XOR b = 1
->  > 0 XOR 0 = 0 XOR b = 0
->  > 
->  > 
->  > but i don't have to explain that to you...
->  > 
->  > thanks,
->  > Christian.
-> 
-> Nikita.
+and when it is a new file?  surely we still use the left neighbor in the 
+tree as the hint....?
 
-Regards,
-Carl-Daniel
+
+It seems that Rogiers problems are due to not using this code that you 
+wrote at all.....
+
+> . So, the search starts at the bitmap and offset specified by
+> the hint. If there is a block available after that position, but still
+> in that bitmap, it's used; regardless of the 10% rule.
+>
+> Once we move out of that bitmap, the skip busy algorithm is applied,
+> which aims to keep bitmaps at least 10% free when possible so that
+> future allocations may have blocks local to the last allocation 
+> available.
+>
+> The algorithm is only as good as the hint passed to it. It doesn't try
+> to be smart about placement other than implementing the above algorithm.
+>
+> - -Jeff
+>
+> - --
+> jeffm@suse.com
+> jeffm@csh.rit.edu
+> -----BEGIN PGP SIGNATURE-----
+> Version: GnuPG v1.2.2-rc1-SuSE (GNU/Linux)
+> Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+>
+> iD8DBQE/MnYGLPWxlyuTD7IRAriBAKCBi4j1YvWmndTrQsqDAZex/HFSMACdFMrV
+> octG4Hi4ipGEKXUxoiWkFwo=
+> =J/Pn
+> -----END PGP SIGNATURE-----
+>
+>
+>
+
 
 -- 
-Usual disclaimers apply. Satisfaction guaranteed: You would get your money
-back if you had paid me for writing this.
+Hans
+
 
