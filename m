@@ -1,82 +1,93 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiser4 disk formats (was http://www.namesys.com/snapshots/2004.08.09-internal.testing/)
-Date: Sun, 15 Aug 2004 15:24:34 +0400
-Message-ID: <200408151524.34396.vitaly@namesys.com>
-References: <20040813171827.GA15303@raptus.homelinux.net>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: Bug report: slab error at module removal
+Date: Sun, 15 Aug 2004 20:16:04 +0400
+Message-ID: <20040815161604.GB4703@backtop.namesys.com>
+References: <87pt5uibur.fsf@barad-dur.crans.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20298-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20299-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040813171827.GA15303@raptus.homelinux.net>
 Content-Disposition: inline
+In-Reply-To: <87pt5uibur.fsf@barad-dur.crans.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Domenico Andreoli <cavok@tiscali.it>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Mathieu Segaud <matt@minas-morgul.org>
+Cc: reiserfs-list@namesys.com
 
-On Friday 13 August 2004 21:18, Domenico Andreoli wrote:
-> hi all,
->
-> On Mon, Aug 09, 2004 at 11:49:31PM +0400, Vitaly Fertman wrote:
-> > and it has a converter from the previous format to the new one -- if you
-> > already created a reiser4 fs with the mkfs from some previous version
-> > of reiser4progs, first of all run
-> >     $ debugfs.reiser4 -C device
->
-> [ why i can't find any -C option in the debugfs.reiser4' manpage? it
-> is instead present in the help of debugfs.reiser4. probably i'll add
-> it to the debian manpage. ]
+On Sat, Aug 14, 2004 at 06:26:36AM +0200, Mathieu Segaud wrote:
+> 
+> I don't know if this is the right place, but I just saw a kernel message
+> in my dmesg.  
+> 
+> The box is a test box with 7 Reiser4 FSes.
+> 5 of them are LVM2 logical volumes. And the device-mapper
+> is used to crypt root partition (cipher AES).
+> All Reiser4 partitions have been converted to 1.0.0 layout/format,
+> and were consistent at boot time.
+> After several hours of running some moderatly high load stuff 
+> on each of them (big transfert of data, long repacker runs...).
+> I decided to umount them and unload reiser4.ko module.
+> dmesg gave this message:
+> 
+> slab error in kmem_cache_destroy(): cache `plugin_set': Can't free all objects
+>  [<c0135c41>] kmem_cache_destroy+0xd1/0x130
+>  [<f99bf57a>] plugin_set_done+0xa/0x30 [reiser4]
+>  [<f99b9194>] shutdown_reiser4+0xf4/0x210 [reiser4]
+>  [<c012a004>] sys_delete_module+0x144/0x180
+>  [<c013ea9e>] unmap_vma_list+0xe/0x20
+>  [<c013edcf>] do_munmap+0xef/0x150
+>  [<c0103afd>] sysenter_past_esp+0x52/0x71
+> SLAB: cache with size 64 has lost its name
+> SLAB: cache with size 64 has lost its name
+> SLAB: cache with size 64 has lost its name
+> SLAB: cache with size 64 has lost its name
+> SLAB: cache with size 64 has lost its name
+> SLAB: cache with size 64 has lost its name
+> SLAB: cache with size 64 has lost its name
+> SLAB: cache with size 64 has lost its name
+> SLAB: cache with size 64 has lost its name
+> SLAB: cache with size 64 has lost its name
+> SLAB: cache with size 64 has lost its name
+> 
+> The FSes are still consistent (fsck'ed with no --fix needed).
+> Unfortunatly, I turned off debugging options to test latest snapshot
+> performance. I can rebuild the module with debugging options on,
+> and try to give you a more accurate report to help find the memory leak.
 
-ok. I will add it also.
+can you try the following patch:
 
-> if i launched this command using reiser4progs 1.0.0 would it make all
-> the required conversions to bring up to date the disk format?
->
-> the problem is that in debian currently i have two versions of
-> reiser4progs, 0.5.3 and 0.5.6. in the next few days i want to upload also
-> 1.0.0 to push it into sarge (the next debian stable due to being released
-> in few weeks and for which the uploads will be closed on 17th August).
->
-> hence i must explain to the user what she is required to do in order
-> to update her filesystems and kernel.
->
-> IIRC 0.5.3, 0.5.6 and 1.0.0 have all different disk format, haven't them?
->
-> are the following the commands required to properly convert the disk
-> formats?
->
-> to convert a 0.5.3 to a 0.5.6:
->   $ fsck.reiser4 <device>
->
-> to convert a 0.5.6 to 1.0.0:
->   $ debugfs.reiser4 -C <device>
->
-> to convert a 0.5.3 to a 1.0.0:
->   $ fsck.reiser4 [--fix] <device>
->   $ debugfs.reiser4 -C <device>
-
-there were a few format changes in 0.5.5. The first one is the formatting policy 
-id was changed, to fix this 
-	fsck.reiser4 --build-sb device
-is needed. The second is object plugin sets. It was supposed to run
-	fsck.reiser4 --fix device
-to add pset to the root directory. Actually you could merely run
-	fsck.reiser4 device
-and it tells you what to do next.
-
-To jump from 0.5.3 to 1.0.0 it would be better to run:
-	fsck.reiser4 --build-sb device
-	debugfs.reiser4 -C device
-	fsck.reiser4 --fix device
-all tools are from 1.0.0 here.
-
-The converter (debugfs.reiser4 -C) is supposed to be run on consistent fs of 
-course, so probably it is worth to check/fix it with the current reiser4progs 
-before any update.
+# This is a BitKeeper generated diff -Nru style patch.
+#
+# ChangeSet
+#   2004/08/15 20:07:10+04:00 zam@crimson.namesys.com 
+#   plugin_set_done: first clean the hash table and free all elements, then remove the slab cache.
+# 
+# plugin/plugin_set.c
+#   2004/08/15 20:07:07+04:00 zam@crimson.namesys.com +1 -1
+#   plugin_set_done: first clean the hash table and free all elements, then remove the slab cache.
+# 
+diff -Nru a/plugin/plugin_set.c b/plugin/plugin_set.c
+--- a/plugin/plugin_set.c	Sun Aug 15 20:12:29 2004
++++ b/plugin/plugin_set.c	Sun Aug 15 20:12:29 2004
+@@ -329,8 +329,8 @@
+ reiser4_internal void plugin_set_done(void)
+ {
+ 	/* NOTE: scan hash table and recycle all objects. */
+-	kmem_cache_destroy(plugin_set_slab);
+ 	ps_hash_done(&ps_table);
++	kmem_cache_destroy(plugin_set_slab);
+ }
+ 
+ 
+> 
+> Regards,
+> 
+> -- 
+> Mathieu Segaud
+> 
 
 -- 
-Thanks,
-Vitaly Fertman
-
+Alex.
