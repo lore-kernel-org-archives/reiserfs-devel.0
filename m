@@ -1,45 +1,34 @@
-From: Laurenz Brein <brein@culturall.com>
-Subject: cannot mount reiserfs with nonstandard journal size
-Date: Tue, 9 Sep 2003 13:13:01 +0200
-Message-ID: <20030909111301.GA3688@WS-VPK-054>
+From: Pavel Machek <pavel@suse.cz>
+Subject: Re: precise characterization of ext3 atomicity
+Date: Tue, 9 Sep 2003 15:09:02 +0200
+Message-ID: <20030909130902.GE3944@openzaurus.ucw.cz>
+References: <3F574A49.7040900@namesys.com> <20030904085537.78c251b3.akpm@osdl.org> <3F576176.3010202@namesys.com> <20030904091256.1dca14a5.akpm@osdl.org> <3F57676E.7010804@namesys.com> <20030904181540.GC13676@matchmail.com> <3F578656.60005@namesys.com> <20030904132804.D15623@schatzie.adilger.int> <3F57AF79.1040702@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15606-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15607-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
+In-Reply-To: <3F57AF79.1040702@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Andreas Dilger <adilger@clusterfs.com>, Mike Fedyk <mfedyk@matchmail.com>, Andrew Morton <akpm@osdl.org>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-I'm using reiserfsprogs 3.6.11 on a Slackware 9.0 machine with Kernel 2.4.20
-which I patched with the patches from /pub/reiserfs-for-2.4/2.4.20-pending
+Hi!
 
-When I
-   mkreiserfs /dev/sdb1
-(standard journal size), I can mount the file system with
-  mount -t reiserfs /dev/sdb1 /back
-without problems.
+> Yup.  That's why we confine it to a (finite #defined number) set of 
+> operations within one sys_reiser4 call.  At some point we will allow 
+> trusted user space processes to span multiple system calls (mail 
+> server applicances, database appliances, etc., might find this 
+> useful).  You might consider supporting sys_reiser4 at some point.
 
-If, however, I create it with
-  mkreiserfs -s 1025 /dev/sdb1
-or any other journal size, the same mount will fail with
-  mount: wrong fs type, bad option, bad superblock on /dev/sdb1,
-         or too many mounted file systems
 
-Checking the file system with
-  reiserfsck /dev/sdb1
-fails with the message
-  Failed to open the journal device ((null)).
-The check works fine if I either add the --no-journal-available or the
--j /dev/sdb1 option.
+Well, if you want that API to be widely usable, you should invent
+better name than sys_reiser4 :-).
+-- 
+				Pavel
+Written on sharp zaurus, because my Velo1 broke. If you have Velo you don't need...
 
-My questions:
-- Is this behaviour correct?
-- Is there a way (mount option?) to mount reiserfs with non-standard
-  journal sizes?
-
-Thanks,
-Laurenz Brein
