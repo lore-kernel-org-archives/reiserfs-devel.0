@@ -1,46 +1,67 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+From: Alex Zarochentsev <zam@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Mon, 30 Aug 2004 09:17:28 -0400 EDT
+Date: Mon, 30 Aug 2004 17:25:04 +0400
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <48730003943-BeMail@cr593174-a>
-References: <4132DA55.5080903@namesys.com>
+Message-ID: <20040830132504.GR5108@backtop.namesys.com>
+References: <20040825205149.GA17654@lst.de> <412DA2CF.2030204@namesys.com> <20040826124119.GA431@lst.de> <20040826134812.GB5733@mail.shareable.org> <20040826155744.GA4250@lst.de> <20040826160638.GJ5733@mail.shareable.org> <20040826161303.GA4716@lst.de> <Pine.LNX.4.58.0408260919380.2304@ppc970.osdl.org> <20040826172029.GP5733@mail.shareable.org> <Pine.LNX.4.58.0408261021250.2304@ppc970.osdl.org>
 Mime-Version: 1.0
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.58.0408261021250.2304@ppc970.osdl.org>
+List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <4132DA55.5080903@namesys.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: flx@msu.ru, pj@sgi.com, riel@redhat.com, ninja@slaphack.com, torvalds@osdl.org, diegocg@teleline.es, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com, viro@parcelfarce.linux.theplanet.co.uk
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Jamie Lokier <jamie@shareable.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Hans Reiser wrote on Mon, 30 Aug 2004 00:42:13 -0700:
-> or, 2) we should ask Alexander Smith to help with applying the graph 
-> traversal cycle detection code that he wrote.
+On Thu, Aug 26, 2004 at 10:29:45AM -0700, Linus Torvalds wrote:
+> 
+> 
+> On Thu, 26 Aug 2004, Jamie Lokier wrote:
+> >
+> >     run_setuid_program
+> > 
+> >         -> calls pwd
+> >            pwd opens("."), (".."), ("../..") etc.
+> 
+> Ehh.. Not only does pwd not do that..
+> 
+> (hint: there's a getcwd() system call)
+> 
+> >         -> the setuid program thus ends up opening a device or fifo,
+> >            when it does pwd's path walk.  Yes it could use the getcwd
+> >            syscall, but some programs do their own path walk.
+> 
+> .. but even if it did that, it should use O_DIRECTORY when it did so. If 
+> it doesn't, it's broken.
+> 
+> So no, it would _not_ open the device or fifo when it did so.
+> 
+> The fact is, anything that expects to open a directory should already be 
+> opening it with O_DIRECTORY.
 
-I put my foot into it, didn't I?  It's not too bad, one trick to simplify
-things is to have the concept of a main parent and step parents.  The file
-system name space graph is kept structured so that by always going upward
-through the main parent, you're guaranteed to reach the root.  It doesn't
-save anything on traversal when deleting files (you still have to visit
-all the relevant nodes to check for cycles), but allows you to replace
-hard links with a new kind of dynamic symbolic link.  The hard link
-pretends to be a symbolic link presenting the "true path" to its target,
-which changes as the target moves around (so it's not as reliable as real
-hard link).  Old software doesn't see the cycles in the graph, just follows
-the single true path to any particular object like it currently does, and
-sees a bunch of symbolic links to everything else.  New software can see
-the full parent list (not just a single "..") and the actual hard links.
+reiser4 files-as-dirs do not depend on that.
 
-> Ok, Linus and Viro, now I see why it was hard. Being able to effectively 
-> connect to compound documents only with symlinks is a bit distasteful, 
-> but it is quite livable, and I very much hope you decide it is better 
-> than fragmenting the namespace.
+A file behaves as directory if one calls i_op->lookup() or f_op->readdir().  I
+am not sure that O_DIRECTORY should be a switch. 
 
-Still, having hard links to attributes or directories of attributes is
-useful.  For example, if several contact manager entries reference the
-same person, it would be nice to have that represented as a hard link to
-the attribute directory tree describing that person.  That's assuming you
-implement contacts (name, address, etc) as a bunch of attributes in a
-directory.
+> That said, ".." and "." are special already inside the kernel, and it 
+> migth be worth making them automatically imply O_DIRECTORY, since nothing 
+> else makes sense anyway. That would fix the case where somebody uses ".." 
+> _without_ using O_DIRECTORY. 
+> 
+> > It also fits the container idea very well:
+> > 
+> >         /dev/hda/part1/ <- the filesystem inside partition 1
+> 
+> I don't think you can do that. The kernel has no idea how to mount the
+> filesystem.
+> 
+> If it's already mounted somewhere else, that's a different issue.  
+> Although it might be mounted in several places (as a bind mount) with
+> different writability, I guess, so even then it might be "interesting".
+> 
+> 		Linus
 
-- Alex
+-- 
+Alex.
