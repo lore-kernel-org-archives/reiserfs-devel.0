@@ -1,47 +1,48 @@
-From: David Masover <ninja@slaphack.com>
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: The situation at hand and in the future
-Date: Sat, 29 May 2004 18:19:01 -0500
-Message-ID: <40B91A65.2060302@slaphack.com>
-References: <20040527200127.GS4990@nysv.org> <200405272105.i4RL5LDh026210@turing-police.cc.vt.edu> <40B6670D.9060408@slaphack.com> <20040528063324.GT4990@nysv.org> <40B89C9C.5050307@slaphack.com> <873c5j0zm3.fsf@uhoreg.ca>
+Date: Sat, 29 May 2004 20:41:48 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <87k6yuzqyb.fsf@uhoreg.ca>
+References: <20040527200127.GS4990@nysv.org> <200405272105.i4RL5LDh026210@turing-police.cc.vt.edu>
+ <40B6670D.9060408@slaphack.com> <20040528063324.GT4990@nysv.org>
+ <40B89C9C.5050307@slaphack.com> <20040529154917.GW4990@nysv.org>
+ <40B919DF.3040408@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18907-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18908-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <873c5j0zm3.fsf@uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+>>>>> "David" == David Masover <ninja@slaphack.com> writes:
 
+[...]
 
-Hubert Chan wrote:
+David> Don't know about md5, but how hard is it to brute-force the file
+David> itself?  ~ How about some strong magic at the beginning of the
+David> file (perhaps a checksum of the filename?) which can be used to
+David> verify (within reason) that the passphrase worked?  How
+David> vulnerable are modern ciphers to known-plaintext attacks?
 
-| Note that allowing a passphrase to be checked may decrease security
+Modern ciphers should be fairly resistant to know-plaintext attacks, I
+think.  When you put a filesystem on a loopback, you've essentially got
+a known-plaintext, because filesystems typically start with a magic
+number.  (Assuming the attacker knows what filesystem you're using.)
+It's best to avoid known plaintexts if possible, of course, if you're
+worried about security.
 
-Files are not encrypted by default, so encrypted files should allow a
-passphrase to be checked by default.  In balancing security and
-convenience, make convenience the default.
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+One thing that can be done is to take just the first couple of bytes
+from a hash to be used as your check.  That will catch the user from
+common entry errors, and won't reduce the keyspace by that much
+(hopefully).
 
-iQIVAwUBQLkaZXgHNmZLgCUhAQK3vhAAg2xE4ohKaXqV63EOBRkszdqYx34w04+Q
-ulpL7/uHridbT6OUNszkkMh9sls8cBQilBcwVMIP/uGeo/ehnthxDQ6NUmJhxKTq
-qMIQLU6Ak42VsYZDau87RFHij53uqilZQcfl4Scvv3DcM0oQhJYJur/CtQQiLTk/
-uYS+q/d31sLFYxnKqTGOvBq1M3fOOeSqAhQw2Djv6jPaSMhFTbQW5l8jbXp319l6
-bzPucjGzrDJZSqu93gMzonQF2zSnHHTQxjctxUDaQ9WpAVCIoNUFqCeM1r5khet9
-WIT16+wJTRgWeusWpKJpe9N9WYECuX6u6UKYCfpmMXGh6ae+Z8jOCLENkstI9DZL
-Vbbo1ugsuPjM9q/J7X/FIQ9vLKSiFx2krdHYfQD+2TR09hZAdSRwAYvgpaHDKZqg
-MgHuD4hK+mpxVorpNDZNc/Z2noX+f3ylDHl+GnFH2WBaksSbmbAjN3/IFBtG1otF
-rTA5fQS77h4PYhIUXTbCWcYC3EYyUqsReI3VmUyVLmZhvrxwXy2r5Hy0LBof7aST
-iiIzqetXk2xvXhzaADh6uaPaDFUDfJD3R3dPCzCMNirdq+ALuf3DY+4Tq43hxd5R
-NohKrFgxQuo2FPE2I5zGw6IAmjvLZpzYB3+E246TCdBwHt3WHqmHGW9Vk7jy8bbH
-zwDe/j5xGo0=
-=AgBH
------END PGP SIGNATURE-----
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
