@@ -1,22 +1,42 @@
 From: "Doug Bazarnic" <doug@cavecreek.net>
-Subject: How to mount reiserfs with a relocated journal?
-Date: Thu, 10 Jul 2003 19:12:48 -0700
-Message-ID: <008b01c34751$ec654a10$7000000a@hardwarehq.local>
+Subject: RE: How to mount reiserfs with a relocated journal? -- Figured out
+Date: Thu, 10 Jul 2003 20:26:19 -0700
+Message-ID: <009a01c3475c$31dc9990$7000000a@hardwarehq.local>
+References: <008b01c34751$ec654a10$7000000a@hardwarehq.local>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_008C_01C34717.40067210"
-Return-path: <reiserfs-list-return-14871-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14872-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <008b01c34751$ec654a10$7000000a@hardwarehq.local>
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-------=_NextPart_000_008C_01C34717.40067210
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+I had forgotten to run lilo to actually USE the patched kernel.  Oops!
+:)
+
+Duh... 
+
+Any way, is there a down side to using a large journal?  8193 vs ~125000
+block size?   Right now, I've allocated the entire 512 meg flash card
+for the journal size.   
+
+
+Thanks for you help,
+
+Doug
+
+
+
+
+-----Original Message-----
+From: Doug Bazarnic [mailto:doug@cavecreek.net] 
+Sent: Thursday, July 10, 2003 7:13 PM
+To: reiserfs-list@namesys.com
+Subject: How to mount reiserfs with a relocated journal?
 
 Hello,  
  
@@ -43,6 +63,4 @@ Any help would be appreciated!
 Thanks so much,
  
 Doug
-
-------=_NextPart_000_008C_01C34717.40067210--
 
