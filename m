@@ -1,56 +1,56 @@
-From: Kuba Ober <kuba@mareimbrium.org>
-Subject: Re: mkreiserfs and big RAID-Systems
-Date: Mon, 15 Jul 2002 12:53:45 -0400
-Message-ID: <200207151253.45018.kuba@mareimbrium.org>
-References: <1026741573.30600.25.camel@pallas.IZS.FhG.de> <200207152008.51657.vitaly@namesys.com> <1026757533.32136.26.camel@pallas.IZS.FhG.de>
+From: "Brian" <brian@english-bay.com>
+Subject: Re: My mistake...
+Date: Mon, 15 Jul 2002 10:38:46 -0700
+Message-ID: <001c01c22c26$7c0866e0$0e01a8c0@englishbay.com>
+References: <001c01c22902$aef10660$0e01a8c0@englishbay.com> <200207121942.41361.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11017-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11018-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <1026757533.32136.26.camel@pallas.IZS.FhG.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Andreas Abele <aba@IZS.FhG.de>
+To: Vitaly Fertman <vitaly@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-> > > [root@saturn6 mkreiserfs]# ./mkreiserfs /dev/sdf1
-> > > Count of blocks on the device: 210096054
-> >
-> > As you can see block number is correct - 840384216 blocks.
-> >
-> > > bread: Cannot read a block # 210096053.
->
-> it looks like every block on these devices that is aboth about
-> Block-Number 18000000 is declared as a bad block in reiserfs,
 
-It's not declared as a bad block. It's just that reiserfs cannot read that, 
-because your kernel cannot read it as well, and that's because the raid 
-driver reports an error.
+----- Original Message -----
+From: "Vitaly Fertman" <vitaly@namesys.com>
+To: "Brian" <brian@english-bay.com>
+Cc: <reiserfs-dev@namesys.com>
+Sent: Friday, July 12, 2002 8:42 AM
+Subject: Re: My mistake...
 
-So *please* first make sure that the whole raid array is readable. Try 
-something like 
-dd if=/dev/sdf1 of=/dev/null
-and see if it succeeds (i.e. it doesn't report an error before end of the raid 
-device).
+> Hi, you probably still cannot mount your partition due to wrong
+> reiserfs super block version and due to that ext3 superblock you
+> find every time. At least this message bolow says about it.
+> So if you need our assistance in recovery you are welcome on our
+> support page: www.namesys.com/support.html
 
-> in ext2fs
-> that doesnt happen.
-Try mke2fs -c /dev/sdf1
-I'm quite sure it'll complain loudly (-c enables checking the device for read 
-errors).
+Well, I am using the correct reiserfs super block version and I have deleted
+the ext3 superblock so that can't be it.
 
-So it didn't happen in mke2fs probably because it just didn't try 
-writing/reading from the bad blocks. 
+I gather you are offering to help me if I pay $25, is that correct?
 
-AFAICT, you're definitely having some device access problem -- either your 
-kernel is bad, or the raid driver in the kernel, or your raid controller is 
-failing, or your motherboard, or your raid array is dying. Whatever it is, as 
-long as kernel cannot read blocks from the device, you cannot use it, and it 
-doesn't depend on reiserfs at all.
+Further, I gather you have the answer but are holding out for the $25?
 
-This thread is off-topic. You're having bad hardware. This has nothing to do 
-with reiserfs.
+I see.
 
-Cheers, Kuba Ober
+Is this what open source has come to?
+
+Well, I have decided to shit-can the reiserfs partition and install ext3 in
+it's stead. I am not going to be held for ransom by some pseudo-open source
+project that can only help if there is a dollar value attached.
+
+Fuck That!
+
+Lots of luck with your "open source project".
+
+Best regards,
+
+Brian
+BSFH
+
+
+
