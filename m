@@ -1,88 +1,57 @@
 From: Manuel Krause <manuelkrause@netscape.net>
-Subject: Re: Recent spam
-Date: Sat, 14 Jun 2003 13:03:07 +0200
-Message-ID: <3EEB00EB.90408@netscape.net>
-References: <3EDAEEBE.3050202@netscape.net>
+Subject: data-logging for 2.4.21+ (was Re: How to build a big file server)
+Date: Sat, 14 Jun 2003 13:11:31 +0200
+Message-ID: <3EEB02E3.6030608@netscape.net>
+References: <1054800852.1997.15.camel@wusel.schnulli.de>	 <200306051959.45126.russell@coker.com.au>	 <1054807982.1995.56.camel@wusel.schnulli.de>	 <200306052025.05910.russell@coker.com.au> <1054820922.23132.133.camel@tiny.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14537-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14538-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
+To: Chris Mason <mason@suse.com>, Oleg Drokin <green@namesys.com>
 Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-On 06/02/2003 08:29 AM, Manuel Krause wrote:
-> Hi!
-> 
-> Whats up with these rows of spam mails I receive from reiserfs list the 
-> last days/weeks? Does this list spam itself now or what new anti-spam 
-> algorithm did I miss?
+On 06/05/2003 03:48 PM, Chris Mason wrote:
+> On Thu, 2003-06-05 at 06:25, Russell Coker wrote:
 > 
 > 
-> Thanks,
+>>>I use SuSE 8.2. It's much faster than the SuSE kernel in 8.1, even on my
+>>>ZIP drive at the parallel port ;)
+>>
+>>Hopefully someone can advise on whether the SuSE 8.2 kernel has all the 
+>>patches you desire for best ReiserFS performance.
 > 
->  Manuel
 > 
+> The suse kernels include the data logging code, along with the other
+> minor optimizations in my data logging dir.
+> 
+> The good news is that I've also tracked down a long standing
+> data=ordered performance bug, and I've got more data=ordered
+> optimizations to make fsync workloads better.  Hopefully this morning I
+> can get it all to stop oopsing and I'll send out for broader testing.
+> 
+> -chris
 
-Hi, all! Dear Mr. Reiser!
+Hi, Chris, Oleg and all others!
 
-I want to apologize for having brought up this topic again and having 
-caused that many "line-noise" (Alexander Lyamin).
+Are these patches ready for "broader testing" now? I would appreciate it 
+as you mentioned the key words "performance" and "data=ordered" in one 
+sentence ...  ;-))
 
-Originally I only wanted to know why I received multiplicated spam from 
-one spammers address via this list and if this would go on. And the 
-first replies seemed to explain it to me. So I didn't need to worry more 
-than before. Nothing more, nothing less I wanted.
+Does the iget5_locked patch (Oleg?!) get updated or is it obsolete? It 
+didn't apply fine to 2.4.21-pre6. So I skipped it for that kernel.
 
-
-The following replies only showed one main thing to adjust 
-@reiserfs-list: That this list has still a serious problem with spam. 
-This fact is best proved by the quantity of reoccurrence of these spam 
-related subjects and the increasing quality(!) of hints against this by 
-our lists people.
-
-This problem will not be solved by the hint "some people could 
-unsubscribe from reiserfs-list, if they don't like spam or do remind 
-someone @namesys about this problem" (Hans Reiser in very short). There 
-have been some many reasonable mails telling why many of these people 
-should = must stay on here as they greatly help development and 
-debugging. If namesys' admin has too much work, hire me or someone else 
-additionally. Don't spam me with something like "sponsored(!) machines 
-need to be installed before" and "admin is overworked", that happens 
-everywhere.
-
-The point, dear Mr. Hans Reiser, is that contributions in 
-"freedom-of-speech" regarding this poor topic would be trashed (as is: 
-"should be marked as [SPAM]" for Mr. Hans Reiser) is some steps too 
-aggressive to me and a tone of speech I would not like @reiserfs-list in 
-future. Mr. Rumsfeld ("Old Europe...") is a senseful diplomate compared 
-to you. And he isn't a diplomate at least, we all know.
+I didn't try kernels > 2.4.21-pre6 so far -- my simple question is: Are 
+  the new patches in the queue or have they been forgotten over time? Or 
+are there some compounds or merges in progress?!!
 
 
-Hey, we don't fight a war on here! We're working together on here for 
-ReiserFS-vX.Yz to be a powerful filesystem. Also to unite many people 
-that believe in that goal through previous good experience and the 
-"corporate safety" (you get help on any ReiserFS problem, if you didn't 
-kill the FS yourself). ReiserFS-list should be bug-free, too.
+Many thanks for clarification,
+best regards,
 
-
-For heavens sake, best regards,
-
-Manuel
-
-
-
-
-
-
-
-
-
-
-
-
+  Manuel
 
