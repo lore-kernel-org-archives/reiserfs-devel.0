@@ -1,44 +1,32 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Problems with reiserfs partition after systemcrash -- I need help
-Date: Fri, 2 May 2003 12:13:07 +0400
-Message-ID: <20030502081307.GA20723@namesys.com>
-References: <200305011848.48027.kd.wolfinger@gmx.de>
+From: Francis Stevens <Francis.Stevens@bristow.co.uk>
+Subject: Re: reiserfsprogs 3.6.7 release
+Date: Fri, 02 May 2003 09:51:55 +0100
+Message-ID: <3EB231AB.6060306@bristow.co.uk>
+References: <20030501161511.GA15766@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13925-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13926-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200305011848.48027.kd.wolfinger@gmx.de>
+In-Reply-To: <20030501161511.GA15766@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Klaus Dieter Wolfinger <kd.wolfinger@gmx.de>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Hello!
-
-On Thu, May 01, 2003 at 07:19:44PM +0200, Klaus Dieter Wolfinger wrote:
-
-> after a systemcrash I can't mount a partition (hdb2) with reiserfs.
-> pass0 -> interrupts with the message:
-> cannot read block 12252
-> badblocks -b 4096 /dev/hdb2
-> 98
-> 99
-> ..... long list of numbers
+Oleg Drokin wrote:
+>    Grab it from ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.7.tar.gz
 > 
-> 23954
-> .
-> 23966
+>    If you are just a user, you might want not to grab this release because you have
+>    rebuilt your superblock most probably. If you are representing a distro, and
+>    you are shipping/planning to ship reiserfsprogs-3.6.[56], you need this
+>    release instead.
+> 
 
-Well, bad hardware (harddrive)
+Sorry if this is a dumb question, I'm currently using  3.6.3, I'm just a 
+user should I be installing 3.6.7 ? I don't understand the bit about 
+rebuilding the superblock.
 
-> Is it possible to retrieve the data on this partition ?
+Francis Stevens
 
-Yes, you can dig the archives for solution or read
-http://namesys.com/support.html if you want to get advice directly from us.
-
-Bye,
-    Oleg
