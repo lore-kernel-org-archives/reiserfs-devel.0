@@ -1,33 +1,32 @@
-From: Ookhoi <ookhoi@humilis.net>
+From: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
 Subject: Re: reiserfsprogs-3.6.12-pre1 release
-Date: Sat, 1 Nov 2003 19:30:13 +0100
-Message-ID: <20031101183013.GD11595@favonius>
+Date: Sat, 01 Nov 2003 23:01:40 +0100
+Message-ID: <m3llqz7np7.fsf@merlin.emma.line.org>
 References: <200311012049.19969.vitaly@namesys.com>
-Reply-To: ookhoi@humilis.net
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15957-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15958-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200311012049.19969.vitaly@namesys.com>
+In-Reply-To: <200311012049.19969.vitaly@namesys.com> (Vitaly Fertman's
+ message of "Sat, 1 Nov 2003 20:49:19 +0300")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Vitaly Fertman wrote (ao):
+Vitaly Fertman <vitaly@namesys.com> writes:
+
 > The new pre release is available for downloading on
 > ftp://ftp.namesys.com/pub/reiserfsprogs/pre/reiserfsprogs-3.6.12-pre1.tar.gz
-> 
-> The release includes:
-> 
-> * bad block support, documentation is available at 
-> http://www.namesys.com/bad-block-handling.html
-> 
+...
 > *reiserfsck can check ro mounted filesystems.
 
-Hi guys, these features are really great. Thanks a lot for adding them.
-One hopes never to have to use them, but when they are needed, they are
-like from heaven :-)
+Does this use the "reboot Linux" exit codes that (e2)fsck uses?
+
+-- 
+Matthias Andree
+
+Encrypt your mail: my GnuPG key ID is 0x052E7D95
