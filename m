@@ -1,48 +1,29 @@
-From: Frank van Maarseveen <frankvm@xs4all.nl>
-Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: Fri, 3 Sep 2004 01:52:53 +0200
-Message-ID: <20040902235253.GA6131@janus>
-References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain> <20040902203854.GA4801@janus> <200409022319.i82NJlTN025039@turing-police.cc.vt.edu> <1076230617.20040903014302@tnonline.net>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 02 Sep 2004 23:51:45 +0100
+Message-ID: <1094165499.6170.17.camel@localhost.localdomain>
+References: <rlrevell@joe-job.com>
+	 <1094155277.11364.92.camel@krustophenia.net>
+	 <200409022200.i82M0ihC026321@laptop11.inf.utfsm.cl>
+	 <20040902232350.GA32244@mail.shareable.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21362-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21363-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1076230617.20040903014302@tnonline.net>
+In-Reply-To: <20040902232350.GA32244@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Spam <spam@tnonline.net>
-Cc: Valdis.Kletnieks@vt.edu, Frank van Maarseveen <frankvm@xs4all.nl>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Jamie Lokier <jamie@shareable.org>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Lee Revell <rlrevell@joe-job.com>, Pavel Machek <pavel@ucw.cz>, Spam <spam@tnonline.net>, David Masover <ninja@slaphack.com>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, Sep 03, 2004 at 01:43:02AM +0200, Spam wrote:
-> 
->   Yes why not? If there was any filesystem drivers for the AudioCD
->   format then it could.
-> 
->   I had such a driver for Windows 9x which would display several
->   folders and files for inserted AudioCD's:
-> 
->   D: (cdrom)
->     Stereo
->       22050
->         Track01.wav
->         Track02.wav
->         ...
->       44100
->         Track01.wav
->         ...
-...
-> 
->   If you just want to do a cd file.iso then it may be a totally
->   different thing. Either you would have a automount feature or a
->   filesystem/vfs plugin that could load secondary modules to support
->   this kind of thing.
+On Gwe, 2004-09-03 at 00:23, Jamie Lokier wrote:
+> However, if we ever see that search engine index thing happen, it
+> would be a most excellent capability if it searched inside archive
+> files too.  I would definitely use that.  Not often, but occasionally I would.
 
-Why is this so different, compared to your example? They are both
-filesystem drivers.
+Thats an indexer decision, the search backend (which is the performance
+and complexity critical part) doesn't give a damn.
 
--- 
-Frank
