@@ -1,31 +1,43 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: Reiser4 patch for 2.6.11 kernel
-Date: Mon, 07 Mar 2005 12:58:05 +0300
-Message-ID: <1110189484.11487.136.camel@tribesman.namesys.com>
-References: <8jfll8zyhlo.fsf@panter.stud.ntnu.no>
+From: Junfeng Yang <yjf@stanford.edu>
+Subject: Re: [CHECKER] Do ext2, jfs and reiserfs respect mount -o sync/dirsync
+ option?
+Date: Mon, 7 Mar 2005 14:29:52 -0800 (PST)
+Message-ID: <Pine.GSO.4.44.0503071426070.7096-100000@elaine24.Stanford.EDU>
+References: <1110216555.28860.74.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <8jfll8zyhlo.fsf@panter.stud.ntnu.no>
+In-Reply-To: <1110216555.28860.74.camel@localhost.localdomain>
+Sender: ext2-devel-admin@lists.sourceforge.net
+Errors-To: ext2-devel-admin@lists.sourceforge.net
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/ext2-devel>,
+	<mailto:ext2-devel-request@lists.sourceforge.net?subject=unsubscribe>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Lars Tobias =?ISO-8859-1?Q?B=F8rsting?= <larstobi@stud.ntnu.no>
-Cc: Reiser Mailing List <reiserfs-list@namesys.com>
+List-Post: <mailto:ext2-devel@lists.sourceforge.net>
+List-Help: <mailto:ext2-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/ext2-devel>,
+	<mailto:ext2-devel-request@lists.sourceforge.net?subject=subscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum=ext2-devel>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Jan Engelhardt <jengelh@linux01.gwdg.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ext2-devel@lists.sourceforge.net, jfs-discussion@www-124.southbury.usf.ibm.com, reiserfs-list@namesys.com, mc@cs.Stanford.EDU
 
-Hello
 
-On Mon, 2005-03-07 at 11:40, Lars Tobias B=F8rsting wrote:
-> Hi,
->=20
-> The 2.6.11 kernel has been out for some days now, but no Reiser4 patch
-> has yet been released for it at
-> http://ftp.namesys.com/pub/reiser4-for-2.6/. I need to update to 2.6.11
-> but I need Reiser4 support.
->=20
-> Has anybody got any idea of if it will be long until a release? Thanks!
+FiSC can still get those warnings with hdparm -W 0, or with a simple
+ramdisk that serves the disk requests whenever they are submitted.
 
-reiser4 patch for 2.6.11 should get out this week
+Thanks,
+-Junfeng
 
+On Mon, 7 Mar 2005, Alan Cox wrote:
+
+> The IDE layer default is still unfortunately broken and leaves write
+> caching enabled. Turn it off with hdparm.
+>
+
+
+
+-------------------------------------------------------
+SF email is sponsored by - The IT Product Guide
+Read honest & candid reviews on hundreds of IT Products from real users.
+Discover which products truly live up to the hype. Start reading now.
+http://ads.osdn.com/?ad_id=6595&alloc_id=14396&op=click
