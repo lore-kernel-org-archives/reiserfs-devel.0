@@ -1,37 +1,38 @@
-From: Csillag Tamas <csillagtamas@freemail.hu>
-Subject: quota for 2.4.20 (ptrace bug)
-Date: Sat, 22 Mar 2003 09:52:37 +0100
-Sender: cstamas
-Message-ID: <3E7C2454.CC7D28F5@freemail.hu>
+From: Bernd Schubert <bernd-schubert@web.de>
+Subject: Re: filesystem corruption ?
+Date: Sat, 22 Mar 2003 19:18:23 +0100
+Sender: bernd-schubert@web.de
+Message-ID: <200303221918.23552.bernd-schubert@web.de>
+References: <200303201725.14039.bernd-schubert@web.de> <20030321103230.C12315@namesys.com> <200303211401.38329.bernd-schubert@web.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13330-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13332-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200303211401.38329.bernd-schubert@web.de>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Hi Reiserfs team,
+Hello,
 
-I am using reiserfs with quota and kernel version 2.4.18.
-It is stable and works very well.
+> Though this machine will be replaced by a real server in a few month, I'm
+> still rather worried what happend. Even if its 'only' a hardware memory
+> problem this means lots of trouble for us -- on the one hand it seems not
+> to be memtest86 detectable and on the other hand our programs really do
+> need working memory, but of course this is not of your concern.
 
-But here is the *serious* ptrace bug and I have to upgrade to 2.4.20 with
-the right patch, but I am unable to find patches for reiserfs quota (for th=
-is
-version)
-but only for 2.4.19-preX. (and these did not apply because the reiserfs cod=
-e changes)
+Update: I yesterday started our fall-back-server and run another memtest86 on 
+the suspected machine. A colleague just told me that memtest86 reported 3 
+errors in test 8, well lets see what comes in test 11.
+So this either means that the physicians have run some experiments today or 
+that the memory became damaged within 2 weeks.
 
-Probably these patches already made for suse's 2.4.20 kernel.
+Thanks a lot for your help to identify this as a hardware problem.
 
-So please put these to the ftp site as soon as possible.
-
-Yours Tam=E1s Csillag.
-
-(PS: please CC to me because I am not on the list)
-
-
+Best regards,
+	Bernd
