@@ -1,48 +1,53 @@
-From: Domenico Andreoli <cavok@libero.it>
+From: Bennett Todd <bet@rahul.net>
 Subject: Re: typo: failed to genetate UUID? what's it?
-Date: Wed, 14 Jan 2004 14:04:14 +0100
-Message-ID: <40053E4E.9020604@libero.it>
-References: <4003FCB1.4030205@libero.it> <200401141349.37081.vitaly@namesys.com> <40053457.1070901@libero.it> <40053B49.3000508@namesys.com>
+Date: Wed, 14 Jan 2004 13:11:27 -0500
+Message-ID: <20040114181127.GC557@rahul.net>
+References: <4003FCB1.4030205@libero.it> <200401141349.37081.vitaly@namesys.com> <40053457.1070901@libero.it> <40053B49.3000508@namesys.com> <40053E4E.9020604@libero.it>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16500-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="DIOMP1UsTsWJauNi"
+Return-path: <reiserfs-list-return-16501-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40053B49.3000508@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <40053E4E.9020604@libero.it>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+To: Domenico Andreoli <cavok@libero.it>
+Cc: reiserfs-list@namesys.com
 
-Hans Reiser wrote:
-> Domenico Andreoli wrote:
->> Vitaly Fertman wrote:
->>> On Tuesday 13 January 2004 17:12, Domenico Andreoli wrote:
->>>>
->>>> what does it really mean? is something i need to worry? i sometimes 
->>>> receive
->>>> it when i'm formatting a new reiserfs partition.
->>>
->>> do you have /dev/urandom? It should have read permissions.
->>>
->> no
->>
->>
-> Vitaly, if this happens to real users, then you must handle the error 
-> gracefully and informatively.....
-> 
-> I have no idea whether a significant percentage of them lack 
-> /dev/urandom, maybe you should ask the list.
-> 
+--DIOMP1UsTsWJauNi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-i'm getting this error on a very simple initrd image i'm working on,
-where only required devices have been copied by hand. now i know that
-/dev/urandom is also required :))
+2004-01-14T08:04:14 Domenico Andreoli:
+> i'm getting this error on a very simple initrd image i'm working on,
+> where only required devices have been copied by hand. now i know that
+> /dev/urandom is also required :))
 
-thanks
-domenico
+By one of those amazing coincidences, "very simple initrd" is
+something I'm wallowing in with glee just at the moment.
 
------[ Domenico Andreoli, aka cavok
-  --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
-    ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
+BusyBox built with uClibc is magnificent for "very simple initrd".
+
+If you build your kernel to include devfs, and run busybox's devfsd,
+all the normal paths show up in /dev by automagic.
+
+When I switch to 2.6 I believe the corresponding automagic is udev.
+
+-Bennett
+
+--DIOMP1UsTsWJauNi
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
+
+iD8DBQFABYZOHZWg9mCTffwRAqswAKC2JaRhfcVTxYbjsswNslEAArV19wCgz60l
++P6Zdm1n19chcmw1O8s/ZaU=
+=dW3u
+-----END PGP SIGNATURE-----
+
+--DIOMP1UsTsWJauNi--
