@@ -1,55 +1,29 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: other OS
-Date: Tue, 03 Dec 2002 11:16:04 -0500
-Message-ID: <200212031616.gB3GG4Np004811@turing-police.cc.vt.edu>
-References: <001501c29a82$0126a110$0101a8c0@bummer>
+From: Chris Mason <mason@suse.com>
+Subject: Re: 2.4.20 and data logging
+Date: 03 Dec 2002 11:21:11 -0500
+Message-ID: <1038932472.1508.4.camel@tiny>
+References: <200212031238.32403.russell@coker.com.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_145291612P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12091-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12092-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Tue, 03 Dec 2002 12:11:06 +0800."
-             <001501c29a82$0126a110$0101a8c0@bummer> 
+In-Reply-To: <200212031238.32403.russell@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: darren <teodarren@myrealbox.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Russell Coker <russell@coker.com.au>
 Cc: reiserfs-list@namesys.com
 
---==_Exmh_145291612P
-Content-Type: text/plain; charset=us-ascii
+On Tue, 2002-12-03 at 06:38, Russell Coker wrote:
+> How is data logging work going?  Is there a patch for 2.4.20?
 
-On Tue, 03 Dec 2002 12:11:06 +0800, darren <teodarren@myrealbox.com>  said:
-> Was just wondering about the possibilities of using reiserfs on my
-> Solaris 6 machine.
-> 
-> Any chance of that?
+I'm trying to sort out a complete fix for the transaction overflow bug
+Philippe hit, but other than that the patches are considered stable.
 
-Almost none.  Unless you're clued enough about Solaris kernel internals to
-port a filesystem, in which case you'd not be asking.
+You can find 2.4.20 patches in
+ftp.suse.com/pub/people/mason/patches/data-logging/2.4.20
 
-You might want to look into whether Solaris 7, 8, or 9 address your
-performance concerns - Solaris 6 is quite ancient.
+-chris
 
-
--- 
-				Valdis Kletnieks
-				Computer Systems Senior Engineer
-				Virginia Tech
-
-
---==_Exmh_145291612P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.1 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQE97NjEcC3lWbTT17ARAiNwAKDEyt7CG8rhaVp1/K4F6sM/nFEwVwCePGWQ
-475vgIB6SRljoFPpFXENGbY=
-=1oAu
------END PGP SIGNATURE-----
-
---==_Exmh_145291612P--
