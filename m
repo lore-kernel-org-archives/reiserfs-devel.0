@@ -1,28 +1,79 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 23:17:10 -0700
+Subject: Re: reiser4 plugins
+Date: Fri, 27 Aug 2004 23:54:49 -0700
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <41302366.3020306@namesys.com>
-References: <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <1093467601.9749.14.camel@leto.cs.pocnet.net> <20040825225933.GD5618@nocona.random> <412DA0B5.3030301@namesys.com> <20040826112818.GL5618@nocona.random> <1093520699.9004.11.camel@leto.cs.pocnet.net> <20040826121630.GN5618@nocona.random> <20040827183858.GF5108@backtop.namesys.com>
+Message-ID: <41302C39.2080100@namesys.com>
+References: <20040825152805.45a1ce64.akpm@osdl.org>	 <412D9FE6.9050307@namesys.com>	<20040826014542.4bfe7cc3.akpm@osdl.org>	 <1093522729.9004.40.camel@leto.cs.pocnet.net>	<20040826124929.GA542@lst.de>	 <1093525234.9004.55.camel@leto.cs.pocnet.net>	<20040826130718.GB820@lst.de>	 <1093526273.11694.8.camel@leto.cs.pocnet.net>	 <20040826132439.GA1188@lst.de>	 <1093527307.11694.23.camel@leto.cs.pocnet.net>	 <20040826134034.GA1470@lst.de>	 <1093528683.11694.36.camel@leto.cs.pocnet.net>	 <412E786E.5080608@namesys.com>	 <16687.9051.311225.697109@thebsh.namesys.com>	 <412F7A59.8060508@namesys.com> <1093645747.17445.19.camel@voyager.localdomain>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040827183858.GF5108@backtop.namesys.com>
+In-Reply-To: <1093645747.17445.19.camel@voyager.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: Andrea Arcangeli <andrea@suse.de>, Christophe Saout <christophe@saout.de>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Steve Bergman <steve@rueb.com>
+Cc: Nikita Danilov <nikita@clusterfs.com>, Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>
 
-Alex Zarochentsev wrote:
+Steve Bergman wrote:
 
->
->
->There should be infracture to change plugin on fly, and choosing object's
->plugins at object's creation time.  Currently only certain object's plugins
->can be changed through <object>/metas/plugin interface. 
+>On Fri, 2004-08-27 at 11:15 -0700, Hans Reiser wrote:
 >  
 >
-To be more clear for those not familiar with our project, there is much 
-more work to be done, and one of the areas that (extremely) needs more 
-work is changing plugins on the fly and clean interfaces for specifying 
-them at creation time.
+>>If you ask real users, they say that reiser4 is fast, and their 
+>>experience matches our benchmark.  You can criticize the benchmark if 
+>>you want, but then you should run your own and publish it.
+>>
+>>    
+>>
+>
+>
+>As a "real" desktop user who just converted all his partitions from ext3
+>to reiser4, I have not, as yet, noticed any startling performance
+>increase.  Being slightly slightly irked to hear that the benchmark
+>numbers that have been paraded around on Slashdot and the internet in
+>general, at ext3's expense, have had reiser4's "bad" results surgically
+>extracted, I am running my own benchmarks to get the real story on
+>reiser4/ext3 mongo performance on my, rather average, desktop hardware.
+>
+>I am using the latest Mongo on FC/rawhide and the 2.6.8.1-mm4 kernel.
+>
+>Unfortunately, I get an error from mongo.pl that "Done" is not a numeric
+>argument at line 439.
+>
+>I have done this to fix it:
+>
+>
+>--- mongo.pl    2004-08-27 17:07:01.681723313 -0500
+>+++ mongo_fixed.pl      2004-08-27 17:06:51.369306735 -0500
+>@@ -429,8 +429,8 @@
+>        if ( -e ${ERR_FILE}) {
+>            &DIE ("\nEXITED WITH FAIL\n");
+>        }
+>-       my $real = (split ' ', $time_output[0])[1];
+>-       my $cpu  = (split ' ', $time_output[2])[1];
+>+       my $real = (split ' ', $time_output[1])[1];
+>+       my $cpu  = (split ' ', $time_output[3])[1];
+>  
+>        unless ( $real =~ /\s*\d+/ && $cpu =~ /\s*\d+/) {
+>          LOG "@time_output";
+>
+>
+>What it gets me is the "real" line of the "time" output for "STAT
+>REAL_TIME" and the "sys" line of the "time" output for "STAT CPU_TIME".
+>i.e. only system time is counted. I believe this was the intent of the
+>original code, but want to verify before continuing.
+>
+>Thanks,
+>Steve Bergman
+>
+>
+>
+>  
+>
+I didn't write this (more precisely, it only vaguely resembles what I 
+wrote in 1996).  Are you saying that it reports system time as real 
+time?  If yes, then it is an error, we need to go remove a bunch of 
+numbers from our benchmarks, and thanks for finding it.
+
+Zam, please comment.
+
+Hans
