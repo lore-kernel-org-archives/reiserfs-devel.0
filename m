@@ -1,49 +1,41 @@
-From: Valdis.Kletnieks@vt.edu
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: Processes dying?
-Date: Fri, 04 Jun 2004 16:50:13 -0400
-Message-ID: <200406042050.i54KoDYD029229@turing-police.cc.vt.edu>
-References: <20040604203925.GF4990@nysv.org>
+Date: Sat, 5 Jun 2004 00:01:30 +0300
+Message-ID: <20040604210130.GH4990@nysv.org>
+References: <20040604203925.GF4990@nysv.org> <200406042050.i54KoDYD029229@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1326084448P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19019-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19020-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Fri, 04 Jun 2004 23:39:25 +0300."
-             <20040604203925.GF4990@nysv.org> 
+Content-Disposition: inline
+In-Reply-To: <200406042050.i54KoDYD029229@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Valdis.Kletnieks@vt.edu
 Cc: reiserfs-list@namesys.com
 
---==_Exmh_1326084448P
-Content-Type: text/plain; charset=us-ascii
+On Fri, Jun 04, 2004 at 04:50:13PM -0400, Valdis.Kletnieks@vt.edu wrote:
 
-On Fri, 04 Jun 2004 23:39:25 +0300, mjt@nysv.org (Markus =?UNKNOWN?Q?T=F6rnqvist?=)  said:
-> Hello
-> 
-> I just started using the latest auto-snapshot.
-> 
-> I noticed weird behavior, that is, processes crash, so bad even C-c doesn't
-> kill them. For some reason running strace behind them gives me C-c support.
+>My guess is that some *other* process got wedged in the kernel while holding
+>a kernel lock, causing other processes to block when they needed that lock.
 
-My guess is that some *other* process got wedged in the kernel while holding
-a kernel lock, causing other processes to block when they needed that lock.
+Hmm, mmmmaybe. I'll have to take your word for it, since you're the more
+experienced one :)
 
-Probably will need a SysRq-T output to figure out who's hung where...
+But here's the thing, it appears to be related to directories, mostly,
+maybe. When I press tab to expand names.
 
---==_Exmh_1326084448P
-Content-Type: application/pgp-signature
+>Probably will need a SysRq-T output to figure out who's hung where...
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+Any ideas on how to ship the output somewhere for analysis?
+Some means of accessing the trace without sysrq?
 
-iD8DBQFAwOCEcC3lWbTT17ARAkiyAKCdI4VxsY0HwR6Gm05ux1RIxujwXgCgwB1T
-AL8cgr0Q4NcLJZjeSJMtk9E=
-=rp4A
------END PGP SIGNATURE-----
+This will be the first time I didn't go into X with this kernel,
+let's see if she boots without the reset button this time around ;)
 
---==_Exmh_1326084448P--
+-- 
+mjt
+
