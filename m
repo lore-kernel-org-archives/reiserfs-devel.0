@@ -1,63 +1,48 @@
-From: "Yiannis Mavroukakis" <yiannis@jaguarfreight.com>
-Subject: Does this look right?
-Date: Mon, 29 Nov 2004 13:48:13 -0000
-Message-ID: <77912E9FD42896419D1CEF15E1C397A58AFC45@london.jaguarfreightservices.local>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: file as a directory
+Date: Mon, 29 Nov 2004 07:41:48 -0800
+Message-ID: <41AB433C.2030705@namesys.com>
+References: <2c59f00304112205546349e88e@mail.gmail.com> <1101287762.1267.41.camel@pear.st-and.ac.uk> <4d8e3fd304112407023ff0a33d@mail.gmail.com> <200411241711.28393.christian.mayrhuber@gmx.net> <1101379820.2838.15.camel@grape.st-and.ac.uk> <41A773CD.6000802@namesys.com> <20041127124937.GO26192@nysv.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-22615-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22616-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Class: urn:content-classes:message
+In-Reply-To: <20041127124937.GO26192@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
+Cc: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>, linux-kernel@vger.kernel.org
 
+Markus T=F6rnqvist wrote:
 
-Am=20I=20completely=20loosing=20it=20?
-
-Using=202.6.10-rc2-mm3=20allows=20me=20to=20go=20into=20a=20file=20as=20a=20=
-directory=20when
-the=20file=20has=20the=20executable=20flag...that=20shouldn't=20be=20happe=
-ning,=20should
-it?
-
-root@firewall:~#=20ls=20-l=20file
--rwxr-xr-x=20=201=20root=20root=200=202004-11-29=2013:50=20file
-root@firewall:~#=20cd=20file
-root@firewall:~/file#=20ls
-ls:=20reading=20directory=20.:=20Not=20a=20directory
-
-
-Yiannis.
-
-Note:__________________________________________________________________
-This=20message=20is=20for=20the=20named=20person's=20use=20only.=20It=20ma=
-y=20contain
-confidential,=20proprietary=20or=20legally=20privileged=20information.=20N=
-o
-confidentiality=20or=20privilege=20is=20waived=20or=20lost=20by=20any=20mi=
-stransmission.
-If=20you=20receive=20this=20message=20in=20error,=20please=20immediately=20=
-delete=20it=20and
-all=20copies=20of=20it=20from=20your=20system,=20destroy=20any=20hard=20co=
-pies=20of=20it=20and
-notify=20the=20sender.=20You=20must=20not,=20directly=20or=20indirectly,=20=
-use,=20disclose,
-distribute,=20print,=20or=20copy=20any=20part=20of=20this=20message=20if=20=
-you=20are=20not=20the
-intended=20recipient.=20Jaguar=20Freight=20Services=20and=20any=20of=20its=
-=20subsidiaries
-each=20reserve=20the=20right=20to=20monitor=20all=20e-mail=20communication=
-s=20through=20its
-networks.
-Any=20views=20expressed=20in=20this=20message=20are=20those=20of=20the=20i=
-ndividual=20sender,
-except=20where=20the=20message=20states=20otherwise=20and=20the=20sender=20=
-is=20authorized
-to=20state=20them=20to=20be=20the=20views=20of=20any=20such=20entity.
-________________________________________________________________________
-This=20e-mail=20has=20been=20scanned=20for=20all=20viruses=20by=20Star=20I=
-nternet.=20The
-service=20is=20powered=20by=20MessageLabs.
+>On Fri, Nov 26, 2004 at 10:19:57AM -0800, Hans Reiser wrote:
+>
+> =20
+>
+>>For the case Peter cites, yes, it does add clutter to the pathname to=20
+>>say "..metas" (actually, it is "...." now in the current reiser4, not=20
+>>"..metas").  This is because you aren't looking for metafile=20
+>>   =20
+>>
+>
+>"...." shound like something that could be an alias for ../..
+>so not much better than reserving the word "metas" from the namespace.
+>
+>I guess I'll still go with ..metas here, as it's the best compromise
+>showed. Or maybe even ..meta (as there is no need for the plural imo)
+>
+>Just re-opening a damned useless, old, tired and daft can of worms :P
+>
+> =20
+>
+I agree that ..metas is much less likely to cause a namespace collision,=20
+but I also think that if we called it "john" it would not be a major=20
+problem, and since the issue is causing us political problems in getting=20
+into the kernel, "...." is more PR right (as it does not slight Finnish=20
+women named meta by suggesting they are too obscure to count), and so=20
+"...." wins.    "...." also has the advantage that it is elegant in=20
+extending the Unix convention, in that we already have a ".." and a "."=20
+and hidden files that start with ".".
