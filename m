@@ -1,38 +1,119 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
-Subject: Re: silent semantic changes with reiser4
-Date: Fri, 10 Sep 2004 13:50:05 -0400
-Message-ID: <200409101750.i8AHo5qx005157@localhost.localdomain>
-References: <wscott@bitmover.com>
-Return-path: <reiserfs-list-return-21684-reiserfs=m.gmane.org@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: [RFC] Pathname Semantics with //
+Date: Thu, 09 Sep 2004 11:03:30 -0700
+Message-ID: <41409AF2.7010003@namesys.com>
+References: <20040910174518.1DAED15CE4@mail03.powweb.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21686-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Wayne Scott <wscott@bitmover.com> 
-   of "Fri, 10 Sep 2004 10:50:40 EST." <20040910.105040.30177815.wscott@bitmover.com> 
+In-Reply-To: <20040910174518.1DAED15CE4@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wayne Scott <wscott@bitmover.com>
-Cc: miller@techsource.com, reiser@namesys.com, Peter.Foldiak@st-andrews.ac.uk, jamie@shareable.org, bunk@fs.tum.de, viro@parcelfarce.linux.theplanet.co.uk, torvalds@osdl.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Dabbs <david@dabbs.net>
+Cc: reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org, cliff@lindows.com
 
-Timothy Miller <miller@techsource.com> said:
-> > Everyone likes ':', so we'd have "problem/shoe:size".  (Don't bother to 
-> > complain about files which have : in them, because I already know it 
-> > sucks, but it's an example.)
-> 
-> [[ I just joined this discussion, so pardon if this is already known.]]
+David Dabbs wrote:
 
-> One advantage of ':' is that portable programs already have to avoid
-> it because of NTFS alternate data streams:
+>  
+>
+>>Jamie Lokier
+>>
+>>David Dabbs wrote:
+>>
+>>    
+>>
+>>>Shooting from the hip here. If we want to unify namespaces in a 
+>>>UNIXy
+>>>      
+>>>
+>>way,
+>>    
+>>
+>>>what if we make the VFS expose all the non-file "protocol" 
+>>>namespaces through one mount point, device node or whatever. A 
+>>>filesystem, perhaps something built using FiST
+>>>      
+>>>
+>[http://www.filesystems.org/], would "handle"
+>  
+>
+>>a
+>>    
+>>
+>>>protocol. Another, perhaps preferred, option is to steer in the
+>>>      
+>>>
+>>direction of
+>>    
+>>
+>>>Plan9, where ftp can be mounted and handled by a user-space 
+>>>filesystem, ftpfs.
+>>>See http://plan9.bell-labs.com/magic/man2html/4/ftpfs
+>>>      
+>>>
+>>You can already do it, something like this:
+>>
+>>    mkdir /http:; mount none /http: -t uservfs -o view=http
+>>    mkdir /ftp:;  mount none /ftp:  -t uservfs -o view=ftp
+>>
+>>I don't see any compelling reason to make "//" special for this.
+>>However, if there is such a reason, then you could just mount protocol 
+>>handlers on "//http:" and so on, and make "//" a normal directory with 
+>>a special name.
+>>
+>>-- Jamie
+>>    
+>>
+Jamie, I like your approach, and I think it should go into LSB and be 
+used by all distros.  It improves closure in the OS.
 
-Portable programs working on POSIX don't give a damn that C:, CON:, etc are
-reserved in MS-DOS.
+>
+>Jamie, we _definitely_ agree, except apps that want to create links to URLs
+>will prepend one slash to the URL instead of two. Is your reference to
+>uservfs a "foo" reference or do you mean
+>http://sourceforge.net/projects/uservfs/? It looks a little dusty. But we
+>are pulling in the same direction.
+>
+>The /file: node could simply be a symlink. Thus we have
+>
+>      cd /
+>      ln -s / file:
+>      mkdir http:; mount none /http: -t uservfs -o view=http
+>      mkdir ftp:;  mount none /ftp:  -t uservfs -o view=ftp
+>      #etc...
+>
+>Pathnames would be resolved with the existing code in namei.c. I can
+>understand mounting a URL whose protocol looks like a fs tree (e.g. ftp),
+>but http? Namei() parses the pathname one component at a time, checks the
+>dcache, and goes to the fs when that fails. Let's trace through how a URL
+>might get resolved. 
+>
+>      ln -s /http://sourceforge.net/projects/uservfs
+>      cat uservfs
+>
+>Pathname would be resolved as 
+>
+>      /http:          
+>      sourceforge.net/
+>      projects/
+>      uservfs
+>
+>I need to look closer at namei (or the uservfs code if it really supports a
+>view=http). As long as a fs can generate meaningful, stateful values in
+>response to VFS calls to real_lookup(), then this may work. 
+>
+>
+>David
+>
+>
+>
+>
+>
+>
+>  
+>
 
-Windows warts shouldn't infect Linux.
--- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
