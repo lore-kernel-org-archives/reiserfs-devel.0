@@ -1,80 +1,87 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: On a free repacker
-Date: Thu, 20 May 2004 10:28:13 -0700
-Message-ID: <200405201028.13184.reiser@namesys.com>
-References: <20040519192831.GL24604@nysv.org>
+Subject: Re: Reiser4 status as of this weekend
+Date: Thu, 20 May 2004 10:37:00 -0700
+Message-ID: <200405201037.00029.reiser@namesys.com>
+References: <003a01c4377d$d653eac0$7d02a8c0@toronto.chantrynetworks.com> <20040519195056.GM24604@nysv.org> <1085045969.1431.141.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18784-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18785-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040519192831.GL24604@nysv.org>
+In-Reply-To: <1085045969.1431.141.camel@tribesman.namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Markus =?iso-8859-1?q?T=F6rnqvist?= <mjt@nysv.org>, reiserfs-list@namesys.com
-Cc: flx@namesys.com
+Content-Type: text/plain; charset="utf-8"
+To: Vladimir Saveliev <vs@namesys.com>, Markus =?utf-8?q?T=D0=96rnqvist?= <mjt@nysv.org>
+Cc: Russell Treleaven <rtreleaven@chantrynetworks.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-flx, please create the donations acceptance wording for our website.
-
-Hans
-
-On Wednesday 19 May 2004 12:28, Markus T=F6rnqvist wrote:
-> Hi
+On Thursday 20 May 2004 02:39, Vladimir Saveliev wrote:
+> Hello
 >
-> There was an IRC discussion earlier today, a short one, about the repacke=
-r.
+> On Wed, 2004-05-19 at 23:50, Markus T=D0=96rnqvist wrote:
+> > On Sun, May 16, 2004 at 10:30:59AM -0700, Hans Reiser wrote:
+> > >Markus T=C3=B6rnqvist wrote:
+> >
+> > [mmap]
+> >
+> > >>>substantial work to do right, and is in progress.  We currently have=
+ a
+> > >>>fix that costs performance, and are fixing the performance issue
+> > >>> (which is fixable but requires code....).
+> > >>
+> > >>Would you say this is the biggest issue?
+> > >
+> > >It is the only issue that I know of.
+> >
+> > How about Copy-on-capture? Is it usable? Does it provide better
+> > performance?
 >
-> It appears that Reiser4 does not fragment much in normal use, but it can
-> get badly fragmented with fsstress for example?
+> When we moved to mm kernel it broke. When it was working - it did not
+> show significant effect in quick tests like bonnie.
+=46ix it.  Find the right test to measure its effect.
 >
-> Now, the idea is to sell the repacker.
->
-> Basically:
->
-> 1) It could be binary-only
->    Enough buyers will open the source like with Blender
->    There would be online statistics which describe how much to go
->    before this happens.
->
-> 2) You could sell the sources and the rights to do whatever you want,
->    except redistribute it.
-Yes, I think this.
->
-> There was the point that Blender had gained some popularity before
-> the source release, which Reiser4 does not yet have. That may make
-> this difficult to push through. A free repacker would make the situation
-> better, but I see it as one of those annoying chicken-and-egg problems.
->
-> The pricing must be ok too. Not so high that regular people won't buy it
-> but not so cheap that it doesn't generate revenue.
-I think 5% of the cost of the storage hardware (including raid cards), whic=
-h=20
-is about $5 for most people.
->
-> If the source code is sold, people may want to develop it further, but
-> I'm sure if they pay 1000000000e for it, they will expect perfection
-> and not contribute.
->
-> Then there's some copy-protection issues. I hope it will not be too
-> heavily laid with license keys and stuff like that, because it makes
-> usage harder and doesn't stop anyone from being an asshole.
-No copy protection.  We will make money from large corporations and not wor=
-ry=20
-about individual pirates.
->
-> I understood that a binary-only model would be in the form of a kernel
-> module? It may be the easiest method.
-only user space portion will be non-gpl.
->
-> Hans, what's your take on this?
-> Maybe a real donations page would be required to get the baby up and
-> running, maybe some really basic repacker but one that's so rock-solid
-> that people would buy it and know they'll get free updates and in
-> the end it'll be all open...
->
-> Just my two cents worth of rambling again :)
-thanks for your thoughts.
+> > >>What about NFS?
+> > >
+> > >fixed by nikita recently but not released.  See next snapshot.
+> >
+> > I'm trying BK pulls. Yesterday it didn't compile, xfs seemed broken.
+> > Retrying now, after bk -r get.
+> >
+> > I wrote a lame script, haven't used it much myself, but it should do
+> > something. Like get a BK pull.
+> > http://mjt.nysv.org/reiser/getreiser.sh
+> > http://mjt.nysv.org/reiser/getreiser.sh.txt
+> >
+> > >by doing the architectural work....  Also, it requires that 2/3 of the
+> > >work (by cost) be done in the US, and the moscow embassy has gone into
+> >
+> > Have you tried other governments?
+> >
+> > >total asshole mode and isn't giving work visas to most russians.  Stil=
+l,
+> > >we will try to get work visas in 6 months.  I hope that it being for D=
+oD
+> > >work will increase the chance of getting visas.
+> >
+> > That must not fail.
+> > The DoD can't say "please give these guys work visas" just to cover
+> > their own interests? Or this has no effect?
+> >
+> > >It is in the source code..... we have the best commented source code in
+> > >the kernel (Andrew Morton is the only other kernel person who comments
+> > >code well that I know of).
+> >
+> > There was also a tangent on the topic of creating daily snapshots.
+> >
+> > This might make it easier for people to come to terms with Reiser4.
+> > People have many reasons to dislike BK, so a daily snapshot patch
+> > against some vanilla system may be a good thing.
+> >
+> > However, having broken code in the BK for days without having time to
+> > fix it is not good.
+> >
+> > So this would require changelogs and some testing on snapshots so that
+> > every once in a while one can be labeled "stable as hell"
 
