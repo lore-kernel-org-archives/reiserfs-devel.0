@@ -1,71 +1,67 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Gunnar Ritter <Gunnar.Ritter@pluto.uni-freiburg.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Tue, 07 Sep 2004 12:14:44 -0700
-Message-ID: <413E08A4.9020005@namesys.com>
-References: <200409071815.i87IFseF004907@laptop11.inf.utfsm.cl>
+Date: Tue, 07 Sep 2004 21:22:33 +0200
+Message-ID: <413E0A79.nailEBK11DW72@pluto.uni-freiburg.de>
+References: <200409070206.i8726vrG006493@localhost.localdomain>
+ <413D4C18.6090501@slaphack.com> <m3d60yjnt7.fsf@zoo.weinigel.se>
+ <413DA8EE.nailA301JQ74H@pluto.uni-freiburg.de>
+ <413DFC06.5070604@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21583-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21584-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200409071815.i87IFseF004907@laptop11.inf.utfsm.cl>
+In-Reply-To: <413DFC06.5070604@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Spam <spam@tnonline.net>, Christer Weinigel <christer@weinigel.se>, David Masover <ninja@slaphack.com>, Tonnerre <tonnerre@thundrix.ch>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Tonnerre <tonnerre@thundrix.ch>, Spam <spam@tnonline.net>, ReiserFS List <reiserfs-list@namesys.com>, Pavel Machek <pavel@ucw.cz>, David Masover <ninja@slaphack.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jamie Lokier <jamie@shareable.org>, Christoph Hellwig <hch@lst.de>, Alexander Lyamin aka FLX <flx@namesys.com>, Chris Wedgwood <cw@f00f.org>, Christer Weinigel <christer@weinigel.se>
 
-Horst von Brand wrote:
+Hans Reiser <reiser@namesys.com> wrote:
 
->Hans Reiser <reiser@namesys.com> said:
->  
->
->>Horst von Brand wrote:
->>    
->>
->>>Spam <spam@tnonline.net> said:
->>>      
->>>
->>>>Christer Weinigel <christer@weinigel.se> said:
->>>>        
->>>>
->
->[...]
->
->  
->
->>>>>2. How do we want to expose named streams?
->>>>>          
->>>>>
->
->  
->
->>>>>  One suggestion is file-as-directory in some form.
->>>>>          
->>>>>
->
->  
->
->>>Which is broken, as it forbids hard links to files.
->>>      
->>>
->
->  
->
->>No, it forbids hard links to the directory aspect of the file-directory 
->>duality.
->>    
->>
->
->How do you distinguish a "hard link to the directory personality" from
->"hard link to the file personality"?
->
-Put in (undoubtedly overly) simple terms, if you can do it to a file you 
-can do it to the file personality, but if you currently can only do it 
-to a directory and get an error from attempting it to a file then in the 
-new scheme doing it to the hard link only gives the same error.
+> Gunnar Ritter wrote:
+> >You cannot just 'modify cp'. 
+> >
+> People who think that POSIX is the objective rather than the least 
+> common denominator of OS design
 
-Or, we can ask Alexander to help us use his deadlock detection algorithm 
-and try to do things right....
+I am not principally adversed against extensions to POSIX. My mailx
+implementation 'nail' has e.g. perhaps more extensions than there are
+commands and options in the POSIX standard for it.
 
+POSIX is also not against extensions. In fact, POSIX development
+generally works as follows: One vendor creates something as an extension,
+other vendors follow to implement it, and later on it is discussed if it
+is desirable to integrate the feature into the standard itself. It is
+absolutely possible that Sun's openat() might be in POSIX.1-2010 one day,
+for example. Useful extensions are thus welcome to POSIX.
+
+This does not mean, however, that one should not clearly distinct between
+standard and extensions, and that extensions should be created at will
+without carefully weighting pros and cons.
+
+I did not say: POSIX forbids to handle streams or directory/file mixes.
+This would not even have been true. However, POSIX restricts the choice
+of possible interfaces for them. One of those restrictions is that 'cp'
+may not copy streams if used in strict accordance with POSIX. As you
+acknowledged in your reply, POSIX is the least common denominator. Thus
+'cp' implementations should not be modified in a way that violates it.
+
+This means, in effect, that a strictly conforming POSIX application (i.e.
+something like a shell script that uses no POSIX extensions or methods
+which are not clearly defined in the standard) will very likely be unable
+to copy streams, unless some other, conforming, method is found. Which is
+a problem one should know about when discussing this.
+
+> have had their head screwed on backwards 
+> to better look at where their competitors used to be.
+
+But there are not only forwards and backwards directions. Sideways might
+lead to nowhere.
+
+	Gunnar
+
+-- 
+http://omnibus.ruf.uni-freiburg.de/~gritter
