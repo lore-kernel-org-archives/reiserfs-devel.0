@@ -1,40 +1,49 @@
-From: Wichert Akkerman <wichert@wiggy.net>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 02:05:40 +0200
-Sender: Wichert Akkerman <wichert@levante.wiggy.net>
-Message-ID: <20040826000540.GG2612@wiggy.net>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <c7ef32a704082517012aca6061@mail.gmail.com>
+Date: Thu, 26 Aug 2004 01:11:52 +0100
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040826001152.GB23423@mail.shareable.org>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20545-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <c7ef32a704082517012aca6061@mail.gmail.com>
+In-Reply-To: <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tierra <etierra@gmail.com>
-Cc: ReiserFS <reiserfs-list@namesys.com>
+To: viro@parcelfarce.linux.theplanet.co.uk
+Cc: Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Previously Tierra wrote:
-> It's not so much about samba having a use for them as it is about
-> other applications using them between platforms in the same way.
+This message suggests a way to extend the VFS safe locking rules to
+include files-as-directories.
 
-But what for? Personally I still haven't seen a good use for them.
-Apple's resource fork comes close though.
+viro@parcelfarce.linux.theplanet.co.uk wrote:
+> Note that currently it's OK - we get "all non-directories are always locked
+> after all directories".  With filesystem that provides hybrid objects with
+> non-NULL ->link() it's not true and we are in deadlock country.  Before
+> we get anywhere near fs code.
 
-> NTFS had very poor support for them for a long time. At one point I
-> was convinced it was going to be taken out eventually, but SP2 just
-> showed with even better support for them, and more MS software has
-> started using them.
+Is this a problem if we treat entering a file-as-directory as crossing
+a mount point (i.e. like auto-mounting)?
 
-I wonder how they intend to shoehorn that into distribution across
-other media such as emails or zip files.
+Simply doing a path walk would lock the file and then cross the mount
+point to a directory.
 
-Wichert.
+A way to ensure that preserves the lock order is to require that the
+metadata is in a different filesystem to its file (i.e. not crossing a
+bind mount to the same filesystem).
 
--- 
-Wichert Akkerman <wichert@wiggy.net>    It is simple to make things.
-http://www.wiggy.net/                   It is hard to make things simple.
+That has the side effect of preventing hard links between metadata
+files and non-metadata, which in my opinion is fine.
+
+Path walking will lock the file, and then lock the directory on a
+different filesystem.  Lock order is still safe, provided a strict
+order is maintained between the two filesystems.
+
+The strict order is ensured by preventing bind mounts which create a
+path cycle containing a file->metadata edge.  One way to ensure that
+is to prevent mounts on the metadata filesystems, but the rule doesn't
+have to be that strict.  This condition only needs to be checked in
+the mount() syscall.
+
+-- Jamie
