@@ -1,59 +1,29 @@
-From: Hans Reiser <reiser@namesys.com>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
 Subject: Re: Split Trees (my design, similar to binary treaps)
-Date: Fri, 23 May 2003 02:48:05 +0400
-Message-ID: <3ECD53A5.40801@namesys.com>
-References: <26734079117-BeMail@cr593174-a>
+Date: Thu, 22 May 2003 19:27:59 -0400 EDT
+Message-ID: <10375659311-BeMail@cr593174-a>
+References: <3ECD53A5.40801@namesys.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14215-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14216-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <26734079117-BeMail@cr593174-a>
+In-Reply-To: <3ECD53A5.40801@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Alexander G. M. Smith" <agmsmith@rogers.com>
+To: Hans Reiser <reiser@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Alexander G. M. Smith wrote:
+Hans Reiser wrote on Fri, 23 May 2003 02:48:05 +0400:
+> Do nodes contain both pointers and data?
 
->Hans Reiser wrote on Thu, 22 May 2003 21:16:15 +0400:
->  
->
->>Alexander G. M. Smith wrote:
->>    
->>
->>>Only on the average, at least in the original skip list algorithm.  The
->>>height is determined randomly when the node is created; there is no
->>>rebalancing.  The random distribution is defined as you would expect,
->>>50% of the nodes have 1 level, 25% have 2 levels, ... 0.5**n of the
->>>nodes have n levels.  Surprisingly, this works fairly well.
->>>      
->>>
->>To have a level means to be on that level or lower?
->>    
->>
->
->Yes, at least for skip lists.  A level n node has n next pointers
->(or maybe n+1 if you are counting starting at zero) in the skip list.
->All nodes have level 0 next node pointers (same as an ordinary linked
->list).  Half of them have level 0 and level 1 pointers (level 1 pointers
->point to the next node that is level 1 or higher, skipping past level 0
->nodes - that's why it's a "skip list").  A quarter have level 2, 1, and 0
->pointers.  In general, when you create a node, randomly determine its
->level (rarely is infinite :-), allocate an array of pointers that big,
->and thread it into the 0 to n different parallel level lists.  Of course,
->the list head/tail endpoints have to have all n levels.
->
->- Alex
->
->
->  
->
-Do nodes contain both pointers and data?
+Yes, that's a common way of doing skip lists.  Or the node could contain
+the level pointers and a data pointer.  The nodes are also awkwardly
+variable sized due to the random number of levels.  That leads to
+allocation fragmentation unless extra steps are taken.
 
--- 
-Hans
+I don't know how the split trees approach does it.
 
-
+- Alex
