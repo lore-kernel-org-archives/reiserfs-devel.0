@@ -1,48 +1,82 @@
-From: Amit Gud <amitgud1@gmail.com>
-Subject: Re: file as a directory
-Date: Tue, 23 Nov 2004 11:50:15 +0530
-Message-ID: <2c59f003041122222038834d7e@mail.gmail.com>
-References: <2c59f00304112205546349e88e@mail.gmail.com>
-	 <41A1FFFC.70507@hist.no>
-Reply-To: Amit Gud <amitgud1@gmail.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: [Fwd: [PATCH] reiser4: fix a use after free bug in
+	reiser4_parse_options]
+Date: Tue, 23 Nov 2004 11:11:28 +0300
+Message-ID: <1101197483.2151.38.camel@tribesman.namesys.com>
+References: <41A2523F.2050201@free.fr>  <41A2C8E0.8020808@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22520-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22522-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41A1FFFC.70507@hist.no>
+In-Reply-To: <41A2C8E0.8020808@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Helge Hafting <helge.hafting@hist.no>
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Laurent Riffard <laurent.riffard@free.fr>, reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>, vs <vs@thebsh.namesys.com>
 
-On Mon, 22 Nov 2004 16:04:28 +0100, Helge Hafting <helge.hafting@hist.no> wrote:
+Hello
 
-> You won't get .tar or .tar.gz support in the VFS, for a few simple reasons:
-> 1. .tar and .tar.gz are complicated formats, and are therefore better
->    left to userland.  
+On Tue, 2004-11-23 at 08:21, Hans Reiser wrote:
+> Apologies, things have been hectic at Namesys.
 
-Agreed that .tar.gz is a complicated format, but zlib is already in
-the kernel. It _should_ simplify inflate and deflate of files. And as
-compared to .gz format, .tar is much simpler, I guess.
+Thanks, Laurent
+Your patch is merged in reiser4 bk repository.
 
 > 
->    It is hard to make a guaranteed bug-free decompressor that
->    is efficient and works with a finite amount of memory.  The kernel
->    needs all that - userland doesn't.
+> Vs, please review tomorrow and comment.
+> 
+> Hans
+> 
+> Laurent Riffard wrote:
+> 
+> > Hello,
+> >
+> > I posted this patch last week and nobody replied.
+> >
+> > So, if there is no objections, Andrew please apply.
+> >
+> > Thank you.
+> >
+> > -------- Message original --------
+> > Sujet: [PATCH] reiser4: fix a use after free bug in
+> > reiser4_parse_options
+> > Date: Thu, 18 Nov 2004 00:09:36 +0100
+> > De: Laurent Riffard <laurent.riffard@free.fr>
+> > Pour: reiserfs-list@namesys.com
+> >
+> > This patch fix a "use after kfree" bug in reiser4_parse_options.
+> >
+> > Signed-off-by: Laurent Riffard <laurent.riffard@free.fr>
+> > ---
+> >
+> > diff -u linux-2.6-orig/fs/reiser4/vfs_ops.c
+> > linux-2.6/fs/reiser4/vfs_ops.c
+> > --- linux-2.6-orig/fs/reiser4/vfs_ops.c    2004-11-17
+> > 23:43:22.186242952 +0100
+> > +++ linux-2.6/fs/reiser4/vfs_ops.c    2004-11-17 23:39:15.935678728 +0100
+> > @@ -1060,8 +1060,6 @@
+> >      });
+> >  #endif
+> >
+> > -    kfree(opts);
+> > -
+> >      sbinfo->tmgr.atom_max_size = txnmgr_get_max_atom_size(s);
+> >      sbinfo->tmgr.atom_max_age = REISER4_ATOM_MAX_AGE / HZ;
+> >      sbinfo->tmgr.atom_max_flushers = ATOM_MAX_FLUSHERS;
+> > @@ -1089,6 +1087,9 @@
+> >      sbinfo->ra_params.flags = 0;
+> >
+> >      result = parse_options(opt_string, opts, p - opts);
+> > +
+> > +    kfree(opts);
+> > +
+> >      if (result != 0)
+> >          return result;
+> >
+> >
+> 
+> 
 
-I think, finite amount of memory is the concern of worry, not the rest
-... if we could rely on zlib.
- 
-> 2. Both .tar and .gz  file formats may improve with time.  Getting a new
->     version of tar og gunzip is easy enough - getting another compression
->     algorithm into the kernel won't be that easy.
-
-Doesn't zlib in the kernel gets updated as the formats change? If not,
-.tar formats would be worth trying first as proof of concept.
- 
-AG
---
-May the source be with you.
