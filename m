@@ -1,112 +1,53 @@
-From: Andreas Abele <aba@IZS.FhG.de>
-Subject: Re: mkreiserfs and big RAID-Systems
-Date: 15 Jul 2002 18:01:34 +0200
-Message-ID: <1026748894.30600.39.camel@pallas.IZS.FhG.de>
-References: <1026741573.30600.25.camel@pallas.IZS.FhG.de>
-	<200207151639.03258.vitaly@namesys.com>
-	<1026744912.30621.31.camel@pallas.IZS.FhG.de> 
-	<200207151738.02786.vitaly@namesys.com>
+From: Basil Chupin <blchupin@tpg.com.au>
+Subject: Re: What does this mean?
+Date: Mon, 15 Jul 2002 23:27:35 +1000
+Message-ID: <3D32CDC7.7020903@tpg.com.au>
+References: <3D2993E5.6030707@tpg.com.au> <20020708190923.A928@namesys.com> <3D29BA3F.7010201@tpg.com.au> <200207081228.56302.kuba@mareimbrium.org> <3D2E6DAB.9050400@tpg.com.au> <200207121326.g6CDQu3u003587@turing-police.cc.vt.edu>            <3D2FFA1B.8050302@tpg.com.au> <200207141636.g6EGaTCr017595@turing-police.cc.vt.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11008-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11009-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <200207151738.02786.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-> First of all get the latest reiserfsprogs-3.6.2 from our ftp site please 
-> and try again.
+Valdis.Kletnieks@vt.edu wrote:
 
-Hi Vitaly,
+>On Sat, 13 Jul 2002 19:59:55 +1000, Basil Chupin <blchupin@tpg.com.au>  said:
+>
+>  
+>
+>>We compared the outputs from the 'ps aux' command and what I found is 
+>>that I am not running the kjournald process on any of my (3) 'systems' 
+>> while he is (on his 2 'systems') even though our setups are almost 
+>>identical (with regards to running SuSE v8 ). I thought kjournald was 
+>>part and parcel of reiserfs but then why isn't it running on my 
+>>'systems'? Just another mystery.
+>>    
+>>
+>
+>ext2 filesystems don't have a kernel thread.
+>ext3 have one kjournald thread per file system.
+>resierfs have one kreiserfsd thread per file system.
+>
+>You don't have any because you're all reiserfs.
+>
+I learn someting new every day. Thanks for this information. And, Yes I 
+do only have reiserfs installed.
 
-i have built the 3.6.2-Progs and get the following behaviour:
+>  His two systems obviously
+>have at least 1 ext3 file system (/boot or / perhaps?)
+>  
+>
+Ah, now this is something I believe he does not have. Like me he 
+installs everything under the one file system. Howeve, I will check with 
+him just in case he somehow misconfigured his system by accident (or 
+design).
 
-1.) mkreiserfs -d /dev/sdf1 180000000 (less than 720 GB)
-                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[root@saturn6 mkreiserfs]# ./mkreiserfs -d /dev/sdf1 180000000
+Cheers.
 
-<-------------mkreiserfs, 2002------------->
-reiserfsprogs 3.6.2
 
-mkreiserfs: Guessing about desired format.. 
-mkreiserfs: Kernel 2.4.18 is running.
-Block 16 (0x851) contains super block. Format 3.6 with standard journal
-Count of blocks on the device: 180000000
-Number of blocks consumed by mkreiserfs formatting process: 13705
-Free blocks: 179986295
-Blocksize: 4096
-Hash function used to sort names: "r5"
-Number of bitmaps: 5494
-Root block: 8211
-Tree height: 2
-Objectid map size 2, max 972
-Journal parameters:
-        Device [0x0]
-        Magic [0x1162e2dd]
-        Size 8193 blocks (including 1 for journal header) (first block
-18)
-        Max transaction length 1024 blocks
-        Max batch size 900 blocks
-        Max commit age 30
-Filesystem state 0x0
-sb_version 2
-inode generation number: 0
-UUID: df15b6bc-8c2f-484e-876b-9930cbcc3548
-ATTENTION: YOU SHOULD REBOOT AFTER FDISK!
-        ALL DATA WILL BE LOST ON '/dev/sdf1'!
-Continue (y/n):y
-Initializing journal - 0%....20%....40%....60%....80%....100%
-Syncing..ok
-
-=>Everything seems to be okay until now.
-2.) => Now the following command (bigger than 720 GB):
-
-[root@saturn6 mkreiserfs]# ./mkreiserfs -d /dev/sdf1 190000000
-
-<-------------mkreiserfs, 2002------------->
-reiserfsprogs 3.6.2
-
-mkreiserfs: Guessing about desired format.. 
-mkreiserfs: Kernel 2.4.18 is running.
-Block 16 (0x851) contains super block. Format 3.6 with standard journal
-Count of blocks on the device: 190000000
-Number of blocks consumed by mkreiserfs formatting process: 14010
-Free blocks: 189985990
-Blocksize: 4096
-Hash function used to sort names: "r5"
-Number of bitmaps: 5799
-Root block: 8211
-Tree height: 2
-Objectid map size 2, max 972
-Journal parameters:
-        Device [0x0]
-        Magic [0x7457c150]
-        Size 8193 blocks (including 1 for journal header) (first block
-18)
-        Max transaction length 1024 blocks
-        Max batch size 900 blocks
-        Max commit age 30
-Filesystem state 0x0
-sb_version 2
-inode generation number: 0
-UUID: 8e4a9fe8-1e96-47f3-9d2d-e5a7e05cc01f
-ATTENTION: YOU SHOULD REBOOT AFTER FDISK!
-        ALL DATA WILL BE LOST ON '/dev/sdf1'!
-Continue (y/n):y
-Initializing journal - 0%....20%....40%....60%....80%....100%
-
-bread: Cannot read a block # 189999999.
-Abgebrochen (core dumped)
-
-=> the same behaviour with no filesize-param at the end.
-
-any Ideas?
-
-thanks
-Andreas Abele
 
 
