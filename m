@@ -1,38 +1,35 @@
 From: Ben Collins <bcollins@debian.org>
 Subject: Re: plagiarism of reiserfs by Debian
-Date: Sat, 19 Apr 2003 16:55:55 -0400
-Message-ID: <20030419205555.GY2528@phunnypharm.org>
-References: <143CBAC4-7291-11D7-ADF3-00050285B655@ncpro.com> <3EA19DEC.3090202@techhouse.org>
+Date: Sat, 19 Apr 2003 16:56:40 -0400
+Message-ID: <20030419205640.GZ2528@phunnypharm.org>
+References: <200304181604.28955.vitaly@namesys.com> <3EA17427.7040300@namesys.com> <20030419172906.GX2528@phunnypharm.org> <00f001c306a9$47d22560$a2b89bd9@banana.org.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13724-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13725-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3EA19DEC.3090202@techhouse.org>
+In-Reply-To: <00f001c306a9$47d22560$a2b89bd9@banana.org.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Travis Crump <pretzalz@techhouse.org>
-Cc: Marcel Weber <mmweber@ncpro.com>, Hans Reiser <reiser@namesys.com>, Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com, debian-testing@lists.debian.org, Ed Boraas <ed@debian.org>, debian-devel@lists.debian.org
+To: Matt Ryan <mryan@debian.org>
+Cc: Hans Reiser <reiser@namesys.com>, Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com, debian-testing@lists.debian.org, Ed Boraas <ed@debian.org>, debian-devel@lists.debian.org
 
-> all that was removed was *code* that gets compiled.  If the maintainer 
-> cannot arbitrarily change any code he wants, then it is not clear that 
-> the program is DFSG-free.
+On Sat, Apr 19, 2003 at 08:24:21PM +0100, Matt Ryan wrote:
+> > Now I hope you stop with your trolling and consider speaking
+> > respectfully to us. I am pretty sure that if you emailed the maintainer
+> > of the package and pointed out the facts to him, he would revert the
+> > change.
+> 
+> Dude,
+> 
+>     You really need to calm down. Twice now recently you have opened your
+> mouth and stuck your foot in when there really wasn't any need to. Take a
+> Valium and do something less stressful.
 
-Amen. Making part of the code immutable is not what I call free
-software. What if I want to use parts of the code and I respect the
-copyright and license...does that mean I also have to take this part of
-the code and output the credits? What if environment doesn't provide a
-way to output the credits. What if I am implementing the reiser tools on
-an embedded system that will never show any such output?
-
-What about programs that execute the reiserfs tools (like bootup
-scripts)...are they not allowed to redirect or filter this output?
-
-If any of this is questionable, then I suspect reiserfs tools isn't DFSG
-compliant and belongs in non-free with all it's flakiness.
+Are you talking to me?
 
 -- 
 Debian     - http://www.debian.org/
