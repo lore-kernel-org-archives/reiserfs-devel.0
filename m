@@ -1,64 +1,37 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiser4 data journalling?
-Date: Fri, 29 Aug 2003 00:48:36 +0400
-Message-ID: <3F4E6AA4.3030900@namesys.com>
-References: <3F4E3AF9.2060100@tupshin.com> <16206.16138.72832.920045@laputa.namesys.com>
+From: Tom Vier <tmv@comcast.net>
+Subject: Re: write barrier patches for 2.4.21
+Date: Thu, 28 Aug 2003 20:07:30 -0400
+Message-ID: <20030829000730.GA9019@zero>
+References: <20030825170849.GA14811@mfa.kfki.hu> <20030826214624.GA410@zero> <20030827064103.GA29131@namesys.com> <20030827220337.GB4886@zero> <1062031059.5324.111.camel@tiny.suse.com> <20030828170725.GB21352@matchmail.com>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15479-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15480-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16206.16138.72832.920045@laputa.namesys.com>
+Content-Disposition: inline
+In-Reply-To: <20030828170725.GB21352@matchmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: Tupshin Harper <tupshin@tupshin.com>, Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Reiserfs List <reiserfs-list@namesys.com>
 
-Nikita Danilov wrote:
+On Thu, Aug 28, 2003 at 10:07:25AM -0700, Mike Fedyk wrote:
+> On Wed, Aug 27, 2003 at 08:37:40PM -0400, Chris Mason wrote:
+> > scsi drives don't really need them because most scsi drives don't have
+> > write back caching on by default, and most actually listen when you turn
+> > the cache off.  The scsi tag queuing makes good performance possible
+> > even without writeback caching.
+> 
+> So, in essence, TCQ is exposing what is happening in the cache, and allowing
+> control/showing state compared to IDE's non-TCQ write cache.  Do I have that
+> right?
 
->Tupshin Harper writes:
-> > Will reiser4 have options equivalent to ext3's data=journal and 
-> > data=ordered options? My understanding is that reiser4(and reiser3) do 
-> > the equivalent of ext3's writeback mode(correct?). Any plans for the 
->
->reiserfs has meta-data only journalling by default (equivalent to
->writeback mode), and optionally supports full data journalling (Chris
->patches).
->
->reiser4 supports full data journalling only
->
-full data journaling means that if you perform writes that are 4k or 
-less, and page align them, they will be performed atomically. 
-
-Reiser4 is a fully atomic filesystem, and that means that you can 
-perform a set of filesystem operations of any size, and they will be 
-performed atomically.  By default, every fs system call is performed 
-atomically.
-
-Please describe reiser4 as an atomic filesystem, not as (just) a data 
-journaling filesystem, ok?
-
->, but it is still faster than
->ext3-writeback.
->
->Look at http://www.namesys.com/benchmarks.html for last benchmarking
->results.
->
-> > other modes in order to maximize data integrity?
-> > 
-> > -Tupshin
-> > 
->
->Nikita.
->
->
->  
->
-
+i'm not sure what you mean. chris is just saying tcq makes performance w/o
+write cache better. i WOULD like to see wb's used w/ scsi. it would be nice
+to be able to safely enable write cache on my drives.
 
 -- 
-Hans
-
-
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0xE6CB97DA
