@@ -1,54 +1,41 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Wolfgang Rohdewald <wolfgang@rohdewald.de>
 Subject: Re: file attributes destroyed.
-Date: Sun, 26 Oct 2003 15:06:53 +0300
-Message-ID: <3F9BB8DD.5040800@namesys.com>
-References: <200310261227.18711.wolfgang@rohdewald.de> <200310261550.06162.vitaly@namesys.com>
+Date: Sun, 26 Oct 2003 14:45:23 +0100
+Message-ID: <200310261445.23681.wolfgang@rohdewald.de>
+References: <200310261227.18711.wolfgang@rohdewald.de> <200310261550.06162.vitaly@namesys.com> <3F9BB8DD.5040800@namesys.com>
+Reply-To: wolfgang@rohdewald.de
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15883-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15884-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200310261550.06162.vitaly@namesys.com>
+In-Reply-To: <3F9BB8DD.5040800@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: wolfgang@rohdewald.de, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Vitaly Fertman wrote:
+On 26.10.2003 13:06, Hans Reiser wrote:
+HR> Are you using the SuSE kernel?
 
->On Sunday 26 October 2003 14:27, Wolfgang Rohdewald wrote:
->  
->
->>Hi,
->>
->>last night, some files and directories involved in starting bash went
->>defect:
->>
->>$HOME had very wrong permissions
->>/etc/bashrc was empty
->>
->>and a few more. I did not make notes, I was rather trying to fix that ASAP.
->>
->>This never happened before. I am running an up to date debian unstable
->>with only ReiserFS and 2.4.22
->>
->>Last night, the summer daylight saving ended. The modification time of
->>/etc/bashrc was 03:29, I believe.
->>
->>Any ideas?
->>    
->>
->
->would you take the latest reiserfsprogs from our ftp site (3.6.11) and run
->reiserfsck to be sure that there are no fs corruptions.
->
->  
->
-Are you using the SuSE kernel?  Are you using NFS?
+No, Debian unstable with a standard 2.4.22 kernel augmented with ibcs2, qc-usb.
+I am using ibcs2 since years and qc-usb since several months.
+
+HR> Are you using NFS?
+
+Never.
+
+/usr/src/linux# grep -i nfs .config
+# CONFIG_NFS_FS is not set
+# CONFIG_NFS_V3 is not set
+# CONFIG_NFS_DIRECTIO is not set
+# CONFIG_ROOT_NFS is not set
+# CONFIG_NFSD is not set
+# CONFIG_NFSD_V3 is not set
+# CONFIG_NFSD_TCP is not set
+# CONFIG_NCPFS_NFS_NS is not set
 
 -- 
-Hans
-
-
+Wolfgang
