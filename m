@@ -1,46 +1,41 @@
 From: Oleg Drokin <green@namesys.com>
-Subject: Re: trouble with reiserfs on ppc vs-3050: wait_buffer_until_released ...
-Date: Tue, 29 Apr 2003 09:21:17 +0400
-Message-ID: <20030429052117.GG1231@namesys.com>
-References: <20030425084742.GA22827@namesys.com> <1051261556.3513.31.camel@localhost> <20030425091916.GG10802@namesys.com> <1051263219.1642.10.camel@localhost> <20030425094630.GH10802@namesys.com> <1051265575.1656.37.camel@localhost> <20030425102812.GA24352@namesys.com> <1051397193.1232.4.camel@localhost> <20030428051858.GA22805@namesys.com> <1051559684.10360.13.camel@localhost>
+Subject: Re: RE : some troubles with mounting reiserfs
+Date: Tue, 29 Apr 2003 09:40:44 +0400
+Message-ID: <20030429054044.GI1231@namesys.com>
+References: <20030428053807.GB22902@namesys.com> <001e01c30dbd$09f495f0$0732a8c0@dell8100>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13889-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13890-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1051559684.10360.13.camel@localhost>
+In-Reply-To: <001e01c30dbd$09f495f0$0732a8c0@dell8100>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Soeren Sonnenburg <reiserfs@nn7.de>
+To: Serge Rodrigues <serge@onpoi.net>
 Cc: reiserfs-list@namesys.com
 
 Hello!
 
-On Mon, Apr 28, 2003 at 09:54:44PM +0200, Soeren Sonnenburg wrote:
-> > > errors... I did a full compare (not only md5sums) over network with the
-> > > files I have on disk... they were the same... I let bonnie run and
-> > > checked for corruption... nothing ... 
-> > > Looks like all I can do is keeping an eye on it.
-> > Hm, and given there was another report like this recently, it seems like
-> > some reiserfs problem :(
-> > Unfortunatelly we don't even have PPC (or other bigendian) hardware to test on.
-> so it seems all I can do is check the fs much more regularly and see
-> whether I observe some corruption again...
+On Mon, Apr 28, 2003 at 09:33:20PM +0200, Serge Rodrigues wrote:
 
-Probably so.
+> ReiserFS version 3.6.25
+> hdb: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+> hdb: dma_intr: error=0x40 { UncorrectableError }, LBAsect=142082111,
+> sector=142082048
+> end_request: I/O error, dev 03:41 (hdb), sector 142082048
+> hdb: dma_intr: status=0x51 { DriveReady SeekComplete Error }
+> hdb: dma_intr: error=0x40 { UncorrectableError }, LBAsect=147587135,
+> sector=147587072
+> end_request: I/O error, dev 03:41 (hdb), sector 147587072
+> sh-2029: reiserfs read_bitmaps: bitmap block (#17760256) reading failed
+> reiserfs_read_super: unable to read bitmap
 
-> if the problem occurs again do you have an idea how to track it down ?
-
-Well, if you'd have fs in some predefined state (metadata snapshot of that state),
-then there is sequence of actions you do that ultimately leads to corruption,
-that would be the best possible case for debugging.
-Well, if we assume this is endianness issue, you will probably see some corruptions after
-writieng say 1-2 gigabytes to the FS. Can you try that? I mean mount the fs, write
-to it, unmount, run reiserfsck --check to see if there are any bitmap mismatches.
-If there are, try to mount with alloc=preallocmin=16 and see if that changes anything.
+These are sure sign of something cannot be read from your disk.
+Though I am not sure why badblocks outputs no info.
+How about running badblocks without specifying start offset and device size?
 
 Bye,
     Oleg
