@@ -1,51 +1,68 @@
-From: Phil Howard <phil-reiserfs@ipal.net>
-Subject: Re: copying partition to partition, sector by sector, live
-Date: Mon, 22 Apr 2002 18:28:41 -0500
-Message-ID: <20020422232841.GF8407@vega.ipal.net>
-References: <20020421181614.GA11239@vega.ipal.net> <20020422010733.GA2379@amphibian.dyndns.org> <20020422013955.GB8407@vega.ipal.net> <1019501914.24720.89.camel@tiny>
+From: Chris Mason <mason@suse.com>
+Subject: Re: copying partition to partition, sector by
+	sector, live
+Date: 22 Apr 2002 19:39:11 -0400
+Message-ID: <1019518751.16727.39.camel@tiny>
+References: <20020421181614.GA11239@vega.ipal.net>
+	<20020422010733.GA2379@amphibian.dyndns.org>
+	<20020422013955.GB8407@vega.ipal.net>
+	<20020422224755.GA1710@amphibian.dyndns.org> 
+	<20020422232448.GE8407@vega.ipal.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10133-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10134-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <1019501914.24720.89.camel@tiny>
+In-Reply-To: <20020422232448.GE8407@vega.ipal.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list@namesys.com
+To: Phil Howard <phil-reiserfs@ipal.net>
+Cc: Matthew Toseland <mtoseland@blueyonder.co.uk>, reiserfs-list@namesys.com
 
-On Mon, Apr 22, 2002 at 02:58:34PM -0400, Chris Mason wrote:
+On Mon, 2002-04-22 at 19:24, Phil Howard wrote:
+> On Mon, Apr 22, 2002 at 11:47:55PM +0100, Matthew Toseland wrote:
+> 
+> | On Sun, Apr 21, 2002 at 08:39:55PM -0500, Phil Howard wrote:
+> | > On Mon, Apr 22, 2002 at 02:07:33AM +0100, Matthew Toseland wrote:
+> | > 
+> | > | Ummm, LVM snapshots? (man lvcreate).
+> | > 
+> | > No.  Nothing to do with LVM.
+> | I was suggesting a solution. Your problem is that reiserfs's metadata is
+> | so dynamic that if you copy the partition while it is active, you end up
+> | with metadata loss, which has to be fixed by reiserfsck. A possible
+> | solution is to get a consistent snapshot. To do this, do:
+> | 
+> | lvcreate -n <snapshotname> -L 500M -v /dev/<vgname>/<partition name>
+> | dd if=/dev/<vgname>/snapshotname of=/usr/local/temp/snapshot.img bs=1M
+> | lvremove -f /dev/<vgname>/snapshotname
+> | 
+> | (1) 500M could be anything; it is the amount of space needed to log all
+> | changes to the partition while the dd is going on; you can extend it later
+> | but once it fills up completely, you're scr00d; presumably the dd will
+> | return an error
+> 
+> Sounds like journaling at the sector level.
+> 
+> How does all that change get replayed after the snapshot is done?
 
-| On Sun, 2002-04-21 at 21:39, Phil Howard wrote:
-| > On Mon, Apr 22, 2002 at 02:07:33AM +0100, Matthew Toseland wrote:
-| > 
-| > | Ummm, LVM snapshots? (man lvcreate).
-| > 
-| > No.  Nothing to do with LVM.
-| >
-| 
-| Doing it safely will require something like lvm or evms snapshots.  You
-| could do the sector by sector copy and then run reiserfsck
-| --rebuild-tree.  The latest versions of reiserfsprogs are faster, the
-| speed relative to a search for updated files will depend on your data
-| set.
-| 
-| More importantly you just don't get a consistent copy, regardless of the
-| FS you choose.  I wouldn't consider a sector by sector copy on a mounted
-| FS a valid backup of any type of filesystem, especially not a tree based
-| one.
+The snapshots use a simple copy on write setup.  Before changing a block
+on the source, the original is copied to the snapshot.  This allows for
+very fast snapshot creation, and a moderate runtime cost doing the
+copies.
 
-I've never have a problem doing this with ext2 filesystems.  By comparison
-I have had ext2 filesystems totally corrupted by just a power-reset.
+When you're done with the backup, you can just delete the snapshot
+without affecting the (now modified) original.
 
-But I'm starting to think that with reiserfs, I need to go back to rsync
-as the backup mechanism.  Some memory leak and stalling problems with rsync
-seem to be fixed, now.
+> 
+> I'm starting to think it might be better to go back to using rsync on
+> mounted filesystems.
 
--- 
------------------------------------------------------------------
-| Phil Howard - KA9WGN |   Dallas   | http://linuxhomepage.com/ |
-| phil-nospam@ipal.net | Texas, USA | http://phil.ipal.org/     |
------------------------------------------------------------------
+It might.  Snapshots are very useful, but are best in databases and
+other setups where you need to freeze the FS at a specific point in
+time, and when you need an absolute minimum of application down time.
+
+-chris
+
+
