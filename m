@@ -1,108 +1,63 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: More on Hard Links
-Date: Tue, 09 Dec 2003 13:48:44 -0500
-Sender: news <news@sea.gmane.org>
-Message-ID: <87vfopyghf.fsf@uhoreg.ca>
-References: <5450026541-BeMail@cr593174-a> <20031209052107.58404.qmail@web25009.mail.ukl.yahoo.com>
-Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16302-reiserfs=m.gmane.org@namesys.com>
+From: esr@thyrsus.com
+Subject: problems in one or more man pages you maintain
+Date: Tue, 9 Dec 2003 14:29:58 -0500
+Message-ID: <200312091929.hB9JTwae029814@snark.thyrsus.com>
+Return-path: <reiserfs-list-return-16303-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
->>>>> "Narcoleptic" == Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk> writes:
+(My apologies if you get this twice.  My first run of sends had a bug.)
 
-[...]
+This is automatically generated email about problems in a man page for which
+you appear to be responsible.  If you are not the right person or list, tell
+me and I will attempt to correct my database.
 
-Narcoleptic> A. Symlinks:
-Narcoleptic> ============
+See http://catb.org/~esr/doclifter/problems.html for details on how and
+why these patches were generated.  Feel free to email me with any questions.
 
-[...]
+Problems with debugreiserfs.8:
+1. Missing or garbled name section.  The most common form of garbling
+is a missing - or extra -. Or your manual page may have been generated
+by a tool that doesn't emit a NAME section as it should.  These
+problems make it impossible to lift the page to DocBook.  They
+can also confuse some implementations of man -k.
 
-Narcoleptic> 2. By file (i.e. volume id and file id).  File id is a
-Narcoleptic> unique identifier for the file on the volume (eg.  inode
-Narcoleptic> number).  Not sure if there is a way to uniquely identify a
-Narcoleptic> volume reliably...
+--- debugreiserfs.8-orig	2003-11-26 19:25:49.000000000 -0500
++++ debugreiserfs.8	2003-11-26 19:26:25.000000000 -0500
+@@ -3,7 +3,7 @@
+ .\" 
+ .TH DEBUGREISERFS 8 "January 2002" "Reiserfsprogs 3.6.4"
+ .SH NAME
+-debugreiserfs
++debugreiserfs \- debugging tool for the ReiserFS filesystem
+ .SH SYNOPSIS
+ .B debugreiserfs
+ [
+Problems with reiserfstune.8:
+1. Missing or garbled name section.  The most common form of garbling
+is a missing - or extra -. Or your manual page may have been generated
+by a tool that doesn't emit a NAME section as it should.  These
+problems make it impossible to lift the page to DocBook.  They
+can also confuse some implementations of man -k.
 
-I don't think it's a good idea to classify these as symlinks.  For one
-thing, it's called a "symbolic" link, because the link contains a
-symbol: a path name.  Also, it works differently from regular
-symlinks.  IMHO, it would be better to give it another name.  (This is
-what I would call a "firmlink", and I think what Leo calls a "weak
-link".)
+--- reiserfstune.8	2003-02-16 18:47:41.000000000 -0500
++++ reiserfstune.8	2003-02-16 18:48:07.000000000 -0500
+@@ -3,7 +3,7 @@
+ .\" 
+ .TH REISERFSTUNE 8 "January 2002" "Reiserfsprogs-3.6.2"
+ .SH NAME
+-reiserfstune 
++reiserfstune \- tune parameters of a Reiser file system
+ .SH SYNOPSIS
+ .B reiserfstune
+ [ \fB-f\fR ]
 
-[...]
-
-Narcoleptic> 2. Linking to a file on a different ReiserX
-Narcoleptic> volume.
-Narcoleptic> ---------------------------------------------------
-
-I believe the plan is to have Reiser5 be a distributed filesystem,
-which will basically (AFAICT) solve all our problems and eliminates the
-need for cross-ReiserFSx hard links.  IMHO this is the better way to do
-things, since a distributed filesystem will already take into account a
-lot of problems that we have.
-
-Not to say that you (or Leo) shouldn't pursue this idea.  You may not
-want to use the distributed stuff, or you may want to implement it as a
-proof of concept to convince other FS maintainers to add it to their
-FS, or etc.
-
-[...]
-
-Narcoleptic> My idea: Each volume can contain a "synchronized" copy of
-Narcoleptic> the underlying file.
-
-My first reaction: "Bwaa!  Wasted space!  Consistency problems!"
-
-Wasted space, you're of course aware of.  But then, the number of
-hardlinks is probably not that large, so we won't have that many
-duplicates.
-
-Consistency problems you've dealt with, sort of.  I'm a bit wary of
-preventing the file from being changed if not all the involved volumes
-are mounted.  Also, if one volume dies and needs to be reformatted, or
-removed, you need to have some way of recovering.  It's hard to
-differentiate that from the volume just being unmounted.
-
-[...]
-
-Narcoleptic> The principle of least privilege applies: if a file is on a
-Narcoleptic> non-writable volume, no files synchronized with it are
-Narcoleptic> modifiable.
-
-So then you have the case where you have a file that's on a read-write
-partition, has all the bits necessary for writing, but is read-only.
-I'm not convinced this is the best thing to do.  But if you must have
-cross-filesystem hardlinks, I think this is what you must do.
-
-Really, it's a compromise.  I look at this situation and say: this is
-why we can't have cross-filesystem hardlinks.  Others may look at it
-and say: I really want cross-filesystem hardlinks, and so this is what
-I will do, which is reasonable, and doesn't completely suck.
-
-[...]
-
-Narcoleptic> 3. Linking to a file on a different non-ReiserX
-Narcoleptic> volume.
-Narcoleptic> -------------------------------------------------------
-
-Narcoleptic> Not possible (because "file synchronization" management
-Narcoleptic> code would be unique to ReiserX).  User either has to use a
-Narcoleptic> symlink or make a copy.
-
-Well, if you implement it on ReiserFSx in a reasonably portable way,
-you may be able to convince other FS maintainers to use it (if they
-aren't completely opposed to the idea of cross-filesystem hardlinks).
-
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
+--
+                             Eric S. Raymond
