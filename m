@@ -1,44 +1,39 @@
-From: Chris Mason <mason@suse.com>
+From: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
 Subject: Re: Feature request: online fsync disable
-Date: 24 Aug 2002 15:15:21 -0400
-Message-ID: <1030216521.17780.83.camel@tiny>
+Date: Sun, 25 Aug 2002 23:20:16 +0200
+Message-ID: <m3n0raskj3.fsf@merlin.emma.line.org>
 References: <3D661C89.C8A805D7@baldauf.org>
 	<15718.8710.244926.960377@laputa.namesys.com>
-	<20020823155658.A962@namesys.com> <3D6623BE.4040500@namesys.com> 
-	<15718.9718.736822.978374@laputa.namesys.com>
-	<1030108119.17778.8.camel@tiny>  <3D667A7D.5BD60783@baldauf.org>
+	<20020823155658.A962@namesys.com> <3D6623BE.4040500@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11316-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11317-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3D667A7D.5BD60783@baldauf.org>
+In-Reply-To: <3D6623BE.4040500@namesys.com> (Hans Reiser's message of "Fri,
+ 23 Aug 2002 15:59:58 +0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Xuan Baldauf <xuan--reiserfs@baldauf.org>
-Cc: Nikita Danilov <Nikita@namesys.com>, Hans Reiser <reiser@namesys.com>, Oleg Drokin <green@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>, zam@thebsh.namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-On Fri, 2002-08-23 at 14:10, Xuan Baldauf wrote:
+Hans Reiser <reiser@namesys.com> writes:
 
-> > Xuan, you could try the data logging patches in either data=writeback or
-> > data=journal.  Either one will be significantly faster than stock
-> > 2.4.19.
-> 
-> Thank you. I guess "data=writeback" will result in the desired behaviour.
-> 
-> Are these patches tested?
+> It is a reasonable feature request I think.
 
-Yes, although I've now got 3 or 4 bug fixes from testing in the suse
-kernel that I need to put into the pure 2.4.19 patch.  I'm doing the
-last of the fixes today, and I'll start merging back into the main code
-on monday.  This was all supposed to happen last week, but I got
-diverted by some important other suse work.
+A file system that has a switch "oh, you can throw away my data if you
+like" is no good at all. If the application + FS interaction leads to
+contention, then you have to choices to optimize: the application or the
+file system. We've had this kind of discussion before, with a different
+focus: on mail transfer agents. There have been considerations of
+merging fsync() operations and committing them at the same time, and
+asynchronous operation or threading might in fact help the application.
 
-If your application is very fsync heavy and doesn't do many non-fsync
-writes data=journal will probably be much faster.
+I'd not trust a file system that even has a switch to let it ignore
+fsync(). Please let me know if your file systems exhibit this behaviour
+so I can statfs() in my applications and if I see a file system that
+does ignore fsync() just call raise(SIGKILL);
 
--chris
-
-
+-- 
+Matthias Andree
