@@ -1,60 +1,46 @@
-From: Tonnerre <tonnerre@thundrix.ch>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Mon, 6 Sep 2004 10:58:19 +0200
-Message-ID: <20040906085819.GE28697@thundrix.ch>
-References: <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain> <20040902203854.GA4801@janus> <1094160994.31499.19.camel@shaggy.austin.ibm.com> <20040902214806.GA5272@janus> <20040902220027.GD23987@parcelfarce.linux.theplanet.co.uk> <4137B5F5.8000402@slaphack.com> <16696.30683.207905.803165@gargle.gargle.HOWL> <112181186.20040903160117@tnonline.net>
+From: Faraz S <farazs@calsoftinc.com>
+Subject: Comments about indexing and query solving in user land
+Date: Mon, 06 Sep 2004 14:32:34 +0530
+Message-ID: <19592.4152424142$1094461530@news.gmane.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qOrJKOH36bD5yhNe"
-Return-path: <reiserfs-list-return-21503-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21504-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <112181186.20040903160117@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Spam <spam@tnonline.net>
-Cc: John Stoffel <stoffel@lucent.com>, David Masover <ninja@slaphack.com>, viro@parcelfarce.linux.theplanet.co.uk, Frank van Maarseveen <frankvm@xs4all.nl>, Dave Kleikamp <shaggy@austin.ibm.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
---qOrJKOH36bD5yhNe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi;
+	With the hot debate on the linux kernel mailing list about what
+features must be in the kernel, i'd like to add my experience about
+keeping the query parser in the userspace. 
 
-Salut,
+	In our project http://sourceforge.net/projects/linuxsfs-tm/ we did the
+attribute indexing and query parsing in the user-space and we had hooks
+in the VFS which communicated with the user-space deamons. As far as
+directory listing is concerned we had a in kernel-recordset cache
+(hashed on the query). The listing were pretty efficient.
 
-On Fri, Sep 03, 2004 at 04:01:17PM +0200, Spam wrote:
-> >> mount -t tarfs /some/place/on/disk/foo.tar.gz /mnt/tar
-> >> cp /var/tmp/img.gif .
-> >> umount /mnt/tar
->=20
-> > Oops!  Someone did a rm /some/place/on/disk/foo.tar.gz between steps
-> > one and two.  Now what happens?  Please define those semantics...
->=20
->   Uhm, can you delete a file (loop) that is mounted?
+	But the real problem occured when a large number of files were copied
+in the onto our file system. All the files now need to be indexed in the
+user space , leading to mode switch. That was pathetically slooow. The
+entire 2.4 sources were copied in 5-6 hours. I think this problem could
+be solved by batching requests the user space deamon.  Then u have all
+the problems on missing out on indexing on a large set of files.
+	
+	No doubt the feature which did content based listing was very well
+recieved by the audience of the project. I will soon be uplaoding the
+project documentation and PPT's. 
 
-"Text file busy"
+WE NEED THIS FOR SURE - BUT DONE IN THE RIGHT WAY
 
-But for files this isn't true.
+regards.
 
-Currently, we  have another method assuring data  coherency: we remove
-the inode only when the last reference goes away.
+-- 
+Faraz Ahmed Shaikh
+Member Technical Staff
+Calsoft Pvt Limited
 
-				Tonnerre
-
-
---qOrJKOH36bD5yhNe
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.9.2 (GNU/Linux)
-
-iD8DBQFBPCar/4bL7ovhw40RAqtyAKCAFsbtNLGylo3gxPXoX5COOmLCxwCfU5+Z
-hi8K34PIZbAzmL9Lr/EACGU=
-=2KZi
------END PGP SIGNATURE-----
-
---qOrJKOH36bD5yhNe--
