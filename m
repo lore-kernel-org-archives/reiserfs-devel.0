@@ -1,73 +1,40 @@
-From: Christophe Saout <christophe@saout.de>
+From: Adrian Bunk <bunk@fs.tum.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 17:12:55 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <1093533175.11694.77.camel@leto.cs.pocnet.net>
-References: <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>
-	 <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk>
-	 <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org>
-	 <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk>
-	 <20040826001152.GB23423@mail.shareable.org>
-	 <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk>
-	 <20040826010049.GA24731@mail.shareable.org> <412DA40B.5040806@namesys.com>
-	 <20040826140500.GA29965@fs.tum.de>
-	 <1093530313.11694.56.camel@leto.cs.pocnet.net>
-	 <20040826150434.GF5733@mail.shareable.org>
+Date: Thu, 26 Aug 2004 17:15:29 +0200
+Message-ID: <20040826151529.GF29965@fs.tum.de>
+References: <20040824202521.GA26705@lst.de> <20040825163225.4441cfdd.akpm@osdl.org> <1093510983.23289.6.camel@imp.csi.cam.ac.uk> <200408261245.47734.christian.mayrhuber@gmx.net> <20040826115229.A18013@infradead.org> <20040826124334.GA39176@dspnet.fr.eu.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-vvWcgnXTlShXGRKtEj4Z"
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040826150434.GF5733@mail.shareable.org>
+Return-path: <reiserfs-list-return-20698-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <20040826124334.GA39176@dspnet.fr.eu.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Olivier Galibert <galibert@pobox.com>, Christoph Hellwig <hch@infradead.org>, Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com, Anton Altaparmakov <aia21@cam.ac.uk>, linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
 
+On Thu, Aug 26, 2004 at 02:43:34PM +0200, Olivier Galibert wrote:
+> On Thu, Aug 26, 2004 at 11:52:29AM +0100, Christoph Hellwig wrote:
+> > Sure, no one stops you from playing around with new semantics.  But please
+> > don't add them to the linux kernel stable series until we have semantics we
+> > a) want to stick to for a while and b) actually work.
+> 
+> He's not proposing to add it to 2.4, is he?
 
---=-vvWcgnXTlShXGRKtEj4Z
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+2.6 is a stable series...
 
-Am Donnerstag, den 26.08.2004, 16:04 +0100 schrieb Jamie Lokier:
+>   OG.
 
-> Christophe Saout wrote:
-> > What reiser4 can do, but the VFS can't is to insert or remove data in
-> > the middle of a file. Adding this above the page cache would probably b=
-e
-> > almost impossible (truncate seems already complicated enough).
->=20
-> That would be one of those "special features" that a
-> VFS-plus-userspace implementation of archive views could take
-> advantage of on reiser4, while using a slower method (sometimes much
-> slower) on all other filesystems.
+cu
+Adrian
 
-I'm just thinking about something. While you can't cut bytes out of unix
-iles a lot of filesystems can do this (holes). Most of them only on a
-block boundary, reiser4 on a byte boundary. If the filesystems could
-export this functionality using an enhanced API we could implement a
-compression plugin and other things on the VFS level that works with
-every filesystem supporting the required mechanisms, not only reiser4.
-And those features would take advantage of reiser4's storage mechanisms.
-I think Hans made the plugins reiser4-only because only reiser4 has a
-similar API at that time (and obviously because he didn't even think
-about doing it otherwise).
+-- 
 
-> By the way, can reiser4 share parts of files between different files?
-
-At the moment a file is exactly one object. But someone could write
-another file plugin that spans a file across multiple objects, then yes,
-multiple files could share parts.
-
-
---=-vvWcgnXTlShXGRKtEj4Z
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQBBLf33ZCYBcts5dM0RAs0kAJ9ok4vLKWFq4D5anSsnieCbBjX4hACgigL1
-hdiCY9AxcmzQ/eVirE/HP5o=
-=684B
------END PGP SIGNATURE-----
-
---=-vvWcgnXTlShXGRKtEj4Z--
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
 
