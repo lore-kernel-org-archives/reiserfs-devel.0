@@ -1,45 +1,50 @@
-From: "Burnes, James" <james.burnes@gwl.com>
-Subject: Longhorn FS being removed to Blackcomb (end of decade)
-Date: Fri, 9 Apr 2004 11:32:26 -0600
-Message-ID: <3DF9165145FACB4C96977FF650C1E9040C469DD0@its-mail1.its.corp.gwl.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: Resier Fragmentation Effects (was compression vs performance)
+Date: Fri, 09 Apr 2004 14:13:36 -0400
+Message-ID: <1081534415.16461.10.camel@watt.suse.com>
+References: <3DF9165145FACB4C96977FF650C1E9040C469DBF@its-mail1.its.corp.gwl.com>
+	 <40763A44.4040107@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-17817-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17818-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
+In-Reply-To: <40763A44.4040107@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: "Burnes, James" <james.burnes@gwl.com>, Stewart Smith <stewart@flamingspork.com>, Tom Vier <tmv@comcast.net>, Scott Young <youngs1@sunyit.edu>, reiserfs-list@namesys.com
 
-Just thought this might be interesting to some of you.  The
-database-like FS for Longhorn has just been delayed until the end of the
-decade.  That's great.  It means that Microsoft's attempt to copy the
-BeOS filesystem is not meeting with much success.
+On Fri, 2004-04-09 at 01:53, Hans Reiser wrote:
+> Burnes, James wrote:
+> 
+> >I thought nearly all filesystems designed since Berkeley FFS were nearly
+> >immune to fragmentation problems.
+> >
+> >After reading the following analysis at Harvard, it seems that
+> >fragmentation is still a problem.
+> >
+> >http://www.eecs.harvard.edu/~keith/research/tr94.html
+> >
+> >  
+> >
+> Yeah, I wish I had read this in 94.  V3 suffers from the same problems 
+> as FFS does as described in the abstract (all that I read, sorry about 
+> that, I really am a bit busy, so unless someone suggests I should read 
+> more.... ) .  V4 cures it though.
 
-Which leads to my follow on...
+I put out some patches last week that try to deal with this in v3.  Take
+a look through the archives for mail from me.
 
-I think I remember database-like file system capabilities in Reiser are
-scheduled for V5? Or could it be done with plugins?
+The v3 patches are an attempt to do better under common workloads.  I
+think they are a big improvement, and I doubt there's much more that can
+(or should) be done beyond simple tweaking.
 
-It would be great to beat MS to the DB filesystem punch.  Maybe with
-object-oriented plugins in V4 that won't matter as much.
+v4 does a better job, and even if it doesn't, it should at least have
+enough info in the metadata such that any problems can be fixed.
 
-BTW: I was thinking about Squid performance this morning vs. Cacheflow.
-Has anyone considered that a special V4 plugin for Squid might really
-boost it's performance.
+-chris
 
-Just thinking out loud....
-
-(Hans in the background: You want more features, how about writing it
-yourself.  I mumble something about being in the middle of a move to
-Denver).
-
-
-jim burnes
-security engineer
-great-west, denver
-=20
 
