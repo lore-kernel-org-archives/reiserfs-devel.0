@@ -1,55 +1,45 @@
-From: "Ronny T. Lampert" <telecaadmin@uni.de>
-Subject: reiserfsck failing with external journal
-Date: Thu, 30 Sep 2004 15:49:32 +0200
-Message-ID: <415C0EEC.30906@uni.de>
+From: Christophe Saout <christophe@saout.de>
+Subject: Re: reproducable deadlock condition (reiser4)
+Date: Thu, 30 Sep 2004 16:23:07 +0200
+Message-ID: <1096554187.4332.1.camel@leto.cs.pocnet.net>
+References: <1096116193.12503.7.camel@leto.cs.pocnet.net>
+	 <559718553.20040925144815@tnonline.net>
+	 <1096116729.12503.15.camel@leto.cs.pocnet.net>
+	 <1096472922.11946.2.camel@leto.cs.pocnet.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21971-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-vg8jM43v2f0zkjnXpLoI"
+Return-path: <reiserfs-list-return-21972-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1096472922.11946.2.camel@leto.cs.pocnet.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hi,
+--=-vg8jM43v2f0zkjnXpLoI
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-I've made a fs with the newest reiserfs-progs.
+Hello,
 
-#> mkreiserfs -j /dev/hda5 /dev/hda6
+I'm still offering the possibility to debug this deadlock on my machine,
+is really no one interested? :(
 
-Mounting is fine.
-But reiserfsck fails every time with:
+Not even a comment?
 
--o-o-
 
-###########
-reiserfsck --check started at Thu Sep 30 15:42:47 2004
-###########
+--=-vg8jM43v2f0zkjnXpLoI
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
 
-reiserfs_open_journal: journal parameters from the super block does not match
-to journal parameters from the journal. You should run  reiserfsck with 
---rebuild-sb to check your superblock consistency.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.6 (GNU/Linux)
 
--o-o-
+iD8DBQBBXBbLZCYBcts5dM0RAiAkAJwLHtEw3EcQfVnK//3x70FUL4LmwQCdEFGc
+OS/ScNETGWYiYTX04QEbGs8=
+=r2sM
+-----END PGP SIGNATURE-----
 
-If I do as adviced (reiserfsck --rebuild-sb), it says the superblock is fine.
-Next time it fails with the same message.
+--=-vg8jM43v2f0zkjnXpLoI--
 
-Only supplying -j /dev/hda5 to every reiserfs-prog will help :(
-Doing an
-
-#> reiserfstune --new-journal-dev /dev/hda5
-
-doesn't cure it, too.
-
-I think, that is not as it's supposed to work because it'll _break all system 
-boot-up scripts_ !
-
-Is it some subtle bug in the reiserfs-progs, because they try to extract the 
-journal_dev from the SB (as a quick look at the source reveals) but don't use 
-it properly?
-
-Kind regards,
-Ronny
