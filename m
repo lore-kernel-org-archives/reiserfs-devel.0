@@ -1,73 +1,51 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: Status of data-logging for 2.5.x?
-Date: Thu, 26 Sep 2002 16:19:57 +0200
-Message-ID: <200209261619.58019.Dieter.Nuetzel@hamburg.de>
-References: <20020925174802.UKLL16629.rwcrmhc51.attbi.com@rwcrwbc55> <1032976747.13899.66.camel@tiny> <3D92AFE6.9040708@mb.tu-ilmenau.de>
+From: berthiaume_wayne@emc.com
+Subject: RE: Data Shredding on a Journal Filesystem
+Date: Thu, 26 Sep 2002 13:20:51 -0400
+Message-ID: <93F527C91A6ED411AFE10050040665D0049C0085@corpusmx1.us.dg.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11553-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11554-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3D92AFE6.9040708@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>, Chris Mason <mason@suse.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: green@namesys.com
+Cc: reiserfs-list@namesys.com
 
-Am Donnerstag, 26. September 2002 08:57 schrieb Manuel Krause:
-> On 09/25/2002 07:59 PM, Chris Mason wrote:
-> > On Wed, 2002-09-25 at 13:48, jordan.breeding@attbi.com wrote:
-> >>Hello,
-> >>
-> >>  Does anyone know the current status of the data-
-> >>logging patches being ported to 2.5.x?  Thanks.
-> >
-> > They are finally ported to 2.4.20-pre7 (in testing now on my local
-> > box).
->
-> I'm very excited about that fact!
+	Hi Oleg.
 
-I appreciate this, too.
-Thank you Chris.
-I'll put this all together with 2.4.x-ckX (-AA, preemption, O(1), ll).
+	I'm using the standard journaling from 2.4.19 - metadata for
+recovery from power failures. We are also  using tails at this time. I have
+been investigating the use of -o notails as a performance improvement;
+however, I need to weigh that against disk space usage as well.
 
-> Can you supply some gamma patches on your ftp (e.g. in directoy "gamma"=
-)
->
-> Thanks, for your great work, so far, you read, I contributed some
-> re-testing for your code, so I really like to test the next stage(!!!),
->
-> > 2.5.x is a few weeks away but it is very high up there on my
-> > list.
+-----Original Message-----
+From: Oleg Drokin [mailto:green@namesys.com]
+Sent: Wednesday, September 25, 2002 3:30 AM
+To: berthiaume_wayne@emc.com
+Cc: reiserfs-list@namesys.com
+Subject: Re: [reiserfs-list] Data Shredding on a Journal Filesystem
 
-Can't wait for this.
 
-Jens Axboe has a new "deadline io scheduler" ready for 2.5.38+ (it is in=20
-2.5.38-BK).
+Hello!
 
-Terrific numbers!
+On Tue, Sep 24, 2002 at 05:12:03PM -0400, berthiaume_wayne@emc.com wrote:
 
-> > Am Mittwoch, 25. September 2002 17:20 schrieben Sie:
-> > Due to recent "problems" (well the vm being just too damn good at kee=
-p
-> > disks busy these days), it's become even more apparent that our curre=
-nt
-> > io scheduler just cannot cope with some work loads. Repeated starvart=
-ion
-> > of reads is the most important one. The Andrew Morton Interactive
-> > Workload (AMIW) [1] rates the current kernel poorly, on my test machi=
-ne
-> > it completes in 1-2 minutes depending on your luck. 2.5.38-BK does a =
-lot
-> > better, but mainly because it's being extremely unfair. This deadline=
- io
-> > scheduler finishes the AMIW in anywhere from ~0.5 seconds to ~3-4
-> > seconds, depending on the io load.
+> 	Hello fellow ReiserFS fans. I'm in search of a data shredder for use
+> on reiserfs and am wondering if anyone knows of one. It would need to
+> effectively remove any trace both in the journal and on the disk itself
+any
+> and all data pertaining to a file. I'm not sure, but I thought at one time
+> Hans was talking about something this himself. I have looked at shred()
+but
+> it does not work with journalling filesystems.
 
-http://marc.theaimsgroup.com/?l=3Dlinux-kernel&m=3D103297463302181&w=3D2
+shred should work just fine with reiserfs in case you did not
+enable data journaling mode and you have tails disabled.
+The only thing that may be left on disk is filename and 
+blocks in which file itself was stored.
 
--Dieter
-
-BTW 2.4.20-pre8 is out...;-)
+Bye,
+    Oleg
