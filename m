@@ -1,10 +1,9 @@
-From: "JP Howard" <jh_lists@fastmail.fm>
-Subject: Re: back up to disk
-Date: Wed, 16 Oct 2002 02:15:58 UT
-Message-ID: <20021016021558.79A2E1AEC1B9@server5.fastmail.fm>
+From: rwhron@earthlink.net
+Subject: oops from 2.5.42-mm3 running lilo on reiserfs
+Date: Tue, 15 Oct 2002 23:14:40 -0400
+Message-ID: <20021016031440.GA257@rushmore>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11706-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11707-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -12,82 +11,41 @@ Errors-To: flx@namesys.com
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Russell Coker <bofh@coker.com.au>, ReiserFS List <reiserfs-list@namesys.com>, webmaster@www.mikerubel.org
+Content-Transfer-Encoding: 7bit
+To: akpm@digeo.com
+Cc: reiserfs-list@namesys.com
 
-On Wed, 16 Oct 2002 05:15:33 +0400, "Hans Reiser" <reiser@namesys.com>
-said:
-> JP Howard wrote:
-> 
-> >We've been thinking about something like that, using this extremely nifty
-> >trick:
-> >
-> >http://www.mikerubel.org/computers/rsync_snapshots/
-> >
-> This is brilliantly simple.
-> 
-I thought so too. I'm cc'ing the author so he can bask in the glory...
-;-)
-> >
-> >Back in the old days (i.e. last week) when we were planning around Ext3,
-> >we were thinking of combining it with this product:
-> >
-> >http://www.shaolinmicro.com/product/cogofs/index.php
-> >
-> This looks reasonable as a product, and not unreasonably expensive for 
-> servers.   There are some advantages to tight integration though, in 
-> that you can compress at flush time.
-> 
-Yes indeed. And I haven't seen this product used anywhere--I don't know
-how reliable it is. It's binary-only, which I don't like, and you have to
-get a version for your particular kernel (and really, who uses stock
-kernels?...)
-> >
-> >The two combined, with ATA RAID, provide fast, redundent, incremental,
-> >compressed backups.
-> >
-> >Does ReiserFS support transparent compression?
-> >
-> This is one of the features that won't make the Halloween deadline, but 
-> might be slipped in later.
-> 
-> If not, are there any
-> >plans in this direction? Benchmarks I've seen in the past suggest that
-> >compressed file systems generally improve performance (especially when
-> >using something fast like LZOP) since CPUs are so fast--and of course for
-> >backups being able to store more on fewer disks is nice...
-> >
-> What I had heard was that they generally slowed peformance, but maybe my 
-> info is old.
-> 
-> CPUs are faster now, and maybe compression algorithms are faster.
-> 
-> Can you give more details?
-> 
-I'm just passing on anecdotal information, I'm afraid. I can tell you
-that LZOP is *seriously* fast. 
-  http://www.oberhumer.com/opensource/lzop/
+AMD Athlon 1333
+1GB (highmem enabled)
+IDE disk
+reiserfs filesystems
 
-Every benchmark I've seen shows it #1 for speed. We see around 50%
-compression ratio on our Cyrus mail store using LZOP compression on our
-backups.
+While running lilo I got this oops:
 
-It's easy enough to construct some simple benchmarks like this:
-----
-# time zgrep foobar maillog.1.gz
-real    0m6.924s
-user    0m3.140s
-sys     0m0.620s
+ kernel BUG at mm/highmem.c:177!
+ invalid operand: 0000
 
-# time grep foobar maillog.1
+ CPU:    0
+ EIP:    0060:[<c01325cf>]    Not tainted
+ EFLAGS: 00010246
+ EIP is at kunmap_high+0xf/0x80
+ eax: 00000000   ebx: c195fe70   ecx: c037bb1c   edx: c037bb14
+ esi: 00000a00   edi: f6b31df4   ebp: 00001000   esp: f6b63f3c
+ ds: 0068   es: 0068   ss: 0068
+ Process lilo (pid: 810, threadinfo=f6b62000 task=f7435940)
+ Stack: c195fe70 00000a00 c0111f5b c017c633 c195fe70 00000001 f6b31df4 f737d3c0
+        00000001 f6b31e50 00000000 c017c560 f6b31df4 f737d3c0 c01448e8 f6b31df4
+        f737d3c0 4004cd01 00000001 4004cd01 ffffffe7 f737d3c0 00000001 c0144aeb
+ Call Trace:
+  [<c0111f5b>] kunmap+0x2b/0x30
+  [<c017c633>] reiserfs_unpack+0xc3/0x108
+  [<c017c560>] reiserfs_ioctl+0x20/0x30
+  [<c01448e8>] file_ioctl+0x148/0x160
+  [<c0144aeb>] sys_ioctl+0x1eb/0x220
+  [<c0106e0b>] syscall_call+0x7/0xb
 
-real    0m19.972s
-user    0m0.290s
-sys     0m0.620s
-----
 
-Of course, it depends a lot on the CPU and HDD configuration, and where
-your system is loaded. We always find our IMAP and SMTP servers IO bound,
-with plenty of CPU free. It's very expensive to change from a 5x73GB to a
-10x36GB config, so buying more IO performance is an expensive
-proposition.
+-- 
+Randy Hron
+http://home.earthlink.net/~rwhron/kernel/bigbox.html
+
