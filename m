@@ -1,55 +1,82 @@
-From: "Burnes, James" <james.burnes@gwl.com>
-Subject: OpenSource the Reiser4 T-Shirt Slogan
-Date: Fri, 25 Jun 2004 13:28:51 -0600
-Message-ID: <3DF9165145FACB4C96977FF650C1E9040C46A0D1@its-mail1.its.corp.gwl.com>
+From: Jure =?UTF-8?Q?Pe=C3=A8ar?= <pegasus@nerv.eu.org>
+Subject: reiser4 on alpha
+Date: Sat, 26 Jun 2004 01:51:01 +0200
+Message-ID: <20040626015101.3c47427d.pegasus@nerv.eu.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19401-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-19404-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>, "Robert P. J. Day" <rpjday@mindspring.com>
-Cc: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>, Chris Dukes <pakrat@www.uk.linux.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="macroman"
+To: reiserfs-list@namesys.com
 
-Why not just take a vote on all submitted slogans and then send the top =
-'n' vote getters to caf=E9 press so that the users can pick the t-shirts =
-they like the most.  Heck, you could even have the designs put on coffee =
-mugs.
-
-Reiser4, fully Caffeinated!
-
-You are assured of selling more schwag that way.
-
-Open Source Software should support Open Source Slogans (and vice =
-versa).
-
-http://www.cafepress.com/cp/info/
-
-Oh, and an excellent article on the mysteries of schwag!
-
-http://www.wired.com/wired/archive/9.01/schwag.html
-
-Just because you don't have a marketing department doesn't mean that you =
-can crank out and consume schwag.  Maybe namesys needs a logo (or is the =
-tornado thing the logo?  I don't know)
-
-;-)
-
-jim burnes
-security engineer
-great-west, denver
-=20
-
-> -----Original Message-----
-> From: Hans Reiser [mailto:reiser@namesys.com]
-> Sent: Friday, June 25, 2004 11:59 AM
-> To: Robert P. J. Day
-> Cc: Narcoleptic Electron; Chris Dukes; reiserfs-list@namesys.com
-> Subject: Re: we need a slogan for our reiser4 t-shirt
->=20
-> I personally don't like substitute obscenities --- people who want to
-> swear should do so --- so I won't use fsck as suggested.
+CkhpIGFsbCwKCmkgdG91Z2h0IHNvbWVvbmUgbWlnaHQgYmUgaW50ZXJlc3RlZCBpbiB0aGUgZm9s
+bG93aW5nIGNvbXBpbGVyIHdhcm5pbmdzIGFuZAplcnJvcjoKCiAgTEQgICAgICBmcy9yZWlzZXI0
+L2J1aWx0LWluLm8KICBDQyBbTV0gIGZzL3JlaXNlcjQvZGVidWcubwp7c3RhbmRhcmQgaW5wdXR9
+OiBBc3NlbWJsZXIgbWVzc2FnZXM6CntzdGFuZGFyZCBpbnB1dH06NTogV2FybmluZzogc2V0dGlu
+ZyBpbmNvcnJlY3Qgc2VjdGlvbiBhdHRyaWJ1dGVzIGZvciAuZ290CiAgQ0MgW01dICBmcy9yZWlz
+ZXI0L3N0YXRzLm8Ke3N0YW5kYXJkIGlucHV0fTogQXNzZW1ibGVyIG1lc3NhZ2VzOgp7c3RhbmRh
+cmQgaW5wdXR9OjU6IFdhcm5pbmc6IHNldHRpbmcgaW5jb3JyZWN0IHNlY3Rpb24gYXR0cmlidXRl
+cyBmb3IgLmdvdAogIENDIFtNXSAgZnMvcmVpc2VyNC9qbm9kZS5vCntzdGFuZGFyZCBpbnB1dH06
+IEFzc2VtYmxlciBtZXNzYWdlczoKe3N0YW5kYXJkIGlucHV0fTo1OiBXYXJuaW5nOiBzZXR0aW5n
+IGluY29ycmVjdCBzZWN0aW9uIGF0dHJpYnV0ZXMgZm9yIC5nb3QKICBDQyBbTV0gIGZzL3JlaXNl
+cjQvem5vZGUubwpmcy9yZWlzZXI0L3pub2RlLmM6IEluIGZ1bmN0aW9uIGB6Z2V0JzoKZnMvcmVp
+c2VyNC96bm9kZS5jOjU2NTogd2FybmluZzogbG9uZyBsb25nIHVuc2lnbmVkIGludCBmb3JtYXQs
+IGxvbmcKdW5zaWduZWQgaW50IGFyZyAoYXJnIDIpCntzdGFuZGFyZCBpbnB1dH06IEFzc2VtYmxl
+ciBtZXNzYWdlczoKe3N0YW5kYXJkIGlucHV0fTo1OiBXYXJuaW5nOiBzZXR0aW5nIGluY29ycmVj
+dCBzZWN0aW9uIGF0dHJpYnV0ZXMgZm9yIC5nb3QKICBDQyBbTV0gIGZzL3JlaXNlcjQva2V5Lm8K
+ZnMvcmVpc2VyNC9rZXkuYzogSW4gZnVuY3Rpb24gYHNwcmludGZfa2V5JzoKZnMvcmVpc2VyNC9r
+ZXkuYzoxNTA6IHdhcm5pbmc6IGxvbmcgbG9uZyB1bnNpZ25lZCBpbnQgZm9ybWF0LCBvaWRfdCBh
+cmcgKGFyZwozKQpmcy9yZWlzZXI0L2tleS5jOjE1MDogd2FybmluZzogbG9uZyBsb25nIHVuc2ln
+bmVkIGludCBmb3JtYXQsIF9fdTY0IGFyZyAoYXJnCjUpCmZzL3JlaXNlcjQva2V5LmM6MTUwOiB3
+YXJuaW5nOiBsb25nIGxvbmcgdW5zaWduZWQgaW50IGZvcm1hdCwgX191NjQgYXJnIChhcmcKNikK
+ZnMvcmVpc2VyNC9rZXkuYzoxNTA6IHdhcm5pbmc6IGxvbmcgbG9uZyB1bnNpZ25lZCBpbnQgZm9y
+bWF0LCBvaWRfdCBhcmcgKGFyZwo3KQpmcy9yZWlzZXI0L2tleS5jOjE1MDogd2FybmluZzogbG9u
+ZyBsb25nIHVuc2lnbmVkIGludCBmb3JtYXQsIF9fdTY0IGFyZyAoYXJnCjgpCmZzL3JlaXNlcjQv
+a2V5LmM6MTU3OiB3YXJuaW5nOiBsb25nIGxvbmcgdW5zaWduZWQgaW50IGZvcm1hdCwgb2lkX3Qg
+YXJnIChhcmcKMykKZnMvcmVpc2VyNC9rZXkuYzoxNTc6IHdhcm5pbmc6IGxvbmcgbG9uZyB1bnNp
+Z25lZCBpbnQgZm9ybWF0LCBfX3U2NCBhcmcgKGFyZwo1KQpmcy9yZWlzZXI0L2tleS5jOjE1Nzog
+d2FybmluZzogbG9uZyBsb25nIHVuc2lnbmVkIGludCBmb3JtYXQsIG9pZF90IGFyZyAoYXJnCjYp
+CmZzL3JlaXNlcjQva2V5LmM6MTU3OiB3YXJuaW5nOiBsb25nIGxvbmcgdW5zaWduZWQgaW50IGZv
+cm1hdCwgX191NjQgYXJnIChhcmcKNykKe3N0YW5kYXJkIGlucHV0fTogQXNzZW1ibGVyIG1lc3Nh
+Z2VzOgp7c3RhbmRhcmQgaW5wdXR9OjU6IFdhcm5pbmc6IHNldHRpbmcgaW5jb3JyZWN0IHNlY3Rp
+b24gYXR0cmlidXRlcyBmb3IgLmdvdAogIENDIFtNXSAgZnMvcmVpc2VyNC9wb29sLm8Ke3N0YW5k
+YXJkIGlucHV0fTogQXNzZW1ibGVyIG1lc3NhZ2VzOgp7c3RhbmRhcmQgaW5wdXR9OjU6IFdhcm5p
+bmc6IHNldHRpbmcgaW5jb3JyZWN0IHNlY3Rpb24gYXR0cmlidXRlcyBmb3IgLmdvdAogIENDIFtN
+XSAgZnMvcmVpc2VyNC90cmVlX21vZC5vCmZzL3JlaXNlcjQvdHJlZV9tb2QuYzogSW4gZnVuY3Rp
+b24gYG5ld19ub2RlJzoKZnMvcmVpc2VyNC90cmVlX21vZC5jOjYyOiB3YXJuaW5nOiBsb25nIGxv
+bmcgdW5zaWduZWQgaW50IGZvcm1hdCwKcmVpc2VyNF9ibG9ja19uciBhcmcgKGFyZyAyKQp7c3Rh
+bmRhcmQgaW5wdXR9OiBBc3NlbWJsZXIgbWVzc2FnZXM6CntzdGFuZGFyZCBpbnB1dH06NTogV2Fy
+bmluZzogc2V0dGluZyBpbmNvcnJlY3Qgc2VjdGlvbiBhdHRyaWJ1dGVzIGZvciAuZ290CiAgQ0Mg
+W01dICBmcy9yZWlzZXI0L2VzdGltYXRlLm8Ke3N0YW5kYXJkIGlucHV0fTogQXNzZW1ibGVyIG1l
+c3NhZ2VzOgp7c3RhbmRhcmQgaW5wdXR9OjU6IFdhcm5pbmc6IHNldHRpbmcgaW5jb3JyZWN0IHNl
+Y3Rpb24gYXR0cmlidXRlcyBmb3IgLmdvdAogIENDIFtNXSAgZnMvcmVpc2VyNC9jYXJyeS5vCntz
+dGFuZGFyZCBpbnB1dH06IEFzc2VtYmxlciBtZXNzYWdlczoKe3N0YW5kYXJkIGlucHV0fTo1OiBX
+YXJuaW5nOiBzZXR0aW5nIGluY29ycmVjdCBzZWN0aW9uIGF0dHJpYnV0ZXMgZm9yIC5nb3QKICBD
+QyBbTV0gIGZzL3JlaXNlcjQvY2Fycnlfb3BzLm8Ke3N0YW5kYXJkIGlucHV0fTogQXNzZW1ibGVy
+IG1lc3NhZ2VzOgp7c3RhbmRhcmQgaW5wdXR9OjU6IFdhcm5pbmc6IHNldHRpbmcgaW5jb3JyZWN0
+IHNlY3Rpb24gYXR0cmlidXRlcyBmb3IgLmdvdAogIENDIFtNXSAgZnMvcmVpc2VyNC9sb2NrLm8K
+e3N0YW5kYXJkIGlucHV0fTogQXNzZW1ibGVyIG1lc3NhZ2VzOgp7c3RhbmRhcmQgaW5wdXR9OjU6
+IFdhcm5pbmc6IHNldHRpbmcgaW5jb3JyZWN0IHNlY3Rpb24gYXR0cmlidXRlcyBmb3IgLmdvdAog
+IENDIFtNXSAgZnMvcmVpc2VyNC90cmVlLm8Ke3N0YW5kYXJkIGlucHV0fTogQXNzZW1ibGVyIG1l
+c3NhZ2VzOgp7c3RhbmRhcmQgaW5wdXR9OjU6IFdhcm5pbmc6IHNldHRpbmcgaW5jb3JyZWN0IHNl
+Y3Rpb24gYXR0cmlidXRlcyBmb3IgLmdvdAogIENDIFtNXSAgZnMvcmVpc2VyNC9jb250ZXh0Lm8K
+e3N0YW5kYXJkIGlucHV0fTogQXNzZW1ibGVyIG1lc3NhZ2VzOgp7c3RhbmRhcmQgaW5wdXR9OjU6
+IFdhcm5pbmc6IHNldHRpbmcgaW5jb3JyZWN0IHNlY3Rpb24gYXR0cmlidXRlcyBmb3IgLmdvdAog
+IENDIFtNXSAgZnMvcmVpc2VyNC90YXAubwp7c3RhbmRhcmQgaW5wdXR9OiBBc3NlbWJsZXIgbWVz
+c2FnZXM6CntzdGFuZGFyZCBpbnB1dH06NTogV2FybmluZzogc2V0dGluZyBpbmNvcnJlY3Qgc2Vj
+dGlvbiBhdHRyaWJ1dGVzIGZvciAuZ290CiAgQ0MgW01dICBmcy9yZWlzZXI0L2Nvb3JkLm8KZnMv
+cmVpc2VyNC9jb29yZC5jOiBJbiBmdW5jdGlvbiBgY29vcmRzX2VxdWFsJzoKZnMvcmVpc2VyNC9j
+b29yZC5jOjU5ODogZXJyb3I6IGR1cGxpY2F0ZSBjYXNlIHZhbHVlCmZzL3JlaXNlcjQvY29vcmQu
+Yzo1OTg6IGVycm9yOiBwcmV2aW91c2x5IHVzZWQgaGVyZQp7c3RhbmRhcmQgaW5wdXR9OiBBc3Nl
+bWJsZXIgbWVzc2FnZXM6CntzdGFuZGFyZCBpbnB1dH06NTogV2FybmluZzogc2V0dGluZyBpbmNv
+cnJlY3Qgc2VjdGlvbiBhdHRyaWJ1dGVzIGZvciAuZ290Cm1ha2VbMl06ICoqKiBbZnMvcmVpc2Vy
+NC9jb29yZC5vXSBFcnJvciAxCm1ha2VbMV06ICoqKiBbZnMvcmVpc2VyNF0gRXJyb3IgMgptYWtl
+OiAqKiogW2ZzXSBFcnJvciAyCgpMb29raW5nIGF0IGZzL3JlaXNlcjQvZGVidWcuaCBzdWdnZXN0
+IHRoYXQgdGhpcyBpcyBzb21ldGhpbmcgZG9uZSBvbiBwdXJwb3NlCnRvIGd1YXJkIGFnYWluc3Qg
+b3RoZXIgcHJvYmxlbXMuCgpHY2MgMy4zLjQgb24gZGViaWFuL2FscGhhLCByZWlzZXI0LTIwMDQu
+MDYuMjQtMTkuMzYtbGludXgtMi42Ljcgc25hcHNob3QuCgoKLS0gCgpKdXJlIFBl6GFyCi0tIAoK
+SnVyZSBQZcSNYXIK
