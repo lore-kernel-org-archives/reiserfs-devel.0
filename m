@@ -1,45 +1,27 @@
-From: Gorazd Golob <gorazdg@noviforum.si>
-Subject: Re: umount and sync delays
-Date: Mon, 14 Mar 2005 20:59:00 +0100 (CET)
-Message-ID: <Pine.LNX.4.61.0503142052410.26303@dacun>
-References: <Pine.LNX.4.61.0503141338470.25427@dacun> <4235CCAE.9030408@namesys.com>
- <Pine.LNX.4.61.0503142008090.26303@dacun> <4235EAAD.1070205@namesys.com>
+From: "Clemens Eisserer" <linuxhippy@web.de>
+Subject: Re: compression/reiser4.1
+Date: Tue, 15 Mar 2005 08:51:00 +0100
+Message-ID: <1099281577@web.de>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4235EAAD.1070205@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
->
-> I have no idea, and so I must guess.  I guess that if you try the same
-> application on a different computer it will work reasonably fast and
-> that the problem is hardware doing extensive retries.
-We have tests on ext3 and it wasn't like fast, but few minutes, not 30 
-minutes.. 
->
-> Or, you are doing completely random IO with tiny little bits of dirty
-> data in a large file, and so each 4k is a seek.  I doubt this, but in
-> theory....
-No.. there is really "random" data in this files, but files are small 
-(most of them less than 4 kb).
+Hi there!
 
-> Or you have something else on that machine dirtying lots of memory after
-> the application closes, and perhaps there is a flaw in our method for
-> forcing atoms to disk after they get old that we should look into.
-There were no other applications on that system and none of user land 
-deamons were using that partition.
->
-> Finally, it could be none of the above and something is wrong in our
-> sync algorithms, and somebody should log onto your machine and look at it.
-Thanks.
->
-> Probably all guesses are wrong, but I have to ask them as a start.
-Hope it helped..
+I just read the discussion about the compression-plugin and I just wanted to say that this feature is something I really always missed under Linux when looking to NTFS.
 
-tnx, gorazd
+Its really great to see progress in this area!
+
+When do you think reiser4.1 will be ready?
+
+Thanks a lot, Clemens Eisserer
+______________________________________________________________
+Verschicken Sie romantische, coole und witzige Bilder per SMS!
+Jetzt bei WEB.DE FreeMail: http://f.web.de/?mc=021193
+
