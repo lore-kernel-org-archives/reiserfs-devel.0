@@ -1,31 +1,47 @@
 From: Pierre Abbat <phma@webjockey.net>
 Subject: Re: Proposal for keying encrypted filesystem
-Date: Sun, 30 Mar 2003 11:30:23 -0500
-Message-ID: <200303301130.24136.phma@webjockey.net>
-References: <200303282026.23543.phma@webjockey.net> <200303291155.40419.phma@webjockey.net> <3E85E338.CEAA7DC7@namesys.com>
+Date: Sun, 30 Mar 2003 12:00:53 -0500
+Message-ID: <200303301200.53330.phma@webjockey.net>
+References: <200303282026.23543.phma@webjockey.net> <200303291549.08160.phma@webjockey.net> <20030330101226.GB3520@hvs.envisage.co.za>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13448-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13449-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E85E338.CEAA7DC7@namesys.com>
+In-Reply-To: <20030330101226.GB3520@hvs.envisage.co.za>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-On Saturday 29 March 2003 13:17, Edward Shushkin wrote:
-> Any collision can be used by attacker for access to remained decrypted data
-> in memory, so you should assign the *whole* output of any crypto-stable
-> hash function (20 bytes for SHA1). If you use 19 bytes for ID, there is no
-> any guarantee that someone can not find a collision easy.
-> Edward.
+On Sunday 30 March 2003 05:12, Hendrik Visage wrote:
+> In this whole discussion I'm still missing some references to research
+> papers on this technique, as it still sounds to me like security by
+> obscurity.
 
-There isn't any guarantee with all 20 either, it's just 256 times as hard to 
-find one and practically impossible. What about using the MD5 of the 
-passphrase for the key ID, and the SHA1 of the passphrase for the key?
+I didn't find this in research papers. I thought of it in the bathtub. The 
+credential could be a private key, if you like. The method of setting the 
+credential in some ancestor of the current process is designed to meet two 
+objectives:
+1. A script can run, and it and all of its children can access the encrypted 
+files, whereas no other process can. This would be used by an encrypted 
+backup server, so that the operator of the backup server cannot read the 
+backups, even while they are being backed up. It could also be used on 
+multiuser workstations; if a user logs in twice, he would also have to key 
+the filesystem twice.
+2. A computer can have an encrypted /home directory, which is keyed once, and 
+then every user can access files in it, subject to the permission bits.
+
+> On the key: I'd prefer it to be  "truely" randomly generated
+> (ie. /dev/random and not /dev/urandom), and then it be encrypted.
+> I'd prefer it to be encrypted with the public keys of all those that
+> would need access to it.
+
+If each file has a different key, and each key is generated with /dev/random 
+and encrypted with public keys, making a directory containing thousands of 
+files is going to be *very* slow.
 
 phma
 -- 
