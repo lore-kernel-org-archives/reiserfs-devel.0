@@ -1,64 +1,37 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: Red Hat Enterprise Linux AS (v. 2.1) and  > 2 GB files
-Date: Fri, 27 Jun 2003 15:51:57 +0400
-Message-ID: <16124.12253.655810.956151@laputa.namesys.com>
-References: <1056635615.1967.377.camel@atlas.vinterbro.com>
-	<20030626155842.2c7fd748.pegasus@nerv.eu.org>
-	<3EFB1F97.3020205@namesys.com>
-	<20030627065918.GA20771@namesys.com>
-	<20030627125003.A32245@t-raenon.nmd.msu.ru>
+From: Christian Kujau <evil@g-house.de>
+Subject: Re: vpf-10680, minor corruptions
+Date: Fri, 27 Jun 2003 14:18:34 +0200
+Message-ID: <3EFC361A.4030009@g-house.de>
+References: <20030624131904.GA460@namesys.com> <3EF86928.7080504@g-house.de> <20030624151940.GC21845@namesys.com> <3EF888B2.4000900@g-house.de> <3EF8EFF0.6020207@g-house.de> <20030625054031.GA11576@namesys.com> <3EF9A0F6.4030401@g-house.de> <3EF9E939.1050501@g-house.de> <20030626092608.GA12252@namesys.com> <3EFAE933.6040206@g-house.de> <20030627092821.GA29715@namesys.com>
+Reply-To: evil@g-house.de
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14726-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14727-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030627125003.A32245@t-raenon.nmd.msu.ru>
+In-Reply-To: <20030627092821.GA29715@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: flx@msu.ru
-Cc: Oleg Drokin <green@namesys.com>, Hans Reiser <reiser@namesys.com>, Jure Pecar <pegasus@nerv.eu.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-Alexander Lyamin writes:
- > Fri, Jun 27, 2003 at 10:59:18AM +0400, Oleg Drokin wrote:
- > > Hello!
- > > 
- > > On Thu, Jun 26, 2003 at 08:30:15PM +0400, Hans Reiser wrote:
- > > 
- > > > >Because RedHat never bothered to update reiserfs code in their e kernels.
- > > > >Your best bet is to get a newer kernel, perhaps 2.4.21, and if you cannot
- > > > >afford that, trim your app to not create files that big.
- > > > >There are rumors that 2.4.18 based e kernel is in the testing ... 
- > > > You mean RedHat is STILL shipping 2.4.9 based kernels?  Oh no wonder 
- > > > there are people with stability problems.....
- > > 
- > > No, I believe there was kernel update last month that upgraded RHAS kernel up to
- > > 2.4.18.
- > > Anyway RHAS 2.4.9 kernel does not have that much in common with vanilla 2.4.9.
+Oleg Drokin schrieb:
+> Well, there is really a pattern.
+> Each 4k of data you copy us placed in its own 8k page (the rest 4k are freed).
+> But I really cannot see how that may happen! It simply cannot, I'd say.
 
-Really? It is easy to calculate a number of lines of the code that are
-different in Red Top Hat kernels, and it is highly doubtful, that more
-than half are changed (least which would qualify as "does not have that
-much in common").
+i put some more info about this alpha on the very same web-address, 
+alpha machines differ much, maybe it's just this kind of alpha (Avanti) 
+showing this behaviour...
 
- > 
- > If there's nothing much in common with vanilla linux, then they should not 
- > mislead their customers with "linux" label on it, but should fork and do 
- > something like Reddix or Hattix 2.4.9 .
+> Would you mind to try 2.5.72 with the following patch, and copy some file under
+> 128k in size to some reiserfs filesystem and see if any warnings were
+> produced. (if they are, show me what were those warnings).
+> Also check that files are still corrupted.
 
-Reiserfs was to much extent -only- successful because SuSE generously
-shipped, and supported it long before it was included into vanilla
-kernel. Face it.
+yes, of course.
 
- > 
- > Sometimes I really getting lost in marketting tricks of thouse guys.
- > 
- > > Bye,
- > >     Oleg
- > 
- > -- 
- > everything zen
- > lex lyamin
+Thanks,
+Christian.
 
-Nikita.
