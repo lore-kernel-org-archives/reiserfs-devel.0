@@ -1,42 +1,48 @@
-From: Spam <spam@tnonline.net>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 2 Sep 2004 22:28:37 +0200
-Message-ID: <10910423335.20040902222837@tnonline.net>
-References: Message from Lee Revell <rlrevell@joe-job.com>  of "Wed, 01 Sep
- 2004 18:51:12 -0400." <1094079071.1343.25.camel@krustophenia.net>
- <200409021425.i82EPn9i005192@laptop11.inf.utfsm.cl>
- <1535878866.20040902214144@tnonline.net>
- <1094151338.5645.32.camel@localhost.localdomain>
- <1785708679.20040902220722@tnonline.net>
- <1094152671.5726.39.camel@localhost.localdomain>
-Reply-To: Spam <spam@tnonline.net>
+From: Frank van Maarseveen <frankvm@xs4all.nl>
+Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
+Date: Thu, 2 Sep 2004 22:38:54 +0200
+Message-ID: <20040902203854.GA4801@janus>
+References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21325-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21326-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1094152671.5726.39.camel@localhost.localdomain>
+Content-Disposition: inline
+In-Reply-To: <1094118362.4847.23.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Lee Revell <rlrevell@joe-job.com>, Jamie Lokier <jamie@shareable.org>, Pavel Machek <pavel@suse.cz>, David Masover <ninja@slaphack.com>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
+On Thu, Sep 02, 2004 at 10:46:05AM +0100, Alan Cox wrote:
+> On Mer, 2004-09-01 at 21:50, Linus Torvalds wrote:
+> > and quite frankly, I think you can do the above pretty much totally in
+> > user space with a small library and a daemon (in fact, ignoring security
+> > issues you probably don't even need the daemon). And if you can prototype
+> > it like that, and people actually find it useful, I suspect kernel support
+> > for better performance might be possible.
+> 
+> Gnome already supports this in the gnome-vfs2 layer. "MC" has supported
+> it since the late 1990's.
 
+Can it do this:
 
+	cd FC2-i386-disc1.iso
+	ls
 
-> On Iau, 2004-09-02 at 21:07, Spam wrote:
->> > And would you rather that logic was running swappable in shared library
->> > space or privileged and unswappable in kernel ?
->> 
->>   I would rather have it as a filesystem/vfs plugin that would allow
->>   all my programs to use the features the plugin gives, even if it
->>   would mean being totally in kernel space.
+or this:
 
-> Thats not what I asked.
+	cd /dev/sda1
+	ls
+	cd /dev/floppy
+	ls
+	cd /dev/cdrom
+	ls
 
-  I failed to understand your question then. :(
+?
 
-  ~S
-
+-- 
+Frank
