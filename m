@@ -1,46 +1,31 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: fsck in background?
-Date: Mon, 31 Mar 2003 21:54:35 +0400
-Message-ID: <200303312154.35760.vitaly@namesys.com>
-References: <3E8818CD.1000500@dotcom.pl> <20030331144609.B1430@namesys.com> <3E88775F.5070302@namesys.com>
+From: "Luna Kid \(list-reader address\)" <listreader@neuropolis.org>
+Subject: Re: reiserfsprogs 3.6.5 release
+Date: Mon, 31 Mar 2003 20:00:13 +0200
+Message-ID: <004f01c2f7af$60cb9f50$6400a8c0@twister>
+References: <200303251108.11938.Dieter.Nuetzel@hamburg.de> <200303251335.06542.Dieter.Nuetzel@hamburg.de> <200303251642.23944.vitaly@namesys.com> <200303251903.34660.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-13493-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13494-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E88775F.5070302@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>, Oleg Drokin <green@namesys.com>
-Cc: myciel <myciel@dotcom.pl>, reiserfs-list@namesys.com
+To: ReiserFS List <reiserfs-list@namesys.com>
+Cc: Dieter =?unknown-8bit?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>, Vitaly Fertman <vitaly@namesys.com>
 
-On Monday 31 March 2003 21:14, Hans Reiser wrote:
-> Oleg Drokin wrote:
-> >Hello!
-> >
-> >On Mon, Mar 31, 2003 at 12:30:37PM +0200, myciel wrote:
-> >>Yes, I know this sounds strange, but if one have 1T filesystem full of
-> >>small files,
-> >>reiserfsck estimates duration to be of order of months,
-> >
-> >We have a patch that significantly speeds things up.
-> >In the similar case 28+ years estimated for pass 0 turned into 208 hours
-> > total
->
-> As I said before, 208 hours is unacceptable and Vitaly needs to do more
-> work on it. If Vitaly doesn't know how to fix it, then I need to review
-> his algorithms in detail.
+> All partitions wouldn't mounted due to 
+> "flush_buffers: device is not specified". ;-(
 
-As I wrote you the objectid handling is not the problem anymore, and I 
-described also that the performance problem for now is nlink calculation 
-on semantic rebuild pass which needs many writes on disk what is not easy
-to optimize in the case with shared objectids. Although it could be solved 
-with another pass which would solve all such shared objectid problems just 
-before semantic rebuild pass. 
+Any news on this topic? I've got that exact same problem 
+since a Debian upgrade, on a (fortunately!) completely 
+idle server. It stops the reboot process. Nothing is wrong 
+with any partitions. (Nothing has changed for months. 
+It fails woth both a vanilla and a Gentoo 2.4.19 kernel. 
+ReiserFS: 3.6.25. Reiserfsck: 3.6.4, 2002 -- but it seems
+Dieter have the same problem with the newer stuff too.)
 
--- 
-
-Thanks,
-Vitaly Fertman
+Cheers,
+Luna Kid
+(Please Cc: me in replies, thanks.)
