@@ -1,62 +1,52 @@
-From: Sebastiaan <S.Breedveld@ewi.tudelft.nl>
-Subject: very messed up reiserfs with bad blocks
-Date: Sat, 12 Jun 2004 22:16:19 +0200 (METDST)
-Message-ID: <Pine.GHP.4.44.0406122215500.13459-100000@elektron.its.tudelft.nl>
+From: David Masover <ninja@slaphack.com>
+Subject: preexisting 'metas'?
+Date: Sat, 12 Jun 2004 21:04:46 -0500
+Message-ID: <40CBB63E.4060001@slaphack.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19160-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19162-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hi,
-
-I have a problem with a reiserfs partition. Some days ago the drive
-reported bad blocks, so I ran the badblocks program tried to fix the
-filesystem with the badblocksoutput.
-
-Assuming I fixed the badblock list with 'reiserfsck --badblocks' I tried
-to access some (reported broken) files on that partition. This gave some
-I/O errors, so I thought I had to rebuild the tree (reiserfsck --badblocks
---rebuild-tree). This failed, and the filesystem became unmountable (mount
-fails with 'mount: Not a directory').
-
-I ran another badblock scan, and the number of badblocks grew
-substantially (from 11 in the first run to 177 in the second).
---rebuild-tree failed again and again.
-
-Now the weird thing occured: running a third badblock scan didn't increase
-the amount of badblocks (as I should expect, since the badblock program
-runs on a lower level than the filesystem). It gave me 56 badblocks.
-
-
-Now the following questions raised:
-- what causes the amount of bad blocks to fluctuate?
-- how can I access the filesystem again?
-
-I know the drive is bad, so I am only into copying the contents off it as
-soon as possible. I have the idea the file allocation table is corrupted.
-Now --rebuild-tree won't help me, so I was hoping there is a backup of
-this FAT on the drive somewhere. I couldn't find it, so how does one deal
-with this thing under reiser?
-
-Thanks a lot in advance!
-Sebastiaan
-
-
---
-
-English written by Dutch people is easily recognized by the improper use of 'In principle ...'
-
-The software box said 'Requires Windows 95 or better', so I installed Linux.
-
-Als Pacman in de jaren '80 de kinderen zo had be?nvloed zouden nu veel jongeren rondrennen
-in donkere zalen terwijl ze pillen eten en luisteren naar monotone electronische muziek.
-(Kristian Wilson, Nintendo, 1989)
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
 
 
+I finally got sick of having the metas directory named 'metas'.  I went
+in and found (quite easily -- clean-ish looking code) the label name and
+changed it to '...' (sanest option for me).
+
+Well, the '...' in my brother's home dir had some stuff that he'd like
+to keep secret -- as in, he doesn't want people to know he has them.
+After reboot, his '...' dir still exists, but when I rename it, the
+metas dir pops back in.  Then I can't overwrite it again (make a new dir
+called '...', or move the old one back).
+
+This is all perfect, and exactly what you'd want/expect.  Just curious
+- -- is this intentional/documented?
+
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iQIVAwUBQMu2PXgHNmZLgCUhAQJ0YBAAgbFpJhuGCiI+XZ3kKqzUm1SdABM7m8ZV
+qbLwzHhRu1R5I8zVpXUEAfR2ba1bL+3/DuXkvNjvRjL/RopGDcmp2yH4C69MIC/B
+kCEAkq1pb2Hh6Ot7Qopj9XNfXFO5VflPVu0JVj2xxaO4uXI3V0N5m34Uz7xfRV6T
+D7pqxgsRWVwB+ipSZ0Et9KUodawcudBt9w4eCgx+y7lchTYMjXMu4iopqU5uUQuW
+IPM/T997NslJ5tsAQjVVFtwZrotrEoC3pV2s24T7aYVnnF2HCmlHJDK5Ldpd751a
++9TyYxmEBHk4ZyAZQvKNc5oIN3vPGdRfz+Lphuv11/FZ8xDV05mgltPSqDQRMKjF
+4zIwPvW6OQo3sL4kzBNWXF7i26/h6KrYb7TP/yUtd3zV4NLN2hHOKUzu1p02Pu/7
+NB7Ds8nW3kpHmeS7rYIYLamyXJiarLTa+yMnLcHYC8zAQkHR31S6HPKqHDfgX2Qf
+L+cBxJAnyu/wko1Ays52o0AbYjRlEaeMaiYRBCb5AAhNo8K7aZUWJgwPw5KVvxTU
+F0z9fYNfMeCLhIyw3jFL7WF7nGdEfyr8lPJm3z9IZLqCEVxGeUrdvDRrazN1XQj0
+FYeWh8GZPPgIPjZiUu5gwDWSRbqU3feCLQuH8tWjiUy1neI9/XBU4D5b1u/Z3IjG
+jX3a360dfJ8=
+=hMCA
+-----END PGP SIGNATURE-----
