@@ -1,37 +1,30 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: Reiser4 mount support, Grub support
-Date: Fri, 20 Aug 2004 00:38:50 +0400
-Message-ID: <20040819203850.GR5154@backtop.namesys.com>
-References: <e7963922040819082125b7d8aa@mail.gmail.com>
+From: Sander <sander@humilis.net>
+Subject: Re: Reoccuring corruption problem
+Date: Thu, 19 Aug 2004 21:42:22 +0200
+Message-ID: <20040819194222.GC29745@favonius>
+References: <200408192046.27223.zyrax@home.se>
+Reply-To: sander@humilis.net
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20411-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20412-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <e7963922040819082125b7d8aa@mail.gmail.com>
+In-Reply-To: <200408192046.27223.zyrax@home.se>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stefan Schweizer <sschweizer@gmail.com>
-Cc: reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>
+To: Dan Nilsson <zyrax@home.se>
+Cc: reiserfs-list@namesys.com
 
-On Thu, Aug 19, 2004 at 05:21:04PM +0200, Stefan Schweizer wrote:
-> Hi,
+Dan Nilsson wrote (ao):
+> Typical corruptions i get:
 > 
-> is there a patch for util-linux to support reiser4 w/o -t reiser4 in mount?
+> "ruby-progressbar" becomes "ruby-pr?gressbar"
+> "ruby-zlib"        becomes "ruby-zlyb"
 
-add reiser4 to the list in /etc/filesystems ?
+> I have run badblocks and memtest and they have come up with nothing.
 
-
-> The grub support is not really ready yet.
-> Symlinks do not work.
-> And if I try to specify the direct path it is accepted.
-> But when I try to boot it says invalid compress format  :(
-> 
-> 
-> Stefan Schweizer
-
--- 
-Alex.
+Sounds like bad memory nevertheless. Can you try memtest86 for at least
+24 hours?
