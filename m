@@ -1,33 +1,75 @@
-From: Cyrille Chepelov <cyrille@chepelov.org>
-Subject: Reiserfs4 & cleaner process
-Date: Thu, 5 Jun 2003 15:29:03 +0200
-Message-ID: <20030605132903.GB22392@chepelov.org>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: How to build a big file server
+Date: Thu, 05 Jun 2003 17:38:17 +0400
+Message-ID: <3EDF47C9.1000309@namesys.com>
+References: <1054800852.1997.15.camel@wusel.schnulli.de>	 <20030605083301.GB4849@vestdata.no> <20030605084643.GA5869@namesys.com>	 <1054803014.1995.31.camel@wusel.schnulli.de>	 <20030605090435.GE7950@namesys.com> <1054804624.1997.39.camel@wusel.schnulli.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14437-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14438-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <1054804624.1997.39.camel@wusel.schnulli.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Heinz-Josef Claes <hjclaes@web.de>
+Cc: reiserfs-list@namesys.com
 
-Hi all,
+Heinz-Josef Claes wrote:
 
-I've seen several statements recently to the effect that Reiserfs4 is going
-to start beta time in July (I wish there were patches available now 
-against current 2.5 kernel rather than BK, but I guess that considering that
-I'm unable to bri^Wfund such a "project" and I'd rather have beta patches 
-earlier than having snapshot patches right now, all's fine).
+>Am Don, 2003-06-05 um 11.04 schrieb Oleg Drokin:
+>  
+>
+>>Hello!
+>>
+>>On Thu, Jun 05, 2003 at 10:50:15AM +0200, Heinz-Josef Claes wrote:
+>>    
+>>
+>>>>>My guess is that the writes to the journal _would_ be a problem, and
+>>>>>that writing them to a seperate (RAID1)-device would help significantly.
+>>>>>          
+>>>>>
+>>>>And with journal on battery-backed RAM it would be even faster ;)
+>>>>        
+>>>>
+>>>The target is to have a cheep solution :/
+>>>      
+>>>
+>>The cheapest solution to get speed is to put journal and all data on ramdisk
+>>(or even into ramfs).
+>>This is not the safest one, though.
+>>
+>>    
+>>
+>Perhaps this is a good idea. I'll try to test the performance. Since the
+>servers are only used for an (additional) online backup (like
+>snapshots), there will not be really critical data on them. I'll see if
+>the performance win is worth the risk :-)
+>
+This sounds like a bad idea to me.  If you want to gain performance, 
+don't do raid 5, or use a controller with a writeback cache.  Frankly I 
+doubt you will be disk performance bound anyway.
 
-However, one point is unclear to me at this point: there are numerous
-mentions of a "cleaner" process (whatever the terminology) in the published 
-reiser4 design documents. Does the July timeframe apply to this component
-too, or is it for later?
+>
+>BTW: Some weeks ago there where questions about the performance of
+>NetApp. I think I will have the possibility to repeat the tests with a
+>filer. I'll post the results to the list, if somebody is interested.
+>  
+>
+>>Bye,
+>>    Oleg
+>>
+>>    
+>>
+>
+>
+>
+>  
+>
 
-Thanks in advance,
 
-	-- Cyrille
 -- 
+Hans
+
+
