@@ -1,34 +1,65 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: fsck problem on suse 7.2
-Date: Mon, 9 Dec 2002 13:59:05 +0300
-Message-ID: <20021209135905.A9669@namesys.com>
-References: <80649203.1039434914@[192.168.100.101]>
+From: =?iso-8859-1?Q?Ragnar_Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
+Subject: Agressive selective pre-allocation
+Date: Tue, 10 Dec 2002 07:46:00 +0100
+Message-ID: <20021210074600.J26400@vestdata.no>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12132-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-12133-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <80649203.1039434914@[192.168.100.101]>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Matthias Henze <lists@mhcsoftware.de>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-Hello!
+Hi
 
-On Mon, Dec 09, 2002 at 11:55:14AM +0100, Matthias Henze wrote:
 
-> i've a system withe suse 7.2 - reiserfsck stats after a recoverd RAID crash:
-> check_semantic_tree: no root directory found
-> is there any hope ??
+A lot of filesystems have files that grow slowly over time, and this is
+causing serious fragmentation, and thus performance-problems in some
+situations.
 
-What version on reiserfsck do you have? If it is stock SuSE version, then
-download reiserfsprogs-3.6.4 from ftp://ftp.namesys.com/pub/reiserfsprogs
-and try reiserfsck from there. If it still does not work, let us know.
-Also what options have you given to reiserfsck this time?
+A defragmentation-utility could potentially solve this, but maybe there
+is a better way?
 
-Bye,
-    Oleg
+Some files, for instance MBOX-type mailboxes and logfiles, are known to
+the user/administrator to grow over time. It is possible to preallocate
+diskspace by creating large files with just zeroes in them, but this is
+not very flexible and requires the application to be awere.
+
+An alternative would be the possibility to tell the fs about the
+properties of the files. Maybe an ioctl to notify the fs that for this
+particular file the fs should allocate X blocks at the time? That would
+ensure that the files only get limited fragmentation and performance
+stays optimal.
+
+Does the metadata-format support blocks beeing allocated but not used
+yet? Is it sufficient to add them to the extent-map, mark them free,
+without changing the size of the file?
+
+An even better way would be to mark the blocks as "preallocated" without
+assigning them to the file. This would allow preallocation without
+actually locking the blocks - so if the disk went full the allocator
+could override the preallocation and use them for other data.=20
+
+Blocks are managed in extents in reiserfs4, right? So I assume there is
+an extent-list for free blocks? So maybe one could add an extra
+extent-list for "preallocated blocks", and the change the allocator to
+search that list if, and only if, it is appending to file on the
+previous block or if there are no blocks in the free-list?
+
+
+I have no time to try to implement this right now, but I just got the
+idea and figgured I should write it down while fresh in memory. Any
+reason why this wouldn't work?=20
+
+Personally I think fragmentation is one of the most serious
+performance-problems for filesystems, and this could potentially help a
+lot at least for the slow-growing files like logfiles and mboxes.
+
+
+
+--=20
+Ragnar Kj=F8rstad
