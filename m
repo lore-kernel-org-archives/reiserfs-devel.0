@@ -1,42 +1,21 @@
-From: Sander <sander@humilis.net>
-Subject: Re: Reoccuring corruption problem
-Date: Sat, 21 Aug 2004 10:16:13 +0200
-Message-ID: <20040821081613.GC10308@favonius>
-References: <200408192046.27223.zyrax@home.se> <20040819194222.GC29745@favonius> <200408210743.41317.zyrax@home.se>
-Reply-To: sander@humilis.net
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: viewprinting: what format should views be stored in?
+Date: Sat, 21 Aug 2004 01:59:42 -0700
+Message-ID: <41270EFE.2000808@namesys.com>
+References: <20040821073818.D5EB115CBA@mail03.powweb.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20451-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20452-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200408210743.41317.zyrax@home.se>
+In-Reply-To: <20040821073818.D5EB115CBA@mail03.powweb.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Nilsson <zyrax@home.se>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Dabbs <david@dabbs.net>
+Cc: George Beshers <gbeshers@comcast.net>, Valdis.Kletnieks@vt.edu, reiserfs-list@namesys.com
 
-Dan Nilsson wrote (ao):
-> > Sounds like bad memory nevertheless. Can you try memtest86 for at least
-> > 24 hours?
-> 
-> Yes,
-> I put the computer running memtest86 after getting your email and it
-> did in fact pass all tests (after ~24hrs i aborted the test). 
-> 
-> I have fairly recently upgraded the computer by adding a memory module
-> which i suspected would show up the errors (if any).
-> 
-> After running the test I fsck:ed to remove the corruptions, then
-> proceeded by removed my /usr/portage tree (where corruptions seem to
-> easily occur) and reinstalled all the files (with rsync). The same
-> type of corruption occured but now to a different directory than
-> "usual". 
-
-You seem to be able to trigger it fast and easy. Can you try again with
-the added memory module removed? I'm a bit stubborn .. ;-)
-
-It must be something with your hardware, as you are the only one, and
-also the kind of corruption is common with broken hardware.
+The LSM paper cited (that does not require paying money) says very 
+little about what they do with regards to the filesystem.  Do you have a 
+more informative URL?
