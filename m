@@ -1,39 +1,45 @@
-From: Voicu Liviu <pacman@huji.ac.il>
+From: Anders Widman <andewid@tnonline.net>
 Subject: Re: Error messages.
-Date: Thu, 6 Mar 2003 09:19:45 +0200
-Message-ID: <200303060919.45287.pacman@huji.ac.il>
-References: <7473069171.20030305201818@tnonline.net> <200303060907.49762.pacman@huji.ac.il> <20030306101957.A5751@namesys.com>
+Date: Thu, 6 Mar 2003 09:32:38 +0100
+Message-ID: <170120728875.20030306093238@tnonline.net>
+References: <7473069171.20030305201818@tnonline.net>
+ <20030306095743.B5417@namesys.com>
+Reply-To: Anders Widman <andewid@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13113-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13114-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030306101957.A5751@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <20030306095743.B5417@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-On Thursday 06 March 2003 09:19, Oleg Drokin wrote:
-> Hello!
->
-> On Thu, Mar 06, 2003 at 09:07:49AM +0200, Voicu Liviu wrote:
-> > I also get messages like this: ( what is this? )
-> >
-> > On Thursday 06 March 2003 08:57, Oleg Drokin wrote:
-> > > hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
-> > >   hda: dma_intr: error=0x84 { DriveStatusError BadCRC }
->
-> This is a complete sign of either your having noisy/broken (or too long?)
-> IDE cable (consider changing).
-> or your using too high UDMA mode for your IDE cable (e.g. UDMA3+ for 40
-> wire cable) (consider changing cable or lowering UDMA mode).
 
-but not bad HD right? this is a new Seagate 40 GB
+> Well, I checked my logs:
+> kernel: hdg: status error: status=0x58 { DriveReady SeekComplete DataRequest }
+> kernel: hdg: drive not ready for command
 
->
+   This is what I get all the time.
+
+> And for this case I am sure this was a scratchy CD-ROM disk in my CD-ROM drive.
+
+   Well, have no CD-ROM. :)
+
+> Probably same stuff can be get when drive is busy remapping bad sectors?
+> Use smartctl to find out how these messages corellate with remapped bad sectors counts?
+
+  Very strange. Would mean all of my harddrives would be broken, or on
+  their  way  to  get  broken.  I  do  not  believe that.  Most of the
+  hardware, including the cabling has been replaced and changed.
+
 > Bye,
 >     Oleg
+
+
+
+--------
+PGP public key: https://tnonline.net/secure/pgp_key.txt
 
