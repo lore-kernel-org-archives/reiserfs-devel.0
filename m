@@ -1,44 +1,44 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: Application Problems with Reiser4/19.01.2004-fixed
-Date: Fri, 23 Jan 2004 15:09:40 +0300
-Message-ID: <16401.3844.21706.388236@laputa.namesys.com>
-References: <4010218C.9090006@gmx.at>
-	<16400.65481.167302.617050@laputa.namesys.com>
-	<40110710.4070100@gmx.at>
+From: Paolo Correnti <paolunix@yahoo.com>
+Subject: REISER4 "strange" partition size
+Date: Fri, 23 Jan 2004 06:46:52 -0800 (PST)
+Message-ID: <20040123144652.31406.qmail@web21501.mail.yahoo.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16615-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16616-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40110710.4070100@gmx.at>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Willi W." <willi.w@gmx.at>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: REISER LIST <reiserfs-list@namesys.com>
 
-Willi W. writes:
- > Nikita Danilov wrote:
- > 
- > > > * overnet cannot reload shared data from the reiser4 partition.
- > >
- > > > * azureus (a java bittorrent client) has hash problems all the time when 
- > >
- > >What are these application, and where can we obtain them from?
- > >  
- > >
- > overnet, small binary, closed source from 
- > http://download.overnet.com/overnet0.51.2.tar.gz for downloading edonkey 
- > files
+Hallo,
 
-Hmm... can you run overnet under strace (up to the failure) and send the
-output to me?
+as anyone experience with this e-mail object ?
 
- > 
- > azureus, java app, opensource from http://azureus.sourceforge.net/ for 
- > downloading bittorrent files (google: bittorrent)
- > 
- > both store parts of downloaded (p2p) data in files.
+I'm testing kernel 2.6.1 + latest snapshot
+and I've noticed that if a use mkreiserfs 
+and mkfs.reiser4 on 2 partitions of the same size
+with df I obtain that reiser4 partition has "lost"
+about 5% of space (for example on a 4 Gb partition
+I see 3,8 Gb).
 
-Nikita.
+Then making intensive writing test on this reiser4
+partition (for example: writing 1 million rows on an
+Oracle table in archivelog mode) on each test I obtain
+a corrupted redolog file [sometimes is recoverable,
+sometimes I've to rebuild the entire DB).
+
+
+I've never had this kind of problem with kernel 2.6.0
+and last 2003 snapshot.
+
+Best regards
+
+Paolo
+
+__________________________________
+Do you Yahoo!?
+Yahoo! SiteBuilder - Free web site building tool. Try it!
+http://webhosting.yahoo.com/ps/sb/
