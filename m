@@ -1,59 +1,85 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
+From: Boris Tschirschwitz <boris@math.ubc.ca>
 Subject: Re: reiser4 snapshot
-Date: Mon, 11 Aug 2003 20:55:44 +0400
-Message-ID: <16183.51856.591552.209707@laputa.namesys.com>
+Date: Mon, 11 Aug 2003 17:32:25 -0700
+Sender: news <news@sea.gmane.org>
+Message-ID: <pan.2003.08.12.00.32.11.185228@math.ubc.ca>
 References: <16183.48363.884605.564937@laputa.namesys.com>
-	<3F37C738.9060806@gmx.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15284-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-15285-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F37C738.9060806@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Carl-Daniel Hailfinger writes:
- > Nikita Danilov wrote:
- > > Hello,
- > > 
- > > new reiser4 snapshot is available at 
- > > 
- > > http://thebsh.namesys.com/snapshots/2003.08.11/
- > 
- > +config REISER4_LARGE_KEY
- > +	bool "Use larger keys on reiser4 tree"
- > +	depends on REISER4_FS
- > +	default y
- > +	---help---
- > +      Make keys larger and use additional bits to order bodies of files
- > within
- > +      a directory in the order of their names, which is what you want
- > +      normally. If you turn this off, file bodies will be ordered by creation
- > +      time, which is not optimal for most users.
- > +
- > +      Warning: flipping this option makes your file system binary
- > +      incompatible.
- > 
- > This needs some explanation. What happens if I have two reiser4 fs on my
- > disk, one written with REISER4_LARGE_KEY, the other one without? Does it
- > prevent me from mounting both filesystems at the same time? If so, will
+Hey.
 
-Right.
+I thought I'd give it a try on 2.6.0-test3-mm1.
 
- > this change some time?
- > 
+Even with 'make mrproper' before compiling, I get the following error
+message:
 
-Not likely. Supporting both key assignment algorithms costs too much at
-run time. Probably small keys will be just obsoleted.
+(Is there any interest in such error reports?)
 
- > 
- > Thanks,
- > Carl-Daniel
- > 
+bobele linux # make bzImage
+  CHK     include/linux/version.h
+  UPD     include/linux/version.h
+  Making asm->asm-i386 symlink
+  CC      scripts/empty.o
+  MKELF   scripts/elfconfig.h
+  HOSTCC  scripts/file2alias.o
+  HOSTCC  scripts/modpost.o
+  HOSTLD  scripts/modpost
+  SPLIT   include/linux/autoconf.h -> include/config/*
+  CC      arch/i386/kernel/asm-offsets.s
+  CHK     include/asm-i386/asm_offsets.h
+  UPD     include/asm-i386/asm_offsets.h
+  CC      init/main.o
+In file included from include/linux/unistd.h:9,
+                 from init/main.c:18:
+include/asm/unistd.h: In function `reiser4':
+include/asm/unistd.h:400: error: `__NR_reiser4' undeclared (first use in this function)
+include/asm/unistd.h:400: error: (Each undeclared identifier is reported only once
+include/asm/unistd.h:400: error: for each function it appears in.)
+make[1]: *** [init/main.o] Error 1
+make: *** [init] Error 2
 
-Nikita.
+
+On Mon, 11 Aug 2003 19:57:31 +0400, Nikita Danilov wrote:
+
+> Hello,
+> 
+> new reiser4 snapshot is available at
+> 
+> http://thebsh.namesys.com/snapshots/2003.08.11/
+> 
+> **********************************************************************
+>                               WARNING!!!
+>                       This code is experimental!
+>     WE ARE NOT KIDDING! DO NOT PUT ANY VALUABLE DATA ON REISER4 YET!
+> **********************************************************************
+> 
+> Lots of changes in this snapshot compared to previous one that was release
+> over half of year ago.  Everything should be better and more stable I
+> hope.
+> 
+> Snapshot is released as a patch against linux-2.6.0-test3.
+> 
+> REISER4_NOOPT config option (Disable compiler optimizations for reiser4
+> code.)  is known to not compile on x86.
+> 
+> The reiser4-kernelonly.diff file represents only required kernel
+> modifications if you plan to use our reiser4 bk repository. It does not
+> contains any reiser4 code
+> 
+> The reiser4.diff is full patch with everything included.
+> 
+> With this snapshot reiser4 supports different on-disk format by default,
+> so you should recreate your reiser4 file systems.
+> 
+> Nikita.
+
+
