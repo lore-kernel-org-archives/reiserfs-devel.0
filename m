@@ -1,23 +1,24 @@
-From: hanasaki <hanasaki@hanaden.com>
-Subject: --rebuild-tree always finds errors --check is ok
-Date: Thu, 30 Dec 2004 23:35:46 -0600
-Message-ID: <41D4E532.9000905@hanaden.com>
+From: Andrew Morton <akpm@osdl.org>
+Subject: Re: reiser4 read performance loss of 17% in latest -mm kernel
+Date: Thu, 30 Dec 2004 21:46:39 -0800
+Message-ID: <20041230214639.71dd6e82.akpm@osdl.org>
+References: <41D4D358.2010406@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22995-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22996-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <41D4D358.2010406@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Running reiser3 on kernel 2.6.10 and 2.6.9 with Debian sarge and unstable.
+Hans Reiser <reiser@namesys.com> wrote:
+>
+> Just an FYI, we are still figuring it out.  andrew, you might note it in 
+> release notes, especially if we don't fix it before your next release.
 
-the --rebuild-tree always finds errors and corrects them.  even when run 
-more than once consecutively without mounting the partition in between.
-
---check says all is good.
-
-
+I'd try reverting simplified-readahead*.patch.
