@@ -1,153 +1,160 @@
-From: Sam Vilain <sam@vilain.net>
-Subject: Re: What Filesystem?
-Date: Thu, 30 Jan 2003 04:58:59 +1300
-Sender: Sam Vilain <sv@vilain.net>
-Message-ID: <200301300458.59629.sam@vilain.net>
-References: <3E38378A.8030406@jtmstudio.fsbusiness.co.uk>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Fwd: Re: Segmentation Fault when mounting ataraid
+Date: Wed, 29 Jan 2003 20:38:16 +0300
+Message-ID: <3E381188.8080701@namesys.com>
+References: <3E36E3EB.4040305@mb.tu-ilmenau.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12540-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12541-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E38378A.8030406@jtmstudio.fsbusiness.co.uk>
+In-Reply-To: <3E36E3EB.4040305@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: james@jtmstudio.fsbusiness.co.uk, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Cc: reiserfs-list <reiserfs-list@namesys.com>, Oleg Drokin <green@namesys.com>
 
-Reiserfs is probably not what you want for doing lots of high volume data=
-=2E =20
-Reiserfs is good with many small files and general purpose use.  It is=20
-actually the slowest filesystem for bulk data.
+Well, that certainly looks like a bug in mount options parsing code.  
+Edward and Oleg, please review and fix.
 
-I'm sure some smartass will probably post some benchmark to prove me wron=
-g,=20
-but SGI have a long heritage of making filesystems for exactly what you=20
-want and so if XFS works I'd say use that.  It's pumpin'.  Of course more=
-=20
-quantitative comparisons can easily be found on the linux-kernel mailing=20
-list.
+Hans
 
-However, the practical difference between the high performance filesystem=
-s=20
-you mentioned, or the difference between running pre-empt or not should b=
-e=20
-considered marginal compared to other factors - such as, the load that=20
-your hard disk controller places on the system and the number of physical=
-=20
-disks you have (and how many RPM they run at).  Keep in mind that you can=
-=20
-often nearly double the data throughput of a system by doubling the numbe=
-r=20
-of physical disks in it, and using RAID.
+Manuel Krause wrote:
 
-Even with the latest UDMA-133, I haven't seen any IDE system actually=20
-perform without bothering the CPU non-trivially (of course YMMV).  Using=20
-SCSI disks and controllers will give you a smoother system ride; which is=
-=20
-why 95% of high-end workstations come equipped with SCSI.  You can get=20
-15,000 RPM U320 SCSI disks, which are f*** fast (though loud).  This is=20
-largely because the SCSI protocol was designed properly, IDE/ATA is a=20
-hack.  Serial-ATA promises to offer SCSI like host efficiency, but I'll=20
-only believe it when I see it.  And at the moment the costs are as bad as=
-=20
-SCSI anyway.
+> Hi!
+>
+> Just forwarding... the ksymoopsed version. Please, send any hints and 
+> solutions or other comments to Jochens address <thehammer@gmx.net> .
+>
+> Manuel
+>
+>
+> -------- Original Message --------
+> From: - Tue Jan 28 20:56:55 2003
+> Date: Tue, 28 Jan 2003 20:47:29 +0100
+> From: Jochen Haemmerle <thehammer@gmx.net>
+> User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.2.1)
+> To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+> Subject: Re: Segmentation Fault when mounting ataraid
+> References: <3E35B2F8.10806@gmx.net> <3E35B99C.2040206@mb.tu-ilmenau.de>
+> In-Reply-To: <3E35B99C.2040206@mb.tu-ilmenau.de>
+>
+> Well, down there it is!!
+> thx for the quick answers
+>
+> Bye,
+>
+> Jochen
+>
+>
+>
+> Manuel Krause wrote:
+>
+> > On 01/27/2003 11:30 PM, Jochen Haemmerle wrote:
+> >
+> >> Hello!
+> >>
+> >> When I try to mount my reiserfs partition on a HPT370 Stripe I get a
+> >> Segmentation Fault. All other partitions (reiserfs of cource) work 
+> fine.
+> >>
+> >> My kernel is the 2.4.20 from Kernel.org
+> >> The PC is a Dual PIII 866 with Via-Apollo Chipset
+> >> The Harddisks are 2 Maxtor 80GB
+> >> ACPI is turned off !
+> >>
+> >> I don't know if this error depends on reiserfs, but maybe someone can
+> >> help me!
+> >>
+> >> Best Regards
+> >>
+> >> Jochen Haemmerle
+> >>
+> >
+> > Can you process it through something like:
+> > "cat this-segfault.txt | ksymoops -m
+> > /boot/System.map-you.had@segfault" and post the result ... while
+> > awaiting the developers' answer?!
+> >
+> > This would provide essentially more info for them (even if they knew
+> > the BUG already), AFAIK.
+> >
+> > Bye,
+> >
+> > Manuel
+> >
+>
+> guardian@viking:~$ cat segfault.txt | ksymoops -m /boot/System.map-2.4.20
+> ksymoops 2.4.6 on i686 2.4.20.  Options used
+>      -V (default)
+>      -k /proc/ksyms (default)
+>      -l /proc/modules (default)
+>      -o /lib/modules/2.4.20/ (default)
+>      -m /boot/System.map-2.4.20 (specified)
+>
+> Unable to handle kernel NULL pointer dereference at vitual address 
+> 00000004
+> c01a62c0
+> *pde = 00000000
+> Oops: 0002
+> CPU:   0
+> EFLAGS: 00010012
+> eax: 00000000   ebx: c03324f8  ecx: dff188a0   edx: c03324fc
+> esi: 00000000   edi: c03324f8  ebp: 00000008   esp: d7839d98
+> Process mount (pid: 327, stackpage=d7839000)
+>       007c0000 098a9f2d c0332518 00000800 c0332520 c0332518 00000080
+> 00000000
+>       003e003f 00000000 c01a6c6c c03324f8 00000000 d7cc54a0 00000008
+> 00000000
+> Call Trace:   [<c01a698d>] [<c01a6c6c>][<c01a6ccc>] [<c01a6e27>]
+> [<c0172671>]
+> [<c0173188>] [<c013c712>] [<c014d546>][<c013c8fd>] [<c014e589>] 
+> [<c014e842>]
+> [<c014e6ad>] [<c014ec6f>] [<c0106f17>]
+> Code: 89 50 04 89 02 c7 01 00 00 00 00 c7 41 04 00 00 00 00 ff 0b
+> Using defaults from ksymoops -t elf32-i386 -a i386
+>
+>
+>  >>ebx; c03324f8 <parse_options+124/1c8>
+>  >>edx; c03324fc <parse_options+128/1c8>
+>  >>edi; c03324f8 <parse_options+124/1c8>
+>
+> Trace; c01a698d <reiserfs_super_in_proc+69/254>
+> Trace; c01a6c6c <reiserfs_per_level_in_proc+f4/134>
+> Trace; c01a6ccc <reiserfs_bitmap_in_proc+20/a0>
+> Trace; c01a6e27 <reiserfs_on_disk_super_in_proc+db/f0>
+> Trace; c0172671 <nlm_shutdown_hosts+e9/11c>
+> Trace; c0173188 <nlmsvc_lock+c8/340>
+> Trace; c013c712 <sys_getdents64+7e/b3>
+> Trace; c014d546 <notesize+1e/2c>
+> Trace; c013c8fd <max_select_fd+9d/a4>
+> Trace; c014e589 <handle_ide_mess+25/194>
+> Trace; c014e842 <msdos_partition+14a/2f8>
+> Trace; c014e6ad <handle_ide_mess+149/194>
+> Trace; c014ec6f <__load_block_bitmap+17f/198>
+> Trace; c0106f17 <show_stack+7/78>
+>
+> Code;  00000000 Before first symbol
+> 00000000 <_EIP>:
+> Code;  00000000 Before first symbol
+>    0:   89 50 04                  mov    %edx,0x4(%eax)
+> Code;  00000003 Before first symbol
+>    3:   89 02                     mov    %eax,(%edx)
+> Code;  00000005 Before first symbol
+>    5:   c7 01 00 00 00 00         movl   $0x0,(%ecx)
+> Code;  0000000b Before first symbol
+>    b:   c7 41 04 00 00 00 00      movl   $0x0,0x4(%ecx)
+> Code;  00000012 Before first symbol
+>   12:   ff 0b                     decl   (%ebx)
+>
+>
+>
+>
 
-Of course, being able to move around large chunks of data quickly extends=
-=20
-to other parts of the system, too.  The bigger and faster the system BUS,=
-=20
-the better.  Having `researched hardware platforms' you should know this,=
-=20
-of course.  As far as Athlon Motherboards go, Tyan are a reputable vendor=
-=20
-who used to produce Sun clone motherboards - they have a really nice dual=
-=20
-capable system with dual U160 SCSI controllers and 66MHz PCI slots - whic=
-h=20
-must mean that the SCSI controllers run at that speed.  It's definitely=20
-worth the ~$500 price tag.  They all pale in comparison to R10000+ based=20
-SGI or Sparc 9+ platforms of course.
 
-=46rom a graphic artist's perspective, you're probably better off buying =
-a=20
-new G4 based system and running MacOS X, you know :-).  Linux isn't=20
-exactly `The Platform' for digital content creation.  The Mac's CPU and=20
-hardware platform are a lot better at moving data around, and if you've=20
-got a Mac then you can run Mac OS X, or Linux + Mac OS inside an emulator=
-=20
-(which runs FAST!).
+-- 
+Hans
 
-As a final note, keep in mind that a filesystem reformat does not mean a=20
-re-install; keep your partitions as small as practical and you can change=
-=20
-them over individually.
 
-Sam.
-
-On Thu, 30 Jan 2003 09:20, James Thompson wrote:
-> Dear Sirs,
->
-> I am a visual artist and musician.  As well as a range of traditional
-> media I use Linux Mandrake 8.0 on an old Athlon-based PC.  I wrote to
-> Mr. Hans Reiser, after following a mailto link on the Namesys website,
-> with a slightly lengthier version of the question written below, and wa=
-s
-> advised that "This is really a better question for our mailing list
-> (reiserfs-list@namesys.com) than for me, as I am obviously biased."  I
-> am therefore sending this email to you in the hope that somebody may be
-> able to solve my puzzle - or at least direct me towards another
-> knowledgeable source of information!  Thank you.
->
->  >> The question:
->
-> ... I have done much research in the field of computer /hardware/
-> suitable for commercial Digital Content Creation (P4 Xeon; Wildcat
-> graphics; ART's "PURE" raytracing PCI render board, etc. ...) and now
-> look to a better understanding of the choices I might make for a
-> (presumably) Linux-based OS running on (presumably) Intel 32-bit
-> hardware SUCH AS these two elements:-
->
->      1. Kernel Patches - pre-empt and low latency;
->      2. File System type - EXT3, ReiserFS, SGi's XFS, HFS, JFS....;
->
-> Would you be able to advsie me on any issues I might need to be aware o=
-f
-> and perhaps any firm decisions you think would be good for me to make,
-> regarding OS choice and configuration?  I realise that all pre-built
-> workstations supplied by Dell, IBM and HP-Compaq come with RedHat, but,
-> just for the record, I like Mandrake and I am getting into the
-> WindowMaker desktop :).
->
-> I also develop my website locally using Apache (but hosted on Freeserve
->
-> :( ), and I understand pre-empt &/or low-latency patches are
->
-> counter-effective for servers.  However, as long as no real harm can be
-> expected, my priority is for graphics and sound creation, editing,
-> compositing, publishing, etc., while fast response for just developing
-> html pages isn't.
->
-> I would like to believe that, somewhere, I can get a 'standard' Linux
-> patched for optimal DCC, with suitable FS type available to choose from
-> during installation.  If not, I will have to find and apply patches, bu=
-t
-> I know that with FS type any change demands a reformat, which can reall=
-y
-> disrupt a working week!
->
->  >> [End question]
->
-> Yours faithfully,
->
-> James Thompson,
-> Visual Artist & Musician
-> H.E. Student of Fine Arts
-
---=20
-Sam Vilain, sam@vilain.net
-
-  Sure there are dishonest men in local government.  But there are
-dishonest men in national government too.
-RICHARD M NIXON
