@@ -1,58 +1,41 @@
-From: Tupshin Harper <tupshin@tupshin.com>
+From: Henning Westerholt <henning@skalatan.de>
 Subject: Re: Reiser4 and linux 2.6.0
-Date: Sat, 09 Aug 2003 19:02:56 -0700
-Message-ID: <3F35A7D0.8000607@tupshin.com>
-References: <3F1EF7DB.2010805@namesys.com>	<3F1F6005.4060307@tupshin.com>	<1059021113.7911.13.camel@localhost>	<3F1F66F0.1050406@tupshin.com>	<1059024090.9728.22.camel@localhost>	<16159.48809.812634.455756@laputa.namesys.com>	<3F1FF6DB.2090104@tupshin.com>	<20030724152649.GB12647@work.bitmover.com>	<3F1FFBF9.2050308@tupshin.com>	<20030724155432.GE12647@work.bitmover.com>	<20030801161520.GA17083@pillars.net>	<3F2A94F1.2010502@tupshin.com> <16170.38409.267629.396781@laputa.namesys.com> <3F351722.2000108@namesys.com>
+Date: Sun, 10 Aug 2003 14:30:04 +0200
+Message-ID: <200308101430.08620.henning@skalatan.de>
+References: <3F1EF7DB.2010805@namesys.com> <3F351722.2000108@namesys.com> <3F35A7D0.8000607@tupshin.com>
+Reply-To: henning@skalatan.de
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15272-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15273-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F351722.2000108@namesys.com>
+In-Reply-To: <3F35A7D0.8000607@tupshin.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Nikita Danilov <Nikita@Namesys.COM>, reiserfs mailing list <reiserfs-list@Namesys.COM>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Hans Reiser wrote:
-
-> Nikita Danilov wrote:
+Am Sonntag, 10. August 2003 04:02 schrieb Tupshin Harper:
+> It would still be wonderful to have a way of getting such patches
+> without going through bk. I requested that a working (complete) patch be
+> made against a recent kernel version(2.6.0-test2 or later at this point)
+> a few weeks ago, and while a got positive response, I still haven't seen
+> anything. I would think you would want to make this very easy for people
+> who are already going through the effort of testing 2.6 kernels.
 >
->> Tupshin Harper writes:
->> > Larry was kind enough to send me the patch of his results of this 
->> merge, > but unfortunately it suffered from the same incompleteness 
->> problems that > the recent diffs on the namesys ftp site do. They 
->> apply cleanly, but > they completely omit the contents of the 
->> fs/reiser4 directory which has > the bulk of the code. It seem that 
->> the problem resides with the reiser > folks. Maybe they have some 
->> more complicated structure involving two > trees. Not sure, but a 
->> correct patch looks like it has to come from the > reiser4 team.
->>
->> This is because Larry only made a diff against
->> bk://bk.namesys.com/bk/reiser4-linux-2.5 which is a repository
->> containing changes needed by the reiser4 in the core kernel code.
->>
->> Bulk of reiser4 code (content of fs/reiser4) is in
->> bk://bk.namesys.com/bk/reiser4 repository.
->>
->> > > -Tupshin
->> >
->> Nikita.
->>
->>
->>  
->>
-> make more effort to make this well documented for users.  If they are 
-> asking these questions, it means that you failed to document.
->
-It would still be wonderful to have a way of getting such patches 
-without going through bk. I requested that a working (complete) patch be 
-made against a recent kernel version(2.6.0-test2 or later at this point) 
-a few weeks ago, and while a got positive response, I still haven't seen 
-anything. I would think you would want to make this very easy for people 
-who are already going through the effort of testing 2.6 kernels.
+> -Tupshin
 
--Tupshin
+Hello List,
+
+i would love to see a patch against a 2.6.0-test kernel too. I don't want to 
+obtain a bitkeeper licence.
+A anoncvs-gateway as a alternative would be also ok ;)
+
+As a happy reiserfs user, it is hard to read about the various changes in v4, 
+and can't test them for yourself. 
+
+
+Henning
 
