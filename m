@@ -1,36 +1,92 @@
-From: Cyrille Chepelov <cyrille@chepelov.org>
-Subject: Re: FIFO files
-Date: Tue, 17 Jun 2003 19:07:20 +0200
-Message-ID: <20030617170720.GC14124@chepelov.org>
-References: <20030617162127.GA14124@chepelov.org> <3EEF40B3.6000300@gmx.net>
+From: Edward Shushkin <edward@namesys.com>
+Subject: Re: Several questions about encrypted filesystem
+Date: Tue, 17 Jun 2003 21:22:32 +0400
+Sender: edward
+Message-ID: <3EEF4E58.1E61F66F@namesys.com>
+References: <20030617161725.17287.qmail@web80507.mail.yahoo.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14587-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14588-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3EEF40B3.6000300@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: tdwebste2@yahoo.com
+Cc: "Zhao, Forrest" <forrest.zhao@intel.com>, reiserfs-list@namesys.com
 
+Timothy Webster wrote:
+> 
+> Hi,
+> The first question in my mind is always key
+> management. By that I mean, where are the keys stored,
+> how are does key rotation occurr, who holds the keys
+> for shared files, (by this I mean serveral authers
+> contributed to a file).
+> 
+> 1) Shared files, and file parts.
+> In order to address this situation. Access needs to be
+> broken into parts, authenication, authorization,
+> encryption/decryption. These can be though as an
+> "signed authenication module", "trusted authorization
+> database server", "signed encryption/decryption
+> module". By signed and trusted, I mean the local
+> authenication and encryption modules care out a secure
+> hand shake with the authorization server. The
+> authenitcation module must prove that its code trust
+> worthy to the authorization server. And the
+> authorization server must prove to the authenication
+> module that it is "the" authorization server the
+> authenication module was designed to trust. And
+> similarly for the encryption/decryption module.
+> Why all this work? So that each can be run by
+> different users perhaps on different hosts, such as
+> "SAN".
+> 
+> 2) Key rotation and backups
+> Over time the number of keys quickly become
+> prohibitive. You need to in stead store the "seed key
+> and the dimension" of multi-dimension key space. The
+> multi-dimension key space is actually several key
+> spaces combined to make a higher dimensional key
+> space.
+> The key space is created by sequencal encryption of
+> the seed key inserted into dimension space controlled
+> by a "secure" psedo-random walk. When a new key is
+> required it is taken form the mult-dimensional key
+> space as the next index number. Keys don't need to use
+> all the deminsion in its index number.
 
-Le Tue, Jun 17, 2003, =E0 06:24:19PM +0200, Carl-Daniel Hailfinger a =E9cri=
-t:
+Ok, this requires additional identification (key, seed).
+So if you export a key created 10 years ago, then there 
+will be only one key in the appropriate multi-dimension
+key space, right? ;)
 
-> This facility has been present in linux for years. Just google for "sparse
-> files".
+Edward. 
 
-Yes sparse files would do. However, after a sizeable use of the facility,
-you'd end up with a giant hole at the beginning, whatever queued data, and
-EOF.=20
-What I want to do is the ability to just remove the hole in front (just as
-when there is no point in having a hole at the end of the file, you just
-truncate that hole out), so that seek(SEEK_BEGIN,0) positions me at the
-beginning of useful data (or EOF if my queue is empty).
-
-	-- Cyrille
-
---=20
+ Which allows
+> transition to new key spaces as old ones get filled.
+> Or Remote sites which will ofcourse have different key
+> spaces.
+> 
+> At some point in the future a particular key is
+> required, it is retrived by first regenating the key
+> space, then using the key in the key space specified
+> my the "particular" key's index number. There is no
+> reason that the key's index number and key space
+> "number" can not be stored in the clear, lets say in
+> the file header.
+> 
+> Using this method there is basically unlimited keys
+> available, and they can be stored and retrived
+> efficently.
+> 
+> This is brief and incomplete.
+> -tim
+> 
+> 
+> __________________________________
+> Do you Yahoo!?
+> SBC Yahoo! DSL - Now only $29.95 per month!
+> http://sbc.yahoo.com
