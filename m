@@ -1,52 +1,51 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: A question about slum and relocate
-Date: Tue, 25 Nov 2003 13:19:03 +0300
-Message-ID: <20031125101902.GB2144@backtop.namesys.com>
-References: <Pine.GSO.4.58.0311241820230.6503@bingsun2.cc.binghamton.edu>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: bug report
+Date: Tue, 25 Nov 2003 13:54:21 +0300
+Message-ID: <200311251354.21720.vitaly@namesys.com>
+References: <NHBBLMBAALMFLLANBMBIMECPCAAA.Stephan.Reichel@1net4you.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16160-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16161-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <NHBBLMBAALMFLLANBMBIMECPCAAA.Stephan.Reichel@1net4you.de>
 Content-Disposition: inline
-In-Reply-To: <Pine.GSO.4.58.0311241820230.6503@bingsun2.cc.binghamton.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Zhihui Zhang <bf20761@binghamton.edu>
-Cc: reiserfs-list@namesys.com
+To: Stephan Reichel <Stephan.Reichel@1net4you.de>, reiserfs-list@namesys.com
 
-On Mon, Nov 24, 2003 at 06:50:07PM -0500, Zhihui Zhang wrote:
-> Hi,
-> 
-> After reading some code, it seems to me that a slum does not have to be
-> relocated.  If a slum is small , it will use the overwrite strategy.  Is
-> this understanding correct?  
 
-Not exactly.
+Hello, 
 
-If slum is big we set pos->leaf_relocate and always relocate leaf nodes.
-Except this, flush alg. makes relocate/overwrite decision individually for each
-node. Leaves can be relocated even if slum size < FLUSH_RELOCATE_THRESHOLD.
+On Tuesday 25 November 2003 03:44, Stephan Reichel wrote:
+> Hello,
+> thanks to Vitaly for the hint.
+> And this is the next result:
+> -----------
+>
+> proxy:/home/reichel# reiserfsck --rebuild-tree -l /home/reichel/rfsck.log
+> /dev/hdb6
+> reiserfsck 3.6.11 (2003 www.namesys.com)
+...
+> Pass 3 (semantic):
+> /old_var/spool/wwwoffle/prevout6/OrQokTtODwNeuEEihdvrfHQlbalance.c 1019
+> leaf_delete_items_entirely
+> leaf_delete_items_entirely: bad leaf 55340: level=1, nr_items=22,
+> free_space=65484 rdkey
+> Aborted
 
-> Also, at the leaf level, if the number of
-> dirty nodes exceeds FLUSH_RELOCATE_THRESHOLD (64), they are always
-> relocated.  Is there any similar threshold for an internal level?  
-
-no.
-
-> Does Reiser4 relocate internal nodes separately (i.e. not as part of the slum
-> involving leaf nodes.  
-
-yes.
-
-> Note a slum can grow backwards if a dirty node is the leftmost child of a
-> parent at an internal level)?  Thanks for your enlightenment.
-> 
-> -Zhihui
-> 
-> -- 
+Hm, this is strange. 
+Did you build the reiserfsprogs on the same mashine where you run it?
+Would you run
+    debugreiserfs -p /dev/hdb6 | bzip2 -c > hdb6.bz2
+and provide it for downloading -- I will debug reiserfsck localy on your fs 
+metadata if there is some bug. Although it may be some hardware problem
+also -- with hdb or with the memory. 
 
 -- 
-Alex.
+Thanks,
+Vitaly Fertman
+
+
