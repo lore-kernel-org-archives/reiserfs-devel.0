@@ -1,44 +1,49 @@
-From: hanasaki <hanasaki@hanaden.com>
-Subject: Re: --rebuild-tree always finds errors --check is ok
-Date: Fri, 07 Jan 2005 18:44:06 -0600
-Message-ID: <41DF2CD6.7040800@hanaden.com>
-References: <41D71C4E.6000209@hanaden.com> <1104849038.32178.54.camel@tribesman.namesys.com> <41DAD195.1080306@hanaden.com> <200501072343.08374.vitaly@namesys.com>
+From: Shoshannah Forbes <xslf@xslf.com>
+Subject: Re: rebuild-tree working for more then 3 days- what to do?
+Date: Sat, 08 Jan 2005 06:46:44 +0200
+Message-ID: <4BE282F3-6130-11D9-903C-003065C0167C@xslf.com>
+References: <2AEAD962-6089-11D9-A3E5-003065C0167C@xslf.com>
+ <1105093253.3616.34.camel@tribesman.namesys.com>
+ <53BAB6CE-60A5-11D9-8B41-003065C0167C@xslf.com>
+ <1105101220.4192.68.camel@tribesman.namesys.com>
+ <1332240552.20050107134330@tnonline.net>
+ <87390888-60AC-11D9-8B41-003065C0167C@xslf.com>
+ <1105103606.3616.98.camel@tribesman.namesys.com>
+ <20050108002947.0f149ce2.xslf@xslf.com> <41DF1CCD.8010900@airmail.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23081-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-list-return-23082-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200501072343.08374.vitaly@namesys.com>
+In-reply-to: <41DF1CCD.8010900@airmail.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+To: Chris Cox <ccox@airmail.net>
+Cc: reiserfs-list@namesys.com
 
-Could you outline exactly what takes place on a rebuild-tree?
 
-I was under the incorrect assumption that if a rebuild-tree is 100% 
-successful then the FS is ok and a subsequent rebuild-tree will have 
-nothing to fix/report.  .....
+On 08/01/2005, at 01:35, Chris Cox wrote:
+> Not sure about this.. but I have observed that some systems trash 
+> resierfs3
+> pretty badly, while others do not.  The problem seems a bit worse with 
+> LVM.
+> For example a Compaq n610c laptop will trash reiserfs3 on hard 
+> shutdown or crash
+> about 1 out of every 3 times (with entire directory trees going to 
+> lost+found
+> even though no writes involved the files there).  Likewise for my dual
+> AMD using the Tyan S2468UGN mb.  But my laptop, Toshiba 3000-s504 is 
+> fine.
+> And my dual Opteron (Sun w2100z) is fine.  These can be crashed, 
+> powered off
+> without everything going into lost+found.  I suspect something is up.. 
+> and
+> it may be chipset related (??).
 
-Vitaly Fertman wrote:
-> On Tuesday 04 January 2005 20:25, hanasaki wrote:
-> 
->>Version of reiserfsk
->>======================
->>== From debian sarge
->>/sbin/reiserfsck -V
->>reiserfsck 3.6.19 (2003 www.namesys.com)
->>== also used the version in knoppix 3.7 with similar results
->>
->>the output of two consecutive runs of --rebuild-tree on the same
->>unmounted partition are attached.  Below is the diff
-> 
-> 
-> rebuild-tree finds some blocks that looks like reiserfs formatted 
-> blocks for the first sight whereas they are not and just belongs to 
-> some file bodies. The consistency check reveals no valid metadata 
-> in them, so they are considered as not valid reiserfs formatted blocks
-> and left not modified on disk. This is why the second run of rebuild-tree
-> finds them again and tries to do all the stuff again.
-> 
+FWIW, my machine is a cheap AMD duron with a SiS 740 chipset.
+---
+Shoshannah Forbes
+http://www.xslf.com
+
