@@ -1,38 +1,46 @@
-From: Henning Westerholt <henning@skalatan.de>
-Subject: reiserfs4 fails to free unlinked files
-Date: Sun, 17 Aug 2003 19:03:48 +0200
-Message-ID: <200308171903.52263.henning@skalatan.de>
-Reply-To: henning@skalatan.de
+From: reiserfs@ied.com
+Subject: how screwed am I ? - lost 79160kB off of a May 2001 reiserfs partition
+ to a swap :-(
+Date: Sun, 17 Aug 2003 13:44:16 -0400 (EDT)
+Message-ID: <no.Yo.N.nN.0308171326020.2986-100000@business.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15342-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15343-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-I continued my test with "stress" on a fresh 10 GB Partition. With the 
-previous compile jobs i noticed, that reiserfs4 fails to free unlinked files 
-under load.
-
-I was able to reproduce this problem only with stress. 
-"stress -v -i 2 -c 2 -m 2 -d 2 --hdd-bytes 100M" produce cpu, vm, io load and 
-wrote with two processes a random 100 MB file, delete the files and repeat 
-forever.
-
-This test-load fills the fs in 6 minutes. 
 
 
-The same test on a small ext2 fs runs hours without problems. Reiserfs4 could 
-complete the test only if i decrease the filesize down to 50 MB and without 
-any additional load.
+  Hello all,
 
--- 
-Regards,
+   I screwed myself - I've overwritten the first 79160kB of 
+a 38GB partition (fdisk says 38796975 blocks) with swap :-(
 
-Henning
+   The partition was almost full. I also have full output of 
+"find ." on that partition before I screwed up. Total of 
+639146 files.
+
+   I don't care about the files in the first 79160kB, since 
+those would be OS installation files. But I have many 
+important personal files in the remaining 38GB.
+
+   The partition was created as part of a Mandrake 
+installation in about May 2001 (I think it was Mandrake 7.2 
+then?). The kernel was linux-2.4.3 (which reiserfs version 
+would this be?)
+
+   I know I'm screwed, but exactly how much ?
+
+   Any tips / suggestions / procedures for recovering these
+files ?
+
+    Thanks a bunch in advance,
+
+        John
+
 
