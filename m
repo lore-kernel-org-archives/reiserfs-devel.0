@@ -1,49 +1,48 @@
 From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: Reiser4 and linux 2.6.0
-Date: Mon, 11 Aug 2003 15:25:51 +0400
-Message-ID: <16183.32063.242994.368675@laputa.namesys.com>
-References: <3F1EF7DB.2010805@namesys.com>
-	<3F351722.2000108@namesys.com>
-	<3F35A7D0.8000607@tupshin.com>
-	<200308101430.08620.henning@skalatan.de>
+Subject: reiser4 snapshot
+Date: Mon, 11 Aug 2003 19:57:31 +0400
+Message-ID: <16183.48363.884605.564937@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15281-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15282-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200308101430.08620.henning@skalatan.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: henning@skalatan.de
-Cc: reiserfs-list@namesys.com
+To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Cc: Reiserfs developers mail-list <Reiserfs-Dev@Namesys.COM>
 
-Henning Westerholt writes:
- > Am Sonntag, 10. August 2003 04:02 schrieb Tupshin Harper:
- > > It would still be wonderful to have a way of getting such patches
- > > without going through bk. I requested that a working (complete) patch be
- > > made against a recent kernel version(2.6.0-test2 or later at this point)
- > > a few weeks ago, and while a got positive response, I still haven't seen
- > > anything. I would think you would want to make this very easy for people
- > > who are already going through the effort of testing 2.6 kernels.
- > >
- > > -Tupshin
- > 
- > Hello List,
- > 
- > i would love to see a patch against a 2.6.0-test kernel too. I don't want to 
- > obtain a bitkeeper licence.
- > A anoncvs-gateway as a alternative would be also ok ;)
- > 
- > As a happy reiserfs user, it is hard to read about the various changes in v4, 
- > and can't test them for yourself. 
- > 
+Hello,
 
-Snapshot will be done to-day (2003.08.11).
+new reiser4 snapshot is available at 
 
- > 
- > Henning
- > 
+http://thebsh.namesys.com/snapshots/2003.08.11/
+
+**********************************************************************
+                              WARNING!!! 
+                      This code is experimental! 
+    WE ARE NOT KIDDING! DO NOT PUT ANY VALUABLE DATA ON REISER4 YET!
+**********************************************************************
+
+Lots of changes in this snapshot compared to previous one that was
+release over half of year ago.  Everything should be better and more
+stable I hope.
+
+Snapshot is released as a patch against linux-2.6.0-test3.
+
+REISER4_NOOPT config option (Disable compiler optimizations for reiser4
+code.)  is known to not compile on x86.
+
+The reiser4-kernelonly.diff file represents only required kernel
+modifications if you plan to use our reiser4 bk repository. It does not
+contains any reiser4 code
+
+The reiser4.diff is full patch with everything included.
+
+With this snapshot reiser4 supports different on-disk format by default,
+so you should recreate your reiser4 file systems.
 
 Nikita.
+
