@@ -1,61 +1,34 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH 2/5] selinux: adds a private inode operation
-Date: Mon, 22 Nov 2004 14:08:18 -0500
-Message-ID: <41A23922.80501@suse.com>
-References: <20041121001318.GC979@locomotive.unixthugs.org>	 <1101145050.18273.68.camel@moss-spartans.epoch.ncsc.mil>	 <41A22A2D.1000708@suse.com> <1101148090.18273.94.camel@moss-spartans.epoch.ncsc.mil>
+From: Cal <hihone@bigpond.net.au>
+Subject: Re: reiser4 problems in 2.6.10-rc1-mm
+Date: Tue, 23 Nov 2004 07:24:50 +1100
+Message-ID: <20041123072450.6f0c68ea.hihone@bigpond.net.au>
+References: <1100667360l.1027l.0l@comotion>
+	<1100850087l.4414l.0l@comotion>
+Reply-To: hihone@bigpond.net.au
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22512-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22513-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1101148090.18273.94.camel@moss-spartans.epoch.ncsc.mil>
+In-Reply-To: <1100850087l.4414l.0l@comotion>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Stephen Smalley <sds@epoch.ncsc.mil>
-Cc: Andrew Morton <akpm@osdl.org>, Linus Torvalds <torvalds@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, James Morris <jmorris@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Kacper Wysocki <kacperw@online.no>
+Cc: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+----------
+and then at Fri, 19 Nov 2004 07:41:24 +0000, it was written ...
+ >"Re: 2.6.10-rc2-mm1: oops when accessing reiser4 fs's(maybe fix	 
+ >provided)" on this very same list, since Mathieu Segaud seemed to
+ >have   >problems similar to mine. This did indeed fix my bootup
+ >oopsing problems, however the filesystem still oopses+segfaults
+ >some important   >applications - ie apt-get as described in the
+ >previous post.
 
-Stephen Smalley wrote:
-| On Mon, 2004-11-22 at 13:04, Jeff Mahoney wrote:
-|
-|>Yes, you're right. The isec->initialized check means that code never
-|>gets executed.
-|
-|
-| Ok.  How about the untested diff below relative to your patch?  It
-| removes the unnecessary code, replaces the unused inherits flag field
-| (legacy from earlier code) with a private flag field, does not set the
-| SID in selinux_inode_mark_private (leaving it with the unlabeled SID,
-| which will ensure that we notice it if it ever reaches a SELinux
-| permission check), and modifies SELinux permission checking functions
-| and post_create() to test for the private flag and skip SELinux
-| processing in that case.  Note that this means that reiserfs should be
-| able to use the VFS helpers if desired without interference by SELinux
-| when accessing these private inodes.
-|
+Still getting the "apt-get update" BUG failure with 2.6.10-rc2-mm3. 
+As reported under a different thread, there seems to be a "sometimes"
+factor involved, which doesn't help at all.
 
-Excellent. Thanks. Preliminary testing works as expected (ie: deadlocks
-don't occur, xattrs/<dir> is removed when owning file is deleted)
-
-I've integrated the changes into my patch set. With those issues
-addressed, would you feel these would be appropriate for inclusion? I
-suspect you may have gotten questions as many interested parties in this
-feature working as I have.
-
-- -Jeff
-
-- --
-Jeff Mahoney
-SuSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iD8DBQFBojkiLPWxlyuTD7IRAoM/AJ9XQ/twgcSTiRGQU1kOp01A2NlhywCfWrvF
-/LtguPq+tMjFe1uThpR4fws=
-=izmO
------END PGP SIGNATURE-----
+cheers, Cal
