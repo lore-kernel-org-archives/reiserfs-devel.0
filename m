@@ -1,44 +1,37 @@
-From: Mike Fedyk <mfedyk@matchmail.com>
-Subject: Re: v3 experimental data=ordered and logging speedups for 2.6.1
-Date: Mon, 19 Jan 2004 14:54:14 -0800
-Sender: Mike Fedyk <mfedyk@srv-lnx2600.matchmail.com>
-Message-ID: <20040119225414.GV1748@srv-lnx2600.matchmail.com>
-References: <1074530725.29546.178.camel@tiny.suse.com> <200401192353.03670.Dieter.Nuetzel@hamburg.de>
+From: Redeeman <redeeman@metanurb.dk>
+Subject: Re: Snapshot against 2.6.1 released.
+Date: Tue, 20 Jan 2004 00:47:20 +0100
+Message-ID: <1074556040.32288.0.camel@redeeman.linux.dk>
+References: <16395.60465.989777.981597@laputa.namesys.com>
+Reply-To: redeeman@metanurb.dk
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16577-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16578-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200401192353.03670.Dieter.Nuetzel@hamburg.de>
+In-Reply-To: <16395.60465.989777.981597@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
-Cc: Chris Mason <mason@suse.com>, reiserfs-list@namesys.com, green@linuxhacker.ru, Gerd Knorr <kraxel@suse.de>, Jeff Mahoney <jeffm@suse.com>
+To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-On Mon, Jan 19, 2004 at 11:53:03PM +0100, Dieter N?tzel wrote:
-> An EXPORT was missing in linux/fs/buffer.c to compile ReiserFS 3.x.x as modul 
-> (inode.c, unresolved symbol):
-> 
-> [-]
-> int try_to_release_page(struct page *page, int gfp_mask)
-> {
->         struct address_space * const mapping = page->mapping;
-> 
->         if (!PageLocked(page))
->                 BUG();
->         if (PageWriteback(page))
->                 return 0;
-> 
->         if (mapping && mapping->a_ops->releasepage)
->                 return mapping->a_ops->releasepage(page, gfp_mask);
->         return try_to_free_buffers(page);
-> }
-> EXPORT_SYMBOL(try_to_release_page);
-> [-]
-> 
-> Up and running.
+the love kernel patch provides reiser4
 
-Uh, oh, I think several people won't like exporting that function...
+
+On Mon, 2004-01-19 at 15:39, Nikita Danilov wrote:
+> Hello,
+> 
+> new snapshot against 2.6.1 kernel is at
+> 
+> http://namesys.com/snapshots/2004.01.19/
+> 
+> look into READ.ME file for details.
+> 
+> Nikita.
+-- 
+Regards, Redeeman
+()  ascii ribbon campaign - against html e-mail 
+/\                        - against microsoft attachments
+
+
