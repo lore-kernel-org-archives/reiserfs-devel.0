@@ -1,151 +1,134 @@
-From: "Humberto Massa" <humberto.massa@almg.gov.br>
+From: Matthew Palmer <mpalmer@hezmatt.org>
 Subject: Re: reiser4 non-free?
-Date: Sat, 08 May 2004 11:13:53 -0300
-Message-ID: <1084025633.28080.196082736@webmail.messagingengine.com>
+Date: Sun, 9 May 2004 17:08:12 +1000
+Message-ID: <20040509070812.GB1247@hezmatt.org>
+References: <4097CCA4.4060707@namesys.com> <87fzag139k.fsf@aule.evenmere.org> <4099A868.9030406@slaphack.com> <20040506.083242.41632888.wlandry@ucsd.edu> <87k6zpy8ke.fsf@aule.evenmere.org> <20040506143643.GB25505@raptus.homelinux.org> <877jvpy08v.fsf@aule.evenmere.org> <409A7F98.7040609@namesys.com> <20040506232310.GA25081@hezmatt.org> <409BB5CE.3020805@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18557-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Return-path: <bounce-debian-legal=debian-legal=m.gmane.org@lists.debian.org>
 Content-Disposition: inline
+In-Reply-To: <409BB5CE.3020805@namesys.com>
+Resent-Message-ID: <Fw2DFD.A.LNF.gkdnAB@murphy>
 List-Id: <reiserfs-devel.vger.kernel.org>
+List-Post: <mailto:debian-legal@lists.debian.org>
+List-Help: <mailto:debian-legal-request@lists.debian.org?subject=help>
+List-Subscribe: <mailto:debian-legal-request@lists.debian.org?subject=subscribe>
+List-Unsubscribe: <mailto:debian-legal-request@lists.debian.org?subject=unsubscribe>
+List-Archive: <http://lists.debian.org/debian-legal/>
 Content-Type: text/plain; charset="us-ascii"
-To: rms@gnu.org
-Cc: debian-legal@lists.debian.org, Valdis.Kletnieks@vt.edu, humberto.massa@almg.gov.br, reiser@namesys.com, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-Mr. Stallman:
+On Fri, May 07, 2004 at 09:14:06AM -0700, Hans Reiser wrote:
+> Matthew Palmer wrote:
+> > Hans Reiser:
+> >>Q: Can we the distro preserve the credits but send the credits to 
+> >>/dev/null.
+> >>
+> >>A: No. How can you even ask such a question?
+> >
+> >Q: Can we the distro send the credits to another virtual console other than
+> >the one the user is currently looking at?
+> >
+> >Likely Answer: No.  How can you even ask such a question?
+> >
+> >Actual answer: ???
+> >
+> >Q: Must we then force the user to stay on the virtual console which the
+> >credits are displayed until the notice has finished displaying?
+> >
+> >Likely Answer: No.
+> >
+> >Actual Answer: ???
+>
+> the current credits do not prevent console switching, though they do 
+> print to the one the user interacted with when he caused the mkreiserfs 
+> to occur.  why would you want to change that?
 
-First of all, I would like to state that I have nothing but deep respect
-and admiration for your ideals, and all your work. Thank you for
-everything.
+I'm not thinking in terms of modifying mkreiserfs directly, although that is
+a possible option.  I was trundling along the installer thought path, and
+having noted that you dismissed redirecting the credits to /dev/null, I
+thought about a GUI installer, which invokes mkreiserfs in the background,
+and the user doesn't see any of the output under normal circumstances.  It
+probably isn't redirected to /dev/null, but it would be printed on the VC
+which invoked the X session, not in the GUI, which would mean that it would
+be *very* unlikely that the user would ever see the credits messages. 
+That's very, very close to sending the output to /dev/null.  So I was just
+interested in where you thought the line-in-the-sand would be.
 
-That said, I humbly disagree with your e-mail:
+If it's permissible to cause the credits not to appear in the user's
+ordinary line of view, as long as they appear *somewhere*, I can imagine
+that the credits will appear in all sorts of unlikely places.  That way the
+distributors will always be following the letter of your licence, and can
+still play their branding games[1].
 
-RMS wrote:
->> It's the same case as Windows NDIS drivers loading on linux. They
->> were created in a different environment, and would exist as they are
->> even if linux did not exist. Provided GPL'd glue code, you can load
->> them in the linux kernel, and they are _not_ derivative works.
+> >Q: Where is the limit between displaying the credits where the user won't
+> >necessarily see them, and forcing the user to read them?
+> >
+> >Likely Answer: Umm...
+> >
+> >Actual Answer: ???
 >
->The idea that "glue code" makes it ok to combine GPL-covered code with
->non-free code has no basis in the GPL. The GPL applies to the entire
->combination of code that is combined into a larger program. If a.o is
->under the GPL and talks to b.o which talks to c.o, the GPL covers all
->three files, if all three are combined as one program.
->
->Linus has implicitly and sometimes explicitly given permission for some
->kinds of non-free dynamically loaded modules; perhaps the concept of
->"glue code" is relevant in terms of the permission he has given.  I'm
->not the one to ask about that kind of issue.
+> Display the credits at the same times that running the tool without the 
+> wrapper would display them, and the license is satisfied.  If you want 
 
-No, this idea has basis in copyright law. I specifically mentioned
-Brazilian copyright laws in my e-mails, because that's what I have some
-knowledge of, but the Berne convention is also reasonably clear, if you
-think about it.
+Now that is a fairly explicit description of what the terms of the licence
+are.  I would respectfully suggest that become an integral part of the
+licence -- preferably with the exact description of the credits to be
+displayed, so that differing interpretations of the term "credits" and
+confusion with "adverts" (which even dictionaries can't agree on) don't get
+in the way.
 
-Brazilian copyright (author's rights, in truth) law says: a derived work
-is the result of the transformation of an original work, that is an
-intellectual creation on its own standing (best translation I can do).
-So, a good rule of thumb a Brazilian copyright lawyer would use to
-eliminate the possibility of a work be derived for another is to ask
-himself: would work D exist (in the same form it currently exists) if
-work O did not exist? Ellaborating a little bit more than I did in my
-previous e-mails, if the answer is _yes_, it would exist, in the same
-form it exists currently, even if work O did not exist, then D _IS_
-_NOT_ a derived work from O. If the answer is _no_, it would not exist
-in the same current form, then you'll have to dig deeper.
+> >There's something I haven't seen answered in this thread or the other
+> >recurring ones on the same topic: have you ever actually made a formal
+> >request to any of the distributions which have butchered your credits to
+> >reinstate them?  If so, what was the response?
+>
+> I did not make a formal request first before changing the license.  
+> Maybe you have a point there.  I was pretty pissed when they removed the 
+> credits without even mentioning that they had done so....  You see, that 
+> is part of the problem.  I won't know about all the times the credits 
 
-In the case of a NDIS driver, the driver itself is without doubt NOT a
-derived work on the linux kernel. It would exist as-is even if linux did
-not exist; the glue code IS (also without doubt) a derived work on the
-linux kernel. The question is: "is there any license/copyright
-infringement?". The answer is: no, under no circumstances. When the glue
-code writer wrote the glue code, he was making a permitted modification
-on the linux kernel (of which he had a GPL license), and of course I
-suppose he is abiding the other terms of the GPL for distribution of the
-glue code (p.ex., distributing it under the terms of the GPL also). When
-the user linked the glue code with the NDIS driver code, he was doing
-something inherent to the *use* of the kernel, the glue code, and the
-NDIS driver code, which we know is quite out of reach of copyright law.
-In the worst case, he would be in violation of some EULA for the NDIS
-driver code.
+Understandably.
 
-This is not a Linus/Linux exemption, is just the application of the law.
-What Linus did was to dig into copyright law (USofAn copyright law - USC
-17) and find out the following (excerpt from Linus' lkml post):
+> get removed if it is not in the license.....  but you are right that I 
+> missed the chance to see if the top level of the distros could be talked 
+> out of their actions.
 
->There's a clarification that user-space programs that use the standard
->system call interfaces aren't considered derived works, but even that
->isn't an "exception" - it's just a statement of a border of what is
->clearly considered a "derived work". User programs are _clearly_ not
->derived works of the kernel, and as such whatever the kernel license is
->just doesn't matter.
->
->And in fact, when it comes to modules, the GPL issue is exactly the
->same.  The kernel _is_ GPL. No ifs, buts and maybe's about it. As a
->result, anything that is a derived work has to be GPL'd. It's that
->simple.
->
->Now, the "derived work" issue in copyright law is the only thing that
->leads to any gray areas. There are areas that are not gray at all: user
->space is clearly not a derived work, while kernel patches clearly _are_
->derived works.
->
->But one gray area in particular is something like a driver that was
->originally written for another operating system (ie clearly not a
->derived work of Linux in origin). At exactly what point does it become
->a derived work of the kernel (and thus fall under the GPL)?
->
->THAT is a gray area, and _that_ is the area where I personally believe
->that some modules may be considered to not be derived works simply
->because they weren't designed for Linux and don't depend on any special
->Linux behaviour.
->
->Basically:
-> - anything that was written with Linux in mind (whether it then _also_
->   works on other operating systems or not) is clearly partially a
->   derived work.
-> - anything that has knowledge of and plays with fundamental internal
->   Linux behaviour is clearly a derived work. If you need to muck
->   around with core code, you're derived, no question about it.
->
->Historically, there's been things like the original Andrew filesystem
->module: a standard filesystem that really wasn't written for Linux in
->the first place, and just implements a UNIX filesystem. Is that derived
->just because it got ported to Linux that had a reasonably similar VFS
->interface to what other UNIXes did? Personally, I didn't feel that I
->could make that judgment call. Maybe it was, maybe it wasn't, but it
->clearly is a gray area.
->
->Personally, I think that case wasn't a derived work, and I was willing
->to tell the AFS guys so.
->
->Does that mean that any kernel module is automatically not a derived
->work?  HELL NO! It has nothing to do with modules per se, except that
->non-modules clearly are derived works (if they are so central to the
->kenrel that you can't load them as a module, they are clearly derived
->works just by virtue of being very intimate - and because the GPL
->expressly mentions linking).
->
->So being a module is not a sign of not being a derived work. It's just
->one sign that _maybe_ it might have other arguments for why it isn't
->derived.
->
-Now, Linus is NAL, nor am I, and absolutely TINLA, but, I think it's not
-up to the GPL (or any other license) to decide what is a derived work; a
-license can clarify, for instance, like the kernel clarification, what
-the copyright holder _exempts_ from being a derived work. That is, a
-license can _relax_ what copyright law would consider a derived work,
-not _tighten_ it. The process of "relaxing" the definition goes more or
-less like "yeah, I know X _could_ be considered a derived work on my
-work, but I am promising I do not consider it to be, meaning basically I
-will not sue over this". IIRC, this is where *estoppel* applies.
+I'm not sure that your chance has been missed.  A nicely worded letter
+(probably hard copy, for surety) to appropriate places at the major
+distribution vendors would probably get a few "oops, didn't realise"
+responses.
 
-I hope I have contributed to this discussion,
+I'm a great believer in discussion to settle problems, rather than trying to
+play legal games -- and your attempts at an Anti-plagiarism licence are a
+good demonstration of why.  If you write a licence which people want to get
+around, it's fairly hard to stop them.  Your typical human-readable
+languages aren't real good at comprehensively eliminating all grey areas --
+they're too open to interpretation.
 
-Humberto Massa
+So, in a battle of licencing, you write your terms, and your "opponents"
+read those terms, find the loopholes, and keep doing what they're doing. 
+You write a new licence, they find new loopholes, and keep going.  Lather,
+rinse, repeat.  They keep doing this because you're hoping that they'll
+stick to the spirit of the licence, but they've no reason to because they're
+opponents.
 
--- 
-http://www.fastmail.fm - Does exactly what it says on the tin
+If you don't treat the distributors as "opponents", but rather as allies in
+the world of software, you'll probably get a lot further.  True allies will
+generally stick to the spirit of licencing, because they don't want to annoy
+you - you're a friend.  But without any friendly relationship there,
+distributors can't know what your desires are, and you can't see what the
+distributor's desires are.  You've attributed shady motives when, in my
+experience, it's usually just overzealousness or some other form of innocent
+misunderstanding.  This is the reason, IMO, why Debian encourages developers
+to get to know the upstreams of their packages.
+
+- Matt
+
+[1] Are you familiar with the game of brandings?  Group of (usually young,
+stupid) kids line up against a wall, one person with a tennis ball some
+distance away, tries to hit someone with the ball, keeps trying until they
+succeed, when the thrower becomes the hit person?  Painful and pointless
+game, really.  Don't know why I thought of it.  <grin>
+
