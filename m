@@ -1,32 +1,34 @@
 From: Mike Fedyk <mfedyk@matchmail.com>
 Subject: Re: ReiserFS problems
-Date: Thu, 7 Aug 2003 11:12:27 -0700
-Message-ID: <20030807181227.GA23303@matchmail.com>
-References: <20030806182055.A28562@bitwizard.nl> <20030806164852.GA14719@namesys.com> <20030806191806.A31496@bitwizard.nl> <20030806172834.GA15024@namesys.com> <3F3252A4.4010104@namesys.com>
+Date: Thu, 7 Aug 2003 11:44:23 -0700
+Message-ID: <20030807184423.GC23303@matchmail.com>
+References: <20030806182055.A28562@bitwizard.nl> <20030806164852.GA14719@namesys.com> <20030806191806.A31496@bitwizard.nl> <3F324E06.2080805@namesys.com> <20030807154107.B7165@bitwizard.nl>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15237-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15238-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3F3252A4.4010104@namesys.com>
+In-Reply-To: <20030807154107.B7165@bitwizard.nl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Oleg Drokin <green@namesys.com>, Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>, reiserfs-list@namesys.com, copy@harddisk-recovery.nl
+To: Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>
+Cc: Hans Reiser <reiser@namesys.com>, Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com, copy@harddisk-recovery.nl
 
-On Thu, Aug 07, 2003 at 05:22:44PM +0400, Hans Reiser wrote:
-> Oleg Drokin wrote:
-> >Well. This is actually unfortunate, I agree. In such a case you'd better
-> >move your reiserfs images to some other place for the time of reiserfsck 
-> >--rebuild-tree run.
-> >
-> or compress them.
+On Thu, Aug 07, 2003 at 03:41:08PM +0200, Rogier Wolff wrote:
+> On Thu, Aug 07, 2003 at 05:03:02PM +0400, Hans Reiser wrote:
+> > Can you help Oleg investigate this more closely by providing an exact 
+> > account of what to do to replicate it?  Oleg, replicate this and observe 
+> > what happens.
+> 
+> What part of: "we reported it a while back, and you told us it was
+> fixed" don't you understand?
 
-But if there was at any time an uncompressed reiserfs image within the outer
-reiserfs filesystem you're fscking, won't that screw it up too?
+OK Rogier, please search through the archive, and post the URL of your
+previous report.  That will be most helpful.
 
-So you can compress it, but if you uncompress it to work with it, it still
-fscks fsck...  Right? :-/
+You are complaining about legitemate problems, and they are doing what they
+can to get it identified, and fixed.  With that URL they will be able to at
+least know what they already fixed...
