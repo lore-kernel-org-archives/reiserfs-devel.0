@@ -1,30 +1,63 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: BTW: 2.4.19-patches-to-come?
-Date: Fri, 17 May 2002 20:26:00 +0200
-Message-ID: <200205172026.00249.Dieter.Nuetzel@hamburg.de>
-References: <200205171736.50971.Dieter.Nuetzel@hamburg.de> <1021650453.14986.914.camel@tiny> <200205172020.51959.Dieter.Nuetzel@hamburg.de>
+Date: Fri, 17 May 2002 22:28:47 +0400
+Message-ID: <20020517222846.A1514@namesys.com>
+References: <200205171736.50971.Dieter.Nuetzel@hamburg.de> <20020517195445.A1032@namesys.com> <200205171905.30804.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10372-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10373-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <200205172020.51959.Dieter.Nuetzel@hamburg.de>
+Content-Disposition: inline
+In-Reply-To: <200205171905.30804.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Chris Mason <mason@suse.com>
-Cc: Oleg Drokin <green@namesys.com>, Manuel Krause <manuelkrause@netscape.net>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
+Cc: Chris Mason <mason@suse.com>, Manuel Krause <manuelkrause@netscape.net>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Friday 17 May 2002 20:20, Dieter N=FCtzel wrote:
-> On Friday 17 May 2002 17:47, Chris Mason wrote:
-> > On Fri, 2002-05-17 at 11:36, Dieter N=FCtzel wrote:
-> > > Sorry Oleg, that I jump in, here...
+Hello!
 
-> > Are all the affected files less than 16k?
->
-> I have to recheck (regenerate the "test case" --- push the power button).
+On Fri, May 17, 2002 at 07:05:30PM +0200, Dieter N?tzel wrote:
+> > What is the corruption pattern?
+> Have a look into the two examples.
 
-Ups, see the two attached files, again.
-One is below 16k, the other above.
+I will, but later, it seems.
 
--Dieter
+> > What was the crash, btw?
+> > Hard power loss?
+> No.
+> "Only" hard lookup. Sadly SysReq is not working ;-(
+
+And you fix it by "reset switch"?
+
+BTW, Was that you with a kernel with lot of patches applied, or
+you do not use anything strange on your workstations?
+
+> > > written before/during crash and rebuild during replay, but it should much
+> > > more usefull if they were only _REMOVED_ during replay. Because the
+> > > "next" kernel build can't run smooth without "make clean" or deletion by
+> > > hand. What do you think?
+> > These files are not deleted, so why fs should delete these?
+> Yes, you are right. But semantically they are worthless 'cause they are 
+> "broken"...
+
+FS cannot know this. Absolutely cannot.
+File was created, written into. So file appears after reboot (if transaction
+in which it was created was commited).
+BTW, I have a feeling that datalogging patches would help to get rid of
+garbage in the files, but files still will remain (may be of zero length).
+
+> > > Have a look into the falsely "rebuild" broken files in the attachment,
+> > > too.
+> > Later today
+> Hey, it's weekend then...;-)
+
+So what? ;)
+
+> Happy Whitsun everyone!
+
+Hm. What's that? ;)
+
+Bye,
+    Oleg
