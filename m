@@ -1,30 +1,51 @@
-From: nbrosnan@symcor.com
-Subject: FYI: reiserfs fails sb rebuild
-Date: Mon, 29 Mar 2004 10:30:11 -0500
-Message-ID: <OF4673E899.EEC39027-ON85256E66.00539990-85256E66.0055280A@symprod.com>
+From: markw@osdl.org
+Subject: Re: Reiser4 needs more testers
+Date: Mon, 29 Mar 2004 08:59:14 -0800 (PST)
+Message-ID: <200403291659.i2TGxQ214736@mail.osdl.org>
+References: <406462C1.5020507@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17567-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17568-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <406462C1.5020507@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: reiser@namesys.com
+Cc: Nikita@namesys.com, Reiserfs-Dev@namesys.com, Reiserfs-List@namesys.com, Linux-Kernel@Vger.Kernel.ORG, cliff@lindows.com, tom.welch@lindows.com, garloff@suse.de, drobbins@gentoo.org, reiserrf@hotmail.com
 
-Hdw: IBM netfinity 5500 PII (2 X 300MHZ) with servraid2 rev 6.10.2.4.
-Kernel 2.2.22-1.2174ntplsmp
-Reiserfs 3.6
-SB in block16
-Checking tree, error, cannot find /dev/vg01/lv01 (/root)
+I've run through another test on STP with the latest snapshot against
+reiser4 and reiserfs for comparison.  Reiser4 still seems to be lagging
+behind reiserfs in our DBT-2 workload (the bigger number is better in
+the metric):
 
+          metric  url to test results
+          ------  ---------------------------------
+reiser4   1208    http://khack.osdl.org/stp/290774/
+reiserfs  1819    http://khack.osdl.org/stp/290775/
 
-Neil Brosnan,
-Unix  Systems Administrator,
-Mid-Range Systems,
-Symcor Inc (RSP), (905) 273-1057
+Mark
 
-
-
+On 26 Mar, Hans Reiser wrote:
+> We have one NFS related bug remaining, and one mmap all of memory 
+> related bug (and performance issue) that you can hit using iozone.  We 
+> will fix both of these in next week's snapshot, they were both multi-day 
+> bug fixes.  When they are fixed, unless users/distros find bugs next 
+> week we will submit it for inclusion in the -mm and then the official 
+> kernel.
+> 
+> We hope it is now fairly stable for average users if you avoid those two 
+> issues (we need to get rid of those dire warnings about its 
+> stability...., we will remember that next snapshot....;-) )
+> 
+> We need a lot more real user testers, because we have run out of scripts 
+> that can crash it, and there are distros that would like to ship it 
+> soon.  Please also complain to vitaly@namesys.com and ramon@namesys.com 
+> about poor documentation, etc., ....
+> 
+> The new reiser4 snapshot (against 2.6.5-rc2) is available at
+> 
+> http://www.namesys.com/snapshots/2004.03.26/
 
