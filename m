@@ -1,65 +1,42 @@
-From: Juan Quintela <quintela@mandrakesoft.com>
-Subject: Re: when distros do not support official Marcelo kernels they are
- not being team players
-Date: Wed, 05 Feb 2003 13:04:26 +0100
-Message-ID: <864r7jndbp.fsf@trasno.mitica>
-References: <86lm0xpmho.fsf@trasno.mitica> <3E3E7A95.1050908@namesys.com>
-	<1044284001.15685.358.camel@tiny.suse.com>
-	<3E3EBA3F.7060806@namesys.com>
-	<1044300746.15684.428.camel@tiny.suse.com>
-	<3E3EC7EC.8090005@namesys.com>
-	<1044304857.15684.475.camel@tiny.suse.com>
-	<3E3F0D5D.5070409@namesys.com> <20030204163609.GT19723@suse.de>
-	<3E403488.9050408@namesys.com> <20030205083402.GA11363@suse.de>
+From: John Dalbec <jpdalbec@ysu.edu>
+Subject: Re: Trying to port data-logging to RH 2.4.18-19.7.x kernel
+Date: Wed, 05 Feb 2003 09:24:34 -0500
+Message-ID: <3E411EA2.8000306@ysu.edu>
+References: <3E3A8B15.80300@ysu.edu>	 <1044024906.15685.206.camel@tiny.suse.com>  <3E3A99A1.2010600@ysu.edu>	 <1044029165.15685.226.camel@tiny.suse.com>  <3E3AEA73.1090607@ysu.edu> <1044290509.15685.391.camel@tiny.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12652-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12653-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030205083402.GA11363@suse.de> (Hubert Mantel's message of
- "Wed, 5 Feb 2003 09:34:03 +0100")
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hubert Mantel <mantel@suse.de>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
 Cc: reiserfs-list@namesys.com
 
->>>>> "hubert" == Hubert Mantel <mantel@suse.de> writes:
+Chris Mason wrote:
+> So your two basic choices are adding the BKL to reiserfs_read_inode2, or
+> going into the nfsd source and putting them around the iget4 call.  You
+> might want to double check to see if their source had the BKL in
+> reiserfs_read_inode2 before you started the data logging port.
 
-Hi
+It did not.
 
-hubert> Every time an official kernel is released, I can see postings to this list 
-hubert> asking for new versions of various patches (data-logging, quota for 
-hubert> reiserfs and so on). So apparently there are users who cannot use the 
-hubert> vanilla kernel but need a patched one. So this is not really different 
-hubert> from the situation distributors are in.
+> 
+> If not, you should be able to reproduce the oops on an unmodified redhat
+> kernel (compiled with SMP on), and I'd appreciate it if you could send
+> them a bug report as well.
 
-I agree here.  For a new feature to be included in Marcelo kernel, it
-is good to have been for a while in a distro kernel.  If you send a
-new feature/patch to Marcelo, and you add that this patch has been
-included for a year in <put distriubtion here> and found stable, you
-get more posibilities of having it included.
+I cannot reproduce the oops on an unmodified Red Hat kernel because they 
+don't call reiserfs_check_lock_depth in search_by_key.  That was added 
+by your data-logging patch.
 
-hubert> All this does not make the official kernel useless. It is a great 
-hubert> reference kernel and THE major synchronisation point. It is very valuable 
-hubert> for distributors to get a report of the form "I have a problem with your 
-hubert> distro kernel, but the official kernel works fine", because this restricts 
-hubert> the source of the problem and makes it easier to fix. And when we update 
-hubert> our kernel to some new official version, every time lots of patches become 
-hubert> obsolete, which is great. 
-
-Completely agree.
-
-hubert> I'm not really eager to maintain hundreds of 
-hubert> patches. If we would be able to just use the official kernel, I would be a 
-hubert> very happy guy.
-
-/me founds that making happy distro kernels maintainers is easy :)
-
-Later, Juan.
+> 
+> -chris
+> 
+> 
+> 
 
 
--- 
-In theory, practice and theory are the same, but in practice they 
-are different -- Larry McVoy
+
