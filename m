@@ -1,37 +1,36 @@
-From: "daniel.poelzleithner" <poelzi@poelzi.org>
+From: Sander <sander@humilis.net>
 Subject: Re: we need a slogan for our reiser4 t-shirt
-Date: Fri, 25 Jun 2004 14:40:48 +0200
-Message-ID: <40DC1D50.40705@poelzi.org>
-References: <40D9DC3A.9090209@namesys.com>
+Date: Fri, 25 Jun 2004 14:57:01 +0200
+Message-ID: <20040625125701.GA9778@favonius>
+References: <40D9DC3A.9090209@namesys.com> <c7ef32a704062409314a0c6656@mail.gmail.com> <c7ef32a704062409341e6d4016@mail.gmail.com> <200406250045.32140.chrivers@iversen-net.dk> <40DB62E9.9000404@namesys.com> <1xk4m8bh.fsf@pop-server.bigpond.net.au> <40DBDC9A.5030704@mweb.co.za>
+Reply-To: sander@humilis.net
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19378-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19379-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40D9DC3A.9090209@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <40DBDC9A.5030704@mweb.co.za>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Cami <camis@mweb.co.za>
+Cc: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Cami wrote (ao):
+> Reiserfs4: cant make coffee, yet..
+> Reiserfs4: adding 2 inches to your ego..
+> Reiserfs4: more than just a filesystem..
+> Reiserfs4: you are the weakest link..
+> Linux outside, Reiserfs4 inside..
+> Reiserfs4: chicks dig it..
+> Reiserfs4: plug and play where you need it most
+> Reiserfs4: its our passion..
+> 
+> and my favourite i could come up with:
+> 
+> Reiserfs4: fsck'ing fast
 
-"cd ...metas"
-
-- --
-nihil me cirumdat
-
-.. . .. ... . . .. . ... . .. . ... . . .
-pgp key @ http://files.poelzi.org/pgp.txt
-ED80 E53D 5269 4BB1 1E73 3A53 CBF9 A421 0A7B 003D
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Debian - http://enigmail.mozdev.org
-
-iD8DBQFA3B1Qy/mkIQp7AD0RAqSTAKCcXIVMlCOoaqvfzoa7pTGQ1A3ezwCdFX3L
-w5Uz9jckRxP1YDmildpl1bw=
-=JTlR
------END PGP SIGNATURE-----
+I believe the official name is Reiser4, not Reiserfs4. Is this true
+Hans?
