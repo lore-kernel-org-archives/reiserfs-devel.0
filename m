@@ -1,28 +1,51 @@
-From: Dax Kelson <dax@gurulabs.com>
-Subject: Re: Howto mount without replay?
-Date: 03 May 2002 20:44:13 -0600
-Message-ID: <1020480276.2642.4.camel@thud>
-References: <Pine.LNX.4.44.0205022236450.22979-100000@mooru.gurulabs.com>
-	<Pine.LNX.4.44.0205022252320.22979-100000@mooru.gurulabs.com> 
-	<20020503103239.A6410@namesys.com>  <1020425865.1511.104.camel@tiny>
+From: teague <teague@fourth-world.com>
+Subject: reiserfs failure on linux 2.4.18
+Date: Sat, 4 May 2002 00:39:51 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44.0205040037160.7627-100000@manray.fourth-world.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10232-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10233-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <1020425865.1511.104.camel@tiny>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Chris Mason <mason@suse.com>
-Cc: Oleg Drokin <green@namesys.com>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-On Fri, 2002-05-03 at 05:37, Chris Mason wrote:
-> 
-> This might work on 2.4.18, I think it was 2.4.16 based.  I'll port
-> forward a little later today.
+Hey folks,
 
-I'm about to try this.  Do you have something against 2.4.18?
+I'm running Reiserfs on a Maxtor 45 GB drive (7200 rpm).  I'm also running
+linux 2.4.18.  I encountered a problem yesterday.  I rebooted the machine
+and it was apparent that things were wrong with the fs.  I couldn't even
+get past the inits.  I rebooted off an old Slackware (4.0) cdrom.  I've
+run reiserfsck --rebuild-tree from different flavors of reiserfsprogs.
 
-Dax
+here are the errors i've received:
+
+version 3.x.1c-pre2
+during Pass 2 with 97845 left
+direct2indirect: incorrect item found in 133809 block
+IOT trap/Abort
+
+version 3.x.1c-pre3
+during Pass 2 with 99129 left
+mark_block_used: (27895) used already
+IOT trap/Abort
+
+version 3.x.1c-pre3 (run #2)
+during Pass 2 with 99125 left
+mark_block_used: (33930) used already
+IOT trap/Abort
+
+I've included log files for the pre2 run (log.cp2) and from the pre3 run
+(log.cp3).  I'll be more than happy to give you all the info you need to
+help you solve this.  I'm looking at loosing 40G of data that I really
+need.  Please keep me informed.
+
+Thanks,
+
+Michael
+
+ps I initially tried to include my log files, but your mail server refused
+to take anything of 40k.  I'll be happy to send them if you advise me how.
 
