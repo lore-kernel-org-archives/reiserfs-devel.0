@@ -1,64 +1,64 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Strange errors with 2.4.22 patches (from Chris) and bonnie++
-Date: Mon, 01 Dec 2003 08:49:10 -0500
-Message-ID: <1070286549.12807.22.camel@tiny.suse.com>
-References: <bq8f7u$ufn$1@sea.gmane.org>
+From: Redeeman <redeeman@metanurb.dk>
+Subject: Re: production use of reiserfs
+Date: Mon, 01 Dec 2003 16:19:39 +0100
+Message-ID: <1070291978.4355.6.camel@redeeman.linux.dk>
+References: <200311280846.12697.ivan@t1.unisoftbg.com>
+Reply-To: redeeman@metanurb.dk
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-16188-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16189-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <bq8f7u$ufn$1@sea.gmane.org>
+In-Reply-To: <200311280846.12697.ivan@t1.unisoftbg.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Jens Benecke <jens-usenet@spamfreemail.de>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-On Fri, 2003-11-28 at 16:38, Jens Benecke wrote:
+this is strange, i feel that the linux filesystems is much more unstable
+after a power failure than windows filesystens, but in advance they are
+much faster. but ofcourse, windows filesystems are made to be crash
+proof.
 
-> b) bonnie++ on a (previously created) reiserfs partition (with 
->    mkreiserfs 3.6.6) exited with random "disk full" errors, although 
->    the disk was never full. This didn't happen before.
-> 
-> 
-> Details:
-> 
-> > bonnie++ -d . -s 2048 -m master1 -r 1024 -x 2 -u nobody:nogroup
-> 
-> Now bonnie++ exits randomly with "no space left on device" when 'df' clearly
-> shows there is ample space left:
-> 
-> Writing with putc()...  
-> Writing intelligently...
-> Can't write block.
-> Bonnie: drastic I/O error (write(2)): No space left on device
-> 
-> -rw-------    1 nobody   nogroup  474931200 Nov 28 22:04 Bonnie.19345.000
-> -rw-------    1 nobody   nogroup         0 Nov 28 22:04 Bonnie.19345.001
-> 
-> Dateisystem          1k-Blöcke    Benutzt Verfügbar Ben% montiert auf
-> /dev/ide/host0/bus0/target0/lun0/part7
->                        3044184    945424   2098760  32% /var
-> 
-> 
-> This did not happen before I applied the patches.
-> To be honest, I don't know how to debug this.
-> 
-> There is nothing in the syslog and nothing via 'dmesg' related to drbd or
-> reiserfs.
->
-> I would appreciate any help.
-> Thank you! :-)
+i have run into a crash with reiserfs, it didnt work, rebuild tree fixed
+it perfect though
 
-Ugh, the new block allocator isn't properly forcing a commit when an
-allocation fails, so we don't reclaim blocks deleted in an uncommitted
-transaction.  I thought this fix got pulled out of the suse kernel when
-namesys and I pulled out the important bug fixes, but it got missed.
-
-porting.
-
--chris
+On Fri, 2003-11-28 at 07:46, ivan wrote:
+> Hi all,
+> 
+> We are collecting our statistic for the last 9 m. of using linux + postgreSQL 
+> as oracle+windows alternative in production.
+> 
+> We are using linux redhat (7.3 and 9.0) + reiserfs (it was recomendet as 
+> stable and fast).
+> 
+> For this time we have 6 filesystem crashes (all after powerdown) with total 
+> database lose.
+> 
+> It is very bad situation because for this period we do not have any problems 
+> with windows + oracle.
+> 
+> So it is now time to see if resierfs is production ready or we need to change 
+> the filesystem (or OS distro).
+> 
+> My question:
+> 
+> exist somewath special in reiserfs setup on redhat, that we need to change?
+> We are using the standart install (linux reiserfs).
+> 
+> We do not make changes on kernel or setup.
+> 
+> Is it good idea to change redhat?
+> 
+> Also it is possible to use redhat AS 3.0, but we do not find any info how to 
+> instsall it with reiserfs. Exist any problems on this distro?
+> 
+> regards,
+> ivan.
+-- 
+Regards, Redeeman
+()  ascii ribbon campaign - against html e-mail 
+/\                        - against microsoft attachments
 
 
