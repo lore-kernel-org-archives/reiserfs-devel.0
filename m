@@ -1,40 +1,38 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
+From: Gunnar Ritter <Gunnar.Ritter@pluto.uni-freiburg.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Tue, 07 Sep 2004 11:37:23 -0400
-Message-ID: <200409071537.i87FbNOV004040@laptop11.inf.utfsm.cl>
-References: <spam@tnonline.net>
-Return-path: <reiserfs-list-return-21574-reiserfs=m.gmane.org@namesys.com>
+Date: Tue, 07 Sep 2004 17:37:24 +0200
+Message-ID: <413DD5B4.nailC801GI4E2@pluto.uni-freiburg.de>
+References: <200409070206.i8726vrG006493@localhost.localdomain>
+ <413D4C18.6090501@slaphack.com> <m3d60yjnt7.fsf@zoo.weinigel.se>
+ <1183150024.20040907143346@tnonline.net>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21575-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Spam <spam@tnonline.net> 
-   of "Tue, 07 Sep 2004 15:52:25 +0200." <16310505631.20040907155225@tnonline.net> 
+In-Reply-To: <1183150024.20040907143346@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Spam <spam@tnonline.net>
-Cc: Christer Weinigel <christer@weinigel.se>, David Masover <ninja@slaphack.com>, Tonnerre <tonnerre@thundrix.ch>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Spam <spam@tnonline.net>, Christer Weinigel <christer@weinigel.se>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Tonnerre <tonnerre@thundrix.ch>, ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>, Pavel Machek <pavel@ucw.cz>, David Masover <ninja@slaphack.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jamie Lokier <jamie@shareable.org>, Christoph Hellwig <hch@lst.de>, Alexander Lyamin aka FLX <flx@namesys.com>, Chris Wedgwood <cw@f00f.org>
 
-Spam <spam@tnonline.net> said:
-> Christer Weinigel <christer@weinigel.se> said:
+Spam <spam@tnonline.net> wrote:
 
-[...]
+>   One suggestion is missed. It is to provide system calls for copy.
+>   That would also solve the problem.
 
-> > But this still solves only part of the problem.  A backup application
-> > won't have any use for a copyfile syscall, it will need to be taught
-> > about streams.
+No, it would not. If you read the POSIX.1 specification for cp
+carefully <http://www.unix.org/version3/online.html>, you will
+notice that the process for copying a regular file is carefully
+standardized. A POSIX.1-conforming cp implementation would not
+be allowed to copy additional streams, unless either additional
+options are given or the type of the file being copied is other
+than S_IFREG. And cp is just one example of a standardized file
+handling program.
 
->   Yes, but backup programs always needed to be taught about new
->   features. Be it new type of files, attributes or meta-data. I think
->   that teaching backup applications is far better than teaching every
->   application.
+	Gunnar
 
-Strange... tar(1) is quite capable of backing up .mp3 files, which weren't
-around when tar was born...
 -- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+http://omnibus.ruf.uni-freiburg.de/~gritter
