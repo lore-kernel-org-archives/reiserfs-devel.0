@@ -1,30 +1,34 @@
 From: Tom Vier <tmv@comcast.net>
 Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Thu, 1 Apr 2004 20:17:33 -0500
-Message-ID: <20040402011733.GA2158@zero>
-References: <20040330123546.GA5229@nysv.org> <200403301513.01851.christian.mayrhuber@gmx.net> <87hdw5vifk.fsf@uhoreg.ca>
+Date: Thu, 1 Apr 2004 22:41:50 -0500
+Message-ID: <20040402034150.GB2158@zero>
+References: <20040330123546.GA5229@nysv.org> <20040330162451.63097.qmail@web25001.mail.ukl.yahoo.com> <16489.43144.773836.364284@laputa.namesys.com>
 Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17659-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17660-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <87hdw5vifk.fsf@uhoreg.ca>
+In-Reply-To: <16489.43144.773836.364284@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Tue, Mar 30, 2004 at 09:50:23PM -0500, Hubert Chan wrote:
-> That effectively kills all filenames that contain @, much worse than
-> just a "metas" conflict IMHO.
+On Tue, Mar 30, 2004 at 09:04:08PM +0400, Nikita Danilov wrote:
+> A character string that is used to identify a file. In the context of
+> IEEE Std 1003.1-2001, a pathname consists of, at most, {PATH_MAX} bytes,
+> including the terminating null byte. It has an optional beginning slash,
 
-the djbdns utils (eg, dnscache) use files starting with @ for cache files.
+interesting. i thought posix, et al said PATH_MAX *not* including the nul
+term. maybe i need to change all the str[PATH_MAX+1]; definitions i've made
+in wipe.
 
-i would prefer ".meta" *without* the 's'! i would also like to suggest "..."
-if it hasn't already been.
+google is my friend too, and i'll try to search the various 5000 *nix-like
+standards. (heh, we need to standardize on one standard - i guess that's
+what unix '98 was for.)
 
 -- 
 Tom Vier <tmv@comcast.net>
