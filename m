@@ -1,40 +1,45 @@
-From: Russell Coker <bofh@coker.com.au>
-Subject: Re: extended attributes
-Date: Thu, 24 Oct 2002 15:12:05 +0200
-Message-ID: <200210241512.05581.bofh@coker.com.au>
-References: <200210231916.18976.bofh@coker.com.au> <20021024014522.GD28822@clusterfs.com> <1035464747.28715.92.camel@tiny>
-Reply-To: Russell Coker <bofh@coker.com.au>
+From: Gregor Zeitlinger <zeitling@informatik.hu-berlin.de>
+Subject: how do plugins work?
+Date: Thu, 24 Oct 2002 16:38:57 +0200 (CEST)
+Message-ID: <Pine.LNX.4.33.0210241624300.2792-100000@mitte.informatik.hu-berlin.de>
+Reply-To: <gregor@zeitlinger.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11753-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11754-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1035464747.28715.92.camel@tiny>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Chris Mason <mason@suse.com>, Andreas Dilger <adilger@clusterfs.com>
-Cc: ReiserFS <reiserfs-list@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs mailing list <reiserfs-list@namesys.com>
 
-On Thu, 24 Oct 2002 15:05, Chris Mason wrote:
-> We did it without changing the metadata format at all, which means
-> putting each xattr into a file.  The patches are mired in dependencies
-> from other parts of the suse kernel, we're trying to pull it all out.
->
-> Until then you can grab the kernels/source at
-> ftp.suse.com/pub/people/mantel/next (warning, these are the suse
-> bleeding edge kernels).
+Hi,
 
-Unfortunately that will probably conflict with the LSM kernel patch.  LSM 
-touches so many things that almost any patch of moderate size will conflict.  
-:(
+I'm new to this list. I'm wondering how the file plugins work. Are they
+just a means of accessing the file contents or are they also designed to
+save the file differently.
 
-I look forward to seeing this get extracted out in a minimal form.
+For example, could you create a plugin that automatically zips each
+text/plain file, which is totally transparent to the user?
+If so, can those plugins be hirachical. Like: when I save a .tex file its
+automatically zipped and encrypted before writtten to disk.
+Or even better: When I save a file, its automatically zipped, encrypted
+and written over a ssh or ftp connection.
+
+More precisely, I'm thinking about a plugin that stores xml files in an
+efficient manner. Somewhat like a btree. I'm not sure wheater you've
+already been through this issue, but I didn't find anything in the
+archives. The issue is somewhat difficult, because I'd love to be able to
+use xpath (possibly dom or xquery) to retreive/update xml data
+EFFICIENTY.
+
+I've gotten some ideas from a university project I'm working on. There
+we're trying to do a whole xml database management system. Although
+progress is terribly slow there are some good algos that might be
+reusable.
 
 -- 
-http://www.coker.com.au/bonnie++/     Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/       Postal SMTP/POP benchmark
-http://www.coker.com.au/projects.html Projects I am working on
-http://www.coker.com.au/~russell/     My home page
+Gregor Zeitlinger
+gregor@zeitlinger.de
 
