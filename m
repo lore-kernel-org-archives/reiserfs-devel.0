@@ -1,42 +1,72 @@
-From: Lorenzo Allegrucci <l.allegrucci@tiscali.it>
-Subject: Re: [OOPS] Linux-2.4.20-pre4 with reiserfs
-Date: Wed, 12 Mar 2003 11:41:38 +0000
-Message-ID: <200303121141.38414.l.allegrucci@tiscali.it>
-References: <200303112216.12359.l.allegrucci@tiscali.it> <20030312104642.B9291@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: [PATCH] various allocator optimizations
+Date: Wed, 12 Mar 2003 14:12:53 +0300
+Message-ID: <3E6F1635.2010305@namesys.com>
+References: <1047400482.8215.312.camel@tiny.suse.com>	 <20030311194205.A4493@namesys.com>	 <1047403968.8219.337.camel@tiny.suse.com>  <3E6E584D.4080809@namesys.com>	 <1047421551.8219.448.camel@tiny.suse.com>  <3E6E674E.4040305@namesys.com> <1047433739.8215.487.camel@tiny.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13215-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13217-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030312104642.B9291@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <1047433739.8215.487.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
 
-On Wednesday 12 March 2003 07:46, Oleg Drokin wrote:
-> Hello!
+Chris Mason wrote:
+
+>On Tue, 2003-03-11 at 17:46, Hans Reiser wrote:
+>  
 >
-> On Tue, Mar 11, 2003 at 10:16:12PM +0000, Lorenzo Allegrucci wrote:
-> > `fsx-linux -c 2 linux-2.4.20.tar.bz2' on a console and
-> > `fsstress -d -d -n 10000 -p 10' on a second console.
-> > The oops happened just few seconds after I run `vmstat 1'
-> > on third console.  Reproducible.
+>>Chris Mason wrote:
+>>
+>>    
+>>
+>>>On Tue, 2003-03-11 at 16:42, Hans Reiser wrote:
+>>>
+>>> 
+>>>
+>>>      
+>>>
+>>>>Chris, don't you think the right answer would be to take zam's resizer 
+>>>>and make a defragmenter out of it?
+>>>>   
+>>>>
+>>>>        
+>>>>
+>>>Yes and no, for a defrag program to fix things we'd have to agree on an
+>>>optimal layout ;-)  Also it assumes the machine has idle time when a
+>>>defragment cycle is possible. 
+>>>
+>>>      
+>>>
+>>No, it assumes that 80% of files don't move during the course of a week, 
+>>so if defrag takes a week, it still adds value.
+>>
+>>    
+>>
+>I ran a number of systems where this wasn't true.  Spool files are
+>constantly appended to or deleted by pop/imap servers.  Idle time is
+>important, between normal operations and backups it is almost impossible
+>to find a time when big servers have disk bandwidth to spare.
 >
-> Ah, looks like known direct io problem.
-> There was a directio fix in 2.4.21-pre5, but
-> some later IBM guys made us aware of another directio problem,
-> see the patch below (should help for you).
-> Please try 2.4.21-pre5 + this patch and if it still does not work, please
-> tell us. Thank you. (note that this patch was not passed through our full
-> patch verification process yet, but it works for me and for Chris Mason
-> (whose code is most part of the patch)).
+>I like the idea of a dynamic in-kernel fragmentation tool though, you
+>mark a file as being in need of reallocation, and it happens before io
+>or something (hand waving is fun).
+>
+You mean you like the allocate on flush we do in reiser4?
 
-[snip patch]
+Perhaps I should say only that for 80% of machines 80% of the files 
+never move during the course of a week.;-)
 
-It works for me, I could not reproduce the oops.
-Thank you.
+allocate on flush will improve a lot of the cases, and an online 
+repacker will improve a lot of the ones that allocate on flush does not 
+improve.
+
+-- 
+Hans
+
 
