@@ -1,34 +1,30 @@
 From: Tom Vier <tmv@comcast.net>
-Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Thu, 1 Apr 2004 22:41:50 -0500
-Message-ID: <20040402034150.GB2158@zero>
-References: <20040330123546.GA5229@nysv.org> <20040330162451.63097.qmail@web25001.mail.ukl.yahoo.com> <16489.43144.773836.364284@laputa.namesys.com>
+Subject: starting with ".." could break stuff
+Date: Thu, 1 Apr 2004 22:56:17 -0500
+Message-ID: <20040402035617.GC2158@zero>
+References: <200404010546.i315kEvY019805@sirius.cs.pdx.edu>
 Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17660-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17661-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <16489.43144.773836.364284@laputa.namesys.com>
+In-Reply-To: <200404010546.i315kEvY019805@sirius.cs.pdx.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Tue, Mar 30, 2004 at 09:04:08PM +0400, Nikita Danilov wrote:
-> A character string that is used to identify a file. In the context of
-> IEEE Std 1003.1-2001, a pathname consists of, at most, {PATH_MAX} bytes,
-> including the terminating null byte. It has an optional beginning slash,
+i bet there's a few apps that, when trying to skip .., only check the first
+two chars of the name. this may or may not be a problem.
 
-interesting. i thought posix, et al said PATH_MAX *not* including the nul
-term. maybe i need to change all the str[PATH_MAX+1]; definitions i've made
-in wipe.
-
-google is my friend too, and i'll try to search the various 5000 *nix-like
-standards. (heh, we need to standardize on one standard - i guess that's
-what unix '98 was for.)
+i'm not clear about how the metadata and plugins work. if you write to
+..meta/blah there has to be a plugin registered for that meta filename,
+right? does it keep the data in there ("..meta/blah") in some portian of the
+normal, linear file? or is ..meta/ the only way to get at it? err - are we
+talking about files as dirs? i'm confused. 8) i need some sleep.
 
 -- 
 Tom Vier <tmv@comcast.net>
