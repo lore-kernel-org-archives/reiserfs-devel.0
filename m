@@ -1,33 +1,30 @@
-From: Chris Mason <mason@suse.com>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: Quotas aand 2.5.x
-Date: 14 Jan 2003 12:36:33 -0500
-Message-ID: <1042565793.31095.1299.camel@tiny.suse.com>
+Date: Tue, 14 Jan 2003 20:38:42 +0300
+Message-ID: <20030114203842.A18999@namesys.com>
 References: <20030114182217.4fa8f2f8.philippe.gramoulle@mmania.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12337-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12338-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 In-Reply-To: <20030114182217.4fa8f2f8.philippe.gramoulle@mmania.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Philippe =?ISO-8859-1?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Philippe Gramoull? <philippe.gramoulle@mmania.com>
 Cc: reiserfs <reiserfs-list@namesys.com>
 
-On Tue, 2003-01-14 at 12:22, Philippe Gramoull=E9 wrote:
-> Hi,
->=20
+Hello!
+
+On Tue, Jan 14, 2003 at 06:22:17PM +0100, Philippe Gramoull? wrote:
 > Just a question:
->=20
-> Does quotas for ReiserFS V3 are likely to be available for 2.5.x kernel a=
-nytime soon ?
->=20
+> Does quotas for ReiserFS V3 are likely to be available for 2.5.x kernel anytime soon ?
 
-Yes, I've been making progress on getting the data logging patches in
-2.5, and once that is done the quotas should be easy.
+I think that new quota stuff is included into 2.5 already. If my guess is right,
+I will look into porting quota code into 2.5 later this week.
 
--chris
-
-
+Bye,
+    Oleg
