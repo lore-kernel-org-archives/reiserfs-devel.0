@@ -1,16 +1,16 @@
 From: David Masover <jedi@ninja.dynup.net>
-Subject: Re: A bold idea (Re: Carrying Attributes too Far)
-Date: Fri, 05 Dec 2003 08:00:19 -0600
-Message-ID: <3FD08F73.4070404@ninja.dynup.net>
-References: <1065247084.3f7e616c94ec9@webmail.st-andrews.ac.uk>	 <3FCE3716.8000509@namesys.com>	 <1070584227.3fcfd1a3d67f4@webmail.st-andrews.ac.uk>	 <3FD00272.7040607@ninja.dynup.net> <1070617453.5605.13.camel@schlappix.schnulli.de>
+Subject: Re: The x Bit Problem
+Date: Fri, 05 Dec 2003 08:03:15 -0600
+Message-ID: <3FD09023.5070902@ninja.dynup.net>
+References: <16333.14692.61778.304155@pc7.dolda2000.com>	 <3FCD47C4.50500@ninja.dynup.net> <3FCE39B8.20307@namesys.com>	 <16334.15412.686909.927196@laputa.namesys.com> <1070580817.8344.140.camel@arabia.home.lan> <3FD00086.90607@ninja.dynup.net> <3FD01679.3040007@mrs.umn.edu> <3FD07DB5.6090708@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16246-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16247-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1070617453.5605.13.camel@schlappix.schnulli.de>
+In-Reply-To: <3FD07DB5.6090708@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
@@ -18,49 +18,46 @@ To: reiserfs-list@namesys.com
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
+Hans Reiser wrote:
 
->If you want to have a flexible size for a filesystem, the are
->possiblities with LVM (or others) which gives you also the possibility
->to create a raid - which you normally want on such filesystems.
->Hardlinks between different partitions gives another problem: What is,
->if the other partition is not available (unmounted or crashed)? What is,
->if the other partition is an NFS-mounted partition with all the
->possiblities that can happen?
-> 
->  
+> Grant Miner wrote:
 >
-That's why I don't think there should be hardlinks across devices.  You 
-can put a filesystem on a RAID, of course.  LVM is not really a 
-solution, for several reasons.  For example, it seems as though it's 
-actually possible to have an entire partition fragmented in the same way 
-that a single file can be, and there's no way to fix that.
-
-It also requires the user to change things.
-
-Now, why would I use separate filesystems in the first place?  Two 
-reasons:  performance and security.  Right now, it's a lot easier to 
-have /var be a certain sized partition rather than trying to enforce 
-disk quotas.  It also improves performance if we know that quickly 
-moving data like that in /tmp is separated from slowly moving data like 
-that in /usr.  However, I think both of these problems could be solved 
-to the point where an intelligent filesystem would beat an intelligent 
-admin on partitioning any time.
+>> An interesting thing I discovered is that Windows simply ignores the 
+>> 'x' bit (I should say the Windows equivalent of the 'x' bit, called 
+>> "traverse folder / execute file"), but there is a policy setting that 
+>> overrides this attribute.
+>>
+>> I know users get tripped up on this a lot in Unix, like when they 
+>> don't understand why the webserver can't read their public_html 
+>> directory.  It might be a good option for Linux.
+>>
+>>
+>>
+> The right solution is to have a separate readdir permission, so that a 
+> file-directory can be not executable but be listable, and vice-versa.  
+> The problem comes from overloading the bit and also changing whether 
+> objects can be simultaneously files and directories.
+>
+Why does that need to be separate from the read bit?  In fact, right 
+now, I can actually get a directory listing, but I can't even find out a 
+single attribute about the files inside if the execute bit is not set.  
+When is this desireable?
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.3 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBP9CPcwisZLIF6uqOAQJePA//UIo+NjWW6AwLSNpanthF+kggKGQ5R/ha
-GYim57s3BRCKOl1JSSpopCsM2jgKQvSqUzdLOJJX7BB8G1YNoGNB5/RAHaW8EmEp
-bJ3rZro+ki2lkA4zAMiXP5f1Sfk3McjFA07C0ZBVOy1pC1oZ1max7YvLn/qIdJPe
-JuDeWRadNYly6Tcjykehio/Lsd5FJI52TBetZZ/SMuY6ib3EB8JPLrjjBpAxcXFZ
-n9vZduC7rPEsS5YWtdWtUebR6uPZg4eYNUc2er1GG3Z0beMCwKtB6lM7/NxBd0Pt
-JG+JekxKxTQxZOAaL88oOJ8wpiQMh0/BP8yHMimnOY7YwPKJYjblGl5Od9lngGoY
-0dLEVjmjvPjUB4qyV8m1xxI1DGWbXOmjxV8zfZzYgvj6C1BqGArzc1pKlic0CrS3
-ZgvoddjzEZlSSfmndlzh9JokIxsI63vLxA6qUkLYVn0NCKKq/XecmKlhHGCOPEWD
-t0FLmqjYl3p2rSrpUrcCiZXOOhjCKo5ae2NHlfT6aDJDR930i1QFROYZdSWi8L7y
-/nqnlKdQOQuP7dI+cndZTAf4WvHS095TE/rsveKlkMhVpo+V4UbWse6q5xTrzU3X
-CYJkggpmzhwiRF+GEscnCcY2uCIxn8cteShpWmlYjJmZZ1AofaFC8b/ChKutrPJP
-SuxuINXgjhE=
-=tsHB
+iQIVAwUBP9CQIwisZLIF6uqOAQLdPw/9HEHbi41hey1LoH8d2wuQRDTUwH5iEZVN
+ld/pnuPlHPp1sO8ag+WjoT4sv3umlSBPdRtzk3H1Y8WSBZ4xgnD6imo9eAQXzMmu
+UG4t9reWrCeKgl95KCJmapH6PPYFE6O8+YliBO4uCEFHLX6UM0Xb02nkZ2dQ25+G
+E1ryv5KUI+lMSliTuOEzfmMzuXapRul59Cc6WPplDmXN9ApMEnxJKYQtCBeYX1kf
+Wr4/6eGnJ91kIIfMGqe30IgOBbHRAENIq+K/ha+aUjmCQOwFjEaU1Imd3ytFZbPn
+xxwzXoD9+C2kNh6l3LFKiAm43rssTBwohSZbp8DNbhvboGOCgNuzzE6YzyJFNcCl
+hmW4PBoKP+SG6lrGb0C3USyjY/7U8KY1OHAviNyZW2InfFpbsfNhQg/FIH2eFOHS
+uhnVborliZwUA1XGxDZPG2pvrm3e0dTHyCLu2FENU7ErY/3o5IBoTS2RypWMkjiK
+PBLvedufBMO4Ssq8vZg+t74pLaESsMvw4J6ebr8YwakJQS2A/a6mDTOLIe11qZby
+suH35Cu3RW6ecxJ6WQnmDQcozcbKdybwbf3KWjn+MppMtzPpF+MwllykMKCHYf4t
+5bVM8Mc1y1zBB+zYmF0Kv0rP9CtOvOmri2O6tDXtUOI/qDNDqKB5u5ICn/q5WVmF
+Y7QciJdsWvA=
+=jZ2A
 -----END PGP SIGNATURE-----
 
