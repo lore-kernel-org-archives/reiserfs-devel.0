@@ -1,38 +1,42 @@
-From: Eric Whiting <ewhiting@amis.com>
+From: bscott@ntisys.com
 Subject: Re: what do you do that stresses your filesystem?
-Date: Mon, 23 Dec 2002 07:37:40 -0700
-Sender: ewhiting@amis.com
-Message-ID: <3E071FB4.A8FA94D6@amis.com>
-References: <3E06F360.7000708@namesys.com> <20021223120357.GC13460@hvs.envisage.co.za> <20021223151045.A7697@namesys.com> <3E06FDC1.5040907@namesys.com>
+Date: Mon, 23 Dec 2002 09:44:51 -0500 (EST)
+Sender: bscott@ntisys.com
+Message-ID: <Pine.LNX.4.44.0212230848030.29660-100000@dragon.inside.ntisys.com>
+References: <3E06F360.7000708@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12215-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12216-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3E06F360.7000708@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Oleg Drokin <green@namesys.com>, Hendrik Visage <hvisage@envisage.co.za>, ReiserFS <reiserfs-list@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ReiserFS <reiserfs-list@namesys.com>
 
-Hans Reiser wrote:
+On Mon, 23 Dec 2002, at 2:28pm, reiser@namesys.com wrote:
+> We were discussing how to optimize reiser4 best, and came to realize that
+> us developers did not have a good enough intuition for what users do that
+> stresses their filesystem enough that they care about its performance.
 
-> >>Another slowness (especially with reiserfs3 without the notails option)
-> >>is "dd if=/dev/zero of=/swapfile bs=1k count=1024k"
->
-> I suppose I shouldn't ask Hendrik how often he does this in the course
-> of his usual usage patterns....;-)
+  Define "users".
 
-The above dd command (with different values of bs) is one of the first tests I
-do when I bring up a RAID array -- under solaris9 or linux. It is a good way to
-measure streaming throughput. 
+  Even a moderately large mailserver will have many simultaneous opens,
+reads, rewrites, creates, unlinks, and so on happening at once.  Depending
+on the type of mailbox storage format in use, the patterns are slightly
+different.  Traditional BSD mbox does a lot of sequential file reading, does
+appends on new messages, and typically rewrites the whole file when deleted
+messages are purged.  The maildir and mh formats, on the other hand, have
+many smaller files.  Reading the mail index involves lots of open/read-one-
+-or-two-blocks/close operations in sequence.  New messages creates files;
+purging old ones deletes them.
 
-As for other ways to artificially stress the filesystem I sometimes run multiple
-concurrent 'while(true);do bonnie -s N;done' loops with different values for N. 
+-- 
+Ben Scott <bscott@ntisys.com>
+| The opinions expressed in this message are those of the author and do not |
+| necessarily represent the views or policy of any other person, entity or  |
+| organization.  All information is provided without warranty of any kind.  |
 
-As far as real life stressing of the filesystem -- I think kernel compiles and
-just letting the users hit the filesystem are the main high stress fs loads. My
-filesystems get a lot of rsync activity as well. 
 
-eric
