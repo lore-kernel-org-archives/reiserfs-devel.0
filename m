@@ -1,45 +1,54 @@
-From: Richard Heycock <rgh@roughage.com.au>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Wed, 07 Apr 2004 11:44:59 +1000
-Message-ID: <1081302299.5398.72.camel@boadicea>
-References: <no.id@vt.edu> <200404050401.i3541XVk004592@sirius.cs.pdx.edu>
-	 <87fzbj9fws.fsf@uhoreg.ca> <200404051222.07071.marcelo@macp.eti.br>
-	 <4072BEEF.9060802@namesys.com>
-	 <200404061645.i36Gj6I5016566@turing-police.cc.vt.edu>
-	 <4072F6B8.2020104@mweb.co.za> <16498.65417.8635.329337@laputa.namesys.com>
-	 <200404061914.i36JEBlt022398@turing-police.cc.vt.edu>
+Date: Wed, 7 Apr 2004 10:38:43 +0300
+Message-ID: <20040407073843.GX5229@nysv.org>
+References: <200404061914.i36JEBlt022398@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17773-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17776-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 In-Reply-To: <200404061914.i36JEBlt022398@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Wed, 2004-04-07 at 05:14, Valdis.Kletnieks@vt.edu wrote:
-> On Tue, 06 Apr 2004 23:05:45 +0400, Nikita Danilov said:
-> >   Meath \Meath\, Meathe \Meathe\, n. [See {Mead}.]
-> >      A sweet liquor; mead. [Obs.] --Chaucer. Milton.
-> 
-> On the other hand, both those Chaucer and Milton blokes have
-> been dust for quite some time, and the language has moved on.
-> 
-> Does anybody outside the Renaissance Fair circuit still even drink mead? ;)
+Valdis Kletnieks wrote:
 
-I'm rather partial to a drop of mead if I can get my hands on it? Though
-metadata is not something I think about if I do drink it!
+>Does anybody outside the Renaissance Fair circuit still even drink mead? ;)
 
-rgh
+Yes, as a matter of fact they do ;)
+
+I don't know how typical it is even for a Finn, but I prefer mead over
+most other beverages, and even have some recipes for it.
+
+But to get back to the point. "meths" is NOT a good word, like crystal
+meth or whatever, it's almost more a word than "metas" (maybe most people
+would just use "meta" as a directory name)
+
+I mean, most of this discussion has been, pardon my French, bullshit.
+..metas/ is still a good solution, it's prefixed in a manner that most
+stuff is not, the prefix makes sense as being "really hidden" and metas
+is not as probable a word as meta and it's still easily accessible.
+Hell, it used to be prefixed like that before it was a unified
+directory.
+
+Whatever. I'm tired. I'm sure everyone has their opinion on this matter
+and I'm also sure the guys at Namesys are farting blood because of
+this discussion. Whatever people want as their meta directory name they
+will patch or macro or edit in. If there's enough dispersion it will
+be shown in /proc/ or /sys/ or wherever, even if not an environmental
+variable.
+
+Let's be reasonable and concentrate on something more important, like
+brewing good mead or how to protect the metadata integrity or
+something.
+
+I, for one, will not participate in this thread again.
 
 -- 
-"It is possible to make things of great complexity out of things
- that are very simple. There is no conservation of simplicity"
- -- Stephen Wolfram
+mjt
 
-Richard Heycock <rgh@roughage.com.au>
-tel : 0410 646 369
-key fingerprint : 909D CBFA C669 AC2F A937 AFA4 661B 9D21 EAAB 4291
