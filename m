@@ -1,38 +1,46 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Oops with in nfsd - 2.4.19-pre6
-Date: Tue, 29 Oct 2002 18:26:00 +0300
-Message-ID: <20021029182600.A23041@namesys.com>
-References: <20021029155907.74f4b3ac.philippe.gramoulle@mmania.com> <20021029181438.A21904@namesys.com> <20021029162014.0d9b359f.philippe.gramoulle@mmania.com>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: [ANNOUNCE]: reiser4
+Date: Tue, 29 Oct 2002 20:45:52 +0300
+Message-ID: <15806.51536.985203.709475@laputa.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11824-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11825-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20021029162014.0d9b359f.philippe.gramoulle@mmania.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Philippe Gramoull? <philippe.gramoulle@mmania.com>
-Cc: reiserfs-list@namesys.com, mason@suse.com
+To: Linux Kernel Mailing List <Linux-Kernel@Vger.Kernel.ORG>
+Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Hello!
+Hello,
 
-On Tue, Oct 29, 2002 at 04:20:14PM +0100, Philippe Gramoull? wrote:
+Snapshot of reiser4 source code can be found at 
+http://www.namesys.com/snapshots/2002.10.29/.
 
-> This in the log , before the oops :
->  journal-1413: journal_mark_dirty: j_len (1024) is too big
+It is set of patches against current Linus BK tree (2.5.44).
 
-Yes, this is the assertion that failed (jlen to be less than TRANS_MAX
-something).
+Reiser4 is the next version of ReiserFS file system. It was re-written
+from the scratch. It supports:
 
-> and filer is low on space :o)
-> /dev/sdb1            572418604 572341220     77384 100% /storage
-> Should it be because filer hit 0 on space ?
+ - full data journalling with "wandered logs" ("shadows" in DB
+   parlance);
 
-No, the free space on disk is irrelevant I believe.
-Journal is on its own separate area anyway.
+ - extent-based files;
 
-Bye,
-    Oleg
+ - delayed allocation of disk space and on-line optimization of disk
+   layout across file boundaries;
+
+ - plugins: infrastructure for easy extention of file system and utils
+   functionality;
+
+ - and a lot more, see http://www.namesys.com/v4/v4.html
+
+Snapshot contains reiser4 proper (fs_reiser4.diff), set of patches
+(described in READ.ME) with necessary changes to the core kernel, and
+utils package (in particlar, mkfs.reiser4).
+
+It is still crasheable. Do not put critical data on it.
+
+Nikita.
