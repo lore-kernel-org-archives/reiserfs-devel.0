@@ -1,55 +1,80 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Mon, 29 Mar 2004 20:32:14 -0500
-Message-ID: <200403300132.i2U1WEIb006442@turing-police.cc.vt.edu>
-References: <20040329185901.62166.qmail@web25008.mail.ukl.yahoo.com>
-            <406885F1.9040409@mrs.umn.edu>
+From: "Burnes, James" <james.burnes@gwl.com>
+Subject: RE: secure delete?
+Date: Mon, 29 Mar 2004 19:13:27 -0700
+Message-ID: <3DF9165145FACB4C96977FF650C1E9040C469D4C@its-mail1.its.corp.gwl.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_91550282P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17583-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-17584-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Mon, 29 Mar 2004 14:24:17 CST."
-             <406885F1.9040409@mrs.umn.edu> 
+content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Grant Miner <mine0057@mrs.umn.edu>
+Content-Type: text/plain; charset="us-ascii"
+To: Valdis.Kletnieks@vt.edu, Tom Vier <tmv@comcast.net>
 Cc: reiserfs-list@namesys.com
 
---==_Exmh_91550282P
-Content-Type: text/plain; charset=us-ascii
+As sad as it may be, physical destruction is the gold standard of data
+security for retired media.
 
-On Mon, 29 Mar 2004 14:24:17 CST, Grant Miner <mine0057@mrs.umn.edu>  said:
-> Someone mentioned earlier, and I like just the at sign: @ Think of it 
-> short for "attributes".
-> 
-> file/@/uid
-> 
-> The nice thing about @ is it shows up early lexicographically, it's 
-> short and unlikely to be used.  This name is important to pick well 
-> because it will likely set a long precedent.
+In my current job they have a small lottery.  The IT admin that wins get
+to use a ball-peen hammer on several drives.
 
-Don't use the MH mail handler on that filesystem then.  It uses a
-symlink called '@' to point to "the current mail item". For instance, this
-reply:
+In my old job from 10 years ago (of which I can say little), the
+standard was to take the drive into a sound insulated room with a 12
+guage shotgun.  Several point-blank bursts from a Mossberg 500 has a way
+of reducing the carrier media to slag.  Remember, "Mossberg: Proven
+Performance and Peace of Mind."
 
-$ ls -l ~/@
-1 lrwxrwxrwx  1 valdis valdis 28 Mar 29 20:30 /home/valdis/@ -> /home/valdis/Mail/reiser/849
+Something to think about when you lie awake at night worrying about the
+very technical dumpster divers who might want your latest F18 Mod
+blueprints. ;-)
 
+jim burnes
+security engineer
+great-west, denver
+=20
 
---==_Exmh_91550282P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFAaM4ecC3lWbTT17ARAqeLAJ9N07RTK+6s669QFlwx0C7mptueggCguQkj
-pX1cD0JNgNBuMEqMuwd01OI=
-=tuD5
------END PGP SIGNATURE-----
-
---==_Exmh_91550282P--
+> -----Original Message-----
+> From: Valdis.Kletnieks@vt.edu [mailto:Valdis.Kletnieks@vt.edu]
+> Sent: Monday, March 29, 2004 6:10 PM
+> To: Tom Vier
+> Cc: reiserfs-list@namesys.com
+> Subject: Re: secure delete?
+>=20
+> On Wed, 24 Mar 2004 22:16:16 EST, Tom Vier <tmv@comcast.net>  said:
+> > On Wed, Mar 24, 2004 at 01:20:47PM -0500, Valdis.Kletnieks@vt.edu
+wrote:
+> > > That's our official government recommendation for what's
+sufficient
+> when
+> > > we're throwing away stuff that the Other Guys might actually do
+this
+> to.
+> > > I have to assume that if the DoD or RCMP thought this wasn't
+> sufficient
+> > > to protect *our* secrets, they'd have a stricter standard.
+> >
+> > they do, complete destruction. that's what they do with secret
+stuff.
+>=20
+> http://www.irwin.army.mil/ac/LSS/DoD_Publications.html
+>=20
+>
+http://www.irwin.army.mil/ac/Electronic_Publications/DoD_Pubs/DoD%205220
+-
+> 22-M/cp8.pdf
+>=20
+> Pages 14 and 15 note methods "a, b, d, and m" sanitizing fixed drives,
+> and continues:
+>=20
+> d. Overwrite all addressable locations with a character, its
+complement,
+> then a random character and verify. THIS
+>    METHOD IS NOT APPROVED FOR SANITIZING MEDIA THAT CONTAINS TOP
+SECRET
+> INFORMA-
+>    TION.
+>=20
+> Implying that it is acceptable at lower classification levels.....
