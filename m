@@ -1,106 +1,64 @@
-From: David T Hollis <dhollis@davehollis.com>
-Subject: RPM spec file for libaal
-Date: Thu, 28 Aug 2003 12:55:47 -0400
-Message-ID: <3F4E3413.30108@davehollis.com>
+From: Steven Cole <elenstev@mesatop.com>
+Subject: Re: reiser4 snapshot for August 26th.
+Date: 28 Aug 2003 09:12:49 -0600
+Message-ID: <1062083569.1670.141.camel@spc9.esa.lanl.gov>
+References: <20030826102233.GA14647@namesys.com>
+	 <1061922037.1670.3.camel@spc9.esa.lanl.gov> <3F4BA9E9.4090108@namesys.com>
+	 <20030826184114.GP5448@backtop.namesys.com>
+	 <1061925286.1666.31.camel@spc9.esa.lanl.gov>
+	 <20030828114654.GA1361@backtop.namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------060309020908050503090701"
-Return-path: <reiserfs-list-return-15471-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15472-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20030828114654.GA1361@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Alex Zarochentsev <zam@namesys.com>
+Cc: Hans Reiser <reiser@namesys.com>, Oleg Drokin <green@namesys.com>, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, demidov <demidov@namesys.com>, god@namesys.com
 
---------------060309020908050503090701
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+On Thu, 2003-08-28 at 05:46, Alex Zarochentsev wrote:
+[snipped]
+> > [root@spc1 /]# mount -t reiser4 /dev/hda11 /share_r4
+> > [root@spc1 /]# df -T
+> > Filesystem    Type   1K-blocks      Used Available Use% Mounted on
+> > /dev/hda1     ext3      241116     89449    139219  40% /
+> > /dev/hda9     ext3    20556656  16526188   4030468  81% /home
+> > none         tmpfs      126784         0    126784   0% /dev/shm
+> > /dev/hda8     ext3      241116      4711    223957   3% /tmp
+> > /dev/hda6     ext3     3012204   2507596    351592  88% /usr
+> > /dev/hda7     ext3      489992     70721    393971  16% /var
+> > df: `/share_r4': Value too large for defined data type
+> 
+> I can't reproduce that.  Do you see df errors each time you mount just created
+> reiser4 fs?  Can you provide additional information about your system:
+> distro, libc which you used?  
+> 
+Yes, each time that /dev/hda11 is reiser4 and mounted, I get that error.
+Other fs report OK, tested were ext2, ext3, reiserfs, jfs, xfs.  Size
+is about 4G.  At some point in the past, around 2.5.60, I tested the
+reiser4 snapshot, and this problem did not exist.  Unfortunately, I
+don't remember what the base distro was for those tests.
 
-This can be included in the libaal package to allow users to build it 
-with rpmbuild -ta libaal-XXXXX.tar.gz.  If there is desire, I could 
-produce a patch that would allow configure to embed the proper version 
-in the spec file to help automate future releases.
+Distro is Red Hat Severn (the latest RH beta).
+df --version reports df (coreutils) 5.0
+/lib/libc.so.6 reports 2.3.2
+gcc is 3.3
+kernel is 2.6.0-test4 of course.
+reiser4progs is 0.4.12
 
---------------060309020908050503090701
-Content-Type: text/plain;
- name="libaal.spec"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="libaal.spec"
+> My hypothesysis is that libc statfs or df itself want to convert "free inodes"
+> result parameter which is __u64 to shorter data type.  reiser4_statfs() sets
+> kstatfs->f_ffree to a large value which is close to 2^64.
 
-%define file_version 20030826
-%define enable_debug 1
+I also tried a copy of df version 4.5.7 from a Mandrake 9.1 system, with
+exactly the same results as above.
 
-Name: libaal
-Version: 0.4.9
-Release: 1
-Epoch:   1
-Summary: Abstraction library for ReiserFS utilities
-License: GPL
-Group: Development/Libraries
-URL: http://www.namesys.com/
-Source: libaal-%{file_version}.tar.gz
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
+Let me know if you have further questions.
 
-%description
-This is a library that provides application abstraction mechanism.
-It include device abstraction, libc independence code, etc.
+Steven
 
-%package devel
-Summary: Headers and static libraries for developing with libaal.
-Group: Development/Libraries
-
-%description devel
-This package includes the headers and static libraries for developing
-with the libaal library.
-
-%prep
-%setup -q
-
-%build
-BUILD_OPTS="--enable-stand-alone"
-%if %{enable_debug}
-BUILD_OPTS="$BUILD_OPTS	--enable-debug"
-%endif
-
-%configure \
-%if %{enable_debug}
-	--enable-debug \
-%endif
-	--enable-stand-alone
-make
-
-%install
-rm -rf $RPM_BUILD_ROOT
-%makeinstall
-
-%clean
-rm -rf $RPM_BUILD_ROOT
-
-%post -p /sbin/ldconfig
-
-%postun -p /sbin/ldconfig
-
-%files
-%defattr(-,root,root)
-%doc AUTHORS BUGS COPYING CREDITS INSTALL NEWS README THANKS TODO
-%{_libdir}/libaal-0.4.so.*
-%{_libdir}/libaal-alone.so.*
-
-%files devel
-%defattr(-,root,root)
-%{_libdir}/libaal.so
-%{_libdir}/libaal.*a
-%{_libdir}/libaal-alone.so
-%{_libdir}/libaal-alone.*a
-%dir %{_includedir}/aal
-%{_includedir}/aal/*
-%{_datadir}/aclocal/libaal.m4
-
-%changelog
-* Wed Aug 27 2003 David T Hollis <dhollis@davehollis.com>
-- RPM package created
-
---------------060309020908050503090701--
 
