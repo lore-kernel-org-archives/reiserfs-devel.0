@@ -1,28 +1,34 @@
-From: Hans Reiser <reiser@namesys.com>
+From: bscott@ntisys.com
 Subject: Re: Corruption: --fix-fixable results in all nlink
  values = 0
-Date: Fri, 16 Aug 2002 18:24:36 +0400
-Message-ID: <3D5D0B24.2030806@namesys.com>
-References: <200208152007.42370.degerrit@web.de>	<200208152253.40413.vitaly@namesys.com>	<200208152329.40707.degerrit@web.de>	<200208161205.00550.vitaly@namesys.com> <3D5CBF08.4010308@web.de>	<m3ptwjw00q.fsf@merlin.emma.line.org> <3D5CFA0B.3030107@web.de> <m3wuqqq4dg.fsf@merlin.emma.line.org>
+Date: Fri, 16 Aug 2002 10:42:11 -0400 (EDT)
+Sender: bscott@ntisys.com
+Message-ID: <Pine.LNX.4.44.0208161041230.28115-100000@dragon.inside.ntisys.com>
+References: <3D5D0B24.2030806@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11209-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11210-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3D5D0B24.2030806@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Matthias Andree <ma+rfs@dt.e-technik.uni-dortmund.de>
-Cc: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ReiserFS Mailing List <reiserfs-list@namesys.com>
 
-A colleague of mine back when I was part of a sysadmin department used 
-to write to every block on the drive before installing the OS on it.  I 
-think he was right to do so.  I have considered having mkreiserfs ask 
-the user if he wants to do that.
+On Fri, 16 Aug 2002, at 6:24pm, Hans Reiser wrote:
+> A colleague of mine back when I was part of a sysadmin department used to
+> write to every block on the drive before installing the OS on it.  I think
+> he was right to do so.  I have considered having mkreiserfs ask the user
+> if he wants to do that.
+
+  I usually do a "badblocks -w" on any new disk before putting it into
+production for that reason.
 
 -- 
-Hans
-
-
+Ben Scott <bscott@ntisys.com>
+| The opinions expressed in this message are those of the author and do not |
+| necessarily represent the views or policy of any other person, entity or  |
+| organization.  All information is provided without warranty of any kind.  |
 
