@@ -1,98 +1,40 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
-Subject: Re: reiserfs3 filesystem corruption?
-Date: Sat, 28 Aug 2004 17:28:15 +0200
-Message-ID: <200408281728.16047.christian.mayrhuber@gmx.net>
-References: <270bd0c404082806271f566342@mail.gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: silent semantic changes with reiser4
+Date: Fri, 27 Aug 2004 23:01:38 +0200
+Message-ID: <20040827210137.GD709@openzaurus.ucw.cz>
+References: <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <20040826100530.GA20805@taniwha.stupidest.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20992-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20993-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <270bd0c404082806271f566342@mail.gmail.com>
 Content-Disposition: inline
+In-Reply-To: <20040826100530.GA20805@taniwha.stupidest.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com, leon breedt <bitserf@gmail.com>
+Content-Transfer-Encoding: 7bit
+To: Chris Wedgwood <cw@f00f.org>
+Cc: Jamie Lokier <jamie@shareable.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Saturday 28 August 2004 15:27, leon breedt wrote:
-> hi,
+Hi!
+
+> > One of the big potential uses for file-as-directory is to go inside
+> > archive files, ELF files, .iso files and so on in a convenient way.
 > 
-> not sure if i'm going mad here:
-> 
-> [ljb@imryrr]:/home/ljb $ ls -l /usr/bin/sdiff
-> -rwxr-xr-x  1 root root 24576 Apr 25  2003 /usr/bin/sdiff*
-> 
-> [ljb@imryrr]:/home/ljb $ cp /usr/bin/sdiff .
-> 
-> [ljb@imryrr]:/home/ljb $ ls -l sdiff
-> -rwxr-xr-x  1 ljb ljb 20480 Aug 29 01:12 sdiff*
-> 
-> [ljb@imryrr]:/home/ljb $ ./sdiff
-> zsh: bus error  ./sdiff
-> 
-> [ljb@imryrr]:/home/ljb $ /usr/bin/sdiff
-> /usr/bin/sdiff: missing operand after `/usr/bin/sdiff'
-> /usr/bin/sdiff: Try `/usr/bin/sdiff --help' for more information.
-> 
-> why would the file shrink by 4096 bytes? 
-> 
-> and notice, the original is still able to run. its just when i try to
-> copy it, that it gets corrupted somehow.
-> 
-> this occurs for a fair number of random files on this filesystem
-> (affected files all shrink by 4096 bytes). reiserfsck has no
-> complaints, and i've also run reiserfsck --rebuild-tree. it occurs to
-> the same set of files every time.
-> 
-> i ran across this while trying to copy my / filesystem to a new
-> reiser4 filesystem. first thought it was a reiser4 issue, but it
-> occurs when copying to an ext3 filesystem as well.
-> 
-> i've run badblocks on the disk, with no errors. the filesystem isn't
-> mounted with any special options, just "noatime".
-> 
-> kernel: 2.6.9-rc1-mm1
-> reiserfsck: 3.6.18
-> reiserfs format: "3.6"
-> 
-> its serial ATA device on ICH5-R, if that makes any difference.
-> 
-> the relevant dmesg output:
-> 
-> ReiserFS: sda7: found reiserfs format "3.6" with standard journal
-> ReiserFS: sda7: using ordered data mode
-> ReiserFS: sda7: journal params: device sda7, size 8192, journal first
-> block 18, max trans len 1024, max batch 900, max commit age 30, max
-> trans age 30
-> ReiserFS: sda7: checking transaction log (sda7)
-> ReiserFS: sda7: Using r5 hash to sort names
-> 
-> any ideas what to try? i'm keeping this filesystem around so i have
-> the test cases available.
-> 
-> leon
+> Arguably this belongs in userspace --- and people have put it there.
 > 
 
-This is a bug in 2.6.9-rc1-mm1. See:
-http://marc.theaimsgroup.com/?l=linux-kernel&m=109360433916523&w=2
+uservfs.sf.net, using existing coda hooks. There are 2+
+very similar projects.
 
-To fix it you have to revert these patches:
 
-=== START Andrew Morton ===
-ftp://ftp.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.9-rc1/2.6.9-rc1-mm1/ 
-\
-broken-out/re-fix-pagecache-reading-off-by-one-cleanup.patch
+Advantage is we can do ftpfs, too. Having ftp done by
 
-and then
+> /ftp
+cd /ftp/sunsite
 
-ftp://ftp.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.9-rc1/2.6.9-rc1-mm1/ 
-\
-broken-out/re-fix-pagecache-reading-off-by-one.patch
-=== END Andrew Morton ===
-Full email at: 
-http://marc.theaimsgroup.com/?l=linux-kernel&m=109368723414915&w=2
-
+would be too ugly for reiser4 plugins... Or not?
 -- 
-lg, Chris
+64 bytes from 195.113.31.123: icmp_seq=28 ttl=51 time=448769.1 ms         
+
