@@ -1,21 +1,31 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Nikita Danilov <Nikita@Namesys.COM>
 Subject: Re: Feature request: online fsync disable
-Date: Fri, 23 Aug 2002 15:59:58 +0400
-Message-ID: <3D6623BE.4040500@namesys.com>
-References: <3D661C89.C8A805D7@baldauf.org> <15718.8710.244926.960377@laputa.namesys.com> <20020823155658.A962@namesys.com>
+Date: Fri, 23 Aug 2002 16:09:26 +0400
+Message-ID: <15718.9718.736822.978374@laputa.namesys.com>
+References: <3D661C89.C8A805D7@baldauf.org>
+	<15718.8710.244926.960377@laputa.namesys.com>
+	<20020823155658.A962@namesys.com>
+	<3D6623BE.4040500@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11311-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11312-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3D6623BE.4040500@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Oleg Drokin <green@namesys.com>
-Cc: Nikita Danilov <Nikita@Namesys.COM>, Xuan Baldauf <xuan--reiserfs@baldauf.org>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>, zam@thebsh.namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Oleg Drokin <green@namesys.com>, Xuan Baldauf <xuan--reiserfs@baldauf.org>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>, zam@thebsh.namesys.com
 
-It is a reasonable feature request I think.
+Hans Reiser writes:
+ > It is a reasonable feature request I think.
+ > 
+ > Zam, put it into reiser4.1.
+ > 
 
-Zam, put it into reiser4.1.
+I think, in stead of feature "disable fsync", better alternative would
+be "disable journalling", or "journal meta-data only".
 
+Nikita.
