@@ -1,54 +1,30 @@
-From: Michael Gaughen <mgaughen@polyserve.com>
-Subject: Re: BUG in reiserfs_write_full_page().
-Date: Thu, 17 Jul 2003 14:53:03 -0700
-Message-ID: <3F171ABF.6080601@polyserve.com>
-References: <3F1712F6.7080204@polyserve.com> <1058477610.4012.333.camel@tiny.suse.com>
+From: Yury Umanets <umka@namesys.com>
+Subject: Re: Patch for 2.6.0-test1 kernel
+Date: 18 Jul 2003 09:48:40 +0400
+Message-ID: <1058507319.2030.7.camel@haron.namesys.com>
+References: <sf16c55a.075@gwia201.syr.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14960-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14961-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1058477610.4012.333.camel@tiny.suse.com>
+In-Reply-To: <sf16c55a.075@gwia201.syr.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Michael Konrad <mkonrad@syr.edu>
 Cc: reiserfs-list@namesys.com
 
-Chris Mason wrote:
+On Thu, 2003-07-17 at 23:48, Michael Konrad wrote:
+Hello, 
 
->
->Hmmm, the allocation masks are supposed to be set such that writepage
->won't get called.  I'll take a look.  How easy is it to reproduce?  If
->you have any tests cases that can trigger it, please send them along.
->
+Not yet, but we're considering about.
 
-Actually, the problem may have to do with the common journal_info kept
-within the task structure.  Looking at ext3_writepage, they have this to 
-say:
-
-        /*
-         * We give up here if we're reentered, because it might be
-         * for a different filesystem.  One *could* look for a
-         * nested transaction opportunity.
-         */
-        lock_kernel();
-        if (ext3_journal_current_handle())
-                goto out_fail;
-
-and in the case of out_fail, they do:
-
-        unlock_kernel();
-        SetPageDirty(page);
-        UnlockPage(page);
-        return ret;
-
-So, in the case of reiserfs_write_full_page(), the BUG() is falsely 
-triggered
-due to a transaction that was started on another filesystem (ext3).  And the
-fix would simply be to do something along the lines of ext3...
-
-Thanks,
--Mike
+> Is there a reiser4 patch for the 2.6.0-test1 kernel?
+> 
+> Thank you.
+> -Michael
+-- 
+We're flying high, we're watching the world passes by...
 
