@@ -1,49 +1,38 @@
-From: Herbie Hopkins <Herbie@Hopkins.net>
-Subject: Re: slow mount
-Date: 12 Jun 2003 18:33:37 +0100
-Message-ID: <1055439217.2068.27.camel@terminus.zapto.org>
-References: <1055427629.1875.8.camel@terminus.zapto.org>
-	 <20030612144609.GA27645@namesys.com>
-	 <1055432836.8601.3.camel@terminus.zapto.org> <3EE8A2A0.2080500@namesys.com>
-	 <1055435090.2028.7.camel@terminus.zapto.org>
-	 <20030612172624.GG7319@namesys.com>
+From: Lars O. Grobe <grobe@gmx.net>
+Subject: Re: How to build a big file server
+Date: Thu, 12 Jun 2003 22:34:25 +0200
+Message-ID: <E19QYkY-00030k-00@main.gmane.org>
+References: <1054800852.1997.15.camel@wusel.schnulli.de> <1055252169.2010.5.camel@wusel.schnulli.de> <3EE5E77E.70505@dotcom.pl>
+Reply-To: grobe@gmx.net
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14522-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-14523-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030612172624.GG7319@namesys.com>
+In-Reply-To: <3EE5E77E.70505@dotcom.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: Hans Reiser <reiser@namesys.com>, Reiserfs <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-I don't have the dubuging stuff on at the moment, I just compiled
-another kernel with it enabled to see what extra info it gave me.
+> >>>3ware Controller. Works perfect.
+> >>
+> >>but not in raid 5...
+> >>
+>  > What do you mean? Do have any experiences? What type of controler do
+>  > use?
 
-On Thu, 2003-06-12 at 18:26, Oleg Drokin wrote:
-> Hello!
-> 
-> On Thu, Jun 12, 2003 at 05:24:50PM +0100, Herbie Hopkins wrote:
-> > > Is the hardware starting to fail and doing lots of retries maybe?
-> > I sure hope not as the drive is only a couple of months old. Booting a
-> > kernel with CONFIG_REISERFS_CHECK=y dmesg gives me:
-> > reiserfs:warning: CONFIG_REISERFS_CHECK is set ON
-> > reiserfs:warning: - it is slow mode for debugging.
-> > reiserfs: checking transaction log (device 03:07) ...
-> > journal-1153: found in header: first_unflushed_offset 465,
-> > last_flushed_trans_id 84176
-> > journal-1206: Starting replay from offset 465, trans_id 84177
-> > journal-1299: Setting newest_mount_id to 95
-> > Using r5 hash to sort names
-> > ReiserFS version 3.6.25
-> > which looks normal to me.
-> 
-> What if you turn off this debugging stuff that is certainly slows down all the operations by a lot?
-> Corresponding kernel option (compile-time) is CONFIG_REISERFS_CHECK
-> 
-> Bye,
->     Oleg
+Hi,
 
+just a short note, I have been using 3ware controllers (the old 6800s) on=
+ a=20
+540GB backup server... after too much trouble, I switched to software-rai=
+d.=20
+The controller only gives me 8 channels now, raid5 is done by software.=20
+Better performance, no need of identical disks (almost impossible in=20
+ide-world), no firmware-problems any more.
+
+However, a serious server has always scsi (or fc) IMHO...
+
+CU Lars.
