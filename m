@@ -1,11 +1,11 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: zam, please discuss this
-Date: Wed, 23 Jun 2004 20:33:46 -0700
-Message-ID: <40DA4B9A.8000908@namesys.com>
+Date: Wed, 23 Jun 2004 21:29:48 -0700
+Message-ID: <40DA58BC.1060203@namesys.com>
 References: <40D8EB0D.6050109@namesys.com> <20040623063049.GA5080@backtop.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19308-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19309-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -32,5 +32,11 @@ Alex Zarochentsev wrote:
 >
 >  
 >
-I don't understand this statement.  Did you employ the algorithm I asked 
-you to, with it throttling on every Nth page instead of every page?
+I apologize to zam, I meant to only cc this to reiserfs-dev. 
+
+ I think this performance loss can be overcome, and needs to be overcome 
+so we can eliminate emergency flush and get good iozone results.  I 
+should note though that Andrew Morton thinks iozone is a benchmark that 
+does things that no application does (dirtying massive amounts of mmap'd 
+pages).  I am curious as to whether the sysadmins on the list would 
+agree with that (Andrew may be right)....
