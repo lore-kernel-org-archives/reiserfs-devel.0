@@ -1,75 +1,57 @@
-From: Stephen Wille Padnos <spadnos@sover.net>
+From: Christophe Saout <christophe@saout.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 16:35:37 -0400
-Message-ID: <412E4999.1050504@sover.net>
-References: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com>
+Date: Thu, 26 Aug 2004 22:36:10 +0200
+Message-ID: <1093552570.13881.41.camel@leto.cs.pocnet.net>
+References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com>
+	 <200408262128.41326.vda@port.imtp.ilyichevsk.odessa.ua>
+	 <Pine.LNX.4.58.0408261132150.2304@ppc970.osdl.org>
+	 <20040826191323.GY21964@parcelfarce.linux.theplanet.co.uk>
+	 <20040826203228.GZ21964@parcelfarce.linux.theplanet.co.uk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20791-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-93ZxXzE7cHUjN/kDvYMF"
+Return-path: <reiserfs-list-return-20792-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com>
+In-Reply-To: <20040826203228.GZ21964@parcelfarce.linux.theplanet.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Rik van Riel <riel@redhat.com>
-Cc: Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: viro@parcelfarce.linux.theplanet.co.uk
+Cc: Linus Torvalds <torvalds@osdl.org>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Rik van Riel wrote:
+--=-93ZxXzE7cHUjN/kDvYMF
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
->On Thu, 26 Aug 2004, Linus Torvalds wrote:
->  
->
->>So "/tmp/bash" is _not_ two different things. It is _one_ entity, that
->>contains both a standard data stream (the "file" part) _and_ pointers to
->>other named streams (the "directory" part).
->>    
->>
->Thinking about it some more, how would file managers and
->file chosers handle this situation ?
->
->Currently the user browses the directory tree and when
->the user clicks on something, one of the following 
->happens:
->
->1) if it is a directory, the file manager/choser changes
->   into that directory
->  
->
-How does the file manager / chooser decide whether you're trying to move 
-into a directory, or the meta-data-directory for a directory?
-It's not just files that should have metadata - directories need* them 
-too.  Making it possible to see attributes as a directory under a file 
-is great, but you'd still need an O_META flag for accessing directory 
-metadata (since there are already files under a directory).
+Am Donnerstag, den 26.08.2004, 21:32 +0100 schrieb :
 
->2) if it is a file, the file is opened
->
->Now how do we present things to users ?
->
->How will users know when an object can only be chdired
->into, or only be opened ?
->
->For objects that do both, how does the user choose ?
->
->Do we really want to have a file paradigm that's different
->from the other OSes out there ?
->  
->
-MacOS does, Be did (sort of).  I'm not sure it would be the end of the 
-world, as long as the data can be extracted.
+> Argh...  OK, now I remember why I went for -EBUSY for unlink() (we obviou=
+sly
+> are not bound by SuS on that one).  Consider the following scenario:
+> 	* local file foo got something else bound on it for a while
+> 	* we are tight on space - time to clean up
+> 	* oh, look - contents of foo is junk
+> 	* rm foo
+> 	* ... oh, fuck, there goes the underlying file.
 
->What happens when users want to transfer data from Linux
->to another system ?
->  
->
-That would depend on the other system.  Data is easy, metadata is hard.
-It would be possible to create an XML schema for metadata, and if 
-requested (O_EVERYTHING?), the file data is returned with all metadata 
-in XML tags.  (not advocating this, just an idea :)
-- Steve
+Right. Good thinking. You can't delete a directory while there regular
+files in it either.
 
-* I say need in the same way as one *needs* to upgrade their 2GHz 
-computer - it would be nice :)
+Another question: /mnt/test is a mountpoint. Why can I rename `mnt' but
+can't rename `test'?
+
+
+--=-93ZxXzE7cHUjN/kDvYMF
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQBBLkm6ZCYBcts5dM0RApvcAKCMxROH+ugJZw6LlUMzRKlSInpwkQCfQg1I
+KW/2Ax+hEGewrv+vJCSoCKs=
+=F9+H
+-----END PGP SIGNATURE-----
+
+--=-93ZxXzE7cHUjN/kDvYMF--
 
