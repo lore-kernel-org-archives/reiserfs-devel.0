@@ -1,42 +1,44 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: using of XATTRs instead of pseudo files for accessing reiser4
-	file attributes.
-Date: Mon, 05 Apr 2004 21:22:39 -0400
-Sender: news <news@sea.gmane.org>
-Message-ID: <87lll97vds.fsf@uhoreg.ca>
-References: <1081169185.3548.373.camel@watt.suse.com> <38261445506-BeMail@cr593174-a>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: testing/questions about latest Reiser4
+Date: Tue, 06 Apr 2004 10:48:10 +0400
+Message-ID: <1081234089.1162.57.camel@tribesman.namesys.com>
+References: <4070E534.9010509@mrs.umn.edu>
+	 <1081178588.1162.47.camel@tribesman.namesys.com>
+	 <200404052300.i35N0NTT025232@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17738-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17740-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200404052300.i35N0NTT025232@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Valdis.Kletnieks@vt.edu
+Cc: Grant Miner <mine0057@mrs.umn.edu>, reiserfs-list@namesys.com
 
->>>>> "Alexander" == Alexander G M Smith <agmsmith@rogers.com> writes:
+Hello
 
-Alexander> One of the big points is to cut down on the number of APIs
-Alexander> and gain in saved effort.  Listing attributes?  Just use good
-Alexander> old ReadDir().  With a common name space, you can use grep
-Alexander> and other well developed tools to deal with attributes.  And
-Alexander> so on.
+On Tue, 2004-04-06 at 03:00, Valdis.Kletnieks@vt.edu wrote:
+> On Mon, 05 Apr 2004 19:23:08 +0400, Vladimir Saveliev said:
+> 
+> > >   Are 
+> > > pseudo files just representation of stat data stored a special way? 
+> > 
+> > Pseudo files are not stored anywhere
+> 
+> Subtle distinction here - the data in a pseudo file has to be stored
+> *somewhere* if you want it to persist across reboots, and even for things that
+> don't survive a reboot, the data has to be saved *someplace* in memory, even if
+> it's only in a variable or a dentry structure or something like that....
+> 
+> So more accurate might be to say "The content of pseudo files is created on the
+> fly from metadata that is managed (and possibly saved) by the file system".
+> 
 
-But if programs are using xattrs for other filesystems, then people
-don't want to have to detect when they're running on Reiser4, and switch
-to using ReadDir() et al.  So while the philosophical side of me says
-that using normal file operations is the better thing to do, the
-pragmatic side of me says that there should be at least some sort of
-compatibility layer that uses the xattrs API and makes the appropriate
-translation for Reiser4.  (And whether or not that really is the best
-thing to do runs along the same lines as whether or not WINE helps
-migration from Windows to GNU/Linux.)
+Yes, thanks, I should have said something like that
 
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+> (Sorry to be pedantic, but it's a point that will cause a lot of confusion if you
+> don't really understand it)...
 
