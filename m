@@ -1,58 +1,43 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: What Filesystem?
-Date: Wed, 29 Jan 2003 20:02:14 +0100
-Message-ID: <200301292002.14633.Dieter.Nuetzel@hamburg.de>
-References: <3E38378A.8030406@jtmstudio.fsbusiness.co.uk> <20030129152815.GB28632@willow.seitz.com>
+From: Alexander Lyamin <flx@msu.ru>
+Subject: Re:  UNSUBSCRIBE PLEASE THANKS - add a footer, please
+Date: Wed, 29 Jan 2003 22:17:06 +0300
+Message-ID: <20030129221706.D7998@t-raenon.nmd.msu.ru>
+References: <1043651468.25547.3.camel@automatisme5> <20030127080427.GA6431@suse.de> <1043655641.25602.19.camel@automatisme5> <20030127082200.GC6431@suse.de> <1043663360.29890.4.camel@automatisme5> <20030128025029.GF13587@mrball.net> <004801c2c6ad$9ee11c30$6400a8c0@twister>
+Reply-To: flx@msu.ru
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12544-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12545-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030129152815.GB28632@willow.seitz.com>
 Content-Disposition: inline
+In-Reply-To: <004801c2c6ad$9ee11c30$6400a8c0@twister>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Ross Vandegrift <ross@willow.seitz.com>, James Thompson <james@jtmstudio.fsbusiness.co.uk>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Szabolcs Szasz <sz@szasz.hu>
+Cc: Todd Lyons <todd@mrball.net>, stephane ancelot <sancelot@free.fr>, Hubert Mantel <mantel@suse.de>, reiserfs-list@namesys.com
 
-Am Mittwoch, 29. Januar 2003 16:28 schrieb Ross Vandegrift:
-> On Wed, Jan 29, 2003 at 03:20:26PM -0500, James Thompson wrote:
-> > I am a visual artist and musician.
->
-> Check out the document at
-> http://myweb.cableone.net/eviltwin69/ALSA_JACK_ARDOUR.html.  There a
-> section that benchmarks various filesystems for their latency.  The
-> short story is that Reiserfs wins handily over Ext2, Ext3, and FAT32
-> (duh!  why would someone test that...).  Unfortunately, there's no
-> comparison between Reiser/JFS/XFS.  I think that would be more of a fair
-> match.
+Tue, Jan 28, 2003 at 10:14:11AM +0100, Szabolcs Szasz wrote:
+> > You're using Ximian Evolution:
+> >   View -> MessageDisplay -> ShowFullHeaders
+> 
+> Few people ever see those headers. Having 
+> full headers on is not a realistic assumption,
+> ESPECIALLY NOT for those (mostly beginners), 
+> who have unsubscribe problems.
+> 
+> A footer, maybe?
 
-XFS could win _today_ for "real time" (granted video bandwidth, for which i=
-t=20
-was designed in the first place), but this could change (compensate) with t=
-he=20
-latest ReiserFS 3.x patches (data logging) and finally Reiser4 (see the=20
-Reiser Homepage).
+instructions on web-site.
+much more realistical.
+including auto-helpdesk and my address for especially
+tough cases.
 
-> Anyhow though, for general low-latency multimedia work, ReiserFS looks
-> like it's a good choice.
+:)
+> 
+> Sab
 
-Yes.
-
-Go with low-latency _and_ preemption patches (try Gentoo, it has it all).
-I did beta testing for Robert Love (MontaVista) for ages and it is _the way=
- to=20
-go_ for multi media machines.
-
-Greetings,
-	Dieter
-
-=2D-=20
-Dieter N=FCtzel
-Graduate Student, Computer Science
-
-University of Hamburg
-Department of Computer Science
-@home: Dieter.Nuetzel at hamburg.de (replace at with @)
+-- 
+"Cache remedies via multi-variable logic shorts will leave you crying."(cl)
+Lex Lyamin
