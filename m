@@ -1,62 +1,27 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: silent semantic changes with reiser4
-Date: Sat, 04 Sep 2004 01:03:37 -0500
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: The argument for fs assistance in handling archives
+Date: Fri, 03 Sep 2004 23:21:29 -0700
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <41395AB9.1090804@slaphack.com>
-References: <Pine.LNX.4.44.0408261011410.27909-100000@chimarrao.boston.redhat.com> <200408261819.59328.vda@port.imtp.ilyichevsk.odessa.ua> <1093789802.27932.41.camel@localhost.localdomain> <1093804864.8723.15.camel@lade.trondhjem.org> <20040829193851.GB21873@jeremy1> <20040901201945.GE31934@mail.shareable.org> <20040901202641.GJ4455@legion.cup.hp.com> <1094118524.4842.27.camel@localhost.localdomain> <20040904011012.GA27405@pants.nu>
+Message-ID: <41395EE9.4040407@namesys.com>
+References: <200409032145.i83LjdXG002843@localhost.localdomain> <413954B7.7050502@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20040904011012.GA27405@pants.nu>
+In-Reply-To: <413954B7.7050502@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Brad Boyer <flar@allandria.com>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Jeremy Allison <jra@samba.org>, Jamie Lokier <jamie@shareable.org>, Trond Myklebust <trond.myklebust@fys.uio.no>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, Linus Torvalds <torvalds@osdl.org>, reiser@namesys.com, hch@lst.de, Linux Filesystem Development <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Spam <spam@tnonline.net>, Dave Kleikamp <shaggy@austin.ibm.com>, Paul Jakma <paul@clubi.ie>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jamie Lokier <jamie@shareable.org>, Linus Torvalds <torvalds@osdl.org>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+David Masover wrote:
 
-Brad Boyer wrote:
-| On Thu, Sep 02, 2004 at 10:48:46AM +0100, Alan Cox wrote:
-|
-|>What I don't understand is the tie between Linux having such streams and
-|>Windows doing it for Samba to work. Netatalk has always handle this for
-|>Macintosh and portably. Presumably any Samba support would need to
-|>handle OS's without wacky files for portability too ?
-|
-|
-| I'm not 100% sure on the samba side, but I think there is a pretty
-| significant difference. On the Mac, the problem of copying forks and
-| metadata onto non-Mac systems was recognized early on. There are several
-| standard formats for serialized versions of this data. If you take the
-| files that netatalk writes and copy them directly to a Mac separately,
-| there are tools that can convert them back to the original format with
-| all the data intact. I've never seen such a thing for NTFS named streams.
+>   I used the betas for months, and "metas"
+> never burned me.
 
-I had an idea for how to solve this.  Search the archives for
-"serialization" or "serialize".
-
-Basically, it involves creating a better interface to a better "dump".
-You do
-	cat foo/serialize > foo.img
-and send foo.img over the network.  Or you just tell mutt/scp/whatever
-to grab foo/serialize instead of foo.  Can't be worse than a mac
-resource fork, and it looks more user-friendly to me.
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQTlauHgHNmZLgCUhAQK7Iw//SAi7I84OIz4xHh5S7i1xc+JugPvELyh2
-dvrVkETvQlvRcABZ0GYlCQQPPzL+QcTVnruMRAUZGrGCPJdTkxfae41tX5KDS8/4
-OpPWEDki+FSJrv+Mn9Pbm3I5Bxlhu0+nuNOIS0HSULo+/IBV4f/ldv8TUKSbXeXJ
-YjAXJJECpWTlYwF8sTvM/ALHpo+6xEtJq5gQxoUFnw4Pio8eycalS9m2cDs/N6rq
-PYcOjb7pWjGEk+9qimmwIcX5LnBXl8L9OhXqMQoR3Of+blniIrEOtg/0WLrwzu62
-rW+rBxDAfoDxIZZvquf/gyJ6stO8QzGeQqoxxTUXhbI5PUtD+qGO+tWT6+/EljHF
-qNri65JwB8PetbqdjWmsTO3V+FVSRy3hu4/vTNpnmwnR8H+yilWWDc7Tnsjql+dh
-9j4ycfT5xDAA9dC6APOSV5AEgI9z8FntQZzOCPe1lyLD7Qwjdak+3Nw2I3yNS+Pl
-Xa5ijSm3IKJ+JqKpZKRzCRyXRQdeAj2kGaWQP4Ui3D/RwBEHtn7shwdJ9Hku6KkN
-9ZyiTPqY5XGiyLrJWqRc9MraepGhuxxtYcq65A+vdJq2fxA5+XRF8UGbYc9KW5lF
-1fYSXA2DBNJjeNEvZw8LWI54OrIMSlhj3dWLX8WkkXog2gWO7ly0E6OiA0odZV6M
-i9sDeRClqlM=
-=CFb4
------END PGP SIGNATURE-----
+metas is much less likely than what clearcase uses to be hit 
+accidentally (After all these years I forget what exactly clearcase 
+special cases, maybe it was "@@").  When people using clearcase suffer a 
+namespace collision, life goes on, no big deal, they structure a 
+filename slightly differently and so what?  I mean, just how much do we 
+suffer from not being able to use '/' in filenames?  Every once in a 
+while it is annoying, but not that much....
