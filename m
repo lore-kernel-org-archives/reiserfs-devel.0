@@ -1,35 +1,58 @@
-From: Jeremy Howard <jh_lists@fastmail.fm>
-Subject: External journals and NVRAM devices
-Date: Fri, 01 Nov 2002 16:38:32 +1100
-Message-ID: <3DC21358.5040808@fastmail.fm>
+From: Andreas Dilger <adilger@clusterfs.com>
+Subject: Re: External journals and NVRAM devices
+Date: Thu, 31 Oct 2002 23:29:57 -0700
+Message-ID: <20021101062957.GE554@clusterfs.com>
+References: <3DC21358.5040808@fastmail.fm>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11883-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11884-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <3DC21358.5040808@fastmail.fm>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jeremy Howard <jh_lists@fastmail.fm>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Hi all,
+On Nov 01, 2002  16:38 +1100, Jeremy Howard wrote:
+> I'm looking at buying solid state drives / NVRAM drives for our servers
+> to hold an external ReiserFS journal.
+> 
+> We are using 2.4.20pre11, and Chris Mason's data logging patches.
+> 
+> I'm looking for any tips on how large the journal is when using
+> data=journal, and whether the external log patches are stable and work OK
+> in data=journal mode. Is there a command to show the current journal
+> size? Does the size vary over time? We need to ensure we buy a card with
+> enough memory so this is important information for us.
+> 
+> Is anyone currently using NVRAM for the journal? If so, how do you find
+> the performance of this configuration?
 
-I'm looking at buying solid state drives / NVRAM drives for our servers
-to hold an external ReiserFS journal.
+When people were testing this with ext3 external journals, they just
+used a RAMDISK for getting the performance measurements.  Obviously,
+(I hope ;-) this is not something you can do in real life, but for
+performance measurement it is OK.
 
-We are using 2.4.20pre11, and Chris Mason's data logging patches.
+Most people found that the ramdisk (and presumably the NVRAM device too)
+didn't perform much, if any, better than having a separate fast disk for
+the journal, because you are doing sequential I/O to the journal anyways.
+If it is on a separate disk/controller from the filesystem you don't have
+any seek or channel contention with the filesystem.  Of course, using a
+regular disk for the journal is MUCH cheaper than an NVRAM card, so you
+probably want to test this out before you go ahead and buy the NVRAM card.
 
-I'm looking for any tips on how large the journal is when using
-data=journal, and whether the external log patches are stable and work OK
-in data=journal mode. Is there a command to show the current journal
-size? Does the size vary over time? We need to ensure we buy a card with
-enough memory so this is important information for us.
+NVRAM devices are great for disks you are doing a lot of random I/O
+on (maybe database indexes or something), because there is zero seek
+latency, but for sequential I/O (like the journal) it really isn't
+anything special.
 
-Is anyone currently using NVRAM for the journal? If so, how do you find
-the performance of this configuration?
-
-TIA,
-   Jeremy
-
+Cheers, Andreas
+--
+Andreas Dilger
+http://www-mddsp.enel.ucalgary.ca/People/adilger/
+http://sourceforge.net/projects/ext2resize/
 
