@@ -1,57 +1,50 @@
-From: jlewis@lewis.org
-Subject: Re: reiserfs rebuild-tree time?
-Date: Fri, 12 Mar 2004 09:39:07 -0500 (EST)
-Message-ID: <Pine.LNX.4.58.0403120923290.1969@web1.mmaero.com>
-References: <Pine.LNX.4.58.0403110111490.1969@web1.mmaero.com>
- <1078997330.9476.246.camel@tribesman.namesys.com>
- <Pine.LNX.4.58.0403112100510.1969@web1.mmaero.com> <200403121259.39117.vitaly@namesys.com>
+From: Stewart Smith <stewart@flamingspork.com>
+Subject: Re: Reiserfs Data Recovery
+Date: Sat, 13 Mar 2004 20:44:52 +1100
+Message-ID: <1079171092.16498.29.camel@willster>
+References: <404E8665.7090305@nsanity.com>
+	 <1078918871.9476.116.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17189-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-oNg5RYMUrbhUcY3plRYD"
+Return-path: <reiserfs-list-return-17194-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200403121259.39117.vitaly@namesys.com>
+In-Reply-To: <1078918871.9476.116.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: Nick Vahalik <nick@nsanity.com>, reiserfs-list@namesys.com
 
-On Fri, 12 Mar 2004, Vitaly Fertman wrote:
+--=-oNg5RYMUrbhUcY3plRYD
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> How big was it? There are many directories at the beginning of the fs
-> and directories need more time for packing, the speed usually increases
-> when ~20% of partition is processed.
+On Wed, 2004-03-10 at 22:41, Vladimir Saveliev wrote:
+> namesys.com had description of reiserfs internals. But now it does not.
+> read source code instead
 
-It's about a 70gb fs with about 45gb in use.  The bzip'd metadata file was
-about 60mb, and there were still about 10M blocks left in the countdown.
-I see now that the file gets pretty big to start with, but growth slows
-down.  I'm collecting this again.
+Is it possible to get all of these documents back and in a nice, central
+location? Historical documents can be quite interesting, especially in
+trying to understand the design process of modern file systems.
 
-Before stopping the rebuild again just now, I straced it and could see
-that it was apparently working on the same maildir again.
 
-> How is CPU activity now?
+--=20
+Stewart Smith (stewart@flamingspork.com)
+http://www.flamingspork.com/
 
-When reiserfsck gets to "Pass 3 (semantic):" CPU load is very low (>90%
-idle) and disk I/O is fairly low, but it seems to get to a particular
-maildir and stop making progress.
 
-debugreiserfs 3.6.13 (2003 www.namesys.com)
+--=-oNg5RYMUrbhUcY3plRYD
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
-Loading on-disk bitmap .. 11377568 bits set - done
-super block..ok
-bitmaps..(545).. ok
-journal (from 18 to 8210)..ok
-Super block, bitmaps, journal - 8739 blocks - done, 11368829 blocks left
-0%....20%....40%                                        left 6679893, 4402 /sec
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
 
-The bzip'd output file is >100mb already.  What's the best way to get you
-a copy once it finishes?
+iD8DBQBAUtgT3tgLgERgy8oRAj/vAJ495pJvQQEh+0vkKmKJiSdkfvp6GgCfd2IR
+9JAf9MaHwIYhrwK2XRMRFms=
+=SV41
+-----END PGP SIGNATURE-----
 
-----------------------------------------------------------------------
- Jon Lewis *jlewis@lewis.org*|  I route
- Senior Network Engineer     |  therefore you are
- Atlantic Net                |
-_________ http://www.lewis.org/~jlewis/pgp for PGP public key_________
+--=-oNg5RYMUrbhUcY3plRYD--
+
