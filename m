@@ -1,48 +1,37 @@
-From: berthiaume_wayne@emc.com
-Subject: RE: RE: lk 2.4.19 ReiserFS Build
-Date: Wed, 14 Aug 2002 07:19:55 -0400
-Message-ID: <93F527C91A6ED411AFE10050040665D0049BFE6A@corpusmx1.us.dg.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: call for testers. reiserfs_file_write() implementation.
+Date: Wed, 14 Aug 2002 18:49:38 +0400
+Message-ID: <20020814184938.A12116@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11187-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11188-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: green@namesys.com
-Cc: reiserfs-list@namesys.com, manuel.krause@mb.tu-ilmenau.de
-
-	Oleg, does this include the "speedup" series both you and Chris have
-been working on?
-Regards,
-Wayne.
-
------Original Message-----
-From: Oleg Drokin [mailto:green@namesys.com]
-Sent: Tuesday, August 13, 2002 1:34 AM
-To: Manuel Krause
-Cc: reiserfs-list
-Subject: Re: [reiserfs-list] RE: lk 2.4.19 ReiserFS Build
-
+To: reiserfs-list@namesys.com
 
 Hello!
 
-On Tue, Aug 13, 2002 at 09:17:06AM +0400, Oleg Drokin wrote:
-> > On 08/12/2002 08:21 PM, berthiaume_wayne@emc.com wrote:
-> > >	Thanks Chris. Should I pull the 2.4.20-pre series from Namesys?
-> >                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
-> > 
-> >              -------->                  this special Namesys series
-> bk://thebsh.namesys.com/bk/reiser3-linux-2.4
-> But it won't last there for long since it was not accepted by Marcelo it
-seems. 
-
-Oh, wait, it was indeed accepted by Marcelo, as I see now.
-So you can pull it from Marcelo's tree as well.
-
-I am still going to port it to 2.5, though.
+    After some time of development and internal testing, I am releasing
+    this in public (obviously before pushing it to Marcelo).
+    There are two patches at
+    ftp://ftp.namesys.com/pub/reiserfs-for-2.4/2.4.19.pending/testing
+    These implement reiserfs_file_write() support (patches are against
+    2.4.20-pre2) that should speedup writes for those applications
+    that actually care about st_blksize content of stat(2) output.
+    (including cp and dd of course)
+    Before submittig these to Marcelo we'd like to get more wide testing,
+    of course. So if you can try these and report any problems, that
+    would be very much appreciated.
+    Also first patch considerably speedups hole creation (I remember report
+    about creating 128G empty file was taking ages, this should fix this).
+    
+    Please note that these patches are not compatible with Chris Mason's
+    datalogging patches, though we will do a merge later of course.
 
 Bye,
     Oleg
