@@ -1,109 +1,27 @@
-From: Michael Savchenko <savchenk@students.uiuc.edu>
-Subject: Re: rebuild-tree segfault
-Date: Tue, 2 Jul 2002 17:35:19 -0500 (CDT)
-Message-ID: <Pine.GSO.4.31.0207021724450.13166-100000@ux10.cso.uiuc.edu>
-References: <200207021515.31185.vitaly@namesys.com>
+From: Pierre Etchemaite <petchema@concept-micro.com>
+Subject: linux-2.4.19p7-compound-speedup-2.patch + apt-get => segfault
+Date: Wed, 3 Jul 2002 02:25:42 +0200
+Message-ID: <20020703022542.7104ac87.petchema@concept-micro.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10905-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10906-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <200207021515.31185.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: reiserfs-list@namesys.com
-
-Using reiserfsprogs-3.x.1c-pre7, reiserfsck --rebuild-tree:
-
-...
-...
-...
-init_source_bitmap: bitmap 740 (of 32768 bits) is wrong - make all blocks
-[24248
-320 - 24281088] as used
-init_source_bitmap: bitmap 742 (of 32768 bits) is wrong - make all blocks
-[24313
-856 - 24346624] as used
-init_source_bitmap: bitmap 743 (of 32768 bits) is wrong - make all blocks
-[24346
-624 - 24379392] as used
-init_source_bitmap: bitmap 744 (of 32768 bits) is wrong - make all blocks
-[24379
-392 - 24412160] as used
-init_source_bitmap: bitmap 745 (of 9286 bits) is wrong - make all blocks
-[244121
-60 - 24421446] as used
-Skipping 8956 blocks (super block, journal, bitmaps) 18197265 blocks will
-be rea
-d
-0%....20%....40%....60%....80%....100%                         left 0, 662
-/sec
-Could not find hash in use. Using "r5"
-	"r5" hash is selected
-Flushing..done
-	Read blocks (but not data blocks) 18197265
-		Leaves among those 0
-		Objectids found 2
-
-Pass 1 (will try to insert 0 leaves):
-####### Pass 1 #######
-Looking for allocable blocks .. ok
-
-Flushing..done
-	0 leaves read
-		0 inserted
-####### Pass 2 #######
-Flushing..done
+Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
 
+Maybe it's old news, but maybe not.
 
-No reiserfs metadata found
+It seems that linux-2.4.19p7-compound-speedup-2.patch makes apt-get to segfault during dependency tree building (in pkgCacheGenerator::MergeList to be exact)
 
+2.4.19-rc1 + all 2.4.19-pre7.pending => ok
 
-Aborted
+2.4.19-rc1 + all 2.4.19-pre7.pending + linux-2.4.19p7-compound-speedup-2.patch => segfault
 
+Since apt-get uses mmap() "in evil ways" [1], and already picked up some xfs bugs, I'm not all that surprised...
 
-
-Still can't mount, and reiserfsck has the same problem as before.
-What does it mean? debugreiserfs -p gives only 36M of metadata. Is my data
-gone?
-
-
-
-On Tue, 2 Jul 2002, Vitaly Fertman wrote:
->
-> Hi,
->
-> It seems to be fixed in last reiserfsprogs. So you can
-> try the latest 3.x.1c-pre7 pre-release. If you want to
-> know for sure that it will work for you I can test it
-> when get your metadata.
->
-> > Naturally, reiserfsck --check gives:
-> >
-> >   ###########
-> >   reiserfsck --check started at Tue Jul  2 05:42:40 2002
-> >   ###########
-> >   Replaying journal..
-> >   0 transactions replayed
-> >   Checking S+tree..
-> >
-> >   Bad root block 4294967295. (--rebuild-tree did not complete)
-> >
-> >   Aborted
-> >
-> >
-> > A filesystem definitely exists, as shown by debugreiserfs:
->
-> This is OK, because we do not want somebody gets his partition
-> mounted after rebuild-tree failed.
->
-> --
->
-> Thanks,
-> Vitaly Fertman
->
->
-
+[1] Words from Jason Gunthorpe <jgg@debian.org>, see http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=93453&repeatmerged=yes
+don't know what he *really* means ;)
