@@ -1,41 +1,45 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Subject: Re: Re: Heuristic readahead for filesystems - GetDirEnts for Attributes
-Date: Wed, 11 Sep 2002 14:58:59 EDT (-0400)
-Message-ID: <21062363137-BeMail@CR593174-A>
+From: Tomas Szepe <szepe@pinerecords.com>
+Subject: Re: Heuristic readahead for filesystems
+Date: Wed, 11 Sep 2002 21:03:37 +0200
+Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <20020911190337.GG14900@louise.pinerecords.com>
+References: <3D7F647B.1E0707FB@baldauf.org> <Pine.LNX.4.44L.0209111340060.1857-100000@imladris.surriel.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11425-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L.0209111340060.1857-100000@imladris.surriel.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Rik van Riel <riel@conectiva.com.br>
+Cc: Xuan Baldauf <xuan--lkml@baldauf.org>, linux-kernel@vger.kernel.org, Reiserfs List <reiserfs-list@namesys.com>
 
-> In theory, this also could be implemented explicitly if the application
-> could tell the kernel "I'm going to read these 100 files in the very
-> near future, please make them ready for me". But wait, maybe the
-> application can do this (for regular files, not for directory entries
-> and stat() data): Could it be efficient if the application used
-> open(file,O=5FNONBLOCK) for the next 100 files and subsequent read()s on
-> each of the returned filedescriptors=3F
+> > I wonder wether Linux implements a kind of heuristic
+> > readahead for filesystems:
+> 
+> > If an application did a stat()..open()..read() sequence on a
+> > file, it is likely that, after the next stat(), it will open
+> > and read the mentioned file. Thus, one could readahead the
+> > start of a file on stat() of that file.
+> 
+> > Example: See this diff strace:
+> 
+> Your observation is right, but I'm not sure how much it will
+> matter if we start reading the file at stat() time or at
+> read() time.
+> 
+> This is because one disk seek takes about 10 million CPU
+> cycles on modern systems and we'll have completed the stat(),
+> open() and started the read() before the disk arm has started
+> moving ;)
 
-We were discussing something similar for a new system call in OpenBeOS.
-Rather than opening each file and reading the stat info and attribute
-info separately, we were thinking of having one call for all that.
-Kind of like an enhanced getdirentries() call.
+Please correct me if I'm missing something: I tend to assume
+that if the cost of the disk seek is known to be a relatively
+huge value, a fraction of it could be used as a timeout for disk
+read request reordering with performance not deteriorating (except
+for the heuristics overhead of course). I.e., if some code in the
+block layer were able to detect a lot of "parallel yet sequential"
+reads were going on, the amount of seeks could be minimized for
+the price of the final timeout.
 
-The user would specify which metadata they were interested in (as a
-list of attribute names, some would be "magic" aliases for getting
-that old fashioned stat info) and a directory to examine (or maybe just
-a single file, though the benefits wouldn't be as great).  This saves
-several calls into kernel space, even if it doesn't happen to save any
-disk IO (small attributes are packed into one disk sector).  So now
-when the desktop displays a directory window, it will take one call
-rather than separate ones to read each file's size, icon, MIME type,
-etc.
-
-- Alex
-
-
+T.
