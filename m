@@ -1,8 +1,8 @@
-From: btinsley <btinsley@gmail.com>
-Subject: vs-6030
-Date: Thu, 3 Mar 2005 15:43:02 -0600
-Message-ID: <263a8b350503031343182f4e4a@mail.gmail.com>
-Reply-To: btinsley <btinsley@gmail.com>
+From: Kanwar Plaha <kanwar.plaha@gmail.com>
+Subject: Error with SuSE 9.2 bootup
+Date: Fri, 4 Mar 2005 09:36:46 +1100
+Message-ID: <4df7963105030314363f919a21@mail.gmail.com>
+Reply-To: Kanwar Plaha <kanwar.plaha@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
@@ -13,19 +13,17 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-I posted this kernel panic once before and received no response. Now I
-have another occurence and I need to find out what is happening:
+Hi:
+After I upgraded to SuSE 9.2, I cannot boot my machine. During bootup
+it "hangs" with the message:
 
-vs-6030: check_internal_block_head: invalid item number level=2,
-nr_items=211, free_space=64536 rdkey kernel BUG at prints.c:334!
-invalid operand: 0000 2.4.21-241-smp #1 SMP Tue Aug 10 15:55:34 UTC 2004
+Reiserfs: hda4: checking transaction log (hda4)
 
-Running reiserfsck (3.6.19) detects no problems. Running a
---rebuild-tree doesn't seem to correct the problem. It seems the only
-way it is repaired is to run mkreiserfs, which is totally
-unacceptable.
+There is constant activity on the hard drive and even after waiting an
+entire night (rolls eyes) it was still doing the same thing. So I had
+to force reboot by Ctrl-Alt-Delete.
 
-Any assistance is much appreciated. If I need to arrange to pay for
-support, I can.
-
-Thanks!
+Btw, I can access the partition from another distro (thankfully I have
+multi-booted machine) and have checked the partition again and again
+with no errors reported. I have also used the rebuild-tree option but
+the bootup issue remains!
