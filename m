@@ -1,43 +1,39 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Hard errors, trying to recover
-Date: Wed, 30 Jun 2004 18:02:05 +0400
-Message-ID: <200406301802.05840.vitaly@namesys.com>
-References: <20040629193943.GA15481@p15104972.pureserver.info>
+From: Ronni Nielsen <ronni_nielsen@adslhome.dk>
+Subject: Reiser4
+Date: Wed, 30 Jun 2004 16:16:33 +0200
+Message-ID: <1088604993.6610.5.camel@ronni.subtil.dk>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19458-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19459-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040629193943.GA15481@p15104972.pureserver.info>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Kristian Koehntopp <kris@xn--khntopp-90a.de>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello,
+I reeeeeeeeeeeeeeeeeeeeeeeeeeeeally want to test reiser4 - but i have
+this problem:
 
-On Tuesday 29 June 2004 23:39, Kristian Koehntopp wrote:
-> I have a 160 GB disk that has at least one hard read-error.
->
-> I tried reiserfsck'ing that disk, in order to salvage data on that disk by
-> copying it to a safe location one last time. Unfortunately, reiserfsck
-> --rebuild-tree runs into that read-error and stops, lecturing me on disk
-> quality (I knew that!). Now I cannot even mount that disk, because
-> reiserfsck zeroed root block 0 during the rebuild-tree.
->
-> I am at the moment dd'ing that disk with conv=noerrors, hoping that I will
-> get an image (which will be truncated by 4 GB, because my scratch disk is
-> somewhat smaller than the source disk). I tried to reiserfsck
-> --rebuild-tree the partial image, but I reiserfsck breaks down, because it
-> is unable to read the last block of the images (it is a partial image).
->
-> What can I do to salvage the data on my broken disk?
+modprobe reiser4:
+FATAL: Error inserting reiser4
+(/lib/modules/2.6.7-mm4/kernel/fs/reiser4/reiser4.ko): Unknown symbol in
+module, or unknown parameter (see dmesg)
 
-we deal with hardware problems only under www.namesys.com/support.html terms.
+dmesg:
+...
+reiser4: Unknown symbol __pagevec_release
+reiser4: Unknown symbol pagevec_lookup_tag
+reiser4: Unknown symbol __iget
 
--- 
-Thanks,
-Vitaly Fertman
+I downloaded the 2.6.7 kernel and patched it with the 2.6.7-mm4 patch.
+Then i downloaded reiser4-2004.06.30-09.12-linux-2.6.7-mm4.diff.gz
+from http://www.namesys.com/auto-snapshots/
+
+What is the problem???
+
+And how can I help in testing the new filesystem?
+
+/ronni
 
