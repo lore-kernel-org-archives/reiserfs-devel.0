@@ -1,102 +1,80 @@
-From: Hendrik Visage <hvisage@envisage.co.za>
-Subject: Re: Proposal for keying encrypted filesystem
-Date: Mon, 31 Mar 2003 23:31:04 +0200
-Message-ID: <20030331213104.GZ8452@hvs.envisage.co.za>
-References: <200303282026.23543.phma@webjockey.net> <200303310854.21695.phma@webjockey.net> <20030331163536.GS8452@hvs.envisage.co.za> <200303311511.40537.phma@webjockey.net>
+From: Roland <roland@xebec.de>
+Subject: Re: nfsd-fh: found a name that I didn't expect
+Date: Mon, 31 Mar 2003 22:44:23 +0100
+Message-ID: <200303312344.23931.roland@xebec.de>
+References: <200303281828.55093.bernd-schubert@web.de> <200303291933.48476.roland@xebec.de> <20030331122820.D25533@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13501-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-13502-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200303311511.40537.phma@webjockey.net>
+In-Reply-To: <20030331122820.D25533@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Pierre Abbat <phma@webjockey.net>
+To: Oleg Drokin <green@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-On Mon, Mar 31, 2003 at 03:11:40PM -0500, Pierre Abbat wrote:
-> On Monday 31 March 2003 11:35, Hendrik Visage wrote:
-> > On Mon, Mar 31, 2003 at 08:54:21AM -0500, Pierre Abbat wrote:
-> > > On Monday 31 March 2003 08:36, Hendrik Visage wrote:
-> > > > The question that should be answered:
-> > > >
-> > > >  Are the design suppose to withstand scrutiny from people like the NSA
-> > > > and other crypto gurus, or just for the mom-a-pop-shops ?
-> > >
-> > > As I proposed it, it was not meant to withstand scrutiny from anyone. It
-> > > was meant to be modified by people who know more about kernel and
-> > > ReiserFS internals than I do. What's your current proposal for keying the
-> > > encryption?
-> >
-> > /dev/random for the paranoid, /dev/urandom for the lesser paranoid
-> >
-> > Each file would have a minimum 64bit (For a starter and speed
-> > on <64bit CPUs 32 bit with the top 64bits zeroed and to allow
-> > future 64bit operations) KeyID.
-> 
-> "32 bit with the top 64bits zeroed" is nonsense. I assume you mean "64 bits 
-> with the top 32 zeroed". There is no point in doing this, as it's a key ID, 
-> not a key. Use the full 64 bits.
+Hi Oleg,
 
-Correct. It'll be for speed purposes on 32bit environments until
-the need is there for bigger space (ie more than 2^32 files/directories
-encrypted/mangled) :(
+i've forgot to CC to reiserfs-list last time, so i do a full quote.
 
-> > The optimization to it would be to create access groups, and then those
-> > files in the same (sub*)directory & access group could share the same
-> > keyID, if the user/operator so desire (Some would prefer the slowness to
-> > the added security of the files not sharing the same "guesable" encryption
-> > key, while others would only want to prevent disk scraping from showing
-> > something usable).
-> 
-> An access group is a group of what?
+On Monday 31 March 2003 10:28, you wrote:
+> Hello!
+>
+> On Sat, Mar 29, 2003 at 07:33:48PM +0100, Roland wrote:
+> > i've read your thread very interessted, because i think i've a very
+> > similar problem (but until know, i didn't think about reiserfs as
+> > source): kernel 2.4.20 SMP, HighMem, HighMem IO (without ptrace patch=
+)
+> > root filesystem ~70GB ext3 on Compaq CISS
+> > /data filesystems ~1.1TB reiserfs (on top of lvm) on a second Compaq =
+CISS
+> > System: Compaq Dual PIII 2GB Ram
+> > the system is used as nfs fileserver for diskless clients (about 30 r=
+ight
+> > now) first we experienced high load situations during daily cron jobs=
+,
+> > later we saw log messages very similar to what Bernd has
+> > (/usr/sbin/logrotate, /usr/lib/perl5/...) and last week we had a cras=
+h of
+> > the fileserver (no sysreq key's, console blanking didn't responded, p=
+ing
+> > to system was ok)
+>
+> Was there anything in logs after reboot?
 
-The specifics should be the key database/engine's responsibility
-to define it more precisely, but my initial idea was where two or more
-files have the same users having access to these files, these 
-users would form an accessgroup.
+no, nothing...
 
-> > To make this plugin/future prove, I'd then requested the encryption key
-> > from another process/kernel/module/etc. with at least the minimum tuple
-> > <mount-point,operation[3],KeyID[1a]> or for more expressive information
-> > <mount-point,operation[3],directory,file,UID,GID,KeyID[1a]>.
-> > The data returned from the key database would be
-> > <keyID[1b],EncryptionKey,EncryptionAlgorithm,CryptoOptions[2]>
-> 
-> You need to add the PID to the tuple used to ask for the key. That way a 
-> process and its children can access a file, but other processes running with 
-> the same UID cannot. This is necessary for trusted encrypted backup.
+> > since that crash we don't have any 'nfsd-fh: found a name that I didn=
+'t
+> > expect:' messages; but we need to find out what was behind that crash=
+=2E..
+> > Any ideas?
+>
+> If only you had related kernel oops/whatever was caused the crash
+> (either on your HDD, or captured via serial console/network oops
+> dumper/whatever), that would be much easier.
 
-Agreed.
+the system has no serial console attached *sight*, the logs on disk carri=
+ed=20
+nothing useful...
 
-However if the key database/engine doesn't have access to an
-already decrypted key, then it would return an error. That way the backups
-would only be able to copy the file verbatim (ie. un-decryptable) to the backup
-medium. Ie. the backups run while the user haven't logged in to enable
-decryption. Or am I missing the definition of "trusted encrypted backups"?
+> > (it would be possible for me to provide a machine which is 100% ident=
+ical
+> > to our production fileserver if this would help for tests, but i don'=
+t
+> > have ressources to put up more than one client for this testsystem...=
+)
+>
+> Since we do not know yet on how to produce those nfsd-fh stuff, there i=
+s no
+> point in using your test server yet.
 
-> What does "To make this plugin/future prove" mean?
+hmm... ok if you think it can be useful, let me know...
 
-To not be limited by current design for future enhancements or needs.
+Greetings,
 
-Hmmm... made me think: The are a bit of information leakage in my data above,
-as it assumes the filenames are unencrypted.
-However, that could be fixed with the following:
-Request:
-<mount-point,operation[3],directory,file[4],PID,UID,GID,KeyID[1a]>
+Roland
 
-The answer:
-<keyID[1b],FileName[4]EncryptionKey,EncryptionAlgorithm,CryptoOptions[2]>
-
-Note[4]: The key engine/database might want filenames to be mangled too.
- The request for a new file would be the unmangled, with the response being
- the mangled filename. The reverse would be the case in directory accesses etc.
-
-This could be used for directory names too, thus the only data available to
-the attacker (excluding the key engine) would be the mangled names and the
-place on the filesystem the data is.
-
-Hendrik
