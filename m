@@ -1,54 +1,65 @@
 From: Alex Zarochentsev <zam@namesys.com>
 Subject: Re: A question about slum and relocate
-Date: Tue, 25 Nov 2003 21:07:54 +0300
-Message-ID: <20031125180754.GC2144@backtop.namesys.com>
-References: <Pine.GSO.4.58.0311241820230.6503@bingsun2.cc.binghamton.edu> <20031125101902.GB2144@backtop.namesys.com>
+Date: Wed, 26 Nov 2003 01:56:10 +0300
+Message-ID: <20031125225609.GD2144@backtop.namesys.com>
+References: <Pine.GSO.4.58.0311241820230.6503@bingsun2.cc.binghamton.edu> <3FC201CA.9090700@namesys.com> <Pine.GSO.4.58.0311251200010.29299@bingsun2.cc.binghamton.edu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16163-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16164-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20031125101902.GB2144@backtop.namesys.com>
+In-Reply-To: <Pine.GSO.4.58.0311251200010.29299@bingsun2.cc.binghamton.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Zhihui Zhang <bf20761@binghamton.edu>
 Cc: reiserfs-list@namesys.com
 
-On Tue, Nov 25, 2003 at 01:19:03PM +0300, Alex Zarochentcev wrote:
-> On Mon, Nov 24, 2003 at 06:50:07PM -0500, Zhihui Zhang wrote:
-> > Hi,
-> > 
-> > After reading some code, it seems to me that a slum does not have to be
-> > relocated.  If a slum is small , it will use the overwrite strategy.  Is
-> > this understanding correct?  
+On Tue, Nov 25, 2003 at 12:41:35PM -0500, Zhihui Zhang wrote:
 > 
-> Not exactly.
-> 
-> If slum is big we set pos->leaf_relocate and always relocate leaf nodes.
-> Except this, flush alg. makes relocate/overwrite decision individually for each
-> node. Leaves can be relocated even if slum size < FLUSH_RELOCATE_THRESHOLD.
-> 
-> > Also, at the leaf level, if the number of
-> > dirty nodes exceeds FLUSH_RELOCATE_THRESHOLD (64), they are always
-> > relocated.  Is there any similar threshold for an internal level?  
-> 
-> no.
-> 
-> > Does Reiser4 relocate internal nodes separately (i.e. not as part of the slum
-> > involving leaf nodes.  
-> 
-> yes.
+> Thanks for your reply.  According to Alex, the decision to relocation is
+> done on a per-node basis.  My limited reading of the code shows that it is
+> based on whether a node can be located closer to its preceder in the tree
+> order.  I noticed that there is a max_dist hint to limit the region to
+> search, but it is not really used (i.e., passed from the flush code to the
+> bitmap code). 
 
-Seems I did not understand your question correctly.
+There is an attempt to relocate within given region, if it fails reiser4 may
+keep original _good_ node location or relocate it to the first free location
+after the preceder.
 
-The flush position state has a "preceder" object.  It is used as a search start
-when reiser4 relocates node and it is set to node's block number after
-finishing node processing.  But the relocate/overwrite decision is made
-individually for each node.  If there is enough free space all nodes will be
-allocated close one to each other.
+> Therefore, the new location is not guaranteed to be closer
+> to its preceder.  This is not necessarily bad though, because Reiser4 can
+> have better write performance anyway by relocating a lot of nodes
+> together.  
+
+Yes.  I have a feeling that relocating a slum as a whole thing would be better.
+But reiser4 write performace is very good for now.  Read speed is acceptable.
+
+However in complex multithread tests the fs fragmentation grows, that means the
+flush code does not do its work well (or it is not possible there).  For curing
+that we have reiser4 repacker which walks the tree in both directions, dirties
+many nodes and creates good conditions for the flush code to do optimal node
+allocation.
+
+> Please clarify this for me.
+> 
+> Overall, Reiser4 is a very complicated file system.  So many details and
+> ideas.  
+
+They continue to appear in Hans' mind :-)
+
+> In my humble opinion, you guys are courageous in trying to re-do a
+> file system from a different approach - a less travelled route if I put it
+> right.
+> 
+> Thanks,
+> 
+> -Zhihui
+
+Thanks,
 
 -- 
 Alex.
