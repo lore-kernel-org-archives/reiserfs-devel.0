@@ -1,47 +1,57 @@
-From: Wayne Scott <wscott@bitmover.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 10 Sep 2004 10:50:40 -0500 (EST)
-Message-ID: <20040910.105040.30177815.wscott@bitmover.com>
-References: <1094797973.4838.4.camel@almond.st-and.ac.uk>
-	<4141504B.8030104@namesys.com>
-	<4141CCA2.9010005@techsource.com>
+Date: Fri, 10 Sep 2004 09:32:38 -0700
+Message-ID: <4141D726.60801@namesys.com>
+References: <88320341394-BeMail@cr593174-a>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21680-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21681-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4141CCA2.9010005@techsource.com>
+In-Reply-To: <88320341394-BeMail@cr593174-a>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: Text/Plain; charset="us-ascii"
-To: miller@techsource.com
-Cc: reiser@namesys.com, Peter.Foldiak@st-andrews.ac.uk, jamie@shareable.org, bunk@fs.tum.de, viro@parcelfarce.linux.theplanet.co.uk, torvalds@osdl.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Cc: linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
 
-From: Timothy Miller <miller@techsource.com>
-> Everyone likes ':', so we'd have "problem/shoe:size".  (Don't bother to 
-> complain about files which have : in them, because I already know it 
-> sucks, but it's an example.)
+Alexander G. M. Smith wrote:
 
-[[ I just joined this discussion, so pardon if this is already known.]]
+>Hans Reiser wrote on Thu, 09 Sep 2004 22:22:51 -0700:
+>  
+>
+>>This was actually pretty decent as a design, but then a user on the 
+>>mailing list suggested replacing the '..' prefix with a subdirectory 
+>>prefix. I forget who suggested this and what the prefix was exactly. So 
+>>we then created a '..metas' subdirectory, and this had the advantage 
+>>that one could ls it to see all the builtins supported by a given 
+>>plugin. This is not an important advantage, and I encourage others to 
+>>critique it.
+>>    
+>>
+>
+>Like I said before, it breaks orthogonality by introducing a directory
+>which isn't a file/directory like the others.  ..metas can't have
+>attributes attached to it like other files can.
+>
+That does not have to be true.  Whether ..metas contains only builtins 
+can be nothing more than a style convention, or it can be a plugin 
+property for plugins that don't want other files to pretend to be their 
+builtins.
 
-One advantage of ':' is that portable programs already have to avoid
-it because of NTFS alternate data streams:
-  http://www.diamondcs.com.au/index.php?page=archive&id=ntfs-streams
+>  In practical use,
+>that makes it difficult to display in a GUI view, where you might want
+>to attach attributes describing the ..metas directory window size and
+>position.  The GUI code would have to special case it, for those times
+>when you want to drill down and see what's attached to a file.
+>
+>On the other hand, it does satisfy the Human need to group things
+>together neatly, like you said.  But then so does Tetris :-).
+>
+>- Alex
+>
+>
+>  
+>
 
-For example on an XP box with NTFS:
-
-$ mkdir j
-$ cd j
-$ echo hi > foo:bar
-$ ls -l
-total 0
--rw-r--r--    1 wscott   Administ        0 Sep 10 10:45 foo
-$ cat foo
-$ cat foo:bar
-hi
-$ rm foo
-$ cat foo:bar
-cat: foo:bar: No such file or directory
-
--Wayne
