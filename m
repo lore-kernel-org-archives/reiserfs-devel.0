@@ -1,48 +1,54 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: 3.6.25 - Journal replayed back to 3 weeks ago
-Date: Thu, 15 Jan 2004 09:53:47 -0500
-Message-ID: <1074178426.29550.19.camel@tiny.suse.com>
-References: <1073933244.2405.44.camel@neilvaiogt.superbase.co.uk>
-	 <1073934293.32706.861.camel@tiny.suse.com>
-	 <1074144196.2397.38.camel@neilvaiogt.superbase.co.uk>
+From: "Sergey S. Kostyliov" <rathamahata@php4.ru>
+Subject: Re: bk pull problem (reiser4)
+Date: Thu, 15 Jan 2004 18:03:20 +0300
+Message-ID: <200401151803.20907.rathamahata@php4.ru>
+References: <200401121528.14023.rathamahata@php4.ru>
+Reply-To: "Sergey S. Kostyliov" <rathamahata@php4.ru>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16524-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16525-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1074144196.2397.38.camel@neilvaiogt.superbase.co.uk>
+In-Reply-To: <200401121528.14023.rathamahata@php4.ru>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Neil Robinson <neilr@superbase.co.uk>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Thu, 2004-01-15 at 00:23, Neil Robinson wrote:
-> Chris,
-> 
-> I haven't heard anything since my response, so just in case it wasn't
-> complete enough:
-> 
-> uname -a results:
-> 
-> 2.4.20-gentoo-r9 #1 Sat Dec 6 03:17:43 GMT 2003 i686 Intel(R) Pentium(R)
-> 4 CPU 2.66GHz GenuineIntel GNU/Linux
-> 
-> This is running in a vmware workstation 4.0 Windows XP host. It is set
-> up with 3 MAX 4GB emulated SCSI drives and 1 emulated MAX 2GB FAT32 IDE
-> hard drive.
-> 
-> sda1 is ext2 on /boot
-> sda2 is swap on swap
-> sda3 is reiserfs on /
-> sdb1 is reiserfs on /home
-> sdc1 is reiserfs on /var/tmp/portage
-> hda1 is vfat on /work
+On Monday 12 January 2004 15:28, Sergey S. Kostyliov wrote:
+> Hello all,
+>
+> I can not pull from reiser4 tree,
+> bk pull is just waited indefinitely:
+> rathamahata@arise reiser4 $ bk parent
+> Parent repository is bk://bk.namesys.com/bk/reiser4
+> rathamahata@arise reiser4 $ bk pull
+> Pull bk://bk.namesys.com/bk/reiser4
+>   -> file://usr/local/src/bk/reiser4
+> (nothing more)
 
-Ok, please tell me more about the vmware setup.  Is are the vmware
-drives configured to do copy on write?
+The problem hasn't gone away. I believe there are no any network problems
+on my side. Is `bk clone` allowed for namesys's bk trees? Perhaps there
+was some kind of announcement that I've missed?
 
--chris
+Any hints will be appreciated.
 
+>
+> but bk clone is still posiible.
+>
+> traceroute to thebsh.namesys.com (212.16.7.65), 30 hops max, 40 byte
+> packets 1  breuss-10.ws.ehouse.ru (192.168.114.10)  1.251 ms  2.773 ms 
+> 28.617 ms 2  hobbit-gw.ehouse.ru (193.111.92.33)  11.445 ms  9.780 ms 
+> 9.920 ms 3  express-ehouse.express.ru (212.24.42.9)  9.884 ms  9.800 ms 
+> 9.914 ms 4  LYNX-M9.ATM6-0.30.M9-R1.msu.net (193.232.127.230)  4.985 ms 
+> 12.488 ms  4.978 ms 5  LYNX-M9.ATM6-0.30.M9-R1.msu.net (193.232.127.230) 
+> 6.080 ms  5.403 ms * 6  thebsh.namesys.com (212.16.7.65)  5.847 ms  5.469
+> ms  5.147 ms
+
+-- 
+                   Best regards,
+                   Sergey S. Kostyliov <rathamahata@php4.ru>
+                   Public PGP key: http://sysadminday.org.ru/rathamahata.asc
 
