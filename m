@@ -1,41 +1,54 @@
-From: Cal <hihone@bigpond.net.au>
-Subject: Re: reiser4 crash
-Date: Fri, 26 Nov 2004 09:14:33 +1100
-Message-ID: <20041126091433.3ad4caef.hihone@bigpond.net.au>
-References: <20041119084757.GA2310@sk2-4.tky.hut.fi>
-	<1101369249.1628.13.camel@tribesman.namesys.com>
-	<20041125221919.2180794b.hihone@bigpond.net.au>
-	<20041125112343.GG26192@nysv.org>
-	<20041125184832.GI26192@nysv.org>
-	<20041126070059.0893de98.hihone@bigpond.net.au>
-	<20041125202119.GJ26192@nysv.org>
-	<20041126081444.13af5196.hihone@bigpond.net.au>
-	<20041125212826.GK26192@nysv.org>
-	<20041126084225.35ecfffb.hihone@bigpond.net.au>
-	<20041125214750.GL26192@nysv.org>
-Reply-To: hihone@bigpond.net.au
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: file as a directory
+Date: Fri, 26 Nov 2004 00:09:37 +0100
+Message-ID: <20041125230937.GA2909@elf.ucw.cz>
+References: <2c59f00304112205546349e88e@mail.gmail.com> <41A1FFFC.70507@hist.no>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22577-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22579-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20041125214750.GL26192@nysv.org>
+Content-Disposition: inline
+In-Reply-To: <41A1FFFC.70507@hist.no>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Markus =?ISO-8859-1?Q?T=F6rnqvist?= <mjt@nysv.org>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Helge Hafting <helge.hafting@hist.no>
+Cc: Amit Gud <amitgud1@gmail.com>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-----------
-and then at Thu, 25 Nov 2004 23:47:51 +0200, it was written ...
- >Anyway, I just prefer to try have things working but cut down on the
- >fiddling, rather just report when something breaks :)
+Hi!
 
-Vanilla 2.6.9 + 2.6.9-ck3 + latest 2.6.9 reiser4 (#2) patches, builds
-and boots clean and easy, no fiddling required.  And, "apt-get update"
-didn't explode.  All too cool.
+> Such support may happen for a few fs'es - people who
+> want this will then use those fses.  Those who don't
+> like the ideas will use others.
+> 
+> >(.tar, .tar.gz, ...) support in the VFS itself, and of course
+> >transparent to any fs and any user-land application. There are many
+> >archive FSs around, but how feasible would it be to implement the
+> >archive file support in the VFS at dentry-level? I'd be happy to share
+> >my proposal.
+> >
+> > 
+> >
+> You won't get .tar or .tar.gz support in the VFS, for a few simple reasons:
+> 1. .tar and .tar.gz are complicated formats, and are therefore better
+>   left to userland.  You can get some of the same effect by using a shared
+>   library that redefines fopen() and fread() though.  It'll work fine for
+>   the vast majority of apps that happens to use the C library.
 
-Hope your's turned out the same!
+It is not same effect -- with shared library you get no caching. And
+that hurts a lot.
 
-cheers, Cal
+>   It is hard to make a guaranteed bug-free decompressor that
+>   is efficient and works with a finite amount of memory.  The kernel
+>   needs all that - userland doesn't.
+
+If you have bug in decompressor, you are screwed, anyway, because you
+get remote user exploit when mozilla gets the file from
+web. Oops. [Ok, you at least do not get remote root exploit, but...]
+
+								Pavel 
+-- 
+People were complaining that M$ turns users into beta-testers...
+...jr ghea gurz vagb qrirybcref, naq gurl frrz gb yvxr vg gung jnl!
