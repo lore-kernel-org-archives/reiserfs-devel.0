@@ -1,40 +1,28 @@
-From: Jamie Lokier <jamie@shareable.org>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 14:48:12 +0100
-Message-ID: <20040826134812.GB5733@mail.shareable.org>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <20040825203516.GB4688@backtop.namesys.com> <20040825205149.GA17654@lst.de> <412DA2CF.2030204@namesys.com> <20040826124119.GA431@lst.de>
+From: Rik van Riel <riel@redhat.com>
+Subject: Re: reiser4 plugins (was: silent semantic changes with reiser4)
+Date: Thu, 26 Aug 2004 09:52:49 -0400 (EDT)
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <Pine.LNX.4.44.0408260952230.26316-100000@chimarrao.boston.redhat.com>
+References: <1093527307.11694.23.camel@leto.cs.pocnet.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20673-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040826124119.GA431@lst.de>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <1093527307.11694.23.camel@leto.cs.pocnet.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, Alex Zarochentsev <zam@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Christophe Saout <christophe@saout.de>
+Cc: Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-Christoph Hellwig wrote:
->  you need to fstat after open to really check that no one swtiched the
->  path below you to a fifo or device, O_DIRECTORY gets that directly in
->  the open call, with the additional benefit of making sure you don't
->  get any of the sideeffects at all that would happen if you're opening
->  a device file.
-> 
->  the current reiser4 semantics break that and as soon as you're having a
->  world-writeable (e.g. /tmp) dir on it and someone is doing an opendir
->  on it he's lost.
+On Thu, 26 Aug 2004, Christophe Saout wrote:
 
-How does the current reiser4 semantics break that?
+> That's your opinion. reiser4 seems to work very well.
 
-In a reiser4 filesystem, a file _is_ a directory.
-opendir() is supposed to succeed on it.
+Have you tried /bin/cp, or a backup+restore ?
 
-There's bound to be some security issue, but I'm not sure what you're
-getting at with /tmp.  What sort of sort of security problem arises
-with a world-writeable directory such as /tmp, that cannot arise with
-the standard fs semantics?
+What happened to your file streams ?
 
--- Jamie
+-- 
+"Debugging is twice as hard as writing the code in the first place.
+Therefore, if you write the code as cleverly as possible, you are,
+by definition, not smart enough to debug it." - Brian W. Kernighan
+
