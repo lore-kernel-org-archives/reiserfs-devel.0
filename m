@@ -1,42 +1,35 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: implementing reiserfs in C++ for a new OS
-Date: Mon, 9 Aug 2004 20:24:37 +0300
-Message-ID: <20040809172437.GP1284@nysv.org>
-References: <71d3364904080706112e72fb6b@mail.gmail.com> <41151698.3020508@namesys.com> <71d3364904080907361d3d7064@mail.gmail.com> <41178FA8.80107@futuretg.com> <20040809151252.GN1284@nysv.org> <411796CC.6070509@futuretg.com> <20040809153556.GO1284@nysv.org> <20040809170145.GE5429@parcelfarce.linux.theplanet.co.uk>
+From: Tom Lanyon <tomlanyon@gmail.com>
+Subject: Apache2 problems
+Date: Tue, 10 Aug 2004 02:55:55 +0930
+Message-ID: <cd32a06204080910256de4cc0e@mail.gmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20089-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20090-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040809170145.GE5429@parcelfarce.linux.theplanet.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>, Ramachandra K <ariston@gmail.com>, reiserfs-list@namesys.com, reiser@namesys.com
+To: reiserfs-list@namesys.com
 
-On Mon, Aug 09, 2004 at 06:01:45PM +0100, Chris Dukes wrote:
->So, how do you feel about the closed source licenses for Reiserfs
->that namesys.com sells?
+Hello,
 
-Namesys can double-lincense as they want.
+Can someone please inform me of how to stop the dreaded sendfile
+issues while using reiser4 and apache2?
 
-Anyway, I'd like some final clarity on this point, as Hans has said
-that all is GPL, totally, but the README doesn't confirm this yet.
+I just setup reiser4 on a nice new hard drive and tried to run apache2
+and ended up with many kernel panics and then the machine locked up.
 
-Just for the record, also, I would buy whatever closed-source stuff
-Namesys sells, if it works and if it doesn't cause me more trouble than
-it's worth, by, say, not giving free updates or requiring a certain
-kernel with certain configurations.
+I thought this issue was fixed in reiser4? If not, how can I go about
+stopping this from happening?
 
-Because it's the right thing to do.
-They have the right to sell it and they need the money. 
+This is reiser4-2004.07.23-19.37-linux-2.6.8-rc2-bk4.diff  on a
+2.6.8-rc2 kernel.
+I'm about to try the latest snapshot on a vanilla 2.6.8-rc3 and see if
+it helps..
 
-But still I think ransomware is the best way to go if in a pinch,
-there will always be a next feature that could be held as ransomware,
-after enough money has been gathered.
 
--- 
-mjt
+Thanks for any help,
 
+Tom.
