@@ -1,40 +1,69 @@
-From: Frank van Maarseveen <frankvm@xs4all.nl>
+From: Tonnerre <tonnerre@thundrix.ch>
 Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: Mon, 6 Sep 2004 10:41:55 +0200
-Message-ID: <20040906084155.GB31483@janus>
-References: <20040902203854.GA4801@janus> <1094160994.31499.19.camel@shaggy.austin.ibm.com> <20040902214806.GA5272@janus> <20040902220027.GD23987@parcelfarce.linux.theplanet.co.uk> <20040902220242.GA5414@janus> <20040902220640.GE23987@parcelfarce.linux.theplanet.co.uk> <20040902221133.GB5414@janus> <20040902221722.GF23987@parcelfarce.linux.theplanet.co.uk> <20040902222650.GA5523@janus> <20040906080424.GC28697@thundrix.ch>
+Date: Mon, 6 Sep 2004 10:56:14 +0200
+Message-ID: <20040906085614.GD28697@thundrix.ch>
+References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain> <Pine.LNX.4.58.0409021045210.2295@ppc970.osdl.org> <1591214030.20040902215031@tnonline.net> <20040906074518.GA28697@thundrix.ch> <1873133500.20040906100534@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21500-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7DO5AaGCk89r4vaK"
+Return-path: <reiserfs-list-return-21502-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040906080424.GC28697@thundrix.ch>
+In-Reply-To: <1873133500.20040906100534@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tonnerre <tonnerre@thundrix.ch>
-Cc: Frank van Maarseveen <frankvm@xs4all.nl>, viro@parcelfarce.linux.theplanet.co.uk, Dave Kleikamp <shaggy@austin.ibm.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Spam <spam@tnonline.net>
+Cc: Linus Torvalds <torvalds@osdl.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Mon, Sep 06, 2004 at 10:04:24AM +0200, Tonnerre wrote:
-> 
-> Problem is:
-> 
-> There are  cool superblock magics  for reiserfs. And for  ext[23]. And
-> even for good old Minix. Cool.
-> 
-> However,  there  are   also  ugly  file  systems,  such   as  fat  for
-> example. Fat has been defined as  "something that can be read by a fat
+--7DO5AaGCk89r4vaK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This problem is not new. Kernel probes for filesystems in a particular
-order for mounting the root fs. And mount understands the fstype=auto in
-/etc/fstab. There is no perfect solution but it's sure possible to come
-up with something acceptable and workable with not too much effort, for
-a configuratble subset of file-systems. This is not that much different
-from an automounter/usermount mounting a USB storage device or cdrom:
-ext3, ext2, udf, iso9660, vfat, read-only or not, just to name a few
-things. This should work anyway.
+Salut,
 
--- 
-Frank
+On Mon, Sep 06, 2004 at 10:05:34AM +0200, Spam wrote:
+> Then it is good. Just I see no programs other than Gnome or KDE apps
+> that are using them.
+
+Because KDE people  hate Gnome people and vice  versa, and because the
+rest of the world just neglects the two races for political reasons.
+
+Maybe   the  Freedesktop  project   should  provide   some  convenient
+specification/code to  do it.  Like they  do for HAL  and DBUS (Please
+note that this is something  interesting because it does clever things
+on hardware without requiring to patch the kernel.)
+
+> > In  case of  marketing it's  up  to the  distributions to  provide
+> > something  concise so everyone  can use  their programs  through a
+> > coherent namespace. (I.e. port all the apps they ship to gnome-vfs
+> > or kio).
+>=20
+> Do you really believe this will happen?
+
+If the distributors  really want to be able to gain  money, and if the
+Free Unix community wants to  gain a significant market share, this is
+supposed to  happen. It's  the question of  whether we can  ignore our
+childish concept  wars, or if we're  always going to stay  at that low
+level we're at now.
+
+Actually, this can't be fixed by putting everything into the kernel.
+
+			    Tonnerre
+
+--7DO5AaGCk89r4vaK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.9.2 (GNU/Linux)
+
+iD8DBQFBPCYt/4bL7ovhw40RAuYdAJ9/9IaeqcMWfecCIjgFrCpVVYGjxwCeNtrx
+zCB78VYSwgBITYpC3Mg8V5M=
+=A2HU
+-----END PGP SIGNATURE-----
+
+--7DO5AaGCk89r4vaK--
