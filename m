@@ -1,53 +1,41 @@
-From: "Wallace Michel" <aDubois@juneisp.biz>
-Subject: RE: At last, smart filtering technology that works    bridgehead
-Date: Tue, 03 Aug 2004 06:04:22 -0500
-Message-ID: <882752083827.29829502950766201599@juneisp.biz>
-Reply-To: "Wallace Michel" <aDubois@juneisp.biz>
+From: Pierre Etchemaite <petchema@concept-micro.com>
+Subject: Re: Using fs views to isolate untrusted processes: I need an
+ assistant architect in the USA for Phase I of a DARPA funded linux kernel
+ project
+Date: Tue, 3 Aug 2004 12:08:37 +0200
+Message-ID: <20040803120837.3b75614a@rayanne>
+References: <410D96DC.1060405@namesys.com>
+	<200408021112.08981.christian.mayrhuber@gmx.net>
+	<87r7qpo3dj.fsf@uhoreg.ca>
+	<410EBBD5.4080308@dgreaves.com>
+	<873c35nl2l.fsf@uhoreg.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-19933-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-19934-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <873c35nl2l.fsf@uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiser@namesys.com
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-FORGET SPAM BLOCKERS!
+Le Mon, 02 Aug 2004 20:04:34 -0400, Hubert Chan <hubert@uhoreg.ca> a =E9cri=
+t :
 
-Get SMART Spam Control That Always Delivers The Email You Want!
+> Possibly.  But, from my understanding of views, apache would not even
+> be able to see that /etc/passwd exists -- it is not just limited to not
+> being able to read it.  I don't think you can do that with acls, and
+> still allow apache to see some entries in /etc.
 
-Finally, we discovered the ultimate solution that is guaranteed to stop all spam
-without losing any of your important email! This revolutionary advanced technology
-also protects you 100% against ALL email-borne viruses - both known and unknown.
+Vserver has been mentionned, but now I cannot help but think about grsec
+patch (http://www.grsecurity.net/), and possibly other similar works.
+There's interesting papers on this site on how they improved the performance
+of their rules system with v2.0.
 
-We didn't beleive it either until we actually tried it. So you be the judge and see for yourself.
-
-
-
-You owe it to yourself to try this program, and forward this email to all of your friends who
-hate Spam or as many people as possible.Learn more: http://mail-svcs.com/more
-
- 
-
-We are strongly against sending unsolicited emails to those who do not wish to receive
-our special mailings. If you do not wish to receive further mailings go here: http://mail-svcs.com/r.htm
-
-Markket Research
-8721 Santa Monica Boulevard
-#1105
-Los Angeles, CA 90069-4507
-
-
-
---- sytem info ---
-astronomic  brought  angles  daphne  agnomen
-coolheaded accusative  diacritic  antiperspirant  dogfish
-
-
-
-
+Implementing file access at filesystem level looks more natural, on the
+other hand implementing it as a separate patch has advantages (filesystem
+independancy, unification of rules for both files and non-files objects
+-like processes-)...
 
