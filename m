@@ -1,40 +1,124 @@
-From: Russell Coker <russell@coker.com.au>
-Subject: Re: OT: Swapfile to RAM relation with 2.4.2X+
-Date: Fri, 7 Feb 2003 12:09:51 +0100
-Message-ID: <200302071209.51547.russell@coker.com.au>
-References: <3E43103A.5010106@mb.tu-ilmenau.de>
-Reply-To: Russell Coker <russell@coker.com.au>
+From: Sam@Vilain.net
+Subject: reiserfsck --no-journal-available --do-as-i-fucking-say-bitch
+Date: Fri, 7 Feb 2003 11:36:34 +0000
+Message-ID: <20030207113634.C7611@ns.soreal.co.uk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12670-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12671-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3E43103A.5010106@mb.tu-ilmenau.de>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>, reiserfs-list <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-On Fri, 7 Feb 2003 02:47, Manuel Krause wrote:
-> In the beginning of 2.4.0+ a relation of swapfile-to-RAM of 2-to-1 was
-> recommended. Due to my several system changes to come in those times I
+Hi there,
 
-Such recommendations are only generalisations.  Ignore them and look at what 
-your system is doing.  If your swap space never runs out and you don't expect 
-your usage patterns to require more (including cron jobs and periods of 
-unexpected load) then you have enough.  If you run out of swap space then you 
-need more, also you should have some swap even if you have a lot of memory.  
-There's always data that isn't used much and can be paged out to make room 
-for more disk cache.
+I have a reiserfs filesystem that has a corrupted journal; whenever I
+try to mount it, fsck it (including with the --no-journal-available
+option), etc reiserfs tries to seek beyond the end of the block
+device.
 
+Is there an easy way to blank the journal so that I can run reiserfsck
+on it?
 
-BTW  Anything that is worth saying in a .sig can be said in 4 lines.
+(none):/mnt/backups# reiserfsck /dev/hda1
 
--- 
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
+<-------------reiserfsck, 2002------------->
+reiserfsprogs 3.x.1b
+
+Will read-only check consistency of the filesystem on /dev/hda1
+Will put log info to 'stdout'
+
+Do you want to run this program?[N/Yes] (note need to type Yes):Yes
+###########
+reiserfsck --check started at Fri Feb  7 10:43:10 2003
+###########
+Replaying journal..
+trans replayed: mountid 101, transid 216560, desc 6118, len 72, commit 6191, nex
+t trans offset 6174
+bwrite: lseek to position 2048503808 (block=500123, dev=4): Invalid argument
+(none):/mnt/backups# reiserfsck --no-journal-available /dev/hda1
+
+<-------------reiserfsck, 2002------------->
+reiserfsprogs 3.x.1b
+
+Will read-only check consistency of the filesystem on /dev/hda1
+Will put log info to 'stdout'
+
+Do you want to run this program?[N/Yes] (note need to type Yes):Yes
+Filesystem with standard journal found, --no-journal-availabel is ignored
+###########
+reiserfsck --check started at Fri Feb  7 10:43:29 2003
+###########
+Replaying journal..
+trans replayed: mountid 101, transid 216560, desc 6118, len 72, commit 6191, nex
+t trans offset 6174
+bwrite: lseek to position 2048503808 (block=500123, dev=4): Invalid argument
+(none):/mnt/backups# 
+
+Here is what I get on the console when I try to mount:
+
+mount: wrong fs type, bad option, bad superblock on /dev/hda1,
+       or too many mounted file systems
+Replay Failure, unable to mount
+reiserfs_read_super: unable to initialize journal space
+reiserfs: checking transaction log (device 03:01) ...
+attempt to access beyond end of device
+03:01: rw=1, want=2000496, limit=2000061
+attempt to access beyond end of device
+03:01: rw=1, want=2000500, limit=2000061
+journal-1226: REPLAY FAILURE, fsck required! buffer write failed
+Replay Failure, unable to mount
+reiserfs_read_super: unable to initialize journal space
+
+Here's the output of debugreiserfs -j (I think - the journal header
+option)
+
+Filesystem state: consistency is not checked after last mounting
+
+Reiserfs super block in block 16 on 0x301 of format 3.6 with standard journal
+Count of blocks on the device: 524112
+Number of bitmaps: 16
+Blocksize: 4096
+Free blocks (count of blocks - used [journal, bitmaps, data, reserved] blocks): 60981
+Root block: 37661
+Filesystem is NOT cleanly umounted
+Tree height: 5
+Hash function used to sort names: "r5"
+Objectid map size 2, max 972
+Journal parameters:
+        Device [0x0]
+        Magic [0x2d5b5922]
+        Size 8193 blocks (including 1 for journal header) (first block 18)
+        Max transaction length 1024 blocks
+        Max batch size 900 blocks
+        Max commit age 30
+Blocks reserved by journal: 0
+Fs state field: 0x0
+sb_version: 2
+inode generation number: 214154
+UUID: cbf04f8b-8d1c-4f07-813e-e449c393c294
+LABEL: 
+Set flags in SB:
+        ATTRIBUTES CLEAN
+Journal header (block #8210 of /dev/hda1):
+        j_last_flush_trans_id 216559
+        j_first_unflushed_offset 6100
+        j_mount_id 101
+        Device [0x0]
+        Magic [0x2d5b5922]
+        Size 8193 blocks (including 1 for journal header) (first block 18)
+        Max transaction length 1024 blocks
+        Max batch size 900 blocks
+        Max commit age 30
+
+Is there an easy override for this?
+
+Why is the option there, if it is ignored in the standard case?
+
+Cheers,
+Sam.
 
