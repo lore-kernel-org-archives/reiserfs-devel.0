@@ -1,89 +1,59 @@
-From: Johannes Stezenbach <js@convergence.de>
-Subject: Re: Desktop Filesystem Benchmarks in 2.6.3
-Date: Thu, 4 Mar 2004 00:41:04 +0100
-Message-ID: <20040303234104.GD1875@convergence.de>
-References: <4044119D.6050502@andrew.cmu.edu> <4044366B.3000405@namesys.com> <4044B787.7080301@andrew.cmu.edu>
+From: David Nielsen <david@graveyard.dk>
+Subject: Re: Formatted over NTFS
+Date: Wed, 03 Mar 2004 23:52:44 +0000
+Message-ID: <40466FCC.1050508@graveyard.dk>
+References: <40463550.8050203@graveyard.dk> <40465235.90904@matchmail.com> <40465ADB.4020603@graveyard.dk> <40465D1C.60105@matchmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17058-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17059-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <4044B787.7080301@andrew.cmu.edu>
+In-Reply-To: <40465D1C.60105@matchmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Peter Nelson <pnelson@andrew.cmu.edu>
-Cc: Hans Reiser <reiser@namesys.com>, Jens Axboe <axboe@suse.de>, linux-kernel@vger.kernel.org, ext2-devel@lists.sourceforge.net, ext3-users@redhat.com, jfs-discussion@www-124.ibm.com, reiserfs-list@namesys.com, linux-xfs@oss.sgi.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Mike Fedyk <mfedyk@matchmail.com>
+Cc: reiserfs-list@namesys.com
 
-Peter Nelson wrote:
-> Hans Reiser wrote:
-> 
-> >Are you sure your benchmark is large enough to not fit into memory, 
-> >particularly the first stages of it?  It looks like not.  reiser4 is 
-> >much faster on tasks like untarring enough files to not fit into ram, 
-> >but (despite your words) your results seem to show us as slower unless 
-> >I misread them....
-> 
-> I'm pretty sure most of the benchmarking I am doing fits into ram, 
-> particularly because my system has 1GB of it, but I see this as 
-> realistic.  When I download a bunch of debs (or rpms or the kernel) I'm 
-> probably going to install them directly with them still in the file 
-> cache.  Same with rebuilding the kernel after working on it.
+Mike Fedyk wrote:
 
-OK, that test is not very interesting for the FS gurus because it
-doesn't stress the disk enough.
+> David Nielsen wrote:
+>
+> [ David, please keep this on the list... ]
+>
+>> Mike Fedyk wrote:
+>>
+>>> David Nielsen wrote:
+>>>
+>>>> Hi..
+>>>> i was installing gentoo the other day, and by mistake did a 
+>>>> mkreiserfs /dev/hda1 instred of /dev/hdc1 :(
+>>>>
+>>>> /dev/hda1 was a NTFS file system with a lot of data that i dont wat 
+>>>> to lose , is there any way to "unformat" the new reiserfs 
+>>>> filesystem i made or any way to just restore the files on the disk ?
+>>>
+>>>
+>>>
+>>>
+>>> mkreiserfs doesn't write a lot to the disk, so maybe you can just 
+>>> mount it as ntfs and see what you can recover (unless mkreiserfs 
+>>> wrote over your MBT file...)
+>>>
+>
+> Try the userspace ntfs tools, or even windows >= NT
+>
+Ok........
+Now it doesnt matter.....
 
-Anyway, I have some related questions concerning disk/fs performance:
+I took it out and into another machine temporarily, but.. now the disk 
+doesnt power up(on any of the machines)
+Its an old disk so...
 
-o I see you are using and IDE disk with a large (8MB) write cache.
+Shit, Shit, Shit...
+Backup, Backup, Backup......
 
-  My understanding is that enabling write cache is a risky
-  thing for journaled file systems, so for a fair comparison you
-  would have to enable the write cache for ext2 and disable it
-  for all journaled file systems.
+but thanks anyway.
 
-It would be nice if someone with more profound knowledge could comment
-on this, but my understanding of the problem is:
-
-- journaled filesystems can only work when they can enforce that
-  journal data is written to the platters at specifc times wrt
-  normal data writes
-- IDE write caching makes the disk "lie" to the kernel, i.e. it says
-  "I've written the data" when it was only put in the cache
-- now if a *power failure* keeps the disk from writing the cache
-  contents to the platter, the fs and journal are inconsistent
-  (a kernel crash would not cause this problem because the disk can
-  still write the cache contents to the platters)
-- at next mount time the fs will read the journal from the disk
-  and try to use it to bring the fs into a consistent state;
-  however, since the journal on disk is not guaranteed to be up to date
-  this can *fail*  (I have no idea what various fs implementations do
-  to handle this; I suspect they at least refuse to mount and require
-  you to manually run fsck. Or they don't notice and let you work
-  with a corrupt filesystem until they blow up.)
-
-Right?  Or is this just paranoia?
-
-To me it looks like IDE write barrier support
-(http://lwn.net/Articles/65353/) would be a way
-to safely enable IDE write caches for journaled filesystems.
-
-Has anyone done any benchmarks concerning write cache and journaling?
-
-
-o And one totally different :-) question:
-
-Has anyone benchmarked fs performance on PATA IDE disks vs.
-otherwise comparable SCSI or SATA disks (I vaguely recall
-having read that SATA has working TCQ, i.e. not broken by
-design as with PATA)?
-
-I have read a few times that SCSI disks perform much better
-than IDE disks. The usual reason given is "SCSI disks are built for
-servers, IDE for desktops". Is this all, or is it TCQ that
-matters? Or is the Linux SCSI core better than the IDE core?
-
-
-Johannes
+David.
