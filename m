@@ -1,25 +1,30 @@
-From: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
-Subject: Re: Recent spam
-Date: Sat, 12 Jul 2003 07:44:54 +0200
-Message-ID: <3F0FA056.5050005@gmx.net>
-References: <3EDAEEBE.3050202@netscape.net> <3EEB00EB.90408@netscape.net>
+From: Soeren Sonnenburg <reiserfs@nn7.de>
+Subject: reiserfs b0rken on 2.4.22-pre4-ben0 on powerpc ?
+Date: 12 Jul 2003 13:42:45 +0200
+Message-ID: <1058010165.17888.8.camel@localhost>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14909-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14910-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3EEB00EB.90408@netscape.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list <reiserfs-list@namesys.com>
 
-Just wondering...
-The e-mail headers mention spamassassin twice. The first time it's version
-2.43-cvs, the second time it's 2.50-cvs. Could this be the cause why some
-mails tagged as spam went through?
+Hi.
 
+I tried to mount a reiserfs partition (which is connected via firewire
+or usb mass storage) and while it mounts ok with 2.4.21-ben2 it hangs
+while mounting on 2.4.22-pre4-ben0.
 
-Carl-Daniel
+I guess something is broken there... I can get into the kernel debugger
+xmon and supply you with a backtrace shot taken with some digital
+camera... if that helps.
+
+If it is a known issue what is the solution ?
+
+Thanks,
+Soeren.
 
