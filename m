@@ -1,57 +1,61 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiser4 panic at fs/reiser4/lock.c:434
-Date: Mon, 29 Mar 2004 05:08:16 -0800
-Message-ID: <40681FC0.6010008@namesys.com>
-References: <1080175834.13000.10.camel@localhost.localdomain>	 <16482.50006.976095.680498@laputa.namesys.com> <1080243714.31969.6.camel@localhost.localdomain>
+Subject: Re: reiserfs logging patches udpated
+Date: Mon, 29 Mar 2004 05:10:22 -0800
+Message-ID: <4068203E.4050700@namesys.com>
+References: <1080149399.14737.77.camel@watt.suse.com>	 <20040324143516.3162cbfe.akpm@osdl.org>	 <1080168379.14743.124.camel@watt.suse.com>	 <200403250147.54246.bernd-schubert@web.de> <40625867.4060800@matchmail.com>	 <1080224062.26677.3.camel@watt.suse.com> <406343F1.2050504@matchmail.com> <1080247847.2926.0.camel@watt.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17565-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17566-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1080243714.31969.6.camel@localhost.localdomain>
+In-Reply-To: <1080247847.2926.0.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jonathan Briggs <jbriggs@esoft.com>
-Cc: Nikita Danilov <Nikita@Namesys.COM>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: Chris Mason <mason@suse.com>
+Cc: Mike Fedyk <mfedyk@matchmail.com>, Bernd Schubert <bernd-schubert@web.de>, reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>
 
-Jonathan Briggs wrote:
+Chris Mason wrote:
 
->On Thu, 2004-03-25 at 04:32, Nikita Danilov wrote:
+>On Thu, 2004-03-25 at 15:41, Mike Fedyk wrote:
 >  
 >
->>Jonathan Briggs writes:
->> > The system is running Linux kernel 2.6.5-rc2.  It's tainted by Nvidia
->> > drivers.
->> > 
->> > The system was compiling the kernel, and Reiser4 panicked.
+>>Chris Mason wrote:
+>>    
 >>
->>Was compilation multi-threaded (make -j)?
+>>>On Wed, 2004-03-24 at 22:56, Mike Fedyk wrote:
+>>>
+>>>
+>>>      
+>>>
+>>>>And after having the difference of a block level journal (ext3), instead 
+>>>>of a "virtual" journal(reiserfs, jfs, xfs) explained to me (check the 
+>>>>ext3-users archives...) -- and how it can save your ass when there are 
+>>>>hardware problems.  I was convinced and switched everything back to ext3.
+>>>>        
+>>>>
+>>>reiserfs does block based logging ;-)
+>>>      
+>>>
+>>I stand corrected.
+>>
+>>Thanks Chris, I feel much better about reiserfs now, especially with 
+>>your ordered/data journaling patches.
 >>    
 >>
 >
->No, it was just plain make.  There were other programs using the disk at
->the same time, though.  Evolution, rhythmbox, other desktop stuff.
+>One other point, the current patch set only does data=ordered.  I wanted
+>that fully stabilized before I enabled data=journal.
 >
->[snip]
+>-chris
+>
+>
+>
+>
 >  
 >
->>Please try following patch:
->>    
->>
->[patch snipped]
->
->I tried to apply the patch, but it must be against a newer version of
->Reiser4.  I haven't been following the internal-testing snapshots. 
->Should I have been?  I'm still using the 2004-02-25 snapshot.  What
->should I be using to apply your patch to?
->
->Thanks.
->  
->
-Can you upgrade to the latest Reiser4 on our website?  We have been 
-fixing about 5 bugs a week, so the latest is much more solid.
+what is a virtual journal?
 
 -- 
 Hans
