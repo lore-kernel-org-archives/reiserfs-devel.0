@@ -1,35 +1,56 @@
-From: Benjamin Scott <bscott@ntisys.com>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: Silly question, defrag
-Date: Fri, 5 Apr 2002 08:50:35 -0500 (EST)
-Sender: bscott@ntisys.com
-Message-ID: <Pine.LNX.4.44.0204050850170.6398-100000@dragon.inside.ntisys.com>
-References: <3CAD6508.2060308@namesys.com>
+Date: Fri, 05 Apr 2002 09:04:21 -0500
+Message-ID: <200204051404.g35E4L6H007366@foo-bar-baz.cc.vt.edu>
+References: <Pine.LNX.4.44.0204050850170.6398-100000@dragon.inside.ntisys.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1560364882P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <3CAD6508.2060308@namesys.com>
+In-Reply-To: Your message of "Fri, 05 Apr 2002 08:50:35 EST."
+             <Pine.LNX.4.44.0204050850170.6398-100000@dragon.inside.ntisys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: Benjamin Scott <bscott@ntisys.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, 5 Apr 2002, at 12:49pm, Hans Reiser wrote:
-> There are a whole bunch of algorithms for optimizing layout for reads
-> which are too expensive to do at every write.  Doing them once a week is
-> an excellent way to handle them.
+--==_Exmh_1560364882P
+Content-Type: text/plain; charset=us-ascii
 
-  That makes sense.
+On Fri, 05 Apr 2002 08:50:35 EST, Benjamin Scott <bscott@ntisys.com>  said:
 
-  What about using "idle time" to defragment the filesystem on a continuous
-basis?  If the system is not doing anything else, a background daemon in the
-kernel could move blocks around to optimize things.  While I expect this
-would be a nightmare to implement in an existing filesystem driver, if it
-were written with this in mind up-front, perhaps it would be easier?
+>   What about using "idle time" to defragment the filesystem on a continuous
+> basis?  If the system is not doing anything else, a background daemon in the
+> kernel could move blocks around to optimize things.  While I expect this
+
+A good idea, worth researching, but probably a royal pain to implement.
+The biggest problem is identifying "idle", and being careful to do things
+in a way that doesn't cause problems if the system suddenly goes un-idle.
+
+It's not as bad as doing an fsck on a live filesystem - but you do want to
+be sure that if a program suddenly decides to read the file you're currently
+moving around, that you do the right thing (writing gets a bit trickier -
+you have to worry about stuff like somebody doing an fsync() of a block
+that you're in the middle of moving around on the disk.  Race Condition City ;)
 
 -- 
-Ben Scott <bscott@ntisys.com>
-| The opinions expressed in this message are those of the author and do not |
-| necessarily represent the views or policy of any other person, entity or  |
-| organization.  All information is provided without warranty of any kind.  |
+				Valdis Kletnieks
+				Computer Systems Senior Engineer
+				Virginia Tech
 
+
+--==_Exmh_1560364882P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQE8ra7lcC3lWbTT17ARAvkDAKDpLbU+lTQLrl8NKx90MYX4sI615wCg4pxS
++wFDKXptuEB5135oJtS3KhQ=
+=DOlk
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1560364882P--
