@@ -1,61 +1,37 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: File system corruption!
-Date: Fri, 20 Feb 2004 16:55:08 +0300
-Message-ID: <1077285308.5090.373.camel@tribesman.namesys.com>
-References: <12C7D768CC8ED4118A9200508BEEC6FB03377A50@zanexch.zantaz.com>
+From: John Dalbec <jpdalbec@ysu.edu>
+Subject: Re: data-logging 2.4.23 patches: 1 reject in fs/inode.c in 2.4.25
+Date: Fri, 20 Feb 2004 13:56:52 -0500
+Message-ID: <40365874.40905@ysu.edu>
+References: <c12ap7$vor$1@sea.gmane.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16867-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16870-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <12C7D768CC8ED4118A9200508BEEC6FB03377A50@zanexch.zantaz.com>
+In-Reply-To: <c12ap7$vor$1@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Fong Vang <FVang@Zantaz.com>
-Cc: "'reiserfs-list@namesys.com'" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jens Benecke <jens@spamfreemail.de>
+Cc: reiserfs-list@namesys.com
 
-Hi
 
-On Fri, 2004-02-20 at 04:33, Fong Vang wrote:
-> Currently, we have a couple of hundred systems with this configuration (per
-> server):
-> 
-> * RedHat Linux 7.1
-> * Linux 2.4.20 kernel (from RedHat).  ReiserFS version 3.6.25
-> * Dual Xeon processors on SuperMicro motherboards
-> * 4 GB of RAM
-> * ~1 TB of storage allocated to ReiserFS (8 drives in RAID-10 configuration)
-> 
-> Although most of the systems are performing without hiccups, we've had 2-3
-> systems loosing the ~1TB ReiserFS file system after a reboot.  3ware reports
-> all drives are performing optimally.  Mounting the ~1TB ReiserFS file system
-> is successful but the file system is blank (the actual file system is empty,
-> not the mount point).  Anyone has any idea how this could happen?
-> 
-> I'm just wondering how many places ReiserFS store the meta data (superinode,
-> inode, etc.)?
-> 
-reiserfs may store its metadata spread over whole filesystem.
 
-> Any help is appreciated.
-> 
+Jens Benecke wrote:
 
-can you please run: debugreiserfs -m /dev/emptiedfilesystem and send us
-its output?
+> Hi,
+> 
+> Chris' data-logging patches do not apply cleanly to 2.4.25, are they being
+> updated?
 
+Not by Chris; his time is devoted to data-logging for 2.6 kernels now.
 > 
-> This e-mail has been captured and archived by the ZANTAZ Digital Safe(tm)
-> service.  For more information, visit us at www.zantaz.com. 
-> IMPORTANT: This electronic mail message is intended only for the use of the
-> individual or entity to which it is addressed and may contain information
-> that is privileged, confidential or exempt from disclosure under applicable
-> law.  If the reader of this message is not the intended recipient, or the
-> employee or agent responsible for delivering this message to the intended
-> recipient, you are hereby notified that any dissemination, distribution or
-> copying of this communication is strictly prohibited.  If you have received
-> this communication in error, please notify the sender immediately by
-> telephone or directly reply to the original message(s) sent.  Thank you.
-> 
+> I think the fix for inode.c is not very hard but I don't dare to fiddle
+> around with file system code. ;)
+
+Maybe you should post the relevant section of inode.c from 2.4.25?  Many eyes 
+and all that...
+John
+
 
