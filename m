@@ -1,56 +1,55 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Debugreiserfs Security Question (3.6.7-pre1)
-Date: Fri, 20 Jun 2003 16:43:30 +0400
-Message-ID: <20030620124330.GC24875@namesys.com>
-References: <3EF27041.6060401@netscape.net>
+From: Christian Kujau <evil@g-house.de>
+Subject: Re: vpf-10680, minor corruptions -- oooh!
+Date: Fri, 20 Jun 2003 16:14:31 +0200
+Message-ID: <3EF316C7.7010209@g-house.de>
+References: <3EF07AFB.8060303@g-house.de> <20030618152626.GA17240@namesys.com> <3EF0A8E8.2000209@g-house.de> <20030619054535.GA23852@namesys.com> <3EF20728.2080905@g-house.de> <3EF2F315.2080306@g-house.de> <20030620122946.GA24875@namesys.com>
+Reply-To: evil@g-house.de
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14642-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14643-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3EF27041.6060401@netscape.net>
+In-Reply-To: <20030620122946.GA24875@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Manuel Krause <manuelkrause@netscape.net>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-Hello!
+Oleg Drokin schrieb:
+>>lila:~# cp -a /lib/ /var/cache/apt-proxy/temp/ | wc -l
+>>    329
+>>lila:~#
+> 
+> Was /var/cache/apt-proxy/temp/ empty before copying?
 
-On Fri, Jun 20, 2003 at 04:24:01AM +0200, Manuel Krause wrote:
+yes.
 
-> If I currently use debugreiserfs -p  /dev/xxx | gzip -c > xxx.gz and
-> later for testing gunzip -c xxx.gz | unpack /dev/yyy  I get the same
-> filenames on the last target partition. (with reiserfsprogs 3.6.7-pre1)
-> If I don't want to spread info about
->  /home/manuel/my_car/tech_overview/lies_for_BMW_&_DC/engine.259.fake.jpg
-> anywhere else than only on my HDD, shouldn't this file be converted to
->  /d98/d4/d2/d65/d1/23.file
-> e.g., or something like that (random directory & filenames) within
-> debugreiserfs, in general?!
+> "diff -r" will emit "only in PATH" message for each file present only
+> in one compared dir, so if you have some extra files at the destination,
+> thisis kind of expected.
 
-This question was brought already, so I think I will add it to the FAQ now.
-It is impossible to do this. Each directory entry is accompanied with
-the hash value calculated of the name, if you change the name, hash value will differ.
-(and entries are sorted in hash-order, so you cannot change hash value too).
+yes, i know. see, the severity is really as strong as it seems. there 
+are no "only in path" msg, but "file1 and file1 differ" messages.
 
-> I don't know if that is a serious security issue. But it is one.
 
-As long as you do not redistribute this info, there is no issue, I believe.
+> Ok, I am looking into this.
+> In fact this "non-matching blocks" stuff is not dangerous to actual data.
 
-> No no, I don't doubt your developers' debugging cyle and purpose at all.
-> But I don't need you (and others if we couldn't establish a secure
-> connection) to read our filenames. In case of real failure we may not
-> be able to rename anything any more, you know..
+are you sure? when even "diff" says that the files are different, the 
+data is wrong in some way.
 
-Well, in this case we won't be able to debug the problem, it seems.
-Unless you will be able to describe what happened so good, that we will
-be able reproduce it ourselves.
+under /lib are modeuls, inserting them is fine. however, the copied 
+files (modules) gaive only a segfault!
 
-And you know, in case of real corruptions, not only filenames are included in dump,
-parts of the file's tails could be included as well.
+Thanks,
+Christian.
 
-Bye,
-    Oleg
+> I am interested in what will happen if you'd do a cp -a/diff -r on a
+> freshly formatted reiserfs, will there be any differences?
+> (and send me output of diff in this case.)
+
+will do later.
+
+
+
