@@ -1,103 +1,91 @@
-From: Jake Maciejewski <maciejej@msoe.edu>
-Subject: Re: AMD64 progress?
-Date: Tue, 08 Feb 2005 14:49:53 -0600
-Message-ID: <1107895793.10601.31.camel@gentoo>
-References: <20050114201751.GB5883@backtop.namesys.com>
-	 <Pine.LNX.4.44.0501152102230.10167-100000@ccc7.wpi.edu>
-	 <20050207132934.GA7482@backtop.namesys.com>
-	 <1107804896.10689.17.camel@gentoo>
-	 <20050207195147.GB7482@backtop.namesys.com>
-	 <1107887159.12393.6.camel@gentoo>
-	 <20050208191258.GF7482@backtop.namesys.com>
+From: Esben Stien <b0ef@esben-stien.name>
+Subject: Encounter of the Bad Block Kind
+Date: Tue, 08 Feb 2005 22:51:35 +0100
+Message-ID: <87y8dyvhy0.fsf@quasar.esben-stien.name>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050208191258.GF7482@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-On Tue, 2005-02-08 at 22:12 +0300, Alex Zarochentsev wrote:
-> On Tue, Feb 08, 2005 at 12:25:58PM -0600, Jake Maciejewski wrote:
-> > On Mon, 2005-02-07 at 22:51 +0300, Alex Zarochentsev wrote:
-> > > On Mon, Feb 07, 2005 at 01:34:56PM -0600, Jake Maciejewski wrote:
-> > > > I'm running reiser4progs 1.0.3 and 2.6.10 patched with reiser4 from
-> > > > 2.6.11-rc3-mm1 (and this patch).
-> > > > 
-> > > > I've been doing the simultaneous dd and kernel compilation that has
-> > > > always crashed reiser4 on AMD64 in the past. After about an hour with
-> > > > debugging and two hours without debugging, I'm thinking of more ways to
-> > > > torture the FS. For now it looks like reiser4 is working on AMD64!
-> > > 
-> > > i think so.  reiser4/amd64 passed 5h of stress testing instead of crashing in
-> > > first 30min.
-> > > 
-> > Have you been stress testing with debugging disabled? I was doing some
-> > extreme testing and crashed reiser4 with this patch twice. The same test
-> 
-> how it crashed?  Was the fs corrupted after the crash?
+All filesystems herein are reiserfs'ed. 
 
-As I said, it was extreme testing. I didn't keep track of my testing
-procedures because I expected reiser4 to take whatever I threw at it.
+I was entering a directory called foo/ on hda1 (hda = 203Go), then bad
+blocks were found.
 
-Anyway, the first test involved one hard drive with a reiser4 filesystem
-on a partition, and another drive with a reiser4 loopback filesystem on
-a reiser4 loopback filesystem on XFS. The partition-based filesytem had
-bonnie++, a kernel compile, and dd'ing a large file from /dev/zero all
-going on at once, as I recall. The top-level loopback filesystem was
-also running bonnie++, and I was continually cat'ing its loopback file
-to /dev/null. Of course while all this was going, since I didn't expect
-trouble, I was seeding about 30 torrents with Azureus (most of which are
-actually stored on a Samba server mounted as SMBFS because CIFS has been
-unstable ever since I added a gigabit card) and listening to MP3s with
-XMMS. The music stopped, X froze, and I couldn't SSH in. After
-rebooting, I discovered minor corruption on the parition-based reiser4
-filesystem but neither loopback. --fix fixed it and --check after --fix
-came up clean. The log from --fix:
+Here's a shortened and modified sample:
 
-FSCK: Directory [12557:6b636f6e666967:1257d]: can't find the object
-[1257d:c673796d626f6c2e:12591] pointed by the entry [symbol.c].
-FSCK: Directory [12557:6b636f6e666967:1257d]: can't find the object
-[1257d:c673796d626f6c2e:12591] pointed by the entry [symbol.c]. Entry is
-removed.
+end_request: I/O error, dev hda, sector z
+hda:dma_intr:status=0x51{DriveReady SeekComplete Error}
+hda:dma_intr:error=0x40{UncorrectableError},LBAsect=x,high=17,low=y,sector=z
+ide: failed opcode was: unknown
 
-I probably should have checked what happened to symbol.c, but I didn't
-think anything of it and continued testing on a fresh filesystem.
+#umount /dev/hda1
+#dd_rescue -l hda1.dd.p1.log -A -B 4096 -b 1M /dev/hda1 /mnt/fs2/hda1.img
 
-My next test was dd'ing a large file from /dev/zero, compiling a kernel,
-running bonnie++, and "find . -type f -exec cat {} >/dev/null \;", all
-looping and running simultaneously on a a fresh filesystem on a
-parition, no loopback involved at all. Once again I was doing other
-stuff at the time. I know I was watching a movie with mplayer, but I
-don't remember if Azureus was going or not. It froze like the previous
-time.
+I umount'ed the partition, called up shop, ordered a new 200Go hd and
+transferred hda1.img to a filesystem on the new hd.
 
-Figuring I was onto something with the above test, I tried reiserfs on
-the same drive, same parition to eliminate hardware and other errors. It
-ran for a few hours until I decided test reiser4 with debugging.
+Because the partition I was transferring hda1.img to was smaller I had
+to cancel the dd_rescue operation. This was because hda itself was
+about 203Go and the new hd I had was 199Go. I had to cancel dd_rescue
+several Go before the job was complete. 
 
-The same crazy combination of dd, kernel compilation, bonnie++, and
-find/cat worked at least 7 hours with debugging enabled, although I
-might not have been reproducing the conditions exactly because I think I
-changed the options to dd so that the filesystem wouldn't fill up, as it
-did several times before the crash.
+#losetup /dev/loop0 /mnt/hda1.img 
+#reiserfsck --logfile hda1.fsck.p1.log /dev/loop0
+#reiserfsck --logfile hda1.fsck.p1.rsb.log --rebuild-superblock /dev/loop0
+#reiserfsck --logfile hda1.fsck.p1.rt.log --rebuild-tree /dev/loop0
 
-At some point I tried compiling 2.6.11-rc3-mm1, but it failed. My crash
-still isn't reproducible, but if I ever get something I have a 32-bit
-installation to test if it's an AMD64-only problem.
+I then losetup'ed the image and ran reiserfsck on it. Because the
+hda1.img was smaller in size, the superblock holding the information
+on the partition size was wrong. I then --rebuild-sb and ran
+reiserfsck again, which adviced me to run --rebuild-tree; ..and so I
+did.
 
-> 
-> > that crashed it one of the times passes on reiserfs (didn't try the
-> > other), and if enable debugging, I can torture reiser4 all night and
-> > still not crash it. I'll do some more tests and try to identify a
-> > simple, reproducible crash scenario.
-> 
-> Thanks,
-> Alex.
+#mount /dev/loop0 /mnt/image
+
+When it was finished, I mounted the hda1.img only to find about 90% of
+the files fubar'ed. My hda1 was only containing movies in several
+directories and I was unable to play most fubar'ed files and those
+borken files I managed to play were very annoying to look at. The
+remaining 10% which were intact, played fine. There were also many
+files missing; f.ex I had part 1 of one movie and part 2 of
+another. 
+
+#dd_rescue -l hda1.dd.p2.log -A -B 4096 -b 1M /dev/hda1 /mnt/fs2/hda1.img
+#losetup /dev/loop0 /mnt/hda1.img 
+#reiserfsck --logfile hda1.fsck.p2.log /mnt/image
+
+I then decided to get a bigger hd, so I bought a 250Go hd. I then
+dd_rescue'ed the whole image to the new filesystem and losetup'ed
+it. I noted that dd_rescue found 52 errors in 208kio of data. I
+proceeded with reiserfsck which told me to run --rebuild-tree.
+
+#mount /dev/loop0 /mnt/image
+#cp -a /mnt/image/* /mnt/fs4/muhaha
+
+I was sceptic this time around to run --rebuild-tree since the last
+time I ran it, it destroyed 90% of my files so I just mounted the
+hda1.img without --rebuild-tree'ing it. All my files except foo/ and
+bar.mtk were intact. I cp'ed all these files to another filesystem.
+
+#reiserfsck --logfile hda1.fsck.p2.rt.log --rebuild-tree /mnt/image
+#mount /dev/loop0 /mnt/image
+
+I then --rebuild-tree as reiserfsck adviced me to; just to see what
+happened. It ran until it was finished, then I mounted it. All my
+files except foo/ and bar.mtk were intact. Now they were found in
+lost_and_found, as expected. Some files that were in foo/ I could also
+play;), but bar.mtk is gone forever it seems.
+
+Guess we can't work on incomplete images..!
+
 -- 
-Jake Maciejewski <maciejej@msoe.edu>
-
+Esben Stien is b0ef@esben-stien.name
+http://www.esben-stien.name
+irc://irc.esben-stien.name/%23contact
+[sip|iax]:b0ef@esben-stien.name
