@@ -1,60 +1,64 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Where are the plugins?
-Date: Wed, 03 Sep 2003 02:19:44 +0400
-Message-ID: <3F551780.1030701@namesys.com>
-References: <3F51080F.7060901@mail.utexas.edu>
+Subject: Re: reiser4 data journalling?
+Date: Wed, 03 Sep 2003 02:21:20 +0400
+Message-ID: <3F5517E0.6000403@namesys.com>
+References: <3F4E3AF9.2060100@tupshin.com>	<16206.16138.72832.920045@laputa.namesys.com>	<3F4E6AA4.3030900@namesys.com> <20030829001814.GB9019@zero>	<3F4E9C6D.2080009@namesys.com> <20030829012322.GJ21352@matchmail.com>	<20030829050857.GA5755@namesys.com> <3F4F91DB.2080900@namesys.com>	<16207.38985.871686.419166@laputa.namesys.com>	<3F4FC8FD.1050303@namesys.com> <m3oey7m2ed.fsf@averell.firstfloor.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15518-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15519-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F51080F.7060901@mail.utexas.edu>
+In-Reply-To: <m3oey7m2ed.fsf@averell.firstfloor.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jeffrey Yasskin <jyasskin@mail.utexas.edu>
+To: Andi Kleen <ak@muc.de>
 Cc: reiserfs-list@namesys.com
 
-Jeffrey Yasskin wrote:
+Andi Kleen wrote:
 
-> I've been looking at the reiser4 source code for a few days, and I 
-> can't find any non-essential plugins. 
+>Hans Reiser <reiser@namesys.com> writes:
+>  
+>
+>>Because atomicity in ext3 basically consists of guaranteeing that the filesystem is consistent, and due to the disk drive implementation 4k blocks are written atomically.  So, if you span more than one block, it is not guaranteed to be atomic.
+>>    
+>>
+>
+>I was told most modern disks run with 32-64K blocks internally.
+>
+This is very interesting, it would explain something that has puzzled me 
+for a long time about 64k being the optimal transfer size.
 
-This is called the minimal functionality for first release project 
-management style. ;-)
+>4K is very unlikely.
+>
+>Of course they don't always guarantee that a write of such a block
+>is atomic, but then they also don't guarantee it for 4K.
+>
+What they do in the event of power loss is the big unclear for hard 
+drives.  Maybe I should ask for government funding to test hard drives 
+for what they actually do, and how they handle power loss.;-)   Somebody 
+needs to test these folks.....
 
->
->
-> For example: You say on the website that you've written several 
-> security plugins for DARPA,
+Most filesystems are designed based around the assumption that ecc on 
+the drive will detect failed writes with 4k granularity.  If I remember 
+right, some folks on this list have said some things suggesting that for 
+some IBM drives a power failure can cause a more than 4k chunk to go 
+bad, and that this can be a problem for filesystem consistency.
 
-oh dear, if you send nikita (offlist) the lines he'll correct them.
+It would probably be nice for the OS and the drive to use the same block 
+size..... or at least interesting to experiment with.
 
-> but the only files in fs/reiser4/plugin/security/ are acl.c and 
-> perm.{c,h}, and acl.c is empty.
-> On the website you also suggest writing a plugin so /etc/passwd can be 
-> split in to individually-permissioned sub-files. Is that plugin 
-> written yet, or is it just an idea? 
+>The only sure way is to wait for the disk telling you it is finished 
+>(= use write barriers)  and/or turn the write buffer off.
+>Even then you have to hope that the disk firmware doesn't lie to you.
+>
+>-Andi
+>
+>
+>  
+>
 
-Umh, it is in our contract, so that makes it more than an idea;-), 
-however the person working on file inheritance got put on encryption and 
-hasn't finished that yet.  There exists some code somewhere that I need 
-to review and....
-
->
->
-> I'd like to write a few plugins to move mp3s' and oggs' meta-data into 
-> the filesystem, and it'd be a lot easier if there were an example to 
-> copy from. (Would it be better just to move that kind of plugin into a 
-> userspace callback?)
->
-> Thanks,
-> Jeffrey
->
->
->
-I agree that we need examples..... and more plugins.....;-)
 
 -- 
 Hans
