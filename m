@@ -1,65 +1,78 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Impressed. Any info other than source?
-Date: Tue, 01 Feb 2005 08:27:01 -0800
-Message-ID: <41FFADD5.7010605@namesys.com>
-References: <1107223140.28831.110.camel@cunegonde.paulshome.acculin.com>
+From: "Nicolas Smallwood" <smallwood@maya.com>
+Subject: RE: Errors reported with dmesg using reiser4
+Date: Tue, 1 Feb 2005 11:55:45 -0500
+Message-ID: <CMEFJOIJPCAMFCEKIEOECEMJCFAA.smallwood@maya.com>
+References: <CMEFJOIJPCAMFCEKIEOEIEMICFAA.smallwood@maya.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1107223140.28831.110.camel@cunegonde.paulshome.acculin.com>
+In-Reply-To: <CMEFJOIJPCAMFCEKIEOEIEMICFAA.smallwood@maya.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Info <info@acculin.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiser <reiserfs-list@namesys.com>
+
+The fsck.reiser4 check reported one fatal error in the superblock
+
+Running fsck.reiser4 --build-sb as I type this.
+
+Nicolas Smallwood
+
+
+
+-----Original Message-----
+From: Alex Zarochentsev [mailto:zam@namesys.com]
+Sent: Monday, January 31, 2005 3:44 PM
+To: smallwood@maya.com
 Cc: reiserfs-list@namesys.com
+Subject: Re: Errors reported with dmesg using reiser4
 
-Info wrote:
 
->Hello,
->
->I am really impressed by what you're doing with Reiserfs.
->It is a wonderful mix of the immediately usable and great
->promise for the future. 
->
->I am somewhat amazed that this is such a low traffic list.
->Am I missing some other place where this stuff is discussed?
->  
->
-Not really.  We are in a period of stabilizing rather than designing new 
-stuff.  Unfortunately, one always spends far more time stabilizing than 
-designing.....
+Hello,
 
->Quoting from your website:
->  
+On Tue, Jan 25, 2005 at 03:28:54PM -0500, smallwood@maya.com wrote:
+> Hello, for the record, this is from a system running the following specs:
 >
->>Looking at the coin from the other side, we want to make
->>it an order of magnitude less work to add features to 
->>ReiserFS so that both users and Namesys can add at least 
->>an order of magnitude more of them.
->>    
->>
+> Gentoo Linux
+> 2.6.10-gentoo-r6 patched with reiser4-for-2.6.10-1
+> 3ware 7000 series card with 4 SATA 250GB Western Digitial Drives with no
+> raid configured.
 >
->To this end is there any documentation between the general 
->descriptions (.../v4/v4.html and .../whitepaper.html) and
->the actual source code? I have searched your site and the
->web (although I haven't tried BitKeeper yet) and can't find
->anything. It is not the actual internal workings so much as
->how to modify a plugin that I'm interested in. Any sort of
->howto type documentation?
->  
+> I am running a test pushing millions of directories onto one of the drives
+> using a UUID as the directory name.  These all reside in the base
+> directory of the filesystem.
 >
-The source code is intended to be very readable.  I don't think there 
-should be any documentation besides web site and source code.
+> The directories are now being propogated by two python scripts creating
+> random data inside these folders on two of the other drives.  When about
+> 1.5gb has collected, they begin moving the folders onto the main drive.
+>
+> This latest test was started last Thursday, with the drive being about 34
+> GBs full of data from related testing.
+>
+> Since then, the drive has filled to 92GB, but at some point, I discovered
+> the following error:
+>
+> reiser4[mv(28692)]: key_warning
+(fs/reiser4/plugin/object.c:97)[nikita-717]:
+> WARNING: Error for inode 215673251 (-2)
+> reiser4[mv(28692)]: write_sd_by_inode_common
+> (fs/reiser4/plugin/object.c:480[nikita-2221]:
+> WARNING: Failed to save sd for 215673251: -2
+>
+> These messages are then repeated nine times.
+>
+> Any suggestions on further checks I can make?
 
->Any URLs gratefully received!
+can you run fsck.reiser4 --check on that drive?
+
 >
->Regards,
->Paul Hilton
+> Thank You,
 >
->
->
->  
->
+> Nicolas Smallwood
+> smallwood@maya.com
+
+--
+Alex.
 
