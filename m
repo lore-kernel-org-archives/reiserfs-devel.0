@@ -1,39 +1,29 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: bug report
-Date: Tue, 29 Apr 2003 09:49:02 +0400
-Message-ID: <20030429054902.GA16939@namesys.com>
-References: <Pine.LNX.4.53.0304281636140.366@max15g>
+From: Emanuel.Quass@temic.com
+Subject: Antwort: LVM and snapshots with ReiserFS
+Date: Tue, 29 Apr 2003 11:08:42 +0300
+Message-ID: <OF1856EE2B.0270764C-ONC1256D17.002C591F-C2256D17.002CBEA7@temic.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13891-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; boundary="=_alternative 002CBE9CC2256D17_="
+Return-path: <reiserfs-list-return-13892-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.53.0304281636140.366@max15g>
 List-Id: <reiserfs-devel.vger.kernel.org>
+To: Guillermo Torreiro <gtorreiro@yahoo.com>, reiserfs-list <reiserfs-list@namesys.com>
+
+--=_alternative 002CBE9CC2256D17_=
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: robs@op.net
-Cc: reiserfs-list@namesys.com
 
-Hello!
+Hi 
 
-On Mon, Apr 28, 2003 at 04:40:49PM -0400, robs@op.net wrote:
-> Having difficulty recovering a damaged ReiserFS.
-> Tried stuff- reiserfsck, reiserfstune, etc.  Seems to lead into an infinite
-> loop of things to try but don't work- ie: do x, but x needs y, but y needs
-> z, but z needs x.
-> Not sure what you need to know.
-> "reiserfstune" man page talks about "kernel patched with special
-> 'relocatable journal support' patch"
+as far as I know it should work out of the box. I used both already in 
+2.4.10 and I had no problems!
 
-Well, unfortunatelly you provided not enough info at all.
-We'd like to know:
-what was your problem, how did you decide that reiserfs is damaged? Quote any relevant
-messages from kernel/reiserfsprogs. Do you know how you get it damaged?
-what reiserfsck version do you have? What steps have you already performed?
-What is the kernel version?
+There are some patches for 2.4.20 which can be applied for reiserfs. But 
+it will work without as well.
 
-Bye,
-    Oleg
+Best wishes
+
+        Emanuel
+--=_alternative 002CBE9CC2256D17_=--
