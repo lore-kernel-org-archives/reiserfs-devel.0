@@ -1,136 +1,59 @@
-From: Clifford Beshers <clifford.beshers@lindows.com>
-Subject: Re: 2 Terabyte install
-Date: Wed, 12 May 2004 16:36:01 -0700
-Message-ID: <40A2B4E1.6000804@lindows.com>
-References: <409AC2FF.7080800@lindows.com> <1083917932.14089.281.camel@tribesman.namesys.com> <409BB690.6030604@namesys.com> <409BBDC9.3030809@lindows.com> <409FB387.8080804@namesys.com> <40A19147.4010703@lindows.com> <20040512034150.GS9641@schnapps.adilger.int> <40A2B1D0.5040005@lindows.com>
+From: Michael James <Michael.James@csiro.au>
+Subject: plugin for cached network file system
+Date: Thu, 13 May 2004 10:59:22 +1000
+Message-ID: <200405131059.22693.Michael.James@csiro.au>
+Reply-To: Michael.James@csiro.au
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
- boundary="------------000705070808010203060306"
-Return-path: <reiserfs-list-return-18638-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18640-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40A2B1D0.5040005@lindows.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Clifford Beshers <clifford.beshers@lindows.com>
-Cc: Andreas Dilger <adilger@clusterfs.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>, Vitaly Fertman <vitaly@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
---------------000705070808010203060306
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+How hard would it be to write a Reiser4 plug-in
+ to implement a network file system with a cache on the local disk?
 
-Argh.  It never fails.  I found 'blkid' in package libblkid1 immediately 
-after I sent this.  Bad packaging by Debian.
+By caching I mean an incomplete local mirror
+ of the master filesystem on the network server
+ with on-demand loading and a simple flushing algorithm.
+So open calls to files in the cached area are intercepted
+ and if the file isn't already in place a script is called to get it there.
+THEN the open call returns the file-handle normally.
 
-Anyway, it works as advertised.  Thanks.
-
-Clifford Beshers wrote:
-
->
-> Andreas Dilger wrote:
->
->>>   * Is there a tool to determine the type of file system on a
->>>     partition without mounting it?
->>>    
->>>
->>
->>Lots of them.  "file -s /dev/foo" or if you have a newer e2fsprogs (1.33
->>and newer I think) you can use "blkid [dev ...]" to tell you a bunch of
->>things about each device (LABEL, UUID, TYPE).
->>
->>
->>  
->>
-> Very interesting.  Unfotunately, my results don't match yours.
->
-> First, I had tried 'file' and found that it didn't work.  I tried it 
-> again and found that it still didn't work.
->
->     root@notsomarlin:~# losetup /dev/loop/0 /tmp/foo
->     root@notsomarlin:~# mke2fs /dev/loop/0
->     ...
->     root@notsomarlin:~# file /tmp/foo
->     /tmp/foo: Linux rev 1.0 ext2 filesystem data
->     root@notsomarlin:~# mkreiserfs /dev/loop/0
->     ...
->     ReiserFS is successfully created on /dev/loop/0.
->     root@notsomarlin:~# file /tmp/foo
->     /tmp/foo: data
->
-> Do you get other results?  If not, it would seem that Debian's version 
-> of 'file' is broken, yet I checked the source code and there are magic 
-> numbers for reiserfs included.
->
-> Also, I check e2fsprogs and it is at version 1.35 in Debian unstable, 
-> but no tool called 'blkid' is included.
->
-> So I'm still searching for reliable methods to do this.
+I only need the simplest case of a distributed file system:
+  - nodes are only reading the files,
+  - files only change slowly (~weekly) 
+	so cached files could be assumed fresh for a day at a time
+	or even flushed with:		rsh node 'rm -r /cache/*'
+  - any network code could be avoided by NFS mounting the master copy,
+	so fetching a new file is still just a local cp off the NFS mount.
 
 
---------------000705070808010203060306
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+The situation is that CSIRO'S Bioinformatics Facility
+ has two 400Gig filesystems on a server,
+ that need to be available to 66 cluster nodes.
+Just NFS exporting one server to so many nodes leaves the cluster NFS bound.
+(Should I say they are Dell Perc 3 controllers and slow-as...)
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
-  <title></title>
-</head>
-<body text="#000000" bgcolor="#ffffff">
-Argh.&nbsp; It never fails.&nbsp; I found 'blkid' in package libblkid1
-immediately after I sent this.&nbsp; Bad packaging by Debian.<br>
-<br>
-Anyway, it works as advertised.&nbsp; Thanks.<br>
-<br>
-Clifford Beshers wrote:<br>
-<blockquote type="cite" cite="mid40A2B1D0.5040005@lindows.com">
-  <meta content="text/html;" http-equiv="Content-Type">
-  <title></title>
-  <br>
-Andreas Dilger wrote:<br>
-  <blockquote cite="mid20040512034150.GS9641@schnapps.adilger.int"
- type="cite">
-    <blockquote type="cite">
-      <pre wrap="">   * Is there a tool to determine the type of file system on a
-     partition without mounting it?
-    </pre>
-    </blockquote>
-    <pre wrap=""><!---->
-Lots of them.  "file -s /dev/foo" or if you have a newer e2fsprogs (1.33
-and newer I think) you can use "blkid [dev ...]" to tell you a bunch of
-things about each device (LABEL, UUID, TYPE).
+Jobs come in big batches each reading the same 2 - 6 Gig file.
+Each node has 27 Gig of free space so it's heaps for the working set
+ I just don't want to have to groom what is in this working set for each job.
+Nor do I want to have to pre-pend an rsync to a batch.
+
+Has anyone written something that could be bent to this purpose?
+Is there template code for a Reiser4 plug-in?
+Or what would it cost to get it written?
+
+michaelj
 
 
-  </pre>
-  </blockquote>
-Very interesting.&nbsp; Unfotunately, my results don't match yours.<br>
-  <br>
-First, I had tried 'file' and found that it didn't work.&nbsp; I tried it
-again and found that it still didn't work.<br>
-  <blockquote>root@notsomarlin:~# losetup /dev/loop/0 /tmp/foo<br>
-root@notsomarlin:~# mke2fs /dev/loop/0<br>
-...<br>
-root@notsomarlin:~# file /tmp/foo<br>
-/tmp/foo: Linux rev 1.0 ext2 filesystem data<br>
-root@notsomarlin:~# mkreiserfs /dev/loop/0<br>
-...<br>
-ReiserFS is successfully created on /dev/loop/0.<br>
-root@notsomarlin:~# file /tmp/foo<br>
-/tmp/foo: data<br>
-  </blockquote>
-Do you get other results?&nbsp; If not, it would seem that Debian's version
-of 'file' is broken, yet I checked the source code and there are magic
-numbers for reiserfs included.<br>
-  <br>
-Also, I check e2fsprogs and it is at version 1.35 in Debian unstable,
-but no tool called 'blkid' is included.<br>
-  <br>
-So I'm still searching for reliable methods to do this.<br>
-</blockquote>
-</body>
-</html>
-
---------------000705070808010203060306--
+-- 
+Michael James                         michael.james@csiro.au
+System Administrator                    voice:  02 6246 5040
+CSIRO Bioinformatics Facility             fax:  02 6246 5166
 
