@@ -1,53 +1,59 @@
-From: Gunnar Ritter <Gunnar.Ritter@pluto.uni-freiburg.de>
+From: Christer Weinigel <christer@weinigel.se>
 Subject: Re: silent semantic changes with reiser4
-Date: Wed, 08 Sep 2004 00:13:20 +0200
-Message-ID: <413E3280.nailEK92X8CU7@pluto.uni-freiburg.de>
-References: <200409070206.i8726vrG006493@localhost.localdomain>
- <413D4C18.6090501@slaphack.com> <m3d60yjnt7.fsf@zoo.weinigel.se>
- <1183150024.20040907143346@tnonline.net>
- <413DD5B4.nailC801GI4E2@pluto.uni-freiburg.de>
- <m34qm9kbcl.fsf@zoo.weinigel.se>
+Date: 08 Sep 2004 00:28:20 +0200
+Sender: wingel@zoo.weinigel.se
+Message-ID: <m3r7pdiuij.fsf@zoo.weinigel.se>
+References: <200409071530.i87FUCP1003927@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21599-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21600-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <m34qm9kbcl.fsf@zoo.weinigel.se>
+In-Reply-To: <200409071530.i87FUCP1003927@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christer Weinigel <christer@weinigel.se>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Tonnerre <tonnerre@thundrix.ch>, Spam <spam@tnonline.net>, ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>, Pavel Machek <pavel@ucw.cz>, David Masover <ninja@slaphack.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jamie Lokier <jamie@shareable.org>, Christoph Hellwig <hch@lst.de>, Alexander Lyamin aka FLX <flx@namesys.com>, Chris Wedgwood <cw@f00f.org>, Christer Weinigel <christer@weinigel.se>
+Content-Transfer-Encoding: 7bit
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Spam <spam@tnonline.net>, Christer Weinigel <christer@weinigel.se>, David Masover <ninja@slaphack.com>, Tonnerre <tonnerre@thundrix.ch>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Christer Weinigel <christer@weinigel.se> wrote:
+Horst von Brand <vonbrand@inf.utfsm.cl> writes:
 
-> Gunnar Ritter <Gunnar.Ritter@pluto.uni-freiburg.de> writes:
-> > No, it would not. If you read the POSIX.1 specification for cp
-> > carefully <http://www.unix.org/version3/online.html>, you will
-> > notice that the process for copying a regular file is carefully
-> > standardized. A POSIX.1-conforming cp implementation would not
-> > be allowed to copy additional streams, unless either additional
-> > options are given or the type of the file being copied is other
-> > than S_IFREG. And cp is just one example of a standardized file
-> > handling program.
-> We can safely ignore POSIX when it is too broken.
+> > > 1. Do we want support for named streams?
+> > 
+> > >    I belive the answer is yes [...]
+> 
+> There are many people around here who disagree (that is precisely the heart
+> of the discussion). I for one don't think Linux has to get $RANDOM_FEATURE
+> just because $SOME_OTHER_OS has got it. Either the feature stands on its
+> own _in the context of POSIX/Unix/Linux_ (possibly as an extension or
+> modification of said standards) or it isn't worth it.
 
-Excuse me, but there's really nothing broken here with POSIX and cp.
-You're just making an insulting talk about a part of the specification
-which currently serves GNU/Linux and other Unix-like environments very
-well, and has done so for about twelve years now.
+Ok, noted. :-)
 
-> cp could very well be modified to copy named streams except when
-> the option --posix is specified
+I myself am not very interested in generic named stream support in
+Linux.  But since we have support for filesystems with named streams
+and people are interested in getting at those streams (if nothing else
+thanq to serve streams from an NTFS file system via Samba on a dual boot
+machine), we'd better do it well, instead of with ugly hacks.
 
-Hey, you didn't ever even have a look at POSIX Shell & Utilities, did
-you? Then why are you making derogatory statements about it?
+> We need to sort out exactly how far it makes sense to go, by showing
+> concrete, down to earth uses for whatever substructure we want. Then show
+> the effect can't be easily gotten through tools for power users or faking
+> it for unsuspecting users via GUI, and that overall the complexity and
+> performance cost is less than the win. Note that the success of the Unix
+> way is in large part due to its use of few, simple concepts that can be
+> combined endlessly; and tools following the same strategy. Adding extra
+> concepts that current tools can't naturally handle has to be considered
+> with extreme care.
 
-> or the environment variale POSIXLY_CORRECT is set.
+Regarding this section and all you wrote before, I definitely agree.
+Simplicity wins hands down every time.
 
-Cool, data loss depending upon an environment variable which is even
-currently used by many programs unaware of such results. This really
-sounds like good engineering to me.
+  /Christer
 
-	Gunnar
+-- 
+"Just how much can I get away with and still go to heaven?"
+
+Freelance consultant specializing in device driver programming for Linux 
+Christer Weinigel <christer@weinigel.se>  http://www.weinigel.se
