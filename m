@@ -1,53 +1,44 @@
-From: "Giuliano Luppi" <g_luppi@brokerstudio.it>
-Subject: Mount fails after reiserfsck --rebuild-tree failure
-Date: Thu, 19 Jun 2003 21:11:29 +0200
-Message-ID: <FCEDLNJPOJKGBCPDLKPGGEFMCBAA.g_luppi@brokerstudio.it>
-Reply-To: "Ing. Davide Imbeni" <davide.imbeni@tei.ericsson.se>,
-   <davide.imbeni@tiscali.it>
+From: Manuel Krause <manuelkrause@netscape.net>
+Subject: Debugreiserfs Security Question (3.6.7-pre1)
+Date: Fri, 20 Jun 2003 04:24:01 +0200
+Message-ID: <3EF27041.6060401@netscape.net>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0009_01C336A7.5A2DDFA0"
-Return-path: <reiserfs-list-return-14636-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14637-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list <reiserfs-list@namesys.com>
 
-------=_NextPart_000_0009_01C336A7.5A2DDFA0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Hi!
 
-Estimated sirs,
-after experiencing some problems accessing files on a reiserfs file system
-(SuSE linux 8.1, kernel 2.4), I tried reiserfsck =96rebuild-tree.
-Since the problem resulted to be in the hardware, it failed, leaving me with
-an unmountable partition (root inode set to 0)
+If I currently use debugreiserfs -p  /dev/xxx | gzip -c > xxx.gz and
+later for testing gunzip -c xxx.gz | unpack /dev/yyy  I get the same
+filenames on the last target partition. (with reiserfsprogs 3.6.7-pre1)
 
-As suggested in you site=92s FAQ (section 2), I tried with the latest
-reiserfsprogs (3.6.7-pre1), installed on another HD (with RedHat). The
-latter also failed.
 
-Now I know the problems are (a lot of) bad blocks.
+If I don't want to spread info about
+  /home/manuel/my_car/tech_overview/lies_for_BMW_&_DC/engine.259.fake.jpg
+anywhere else than only on my HDD, shouldn't this file be converted to
+  /d98/d4/d2/d65/d1/23.file
+e.g., or something like that (random directory & filenames) within
+debugreiserfs, in general?!
 
-I would like to
-1.	re-enable mounting the partition, in order to recover some of the data I
-still have there (I know, I should backup more often=85 :-( )
-2.	possibly fix the badblocks (as you describe in section 38 of the FAQ), in
-order to bring up the system until new hard disks are ready.
+I don't know if that is a serious security issue. But it is one.
 
-The main question is: how can I undo the setting of root inode to 0?
-Is there a good way for dealing with faulty hardware with reiserfs?
+No no, I don't doubt your developers' debugging cyle and purpose at all.
+But I don't need you (and others if we couldn't establish a secure
+connection) to read our filenames. In case of real failure we may not
+be able to rename anything any more, you know..
 
-Thank you very much for your answers
 
-Davide Imbeni
+Best regards,
 
----
-Outgoing mail is certified Virus Free.
-Checked by AVG anti-virus system (http://www.grisoft.com).
-Version: 6.0.489 / Virus Database: 288 - Release Date: 10/06/2003
+Manuel Krause
 
-------=_NextPart_000_0009_01C336A7.5A2DDFA0--
+
+(The filenames mentioned above have NO real meaning in ANY sense.)
 
