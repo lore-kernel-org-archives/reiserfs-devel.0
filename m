@@ -1,135 +1,136 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: making reiser4/AMD64 hardlock
-Date: Wed, 10 Nov 2004 19:08:47 +0300
-Message-ID: <1100102927.1659.64.camel@tribesman.namesys.com>
-References: <1099472359.8158.36.camel@localhost>
-	 <20041103201825.GY30438@hvs.envisage.co.za>
-	 <1099561964.1492.20.camel@tribesman.namesys.com>
-	 <1100073674.31776.21.camel@localhost>
+From: Jeremy West <jkwest@gmail.com>
+Subject: Re: reiser4 and reiserfs co-existence?
+Date: Wed, 10 Nov 2004 13:34:32 -0500
+Message-ID: <b28a8861041110103458b4a689@mail.gmail.com>
+References: <b28a886104110808555d3f59dc@mail.gmail.com>
+	 <1099933755.13138.4.camel@localhost>
+	 <b28a886104110823161fe3a30d@mail.gmail.com>
+	 <1099997754.1373.72.camel@tribesman.namesys.com>
+	 <b28a886104110921518b5365b@mail.gmail.com>
+	 <b28a886104110922046481965d@mail.gmail.com>
+	 <b28a8861041109224831610ab8@mail.gmail.com>
+	 <1100072902.1381.44.camel@tribesman.namesys.com>
+Reply-To: Jeremy West <jkwest@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-LJZzq+/05QMtFne9wXGZ"
-Return-path: <reiserfs-list-return-22346-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22348-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1100073674.31776.21.camel@localhost>
+In-Reply-To: <1100072902.1381.44.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Jake Maciejewski <maciejej@msoe.edu>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
---=-LJZzq+/05QMtFne9wXGZ
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+I've used by vanilla 2.6.9 kernel sources with the 1.0.2 reiser4 patch
+from Jake who also subscribes to this list.  Here is his patch
+http://people.msoe.edu/~maciejej/patches/
 
-Hello
+I've also tried the latest 2.6.10-rc1 mm sources, but I noticed on the
+list this morning that you guys missed getting an update into those
+sources, and to try the lastest patch which you linked to in the
+email.
 
-On Wed, 2004-11-10 at 11:01, Jake Maciejewski wrote:
-> I documented a few more AMD64 errors/panics. The system hasn't been
-> freezing since I enabled debugging, but make, dd, or whatever else hits
-> the bug(s) still freeze.
+I've kinda gotten tired of not being able to use my system, so I might
+just wait a few more months for these bugs to work out.
+
+I like what I see though, and when I'm ready I'll move from ext3 and
+donate to your project.
+
+
+On Wed, 10 Nov 2004 10:48:22 +0300, Vladimir Saveliev <vs@namesys.com> wrote:
+> Hello
 > 
-> http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/11-08-04/
-> with reiser4progs 1.0.2 and my custom patched 2.6.9 kernel
 > 
-> http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/11-09-04/
-> with reiser4progs 1.0.2 and 2.6.10-rc1 with the ftp.namesys.com patch
+> 
+> On Wed, 2004-11-10 at 09:48, Jeremy West wrote:
+> > Before I head off to bed, I was able to obtain a better log of a
+> > segfault.  After rebooting from the problem I had with zombie threads,
+> > I tried restarting my kernel compilation.  It died right away.  Here
+> > is the end of the kernel file
+> >
+> > bash-2.05b# ls
+> > current  log-2004-11-08-08:16:05  log-2004-11-09-08:32:37
+> > bash-2.05b# tail -f current
+> > Nov 10 01:32:53 [kernel] NVRM: loading NVIDIA Linux x86 NVIDIA Kernel
+> > Module  1.0-6629  Wed Nov  3 13:12:51 PST 2004
+> > Nov 10 01:32:57 [kernel] process `named' is using obsolete setsockopt
+> > SO_BSDCOMPAT
+> > Nov 10 01:33:16 [kernel] NVRM: not using NVAGP, AGPGART is loaded!!
+> >                 - Last output repeated twice -
+> > Nov 10 01:36:27 [kernel] loop: loaded (max 8 devices)
+> > Nov 10 01:36:27 [kernel] EXT2-fs warning: mounting unchecked fs,
+> > running e2fsck is recommended
+> > Nov 10 01:43:27 [kernel] reiser4[fixdep(7878)]: find_file_state
+> > (fs/reiser4/plugin/file/file.c:487)[vs-1074]:
+> > Nov 10 01:43:27 [kernel] code: -2 at fs/reiser4/search.c:1278
+> > Nov 10 01:43:27 [kernel] context: trace_flags: 0
+> > Nov 10 01:43:27 [kernel] ------------[ cut here ]------------
+> >
+> >
+> 
+> Please specify what kernel do you use, where did you get reiser4 for it
+> and sent .config.
+> 
+> 
+> 
+> 
+> > --Jeremy
+> >
+> >
+> > On Wed, 10 Nov 2004 01:04:44 -0500, Jeremy West <jkwest@gmail.com> wrote:
+> > > Here is an error for you all.  From my /var/log/everything log.
+> > >
+> > > -----------------------
+> > > Nov 10 00:30:01 [/usr/sbin/cron] (root) CMD (test -x /usr/sbin/run-crons && /usr
+> > > /sbin/run-crons )
+> > >                 - Last output repeated 2 times -
+> > > Nov 10 00:50:58 [kernel] reiser4[g++(10858)]: check_dkeys (fs/reiser4/search.c:1
+> > > 084)[vs-1199]
+> > > -----------------------
+> > >
+> > > This happened while I was compiling a kernel, compiling kdeedu, and I
+> > > was listening to music through alsa.  While I was listening to music,
+> > > I restarted alsa.  The compiles both died, and one of them created a
+> > > zombie process.
+> > >
+> > > Here is the output in one console as it was compiling kdeedu.  After I
+> > > noticed the build processes had stopped (by using "top" command), I
+> > > tried "ctrl-c" to kill the kdeedu compile.  Here is the last bit.
+> > > This runaway build spawned the "zombie" proces.
+> > >
+> > > ---------------------
+> > > g++ -DHAVE_CONFIG_H -I. -I. -I../.. -I../.. -I/usr/kde/3.3/include
+> > > -I/usr/qt/3/include -I/usr/X11R6/include   -DQT_THREAD_SUPPORT
+> > > -D_REENTRANT  -Wnon-virtual-dtor -Wno-long-long -Wundef -ansi
+> > > -D_XOPEN_SOURCE=500 -D_BSD_SOURCE -Wcast-align -Wconversion
+> > > -Wchar-subscripts -Wall -W -Wpointer-arith -Wwrite-strings -DNDEBUG
+> > > -DNO_DEBUG -O2 -O2 -march=athlon-xp -fomit-frame-pointer
+> > > -Wformat-security -Wmissing-format-attribute -fno-exceptions
+> > > -fno-check-new -fno-common -DQT_CLEAN_NAMESPACE -DQT_NO_ASCII_CAST
+> > > -DQT_NO_STL -DQT_NO_COMPAT -DQT_NO_TRANSLATION -D_GNU_SOURCE -c -o
+> > > ksfilereader.o ksfilereader.cpp
+> > > Caught signal 2 in pid 20302
+> > > Pid 20302 alreadly caught signal and is still cleaning up
+> > > Pid 20302 alreadly caught signal and is still cleaning up
+> > > -------------------------------
+> > > #uname -a
+> > > Linux homer1 2.6.9+reiser4 #1 Tue Nov 9 02:30:12 EST 2004 i686 AMD
+> > >
+> > >
+> > > Athlon(tm) XP 2600+ AuthenticAMD GNU/Linux
+> > >
+> > > Jeremy West
+> > > //---------------------------
+> > > "I had a life once... now I have a computer and DSL"
+> > >
+> >
+> 
 > 
 
-Would you please try to reproduce this problem (reiser4[dd(7926)]:
-check_blocks_bitmap (fs/reiser4/plugin/space/bitmap.c:1174)[zam-623])
-with the attached patch? 
 
-> Every test has been on a freshly made filesystem.
-> 
-> You might be interested to know that I think fsck failed to fix
-> corruption after my 11-08-04/test1. When I tried to build the kernel
-> after a --build-fs, make failed. I didn't have checksums to verify the
-> tree, so something else could have been wrong. It froze when I tried to
-> dump metadata.
-> 
-> On Thu, 2004-11-04 at 12:52 +0300, Vladimir Saveliev wrote:
-> > Hello
-> > 
-> > On Wed, 2004-11-03 at 23:18, Hendrik Visage wrote:
-> > > On Wed, Nov 03, 2004 at 02:59:19AM -0600, Jake Maciejewski wrote:
-> > > > I've been testing reiser4 on 2.6.9 (patches from 2.6.9-mm1 and fixes
-> > > > from reiser4-for-2.6.9.diff). I have reiser4progs and libaal 1.0.1.
-> > > > Syslog doesn't catch any errors when I get hardlocks (haven't tried
-> > > > SysRq). I figured I could at least give you guys a hint about what kind
-> > > > of usage pattern kills reiser4.
-> > > 
-> > 
-> > Please try to get as much debugging information as you can.
-> > sysrq+t's output may help to understand the problem. Do you have "File
-> > systems" -> "Reiser4" -> "Enable reiser4 debug options" -> "Assertions"
-> > turned on? If no, please turn it, it may also help. Try to catch its
-> > output, via serial console if it will not be stored in logs.
-> > 
-> > I will try your test in x86.
-> > 
-> > > I recall the last response about this issue:
-> > > 
-> > >  We need an AMD64 cpu...
-> > > 
-> > well, yes.
-> > 
-> > > 
-> > 
-
---=-LJZzq+/05QMtFne9wXGZ
-Content-Disposition: attachment; filename=bitmap.c.diff
-Content-Type: text/plain; name=bitmap.c.diff; charset=koi8-r
-Content-Transfer-Encoding: 7bit
-
---- reiser4.orig/plugin/space/bitmap.c	2004-11-09 16:30:37.991446947 +0300
-+++ reiser4/plugin/space/bitmap.c	2004-11-10 19:01:18.450540361 +0300
-@@ -337,6 +337,7 @@ reiser4_find_last_zero_bit (bmap_off_t *
- static void
- reiser4_clear_bits(char *addr, bmap_off_t start, bmap_off_t end)
- {
-+/*
- 	int first_byte;
- 	int last_byte;
- 
-@@ -360,6 +361,14 @@ reiser4_clear_bits(char *addr, bmap_off_
- 		addr[first_byte] &= first_byte_mask;
- 		addr[last_byte] &= last_byte_mask;
- 	}
-+*/
-+	int i;
-+	bmap_off_t count;
-+
-+	BUG_ON(end <= start);
-+	count = end - start;
-+	for (i = 0; i < count; i ++)
-+		reiser4_clear_bit(start + i, addr);
- }
- 
- /* Audited by: green(2002.06.12) */
-@@ -367,6 +376,7 @@ reiser4_clear_bits(char *addr, bmap_off_
- static void
- reiser4_set_bits(char *addr, bmap_off_t start, bmap_off_t end)
- {
-+#if 0
- 	int first_byte;
- 	int last_byte;
- 
-@@ -390,6 +400,14 @@ reiser4_set_bits(char *addr, bmap_off_t 
- 		addr[first_byte] |= first_byte_mask;
- 		addr[last_byte] |= last_byte_mask;
- 	}
-+#endif
-+	int i;
-+	bmap_off_t count;
-+
-+	BUG_ON(end <= start);
-+	count = end - start;
-+	for (i = 0; i < count; i ++)
-+		reiser4_set_bit(start + i, addr);
- }
- 
- #define ADLER_BASE    65521
-
---=-LJZzq+/05QMtFne9wXGZ--
-
+-- 
+Jeremy West
+//---------------------------
+"I had a life once... now I have a computer and DSL"
