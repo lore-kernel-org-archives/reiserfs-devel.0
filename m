@@ -1,58 +1,37 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Problem with my HDD
-Date: Thu, 30 May 2002 09:21:55 +0400
-Message-ID: <20020530092155.D3922@namesys.com>
-References: <10512850437.20020529194929@starfall.de>
+From: Adrian Phillips <a.phillips@dnmi.no>
+Subject: Re: EVMS Reiser FSIM
+Date: 30 May 2002 07:32:58 +0200
+Sender: "Adrian Phillips,,," <a.phillips@dnmi.no>
+Message-ID: <wvelfufbed.fsf@freeze.oslo.dnmi.no>
+References: <OFB49DCA39.27F715F1-ON85256BC8.004B436D@pok.ibm.com>
+	<20020530090934.A3922@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10445-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10446-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <10512850437.20020529194929@starfall.de>
+In-Reply-To: <20020530090934.A3922@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Cookie-Monster <cookie.monster@starfall.de>
+To: Oleg Drokin <green@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Hello!
+>>>>> "Oleg" == Oleg Drokin <green@namesys.com> writes:
 
-On Wed, May 29, 2002 at 07:49:29PM +0200, Cookie-Monster wrote:
+    Oleg> I am sorry, but how can I check out?  You have not provided
+    Oleg> a link to download, and latest released version is 1.0.1
+    Oleg> from May 7th does not contain this code, I am sure.
 
-> I hope you can help me. I formated on of my Server-HDDs with ReiserFS
-> version, which has been distributed in SuSE Linux 7.3. Sorry, but I
-> don't know the version, cause I'm know running SuSE Linux 8.0.
-> My Problem is, that the HDD cannot be mounted anymore:
-> 1.   fileserver:/ # mount /dev/sda1 /ftp/apps/
-> 2.   mount: Not a directory
->       Bad root block 4294967295. (--rebuild-tree did not complete)
+http://www.google.com/search?q=evms&num=100
 
-Well, so you in fact run reiserfsck --rebuild-tree before.
-What caused you to run it for the first time?
+Its a standard sf project,
 
-> The check goes on til there are 171398 (more than 60%) blocks left then it hangs
-> up for a while before continueing. From this point on it continues
-> very slow only. From 150xxx it continues fast til 13039.
-> At this point the program quits without saying anything and the HDD is
-> hung up. The old version of reiserfsck, in the SuSe Linux 7.3 Edition
-> gave out a lot of "Block could not be read" or something like this and
-> the HDD hung up.
+Sincerely,
 
-what does 'dmesg' output says after this?
-If you have read errors, then namesys can help you only based
-on http://namesys.com/support.html terms.
+Adrian Phillips
 
-> I really need the data! Is there any possibilty of deleating the
-> unreadable blocks and rebuuilding the tree then? When this works, I
-
-This is possible, but all the data that was contained in these blocks would be
-lost.
-
-> p.s.: The HDD is a IBM DRHS36V (36GB U2W-SCSI) if that is important.
-
-Hm, I thought that only IBM DTLA-307040 and IC40... were subject to quick
-death.
-
-Bye,
-    Oleg
+-- 
+Your mouse has moved.
+Windows NT must be restarted for the change to take effect.
+Reboot now?  [OK]
