@@ -1,43 +1,35 @@
-From: Newsmail <newsmail@satimex.tvnet.hu>
-Subject: Re: big problem with loop-aes and reiserfs partitions
-Date: Mon, 23 Dec 2002 20:29:01 +0100
-Message-ID: <5.2.0.9.2.20021223202730.03375ba8@pop.tvnet.hu>
-References: <5.2.0.9.2.20021223133707.00b8f9c0@pop.tvnet.hu>
- <5.2.0.9.2.20021222221057.01cfeb90@pop.tvnet.hu>
- <5.2.0.9.2.20021222221057.01cfeb90@pop.tvnet.hu>
- <5.2.0.9.2.20021223133707.00b8f9c0@pop.tvnet.hu>
+From: Russell Coker <russell@coker.com.au>
+Subject: Re: what do you do that stresses your filesystem?
+Date: Mon, 23 Dec 2002 21:12:59 +0100
+Message-ID: <200212232112.59316.russell@coker.com.au>
+References: <3E06F360.7000708@namesys.com> <20021223155640.GB773@willow.seitz.com>
+Reply-To: Russell Coker <russell@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12229-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-12230-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20021223172014.B808@namesys.com>
+In-Reply-To: <20021223155640.GB773@willow.seitz.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Ross Vandegrift <ross@willow.seitz.com>, Hans Reiser <reiser@namesys.com>
+Cc: ReiserFS <reiserfs-list@namesys.com>
 
-http://loop-aes.sourceforge.net
-I was using the newest version, with aes-128 encryption.
-regards,
-greg
-At 15:20 2002. 12. 23.=AD, you wrote:
->Hello!
->
->On Mon, Dec 23, 2002 at 01:47:36PM +0100, Newsmail wrote:
-> > Yep, sorry I should have reported it back at that time :~
-> > Well the huge amount isnt really 'huge' compared to the partition size.=
- I
-> > copied 1 gig of data, composed of + - big files(10-60megs each) on/to a
-> > partition of size like 300gigs.
-> > regards,
->
->Ok, another question is where did you got your crypto api patches from?
->Ones I took from kerneli.org cannot be compiled.
->
->Bye,
->     Oleg
+On Mon, 23 Dec 2002 16:56, Ross Vandegrift wrote:
+> On machines with Linux md RAID arrays that need to be remirrored,
+> I do end up waiting a bit (10-30 seconds) due to read starvation, but
+> this problem is so much better than it used to be it's hardly worth
+> mentioning.
 
+One thing I've done before is configure the boot scripts to set the RAID 
+re-sync speed very low before fsck/mount time and then set it back later.  It 
+didn't seem to do as much good as I thought it would though.
+
+-- 
+http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
+http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
+http://www.coker.com.au/~russell/  My home page
 
