@@ -1,83 +1,67 @@
-From: Szakacsits Szabolcs <szaka@sienet.hu>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: Horrible ftruncate performance
-Date: Thu, 10 Jul 2003 09:30:46 +0200 (MEST)
-Message-ID: <Pine.LNX.4.30.0307100851120.26018-100000@divine.city.tvnet.hu>
-References: <20030710052931.GA17957@namesys.com>
+Date: Thu, 10 Jul 2003 13:21:12 +0400
+Message-ID: <20030710092112.GA837@namesys.com>
+References: <20030710052931.GA17957@namesys.com> <Pine.LNX.4.30.0307100851120.26018-100000@divine.city.tvnet.hu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14860-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14861-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030710052931.GA17957@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.30.0307100851120.26018-100000@divine.city.tvnet.hu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <green@namesys.com>
+To: Szakacsits Szabolcs <szaka@sienet.hu>
 Cc: reiserfs-list@namesys.com
 
+Hello!
 
-On Thu, 10 Jul 2003, Oleg Drokin wrote:
-> On Thu, Jul 10, 2003 at 05:23:39AM +0200, Szakacsits Szabolcs wrote:
->
-> > I've noticed very long "hangs" using reiserfs and they were always at
-> > ftruncate(2). I made a comparision between different filesystems. SuSE 8.2
->
-> Yes, this is known "feature".
+On Thu, Jul 10, 2003 at 09:30:46AM +0200, Szakacsits Szabolcs wrote:
+> > > I've noticed very long "hangs" using reiserfs and they were always at
+> > > ftruncate(2). I made a comparision between different filesystems. SuSE 8.2
+> > Yes, this is known "feature".
+> OK, I've searched all relevant archives, namesys web pages and found
+> nothing relevant.
+In fact there were sevaral discussions on our mailing list about this.
 
-OK, I've searched all relevant archives, namesys web pages and found
-nothing relevant.
+> > Speeds up large holes creation in ~ 1000 times
+> How long does it take for you the above dd command _and_ how fast is your
+> CPU?
 
-> > (same bad performance on older SuSE versions as well), same partitition,
-> > default mkfs.*. Let's create a 200GB sparse file:
-> > 	dd if=/dev/zero of=sparse bs=1 seek=200G count=1
-> > Results:
-> > 	ext3	    0.00 sec
-> > 	XFS         0.00 sec
-> > 	JFS         0.00 sec
-> > 	reiserfs  874.27 sec (all spent in the kernel)
->
-> See the patch below.
-> It is merged into 2.4.22-pre3
+angband:/mnt # time dd if=/dev/zero of=sparse bs=1 seek=200G count=1
+1+0 records in
+1+0 records out
 
-Excellent, I can see
-http://www.kernel.org/pub/linux/kernel/v2.4/testing/patch-2.4.22.log
-Oleg Drokin <green@angband.namesys.com>:
-	reiserfs: speed up large file holes creation
+real    0m19.205s
+user    0m0.000s
+sys     0m7.130s
 
-> Speeds up large holes creation in ~ 1000 times
+This is on Athlon MP-1700+ (I have dual system). The system is all IDE.
+This is still kind of long, but it is better than it was ;)
+Actually I expected it to be much faster, I guess I need to take a look why
+it still eats this much time.
 
-How long does it take for you the above dd command _and_ how fast is your
-CPU?
+> > (on 4k blocksize)
+> AFAIK, reiserfs supports only 4 kB blocksizes. At least the
+> 'man mkreiserfs' said always so.
 
-> (on 4k blocksize)
+may be you just have old reiserfsprogs version.
+There are support for variable blocksizes in 2.5, and there is separate
+patch for 2.4
 
-AFAIK, reiserfs supports only 4 kB blocksizes. At least the
-'man mkreiserfs' said always so.
+> The problem is when one uses it on reiserfs. For the users it "hangs". E.g.
+> in the above case creating a metadata only clone takes 2-3 sec for all the
+> other filesystems and 15 minutes for reiserfs.
+> So apparently my only chance is to document the issue and detect if the fs
+> is reiserfs and warn the user it will take a very long time (unless kernel
+> is at least 2.4.22 and your speed up works).
 
-> > Is there a faster way to create big sparse files on reiserfs?
->
-> Use the patch. (should apply to 2.4.18,2.4.19,2.4.20,2.4.21)
-> (I am unsure if you can apply it to the kernel from SuSE 8.2, though).
+Yes, this seems adequate.
 
-Thanks but it's only indirectly my problem (I use XFS, there are other
-problems with reiserfs for my needs): before further work on ntfsresize,
-NTFS I wrote a util, ntfsclone. It efficiently saves all data or only
-metadata to a device, stdout or sparse file, so the clone is an exact copy
-and always mountable. Good for backup, debug, development and the extremely
-well compressable metadata-only clone can be transfered through the net
-(e.g. a 200GB NTFS with only a few GB data ends up between a few hundred kB
-or max a couple of MB).
+Thank you.
 
-The problem is when one uses it on reiserfs. For the users it "hangs". E.g.
-in the above case creating a metadata only clone takes 2-3 sec for all the
-other filesystems and 15 minutes for reiserfs.
-
-So apparently my only chance is to document the issue and detect if the fs
-is reiserfs and warn the user it will take a very long time (unless kernel
-is at least 2.4.22 and your speed up works).
-
-Thanks again,
-
-	Szaka
-
+Bye,
+    Oleg
