@@ -1,35 +1,40 @@
-From: Dirk Meul <dirk.meul@epost.de>
+From: "Matthias Urlichs" <smurf@noris.de>
 Subject: Re: "reiserfsck --rebuild-tree" fails
-Date: 25 Sep 2002 13:29:19 +0200
-Message-ID: <1032953396.27530.21.camel@riggs>
-References: <Pine.LNX.4.33L2.0209251208570.1154-100000@mailbackup.pi.dk>
+Date: Wed, 25 Sep 2002 13:36:19 +0200
+Message-ID: <20020925133619.Q32363@noris.de>
+References: <Pine.LNX.4.33L2.0209251208570.1154-100000@mailbackup.pi.dk> <1032953396.27530.21.camel@riggs>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11526-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11527-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.33L2.0209251208570.1154-100000@mailbackup.pi.dk>
+Content-Disposition: inline
+In-Reply-To: <1032953396.27530.21.camel@riggs>; from dirk.meul@epost.de on Wed, Sep 25, 2002 at 01:29:19PM +0200
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Dirk Meul <dirk.meul@epost.de>
+Cc: reiserfs-list@namesys.com
 
-Hello.
+Hi,
 
-On Mit, 2002-09-25 at 12:15, Ole Tange wrote:
-> This is a hardware error. Try running:
+Dirk Meul:
+> Thank you for your answer. Will "reiserfsck --rebuid-tree" succeed after
+> badblock running? I think 85%-90% of the data will be ok and this
+> badblocks contain a file which should be deleted.
 > 
->   ide-smart /dev/hda
-> 
-> If ide-smart does not complain you can map out the bad sector by running
-> badblocks on your disk (this will erase the content).
+Very likely. I had a big RAID5 the other day where one disk too many died
+and I had to reconstruct from two current disks and one that was a month
+out of date.
 
-Thank you for your answer. Will "reiserfsck --rebuid-tree" succeed after
-badblock running? I think 85%-90% of the data will be ok and this
-badblocks contain a file which should be deleted.
+I now have 35000 files (mostly junk, year-old deleted files and all that)
+in my /lost+found file system, but that's a minor problem. The major Good
+Thing which happened is that every file which hasn't been touched during
+the last month is perfectly OK.
 
-Regards,
---
-Dirk
+One of these days I'll check whether ext2fs would survive that kind of
+abuse, but I seriously doubt it...
 
+-- 
+Matthias Urlichs     |     noris network AG     |     http://smurf.noris.de/
