@@ -1,47 +1,78 @@
-From: Giuseppe Bilotta <bilotta78@hotpop.com>
+From: Helge Hafting <helgehaf@aitel.hist.no>
 Subject: Re: silent semantic changes with reiser4
-Date: Sat, 28 Aug 2004 18:33:33 +0200
-Sender: news <news@sea.gmane.org>
-Message-ID: <MPG.1b9ad1e799adc9319896db@news.gmane.org>
-References: <Pine.LNX.4.58.0408260919380.2304@ppc970.osdl.org> <XFMail.20040827111855.pochini@shiny.it> <MPG.1b992c526a4726c59896d9@news.gmane.org> <87hdqomn7w.fsf@uhoreg.ca>
+Date: Sat, 28 Aug 2004 18:49:31 +0200
+Message-ID: <20040828164931.GA24868@hh.idb.hist.no>
+References: <helge.hafting@hist.no> <412D9FFA.6030307@hist.no> <200408261817.i7QIH35O002702@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20998-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20999-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <200408261817.i7QIH35O002702@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Helge Hafting <helge.hafting@hist.no>, Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Hubert Chan wrote:
-> >>>>> "Giuseppe" == Giuseppe Bilotta <bilotta78@hotpop.com> writes:
-> 
-> Giuseppe> Giuliano Pochini wrote:
+On Thu, Aug 26, 2004 at 02:17:03PM -0400, Horst von Brand wrote:
+> Helge Hafting <helge.hafting@hist.no> said:
+> > Matt Mackall wrote:
 > 
 > [...]
 > 
-> >> You're actually looking for a database with a legacy fs-like
-> >> interface :)
+> > >Find some silly person with an iBook and open a shell on OS X. Use cp
+> > >to copy a file with a resource fork. Oh look, the Finder has no idea
+> > >what the new file is, even though it looks exactly identical in the
+> > >shell. Isn't that _wonderful_? 
 > 
-> Giuseppe> Hm. Isn't this exactly what MS has in store for Longhorn?
+> > It is what I'd expect.
 > 
-> No.  To access the database-like functionality in WinFS, you need to use
-> a special API.
+> Great. That means that all the tools of the trade stop working. Sounds like
+> show-killer feature to me.
+>
+All wrong.  Feel free to dislike the concept all you want, but don't provide 
+false arguments.  I am sure you can think up some _good_ ones, if
+you feel so strongly about this.
 
-I see, thanks. Might be interesting to know what they plan to 
-make accessible of WinFS to legacy apps via the old API, then 
-(especially since, at according to a /. article, they're 
-planning to retrofit WinFS to WinXP ...)
+_No_ tool "stop working" with such a fs.  Of course the new
+feature (file-as-directory) may not be supported - which is a problem
+only for files that use the new feature.  Stick a lot of ordinary
+files and directories in such a fs, and the tools works as before
+with no breakage.  People obviously won't deploy new features before
+they are useable - the fs have to come first.  Then the tools,
+and widespread use only after that.  This is similiar to other extensions 
+like ACLs which many tools don't understand.  They're still useable though.
 
--- 
-Giuseppe "Oblomov" Bilotta
+Of course file-as-directory can have pilot uses like the often
+mentioned thumbnails - because it doesn't matter if those aren't
+backed up or get lost at random during the experimental phase.
 
-Can't you see
-It all makes perfect sense
-Expressed in dollar and cents
-Pounds shillings and pence
-                  (Roger Waters)
+ 
+> >                         Now, use cp -R to copy  the file
+> > _with its directory_,
+> 
+> Either it is a file or a directory. Make up your mind. 
+
+Wrong again.  The file-as-directory concept means that
+a filename refers to something that is a file, or a directory,
+or both.  That's the point of it.  Being both isn't
+possible with current filesystems (except reiser4) of course, 
+but file-as-directory is a proposed _extension_.  
+
+> If you have no clear
+> distinction, you'll only get messed up. Badly.
+>
+The distinction is clear enough - three options instead of two.
+ 
+> Excuse me, I must grab my sickness bag here.
+
+Oh, very impressive.  Please take a look at what we're talking
+about before attacking.   
+
+Helge Hafting
+
+
 
