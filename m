@@ -1,78 +1,79 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: vpf-10680, minor corruptions
-Date: Thu, 19 Jun 2003 09:45:35 +0400
-Message-ID: <20030619054535.GA23852@namesys.com>
-References: <3EF07AFB.8060303@g-house.de> <20030618152626.GA17240@namesys.com> <3EF0A8E8.2000209@g-house.de>
+From: Heinz-Josef Claes <heinz-josef.claes@bundestag.de>
+Subject: Re: Several questions about encrypted filesystem
+Date: 19 Jun 2003 08:01:35 +0200
+Message-ID: <1056002495.2016.6.camel@wusel.schnulli.de>
+References: <3AA03342E913FA4BA6D8BD0732BFC74B020F443A@pdsmsx402.pd.intel.com>
+	 <3EEEFE60.4C86EEE6@namesys.com>  <3EEF3B81.9060709@namesys.com>
+	 <1055921837.2026.25.camel@wusel.schnulli.de>
+	 <3EF0833D.EF03FB90@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14619-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14620-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3EF0A8E8.2000209@g-house.de>
+In-Reply-To: <3EF0833D.EF03FB90@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christian Kujau <evil@g-house.de>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Hello!
+Am Mit, 2003-06-18 um 17.20 schrieb Edward Shushkin:
+> Heinz-Josef Claes wrote:
+> > 
+> > Am Die, 2003-06-17 um 18.02 schrieb Hans Reiser:
+> > > V4 performs individual file encryption and compression, and it performs
+> > > it at flush to disk time rather than at every write for performance reasons.
+> > >
+> > > We are going to move reiserfs gradually more and more towards encryption
+> > > based security, it is especially important for distributed file systems.
+> > >
+> > > How we integrate into the PKI is still being designed, right now we are
+> > > working on making encryption and compression work in the lower layers,
+> > > and later we will look at how processes should inherit keys from each
+> > > other, etc.
+> > 
+> > I'm really not a specialist in encryption. If it should be really useful
+> > in a "normal" office evironment it should be possible to handle the
+> > following on the lokal and on the remote filesystem:
+> > - mounting different filesystems via NFS
+> > - mounting different filesystems via SMB (Samba) from Windows
+> > - sharing group filesystems between different users
+> > - combination with unix permissions and ACLs (I don't know if this makes
+> > sense)
+> > 
+> > Pershaps this is possible with kerberos or something like this!?
+> > *But* all of the above does encrypt on the network.
+Sorry, my intention naturally was:
+But all of the above does *not* encrypt on the network.
+> 
+> Actually kerberos is to detect transfer errors of big packets (it uses
+> a special chaining mode which smears a whole packet during decryption
+> if error occurs). This feature is incompatible with file system purpose
+> (to be precisely, with the purpose of its default plugins) which is
+> required to not spend a lot of resources when you ask to read 2 bytes
+> from any offset. However we'll support chaining, but it should going
+> on in very restricted volumes (< 32-128K). For other special plugins 
+> everything is possible (for instance large crypto-logs where chaining
+> is going per whole file: each string is encrypted by its own key generated
+> from previous one by special rules, etc..)
+> 
+> Edward.
+> 
+My idea with something like kerberos _to_authentificate_ to a remote
+file system is:
+- single authentification on the network
+- kerberos is an existing system for authentification in linux and other
+OS'es.
+(But as I wrote in the beginning, I'm a bloody amateur in encryption :-)
+> 
+> > 
+> > I've heard about (commercial) software which does all of this on the
+> > client side (on windows).
+> > Do you have any ideas how to solve or integrate these problems in the
+> > (lokal?) solution or is this behind your focus?
+> > 
+> > Regards,
+> > Heinz-Josef Claes
+> 
 
-On Wed, Jun 18, 2003 at 08:01:12PM +0200, Christian Kujau wrote:
-
-> >Hm, interesting. Do you had crashes/unexpected shutdowns before 
-> >corruptions appears
-> >or are they appear without any reason at all?
-> i had this issue once before -- did a check and noticed vpf-10680/some 
-> corruptions. but these must have been from an crash.
-> but now, i think as i rebooted the machine yesterday (because i upgraded 
-> to kernel 2.5.72) the journal was checked (replayed?) anyway at boot:
-> found reiserfs format "3.6" with standard journal
-> Reiserfs journal params: device sde2, size 8192, journal first block 18, 
-> max trans len 1024, max batch 900, max commit age 30, max trans age 30
-> reiserfs: checking transaction log (sde2) for (sde2)
-> Using r5 hash to sort names
-> (from dmesg, booting process)
-
-No, there is no sign of replaying journal.
-If there was replay, you'd normally see "x transactions replayed in y seconds" message.
-
-> and i thought the fs is "O.K." at least after boot, because ReiserFS 
-> cares about consistency for itsself. if not, the corruptions are likely 
-> from the unclean shutdowns. but that would mean, that i still have to 
-> manually reiserfsck from time to time.
-
-Well, normally reiserfs is caring about consistency.
-There are two noticeable omissions, though:
-1. if the unexpected shutdown was because of power loss and you have write cache enabled
-   and your write reorders write requests, then it is possible invalid data gets
-   written to disk, before "transaction is finished" mark is written to the drive.
-   (there is a way to avoid this with some drives, by explicitly flushing
-    drive cache in some cases, but this method seems to create some problems
-    on itself. So this is not yet merged in any mainstream kernel).
-2. there is no protection against kernel bugs.
-
-1st usually leads to bitmap problems, but I also seen names pointing to nowhere.
-Your corruption is somewhat strange by the fact the number of blocks
-in statdata is ~ 2x bigger than it should be (on several files). Sounds like a pattern
-to me.
-
-> btw, is there a switch like "Maximum mount counft before doing the next 
-> fsck while booting"?
-
-No.
-
-> >Well, I guess it's time to clear the dust off our alpha and do some 
-> >testing.
-> hehe, should it be architecture related?
-
-This is also possible.
-
-So can you say check/fix the fs, mount it write some files to it,
-unmount it and run fsck again to see if everything is ok?
-
-Thank you.
-
-Bye,
-    Oleg
