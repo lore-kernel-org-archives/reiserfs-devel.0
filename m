@@ -1,94 +1,82 @@
-From: Ryan Underwood <nemesis-lists@icequake.net>
-Subject: Re: Reiserfs Data Recovery
-Date: Mon, 8 Mar 2004 19:13:11 -0600
-Message-ID: <20040309011311.GA15226@dbz.icequake.net>
-References: <404C81B9.4050504@nsanity.com> <20040308184124.GE5817@dbz.icequake.net> <404CC8AA.9020405@nsanity.com> <20040308215919.GB11093@dbz.icequake.net> <404CF46B.10000@nsanity.com>
+From: Corey McGuire <coreyfro@coreyfro.com>
+Subject: Re: Mount Segfaults for ReiserFS Volume
+Date: Mon, 8 Mar 2004 18:36:13 -0800
+Message-ID: <200403081836.13400.coreyfro@coreyfro.com>
+References: <200403070144.23233.coreyfro@coreyfro.com> <200403080907.01484.coreyfro@coreyfro.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
-Return-path: <reiserfs-list-return-17129-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17130-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200403080907.01484.coreyfro@coreyfro.com>
 Content-Disposition: inline
-In-Reply-To: <404CF46B.10000@nsanity.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Nick Vahalik <nick@nsanity.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
---1yeeQ81UyVL57Vl7
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I have still been working on recovering the data.  I have upgraded to RFSTools 
+3.6.13 and "reiserfsck --rebuild-tree -S /dev/md2" completes with no errors 
+but both "mount /dev/md2" and "debugreiserfs -D /dev/md2" segfault.
 
+Please help me.  Tell me what you need and I will look for the problem.
 
-On Mon, Mar 08, 2004 at 04:32:11PM -0600, Nick Vahalik wrote:
-> Same here.  Of course, now I'm wondering if the crash had anything to do=
-=20
-> with a possible faulty drive.  It's one of those IBM Deathstars!  I=20
-> forgot about it until about 2 am this morning when I found my receipt. =
-=20
-> Eh, well at least I had my code backed up...
+Here is 3MB's of output from "debugreiserfs -D /dev/md2 &> bob.txt" (up unto 
+the point it segfaults) gziped to 500K.
 
-Oh wow, you do definitely want to run IBM DFT as soon as possible.  That
-might be the only thing that is wrong... usually you would see some
-syslog errors though when you tried to mount the drives if the system
-was having problems reading from the drive(s).  DFT should not destroy
-any data or make anything worse, but it will try to relocate the sector
-if it is having trouble reading it.
+http://www.coreyfro.com/~coreyfro/bob.txt.gz
 
-this firmware upgrade was released a while ago and corrects some
-deathstar crashing if you have one of the listed drives:
-http://www-1.ibm.com/support/docview.wss?rs=3D0&q=3DDTLA&uid=3Dpsg1MIGR-441=
-95
-
-> Well, I was thinking about doing more of a raw data recovery.  We have=20
-> tools that will just simply look for files minus the structure and dump=
-=20
-> the results out into a spare drive.  I did this once to another web=20
-> server I had.  It recovered 80% of my code... and the MBR/SB was=20
-> completely eradicated on that drive as well.
-
-Yeah, I guess you can try something if you have the tools, but just
-guessing that to get anything serious done you will need tools that
-understand Reiser structures.  Otherwise all you can do in a general
-case is to find contiguous allocation blocks and try to piece together
-files from those.  That approach might get all of your data, though
-pieceing it together would be loads of fun...
-
-> Well you replied, and I guess this is just another lesson to backup,=20
-> backup, backup!  In all honesty, I don't think the filesystem itself is=
-=20
-> damaged, I still think it's just the superblock.  I've had this problem=
-=20
-> before with another drive... it just decided to MBR/Root SB... It was=20
-> also an Hitachi (IBM) Drive.  *sigh*  Oh well, I'll just set the drives=
-=20
-> aside and leave em.  Maybe in a week or two I'll have enough money to=20
-> actually afford $25.=20
-
-I think you might try the DFT approach before giving up, but definitely
-don't do anymore damage with reiserfsck. :)  Also, since this is a
-stripe set, is the md device able to start the raid successfully?  If
-so, and if it only fails when you try to mount the filesystem on the
-raid, you will have better chances than if md can't even figure out that
-you have a stripe set spanning those disks.
-
---=20
-Ryan Underwood, <nemesis@icequake.net>
-
---1yeeQ81UyVL57Vl7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQFATRonIonHnh+67jkRAlUoAJ9cnNKtz3I9vke27xbMmI4Qx7Oz2gCaA2R6
-c2vyR87jtEuTQObvoqfKSRQ=
-=2fMo
------END PGP SIGNATURE-----
-
---1yeeQ81UyVL57Vl7--
+On Monday 08 March 2004 09:07 am, Corey McGuire wrote:
+> I have a question, is there any tool that allows one to read from a file
+> system without mounting it?
+>
+> For you samba users, I am thinking like a smbclient instead of a
+> smbmount... something with a crude, ftp like interface. just so I can grab
+> the files I need, and nuke the rest...
+>
+> anything like that?
+>
+> On Sunday 07 March 2004 01:44 am, Corey McGuire wrote:
+> > I have a RAID5 that I had to do a little rebuilding on.  I rebuilt the SB
+> > and the tree, but when I tried mounting it after repair, mount would
+> > segfault, locking the device to the mount that i couldn't raidstop it.
+> >
+> > I am running SuSE 8.2, I tried under 2.4.20, 2.4.23, and 2.6.3...
+> >
+> > here is a paste from dmesg, let me know if you need more before you have
+> > an idea:
+> >
+> > found reiserfs format "3.6" with standard journal
+> > Unable to handle kernel paging request at virtual address e0999004
+> >  printing eip:
+> > c019e12d
+> > *pde = 1fe7c067
+> > *pte = 00000000
+> > Oops: 0002 [#1]
+> > CPU:    0
+> > EIP:    0060:[<c019e12d>]    Not tainted
+> > EFLAGS: 00010282
+> > EIP is at read_old_bitmaps+0xbd/0x100
+> > eax: da87a4e0   ebx: e0991000   ecx: dfd3b940   edx: da87a4e0
+> > esi: dd619400   edi: 00001000   ebp: db847000   esp: db90fdf0
+> > ds: 007b   es: 007b   ss: 0068
+> > Process mount (pid: 833, threadinfo=db90e000 task=dbacc6e0)
+> > Stack: dfda9040 00001003 00001000 00000003 def6ac00 dd619400 83c30000
+> > 000000e5 c019ec93 dd619400 00002000 def6ac1c db90fe40 db90fe44 db90fe48
+> > ffffffea db847000 00000001 dd619510 db90fea0 00000000 00000000 00000000
+> > c02e07b7 Call Trace:
+> >  [<c019ec93>] reiserfs_fill_super+0x2c3/0x690
+> >  [<c01819ff>] disk_name+0xaf/0xd0
+> >  [<c01566ff>] sb_set_blocksize+0x1f/0x50
+> >  [<c01560ba>] get_sb_bdev+0xea/0x170
+> >  [<c019f0cf>] get_super_block+0x2f/0x40
+> >  [<c019e9d0>] reiserfs_fill_super+0x0/0x690
+> >  [<c015636b>] do_kern_mount+0x5b/0xf0
+> >  [<c016c3a7>] do_add_mount+0x97/0x190
+> >  [<c016c744>] do_mount+0x194/0x1c0
+> >  [<c016c52c>] copy_mount_options+0x8c/0x110
+> >  [<c016cb3f>] sys_mount+0xbf/0x140
+> >  [<c010906b>] syscall_call+0x7/0xb
+> >
+> > Code: 89 44 fb 04 8b 86 64 01 00 00 8b 50 08 b8 01 00 00 00 8b 4c
