@@ -1,40 +1,44 @@
-From: Bruce <bestb@sympatico.ca>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: Can resize_reiserfs do non-destructive resizing??
-Date: Mon, 18 Nov 2002 08:51:54 -0500
-Message-ID: <200211180851.54274.bestb@sympatico.ca>
+Date: Mon, 18 Nov 2002 16:53:44 +0300
+Message-ID: <20021118165344.A14537@namesys.com>
+References: <200211180851.54274.bestb@sympatico.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12011-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12012-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <200211180851.54274.bestb@sympatico.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Bruce <bestb@sympatico.ca>
+Cc: reiserfs-list@namesys.com
 
-Thanks; I ran=20
-=09reiserfsck --rebuild-sb /de/hda2
-then tried to run=20
-=09reiserfsck --rebuild-tree
-However, running the second came up with:
+Hello!
 
-Pass 0:
-####### Pass 0 #######
-Loading on-disk bitmap .. ok, 1837081 blocks marked used
-Skipping 8373 blocks (super block, journal, bitmaps) 1828708 blocks will =
-be=20
-read
-0%                                                      left 1823494, 260=
-7=20
-/sec
-bread: Cannot read a block # 17599.
+On Mon, Nov 18, 2002 at 08:51:54AM -0500, Bruce wrote:
 
+> Thanks; I ran 
+> 	reiserfsck --rebuild-sb /de/hda2
+> then tried to run 
+> 	reiserfsck --rebuild-tree
+> However, running the second came up with:
+> Pass 0:
+> ####### Pass 0 #######
+> Loading on-disk bitmap .. ok, 1837081 blocks marked used
+> Skipping 8373 blocks (super block, journal, bitmaps) 1828708 blocks will be 
+> read
+> 0%                                                      left 1823494, 2607 
+> /sec
+> bread: Cannot read a block # 17599.
 
+Hm, this is a bad sign.
+Try to run badblocks on yor drive.
 
-Aborted
-[root@desktop /] #
+Is there anything in kernel logs at this time?
 
-Thoughts??
-
-Bruce
+Bye,
+    Oleg
