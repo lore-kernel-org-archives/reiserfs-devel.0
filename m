@@ -1,30 +1,39 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: data=ordered patch for 2.6.5?
-Date: Mon, 05 Apr 2004 09:00:30 -0400
-Message-ID: <1081170030.3547.377.camel@watt.suse.com>
-References: <20040404234544.GA9905@zero>
+From: "Raymond A. Meijer" <rmeijer@internet.gr>
+Subject: Re: snapshot 2004.03.26 + linux 2.6.5 = build error
+Date: Mon, 5 Apr 2004 16:06:41 +0300
+Message-ID: <200404051606.41099.rmeijer@internet.gr>
+References: <20040404161030.GA21978@raptus.homelinux.org> <200404051540.58430.rmeijer@internet.gr> <16497.21749.932806.34057@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17718-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17719-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040404234544.GA9905@zero>
+In-Reply-To: <16497.21749.932806.34057@laputa.namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Tom Vier <tmv@comcast.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Sun, 2004-04-04 at 19:45, Tom Vier wrote:
-> i looked through all linus's changelogs for .4->.5. i see a few fixes, but
-> nothing about ordering. i thought it was going in soon. will it be in .6? i
-> guess for .5 i'll have to wait for chris mason to make a patch set.
+On Monday 05 April 2004 15:45, Nikita Danilov wrote:
 
-Right, these are in testing in the -mm tree only right now.  Since there
-hasn't been a single bug report, it might be time to send them in during
-2.6.5-pre.  I'll ask Andrew how he feels about it.
+> Try this:
 
--chris
+> ===== as_ops.c 1.69 vs edited =====
+> ===== plugin/item/tail.c 1.167 vs edited =====
+
+Patch applied, and I got only 2 warnings:
+
+fs/reiser4/plugin/cryptcompress.c:2269: warning: `cut_items_cryptcompress' 
+defined but not used
+
+fs/reiser4/plugin/disk_format/disk_format40.c:65: warning: 
+`get_format40_formatting_policy' defined but not used
+
+The machine will be rebooted in a little while. I'll keep you posted.
 
 
+Thanks,
+
+Ray
