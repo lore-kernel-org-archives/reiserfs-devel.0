@@ -1,106 +1,88 @@
-From: "Fred -- Speed Up --" <speedup@free.fr>
-Subject: Re: Reiser4 bitmap & replication handling
-Date: Thu, 22 May 2003 18:14:53 +0200
-Message-ID: <002f01c3207d$47b5bf40$b300a8c0@xpstation>
+From: Ragnar =?iso-8859-15?Q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
+Subject: Re: reiserfs vs NTFS vs WAFL
+Date: Thu, 22 May 2003 19:07:24 +0200
+Message-ID: <20030522170723.GH7706@vestdata.no>
+References: <3ECBC1DF.3060607@namesys.com> <003b01c32070$052d59b0$0101a8c0@bummer>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_002C_01C3208E.0A9074F0"
-Return-path: <reiserfs-list-return-14206-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-14207-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <003b01c32070$052d59b0$0101a8c0@bummer>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: darren <teodarren@myrealbox.com>
+Cc: 'Hans Reiser' <reiser@namesys.com>, 'reiserfs' <reiserfs-list@namesys.com>, 'Mike Jadon' <mikej@umem.com>
 
-------=_NextPart_000_002C_01C3208E.0A9074F0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+On Thu, May 22, 2003 at 10:39:56PM +0800, darren wrote:
+> Hi all,
+>=20
+> Thanx for replying to my mail.
+>=20
+> I am doing some tests on this three FS now (to see if we would want to
+> spend $$$$$ on a netapp).
 
-> well, his words are not quite that strong, and who knows if he is =
-using
-> the latest journaling patches but XFS is a very nice filesystem.....
-You're speaking from Reiser 3.6 right ? Are these patches included in =
-2.4.20
-or 2.4.21 official kernel sources ?
+Be sure to post whatever you find here. I'm sure I'm not the only
+curious one.
 
-> Well, Reiser4 has much fewer seeks than other filesystems usually.  =
-The
-> current weakness of Reiser4 is CPU consumption, but our team is =
-cutting
-> that down at great speed.  It seems like each team member manages to
-> reduce it by >10% a week, and there are 3 of them working actively on
-> that.  This is fortunate, because it is still very high.....  I have
-> this fond hope that performance will be something very nice by
-> LinuxTag.....;-)
-I really hope so, performance is a big point for the Reiser filesystem =
-;)
-You say the CPU is now the weakness ... but how do you handle with large
-file read/write operations : in this case, the HDD performance level =
-should
-come first ?
-Great part of the Reiser4 team is working on performance tweaking : does
-this mean that Reiser has come into the final stage, that it has now =
-proven
-stable so that performance improvement is the only thing to achieve =
-before
-RC and/or release ? Did you published a release plan, with public beta =
-and
-RC or do you want to test Reiser4 internally ? I know Reiser4 is =
-available
-as a 2.5 kernel patch, but do you plan to build a dedicated structure to
-report bugs found in early Reiser4 versions ?
+> My test is based on the simultaneous creation and deletion of small
+> files 50Kb, as per my actual usage of the file server for my application
+> servers.
 
-> what do you mean, replicate the tree?
-I mean, for security pruposes, does Reiser4 maintain copies of the =
-storage
-tree or does it simply trust its marvelous journalising system ?
+There is a small frontend-script to bonnie++ available at
+http://www.stud.ntnu.no/~ragnarkj/download/dbonnie++/dbonnie++.py if
+you're interested.
 
-> bitmaps.;-) we have some nice little tweaks, like we count the number =
-of
-> used bits in every bitmap block so that we don't have to scan full
-> blocks, and we hash around if we scan too much, but I have to say that
-> bitmaps are nice and simple and work without a lot of code.
-I wad afraid Reiser4 didn't had the best bitmap-handling system over =
-there,
-now I'm reassured thank you :-D
+It aims to assist in running bonnie++ at multiple clients at once.
 
-> >Are you implementing some special features for very large disks,
-> how are they different
-Maybe some really big files handling performance improvements, to near =
-XFS
-performance in this domain. I'm not really concerned, but some specific
-systems may need such features only offered by XFS. Do you plan to =
-release
-different versions of the filesystem's plugins to adapt to different =
-systems
-ans situations ?
+It's very old, so it may or may not work with recent versions of
+bonnie++.
 
-> Reiser4 inconsistently performs very very fast.  We have no doubt that
-> we can make that consistent but it is a lot of measuring and tweaking
-> and measuring and tweaking.....
-Sorry but ... what do you mean by "unconsistently" ? Does this mean you =
-only
-consider avarage performance, ignoring worse cases ?
-Again, do you plan to ask some external testers to tweak Reiser4 ?
+Alternatively SPEC sfs is probably a good way to test NFS-performance
+(but it costs $$).
 
-> >I didn't remember, when do you plan to release Reiser4 ?
-> >
-> LinuxTag, July 11, if lucky, we will start our beta.
-Outstanding ... I hope you'll be sucessfull, but I'm not really scary =
-about
-that ;)
-Another question, do you want to release Reiser4 so that it will be
-presented on LinuxTag because :
-1- The developement team is mainly composed of german people
-2- Suse will have a very big area on the show
-3- The release date just accorded to the LinuxTag opening
-4- All of you especially like LinuxTag :-D
+> My main problem with using Linux/Reiserfs3 is with the performance of
+> Samba when under heavy load. CIFS operation is required as some of our
+> application servers are windows based. Netapp's CIFS performance is
+> really incredible.
+
+That is realy surprising.=20
+Samba is just another userspace application. I can't see how reiserfs
+could perform worse with samba than with other applications?=20
+
+Did you test other filesystems as well? e.g. xfs?
+
+It would be really interesting to know more about what the problem is.=20
 
 
-Thank you Hans,
+> With NFS, we can sometimes beat the netapp F87 with a
+> Linux/ReiserFs/RAID0 config with the same number of harddisk.
 
-Fred
-------=_NextPart_000_002C_01C3208E.0A9074F0--
+I take it that means it's slower with RAID5?
+Even so, you can probably get a linux-system with RAID10 (and twice the
+number of disks) for the price of a netapp...
 
+> Will post more details when I thru with it.
+Please do.
+
+> In the mean time, will really appreciate any suggestions to improving
+> Samba's performance in order to make a CIFS file server based on
+> Linux/Reiser/Samba possible.
+
+There are some generic samba-tuning information available at:
+http://hr.uoregon.edu/davidrl/samba/samba-optimize.html
+
+
+I would also suggest trying to figgure out exactly what it is that is
+slow with samba on reiserfs. Are there specific operations that are very
+expensive? Is the server network-, cpu- or disk-bound?
+Things like that.
+
+
+
+--=20
+Ragnar Kj=F8rstad
+Zet.no
