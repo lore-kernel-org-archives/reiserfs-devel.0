@@ -1,89 +1,86 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: EVMS Reiser FSIM
-Date: Tue, 4 Jun 2002 10:09:09 +0400
-Message-ID: <20020604100909.A1389@namesys.com>
-References: <OFB5110BE1.9C046DEC-ON85256BCD.00735354@pok.ibm.com>
+From: Chris Mason <mason@suse.com>
+Subject: Re: [PATCH CFT] tons of logging patches
+Date: 04 Jun 2002 09:12:25 -0400
+Message-ID: <1023196345.31682.81.camel@tiny>
+References: <1023076301.22608.1778.camel@tiny>
+	<3CFC1CB5.8040102@mb.tu-ilmenau.de> <1023157228.31475.38.camel@tiny> 
+	<3CFC33F2.7080009@mb.tu-ilmenau.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10499-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10500-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <OFB5110BE1.9C046DEC-ON85256BCD.00735354@pok.ibm.com>
+In-Reply-To: <3CFC33F2.7080009@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steve Pratt <slpratt@us.ibm.com>
-Cc: reiserfs-list@namesys.com
+To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-Hello!
+On Mon, 2002-06-03 at 23:28, Manuel Krause wrote:
 
-On Mon, Jun 03, 2002 at 04:03:32PM -0500, Steve Pratt wrote:
- 
-> Let me know if this still doesn't work.
+> 
+> So, VMware is stable with it, too, on my well known "heavy-private-test" 
+> of it (running Norton SpeedDisk at least twice within a most recent 
+> VMware Win98). It doesn't show greatly different timings than to my 
+> setup before though having a different disk i/o pattern (due to the 
+> missing aa patches)... and me having a reduced RAM from 512to256MB at 
+> the moment. And I should be honest to say I can't give exact timings as 
+> the important disk contents changed during last weeks. But the 
+> disk-access-times/related-to-the-content are definitively _not_ higher 
+> than before!
 
-Ok, now I am able to compile and boot the kernel, and evms gui starts up.
+same speed on 1/2 the ram isn't bad ;-)
 
-But now the problem is all the screens except plugin lists are empty.
+> 
+> > 
+> > Great to hear, thanks for trying things out.
+> > 
+> > data=logging will be the slowest mode for everything except mail servers
+> > and write heavy databases (or other apps that hammer on O_SYNC/fsync). 
+> > This is because all the data gets written twice, once to log and once to
+> > the main disk.  It helps synchronous writes by writing to the log in
+> > quick sequential bursts, and then writing back to the main disk in
+> > larger chunks.
+> 
+> Yes, I assumed/learnt that from your very previous explanations. But I 
+> don't see the point "slowest", so far, on here.
 
-Whenever I select some operation from the menu (create, convert or whatever),
-I am represented with empty window that says "No items were found matching
-the search criteria" (sometimes the window is persent instantly, sometimes
-there is a windo with some items, but when I choose one of the items
-and press "Next" button, the empty window appears).
+try dbench, or any streaming write.  It should be roughtly 1/2 as fast
+as the default mode.  If it isn't data=journal probably isn't really
+activated (it sends a printk on mount about using journaled data mode).
 
-I read the FAQ and since I run non-devfs enabled kernel, I run
-evms_devnode_fixup. First time it failed:
-# ./evms_devnode_fixup
-evms_devnode_fixup -- updating the EVMS device node tree...
-evms_devnode_fixup -- ERROR: return code from evms_update_evms_dev_tree() was -9.
+> 
+> This is a home/single session ?non?-production system on here. 1 to 2 
+> IDE disks, one processor... notebook, you'd remember this setup from my 
+>   mails.
+> 
+> > 
+> > data=ordered will usually be fastest for streaming appends to a file. 
+> > The rest of the time it will be the same or slightly slower than the
+> > default (data=writeback).
+> 
+> What would be my recommended mount option later then (mentionned in the 
+> manpages or on the webpage?!) Mmmh: I see I test that at the moment...
 
-Second time it succeed:
-# ./evms_devnode_fixup
-evms_devnode_fixup -- updating the EVMS device node tree...
-evms_devnode_fixup -- Finished.
+data=ordered will work best for most people.  The performance hit is
+very small, and you won't have any more garbage in files after a crash.
 
-But still not a single entry in evsmgui tool.
+> 
+> Why is no combo possible? Meant as: Could/would that bring advantages in 
+> future?!!
 
-# ./evms_gather_info
-############################################################
-                    Data from /proc/evms
-############################################################
+Since there are no userspace transactions, data=journal is only useful
+in a very limited set of cases.  The fact that everything is logged
+allows me to cheat, and skip some of the steps to keep block allocations
+and deallocations safe in the writeback data mode.
 
+intermezzo is the only app that really needs data=journal with the rest
+of the FS mounted with some other write mode (for speed).  The patch has
+a way for them to enable data logging mode on a single file.
 
-/proc/evms/info:
-Enterprise Volume Management System: Info
-EVMS info level: 5 (default).
-EVMS kernel version: 1.1.0
-EVMS IOCTL interface version: 10.0.0
-EVMS Common Services version: 0.6.0
+I think I'll forward the patch announcement to the intermezzo list...
 
-
-/proc/evms/volumes:
-Enterprise Volume Management System: Volumes
-major   minor          #blocks type   flags name
-
-
-
-/proc/evms/plugins:
-Enterprise Volume Management System: Plugins
- ---------Plugin----------      required services
- ----id----        version      version
-
-
-
-############################################################
-                  Data from the EVMS Engine
-############################################################
-
-
-./evms_gather_info: /usr/local/evms: is a directory
+-chris
 
 
-What should I do to get something to appear in the disks/slices/whatever
-lists so I can play with it?
-
-Thank you.
-
-Bye,
-    Oleg
