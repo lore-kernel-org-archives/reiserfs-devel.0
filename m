@@ -1,76 +1,75 @@
 From: Dave Kleikamp <shaggy@austin.ibm.com>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Fri, 03 Sep 2004 07:50:39 -0500
-Message-ID: <1094215839.2680.17.camel@shaggy.austin.ibm.com>
+Subject: Re: The argument for fs assistance in handling archives (was:
+	silent semantic changes with reiser4)
+Date: Fri, 03 Sep 2004 08:05:19 -0500
+Message-ID: <1094216718.2679.30.camel@shaggy.austin.ibm.com>
 References: <20040826150202.GE5733@mail.shareable.org>
 	 <200408282314.i7SNErYv003270@localhost.localdomain>
 	 <20040901200806.GC31934@mail.shareable.org>
 	 <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
 	 <1094118362.4847.23.camel@localhost.localdomain>
 	 <20040902161130.GA24932@mail.shareable.org>
-	 <1094146912.31495.13.camel@shaggy.austin.ibm.com>
-	 <4137B9FC.7040708@slaphack.com>
+	 <Pine.LNX.4.61.0409030028510.23011@fogarty.jakma.org>
+	 <1835526621.20040903014915@tnonline.net>
+	 <1094165736.6170.19.camel@localhost.localdomain>
+	 <32810200.20040903020308@tnonline.net>
+	 <Pine.LNX.4.61.0409030112080.23011@fogarty.jakma.org>
+	 <142794710.20040903023906@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21426-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21427-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4137B9FC.7040708@slaphack.com>
+In-Reply-To: <142794710.20040903023906@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: Jamie Lokier <jamie@shareable.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Spam <spam@tnonline.net>
+Cc: Paul Jakma <paul@clubi.ie>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jamie Lokier <jamie@shareable.org>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, 2004-09-02 at 19:25, David Masover wrote:
-> Dave Kleikamp wrote:
-> [...]
-> | Please don't tell me that we have expectations to run make from within a
-> | tar file.  This is getting silly.  tar does a pretty good job of
-> | extracting files into real directories, and putting them back into an
-> | archive.  I don't see a need to teach the kernel how to deal with
-> | compound files when user space can do it very easily.
+On Thu, 2004-09-02 at 19:39, Spam wrote:
+>   
 > 
-> Suppose I've got a tar file with an index attached.  Suppose it's
-> something like /usr/src/linux.  Am I expected to extract all code for
-> all architectures, with all drivers, all docs, etc?  Now, yes -- or I
-> have to figure out exactly which ones I need before I extract them
-> manually, one by one.
+> > On Fri, 3 Sep 2004, Spam wrote:
+> 
+> >>  Yes, some archive types can't be partially unzipped either. But my
+> >>  point is that it wouldn't be transparent to the application/user in
+> >>  the same way.
+> 
+> > It doesnt matter whether it is transparent to the application. It can
+> > be the application which implements the required level of 
+> > transparency.
+> 
+> > User doesnt care what provides the transparency or how it's 
+> > implemented.
+> 
+>   Indeed. I hope I didn't say otherwise :). Just that I think it will
+>   be very difficult to have this transparency in all apps.
 
-I don't think it's unreasonable to expect someone to either extract the
-whole tar file, or identify what files they want from it.  If you think
-there is too much in the tar file, roll your own with only the files you
-need.
+You're missing the point.  We don't need transparency in all apps.  You
+can write an application to be as transparent as you want, but you don't
+need every app to to understand every file format.
 
-> But with tar support for make (and so on), files can be extracted on
-> demand.  It's possible to do this in userspace, with named pipes, but
-> that's much slower and insanely clumsy.
+>  Just
+>   thinking of "nano file.jpg/description.txt" or "ls
+>   file.tar/untar/*.doc".
 
-This doesn't justify bloating the kernel.  untar the darn thing and user
-space does fine.
+I don't do much image editting, but I'm sure there are applications that
+let you edit the description in a text file.  You can even create a
+script that extracts it, runs nano, and puts it back into the jpeg.
 
-> This has further implications -- imagine a desktop, binary distro
-> shipped with all files except the very most basic stuff as package
-> archives.  They can all be extracted, on demand -- the first time I run
-> OpenOffice.org, it's installed.  If there needs to be post-installation,
-> that's handled by the .deb plugin (or whatever).
+This works for me:
+tar -tf file.tar | grep '\.doc'
 
-Are you saying install it on demand the first time it's run?  This
-doesn't take any new kernel function.
+There are userland tools that deal with hundreds of file formats.  Use
+the tool you need, rather than try to have the kernel do everything.
 
-Or are you saying that the files are never installed on the filesystem,
-but always accessed from the package archives?  In this case, why not
-ship each package as a compressed iso, and have the system mount the iso
-to run the app.  I really don't see the point though, in that disk space
-is very cheap these days.
+>  Sure in some environments like Gnome it could
+>   work, but it still doesn't for the rest of the flora of Linux
+>   programs.
 
-> I don't know offhand how big OOo is.  I think it's something like this:
-> ~ The installer is at most half (and maybe only a third) of the full
-> installation. That's a HUGE optimization!
-
-Optimization?  How much performance are you willing to give up to save a
-little bit of disk space?
+Just choose the right program.  tar groks tar files, not ls.
 
 -- 
 David Kleikamp
