@@ -1,40 +1,85 @@
-From: "JP Howard" <jh_lists@fastmail.fm>
-Subject: file-nr, file-max, and ReiserFS
-Date: Tue, 22 Oct 2002 04:41:17 UT
-Message-ID: <20021022044118.074F5ECC7@server2.fastmail.fm>
+From: "Torsten Scholz" <t.scholz@alfeld.de>
+Subject: Data corruption on reiserfs
+Date: Tue, 22 Oct 2002 08:21:01 +0200
+Message-ID: <017001c27993$331f5500$0a00a8c0@nemesis>
+Reply-To: "Torsten Scholz" <t.scholz@alfeld.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11734-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+	boundary="----=_NextPart_000_016C_01C279A3.F4EA4860"
+Return-path: <reiserfs-list-return-11735-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-We're currently testing ReiserFS on one of our servers. It's holding up
-pretty well so far, except that we're seeing one perculiarity...
+------=_NextPart_000_016C_01C279A3.F4EA4860
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_016D_01C279A3.F4EA4860"
 
-The ReiserFS server (running Cyrus and Postfix) has been hitting our max
-FDs (/proc/sys/fs/file-max) a few times, which is set at 90,000. However,
-we have an Ext3 server with almost the same # of users and overall load,
-and it has only hit 20,000 open files (according to
-/proc/sys/fs/file-nr).
 
-Does ReiserFS use more file handles for some reason? Is there any
-downside to setting file-max to something really big to avoid running out
-of FDs? Do you think that this may actually indicate some problem with
-our configuration, or this normal for ReiserFS?
+------=_NextPart_001_016D_01C279A3.F4EA4860
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-Also, I checked with `lsof | wc -l` to see how many files it reported as
-open. On the ReiserFS server it only showed 45,000 files as open (when
-the system had actually used all 90,000 handles). On the Ext3 server is
-showed 30,000 files as open (when the system had actually only used
-20,000 handles according to file-nr). I guess I'm wrong to be thinking
-that lsof and file-nr should show the same number of open files, but
-could someone explain why?
+Hi all,
 
-TIA,
-  Jeremy
+last time to get some help....
+
+I have a data corruption on a rieserfs partition (80GB). After repair =
+with gpart and reiserfsck (-s --rebuild-tree) all the data seams to be =
+restored, but inside the files is only a small part of the original =
+data. Can anyone give some hints how to recover the whole data back?
+
+--
+cu t.scholz (exolon)
+______________________________________
+Web: http://eXnet-online.de   Email: t.scholz@alfeld.de   =20
+Tel.: 05187/2052   Fax.: 05187/2053   ICQ: 20794370 PGP: DFFEF426 =20
+"Linux is like a wigwam: no windows, no gates, but apache inside!"
+
+------=_NextPart_001_016D_01C279A3.F4EA4860
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; =
+charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2719.2200" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2>Hi all,</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>last time to get some =
+help....</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>I have a data corruption on a rieserfs =
+partition=20
+(80GB). After repair with gpart and reiserfsck (-s --rebuild-tree) all =
+the data=20
+seams to be restored, but inside the files is only a small part of the =
+original=20
+data. Can anyone give some hints how to recover the whole data=20
+back?</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>--<BR>cu t.scholz=20
+(exolon)<BR>______________________________________<BR>Web: <A=20
+href=3D"http://eXnet-online.de">http://eXnet-online.de</A>&nbsp;&nbsp; =
+Email: <A=20
+href=3D"mailto:t.scholz@alfeld.de">t.scholz@alfeld.de</A>&nbsp;&nbsp;&nbs=
+p;=20
+<BR>Tel.: 05187/2052&nbsp;&nbsp; Fax.: 05187/2053&nbsp;&nbsp; ICQ: =
+20794370 PGP:=20
+DFFEF426&nbsp; <BR>"Linux is like a wigwam: no windows, no gates, but =
+apache=20
+inside!"</FONT></DIV></BODY></HTML>
+
+------=_NextPart_001_016D_01C279A3.F4EA4860--
+
+------=_NextPart_000_016C_01C279A3.F4EA4860--
+
