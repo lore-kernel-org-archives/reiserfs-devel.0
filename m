@@ -1,75 +1,60 @@
-From: Christer Weinigel <christer@weinigel.se>
+From: Spam <spam@tnonline.net>
 Subject: Re: silent semantic changes with reiser4
-Date: 01 Sep 2004 01:19:00 +0200
-Sender: wingel@zoo.weinigel.se
-Message-ID: <m3acwa99qz.fsf@zoo.weinigel.se>
+Date: Wed, 1 Sep 2004 01:20:58 +0200
+Message-ID: <875639874.20040901012058@tnonline.net>
 References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
-	<Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
-	<20040831203226.GB16110@elf.ucw.cz>
-	<Pine.LNX.4.58.0408311336580.2295@ppc970.osdl.org>
-	<20040831205422.GD16110@elf.ucw.cz>
-	<Pine.LNX.4.58.0408311357550.2295@ppc970.osdl.org>
-	<20040831220726.GB16428@elf.ucw.cz>
+ <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
+ <m3eklm9ain.fsf@zoo.weinigel.se>
+Reply-To: Spam <spam@tnonline.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21189-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21190-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040831220726.GB16428@elf.ucw.cz>
+In-Reply-To: <m3eklm9ain.fsf@zoo.weinigel.se>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Christer Weinigel <christer@weinigel.se>
+Cc: Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Pavel Machek <pavel@ucw.cz>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Pavel Machek <pavel@ucw.cz> writes:
 
-> Okay, that does work, it just is not really nice. Just as reserving
-> fixed ammount of space for disk cache is bad, reserving fixed ammount
-> of space for ccache (and similar) is bad. When there are few of such
-> caches, balancing between them starts to matter...
+  
 
-So try to convince them to use the same cache daemon or the same
-shared cache manager library then.  It isn't all that different from
-implementing a kernel interface that everyone is supposed to use.
+> Linus Torvalds <torvalds@osdl.org> writes:
 
-A cache manager daemon could sit and watch the free space on the disk
-every other second and start deleting the cached files (according to
-some LCU heuristics or whatever) whenever free space is getting low.
+>> In a graphical environment, the "icon" stream is a good example of this.
+>> It literally has _nothing_ to do with the data in the main stream. The
+>> only linkage is a totally non-technical one, where the user wanted to
+>> associate a secondary stream with the main stream _without_ altering the
+>> main one. THAT is where named streams make sense.
 
-To see if the original file is newer than the cached file, good old
-mtime can be used.  
+> I think that the "icon" argument for named streams is a silly
+> argument, since different users may want to have different icons for
+> the same file.  Say that I want /usr/bin/emacs to have the enterprise
+> icon and someone else wants the gnu head icon.  And besides, root owns
+> the file anyways, so neither of us mortal users should be able to add
+> a stream to it.
 
-I can't remember who right now, but someone mentioned a few problems
-with timestamps:
+  Yet again are we thinking in blocking ways. Firstly this was an
+  example. Usually, though, most users accept the default icon for a
+  file. If they do not they can still change the icon for the link
+  they make on their start-menu/home folder/etc.
 
-1. The resolutions is too low in current kernels, but that just means
-   that someone(tm) needs to implement nanosecond timestamps in the
-   kernel and for the filesystems.
+> Another reason for named streams that usually crops up is the ability
+> set a "preferred application" for a certain file, so that when I
+> double click on a document I want to open it with antiword instead of
+> openoffice.  But the same contra-argument applies here, different
+> users have different preferences.
 
-2. Even nanosecond timestams may become to coarse in the future.  One
-   way of getting around this is to keep track of the latest timestamp
-   written and make sure the next timestamp is one higher than the
-   latest one.  This way timestamps are always increasing, and I doubt
-   that we can have modifications each nanosecond for a long time with
-   the hardware available for the next ten years.
+  I can make the same argument as for the icons.
 
-3. If time goes backwards beacuse somebody changes the clock, the
-   caching (or makefile rules) can get confued.  This is a hard one,
-   but I actually we can use the doctors response "don't do that
-   then".  With NTP we can guarantee a monotonically increasing clock.
+> I can see the argument for having the equivalent of Content-type or
+> Content-transfer-encoding as a named stream though.
 
-I belive the kernel could give some assistance to make it easier to
-see if a file has been modified, I remember that a few suggestions
-were thrown around the last time Samba and dcache aliases were
-discussed on l-k.  I definitely belive that kind of infrastructure
-belongs in the kernel.  But the cache manager itself, no.
+  That would be a nice thing.
 
-  /Christer
+>   /Christer
 
--- 
-"Just how much can I get away with and still go to heaven?"
 
-Freelance consultant specializing in device driver programming for Linux 
-Christer Weinigel <christer@weinigel.se>  http://www.weinigel.se
