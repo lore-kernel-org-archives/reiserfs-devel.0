@@ -1,104 +1,30 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Tue, 07 Sep 2004 11:05:39 -0700
-Message-ID: <413DF873.1090304@namesys.com>
-References: <200409071530.i87FUCP1003927@laptop11.inf.utfsm.cl>
+Date: Tue, 07 Sep 2004 11:11:30 -0700
+Message-ID: <413DF9D2.5060703@namesys.com>
+References: <200409070206.i8726vrG006493@localhost.localdomain>	<413D4C18.6090501@slaphack.com> <m3d60yjnt7.fsf@zoo.weinigel.se>	<1183150024.20040907143346@tnonline.net> <m38ybmjiyz.fsf@zoo.weinigel.se>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21578-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21579-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200409071530.i87FUCP1003927@laptop11.inf.utfsm.cl>
+In-Reply-To: <m38ybmjiyz.fsf@zoo.weinigel.se>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Spam <spam@tnonline.net>, Christer Weinigel <christer@weinigel.se>, David Masover <ninja@slaphack.com>, Tonnerre <tonnerre@thundrix.ch>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Christer Weinigel <christer@weinigel.se>
+Cc: Spam <spam@tnonline.net>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Tonnerre <tonnerre@thundrix.ch>, Linus Torvalds <torvalds@osdl.org>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Horst von Brand wrote:
+Christer Weinigel wrote:
 
->Spam <spam@tnonline.net> said:
->  
->
->>Christer Weinigel <christer@weinigel.se> said:
->>    
->>
->
->[...]
+>Spam <spam@tnonline.net> writes:
 >
 >  
 >
->>>Could you please try summarize a few of the arguments that you find
->>>especially compelling?  This thread has gotten very confused since
->>>there are a bunch of different subjects all being intermixed here.
->>>      
+>>>Additionally, files-as-directores does not solve the problem of 
+>>>"cp a b" losing named streams.
 >>>
->
->  
->
->>  Indeed. We are discussion changes to the heart of Linux. It is bound
->>  to get a little heated :/
->>    
->>
->
->True. But without any specific applications, just "this would be nice to
->have", the discussion can't go forward.
->
->  
->
->>>What are we discussing?
->>>      
->>>
->
->  
->
->>>1. Do we want support for named streams?
->>>      
->>>
->>>   I belive the answer is yes, since both NTFS and HFS (that's the
->>>   MacOS filesystem, isn't it?) supports streams we want Linux to
->>>   support this if possible.
->>>      
->>>
->>>   Anyone disagreeing?
->>>      
->>>
->>     No :)
->>    
->>
->
->There are many people around here who disagree (that is precisely the heart
->of the discussion). I for one don't think Linux has to get $RANDOM_FEATURE
->just because $SOME_OTHER_OS has got it. Either the feature stands on its
->own _in the context of POSIX/Unix/Linux_ (possibly as an extension or
->modification of said standards) or it isn't worth it.
->
->  
->
->>>2. How do we want to expose named streams?
->>>      
->>>
->>>   One suggestion is file-as-directory in some form.
->>>      
->>>
->
->Which is broken, as it forbids hard links to files.
->  
->
-No, it forbids hard links to the directory aspect of the file-directory 
-duality.
+reiser4 does not support streams, it supports files that can do what 
+streams do. cp -r does not currently lose files.
 
->
->
->Now you have 3 principal types of objects: Directories, containers (files
->with streams), and files (no streams).
->
-No, the reiser4 design supports only files and directories, but makes 
-them able to do what people use streams for.
-
-The reiser4 design is based on a hatred of streams, and a desire to show 
-that adding more features to files and directories makes streams 
-unnecessary.
-
-Hans
