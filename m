@@ -1,68 +1,69 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Debian and non-free
-Date: Mon, 26 Apr 2004 09:33:51 +0300
-Message-ID: <20040426063351.GT19049@nysv.org>
-References: <20040425145238.GQ19049@nysv.org> <874qr7y60b.fsf@uhoreg.ca>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: ioctl and return parameters
+Date: Mon, 26 Apr 2004 12:16:45 +0400
+Message-ID: <1082967405.2590.119.camel@tribesman.namesys.com>
+References: <001901c42a87$00d495a0$7e32a5d1@energy>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18219-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18220-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <874qr7y60b.fsf@uhoreg.ca>
+In-Reply-To: <001901c42a87$00d495a0$7e32a5d1@energy>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hubert Chan <hubert@uhoreg.ca>
+Content-Type: text/plain; charset="us-ascii"
+To: jenn sirp <sirpj@ecs.csus.edu>
 Cc: reiserfs-list@namesys.com
 
-On Sun, Apr 25, 2004 at 07:47:32PM -0400, Hubert Chan wrote:
->>>>>> "Markus" =3D=3D Markus T=F6rnqvist <mjt@nysv.org> writes:
->
->Or companies can just keep the binary, and their sources, private
->i.e. for internal use only.  That kind of use is allowed by the GPL.
+Hello
 
-Licensing issues give me a headache, that's why IANAL.
-A bit off-topic:
-I thought the GPL allows the above scenario only until someone requests
-the changes you've made?
-Or is that only in the case that you're distributing a derived work
-without source code?
+On Sun, 2004-04-25 at 09:34, jenn sirp wrote:
+> Hi,
+> 
+> I have a couple of questions and am in need of an opinion. . .
+> 
+> I have a linked list full of filenames that are stored in the order they are
+> written to in a reiser file system. I would like to be able to return this
+> list from kernel space to user space so that the list can be accessed by an
+> outside application. The man page for the ioctl call says ioctl can take
+> additional parameters. Can I place more parameters in the ioctl definition
+> and access them in reiserfs_ioctl()? Specifically, can I pass a structure
+> from user space to the reiserfs_ioctl function to fill in the list data and
+> return?
+yes.
+Create a structure in user space and pass pointer to it as a third
+argument of ioctl. In filesystem ioctl you can then do whatever you want
+with that user space structure.
+> 
+> I have only poked around a bit with the innards of ioctl, but I haven't had
+> success returning kernel space data to user space.
 
->Markus> This seems like an internal conflict in the license itself;
->Markus> without having paying money as a forced bribe of sorts to keep
->Markus> the source closed, it would seem like a BSD-style license. BSD
->Markus> should be ok by Debian Free even.
->I don't understand what you are saying here.  BSD is much more
->permissive than GPL.
+You have to use get_user and put_user to exchange data between kernel
+and user space. You may want to take a look at how FIBMAP request is
+handled in linux/fs/ioctl.c:file_ioctl(). Argument arg is a pointer to
+user space where logical block number is store. get_user reads arg's
+content to variable block. File system bmap operation is called to
+convert logical block number to on disk address. put_user is then used
+to copy return data to user space.
 
-The entire point is explained to me by the nature of dual licensing.
-GPL itself does not allow sources to be closed, even by money, but
-a dual license would.
 
->Debian is also very well known for being picky about copyright and
->freedom.
+>  I have looked at the vfs
+> code for ioctl and am a bit confused on how additional parameters would be
+> handled by the vfs before calling reiser code.
+> 
+Vfs will not handle anything if command is unknown. It will just pass
+input paramaters down to filesystem's ioctl.
 
-Indeed.
-
->I actually wouldn't be surprised if the installer for sarge+1 included
->Reiser4.  All that's really needed is for Reiser4 to get into the
->stable kernel, and someone to write (good) support for debian-installer.
-
-I started to do this about a week ago.
-Got the bugger to compile, actually, but the resulting .iso file
-looked nothing like a downloaded .iso file.
-Guess the packages should just be added along with a directory
-hierarchy or something. Something being the key word.
-
-I haven't had time to do anything with it in about a week or so,
-after getting it to compile, because of school, work and swordfighting,=20
-so if anyone wants to see what I've got and maybe give me a hand, I'd=20
-love to hear it!
-Lack of time seldom means lack of interest and communal help eases
-lack of time and increases interest, yes? :)
-
---=20
-mjt
+> 
+> Alternatively, would it be wiser to explore a copy from kernel space to user
+> space through proc instead?
+> 
+> Any hints would greatly increase my level of happiness,
+> 
+> thank you.
+> 
+> Jenn
+> 
+> 
 
