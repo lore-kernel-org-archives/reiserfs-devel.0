@@ -1,11 +1,11 @@
 From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Tue, 30 Mar 2004 22:00:14 -0500
+Date: Tue, 30 Mar 2004 21:50:23 -0500
 Sender: news <news@sea.gmane.org>
-Message-ID: <87ad1xvhz5.fsf@uhoreg.ca>
-References: <20040330123546.GA5229@nysv.org> <4069B659.3070606@namesys.com>
+Message-ID: <87hdw5vifk.fsf@uhoreg.ca>
+References: <20040330123546.GA5229@nysv.org> <200403301513.01851.christian.mayrhuber@gmx.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17607-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17608-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -15,20 +15,18 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
->>>>> "Hans" == Hans Reiser <reiser@namesys.com> writes:
+>>>>> "Christian" == Christian Mayrhuber <christian.mayrhuber@gmx.net> writes:
 
-Hans> I think that metas/ should be defined as a macro, and users should
-Hans> feel free to change it and recompile as suits their needs.
+Christian> What about introducing an separator for meta information,
+Christian> like it is / for directories.  This separator could be turned
+Christian> into a mount option to avoid breakage of some apps.
 
-I had though about maybe making it a mount option, I don't really like
-the idea, as it can induce confusion.  You can't just sit in front of
-any Linux computer that uses Reiser4, and know how to easily access the
-pseudofiles.  It may also confuse script writers.  I think it's best to
-try to pick a sensible default that is the least likely to have people
-up in arms.
+Christian> My suggestion is "@" to become the default separator, because
+Christian> XPath uses it for attributes and it is THE accepted standard
+Christian> so far.  Filesystems are just a new domain. ...
 
-P.S.  I really do think you guys are doing a great job, and look
-forward to giving it a test run soon.
+That effectively kills all filenames that contain @, much worse than
+just a "metas" conflict IMHO.
 
 -- 
 Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
