@@ -1,65 +1,40 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: --rebuild-tree always finds errors --check is ok
-Date: Fri, 7 Jan 2005 23:43:08 +0300
-Message-ID: <200501072343.08374.vitaly@namesys.com>
-References: <41D71C4E.6000209@hanaden.com> <1104849038.32178.54.camel@tribesman.namesys.com> <41DAD195.1080306@hanaden.com>
+From: Shoshannah Forbes <xslf@xslf.com>
+Subject: Re: rebuild-tree working for more then 3 days- what to do?
+Date: Sat, 08 Jan 2005 00:29:47 +0200
+Message-ID: <20050108002947.0f149ce2.xslf@xslf.com>
+References: <2AEAD962-6089-11D9-A3E5-003065C0167C@xslf.com>
+ <1105093253.3616.34.camel@tribesman.namesys.com>
+ <53BAB6CE-60A5-11D9-8B41-003065C0167C@xslf.com>
+ <1105101220.4192.68.camel@tribesman.namesys.com>
+ <1332240552.20050107134330@tnonline.net>
+ <87390888-60AC-11D9-8B41-003065C0167C@xslf.com>
+ <1105103606.3616.98.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23075-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-list-return-23076-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41DAD195.1080306@hanaden.com>
-Content-Disposition: inline
+In-reply-to: <1105103606.3616.98.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: hanasaki <hanasaki@hanaden.com>, Vladimir Saveliev <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: spam@tnonline.net, reiserfs-list@namesys.com
 
-On Tuesday 04 January 2005 20:25, hanasaki wrote:
-> Version of reiserfsk
-> ======================
-> == From debian sarge
-> /sbin/reiserfsck -V
-> reiserfsck 3.6.19 (2003 www.namesys.com)
-> == also used the version in knoppix 3.7 with similar results
->
-> the output of two consecutive runs of --rebuild-tree on the same
-> unmounted partition are attached.  Below is the diff
+On Fri, 07 Jan 2005 16:13:27 +0300
+"Vladimir Saveliev" <vs@namesys.com> wrote:
 
-rebuild-tree finds some blocks that looks like reiserfs formatted 
-blocks for the first sight whereas they are not and just belongs to 
-some file bodies. The consistency check reveals no valid metadata 
-in them, so they are considered as not valid reiserfs formatted blocks
-and left not modified on disk. This is why the second run of rebuild-tree
-finds them again and tries to do all the stuff again.
+> reiserfsck --rebuild-tree 's speed depends of file set substantially.
+> The worst case - a lots (millons) of small files.
+> But even in that case on average today hardware it should not take more
+> than 4-5 hours for 60gb filesystem.
+> Please inform us how does it progress. Pass 0 is the longest usually.
 
--- 
-Thanks,
-Vitaly Fertman
+It ran, fixed some errors, and now I have my system back (plus a bunch of portage files in lost+found). Yippy!
+Now I should go a buy that DVD-R I was thinking of getting, and make sure I have proper backups :-)
 
-
-> diff data00-run1 data00-run0
-> 14c14
-> < 172168 directory entries were hashed with "r5" hash.
-> ---
->
->  > 172167 directory entries were hashed with "r5" hash.
->
-> Vladimir Saveliev wrote:
-> > Hello
-> >
-> > On Sun, 2005-01-02 at 00:55, hanasaki wrote:
-> >>Running reiser3 on kernel 2.6.10 and 2.6.9 with Debian sarge and
-> >> unstable.
-> >>
-> >>the --rebuild-tree always finds errors and corrects them.  even when run
-> >>more than once consecutively without mounting the partition in between.
-> >
-> > Please provide reiserfsck --rebuild-tree output.
-> > What is version of your reiserfsck? (reiserfsck -V)
-> >
-> >>--check says all is good.
-
-
+Thanks all!
+--
+Shoshannah Forbes
+http://www.xslf.com
