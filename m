@@ -1,82 +1,34 @@
-From: David Lang <david.lang@digitalinsight.com>
+From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 14:17:46 -0700 (PDT)
-Message-ID: <Pine.LNX.4.60.0408261414100.27825@dlang.diginsite.com>
-References: <Pine.LNX.4.44.0408261152340.27909-100000@chimarrao.boston.redhat.com>
- <1093536282.5482.6.camel@leto.cs.pocnet.net> <412E2E86.8050909@slaphack.com>
+Date: Thu, 26 Aug 2004 22:24:11 +0100
+Message-ID: <20040826212411.GG5733@mail.shareable.org>
+References: <45010000.1093553046@flay> <Pine.LNX.4.58.0408261348500.2304@ppc970.osdl.org> <57730000.1093554054@flay> <Pine.LNX.4.58.0408261402400.2304@ppc970.osdl.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20811-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20812-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <412E2E86.8050909@slaphack.com>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.58.0408261402400.2304@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
-Cc: Christophe Saout <christophe@saout.de>, Rik van Riel <riel@redhat.com>, Jamie Lokier <jamie@shareable.org>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: "Martin J. Bligh" <mbligh@aracnet.com>, Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Thu, 26 Aug 2004, David Masover wrote:
+Linus Torvalds wrote:
+> In other words, the "directory" part is just a _view_ into the file. A
+> view that potentially exposes a lot _more_ of the file, but we're still
+> talking about the same file.
+> 
+> In contrast, a S_IFDIR-like _directory_ is something else entirely. When 
+> you view the things in that, you aren't looking at data "inside" the 
+> directory. You're looking at somethign totally independent.
 
-> Christophe Saout wrote:
->
-> | Yes, the main compound stream unaware applications would see would just
-> | be a writable view of its contents. Probably not trivial to implement
-> | but doable.
->
-> Not the main stream, I think, but we do need a way to make "eight-stream
-> octopus" files portable.  But there needs to be a copy(2) syscall, and
-> apps need to start supporting it.  After all, copy-on-write was planned
-> for Reiser4, now 4.1*.  And don't anyone dare suggest "userland library".
->
-> | It should be a simple format. Something simliar to tar. The worst thing
->
-> Simple, yes.  Similar to tar, no.
->
-> How about a serializer plugin?  foo.mp3/serialize (say) should return
-> some single stream which contains all of foo.mp3.  It could work for
-> directories as well, recursively, at least on the same filesystem --
-> you'd back up by doing
->
-> cp /serialize /backup/20040826
->
-> This has two potential problems.  One is security -- I want to be able
-> to serialize foo.mp3 without being root, but root doesn't want me to be
-> able to serialize /etc and thus get access to shadow.
->
-> The second problem is that in order to actually be used for backup, we
-> need snapshots, which are not done yet*.  Currently, it'd have to lock
-> the file/directory (recursively), which you don't want to do to entire
-> live filesystems...  So, no massive backups of live systems yet, but
-> definitely useful for sending around mp3s and such.
->
-> | that can happen is people start writing plugins for every existing
-> | compound format out there. It should be the other way around, agree on a
-> | simple compound format and encourage applications to use this one if the
-> | want to use this advantage.
->
-> For the format, I vote for whatever format we're using at the storage
-> layer.  It'd be a lot faster that way, both in execution time (I think)
-> and in development time (I'm sure).  Plus, imagine the restore:
->
-> cat /backup/20040826 > /dev/hda5
-> resizefs_reiser4 /dev/hda5
->
+One of the constraints is that you can create any name in an
+S_IFDIR-like directory, but you probably can't create any name "in" an
+S_IFREG-like file, because the names have meaning -- except in
+designated subtrees of the view intended for holding arbitrary names.
 
-one of the virtual metatags should be something about the method to 
-serialize the data
-
-if you are viewing a tarfile as a directory the VFS/Filesystem shoud know 
-that the link between the whole thing and the contents is tar, and it 
-should be possible for userspace programs to find this out by reading teh 
-appropriate thing inside the virtual directory (and eventually change it 
-as well, which would trigger regeneration of the base object, or at least 
-noting that the current version is wrong and needs to be regenerated)
-
-David Lang
-
--- 
-"Debugging is twice as hard as writing the code in the first place.
-Therefore, if you write the code as cleverly as possible, you are,
-by definition, not smart enough to debug it." - Brian W. Kernighan
+-- Jamie
