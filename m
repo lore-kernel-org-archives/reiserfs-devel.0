@@ -1,50 +1,55 @@
-From: Michael James <Michael.James@csiro.au>
+From: eazgwmir@umail.furryterror.org (Zygo Blaxell)
 Subject: Re: Reiserfs, highquality meds source, low rates
-Date: Tue, 20 Apr 2004 10:54:22 +1000
-Message-ID: <200404201054.22865.Michael.James@csiro.au>
-References: <000001c425b0$1750e0b8$4fa9aa0e@fluridden.com> <200404191339.08313.tdickenson@geminidataloggers.com> <20040419134032.GD57@alias.nmd.msu.ru>
-Reply-To: Michael.James@csiro.au
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18065-reiserfs=m.gmane.org@namesys.com>
+Date: 19 Apr 2004 20:14:48 -0400
+Message-ID: <c61q1o$6bk$1@satsuki.furryterror.org>
+References: <000001c425b0$1750e0b8$4fa9aa0e@fluridden.com> <20040419115902.GD15007@alias.nmd.msu.ru> <20040419115902.GD15007@alias.nmd.msu.ru> <4083C0B0.6090607@mweb.co.za>
+Return-path: <reiserfs-list-return-18066-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040419134032.GD57@alias.nmd.msu.ru>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
-Cc: Alexander Lyamin <flx@msu.ru>
 
-On Monday 19 April 2004 23:40, Alexander Lyamin wrote:
-> > i am just not sure how to kill THIS messages which look so....
-> > they dont look like spam, even to me upon first look.
-> >=20
->  You need more software....
+In article <4083C0B0.6090607@mweb.co.za>, Cami  <camis@mweb.co.za> wrote:
+>> i am just not sure how to kill THIS messages which look so....
+>> they dont look like spam, even to me upon first look.
+>
+>If you were using SpamAssasin, you wouldn't get these..
 
-While Hans doesn't want to block posts by non-subscribers,
- could a non-subscriber return address be verified
- in the same way as a new subscription is?
+I _am_ using SpamAssassin, and I got this.  
 
-ie: If a non-subscriber posts; they get back a letter,
- "We recieved this posting to the Reiserfs List,
-  if you want it to appear, just hit reply."
+Actually, this has turned into a neat example of how to poison a Bayes filter.
 
-=46rom the list software's point of view
- they are actually subscribing, but with delivery supressed.
+The original spam got flagged on my system like this:
 
-Mailman can cope with a subscriber suspending delivery, (for holidays etc)
- it would be a case of jiggering the subscription to happen transparently.
+X-Spam-Status: No, hits=2.9 required=5.0 tests=BAYES_40,HTML_MESSAGE, 
+	RCVD_IN_DYNABLOCK,RCVD_IN_RFCI,RCVD_IN_SORBS autolearn=no version=2.63
 
-Just another slightly different hoop to trip up the spammers.
-michaelj
+So this got through the usual SA rules, none of which give very high
+scores, and even the Bayes filter isn't sure.
 
-PS: Thanks for you existing labours on this list, it's appreciated.
+Then comes your message, with a quote of the original spam:
 
-=2D-=20
-Michael James                         michael.james@csiro.au
-System Administrator                    voice:  02 6246 5040
-CSIRO Bioinformatics Facility             fax:  02 6246 5166
+X-Spam-Status: No, hits=-3.2 required=5.0 tests=AWL,BAYES_00 autolearn=ham  
+	version=2.63
 
+So...my Bayes filter just auto-trained itself on the contents of the
+spam message...as ham.  If I now feed the original spam through SA
+again, it gets BAYES_01, and a score of -1.5.  Clearly I'm going to be
+receiving a _lot_ of these, at least until I batch them all up and feed
+them to sa-learn to retrain the Bayes filter.
+
+Folks, if you want to talk about spam on a (non-spam-related) mailing
+list, please please please don't quote it, no matter how interesting it
+may be.  Or at least, if you do quote it, be sure to include a sentence
+or two that contains gratuitous references to the names of chemicals
+often used to mitigate the effects of problems that may arise with men
+and the organs they use to procreate.
+
+-- 
+Zygo Blaxell (Laptop) <zblaxell@feedme.hungrycats.org>
+GPG = D13D 6651 F446 9787 600B AD1E CCF3 6F93 2823 44AD
