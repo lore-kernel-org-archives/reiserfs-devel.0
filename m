@@ -1,39 +1,78 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: different block sizes and badblocks
-Date: Thu, 20 Jun 2002 20:21:49 +0400
-Message-ID: <20020620202149.B1336@namesys.com>
-References: <5.0.2.1.2.20020620135847.01c3bdb0@pop.tvnet.hu>
+From: Vadim <vadim@sheelab.dynodns.net>
+Subject: ReiserFS partition detected as vfat
+Date: Thu, 20 Jun 2002 19:21:14 +0200
+Message-ID: <200206201921.26559.vadim@sheelab.dynodns.net>
+Reply-To: vadim@hardison.net
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10771-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10772-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <5.0.2.1.2.20020620135847.01c3bdb0@pop.tvnet.hu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Newsmail <newsmail@satimex.tvnet.hu>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On Thu, Jun 20, 2002 at 02:05:11PM +0100, Newsmail wrote:
-> I have two questions: I see that in reiserfsprogs 3.x.1c-pre5 we have the 
-> option to make filesystem with different block sizes than the default 4096 
-> bytes. what does this mean? I can choose whatever blocksize I want? or it 
-> has to be a multiple of 4096? actually as I heard if I have a filesystem 
+Hello, I'm having a really strange problem.
 
-Right now kernel lacks support for blocksize other than 4096 bytes.
+I installed Debian on one of my machines using the floppies with=20
+the 2.4 kernel, and created a ReiserFS system on it. I think the=20
+kernel used is 2.4.16. The installation went well, but on reboot=20
+it failed to mount root and I got a panic. Kernel messages show=20
+that it was attempted to be mounted as vfat. Unfortunately I=20
+don't have that log anymore.
 
-> the other question is about badblocks. we have badblock support in 
-> reiserfsprogs 3.x.1c-pre5, but its disabled by default. Oleg, could you 
-> give me some infos about it, how can I reenable it, or how does it work 
-> actually? it would be really nice :)
+Now I'm moving the system to another disk, with reiserfs too. It=20
+seems to work fine, but I'm using a 2.4.18 kernel without vfat=20
+support, as I don't need it there. Here's what happens if I try=20
+to mount the old disk:
 
-Right now badblocks support is disabled on purpose.
-It conflicts with savelinks and we have not decided how to solve that yet.
-But we will announce badblocks support once we think it is ready.
+rabbit:/mnt# mount /dev/hda1 hda
+mount: fs type vfat not supported by kernel
+rabbit:/mnt#=20
 
-Bye,
-    Oleg
+If I specify the file type it works:
+rabbit:/mnt# mount -t reiserfs /dev/hda1 hda
+rabbit:/mnt#=20
+
+
+On my other computer, with kernel 2.4.18, where I do have vfat=20
+support it seems it attempts mounting the reiserfs partition as=20
+vfat as well:
+
+FAT: bogus logical sector size 0
+UMSDOS: msdos_read_super failed, mount aborted.
+FAT: bogus logical sector size 0
+FAT: bogus logical sector size 0
+(USB messages)
+reiserfs: checking transaction log (device 03:03) ...
+Warning, log replay starting on readonly filesystem
+reiserfs: replayed 24 transactions in 9 seconds
+Using r5 hash to sort names
+ReiserFS version 3.6.25
+VFS: Mounted root (reiserfs filesystem) readonly.
+
+I'm not sure if this is a reiserfs problem or a vfat one, but it=20
+seems related at least. I won't have the disk from the "rabbit"=20
+machine for long, so if you need a few sectors from it or=20
+anything like that, please ask now.
+
+Thanks in advance
+
+
+- --=20
+Vadim
+<@chani> I *cannot* remember names. but I did memorize 214 digits=20
+of pi once.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
+
+iD8DBQE9Eg8SvCkUtBccqkoRAr/HAJ9q0R5HMLPHl934MZo9NyuYE9WXfgCeLeIl
+jw2iguNzYQBAlDa8cOEnRiU=3D
+=3DyOFw
+-----END PGP SIGNATURE-----
+
