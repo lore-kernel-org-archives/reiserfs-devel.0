@@ -1,51 +1,59 @@
-From: "Lamont R. Peterson" <lamont@gurulabs.com>
-Subject: Re: SMART Self-Test Reports UNC Errors on Dell Latitude D800
-	Hitachi Travelstar DK23FB
-Date: Thu, 12 Aug 2004 14:18:59 -0600
-Message-ID: <1092341939.2251.3.camel@wraith.lrp.advansoft.us>
-References: <1092327723.16346.7.camel@turing.optivel.com>
-	 <200408121932.08943.bernd-schubert@web.de>
-Reply-To: lamont@gurulabs.com
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: fsck.reiser4 wrong size error (?)
+Date: Fri, 13 Aug 2004 00:31:13 +0400
+Message-ID: <200408130031.13061.vitaly@namesys.com>
+References: <cd32a06204080910256de4cc0e@mail.gmail.com> <200408102009.39695.frbiscani@jumpy.it> <200408122138.46787.frbiscani@jumpy.it>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-y8Rx9vlu66t3SN/OjbNc"
-Return-path: <reiserfs-list-return-20242-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20243-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200408121932.08943.bernd-schubert@web.de>
+In-Reply-To: <200408122138.46787.frbiscani@jumpy.it>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Francesco Biscani <frbiscani@jumpy.it>, reiserfs-list@namesys.com
 
---=-y8Rx9vlu66t3SN/OjbNc
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Thursday 12 August 2004 23:38, Francesco Biscani wrote:
+> On Tuesday 10 August 2004 20:09, Francesco Biscani wrote:
+> > Hi,
+> >
+> > > are messages about 'wrong size' or about 'wrong bytes' or both?
+> >
+> > I'm _almost_ sure it's about "wrong bytes". I'll confirm ASAP. Are they
+> > potentially harmful?
+> >
+> > Oh, BTW, "debugfs -C" worked ok here.
+> >
+> > Regards,
+> >
+> >   Francesco
+>
+> An update for those interested:
+>
+> - it was a "wrong bytes" message. All the bytes of affected objects were
+> doubled. Corrected with --fix and using now auto-snapshot for
+> 2.6.8-rc4-mm1. Let's see if it happens again.
 
-On Thu, 2004-08-12 at 11:32, Bernd Schubert wrote:
-> Whats your definition of 'reformating'? Its certainly not=20
-> 'mkreiserfs /dev/my_partition'. You would need a tool for a low level for=
-mat=20
-> of the disk, I don't know if there are any for IDE disks.
+this was fixed recently.
 
-SpinRite
+> - debugfs -C worked ok also on my / partition.
+>
+> BTW, debugfs -p showed also that the default plugin for fibration was
+> changed, from dot-o to ext-1. But if I create a dir it is still
+> dot-o-fibrated. Am I missing something here? Should I mount with some
+> special options to have ext-1 fibration as default?
 
-[SNIP]
---=20
-Lamont R. Peterson <lamont@gurulabs.com>
-Senior Instructor
-Guru Labs, L.C. http://www.GuruLabs.com/
+default plugins in progs play role for mkfs only, and they have nothing to
+do with already created fs. You have created it with dot-o default, so the 
+current fibration fs default is dot-o, and you can change it for some partitcular 
+directory only, an empty one, with :
+	echo -e "ext-1\0" > dir/metas/plugin/fibration
+Then all children will be created with with ext-1 also.
 
---=-y8Rx9vlu66t3SN/OjbNc
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQBBG9CyRK8Q4zt1QRURAgE+AKCgLSLVRBu8cNlaiOLIIwrztS+ijACcDvJ1
-nPo9JZDty6tmgHW1mWVLtiQ=
-=1Qb9
------END PGP SIGNATURE-----
-
---=-y8Rx9vlu66t3SN/OjbNc--
+-- 
+Thanks,
+Vitaly Fertman
 
