@@ -1,65 +1,38 @@
-From: Jan Harkes <jaharkes@cs.cmu.edu>
+From: Rik van Riel <riel@redhat.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 14:07:36 -0400
-Message-ID: <20040826180736.GE8959@delft.aura.cs.cmu.edu>
-References: <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826044425.GL5414@waste.org> <1093496948.2748.69.camel@entropy> <20040826053200.GU31237@waste.org> <20040826075348.GT1284@nysv.org> <20040826163234.GA9047@delft.aura.cs.cmu.edu> <Pine.LNX.4.58.0408260936550.2304@ppc970.osdl.org>
+Date: Thu, 26 Aug 2004 13:59:29 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44.0408261358370.27909-100000@chimarrao.boston.redhat.com>
+References: <20040826194010.548e4a4c.diegocg@teleline.es>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20746-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20744-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.58.0408260936550.2304@ppc970.osdl.org>
+In-Reply-To: <20040826194010.548e4a4c.diegocg@teleline.es>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Andrew Morton <akpm@osdl.org>, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com, viro@parcelfarce.linux.theplanet.co.uk
+Content-Type: TEXT/PLAIN; charset="iso-8859-1"
+To: Diego Calleja <diegocg@teleline.es>
+Cc: jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-I trimmed/adjusted the CC list somewhat in the hope of getting a more
-productive discussion going.
+On Thu, 26 Aug 2004, Diego Calleja wrote:
+> El Thu, 26 Aug 2004 13:16:22 -0400 (EDT) Rik van Riel <riel@redhat.com> e=
+scribi=F3:
+>=20
+> > So all I need to do is "cat /bin | gzip -9 > /path/to/backup.tar.gz" ?
+>=20
+> /bin could be separated (like linus said) but cat /bin/.compound could
+> do it. This is the /etc/passwd Hans' example, I think:
 
-On Thu, Aug 26, 2004 at 09:48:04AM -0700, Linus Torvalds wrote:
-> On Thu, 26 Aug 2004, Jan Harkes wrote:
-> > 
-> > (btw. the same could be implemented completely in userspace, for
-> > instance in glibc. Whenever an open call gets an EISDIR error, simply
-> > retry the open, but this time with /_contents appended).
-> 
-> Yes, and no - just to make it obvious before people jump on this, a lot of 
-> things can be prototyped in user space with things like this, but once you 
-> have to deal with races and mixed tool environments, user space suddenly 
-> doesn't work so well any more.
+Arghhhh.  I wrote it down to ridicule the idea and now people
+are taking it seriously ;(
 
-Agreed.
+It should be obvious enough that anything depending on the
+kernel parsing file contents will lead to problems.
 
-> The same goes for something like a "container file". Whether you see it as
-> "dir-as-file" or "file-as-dir" (and I agree with Jan that the two are
-> totally equivalent), the point of having the capability in the kernel is
-
-Only to some point. I was mostly trying to make the point that similar
-functionality is already achievable within the current VFS framework.
-
-However, files and directories still have some semantical differences,
-and these are probably the points that we would have to address to get
-Hans's efforts work well in cooperation with the Linux VFS.
-
-We cannot atomically unlink a dir-as-file, but can unlink a file-as-dir.
-In this case, the dcache seems to have no problems unlinking/unhashing a
-non-empty directory, so I'm assuming that the unlink problem is mostly
-enforced to avoid unreachable, but still allocated files in a file
-system. (I'm sure that Viro can probably come up with other reasons why
-unlinking a non-empty directory can be evil).
-
-Also, we cannot create hardlinks to a directory (-as-file), but I guess
-reiserfs4 allows hardlinks to files (-as-directory). Luckily as far as
-hardlinked directories are concerned the file-as-dir implementation
-should be a relatively benign subset. I assume that we are not allowed
-to rename or link arbitrary objects from the regular fs into it, Coda
-returns EXDEV in such situations. As a result there will be no cycles
-and this simple premise should get rid of at least a couple of the
-possible deadlock scenarios that I've seen mentioned.
-
-Jan
+--=20
+"Debugging is twice as hard as writing the code in the first place.
+Therefore, if you write the code as cleverly as possible, you are,
+by definition, not smart enough to debug it." - Brian W. Kernighan
 
