@@ -1,66 +1,66 @@
-From: Richard Heycock <rgh@roughage.com.au>
-Subject: Re: Reiser4 installation & kernel patching
-Date: 23 Jun 2003 17:44:18 +1000
-Message-ID: <1056354258.1449.34.camel@boadicea>
-References: <000e01c33621$2ced8490$0200a8c0@xpstation>
-	 <200306192030.58137.vitaly@namesys.com>
-	 <000701c33681$d527c3e0$0200a8c0@xpstation>
-	 <200306192112.42901.vitaly@namesys.com>
-	 <001901c33756$fe776ae0$0200a8c0@xpstation>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: xattr
+Date: Mon, 23 Jun 2003 11:56:57 +0400
+Message-ID: <3EF6B2C9.1090003@namesys.com>
+References: <200306162226.39701.russell@coker.com.au> <1056030719.6758.97.camel@tiny.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14661-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14662-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <001901c33756$fe776ae0$0200a8c0@xpstation>
+In-Reply-To: <1056030719.6758.97.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: Russell Coker <russell@coker.com.au>, reiserfs-list@namesys.com
 
-On Sat, 2003-06-21 at 04:08, Fred -- Speed Up -- wrote:
-> > > Can I use the bk reiser4 kernel folder and simply copy it into my
-> kernel's
-> > > fs directory and apply the little linux-[...].patch patch to get Reiser4
-> > > into the kernel ?
-> > no, there are quite a few changes all over the kernel code.
-> > If you do not want wait a bit for coming snapshot and do not want to use
-> > the latest snapshot for 2.5.60, I can make a patch against 2.5.72 for you.
-> 
-> That would be great ...
-> Does the reiser team often modifies the kernel tree (other than the reiser4
-> code, off course), so that it would be possible to release a patch against
-> the latest 2.5 kernel ? We'd then just have to download a reiser4-kernel
-> daily snapshot that we would include in the kernel source tree, and then
-> just configure & compile the whole stuff. And maybe bk could automate both
-> process : making a daily (or nightly :D) kernel patch and reiser kernel
-> package, this will be the way for users and administrators to test your
-> software without having to handle with bk ;)
-> 
-> > > If I succeed in installing all the software and get reiser4 running,
-> I'll
-> > > write a clear french howto for it ;)
-> >
-> > ;) ok
-> > I have changed that install v4 page, is it better for you now?
-> 
-> Now it's all right ... but you'll hopefully have to change it again soon, if
-> these daily snapshots are made available ;)
+Chris Mason wrote:
 
-I'd be quite keen to try version 4 with the latest kernel release.
+>On Mon, 2003-06-16 at 08:26, Russell Coker wrote:
+>  
+>
+>>What is the status of xattr support in 2.5.x?
+>>
+>>How is journalling of xattr's being handled?
+>>
+>>For correct operation of SE Linux we need to have the xattr that is used for 
+>>the security context be changed atomically, and if a file is created and 
+>>immediately has the xattr set then ideally we would have the file creation 
+>>and the xattr creation in the same journal entry.
+>>
+>>Is this possible?  If doing this requires that the file system be mounted with 
+>>data=journal then this will be fine.
+>>    
+>>
+>
+>How big are the xattrs you have in mind?  We can get atomic writes of 4k
+>in length but beyond that things get more difficult.
+>
+it is complete trivial to do it in reiser4.
 
-rgh
+>
+>As for the xattr and the create in the same transaction, that's a little
+>harder.  
+>
+equally easy in reiser4.
 
-> 
-> > -- 
-> > Thanks,
-> > Vitaly Fertman
+>We'd probably need a new syscall, or to change the semantics of
+>the xattr call such that creating an xattr on a file that doesn't exist
+>also creates the file.
+>
+>-chris
+>
+>
+>
+>
+>  
+>
+V3 should not have new features added to it.  It needs to be zero 
+defect, and avoiding new features is the only way.
+
 -- 
-"It is possible to make things of great complexity out of things
- that are very simple. There is no conservation of simplicity"
- -- Stephen Wolfram
+Hans
 
-Richard Heycock <rgh@roughage.com.au>
-tel : 0410 646 369
-key fingerprint : 909D CBFA C669 AC2F A937  AFA4 661B 9D21 EAAB 4291
+
