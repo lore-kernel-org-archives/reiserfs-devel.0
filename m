@@ -1,57 +1,54 @@
-From: <pcg( Marc)@goof(A.).(Lehmann )com>
-Subject: Re: Odd data corruption problem with LVM/ReiserFS
-Date: Tue, 22 Feb 2005 20:49:00 +0100
-Message-ID: <20050222194900.GB10968@schmorp.de>
-References: <93ca3067050220212518d94666@mail.gmail.com> <4219C811.5070906@domdv.de> <20050222190149.GB9590@schmorp.de> <421B8A69.8000903@domdv.de>
+From: Sander <sander@humilis.net>
+Subject: Re: reiser4progs 1.0.4
+Date: Tue, 22 Feb 2005 21:08:09 +0100
+Message-ID: <20050222200809.GA15179@favonius>
+References: <200502201344.41656.vitaly@namesys.com> <20050221131024.GA43266@xs4all.nl> <200502211659.53972.vitaly@namesys.com>
+Reply-To: sander@humilis.net
 Mime-Version: 1.0
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <421B8A69.8000903@domdv.de>
+In-Reply-To: <200502211659.53972.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andreas Steinmetz <ast@domdv.de>
-Cc: Alex Adriaanse <alex.adriaanse@gmail.com>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: Ookhoi <ookhoi@xs4all.nl>, reiserfs-list@namesys.com
 
-On Tue, Feb 22, 2005 at 08:39:21PM +0100, Andreas Steinmetz <ast@domdv.de> wrote:
-> To clarify: there were no disk I/O errors, only I/O errors were reported 
->  by find during operation so it is definitely filesystem corruption 
-> that is  going on here.
-> Though find performs heavy read activity there could well be heavy write 
-> activity be involved due to atime updates so this fits your description.
+Vitaly Fertman wrote (ao):
+> On Monday 21 February 2005 16:59, Vitaly Fertman wrote:
+> > On Monday 21 February 2005 16:10, Ookhoi wrote:
+> > > On Sun, Feb 20, 2005 at 01:44:41PM +0300, Vitaly Fertman wrote:
+> > > > The new reiser4progs package is available on our ftp
+> > > > site (ftp://ftp.namesys.com/pub/reiser4progs/).
+> > >
+> > > Thank you for this release. It doesn't crash anymore :-)
+> > >
+> > > But it does tell me:
+> > > "NO REISER4 METADATA WERE FOUND. FS RECOVERY IS NOT POSSIBLE."
 
-That wouldn't fill my definition for "heavy", but as it is a race
-somewhere, it can happen undr many circumstances, I guess.
+> > no master super block, no format-specific super block, no backup
+> > blocks, no status block, all bitmap blocks are not valid, no one
+> > reiser4 formatted node has been found ... what you are fscking does
+> > not look like a reiser4 filesystem at all.
 
-> >A reboot fixes this for both ext3 and reiserfs (i.e. the error is gone).
-> >
-> 
-> Well, it didn't fix it for me. The fs was trashed for good. The major 
-> question for me is now usability of md/dm for any purpose with 2.6.x. 
-> For me this is a showstopper for any kind of 2.6 production use.
+As said before I was very much asleep when I ran the fsck command. It
+should have been hda2, not hda1.
 
-Well, I do use reiserfs->aes-loop->lvm/dm->md5/raid5, and it never failed
-for me, except once, and the error is likely to be outside reiserfs, and
-possibly outside lvm.
+Btw, hda1 contained an ext2 filesystem which was not mountable and not
+recoverable after running all the fsck.reiser4 commands on it. Can't
+blame it I guess :-)  Luckily it was only /boot and thus easy to
+recover.
 
-However, your case *is* different, as corruption wasn't permament for me,
-so chances are that you are hitting sth. else.
+I managed  to reboot the machine and mount the fs. Some files where
+corrupted, but on the whole the fs seems fine now. So a big thumbs up
+for this release of fsck.reiser4 :-)
 
-Of course, many people find 2.6 too unstable for production use (remember
-2.4.x, it was the same), and the most important rule is: if it fails for
-you, it's a showstopper.
+Btw, I blame the corruption on the combination kernel and a forced
+hard-reboot during shutdown (it hung).
 
-Also, mild corruption is likely to be more disastrous to reiserfs as it
-uses a much denser representation on disk (in other words: it uses space
-more efficiently, but that comes at the price of redundancy).
+Again, thumbs up. This all made me much more confident wrt Reiser4.
 
--- 
-                The choice of a
-      -----==-     _GNU_
-      ----==-- _       generation     Marc Lehmann
-      ---==---(_)__  __ ____  __      pcg@goof.com
-      --==---/ / _ \/ // /\ \/ /      http://schmorp.de/
-      -=====/_/_//_/\_,_/ /_/\_\      XX11-RIPE
+With kind regards, Sander
