@@ -1,47 +1,49 @@
 From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: Reiser4 breaks (Debian's ?) module-init-tools
-Date: Wed, 06 Oct 2004 11:39:35 +0400
-Message-ID: <1097048374.1887.35.camel@tribesman.namesys.com>
-References: <20041004235826.09ed7a00@rayanne>
+Subject: Re: MAX_TRANS_AGE tuning
+Date: Wed, 06 Oct 2004 14:37:33 +0400
+Message-ID: <1097059052.13026.19.camel@tribesman.namesys.com>
+References: <e96ff12004100405291b9f174c@mail.gmail.com>
+	 <e96ff1200410040532787d4c62@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22006-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22007-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20041004235826.09ed7a00@rayanne>
+In-Reply-To: <e96ff1200410040532787d4c62@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Pierre Etchemaite <petchema@concept-micro.com>
+To: Ash <ashrat@gmail.com>
 Cc: reiserfs-list@namesys.com
 
 Hello
 
-On Tue, 2004-10-05 at 01:58, Pierre Etchemaite wrote:
->         Hi,
+On Mon, 2004-10-04 at 16:32, Ash wrote:
+> Sorry, accidently sent the previous message before completing the compose. :-(
 > 
-> On an (almost) fully Reiser4 system, /etc/modprobe.d/ contents seem to
-> be disregarded. When tracing modprobe, each file in this directory is
-> opened as a directory, that looks a lot like the Apache
-> compatibility bug.
+> What is the difference between JOURNAL_MAX_TRANS_AGE and JOURNAL_MAX_COMMIT_AGE 
+> defined in reiserfs_fs.h ?
 > 
-> open("/etc/modprobe.d/autofs", O_RDONLY|O_NONBLOCK|O_LARGEFILE|O_DIRECTORY) = 4
-> fstat64(4, {st_mode=S_IFREG|0644, st_size=64, ...}) = 0
-> fcntl64(4, F_SETFD, FD_CLOEXEC)         = 0
-> getdents64(4, 0x8063e3c, 65536)         = -1 ENOTDIR (Not a directory)
-> close(4)                                = 0
+> I see that both are set to 30 as default. Would reducing the either of
+> them to lower
+> values give more persistency in filesystem operations in post-crash scenarios ?
 > 
-> Looking closer, it's not limited to that directory:
-> 
-> open("/lib/modules/2.6.8.1/modules.alias", O_RDONLY|O_NONBLOCK|O_LARGEFILE|O_DIRECTORY) = 3
-> fstat64(3, {st_mode=S_IFREG|0644, st_size=27353, ...}) = 0
-> fcntl64(3, F_SETFD, FD_CLOEXEC)         = 0
-> getdents64(3, 0x804f0ac, 65536)         = -1 ENOTDIR (Not a directory)
-> close(3)                                = 0
-> 
-> module-init-tools v. 3.1-pre5-7 (Debian testing)
 
-Would you please try whether this patch fixes the problem?
-ftp://ftp.ru.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.9-rc3/2.6.9-rc3-mm2/broken-out/reiser4-disable-pseudo.patch
+Reducing JOURNAL_MAX_TRANS_AGE should cause transactions to flush
+earlier. Once a transaction is flushed - it will be replaied on
+post-crash reboot.
+
+> What are the side-effects of changing these values ?
+> 
+> Thanks,
+> Ash
+> 
+> 
+> On Mon, 4 Oct 2004 17:59:48 +0530, Ash <ashrat@gmail.com> wrote:
+> > Hi
+> > 
+> > What is the difference between
+> >
+> 
 
