@@ -1,43 +1,75 @@
-From: Dax Kelson <dax@gurulabs.com>
-Subject: result of noreplay
-Date: Fri, 3 May 2002 23:16:12 -0600 (MDT)
-Message-ID: <Pine.LNX.4.44.0205032307120.25287-100000@mooru.gurulabs.com>
-References: <Pine.LNX.4.44.0205040037160.7627-100000@manray.fourth-world.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: fsync() Performance Issue
+Date: Sat, 04 May 2002 01:41:53 -0400
+Message-ID: <200205040541.g445frQn019183@foo-bar-baz.cc.vt.edu>
+References: <93F527C91A6ED411AFE10050040665D0049BF9B4@corpusmx1.us.dg.com> <1020463205.3946.252.camel@tiny>
+            <3CD341EC.9080906@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10234-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_-457746487P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10235-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <Pine.LNX.4.44.0205040037160.7627-100000@manray.fourth-world.com>
+In-Reply-To: Your message of "Sat, 04 May 2002 06:05:32 +0400."
+             <3CD341EC.9080906@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
+
+--==_Exmh_-457746487P
+Content-Type: text/plain; charset=us-ascii
+
+On Sat, 04 May 2002 06:05:32 +0400, Hans Reiser said:
+> Chris Mason wrote:
+> >Hans, data=journal turns on the data journaling.  The data journaling
+> and the reason it is faster is....
+> >patches also include optimizations to write metadata back to disk in
+> >bigger chunks for tiny transactions (the current method is to write one
+> >transaction's worth back, when a transaction has 3 blocks, this is
+> >pretty slow).
+> >
+> is this a lazy fsync?  If so, then everything makes sense to me, if not, 
+> I remain uneducated and looking to receive your wisdom;-)
+
+Well.. *semi* lazy - since the bits *ARE* on the oxide, it's followed
+the requirements of fsync() not returning till they hit the oxide ;)
+
+We ran into a similar performance issue when we first started deploying
+another vendor's data-journalled filesystem (although at 1:30AM, I'm
+unable to remember whether it was Sun or Digital).  We finally did a bunch
+of benchmarking work, and discovered that it was due to the arm movement
+patterns.  
+
+When running on a non-journalled file system, the arm would be seeking back
+and forth however the elevator algorithm told it, to write the next blocks
+that needed writing (which if you had any fragmentation or writes to
+multiple files, meant you were doing seeks all over the place).
+
+However, when running journalled, during periods of high activity,
+the head would basically stay parked in the journal area doing sequential
+writes to the journal, meaning the *effective* seek time for the next
+write would be essentially zero (since the head was over the journal
+already) - it would then go and do all the write-behind out to the
+"permanent" area of the disk when the disk wasn't otherwise busy (so
+you didn't take a performance hit.
+-- 
+				Valdis Kletnieks
+				Computer Systems Senior Engineer
+				Virginia Tech
 
 
-The drive definately has bad sectors, but it isn't making any funny noises 
-yet.  I think the drive is "more good than bad" as a "strings /dev/hda" 
-returns lots of stuff (and then aborts on the first read error), and I can 
-boot from the drive too, but mounting the / fails.
+--==_Exmh_-457746487P
+Content-Type: application/pgp-signature
 
-I used the patch Chris Mason posted for noreplay.  It applied with a few 
-offsets to 2.4.18.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.6 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-It would REALLY nice if I could recover my files by mounting the damaged 
-fs, and then using "cp" to get what I can.
+iD8DBQE803ShcC3lWbTT17ARAruqAKDhyXp+T8/Z//ZiLbmCJ69yyvipyACgyK3z
+wHASJ/NSvgy0drewDN/mIs8=
+=z2I8
+-----END PGP SIGNATURE-----
 
-reiserfs: checking transaction log (device 03:03) ...
--o noreplay used to force unclean mount.  FS set to readonly
-is_tree_node: node level 1 does not match to the expected one 4
-vs-5150: search_by_key: invalid format found in block 14806. Fsck?
-vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat 
-data of [1 2 0x0 SD]
-Using r5 hash to sort names
-reiserfs: cannot support attributes until flag is set in super-block
-ReiserFS version 3.6.25
-
-Is there anyway I can mount using a "backup super-block" or some other 
-method?
-
-Dax
-
+--==_Exmh_-457746487P--
