@@ -1,52 +1,52 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: [BK] ReiserFS file write bug fix for 2.4
-Date: Wed, 11 Sep 2002 21:37:22 +0200
-Message-ID: <200209112137.22422.Dieter.Nuetzel@hamburg.de>
-References: <3D7F7783.6030804@namesys.com> <200209111934.11373.Dieter.Nuetzel@hamburg.de> <20020911215310.A1504@namesys.com>
+From: Troy Wu <troy@sequence.stanford.edu>
+Subject: Re: [NFS] NFS/2.4.18/reiserfs question
+Date: Wed, 11 Sep 2002 12:34:23 -0700 (PDT)
+Message-ID: <Pine.LNX.4.44L1.0209111208160.20363-100000@sequence.stanford.edu>
+References: <Pine.LNX.4.44.0209110853090.29369-100000@fogarty.jakma.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11426-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11427-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20020911215310.A1504@namesys.com>
+In-Reply-To: <Pine.LNX.4.44.0209110853090.29369-100000@fogarty.jakma.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Oleg Drokin <green@namesys.com>
-Cc: Linux Kernel List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: NFS at SourceForge <NFS@lists.sourceforge.net>
+Cc: ReiserFS at NameSys <reiserfs-list@namesys.com>
 
-On Wednesday 11 September 2002 19:53, Oleg Drokin wrote:
-> Hello!
->
-> On Wed, Sep 11, 2002 at 07:34:11PM +0200, Dieter N?tzel wrote:
-> > On Wednesday 11 September 2002 19:04, Hans Reiser wrote:
-> > > Well, at least getting the new file write code into pre6 found this b=
-ug
-> > > for us....  please apply.
-> >
-> > What is the "right" way to get the new block allocation going?
->
-> use 2.4.19-pre2+ and it is in there ;)
+I've gotten some very helpful information, but am still a little confused.
+Basically, I've heard some people say that Reiser (RFS) is simply a bad
+choice with NFS.  Others have said I'm using the wrong version of the
+on-disk format.  I've also been reading up on the discussion at the
+ReiserFS archives about this.
 
-You meant 2.4.20-pre2, didn't you?
+Am I to understand that RFS-3.5.x does not reliably work with NFS (because
+of the stale filehandle problem caused by a weird inode generation
+implementation)?  I'm not convinced that RFS-3.6.x will fix the problem.
 
-> > The mount option (-o alloc=3Dprealloc min=3D4:preallocsize=3D9) only or=
- better
-> > a "reformat"?
->
-> Those mount options are no longer needed starting from 2.4.20-pre6.
-> They are default. Reformat is not needed, but all the blocks allocated by
-> old allocator will remain at their old places of course.
->
-> Bye,
->     Oleg
+	Basically, does RFS-3.6.x *fix* this problem or simply *mitigate*
+	this problem?
 
---=20
-Dieter N=FCtzel
-Graduate Student, Computer Science
+	Secondly, even though I acknowlege that NFS is a bit lame,
+	filesystem support is still critical to many operations (including
+	ours).  We have terabytes of data, and copying files to move them
+	to a new file format (which in this case seems necessary), is not
+	something that we can do at the drop of a hat.  I understand it's
+	my failing not to have checked this before using RFS, but can
+	someone provide an objective picture of how seriously
+	production-ready RFS/NFS is?
 
-University of Hamburg
-Department of Computer Science
-@home: Dieter.Nuetzel at hamburg.de (replace at with @)
+Can anyone point me to the actual references which describe this problem
+(i.e., the inode numbers or file-handles and how they relate to NFS and
+Reiser interacting badly)?  Or, if you're so inclined, to share that
+information via email?  =)
+
+Thanks--particularly to those who've already provided some valuable
+information!
+
+	--troy
+
+
 
