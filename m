@@ -1,74 +1,162 @@
-From: Christian Kujau <evil@g-house.de>
-Subject: vpf-10680, minor corruptions
-Date: Wed, 18 Jun 2003 16:45:15 +0200
-Message-ID: <3EF07AFB.8060303@g-house.de>
-Reply-To: evil@g-house.de
+From: Timothy Webster <tdwebste2@yahoo.com>
+Subject: Re: Several questions about encrypted filesystem
+Date: Wed, 18 Jun 2003 08:12:07 -0700 (PDT)
+Message-ID: <20030618151207.57490.qmail@web80512.mail.yahoo.com>
+References: <3EF03860.7000608@namesys.com>
+Reply-To: tdwebste2@yahoo.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14606-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14607-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3EF03860.7000608@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS List <reiserfs-list@namesys.com>
-
-Hi,
-
-i'm running linux 2.5.70/2.5.72 and have a 2GB fs with Reiserfs on it.
-from time to time reiserfsck the fs and some corrutions came up, which 
-were fixed as suggested by --fix-fixable.
-how comes? the data on the fs is not that important, it's a cache for 
-Debian packages. I'm just curious _why_ there are corruptions anyway, 
-since there is not even heavy load on the fs.
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Edward Shushkin <edward@namesys.com>, "Zhao, Forrest" <forrest.zhao@intel.com>, reiserfs-list@namesys.com
 
 
-lila:~# reiserfsck /dev/sde2
-<--------reiserfsck 3.6.6, 2003-------->
+--- Hans Reiser <reiser@namesys.com> wrote:
+> Timothy Webster wrote:
+> 
+> >--- Hans Reiser <reiser@namesys.com> wrote:
+> >  
+> >
+> >>Timothy Webster wrote:
+> >>
+> >>    
+> >>
+> >>>2) Key rotation and backups
+> >>>Over time the number of keys quickly become
+> >>>prohibitive. 
+> >>>
+> >>>      
+> >>>
+> >>Why? One key per user or group or file body. user
+> >>and group keys unlock 
+> >>the file body key which is stored in the file
+> >>metadata.
+> >>    
+> >>
+> >
+> >This additional level of abstraction is a good
+> >one and greatly reduces the total number of 
+> >keys required. The key space is for user, 
+> >group, master, acl "keys" which in turn unlock 
+> >individual file body keys encrypted in the file 
+> >metadata. The file body keys are session keys,
+> >which may would change foreach encrypting writing
+> >process. Or is this not what you had in mind?
+> >
+> 
+> By default, no.  There was someone who proposed
+> granting write only 
+> permissions using a scheme in which keys change such
+> that if you know 
+> the first key you can compute the later ones but the
+> later ones don't 
+> allow you to compute the first ones, but this would
+> not be the default 
+> encryption plugin.
+> 
+> >Anyway, the user, group, master, acl "keys" need
+> >to change quite often, perhaps once a day.
+> >
+> Why?
 
-[...]
+A new key every time a user is issued a 
+new kerberos, ticket. The get a new key as
+needed. Since these tickets are used for
+encryption of file information, we can 
+not simple use create and forget.
 
-Do you want to run this program?[N/Yes] (note need to type Yes if you 
-do):Yes
-###########
-reiserfsck --check started at Wed Jun 18 16:32:20 2003
-###########
-Replaying journal..
-0 transactions replayed
-Checking internal tree..finished
-Comparing bitmaps..vpf-10640: The on-disk and the correct bitmaps differs.
-Checking Semantic tree:
-/debian/dists/woody/main/binary-powerpc/Packages.gzvpf-10680: The file 
-[2256 3144] has the wrong block count in the StatData (3344), should be 
-(1680)
-/source/Sources.gzvpf-10680: The file [2275 2349] has the wrong block 
-count in the StatData (1432), should be (720)
-/contrib/binary-powerpc/Packages.gzvpf-10680: The file [2225 523] has 
-the wrong block count in the StatData (80), should be (40)
-/source/Sources.gzvpf-10680: The file [2246 2785] has the wrong block 
-count in the StatData (48), should be (24)
-/non-free/binary-powerpc/Packages.gzvpf-10680: The file [2289 2782] has 
-the wrong block count in the StatData (104), should be (56)
-/source/Sources.gzvpf-10680: The file [2310 2471] has the wrong block 
-count in the StatData (56), should be (32)
-/non-US/dists/woody/non-US/main/binary-powerpc/Packages.gzvpf-10680: The 
-file [2627 2495] has the wrong block count in the StatData (88), should 
-be (48)
-finished 
+> 
+> > The
+> >idea is to keep handing out new keys as needed.
+> >Or is your idea to retrive semi-perminate 
+> >metadata keys from a PKI. Which ever approach
+> >you take being able to construct a combined
+> >key is very useful. See my other mail
+> >"kool stuff". The number of key components
+> >starts adding up very quickly even if you don't
+> >change the metadata keys frequently.
+> >10 yrs later with all these key combinations 
+> >on lets say a mail server, you have far too 
+> >many keys to individually remember. And thus 
+> >the key space approach. 
+> >
 
-9 found corruptions can be fixed with --fix-fixable
-###########
-reiserfsck finished at Wed Jun 18 16:32:35 2003
-###########
-lila:~#
+Actually, I don't like my answer. So let me 
+try again. I think it is more of a question 
+how do you want to manage your keys.
+
+Are your users careless with keys. They
+like to use them and lose them. And they
+use their keys in lots of conversations
+with some not so close friends. It is
+better not to keep using this key.
+I like to think of the key space approach
+as my stuff stored in bus lockers all over
+the place and I trust the bus company.
+By the time I want to retrieve my stuff 
+from one of the bus lockers, I have 
+forgotten my key so I read off the 
+box number and depot number. After 
+proving my identity to the key clerk 
+(who is verified by the key office), 
+the clerk checks up my authorization. 
+The authorization rules are in sealed
+envelope attached to the locker. And
+key clerks are authorized to unlock
+these envelops. Finally if I am 
+approved to recover the stuff in
+that box, she cuts me a new key. I grab 
+my stuff and run, leaving my key on
+the street. No big deal there are very
+few boxes it can open.
+In Key space approach the key index
+number and key space number is printed 
+on the file metadata. And I use the
+described key clear method to unlock
+the metadata. Of course I would probably
+not just leave the key laying around,
+but I might try it on other file 
+metadata. This handles the problem
+of how to hand over some of your
+files to another party, without
+handing over all of your files.
+You had not planed to hand over
+these files when you created them.
+Perhaps you did not even know this 
+party. 
 
 
-(--fix-fixable fixed all corruptions, none left).
-the machine was booted yesterday evening, and is booted once in a week 
-or so. it's an Alpha/EV45, Debian testing on it, glibc 2.3.1.
+Or are your users carefull with keys
+and dont' trust athorities. Then
+your users are probably best sharing 
+keys directly with their fiends. Who 
+knows the secret police might ask 
+the key clerk for their bus locker 
+key. 
+Then key spaces are definitely
+NOT for you. Your users are much 
+better off managing their own keys,
+as trusting groups or individually.
+But perhaps key spaces might how
+they manage their keys. Do you
+care, NOPE, because they are doing
+the key management task.
+I still think even in this case
+it is a good idea to have the 
+authorization rules separately
+sealed but attached to the
+metadata.
 
+-tim.
 
-Thanks,
-Christian.
-
+__________________________________
+Do you Yahoo!?
+SBC Yahoo! DSL - Now only $29.95 per month!
+http://sbc.yahoo.com
