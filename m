@@ -1,48 +1,28 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: [PATCH CFT] tons of logging patches
-Date: 08 Jul 2002 09:51:33 -0400
-Message-ID: <1026136293.5663.56.camel@tiny>
+From: Basil Chupin <blchupin@tpg.com.au>
+Subject: What does this mean?
+Date: Mon, 08 Jul 2002 23:30:13 +1000
+Message-ID: <3D2993E5.6030707@tpg.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10924-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10925-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <3D2396AF.8020508@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On Wed, 2002-07-03 at 20:28, Manuel Krause wrote:
- 
-> So far the 13 prerelease works fine under rootflags boot and 
-> mount/remount option "data=ordered" on here.
+I am running SuSE 8 and the HD is being accessed every 5 seconds by 
+"something". I thought I would just do a quick check of the reiserfs but 
+on executing "reiserfsck --check --logfile check.log  /dev/hda7" this 
+produces the error message "/dev/hda7 is mounted w/ write permissions, 
+can not check it." I cannot find this message documented so am wondering 
+what it means, and what do I need to do in order to be able to check the 
+integrity of the reiserfs on my sytem. Can anyone please help?
 
-I think I've got the bug, it was newly introduced in -13.  New stuff
-will be uploaded today.
+Cheers.
 
-> 
-> Can you, please, answer my old questions as of:
-> 
-> On 06/25/2002 02:55 AM, Manuel Krause mainly wrote (but too much more):
-> 
->  > Is the rootflag needed any more? Does your patchset work with all
->  > pending ReiserFS patches together, now?
 
-Yes, you still need the rootflag.  I haven't tried to merge it with all
-the namesys pending patches, except for the journal relocation stuff and
-the commit_super speedups.
- 
-> 
-> Thanks,
-> 
-> I don't get a performance decrease with "13", and: Is it really 
-> dangerous to use "13" in this mode of operation?
 
-It is dangerous to use -13 at all, although the bug is pretty difficult
-to trigger.  Please run reiserfsck --check before upgrading.
-
--chris
 
 
