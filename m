@@ -1,34 +1,38 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: reiserfsck infinite loop at pass2 (built by Debian).
-Date: Fri, 18 Apr 2003 19:27:15 +0400
-Message-ID: <20030418192715.A10324@namesys.com>
-References: <200304181604.28955.vitaly@namesys.com> <200304181710.23731.Dieter.Nuetzel@hamburg.de> <20030418191144.A10228@namesys.com> <200304181726.28793.Dieter.Nuetzel@hamburg.de>
+From: Hans Reiser <reiser@namesys.com>
+Subject: plagiarism of reiserfs by Debian
+Date: Sat, 19 Apr 2003 20:07:03 +0400
+Message-ID: <3EA17427.7040300@namesys.com>
+References: <200304181604.28955.vitaly@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13712-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13716-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200304181726.28793.Dieter.Nuetzel@hamburg.de>
+In-Reply-To: <200304181604.28955.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
-Cc: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: reiserfs-list@namesys.com, debian-testing@lists.debian.org, Ed Boraas <ed@debian.org>, debian-devel@lists.debian.org
 
-Hello!
+Please explain your reasons for removing the credits and attributions 
+from the reiserfs utilities in violation of our copyright.
 
-On Fri, Apr 18, 2003 at 05:26:28PM +0200, Dieter N?tzel wrote:
+You'll note that ReiserFS anticipated the GNU GPL V3 by including 
+clauses that forbid removal of credits in its license, and for a long 
+time I have been telling Stallman that he needs to get V3 of the GPL out 
+the door.
 
-> > The quote below lists kernel messages that are printed during mount.
-> Yes, you are right.
-> But two (one useless) journal replay rounds.
-> Could this be avoided?
+By the way, does Debian support as a matter of principle the decrediting 
+of Stallman and KDE by RedHat?  I had really expected this from RedHat, 
+not Debian, when I wrote those clauses.
 
-It is avoided.
-if fsck replayed the journal, then kernel _checks_ the log,
-and found it is empty, then does nothing ;)
+In the academic world, this is called plagiarism.  In the academic 
+world, knowledge is shared but fairly credited.  The GPL is born of the 
+academic tradition.
 
-Bye,
-    Oleg
+-- 
+Hans
+
+
