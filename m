@@ -1,68 +1,66 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Re: search for mailing archive on geocrawler
-Date: Sat, 17 Aug 2002 03:03:46 +0200
-Message-ID: <3D5DA0F2.2000704@mb.tu-ilmenau.de>
-References: <200208152007.42370.degerrit@web.de> <20020815194425.GA21232@shuttle.mothership.home.dhs.org> <m3y9b7w0dx.fsf@merlin.emma.line.org> <200208162134.16057.vitaly@namesys.com> <00b001c24583$a9219d60$5701a8c0@bomoon>
+From: Robert Brockway <robert@timetraveller.org>
+Subject: Possible problem with Firewire device
+Date: Sat, 17 Aug 2002 11:28:59 +1000 (EST)
+Message-ID: <Pine.LNX.4.44.0208171042410.10279-100000@avon.timetraveller.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11215-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11216-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: bo <bo@sosnetwork.net>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-On 08/17/2002 02:18 AM, bo wrote:
-> Hello,
-> 
-> Could anyone give me a quick hand "How to search a
-> special topic or issue from the mailing archive on www.geocrawler.com"?
-> 
-> Under the www.geocrawler.com, there are LINUX, RAID, REISERFS
-> mailing archives, and then several thousands of email archive under each
-> one.
+Hi all.  I have an external HD casing with an ATA/Firewire bridge built
+in.  A 3.5" ATA66/100 drive is put in the casing and it connects to the
+box through firewire.
 
-You mean
-  http://www.geocrawler.com/lists/3/Linux/3455/0/
-?
+I've got a 15Gb ATA66 drive in the casing right now.
 
-:-(
+The whole drive is in a single partition.  I've been running ext2/3 on the
+drive for some months under a number of 2.4 kernels without issue.  I
+decided to convert it to Reiserfs the other day.
 
-> 
-> I could step through each email, but I want to search my issue or topic
-> quickly.
+I was able to mkreiserfs without error on the partition (which is mapped
+into the system as /dev/sda1).
 
-You're obviously right -- no usable search possible :-(
-IIRC, I was unlucky to use this archive when I followed the linux-usb 
-stuff some months ago. Quite unusable.
+I was then able to mount the drive as /backup.  No problem.
 
-The look and usability reminds me of the sourceforge.net project 
-listings and related mail archives some months ago. Some sites even are 
-not able to sort their topics alphabetically though having some hundreds 
-in one page...
+I then kicked off a backup job which grabs a tar file of my system,
+excluding /proc,/tmp and other areas that aren't to be backed up.  This is
+a home grown script I've been using for ages.
 
-> 
-> Of course, I could search it from www.google.com.
-> 
+The tar should have come out at about 7.5Gb (no compression).  The tar
+seemed to be fine until it got to about 382Mb.  At this point the tar
+stopped.  The process was still running but was not hitting the disk.  I
+left this for several minutes with no change.  The process didn't accept a
+SIGTERM or a SIGKILL.  Unable to umount the device in any way I then
+attempted a reboot.  The reboot command hung for several minutes and I
+eventually had to power cycle the box to recover.  On reboot /backup
+mounted fine and the tar file was still present.
 
+I immediately remade the filesystem as ext3 as this is actually a
+production box (handling mostly non-interactive jobs like mail I'm pleased
+to say).  I was then able to run my backup successfully onto the ext3 FS.
 
+Kernel version:	Modular Vanilla 2.4.19.
 
-Maybe you want to try
-  http://marc.theaimsgroup.com/?l=reiserfs&r=1&w=4
-instead and go to the date section directly or test the search function 
-on the top of the page. I just did it with the topic "data-logging" and 
-it worked. I didn't go in depth (if it even searches mail bodies) for now.
+Reiserfsprogs:	3.x.1b
 
-I have another ReiserFS mailing list archive in my bookmarks:
-  http://lists.omnipotent.net/reiserfs/
-but it is not up at the moment (read http://lists.omnipotent.net/ ) so I 
-can't say if the search function [exists,works].
+The Reiserfs on the root filesystem was built under Debian's 2.4bf kernel
+as part of a Debian 3.0r0 install recently and works perfectly.
 
+Due to the nature of the system I was not able to experiment extensively
+but do have the opportunity to take the system down later to test this a
+bit better if needed (right after taking a backup :)
 
-Best wishes,
+If any further info is required I'm happy to supply it.
 
-Manuel
+Rob
+
+-- Robert Brockway B.Sc. email: robert@timetraveller.org  ICQ: 104781119
+   Linux counter project ID #16440 (http://counter.li.org)
+   "The earth is but one country and mankind its citizens" -Baha'u'llah
 
