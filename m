@@ -1,48 +1,34 @@
-From: Linus Torvalds <torvalds@osdl.org>
+From: mitya@school.ioffe.ru (Dmitry Baryshkov)
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 13:47:37 -0700 (PDT)
-Message-ID: <Pine.LNX.4.58.0408261344150.2304@ppc970.osdl.org>
-References: <Pine.LNX.4.44.0408261356330.27909-100000@chimarrao.boston.redhat.com>
- <200408262128.41326.vda@port.imtp.ilyichevsk.odessa.ua>
- <Pine.LNX.4.58.0408261132150.2304@ppc970.osdl.org>
- <20040826191323.GY21964@parcelfarce.linux.theplanet.co.uk>
- <20040826203228.GZ21964@parcelfarce.linux.theplanet.co.uk>
+Date: Fri, 27 Aug 2004 00:49:29 +0400
+Message-ID: <20040826204929.GA15329@school.ioffe.ru>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com> <20040826014542.4bfe7cc3.akpm@osdl.org> <412DAC59.4010508@namesys.com> <1093548414.5678.74.camel@krustophenia.net> <20040826203017.GA14361@school.ioffe.ru> <1093552692.13881.43.camel@leto.cs.pocnet.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20798-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20799-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826203228.GZ21964@parcelfarce.linux.theplanet.co.uk>
+Content-Disposition: inline
+In-Reply-To: <1093552692.13881.43.camel@leto.cs.pocnet.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: viro@parcelfarce.linux.theplanet.co.uk
-Cc: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Diego Calleja <diegocg@teleline.es>, jamie@shareable.org, christophe@saout.de, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Christophe Saout <christophe@saout.de>
+Cc: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-
-
-On Thu, 26 Aug 2004 viro@parcelfarce.linux.theplanet.co.uk wrote:
+Hello,
+On Thu, Aug 26, 2004 at 10:38:12PM +0200, Christophe Saout wrote:
 > 
-> Argh...  OK, now I remember why I went for -EBUSY for unlink() (we obviously
-> are not bound by SuS on that one).  Consider the following scenario:
-> 	* local file foo got something else bound on it for a while
-> 	* we are tight on space - time to clean up
-> 	* oh, look - contents of foo is junk
-> 	* rm foo
-> 	* ... oh, fuck, there goes the underlying file.
+> No. You can change the format the reiser4 storage tree is stored in. As
+> long as other filesystems don't use the same underlying storage tree
+> this is not possible.
+> 
 
-Hey, that's a valid reason for doing -EBUSY for normal bind-mounts, but it
-actually _is_ what we want for an "implied-by-way-of-container-mount". 
-After all, when you do a "rm foo", you do mean "remove the container foo".
+Thank you for clarification. As I wrote, it's too good to be true.
 
-I replied to your earlier off-list mail in private, so let's re-iterate
-for the list: the easiest way to handle this is to just have a "mount
-option", and have "MNT_ALLOWUNLINK" that gets set for containers, and that
-users could possibly choose to set for regular mounts too (as a mount
-option) if they really want to (and if we want them to).
+-- 
+With best wishes
+Dmitry Baryshkov
 
-So there's no reason we'd have to drop existing mount behaviour only 
-because we also have special files that look like mountpoints. 
 
-		Linus
