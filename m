@@ -1,45 +1,47 @@
-From: Jim Miller <jimm@simutronics.com>
-Subject: Need Warm Fuzzies, ReiserFS (3)
-Date: Sun, 19 Dec 2004 23:41:41 -0600
-Message-ID: <41C66615.5010206@simutronics.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: status of reiser4
+Date: Mon, 20 Dec 2004 07:48:28 +0200
+Message-ID: <20041220054828.GS26192@nysv.org>
+References: <41C322ED.4000807@namesys.com> <1103309648.8570.28.camel@localhost>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22842-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22843-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <1103309648.8570.28.camel@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jake Maciejewski <maciejej@msoe.edu>
+Cc: Hans Reiser <reiser@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Hi everyone,
+On Fri, Dec 17, 2004 at 12:54:08PM -0600, Jake Maciejewski wrote:
+>Have there been any reports other than Isaac's of reiser4 working on
+>AMD64? It still doesn't work for me, and I'd like to know if I'm the
+>only one having problems.
 
-I have recently been burned by the XFS file system -- After a recent 
-system crash/hang we experienced a lot of file corruption and needed to 
-restore from a backup that was ~12hrs old.  It seems that XFS keeps a 
-lot of journal info in memory and a sudden system crash (hang) prevents 
-it from writing out the journal. 
+I recently purchased an AMD64 setup.
+Here's the catch; I did so because my old box went belly-up and now
+it seems the GFX card is broken (The box shut itself down and doesn't
+boot if the GFX card has its extra power cable connected, regardless
+of the amount of other hardware. I hate hardware.)
 
-We run a few game servers that have a large number of large and small 
-files that are actively accessed (and restoring from a backup 12hrs old 
-made a lot of our gamers very unhappy).  We were running EXT3 (which in 
-the past recovered nicely from hangs/crashes) but performance was so bad 
-we needed a new FS so 6mos ago a decision was made to go with XFS. 
-I would like to switch to ReiserFS (v3) (I understand Reiser4 isn't 
-quite ready for production use) and was hoping to get the warm fuzzies 
-about making this decision.  I know it's much faster than ext3 but at 
-this point I need to feel good about it's ability to recover from a 
-sudden system hang/crash/reset.
+Anyway, due to severe space limitations, I couldn't back my home up
+so I'm hoping it'll work long enough for me to wiggle some stuff
+somewhere else.
 
+My plan for testing is to use Reiser4 in (at least) an x86 chroot,
+which should hit amd64 bugs nonetheless, because the only difference
+is how the software is compiled, yes?
 
-Thanks,
-Jim
+Anything specific I should look out for? Nothing I have in my home
+directory is _that_ critical for me to get out _now_, but I would
+like to get it some day :>
 
+Thanks guys!
 
-
-
-
-
-
+-- 
+mjt
 
