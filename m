@@ -1,34 +1,44 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 16:53:51 -0700
-Message-ID: <412E780F.7000009@namesys.com>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>	 <20040825200859.GA16345@lst.de> <20040825201929.GA16855@lst.de>	 <412DA25E.9090405@namesys.com> <1093527487.21878.270.camel@watt.suse.com>
+Date: Thu, 26 Aug 2004 16:54:09 -0700
+Message-ID: <412E7821.7020100@namesys.com>
+References: <Pine.LNX.4.44.0408260935130.26316-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20850-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20851-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1093527487.21878.270.camel@watt.suse.com>
+In-Reply-To: <Pine.LNX.4.44.0408260935130.26316-100000@chimarrao.boston.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Rik van Riel <riel@redhat.com>
+Cc: Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Chris Mason wrote:
+Rik van Riel wrote:
 
->
->
->If the early linux filesystems had taken the same attitude you have
->(don't write new filesystems, only write plugins), there would be no
->framework allowing the wealth of filesystems we do have, including
->reiser4.
+>On Thu, 26 Aug 2004, Andrew Morton wrote:
 >
 >  
 >
-Au contraire, with my approach, there would be 10x as many filesystems, 
-because people would be easily able to mix-and-match different methods 
-and plugins from different filesystems together, and if you wanted the 
-MySQL semantics, you would mount mysql, and if you wanted the zope 
-semantics you would mount zope.
+>>All of which can be handled in userspace library code.
+>>
+>>What compelling reason is there for doing this in the kernel?
+>>    
+>>
+>
+>There's a compelling reason to do it in userspace.  If an
+>unaware program copies or moves such a file with streams
+>inside, it doesn't break the streams and aware programs will
+>continue to see them.
+>
+>OTOH, if we had the streams in the kernel, unaware applications
+>would continuously break the metadata and streams that the
+>streams aware programs expect !
+>
+>  
+>
+Well, first off, you don't want streams in the kernel, you want all the 
+little pieces that can be composed together into a stream if you so 
+choose.  Streams are ugly, the pieces are all cool.
