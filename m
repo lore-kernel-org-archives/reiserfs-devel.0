@@ -1,33 +1,39 @@
-From: Jan Engelhardt <jengelh@linux01.gwdg.de>
-Subject: Re: =?ISO-8859-1?B?oDIuNi45LW1tMQ==?=
-Date: Sat, 23 Oct 2004 21:49:12 +0200 (MEST)
-Message-ID: <Pine.LNX.4.53.0410232148150.22622@yvahk01.tjqt.qr>
-References: <20041022032039.730eb226.akpm@osdl.org> <4179425A.3080903@namesys.com>
- <1078.217.232.234.250.1098558101.squirrel@florka.hu> <20041023123957.35cfc389.akpm@osdl.org>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re:  2.6.9-mm1
+Date: Sat, 23 Oct 2004 13:28:50 -0700
+Message-ID: <417ABF02.4030705@namesys.com>
+References: <20041022032039.730eb226.akpm@osdl.org>    <4179425A.3080903@namesys.com> <1078.217.232.234.250.1098558101.squirrel@florka.hu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-22143-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-22145-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20041023123957.35cfc389.akpm@osdl.org>
+In-Reply-To: <1078.217.232.234.250.1098558101.squirrel@florka.hu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="iso-8859-1"
-To: Andrew Morton <akpm@osdl.org>
-Cc: marcel@hilzinger.hu, reiser@namesys.com, linux-kernel@vger.kernel.org, reiserfs-dev@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: marcel@hilzinger.hu
+Cc: Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, Reiserfs developers mail-list <reiserfs-dev@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
->> SuSE Linux 9.2 will contain reiser4
+Hilzinger Marcel wrote:
+
 >
->hm.  Nobody ever tells me anything.  Does that mean that
->SuSE are using 8k stacks?
+>Too late, perhaps... SuSE Linux 9.2 will contain reiser4 (at least the
+>beta testversions did). It cannot be set up via YaST during installation,
+>  
+>
+which makes its user base pretty small. 9.3 is where we will probably 
+get a lot of users. Probably more bugs will get found by the SuSE QA 
+team in the next few weeks though, and that should help us.
 
-Yes, the defconfig does not have 4K stacks enabled.
-(And I stick to that when I use the kernel-source.i586.rpm)
+The one I am wanting to precede regarding shipping is Lindows where we 
+will be the default. Reiser4 is pretty stable now, but if we got into 
+the kernel now we'd have a few weeks of bug finding before they ship, 
+and I just bet there will be a few bugs found as a result (not frequent 
+ones, but....) that several of their users would be happy to not hit. 
+The official kernel has the advantage of a far faster test and fix time 
+cycle than a distro, and has more sophisticated users. The reason for 
+features going into distros first is not technical, and sad.
 
-
-
-Jan Engelhardt
---=20
-Gesellschaft f=FCr Wissenschaftliche Datenverarbeitung
-Am Fassberg, 37077 G=F6ttingen, www.gwdg.de
+Hans
