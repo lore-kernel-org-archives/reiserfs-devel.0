@@ -1,26 +1,68 @@
-From: David Garamond <davegaramond@icqmail.com>
-Subject: transaction and atomicity
-Date: Sat, 04 May 2002 04:21:42 +0700
-Message-ID: <3CD2FF66.50100@icqmail.com>
+From: Chris Mason <mason@suse.com>
+Subject: RE: fsync() Performance Issue
+Date: 03 May 2002 18:00:05 -0400
+Message-ID: <1020463205.3946.252.camel@tiny>
+References: <93F527C91A6ED411AFE10050040665D0049BF9B4@corpusmx1.us.dg.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10227-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10228-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <93F527C91A6ED411AFE10050040665D0049BF9B4@corpusmx1.us.dg.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: berthiaume_wayne@emc.com
+Cc: reiserfs-list@namesys.com, green@namesys.com
 
-since reiserfs is a transactional filesystem, i wonder whether it 
-exposes a "transaction api". or if not, can i somehow control write 
-caching to make several filesystem modification operations committed to 
-disk as a single group? [or will this be tackled in one of reiserfs 
-version 4?]
+On Fri, 2002-05-03 at 16:35, berthiaume_wayne@emc.com wrote:
+> 	Chris, I have some quick preliminary results for you. I have
+> additional testing to perform and haven't run debugreiserfs() yet. If you
+> have a preference for which tests to run debugreiserfs() let me know.
+> 	Base testing was done against 2.4.13 built on RH 7.1 using the
+> test_writes.c code I forwarded to you. The system is a Tyan with single
+> PIII, IDE Promise 20269, Maxtor 160GB drive - write cache disabled. All
+> numbers are with fsync() and 1KB files. As I said, more testing, i.e.
+> filesizes, need to be performed.
 
-if any of the above is not possible, is there a way to do filesystem 
-operations grouping so they become more reliable (all-or-nothing)?
+> 2.4.19-pre7 speedup, data logging, write barrier / no options
+> 	=> 47.1ms/file
 
---
-dave
+Hi Wayne, thanks for sending these along.
+
+I expected a slight improvement over the 2.4.13 code even with the data
+logging turned off.  I'm curious to see how it does with the IDE cache
+turned on.  With scsi, I see 10-15% better without any options than an
+unpatched kernel.
+
+> 2.4.19-pre7 speedup, data logging, write barrier / data=journal
+> 	=> 25.2ms/file
+> 2.4.19-pre7 speedup, data logging, write barrier / data=journal,barrier=none
+> 	=> 27.8ms/file
+
+The barrier option doesn't make much difference because the write cache
+is off.  With write cache on, the barrier code should allow you to be
+faster than with the caching off, but without risking the data (Jens and
+I are working on final fsync safety issues though).
+
+Hans, data=journal turns on the data journaling.  The data journaling
+patches also include optimizations to write metadata back to disk in
+bigger chunks for tiny transactions (the current method is to write one
+transaction's worth back, when a transaction has 3 blocks, this is
+pretty slow).
+
+I've put these patches up on:
+
+ftp.suse.com/pub/people/mason/patches/data-logging
+
+> 	One question is will these patches be going into the 2.4 tree and
+> when?
+
+The data logging patches are a huge change, but the good news is they
+are based on the nesting patches that have been stable for a long time
+in the quota code.  I'll probably want a month or more of heavy testing
+before I think about submitting them.
+
+-chris
+
 
