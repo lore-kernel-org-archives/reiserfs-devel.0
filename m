@@ -1,69 +1,48 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: viewprinting processes and process oriented permissions got funded by DARPA
-Date: Thu, 15 Apr 2004 15:52:51 +0400
-Message-ID: <16510.30611.752735.235549@laputa.namesys.com>
-References: <407C304F.4080804@namesys.com>
-	<m31xmrefug.fsf@averell.firstfloor.org>
-	<407C930D.5010407@namesys.com>
-	<20040414022248.GA92870@colin2.muc.de>
-	<20040414113741.GB15922@alias.nmd.msu.ru>
-	<20040414125340.GA7737@colin2.muc.de>
-	<20040414150052.GB19430@alias.nmd.msu.ru>
-	<20040414152804.GA2180@colin2.muc.de>
-	<20040414155342.GC19430@alias.nmd.msu.ru>
+From: "Fabiano Reis" <fsilos@ig.com>
+Subject: reiser limits
+Date: Thu, 15 Apr 2004 09:10:20 -0300
+Message-ID: <001d01c422e2$9f7e14d0$3f32a8c0@ds.ig.com.br>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17960-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_001A_01C422C9.7A219A90"
+Return-path: <reiserfs-list-return-17961-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040414155342.GC19430@alias.nmd.msu.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: flx@msu.ru
-Cc: Andi Kleen <ak@muc.de>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Alexander Lyamin writes:
- > Wed, Apr 14, 2004 at 05:28:04PM +0200, Andi Kleen wrote:
- > > > than if its that comfy, i'm just stupid that i dont use it in my day-to-day life.
- > > 
- > > Possible. It depends on what you're doing day-to-day.
- > > 
- > > > and i'll tell you what - there's a lots of distro's (even hatted ones) that may benefit
- > > > from that feature but dont using it.
- > > > 
- > > > people are so inert sometimes.
- > > > got me ? ;)
- > > 
- > > No, not really. 
- > > 
- > > You're saying it's useless because it is not widely used yet?
- > > 
- > > The per process name spaces seem to be not widely used yet, but some 
- > > of the other features of the namespace architecture are (like --bind 
- > > mounts). That's probably because the feature only appeared in 2.6
- > > and is still to new. --bind also took some time to catch on after
- > > it appeared in 2.4. 
- > > 
- > > Anyways I will shut up on this now and not disturb you further in your
- > > quest of reinventing the wheel.
- > 
- > thanks.
- > actually its a quest for holy grail.
+------=_NextPart_000_001A_01C422C9.7A219A90
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-It's always tempting to point new-fangled Knights of the Round Table to
-the fact that historic prototype of their master (King Arthur, that is)
-was Atilla the Hun---a man who murdered millions of people and almost
-reduced civilization in the West Eurasia to the dust.
+Hi list,
 
-An identification of inevitable Aetius (because history in its infinite
-wisdom always keeps somebody to meet barbarians with mighty encounter)
-is left as an exercise to the curious reader.
+Someone knows how many directory can I create inside a single directory?
 
- > 
- > -- 
- > "the liberation loophole will make it clear.."
- > lex lyamin
+Fabiano
+------=_NextPart_000_001A_01C422C9.7A219A90
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-Nikita.
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; =
+charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2800.1226" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2>Hi list,</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>Someone knows how many directory can I =
+create=20
+inside a single directory?</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>Fabiano</FONT></DIV></BODY></HTML>
+
+------=_NextPart_000_001A_01C422C9.7A219A90--
+
