@@ -1,76 +1,67 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: Reserved Blocks
-Date: Mon, 16 Sep 2002 10:50:53 -0400
-Message-ID: <200209161450.g8GEorM4003750@turing-police.cc.vt.edu>
-References: <20020916102742.6538D2926@hofmann.snowcra.sh>
+From: Russell Coker <bofh@coker.com.au>
+Subject: Fwd: Re: [reiserfs-list] Reserved Blocks
+Date: Mon, 16 Sep 2002 17:29:19 +0200
+Message-ID: <200209161729.19198.bofh@coker.com.au>
+Reply-To: Russell Coker <bofh@coker.com.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-1925021114P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11473-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11474-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Mon, 16 Sep 2002 11:27:42 BST."
-             <20020916102742.6538D2926@hofmann.snowcra.sh> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Sam Vilain <sam@vilain.net>
-Cc: 'reiserfs-list' <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS <reiserfs-list@namesys.com>
 
---==_Exmh_-1925021114P
-Content-Type: text/plain; charset=us-ascii
+BTW  Can someone please configure the mailing list to allow postings from my 
+regular email address?
 
-On Mon, 16 Sep 2002 11:27:42 BST, Sam Vilain <sam@vilain.net>  said:
-> How can I reserve space on a filesystem for the superuser?  There
-> doesn't seem to be an option to mkreiserfs or reiserfstune for it.
-> 
-> Is this essential UNIX filesystem feature implemented?
+----------  Forwarded Message  ----------
 
-"essential feature"?  Hardly.
+Subject: Re: [reiserfs-list] Reserved Blocks
+Date: Mon, 16 Sep 2002 17:13:52 +0200
+From: Russell Coker <russell@coker.com.au>
+To: Valdis.Kletnieks@vt.edu, Sam Vilain <sam@vilain.net>
+Cc: "'reiserfs-list'" <reiserfs-list@namesys.com>
 
-The *ORIGINAL* reason for the Berkeley FFS doing the "10% reserve"
-was to work around the fact that the original FFS code had severe fragmentation
-issues if the filesystem ran over 90% full (but at under 90%, there were
-enough free blocks usually available to not fragment TOO badly - the "knee"
-in the performance curve seems to have been around 92-94% full).  As such,
-this shouldn't be at all required for a modern filesystem, as it should be
-hardened against fragmentation to start with.
+On Mon, 16 Sep 2002 16:50, Valdis.Kletnieks@vt.edu wrote:
+> If you're worried about security enough to not want users doing a
+> denial-of-service attack by filling the disk, then DON'T HAVE a
+> world-writable directory on a partition that will cause trouble if it gets
+> full.
 
-A lot of sites have started abusing the "10% reserve" feature in order to
-protect themselves from people hosing things up by filling the disk - these
-are usually boxes that have "one big / filesystem" for everything.  I
-suggest that this is a *BAD* practice, and that the *proper* protection
-here is to have separate /, /usr, /var, /tmp and /home file systems.
+Alternately use quotas, speaking of which, do Quotas work on ReiserFS without
+additional patches yet?  Quotas really are an essential feature.
 
-If you're worried about security enough to not want users doing a
-denial-of-service attack by filling the disk, then DON'T HAVE a world-writable
-directory on a partition that will cause trouble if it gets full.
+> Among other things, if there's a world-writable directory on the same
+> filesystem, you get exposed to a whole raft of hard-link attacks that
+> simply Wont Work if (for example) /tmp is a separate filesystem.  You'd
 
-Among other things, if there's a world-writable directory on the same
-filesystem, you get exposed to a whole raft of hard-link attacks that
-simply Wont Work if (for example) /tmp is a separate filesystem.  You'd
-be amazed how many tools would fail in interesting ways if you were able to
-do 'ln /etc/passwd /tmp/totally-foobar' because they expect exactly one link
-to the /etc/passwd inode.  And if you thought the average symlink attack was
-bad, a hardlink is worse - root can stat() the temp file and say "Oh, it's OK,
-I own it" and proceed to do Something Very Dumb...
--- 
-				Valdis Kletnieks
-				Computer Systems Senior Engineer
-				Virginia Tech
+Solar Designer's OpenWall kernel patch addresses this issue by prohibiting
+hard links to files with a different UID being created in a directory that
+has the sticky bit set.  http://www.openwall.com/linux/
+
+OpenWall is ported to the recent 2.4.x kernels and some 2.5.x kernels in the
+form of the Linux Security Modules (LSM) kernel patch.
+http://lsm.immunix.org/
+
+Also the LSM patch includes NSA Security enhanced Linux.  In the default SE
+Linux policy a user in the default un-priviledged role (user_r) with the
+defalt security domain for that role (user_t) will not be allowed to even
+stat /etc/shadow or other files with the type shadow_t, and will not be
+allowed to link files with type etc_t (which includes /etc/passwd).
+
+A machine with an adequate security setup and with correctly configured
+ quotas should be able to operate correctly with hostile local users even if
+ it only has a single file system.
+
+If anyone disagrees then I will be happy to setup a test machine and
+ challenge them to prove me wrong.
 
 
---==_Exmh_-1925021114P
-Content-Type: application/pgp-signature
+Russell Coker
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.7 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
 
-iD8DBQE9he/NcC3lWbTT17ARAjITAKDcrvbFeI5h6reXUBULB4XV+/uD4wCeLqZa
-wQBxUI+Zc3iZroY4QonOEG0=
-=8H+c
------END PGP SIGNATURE-----
+PS  SE Linux is why I haven't done much Bonnie++ work for ages...
 
---==_Exmh_-1925021114P--
