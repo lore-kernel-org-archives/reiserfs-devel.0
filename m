@@ -1,98 +1,103 @@
-From: =?ISO-8859-1?Q?J=FCrgen_Botz?= <jurgen@botz.org>
+From: Bennett Todd <bet@rahul.net>
 Subject: Re: software packaging and ReiserFS v4
-Date: Wed, 03 Sep 2003 14:18:07 -0700
-Message-ID: <3F565A8F.4010209@botz.org>
-References: <20030903165409.GD4714@rahul.net>
+Date: Wed, 3 Sep 2003 17:37:42 -0400
+Message-ID: <20030903213742.GA13146@rahul.net>
+References: <20030903165409.GD4714@rahul.net> <3F565A8F.4010209@botz.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-15535-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
+Return-path: <reiserfs-list-return-15536-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030903165409.GD4714@rahul.net>
+Content-Disposition: inline
+In-Reply-To: <3F565A8F.4010209@botz.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Bennett Todd <bet@rahul.net>
+To: J?rgen Botz <jurgen@botz.org>
 Cc: reiserfs-list@namesys.com
 
-Bennett Todd wrote:
-> As I've gotten deeper into the project, I've had my nose rubbed in
-> the fact that rpm is the accumulating cruft heart; it's the worst.
+--SUOF0GtieIMvvwua
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Amen.  It's so bad that RH can't even fix it anymore... It took
-them the better part of a year to fix the widely reported hanging
-bug that appeared in RH 8.0.
-
-> Then I started thinking about the database that a good software
-> packging tool needs to maintain. After a bit, it hit me that
-> ReiserFS 4 would be _killer_!
-
-Uh-huh.  I've been dreaming about something like this for 10 years,
-even since I first played around with the Prospero file system.
-In its implementation Prospero fell short of its promise, but it
-demonstrated the revolutionary idea that closure enabled complete
-customization of namespaces in a file system.
-
-> With ReiserFS v4 its as natural as can be; a file /usr/bin/foo,
-> installed by a package foo, would simply have a symlink
+2003-09-03T17:18:07 J?rgen Botz:
+> >With ReiserFS v4 its as natural as can be; a file /usr/bin/foo,
+> >installed by a package foo, would simply have a symlink
+> >
+> >	/usr/bin/foo/pkg -> /var/lib/pkg/foo
+> >
+> >Besides scaling elegantly and staying wonderfully simple, this has
+> >the additional otherwise-impossible feature that the package
+> >attribution automatically correctly updates if you move the file
+> >(although the forward mappings within /var/lib/pkg/foo wouldn't
+> >update automagically).
 >=20
-> 	/usr/bin/foo/pkg -> /var/lib/pkg/foo
->=20
-> Besides scaling elegantly and staying wonderfully simple, this has
-> the additional otherwise-impossible feature that the package
-> attribution automatically correctly updates if you move the file
-> (although the forward mappings within /var/lib/pkg/foo wouldn't
-> update automagically).
+> They could, with the right plug-in.
 
-They could, with the right plug-in.  Without such a plug-in I don't
-see why you need reiser4 for this... in fact, this kind of scheme
-has already been implemented in some older package managers.  There
-are several LISA papers talking about this kind of thing since
-the early 90s.  In particular the CMU "depot" system comes to mind.
+A plug-in to reach in and edit the forward references in the package
+database misses my vision of "simple"; I think I'd rather live
+without it (after all, we do now) than live with it.
 
-But take this idea further.... in my ideal system there is no /usr.
-/usr is just a historical artifact, anyway.
+> Without such a plug-in I don't see why you need reiser4 for
+> this... [...]
 
-Nor is there a $HOME.  Depending on your point of view (more about
-that below) there is only /, /bin, /lib, /etc, and maybe /man or
-/doc, plus any directories you create.  Your files go into /.  Or
-at least that's what you think...
+I'd have an executable, /usr/bin/wc, installed by the
+textutils-2.0.21-5 package, and its reverse link would be
 
-In /bin are the programs you use.  There are all the standard Unix
-utils, of course, but if you're an emacs user there's /bin/emacs, and
-if you're a vi user there's /bin/vi.  That's for you as a user... for
-root all commands that are installed in the system are in /bin.  If
-you become a heretic ;-) and convert from emacs to vi, you just use
-a UI that lets you deselect the emacs package from being included in
-your namespace and select the vi package.
+	/usr/bin/wc/pkg -> /var/lib/pkg/textutils-2.0.21-5
 
-The key to this are what we might call "perspectives".  Every user
-has their own perspective, or maybe more than one that they can
-chose between.  There's also a special perspective that
-shows every package in its own hierarchy, i.e.
-/pkg/emacs/20.1/{bin,lib,man}.  This perspective is your "package
-manager" if you will.  In addition every execution context
-has its own perspective... when emacs runs it always sees itself and
-all its files as "/pkg/emacs/20.1/...".  This is closure, and
-it guarantees that every reference can always be resolved.  It once
-and for all solves the "hardcoded path" problem.  It also resolves
-name collision problems, multiple installed package version problems,
-etc., etc.
+How would you do that without Reiser4's ability to pun the same
+pathname as both a file and an associated directory?
 
-Reiser4 as it is today can't do this yet.  But it provides the
-infrastructure on which such a system (and others) can be built.
+> in fact, this kind of scheme has already been implemented
+> in some older package managers.  There are several LISA papers
+> talking about this kind of thing since the early 90s.  In
+> particular the CMU "depot" system comes to mind.
 
-I have learned that very few people actually understand the importance
-and power of flexible namespaces, never mind closure in namespaces.
-Fortunately Hans Reiser does, and since his wonderful filesystem has
-other benefits is being adopted in spite of people's ignorance of
-its far-ranging implications!  ;-)
+A different vision; I prefer for my /usr/bin/wc to be a real file,
+not a symlink to /usr/depot/textutils-2.0.21-5/bin/wc or whatever.
+Different people, different tastes:-).
 
-:j
+> But take this idea further.... in my ideal system there is no /usr.
+> /usr is just a historical artifact, anyway.
 
---
-J=FCrgen Botz               | While differing widely in the various
-jurgen@botz.org           | little bits we know, in our infinite
-                           | ignorance we are all equal. -Karl Popper
+It serves some pragmatic roles; distinguishing the minimum needed to
+get booted up (/bin, /sbin, ...) from the stuff that's only needed
+multiuser (/usr/bin, ...) is sometimes helpful. And a small,
+rarely-accessed, readonly / is less prone to damage.
 
+> Nor is there a $HOME.  Depending on your point of view (more
+> about that below) there is only /, /bin, [...] The key to this
+> are what we might call "perspectives".  Every user has their own
+> perspective, or maybe more than one that they can chose between.
+> [...]
+
+I _think_ this was big in Plan 9, if I'm not mistaken.
+
+Different folks are game for different things.
+
+I'm rebellious enough to be fantasizing a nice simple software
+package manager that can easily allow an rpm user to say "bpm"
+instead and have all the same commands work --- or have all but a
+couple of them trivially implementable using normal native system
+commands for that matter --- by taking advantage of Reiserfs 4's
+open-ended attributes dir stuff. But I'm not so sublime about
+completely abandoning the Filesystem Heirarchy Standard.
+
+-Bennett
+
+--SUOF0GtieIMvvwua
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
+
+iD8DBQE/Vl8lHZWg9mCTffwRAiNMAJ4p2GiZFa1HMCakHpGQELsVMPpQ8wCeIIsm
+YJhcc5aspnVBS4pypoZnifc=
+=Uuav
+-----END PGP SIGNATURE-----
+
+--SUOF0GtieIMvvwua--
