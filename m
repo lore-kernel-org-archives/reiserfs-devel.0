@@ -1,43 +1,43 @@
-From: Todd Lyons <todd@mrball.net>
-Subject: Re: Error messages.
-Date: Thu, 6 Mar 2003 21:50:10 -0800
-Message-ID: <20030307055010.GI31821@mrball.net>
-References: <93F527C91A6ED411AFE10050040665D0049C0799@CORPUSMX1> <17280449343.20030305222118@tnonline.net> <20030306065807.GQ7208@mrball.net> <16120863312.20030306093452@tnonline.net> <14119550703.20030306183345@tnonline.net>
+From: Soeren Sonnenburg <reiserfs@nn7.de>
+Subject: Re: free space seems wrong...
+Date: 07 Mar 2003 16:52:05 +0100
+Message-ID: <1047052325.23752.70.camel@calculon>
+References: <1046886804.23752.25.camel@calculon>
+	 <20030306094705.A5417@namesys.com> <1046952022.23752.55.camel@calculon>
+	 <200303061523.14590.vitaly@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13138-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13140-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <14119550703.20030306183345@tnonline.net>
+In-Reply-To: <200303061523.14590.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; x-action="pgp-signed"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Thu, 2003-03-06 at 13:23, Vitaly Fertman wrote:
+> Hi, 
+> 
+> > do):Yes reiserfs_open_journal: journal parameters from super block does not
+> > match to journal parameters from journal.
+> >
+> > Either make journal partition available or use --no-journal-available
+> > If you have the standard journal or if your partition is available
+> > and you specified it correctly, you must run rebuild-sb.
+> 
+> There is a new check for journal parameters were added which helps to recover
+> fs with relocated journal and in a few other cases. These parameters were not
+> stored correctly in old kernels before relocated journal appeared. This is 
+> nothing to worry about, and you can fix if you run fsck --rebuild-sb and
+> say there to fix parameters in the jouranl by ones from the super block.
 
-Anders Widman wanted us to know:
+Ok. So I ran reiserfsck --rebuild-sb first and later with --check and
+than --rebuild-tree... It connected very few files to lost+found and
+finished within 1hr (its a ~3 year old 300G raid) - good job guys !
 
->Have now tried without ACPI,APIC and APM. Still crashes.... :(
->Will fiddle more with this in the weekend.
+Thanks a lot,
+Soeren.
 
-Get the absolute latest Cooker kernel.  For what it's worth, I've heard
-that RedHat's kernels work well with the PDC chipsets, so you might try
-with their latest from their Beta as well.
-- -- 
-Blue skies...		Todd
-| Get a bigger hammer!   |  Are you feeling lucky...punk?         |
-| http://www.mrball.net  |  I've had better days...               |
-| http://faq.mrball.net  |  It's the end of the world as we know i|
-Linux kernel 2.4.19-24mdk   load average: 0.00, 0.04, 0.00
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.0.7 (GNU/Linux)
-Comment: http://www.mrball.net/todd.asc
-
-iD8DBQE+aDMSIBT1264ScBURAjDSAJ4zrTIW67XJPkjL0jn8fwew1HCERgCeJq2R
-+pV0MM+C8F1mbI9Hkdafw8A=
-=QjxQ
------END PGP SIGNATURE-----
