@@ -1,28 +1,53 @@
-From: Vince <fuzzy77@free.fr>
-Subject: Re: can't find a reiserfs file ssytem! 3
-Date: Wed, 17 Mar 2004 15:38:52 +0100
-Message-ID: <405862FC.2010002@free.fr>
-References: <20040317142636.9FA2F23979@ws5-3.us4.outblaze.com>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: ReConfigurable Directory Structure & Agrregation of files according
+ to semantic.
+Date: Wed, 17 Mar 2004 08:47:29 -0600
+Message-ID: <40586501.1070005@slaphack.com>
+References: <94121091767-BeMail@cr593174-a>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17272-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17273-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040317142636.9FA2F23979@ws5-3.us4.outblaze.com>
+In-Reply-To: <94121091767-BeMail@cr593174-a>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: mite pascoff <ttl@linuxmail.org>
-Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-mite pascoff wrote:
->>You have to get full copy of problem partition. Can you try to copy it
->>to device like (/dev/hda6), not to regular file?
->>
-> 
-> NO the problem is that a have a laptop and tha harddrive is 20GB - 5GB for / and 15GB for /home ... I dont have a 15GB partition on which I can copy the entire problem partition ... I have only network and a pc with 80GB harddrive which I can use ... so I can only mount a directory or partition through the network and use it as free space ...
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-You can also use netcat to transfer an image of your partition to your 
-desktop computer...
+Alexander G. M. Smith wrote:
+...
+| I (and others) think it would be better for this to be done at the file
+| system level.  That way you can leverage all sorts of other utilities and
 
+
+What about a reiser4 plugin?
+What about a plugin that is mostly in userspace?
+Even a generic reiser4 kernel plugin that allows userspace plugins to be
+written?
+
+I suggest v4 because you can start right now.  Maybe v6 would be better,
+but at this rate, you'll be lucky to get a stable v4 by the time you're
+done your project.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iQIVAwUBQFhlAXgHNmZLgCUhAQJFQQ//VKa0yoqu+WXEKynR/KsNZv+pGNDrKvUh
+6uVewiftyE7wJIyhmqwOSwsfcNb9LjaV5TPt7h1bzw7g+dZyktIZIOM7564Zeb/V
+ETbiE+S43lnprDxfGMUcrhp+n26mej48Onz5MOJI+Nb7JtJ6HkWs14lXfjNuyxg3
+1arbX8PkH/igXknzMYvl4ghp6nrpyVf33kDSHjvq9jSA64Pott17Z1b1p0uUzUG/
+WSXaqsosXATAR/mgfPP780693y9oxjIovWs0XBvOXhjDmpNWt3H829yFwfH+h4EO
+23gj9kd3xmdXJiVSKpFwvZSVxm2wMDcMON92t0klTSthPB3E8t/f6lI/ndDhC1a0
+xySmAwS52Mi1vhE+9Dc3w9vX90de/vUzHQoXhbVXDHtytP96VhumF9kco5QfqPPL
+jLwa7k2ZcQS8maP4pUaYgtAdI8dOqNNyBxeEpTzzJ0WWBM1xa9OaeT+FOW1yQofj
+2bO+ax+Mx+mXCw6RCWU2SvEGwjxLV1Rb+zcY+dx8E4cULw8K+PglOcaPFQKlW8CR
+w7vvY8aXp/cTwQjLiNQPzzerudQtB4hLvMosmofisRr+95oiX6hLfdchQAWQung4
+Ol9d9SJFZXnyxuzIUgeB1ELwF85iX0pAEcIyLqP4u3uwLIhEKCqBjvz+hpL/4MEo
+Pvkl8kLPsQE=
+=1erf
+-----END PGP SIGNATURE-----
