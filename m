@@ -1,46 +1,39 @@
-From: Vitaly Fertman <vitaly@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: ReiserFS problems
-Date: Thu, 7 Aug 2003 18:11:58 +0400
-Message-ID: <200308071811.58952.vitaly@namesys.com>
-References: <20030806182055.A28562@bitwizard.nl> <3F325597.30209@namesys.com> <20030807154627.C7165@bitwizard.nl>
+Date: Thu, 07 Aug 2003 18:41:20 +0400
+Message-ID: <3F326510.7030804@namesys.com>
+References: <20030806182055.A28562@bitwizard.nl> <20030806164852.GA14719@namesys.com> <3F324CEF.4070608@namesys.com> <200308072324.55305.russell@coker.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15233-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15234-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030807154627.C7165@bitwizard.nl>
-Content-Disposition: inline
+In-Reply-To: <200308072324.55305.russell@coker.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>, Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com, copy@harddisk-recovery.nl
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: russell@coker.com.au
+Cc: Rogier Wolff <R.E.Wolff@harddisk-recovery.nl>, reiserfs-list@namesys.com
 
-On Thursday 07 August 2003 17:46, Rogier Wolff wrote:
-> On Thu, Aug 07, 2003 at 05:35:19PM +0400, Hans Reiser wrote:
-> > Rogier Wolff wrote:
-> > >Only list the file/directory that's being worked upon when explicitly
-> > >requested. When not explicitly requested, set an alarm handler to
-> > >print it every second (or so). Lots of time is now spent in writing to
-> > >the screen. (It's consumed over an hour of CPU time by now...)
-> >
-> > good point.  Vitaly, do this unless you have a reason not to.
+Russell Coker wrote:
 
-:) Hans, I answered on this and described how it is done, do you see 
-my answer?
-
-> FYI: A "reason not to" would be if you "frequently" get crashes in the
-> program that get the location misreported because the last line it
-> printed ends up being quite wrong.
 >
-> 			Roger.
-
-As I have wrote already the path to the directory, the file was reached from 
-is printed, without the name of the file being checked -- this reduces the 
-amount of stuff being printed and as there is no ararms at the time of a 
-crash the path to the parent directory is always printed. 
+>The problem with fsck being too agressive has a long history.  The HPFS DLL 
+>for CHKDSK.EXE in OS/2 when run in level 3 was known for recovering files 
+>from a recently formatted file system.  It seems that the IBM file-system 
+>people weren't smart enough to come up with the type of ideas that Rogier can 
+>come up with in seconds.  ;)
+>
+>  
+>
+I think it is more like, when you write the first version of fsck you 
+don't think about people storing copies of reiserfs on reiserfs, and 
+then on the next chance you get you change the disk format.  
+Unfortunately, changing disk formats is not done often so there is a lag 
+(though now that we have the new plugin infrastructure....).
 
 -- 
-Thanks,
-Vitaly Fertman
+Hans
+
+
