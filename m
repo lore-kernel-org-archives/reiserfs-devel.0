@@ -1,70 +1,45 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: http://www.namesys.com/snapshots/2004.08.03-internal.testing/
-Date: Wed, 04 Aug 2004 14:44:03 -0700
-Message-ID: <411158A3.1060707@namesys.com>
-References: <200406150022.34578.vitaly@namesys.com> <20040804142227.GR1284@nysv.org> <41112137.4010102@namesys.com> <200408042251.41149.vitaly@namesys.com>
+Subject: Re: mongo_copy: cp: cannot stat `/mnt/testfs/testdir0-0-0/f92': Input/output
+ error
+Date: Wed, 04 Aug 2004 14:47:14 -0700
+Message-ID: <41115962.1030407@namesys.com>
+References: <20040804065840.17C7915C7C@mail03.powweb.com> <4110A0FA.3030007@namesys.com> <4110A38E.6070905@namesys.com> <4110A561.9050200@namesys.com> <4110DBD6.7010904@namesys.com> <20040804183801.GU1284@nysv.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-20006-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20007-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200408042251.41149.vitaly@namesys.com>
+In-Reply-To: <20040804183801.GU1284@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"; format="flowed"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: =?UTF-8?B?TWFya3VzIFTDtnJucXZpc3Q=?= <mjt@nysv.org>, Thomas Graham <lkthomas@sml.dyndns.org>, Chris Mason <mason@suse.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
 
-Vitaly Fertman wrote:
+Markus T=F6rnqvist wrote:
 
->On Wednesday 04 August 2004 21:47, Hans Reiser wrote:
+>On Wed, Aug 04, 2004 at 04:51:34PM +0400, Vladimir V. Saveliev wrote:
 > =20
 >
->>Markus T=D0=96rnqvist wrote:
->>   =20
->>
->>>On Wed, Aug 04, 2004 at 10:16:26PM +0800, Thomas Graham wrote:
+>>>If it is due to 4k stacks,
 >>>     =20
 >>>
->>>>if a convertor are not done yet, I think we could wait until it's bundle
->>>>into the .tar.gz and we could use it, actually, do we HAVE TO do that
->>>>format changes ? or normal user could just ignore that except for some =
-of
->>>>them who reach problem with that ?
->>>>       =20
->>>>
->>>I don't think you HAVE to do it, if you would, there would be a
->>>compensation in the kernel, and Vitaly said there is not.
->>>
->>>So just avoid the reiser4progs like the plague, call the Namesys helpdes=
-k,
->>>whatever and ask Vitaly to remove the file from the web, remove the
->>>code that changes the format, whatever.
->>>
->>>I just hope I won't hit a corruptive bug on my machine, it would be pret=
-ty
->>>anticlimactic if I did and I would lose data because it decides to
->>>change the format.
->>>     =20
->>>
->>I don't understand why Vitaly cannot do one of the things suggested on
->>this thread: create an fsck option for people like Markus to use.
->>
->>If Vitaly does that, problem solved, yes?
->>
->>Chris is right that any disk format changes need to be made now.
->>Vitaly, send an email defining what you propose to do, and cc the list.
->>Do that now please.
+>>No, I do not think it is.
 >>   =20
 >>
 >
->I have written a converter (an option to debugfs), testing it,=20
->it does well for the last half an hout already.=20
+> =20
 >
->I am going to release another internal snapshot with the explanation=20
->in README how to use it.
+>>reiser4 now refuses to compile if 4k stack is on.
+>>   =20
+>>
+>
+>WTF, Redeeman at least runs Reiser4 with 4k stacks...
+>
+>What's this about?
 >
 > =20
 >
-good answer.
+V4 likes stack.  If someone can convince me that kmalloc is as efficient=20
+as stack, I'd like to hear it, because I know I lack expertise on the topic.
