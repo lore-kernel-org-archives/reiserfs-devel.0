@@ -1,64 +1,43 @@
-From: Brian Tinsley <btlists@emageon.com>
+From: Andreas Dilger <adilger@clusterfs.com>
 Subject: Re: getting UUID and label of a filesystem
-Date: Thu, 06 Nov 2003 15:03:54 -0600
-Message-ID: <1068152634.2455.37.camel@dragonball>
+Date: Thu, 6 Nov 2003 14:07:47 -0700
+Message-ID: <20031106140747.Z10197@schatzie.adilger.int>
 References: <3FAAB330.5040503@nrao.edu>
-	 <1068152277.2556.13.camel@redeeman.linux.dk>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; boundary="=-KlW1PqyV/mW3i3ACJ4Rx"
-Return-path: <reiserfs-list-return-15999-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16000-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1068152277.2556.13.camel@redeeman.linux.dk>
+Content-Disposition: inline
+In-Reply-To: <3FAAB330.5040503@nrao.edu>; from bwaters+moz@nrao.edu on Thu, Nov 06, 2003 at 01:46:40PM -0700
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
-
---=-KlW1PqyV/mW3i3ACJ4Rx
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Boyd Waters <bwaters+moz@nrao.edu>
+Cc: reiserfs-list@namesys.com
 
-reiserfstune --label <new label> /dev/xxx
-
-That ought to do it  ;)
-
-
-On Thu, 2003-11-06 at 14:57, Redeeman wrote:
-
-> now you talk about label, how to change a label?
+On Nov 06, 2003  13:46 -0700, Boyd Waters wrote:
+> Perhaps this is obvious, but I cannot find a way to print out the UUID
+> or the label of a mounted reiser filesystem, in a manner similar to
+> xfs_admin.
 > 
-> On Thu, 2003-11-06 at 21:46, Boyd Waters wrote:
-> > -----BEGIN PGP SIGNED MESSAGE-----
-> > Hash: SHA1
-> > 
-> > Perhaps this is obvious, but I cannot find a way to print out the UUID
-> > or the label of a mounted reiser filesystem, in a manner similar to
-> > xfs_admin.
-> > 
-> > Best way to do this?
-> > 
-> > On a mounted filesystem?
-> > 
-> > As non-root user?
-> > 
-> > Thanks!
-> > 
-> > ~ - boyd
-> > 
-> > Boyd Waters
-> > http://www.aoc.nrao.edu/~bwaters
-> > National Radio Astronomy Observatory
-> > Socorro, New Mexico
-> > 
-> > -----BEGIN PGP SIGNATURE-----
-> > Version: GnuPG v1.2.3 (GNU/Linux)
-> > Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
-> > 
-> > iD8DBQE/qrMw0is8k1r0QeURAhekAJ9N7Q7USe7Hull5ydP99vdS/uYO2gCgrj0v
-> > v5MuJNmUlLEJyYWUaVjqn2M=
-> > =J7uc
-> > -----END PGP SIGNATURE-----
+> Best way to do this?
+> 
+> On a mounted filesystem?
+> 
+> As non-root user?
 
---=-KlW1PqyV/mW3i3ACJ4Rx--
+If you have a recent e2fsprogs (1.33+ I think), you can use "blkid" to dump
+the UUID/LABEL of most filesystem types (including reiserfs, XFS, JFS, ext*).
+If run as root it will create a cache of available block devices and
+their UUID/LABEL that non-root users can access even if they can't read
+the block device, so it doesn't need to be suid or anything.  You can also
+use it to locate specific devices by LABEL/UUID/TYPE from scripts, etc.
+
+Cheers, Andreas
+--
+Andreas Dilger
+http://sourceforge.net/projects/ext2resize/
+http://www-mddsp.enel.ucalgary.ca/People/adilger/
 
