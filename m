@@ -1,72 +1,44 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Re: Re: [PATCH CFT] tons of logging patches
-Date: Tue, 25 Jun 2002 02:55:23 +0200
-Message-ID: <3D17BF7B.2090409@mb.tu-ilmenau.de>
-References: <1023076301.22608.1778.camel@tiny>	<3CFC1CB5.8040102@mb.tu-ilmenau.de>	<1023	 	157228.31475.38.camel@tiny>	<3CFC33F2.7080009@mb.tu-ilmenau.de>	<1023196345.	 31682.81.camel@tiny>	<3CFE7EFB.6080203@mb.tu-ilmenau.de>	<3CFE8234.7010006@mb.tu-ilmenau.de>	<1023322167.2920.772.camel@tiny> 	<3D07CBE7.5080701@mb.tu-ilmenau.de> <1024274859.11086.68.camel@tiny> 	<3D0D2DEE.7080909@mb.tu-ilmenau.de>  <1024340679.18666.36.camel@tiny> <1024619159.2123.94.camel@tiny>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: access beyond end of device again
+Date: Tue, 25 Jun 2002 09:11:50 +0400
+Message-ID: <20020625091150.B4240@namesys.com>
+References: <1951319530634.20020624073524@redefine.org> <20020624183557.A2171@namesys.com> <20020624144501.GA28013@matrix.wg> <20020624184948.B896@namesys.com> <3D174CD6.5000407@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10825-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10826-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <3D174CD6.5000407@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Dirk Mueller <dmuell@gmx.net>, reiserfs-list@namesys.com
 
-On 06/21/2002 02:25 AM, Chris Mason wrote:
- > ftp.suse.com/pub/people/mason/patches/data-logging has a new
- > beta-data-logging-10.diff.gz
- >
- > This one:
- >
- > compiles as a module (thanks Jeff Mahoney)
- >
- > has a highmem bug fixed with data=journal (help from Andrea)
- >
- > Fixes a problem with relocated/different sized journal devices.  This
- > was a merge error on my part.
- >
- > One tester reports a hang that I can't reproduce here, I'm still trying.
- >
- > -chris
- >
- >
- >
+Hello!
 
-Many thanks to you, Chris!
+On Mon, Jun 24, 2002 at 08:46:14PM +0400, Hans Reiser wrote:
+> >reiserfs does not allocates any blocks past the partition size,
+> >so I cannot even imagine what are you speaking about ;)
+> This can be caused by fdisk followed by mkreiserfs without a reboot 
+> between fdisk and mkreiserfs, yes?
 
-I applied it on Sunday as I was on a short vacation to Hamburg.de, for
-one week before, and your recent patch works very well under
-noatime,notail,data=ordered on / still booted with the appropriate
-rootflag. (That is my old setup.)
-I remarked one difference, I didn't realize this before on ReiserFS.
-Having a backup partition previously mounted with fstab settings:
-"/dev/hda11  /mnt/beta   reiserfs
-noauto,user,noatime,notail,data=ordered   0  0",
-I was not able to execute any executable. So it should be normally as I
-understand "mount" and its manpage. I had to add a "exec," to the mount
-options. Now it works and [this] is right?! ;-)
+Similar problem, but not this exact one, I'd say.
+But sequence of events should be this:
+have a hdd with several partitions. Have some of the partitions mounted.
+(or at least one).
+Destroy one of the partitions and create smaller one instead.
+(or just resize partition down).
+mkfs the partition without rebooting.
+But if resizing have removed more than 132 Mb of space,
+then such a partition won't mount on next reboot just because not of all
+bitmaps can be readed. (and messages indicated that requested sector is far
+away from partition end).
 
-Is the rootflag needed any more? Does your patchset work with all
-pending ReiserFS patches together, now? (Yes, I remember your and your
-teams words on 2.4.20-pre...) I didn't try this complete combo again,
-just replaced the old beta-data-logging patch in my last (posted) setup.
+The main thins there is for HDD to be mounted (at least one partition).
+If nothing were mounted off the HDD, then kernel is able to correctly
+re-read partition table.
 
-Last week I got my old RAM renewed (to 512MB again) and some of my old
-problems disappeared for now (boot-up overheating symptoms, Oleg told me
-about, that are quite assumable (warranty time exceeded)). The load
-timings I posted stay the same, so, my aa-akpm-rml patch setup was
-really somekind of poor.
-
-Mmh. Now I don't have the old crash pattern any more ;-)
-Maybe I push my notebooks power button "accidentally", soon, to test...
-
-
-Best wishes and greetings,
-
-Manuel
-
-
-
-
+Bye,
+    Oleg
