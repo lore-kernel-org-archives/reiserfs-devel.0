@@ -1,46 +1,29 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: fsck 0.5.5 time
-Date: Fri, 18 Jun 2004 15:29:01 +0300
-Message-ID: <20040618122901.GI4990@nysv.org>
-References: <20040618110112.GG4990@nysv.org> <40D2D82B.3090301@namesys.com> <200406181620.25609.vitaly@namesys.com>
+From: Hendrik Visage <hvisage@envisage.co.za>
+Subject: Re: Terrible performance (<100kb/sec) in a cp -Raf
+Date: Fri, 18 Jun 2004 15:27:47 +0200
+Message-ID: <20040618132747.GA23705@hvs.envisage.co.za>
+References: <oyd4qpee0fv.fsf@bert.cs.rice.edu> <oyd3c4utf1q.fsf@bert.cs.rice.edu> <20040618110759.63901f99@blade.concept-micro.com> <20040618101813.GW23705@hvs.envisage.co.za> <59191.194.25.40.4.1087554202.squirrel@mailrapid.upb.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-19252-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19253-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200406181620.25609.vitaly@namesys.com>
+In-Reply-To: <59191.194.25.40.4.1087554202.squirrel@mailrapid.upb.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
+To: godot@uni-paderborn.de
+Cc: reiserfs-list@namesys.com
 
-On Fri, Jun 18, 2004 at 04:20:25PM +0400, Vitaly Fertman wrote:
->> > How long is the expected time for fsck to run?
->depends on the speed of your hardware, kind of corruptions, 
->fsck options, many things.
+On Fri, Jun 18, 2004 at 12:23:22PM +0200, godot@uni-paderborn.de wrote:
+> >> Uh, I wonder why I read "firewire" when it was "USB" ;)
+> >
+> > And then also, USB 1.1 would only run at about 100Kbyte/sec max :(
+> 
+> That should read ~1000 KB/s.
 
-Yeah, I was just hoping for some rough estimate of a clean filesystem
-with a some benchmark setup :)
+USB 1.1 is 1.2Mbit/sec (give or take a few bits ;^) = ~150Kbyte/sec
 
-Well, it's not that critical.
-
->> > Are there any risks in using the /home/ read-write without the stat data
->> > extensions, or whatever --fix fixes?
->should be ok, if you are talking about the plugin set that is added into 
->the root. 
-
-Well, I guess I am :)
-I couldn't remember exactly what the new addition that wanted --fix was,
-but I thought I remembered it was statdata extensions.
-
->yes, you are right, there will be some progress on semtanic pass also, 
->it has not been implemented yet. 
-
-Hooray! I owe you a beer :)
-
--- 
-mjt
 
