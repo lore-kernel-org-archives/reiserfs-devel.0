@@ -1,164 +1,85 @@
-From: Jamie Lokier <jamie@shareable.org>
-Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: Thu, 2 Sep 2004 01:24:31 +0100
-Message-ID: <20040902002431.GN31934@mail.shareable.org>
-References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: silent semantic changes with reiser4
+Date: Wed, 01 Sep 2004 19:04:41 -0400
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <87sma1bng6.fsf@uhoreg.ca>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <41352279.7020307@slaphack.com>
+ <41356321.4030307@namesys.com>
+ <Pine.LNX.4.58.0408312259180.2295@ppc970.osdl.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21239-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Linus Torvalds wrote:
-> > I'm going to explain why filesystem support for .tar.gz or other
-> > "document container"-like formats is useful.  This does _not_ mean tar
-> > in the kernel (I know someone who can't read will think that if I
-> > don't say it isn't); it does mean hooks in the kernel for maintaining
-> > coherency between different views and filesystem support for cacheing.
+>>>>> "Linus" == Linus Torvalds <torvalds@osdl.org> writes:
 
-Thanks for your reply.
+Linus> For example, you could make just _one_ program support
+Linus> "openat()", and you'd get most of the advantages, with no
+Linus> possibility of _breaking_ any of thousands of applications..
 
-> I think that's a valid thing, but there are some fundamental problems with 
-> it if you expect it to work on a normal filesystem (ie something that 
-> isn't fundamentally designed as a database).
-> 
-> For example, _what_ kind of coherency do you think is acceptable? Quite
-> frankly, using standard UNIX interfaces, absolute coherency just isn't an
-> option, because it's just not possible to try to atomically update a view
-> at the same time somebody else is writing to the "main file". "mmap()" is
-> the most obvious example of this, but even the _basic_ notion of multiple
-> "read" calls is not atomic without locking that is _way_ too expensive.
->
-> A "read()" on a file is not atomic even on the _plain_ file: if somebody 
-> does a concurrent "write()", the reader may see a partial update. This 
-> becomes a million times more confusing if the reader is seeing a 
-> structured view of the file the writer is modifying.
+I'm starting to think that even if we had openat, it wouldn't solve
+much.  Maybe I'm just not imaginative enough, but I still see problems.
+Let's pretend, just for the sake of argument, that every program all of
+a sudden magically was modified to support openat, which is a big
+assumption.  But we'll make that assumption so that we can ignore _that_
+problem for a second.
 
-I agree.  Coherency should be about equivalent to what writing flat
-files offers.
+The question still remains, how do I tell the thing to open a stream?
+If cat knows about openat, how do I tell it to cat foo.txt, stream
+bar?  I obviously can't do it using a normal filename, because if I
+could do that, we could just forget about the openat business.  The
+only way I can think of is to give cat a flag that tells it what stream
+to open: "cat --stream bar foo.txt".  Ugly.  It also makes it
+impossible to do redirection, because you can't pass flags to "<".
 
-(For now.  Eventually I think we'll see transactional I/O in Linux, to
-solve the sort of updater-to-server glitches which are currently
-solved by putting even trivial data behind clunky database servers).
+And before someone yells "runat" at me (which, btw, won't work with
+redirection either), consider larger programs like GIMP or emacs.  Let's
+look at GIMP first.  I've already got an instance of GIMP open, and I
+don't want to waste memory with another instance.  How do I tell it to
+open the icon.png stream of the file xterm?  When I go to File | Open,
+up pops a dialog that only shows real files.  Trying to design a dialog
+box that will show real files and substreams, and not confuse the users
+is not going to be fun.  Please don't ask the GTK/GNOME developers to
+design another file selection dialog.  There were enough people whining
+the last round.  If they need to add more complexity, we'll have even
+more whining.
 
-The coherency I'd like would also ensure that you'll never see an
-invalid file structure in the long term, even if during writing
-operations you might see temporarily invalid structure.
+Now let's look at emacs.  I want to open up the description.txt stream
+of the file xterm.  So I do "C-x C-f", and it prompts me on the status
+bar for the file name.  What do I type?  Well, description.txt doesn't
+live in the normal namespace, so the only way around that is for emacs
+to ask for the filename, and then ask for the stream name.  That's
+extra-annoying when I usually just want to open just the normal stream,
+and that second prompt just makes more work for me.
 
-That is easy if you only have read-only views.
+Linus> I know, you've ignored the "runat" program (which is just a
+Linus> wrapper around the openat() system call), but it _has_ been
+Linus> mentioned several times in this thread. Yes, you'd type a bit
+Linus> more to do
 
-> Also, it's likely impossible to write() to the view-file, again unless you 
-> expect all the underlying filesystems to be something really special.
+Linus> 	runat file ls -l
 
-Right.  I wonder if you read the part of my message which deals with
-lazy updates of container files.
+Linus> instead of
 
-The idea is that write() to a view-file doesn't repack the container
-file until the container file is read.
+Linus> 	ls -l file/
 
-Practically, that means the view-file's write handler, which is
-probably in userspace, grabs a kind of mandatory lock (similar to
-F_SETLEASE) on the container file and then truncates it.  After a
-time, or when a program tries to read the container (whichever comes
-first), the view-file's handler is notified, it regenerates the
-container file, and releases the lock.
+Might not be just a "bit more" typing, because you lose handy things
+like tab completion.  Say I want to "cat" file foo.txt, stream bar.  Or
+was that baz?  Instead of being able to type
+  cat foo/ba<tab>
+and have the filename magically come up, I need to
+  runat foo ls ba*
+  runat foo cat baz
+(which also requires more thinking, since I need to think about how to
+formulate the query, read the output, and write the new command, and so
+is much much slower than being able to mindlessly hit the <tab> key.)
 
-This is the form of coherency needed to make writes work properly.
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
-(You can take it more fine grained, locking at the page level, but
-that's just to improve performance some more.  It's not fundamental.)
-
-Notice that it doesn't need a special filesystem.  View-file writes
-will work with any ordinary filesystem.  A special filesystem would
-make it perform better (much better), by allowing the truncated state
-to persist across reboots, with an xattr to say what's needed to
-recreate the data -- but it's not fundamentally necessary.
-
-It does need kernel support for that kind of lock, which F_SETLEASE
-isn't, and notifications of mount events, and notifications of
-file writes.
-
-> So from a _practical_ standpoint, I suspect that the best you can really 
-> do pretty cheaply (and which gets you 90% of what you probably want) is:
-> 
->  - open-close consistency: the "validity" of the cache is checked at 
->    _open_ time, and no guarantees are given about the cache being 
->    updated afterwards.
->  - read-only access to the cache (ie you can only read the view, not write 
->    to it).
-
-I think that gets 90% of the useful features, but leaves out some
-applications which would raise eyebrows when they actually work --
-i.e. the component editing applications.
-
-> and quite frankly, I think you can do the above pretty much totally in
-> user space with a small library and a daemon (in fact, ignoring security
-> issues you probably don't even need the daemon). And if you can prototype
-> it like that, and people actually find it useful, I suspect kernel support
-> for better performance might be possible.
-
-Right now it's stupidly impossible for a daemon to monitor a file for
-changes and not be tricked by mtime faults, because someone can link
-to the file and modify it on another path.  That's obviously a bug in
-dnotify which I keep meaning to fix.  There are other dnotify
-problems, some of which are fundamental when it's over a network.
-
-I do care about security issues, for things like an "md5" or
-"compiled" attribute especially, but for a prototype that's just
-something to live with.
-
-> Suggested interface:
-> 
-> 	int open_cached_view(int base_fd, char *type, char *subname);
-
-Something userspace is useful anyway, so that a fully userspace
-alternative is available, so that people writing apps will take up the
-approach and take advantage of fs-level support where available while
-still being portable elsewhere.
-
-> see what I'm aiming at? You start out with a generic "attribute cache" 
-> library that does some hacky things (like depending on "mtime" for 
-> coherency) and then if that works out you can see if it's useful.
-
-Ok but I don't think that form of it is useful!  It's the sort of
-interface that specific attribute-using programs will have to use if
-they're to be portable, but it doesn't provide any special advantages
-to any other programs.
-
-Gnome VFS, KDE etc. provide much of that kind of interface already.
-Evidently some people find that useful.  But I don't, precisely
-because it's so tied into one set of programs or another.
-
-This is where the file-as-directory metadata stuff is so potentially
-interesting.  It's actually a nice interface that every program can see.
-
-It's the nice interface when running on Linux that'll make it deliciously
-worthwhile for portable applications, such as MP3 retaggers and PDF
-image extractors, to be written in the form of a tool plus a plugin
-for a common view-file library, instead of all in the tool as they are now.
-
-Without the feature of a nice interface on Linux, there's no reason
-why application writers would bother to learn and use a view-file library.
-
-To be fair, the whole thing could be prototyped (with glitches, but
-enough to demonstrate) in userspace, running everything through
-something like uservfs or even NFS, especially with file-as-directory
-being blessed at the VFS level.
-
-That is exactly the right way to go about it.  I started some work on
-that back in '99, around the same time Pavel was exerimenting with
-podfuk (which become uservfs), but haven't and don't have the time or
-money(*) to take it further.
-
--- Jamie
-
-(*) That's a hint to potential employers who want to support this work,
-by the way.
