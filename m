@@ -1,33 +1,52 @@
-From: Cliff White <cliffw@osdl.org>
-Subject: Reiser4 - small test results
-Date: Wed, 13 Nov 2002 12:50:26 -0800
-Message-ID: <200211132050.gADKoQQ12656@mail.osdl.org>
-Return-path: <reiserfs-list-return-11986-reiserfs=m.gmane.org@namesys.com>
+From: "Vitaly Fertman" <vitaly@namesys.com>
+Subject: Re: corruption?  how do I fix?
+Date: Thu, 14 Nov 2002 00:41:45 +0300
+Message-ID: <002d01c28b5d$7e5f7640$bf7b55c2@figwam>
+References: <3DD1DEEF.6030903@panix.com> <3DD2304E.70500@namesys.com> <3DD2698E.50100@panix.com> <3DD26A74.3090800@namesys.com> <3DD26C61.6000103@panix.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11987-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nikita Danilov <Nikita@namesys.com>
-Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, cliffw@osdl.org, wookie@osdl.org
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: kenny gorman <kgorman@panix.com>, reiserfs-list@namesys.com
 
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
---------
-Quick progress note, i've made some. 
-Have succeeding in building the latest snapshot against 2.5.47.
-Am doing some initial small tests (LTP disktest code) on IDE disk,
- then will move
-tests to SCSI RAID array. 
+Hi,
 
-First results are..interesting. Reads are fast, writes are slow.
-However, these first tests are very small and somewhat contrived,
-so i am not posting numbers yet.
+> >> I am running a semi-large oracle database on reiserfs and lvm.  I
+> >> started receiving block corruption messages in oracle.  So I started
 
-Results detail is at: http://www.osdl.org/archive/cliffw/reiser/index.html
+Do you mean I/O error messages? reiserfsck does not check partitions
+for badblocks so I would suggest you to run /sbin/badblocks utility first.
+If you have badblocks on your device, it is a bad idea to continue using
+your harddrive, you probably should get a working one.
 
-cliffw
+> Yury,
+>
+> Thx for the quick response.  Is there a way to 'see' if the
+> reiserfsck --fix-fixable .... command would work?  like a dry run?
+
+No, there is no a such.
+
+> Running another backup is going to take a while, so I need to gauge the
+> risks.  What is this command going to do?  Is it permanent when I do it
+> (seems like it from the docs)
+>
+
+If you do not have badblocks, then the only problem is bitmaps. reiserfsck
+--fix-fixable should fix it easily - it is not a severe corruption and the
+latest reiserfsck is considered as quite stable.
+
+Thanks,
+Vitaly Fertman
+
+
+
+
+
+
 
