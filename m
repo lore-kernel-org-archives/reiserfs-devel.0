@@ -1,37 +1,39 @@
 From: Oleg Drokin <green@namesys.com>
 Subject: Re: New reiser4 snapshot (2003.09.12) is out
-Date: Sat, 13 Sep 2003 23:21:23 +0400
-Message-ID: <20030913192123.GA24770@namesys.com>
-References: <20030913063124.GJ2123@backtop.namesys.com> <Pine.LNX.4.44.0309130437320.30756-100000@localhost.localdomain> <20030913085201.GA13272@namesys.com> <3F632446.30004@namesys.com>
+Date: Sat, 13 Sep 2003 23:24:27 +0400
+Message-ID: <20030913192427.GB24770@namesys.com>
+References: <3F632446.30004@namesys.com> <Pine.LNX.4.44.0309131039450.32678-100000@localhost.localdomain>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15653-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15654-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3F632446.30004@namesys.com>
+In-Reply-To: <Pine.LNX.4.44.0309131039450.32678-100000@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: "Robert P. J. Day" <rpjday@mindspring.com>, Alex Zarochentsev <zam@namesys.com>, Mike Benoit <mikeb@netnation.com>, reiserfs-list@namesys.com
+To: "Robert P. J. Day" <rpjday@mindspring.com>
+Cc: Hans Reiser <reiser@namesys.com>, Reiser FS mailing list <reiserfs-list@namesys.com>
 
 Hello!
 
-On Sat, Sep 13, 2003 at 06:05:58PM +0400, Hans Reiser wrote:
-> >>my system definitely has readline installed, and i get the same error.
-> >On the other hand, you need not only readline itself, but also its header 
-> >files.
-> >Lots of distributions (e.g. redhat-alike) form another package called 
-> >(usuaully) readline-devel,
-> >that contains this necessary stuff.
-> did you adjust our headers to be redhat compatible?  If not, please do.
+On Sat, Sep 13, 2003 at 10:41:47AM -0400, Robert P. J. Day wrote:
+> > did you adjust our headers to be redhat compatible?  If not, please do.
+> i didn't see anything in the READ.ME about adjusting headers, but would
+> this also explain why, if i build reiser 4 support directly into the 
+> kernel, my "make modules_install" works fine, but if i make it modular,
+> i get
 
-The problem turned out to be that RedHat's readline was compiled with ncurses
-dynamically, so when you link in readline, you need to link ncurses too.
+reiser4 is not supposed to be build as module yet.
+Hm, I thought I disabled this in Kconfig, but it seems I done this not fully.
 
-Vitaly will release the fix to configure script shortly, I believe.
+Anyway the list of unresolved symbols you provided is valuable and we will
+export those on next snapshot.
+
+>   just curious.  haven't rebooted under the new kernel yet, but i'd like 
+> to clear up the above before i do that.  thanks.
 
 Bye,
     Oleg
