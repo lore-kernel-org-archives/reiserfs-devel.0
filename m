@@ -1,91 +1,42 @@
-From: Will Smith <will@willsmith.org>
-Subject: Minor, 'mergable units' error caused by repacker.
-Date: Wed, 15 Sep 2004 20:40:45 +0800
-Message-ID: <4148384D.2010508@willsmith.org>
+From: "daniel.poelzleithner" <poelzi@poelzi.org>
+Subject: Re: reiser4 limits
+Date: Wed, 15 Sep 2004 14:51:34 +0200
+Message-ID: <41483AD6.8040807@poelzi.org>
+References: <4147BA63.4010207@poelzi.org> <1095231116.5478.247.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21755-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21756-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1095231116.5478.247.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: Reiser FS Mailing List <reiserfs-list@namesys.com>
 
-I've been running the repacker a number of times, and often it causes
-minor errors, fixable with fsck.reiser4 --fix.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-It appears to only cause errors when run in 'direction=1' (backward) mode.
+Vladimir Saveliev wrote:
 
-Config : Linux server 2.6.8.1-mm4
-        : reiser4progs-1.0.0
-        : all defaults
-Reiser4 filesystem : kernel source (fragmented) on 350Mb partition
+thanks
 
+|> File size limit on i386 for reiser4 is 0x7ffffffffff.
+|> For ext2  it is 0x1fffffff000.
+|
+|> Which FAQ are you refering to?
 
+http://www.namesys.com/faq.html#reiserfsspecs
 
-Example fsck.reiser4 output:
+regards
+~ Daniel
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-[root@server repacker]# /usr/local/sbin/fsck.reiser4  /dev/hdc2
-*******************************************************************
-This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
-*******************************************************************
-
-Fscking the /dev/hdc2 block device. 
-
-Will check the consistency of the Reiser4 SuperBlock. 
-
-Will check the consistency of the Reiser4 FileSystem. 
-
-Continue? 
-
-(Yes/No): y
-***** fsck.reiser4 started at Wed Sep 15 19:25:06 2004
-Reiser4 journal (journal40) on /dev/hdc2: 0 transactions replayed of the 
-total 0
-blocks.
-Reiser4 fs was detected on /dev/hdc2. 
-
-Master super block (16):
-magic:          ReIsEr4
-blksize:        4096
-format:         0x0 (format40)
-uuid:           95531358-2088-4577-92c3-3ab69c186415
-label:          <none>
-
-Format super block (17):
-plugin:         format40
-description:    Disk-format for reiser4, ver. 1.0.0
-magic:          ReIsEr40FoRmAt
-flushes:        0
-mkfs id:        0x313b7a2d
-blocks:         85554
-free blocks:    39522
-root block:     17836
-tail policy:    0x2 (smart)
-next oid:       0x7f245
-file count:     15924
-tree height:    4
-key policy:     LARGE
-
-
-CHECKING STORAGE TREE 
-
-FSCK: Node (18023), item (2): 1 mergable units were found in the 
-extent40 unit.
-FSCK: Node (18333), item (78): 1 mergable units were found in the 
-extent40 unit.
-FSCK: Node (19880), item (65): 1 mergable units were found in the 
-extent40 unit.
-FSCK: Node (22794), item (28): 1 mergable units were found in the 
-extent40 unit.
-FSCK: Node (22794), item (33): 1 mergable units were found in the 
-extent40 unit.
-FSCK: Node (23976), item (79): 1 mergable units were found in the 
-extent40 unit.
-...
-
-
-
-
+iD8DBQFBSDqky/mkIQp7AD0RAkNuAJ4gfMT9wXUiTNm2iWQjYzqssGhCYQCgsrTq
+lWh5g3F+8B7a4zjbMt0cXzQ=
+=4jVl
+-----END PGP SIGNATURE-----
