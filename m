@@ -1,74 +1,59 @@
-From: markw@osdl.org
-Subject: Re: Reiser4 needs more testers
-Date: Mon, 29 Mar 2004 13:29:20 -0800 (PST)
-Message-ID: <200403292129.i2TLTN204307@mail.osdl.org>
-References: <40687354.1060604@namesys.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: secure delete?
+Date: Mon, 29 Mar 2004 20:10:08 -0500
+Message-ID: <200403300110.i2U1A8Ug005681@turing-police.cc.vt.edu>
+References: <1079691239.5767.7.camel@pear.st-and.ac.uk> <405AD31A.7070304@mweb.co.za> <20040319110748.GA30491@chihiro.cern.ch> <405AD9B5.80102@namesys.com> <405F94DD.80004@botz.org> <405FD7C2.5030605@namesys.com> <200403241820.i2OIKlDG008088@turing-police.cc.vt.edu>
+            <20040325031616.GA8473@zero>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17581-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_83107920P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17582-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40687354.1060604@namesys.com>
+In-Reply-To: Your message of "Wed, 24 Mar 2004 22:16:16 EST."
+             <20040325031616.GA8473@zero> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiser@namesys.com
-Cc: Nikita@namesys.com, Reiserfs-Dev@namesys.com, Reiserfs-List@namesys.com, Linux-Kernel@Vger.Kernel.ORG, cliff@lindows.com, tom.welch@lindows.com, garloff@suse.de, drobbins@gentoo.org, reiserrf@hotmail.com
+To: Tom Vier <tmv@comcast.net>
+Cc: reiserfs-list@namesys.com
 
-It's an OLTP database workload, but it is the one with all those fsyncs
-that Nikita pointed out.
+--==_Exmh_83107920P
+Content-Type: text/plain; charset=us-ascii
 
-Mark
+On Wed, 24 Mar 2004 22:16:16 EST, Tom Vier <tmv@comcast.net>  said:
+> On Wed, Mar 24, 2004 at 01:20:47PM -0500, Valdis.Kletnieks@vt.edu wrote:
+> > That's our official government recommendation for what's sufficient when
+> > we're throwing away stuff that the Other Guys might actually do this to.
+> > I have to assume that if the DoD or RCMP thought this wasn't sufficient
+> > to protect *our* secrets, they'd have a stricter standard.
+> 
+> they do, complete destruction. that's what they do with secret stuff.
 
-On 29 Mar, Hans Reiser wrote:
-> This was the parallel fsync benchmark?
-> 
-> Hans
-> 
-> markw@osdl.org wrote:
-> 
->>I've run through another test on STP with the latest snapshot against
->>reiser4 and reiserfs for comparison.  Reiser4 still seems to be lagging
->>behind reiserfs in our DBT-2 workload (the bigger number is better in
->>the metric):
->>
->>          metric  url to test results
->>          ------  ---------------------------------
->>reiser4   1208    http://khack.osdl.org/stp/290774/
->>reiserfs  1819    http://khack.osdl.org/stp/290775/
->>
->>Mark
->>
->>On 26 Mar, Hans Reiser wrote:
->>  
->>
->>>We have one NFS related bug remaining, and one mmap all of memory 
->>>related bug (and performance issue) that you can hit using iozone.  We 
->>>will fix both of these in next week's snapshot, they were both multi-day 
->>>bug fixes.  When they are fixed, unless users/distros find bugs next 
->>>week we will submit it for inclusion in the -mm and then the official 
->>>kernel.
->>>
->>>We hope it is now fairly stable for average users if you avoid those two 
->>>issues (we need to get rid of those dire warnings about its 
->>>stability...., we will remember that next snapshot....;-) )
->>>
->>>We need a lot more real user testers, because we have run out of scripts 
->>>that can crash it, and there are distros that would like to ship it 
->>>soon.  Please also complain to vitaly@namesys.com and ramon@namesys.com 
->>>about poor documentation, etc., ....
->>>
->>>The new reiser4 snapshot (against 2.6.5-rc2) is available at
->>>
->>>http://www.namesys.com/snapshots/2004.03.26/
->>>    
->>>
->>
->>
->>
->>  
->>
-> 
-> 
+http://www.irwin.army.mil/ac/LSS/DoD_Publications.html
 
+http://www.irwin.army.mil/ac/Electronic_Publications/DoD_Pubs/DoD%205220-22-M/cp8.pdf
+
+Pages 14 and 15 note methods "a, b, d, and m" sanitizing fixed drives,
+and continues:
+
+d. Overwrite all addressable locations with a character, its complement, then a random character and verify. THIS
+   METHOD IS NOT APPROVED FOR SANITIZING MEDIA THAT CONTAINS TOP SECRET INFORMA-
+   TION.
+
+Implying that it is acceptable at lower classification levels.....
+
+--==_Exmh_83107920P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFAaMjwcC3lWbTT17ARAnyRAKD9/4UTeEa1cGQ0tZPopgNhiy8dSgCfd+q2
+q7pYyXhHENT3qJ4JDep88mM=
+=Xf4K
+-----END PGP SIGNATURE-----
+
+--==_Exmh_83107920P--
