@@ -1,35 +1,76 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: silent semantic changes with reiser4
-Date: Wed, 08 Sep 2004 13:57:48 +0100
-Message-ID: <1094648265.11680.9.camel@localhost.localdomain>
-References: <20040905111743.GC26560@thundrix.ch>
-	 <1215700165.20040905135749@tnonline.net>
-	 <20040905115854.GH26560@thundrix.ch>
-	 <1819110960.20040905143012@tnonline.net>
-	 <20040906105018.GB28111@atrey.karlin.mff.cuni.cz>
-	 <6010544610.20040906143222@tnonline.net> <m3wtz7h2l6.fsf@zoo.weinigel.se>
-	 <826067315.20040906171320@tnonline.net> <m3sm9vh06b.fsf@zoo.weinigel.se>
-	 <20040906155456.GC13539@atrey.karlin.mff.cuni.cz>
-	 <20040908061159.GC1630@thundrix.ch>
+From: Michele Nicosia <michele.nicosia@lastminutetour.com>
+Subject: Re: Crash recovery after a shutdown, lvm,reiser3.6,2.4.26, lost files
+Date: Wed, 08 Sep 2004 16:52:07 +0200
+Message-ID: <413F1C97.7090706@lastminutetour.com>
+References: <918973493892.65637@bao72@lendingflow.net> <413EFE7C.2030006@lastminutetour.com> <200409081524.37440.christian.mayrhuber@gmx.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21631-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21632-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040908061159.GC1630@thundrix.ch>
+In-Reply-To: <200409081524.37440.christian.mayrhuber@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Tonnerre <tonnerre@thundrix.ch>
-Cc: Pavel Machek <pavel@ucw.cz>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On Mer, 2004-09-08 at 07:11, Tonnerre wrote:
-> This  has   been  discussed  along   with  the  HAL  people   a  while
-> ago. Actually, file systems can  introduce a refcount, where we need a
-> decrement function  which automatically unmounts the  filesystem if we
-> decrement the use count to zero. Kind of an automatic umount.
+Christian Mayrhuber wrote:
 
-We've supported file system garbage collection when they become unused
-since umm about 2.4.10 I think.
+> 1)
+>
+>I once had such an insult on a machine I was playing around and some old
+>2.4.x kernel + ext2. (rebooting after partitioning did away with these 
+>problems)
+>  
+>
+Hi,
+    the primary idea starting play with reiserfs is that on crash the 
+journal will save the job...
+It is not the same of ext2 fs.
+
+>I may be wrong, but there is the possibility that your lvm configuration was 
+>not quite right because you repartitioned your harddisk and created the lvm 
+>configuration without rebooting after repartitioning. This can happen because 
+>the kernel may not have read the correct partition table info. Thats why 
+>fdisk suggests rebooting. (At least there was a time it was necessary)
+>Your reboot after 3 months made the kernel read the correct
+>partition table and resulted for lvm to fail, because it's disk information 
+>did not match the kernel one.
+>
+>  
+>
+After the partitionig i restarted the machine (i also founded the limti 
+of 15 partition), but i do not restarted after i add another pv to the 
+volume group e resized the volume, like i suppose is the thing normal to do.
+Except this i can suppose tha another thing about th elvm could be 
+worng, but it is not the issue, because after recover the pv, and 
+mounted the fs all the files, many of them, were corrupted!!
+
+
+>2)
+>One of your harddisks could be defect. Try to run the badblocks command.
+>
+>  
+>
+smart array 641 with six ultra3 scsi drive, i think it is not a disk 
+failure.
+
+>3)
+>Your RAM could be defect. Try to run memtest86 for about 2 days.
+>
+>  
+>
+e.c.c. 1,5 g on proliant G3 dual xeon, also this, i suppose the ram is 
+good, not sure , i'm not tested it, but the probabilyt is low..
+
+>Note: ReiserFS has never failed for me on LVM and 2.4.x kernels (x >= 18,
+>I didn't use the combination lvm+reiserfs on earlier kernels) 
+>  
+>
+
+2.4.26  > 2.4.18 and the lvm with reiserfs is the most improtnat and 
+useful thing to use with linux, IMHO....
+
+Thanks
 
