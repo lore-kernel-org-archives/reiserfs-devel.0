@@ -1,45 +1,56 @@
 From: Russell Coker <bofh@coker.com.au>
-Subject: Re: Fwd: Re: [reiserfs-list] Reiserfs with Samba vs  NetApp Filer
-Date: Sat, 12 Oct 2002 15:53:23 +0200
-Message-ID: <200210121553.23053.bofh@coker.com.au>
-References: <200210112028.52316.bofh@coker.com.au> <3DA80F7A.B4E7D94D@amis.com>
+Subject: Re: Reiserfs with Samba vs NetApp Filer
+Date: Sat, 12 Oct 2002 16:00:39 +0200
+Message-ID: <200210121600.39712.bofh@coker.com.au>
+References: <Pine.LNX.4.33L2.0210100853240.1670-100000@localhost.localdomain> <200210121052.22603.bofh@coker.com.au> <20021012150028.G14731@vestdata.no>
 Reply-To: Russell Coker <bofh@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-11660-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-11661-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3DA80F7A.B4E7D94D@amis.com>
+In-Reply-To: <20021012150028.G14731@vestdata.no>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Eric Whiting <ewhiting@amis.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Ragnar =?iso-8859-1?q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
 
-On Sat, 12 Oct 2002 14:03, Eric Whiting wrote:
-> > Also with a device such as a NetApp you have a limited choice of what
-> >  hardware you can get.  You generally can't choose from all available
-> > sizes of drives, and I have been told that there is no supported option
-> > for upgrading a NetApp device to bigger drives (while doing so on Linux
-> > software RAID is easy and I've done it many times with both ReiserFS and
-> > Ext2/3).
+On Sat, 12 Oct 2002 15:00, Ragnar Kj=F8rstad wrote:
+> > I think that's about to change (if it hasn't already).  3ware sells RAID
+> > controllers that do 8 or 12 drives.  200G ATA drives are now on sale, a=
+nd
+> > 320G drives will be available soon.
+> >
+> > 12 * 320G should solve the disk space issue for most people...
 >
-> We run netapp boxes with mixed size drive -- 9,18,36,72 all in the same
-> box. (even the same shelf) Maybe I didn't understand what you are
-> saying...
+> The disk-space / cabeling-issue is mostly an IDE-problem anyway. If you
+> go SCSI/FC there is practically no limit on how much storage you can put
+> on a single server. (performance-issues aside)
+>
+> Sure, IDE is less expensive, but when comparing to NetApp there is
+> plenty of room to go for SCSI/FC - so diskspace should defenitively not
+> be an argument for going for NetApp.
 
-OK, having tiny 9G drives in the same shelf as newer and faster 72G drives 
-makes no sense.  So what you want to do is move the data off the 9G drives 
-and onto 72G drives.
+Actually the problem then becomes case space.  On the linux IDE arrays list=
+=20
+there are a few people having 2 or more 3ware cards, they have 16 or more I=
+DE=20
+drives in a system.  With 24 inch cables they can get by with regular IDE=20
+cabling (and S-ATA will solve this properly soon).  3ware cards allow suppo=
+rt=20
+for enough disks.  The problem then becomes what to house the disks in and =
 
-I take it from the fact that you still have 9G drives in operation that this 
-is not possible.
+how to supply enough power.
 
-Running mixed disk sizes is not desirable.  You want to have the newest drives 
-possible for best performance and reliability.
+Here's the URL for subscribing to the IDE arrays list, I think that many=20
+people here will be interested (Ragnar - you might want to make 3ware not b=
+e=20
+the only IDE RAID hardware that's supported on the list).
+http://lists.math.uh.edu/cgi-bin/mj_wwwusr
 
--- 
+--=20
 http://www.coker.com.au/bonnie++/     Bonnie++ hard drive benchmark
 http://www.coker.com.au/postal/       Postal SMTP/POP benchmark
 http://www.coker.com.au/projects.html Projects I am working on
