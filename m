@@ -1,83 +1,51 @@
-From: "Mike Young" <myoung@wildernessvoice.com>
-Subject: RE: ACL Support
-Date: Thu, 1 Apr 2004 14:11:54 -0800
-Message-ID: <200404012212.OAA21330@amber.he.net>
-References: <406C8E2F.2070304@suse.com>
+From: Steven Cole <elenstev@mesatop.com>
+Subject: Reiser4 shows Type: UNKNOWN with stat -f mountpoint
+Date: Thu, 01 Apr 2004 15:57:11 -0700
+Message-ID: <1080860231.2206.18.camel@spc0.esa.lanl.gov>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17656-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17657-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <406C8E2F.2070304@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: 'Jeff Mahoney' <jeffm@suse.com>
-Cc: reiserfs-list@namesys.com
+To: Reiserfs List <reiserfs-list@namesys.com>
+Cc: Hans Reiser <reiser@namesys.com>
 
-I should be able to get around the 2TB limit using LBD support on the 2.4
-kernel.
+I noticed that stat -f returns UNKNOWN for Type for a reiser4
+filesystem, while working OK* with other filesystems.  The version
+of stat used is 5.0.  If this is the fault of the stat command and not
+reiser4, sorry for the noise.
 
-Other than that, the 16TB limit shouldn't be a problem either since I can't
-get beyond that with the current VFS limit of 32-bit inodes on Xeon
-platforms.  With that, I can only go 2^32*4k block size, which is 16TB.
+[steven@spc2 testing-2.6]$ df -T
+Filesystem    Type   1K-blocks      Used Available Use% Mounted on
+/dev/sda1     ext3      798476    156840    601076  21% /
+/dev/sda8     ext3     7147260   5570588   1213608  83% /home
+none         tmpfs      257456         0    257456   0% /dev/shm
+/dev/sda6     ext3     4024188   1874192   1945572  50% /usr
+/dev/sda7     ext3      806368    131756    633648  18% /var
+/dev/sda9  reiser4     3930680    302468   3628212   8% /r4_testing
 
-Hmmm.  Reiserfs is looking pretty good for me.
+[steven@spc2 testing-2.6]$ stat -f /var
+  File: "/var"
+    ID: 0        Namelen: 255     Type: ext2/ext3
+Blocks: Total: 201592     Free: 168653     Available: 158412     Size: 4096
+Inodes: Total: 102592     Free: 101008
 
-Thanks,
+[steven@spc2 testing-2.6]$ stat -f /r4_testing
+  File: "/r4_testing"
+    ID: 0        Namelen: 3976    Type: UNKNOWN (0x52345362)
+Blocks: Total: 982670     Free: 907053     Available: 907053     Size: 4096
+Inodes: Total: 0          Free: 0
 
-Mike
+*well, sort of OK.  Vfat systems are reported as 'vfat' by df -T, but as
+'msdos' by stat -f: 
+/dev/hda5     vfat    1.9G  920M  963M  49% /win_d
+[steven@spc0 steven]$ stat -f /win_d
+  File: "/win_d"
+    ID: 0        Namelen: 260     Type: msdos
 
------Original Message-----
-From: Jeff Mahoney [mailto:jeffm@suse.com] 
-Sent: Thursday, April 01, 2004 1:49 PM
-To: Mike Young
-Cc: reiserfs-list@namesys.com
-Subject: Re: ACL Support
-
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-Mike Young wrote:
-| Wow Jeff!  That's a great explanation and very helpful too.  Can you
-answer
-| a couple more questions for me on the v3.x reiserfs?  I'm trying to
-| understand the limits right now.  For example, how big of a volume can I
-| support?  How large of a file?  And how many files?
-|
-| I actually have a problem in that I've got files that are 2TB in size--
-| nothing bigger, though.
-
-Mike -
-
-The on-disk format for ReiserFS v3 defines the maximum filesystem size
-as 2^32 * blocksize, which is currently limited by the size of a page on
-the system. So, 16 TB assuming a 4k blocksize. The maximum file size is
-2^61-1bytes, but is obviously limited by the maximum size of the
-filesystem. The maximum number of files is 2^32.
-
-If you're using a 2.4 kernel, you're not going to be able to handle that
-workload using any filesystem, since block devices are limited to 2^32 *
-512 bytes = 2 TB. This, in turn, limits all filesystems to 2 TB in size.
-
-Using the 2.6 kernel, the block device limits have been raised, so
-ReiserFS can use its maximum capacity.
-
-- -Jeff
-
-- --
-Jeff Mahoney
-SuSE Labs
-jeffm@suse.com
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.2 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iD8DBQFAbI4vLPWxlyuTD7IRAsaSAJwIN8Vv/W+LVO5xA2muNWhAsuusAACfV2sn
-eX23G/LcEyflt0svSywvIUM=
-=Bi+O
------END PGP SIGNATURE-----
-
-
+Steven
 
