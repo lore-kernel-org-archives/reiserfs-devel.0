@@ -1,27 +1,39 @@
-From: Gergely Tamas <dice@mfa.kfki.hu>
-Subject: Re: write barrier patches for 2.4.21
-Date: Tue, 26 Aug 2003 11:32:04 +0200
-Message-ID: <20030826093204.GB29526@mfa.kfki.hu>
-References: <20030825170849.GA14811@mfa.kfki.hu> <20030826081715.GA5816@namesys.com> <20030826090348.GA29526@mfa.kfki.hu> <20030826091353.GA788@namesys.com>
+From: Lorenzo Allegrucci <l.allegrucci@tiscali.it>
+Subject: Re: 2.6.0-test4 reiserfs oops
+Date: Tue, 26 Aug 2003 11:46:47 +0000
+Message-ID: <200308261146.47241.l.allegrucci@tiscali.it>
+References: <200308252047.36054.l.allegrucci@tiscali.it> <20030826083244.GC5816@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15417-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15418-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20030826083244.GC5816@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <20030826091353.GA788@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Oleg Drokin <green@namesys.com>
-Cc: Reiserfs List <reiserfs-list@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Hi!
+On Tuesday 26 August 2003 08:32, Oleg Drokin wrote:
+> Hello!
+>
+> On Mon, Aug 25, 2003 at 08:47:36PM +0000, Lorenzo Allegrucci wrote:
+> > I have got this oops running fsstress and fsx-linux
+> > on a 20Gb reiserfs partition.  Fully reproducible.
+>
+> What are the options to fsx and fsstress?
 
- > Actually if you have some sort of uninterruptible power supply that never fails (and
- > you have correct shutdown scripts to shut the box down when its about to run out), you
- > are safe to use write cache.
+fsx-linux linux-2.5.0.tar.bz2 :)
+mkdir d
+fsstress -d d -n 1000000 -p 10
 
-Thank you.
-Gergely
+The oops follows immediately.
+
+> Also I immediately see a place that can lead to an oops you quoted,
+> can you try to run with the patch attached and see if the oops go away?
+
+The oops goes away but fsx-linux hangs in "D" state.
+
